@@ -21,7 +21,7 @@ export default function LoginPage() {
       setMsg(error.message)
       return
     }
-    router.push('/dashboard')
+    router.push('/outils')
   }
 
   return (

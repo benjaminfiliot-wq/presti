@@ -1,0 +1,41 @@
+import { NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { generateLeadReply } from '@/lib/ai'
+
+// Générateur de réponse à la demande : l'artisan connecté colle la demande
+// d'un client, Presti rédige la réponse dans son ton.
+export async function POST(req: Request) {
+  try {
+    // Auth : on vérifie le jeton Supabase de l'artisan connecté (anti-abus + bon profil)
+    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
+    if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+
+    const { data: userData, error: uErr } = await supabaseAdmin.auth.getUser(token)
+    if (uErr || !userData?.user) {
+      return NextResponse.json({ error: 'Session expirée, reconnecte-toi.' }, { status: 401 })
+    }
+
+    const { data: artisan } = await supabaseAdmin
+      .from('artisans')
+      .select('nom, metier, ton_style')
+      .eq('id', userData.user.id)
+      .maybeSingle()
+    if (!artisan) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
+
+    const body = await req.json()
+    const { message, nomClient } = body ?? {}
+    if (!message || !String(message).trim()) {
+      return NextResponse.json({ error: 'Décris la demande de ton client.' }, { status: 400 })
+    }
+
+    const reply = await generateLeadReply(
+      { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style },
+      { nom_prospect: nomClient ?? null, message },
+    )
+
+    return NextResponse.json({ ok: true, reply })
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Erreur inconnue'
+    return NextResponse.json({ error: msg }, { status: 500 })
+  }
+}

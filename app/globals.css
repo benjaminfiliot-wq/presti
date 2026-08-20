@@ -166,3 +166,20 @@ button:disabled{opacity:.55;cursor:default}
 @media(prefers-reduced-motion:reduce){
   .reply-anim,.bubble--out,.badge-live::before{animation:none}
 }
+
+/* ============ app shell (espace connecté) ============ */
+.appbar{position:sticky;top:0;z-index:40;background:rgba(244,247,245,.85);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.appbar-in{max-width:920px;margin:0 auto;padding:.7rem 1.3rem;display:flex;align-items:center;gap:1rem}
+.appbar-in .brand{font-size:1.15rem}
+.appbar-links{display:flex;gap:1.2rem;margin-left:auto;align-items:center}
+.applink{font-size:.9rem;color:var(--muted);font-weight:600;background:none;border:none;width:auto;margin:0;padding:0;cursor:pointer;font-family:inherit}
+.applink:hover{color:var(--ink);background:none}
+.applink.active{color:var(--ink)}
+.app-wrap{max-width:920px;margin:2.2rem auto;padding:0 1.3rem}
+.app-wrap>h1{font-size:1.7rem;margin:0 0 .3rem}
+.tool-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.7rem;box-shadow:var(--shadow-sm)}
+.tool-card+.tool-card{margin-top:1.2rem}
+.tool-card h2{font-size:1.15rem;margin:0 0 .3rem}
+.tool-out{margin-top:1.1rem}
+.tool-out-label{font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:.4rem}
+.soon-tag{font-family:var(--font-mono);font-size:.64rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:.22rem .55rem;margin-left:.5rem;vertical-align:middle}

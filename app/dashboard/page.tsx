@@ -111,7 +111,7 @@ export default function Dashboard() {
 
   if (!ready || !artisan) {
     return (
-      <main className="wrap">
+      <main className="app-wrap">
         <p className="muted">Chargement…</p>
       </main>
     )
@@ -121,79 +121,90 @@ export default function Dashboard() {
   const nouveaux = leads.filter((l) => l.statut === 'nouveau').length
 
   return (
-    <main className="wrap">
-      <div className="card">
-        <div className="brand"><span className="dot" />Presti</div>
-        <h1>Bonjour {artisan.nom}</h1>
-        <p className="muted">{artisan.metier} · ton espace</p>
-
-        <label style={{ marginTop: '1.4rem' }}>Ton lien de contact (à coller sur Le Bon Coin, Google, Facebook)</label>
-        <div className="linkbox">
-          <span className="linkbox-url">{link}</span>
-          <button type="button" className="linkbox-btn" onClick={copyLink}>{copied ? '✓ Copié' : 'Copier'}</button>
+    <>
+      <div className="appbar">
+        <div className="appbar-in">
+          <span className="brand"><span className="dot" />Presti</span>
+          <div className="appbar-links">
+            <a className="applink" href="/outils">Générateurs</a>
+            <a className="applink active" href="/dashboard">Mes demandes</a>
+            <button className="applink" onClick={logout}>Déconnexion</button>
+          </div>
         </div>
-
-        <button onClick={logout} style={{ background: 'transparent', color: 'var(--soft)', border: '1px solid var(--line)', marginTop: '1.6rem' }}>Se déconnecter</button>
       </div>
 
-      <div className="card" style={{ marginTop: '1.2rem' }}>
-        <h2 style={{ margin: 0, fontSize: '1.15rem' }}>
-          Vos demandes {nouveaux > 0 && <span style={{ fontSize: '.85rem', color: '#92400E', background: '#FEF3C7', padding: '.1rem .5rem', borderRadius: 999, marginLeft: '.4rem' }}>{nouveaux} nouveau{nouveaux > 1 ? 'x' : ''}</span>}
-        </h2>
+      <main className="app-wrap">
+        <h1>Bonjour {artisan.nom} 👋</h1>
+        <p className="muted" style={{ marginBottom: '1.6rem' }}>{artisan.metier} · votre espace</p>
 
-        {leads.length === 0 && (
-          <p className="muted" style={{ marginTop: '1rem' }}>Aucune demande pour l'instant. Dès qu'un client remplira votre lien, elle apparaîtra ici.</p>
-        )}
+        <div className="tool-card">
+          <h2>Votre lien de contact</h2>
+          <p className="muted" style={{ margin: '0 0 .6rem' }}>À coller sur Le Bon Coin, Google, Facebook, votre signature mail.</p>
+          <div className="linkbox">
+            <span className="linkbox-url">{link}</span>
+            <button type="button" className="linkbox-btn" onClick={copyLink}>{copied ? '✓ Copié' : 'Copier'}</button>
+          </div>
+        </div>
 
-        <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '.7rem' }}>
-          {leads.map((l) => {
-            const meta = statutMeta(l.statut)
-            const isOpen = open === l.id
-            const isMail = typeof l.contact === 'string' && l.contact.includes('@')
-            return (
-              <div key={l.id} style={{ border: '1px solid var(--line)', borderRadius: 10, padding: '.85rem 1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.6rem', flexWrap: 'wrap' }}>
-                  <div style={{ minWidth: 0 }}>
-                    <strong>{l.nom_prospect || 'Client'}</strong>
-                    <span className="muted" style={{ marginLeft: '.5rem', fontSize: '.85rem' }}>{formatDate(l.created_at)}</span>
-                    <div style={{ fontSize: '.9rem' }}>
-                      {isMail
-                        ? <a href={`mailto:${l.contact}`} style={{ color: 'var(--green)' }}>{l.contact}</a>
-                        : <a href={`tel:${l.contact}`} style={{ color: 'var(--green)' }}>{l.contact}</a>}
+        <div className="tool-card" style={{ marginTop: '1.2rem' }}>
+          <h2>
+            Vos demandes {nouveaux > 0 && <span style={{ fontSize: '.8rem', color: '#92400E', background: '#FEF3C7', padding: '.15rem .5rem', borderRadius: 999, marginLeft: '.4rem', verticalAlign: 'middle' }}>{nouveaux} nouveau{nouveaux > 1 ? 'x' : ''}</span>}
+          </h2>
+
+          {leads.length === 0 && (
+            <p className="muted" style={{ marginTop: '.8rem' }}>Aucune demande pour l&apos;instant. Dès qu&apos;un client remplira votre lien, elle apparaîtra ici.</p>
+          )}
+
+          <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '.7rem' }}>
+            {leads.map((l) => {
+              const meta = statutMeta(l.statut)
+              const isOpen = open === l.id
+              const isMail = typeof l.contact === 'string' && l.contact.includes('@')
+              return (
+                <div key={l.id} style={{ border: '1px solid var(--line)', borderRadius: 10, padding: '.85rem 1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.6rem', flexWrap: 'wrap' }}>
+                    <div style={{ minWidth: 0 }}>
+                      <strong>{l.nom_prospect || 'Client'}</strong>
+                      <span className="muted" style={{ marginLeft: '.5rem', fontSize: '.85rem' }}>{formatDate(l.created_at)}</span>
+                      <div style={{ fontSize: '.9rem' }}>
+                        {isMail
+                          ? <a href={`mailto:${l.contact}`} style={{ color: 'var(--green)' }}>{l.contact}</a>
+                          : <a href={`tel:${l.contact}`} style={{ color: 'var(--green)' }}>{l.contact}</a>}
+                      </div>
                     </div>
+                    <span style={{ background: meta.bg, color: meta.fg, padding: '.2rem .6rem', borderRadius: 999, fontSize: '.8rem', fontWeight: 600, whiteSpace: 'nowrap' }}>{meta.label}</span>
                   </div>
-                  <span style={{ background: meta.bg, color: meta.fg, padding: '.2rem .6rem', borderRadius: 999, fontSize: '.8rem', fontWeight: 600, whiteSpace: 'nowrap' }}>{meta.label}</span>
+
+                  <button
+                    type="button"
+                    onClick={() => setOpen(isOpen ? null : l.id)}
+                    style={{ background: 'transparent', color: 'var(--soft)', border: 'none', padding: '.4rem 0 0', fontSize: '.85rem', cursor: 'pointer', width: 'auto', marginTop: 0 }}
+                  >
+                    {isOpen ? '▾ Masquer le détail' : '▸ Voir le détail'}
+                  </button>
+
+                  {isOpen && (
+                    <div style={{ marginTop: '.6rem', borderTop: '1px solid var(--line)', paddingTop: '.7rem' }}>
+                      <p style={{ margin: '0 0 .3rem', fontSize: '.8rem', fontWeight: 600, color: 'var(--soft)' }}>Sa demande</p>
+                      <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap' }}>{l.message || <span className="muted">(aucun message)</span>}</p>
+
+                      <p style={{ margin: '0 0 .3rem', fontSize: '.8rem', fontWeight: 600, color: 'var(--soft)' }}>Réponse envoyée automatiquement</p>
+                      {replies[l.id]
+                        ? <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap', background: 'var(--green-050)', border: '1px solid var(--green-300)', borderRadius: 8, padding: '.7rem' }}>{replies[l.id]}</p>
+                        : <p className="muted" style={{ margin: '0 0 .9rem' }}>Pas encore de réponse automatique pour cette demande.</p>}
+
+                      <label style={{ fontSize: '.8rem' }}>Statut</label>
+                      <select value={l.statut ?? 'nouveau'} onChange={(e) => changeStatut(l.id, e.target.value)}>
+                        {STATUTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                      </select>
+                    </div>
+                  )}
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => setOpen(isOpen ? null : l.id)}
-                  style={{ background: 'transparent', color: 'var(--soft)', border: 'none', padding: '.4rem 0 0', fontSize: '.85rem', cursor: 'pointer', width: 'auto' }}
-                >
-                  {isOpen ? '▾ Masquer le détail' : '▸ Voir le détail'}
-                </button>
-
-                {isOpen && (
-                  <div style={{ marginTop: '.6rem', borderTop: '1px solid var(--line)', paddingTop: '.7rem' }}>
-                    <p style={{ margin: '0 0 .3rem', fontSize: '.8rem', fontWeight: 600, color: 'var(--soft)' }}>Sa demande</p>
-                    <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap' }}>{l.message || <span className="muted">(aucun message)</span>}</p>
-
-                    <p style={{ margin: '0 0 .3rem', fontSize: '.8rem', fontWeight: 600, color: 'var(--soft)' }}>Réponse envoyée automatiquement</p>
-                    {replies[l.id]
-                      ? <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap', background: '#F0FDF4', border: '1px solid #D1FAE5', borderRadius: 8, padding: '.7rem' }}>{replies[l.id]}</p>
-                      : <p className="muted" style={{ margin: '0 0 .9rem' }}>Pas encore de réponse automatique pour cette demande.</p>}
-
-                    <label style={{ fontSize: '.8rem' }}>Statut</label>
-                    <select value={l.statut ?? 'nouveau'} onChange={(e) => changeStatut(l.id, e.target.value)}>
-                      {STATUTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-                    </select>
-                  </div>
-                )}
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   )
 }

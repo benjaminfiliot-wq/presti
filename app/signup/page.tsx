@@ -22,7 +22,7 @@ export default function SignupPage() {
       return
     }
     if (data.session) {
-      router.push('/dashboard')
+      router.push('/outils')
     } else {
       setMsg({
         type: 'ok',
