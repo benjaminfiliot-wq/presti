@@ -97,6 +97,73 @@ Numéro de relance : ${rang}`
   return out.trim()
 }
 
+export type DevisLigne = {
+  designation: string
+  quantite: number
+  unite: string
+  prix_unitaire_ht: number
+  tva_taux: number
+}
+
+type Poste = { designation: string; unite: string; prix_ht_min: number; prix_ht_max: number; tva_defaut: number }
+
+/**
+ * Chiffre un devis à partir d'une description de chantier, adapté au métier
+ * (et à la bibliothèque de prix fournie). Renvoie des lignes éditables.
+ */
+export async function generateDevis(
+  artisan: { nom: string | null; metier: string | null },
+  description: string,
+  postes: Poste[] = [],
+): Promise<{ lignes: DevisLigne[]; note: string }> {
+  const metier = artisan.metier?.trim() || 'artisan du bâtiment'
+  const biblio = postes.length
+    ? '\nBibliothèque de postes de référence (désignation | unité | fourchette prix HT | TVA%) :\n' +
+      postes.map((p) => `- ${p.designation} | ${p.unite} | ${p.prix_ht_min}-${p.prix_ht_max}€ | ${p.tva_defaut}%`).join('\n')
+    : ''
+
+  const system = `Tu es un métreur-chiffreur expert pour un ${metier} en France. À partir de la description d'un chantier, tu produis les LIGNES d'un devis réaliste et bien décomposé.${biblio}
+
+Règles :
+- Décompose le chantier en postes clairs (fourniture + pose quand c'est pertinent).
+- Chaque ligne : "designation" précise, "quantite" (nombre), "unite" (u, ml, m², m³, h, forfait, ens.), "prix_unitaire_ht" (€ HT, réaliste pour la France), "tva_taux" (20, 10 ou 5.5).
+- TVA : 10 par défaut en rénovation d'un logement de +2 ans ; 5.5 pour la rénovation énergétique ; 20 pour le neuf ou si doute.
+- Les prix sont des ESTIMATIONS réalistes que l'artisan ajustera. N'exagère pas.
+- 3 à 10 lignes selon l'ampleur.
+- Réponds UNIQUEMENT avec un objet JSON valide, sans aucun texte autour, au format exact :
+{"lignes":[{"designation":"...","quantite":1,"unite":"u","prix_unitaire_ht":0,"tva_taux":10}],"note":"hypothèses ou points à préciser avec le client"}`
+
+  const res = await client.messages.create({
+    model: AI_MODEL,
+    max_tokens: 1500,
+    system,
+    messages: [{ role: 'user', content: `Chantier : ${description.trim()}` }],
+  })
+
+  let raw = ''
+  for (const b of res.content) if (b.type === 'text') raw += b.text
+  raw = raw.trim()
+  const start = raw.indexOf('{')
+  const end = raw.lastIndexOf('}')
+  const json = start >= 0 && end >= 0 ? raw.slice(start, end + 1) : raw
+  const parsed = JSON.parse(json) as { lignes?: unknown[]; note?: unknown }
+
+  const arr = Array.isArray(parsed.lignes) ? parsed.lignes : []
+  const lignes: DevisLigne[] = arr.map((item) => {
+    const l = item as Record<string, unknown>
+    const tva = Number(l.tva_taux)
+    return {
+      designation: String(l.designation ?? '').trim(),
+      quantite: Number(l.quantite) || 1,
+      unite: String(l.unite ?? 'u').trim() || 'u',
+      prix_unitaire_ht: Math.max(0, Number(l.prix_unitaire_ht) || 0),
+      tva_taux: [5.5, 10, 20].includes(tva) ? tva : 10,
+    }
+  }).filter((l) => l.designation)
+
+  return { lignes, note: typeof parsed.note === 'string' ? parsed.note : '' }
+}
+
 /** Modèle de relance de secours (utilisé si l'IA n'est pas disponible). */
 export function relanceTemplate(nomArtisan: string | null, nomProspect: string | null, rang: number): string {
   const a = nomArtisan?.trim() || 'votre artisan'
