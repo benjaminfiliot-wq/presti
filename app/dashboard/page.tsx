@@ -127,6 +127,7 @@ export default function Dashboard() {
           <span className="brand"><span className="dot" />Presti</span>
           <div className="appbar-links">
             <a className="applink" href="/outils">Générateurs</a>
+            <a className="applink" href="/devis">Devis</a>
             <a className="applink active" href="/dashboard">Mes demandes</a>
             <button className="applink" onClick={logout}>Déconnexion</button>
           </div>

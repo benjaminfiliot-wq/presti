@@ -88,6 +88,7 @@ export default function Outils() {
           <span className="brand"><span className="dot" />Presti</span>
           <div className="appbar-links">
             <a className="applink active" href="/outils">Générateurs</a>
+            <a className="applink" href="/devis">Devis</a>
             <a className="applink" href="/dashboard">Mes demandes</a>
             <button className="applink" onClick={logout}>Déconnexion</button>
           </div>
