@@ -1,30 +1,36 @@
 *{box-sizing:border-box}
 
 :root{
-  --bg:#F4F7F5;
+  /* Identité inspirée d'Anthropic/Claude : ivoire chaud + argile/corail + serif éditorial */
+  --bg:#F3F1E9;                   /* ivoire chaud */
   --surface:#FFFFFF;
-  --ink:#0E1B16;
-  --muted:#586B63;
-  --soft:#586B63;                 /* alias legacy */
-  --line:#E4EAE6;
-  --paper:#F4F7F5;                /* alias legacy */
-  --green:#0E5C4A;
-  --green-700:#0A4638;
-  --green-050:#EAF3EF;
-  --green-300:#9CD3C1;
-  --live:#1FA971;
+  --ink:#1A1915;                  /* noir chaud */
+  --muted:#6E6A5F;
+  --soft:#6E6A5F;                 /* alias legacy */
+  --line:#E7E2D4;                 /* filet chaud */
+  --paper:#F3F1E9;                /* alias legacy */
+  --clay:#C15F3C;                 /* argile/corail — accent signature */
+  --clay-hover:#A64D2E;
+  --clay-050:#F4E9E1;
+  --clay-300:#E2B6A2;
+  --live:#4F8A5B;                 /* vert sobre pour "en direct/réussi" */
+  /* alias legacy → nouvelle palette (pour ne rien casser dans les styles existants) */
+  --green:#C15F3C;
+  --green-700:#A64D2E;
+  --green-050:#F4E9E1;
+  --green-300:#E2B6A2;
   --radius:14px;
-  --shadow-sm:0 1px 2px rgba(14,27,22,.05);
-  --shadow:0 2px 4px rgba(14,27,22,.04), 0 14px 34px rgba(14,27,22,.07);
-  --font-display:var(--f-display,'Bricolage Grotesque',system-ui,sans-serif);
-  --font-body:var(--f-body,'Instrument Sans',system-ui,-apple-system,"Segoe UI",sans-serif);
+  --shadow-sm:0 1px 2px rgba(26,25,21,.05);
+  --shadow:0 2px 4px rgba(26,25,21,.04), 0 14px 34px rgba(26,25,21,.08);
+  --font-display:var(--f-display,'Fraunces',Georgia,'Times New Roman',serif);
+  --font-body:var(--f-body,'Hanken Grotesk',system-ui,-apple-system,"Segoe UI",sans-serif);
   --font-mono:var(--f-mono,'JetBrains Mono',ui-monospace,monospace);
 }
 
 html,body{margin:0;padding:0}
 body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
 a{color:var(--green);text-decoration:none}
-h1,h2,h3{font-family:var(--font-display);letter-spacing:-.02em;line-height:1.1;font-weight:700;margin:0}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:-.008em;line-height:1.14;font-weight:600;margin:0}
 
 /* ============ shared app styles (auth, onboarding, dashboard, lead) ============ */
 .wrap{max-width:27rem;margin:min(9vh,4.5rem) auto;padding:0 1.2rem}
@@ -39,9 +45,9 @@ button:hover{background:var(--green-700)}
 button:active{transform:translateY(1px)}
 button:disabled{opacity:.55;cursor:default}
 .muted{color:var(--muted);font-size:.92rem}
-.msg{margin-top:1rem;padding:.8rem .95rem;border-radius:10px;background:var(--green-050);color:#0b4a3b;font-size:.9rem}
+.msg{margin-top:1rem;padding:.8rem .95rem;border-radius:10px;background:var(--clay-050);color:#7A3E22;font-size:.9rem}
 .msg.err{background:#FBE9E7;color:#B23129}
-.brand{font-family:var(--font-display);font-weight:800;font-size:1.3rem;display:flex;align-items:center;gap:.5rem;letter-spacing:-.02em;color:var(--ink)}
+.brand{font-family:var(--font-display);font-weight:600;font-size:1.35rem;display:flex;align-items:center;gap:.5rem;letter-spacing:-.01em;color:var(--ink)}
 .dot{width:.62rem;height:.62rem;border-radius:50%;background:var(--green);display:inline-block}
 .row{display:flex;gap:.7rem;margin-top:1.6rem}
 .row a{flex:1;text-align:center;padding:.8rem;border-radius:10px;font-weight:650}
