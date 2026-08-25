@@ -30,7 +30,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       },
     })
   } catch (e) {
-    const msg = e instanceof Error ? (e.stack || e.message) : String(e)
-    return new Response('PDF_ERROR: ' + msg, { status: 500, headers: { 'Content-Type': 'text/plain; charset=utf-8' } })
+    console.error('[devis pdf]', e)
+    return new Response('Erreur lors de la génération du PDF.', { status: 500, headers: { 'Content-Type': 'text/plain; charset=utf-8' } })
   }
 }
