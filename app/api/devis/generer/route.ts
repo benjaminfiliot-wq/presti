@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateDevis } from '@/lib/ai'
+import { resolveModel } from '@/lib/models'
 
 // Génère les lignes d'un devis à partir d'une description de chantier.
 export async function POST(req: Request) {
@@ -15,13 +16,14 @@ export async function POST(req: Request) {
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier')
+      .select('nom, metier, plan')
       .eq('id', userData.user.id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
 
     const body = await req.json()
     const description = body?.description
+    const { model, tier, downgraded } = resolveModel(body?.model, artisan.plan)
     if (!description || !String(description).trim()) {
       return NextResponse.json({ error: 'Décris le chantier.' }, { status: 400 })
     }
@@ -38,8 +40,8 @@ export async function POST(req: Request) {
       // table pas encore créée → on génère sans bibliothèque
     }
 
-    const result = await generateDevis({ nom: artisan.nom, metier: artisan.metier }, String(description), postes)
-    return NextResponse.json({ ok: true, ...result })
+    const result = await generateDevis({ nom: artisan.nom, metier: artisan.metier }, String(description), postes, model)
+    return NextResponse.json({ ok: true, ...result, tier, downgraded })
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Erreur inconnue'
     return NextResponse.json(

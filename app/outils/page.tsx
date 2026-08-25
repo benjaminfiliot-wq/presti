@@ -3,11 +3,15 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import ModelSelect from '@/app/ModelSelect'
+import type { Tier } from '@/lib/models'
 
 export default function Outils() {
   const router = useRouter()
   const [ready, setReady] = useState(false)
   const [nom, setNom] = useState('')
+  const [plan, setPlan] = useState('gratuit')
+  const [tier, setTier] = useState<Tier>('standard')
 
   // Générateur de réponse
   const [message, setMessage] = useState('')
@@ -25,7 +29,7 @@ export default function Outils() {
       }
       const { data: prof } = await supabase
         .from('artisans')
-        .select('nom')
+        .select('nom, plan')
         .eq('id', data.session.user.id)
         .maybeSingle()
       if (!prof) {
@@ -33,6 +37,7 @@ export default function Outils() {
         return
       }
       setNom((prof as { nom: string | null }).nom ?? '')
+      setPlan((prof as { plan?: string }).plan ?? 'gratuit')
       setReady(true)
     })
   }, [router])
@@ -51,7 +56,7 @@ export default function Outils() {
     const res = await fetch('/api/tools/reponse', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ message, nomClient }),
+      body: JSON.stringify({ message, nomClient, model: tier }),
     })
     setLoading(false)
     const d = await res.json().catch(() => ({}))
@@ -115,6 +120,7 @@ export default function Outils() {
           />
           <label>Nom du client (facultatif)</label>
           <input value={nomClient} onChange={(e) => setNomClient(e.target.value)} placeholder="Ex : Marie" />
+          <div style={{ marginTop: '.7rem' }}><ModelSelect plan={plan} value={tier} onChange={setTier} /></div>
           <button disabled={loading} onClick={generate}>{loading ? 'Presti rédige…' : 'Générer la réponse'}</button>
           {err && <div className="msg err">{err}</div>}
           {reply && (

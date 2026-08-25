@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateLeadReply } from '@/lib/ai'
+import { resolveModel } from '@/lib/models'
 
 // Générateur de réponse à la demande : l'artisan connecté colle la demande
 // d'un client, Presti rédige la réponse dans son ton.
@@ -17,13 +18,14 @@ export async function POST(req: Request) {
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier, ton_style')
+      .select('nom, metier, ton_style, plan')
       .eq('id', userData.user.id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
 
     const body = await req.json()
     const { message, nomClient } = body ?? {}
+    const { model, tier, downgraded } = resolveModel(body?.model, artisan.plan)
     if (!message || !String(message).trim()) {
       return NextResponse.json({ error: 'Décris la demande de ton client.' }, { status: 400 })
     }
@@ -31,9 +33,10 @@ export async function POST(req: Request) {
     const reply = await generateLeadReply(
       { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style },
       { nom_prospect: nomClient ?? null, message },
+      model,
     )
 
-    return NextResponse.json({ ok: true, reply })
+    return NextResponse.json({ ok: true, reply, tier, downgraded })
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Erreur inconnue'
     return NextResponse.json({ error: msg }, { status: 500 })

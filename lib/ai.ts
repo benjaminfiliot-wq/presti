@@ -15,7 +15,7 @@ type Lead = { nom_prospect?: string | null; contact?: string | null; message?: s
  * Rédige, dans le ton de l'artisan, la première réponse à envoyer au prospect.
  * Renvoie uniquement le corps du message (français, 1re personne).
  */
-export async function generateLeadReply(artisan: Artisan, lead: Lead): Promise<string> {
+export async function generateLeadReply(artisan: Artisan, lead: Lead, model: string = AI_MODEL): Promise<string> {
   const nomArtisan = artisan.nom?.trim() || "l'artisan"
   const metier = artisan.metier?.trim() || 'artisan'
   const ton = artisan.ton_style?.trim() || 'professionnel, chaleureux et rassurant'
@@ -37,7 +37,7 @@ Règles :
 Besoin décrit par le prospect : ${besoin}`
 
   const res = await client.messages.create({
-    model: AI_MODEL,
+    model,
     max_tokens: 1024,
     system,
     messages: [{ role: 'user', content: user }],
@@ -54,7 +54,7 @@ Besoin décrit par le prospect : ${besoin}`
  * Rédige une relance (follow-up) dans le ton de l'artisan.
  * rang : 1 = douce, 2 = rappel avec créneau, 3 = dernière relance.
  */
-export async function generateRelanceReply(artisan: Artisan, lead: Lead, rang: number): Promise<string> {
+export async function generateRelanceReply(artisan: Artisan, lead: Lead, rang: number, model: string = AI_MODEL): Promise<string> {
   const nomArtisan = artisan.nom?.trim() || "l'artisan"
   const metier = artisan.metier?.trim() || 'artisan'
   const ton = artisan.ton_style?.trim() || 'professionnel, chaleureux et rassurant'
@@ -84,7 +84,7 @@ Besoin initial : ${besoin}
 Numéro de relance : ${rang}`
 
   const res = await client.messages.create({
-    model: AI_MODEL,
+    model,
     max_tokens: 700,
     system,
     messages: [{ role: 'user', content: user }],
@@ -115,6 +115,7 @@ export async function generateDevis(
   artisan: { nom: string | null; metier: string | null },
   description: string,
   postes: Poste[] = [],
+  model: string = AI_MODEL,
 ): Promise<{ lignes: DevisLigne[]; note: string }> {
   const metier = artisan.metier?.trim() || 'artisan du bâtiment'
   const biblio = postes.length
@@ -134,7 +135,7 @@ Règles :
 {"lignes":[{"designation":"...","quantite":1,"unite":"u","prix_unitaire_ht":0,"tva_taux":10}],"note":"hypothèses ou points à préciser avec le client"}`
 
   const res = await client.messages.create({
-    model: AI_MODEL,
+    model,
     max_tokens: 1500,
     system,
     messages: [{ role: 'user', content: `Chantier : ${description.trim()}` }],

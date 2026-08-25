@@ -13,6 +13,7 @@ export async function sendEmail(opts: {
   subject: string
   text: string
   replyTo?: string
+  attachments?: { filename: string; content: string }[]
 }): Promise<SendResult> {
   if (!RESEND_API_KEY) return { ok: false, error: 'RESEND_API_KEY manquante' }
 
@@ -29,6 +30,7 @@ export async function sendEmail(opts: {
         subject: opts.subject,
         text: opts.text,
         ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
+        ...(opts.attachments && opts.attachments.length ? { attachments: opts.attachments } : {}),
       }),
     })
 

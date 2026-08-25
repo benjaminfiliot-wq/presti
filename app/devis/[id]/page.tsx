@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { computeTotals } from '@/lib/devisTotals'
+import ModelSelect from '@/app/ModelSelect'
+import type { Tier } from '@/lib/models'
 
 type Ligne = { key: string; designation: string; quantite: string; unite: string; prix_unitaire_ht: string; tva_taux: number }
 
@@ -23,6 +25,8 @@ export default function DevisEditor() {
   const [savedId, setSavedId] = useState<string | null>(isNew ? null : rawId)
   const [numero, setNumero] = useState<string | null>(null)
   const [statut, setStatut] = useState('brouillon')
+  const [plan, setPlan] = useState('gratuit')
+  const [tier, setTier] = useState<Tier>('standard')
 
   // artisan / entreprise
   const [entNom, setEntNom] = useState('')
@@ -67,7 +71,7 @@ export default function DevisEditor() {
       setEntNom(a.nom ?? ''); setMetier(a.metier ?? ''); setSiret(a.siret ?? ''); setForme(a.forme_juridique ?? '')
       setEntAdresse([a.adresse, a.code_postal, a.ville].filter(Boolean).join(', '))
       setAssNom(a.assurance_nom ?? ''); setAssContrat(a.assurance_contrat ?? ''); setAssActivites(a.assurance_activites ?? ''); setAssZone(a.assurance_zone ?? '')
-      setIban(a.iban ?? ''); setCondPaiement(a.conditions_paiement ?? ''); setTvaRegime(a.tva_regime ?? 'franchise')
+      setIban(a.iban ?? ''); setCondPaiement(a.conditions_paiement ?? ''); setTvaRegime(a.tva_regime ?? 'franchise'); setPlan(a.plan ?? 'gratuit')
 
       if (!isNew) {
         const { data: d } = await supabase.from('devis').select('*').eq('id', rawId).maybeSingle()
@@ -106,7 +110,7 @@ export default function DevisEditor() {
     if (!description.trim()) { setMsg({ type: 'err', text: 'Décris le chantier pour que l\'IA le chiffre.' }); return }
     setGenerating(true); setMsg(null); setAiNote('')
     const { data } = await supabase.auth.getSession()
-    const res = await fetch('/api/devis/generer', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ description }) })
+    const res = await fetch('/api/devis/generer', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ description, model: tier }) })
     setGenerating(false)
     const d = await res.json().catch(() => ({}))
     if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Erreur de génération.' }); return }
@@ -140,6 +144,28 @@ export default function DevisEditor() {
     }
   }
 
+  async function downloadPdf() {
+    if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de télécharger le PDF.' }); return }
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch(`/api/devis/${savedId}/pdf`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+    if (!res.ok) { setMsg({ type: 'err', text: 'PDF indisponible, réessaie.' }); return }
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href = url; a.download = `${numero || 'devis'}.pdf`; a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  async function envoyer() {
+    if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de l\'envoyer.' }); return }
+    if (!clientEmail.trim()) { setMsg({ type: 'err', text: 'Renseigne l\'email du client pour l\'envoyer.' }); return }
+    setSaving(true); setMsg(null)
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch(`/api/devis/${savedId}/envoyer`, { method: 'POST', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+    const d = await res.json().catch(() => ({})); setSaving(false)
+    if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Envoi échoué.' }); return }
+    setStatut('envoye'); setMsg({ type: 'ok', text: 'Devis envoyé au client ✅' })
+  }
+
   async function logout() { await supabase.auth.signOut(); router.replace('/login') }
 
   const lignesPleines = lignes.filter((l) => l.designation.trim())
@@ -171,7 +197,9 @@ export default function DevisEditor() {
           <a className="applink" href="/devis">← Devis</a>
           <h1>{numero ? numero : 'Nouveau devis'}</h1>
           <span className="muted" style={{ fontSize: '.85rem' }}>{savedId ? 'Enregistré' : 'Brouillon'}</span>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: '.6rem' }}>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: '.6rem', flexWrap: 'wrap' }}>
+            <button className="btn btn--ghost" style={{ width: 'auto' }} onClick={downloadPdf}>Télécharger PDF</button>
+            <button className="btn btn--ghost" style={{ width: 'auto' }} onClick={envoyer}>Envoyer au client</button>
             <button className="btn btn--primary" style={{ width: 'auto' }} disabled={saving} onClick={() => save()}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
           </div>
         </div>
@@ -197,6 +225,7 @@ export default function DevisEditor() {
               <h2>Chiffrer avec l&apos;IA</h2>
               <p className="muted" style={{ margin: '0 0 .6rem' }}>Décrivez le chantier — Presti propose les lignes, vous ajustez.</p>
               <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Ex : remplacement du tableau, 12 prises, 6 points lumineux, mise aux normes d'un 3 pièces" />
+              <div style={{ marginTop: '.7rem' }}><ModelSelect plan={plan} value={tier} onChange={setTier} /></div>
               <button disabled={generating} onClick={chiffrerIA}>{generating ? 'Presti chiffre…' : '⚡ Chiffrer avec l\'IA'}</button>
               {aiNote && <div className="ai-note"><strong>Note de Presti :</strong> {aiNote}</div>}
             </div>

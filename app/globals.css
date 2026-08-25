@@ -273,3 +273,12 @@ button:disabled{opacity:.55;cursor:default}
 .doc-legal strong{color:#26241d;font-weight:600}
 .doc-todo{color:var(--clay)}
 @media(max-width:980px){.doc{padding:1.5rem 1.3rem}.doc-grid{flex-direction:column;gap:1rem}}
+
+/* sélecteur de modèles IA (style Claude) */
+.model-row{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin:.1rem 0 .85rem}
+.model-row .lbl{font-size:.8rem;color:var(--muted);font-weight:600}
+.modelsel{display:inline-flex;gap:.25rem;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.25rem}
+.modelsel-opt{width:auto;margin:0;padding:.42rem .75rem;font-size:.82rem;border-radius:7px;background:transparent;color:var(--muted);border:none;font-weight:600;cursor:pointer;font-family:inherit}
+.modelsel-opt.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm)}
+.modelsel-opt.locked{opacity:.7;cursor:not-allowed}
+.modelsel-opt:not(.locked):hover{color:var(--ink)}
