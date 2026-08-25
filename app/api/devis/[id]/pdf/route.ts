@@ -2,10 +2,10 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 import React from 'react'
-import { renderToBuffer } from '@react-pdf/renderer'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { DevisPDF } from '@/lib/DevisPDF'
 import { buildPdfData } from '@/lib/devisPdfData'
+import { renderPdfToBuffer } from '@/lib/renderPdf'
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -21,7 +21,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const { data: artisan } = await supabaseAdmin.from('artisans').select('*').eq('id', uid).maybeSingle()
 
   const pdfData = buildPdfData(devis, lignes ?? [], artisan ?? {})
-  const buffer = await renderToBuffer(React.createElement(DevisPDF, { d: pdfData }) as unknown as Parameters<typeof renderToBuffer>[0])
+  const buffer = await renderPdfToBuffer(React.createElement(DevisPDF, { d: pdfData }))
   return new Response(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/pdf',
