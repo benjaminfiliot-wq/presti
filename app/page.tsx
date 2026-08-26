@@ -134,14 +134,15 @@ export default function Home() {
             <div className="section-head center">
               <span className="kicker">Tarifs</span>
               <h2>Un prix simple, rentabilisé dès le premier chantier sauvé.</h2>
+              <p>Chaque réponse ou devis généré par l&apos;IA = <strong>1 crédit</strong>. Choisissez la puissance dont vous avez besoin.</p>
             </div>
             <div className="pricing">
               <div className="plan">
                 <div className="plan-name">Gratuit</div>
                 <div className="price">0€<span> /mois</span></div>
                 <ul className="plan-list">
+                  <li><strong>10 crédits</strong> / mois pour tester</li>
                   <li>1 lien de contact</li>
-                  <li>Réponses IA (quota découverte)</li>
                   <li>Tableau de bord des demandes</li>
                 </ul>
                 <a className="btn btn--ghost" href="/signup">Commencer</a>
@@ -151,10 +152,10 @@ export default function Home() {
                 <div className="plan-name">Pro</div>
                 <div className="price">39€<span> /mois</span></div>
                 <ul className="plan-list">
-                  <li>Réponses illimitées</li>
-                  <li>Relances automatiques J+2 / J+5 / J+10</li>
-                  <li>Votre ton personnalisé</li>
-                  <li>Support prioritaire</li>
+                  <li><strong>100 crédits</strong> / mois</li>
+                  <li>Réponses instantanées + relances auto</li>
+                  <li>Génération de devis IA</li>
+                  <li>Votre ton · support prioritaire</li>
                 </ul>
                 <a className="btn btn--primary" href="/signup">Choisir Pro</a>
               </div>
@@ -162,10 +163,10 @@ export default function Home() {
                 <div className="plan-name">Business</div>
                 <div className="price">79€<span> /mois</span></div>
                 <ul className="plan-list">
-                  <li>Tout Pro, sans limite</li>
-                  <li>Plusieurs métiers / plusieurs liens</li>
-                  <li>Génération de devis</li>
-                  <li>Accompagnement dédié</li>
+                  <li><strong>500 crédits</strong> / mois</li>
+                  <li>Tout Pro, en illimité pratique</li>
+                  <li>Modèle IA Expert (le plus précis)</li>
+                  <li>Plusieurs métiers · accompagnement dédié</li>
                 </ul>
                 <a className="btn btn--ghost" href="/signup">Choisir Business</a>
               </div>

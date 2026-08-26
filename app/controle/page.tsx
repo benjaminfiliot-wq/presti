@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import HudGraph from '@/app/HudGraph'
 
 type Activity = { kind: 'lead' | 'devis'; title: string; sub: string; artisan: string; statut: string; montant: number; at: string }
 type DevisItem = { id: string; numero: string | null; client: string; objet: string; statut: string; montant: number; artisan: string; at: string }
@@ -27,22 +28,6 @@ function relTime(iso: string) {
   if (d < 3600) return `${Math.floor(d / 60)}min`
   if (d < 86400) return `${Math.floor(d / 3600)}h`
   return `${Math.floor(d / 86400)}j`
-}
-
-function Gauge({ pct, label, gid }: { pct: number; label: string; gid: string }) {
-  const r = 48, C = 2 * Math.PI * r
-  const off = C * (1 - Math.max(0, Math.min(100, pct)) / 100)
-  return (
-    <div className="gauge">
-      <svg width="112" height="112" viewBox="0 0 118 118" role="img" aria-label={`${label} ${pct}%`}>
-        <defs><linearGradient id={gid} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#3EE0F0" /><stop offset="1" stopColor="#6C8CFF" /></linearGradient></defs>
-        <circle cx="59" cy="59" r={r} fill="none" stroke="rgba(62,224,240,.12)" strokeWidth="8" />
-        <circle cx="59" cy="59" r={r} fill="none" stroke={`url(#${gid})`} strokeWidth="8" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={off} transform="rotate(-90 59 59)" style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(.2,.7,.25,1)' }} />
-        <text x="59" y="65" textAnchor="middle" fontWeight="800" fontSize="25" fill="#eafcff" style={{ fontFamily: 'var(--font-display)' }}>{pct}%</text>
-      </svg>
-      <div className="gl">{label}</div>
-    </div>
-  )
 }
 
 function Bar({ label, value, max, money }: { label: string; value: number; max: number; money?: boolean }) {
@@ -138,45 +123,40 @@ export default function Controle() {
               <div className="hud-main-inner" key={module}>
 
                 {module === 'overview' && (
-                  <div className="hud-grid">
-                    <div className="hud-panel">
-                      <div className="hud-lab">Revenus encaissés</div>
-                      <div className="hud-big">{eur(stats.revenus.accepte)}</div>
-                      <div className="hud-sub">
-                        <div className="r"><span>Pipeline en cours</span><b>{eur(stats.revenus.pipeline)}</b></div>
-                        <div className="r"><span>Encaissé ce mois</span><b>{eur(stats.revenus.mois)}</b></div>
+                  <>
+                    <div className="hud-stage">
+                      <HudGraph demandes={stats.leads.total} chiffrages={stats.devis.total} clients={stats.clients} revenus={stats.revenus.accepte} />
+                      <div className="hud-corner tl">
+                        <div className="cl">Revenus encaissés</div>
+                        <div className="cbig">{eur(stats.revenus.accepte)}</div>
+                        <div className="cr"><span>Pipeline</span><b>{eur(stats.revenus.pipeline)}</b></div>
+                        <div className="cr"><span>Ce mois</span><b>{eur(stats.revenus.mois)}</b></div>
                       </div>
-                    </div>
-                    <div className="hud-panel">
-                      <div className="hud-lab">Performance</div>
-                      <div className="hud-gauges">
-                        <Gauge pct={stats.tauxConversion} label="Conversion" gid="gConv" />
-                        <Gauge pct={stats.tauxReponse} label="Réponse" gid="gRep" />
+                      <div className="hud-corner tr">
+                        <div className="cl">Génération de demandes</div>
+                        <div className="cr"><span>Total</span><b>{stats.leads.total}</b></div>
+                        <div className="cr"><span>Nouvelles</span><b>{stats.leads.nouveau}</b></div>
+                        <div className="cr"><span>Cette semaine</span><b>{stats.leads.semaine}</b></div>
+                        <div className="cr"><span>Gagnés</span><b>{stats.leads.gagne}</b></div>
                       </div>
-                    </div>
-                    <div className="hud-panel">
-                      <div className="hud-lab">Détection · réseau</div>
-                      <div className="radar">
-                        <div className="ring r1" /><div className="ring r2" /><div className="cross cx" /><div className="cross cy" />
-                        <div className="blip" style={{ top: '30%', left: '58%' }} /><div className="blip" style={{ top: '62%', left: '40%', animationDelay: '.6s' }} /><div className="blip" style={{ top: '46%', left: '70%', animationDelay: '1.1s' }} />
+                      <div className="hud-corner bl">
+                        <div className="cl">Performance</div>
+                        <div className="cr"><span>Conversion</span><b>{stats.tauxConversion}%</b></div>
+                        <div className="cr"><span>Réponse</span><b>{stats.tauxReponse}%</b></div>
+                        <div className="cr"><span>Devis acceptés</span><b>{stats.devis.accepte}</b></div>
                       </div>
-                      <div className="hud-sub"><div className="r"><span>Artisans connectés</span><b>{stats.artisans}</b></div></div>
-                    </div>
-
-                    <div className="hud-panel c5">
-                      <div className="hud-lab">Signaux — cliquez pour explorer</div>
-                      <div className="hud-tiles">
-                        <button className="hud-tile" style={{ cursor: 'pointer', textAlign: 'left' }} onClick={() => setModule('demandes')}><div className="n">{stats.leads.total}</div><div className="l">Demandes →</div></button>
-                        <button className="hud-tile" style={{ cursor: 'pointer', textAlign: 'left' }} onClick={() => setModule('clients')}><div className="n">{stats.clients}</div><div className="l">Clients →</div></button>
-                        <button className="hud-tile" style={{ cursor: 'pointer', textAlign: 'left' }} onClick={() => setModule('chiffrages')}><div className="n">{stats.devis.total}</div><div className="l">Chiffrages →</div></button>
-                        <button className="hud-tile" style={{ cursor: 'pointer', textAlign: 'left' }} onClick={() => setModule('revenus')}><div className="n">{eur(stats.revenus.accepte).replace(' €', '')}</div><div className="l">Revenus € →</div></button>
+                      <div className="hud-corner br">
+                        <div className="cl">Réseau</div>
+                        <div className="cr"><span>Clients</span><b>{stats.clients}</b></div>
+                        <div className="cr"><span>Chiffrages</span><b>{stats.devis.total}</b></div>
+                        <div className="cr"><span>Artisans</span><b>{stats.artisans}</b></div>
                       </div>
                     </div>
 
-                    <div className="hud-panel c7">
+                    <div className="hud-panel" style={{ marginTop: 14 }}>
                       <div className="hud-lab">Flux d&apos;activité — temps réel</div>
                       <div className="hud-feed">
-                        {stats.activity.length === 0 && <div className="hud-empty">Aucune activité.</div>}
+                        {stats.activity.length === 0 && <div className="hud-empty">Aucune activité — les nouvelles demandes et devis apparaîtront ici en direct.</div>}
                         {stats.activity.map((a, i) => (
                           <div className="hud-feed-row" key={i}>
                             <span className={`ic ${a.kind}`}>{a.kind === 'lead' ? <LeadIcon /> : <DevisIcon />}</span>
@@ -187,7 +167,7 @@ export default function Controle() {
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </>
                 )}
 
                 {module === 'demandes' && (
