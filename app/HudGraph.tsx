@@ -14,16 +14,17 @@ export default function HudGraph({ density = 1 }: { density?: number }) {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const PAL = ['#3EE0F0', '#6C8CFF', '#8A6BFF', '#F0567A', '#38CD8C', '#F5B301']
-    const N = Math.round(72 * Math.min(1.6, Math.max(0.7, density)))
-    // filaments déterministes (pas de random qui saute à chaque frame)
+    const N = Math.round(98 * Math.min(1.6, Math.max(0.8, density)))
+    // filaments déterministes, groupés par couleur en secteurs (clusters, comme la vidéo)
     const fil = Array.from({ length: N }, (_, i) => {
-      const a = (i / N) * Math.PI * 2 + (i % 5) * 0.11
-      const len = 0.34 + ((i * 37) % 60) / 100 * 0.6
+      const sector = Math.floor(i / (N / PAL.length)) % PAL.length
+      const a = (i / N) * Math.PI * 2 + (i % 5) * 0.09
+      const len = 0.36 + ((i * 37) % 62) / 100 * 0.62
       const segs = 4 + (i % 3)
       const jit = ((i * 53) % 100) / 100 - 0.5
-      return { a, len, segs, jit, color: PAL[i % PAL.length], speed: 0.4 + (i % 4) * 0.18, wob: 0.05 + (i % 5) * 0.015 }
+      return { a, len, segs, jit, color: PAL[sector], speed: 0.4 + (i % 4) * 0.18, wob: 0.05 + (i % 5) * 0.015 }
     })
-    const labels = ['CLIENTS', 'DEVIS', 'DEMANDES', 'REVENUS', 'RELANCES', 'RÉSEAU']
+    const labels = ['REVENUS', 'DEVIS', 'DEMANDES', 'RELANCES', 'CLIENTS', 'LEADS', 'PAIEMENTS', 'RÉSEAU', 'PIPELINE', 'CONVERSION', 'SIGNATURES', 'ACOMPTES']
 
     let W = 0, H = 0, cx = 0, cy = 0, dpr = 1, R = 0
     const resize = () => {
@@ -66,11 +67,11 @@ export default function HudGraph({ density = 1 }: { density?: number }) {
         const tw = 1 + Math.sin(t * 1.5 + i) * 0.5
         ctx.beginPath(); ctx.arc(ex, ey, Math.max(0.6, tw), 0, Math.PI * 2)
         ctx.fillStyle = f.color; ctx.shadowBlur = 7; ctx.shadowColor = f.color; ctx.fill(); ctx.shadowBlur = 0
-        // quelques labels
-        if (i % 12 === 0) {
+        // labels dispersés sur les nœuds (comme la vidéo)
+        if (i % 8 === 0) {
           ctx.font = '700 8px "JetBrains Mono", monospace'
-          ctx.fillStyle = f.color + 'cc'; ctx.textAlign = 'center'
-          ctx.fillText(labels[(i / 12) % labels.length], ex, ey - 6)
+          ctx.fillStyle = f.color + 'dd'; ctx.textAlign = 'center'
+          ctx.fillText(labels[(i / 8) % labels.length], ex, ey - 6)
         }
       })
       // burst central
