@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 
-type LeadRow = { id: string; nom_prospect: string | null; contact: string | null; statut: string | null; created_at: string; artisan_id: string }
+type LeadRow = { id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null; created_at: string; artisan_id: string }
 type DevisRow = { id: string; numero: string | null; client_nom: string | null; objet: string | null; statut: string | null; total_ttc: number | null; created_at: string; artisan_id: string }
 type ArtRow = { id: string; nom: string | null }
 
@@ -20,7 +20,7 @@ export async function GET(req: Request) {
   if (!me?.is_founder) return json({ error: 'Réservé aux fondateurs' }, 403)
 
   const [leadsRes, devisRes, artRes] = await Promise.all([
-    supabaseAdmin.from('leads').select('id,nom_prospect,contact,statut,created_at,artisan_id').order('created_at', { ascending: false }),
+    supabaseAdmin.from('leads').select('id,nom_prospect,contact,message,statut,created_at,artisan_id').order('created_at', { ascending: false }),
     supabaseAdmin.from('devis').select('id,numero,client_nom,objet,statut,total_ttc,created_at,artisan_id').order('created_at', { ascending: false }),
     supabaseAdmin.from('artisans').select('id,nom'),
   ])
@@ -59,7 +59,19 @@ export async function GET(req: Request) {
   const tauxReponse = L.length ? Math.round((L.filter((l) => l.statut === 'repondu' || l.statut === 'gagne').length / L.length) * 100) : 0
   const tauxConversion = D.length ? Math.round((accepte.length / D.length) * 100) : 0
 
+  const devisList = D.slice(0, 120).map((d) => ({ id: d.id, numero: d.numero, client: d.client_nom || 'Client', objet: d.objet || '', statut: d.statut || 'brouillon', montant: Number(d.total_ttc) || 0, artisan: nameOf[d.artisan_id] || '—', at: d.created_at }))
+  const leadsList = L.slice(0, 120).map((l) => ({ id: l.id, nom: l.nom_prospect || 'Client', contact: l.contact || '', message: l.message || '', statut: l.statut || 'nouveau', artisan: nameOf[l.artisan_id] || '—', at: l.created_at }))
+
+  const cmap: Record<string, { nom: string; demandes: number; devis: number; total: number }> = {}
+  const keyOf = (s: string) => s.trim().toLowerCase()
+  L.forEach((l) => { if (l.nom_prospect) { const k = keyOf(l.nom_prospect); (cmap[k] ||= { nom: l.nom_prospect, demandes: 0, devis: 0, total: 0 }).demandes++ } })
+  D.forEach((d) => { if (d.client_nom) { const k = keyOf(d.client_nom); const c = (cmap[k] ||= { nom: d.client_nom, demandes: 0, devis: 0, total: 0 }); c.devis++; if (d.statut === 'accepte') c.total += Number(d.total_ttc) || 0 } })
+  const clientsList = Object.values(cmap).sort((a, b) => b.total - a.total || b.devis - a.devis)
+
   return json({
+    devisList,
+    leadsList,
+    clientsList,
     revenus,
     devis: { total: D.length, brouillon: devisStat('brouillon'), envoye: devisStat('envoye'), accepte: accepte.length, refuse: devisStat('refuse') },
     leads: { total: L.length, nouveau: leadStat('nouveau'), repondu: leadStat('repondu'), gagne: leadStat('gagne'), semaine: L.filter((l) => ts(l.created_at) >= weekAgo).length },
