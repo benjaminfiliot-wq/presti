@@ -86,6 +86,18 @@ export default function AppShell({
           <span><b>Presti</b><small>Console artisan</small></span>
         </a>
 
+        {isFounder && (
+          <>
+            <div className="psh-navlabel">Fondateur</div>
+            <nav className="psh-nav">
+              <a className={active === 'controle' ? 'on' : ''} href="/controle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3" /></svg>
+                Poste de contrôle
+              </a>
+            </nav>
+          </>
+        )}
+
         {NAV.map((g) => (
           <div key={g.group}>
             <div className="psh-navlabel">{g.group}</div>
