@@ -2,32 +2,34 @@
 
 import { useEffect, useRef } from 'react'
 
-type Hub = { label: string; color: string; count: number }
-
-export default function HudGraph({ demandes, chiffrages, clients, revenus }: { demandes: number; chiffrages: number; clients: number; revenus: number }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+// Explosion réseau lumineuse (fidèle à la vidéo) : filaments colorés qui rayonnent du centre.
+export default function HudGraph({ density = 1 }: { density?: number }) {
+  const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = ref.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    const hubs: Hub[] = [
-      { label: 'DEMANDES', color: '#F5B301', count: demandes },
-      { label: 'CHIFFRAGES', color: '#6C8CFF', count: chiffrages },
-      { label: 'REVENUS', color: '#38CD8C', count: Math.min(12, Math.round(revenus / 1000) || 1) },
-      { label: 'CLIENTS', color: '#3EE0F0', count: clients },
-    ]
-    // particules d'ambiance (décor, non-données)
-    const parts = Array.from({ length: 46 }, (_, i) => ({ a: (i / 46) * Math.PI * 2, r: 60 + (i % 7) * 34, s: 0.08 + (i % 5) * 0.02, sz: 0.6 + (i % 3) * 0.5 }))
+    const PAL = ['#3EE0F0', '#6C8CFF', '#8A6BFF', '#F0567A', '#38CD8C', '#F5B301']
+    const N = Math.round(72 * Math.min(1.6, Math.max(0.7, density)))
+    // filaments déterministes (pas de random qui saute à chaque frame)
+    const fil = Array.from({ length: N }, (_, i) => {
+      const a = (i / N) * Math.PI * 2 + (i % 5) * 0.11
+      const len = 0.34 + ((i * 37) % 60) / 100 * 0.6
+      const segs = 4 + (i % 3)
+      const jit = ((i * 53) % 100) / 100 - 0.5
+      return { a, len, segs, jit, color: PAL[i % PAL.length], speed: 0.4 + (i % 4) * 0.18, wob: 0.05 + (i % 5) * 0.015 }
+    })
+    const labels = ['CLIENTS', 'DEVIS', 'DEMANDES', 'REVENUS', 'RELANCES', 'RÉSEAU']
 
-    let W = 0, H = 0, cx = 0, cy = 0, dpr = 1
+    let W = 0, H = 0, cx = 0, cy = 0, dpr = 1, R = 0
     const resize = () => {
       const rect = canvas.getBoundingClientRect()
       dpr = Math.min(2, window.devicePixelRatio || 1)
-      W = rect.width; H = rect.height; cx = W / 2; cy = H / 2
+      W = rect.width; H = rect.height; cx = W / 2; cy = H / 2; R = Math.min(W, H) / 2
       canvas.width = W * dpr; canvas.height = H * dpr
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
@@ -36,66 +38,54 @@ export default function HudGraph({ demandes, chiffrages, clients, revenus }: { d
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, W, H)
-      const R1 = Math.min(W, H) * 0.28
-      const rot = t * 0.06
-
-      // particules d'ambiance
-      for (const p of parts) {
-        const a = p.a + t * p.s * 0.15
-        const x = cx + Math.cos(a) * p.r, y = cy + Math.sin(a) * p.r * 0.7
-        ctx.beginPath(); ctx.arc(x, y, p.sz, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(120,180,255,.35)'; ctx.fill()
-      }
-
-      hubs.forEach((hub, hi) => {
-        const base = rot + (hi / hubs.length) * Math.PI * 2
-        const hx = cx + Math.cos(base) * R1, hy = cy + Math.sin(base) * R1 * 0.82
-        const leaves = Math.min(9, Math.max(1, hub.count))
-
-        // arête cœur → hub + impulsion mobile
-        ctx.strokeStyle = hub.color + '55'; ctx.lineWidth = 1.4
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(hx, hy); ctx.stroke()
-        const ph = (t * 0.5 + hi * 0.4) % 1
-        const px = cx + (hx - cx) * ph, py = cy + (hy - cy) * ph
-        ctx.beginPath(); ctx.arc(px, py, 2, 0, Math.PI * 2)
-        ctx.fillStyle = hub.color; ctx.shadowBlur = 10; ctx.shadowColor = hub.color; ctx.fill(); ctx.shadowBlur = 0
-
-        // feuilles autour du hub
-        for (let i = 0; i < leaves; i++) {
-          const la = base + (i - leaves / 2) * 0.42 + Math.sin(t * 0.8 + i + hi) * 0.06
-          const lr = R1 * (0.55 + (i % 3) * 0.16)
-          const lx = hx + Math.cos(la) * lr, ly = hy + Math.sin(la) * lr * 0.9
-          ctx.strokeStyle = hub.color + '33'; ctx.lineWidth = 0.8
-          ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(lx, ly); ctx.stroke()
-          const tw = 1.1 + Math.sin(t * 2 + i * 1.7) * 0.5
-          ctx.beginPath(); ctx.arc(lx, ly, Math.max(0.5, tw), 0, Math.PI * 2)
-          ctx.fillStyle = hub.color; ctx.shadowBlur = 8; ctx.shadowColor = hub.color; ctx.fill(); ctx.shadowBlur = 0
+      const rot = t * 0.04
+      fil.forEach((f, i) => {
+        const a = f.a + rot
+        // polyligne jaggy du centre vers l'extérieur
+        ctx.beginPath(); ctx.moveTo(cx, cy)
+        let ex = cx, ey = cy
+        for (let s = 1; s <= f.segs; s++) {
+          const p = s / f.segs
+          const rr = R * f.len * p
+          const wob = Math.sin(t * f.speed + i + s) * f.wob + f.jit * 0.06 * p
+          const aa = a + wob
+          ex = cx + Math.cos(aa) * rr
+          ey = cy + Math.sin(aa) * rr
+          ctx.lineTo(ex, ey)
         }
-
-        // nœud hub
-        ctx.beginPath(); ctx.arc(hx, hy, 5, 0, Math.PI * 2)
-        ctx.fillStyle = hub.color; ctx.shadowBlur = 16; ctx.shadowColor = hub.color; ctx.fill(); ctx.shadowBlur = 0
-        ctx.font = '700 9px "JetBrains Mono", monospace'; ctx.fillStyle = hub.color; ctx.textAlign = 'center'
-        ctx.fillText(hub.label, hx, hy - 12)
-        ctx.fillStyle = '#eafcff'; ctx.font = '800 12px "Bricolage Grotesque", sans-serif'
-        ctx.fillText(String(hub.count), hx, hy + 20)
+        ctx.strokeStyle = f.color + '66'; ctx.lineWidth = 1
+        ctx.shadowBlur = 6; ctx.shadowColor = f.color
+        ctx.stroke(); ctx.shadowBlur = 0
+        // particule qui voyage
+        const ph = (t * f.speed * 0.5 + i * 0.13) % 1
+        const px = cx + Math.cos(a) * R * f.len * ph
+        const py = cy + Math.sin(a) * R * f.len * ph
+        ctx.beginPath(); ctx.arc(px, py, 1.3, 0, Math.PI * 2)
+        ctx.fillStyle = f.color; ctx.shadowBlur = 8; ctx.shadowColor = f.color; ctx.fill(); ctx.shadowBlur = 0
+        // nœud d'extrémité
+        const tw = 1 + Math.sin(t * 1.5 + i) * 0.5
+        ctx.beginPath(); ctx.arc(ex, ey, Math.max(0.6, tw), 0, Math.PI * 2)
+        ctx.fillStyle = f.color; ctx.shadowBlur = 7; ctx.shadowColor = f.color; ctx.fill(); ctx.shadowBlur = 0
+        // quelques labels
+        if (i % 12 === 0) {
+          ctx.font = '700 8px "JetBrains Mono", monospace'
+          ctx.fillStyle = f.color + 'cc'; ctx.textAlign = 'center'
+          ctx.fillText(labels[(i / 12) % labels.length], ex, ey - 6)
+        }
       })
-
-      // cœur pulsant
-      const pulse = 1 + Math.sin(t * 1.6) * 0.12
-      const g = ctx.createRadialGradient(cx, cy, 2, cx, cy, 46 * pulse)
-      g.addColorStop(0, 'rgba(230,250,255,.95)'); g.addColorStop(.3, 'rgba(62,224,240,.7)'); g.addColorStop(1, 'rgba(62,224,240,0)')
-      ctx.beginPath(); ctx.arc(cx, cy, 46 * pulse, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill()
-      ctx.beginPath(); ctx.arc(cx, cy, 9, 0, Math.PI * 2); ctx.fillStyle = '#eafcff'; ctx.shadowBlur = 24; ctx.shadowColor = '#3EE0F0'; ctx.fill(); ctx.shadowBlur = 0
+      // burst central
+      const pulse = 1 + Math.sin(t * 1.8) * 0.14
+      const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, 40 * pulse)
+      g.addColorStop(0, 'rgba(240,252,255,.95)'); g.addColorStop(.35, 'rgba(62,224,240,.6)'); g.addColorStop(1, 'rgba(62,224,240,0)')
+      ctx.beginPath(); ctx.arc(cx, cy, 40 * pulse, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill()
     }
 
     let raf = 0, start = 0
     const loop = (ms: number) => { if (!start) start = ms; draw((ms - start) / 1000); raf = requestAnimationFrame(loop) }
-    draw(0) // premier rendu immédiat (jamais vide)
+    draw(0)
     if (!reduce) raf = requestAnimationFrame(loop)
-
     return () => { cancelAnimationFrame(raf); ro.disconnect() }
-  }, [demandes, chiffrages, clients, revenus])
+  }, [density])
 
-  return <canvas ref={canvasRef} className="hud-canvas" aria-hidden="true" />
+  return <canvas ref={ref} className="jv-explosion" aria-hidden="true" />
 }

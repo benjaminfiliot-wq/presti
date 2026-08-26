@@ -738,6 +738,24 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 @media(max-width:560px){.jv-seg{width:78px;padding:8px 6px}.jv-seg .sv{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.jv-rot-slow,.jv-rot-med,.jv-rot-fast,.jv-core,.jv-panel{animation:none}}
 
+/* cadre terminal : coins + explosion réseau en fond */
+.jv-frame{position:relative;width:100%;max-width:1080px;min-height:min(94vw,560px);display:grid;place-items:center}
+.jv-frame .hud-corner{position:absolute;z-index:3;width:min(220px,23%)}
+.jv-explosion{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+.jv-rings .jv-svg,.jv-rings .jv-seg,.jv-rings .jv-core{z-index:1}
+.jv-rings .jv-seg{z-index:2}
+@media(max-width:900px){.jv-frame .hud-corner{display:none}}
+
+/* formulaire de config (saisie PayPal, etc.) */
+.jv-form .jv-field{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
+.jv-form label{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--cy-soft);margin:0}
+.jv-form input{background:rgba(5,7,12,.7);border:1px solid rgba(62,224,240,.2);border-radius:9px;padding:.7rem .8rem;font-size:.95rem;color:#eafcff;width:100%;font-family:inherit}
+.jv-form input:focus{outline:none;border-color:var(--cy);box-shadow:0 0 0 3px rgba(62,224,240,.15)}
+.jv-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.jv-2{grid-template-columns:1fr}}
+.jv-save{width:100%;margin-top:6px;padding:.8rem;background:linear-gradient(135deg,var(--sc,#3EE0F0),#6C8CFF);color:#04121a;border:none;border-radius:10px;font-weight:800;font-size:.95rem;cursor:pointer;font-family:inherit;box-shadow:0 0 22px -8px var(--sc)}
+.jv-note{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);margin-top:10px;line-height:1.6}
+
 /* scène centrale : graphe animé plein cadre + panneaux dans les coins */
 .hud-stage{position:relative;height:min(62vh,580px);border:1px solid rgba(62,224,240,.16);border-radius:16px;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(62,224,240,.05),transparent 60%),rgba(5,7,12,.55)}
 .hud-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
