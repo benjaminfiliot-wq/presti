@@ -303,6 +303,7 @@ button:disabled{opacity:.55;cursor:default}
 
 /* ---- App shell (espace connecté) ---- */
 .psh-app{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+.psh-scrim{display:none;position:fixed;inset:0;background:rgba(20,24,31,.4);z-index:55}
 .psh-side{position:sticky;top:0;align-self:start;height:100vh;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;padding:18px 14px;overflow-y:auto}
 .psh-sbrand{display:flex;align-items:center;gap:11px;padding:6px 8px 14px;text-decoration:none}
 .psh-logo{width:34px;height:34px;border-radius:9px;flex:none;background:var(--ink);display:grid;place-items:center;color:#fff}
