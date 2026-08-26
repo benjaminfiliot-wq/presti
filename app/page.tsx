@@ -1,3 +1,6 @@
+import HeroDemo from '@/app/HeroDemo'
+import Counter from '@/app/Counter'
+
 export default function Home() {
   return (
     <>
@@ -21,7 +24,7 @@ export default function Home() {
           <div className="container hero-grid">
             <div>
               <span className="eyebrow">Pour les artisans du bâtiment</span>
-              <h1>Le premier qui répond décroche le chantier.</h1>
+              <h1>Le premier qui répond <span className="g">décroche le chantier.</span></h1>
               <p className="lede">
                 Presti répond à chaque demande de devis en moins d&apos;une minute, dans votre style — et relance
                 tout seul jusqu&apos;à la réponse. Vous ne perdez plus un client parce que vous étiez sur un chantier.
@@ -33,26 +36,7 @@ export default function Home() {
               <p className="trust"><span className="dot" /> Gratuit pour démarrer · sans carte bancaire</p>
             </div>
 
-            <div className="reply-card reply-anim">
-              <div className="reply-head">
-                <div className="reply-avatar">P</div>
-                <div>
-                  <div className="reply-who">Presti répond pour vous</div>
-                  <div className="reply-sub">à la place de Dupont Plomberie</div>
-                </div>
-                <span className="badge-live">En direct</span>
-              </div>
-              <div className="bubble bubble--in">
-                Bonjour, fuite sous mon évier depuis ce matin. Vous pouvez passer cette semaine ?
-                <span className="t">Marie · 14:02</span>
-              </div>
-              <div className="bubble bubble--out">
-                Bonjour Marie, merci pour votre message ! Je comprends l&apos;urgence. Je vous rappelle dans la
-                journée pour convenir d&apos;un passage — en attendant, coupez l&apos;arrivée d&apos;eau sous
-                l&apos;évier pour limiter les dégâts.
-                <span className="t">Presti · répondu en 43 s</span>
-              </div>
-            </div>
+            <HeroDemo />
           </div>
         </section>
 
@@ -70,7 +54,7 @@ export default function Home() {
             </div>
             <div className="stats">
               <div className="stat">
-                <div className="stat-num">7×</div>
+                <div className="stat-num"><Counter to={7} suffix="×" /></div>
                 <div className="stat-label">plus de chances de décrocher le client si vous répondez dans l&apos;heure.</div>
                 <div className="stat-source">Harvard Business Review</div>
               </div>
@@ -80,7 +64,7 @@ export default function Home() {
                 <div className="stat-source">À chaque demande reçue</div>
               </div>
               <div className="stat">
-                <div className="stat-num">3 relances</div>
+                <div className="stat-num"><Counter to={3} /> relances</div>
                 <div className="stat-label">automatiques — J+2, J+5, J+10 — jusqu&apos;à ce que le client réponde.</div>
                 <div className="stat-source">Sans y penser</div>
               </div>
