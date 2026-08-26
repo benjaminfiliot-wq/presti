@@ -3,43 +3,24 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import AppShell from '@/app/AppShell'
 
-type Artisan = {
-  id: string
-  nom: string | null
-  metier: string | null
-  slug: string | null
-}
-
-type Lead = {
-  id: string
-  nom_prospect: string | null
-  contact: string | null
-  message: string | null
-  statut: string | null
-  created_at: string
-}
-
+type Artisan = { id: string; nom: string | null; metier: string | null; slug: string | null }
+type Lead = { id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null; created_at: string }
 type Message = { lead_id: string; sens: string | null; type: string | null; contenu: string | null }
 
-const STATUTS: { value: string; label: string; bg: string; fg: string }[] = [
-  { value: 'nouveau', label: 'Nouveau', bg: '#FEF3C7', fg: '#92400E' },
-  { value: 'repondu', label: 'Répondu', bg: '#D1FAE5', fg: '#065F46' },
-  { value: 'gagne', label: 'Gagné 🎉', bg: '#0E5C4A', fg: '#ffffff' },
-  { value: 'perdu', label: 'Perdu', bg: '#F3F4F6', fg: '#6B7280' },
+const STATUTS: { value: string; label: string; pill: string }[] = [
+  { value: 'nouveau', label: 'Nouveau', pill: 'warn' },
+  { value: 'repondu', label: 'Répondu', pill: 'info' },
+  { value: 'gagne', label: 'Gagné 🎉', pill: 'ok' },
+  { value: 'perdu', label: 'Perdu', pill: 'muted' },
 ]
-
-function statutMeta(v: string | null) {
-  return STATUTS.find((s) => s.value === v) ?? { value: v ?? '', label: v ?? '—', bg: '#F3F4F6', fg: '#6B7280' }
-}
+const statutMeta = (v: string | null) => STATUTS.find((s) => s.value === v) ?? { value: v ?? '', label: v ?? '—', pill: 'muted' }
 
 function formatDate(iso: string) {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
-  } catch {
-    return iso
-  }
+  try { return new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) } catch { return iso }
 }
+const initials = (n: string | null) => (n ? n.trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase()).join('') : '?')
 
 export default function Dashboard() {
   const router = useRouter()
@@ -51,40 +32,19 @@ export default function Dashboard() {
   const [open, setOpen] = useState<string | null>(null)
 
   async function loadLeads(artisanId: string) {
-    const { data: ls } = await supabase
-      .from('leads')
-      .select('id, nom_prospect, contact, message, statut, created_at')
-      .eq('artisan_id', artisanId)
-      .order('created_at', { ascending: false })
+    const { data: ls } = await supabase.from('leads').select('id, nom_prospect, contact, message, statut, created_at').eq('artisan_id', artisanId).order('created_at', { ascending: false })
     setLeads((ls as Lead[]) ?? [])
-
-    const { data: ms } = await supabase
-      .from('messages')
-      .select('lead_id, sens, type, contenu')
-      .eq('sens', 'out')
-      .eq('type', 'reponse_auto')
+    const { data: ms } = await supabase.from('messages').select('lead_id, sens, type, contenu').eq('sens', 'out').eq('type', 'reponse_auto')
     const map: Record<string, string> = {}
-    for (const m of (ms as Message[]) ?? []) {
-      if (m.lead_id && m.contenu && !map[m.lead_id]) map[m.lead_id] = m.contenu
-    }
+    for (const m of (ms as Message[]) ?? []) if (m.lead_id && m.contenu && !map[m.lead_id]) map[m.lead_id] = m.contenu
     setReplies(map)
   }
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
-      if (!data.session) {
-        router.replace('/login')
-        return
-      }
-      const { data: prof } = await supabase
-        .from('artisans')
-        .select('id, nom, metier, slug')
-        .eq('id', data.session.user.id)
-        .maybeSingle()
-      if (!prof) {
-        router.replace('/onboarding')
-        return
-      }
+      if (!data.session) { router.replace('/login'); return }
+      const { data: prof } = await supabase.from('artisans').select('id, nom, metier, slug').eq('id', data.session.user.id).maybeSingle()
+      if (!prof) { router.replace('/onboarding'); return }
       setArtisan(prof as Artisan)
       await loadLeads((prof as Artisan).id)
       setReady(true)
@@ -96,106 +56,102 @@ export default function Dashboard() {
     await supabase.from('leads').update({ statut, updated_at: new Date().toISOString() }).eq('id', leadId)
   }
 
-  async function logout() {
-    await supabase.auth.signOut()
-    router.replace('/login')
-  }
-
   function copyLink() {
     if (!artisan?.slug) return
-    const link = `${window.location.origin}/l/${artisan.slug}`
-    navigator.clipboard?.writeText(link)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    navigator.clipboard?.writeText(`${window.location.origin}/l/${artisan.slug}`)
+    setCopied(true); setTimeout(() => setCopied(false), 2000)
   }
 
-  if (!ready || !artisan) {
-    return (
-      <main className="app-wrap">
-        <p className="muted">Chargement…</p>
-      </main>
-    )
-  }
-
-  const link = typeof window !== 'undefined' ? `${window.location.origin}/l/${artisan.slug}` : `/l/${artisan.slug}`
+  const prenom = artisan?.nom ? artisan.nom.split(/\s+/)[0] : ''
+  const link = typeof window !== 'undefined' && artisan ? `${window.location.origin}/l/${artisan.slug}` : `/l/${artisan?.slug ?? ''}`
   const nouveaux = leads.filter((l) => l.statut === 'nouveau').length
+  const gagnes = leads.filter((l) => l.statut === 'gagne').length
+  const repondus = Object.keys(replies).length
 
   return (
-    <>
-      <div className="appbar">
-        <div className="appbar-in">
-          <span className="brand"><span className="dot" />Presti</span>
-          <div className="appbar-links">
-            <a className="applink" href="/outils">Générateurs</a>
-            <a className="applink" href="/devis">Devis</a>
-            <a className="applink active" href="/dashboard">Mes demandes</a>
-            <button className="applink" onClick={logout}>Déconnexion</button>
+    <AppShell active="dashboard" title={ready && prenom ? `Bonjour ${prenom}` : 'Tableau de bord'} crumb={artisan?.metier || 'Votre espace'}>
+      {!ready ? (
+        <p className="muted">Chargement…</p>
+      ) : (
+        <>
+          <section className="psh-kpis">
+            <div className="psh-kpi">
+              <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>Demandes reçues</div>
+              <div className="val tnum">{leads.length}</div>
+              <div className="sub">au total</div>
+            </div>
+            <div className="psh-kpi">
+              <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9" /><path d="M12 8v4l2 2" /></svg>À traiter</div>
+              <div className="val tnum">{nouveaux}</div>
+              <div className="sub">{nouveaux > 0 ? <span className="pill warn"><span className="pdot" />à répondre</span> : 'tout est à jour'}</div>
+            </div>
+            <div className="psh-kpi">
+              <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m5 12 4 4L19 6" /></svg>Chantiers gagnés</div>
+              <div className="val tnum">{gagnes}</div>
+              <div className="sub">signés via Presti</div>
+            </div>
+            <div className="psh-kpi">
+              <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M13 2 3 14h7l-1 8 10-12h-7z" /></svg>Réponses IA</div>
+              <div className="val tnum">{repondus}</div>
+              <div className="sub">envoyées automatiquement</div>
+            </div>
+          </section>
+
+          <div className="tool-card">
+            <h2>Votre lien de contact</h2>
+            <p className="muted" style={{ margin: '0 0 .6rem' }}>À coller sur Le Bon Coin, Google, Facebook, votre signature mail. Chaque demande arrive ici — et Presti répond en moins d’une minute.</p>
+            <div className="linkbox">
+              <span className="linkbox-url">{link}</span>
+              <button type="button" className="linkbox-btn" onClick={copyLink}>{copied ? '✓ Copié' : 'Copier'}</button>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <main className="app-wrap">
-        <h1>Bonjour {artisan.nom} 👋</h1>
-        <p className="muted" style={{ marginBottom: '1.6rem' }}>{artisan.metier} · votre espace</p>
+          <div className="psh-panel">
+            <header>
+              <h2>Vos demandes</h2>
+              {nouveaux > 0 && <span className="tag"><span className="pill warn"><span className="pdot" />{nouveaux} nouvelle{nouveaux > 1 ? 's' : ''}</span></span>}
+            </header>
 
-        <div className="tool-card">
-          <h2>Votre lien de contact</h2>
-          <p className="muted" style={{ margin: '0 0 .6rem' }}>À coller sur Le Bon Coin, Google, Facebook, votre signature mail.</p>
-          <div className="linkbox">
-            <span className="linkbox-url">{link}</span>
-            <button type="button" className="linkbox-btn" onClick={copyLink}>{copied ? '✓ Copié' : 'Copier'}</button>
-          </div>
-        </div>
+            {leads.length === 0 && (
+              <div className="psh-empty">Aucune demande pour l’instant. Dès qu’un client remplira votre lien, elle apparaîtra ici.</div>
+            )}
 
-        <div className="tool-card" style={{ marginTop: '1.2rem' }}>
-          <h2>
-            Vos demandes {nouveaux > 0 && <span style={{ fontSize: '.8rem', color: '#92400E', background: '#FEF3C7', padding: '.15rem .5rem', borderRadius: 999, marginLeft: '.4rem', verticalAlign: 'middle' }}>{nouveaux} nouveau{nouveaux > 1 ? 'x' : ''}</span>}
-          </h2>
-
-          {leads.length === 0 && (
-            <p className="muted" style={{ marginTop: '.8rem' }}>Aucune demande pour l&apos;instant. Dès qu&apos;un client remplira votre lien, elle apparaîtra ici.</p>
-          )}
-
-          <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '.7rem' }}>
             {leads.map((l) => {
               const meta = statutMeta(l.statut)
               const isOpen = open === l.id
               const isMail = typeof l.contact === 'string' && l.contact.includes('@')
               return (
-                <div key={l.id} style={{ border: '1px solid var(--line)', borderRadius: 10, padding: '.85rem 1rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.6rem', flexWrap: 'wrap' }}>
-                    <div style={{ minWidth: 0 }}>
-                      <strong>{l.nom_prospect || 'Client'}</strong>
-                      <span className="muted" style={{ marginLeft: '.5rem', fontSize: '.85rem' }}>{formatDate(l.created_at)}</span>
-                      <div style={{ fontSize: '.9rem' }}>
+                <div key={l.id} className="psh-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                    <span className="psh-iava">{initials(l.nom_prospect)}</span>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                        <b>{l.nom_prospect || 'Client'}</b>
+                        <span className="time" style={{ marginLeft: 'auto', fontSize: '.72rem', color: 'var(--faint)', fontFamily: 'var(--font-mono)' }}>{formatDate(l.created_at)}</span>
+                      </div>
+                      <div style={{ fontSize: '.86rem' }}>
                         {isMail
-                          ? <a href={`mailto:${l.contact}`} style={{ color: 'var(--green)' }}>{l.contact}</a>
-                          : <a href={`tel:${l.contact}`} style={{ color: 'var(--green)' }}>{l.contact}</a>}
+                          ? <a href={`mailto:${l.contact}`} style={{ color: 'var(--accent-ink)' }}>{l.contact}</a>
+                          : <a href={`tel:${l.contact}`} style={{ color: 'var(--accent-ink)' }}>{l.contact}</a>}
                       </div>
                     </div>
-                    <span style={{ background: meta.bg, color: meta.fg, padding: '.2rem .6rem', borderRadius: 999, fontSize: '.8rem', fontWeight: 600, whiteSpace: 'nowrap' }}>{meta.label}</span>
+                    <span className={`pill ${meta.pill}`}><span className="pdot" />{meta.label}</span>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setOpen(isOpen ? null : l.id)}
-                    style={{ background: 'transparent', color: 'var(--soft)', border: 'none', padding: '.4rem 0 0', fontSize: '.85rem', cursor: 'pointer', width: 'auto', marginTop: 0 }}
-                  >
+                  <button type="button" onClick={() => setOpen(isOpen ? null : l.id)} style={{ background: 'transparent', color: 'var(--muted)', border: 'none', padding: 0, fontSize: '.83rem', cursor: 'pointer', width: 'auto', margin: 0, textAlign: 'left', fontWeight: 600 }}>
                     {isOpen ? '▾ Masquer le détail' : '▸ Voir le détail'}
                   </button>
 
                   {isOpen && (
-                    <div style={{ marginTop: '.6rem', borderTop: '1px solid var(--line)', paddingTop: '.7rem' }}>
-                      <p style={{ margin: '0 0 .3rem', fontSize: '.8rem', fontWeight: 600, color: 'var(--soft)' }}>Sa demande</p>
+                    <div style={{ borderTop: '1px solid var(--line)', paddingTop: '.7rem' }}>
+                      <p style={{ margin: '0 0 .3rem', fontSize: '.78rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Sa demande</p>
                       <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap' }}>{l.message || <span className="muted">(aucun message)</span>}</p>
-
-                      <p style={{ margin: '0 0 .3rem', fontSize: '.8rem', fontWeight: 600, color: 'var(--soft)' }}>Réponse envoyée automatiquement</p>
+                      <p style={{ margin: '0 0 .3rem', fontSize: '.78rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Réponse envoyée automatiquement</p>
                       {replies[l.id]
-                        ? <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap', background: 'var(--green-050)', border: '1px solid var(--green-300)', borderRadius: 8, padding: '.7rem' }}>{replies[l.id]}</p>
+                        ? <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap', background: 'var(--accent-tint)', border: '1px solid var(--accent-tint-2)', borderRadius: 10, padding: '.7rem' }}>{replies[l.id]}</p>
                         : <p className="muted" style={{ margin: '0 0 .9rem' }}>Pas encore de réponse automatique pour cette demande.</p>}
-
                       <label style={{ fontSize: '.8rem' }}>Statut</label>
-                      <select value={l.statut ?? 'nouveau'} onChange={(e) => changeStatut(l.id, e.target.value)}>
+                      <select value={l.statut ?? 'nouveau'} onChange={(e) => changeStatut(l.id, e.target.value)} style={{ maxWidth: '16rem' }}>
                         {STATUTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                       </select>
                     </div>
@@ -204,8 +160,8 @@ export default function Dashboard() {
               )
             })}
           </div>
-        </div>
-      </main>
-    </>
+        </>
+      )}
+    </AppShell>
   )
 }

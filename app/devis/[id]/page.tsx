@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { computeTotals } from '@/lib/devisTotals'
+import AppShell from '@/app/AppShell'
 import ModelSelect from '@/app/ModelSelect'
 import type { Tier } from '@/lib/models'
 
@@ -166,8 +167,6 @@ export default function DevisEditor() {
     setStatut('envoye'); setMsg({ type: 'ok', text: 'Devis envoyé au client ✅' })
   }
 
-  async function logout() { await supabase.auth.signOut(); router.replace('/login') }
-
   const lignesPleines = lignes.filter((l) => l.designation.trim())
   const totals = computeTotals(lignes.map((l) => ({ quantite: Number(l.quantite) || 0, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: l.tva_taux })), Number(remise) || 0)
   const totalBrut = lignes.reduce((s, l) => s + (Number(l.quantite) || 0) * (Number(l.prix_unitaire_ht) || 0), 0)
@@ -176,37 +175,21 @@ export default function DevisEditor() {
   const today = new Date()
   const validiteDate = new Date(today.getTime() + (Number(validite) || 90) * 86400000)
 
-  if (!ready) return <main className="app-wrap"><p className="muted">Chargement…</p></main>
+  if (!ready) return <AppShell active="devis" title="Devis" crumb="Chargement…"><p className="muted">Chargement…</p></AppShell>
+
+  const actions = (
+    <>
+      <button className="psh-btn ghost" onClick={downloadPdf}>Télécharger PDF</button>
+      <button className="psh-btn ghost" onClick={envoyer}>Envoyer au client</button>
+      <button className="psh-btn primary" disabled={saving} onClick={() => save()}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
+    </>
+  )
 
   return (
-    <>
-      <div className="appbar">
-        <div className="appbar-in">
-          <span className="brand"><span className="dot" />Presti</span>
-          <div className="appbar-links">
-            <a className="applink" href="/outils">Générateurs</a>
-            <a className="applink active" href="/devis">Devis</a>
-            <a className="applink" href="/dashboard">Mes demandes</a>
-            <button className="applink" onClick={logout}>Déconnexion</button>
-          </div>
-        </div>
-      </div>
+    <AppShell active="devis" title={numero ? numero : 'Nouveau devis'} crumb={savedId ? 'Devis · enregistré' : 'Devis · brouillon'} actions={actions} wide>
+      {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`} style={{ marginTop: 0, marginBottom: '1.1rem' }}>{msg.text}</div>}
 
-      <main className="editor-wrap">
-        <div className="editor-top">
-          <a className="applink" href="/devis">← Devis</a>
-          <h1>{numero ? numero : 'Nouveau devis'}</h1>
-          <span className="muted" style={{ fontSize: '.85rem' }}>{savedId ? 'Enregistré' : 'Brouillon'}</span>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: '.6rem', flexWrap: 'wrap' }}>
-            <button className="btn btn--ghost" style={{ width: 'auto' }} onClick={downloadPdf}>Télécharger PDF</button>
-            <button className="btn btn--ghost" style={{ width: 'auto' }} onClick={envoyer}>Envoyer au client</button>
-            <button className="btn btn--primary" style={{ width: 'auto' }} disabled={saving} onClick={() => save()}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
-          </div>
-        </div>
-
-        {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`} style={{ marginTop: 0, marginBottom: '1.1rem' }}>{msg.text}</div>}
-
-        <div className="editor">
+      <div className="editor">
           {/* ---------------- FORM (gauche) ---------------- */}
           <div className="editor-form">
             <div className="tool-card">
@@ -300,7 +283,8 @@ export default function DevisEditor() {
           </div>
 
           {/* ---------------- APERÇU LIVE (droite) ---------------- */}
-          <div className="preview-wrap">
+          <div className="preview-wrap blueprint">
+            <div className="live-flag"><span className="b" />Aperçu en direct — conforme</div>
             <div className="doc">
               <div className="doc-head">
                 <div>
@@ -380,7 +364,6 @@ export default function DevisEditor() {
             </div>
           </div>
         </div>
-      </main>
-    </>
+    </AppShell>
   )
 }

@@ -17,9 +17,9 @@ const TIER_PLANS: Record<Tier, string[]> = {
 
 // Métadonnées d'affichage (côté client — sans les IDs de modèles).
 export const TIERS: { value: Tier; label: string; desc: string; plan: 'gratuit' | 'pro' | 'business' }[] = [
-  { value: 'standard', label: 'Standard', desc: 'Rapide et fiable', plan: 'gratuit' },
-  { value: 'pro', label: 'Pro', desc: 'Plus précis', plan: 'pro' },
-  { value: 'expert', label: 'Expert', desc: 'Résultat maximal', plan: 'business' },
+  { value: 'standard', label: 'Standard', desc: 'Rapide, pour les demandes simples', plan: 'gratuit' },
+  { value: 'pro', label: 'Pro', desc: 'Chiffrage fin, postes détaillés', plan: 'pro' },
+  { value: 'expert', label: 'Expert', desc: 'Le plus précis, gros chantiers', plan: 'business' },
 ]
 
 const PLAN_RANK: Record<string, number> = { gratuit: 0, pro: 1, business: 2 }
