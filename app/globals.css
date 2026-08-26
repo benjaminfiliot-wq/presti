@@ -447,3 +447,35 @@ button:disabled{opacity:.55;cursor:default}
 /* ---- utilitaires ---- */
 .psh-empty{padding:22px;text-align:center;color:var(--muted);font-size:13.5px}
 @media(prefers-reduced-motion:reduce){.eline,.doc-table tbody tr,.live-flag .b{animation:none}}
+
+/* =======================================================================
+   Landing — mise au standard "Chantier"
+   ======================================================================= */
+.site-header{background:color-mix(in srgb,var(--paper) 82%,transparent);backdrop-filter:saturate(1.2) blur(10px)}
+.nav .brand,.footer .brand{display:inline-flex;align-items:center;gap:.55rem}
+.brand-mark{width:28px;height:28px;border-radius:7px;background:var(--ink);display:inline-grid;place-items:center;color:#fff;flex:none}
+.brand-mark svg{width:17px;height:17px}
+
+.hero{position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/26px 26px,
+             linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/26px 26px;
+  -webkit-mask-image:radial-gradient(130% 90% at 72% 0%,#000,transparent 68%);
+  mask-image:radial-gradient(130% 90% at 72% 0%,#000,transparent 68%);
+  pointer-events:none;z-index:0}
+.hero .container{position:relative;z-index:1}
+.hero h1{animation:rise .6s both}
+.hero .lede{animation:rise .6s .06s both}
+.hero .cta-row{animation:rise .6s .12s both}
+.hero .trust{animation:rise .6s .18s both}
+
+.eyebrow{color:var(--accent-ink)}
+.stat,.feature,.plan{transition:transform .16s,border-color .16s,box-shadow .16s}
+.stat:hover,.feature:hover{transform:translateY(-2px);border-color:var(--accent-tint-2);box-shadow:var(--shadow)}
+.stat-num,.price,.stat-source,.step-num{font-variant-numeric:tabular-nums}
+.feature-ic{background:var(--accent-tint);border:1px solid var(--accent-tint-2)}
+.step-num{color:var(--accent-ink);border-color:var(--accent-tint-2);background:var(--accent-tint)}
+.plan--featured{box-shadow:var(--shadow-lg)}
+.plan-list li::before{color:var(--accent)}
+.cta-band{background:linear-gradient(135deg,var(--accent),#5b3fd6);box-shadow:var(--shadow-lg)}
+@media(prefers-reduced-motion:reduce){.hero h1,.hero .lede,.hero .cta-row,.hero .trust{animation:none}}

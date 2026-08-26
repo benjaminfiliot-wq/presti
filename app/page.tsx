@@ -3,7 +3,7 @@ export default function Home() {
     <>
       <header className="site-header">
         <nav className="nav">
-          <a className="brand" href="/"><span className="dot" />Presti</a>
+          <a className="brand" href="/"><span className="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21 L21 21" /><path d="M6 21 L6 10 L12 6 L18 10 L18 21" /><path d="M10 21 L10 15 L14 15 L14 21" /></svg></span>Presti</a>
           <div className="nav-spacer" />
           <div className="nav-links">
             <a href="#fonctionnement">Fonctionnement</a>
@@ -201,7 +201,7 @@ export default function Home() {
 
       <footer className="footer">
         <div className="container footer-in">
-          <span className="brand" style={{ fontSize: '1.05rem' }}><span className="dot" />Presti</span>
+          <span className="brand" style={{ fontSize: '1.05rem' }}><span className="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21 L21 21" /><path d="M6 21 L6 10 L12 6 L18 10 L18 21" /><path d="M10 21 L10 15 L14 15 L14 21" /></svg></span>Presti</span>
           <div className="footer-links">
             <a href="/login">Se connecter</a>
             <a href="/signup">Créer un compte</a>
