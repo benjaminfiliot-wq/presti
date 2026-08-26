@@ -529,3 +529,44 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .pdemo-toast .amt{margin-left:auto;font-family:var(--font-mono);font-weight:600;color:var(--ink);font-size:13px}
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 @media(prefers-reduced-motion:reduce){.pdemo-typing i{animation:none}}
+
+/* =======================================================================
+   Cinématique : glow néon, bordure lumineuse, orbe de verre, 3D, reveals
+   ======================================================================= */
+@property --sweep{syntax:"<angle>";inherits:false;initial-value:0deg}
+.sweepborder{position:relative;isolation:isolate}
+.sweepborder::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.6px;
+  background:conic-gradient(from var(--sweep),transparent 0 58%,var(--accent-ink) 72%,#eef3ff 80%,var(--accent) 88%,transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  animation:sweepspin 3.6s linear infinite;pointer-events:none}
+@keyframes sweepspin{to{--sweep:360deg}}
+.btn--primary.btn--lg{animation:glowpulse 3.4s ease-in-out infinite}
+@keyframes glowpulse{0%,100%{box-shadow:0 0 0 1px rgba(108,140,255,.35),0 12px 40px -8px rgba(108,140,255,.5)}50%{box-shadow:0 0 0 1px rgba(108,140,255,.55),0 16px 56px -8px rgba(108,140,255,.78)}}
+
+.hero h1{font-size:clamp(2.6rem,6vw,4.6rem);line-height:1.03}
+.section h2{font-size:clamp(1.95rem,4vw,2.9rem)}
+
+/* orbe de verre (façon Glass Health) */
+.pdemo-wrap{position:relative;display:flex;justify-content:center}
+.orb{position:absolute;top:-48px;right:4%;width:120px;height:120px;border-radius:50%;z-index:0;pointer-events:none;
+  background:radial-gradient(circle at 34% 28%,#e9efff,#6C8CFF 42%,#3b3f8f 72%,#1a1e40);
+  box-shadow:0 0 72px 14px rgba(108,140,255,.45),inset 0 0 34px rgba(255,255,255,.28);animation:floaty 6.5s ease-in-out infinite}
+.orb::after{content:"";position:absolute;inset:-34%;border-radius:50%;filter:blur(11px);
+  background:conic-gradient(from 0deg,transparent,rgba(138,107,255,.45),transparent,rgba(108,140,255,.45),transparent);animation:spin 9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+/* téléphone : flottement 3D */
+.pdemo{position:relative;z-index:1;animation:phonefloat 7s ease-in-out infinite}
+@keyframes phonefloat{0%,100%{transform:perspective(1300px) rotateY(-6deg) rotateX(2.5deg) translateY(0)}50%{transform:perspective(1300px) rotateY(-6deg) rotateX(2.5deg) translateY(-12px)}}
+@media(max-width:920px){.pdemo{animation:none;transform:none}.orb{display:none}}
+
+/* verre + glow au survol */
+.stat,.feature,.plan{border-top:1px solid rgba(255,255,255,.08)}
+.stat:hover,.feature:hover,.plan:hover{box-shadow:0 14px 44px -12px rgba(108,140,255,.4)}
+
+/* reveals au scroll (fail-safe : visible si JS off) */
+.will-reveal{opacity:0;transform:translateY(28px);transition:opacity .75s cubic-bezier(.2,.7,.25,1),transform .75s cubic-bezier(.2,.7,.25,1)}
+.will-reveal.revealed{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.pdemo,.orb,.orb::after,.btn--primary.btn--lg,.will-reveal,.sweepborder::before{animation:none!important;opacity:1;transform:none}}

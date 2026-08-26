@@ -1,5 +1,6 @@
 import HeroDemo from '@/app/HeroDemo'
 import Counter from '@/app/Counter'
+import ScrollFx from '@/app/ScrollFx'
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
       </header>
 
       <main>
+        <ScrollFx />
         {/* HERO */}
         <section className="hero">
           <div className="container hero-grid">
@@ -30,7 +32,7 @@ export default function Home() {
                 tout seul jusqu&apos;à la réponse. Vous ne perdez plus un client parce que vous étiez sur un chantier.
               </p>
               <div className="cta-row">
-                <a className="btn btn--primary btn--lg" href="/signup">Commencer gratuitement</a>
+                <a className="btn btn--primary btn--lg sweepborder" href="/signup">Commencer gratuitement</a>
                 <a className="btn btn--ghost btn--lg" href="/login">J&apos;ai déjà un compte</a>
               </div>
               <p className="trust"><span className="dot" /> Gratuit pour démarrer · sans carte bancaire</p>

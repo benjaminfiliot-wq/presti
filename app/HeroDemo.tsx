@@ -31,7 +31,9 @@ export default function HeroDemo() {
   }, [])
 
   return (
-    <div className="pdemo">
+    <div className="pdemo-wrap">
+      <span className="orb" aria-hidden="true" />
+      <div className="pdemo">
       <div className="pdemo-top">
         <div className="pdemo-pa">ML</div>
         <div><div className="pn">Marie Lefèvre</div><div className="ps">Presti répond en direct</div></div>
@@ -45,6 +47,7 @@ export default function HeroDemo() {
           <div><b>Devis DEV-2026-0042 envoyé</b><div className="sub">Chauffe-eau 200 L · PDF conforme</div></div>
           <span className="amt">704,00 €</span>
         </div>
+      </div>
       </div>
     </div>
   )
