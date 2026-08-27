@@ -5,6 +5,23 @@ import ScrollFx from '@/app/ScrollFx'
 export default function Home() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: 'Presti',
+            applicationCategory: 'BusinessApplication',
+            operatingSystem: 'Web',
+            url: 'https://prestiapp.fr',
+            description:
+              "Presti répond à chaque demande de devis en moins d'une minute, dans votre ton, génère vos devis et factures, et relance automatiquement jusqu'à la réponse.",
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR', description: 'Essai gratuit' },
+            provider: { '@type': 'Organization', name: 'Presti', url: 'https://prestiapp.fr' },
+          }),
+        }}
+      />
       <header className="site-header">
         <nav className="nav">
           <a className="brand" href="/"><span className="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21 L21 21" /><path d="M6 21 L6 10 L12 6 L18 10 L18 21" /><path d="M10 21 L10 15 L14 15 L14 21" /></svg></span>Presti</a>
@@ -13,6 +30,7 @@ export default function Home() {
             <a href="#fonctionnement">Fonctionnement</a>
             <a href="#fonctionnalites">Fonctionnalités</a>
             <a href="#tarifs">Tarifs</a>
+            <a href="/faq">FAQ</a>
           </div>
           <a className="btn btn--ghost" href="/login">Se connecter</a>
           <a className="btn btn--primary" href="/signup">Commencer</a>
@@ -193,6 +211,7 @@ export default function Home() {
             <a href="/login">Se connecter</a>
             <a href="/signup">Créer un compte</a>
             <a href="#tarifs">Tarifs</a>
+            <a href="/faq">FAQ</a>
           </div>
           <span className="muted">© 2026 Presti · Fait pour les artisans.</span>
           <div className="footer-legal" style={{ flexBasis: '100%' }}>

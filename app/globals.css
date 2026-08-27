@@ -799,6 +799,16 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .footer-legal a{color:var(--muted);font-size:.85rem;text-decoration:none}
 .footer-legal a:hover{color:var(--ink)}
 
+/* ===== FAQ (accordéon) ===== */
+.faq-item{border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:.7rem;overflow:hidden;transition:border-color .15s}
+.faq-item[open]{border-color:var(--accent-tint-2)}
+.faq-item summary{cursor:pointer;padding:1.05rem 1.2rem;font-family:var(--font-display);font-weight:600;font-size:1.02rem;list-style:none;display:flex;align-items:center;gap:.7rem;color:var(--ink)}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::before{content:"+";font-family:var(--font-mono);color:var(--accent-ink);font-size:1.15rem;flex:none;width:1rem;text-align:center}
+.faq-item[open] summary::before{content:"−"}
+.faq-item .faq-a{padding:0 1.2rem 1.1rem 2.9rem;color:var(--ink-soft);line-height:1.66;font-size:.96rem}
+.faq-item .faq-a a{color:var(--accent-ink)}
+
 /* scène centrale : graphe animé plein cadre + panneaux dans les coins */
 .hud-stage{position:relative;height:min(62vh,580px);border:1px solid rgba(62,224,240,.16);border-radius:16px;overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(62,224,240,.05),transparent 60%),rgba(5,7,12,.55)}
 .hud-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
