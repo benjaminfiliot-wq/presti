@@ -167,6 +167,15 @@ export default function DevisEditor() {
     setStatut('envoye'); setMsg({ type: 'ok', text: 'Devis envoyé au client ✅' })
   }
 
+  async function paiement() {
+    if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de générer le paiement.' }); return }
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch(`/api/devis/${savedId}/payer`, { method: 'POST', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+    const d = await res.json().catch(() => ({}))
+    if (!res.ok || !d.url) { setMsg({ type: 'err', text: d.error ?? 'Paiement indisponible.' }); return }
+    window.open(d.url as string, '_blank')
+  }
+
   const lignesPleines = lignes.filter((l) => l.designation.trim())
   const totals = computeTotals(lignes.map((l) => ({ quantite: Number(l.quantite) || 0, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: l.tva_taux })), Number(remise) || 0)
   const totalBrut = lignes.reduce((s, l) => s + (Number(l.quantite) || 0) * (Number(l.prix_unitaire_ht) || 0), 0)
@@ -181,6 +190,7 @@ export default function DevisEditor() {
     <>
       <button className="psh-btn ghost" onClick={downloadPdf}>Télécharger PDF</button>
       <button className="psh-btn ghost" onClick={envoyer}>Envoyer au client</button>
+      <button className="psh-btn ghost" onClick={paiement}>💳 Paiement</button>
       <button className="psh-btn primary" disabled={saving} onClick={() => save()}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
     </>
   )
