@@ -195,6 +195,11 @@ export default function Home() {
             <a href="#tarifs">Tarifs</a>
           </div>
           <span className="muted">© 2026 Presti · Fait pour les artisans.</span>
+          <div className="footer-legal" style={{ flexBasis: '100%' }}>
+            <a href="/cgu">Conditions générales</a>
+            <a href="/confidentialite">Confidentialité</a>
+            <a href="/mentions-legales">Mentions légales</a>
+          </div>
         </div>
       </footer>
     </>
