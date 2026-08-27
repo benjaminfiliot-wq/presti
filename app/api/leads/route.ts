@@ -3,13 +3,28 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateLeadReply } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 
+// Bornes anti-abus (une demande légitime tient largement dedans).
+const MAX = { slug: 80, contact: 200, nom: 120, message: 5000 }
+const clip = (v: unknown, n: number): string | null => {
+  if (typeof v !== 'string') return null
+  const t = v.trim()
+  return t ? t.slice(0, n) : null
+}
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
-    const { slug, nom_prospect, contact, message } = body ?? {}
+    const body = await req.json().catch(() => null)
+    const slug = clip(body?.slug, MAX.slug)
+    const contact = clip(body?.contact, MAX.contact)
+    const nom_prospect = clip(body?.nom_prospect, MAX.nom)
+    const message = clip(body?.message, MAX.message)
 
+    // Validation stricte des entrées (slug attendu : minuscules/chiffres/tirets)
     if (!slug || !contact) {
       return NextResponse.json({ error: 'Slug et contact requis' }, { status: 400 })
+    }
+    if (!/^[a-z0-9-]{1,80}$/.test(slug)) {
+      return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
     }
 
     // 1) Retrouver l'artisan à partir de son slug
@@ -19,7 +34,10 @@ export async function POST(req: Request) {
       .eq('slug', slug)
       .maybeSingle()
 
-    if (aErr) return NextResponse.json({ error: aErr.message }, { status: 500 })
+    if (aErr) {
+      console.error('[leads] lookup artisan:', aErr.message)
+      return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+    }
     if (!artisan) return NextResponse.json({ error: 'Artisan introuvable' }, { status: 404 })
 
     // 2) Enregistrer le lead (chemin critique : on ne le perd jamais)
@@ -27,16 +45,39 @@ export async function POST(req: Request) {
       .from('leads')
       .insert({
         artisan_id: artisan.id,
-        nom_prospect: nom_prospect ?? null,
+        nom_prospect,
         contact,
-        message: message ?? null,
+        message,
         canal: 'formulaire',
         statut: 'nouveau',
       })
       .select('id')
       .single()
 
-    if (lErr) return NextResponse.json({ error: lErr.message }, { status: 500 })
+    if (lErr) {
+      console.error('[leads] insert lead:', lErr.message)
+      return NextResponse.json({ error: 'Enregistrement impossible' }, { status: 500 })
+    }
+
+    // 2bis) Anti-abus (I2) : on plafonne l'IA+email par artisan sur une fenêtre courte.
+    // Au-delà, le lead est TOUJOURS sauvé (visible dashboard) mais on coupe le coûteux
+    // (empêche l'amplification de coûts IA et le relais d'emails). Ne bloque jamais un vrai lead.
+    let throttled = false
+    try {
+      const since = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+      const { count } = await supabaseAdmin
+        .from('leads')
+        .select('id', { count: 'exact', head: true })
+        .eq('artisan_id', artisan.id)
+        .gte('created_at', since)
+      throttled = (count ?? 0) > 8
+    } catch {
+      // en cas de doute sur le comptage, on ne throttle pas (priorité : ne rien perdre)
+    }
+    if (throttled) {
+      console.warn('[leads] throttle IA/email pour artisan', artisan.id)
+      return NextResponse.json({ ok: true, leadId: lead.id })
+    }
 
     // 3) Étape 4 — réponse IA instantanée + emails.
     // Non bloquant : si l'IA ou l'email échoue, le lead est déjà sauvé et
@@ -122,7 +163,7 @@ ${reply}`
 
     return NextResponse.json({ ok: true, leadId: lead.id })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Erreur inconnue'
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('[leads] erreur inattendue:', e)
+    return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
   }
 }

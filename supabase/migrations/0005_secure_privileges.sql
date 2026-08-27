@@ -10,7 +10,7 @@
 
 -- UPDATE : un utilisateur ne peut pas changer is_founder / plan / compteurs
 create or replace function public.lock_artisan_privileges()
-returns trigger language plpgsql security definer set search_path = public as $$
+returns trigger language plpgsql set search_path = public as $$
 begin
   if current_user not in ('service_role', 'postgres') then
     new.is_founder := old.is_founder;
@@ -28,7 +28,7 @@ create trigger trg_lock_artisan_upd
 
 -- INSERT : à la création de compte, is_founder est forcé à false et plan à 'gratuit'
 create or replace function public.lock_artisan_privileges_ins()
-returns trigger language plpgsql security definer set search_path = public as $$
+returns trigger language plpgsql set search_path = public as $$
 begin
   if current_user not in ('service_role', 'postgres') then
     new.is_founder := false;

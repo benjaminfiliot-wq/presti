@@ -24,21 +24,22 @@ export async function POST(req: Request) {
     if (!artisan) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
 
     const body = await req.json()
-    const { message, nomClient } = body ?? {}
+    const message = typeof body?.message === 'string' ? body.message.trim().slice(0, 4000) : ''
+    const nomClient = typeof body?.nomClient === 'string' ? body.nomClient.trim().slice(0, 160) : null
     const { model, tier, downgraded } = resolveModel(body?.model, artisan.plan)
-    if (!message || !String(message).trim()) {
+    if (!message) {
       return NextResponse.json({ error: 'Décris la demande de ton client.' }, { status: 400 })
     }
 
     const reply = await generateLeadReply(
       { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style },
-      { nom_prospect: nomClient ?? null, message },
+      { nom_prospect: nomClient, message },
       model,
     )
 
     return NextResponse.json({ ok: true, reply, tier, downgraded })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Erreur inconnue'
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('[tools/reponse] IA:', e)
+    return NextResponse.json({ error: "La génération a échoué. Réessaie." }, { status: 500 })
   }
 }

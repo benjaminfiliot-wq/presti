@@ -22,9 +22,9 @@ export async function POST(req: Request) {
     if (!artisan) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
 
     const body = await req.json()
-    const description = body?.description
+    const description = typeof body?.description === 'string' ? body.description.trim().slice(0, 4000) : ''
     const { model, tier, downgraded } = resolveModel(body?.model, artisan.plan)
-    if (!description || !String(description).trim()) {
+    if (!description) {
       return NextResponse.json({ error: 'Décris le chantier.' }, { status: 400 })
     }
 
@@ -40,12 +40,12 @@ export async function POST(req: Request) {
       // table pas encore créée → on génère sans bibliothèque
     }
 
-    const result = await generateDevis({ nom: artisan.nom, metier: artisan.metier }, String(description), postes, model)
+    const result = await generateDevis({ nom: artisan.nom, metier: artisan.metier }, description, postes, model)
     return NextResponse.json({ ok: true, ...result, tier, downgraded })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Erreur inconnue'
+    console.error('[devis/generer] IA:', e)
     return NextResponse.json(
-      { error: "L'IA n'a pas pu générer le devis. Réessaie ou reformule la description. (" + msg + ')' },
+      { error: "L'IA n'a pas pu générer le devis. Réessaie ou reformule la description." },
       { status: 500 },
     )
   }
