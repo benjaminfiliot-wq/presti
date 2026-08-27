@@ -6,13 +6,13 @@ import { sendEmail } from '@/lib/email'
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
 export async function GET(req: Request) {
-  // Sécurité : si CRON_SECRET est défini, on exige le bon header.
+  // Sécurité (fail-closed) : le secret est OBLIGATOIRE. Sans CRON_SECRET configuré,
+  // ou avec un mauvais header, l'endpoint refuse (évite tout déclenchement public d'emails/IA).
+  // Vercel Cron envoie automatiquement `Authorization: Bearer $CRON_SECRET` quand la variable existe.
   const secret = process.env.CRON_SECRET
-  if (secret) {
-    const auth = req.headers.get('authorization')
-    if (auth !== `Bearer ${secret}`) {
-      return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-    }
+  const auth = req.headers.get('authorization')
+  if (!secret || auth !== `Bearer ${secret}`) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
   const nowIso = new Date().toISOString()
