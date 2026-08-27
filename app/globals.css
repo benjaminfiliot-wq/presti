@@ -1038,6 +1038,64 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .lp-foot-in{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;font-size:.86rem}
 .lp-foot-in a{color:var(--muted)}.lp-foot-in a:hover{color:var(--ink)}
 
+/* ===== scènes épinglées (scroll-scrub) ===== */
+.lp-scene{position:relative}
+.lp-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center;perspective:1500px}
+.lp-shead{position:absolute;top:11vh;left:0;right:0;text-align:center;z-index:5;padding:0 1.5rem}
+.lp-shead .k{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--co2);font-weight:600;display:inline-flex;align-items:center;gap:.5rem}
+.lp-shead .k .fi{width:1.5rem;height:1.5rem;border-radius:7px;background:rgba(217,119,87,.14);display:grid;place-items:center}
+.lp-shead .k .fi svg{width:14px;height:14px;stroke:var(--co2);fill:none}
+.lp-shead h3{font-size:clamp(1.5rem,3.4vw,2.5rem);margin:.7rem auto 0;color:#fff;font-weight:800;max-width:20ch;letter-spacing:-.025em}
+.lp-beam2{position:absolute;left:50%;top:50%;width:min(72vw,560px);height:120vh;transform:translate(-50%,-42%);background:radial-gradient(ellipse 46% 40% at 50% 42%,var(--co-glow),rgba(217,119,87,.14) 46%,transparent 72%);filter:blur(18px);pointer-events:none;opacity:calc(.32 + .5*var(--p,.4))}
+.lp-floor{position:absolute;left:50%;bottom:15vh;width:min(56vw,440px);height:34px;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(217,119,87,.5),transparent 70%);filter:blur(9px);pointer-events:none;opacity:calc(.75*var(--p,0))}
+.lp-phase{position:absolute;left:0;right:0;bottom:7vh;text-align:center;z-index:5}
+.lp-phase .pi{font-family:var(--font-mono);font-size:.86rem;color:var(--ink2);position:absolute;left:0;right:0}
+
+/* document (devis / facture) flottant */
+.lp-doc{width:min(88vw,430px);background:#FBFAF7;color:#20201C;border-radius:14px;padding:1.5rem 1.6rem 1.8rem;box-shadow:0 60px 130px -30px rgba(0,0,0,.85),0 10px 30px -10px rgba(0,0,0,.6);position:relative;transform-style:preserve-3d}
+.lp-doc-h{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #20201C;padding-bottom:.75rem}
+.lp-doc-h .co{font-family:var(--font-display);font-weight:700;font-size:1rem;line-height:1.1}
+.lp-doc-h .co small,.lp-doc-h .ti small{display:block;font-family:var(--font-body);font-size:.62rem;color:#8a857a;font-weight:500;margin-top:.2rem}
+.lp-doc-h .ti{text-align:right}
+.lp-doc-h .ti b{font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:var(--co-deep)}
+.lp-doc-h .ti small{font-family:var(--font-mono)}
+.lp-doc-cli{font-size:.66rem;color:#8a857a;margin:.65rem 0 .1rem}
+.lp-doc-cli b{color:#20201C;font-size:.8rem}
+.lp-dl{display:flex;justify-content:space-between;gap:1rem;padding:.4rem 0;border-bottom:1px solid #eae6dd;font-size:.79rem}
+.lp-dl .p{font-family:var(--font-mono);white-space:nowrap}
+.lp-doc-tot{display:flex;justify-content:space-between;margin-top:.75rem;padding-top:.5rem;border-top:2px solid #20201C;font-family:var(--font-display);font-weight:800;font-size:1.15rem}
+.lp-doc-tot .p{color:var(--co-deep)}
+.lp-doc-badges{display:flex;gap:.5rem;margin-top:.85rem;flex-wrap:wrap}
+.lp-bdg{font-family:var(--font-mono);font-size:.58rem;font-weight:600;letter-spacing:.03em;padding:.28rem .55rem;border-radius:999px;background:rgba(217,119,87,.12);color:var(--co-deep)}
+.lp-bdg.ok{background:rgba(70,180,120,.16);color:#2c7a52}
+
+/* specs flottantes */
+.lp-spec{position:absolute;z-index:3;text-align:left;pointer-events:none}
+.lp-spec .lab{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.lp-spec .big{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,4.4vw,3.4rem);line-height:1;letter-spacing:-.03em;background:linear-gradient(180deg,#fff,var(--co2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lp-spec.s1{left:6%;top:27%}.lp-spec.s2{right:6%;top:23%;text-align:right}.lp-spec.s3{right:8%;bottom:25%;text-align:right}.lp-spec.s4{left:7%;bottom:27%}
+@media(max-width:860px){.lp-spec{display:none}}
+
+/* scène relances : fil + messages */
+.lp-relwrap{width:min(90vw,460px)}
+.lp-relmsg{background:linear-gradient(180deg,var(--surf),#0c0b0f);border:1px solid var(--line);border-radius:14px;padding:.9rem 1.05rem;margin-bottom:.7rem;box-shadow:0 20px 50px -24px rgba(0,0,0,.8)}
+.lp-relmsg .rt{font-family:var(--font-mono);font-size:.62rem;color:var(--co2);letter-spacing:.06em;text-transform:uppercase}
+.lp-relmsg p{font-size:.86rem;color:var(--ink2);margin:.35rem 0 0}
+.lp-relmsg.win{border-color:rgba(70,200,154,.35)}
+.lp-relmsg.win .rt{color:var(--ok)}
+
+/* scène dashboard : lignes de leads */
+.lp-dashwin{width:min(90vw,470px);background:linear-gradient(180deg,var(--surf),#0c0b0f);border:1px solid var(--line);border-radius:16px;padding:1.1rem 1.2rem;box-shadow:0 40px 100px -30px rgba(0,0,0,.85)}
+.lp-dashwin .dh{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.7rem}
+.lp-drowd{display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:center;padding:.6rem .1rem;border-bottom:1px solid var(--line2)}
+.lp-drowd .who{font-weight:600;font-size:.9rem}
+.lp-drowd .m{font-size:.75rem;color:var(--muted)}
+
+/* rangée compacte scroll-scrub (lien / paiement) */
+.lp-mini{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+.lp-mini.rev .lp-media{order:-1}
+@media(max-width:820px){.lp-mini{grid-template-columns:1fr}.lp-mini.rev .lp-media{order:0}}
+
 /* reveal — visible par défaut. Le JS "arme" (.reveal-armed) pour cacher puis révéler
    au scroll ; un filet désarme après 4 s. Résultat : jamais de contenu bloqué caché,
    même sans JS, sans GSAP, ou si le compositeur est en pause. */
