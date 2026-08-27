@@ -1040,7 +1040,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 
 /* ===== scènes épinglées (scroll-scrub) ===== */
 .lp-scene{position:relative}
-.lp-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center;perspective:1500px}
+.lp-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center;perspective:1150px}
 .lp-shead{position:absolute;top:11vh;left:0;right:0;text-align:center;z-index:5;padding:0 1.5rem}
 .lp-shead .k{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--co2);font-weight:600;display:inline-flex;align-items:center;gap:.5rem}
 .lp-shead .k .fi{width:1.5rem;height:1.5rem;border-radius:7px;background:rgba(217,119,87,.14);display:grid;place-items:center}
@@ -1052,7 +1052,14 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .lp-phase .pi{font-family:var(--font-mono);font-size:.86rem;color:var(--ink2);position:absolute;left:0;right:0}
 
 /* document (devis / facture) flottant */
-.lp-doc{width:min(88vw,430px);background:#FBFAF7;color:#20201C;border-radius:14px;padding:1.5rem 1.6rem 1.8rem;box-shadow:0 60px 130px -30px rgba(0,0,0,.85),0 10px 30px -10px rgba(0,0,0,.6);position:relative;transform-style:preserve-3d}
+.lp-doc{width:min(90vw,460px);background:#FBFAF7;color:#20201C;border-radius:14px;padding:1.5rem 1.6rem 1.8rem;box-shadow:0 60px 130px -30px rgba(0,0,0,.85),0 10px 30px -10px rgba(0,0,0,.6);position:relative;transform-style:preserve-3d;overflow:hidden}
+/* ligne de scan (le doc "se génère") */
+.lp-scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--co),transparent);box-shadow:0 0 14px 2px rgba(217,119,87,.7);top:calc(8% + var(--p,0) * 84%);opacity:calc(0.85 - var(--p,0));pointer-events:none;z-index:4}
+/* reflet lumineux qui balaie */
+.lp-doc::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.55) 50%,transparent 58%);transform:translateX(calc(-60% + var(--p,0) * 165%));pointer-events:none;z-index:3}
+/* tampon conforme */
+.lp-stamp{position:absolute;right:-8px;bottom:30px;width:92px;height:92px;border-radius:50%;border:2px solid var(--co);color:var(--co-deep);display:grid;place-items:center;text-align:center;font-family:var(--font-mono);font-size:8.5px;font-weight:700;letter-spacing:.08em;line-height:1.35;text-transform:uppercase;background:rgba(251,250,247,.72);backdrop-filter:blur(2px);box-shadow:0 0 26px -6px var(--co-glow);z-index:6;transform:rotate(-13deg) scale(calc(.8 + .22*var(--p,0)));opacity:calc((var(--p,0) - .8) * 6)}
+.lp-stamp b{font-size:11px;display:block;color:var(--co)}
 .lp-doc-h{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #20201C;padding-bottom:.75rem}
 .lp-doc-h .co{font-family:var(--font-display);font-weight:700;font-size:1rem;line-height:1.1}
 .lp-doc-h .co small,.lp-doc-h .ti small{display:block;font-family:var(--font-body);font-size:.62rem;color:#8a857a;font-weight:500;margin-top:.2rem}
@@ -1072,8 +1079,8 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 /* specs flottantes */
 .lp-spec{position:absolute;z-index:3;text-align:left;pointer-events:none}
 .lp-spec .lab{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.lp-spec .big{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,4.4vw,3.4rem);line-height:1;letter-spacing:-.03em;background:linear-gradient(180deg,#fff,var(--co2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.lp-spec.s1{left:6%;top:27%}.lp-spec.s2{right:6%;top:23%;text-align:right}.lp-spec.s3{right:8%;bottom:25%;text-align:right}.lp-spec.s4{left:7%;bottom:27%}
+.lp-spec .big{font-family:var(--font-display);font-weight:800;font-size:clamp(2.4rem,5.2vw,4.2rem);line-height:1;letter-spacing:-.03em;background:linear-gradient(180deg,#fff,var(--co2));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 10px 30px rgba(217,119,87,.28))}
+.lp-spec.s1{left:11%;top:30%}.lp-spec.s2{right:11%;top:26%;text-align:right}.lp-spec.s3{right:12%;bottom:28%;text-align:right}.lp-spec.s4{left:12%;bottom:30%}
 @media(max-width:860px){.lp-spec{display:none}}
 
 /* scène relances : fil + messages */

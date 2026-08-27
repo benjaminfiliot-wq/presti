@@ -113,8 +113,9 @@ export default function Home() {
             <div className="lp-spec s2" data-anim="" data-p="0.36,0.48"><div className="lab">TVA auto</div><div className="big">10<span style={{ fontSize: '.42em' }}> %</span></div></div>
             <div className="lp-spec s3" data-anim="" data-p="0.58,0.70"><div className="lab">Total TTC</div><div className="big" data-count="873.40" data-p="0.46,0.72" data-dec="2" data-suffix=" €">0 €</div></div>
             <div className="lp-spec s4" data-anim="" data-p="0.72,0.84"><div className="lab">Conforme</div><div className="big">PDF</div></div>
-            <div data-tilt="16" style={{ transformStyle: 'preserve-3d' }}>
+            <div data-tilt="20" style={{ transformStyle: 'preserve-3d' }}>
               <div className="lp-doc">
+                <span className="lp-scan" aria-hidden="true" />
                 <div className="lp-doc-h">
                   <div className="co">Dupont Plomberie<small>17230 Marans · SIRET en cours</small></div>
                   <div className="ti"><b>DEVIS</b><small>DEV-2026-0042</small></div>
@@ -132,6 +133,7 @@ export default function Home() {
                   <span className="lp-bdg" data-anim="" data-p="0.80,0.88">Prêt à envoyer</span>
                 </div>
               </div>
+              <span className="lp-stamp" aria-hidden="true"><span>Devis<b>PRÊT</b>conforme</span></span>
             </div>
           </div>
         </ScrollScene>
