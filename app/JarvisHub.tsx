@@ -32,6 +32,7 @@ const I: Record<string, ReactNode> = {
   revenus: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>,
   paiements: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></svg>,
   demandes: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>,
+  mails: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 6 10 7L22 6" /></svg>,
   chiffrages: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /></svg>,
   clients: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-3.5 3.6-6 8-6s8 2.5 8 6" /></svg>,
   config: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.9 1.14V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 6 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15H4.5a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 6 9.4l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 12 4.6a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 3.4 1.14l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 12v.09z" /></svg>,
@@ -49,12 +50,13 @@ function Bar({ label, value, max, color, money }: { label: string; value: number
 }
 
 export type StripeData = { configured: boolean; solde?: number; totalEncaisse?: number; nbPaiements?: number; transactions?: { id: string; montant: number; desc: string; at: string }[]; error?: string }
-type HubKey = 'demandes' | 'chiffrages' | 'clients' | 'revenus' | 'paiements' | 'config'
-type Leaf = { id: string; kind: 'lead' | 'devis' | 'client' | 'tx'; name: string }
+export type MailData = { configured: boolean; messages?: { id: string; from: string; fromName: string; subject: string; at: string; seen: boolean }[]; total?: number; error?: string }
+type HubKey = 'demandes' | 'mails' | 'chiffrages' | 'clients' | 'revenus' | 'paiements' | 'config'
+type Leaf = { id: string; kind: 'lead' | 'devis' | 'client' | 'tx' | 'mail'; name: string }
 type Integrations = { paypal: string; stripe: string; iban: string; entreprise: string; siret: string }
 const EMPTY_INT: Integrations = { paypal: '', stripe: '', iban: '', entreprise: '', siret: '' }
 
-export default function JarvisHub({ stats, stripe, onOpenDevis }: { stats: Stats; stripe: StripeData | null; onOpenDevis: (id: string) => void }) {
+export default function JarvisHub({ stats, stripe, mails, onOpenDevis }: { stats: Stats; stripe: StripeData | null; mails: MailData | null; onOpenDevis: (id: string) => void }) {
   const [active, setActive] = useState<HubKey | null>(null)
   const [expanded, setExpanded] = useState<string | null>(null)
   const [cfg, setCfg] = useState<Integrations>(EMPTY_INT)
@@ -67,14 +69,15 @@ export default function JarvisHub({ stats, stripe, onOpenDevis }: { stats: Stats
 
   const HUBS: { key: HubKey; label: string; color: string; count: string; leaves: Leaf[] }[] = [
     { key: 'demandes', label: 'DEMANDES', color: '#F5B301', count: String(stats.leads.total), leaves: stats.leadsList.slice(0, 7).map((l) => ({ id: l.id, kind: 'lead', name: l.nom })) },
+    { key: 'mails', label: 'MAILS', color: '#2FD3B5', count: mails?.configured ? String(mails.total || 0) : '—', leaves: (mails?.messages || []).slice(0, 7).map((m) => ({ id: m.id, kind: 'mail' as const, name: m.subject })) },
     { key: 'chiffrages', label: 'CHIFFRAGES', color: '#6C8CFF', count: String(stats.devis.total), leaves: stats.devisList.slice(0, 7).map((d) => ({ id: d.id, kind: 'devis', name: d.client })) },
     { key: 'clients', label: 'CLIENTS', color: '#3EE0F0', count: String(stats.clients), leaves: stats.clientsList.slice(0, 7).map((c) => ({ id: c.nom, kind: 'client', name: c.nom })) },
     { key: 'revenus', label: 'REVENUS', color: '#38CD8C', count: eurShort(stats.revenus.accepte), leaves: stats.devisList.filter((d) => d.statut === 'accepte').slice(0, 7).map((d) => ({ id: d.id, kind: 'devis', name: d.client })) },
     { key: 'paiements', label: 'PAIEMENTS', color: '#7A6CFF', count: stripe?.configured ? eurShort(stripe.totalEncaisse || 0) : '—', leaves: (stripe?.transactions || []).slice(0, 7).map((t) => ({ id: t.id, kind: 'tx' as const, name: t.desc || `${Math.round(t.montant)} €` })) },
     { key: 'config', label: 'CONFIG', color: '#F0567A', count: `${nInt}/3`, leaves: [] },
   ]
-  const COLOR: Record<HubKey, string> = { demandes: '#F5B301', chiffrages: '#6C8CFF', clients: '#3EE0F0', revenus: '#38CD8C', paiements: '#7A6CFF', config: '#F0567A' }
-  const LABEL: Record<HubKey, string> = { demandes: 'Demandes', chiffrages: 'Chiffrages', clients: 'Clients', revenus: 'Revenus', paiements: 'Paiements', config: 'Config' }
+  const COLOR: Record<HubKey, string> = { demandes: '#F5B301', mails: '#2FD3B5', chiffrages: '#6C8CFF', clients: '#3EE0F0', revenus: '#38CD8C', paiements: '#7A6CFF', config: '#F0567A' }
+  const LABEL: Record<HubKey, string> = { demandes: 'Demandes', mails: 'Mails', chiffrages: 'Chiffrages', clients: 'Clients', revenus: 'Revenus', paiements: 'Paiements', config: 'Config' }
 
   const hubClick = (k: HubKey) => { setActive(active === k ? null : k); setExpanded(null) }
   const leafClick = (h: HubKey, l: Leaf) => {
@@ -222,6 +225,23 @@ export default function JarvisHub({ stats, stripe, onOpenDevis }: { stats: Stats
                 </div>
               ))}
             </div>
+          )}
+
+          {active === 'mails' && (
+            mails?.configured ? (
+              <div>
+                <div className="jv-mt" style={{ marginTop: 0 }}>Boîte de réception · {mails.total || 0} derniers mails</div>
+                {mails.error && <div className="hud-empty">Connexion mail : {mails.error}</div>}
+                {!mails.error && (mails.messages || []).length === 0 && <div className="hud-empty">Aucun mail récent.</div>}
+                {(mails.messages || []).map((m) => (
+                  <div className="hud-row" key={m.id} style={{ cursor: 'default' }}>
+                    <span className="who"><b>{m.subject}</b><span>{m.fromName || m.from}</span></span>
+                    {!m.seen && <span className="hud-chip chip-nouveau">Non lu</span>}
+                    <span className="rt">il y a {relTime(m.at)}</span>
+                  </div>
+                ))}
+              </div>
+            ) : <div className="hud-empty">Boîte mail pas encore connectée sur ce déploiement.</div>
           )}
 
           {active === 'paiements' && (
