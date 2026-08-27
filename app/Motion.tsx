@@ -23,6 +23,8 @@ export default function Motion() {
 
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { showAll(); return }
 
+    const lp = document.querySelector('.lp')
+    lp?.classList.add('reveal-armed') // à partir d'ici, les .reveal sont cachés jusqu'à .in
     gsap.registerPlugin(ScrollTrigger)
     const ctx = gsap.context(() => {
       // Révélations
@@ -52,7 +54,8 @@ export default function Motion() {
     })
 
     const refresh = setTimeout(() => ScrollTrigger.refresh(), 400)
-    const safety = setTimeout(showAll, 3200) // filet : jamais de contenu caché
+    // filet : après 4 s on DÉSARME (contenu visible sans dépendre d'une transition/rAF) + reveal complet
+    const safety = setTimeout(() => { lp?.classList.remove('reveal-armed'); showAll() }, 4000)
     return () => { ctx.revert(); clearTimeout(refresh); clearTimeout(safety) }
   }, [])
 
