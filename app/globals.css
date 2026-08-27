@@ -866,7 +866,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   --ink:#ECEAE6; --ink2:#C7C2BA; --muted:#8B867D; --faint:#5B564E;
   --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.05);
   --ok:#46C89A;
-  background:var(--bg); color:var(--ink); position:relative; overflow-x:hidden;
+  background:var(--bg); color:var(--ink); position:relative; overflow-x:clip;
 }
 .lp *{box-sizing:border-box}
 .lp ::selection{background:rgba(217,119,87,.28)}
