@@ -30,6 +30,7 @@ function relTime(iso: string) {
 
 const I: Record<string, ReactNode> = {
   revenus: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>,
+  paiements: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></svg>,
   demandes: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>,
   chiffrages: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /></svg>,
   clients: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-3.5 3.6-6 8-6s8 2.5 8 6" /></svg>,
@@ -47,12 +48,13 @@ function Bar({ label, value, max, color, money }: { label: string; value: number
   )
 }
 
-type HubKey = 'demandes' | 'chiffrages' | 'clients' | 'revenus' | 'config'
-type Leaf = { id: string; kind: 'lead' | 'devis' | 'client'; name: string }
+export type StripeData = { configured: boolean; solde?: number; totalEncaisse?: number; nbPaiements?: number; transactions?: { id: string; montant: number; desc: string; at: string }[]; error?: string }
+type HubKey = 'demandes' | 'chiffrages' | 'clients' | 'revenus' | 'paiements' | 'config'
+type Leaf = { id: string; kind: 'lead' | 'devis' | 'client' | 'tx'; name: string }
 type Integrations = { paypal: string; stripe: string; iban: string; entreprise: string; siret: string }
 const EMPTY_INT: Integrations = { paypal: '', stripe: '', iban: '', entreprise: '', siret: '' }
 
-export default function JarvisHub({ stats, onOpenDevis }: { stats: Stats; onOpenDevis: (id: string) => void }) {
+export default function JarvisHub({ stats, stripe, onOpenDevis }: { stats: Stats; stripe: StripeData | null; onOpenDevis: (id: string) => void }) {
   const [active, setActive] = useState<HubKey | null>(null)
   const [expanded, setExpanded] = useState<string | null>(null)
   const [cfg, setCfg] = useState<Integrations>(EMPTY_INT)
@@ -68,10 +70,11 @@ export default function JarvisHub({ stats, onOpenDevis }: { stats: Stats; onOpen
     { key: 'chiffrages', label: 'CHIFFRAGES', color: '#6C8CFF', count: String(stats.devis.total), leaves: stats.devisList.slice(0, 7).map((d) => ({ id: d.id, kind: 'devis', name: d.client })) },
     { key: 'clients', label: 'CLIENTS', color: '#3EE0F0', count: String(stats.clients), leaves: stats.clientsList.slice(0, 7).map((c) => ({ id: c.nom, kind: 'client', name: c.nom })) },
     { key: 'revenus', label: 'REVENUS', color: '#38CD8C', count: eurShort(stats.revenus.accepte), leaves: stats.devisList.filter((d) => d.statut === 'accepte').slice(0, 7).map((d) => ({ id: d.id, kind: 'devis', name: d.client })) },
+    { key: 'paiements', label: 'PAIEMENTS', color: '#7A6CFF', count: stripe?.configured ? eurShort(stripe.totalEncaisse || 0) : '—', leaves: (stripe?.transactions || []).slice(0, 7).map((t) => ({ id: t.id, kind: 'tx' as const, name: t.desc || `${Math.round(t.montant)} €` })) },
     { key: 'config', label: 'CONFIG', color: '#F0567A', count: `${nInt}/3`, leaves: [] },
   ]
-  const COLOR: Record<HubKey, string> = { demandes: '#F5B301', chiffrages: '#6C8CFF', clients: '#3EE0F0', revenus: '#38CD8C', config: '#F0567A' }
-  const LABEL: Record<HubKey, string> = { demandes: 'Demandes', chiffrages: 'Chiffrages', clients: 'Clients', revenus: 'Revenus', config: 'Config' }
+  const COLOR: Record<HubKey, string> = { demandes: '#F5B301', chiffrages: '#6C8CFF', clients: '#3EE0F0', revenus: '#38CD8C', paiements: '#7A6CFF', config: '#F0567A' }
+  const LABEL: Record<HubKey, string> = { demandes: 'Demandes', chiffrages: 'Chiffrages', clients: 'Clients', revenus: 'Revenus', paiements: 'Paiements', config: 'Config' }
 
   const hubClick = (k: HubKey) => { setActive(active === k ? null : k); setExpanded(null) }
   const leafClick = (h: HubKey, l: Leaf) => {
@@ -219,6 +222,26 @@ export default function JarvisHub({ stats, onOpenDevis }: { stats: Stats; onOpen
                 </div>
               ))}
             </div>
+          )}
+
+          {active === 'paiements' && (
+            stripe?.configured ? (
+              <div>
+                <div className="jv-mt" style={{ marginTop: 0 }}>Stripe · encaissements réels</div>
+                <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', fontFamily: 'var(--font-mono)', fontSize: 13, marginBottom: 12 }}>
+                  <div>Solde : <b style={{ color: '#eafcff' }}>{eur(stripe.solde || 0)}</b></div>
+                  <div>Total encaissé : <b style={{ color: '#eafcff' }}>{eur(stripe.totalEncaisse || 0)}</b></div>
+                  <div>Paiements : <b style={{ color: '#eafcff' }}>{stripe.nbPaiements || 0}</b></div>
+                </div>
+                {(stripe.transactions || []).length === 0 && <div className="hud-empty">Aucun paiement encore — dès qu&apos;un client paie par carte, ça apparaît ici en direct.</div>}
+                {(stripe.transactions || []).map((t) => (
+                  <div className="hud-row" key={t.id} style={{ cursor: 'default' }}>
+                    <span className="who"><b>{t.desc || 'Paiement'}</b><span>Stripe</span></span>
+                    <span className="amt">{eur(t.montant)}</span><span className="rt">il y a {relTime(t.at)}</span>
+                  </div>
+                ))}
+              </div>
+            ) : <div className="hud-empty">Stripe pas encore actif sur ce déploiement.</div>
           )}
 
           {active === 'config' && (

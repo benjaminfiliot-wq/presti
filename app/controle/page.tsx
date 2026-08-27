@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import JarvisHub, { type Stats } from '@/app/JarvisHub'
+import JarvisHub, { type Stats, type StripeData } from '@/app/JarvisHub'
 
 const eur = (n: number) => `${Math.round(n || 0).toLocaleString('fr-FR')} €`
 
 export default function Controle() {
   const router = useRouter()
   const [stats, setStats] = useState<Stats | null>(null)
+  const [stripe, setStripe] = useState<StripeData | null>(null)
   const [ready, setReady] = useState(false)
   const [booting, setBooting] = useState(true)
   const [clock, setClock] = useState('')
@@ -29,6 +30,8 @@ export default function Controle() {
       const res = await fetch('/api/control/stats', { headers: { Authorization: `Bearer ${data.session.access_token}` } })
       if (res.status === 403) { router.replace('/dashboard'); return }
       if (res.ok) setStats(await res.json())
+      const sres = await fetch('/api/control/stripe', { headers: { Authorization: `Bearer ${data.session.access_token}` } })
+      if (sres.ok) setStripe(await sres.json())
       setReady(true)
     }
     load(); const t = setInterval(load, 20000); return () => clearInterval(t)
@@ -61,7 +64,7 @@ export default function Controle() {
         <div className="hud-empty">Données indisponibles.</div>
       ) : (
         <>
-          <JarvisHub stats={stats} onOpenDevis={(id) => router.push(`/devis/${id}`)} />
+          <JarvisHub stats={stats} stripe={stripe} onOpenDevis={(id) => router.push(`/devis/${id}`)} />
 
           <div className="hud-ticker">
             <div className="track">
