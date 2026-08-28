@@ -15,6 +15,7 @@ export type PDFData = {
   totalBrut: number; remisePct: number; remiseMontant: number; totalHt: number
   tvaParTaux: [string, number][]; totalTtc: number; acomptePct: number; acompteMontant: number
   franchise: boolean; assurance: string; conditions: string; iban: string
+  type?: 'devis' | 'facture'; echeanceDate?: string
 }
 
 const s = StyleSheet.create({
@@ -49,7 +50,7 @@ const s = StyleSheet.create({
 
 export function DevisPDF({ d }: { d: PDFData }) {
   return (
-    <Document title={`Devis ${d.numero}`}>
+    <Document title={`${d.type === 'facture' ? 'Facture' : 'Devis'} ${d.numero}`}>
       <Page size="A4" style={s.page}>
         <View style={s.head}>
           <View style={{ maxWidth: 300 }}>
@@ -57,10 +58,10 @@ export function DevisPDF({ d }: { d: PDFData }) {
             {d.entSub.map((l, i) => <Text key={i} style={s.sub}>{l}</Text>)}
           </View>
           <View style={s.metaWrap}>
-            <Text style={s.title}>DEVIS</Text>
+            <Text style={s.title}>{d.type === 'facture' ? 'FACTURE' : 'DEVIS'}</Text>
             <Text style={s.metaLine}>{d.numero}</Text>
             <Text style={s.metaLine}>Le {d.date}</Text>
-            <Text style={s.metaLine}>Valable jusqu&apos;au {d.validiteDate}</Text>
+            <Text style={s.metaLine}>{d.type === 'facture' ? `Échéance : ${d.echeanceDate || d.date}` : `Valable jusqu'au ${d.validiteDate}`}</Text>
           </View>
         </View>
 
@@ -102,16 +103,20 @@ export function DevisPDF({ d }: { d: PDFData }) {
           {d.acomptePct > 0 && <View style={[s.totRow, s.acompte]}><Text>Acompte {d.acomptePct}%</Text><Text>{eur(d.acompteMontant)}</Text></View>}
         </View>
 
-        <View style={s.sign}>
-          <View style={s.signBox}>
-            <Text>Bon pour accord — le client fait précéder sa signature de la mention manuscrite « Devis reçu avant l&apos;exécution des travaux ».</Text>
-            <Text style={{ marginTop: 8 }}>Date et signature :</Text>
+        {d.type !== 'facture' && (
+          <View style={s.sign}>
+            <View style={s.signBox}>
+              <Text>Bon pour accord — le client fait précéder sa signature de la mention manuscrite « Devis reçu avant l&apos;exécution des travaux ».</Text>
+              <Text style={{ marginTop: 8 }}>Date et signature :</Text>
+            </View>
           </View>
-        </View>
+        )}
 
         <View style={s.legal}>
           <Text style={s.legalTitle}>MENTIONS</Text>
-          <Text>Devis gratuit, valable {d.validiteJours} jours à compter du {d.date}.{d.conditions ? ` Conditions de paiement : ${d.conditions}.` : ''}{d.iban ? ` Règlement par virement — IBAN ${d.iban}.` : ''}</Text>
+          {d.type === 'facture'
+            ? <Text>Facture payable {d.echeanceDate ? `au plus tard le ${d.echeanceDate}` : 'à réception'}.{d.conditions ? ` ${d.conditions}.` : ''}{d.iban ? ` Règlement par virement — IBAN ${d.iban}.` : ''} En cas de retard : pénalités au taux de 3 fois le taux d&apos;intérêt légal, plus une indemnité forfaitaire de recouvrement de 40 €.</Text>
+            : <Text>Devis gratuit, valable {d.validiteJours} jours à compter du {d.date}.{d.conditions ? ` Conditions de paiement : ${d.conditions}.` : ''}{d.iban ? ` Règlement par virement — IBAN ${d.iban}.` : ''}</Text>}
           {d.franchise ? <Text style={{ marginTop: 3 }}>TVA non applicable, art. L.223 et s. du code des impositions sur les biens et services (CIBS).</Text> : null}
           {d.assurance ? <Text style={{ marginTop: 3 }}>Assurance professionnelle : {d.assurance}</Text> : null}
         </View>

@@ -176,6 +176,16 @@ export default function DevisEditor() {
     window.open(d.url as string, '_blank')
   }
 
+  async function creerFacture() {
+    if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de créer la facture.' }); return }
+    setSaving(true); setMsg(null)
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch('/api/factures', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ devis_id: savedId }) })
+    const d = await res.json().catch(() => ({})); setSaving(false)
+    if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Création de la facture échouée.' }); return }
+    router.push('/factures')
+  }
+
   const lignesPleines = lignes.filter((l) => l.designation.trim())
   const totals = computeTotals(lignes.map((l) => ({ quantite: Number(l.quantite) || 0, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: l.tva_taux })), Number(remise) || 0)
   const totalBrut = lignes.reduce((s, l) => s + (Number(l.quantite) || 0) * (Number(l.prix_unitaire_ht) || 0), 0)
@@ -190,7 +200,8 @@ export default function DevisEditor() {
     <>
       <button className="psh-btn ghost" onClick={downloadPdf}>Télécharger PDF</button>
       <button className="psh-btn ghost" onClick={envoyer}>Envoyer au client</button>
-      <button className="psh-btn ghost" onClick={paiement}>💳 Paiement</button>
+      <button className="psh-btn ghost" onClick={paiement}>Paiement</button>
+      <button className="psh-btn ghost" onClick={creerFacture}>Créer la facture</button>
       <button className="psh-btn primary" disabled={saving} onClick={() => save()}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
     </>
   )

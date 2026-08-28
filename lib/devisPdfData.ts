@@ -8,7 +8,7 @@ type ArtisanRow = {
   tva_regime?: string | null; conditions_paiement?: string | null; iban?: string | null
 }
 type DevisRow = {
-  numero?: string | null; date_emission?: string | null; validite_jours?: number | null
+  numero?: string | null; date_emission?: string | null; validite_jours?: number | null; date_echeance?: string | null
   remise_pct?: number | null; acompte_pct?: number | null
   client_nom?: string | null; client_adresse?: string | null; objet?: string | null
 }
@@ -16,7 +16,7 @@ type LigneRow = { designation?: string | null; quantite?: number | null; unite?:
 
 const dateFr = (d: Date) => d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
 
-export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: ArtisanRow): PDFData {
+export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: ArtisanRow, type: 'devis' | 'facture' = 'devis'): PDFData {
   const ls = (lignes || []).map((l) => ({
     designation: l.designation ?? '', quantite: Number(l.quantite) || 0, unite: l.unite ?? 'u',
     prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: Number(l.tva_taux) || 20,
@@ -27,6 +27,7 @@ export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: Artis
   const validiteJours = Number(devis.validite_jours) || 90
   const validiteDate = new Date(emission.getTime() + validiteJours * 86400000)
   const acomptePct = Number(devis.acompte_pct) || 0
+  const echeance = devis.date_echeance ? new Date(devis.date_echeance) : new Date(emission.getTime() + 30 * 86400000)
 
   const entSub = [
     [artisan.metier, artisan.forme_juridique].filter(Boolean).join(' · '),
@@ -46,5 +47,6 @@ export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: Artis
     totalBrut, remisePct: Number(devis.remise_pct) || 0, remiseMontant: totalBrut - totals.total_ht, totalHt: totals.total_ht,
     tvaParTaux: Object.entries(totals.tva_par_taux), totalTtc: totals.total_ttc, acomptePct, acompteMontant: (totals.total_ttc * acomptePct) / 100,
     franchise: (artisan.tva_regime || 'franchise') === 'franchise', assurance, conditions: artisan.conditions_paiement || '', iban: artisan.iban || '',
+    type, echeanceDate: dateFr(echeance),
   }
 }
