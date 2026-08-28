@@ -283,7 +283,6 @@ Besoin décrit par le prospect : ${besoin}`
   const res = await client.messages.create({
     model,
     max_tokens: 1024,
-    temperature: 0.55,
     system,
     messages: [{ role: 'user', content: user }],
   })
@@ -355,7 +354,6 @@ Numéro de relance : ${rang}`
   const res = await client.messages.create({
     model,
     max_tokens: 700,
-    temperature: 0.55,
     system,
     messages: [{ role: 'user', content: user }],
   })
@@ -553,7 +551,6 @@ RÈGLES :
   const res = await client.messages.create({
     model,
     max_tokens: 2200,
-    temperature: 0.15,
     system,
     messages: [{ role: 'user', content: `Chantier : ${description.trim()}` }],
   })

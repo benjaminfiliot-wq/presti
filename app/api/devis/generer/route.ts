@@ -4,6 +4,10 @@ import { generateDevis } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
 import { consumeCredit } from '@/lib/credits'
 
+// Le modèle Expert (opus) peut mettre ~30 s : on dépasse le timeout Vercel par défaut (10 s).
+export const runtime = 'nodejs'
+export const maxDuration = 60
+
 // Génère les lignes d'un devis à partir d'une description de chantier.
 export async function POST(req: Request) {
   try {

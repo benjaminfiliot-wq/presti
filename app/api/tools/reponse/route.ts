@@ -4,6 +4,10 @@ import { generateLeadReply } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
 import { consumeCredit } from '@/lib/credits'
 
+// Modèle Expert (opus) possible → au-delà du timeout Vercel par défaut (10 s).
+export const runtime = 'nodejs'
+export const maxDuration = 60
+
 // Générateur de réponse à la demande : l'artisan connecté colle la demande
 // d'un client, Presti rédige la réponse dans son ton.
 export async function POST(req: Request) {
