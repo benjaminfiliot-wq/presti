@@ -2,7 +2,7 @@
 
 import { TIERS, type Tier, tierAllowed } from '@/lib/models'
 
-const PLAN_BADGE: Record<string, string> = { gratuit: 'Inclus', pro: 'Offre Pro', business: 'Business' }
+const PLAN_BADGE: Record<string, string> = { gratuit: 'Inclus', essentiel: 'Dès Essentiel', studio: 'Dès Studio', signature: 'Signature', pro: 'Offre Pro', business: 'Business' }
 
 const Lock = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg>
@@ -25,7 +25,7 @@ export default function ModelSelect({ plan, value, onChange }: { plan: string; v
               aria-disabled={!allowed}
               className={`msel-opt${on ? ' on' : ''}${allowed ? '' : ' locked'}`}
               onClick={() => { if (allowed) onChange(t.value) }}
-              title={allowed ? t.desc : `Réservé à l'offre ${t.plan === 'pro' ? 'Pro' : 'Business'}`}
+              title={allowed ? t.desc : `Réservé à l'offre ${PLAN_BADGE[t.plan] ?? t.plan}`}
             >
               {!allowed && <span className="lk"><Lock /></span>}
               <span className="mt">{t.value === 'expert' && <span className="crown">◆</span>}{t.label}</span>

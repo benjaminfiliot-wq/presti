@@ -8,21 +8,21 @@ const MODEL_BY_TIER: Record<Tier, string> = {
   expert: 'claude-opus-5',
 }
 
-// Plans qui débloquent chaque niveau.
+// Plans qui débloquent chaque niveau. (business = fondateurs ; pro = ancien plan legacy)
 const TIER_PLANS: Record<Tier, string[]> = {
-  standard: ['gratuit', 'pro', 'business'],
-  pro: ['pro', 'business'],
-  expert: ['business'],
+  standard: ['gratuit', 'essentiel', 'studio', 'signature', 'pro', 'business'],
+  pro: ['essentiel', 'studio', 'signature', 'pro', 'business'],
+  expert: ['studio', 'signature', 'business'],
 }
 
 // Métadonnées d'affichage (côté client — sans les IDs de modèles).
-export const TIERS: { value: Tier; label: string; desc: string; plan: 'gratuit' | 'pro' | 'business' }[] = [
+export const TIERS: { value: Tier; label: string; desc: string; plan: string }[] = [
   { value: 'standard', label: 'Standard', desc: 'Rapide, pour les demandes simples', plan: 'gratuit' },
-  { value: 'pro', label: 'Pro', desc: 'Chiffrage fin, postes détaillés', plan: 'pro' },
-  { value: 'expert', label: 'Expert', desc: 'Le plus précis, gros chantiers', plan: 'business' },
+  { value: 'pro', label: 'Pro', desc: 'Chiffrage fin, postes détaillés', plan: 'essentiel' },
+  { value: 'expert', label: 'Expert', desc: 'Le plus précis, gros chantiers', plan: 'studio' },
 ]
 
-const PLAN_RANK: Record<string, number> = { gratuit: 0, pro: 1, business: 2 }
+const PLAN_RANK: Record<string, number> = { gratuit: 0, essentiel: 1, pro: 1, studio: 2, signature: 3, business: 4 }
 
 export function tierAllowed(tier: Tier, plan: string | null | undefined): boolean {
   return TIER_PLANS[tier].includes(plan || 'gratuit')

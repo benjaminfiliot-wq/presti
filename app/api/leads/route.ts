@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateLeadReply } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
+import { consumeCredit } from '@/lib/credits'
 
 // Bornes anti-abus (une demande légitime tient largement dedans).
 const MAX = { slug: 80, contact: 200, nom: 120, message: 5000 }
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
     // 1) Retrouver l'artisan à partir de son slug
     const { data: artisan, error: aErr } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email')
+      .select('id, nom, metier, ton_style, email, is_founder')
       .eq('slug', slug)
       .maybeSingle()
 
@@ -76,6 +77,14 @@ export async function POST(req: Request) {
     }
     if (throttled) {
       console.warn('[leads] throttle IA/email pour artisan', artisan.id)
+      return NextResponse.json({ ok: true, leadId: lead.id })
+    }
+
+    // Décompte d'un crédit pour la réponse auto. Si épuisé : le lead est TOUJOURS
+    // sauvé (visible dans le dashboard), on coupe seulement la génération IA.
+    const credit = await consumeCredit(artisan.id, 'standard', !!artisan.is_founder)
+    if (!credit.ok) {
+      console.warn('[leads] crédits épuisés pour artisan', artisan.id, '— réponse auto coupée, lead conservé')
       return NextResponse.json({ ok: true, leadId: lead.id })
     }
 

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateLeadReply } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
+import { consumeCredit } from '@/lib/credits'
 
 // Générateur de réponse à la demande : l'artisan connecté colle la demande
 // d'un client, Presti rédige la réponse dans son ton.
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier, ton_style, plan')
+      .select('nom, metier, ton_style, plan, is_founder')
       .eq('id', userData.user.id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
@@ -30,6 +31,9 @@ export async function POST(req: Request) {
     if (!message) {
       return NextResponse.json({ error: 'Décris la demande de ton client.' }, { status: 400 })
     }
+
+    const credit = await consumeCredit(userData.user.id, tier, !!artisan.is_founder)
+    if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
 
     const reply = await generateLeadReply(
       { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style },

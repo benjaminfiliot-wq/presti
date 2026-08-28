@@ -17,6 +17,7 @@ const NAV: { group: string; items: Nav[] }[] = [
       { key: 'dashboard', label: 'Tableau de bord', href: '/dashboard', icon: ic(<><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></>) },
       { key: 'devis', label: 'Devis', href: '/devis', icon: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M8 13h8M8 17h5" /></>) },
       { key: 'factures', label: 'Factures', href: '/factures', icon: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M9 15h6" /></>) },
+      { key: 'abonnement', label: 'Abonnement', href: '/abonnement', icon: ic(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
     ],
   },
   {
@@ -27,9 +28,9 @@ const NAV: { group: string; items: Nav[] }[] = [
   },
 ]
 
-type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null }
+type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null; credits: number | null }
 
-const PLAN_LABEL: Record<string, string> = { gratuit: 'Offre Gratuite', pro: 'Offre Pro', business: 'Offre Business' }
+const PLAN_LABEL: Record<string, string> = { gratuit: 'Essai gratuit', essentiel: 'Offre Essentiel', studio: 'Offre Studio', signature: 'Offre Signature', pro: 'Offre Pro', business: 'Offre Business' }
 
 function initials(nom: string | null) {
   if (!nom) return 'P'
@@ -124,7 +125,7 @@ export default function AppShell({
               <b>{a?.nom || 'Mon compte'}</b>
               {isFounder
                 ? <span className="founder">Fondateur · Accès total</span>
-                : <span>{PLAN_LABEL[a?.plan ?? 'gratuit'] ?? 'Offre Gratuite'}</span>}
+                : <span>{PLAN_LABEL[a?.plan ?? 'gratuit'] ?? 'Essai gratuit'} · <strong style={{ color: 'var(--accent-ink)' }}>{a?.credits ?? 0}</strong> crédits</span>}
             </span>
           </div>
           <button className="psh-logout" onClick={logout}>Déconnexion</button>

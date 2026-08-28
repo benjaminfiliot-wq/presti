@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateDevis } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
+import { consumeCredit } from '@/lib/credits'
 
 // Génère les lignes d'un devis à partir d'une description de chantier.
 export async function POST(req: Request) {
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier, plan')
+      .select('nom, metier, plan, is_founder')
       .eq('id', userData.user.id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
@@ -27,6 +28,9 @@ export async function POST(req: Request) {
     if (!description) {
       return NextResponse.json({ error: 'Décris le chantier.' }, { status: 400 })
     }
+
+    const credit = await consumeCredit(userData.user.id, tier, !!artisan.is_founder)
+    if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
 
     // Bibliothèque de postes du métier (optionnelle — peut ne pas exister encore)
     let postes: { designation: string; unite: string; prix_ht_min: number; prix_ht_max: number; tva_defaut: number }[] = []
