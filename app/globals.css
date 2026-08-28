@@ -1207,26 +1207,49 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 /* reveal — visible par défaut. Le JS "arme" (.reveal-armed) pour cacher puis révéler
    au scroll ; un filet désarme après 4 s. Résultat : jamais de contenu bloqué caché,
    même sans JS, sans GSAP, ou si le compositeur est en pause. */
-.lp .reveal{opacity:1;transform:none}
-.lp.reveal-armed .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.2,.7,.25,1),transform .8s cubic-bezier(.2,.7,.25,1)}
+.lp .reveal,.lp .reveal-kids>*{opacity:1;transform:none}
+/* bloc entier : rise + léger scale, courbe de décélération Apple */
+.lp.reveal-armed .reveal{opacity:0;transform:translateY(26px) scale(.99);transition:opacity .78s var(--ease-apple),transform .78s var(--ease-apple)}
 .lp.reveal-armed .reveal.in{opacity:1;transform:none}
+/* cascade : les enfants directs entrent en décalé (--d posé par Motion) */
+.lp.reveal-armed .reveal-kids>*{opacity:0;transform:translateY(22px) scale(.985);transition:opacity .7s var(--ease-apple),transform .7s var(--ease-apple);transition-delay:var(--d,0s)}
+.lp.reveal-armed .reveal-kids.in>*{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
-  .lp.reveal-armed .reveal{opacity:1!important;transform:none!important;transition:none!important}
+  .lp.reveal-armed .reveal,.lp.reveal-armed .reveal-kids>*{opacity:1!important;transform:none!important;transition:none!important}
   .lp-beam,.lp-float,.lp-typing i{animation:none!important}
   .lp-tl-dot{animation:none!important;border-color:var(--co);color:var(--co2);box-shadow:0 0 0 4px rgba(217,119,87,.16)}
 }
 
 /* ===== Craft polish (apple-design + Emil Kowalski) ===== */
-:root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-io:cubic-bezier(.77,0,.175,1)}
+:root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-io:cubic-bezier(.77,0,.175,1);--ease-apple:cubic-bezier(.16,1,.3,1)}
+
+/* Entrée du hero au chargement : cascade rise + net-depuis-flou (signature Apple).
+   Chaque élément arrive légèrement après le précédent → la page "s'assemble". */
+@keyframes lp-in{from{opacity:0;transform:translateY(28px);filter:blur(7px)}to{opacity:1;transform:none;filter:blur(0)}}
+.lp-hero .lp-eyebrow{animation:lp-in .9s var(--ease-apple) both}
+.lp-hero h1{animation:lp-in .95s .08s var(--ease-apple) both}
+.lp-hero .lp-lede{animation:lp-in .95s .17s var(--ease-apple) both}
+.lp-hero .lp-cta{animation:lp-in .95s .26s var(--ease-apple) both}
+.lp-hero .lp-trust{animation:lp-in .95s .35s var(--ease-apple) both}
+.lp-hero .lp-stage{animation:lp-in 1.15s .44s var(--ease-apple) both}
+
 /* feedback à la pression : instantané (rend l'UI "vivante") */
 .lp-btn,.fs-tab,.psh-btn,.abo-card .psh-btn{transition:transform .14s var(--ease-out),box-shadow .25s var(--ease-out),background .2s,border-color .2s,color .15s}
 .lp-btn:active,.btn:active,.fs-tab:active,.psh-btn:active,.abo-card .psh-btn:active,.wrap .card button:active{transform:scale(.97)}
-/* survol réservé aux vrais pointeurs (pas de faux hover au tap) */
+/* survol réservé aux vrais pointeurs — lift spring (courbe Apple) */
 @media(hover:hover) and (pointer:fine){
   .lp-btn--p:hover{transform:translateY(-1px)}
-  .lp-rc:hover{transform:translateY(-2px)}
+  .lp-rc{transition:transform .4s var(--ease-apple),border-color .25s,box-shadow .4s var(--ease-apple)}
+  .lp-rc:hover{transform:translateY(-4px)}
+  .lp-plan{transition:transform .4s var(--ease-apple),border-color .25s,box-shadow .4s var(--ease-apple)}
+  .lp-plan:hover{transform:translateY(-5px)}
+  .lp-hc{transition:transform .4s var(--ease-apple),border-color .25s}
+  .lp-hc:hover{transform:translateY(-3px)}
 }
 @media (hover:none){ .lp-rc:hover,.fs-tab:hover,.lp-plan:hover{transform:none} }
+@media(prefers-reduced-motion:reduce){
+  .lp-hero .lp-eyebrow,.lp-hero h1,.lp-hero .lp-lede,.lp-hero .lp-cta,.lp-hero .lp-trust,.lp-hero .lp-stage{animation:none}
+}
 /* transition d'onglet de la vitrine : crossfade + blur (masque le remplacement) */
 .fs-enter{animation:fs-enter .34s var(--ease-out) both}
 @keyframes fs-enter{from{opacity:0;filter:blur(7px);transform:scale(.985)}to{opacity:1;filter:blur(0);transform:none}}

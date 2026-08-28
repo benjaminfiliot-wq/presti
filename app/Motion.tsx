@@ -14,8 +14,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
  */
 export default function Motion() {
   useEffect(() => {
-    const revealEls = Array.from(document.querySelectorAll<HTMLElement>('.reveal'))
+    const revealEls = Array.from(document.querySelectorAll<HTMLElement>('.reveal, .reveal-kids'))
     const countEls = Array.from(document.querySelectorAll<HTMLElement>('.count'))
+    // Cascade : chaque enfant direct d'une grille .reveal-kids entre légèrement décalé.
+    document.querySelectorAll<HTMLElement>('.reveal-kids').forEach((c) => {
+      Array.from(c.children).forEach((ch, i) => (ch as HTMLElement).style.setProperty('--d', `${i * 0.08}s`))
+    })
     const showAll = () => {
       revealEls.forEach((e) => e.classList.add('in'))
       countEls.forEach((e) => { e.textContent = (e.dataset.to || '0') + (e.dataset.suffix || '') })

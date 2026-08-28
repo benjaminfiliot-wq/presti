@@ -73,9 +73,9 @@ export default function Home() {
         </section>
 
         {/* RÉASSURANCE */}
-        <section className="lp-blk reveal" style={{ paddingTop: '1rem' }}>
+        <section className="lp-blk" style={{ paddingTop: '1rem' }}>
           <div className="container">
-            <div className="lp-reassure">
+            <div className="lp-reassure reveal-kids">
               <div className="lp-rc"><span className="i">{I.zap}</span><div><b>Rapide</b><em>Réponse en moins d&apos;une minute</em></div></div>
               <div className="lp-rc"><span className="i">{I.badge}</span><div><b>Fiable</b><em>Devis conformes, dans votre ton</em></div></div>
               <div className="lp-rc"><span className="i">{I.shield}</span><div><b>Sécurisé</b><em>Vos données isolées, chiffrées</em></div></div>
@@ -106,7 +106,7 @@ export default function Home() {
           <div className="container">
             <div className="lp-head2 c reveal"><span className="lp-kick">Abonnements</span><h2>Simple : vous payez à l&apos;usage, en crédits.</h2><p>Chaque formule vous donne des crédits chaque mois. Vous montez en formule quand votre activité grandit.</p></div>
 
-            <div className="lp-howcredits reveal">
+            <div className="lp-howcredits reveal-kids">
               <div className="lp-hc"><span className="ic">{I.zap}</span><b>1 crédit = 1 génération</b><span>Une réponse envoyée à un client, ou un devis chiffré par l&apos;IA.</span></div>
               <div className="lp-hc"><span className="ic">{I.badge}</span><b>Modèle Expert = 3 crédits</b><span>L&apos;IA la plus puissante consomme plus — réservez-la aux gros chantiers.</span></div>
               <div className="lp-hc"><span className="ic">{I.repeat}</span><b>Rechargés chaque mois</b><span>Vos crédits se réinitialisent à chaque renouvellement. Non reportés au mois suivant.</span></div>
@@ -114,7 +114,7 @@ export default function Home() {
 
             <div className="lp-trial reveal"><b>Essai gratuit</b><em>3 crédits offerts (3 réponses ou devis) sur vos vraies demandes — pour juger la qualité avant de payer. Sans carte.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
 
-            <div className="lp-plans reveal">
+            <div className="lp-plans reveal-kids">
               <div className="lp-plan">
                 <div className="lp-pn">Essentiel</div>
                 <div className="lp-pp">29€<small>par mois</small></div>
