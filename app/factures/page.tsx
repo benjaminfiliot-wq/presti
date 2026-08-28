@@ -36,14 +36,17 @@ export default function FacturesList() {
   }, [router])
 
   async function pdf(f: Facture) {
+    // Ouvre un onglet DANS le geste utilisateur (sinon bloqué par le navigateur, surtout mobile).
+    const win = window.open('', '_blank')
     setBusy(f.id)
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/factures/${f.id}/pdf`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })
     setBusy(null)
-    if (!res.ok) return
+    if (!res.ok) { win?.close(); alert('Impossible d’ouvrir le PDF. Réessaie dans un instant.'); return }
     const url = URL.createObjectURL(await res.blob())
-    const a = document.createElement('a'); a.href = url; a.download = `${f.numero || 'facture'}.pdf`; a.click()
-    URL.revokeObjectURL(url)
+    if (win) win.location.href = url
+    else { const a = document.createElement('a'); a.href = url; a.download = `${f.numero || 'facture'}.pdf`; a.click() }
+    setTimeout(() => URL.revokeObjectURL(url), 60000)
   }
 
   async function setStatut(f: Facture, statut: string) {

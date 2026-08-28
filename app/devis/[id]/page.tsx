@@ -149,13 +149,14 @@ export default function DevisEditor() {
 
   async function downloadPdf() {
     if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de télécharger le PDF.' }); return }
+    const win = window.open('', '_blank') // dans le geste utilisateur (anti-blocage, mobile)
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/devis/${savedId}/pdf`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })
-    if (!res.ok) { setMsg({ type: 'err', text: 'PDF indisponible, réessaie.' }); return }
-    const blob = await res.blob()
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a'); a.href = url; a.download = `${numero || 'devis'}.pdf`; a.click()
-    URL.revokeObjectURL(url)
+    if (!res.ok) { win?.close(); setMsg({ type: 'err', text: 'PDF indisponible, réessaie.' }); return }
+    const url = URL.createObjectURL(await res.blob())
+    if (win) win.location.href = url
+    else { const a = document.createElement('a'); a.href = url; a.download = `${numero || 'devis'}.pdf`; a.click() }
+    setTimeout(() => URL.revokeObjectURL(url), 60000)
   }
 
   async function envoyer() {
