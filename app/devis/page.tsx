@@ -43,6 +43,7 @@ export default function DevisList() {
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/devis/${d.id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
     if (res.ok) await load()
+    else alert('Suppression impossible. Réessaie dans un instant.')
     setBusy(null)
   }
 

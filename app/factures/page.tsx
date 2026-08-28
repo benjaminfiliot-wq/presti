@@ -49,7 +49,8 @@ export default function FacturesList() {
   async function setStatut(f: Facture, statut: string) {
     setBusy(f.id)
     const { data } = await supabase.auth.getSession()
-    await fetch(`/api/factures/${f.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ statut }) })
+    const res = await fetch(`/api/factures/${f.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ statut }) })
+    if (!res.ok) alert('Action impossible. Réessaie dans un instant.')
     await load(); setBusy(null)
   }
 
