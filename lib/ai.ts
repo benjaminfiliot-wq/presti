@@ -581,7 +581,7 @@ RÈGLES :
         quantite: Number.isFinite(q) && q > 0 ? Math.round(q * 100) / 100 : 1,
         unite: normalizeUnite(String(l.unite ?? 'u')),
         prix_unitaire_ht: Number.isFinite(pu) && pu > 0 ? Math.round(pu * 100) / 100 : 0,
-        tva_taux: [5.5, 10, 20].includes(tva) ? tva : 10,
+        tva_taux: [0, 5.5, 10, 20].includes(tva) ? tva : 10, // 0 autorisé (franchise de TVA)
       }
     })
     .filter((l) => l.designation)

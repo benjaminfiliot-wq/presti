@@ -18,23 +18,30 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   return NextResponse.json({ facture, lignes: lignes ?? [] })
 }
 
+// I5 — une facture est une pièce comptable : le statut n'évolue qu'en marche avant
+// (émise → payée/annulée, payée → annulée). Jamais de retour en arrière.
+const NEXT_STATUTS: Record<string, string[]> = { emise: ['payee', 'annulee'], payee: ['annulee'], annulee: [] }
+
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const uid = await auth(req)
   if (!uid) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
   const b = await req.json().catch(() => ({}))
-  const patch: Record<string, unknown> = { updated_at: new Date().toISOString() }
-  if (['emise', 'payee', 'annulee'].includes(b?.statut)) patch.statut = b.statut
-  const { error } = await supabaseAdmin.from('factures').update(patch).eq('id', id).eq('artisan_id', uid)
+  const next = b?.statut
+  if (!['emise', 'payee', 'annulee'].includes(next)) return NextResponse.json({ error: 'Statut invalide' }, { status: 400 })
+  const { data: cur } = await supabaseAdmin.from('factures').select('statut').eq('id', id).eq('artisan_id', uid).maybeSingle()
+  if (!cur) return NextResponse.json({ error: 'Facture introuvable' }, { status: 404 })
+  if (next !== cur.statut && !NEXT_STATUTS[cur.statut]?.includes(next)) {
+    return NextResponse.json({ error: 'Une facture émise ne peut pas revenir en arrière. Pour l’annuler, passez-la en « annulée ».' }, { status: 409 })
+  }
+  const { error } = await supabaseAdmin.from('factures').update({ statut: next, updated_at: new Date().toISOString() }).eq('id', id).eq('artisan_id', uid)
   if (error) { console.error('[factures PATCH]', error.message); return NextResponse.json({ error: 'Mise à jour impossible' }, { status: 500 }) }
   return NextResponse.json({ ok: true })
 }
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
   const uid = await auth(req)
   if (!uid) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-  const { error } = await supabaseAdmin.from('factures').delete().eq('id', id).eq('artisan_id', uid)
-  if (error) return NextResponse.json({ error: 'Suppression impossible' }, { status: 500 })
-  return NextResponse.json({ ok: true })
+  // Une facture émise ne se supprime pas (séquence continue obligatoire) : on l'annule.
+  return NextResponse.json({ error: 'Une facture ne se supprime pas. Passez-la en « annulée » pour la neutraliser.' }, { status: 403 })
 }

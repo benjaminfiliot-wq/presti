@@ -20,7 +20,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Trop de lignes (200 max).' }, { status: 400 })
     }
     const s = (v: unknown, n: number): string | null => (typeof v === 'string' && v.trim() ? v.trim().slice(0, n) : null)
-    const totals = computeTotals(lignes.map((l) => ({ quantite: Number(l.quantite) || 0, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: Number(l.tva_taux) || 0 })), Number(b?.remise_pct) || 0)
+
+    // Franchise de TVA (défaut auto-entrepreneur) ⇒ 0 % ; sinon on garde le taux (0 réel préservé).
+    const { data: art } = await supabaseAdmin.from('artisans').select('tva_regime').eq('id', uid).maybeSingle()
+    const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
+    const eff = lignes.map((l) => {
+      const tv = Number(l.tva_taux)
+      return {
+        designation: (l.designation ?? '').slice(0, 300),
+        quantite: Number(l.quantite) || 1, unite: l.unite ?? 'u',
+        prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0,
+        tva_taux: franchise ? 0 : (Number.isFinite(tv) ? tv : 20),
+      }
+    })
+    const totals = computeTotals(eff, Number(b?.remise_pct) || 0)
 
     // Numéro en séquence continue
     const { data: n } = await supabaseAdmin.rpc('next_numero', { p_artisan: uid, p_type: 'devis' })
@@ -52,17 +65,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Création du devis impossible' }, { status: 500 })
     }
 
-    if (lignes.length) {
+    if (eff.length) {
       await supabaseAdmin.from('devis_lignes').insert(
-        lignes.map((l, i) => ({
-          devis_id: devis.id,
-          ordre: i,
-          designation: (l.designation ?? '').slice(0, 300),
-          quantite: Number(l.quantite) || 1,
-          unite: l.unite ?? 'u',
-          prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0,
-          tva_taux: Number(l.tva_taux) || 20,
-        })),
+        eff.map((l, i) => ({ devis_id: devis.id, ordre: i, ...l })),
       )
     }
 

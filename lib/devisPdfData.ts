@@ -17,10 +17,17 @@ type LigneRow = { designation?: string | null; quantite?: number | null; unite?:
 const dateFr = (d: Date) => d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
 
 export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: ArtisanRow, type: 'devis' | 'facture' = 'devis'): PDFData {
-  const ls = (lignes || []).map((l) => ({
-    designation: l.designation ?? '', quantite: Number(l.quantite) || 0, unite: l.unite ?? 'u',
-    prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: Number(l.tva_taux) || 20,
-  }))
+  // Franchise de TVA (défaut auto-entrepreneur) ⇒ 0 % sur toutes les lignes,
+  // cohérent avec la mention « TVA non applicable, art. 293 B du CGI ».
+  const franchise = (artisan.tva_regime || 'franchise') === 'franchise'
+  const ls = (lignes || []).map((l) => {
+    const tv = Number(l.tva_taux)
+    return {
+      designation: l.designation ?? '', quantite: Number(l.quantite) || 0, unite: l.unite ?? 'u',
+      prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0,
+      tva_taux: franchise ? 0 : (Number.isFinite(tv) ? tv : 20), // ne pas écraser un 0 réel
+    }
+  })
   const totals = computeTotals(ls, Number(devis.remise_pct) || 0)
   const totalBrut = ls.reduce((sum, l) => sum + l.quantite * l.prix_unitaire_ht, 0)
   const emission = devis.date_emission ? new Date(devis.date_emission) : new Date()
@@ -46,7 +53,7 @@ export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: Artis
     lignes: ls,
     totalBrut, remisePct: Number(devis.remise_pct) || 0, remiseMontant: totalBrut - totals.total_ht, totalHt: totals.total_ht,
     tvaParTaux: Object.entries(totals.tva_par_taux), totalTtc: totals.total_ttc, acomptePct, acompteMontant: (totals.total_ttc * acomptePct) / 100,
-    franchise: (artisan.tva_regime || 'franchise') === 'franchise', assurance, conditions: artisan.conditions_paiement || '', iban: artisan.iban || '',
+    franchise, assurance, conditions: artisan.conditions_paiement || '', iban: artisan.iban || '',
     type, echeanceDate: dateFr(echeance),
   }
 }

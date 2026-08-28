@@ -31,10 +31,19 @@ export async function POST(req: Request) {
     }
     if (lignes.length > 200) return NextResponse.json({ error: 'Trop de lignes (200 max).' }, { status: 400 })
 
-    const totals = computeTotals(
-      lignes.map((l) => ({ quantite: Number(l.quantite) || 0, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: Number(l.tva_taux) || 0 })),
-      Number(src.remise_pct) || 0,
-    )
+    // Franchise de TVA (défaut auto-entrepreneur) ⇒ 0 % ; sinon taux conservé (0 réel préservé).
+    const { data: art } = await supabaseAdmin.from('artisans').select('tva_regime').eq('id', uid).maybeSingle()
+    const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
+    const eff = lignes.map((l) => {
+      const tv = Number(l.tva_taux)
+      return {
+        designation: (l.designation ?? '').slice(0, 300),
+        quantite: Number(l.quantite) || 1, unite: l.unite ?? 'u',
+        prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0,
+        tva_taux: franchise ? 0 : (Number.isFinite(tv) ? tv : 20),
+      }
+    })
+    const totals = computeTotals(eff, Number(src.remise_pct) || 0)
 
     const { data: n } = await supabaseAdmin.rpc('next_numero', { p_artisan: uid, p_type: 'facture' })
     const numero = `FAC-${new Date().getFullYear()}-${String(n ?? 1).padStart(4, '0')}`
@@ -63,14 +72,9 @@ export async function POST(req: Request) {
       .single()
     if (fErr) { console.error('[factures] insert:', fErr.message); return NextResponse.json({ error: 'Création de la facture impossible' }, { status: 500 }) }
 
-    if (lignes.length) {
+    if (eff.length) {
       await supabaseAdmin.from('factures_lignes').insert(
-        lignes.map((l, i) => ({
-          facture_id: facture.id, ordre: i,
-          designation: (l.designation ?? '').slice(0, 300),
-          quantite: Number(l.quantite) || 1, unite: l.unite ?? 'u',
-          prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: Number(l.tva_taux) || 20,
-        })),
+        eff.map((l, i) => ({ facture_id: facture.id, ordre: i, ...l })),
       )
     }
 
