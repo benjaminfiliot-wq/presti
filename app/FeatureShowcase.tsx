@@ -58,12 +58,12 @@ function FactureDemo() {
       <div className="fs-dl fsr" style={R(0.85)}><span>Groupe de sécurité + raccords</span><span className="p">84,00 €</span></div>
       <div className="fs-dl fsr" style={R(1.2)}><span>Main-d&apos;œuvre (2 h)</span><span className="p">90,00 €</span></div>
       <div className="fs-doc-tot fsr" style={R(1.5)}><span>Total TTC</span><span className="p">{total} €</span></div>
-      <div className="fs-doc-cli fsr" style={R(1.8)}>Échéance de paiement&nbsp;: <b>27 septembre 2026</b></div>
+      <div className="fs-doc-ech fsr" style={R(1.8)}><span>Échéance de paiement</span><b>27 sept. 2026</b></div>
       <div className="fs-badges">
-        <span className="fs-bdg fsr" style={R(2.1)}>N° FAC- en séquence</span>
+        <span className="fs-bdg fsr" style={R(2.1)}>N° FAC- légal</span>
         <span className="fs-bdg fsr" style={R(2.3)}>Mentions pénalités</span>
-        <span className="fs-bdg ok fsr" style={R(2.6)}>✓ Marquer payée</span>
       </div>
+      <span className="fs-stamp" style={R(2.7)} aria-hidden="true">PAYÉE</span>
     </div>
   )
 }
@@ -100,24 +100,12 @@ function LienDemo() {
     </div>
   )
 }
-function PaiementDemo() {
-  return (
-    <div className="fs-pay">
-      <div className="fs-payrow fsr" style={R(0)}><span>À régler</span><span className="amt">873,40 €</span></div>
-      <div className="fs-card fsr" style={R(0.5)}><span className="ic" /><span className="num">4242 4242 4242 4242</span></div>
-      <div className="fs-send fsr" style={R(0.95)}>Payer 873,40 €</div>
-      <div className="fs-arrived fsr" style={R(1.7)}><span className="tick">✓</span> Paiement reçu · chantier confirmé</div>
-    </div>
-  )
-}
-
 const FEATURES = [
   { id: 'devis', label: 'Devis chiffré', desc: 'Décrivez le chantier : Presti détaille les postes, applique la bonne TVA et sort un PDF conforme.', Demo: DevisDemo },
   { id: 'facture', label: 'Facturation', desc: 'Le chantier est fait ? Le devis devient une facture en un clic — numéro légal, échéance et mentions de pénalités générés tout seuls.', Demo: FactureDemo },
   { id: 'relances', label: 'Relances auto', desc: 'Le client ne répond pas ? Presti relance à J+2, J+5, J+10 — et s’arrête dès qu’il répond.', Demo: RelancesDemo },
   { id: 'dashboard', label: 'Tableau de bord', desc: 'Toutes vos demandes au même endroit, avec leur statut. Plus rien ne se perd.', Demo: DashboardDemo },
   { id: 'lien', label: 'Lien de contact', desc: 'Un lien à vous à coller partout. Chaque demande arrive dans Presti, instantanément.', Demo: LienDemo },
-  { id: 'paiement', label: 'Paiement', desc: 'Le client règle le devis en ligne, par carte, via un lien sécurisé (Stripe).', Demo: PaiementDemo },
 ] as const
 
 export default function FeatureShowcase() {

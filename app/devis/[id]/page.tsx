@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { computeTotals } from '@/lib/devisTotals'
 import AppShell from '@/app/AppShell'
 import ModelSelect from '@/app/ModelSelect'
+import LogoUpload from '@/app/LogoUpload'
 import type { Tier } from '@/lib/models'
 
 type Ligne = { key: string; designation: string; quantite: string; unite: string; prix_unitaire_ht: string; tva_taux: number }
@@ -42,6 +43,7 @@ export default function DevisEditor() {
   const [iban, setIban] = useState('')
   const [condPaiement, setCondPaiement] = useState('')
   const [tvaRegime, setTvaRegime] = useState('franchise')
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [savingInfos, setSavingInfos] = useState(false)
   const [infosMsg, setInfosMsg] = useState('')
 
@@ -72,7 +74,7 @@ export default function DevisEditor() {
       setEntNom(a.nom ?? ''); setMetier(a.metier ?? ''); setSiret(a.siret ?? ''); setForme(a.forme_juridique ?? '')
       setEntAdresse([a.adresse, a.code_postal, a.ville].filter(Boolean).join(', '))
       setAssNom(a.assurance_nom ?? ''); setAssContrat(a.assurance_contrat ?? ''); setAssActivites(a.assurance_activites ?? ''); setAssZone(a.assurance_zone ?? '')
-      setIban(a.iban ?? ''); setCondPaiement(a.conditions_paiement ?? ''); setTvaRegime(a.tva_regime ?? 'franchise'); setPlan(a.plan ?? 'gratuit')
+      setIban(a.iban ?? ''); setCondPaiement(a.conditions_paiement ?? ''); setTvaRegime(a.tva_regime ?? 'franchise'); setPlan(a.plan ?? 'gratuit'); setLogoUrl(a.logo_url ?? null)
 
       if (!isNew) {
         const { data: d } = await supabase.from('devis').select('*').eq('id', rawId).maybeSingle()
@@ -167,15 +169,6 @@ export default function DevisEditor() {
     setStatut('envoye'); setMsg({ type: 'ok', text: 'Devis envoyé au client ✅' })
   }
 
-  async function paiement() {
-    if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de générer le paiement.' }); return }
-    const { data } = await supabase.auth.getSession()
-    const res = await fetch(`/api/devis/${savedId}/payer`, { method: 'POST', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
-    const d = await res.json().catch(() => ({}))
-    if (!res.ok || !d.url) { setMsg({ type: 'err', text: d.error ?? 'Paiement indisponible.' }); return }
-    window.open(d.url as string, '_blank')
-  }
-
   async function creerFacture() {
     if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de créer la facture.' }); return }
     setSaving(true); setMsg(null)
@@ -200,7 +193,6 @@ export default function DevisEditor() {
     <>
       <button className="psh-btn ghost" onClick={downloadPdf}>Télécharger PDF</button>
       <button className="psh-btn ghost" onClick={envoyer}>Envoyer au client</button>
-      <button className="psh-btn ghost" onClick={paiement}>Paiement</button>
       <button className="psh-btn ghost" onClick={creerFacture}>Créer la facture</button>
       <button className="psh-btn primary" disabled={saving} onClick={() => save()}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
     </>
@@ -293,6 +285,10 @@ export default function DevisEditor() {
                     <div><label>Zone géographique</label><input value={assZone} onChange={(e) => setAssZone(e.target.value)} placeholder="Ex : France métropolitaine" /></div>
                   </div>
                 </div>
+                <div style={{ marginTop: '.4rem' }}>
+                  <label>Logo de l&apos;entreprise</label>
+                  {uid && <LogoUpload uid={uid} value={logoUrl} onChange={setLogoUrl} />}
+                </div>
                 <div className="grid2" style={{ marginTop: '.4rem' }}>
                   <div><label>IBAN (pour le règlement)</label><input value={iban} onChange={(e) => setIban(e.target.value)} placeholder="FR76 …" /></div>
                   <div><label>Conditions de paiement</label><input value={condPaiement} onChange={(e) => setCondPaiement(e.target.value)} placeholder="Acompte 30%, solde à la fin" /></div>
@@ -308,12 +304,18 @@ export default function DevisEditor() {
             <div className="live-flag"><span className="b" />Aperçu en direct — conforme</div>
             <div className="doc">
               <div className="doc-head">
-                <div>
+                <div className="doc-brand">
+                  {logoUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img className="doc-logo" src={logoUrl} alt="" />
+                  )}
+                  <div>
                   <div className="doc-artisan-nom">{entNom || 'Votre entreprise'}</div>
                   <div className="doc-artisan-sub">
                     {metier}{forme ? ` · ${forme}` : ''}<br />
                     {entAdresse || <span className="doc-todo">Adresse à compléter</span>}<br />
                     {siret ? `SIRET ${siret}` : <span className="doc-todo">SIRET à compléter</span>}
+                  </div>
                   </div>
                 </div>
                 <div className="doc-meta">

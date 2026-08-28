@@ -28,7 +28,7 @@ const NAV: { group: string; items: Nav[] }[] = [
   },
 ]
 
-type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null; credits: number | null }
+type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null; credits: number | null; logo_url: string | null }
 
 const PLAN_LABEL: Record<string, string> = { gratuit: 'Essai gratuit', essentiel: 'Offre Essentiel', studio: 'Offre Studio', signature: 'Offre Signature', pro: 'Offre Pro', business: 'Offre Business' }
 
@@ -120,7 +120,10 @@ export default function AppShell({
 
         <div className="psh-foot">
           <div className="psh-founder">
-            <span className="psh-ava">{initials(a?.nom ?? null)}</span>
+            {a?.logo_url
+              // eslint-disable-next-line @next/next/no-img-element
+              ? <span className="psh-ava has-logo"><img src={a.logo_url} alt="" /></span>
+              : <span className="psh-ava">{initials(a?.nom ?? null)}</span>}
             <span className="psh-who">
               <b>{a?.nom || 'Mon compte'}</b>
               {isFounder

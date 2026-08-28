@@ -373,6 +373,16 @@ button:disabled{opacity:.55;cursor:default}
 /* le document (aperçu live = base du futur PDF) */
 .doc{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:2.1rem 2.1rem 2.3rem;color:#26241d}
 .doc-head{display:flex;justify-content:space-between;gap:1.2rem;border-bottom:2px solid #26241d;padding-bottom:1rem}
+.doc-brand{display:flex;align-items:center;gap:.8rem;min-width:0}
+.doc-logo{width:48px;height:48px;object-fit:contain;flex:none}
+/* Upload logo (espace connecté) */
+.logo-up{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;margin-top:.35rem}
+.logo-prev{width:64px;height:64px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);display:grid;place-items:center;overflow:hidden;flex:none}
+.logo-prev.has{background:#fff}
+.logo-prev img{width:100%;height:100%;object-fit:contain}
+.logo-ph{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.logo-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.logo-hint{flex-basis:100%;font-size:.78rem;color:var(--muted);margin:.2rem 0 0}
 .doc-artisan-nom{font-family:var(--font-display);font-size:1.45rem;font-weight:600;color:#1A1915;line-height:1.1}
 .doc-artisan-sub{font-size:.76rem;color:#6b675c;margin-top:.25rem;line-height:1.5}
 .doc-meta{text-align:right;flex-shrink:0}
@@ -435,6 +445,8 @@ button:disabled{opacity:.55;cursor:default}
 .psh-foot{margin-top:auto;padding-top:12px;display:flex;flex-direction:column;gap:8px}
 .psh-founder{border:1px solid var(--line);border-radius:12px;padding:10px 11px;background:var(--surface-2);display:flex;align-items:center;gap:10px}
 .psh-ava{width:34px;height:34px;border-radius:9px;flex:none;background:linear-gradient(135deg,var(--accent-2),var(--accent));color:#1a0f0a;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:13px}
+.psh-ava.has-logo{background:#fff;overflow:hidden}
+.psh-ava.has-logo img{width:100%;height:100%;object-fit:contain}
 .psh-who{min-width:0}
 .psh-who b{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
 .psh-who span{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
@@ -1176,6 +1188,10 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .fs-badges{display:flex;gap:.5rem;margin-top:.85rem;flex-wrap:wrap}
 .fs-bdg{font-family:var(--font-mono);font-size:.58rem;font-weight:600;padding:.28rem .55rem;border-radius:999px;background:rgba(217,119,87,.12);color:var(--co-deep)}
 .fs-bdg.ok{background:rgba(70,180,120,.16);color:#2c7a52}
+.fs-doc-ech{display:flex;justify-content:space-between;align-items:center;margin-top:.55rem;padding:.4rem .6rem;background:rgba(217,119,87,.08);border:1px solid rgba(217,119,87,.22);border-radius:8px;font-size:.72rem;color:#6a655c}
+.fs-doc-ech b{font-family:var(--font-mono);color:#20201C;font-size:.78rem}
+.fs-stamp{position:absolute;top:30%;right:6%;font-family:var(--font-display);font-weight:800;font-size:1.5rem;letter-spacing:.08em;color:#2c7a52;border:.18rem solid #2c7a52;border-radius:9px;padding:.1rem .55rem;transform:rotate(-12deg);opacity:.86;pointer-events:none;z-index:5;animation:fs-stampin .45s var(--ease-out) both}
+@keyframes fs-stampin{from{opacity:0;transform:rotate(-12deg) scale(1.6)}to{opacity:.86;transform:rotate(-12deg) scale(1)}}
 
 /* démo relances / dashboard / lien / paiement */
 .fs-rel,.fs-lien,.fs-pay{width:min(94%,460px);display:flex;flex-direction:column;gap:.65rem}
@@ -1202,7 +1218,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .fs-card .ic{width:1.8rem;height:1.2rem;border-radius:4px;background:linear-gradient(120deg,var(--co2),var(--co));flex:none}
 .fs-card .num{font-family:var(--font-mono);font-size:.85rem;color:var(--ink2)}
 @media(max-width:520px){.fs-stage{min-height:400px;padding:1.4rem .8rem}}
-@media(prefers-reduced-motion:reduce){.fsr{opacity:1;animation:none}.fs-scan,.fs-beam,.fs-doc{animation:none}}
+@media(prefers-reduced-motion:reduce){.fsr{opacity:1;animation:none}.fs-scan,.fs-beam,.fs-doc,.fs-stamp{animation:none}}
 
 /* reveal — visible par défaut. Le JS "arme" (.reveal-armed) pour cacher puis révéler
    au scroll ; un filet désarme après 4 s. Résultat : jamais de contenu bloqué caché,

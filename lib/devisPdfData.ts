@@ -5,11 +5,11 @@ type ArtisanRow = {
   nom?: string | null; metier?: string | null; forme_juridique?: string | null
   adresse?: string | null; code_postal?: string | null; ville?: string | null; siret?: string | null
   assurance_nom?: string | null; assurance_contrat?: string | null; assurance_activites?: string | null; assurance_zone?: string | null
-  tva_regime?: string | null; conditions_paiement?: string | null; iban?: string | null
+  tva_regime?: string | null; conditions_paiement?: string | null; iban?: string | null; logo_url?: string | null
 }
 type DevisRow = {
   numero?: string | null; date_emission?: string | null; validite_jours?: number | null; date_echeance?: string | null
-  remise_pct?: number | null; acompte_pct?: number | null
+  remise_pct?: number | null; acompte_pct?: number | null; statut?: string | null
   client_nom?: string | null; client_adresse?: string | null; objet?: string | null
 }
 type LigneRow = { designation?: string | null; quantite?: number | null; unite?: string | null; prix_unitaire_ht?: number | null; tva_taux?: number | null }
@@ -55,5 +55,6 @@ export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: Artis
     tvaParTaux: Object.entries(totals.tva_par_taux), totalTtc: totals.total_ttc, acomptePct, acompteMontant: (totals.total_ttc * acomptePct) / 100,
     franchise, assurance, conditions: artisan.conditions_paiement || '', iban: artisan.iban || '',
     type, echeanceDate: dateFr(echeance),
+    logoUrl: artisan.logo_url || null, statut: devis.statut || null,
   }
 }
