@@ -179,6 +179,20 @@ export default function DevisEditor() {
     router.push('/factures')
   }
 
+  function recommencer() {
+    if (!confirm('Effacer toutes les lignes et recommencer le chiffrage ?')) return
+    setLignes([emptyLigne()]); setAiNote(''); setMsg(null)
+  }
+
+  async function supprimerDevis() {
+    if (!savedId) { router.push('/devis'); return }
+    if (!confirm('Supprimer définitivement ce devis ?')) return
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch(`/api/devis/${savedId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+    if (res.ok) router.push('/devis')
+    else setMsg({ type: 'err', text: 'Suppression impossible.' })
+  }
+
   const lignesPleines = lignes.filter((l) => l.designation.trim())
   const totals = computeTotals(lignes.map((l) => ({ quantite: Number(l.quantite) || 0, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: l.tva_taux })), Number(remise) || 0)
   const totalBrut = lignes.reduce((s, l) => s + (Number(l.quantite) || 0) * (Number(l.prix_unitaire_ht) || 0), 0)
@@ -194,6 +208,7 @@ export default function DevisEditor() {
       <button className="psh-btn ghost" onClick={downloadPdf}>Télécharger PDF</button>
       <button className="psh-btn ghost" onClick={envoyer}>Envoyer au client</button>
       <button className="psh-btn ghost" onClick={creerFacture}>Créer la facture</button>
+      {savedId && <button className="psh-btn ghost danger" onClick={supprimerDevis}>Supprimer</button>}
       <button className="psh-btn primary" disabled={saving} onClick={() => save()}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
     </>
   )
@@ -244,7 +259,10 @@ export default function DevisEditor() {
                 </div>
               ))}
               <datalist id="unites"><option value="u" /><option value="ml" /><option value="m²" /><option value="m³" /><option value="h" /><option value="forfait" /><option value="ens." /></datalist>
-              <button className="btn btn--ghost" style={{ width: 'auto', marginTop: '.9rem' }} onClick={() => setLignes((prev) => [...prev, emptyLigne()])}>+ Ajouter une ligne</button>
+              <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', marginTop: '.9rem' }}>
+                <button className="btn btn--ghost" style={{ width: 'auto' }} onClick={() => setLignes((prev) => [...prev, emptyLigne()])}>+ Ajouter une ligne</button>
+                <button className="btn btn--ghost danger" style={{ width: 'auto' }} onClick={recommencer}>Tout effacer &amp; recommencer</button>
+              </div>
             </div>
 
             <div className="tool-card">

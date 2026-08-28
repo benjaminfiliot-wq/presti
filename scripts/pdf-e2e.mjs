@@ -28,7 +28,7 @@ const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ e
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
   id: u.id, email, nom: 'Dupont Plomberie', metier: 'Plombier', ton_style: 'pro', slug: `pdf-${st}`,
   forme_juridique: 'Auto-entreprise', adresse: '12 rue des Lilas', code_postal: '17230', ville: 'Marans', siret: '123 456 789 00012',
-  iban: 'FR76 3000 4000 0512 3456 7890 143', conditions_paiement: 'Paiement à 30 jours', tva_regime: 'reel',
+  iban: 'FR76 3000 4000 0512 3456 7890 143', conditions_paiement: 'Paiement à 30 jours', tva_regime: 'franchise',
   assurance_nom: 'AXA Pro', assurance_contrat: 'BTP-2291', logo_url: logo,
 }) })
 const lignes = (pid, col) => [

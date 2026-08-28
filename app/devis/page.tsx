@@ -20,17 +20,31 @@ export default function DevisList() {
   const router = useRouter()
   const [ready, setReady] = useState(false)
   const [devis, setDevis] = useState<Devis[]>([])
+  const [busy, setBusy] = useState<string | null>(null)
+
+  async function load() {
+    const { data: ds } = await supabase.from('devis').select('id, numero, objet, client_nom, statut, total_ttc, date_emission').order('created_at', { ascending: false })
+    setDevis((ds as Devis[]) ?? [])
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
       const { data: prof } = await supabase.from('artisans').select('id').eq('id', data.session.user.id).maybeSingle()
       if (!prof) { router.replace('/onboarding'); return }
-      const { data: ds } = await supabase.from('devis').select('id, numero, objet, client_nom, statut, total_ttc, date_emission').order('created_at', { ascending: false })
-      setDevis((ds as Devis[]) ?? [])
+      await load()
       setReady(true)
     })
   }, [router])
+
+  async function supprimer(d: Devis) {
+    if (!confirm(`Supprimer le devis ${d.numero || ''} ? Cette action est définitive.`)) return
+    setBusy(d.id)
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch(`/api/devis/${d.id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+    if (res.ok) await load()
+    setBusy(null)
+  }
 
   const nouveau = (
     <a className="psh-btn primary" href="/devis/nouveau">
@@ -49,24 +63,27 @@ export default function DevisList() {
         </div>
       ) : (
         <div className="psh-panel">
-          <div className="psh-tablewrap">
-            <table className="psh-dtable">
-              <thead><tr><th>Numéro</th><th>Client</th><th>Objet</th><th className="r">Montant TTC</th><th>Statut</th></tr></thead>
-              <tbody>
-                {devis.map((d) => {
-                  const b = BADGE[d.statut ?? 'brouillon'] ?? BADGE.brouillon
-                  return (
-                    <tr key={d.id} onClick={() => router.push(`/devis/${d.id}`)} style={{ cursor: 'pointer' }}>
-                      <td className="num">{d.numero ?? '—'}</td>
-                      <td className="obj">{d.client_nom || 'Client'}</td>
-                      <td className="muted">{d.objet || 'Sans objet'}</td>
-                      <td className="amt">{eur(d.total_ttc ?? 0)}</td>
-                      <td><span className={`pill ${b.pill}`}><span className="pdot" />{b.label}</span></td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+          <div className="doc-list">
+            {devis.map((d) => {
+              const b = BADGE[d.statut ?? 'brouillon'] ?? BADGE.brouillon
+              return (
+                <div className="doc-card" key={d.id}>
+                  <div className="dc-main" onClick={() => router.push(`/devis/${d.id}`)} title="Ouvrir le devis">
+                    <div className="dc-top">
+                      <span className="dc-num">{d.numero ?? '—'}</span>
+                      <span className={`pill ${b.pill}`}><span className="pdot" />{b.label}</span>
+                    </div>
+                    <span className="dc-cli">{d.client_nom || 'Client'}</span>
+                    <span className="dc-obj">{d.objet || 'Sans objet'}</span>
+                  </div>
+                  <span className="dc-amt">{eur(d.total_ttc ?? 0)}</span>
+                  <div className="dc-actions">
+                    <button className="btn btn--ghost" onClick={() => router.push(`/devis/${d.id}`)}>Ouvrir</button>
+                    <button className="btn btn--ghost danger" disabled={busy === d.id} onClick={() => supprimer(d)}>Supprimer</button>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}

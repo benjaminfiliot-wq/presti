@@ -474,7 +474,10 @@ button:disabled{opacity:.55;cursor:default}
   .psh-hamb{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);cursor:pointer;padding:0}
   .psh-hamb svg{width:18px;height:18px}
   .psh-content{padding:18px 16px 60px}
-  .psh-top{padding:13px 16px}
+  .psh-top{padding:13px 16px;flex-wrap:wrap}
+  /* actions passent sous le titre (fini le chevauchement sur mobile) */
+  .psh-actions{margin-left:0;width:100%;order:3}
+  .psh-actions>*{flex:1 1 auto;justify-content:center;text-align:center}
 }
 
 /* ---- boutons compacts dans le shell ---- */
@@ -482,6 +485,9 @@ button:disabled{opacity:.55;cursor:default}
 .psh-btn svg{width:15px;height:15px}
 .psh-btn.primary{background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}
 .psh-btn.primary:hover{background:var(--accent-hover)}
+/* boutons destructifs (supprimer / annuler / recommencer) */
+.psh-btn.danger,.btn.danger,.btn--ghost.danger{color:#e5735a;border-color:rgba(229,115,90,.35)}
+.psh-btn.danger:hover,.btn.danger:hover,.btn--ghost.danger:hover{background:rgba(229,115,90,.12);border-color:rgba(229,115,90,.55)}
 .psh-btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
 .psh-btn.ghost:hover{border-color:var(--faint)}
 .psh-btn:disabled{opacity:.55;cursor:default}
@@ -524,6 +530,26 @@ button:disabled{opacity:.55;cursor:default}
 .pill.crit{color:var(--crit);background:var(--crit-tint)}
 .pill.muted{color:var(--muted);background:var(--line-2)}
 
+/* ---- liste de documents en cartes (devis + factures) — responsive, pas de débordement ---- */
+.doc-list{display:flex;flex-direction:column;gap:.6rem}
+.doc-card{display:flex;align-items:center;gap:.9rem 1rem;flex-wrap:wrap;background:var(--surface-2);border:1px solid var(--line);border-radius:13px;padding:.85rem 1.05rem;transition:border-color .15s,transform .12s}
+.doc-card:hover{border-color:var(--accent-tint-2)}
+.dc-main{flex:1 1 200px;min-width:0;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.dc-top{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.dc-num{font-family:var(--font-mono);font-size:11.5px;color:var(--faint)}
+.dc-cli{font-weight:650;font-size:14.5px;color:var(--ink)}
+.dc-obj{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.dc-amt{font-family:var(--font-mono);font-weight:700;font-size:14.5px;color:var(--ink);flex:none;margin-left:auto}
+.dc-actions{display:flex;gap:.4rem;flex-wrap:wrap;flex:none}
+.dc-actions .btn{width:auto;margin:0;padding:.4rem .7rem;font-size:.82rem}
+.dc-actions .btn.danger{color:#e5735a;border-color:rgba(229,115,90,.35)}
+.dc-actions .btn.danger:hover{background:rgba(229,115,90,.1)}
+@media(max-width:620px){
+  .doc-card{align-items:flex-start}
+  .dc-amt{margin-left:0}
+  .dc-actions{flex-basis:100%;margin-top:.3rem}
+  .dc-actions .btn{flex:1 1 auto;text-align:center;justify-content:center}
+}
 /* ---- table devis ---- */
 .psh-tablewrap{overflow-x:auto}
 .psh-dtable{width:100%;border-collapse:collapse;font-size:13.5px}

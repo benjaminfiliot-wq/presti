@@ -46,11 +46,16 @@ export default function FacturesList() {
     URL.revokeObjectURL(url)
   }
 
-  async function marquerPayee(f: Facture) {
+  async function setStatut(f: Facture, statut: string) {
     setBusy(f.id)
     const { data } = await supabase.auth.getSession()
-    await fetch(`/api/factures/${f.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ statut: 'payee' }) })
+    await fetch(`/api/factures/${f.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ statut }) })
     await load(); setBusy(null)
+  }
+
+  async function annuler(f: Facture) {
+    if (!confirm(`Annuler la facture ${f.numero || ''} ? Elle reste dans la liste (statut « annulée »), comme l'exige la loi — impossible de la supprimer.`)) return
+    await setStatut(f, 'annulee')
   }
 
   return (
@@ -63,30 +68,33 @@ export default function FacturesList() {
         </div>
       ) : (
         <div className="psh-panel">
-          <div className="psh-tablewrap">
-            <table className="psh-dtable">
-              <thead><tr><th>Numéro</th><th>Client</th><th>Objet</th><th className="r">Montant TTC</th><th>Statut</th><th className="r">Actions</th></tr></thead>
-              <tbody>
-                {factures.map((f) => {
-                  const b = BADGE[f.statut ?? 'emise'] ?? BADGE.emise
-                  return (
-                    <tr key={f.id}>
-                      <td className="num">{f.numero ?? '—'}</td>
-                      <td className="obj">{f.client_nom || 'Client'}</td>
-                      <td className="muted">{f.objet || 'Sans objet'}</td>
-                      <td className="amt">{eur(f.total_ttc ?? 0)}</td>
-                      <td><span className={`pill ${b.pill}`}><span className="pdot" />{b.label}</span></td>
-                      <td className="r" style={{ whiteSpace: 'nowrap' }}>
-                        <button className="btn btn--ghost" style={{ width: 'auto', padding: '.4rem .7rem', fontSize: '.82rem' }} disabled={busy === f.id} onClick={() => pdf(f)}>PDF</button>
-                        {f.statut !== 'payee' && (
-                          <button className="btn btn--ghost" style={{ width: 'auto', padding: '.4rem .7rem', fontSize: '.82rem', marginLeft: '.4rem' }} disabled={busy === f.id} onClick={() => marquerPayee(f)}>Marquer payée</button>
-                        )}
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+          <div className="doc-list">
+            {factures.map((f) => {
+              const b = BADGE[f.statut ?? 'emise'] ?? BADGE.emise
+              const active = f.statut !== 'annulee'
+              return (
+                <div className="doc-card" key={f.id}>
+                  <div className="dc-main" onClick={() => pdf(f)} title="Voir le PDF">
+                    <div className="dc-top">
+                      <span className="dc-num">{f.numero ?? '—'}</span>
+                      <span className={`pill ${b.pill}`}><span className="pdot" />{b.label}</span>
+                    </div>
+                    <span className="dc-cli">{f.client_nom || 'Client'}</span>
+                    <span className="dc-obj">{f.objet || 'Sans objet'}</span>
+                  </div>
+                  <span className="dc-amt">{eur(f.total_ttc ?? 0)}</span>
+                  <div className="dc-actions">
+                    <button className="btn btn--ghost" disabled={busy === f.id} onClick={() => pdf(f)}>PDF</button>
+                    {active && f.statut !== 'payee' && (
+                      <button className="btn btn--ghost" disabled={busy === f.id} onClick={() => setStatut(f, 'payee')}>Marquer payée</button>
+                    )}
+                    {active && (
+                      <button className="btn btn--ghost danger" disabled={busy === f.id} onClick={() => annuler(f)}>Annuler</button>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}

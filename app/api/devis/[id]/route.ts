@@ -20,7 +20,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const b = await req.json()
     const lignes: LigneIn[] = Array.isArray(b?.lignes) ? b.lignes : []
-    const totals = computeTotals(lignes.map((l) => ({ quantite: Number(l.quantite) || 0, prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: Number(l.tva_taux) || 0 })), Number(b?.remise_pct) || 0)
+
+    // Franchise de TVA (défaut) ⇒ 0 % ; taux normalisé une seule fois (totaux = stockage).
+    const { data: art } = await supabaseAdmin.from('artisans').select('tva_regime').eq('id', uid).maybeSingle()
+    const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
+    const eff = lignes.map((l) => {
+      const tv = Number(l.tva_taux)
+      return {
+        designation: (l.designation ?? '').slice(0, 300),
+        quantite: Number(l.quantite) || 1, unite: l.unite ?? 'u',
+        prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0,
+        tva_taux: franchise ? 0 : (Number.isFinite(tv) ? tv : 20),
+      }
+    })
+    const totals = computeTotals(eff, Number(b?.remise_pct) || 0)
 
     const patch: Record<string, unknown> = {
       objet: b?.objet ?? null,
@@ -44,17 +57,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     // Remplacer les lignes
     await supabaseAdmin.from('devis_lignes').delete().eq('devis_id', id)
-    if (lignes.length) {
+    if (eff.length) {
       await supabaseAdmin.from('devis_lignes').insert(
-        lignes.map((l, i) => ({
-          devis_id: id,
-          ordre: i,
-          designation: l.designation ?? '',
-          quantite: Number(l.quantite) || 1,
-          unite: l.unite ?? 'u',
-          prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0,
-          tva_taux: Number(l.tva_taux) || 20,
-        })),
+        eff.map((l, i) => ({ devis_id: id, ordre: i, ...l })),
       )
     }
 
@@ -63,4 +68,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const msg = e instanceof Error ? e.message : 'Erreur inconnue'
     return NextResponse.json({ error: msg }, { status: 500 })
   }
+}
+
+// Supprime un devis (et ses lignes). Un devis n'est pas une pièce comptable → suppression libre.
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
+  if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+  const { data: userData } = await supabaseAdmin.auth.getUser(token)
+  if (!userData?.user) return NextResponse.json({ error: 'Session expirée' }, { status: 401 })
+  const uid = userData.user.id
+  const { data: owned } = await supabaseAdmin.from('devis').select('id').eq('id', id).eq('artisan_id', uid).maybeSingle()
+  if (!owned) return NextResponse.json({ error: 'Devis introuvable' }, { status: 404 })
+  await supabaseAdmin.from('devis_lignes').delete().eq('devis_id', id)
+  const { error } = await supabaseAdmin.from('devis').delete().eq('id', id).eq('artisan_id', uid)
+  if (error) return NextResponse.json({ error: 'Suppression impossible' }, { status: 500 })
+  return NextResponse.json({ ok: true })
 }
