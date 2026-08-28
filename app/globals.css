@@ -1115,6 +1115,72 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .lp-mini.rev .lp-media{order:-1}
 @media(max-width:820px){.lp-mini{grid-template-columns:1fr}.lp-mini.rev .lp-media{order:0}}
 
+/* ===== vitrine interactive click-to-play (remplace le scroll-scrub) ===== */
+.fs{max-width:1000px;margin:2.6rem auto 0}
+.fs-tabs{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:1.4rem}
+.fs-tab{width:auto;margin:0;font-family:var(--font-body);font-size:.9rem;font-weight:600;color:var(--muted);background:var(--surf);border:1px solid var(--line);border-radius:999px;padding:.55rem 1.05rem;cursor:pointer;transition:.18s}
+.fs-tab:hover{color:var(--ink);border-color:rgba(255,255,255,.2)}
+.fs-tab.on{color:#1a0f0a;background:linear-gradient(120deg,var(--co2),var(--co));border-color:transparent;box-shadow:0 10px 24px -10px var(--co-glow)}
+.fs-stage{position:relative;min-height:440px;display:grid;place-items:center;padding:2rem 1.2rem;border:1px solid var(--line);border-radius:22px;background:radial-gradient(120% 90% at 50% 0%,rgba(217,119,87,.08),transparent 60%),linear-gradient(180deg,#100e13,#0a090d);overflow:hidden;cursor:pointer}
+.fs-beam{position:absolute;left:50%;top:44%;width:min(80%,520px);height:130%;transform:translate(-50%,-50%);background:radial-gradient(ellipse 48% 42% at 50% 42%,var(--co-glow),rgba(217,119,87,.12) 46%,transparent 72%);filter:blur(20px);opacity:.55;pointer-events:none;animation:fs-pulse 5s ease-in-out infinite}
+@keyframes fs-pulse{50%{opacity:.8}}
+.fs-play{position:relative;z-index:2;width:100%;display:grid;place-items:center}
+.fs-replay{position:absolute;bottom:.8rem;right:1rem;z-index:3;display:inline-flex;align-items:center;gap:.35rem;font-family:var(--font-mono);font-size:.66rem;color:var(--faint);opacity:.7}
+.fs-replay svg{width:13px;height:13px;stroke:var(--faint)}
+.fs-caption{text-align:center;margin-top:1.3rem;max-width:52ch;margin-left:auto;margin-right:auto}
+.fs-captag{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--co2);font-weight:600}
+.fs-caption p{color:var(--ink2);font-size:1.02rem;margin:.5rem 0 0;animation:fsin .5s ease}
+
+/* reveal des éléments de démo (se jouent au montage) */
+.fsr{opacity:0;animation:fsin .55s ease forwards}
+@keyframes fsin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* démo devis */
+.fs-doc{width:min(92%,400px);background:#FBFAF7;color:#20201C;border-radius:13px;padding:1.3rem 1.5rem 1.5rem;box-shadow:0 40px 90px -30px rgba(0,0,0,.8);position:relative;overflow:hidden;animation:fs-float 6s ease-in-out infinite}
+@keyframes fs-float{50%{transform:translateY(-8px)}}
+.fs-scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--co),transparent);box-shadow:0 0 14px 2px rgba(217,119,87,.7);top:6%;animation:fs-scanmove 2.4s ease-out forwards;z-index:4}
+@keyframes fs-scanmove{0%{top:6%;opacity:.9}100%{top:92%;opacity:0}}
+.fs-doc-h{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #20201C;padding-bottom:.7rem}
+.fs-doc-h .co{font-family:var(--font-display);font-weight:700;font-size:.98rem}
+.fs-doc-h .co small,.fs-doc-h .ti small{display:block;font-family:var(--font-body);font-size:.62rem;color:#8a857a;font-weight:500;margin-top:.15rem}
+.fs-doc-h .ti{text-align:right}.fs-doc-h .ti b{font-family:var(--font-display);font-weight:800;font-size:1.05rem;color:var(--co-deep)}
+.fs-doc-h .ti small{font-family:var(--font-mono)}
+.fs-doc-cli{font-size:.66rem;color:#8a857a;margin:.6rem 0 .3rem}.fs-doc-cli b{color:#20201C;font-size:.8rem}
+.fs-dl{display:flex;justify-content:space-between;gap:1rem;padding:.4rem 0;border-bottom:1px solid #eae6dd;font-size:.79rem}
+.fs-dl .p{font-family:var(--font-mono);white-space:nowrap}
+.fs-doc-tot{display:flex;justify-content:space-between;margin-top:.7rem;padding-top:.5rem;border-top:2px solid #20201C;font-family:var(--font-display);font-weight:800;font-size:1.15rem}
+.fs-doc-tot .p{color:var(--co-deep)}
+.fs-badges{display:flex;gap:.5rem;margin-top:.85rem;flex-wrap:wrap}
+.fs-bdg{font-family:var(--font-mono);font-size:.58rem;font-weight:600;padding:.28rem .55rem;border-radius:999px;background:rgba(217,119,87,.12);color:var(--co-deep)}
+.fs-bdg.ok{background:rgba(70,180,120,.16);color:#2c7a52}
+
+/* démo relances / dashboard / lien / paiement */
+.fs-rel,.fs-lien,.fs-pay{width:min(94%,460px);display:flex;flex-direction:column;gap:.65rem}
+.fs-relmsg{background:linear-gradient(180deg,var(--surf),#0c0b0f);border:1px solid var(--line);border-radius:13px;padding:.85rem 1rem}
+.fs-relmsg .rt{font-family:var(--font-mono);font-size:.62rem;color:var(--co2);letter-spacing:.05em;text-transform:uppercase}
+.fs-relmsg p{font-size:.85rem;color:var(--ink2);margin:.3rem 0 0}
+.fs-relmsg.win{border-color:rgba(70,200,154,.4)}.fs-relmsg.win .rt{color:var(--ok)}
+.fs-dash{width:min(94%,470px);background:linear-gradient(180deg,var(--surf),#0c0b0f);border:1px solid var(--line);border-radius:15px;padding:1rem 1.2rem}
+.fs-dash .dh{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:.5rem}
+.fs-dash .dh b{color:var(--co2)}
+.fs-drow{display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:center;padding:.55rem .1rem;border-bottom:1px solid var(--line2)}
+.fs-drow:last-child{border-bottom:none}
+.fs-drow .who{font-weight:600;font-size:.88rem}.fs-drow .m{font-size:.73rem;color:var(--muted)}
+.fs-pill{font-family:var(--font-mono);font-size:.6rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:.24rem .55rem;border-radius:999px;white-space:nowrap}
+.fs-pill.new{background:rgba(217,119,87,.14);color:var(--co2)}.fs-pill.ok{background:rgba(70,200,154,.14);color:var(--ok)}.fs-pill.wait{background:rgba(255,255,255,.06);color:var(--muted)}
+.fs-url{font-family:var(--font-mono);font-size:.72rem;color:var(--co2);text-align:center;padding:.55rem;background:rgba(217,119,87,.08);border:1px solid rgba(217,119,87,.2);border-radius:9px}
+.fs-field{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:.7rem .85rem;font-size:.86rem;color:var(--ink2)}
+.fs-send{text-align:center;background:linear-gradient(120deg,var(--co2),var(--co));color:#1a0f0a;font-weight:650;border-radius:10px;padding:.75rem;font-size:.92rem}
+.fs-arrived{display:flex;align-items:center;gap:.5rem;justify-content:center;font-size:.85rem;color:var(--ok);background:rgba(70,200,154,.1);border:1px solid rgba(70,200,154,.28);border-radius:10px;padding:.65rem}
+.fs-arrived .tick{display:grid;place-items:center;width:1.2rem;height:1.2rem;border-radius:50%;background:var(--ok);color:#04140d;font-size:.7rem;font-weight:800}
+.fs-payrow{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-display);font-weight:800;font-size:1.3rem}
+.fs-payrow .amt{color:var(--co2)}
+.fs-card{display:flex;align-items:center;gap:.6rem;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:.7rem .85rem}
+.fs-card .ic{width:1.8rem;height:1.2rem;border-radius:4px;background:linear-gradient(120deg,var(--co2),var(--co));flex:none}
+.fs-card .num{font-family:var(--font-mono);font-size:.85rem;color:var(--ink2)}
+@media(max-width:520px){.fs-stage{min-height:400px;padding:1.4rem .8rem}}
+@media(prefers-reduced-motion:reduce){.fsr{opacity:1;animation:none}.fs-scan,.fs-beam,.fs-doc{animation:none}}
+
 /* reveal — visible par défaut. Le JS "arme" (.reveal-armed) pour cacher puis révéler
    au scroll ; un filet désarme après 4 s. Résultat : jamais de contenu bloqué caché,
    même sans JS, sans GSAP, ou si le compositeur est en pause. */
