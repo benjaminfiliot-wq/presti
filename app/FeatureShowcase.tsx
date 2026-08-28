@@ -126,7 +126,7 @@ export default function FeatureShowcase() {
 
       <div className="fs-stage" onClick={() => setPlay((p) => p + 1)} title="Cliquer pour rejouer">
         <span className="fs-beam" aria-hidden="true" />
-        <div className="fs-play"><F.Demo key={`${active}-${play}`} /></div>
+        <div className="fs-play"><div className="fs-enter" key={`${active}-${play}`}><F.Demo /></div></div>
         <span className="fs-replay" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2v6h6" /><path d="M3 13a9 9 0 1 0 3-7.7L3 8" /></svg> rejouer</span>
       </div>
 

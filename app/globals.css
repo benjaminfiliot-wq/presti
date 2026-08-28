@@ -1216,6 +1216,25 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .lp-tl-dot{animation:none!important;border-color:var(--co);color:var(--co2);box-shadow:0 0 0 4px rgba(217,119,87,.16)}
 }
 
+/* ===== Craft polish (apple-design + Emil Kowalski) ===== */
+:root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-io:cubic-bezier(.77,0,.175,1)}
+/* feedback à la pression : instantané (rend l'UI "vivante") */
+.lp-btn,.fs-tab,.psh-btn,.abo-card .psh-btn{transition:transform .14s var(--ease-out),box-shadow .25s var(--ease-out),background .2s,border-color .2s,color .15s}
+.lp-btn:active,.btn:active,.fs-tab:active,.psh-btn:active,.abo-card .psh-btn:active,.wrap .card button:active{transform:scale(.97)}
+/* survol réservé aux vrais pointeurs (pas de faux hover au tap) */
+@media(hover:hover) and (pointer:fine){
+  .lp-btn--p:hover{transform:translateY(-1px)}
+  .lp-rc:hover{transform:translateY(-2px)}
+}
+@media (hover:none){ .lp-rc:hover,.fs-tab:hover,.lp-plan:hover{transform:none} }
+/* transition d'onglet de la vitrine : crossfade + blur (masque le remplacement) */
+.fs-enter{animation:fs-enter .34s var(--ease-out) both}
+@keyframes fs-enter{from{opacity:0;filter:blur(7px);transform:scale(.985)}to{opacity:1;filter:blur(0);transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .fs-enter{animation:none}
+  .lp-btn:active,.btn:active,.fs-tab:active,.psh-btn:active,.wrap .card button:active{transform:none}
+}
+
 /* ===== Pages légales (CGU, confidentialité, mentions) ===== */
 .legal-wrap{max-width:820px;margin:0 auto;padding:44px 22px 80px}
 .legal-back{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .15s}
