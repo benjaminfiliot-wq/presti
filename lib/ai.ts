@@ -1,8 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk'
 
-// ⚙️ Modèle utilisé pour rédiger les réponses aux prospects.
+// ⚙️ Modèle par défaut pour rédiger les réponses aux prospects.
 // Haiku = rapide + très économique, parfait pour des réponses courtes en volume.
-// Pour des réponses plus soignées, remplace par 'claude-opus-5' (plus cher).
+// Les routes passent un vrai modèle (haiku/sonnet/opus) via resolveModel selon le plan.
 const AI_MODEL = 'claude-haiku-4-5'
 
 // Lit automatiquement ANTHROPIC_API_KEY depuis .env.local (côté serveur uniquement).
@@ -12,6 +12,8 @@ type Artisan = { nom: string | null; metier: string | null; ton_style: string | 
 type Lead = { nom_prospect?: string | null; contact?: string | null; message?: string | null }
 
 // ── Petits utilitaires d'analyse du message (déterministes, robustes) ──────────
+// Toute l'intelligence "de cadrage" est calculée ici, en dur : elle reste fiable
+// même sur le modèle le plus léger (Standard/Haiku) et évite que le LLM parte à côté.
 
 /** Minuscule sans accents ni ponctuation, espaces normalisés — pour la détection de mots-clés. */
 function normalize(s: string): string {
@@ -23,6 +25,11 @@ function normalize(s: string): string {
     .trim()
 }
 
+/** true si l'un des mots-clés (déjà "sans accents") apparaît dans le texte normalisé `n`. */
+function has(n: string, keys: string[]): boolean {
+  return keys.some((k) => n.includes(normalize(k)))
+}
+
 // Signaux forts d'une situation d'urgence (sinistre / panne) dans le bâtiment.
 const URGENCE_KEYWORDS = [
   'fuite', 'degat des eaux', 'degats des eaux', 'inond', 'panne', 'plus de chauffage',
@@ -32,11 +39,66 @@ const URGENCE_KEYWORDS = [
   'ne marche plus', 'tombe en panne', 'en rade', 'ce soir', 'aujourd hui', 'des maintenant',
 ]
 
+// Insatisfaction / SAV sur un travail déjà réalisé (à traiter avec doigté, sans reconnaître de faute).
+const RECLAMATION_KEYWORDS = [
+  'malfacon', 'mal facon', 'pas satisfait', 'insatisfait', 'decu', 'deception', 'decevant',
+  'mecontent', 'reclamation', 'plainte', 'sav', 'reprise', 'bacle', 'mal fait', 'mal realise',
+  'travail mal', 'garantie decennale', 'depuis les travaux', 'depuis votre passage',
+  'apres les travaux', 'apres votre passage', 'rembours', 'litige', 'geste commercial',
+  'toujours pas repare', 'toujours pas fini', 'jamais revenu',
+]
+
+// Le prospect veut concrètement une date / un contact (RDV, appel, visite).
+const RDV_KEYWORDS = [
+  'rendez vous', 'rdv', 'creneau', 'disponib', 'quand pouvez', 'quand etes', 'quand seriez',
+  'venir voir', 'passer voir', 'vous deplacer', 'deplacer chez', 'planifier', 'convenir d un',
+  'prendre date', 'cette semaine', 'la semaine prochaine', 'me rappeler', 'rappelez moi',
+  'quand pourriez', 'quand viendriez',
+]
+
+// Le prospect s'interroge sur le prix / demande un devis.
+const PRIX_KEYWORDS = [
+  'prix', 'tarif', 'combien', 'cout', 'coute', 'couterait', 'devis', 'estimation',
+  'chiffrage', 'chiffrer', 'a peu pres', 'ordre de prix', 'fourchette', 'ca fait combien',
+  'ca coute', 'ca reviendrait',
+]
+
+// Le prospect met en concurrence (compare plusieurs devis).
+const COMPARAISON_KEYWORDS = [
+  'moins cher', 'plus competitif', 'concurrent', 'autre devis', 'autres devis', 'plusieurs devis',
+  'comparer', 'comparaison', 'meilleur prix', 'faire jouer', 'd autres artisans', 'autres artisans',
+]
+
+// Budget explicitement contraint.
+const BUDGET_SERRE_KEYWORDS = [
+  'petit budget', 'budget serre', 'budget limite', 'budget reduit', 'pas trop cher',
+  'pas les moyens', 'economique', 'le moins cher', 'au plus juste', 'pas cher',
+]
+
+// Contexte assurance / sinistre (devis pour un dossier, expert, indemnisation).
+const ASSURANCE_KEYWORDS = [
+  'assurance', 'sinistre', 'expertise', 'expert', 'declaration de sinistre', 'indemnis',
+  'franchise', 'catastrophe naturelle', 'assureur', 'dossier assurance',
+]
+
+// Contexte copropriété (syndic, AG, parties communes).
+const COPRO_KEYWORDS = [
+  'copropriete', 'copro', 'syndic', 'parties communes', 'immeuble', 'assemblee generale',
+  'ag de copropriete', 'cage d escalier',
+]
+
+// Signaux d'un chantier d'ampleur (mérite une visite technique avant chiffrage).
+const COMPLEXE_KEYWORDS = [
+  'renovation complete', 'renovation totale', 'tout refaire', 'toute la maison',
+  'tout l appartement', 'plusieurs pieces', 'plusieurs travaux', 'cle en main', 'de a a z',
+  'gros chantier', 'extension', 'plusieurs corps de metier', 'combles amenag',
+]
+
 /** Détecte une demande potentiellement urgente à partir du message du prospect. */
 function isUrgent(message: string): boolean {
   const n = normalize(message)
   if (!n) return false
-  return URGENCE_KEYWORDS.some((k) => n.includes(k))
+  return has(n, URGENCE_KEYWORDS)
 }
 
 /** Détecte une demande trop floue pour être chiffrée/traitée sans précisions. */
@@ -44,6 +106,134 @@ function isVague(message: string, hasMessage: boolean): boolean {
   if (!hasMessage) return true
   const words = normalize(message).split(' ').filter(Boolean)
   return words.length <= 3
+}
+
+type Canal = 'email' | 'telephone' | 'inconnu'
+
+/** Déduit le canal de contact laissé par le prospect (email vs téléphone). */
+function detectCanal(contact?: string | null): Canal {
+  const c = (contact ?? '').trim()
+  if (!c) return 'inconnu'
+  if (c.includes('@')) return 'email'
+  const digits = c.replace(/[^0-9]/g, '')
+  if (digits.length >= 9) return 'telephone'
+  return 'inconnu'
+}
+
+type LeadInsights = {
+  canal: Canal
+  urgent: boolean
+  vague: boolean
+  reclamation: boolean
+  rdv: boolean
+  prix: boolean
+  comparaison: boolean
+  budgetSerre: boolean
+  assurance: boolean
+  copropriete: boolean
+  complexe: boolean
+  detail: 'faible' | 'moyen' | 'eleve'
+  primary: 'urgence' | 'reclamation' | 'rdv' | 'prix' | 'info'
+}
+
+/**
+ * Analyse déterministe complète d'une demande : intention principale, contexte
+ * (assurance, copro, budget), canal et niveau de détail. Sert à piloter finement
+ * le prompt sans dépendre de la finesse du modèle.
+ */
+function analyzeLead(message: string, contact?: string | null): LeadInsights {
+  const hasMessage = Boolean(message && message.trim())
+  const n = normalize(message)
+  const wordCount = n ? n.split(' ').filter(Boolean).length : 0
+
+  const urgent = isUrgent(message)
+  const vague = !urgent && isVague(message, hasMessage)
+  const reclamation = has(n, RECLAMATION_KEYWORDS)
+  const rdv = has(n, RDV_KEYWORDS)
+  const prix = has(n, PRIX_KEYWORDS)
+  const comparaison = has(n, COMPARAISON_KEYWORDS)
+  const budgetSerre = has(n, BUDGET_SERRE_KEYWORDS)
+  const assurance = has(n, ASSURANCE_KEYWORDS)
+  const copropriete = has(n, COPRO_KEYWORDS)
+  const complexe = has(n, COMPLEXE_KEYWORDS) || wordCount > 45
+
+  const detail: LeadInsights['detail'] = wordCount <= 3 ? 'faible' : wordCount <= 25 ? 'moyen' : 'eleve'
+
+  // Priorité d'intention : la sécurité et la relation client priment sur le commercial.
+  const primary: LeadInsights['primary'] = urgent
+    ? 'urgence'
+    : reclamation
+      ? 'reclamation'
+      : rdv
+        ? 'rdv'
+        : prix || comparaison
+          ? 'prix'
+          : 'info'
+
+  return {
+    canal: detectCanal(contact),
+    urgent, vague, reclamation, rdv, prix, comparaison, budgetSerre,
+    assurance, copropriete, complexe, detail, primary,
+  }
+}
+
+/** Construit le bloc d'instructions dynamiques injecté dans le prompt système. */
+function buildLeadGuidance(a: LeadInsights, metier: string): string {
+  const lines: string[] = []
+
+  const primaryMap: Record<LeadInsights['primary'], string> = {
+    urgence:
+      "INTENTION = URGENCE (sinistre/panne). Réponse TRÈS courte (2-3 phrases) : rassure d'abord, montre que tu prends au sérieux, puis UNE action immédiate (rappel très rapide, intervention au plus vite, ou geste de sécurité simple si pertinent : couper l'eau, l'électricité ou le gaz).",
+    reclamation:
+      "INTENTION = RÉCLAMATION / insatisfaction. Accueille la remarque avec sérieux, sans te braquer et sans reconnaître de faute juridique à l'aveugle. Propose de venir constater rapidement et de trouver une solution. Ton posé et responsable.",
+    rdv:
+      "INTENTION = PRISE DE RENDEZ-VOUS. Le prospect veut te voir ou te parler : propose concrètement de convenir d'un créneau (visite ou appel) et demande-lui ses disponibilités. Droit au but.",
+    prix:
+      "INTENTION = QUESTION DE PRIX / BUDGET. NE DONNE AUCUN CHIFFRE ni fourchette. Explique brièvement qu'un chiffrage juste demande un ou deux détails (ou une courte visite), valorise le sérieux d'un devis précis et gratuit, et propose de l'établir vite.",
+    info:
+      "INTENTION = DEMANDE D'INFORMATION. Réponds utilement et clairement à ce qui est demandé, puis propose la prochaine étape (devis, visite ou appel).",
+  }
+  lines.push(primaryMap[a.primary])
+
+  if (a.vague && a.primary !== 'urgence') {
+    lines.push(
+      `Demande FLOUE : pose 1 à 2 questions PRÉCISES et utiles pour un(e) ${metier} — uniquement ce qui manque vraiment pour avancer (surface, nombre de pièces, type/état du matériel, photos). Une seule salve, courte.`,
+    )
+  }
+  if (a.comparaison) {
+    lines.push(
+      "Le prospect COMPARE plusieurs devis : différencie-toi par le sérieux, le conseil et la clarté — sans dénigrer personne et sans casser les prix.",
+    )
+  }
+  if (a.budgetSerre) {
+    lines.push(
+      "BUDGET SERRÉ évoqué : rassure sur ta capacité à t'adapter (proposer des options, prioriser l'essentiel), sans t'engager sur un montant.",
+    )
+  }
+  if (a.assurance) {
+    lines.push(
+      "Contexte ASSURANCE / SINISTRE : précise que tu peux établir un devis détaillé adapté au dossier d'assurance et intervenir en lien avec l'expert si besoin.",
+    )
+  }
+  if (a.copropriete) {
+    lines.push(
+      "Contexte COPROPRIÉTÉ : mentionne que tu peux fournir un devis détaillé exploitable pour le syndic ou l'assemblée générale.",
+    )
+  }
+  if (a.complexe && a.primary !== 'urgence') {
+    lines.push(
+      "Chantier POTENTIELLEMENT IMPORTANT : propose une visite technique pour bien cadrer les postes avant tout chiffrage.",
+    )
+  }
+
+  // Canal → prochaine étape concrète, formulée pour le bon média.
+  if (a.canal === 'telephone') {
+    lines.push("Le prospect a laissé un TÉLÉPHONE : propose un rappel et invite-le à indiquer un créneau qui lui convient.")
+  } else if (a.canal === 'email') {
+    lines.push("Le prospect a laissé un EMAIL : propose de convenir par retour de mail d'un échange ou d'une visite.")
+  }
+
+  return '\n\nANALYSE DE LA DEMANDE (déduite automatiquement — adapte-toi précisément) :\n- ' + lines.join('\n- ')
 }
 
 /**
@@ -56,45 +246,44 @@ export async function generateLeadReply(artisan: Artisan, lead: Lead, model: str
   const ton = artisan.ton_style?.trim() || 'professionnel, chaleureux et rassurant'
   const nomProspect = lead.nom_prospect?.trim() || 'non précisé'
   const messageBrut = lead.message?.trim() || ''
+  const contact = lead.contact?.trim() || null
   const besoin = messageBrut || '(aucune précision donnée)'
 
-  // Pré-analyse déterministe : fiable même sur le modèle le plus léger (Standard/Haiku).
-  const urgent = isUrgent(messageBrut)
-  const vague = !urgent && isVague(messageBrut, Boolean(messageBrut))
-
-  const situation = urgent
-    ? `\nSITUATION DÉTECTÉE : demande potentiellement URGENTE (sinistre, panne, dégât). Priorité absolue : RASSURER en une phrase, montrer que tu prends la situation au sérieux, puis donner UNE étape immédiate et concrète (proposer un rappel très rapide, annoncer une intervention au plus vite, ou suggérer un geste de sécurité simple si pertinent : couper l'eau ou l'électricité). Pas de longue reformulation, on va à l'essentiel.`
-    : vague
-      ? `\nSITUATION DÉTECTÉE : demande FLOUE ou incomplète. Pose 1 à 2 questions PRÉCISES et utiles pour un(e) ${metier} — uniquement ce qui te manque vraiment pour pouvoir chiffrer (ex. surface, nombre de pièces, type/état du matériel, photos). Une seule salve de questions, courtes et concrètes.`
-      : ''
+  // Pré-analyse déterministe : intention, contexte, canal, niveau de détail.
+  const insights = analyzeLead(messageBrut, contact)
+  const guidance = buildLeadGuidance(insights, metier)
 
   const system = `Tu es l'assistant de ${nomArtisan}, ${metier}. Tu écris À SA PLACE la toute première réponse à un prospect qui vient de le contacter (demande via son site).
 Ton et style à respecter absolument : ${ton}
 
-OBJECTIF : une réponse humaine, utile et rassurante qui fait avancer le prospect d'une étape concrète — jamais un texte générique ni du remplissage.
+OBJECTIF : une réponse humaine, utile et rassurante qui fait avancer le prospect d'UNE étape concrète — jamais un texte générique ni du remplissage. Tu t'adaptes précisément à l'intention réelle du prospect et au niveau de détail qu'il a donné.
 
-ADAPTE-TOI au message reçu :
-- Demande URGENTE (fuite, dégât des eaux, panne, plus de chauffage/d'eau, coupure, odeur de gaz, sinistre…) → d'abord RASSURER, puis donner UNE étape immédiate (rappel très rapide, intervention au plus vite, ou geste de sécurité simple). Sérieux et réactif.
-- Demande FLOUE ou incomplète → pose 1 à 2 questions PRÉCISES et pertinentes pour un(e) ${metier} (ce qui te manque réellement pour chiffrer). Une seule salve, courte.
-- Demande CLAIRE → confirme en une phrase que tu as bien compris le besoin, puis propose la prochaine étape (visite pour chiffrer, appel, ou devis).
-- Demande HORS de ton métier (${metier}) → dis honnêtement que ce n'est pas ta spécialité, sans t'engager sur un travail que tu ne fais pas, et invite à préciser si une partie relève quand même de ton activité.
+CADRE GÉNÉRAL D'ADAPTATION :
+- Demande URGENTE (fuite, dégât des eaux, panne, plus de chauffage/d'eau, coupure, odeur de gaz, sinistre…) → RASSURER d'abord, puis UNE action immédiate. Sérieux et réactif.
+- Demande FLOUE ou incomplète → 1 à 2 questions PRÉCISES et pertinentes pour un(e) ${metier}. Une seule salve, courte.
+- Demande CLAIRE → confirme en une phrase que tu as bien compris, puis propose la prochaine étape.
+- Question de PRIX / BUDGET → jamais de chiffre ; propose un devis précis et gratuit après un ou deux détails ou une courte visite.
+- RÉCLAMATION → prends au sérieux, sans reconnaître de faute à l'aveugle ; propose de constater et de corriger.
+- Demande HORS de ton métier (${metier}) → dis-le honnêtement, sans t'engager sur un travail que tu ne fais pas, et invite à préciser si une partie relève quand même de ton activité.
 
-RÈGLES :
-- Français, à la première personne (comme si ${nomArtisan} écrivait lui-même).
-- Court : 3 à 6 phrases. Zéro blabla.
+RÈGLES (garde-fous) :
+- Français impeccable, à la première personne (comme si ${nomArtisan} écrivait lui-même).
+- Longueur adaptée : 3 à 6 phrases en général, 2 à 3 si c'est urgent. Zéro blabla, aucune formule creuse.
 - Ne donne JAMAIS de prix chiffré ni de fourchette (tu n'as pas les détails).
-- N'invente aucun délai précis intenable : reste sur « rapidement », « au plus vite », « dans la journée » (si urgent).
+- N'invente AUCUN délai précis intenable : reste sur « rapidement », « au plus vite », « dans la journée » (si urgent).
+- Termine TOUJOURS par une prochaine étape ultra-concrète (rappel, visite, devis, créneau).
 - Emploie le nom du prospect s'il est fourni, sinon un « Bonjour » simple.
 - Termine par une formule de politesse signée « ${nomArtisan} ».
-- Renvoie UNIQUEMENT le texte du message : pas d'objet, pas de « Voici la réponse », pas de guillemets, pas de balises.${situation}`
+- Renvoie UNIQUEMENT le texte du message : pas d'objet, pas de « Voici la réponse », pas de guillemets, pas de balises.${guidance}`
 
   const user = `Nom du prospect : ${nomProspect}
+Canal de contact : ${insights.canal === 'email' ? 'email' : insights.canal === 'telephone' ? 'téléphone' : 'non précisé'}
 Besoin décrit par le prospect : ${besoin}`
 
   const res = await client.messages.create({
     model,
     max_tokens: 1024,
-    temperature: 0.6,
+    temperature: 0.55,
     system,
     messages: [{ role: 'user', content: user }],
   })
@@ -117,6 +306,7 @@ export async function generateRelanceReply(artisan: Artisan, lead: Lead, rang: n
   const nomProspect = lead.nom_prospect?.trim() || 'non précisé'
   const messageBrut = lead.message?.trim() || ''
   const besoin = messageBrut || '(aucune précision donnée)'
+
   const contexte =
     rang <= 1
       ? "C'est une PREMIÈRE relance, DOUCE : le prospect n'a pas répondu depuis quelques jours. Simple prise de nouvelles, rappelle son besoin en une phrase et propose de continuer. Aucune insistance."
@@ -124,21 +314,36 @@ export async function generateRelanceReply(artisan: Artisan, lead: Lead, rang: n
         ? "C'est une DEUXIÈME relance : reste léger mais propose une étape CONCRÈTE qui facilite la reprise (un créneau d'appel, une visite, un devis rapide). Toujours zéro pression."
         : "C'est une DERNIÈRE relance : courtoise et brève. Laisse la porte grande ouverte, précise que tu ne le relanceras plus pour ne pas le déranger, et qu'il peut revenir vers toi quand il le souhaite."
 
-  // Si le besoin initial était urgent, une relance qui montre de la disponibilité est plus juste.
-  const noteUrgence = isUrgent(messageBrut)
-    ? "\nLe besoin initial semblait pressé : montre-toi disponible et réactif, sans dramatiser."
-    : ''
+  // Analyse du besoin initial pour caler la relance sur ce qui comptait pour le prospect.
+  const insights = analyzeLead(messageBrut, lead.contact ?? null)
+  const hints: string[] = []
+  if (insights.primary === 'prix' || insights.comparaison) {
+    hints.push("Son besoin tournait autour du prix/devis : propose simplement de lui établir ou finaliser un devis précis (sans donner de chiffre).")
+  }
+  if (insights.primary === 'rdv') {
+    hints.push("Il souhaitait un rendez-vous : re-propose un créneau simple (appel ou visite).")
+  }
+  if (insights.assurance) {
+    hints.push("Contexte assurance/sinistre : rappelle que tu peux fournir un devis détaillé adapté à son dossier.")
+  }
+  if (insights.copropriete) {
+    hints.push("Contexte copropriété : rappelle que ton devis est exploitable pour le syndic ou l'assemblée générale.")
+  }
+  if (insights.urgent) {
+    hints.push("Le besoin initial semblait pressé : montre-toi disponible et réactif, sans dramatiser ni faire de fausse urgence.")
+  }
+  const notes = hints.length ? '\n' + hints.map((h) => `- ${h}`).join('\n') : ''
 
   const system = `Tu es l'assistant de ${nomArtisan}, ${metier}. Tu écris À SA PLACE un email de relance à un prospect qui avait fait une demande mais n'a pas donné suite.
 Ton et style à respecter : ${ton}
-${contexte}${noteUrgence}
+${contexte}${notes ? '\nÀ prendre en compte :' + notes : ''}
 
 RÈGLES :
-- Français, première personne (comme si c'était ${nomArtisan}).
-- Très court : 3 à 5 phrases. Aucune pression, aucune culpabilisation (pas de « vous n'avez pas répondu »), aucune fausse urgence ou rareté.
-- Calibre le message selon le rang de relance (voir ci-dessus) et rappelle brièvement le besoin de façon naturelle.
-- Propose une prochaine étape simple, adaptée au rang.
-- Jamais de prix chiffré.
+- Français impeccable, première personne (comme si c'était ${nomArtisan}).
+- Très court : 3 à 5 phrases. AUCUNE pression, aucune culpabilisation (jamais de « vous n'avez pas répondu »), aucune fausse urgence ou rareté.
+- Calibre le message selon le rang de relance (voir ci-dessus) et rappelle brièvement le besoin de façon naturelle, en t'appuyant dessus.
+- Propose une prochaine étape simple et concrète, adaptée au rang.
+- Jamais de prix chiffré, jamais de délai inventé.
 - Emploie le nom du prospect s'il est fourni, sinon un « Bonjour » simple.
 - Termine par une formule de politesse signée « ${nomArtisan} ».
 - Renvoie UNIQUEMENT le texte de l'email : pas d'objet, pas de balises, pas de guillemets.`
@@ -150,7 +355,7 @@ Numéro de relance : ${rang}`
   const res = await client.messages.create({
     model,
     max_tokens: 700,
-    temperature: 0.6,
+    temperature: 0.55,
     system,
     messages: [{ role: 'user', content: user }],
   })
@@ -172,43 +377,49 @@ export type DevisLigne = {
 
 type Poste = { designation: string; unite: string; prix_ht_min: number; prix_ht_max: number; tva_defaut: number }
 
-// Aides à la décomposition par métier — orientent le CHIFFRAGE (postes, unités, TVA),
-// sans imposer de prix : le modèle connaît les ordres de grandeur du marché français.
+// Aides à la décomposition par métier — orientent le CHIFFRAGE (postes, unités, TVA)
+// avec des ordres de grandeur France crédibles (HT, à ajuster). Ce ne sont PAS des prix fermes :
+// le modèle affine selon le chantier réel.
 const METIER_GUIDES: { keys: string[]; guide: string }[] = [
   {
     keys: ['plomb', 'sanitaire', 'chauffagi', 'chauffage'],
     guide:
-      "Plomberie/chauffage : dépose de l'existant, fourniture des équipements (mitigeur, WC, ballon, chaudière, radiateur, PAC), tuyauterie (ml), pose + raccordements eau/évacuation/gaz, main d'œuvre (h), mise en service/essais. TVA 5,5% pour la rénovation énergétique (PAC, chaudière à condensation, ballon thermodynamique) sinon 10% en rénovation.",
+      "Plomberie/chauffage : dépose de l'existant, fourniture (mitigeur, WC, ballon, chaudière, radiateur, PAC), tuyauterie (ml), pose + raccordements eau/évacuation/gaz, main d'œuvre (h), mise en service/essais. Ordres de grandeur HT France : MO 45-70€/h ; mitigeur fourni-posé 120-300€ ; WC suspendu fourni-posé 400-900€ ; ballon ECS 300-900€ + pose ; chaudière gaz à condensation 2500-5000€ fourni-posé ; PAC air/eau 9000-15000€ fourni-posé ; radiateur 150-600€ + pose ; tuyauterie 30-60€/ml. TVA 5,5% pour la rénovation énergétique (PAC, chaudière à condensation, ballon thermodynamique), sinon 10% en rénovation.",
   },
   {
     keys: ['elec', 'electric', 'electrici', 'domotique'],
     guide:
-      "Électricité : dépose, fourniture (tableau, disjoncteurs, prises, points lumineux, câble au ml), tirage/pose (au point ou ml), mise aux normes du tableau (forfait), attestation Consuel/essais. TVA 10% en rénovation, 20% dans le neuf.",
+      "Électricité : dépose, fourniture (tableau, disjoncteurs, prises, points lumineux, câble au ml), tirage/pose (au point ou ml), mise aux normes du tableau (forfait), attestation Consuel/essais. Ordres de grandeur HT France : MO 40-60€/h ; point (prise/interrupteur/lumineux) 80-150€ posé ; tableau électrique 1000-2500€ ; rénovation complète 90-150€/m² ; Consuel ~150€. TVA 10% en rénovation, 20% dans le neuf.",
   },
   {
-    keys: ['macon', 'maconn', 'gros oeuvre', 'gros œuvre', 'beton', 'terrasse'],
+    keys: ['macon', 'maconn', 'gros oeuvre', 'gros œuvre', 'beton', 'terrasse', 'dalle', 'fondation'],
     guide:
-      "Maçonnerie : démolition + évacuation des gravats (m³ ou forfait), fourniture matériaux (m²/m³), ouverture de mur + linteau (u), dalle/chape béton (m²), enduit (m²), main d'œuvre maçon (h/m²). TVA 10% en rénovation, 20% pour le neuf/extension.",
+      "Maçonnerie : démolition + évacuation des gravats (m³ ou forfait), fourniture matériaux (m²/m³), ouverture de mur porteur + linteau/IPN (u), dalle/chape béton (m²), enduit (m²), main d'œuvre maçon (h/m²). Ordres de grandeur HT France : MO 45-70€/h ; ouverture mur porteur + IPN 1500-4000€/u ; dalle béton 60-120€/m² ; enduit façade 30-60€/m². TVA 10% en rénovation, 20% pour le neuf/extension.",
   },
   {
-    keys: ['peint', 'peintre', 'ravalement', 'decoration'],
+    keys: ['peint', 'peintre', 'ravalement', 'decoration', 'enduit'],
     guide:
-      'Peinture : préparation des supports (rebouchage, ponçage, sous-couche) au m², application 2 couches au m², traitement des boiseries (ml/u), protection + nettoyage (forfait). TVA 10% en rénovation.',
+      'Peinture : préparation des supports (rebouchage, ponçage, sous-couche) au m², application 2 couches au m², traitement des boiseries (ml/u), protection + nettoyage (forfait). Ordres de grandeur HT France : peinture murs/plafonds avec prépa 25-45€/m² ; sous-couche 5-10€/m² ; boiseries 20-40€/ml ou /u. TVA 10% en rénovation.',
   },
   {
-    keys: ['menuis', 'menuiserie', 'fenetre', 'porte', 'placard', 'agencement'],
+    keys: ['menuis', 'menuiserie', 'fenetre', 'porte', 'placard', 'agencement', 'volet', 'veranda'],
     guide:
-      'Menuiserie : fourniture des ouvrages (fenêtre, porte, placard) à l\'unité, dépose de l\'ancien (u), pose + étanchéité/calfeutrement (u), habillage/finitions (ml). Menuiseries isolantes améliorant la performance thermique → TVA 5,5%, sinon 10% en rénovation.',
+      "Menuiserie : fourniture des ouvrages (fenêtre, porte, placard) à l'unité, dépose de l'ancien (u), pose + étanchéité/calfeutrement (u), habillage/finitions (ml). Ordres de grandeur HT France : fenêtre PVC double vitrage fournie-posée 400-900€/u ; fenêtre alu 700-1500€/u ; porte d'entrée 900-2500€/u ; placard sur mesure 300-800€/ml ; dépose 50-120€/u. Menuiseries isolantes améliorant la performance thermique → TVA 5,5%, sinon 10% en rénovation.",
   },
   {
-    keys: ['carrel', 'carrelage', 'faience', 'sol'],
+    keys: ['carrel', 'carrelage', 'faience', 'sol', 'parquet', 'revetement'],
     guide:
-      'Carrelage : dépose du revêtement existant (m²), préparation/ragréage du support (m²), fourniture carrelage/faïence (m²), pose (m²), plinthes (ml), joints/finitions (forfait). TVA 10% en rénovation.',
+      'Carrelage/sols : dépose du revêtement existant (m²), préparation/ragréage du support (m²), fourniture carrelage/faïence (m²), pose (m²), plinthes (ml), joints/finitions (forfait). Ordres de grandeur HT France : pose carrelage sol 40-70€/m² (pose seule) + fourniture 20-60€/m² ; faïence murale 45-80€/m² posée ; ragréage 15-30€/m² ; dépose 10-25€/m² ; plinthes 8-15€/ml. TVA 10% en rénovation.',
   },
   {
-    keys: ['multi', 'renovation', 'rénovation', 'batiment', 'tous corps', 'general'],
+    keys: ['couvr', 'couverture', 'toiture', 'toit', 'zinguerie', 'charpente', 'tuile', 'ardoise'],
     guide:
-      'Multiservices/rénovation : décompose le chantier par lot (démolition, plomberie, élec, peinture, sols…). Choisis la TVA lot par lot selon sa nature (10% rénovation, 5,5% rénovation énergétique, 20% neuf). Consigne clairement les hypothèses dans "note".',
+      "Couverture/toiture : dépose de la couverture existante (m²), fourniture (tuiles/ardoises, liteaux, écran sous-toiture, zinguerie), pose (m²), gouttières/descentes (ml), faîtage, échafaudage (forfait). Ordres de grandeur HT France : MO couvreur 45-70€/h ; réfection toiture tuiles 100-250€/m² ; zinguerie/gouttières 40-90€/ml ; démoussage/traitement 15-40€/m² ; Velux fourni-posé 800-2000€/u ; isolation combles 20-60€/m² (TVA 5,5%). TVA 10% en rénovation, 5,5% pour l'isolation, 20% dans le neuf.",
+  },
+  {
+    keys: ['multi', 'renovation', 'rénovation', 'batiment', 'tous corps', 'general', 'tce'],
+    guide:
+      'Multiservices/rénovation : décompose le chantier par LOT (démolition, plomberie, élec, peinture, sols, menuiserie…). Chiffre chaque lot avec ses propres unités et ordres de grandeur, et choisis la TVA lot par lot selon sa nature (10% rénovation, 5,5% rénovation énergétique, 20% neuf). Consigne clairement les hypothèses de découpage dans "note".',
   },
 ]
 
@@ -217,6 +428,44 @@ function guideMetier(metier: string): string {
   const n = normalize(metier)
   const hit = METIER_GUIDES.find((g) => g.keys.some((k) => n.includes(normalize(k))))
   return hit ? `\nRepères de chiffrage pour ce métier : ${hit.guide}` : ''
+}
+
+/** Indice de contexte TVA déduit de la description (soft hint, l'IA décide ligne par ligne). */
+function tvaContexte(description: string): string {
+  const n = normalize(description)
+  const neuf = has(n, [
+    'neuf', 'construction neuve', 'maison neuve', 'extension', 'agrandissement', 'surelevation',
+    'batiment neuf', 'local neuf', 'construire',
+  ])
+  const energetique = has(n, [
+    'isolation', 'isoler', 'pompe a chaleur', 'pac', 'chaudiere a condensation', 'chaudiere condensation',
+    'ballon thermodynamique', 'double vitrage', 'triple vitrage', 'menuiserie isolante', 'renovation energetique',
+    'vmc double flux', 'calorifug', 'poele a granule', 'poele a bois',
+  ])
+  const base =
+    'Rappel TVA France (choisis le taux LIGNE PAR LIGNE ; en cas de doute prends le taux le plus prudent et signale-le dans "note") : 10% en rénovation d\'un logement achevé depuis +2 ans ; 5,5% en rénovation énergétique ; 20% dans le neuf/extension ou si le doute persiste.'
+  const flags: string[] = []
+  if (neuf) flags.push("la description évoque du NEUF/extension → 20% possible sur ces postes")
+  if (energetique) flags.push("elle évoque de la RÉNOVATION ÉNERGÉTIQUE → 5,5% possible sur ces postes")
+  const detect = flags.length ? ` Indices détectés : ${flags.join(' ; ')}.` : ''
+  return `\n${base}${detect}`
+}
+
+/** Normalise l'unité renvoyée par le modèle vers un jeu cohérent (m², m³, ml, u, h, forfait…). */
+function normalizeUnite(u: string): string {
+  const raw = (u ?? '').trim()
+  const t = normalize(raw)
+  const map: Record<string, string> = {
+    'm2': 'm²', 'metre carre': 'm²', 'metres carres': 'm²', 'm carre': 'm²',
+    'm3': 'm³', 'metre cube': 'm³', 'metres cubes': 'm³',
+    'ml': 'ml', 'metre lineaire': 'ml', 'metres lineaires': 'ml', 'metre': 'ml', 'metres': 'ml', 'm': 'ml',
+    'u': 'u', 'unite': 'u', 'unites': 'u', 'piece': 'u', 'pieces': 'u', 'pce': 'u', 'p': 'u',
+    'h': 'h', 'heure': 'h', 'heures': 'h', 'hr': 'h',
+    'j': 'j', 'jour': 'j', 'jours': 'j',
+    'forfait': 'forfait', 'ft': 'forfait', 'fft': 'forfait', 'ff': 'forfait',
+    'ens': 'ens.', 'ens.': 'ens.', 'ensemble': 'ens.', 'lot': 'ens.',
+  }
+  return map[t] ?? (raw || 'u')
 }
 
 /**
@@ -234,7 +483,7 @@ function extractJsonObject(raw: string): { lignes?: unknown[]; note?: unknown } 
   }
 
   // 1) Retire d'éventuelles fences markdown ```json ... ```
-  let s = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim()
+  const s = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim()
 
   // 2) Tentative directe
   let p = tryParse(s)
@@ -253,6 +502,19 @@ function extractJsonObject(raw: string): { lignes?: unknown[]; note?: unknown } 
     if (p) return p
   }
 
+  // 5) Dernier recours : récupérer un tableau de lignes seul, même sans l'objet englobant.
+  const as = s.indexOf('[')
+  const ae = s.lastIndexOf(']')
+  if (as >= 0 && ae > as) {
+    const sub = s.slice(as, ae + 1).replace(/,\s*([}\]])/g, '$1')
+    try {
+      const v = JSON.parse(sub)
+      if (Array.isArray(v)) return { lignes: v }
+    } catch {
+      /* irrécupérable */
+    }
+  }
+
   return null
 }
 
@@ -268,28 +530,30 @@ export async function generateDevis(
 ): Promise<{ lignes: DevisLigne[]; note: string }> {
   const metier = artisan.metier?.trim() || 'artisan du bâtiment'
   const biblio = postes.length
-    ? '\nBibliothèque de postes de référence (à privilégier ; désignation | unité | fourchette prix HT | TVA%) :\n' +
+    ? '\nBibliothèque de postes de référence de CET artisan (à privilégier quand un poste correspond ; désignation | unité | fourchette prix HT | TVA%) :\n' +
       postes.map((p) => `- ${p.designation} | ${p.unite} | ${p.prix_ht_min}-${p.prix_ht_max}€ | ${p.tva_defaut}%`).join('\n')
     : ''
   const repere = guideMetier(metier)
+  const tvaHint = tvaContexte(description)
 
-  const system = `Tu es un métreur-chiffreur expert pour un(e) ${metier} en France. À partir de la description d'un chantier, tu produis les LIGNES d'un devis réaliste et bien décomposé.${biblio}${repere}
+  const system = `Tu es un métreur-chiffreur expert pour un(e) ${metier} en France. À partir de la description d'un chantier, tu produis les LIGNES d'un devis réaliste, bien décomposé et cohérent.${biblio}${repere}${tvaHint}
 
 RÈGLES :
-- Décompose le chantier en postes clairs (fourniture + pose séparées quand c'est pertinent, main d'œuvre à part si utile).
-- Chaque ligne : "designation" précise, "quantite" (nombre > 0), "unite" (u, ml, m², m³, h, forfait, ens.), "prix_unitaire_ht" (€ HT réaliste pour la France), "tva_taux" (20, 10 ou 5.5).
-- Quantités RÉALISTES et cohérentes entre elles (une surface de sol ≈ surface de préparation ; ne surestime pas les heures).
-- TVA — applique la règle française : 10 en rénovation d'un logement achevé depuis +2 ans ; 5.5 pour la rénovation énergétique (isolation, PAC, chaudière à condensation, ballon thermodynamique, menuiseries isolantes) ; 20 pour le neuf, une extension, ou en cas de doute. En cas d'ambiguïté sur la TVA, choisis le taux le plus prudent et signale-le dans "note".
-- Les prix sont des ESTIMATIONS que l'artisan ajustera : n'exagère pas, reste dans les ordres de grandeur du marché.
-- Si la description est incomplète ou ambiguë, fais des HYPOTHÈSES raisonnables, chiffre quand même, et LISTE ces hypothèses + les points à confirmer avec le client dans "note".
-- 3 à 10 lignes selon l'ampleur.
+- Décompose le chantier en postes clairs. Sépare FOURNITURE et POSE quand c'est pertinent, isole la main d'œuvre si utile, ajoute la dépose/évacuation et la mise en service quand le chantier l'exige.
+- Chaque ligne : "designation" précise et parlante, "quantite" (nombre > 0), "unite" (u, ml, m², m³, h, j, forfait, ens.), "prix_unitaire_ht" (€ HT réaliste pour la France), "tva_taux" (20, 10 ou 5.5).
+- COHÉRENCE des quantités et unités : une surface de pose ≈ la surface de préparation ; le linéaire de plinthes suit le périmètre ; les heures de main d'œuvre restent proportionnées au chantier. N'invente pas de quantités absurdes.
+- Respecte les ordres de grandeur du marché français fournis ci-dessus : ce sont des ESTIMATIONS que l'artisan ajustera, n'exagère jamais ni en plus ni en moins.
+- TVA — applique la règle française LIGNE PAR LIGNE : 10 en rénovation d'un logement achevé depuis +2 ans ; 5.5 pour la rénovation énergétique (isolation, PAC, chaudière à condensation, ballon thermodynamique, menuiseries isolantes, VMC double flux) ; 20 pour le neuf, une extension, ou en cas de doute. En cas d'ambiguïté, choisis le taux le plus prudent et signale-le dans "note".
+- Si la description est incomplète ou ambiguë, fais des HYPOTHÈSES raisonnables, chiffre quand même, et LISTE clairement dans "note" : (1) les hypothèses retenues (surfaces/quantités supposées, type de matériel, TVA choisie) et (2) les points à confirmer avec le client avant devis ferme.
+- N'invente aucune certitude : la "note" doit rappeler que ce sont des estimations HT à valider (idéalement après visite).
+- 3 à 12 lignes selon l'ampleur.
 - Réponds UNIQUEMENT avec un objet JSON valide, sans aucun texte ni balise autour, au format EXACT :
 {"lignes":[{"designation":"...","quantite":1,"unite":"u","prix_unitaire_ht":0,"tva_taux":10}],"note":"hypothèses retenues et points à préciser avec le client"}`
 
   const res = await client.messages.create({
     model,
-    max_tokens: 1500,
-    temperature: 0.2,
+    max_tokens: 2200,
+    temperature: 0.15,
     system,
     messages: [{ role: 'user', content: `Chantier : ${description.trim()}` }],
   })
@@ -315,14 +579,20 @@ RÈGLES :
       return {
         designation: String(l.designation ?? '').trim(),
         quantite: Number.isFinite(q) && q > 0 ? Math.round(q * 100) / 100 : 1,
-        unite: String(l.unite ?? 'u').trim() || 'u',
+        unite: normalizeUnite(String(l.unite ?? 'u')),
         prix_unitaire_ht: Number.isFinite(pu) && pu > 0 ? Math.round(pu * 100) / 100 : 0,
         tva_taux: [5.5, 10, 20].includes(tva) ? tva : 10,
       }
     })
     .filter((l) => l.designation)
 
-  return { lignes, note: typeof parsed.note === 'string' ? parsed.note : '' }
+  // Filet de sécurité : une "note" toujours utile, même si le modèle l'a oubliée.
+  const note =
+    typeof parsed.note === 'string' && parsed.note.trim()
+      ? parsed.note.trim()
+      : "Estimations HT indicatives, à confirmer après visite : les quantités, prix et taux de TVA sont à ajuster selon l'état réel du support, les finitions choisies et l'ancienneté du logement."
+
+  return { lignes, note }
 }
 
 /** Modèle de relance de secours (utilisé si l'IA n'est pas disponible). */

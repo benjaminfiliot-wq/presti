@@ -54,7 +54,17 @@ export default function ScrollScene({ children, className = '', height = '360vh'
           : 'none'
       })
       counts.forEach((el) => { const [a, b] = parseP(el); el.textContent = fmt(el, Number(el.dataset.count || '0') * range(p, a, b)) })
-      tilts.forEach((el) => { const amt = Number(el.dataset.tilt || '14'); const t = range(p, 0.1, 0.6); el.style.transform = `rotateY(${((1 - t) * -amt).toFixed(2)}deg) rotateX(${((1 - t) * amt * 0.5).toFixed(2)}deg)` })
+      const mobile = window.innerWidth < 760
+      tilts.forEach((el) => {
+        let amt = Number(el.dataset.tilt || '14')
+        if (mobile) amt = Math.min(amt, 18)            // pivot moins extrême sur mobile (reste à l'écran)
+        const t = range(p, 0.08, 0.55)
+        const ry = (1 - t) * -amt
+        const rx = (1 - t) * Math.min(amt * 0.35, 12)
+        const sc = (mobile ? 0.9 : 0.8) + (mobile ? 0.1 : 0.2) * t
+        const tz = (1 - t) * (mobile ? -30 : -80)
+        el.style.transform = `translateZ(${tz.toFixed(0)}px) rotateY(${ry.toFixed(2)}deg) rotateX(${rx.toFixed(2)}deg) scale(${sc.toFixed(3)})`
+      })
     }
 
     let ticking = false

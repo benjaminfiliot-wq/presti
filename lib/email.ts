@@ -1,10 +1,9 @@
 // Envoi d'emails transactionnels via Resend (appel HTTP direct, sans dépendance).
-// ⚠️ Tant qu'aucun domaine n'est vérifié dans Resend, l'expéditeur reste
-// « onboarding@resend.dev » et Resend n'envoie QU'À l'adresse du compte Resend.
-// Pour écrire aux vrais prospects : vérifier un domaine dans Resend (DNS) puis
-// remplacer FROM par une adresse de ce domaine (ex : « Presti <devis@tondomaine.fr> »).
+// Expéditeur = domaine prestiapp.fr (à VÉRIFIER dans Resend en posant les DNS chez OVH :
+// TXT resend._domainkey, MX send, TXT send/SPF). Tant que le domaine n'est pas "verified",
+// Resend refuse l'envoi vers des adresses tierces — dès qu'il l'est, les emails partent aux vrais prospects.
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const FROM = 'Presti <onboarding@resend.dev>'
+const FROM = 'Presti <contact@prestiapp.fr>'
 
 type SendResult = { ok: boolean; id?: string; error?: string }
 

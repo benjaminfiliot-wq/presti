@@ -113,7 +113,8 @@ export default function Home() {
             <div className="lp-spec s2" data-anim="" data-p="0.36,0.48"><div className="lab">TVA auto</div><div className="big">10<span style={{ fontSize: '.42em' }}> %</span></div></div>
             <div className="lp-spec s3" data-anim="" data-p="0.58,0.70"><div className="lab">Total TTC</div><div className="big" data-count="873.40" data-p="0.46,0.72" data-dec="2" data-suffix=" €">0 €</div></div>
             <div className="lp-spec s4" data-anim="" data-p="0.72,0.84"><div className="lab">Conforme</div><div className="big">PDF</div></div>
-            <div data-tilt="20" style={{ transformStyle: 'preserve-3d' }}>
+            <div data-tilt="52" style={{ transformStyle: 'preserve-3d' }}>
+              <span className="lp-docglow" aria-hidden="true" />
               <div className="lp-doc">
                 <span className="lp-scan" aria-hidden="true" />
                 <div className="lp-doc-h">
@@ -219,14 +220,21 @@ export default function Home() {
         {/* TARIFS */}
         <section className="lp-blk" id="tarifs">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick">Abonnements</span><h2>Choisissez jusqu&apos;où Presti travaille pour vous.</h2><p>Chaque réponse ou devis généré par l&apos;IA consomme <strong style={{ color: 'var(--ink)' }}>1 crédit</strong>. Vous montez en formule quand votre activité grandit.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick">Abonnements</span><h2>Simple : vous payez à l&apos;usage, en crédits.</h2><p>Chaque formule vous donne des crédits chaque mois. Vous montez en formule quand votre activité grandit.</p></div>
 
-            <div className="lp-trial reveal"><b>Essai gratuit</b><em>1 à 3 réponses IA offertes sur vos vraies demandes — pour juger la qualité avant de payer. Sans carte.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
+            <div className="lp-howcredits reveal">
+              <div className="lp-hc"><span className="ic">{I.zap}</span><b>1 crédit = 1 génération</b><span>Une réponse envoyée à un client, ou un devis chiffré par l&apos;IA.</span></div>
+              <div className="lp-hc"><span className="ic">{I.badge}</span><b>Modèle Expert = 3 crédits</b><span>L&apos;IA la plus puissante consomme plus — réservez-la aux gros chantiers.</span></div>
+              <div className="lp-hc"><span className="ic">{I.repeat}</span><b>Rechargés chaque mois</b><span>Vos crédits se réinitialisent à chaque renouvellement. Non reportés au mois suivant.</span></div>
+            </div>
+
+            <div className="lp-trial reveal"><b>Essai gratuit</b><em>3 crédits offerts (3 réponses ou devis) sur vos vraies demandes — pour juger la qualité avant de payer. Sans carte.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
 
             <div className="lp-plans reveal">
               <div className="lp-plan">
                 <div className="lp-pn">Essentiel</div>
                 <div className="lp-pp">29€<small>par mois</small></div>
+                <div className="lp-credits"><b>80</b>&nbsp;crédits / mois</div>
                 <div className="lp-for">Pour l&apos;artisan solo qui ne veut plus louper une demande.</div>
                 <p className="lp-psub">L&apos;essentiel pour répondre vite et bien : chaque demande reçoit une réponse pro dans votre ton, vous générez devis et factures en quelques mots, et Presti relance tout seul.</p>
                 <ul className="lp-plist"><li>Réponse instantanée dans votre ton</li><li>Génération de devis IA (crédits inclus)</li><li>Relances automatiques J+2 / J+5 / J+10</li><li>Modèles IA Standard &amp; Pro</li></ul>
@@ -236,6 +244,7 @@ export default function Home() {
               <div className="lp-plan lp-plan--feat">
                 <div className="lp-pn">Studio</div>
                 <div className="lp-pp">59€<small>par mois</small></div>
+                <div className="lp-credits"><b>250</b>&nbsp;crédits / mois</div>
                 <div className="lp-for">Pour celui qui veut aussi une présence en ligne et toute la puissance.</div>
                 <p className="lp-psub">Tout l&apos;Essentiel, plus l&apos;accès à tous les modèles d&apos;IA — le plus puissant, Expert, jusqu&apos;à 10 fois par mois — et plus de crédits. Votre site web pro clé en main arrive bientôt, inclus dans ce palier.</p>
                 <ul className="lp-plist"><li>Tout l&apos;Essentiel inclus</li><li>Tous les modèles IA (Expert : 10×/mois)</li><li>Crédits augmentés chaque mois</li><li>Site web pro clé en main <em style={{ color: 'var(--co2)', fontStyle: 'normal' }}>· bientôt</em></li></ul>
@@ -245,13 +254,14 @@ export default function Home() {
               <div className="lp-plan">
                 <div className="lp-pn">Signature</div>
                 <div className="lp-pp">99€<small>par mois</small></div>
+                <div className="lp-credits"><b>600</b>&nbsp;crédits / mois</div>
                 <div className="lp-for">Pour l&apos;atelier qui tourne à plein régime.</div>
                 <p className="lp-psub">Le maximum de puissance et de crédits, plusieurs métiers gérés, et un accompagnement dédié pour installer Presti dans votre quotidien.</p>
                 <ul className="lp-plist"><li>Tout Studio inclus</li><li>Crédits élevés (gros volumes)</li><li>Plusieurs métiers / activités</li><li>Accompagnement dédié</li></ul>
                 <a className="lp-btn lp-btn--g" href="/signup">Choisir Signature</a>
               </div>
             </div>
-            <p className="lp-pnote">Le modèle Expert consomme plus de crédits · Résiliable à tout moment, sans engagement</p>
+            <p className="lp-pnote">1 crédit = 1 génération · Expert = 3 crédits · crédits rechargés chaque mois (non reportés) · sans engagement</p>
           </div>
         </section>
 

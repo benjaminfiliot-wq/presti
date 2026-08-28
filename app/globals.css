@@ -1029,6 +1029,16 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .lp-plan .lp-btn{width:100%;justify-content:center;margin-top:auto}
 .lp-pnote{text-align:center;color:var(--faint);font-size:.88rem;margin-top:1.6rem;font-family:var(--font-mono)}
 @media(max-width:860px){.lp-plans{grid-template-columns:1fr}}
+/* crédits */
+.lp-credits{display:inline-flex;align-items:baseline;gap:.4rem;margin:.7rem 0 .2rem;font-family:var(--font-mono);font-size:.78rem;color:var(--co2);font-weight:600;background:rgba(217,119,87,.1);border:1px solid rgba(217,119,87,.24);border-radius:999px;padding:.34rem .75rem}
+.lp-credits b{font-family:var(--font-display);font-size:1.05rem;color:var(--ink);letter-spacing:-.02em}
+.lp-howcredits{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2.4rem auto 0;max-width:940px}
+.lp-hc{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:1.3rem;text-align:center}
+.lp-hc .ic{width:2rem;height:2rem;border-radius:9px;background:rgba(217,119,87,.13);display:inline-grid;place-items:center;color:var(--co2);margin-bottom:.6rem}
+.lp-hc .ic svg{width:16px;height:16px;stroke:var(--co2);fill:none}
+.lp-hc b{display:block;font-family:var(--font-display);font-weight:700;font-size:1.02rem}
+.lp-hc span{display:block;font-size:.88rem;color:var(--muted);margin-top:.3rem}
+@media(max-width:760px){.lp-howcredits{grid-template-columns:1fr}}
 
 /* CTA final + footer */
 .lp-final{text-align:center;background:radial-gradient(ellipse at center,rgba(217,119,87,.12),transparent 62%)}
@@ -1060,6 +1070,8 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 /* tampon conforme */
 .lp-stamp{position:absolute;right:-8px;bottom:30px;width:92px;height:92px;border-radius:50%;border:2px solid var(--co);color:var(--co-deep);display:grid;place-items:center;text-align:center;font-family:var(--font-mono);font-size:8.5px;font-weight:700;letter-spacing:.08em;line-height:1.35;text-transform:uppercase;background:rgba(251,250,247,.72);backdrop-filter:blur(2px);box-shadow:0 0 26px -6px var(--co-glow);z-index:6;transform:rotate(-13deg) scale(calc(.8 + .22*var(--p,0)));opacity:calc((var(--p,0) - .8) * 6)}
 .lp-stamp b{font-size:11px;display:block;color:var(--co)}
+/* halo derrière le doc qui s'intensifie au scroll */
+.lp-docglow{position:absolute;left:50%;top:50%;width:155%;height:145%;transform:translate(-50%,-50%) translateZ(-70px);border-radius:50%;background:radial-gradient(ellipse at center,var(--co-glow),transparent 66%);filter:blur(36px);opacity:calc(.14 + .6*var(--p,0));pointer-events:none}
 .lp-doc-h{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #20201C;padding-bottom:.75rem}
 .lp-doc-h .co{font-family:var(--font-display);font-weight:700;font-size:1rem;line-height:1.1}
 .lp-doc-h .co small,.lp-doc-h .ti small{display:block;font-family:var(--font-body);font-size:.62rem;color:#8a857a;font-weight:500;margin-top:.2rem}
