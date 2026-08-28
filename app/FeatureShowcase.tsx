@@ -44,6 +44,29 @@ function DevisDemo() {
     </div>
   )
 }
+function FactureDemo() {
+  const total = useCount(873.4, 2)
+  return (
+    <div className="fs-doc">
+      <span className="fs-scan" aria-hidden="true" />
+      <div className="fs-doc-h fsr" style={R(0)}>
+        <div className="co">Dupont Plomberie<small>17230 Marans</small></div>
+        <div className="ti"><b>FACTURE</b><small>FAC-2026-0018</small></div>
+      </div>
+      <div className="fs-doc-cli fsr" style={R(0.15)}>Générée depuis le devis <b>DEV-2026-0042</b> — en un clic</div>
+      <div className="fs-dl fsr" style={R(0.5)}><span>Dépose + pose chauffe-eau 200 L</span><span className="p">620,00 €</span></div>
+      <div className="fs-dl fsr" style={R(0.85)}><span>Groupe de sécurité + raccords</span><span className="p">84,00 €</span></div>
+      <div className="fs-dl fsr" style={R(1.2)}><span>Main-d&apos;œuvre (2 h)</span><span className="p">90,00 €</span></div>
+      <div className="fs-doc-tot fsr" style={R(1.5)}><span>Total TTC</span><span className="p">{total} €</span></div>
+      <div className="fs-doc-cli fsr" style={R(1.8)}>Échéance de paiement&nbsp;: <b>27 septembre 2026</b></div>
+      <div className="fs-badges">
+        <span className="fs-bdg fsr" style={R(2.1)}>N° FAC- en séquence</span>
+        <span className="fs-bdg fsr" style={R(2.3)}>Mentions pénalités</span>
+        <span className="fs-bdg ok fsr" style={R(2.6)}>✓ Marquer payée</span>
+      </div>
+    </div>
+  )
+}
 function RelancesDemo() {
   return (
     <div className="fs-rel">
@@ -90,6 +113,7 @@ function PaiementDemo() {
 
 const FEATURES = [
   { id: 'devis', label: 'Devis chiffré', desc: 'Décrivez le chantier : Presti détaille les postes, applique la bonne TVA et sort un PDF conforme.', Demo: DevisDemo },
+  { id: 'facture', label: 'Facturation', desc: 'Le chantier est fait ? Le devis devient une facture en un clic — numéro légal, échéance et mentions de pénalités générés tout seuls.', Demo: FactureDemo },
   { id: 'relances', label: 'Relances auto', desc: 'Le client ne répond pas ? Presti relance à J+2, J+5, J+10 — et s’arrête dès qu’il répond.', Demo: RelancesDemo },
   { id: 'dashboard', label: 'Tableau de bord', desc: 'Toutes vos demandes au même endroit, avec leur statut. Plus rien ne se perd.', Demo: DashboardDemo },
   { id: 'lien', label: 'Lien de contact', desc: 'Un lien à vous à coller partout. Chaque demande arrive dans Presti, instantanément.', Demo: LienDemo },
