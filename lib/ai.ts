@@ -8,6 +8,24 @@ const AI_MODEL = 'claude-haiku-4-5'
 // Lit automatiquement ANTHROPIC_API_KEY depuis .env.local (côté serveur uniquement).
 const client = new Anthropic()
 
+// Modèles qui supportent le "thinking adaptatif" (raisonnement profond auto-dosé) : 4.6+ et 5-series.
+// Haiku 4.5 (Standard) reste sur la voie rapide, sans thinking.
+function supportsThinking(model: string): boolean {
+  return /claude-(opus|sonnet|fable)-(5($|-)|4-[6-9])/.test(model)
+}
+
+/**
+ * Paramètres de génération : sur un modèle capable (Pro/Expert), active le thinking
+ * adaptatif et élargit max_tokens pour laisser de la place au raisonnement + à la sortie.
+ * Sur Standard (Haiku), garde la voie rapide et économique.
+ */
+function genParams(model: string, baseMaxTokens: number) {
+  if (supportsThinking(model)) {
+    return { model, max_tokens: baseMaxTokens + 4000, thinking: { type: 'adaptive' as const } }
+  }
+  return { model, max_tokens: baseMaxTokens }
+}
+
 type Artisan = { nom: string | null; metier: string | null; ton_style: string | null }
 type Lead = { nom_prospect?: string | null; contact?: string | null; message?: string | null }
 
@@ -281,8 +299,7 @@ Canal de contact : ${insights.canal === 'email' ? 'email' : insights.canal === '
 Besoin décrit par le prospect : ${besoin}`
 
   const res = await client.messages.create({
-    model,
-    max_tokens: 1024,
+    ...genParams(model, 1024),
     system,
     messages: [{ role: 'user', content: user }],
   })
@@ -352,8 +369,7 @@ Besoin initial : ${besoin}
 Numéro de relance : ${rang}`
 
   const res = await client.messages.create({
-    model,
-    max_tokens: 700,
+    ...genParams(model, 700),
     system,
     messages: [{ role: 'user', content: user }],
   })
@@ -549,8 +565,7 @@ RÈGLES :
 {"lignes":[{"designation":"...","quantite":1,"unite":"u","prix_unitaire_ht":0,"tva_taux":10}],"note":"hypothèses retenues et points à préciser avec le client"}`
 
   const res = await client.messages.create({
-    model,
-    max_tokens: 2200,
+    ...genParams(model, 2200),
     system,
     messages: [{ role: 'user', content: `Chantier : ${description.trim()}` }],
   })
