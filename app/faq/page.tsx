@@ -1,5 +1,7 @@
+import Breadcrumb from '@/app/Breadcrumb'
+
 export const metadata = {
-  title: 'FAQ — Presti',
+  title: 'FAQ',
   description: 'Questions fréquentes sur Presti : fonctionnement, sécurité des données, tarifs, devis, paiements.',
 }
 
@@ -12,7 +14,6 @@ const FAQ: { q: string; a: string }[] = [
   { q: 'Combien ça coûte ?', a: 'Des abonnements simples fonctionnant à base de crédits : 1 crédit = 1 réponse ou 1 devis généré par l’IA. Vous choisissez le niveau dont vous avez besoin, sans engagement, résiliable à tout moment.' },
   { q: 'Les devis générés sont-ils valables ?', a: 'Presti génère des devis conformes (mentions légales, TVA, assurance décennale). Vous restez responsable de leur vérification et de leur validation avant envoi : Presti est un outil d’assistance, pas un substitut à votre contrôle.' },
   { q: 'L’intelligence artificielle peut-elle se tromper ?', a: 'Comme tout outil basé sur l’IA, les contenus proposés peuvent comporter des inexactitudes. Vous devez toujours les relire et les valider avant de les envoyer à un client. Voir nos conditions générales pour le détail.' },
-  { q: 'Comment mes clients me paient-ils ?', a: 'Vous pouvez générer un lien de paiement sécurisé (Stripe) sur chaque devis. Votre client paie par carte bancaire en un clic, et l’argent arrive directement sur votre compte.' },
   { q: 'Puis-je annuler à tout moment ?', a: 'Oui, les abonnements sont sans engagement et résiliables à tout moment. Votre accès reste actif jusqu’à la fin de la période déjà payée.' },
 ]
 
@@ -30,7 +31,7 @@ export default function FaqPage() {
   return (
     <main className="legal-wrap">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <a className="legal-back" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>Retour</a>
+      <Breadcrumb label="FAQ" path="/faq" />
       <h1>Questions fréquentes</h1>
       <div className="legal-updated">Tout ce qu’il faut savoir sur Presti</div>
 

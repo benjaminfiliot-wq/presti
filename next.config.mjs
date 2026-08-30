@@ -13,11 +13,11 @@ const nextConfig = {
   async headers() {
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'", // Next hydrate via scripts inline ; pas de eval en prod
+      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com", // Next inline + GA (optionnel)
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
-      "img-src 'self' data: blob:", // logos en data URL
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com",
+      "img-src 'self' data: blob: https://www.google-analytics.com", // logos data URL + GA
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://www.google-analytics.com https://*.analytics.google.com",
       "frame-src https://js.stripe.com https://checkout.stripe.com",
       "object-src 'none'",
       "base-uri 'self'",

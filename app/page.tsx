@@ -33,6 +33,19 @@ export default function Home() {
         }}
       />
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@graph': [
+              { '@type': 'Organization', '@id': 'https://prestiapp.fr/#org', name: 'Presti', url: 'https://prestiapp.fr', logo: 'https://prestiapp.fr/icon.svg' },
+              { '@type': 'WebSite', '@id': 'https://prestiapp.fr/#site', url: 'https://prestiapp.fr', name: 'Presti', inLanguage: 'fr-FR', publisher: { '@id': 'https://prestiapp.fr/#org' } },
+            ],
+          }),
+        }}
+      />
+
       <div className="lp-aurora" aria-hidden="true">
         <span className="lp-glow a parallax" data-speed="-14" />
         <span className="lp-glow b parallax" data-speed="10" />
