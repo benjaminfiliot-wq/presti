@@ -57,11 +57,13 @@ const s = StyleSheet.create({
   cTva: { width: 40, textAlign: 'right' },
   cTot: { width: 68, textAlign: 'right' },
 
-  totals: { marginLeft: 'auto', width: 220, marginTop: 12 },
-  totRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 2 },
-  grand: { borderTopWidth: 2, borderTopColor: INK, marginTop: 3, paddingTop: 5 },
-  grandText: { fontFamily: 'Times-Bold', fontSize: 12 },
-  acompte: { color: CLAY, fontFamily: 'Helvetica-Bold' },
+  totals: { marginLeft: 'auto', width: 238, marginTop: 14 },
+  totRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 2.5 },
+  totSub: { color: MUTED },
+  // Total TTC : bandeau corail (le montant clé ressort)
+  grand: { backgroundColor: CLAY, borderRadius: 6, marginTop: 6, paddingVertical: 8, paddingHorizontal: 12 },
+  grandText: { fontFamily: 'Times-Bold', fontSize: 13, color: '#fff' },
+  acompte: { color: CLAY, fontFamily: 'Helvetica-Bold', marginTop: 4, paddingHorizontal: 12 },
 
   // Bloc paiement (RIB) — facture
   pay: { marginTop: 20, backgroundColor: '#FAF9F6', borderWidth: 1, borderColor: LINE, borderRadius: 6, padding: 11 },
@@ -154,12 +156,12 @@ export function DevisPDF({ d }: { d: PDFData }) {
 
         {/* Totaux */}
         <View style={s.totals}>
-          {d.remiseMontant > 0.001 && <View style={s.totRow}><Text>Sous-total HT</Text><Text>{eur(d.totalBrut)}</Text></View>}
-          {d.remiseMontant > 0.001 && <View style={s.totRow}><Text>Remise {d.remisePct}%</Text><Text>- {eur(d.remiseMontant)}</Text></View>}
-          <View style={s.totRow}><Text>Total HT</Text><Text>{eur(d.totalHt)}</Text></View>
-          {d.tvaParTaux.map(([t, m]) => <View key={t} style={s.totRow}><Text>TVA {t.replace('.', ',')}%</Text><Text>{eur(m)}</Text></View>)}
+          {d.remiseMontant > 0.001 && <View style={s.totRow}><Text style={s.totSub}>Sous-total HT</Text><Text style={s.totSub}>{eur(d.totalBrut)}</Text></View>}
+          {d.remiseMontant > 0.001 && <View style={s.totRow}><Text style={s.totSub}>Remise {d.remisePct}%</Text><Text style={s.totSub}>- {eur(d.remiseMontant)}</Text></View>}
+          <View style={s.totRow}><Text style={s.totSub}>Total HT</Text><Text style={s.totSub}>{eur(d.totalHt)}</Text></View>
+          {d.tvaParTaux.map(([t, m]) => <View key={t} style={s.totRow}><Text style={s.totSub}>TVA {t.replace('.', ',')}%</Text><Text style={s.totSub}>{eur(m)}</Text></View>)}
           <View style={[s.totRow, s.grand]}><Text style={s.grandText}>Total TTC</Text><Text style={s.grandText}>{eur(d.totalTtc)}</Text></View>
-          {!isFacture && d.acomptePct > 0 && <View style={[s.totRow, s.acompte]}><Text>Acompte {d.acomptePct}%</Text><Text>{eur(d.acompteMontant)}</Text></View>}
+          {!isFacture && d.acomptePct > 0 && <View style={[s.totRow, s.acompte]}><Text>Acompte {d.acomptePct}% à la commande</Text><Text>{eur(d.acompteMontant)}</Text></View>}
         </View>
 
         {/* Bloc paiement (RIB) — facture non annulée */}
