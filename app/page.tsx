@@ -101,8 +101,8 @@ export default function Home() {
         <section className="lp-blk lp-proof reveal">
           <div className="container">
             <div className="lp-bignum count" data-to="7" data-suffix="×">7×</div>
-            <p>plus de chances de signer le client si vous répondez dans l&apos;heure. Presti, lui, répond en moins d&apos;une minute — jour et nuit.</p>
-            <div className="src">Source : Harvard Business Review</div>
+            <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Presti, lui, répond en moins d&apos;une minute — jour et nuit.</p>
+            <div className="src">Source : Harvard Business Review — « The Short Life of Online Sales Leads » (étude sur 2 241 entreprises)</div>
           </div>
         </section>
 
