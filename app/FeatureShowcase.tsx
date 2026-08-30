@@ -100,7 +100,23 @@ function LienDemo() {
     </div>
   )
 }
+function ConversationDemo() {
+  return (
+    <div className="fs-conv">
+      <div className="fs-conv-h fsr" style={R(0)}>
+        <span className="fs-conv-ava">DP</span>
+        <div className="fs-conv-id"><b>Dupont Plomberie</b><span className="fs-conv-live"><i />En ligne · répond en direct</span></div>
+      </div>
+      <div className="fs-cbub me fsr" style={R(0.35)}>Fuite sous l&apos;évier, ça goutte de plus en plus. Vous pouvez passer&nbsp;?</div>
+      <div className="fs-cbub them fsr" style={R(0.95)}>Bonjour Marie, je vous rappelle dans l&apos;heure. En attendant, placez une bassine et coupez l&apos;arrivée d&apos;eau. Demain matin vous conviendrait&nbsp;?</div>
+      <div className="fs-cbub me fsr" style={R(1.7)}>Parfait pour demain 9h. C&apos;est un mitigeur récent.</div>
+      <div className="fs-cbub them fsr" style={R(2.3)}>Noté&nbsp;! Un joint usé, ça se règle vite. Je vous prépare un devis clair d&apos;ici là.</div>
+      <div className="fs-conv-out fsr" style={R(3)}><span className="tick">✓</span> Conversation transformée en devis — en un clic</div>
+    </div>
+  )
+}
 const FEATURES = [
+  { id: 'conversation', label: 'Conversation en direct', desc: 'Votre client discute sur votre page, l’IA lui répond dans la seconde — de façon humaine et juste. Vous reprenez la main quand vous voulez, et la conversation devient un devis en un clic.', Demo: ConversationDemo },
   { id: 'devis', label: 'Devis chiffré', desc: 'Décrivez le chantier : Presti détaille les postes, applique la bonne TVA et sort un PDF conforme.', Demo: DevisDemo },
   { id: 'facture', label: 'Facturation', desc: 'Le chantier est fait ? Le devis devient une facture en un clic — numéro légal, échéance et mentions de pénalités générés tout seuls.', Demo: FactureDemo },
   { id: 'relances', label: 'Relances auto', desc: 'Le client ne répond pas ? Presti relance à J+2, J+5, J+10 — et s’arrête dès qu’il répond.', Demo: RelancesDemo },

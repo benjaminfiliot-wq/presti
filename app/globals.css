@@ -1304,6 +1304,19 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .fs-send{text-align:center;background:linear-gradient(120deg,var(--co2),var(--co));color:#1a0f0a;font-weight:650;border-radius:10px;padding:.75rem;font-size:.92rem}
 .fs-arrived{display:flex;align-items:center;gap:.5rem;justify-content:center;font-size:.85rem;color:var(--ok);background:rgba(70,200,154,.1);border:1px solid rgba(70,200,154,.28);border-radius:10px;padding:.65rem}
 .fs-arrived .tick{display:grid;place-items:center;width:1.2rem;height:1.2rem;border-radius:50%;background:var(--ok);color:#04140d;font-size:.7rem;font-weight:800}
+/* démo conversation en direct */
+.fs-conv{width:min(94%,470px);display:flex;flex-direction:column;gap:.5rem}
+.fs-conv-h{display:flex;align-items:center;gap:.6rem;padding-bottom:.55rem;margin-bottom:.15rem;border-bottom:1px solid var(--line)}
+.fs-conv-ava{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--co2),var(--co));color:#1a0f0a;font-weight:800;font-size:.72rem}
+.fs-conv-id{display:flex;flex-direction:column;gap:.12rem}
+.fs-conv-id b{font-size:.9rem;color:var(--ink);line-height:1.1}
+.fs-conv-live{display:inline-flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--muted)}
+.fs-conv-live i{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(70,200,154,.16)}
+.fs-cbub{max-width:84%;padding:.58rem .8rem;border-radius:13px;font-size:.84rem;line-height:1.45}
+.fs-cbub.me{align-self:flex-end;background:linear-gradient(120deg,var(--co2),var(--co));color:#1a0f0a;font-weight:500;border-bottom-right-radius:4px}
+.fs-cbub.them{align-self:flex-start;background:var(--bg2);border:1px solid var(--line);color:var(--ink2);border-bottom-left-radius:4px}
+.fs-conv-out{display:flex;align-items:center;gap:.5rem;justify-content:center;font-size:.82rem;color:var(--ok);background:rgba(70,200,154,.1);border:1px solid rgba(70,200,154,.28);border-radius:10px;padding:.6rem;margin-top:.25rem}
+.fs-conv-out .tick{display:grid;place-items:center;width:1.2rem;height:1.2rem;border-radius:50%;background:var(--ok);color:#04140d;font-size:.7rem;font-weight:800}
 .fs-payrow{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-display);font-weight:800;font-size:1.3rem}
 .fs-payrow .amt{color:var(--co2)}
 .fs-card{display:flex;align-items:center;gap:.6rem;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:.7rem .85rem}
