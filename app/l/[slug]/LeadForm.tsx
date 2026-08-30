@@ -6,6 +6,7 @@ export default function LeadForm({ slug }: { slug: string }) {
   const [nom, setNom] = useState('')
   const [contact, setContact] = useState('')
   const [message, setMessage] = useState('')
+  const [website, setWebsite] = useState('') // honeypot (doit rester vide)
   const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
@@ -17,7 +18,7 @@ export default function LeadForm({ slug }: { slug: string }) {
     const res = await fetch('/api/leads', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug, nom_prospect: nom, contact, message }),
+      body: JSON.stringify({ slug, nom_prospect: nom, contact, message, website }),
     })
     setLoading(false)
     if (!res.ok) {
@@ -34,6 +35,12 @@ export default function LeadForm({ slug }: { slug: string }) {
 
   return (
     <form onSubmit={submit}>
+      {/* honeypot anti-bot : invisible pour les humains, ignoré des lecteurs d'écran */}
+      <input
+        type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
+        value={website} onChange={(e) => setWebsite(e.target.value)}
+        style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
+      />
       <label>Votre nom</label>
       <input value={nom} onChange={(e) => setNom(e.target.value)} required />
       <label>Votre email ou téléphone</label>

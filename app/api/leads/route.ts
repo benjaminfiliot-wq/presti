@@ -28,6 +28,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
     }
 
+    // Honeypot anti-bot : champ caché qui doit rester vide. Rempli → on droppe en silence.
+    if (typeof body?.website === 'string' && body.website.trim()) {
+      return NextResponse.json({ ok: true })
+    }
+
+    // Rate-limit PAR IP (anti-flood + anti-relais email anonyme) : au-delà de 6 demandes
+    // par IP sur 10 min, on refuse tout (rien inséré, aucun email généré).
+    const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown'
+    if (ip !== 'unknown') {
+      try {
+        const since = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+        const { count } = await supabaseAdmin
+          .from('leads')
+          .select('id', { count: 'exact', head: true })
+          .eq('ip', ip)
+          .gte('created_at', since)
+        if ((count ?? 0) >= 6) return NextResponse.json({ error: 'Trop de demandes. Réessayez dans quelques minutes.' }, { status: 429 })
+      } catch { /* en cas de doute sur le comptage : on ne bloque pas un vrai prospect */ }
+    }
+
     // 1) Retrouver l'artisan à partir de son slug
     const { data: artisan, error: aErr } = await supabaseAdmin
       .from('artisans')
@@ -51,6 +71,7 @@ export async function POST(req: Request) {
         message,
         canal: 'formulaire',
         statut: 'nouveau',
+        ip: ip === 'unknown' ? null : ip,
       })
       .select('id')
       .single()

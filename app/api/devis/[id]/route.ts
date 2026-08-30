@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { computeTotals } from '@/lib/devisTotals'
+import { normalizeLigne } from '@/lib/lignes'
+
+const DEVIS_STATUTS = ['brouillon', 'envoye', 'accepte', 'refuse', 'expire']
 
 type LigneIn = { designation?: string; quantite?: number; unite?: string; prix_unitaire_ht?: number; tva_taux?: number }
 
@@ -24,15 +27,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     // Franchise de TVA (défaut) ⇒ 0 % ; taux normalisé une seule fois (totaux = stockage).
     const { data: art } = await supabaseAdmin.from('artisans').select('tva_regime').eq('id', uid).maybeSingle()
     const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
-    const eff = lignes.map((l) => {
-      const tv = Number(l.tva_taux)
-      return {
-        designation: (l.designation ?? '').slice(0, 300),
-        quantite: Number(l.quantite) || 1, unite: l.unite ?? 'u',
-        prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0,
-        tva_taux: franchise ? 0 : (Number.isFinite(tv) ? tv : 20),
-      }
-    })
+    const eff = lignes.map((l) => normalizeLigne(l, franchise))
     const totals = computeTotals(eff, Number(b?.remise_pct) || 0)
 
     const patch: Record<string, unknown> = {
@@ -50,10 +45,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       total_ttc: totals.total_ttc,
       updated_at: new Date().toISOString(),
     }
-    if (typeof b?.statut === 'string') patch.statut = b.statut
+    if (typeof b?.statut === 'string' && DEVIS_STATUTS.includes(b.statut)) patch.statut = b.statut
 
-    const { error: upErr } = await supabaseAdmin.from('devis').update(patch).eq('id', id)
-    if (upErr) return NextResponse.json({ error: upErr.message }, { status: 500 })
+    const { error: upErr } = await supabaseAdmin.from('devis').update(patch).eq('id', id).eq('artisan_id', uid)
+    if (upErr) { console.error('[devis PATCH]', upErr.message); return NextResponse.json({ error: 'Mise à jour impossible' }, { status: 500 }) }
 
     // Remplacer les lignes
     await supabaseAdmin.from('devis_lignes').delete().eq('devis_id', id)
@@ -65,8 +60,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     return NextResponse.json({ ok: true, ...totals })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Erreur inconnue'
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('[devis PATCH] inattendu:', e)
+    return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
   }
 }
 

@@ -37,12 +37,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       replyTo: artisan?.email || undefined,
       attachments: [{ filename: `${devis.numero || 'devis'}.pdf`, content: base64 }],
     })
-    if (!r.ok) return NextResponse.json({ error: `Envoi échoué : ${r.error}` }, { status: 502 })
+    if (!r.ok) { console.error('[devis envoyer]', r.error); return NextResponse.json({ error: 'Envoi impossible pour le moment.' }, { status: 502 }) }
 
-    await supabaseAdmin.from('devis').update({ statut: 'envoye', updated_at: new Date().toISOString() }).eq('id', id)
+    await supabaseAdmin.from('devis').update({ statut: 'envoye', updated_at: new Date().toISOString() }).eq('id', id).eq('artisan_id', uid)
     return NextResponse.json({ ok: true })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Erreur inconnue'
-    return NextResponse.json({ error: msg }, { status: 500 })
+    console.error('[devis envoyer] inattendu:', e)
+    return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
   }
 }

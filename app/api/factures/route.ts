@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { computeTotals } from '@/lib/devisTotals'
+import { normalizeLigne } from '@/lib/lignes'
 
 type LigneIn = { designation?: string; quantite?: number; unite?: string; prix_unitaire_ht?: number; tva_taux?: number }
 
@@ -34,15 +35,7 @@ export async function POST(req: Request) {
     // Franchise de TVA (défaut auto-entrepreneur) ⇒ 0 % ; sinon taux conservé (0 réel préservé).
     const { data: art } = await supabaseAdmin.from('artisans').select('tva_regime').eq('id', uid).maybeSingle()
     const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
-    const eff = lignes.map((l) => {
-      const tv = Number(l.tva_taux)
-      return {
-        designation: (l.designation ?? '').slice(0, 300),
-        quantite: Number(l.quantite) || 1, unite: l.unite ?? 'u',
-        prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0,
-        tva_taux: franchise ? 0 : (Number.isFinite(tv) ? tv : 20),
-      }
-    })
+    const eff = lignes.map((l) => normalizeLigne(l, franchise))
     const totals = computeTotals(eff, Number(src.remise_pct) || 0)
 
     const { data: n } = await supabaseAdmin.rpc('next_numero', { p_artisan: uid, p_type: 'facture' })
