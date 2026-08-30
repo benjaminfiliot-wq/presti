@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateLeadReply } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { consumeCredit } from '@/lib/credits'
+import { getIp, isBanned, recordAbuse } from '@/lib/security'
 
 // Bornes anti-abus (une demande légitime tient largement dedans).
 const MAX = { slug: 80, contact: 200, nom: 120, message: 5000 }
@@ -28,14 +29,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
     }
 
-    // Honeypot anti-bot : champ caché qui doit rester vide. Rempli → on droppe en silence.
+    const ip = getIp(req)
+
+    // Anti-hacker : IP bannie (manuelle ou auto) → on refuse tout, immédiatement.
+    if (await isBanned(ip)) {
+      return NextResponse.json({ error: 'Accès refusé.' }, { status: 403 })
+    }
+
+    // Honeypot anti-bot : champ caché qui doit rester vide. Rempli = bot → abus + drop silencieux.
     if (typeof body?.website === 'string' && body.website.trim()) {
+      await recordAbuse(ip, 'honeypot /api/leads')
       return NextResponse.json({ ok: true })
     }
 
     // Rate-limit PAR IP (anti-flood + anti-relais email anonyme) : au-delà de 6 demandes
-    // par IP sur 10 min, on refuse tout (rien inséré, aucun email généré).
-    const ip = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown'
+    // par IP sur 10 min, on refuse tout — et on journalise l'abus (peut déclencher un auto-ban).
     if (ip !== 'unknown') {
       try {
         const since = new Date(Date.now() - 10 * 60 * 1000).toISOString()
@@ -44,7 +52,10 @@ export async function POST(req: Request) {
           .select('id', { count: 'exact', head: true })
           .eq('ip', ip)
           .gte('created_at', since)
-        if ((count ?? 0) >= 6) return NextResponse.json({ error: 'Trop de demandes. Réessayez dans quelques minutes.' }, { status: 429 })
+        if ((count ?? 0) >= 6) {
+          await recordAbuse(ip, 'flood /api/leads')
+          return NextResponse.json({ error: 'Trop de demandes. Réessayez dans quelques minutes.' }, { status: 429 })
+        }
       } catch { /* en cas de doute sur le comptage : on ne bloque pas un vrai prospect */ }
     }
 

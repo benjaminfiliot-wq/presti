@@ -1272,6 +1272,37 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .lp-tl-dot{animation:none!important;border-color:var(--co);color:var(--co2);box-shadow:0 0 0 4px rgba(217,119,87,.16)}
 }
 
+/* ===== Poste de contrôle — panneau sécurité + agents ===== */
+.cp{display:grid;grid-template-columns:1fr;gap:14px;margin:18px 0;max-width:1300px}
+@media(min-width:900px){.cp{grid-template-columns:1.15fr .85fr}}
+.cp-card{background:rgba(18,20,26,.72);border:1px solid rgba(120,140,180,.18);border-radius:14px;padding:16px 18px;backdrop-filter:blur(6px)}
+.cp-h{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;color:#cdd6e6;font-weight:700;display:flex;align-items:center;gap:.6rem;margin-bottom:12px}
+.cp-tag{font-family:var(--font-mono);font-size:10px;background:rgba(217,119,87,.16);color:#E8946F;border-radius:20px;padding:2px 9px;font-weight:700}
+.cp-sub{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#7f8aa0;margin:14px 0 7px}
+.cp-form{display:flex;gap:8px;flex-wrap:wrap}
+.cp-form input{flex:1 1 140px;background:rgba(10,12,16,.7);border:1px solid rgba(120,140,180,.22);border-radius:9px;padding:9px 11px;color:#eaf0fb;font-size:13px;font-family:var(--font-mono)}
+.cp-form input:focus{outline:none;border-color:#E8946F}
+.cp-form button,.cp-mini{background:linear-gradient(120deg,#E8946F,#D97757);color:#1a0f0a;border:none;border-radius:9px;padding:9px 14px;font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap;font-family:var(--font-body)}
+.cp-form button:disabled{opacity:.5;cursor:not-allowed}
+.cp-rows{display:flex;flex-direction:column;gap:6px}
+.cp-row{display:flex;align-items:center;gap:.7rem;background:rgba(10,12,16,.5);border:1px solid rgba(120,140,180,.12);border-radius:9px;padding:8px 11px;flex-wrap:wrap}
+.cp-row.off{opacity:.5}
+.cp-ip{font-family:var(--font-mono);font-size:13px;color:#eaf0fb;font-weight:600}
+.cp-mut{font-family:var(--font-mono);font-size:11px;color:#8792a6;flex:1;min-width:120px}
+.cp-mini{padding:5px 10px;font-size:11px}
+.cp-mini.danger{background:rgba(229,115,90,.15);color:#f0917b}
+.cp-empty{font-family:var(--font-mono);font-size:12px;color:#7f8aa0;padding:8px 0}
+.cp-agents{display:grid;grid-template-columns:1fr;gap:7px}
+.cp-agent{display:flex;align-items:center;justify-content:space-between;gap:.7rem;background:rgba(10,12,16,.5);border:1px solid rgba(120,140,180,.12);border-radius:9px;padding:9px 12px}
+.cp-agent b{color:#eaf0fb;font-size:13.5px} .cp-agent span{display:block;color:#8792a6;font-size:11px}
+.cp-agent button{background:linear-gradient(120deg,#E8946F,#D97757);color:#1a0f0a;border:none;border-radius:8px;padding:7px 14px;font-weight:700;font-size:12px;cursor:pointer}
+.cp-badge{font-family:var(--font-mono);font-size:10px;color:#7f8aa0;border:1px solid rgba(120,140,180,.2);border-radius:20px;padding:3px 9px}
+.cp-health{margin-top:12px;background:rgba(10,12,16,.55);border:1px solid rgba(120,140,180,.14);border-radius:10px;padding:11px 13px}
+.cp-hrow{display:flex;align-items:center;gap:.6rem;padding:4px 0;font-size:12.5px}
+.cp-hk{flex:1;color:#cdd6e6} .cp-hv{font-family:var(--font-mono);font-size:11.5px;color:#8792a6}
+.cp-d{width:8px;height:8px;border-radius:50%;flex:none}
+.cp-d.ok{background:#46C89A;box-shadow:0 0 7px #46C89A} .cp-d.warn{background:#E4B45A;box-shadow:0 0 7px #E4B45A} .cp-d.crit{background:#e5735a;box-shadow:0 0 7px #e5735a}
+
 /* ===== Craft polish (apple-design + Emil Kowalski) ===== */
 :root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-io:cubic-bezier(.77,0,.175,1);--ease-apple:cubic-bezier(.16,1,.3,1)}
 

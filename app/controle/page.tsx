@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import JarvisHub, { type Stats, type StripeData, type MailData } from '@/app/JarvisHub'
+import ControlPanel from '@/app/ControlPanel'
 
 const eur = (n: number) => `${Math.round(n || 0).toLocaleString('fr-FR')} €`
 
@@ -74,6 +75,8 @@ export default function Controle() {
       ) : (
         <>
           <JarvisHub stats={stats} stripe={stripe} mails={mails} onOpenDevis={(id) => router.push(`/devis/${id}`)} />
+
+          <ControlPanel />
 
           <div className="hud-ticker">
             <div className="track">
