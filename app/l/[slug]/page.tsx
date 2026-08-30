@@ -148,7 +148,7 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
       <section className="plat-block plat-contact" id="contact">
         <div className="plat-head c plat-reveal"><span className="plat-kick">Contact</span><h2>Parlons de votre projet</h2><p>Décrivez votre besoin — vous recevez une réponse en moins d&apos;une minute.</p></div>
         <div className="plat-card plat-form plat-reveal">
-          <LeadForm slug={a.slug as string} />
+          <LeadForm slug={a.slug as string} artisanNom={a.nom} avatar={avatar} />
         </div>
       </section>
 

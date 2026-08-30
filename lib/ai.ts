@@ -311,6 +311,82 @@ Besoin décrit par le prospect : ${besoin}`
   return out.trim()
 }
 
+export type ConvTurn = { sens: 'in' | 'out'; contenu: string }
+
+/**
+ * Rédige la réponse SUIVANTE dans une conversation en cours entre un prospect et
+ * l'artisan (le prospect a répondu / relancé sur la plateforme). Contrairement à
+ * generateLeadReply (premier contact), on tient compte de TOUT l'historique pour
+ * une réponse naturelle, humaine et contextuelle — jamais un copier-coller du 1er
+ * message. Renvoie uniquement le corps du message.
+ */
+export async function generateConversationReply(
+  artisan: Artisan,
+  lead: Lead,
+  history: ConvTurn[],
+  model: string = AI_MODEL,
+): Promise<string> {
+  const nomArtisan = artisan.nom?.trim() || "l'artisan"
+  const metier = artisan.metier?.trim() || 'artisan'
+  const ton = artisan.ton_style?.trim() || 'professionnel, chaleureux et rassurant'
+  const nomProspect = lead.nom_prospect?.trim() || null
+  const besoinInitial = lead.message?.trim() || '(aucune précision au départ)'
+
+  // Dernier message entrant du prospect → pilote l'analyse d'intention (déterministe).
+  const dernierIn = [...history].reverse().find((t) => t.sens === 'in')?.contenu?.trim() || ''
+  const insights = analyzeLead(dernierIn, lead.contact ?? null)
+  const guidance = buildLeadGuidance(insights, metier)
+
+  const system = `Tu es l'assistant de ${nomArtisan}, ${metier}. Tu écris À SA PLACE, dans une CONVERSATION DÉJÀ ENGAGÉE avec un prospect sur sa page de contact. Le prospect vient de t'écrire à nouveau ; tu réponds à son dernier message.
+Ton et style à respecter absolument : ${ton}
+Contexte — besoin décrit au départ : ${besoinInitial}${nomProspect ? `\nPrénom/nom du prospect : ${nomProspect}` : ''}
+
+OBJECTIF : une réponse HUMAINE et naturelle, comme un vrai artisan qui discute avec son client — chaleureuse, concrète, qui fait avancer l'échange d'UNE étape. Tu réagis vraiment à ce qu'il vient de dire, tu ne récites pas.
+
+RÈGLES (garde-fous) :
+- Français impeccable, première personne, comme si ${nomArtisan} écrivait lui-même.
+- COURT et vivant : 2 à 5 phrases. On est dans une conversation, pas dans une lettre — pas de « Bonjour » ni de signature à CHAQUE message (tu t'es déjà présenté). Va droit au but, avec chaleur.
+- Rebondis sur le dernier message du prospect : réponds à sa question, prends en compte les précisions qu'il donne, remercie brièvement s'il t'a apporté un détail utile.
+- Ne donne JAMAIS de prix chiffré ni de fourchette. Si le prospect insiste sur le prix, explique avec tact qu'un devis précis et gratuit sera établi (après un ou deux détails ou une courte visite) et propose de l'enclencher.
+- N'invente aucun délai précis intenable (reste sur « rapidement », « au plus vite », « dans la journée » si urgent).
+- Propose une prochaine étape concrète quand c'est pertinent (préciser un point, convenir d'un créneau, établir le devis), sans harceler.
+- Si le prospect a donné assez d'éléments pour chiffrer, tu peux proposer de lui préparer un devis.
+- Renvoie UNIQUEMENT le texte du message : pas d'objet, pas de « Voici la réponse », pas de guillemets, pas de balises.${guidance}`
+
+  // Historique → messages Anthropic (in=user, out=assistant), en fusionnant les
+  // messages consécutifs de même rôle pour garantir l'alternance stricte exigée par l'API.
+  const msgs: { role: 'user' | 'assistant'; content: string }[] = []
+  for (const t of history) {
+    const role: 'user' | 'assistant' = t.sens === 'in' ? 'user' : 'assistant'
+    const contenu = (t.contenu ?? '').trim()
+    if (!contenu) continue
+    const last = msgs[msgs.length - 1]
+    if (last && last.role === role) last.content += '\n\n' + contenu
+    else msgs.push({ role, content: contenu })
+  }
+  // L'API exige de commencer par un message 'user'. Si l'historique commençait par
+  // une réponse auto (rare), on préfixe le besoin initial du prospect.
+  if (!msgs.length || msgs[0].role !== 'user') {
+    msgs.unshift({ role: 'user', content: besoinInitial })
+  }
+  // On répond à un message entrant : la conversation doit se terminer côté 'user'.
+  if (msgs[msgs.length - 1].role !== 'user') {
+    msgs.push({ role: 'user', content: dernierIn || '(le prospect attend votre retour)' })
+  }
+
+  const res = await client.messages.create({
+    ...genParams(model, 900),
+    system,
+    messages: msgs,
+  })
+
+  let out = ''
+  for (const block of res.content) {
+    if (block.type === 'text') out += block.text
+  }
+  return out.trim()
+}
+
 /**
  * Rédige une relance (follow-up) dans le ton de l'artisan.
  * rang : 1 = douce, 2 = rappel avec créneau, 3 = dernière relance.

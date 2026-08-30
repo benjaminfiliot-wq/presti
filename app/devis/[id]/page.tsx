@@ -86,6 +86,22 @@ export default function DevisEditor() {
           if (ls && ls.length) setLignes(ls.map((l) => ({ key: k(), designation: l.designation ?? '', quantite: String(l.quantite ?? 1), unite: l.unite ?? 'u', prix_unitaire_ht: String(l.prix_unitaire_ht ?? 0), tva_taux: Number(l.tva_taux) || 20 })))
         }
       }
+
+      // Pré-remplissage depuis une conversation (bouton « Créer un devis » de la boîte de réception).
+      if (isNew && typeof window !== 'undefined') {
+        const leadId = new URLSearchParams(window.location.search).get('lead')
+        if (leadId) {
+          const { data: lead } = await supabase.from('leads').select('nom_prospect, contact, message').eq('id', leadId).maybeSingle()
+          if (lead) {
+            setClientNom(lead.nom_prospect ?? '')
+            if (lead.contact && lead.contact.includes('@')) setClientEmail(lead.contact)
+            const { data: ms } = await supabase.from('messages').select('sens, contenu, sent_at').eq('lead_id', leadId).order('sent_at')
+            const dits = (ms ?? []).filter((m) => m.sens === 'in').map((m) => (m.contenu ?? '').trim()).filter(Boolean)
+            const desc = dits.length ? dits.join('\n') : (lead.message ?? '')
+            if (desc) setDescription(desc)
+          }
+        }
+      }
       setReady(true)
     })
   }, [router, isNew, rawId])

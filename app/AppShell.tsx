@@ -15,6 +15,7 @@ const NAV: { group: string; items: Nav[] }[] = [
     group: 'Pilotage',
     items: [
       { key: 'dashboard', label: 'Tableau de bord', href: '/dashboard', icon: ic(<><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></>) },
+      { key: 'messages', label: 'Messages', href: '/messages', icon: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></>) },
       { key: 'devis', label: 'Devis', href: '/devis', icon: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M8 13h8M8 17h5" /></>) },
       { key: 'factures', label: 'Factures', href: '/factures', icon: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M9 15h6" /></>) },
       { key: 'profil', label: 'Ma page', href: '/profil', icon: ic(<><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></>) },
@@ -56,6 +57,7 @@ export default function AppShell({
   const router = useRouter()
   const [a, setA] = useState<ArtisanInfo | null>(null)
   const [open, setOpen] = useState(false)
+  const [unread, setUnread] = useState(0)
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -67,6 +69,15 @@ export default function AppShell({
         .eq('id', data.session.user.id)
         .maybeSingle()
       if (prof) setA(prof as ArtisanInfo)
+      // Conversations non lues (badge Messages). Tolère l'absence de la colonne lu_le.
+      try {
+        const { count } = await supabase
+          .from('leads')
+          .select('id', { count: 'exact', head: true })
+          .is('lu_le', null)
+          .in('statut', ['nouveau', 'en_discussion'])
+        setUnread(count ?? 0)
+      } catch { /* colonne pas encore migrée : pas de badge */ }
     })
   }, [])
 
@@ -112,6 +123,7 @@ export default function AppShell({
                 ) : (
                   <a key={it.key} className={it.key === active ? 'on' : ''} href={it.href}>
                     {it.icon}{it.label}
+                    {it.key === 'messages' && unread > 0 && <span className="count alert">{unread}</span>}
                   </a>
                 )
               )}

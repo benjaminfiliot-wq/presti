@@ -84,7 +84,7 @@ export async function POST(req: Request) {
         statut: 'nouveau',
         ip: ip === 'unknown' ? null : ip,
       })
-      .select('id')
+      .select('id, token')
       .single()
 
     if (lErr) {
@@ -109,7 +109,11 @@ export async function POST(req: Request) {
     }
     if (throttled) {
       console.warn('[leads] throttle IA/email pour artisan', artisan.id)
-      return NextResponse.json({ ok: true, leadId: lead.id })
+      // Message entrant tout de même tracé : le prospect retrouvera son fil.
+      if (message) {
+        await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
+      }
+      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token })
     }
 
     // Décompte d'un crédit pour la réponse auto. Si épuisé : le lead est TOUJOURS
@@ -117,12 +121,16 @@ export async function POST(req: Request) {
     const credit = await consumeCredit(artisan.id, 'standard', !!artisan.is_founder)
     if (!credit.ok) {
       console.warn('[leads] crédits épuisés pour artisan', artisan.id, '— réponse auto coupée, lead conservé')
-      return NextResponse.json({ ok: true, leadId: lead.id })
+      if (message) {
+        await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
+      }
+      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token })
     }
 
     // 3) Étape 4 — réponse IA instantanée + emails.
     // Non bloquant : si l'IA ou l'email échoue, le lead est déjà sauvé et
     // apparaîtra dans le dashboard (statut 'nouveau'), donc rien n'est perdu.
+    let replyText: string | null = null
     try {
       // trace du message entrant du prospect
       if (message) {
@@ -140,6 +148,7 @@ export async function POST(req: Request) {
       )
 
       if (reply) {
+        replyText = reply
         await supabaseAdmin.from('messages').insert({
           lead_id: lead.id,
           sens: 'out',
@@ -202,7 +211,9 @@ ${reply}`
       // lead conservé en 'nouveau' — visible dans le dashboard, rien de perdu
     }
 
-    return NextResponse.json({ ok: true, leadId: lead.id })
+    // On renvoie le jeton (pour ouvrir le fil de conversation côté prospect) et,
+    // si elle a pu être générée, la réponse IA à afficher immédiatement.
+    return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: replyText })
   } catch (e) {
     console.error('[leads] erreur inattendue:', e)
     return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
