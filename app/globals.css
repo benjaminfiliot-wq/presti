@@ -1272,6 +1272,105 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .lp-tl-dot{animation:none!important;border-color:var(--co);color:var(--co2);box-shadow:0 0 0 4px rgba(217,119,87,.16)}
 }
 
+/* ===== Éditeur de profil / plateforme (espace connecté) ===== */
+.prof{display:flex;flex-direction:column;gap:16px}
+.prof-link{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;background:var(--surface-2,#1B1A22);border:1px solid var(--line);border-radius:11px;padding:.7rem .85rem}
+.prof-link span{font-family:var(--font-mono);font-size:.9rem;color:var(--accent-ink,var(--accent));flex:1;min-width:160px;word-break:break-all}
+.prof-toggle{display:flex;align-items:center;gap:.6rem;margin-top:.9rem;font-size:.9rem;color:var(--ink-soft);cursor:pointer}
+.prof-toggle input{width:auto;margin:0;accent-color:var(--accent)}
+.prof-toggle b{color:var(--ink)}
+.prof-id{display:flex;gap:1.2rem;flex-wrap:wrap}
+.prof-serv{display:flex;gap:.5rem;margin-top:.55rem;align-items:center}
+.prof-serv .s-nom{flex:1 1 180px}
+.prof-serv .s-desc{flex:2 1 220px}
+@media(max-width:560px){.prof-serv{flex-wrap:wrap}.prof-serv .s-nom,.prof-serv .s-desc{flex:1 1 100%}}
+
+/* ===== Plateforme publique de l'artisan (page /l/[slug]) — design dédié, chaleureux & premium ===== */
+.plat{
+  --p-bg:#FAF7F2; --p-surf:#FFFFFF; --p-ink:#1D1B16; --p-ink2:#4A463E; --p-mut:#6B665C;
+  --p-co:#D97757; --p-co2:#E8946F; --p-co-deep:#B85C3C; --p-soft:#FBF1EC; --p-line:#EEE7DC;
+  --p-fd:var(--font-display,'Bricolage Grotesque',sans-serif); --p-fb:var(--font-body,'Hanken Grotesk',sans-serif);
+  min-height:100dvh;background:
+    radial-gradient(120% 60% at 50% -10%,rgba(217,119,87,.10),transparent 60%),
+    var(--p-bg);
+  color:var(--p-ink);font-family:var(--p-fb);padding:clamp(1.4rem,4vw,3rem) 1.1rem 3.5rem;line-height:1.55;
+}
+.plat-wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:1.15rem}
+.plat *{box-sizing:border-box}
+@media (prefers-reduced-motion:no-preference){
+  .plat-bio,.plat-block,.plat-hours,.plat-foot{animation:plat-in .7s cubic-bezier(.16,1,.3,1) both}
+  .plat-bio{animation-delay:.22s}.plat-block{animation-delay:.28s}.plat-hours{animation-delay:.32s}
+  .plat-block#contact{animation-delay:.36s}.plat-foot{animation-delay:.42s}
+  /* hero : cascade par enfant (avatar en scale = ancre de confiance) */
+  .plat-ava{animation:plat-ava .8s cubic-bezier(.16,1,.3,1) both}
+  .plat-hero h1{animation:plat-in .7s .06s cubic-bezier(.16,1,.3,1) both}
+  .plat-sub{animation:plat-in .7s .12s cubic-bezier(.16,1,.3,1) both}
+  .plat-badge{animation:plat-in .7s .18s cubic-bezier(.16,1,.3,1) both}
+  /* confirmation : pop + tracé du check (moment de délice) */
+  .plat-done{animation:plat-pop .5s cubic-bezier(.16,1,.3,1) both}
+  .plat-done svg path{stroke-dasharray:26;stroke-dashoffset:26;animation:plat-draw .45s .14s cubic-bezier(.16,1,.3,1) forwards}
+}
+@keyframes plat-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes plat-ava{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes plat-pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes plat-draw{to{stroke-dashoffset:0}}
+
+.plat-hero{text-align:center;padding:.5rem 0 .3rem}
+.plat-ava{width:92px;height:92px;border-radius:26px;margin:0 auto 1rem;display:grid;place-items:center;overflow:hidden;
+  background:linear-gradient(135deg,var(--p-co2),var(--p-co));color:#fff;font-family:var(--p-fd);font-weight:800;font-size:2rem;
+  box-shadow:0 18px 40px -14px rgba(217,119,87,.6),0 0 0 6px rgba(217,119,87,.08)}
+.plat-ava img{width:100%;height:100%;object-fit:cover}
+.plat-hero h1{font-family:var(--p-fd);font-weight:800;font-size:clamp(1.9rem,6vw,2.7rem);letter-spacing:-.025em;line-height:1.05;text-wrap:balance}
+.plat-sub{color:var(--p-ink2);font-size:1.05rem;margin-top:.5rem;font-weight:500}
+.plat-loc{display:inline-flex;align-items:center;gap:.28rem}
+.plat-loc svg{width:15px;height:15px;stroke:var(--p-co-deep);vertical-align:-2px}
+.plat-badge{display:inline-flex;align-items:center;gap:.45rem;margin-top:1rem;background:var(--p-soft);border:1px solid rgba(217,119,87,.22);
+  color:var(--p-co-deep);font-weight:650;font-size:.9rem;padding:.5rem .95rem;border-radius:999px}
+.plat-badge svg{width:16px;height:16px;stroke:var(--p-co);fill:none}
+
+.plat-card{background:var(--p-surf);border:1px solid var(--p-line);border-radius:18px;padding:1.35rem 1.5rem;box-shadow:0 8px 30px -18px rgba(60,40,20,.22)}
+.plat-bio p{font-size:1.06rem;color:var(--p-ink2);line-height:1.65;margin:0}
+
+.plat-block h2{font-family:var(--p-fd);font-weight:700;font-size:1.3rem;letter-spacing:-.01em;margin:.4rem 0 .1rem}
+.plat-lead{color:var(--p-mut);font-size:.98rem;margin:.15rem 0 .9rem}
+.plat-services{display:grid;grid-template-columns:1fr;gap:.6rem;margin-top:.9rem}
+@media(min-width:520px){.plat-services{grid-template-columns:1fr 1fr}}
+.plat-serv{display:flex;gap:.7rem;align-items:flex-start;background:var(--p-surf);border:1px solid var(--p-line);border-radius:14px;padding:.9rem 1rem;
+  transition:transform .25s cubic-bezier(.16,1,.3,1),border-color .2s,box-shadow .35s cubic-bezier(.16,1,.3,1)}
+@media(hover:hover){.plat-serv:hover{transform:translateY(-3px);border-color:rgba(217,119,87,.35);box-shadow:0 14px 30px -18px rgba(217,119,87,.5)}}
+.plat-serv-ic{flex:none;width:26px;height:26px;border-radius:8px;background:var(--p-soft);display:grid;place-items:center;margin-top:1px}
+.plat-serv-ic svg{width:15px;height:15px;stroke:var(--p-co-deep);fill:none}
+.plat-serv b{display:block;font-size:.98rem;color:var(--p-ink)}
+.plat-serv span{display:block;color:var(--p-mut);font-size:.88rem;margin-top:.12rem}
+
+.plat-hours{display:flex;align-items:center;gap:.9rem}
+.plat-hours-ic{flex:none;width:40px;height:40px;border-radius:12px;background:var(--p-soft);display:grid;place-items:center}
+.plat-hours-ic svg{width:20px;height:20px;stroke:var(--p-co-deep);fill:none}
+.plat-hours b{display:block;font-size:.95rem}.plat-hours span{color:var(--p-mut);font-size:.9rem}
+
+/* Formulaire de contact (le cœur — mis en avant : filet corail + halo) */
+.plat-form{border-color:rgba(217,119,87,.3);box-shadow:0 16px 48px -22px rgba(217,119,87,.45)}
+.plat-form label{display:block;font-weight:650;font-size:.88rem;color:var(--p-ink2);margin:.9rem 0 .35rem}
+.plat-form label:first-child{margin-top:0}
+.plat-form input,.plat-form textarea{width:100%;background:#FCFAF7;border:1.5px solid var(--p-line);border-radius:11px;padding:.8rem .95rem;
+  font-size:1rem;font-family:inherit;color:var(--p-ink);transition:border-color .15s,box-shadow .15s}
+.plat-form input:focus,.plat-form textarea:focus{outline:none;border-color:var(--p-co);box-shadow:0 0 0 3px rgba(217,119,87,.14)}
+.plat-form button{width:100%;margin-top:1.15rem;background:linear-gradient(120deg,var(--p-co2),var(--p-co));color:#fff;border:none;
+  border-radius:12px;padding:.95rem;font-size:1.02rem;font-weight:700;cursor:pointer;box-shadow:0 12px 26px -12px rgba(217,119,87,.7);
+  transition:transform .12s cubic-bezier(.16,1,.3,1),box-shadow .25s}
+.plat-form button:hover{box-shadow:0 16px 34px -12px rgba(217,119,87,.8)}
+.plat-form button:active{transform:scale(.985)}
+.plat-form button:disabled{opacity:.6;cursor:wait}
+.plat-form .msg{margin-top:1rem;padding:.85rem 1rem;border-radius:11px;background:var(--p-soft);color:var(--p-co-deep);font-size:.95rem;font-weight:500;border:1px solid rgba(217,119,87,.2)}
+.plat-form .msg.err{background:#FBE9E7;color:#B23129;border-color:rgba(178,49,41,.2)}
+.plat-form .msg.ok,.plat-done{display:flex;align-items:center;gap:.6rem;background:#EAF6EF;color:#2c7a52;border:1px solid rgba(70,180,120,.3);padding:1rem 1.15rem;border-radius:14px;font-size:1rem;font-weight:600}
+
+.plat-foot{text-align:center;color:var(--p-mut);font-size:.85rem;margin-top:.6rem}
+.plat-foot b{color:var(--p-co-deep);font-weight:700}
+.plat-404{background:var(--p-surf);border:1px solid var(--p-line);border-radius:18px;padding:2.2rem;text-align:center}
+.plat-404 b{display:block;font-family:var(--p-fd);font-size:1.4rem;margin-bottom:.4rem}
+.plat-404 span{color:var(--p-mut)}
+
 /* ===== Poste de contrôle — panneau sécurité + agents ===== */
 .cp{display:grid;grid-template-columns:1fr;gap:14px;margin:18px 0;max-width:1300px}
 @media(min-width:900px){.cp{grid-template-columns:1.15fr .85fr}}

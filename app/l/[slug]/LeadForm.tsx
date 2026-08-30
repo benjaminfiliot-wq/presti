@@ -30,7 +30,12 @@ export default function LeadForm({ slug }: { slug: string }) {
   }
 
   if (sent) {
-    return <div className="msg">Merci ! Votre demande est bien envoyée. Vous aurez une réponse très vite. ✅</div>
+    return (
+      <div className="plat-done">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5L20 7" /></svg>
+        <span>Demande envoyée&nbsp;! Vous allez recevoir une réponse très vite.</span>
+      </div>
+    )
   }
 
   return (
@@ -46,13 +51,7 @@ export default function LeadForm({ slug }: { slug: string }) {
       <label>Votre email ou téléphone</label>
       <input value={contact} onChange={(e) => setContact(e.target.value)} required />
       <label>Votre besoin (décrivez les travaux)</label>
-      <textarea
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        rows={4}
-        required
-        style={{ width: '100%', padding: '.7rem .8rem', border: '1px solid var(--line)', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit', resize: 'vertical' }}
-      />
+      <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} required style={{ resize: 'vertical' }} />
       <button disabled={loading}>{loading ? '…' : 'Envoyer ma demande'}</button>
       {err && <div className="msg err">{err}</div>}
     </form>
