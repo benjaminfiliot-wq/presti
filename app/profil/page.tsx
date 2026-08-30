@@ -21,6 +21,7 @@ export default function ProfilPage() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [services, setServices] = useState<Service[]>([])
   const [active, setActive] = useState(true)
+  const [accent, setAccent] = useState('#D97757')
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
 
@@ -33,7 +34,7 @@ export default function ProfilPage() {
       if (!a) { router.replace('/onboarding'); return }
       setSlug(a.slug ?? ''); setNom(a.nom ?? ''); setMetier(a.metier ?? '')
       setBio(a.bio ?? ''); setZone(a.zone_intervention ?? ''); setHoraires(a.horaires ?? '')
-      setLogoUrl(a.logo_url ?? null); setActive(a.plateforme_active !== false)
+      setLogoUrl(a.logo_url ?? null); setActive(a.plateforme_active !== false); setAccent(/^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? a.accent : '#D97757')
       setServices(Array.isArray(a.services) ? (a.services as Service[]).map((s) => ({ nom: s.nom ?? '', description: s.description ?? '' })) : [])
       setReady(true)
     })
@@ -52,6 +53,7 @@ export default function ProfilPage() {
       horaires: horaires.trim().slice(0, 200) || null,
       services: cleanServices,
       plateforme_active: active,
+      accent: /^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#D97757',
     }).eq('id', uid)
     setSaving(false)
     if (error) { setMsg({ type: 'err', text: 'Enregistrement impossible.' }); return }
@@ -105,6 +107,20 @@ export default function ProfilPage() {
           <div className="grid2" style={{ marginTop: '.6rem' }}>
             <div><label>Zone d&apos;intervention</label><input value={zone} onChange={(e) => setZone(e.target.value)} placeholder="Ex : La Rochelle et 30 km alentour" /></div>
             <div><label>Disponibilités</label><input value={horaires} onChange={(e) => setHoraires(e.target.value)} placeholder="Ex : Lun–Ven 8h–18h · Urgences 7j/7" /></div>
+          </div>
+        </div>
+
+        {/* Apparence */}
+        <div className="tool-card">
+          <h2>Couleur de votre page</h2>
+          <p className="muted" style={{ margin: '0 0 .7rem' }}>L&apos;accent de votre page publique — choisissez ce qui vous ressemble.</p>
+          <div className="prof-accent">
+            {['#D97757', '#3B82F6', '#10B981', '#8B5CF6', '#EF4444', '#0EA5A0', '#D9A441', '#64748B'].map((c) => (
+              <button key={c} type="button" aria-label={c} className={`prof-swatch${accent.toLowerCase() === c.toLowerCase() ? ' on' : ''}`} style={{ background: c }} onClick={() => setAccent(c)} />
+            ))}
+            <label className="prof-swatch custom" style={{ background: accent }} title="Couleur libre">
+              <input type="color" value={accent} onChange={(e) => setAccent(e.target.value)} />
+            </label>
           </div>
         </div>
 
