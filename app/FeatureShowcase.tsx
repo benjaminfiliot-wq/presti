@@ -31,7 +31,7 @@ function DevisDemo() {
         <div className="co">Dupont Plomberie<small>17230 Marans</small></div>
         <div className="ti"><b>DEVIS</b><small>DEV-2026-0042</small></div>
       </div>
-      <div className="fs-doc-cli fsr" style={R(0.15)}>Client<br /><b>Marie Lefèvre — Rénovation salle d&apos;eau</b></div>
+      <div className="fs-doc-cli fsr" style={R(0.15)}>Client<br /><b>Marie Lefèvre — Rénovation salle de bain</b></div>
       <div className="fs-dl fsr" style={R(0.5)}><span>Dépose + pose chauffe-eau 200 L</span><span className="p">620,00 €</span></div>
       <div className="fs-dl fsr" style={R(0.85)}><span>Groupe de sécurité + raccords</span><span className="p">84,00 €</span></div>
       <div className="fs-dl fsr" style={R(1.2)}><span>Main-d&apos;œuvre (2 h)</span><span className="p">90,00 €</span></div>

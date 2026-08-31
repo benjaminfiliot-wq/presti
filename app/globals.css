@@ -464,6 +464,9 @@ button:disabled{opacity:.55;cursor:default}
 .psh-content{padding:24px 28px 64px;display:flex;flex-direction:column;gap:20px;width:100%;max-width:1060px}
 .psh-content.wide{max-width:1300px}
 .psh-hamb{display:none}
+.psh-back{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;padding:0;flex:none;transition:border-color .14s,color .14s}
+.psh-back:hover{border-color:var(--accent-tint-2);color:var(--ink)}
+.psh-back svg{width:20px;height:20px}
 
 @media(max-width:860px){
   .psh-app{grid-template-columns:1fr}

@@ -43,7 +43,7 @@ export default function FaqPage() {
       ))}
 
       <p style={{ marginTop: '2.4rem' }}>
-        Une autre question ? Écrivez-nous : <a href="mailto:benjaminfiliot@gmail.com">benjaminfiliot@gmail.com</a>.
+        Une autre question ? Écrivez-nous : <a href="mailto:contact@prestiapp.fr">contact@prestiapp.fr</a>.
       </p>
       <p><a href="/cgu">Conditions générales</a> · <a href="/confidentialite">Confidentialité</a> · <a href="/mentions-legales">Mentions légales</a></p>
     </main>

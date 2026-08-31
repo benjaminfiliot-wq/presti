@@ -17,7 +17,7 @@ export default function MentionsLegales() {
         <div><span className="k">Éditeur</span> Benjamin Filiot — entrepreneur individuel (micro-entreprise)</div>
         <div><span className="k">Adresse</span> 17230 Marans, France</div>
         <div><span className="k">SIRET</span> en cours d’attribution (immatriculation en cours)</div>
-        <div><span className="k">Contact</span> <a href="mailto:benjaminfiliot@gmail.com">benjaminfiliot@gmail.com</a></div>
+        <div><span className="k">Contact</span> <a href="mailto:contact@prestiapp.fr">contact@prestiapp.fr</a></div>
         <div><span className="k">Directeur de la publication</span> Benjamin Filiot</div>
       </div>
 
@@ -35,7 +35,7 @@ export default function MentionsLegales() {
       <p>Le traitement des données personnelles est détaillé dans notre <a href="/confidentialite">Politique de confidentialité</a>. Conformément au RGPD, vous disposez de droits d’accès, de rectification et de suppression que vous pouvez exercer à l’adresse ci-dessus.</p>
 
       <h2>Contact</h2>
-      <p>Pour toute question : <a href="mailto:benjaminfiliot@gmail.com">benjaminfiliot@gmail.com</a>.</p>
+      <p>Pour toute question : <a href="mailto:contact@prestiapp.fr">contact@prestiapp.fr</a>.</p>
 
       <p style={{ marginTop: '2.4rem' }}><a href="/cgu">Conditions générales</a> · <a href="/confidentialite">Politique de confidentialité</a></p>
     </main>

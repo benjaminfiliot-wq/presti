@@ -5,7 +5,13 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { slugify, randomSuffix } from '@/lib/slug'
 
-const METIERS = ['Plombier', 'Électricien', 'Maçon', 'Menuisier', 'Chauffagiste', 'Peintre', 'Carreleur', 'Couvreur', 'Autre']
+const METIERS = [
+  'Plombier', 'Chauffagiste', 'Électricien', 'Maçon', 'Menuisier', 'Charpentier', 'Couvreur', 'Peintre',
+  'Carreleur', 'Plaquiste / Plâtrier', 'Serrurier / Métallier', 'Ferronnier', 'Vitrier', 'Solier / Moquettiste',
+  'Façadier / Ravaleur', 'Étancheur', 'Isolation (ITE/ITI)', 'Climaticien / Frigoriste', 'Domoticien',
+  'Cuisiniste', 'Ébéniste / Agenceur', 'Pisciniste', 'Paysagiste', 'Terrassier / Maçon VRD',
+  'Ramoneur', 'Poêlier / Fumiste', 'Store & fermeture', 'Multiservices / Rénovation', 'Autre',
+]
 
 export default function Onboarding() {
   const router = useRouter()
@@ -13,6 +19,7 @@ export default function Onboarding() {
   const [email, setEmail] = useState<string | null>(null)
   const [nom, setNom] = useState('')
   const [metier, setMetier] = useState('Plombier')
+  const [metierAutre, setMetierAutre] = useState('')
   const [tel, setTel] = useState('')
   const [ton, setTon] = useState(
     "Bonjour, merci pour votre demande ! Je reviens vers vous très vite avec un devis. À bientôt.",
@@ -37,9 +44,10 @@ export default function Onboarding() {
     setLoading(true)
     setErr(null)
     const slug = `${slugify(nom) || 'artisan'}-${randomSuffix()}`
+    const metierFinal = metier === 'Autre' ? (metierAutre.trim() || 'Artisan') : metier
     const { error } = await supabase
       .from('artisans')
-      .upsert({ id: userId, email, nom, metier, tel, ton_style: ton, slug })
+      .upsert({ id: userId, email, nom, metier: metierFinal, tel, ton_style: ton, slug })
     setLoading(false)
     if (error) {
       setErr(error.message)
@@ -61,6 +69,9 @@ export default function Onboarding() {
           <select value={metier} onChange={(e) => setMetier(e.target.value)}>
             {METIERS.map((m) => <option key={m} value={m}>{m}</option>)}
           </select>
+          {metier === 'Autre' && (
+            <input value={metierAutre} onChange={(e) => setMetierAutre(e.target.value)} required placeholder="Précise ton métier (ex : Cordiste, Enduiseur, Cheministe…)" style={{ marginTop: '.5rem' }} />
+          )}
           <label>Ton téléphone</label>
           <input value={tel} onChange={(e) => setTel(e.target.value)} placeholder="06 12 34 56 78" />
           <label>Le ton de tes réponses (l'IA s'en inspirera)</label>
