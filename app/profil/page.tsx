@@ -18,6 +18,11 @@ const RESEAUX: { key: keyof Reseaux; label: string; ph: string }[] = [
   { key: 'google', label: 'Fiche Google', ph: 'Lien de votre fiche Google' },
   { key: 'site', label: 'Site web', ph: 'https://votre-site.fr' },
 ]
+const TIERS: { n: number; nom: string; desc: string }[] = [
+  { n: 1, nom: 'Essentiel', desc: 'Une page nette : présentation, prestations, contact.' },
+  { n: 2, nom: 'Pro', desc: 'Réalisations en galerie, à-propos, réseaux — plus complet.' },
+  { n: 3, nom: 'Signature', desc: 'Site cinématique haut de gamme, animations, galerie immersive.' },
+]
 
 export default function ProfilPage() {
   const router = useRouter()
@@ -36,6 +41,8 @@ export default function ProfilPage() {
   const [telPublic, setTelPublic] = useState('')
   const [emailPublic, setEmailPublic] = useState('')
   const [reponseAuto, setReponseAuto] = useState(true)
+  const [siteActive, setSiteActive] = useState(false)
+  const [siteTier, setSiteTier] = useState(3)
   const [active, setActive] = useState(true)
   const [accent, setAccent] = useState('#D97757')
   const [saving, setSaving] = useState(false)
@@ -55,6 +62,7 @@ export default function ProfilPage() {
       setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '' })).filter((r) => r.image) : [])
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
       setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setReponseAuto(a.reponse_auto !== false)
+      setSiteActive(a.site_active === true); setSiteTier([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3)
       setReady(true)
     })
   }, [router])
@@ -79,6 +87,8 @@ export default function ProfilPage() {
       tel_public: telPublic.trim().slice(0, 40) || null,
       email_public: emailPublic.trim().slice(0, 160) || null,
       reponse_auto: reponseAuto,
+      site_active: siteActive,
+      site_tier: [1, 2, 3].includes(siteTier) ? siteTier : 3,
       plateforme_active: active,
       accent: /^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#D97757',
     }).eq('id', uid)
@@ -206,6 +216,31 @@ export default function ProfilPage() {
             <input type="checkbox" checked={reponseAuto} onChange={(e) => setReponseAuto(e.target.checked)} />
             <span>Réponse <b>{reponseAuto ? 'automatique' : 'manuelle'}</b> {reponseAuto ? '— l’IA répond tout de suite, à votre place (vous gardez la main ensuite)' : '— vous répondez vous-même depuis vos messages (l’IA vous suggère un brouillon)'}</span>
           </label>
+        </div>
+
+        {/* Site web (constructeur 3 niveaux) */}
+        <div className="tool-card">
+          <h2>Votre site web</h2>
+          <p className="muted" style={{ margin: '0 0 .9rem' }}>Un vrai site vitrine, généré depuis votre profil (présentation, réalisations, prestations, contacts). Choisissez le niveau, publiez, partagez.</p>
+          <div className="site-tiers">
+            {TIERS.map((t) => (
+              <button key={t.n} type="button" className={`site-tier${siteTier === t.n ? ' on' : ''}`} onClick={() => setSiteTier(t.n)}>
+                <span className="st-n">Niveau {t.n}</span>
+                <b>{t.nom}</b>
+                <span className="st-d">{t.desc}</span>
+              </button>
+            ))}
+          </div>
+          <label className="prof-toggle" style={{ marginTop: '1rem' }}>
+            <input type="checkbox" checked={siteActive} onChange={(e) => setSiteActive(e.target.checked)} />
+            <span>Mon site est <b>{siteActive ? 'publié' : 'hors ligne'}</b> {siteActive ? '— accessible à tous' : '— visible de vous seul'}</span>
+          </label>
+          {slug && siteActive && (
+            <div className="prof-link" style={{ marginTop: '.9rem' }}>
+              <span>prestiapp.fr/site/{slug}</span>
+              <a className="btn btn--ghost" style={{ width: 'auto' }} href={`/site/${slug}`} target="_blank" rel="noopener">Voir mon site ↗</a>
+            </div>
+          )}
         </div>
 
         {/* Zone dangereuse — droit à l'effacement (RGPD) */}
