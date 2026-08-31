@@ -27,11 +27,16 @@ async function getArtisan(slug: string): Promise<Artisan | null> {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const a = await getArtisan(slug)
-  if (!a) return { title: 'Page introuvable', robots: { index: false } }
+  if (!a) return { title: { absolute: 'Page introuvable' }, robots: { index: false } }
+  const t = `${a.nom}${a.metier ? ` — ${a.metier}` : ''}`
+  const d = a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}. Devis clair, réponse rapide.`
   return {
-    title: `${a.nom}${a.metier ? ` — ${a.metier}` : ''}`,
-    description: a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}. Devis clair, réponse rapide.`,
+    // Titre + OG ABSOLUS : aucune mention « Presti » (plateforme white-label, marque de l'artisan seule).
+    title: { absolute: t },
+    description: d,
     robots: { index: false, follow: false },
+    openGraph: { title: t, description: d, type: 'website', ...(a.nom ? { siteName: a.nom } : {}) },
+    twitter: { card: 'summary_large_image', title: t, description: d },
   }
 }
 
