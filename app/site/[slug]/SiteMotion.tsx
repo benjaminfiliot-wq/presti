@@ -72,7 +72,7 @@ export default function SiteMotion() {
     let onNative: (() => void) | null = null
     let onAnchor: ((ev: Event) => void) | null = null
     try {
-      lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 1, touchMultiplier: 1.6, smoothWheel: true })
+      lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 1, touchMultiplier: 1, smoothWheel: true })
       lenis.on('scroll', update)
       const raf = (time: number) => { lenis!.raf(time); rafId = requestAnimationFrame(raf) }
       rafId = requestAnimationFrame(raf)

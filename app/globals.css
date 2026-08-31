@@ -1824,7 +1824,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-hero{position:relative;min-height:clamp(560px,88vh,900px);display:flex;align-items:flex-end;padding:clamp(2rem,7vw,5rem) clamp(1.1rem,5vw,3rem) clamp(2.4rem,7vw,5rem);isolation:isolate}
 .site-hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--sbg2)}
 .site-hero-img{position:absolute;inset:-8% 0 0 0;width:100%;height:116%;object-fit:cover;transform:scale(1.08);will-change:transform;filter:saturate(1.02)}
-.site-hero-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,14,11,.55) 0%,rgba(16,14,11,.35) 38%,rgba(16,14,11,.82) 82%,var(--sbg) 100%)}
+.site-hero-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,14,11,.58) 0%,rgba(16,14,11,.48) 42%,rgba(16,14,11,.84) 82%,var(--sbg) 100%)}
 .site-hero-in{max-width:900px;position:relative}
 .site-eyebrow{display:inline-block;font-family:var(--sfm);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--pc2);margin-bottom:1.1rem}
 .site-hero h1{font-family:var(--sfd);font-weight:900;font-size:clamp(2.9rem,9.5vw,7rem);line-height:.94;letter-spacing:-.02em;text-wrap:balance;margin:0}
@@ -1957,3 +1957,22 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-armed .site-word.site-reveal{opacity:1;transform:none;clip-path:inset(0 104% 0 0)}
 .site-word.site-reveal{transition:clip-path 1.05s var(--se)}
 .site-word.site-reveal.in{clip-path:inset(0 0 0 0)}
+
+/* ===== Round ultime — revue coentreprise (anim-marque + accessibilite) ===== */
+/* MOTS GEANTS : plus jamais 4 mots a poids egal (tell IA). Le 1er domine, les suivants resonnent. */
+.site-words .site-word:nth-child(1) .site-word-t{font-size:clamp(2.7rem,9.6vw,6.6rem)}
+.site-words .site-word:nth-child(2) .site-word-t{font-size:clamp(2.35rem,8vw,5.5rem)}
+.site-words .site-word:nth-child(3) .site-word-t{font-size:clamp(2.05rem,6.9vw,4.7rem)}
+.site-words .site-word:nth-child(n+4) .site-word-t{font-size:clamp(1.85rem,6vw,4.1rem)}
+.site-words .site-word:nth-child(1) .site-word-n{color:var(--pc)} /* 1er numero en accent : ancre le regard */
+/* Timing echelonne du reveal (cascade, pas simultane). */
+.site-words .site-word:nth-child(2).site-reveal{transition-delay:.1s}
+.site-words .site-word:nth-child(3).site-reveal{transition-delay:.2s}
+.site-words .site-word:nth-child(n+4).site-reveal{transition-delay:.3s}
+/* Rythme des reveals : medias plus lents que le texte (profondeur), kickers plus vifs. */
+.site-eyebrow.site-reveal,.site-kick.site-reveal{transition-duration:.5s}
+.site-feature-media.site-reveal{transition-duration:1.05s}
+/* Focus clavier net sur les cibles interactives (a11y). */
+.site-word:focus-visible,.site-chan:focus-visible,.site-btn:focus-visible,.site-nav-cta:focus-visible,.site-links a:focus-visible{outline:2px solid var(--pc2);outline-offset:4px;border-radius:6px}
+/* Profondeur des images : vignettage doux pour dramatiser la matiere (surtout sur vraies photos). */
+.site-feature-media::after,.site-manifesto-media::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,transparent 44%,rgba(0,0,0,.26) 100%)}
