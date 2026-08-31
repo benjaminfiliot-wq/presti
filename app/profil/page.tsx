@@ -61,6 +61,17 @@ export default function ProfilPage() {
     setTimeout(() => setMsg(null), 2500)
   }
 
+  async function supprimerCompte() {
+    const t = prompt('Cette action est DÉFINITIVE : votre compte et toutes vos données (page, conversations, devis, factures) seront supprimés.\n\nTapez SUPPRIMER pour confirmer.')
+    if (t == null) return
+    if (t.trim().toUpperCase() !== 'SUPPRIMER') { setMsg({ type: 'err', text: 'Suppression annulée (confirmation incorrecte).' }); return }
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch('/api/account/delete', { method: 'POST', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+    if (!res.ok) { setMsg({ type: 'err', text: 'Suppression impossible. Réessayez dans un instant.' }); return }
+    await supabase.auth.signOut()
+    router.replace('/')
+  }
+
   const lien = slug ? `prestiapp.fr/l/${slug}` : ''
 
   const actions = (
@@ -136,6 +147,13 @@ export default function ProfilPage() {
             </div>
           ))}
           <button className="btn btn--ghost" style={{ width: 'auto', marginTop: '.7rem' }} disabled={services.length >= 12} onClick={() => setServices((p) => [...p, { nom: '', description: '' }])}>+ Ajouter une prestation</button>
+        </div>
+
+        {/* Zone dangereuse — droit à l'effacement (RGPD) */}
+        <div className="tool-card danger-zone">
+          <h2>Zone dangereuse</h2>
+          <p className="muted" style={{ margin: '0 0 .8rem' }}>Supprimer votre compte efface définitivement votre page, vos conversations, devis et factures. Cette action est irréversible.</p>
+          <button className="btn btn--ghost danger" style={{ width: 'auto' }} onClick={supprimerCompte}>Supprimer mon compte</button>
         </div>
 
         {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`}>{msg.text}</div>}

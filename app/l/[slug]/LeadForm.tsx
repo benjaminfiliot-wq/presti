@@ -183,6 +183,7 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
       <label>Votre besoin (décrivez les travaux)</label>
       <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} required style={{ resize: 'vertical' }} />
       <button disabled={loading}>{loading ? '…' : 'Démarrer la conversation'}</button>
+      <p className="plat-consent">En envoyant, vous acceptez que vos coordonnées soient utilisées uniquement pour traiter votre demande. Vous pouvez demander leur suppression à tout moment.</p>
       {err && <div className="msg err">{err}</div>}
     </form>
   )

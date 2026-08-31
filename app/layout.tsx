@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   authors: [{ name: 'Presti' }],
   alternates: { canonical: '/' },
   robots: { index: true, follow: true },
+  // Google Search Console : poser le code dans la variable d'env GOOGLE_SITE_VERIFICATION
+  // (Vercel → Settings → Environment Variables) → la balise apparaît, le domaine est vérifié.
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
   openGraph: {
     type: 'website',
     locale: 'fr_FR',

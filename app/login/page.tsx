@@ -46,7 +46,10 @@ export default function LoginPage() {
           <button disabled={loading}>{loading ? '…' : 'Se connecter'}</button>
         </form>
         {msg && <div className="msg err">{msg}</div>}
-        <p className="muted" style={{ marginTop: '1rem' }}>
+        <p className="muted" style={{ marginTop: '.9rem', textAlign: 'center' }}>
+          <a href="/reset-password">Mot de passe oublié&nbsp;?</a>
+        </p>
+        <p className="muted" style={{ marginTop: '.4rem' }}>
           Pas encore de compte ? <a href="/signup">Créer un compte</a>
         </p>
       </div>

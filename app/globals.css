@@ -616,6 +616,12 @@ button:disabled{opacity:.55;cursor:default}
   .inbox-back{display:grid;place-items:center}
 }
 
+/* ---- zone dangereuse (suppression de compte) ---- */
+.danger-zone{border-color:rgba(229,115,90,.28)}
+.danger-zone h2{color:#e5735a}
+.btn--ghost.danger{color:#e5735a;border-color:rgba(229,115,90,.4)}
+.btn--ghost.danger:hover{background:rgba(229,115,90,.1)}
+
 /* ---- table devis ---- */
 .psh-tablewrap{overflow-x:auto}
 .psh-dtable{width:100%;border-collapse:collapse;font-size:13.5px}
@@ -1478,6 +1484,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .plat-form button:disabled{opacity:.6;cursor:wait}
 .plat-form .msg{margin-top:1rem;padding:.85rem 1rem;border-radius:11px;background:var(--psoft);color:var(--pc2);font-size:.94rem;border:1px solid color-mix(in srgb,var(--pc) 24%,transparent)}
 .plat-form .msg.err{background:rgba(240,119,106,.12);color:#F0A79E;border-color:rgba(240,119,106,.3)}
+.plat-consent{margin:.85rem 0 0;font-size:.76rem;line-height:1.5;color:var(--pf);text-align:center}
 .plat-done{display:flex;align-items:center;gap:.65rem;background:rgba(70,200,154,.1);color:#7EE0B6;border:1px solid rgba(70,200,154,.3);padding:1.05rem 1.2rem;border-radius:14px;font-size:1rem;font-weight:600}
 .plat-done svg{flex:none;stroke:#46C89A}
 @media(prefers-reduced-motion:no-preference){
