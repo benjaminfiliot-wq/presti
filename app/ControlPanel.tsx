@@ -46,6 +46,15 @@ export default function ControlPanel() {
   const [health, setHealth] = useState<Health | null>(null)
   const [running, setRunning] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  // Lanceur de mission Managed Agent (sandbox cloud réel + mémoire)
+  const [missAgent, setMissAgent] = useState('gestion')
+  const [missTask, setMissTask] = useState('')
+  const [missSession, setMissSession] = useState<string | null>(null)
+  const [missStatus, setMissStatus] = useState('')
+  const [missText, setMissText] = useState('')
+  const [missTools, setMissTools] = useState<string[]>([])
+  const [missBusy, setMissBusy] = useState(false)
+  const [missDone, setMissDone] = useState(false)
 
   const load = useCallback(async () => {
     const t = await tok(); if (!t) return
@@ -75,6 +84,34 @@ export default function ControlPanel() {
     if (r.ok) setHealth(await r.json())
     setRunning(null)
   }
+
+  async function lancerMission() {
+    if (!missTask.trim() || missBusy) return
+    if (!confirm('Lancer un vrai Managed Agent : ça démarre un sandbox cloud (petit coût). Continuer ?')) return
+    setMissBusy(true); setMissText(''); setMissTools([]); setMissStatus('démarrage…'); setMissDone(false); setMissSession(null)
+    const t = await tok()
+    const r = await fetch('/api/control/run-agent', { method: 'POST', headers: { Authorization: `Bearer ${t}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ key: missAgent, task: missTask }) })
+    const d = await r.json().catch(() => ({}))
+    if (!r.ok) { setMissStatus('erreur : ' + (d.error ?? '')); setMissBusy(false); return }
+    setMissSession(d.sessionId); setMissStatus('en cours…')
+  }
+
+  // Poll de la session en cours jusqu'à idle.
+  useEffect(() => {
+    if (!missSession || missDone) return
+    let stop = false
+    const id = setInterval(async () => {
+      const t = await tok()
+      const r = await fetch(`/api/control/run-agent?session=${encodeURIComponent(missSession)}`, { headers: { Authorization: `Bearer ${t}` } })
+      const d = await r.json().catch(() => ({}))
+      if (stop || !r.ok) return
+      if (d.text) setMissText(d.text)
+      if (d.tools) setMissTools(d.tools)
+      setMissStatus(d.done ? 'terminé ✅' : (d.status || 'en cours…'))
+      if (d.done) { setMissDone(true); setMissBusy(false); clearInterval(id) }
+    }, 3000)
+    return () => { stop = true; clearInterval(id) }
+  }, [missSession, missDone])
 
   const dot = (ok: boolean | 'warn') => (ok === true ? 'ok' : ok === 'warn' ? 'warn' : 'crit')
 
@@ -131,13 +168,41 @@ export default function ControlPanel() {
                 <div className="cp-agent" key={a.key}>
                   <div><b>{a.nom}</b><span>{a.desc}</span></div>
                   {a.runnable
-                    ? <button disabled={!!running} onClick={() => runAgent(a.key)}>{running === a.key ? '…' : 'Lancer'}</button>
-                    : <span className="cp-badge">session dev</span>}
+                    ? <button className="cp-check" title="Vérification instantanée et gratuite (pas de sandbox)" disabled={!!running} onClick={() => runAgent(a.key)}>{running === a.key ? '…' : 'Check ⚡'}</button>
+                    : <span className="cp-badge">via mission ↓</span>}
                 </div>
               ))}
             </div>
           </div>
         ))}
+
+        {/* Lanceur de mission — VRAI Managed Agent (sandbox cloud + mémoire cerveau) */}
+        <div className="cp-mission">
+          <div className="cp-sub">Lancer une mission · Managed Agent réel <span className="cp-tag">mémoire cerveau</span></div>
+          <div className="cp-missrow">
+            <select value={missAgent} onChange={(e) => setMissAgent(e.target.value)} disabled={missBusy}>
+              {CATS.map((c) => (
+                <optgroup key={c.cat} label={c.cat}>
+                  {c.agents.map((a) => <option key={a.key} value={a.key}>{a.nom}</option>)}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+          <textarea className="cp-misstask" rows={2} value={missTask} disabled={missBusy}
+            onChange={(e) => setMissTask(e.target.value)}
+            placeholder="Mission de l'agent — ex : « Audite la page /l/[slug] en ligne et liste les failles » ou « Vérifie la délivrabilité des emails »" />
+          <div className="cp-missbar">
+            <span className="cp-missmut">{missStatus || 'Haiku · sandbox cloud · petit coût par lancement'}</span>
+            <button disabled={missBusy || !missTask.trim()} onClick={lancerMission}>{missBusy ? 'En cours…' : 'Lancer la mission'}</button>
+          </div>
+          {(missText || missTools.length > 0) && (
+            <div className="cp-missout">
+              {missTools.length > 0 && <div className="cp-misstools">{missTools.map((t, i) => <span key={i}>{t}</span>)}</div>}
+              {missText && <div className="cp-misstext">{missText}</div>}
+            </div>
+          )}
+        </div>
+
         {health && (
           <div className="cp-health">
             <div className="cp-sub">Bilan « {health.agent} » · {new Date(health.at).toLocaleTimeString('fr-FR')}</div>
