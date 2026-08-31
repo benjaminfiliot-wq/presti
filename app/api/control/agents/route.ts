@@ -23,7 +23,63 @@ export async function POST(req: Request) {
   const agent = typeof b?.agent === 'string' ? b.agent : ''
 
   if (agent === 'gestion') return json(await gestion())
-  return json({ error: 'Agent inconnu ou non exécutable côté serveur (auditeur/animateur = session dev).' }, 400)
+  if (agent === 'gestion-donnees') return json(await gestionDonnees())
+  if (agent === 'mails-delivrabilite') return json(await mailsDelivrabilite())
+  return json({ error: 'Agent inconnu ou non exécutable côté serveur (audit/animation/IA = session dev).' }, 400)
+}
+
+// Agent GESTION-DONNÉES : métriques de tunnel (agrégats uniquement, zéro donnée perso).
+async function gestionDonnees() {
+  const items: { k: string; ok: boolean | 'warn'; v: string }[] = []
+  const push = (k: string, ok: boolean | 'warn', v: string) => items.push({ k, ok, v })
+  // On passe la requête déjà construite (évite les frictions de type du query builder).
+  const cnt = async (q: PromiseLike<{ count: number | null }>): Promise<number> => {
+    try { const { count } = await q; return count ?? 0 } catch { return -1 }
+  }
+  const head = (t: string) => supabaseAdmin.from(t).select('id', { count: 'exact', head: true })
+  const artisans = await cnt(head('artisans'))
+  const leads = await cnt(head('leads'))
+  const enDiscussion = await cnt(head('leads').eq('statut', 'en_discussion'))
+  const nonLus = await cnt(head('leads').is('lu_le', null).in('statut', ['nouveau', 'en_discussion']))
+  const gagnes = await cnt(head('leads').eq('statut', 'gagne'))
+  const messages = await cnt(head('messages'))
+  const devis = await cnt(head('devis'))
+  const factures = await cnt(head('factures'))
+  push('Artisans', artisans >= 0, String(artisans))
+  push('Leads (conversations)', leads >= 0, String(leads))
+  push('Conversations actives', true, String(enDiscussion))
+  push('Non lus', nonLus === 0 ? true : 'warn', String(nonLus))
+  push('Leads gagnés', true, String(gagnes))
+  push('Messages échangés', messages >= 0, String(messages))
+  push('Devis', devis >= 0, String(devis))
+  push('Factures', factures >= 0, String(factures))
+  try {
+    const { data } = await supabaseAdmin.from('factures').select('total_ttc')
+    const ca = (data ?? []).reduce((s: number, f: { total_ttc: number | null }) => s + (f.total_ttc ?? 0), 0)
+    push('CA facturé (TTC)', true, `${ca.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`)
+  } catch { push('CA facturé', 'warn', 'indisponible') }
+  return { agent: 'gestion-donnees', at: new Date().toISOString(), items }
+}
+
+// Agent MAILS-DÉLIVRABILITÉ : statut du domaine Resend + DNS.
+async function mailsDelivrabilite() {
+  const items: { k: string; ok: boolean | 'warn'; v: string }[] = []
+  const push = (k: string, ok: boolean | 'warn', v: string) => items.push({ k, ok, v })
+  const key = process.env.RESEND_API_KEY
+  if (!key) { push('Clé Resend', false, 'absente'); return { agent: 'mails-delivrabilite', at: new Date().toISOString(), items } }
+  try {
+    const list = await (await fetch('https://api.resend.com/domains', { headers: { Authorization: `Bearer ${key}` } })).json()
+    const dom = (list.data || []).find((d: { name: string }) => d.name === 'prestiapp.fr')
+    if (!dom) { push('Domaine prestiapp.fr', false, 'non ajouté'); return { agent: 'mails-delivrabilite', at: new Date().toISOString(), items } }
+    push('Domaine prestiapp.fr', dom.status === 'verified', dom.status)
+    const det = await (await fetch(`https://api.resend.com/domains/${dom.id}`, { headers: { Authorization: `Bearer ${key}` } })).json()
+    const recs = det.records || []
+    const has = (type: string, name: string) => recs.some((r: { type: string; name: string; status?: string }) => r.type === type && (r.name || '').includes(name))
+    push('DKIM (resend._domainkey)', has('TXT', 'resend._domainkey'), has('TXT', 'resend._domainkey') ? 'présent' : 'manquant')
+    push('SPF (send)', has('TXT', 'send'), has('TXT', 'send') ? 'présent' : 'manquant')
+    push('MX (send)', has('MX', 'send'), has('MX', 'send') ? 'présent' : 'manquant')
+  } catch { push('Resend', 'warn', 'API injoignable') }
+  return { agent: 'mails-delivrabilite', at: new Date().toISOString(), items }
 }
 
 // Agent GESTION : bilan santé de la plateforme.

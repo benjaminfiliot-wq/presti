@@ -12,13 +12,31 @@ async function tok() {
   return data.session?.access_token
 }
 
-const AGENTS = [
-  { key: 'gestion', nom: 'Gestion', desc: 'Bilan santé (site, base, bans, emails)', runnable: true },
-  { key: 'auditeur', nom: 'Auditeur', desc: 'Audit sécurité/qualité — session dev', runnable: false },
-  { key: 'animateur', nom: 'Animateur', desc: 'Audit motion/design — session dev', runnable: false },
-  { key: 'mails', nom: 'Mails', desc: 'Triage & rédaction email — session dev', runnable: false },
-  { key: 'ai-engineer', nom: 'IA', desc: 'Amélioration de l\'IA — session dev', runnable: false },
+// Coentreprise : 4 catégories × 3 agents (+ IA transverse). Les agents « côté serveur »
+// (bilan en direct) sont runnable ; ceux qui lisent le dépôt tournent en session dev.
+const CATS: { cat: string; agents: { key: string; nom: string; desc: string; runnable: boolean }[] }[] = [
+  { cat: 'Audit', agents: [
+    { key: 'auditeur', nom: 'Auditeur', desc: 'Vue d\'ensemble sécu & qualité', runnable: false },
+    { key: 'audit-attaque', nom: 'Audit offensif', desc: 'Pentest — rejoue les exploits', runnable: false },
+    { key: 'audit-conformite', nom: 'Conformité', desc: 'RGPD + légal devis/facture', runnable: false },
+  ] },
+  { cat: 'Animation', agents: [
+    { key: 'animateur', nom: 'Animateur', desc: 'Motion craft (Apple/Emil)', runnable: false },
+    { key: 'anim-accessibilite', nom: 'Accessibilité', desc: 'a11y, contraste, perf', runnable: false },
+    { key: 'anim-marque', nom: 'Direction artistique', desc: 'White-label + accent', runnable: false },
+  ] },
+  { cat: 'Gestion', agents: [
+    { key: 'gestion', nom: 'Gestion', desc: 'Bilan santé (site, base, bans, emails)', runnable: true },
+    { key: 'gestion-donnees', nom: 'Données', desc: 'Tunnel & métriques', runnable: true },
+    { key: 'gestion-fiabilite', nom: 'Fiabilité', desc: 'Coûts IA, quotas, robustesse', runnable: false },
+  ] },
+  { cat: 'Mails', agents: [
+    { key: 'mails', nom: 'Mails', desc: 'Qualité sortante', runnable: false },
+    { key: 'mails-delivrabilite', nom: 'Délivrabilité', desc: 'Resend, DNS, anti-spam', runnable: true },
+    { key: 'mails-cycle', nom: 'Cycle & copy', desc: 'Séquences, relances, ton FR', runnable: false },
+  ] },
 ]
+const NB_AGENTS = CATS.reduce((n, c) => n + c.agents.length, 0)
 
 export default function ControlPanel() {
   const [bans, setBans] = useState<Ban[]>([])
@@ -26,7 +44,7 @@ export default function ControlPanel() {
   const [banIp, setBanIp] = useState('')
   const [banRaison, setBanRaison] = useState('')
   const [health, setHealth] = useState<Health | null>(null)
-  const [running, setRunning] = useState(false)
+  const [running, setRunning] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
   const load = useCallback(async () => {
@@ -51,11 +69,11 @@ export default function ControlPanel() {
     await load(); setBusy(false)
   }
   async function runAgent(key: string) {
-    setRunning(true); setHealth(null)
+    setRunning(key); setHealth(null)
     const t = await tok()
     const r = await fetch('/api/control/agents', { method: 'POST', headers: { Authorization: `Bearer ${t}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ agent: key }) })
     if (r.ok) setHealth(await r.json())
-    setRunning(false)
+    setRunning(null)
   }
 
   const dot = (ok: boolean | 'warn') => (ok === true ? 'ok' : ok === 'warn' ? 'warn' : 'crit')
@@ -103,17 +121,23 @@ export default function ControlPanel() {
 
       {/* ===== AGENTS ===== */}
       <section className="cp-card">
-        <h3 className="cp-h">COENTREPRISE D&apos;AGENTS</h3>
-        <div className="cp-agents">
-          {AGENTS.map((a) => (
-            <div className="cp-agent" key={a.key}>
-              <div><b>{a.nom}</b><span>{a.desc}</span></div>
-              {a.runnable
-                ? <button disabled={running} onClick={() => runAgent(a.key)}>{running ? '…' : 'Lancer'}</button>
-                : <span className="cp-badge">session dev</span>}
+        <h3 className="cp-h">COENTREPRISE D&apos;AGENTS <span className="cp-tag">{NB_AGENTS} agents · 4 pôles</span></h3>
+        <p className="cp-note">Mémoire de domaine partagée + journal d&apos;apprentissage par pôle (voir <code>.claude/agents/knowledge</code>). Les agents « en direct » tournent côté serveur ; les autres lisent le dépôt (session dev).</p>
+        {CATS.map((c) => (
+          <div key={c.cat}>
+            <div className="cp-sub">{c.cat}</div>
+            <div className="cp-agents">
+              {c.agents.map((a) => (
+                <div className="cp-agent" key={a.key}>
+                  <div><b>{a.nom}</b><span>{a.desc}</span></div>
+                  {a.runnable
+                    ? <button disabled={!!running} onClick={() => runAgent(a.key)}>{running === a.key ? '…' : 'Lancer'}</button>
+                    : <span className="cp-badge">session dev</span>}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
         {health && (
           <div className="cp-health">
             <div className="cp-sub">Bilan « {health.agent} » · {new Date(health.at).toLocaleTimeString('fr-FR')}</div>
