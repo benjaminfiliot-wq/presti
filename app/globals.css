@@ -609,8 +609,9 @@ button:disabled{opacity:.55;cursor:default}
 .inbox-compose textarea{width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:11px;padding:.7rem .85rem;font-size:14px;font-family:inherit;color:var(--ink);resize:vertical;min-height:54px}
 .inbox-compose textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tint)}
 .inbox-cbar{display:flex;gap:.5rem;justify-content:flex-end;margin-top:.6rem;flex-wrap:wrap}
-.inbox-cbar .btn--primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.inbox-cbar .btn--primary:hover{filter:brightness(1.05)}
+.inbox-cbar .btn--primary,.inbox-actions .btn--primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.inbox-cbar .btn--primary:hover,.inbox-actions .btn--primary:hover{filter:brightness(1.05)}
+.inbox-actions .btn--primary:disabled{opacity:.6}
 @media(max-width:760px){
   .inbox{grid-template-columns:1fr}
   .inbox .inbox-thread{display:none}

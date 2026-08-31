@@ -35,6 +35,7 @@ export default function MessagesPage() {
   const [draft, setDraft] = useState('')
   const [sending, setSending] = useState(false)
   const [suggesting, setSuggesting] = useState(false)
+  const [devAuto, setDevAuto] = useState(false)
   const [err, setErr] = useState<string | null>(null)
   const threadRef = useRef<HTMLDivElement>(null)
 
@@ -101,6 +102,20 @@ export default function MessagesPage() {
     await loadThread(sel); await loadLeads()
   }
 
+  async function devisAutomatique() {
+    if (!sel || devAuto) return
+    setDevAuto(true); setErr(null)
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch('/api/devis/auto', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` },
+      body: JSON.stringify({ lead_id: sel }),
+    })
+    const d = await res.json().catch(() => ({}))
+    setDevAuto(false)
+    if (!res.ok) { setErr(d.outOfCredits ? 'Crédits épuisés — rechargez pour le devis auto.' : (d.error ?? 'Devis auto impossible.')); return }
+    router.push(`/devis/${d.id}`)
+  }
+
   async function suggererIA() {
     if (!sel || suggesting) return
     setSuggesting(true); setErr(null)
@@ -161,9 +176,12 @@ export default function MessagesPage() {
                   <span>{selLead.contact || 'contact non précisé'}</span>
                 </div>
                 <div className="inbox-actions">
+                  <button className="btn btn--primary" style={{ width: 'auto' }} disabled={devAuto} onClick={devisAutomatique} title="L'IA chiffre la conversation et crée un devis complet, prêt à relire">
+                    {devAuto ? 'L’IA chiffre…' : '⚡ Devis auto'}
+                  </button>
                   <button className="btn btn--ghost" style={{ width: 'auto' }} onClick={() => router.push(`/devis/nouveau?lead=${selLead.id}`)}>
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M12 18v-6M9 15h6" /></svg>
-                    Créer un devis
+                    Devis manuel
                   </button>
                 </div>
               </div>
