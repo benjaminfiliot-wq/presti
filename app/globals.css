@@ -1349,6 +1349,32 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .fs-cbub.them{align-self:flex-start;background:var(--bg2);border:1px solid var(--line);color:var(--ink2);border-bottom-left-radius:4px}
 .fs-conv-out{display:flex;align-items:center;gap:.5rem;justify-content:center;font-size:.82rem;color:var(--ok);background:rgba(70,200,154,.1);border:1px solid rgba(70,200,154,.28);border-radius:10px;padding:.6rem;margin-top:.25rem}
 .fs-conv-out .tick{display:grid;place-items:center;width:1.2rem;height:1.2rem;border-radius:50%;background:var(--ok);color:#04140d;font-size:.7rem;font-weight:800}
+/* démo site web 3 niveaux */
+.fs-site{width:min(94%,480px);display:flex;flex-direction:column;gap:.75rem}
+.fs-site-win{background:#141210;border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.fs-site-bar{display:flex;align-items:center;gap:5px;padding:.5rem .75rem;border-bottom:1px solid var(--line);background:rgba(255,255,255,.03)}
+.fs-site-bar span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.18)}
+.fs-site-bar i{margin-left:auto;font-family:var(--fm);font-size:.62rem;color:var(--faint);font-style:normal}
+.fs-site-hero{padding:1.5rem 1.2rem .5rem}
+.fs-site-eye{font-family:var(--fm);font-size:.58rem;letter-spacing:.14em;color:var(--co2)}
+.fs-site-h1{font-family:Georgia,serif;font-weight:800;font-size:2rem;color:#f3efe7;line-height:1;margin:.45rem 0 .35rem}
+.fs-site-tag{font-family:Georgia,serif;font-style:italic;font-size:.98rem;color:var(--co2)}
+.fs-site-gal{display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px;padding:.7rem 1.2rem 1.3rem}
+.fs-site-gal span{aspect-ratio:1.4;border-radius:7px;background:linear-gradient(135deg,#4a3620,#0f0b06)}
+.fs-site-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.fs-tier{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:.6rem .5rem;text-align:center}
+.fs-tier b{display:block;font-size:.82rem;color:var(--ink2)}
+.fs-tier span{font-size:.62rem;color:var(--muted)}
+.fs-tier.on{border-color:rgba(217,119,87,.5);background:rgba(217,119,87,.1)}
+.fs-tier.on b{color:var(--co2)}
+/* démo réalisations & réseaux */
+.fs-res{width:min(94%,470px);display:flex;flex-direction:column;gap:.85rem}
+.fs-res-gal{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.fs-res-gal span{aspect-ratio:1;border-radius:9px}
+.fs-res-chans{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center}
+.fs-res-chan{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--ink2);background:var(--surf);border:1px solid var(--line);border-radius:999px;padding:.35rem .75rem}
+.fs-res-chan b{color:var(--co2);font-weight:400}
+.fs-res-note{text-align:center;font-size:.85rem;color:var(--muted);margin-top:.2rem}
 .fs-payrow{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-display);font-weight:800;font-size:1.3rem}
 .fs-payrow .amt{color:var(--co2)}
 .fs-card{display:flex;align-items:center;gap:.6rem;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:.7rem .85rem}

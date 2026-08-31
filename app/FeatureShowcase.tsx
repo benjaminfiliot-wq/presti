@@ -115,8 +115,49 @@ function ConversationDemo() {
     </div>
   )
 }
+function SiteDemo() {
+  return (
+    <div className="fs-site">
+      <div className="fs-site-win fsr" style={R(0)}>
+        <div className="fs-site-bar"><span /><span /><span /><i>votre-nom.fr</i></div>
+        <div className="fs-site-hero">
+          <span className="fs-site-eye fsr" style={R(.5)}>MENUISIER · LYON</span>
+          <div className="fs-site-h1 fsr" style={R(.7)}>Atelier Vasseur</div>
+          <div className="fs-site-tag fsr" style={R(.95)}>Le bois travaillé avec exigence</div>
+        </div>
+        <div className="fs-site-gal">
+          <span className="fsr" style={R(1.3)} /><span className="fsr" style={R(1.42)} /><span className="fsr" style={R(1.54)} />
+        </div>
+      </div>
+      <div className="fs-site-tiers">
+        <div className="fs-tier fsr" style={R(1.9)}><b>Essentiel</b><span>1 page nette</span></div>
+        <div className="fs-tier fsr" style={R(2.05)}><b>Pro</b><span>Galerie + à-propos</span></div>
+        <div className="fs-tier on fsr" style={R(2.2)}><b>Signature ✦</b><span>Cinématique, niveau agence</span></div>
+      </div>
+    </div>
+  )
+}
+function ReseauxDemo() {
+  return (
+    <div className="fs-res">
+      <div className="fs-res-gal">
+        {['#3a2a17', '#4a3620', '#5a4126', '#3f2f1c'].map((c, i) => (
+          <span key={i} className="fsr" style={{ ...R(0.1 + i * 0.12), background: `linear-gradient(135deg,${c},#100c07)` }} />
+        ))}
+      </div>
+      <div className="fs-res-chans">
+        {[['📞', '06 12 34 56 78'], ['✉️', 'contact@…'], ['◎', 'Instagram'], ['ⓕ', 'Facebook'], ['★', 'Google']].map((c, i) => (
+          <span key={i} className="fs-res-chan fsr" style={R(0.8 + i * 0.13)}><b>{c[0]}</b>{c[1]}</span>
+        ))}
+      </div>
+      <div className="fs-res-note fsr" style={R(1.7)}>Tout arrive au même endroit — vous répondez d’un clic.</div>
+    </div>
+  )
+}
 const FEATURES = [
   { id: 'conversation', label: 'Conversation en direct', desc: 'Votre client discute sur votre page, l’IA lui répond dans la seconde — de façon humaine et juste. Vous reprenez la main quand vous voulez, et la conversation devient un devis en un clic.', Demo: ConversationDemo },
+  { id: 'site', label: 'Site web (3 niveaux)', desc: 'Un vrai site vitrine généré depuis votre profil, rédigé par l’IA et personnalisable à votre marque. Trois niveaux, du plus simple au cinématique « niveau agence » — publié en un clic.', Demo: SiteDemo },
+  { id: 'reseaux', label: 'Réalisations & réseaux', desc: 'Montrez votre travail en photos par spécialité, et connectez tous vos canaux (téléphone, email, Instagram, Facebook, Google…). Chaque contact arrive au même endroit.', Demo: ReseauxDemo },
   { id: 'devis', label: 'Devis chiffré', desc: 'Décrivez le chantier : Presti détaille les postes, applique la bonne TVA et sort un PDF conforme.', Demo: DevisDemo },
   { id: 'facture', label: 'Facturation', desc: 'Le chantier est fait ? Le devis devient une facture en un clic — numéro légal, échéance et mentions de pénalités générés tout seuls.', Demo: FactureDemo },
   { id: 'relances', label: 'Relances auto', desc: 'Le client ne répond pas ? Presti relance à J+2, J+5, J+10 — et s’arrête dès qu’il répond.', Demo: RelancesDemo },
