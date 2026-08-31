@@ -33,9 +33,11 @@ export default function SiteMotion() {
       })
     } else showAll()
 
-    // Parallax : hero (scroll absolu) + manifeste (relatif à sa position dans le viewport).
+    // Parallax + motion scroll-driven : hero, manifeste, et MOTS GÉANTS (dérive horizontale
+    // pendant le scroll, façon "FIND"). Transform uniquement (perf), jamais de contenu caché.
     const heroImg = document.querySelector<HTMLElement>('.site-hero-img')
     const manif = document.querySelector<HTMLElement>('.site-manifesto-img')
+    const words = Array.from(document.querySelectorAll<HTMLElement>('.site-word'))
     let raf = 0
     const onScroll = () => {
       if (raf) return
@@ -44,15 +46,22 @@ export default function SiteMotion() {
         if (heroImg) { const y = Math.min(scrollY, innerHeight) * 0.28; heroImg.style.transform = `translate3d(0,${y}px,0) scale(1.08)` }
         if (manif) {
           const r = manif.getBoundingClientRect()
-          const p = (r.top + r.height / 2 - innerHeight / 2) / innerHeight // -1 → +1 autour du centre
+          const p = (r.top + r.height / 2 - innerHeight / 2) / innerHeight
           manif.style.transform = `translate3d(0,${p * -60}px,0)`
+        }
+        for (let i = 0; i < words.length; i++) {
+          const r = words[i].getBoundingClientRect()
+          const prog = 1 - (r.top + r.height / 2) / innerHeight // 0 en bas → 1 en haut
+          const x = (0.5 - prog) * 46 * (i % 2 ? 1 : -1) // dérive horizontale, alternée
+          words[i].style.transform = `translate3d(${x.toFixed(1)}px,0,0)`
         }
       })
     }
-    if (heroImg || manif) { addEventListener('scroll', onScroll, { passive: true }); onScroll() }
+    const anim = heroImg || manif || words.length
+    if (anim) { addEventListener('scroll', onScroll, { passive: true }); onScroll() }
 
     const safety = setTimeout(() => { root?.classList.remove('site-armed'); showAll() }, 3200)
-    return () => { clearTimeout(t0); clearTimeout(safety); io?.disconnect(); if (heroImg || manif) removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf) }
+    return () => { clearTimeout(t0); clearTimeout(safety); io?.disconnect(); if (anim) removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf) }
   }, [])
   return null
 }
