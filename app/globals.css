@@ -1518,7 +1518,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .plat-chat-id{display:flex;flex-direction:column;gap:.15rem;min-width:0}
 .plat-chat-id b{font-family:var(--pfd);font-size:1.05rem;color:var(--pi);line-height:1.1}
 .plat-chat-live{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--pm)}
-.plat-thread{display:flex;flex-direction:column;gap:.7rem;max-height:min(52vh,440px);overflow-y:auto;padding:.4rem .3rem .6rem;scrollbar-width:thin;scrollbar-color:var(--pl) transparent}
+.plat-thread{display:flex;flex-direction:column;gap:.95rem;max-height:min(54vh,460px);overflow-y:auto;padding:.5rem .3rem .7rem;scrollbar-width:thin;scrollbar-color:var(--pl) transparent}
 .plat-thread::-webkit-scrollbar{width:7px}
 .plat-thread::-webkit-scrollbar-thumb{background:var(--pl);border-radius:20px}
 .plat-bub{display:flex;align-items:flex-end;gap:.5rem;max-width:88%}
@@ -1526,7 +1526,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .plat-bub.them{align-self:flex-start}
 .plat-bub-ava{flex:none;width:27px;height:27px;border-radius:8px;overflow:hidden;display:grid;place-items:center;background:var(--psoft);color:var(--pc2);font-family:var(--pfd);font-weight:800;font-size:.7rem;margin-bottom:2px}
 .plat-bub-ava img{width:100%;height:100%;object-fit:cover}
-.plat-bub-txt{padding:.7rem .95rem;border-radius:16px;font-size:.97rem;line-height:1.5;white-space:normal;word-break:break-word}
+.plat-bub-txt{padding:.75rem 1.05rem;border-radius:17px;font-size:.98rem;line-height:1.58;white-space:normal;word-break:break-word}
 .plat-bub.them .plat-bub-txt{background:rgba(255,255,255,.05);border:1px solid var(--pl);color:var(--pi);border-bottom-left-radius:5px}
 .plat-bub.me .plat-bub-txt{background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;font-weight:500;border-bottom-right-radius:5px;box-shadow:0 10px 26px -12px color-mix(in srgb,var(--pc) 70%,transparent)}
 .plat-bub-txt.typing{display:inline-flex;gap:5px;align-items:center;padding:.85rem 1rem}
@@ -1539,14 +1539,17 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 }
 @keyframes plat-bub-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 @keyframes plat-typing{0%,60%,100%{opacity:.35;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
-.plat-compose{display:flex;align-items:flex-end;gap:.55rem;margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--pl2)}
-.plat-compose textarea{flex:1;background:rgba(255,255,255,.03);border:1.5px solid var(--pl);border-radius:14px;padding:.8rem 1rem;font-size:1rem;font-family:inherit;color:var(--pi);resize:none;max-height:120px;line-height:1.45;transition:border-color .15s,box-shadow .15s,background .15s}
+/* Barre de saisie unifiée, épurée (inspiration Claude) */
+.plat-compose{display:flex;align-items:flex-end;gap:.4rem;margin-top:1.1rem;padding:.42rem .42rem .42rem 1.1rem;border:1.5px solid var(--pl);border-radius:22px;background:rgba(255,255,255,.03);transition:border-color .16s,box-shadow .16s,background .16s}
+.plat-compose:focus-within{border-color:var(--pc);background:rgba(255,255,255,.05);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 13%,transparent)}
+.plat-compose textarea{flex:1;background:none;border:none;padding:.62rem 0;font-size:1rem;font-family:inherit;color:var(--pi);resize:none;max-height:150px;line-height:1.55}
 .plat-compose textarea::placeholder{color:var(--pf)}
-.plat-compose textarea:focus{outline:none;border-color:var(--pc);background:rgba(255,255,255,.05);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 15%,transparent)}
-.plat-compose button{flex:none;width:46px;height:46px;border-radius:13px;border:none;cursor:pointer;display:grid;place-items:center;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;box-shadow:0 12px 28px -12px color-mix(in srgb,var(--pc) 80%,transparent);transition:transform .12s var(--pe),box-shadow .25s,opacity .15s}
-.plat-compose button:hover{box-shadow:0 16px 34px -12px color-mix(in srgb,var(--pc) 95%,transparent)}
-.plat-compose button:active{transform:scale(.94)}
-.plat-compose button:disabled{opacity:.45;cursor:default;box-shadow:none}
+.plat-compose textarea:focus{outline:none;box-shadow:none}
+.plat-compose button{flex:none;width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;box-shadow:0 8px 20px -10px color-mix(in srgb,var(--pc) 80%,transparent);transition:transform .12s var(--pe),box-shadow .25s,opacity .15s}
+.plat-compose button:hover{box-shadow:0 12px 26px -10px color-mix(in srgb,var(--pc) 95%,transparent)}
+.plat-compose button:active{transform:scale(.92)}
+.plat-compose button:disabled{opacity:.4;cursor:default;box-shadow:none}
+.plat-compose button svg{width:18px;height:18px}
 .plat-chat-closed{margin-top:1rem;padding:.9rem 1.1rem;border-radius:13px;background:var(--psoft);border:1px solid color-mix(in srgb,var(--pc) 22%,transparent);color:var(--pc2);font-size:.94rem;line-height:1.5}
 
 /* Réalisations (galerie portfolio) */
