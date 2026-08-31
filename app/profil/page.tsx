@@ -9,6 +9,14 @@ import PortfolioUpload, { type Realisation } from '@/app/PortfolioUpload'
 
 type Service = { nom: string; description: string }
 type Reseaux = { instagram?: string; facebook?: string; tiktok?: string; linkedin?: string; whatsapp?: string; site?: string; google?: string }
+// Contenu du site rédigé par l'IA — 100% éditable ensuite par l'artisan (chaque mot est le sien).
+type SiteContenu = {
+  hero_accroche: string; hero_lede: string; apropos: string
+  prestations_intro: string; realisations_intro: string
+  cta_titre: string; cta_texte: string; meta_description: string
+  manifeste: string; mots_cles: string[]
+}
+const CONTENU_VIDE: SiteContenu = { hero_accroche: '', hero_lede: '', apropos: '', prestations_intro: '', realisations_intro: '', cta_titre: '', cta_texte: '', meta_description: '', manifeste: '', mots_cles: [] }
 const RESEAUX: { key: keyof Reseaux; label: string; ph: string }[] = [
   { key: 'instagram', label: 'Instagram', ph: 'https://instagram.com/votre_compte' },
   { key: 'facebook', label: 'Facebook', ph: 'https://facebook.com/votre_page' },
@@ -45,6 +53,7 @@ export default function ProfilPage() {
   const [siteTier, setSiteTier] = useState(3)
   const [siteContact, setSiteContact] = useState(true)
   const [genSite, setGenSite] = useState(false)
+  const [siteContenu, setSiteContenu] = useState<SiteContenu | null>(null)
   const [active, setActive] = useState(true)
   const [accent, setAccent] = useState('#D97757')
   const [saving, setSaving] = useState(false)
@@ -65,6 +74,7 @@ export default function ProfilPage() {
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
       setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setReponseAuto(a.reponse_auto !== false)
       setSiteActive(a.site_active === true); setSiteTier([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3); setSiteContact(a.site_contact_integre !== false)
+      setSiteContenu(a.site_contenu && typeof a.site_contenu === 'object' ? { ...CONTENU_VIDE, ...(a.site_contenu as Partial<SiteContenu>), mots_cles: Array.isArray((a.site_contenu as SiteContenu).mots_cles) ? (a.site_contenu as SiteContenu).mots_cles : [] } : null)
       setReady(true)
     })
   }, [router])
@@ -72,6 +82,8 @@ export default function ProfilPage() {
   function setService(i: number, patch: Partial<Service>) {
     setServices((prev) => prev.map((s, j) => (j === i ? { ...s, ...patch } : s)))
   }
+  function setC(patch: Partial<SiteContenu>) { setSiteContenu((prev) => ({ ...(prev ?? CONTENU_VIDE), ...patch })) }
+  function setMot(i: number, v: string) { setSiteContenu((prev) => { const base = prev ?? CONTENU_VIDE; const m = [...(base.mots_cles ?? [])]; while (m.length <= i) m.push(''); m[i] = v; return { ...base, mots_cles: m } }) }
 
   async function save() {
     setSaving(true); setMsg(null)
@@ -79,6 +91,15 @@ export default function ProfilPage() {
     const cleanReal = realisations.filter((r) => r.image).slice(0, 12).map((r) => ({ image: r.image, titre: r.titre.trim().slice(0, 80), specialite: r.specialite.trim().slice(0, 50) }))
     const cleanReseaux: Reseaux = {}
     for (const { key } of RESEAUX) { const v = (reseaux[key] ?? '').trim().slice(0, 300); if (v) cleanReseaux[key] = v }
+    // Contenu du site édité à la main (chaque texte est personnalisable).
+    const t = (v: string, max: number) => (v ?? '').trim().slice(0, max)
+    const cleanContenu = siteContenu ? {
+      hero_accroche: t(siteContenu.hero_accroche, 80), hero_lede: t(siteContenu.hero_lede, 400), apropos: t(siteContenu.apropos, 900),
+      prestations_intro: t(siteContenu.prestations_intro, 300), realisations_intro: t(siteContenu.realisations_intro, 300),
+      cta_titre: t(siteContenu.cta_titre, 120), cta_texte: t(siteContenu.cta_texte, 300), meta_description: t(siteContenu.meta_description, 180),
+      manifeste: t(siteContenu.manifeste, 120),
+      mots_cles: (Array.isArray(siteContenu.mots_cles) ? siteContenu.mots_cles : []).map((m) => t(m, 22)).filter(Boolean).slice(0, 4),
+    } : null
     const { error } = await supabase.from('artisans').update({
       bio: bio.trim().slice(0, 800) || null,
       zone_intervention: zone.trim().slice(0, 160) || null,
@@ -92,6 +113,7 @@ export default function ProfilPage() {
       site_active: siteActive,
       site_tier: [1, 2, 3].includes(siteTier) ? siteTier : 3,
       site_contact_integre: siteContact,
+      ...(cleanContenu ? { site_contenu: cleanContenu } : {}),
       plateforme_active: active,
       accent: /^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#D97757',
     }).eq('id', uid)
@@ -120,8 +142,9 @@ export default function ProfilPage() {
     const d = await res.json().catch(() => ({}))
     setGenSite(false)
     if (!res.ok) { setMsg({ type: 'err', text: d.outOfCredits ? 'Crédits épuisés — rechargez pour laisser l’IA rédiger votre site.' : (d.error ?? 'Génération impossible.') }); return }
-    setMsg({ type: 'ok', text: 'Contenu de votre site rédigé par l’IA ✅ Ouvrez « Voir mon site ».' })
-    setTimeout(() => setMsg(null), 4000)
+    if (d.contenu && typeof d.contenu === 'object') setSiteContenu({ ...CONTENU_VIDE, ...d.contenu, mots_cles: Array.isArray(d.contenu.mots_cles) ? d.contenu.mots_cles : [] })
+    setMsg({ type: 'ok', text: 'Contenu rédigé par l’IA ✅ Relisez et personnalisez chaque texte ci-dessous, puis Enregistrez.' })
+    setTimeout(() => setMsg(null), 5000)
   }
 
   const lien = slug ? `prestiapp.fr/l/${slug}` : ''
@@ -247,9 +270,48 @@ export default function ProfilPage() {
             ))}
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', gap: '.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
-            <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={genSite} onClick={genererSite}>{genSite ? 'L’IA rédige votre site…' : '⚡ Rédiger mon site avec l’IA'}</button>
+            <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={genSite} onClick={genererSite}>{genSite ? 'L’IA rédige votre site…' : (siteContenu ? '⚡ Régénérer avec l’IA' : '⚡ Rédiger mon site avec l’IA')}</button>
             <span className="muted" style={{ fontSize: '.85rem' }}>Titres, accroches et à-propos rédigés sur-mesure à partir de votre profil.</span>
           </div>
+
+          {/* Édition libre du contenu — tout est personnalisable (l'IA propose, vous décidez). */}
+          {siteContenu && (
+            <div className="site-copy">
+              <div className="site-copy-h">
+                <b>Les textes de votre site</b>
+                <span className="muted">L’IA a écrit une première version — modifiez chaque mot, c’est votre site. Pensez à Enregistrer.</span>
+              </div>
+              <label>Signature (accroche sous votre nom)</label>
+              <input value={siteContenu.hero_accroche} onChange={(e) => setC({ hero_accroche: e.target.value })} maxLength={80} placeholder="Ex : Le bois travaillé avec exigence" />
+              <label>Phrase d’introduction</label>
+              <textarea rows={2} value={siteContenu.hero_lede} onChange={(e) => setC({ hero_lede: e.target.value })} maxLength={400} />
+              {siteTier === 3 && (
+                <>
+                  <label>Mots-clés géants (jusqu’à 4, affichés en grand)</label>
+                  <div className="site-mots">
+                    {[0, 1, 2, 3].map((i) => (
+                      <input key={i} value={(siteContenu.mots_cles ?? [])[i] ?? ''} onChange={(e) => setMot(i, e.target.value)} maxLength={22} placeholder={`Mot ${i + 1}`} />
+                    ))}
+                  </div>
+                  <label>Manifeste (grande phrase pleine page)</label>
+                  <input value={siteContenu.manifeste} onChange={(e) => setC({ manifeste: e.target.value })} maxLength={120} placeholder="Ex : Dessiné, taillé, assemblé : le bois prend vie ici." />
+                </>
+              )}
+              <label>À propos</label>
+              <textarea rows={4} value={siteContenu.apropos} onChange={(e) => setC({ apropos: e.target.value })} maxLength={900} />
+              <div className="grid2" style={{ marginTop: '.2rem' }}>
+                <div><label>Intro « Prestations »</label><input value={siteContenu.prestations_intro} onChange={(e) => setC({ prestations_intro: e.target.value })} maxLength={300} /></div>
+                <div><label>Intro « Réalisations »</label><input value={siteContenu.realisations_intro} onChange={(e) => setC({ realisations_intro: e.target.value })} maxLength={300} /></div>
+              </div>
+              <div className="grid2" style={{ marginTop: '.2rem' }}>
+                <div><label>Titre de la section contact</label><input value={siteContenu.cta_titre} onChange={(e) => setC({ cta_titre: e.target.value })} maxLength={120} /></div>
+                <div><label>Texte de la section contact</label><input value={siteContenu.cta_texte} onChange={(e) => setC({ cta_texte: e.target.value })} maxLength={300} /></div>
+              </div>
+              <label>Description Google (SEO) — 150 à 160 caractères</label>
+              <textarea rows={2} value={siteContenu.meta_description} onChange={(e) => setC({ meta_description: e.target.value })} maxLength={180} />
+            </div>
+          )}
+
           <label className="prof-toggle" style={{ marginTop: '1rem' }}>
             <input type="checkbox" checked={siteContact} onChange={(e) => setSiteContact(e.target.checked)} />
             <span>Formulaire de contact <b>{siteContact ? 'intégré au site' : 'renvoyé vers la plateforme'}</b> {siteContact ? '— le client discute directement sur votre site' : '— un bouton mène à votre page de contact'}</span>

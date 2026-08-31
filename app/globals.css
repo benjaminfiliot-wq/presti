@@ -656,6 +656,13 @@ button:disabled{opacity:.55;cursor:default}
 .site-tier b{font-size:15px;color:var(--ink)}
 .site-tier.on b{color:var(--accent-ink)}
 .site-tier .st-d{font-size:12px;color:var(--muted);line-height:1.42}
+/* Édition libre des textes du site (l'IA propose, l'artisan personnalise tout) */
+.site-copy{margin-top:1rem;padding:1rem;border:1px solid var(--line);border-radius:13px;background:var(--surface-2);display:flex;flex-direction:column;gap:.15rem}
+.site-copy-h{display:flex;flex-direction:column;gap:.15rem;margin-bottom:.5rem;padding-bottom:.6rem;border-bottom:1px solid var(--line)}
+.site-copy-h b{font-size:14px;color:var(--ink)}
+.site-copy-h .muted{font-size:12.5px}
+.site-copy label{margin-top:.55rem}
+.site-mots{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.5rem}
 
 /* ---- table devis ---- */
 .psh-tablewrap{overflow-x:auto}
