@@ -95,12 +95,15 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const apropos = c?.apropos || a.bio
   const showAbout = !!apropos
   const showChannels = channels.length > 0
-  // Mots-clés GÉANTS (inspiration sites cinématiques) : les grands savoir-faire de l'artisan.
+  // Mots-clés GÉANTS (inspiration sites cinématiques « FIND ») : d'abord ceux choisis par
+  // l'IA (mots qui claquent, ancrés dans le geste), sinon repli sur prestations/spécialités.
   const uniq = (arr: string[]) => Array.from(new Set(arr.map((s) => s.trim()).filter(Boolean)))
-  const bigWords = uniq([
+  const aiWords = uniq(Array.isArray(c?.mots_cles) ? (c!.mots_cles as string[]) : [])
+  const bigWords = (aiWords.length >= 2 ? aiWords : uniq([
     ...services.map((s) => s.nom || ''),
     ...realisations.map((rz) => rz.specialite || ''),
-  ]).slice(0, 4)
+  ])).slice(0, 4)
+  const manifesteTxt = c?.manifeste || c?.hero_accroche || (a.metier ? `${a.metier}, avec exigence.` : 'Un travail fait pour durer.')
 
   return (
     <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent }} data-tier={tier}>
@@ -204,7 +207,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             <img src={realisations[1]?.image || heroShot || ''} alt="" className="site-manifesto-img" />
             <span className="site-manifesto-veil" />
           </div>
-          <p className="site-manifesto-t site-reveal">{c?.hero_accroche || (a.metier ? `${a.metier}, avec exigence.` : 'Un travail fait pour durer.')}</p>
+          <p className="site-manifesto-t site-reveal">{manifesteTxt}</p>
         </section>
       ) : null}
 

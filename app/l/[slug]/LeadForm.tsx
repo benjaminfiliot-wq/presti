@@ -124,7 +124,7 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
           </span>
         </div>
 
-        <div className="plat-thread" ref={threadRef}>
+        <div className="plat-thread" ref={threadRef} data-lenis-prevent>
           {msgs.map((m, i) => (
             <div key={i} className={`plat-bub ${m.sens === 'in' ? 'me' : 'them'}`}>
               {m.sens === 'out' && <span className="plat-bub-ava">{avatar

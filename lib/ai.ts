@@ -687,6 +687,8 @@ export type SiteContenu = {
   hero_accroche: string; hero_lede: string; apropos: string
   prestations_intro: string; realisations_intro: string
   cta_titre: string; cta_texte: string; meta_description: string
+  manifeste: string        // grande phrase plein-cadre (section manifeste cinématique)
+  mots_cles: string[]      // 3–4 MOTS GÉANTS (savoir-faire, section « FIND »)
 }
 type SiteArtisan = {
   nom: string | null; metier: string | null; bio: string | null; zone: string | null
@@ -708,20 +710,24 @@ export async function generateSiteContent(a: SiteArtisan, model: string = AI_MOD
   const svc = a.services.filter((s) => s?.nom).map((s) => `- ${s.nom}${s.description ? ' : ' + s.description : ''}`).join('\n') || '(non précisées)'
   const real = a.realisations.filter((r) => r?.titre || r?.specialite).map((r) => `- ${[r.titre, r.specialite].filter(Boolean).join(' — ')}`).join('\n') || '(aucune)'
 
-  const system = `Tu es un excellent concepteur-rédacteur pour les sites de professionnels du bâtiment en France. Tu écris le CONTENU du site vitrine de ${nom} (${metier}${lieu ? `, ${lieu}` : ''}), à partir de ses données RÉELLES uniquement.
+  const system = `Tu es directeur de création ET concepteur-rédacteur d'un studio réputé pour des sites d'artisans qu'on ne peut confondre avec aucun autre. Tu écris le CONTENU du site vitrine de ${nom} (${metier}${lieu ? `, ${lieu}` : ''}), à partir de ses données RÉELLES uniquement. Ce site vise le niveau des sites primés : chaque mot compte.
 
-OBJECTIF : un contenu premium, humain, spécifique au métier et à cet artisan — jamais du remplissage générique. Ça doit donner confiance et donner envie de demander un devis.
+MÉTHODE (pense d'abord, puis rédige) :
+1. Trouve l'ANGLE propre à cet artisan : ce que son métier a de concret, matériel, sensoriel (matières, gestes, finitions, exigence). Pas d'abstraction marketing.
+2. Écris une signature (hero_accroche) qu'on RETIENT — courte, juste, jamais vue sur un autre site du même métier.
+3. Choisis 3 ou 4 MOTS GÉANTS (mots_cles) : des mots pleins, évocateurs, ancrés dans le geste du métier (ex. menuisier : « Sur-mesure », « Massif », « Patine », « Assemblages » ; plombier : « Étanche », « Précis », « Dépannage »). PAS les libellés bruts des prestations : des mots qui claquent, en 1 à 2 mots chacun, sans article.
+4. Écris un MANIFESTE : une seule grande phrase (6 à 12 mots), affichée en énorme plein cadre, qui condense la promesse — différente de la signature, plus ample.
 
 RÈGLES ABSOLUES :
-- N'INVENTE AUCUN FAIT non fourni : pas d'années d'expérience inventées, pas de certifications, labels, distinctions, avis clients, chiffres ou noms de clients qui ne sont pas dans les données. Si le nombre d'années n'est pas donné, ne le mentionne pas.
-- Français impeccable, ton professionnel, chaleureux et confiant, ancré dans le métier (vocabulaire juste du ${metier}).
+- N'INVENTE AUCUN FAIT non fourni : pas d'années d'expérience, certifications, labels, distinctions, avis clients, chiffres ou noms de clients absents des données. Si une info n'est pas donnée, ne la mentionne pas.
+- Français impeccable, ton pro, chaleureux, sobre et confiant, vocabulaire juste du ${metier}.
 - Spécifique : appuie-toi sur les prestations et réalisations réelles fournies.
-- SEO naturel : intègre naturellement le métier et le lieu dans les textes clés (accroche, meta) sans bourrage.
-- Zéro superlatif creux ("le meilleur", "numéro 1"), zéro promesse intenable.
-- Longueurs : hero_accroche = 3 à 6 mots (une signature) ; hero_lede = 1 à 2 phrases ; apropos = 3 à 5 phrases ; les intros = 1 phrase ; cta_texte = 1 phrase ; meta_description = 150 à 160 caractères.
+- SEO naturel : métier + lieu intégrés naturellement dans accroche et meta, sans bourrage.
+- Zéro superlatif creux (« le meilleur », « numéro 1 »), zéro promesse intenable, zéro cliché (« votre satisfaction est notre priorité »).
+- Longueurs : hero_accroche = 3–6 mots ; hero_lede = 1–2 phrases ; apropos = 3–5 phrases (à la 1re personne, humain) ; intros = 1 phrase ; cta_texte = 1 phrase ; meta_description = 150–160 caractères ; manifeste = 6–12 mots ; mots_cles = 3 ou 4 mots.
 
 Réponds UNIQUEMENT avec un objet JSON valide, sans texte ni balise autour, au format EXACT :
-{"hero_accroche":"...","hero_lede":"...","apropos":"...","prestations_intro":"...","realisations_intro":"...","cta_titre":"...","cta_texte":"...","meta_description":"..."}`
+{"hero_accroche":"...","hero_lede":"...","apropos":"...","prestations_intro":"...","realisations_intro":"...","cta_titre":"...","cta_texte":"...","meta_description":"...","manifeste":"...","mots_cles":["...","...","..."]}`
 
   const user = `Données réelles de l'artisan :
 Nom / entreprise : ${nom}
@@ -735,16 +741,21 @@ Réalisations :
 ${real}`
 
   const res = await client.messages.create({
-    ...genParams(model, 1400),
+    ...genParams(model, 1700),
     system,
     messages: [{ role: 'user', content: user }],
   })
   let raw = ''
   for (const b of res.content) if (b.type === 'text') raw += b.text
-  const p = extractJsonObject(raw.trim()) as Partial<SiteContenu> | null
+  const p = extractJsonObject(raw.trim()) as (Partial<SiteContenu> & { mots_cles?: unknown }) | null
   if (!p) throw new Error('Contenu de site IA non exploitable.')
 
   const str = (v: unknown, max: number, fb = '') => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : fb)
+  // MOTS GÉANTS : 3–4 mots courts, nettoyés (pas d'article, pas de ponctuation traînante).
+  const mots = (Array.isArray(p.mots_cles) ? p.mots_cles : [])
+    .map((m) => (typeof m === 'string' ? m.trim().replace(/^[«"'\s]+|[»"'.,;:\s]+$/g, '').replace(/^(le|la|les|un|une|des|du|de)\s+/i, '') : ''))
+    .filter((m) => m && m.length <= 22)
+    .slice(0, 4)
   return {
     hero_accroche: str(p.hero_accroche, 80),
     hero_lede: str(p.hero_lede, 400),
@@ -754,6 +765,8 @@ ${real}`
     cta_titre: str(p.cta_titre, 120, 'Parlons de votre projet'),
     cta_texte: str(p.cta_texte, 300, 'Décrivez votre besoin — vous recevez une réponse rapide et un devis clair.'),
     meta_description: str(p.meta_description, 180),
+    manifeste: str(p.manifeste, 120),
+    mots_cles: mots,
   }
 }
 

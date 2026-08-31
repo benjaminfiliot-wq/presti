@@ -1,5 +1,12 @@
 *{box-sizing:border-box}
 
+/* ===== Lenis (smooth scroll) — n'agit que sur les pages qui l'initialisent (classe html.lenis) ===== */
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+.lenis.lenis-stopped{overflow:hidden}
+.lenis.lenis-smooth iframe{pointer-events:none}
+
 :root{
   /* ===== Presti · design system "Chantier Dark" : nuit graphite + bleu plan + jaune chantier ===== */
   --paper:#0A0C11;                /* nuit graphite (fond) */
