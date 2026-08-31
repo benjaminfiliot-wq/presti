@@ -124,10 +124,23 @@ export async function POST(req: Request) {
     // Profil artisan (persona + crédits/fondateur).
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email, is_founder')
+      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto')
       .eq('id', lead.artisan_id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
+
+    // Mode MANUEL : on a déjà tracé le message + notifié plus haut ; pas de réponse IA.
+    if (artisan.reponse_auto === false) {
+      if (artisan.email) {
+        await sendEmail({
+          to: artisan.email,
+          subject: `Nouveau message — ${lead.nom_prospect || lead.contact || 'prospect'}`,
+          text: `Un prospect vous a écrit sur votre page Presti (réponse manuelle) :\n\n« ${message} »\n\nRépondez-lui depuis votre espace (Messages).`,
+          replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
+        }).catch(() => {})
+      }
+      return NextResponse.json({ ok: true, reply: null })
+    }
 
     // Crédit pour la réponse IA. Épuisé → message tout de même sauvé, artisan notifié,
     // mais pas de réponse auto (il répondra lui-même depuis sa boîte de réception).

@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     // 1) Retrouver l'artisan à partir de son slug
     const { data: artisan, error: aErr } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email, is_founder')
+      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto')
       .eq('slug', slug)
       .maybeSingle()
 
@@ -114,6 +114,23 @@ export async function POST(req: Request) {
         await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
       }
       return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token })
+    }
+
+    // Mode MANUEL (l'artisan a coupé la réponse auto) : on trace le message + on le
+    // notifie, mais on ne génère PAS de réponse IA. Il répondra depuis sa boîte de réception.
+    if (artisan.reponse_auto === false) {
+      if (message) {
+        await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
+      }
+      if (artisan.email) {
+        await sendEmail({
+          to: artisan.email,
+          subject: `Nouveau contact — ${nom_prospect || contact}`,
+          text: `Nouveau contact via votre page Presti (mode réponse manuelle).\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}\n\nRépondez-lui depuis votre espace (Messages).`,
+          replyTo: typeof contact === 'string' && contact.includes('@') ? contact : undefined,
+        }).catch(() => {})
+      }
+      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: null })
     }
 
     // Décompte d'un crédit pour la réponse auto. Si épuisé : le lead est TOUJOURS

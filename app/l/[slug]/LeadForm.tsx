@@ -70,6 +70,7 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
       const seed: Msg[] = []
       if (message.trim()) seed.push({ sens: 'in', contenu: message.trim() })
       if (d.reply) seed.push({ sens: 'out', contenu: d.reply })
+      else seed.push({ sens: 'out', contenu: `Bien reçu${nom.trim() ? ' ' + nom.trim().split(/\s+/)[0] : ''} ! ${artisanNom || 'Votre artisan'} a bien votre demande et vous répond au plus vite.` })
       setMsgs(seed)
       if (d.token) {
         setToken(d.token)

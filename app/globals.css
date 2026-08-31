@@ -625,6 +625,19 @@ button:disabled{opacity:.55;cursor:default}
 .btn--ghost.danger{color:#e5735a;border-color:rgba(229,115,90,.4)}
 .btn--ghost.danger:hover{background:rgba(229,115,90,.1)}
 
+/* ---- portfolio (réalisations) dans l'éditeur ---- */
+.pf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.75rem}
+.pf-item{display:flex;flex-direction:column;gap:.35rem}
+.pf-thumb{position:relative;aspect-ratio:4/3;border-radius:11px;overflow:hidden;border:1px solid var(--line);background:var(--surface-2)}
+.pf-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.pf-del{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:7px;border:none;background:rgba(0,0,0,.55);color:#fff;cursor:pointer;font-size:12px;display:grid;place-items:center;line-height:1}
+.pf-del:hover{background:rgba(229,115,90,.92)}
+.pf-in{width:100%;padding:.5rem .6rem;border:1px solid var(--line);border-radius:9px;font-size:13px;background:var(--surface);color:var(--ink);font-family:inherit}
+.pf-in:focus{outline:none;border-color:var(--accent)}
+.pf-in.sm{font-size:12px;color:var(--muted)}
+.pf-add{aspect-ratio:4/3;border:1.5px dashed var(--line-2);border-radius:11px;background:var(--surface-2);color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;font-size:.85rem;transition:border-color .14s,color .14s}
+.pf-add:hover{border-color:var(--accent-tint-2);color:var(--accent-ink)}
+
 /* ---- table devis ---- */
 .psh-tablewrap{overflow-x:auto}
 .psh-dtable{width:100%;border-collapse:collapse;font-size:13.5px}
@@ -1536,8 +1549,29 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .plat-compose button:disabled{opacity:.45;cursor:default;box-shadow:none}
 .plat-chat-closed{margin-top:1rem;padding:.9rem 1.1rem;border-radius:13px;background:var(--psoft);border:1px solid color-mix(in srgb,var(--pc) 22%,transparent);color:var(--pc2);font-size:.94rem;line-height:1.5}
 
+/* Réalisations (galerie portfolio) */
+.plat-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+.plat-shot{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--pl);background:var(--ps);aspect-ratio:4/3;margin:0}
+.plat-shot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .55s var(--pe)}
+.plat-shot:hover img{transform:scale(1.045)}
+.plat-shot figcaption{position:absolute;inset:auto 0 0 0;padding:1.6rem .9rem .8rem;display:flex;flex-direction:column;gap:.3rem;background:linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.35) 55%,transparent)}
+.plat-shot figcaption b{color:#fff;font-size:.98rem;font-weight:650;line-height:1.25}
+.plat-shot-tag{align-self:flex-start;font-family:var(--pfm);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:#1a0f0a;background:var(--pc2);padding:2px 9px;border-radius:20px;font-weight:700}
+
+/* Canaux de contact (tel / email / réseaux) */
+.plat-channels{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin:0 auto 1.5rem;max-width:660px}
+.plat-chan{display:inline-flex;align-items:center;gap:.55rem;padding:.62rem .95rem;border-radius:12px;border:1px solid var(--pl);background:rgba(255,255,255,.03);color:var(--pi);text-decoration:none;font-size:.9rem;transition:border-color .15s,background .15s,transform .12s var(--pe)}
+.plat-chan:hover{border-color:var(--pc);background:var(--psoft);transform:translateY(-1px)}
+.plat-chan-ic{display:grid;place-items:center;width:20px;height:20px}
+.plat-chan-ic svg{width:18px;height:18px;stroke:var(--pc2);fill:none}
+
 /* Footer white-label (aucune mention Presti) */
 .plat-foot{max-width:960px;margin:clamp(2.6rem,6vw,4rem) auto 0;padding:1.8rem clamp(1.1rem,4vw,1.6rem);border-top:1px solid var(--pl2);display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;color:var(--pm);font-size:.9rem}
+.plat-foot-id{display:inline-flex;align-items:center;gap:.9rem;flex-wrap:wrap}
+.plat-foot-soc{display:flex;gap:.5rem;margin-left:auto;flex-wrap:wrap}
+.plat-soc{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;border:1px solid var(--pl);color:var(--pm);transition:border-color .15s,color .15s}
+.plat-soc:hover{border-color:var(--pc);color:var(--pc2)}
+.plat-soc svg{width:18px;height:18px;stroke:currentColor;fill:none}
 .plat-foot b{font-family:var(--pfd);font-size:1.05rem;color:var(--pi)}
 .plat-foot span{display:inline-flex;align-items:center;gap:.3rem}.plat-foot svg{width:14px;height:14px;stroke:var(--pc2)}
 .plat-mid{min-height:100dvh;display:grid;place-items:center;padding:2rem}
