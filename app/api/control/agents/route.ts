@@ -119,5 +119,13 @@ async function gestion() {
     } else push('Emails (Resend)', 'warn', 'clé absente')
   } catch { push('Emails (Resend)', 'warn', 'non vérifié') }
 
+  // Crash reporting : erreurs applicatives sur 24 h
+  try {
+    const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString()
+    const { count } = await supabaseAdmin.from('app_errors').select('id', { count: 'exact', head: true }).gte('created_at', since)
+    const n = count ?? 0
+    push('Erreurs applicatives (24h)', n === 0 ? true : 'warn', String(n))
+  } catch { push('Erreurs applicatives', 'warn', 'table indisponible') }
+
   return { agent: 'gestion', at: new Date().toISOString(), items }
 }
