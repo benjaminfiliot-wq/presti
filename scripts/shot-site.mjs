@@ -32,6 +32,16 @@ await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, 
     { image: shot('Dressing', '#4d3924', '#14100a'), titre: 'Dressing chêne clair', specialite: 'Agencement' },
   ],
   reseaux: { instagram: 'https://instagram.com/atelier.vasseur', facebook: 'https://facebook.com/ateliervasseur', google: 'https://g.page/vasseur' },
+  site_contenu: {
+    hero_accroche: 'Le bois travaillé avec exigence',
+    hero_lede: 'Atelier Vasseur conçoit et fabrique escaliers, agencements et mobilier massif sur mesure à Lyon et dans le Rhône.',
+    apropos: 'Atelier Vasseur est un menuisier ébéniste basé à Lyon, spécialisé dans l\'escalier sur mesure, l\'agencement intérieur et le mobilier en bois massif. Chaque projet est pensé, dessiné puis façonné à l\'atelier, avec le souci du détail et du geste juste.',
+    prestations_intro: 'Un savoir-faire complet en menuiserie ébénisterie, de l\'escalier structurel au mobilier d\'agencement sur mesure.',
+    realisations_intro: 'Quelques pièces récentes, conçues et posées dans le Rhône.',
+    cta_titre: 'Un projet de menuiserie sur mesure ?',
+    cta_texte: 'Décrivez votre besoin — vous recevez une réponse rapide et un devis clair.',
+    meta_description: 'Atelier Vasseur, menuisier ébéniste à Lyon.',
+  },
 }) })
 
 const browser = await chromium.launch()

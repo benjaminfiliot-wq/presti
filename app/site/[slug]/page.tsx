@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import type { SiteContenu } from '@/lib/ai'
 import SiteMotion from './SiteMotion'
 
 type Service = { nom?: string; description?: string }
@@ -13,12 +14,13 @@ type Artisan = {
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
   tel_public: string | null; email_public: string | null
   site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
+  site_contenu: SiteContenu | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active')
+    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -30,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!a) return { title: 'Site introuvable', robots: { index: false } }
   return {
     title: `${a.nom}${a.metier ? ` — ${a.metier}` : ''}`,
-    description: a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}.`,
+    description: a.site_contenu?.meta_description || a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}.`,
     robots: { index: false, follow: false },
   }
 }
@@ -57,6 +59,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   }
 
   const tier = [1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3
+  const c = a.site_contenu || null // contenu rédigé par l'IA (sur-mesure), sinon données brutes
   const accent = /^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? (a.accent as string) : '#D97757'
   const services = (Array.isArray(a.services) ? a.services : []).filter((s) => s && (s.nom || s.description))
   const realisations = (Array.isArray(a.realisations) ? a.realisations : []).filter((r) => r && r.image)
@@ -86,7 +89,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   }
 
   const showReal = realisations.length > 0 && tier >= 2
-  const showAbout = !!a.bio
+  const apropos = c?.apropos || a.bio
+  const showAbout = !!apropos
   const showChannels = channels.length > 0
 
   return (
@@ -122,7 +126,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
         <div className="site-hero-in">
           <span className="site-eyebrow site-reveal">{a.metier || 'Artisan'}{zone ? <> · {zone}</> : null}</span>
           <h1 className="site-reveal">{a.nom}</h1>
-          <p className="site-lede site-reveal">{a.bio || `Un travail soigné, un devis clair, des délais tenus. Décrivez votre projet — on s'occupe du reste.`}</p>
+          {c?.hero_accroche ? <p className="site-tagline site-reveal">{c.hero_accroche}</p> : null}
+          <p className="site-lede site-reveal">{c?.hero_lede || a.bio || `Un travail soigné, un devis clair, des délais tenus. Décrivez votre projet — on s'occupe du reste.`}</p>
           <div className="site-hero-cta site-reveal">
             <a className="site-btn p" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis {IC.arrow}</a>
             {showReal ? <a className="site-btn g" href="#realisations">Voir mes réalisations</a> : null}
@@ -150,7 +155,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       {/* RÉALISATIONS (tier 2+) */}
       {showReal ? (
         <section className="site-block" id="realisations">
-          <div className="site-head site-reveal"><span className="site-kick">Réalisations</span><h2>Le travail parle de lui-même</h2></div>
+          <div className="site-head site-reveal"><span className="site-kick">Réalisations</span><h2>Le travail parle de lui-même</h2>{c?.realisations_intro ? <p className="site-sub">{c.realisations_intro}</p> : null}</div>
           <div className={`site-gallery${tier === 3 ? ' cine' : ''}`}>
             {realisations.map((rz, i) => (
               <figure className={`site-shot site-reveal${tier === 3 && i % 5 === 0 ? ' wide' : ''}`} key={i}>
@@ -168,7 +173,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       {/* PRESTATIONS */}
       {services.length > 0 ? (
         <section className="site-block" id="services">
-          <div className="site-head site-reveal"><span className="site-kick">Prestations</span><h2>Ce que je réalise</h2></div>
+          <div className="site-head site-reveal"><span className="site-kick">Prestations</span><h2>Ce que je réalise</h2>{c?.prestations_intro ? <p className="site-sub">{c.prestations_intro}</p> : null}</div>
           <div className="site-services">
             {services.map((s, i) => (
               <div className="site-serv site-reveal" key={i}>
@@ -185,7 +190,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
         <section className="site-block site-about" id="apropos">
           <div className="site-about-in site-reveal">
             <span className="site-kick">À propos</span>
-            <p>{a.bio}</p>
+            <p>{apropos}</p>
             {(zone || a.horaires) ? (
               <div className="site-about-meta">
                 {zone ? <span>{IC.pin}{zone}</span> : null}
@@ -198,8 +203,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
       {/* CONTACT */}
       <section className="site-cta-block site-reveal" id="contact">
-        <h2>Parlons de votre projet</h2>
-        <p>Décrivez votre besoin — vous recevez une réponse rapide et un devis clair.</p>
+        <h2>{c?.cta_titre || 'Parlons de votre projet'}</h2>
+        <p>{c?.cta_texte || 'Décrivez votre besoin — vous recevez une réponse rapide et un devis clair.'}</p>
         <a className="site-btn p lg" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis {IC.arrow}</a>
         {showChannels ? (
           <div className="site-channels">

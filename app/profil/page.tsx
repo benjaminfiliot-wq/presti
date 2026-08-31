@@ -43,6 +43,7 @@ export default function ProfilPage() {
   const [reponseAuto, setReponseAuto] = useState(true)
   const [siteActive, setSiteActive] = useState(false)
   const [siteTier, setSiteTier] = useState(3)
+  const [genSite, setGenSite] = useState(false)
   const [active, setActive] = useState(true)
   const [accent, setAccent] = useState('#D97757')
   const [saving, setSaving] = useState(false)
@@ -107,6 +108,18 @@ export default function ProfilPage() {
     if (!res.ok) { setMsg({ type: 'err', text: 'Suppression impossible. Réessayez dans un instant.' }); return }
     await supabase.auth.signOut()
     router.replace('/')
+  }
+
+  async function genererSite() {
+    if (genSite) return
+    setGenSite(true); setMsg(null)
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch('/api/site/generate', { method: 'POST', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+    const d = await res.json().catch(() => ({}))
+    setGenSite(false)
+    if (!res.ok) { setMsg({ type: 'err', text: d.outOfCredits ? 'Crédits épuisés — rechargez pour laisser l’IA rédiger votre site.' : (d.error ?? 'Génération impossible.') }); return }
+    setMsg({ type: 'ok', text: 'Contenu de votre site rédigé par l’IA ✅ Ouvrez « Voir mon site ».' })
+    setTimeout(() => setMsg(null), 4000)
   }
 
   const lien = slug ? `prestiapp.fr/l/${slug}` : ''
@@ -230,6 +243,10 @@ export default function ProfilPage() {
                 <span className="st-d">{t.desc}</span>
               </button>
             ))}
+          </div>
+          <div style={{ marginTop: '1rem', display: 'flex', gap: '.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={genSite} onClick={genererSite}>{genSite ? 'L’IA rédige votre site…' : '⚡ Rédiger mon site avec l’IA'}</button>
+            <span className="muted" style={{ fontSize: '.85rem' }}>Titres, accroches et à-propos rédigés sur-mesure à partir de votre profil.</span>
           </div>
           <label className="prof-toggle" style={{ marginTop: '1rem' }}>
             <input type="checkbox" checked={siteActive} onChange={(e) => setSiteActive(e.target.checked)} />

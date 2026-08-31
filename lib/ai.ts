@@ -683,6 +683,80 @@ RÈGLES :
   return { lignes, note }
 }
 
+export type SiteContenu = {
+  hero_accroche: string; hero_lede: string; apropos: string
+  prestations_intro: string; realisations_intro: string
+  cta_titre: string; cta_texte: string; meta_description: string
+}
+type SiteArtisan = {
+  nom: string | null; metier: string | null; bio: string | null; zone: string | null
+  ville: string | null; horaires: string | null
+  services: { nom?: string; description?: string }[]
+  realisations: { titre?: string; specialite?: string }[]
+}
+
+/**
+ * Rédige, à la place de l'artisan, le CONTENU de son site vitrine (accroches, lede,
+ * à-propos, intros de sections, meta SEO). Sur-mesure à partir de ses données réelles.
+ * Garde-fous (audit + fabrication interdite) : n'invente JAMAIS de fait non fourni
+ * (années, certifications, avis, chiffres, distinctions). Français pro, humain, spécifique.
+ */
+export async function generateSiteContent(a: SiteArtisan, model: string = AI_MODEL): Promise<SiteContenu> {
+  const metier = a.metier?.trim() || 'artisan du bâtiment'
+  const nom = a.nom?.trim() || "l'entreprise"
+  const lieu = a.zone?.trim() || a.ville?.trim() || ''
+  const svc = a.services.filter((s) => s?.nom).map((s) => `- ${s.nom}${s.description ? ' : ' + s.description : ''}`).join('\n') || '(non précisées)'
+  const real = a.realisations.filter((r) => r?.titre || r?.specialite).map((r) => `- ${[r.titre, r.specialite].filter(Boolean).join(' — ')}`).join('\n') || '(aucune)'
+
+  const system = `Tu es un excellent concepteur-rédacteur pour les sites de professionnels du bâtiment en France. Tu écris le CONTENU du site vitrine de ${nom} (${metier}${lieu ? `, ${lieu}` : ''}), à partir de ses données RÉELLES uniquement.
+
+OBJECTIF : un contenu premium, humain, spécifique au métier et à cet artisan — jamais du remplissage générique. Ça doit donner confiance et donner envie de demander un devis.
+
+RÈGLES ABSOLUES :
+- N'INVENTE AUCUN FAIT non fourni : pas d'années d'expérience inventées, pas de certifications, labels, distinctions, avis clients, chiffres ou noms de clients qui ne sont pas dans les données. Si le nombre d'années n'est pas donné, ne le mentionne pas.
+- Français impeccable, ton professionnel, chaleureux et confiant, ancré dans le métier (vocabulaire juste du ${metier}).
+- Spécifique : appuie-toi sur les prestations et réalisations réelles fournies.
+- SEO naturel : intègre naturellement le métier et le lieu dans les textes clés (accroche, meta) sans bourrage.
+- Zéro superlatif creux ("le meilleur", "numéro 1"), zéro promesse intenable.
+- Longueurs : hero_accroche = 3 à 6 mots (une signature) ; hero_lede = 1 à 2 phrases ; apropos = 3 à 5 phrases ; les intros = 1 phrase ; cta_texte = 1 phrase ; meta_description = 150 à 160 caractères.
+
+Réponds UNIQUEMENT avec un objet JSON valide, sans texte ni balise autour, au format EXACT :
+{"hero_accroche":"...","hero_lede":"...","apropos":"...","prestations_intro":"...","realisations_intro":"...","cta_titre":"...","cta_texte":"...","meta_description":"..."}`
+
+  const user = `Données réelles de l'artisan :
+Nom / entreprise : ${nom}
+Métier : ${metier}
+Zone / ville : ${lieu || '(non précisé)'}
+Disponibilités : ${a.horaires?.trim() || '(non précisé)'}
+Présentation fournie (bio) : ${a.bio?.trim() || '(aucune)'}
+Prestations :
+${svc}
+Réalisations :
+${real}`
+
+  const res = await client.messages.create({
+    ...genParams(model, 1400),
+    system,
+    messages: [{ role: 'user', content: user }],
+  })
+  let raw = ''
+  for (const b of res.content) if (b.type === 'text') raw += b.text
+  const p = extractJsonObject(raw.trim()) as Partial<SiteContenu> | null
+  if (!p) throw new Error('Contenu de site IA non exploitable.')
+
+  const str = (v: unknown, max: number, fb = '') => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : fb)
+  return {
+    hero_accroche: str(p.hero_accroche, 80),
+    hero_lede: str(p.hero_lede, 400),
+    apropos: str(p.apropos, 900),
+    prestations_intro: str(p.prestations_intro, 300),
+    realisations_intro: str(p.realisations_intro, 300),
+    cta_titre: str(p.cta_titre, 120, 'Parlons de votre projet'),
+    cta_texte: str(p.cta_texte, 300, 'Décrivez votre besoin — vous recevez une réponse rapide et un devis clair.'),
+    meta_description: str(p.meta_description, 180),
+  }
+}
+
 /** Modèle de relance de secours (utilisé si l'IA n'est pas disponible). */
 export function relanceTemplate(nomArtisan: string | null, nomProspect: string | null, rang: number): string {
   const a = nomArtisan?.trim() || 'votre artisan'

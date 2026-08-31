@@ -1778,7 +1778,9 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-hero-in{max-width:900px;position:relative}
 .site-eyebrow{display:inline-block;font-family:var(--sfm);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--pc2);margin-bottom:1.1rem}
 .site-hero h1{font-family:var(--sfd);font-weight:900;font-size:clamp(2.9rem,9.5vw,7rem);line-height:.94;letter-spacing:-.02em;text-wrap:balance;margin:0}
-.site-lede{max-width:44ch;font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--sink2);margin:1.5rem 0 0;line-height:1.55}
+.site-tagline{font-family:var(--sfd);font-style:italic;font-weight:400;font-size:clamp(1.2rem,2.7vw,1.75rem);color:var(--pc2);margin:.9rem 0 0;line-height:1.3;max-width:36ch}
+.site-lede{max-width:44ch;font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--sink2);margin:1.3rem 0 0;line-height:1.55}
+.site-sub{color:var(--sink2);font-size:clamp(1rem,2vw,1.15rem);margin:1rem 0 0;max-width:54ch;line-height:1.5}
 .tier-1 .site-hero,.tier-2 .site-hero{min-height:auto;padding-top:clamp(4rem,12vw,8rem)}
 .tier-1 .site-hero{align-items:flex-start}
 
