@@ -196,6 +196,18 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
         </section>
       ) : null}
 
+      {/* MANIFESTE plein-cadre cinématique (image parallax + grande phrase) */}
+      {tier === 3 && (realisations[1]?.image || heroShot) ? (
+        <section className="site-manifesto">
+          <div className="site-manifesto-media" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={realisations[1]?.image || heroShot || ''} alt="" className="site-manifesto-img" />
+            <span className="site-manifesto-veil" />
+          </div>
+          <p className="site-manifesto-t site-reveal">{c?.hero_accroche || (a.metier ? `${a.metier}, avec exigence.` : 'Un travail fait pour durer.')}</p>
+        </section>
+      ) : null}
+
       {/* RÉALISATIONS (tier 2+) */}
       {showReal ? (
         <section className="site-block" id="realisations">

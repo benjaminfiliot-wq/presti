@@ -33,20 +33,26 @@ export default function SiteMotion() {
       })
     } else showAll()
 
-    // Parallax hero (tier 3).
-    const img = document.querySelector<HTMLElement>('.site-hero-img')
+    // Parallax : hero (scroll absolu) + manifeste (relatif à sa position dans le viewport).
+    const heroImg = document.querySelector<HTMLElement>('.site-hero-img')
+    const manif = document.querySelector<HTMLElement>('.site-manifesto-img')
     let raf = 0
     const onScroll = () => {
       if (raf) return
       raf = requestAnimationFrame(() => {
         raf = 0
-        if (img) { const y = Math.min(scrollY, innerHeight) * 0.28; img.style.transform = `translate3d(0,${y}px,0) scale(1.08)` }
+        if (heroImg) { const y = Math.min(scrollY, innerHeight) * 0.28; heroImg.style.transform = `translate3d(0,${y}px,0) scale(1.08)` }
+        if (manif) {
+          const r = manif.getBoundingClientRect()
+          const p = (r.top + r.height / 2 - innerHeight / 2) / innerHeight // -1 → +1 autour du centre
+          manif.style.transform = `translate3d(0,${p * -60}px,0)`
+        }
       })
     }
-    if (img) addEventListener('scroll', onScroll, { passive: true })
+    if (heroImg || manif) { addEventListener('scroll', onScroll, { passive: true }); onScroll() }
 
     const safety = setTimeout(() => { root?.classList.remove('site-armed'); showAll() }, 3200)
-    return () => { clearTimeout(t0); clearTimeout(safety); io?.disconnect(); if (img) removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf) }
+    return () => { clearTimeout(t0); clearTimeout(safety); io?.disconnect(); if (heroImg || manif) removeEventListener('scroll', onScroll); if (raf) cancelAnimationFrame(raf) }
   }, [])
   return null
 }
