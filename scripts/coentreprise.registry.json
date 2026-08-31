@@ -1,0 +1,71 @@
+{
+  "env": "env_012cWPxDubbdLhX8u2ub1rBr",
+  "stores": {
+    "audit": "memstore_015425sJjYHgAwwD3GEkfDRj",
+    "animation": "memstore_01RqeyXwGJrx4xQKoKBPkJvh",
+    "gestion": "memstore_01XvHCFMTsfx4AEy9AdyAbSc",
+    "mails": "memstore_01G53DjusPmhRy9gnDcgDgKe"
+  },
+  "agents": {
+    "auditeur": {
+      "id": "agent_015LfmgKXBeMK9NSm5krHaTp",
+      "pole": "audit",
+      "name": "Auditeur"
+    },
+    "audit-attaque": {
+      "id": "agent_01Xw3hTkXCgMaJ4H58eMYexJ",
+      "pole": "audit",
+      "name": "Audit offensif"
+    },
+    "audit-conformite": {
+      "id": "agent_017E9bsQMSzGH1pGZJqkvbhr",
+      "pole": "audit",
+      "name": "Conformité"
+    },
+    "animateur": {
+      "id": "agent_014eNXqJrPVqDrMQruE8xQ2t",
+      "pole": "animation",
+      "name": "Animateur"
+    },
+    "anim-accessibilite": {
+      "id": "agent_01K6bVBWfiaf4UsW8eKgaXpY",
+      "pole": "animation",
+      "name": "Accessibilité"
+    },
+    "anim-marque": {
+      "id": "agent_01XvRq1FWjuq42GJozbP2LQe",
+      "pole": "animation",
+      "name": "Direction artistique"
+    },
+    "gestion": {
+      "id": "agent_012Sg1b2rmus2DNKkUcTUxhN",
+      "pole": "gestion",
+      "name": "Gestion"
+    },
+    "gestion-donnees": {
+      "id": "agent_01LbnKAXpEVeaMDZkdpdFbAZ",
+      "pole": "gestion",
+      "name": "Données"
+    },
+    "gestion-fiabilite": {
+      "id": "agent_016Wq8UiLkn6rEqeNVXpjTkM",
+      "pole": "gestion",
+      "name": "Fiabilité"
+    },
+    "mails": {
+      "id": "agent_017i1C4igo85mKaH9m6MW8yr",
+      "pole": "mails",
+      "name": "Mails"
+    },
+    "mails-delivrabilite": {
+      "id": "agent_016ChiiZrjqbriD9iZvQ6F6f",
+      "pole": "mails",
+      "name": "Délivrabilité"
+    },
+    "mails-cycle": {
+      "id": "agent_01RehHr1QDw1fYro7dCrmr3f",
+      "pole": "mails",
+      "name": "Cycle & copy"
+    }
+  }
+}
