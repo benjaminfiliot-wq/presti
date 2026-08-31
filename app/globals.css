@@ -512,6 +512,14 @@ button:disabled{opacity:.55;cursor:default}
 .psh-kpi .val{font-family:var(--font-display);font-weight:700;font-size:29px;letter-spacing:-.03em;line-height:1;color:var(--ink)}
 .psh-kpi .val .u{font-size:15px;color:var(--muted);font-weight:600;margin-left:2px}
 .psh-kpi .sub{font-size:12px;color:var(--muted)}
+/* KPI vivants : légère élévation + filet d'accent au survol, valeur mise en avant */
+.psh-kpi{transition:transform .18s var(--ease,ease),border-color .18s,box-shadow .25s}
+.psh-kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity .25s;z-index:1}
+.psh-kpi:hover{transform:translateY(-2px);border-color:var(--accent-tint-2);box-shadow:0 16px 36px -22px rgba(0,0,0,.7)}
+.psh-kpi:hover::before{opacity:.9}
+.psh-kpi:hover .val{color:var(--accent-ink)}
+.psh-kpi .val{transition:color .2s}
+@media(prefers-reduced-motion:reduce){.psh-kpi{transition:none}.psh-kpi:hover{transform:none}}
 
 /* ---- panneau + listes ---- */
 .psh-panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
@@ -1838,8 +1846,10 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-tagline{font-family:var(--sfd);font-style:italic;font-weight:400;font-size:clamp(1.2rem,2.7vw,1.75rem);color:var(--pc2);margin:.9rem 0 0;line-height:1.3;max-width:36ch}
 .site-lede{max-width:44ch;font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--sink2);margin:1.3rem 0 0;line-height:1.55}
 .site-sub{color:var(--sink2);font-size:clamp(1rem,2vw,1.15rem);margin:1rem 0 0;max-width:54ch;line-height:1.5}
-.tier-1 .site-hero,.tier-2 .site-hero{min-height:auto;padding-top:clamp(4rem,12vw,8rem)}
+.tier-1 .site-hero,.tier-2 .site-hero{min-height:auto;padding-top:clamp(4rem,12vw,8rem);border-bottom:1px solid var(--sline)}
 .tier-1 .site-hero{align-items:flex-start}
+/* Tiers 1/2 sans image : halo ambiant chaud (accent) → entrée intentionnelle, pas du noir plat */
+.tier-1 .site-hero::before,.tier-2 .site-hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(115% 80% at 8% -10%,color-mix(in srgb,var(--pc) 16%,transparent),transparent 58%),radial-gradient(90% 70% at 100% 0%,color-mix(in srgb,var(--pc2) 9%,transparent),transparent 55%)}
 
 .site-hero-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2.2rem}
 .site-btn{display:inline-flex;align-items:center;gap:.55rem;padding:.95rem 1.6rem;border-radius:999px;font-weight:600;font-size:1.02rem;transition:transform .14s var(--se),box-shadow .3s,background .2s}

@@ -22,6 +22,19 @@ function formatDate(iso: string) {
 }
 const initials = (n: string | null) => (n ? n.trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase()).join('') : '?')
 
+// Compteur animé (0 → valeur) au montage — donne vie aux KPI. Respecte reduced-motion.
+function CountUp({ value }: { value: number }) {
+  const [n, setN] = useState(0)
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || value <= 0) { setN(value > 0 ? value : 0); return }
+    let raf = 0; const dur = 650; const t0 = performance.now()
+    const tick = (t: number) => { const p = Math.min(1, (t - t0) / dur); setN(Math.round(value * (1 - Math.pow(1 - p, 3)))); if (p < 1) raf = requestAnimationFrame(tick) }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [value])
+  return <>{n}</>
+}
+
 export default function Dashboard() {
   const router = useRouter()
   const [artisan, setArtisan] = useState<Artisan | null>(null)
@@ -77,22 +90,22 @@ export default function Dashboard() {
           <section className="psh-kpis">
             <div className="psh-kpi">
               <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>Demandes reçues</div>
-              <div className="val tnum">{leads.length}</div>
+              <div className="val tnum"><CountUp value={leads.length} /></div>
               <div className="sub">au total</div>
             </div>
             <div className="psh-kpi">
               <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9" /><path d="M12 8v4l2 2" /></svg>À traiter</div>
-              <div className="val tnum">{nouveaux}</div>
+              <div className="val tnum"><CountUp value={nouveaux} /></div>
               <div className="sub">{nouveaux > 0 ? <span className="pill warn"><span className="pdot" />à répondre</span> : 'tout est à jour'}</div>
             </div>
             <div className="psh-kpi">
               <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m5 12 4 4L19 6" /></svg>Chantiers gagnés</div>
-              <div className="val tnum">{gagnes}</div>
+              <div className="val tnum"><CountUp value={gagnes} /></div>
               <div className="sub">signés via Presti</div>
             </div>
             <div className="psh-kpi">
               <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M13 2 3 14h7l-1 8 10-12h-7z" /></svg>Réponses IA</div>
-              <div className="val tnum">{repondus}</div>
+              <div className="val tnum"><CountUp value={repondus} /></div>
               <div className="sub">envoyées automatiquement</div>
             </div>
           </section>
