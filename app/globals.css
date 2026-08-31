@@ -1904,3 +1904,32 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .site-hero-img{transform:scale(1.05) !important}
   .site-reveal,.site-hero .hero-in{transition:none !important}
 }
+
+/* ===== Signature cinematique : mots geants (FIND) + blocs editoriaux alternes (DRIP) ===== */
+.site-manifest{max-width:1180px;margin:0 auto;padding:clamp(3.5rem,9vw,7rem) clamp(1.1rem,5vw,3rem)}
+.site-words{display:flex;flex-direction:column;margin-top:1.6rem}
+.site-word{display:flex;align-items:center;gap:1.2rem;padding:clamp(1rem,3.2vw,2.1rem) 0;border-top:1px solid var(--sline)}
+.site-word:last-child{border-bottom:1px solid var(--sline)}
+.site-word-n{font-family:var(--sfm);font-size:.8rem;color:var(--sfaint);flex:none;width:2.4rem}
+.site-word-t{font-family:var(--sfd);font-weight:800;font-size:clamp(2.1rem,8vw,5.4rem);line-height:1;letter-spacing:-.02em;color:var(--sink);flex:1;transition:color .3s,transform .5s var(--se)}
+.site-word-a{width:clamp(28px,4vw,46px);height:clamp(28px,4vw,46px);stroke:var(--sfaint);flex:none;transition:transform .35s var(--se),stroke .3s}
+.site-word:hover .site-word-t{color:var(--pc2);transform:translateX(14px)}
+.site-word:hover .site-word-a{stroke:var(--pc2);transform:translateX(10px)}
+
+.site-features{display:flex;flex-direction:column}
+.site-feature{display:grid;grid-template-columns:1fr 1fr;min-height:clamp(420px,58vh,640px);align-items:stretch}
+.site-feature.alt .site-feature-media{order:2}
+.site-feature-media{position:relative;overflow:hidden;background:var(--sbg2)}
+.site-feature-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--se)}
+.site-feature:hover .site-feature-media img{transform:scale(1.04)}
+.site-feature-txt{display:flex;flex-direction:column;justify-content:center;padding:clamp(2.4rem,6vw,5rem);background:var(--sbg)}
+.site-feature.alt .site-feature-txt{background:#F3EFE7;color:#1a1712}
+.site-feature-n{font-family:var(--sfm);font-size:.86rem;color:var(--pc);margin-bottom:1rem;letter-spacing:.06em}
+.site-feature.alt .site-feature-n{color:color-mix(in srgb,var(--pc) 78%,#000)}
+.site-feature-txt h3{font-family:var(--sfd);font-weight:700;font-size:clamp(1.8rem,4.6vw,3.3rem);line-height:1.02;letter-spacing:-.015em;margin:0}
+.site-feature-txt p{margin:1.3rem 0 0;font-size:clamp(1rem,2vw,1.2rem);line-height:1.55;max-width:40ch;opacity:.72}
+@media(max-width:760px){
+  .site-feature{grid-template-columns:1fr}
+  .site-feature.alt .site-feature-media{order:0}
+  .site-feature-media{min-height:280px}
+}

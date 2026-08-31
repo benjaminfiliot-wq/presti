@@ -95,6 +95,12 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const apropos = c?.apropos || a.bio
   const showAbout = !!apropos
   const showChannels = channels.length > 0
+  // Mots-clés GÉANTS (inspiration sites cinématiques) : les grands savoir-faire de l'artisan.
+  const uniq = (arr: string[]) => Array.from(new Set(arr.map((s) => s.trim()).filter(Boolean)))
+  const bigWords = uniq([
+    ...services.map((s) => s.nom || ''),
+    ...realisations.map((rz) => rz.specialite || ''),
+  ]).slice(0, 4)
 
   return (
     <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent }} data-tier={tier}>
@@ -152,6 +158,41 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           <div><b>Réponse rapide</b><span>On revient vers vous très vite</span></div>
           <div><b>Travail assuré</b><span>Sérieux engagé sur chaque chantier</span></div>
           {zone ? <div><b>Sur votre secteur</b><span>{zone}</span></div> : <div><b>Sur-mesure</b><span>Adapté à votre projet</span></div>}
+        </section>
+      ) : null}
+
+      {/* MOTS GÉANTS (inspiration cinématique « FIND ») — les grands savoir-faire */}
+      {tier === 3 && bigWords.length >= 2 ? (
+        <section className="site-manifest" id="savoir-faire">
+          <span className="site-kick site-reveal">Le savoir-faire</span>
+          <div className="site-words">
+            {bigWords.map((w, i) => (
+              <a className="site-word site-reveal" href={showReal ? '#realisations' : '#contact'} key={i}>
+                <span className="site-word-n">{String(i + 1).padStart(2, '0')}</span>
+                <span className="site-word-t">{w}</span>
+                <svg className="site-word-a" viewBox="0 0 24 24" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </a>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {/* BLOCS ÉDITORIAUX ALTERNÉS (inspiration « DRIP ») — chaque prestation en grand, avec photo */}
+      {tier === 3 && services.length >= 2 && realisations.length >= 2 ? (
+        <section className="site-features">
+          {services.slice(0, Math.min(3, realisations.length)).map((s, i) => (
+            <div className={`site-feature${i % 2 ? ' alt' : ''}`} key={i}>
+              <div className="site-feature-media site-reveal">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={realisations[i].image} alt={s.nom || ''} loading="lazy" />
+              </div>
+              <div className="site-feature-txt site-reveal">
+                <span className="site-feature-n">0{i + 1}</span>
+                <h3>{s.nom}</h3>
+                {s.description ? <p>{s.description}</p> : null}
+              </div>
+            </div>
+          ))}
         </section>
       ) : null}
 
