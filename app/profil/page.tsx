@@ -43,6 +43,7 @@ export default function ProfilPage() {
   const [reponseAuto, setReponseAuto] = useState(true)
   const [siteActive, setSiteActive] = useState(false)
   const [siteTier, setSiteTier] = useState(3)
+  const [siteContact, setSiteContact] = useState(true)
   const [genSite, setGenSite] = useState(false)
   const [active, setActive] = useState(true)
   const [accent, setAccent] = useState('#D97757')
@@ -63,7 +64,7 @@ export default function ProfilPage() {
       setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '' })).filter((r) => r.image) : [])
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
       setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setReponseAuto(a.reponse_auto !== false)
-      setSiteActive(a.site_active === true); setSiteTier([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3)
+      setSiteActive(a.site_active === true); setSiteTier([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3); setSiteContact(a.site_contact_integre !== false)
       setReady(true)
     })
   }, [router])
@@ -90,6 +91,7 @@ export default function ProfilPage() {
       reponse_auto: reponseAuto,
       site_active: siteActive,
       site_tier: [1, 2, 3].includes(siteTier) ? siteTier : 3,
+      site_contact_integre: siteContact,
       plateforme_active: active,
       accent: /^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#D97757',
     }).eq('id', uid)
@@ -249,6 +251,10 @@ export default function ProfilPage() {
             <span className="muted" style={{ fontSize: '.85rem' }}>Titres, accroches et à-propos rédigés sur-mesure à partir de votre profil.</span>
           </div>
           <label className="prof-toggle" style={{ marginTop: '1rem' }}>
+            <input type="checkbox" checked={siteContact} onChange={(e) => setSiteContact(e.target.checked)} />
+            <span>Formulaire de contact <b>{siteContact ? 'intégré au site' : 'renvoyé vers la plateforme'}</b> {siteContact ? '— le client discute directement sur votre site' : '— un bouton mène à votre page de contact'}</span>
+          </label>
+          <label className="prof-toggle" style={{ marginTop: '.7rem' }}>
             <input type="checkbox" checked={siteActive} onChange={(e) => setSiteActive(e.target.checked)} />
             <span>Mon site est <b>{siteActive ? 'publié' : 'hors ligne'}</b> {siteActive ? '— accessible à tous' : '— visible de vous seul'}</span>
           </label>

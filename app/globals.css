@@ -1430,6 +1430,17 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   position:relative;min-height:100dvh;overflow-x:clip;background:var(--pb);color:var(--pi);font-family:var(--pfb);line-height:1.55;
 }
 .plat *{box-sizing:border-box}
+/* Chat/formulaire de la plateforme EMBARQUÉ dans le site vitrine (tokens plateforme,
+   sans le chrome plein écran ; --pc hérité du site = même accent). */
+.plat-embed{
+  --ps:#121118;--ps2:#1A1922;--pi:#F1EFEA;--pi2:#BAB4AA;--pm:#867F76;--pf:#575249;
+  --pc2:color-mix(in srgb,var(--pc) 74%,#ffffff);--pcd:color-mix(in srgb,var(--pc) 82%,#000000);--psoft:color-mix(in srgb,var(--pc) 14%,transparent);
+  --pglow:color-mix(in srgb,var(--pc) 46%,transparent);--pl:rgba(255,255,255,.09);--pl2:rgba(255,255,255,.045);
+  --pfd:var(--font-display,system-ui,sans-serif);--pfb:var(--font-body,system-ui,sans-serif);--pfm:var(--font-mono,ui-monospace,monospace);--pe:cubic-bezier(.16,1,.3,1);
+  color:var(--pi);font-family:var(--pfb);text-align:left;max-width:600px;margin:0 auto;
+}
+.plat-embed *{box-sizing:border-box}
+.plat-embed .plat-form{border:1px solid var(--pl);border-radius:18px;padding:1.6rem;background:rgba(255,255,255,.02)}
 /* Aurore corail + grille blueprint (l'univers du chantier/plan) = signature */
 .plat-aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .plat-glow{position:absolute;border-radius:50%;filter:blur(110px);opacity:.5}
@@ -1591,7 +1602,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 /* Réalisations (galerie portfolio) */
 .plat-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
 .plat-shot{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--pl);background:var(--ps);aspect-ratio:4/3;margin:0}
-.plat-shot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .55s var(--pe)}
+.plat-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .55s var(--pe)}
 .plat-shot:hover img{transform:scale(1.045)}
 .plat-shot figcaption{position:absolute;inset:auto 0 0 0;padding:1.6rem .9rem .8rem;display:flex;flex-direction:column;gap:.3rem;background:linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.35) 55%,transparent)}
 .plat-shot figcaption b{color:#fff;font-size:.98rem;font-weight:650;line-height:1.25}
@@ -1842,7 +1853,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-shot{position:relative;margin:0;border-radius:18px;overflow:hidden;background:var(--sbg2);aspect-ratio:4/3;border:1px solid var(--sline)}
 .site-shot.wide{grid-column:span 2}
 @media(max-width:680px){.site-shot.wide{grid-column:span 1}}
-.site-shot img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--se)}
+.site-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--se)}
 .site-shot:hover img{transform:scale(1.05)}
 /* Révélation cinématique des réalisations : montée + léger scale, plus lente et luxueuse */
 .site-shot.site-reveal{transition:opacity 1s var(--se),transform 1s var(--se)}
@@ -1871,6 +1882,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-cta-block{max-width:820px;margin:0 auto;padding:clamp(4rem,10vw,7rem) clamp(1.1rem,5vw,3rem);text-align:center}
 .site-cta-block h2{font-family:var(--sfd);font-weight:700;font-size:clamp(2.1rem,5.5vw,3.6rem);line-height:1.02;letter-spacing:-.02em;margin:0 0 .9rem;text-wrap:balance}
 .site-cta-block p{color:var(--sink2);font-size:clamp(1rem,2.2vw,1.2rem);max-width:46ch;margin:0 auto 2.2rem}
+.site-embed{margin-top:2.6rem;text-align:left}
 .site-channels{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin-top:2.4rem}
 .site-chan{display:inline-flex;align-items:center;gap:.55rem;padding:.65rem 1.1rem;border-radius:999px;border:1px solid var(--sline);background:rgba(255,255,255,.03);color:var(--sink);font-size:.92rem;transition:border-color .15s,background .15s,transform .12s var(--se)}
 .site-chan:hover{border-color:var(--pc);background:var(--psoft);transform:translateY(-1px)}

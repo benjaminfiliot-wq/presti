@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type { SiteContenu } from '@/lib/ai'
 import SiteMotion from './SiteMotion'
+import LeadForm from '@/app/l/[slug]/LeadForm'
 
 type Service = { nom?: string; description?: string }
 type Realisation = { image?: string; titre?: string; specialite?: string }
@@ -14,13 +15,13 @@ type Artisan = {
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
   tel_public: string | null; email_public: string | null
   site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
-  site_contenu: SiteContenu | null
+  site_contenu: SiteContenu | null; site_contact_integre: boolean | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu')
+    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -80,6 +81,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   ]
   const ext = (h: string) => /^https?:/i.test(h)
   const contactHref = a.plateforme_active !== false ? `/l/${a.slug}` : (telDigits ? `tel:${telDigits}` : '#contact')
+  // Connexion plateforme <-> site : le chat de contact est-il intégré directement dans le site ?
+  const embedContact = a.site_contact_integre !== false && a.plateforme_active !== false && !!a.slug
 
   const ld = {
     '@context': 'https://schema.org', '@type': 'LocalBusiness', name: a.nom,
@@ -205,7 +208,13 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       <section className="site-cta-block site-reveal" id="contact">
         <h2>{c?.cta_titre || 'Parlons de votre projet'}</h2>
         <p>{c?.cta_texte || 'Décrivez votre besoin — vous recevez une réponse rapide et un devis clair.'}</p>
-        <a className="site-btn p lg" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis {IC.arrow}</a>
+        {embedContact ? (
+          <div className="plat-embed site-embed" style={{ ['--pc' as string]: accent }}>
+            <div className="plat-form"><LeadForm slug={a.slug as string} artisanNom={a.nom} avatar={brand} /></div>
+          </div>
+        ) : (
+          <a className="site-btn p lg" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis {IC.arrow}</a>
+        )}
         {showChannels ? (
           <div className="site-channels">
             {channels.map((c, i) => (
