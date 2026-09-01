@@ -6,10 +6,10 @@ import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import { OFFRES } from '@/lib/plans'
 
-const CONTENT: Record<string, { for: string; feats: string[] }> = {
-  essentiel: { for: 'Pour ne plus louper une demande.', feats: ['Réponse instantanée dans votre ton', 'Devis IA (crédits inclus)', 'Relances automatiques', 'Modèles Standard & Pro'] },
-  studio: { for: 'Présence en ligne + toute la puissance.', feats: ['Tout l’Essentiel', 'Tous les modèles (Expert)', 'Plus de crédits', 'Site web pro · bientôt'] },
-  signature: { for: 'Pour l’atelier à plein régime.', feats: ['Tout Studio', 'Crédits élevés', 'Plusieurs métiers', 'Accompagnement dédié'] },
+const CONTENT: Record<string, { for: string; site: string; feats: string[] }> = {
+  essentiel: { for: 'Pour ne plus louper une demande.', site: 'Site Essentiel', feats: ['Plateforme de contact + réponse IA instantanée', 'Devis IA chiffrés (crédits inclus)', 'Relances automatiques J+2/5/10', 'Modèles Standard & Pro', 'Site vitrine niveau Essentiel'] },
+  studio: { for: 'Présence en ligne soignée + toute la puissance.', site: 'Site Pro', feats: ['Tout l’Essentiel', 'Tous les modèles, dont Expert', 'Plus de crédits chaque mois', 'Site vitrine niveau Pro — galerie & à-propos'] },
+  signature: { for: 'L’atelier à plein régime, image d’agence.', site: 'Site Signature ✦', feats: ['Tout Studio', 'Crédits élevés', 'Site vitrine Signature — cinématique, niveau agence', 'Réponses auto ou manuelles au choix', 'Accompagnement dédié'] },
 }
 
 export default function Abonnement() {
@@ -53,6 +53,7 @@ export default function Abonnement() {
                   <div className="abo-name">{o.label}</div>
                   <div className="abo-price">{o.prix}€<small>/mois</small></div>
                   <div className="abo-credits">{o.credits} crédits / mois</div>
+                  <div className="abo-site"><span className="abo-site-dot" />{c.site}</div>
                   <div className="abo-for">{c.for}</div>
                   <ul className="abo-list">{c.feats.map((f) => <li key={f}>{f}</li>)}</ul>
                   {current

@@ -116,23 +116,64 @@ function ConversationDemo() {
   )
 }
 function SiteDemo() {
+  // Trois vrais aperçus distincts : Essentiel (épuré), Pro (galerie), Signature (cinématique).
   return (
-    <div className="fs-site">
-      <div className="fs-site-win fsr" style={R(0)}>
-        <div className="fs-site-bar"><span /><span /><span /><i>votre-nom.fr</i></div>
-        <div className="fs-site-hero">
-          <span className="fs-site-eye fsr" style={R(.5)}>MENUISIER · LYON</span>
-          <div className="fs-site-h1 fsr" style={R(.7)}>Atelier Vasseur</div>
-          <div className="fs-site-tag fsr" style={R(.95)}>Le bois travaillé avec exigence</div>
+    <div className="fs-sites">
+      {/* Essentiel : une page nette, sans fioriture */}
+      <div className="fs-sc t1 fsr" style={R(0.1)}>
+        <div className="fs-sc-bar"><span /><span /><span /></div>
+        <div className="fs-sc-body">
+          <div className="fs-sc-h1">Atelier Vasseur</div>
+          <div className="fs-sc-tag">Le bois travaillé avec exigence</div>
+          <div className="fs-sc-btn" />
+          <div className="fs-sc-list"><i /><i /><i /></div>
         </div>
-        <div className="fs-site-gal">
-          <span className="fsr" style={R(1.3)} /><span className="fsr" style={R(1.42)} /><span className="fsr" style={R(1.54)} />
-        </div>
+        <div className="fs-sc-tag-b"><b>Essentiel</b><span>1 page nette</span></div>
       </div>
-      <div className="fs-site-tiers">
-        <div className="fs-tier fsr" style={R(1.9)}><b>Essentiel</b><span>1 page nette</span></div>
-        <div className="fs-tier fsr" style={R(2.05)}><b>Pro</b><span>Galerie + à-propos</span></div>
-        <div className="fs-tier on fsr" style={R(2.2)}><b>Signature ✦</b><span>Cinématique, niveau agence</span></div>
+      {/* Pro : galerie + à-propos */}
+      <div className="fs-sc t2 fsr" style={R(0.25)}>
+        <div className="fs-sc-bar"><span /><span /><span /></div>
+        <div className="fs-sc-body">
+          <div className="fs-sc-h1">Atelier Vasseur</div>
+          <div className="fs-sc-tag">Escaliers & agencements sur mesure</div>
+          <div className="fs-sc-gal"><em /><em /><em /><em /></div>
+          <div className="fs-sc-about"><i /><i className="sh" /></div>
+        </div>
+        <div className="fs-sc-tag-b"><b>Pro</b><span>Galerie + à-propos</span></div>
+      </div>
+      {/* Signature : cinématique, mots géants, mosaïque */}
+      <div className="fs-sc t3 on fsr" style={R(0.4)}>
+        <div className="fs-sc-bar dark"><span /><span /><span /></div>
+        <div className="fs-sc-body dark">
+          <div className="fs-sc-eye">MENUISIER · LYON</div>
+          <div className="fs-sc-h1 big">Atelier Vasseur</div>
+          <div className="fs-sc-words"><u>Sur-mesure</u><u>Massif</u></div>
+          <div className="fs-sc-mosaic"><em className="w" /><em /><em /><em /></div>
+        </div>
+        <div className="fs-sc-tag-b on"><b>Signature ✦</b><span>Cinématique, niveau agence</span></div>
+      </div>
+    </div>
+  )
+}
+function PlatDemo() {
+  return (
+    <div className="fs-plat">
+      <div className="fs-plat-win fsr" style={R(0)}>
+        <div className="fs-site-bar"><span /><span /><span /><i>votre-nom.fr / contact</i></div>
+        <div className="fs-plat-head fsr" style={R(0.3)}>
+          <span className="fs-plat-ava">AV</span>
+          <div className="fs-plat-id"><b>Atelier Vasseur</b><span className="fs-plat-live"><i />En ligne · répond en direct</span></div>
+        </div>
+        <div className="fs-plat-reassure">
+          <span className="fsr" style={R(0.6)}>⚡ Réponse en minutes</span>
+          <span className="fsr" style={R(0.72)}>✓ Devis clair</span>
+          <span className="fsr" style={R(0.84)}>🛡 Travail assuré</span>
+        </div>
+        <div className="fs-cbub me fsr" style={R(1.1)}>Un escalier sur mesure pour ma mezzanine, c&apos;est possible&nbsp;?</div>
+        <div className="fs-cbub them fsr" style={R(1.7)}>Bien sûr&nbsp;! Chêne ou frêne&nbsp;? Je peux passer prendre les mesures cette semaine et vous chiffrer ça.</div>
+        <div className="fs-plat-chans fsr" style={R(2.3)}>
+          {['📞', '✉️', '◎', 'ⓕ', '★'].map((c, i) => <span key={i}>{c}</span>)}
+        </div>
       </div>
     </div>
   )
@@ -155,8 +196,9 @@ function ReseauxDemo() {
   )
 }
 const FEATURES = [
+  { id: 'plateforme', label: 'Plateforme de contact', desc: 'Votre page à votre marque : présentation, réassurance, et un chat où le client décrit son besoin. Chaque demande arrive au même endroit, jour et nuit — email, téléphone, Instagram, tout est réuni.', Demo: PlatDemo },
   { id: 'conversation', label: 'Conversation en direct', desc: 'Votre client discute sur votre page, l’IA lui répond dans la seconde — de façon humaine et juste. Vous reprenez la main quand vous voulez, et la conversation devient un devis en un clic.', Demo: ConversationDemo },
-  { id: 'site', label: 'Site web (3 niveaux)', desc: 'Un vrai site vitrine généré depuis votre profil, rédigé par l’IA et personnalisable à votre marque. Trois niveaux, du plus simple au cinématique « niveau agence » — publié en un clic.', Demo: SiteDemo },
+  { id: 'site', label: 'Site web (3 niveaux)', desc: 'Un vrai site vitrine généré depuis votre profil, rédigé par l’IA et à votre marque. Trois niveaux bien distincts — Essentiel (épuré), Pro (galerie), Signature (cinématique, niveau agence) — publiés en un clic.', Demo: SiteDemo },
   { id: 'reseaux', label: 'Réalisations & réseaux', desc: 'Montrez votre travail en photos par spécialité, et connectez tous vos canaux (téléphone, email, Instagram, Facebook, Google…). Chaque contact arrive au même endroit.', Demo: ReseauxDemo },
   { id: 'devis', label: 'Devis chiffré', desc: 'Décrivez le chantier : Presti détaille les postes, applique la bonne TVA et sort un PDF conforme.', Demo: DevisDemo },
   { id: 'facture', label: 'Facturation', desc: 'Le chantier est fait ? Le devis devient une facture en un clic — numéro légal, échéance et mentions de pénalités générés tout seuls.', Demo: FactureDemo },

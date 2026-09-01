@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import LogoUpload from '@/app/LogoUpload'
 import PortfolioUpload, { type Realisation } from '@/app/PortfolioUpload'
+import { siteMaxForPlan } from '@/lib/plans'
 
 type Service = { nom: string; description: string }
 type Reseaux = { instagram?: string; facebook?: string; tiktok?: string; linkedin?: string; whatsapp?: string; site?: string; google?: string }
@@ -51,6 +52,8 @@ export default function ProfilPage() {
   const [reponseAuto, setReponseAuto] = useState(true)
   const [siteActive, setSiteActive] = useState(false)
   const [siteTier, setSiteTier] = useState(3)
+  const [siteMax, setSiteMax] = useState<1 | 2 | 3>(3) // niveau de site max inclus dans la formule
+  const [plan, setPlan] = useState('gratuit')
   const [siteContact, setSiteContact] = useState(true)
   const [genSite, setGenSite] = useState(false)
   const [siteContenu, setSiteContenu] = useState<SiteContenu | null>(null)
@@ -73,7 +76,9 @@ export default function ProfilPage() {
       setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '' })).filter((r) => r.image) : [])
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
       setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setReponseAuto(a.reponse_auto !== false)
-      setSiteActive(a.site_active === true); setSiteTier([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3); setSiteContact(a.site_contact_integre !== false)
+      const max = siteMaxForPlan(a.plan); setSiteMax(max); setPlan(a.plan ?? 'gratuit')
+      // niveau de site borné par la formule (on ne propose jamais un niveau non inclus)
+      setSiteActive(a.site_active === true); setSiteTier(Math.min([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : max, max) as number); setSiteContact(a.site_contact_integre !== false)
       setSiteContenu(a.site_contenu && typeof a.site_contenu === 'object' ? { ...CONTENU_VIDE, ...(a.site_contenu as Partial<SiteContenu>), mots_cles: Array.isArray((a.site_contenu as SiteContenu).mots_cles) ? (a.site_contenu as SiteContenu).mots_cles : [] } : null)
       setReady(true)
     })
@@ -111,7 +116,7 @@ export default function ProfilPage() {
       email_public: emailPublic.trim().slice(0, 160) || null,
       reponse_auto: reponseAuto,
       site_active: siteActive,
-      site_tier: [1, 2, 3].includes(siteTier) ? siteTier : 3,
+      site_tier: Math.min([1, 2, 3].includes(siteTier) ? siteTier : 3, siteMax),
       site_contact_integre: siteContact,
       ...(cleanContenu ? { site_contenu: cleanContenu } : {}),
       plateforme_active: active,
@@ -261,14 +266,23 @@ export default function ProfilPage() {
           <h2>Votre site web</h2>
           <p className="muted" style={{ margin: '0 0 .9rem' }}>Un vrai site vitrine, généré depuis votre profil (présentation, réalisations, prestations, contacts). Choisissez le niveau, publiez, partagez.</p>
           <div className="site-tiers">
-            {TIERS.map((t) => (
-              <button key={t.n} type="button" className={`site-tier${siteTier === t.n ? ' on' : ''}`} onClick={() => setSiteTier(t.n)}>
-                <span className="st-n">Niveau {t.n}</span>
-                <b>{t.nom}</b>
-                <span className="st-d">{t.desc}</span>
-              </button>
-            ))}
+            {TIERS.map((t) => {
+              const locked = t.n > siteMax
+              return (
+                <button key={t.n} type="button" className={`site-tier${siteTier === t.n ? ' on' : ''}${locked ? ' locked' : ''}`} onClick={() => { if (!locked) setSiteTier(t.n) }} disabled={locked} aria-disabled={locked}>
+                  <span className="st-n">Niveau {t.n}{locked ? ' · 🔒' : ''}</span>
+                  <b>{t.nom}</b>
+                  <span className="st-d">{t.desc}</span>
+                  {locked ? <span className="st-lock">Inclus dès {t.n === 2 ? 'Studio' : 'Signature'}</span> : null}
+                </button>
+              )
+            })}
           </div>
+          {siteMax < 3 ? (
+            <p className="muted" style={{ margin: '.6rem 0 0', fontSize: '.83rem' }}>
+              Votre formule inclut le site <b>{siteMax === 1 ? 'Essentiel' : 'Pro'}</b>. <a href="/abonnement" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>Passez à {siteMax === 1 ? 'Studio ou Signature' : 'Signature'}</a> pour débloquer les niveaux supérieurs{siteMax === 1 ? ' (galerie, cinématique)' : ' (cinématique, niveau agence)'}.
+            </p>
+          ) : null}
           <div style={{ marginTop: '1rem', display: 'flex', gap: '.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
             <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={genSite} onClick={genererSite}>{genSite ? 'L’IA rédige votre site…' : (siteContenu ? '⚡ Régénérer avec l’IA' : '⚡ Rédiger mon site avec l’IA')}</button>
             <span className="muted" style={{ fontSize: '.85rem' }}>Titres, accroches et à-propos rédigés sur-mesure à partir de votre profil.</span>

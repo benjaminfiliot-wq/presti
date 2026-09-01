@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type { SiteContenu } from '@/lib/ai'
 import SiteMotion from './SiteMotion'
 import LeadForm from '@/app/l/[slug]/LeadForm'
+import { siteMaxForPlan } from '@/lib/plans'
 
 type Service = { nom?: string; description?: string }
 type Realisation = { image?: string; titre?: string; specialite?: string }
@@ -15,13 +16,13 @@ type Artisan = {
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
   tel_public: string | null; email_public: string | null
   site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
-  site_contenu: SiteContenu | null; site_contact_integre: boolean | null
+  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre')
+    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -64,7 +65,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     return <main className="site"><div className="site-mid"><div className="site-404"><b>Site indisponible</b><span>Ce site n&apos;existe pas ou n&apos;est pas encore publié.</span></div></div></main>
   }
 
-  const tier = [1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3
+  // Niveau rendu borné par la formule (si l'artisan a rétrogradé, le site suit son plan).
+  const tier = Math.min([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3, siteMaxForPlan(a.plan))
   const c = a.site_contenu || null // contenu rédigé par l'IA (sur-mesure), sinon données brutes
   const accent = /^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? (a.accent as string) : '#D97757'
   const services = (Array.isArray(a.services) ? a.services : []).filter((s) => s && (s.nom || s.description))
