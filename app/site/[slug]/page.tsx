@@ -3,7 +3,6 @@ import type { ReactNode } from 'react'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type { SiteContenu } from '@/lib/ai'
 import SiteMotion from './SiteMotion'
-import LeadForm from '@/app/l/[slug]/LeadForm'
 import { siteMaxForPlan } from '@/lib/plans'
 
 type Service = { nom?: string; description?: string }
@@ -87,9 +86,9 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     ...(r.site ? [{ href: r.site, label: 'Site', icon: IC.globe }] : []),
   ]
   const ext = (h: string) => /^https?:/i.test(h)
-  const contactHref = a.plateforme_active !== false ? `/l/${a.slug}` : (telDigits ? `tel:${telDigits}` : '#contact')
-  // Connexion plateforme <-> site : le chat de contact est-il intégré directement dans le site ?
-  const embedContact = a.site_contact_integre !== false && a.plateforme_active !== false && !!a.slug
+  const plateformeActive = a.plateforme_active !== false && !!a.slug
+  // Le site RENVOIE vers la plateforme (espace de contact) — il ne l'embarque jamais.
+  const contactHref = plateformeActive ? `/l/${a.slug}` : (telDigits ? `tel:${telDigits}` : '#contact')
 
   const ld = {
     '@context': 'https://schema.org', '@type': 'LocalBusiness', name: a.nom,
@@ -134,7 +133,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       </header>
 
       {/* HERO */}
-      <section className="site-hero" id="top">
+      <section className={`site-hero${tier === 3 && heroShot ? ' site-dark' : ''}`} id="top">
         {tier === 3 && heroShot ? (
           <div className="site-hero-media" aria-hidden="true">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -173,7 +172,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
       {/* MOTS GÉANTS (inspiration cinématique « FIND ») — les grands savoir-faire */}
       {tier === 3 && bigWords.length >= 2 ? (
-        <section className="site-manifest" id="savoir-faire">
+        <section className="site-manifest site-dark" id="savoir-faire">
           <span className="site-kick site-reveal">Le savoir-faire</span>
           <div className="site-words">
             {bigWords.map((w, i) => (
@@ -253,7 +252,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
       {/* À PROPOS */}
       {showAbout ? (
-        <section className="site-block site-about" id="apropos">
+        <section className="site-block site-about site-dark" id="apropos">
           <div className="site-about-in site-reveal">
             <span className="site-kick">À propos</span>
             <p>{apropos}</p>
@@ -267,17 +266,15 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
         </section>
       ) : null}
 
-      {/* CONTACT */}
-      <section className="site-cta-block site-reveal" id="contact">
+      {/* CONTACT — panneau de clôture. Le site NE contient PAS la plateforme :
+          il présente tout, puis renvoie vers l'espace de contact (la plateforme). */}
+      <section className="site-cta-block site-dark site-reveal" id="contact">
         <h2>{c?.cta_titre || 'Parlons de votre projet'}</h2>
-        <p>{c?.cta_texte || 'Décrivez votre besoin — vous recevez une réponse rapide et un devis clair.'}</p>
-        {embedContact ? (
-          <div className="plat-embed site-embed" style={{ ['--pc' as string]: accent }}>
-            <div className="plat-form"><LeadForm slug={a.slug as string} artisanNom={a.nom} avatar={brand} /></div>
-          </div>
-        ) : (
-          <a className="site-btn p lg" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis {IC.arrow}</a>
-        )}
+        <p>{c?.cta_texte || 'Décrivez votre besoin — réponse rapide, échange direct, devis clair.'}</p>
+        <a className="site-btn p lg" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>
+          {plateformeActive ? 'Démarrer une demande' : 'Me contacter'} {IC.arrow}
+        </a>
+        {plateformeActive ? <p className="site-cta-note">Vous arrivez sur mon espace de contact — je vous réponds en direct.</p> : null}
         {showChannels ? (
           <div className="site-channels">
             {channels.map((c, i) => (

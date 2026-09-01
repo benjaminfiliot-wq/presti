@@ -1859,17 +1859,29 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
    Identite premium "atelier" : chaud, matiere, Fraunces monumentale, motion tenue.
    Zero tell IA (pas de degrade violet, glassmorphism partout, orbes, fond a points, bento).
    ============================================================================ */
+/* ============================================================
+   SITE VITRINE — DNA "Atelier" : crème éditorial + panneaux sombres cinématiques.
+   Inspiration directe FIND (agence, mots géants + full-bleed) & DRIP (panneaux produit).
+   Volontairement À L'OPPOSÉ de la console Presti (nuit graphite + orange chantier).
+   ============================================================ */
 .site{
-  --sbg:#100E0B; --sbg2:#181510; --spanel:#1E1A14; --sink:#F3EFE7; --sink2:#B9B1A2; --sfaint:#726A5B;
-  --sline:rgba(255,255,255,.09); --sline2:rgba(255,255,255,.05);
-  --pc2:color-mix(in srgb,var(--pc) 72%,#ffffff); --psoft:color-mix(in srgb,var(--pc) 14%,transparent);
+  /* Base CLAIRE (papier chaud) */
+  --sbg:#F5EFE4; --sbg2:#ECE3D4; --spanel:#FBF7EF; --sink:#1B1712; --sink2:#6B6154; --sfaint:#A99E8C;
+  --sline:color-mix(in srgb,var(--sink) 14%,transparent); --sline2:color-mix(in srgb,var(--sink) 8%,transparent);
+  /* Panneaux SOMBRES (contraste cinématique) */
+  --sdark:#171310; --sdark2:#211B15; --sdark-ink:#F5EFE4; --sdark-ink2:#C6BDAD;
+  --pc2:color-mix(in srgb,var(--pc) 78%,#111); --psoft:color-mix(in srgb,var(--pc) 14%,transparent);
   --se:cubic-bezier(.16,1,.3,1);
   --sfd:var(--f-fraunces),Georgia,serif; --sfb:var(--f-body),system-ui,sans-serif; --sfm:var(--f-mono),ui-monospace,monospace;
   background:var(--sbg);color:var(--sink);font-family:var(--sfb);line-height:1.6;-webkit-font-smoothing:antialiased;
   min-height:100vh;overflow-x:hidden;
 }
-.site ::selection{background:var(--psoft);color:#fff}
+.site ::selection{background:var(--psoft);color:var(--sink)}
 .site a{color:inherit;text-decoration:none}
+/* Panneau sombre : on redéfinit les tokens localement → tous les composants basculent en clair sur fond sombre. */
+.site-dark{--sbg:var(--sdark);--sbg2:var(--sdark2);--spanel:var(--sdark2);--sink:var(--sdark-ink);--sink2:var(--sdark-ink2);
+  --sline:rgba(255,255,255,.13);--sline2:rgba(255,255,255,.06);--pc2:color-mix(in srgb,var(--pc) 72%,#ffffff);
+  background:var(--sdark);color:var(--sdark-ink)}
 
 /* Revelations */
 .site-armed .site-reveal{opacity:0;transform:translateY(26px)}
@@ -1887,7 +1899,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-mark img{width:100%;height:100%;object-fit:cover}
 .site-links{display:flex;align-items:center;gap:1.6rem;font-size:.95rem;color:var(--sink2)}
 .site-links a:not(.site-nav-cta):hover{color:var(--sink)}
-.site-nav-cta{padding:.6rem 1.1rem;border-radius:999px;background:var(--sink);color:#141210;font-weight:600;transition:transform .14s var(--se),background .15s}
+.site-nav-cta{padding:.6rem 1.1rem;border-radius:999px;background:var(--sink);color:var(--sbg);font-weight:600;transition:transform .14s var(--se),background .15s}
 .site-nav-cta:hover{transform:translateY(-1px)}
 @media(max-width:760px){.site-links a:not(.site-nav-cta){display:none}}
 
@@ -1913,8 +1925,8 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-btn:hover svg{transform:translateX(3px)}
 .site-btn.p{background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;box-shadow:0 18px 44px -18px color-mix(in srgb,var(--pc) 80%,transparent)}
 .site-btn.p:hover{box-shadow:0 24px 54px -18px color-mix(in srgb,var(--pc) 95%,transparent);transform:translateY(-2px)}
-.site-btn.g{background:rgba(255,255,255,.06);color:var(--sink);border:1px solid var(--sline)}
-.site-btn.g:hover{background:rgba(255,255,255,.1)}
+.site-btn.g{background:color-mix(in srgb,var(--sink) 7%,transparent);color:var(--sink);border:1px solid var(--sline)}
+.site-btn.g:hover{background:color-mix(in srgb,var(--sink) 12%,transparent)}
 .site-btn.lg{padding:1.1rem 2rem;font-size:1.1rem}
 .site-hero-meta{display:flex;flex-wrap:wrap;gap:1.4rem;margin-top:2rem;color:var(--sink2);font-size:.95rem}
 .site-hero-meta a,.site-hero-meta span{display:inline-flex;align-items:center;gap:.5rem}
@@ -1968,9 +1980,10 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-cta-block{max-width:820px;margin:0 auto;padding:clamp(4rem,10vw,7rem) clamp(1.1rem,5vw,3rem);text-align:center}
 .site-cta-block h2{font-family:var(--sfd);font-weight:700;font-size:clamp(2.1rem,5.5vw,3.6rem);line-height:1.02;letter-spacing:-.02em;margin:0 0 .9rem;text-wrap:balance}
 .site-cta-block p{color:var(--sink2);font-size:clamp(1rem,2.2vw,1.2rem);max-width:46ch;margin:0 auto 2.2rem}
+.site-cta-note{margin:1.1rem auto 0;font-size:.9rem;color:var(--sink2);max-width:40ch}
 .site-embed{margin-top:2.6rem;text-align:left}
 .site-channels{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin-top:2.4rem}
-.site-chan{display:inline-flex;align-items:center;gap:.55rem;padding:.65rem 1.1rem;border-radius:999px;border:1px solid var(--sline);background:rgba(255,255,255,.03);color:var(--sink);font-size:.92rem;transition:border-color .15s,background .15s,transform .12s var(--se)}
+.site-chan{display:inline-flex;align-items:center;gap:.55rem;padding:.65rem 1.1rem;border-radius:999px;border:1px solid var(--sline);background:color-mix(in srgb,var(--sink) 4%,transparent);color:var(--sink);font-size:.92rem;transition:border-color .15s,background .15s,transform .12s var(--se)}
 .site-chan:hover{border-color:var(--pc);background:var(--psoft);transform:translateY(-1px)}
 .site-chan span{display:grid;place-items:center;width:18px;height:18px}
 .site-chan svg{width:17px;height:17px;stroke:var(--pc2);fill:none}
@@ -1991,7 +2004,9 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 }
 
 /* ===== Signature cinematique : mots geants (FIND) + blocs editoriaux alternes (DRIP) ===== */
-.site-manifest{max-width:1180px;margin:0 auto;padding:clamp(3.5rem,9vw,7rem) clamp(1.1rem,5vw,3rem)}
+/* Section MOTS GÉANTS : plein-cadre (panneau sombre .site-dark posé en JSX), contenu centré */
+.site-manifest{padding:clamp(3.5rem,9vw,7rem) clamp(1.1rem,5vw,3rem)}
+.site-manifest .site-kick,.site-manifest .site-words{max-width:1180px;margin-inline:auto}
 .site-words{display:flex;flex-direction:column;margin-top:1.6rem}
 .site-word{display:flex;align-items:center;gap:1.2rem;padding:clamp(1rem,3.2vw,2.1rem) 0;border-top:1px solid var(--sline)}
 .site-word:last-child{border-bottom:1px solid var(--sline)}
@@ -2007,10 +2022,12 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-feature-media{position:relative;overflow:hidden;background:var(--sbg2)}
 .site-feature-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.1s var(--se)}
 .site-feature:hover .site-feature-media img{transform:scale(1.04)}
-.site-feature-txt{display:flex;flex-direction:column;justify-content:center;padding:clamp(2.4rem,6vw,5rem);background:var(--sbg)}
-.site-feature.alt .site-feature-txt{background:#F3EFE7;color:#1a1712}
+.site-feature-txt{display:flex;flex-direction:column;justify-content:center;padding:clamp(2.4rem,6vw,5rem);background:var(--sbg);color:var(--sink)}
+/* Alternance cinématique : un panneau sur deux passe en SOMBRE (rythme FIND/DRIP) */
+.site-feature.alt .site-feature-txt{background:var(--sdark);color:var(--sdark-ink)}
+.site-feature.alt .site-feature-txt p{color:var(--sdark-ink2)}
 .site-feature-n{font-family:var(--sfm);font-size:.86rem;color:var(--pc);margin-bottom:1rem;letter-spacing:.06em}
-.site-feature.alt .site-feature-n{color:color-mix(in srgb,var(--pc) 78%,#000)}
+.site-feature.alt .site-feature-n{color:color-mix(in srgb,var(--pc) 66%,#fff)}
 .site-feature-txt h3{font-family:var(--sfd);font-weight:700;font-size:clamp(1.8rem,4.6vw,3.3rem);line-height:1.02;letter-spacing:-.015em;margin:0}
 .site-feature-txt p{margin:1.3rem 0 0;font-size:clamp(1rem,2vw,1.2rem);line-height:1.55;max-width:40ch;opacity:.72}
 @media(max-width:760px){
