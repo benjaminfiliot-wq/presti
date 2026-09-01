@@ -12,13 +12,13 @@ type Artisan = {
   bio: string | null; services: Service[] | null; zone_intervention: string | null
   photo_url: string | null; logo_url: string | null; horaires: string | null; plateforme_active: boolean | null
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
-  tel_public: string | null; email_public: string | null
+  tel_public: string | null; email_public: string | null; theme: string | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, photo_url, logo_url, horaires, plateforme_active, accent, realisations, reseaux, tel_public, email_public')
+    .select('nom, metier, slug, ville, bio, services, zone_intervention, photo_url, logo_url, horaires, plateforme_active, accent, realisations, reseaux, tel_public, email_public, theme')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -100,6 +100,7 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
   const ext = (h: string) => /^https?:/i.test(h)
   // Accent personnalisable (validé : hex 6 chiffres, sinon corail par défaut)
   const accent = /^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? (a.accent as string) : '#D97757'
+  const theme = ['atelier', 'nuit', 'epure'].includes(a.theme || '') ? (a.theme as string) : 'atelier'
   const ld = {
     '@context': 'https://schema.org', '@type': 'LocalBusiness', name: a.nom,
     ...(a.metier ? { description: a.bio || `${a.metier} — devis et contact rapide.` } : {}),
@@ -107,7 +108,7 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
   }
 
   return (
-    <main className="plat" style={{ ['--pc' as string]: accent }}>
+    <main className="plat" style={{ ['--pc' as string]: accent }} data-theme={theme}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
       <PlatMotion />
       <div className="plat-aurora" aria-hidden="true"><span className="plat-glow a" /><span className="plat-glow b" /></div>

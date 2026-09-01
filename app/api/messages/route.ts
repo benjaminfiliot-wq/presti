@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { consumeCredit } from '@/lib/credits'
+import { resolveModel } from '@/lib/models'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -62,13 +63,15 @@ export async function POST(req: Request) {
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier, ton_style, email, is_founder')
+      .select('nom, metier, ton_style, email, is_founder, plan')
       .eq('id', uid)
       .maybeSingle()
 
     // ── Suggestion IA : renvoie un brouillon que l'artisan pourra éditer avant d'envoyer.
+    //    L'artisan CHOISIT le modèle (Standard/Pro/Expert) ; on respecte sa formule.
     if (action === 'suggest') {
-      const credit = await consumeCredit(uid, 'standard', !!artisan?.is_founder)
+      const { tier, model, downgraded } = resolveModel(typeof body?.model === 'string' ? body.model : 'standard', artisan?.plan)
+      const credit = await consumeCredit(uid, tier, !!artisan?.is_founder)
       if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
       const turns = await history(leadId)
       if (!turns.length) return NextResponse.json({ error: 'Aucun message à traiter.' }, { status: 400 })
@@ -76,8 +79,9 @@ export async function POST(req: Request) {
         { nom: artisan?.nom ?? null, metier: artisan?.metier ?? null, ton_style: artisan?.ton_style ?? null },
         { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
         turns,
+        model,
       )
-      return NextResponse.json({ ok: true, reply })
+      return NextResponse.json({ ok: true, reply, tier, downgraded })
     }
 
     // ── Réponse de l'artisan (envoyée telle quelle dans le fil + par email si possible).

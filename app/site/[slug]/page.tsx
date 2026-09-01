@@ -15,13 +15,13 @@ type Artisan = {
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
   tel_public: string | null; email_public: string | null
   site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
-  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null
+  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan')
+    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -68,6 +68,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const tier = Math.min([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3, siteMaxForPlan(a.plan))
   const c = a.site_contenu || null // contenu rédigé par l'IA (sur-mesure), sinon données brutes
   const accent = /^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? (a.accent as string) : '#D97757'
+  const theme = ['atelier', 'nuit', 'epure'].includes(a.theme || '') ? (a.theme as string) : 'atelier'
   const services = (Array.isArray(a.services) ? a.services : []).filter((s) => s && (s.nom || s.description))
   const realisations = (Array.isArray(a.realisations) ? a.realisations : []).filter((r) => r && r.image)
   const zone = a.zone_intervention || a.ville
@@ -112,7 +113,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const manifesteTxt = c?.manifeste || c?.hero_accroche || (a.metier ? `${a.metier}, avec exigence.` : 'Un travail fait pour durer.')
 
   return (
-    <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent }} data-tier={tier}>
+    <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent }} data-tier={tier} data-theme={theme}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
       <SiteMotion />
 

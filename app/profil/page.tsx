@@ -32,6 +32,12 @@ const TIERS: { n: number; nom: string; desc: string }[] = [
   { n: 2, nom: 'Pro', desc: 'Réalisations en galerie, à-propos, réseaux — plus complet.' },
   { n: 3, nom: 'Signature', desc: 'Site cinématique haut de gamme, animations, galerie immersive.' },
 ]
+// Thème / DNA visuelle (s'applique au site ET à la plateforme). Aperçu = [fond, encre, accent].
+const THEMES: { id: string; nom: string; desc: string; sw: [string, string, string] }[] = [
+  { id: 'atelier', nom: 'Atelier', desc: 'Crème éditorial, chaleureux', sw: ['#F5EFE4', '#171310', '#C6853F'] },
+  { id: 'nuit', nom: 'Nuit', desc: 'Sombre, cinématique', sw: ['#12100C', '#F5EFE4', '#C6853F'] },
+  { id: 'epure', nom: 'Épuré', desc: 'Blanc minimal, moderne', sw: ['#FBFAF8', '#171614', '#C6853F'] },
+]
 
 export default function ProfilPage() {
   const router = useRouter()
@@ -59,6 +65,7 @@ export default function ProfilPage() {
   const [siteContenu, setSiteContenu] = useState<SiteContenu | null>(null)
   const [active, setActive] = useState(true)
   const [accent, setAccent] = useState('#D97757')
+  const [theme, setTheme] = useState('atelier')
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
 
@@ -72,6 +79,7 @@ export default function ProfilPage() {
       setSlug(a.slug ?? ''); setNom(a.nom ?? ''); setMetier(a.metier ?? '')
       setBio(a.bio ?? ''); setZone(a.zone_intervention ?? ''); setHoraires(a.horaires ?? '')
       setLogoUrl(a.logo_url ?? null); setActive(a.plateforme_active !== false); setAccent(/^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? a.accent : '#D97757')
+      setTheme(['atelier', 'nuit', 'epure'].includes(a.theme) ? a.theme : 'atelier')
       setServices(Array.isArray(a.services) ? (a.services as Service[]).map((s) => ({ nom: s.nom ?? '', description: s.description ?? '' })) : [])
       setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '' })).filter((r) => r.image) : [])
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
@@ -121,6 +129,7 @@ export default function ProfilPage() {
       ...(cleanContenu ? { site_contenu: cleanContenu } : {}),
       plateforme_active: active,
       accent: /^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#D97757',
+      theme: ['atelier', 'nuit', 'epure'].includes(theme) ? theme : 'atelier',
     }).eq('id', uid)
     setSaving(false)
     if (error) { setMsg({ type: 'err', text: 'Enregistrement impossible.' }); return }
@@ -203,8 +212,19 @@ export default function ProfilPage() {
 
         {/* Apparence */}
         <div className="tool-card">
-          <h2>Couleur de votre page</h2>
-          <p className="muted" style={{ margin: '0 0 .7rem' }}>L&apos;accent de votre page publique — choisissez ce qui vous ressemble.</p>
+          <h2>Apparence</h2>
+          <p className="muted" style={{ margin: '0 0 .8rem' }}>Le style visuel de votre site <b>et</b> de votre plateforme. Choisissez l&apos;ambiance, puis votre couleur d&apos;accent.</p>
+          <div className="prof-themes">
+            {THEMES.map((t) => (
+              <button key={t.id} type="button" className={`prof-theme${theme === t.id ? ' on' : ''}`} onClick={() => setTheme(t.id)}>
+                <span className="prof-theme-pv" style={{ background: t.sw[0] }}>
+                  <span style={{ background: t.sw[1] }} /><span style={{ background: t.sw[1], opacity: .55 }} /><b style={{ background: t.sw[2] }} />
+                </span>
+                <b>{t.nom}</b><span className="prof-theme-d">{t.desc}</span>
+              </button>
+            ))}
+          </div>
+          <label style={{ display: 'block', margin: '1.1rem 0 .5rem', fontWeight: 600, fontSize: '.9rem' }}>Couleur d&apos;accent</label>
           <div className="prof-accent">
             {['#D97757', '#3B82F6', '#10B981', '#8B5CF6', '#EF4444', '#0EA5A0', '#D9A441', '#64748B'].map((c) => (
               <button key={c} type="button" aria-label={c} className={`prof-swatch${accent.toLowerCase() === c.toLowerCase() ? ' on' : ''}`} style={{ background: c }} onClick={() => setAccent(c)} />

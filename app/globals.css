@@ -626,7 +626,12 @@ button:disabled{opacity:.55;cursor:default}
 .inbox-compose{border-top:1px solid var(--line);padding:.8rem 1rem;background:var(--surface-2)}
 .inbox-compose textarea{width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:11px;padding:.7rem .85rem;font-size:14px;font-family:inherit;color:var(--ink);resize:vertical;min-height:54px}
 .inbox-compose textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tint)}
-.inbox-cbar{display:flex;gap:.5rem;justify-content:flex-end;margin-top:.6rem;flex-wrap:wrap}
+.inbox-cbar{display:flex;gap:.5rem;align-items:center;margin-top:.6rem;flex-wrap:wrap}
+/* Sélecteur de modèle IA (segmented) — l'artisan choisit la puissance de la réponse */
+.inbox-model{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:2px;gap:2px}
+.inbox-model-b{background:none;border:none;cursor:pointer;font:inherit;font-size:.8rem;font-weight:600;color:var(--muted);padding:.34rem .62rem;border-radius:8px;transition:background .14s,color .14s;width:auto;margin:0}
+.inbox-model-b:hover{color:var(--ink)}
+.inbox-model-b.on{background:var(--accent);color:#fff}
 .inbox-cbar .btn--primary,.inbox-actions .btn--primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .inbox-cbar .btn--primary:hover,.inbox-actions .btn--primary:hover{filter:brightness(1.05)}
 .inbox-actions .btn--primary:disabled{opacity:.6}
@@ -1494,6 +1499,17 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .prof-serv .s-nom{flex:1 1 180px}
 .prof-serv .s-desc{flex:2 1 220px}
 @media(max-width:560px){.prof-serv{flex-wrap:wrap}.prof-serv .s-nom,.prof-serv .s-desc{flex:1 1 100%}}
+/* Sélecteur de thème (DNA visuelle) : 3 cartes avec mini-aperçu fond/encre/accent */
+.prof-themes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem}
+.prof-theme{text-align:left;background:var(--surface-2);border:1.5px solid var(--line);border-radius:13px;padding:.7rem .8rem .8rem;cursor:pointer;display:flex;flex-direction:column;gap:.2rem;transition:border-color .14s,transform .12s var(--ease-out,ease)}
+.prof-theme:hover{border-color:var(--accent-tint-2);transform:translateY(-2px)}
+.prof-theme.on{border-color:var(--accent);background:var(--accent-tint)}
+.prof-theme-pv{display:flex;align-items:center;gap:5px;height:44px;border-radius:9px;padding:0 .7rem;margin-bottom:.5rem;border:1px solid rgba(0,0,0,.12)}
+.prof-theme-pv span{width:26px;height:8px;border-radius:3px}
+.prof-theme-pv b{width:16px;height:16px;border-radius:50%;margin-left:auto}
+.prof-theme>b{font-size:.95rem;color:var(--ink)}
+.prof-theme.on>b{color:var(--accent-ink)}
+.prof-theme-d{font-size:.76rem;color:var(--muted);line-height:1.4}
 .prof-accent{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
 .prof-swatch{width:38px;height:38px;border-radius:11px;border:2px solid transparent;cursor:pointer;padding:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);transition:transform .12s var(--ease-out,ease)}
 .prof-swatch:hover{transform:scale(1.08)}
@@ -1514,6 +1530,18 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   position:relative;min-height:100dvh;overflow-x:clip;background:var(--pb);color:var(--pi);font-family:var(--pfb);line-height:1.55;
 }
 .plat *{box-sizing:border-box}
+/* ===== THÈMES / DNA au choix de l'artisan (plateforme) — cohérents avec le site ===== */
+.plat[data-theme="nuit"]{
+  --pb:#0B0906; --ps:#16110D; --ps2:#221D16; --pi:#F5EFEA; --pi2:#C6BDAD; --pm:#8A8072; --pf:#5A5348;
+  --pl:rgba(255,255,255,.1); --pl2:rgba(255,255,255,.05);
+  --pc2:color-mix(in srgb,var(--pc) 74%,#fff);
+  --pfd:var(--f-display),system-ui,sans-serif;
+}
+.plat[data-theme="epure"]{
+  --pb:#FBFAF8; --ps:#FFFFFF; --ps2:#F1EEE9; --pi:#171614; --pi2:#5C5A55; --pm:#847C6E; --pf:#A6A29B;
+  --pl:rgba(0,0,0,.1); --pl2:rgba(0,0,0,.05);
+  --pfd:var(--f-display),system-ui,sans-serif;
+}
 /* Chat/formulaire de la plateforme EMBARQUÉ dans le site vitrine (tokens plateforme,
    sans le chrome plein écran ; --pc hérité du site = même accent). */
 .plat-embed{
@@ -1885,6 +1913,23 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .site-dark{--sbg:var(--sdark);--sbg2:var(--sdark2);--spanel:var(--sdark2);--sink:var(--sdark-ink);--sink2:var(--sdark-ink2);
   --sline:rgba(255,255,255,.13);--sline2:rgba(255,255,255,.06);--pc2:color-mix(in srgb,var(--pc) 72%,#ffffff);
   background:var(--sdark);color:var(--sdark-ink)}
+
+/* ===== THÈMES / DNA au choix de l'artisan (site) — Atelier (défaut, crème) + Nuit + Épuré ===== */
+.site[data-theme="nuit"]{ /* sombre cinématique */
+  --sbg:#12100C; --sbg2:#1B1712; --spanel:#221D16; --sink:#F5EFE4; --sink2:#C6BDAD; --sfaint:#8A8072;
+  --sline:rgba(255,255,255,.12); --sline2:rgba(255,255,255,.055);
+  --sdark:#0B0906; --sdark2:#16110D; --sdark-ink:#F5EFE4; --sdark-ink2:#C6BDAD;
+  --pc2:color-mix(in srgb,var(--pc) 74%,#fff);
+  --sfd:var(--f-display),system-ui,sans-serif;
+}
+.site[data-theme="epure"]{ /* blanc minimal, type Apple */
+  --sbg:#FBFAF8; --sbg2:#F1EEE9; --spanel:#FFFFFF; --sink:#171614; --sink2:#5C5A55; --sfaint:#A6A29B;
+  --sline:rgba(0,0,0,.1); --sline2:rgba(0,0,0,.05);
+  --sdark:#171614; --sdark2:#232220; --sdark-ink:#FBFAF8; --sdark-ink2:#BEBAB3;
+  --sfd:var(--f-display),system-ui,sans-serif;
+}
+.site[data-theme="epure"] .site-hero h1,.site[data-theme="nuit"] .site-hero h1{font-weight:700;letter-spacing:-.03em}
+.site[data-theme="epure"] .site-tagline,.site[data-theme="nuit"] .site-tagline{font-style:normal;font-weight:600}
 
 /* Revelations */
 .site-armed .site-reveal{opacity:0;transform:translateY(26px)}
