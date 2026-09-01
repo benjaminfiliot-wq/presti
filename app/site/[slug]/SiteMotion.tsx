@@ -41,6 +41,7 @@ export default function SiteMotion() {
     const heroImg = document.querySelector<HTMLElement>('.site-hero-img') // image plein-cadre (parallax)
     const manif = document.querySelector<HTMLElement>('.site-manifesto-img')
     const words = Array.from(document.querySelectorAll<HTMLElement>('.site-word'))
+    const feats = Array.from(document.querySelectorAll<HTMLElement>('.site-feature-media img')) // parallax panneaux (DRIP)
 
     // Transforms only (jamais de layout) → 60fps. Une seule fonction, appelée par Lenis à chaque frame.
     const update = () => {
@@ -62,8 +63,14 @@ export default function SiteMotion() {
         const x = (0.5 - prog) * 46 * (i % 2 ? 1 : -1)          // dérive horizontale, alternée
         words[i].style.transform = `translate3d(${x.toFixed(1)}px,0,0)`
       }
+      for (let i = 0; i < feats.length; i++) {
+        const rc = feats[i].getBoundingClientRect()
+        const raw = (rc.top + rc.height / 2 - innerHeight / 2) / innerHeight
+        const p = Math.max(-1, Math.min(1, raw)) // clamp → la dérive reste dans la marge du scale (jamais de trou)
+        feats[i].style.transform = `translate3d(0,${(p * -6).toFixed(2)}%,0) scale(1.16)`
+      }
     }
-    const hasAnim = !!(heroIn || heroImg || manif || words.length)
+    const hasAnim = !!(heroIn || heroImg || manif || words.length || feats.length)
 
     // Smooth scroll Lenis — le cœur du feel « site primé ». Sa boucle rAF pilote aussi `update`.
     let lenis: Lenis | null = null
