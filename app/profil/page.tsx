@@ -253,7 +253,7 @@ export default function ProfilPage() {
         <div className="tool-card">
           <h2>Vos réalisations</h2>
           <p className="muted" style={{ margin: '0 0 .8rem' }}>Montrez votre travail en photos — chaque image avec un titre et une spécialité. C&apos;est ce qui donne confiance et déclenche les demandes.</p>
-          <PortfolioUpload value={realisations} onChange={setRealisations} />
+          <PortfolioUpload uid={uid} value={realisations} onChange={setRealisations} />
         </div>
 
         {/* Canaux connectés */}

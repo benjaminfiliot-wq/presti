@@ -1,34 +1,13 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { resizeToBlob, uploadArtisanMedia } from '@/lib/media'
 
 export type Realisation = { image: string; titre: string; specialite: string }
 
-// Redimensionne une PHOTO en data URL JPEG (léger : photos → JPEG ~0.72, max 1100px).
-function resizePhoto(file: File, max: number): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    const url = URL.createObjectURL(file)
-    img.onload = () => {
-      const scale = Math.min(1, max / Math.max(img.width, img.height))
-      const w = Math.max(1, Math.round(img.width * scale))
-      const h = Math.max(1, Math.round(img.height * scale))
-      const c = document.createElement('canvas')
-      c.width = w; c.height = h
-      const ctx = c.getContext('2d')
-      if (!ctx) { URL.revokeObjectURL(url); reject(new Error('canvas')); return }
-      ctx.drawImage(img, 0, 0, w, h)
-      URL.revokeObjectURL(url)
-      resolve(c.toDataURL('image/jpeg', 0.72))
-    }
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')) }
-    img.src = url
-  })
-}
-
 const MAX = 12
 
-export default function PortfolioUpload({ value, onChange }: { value: Realisation[]; onChange: (v: Realisation[]) => void }) {
+export default function PortfolioUpload({ uid, value, onChange }: { uid: string; value: Realisation[]; onChange: (v: Realisation[]) => void }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
@@ -45,7 +24,9 @@ export default function PortfolioUpload({ value, onChange }: { value: Realisatio
       for (const file of files.slice(0, Math.max(0, room))) {
         if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) { setErr('Formats acceptés : JPG, PNG, WebP.'); continue }
         if (file.size > 12 * 1024 * 1024) { setErr('Photo trop lourde (12 Mo max).'); continue }
-        const image = await resizePhoto(file, 1100)
+        // Photo → JPEG (max 1100px) → fichier dans le bucket, on stocke l'URL (plus de base64).
+        const blob = await resizeToBlob(file, 1100, 'image/jpeg', 0.72)
+        const image = await uploadArtisanMedia(uid, blob, 'jpg')
         added.push({ image, titre: '', specialite: '' })
       }
       if (added.length) onChange([...value, ...added])

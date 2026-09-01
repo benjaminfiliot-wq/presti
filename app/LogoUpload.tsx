@@ -2,28 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-
-/** Redimensionne une image (max px) en data URL PNG — garde la transparence, reste léger. */
-function resize(file: File, max: number): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    const url = URL.createObjectURL(file)
-    img.onload = () => {
-      const scale = Math.min(1, max / Math.max(img.width, img.height))
-      const w = Math.max(1, Math.round(img.width * scale))
-      const h = Math.max(1, Math.round(img.height * scale))
-      const c = document.createElement('canvas')
-      c.width = w; c.height = h
-      const ctx = c.getContext('2d')
-      if (!ctx) { URL.revokeObjectURL(url); reject(new Error('canvas')); return }
-      ctx.drawImage(img, 0, 0, w, h)
-      URL.revokeObjectURL(url)
-      resolve(c.toDataURL('image/png'))
-    }
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')) }
-    img.src = url
-  })
-}
+import { resizeToBlob, uploadArtisanMedia } from '@/lib/media'
 
 export default function LogoUpload({ uid, value, onChange }: { uid: string; value: string | null; onChange: (v: string | null) => void }) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -39,12 +18,14 @@ export default function LogoUpload({ uid, value, onChange }: { uid: string; valu
     if (file.size > 4 * 1024 * 1024) { setErr('Image trop lourde (4 Mo max).'); return }
     setBusy(true)
     try {
-      const dataUrl = await resize(file, 320)
-      onChange(dataUrl)
-      const { error } = await supabase.from('artisans').update({ logo_url: dataUrl }).eq('id', uid)
+      // Logo en PNG (transparence) → fichier dans le bucket, plus de base64 en DB.
+      const blob = await resizeToBlob(file, 320, 'image/png')
+      const publicUrl = await uploadArtisanMedia(uid, blob, 'png')
+      onChange(publicUrl)
+      const { error } = await supabase.from('artisans').update({ logo_url: publicUrl }).eq('id', uid)
       if (error) setErr('Enregistrement du logo impossible.')
     } catch {
-      setErr('Lecture de l’image impossible.')
+      setErr('Import de l’image impossible.')
     } finally {
       setBusy(false)
     }
