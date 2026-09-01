@@ -40,6 +40,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Titre + OG ABSOLUS : aucune mention « Presti » (site 100 % white-label, marque de l'artisan seule).
     title: { absolute: t },
     description: d,
+    // On écrase les meta du layout racine (application-name/author = "Presti") par la marque de l'artisan.
+    applicationName: a.nom || undefined,
+    authors: a.nom ? [{ name: a.nom }] : undefined,
     alternates: { canonical },
     robots: indexable
       ? { index: true, follow: true, googleBot: { index: true, follow: true } }

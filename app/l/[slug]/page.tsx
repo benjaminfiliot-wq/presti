@@ -34,6 +34,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Titre + OG ABSOLUS : aucune mention « Presti » (plateforme white-label, marque de l'artisan seule).
     title: { absolute: t },
     description: d,
+    applicationName: a.nom || undefined,
+    authors: a.nom ? [{ name: a.nom }] : undefined,
     robots: { index: false, follow: false },
     openGraph: { title: t, description: d, type: 'website', ...(a.nom ? { siteName: a.nom } : {}) },
     twitter: { card: 'summary_large_image', title: t, description: d },
