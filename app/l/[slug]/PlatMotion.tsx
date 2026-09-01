@@ -27,11 +27,14 @@ export default function PlatMotion() {
       })
     } else showAll()
 
-    // Smooth scroll Lenis + ancres feutrées (les halos gardent leur dérive CSS ambiante).
+    // Smooth scroll Lenis + ancres feutrées — DESKTOP uniquement. Sur mobile, scroll natif
+    // (meilleur que l'inertie JS) ; les reveals + les halos CSS restent actifs.
+    const mobile = window.innerWidth < 760 || matchMedia('(pointer: coarse)').matches
     let lenis: Lenis | null = null
     let rafId = 0
     let onAnchor: ((ev: Event) => void) | null = null
     try {
+      if (mobile) throw new Error('mobile: scroll natif')
       lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 1, touchMultiplier: 1, smoothWheel: true })
       const raf = (time: number) => { lenis!.raf(time); rafId = requestAnimationFrame(raf) }
       rafId = requestAnimationFrame(raf)
