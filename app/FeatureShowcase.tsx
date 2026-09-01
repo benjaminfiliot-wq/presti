@@ -178,6 +178,30 @@ function PlatDemo() {
     </div>
   )
 }
+function ThemesDemo() {
+  // Montre que le site + la plateforme se déclinent en 3 DNA complètes (pas qu'une couleur).
+  const T = [
+    { k: 'atelier', nom: 'Atelier', desc: 'Crème éditorial', serif: true },
+    { k: 'nuit', nom: 'Nuit', desc: 'Sombre cinématique', serif: false },
+    { k: 'epure', nom: 'Épuré', desc: 'Blanc minimal', serif: false },
+  ] as const
+  return (
+    <div className="fs-sites">
+      {T.map((t, i) => (
+        <div key={t.k} className={`fs-sc th-${t.k} fsr`} style={R(0.1 + i * 0.15)}>
+          <div className="fs-sc-bar"><span /><span /><span /></div>
+          <div className="fs-sc-body">
+            <div className="fs-sc-eye">MENUISIER · LYON</div>
+            <div className={`fs-sc-h1 big${t.serif ? ' serif' : ''}`}>Atelier Vasseur</div>
+            <div className="fs-th-tag">Le bois travaillé avec exigence</div>
+            <div className="fs-sc-list"><i /><i /></div>
+          </div>
+          <div className="fs-sc-tag-b"><b>{t.nom}</b><span>{t.desc}</span></div>
+        </div>
+      ))}
+    </div>
+  )
+}
 function ReseauxDemo() {
   return (
     <div className="fs-res">
@@ -199,6 +223,7 @@ const FEATURES = [
   { id: 'plateforme', label: 'Plateforme de contact', desc: 'Votre page à votre marque : présentation, réassurance, et un chat où le client décrit son besoin. Chaque demande arrive au même endroit, jour et nuit — email, téléphone, Instagram, tout est réuni.', Demo: PlatDemo },
   { id: 'conversation', label: 'Conversation en direct', desc: 'Votre client discute sur votre page, l’IA lui répond dans la seconde — de façon humaine et juste. Vous reprenez la main quand vous voulez, et la conversation devient un devis en un clic.', Demo: ConversationDemo },
   { id: 'site', label: 'Site web (3 niveaux)', desc: 'Un vrai site vitrine généré depuis votre profil, rédigé par l’IA et à votre marque. Trois niveaux bien distincts — Essentiel (épuré), Pro (galerie), Signature (cinématique, niveau agence) — publiés en un clic.', Demo: SiteDemo },
+  { id: 'themes', label: 'Thèmes au choix', desc: 'Votre site ET votre plateforme adoptent l’identité que vous voulez : Atelier (crème éditorial), Nuit (sombre cinématique) ou Épuré (blanc minimal). Vous choisissez l’ambiance et votre couleur — tout se met au même diapason.', Demo: ThemesDemo },
   { id: 'reseaux', label: 'Réalisations & réseaux', desc: 'Montrez votre travail en photos par spécialité, et connectez tous vos canaux (téléphone, email, Instagram, Facebook, Google…). Chaque contact arrive au même endroit.', Demo: ReseauxDemo },
   { id: 'devis', label: 'Devis chiffré', desc: 'Décrivez le chantier : Presti détaille les postes, applique la bonne TVA et sort un PDF conforme.', Demo: DevisDemo },
   { id: 'facture', label: 'Facturation', desc: 'Le chantier est fait ? Le devis devient une facture en un clic — numéro légal, échéance et mentions de pénalités générés tout seuls.', Demo: FactureDemo },

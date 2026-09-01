@@ -1438,6 +1438,19 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .fs-sc-tag-b b{font-size:.72rem;color:#1B1712}
 .fs-sc-tag-b span{font-size:.56rem;color:#6B6154}
 .fs-sc-tag-b.on b{color:color-mix(in srgb,var(--co) 75%,#000)}
+/* Démo THÈMES : 3 DNA distinctes (Atelier crème serif / Nuit sombre / Épuré blanc) */
+.fs-sc-h1.serif{font-family:Georgia,serif}
+.fs-th-tag{font-size:.7rem;color:color-mix(in srgb,var(--co) 75%,#000);margin-top:.05rem}
+.fs-sc.th-nuit{background:#12100C;border-color:rgba(255,255,255,.12)}
+.fs-sc.th-nuit .fs-sc-bar{background:rgba(0,0,0,.4);border-bottom-color:rgba(255,255,255,.08)}
+.fs-sc.th-nuit .fs-sc-bar span{background:rgba(255,255,255,.25)}
+.fs-sc.th-nuit .fs-sc-h1{color:#F5EFE4}
+.fs-sc.th-nuit .fs-sc-eye,.fs-sc.th-nuit .fs-th-tag{color:var(--co2)}
+.fs-sc.th-nuit .fs-sc-list i{background:rgba(255,255,255,.13)}
+.fs-sc.th-nuit .fs-sc-tag-b{background:rgba(255,255,255,.03);border-top-color:rgba(255,255,255,.1)}
+.fs-sc.th-nuit .fs-sc-tag-b b{color:#F5EFE4}.fs-sc.th-nuit .fs-sc-tag-b span{color:#B9B1A2}
+.fs-sc.th-epure{background:#FFFFFF;border-color:rgba(0,0,0,.1)}
+.fs-sc.th-epure .fs-sc-h1{color:#171614}
 
 /* ==== Démo : plateforme de contact ==== */
 .fs-plat{width:min(94%,460px)}

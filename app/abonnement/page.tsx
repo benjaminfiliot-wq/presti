@@ -7,7 +7,7 @@ import AppShell from '@/app/AppShell'
 import { OFFRES } from '@/lib/plans'
 
 const CONTENT: Record<string, { for: string; site: string; feats: string[] }> = {
-  essentiel: { for: 'Pour ne plus louper une demande.', site: 'Site Essentiel', feats: ['Plateforme de contact + réponse IA instantanée', 'Devis IA chiffrés (crédits inclus)', 'Relances automatiques J+2/5/10', 'Modèles Standard & Pro', 'Site vitrine niveau Essentiel'] },
+  essentiel: { for: 'Pour ne plus louper une demande.', site: 'Site Essentiel', feats: ['Plateforme de contact + réponse IA instantanée', 'Console : réponse auto ou manuelle, modèle au choix', 'Devis IA chiffrés (crédits inclus)', 'Relances automatiques J+2/5/10', '3 thèmes au choix (site + plateforme)', 'Site vitrine niveau Essentiel'] },
   studio: { for: 'Présence en ligne soignée + toute la puissance.', site: 'Site Pro', feats: ['Tout l’Essentiel', 'Tous les modèles, dont Expert', 'Plus de crédits chaque mois', 'Site vitrine niveau Pro — galerie & à-propos'] },
   signature: { for: 'L’atelier à plein régime, image d’agence.', site: 'Site Signature ✦', feats: ['Tout Studio', 'Crédits élevés', 'Site vitrine Signature — cinématique, niveau agence', 'Réponses auto ou manuelles au choix', 'Accompagnement dédié'] },
 }
