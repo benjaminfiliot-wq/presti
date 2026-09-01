@@ -15,13 +15,13 @@ type Artisan = {
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
   tel_public: string | null; email_public: string | null
   site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
-  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null
+  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null; site_seo: boolean | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme')
+    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -33,12 +33,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!a) return { title: { absolute: 'Site introuvable' }, robots: { index: false } }
   const t = `${a.nom}${a.metier ? ` — ${a.metier}` : ''}`
   const d = a.site_contenu?.meta_description || a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}.`
+  // Un site PUBLIÉ (site_active) est indexable, sauf si l'artisan a coupé le SEO (site_seo=false).
+  const indexable = a.site_active === true && a.site_seo !== false
+  const canonical = `https://prestiapp.fr/site/${slug}`
   return {
     // Titre + OG ABSOLUS : aucune mention « Presti » (site 100 % white-label, marque de l'artisan seule).
     title: { absolute: t },
     description: d,
-    robots: { index: false, follow: false },
-    openGraph: { title: t, description: d, type: 'website', ...(a.nom ? { siteName: a.nom } : {}) },
+    alternates: { canonical },
+    robots: indexable
+      ? { index: true, follow: true, googleBot: { index: true, follow: true } }
+      : { index: false, follow: false },
+    openGraph: { title: t, description: d, type: 'website', url: canonical, ...(a.nom ? { siteName: a.nom } : {}) },
     twitter: { card: 'summary_large_image', title: t, description: d },
   }
 }
@@ -91,11 +97,19 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   // Le site RENVOIE vers la plateforme (espace de contact) — il ne l'embarque jamais.
   const contactHref = plateformeActive ? `/l/${a.slug}` : (telDigits ? `tel:${telDigits}` : '#contact')
 
+  // JSON-LD LocalBusiness — SEO local. Anti-fabrication : uniquement des champs RÉELS
+  // fournis par l'artisan (aucun horaire structuré depuis du texte libre, aucun priceRange inventé).
+  const ldImage = heroShot || a.photo_url || realisations[0]?.image
+  const ldSameAs = [r.instagram, r.facebook, r.tiktok, r.linkedin, r.google, r.site].filter(Boolean)
   const ld = {
-    '@context': 'https://schema.org', '@type': 'LocalBusiness', name: a.nom,
-    ...(a.bio ? { description: a.bio } : {}),
+    '@context': 'https://schema.org', '@type': 'LocalBusiness',
+    name: a.nom, url: `https://prestiapp.fr/site/${a.slug}`,
+    ...(a.metier ? { description: a.site_contenu?.meta_description || a.bio || `${a.metier}${zone ? ` à ${zone}` : ''}.` } : {}),
     ...(zone ? { areaServed: zone } : {}),
     ...(a.tel_public ? { telephone: a.tel_public } : {}),
+    ...(a.email_public ? { email: a.email_public } : {}),
+    ...(ldImage && !/^data:/.test(ldImage) ? { image: ldImage } : {}),
+    ...(ldSameAs.length ? { sameAs: ldSameAs } : {}),
   }
 
   const showReal = realisations.length > 0 && tier >= 2
