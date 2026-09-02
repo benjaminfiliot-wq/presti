@@ -10,14 +10,16 @@ export default function MentionsLegales() {
     <main className="legal-wrap">
       <Back />
       <h1>Mentions légales</h1>
-      <div className="legal-updated">Dernière mise à jour : 27 août 2026</div>
+      <div className="legal-updated">Dernière mise à jour : 2 septembre 2026</div>
 
       <h2>Éditeur du site</h2>
       <div className="legal-card">
-        <div><span className="k">Service</span> Presti (presti-ashen.vercel.app · prestiapp.fr)</div>
+        <div><span className="k">Service</span> Presti (prestiapp.fr)</div>
         <div><span className="k">Éditeur</span> Benjamin Filiot — entrepreneur individuel (micro-entreprise)</div>
-        <div><span className="k">Adresse</span> 17230 Marans, France</div>
-        <div><span className="k">SIRET</span> en cours d’attribution (immatriculation en cours)</div>
+        <div><span className="k">Adresse</span> 1 rue du Brouage, 17230 Marans, France</div>
+        <div><span className="k">SIREN</span> 109 411 348 (RNE — immatriculée le 1er septembre 2026)</div>
+        <div><span className="k">Code APE</span> 6201Z — Programmation informatique</div>
+        <div><span className="k">TVA</span> non applicable, art. 293 B du CGI (franchise en base)</div>
         <div><span className="k">Contact</span> <a href="mailto:contact@prestiapp.fr">contact@prestiapp.fr</a></div>
         <div><span className="k">Directeur de la publication</span> Benjamin Filiot</div>
       </div>
