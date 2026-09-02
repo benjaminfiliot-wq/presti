@@ -103,6 +103,7 @@ export async function POST(req: Request) {
     if (lead.contact && lead.contact.includes('@')) {
       const r = await sendEmail({
         to: lead.contact,
+        fromName: artisan?.nom || undefined, // white-label : le prospect voit la marque de l'artisan
         subject: `Réponse de ${artisan?.nom ?? 'votre artisan'}`,
         text: `${contenu}\n\n— ${artisan?.nom ?? ''}`,
         replyTo: artisan?.email ?? undefined,
