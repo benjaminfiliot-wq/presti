@@ -51,6 +51,11 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
   const [website, setWebsite] = useState('') // honeypot
   const [side, setSide] = useState(false)    // tiroir mobile
   const [err, setErr] = useState<string | null>(null)
+  // Compte client (§6) : session portée par un cookie httpOnly, jamais lisible ici.
+  const [compte, setCompte] = useState<{ email: string; nom: string | null } | null>(null)
+  const [authEmail, setAuthEmail] = useState('')
+  const [authEnvoye, setAuthEnvoye] = useState(false)
+  const [authBusy, setAuthBusy] = useState(false)
   const [devis, setDevis] = useState<Devis | null>(null)
   const [devisBusy, setDevisBusy] = useState(false)
   const [modifOuvert, setModifOuvert] = useState(false)
@@ -92,6 +97,38 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
     if (list[0]) ouvrir(list[0].token)
     try { const vk = `presti-view-${slug}`; if (!sessionStorage.getItem(vk)) { sessionStorage.setItem(vk, '1'); pushEvent('view') } } catch { /* ignore */ }
   }, [KEY, slug, ouvrir, pushEvent])
+
+  // Compte client : on consomme d'abord un éventuel lien magique, puis on lit la session.
+  useEffect(() => {
+    (async () => {
+      try {
+        const url = new URL(window.location.href)
+        const lien = url.searchParams.get('connexion')
+        if (lien) {
+          await fetch('/api/p/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'verifier', token: lien }) })
+          url.searchParams.delete('connexion') // on n'expose pas le jeton dans la barre d'adresse
+          window.history.replaceState({}, '', url.toString())
+        }
+        const r = await fetch('/api/p/auth')
+        const d = await r.json()
+        if (d.connecte) setCompte(d.client)
+      } catch { /* la conversation marche très bien sans compte */ }
+    })()
+  }, [])
+
+  async function demanderLien(e: FormEvent) {
+    e.preventDefault()
+    if (authBusy || !authEmail.trim()) return
+    setAuthBusy(true)
+    try {
+      await fetch('/api/p/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'demande', slug, email: authEmail, website }) })
+      setAuthEnvoye(true) // réponse volontairement identique, que le compte existe ou non
+    } catch { /* ignore */ } finally { setAuthBusy(false) }
+  }
+  async function seDeconnecter() {
+    await fetch('/api/p/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'deconnexion' }) }).catch(() => {})
+    setCompte(null)
+  }
 
   useEffect(() => { const el = threadRef.current; if (el) el.scrollTop = el.scrollHeight }, [msgs, thinking, needContact])
   useEffect(() => { const ta = taRef.current; if (ta) { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 168) + 'px' } }, [draft])
@@ -233,6 +270,23 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
             <button type="button" key={c.token} className={`pchat-conv${token === c.token ? ' on' : ''}`} onClick={() => ouvrir(c.token)}>{c.titre}</button>
           ))}
         </nav>
+        {/* Compte client — facultatif : la conversation marche sans, le compte sert à la retrouver. */}
+        <div className="pchat-compte">
+          {compte ? (
+            <>
+              <span className="pchat-compte-m">{compte.nom || compte.email}</span>
+              <button type="button" className="pchat-compte-b" onClick={seDeconnecter}>Se déconnecter</button>
+            </>
+          ) : authEnvoye ? (
+            <span className="pchat-compte-m">Si un espace existe pour cette adresse, un lien de connexion vient d’être envoyé. Vérifiez votre boîte mail.</span>
+          ) : (
+            <form onSubmit={demanderLien}>
+              <span className="pchat-compte-t">Retrouver mes demandes</span>
+              <input type="email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="Votre email" aria-label="Votre email" required />
+              <button type="submit" className="pchat-compte-b" disabled={authBusy}>{authBusy ? '…' : 'Recevoir mon lien'}</button>
+            </form>
+          )}
+        </div>
         {delai ? <div className="pchat-side-foot">{delai}</div> : null}
       </aside>
       <button type="button" className="pchat-scrim" onClick={() => setSide(false)} aria-label="Fermer le menu" />

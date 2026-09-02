@@ -417,3 +417,13 @@ html.lenis,html.lenis body{height:auto}
 .pchat-carte-modif button{width:auto;margin:0;align-self:flex-start;padding:.5rem .9rem;border:none;border-radius:10px;background:var(--pi);color:var(--pb);font-size:.88rem;font-weight:650;cursor:pointer}
 .pchat-carte-ok{font-size:.9rem;font-weight:600;color:#2E9E6B;margin-top:.3rem}
 .pchat-carte-note{font-size:.72rem;color:var(--pf);margin-top:.5rem;line-height:1.4}
+
+/* ── Compte client dans la colonne (v4 §6) ── */
+.pchat-compte{padding:.7rem .3rem 0;border-top:1px solid var(--pl2);display:flex;flex-direction:column;gap:.4rem}
+.pchat-compte form{display:flex;flex-direction:column;gap:.35rem}
+.pchat-compte-t{font-size:.76rem;font-weight:650;color:var(--pi2)}
+.pchat-compte-m{font-size:.76rem;color:var(--pm);line-height:1.45;word-break:break-word}
+.pchat-compte input{width:100%;background:var(--pb);border:1px solid var(--pl);border-radius:9px;padding:.45rem .6rem;font-size:.8rem;font-family:inherit;color:var(--pi)}
+.pchat-compte input:focus{outline:none;border-color:var(--pc)}
+.pchat-compte-b{width:auto;margin:0;align-self:flex-start;background:none;border:none;padding:0;font-size:.76rem;font-weight:600;color:var(--pc2);cursor:pointer;text-decoration:underline}
+.pchat-compte-b:disabled{opacity:.6;cursor:default}
