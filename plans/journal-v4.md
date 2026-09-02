@@ -49,3 +49,10 @@
 - preuve : **7/7 PASS en prod** (`scripts/plateforme-config-e2e.mjs`, test permanent) — non-régression, manuelle, assistée, escalade (« fuite » coupe l'IA + alerte artisan), plafond, plage horaire, et RLS (un anonyme ne lit aucune config).
 - deux erreurs de MON test, corrigées (pas le produit) : l'upsert PostgREST *remplace* la ligne (colonnes omises → défaut) ; et 6 messages sur le même fil déclenchaient l'anti-flood.
 - suivant : [B2-2] l'écran « Ma plateforme → Intelligence » dans la console, puis [B2-3] les cartes riches (devis / facture / RDV) dans le fil.
+
+## [B2-2] Écran « Ma plateforme → Intelligence » (§A4) — 23:11 → 23:30 (19 min) — ✅ terminé
+- fait : entrée de navigation **Ma plateforme** + page `/plateforme`. Le lien de conversation (copier / ouvrir) et TOUS les réglages : mode de réponse (automatique / assistée / manuelle, en cartes explicites), modèle, ton, plage horaire (heure française), devis auto (jamais / brouillon / envoi sous seuil + seuil €), facture auto, mots d'escalade éditables, reprise humaine après N réponses, nom et message d'accueil de l'assistant.
+- ergonomie : sans configuration existante, l'écran **part du comportement actuel** de l'artisan (aucune surprise au premier enregistrement).
+- build : OK · typecheck : OK · déployé : 025b501
+- preuve : **10/10 PASS en prod** (`scripts/plateforme-intelligence-e2e.mjs`, test permanent) — affichage, réglage, enregistrement, persistance en base des 5 champs, et reprise correcte après rechargement. Capture : `b22-intelligence.png`.
+- suivant : [B2-3] cartes riches dans le fil (devis / facture / RDV / récapitulatif éditable) — §A3.
