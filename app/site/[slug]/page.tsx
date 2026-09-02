@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type { SiteContenu } from '@/lib/ai'
 import { Fragment } from 'react'
@@ -19,12 +21,13 @@ type Artisan = {
   tel_public: string | null; email_public: string | null
   site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
   site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null; site_seo: boolean | null; site_layout: unknown
+  domaine: string | null; domaine_verifie: boolean | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout')
+    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout, domaine, domaine_verifie')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -38,7 +41,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const d = a.site_contenu?.meta_description || a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}.`
   // Un site PUBLIÉ (site_active) est indexable, sauf si l'artisan a coupé le SEO (site_seo=false).
   const indexable = a.site_active === true && a.site_seo !== false
-  const canonical = `https://prestiapp.fr/site/${slug}`
+  // Canonique = domaine perso (offre Signature) une fois vérifié/servi, sinon l'URL Presti.
+  // Consolide le SEO sur la marque de l'artisan et évite le duplicate content.
+  const canonical = a.domaine && a.domaine_verifie ? `https://${a.domaine}/` : `https://prestiapp.fr/site/${slug}`
   return {
     // Titre + OG ABSOLUS : aucune mention « Presti » (site 100 % white-label, marque de l'artisan seule).
     title: { absolute: t },
@@ -71,6 +76,14 @@ const IC = {
 export default async function SitePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const a = await getArtisan(slug)
+
+  // Domaine perso vérifié : on renvoie les visiteurs de l'URL Presti vers la marque de l'artisan
+  // (le middleware sert déjà le site sur le domaine → pas de boucle). Redirection non permanente
+  // par prudence (un domaine peut redevenir injoignable ; le SEO est consolidé par la canonique).
+  if (a?.domaine && a.domaine_verifie) {
+    const host = (await headers()).get('host')?.toLowerCase().replace(/:\d+$/, '') || ''
+    if (host && host !== a.domaine && host !== `www.${a.domaine}`) redirect(`https://${a.domaine}/`)
+  }
 
   if (!a || a.site_active !== true) {
     return <main className="site"><div className="site-mid"><div className="site-404"><b>Site indisponible</b><span>Ce site n&apos;existe pas ou n&apos;est pas encore publié.</span></div></div></main>

@@ -79,6 +79,12 @@ export default function ProfilPage() {
   const [layout, setLayout] = useState<{ id: SectionId; on: boolean }[]>([]) // composition de la page (ordre + on/off)
   const [previewKey, setPreviewKey] = useState(0) // force le rechargement de l'aperçu après enregistrement
   const [copied, setCopied] = useState(false)
+  // Domaine perso (offre Signature)
+  const [domaine, setDomaine] = useState('')
+  const [domSaved, setDomSaved] = useState<string | null>(null)
+  const [domStatus, setDomStatus] = useState<{ verified: boolean; served: boolean; records: { type: string; name: string; value: string }[] } | null>(null)
+  const [domBusy, setDomBusy] = useState(false)
+  const [domMsg, setDomMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
   const [siteContact, setSiteContact] = useState(true)
   const [genSite, setGenSite] = useState(false)
   const [siteContenu, setSiteContenu] = useState<SiteContenu | null>(null)
@@ -115,6 +121,7 @@ export default function ProfilPage() {
       // niveau de site borné par la formule (on ne propose jamais un niveau non inclus)
       setSiteActive(a.site_active === true); setSiteTier(Math.min([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : max, max) as number); setSiteContact(a.site_contact_integre !== false)
       setSiteContenu(a.site_contenu && typeof a.site_contenu === 'object' ? { ...CONTENU_VIDE, ...(a.site_contenu as Partial<SiteContenu>), mots_cles: Array.isArray((a.site_contenu as SiteContenu).mots_cles) ? (a.site_contenu as SiteContenu).mots_cles : [] } : null)
+      if (a.domaine) { setDomSaved(a.domaine); setDomaine(a.domaine); refreshDomaine() }
       setReady(true)
     })
   }, [router])
@@ -127,6 +134,40 @@ export default function ProfilPage() {
   function toggleSection(id: SectionId) { if (FIXED.includes(id)) return; setLayout((prev) => prev.map((s) => (s.id === id ? { ...s, on: !s.on } : s))) }
   function moveSection(i: number, dir: -1 | 1) { setLayout((prev) => { const j = i + dir; if (j < 0 || j >= prev.length) return prev; const n = [...prev]; const t = n[i]; n[i] = n[j]; n[j] = t; return n }) }
   async function copierLien() { try { await navigator.clipboard.writeText(`https://prestiapp.fr/site/${slug}`); setCopied(true); setTimeout(() => setCopied(false), 1800) } catch { setMsg({ type: 'err', text: 'Copie impossible — sélectionnez le lien à la main.' }) } }
+
+  async function authToken() { const { data } = await supabase.auth.getSession(); return data.session?.access_token }
+  async function refreshDomaine() {
+    setDomBusy(true); setDomMsg(null)
+    try {
+      const t = await authToken()
+      const res = await fetch('/api/domain', { headers: { Authorization: `Bearer ${t}` } })
+      const d = await res.json().catch(() => ({}))
+      if (res.ok) { setDomSaved(d.domaine ?? null); setDomStatus(d.status ?? null); if (d.domaine) setDomaine(d.domaine) }
+    } catch { /* silencieux */ } finally { setDomBusy(false) }
+  }
+  async function connecterDomaine() {
+    const v = domaine.trim()
+    if (!v || domBusy) return
+    setDomBusy(true); setDomMsg(null)
+    try {
+      const t = await authToken()
+      const res = await fetch('/api/domain', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` }, body: JSON.stringify({ domaine: v }) })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) { setDomMsg({ type: 'err', text: d.error ?? 'Connexion impossible.' }); return }
+      setDomSaved(d.domaine); setDomStatus(d.status); setDomaine(d.domaine)
+      setDomMsg({ type: 'ok', text: d.status?.served ? 'Domaine connecté et actif ✅' : 'Domaine enregistré. Ajoutez les enregistrements DNS ci-dessous, puis cliquez « Vérifier ».' })
+    } catch { setDomMsg({ type: 'err', text: 'Connexion interrompue.' }) } finally { setDomBusy(false) }
+  }
+  async function retirerDomaine() {
+    if (domBusy) return
+    setDomBusy(true); setDomMsg(null)
+    try {
+      const t = await authToken()
+      await fetch('/api/domain', { method: 'DELETE', headers: { Authorization: `Bearer ${t}` } })
+      setDomSaved(null); setDomStatus(null); setDomaine('')
+      setDomMsg({ type: 'ok', text: 'Domaine retiré.' })
+    } catch { /* silencieux */ } finally { setDomBusy(false) }
+  }
 
   async function save() {
     setSaving(true); setMsg(null)
@@ -447,6 +488,49 @@ export default function ProfilPage() {
               </div>
             </div>
           )}
+
+          {/* Domaine personnalisé — offre Signature (niveau 3) */}
+          {siteMax >= 3 ? (
+            <div className="site-domain">
+              <div className="site-domain-h">
+                <b>Votre nom de domaine</b>
+                <span className="muted">Branchez votre propre adresse (ex : mon-entreprise.fr). Inclus dans l’offre Signature.</span>
+              </div>
+              <div className="site-domain-row">
+                <input value={domaine} onChange={(e) => setDomaine(e.target.value)} placeholder="mon-entreprise.fr" spellCheck={false} disabled={domBusy} />
+                {domSaved ? (
+                  <button type="button" className="btn btn--ghost" style={{ width: 'auto' }} onClick={refreshDomaine} disabled={domBusy}>{domBusy ? '…' : 'Vérifier'}</button>
+                ) : (
+                  <button type="button" className="btn btn--primary" style={{ width: 'auto' }} onClick={connecterDomaine} disabled={domBusy || !domaine.trim()}>{domBusy ? '…' : 'Connecter'}</button>
+                )}
+              </div>
+              {domMsg ? <p className={`muted${domMsg.type === 'err' ? ' dom-err' : ''}`} style={{ margin: '.5rem 0 0', fontSize: '.85rem' }}>{domMsg.text}</p> : null}
+
+              {domSaved && domStatus ? (
+                <div className="site-domain-status">
+                  <span className={`dom-badge ${domStatus.served ? 'ok' : 'wait'}`}>
+                    <span className="pdot" />{domStatus.served ? 'Actif — votre site est servi sur ce domaine' : 'En attente de la configuration DNS'}
+                  </span>
+                  {!domStatus.served ? (
+                    <>
+                      <p className="muted" style={{ margin: '.6rem 0 .4rem', fontSize: '.85rem' }}>Chez votre hébergeur (OVH, Ionos, Gandi…), ajoutez :</p>
+                      <div className="dom-records">
+                        {domStatus.records.map((r, i) => (
+                          <div className="dom-rec" key={i}>
+                            <span className="dom-rec-type">{r.type}</span>
+                            <span className="dom-rec-name"><small>Nom</small>{r.name}</span>
+                            <span className="dom-rec-val"><small>Valeur</small>{r.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="muted" style={{ margin: '.5rem 0 0', fontSize: '.78rem' }}>La propagation DNS peut prendre de quelques minutes à quelques heures. Cliquez « Vérifier » ensuite.</p>
+                    </>
+                  ) : null}
+                  <button type="button" className="dom-remove" onClick={retirerDomaine} disabled={domBusy}>Retirer ce domaine</button>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         {/* Zone dangereuse — droit à l'effacement (RGPD) */}
