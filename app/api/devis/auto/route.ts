@@ -63,7 +63,8 @@ export async function POST(req: Request) {
     const { data: devis, error: dErr } = await supabaseAdmin
       .from('devis')
       .insert({
-        artisan_id: uid, numero, statut: 'brouillon', validite_jours: 90, remise_pct: 0, acompte_pct: 30,
+        artisan_id: uid, lead_id: leadId, // rattache le devis à SA conversation (carte §A3)
+        numero, statut: 'brouillon', validite_jours: 90, remise_pct: 0, acompte_pct: 30,
         objet: `${art.metier || 'Travaux'} — ${lead.nom_prospect || 'client'}`.slice(0, 300),
         notes: result.note?.slice(0, 4000) || null,
         client_nom: (lead.nom_prospect || '').slice(0, 160) || null,

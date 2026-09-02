@@ -17,6 +17,12 @@ export type Msg = {
   etat?: 'envoi' | 'envoye' | 'echec'
 }
 type Conv = { token: string; titre: string; ts: number }
+// Carte Devis (§A3) : posée dans la conversation, acceptable en un clic.
+type Devis = {
+  id: string; numero: string | null; objet: string | null; total_ttc: number | null
+  statut: string | null; accepte_le: string | null
+  lignes: { designation: string | null; quantite: number | null; unite: string | null }[]
+}
 type Props = {
   slug: string
   artisanNom: string
@@ -45,6 +51,10 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
   const [website, setWebsite] = useState('') // honeypot
   const [side, setSide] = useState(false)    // tiroir mobile
   const [err, setErr] = useState<string | null>(null)
+  const [devis, setDevis] = useState<Devis | null>(null)
+  const [devisBusy, setDevisBusy] = useState(false)
+  const [modifOuvert, setModifOuvert] = useState(false)
+  const [modifTexte, setModifTexte] = useState('')
   const threadRef = useRef<HTMLDivElement>(null)
   const taRef = useRef<HTMLTextAreaElement>(null)
   const KEY = `presti-convs-${slug}`
@@ -60,12 +70,13 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
   }, [slug])
 
   const ouvrir = useCallback(async (t: string) => {
-    setToken(t); setNeedContact(false); setErr(null); setSide(false)
+    setToken(t); setNeedContact(false); setErr(null); setSide(false); setDevis(null); setModifOuvert(false)
     try {
       const res = await fetch(`/api/conversation?token=${encodeURIComponent(t)}`)
       if (!res.ok) { setMsgs([]); return }
       const d = await res.json()
       setMsgs(Array.isArray(d.messages) ? d.messages.map((m: Msg, i: number) => ({ id: `s${i}`, sens: m.sens, contenu: m.contenu, type: m.type, etat: 'envoye' as const })) : [])
+      setDevis(d.devis ?? null)
     } catch { setMsgs([]) }
   }, [])
 
@@ -86,7 +97,31 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
   useEffect(() => { const ta = taRef.current; if (ta) { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 168) + 'px' } }, [draft])
 
   function saveConvs(next: Conv[]) { setConvs(next); try { localStorage.setItem(KEY, JSON.stringify(next)) } catch { /* ignore */ } }
-  function nouvelle() { setToken(null); setMsgs([]); setNeedContact(false); setDraft(''); setPhotos([]); setErr(null); setSide(false); taRef.current?.focus() }
+  function nouvelle() { setToken(null); setMsgs([]); setNeedContact(false); setDraft(''); setPhotos([]); setErr(null); setSide(false); setDevis(null); setModifOuvert(false); taRef.current?.focus() }
+
+  // ── Carte Devis : accepter (horodaté côté serveur) ou demander une modification.
+  async function repondreDevis(action: 'accepter' | 'modifier') {
+    if (!token || devisBusy) return
+    if (action === 'modifier' && !modifOuvert) { setModifOuvert(true); return }
+    setDevisBusy(true); setErr(null)
+    try {
+      const res = await fetch('/api/conversation/devis', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, action, message: action === 'modifier' ? modifTexte : undefined, website }),
+      })
+      const d = await res.json().catch(() => ({}))
+      setDevisBusy(false)
+      if (!res.ok) { setErr(d.error ?? 'Action impossible.') ; return }
+      if (action === 'accepter') {
+        setDevis((v) => (v ? { ...v, statut: 'accepte', accepte_le: new Date().toISOString() } : v))
+        setMsgs((m) => [...m, { id: `da${Date.now()}`, sens: 'out', type: 'manuel', etat: 'envoye', contenu: `Merci ! Votre acceptation est enregistrée et horodatée. ${artisanNom} vous recontacte pour la suite.` }])
+      } else {
+        setModifOuvert(false)
+        setMsgs((m) => [...m, { id: `dm${Date.now()}`, sens: 'in', etat: 'envoye', contenu: modifTexte || 'Pouvez-vous modifier le devis ?' }])
+        setModifTexte('')
+      }
+    } catch { setDevisBusy(false); setErr('Connexion interrompue.') }
+  }
 
   async function ajouterPhotos(e: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []); e.target.value = ''
@@ -243,6 +278,37 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
               </div>
             </div>
           ))}
+
+          {/* Carte Devis (§A3) : l'objet est posé DANS la conversation, pas promis pour plus tard. */}
+          {devis ? (
+            <div className={`pchat-carte${devis.statut === 'accepte' ? ' ok' : ''}`}>
+              <span className="pchat-carte-k">Devis{devis.numero ? ` ${devis.numero}` : ''}</span>
+              <b className="pchat-carte-t">{Number(devis.total_ttc || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} € TTC</b>
+              {devis.objet ? <span className="pchat-carte-o">{devis.objet}</span> : null}
+              {devis.lignes?.length ? (
+                <ul className="pchat-carte-l">
+                  {devis.lignes.map((l, i) => <li key={i}>{l.designation}{l.quantite ? ` · ${l.quantite} ${l.unite || ''}` : ''}</li>)}
+                </ul>
+              ) : null}
+              {devis.statut === 'accepte' ? (
+                <span className="pchat-carte-ok">✅ Accepté{devis.accepte_le ? ` le ${new Date(devis.accepte_le).toLocaleDateString('fr-FR')}` : ''} — {artisanNom} revient vers vous pour la suite.</span>
+              ) : (
+                <>
+                  <div className="pchat-carte-act">
+                    <button type="button" onClick={() => repondreDevis('accepter')} disabled={devisBusy}>{devisBusy ? '…' : 'Accepter le devis'}</button>
+                    <button type="button" className="g" onClick={() => repondreDevis('modifier')} disabled={devisBusy}>Demander une modification</button>
+                  </div>
+                  {modifOuvert ? (
+                    <div className="pchat-carte-modif">
+                      <textarea rows={2} value={modifTexte} onChange={(e) => setModifTexte(e.target.value)} placeholder="Qu’aimeriez-vous changer ?" />
+                      <button type="button" onClick={() => repondreDevis('modifier')} disabled={devisBusy}>Envoyer ma demande</button>
+                    </div>
+                  ) : null}
+                  <small className="pchat-carte-note">En acceptant, vous validez ce devis. Votre accord est horodaté et conservé avec l’échange.</small>
+                </>
+              )}
+            </div>
+          ) : null}
 
           {thinking ? (
             <div className="pchat-row them"><Ava /><div className="pchat-bub typing"><span /><span /><span /></div></div>

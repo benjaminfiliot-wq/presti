@@ -396,3 +396,24 @@ html.lenis,html.lenis body{height:auto}
   .pchat-bub{max-width:86%}
 }
 @media(max-width:860px) and (prefers-reduced-motion:reduce){.pchat-side{transition:none}}
+
+/* ── Carte Devis dans la conversation (v4 §A3) ── */
+.pchat-carte{align-self:flex-start;max-width:min(92%,520px);display:flex;flex-direction:column;gap:.35rem;padding:1rem 1.1rem;border:1.5px solid color-mix(in srgb,var(--pc) 34%,transparent);border-radius:18px;background:color-mix(in srgb,var(--pc) 6%,var(--ps))}
+.pchat-carte.ok{border-color:color-mix(in srgb,#2E9E6B 45%,transparent);background:color-mix(in srgb,#2E9E6B 8%,var(--ps))}
+.pchat-carte-k{font-family:var(--pfm);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--pc2)}
+.pchat-carte.ok .pchat-carte-k{color:#2E9E6B}
+.pchat-carte-t{font-family:var(--pfd);font-size:1.7rem;line-height:1.1;color:var(--pi)}
+.pchat-carte-o{font-size:.9rem;color:var(--pi2)}
+.pchat-carte-l{margin:.4rem 0 .1rem;padding-left:1.1rem;display:flex;flex-direction:column;gap:.15rem}
+.pchat-carte-l li{font-size:.86rem;color:var(--pi2);line-height:1.45}
+.pchat-carte-act{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+.pchat-carte-act button{width:auto;margin:0;padding:.6rem 1rem;border:none;border-radius:11px;font-size:.92rem;font-weight:700;cursor:pointer;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;transition:transform .12s,opacity .15s}
+.pchat-carte-act button.g{background:none;border:1.5px solid var(--pl);color:var(--pi2);font-weight:600}
+.pchat-carte-act button:hover:not(:disabled){transform:translateY(-1px)}
+.pchat-carte-act button:disabled{opacity:.5;cursor:default}
+.pchat-carte-modif{display:flex;flex-direction:column;gap:.45rem;margin-top:.6rem}
+.pchat-carte-modif textarea{width:100%;background:var(--pb);border:1.5px solid var(--pl);border-radius:11px;padding:.6rem .8rem;font-size:.92rem;font-family:inherit;color:var(--pi);resize:vertical}
+.pchat-carte-modif textarea:focus{outline:none;border-color:var(--pc)}
+.pchat-carte-modif button{width:auto;margin:0;align-self:flex-start;padding:.5rem .9rem;border:none;border-radius:10px;background:var(--pi);color:var(--pb);font-size:.88rem;font-weight:650;cursor:pointer}
+.pchat-carte-ok{font-size:.9rem;font-weight:600;color:#2E9E6B;margin-top:.3rem}
+.pchat-carte-note{font-size:.72rem;color:var(--pf);margin-top:.5rem;line-height:1.4}

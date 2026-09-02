@@ -61,11 +61,30 @@ export async function GET(req: Request) {
       .maybeSingle()
 
     const history = await loadHistory(lead.id)
+
+    // Carte Devis (§A3) : on n'expose QUE des devis réellement envoyés par l'artisan —
+    // jamais un brouillon, qui n'a pas vocation à être vu par le client.
+    const { data: dv } = await supabaseAdmin
+      .from('devis')
+      .select('id, numero, objet, total_ttc, statut, accepte_le')
+      .eq('lead_id', lead.id)
+      .in('statut', ['envoye', 'accepte', 'refuse'])
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    let lignes: { designation: string | null; quantite: number | null; unite: string | null }[] = []
+    if (dv) {
+      const { data } = await supabaseAdmin
+        .from('devis_lignes').select('designation, quantite, unite').eq('devis_id', dv.id).order('ordre').limit(3)
+      lignes = data ?? []
+    }
+
     return NextResponse.json({
       ok: true,
       artisan: { nom: artisan?.nom ?? null, metier: artisan?.metier ?? null, avatar: artisan?.logo_url || artisan?.photo_url || null },
       nom_prospect: lead.nom_prospect,
-      messages: history.map((m) => ({ sens: m.sens, contenu: m.contenu, sent_at: m.sent_at })),
+      messages: history.map((m) => ({ sens: m.sens, type: m.type, contenu: m.contenu, sent_at: m.sent_at })),
+      devis: dv ? { ...dv, lignes } : null,
     })
   } catch (e) {
     console.error('[conversation] GET:', e)
