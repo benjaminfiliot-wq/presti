@@ -1,3 +1,4 @@
+import '@/app/globals.css'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 

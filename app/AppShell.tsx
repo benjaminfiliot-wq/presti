@@ -1,5 +1,6 @@
 'use client'
 
+import '@/app/globals.css' // UI de l'espace connecté (toutes les pages console passent par AppShell)
 import { useEffect, useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'

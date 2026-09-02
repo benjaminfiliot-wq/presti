@@ -1,3 +1,4 @@
+import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
 
 export const metadata = { title: 'Politique de confidentialité' }

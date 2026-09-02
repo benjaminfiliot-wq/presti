@@ -1,3 +1,4 @@
+import '@/app/globals.css'
 import HeroApp from '@/app/HeroApp'
 import Motion from '@/app/Motion'
 import FeatureShowcase from '@/app/FeatureShowcase'

@@ -1,4 +1,5 @@
-import './globals.css'
+import './base.css' // fondation seule (reset + tokens). L'UI console/landing (globals.css) est
+                    // importée par AppShell + les pages publiques → /site et /l ne la chargent JAMAIS.
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
 import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono, Fraunces } from 'next/font/google'
