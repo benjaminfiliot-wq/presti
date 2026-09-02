@@ -2,9 +2,11 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type { SiteContenu } from '@/lib/ai'
+import { Fragment } from 'react'
 import Image from 'next/image'
 import SiteMotion from './SiteMotion'
 import { siteMaxForPlan } from '@/lib/plans'
+import { resolveLayout, type SectionId } from '@/lib/siteLayout'
 
 type Service = { nom?: string; description?: string }
 type Realisation = { image?: string; titre?: string; specialite?: string }
@@ -16,13 +18,13 @@ type Artisan = {
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
   tel_public: string | null; email_public: string | null
   site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
-  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null; site_seo: boolean | null
+  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null; site_seo: boolean | null; site_layout: unknown
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo')
+    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -130,28 +132,11 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   ])).slice(0, 4)
   const manifesteTxt = c?.manifeste || c?.hero_accroche || (a.metier ? `${a.metier}, avec exigence.` : 'Un travail fait pour durer.')
 
-  return (
-    <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent }} data-tier={tier} data-theme={theme}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
-      <SiteMotion />
-
-      {/* NAV */}
-      <header className="site-nav">
-        <a className="site-brand" href="#top">
-          <span className="site-mark">{brand
-            // eslint-disable-next-line @next/next/no-img-element
-            ? <img src={brand} alt="" /> : <b>{initials(a.nom)}</b>}</span>
-          <span>{a.nom}</span>
-        </a>
-        <nav className="site-links">
-          {showReal ? <a href="#realisations">Réalisations</a> : null}
-          {services.length > 0 ? <a href="#services">Prestations</a> : null}
-          {showAbout ? <a href="#apropos">À propos</a> : null}
-          <a className="site-nav-cta" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis</a>
-        </nav>
-      </header>
-
-      {/* HERO */}
+  // Composition pilotée par les données : ordre + activation des sections (défaut = dérivé du niveau).
+  const layout = resolveLayout(a.site_layout, tier as 1 | 2 | 3)
+  // Chaque section rend son JSX existant (conditions de contenu conservées → rendu identique).
+  const sectionNodes: Partial<Record<SectionId, ReactNode>> = {
+      hero: (
       <section className={`site-hero${tier === 3 && heroShot ? ' site-dark' : ''}`} id="top">
         {tier === 3 && heroShot ? (
           <div className="site-hero-media" aria-hidden="true">
@@ -178,19 +163,16 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           ) : null}
         </div>
       </section>
-
-      {/* CONFIANCE (tier 2+) */}
-      {tier >= 2 ? (
+      ),
+      trust: tier >= 2 ? (
         <section className="site-strip site-reveal">
           <div><b>Devis gratuit</b><span>Chiffrage clair, sans surprise</span></div>
           <div><b>Réponse rapide</b><span>On revient vers vous très vite</span></div>
           <div><b>Travail assuré</b><span>Sérieux engagé sur chaque chantier</span></div>
           {zone ? <div><b>Sur votre secteur</b><span>{zone}</span></div> : <div><b>Sur-mesure</b><span>Adapté à votre projet</span></div>}
         </section>
-      ) : null}
-
-      {/* MOTS GÉANTS (inspiration cinématique « FIND ») — les grands savoir-faire */}
-      {tier === 3 && bigWords.length >= 2 ? (
+      ) : null,
+      words: tier === 3 && bigWords.length >= 2 ? (
         <section className="site-manifest site-dark" id="savoir-faire">
           <span className="site-kick site-reveal">Le savoir-faire</span>
           <div className="site-words">
@@ -203,10 +185,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             ))}
           </div>
         </section>
-      ) : null}
-
-      {/* BLOCS ÉDITORIAUX ALTERNÉS (inspiration « DRIP ») — chaque prestation en grand, avec photo */}
-      {tier === 3 && services.length >= 2 && realisations.length >= 2 ? (
+      ) : null,
+      features: tier === 3 && services.length >= 2 && realisations.length >= 2 ? (
         <section className="site-features">
           {services.slice(0, Math.min(3, realisations.length)).map((s, i) => (
             <div className={`site-feature${i % 2 ? ' alt' : ''}`} key={i}>
@@ -222,10 +202,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             </div>
           ))}
         </section>
-      ) : null}
-
-      {/* MANIFESTE plein-cadre cinématique (image parallax + grande phrase) */}
-      {tier === 3 && (realisations[1]?.image || heroShot) ? (
+      ) : null,
+      manifesto: tier === 3 && (realisations[1]?.image || heroShot) ? (
         <section className="site-manifesto">
           <div className="site-manifesto-media" aria-hidden="true">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -234,10 +212,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           </div>
           <p className="site-manifesto-t site-reveal">{manifesteTxt}</p>
         </section>
-      ) : null}
-
-      {/* RÉALISATIONS (tier 2+) */}
-      {showReal ? (
+      ) : null,
+      gallery: showReal ? (
         <section className="site-block" id="realisations">
           <div className="site-head site-reveal"><span className="site-kick">Réalisations</span><h2>Le travail parle de lui-même</h2>{c?.realisations_intro ? <p className="site-sub">{c.realisations_intro}</p> : null}</div>
           <div className={`site-gallery${tier === 3 ? ' cine' : ''}`}>
@@ -251,10 +227,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             ))}
           </div>
         </section>
-      ) : null}
-
-      {/* PRESTATIONS */}
-      {services.length > 0 ? (
+      ) : null,
+      services: services.length > 0 ? (
         <section className="site-block" id="services">
           <div className="site-head site-reveal"><span className="site-kick">Prestations</span><h2>Ce que je réalise</h2>{c?.prestations_intro ? <p className="site-sub">{c.prestations_intro}</p> : null}</div>
           <div className="site-services">
@@ -266,10 +240,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             ))}
           </div>
         </section>
-      ) : null}
-
-      {/* À PROPOS */}
-      {showAbout ? (
+      ) : null,
+      about: showAbout ? (
         <section className="site-block site-about site-dark" id="apropos">
           <div className="site-about-in site-reveal">
             <span className="site-kick">À propos</span>
@@ -282,11 +254,11 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             ) : null}
           </div>
         </section>
-      ) : null}
-
-      {/* CONTACT — panneau de clôture. Le site NE contient PAS la plateforme :
-          il présente tout, puis renvoie vers l'espace de contact (la plateforme). */}
-      <section className="site-cta-block site-dark site-reveal" id="contact">
+      ) : null,
+      // CONTACT — panneau de clôture. Le site NE contient PAS la plateforme : il présente tout,
+      // puis renvoie vers l'espace de contact (la plateforme).
+      contact: (
+        <section className="site-cta-block site-dark site-reveal" id="contact">
         <h2>{c?.cta_titre || 'Parlons de votre projet'}</h2>
         <p>{c?.cta_texte || 'Décrivez votre besoin — réponse rapide, échange direct, devis clair.'}</p>
         <a className="site-btn p lg" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>
@@ -301,6 +273,32 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           </div>
         ) : null}
       </section>
+      ),
+  }
+
+  return (
+    <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent }} data-tier={tier} data-theme={theme}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
+      <SiteMotion />
+
+      {/* NAV — toujours présente, hors composition */}
+      <header className="site-nav">
+        <a className="site-brand" href="#top">
+          <span className="site-mark">{brand
+            // eslint-disable-next-line @next/next/no-img-element
+            ? <img src={brand} alt="" /> : <b>{initials(a.nom)}</b>}</span>
+          <span>{a.nom}</span>
+        </a>
+        <nav className="site-links">
+          {showReal ? <a href="#realisations">Réalisations</a> : null}
+          {services.length > 0 ? <a href="#services">Prestations</a> : null}
+          {showAbout ? <a href="#apropos">À propos</a> : null}
+          <a className="site-nav-cta" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis</a>
+        </nav>
+      </header>
+
+      {/* SECTIONS — dans l'ordre de la composition (site_layout), gating par formule côté serveur */}
+      {layout.sections.map((s) => { const n = sectionNodes[s.id]; return n ? <Fragment key={s.id}>{n}</Fragment> : null })}
 
       <footer className="site-foot">
         <span className="site-foot-b">{a.nom}</span>
