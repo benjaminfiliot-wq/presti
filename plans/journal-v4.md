@@ -25,7 +25,7 @@
 - preuve : 7/7 PASS en prod — `/p` sert la plateforme, `/l` redirige 308 vers `/p`, un ancien lien aboutit, le site pointe sur `/p`, plus aucun `/l` rendu, `/p` embarquable (SAMEORIGIN).
 - suivant : [B1-2] interface de conversation (§A2) — colonne conversations, fil, composeur, streaming SSE, bandeau de transparence IA.
 
-## [B1-2] Plateforme = application de conversation (§A2) — 22:47 → 23:22 (35 min) — ✅ terminé
+## [B1-2] Plateforme = application de conversation (§A2) — 22:47 → 22:54 (7 min) — ✅ terminé
 - fait : `/p/[slug]` n'est plus une page marketing. Nouveau `PlatChat.tsx` — colonne des conversations (persistées en local, tiroir sur mobile + scrim), fil bulles/photos, composeur (Entrée envoie, Maj+Entrée saut de ligne, pièce jointe, auto-grow), **états par message** (envoi → envoyé → échec + **retry visible**), amorces d'ouverture bâties sur les **vraies prestations**, mention « X vous répond directement » quand l'humain reprend, **bandeau de transparence IA permanent**. Capture des coordonnées après la 1re réponse.
 - nettoyage : `LeadForm.tsx` et `PlatMotion.tsx` supprimés (code mort) → Lenis n'est plus chargé sur la plateforme, **First Load 181 → 170 kB**.
 - **fix white-label trouvé en vérifiant** : `openGraph.url` héritait de `https://prestiapp.fr` (la landing Presti) → un partage de la plateforme d'un artisan pointait sur Presti. Écrasé par l'URL de la plateforme.
@@ -33,3 +33,10 @@
 - preuve : **15/15 PASS en prod** (`scripts/plateforme-e2e.mjs`, désormais test permanent §15) + captures desktop/mobile. Reste « presti » uniquement dans le domaine d'hébergement (exception documentée, disparaît avec un domaine perso).
 - dette notée : `plat.css` contient encore les styles de l'ancienne page marketing (non utilisés) → à élaguer (budget §13).
 - suivant : [B1-3] streaming SSE de la réponse IA (§A2) puis [B2] cartes riches + panneau de contrôle IA (§A3/A4).
+
+## [B1-3] Streaming SSE de la réponse IA (§A2) — 22:54 → 23:06 (12 min) — ✅ terminé
+- fait : `generateConversationReply` accepte un callback `onDelta` (via `client.messages.stream`) — les blocs de raisonnement ne sont JAMAIS transmis au prospect. Nouvelle route `POST /api/conversation/stream` avec **les mêmes garde-fous** que la route classique (jeton secret, honeypot, anti-flood 6/5 min, plafond 60 tours, crédits, mode manuel, mode pause) ; erreurs en JSON *avant* le flux, puis SSE (`no-transform`, `X-Accel-Buffering: no`). Client : lecture du flux, bulle qui se remplit, bulle vide retirée si l'IA n'a rien produit. La route non-streamée reste le repli.
+- build : OK · typecheck : OK · déployé : 5c39059
+- preuve : **7/7 PASS en prod** — content-type `text/event-stream`, **6 fragments** (donc pas un bloc unique), **1er fragment à 2,5 s** au lieu d'attendre toute la génération, et la réponse diffusée est exactement celle persistée en base.
+- limite honnête : le tout 1er message passe encore par `/api/leads` (non streamé) — à basculer quand le devis auto arrivera (B2).
+- suivant : [B2] cartes riches dans le fil (devis / facture / RDV) + panneau de contrôle IA `plateforme_config` (§A3/A4).
