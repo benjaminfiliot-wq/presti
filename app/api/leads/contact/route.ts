@@ -56,6 +56,17 @@ export async function POST(req: Request) {
           replyTo: contact.includes('@') ? contact : undefined,
         }).catch(() => {})
       }
+      // Accusé de réception au prospect (marque de l'artisan), maintenant qu'on a son email.
+      if (contact.includes('@')) {
+        const prenom = (nom_prospect || '').trim().split(/\s+/)[0]
+        await sendEmail({
+          to: contact,
+          fromName: artisan?.nom || undefined,
+          subject: `Bien reçu — ${artisan?.nom || 'votre demande'}`,
+          text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci ! ${artisan?.nom || 'Nous'} a bien vos coordonnées et revient vers vous très vite pour la suite.\n\n${lead.message ? `Votre besoin : ${lead.message}\n\n` : ''}À très bientôt.`,
+          replyTo: artisan?.email ?? undefined,
+        }).catch(() => {})
+      }
       // Relances J+2/J+5/J+10 seulement si le lead a bien reçu une réponse et n'en a pas déjà.
       if (lead.statut === 'repondu') {
         const { count } = await supabaseAdmin

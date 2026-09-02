@@ -1,9 +1,15 @@
 // Envoi d'emails transactionnels via Resend (appel HTTP direct, sans dépendance).
-// Expéditeur = domaine prestiapp.fr (à VÉRIFIER dans Resend en posant les DNS chez OVH :
-// TXT resend._domainkey, MX send, TXT send/SPF). Tant que le domaine n'est pas "verified",
-// Resend refuse l'envoi vers des adresses tierces — dès qu'il l'est, les emails partent aux vrais prospects.
+// Domaine prestiapp.fr VÉRIFIÉ dans Resend (envoi activé). Le nom d'expéditeur est celui de
+// l'ARTISAN (white-label : le prospect voit sa marque, pas « Presti »), l'adresse reste
+// contact@prestiapp.fr (seul domaine vérifié) et reply_to pointe vers l'email de l'artisan.
 const RESEND_API_KEY = process.env.RESEND_API_KEY
-const FROM = 'Presti <contact@prestiapp.fr>'
+const FROM_ADDR = 'contact@prestiapp.fr'
+
+// Nettoie un nom d'affichage pour l'en-tête From (pas de retour ligne, guillemets, chevrons).
+function fromHeader(name?: string | null): string {
+  const clean = (name || 'Presti').replace(/[\r\n<>"]/g, '').trim().slice(0, 70) || 'Presti'
+  return `${clean} <${FROM_ADDR}>`
+}
 
 type SendResult = { ok: boolean; id?: string; error?: string }
 
@@ -12,6 +18,7 @@ export async function sendEmail(opts: {
   subject: string
   text: string
   replyTo?: string
+  fromName?: string // marque de l'artisan (défaut : Presti)
   attachments?: { filename: string; content: string }[]
 }): Promise<SendResult> {
   if (!RESEND_API_KEY) return { ok: false, error: 'RESEND_API_KEY manquante' }
@@ -24,7 +31,7 @@ export async function sendEmail(opts: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: FROM,
+        from: fromHeader(opts.fromName),
         to: [opts.to],
         subject: opts.subject,
         text: opts.text,

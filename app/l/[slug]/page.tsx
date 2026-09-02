@@ -15,13 +15,13 @@ type Artisan = {
   bio: string | null; services: Service[] | null; zone_intervention: string | null
   photo_url: string | null; logo_url: string | null; horaires: string | null; plateforme_active: boolean | null
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
-  tel_public: string | null; email_public: string | null; theme: string | null
+  tel_public: string | null; email_public: string | null; theme: string | null; leads_pause: boolean | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, photo_url, logo_url, horaires, plateforme_active, accent, realisations, reseaux, tel_public, email_public, theme')
+    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, photo_url, logo_url, horaires, plateforme_active, accent, realisations, reseaux, tel_public, email_public, theme, leads_pause')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -142,7 +142,7 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
           <a className="plat-btn plat-btn--p" href="#contact">Décrire mon besoin {I.arrow}</a>
           {services.length > 0 ? <a className="plat-btn plat-btn--g" href="#prestations">Voir mes prestations</a> : null}
         </div>
-        <div className="plat-live plat-reveal"><span className="plat-live-dot" />Répond en moins d&apos;une minute</div>
+        <div className={`plat-live plat-reveal${a.leads_pause ? ' paused' : ''}`}><span className="plat-live-dot" />{a.leads_pause ? 'Réponses momentanément suspendues' : 'Répond en moins d’une minute'}</div>
       </section>
 
       {/* CONFIANCE — éléments réels et vérifiables (délai mesuré, zone, dispo, contact) */}
@@ -211,7 +211,8 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
           </div>
         ) : null}
         <div className="plat-card plat-form plat-reveal">
-          <LeadForm slug={a.slug as string} artisanNom={a.nom} avatar={avatar} />
+          {a.leads_pause ? <p className="plat-pause-note">{I.clock} {a.nom || 'L’artisan'} suspend momentanément ses réponses. Laissez votre demande : elle sera bien enregistrée et traitée dès la reprise.</p> : null}
+          <LeadForm slug={a.slug as string} artisanNom={a.nom} avatar={avatar} paused={a.leads_pause === true} />
         </div>
       </section>
 

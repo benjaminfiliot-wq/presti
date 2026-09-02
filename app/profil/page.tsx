@@ -74,6 +74,7 @@ export default function ProfilPage() {
   const [telPublic, setTelPublic] = useState('')
   const [emailPublic, setEmailPublic] = useState('')
   const [reponseAuto, setReponseAuto] = useState(true)
+  const [leadsPause, setLeadsPause] = useState(false)
   const [siteActive, setSiteActive] = useState(false)
   const [siteTier, setSiteTier] = useState(3)
   const [siteMax, setSiteMax] = useState<1 | 2 | 3>(3) // niveau de site max inclus dans la formule
@@ -111,7 +112,7 @@ export default function ProfilPage() {
       setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '' })).filter((r) => r.image) : [])
       setAvantApres(Array.isArray(a.avant_apres) ? (a.avant_apres as AvantApres[]).map((p) => ({ avant: p.avant ?? '', apres: p.apres ?? '', titre: p.titre ?? '' })) : [])
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
-      setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setReponseAuto(a.reponse_auto !== false)
+      setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setReponseAuto(a.reponse_auto !== false); setLeadsPause(a.leads_pause === true)
       const max = siteMaxForPlan(a.plan); setSiteMax(max); setPlan(a.plan ?? 'gratuit')
       // Composition : depuis site_layout stocké, sinon dérivée du niveau ; on complète avec les
       // sections manquantes (désactivées) pour que l'artisan puisse toutes les gérer.
@@ -202,6 +203,7 @@ export default function ProfilPage() {
       tel_public: telPublic.trim().slice(0, 40) || null,
       email_public: emailPublic.trim().slice(0, 160) || null,
       reponse_auto: reponseAuto,
+      leads_pause: leadsPause,
       site_active: siteActive,
       site_tier: Math.min([1, 2, 3].includes(siteTier) ? siteTier : 3, siteMax),
       site_contact_integre: siteContact,
@@ -359,6 +361,10 @@ export default function ProfilPage() {
           <label className="prof-toggle">
             <input type="checkbox" checked={reponseAuto} onChange={(e) => setReponseAuto(e.target.checked)} />
             <span>Réponse <b>{reponseAuto ? 'automatique' : 'manuelle'}</b> {reponseAuto ? '— l’IA répond tout de suite, à votre place (vous gardez la main ensuite)' : '— vous répondez vous-même depuis vos messages (l’IA vous suggère un brouillon)'}</span>
+          </label>
+          <label className="prof-toggle" style={{ marginTop: '.7rem' }}>
+            <input type="checkbox" checked={leadsPause} onChange={(e) => setLeadsPause(e.target.checked)} />
+            <span>Demandes <b>{leadsPause ? 'en pause' : 'ouvertes'}</b> {leadsPause ? '— votre page enregistre les demandes mais n’envoie plus de réponse ni d’email (congés, surcharge). Rien n’est perdu.' : '— vous recevez et traitez les nouvelles demandes normalement'}</span>
           </label>
         </div>
 

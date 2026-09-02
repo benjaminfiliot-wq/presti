@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     // 1) Retrouver l'artisan à partir de son slug
     const { data: artisan, error: aErr } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto')
+      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause')
       .eq('slug', slug)
       .maybeSingle()
 
@@ -135,6 +135,15 @@ export async function POST(req: Request) {
       }
     }
 
+    // Mode PAUSE : l'artisan a suspendu l'accueil des demandes. Le lead est TOUJOURS sauvé
+    // (visible dans sa console à la reprise), mais aucune réponse IA ni email ne part.
+    if (artisan.leads_pause === true) {
+      if (message) {
+        await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
+      }
+      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, paused: true, reply: null })
+    }
+
     // 2bis) Anti-abus (I2) : on plafonne l'IA+email par artisan sur une fenêtre courte.
     // Au-delà, le lead est TOUJOURS sauvé (visible dashboard) mais on coupe le coûteux
     // (empêche l'amplification de coûts IA et le relais d'emails). Ne bloque jamais un vrai lead.
@@ -171,6 +180,17 @@ export async function POST(req: Request) {
           subject: `Nouveau contact — ${nom_prospect || contact}`,
           text: `Nouveau contact via votre page Presti (mode réponse manuelle).\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: typeof contact === 'string' && contact.includes('@') ? contact : undefined,
+        }).catch(() => {})
+      }
+      // Accusé de réception au prospect (marque de l'artisan) — même en mode manuel.
+      if (!deferContact && typeof contact === 'string' && contact.includes('@')) {
+        const prenom = (nom_prospect || '').trim().split(/\s+/)[0]
+        await sendEmail({
+          to: contact,
+          fromName: artisan.nom || undefined,
+          subject: `Bien reçu — ${artisan.nom || 'votre demande'}`,
+          text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci pour votre demande. ${artisan.nom || 'Nous'} l'a bien reçue et revient vers vous très vite.\n\n${message ? `Votre besoin : ${message}\n\n` : ''}À très bientôt.`,
+          replyTo: artisan.email ?? undefined,
         }).catch(() => {})
       }
       return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: null })
@@ -223,6 +243,7 @@ export async function POST(req: Request) {
         if (isEmail && !deferContact) {
           await sendEmail({
             to: contact,
+            fromName: artisan.nom || undefined,
             subject: `Votre demande — ${artisan.nom ?? 'Presti'}`,
             text: reply,
             replyTo: artisan.email ?? undefined,

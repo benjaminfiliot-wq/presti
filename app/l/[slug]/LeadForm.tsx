@@ -4,12 +4,12 @@ import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'r
 import { compressPhotoToDataUrl } from '@/lib/media'
 
 type Msg = { sens: 'in' | 'out'; contenu: string }
-type Props = { slug: string; artisanNom?: string | null; avatar?: string | null }
+type Props = { slug: string; artisanNom?: string | null; avatar?: string | null; paused?: boolean }
 
 const initials = (n?: string | null) =>
   (n || 'A').trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? '').join('') || 'A'
 
-export default function LeadForm({ slug, artisanNom, avatar }: Props) {
+export default function LeadForm({ slug, artisanNom, avatar, paused }: Props) {
   // Phase 1 (formulaire) → Phase 2 (conversation en direct).
   const [phase, setPhase] = useState<'form' | 'chat'>('form')
   const [nom, setNom] = useState('')
@@ -124,6 +124,7 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
       const seed: Msg[] = []
       if (message.trim()) seed.push({ sens: 'in', contenu: message.trim() })
       if (d.reply) seed.push({ sens: 'out', contenu: d.reply })
+      else if (d.paused) seed.push({ sens: 'out', contenu: `Votre demande est bien enregistrée${nom.trim() ? ', ' + nom.trim().split(/\s+/)[0] : ''} — ${artisanNom || 'votre artisan'} est momentanément indisponible et revient vers vous dès la reprise.` })
       else seed.push({ sens: 'out', contenu: `Bien reçu${nom.trim() ? ' ' + nom.trim().split(/\s+/)[0] : ''} ! ${artisanNom || 'Votre artisan'} a bien votre demande et vous répond au plus vite.` })
       setMsgs(seed)
       if (d.token) {
