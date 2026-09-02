@@ -40,3 +40,12 @@
 - preuve : **7/7 PASS en prod** — content-type `text/event-stream`, **6 fragments** (donc pas un bloc unique), **1er fragment à 2,5 s** au lieu d'attendre toute la génération, et la réponse diffusée est exactement celle persistée en base.
 - limite honnête : le tout 1er message passe encore par `/api/leads` (non streamé) — à basculer quand le devis auto arrivera (B2).
 - suivant : [B2] cartes riches dans le fil (devis / facture / RDV) + panneau de contrôle IA `plateforme_config` (§A3/A4).
+
+## [B2-1] Panneau de contrôle IA — socle serveur (§A4) — 23:00 → 23:20 (20 min) — ✅ terminé
+- fait : table `plateforme_config` (mig **0032**, RLS stricte par artisan) — mode de réponse, modèle, plage horaire, devis/facture auto, ton, périmètre de ce que l'IA peut/ne peut pas dire, mots d'escalade, plafond de messages. `lib/plateformeConfig` décide **côté serveur** ; la route de streaming applique mode + escalade + plafond + plage, et le ton alimente la persona.
+- **règle de non-régression tenue** : un artisan SANS ligne de config garde exactement son comportement actuel (dérivé de `reponse_auto`). Vérifié explicitement.
+- **bug trouvé par le test** : `dansLaPlage()` lisait `getHours()` — or le serveur tourne en **UTC**. Une plage « 8h–18h » réglée par l'artisan aurait été décalée de 1 à 2 h selon la saison. Corrigé : lecture de l'heure **Europe/Paris**.
+- build : OK · typecheck : OK · déployé : 4c45696
+- preuve : **7/7 PASS en prod** (`scripts/plateforme-config-e2e.mjs`, test permanent) — non-régression, manuelle, assistée, escalade (« fuite » coupe l'IA + alerte artisan), plafond, plage horaire, et RLS (un anonyme ne lit aucune config).
+- deux erreurs de MON test, corrigées (pas le produit) : l'upsert PostgREST *remplace* la ligne (colonnes omises → défaut) ; et 6 messages sur le même fil déclenchaient l'anti-flood.
+- suivant : [B2-2] l'écran « Ma plateforme → Intelligence » dans la console, puis [B2-3] les cartes riches (devis / facture / RDV) dans le fil.
