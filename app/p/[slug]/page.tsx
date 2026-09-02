@@ -38,7 +38,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     applicationName: a.nom || undefined,
     authors: a.nom ? [{ name: a.nom }] : undefined,
     robots: { index: false, follow: false },
-    openGraph: { title: t, description: d, type: 'website', ...(a.nom ? { siteName: a.nom } : {}) },
+    // `url` DOIT être écrasée : sans elle, l'OG hérite de https://prestiapp.fr (la landing Presti)
+    // défini dans le layout racine → fuite white-label dans les partages.
+    openGraph: { title: t, description: d, type: 'website', url: `https://prestiapp.fr/p/${slug}`, ...(a.nom ? { siteName: a.nom } : {}) },
     twitter: { card: 'summary_large_image', title: t, description: d },
   }
 }
