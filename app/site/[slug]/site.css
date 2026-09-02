@@ -268,3 +268,20 @@ html.lenis,html.lenis body{height:auto}
 .site-word:focus-visible,.site-chan:focus-visible,.site-btn:focus-visible,.site-nav-cta:focus-visible,.site-links a:focus-visible{outline:2px solid var(--pc2);outline-offset:4px;border-radius:6px}
 /* Profondeur des images : vignettage doux pour dramatiser la matiere (surtout sur vraies photos). */
 .site-feature-media::after,.site-manifesto-media::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,transparent 44%,rgba(0,0,0,.26) 100%)}
+
+/* ===== Contenu v2 (J6) : process, FAQ, zone ===== */
+.site-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.4rem 2.4rem;margin-top:clamp(1.5rem,3vw,2.5rem)}
+.site-step{display:flex;gap:1.1rem;padding-top:1.1rem;border-top:2px solid var(--sline)}
+.site-step-n{font-family:var(--sfm);font-size:.9rem;color:var(--pc2);flex:none}
+.site-step b{font-family:var(--sfd);font-weight:600;font-size:1.2rem;display:block;margin:0 0 .35rem}
+.site-step p{color:var(--sink2);font-size:.98rem;margin:0;line-height:1.5}
+.site-faq-list{display:flex;flex-direction:column;max-width:760px}
+.site-faq-item{border-top:1px solid var(--sline)}
+.site-faq-item:last-child{border-bottom:1px solid var(--sline)}
+.site-faq-item summary{cursor:pointer;list-style:none;padding:1.15rem 0;font-family:var(--sfd);font-weight:600;font-size:1.12rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.site-faq-item summary::-webkit-details-marker{display:none}
+.site-faq-item summary::after{content:"+";font-family:var(--sfb);font-weight:400;color:var(--pc2);font-size:1.5rem;line-height:1;transition:transform .2s var(--se)}
+.site-faq-item[open] summary::after{transform:rotate(45deg)}
+.site-faq-item p{margin:0 0 1.2rem;color:var(--sink2);font-size:1rem;line-height:1.6;max-width:64ch}
+.site-zone{max-width:760px}
+.site-zone p{font-family:var(--sfd);font-weight:400;font-size:clamp(1.3rem,3vw,1.9rem);line-height:1.4;color:var(--sink);margin:.9rem 0 0;text-wrap:balance}

@@ -689,6 +689,30 @@ export type SiteContenu = {
   cta_titre: string; cta_texte: string; meta_description: string
   manifeste: string        // grande phrase plein-cadre (section manifeste cinématique)
   mots_cles: string[]      // 3–4 MOTS GÉANTS (savoir-faire, section « FIND »)
+  // ── v2 (optionnels : les sites v1 ne les ont pas) ──
+  process?: { titre: string; texte: string }[]  // 3–4 étapes « comment ça se passe »
+  faq?: { q: string; r: string }[]               // 4–6 questions réelles → schema.org FAQPage
+  zone_texte?: string                            // phrase de zone d'intervention (SEO local)
+}
+
+// Détecte les FAITS potentiellement FABRIQUÉS dans un texte généré : années d'expérience,
+// pourcentages, prix, labels/certifs, superlatifs absolus — SAUF s'ils figurent déjà dans
+// les données d'entrée de l'artisan (auquel cas ce n'est pas une invention). Renvoie la liste.
+export function findFabrications(output: string, input: string): string[] {
+  const inLc = ` ${input.toLowerCase()} `
+  const pats: RegExp[] = [
+    /\b\d{1,3}\s*ans?\b/gi,                                   // "15 ans" d'expérience
+    /\b\d+\s*%/g,                                             // pourcentages
+    /\b\d[\d .,]*\s*(?:€|euros?)\b/gi,                        // prix
+    /\b(RGE|Qualibat|Qualifelec|QualiPAC|décennale|certifi\w+|labellis\w+|agréé\w*|garantie\s+\d)/gi, // labels/certifs
+    /\b(le meilleur|num[ée]ro\s*(?:1|un)|n°\s*1|leader\b|incontournable|expert\s+reconnu|référence\s+(?:du|de la))\b/gi, // superlatifs
+  ]
+  const hits = new Set<string>()
+  for (const re of pats) for (const m of output.matchAll(re)) {
+    const tok = m[0].trim()
+    if (!inLc.includes(` ${tok.toLowerCase()} `) && !inLc.includes(tok.toLowerCase())) hits.add(tok)
+  }
+  return [...hits]
 }
 type SiteArtisan = {
   nom: string | null; metier: string | null; bio: string | null; zone: string | null
@@ -717,17 +741,20 @@ MÉTHODE (pense d'abord, puis rédige) :
 2. Écris une signature (hero_accroche) qu'on RETIENT — courte, juste, jamais vue sur un autre site du même métier.
 3. Choisis 3 ou 4 MOTS GÉANTS (mots_cles) : des mots pleins, évocateurs, ancrés dans le geste du métier (ex. menuisier : « Sur-mesure », « Massif », « Patine », « Assemblages » ; plombier : « Étanche », « Précis », « Dépannage »). PAS les libellés bruts des prestations : des mots qui claquent, en 1 à 2 mots chacun, sans article.
 4. Écris un MANIFESTE : une seule grande phrase (6 à 12 mots), affichée en énorme plein cadre, qui condense la promesse — différente de la signature, plus ample.
+5. PROCESS (3 ou 4 étapes) : « comment ça se passe » avec cet artisan, du premier contact à la fin du chantier. Étapes concrètes du métier (ex. « On échange », « Je viens voir », « Devis clair », « On réalise »). Chaque étape : titre court + 1 phrase.
+6. FAQ (4 à 6 questions) : les VRAIES questions que se pose un client de ce métier (délais, déroulé, zone, devis, garanties générales SANS chiffre inventé). Réponses courtes, honnêtes, rassurantes — JAMAIS de délai précis, prix, garantie chiffrée ou certification non fournis.
+7. ZONE_TEXTE : une phrase de zone d'intervention pour le SEO local (ex. « J'interviens à Lyon et dans un rayon de 30 km. »), à partir de la zone fournie uniquement.
 
 RÈGLES ABSOLUES :
-- N'INVENTE AUCUN FAIT non fourni : pas d'années d'expérience, certifications, labels, distinctions, avis clients, chiffres ou noms de clients absents des données. Si une info n'est pas donnée, ne la mentionne pas.
+- N'INVENTE AUCUN FAIT non fourni : pas d'années d'expérience, certifications, labels (RGE, Qualibat, décennale…), distinctions, avis clients, chiffres, pourcentages, prix ou noms de clients absents des données. Si une info n'est pas donnée, ne la mentionne pas. Ceci vaut AUSSI pour le process et la FAQ.
 - Français impeccable, ton pro, chaleureux, sobre et confiant, vocabulaire juste du ${metier}.
 - Spécifique : appuie-toi sur les prestations et réalisations réelles fournies.
 - SEO naturel : métier + lieu intégrés naturellement dans accroche et meta, sans bourrage.
 - Zéro superlatif creux (« le meilleur », « numéro 1 »), zéro promesse intenable, zéro cliché (« votre satisfaction est notre priorité »).
-- Longueurs : hero_accroche = 3–6 mots ; hero_lede = 1–2 phrases ; apropos = 3–5 phrases (à la 1re personne, humain) ; intros = 1 phrase ; cta_texte = 1 phrase ; meta_description = 150–160 caractères ; manifeste = 6–12 mots ; mots_cles = 3 ou 4 mots.
+- Longueurs : hero_accroche = 3–6 mots ; hero_lede = 1–2 phrases ; apropos = 3–5 phrases (à la 1re personne, humain) ; intros = 1 phrase ; cta_texte = 1 phrase ; meta_description = 150–160 caractères ; manifeste = 6–12 mots ; mots_cles = 3 ou 4 mots ; process = 3–4 étapes (titre 1–3 mots + 1 phrase) ; faq = 4–6 items (question + réponse 1–2 phrases) ; zone_texte = 1 phrase.
 
 Réponds UNIQUEMENT avec un objet JSON valide, sans texte ni balise autour, au format EXACT :
-{"hero_accroche":"...","hero_lede":"...","apropos":"...","prestations_intro":"...","realisations_intro":"...","cta_titre":"...","cta_texte":"...","meta_description":"...","manifeste":"...","mots_cles":["...","...","..."]}`
+{"hero_accroche":"...","hero_lede":"...","apropos":"...","prestations_intro":"...","realisations_intro":"...","cta_titre":"...","cta_texte":"...","meta_description":"...","manifeste":"...","mots_cles":["...","..."],"process":[{"titre":"...","texte":"..."}],"faq":[{"q":"...","r":"..."}],"zone_texte":"..."}`
 
   const user = `Données réelles de l'artisan :
 Nom / entreprise : ${nom}
@@ -740,34 +767,45 @@ ${svc}
 Réalisations :
 ${real}`
 
-  const res = await client.messages.create({
-    ...genParams(model, 1700),
-    system,
-    messages: [{ role: 'user', content: user }],
-  })
-  let raw = ''
-  for (const b of res.content) if (b.type === 'text') raw += b.text
-  const p = extractJsonObject(raw.trim()) as (Partial<SiteContenu> & { mots_cles?: unknown }) | null
-  if (!p) throw new Error('Contenu de site IA non exploitable.')
-
   const str = (v: unknown, max: number, fb = '') => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : fb)
-  // MOTS GÉANTS : 3–4 mots courts, nettoyés (pas d'article, pas de ponctuation traînante).
-  const mots = (Array.isArray(p.mots_cles) ? p.mots_cles : [])
-    .map((m) => (typeof m === 'string' ? m.trim().replace(/^[«"'\s]+|[»"'.,;:\s]+$/g, '').replace(/^(le|la|les|un|une|des|du|de)\s+/i, '') : ''))
-    .filter((m) => m && m.length <= 22)
-    .slice(0, 4)
-  return {
-    hero_accroche: str(p.hero_accroche, 80),
-    hero_lede: str(p.hero_lede, 400),
-    apropos: str(p.apropos, 900),
-    prestations_intro: str(p.prestations_intro, 300),
-    realisations_intro: str(p.realisations_intro, 300),
-    cta_titre: str(p.cta_titre, 120, 'Parlons de votre projet'),
-    cta_texte: str(p.cta_texte, 300, 'Décrivez votre besoin — vous recevez une réponse rapide et un devis clair.'),
-    meta_description: str(p.meta_description, 180),
-    manifeste: str(p.manifeste, 120),
-    mots_cles: mots,
+  const build = (p: Record<string, unknown>): SiteContenu => {
+    const mots = (Array.isArray(p.mots_cles) ? p.mots_cles : [])
+      .map((m) => (typeof m === 'string' ? m.trim().replace(/^[«"'\s]+|[»"'.,;:\s]+$/g, '').replace(/^(le|la|les|un|une|des|du|de)\s+/i, '') : ''))
+      .filter((m: string) => m && m.length <= 22).slice(0, 4)
+    const process = (Array.isArray(p.process) ? p.process : []).map((e: { titre?: string; texte?: string }) => ({ titre: str(e?.titre, 40), texte: str(e?.texte, 200) })).filter((e) => e.titre && e.texte).slice(0, 4)
+    const faq = (Array.isArray(p.faq) ? p.faq : []).map((e: { q?: string; r?: string }) => ({ q: str(e?.q, 140), r: str(e?.r, 400) })).filter((e) => e.q && e.r).slice(0, 6)
+    return {
+      hero_accroche: str(p.hero_accroche, 80), hero_lede: str(p.hero_lede, 400), apropos: str(p.apropos, 900),
+      prestations_intro: str(p.prestations_intro, 300), realisations_intro: str(p.realisations_intro, 300),
+      cta_titre: str(p.cta_titre, 120, 'Parlons de votre projet'),
+      cta_texte: str(p.cta_texte, 300, 'Décrivez votre besoin — vous recevez une réponse rapide et un devis clair.'),
+      meta_description: str(p.meta_description, 180), manifeste: str(p.manifeste, 120), mots_cles: mots,
+      process, faq, zone_texte: str(p.zone_texte, 240),
+    }
   }
+  const allText = (c: SiteContenu) => [c.hero_accroche, c.hero_lede, c.apropos, c.prestations_intro, c.realisations_intro, c.cta_titre, c.cta_texte, c.meta_description, c.manifeste, c.zone_texte, ...(c.process || []).flatMap((e) => [e.titre, e.texte]), ...(c.faq || []).flatMap((e) => [e.q, e.r])].join(' \n ')
+
+  const gen = async (extra = '') => {
+    const res = await client.messages.create({ ...genParams(model, 2600), system: system + extra, messages: [{ role: 'user', content: user }] })
+    let raw = ''
+    for (const b of res.content) if (b.type === 'text') raw += b.text
+    const p = extractJsonObject(raw.trim()) as Record<string, unknown> | null
+    if (!p) throw new Error('Contenu de site IA non exploitable.')
+    return build(p)
+  }
+
+  // Génération + passe de validation anti-fabrication PROGRAMMATIQUE (audit) :
+  // si l'IA a glissé un fait non fourni (années, %, prix, label, superlatif), on régénère UNE fois
+  // en le lui interdisant nommément ; si ça persiste, on DÉGRADE proprement (on retire process + FAQ,
+  // les champs les plus à risque, plutôt que de livrer une invention).
+  let out = await gen()
+  let bad = findFabrications(allText(out), user)
+  if (bad.length) {
+    out = await gen(`\n\nATTENTION : ta version précédente contenait des faits NON fournis, INTERDITS : ${bad.slice(0, 8).join(', ')}. Recommence SANS aucun de ces éléments ni équivalent (aucune année, %, prix, label ou superlatif absent des données).`)
+    bad = findFabrications(allText(out), user)
+    if (bad.length) { out = { ...out, process: [], faq: [] }; if (findFabrications(allText(out), user).length) console.warn('[generateSiteContent] fabrication résiduelle après dégradation:', findFabrications(allText(out), user)) }
+  }
+  return out
 }
 
 /** Modèle de relance de secours (utilisé si l'IA n'est pas disponible). */

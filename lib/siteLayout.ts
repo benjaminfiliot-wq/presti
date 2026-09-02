@@ -21,11 +21,13 @@ export const SECTION_ORDER: SectionId[] = ['hero', 'trust', 'words', 'features',
 
 // Composition par défaut selon le niveau (reproduit EXACTEMENT le rendu actuel).
 export function defaultLayout(tier: 1 | 2 | 3): SiteLayout {
+  // process/faq/zone (v2) sont inclus par défaut : ils ne rendent que si le contenu existe
+  // (les sites v1 sans ces champs → sections nulles → rendu inchangé).
   const ids: SectionId[] = tier >= 3
-    ? ['hero', 'trust', 'words', 'features', 'manifesto', 'gallery', 'services', 'about', 'contact']
+    ? ['hero', 'trust', 'words', 'features', 'manifesto', 'gallery', 'services', 'process', 'about', 'faq', 'zone', 'contact']
     : tier === 2
-      ? ['hero', 'trust', 'gallery', 'services', 'about', 'contact']
-      : ['hero', 'services', 'about', 'contact']
+      ? ['hero', 'trust', 'gallery', 'services', 'process', 'about', 'faq', 'contact']
+      : ['hero', 'services', 'process', 'about', 'faq', 'contact']
   return { v: 2, sections: ids.map((id) => ({ id, on: true })) }
 }
 

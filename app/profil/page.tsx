@@ -16,6 +16,8 @@ type SiteContenu = {
   prestations_intro: string; realisations_intro: string
   cta_titre: string; cta_texte: string; meta_description: string
   manifeste: string; mots_cles: string[]
+  // v2 (rédigés par l'IA, conservés à la sauvegarde ; édition dédiée à venir dans le studio)
+  process?: { titre: string; texte: string }[]; faq?: { q: string; r: string }[]; zone_texte?: string
 }
 const CONTENU_VIDE: SiteContenu = { hero_accroche: '', hero_lede: '', apropos: '', prestations_intro: '', realisations_intro: '', cta_titre: '', cta_texte: '', meta_description: '', manifeste: '', mots_cles: [] }
 const RESEAUX: { key: keyof Reseaux; label: string; ph: string }[] = [
@@ -116,6 +118,10 @@ export default function ProfilPage() {
       cta_titre: t(siteContenu.cta_titre, 120), cta_texte: t(siteContenu.cta_texte, 300), meta_description: t(siteContenu.meta_description, 180),
       manifeste: t(siteContenu.manifeste, 120),
       mots_cles: (Array.isArray(siteContenu.mots_cles) ? siteContenu.mots_cles : []).map((m) => t(m, 22)).filter(Boolean).slice(0, 4),
+      // v2 : conservés tels quels (rédigés par l'IA), édition dédiée à venir
+      ...(Array.isArray(siteContenu.process) ? { process: siteContenu.process } : {}),
+      ...(Array.isArray(siteContenu.faq) ? { faq: siteContenu.faq } : {}),
+      ...(typeof siteContenu.zone_texte === 'string' ? { zone_texte: t(siteContenu.zone_texte, 240) } : {}),
     } : null
     const { error } = await supabase.from('artisans').update({
       bio: bio.trim().slice(0, 800) || null,

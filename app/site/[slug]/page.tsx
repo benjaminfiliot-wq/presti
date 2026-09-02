@@ -255,6 +255,35 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           </div>
         </section>
       ) : null,
+      // PROCESS (v2) — « comment ça se passe », étapes numérotées
+      process: (c?.process && c.process.length) ? (
+        <section className="site-block" id="process">
+          <div className="site-head site-reveal"><span className="site-kick">Comment ça se passe</span><h2>Du premier échange à la fin du chantier</h2></div>
+          <div className="site-steps">
+            {c.process.map((e, i) => (
+              <div className="site-step site-reveal" key={i}><span className="site-step-n">{String(i + 1).padStart(2, '0')}</span><div><b>{e.titre}</b>{e.texte ? <p>{e.texte}</p> : null}</div></div>
+            ))}
+          </div>
+        </section>
+      ) : null,
+      // FAQ (v2) — accordéon + schema.org FAQPage (SEO)
+      faq: (c?.faq && c.faq.length) ? (
+        <section className="site-block site-faq" id="faq">
+          <div className="site-head site-reveal"><span className="site-kick">Questions fréquentes</span><h2>Vous vous demandez peut-être…</h2></div>
+          <div className="site-faq-list">
+            {c.faq.map((e, i) => (
+              <details className="site-faq-item site-reveal" key={i}><summary>{e.q}</summary><p>{e.r}</p></details>
+            ))}
+          </div>
+        </section>
+      ) : null,
+      // ZONE (v2) — phrase de zone d'intervention (SEO local)
+      zone: (c?.zone_texte || zone) ? (
+        <section className="site-block site-zone site-reveal" id="zone">
+          <span className="site-kick">Zone d&apos;intervention</span>
+          <p>{c?.zone_texte || `J'interviens à ${zone}.`}</p>
+        </section>
+      ) : null,
       // CONTACT — panneau de clôture. Le site NE contient PAS la plateforme : il présente tout,
       // puis renvoie vers l'espace de contact (la plateforme).
       contact: (
@@ -279,6 +308,9 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   return (
     <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent }} data-tier={tier} data-theme={theme}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
+      {c?.faq && c.faq.length ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: c.faq.map((e) => ({ '@type': 'Question', name: e.q, acceptedAnswer: { '@type': 'Answer', text: e.r } })) }).replace(/</g, '\\u003c') }} />
+      ) : null}
       <SiteMotion />
 
       {/* NAV — toujours présente, hors composition */}

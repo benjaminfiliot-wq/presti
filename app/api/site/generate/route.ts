@@ -19,14 +19,18 @@ export async function POST(req: Request) {
 
     const { data: a } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier, bio, zone_intervention, ville, horaires, services, realisations, plan, is_founder')
+      .select('nom, metier, bio, zone_intervention, ville, horaires, services, realisations, plan, is_founder, site_contenu_le')
       .eq('id', uid)
       .maybeSingle()
     if (!a) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
 
     const { model, tier } = resolveModel('pro', a.plan)
-    const credit = await consumeCredit(uid, tier, !!a.is_founder)
-    if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
+    // 1re génération OFFERTE (hors crédits) : découple « soigner sa vitrine » de « répondre aux prospects ».
+    const first = !a.site_contenu_le
+    if (!first) {
+      const credit = await consumeCredit(uid, tier, !!a.is_founder)
+      if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
+    }
 
     const contenu = await generateSiteContent({
       nom: a.nom, metier: a.metier, bio: a.bio, zone: a.zone_intervention, ville: a.ville, horaires: a.horaires,
@@ -35,7 +39,7 @@ export async function POST(req: Request) {
     }, model)
 
     await supabaseAdmin.from('artisans').update({ site_contenu: contenu, site_contenu_le: new Date().toISOString() }).eq('id', uid)
-    return NextResponse.json({ ok: true, contenu })
+    return NextResponse.json({ ok: true, contenu, free: first })
   } catch (e) {
     console.error('[site/generate]', e)
     return NextResponse.json({ error: "L'IA n'a pas pu rédiger le contenu. Réessaie dans un instant." }, { status: 500 })
