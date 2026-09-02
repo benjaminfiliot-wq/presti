@@ -4,6 +4,7 @@ import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { consumeCredit } from '@/lib/credits'
 import { resolveModel } from '@/lib/models'
+import { getPlateformeConfig } from '@/lib/plateformeConfig'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -70,7 +71,10 @@ export async function POST(req: Request) {
     // ── Suggestion IA : renvoie un brouillon que l'artisan pourra éditer avant d'envoyer.
     //    L'artisan CHOISIT le modèle (Standard/Pro/Expert) ; on respecte sa formule.
     if (action === 'suggest') {
-      const { tier, model, downgraded } = resolveModel(typeof body?.model === 'string' ? body.model : 'standard', artisan?.plan)
+      // Le modèle ne se choisit plus ici : il vient de « Ma plateforme → Intelligence »
+      // (v4 §B1 — l'IA vit dans la plateforme, la boîte de réception ne fait que proposer).
+      const cfg = await getPlateformeConfig(uid, null)
+      const { tier, model, downgraded } = resolveModel(cfg.modele || 'standard', artisan?.plan)
       const credit = await consumeCredit(uid, tier, !!artisan?.is_founder)
       if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
       const turns = await history(leadId)

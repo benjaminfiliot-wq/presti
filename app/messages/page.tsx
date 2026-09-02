@@ -19,11 +19,6 @@ const STATUT: Record<string, { label: string; pill: string }> = {
   gagne: { label: 'Gagné', pill: 'ok' },
   perdu: { label: 'Perdu', pill: 'muted' },
 }
-const MODELES: { id: 'standard' | 'pro' | 'expert'; label: string; hint: string }[] = [
-  { id: 'standard', label: 'Standard', hint: 'Rapide, pour les échanges simples' },
-  { id: 'pro', label: 'Pro', hint: 'Réponses plus fines et détaillées' },
-  { id: 'expert', label: 'Expert', hint: 'Le plus précis (gros chantiers)' },
-]
 const initials = (n?: string | null) => (n || '?').trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? '').join('') || '?'
 const heure = (s: string) => {
   const d = new Date(s); const now = new Date()
@@ -41,7 +36,6 @@ export default function MessagesPage() {
   const [draft, setDraft] = useState('')
   const [sending, setSending] = useState(false)
   const [suggesting, setSuggesting] = useState(false)
-  const [modele, setModele] = useState<'standard' | 'pro' | 'expert'>('pro') // modèle IA choisi pour répondre
   const [devAuto, setDevAuto] = useState(false)
   const [err, setErr] = useState<string | null>(null)
   const threadRef = useRef<HTMLDivElement>(null)
@@ -134,13 +128,13 @@ export default function MessagesPage() {
     const res = await fetch('/api/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` },
-      body: JSON.stringify({ action: 'suggest', lead_id: sel, model: modele }),
+      body: JSON.stringify({ action: 'suggest', lead_id: sel }),
     })
     setSuggesting(false)
     const d = await res.json().catch(() => ({}))
     if (!res.ok) { setErr(d.outOfCredits ? 'Crédits épuisés — répondez à la main ou rechargez.' : (d.error ?? 'Suggestion indisponible.')); return }
     if (d.reply) setDraft(d.reply)
-    if (d.downgraded) setErr(`Modèle ${modele} non inclus dans votre formule — réponse rédigée avec le meilleur modèle disponible. Passez à une formule supérieure pour ${modele}.`)
+    if (d.downgraded) setErr('Le modèle réglé dans Ma plateforme n’est pas inclus dans votre formule — brouillon rédigé avec le meilleur modèle disponible.')
   }
 
   const selLead = leads.find((l) => l.id === sel) || null
@@ -240,13 +234,11 @@ export default function MessagesPage() {
                   rows={2}
                 />
                 <div className="inbox-cbar">
-                  <div className="inbox-model" role="group" aria-label="Modèle de l'IA">
-                    {MODELES.map((m) => (
-                      <button key={m.id} type="button" className={`inbox-model-b${modele === m.id ? ' on' : ''}`} onClick={() => setModele(m.id)} title={m.hint}>{m.label}</button>
-                    ))}
-                  </div>
-                  <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={suggesting} onClick={suggererIA}>
-                    {suggesting ? 'L’IA rédige…' : '⚡ Suggérer une réponse'}
+                  {/* v4 §B1 : plus d'automatique ici. L'IA vit dans la plateforme ; la boîte de
+                      réception ne fait que PROPOSER, sur demande explicite. Le modèle se règle
+                      dans « Ma plateforme → Intelligence ». */}
+                  <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={suggesting} onClick={suggererIA} title="Rédige un brouillon que vous relisez — rien n’est envoyé sans vous">
+                    {suggesting ? 'Rédaction…' : '⚡ Proposer une réponse'}
                   </button>
                   <button className="btn btn--primary" style={{ width: 'auto', marginLeft: 'auto' }} disabled={sending || !draft.trim()} onClick={envoyer}>
                     {sending ? 'Envoi…' : 'Envoyer'}

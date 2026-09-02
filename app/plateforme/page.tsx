@@ -48,6 +48,7 @@ export default function PlateformePage() {
   const [uid, setUid] = useState('')
   const [slug, setSlug] = useState('')
   const [active, setActive] = useState(true)
+  const [pause, setPause] = useState(false)
   const [cfg, setCfg] = useState<Cfg>(DEFAUT)
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -58,9 +59,9 @@ export default function PlateformePage() {
       if (!data.session) { router.replace('/login'); return }
       const id = data.session.user.id
       setUid(id)
-      const { data: a } = await supabase.from('artisans').select('slug, plateforme_active, reponse_auto').eq('id', id).maybeSingle()
+      const { data: a } = await supabase.from('artisans').select('slug, plateforme_active, reponse_auto, leads_pause').eq('id', id).maybeSingle()
       if (!a) { router.replace('/onboarding'); return }
-      setSlug(a.slug ?? ''); setActive(a.plateforme_active !== false)
+      setSlug(a.slug ?? ''); setActive(a.plateforme_active !== false); setPause(a.leads_pause === true)
       const { data: c } = await supabase.from('plateforme_config').select('*').eq('artisan_id', id).maybeSingle()
       // Sans configuration, on part du comportement actuel de l'artisan (aucune surprise).
       setCfg(c ? { ...DEFAUT, ...(c as Partial<Cfg>) } : { ...DEFAUT, mode_reponse: a.reponse_auto === false ? 'manuelle' : 'auto' })
@@ -91,6 +92,7 @@ export default function PlateformePage() {
       message_accueil: cfg.message_accueil?.trim() || null,
       maj_le: new Date().toISOString(),
     }, { onConflict: 'artisan_id' })
+    await supabase.from('artisans').update({ leads_pause: pause }).eq('id', uid)
     setSaving(false)
     if (error) { setMsg({ type: 'err', text: 'Enregistrement impossible.' }); return }
     setMsg({ type: 'ok', text: 'Réglages enregistrés ✅' })
@@ -127,6 +129,11 @@ export default function PlateformePage() {
         <div className="tool-card">
           <h2>Intelligence</h2>
           <p className="muted" style={{ margin: '0 0 1rem' }}>Comment votre assistant se comporte avec vos clients. Tout est appliqué côté serveur — ce que vous réglez ici fait foi.</p>
+
+          <label className="prof-toggle" style={{ marginBottom: '1.1rem' }}>
+            <input type="checkbox" checked={pause} onChange={(e) => setPause(e.target.checked)} />
+            <span>Demandes <b>{pause ? 'en pause' : 'ouvertes'}</b> {pause ? '— votre page enregistre les demandes mais n’envoie plus rien (congés, surcharge). Rien n’est perdu.' : '— vous recevez et traitez les nouvelles demandes normalement'}</span>
+          </label>
 
           <label className="pcfg-lab">Mode de réponse</label>
           <div className="pcfg-modes">

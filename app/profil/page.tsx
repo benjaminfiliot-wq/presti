@@ -382,14 +382,7 @@ export default function ProfilPage() {
         <div className="tool-card">
           <h2>Réponses aux demandes</h2>
           <p className="muted" style={{ margin: '0 0 .7rem' }}>Quand un client vous écrit sur votre page, choisissez comment il reçoit sa première réponse. Dans tous les cas, la conversation arrive dans votre boîte de réception.</p>
-          <label className="prof-toggle">
-            <input type="checkbox" checked={reponseAuto} onChange={(e) => setReponseAuto(e.target.checked)} />
-            <span>Réponse <b>{reponseAuto ? 'automatique' : 'manuelle'}</b> {reponseAuto ? '— l’IA répond tout de suite, à votre place (vous gardez la main ensuite)' : '— vous répondez vous-même depuis vos messages (l’IA vous suggère un brouillon)'}</span>
-          </label>
-          <label className="prof-toggle" style={{ marginTop: '.7rem' }}>
-            <input type="checkbox" checked={leadsPause} onChange={(e) => setLeadsPause(e.target.checked)} />
-            <span>Demandes <b>{leadsPause ? 'en pause' : 'ouvertes'}</b> {leadsPause ? '— votre page enregistre les demandes mais n’envoie plus de réponse ni d’email (congés, surcharge). Rien n’est perdu.' : '— vous recevez et traitez les nouvelles demandes normalement'}</span>
-          </label>
+          <p className="muted" style={{ margin: 0 }}>Le comportement de votre assistant (réponse automatique ou non, modèle, ton, devis auto, mise en pause) se règle désormais dans <a href="/plateforme" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>Ma plateforme → Intelligence</a> — tout au même endroit.</p>
         </div>
 
         {/* Site web (constructeur 3 niveaux) */}
