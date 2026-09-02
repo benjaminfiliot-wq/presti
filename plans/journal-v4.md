@@ -17,3 +17,10 @@
 - **fix au passage** : l'email de réponse au prospect partait « de Presti » → `fromName = artisan.nom` (white-label).
 - réserve honnête : la remise par EMAIL n'est pas prouvée par le test (adresse `example.com` rejetée par Resend) ; la remise PLATEFORME l'est. Un vrai domaine passe (domaine Resend vérifié).
 - build/déploiement du fix : voir commit ci-dessous.
+
+## [B1-1] Plateforme → route canonique /p/[slug] (§A1) — 22:29 → 22:47 (18 min) — ✅ terminé
+- fait : `git mv app/l → app/p` (imports relatifs intacts) ; redirections **permanentes** `/l/:slug → /p/:slug` (Next émet 308 = équivalent moderne du 301, SEO identique) ; en-têtes embarquables déplacés sur `/p` (console garde DENY) ; liens mis à jour (dashboard, profil, bouton contact du site, smoke-test).
+- build : OK (0 erreur) · typecheck : OK (après purge des types périmés `.next/types/app/l`) · déployé : oui (75edd8a)
+- **incident & correction** : le 1er commit (a3d7641) ne contenait QUE les déplacements — `git add` avait avorté sur `app/l` supprimé, donc next.config n'était pas parti. Détecté en vérifiant les en-têtes live (`/p` en DENY, `/l` encore SAMEORIGIN). Re-commit 75edd8a → tout correct.
+- preuve : 7/7 PASS en prod — `/p` sert la plateforme, `/l` redirige 308 vers `/p`, un ancien lien aboutit, le site pointe sur `/p`, plus aucun `/l` rendu, `/p` embarquable (SAMEORIGIN).
+- suivant : [B1-2] interface de conversation (§A2) — colonne conversations, fil, composeur, streaming SSE, bandeau de transparence IA.
