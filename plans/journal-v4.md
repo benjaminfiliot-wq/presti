@@ -65,3 +65,11 @@
 - preuve : **13/13 PASS en prod** (`scripts/devis-conversation-e2e.mjs`, test permanent). Capture : `b23-carte-devis.png`.
 - **⇒ Sortie attendue du bloc B2 (« un devis naît d'une conversation ») : atteinte.**
 - suivant : [B3] comptes clients (§6) + suppression granulaire (§C3).
+
+## [B3-1] Suppression granulaire (§C3) — 23:23 → 23:40 (17 min) — ✅ terminé
+- fait : `/api/donnees` — **réinitialiser le site** (textes + composition, images gardées), **supprimer le site** (dépublie + efface contenu et fichiers du bucket), **supprimer la plateforme** (réglages effacés, conversations gardées), **anonymiser une conversation** (droit à l'effacement). Interface dans la zone « Données & suppressions » de /profil.
+- garde-fous : **récapitulatif préalable** (ce qui disparaît / ce qui est conservé) + **confirmation par saisie** ; les **devis envoyés et factures émises ne sont jamais supprimables** (archivés, expliqué à l'utilisateur au lieu d'un refus sec) ; l'anonymisation casse les données personnelles **sans casser la chaîne comptable**.
+- build : OK · typecheck : OK · déployé : 78ad8be
+- preuve : **19/19 PASS en prod** (`scripts/suppressions-e2e.mjs`, test permanent) — dont les deux points capitaux : **le compte Presti reste intact** après suppression du site, et **le devis envoyé survit** à l'anonymisation de la conversation. Refus sans confirmation (400) et refus sur une conversation d'autrui (404) également couverts.
+- reste de §C3 pour plus tard : déconnexion d'un canal (les canaux arrivent en B5), délai de grâce de 30 j + export ZIP sur la suppression de compte.
+- suivant : [B3-2] comptes clients de la plateforme (§6) — lien magique, espace client, RGPD.
