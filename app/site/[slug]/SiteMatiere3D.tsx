@@ -44,29 +44,38 @@ export default function SiteMatiere3D({ accent }: { accent: string }) {
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       const scene = new THREE.Scene()
-      const cam = new THREE.PerspectiveCamera(38, 1, 0.1, 100); cam.position.set(0, 0.3, 6.6)
-      scene.add(new THREE.AmbientLight(0xfff2e0, 0.5))
-      const key = new THREE.DirectionalLight(0xfff1dd, 1.5); key.position.set(4, 6, 5); scene.add(key)
+      const cam = new THREE.PerspectiveCamera(36, 1, 0.1, 100); cam.position.set(0, 0.2, 7.2)
+      scene.add(new THREE.AmbientLight(0xfff2e0, 0.4))
+      const key = new THREE.DirectionalLight(0xfff3e2, 1.7); key.position.set(5, 7, 6); scene.add(key)
       const accHex = /^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#D97757'
-      const rim = new THREE.DirectionalLight(new THREE.Color(accHex).getHex(), 0.7); rim.position.set(-5, 2, -3); scene.add(rim)
-      const fill = new THREE.DirectionalLight(0xffffff, 0.3); fill.position.set(-2, -3, 4); scene.add(fill)
+      const rim = new THREE.DirectionalLight(new THREE.Color(accHex).getHex(), 0.9); rim.position.set(-6, 1, -4); scene.add(rim)
+      const fill = new THREE.DirectionalLight(0x9fb6cc, 0.22); fill.position.set(-3, -4, 3); scene.add(fill)
 
-      const geo = new THREE.BoxGeometry(2.1, 2.1, 2.1)
-      const mat = new THREE.MeshStandardMaterial({ color: 0x9c6a35, roughness: 0.5, metalness: 0.05 })
-      const mesh = new THREE.Mesh(geo, mat); scene.add(mesh)
-      mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.08 })))
+      // Une pièce de bois DEBOUT (pas un dé) + léger chanfrein → lecture « matière travaillée ».
+      const geo = new THREE.BoxGeometry(1.5, 2.7, 1.5, 1, 1, 1)
+      const mat = new THREE.MeshStandardMaterial({ color: 0x8a5a2b, roughness: 0.62, metalness: 0.04 })
+      const group = new THREE.Group()
+      const mesh = new THREE.Mesh(geo, mat); group.add(mesh)
+      mesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0x2a1a0c, transparent: true, opacity: 0.18 })))
+      // Décalé à droite pour laisser respirer le titre ; incliné pour montrer 3 faces.
+      group.position.set(2.15, -0.15, 0)
+      group.rotation.set(-0.16, 0.7, 0.06)
+      group.scale.setScalar(0.92)
+      scene.add(group)
 
       const size = () => {
         const b = parent.getBoundingClientRect()
         if (b.width < 1 || b.height < 1) return
         renderer.setSize(b.width, b.height, false); cam.aspect = b.width / b.height; cam.updateProjectionMatrix()
+        // Sur desktop étroit, on rapproche le bloc du bord pour ne pas mordre le titre.
+        group.position.x = b.width < 1040 ? 1.7 : 2.15
       }
       size()
       const onResize = () => size(); window.addEventListener('resize', onResize)
       cleanupResize = () => window.removeEventListener('resize', onResize)
 
       let ry = 0.7
-      const loop = () => { raf = requestAnimationFrame(loop); ry += 0.0032; mesh.rotation.y = ry; mesh.rotation.x = -0.12; renderer.render(scene, cam) }
+      const loop = () => { raf = requestAnimationFrame(loop); ry += 0.0026; group.rotation.y = ry; renderer.render(scene, cam) }
       loop()
     }).catch(() => { /* repli : image hero conservée */ })
 
