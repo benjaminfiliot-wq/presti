@@ -26,7 +26,7 @@ const nextConfig = {
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: blob: https://gorcdvmueakcncsmrouo.supabase.co https://www.google-analytics.com", // médias bucket + data URL (legacy) + GA
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://www.google-analytics.com https://*.analytics.google.com",
-      "frame-src https://js.stripe.com https://checkout.stripe.com",
+      "frame-src 'self' https://js.stripe.com https://checkout.stripe.com", // 'self' = aperçu du site dans la console (« Ma page »)
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
