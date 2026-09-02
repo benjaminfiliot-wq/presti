@@ -1716,3 +1716,8 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .pcfg-heures select,.pcfg-heures input{width:auto;margin:0;background:var(--surface);border:1.5px solid var(--line);border-radius:9px;padding:.4rem .6rem;font-size:.88rem;font-family:inherit;color:var(--ink)}
 .pcfg-heures select:focus,.pcfg-heures input:focus{outline:none;border-color:var(--accent)}
 .pcfg-heures small{font-size:.76rem}
+
+/* Données & suppressions granulaires (v4 §C3) */
+.dz-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.6rem}
+.dz-actions button{display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;text-align:left;padding:.75rem .9rem;height:auto}
+.dz-actions button small{font-size:11.5px;font-weight:400;color:var(--muted);line-height:1.4}

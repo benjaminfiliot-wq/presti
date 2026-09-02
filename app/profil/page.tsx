@@ -220,6 +220,30 @@ export default function ProfilPage() {
     setTimeout(() => setMsg(null), 2500)
   }
 
+  // Suppression GRANULAIRE (§C3) : chaque brique indépendamment, sans toucher au compte.
+  // Toujours : récapitulatif de ce qui disparaît → confirmation par saisie → exécution.
+  async function actionDonnees(action: string, titre: string) {
+    const t = (await supabase.auth.getSession()).data.session?.access_token
+    const recap = await (await fetch(`/api/donnees?action=${action}`, { headers: { Authorization: `Bearer ${t}` } })).json()
+    if (recap.error) { setMsg({ type: 'err', text: recap.error }); return }
+    const liste = (a: string[]) => (a?.length ? a.map((x) => `• ${x}`).join('\n') : '• (rien)')
+    const texte = `${titre}\n\nCE QUI DISPARAÎT :\n${liste(recap.disparait)}\n\nCE QUI EST CONSERVÉ :\n${liste(recap.conserve)}\n\n`
+    if (action === 'site_reinitialiser') {
+      if (!confirm(texte + 'Confirmer la réinitialisation ?')) return
+    } else {
+      const s = prompt(texte + 'Tapez SUPPRIMER pour confirmer.')
+      if (!s || s.trim().toUpperCase() !== 'SUPPRIMER') { setMsg({ type: 'err', text: 'Annulé — rien n’a été touché.' }); return }
+    }
+    const res = await fetch('/api/donnees', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
+      body: JSON.stringify({ action, confirm: 'SUPPRIMER' }),
+    })
+    const d = await res.json().catch(() => ({}))
+    if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Action impossible.' }); return }
+    setMsg({ type: 'ok', text: d.message || 'C’est fait ✅' })
+    setTimeout(() => window.location.reload(), 1400)
+  }
+
   async function supprimerCompte() {
     const t = prompt('Cette action est DÉFINITIVE : votre compte et toutes vos données (page, conversations, devis, factures) seront supprimés.\n\nTapez SUPPRIMER pour confirmer.')
     if (t == null) return
@@ -554,10 +578,29 @@ export default function ProfilPage() {
           ) : null}
         </div>
 
-        {/* Zone dangereuse — droit à l'effacement (RGPD) */}
+        {/* Données & suppressions — chaque brique indépendamment (§C3) */}
         <div className="tool-card danger-zone">
-          <h2>Zone dangereuse</h2>
-          <p className="muted" style={{ margin: '0 0 .8rem' }}>Supprimer votre compte efface définitivement votre page, vos conversations, devis et factures. Cette action est irréversible.</p>
+          <h2>Données &amp; suppressions</h2>
+          <p className="muted" style={{ margin: '0 0 1rem' }}>
+            Chaque partie se supprime <b>séparément</b> — votre compte Presti reste intact. Avant chaque action, on vous montre exactement ce qui disparaît et ce qui est conservé.
+            Les <b>devis envoyés et factures émises</b> ne sont jamais supprimables : la loi impose de les conserver, ils sont archivés.
+          </p>
+          <div className="dz-actions">
+            <button className="btn btn--ghost" style={{ width: 'auto' }} onClick={() => actionDonnees('site_reinitialiser', 'Réinitialiser le site')}>
+              Réinitialiser le site
+              <small>Efface les textes et la composition. Vos images restent.</small>
+            </button>
+            <button className="btn btn--ghost danger" style={{ width: 'auto' }} onClick={() => actionDonnees('site_supprimer', 'Supprimer le site')}>
+              Supprimer le site
+              <small>Dépublie et efface contenu + images. Le compte reste.</small>
+            </button>
+            <button className="btn btn--ghost danger" style={{ width: 'auto' }} onClick={() => actionDonnees('plateforme_supprimer', 'Supprimer la plateforme')}>
+              Supprimer la plateforme
+              <small>Efface les réglages. Vos conversations sont conservées.</small>
+            </button>
+          </div>
+          <hr style={{ border: 0, borderTop: '1px solid var(--line)', margin: '1.2rem 0' }} />
+          <p className="muted" style={{ margin: '0 0 .8rem' }}>Supprimer votre <b>compte</b> efface définitivement votre page, vos conversations, devis et factures. Cette action est irréversible.</p>
           <button className="btn btn--ghost danger" style={{ width: 'auto' }} onClick={supprimerCompte}>Supprimer mon compte</button>
         </div>
 
