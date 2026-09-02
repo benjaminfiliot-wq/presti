@@ -4,11 +4,13 @@ import Image from 'next/image'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import LeadForm from './LeadForm'
 import PlatMotion from './PlatMotion'
+import { computeResponseDelay } from '@/lib/platStats'
 
 type Service = { nom?: string; description?: string }
 type Realisation = { image?: string; titre?: string; specialite?: string }
 type Reseaux = { instagram?: string; facebook?: string; tiktok?: string; linkedin?: string; whatsapp?: string; site?: string; google?: string }
 type Artisan = {
+  id: string
   nom: string | null; metier: string | null; slug: string | null; ville: string | null
   bio: string | null; services: Service[] | null; zone_intervention: string | null
   photo_url: string | null; logo_url: string | null; horaires: string | null; plateforme_active: boolean | null
@@ -19,7 +21,7 @@ type Artisan = {
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, photo_url, logo_url, horaires, plateforme_active, accent, realisations, reseaux, tel_public, email_public, theme')
+    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, photo_url, logo_url, horaires, plateforme_active, accent, realisations, reseaux, tel_public, email_public, theme')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -64,13 +66,6 @@ const I = {
   wa: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.2-5.6A8.4 8.4 0 1 1 21 11.5z" /><path d="M8.5 8.8c.2-.6.6-.6.9-.6h.5c.2 0 .4 0 .6.5l.7 1.6c.1.2 0 .4-.1.5l-.4.5c-.1.2-.2.3 0 .6a5 5 0 0 0 2.4 2.1c.3.1.4 0 .6-.1l.5-.6c.2-.2.3-.2.5-.1l1.5.8c.2.1.3.2.3.4a1.6 1.6 0 0 1-1 1.4 3 3 0 0 1-2-.1 8.3 8.3 0 0 1-4.4-4c-.3-.6-.6-1.4-.6-2.2 0-.6.2-1 .5-1.2z" fill="currentColor" stroke="none" /></svg>,
 }
 
-const REASSURE = [
-  { ic: I.bolt, t: 'Réponse en minutes', d: 'Une question, un besoin — vous avez un retour très vite, jour et nuit.' },
-  { ic: I.doc, t: 'Devis clair', d: 'Un chiffrage détaillé, sans surprise, que vous validez avant tout travaux.' },
-  { ic: I.shield, t: 'Travail assuré', d: 'Un professionnel qui engage son sérieux sur chaque intervention.' },
-  { ic: I.chat, t: 'Contact direct', d: 'Vous échangez directement, sans intermédiaire ni standard interminable.' },
-]
-
 export default async function PlateformePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const a = await getArtisan(slug)
@@ -110,6 +105,16 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
     ...(zone ? { areaServed: zone } : {}),
   }
 
+  // Réassurance CALCULÉE — que du vrai et vérifiable (jamais de promesse générique).
+  const delayLabel = await computeResponseDelay(a.id)
+  const contactLabel = telDigits ? (a.tel_public as string) : a.email_public || (channels.length ? channels[0].label : '')
+  const reassure: { ic: ReactNode; t: string; d: string }[] = [
+    ...(delayLabel ? [{ ic: I.bolt, t: delayLabel, d: 'Délai constaté sur les 30 derniers jours.' }] : []),
+    ...(zone ? [{ ic: I.pin, t: 'Zone d’intervention', d: zone }] : []),
+    ...(a.horaires ? [{ ic: I.clock, t: 'Disponibilités', d: a.horaires }] : []),
+    ...(contactLabel ? [{ ic: I.chat, t: 'Contact direct', d: contactLabel }] : []),
+  ]
+
   return (
     <main className="plat" style={{ ['--pc' as string]: accent }} data-theme={theme}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
@@ -140,14 +145,16 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
         <div className="plat-live plat-reveal"><span className="plat-live-dot" />Répond en moins d&apos;une minute</div>
       </section>
 
-      {/* CONFIANCE */}
-      <section className="plat-block plat-reveal">
-        <div className="plat-reassure">
-          {REASSURE.map((r, i) => (
-            <div className="plat-rc" key={i}><span className="plat-rc-ic">{r.ic}</span><b>{r.t}</b><span>{r.d}</span></div>
-          ))}
-        </div>
-      </section>
+      {/* CONFIANCE — éléments réels et vérifiables (délai mesuré, zone, dispo, contact) */}
+      {reassure.length > 0 ? (
+        <section className="plat-block plat-reveal">
+          <div className="plat-reassure">
+            {reassure.map((r, i) => (
+              <div className="plat-rc" key={i}><span className="plat-rc-ic">{r.ic}</span><b>{r.t}</b><span>{r.d}</span></div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {/* PRESTATIONS */}
       {services.length > 0 ? (
@@ -181,20 +188,12 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
         </section>
       ) : null}
 
-      {/* SAVOIR-FAIRE + ZONE */}
-      {(a.bio || zone || a.horaires) ? (
+      {/* SAVOIR-FAIRE (zone & dispo remontées dans la bande de réassurance) */}
+      {a.bio ? (
         <section className="plat-block">
-          <div className="plat-two">
-            {a.bio ? (
-              <div className="plat-card plat-about plat-reveal">
-                <span className="plat-kick">Le savoir-faire</span>
-                <p>{a.bio}</p>
-              </div>
-            ) : null}
-            <div className="plat-side">
-              {zone ? <div className="plat-card plat-info plat-reveal"><span className="plat-info-ic">{I.pin}</span><div><b>Zone d&apos;intervention</b><span>{zone}</span></div></div> : null}
-              {a.horaires ? <div className="plat-card plat-info plat-reveal"><span className="plat-info-ic">{I.clock}</span><div><b>Disponibilités</b><span>{a.horaires}</span></div></div> : null}
-            </div>
+          <div className="plat-card plat-about plat-reveal">
+            <span className="plat-kick">Le savoir-faire</span>
+            <p>{a.bio}</p>
           </div>
         </section>
       ) : null}
@@ -215,6 +214,9 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
           <LeadForm slug={a.slug as string} artisanNom={a.nom} avatar={avatar} />
         </div>
       </section>
+
+      {/* CTA collant mobile — atteignable sans scroller, safe-area iOS, masqué au niveau du formulaire */}
+      <a className="plat-sticky" href="#contact" aria-label="Décrire mon besoin">Décrire mon besoin {I.arrow}</a>
 
       <footer className="plat-foot">
         <div className="plat-foot-id"><b>{a.nom}</b>{a.metier ? <span>{a.metier}</span> : null}{zone ? <span>{I.pin}{zone}</span> : null}</div>

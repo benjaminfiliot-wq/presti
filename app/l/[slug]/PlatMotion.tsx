@@ -51,9 +51,20 @@ export default function PlatMotion() {
       document.addEventListener('click', onAnchor)
     } catch { lenis = null }
 
+    // CTA collant mobile : masqué dès que la section contact entre dans le champ (évite le doublon avec le formulaire).
+    let ioCta: IntersectionObserver | null = null
+    const sticky = document.querySelector<HTMLElement>('.plat-sticky')
+    const contact = document.querySelector('#contact')
+    if (sticky && contact && 'IntersectionObserver' in window) {
+      ioCta = new IntersectionObserver((entries) => {
+        entries.forEach((en) => sticky.classList.toggle('gone', en.isIntersecting))
+      }, { threshold: 0.01 })
+      ioCta.observe(contact)
+    }
+
     const safety = setTimeout(() => { root?.classList.remove('plat-armed'); showAll() }, 3000)
     return () => {
-      io?.disconnect(); clearTimeout(safety)
+      io?.disconnect(); ioCta?.disconnect(); clearTimeout(safety)
       if (lenis) { lenis.destroy(); cancelAnimationFrame(rafId); if (onAnchor) document.removeEventListener('click', onAnchor) }
     }
   }, [])
