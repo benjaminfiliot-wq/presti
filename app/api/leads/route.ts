@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { generateLeadReply } from '@/lib/ai'
+import { generateLeadReply, qualifyLead } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
@@ -72,6 +72,9 @@ export async function POST(req: Request) {
     }
     if (!artisan) return NextResponse.json({ error: 'Artisan introuvable' }, { status: 404 })
 
+    // Qualification silencieuse (déterministe, 0 coût IA) : urgence + type de chantier → tri de l'inbox.
+    const qualif = qualifyLead(message, artisan.metier)
+
     // 2) Enregistrer le lead (chemin critique : on ne le perd jamais)
     const { data: lead, error: lErr } = await supabaseAdmin
       .from('leads')
@@ -82,6 +85,8 @@ export async function POST(req: Request) {
         message,
         canal: 'formulaire',
         statut: 'nouveau',
+        urgence: qualif.urgence,
+        type_chantier: qualif.type_chantier,
         ip: ip === 'unknown' ? null : ip,
       })
       .select('id, token')

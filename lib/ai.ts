@@ -195,6 +195,47 @@ function analyzeLead(message: string, contact?: string | null): LeadInsights {
   }
 }
 
+// Type de chantier déduit des mots-clés de la demande (déterministe). Ordre = priorité de tranche.
+const TYPE_CHANTIER: { label: string; keys: string[] }[] = [
+  { label: 'Plomberie', keys: ['fuite', 'robinet', 'chauffe eau', 'wc', 'toilette', 'evier', 'lavabo', 'canalisation', 'tuyau', 'douche', 'baignoire', 'degat des eaux', 'siphon', 'chasse d eau', 'debouch'] },
+  { label: 'Chauffage', keys: ['chaudiere', 'radiateur', 'pompe a chaleur', 'thermostat', 'plancher chauffant', 'chauffage', 'ballon d eau', 'climatisation', 'clim', 'frigo'] },
+  { label: 'Électricité', keys: ['electric', 'prise', 'tableau electrique', 'disjoncteur', 'court circuit', 'compteur', 'luminaire', 'interrupteur', 'panne de courant', 'mise aux normes'] },
+  { label: 'Toiture', keys: ['toit', 'toiture', 'tuile', 'ardoise', 'gouttiere', 'charpente', 'zinguerie', 'faitage'] },
+  { label: 'Menuiserie', keys: ['fenetre', 'porte', 'volet', 'parquet', 'escalier', 'dressing', 'placard', 'veranda', 'menuiserie', 'portail', 'store'] },
+  { label: 'Peinture', keys: ['peinture', 'peindre', 'enduit', 'papier peint', 'ravalement', 'lasure'] },
+  { label: 'Maçonnerie', keys: ['macon', 'dalle', 'terrasse', 'fondation', 'parpaing', 'extension', 'chape', 'beton', 'ouverture de mur'] },
+  { label: 'Carrelage', keys: ['carrelage', 'carreau', 'faience', 'pose de sol'] },
+  { label: 'Salle de bain', keys: ['salle de bain', 'salle d eau'] },
+  { label: 'Cuisine', keys: ['cuisine', 'plan de travail', 'credence'] },
+  { label: 'Isolation', keys: ['isolation', 'isoler', 'combles', 'laine de verre'] },
+  { label: 'Serrurerie', keys: ['serrure', 'serrurier', 'porte blindee', 'cylindre', 'verrou'] },
+]
+
+// Métier → libellé de repli quand aucun mot-clé de la demande ne tranche.
+function metierToType(metier?: string | null): string | null {
+  if (!metier) return null
+  const m = normalize(metier)
+  const map: [string, string][] = [
+    ['plomb', 'Plomberie'], ['chauffag', 'Chauffage'], ['frigoriste', 'Chauffage'], ['climatis', 'Chauffage'],
+    ['electric', 'Électricité'], ['couvreur', 'Toiture'], ['toitur', 'Toiture'], ['charpent', 'Toiture'],
+    ['menuis', 'Menuiserie'], ['ebenist', 'Menuiserie'], ['peintr', 'Peinture'], ['macon', 'Maçonnerie'],
+    ['carrel', 'Carrelage'], ['serrur', 'Serrurerie'],
+  ]
+  for (const [k, v] of map) if (m.includes(k)) return v
+  return null
+}
+
+/** Qualification DÉTERMINISTE d'un lead (0 coût IA) : niveau d'urgence + type de chantier. */
+export function qualifyLead(message?: string | null, metier?: string | null): { urgence: 'urgent' | 'normal'; type_chantier: string | null } {
+  const msg = (message || '').trim()
+  const urgence: 'urgent' | 'normal' = msg && isUrgent(msg) ? 'urgent' : 'normal'
+  const n = normalize(msg)
+  let type: string | null = null
+  if (n) { const hit = TYPE_CHANTIER.find((t) => has(n, t.keys)); type = hit ? hit.label : null }
+  if (!type) type = metierToType(metier)
+  return { urgence, type_chantier: type }
+}
+
 /** Construit le bloc d'instructions dynamiques injecté dans le prompt système. */
 function buildLeadGuidance(a: LeadInsights, metier: string): string {
   const lines: string[] = []

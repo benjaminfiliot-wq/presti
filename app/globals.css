@@ -544,7 +544,9 @@ button:disabled{opacity:.55;cursor:default}
 .inbox-item.unread .inbox-top b{font-weight:800}
 .inbox-time{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--faint);flex:none}
 .inbox-prev{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
-.inbox-item .pill{align-self:flex-start}
+.inbox-tags{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.qtag{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;line-height:1.3;white-space:nowrap;color:var(--muted);background:var(--line-2)}
+.qtag.urgent{color:var(--crit);background:var(--crit-tint)}
 .inbox-dot{position:absolute;top:9px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
 
 .inbox-thread{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;min-height:min(70vh,620px)}

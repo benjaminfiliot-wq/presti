@@ -8,6 +8,7 @@ import AppShell from '@/app/AppShell'
 type Lead = {
   id: string; nom_prospect: string | null; contact: string | null; message: string | null
   statut: string | null; created_at: string; updated_at: string | null; lu_le: string | null
+  urgence: string | null; type_chantier: string | null
 }
 type Msg = { id: string; sens: 'in' | 'out'; type: string | null; contenu: string; sent_at: string }
 
@@ -48,10 +49,14 @@ export default function MessagesPage() {
   const loadLeads = useCallback(async () => {
     const { data } = await supabase
       .from('leads')
-      .select('id, nom_prospect, contact, message, statut, created_at, updated_at, lu_le')
+      .select('id, nom_prospect, contact, message, statut, created_at, updated_at, lu_le, urgence, type_chantier')
       .order('updated_at', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
-    setLeads((data as Lead[]) ?? [])
+    // Tri : les urgences ENCORE ouvertes remontent en tête, sinon on garde l'ordre par récence.
+    const rows = (data as Lead[]) ?? []
+    const openUrgent = (l: Lead) => l.urgence === 'urgent' && l.statut !== 'gagne' && l.statut !== 'perdu'
+    rows.sort((a, b) => (openUrgent(b) ? 1 : 0) - (openUrgent(a) ? 1 : 0))
+    setLeads(rows)
   }, [])
 
   const loadThread = useCallback(async (leadId: string) => {
@@ -162,7 +167,11 @@ export default function MessagesPage() {
                   <span className="inbox-meta">
                     <span className="inbox-top"><b>{l.nom_prospect || l.contact || 'Prospect'}</b><span className="inbox-time">{heure(l.updated_at || l.created_at)}</span></span>
                     <span className="inbox-prev">{l.message || 'Nouvelle demande'}</span>
-                    <span className={`pill ${b.pill}`}><span className="pdot" />{b.label}</span>
+                    <span className="inbox-tags">
+                      {l.urgence === 'urgent' && (l.statut !== 'gagne' && l.statut !== 'perdu') ? <span className="qtag urgent">⚡ Urgent</span> : null}
+                      {l.type_chantier ? <span className="qtag">{l.type_chantier}</span> : null}
+                      <span className={`pill ${b.pill}`}><span className="pdot" />{b.label}</span>
+                    </span>
                   </span>
                   {isUnread(l) && <span className="inbox-dot" aria-label="Non lu" />}
                 </button>
