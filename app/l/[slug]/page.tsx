@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import Image from 'next/image'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import LeadForm from './LeadForm'
 import PlatMotion from './PlatMotion'
@@ -170,8 +171,7 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
           <div className="plat-gallery">
             {realisations.map((rz, i) => (
               <figure className="plat-shot plat-reveal" key={i}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={rz.image} alt={rz.titre || 'Réalisation'} loading="lazy" />
+                <Image src={rz.image!} alt={rz.titre || 'Réalisation'} fill sizes="(max-width: 620px) 100vw, 240px" style={{ objectFit: 'cover' }} unoptimized={/^data:/.test(rz.image!)} />
                 {(rz.titre || rz.specialite) ? (
                   <figcaption>{rz.specialite ? <span className="plat-shot-tag">{rz.specialite}</span> : null}{rz.titre ? <b>{rz.titre}</b> : null}</figcaption>
                 ) : null}

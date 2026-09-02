@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type { SiteContenu } from '@/lib/ai'
+import Image from 'next/image'
 import SiteMotion from './SiteMotion'
 import { siteMaxForPlan } from '@/lib/plans'
 
@@ -242,8 +243,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           <div className={`site-gallery${tier === 3 ? ' cine' : ''}`}>
             {realisations.map((rz, i) => (
               <figure className={`site-shot site-reveal${tier === 3 && i % 5 === 0 ? ' wide' : ''}`} key={i}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={rz.image} alt={rz.titre || 'Réalisation'} loading="lazy" />
+                <Image src={rz.image!} alt={rz.titre || 'Réalisation'} fill sizes="(max-width: 680px) 100vw, (max-width: 1180px) 50vw, 33vw" style={{ objectFit: 'cover' }} unoptimized={/^data:/.test(rz.image!)} />
                 {(rz.titre || rz.specialite) ? (
                   <figcaption>{rz.specialite ? <span className="site-shot-tag">{rz.specialite}</span> : null}{rz.titre ? <b>{rz.titre}</b> : null}</figcaption>
                 ) : null}
