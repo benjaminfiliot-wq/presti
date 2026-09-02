@@ -122,12 +122,42 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
         setNeedContact(true)
         return
       }
-      const res = await fetch('/api/conversation', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, message: contenu, website }) })
-      const d = await res.json().catch(() => ({}))
-      setThinking(false); setSending(false)
-      if (!res.ok) { marquer('echec'); setErr(d.error ?? 'Message non envoyé.'); return }
+      // Réponse DIFFUSÉE au fil de l'eau (SSE) : le texte s'écrit sous les yeux du client.
+      const res = await fetch('/api/conversation/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, message: contenu, website }) })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        setThinking(false); setSending(false); marquer('echec'); setErr(d.error ?? 'Message non envoyé.'); return
+      }
       marquer('envoye')
-      if (d.reply) setMsgs((m) => [...m, { id: `r${Date.now()}`, sens: 'out', contenu: d.reply, type: 'reponse_auto', etat: 'envoye' }])
+      // Pas de flux (mode manuel, pause, crédits épuisés) → réponse JSON simple.
+      if (!(res.headers.get('content-type') || '').includes('text/event-stream') || !res.body) {
+        const d = await res.json().catch(() => ({}))
+        setThinking(false); setSending(false)
+        if (d.reply) setMsgs((m) => [...m, { id: `r${Date.now()}`, sens: 'out', contenu: d.reply, type: 'reponse_auto', etat: 'envoye' }])
+        return
+      }
+      const rid = `r${Date.now()}`
+      setThinking(false)
+      setMsgs((m) => [...m, { id: rid, sens: 'out', contenu: '', type: 'reponse_auto', etat: 'envoye' }])
+      const lecteur = res.body.getReader(); const dec = new TextDecoder(); let tampon = ''
+      for (;;) {
+        const { done, value } = await lecteur.read()
+        if (done) break
+        tampon += dec.decode(value, { stream: true })
+        const blocs = tampon.split('\n\n'); tampon = blocs.pop() || ''
+        for (const b of blocs) {
+          const ligne = b.trim()
+          if (!ligne.startsWith('data:')) continue
+          try {
+            const o = JSON.parse(ligne.slice(5).trim())
+            if (o.t === 'delta') setMsgs((m) => m.map((x) => (x.id === rid ? { ...x, contenu: x.contenu + o.v } : x)))
+            else if (o.t === 'error') setErr(o.v)
+          } catch { /* fragment incomplet : on attend la suite */ }
+        }
+      }
+      setSending(false)
+      // Si rien n'est arrivé (IA indisponible), on retire la bulle vide plutôt que de laisser un blanc.
+      setMsgs((m) => m.filter((x) => !(x.id === rid && !x.contenu.trim())))
     } catch {
       setThinking(false); setSending(false); marquer('echec'); setErr('Connexion interrompue.')
     }

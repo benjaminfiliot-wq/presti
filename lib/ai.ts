@@ -366,6 +366,9 @@ export async function generateConversationReply(
   lead: Lead,
   history: ConvTurn[],
   model: string = AI_MODEL,
+  // Si fourni, la réponse est DIFFUSÉE au fil de l'eau (streaming SSE, v4 §A2) :
+  // le prospect voit le texte s'écrire au lieu d'un spinner opaque.
+  onDelta?: (texte: string) => void,
 ): Promise<string> {
   const nomArtisan = artisan.nom?.trim() || "l'artisan"
   const metier = artisan.metier?.trim() || 'artisan'
@@ -413,6 +416,20 @@ RÈGLES (garde-fous) :
   // On répond à un message entrant : la conversation doit se terminer côté 'user'.
   if (msgs[msgs.length - 1].role !== 'user') {
     msgs.push({ role: 'user', content: dernierIn || '(le prospect attend votre retour)' })
+  }
+
+  // Streaming : on émet chaque fragment de texte dès qu'il arrive (les blocs de
+  // raisonnement ne sont jamais transmis au prospect).
+  if (onDelta) {
+    const stream = client.messages.stream({ ...genParams(model, 900), system, messages: msgs })
+    let acc = ''
+    for await (const ev of stream) {
+      if (ev.type === 'content_block_delta' && ev.delta.type === 'text_delta') {
+        acc += ev.delta.text
+        onDelta(ev.delta.text)
+      }
+    }
+    return acc.trim()
   }
 
   const res = await client.messages.create({
