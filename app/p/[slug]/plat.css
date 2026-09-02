@@ -300,3 +300,99 @@ html.lenis,html.lenis body{height:auto}
 .plat-404{background:var(--ps);border:1px solid var(--pl);border-radius:18px;padding:2.4rem;text-align:center;max-width:26rem}
 .plat-404 b{display:block;font-family:var(--pfd);font-size:1.4rem;margin-bottom:.4rem}.plat-404 span{color:var(--pm)}
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   APPLICATION DE CONVERSATION (v4 §A2) — plein écran, colonne + fil + composeur.
+   Reprend les tokens de thème de .plat (--pb/--ps/--pi/--pc/--pl/--pf*).
+   NB : base.css impose button{width:100%;margin-top:1.4rem} → on remet à plat ici.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.plat-app{height:100dvh;min-height:100dvh;overflow:hidden;display:block}
+.pchat{display:flex;height:100dvh;overflow:hidden;font-family:var(--pfb)}
+.pchat button{width:auto;margin:0}
+
+/* ── Colonne des conversations */
+.pchat-side{width:274px;flex:none;display:flex;flex-direction:column;gap:.7rem;padding:1rem .85rem;border-right:1px solid var(--pl);background:color-mix(in srgb,var(--pi) 4%,var(--pb));z-index:3}
+.pchat-brand{display:flex;align-items:center;gap:.6rem;padding:.15rem .25rem .5rem}
+.pchat-brand span{display:flex;flex-direction:column;min-width:0}
+.pchat-brand b{font-size:.95rem;color:var(--pi);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pchat-brand small{font-size:.74rem;color:var(--pm)}
+.pchat-ava{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:color-mix(in srgb,var(--pc) 18%,var(--ps));color:var(--pc2);font-size:.74rem;font-weight:700}
+.pchat-ava img{width:100%;height:100%;object-fit:cover}
+.pchat-new{padding:.6rem .8rem;border-radius:11px;border:1px dashed color-mix(in srgb,var(--pi) 26%,transparent);background:none;color:var(--pi2);font-size:.88rem;font-weight:600;cursor:pointer;text-align:left;transition:border-color .15s,color .15s}
+.pchat-new:hover{border-color:var(--pc);color:var(--pc2)}
+.pchat-list{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.pchat-conv{text-align:left;padding:.55rem .65rem;border:none;background:none;border-radius:9px;color:var(--pi2);font-size:.86rem;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:background .14s,color .14s}
+.pchat-conv:hover{background:color-mix(in srgb,var(--pi) 6%,transparent)}
+.pchat-conv.on{background:color-mix(in srgb,var(--pc) 14%,transparent);color:var(--pi);font-weight:600}
+.pchat-empty{margin:.4rem .3rem;font-size:.8rem;color:var(--pf)}
+.pchat-side-foot{padding:.55rem .3rem 0;border-top:1px solid var(--pl2);font-size:.76rem;color:var(--pm)}
+.pchat-scrim{display:none}
+
+/* ── Zone de conversation */
+.pchat-main{flex:1;min-width:0;display:flex;flex-direction:column;height:100dvh}
+.pchat-top{display:flex;align-items:center;gap:.6rem;padding:.75rem 1.1rem;border-bottom:1px solid var(--pl)}
+.pchat-burger{display:none;font-size:1.1rem;background:none;border:none;color:var(--pi2);cursor:pointer;padding:.2rem .4rem}
+.pchat-who{display:flex;flex-direction:column;min-width:0}
+.pchat-who b{font-size:.95rem;color:var(--pi)}
+.pchat-human{font-style:normal;font-size:.76rem;color:var(--pc2);font-weight:600}
+.pchat-ia{margin:0;padding:.45rem 1.1rem;font-size:.74rem;color:var(--pm);background:color-mix(in srgb,var(--pi) 3%,transparent);border-bottom:1px solid var(--pl2);text-align:center}
+
+.pchat-thread{flex:1;min-height:0;overflow-y:auto;padding:1.2rem clamp(.8rem,4vw,2rem);display:flex;flex-direction:column;gap:.85rem}
+.pchat-hello{margin:auto;text-align:center;max-width:34rem;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.pchat-hello h1{font-family:var(--pfd);font-size:clamp(1.7rem,4vw,2.3rem);margin:.5rem 0 0;color:var(--pi)}
+.pchat-hello p{margin:0;color:var(--pi2);font-size:.98rem}
+.pchat-sugg{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.9rem}
+.pchat-sugg button{padding:.55rem .9rem;border:1px solid var(--pl);border-radius:999px;background:var(--ps);color:var(--pi2);font-size:.86rem;cursor:pointer;transition:border-color .15s,color .15s,transform .12s}
+.pchat-sugg button:hover{border-color:var(--pc);color:var(--pc2);transform:translateY(-1px)}
+
+.pchat-row{display:flex;gap:.55rem;align-items:flex-end}
+.pchat-row.me{justify-content:flex-end}
+.pchat-bub{max-width:min(74%,640px);padding:.7rem .95rem;border-radius:16px;font-size:.97rem;line-height:1.55;background:var(--ps);border:1px solid var(--pl);color:var(--pi);word-break:break-word}
+.pchat-row.me .pchat-bub{background:linear-gradient(120deg,var(--pc2),var(--pc));border-color:transparent;color:#1a0f0a;border-bottom-right-radius:6px}
+.pchat-row.them .pchat-bub{border-bottom-left-radius:6px}
+.pchat-photos{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.4rem}
+.pchat-photos img{width:96px;height:96px;object-fit:cover;border-radius:10px;display:block}
+.pchat-etat{display:flex;align-items:center;gap:.4rem;margin-top:.3rem;font-size:.68rem;opacity:.75}
+.pchat-etat.echec{color:#B4232A;opacity:1;font-weight:600}
+.pchat-etat button{background:none;border:none;text-decoration:underline;color:inherit;font-size:.68rem;cursor:pointer;padding:0}
+.pchat-bub.typing{display:flex;gap:4px;padding:.85rem 1rem}
+.pchat-bub.typing span{width:6px;height:6px;border-radius:50%;background:var(--pm);animation:plat-typing 1.2s infinite}
+.pchat-bub.typing span:nth-child(2){animation-delay:.15s}
+.pchat-bub.typing span:nth-child(3){animation-delay:.3s}
+@media(prefers-reduced-motion:reduce){.pchat-bub.typing span{animation:none}}
+
+.pchat-capture{display:flex;flex-direction:column;gap:.5rem;align-self:flex-start;max-width:min(88%,460px);padding:.9rem 1rem;border:1.5px solid color-mix(in srgb,var(--pc) 30%,transparent);border-radius:16px;background:color-mix(in srgb,var(--pc) 5%,var(--ps))}
+.pchat-capture span{font-size:.88rem;font-weight:650;color:var(--pi2)}
+.pchat-capture input{width:100%;background:var(--pb);border:1.5px solid var(--pl);border-radius:11px;padding:.65rem .85rem;font-size:.95rem;font-family:inherit;color:var(--pi)}
+.pchat-capture input:focus{outline:none;border-color:var(--pc)}
+.pchat-capture button{padding:.7rem;border:none;border-radius:11px;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;font-weight:700;cursor:pointer}
+.pchat-capture button:disabled{opacity:.5;cursor:default}
+
+/* ── Composeur */
+.pchat-composer{position:relative;padding:.7rem clamp(.8rem,4vw,2rem) .9rem;border-top:1px solid var(--pl)}
+.pchat-joint{display:flex;gap:.4rem;margin-bottom:.5rem;flex-wrap:wrap}
+.pchat-joint span{position:relative;width:60px;height:60px;border-radius:10px;overflow:hidden;border:1px solid var(--pl)}
+.pchat-joint img{width:100%;height:100%;object-fit:cover;display:block}
+.pchat-joint button{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.6);color:#fff;font-size:13px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}
+.pchat-inputrow{display:flex;align-items:flex-end;gap:.45rem;padding:.35rem .35rem .35rem .6rem;border:1.5px solid var(--pl);border-radius:20px;background:var(--ps);transition:border-color .16s,box-shadow .16s}
+.pchat-inputrow:focus-within{border-color:var(--pc);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 13%,transparent)}
+.pchat-clip{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1rem;color:var(--pm);transition:background .14s}
+.pchat-clip:hover{background:color-mix(in srgb,var(--pi) 7%,transparent)}
+.pchat-inputrow textarea{flex:1;min-width:0;background:none;border:none;padding:.5rem 0;font-size:1rem;font-family:inherit;color:var(--pi);resize:none;max-height:168px;line-height:1.5}
+.pchat-inputrow textarea:focus{outline:none}
+.pchat-inputrow textarea::placeholder{color:var(--pf)}
+.pchat-inputrow>button[type=submit]{flex:none;width:36px;height:36px;border-radius:50%;border:none;display:grid;place-items:center;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;cursor:pointer;transition:opacity .15s,transform .12s}
+.pchat-inputrow>button[type=submit]:disabled{opacity:.38;cursor:default}
+.pchat-inputrow>button[type=submit]:active:not(:disabled){transform:scale(.93)}
+.pchat-hint{display:block;margin-top:.4rem;text-align:center;font-size:.7rem;color:var(--pf)}
+.pchat-err{margin:0 clamp(.8rem,4vw,2rem) .8rem;padding:.6rem .8rem;border-radius:10px;font-size:.85rem;color:#B4232A;background:color-mix(in srgb,#B4232A 10%,transparent)}
+
+/* ── Mobile : la colonne devient un tiroir */
+@media(max-width:860px){
+  .pchat-side{position:fixed;inset:0 auto 0 0;width:82vw;max-width:310px;transform:translateX(-102%);transition:transform .28s var(--pe);box-shadow:0 0 60px rgba(0,0,0,.28)}
+  .pchat.open .pchat-side{transform:none}
+  .pchat.open .pchat-scrim{display:block;position:fixed;inset:0;z-index:2;background:rgba(0,0,0,.42);border:none;padding:0}
+  .pchat-burger{display:block}
+  .pchat-bub{max-width:86%}
+}
+@media(max-width:860px) and (prefers-reduced-motion:reduce){.pchat-side{transition:none}}

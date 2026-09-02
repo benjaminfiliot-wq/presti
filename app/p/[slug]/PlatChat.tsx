@@ -1,0 +1,263 @@
+'use client'
+
+import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { compressPhotoToDataUrl } from '@/lib/media'
+
+// L'APPLICATION DE CONVERSATION de la plateforme (v4 §A2).
+// Ce n'est plus un formulaire décoré : c'est un client de chat — colonne des conversations,
+// fil, composeur, suggestions d'ouverture, et un bandeau de transparence IA permanent.
+// White-label absolu : aucune mention de Presti, seule la marque de l'artisan apparaît.
+
+export type Msg = {
+  id: string
+  sens: 'in' | 'out'
+  contenu: string
+  type?: string | null            // 'reponse_auto' = IA · 'manuel' = l'artisan en personne
+  photos?: string[]
+  etat?: 'envoi' | 'envoye' | 'echec'
+}
+type Conv = { token: string; titre: string; ts: number }
+type Props = {
+  slug: string
+  artisanNom: string
+  metier?: string | null
+  avatar?: string | null
+  services?: string[]
+  paused?: boolean
+  delai?: string | null
+}
+
+const initials = (n: string) => (n || 'A').trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? '').join('') || 'A'
+const titreDe = (t: string) => { const s = t.trim().replace(/\s+/g, ' '); return s.length > 38 ? s.slice(0, 38) + '…' : s || 'Nouvelle demande' }
+
+export default function PlatChat({ slug, artisanNom, metier, avatar, services = [], paused, delai }: Props) {
+  const [convs, setConvs] = useState<Conv[]>([])
+  const [token, setToken] = useState<string | null>(null)
+  const [msgs, setMsgs] = useState<Msg[]>([])
+  const [draft, setDraft] = useState('')
+  const [photos, setPhotos] = useState<string[]>([])
+  const [photoBusy, setPhotoBusy] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [thinking, setThinking] = useState(false)
+  const [needContact, setNeedContact] = useState(false)
+  const [nom, setNom] = useState('')
+  const [contact, setContact] = useState('')
+  const [website, setWebsite] = useState('') // honeypot
+  const [side, setSide] = useState(false)    // tiroir mobile
+  const [err, setErr] = useState<string | null>(null)
+  const threadRef = useRef<HTMLDivElement>(null)
+  const taRef = useRef<HTMLTextAreaElement>(null)
+  const KEY = `presti-convs-${slug}`
+
+  // ── Amorces personnalisées : construites depuis les VRAIES prestations de l'artisan.
+  const amorces = (services.length
+    ? services.slice(0, 3).map((s) => `J'ai besoin de : ${s.toLowerCase()}`)
+    : ["J'ai un problème à réparer", 'Je voudrais un devis', 'Je veux refaire une pièce']
+  ).concat(metier ? [`Une question pour un ${metier.toLowerCase()}`] : []).slice(0, 4)
+
+  const pushEvent = useCallback((event: 'view' | 'lead' | 'contact') => {
+    try { fetch('/api/plat-event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({ slug, event, variant: 'B' }) }).catch(() => {}) } catch { /* ignore */ }
+  }, [slug])
+
+  const ouvrir = useCallback(async (t: string) => {
+    setToken(t); setNeedContact(false); setErr(null); setSide(false)
+    try {
+      const res = await fetch(`/api/conversation?token=${encodeURIComponent(t)}`)
+      if (!res.ok) { setMsgs([]); return }
+      const d = await res.json()
+      setMsgs(Array.isArray(d.messages) ? d.messages.map((m: Msg, i: number) => ({ id: `s${i}`, sens: m.sens, contenu: m.contenu, type: m.type, etat: 'envoye' as const })) : [])
+    } catch { setMsgs([]) }
+  }, [])
+
+  // Chargement initial : conversations locales (+ migration de l'ancien jeton unique).
+  useEffect(() => {
+    let list: Conv[] = []
+    try {
+      list = JSON.parse(localStorage.getItem(KEY) || '[]')
+      const vieux = localStorage.getItem(`presti-conv-${slug}`)
+      if (vieux && !list.some((c) => c.token === vieux)) { list.unshift({ token: vieux, titre: 'Ma demande', ts: Date.now() }); localStorage.setItem(KEY, JSON.stringify(list)) }
+    } catch { list = [] }
+    setConvs(list)
+    if (list[0]) ouvrir(list[0].token)
+    try { const vk = `presti-view-${slug}`; if (!sessionStorage.getItem(vk)) { sessionStorage.setItem(vk, '1'); pushEvent('view') } } catch { /* ignore */ }
+  }, [KEY, slug, ouvrir, pushEvent])
+
+  useEffect(() => { const el = threadRef.current; if (el) el.scrollTop = el.scrollHeight }, [msgs, thinking, needContact])
+  useEffect(() => { const ta = taRef.current; if (ta) { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 168) + 'px' } }, [draft])
+
+  function saveConvs(next: Conv[]) { setConvs(next); try { localStorage.setItem(KEY, JSON.stringify(next)) } catch { /* ignore */ } }
+  function nouvelle() { setToken(null); setMsgs([]); setNeedContact(false); setDraft(''); setPhotos([]); setErr(null); setSide(false); taRef.current?.focus() }
+
+  async function ajouterPhotos(e: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []); e.target.value = ''
+    if (!files.length) return
+    setPhotoBusy(true); setErr(null)
+    const libres = Math.max(0, 3 - photos.length); const next: string[] = []
+    for (const f of files.slice(0, libres)) { if (!f.type.startsWith('image/')) continue; const d = await compressPhotoToDataUrl(f); if (d) next.push(d) }
+    if (next.length) setPhotos((p) => [...p, ...next].slice(0, 3))
+    setPhotoBusy(false)
+  }
+
+  // ── Envoi d'un message (1er = création de la demande, suivants = conversation).
+  async function envoyer(texte?: string) {
+    const contenu = (texte ?? draft).trim()
+    if ((!contenu && !photos.length) || sending || photoBusy) return
+    const localId = `t${Date.now()}`
+    const envoyees = photos
+    setMsgs((m) => [...m, { id: localId, sens: 'in', contenu, photos: envoyees, etat: 'envoi' }])
+    setDraft(''); setPhotos([]); setSending(true); setThinking(true); setErr(null)
+    const marquer = (etat: Msg['etat']) => setMsgs((m) => m.map((x) => (x.id === localId ? { ...x, etat } : x)))
+    try {
+      if (!token) {
+        const res = await fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug, message: contenu, photos: envoyees, website, variant: 'B', deferContact: true }) })
+        const d = await res.json().catch(() => ({}))
+        setThinking(false); setSending(false)
+        if (!res.ok) { marquer('echec'); setErr(d.error ?? 'Envoi impossible.'); return }
+        marquer('envoye'); pushEvent('lead')
+        if (d.token) { setToken(d.token); saveConvs([{ token: d.token, titre: titreDe(contenu), ts: Date.now() }, ...convs]) }
+        const rep = d.reply || (d.paused
+          ? `Votre demande est bien enregistrée — ${artisanNom} est momentanément indisponible et revient vers vous dès la reprise.`
+          : `Bien reçu ! ${artisanNom} a votre demande et vous répond au plus vite.`)
+        setMsgs((m) => [...m, { id: `r${Date.now()}`, sens: 'out', contenu: rep, type: d.reply ? 'reponse_auto' : 'manuel', etat: 'envoye' }])
+        setNeedContact(true)
+        return
+      }
+      const res = await fetch('/api/conversation', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, message: contenu, website }) })
+      const d = await res.json().catch(() => ({}))
+      setThinking(false); setSending(false)
+      if (!res.ok) { marquer('echec'); setErr(d.error ?? 'Message non envoyé.'); return }
+      marquer('envoye')
+      if (d.reply) setMsgs((m) => [...m, { id: `r${Date.now()}`, sens: 'out', contenu: d.reply, type: 'reponse_auto', etat: 'envoye' }])
+    } catch {
+      setThinking(false); setSending(false); marquer('echec'); setErr('Connexion interrompue.')
+    }
+  }
+
+  // Renvoi d'un message en échec (retry visible, §A2).
+  function reessayer(m: Msg) { setMsgs((x) => x.filter((y) => y.id !== m.id)); setPhotos(m.photos ?? []); envoyer(m.contenu) }
+
+  async function envoyerContact(e: FormEvent) {
+    e.preventDefault()
+    if (!token || !contact.trim() || sending) return
+    setSending(true); setErr(null)
+    try {
+      const res = await fetch('/api/leads/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, nom_prospect: nom, contact, website }) })
+      const d = await res.json().catch(() => ({}))
+      setSending(false)
+      if (!res.ok) { setErr(d.error ?? 'Envoi impossible.'); return }
+      pushEvent('contact'); setNeedContact(false)
+      setMsgs((m) => [...m, { id: `c${Date.now()}`, sens: 'out', contenu: `Merci${nom.trim() ? ' ' + nom.trim().split(/\s+/)[0] : ''} — ${artisanNom} a vos coordonnées et revient vers vous. Vous pouvez continuer à préciser votre besoin ici.`, type: 'manuel', etat: 'envoye' }])
+    } catch { setSending(false); setErr('Connexion interrompue.') }
+  }
+
+  const Ava = () => (
+    <span className="pchat-ava">{avatar
+      // eslint-disable-next-line @next/next/no-img-element
+      ? <img src={avatar} alt="" /> : <b>{initials(artisanNom)}</b>}</span>
+  )
+  const humain = msgs.some((m) => m.sens === 'out' && m.type === 'manuel' && m.contenu.length > 0)
+
+  return (
+    <div className={`pchat${side ? ' open' : ''}`}>
+      {/* ── Colonne des conversations (tiroir sur mobile) */}
+      <aside className="pchat-side">
+        <div className="pchat-brand"><Ava /><span><b>{artisanNom}</b>{metier ? <small>{metier}</small> : null}</span></div>
+        <button type="button" className="pchat-new" onClick={nouvelle}>+ Nouvelle demande</button>
+        <nav className="pchat-list" aria-label="Mes demandes">
+          {convs.length === 0 ? <p className="pchat-empty">Vos échanges apparaîtront ici.</p> : convs.map((c) => (
+            <button type="button" key={c.token} className={`pchat-conv${token === c.token ? ' on' : ''}`} onClick={() => ouvrir(c.token)}>{c.titre}</button>
+          ))}
+        </nav>
+        {delai ? <div className="pchat-side-foot">{delai}</div> : null}
+      </aside>
+      <button type="button" className="pchat-scrim" onClick={() => setSide(false)} aria-label="Fermer le menu" />
+
+      {/* ── Zone de conversation */}
+      <section className="pchat-main">
+        <header className="pchat-top">
+          <button type="button" className="pchat-burger" onClick={() => setSide(true)} aria-label="Mes demandes">☰</button>
+          <span className="pchat-who"><b>{artisanNom}</b>{humain ? <em className="pchat-human">{artisanNom.split(' ')[0]} vous répond directement</em> : null}</span>
+        </header>
+        {/* Transparence IA — non négociable : le visiteur sait toujours à qui il parle. */}
+        <p className="pchat-ia">Assistant de l&apos;entreprise — un humain prend le relais à tout moment.</p>
+
+        <div className="pchat-thread" ref={threadRef} data-lenis-prevent>
+          {msgs.length === 0 && !thinking ? (
+            <div className="pchat-hello">
+              <Ava />
+              <h1>Bonjour 👋</h1>
+              <p>Décrivez votre besoin en quelques mots — {artisanNom} vous répond.{paused ? ' (Réponses momentanément suspendues : votre demande sera bien enregistrée.)' : ''}</p>
+              <div className="pchat-sugg">
+                {amorces.map((a, i) => <button type="button" key={i} onClick={() => envoyer(a)}>{a}</button>)}
+              </div>
+            </div>
+          ) : null}
+
+          {msgs.map((m) => (
+            <div className={`pchat-row ${m.sens === 'in' ? 'me' : 'them'}`} key={m.id}>
+              {m.sens === 'out' ? <Ava /> : null}
+              <div className="pchat-bub">
+                {m.photos?.length ? (
+                  <div className="pchat-photos">{m.photos.map((p, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={i} src={p} alt="" />
+                  ))}</div>
+                ) : null}
+                {m.contenu ? m.contenu.split('\n').map((l, i, arr) => <span key={i}>{l}{i < arr.length - 1 ? <br /> : null}</span>) : null}
+                {m.sens === 'in' ? (
+                  <span className={`pchat-etat ${m.etat}`}>
+                    {m.etat === 'envoi' ? 'envoi…' : m.etat === 'echec' ? 'non envoyé' : 'envoyé'}
+                    {m.etat === 'echec' ? <button type="button" onClick={() => reessayer(m)}>Réessayer</button> : null}
+                  </span>
+                ) : null}
+              </div>
+            </div>
+          ))}
+
+          {thinking ? (
+            <div className="pchat-row them"><Ava /><div className="pchat-bub typing"><span /><span /><span /></div></div>
+          ) : null}
+
+          {needContact ? (
+            <form className="pchat-capture" onSubmit={envoyerContact}>
+              <span>Pour être recontacté par {artisanNom}, laissez vos coordonnées :</span>
+              <input value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Votre nom (facultatif)" aria-label="Votre nom" />
+              <input value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Email ou téléphone" aria-label="Email ou téléphone" required />
+              <button type="submit" disabled={sending || !contact.trim()}>{sending ? '…' : 'Être recontacté'}</button>
+            </form>
+          ) : null}
+        </div>
+
+        {/* ── Composeur */}
+        <form className="pchat-composer" onSubmit={(e) => { e.preventDefault(); envoyer() }}>
+          <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website} onChange={(e) => setWebsite(e.target.value)} style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} />
+          {photos.length ? (
+            <div className="pchat-joint">{photos.map((p, i) => (
+              <span key={i}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={p} alt="" />
+                <button type="button" onClick={() => setPhotos((ps) => ps.filter((_, j) => j !== i))} aria-label="Retirer">×</button>
+              </span>
+            ))}</div>
+          ) : null}
+          <div className="pchat-inputrow">
+            <label className="pchat-clip" title="Ajouter une photo du chantier">
+              <input type="file" accept="image/*" capture="environment" multiple onChange={ajouterPhotos} hidden disabled={photoBusy || photos.length >= 3} />
+              {photoBusy ? '…' : '📎'}
+            </label>
+            <textarea
+              ref={taRef} value={draft} onChange={(e) => setDraft(e.target.value)} rows={1}
+              placeholder="Décrivez votre besoin…"
+              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); envoyer() } }}
+            />
+            <button type="submit" disabled={sending || photoBusy || (!draft.trim() && !photos.length)} aria-label="Envoyer">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4 20-7z" /></svg>
+            </button>
+          </div>
+          <small className="pchat-hint">Entrée pour envoyer · Maj+Entrée pour aller à la ligne · photos bienvenues (la localisation est retirée)</small>
+        </form>
+        {err ? <div className="pchat-err">{err}</div> : null}
+      </section>
+    </div>
+  )
+}
