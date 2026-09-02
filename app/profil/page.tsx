@@ -579,7 +579,7 @@ export default function ProfilPage() {
         </div>
 
         {/* Données & suppressions — chaque brique indépendamment (§C3) */}
-        <div className="tool-card danger-zone">
+        <div className="tool-card danger-zone" id="donnees">
           <h2>Données &amp; suppressions</h2>
           <p className="muted" style={{ margin: '0 0 1rem' }}>
             Chaque partie se supprime <b>séparément</b> — votre compte Presti reste intact. Avant chaque action, on vous montre exactement ce qui disparaît et ce qui est conservé.

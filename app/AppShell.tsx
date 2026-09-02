@@ -32,7 +32,17 @@ const NAV: { group: string; items: Nav[] }[] = [
   },
 ]
 
-type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null; credits: number | null; logo_url: string | null }
+type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null; credits: number | null; logo_url: string | null; email: string | null }
+
+// Menu de profil (v4 §C1) — l'accès à tout ce qui touche au compte, au même endroit.
+const PROFIL_MENU: { href: string; label: string; icone: string }[] = [
+  { href: '/parametres', label: 'Paramètres', icone: '⚙' },
+  { href: '/profil', label: 'Ma page', icone: '👤' },
+  { href: '/abonnement', label: 'Abonnement & facturation', icone: '💳' },
+  { href: '/plateforme', label: 'Ma plateforme', icone: '💬' },
+  { href: '/parametres?onglet=securite', label: 'Sécurité', icone: '🔒' },
+  { href: '/parametres?onglet=legal', label: 'Entreprise & légal', icone: '📄' },
+]
 
 const PLAN_LABEL: Record<string, string> = { gratuit: 'Essai gratuit', essentiel: 'Offre Essentiel', studio: 'Offre Studio', signature: 'Offre Signature', pro: 'Offre Pro', business: 'Offre Business' }
 
@@ -58,6 +68,7 @@ export default function AppShell({
 }) {
   const router = useRouter()
   const [a, setA] = useState<ArtisanInfo | null>(null)
+  const [menuOuvert, setMenuOuvert] = useState(false)
   const [open, setOpen] = useState(false)
   const [unread, setUnread] = useState(0)
 
@@ -134,7 +145,28 @@ export default function AppShell({
         ))}
 
         <div className="psh-foot">
-          <div className="psh-founder">
+          {/* Menu de profil (§C1) : tout ce qui touche au compte, au même endroit. */}
+          {menuOuvert ? (
+            <>
+              <button className="psh-menu-scrim" onClick={() => setMenuOuvert(false)} aria-label="Fermer le menu" />
+              <div className="psh-menu" role="menu">
+                <div className="psh-menu-id">
+                  <b>{a?.nom || 'Mon compte'}</b>
+                  {a?.email ? <span>{a.email}</span> : null}
+                  <span className="psh-menu-plan">
+                    {isFounder ? 'Fondateur · Accès total' : `${PLAN_LABEL[a?.plan ?? 'gratuit'] ?? 'Essai gratuit'} · ${a?.credits ?? 0} crédits`}
+                  </span>
+                </div>
+                <nav>
+                  {PROFIL_MENU.map((m) => (
+                    <a key={m.href} href={m.href} role="menuitem"><span aria-hidden="true">{m.icone}</span>{m.label}</a>
+                  ))}
+                </nav>
+                <button className="psh-menu-out" onClick={logout} role="menuitem">↩ Se déconnecter</button>
+              </div>
+            </>
+          ) : null}
+          <button className="psh-founder" onClick={() => setMenuOuvert((v) => !v)} aria-haspopup="menu" aria-expanded={menuOuvert}>
             {a?.logo_url
               // eslint-disable-next-line @next/next/no-img-element
               ? <span className="psh-ava has-logo"><img src={a.logo_url} alt="" /></span>
@@ -145,8 +177,8 @@ export default function AppShell({
                 ? <span className="founder">Fondateur · Accès total</span>
                 : <span>{PLAN_LABEL[a?.plan ?? 'gratuit'] ?? 'Essai gratuit'} · <strong style={{ color: 'var(--accent-ink)' }}>{a?.credits ?? 0}</strong> crédits</span>}
             </span>
-          </div>
-          <button className="psh-logout" onClick={logout}>Déconnexion</button>
+            <span className="psh-chev" aria-hidden="true">⌃</span>
+          </button>
         </div>
       </aside>
 
