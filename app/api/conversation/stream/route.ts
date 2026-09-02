@@ -4,6 +4,14 @@ import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { getPlateformeConfig, iaDoitRepondre, type PlateformeConfig } from '@/lib/plateformeConfig'
+
+// Ton de l'assistant (§A4) → persona passée au moteur de rédaction.
+const TON: Record<PlateformeConfig['ton'], string> = {
+  sobre: 'sobre, factuel et précis',
+  chaleureux: 'professionnel, chaleureux et rassurant',
+  direct: 'direct et efficace, sans détour',
+}
 
 // Conversation en STREAMING (v4 §A2) : le prospect voit la réponse s'écrire au fil de
 // l'eau au lieu d'attendre un spinner opaque. Mêmes garde-fous que /api/conversation
@@ -66,20 +74,29 @@ export async function POST(req: Request) {
       .from('artisans').select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause').eq('id', lead.artisan_id).maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
 
-    const notifier = async (reply: string | null) => {
+    const notifier = async (reply: string | null, alerte?: string) => {
       if (!artisan.email) return
       await sendEmail({
         to: artisan.email,
-        subject: `Échange en cours — ${lead.nom_prospect || lead.contact || 'prospect'}`,
-        text: `Un prospect discute sur votre page.\n\nSon message :\n« ${message} »\n\n${reply ? `Réponse automatique envoyée :\n---\n${reply}` : '(pas de réponse auto — répondez-lui depuis Messages)'}\n\nPoursuivez l'échange dans votre espace (Messages).`,
+        subject: alerte
+          ? `⚠️ ${alerte} — ${lead.nom_prospect || lead.contact || 'prospect'}`
+          : `Échange en cours — ${lead.nom_prospect || lead.contact || 'prospect'}`,
+        text: `Un prospect vous écrit sur votre page.\n\nSon message :\n« ${message} »\n\n${reply ? `Réponse automatique envoyée :\n---\n${reply}` : '(pas de réponse automatique — répondez-lui depuis Messages)'}\n\nPoursuivez l'échange dans votre espace (Messages).`,
         replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
       }).catch(() => {})
     }
 
-    // Pas de réponse IA : pause, mode manuel, ou crédits épuisés → le message est déjà sauvé.
-    if (artisan.leads_pause === true || artisan.reponse_auto === false) {
-      if (artisan.reponse_auto === false) await notifier(null)
-      return NextResponse.json({ ok: true, reply: null, paused: artisan.leads_pause === true })
+    // ── Panneau de contrôle IA (§A4) : mode de réponse, escalade, plafond, plage horaire.
+    // Un artisan sans configuration garde EXACTEMENT son comportement actuel.
+    const cfg = await getPlateformeConfig(artisan.id, artisan.reponse_auto)
+    const nbReponsesIA = history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length
+    const decision = iaDoitRepondre(cfg, { nbReponsesIA, message, pause: artisan.leads_pause === true })
+    if (!decision.ok) {
+      // L'IA se tait : on prévient l'artisan (alerte renforcée si un mot d'escalade a coupé).
+      if (decision.raison === 'escalade') await notifier(null, `Demande sensible (« ${decision.mot} »)`)
+      else if (decision.raison === 'limite') await notifier(null, 'Conversation à reprendre en main')
+      else if (decision.raison !== 'pause') await notifier(null)
+      return NextResponse.json({ ok: true, reply: null, raison: decision.raison })
     }
     const credit = await consumeCredit(artisan.id, 'standard', !!artisan.is_founder)
     if (!credit.ok) { await notifier(null); return NextResponse.json({ ok: true, reply: null }) }
@@ -93,7 +110,7 @@ export async function POST(req: Request) {
         let complet = ''
         try {
           complet = await generateConversationReply(
-            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style },
+            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux },
             { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
             turns,
             undefined,
