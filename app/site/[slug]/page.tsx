@@ -8,6 +8,7 @@ import { Fragment } from 'react'
 import Image from 'next/image'
 import SiteMotion from './SiteMotion'
 import SiteMatiere3D from './SiteMatiere3D'
+import SiteAvantApres from './SiteAvantApres'
 import { siteMaxForPlan } from '@/lib/plans'
 import { resolveLayout, type SectionId } from '@/lib/siteLayout'
 
@@ -23,12 +24,13 @@ type Artisan = {
   site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
   site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null; site_seo: boolean | null; site_layout: unknown
   domaine: string | null; domaine_verifie: boolean | null
+  avant_apres: { avant?: string; apres?: string; titre?: string }[] | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout, domaine, domaine_verifie')
+    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout, domaine, domaine_verifie, avant_apres')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -146,8 +148,19 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   ])).slice(0, 4)
   const manifesteTxt = c?.manifeste || c?.hero_accroche || (a.metier ? `${a.metier}, avec exigence.` : 'Un travail fait pour durer.')
 
+  // Paires avant/après (Signature) — n'apparaît que si l'artisan en a fourni de complètes.
+  const aaPairs = (Array.isArray(a.avant_apres) ? a.avant_apres : [])
+    .filter((p): p is { avant: string; apres: string; titre?: string } => !!p && !!p.avant && !!p.apres)
+  const showAvantApres = tier >= 3 && aaPairs.length > 0
+
   // Composition pilotée par les données : ordre + activation des sections (défaut = dérivé du niveau).
   const layout = resolveLayout(a.site_layout, tier as 1 | 2 | 3)
+  // « Avant/après » n'est pas géré par le composeur : on l'injecte après la galerie si présent.
+  if (showAvantApres && !layout.sections.some((s) => s.id === 'avantapres')) {
+    const gi = layout.sections.findIndex((s) => s.id === 'gallery')
+    const at = gi >= 0 ? gi + 1 : Math.max(0, layout.sections.length - 1)
+    layout.sections.splice(at, 0, { id: 'avantapres', on: true })
+  }
   // Chaque section rend son JSX existant (conditions de contenu conservées → rendu identique).
   const sectionNodes: Partial<Record<SectionId, ReactNode>> = {
       hero: (
@@ -242,6 +255,12 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
               </figure>
             ))}
           </div>
+        </section>
+      ) : null,
+      avantapres: showAvantApres ? (
+        <section className="site-block site-dark site-aa-section" id="avant-apres">
+          <div className="site-head site-reveal"><span className="site-kick">Avant / après</span><h2>Le geste qui change tout</h2><p className="site-sub">Glissez pour révéler la transformation.</p></div>
+          <SiteAvantApres pairs={aaPairs} />
         </section>
       ) : null,
       services: services.length > 0 ? (

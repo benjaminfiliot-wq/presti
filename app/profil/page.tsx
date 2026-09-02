@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import LogoUpload from '@/app/LogoUpload'
 import PortfolioUpload, { type Realisation } from '@/app/PortfolioUpload'
+import AvantApresUpload, { type AvantApres } from '@/app/AvantApresUpload'
 import { siteMaxForPlan } from '@/lib/plans'
 import { defaultLayout, SECTION_MIN_TIER, SECTION_ORDER, type SectionId } from '@/lib/siteLayout'
 
@@ -14,7 +15,7 @@ const SECTION_LABELS: Record<SectionId, string> = {
   hero: 'En-tête (nom + accroche)', trust: 'Bandeau confiance', words: 'Mots-clés géants',
   features: 'Prestations en grand (photos)', manifesto: 'Manifeste plein-cadre', gallery: 'Réalisations (galerie)',
   services: 'Prestations (liste)', process: 'Comment ça se passe', about: 'À propos',
-  faq: 'Questions fréquentes', zone: "Zone d'intervention", contact: 'Contact',
+  faq: 'Questions fréquentes', zone: "Zone d'intervention", contact: 'Contact', avantapres: 'Avant / après',
 }
 const FIXED: SectionId[] = ['hero', 'contact'] // structurantes : toujours présentes, non déplaçables aux extrémités
 
@@ -68,6 +69,7 @@ export default function ProfilPage() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [services, setServices] = useState<Service[]>([])
   const [realisations, setRealisations] = useState<Realisation[]>([])
+  const [avantApres, setAvantApres] = useState<AvantApres[]>([])
   const [reseaux, setReseaux] = useState<Reseaux>({})
   const [telPublic, setTelPublic] = useState('')
   const [emailPublic, setEmailPublic] = useState('')
@@ -107,6 +109,7 @@ export default function ProfilPage() {
       setTheme(THEME_IDS.includes(a.theme) ? a.theme : 'atelier')
       setServices(Array.isArray(a.services) ? (a.services as Service[]).map((s) => ({ nom: s.nom ?? '', description: s.description ?? '' })) : [])
       setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '' })).filter((r) => r.image) : [])
+      setAvantApres(Array.isArray(a.avant_apres) ? (a.avant_apres as AvantApres[]).map((p) => ({ avant: p.avant ?? '', apres: p.apres ?? '', titre: p.titre ?? '' })) : [])
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
       setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setReponseAuto(a.reponse_auto !== false)
       const max = siteMaxForPlan(a.plan); setSiteMax(max); setPlan(a.plan ?? 'gratuit')
@@ -194,6 +197,7 @@ export default function ProfilPage() {
       horaires: horaires.trim().slice(0, 200) || null,
       services: cleanServices,
       realisations: cleanReal,
+      avant_apres: avantApres.filter((p) => p.avant && p.apres).slice(0, 4).map((p) => ({ avant: p.avant, apres: p.apres, titre: p.titre.trim().slice(0, 80) })),
       reseaux: cleanReseaux,
       tel_public: telPublic.trim().slice(0, 40) || null,
       email_public: emailPublic.trim().slice(0, 160) || null,
@@ -488,6 +492,17 @@ export default function ProfilPage() {
               </div>
             </div>
           )}
+
+          {/* Avant / après — offre Signature (niveau 3) */}
+          {siteMax >= 3 ? (
+            <div className="site-domain">
+              <div className="site-domain-h">
+                <b>Avant / après</b>
+                <span className="muted">Montrez vos transformations en 3D : une photo brute + une photo finie de la même pièce. Inclus dans l’offre Signature.</span>
+              </div>
+              <AvantApresUpload uid={uid} value={avantApres} onChange={setAvantApres} />
+            </div>
+          ) : null}
 
           {/* Domaine personnalisé — offre Signature (niveau 3) */}
           {siteMax >= 3 ? (

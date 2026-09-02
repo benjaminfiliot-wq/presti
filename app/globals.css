@@ -689,6 +689,24 @@ button:disabled{opacity:.55;cursor:default}
 .dom-remove{margin-top:.8rem;font-size:12px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline;padding:0;width:auto}
 .dom-remove:hover{color:var(--crit)}
 
+/* Avant / après (upload des paires, Signature) */
+.aa-pairs{display:flex;flex-direction:column;gap:.7rem}
+.aa-pair{border:1px solid var(--line);border-radius:12px;padding:.6rem;background:var(--surface)}
+.aa-pair-slots{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.aa-slot{position:relative;aspect-ratio:4/3;border:1.5px dashed color-mix(in srgb,var(--ink) 22%,transparent);border-radius:10px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;background:var(--surface-2)}
+.aa-slot.filled{border-style:solid;border-color:var(--line)}
+.aa-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.aa-slot-lab{position:absolute;top:6px;left:6px;z-index:2;font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.5);border-radius:5px;padding:2px 7px}
+.aa-slot-btn{position:relative;z-index:2;margin:0 0 8px;width:auto;padding:.34rem .7rem;font-size:12px;font-weight:600;border-radius:8px;border:none;cursor:pointer;background:var(--accent-tint);color:var(--accent-ink)}
+.aa-slot-btn:hover{background:var(--accent-tint-2)}
+.aa-pair-foot{display:flex;gap:.5rem;align-items:center;margin-top:.5rem}
+.aa-titre{flex:1;background:var(--surface-2);border:1.5px solid var(--line);border-radius:9px;padding:.55rem .75rem;font-size:.9rem;color:var(--ink)}
+.aa-titre:focus{outline:none;border-color:var(--accent)}
+.aa-del{width:auto;margin:0;flex:0 0 auto;font-size:12px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline;padding:0}
+.aa-del:hover{color:var(--crit)}
+.aa-add{width:auto;margin:.7rem 0 0;font-size:13px;font-weight:650;color:var(--accent-ink);background:var(--accent-tint);border:1px solid var(--accent-tint-2);border-radius:10px;padding:.55rem .9rem;cursor:pointer}
+.aa-add:hover{background:var(--accent-tint-2)}
+
 /* ---- table devis ---- */
 .psh-tablewrap{overflow-x:auto}
 .psh-dtable{width:100%;border-collapse:collapse;font-size:13.5px}

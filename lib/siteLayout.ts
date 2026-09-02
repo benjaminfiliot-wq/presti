@@ -5,6 +5,7 @@
 export type SectionId =
   | 'hero' | 'trust' | 'words' | 'features' | 'manifesto'
   | 'gallery' | 'services' | 'about' | 'process' | 'faq' | 'zone' | 'contact'
+  | 'avantapres' // injecté hors composeur (Signature, si paires avant/après)
 
 export type SiteSection = { id: SectionId; on: boolean; variant?: string; opts?: Record<string, unknown> }
 export type SiteLayout = { v: 2; sections: SiteSection[] }
@@ -13,7 +14,7 @@ export type SiteLayout = { v: 2; sections: SiteSection[] }
 export const SECTION_MIN_TIER: Record<SectionId, 1 | 2 | 3> = {
   hero: 1, contact: 1, services: 1, about: 1, process: 1, faq: 1, zone: 1,
   trust: 2, gallery: 2,
-  words: 3, features: 3, manifesto: 3,
+  words: 3, features: 3, manifesto: 3, avantapres: 3,
 }
 
 // Ordre canonique (sert de repli et de tri de secours).
