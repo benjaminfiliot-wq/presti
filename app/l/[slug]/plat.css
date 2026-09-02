@@ -70,7 +70,7 @@ html.lenis,html.lenis body{height:auto}
 .plat-grid{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
   background-image:linear-gradient(var(--pl2) 1px,transparent 1px),linear-gradient(90deg,var(--pl2) 1px,transparent 1px);
   background-size:64px 64px;mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 20%,transparent 75%)}
-.plat>*:not(.plat-aurora):not(.plat-grid){position:relative;z-index:1}
+.plat>*:not(.plat-aurora):not(.plat-grid):not(.plat-sticky){position:relative;z-index:1}
 @media(prefers-reduced-motion:reduce){.plat-glow{animation:none}}
 
 /* Révélations au scroll (armées par PlatMotion ; visibles par défaut sinon) */
