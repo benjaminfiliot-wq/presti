@@ -148,7 +148,9 @@ export default function AppShell({
           {/* Menu de profil (§C1) : tout ce qui touche au compte, au même endroit. */}
           {menuOuvert ? (
             <>
-              <button className="psh-menu-scrim" onClick={() => setMenuOuvert(false)} aria-label="Fermer le menu" />
+              {/* Capteur de clic hors menu — un <div> et non un <button> : le style global
+                  button{background:var(--green)} repeindrait tout l'écran en accent. */}
+              <div className="psh-menu-scrim" onClick={() => setMenuOuvert(false)} aria-hidden="true" />
               <div className="psh-menu" role="menu">
                 <div className="psh-menu-id">
                   <b>{a?.nom || 'Mon compte'}</b>
