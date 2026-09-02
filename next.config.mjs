@@ -18,7 +18,8 @@ const nextConfig = {
   },
   // En-têtes de sécurité HTTP (audit) — anti-clickjacking, anti-sniffing, HSTS, CSP.
   async headers() {
-    const csp = [
+    // Directives communes (hors frame-ancestors, qui varie selon la route).
+    const cspBase = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com", // Next inline + GA (optionnel)
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
@@ -29,21 +30,33 @@ const nextConfig = {
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
-      "frame-ancestors 'none'",
-      "upgrade-insecure-requests",
-    ].join('; ')
+    ]
+    const common = [
+      { key: 'X-Content-Type-Options', value: 'nosniff' },
+      { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+      { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+    ]
+    // Site vitrine (/site) et plateforme (/l) : embarquables par la console (aperçu « Ma page »),
+    // mais jamais par un site tiers → SAMEORIGIN / frame-ancestors 'self' (anti-clickjacking préservé).
+    const embeddableCsp = [...cspBase, "frame-ancestors 'self'", 'upgrade-insecure-requests'].join('; ')
+    const embeddable = [
+      { key: 'Content-Security-Policy', value: embeddableCsp },
+      { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+      ...common,
+    ]
+    // Tout le reste (console, auth, paiement…) : aucun embarquement.
+    const strictCsp = [...cspBase, "frame-ancestors 'none'", 'upgrade-insecure-requests'].join('; ')
+    const strict = [
+      { key: 'Content-Security-Policy', value: strictCsp },
+      { key: 'X-Frame-Options', value: 'DENY' },
+      ...common,
+    ]
     return [
-      {
-        source: '/:path*',
-        headers: [
-          { key: 'Content-Security-Policy', value: csp },
-          { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-        ],
-      },
+      { source: '/site/:path*', headers: embeddable },
+      { source: '/l/:path*', headers: embeddable },
+      // Négatif look-ahead : exclut /site/ et /l/ du bloc strict pour éviter les doublons d'en-têtes.
+      { source: '/((?!site/|l/).*)', headers: strict },
     ]
   },
 };
