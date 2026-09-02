@@ -7,6 +7,16 @@ import AppShell from '@/app/AppShell'
 import LogoUpload from '@/app/LogoUpload'
 import PortfolioUpload, { type Realisation } from '@/app/PortfolioUpload'
 import { siteMaxForPlan } from '@/lib/plans'
+import { defaultLayout, SECTION_MIN_TIER, SECTION_ORDER, type SectionId } from '@/lib/siteLayout'
+
+// Libellés artisan des sections (composeur de page).
+const SECTION_LABELS: Record<SectionId, string> = {
+  hero: 'En-tête (nom + accroche)', trust: 'Bandeau confiance', words: 'Mots-clés géants',
+  features: 'Prestations en grand (photos)', manifesto: 'Manifeste plein-cadre', gallery: 'Réalisations (galerie)',
+  services: 'Prestations (liste)', process: 'Comment ça se passe', about: 'À propos',
+  faq: 'Questions fréquentes', zone: "Zone d'intervention", contact: 'Contact',
+}
+const FIXED: SectionId[] = ['hero', 'contact'] // structurantes : toujours présentes, non déplaçables aux extrémités
 
 type Service = { nom: string; description: string }
 type Reseaux = { instagram?: string; facebook?: string; tiktok?: string; linkedin?: string; whatsapp?: string; site?: string; google?: string }
@@ -66,6 +76,7 @@ export default function ProfilPage() {
   const [siteTier, setSiteTier] = useState(3)
   const [siteMax, setSiteMax] = useState<1 | 2 | 3>(3) // niveau de site max inclus dans la formule
   const [plan, setPlan] = useState('gratuit')
+  const [layout, setLayout] = useState<{ id: SectionId; on: boolean }[]>([]) // composition de la page (ordre + on/off)
   const [siteContact, setSiteContact] = useState(true)
   const [genSite, setGenSite] = useState(false)
   const [siteContenu, setSiteContenu] = useState<SiteContenu | null>(null)
@@ -91,6 +102,14 @@ export default function ProfilPage() {
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
       setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setReponseAuto(a.reponse_auto !== false)
       const max = siteMaxForPlan(a.plan); setSiteMax(max); setPlan(a.plan ?? 'gratuit')
+      // Composition : depuis site_layout stocké, sinon dérivée du niveau ; on complète avec les
+      // sections manquantes (désactivées) pour que l'artisan puisse toutes les gérer.
+      const storedSecs = (a.site_layout && Array.isArray(a.site_layout.sections)) ? a.site_layout.sections : defaultLayout([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) as 1 | 2 | 3 : 3).sections
+      const seen = new Set<string>()
+      const comp: { id: SectionId; on: boolean }[] = []
+      for (const s of storedSecs) { if (s && SECTION_ORDER.includes(s.id) && !seen.has(s.id)) { seen.add(s.id); comp.push({ id: s.id, on: s.on !== false }) } }
+      for (const id of SECTION_ORDER) { if (!seen.has(id)) comp.push({ id, on: false }) }
+      setLayout(comp)
       // niveau de site borné par la formule (on ne propose jamais un niveau non inclus)
       setSiteActive(a.site_active === true); setSiteTier(Math.min([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : max, max) as number); setSiteContact(a.site_contact_integre !== false)
       setSiteContenu(a.site_contenu && typeof a.site_contenu === 'object' ? { ...CONTENU_VIDE, ...(a.site_contenu as Partial<SiteContenu>), mots_cles: Array.isArray((a.site_contenu as SiteContenu).mots_cles) ? (a.site_contenu as SiteContenu).mots_cles : [] } : null)
@@ -103,6 +122,8 @@ export default function ProfilPage() {
   }
   function setC(patch: Partial<SiteContenu>) { setSiteContenu((prev) => ({ ...(prev ?? CONTENU_VIDE), ...patch })) }
   function setMot(i: number, v: string) { setSiteContenu((prev) => { const base = prev ?? CONTENU_VIDE; const m = [...(base.mots_cles ?? [])]; while (m.length <= i) m.push(''); m[i] = v; return { ...base, mots_cles: m } }) }
+  function toggleSection(id: SectionId) { if (FIXED.includes(id)) return; setLayout((prev) => prev.map((s) => (s.id === id ? { ...s, on: !s.on } : s))) }
+  function moveSection(i: number, dir: -1 | 1) { setLayout((prev) => { const j = i + dir; if (j < 0 || j >= prev.length) return prev; const n = [...prev]; const t = n[i]; n[i] = n[j]; n[j] = t; return n }) }
 
   async function save() {
     setSaving(true); setMsg(null)
@@ -137,6 +158,7 @@ export default function ProfilPage() {
       site_tier: Math.min([1, 2, 3].includes(siteTier) ? siteTier : 3, siteMax),
       site_contact_integre: siteContact,
       ...(cleanContenu ? { site_contenu: cleanContenu } : {}),
+      ...(layout.length ? { site_layout: { v: 2, sections: layout } } : {}),
       plateforme_active: active,
       accent: /^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#D97757',
       theme: THEME_IDS.includes(theme) ? theme : 'atelier',
@@ -317,6 +339,42 @@ export default function ProfilPage() {
             <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={genSite} onClick={genererSite}>{genSite ? 'L’IA rédige votre site…' : (siteContenu ? '⚡ Régénérer avec l’IA' : '⚡ Rédiger mon site avec l’IA')}</button>
             <span className="muted" style={{ fontSize: '.85rem' }}>Titres, accroches et à-propos rédigés sur-mesure à partir de votre profil.</span>
           </div>
+
+          {/* Composeur de page — l'artisan agence ses sections (ordre + affichage). Le gating par niveau reste côté serveur. */}
+          {layout.length > 0 && (
+            <div className="site-compose">
+              <div className="site-compose-h">
+                <b>Agencer votre page</b>
+                <span className="muted">Montez, descendez, affichez ou masquez chaque bloc. L’en-tête et le contact restent toujours là.</span>
+              </div>
+              <div className="site-compose-list">
+                {layout.map((s, i) => {
+                  const locked = SECTION_MIN_TIER[s.id] > siteTier
+                  const fixed = FIXED.includes(s.id)
+                  const shown = s.on && !locked
+                  return (
+                    <div className={`site-sec${shown ? ' on' : ''}${locked ? ' locked' : ''}`} key={s.id}>
+                      <span className="site-sec-move">
+                        <button type="button" aria-label="Monter" disabled={i === 0} onClick={() => moveSection(i, -1)}>▲</button>
+                        <button type="button" aria-label="Descendre" disabled={i === layout.length - 1} onClick={() => moveSection(i, 1)}>▼</button>
+                      </span>
+                      <span className="site-sec-lab">
+                        {SECTION_LABELS[s.id]}
+                        {locked ? <em className="site-sec-lock">Niveau {SECTION_MIN_TIER[s.id]} requis</em> : null}
+                      </span>
+                      {fixed ? (
+                        <span className="site-sec-fixed">Toujours affiché</span>
+                      ) : (
+                        <button type="button" className={`site-sec-tog${shown ? ' on' : ''}`} disabled={locked} aria-pressed={shown} onClick={() => toggleSection(s.id)}>
+                          {shown ? 'Affiché' : 'Masqué'}
+                        </button>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Édition libre du contenu — tout est personnalisable (l'IA propose, vous décidez). */}
           {siteContenu && (
