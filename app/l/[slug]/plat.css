@@ -31,6 +31,25 @@ html.lenis,html.lenis body{height:auto}
   --pl:rgba(0,0,0,.1); --pl2:rgba(0,0,0,.05);
   --pfd:var(--f-display),system-ui,sans-serif;
 }
+/* 3 nouveaux thèmes (v3/J5) — cohérents avec le site */
+.plat[data-theme="chantier"]{
+  --pb:#EDEBE6; --ps:#F5F3EE; --ps2:#E2DFD7; --pi:#1A1A17; --pi2:#57534A; --pm:#7A7365; --pf:#9A9384;
+  --pl:rgba(26,26,23,.2); --pl2:rgba(26,26,23,.09);
+  --pfd:var(--f-archivo),'Arial Narrow',system-ui,sans-serif;
+}
+.plat[data-theme="chantier"] h1,.plat[data-theme="chantier"] h2{text-transform:uppercase;letter-spacing:-.005em}
+.plat[data-theme="chantier"] .plat-nav-cta,.plat[data-theme="chantier"] .plat-btn{border-radius:0}
+.plat[data-theme="bleu"]{
+  --pb:#F3F5F8; --ps:#FFFFFF; --ps2:#E6ECF3; --pi:#16202E; --pi2:#3C4A5E; --pm:#6B7891; --pf:#8A96A8;
+  --pl:rgba(22,32,46,.13); --pl2:rgba(22,32,46,.06);
+  --pfd:var(--f-plex),system-ui,sans-serif; --pfb:var(--f-plex),system-ui,sans-serif;
+}
+.plat[data-theme="vitrine"]{
+  --pb:#FAF9F6; --ps:#FFFFFF; --ps2:#F0EEE9; --pi:#14130F; --pi2:#57534A; --pm:#847C6E; --pf:#A8A399;
+  --pl:rgba(20,19,15,.1); --pl2:rgba(20,19,15,.05);
+  --pfd:var(--f-manrope),system-ui,sans-serif; --pfb:var(--f-manrope),system-ui,sans-serif;
+}
+.plat[data-theme="vitrine"] h1{font-weight:300;}
 /* Chat/formulaire de la plateforme EMBARQUÉ dans le site vitrine (tokens plateforme,
    sans le chrome plein écran ; --pc hérité du site = même accent). */
 .plat-embed{

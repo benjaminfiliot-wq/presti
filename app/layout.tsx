@@ -2,7 +2,7 @@ import './base.css' // fondation seule (reset + tokens). L'UI console/landing (g
                     // importée par AppShell + les pages publiques → /site et /l ne la chargent JAMAIS.
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
-import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono, Fraunces } from 'next/font/google'
+import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono, Fraunces, Archivo_Narrow, IBM_Plex_Sans, Manrope } from 'next/font/google'
 import GoogleAnalytics from '@/app/GoogleAnalytics'
 
 // Design system "Chantier" : display grotesque architecturé (Bricolage) + corps net (Hanken) + data (JetBrains Mono).
@@ -11,6 +11,10 @@ const body = Hanken_Grotesk({ subsets: ['latin'], weight: ['400', '500', '600', 
 const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['500', '700'], variable: '--f-mono', display: 'swap' })
 // Site vitrine (constructeur 3 niveaux) : serif éditoriale à caractère (Fraunces) pour un rendu premium.
 const fraunces = Fraunces({ subsets: ['latin'], weight: ['400', '600', '700', '900'], style: ['normal', 'italic'], variable: '--f-fraunces', display: 'swap' })
+// Polices des THÈMES de site artisan (preload:false → chargées seulement quand le thème les utilise).
+const archivo = Archivo_Narrow({ subsets: ['latin'], weight: ['600', '700'], variable: '--f-archivo', display: 'swap', preload: false })
+const plex = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--f-plex', display: 'swap', preload: false })
+const manrope = Manrope({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'], variable: '--f-manrope', display: 'swap', preload: false })
 
 const TITLE = "Presti — Répondez à chaque demande de devis en moins d'une minute"
 const DESC =
@@ -41,7 +45,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr" className={`${display.variable} ${body.variable} ${mono.variable} ${fraunces.variable}`}>
+    <html lang="fr" className={`${display.variable} ${body.variable} ${mono.variable} ${fraunces.variable} ${archivo.variable} ${plex.variable} ${manrope.variable}`}>
       <body>{children}<GoogleAnalytics /></body>
     </html>
   )

@@ -34,10 +34,14 @@ const TIERS: { n: number; nom: string; desc: string }[] = [
 ]
 // Thème / DNA visuelle (s'applique au site ET à la plateforme). Aperçu = [fond, encre, accent].
 const THEMES: { id: string; nom: string; desc: string; sw: [string, string, string] }[] = [
-  { id: 'atelier', nom: 'Atelier', desc: 'Crème éditorial, chaleureux', sw: ['#F5EFE4', '#171310', '#C6853F'] },
-  { id: 'nuit', nom: 'Nuit', desc: 'Sombre, cinématique', sw: ['#12100C', '#F5EFE4', '#C6853F'] },
-  { id: 'epure', nom: 'Épuré', desc: 'Blanc minimal, moderne', sw: ['#FBFAF8', '#171614', '#C6853F'] },
+  { id: 'atelier', nom: 'Atelier', desc: 'Crème éditorial — menuisier, ébéniste', sw: ['#F5EFE4', '#171310', '#C6853F'] },
+  { id: 'nuit', nom: 'Nuit', desc: 'Sombre, cinématique — électricien, piscine', sw: ['#12100C', '#F5EFE4', '#C6853F'] },
+  { id: 'epure', nom: 'Épuré', desc: 'Blanc minimal — archi, peintre HdG', sw: ['#FBFAF8', '#171614', '#C6853F'] },
+  { id: 'chantier', nom: 'Chantier', desc: 'Franc, industriel — maçon, couvreur', sw: ['#EDEBE6', '#1A1A17', '#F2B705'] },
+  { id: 'bleu', nom: 'Bleu de travail', desc: 'Dense, rassurant — plombier, chauffagiste', sw: ['#F3F5F8', '#16202E', '#14549E'] },
+  { id: 'vitrine', nom: 'Vitrine', desc: 'La photo commande — carreleur, paysagiste', sw: ['#FAF9F6', '#14130F', '#8A7A5F'] },
 ]
+const THEME_IDS = THEMES.map((t) => t.id)
 
 export default function ProfilPage() {
   const router = useRouter()
@@ -79,7 +83,7 @@ export default function ProfilPage() {
       setSlug(a.slug ?? ''); setNom(a.nom ?? ''); setMetier(a.metier ?? '')
       setBio(a.bio ?? ''); setZone(a.zone_intervention ?? ''); setHoraires(a.horaires ?? '')
       setLogoUrl(a.logo_url ?? null); setActive(a.plateforme_active !== false); setAccent(/^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? a.accent : '#D97757')
-      setTheme(['atelier', 'nuit', 'epure'].includes(a.theme) ? a.theme : 'atelier')
+      setTheme(THEME_IDS.includes(a.theme) ? a.theme : 'atelier')
       setServices(Array.isArray(a.services) ? (a.services as Service[]).map((s) => ({ nom: s.nom ?? '', description: s.description ?? '' })) : [])
       setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '' })).filter((r) => r.image) : [])
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
@@ -129,7 +133,7 @@ export default function ProfilPage() {
       ...(cleanContenu ? { site_contenu: cleanContenu } : {}),
       plateforme_active: active,
       accent: /^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#D97757',
-      theme: ['atelier', 'nuit', 'epure'].includes(theme) ? theme : 'atelier',
+      theme: THEME_IDS.includes(theme) ? theme : 'atelier',
     }).eq('id', uid)
     setSaving(false)
     if (error) { setMsg({ type: 'err', text: 'Enregistrement impossible.' }); return }

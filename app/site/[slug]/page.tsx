@@ -80,7 +80,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const tier = Math.min([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3, siteMaxForPlan(a.plan))
   const c = a.site_contenu || null // contenu rédigé par l'IA (sur-mesure), sinon données brutes
   const accent = /^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? (a.accent as string) : '#D97757'
-  const theme = ['atelier', 'nuit', 'epure'].includes(a.theme || '') ? (a.theme as string) : 'atelier'
+  const theme = ['atelier', 'nuit', 'epure', 'chantier', 'bleu', 'vitrine'].includes(a.theme || '') ? (a.theme as string) : 'atelier'
   const services = (Array.isArray(a.services) ? a.services : []).filter((s) => s && (s.nom || s.description))
   const realisations = (Array.isArray(a.realisations) ? a.realisations : []).filter((r) => r && r.image)
   const zone = a.zone_intervention || a.ville

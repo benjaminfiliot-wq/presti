@@ -103,7 +103,7 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
   const ext = (h: string) => /^https?:/i.test(h)
   // Accent personnalisable (validé : hex 6 chiffres, sinon corail par défaut)
   const accent = /^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? (a.accent as string) : '#D97757'
-  const theme = ['atelier', 'nuit', 'epure'].includes(a.theme || '') ? (a.theme as string) : 'atelier'
+  const theme = ['atelier', 'nuit', 'epure', 'chantier', 'bleu', 'vitrine'].includes(a.theme || '') ? (a.theme as string) : 'atelier'
   const ld = {
     '@context': 'https://schema.org', '@type': 'LocalBusiness', name: a.nom,
     ...(a.metier ? { description: a.bio || `${a.metier} — devis et contact rapide.` } : {}),

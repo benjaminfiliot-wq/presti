@@ -53,6 +53,39 @@ html.lenis,html.lenis body{height:auto}
 .site[data-theme="epure"] .site-hero h1,.site[data-theme="nuit"] .site-hero h1{font-weight:700;letter-spacing:-.03em}
 .site[data-theme="epure"] .site-tagline,.site[data-theme="nuit"] .site-tagline{font-style:normal;font-weight:600}
 
+/* ===== 3 nouveaux thèmes (v3/J5) — chacun sa DNA (typo + palette + traitement) ===== */
+/* CHANTIER — franc, industriel (maçon/couvreur) : condensé, angles francs, béton */
+.site[data-theme="chantier"]{
+  --sbg:#EDEBE6; --sbg2:#E2DFD7; --spanel:#F5F3EE; --sink:#1A1A17; --sink2:#57534A; --sfaint:#9A9384;
+  --sline:rgba(26,26,23,.22); --sline2:rgba(26,26,23,.1);
+  --sdark:#201F1B; --sdark2:#2A2823; --sdark-ink:#EDEBE6; --sdark-ink2:#B8B09C;
+  --sfd:var(--f-archivo),'Arial Narrow',system-ui,sans-serif; --sfb:var(--f-body),system-ui,sans-serif;
+}
+.site[data-theme="chantier"] .site-hero h1,.site[data-theme="chantier"] .site-head h2,.site[data-theme="chantier"] .site-manifesto-t,.site[data-theme="chantier"] .site-cta-block h2,.site[data-theme="chantier"] .site-word-t{text-transform:uppercase;letter-spacing:-.005em;font-weight:700}
+.site[data-theme="chantier"] .site-tagline{font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+.site[data-theme="chantier"] .site-nav-cta,.site[data-theme="chantier"] .site-btn{border-radius:0}
+.site[data-theme="chantier"] .site-shot,.site[data-theme="chantier"] .site-feature-media{border-radius:2px}
+
+/* BLEU DE TRAVAIL — dense, rassurant (plombier/chauffagiste) : sans utilitaire, bleu, moins de cinéma */
+.site[data-theme="bleu"]{
+  --sbg:#F3F5F8; --sbg2:#E6ECF3; --spanel:#FFFFFF; --sink:#16202E; --sink2:#3C4A5E; --sfaint:#8A96A8;
+  --sline:rgba(22,32,46,.13); --sline2:rgba(22,32,46,.06);
+  --sdark:#122840; --sdark2:#1C334E; --sdark-ink:#EAF0F7; --sdark-ink2:#A9BBD0;
+  --sfd:var(--f-plex),system-ui,sans-serif; --sfb:var(--f-plex),system-ui,sans-serif;
+}
+.site[data-theme="bleu"] .site-hero h1,.site[data-theme="bleu"] .site-head h2,.site[data-theme="bleu"] .site-cta-block h2{font-weight:700;letter-spacing:-.02em}
+.site[data-theme="bleu"] .site-tagline{font-style:normal;font-weight:600}
+
+/* VITRINE — minimal, la photo commande (carreleur/cuisiniste/paysagiste) : Manrope léger */
+.site[data-theme="vitrine"]{
+  --sbg:#FAF9F6; --sbg2:#F0EEE9; --spanel:#FFFFFF; --sink:#14130F; --sink2:#57534A; --sfaint:#A8A399;
+  --sline:rgba(20,19,15,.1); --sline2:rgba(20,19,15,.05);
+  --sdark:#14130F; --sdark2:#22201B; --sdark-ink:#FAF9F6; --sdark-ink2:#B9B4A8;
+  --sfd:var(--f-manrope),system-ui,sans-serif; --sfb:var(--f-manrope),system-ui,sans-serif;
+}
+.site[data-theme="vitrine"] .site-hero h1,.site[data-theme="vitrine"] .site-head h2,.site[data-theme="vitrine"] .site-manifesto-t,.site[data-theme="vitrine"] .site-cta-block h2{font-weight:300;letter-spacing:-.02em}
+.site[data-theme="vitrine"] .site-tagline{font-style:normal;font-weight:600}
+
 /* Revelations */
 .site-armed .site-reveal{opacity:0;transform:translateY(26px)}
 .site-reveal{transition:opacity .8s var(--se),transform .8s var(--se)}
