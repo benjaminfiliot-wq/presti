@@ -82,3 +82,14 @@
 - preuve : **10/10 PASS en prod** (`scripts/comptes-clients-e2e.mjs`, test permanent). Le test central de §16.2 passe : **un cookie copié AVANT la déconnexion est refusé APRÈS** — la révocation est réellement serveur. Cloisonnement vérifié : même email chez 2 artisans = 2 comptes étanches. RLS : les sessions ne fuient pas.
 - reste de §6 pour plus tard : l'espace client `/p/[slug]/compte` (ses devis/factures/documents, modification de ses infos, suppression de son compte) et le rattachement d'un fil anonyme au compte après connexion.
 - suivant : [B4] menu profil + page Paramètres à onglets (§C1/C2).
+
+## [B4] Menu de profil + Paramètres à onglets (§C1/§C2) — 23:47 → 00:12 (25 min) — ✅ terminé
+- **§C1** : le pied de sidebar devient un vrai menu de compte (nom, email, formule · crédits, puis Paramètres / Ma page / Abonnement / Ma plateforme / Sécurité / Entreprise & légal, puis Se déconnecter).
+- **§C2** : `/parametres` à onglets. **Choix assumé et signalé** : on n'a PAS rasé `profil/page.tsx` qui fonctionne (règle « corrections incrémentales »). La page porte les sections qui n'existaient nulle part, et renvoie vers les écrans en place pour le reste.
+  - **Entreprise & légal** : SIRET, assujettissement TVA + numéro (mig **0035**), IBAN, assurance décennale — mentions obligatoires des devis/factures et socle des données exigées par §10.
+  - **Sécurité** : changer son mot de passe, et **fermer réellement ses autres sessions** (révocation serveur).
+  - **Données & confidentialité** : **export complet JSON** (`/api/donnees/export`) + accès aux suppressions granulaires.
+- **bug attrapé sur ma propre capture** : le capteur de clic du menu était un `<button>` → il héritait de `button{background:var(--green)}` et, en `position:fixed inset:0`, **repeignait toute la sidebar en orange**. Passé en `<div>` transparent. Corrigé et re-vérifié.
+- build : OK · typecheck : OK · déployé : e32e5c9
+- preuve : **8/8 PASS en prod** (`scripts/parametres-e2e.mjs`, test permanent) + captures `b4-menu.png` / `b4-parametres.png`.
+- suivant : [B5] messagerie console — retirer l'automatique de /messages (l'IA vit dans la plateforme) et connecter les canaux (§4).
