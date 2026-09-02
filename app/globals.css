@@ -647,6 +647,17 @@ button:disabled{opacity:.55;cursor:default}
 .site-sec-tog.on{color:var(--accent-ink);background:var(--accent-tint);border-color:var(--accent)}
 .site-sec-tog:disabled{opacity:.5;cursor:not-allowed}
 
+/* Publication : partage du lien + aperçu live du site en ligne */
+.site-publish{margin-top:1rem;display:flex;flex-direction:column;gap:1rem}
+.site-publish-share{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.site-preview{border:1px solid var(--line);border-radius:14px;background:var(--surface-2);padding:.85rem}
+.site-preview-bar{display:flex;justify-content:space-between;align-items:center;gap:.6rem;margin-bottom:.65rem;flex-wrap:wrap}
+.site-preview-bar .muted{font-size:12.5px}
+.site-preview-refresh{font-size:12px;font-weight:600;color:var(--accent-ink);background:var(--accent-tint);border:1px solid var(--accent-tint-2);border-radius:999px;padding:.28rem .7rem;cursor:pointer;transition:background .14s}
+.site-preview-refresh:hover{background:var(--accent-tint-2)}
+.site-preview-frame{display:flex;justify-content:center;background:var(--surface);border-radius:12px;padding:1rem;overflow:hidden}
+.site-preview-frame iframe{width:340px;height:620px;max-width:100%;border:1px solid var(--line-2);border-radius:20px;background:#fff;box-shadow:0 14px 44px -20px rgba(0,0,0,.45)}
+
 /* ---- table devis ---- */
 .psh-tablewrap{overflow-x:auto}
 .psh-dtable{width:100%;border-collapse:collapse;font-size:13.5px}

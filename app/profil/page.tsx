@@ -77,6 +77,8 @@ export default function ProfilPage() {
   const [siteMax, setSiteMax] = useState<1 | 2 | 3>(3) // niveau de site max inclus dans la formule
   const [plan, setPlan] = useState('gratuit')
   const [layout, setLayout] = useState<{ id: SectionId; on: boolean }[]>([]) // composition de la page (ordre + on/off)
+  const [previewKey, setPreviewKey] = useState(0) // force le rechargement de l'aperçu après enregistrement
+  const [copied, setCopied] = useState(false)
   const [siteContact, setSiteContact] = useState(true)
   const [genSite, setGenSite] = useState(false)
   const [siteContenu, setSiteContenu] = useState<SiteContenu | null>(null)
@@ -124,6 +126,7 @@ export default function ProfilPage() {
   function setMot(i: number, v: string) { setSiteContenu((prev) => { const base = prev ?? CONTENU_VIDE; const m = [...(base.mots_cles ?? [])]; while (m.length <= i) m.push(''); m[i] = v; return { ...base, mots_cles: m } }) }
   function toggleSection(id: SectionId) { if (FIXED.includes(id)) return; setLayout((prev) => prev.map((s) => (s.id === id ? { ...s, on: !s.on } : s))) }
   function moveSection(i: number, dir: -1 | 1) { setLayout((prev) => { const j = i + dir; if (j < 0 || j >= prev.length) return prev; const n = [...prev]; const t = n[i]; n[i] = n[j]; n[j] = t; return n }) }
+  async function copierLien() { try { await navigator.clipboard.writeText(`https://prestiapp.fr/site/${slug}`); setCopied(true); setTimeout(() => setCopied(false), 1800) } catch { setMsg({ type: 'err', text: 'Copie impossible — sélectionnez le lien à la main.' }) } }
 
   async function save() {
     setSaving(true); setMsg(null)
@@ -166,6 +169,7 @@ export default function ProfilPage() {
     setSaving(false)
     if (error) { setMsg({ type: 'err', text: 'Enregistrement impossible.' }); return }
     setMsg({ type: 'ok', text: 'Profil enregistré ✅' })
+    setPreviewKey((k) => k + 1) // recharge l'aperçu avec la nouvelle composition
     setTimeout(() => setMsg(null), 2500)
   }
 
@@ -423,9 +427,24 @@ export default function ProfilPage() {
             <span>Mon site est <b>{siteActive ? 'publié' : 'hors ligne'}</b> {siteActive ? '— accessible à tous' : '— visible de vous seul'}</span>
           </label>
           {slug && siteActive && (
-            <div className="prof-link" style={{ marginTop: '.9rem' }}>
-              <span>prestiapp.fr/site/{slug}</span>
-              <a className="btn btn--ghost" style={{ width: 'auto' }} href={`/site/${slug}`} target="_blank" rel="noopener">Voir mon site ↗</a>
+            <div className="site-publish">
+              <div className="site-publish-share">
+                <div className="prof-link" style={{ margin: 0, flex: '1 1 240px' }}>
+                  <span>prestiapp.fr/site/{slug}</span>
+                  <button type="button" className="btn btn--ghost" style={{ width: 'auto' }} onClick={copierLien}>{copied ? 'Copié ✅' : 'Copier le lien'}</button>
+                </div>
+                <a className="btn btn--ghost" style={{ width: 'auto' }} href={`/site/${slug}`} target="_blank" rel="noopener">Voir en grand ↗</a>
+              </div>
+              <div className="site-preview">
+                <div className="site-preview-bar">
+                  <span className="muted">Aperçu de votre site en ligne</span>
+                  <button type="button" className="site-preview-refresh" onClick={() => setPreviewKey((k) => k + 1)} aria-label="Rafraîchir l’aperçu">↻ Rafraîchir</button>
+                </div>
+                <div className="site-preview-frame">
+                  <iframe key={previewKey} src={`/site/${slug}?preview=1`} title="Aperçu du site" loading="lazy" />
+                </div>
+                <p className="muted" style={{ margin: '.5rem 0 0', fontSize: '.8rem' }}>L’aperçu montre la version <b>enregistrée</b>. Modifiez, cliquez Enregistrer, puis Rafraîchir.</p>
+              </div>
             </div>
           )}
         </div>
