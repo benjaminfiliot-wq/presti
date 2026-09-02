@@ -93,3 +93,14 @@
 - build : OK · typecheck : OK · déployé : e32e5c9
 - preuve : **8/8 PASS en prod** (`scripts/parametres-e2e.mjs`, test permanent) + captures `b4-menu.png` / `b4-parametres.png`.
 - suivant : [B5] messagerie console — retirer l'automatique de /messages (l'IA vit dans la plateforme) et connecter les canaux (§4).
+
+## [B5-1] La boîte de réception n'est plus l'endroit de l'IA (§4/B1) — 00:12 → 00:28 (16 min) — ✅ terminé
+- fait : `/messages` perd le **sélecteur de modèle** ; il ne reste qu'une aide à la rédaction **explicitement déclenchée** (« Proposer une réponse ») qui remplit un brouillon relu par l'artisan — jamais d'envoi automatique. Le modèle vient désormais de `plateforme_config` (Ma plateforme → Intelligence). La **mise en pause** rejoint elle aussi Ma plateforme : tout le comportement de l'assistant au même endroit ; `/profil` renvoie vers cet écran.
+- build : OK · typecheck : OK · déployé : a855514
+- preuve : **5/5 PASS en prod** (`scripts/messages-deauto-e2e.mjs`, test permanent).
+
+## [B5-2] Connexion des canaux (§B2) — ⛔ ARRÊT PROTOCOLAIRE (§0.3, cas 3 : accès externe manquant)
+- Gmail/Outlook (OAuth Google/Microsoft) et WhatsApp/Instagram/Messenger (Meta) exigent des **applications OAuth déclarées** (Google Cloud Console, Meta for Developers) avec écran de consentement, domaines vérifiés et secrets — **seul Benj peut les créer**. Idem SMS (compte Twilio/Brevo facturé).
+- Décision : **ne pas simuler** un bouton « Connecter » qui ne connecte rien (ce serait exactement le vibecoding qu'on s'interdit). Rien n'est livré à moitié ici.
+- Ce qu'il me faut pour débloquer : (a) un projet Google Cloud + identifiants OAuth (scopes `gmail.readonly` + `gmail.send`) ; ou (b) l'accord pour la voie **IMAP/SMTP** universelle — qui, elle, ne dépend d'aucun tiers mais impose de stocker des identifiants email : je devrai alors ajouter une **clé de chiffrement applicative** (AES-GCM) en variable d'environnement, jamais en clair en base.
+- Les autres blocs continuent sans dépendre de celui-ci.
