@@ -21,6 +21,10 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
   const [photos, setPhotos] = useState<string[]>([]) // data URLs WebP (EXIF strippé)
   const [photoBusy, setPhotoBusy] = useState(false)
 
+  // A/B (J8) : A = formulaire complet ; B = « 1 champ » (besoin d'abord, coordonnées après la 1re réponse).
+  const [variant, setVariant] = useState<'A' | 'B' | null>(null)
+  const [needContact, setNeedContact] = useState(false) // variante B : coordonnées pas encore capturées
+
   // Conversation
   const [token, setToken] = useState<string | null>(null)
   const [msgs, setMsgs] = useState<Msg[]>([])
@@ -30,6 +34,30 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
   const [closed, setClosed] = useState(false)
   const threadRef = useRef<HTMLDivElement>(null)
   const storageKey = `presti-conv-${slug}`
+
+  // Événement d'entonnoir anonyme (ne casse jamais la page).
+  function pingEvent(event: 'view' | 'lead' | 'contact', v: 'A' | 'B' | null) {
+    try {
+      fetch('/api/plat-event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({ slug, event, variant: v }) }).catch(() => {})
+    } catch { /* ignore */ }
+  }
+
+  // Assignation de la variante A/B (collante par visiteur) + comptage d'une vue par session.
+  useEffect(() => {
+    let v: 'A' | 'B'
+    try {
+      const k = `presti-ab-${slug}`
+      const stored = localStorage.getItem(k)
+      v = stored === 'A' || stored === 'B' ? stored : (Math.random() < 0.5 ? 'A' : 'B')
+      localStorage.setItem(k, v)
+    } catch { v = Math.random() < 0.5 ? 'A' : 'B' }
+    setVariant(v)
+    try {
+      const vk = `presti-view-${slug}`
+      if (!sessionStorage.getItem(vk)) { sessionStorage.setItem(vk, '1'); pingEvent('view', v) }
+    } catch { /* pas de compteur si stockage indispo */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug])
 
   // Restaure une conversation en cours (le prospect revient sur la page).
   useEffect(() => {
@@ -77,15 +105,21 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
     e.preventDefault()
     setLoading(true)
     setErr(null)
+    const isB = variant === 'B'
     try {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, nom_prospect: nom, contact, message, website, photos }),
+        body: JSON.stringify(isB
+          ? { slug, message, website, photos, variant: 'B', deferContact: true }
+          : { slug, nom_prospect: nom, contact, message, website, photos, variant: 'A' }),
       })
       const d = await res.json().catch(() => ({}))
       setLoading(false)
       if (!res.ok) { setErr(d.error ?? 'Une erreur est survenue.'); return }
+
+      pingEvent('lead', variant)
+      if (!isB) pingEvent('contact', variant) // variante A : contact fourni dès le départ
 
       const seed: Msg[] = []
       if (message.trim()) seed.push({ sens: 'in', contenu: message.trim() })
@@ -96,10 +130,33 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
         setToken(d.token)
         try { localStorage.setItem(storageKey, d.token) } catch {}
       }
+      if (isB) setNeedContact(true) // variante B : on demande les coordonnées après la 1re réponse
       setPhase('chat')
     } catch {
       setLoading(false)
       setErr('Connexion interrompue. Réessayez.')
+    }
+  }
+
+  // Variante B : capture différée des coordonnées, une fois la valeur démontrée.
+  async function captureContact(e: FormEvent) {
+    e.preventDefault()
+    if (!token || loading) return
+    if (!contact.trim()) { setErr('Indiquez un email ou un téléphone pour être recontacté.'); return }
+    setLoading(true); setErr(null)
+    try {
+      const res = await fetch('/api/leads/contact', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, nom_prospect: nom, contact, website }),
+      })
+      const d = await res.json().catch(() => ({}))
+      setLoading(false)
+      if (!res.ok) { setErr(d.error ?? 'Envoi impossible.'); return }
+      pingEvent('contact', variant)
+      setNeedContact(false)
+      setMsgs((m) => [...m, { sens: 'out', contenu: `Merci${nom.trim() ? ' ' + nom.trim().split(/\s+/)[0] : ''} ! ${artisanNom || "L'artisan"} a vos coordonnées et revient vers vous très vite. Vous pouvez continuer à préciser votre besoin ici.` }])
+    } catch {
+      setLoading(false); setErr('Connexion interrompue. Réessayez.')
     }
   }
 
@@ -165,6 +222,18 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
 
         {closed ? (
           <div className="plat-chat-closed">Merci pour cet échange détaillé&nbsp;! {artisanNom || "L'artisan"} revient vers vous très vite pour la suite.</div>
+        ) : needContact ? (
+          <form className="plat-capture" onSubmit={captureContact}>
+            <input
+              type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
+              value={website} onChange={(e) => setWebsite(e.target.value)}
+              style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
+            />
+            <span className="plat-capture-t">Pour être recontacté par {artisanNom || "l'artisan"}, laissez vos coordonnées&nbsp;:</span>
+            <input value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Votre nom (facultatif)" aria-label="Votre nom" />
+            <input value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Email ou téléphone" aria-label="Email ou téléphone" required />
+            <button type="submit" disabled={loading || !contact.trim()}>{loading ? '…' : 'Être recontacté'}</button>
+          </form>
         ) : (
           <form className="plat-compose" onSubmit={send}>
             <input
@@ -189,6 +258,32 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
     )
   }
 
+  // Bloc photos partagé par les deux variantes.
+  const photoPicker = (
+    <div className="plat-photos">
+      <div className="plat-photos-grid">
+        {photos.map((p, i) => (
+          <div className="plat-photo" key={i}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={p} alt={`Photo ${i + 1}`} />
+            <button type="button" className="plat-photo-x" onClick={() => setPhotos((ps) => ps.filter((_, j) => j !== i))} aria-label="Retirer la photo">×</button>
+          </div>
+        ))}
+        {photos.length < 3 ? (
+          <label className={`plat-photo-add${photoBusy ? ' busy' : ''}`}>
+            <input type="file" accept="image/*" capture="environment" multiple onChange={addPhotos} hidden disabled={photoBusy} />
+            <span aria-hidden="true">{photoBusy ? '…' : '+'}</span>
+            <small>{photoBusy ? 'Compression…' : 'Ajouter une photo'}</small>
+          </label>
+        ) : null}
+      </div>
+      <p className="plat-photos-note">Facultatif · jusqu&apos;à 3 photos. La localisation est retirée automatiquement.</p>
+    </div>
+  )
+
+  // Tant que la variante A/B n'est pas résolue (1er rendu client), on évite tout flash de mise en page.
+  if (!variant) return <div className="plat-form-skel" aria-hidden="true" />
+
   return (
     <form onSubmit={submit}>
       {/* honeypot anti-bot : invisible pour les humains, ignoré des lecteurs d'écran */}
@@ -197,36 +292,29 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
         value={website} onChange={(e) => setWebsite(e.target.value)}
         style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
       />
-      <label>Votre nom</label>
-      <input value={nom} onChange={(e) => setNom(e.target.value)} required />
-      <label>Votre email ou téléphone</label>
-      <input value={contact} onChange={(e) => setContact(e.target.value)} required />
-      <label>Votre besoin (décrivez les travaux)</label>
-      <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} required style={{ resize: 'vertical' }} />
-
-      {/* Photos du chantier — accélère le chiffrage. Compressées + EXIF strippé sur l'appareil. */}
-      <div className="plat-photos">
-        <div className="plat-photos-grid">
-          {photos.map((p, i) => (
-            <div className="plat-photo" key={i}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p} alt={`Photo ${i + 1}`} />
-              <button type="button" className="plat-photo-x" onClick={() => setPhotos((ps) => ps.filter((_, j) => j !== i))} aria-label="Retirer la photo">×</button>
-            </div>
-          ))}
-          {photos.length < 3 ? (
-            <label className={`plat-photo-add${photoBusy ? ' busy' : ''}`}>
-              <input type="file" accept="image/*" capture="environment" multiple onChange={addPhotos} hidden disabled={photoBusy} />
-              <span aria-hidden="true">{photoBusy ? '…' : '+'}</span>
-              <small>{photoBusy ? 'Compression…' : 'Ajouter une photo'}</small>
-            </label>
-          ) : null}
-        </div>
-        <p className="plat-photos-note">Facultatif · jusqu&apos;à 3 photos. La localisation est retirée automatiquement.</p>
-      </div>
-
-      <button disabled={loading || photoBusy}>{loading ? '…' : 'Démarrer la conversation'}</button>
-      <p className="plat-consent">En envoyant, vous acceptez que vos coordonnées soient utilisées uniquement pour traiter votre demande. Vous pouvez demander leur suppression à tout moment.</p>
+      {variant === 'B' ? (
+        <>
+          {/* Variante B : « 1 champ » — on démontre la valeur avant de demander les coordonnées. */}
+          <label>Décrivez votre besoin</label>
+          <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} required style={{ resize: 'vertical' }}
+            placeholder="Ex : Fuite sous mon évier de cuisine depuis ce matin, l'eau goutte dans le placard…" />
+          {photoPicker}
+          <button disabled={loading || photoBusy}>{loading ? '…' : 'Obtenir une réponse'}</button>
+          <p className="plat-consent">Réponse immédiate. On vous demandera vos coordonnées juste après, pour vous recontacter.</p>
+        </>
+      ) : (
+        <>
+          <label>Votre nom</label>
+          <input value={nom} onChange={(e) => setNom(e.target.value)} required />
+          <label>Votre email ou téléphone</label>
+          <input value={contact} onChange={(e) => setContact(e.target.value)} required />
+          <label>Votre besoin (décrivez les travaux)</label>
+          <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} required style={{ resize: 'vertical' }} />
+          {photoPicker}
+          <button disabled={loading || photoBusy}>{loading ? '…' : 'Démarrer la conversation'}</button>
+          <p className="plat-consent">En envoyant, vous acceptez que vos coordonnées soient utilisées uniquement pour traiter votre demande. Vous pouvez demander leur suppression à tout moment.</p>
+        </>
+      )}
       {err && <div className="msg err">{err}</div>}
     </form>
   )

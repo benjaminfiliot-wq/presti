@@ -24,9 +24,14 @@ export async function POST(req: Request) {
     const photosIn: string[] = Array.isArray(body?.photos)
       ? body.photos.filter((p: unknown): p is string => typeof p === 'string' && /^data:image\/(webp|jpeg|png);base64,/.test(p)).slice(0, 3)
       : []
+    // A/B (J8) : variante servie + « coordonnées différées » (variante B « 1 champ »).
+    const variant = body?.variant === 'A' || body?.variant === 'B' ? body.variant : null
+    const deferContact = body?.deferContact === true
 
-    // Validation stricte des entrées (slug attendu : minuscules/chiffres/tirets)
-    if (!slug || !contact) {
+    // Validation stricte des entrées (slug attendu : minuscules/chiffres/tirets).
+    // En mode différé (variante B), le contact arrive APRÈS la 1re réponse → il n'est pas requis ici,
+    // mais le message l'est (sinon rien à traiter).
+    if (!slug || (!contact && !deferContact) || (deferContact && !message)) {
       return NextResponse.json({ error: 'Slug et contact requis' }, { status: 400 })
     }
     if (!/^[a-z0-9-]{1,80}$/.test(slug)) {
@@ -91,6 +96,7 @@ export async function POST(req: Request) {
         statut: 'nouveau',
         urgence: qualif.urgence,
         type_chantier: qualif.type_chantier,
+        ab_variant: variant,
         ip: ip === 'unknown' ? null : ip,
       })
       .select('id, token')
@@ -159,7 +165,7 @@ export async function POST(req: Request) {
       if (message) {
         await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
       }
-      if (artisan.email) {
+      if (artisan.email && !deferContact) {
         await sendEmail({
           to: artisan.email,
           subject: `Nouveau contact — ${nom_prospect || contact}`,
@@ -212,8 +218,9 @@ export async function POST(req: Request) {
 
         const isEmail = typeof contact === 'string' && contact.includes('@')
 
-        // a) réponse instantanée au prospect (si son contact est un email)
-        if (isEmail) {
+        // a) réponse instantanée au prospect (si son contact est un email).
+        //    En mode différé (variante B), pas encore de contact → l'email partira à la capture.
+        if (isEmail && !deferContact) {
           await sendEmail({
             to: contact,
             subject: `Votre demande — ${artisan.nom ?? 'Presti'}`,
@@ -222,8 +229,8 @@ export async function POST(req: Request) {
           })
         }
 
-        // b) notification à l'artisan
-        if (artisan.email) {
+        // b) notification à l'artisan (différée aussi en variante B : rien à recontacter encore)
+        if (artisan.email && !deferContact) {
           const recap = `Nouveau contact via votre lien Presti.
 
 Nom : ${nom_prospect || 'non précisé'}
@@ -249,16 +256,19 @@ ${reply}`
         // Étape 6 — planifier les relances automatiques (J+2, J+5, J+10).
         // Le cron /api/cron/relances les enverra à échéance si le lead est
         // toujours en attente (statut 'repondu', pas encore gagné/perdu).
-        const now = Date.now()
-        const jours = [2, 5, 10]
-        await supabaseAdmin.from('relances').insert(
-          jours.map((j, i) => ({
-            lead_id: lead.id,
-            planifiee_le: new Date(now + j * 86400000).toISOString(),
-            rang: i + 1,
-            envoyee: false,
-          })),
-        )
+        // En variante B, on attend d'avoir un contact (planifié à la capture).
+        if (!deferContact) {
+          const now = Date.now()
+          const jours = [2, 5, 10]
+          await supabaseAdmin.from('relances').insert(
+            jours.map((j, i) => ({
+              lead_id: lead.id,
+              planifiee_le: new Date(now + j * 86400000).toISOString(),
+              rang: i + 1,
+              envoyee: false,
+            })),
+          )
+        }
       }
     } catch (e) {
       console.error('[leads] étape 4 (IA/email) a échoué:', e)
