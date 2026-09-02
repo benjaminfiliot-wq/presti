@@ -117,7 +117,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const ext = (h: string) => /^https?:/i.test(h)
   const plateformeActive = a.plateforme_active !== false && !!a.slug
   // Le site RENVOIE vers la plateforme (espace de contact) — il ne l'embarque jamais.
-  const contactHref = plateformeActive ? `/l/${a.slug}` : (telDigits ? `tel:${telDigits}` : '#contact')
+  const contactHref = plateformeActive ? `/p/${a.slug}` : (telDigits ? `tel:${telDigits}` : '#contact')
 
   // JSON-LD LocalBusiness — SEO local. Anti-fabrication : uniquement des champs RÉELS
   // fournis par l'artisan (aucun horaire structuré depuis du texte libre, aucun priceRange inventé).

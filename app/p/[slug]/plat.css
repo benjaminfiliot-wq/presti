@@ -1,4 +1,4 @@
-/* Feuille de style de la PLATEFORME artisan (/l/[slug]) — extraite de globals.css (v3/A1).
+/* Feuille de style de la PLATEFORME artisan (/p/[slug]) — extraite de globals.css (v3/A1).
    Chargée uniquement par le segment /l. Déplacement à l'identique. */
 /* ===== Lenis (smooth scroll) — n'agit que sur les pages qui l'initialisent (classe html.lenis) ===== */
 html.lenis,html.lenis body{height:auto}
@@ -7,7 +7,7 @@ html.lenis,html.lenis body{height:auto}
 .lenis.lenis-stopped{overflow:hidden}
 .lenis.lenis-smooth iframe{pointer-events:none}
 
-/* ===== Plateforme artisan (page /l/[slug]) — mini-site dark cinématique, white-label ===== */
+/* ===== Plateforme artisan (page /p/[slug]) — mini-site dark cinématique, white-label ===== */
 .plat{
   /* DNA "Atelier" crème éditoriale — même famille que le site vitrine, à l'opposé de la console Presti. */
   --pb:#F5EFE4; --ps:#FBF7EF; --ps2:#ECE3D4; --pi:#1B1712; --pi2:#5E5548; --pm:#847A6C; --pf:#A99E8C;

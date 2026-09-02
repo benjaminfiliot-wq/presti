@@ -244,11 +244,11 @@ export default function ProfilPage() {
     setTimeout(() => setMsg(null), 5000)
   }
 
-  const lien = slug ? `prestiapp.fr/l/${slug}` : ''
+  const lien = slug ? `prestiapp.fr/p/${slug}` : ''
 
   const actions = (
     <>
-      {slug && <a className="psh-btn ghost" href={`/l/${slug}`} target="_blank" rel="noopener">Voir ma page ↗</a>}
+      {slug && <a className="psh-btn ghost" href={`/p/${slug}`} target="_blank" rel="noopener">Voir ma page ↗</a>}
       <button className="psh-btn primary" disabled={saving} onClick={save}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
     </>
   )

@@ -74,7 +74,7 @@ async function main() {
   //    disparaîtront avec le domaine perso (G2).
   await rest(`artisans?id=eq.${uid}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ site_active: true, site_seo: true }) })
   await new Promise((r) => setTimeout(r, 800))
-  for (const path of [`/site/smoke-${rnd}`, `/l/smoke-${rnd}`]) {
+  for (const path of [`/site/smoke-${rnd}`, `/p/smoke-${rnd}`]) {
     const html = await (await fetch(`${PROD}${path}`)).text()
     const leaked = (html.replace(/prestiapp\.fr/gi, '').replace(/presti-[a-z0-9-]+\.vercel\.app/gi, '').match(/presti/gi) || []).length
     check(`white-label ${path} (0 « presti » hors URL)`, leaked === 0, leaked ? `${leaked} occurrence(s)` : 'propre')

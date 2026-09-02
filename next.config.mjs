@@ -57,9 +57,17 @@ const nextConfig = {
     ]
     return [
       { source: '/site/:path*', headers: embeddable },
-      { source: '/l/:path*', headers: embeddable },
-      // Négatif look-ahead : exclut /site/ et /l/ du bloc strict pour éviter les doublons d'en-têtes.
-      { source: '/((?!site/|l/).*)', headers: strict },
+      { source: '/p/:path*', headers: embeddable },
+      // Négatif look-ahead : exclut /site/ et /p/ du bloc strict pour éviter les doublons d'en-têtes.
+      { source: '/((?!site/|p/).*)', headers: strict },
+    ]
+  },
+  // La plateforme est passée de /l/[slug] à /p/[slug] (v4 §A1). Redirection PERMANENTE :
+  // aucun lien déjà distribué par un artisan ne doit casser.
+  async redirects() {
+    return [
+      { source: '/l/:slug', destination: '/p/:slug', permanent: true },
+      { source: '/l/:slug/:path*', destination: '/p/:slug/:path*', permanent: true },
     ]
   },
 };

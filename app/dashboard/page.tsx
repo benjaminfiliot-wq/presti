@@ -71,12 +71,12 @@ export default function Dashboard() {
 
   function copyLink() {
     if (!artisan?.slug) return
-    navigator.clipboard?.writeText(`${window.location.origin}/l/${artisan.slug}`)
+    navigator.clipboard?.writeText(`${window.location.origin}/p/${artisan.slug}`)
     setCopied(true); setTimeout(() => setCopied(false), 2000)
   }
 
   const prenom = artisan?.nom ? artisan.nom.split(/\s+/)[0] : ''
-  const link = typeof window !== 'undefined' && artisan ? `${window.location.origin}/l/${artisan.slug}` : `/l/${artisan?.slug ?? ''}`
+  const link = typeof window !== 'undefined' && artisan ? `${window.location.origin}/p/${artisan.slug}` : `/p/${artisan?.slug ?? ''}`
   const nouveaux = leads.filter((l) => l.statut === 'nouveau').length
   const gagnes = leads.filter((l) => l.statut === 'gagne').length
   const repondus = Object.keys(replies).length
