@@ -56,3 +56,12 @@
 - build : OK · typecheck : OK · déployé : 025b501
 - preuve : **10/10 PASS en prod** (`scripts/plateforme-intelligence-e2e.mjs`, test permanent) — affichage, réglage, enregistrement, persistance en base des 5 champs, et reprise correcte après rechargement. Capture : `b22-intelligence.png`.
 - suivant : [B2-3] cartes riches dans le fil (devis / facture / RDV / récapitulatif éditable) — §A3.
+
+## [B2-3] Carte Devis dans la conversation (§A3) — 23:17 → 23:32 (15 min) — ✅ terminé
+- fait : le devis n'est plus « promis », il est **posé dans le fil**. Mig **0033** : `devis.lead_id` (le devis auto rattache désormais sa conversation) + `accepte_le` / `accepte_ip` / `accepte_canal`. `/api/conversation` renvoie le devis du fil ; nouvelle route `/api/conversation/devis` (Accepter / Demander une modification). Carte rendue dans le chat : numéro, montant TTC, 3 lignes, boutons, mention d'horodatage.
+- **confidentialité** : un devis en **brouillon n'est JAMAIS exposé** au client — il ne voit que ce que l'artisan a envoyé. Testé explicitement.
+- **valeur probante** : acceptation horodatée + IP + canal journalisés, trace écrite dans le fil, lead passé en « gagné », alerte à l'artisan. **Idempotent** : ré-accepter ne modifie pas l'horodatage (la preuve est figée).
+- build : OK · typecheck : OK · déployé : 0d2536b
+- preuve : **13/13 PASS en prod** (`scripts/devis-conversation-e2e.mjs`, test permanent). Capture : `b23-carte-devis.png`.
+- **⇒ Sortie attendue du bloc B2 (« un devis naît d'une conversation ») : atteinte.**
+- suivant : [B3] comptes clients (§6) + suppression granulaire (§C3).
