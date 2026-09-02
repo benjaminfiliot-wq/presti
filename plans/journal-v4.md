@@ -73,3 +73,12 @@
 - preuve : **19/19 PASS en prod** (`scripts/suppressions-e2e.mjs`, test permanent) — dont les deux points capitaux : **le compte Presti reste intact** après suppression du site, et **le devis envoyé survit** à l'anonymisation de la conversation. Refus sans confirmation (400) et refus sur une conversation d'autrui (404) également couverts.
 - reste de §C3 pour plus tard : déconnexion d'un canal (les canaux arrivent en B5), délai de grâce de 30 j + export ZIP sur la suppression de compte.
 - suivant : [B3-2] comptes clients de la plateforme (§6) — lien magique, espace client, RGPD.
+
+## [B3-2] Comptes clients de la plateforme (§6) — 23:29 → 23:47 (18 min) — ✅ terminé
+- **choix d'architecture** : les comptes clients vivent **hors de `auth.users`**. Les y mettre aurait mélangé clients et artisans — un client se connectant aurait pu atterrir dans la console (voire créer un compte artisan). Session maison à la place.
+- fait : mig **0034** — `clients_plateforme` (scopé `(artisan_id, email)`), `clients_liens` (magiques, usage unique, 20 min), `clients_sessions` (révocables), `leads.client_plateforme_id`. `lib/clientAuth` + route `/api/p/auth` (demande / vérifier / déconnexion / session). Bloc « Retrouver mes demandes » dans la colonne du chat ; le lien magique arrive **à la marque de l'artisan**.
+- sécurité §D4 tenue et **prouvée** : cookie **httpOnly + Secure + SameSite** (aucun jeton en localStorage) · la base ne stocke que l'**empreinte** des jetons · **rate-limit** par IP et par email · **réponse identique** que le compte existe ou non (aucune énumération) · lien à **usage unique** · lien **expiré refusé**.
+- build : OK · typecheck : OK · déployé : 78d8508
+- preuve : **10/10 PASS en prod** (`scripts/comptes-clients-e2e.mjs`, test permanent). Le test central de §16.2 passe : **un cookie copié AVANT la déconnexion est refusé APRÈS** — la révocation est réellement serveur. Cloisonnement vérifié : même email chez 2 artisans = 2 comptes étanches. RLS : les sessions ne fuient pas.
+- reste de §6 pour plus tard : l'espace client `/p/[slug]/compte` (ses devis/factures/documents, modification de ses infos, suppression de son compte) et le rattachement d'un fil anonyme au compte après connexion.
+- suivant : [B4] menu profil + page Paramètres à onglets (§C1/C2).
