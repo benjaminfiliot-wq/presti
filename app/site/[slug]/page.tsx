@@ -7,6 +7,7 @@ import type { SiteContenu } from '@/lib/ai'
 import { Fragment } from 'react'
 import Image from 'next/image'
 import SiteMotion from './SiteMotion'
+import SiteMatiere3D from './SiteMatiere3D'
 import { siteMaxForPlan } from '@/lib/plans'
 import { resolveLayout, type SectionId } from '@/lib/siteLayout'
 
@@ -156,6 +157,8 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={heroShot} alt="" className="site-hero-img" />
             <span className="site-hero-veil" />
+            {/* Signature 3D « matière » — chargée en différé, desktop only, repli = l'image ci-dessus */}
+            <SiteMatiere3D accent={accent} />
           </div>
         ) : null}
         <div className="site-hero-in">

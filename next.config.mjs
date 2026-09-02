@@ -21,7 +21,6 @@ const nextConfig = {
     // Directives communes (hors frame-ancestors, qui varie selon la route).
     const cspBase = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com", // Next inline + GA (optionnel)
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: blob: https://gorcdvmueakcncsmrouo.supabase.co https://www.google-analytics.com", // médias bucket + data URL (legacy) + GA
@@ -37,16 +36,20 @@ const nextConfig = {
       { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
       { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
     ]
+    // script-src : la console reste stricte ; le site/plateforme autorisent EN PLUS cdnjs
+    // (three.js chargé en différé pour la signature 3D « matière », niveau Signature).
+    const scriptStrict = "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com"
+    const scriptEmbeddable = scriptStrict + ' https://cdnjs.cloudflare.com'
     // Site vitrine (/site) et plateforme (/l) : embarquables par la console (aperçu « Ma page »),
     // mais jamais par un site tiers → SAMEORIGIN / frame-ancestors 'self' (anti-clickjacking préservé).
-    const embeddableCsp = [...cspBase, "frame-ancestors 'self'", 'upgrade-insecure-requests'].join('; ')
+    const embeddableCsp = [scriptEmbeddable, ...cspBase, "frame-ancestors 'self'", 'upgrade-insecure-requests'].join('; ')
     const embeddable = [
       { key: 'Content-Security-Policy', value: embeddableCsp },
       { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
       ...common,
     ]
     // Tout le reste (console, auth, paiement…) : aucun embarquement.
-    const strictCsp = [...cspBase, "frame-ancestors 'none'", 'upgrade-insecure-requests'].join('; ')
+    const strictCsp = [scriptStrict, ...cspBase, "frame-ancestors 'none'", 'upgrade-insecure-requests'].join('; ')
     const strict = [
       { key: 'Content-Security-Policy', value: strictCsp },
       { key: 'X-Frame-Options', value: 'DENY' },

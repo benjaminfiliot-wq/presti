@@ -111,6 +111,8 @@ html.lenis,html.lenis body{height:auto}
 .site-hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--sbg2)}
 .site-hero-img{position:absolute;inset:-8% 0 0 0;width:100%;height:116%;object-fit:cover;transform:scale(1.08);will-change:transform;filter:saturate(1.02)}
 .site-hero-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,14,11,.58) 0%,rgba(16,14,11,.48) 42%,rgba(16,14,11,.84) 82%,var(--sbg) 100%)}
+/* Signature 3D « matière » (Signature/desktop) — au-dessus du voile, en fond derrière le texte du hero */
+.site-matiere{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:block}
 .site-hero-in{max-width:900px;position:relative}
 .site-eyebrow{display:inline-block;font-family:var(--sfm);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--pc2);margin-bottom:1.1rem}
 .site-hero h1{font-family:var(--sfd);font-weight:900;font-size:clamp(2.9rem,9.5vw,7rem);line-height:.94;letter-spacing:-.02em;text-wrap:balance;margin:0}
