@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { compressPhotoToDataUrl } from '@/lib/media'
 
 type Msg = { sens: 'in' | 'out'; contenu: string }
 type Props = { slug: string; artisanNom?: string | null; avatar?: string | null }
@@ -17,6 +18,8 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
   const [website, setWebsite] = useState('') // honeypot (doit rester vide)
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+  const [photos, setPhotos] = useState<string[]>([]) // data URLs WebP (EXIF strippé)
+  const [photoBusy, setPhotoBusy] = useState(false)
 
   // Conversation
   const [token, setToken] = useState<string | null>(null)
@@ -53,6 +56,23 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
     if (el) el.scrollTop = el.scrollHeight
   }, [msgs, thinking, phase])
 
+  async function addPhotos(e: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || [])
+    e.target.value = '' // permet de re-choisir le même fichier
+    if (!files.length) return
+    setPhotoBusy(true)
+    setErr(null)
+    const slots = Math.max(0, 3 - photos.length)
+    const next: string[] = []
+    for (const f of files.slice(0, slots)) {
+      if (!f.type.startsWith('image/')) continue
+      const d = await compressPhotoToDataUrl(f)
+      if (d) next.push(d)
+    }
+    if (next.length) setPhotos((p) => [...p, ...next].slice(0, 3))
+    setPhotoBusy(false)
+  }
+
   async function submit(e: FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -61,7 +81,7 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, nom_prospect: nom, contact, message, website }),
+        body: JSON.stringify({ slug, nom_prospect: nom, contact, message, website, photos }),
       })
       const d = await res.json().catch(() => ({}))
       setLoading(false)
@@ -183,7 +203,29 @@ export default function LeadForm({ slug, artisanNom, avatar }: Props) {
       <input value={contact} onChange={(e) => setContact(e.target.value)} required />
       <label>Votre besoin (décrivez les travaux)</label>
       <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} required style={{ resize: 'vertical' }} />
-      <button disabled={loading}>{loading ? '…' : 'Démarrer la conversation'}</button>
+
+      {/* Photos du chantier — accélère le chiffrage. Compressées + EXIF strippé sur l'appareil. */}
+      <div className="plat-photos">
+        <div className="plat-photos-grid">
+          {photos.map((p, i) => (
+            <div className="plat-photo" key={i}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={p} alt={`Photo ${i + 1}`} />
+              <button type="button" className="plat-photo-x" onClick={() => setPhotos((ps) => ps.filter((_, j) => j !== i))} aria-label="Retirer la photo">×</button>
+            </div>
+          ))}
+          {photos.length < 3 ? (
+            <label className={`plat-photo-add${photoBusy ? ' busy' : ''}`}>
+              <input type="file" accept="image/*" capture="environment" multiple onChange={addPhotos} hidden disabled={photoBusy} />
+              <span aria-hidden="true">{photoBusy ? '…' : '+'}</span>
+              <small>{photoBusy ? 'Compression…' : 'Ajouter une photo'}</small>
+            </label>
+          ) : null}
+        </div>
+        <p className="plat-photos-note">Facultatif · jusqu&apos;à 3 photos. La localisation est retirée automatiquement.</p>
+      </div>
+
+      <button disabled={loading || photoBusy}>{loading ? '…' : 'Démarrer la conversation'}</button>
       <p className="plat-consent">En envoyant, vous acceptez que vos coordonnées soient utilisées uniquement pour traiter votre demande. Vous pouvez demander leur suppression à tout moment.</p>
       {err && <div className="msg err">{err}</div>}
     </form>

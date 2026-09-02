@@ -20,6 +20,10 @@ export async function POST(req: Request) {
     const contact = clip(body?.contact, MAX.contact)
     const nom_prospect = clip(body?.nom_prospect, MAX.nom)
     const message = clip(body?.message, MAX.message)
+    // Photos de chantier (déjà compressées + EXIF strippé côté client) : ≤ 3 data URLs image.
+    const photosIn: string[] = Array.isArray(body?.photos)
+      ? body.photos.filter((p: unknown): p is string => typeof p === 'string' && /^data:image\/(webp|jpeg|png);base64,/.test(p)).slice(0, 3)
+      : []
 
     // Validation stricte des entrées (slug attendu : minuscules/chiffres/tirets)
     if (!slug || !contact) {
@@ -97,6 +101,34 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Enregistrement impossible' }, { status: 500 })
     }
 
+    // 2ter) Photos de chantier → bucket `lead-media` (service_role). Non bloquant : si l'upload
+    // échoue, le lead est déjà sauvé. On ne stocke QUE l'image ré-encodée (aucun EXIF/géoloc).
+    let photoCount = 0
+    if (photosIn.length) {
+      try {
+        const urls: string[] = []
+        for (let i = 0; i < photosIn.length; i++) {
+          const m = photosIn[i].match(/^data:image\/(webp|jpeg|png);base64,(.+)$/)
+          if (!m) continue
+          const ext = m[1] === 'jpeg' ? 'jpg' : m[1]
+          const buf = Buffer.from(m[2], 'base64')
+          if (buf.length > 3 * 1024 * 1024) continue // borne dure (le bucket limite déjà à 3 Mo)
+          const path = `${lead.id}/${i}.${ext}`
+          const { error: upErr } = await supabaseAdmin.storage.from('lead-media').upload(path, buf, {
+            contentType: `image/${m[1]}`, cacheControl: '31536000', upsert: true,
+          })
+          if (upErr) { console.warn('[leads] upload photo:', upErr.message); continue }
+          urls.push(supabaseAdmin.storage.from('lead-media').getPublicUrl(path).data.publicUrl)
+        }
+        if (urls.length) {
+          photoCount = urls.length
+          await supabaseAdmin.from('leads').update({ photos: urls }).eq('id', lead.id)
+        }
+      } catch (e) {
+        console.warn('[leads] photos ignorées (upload échoué):', e)
+      }
+    }
+
     // 2bis) Anti-abus (I2) : on plafonne l'IA+email par artisan sur une fenêtre courte.
     // Au-delà, le lead est TOUJOURS sauvé (visible dashboard) mais on coupe le coûteux
     // (empêche l'amplification de coûts IA et le relais d'emails). Ne bloque jamais un vrai lead.
@@ -131,7 +163,7 @@ export async function POST(req: Request) {
         await sendEmail({
           to: artisan.email,
           subject: `Nouveau contact — ${nom_prospect || contact}`,
-          text: `Nouveau contact via votre page Presti (mode réponse manuelle).\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}\n\nRépondez-lui depuis votre espace (Messages).`,
+          text: `Nouveau contact via votre page Presti (mode réponse manuelle).\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: typeof contact === 'string' && contact.includes('@') ? contact : undefined,
         }).catch(() => {})
       }
@@ -196,7 +228,7 @@ export async function POST(req: Request) {
 
 Nom : ${nom_prospect || 'non précisé'}
 Contact : ${contact}
-Besoin : ${message || 'non précisé'}
+Besoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}
 
 Réponse automatique ${isEmail ? 'envoyée au prospect' : '(prospect sans email — à rappeler)'} :
 ---

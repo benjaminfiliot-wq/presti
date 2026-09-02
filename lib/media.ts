@@ -7,7 +7,7 @@ export const MEDIA_BUCKET = 'artisan-media'
  * Redimensionne une image en Blob (pas en data-URL) via canvas.
  * On stocke un FICHIER dans le bucket, plus jamais de base64 inliné dans la page (perf/LCP).
  */
-export function resizeToBlob(file: File, max: number, type: 'image/jpeg' | 'image/png' = 'image/jpeg', quality = 0.72): Promise<Blob> {
+export function resizeToBlob(file: File, max: number, type: 'image/jpeg' | 'image/png' | 'image/webp' = 'image/jpeg', quality = 0.72): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image()
     const url = URL.createObjectURL(file)
@@ -26,6 +26,31 @@ export function resizeToBlob(file: File, max: number, type: 'image/jpeg' | 'imag
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')) }
     img.src = url
   })
+}
+
+/** Blob → data URL (base64). */
+function blobToDataUrl(b: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader()
+    r.onload = () => resolve(String(r.result))
+    r.onerror = () => reject(new Error('read'))
+    r.readAsDataURL(b)
+  })
+}
+
+/**
+ * Compresse une photo prospect en WebP data URL, ≤ maxBytes (RGPD : le ré-encodage canvas
+ * STRIPPE tout l'EXIF, géoloc comprise). Baisse la qualité par paliers si nécessaire.
+ * Renvoie null si l'image est illisible.
+ */
+export async function compressPhotoToDataUrl(file: File, maxPx = 1600, maxBytes = 900_000): Promise<string | null> {
+  try {
+    let q = 0.72
+    let blob = await resizeToBlob(file, maxPx, 'image/webp', q)
+    while (blob.size > maxBytes && q > 0.4) { q -= 0.12; blob = await resizeToBlob(file, maxPx, 'image/webp', q) }
+    if (blob.size > maxBytes) blob = await resizeToBlob(file, 1200, 'image/webp', 0.55)
+    return await blobToDataUrl(blob)
+  } catch { return null }
 }
 
 /** Envoie le blob dans `artisan-media/<uid>/…` → renvoie l'URL publique (immuable, cache 1 an). */

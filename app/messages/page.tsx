@@ -8,7 +8,7 @@ import AppShell from '@/app/AppShell'
 type Lead = {
   id: string; nom_prospect: string | null; contact: string | null; message: string | null
   statut: string | null; created_at: string; updated_at: string | null; lu_le: string | null
-  urgence: string | null; type_chantier: string | null
+  urgence: string | null; type_chantier: string | null; photos: string[] | null
 }
 type Msg = { id: string; sens: 'in' | 'out'; type: string | null; contenu: string; sent_at: string }
 
@@ -49,7 +49,7 @@ export default function MessagesPage() {
   const loadLeads = useCallback(async () => {
     const { data } = await supabase
       .from('leads')
-      .select('id, nom_prospect, contact, message, statut, created_at, updated_at, lu_le, urgence, type_chantier')
+      .select('id, nom_prospect, contact, message, statut, created_at, updated_at, lu_le, urgence, type_chantier, photos')
       .order('updated_at', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
     // Tri : les urgences ENCORE ouvertes remontent en tête, sinon on garde l'ordre par récence.
@@ -190,6 +190,12 @@ export default function MessagesPage() {
                 <div className="inbox-who">
                   <b>{selLead.nom_prospect || 'Prospect'}</b>
                   <span>{selLead.contact || 'contact non précisé'}</span>
+                  {(selLead.urgence === 'urgent' && selLead.statut !== 'gagne' && selLead.statut !== 'perdu') || selLead.type_chantier ? (
+                    <span className="inbox-tags" style={{ marginTop: 4 }}>
+                      {selLead.urgence === 'urgent' && selLead.statut !== 'gagne' && selLead.statut !== 'perdu' ? <span className="qtag urgent">⚡ Urgent</span> : null}
+                      {selLead.type_chantier ? <span className="qtag">{selLead.type_chantier}</span> : null}
+                    </span>
+                  ) : null}
                 </div>
                 <div className="inbox-actions">
                   <button className="btn btn--primary" style={{ width: 'auto' }} disabled={devAuto} onClick={devisAutomatique} title="L'IA chiffre la conversation et crée un devis complet, prêt à relire">
@@ -201,6 +207,20 @@ export default function MessagesPage() {
                   </button>
                 </div>
               </div>
+
+              {Array.isArray(selLead.photos) && selLead.photos.length > 0 ? (
+                <div className="inbox-photos">
+                  <span className="inbox-photos-lab">Photos du chantier</span>
+                  <div className="inbox-photos-grid">
+                    {selLead.photos.map((src, i) => (
+                      <a key={i} href={src} target="_blank" rel="noopener" className="inbox-photo" title="Ouvrir en grand">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={src} alt={`Photo chantier ${i + 1}`} loading="lazy" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
 
               <div className="inbox-msgs" ref={threadRef}>
                 {msgs.length === 0 && <div className="inbox-empty-thread muted">Cette conversation démarre. Écrivez le premier message.</div>}

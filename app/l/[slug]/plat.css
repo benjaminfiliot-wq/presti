@@ -186,6 +186,19 @@ html.lenis,html.lenis body{height:auto}
 .plat-form button{width:100%;margin-top:1.2rem;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;border:none;border-radius:12px;padding:.98rem;font-size:1.04rem;font-weight:700;cursor:pointer;box-shadow:0 16px 36px -14px color-mix(in srgb,var(--pc) 80%,transparent);transition:transform .12s var(--pe),box-shadow .25s}
 .plat-form button:hover{box-shadow:0 22px 48px -14px color-mix(in srgb,var(--pc) 95%,transparent)}
 .plat-form button:active{transform:scale(.985)}
+/* Photos de chantier (facultatif) */
+.plat-photos{margin-top:.95rem}
+.plat-form .plat-photos-grid{display:flex;flex-wrap:wrap;gap:.6rem;margin:0}
+.plat-photo{position:relative;width:76px;height:76px;border-radius:12px;overflow:hidden;border:1px solid var(--pl);background:var(--ps)}
+.plat-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.plat-form .plat-photo-x{position:absolute;top:2px;right:2px;width:20px;height:20px;margin:0;padding:0;border-radius:50%;border:none;background:rgba(0,0,0,.62);color:#fff;font-size:15px;line-height:1;display:grid;place-items:center;cursor:pointer;box-shadow:none}
+.plat-form .plat-photo-x:hover{background:rgba(0,0,0,.8)}
+.plat-form .plat-photo-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:76px;height:76px;margin:0;padding:0;border:1.5px dashed color-mix(in srgb,var(--pi) 26%,transparent);border-radius:12px;background:var(--pb);color:var(--pi2);cursor:pointer;transition:border-color .15s,color .15s}
+.plat-form .plat-photo-add:hover{border-color:var(--pc);color:var(--pc2)}
+.plat-form .plat-photo-add span{font-size:1.4rem;line-height:1;font-weight:400}
+.plat-form .plat-photo-add small{font-size:9.5px;text-align:center;line-height:1.15;padding:0 4px}
+.plat-form .plat-photo-add.busy{opacity:.7;cursor:default}
+.plat-photos-note{margin:.5rem 0 0;font-size:.76rem;color:var(--pf)}
 .plat-form button:disabled{opacity:.6;cursor:wait}
 .plat-form .msg{margin-top:1rem;padding:.85rem 1rem;border-radius:11px;background:var(--psoft);color:var(--pc2);font-size:.94rem;border:1px solid color-mix(in srgb,var(--pc) 24%,transparent)}
 .plat-form .msg.err{background:rgba(240,119,106,.12);color:#F0A79E;border-color:rgba(240,119,106,.3)}
