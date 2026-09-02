@@ -63,12 +63,22 @@ export function motEscalade(cfg: PlateformeConfig, message: string): string | nu
   return null
 }
 
+/**
+ * Heure courante EN FRANCE. Le serveur tourne en UTC : sans ça, une plage « 8h–18h »
+ * réglée par l'artisan serait décalée de 1 à 2 h selon la saison.
+ */
+export function heureFrance(d = new Date()): number {
+  try {
+    return parseInt(new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', hour12: false }).format(d), 10)
+  } catch { return d.getUTCHours() }
+}
+
 /** La plage horaire d'auto-réponse est-elle ouverte maintenant ? (gère le passage de minuit) */
 export function dansLaPlage(cfg: PlateformeConfig, maintenant = new Date()): boolean {
   if (cfg.auto_24_7 !== false) return true
   const d = cfg.auto_debut, f = cfg.auto_fin
   if (d == null || f == null) return true
-  const h = maintenant.getHours()
+  const h = heureFrance(maintenant)
   return d <= f ? h >= d && h < f : h >= d || h < f
 }
 
