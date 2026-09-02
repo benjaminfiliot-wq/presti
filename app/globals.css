@@ -1697,3 +1697,22 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 @keyframes bootline{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.hud-boot div{opacity:1;animation:none}.radar::before,.hud-ticker .track,.hud-main-inner{animation:none}}
 
+
+/* ── Ma plateforme → Intelligence (v4 §A4) ── */
+.pcfg-lab{display:block;margin:1.1rem 0 .45rem;font-weight:650;font-size:.88rem;color:var(--ink)}
+.pcfg-lab:first-of-type{margin-top:0}
+.pcfg-modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.6rem}
+.pcfg-mode{width:auto;margin:0;text-align:left;display:flex;flex-direction:column;gap:.25rem;padding:.85rem .95rem;border:1.5px solid var(--line);border-radius:13px;background:var(--surface-2);cursor:pointer;transition:border-color .14s,background .14s}
+.pcfg-mode:hover{border-color:var(--accent-tint-2)}
+.pcfg-mode.on{border-color:var(--accent);background:var(--accent-tint)}
+.pcfg-mode b{font-size:14px;color:var(--ink)}
+.pcfg-mode.on b{color:var(--accent-ink)}
+.pcfg-mode span{font-size:12px;color:var(--muted);line-height:1.45}
+.pcfg-seg{display:flex;flex-wrap:wrap;gap:.4rem}
+.pcfg-seg button{width:auto;margin:0;padding:.45rem .85rem;border:1.5px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--muted);font-size:12.5px;font-weight:600;cursor:pointer;transition:color .14s,border-color .14s,background .14s}
+.pcfg-seg button:hover{border-color:var(--accent-tint-2)}
+.pcfg-seg button.on{color:var(--accent-ink);background:var(--accent-tint);border-color:var(--accent)}
+.pcfg-heures{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-top:.6rem;font-size:.88rem;color:var(--ink2,var(--muted))}
+.pcfg-heures select,.pcfg-heures input{width:auto;margin:0;background:var(--surface);border:1.5px solid var(--line);border-radius:9px;padding:.4rem .6rem;font-size:.88rem;font-family:inherit;color:var(--ink)}
+.pcfg-heures select:focus,.pcfg-heures input:focus{outline:none;border-color:var(--accent)}
+.pcfg-heures small{font-size:.76rem}
