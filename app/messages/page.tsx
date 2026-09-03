@@ -38,6 +38,8 @@ export default function MessagesPage() {
   const [suggesting, setSuggesting] = useState(false)
   const [devAuto, setDevAuto] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+  // Liens signés des photos de la demande ouverte (bucket privé, une heure de validité).
+  const [photosSignees, setPhotosSignees] = useState<string[]>([])
   const threadRef = useRef<HTMLDivElement>(null)
 
   const loadLeads = useCallback(async () => {
@@ -94,8 +96,19 @@ export default function MessagesPage() {
   useEffect(() => { const el = threadRef.current; if (el) el.scrollTop = el.scrollHeight }, [msgs])
 
   async function open(l: Lead) {
-    setSel(l.id); setErr(null); setDraft('')
+    setSel(l.id); setErr(null); setDraft(''); setPhotosSignees([])
     await loadThread(l.id)
+    // Les photos du chantier vivent dans un bucket PRIVÉ : on demande des liens signés
+    // pour cette demande précise, valables une heure.
+    if (Array.isArray(l.photos) && l.photos.length) {
+      const t = (await supabase.auth.getSession()).data.session?.access_token
+      const r = await fetch('/api/leads/photos', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
+        body: JSON.stringify({ lead: l.id }),
+      })
+      const d = await r.json().catch(() => ({}))
+      setPhotosSignees(Array.isArray(d.urls) ? d.urls : [])
+    }
     if (isUnread(l)) {
       await supabase.from('leads').update({ lu_le: new Date().toISOString() }).eq('id', l.id)
       setLeads((prev) => prev.map((x) => (x.id === l.id ? { ...x, lu_le: new Date().toISOString() } : x)))
@@ -215,11 +228,14 @@ export default function MessagesPage() {
                 </div>
               </div>
 
+              {/* Les photos de chantier ne sont plus publiques : le bucket contenait des
+                  photos de domiciles privés, téléchargeables par n'importe qui. On affiche
+                  désormais des liens signés, valables une heure, obtenus pour CETTE demande. */}
               {Array.isArray(selLead.photos) && selLead.photos.length > 0 ? (
                 <div className="inbox-photos">
                   <span className="inbox-photos-lab">Photos du chantier</span>
                   <div className="inbox-photos-grid">
-                    {selLead.photos.map((src, i) => (
+                    {(photosSignees.length ? photosSignees : []).map((src, i) => (
                       <a key={i} href={src} target="_blank" rel="noopener" className="inbox-photo" title="Ouvrir en grand">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={src} alt={`Photo chantier ${i + 1}`} loading="lazy" />

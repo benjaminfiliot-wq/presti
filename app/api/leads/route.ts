@@ -124,6 +124,9 @@ export async function POST(req: Request) {
             contentType: `image/${m[1]}`, cacheControl: '31536000', upsert: true,
           })
           if (upErr) { console.warn('[leads] upload photo:', upErr.message); continue }
+          // On garde une URL de la même forme qu'avant pour ne pas casser l'existant,
+          // mais le bucket est PRIVÉ : elle ne sert que de chemin. La console obtient des
+          // liens signés via /api/leads/photos.
           urls.push(supabaseAdmin.storage.from('lead-media').getPublicUrl(path).data.publicUrl)
         }
         if (urls.length) {

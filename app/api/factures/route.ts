@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
+import { empreinte } from '@/lib/facturation'
 
 type LigneIn = { designation?: string; quantite?: number; unite?: string; prix_unitaire_ht?: number; tva_taux?: number }
 
@@ -70,6 +71,22 @@ export async function POST(req: Request) {
         eff.map((l, i) => ({ facture_id: facture.id, ordre: i, ...l })),
       )
     }
+
+    // SCELLEMENT — après les lignes, quand le contenu est complet.
+    //
+    // C'est ici que la pièce devient inaltérable, et pas à l'insertion : le déclencheur
+    // d'immuabilité refuserait d'écrire l'empreinte sur une facture déjà verrouillée.
+    // Le scellement ne vivait jusqu'ici que dans la branche PATCH, jamais empruntée —
+    // donc AUCUNE facture n'était scellée, et une facture émise restait modifiable et
+    // supprimable depuis le navigateur. C'est ce qui rend la comptabilité opposable.
+    await supabaseAdmin.from('factures').update({
+      verrouillee: true,
+      emise_le: new Date().toISOString(),
+      empreinte: await empreinte(JSON.stringify({
+        numero: facture.numero, client: s(src.client_nom, 160),
+        totaux: [totals.total_ht, totals.total_tva, totals.total_ttc], lignes: eff,
+      })),
+    }).eq('id', facture.id)
 
     return NextResponse.json({ ok: true, id: facture.id, numero: facture.numero })
   } catch (e) {

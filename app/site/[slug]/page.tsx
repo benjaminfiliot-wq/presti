@@ -15,12 +15,13 @@ import { resolveLayout, type SectionId } from '@/lib/siteLayout'
 import { resolveStyle, styleToCss, styleToData } from '@/lib/siteStyle'
 import { lisibleSur } from '@/lib/contrast'
 import { fondDuTheme } from '@/lib/themeFonds'
+import { computeResponseDelay } from '@/lib/platStats'
 
 type Service = { nom?: string; description?: string }
 type Realisation = { image?: string; titre?: string; specialite?: string; blur?: string }
 type Reseaux = { instagram?: string; facebook?: string; tiktok?: string; linkedin?: string; whatsapp?: string; site?: string; google?: string }
 type Artisan = {
-  nom: string | null; metier: string | null; slug: string | null; ville: string | null
+  id: string; nom: string | null; metier: string | null; slug: string | null; ville: string | null
   bio: string | null; services: Service[] | null; zone_intervention: string | null
   logo_url: string | null; photo_url: string | null; horaires: string | null
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
@@ -34,7 +35,7 @@ type Artisan = {
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout, site_style, domaine, domaine_verifie, avant_apres')
+    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout, site_style, domaine, domaine_verifie, avant_apres')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -165,7 +166,13 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const trustItems: { titre: string; detail: string }[] = []
   if (zone) trustItems.push({ titre: 'Sur votre secteur', detail: zone })
   if (a.horaires) trustItems.push({ titre: 'Disponibilités', detail: a.horaires })
-  if (plateformeActive) trustItems.push({ titre: 'Réponse rapide', detail: 'Votre demande reçoit une réponse en quelques minutes' })
+  // Le délai de réponse est MESURÉ, jamais promis. En corrigeant les mentions inventées
+  // de cette bande, j'y avais moi-même remis une promesse en dur (« une réponse en
+  // quelques minutes ») que rien ne soutenait — une promesse de délai non tenue est une
+  // pratique commerciale trompeuse, et c'est l'ARTISAN qui la porte. On réutilise donc
+  // la mesure réelle sur 30 jours, qui se tait quand il y a trop peu de données.
+  const delaiReel = plateformeActive ? await computeResponseDelay(a.id) : null
+  if (delaiReel) trustItems.push({ titre: 'Réponse rapide', detail: delaiReel })
   if (services.length >= 3) trustItems.push({ titre: `${services.length} prestations`, detail: 'Décrivez votre projet, on vous dit ce qui est possible' })
   else if (telDigits) trustItems.push({ titre: 'Joignable directement', detail: a.tel_public as string })
 

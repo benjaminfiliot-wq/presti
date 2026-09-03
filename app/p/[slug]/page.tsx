@@ -42,6 +42,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     robots: { index: false, follow: false },
     // `url` DOIT être écrasée : sans elle, l'OG hérite de https://prestiapp.fr (la landing Presti)
     // défini dans le layout racine → fuite white-label dans les partages.
+    // La canonique manquait : elle retombait sur celle du layout racine, donc sur la
+    // landing Presti. Fuite de marque, et canonique fausse — sur la page où l'artisan
+    // envoie ses clients.
+    alternates: { canonical: `https://prestiapp.fr/p/${slug}` },
     openGraph: { title: t, description: d, type: 'website', url: `https://prestiapp.fr/p/${slug}`, ...(a.nom ? { siteName: a.nom } : {}) },
     twitter: { card: 'summary_large_image', title: t, description: d },
   }

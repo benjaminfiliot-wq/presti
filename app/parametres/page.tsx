@@ -66,6 +66,12 @@ function ParametresInner() {
     const { error } = await supabase.from('artisans').update({
       siret: legal.siret.trim() || null,
       tva_num: aTva ? (legal.tva_num.trim() || null) : null,
+      // Cette ligne manquait : la case « assujetti à la TVA » n'écrivait que le NUMÉRO,
+      // jamais le RÉGIME. Un artisan qui cochait la case et saisissait son n° de TVA
+      // continuait donc à émettre des devis et factures à 0 % avec la mention
+      // « TVA non applicable ». TVA non collectée sur chaque chantier, mention fausse
+      // sur chaque pièce. Trouvé par l'audit indépendant du 2026-09-03.
+      tva_regime: aTva ? 'reel' : 'franchise',
       mention_tva_base: mentionBase,
       iban: legal.iban.replace(/\s+/g, '').toUpperCase() || null,
       assurance_nom: legal.assurance_nom.trim() || null,

@@ -69,8 +69,11 @@ export async function GET(req: Request) {
     if (isMail) {
       await sendEmail({
         to: lead.contact as string,
-        subject: `Suite à votre demande — ${artisan?.nom ?? 'Presti'}`,
+        // Le sujet retombait sur « — Presti » : le prospect d'un artisan recevait une
+        // relance signée du nom de l'éditeur. Sans nom d'artisan, on n'écrit rien du tout.
+        subject: artisan?.nom ? `Suite à votre demande — ${artisan.nom}` : 'Suite à votre demande',
         text,
+        fromName: artisan?.nom ?? undefined,
         replyTo: artisan?.email ?? undefined,
       })
     }
