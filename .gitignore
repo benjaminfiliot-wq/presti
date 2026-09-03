@@ -15,4 +15,5 @@ next-env.d.ts
 .agents/
 
 # Fichiers temporaires d'audit (créés par les relecteurs, jamais versionnés)
-.audit-tmp*
+.audit-*
+*.audit.mjs
