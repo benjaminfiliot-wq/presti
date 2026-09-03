@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { resizeToBlob, uploadArtisanMedia } from '@/lib/media'
+import { preparerPhoto, uploadArtisanMedia } from '@/lib/media'
 
 export type AvantApres = { avant: string; apres: string; titre: string }
 
@@ -16,8 +16,10 @@ export default function AvantApresUpload({ uid, value, onChange }: { uid: string
   async function upload(file: File): Promise<string | null> {
     if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) { setErr('Formats acceptés : JPG, PNG, WebP.'); return null }
     if (file.size > 12 * 1024 * 1024) { setErr('Photo trop lourde (12 Mo max).'); return null }
-    const blob = await resizeToBlob(file, 1400, 'image/jpeg', 0.74)
-    return uploadArtisanMedia(uid, blob, 'jpg')
+    // Même traitement que les réalisations : master large en WebP, EXIF (donc géolocalisation)
+    // retiré au ré-encodage. Une paire avant/après s'affiche en grand, elle mérite la même qualité.
+    const p = await preparerPhoto(file, 'galerie')
+    return uploadArtisanMedia(uid, p.blob, p.ext)
   }
 
   async function pick(i: number, side: 'avant' | 'apres', e: React.ChangeEvent<HTMLInputElement>) {

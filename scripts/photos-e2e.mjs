@@ -114,8 +114,9 @@ try {
   await page.goto(`${BASE}/profil`, { waitUntil: 'networkidle' })
 
   console.log('\n── 1. Import par le vrai parcours')
-  await page.setInputFiles('input[type="file"][accept*="image/jpeg"]', fichier)
-  await page.waitForSelector('.pf-item img', { timeout: 60000 })
+  await page.setInputFiles('input[type="file"][multiple]', fichier)
+  try { await page.waitForSelector('.pf-item img', { timeout: 60000 }) }
+  catch { throw new Error('import échoué — message affiché : ' + (await page.locator('.pf-up p').first().innerText().catch(() => '(aucun)'))) }
   T('la photo est acceptée (nette, assez grande)', await page.locator('.pf-item').count() === 1)
   T('elle est marquée comme photo principale', await page.locator('.pf-role').count() === 1)
 
@@ -155,7 +156,7 @@ try {
     return btoa(s)
   })
   fs.writeFileSync(petit, Buffer.from(b64p, 'base64'))
-  await page.setInputFiles('input[type="file"][accept*="image/jpeg"]', petit)
+  await page.setInputFiles('input[type="file"][multiple]', petit)
   await page.waitForSelector('.pf-alertes', { timeout: 30000 })
   const texte = await page.locator('.pf-alertes').innerText()
   T('elle n’est pas ajoutée', await page.locator('.pf-item').count() === 1)
