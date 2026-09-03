@@ -1,0 +1,30 @@
+name: Qualité
+
+# Garde-fou de build (v4 §13/§15). Ce qui casse ici n'atteint jamais la production :
+#  • le typage doit passer ;
+#  • le build doit passer ;
+#  • le poids JavaScript des pages VUES PAR LES CLIENTS ne doit pas dériver.
+# Le budget est la seule chose qui se dégrade en silence sans un contrôle automatique :
+# chaque ajout coûte 2 Ko, personne ne le voit, et six mois plus tard le site rame.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  qualite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx next build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://exemple.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: cle-factice-pour-le-build
+      - run: node scripts/budget-perf.mjs
