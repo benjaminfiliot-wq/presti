@@ -26,6 +26,17 @@ const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABA
 let ok = 0, ko = 0
 const T = (n, c, d = '') => { if (c) { ok++; console.log(`  ✅ ${n}`) } else { ko++; console.log(`  ❌ ${n}${d ? `\n     ${d}` : ''}`) } }
 
+// Un test qui dit « contraste insuffisant » sans dire OÙ ni COMBIEN ne sert à rien :
+// on remonte le sélecteur, les couleurs et le rapport mesuré, pour chaque nœud fautif.
+const decrire = (violations) => violations.flatMap((v) =>
+  v.nodes.slice(0, 6).map((n) => {
+    const mesure = (n.any ?? []).flatMap((c) => (c.data ? [c.data] : []))[0]
+    const chiffres = mesure?.contrastRatio
+      ? ` ${mesure.contrastRatio}:1 (texte ${mesure.fgColor} sur ${mesure.bgColor}, ${mesure.fontSize})`
+      : ''
+    return `${v.id} · ${n.target.join(' ')}${chiffres}`
+  })).join('\n     ')
+
 const img = (t, c) => 'data:image/svg+xml,' + encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900"><rect width="1200" height="900" fill="${c}"/><text x="600" y="470" font-size="90" text-anchor="middle" fill="#fff" font-family="sans-serif">${t}</text></svg>`)
 
@@ -46,7 +57,11 @@ try {
   })
 
   const nav = await chromium.launch()
-  const ctx = await nav.newContext({ viewport: { width: 1280, height: 900 } })
+  // reducedMotion : axe mesure la couleur RÉELLEMENT peinte. Sans ça, il échantillonne
+  // pendant les fondus et rapporte des couleurs mélangées (un titre à mi-transition sort
+  // à 1,3:1 alors qu'il est parfaitement lisible une fois posé). Le code respecte déjà
+  // prefers-reduced-motion en affichant tout d'emblée : c'est l'état final qu'on audite.
+  const ctx = await nav.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' })
 
   const auditer = async (url, titre) => {
     const page = await ctx.newPage()
@@ -55,7 +70,7 @@ try {
     const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
     const graves = r.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
     const mineures = r.violations.filter((v) => !graves.includes(v))
-    const detail = graves.map((v) => `${v.id} (${v.impact}) — ${v.help}\n     → ${v.nodes[0]?.target?.join(' ')}`).join('\n     ')
+    const detail = decrire(graves)
     T(`${titre} : aucune infraction grave`, graves.length === 0, detail)
     if (mineures.length) console.log(`     ℹ️ ${mineures.length} mineure(s) : ${mineures.map((v) => v.id).join(', ')}`)
     return page
@@ -69,7 +84,7 @@ try {
   await p1.waitForSelector('.site-lb')
   const rl = await new AxeBuilder({ page: p1 }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
   const gravesLb = rl.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')
-  T('visionneuse : aucune infraction grave', gravesLb.length === 0, gravesLb.map((v) => `${v.id} — ${v.help}`).join('\n     '))
+  T('visionneuse : aucune infraction grave', gravesLb.length === 0, decrire(gravesLb))
   await p1.close()
 
   console.log('\n── 3. La plateforme de contact')

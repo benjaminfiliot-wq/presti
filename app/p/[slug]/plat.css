@@ -316,7 +316,9 @@ html.lenis,html.lenis body{height:auto}
 .pchat-brand span{display:flex;flex-direction:column;min-width:0}
 .pchat-brand b{font-size:.95rem;color:var(--pi);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pchat-brand small{font-size:.74rem;color:var(--pm)}
-.pchat-ava{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:color-mix(in srgb,var(--pc) 18%,var(--ps));color:var(--pc2);font-size:.74rem;font-weight:700}
+/* Les initiales se lisaient à 3,6:1 sur la pastille teintée : l'accent brut sur un fond
+   d'accent à 18 %, ça ne pouvait pas passer. On les met en encre du thème. */
+.pchat-ava{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:color-mix(in srgb,var(--pc) 18%,var(--ps));color:var(--pi);font-size:.74rem;font-weight:700}
 .pchat-ava img{width:100%;height:100%;object-fit:cover}
 .pchat-new{padding:.6rem .8rem;border-radius:11px;border:1px dashed color-mix(in srgb,var(--pi) 26%,transparent);background:none;color:var(--pi2);font-size:.88rem;font-weight:600;cursor:pointer;text-align:left;transition:border-color .15s,color .15s}
 .pchat-new:hover{border-color:var(--pc);color:var(--pc2)}
