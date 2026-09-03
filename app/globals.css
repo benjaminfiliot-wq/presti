@@ -1957,3 +1957,14 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .par-cp input { margin: 0; }
 .par-cp input:first-child { flex: 0 0 140px; }
 .par-cp input:last-child { flex: 1; }
+
+/* ── Force du mot de passe à l'inscription (v4 §11) ────────────────────────── */
+.mdp-force { display: flex; flex-direction: column; gap: .35rem; margin-top: .5rem; }
+.mdp-jauge { display: flex; gap: 4px; }
+.mdp-jauge i { flex: 1; height: 3px; border-radius: 2px; background: var(--line); transition: background .2s ease; }
+.mdp-txt { font-size: .8rem; line-height: 1.45; color: var(--muted); }
+/* Rouge tant que c'est refusé, puis on monte : la couleur dit l'état, le texte dit quoi faire. */
+.mdp-force[data-niveau="0"] .mdp-txt { color: #c86a5a; }
+.mdp-force[data-niveau="1"] .mdp-jauge i:nth-child(1) { background: #d08a2c; }
+.mdp-force[data-niveau="2"] .mdp-jauge i:nth-child(-n+2) { background: #c8a23c; }
+.mdp-force[data-niveau="3"] .mdp-jauge i { background: var(--green); }

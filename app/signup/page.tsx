@@ -4,6 +4,7 @@ import '@/app/globals.css'
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { evaluerMotDePasse, messageAuth } from '@/lib/motDePasse'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -12,15 +13,19 @@ export default function SignupPage() {
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
   const [loading, setLoading] = useState(false)
   const [showPw, setShowPw] = useState(false)
+  // Force du mot de passe, évaluée à la frappe. On refuse ce qui figure dans les listes
+  // d'attaque — et on DIT pourquoi, au lieu de refuser sans expliquer.
+  const force = evaluerMotDePasse(password, email)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
+    if (!force.ok) { setMsg({ type: 'err', text: force.probleme ?? 'Choisissez un mot de passe plus solide.' }); return }
     setLoading(true)
     setMsg(null)
     const { data, error } = await supabase.auth.signUp({ email, password })
     setLoading(false)
     if (error) {
-      setMsg({ type: 'err', text: error.message })
+      setMsg({ type: 'err', text: messageAuth(error.message) })
       return
     }
     if (data.session) {
@@ -28,7 +33,9 @@ export default function SignupPage() {
     } else {
       setMsg({
         type: 'ok',
-        text: "Compte créé ! Vérifie tes emails pour confirmer — ou désactive « Confirm email » dans Supabase pour tester sans confirmation.",
+        // Ce message donnait une consigne de DÉVELOPPEUR (« désactive Confirm email dans
+        // Supabase ») à l'artisan qui vient de créer son compte.
+        text: 'Compte créé. Ouvrez le lien de confirmation qu’on vient de vous envoyer par email pour accéder à votre espace.',
       })
     }
   }
@@ -53,7 +60,13 @@ export default function SignupPage() {
                 : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" /></svg>}
             </button>
           </div>
-          <button disabled={loading}>{loading ? '…' : 'Créer mon compte'}</button>
+          {password ? (
+            <div className="mdp-force" data-niveau={force.ok ? force.score : 0}>
+              <span className="mdp-jauge" aria-hidden="true"><i /><i /><i /></span>
+              <span className="mdp-txt">{force.probleme ?? force.conseil}</span>
+            </div>
+          ) : null}
+          <button disabled={loading || !force.ok}>{loading ? '…' : 'Créer mon compte'}</button>
         </form>
         {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`}>{msg.text}</div>}
         <p className="muted" style={{ marginTop: '1rem' }}>

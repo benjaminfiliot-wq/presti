@@ -4,6 +4,7 @@ import '@/app/globals.css'
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { messageAuth } from '@/lib/motDePasse'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -20,7 +21,9 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     setLoading(false)
     if (error) {
-      setMsg(error.message)
+      // Le message brut de Supabase (« Invalid login credentials ») s'affichait tel quel,
+      // en anglais, à un artisan qui vient de se tromper de mot de passe.
+      setMsg(messageAuth(error.message))
       return
     }
     router.push('/outils')
