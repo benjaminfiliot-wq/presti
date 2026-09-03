@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateLeadReply } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
 import { consumeCredit } from '@/lib/credits'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 // Modèle Expert (opus) possible → au-delà du timeout Vercel par défaut (10 s).
 export const runtime = 'nodejs'
@@ -16,7 +17,7 @@ export async function POST(req: Request) {
     const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
     if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
 
-    const { data: userData, error: uErr } = await supabaseAdmin.auth.getUser(token)
+    const { data: userData, error: uErr } = await getUserRevocable(token)
     if (uErr || !userData?.user) {
       return NextResponse.json({ error: 'Session expirée, reconnecte-toi.' }, { status: 401 })
     }

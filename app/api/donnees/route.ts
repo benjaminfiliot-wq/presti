@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { MEDIA_BUCKET } from '@/lib/media'
+import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 // Données & suppressions granulaires (v4 §C3). Principe : CHAQUE brique se réinitialise ou
 // se supprime indépendamment, sans jamais toucher au compte Presti.
@@ -16,11 +17,11 @@ type Action = 'site_reinitialiser' | 'site_supprimer' | 'plateforme_supprimer' |
 const ACTIONS: Action[] = ['site_reinitialiser', 'site_supprimer', 'plateforme_supprimer', 'conversation_supprimer']
 
 async function auth(req: Request) {
-  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-  if (!token) return { error: 'Non authentifié', status: 401 as const }
-  const { data, error } = await supabaseAdmin.auth.getUser(token)
-  if (error || !data?.user) return { error: 'Session expirée, reconnecte-toi.', status: 401 as const }
-  return { uid: data.user.id }
+  // Contrôle central : il refuse aussi les jetons émis AVANT une déconnexion globale
+  // (v4 §11), ce que `getUser` seul ne fait pas.
+  const s = await verifierSession(req)
+  if (estEchec(s)) return { error: s.error, status: s.status }
+  return { uid: s.uid }
 }
 
 const compte = async (table: string, filtre: Record<string, string>) => {

@@ -5,6 +5,7 @@ import { sendEmail } from '@/lib/email'
 import { consumeCredit } from '@/lib/credits'
 import { resolveModel } from '@/lib/models'
 import { getPlateformeConfig } from '@/lib/plateformeConfig'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -22,7 +23,7 @@ type Lead = {
 async function authArtisan(req: Request) {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   if (!token) return { error: NextResponse.json({ error: 'Non authentifié' }, { status: 401 }) }
-  const { data, error } = await supabaseAdmin.auth.getUser(token)
+  const { data, error } = await getUserRevocable(token)
   if (error || !data?.user) return { error: NextResponse.json({ error: 'Session expirée, reconnecte-toi.' }, { status: 401 }) }
   return { uid: data.user.id }
 }

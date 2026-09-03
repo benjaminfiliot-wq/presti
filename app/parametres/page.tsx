@@ -90,9 +90,17 @@ function ParametresInner() {
   async function deconnecterAutres() {
     if (busy) return
     setBusy(true); setMsg(null)
-    const { error } = await supabase.auth.signOut({ scope: 'others' })
+    // On passe par le serveur : `signOut({ scope: 'others' })` seul ne révoque que les
+    // jetons de rafraîchissement, et un jeton d'accès déjà copié continuait de fonctionner
+    // jusqu'à une heure. La route pose une date de révocation que toutes les routes de
+    // Presti vérifient — l'effet est immédiat (v4 §11).
+    const t = (await supabase.auth.getSession()).data.session?.access_token
+    const r = await fetch('/api/securite/sessions', { method: 'POST', headers: { Authorization: `Bearer ${t}` } })
     setBusy(false)
-    setMsg(error ? { type: 'err', text: 'Action impossible.' } : { type: 'ok', text: 'Vos autres sessions ont été fermées ✅' })
+    if (!r.ok) { setMsg({ type: 'err', text: 'Action impossible.' }); return }
+    setMsg({ type: 'ok', text: 'Toutes vos sessions sont fermées. Reconnexion…' })
+    await supabase.auth.signOut()
+    setTimeout(() => router.replace('/login'), 1200)
   }
 
   async function exporter() {
@@ -173,7 +181,7 @@ function ParametresInner() {
             <hr style={{ border: 0, borderTop: '1px solid var(--line)', margin: '1.4rem 0' }} />
             <h3 style={{ margin: '0 0 .3rem', fontSize: '1rem' }}>Vos autres appareils</h3>
             <p className="muted" style={{ margin: '0 0 .8rem', fontSize: '.88rem' }}>Vous avez utilisé un ordinateur qui n’est pas le vôtre ? Fermez toutes les autres sessions — elles seront réellement invalidées, pas seulement oubliées.</p>
-            <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={busy} onClick={deconnecterAutres}>Fermer mes autres sessions</button>
+            <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={busy} onClick={deconnecterAutres}>Fermer toutes mes sessions</button>
           </div>
         ) : null}
 

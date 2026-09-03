@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
+import { authArtisan as verifierSession, estEchec, getUserRevocable } from '@/lib/authArtisan'
 
 const DEVIS_STATUTS = ['brouillon', 'envoye', 'accepte', 'refuse', 'expire']
 
@@ -11,11 +12,10 @@ type LigneIn = { designation?: string; quantite?: number; unite?: string; prix_u
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-    if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-    const { data: userData, error: uErr } = await supabaseAdmin.auth.getUser(token)
-    if (uErr || !userData?.user) return NextResponse.json({ error: 'Session expirée' }, { status: 401 })
-    const uid = userData.user.id
+    // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).
+    const session = await verifierSession(req)
+    if (estEchec(session)) return NextResponse.json({ error: session.error }, { status: session.status })
+    const uid = session.uid
 
     // Vérifier la propriété
     const { data: owned } = await supabaseAdmin.from('devis').select('id').eq('id', id).eq('artisan_id', uid).maybeSingle()
@@ -70,7 +70,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const { id } = await params
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-  const { data: userData } = await supabaseAdmin.auth.getUser(token)
+  const { data: userData } = await getUserRevocable(token)
   if (!userData?.user) return NextResponse.json({ error: 'Session expirée' }, { status: 401 })
   const uid = userData.user.id
   const { data: owned } = await supabaseAdmin.from('devis').select('id').eq('id', id).eq('artisan_id', uid).maybeSingle()

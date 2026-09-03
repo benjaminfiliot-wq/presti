@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { stripe } from '@/lib/stripe'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 function json(o: unknown, s = 200) {
   return new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json' } })
@@ -11,7 +12,7 @@ function json(o: unknown, s = 200) {
 export async function GET(req: Request) {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   if (!token) return json({ error: 'Non authentifié' }, 401)
-  const { data: userData } = await supabaseAdmin.auth.getUser(token)
+  const { data: userData } = await getUserRevocable(token)
   if (!userData?.user) return json({ error: 'Session expirée' }, 401)
   const { data: me } = await supabaseAdmin.from('artisans').select('is_founder').eq('id', userData.user.id).maybeSingle()
   if (!me?.is_founder) return json({ error: 'Réservé aux fondateurs' }, 403)

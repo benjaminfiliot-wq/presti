@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { siteMaxForPlan } from '@/lib/plans'
 import { addDomain, getStatus, removeDomain, normalizeDomain } from '@/lib/vercelDomains'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -10,7 +11,7 @@ export const maxDuration = 30
 async function auth(req: Request) {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   if (!token) return { error: 'Non authentifié', status: 401 as const }
-  const { data, error } = await supabaseAdmin.auth.getUser(token)
+  const { data, error } = await getUserRevocable(token)
   if (error || !data?.user) return { error: 'Session expirée, reconnecte-toi.', status: 401 as const }
   const { data: a } = await supabaseAdmin.from('artisans').select('id, plan, slug, domaine').eq('id', data.user.id).maybeSingle()
   if (!a) return { error: 'Profil introuvable', status: 404 as const }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 // Export de TOUTES ses données (RGPD, droit à la portabilité — §C3).
 // Proposé avant toute suppression, et disponible à tout moment depuis Paramètres.
@@ -8,11 +9,10 @@ export const maxDuration = 60
 
 export async function GET(req: Request) {
   try {
-    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-    if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-    const { data: userData, error } = await supabaseAdmin.auth.getUser(token)
-    if (error || !userData?.user) return NextResponse.json({ error: 'Session expirée, reconnecte-toi.' }, { status: 401 })
-    const uid = userData.user.id
+    // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).
+    const session = await verifierSession(req)
+    if (estEchec(session)) return NextResponse.json({ error: session.error }, { status: session.status })
+    const uid = session.uid
 
     const [artisan, leads, devis, factures, clients] = await Promise.all([
       supabaseAdmin.from('artisans').select('*').eq('id', uid).maybeSingle(),

@@ -2,6 +2,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 function json(o: unknown, status = 200) {
   return new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json' } })
@@ -9,7 +10,7 @@ function json(o: unknown, status = 200) {
 async function requireFounder(req: Request): Promise<boolean> {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   if (!token) return false
-  const { data: userData } = await supabaseAdmin.auth.getUser(token)
+  const { data: userData } = await getUserRevocable(token)
   if (!userData?.user) return false
   const { data: me } = await supabaseAdmin.from('artisans').select('is_founder').eq('id', userData.user.id).maybeSingle()
   return !!me?.is_founder

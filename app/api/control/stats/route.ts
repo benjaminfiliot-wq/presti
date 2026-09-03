@@ -2,6 +2,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 type LeadRow = { id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null; created_at: string; artisan_id: string }
 type DevisRow = { id: string; numero: string | null; client_nom: string | null; objet: string | null; statut: string | null; total_ttc: number | null; created_at: string; artisan_id: string }
@@ -14,7 +15,7 @@ function json(o: unknown, status = 200) {
 export async function GET(req: Request) {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   if (!token) return json({ error: 'Non authentifié' }, 401)
-  const { data: userData } = await supabaseAdmin.auth.getUser(token)
+  const { data: userData } = await getUserRevocable(token)
   if (!userData?.user) return json({ error: 'Session expirée' }, 401)
   const { data: me } = await supabaseAdmin.from('artisans').select('is_founder').eq('id', userData.user.id).maybeSingle()
   if (!me?.is_founder) return json({ error: 'Réservé aux fondateurs' }, 403)

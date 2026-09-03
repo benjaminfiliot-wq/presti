@@ -8,13 +8,14 @@ import { DevisPDF } from '@/lib/DevisPDF'
 import { buildPdfData } from '@/lib/devisPdfData'
 import { renderPdfToBuffer } from '@/lib/renderPdf'
 import { sendEmail } from '@/lib/email'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
     const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
     if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-    const { data: userData } = await supabaseAdmin.auth.getUser(token)
+    const { data: userData } = await getUserRevocable(token)
     if (!userData?.user) return NextResponse.json({ error: 'Session expirée' }, { status: 401 })
     const uid = userData.user.id
 

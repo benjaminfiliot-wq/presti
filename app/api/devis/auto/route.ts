@@ -6,6 +6,7 @@ import { consumeCredit } from '@/lib/credits'
 import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
 import { catalogueDe } from '@/lib/prix'
+import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -15,11 +16,10 @@ export const maxDuration = 60
 // Authentifié + vérif de propriété du lead + décompte crédit (au tier demandé).
 export async function POST(req: Request) {
   try {
-    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-    if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-    const { data: userData, error: uErr } = await supabaseAdmin.auth.getUser(token)
-    if (uErr || !userData?.user) return NextResponse.json({ error: 'Session expirée, reconnecte-toi.' }, { status: 401 })
-    const uid = userData.user.id
+    // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).
+    const session = await verifierSession(req)
+    if (estEchec(session)) return NextResponse.json({ error: session.error }, { status: session.status })
+    const uid = session.uid
 
     const body = await req.json().catch(() => ({}))
     const leadId = typeof body?.lead_id === 'string' ? body.lead_id : ''

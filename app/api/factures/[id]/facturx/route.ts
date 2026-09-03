@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { genererFacturX, controlerAvantEmission, type DonneesFacturX } from '@/lib/facturx'
 import { mentionFranchise, codeExonerationParDefaut, MOTIFS_EXONERATION, type BaseMention } from '@/lib/facturation'
+import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 // Le fichier XML de la facture (v4 §10.3).
 //
@@ -12,10 +13,9 @@ import { mentionFranchise, codeExonerationParDefaut, MOTIFS_EXONERATION, type Ba
 export const runtime = 'nodejs'
 
 async function auth(req: Request) {
-  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-  if (!token) return null
-  const { data } = await supabaseAdmin.auth.getUser(token)
-  return data?.user?.id ?? null
+  // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).
+  const s = await verifierSession(req)
+  return estEchec(s) ? null : s.uid
 }
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {

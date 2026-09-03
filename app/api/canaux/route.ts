@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { chiffrementDisponible, chiffrer } from '@/lib/secretBox'
 import { devineFournisseur, testerImap } from '@/lib/canaux'
+import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 // Canaux de l'artisan (v4 §B2) — voie IMAP/SMTP, universelle (OVH, Gmail, Orange…),
 // sans dépendre d'une application OAuth tierce.
@@ -14,11 +15,11 @@ export const runtime = 'nodejs'
 export const maxDuration = 30
 
 async function auth(req: Request) {
-  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-  if (!token) return { error: 'Non authentifié', status: 401 as const }
-  const { data, error } = await supabaseAdmin.auth.getUser(token)
-  if (error || !data?.user) return { error: 'Session expirée, reconnecte-toi.', status: 401 as const }
-  return { uid: data.user.id }
+  // Contrôle central : il refuse aussi les jetons émis AVANT une déconnexion globale
+  // (v4 §11), ce que `getUser` seul ne fait pas.
+  const s = await verifierSession(req)
+  if (estEchec(s)) return { error: s.error, status: s.status }
+  return { uid: s.uid }
 }
 
 // ── GET : la liste des canaux. Le secret n'est JAMAIS renvoyé.

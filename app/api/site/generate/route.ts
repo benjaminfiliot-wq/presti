@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateSiteContent } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
 import { consumeCredit } from '@/lib/credits'
+import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -11,11 +12,10 @@ export const maxDuration = 60
 // Authentifié + décompte d'un crédit (au tier "pro" pour la qualité — génération rare).
 export async function POST(req: Request) {
   try {
-    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-    if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-    const { data: userData, error: uErr } = await supabaseAdmin.auth.getUser(token)
-    if (uErr || !userData?.user) return NextResponse.json({ error: 'Session expirée, reconnecte-toi.' }, { status: 401 })
-    const uid = userData.user.id
+    // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).
+    const session = await verifierSession(req)
+    if (estEchec(session)) return NextResponse.json({ error: session.error }, { status: session.status })
+    const uid = session.uid
 
     const { data: a } = await supabaseAdmin
       .from('artisans')

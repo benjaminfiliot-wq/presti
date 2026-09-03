@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { stripe } from '@/lib/stripe'
 import { OFFRES } from '@/lib/plans'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 // Crée une session Stripe Checkout d'abonnement mensuel pour le plan demandé.
 export async function POST(req: Request) {
@@ -9,7 +10,7 @@ export async function POST(req: Request) {
     if (!stripe) return NextResponse.json({ error: 'Paiement non configuré' }, { status: 503 })
     const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
     if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-    const { data: userData } = await supabaseAdmin.auth.getUser(token)
+    const { data: userData } = await getUserRevocable(token)
     if (!userData?.user) return NextResponse.json({ error: 'Session expirée' }, { status: 401 })
     const uid = userData.user.id
 

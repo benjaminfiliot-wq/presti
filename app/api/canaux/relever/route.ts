@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { releverCanal, type Canal } from '@/lib/releveCanal'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 // Relève des boîtes email (v4 §B2).
 // Deux entrées : l'artisan qui clique « Relever maintenant » (POST avec son jeton),
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
   try {
     const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
     if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-    const { data: u, error } = await supabaseAdmin.auth.getUser(token)
+    const { data: u, error } = await getUserRevocable(token)
     if (error || !u?.user) return NextResponse.json({ error: 'Session expirée, reconnecte-toi.' }, { status: 401 })
 
     const { data } = await supabaseAdmin.from('canaux').select(CHAMPS)

@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import registry from '@/scripts/coentreprise.registry.json'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 // Lancement d'un VRAI Managed Agent (sandbox cloud) depuis le poste de contrôle, avec sa
 // mémoire persistante attachée. Le POST crée la session + envoie la tâche (rapide, pas de
@@ -18,7 +19,7 @@ function json(o: unknown, status = 200) {
 async function requireFounder(req: Request): Promise<boolean> {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   if (!token) return false
-  const { data } = await supabaseAdmin.auth.getUser(token)
+  const { data } = await getUserRevocable(token)
   if (!data?.user) return false
   const { data: me } = await supabaseAdmin.from('artisans').select('is_founder').eq('id', data.user.id).maybeSingle()
   return !!me?.is_founder

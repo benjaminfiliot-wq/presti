@@ -2,17 +2,17 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
+import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 type LigneIn = { designation?: string; quantite?: number; unite?: string; prix_unitaire_ht?: number; tva_taux?: number }
 
 // Crée une facture — à partir d'un devis (devis_id) ou de lignes fournies.
 export async function POST(req: Request) {
   try {
-    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-    if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-    const { data: userData, error: uErr } = await supabaseAdmin.auth.getUser(token)
-    if (uErr || !userData?.user) return NextResponse.json({ error: 'Session expirée' }, { status: 401 })
-    const uid = userData.user.id
+    // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).
+    const session = await verifierSession(req)
+    if (estEchec(session)) return NextResponse.json({ error: session.error }, { status: session.status })
+    const uid = session.uid
 
     const b = await req.json().catch(() => ({}))
     const devisId: string | undefined = typeof b?.devis_id === 'string' ? b.devis_id : undefined

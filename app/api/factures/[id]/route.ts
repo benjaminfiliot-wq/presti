@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { empreinte } from '@/lib/facturation'
+import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 async function auth(req: Request) {
-  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-  if (!token) return null
-  const { data } = await supabaseAdmin.auth.getUser(token)
-  return data?.user?.id ?? null
+  // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).
+  const s = await verifierSession(req)
+  return estEchec(s) ? null : s.uid
 }
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {

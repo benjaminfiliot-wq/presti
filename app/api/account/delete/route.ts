@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 export const runtime = 'nodejs'
 
@@ -12,7 +13,7 @@ export async function POST(req: Request) {
     const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
     if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
 
-    const { data, error } = await supabaseAdmin.auth.getUser(token)
+    const { data, error } = await getUserRevocable(token)
     if (error || !data?.user) return NextResponse.json({ error: 'Session expirée, reconnecte-toi.' }, { status: 401 })
     const uid = data.user.id
 

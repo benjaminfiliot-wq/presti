@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { lireCsv } from '@/lib/prix/csv'
+import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 // Les tarifs de l'artisan (v4 §8/F2) — sa bibliothèque de prix réels.
 // C'est la seule source de prix qui vaille : ce qu'il paie vraiment chez son fournisseur.
@@ -11,11 +12,11 @@ export const maxDuration = 30
 const MAX_LIGNES = 3000 // un tarif fournisseur complet, pas une base de données
 
 async function auth(req: Request) {
-  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-  if (!token) return { error: 'Non authentifié', status: 401 as const }
-  const { data, error } = await supabaseAdmin.auth.getUser(token)
-  if (error || !data?.user) return { error: 'Session expirée, reconnecte-toi.', status: 401 as const }
-  return { uid: data.user.id }
+  // Contrôle central : il refuse aussi les jetons émis AVANT une déconnexion globale
+  // (v4 §11), ce que `getUser` seul ne fait pas.
+  const s = await verifierSession(req)
+  if (estEchec(s)) return { error: s.error, status: s.status }
+  return { uid: s.uid }
 }
 
 // ── GET : la bibliothèque, avec de quoi juger sa fraîcheur.

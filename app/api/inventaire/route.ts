@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { getUserRevocable } from '@/lib/authArtisan'
 
 // Inventaire (v4 §9) — le stock de l'artisan, et ce qu'il doit racheter.
 //
@@ -14,7 +15,7 @@ const OFFRES_AUTORISEES = new Set(['studio', 'signature', 'business'])
 async function auth(req: Request) {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   if (!token) return { error: 'Non authentifié', status: 401 as const }
-  const { data, error } = await supabaseAdmin.auth.getUser(token)
+  const { data, error } = await getUserRevocable(token)
   if (error || !data?.user) return { error: 'Session expirée, reconnecte-toi.', status: 401 as const }
   const { data: art } = await supabaseAdmin.from('artisans').select('plan, is_founder').eq('id', data.user.id).maybeSingle()
   const plan = (art?.plan as string) || 'gratuit'
