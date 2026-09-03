@@ -126,3 +126,55 @@ visibles ; elle se respecte en ne mettant que ce qui est mesuré.
 
 *Rapports détaillés des quatre auditeurs : dans la transcription de session du 2026-09-03.
 Correctifs vérifiés par `scripts/audit-correctifs-e2e.mjs` (19/19) et `scripts/tout-verifier.mjs` (11/11 en mode rapide).*
+
+---
+
+## 5. Couverture des trois vidéos de référence et de la photo
+
+Vérifié le 2026-09-03 en extrayant les images des trois enregistrements (`ffmpeg`) et en
+lisant leurs sous-titres incrustés. Chacune correspond à une section du §16, et chacune a
+bien été auditée.
+
+| Source | Ce qu'elle demande | Section | Couverture |
+|---|---|---|---|
+| **Vidéo 1** — « Demande à ton pote Claude… où est stocké le token, combien de temps valide, vraiment invalidé ? · LOCAL STORAGE, va vérifier ça · cacher le bouton ❌ / vérifier côté serveur ✅ · un vrai système de hash · 987321, azerty, 123 · la porte la plus facile · Resend / Brevo · 10 000 mots de passe → 500 comptes » | Sécurité des sessions et de l'authentification | §16.2 | ✅ **Intégralement**, et c'est elle qui a produit la plus grosse trouvaille. Stockage : `localStorage`, mesuré (⚠️ ouvert). Durée : 3600 s → **ramenée à 900 s**. Invalidation : **ne marchait pas** — corrigé et vérifié. Bouton vs serveur : les verrous d'offre sont côté serveur, testés en 403. Hash : bcrypt coût 10 sur 100 % des comptes. Mots de passe faibles : **acceptés** (⚠️ réglage tableau de bord). Bruteforce : pas de frein applicatif (⚠️). Bombardement d'emails : **13 emails envoyables à une cible** (⚠️). |
+| **Vidéo 2** — « My vibe coded app got targeted by a hacker in less than 3 hours after launching », avec la liste des 5 vulnérabilités | Les cinq classiques | §16.3 | ✅ **Les cinq, plus un tableau route par route des 38 routes.** Clés exposées : aucune (205 fichiers du bundle scannés). Base publique / RLS : 26 tables couvertes, mais **bucket `lead-media` public** — corrigé. Secrets en dur : aucun dans tout l'historique git. Auth faible : mots de passe faibles + pas de rate limit (⚠️). Limitation de débit : **course sur les compteurs** en rafale parallèle (⚠️). |
+| **Vidéo 3** — « TON SITE EST INVISIBLE ! · demande à un agent de visiter ton site · pour que le contenu soit… les textes, les images · ton site existe mais [personne n'a de] chance de le retrouver » | Rendu serveur, contenu visible sans JS | §16.4 | ✅ **Vérifié sur les trois surfaces, sans exécuter de JS.** Aucun mot n'apparaît uniquement après JS ; le site vitrine sert même **128 %** du texte final. Le problème visé **ne s'applique pas** à Presti. En revanche l'auditeur a trouvé un défaut d'indexation d'un autre ordre : **5 pages se déclaraient comme la page d'accueil** tout en figurant au sitemap — corrigé. |
+| **Photo** — checklist « 20 things to tell Claude before launching your site » | Les 20 points avant lancement | §16.1 | ✅ **Les 20, sur les trois surfaces**, avec preuve par point. Tenu : robots.txt, sitemap, canoniques de la landing, mobile jusqu'à 320 px, 0 lien mort, budgets de perf, anti-double-soumission, aucun cookie déposé. À corriger : mentions légales et confidentialité des surfaces artisan (**fait depuis**), image de partage et favicon par artisan, 404 douces, titres et descriptions dupliqués, bandeau de consentement. |
+
+**Un point de la vidéo 3 mérite d'être relevé** : elle propose de *demander à un agent de
+visiter le site*. C'est exactement la méthode employée — l'auditeur a chargé les pages
+sans exécuter de JavaScript, comme un robot, et comparé au rendu avec JS. La conclusion
+tient parce qu'elle repose sur cette mesure, pas sur une lecture du code.
+
+---
+
+## 6. Correctif du 2026-09-03 (soir) — l'existence juridique des surfaces
+
+C'était le point n° 1 des chantiers ouverts, et le seul qui exposait l'artisan lui-même.
+
+- **`/site/<slug>/infos-legales`** — mentions légales (LCEN art. 6-III) et protection des
+  données, dans la marque de l'artisan, générées depuis ce qu'il a **déjà** renseigné.
+  Servie même si son site n'est pas publié : une obligation légale ne dépend pas d'un
+  réglage marketing.
+- **Aucune donnée inventée**, comme partout : un champ non renseigné s'affiche
+  « non communiqué — information obligatoire », jamais comblé par une formule creuse.
+  Ma première version disait « vous pouvez recourir à un médiateur de la consommation »
+  sans en nommer un : c'était une affirmation non fondée de plus. Le médiateur est
+  désormais un champ déclaré (migration 0046), ou la page ne le prétend pas.
+- **Information au moment de la collecte** (RGPD art. 13) sous le composeur de la
+  plateforme — là où le client livre son nom, son téléphone, la description de sa panne et
+  des photos de son domicile. La classe `.plat-consent` dormait dans la feuille de style
+  depuis des mois : la place était prévue, le contenu n'était jamais venu.
+- **Paramètres** : forme juridique, adresse, médiateur — des champs exigés par les
+  mentions légales et saisissables nulle part. Et un bandeau qui dit à l'artisan **ce qui
+  lui manque** et ce que ça coûte (l'audit avait constaté 10 comptes sur 10 sans SIRET).
+- Deux fuites de marque trouvées par le test de cette page elle-même : les **mots-clés
+  marketing de Presti** et sa **carte Twitter** étaient servis sur les surfaces des
+  artisans, hérités du layout racine. Et les clés de stockage local `presti-*` étaient
+  visibles dans le navigateur de leurs clients.
+- preuve : `scripts/legal-e2e.mjs` → **30/30 en production**.
+
+**Reste ouvert sur ce volet** : l'accord de sous-traitance (art. 28) entre Presti et
+l'artisan, qui relève de la rédaction juridique plus que du code, et le bordereau de
+rétractation pour les devis signés au domicile du client.

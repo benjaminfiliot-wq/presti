@@ -236,3 +236,11 @@
 
 17 blocs livrés (B0 → B11), migrations 0026 → 0045, ~28 suites de tests, tout vérifié en production.
 `node scripts/tout-verifier.mjs --rapide` → **11/11 vertes en 72 s**.
+
+## [B12] Existence juridique des surfaces artisan — 2026-09-03 (soir) — ✅ terminé
+- Le point n° 1 des chantiers ouverts par l'audit, et le seul qui exposait **l'artisan** et pas Presti : ses surfaces n'avaient aucune mention légale, et la plateforme recueillait nom, téléphone, description de panne, photos de domicile et IP **sans un mot** sur les finalités, les durées ou les droits.
+- `/site/<slug>/infos-legales` (LCEN + RGPD), information au moment de la collecte sous le composeur, champs manquants ajoutés aux Paramètres, bandeau qui dit à l'artisan ce qui lui manque, médiateur de la consommation (migration 0046).
+- **Aucune donnée inventée** : ma première version évoquait « un médiateur » sans en nommer un — affirmation non fondée, corrigée.
+- Trois fuites de marque trouvées par le test de cette page : mots-clés marketing de Presti, carte Twitter de la landing, et clés de stockage local `presti-*` visibles chez le client de l'artisan.
+- preuve : `scripts/legal-e2e.mjs` **30/30** · suite complète **18/18 vertes**.
+- **Réglages Supabase, vérifiés par leur effet** : durée du jeton ramenée à **900 s ✅** ; détection de rejeu des jetons de rafraîchissement **pas encore active** ; mots de passe faibles **encore acceptés** à l'inscription.
