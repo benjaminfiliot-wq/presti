@@ -488,3 +488,32 @@ html.lenis,html.lenis body{height:auto}
 /* L'étiquette de spécialité : encre sombre sur accent vif ne passait pas en 10,5 px.
    Fond assombri + texte blanc — même couleur de marque, lisible. */
 .site-shot-tag,.site-lb-cap .site-shot-tag{background:var(--pc-ink,var(--pc2));color:#fff}
+/* ── Informations légales de l'artisan (correctif d'audit 2026-09-03) ────────
+   Sobre et lisible : c'est une page qu'on consulte, pas qu'on admire. */
+.legal-bloc { margin-top: clamp(2rem, 5vw, 3.4rem); max-width: 78ch; }
+.legal-bloc h3 {
+  font-family: var(--sfd); font-weight: 700; font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  letter-spacing: -.015em; margin: 0 0 1rem;
+}
+.legal-bloc h4 { font-family: var(--sfd); font-weight: 600; font-size: 1.15rem; margin: 2rem 0 .5rem; }
+.legal-bloc p { color: var(--sink2); line-height: 1.65; margin: 0 0 .9rem; }
+.legal-bloc a { text-decoration: underline; text-underline-offset: 3px; }
+
+.legal-dl { margin: 0; display: grid; gap: .1rem; }
+.legal-dl > div { display: flex; gap: 1rem; flex-wrap: wrap; padding: .6rem 0; border-bottom: var(--sbw) solid var(--sline2); }
+.legal-dl dt { flex: 0 0 220px; font-weight: 600; font-size: .95rem; }
+.legal-dl dd { margin: 0; flex: 1 1 260px; color: var(--sink2); }
+/* Une mention manquante se voit : mieux vaut un trou visible qu'une phrase inventée. */
+.legal-manque { font-style: normal; color: var(--pc-ink, var(--pc2)); }
+
+.legal-table { width: 100%; border-collapse: collapse; margin: 1rem 0 .5rem; font-size: .92rem; display: block; overflow-x: auto; }
+.legal-table th {
+  text-align: left; font-family: var(--sfm); font-size: .7rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--sink2); padding: .5rem .8rem .5rem 0; border-bottom: var(--sbw) solid var(--sline);
+}
+.legal-table td { padding: .7rem .8rem .7rem 0; border-bottom: var(--sbw) solid var(--sline2); color: var(--sink2); vertical-align: top; line-height: 1.5; }
+.legal-liste { margin: .6rem 0 0; padding-left: 1.1rem; color: var(--sink2); line-height: 1.7; }
+.legal-lieu { opacity: .75; font-size: .9em; }
+.legal-note { font-size: .92rem; }
+.site-foot-legal { margin-left: auto; text-decoration: underline; text-underline-offset: 3px; }
+@media(max-width:560px){ .site-foot-legal { margin-left: 0; } }

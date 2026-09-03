@@ -413,6 +413,9 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
       <footer className="site-foot">
         <span className="site-foot-b">{a.nom}</span>
         <span>{a.metier}{zone ? ` · ${zone}` : ''}</span>
+        {/* Obligation LCEN : un site professionnel doit porter ses mentions légales.
+            Elles manquaient totalement — trouvé par l'audit du 2026-09-03. */}
+        <a className="site-foot-legal" href={`/site/${slug}/infos-legales`}>Informations légales</a>
       </footer>
     </main>
   )

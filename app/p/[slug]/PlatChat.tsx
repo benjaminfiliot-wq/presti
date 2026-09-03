@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { compressPhotoToDataUrl } from '@/lib/media'
+import { noticeCollecte } from '@/lib/legalArtisan'
 
 // L'APPLICATION DE CONVERSATION de la plateforme (v4 §A2).
 // Ce n'est plus un formulaire décoré : c'est un client de chat — colonne des conversations,
@@ -62,7 +63,10 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
   const [modifTexte, setModifTexte] = useState('')
   const threadRef = useRef<HTMLDivElement>(null)
   const taRef = useRef<HTMLTextAreaElement>(null)
-  const KEY = `presti-convs-${slug}`
+  // Clés de stockage local sans marque : elles sont visibles dans les outils du
+  // navigateur du CLIENT de l'artisan, sur une surface censée être en marque blanche.
+  // On migre l'ancienne clé pour ne perdre aucune conversation en cours.
+  const KEY = `conv-${slug}`
 
   // ── Amorces personnalisées : construites depuis les VRAIES prestations de l'artisan.
   const amorces = (services.length
@@ -90,12 +94,20 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
     let list: Conv[] = []
     try {
       list = JSON.parse(localStorage.getItem(KEY) || '[]')
+      for (const ancienne of [`presti-convs-${slug}`, `convs-${slug}`]) {
+        const migre = JSON.parse(localStorage.getItem(ancienne) || '[]')
+        if (Array.isArray(migre) && migre.length) {
+          for (const c of migre) if (!list.some((x) => x.token === c.token)) list.push(c)
+          localStorage.removeItem(ancienne)
+          localStorage.setItem(KEY, JSON.stringify(list))
+        }
+      }
       const vieux = localStorage.getItem(`presti-conv-${slug}`)
       if (vieux && !list.some((c) => c.token === vieux)) { list.unshift({ token: vieux, titre: 'Ma demande', ts: Date.now() }); localStorage.setItem(KEY, JSON.stringify(list)) }
     } catch { list = [] }
     setConvs(list)
     if (list[0]) ouvrir(list[0].token)
-    try { const vk = `presti-view-${slug}`; if (!sessionStorage.getItem(vk)) { sessionStorage.setItem(vk, '1'); pushEvent('view') } } catch { /* ignore */ }
+    try { const vk = `vu-${slug}`; if (!sessionStorage.getItem(vk)) { sessionStorage.setItem(vk, '1'); pushEvent('view') } } catch { /* ignore */ }
   }, [KEY, slug, ouvrir, pushEvent])
 
   // Compte client : on consomme d'abord un éventuel lien magique, puis on lit la session.
@@ -405,6 +417,14 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
             </button>
           </div>
           <small className="pchat-hint">Entrée pour envoyer · Maj+Entrée pour aller à la ligne · photos bienvenues (la localisation est retirée)</small>
+          {/* Information des personnes AU MOMENT de la collecte (RGPD art. 13).
+              Elle manquait entièrement, alors qu'on recueille ici nom, coordonnées,
+              description de panne, photos de domicile et adresse IP. Et le responsable
+              de traitement, c'est l'ARTISAN : c'est lui que la CNIL sanctionnerait. */}
+          <small className="pchat-rgpd">
+            {noticeCollecte(artisanNom)}{' '}
+            <a href={`/site/${slug}/infos-legales`} target="_blank" rel="noopener">En savoir plus</a>
+          </small>
         </form>
         {err ? <div className="pchat-err">{err}</div> : null}
       </section>
