@@ -9,10 +9,11 @@ import Image from 'next/image'
 import SiteMotion from './SiteMotion'
 import SiteLightbox from './SiteLightbox'
 import SiteAvantApres from './SiteAvantApres'
+import SiteSlides from './SiteSlides'
 import { siteMaxForPlan } from '@/lib/plans'
 import { chemins, modeDepuisHote, urlSite } from '@/lib/urls'
 import { artisanParAncienSlug } from '@/lib/slugRedirect'
-import { resolveLayout, type SectionId } from '@/lib/siteLayout'
+import { resolveLayout, slidesOpts, type SectionId } from '@/lib/siteLayout'
 import { resolveStyle, styleToCss, styleToData } from '@/lib/siteStyle'
 import { lisibleSur } from '@/lib/contrast'
 import { fondDuTheme } from '@/lib/themeFonds'
@@ -300,6 +301,17 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           <p className="site-manifesto-t site-reveal">{manifesteTxt}</p>
         </section>
       ) : null,
+      // Slides 3D (Signature, v5 §10 H2) : une réalisation par écran, épinglée au scroll. Ne rend
+      // rien tant que l'artisan n'a pas choisi ses photos — un site existant ne change pas.
+      slides: (() => {
+        if (tier < 3) return null
+        const o = slidesOpts(layout.sections.find((sec) => sec.id === 'slides')?.opts)
+        if (!o) return null
+        const parImage = new Map(realisations.map((rz) => [rz.image as string, rz]))
+        const panneaux = o.images.map((im) => parImage.get(im)).filter((rz): rz is Realisation => !!rz)
+          .map((rz) => ({ image: rz.image as string, titre: rz.titre, specialite: rz.specialite, fait: o.faits?.[rz.image as string], blur: rz.blur }))
+        return panneaux.length >= 2 ? <section className="site-slides-section" id="slides"><SiteSlides panneaux={panneaux} style={o.style} /></section> : null
+      })(),
       gallery: showReal ? (
         <section className="site-block" id="realisations">
           <div className="site-head site-reveal"><span className="site-kick">Réalisations</span><h2>Le travail parle de lui-même</h2>{c?.realisations_intro ? <p className="site-sub">{c.realisations_intro}</p> : null}</div>

@@ -2094,11 +2094,13 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .info-bulle em{display:block;margin-top:6px;color:var(--muted);font-style:italic}
 
 /* ---- visite guidée ---- */
-.visite{opacity:0;transition:opacity .2s var(--ease-out)}
+/* .visite porte lui-même le contexte d'empilement (z 80, au-dessus de l'en-tête sticky z 6 et du menu mobile z 60) :
+   sinon, pendant son fondu d'entrée, opacity<1 le placerait à z 0 et l'en-tête recouvrirait la carte. */
+.visite{position:fixed;inset:0;z-index:80;opacity:0;transition:opacity .2s var(--ease-out)}
 .visite.on{opacity:1}
-.visite-fond{position:fixed;inset:0;z-index:80}
-.visite-spot{position:fixed;z-index:81;border-radius:12px;box-shadow:0 0 0 9999px rgba(10,12,17,.66),0 0 0 2px var(--accent-tint-2);pointer-events:none;transition:top .26s var(--ease-out),left .26s var(--ease-out),width .26s var(--ease-out),height .26s var(--ease-out)}
-.visite-carte{position:fixed;z-index:82;width:min(300px,calc(100vw - 24px));background:var(--surface);border:1px solid var(--line-2);border-radius:14px;box-shadow:var(--shadow-lg);padding:14px 16px 14px;outline:none;transition:top .26s var(--ease-out),left .26s var(--ease-out)}
+.visite-fond{position:absolute;inset:0;z-index:1}
+.visite-spot{position:fixed;z-index:2;border-radius:12px;box-shadow:0 0 0 9999px rgba(10,12,17,.66),0 0 0 2px var(--accent-tint-2);pointer-events:none;transition:top .26s var(--ease-out),left .26s var(--ease-out),width .26s var(--ease-out),height .26s var(--ease-out)}
+.visite-carte{position:fixed;z-index:3;width:min(300px,calc(100vw - 24px));background:var(--surface);border:1px solid var(--line-2);border-radius:14px;box-shadow:var(--shadow-lg);padding:14px 16px 14px;outline:none;transition:top .26s var(--ease-out),left .26s var(--ease-out)}
 .visite-carte .psh-crumb{display:block;margin-bottom:5px;color:var(--accent-ink)}
 .visite-carte h3{font-size:15.5px;margin:0 0 5px;letter-spacing:-.01em}
 .visite-carte p{margin:0;font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
@@ -2142,7 +2144,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 }
 
 /* ── Inventaire v2 (§8 F1/F2) : panneau latéral, fiche, prix vus, fournisseurs ────── */
-.inv-voile { position: fixed; inset: 0; z-index: 290; background: rgba(8, 7, 6, .55); backdrop-filter: blur(2px); display: flex; justify-content: flex-end; }
+.inv-voile { position: fixed; inset: 0; z-index: 320; background: rgba(8, 7, 6, .55); backdrop-filter: blur(2px); display: flex; justify-content: flex-end; }
 .inv-panneau { width: min(580px, 100%); height: 100%; background: var(--surface); border-left: 1px solid var(--line); box-shadow: -20px 0 60px -30px rgba(0, 0, 0, .6); display: flex; flex-direction: column; animation: inv-glisse .32s cubic-bezier(.16, 1, .3, 1) both; }
 @keyframes inv-glisse { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .inv-panneau { animation: none; } }
@@ -2200,3 +2202,13 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .inv-panneau { width: 100%; }
   .four-item { flex-wrap: wrap; }
 }
+
+/* ── Éditeur des slides 3D (Ma page, Signature), v5 §10 ── */
+.slides-edit{margin-top:1rem;padding:.9rem 1rem;border:1px solid var(--line,rgba(0,0,0,.12));border-radius:12px;display:flex;flex-direction:column;gap:.5rem}
+.slides-edit b{font-size:.95rem}
+.slides-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem;margin-top:.3rem}
+.slides-pick-it{position:relative;display:flex;flex-direction:column;gap:.3rem;padding:.4rem;border:1px solid var(--line,rgba(0,0,0,.12));border-radius:10px;cursor:pointer;margin:0;font-weight:500;font-size:.82rem}
+.slides-pick-it.on{border-color:var(--accent-ink,#C15F3C);box-shadow:inset 0 0 0 1px var(--accent-ink,#C15F3C)}
+.slides-pick-it img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;display:block}
+.slides-pick-it input[type=checkbox]{position:absolute;top:.6rem;left:.6rem;margin:0;width:1.1rem;height:1.1rem}
+.slides-fait{margin:0;font-size:.78rem;padding:.3rem .45rem}

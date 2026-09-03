@@ -13,7 +13,7 @@ import AvantApresUpload, { type AvantApres } from '@/app/AvantApresUpload'
 import { siteMaxForPlan } from '@/lib/plans'
 import { afficher, urlPlateforme, urlSite } from '@/lib/urls'
 import AdresseEditor from '@/app/AdresseEditor'
-import { defaultLayout, SECTION_MIN_TIER, SECTION_ORDER, type SectionId } from '@/lib/siteLayout'
+import { defaultLayout, SECTION_MIN_TIER, SECTION_ORDER, slidesOpts, type SectionId, type SlidesOpts } from '@/lib/siteLayout'
 
 // Libellés artisan des sections (composeur de page).
 const SECTION_LABELS: Record<SectionId, string> = {
@@ -21,6 +21,7 @@ const SECTION_LABELS: Record<SectionId, string> = {
   features: 'Prestations en grand (photos)', manifesto: 'Manifeste plein-cadre', gallery: 'Réalisations (galerie)',
   services: 'Prestations (liste)', process: 'Comment ça se passe', about: 'À propos',
   faq: 'Questions fréquentes', zone: "Zone d'intervention", contact: 'Contact', avantapres: 'Avant / après',
+  slides: 'Slides 3D de réalisations',
 }
 const FIXED: SectionId[] = ['hero', 'contact'] // structurantes : toujours présentes, non déplaçables aux extrémités
 
@@ -84,7 +85,7 @@ export default function ProfilPage() {
   const [siteTier, setSiteTier] = useState(3)
   const [siteMax, setSiteMax] = useState<1 | 2 | 3>(3) // niveau de site max inclus dans la formule
   const [plan, setPlan] = useState('gratuit')
-  const [layout, setLayout] = useState<{ id: SectionId; on: boolean }[]>([]) // composition de la page (ordre + on/off)
+  const [layout, setLayout] = useState<{ id: SectionId; on: boolean; opts?: Record<string, unknown> }[]>([]) // composition de la page (ordre + on/off)
   const [previewKey, setPreviewKey] = useState(0) // force le rechargement de l'aperçu après enregistrement
   const [copied, setCopied] = useState(false)
   // Domaine perso (offre Signature)
@@ -125,8 +126,8 @@ export default function ProfilPage() {
       // sections manquantes (désactivées) pour que l'artisan puisse toutes les gérer.
       const storedSecs = (a.site_layout && Array.isArray(a.site_layout.sections)) ? a.site_layout.sections : defaultLayout([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) as 1 | 2 | 3 : 3).sections
       const seen = new Set<string>()
-      const comp: { id: SectionId; on: boolean }[] = []
-      for (const s of storedSecs) { if (s && SECTION_ORDER.includes(s.id) && !seen.has(s.id)) { seen.add(s.id); comp.push({ id: s.id, on: s.on !== false }) } }
+      const comp: { id: SectionId; on: boolean; opts?: Record<string, unknown> }[] = []
+      for (const s of storedSecs) { if (s && SECTION_ORDER.includes(s.id) && !seen.has(s.id)) { seen.add(s.id); comp.push({ id: s.id, on: s.on !== false, ...(s.opts ? { opts: s.opts } : {}) }) } }
       for (const id of SECTION_ORDER) { if (!seen.has(id)) comp.push({ id, on: false }) }
       setLayout(comp)
       // niveau de site borné par la formule (on ne propose jamais un niveau non inclus)
@@ -142,6 +143,12 @@ export default function ProfilPage() {
   }
   function setC(patch: Partial<SiteContenu>) { setSiteContenu((prev) => ({ ...(prev ?? CONTENU_VIDE), ...patch })) }
   function setMot(i: number, v: string) { setSiteContenu((prev) => { const base = prev ?? CONTENU_VIDE; const m = [...(base.mots_cles ?? [])]; while (m.length <= i) m.push(''); m[i] = v; return { ...base, mots_cles: m } }) }
+  // Slides 3D (Signature) : les options vivent dans la section « slides » de la composition.
+  const slides: SlidesOpts | null = slidesOpts(layout.find((s) => s.id === 'slides')?.opts) ?? null
+  const slidesImages: string[] = (layout.find((s) => s.id === 'slides')?.opts as { images?: string[] } | undefined)?.images ?? []
+  function setSlides(patch: Partial<{ images: string[]; style: SlidesOpts['style']; faits: Record<string, string> }>) {
+    setLayout((prev) => prev.map((s) => (s.id === 'slides' ? { ...s, opts: { images: slidesImages, style: slides?.style ?? 'profondeur', faits: slides?.faits ?? {}, ...(s.opts ?? {}), ...patch } } : s)))
+  }
   function toggleSection(id: SectionId) { if (FIXED.includes(id)) return; setLayout((prev) => prev.map((s) => (s.id === id ? { ...s, on: !s.on } : s))) }
   function moveSection(i: number, dir: -1 | 1) { setLayout((prev) => { const j = i + dir; if (j < 0 || j >= prev.length) return prev; const n = [...prev]; const t = n[i]; n[i] = n[j]; n[j] = t; return n }) }
   async function copierLien() { try { await navigator.clipboard.writeText(urlSite(adresse)); setCopied(true); setTimeout(() => setCopied(false), 1800) } catch { setMsg({ type: 'err', text: 'Copie impossible — sélectionnez le lien à la main.' }) } }
@@ -465,6 +472,34 @@ export default function ProfilPage() {
                   )
                 })}
               </div>
+              {siteTier >= 3 && layout.some((s) => s.id === 'slides' && s.on) ? (
+                <div className="slides-edit">
+                  <b>Slides 3D — vos réalisations, une par écran</b>
+                  <span className="muted">Choisissez 3 à 8 photos parmi vos réalisations (l’ordre est celui de la galerie), puis le style de transition. Une ligne de fait par photo — lieu, matériau, durée — seulement si c’est vrai.</span>
+                  {realisations.filter((r) => r.image).length < 3 ? <em className="muted">Ajoutez au moins 3 réalisations ci-dessus pour activer les slides.</em> : null}
+                  <div className="slides-pick">
+                    {realisations.filter((r) => r.image).map((r) => {
+                      const on = slidesImages.includes(r.image)
+                      return (
+                        <label key={r.image} className={`slides-pick-it${on ? ' on' : ''}`}>
+                          <input type="checkbox" checked={on} disabled={!on && slidesImages.length >= 8}
+                            onChange={(e) => setSlides({ images: e.target.checked ? [...slidesImages, r.image] : slidesImages.filter((x) => x !== r.image) })} />
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={r.image} alt="" />
+                          <span>{r.titre || r.specialite || 'Sans titre'}</span>
+                          {on ? <input className="slides-fait" placeholder="Fait réel : lieu, matériau, durée…" maxLength={80} value={slides?.faits?.[r.image] ?? ''} onChange={(e) => setSlides({ faits: { ...(slides?.faits ?? {}), [r.image]: e.target.value } })} onClick={(e) => e.preventDefault()} /> : null}
+                        </label>
+                      )
+                    })}
+                  </div>
+                  <div className="pcfg-seg" style={{ marginTop: '.6rem' }}>
+                    {([['profondeur', 'Profondeur'], ['feuillete', 'Feuilleté'], ['cinema', 'Cinéma']] as const).map(([k, lab]) => (
+                      <button type="button" key={k} className={(slides?.style ?? 'profondeur') === k ? 'on' : ''} onClick={() => setSlides({ style: k })}>{lab}</button>
+                    ))}
+                  </div>
+                  <small className="muted">{slidesImages.length} sélectionnée{slidesImages.length > 1 ? 's' : ''} · les slides s’affichent à partir de 2 photos, sur ordinateur ; sur mobile, la galerie classique prend le relais.</small>
+                </div>
+              ) : null}
             </div>
           )}
 

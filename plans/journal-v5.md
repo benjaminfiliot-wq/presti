@@ -76,4 +76,14 @@
 - PlatChat : « X vous répond directement » vient désormais du serveur (`prise_en_main`), plus seulement d'une heuristique.
 - typecheck 0 · **build cassé par une compilation parallèle d'un sous-agent** (`.next` partagé) → `next build` interdit aux sous-agents, je rebâtis seul.
 
-**Cumul : 3 h 30**
+## [H2] §10 Slides 3D de réalisations — 01:05 → 01:45 (40 min) — ✅ code, ⏳ vérif visuelle
+- Nouvelle section `slides` (Signature, `lib/siteLayout.ts`) placée **avant les mots géants** (le dernier panneau se dépose sur eux) ; dans la composition par défaut mais **ne rend rien sans sélection** → un site existant reste identique.
+- `SiteSlides.tsx` : un panneau par réalisation, plein écran, **épinglé au scroll** (GSAP ScrollTrigger `scrub`, importé en différé), mise en scène **CSS 3D** (perspective + preserve-3d) — pas de WebGL. Trois styles : Profondeur (arrivée du fond, scale .86→1, tilt 7° qui se redresse), Feuilleté (recouvrement), Cinéma (fondu + travelling). Titre révélé par masque, compteur. **Repli sans JS / mobile / reduced-motion / saveData : panneaux empilés en flux normal**, rien de cassé.
+- Éditeur dans « Ma page » : cases à cocher sur les réalisations (3 à 8), style, **ligne de fait par photo** (lieu, matériau, durée) — anti-fabrication : affichée seulement si saisie. Options conservées dans `site_layout.sections[].opts` (le composeur les perdait à la sauvegarde : corrigé).
+- `scripts/slides-e2e.mjs` : inchangé sans sélection, 3 panneaux, armement, opacités aux 3 positions de scroll, compteur, contact atteignable après, replis reduced-motion + mobile (aucun scroll horizontal), captures à regarder.
+- **Photos du compte de démo** (« trouve s'en ») : Wikimedia Commons passé au crible (plein texte puis catégories, 200 candidats libres) — **rien d'exploitable** pour un menuisier : bâtiments d'une vraie entreprise avec son nom (inutilisable), pièces de musée, cuisines quelconques. Je n'ai pas de clé Pexels/Unsplash et je ne crée pas de compte. → **Benj fournit 3 à 8 vraies photos** (les siennes, un artisan d'accord, ou Unsplash qu'il télécharge lui-même) ; le mécanisme est prêt pour n'importe lesquelles.
+
+- **Vérification, et une découverte qui vaut pour tout le sprint** : en mode dev, la CSP bloquait `unsafe-eval` dont Next a besoin pour ses source maps → **aucun JavaScript client ne s'exécutait en local** (pages jamais hydratées — le test disait « la section ne s'arme pas », et SiteMotion non plus). Corrigé : `unsafe-eval` en développement seulement. Les vérifications locales passent désormais en **mode production sur un dossier de build isolé** (`PRESTI_DIST=.next-prod`, port 3006), ce qui règle aussi les collisions de `.next` avec les sous-agents.
+- Deux défauts trouvés par les captures, pas par les assertions : le panneau suivant devenait visible dès la position 0 (`set` posé exactement à t → exécuté au chargement) ; le fond opaque du panneau entrant masquait le sortant pendant la transition. Corrigés. **`slides-e2e` 14/14** en production locale. Drapeau `siteSlides3d` levé → la ligne « Signature · cinématique, slides 3D » apparaît dans la grille.
+
+**Cumul : 4 h 50**

@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { GRILLE, OFFRES, type PlanPayant } from '@/lib/plans'
 
 // Le tableau « qui a quoi » — rendu depuis la matrice de lib/plans.ts, jamais écrit à la
@@ -30,15 +31,15 @@ export default function Comparatif({ actuel, misEnAvant = 'studio' }: { actuel?:
         </thead>
         <tbody>
           {groupes.map((g) => (
-            <>
-              <tr key={`g-${g}`} className="cmp-groupe"><th scope="rowgroup" colSpan={4}>{g}</th></tr>
+            <Fragment key={g}>
+              <tr className="cmp-groupe"><th scope="rowgroup" colSpan={4}>{g}</th></tr>
               {GRILLE.filter((l) => l.groupe === g).map((l) => (
                 <tr key={l.label}>
                   <th scope="row">{l.label}</th>
                   {OFFRES.map((o) => <td key={o.id} className={o.id === misEnAvant ? 'cmp-feat' : ''}><Cellule v={l.cellules[o.id]} /></td>)}
                 </tr>
               ))}
-            </>
+            </Fragment>
           ))}
         </tbody>
       </table>

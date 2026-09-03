@@ -3,9 +3,22 @@
 // `artisans.site_layout` (jsonb). Défaut = composition dérivée du niveau → aucun site cassé.
 
 export type SectionId =
-  | 'hero' | 'trust' | 'words' | 'features' | 'manifesto'
+  | 'hero' | 'trust' | 'slides' | 'words' | 'features' | 'manifesto'
   | 'gallery' | 'services' | 'about' | 'process' | 'faq' | 'zone' | 'contact'
   | 'avantapres' // injecté hors composeur (Signature, si paires avant/après)
+
+// Options de la section « slides » (v5 §10 H2) : quelles réalisations (par URL d'image),
+// quel style de transition, et une ligne de fait réel par photo — jamais inventée.
+export type SlidesOpts = { images: string[]; style: 'profondeur' | 'feuillete' | 'cinema'; faits?: Record<string, string> }
+export function slidesOpts(o: unknown): SlidesOpts | null {
+  const x = (o && typeof o === 'object' ? o : null) as Partial<SlidesOpts> | null
+  if (!x || !Array.isArray(x.images)) return null
+  const images = x.images.filter((s) => typeof s === 'string' && s).slice(0, 8)
+  if (images.length < 2) return null
+  const style = x.style === 'feuillete' || x.style === 'cinema' ? x.style : 'profondeur'
+  const faits = x.faits && typeof x.faits === 'object' ? x.faits : undefined
+  return { images, style, faits }
+}
 
 export type SiteSection = { id: SectionId; on: boolean; variant?: string; opts?: Record<string, unknown> }
 export type SiteLayout = { v: 2; sections: SiteSection[] }
@@ -14,18 +27,21 @@ export type SiteLayout = { v: 2; sections: SiteSection[] }
 export const SECTION_MIN_TIER: Record<SectionId, 1 | 2 | 3> = {
   hero: 1, contact: 1, services: 1, about: 1, process: 1, faq: 1, zone: 1,
   trust: 2, gallery: 2,
-  words: 3, features: 3, manifesto: 3, avantapres: 3,
+  slides: 3, words: 3, features: 3, manifesto: 3, avantapres: 3,
 }
 
-// Ordre canonique (sert de repli et de tri de secours).
-export const SECTION_ORDER: SectionId[] = ['hero', 'trust', 'words', 'features', 'manifesto', 'gallery', 'services', 'about', 'process', 'faq', 'zone', 'contact']
+// Ordre canonique (sert de repli et de tri de secours). Les slides précèdent les mots géants :
+// le dernier panneau se dépose sur eux, puis vient le contact.
+export const SECTION_ORDER: SectionId[] = ['hero', 'trust', 'slides', 'words', 'features', 'manifesto', 'gallery', 'services', 'about', 'process', 'faq', 'zone', 'contact']
 
 // Composition par défaut selon le niveau (reproduit EXACTEMENT le rendu actuel).
 export function defaultLayout(tier: 1 | 2 | 3): SiteLayout {
   // process/faq/zone (v2) sont inclus par défaut : ils ne rendent que si le contenu existe
   // (les sites v1 sans ces champs → sections nulles → rendu inchangé).
+  // « slides » est dans la composition Signature par défaut mais ne rend rien tant que l'artisan
+  // n'a pas choisi ses photos (opts) : un site existant reste octet pour octet identique.
   const ids: SectionId[] = tier >= 3
-    ? ['hero', 'trust', 'words', 'features', 'manifesto', 'gallery', 'services', 'process', 'about', 'faq', 'zone', 'contact']
+    ? ['hero', 'trust', 'slides', 'words', 'features', 'manifesto', 'gallery', 'services', 'process', 'about', 'faq', 'zone', 'contact']
     : tier === 2
       ? ['hero', 'trust', 'gallery', 'services', 'process', 'about', 'faq', 'contact']
       : ['hero', 'services', 'process', 'about', 'faq', 'contact']

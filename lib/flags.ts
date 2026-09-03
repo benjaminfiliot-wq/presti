@@ -21,8 +21,8 @@ export const FLAGS = {
   plateformePilotage: false,
   /** §9 G1 — constructeur de règles d'automatisation. */
   plateformeRegles: false,
-  /** §10 H2 — slides 3D de réalisations (Signature). */
-  siteSlides3d: false,
+  /** §10 H2 — slides 3D de réalisations (Signature). Livré, 14/14 en mode production local. */
+  siteSlides3d: true,
   /** §4 B3 — visites guidées à la première ouverture. */
   aideVisites: true,
   /** §4 B4 — centre d'aide /aide. */

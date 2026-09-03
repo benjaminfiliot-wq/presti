@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Dossier de build paramétrable : permet une compilation de vérification (PRESTI_DIST=.next-prod)
+  // sans entrer en collision avec un serveur de dev qui écrit dans .next au même moment.
+  ...(process.env.PRESTI_DIST ? { distDir: process.env.PRESTI_DIST } : {}),
   serverExternalPackages: ['@react-pdf/renderer', 'imapflow'],
   // Médias artisan servis depuis le bucket Supabase Storage (logos, réalisations) → autorisés pour next/image.
   images: {
@@ -40,7 +43,10 @@ const nextConfig = {
     ]
     // script-src : la console reste stricte ; le site/plateforme autorisent EN PLUS cdnjs
     // (three.js chargé en différé pour la signature 3D « matière », niveau Signature).
-    const scriptStrict = "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com"
+    // 'unsafe-eval' UNIQUEMENT en développement : Next y compile les modules avec eval (source
+    // maps). Sans ça, aucun JavaScript client ne s'exécute en local — les pages restent non
+    // hydratées et tout test navigateur local ment. En production, jamais.
+    const scriptStrict = "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com" + (process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : '')
     // cdnjs n'est plus autorisé : il ne servait qu'au cube 3D, supprimé (v5 §10 H1).
     const scriptEmbeddable = scriptStrict
     // Site vitrine (/site) et plateforme (/l) : embarquables par la console (aperçu « Ma page »),
