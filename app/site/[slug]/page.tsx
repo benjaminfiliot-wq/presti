@@ -174,7 +174,11 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const styleData = styleToData(style)
   // Accent LISIBLE pour les petits textes (§14) : l'accent brut d'un artisan passe rarement
   // 4,5:1 en 12 px. On l'assombrit juste ce qu'il faut, sa couleur reste la sienne ailleurs.
-  const accentLisible = lisibleSur(style.accent2 || accent, style.fond || fondDuTheme(theme))
+  const accentBrut = style.accent2 || accent
+  const accentLisible = lisibleSur(accentBrut, style.fond || fondDuTheme(theme))
+  // Les panneaux sombres du site (hero plein-cadre, manifeste, mots géants) ont leur propre
+  // fond : un accent assombri pour le crème y devient illisible. Il faut la variante inverse.
+  const accentLisibleSombre = lisibleSur(accentBrut, '#171310')
   // « Avant/après » n'est pas géré par le composeur : on l'injecte après la galerie si présent.
   if (showAvantApres && !layout.sections.some((s) => s.id === 'avantapres')) {
     const gi = layout.sections.findIndex((s) => s.id === 'gallery')
@@ -372,7 +376,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent, ['--pc-ink' as string]: accentLisible, ...styleVars }} data-tier={tier} data-theme={theme} {...styleData}>
+    <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent, ['--pc-ink' as string]: accentLisible, ['--pc-ink-d' as string]: accentLisibleSombre, ...styleVars }} data-tier={tier} data-theme={theme} {...styleData}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
       {c?.faq && c.faq.length ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: c.faq.map((e) => ({ '@type': 'Question', name: e.q, acceptedAnswer: { '@type': 'Answer', text: e.r } })) }).replace(/</g, '\\u003c') }} />

@@ -143,7 +143,7 @@ html.lenis,html.lenis body{height:auto}
 .site-aa figcaption{margin-top:.7rem;font-size:.98rem;color:inherit;opacity:.92}
 @media(prefers-reduced-motion:reduce){.site-aa-divider{box-shadow:none}}
 .site-hero-in{max-width:900px;position:relative}
-.site-eyebrow{display:inline-block;font-family:var(--sfm);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--pc2);margin-bottom:1.1rem}
+.site-eyebrow{display:inline-block;font-family:var(--sfm);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--pc-ink,var(--pc2));margin-bottom:1.1rem}
 .site-hero h1{font-family:var(--sfd);font-weight:900;font-size:calc(clamp(2.9rem,9.5vw,7rem) * var(--sscale));line-height:.94;letter-spacing:-.02em;text-wrap:balance;margin:0}
 .site-tagline{font-family:var(--sfd);font-style:italic;font-weight:400;font-size:calc(clamp(1.2rem,2.7vw,1.75rem) * var(--sscale));color:var(--pc2);margin:.9rem 0 0;line-height:1.3;max-width:36ch}
 .site-lede{max-width:44ch;font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--sink2);margin:1.3rem 0 0;line-height:1.55}
@@ -199,7 +199,7 @@ html.lenis,html.lenis body{height:auto}
 /* PRESTATIONS (process numerote) */
 .site-services{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.6rem 2.4rem}
 .site-serv{display:flex;gap:1.1rem;padding:1.6rem 0;border-top:var(--sbw) solid var(--sline)}
-.site-serv-n{font-family:var(--sfm);font-size:.9rem;color:var(--pc2);padding-top:.35rem;flex:none}
+.site-serv-n{font-family:var(--sfm);font-size:.9rem;color:var(--pc-ink,var(--pc2));padding-top:.35rem;flex:none}
 .site-serv b{font-family:var(--sfd);font-weight:600;font-size:1.3rem;display:block;margin-bottom:.35rem}
 .site-serv p{color:var(--sink2);font-size:.98rem;margin:0}
 
@@ -260,7 +260,7 @@ html.lenis,html.lenis body{height:auto}
 /* Alternance cinématique : un panneau sur deux passe en SOMBRE (rythme FIND/DRIP) */
 .site-feature.alt .site-feature-txt{background:var(--sdark);color:var(--sdark-ink)}
 .site-feature.alt .site-feature-txt p{color:var(--sdark-ink2)}
-.site-feature-n{font-family:var(--sfm);font-size:.86rem;color:var(--pc);margin-bottom:1rem;letter-spacing:.06em}
+.site-feature-n{font-family:var(--sfm);font-size:.86rem;color:var(--pc-ink,var(--pc));margin-bottom:1rem;letter-spacing:.06em}
 .site-feature.alt .site-feature-n{color:color-mix(in srgb,var(--pc) 66%,#fff)}
 .site-feature-txt h3{font-family:var(--sfd);font-weight:700;font-size:clamp(1.8rem,4.6vw,3.3rem);line-height:1.02;letter-spacing:-.015em;margin:0}
 .site-feature-txt p{margin:1.3rem 0 0;font-size:clamp(1rem,2vw,1.2rem);line-height:1.55;max-width:40ch;opacity:.72}
@@ -304,7 +304,7 @@ html.lenis,html.lenis body{height:auto}
 /* ===== Contenu v2 (J6) : process, FAQ, zone ===== */
 .site-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.4rem 2.4rem;margin-top:clamp(1.5rem,3vw,2.5rem)}
 .site-step{display:flex;gap:1.1rem;padding-top:1.1rem;border-top:2px solid var(--sline)}
-.site-step-n{font-family:var(--sfm);font-size:.9rem;color:var(--pc2);flex:none}
+.site-step-n{font-family:var(--sfm);font-size:.9rem;color:var(--pc-ink,var(--pc2));flex:none}
 .site-step b{font-family:var(--sfd);font-weight:600;font-size:1.2rem;display:block;margin:0 0 .35rem}
 .site-step p{color:var(--sink2);font-size:.98rem;margin:0;line-height:1.5}
 .site-faq-list{display:flex;flex-direction:column;max-width:760px}
@@ -476,3 +476,13 @@ html.lenis,html.lenis body{height:auto}
   @view-transition{navigation:none}
   .site-lb,.site-lb-img{animation:none}
 }
+
+/* ── Accent lisible en petit texte (v4 §14) ─────────────────────────────────
+   --pc-ink (sur fond clair) et --pc-ink-d (sur panneau sombre) sont calculés au rendu
+   à partir de l'accent CHOISI par l'artisan : aucune valeur codée en dur ne peut
+   convenir à toutes les couleurs. Le gros texte garde l'accent brut, il passe. */
+.site-dark .site-kick,.site-dark .site-eyebrow,.site-dark .site-serv-n,
+.site-dark .site-feature-n,.site-dark .site-step-n,.site-dark .site-word-n{color:var(--pc-ink-d,var(--pc2))}
+/* L'étiquette de spécialité : encre sombre sur accent vif ne passait pas en 10,5 px.
+   Fond assombri + texte blanc — même couleur de marque, lisible. */
+.site-shot-tag,.site-lb-cap .site-shot-tag{background:var(--pc-ink,var(--pc2));color:#fff}
