@@ -5,6 +5,7 @@ import { resolveModel } from '@/lib/models'
 import { consumeCredit } from '@/lib/credits'
 import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
+import { catalogueDe } from '@/lib/prix'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -43,12 +44,10 @@ export async function POST(req: Request) {
     const credit = await consumeCredit(uid, tier, !!art.is_founder)
     if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
 
-    // Bibliothèque de postes du métier (optionnelle).
-    let postes: { designation: string; unite: string; prix_ht_min: number; prix_ht_max: number; tva_defaut: number }[] = []
-    try {
-      const { data } = await supabaseAdmin.from('postes_types').select('designation, unite, prix_ht_min, prix_ht_max, tva_defaut').eq('metier', art.metier ?? '')
-      if (data) postes = data as typeof postes
-    } catch { /* pas de biblio */ }
+    // Catalogue de prix (v4 §8) : SES tarifs d'abord, les ordres de grandeur du marché
+    // en complément. Chaque poste porte sa provenance, que l'IA doit recopier telle quelle.
+    let postes: Awaited<ReturnType<typeof catalogueDe>>['postes'] = []
+    try { postes = (await catalogueDe(uid, art.metier)).postes } catch { /* pas de catalogue */ }
 
     const result = await generateDevis({ nom: art.nom, metier: art.metier }, description, postes, model)
 

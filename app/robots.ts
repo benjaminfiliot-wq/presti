@@ -11,7 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         // mais elles n'ont rien à faire dans un index — et la liste doit suivre les pages ajoutées.
         disallow: [
           '/dashboard', '/devis', '/factures', '/abonnement', '/outils', '/onboarding', '/controle',
-          '/messages', '/profil', '/parametres', '/plateforme',
+          '/messages', '/profil', '/parametres', '/plateforme', '/tarifs',
           '/login', '/signup', '/reset-password', '/api/',
         ],
       },

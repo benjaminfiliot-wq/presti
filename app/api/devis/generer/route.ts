@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateDevis } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
 import { consumeCredit } from '@/lib/credits'
+import { catalogueDe } from '@/lib/prix'
 
 // Le modèle Expert (opus) peut mettre ~30 s : on dépasse le timeout Vercel par défaut (10 s).
 export const runtime = 'nodejs'
@@ -36,16 +37,13 @@ export async function POST(req: Request) {
     const credit = await consumeCredit(userData.user.id, tier, !!artisan.is_founder)
     if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
 
-    // Bibliothèque de postes du métier (optionnelle — peut ne pas exister encore)
-    let postes: { designation: string; unite: string; prix_ht_min: number; prix_ht_max: number; tva_defaut: number }[] = []
+    // Catalogue de prix (v4 §8) : les tarifs de l'artisan d'abord, les ordres de grandeur
+    // du marché seulement pour ce qu'il n'a pas. Chaque poste porte sa source et sa date.
+    let postes: Awaited<ReturnType<typeof catalogueDe>>['postes'] = []
     try {
-      const { data } = await supabaseAdmin
-        .from('postes_types')
-        .select('designation, unite, prix_ht_min, prix_ht_max, tva_defaut')
-        .eq('metier', artisan.metier ?? '')
-      if (data) postes = data as typeof postes
+      postes = (await catalogueDe(userData.user.id, artisan.metier)).postes
     } catch {
-      // table pas encore créée → on génère sans bibliothèque
+      // pas de catalogue → on chiffre quand même, tout sera marqué « estimation »
     }
 
     const result = await generateDevis({ nom: artisan.nom, metier: artisan.metier }, description, postes, model)

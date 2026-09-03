@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { sourceLigneValide, type Poste as PosteePrix } from '@/lib/prix'
 
 // ⚙️ Modèle par défaut pour rédiger les réponses aux prospects.
 // Haiku = rapide + très économique, parfait pour des réponses courtes en volume.
@@ -521,9 +522,12 @@ export type DevisLigne = {
   unite: string
   prix_unitaire_ht: number
   tva_taux: number
+  /** D'où vient ce prix (v4 §8/F4). Toujours rempli : « estimation » à défaut de mieux. */
+  source_prix?: string
 }
 
-type Poste = { designation: string; unite: string; prix_ht_min: number; prix_ht_max: number; tva_defaut: number }
+// Le catalogue de prix vient de lib/prix : chaque poste porte sa source et sa date.
+type Poste = PosteePrix
 
 // Aides à la décomposition par métier — orientent le CHIFFRAGE (postes, unités, TVA)
 // avec des ordres de grandeur France crédibles (HT, à ajuster). Ce ne sont PAS des prix fermes :
@@ -677,10 +681,21 @@ export async function generateDevis(
   model: string = AI_MODEL,
 ): Promise<{ lignes: DevisLigne[]; note: string }> {
   const metier = artisan.metier?.trim() || 'artisan du bâtiment'
-  const biblio = postes.length
-    ? '\nBibliothèque de postes de référence de CET artisan (à privilégier quand un poste correspond ; désignation | unité | fourchette prix HT | TVA%) :\n' +
-      postes.map((p) => `- ${p.designation} | ${p.unite} | ${p.prix_ht_min}-${p.prix_ht_max}€ | ${p.tva_defaut}%`).join('\n')
-    : ''
+  // Le catalogue est présenté HONNÊTEMENT : les prix propres à l'artisan et les ordres de
+  // grandeur du marché sont deux choses différentes. Le prompt annonçait les seconds comme
+  // « la bibliothèque de CET artisan » — c'était faux, et c'est ce qui produit un devis
+  // qui a l'air sourcé alors qu'il repose sur une moyenne nationale.
+  const propres = postes.filter((p) => p.source === 'artisan')
+  const generiques = postes.filter((p) => p.source !== 'artisan')
+  const biblio =
+    (propres.length
+      ? '\nSES PROPRES TARIFS (prix réels, négociés — À PRIVILÉGIER dès qu\'un poste correspond ; désignation | unité | prix HT | TVA% | provenance) :\n' +
+        propres.map((p) => `- ${p.designation} | ${p.unite} | ${p.prix_ht}€ | ${p.tva_taux}% | ${p.source_libelle}`).join('\n')
+      : '') +
+    (generiques.length
+      ? '\nORDRES DE GRANDEUR DU MARCHÉ FRANÇAIS (moyennes indicatives — ce ne sont PAS les prix de cet artisan ; désignation | unité | fourchette HT | TVA%) :\n' +
+        generiques.map((p) => `- ${p.designation} | ${p.unite} | ${p.prix_ht_min ?? p.prix_ht}-${p.prix_ht_max ?? p.prix_ht}€ | ${p.tva_taux}%`).join('\n')
+      : '')
   const repere = guideMetier(metier)
   const tvaHint = tvaContexte(description)
 
@@ -691,12 +706,17 @@ RÈGLES :
 - Chaque ligne : "designation" précise et parlante, "quantite" (nombre > 0), "unite" (u, ml, m², m³, h, j, forfait, ens.), "prix_unitaire_ht" (€ HT réaliste pour la France), "tva_taux" (20, 10 ou 5.5).
 - COHÉRENCE des quantités et unités : une surface de pose ≈ la surface de préparation ; le linéaire de plinthes suit le périmètre ; les heures de main d'œuvre restent proportionnées au chantier. N'invente pas de quantités absurdes.
 - Respecte les ordres de grandeur du marché français fournis ci-dessus : ce sont des ESTIMATIONS que l'artisan ajustera, n'exagère jamais ni en plus ni en moins.
+- PROVENANCE DE CHAQUE PRIX — règle absolue. Chaque ligne porte un champ "source_prix" :
+  • prix repris de SES PROPRES TARIFS → recopie EXACTEMENT la provenance indiquée pour ce poste (ex. "vos tarifs · Rexel · 12/02/2026") ;
+  • prix tiré des ordres de grandeur du marché → écris exactement "ordre de grandeur du marché" ;
+  • dans tous les autres cas → écris exactement "estimation".
+  N'invente JAMAIS une provenance et ne cite JAMAIS un nom de fournisseur ou de grossiste qui ne figure pas ci-dessus. Un prix qui a l'air sourcé alors qu'il est deviné est pire qu'un prix affiché comme estimé : l'artisan le présente à son client.
 - TVA — applique la règle française LIGNE PAR LIGNE : 10 en rénovation d'un logement achevé depuis +2 ans ; 5.5 pour la rénovation énergétique (isolation, PAC, chaudière à condensation, ballon thermodynamique, menuiseries isolantes, VMC double flux) ; 20 pour le neuf, une extension, ou en cas de doute. En cas d'ambiguïté, choisis le taux le plus prudent et signale-le dans "note".
 - Si la description est incomplète ou ambiguë, fais des HYPOTHÈSES raisonnables, chiffre quand même, et LISTE clairement dans "note" : (1) les hypothèses retenues (surfaces/quantités supposées, type de matériel, TVA choisie) et (2) les points à confirmer avec le client avant devis ferme.
 - N'invente aucune certitude : la "note" doit rappeler que ce sont des estimations HT à valider (idéalement après visite).
 - 3 à 12 lignes selon l'ampleur.
 - Réponds UNIQUEMENT avec un objet JSON valide, sans aucun texte ni balise autour, au format EXACT :
-{"lignes":[{"designation":"...","quantite":1,"unite":"u","prix_unitaire_ht":0,"tva_taux":10}],"note":"hypothèses retenues et points à préciser avec le client"}`
+{"lignes":[{"designation":"...","quantite":1,"unite":"u","prix_unitaire_ht":0,"tva_taux":10,"source_prix":"estimation"}],"note":"hypothèses retenues et points à préciser avec le client"}`
 
   const res = await client.messages.create({
     ...genParams(model, 2200),
@@ -728,6 +748,10 @@ RÈGLES :
         unite: normalizeUnite(String(l.unite ?? 'u')),
         prix_unitaire_ht: Number.isFinite(pu) && pu > 0 ? Math.round(pu * 100) / 100 : 0,
         tva_taux: [0, 5.5, 10, 20].includes(tva) ? tva : 10, // 0 autorisé (franchise de TVA)
+        // La provenance est VÉRIFIÉE contre le catalogue réellement transmis : un libellé
+        // inventé par le modèle retombe sur « estimation ». On ne lui fait pas confiance
+        // pour une mention qui engage l'artisan devant son client.
+        source_prix: sourceLigneValide(l.source_prix, postes),
       }
     })
     .filter((l) => l.designation)

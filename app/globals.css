@@ -1868,3 +1868,29 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .pf-guide b { font-size: .86rem; }
 .pf-guide span { font-size: .8rem; color: var(--muted); line-height: 1.4; }
 .pf-guide > .muted { grid-column: 1 / -1; margin: .2rem 0 0; font-size: .8rem; font-style: italic; }
+
+/* ── Mes tarifs (v4 §8/F2) ─────────────────────────────────────────────────── */
+.tar-import { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+.tar-import input { flex: 1 1 260px; margin: 0; }
+.tar-saisie { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+.tar-saisie input { margin: 0; }
+.tar-saisie input:nth-child(1) { flex: 3 1 260px; }
+.tar-saisie input:nth-child(2) { flex: 0 0 110px; }
+.tar-saisie input:nth-child(3) { flex: 0 0 80px; }
+.tar-saisie input:nth-child(4) { flex: 1 1 160px; }
+
+.tar-apercu { margin-top: 1rem; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; }
+.tar-cols { list-style: none; margin: .6rem 0 .9rem; padding: 0; display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; font-size: .83rem; color: var(--muted); }
+.tar-cols em { font-style: normal; opacity: .65; }
+.tar-actions { display: flex; gap: .6rem; margin-top: .9rem; flex-wrap: wrap; }
+
+.tar-table { width: 100%; border-collapse: collapse; font-size: .88rem; margin-top: .6rem; }
+.tar-table th { text-align: left; font-weight: 600; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: .4rem .6rem; border-bottom: 1px solid var(--line); }
+.tar-table td { padding: .5rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tar-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tar-table.full { margin-top: 1rem; display: block; overflow-x: auto; }
+.tar-x {
+  width: auto; margin: 0; background: transparent; color: var(--muted);
+  border: 0; padding: .1rem .3rem; font-size: .9rem; cursor: pointer; line-height: 1;
+}
+.tar-x:hover { color: var(--crit, #c0392b); }
