@@ -7,7 +7,13 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/dashboard', '/devis', '/factures', '/abonnement', '/outils', '/onboarding', '/controle', '/login', '/signup', '/api/'],
+        // Toute la console privée. Ces pages redirigent vers /login côté client : rien ne fuit,
+        // mais elles n'ont rien à faire dans un index — et la liste doit suivre les pages ajoutées.
+        disallow: [
+          '/dashboard', '/devis', '/factures', '/abonnement', '/outils', '/onboarding', '/controle',
+          '/messages', '/profil', '/parametres', '/plateforme',
+          '/login', '/signup', '/reset-password', '/api/',
+        ],
       },
     ],
     sitemap: 'https://prestiapp.fr/sitemap.xml',
