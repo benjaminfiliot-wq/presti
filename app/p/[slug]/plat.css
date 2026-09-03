@@ -10,7 +10,7 @@ html.lenis,html.lenis body{height:auto}
 /* ===== Plateforme artisan (page /p/[slug]) — mini-site dark cinématique, white-label ===== */
 .plat{
   /* DNA "Atelier" crème éditoriale — même famille que le site vitrine, à l'opposé de la console Presti. */
-  --pb:#F5EFE4; --ps:#FBF7EF; --ps2:#ECE3D4; --pi:#1B1712; --pi2:#5E5548; --pm:#72695D; --pf:#A99E8C;
+  --pb:#F5EFE4; --ps:#FBF7EF; --ps2:#ECE3D4; --pi:#1B1712; --pi2:#5E5548; --pm:#6A6257; --pf:#A99E8C;
   --pc:#D97757; /* accent personnalisable par l'artisan — tout le thème en dérive */
   --pc2:color-mix(in srgb,var(--pc) 78%,#111); --pcd:color-mix(in srgb,var(--pc) 82%,#000000); --psoft:color-mix(in srgb,var(--pc) 14%,transparent);
   --pglow:color-mix(in srgb,var(--pc) 34%,transparent); --pl:color-mix(in srgb,var(--pi) 14%,transparent); --pl2:color-mix(in srgb,var(--pi) 8%,transparent);
@@ -21,31 +21,31 @@ html.lenis,html.lenis body{height:auto}
 .plat *{box-sizing:border-box}
 /* ===== THÈMES / DNA au choix de l'artisan (plateforme) — cohérents avec le site ===== */
 .plat[data-theme="nuit"]{
-  --pb:#0B0906; --ps:#16110D; --ps2:#221D16; --pi:#F5EFEA; --pi2:#C6BDAD; --pm:#8A8072; --pf:#5A5348;
+  --pb:#0B0906; --ps:#16110D; --ps2:#221D16; --pi:#F5EFEA; --pi2:#C6BDAD; --pm:#908679; --pf:#5A5348;
   --pl:rgba(255,255,255,.1); --pl2:rgba(255,255,255,.05);
   --pc2:color-mix(in srgb,var(--pc) 74%,#fff);
   --pfd:var(--f-display),system-ui,sans-serif;
 }
 .plat[data-theme="epure"]{
-  --pb:#FBFAF8; --ps:#FFFFFF; --ps2:#F1EEE9; --pi:#171614; --pi2:#5C5A55; --pm:#777063; --pf:#A6A29B;
+  --pb:#FBFAF8; --ps:#FFFFFF; --ps2:#F1EEE9; --pi:#171614; --pi2:#5C5A55; --pm:#716A5E; --pf:#A6A29B;
   --pl:rgba(0,0,0,.1); --pl2:rgba(0,0,0,.05);
   --pfd:var(--f-display),system-ui,sans-serif;
 }
 /* 3 nouveaux thèmes (v3/J5) — cohérents avec le site */
 .plat[data-theme="chantier"]{
-  --pb:#EDEBE6; --ps:#F5F3EE; --ps2:#E2DFD7; --pi:#1A1A17; --pi2:#57534A; --pm:#6E675B; --pf:#9A9384;
+  --pb:#EDEBE6; --ps:#F5F3EE; --ps2:#E2DFD7; --pi:#1A1A17; --pi2:#57534A; --pm:#676055; --pf:#9A9384;
   --pl:rgba(26,26,23,.2); --pl2:rgba(26,26,23,.09);
   --pfd:var(--f-archivo),'Arial Narrow',system-ui,sans-serif;
 }
 .plat[data-theme="chantier"] h1,.plat[data-theme="chantier"] h2{text-transform:uppercase;letter-spacing:-.005em}
 .plat[data-theme="chantier"] .plat-nav-cta,.plat[data-theme="chantier"] .plat-btn{border-radius:0}
 .plat[data-theme="bleu"]{
-  --pb:#F3F5F8; --ps:#FFFFFF; --ps2:#E6ECF3; --pi:#16202E; --pi2:#3C4A5E; --pm:#626E85; --pf:#8A96A8;
+  --pb:#F3F5F8; --ps:#FFFFFF; --ps2:#E6ECF3; --pi:#16202E; --pi2:#3C4A5E; --pm:#5D697E; --pf:#8A96A8;
   --pl:rgba(22,32,46,.13); --pl2:rgba(22,32,46,.06);
   --pfd:var(--f-plex),system-ui,sans-serif; --pfb:var(--f-plex),system-ui,sans-serif;
 }
 .plat[data-theme="vitrine"]{
-  --pb:#FAF9F6; --ps:#FFFFFF; --ps2:#F0EEE9; --pi:#14130F; --pi2:#57534A; --pm:#777063; --pf:#A8A399;
+  --pb:#FAF9F6; --ps:#FFFFFF; --ps2:#F0EEE9; --pi:#14130F; --pi2:#57534A; --pm:#716A5E; --pf:#A8A399;
   --pl:rgba(20,19,15,.1); --pl2:rgba(20,19,15,.05);
   --pfd:var(--f-manrope),system-ui,sans-serif; --pfb:var(--f-manrope),system-ui,sans-serif;
 }
@@ -53,7 +53,7 @@ html.lenis,html.lenis body{height:auto}
 /* Chat/formulaire de la plateforme EMBARQUÉ dans le site vitrine (tokens plateforme,
    sans le chrome plein écran ; --pc hérité du site = même accent). */
 .plat-embed{
-  --ps:#121118;--ps2:#1A1922;--pi:#F1EFEA;--pi2:#BAB4AA;--pm:#867F76;--pf:#575249;
+  --ps:#121118;--ps2:#1A1922;--pi:#F1EFEA;--pi2:#BAB4AA;--pm:#8A837B;--pf:#575249;
   --pc2:color-mix(in srgb,var(--pc) 74%,#ffffff);--pcd:color-mix(in srgb,var(--pc) 82%,#000000);--psoft:color-mix(in srgb,var(--pc) 14%,transparent);
   --pglow:color-mix(in srgb,var(--pc) 46%,transparent);--pl:rgba(255,255,255,.09);--pl2:rgba(255,255,255,.045);
   --pfd:var(--font-display,system-ui,sans-serif);--pfb:var(--font-body,system-ui,sans-serif);--pfm:var(--font-mono,ui-monospace,monospace);--pe:cubic-bezier(.16,1,.3,1);
@@ -203,11 +203,11 @@ html.lenis,html.lenis body{height:auto}
 .plat-form .plat-photo-add span{font-size:1.4rem;line-height:1;font-weight:400}
 .plat-form .plat-photo-add small{font-size:9.5px;text-align:center;line-height:1.15;padding:0 4px}
 .plat-form .plat-photo-add.busy{opacity:.7;cursor:default}
-.plat-photos-note{margin:.5rem 0 0;font-size:.76rem;color:var(--pf)}
+.plat-photos-note{margin:.5rem 0 0;font-size:.76rem;color:var(--pm)}
 .plat-form button:disabled{opacity:.6;cursor:wait}
 .plat-form .msg{margin-top:1rem;padding:.85rem 1rem;border-radius:11px;background:var(--psoft);color:var(--pc2);font-size:.94rem;border:1px solid color-mix(in srgb,var(--pc) 24%,transparent)}
 .plat-form .msg.err{background:rgba(240,119,106,.12);color:#F0A79E;border-color:rgba(240,119,106,.3)}
-.plat-consent{margin:.85rem 0 0;font-size:.76rem;line-height:1.5;color:var(--pf);text-align:center}
+.plat-consent{margin:.85rem 0 0;font-size:.76rem;line-height:1.5;color:var(--pm);text-align:center}
 .plat-done{display:flex;align-items:center;gap:.65rem;background:rgba(70,200,154,.1);color:#7EE0B6;border:1px solid rgba(70,200,154,.3);padding:1.05rem 1.2rem;border-radius:14px;font-size:1rem;font-weight:600}
 .plat-done svg{flex:none;stroke:#46C89A}
 @media(prefers-reduced-motion:no-preference){
@@ -324,7 +324,8 @@ html.lenis,html.lenis body{height:auto}
 .pchat-conv{text-align:left;padding:.55rem .65rem;border:none;background:none;border-radius:9px;color:var(--pi2);font-size:.86rem;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:background .14s,color .14s}
 .pchat-conv:hover{background:color-mix(in srgb,var(--pi) 6%,transparent)}
 .pchat-conv.on{background:color-mix(in srgb,var(--pc) 14%,transparent);color:var(--pi);font-weight:600}
-.pchat-empty{margin:.4rem .3rem;font-size:.8rem;color:var(--pf)}
+/* --pf est une couleur de FILET, pas de texte : en 12,8 px elle tombe à 2:1. */
+.pchat-empty{margin:.4rem .3rem;font-size:.8rem;color:var(--pm)}
 .pchat-side-foot{padding:.55rem .3rem 0;border-top:1px solid var(--pl2);font-size:.76rem;color:var(--pm)}
 .pchat-scrim{display:none}
 
@@ -384,7 +385,7 @@ html.lenis,html.lenis body{height:auto}
 .pchat-inputrow>button[type=submit]{flex:none;width:36px;height:36px;border-radius:50%;border:none;display:grid;place-items:center;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;cursor:pointer;transition:opacity .15s,transform .12s}
 .pchat-inputrow>button[type=submit]:disabled{opacity:.38;cursor:default}
 .pchat-inputrow>button[type=submit]:active:not(:disabled){transform:scale(.93)}
-.pchat-hint{display:block;margin-top:.4rem;text-align:center;font-size:.7rem;color:var(--pf)}
+.pchat-hint{display:block;margin-top:.4rem;text-align:center;font-size:.7rem;color:var(--pm)}
 .pchat-err{margin:0 clamp(.8rem,4vw,2rem) .8rem;padding:.6rem .8rem;border-radius:10px;font-size:.85rem;color:#B4232A;background:color-mix(in srgb,#B4232A 10%,transparent)}
 
 /* ── Mobile : la colonne devient un tiroir */
@@ -416,7 +417,7 @@ html.lenis,html.lenis body{height:auto}
 .pchat-carte-modif textarea:focus{outline:none;border-color:var(--pc)}
 .pchat-carte-modif button{width:auto;margin:0;align-self:flex-start;padding:.5rem .9rem;border:none;border-radius:10px;background:var(--pi);color:var(--pb);font-size:.88rem;font-weight:650;cursor:pointer}
 .pchat-carte-ok{font-size:.9rem;font-weight:600;color:#2E9E6B;margin-top:.3rem}
-.pchat-carte-note{font-size:.72rem;color:var(--pf);margin-top:.5rem;line-height:1.4}
+.pchat-carte-note{font-size:.72rem;color:var(--pm);margin-top:.5rem;line-height:1.4}
 
 /* ── Compte client dans la colonne (v4 §6) ── */
 .pchat-compte{padding:.7rem .3rem 0;border-top:1px solid var(--pl2);display:flex;flex-direction:column;gap:.4rem}
@@ -425,5 +426,5 @@ html.lenis,html.lenis body{height:auto}
 .pchat-compte-m{font-size:.76rem;color:var(--pm);line-height:1.45;word-break:break-word}
 .pchat-compte input{width:100%;background:var(--pb);border:1px solid var(--pl);border-radius:9px;padding:.45rem .6rem;font-size:.8rem;font-family:inherit;color:var(--pi)}
 .pchat-compte input:focus{outline:none;border-color:var(--pc)}
-.pchat-compte-b{width:auto;margin:0;align-self:flex-start;background:none;border:none;padding:0;font-size:.76rem;font-weight:600;color:var(--pc2);cursor:pointer;text-decoration:underline}
+.pchat-compte-b{width:auto;margin:0;align-self:flex-start;background:none;border:none;padding:0;font-size:.76rem;font-weight:600;color:var(--pc-ink,var(--pc2));cursor:pointer;text-decoration:underline}
 .pchat-compte-b:disabled{opacity:.6;cursor:default}

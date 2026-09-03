@@ -176,7 +176,8 @@ html.lenis,html.lenis body{height:auto}
 /* BLOCS */
 .site-block{max-width:var(--swrap);margin:0 auto;padding:calc(clamp(3.5rem,9vw,7rem) * var(--srhythm)) clamp(1.1rem,5vw,3rem)}
 .site-head{margin-bottom:clamp(2rem,4vw,3rem);max-width:60ch}
-.site-kick{display:inline-block;font-family:var(--sfm);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--pc2);margin-bottom:.9rem}
+/* --pc-ink : l'accent assombri juste assez pour être lisible en petit (calculé au rendu). */
+.site-kick{display:inline-block;font-family:var(--sfm);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--pc-ink,var(--pc2));margin-bottom:.9rem}
 .site-head h2{font-family:var(--sfd);font-weight:700;font-size:calc(clamp(1.9rem,4.6vw,3.2rem) * var(--sscale));line-height:1.04;letter-spacing:-.015em;text-wrap:balance;margin:0}
 
 /* REALISATIONS */

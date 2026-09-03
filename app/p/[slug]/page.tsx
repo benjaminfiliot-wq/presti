@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import PlatChat from './PlatChat'
 import { computeResponseDelay } from '@/lib/platStats'
+import { lisibleSur } from '@/lib/contrast'
+import { fondDuTheme } from '@/lib/themeFonds'
 
 // LA PLATEFORME (v4 §A1/§A2) : une application de conversation à la marque de l'artisan,
 // pas une page de contact décorée. La présentation (prestations, réalisations) vit sur le SITE.
@@ -60,7 +62,7 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
   const delai = await computeResponseDelay(a.id)
 
   return (
-    <main className="plat plat-app" style={{ ['--pc' as string]: accent }} data-theme={theme}>
+    <main className="plat plat-app" style={{ ['--pc' as string]: accent, ['--pc-ink' as string]: lisibleSur(accent, fondDuTheme(theme)) }} data-theme={theme}>
       <PlatChat
         slug={a.slug as string}
         artisanNom={a.nom || 'Votre artisan'}
