@@ -8,6 +8,7 @@ import AppShell from '@/app/AppShell'
 import ModelSelect from '@/app/ModelSelect'
 import LogoUpload from '@/app/LogoUpload'
 import type { Tier } from '@/lib/models'
+import { mentionFranchise, type BaseMention } from '@/lib/facturation'
 
 type Ligne = { key: string; designation: string; quantite: string; unite: string; prix_unitaire_ht: string; tva_taux: number }
 
@@ -43,6 +44,10 @@ export default function DevisEditor() {
   const [iban, setIban] = useState('')
   const [condPaiement, setCondPaiement] = useState('')
   const [tvaRegime, setTvaRegime] = useState('franchise')
+  // La référence légale de la mention de franchise suit la date et le choix de l'artisan
+  // (recodification CGI → CIBS au 01/09/2026, tolérance jusqu'au 31/12/2027).
+  const [mentionBase, setMentionBase] = useState<BaseMention>('auto')
+  const mentionTva = mentionFranchise(mentionBase)
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
   const [savingInfos, setSavingInfos] = useState(false)
   const [infosMsg, setInfosMsg] = useState('')
@@ -74,7 +79,7 @@ export default function DevisEditor() {
       setEntNom(a.nom ?? ''); setMetier(a.metier ?? ''); setSiret(a.siret ?? ''); setForme(a.forme_juridique ?? '')
       setEntAdresse([a.adresse, a.code_postal, a.ville].filter(Boolean).join(', '))
       setAssNom(a.assurance_nom ?? ''); setAssContrat(a.assurance_contrat ?? ''); setAssActivites(a.assurance_activites ?? ''); setAssZone(a.assurance_zone ?? '')
-      setIban(a.iban ?? ''); setCondPaiement(a.conditions_paiement ?? ''); setTvaRegime(a.tva_regime ?? 'franchise'); setPlan(a.plan ?? 'gratuit'); setLogoUrl(a.logo_url ?? null)
+      setIban(a.iban ?? ''); setCondPaiement(a.conditions_paiement ?? ''); setTvaRegime(a.tva_regime ?? 'franchise'); setMentionBase((a.mention_tva_base as BaseMention) ?? 'auto'); setPlan(a.plan ?? 'gratuit'); setLogoUrl(a.logo_url ?? null)
 
       if (!isNew) {
         const { data: d } = await supabase.from('devis').select('*').eq('id', rawId).maybeSingle()
@@ -413,7 +418,7 @@ export default function DevisEditor() {
               <div className="doc-legal">
                 <div className="l-title">Mentions</div>
                 <p style={{ margin: '0 0 .35rem' }}>Devis gratuit, valable {validite} jours à compter du {dateFr(today)}.{condPaiement ? ` Conditions de paiement : ${condPaiement}.` : ''}{iban ? ` Règlement par virement — IBAN ${iban}.` : ''}</p>
-                {tvaRegime === 'franchise' && <p style={{ margin: '0 0 .35rem' }}>TVA non applicable, art. L.223 et s. du code des impositions sur les biens et services (CIBS).</p>}
+                {tvaRegime === 'franchise' && <p style={{ margin: '0 0 .35rem' }}>{mentionTva}</p>}
                 <p style={{ margin: 0 }}>
                   <strong>Assurance professionnelle</strong> :{' '}
                   {assNom ? `${assNom}, contrat n° ${assContrat || '—'}${assActivites ? `, ${assActivites}` : ''}${assZone ? `, ${assZone}` : ''}.` : <span className="doc-todo">à renseigner dans « Vos informations » (obligatoire).</span>}

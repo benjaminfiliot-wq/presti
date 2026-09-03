@@ -1,11 +1,12 @@
 import { computeTotals } from './devisTotals'
 import type { PDFData } from './DevisPDF'
+import { mentionFranchise, type BaseMention } from '@/lib/facturation'
 
 type ArtisanRow = {
   nom?: string | null; metier?: string | null; forme_juridique?: string | null
   adresse?: string | null; code_postal?: string | null; ville?: string | null; siret?: string | null
   assurance_nom?: string | null; assurance_contrat?: string | null; assurance_activites?: string | null; assurance_zone?: string | null
-  tva_regime?: string | null; conditions_paiement?: string | null; iban?: string | null; logo_url?: string | null
+  tva_regime?: string | null; mention_tva_base?: string | null; conditions_paiement?: string | null; iban?: string | null; logo_url?: string | null
 }
 type DevisRow = {
   numero?: string | null; date_emission?: string | null; validite_jours?: number | null; date_echeance?: string | null
@@ -17,8 +18,10 @@ type LigneRow = { designation?: string | null; quantite?: number | null; unite?:
 const dateFr = (d: Date) => d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
 
 export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: ArtisanRow, type: 'devis' | 'facture' = 'devis'): PDFData {
-  // Franchise de TVA (défaut auto-entrepreneur) ⇒ 0 % sur toutes les lignes,
-  // cohérent avec la mention « TVA non applicable, art. 293 B du CGI ».
+  // Franchise de TVA (défaut auto-entrepreneur) ⇒ 0 % sur toutes les lignes.
+  // La MENTION qui l'accompagne n'est pas figée : la recodification CGI → CIBS est entrée
+  // en vigueur le 01/09/2026 avec une tolérance jusqu'au 31/12/2027. Elle se calcule donc
+  // à la date du document et selon le choix de l'artisan (lib/facturation.ts).
   const franchise = (artisan.tva_regime || 'franchise') === 'franchise'
   const ls = (lignes || []).map((l) => {
     const tv = Number(l.tva_taux)
@@ -53,7 +56,7 @@ export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: Artis
     lignes: ls,
     totalBrut, remisePct: Number(devis.remise_pct) || 0, remiseMontant: totalBrut - totals.total_ht, totalHt: totals.total_ht,
     tvaParTaux: Object.entries(totals.tva_par_taux), totalTtc: totals.total_ttc, acomptePct, acompteMontant: (totals.total_ttc * acomptePct) / 100,
-    franchise, assurance, conditions: artisan.conditions_paiement || '', iban: artisan.iban || '',
+    franchise, mentionTva: mentionFranchise((artisan.mention_tva_base as BaseMention) || 'auto', emission), assurance, conditions: artisan.conditions_paiement || '', iban: artisan.iban || '',
     type, echeanceDate: dateFr(echeance),
     logoUrl: artisan.logo_url || null, statut: devis.statut || null,
   }

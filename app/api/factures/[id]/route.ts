@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { empreinte } from '@/lib/facturation'
 
 async function auth(req: Request) {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
@@ -29,12 +30,31 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const b = await req.json().catch(() => ({}))
   const next = b?.statut
   if (!['emise', 'payee', 'annulee'].includes(next)) return NextResponse.json({ error: 'Statut invalide' }, { status: 400 })
-  const { data: cur } = await supabaseAdmin.from('factures').select('statut').eq('id', id).eq('artisan_id', uid).maybeSingle()
+  const { data: cur } = await supabaseAdmin.from('factures').select('*').eq('id', id).eq('artisan_id', uid).maybeSingle()
   if (!cur) return NextResponse.json({ error: 'Facture introuvable' }, { status: 404 })
   if (next !== cur.statut && !NEXT_STATUTS[cur.statut]?.includes(next)) {
     return NextResponse.json({ error: 'Une facture émise ne peut pas revenir en arrière. Pour l’annuler, passez-la en « annulée ».' }, { status: 409 })
   }
-  const { error } = await supabaseAdmin.from('factures').update({ statut: next, updated_at: new Date().toISOString() }).eq('id', id).eq('artisan_id', uid)
+
+  // Passage à « émise » : la pièce est SCELLÉE (v4 §10.7). On enregistre son empreinte au
+  // moment exact de l'émission, et la base refuse ensuite toute modification de montant,
+  // de numéro, de client ou de date. Une correction passe désormais par un avoir.
+  const scelle: Record<string, unknown> = {}
+  if (next === 'emise' && !cur.verrouillee) {
+    const { data: lignes } = await supabaseAdmin.from('factures_lignes')
+      .select('designation, quantite, unite, prix_unitaire_ht, tva_taux').eq('facture_id', id).order('ordre')
+    const empreinteDoc = await empreinte(JSON.stringify({
+      numero: cur.numero, client: cur.client_nom, siren: cur.client_siren,
+      totaux: [cur.total_ht, cur.total_tva, cur.total_ttc], lignes: lignes ?? [],
+    }))
+    scelle.verrouillee = true
+    scelle.emise_le = new Date().toISOString()
+    scelle.empreinte = empreinteDoc
+  }
+
+  const { error } = await supabaseAdmin.from('factures')
+    .update({ statut: next, ...scelle, updated_at: new Date().toISOString() })
+    .eq('id', id).eq('artisan_id', uid)
   if (error) { console.error('[factures PATCH]', error.message); return NextResponse.json({ error: 'Mise à jour impossible' }, { status: 500 }) }
   return NextResponse.json({ ok: true })
 }

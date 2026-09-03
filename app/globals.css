@@ -1937,3 +1937,9 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .inv-scan-t { color: #EDE3D2; font-size: .9rem; text-align: center; margin: 0; max-width: 42ch; }
 .inv-scan-manuel { display: flex; gap: .5rem; width: 100%; }
 .inv-scan-manuel input { margin: 0; flex: 1; }
+
+/* ── Mention de franchise paramétrable (Paramètres → v4 §10.2) ─────────────── */
+.par-mention { margin-top: 1rem; padding: .9rem 1rem; border: 1px solid var(--line); border-radius: 11px; }
+.par-mention > label { display: block; margin-bottom: .5rem; }
+.par-apercu { margin: .7rem 0 0; font-size: .85rem; }
+.par-apercu b { color: var(--ink); font-weight: 600; }

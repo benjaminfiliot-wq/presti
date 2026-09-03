@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
+import { mentionFranchise, type BaseMention } from '@/lib/facturation'
 
 // Paramètres à onglets (v4 §C2). Choix assumé : on n'a PAS rasé /profil qui fonctionne.
 // Cette page porte les sections qui n'existaient nulle part (entreprise & légal, sécurité,
@@ -28,6 +29,7 @@ function ParametresInner() {
   const [uid, setUid] = useState('')
   const [legal, setLegal] = useState<Legal>(LEGAL_VIDE)
   const [aTva, setATva] = useState(false)
+  const [mentionBase, setMentionBase] = useState<BaseMention>('auto')
   const [saving, setSaving] = useState(false)
   const [mdp, setMdp] = useState('')
   const [busy, setBusy] = useState(false)
@@ -51,6 +53,7 @@ function ParametresInner() {
         assurance_zone: a.assurance_zone ?? '', assurance_activites: a.assurance_activites ?? '',
       })
       setATva(!!a.tva_num)
+      setMentionBase((a.mention_tva_base as BaseMention) ?? 'auto')
       setReady(true)
     })
   }, [router])
@@ -63,6 +66,7 @@ function ParametresInner() {
     const { error } = await supabase.from('artisans').update({
       siret: legal.siret.trim() || null,
       tva_num: aTva ? (legal.tva_num.trim() || null) : null,
+      mention_tva_base: mentionBase,
       iban: legal.iban.replace(/\s+/g, '').toUpperCase() || null,
       assurance_nom: legal.assurance_nom.trim() || null,
       assurance_contrat: legal.assurance_contrat.trim() || null,
@@ -121,9 +125,28 @@ function ParametresInner() {
             <input value={legal.siret} onChange={(e) => setL('siret', e.target.value)} placeholder="14 chiffres" maxLength={20} />
             <label className="prof-toggle" style={{ marginTop: '.9rem' }}>
               <input type="checkbox" checked={aTva} onChange={(e) => setATva(e.target.checked)} />
-              <span>Je suis <b>assujetti à la TVA</b> {aTva ? '' : '— sinon la mention « TVA non applicable, art. 293 B du CGI » est portée sur vos documents'}</span>
+              <span>Je suis <b>assujetti à la TVA</b>{aTva ? '' : ' — sinon la mention de franchise ci-dessous est portée sur vos documents'}</span>
             </label>
-            {aTva ? (<><label>Numéro de TVA intracommunautaire</label><input value={legal.tva_num} onChange={(e) => setL('tva_num', e.target.value)} placeholder="FR…" maxLength={20} /></>) : null}
+            {aTva ? (<><label>Numéro de TVA intracommunautaire</label><input value={legal.tva_num} onChange={(e) => setL('tva_num', e.target.value)} placeholder="FR…" maxLength={20} /></>) : (
+              <div className="par-mention">
+                {/* La référence légale a changé : la TVA du CGI a été recodifiée vers le CIBS
+                    au 01/09/2026, l'ancienne référence restant admise jusqu'au 31/12/2027.
+                    D'où un choix, et pas une chaîne figée dans le code. */}
+                <label>Référence légale de la mention</label>
+                <div className="sa-pills">
+                  {([['auto', 'Automatique'], ['cibs', 'CIBS (nouvelle)'], ['cgi', 'CGI (ancienne)']] as const).map(([id, nom]) => (
+                    <button key={id} type="button" className={`sa-pill${mentionBase === id ? ' on' : ''}`} onClick={() => setMentionBase(id)}>{nom}</button>
+                  ))}
+                </div>
+                <p className="muted par-apercu">
+                  Portée sur vos devis et factures : <b>{mentionFranchise(mentionBase)}</b>
+                </p>
+                <p className="muted" style={{ fontSize: '.8rem', margin: '.3rem 0 0' }}>
+                  La référence au CGI a été remplacée par le CIBS le 1<sup>er</sup> septembre 2026. L’ancienne reste acceptée
+                  jusqu’au 31 décembre 2027 — gardez-la si votre comptable la préfère, « Automatique » suit la date.
+                </p>
+              </div>
+            )}
             <label>IBAN (pour le règlement de vos factures)</label>
             <input value={legal.iban} onChange={(e) => setL('iban', e.target.value)} placeholder="FR76…" maxLength={40} />
             <h3 style={{ margin: '1.6rem 0 .2rem', fontSize: '1rem' }}>Assurance professionnelle</h3>

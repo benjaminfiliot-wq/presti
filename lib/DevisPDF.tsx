@@ -19,7 +19,7 @@ export type PDFData = {
   lignes: PDFLigne[]
   totalBrut: number; remisePct: number; remiseMontant: number; totalHt: number
   tvaParTaux: [string, number][]; totalTtc: number; acomptePct: number; acompteMontant: number
-  franchise: boolean; assurance: string; conditions: string; iban: string
+  franchise: boolean; mentionTva: string; assurance: string; conditions: string; iban: string
   type?: 'devis' | 'facture'; echeanceDate?: string
   logoUrl?: string | null; statut?: string | null
 }
@@ -193,7 +193,7 @@ export function DevisPDF({ d }: { d: PDFData }) {
           {isFacture
             ? <Text>Facture payable {d.echeanceDate ? `au plus tard le ${d.echeanceDate}` : 'à réception'}. En cas de retard : pénalités au taux de 3 fois le taux d&apos;intérêt légal, plus une indemnité forfaitaire de recouvrement de 40 €.</Text>
             : <Text>Devis gratuit, valable {d.validiteJours} jours à compter du {d.date}.{d.conditions ? ` Conditions de paiement : ${d.conditions}.` : ''}{d.iban ? ` Règlement par virement — IBAN ${d.iban}.` : ''}</Text>}
-          {d.franchise ? <Text style={{ marginTop: 3 }}>TVA non applicable, art. L.223 et s. du code des impositions sur les biens et services (CIBS).</Text> : null}
+          {d.franchise ? <Text style={{ marginTop: 3 }}>{d.mentionTva}</Text> : null}
           {d.assurance ? <Text style={{ marginTop: 3 }}>Assurance professionnelle : {d.assurance}</Text> : null}
         </View>
       </Page>
