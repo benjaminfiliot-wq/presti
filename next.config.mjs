@@ -24,7 +24,9 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: blob: https://gorcdvmueakcncsmrouo.supabase.co https://www.google-analytics.com", // médias bucket + data URL (legacy) + GA
-      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://www.google-analytics.com https://*.analytics.google.com",
+      // Le joker `*.supabase.co` autorisait n'importe quel projet Supabase du monde :
+      // c'est un canal d'exfiltration tout prêt pour un script injecté. On épingle le nôtre.
+      "connect-src 'self' https://gorcdvmueakcncsmrouo.supabase.co wss://gorcdvmueakcncsmrouo.supabase.co https://api.stripe.com https://www.google-analytics.com https://*.analytics.google.com",
       "frame-src 'self' https://js.stripe.com https://checkout.stripe.com", // 'self' = aperçu du site dans la console (« Ma page »)
       "object-src 'none'",
       "base-uri 'self'",

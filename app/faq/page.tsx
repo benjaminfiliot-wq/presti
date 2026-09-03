@@ -2,6 +2,9 @@ import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
 
 export const metadata = {
+  // Sans cette ligne, la canonique du layout racine ('/') s'applique : la page se déclare
+  // comme étant l'accueil, alors qu'elle figure au sitemap — donc jamais indexée.
+  alternates: { canonical: '/faq' },
   title: 'FAQ',
   description: 'Questions fréquentes sur Presti : fonctionnement, sécurité des données, tarifs, devis, paiements.',
 }

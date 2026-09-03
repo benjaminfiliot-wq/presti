@@ -54,13 +54,33 @@ export async function authArtisan(req: Request): Promise<Session | EchecAuth> {
   return { uid: data.user.id, iat: iat ?? 0 }
 }
 
-/** Ferme immédiatement toutes les sessions de cet artisan, y compris les jetons déjà émis. */
-export async function revoquerSessions(uid: string): Promise<void> {
+/**
+ * Ferme réellement toutes les sessions de cet artisan.
+ *
+ * Deux verrous, et il faut les DEUX — c'est la leçon du défaut trouvé le 2026-09-03 :
+ *  1. le seuil `sessions_invalides_avant` invalide les jetons d'ACCÈS déjà émis ;
+ *  2. la suppression des sessions en base tue les jetons de RAFRAÎCHISSEMENT.
+ *
+ * Sans le second, un jeton copié se refabriquait un accès indéfiniment, pendant que
+ * l'interface affichait « toutes vos sessions ont été fermées ». Le premier code appelait
+ * `auth.admin.signOut(uid, 'global')` — or cette API attend un JETON, pas un identifiant :
+ * elle répondait 403, et l'erreur était jetée en silence. Une garantie de sécurité fausse
+ * est pire qu'une garantie absente : la victime ne change pas son mot de passe.
+ *
+ * Renvoie false si la révocation a échoué — l'appelant DOIT le dire, jamais annoncer un
+ * succès qu'il n'a pas.
+ */
+export async function revoquerSessions(uid: string): Promise<boolean> {
   // Une seconde dans le futur : un jeton émis pendant la même seconde que la révocation
   // serait sinon accepté (l'`iat` est en secondes entières).
   const quand = new Date(Date.now() + 1000).toISOString()
-  await supabaseAdmin.from('artisans').update({ sessions_invalides_avant: quand }).eq('id', uid)
-  await supabaseAdmin.auth.admin.signOut(uid, 'global').catch(() => {})
+  const { error: eSeuil } = await supabaseAdmin.from('artisans')
+    .update({ sessions_invalides_avant: quand }).eq('id', uid)
+  if (eSeuil) { console.error('[revocation] seuil:', eSeuil.message); return false }
+
+  const { error: eSessions } = await supabaseAdmin.rpc('revoquer_sessions_auth', { p_uid: uid })
+  if (eSessions) { console.error('[revocation] sessions:', eSessions.message); return false }
+  return true
 }
 
 export const estEchec = (r: Session | EchecAuth): r is EchecAuth => 'error' in r

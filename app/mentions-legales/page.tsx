@@ -1,7 +1,12 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
 
-export const metadata = { title: 'Mentions légales' }
+export const metadata = {
+  title: 'Mentions légales',
+  // Sans cette ligne, la canonique du layout racine ('/') s'applique : la page se déclare
+  // comme étant l'accueil, alors qu'elle figure au sitemap — donc jamais indexée.
+  alternates: { canonical: '/mentions-legales' },
+}
 
 const Back = () => <Breadcrumb label="Mentions légales" path="/mentions-legales" />
 

@@ -128,8 +128,10 @@ try {
   // rafraîchissement. Sans contrôle serveur, un jeton copié — depuis un poste partagé,
   // typiquement — continue d'ouvrir le compte pendant une heure après la déconnexion.
   // On vérifie ici que les routes de Presti le refusent immédiatement.
-  const jetonA = (await createClient(URL, ANON, { auth: { persistSession: false } })
-    .auth.signInWithPassword({ email: A.email, password: A.motDePasse })).data.session.access_token
+  const sessionA = (await createClient(URL, ANON, { auth: { persistSession: false } })
+    .auth.signInWithPassword({ email: A.email, password: A.motDePasse })).data.session
+  const jetonA = sessionA.access_token
+  const rafraichissementA = sessionA.refresh_token
   const appelTarifs = () => fetch(`${BASE}/api/tarifs`, { headers: { Authorization: `Bearer ${jetonA}` } })
 
   T('avant fermeture, le jeton fonctionne', (await appelTarifs()).status === 200)
@@ -146,6 +148,26 @@ try {
   T('refusé aussi sur l’inventaire', inv.status === 401, String(inv.status))
   const donnees = await fetch(`${BASE}/api/donnees`, { headers: { Authorization: `Bearer ${jetonA}` } })
   T('refusé aussi sur les données personnelles', donnees.status === 401, String(donnees.status))
+
+  // ── L'ANGLE MORT de la première version de ce test, et le vrai danger.
+  // Rejouer le jeton d'accès ne prouve rien : il expire de toute façon en une heure.
+  // Ce qu'un voleur utilise, c'est le jeton de RAFRAÎCHISSEMENT, stocké au même endroit.
+  // S'il survit, il se refabrique un accès complet, indéfiniment, sans que personne
+  // ne le voie — pendant que l'écran a affiché « toutes vos sessions ont été fermées ».
+  const reforge = await fetch(`${URL}/auth/v1/token?grant_type=refresh_token`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', apikey: ANON },
+    body: JSON.stringify({ refresh_token: rafraichissementA }),
+  })
+  T('le jeton de RAFRAÎCHISSEMENT est mort lui aussi', reforge.status !== 200,
+    `HTTP ${reforge.status} — un nouvel accès a été refabriqué après la fermeture des sessions !`)
+
+  if (reforge.status === 200) {
+    // Si jamais il repassait un jour, on mesure jusqu'où va la brèche plutôt que de
+    // s'arrêter à « ça a marché ».
+    const neuf = (await reforge.json()).access_token
+    const encore = await fetch(`${BASE}/api/tarifs`, { headers: { Authorization: `Bearer ${neuf}` } })
+    T('et le jeton refabriqué n’ouvre rien', encore.status === 401, `HTTP ${encore.status}`)
+  }
 } catch (e) {
   ko++; console.log('  ❌ exception :', e.message)
 } finally {
