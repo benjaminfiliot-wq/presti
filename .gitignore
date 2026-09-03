@@ -13,3 +13,6 @@ next-env.d.ts
 
 # Skills installes localement (npx skills add)
 .agents/
+
+# Fichiers temporaires d'audit (créés par les relecteurs, jamais versionnés)
+.audit-tmp*
