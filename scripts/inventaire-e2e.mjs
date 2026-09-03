@@ -14,6 +14,7 @@ import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { chromium } from 'playwright'
 import { createClient } from '@supabase/supabase-js'
+import { connexion, appelApi } from './aide-connexion.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split('\n')) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -45,19 +46,8 @@ async function creer(plan) {
  * première — et le test se mentirait à lui-même sur le cloisonnement.
  */
 async function session(nav, c) {
-  const ctx = await nav.newContext()
-  const page = await ctx.newPage()
-  await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' })
-  await page.fill('input[type="email"]', c.email)
-  await page.fill('input[type="password"]', c.motDePasse)
-  await page.getByRole('button', { name: 'Se connecter' }).click()
-  await page.waitForURL(/outils|dashboard|profil/, { timeout: 30000 })
-  return async (chemin, init = {}) => page.evaluate(async ([url, opts]) => {
-    const k = Object.keys(localStorage).find((x) => x.includes('auth-token'))
-    const t = k ? JSON.parse(localStorage.getItem(k))?.access_token : null
-    const r = await fetch(url, { ...opts, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}`, ...(opts.headers || {}) } })
-    return { statut: r.status, corps: await r.json().catch(() => null) }
-  }, [`${BASE}${chemin}`, init])
+  const { page } = await connexion(nav, { email: c.email, motDePasse: c.motDePasse, base: BASE })
+  return appelApi(page, BASE)
 }
 
 try {
