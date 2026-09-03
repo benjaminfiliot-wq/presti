@@ -111,7 +111,7 @@ export default function CanauxPage() {
           )}
           {canaux.length > 0 ? (
             <>
-              <button className="btn btn--ghost" style={{ width: 'auto', marginTop: '1rem' }} disabled={busy} onClick={relever}>
+              <button className="btn btn--ghost" style={{ display: 'block', width: 'auto', marginTop: '1rem' }} disabled={busy} onClick={relever}>
                 {busy ? 'Relève en cours…' : '↻ Relever maintenant'}
               </button>
               <p className="muted" style={{ margin: '.5rem 0 0', fontSize: '.82rem' }}>
@@ -146,7 +146,7 @@ export default function CanauxPage() {
                   <input type="number" value={imapPort} onChange={(e) => setImapPort(Number(e.target.value))} style={{ width: 90 }} />
                 </div>
               ) : null}
-              <button className="btn btn--primary" style={{ width: 'auto', marginTop: '1.1rem' }} disabled={busy || !adresse || !mdp} onClick={brancher}>
+              <button className="btn btn--primary" style={{ display: 'block', width: 'auto', marginTop: '1.1rem' }} disabled={busy || !adresse || !mdp} onClick={brancher}>
                 {busy ? 'Vérification de la connexion…' : 'Connecter ma boîte'}
               </button>
               <p className="muted" style={{ margin: '.6rem 0 0', fontSize: '.82rem' }}>

@@ -1762,6 +1762,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 }
 .canal-x:hover { color: var(--crit, #c0392b); border-color: var(--crit, #c0392b); }
 .canal-avance {
+  display: block; /* sinon il se met sur la même ligne que le bouton suivant (button = inline-block) */
   width: auto; margin: .7rem 0 0; background: transparent; color: var(--muted);
   border: 0; padding: 0; font-size: .85rem; text-decoration: underline; cursor: pointer;
 }
