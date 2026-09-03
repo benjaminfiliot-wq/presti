@@ -22,6 +22,17 @@ export async function POST(req: Request) {
     const nom_prospect = clip(body?.nom_prospect, 120)
     if (!token || !contact) return NextResponse.json({ error: 'Coordonnées requises' }, { status: 400 })
 
+    // Le champ acceptait n'importe quoi : « pasunemail » était enregistré, la page
+    // répondait « merci », et l'artisan recevait une demande QU'IL NE POUVAIT PAS
+    // RECONTACTER — sans le savoir. Le pire genre de défaut : silencieux des deux côtés.
+    const estEmail = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(contact)
+    const estTel = (contact.match(/\d/g) ?? []).length >= 9 && /^[\d\s+().-]+$/.test(contact)
+    if (!estEmail && !estTel) {
+      return NextResponse.json({
+        error: 'Indiquez un email valide ou un numéro de téléphone, pour que l’artisan puisse vous répondre.',
+      }, { status: 400 })
+    }
+
     const ip = getIp(req)
     if (await isBanned(ip)) return NextResponse.json({ error: 'Accès refusé.' }, { status: 403 })
     if (typeof body?.website === 'string' && body.website.trim()) {

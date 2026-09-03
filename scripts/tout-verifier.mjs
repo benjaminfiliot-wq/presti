@@ -30,6 +30,7 @@ const SUITES = [
   { nom: 'XML de facture électronique', cmd: 'node', args: ['--experimental-strip-types', 'scripts/facturx-e2e.mjs'], cout: 'gratuit' },
 
   { nom: 'Isolation entre artisans (RLS)', cmd: 'node', args: ['scripts/rls-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Correctifs de l audit', cmd: 'node', args: ['scripts/audit-correctifs-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Inventaire', cmd: 'node', args: ['scripts/inventaire-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Photos et géolocalisation', cmd: 'node', args: ['scripts/photos-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Visionneuse et réassurance', cmd: 'node', args: ['scripts/site-motion-e2e.mjs'], cout: 'navigateur' },

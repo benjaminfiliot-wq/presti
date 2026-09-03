@@ -144,8 +144,8 @@ export default function Home() {
                 <div className="lp-pp">59€<small>par mois</small></div>
                 <div className="lp-credits"><b>250</b>&nbsp;crédits / mois</div>
                 <div className="lp-for">Pour celui qui veut aussi une présence en ligne et toute la puissance.</div>
-                <p className="lp-psub">Tout l&apos;Essentiel, plus l&apos;accès à tous les modèles d&apos;IA — le plus puissant, Expert, jusqu&apos;à 10 fois par mois — et plus de crédits. Votre site web pro clé en main arrive bientôt, inclus dans ce palier.</p>
-                <ul className="lp-plist"><li>Tout l&apos;Essentiel inclus</li><li>Tous les modèles IA (Expert : 10×/mois)</li><li>Crédits augmentés chaque mois</li><li>Site web pro clé en main <em style={{ color: 'var(--co2)', fontStyle: 'normal' }}>· bientôt</em></li></ul>
+                <p className="lp-psub">Tout l&apos;Essentiel, plus l&apos;accès à tous les modèles d&apos;IA — Expert compris — et beaucoup plus de crédits. Votre site web pro clé en main et votre inventaire sont inclus dans ce palier.</p>
+                <ul className="lp-plist"><li>Tout l&apos;Essentiel inclus</li><li>Tous les modèles IA, Expert compris</li><li>Crédits augmentés chaque mois</li><li>Site web pro clé en main</li><li>Inventaire et stock</li></ul>
                 <a className="lp-btn lp-btn--p" href="/signup">Choisir Studio</a>
               </div>
 
@@ -155,7 +155,7 @@ export default function Home() {
                 <div className="lp-credits"><b>600</b>&nbsp;crédits / mois</div>
                 <div className="lp-for">Pour l&apos;atelier qui tourne à plein régime.</div>
                 <p className="lp-psub">Le maximum de puissance et de crédits, plusieurs métiers gérés, et un accompagnement dédié pour installer Presti dans votre quotidien.</p>
-                <ul className="lp-plist"><li>Tout Studio inclus</li><li>Crédits élevés (gros volumes)</li><li>Plusieurs métiers / activités</li><li>Accompagnement dédié</li></ul>
+                <ul className="lp-plist"><li>Tout Studio inclus</li><li>Crédits élevés (gros volumes)</li><li>Votre nom de domaine personnalisé</li><li>Accompagnement dédié</li></ul>
                 <a className="lp-btn lp-btn--g" href="/signup">Choisir Signature</a>
               </div>
             </div>
