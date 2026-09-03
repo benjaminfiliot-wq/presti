@@ -142,7 +142,8 @@ export default function MessagesPage() {
   const unreadCount = leads.filter(isUnread).length
 
   return (
-    <AppShell active="messages" title="Messages" crumb={`Boîte de réception${unreadCount ? ` · ${unreadCount} non lu${unreadCount > 1 ? 's' : ''}` : ''}`} wide>
+    <AppShell active="messages" title="Messages" crumb={`Boîte de réception${unreadCount ? ` · ${unreadCount} non lu${unreadCount > 1 ? 's' : ''}` : ''}`} wide
+      actions={<a className="btn btn--ghost" style={{ width: 'auto' }} href="/messages/canaux">✉ Canaux</a>}>
       {!ready ? (
         <p className="muted">Chargement…</p>
       ) : leads.length === 0 ? (
