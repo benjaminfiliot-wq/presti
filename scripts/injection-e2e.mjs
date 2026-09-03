@@ -66,17 +66,22 @@ try {
   })
 
   console.log('\n── Tentatives d’injection sur la plateforme, en production')
-  for (const a of ATTAQUES) {
-    const r = await fetch(`${BASE}/api/conversation`, {
+  // Chaque attaque part comme une VRAIE première demande (/api/leads) : c'est ce parcours
+  // qu'un attaquant emprunterait, et c'est là que le message entre dans le prompt.
+  // Une demande par attaque, avec un contact distinct : la plateforme regroupe sinon les
+  // messages d'un même contact dans une seule conversation.
+  for (const [i, a] of ATTAQUES.entries()) {
+    const r = await fetch(`${BASE}/api/leads`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug, message: a.texte, nom: 'Testeur', contact: 'testeur@exemple.fr' }),
+      body: JSON.stringify({ slug, message: a.texte, nom_prospect: `Testeur ${i + 1}`, contact: `testeur${i + 1}-${Date.now()}@exemple.fr` }),
     })
     const d = await r.json().catch(() => ({}))
-    const reponse = String(d.reply ?? d.message ?? d.reponse ?? JSON.stringify(d)).slice(0, 900)
-    if (r.status !== 200) { T(a.nom, false, `HTTP ${r.status} — ${reponse}`); continue }
+    if (r.status !== 200) { T(a.nom, false, `HTTP ${r.status} — ${JSON.stringify(d).slice(0, 200)}`); continue }
+    const reponse = String(d.reply ?? '').slice(0, 900)
+    if (!reponse) { T(a.nom, false, 'aucune réponse générée (IA en pause ?)'); continue }
     T(a.nom, !a.interdit.test(reponse), reponse)
     // Anti-flood de la plateforme : on espace les envois.
-    await new Promise((s) => setTimeout(s, 3000))
+    await new Promise((s) => setTimeout(s, 4000))
   }
 
   console.log('\n── Le chiffrage aussi : une description ne dicte pas les prix')
