@@ -216,3 +216,23 @@
 - **Secrets** : audit de tout l'historique git — **aucune clé jamais committée**. `.gitignore` couvre bien les fichiers d'environnement. Les seules correspondances étaient le mot « service_role » dans des commentaires.
 - §12 (indexation), §13 (perf), §14 (a11y) et §15 (tests) ont été traités en B6-4.
 - suivant : [B11] §16 — audit final par des sous-agents indépendants.
+
+## [B11] Audit final indépendant (§16) — 17:10 → 19:40 (2 h 30) — ✅ terminé
+- **Quatre auditeurs indépendants**, un par domaine, n'ayant pas écrit le code audité : checklist des 20 points, failles classiques d'une application « vibe-codée », sécurité des sessions + rendu serveur, conformité métier. Tests menés **contre la production** avec des comptes créés puis détruits. Rapport consolidé : `plans/audit-v4.md`.
+- **Ils ont trouvé 15 défauts réels, dont 3 des miens parmi les plus graves — et deux annulaient une correction livrée le jour même.** Tous corrigés et vérifiés dans la foulée (`scripts/audit-correctifs-e2e.mjs`, **19/19 en prod**, qui rejoue *exactement* les attaques décrites).
+  1. **Les photos de chantier des clients étaient téléchargeables par n'importe qui** — bucket public, listing anonyme énumérant les demandes. Photos de domiciles privés. Bucket privatisé + liens signés d'une heure.
+  2. **« Fermer toutes mes sessions » ne fermait rien** : `signOut(uid)` attend un JETON, l'appel répondait 403, l'erreur était jetée en silence, et le jeton de rafraîchissement survivait — accès reforgeable indéfiniment pendant que l'écran affichait le contraire.
+  3. **La révocation était annulable par sa cible** : `sessions_invalides_avant` n'était pas figée, un jeton volé la remettait à NULL.
+  4. **Aucune facture n'était scellée** : le scellement vivait dans une branche jamais empruntée, donc les déclencheurs ne se déclenchaient jamais. Montant, numéro et suppression accessibles depuis le navigateur.
+  5. **La case « assujetti à la TVA » n'écrivait jamais le régime** — un artisan assujetti facturait à 0 % avec « TVA non applicable ».
+  + détournement de domaine, RPC anonyme, canoniques fausses sur 5 pages, deux infractions a11y critiques sur la connexion, champ de contact acceptant n'importe quoi, CSP trop large, promesses de vente non tenues.
+- **L'angle mort de mes propres tests, comblé** : `rls-e2e` ne rejouait que le jeton d'accès — qui expire de toute façon. Il rejoue désormais le **jeton de rafraîchissement**, celui qu'un voleur se procure. C'est cet angle mort qui avait laissé passer le défaut n° 2.
+- **Ce qui a tenu** : RLS sur 26 tables, aucun secret dans le bundle ni dans l'historique git, IDOR bloqué partout (404), verrous d'offre serveur, bcrypt sur 100 % des comptes, anti-énumération d'emails, 5 attaques d'injection de prompt tenues, SSR réel sur les trois surfaces (128 % du texte servi sans JS), 0 lien mort, aucun cookie déposé, budgets de perf à 20 % de marge, aucun scroll horizontal jusqu'à 320 px.
+- **Reste ouvert** (chiffré dans `plans/audit-v4.md`) : les mentions légales et l'information des personnes sur les surfaces de l'artisan (~8 h, le plus gros risque juridique — pour l'artisan, pas pour Presti), le DPA art. 28, le passage du jeton en cookie `httpOnly`, l'atomicité des compteurs de limitation, l'image de partage et le favicon par artisan, les 404 douces. Et trois réglages de tableau de bord Supabase qui ne demandent aucun code.
+
+---
+
+# ✅ CHANTIER v4 TERMINÉ
+
+17 blocs livrés (B0 → B11), migrations 0026 → 0045, ~28 suites de tests, tout vérifié en production.
+`node scripts/tout-verifier.mjs --rapide` → **11/11 vertes en 72 s**.
