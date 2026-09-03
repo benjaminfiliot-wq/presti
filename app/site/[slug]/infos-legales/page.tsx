@@ -43,6 +43,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: { absolute: `Informations légales — ${a.nom ?? 'Artisan'}` },
     description: `Mentions légales et protection des données de ${a.nom ?? 'cet artisan'}.`,
     applicationName: a.nom || undefined,
+    authors: a.nom ? [{ name: a.nom }] : undefined,
+    keywords: [a.metier, 'mentions légales'].filter(Boolean) as string[],
     alternates: { canonical: `https://prestiapp.fr/site/${slug}/infos-legales` },
     robots: { index: true, follow: true },
     openGraph: { title: `Informations légales — ${a.nom ?? 'Artisan'}`, type: 'website', url: `https://prestiapp.fr/site/${slug}/infos-legales`, ...(a.nom ? { siteName: a.nom } : {}) },

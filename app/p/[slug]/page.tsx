@@ -45,6 +45,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // La canonique manquait : elle retombait sur celle du layout racine, donc sur la
     // landing Presti. Fuite de marque, et canonique fausse — sur la page où l'artisan
     // envoie ses clients.
+    // Les mots-clés marketing de Presti étaient servis ici, hérités du layout racine.
+    keywords: [a.metier, a.zone_intervention].filter(Boolean) as string[],
     alternates: { canonical: `https://prestiapp.fr/p/${slug}` },
     openGraph: { title: t, description: d, type: 'website', url: `https://prestiapp.fr/p/${slug}`, ...(a.nom ? { siteName: a.nom } : {}) },
     twitter: { card: 'summary_large_image', title: t, description: d },

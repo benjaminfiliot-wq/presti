@@ -59,6 +59,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // On écrase les meta du layout racine (application-name/author = "Presti") par la marque de l'artisan.
     applicationName: a.nom || undefined,
     authors: a.nom ? [{ name: a.nom }] : undefined,
+    // Sans cette ligne, les mots-clés marketing de Presti sont servis sur le site de
+    // l'artisan : identité de l'éditeur qui fuit, et mots-clés hors sujet pour lui.
+    keywords: Array.isArray(a.site_contenu?.mots_cles) && a.site_contenu.mots_cles.length
+      ? (a.site_contenu.mots_cles as string[]).slice(0, 12)
+      : [a.metier, a.zone_intervention || a.ville, 'devis'].filter(Boolean) as string[],
     alternates: { canonical },
     robots: indexable
       ? { index: true, follow: true, googleBot: { index: true, follow: true } }

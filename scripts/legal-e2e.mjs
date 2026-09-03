@@ -76,9 +76,16 @@ try {
     ['le recours à la CNIL', /cnil\.fr/],
     ['le sort des photos et de leur localisation', /localisation.*retir/is],
   ]) T(`${quoi} y figure${quoi.startsWith('les') ? 'nt' : ''}`, motif.test(h))
-  T('aucune mention de « Presti » comme éditeur du site de l’artisan',
-    !/Presti(?!app\.fr)/.test(h.replace(/https:\/\/prestiapp\.fr/g, '').replace(/Presti — Éditeur|<b>Presti<\/b> —/g, '')) || /Presti<\/b> — Éditeur de l’outil/.test(h),
-    (h.match(/.{0,50}Presti.{0,50}/) || [''])[0])
+  // Le seul « Presti » légitime sur cette page est celui de la liste des sous-traitants :
+  // l'artisan DOIT dire qui héberge les données de ses clients. Tout le reste — auteur,
+  // mots-clés, nom d'application — doit être le sien.
+  const meta = h.match(/<meta name="(author|keywords|application-name)" content="[^"]*"/g) || []
+  T('les métadonnées portent la marque de l’artisan, pas celle de Presti',
+    !meta.some((m) => /Presti|devis artisan|logiciel devis/i.test(m)), meta.join(' | '))
+  const corps = h.replace(/<head>[sS]*?</head>/, '')
+  T('« Presti » n’apparaît dans le corps que comme sous-traitant déclaré',
+    (corps.match(/Presti/g) || []).length === 1 && /<b>Presti</b> — Éditeur de l’outil/.test(corps),
+    (corps.match(/.{0,40}Presti.{0,40}/g) || []).join(' ‖ '))
 
   console.log('\n── 3. Rien n’est inventé quand l’artisan n’a rien renseigné')
   const hv = await (await fetch(`${BASE}/site/${vide}/infos-legales`)).text()
