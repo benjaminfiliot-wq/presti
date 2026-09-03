@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import { mentionFranchise, type BaseMention } from '@/lib/facturation'
+import { mentionsManquantes } from '@/lib/legalArtisan'
 
 // Paramètres à onglets (v4 §C2). Choix assumé : on n'a PAS rasé /profil qui fonctionne.
 // Cette page porte les sections qui n'existaient nulle part (entreprise & légal, sécurité,
@@ -18,8 +19,8 @@ const ONGLETS: { id: Onglet; label: string }[] = [
   { id: 'raccourcis', label: 'Le reste' },
 ]
 
-type Legal = { siret: string; tva_num: string; iban: string; assurance_nom: string; assurance_contrat: string; assurance_zone: string; assurance_activites: string }
-const LEGAL_VIDE: Legal = { siret: '', tva_num: '', iban: '', assurance_nom: '', assurance_contrat: '', assurance_zone: '', assurance_activites: '' }
+type Legal = { siret: string; tva_num: string; iban: string; forme_juridique: string; adresse: string; code_postal: string; ville: string; assurance_nom: string; assurance_contrat: string; assurance_zone: string; assurance_activites: string; mediateur_nom: string; mediateur_url: string }
+const LEGAL_VIDE: Legal = { siret: '', tva_num: '', iban: '', forme_juridique: '', adresse: '', code_postal: '', ville: '', assurance_nom: '', assurance_contrat: '', assurance_zone: '', assurance_activites: '', mediateur_nom: '', mediateur_url: '' }
 
 function ParametresInner() {
   const router = useRouter()
@@ -49,6 +50,8 @@ function ParametresInner() {
       if (!a) { router.replace('/onboarding'); return }
       setLegal({
         siret: a.siret ?? '', tva_num: a.tva_num ?? '', iban: a.iban ?? '',
+        forme_juridique: a.forme_juridique ?? '', adresse: a.adresse ?? '', code_postal: a.code_postal ?? '', ville: a.ville ?? '',
+        mediateur_nom: a.mediateur_nom ?? '', mediateur_url: a.mediateur_url ?? '',
         assurance_nom: a.assurance_nom ?? '', assurance_contrat: a.assurance_contrat ?? '',
         assurance_zone: a.assurance_zone ?? '', assurance_activites: a.assurance_activites ?? '',
       })
@@ -58,6 +61,19 @@ function ParametresInner() {
     })
   }, [router])
 
+  // Même source de vérité que la page de mentions légales : ce qui manque ici est
+  // exactement ce qui s'affichera « non communiqué » sur le site de l'artisan.
+  const manquantes = mentionsManquantes({
+    nom: null, metier: null,
+    forme_juridique: legal.forme_juridique || null, siret: legal.siret || null,
+    adresse: legal.adresse || null, code_postal: legal.code_postal || null, ville: legal.ville || null,
+    tel_public: null, email_public: null, tva_num: legal.tva_num || null,
+    assurance_nom: legal.assurance_nom || null, assurance_contrat: legal.assurance_contrat || null,
+    assurance_activites: legal.assurance_activites || null, assurance_zone: legal.assurance_zone || null,
+    zone_intervention: null,
+    mediateur_nom: legal.mediateur_nom || null, mediateur_url: legal.mediateur_url || null,
+  }).filter((m) => m !== 'Dénomination' && m !== 'Contact') // renseignés dans « Ma page »
+
   function setL<K extends keyof Legal>(k: K, v: string) { setLegal((p) => ({ ...p, [k]: v })) }
 
   async function enregistrerLegal() {
@@ -65,6 +81,12 @@ function ParametresInner() {
     setSaving(true); setMsg(null)
     const { error } = await supabase.from('artisans').update({
       siret: legal.siret.trim() || null,
+      forme_juridique: legal.forme_juridique.trim() || null,
+      adresse: legal.adresse.trim() || null,
+      code_postal: legal.code_postal.trim() || null,
+      ville: legal.ville.trim() || null,
+      mediateur_nom: legal.mediateur_nom.trim() || null,
+      mediateur_url: legal.mediateur_url.trim() || null,
       tva_num: aTva ? (legal.tva_num.trim() || null) : null,
       // Cette ligne manquait : la case « assujetti à la TVA » n'écrivait que le NUMÉRO,
       // jamais le RÉGIME. Un artisan qui cochait la case et saisissait son n° de TVA
@@ -134,9 +156,31 @@ function ParametresInner() {
         {onglet === 'legal' ? (
           <div className="tool-card">
             <h2>Entreprise &amp; légal</h2>
-            <p className="muted" style={{ margin: '0 0 1rem' }}>Ces informations apparaissent sur vos devis et factures — elles sont obligatoires pour qu’ils soient conformes.</p>
+            <p className="muted" style={{ margin: '0 0 1rem' }}>Ces informations apparaissent sur vos devis, vos factures et vos mentions légales — elles sont obligatoires pour qu’ils soient conformes.</p>
+
+            {/* L'audit a constaté que 10 comptes sur 10 n'avaient pas de SIRET. Un artisan
+                ne peut pas deviner qu'il lui manque une mention obligatoire : on le lui dit,
+                avec ce qui manque exactement. */}
+            {manquantes.length > 0 ? (
+              <div className="par-manque">
+                <b>Il vous manque {manquantes.length} mention{manquantes.length > 1 ? 's' : ''} obligatoire{manquantes.length > 1 ? 's' : ''}</b>
+                <span>{manquantes.join(' · ')}</span>
+                <em>
+                  Sans elles, vos devis et factures ne sont pas conformes (amende de 15 € par mention manquante),
+                  et vos mentions légales affichent « non communiqué ».
+                </em>
+              </div>
+            ) : null}
             <label>SIRET</label>
             <input value={legal.siret} onChange={(e) => setL('siret', e.target.value)} placeholder="14 chiffres" maxLength={20} />
+            <label>Forme juridique</label>
+            <input value={legal.forme_juridique} onChange={(e) => setL('forme_juridique', e.target.value)} placeholder="Ex : SARL au capital de 10 000 € · EI · Auto-entrepreneur" maxLength={120} />
+            <label>Adresse de l’entreprise</label>
+            <input value={legal.adresse} onChange={(e) => setL('adresse', e.target.value)} placeholder="Numéro et rue" maxLength={160} />
+            <div className="par-cp">
+              <input value={legal.code_postal} onChange={(e) => setL('code_postal', e.target.value)} placeholder="Code postal" maxLength={10} />
+              <input value={legal.ville} onChange={(e) => setL('ville', e.target.value)} placeholder="Ville" maxLength={80} />
+            </div>
             <label className="prof-toggle" style={{ marginTop: '.9rem' }}>
               <input type="checkbox" checked={aTva} onChange={(e) => setATva(e.target.checked)} />
               <span>Je suis <b>assujetti à la TVA</b>{aTva ? '' : ' — sinon la mention de franchise ci-dessous est portée sur vos documents'}</span>
@@ -173,6 +217,18 @@ function ParametresInner() {
             <input value={legal.assurance_zone} onChange={(e) => setL('assurance_zone', e.target.value)} placeholder="Ex : France métropolitaine" />
             <label>Activités couvertes</label>
             <input value={legal.assurance_activites} onChange={(e) => setL('assurance_activites', e.target.value)} placeholder="Ex : menuiserie, agencement" />
+
+            <h3 style={{ margin: '1.6rem 0 .2rem', fontSize: '1rem' }}>Médiateur de la consommation</h3>
+            <p className="muted" style={{ margin: '0 0 .6rem', fontSize: '.85rem' }}>
+              Obligatoire dès que vous travaillez pour des particuliers (art. L.616-1 du code de la consommation) :
+              vous devez adhérer à un dispositif de médiation et en indiquer les coordonnées. Tant que ce n’est pas
+              renseigné, vos mentions légales ne peuvent pas l’afficher — je ne l’invente pas.
+            </p>
+            <label>Nom du médiateur</label>
+            <input value={legal.mediateur_nom} onChange={(e) => setL('mediateur_nom', e.target.value)} placeholder="Ex : CM2C — Centre de la médiation de la consommation de conciliateurs de justice" maxLength={160} />
+            <label>Site du médiateur</label>
+            <input value={legal.mediateur_url} onChange={(e) => setL('mediateur_url', e.target.value)} placeholder="https://…" maxLength={300} />
+
             <button className="btn btn--primary" style={{ width: 'auto', marginTop: '1.2rem' }} disabled={saving} onClick={enregistrerLegal}>{saving ? '…' : 'Enregistrer'}</button>
           </div>
         ) : null}

@@ -1943,3 +1943,17 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .par-mention > label { display: block; margin-bottom: .5rem; }
 .par-apercu { margin: .7rem 0 0; font-size: .85rem; }
 .par-apercu b { color: var(--ink); font-weight: 600; }
+
+/* ── Mentions obligatoires manquantes (Paramètres → correctif d'audit) ─────── */
+.par-manque {
+  display: flex; flex-direction: column; gap: .3rem; margin: 0 0 1.2rem;
+  padding: .9rem 1rem; border: 1px solid var(--line); border-left: 3px solid #d08a2c;
+  border-radius: 11px; background: color-mix(in srgb, #d08a2c 6%, transparent);
+}
+.par-manque b { font-size: .92rem; }
+.par-manque span { font-size: .86rem; color: var(--muted); }
+.par-manque em { font-style: normal; font-size: .82rem; color: var(--muted); opacity: .9; }
+.par-cp { display: flex; gap: .6rem; }
+.par-cp input { margin: 0; }
+.par-cp input:first-child { flex: 0 0 140px; }
+.par-cp input:last-child { flex: 1; }

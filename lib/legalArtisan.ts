@@ -28,6 +28,8 @@ export type ArtisanLegal = {
   assurance_activites: string | null
   assurance_zone: string | null
   zone_intervention: string | null
+  mediateur_nom: string | null
+  mediateur_url: string | null
 }
 
 export type Mention = { cle: string; label: string; valeur: string | null; obligatoire: boolean }
@@ -51,6 +53,17 @@ export function mentionsObligatoires(a: ArtisanLegal): Mention[] {
            a.assurance_activites, a.assurance_zone].filter(Boolean).join(', ')
         : null,
       // Obligatoire pour les métiers du bâtiment (garantie décennale, art. L.241-1 c. ass.).
+      obligatoire: true,
+    },
+    {
+      cle: 'mediateur',
+      label: 'Médiateur de la consommation',
+      valeur: a.mediateur_nom
+        ? [a.mediateur_nom, a.mediateur_url].filter(Boolean).join(' — ')
+        : null,
+      // Art. L.616-1 c. conso : obligatoire dès qu'on vend à des particuliers.
+      // On ne l'invente pas : une page qui évoque « un médiateur » sans le nommer
+      // est une affirmation non fondée de plus.
       obligatoire: true,
     },
   ]

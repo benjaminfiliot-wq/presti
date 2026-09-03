@@ -82,9 +82,14 @@ try {
   const meta = h.match(/<meta name="(author|keywords|application-name)" content="[^"]*"/g) || []
   T('les métadonnées portent la marque de l’artisan, pas celle de Presti',
     !meta.some((m) => /Presti|devis artisan|logiciel devis/i.test(m)), meta.join(' | '))
-  const corps = h.replace(/<head>[\s\S]*?<\/head>/, '')
+  // On retire aussi les <script> : la charge RSC de Next y duplique tout le rendu, et
+  // compter dedans ferait passer une occurrence légitime pour cinq.
+  const corps = h.replace(/<head>[\s\S]*?<\/head>/, '').replace(/<script[\s\S]*?<\/script>/g, '')
+  // React glisse un `<!-- -->` entre deux nœuds de texte voisins : la regex doit le tolérer,
+  // sinon le test échoue sur du balisage parfaitement correct.
   T('« Presti » n’apparaît dans le corps que comme sous-traitant déclaré',
-    (corps.match(/Presti/g) || []).length === 1 && /<b>Presti<\/b> — Éditeur de l’outil/.test(corps),
+    (corps.match(/Presti/g) || []).length === 1
+    && /<b>Presti<\/b>\s*—\s*(<!-- -->)?Éditeur de l’outil/.test(corps),
     (corps.match(/.{0,40}Presti.{0,40}/g) || []).join(' ‖ '))
 
   console.log('\n── 3. Rien n’est inventé quand l’artisan n’a rien renseigné')

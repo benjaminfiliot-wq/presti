@@ -36,6 +36,7 @@ const SUITES = [
   { nom: 'Visionneuse et réassurance', cmd: 'node', args: ['scripts/site-motion-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Accessibilité (axe-core)', cmd: 'node', args: ['scripts/a11y-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Indexation et white-label', cmd: 'node', args: ['scripts/seo-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Existence juridique des surfaces', cmd: 'node', args: ['scripts/legal-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Canaux — interface', cmd: 'node', args: ['scripts/canaux-visuel.mjs'], cout: 'navigateur' },
 
   { nom: 'Injection de prompt', cmd: 'node', args: ['scripts/injection-e2e.mjs'], cout: 'ia' },

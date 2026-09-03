@@ -30,7 +30,7 @@ type Artisan = ArtisanLegal & {
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin.from('artisans')
-    .select('id, nom, metier, slug, forme_juridique, siret, adresse, code_postal, ville, tel_public, email_public, tva_num, assurance_nom, assurance_contrat, assurance_activites, assurance_zone, zone_intervention, accent, theme, site_style, plateforme_active')
+    .select('id, nom, metier, slug, forme_juridique, siret, adresse, code_postal, ville, tel_public, email_public, tva_num, assurance_nom, assurance_contrat, assurance_activites, assurance_zone, zone_intervention, mediateur_nom, mediateur_url, accent, theme, site_style, plateforme_active')
     .eq('slug', slug).maybeSingle()
   return (data as Artisan) ?? null
 }
@@ -107,8 +107,12 @@ export default async function InfosLegales({ params }: { params: Promise<{ slug:
             </div>
           </dl>
           <p className="legal-note">
-            En cas de litige, vous pouvez recourir gratuitement à un médiateur de la consommation.
-            {contactArtisan ? <> Contactez-moi d’abord à <b>{contactArtisan}</b> : la plupart des situations se règlent directement.</> : null}
+            {a.mediateur_nom
+              ? <>En cas de litige, vous pouvez saisir gratuitement mon médiateur de la consommation : <b>{a.mediateur_nom}</b>{a.mediateur_url ? <> (<a href={a.mediateur_url} target="_blank" rel="noopener">{a.mediateur_url.replace(/^https?:\/\//, '')}</a>)</> : null}.</>
+              // On n'écrit pas « vous pouvez saisir un médiateur » sans en nommer un :
+              // ce serait une affirmation non fondée, exactement ce qu'on s'interdit ailleurs.
+              : <>En cas de litige, contactez-moi d’abord : la plupart des situations se règlent directement.</>}
+            {contactArtisan ? <> Écrivez-moi à <b>{contactArtisan}</b>.</> : null}
           </p>
         </section>
 
