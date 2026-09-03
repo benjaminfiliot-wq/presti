@@ -178,3 +178,17 @@
   - `scripts/devis-source-e2e.mjs` → **7/7**, et c'est celui qui compte : un **vrai appel au modèle en production**. Le prix volontairement atypique de l'artisan (813,50 €) **ressort tel quel**, étiqueté « vos tarifs · Cedeo · 12/02/2026 », et aucune ligne ne cite un fournisseur à tort.
 - **Non fait, assumé** : l'API BDM de l'INSEE (indices de révision) et la lecture OCR des factures fournisseurs — utiles, mais secondaires tant que l'artisan peut importer son tarif en un fichier. Aucun mail de licence envoyé, conformément à ta consigne.
 - suivant : [B8] §9 — inventaire et achats (Studio + Signature).
+
+## [B8] Inventaire & achats (§9) — 12:00 → 13:30 (1 h 30) — ✅ terminé
+- **Fonctionnalité Studio et Signature**, avec le verrou **côté serveur** : masquer l'entrée de menu ne protège rien, l'URL de l'API reste appelable. Vérifié en prod : une offre Essentiel reçoit 403 en lecture **et** en écriture.
+- **Pas de table `chantiers`** — décision assumée : le chantier chez Presti, c'est le **devis accepté**. Inventer une entité de plus obligerait l'artisan à ressaisir ce qu'il a déjà saisi.
+- `appliquer_mouvement()` en SQL : le mouvement **et** le stock sont écrits dans la même transaction. Une erreur entre les deux laisserait un inventaire faux — et un inventaire faux ne sert plus à rien. C'est exactement comme ça que ces outils meurent chez les artisans.
+- **Stock par lieu** (atelier / camion) : « il m'en reste combien » n'a de sens que par endroit. Le seuil d'alerte, lui, se déclenche sur le **total**.
+- Le **comptage POSE** la valeur au lieu de l'ajouter — la confusion classique des outils de stock, vérifiée par un test dédié.
+- **Scan de code-barres** avec le détecteur natif du navigateur. Sur Safari iPhone, qui ne l'a pas, on le **dit** et on propose la saisie du code au lieu de faire semblant. Un artisan ne saisira jamais son stock au clavier : c'est la seule raison pour laquelle ces logiciels échouent chez lui.
+- L'écran s'ouvre sur **« À racheter »**, pas sur la liste complète : c'est la seule chose qu'un artisan vient vérifier avant de partir.
+- migration 0040 · build : OK · typecheck : OK.
+- preuve : `scripts/inventaire-e2e.mjs` → **23/23 en prod**, dont le cloisonnement entre artisans (un autre Studio ne voit rien et ne peut pas bouger le stock d'autrui).
+- **Deux bugs, tous les deux dans MON test** : un mouvement de trop attendu, et surtout — les trois comptes partageaient le **même contexte de navigateur**, donc le même `localStorage`, donc la même session : le test se serait menti à lui-même sur le cloisonnement. Un contexte par compte désormais.
+- **Non fait** : liste d'achat agrégée, OCR de facture, coût de revient par chantier. Le socle (matériaux, stock, mouvements, listes) est en place pour les recevoir.
+- suivant : [B9] §10 — facturation électronique (Factur-X, archivage).

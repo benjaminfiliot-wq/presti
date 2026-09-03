@@ -38,8 +38,14 @@ async function creer(plan) {
   return { uid: u.user.id, email, motDePasse: p }
 }
 
-/** Se connecte et renvoie une fonction qui appelle l'API avec le vrai jeton de session. */
-async function session(ctx, c) {
+/**
+ * Se connecte dans SON PROPRE contexte de navigateur et renvoie une fonction qui appelle
+ * l'API avec ce jeton. Un contexte par compte : le localStorage est partagé entre les
+ * pages d'un même contexte, donc une deuxième connexion écraserait la session de la
+ * première — et le test se mentirait à lui-même sur le cloisonnement.
+ */
+async function session(nav, c) {
+  const ctx = await nav.newContext()
   const page = await ctx.newPage()
   await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' })
   await page.fill('input[type="email"]', c.email)
@@ -56,11 +62,10 @@ async function session(ctx, c) {
 
 try {
   const nav = await chromium.launch()
-  const ctx = await nav.newContext()
 
   console.log('\n── 1. Le verrou d’offre est côté serveur')
   const gratuit = await creer('essentiel')
-  const appelEssentiel = await session(ctx, gratuit)
+  const appelEssentiel = await session(nav, gratuit)
   const refus = await appelEssentiel('/api/inventaire')
   T('une offre Essentiel reçoit 403 sur l’API', refus.statut === 403, `${refus.statut}`)
   T('le message explique quelles offres l’incluent', /Studio|Signature/.test(refus.corps?.error || ''), refus.corps?.error)
@@ -71,7 +76,7 @@ try {
 
   console.log('\n── 2. Studio : création et mouvements')
   const studio = await creer('studio')
-  const appel = await session(ctx, studio)
+  const appel = await session(nav, studio)
   const vide = await appel('/api/inventaire')
   T('l’inventaire s’ouvre', vide.statut === 200, `${vide.statut}`)
   T('il est vide au départ', (vide.corps?.materiaux ?? []).length === 0)
@@ -113,14 +118,14 @@ try {
 
   console.log('\n── 7. Traçabilité')
   const { data: mvts } = await sb.from('mouvements_stock').select('type, quantite, lieu').eq('artisan_id', studio.uid).order('cree_le')
-  T('tous les mouvements sont historisés', mvts.length === 6, `${mvts.length} mouvements`)
+  T('tous les mouvements sont historisés', mvts.length === 5, `${mvts.length} mouvements`)
   T('l’historique reflète la séquence réelle',
     mvts.map((m) => `${m.type}:${Number(m.quantite)}@${m.lieu}`).join(' ') === 'entree:50@atelier sortie:12@atelier entree:6@camion inventaire:30@atelier sortie:28@atelier',
     mvts.map((m) => `${m.type}:${Number(m.quantite)}@${m.lieu}`).join(' '))
 
   console.log('\n── 8. Cloisonnement entre artisans')
   const autre = await creer('studio')
-  const appelAutre = await session(ctx, autre)
+  const appelAutre = await session(nav, autre)
   const chezMoi = await appelAutre('/api/inventaire')
   T('un autre artisan ne voit pas cet inventaire', (chezMoi.corps?.materiaux ?? []).length === 0, JSON.stringify(chezMoi.corps?.materiaux))
   const vol = await appelAutre('/api/inventaire', { method: 'POST', body: JSON.stringify({ mouvement: { materiau_id: id, type: 'sortie', quantite: 999, lieu: 'atelier' } }) })
