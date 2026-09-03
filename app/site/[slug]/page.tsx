@@ -7,6 +7,7 @@ import type { SiteContenu } from '@/lib/ai'
 import { Fragment } from 'react'
 import Image from 'next/image'
 import SiteMotion from './SiteMotion'
+import SiteLightbox from './SiteLightbox'
 import SiteMatiere3D from './SiteMatiere3D'
 import SiteAvantApres from './SiteAvantApres'
 import { siteMaxForPlan } from '@/lib/plans'
@@ -157,6 +158,15 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   // Composition pilotée par les données : ordre + activation des sections (défaut = dérivé du niveau).
   const layout = resolveLayout(a.site_layout, tier as 1 | 2 | 3)
   // Réglages fins (v4 §7/E1). Rien de réglé ⇒ objets vides ⇒ rendu strictement identique à avant.
+  // Réassurance : uniquement des faits déclarés par l'artisan, ou tenus par le produit.
+  // Aucune ligne inventée — mieux vaut une bande plus courte (ou absente) qu'une phrase fausse.
+  const trustItems: { titre: string; detail: string }[] = []
+  if (zone) trustItems.push({ titre: 'Sur votre secteur', detail: zone })
+  if (a.horaires) trustItems.push({ titre: 'Disponibilités', detail: a.horaires })
+  if (plateformeActive) trustItems.push({ titre: 'Réponse rapide', detail: 'Votre demande reçoit une réponse en quelques minutes' })
+  if (services.length >= 3) trustItems.push({ titre: `${services.length} prestations`, detail: 'Décrivez votre projet, on vous dit ce qui est possible' })
+  else if (telDigits) trustItems.push({ titre: 'Joignable directement', detail: a.tel_public as string })
+
   const style = resolveStyle(a.site_style)
   const styleVars = styleToCss(style)
   const styleData = styleToData(style)
@@ -207,12 +217,14 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
         </div>
       </section>
       ),
-      trust: tier >= 2 ? (
+      // Bande de réassurance — ANTI-FABRICATION (§0) : chaque ligne doit être vraie et
+      // vérifiable. Les anciennes mentions « Travail assuré » et « Devis gratuit » étaient
+      // des affirmations sur l'entreprise de l'artisan que personne n'avait déclarées
+      // (« assuré » sous-entend une assurance décennale — on ne l'invente pas).
+      // Ne restent que des faits saisis par l'artisan, ou garantis par le produit lui-même.
+      trust: tier >= 2 && trustItems.length >= 2 ? (
         <section className="site-strip site-reveal">
-          <div><b>Devis gratuit</b><span>Chiffrage clair, sans surprise</span></div>
-          <div><b>Réponse rapide</b><span>On revient vers vous très vite</span></div>
-          <div><b>Travail assuré</b><span>Sérieux engagé sur chaque chantier</span></div>
-          {zone ? <div><b>Sur votre secteur</b><span>{zone}</span></div> : <div><b>Sur-mesure</b><span>Adapté à votre projet</span></div>}
+          {trustItems.map((t, i) => <div key={i}><b>{t.titre}</b><span>{t.detail}</span></div>)}
         </section>
       ) : null,
       words: tier === 3 && bigWords.length >= 2 ? (
@@ -361,6 +373,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: c.faq.map((e) => ({ '@type': 'Question', name: e.q, acceptedAnswer: { '@type': 'Answer', text: e.r } })) }).replace(/</g, '\\u003c') }} />
       ) : null}
       <SiteMotion />
+      {showReal ? <SiteLightbox /> : null}
 
       {/* NAV — toujours présente, hors composition */}
       <header className="site-nav">

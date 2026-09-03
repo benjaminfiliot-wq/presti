@@ -400,3 +400,71 @@ html.lenis,html.lenis body{height:auto}
 }
 .site-hero-strip li{display:flex;align-items:center;gap:.9rem}
 .site-hero-strip li + li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--pc);flex:none}
+
+/* ============================================================================
+   MOUVEMENT (v4 §7/E2) — courbes prises dans le vocabulaire du repo, pas inventées.
+   --se (déjà là) est notre ease-out fort : on l'étend, on ne le fourche pas.
+   ============================================================================ */
+.site{--se-io:cubic-bezier(.77,0,.175,1)} /* ease-in-out fort : déplacement à l'écran */
+
+/* ── Visionneuse de galerie ────────────────────────────────────────────────── */
+.site-lb{
+  position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:clamp(1rem,4vw,3rem);
+  background:rgba(12,9,6,.93);backdrop-filter:blur(6px);
+  animation:site-lb-fond .2s var(--se) both;
+}
+@keyframes site-lb-fond{from{opacity:0}to{opacity:1}}
+.site-lb-in{position:relative;display:flex;flex-direction:column;align-items:center;gap:1rem;max-width:min(1200px,100%);max-height:100%}
+.site-lb-img{
+  max-width:100%;max-height:78vh;object-fit:contain;border-radius:var(--srad);
+  view-transition-name:site-lb;
+  /* Entrée : jamais depuis scale(0) — on part de tout près de la taille finale. */
+  animation:site-lb-entree .24s var(--se) both;
+}
+@keyframes site-lb-entree{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.site-lb-x,.site-lb-nav{
+  position:absolute;z-index:2;display:grid;place-items:center;width:44px;height:44px;
+  border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(0,0,0,.42);
+  color:#fff;font-size:1.15rem;line-height:1;cursor:pointer;
+  transition:background .15s ease,border-color .15s ease,transform .15s var(--se);
+}
+.site-lb-x{top:-4px;right:-4px}
+.site-lb-nav{top:calc(39vh - 22px)}
+.site-lb-nav.p{left:-4px}
+.site-lb-nav.n{right:-4px}
+.site-lb-x:hover,.site-lb-nav:hover{background:rgba(0,0,0,.7);border-color:#fff;transform:scale(1.06)}
+.site-lb-x:focus-visible,.site-lb-nav:focus-visible{outline:2px solid var(--pc);outline-offset:3px}
+.site-lb-cap{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;justify-content:center;color:#EDE3D2;text-align:center}
+.site-lb-cap b{font-family:var(--sfd);font-size:1.15rem}
+.site-lb-cap em{font-style:normal;font-family:var(--sfm);font-size:.78rem;opacity:.7}
+/* La vignette cliquable doit se voir comme telle. */
+.site-gallery .site-shot[role="button"]{cursor:zoom-in}
+.site-gallery .site-shot:focus-visible{outline:2px solid var(--pc);outline-offset:4px}
+@media(max-width:680px){
+  .site-lb-nav{top:auto;bottom:-4px}
+  .site-lb-img{max-height:64vh}
+}
+
+/* ── Survol des prestations : « matière », pas un décollage.
+   Un survol se voit des dizaines de fois par visite ⇒ imperceptible ou rien. */
+.site-serv{transition:border-top-color .16s ease,background-color .16s ease}
+@media(hover:hover){
+  .site-serv:hover{border-top-color:var(--pc);background-color:color-mix(in srgb,var(--pc) 4%,transparent)}
+  .site-serv:hover .site-serv-n{color:var(--pc)}
+}
+
+/* ── Révélation par masque des titres de section, réservée au niveau « cinématique ».
+   Le texte est masqué par le bas puis découvert : ça annonce une nouvelle section
+   au lieu de décorer. En « sobre », on garde le fondu existant, plus discret. */
+.site[data-motion="cinematique"] .site-head h2{
+  clip-path:inset(0 0 0 0);transition:clip-path 1s var(--se-io),opacity .8s var(--se),transform .8s var(--se);
+}
+.site[data-motion="cinematique"].site-armed .site-head.site-reveal:not(.in) h2{clip-path:inset(0 0 110% 0)}
+
+/* ── Passage du site à la plateforme : la navigation ne doit pas clignoter.
+   Transition entre documents, même origine — repli silencieux si non supporté. */
+@view-transition{navigation:auto}
+@media(prefers-reduced-motion:reduce){
+  @view-transition{navigation:none}
+  .site-lb,.site-lb-img{animation:none}
+}
