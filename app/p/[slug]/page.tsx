@@ -4,6 +4,10 @@ import PlatChat from './PlatChat'
 import { computeResponseDelay } from '@/lib/platStats'
 import { lisibleSur } from '@/lib/contrast'
 import { fondDuTheme } from '@/lib/themeFonds'
+import { headers } from 'next/headers'
+import { permanentRedirect } from 'next/navigation'
+import { chemins, modeDepuisHote, urlPlateforme } from '@/lib/urls'
+import { artisanParAncienSlug } from '@/lib/slugRedirect'
 
 // LA PLATEFORME (v4 §A1/§A2) : une application de conversation à la marque de l'artisan,
 // pas une page de contact décorée. La présentation (prestations, réalisations) vit sur le SITE.
@@ -16,12 +20,13 @@ type Artisan = {
   bio: string | null; services: Service[] | null; zone_intervention: string | null
   photo_url: string | null; logo_url: string | null; plateforme_active: boolean | null
   accent: string | null; theme: string | null; leads_pause: boolean | null
+  domaine: string | null; domaine_verifie: boolean | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, photo_url, logo_url, plateforme_active, accent, theme, leads_pause')
+    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, photo_url, logo_url, plateforme_active, accent, theme, leads_pause, domaine, domaine_verifie')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -47,8 +52,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // envoie ses clients.
     // Les mots-clés marketing de Presti étaient servis ici, hérités du layout racine.
     keywords: [a.metier, a.zone_intervention].filter(Boolean) as string[],
-    alternates: { canonical: `https://prestiapp.fr/p/${slug}` },
-    openGraph: { title: t, description: d, type: 'website', url: `https://prestiapp.fr/p/${slug}`, ...(a.nom ? { siteName: a.nom } : {}) },
+    // L'adresse publique ne contient jamais « presti » dès qu'un domaine neutre ou perso existe (lib/urls).
+    alternates: { canonical: urlPlateforme(a) },
+    openGraph: { title: t, description: d, type: 'website', url: urlPlateforme(a), ...(a.nom ? { siteName: a.nom } : {}) },
     twitter: { card: 'summary_large_image', title: t, description: d },
   }
 }
@@ -56,6 +62,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function PlateformePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const a = await getArtisan(slug)
+  const host = (await headers()).get('host')
+
+  // Ancienne adresse → nouvelle, définitivement (308) : un lien envoyé avant le changement
+  // continue de mener à la bonne conversation.
+  if (!a) {
+    const actuel = await artisanParAncienSlug(slug)
+    if (actuel) permanentRedirect(chemins(modeDepuisHote(host, actuel), actuel.slug).plateforme)
+  }
 
   if (!a || a.plateforme_active === false) {
     return <main className="plat"><div className="plat-mid"><div className="plat-404"><b>Page introuvable</b><span>Ce lien de contact n&apos;existe pas ou n&apos;est plus actif.</span></div></div></main>
@@ -71,6 +85,7 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
     <main className="plat plat-app" style={{ ['--pc' as string]: accent, ['--pc-ink' as string]: lisibleSur(accent, fondDuTheme(theme)) }} data-theme={theme}>
       <PlatChat
         slug={a.slug as string}
+        infosHref={chemins(modeDepuisHote(host, a), a.slug).infos}
         artisanNom={a.nom || 'Votre artisan'}
         metier={a.metier}
         avatar={a.logo_url || a.photo_url}

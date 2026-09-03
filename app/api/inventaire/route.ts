@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { getUserRevocable } from '@/lib/authArtisan'
+import { messageVerrou, peut } from '@/lib/plans'
 
 // Inventaire (v4 §9) — le stock de l'artisan, et ce qu'il doit racheter.
 //
@@ -10,8 +11,6 @@ import { getUserRevocable } from '@/lib/authArtisan'
 export const runtime = 'nodejs'
 export const maxDuration = 30
 
-const OFFRES_AUTORISEES = new Set(['studio', 'signature', 'business'])
-
 async function auth(req: Request) {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
   if (!token) return { error: 'Non authentifié', status: 401 as const }
@@ -19,8 +18,9 @@ async function auth(req: Request) {
   if (error || !data?.user) return { error: 'Session expirée, reconnecte-toi.', status: 401 as const }
   const { data: art } = await supabaseAdmin.from('artisans').select('plan, is_founder').eq('id', data.user.id).maybeSingle()
   const plan = (art?.plan as string) || 'gratuit'
-  if (!art?.is_founder && !OFFRES_AUTORISEES.has(plan)) {
-    return { error: 'L’inventaire est inclus dans les offres Studio et Signature.', status: 403 as const }
+  // Le verrou vient de la matrice des offres (lib/plans.ts) — plus de liste en dur ici.
+  if (!art?.is_founder && !peut(plan, 'inventaire.stock')) {
+    return { error: `L’inventaire n’est pas dans votre offre. ${messageVerrou('inventaire.stock')}`, status: 403 as const }
   }
   return { uid: data.user.id }
 }

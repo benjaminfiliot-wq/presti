@@ -74,6 +74,59 @@ export function mentionsManquantes(a: ArtisanLegal): string[] {
   return mentionsObligatoires(a).filter((m) => m.obligatoire && !m.valeur).map((m) => m.label)
 }
 
+// ── Mentions BLOQUANTES avant émission (audit v4 §3 : « 10/10 comptes ont siret = null »).
+//
+// Un devis ou une facture qui SORT sans ces mentions expose l'artisan : 15 € d'amende par
+// mention manquante (art. L.441-9 c. com., art. 242 nonies A ann. II CGI), et jusqu'à
+// 3 000 € pour l'absence de l'assurance décennale sur un devis du bâtiment (art. L.243-2
+// c. assurances). On bloque donc l'ENVOI d'un devis et la CRÉATION d'une facture — jamais
+// la sauvegarde d'un brouillon : l'artisan peut travailler, il ne peut pas émettre.
+//
+// Le médiateur (obligatoire sur le site) et le contact public ne bloquent pas ici : ils
+// sont signalés dans la console, mais leur absence sur le document n'entraîne pas la
+// même sanction, et bloquer davantage empêcherait de facturer.
+export const MENTIONS_EMISSION: readonly string[] = ['nom', 'forme', 'siret', 'adresse', 'assurance']
+
+/** Où l'artisan remplit ces mentions. Une seule vérité, réutilisée dans le message et le lien. */
+export const OU_REMPLIR = { lien: '/parametres', label: 'Paramètres → Entreprise & légal' }
+
+/** Les mentions dont l'absence interdit d'émettre (devis envoyé, facture créée). */
+export function mentionsManquantesEmission(a: ArtisanLegal): string[] {
+  return mentionsObligatoires(a)
+    .filter((m) => MENTIONS_EMISSION.includes(m.cle) && !m.valeur)
+    .map((m) => m.label)
+}
+
+/**
+ * Le message rendu à l'artisan quand on refuse d'émettre : quoi remplir, et où.
+ * `quoi` = « ce devis » / « cette facture ».
+ */
+export function messageMentionsBloquantes(manquantes: string[], quoi: string): string {
+  const liste = manquantes.join(', ')
+  return `Impossible d'émettre ${quoi} : il manque ${manquantes.length > 1 ? 'des mentions obligatoires' : 'une mention obligatoire'} (${liste}). ` +
+    `Renseignez-${manquantes.length > 1 ? 'les' : 'la'} dans ${OU_REMPLIR.label}, puis réessayez. Votre brouillon est conservé.`
+}
+
+/** Colonnes à lire sur `artisans` pour appeler mentionsManquantesEmission (évite un select('*')). */
+export const COLONNES_LEGALES =
+  'nom, metier, forme_juridique, siret, adresse, code_postal, ville, tel_public, email_public, tva_num, assurance_nom, assurance_contrat, assurance_activites, assurance_zone, zone_intervention, mediateur_nom, mediateur_url'
+
+/** Normalise une ligne `artisans` (colonnes possiblement absentes) en ArtisanLegal. */
+export function versArtisanLegal(a: Record<string, unknown> | null | undefined): ArtisanLegal {
+  const s = (k: string): string | null => {
+    const v = a?.[k]
+    return typeof v === 'string' && v.trim() ? v.trim() : null
+  }
+  return {
+    nom: s('nom'), metier: s('metier'), forme_juridique: s('forme_juridique'), siret: s('siret'),
+    adresse: s('adresse'), code_postal: s('code_postal'), ville: s('ville'),
+    tel_public: s('tel_public'), email_public: s('email_public'), tva_num: s('tva_num'),
+    assurance_nom: s('assurance_nom'), assurance_contrat: s('assurance_contrat'),
+    assurance_activites: s('assurance_activites'), assurance_zone: s('assurance_zone'),
+    zone_intervention: s('zone_intervention'), mediateur_nom: s('mediateur_nom'), mediateur_url: s('mediateur_url'),
+  }
+}
+
 /**
  * Les traitements de données opérés sur les surfaces de l'artisan.
  * Écrits ici une fois pour toutes : l'artisan n'a pas à rédiger une politique de

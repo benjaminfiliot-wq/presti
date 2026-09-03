@@ -41,7 +41,8 @@ const nextConfig = {
     // script-src : la console reste stricte ; le site/plateforme autorisent EN PLUS cdnjs
     // (three.js chargé en différé pour la signature 3D « matière », niveau Signature).
     const scriptStrict = "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com"
-    const scriptEmbeddable = scriptStrict + ' https://cdnjs.cloudflare.com'
+    // cdnjs n'est plus autorisé : il ne servait qu'au cube 3D, supprimé (v5 §10 H1).
+    const scriptEmbeddable = scriptStrict
     // Site vitrine (/site) et plateforme (/l) : embarquables par la console (aperçu « Ma page »),
     // mais jamais par un site tiers → SAMEORIGIN / frame-ancestors 'self' (anti-clickjacking préservé).
     const embeddableCsp = [scriptEmbeddable, ...cspBase, "frame-ancestors 'self'", 'upgrade-insecure-requests'].join('; ')

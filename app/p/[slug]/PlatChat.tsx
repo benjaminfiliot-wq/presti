@@ -26,6 +26,8 @@ type Devis = {
 }
 type Props = {
   slug: string
+  /** Lien vers les infos légales, calculé par la page selon l'adresse servie (jamais « presti » sur un domaine artisan). */
+  infosHref?: string
   artisanNom: string
   metier?: string | null
   avatar?: string | null
@@ -37,7 +39,7 @@ type Props = {
 const initials = (n: string) => (n || 'A').trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? '').join('') || 'A'
 const titreDe = (t: string) => { const s = t.trim().replace(/\s+/g, ' '); return s.length > 38 ? s.slice(0, 38) + '…' : s || 'Nouvelle demande' }
 
-export default function PlatChat({ slug, artisanNom, metier, avatar, services = [], paused, delai }: Props) {
+export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, services = [], paused, delai }: Props) {
   const [convs, setConvs] = useState<Conv[]>([])
   const [token, setToken] = useState<string | null>(null)
   const [msgs, setMsgs] = useState<Msg[]>([])
@@ -423,7 +425,7 @@ export default function PlatChat({ slug, artisanNom, metier, avatar, services = 
               de traitement, c'est l'ARTISAN : c'est lui que la CNIL sanctionnerait. */}
           <small className="pchat-rgpd">
             {noticeCollecte(artisanNom)}{' '}
-            <a href={`/site/${slug}/infos-legales`} target="_blank" rel="noopener">En savoir plus</a>
+            <a href={infosHref ?? `/site/${slug}/infos-legales`} target="_blank" rel="noopener">En savoir plus</a>
           </small>
         </form>
         {err ? <div className="pchat-err">{err}</div> : null}

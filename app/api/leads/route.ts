@@ -4,9 +4,14 @@ import { generateLeadReply, qualifyLead } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { consommerLimite } from '@/lib/limites'
 
 // Bornes anti-abus (une demande légitime tient largement dedans).
 const MAX = { slug: 80, contact: 200, nom: 120, message: 5000 }
+// Plafonds sur 10 minutes : par IP (tout est refusé au-delà) et par artisan (le lead est
+// sauvé, seuls l'IA et l'email sont coupés). Comptés en base, atomiquement (lib/limites).
+const MAX_LEADS_PAR_IP = 6
+const MAX_LEADS_PAR_ARTISAN = 8
 const clip = (v: unknown, n: number): string | null => {
   if (typeof v !== 'string') return null
   const t = v.trim()
@@ -53,19 +58,11 @@ export async function POST(req: Request) {
 
     // Rate-limit PAR IP (anti-flood + anti-relais email anonyme) : au-delà de 6 demandes
     // par IP sur 10 min, on refuse tout — et on journalise l'abus (peut déclencher un auto-ban).
-    if (ip !== 'unknown') {
-      try {
-        const since = new Date(Date.now() - 10 * 60 * 1000).toISOString()
-        const { count } = await supabaseAdmin
-          .from('leads')
-          .select('id', { count: 'exact', head: true })
-          .eq('ip', ip)
-          .gte('created_at', since)
-        if ((count ?? 0) >= 6) {
-          await recordAbuse(ip, 'flood /api/leads')
-          return NextResponse.json({ error: 'Trop de demandes. Réessayez dans quelques minutes.' }, { status: 429 })
-        }
-      } catch { /* en cas de doute sur le comptage : on ne bloque pas un vrai prospect */ }
+    // Compteur ATOMIQUE (audit v4 §3) : « select count puis insert » laissait passer 11
+    // demandes en rafale parallèle là où 6 sont permises. Ici, exactement 6 passent.
+    if (ip !== 'unknown' && !(await consommerLimite(`leads:ip:${ip}`, MAX_LEADS_PAR_IP, 10 * 60))) {
+      await recordAbuse(ip, 'flood /api/leads')
+      return NextResponse.json({ error: 'Trop de demandes. Réessayez dans quelques minutes.' }, { status: 429 })
     }
 
     // 1) Retrouver l'artisan à partir de son slug
@@ -150,18 +147,8 @@ export async function POST(req: Request) {
     // 2bis) Anti-abus (I2) : on plafonne l'IA+email par artisan sur une fenêtre courte.
     // Au-delà, le lead est TOUJOURS sauvé (visible dashboard) mais on coupe le coûteux
     // (empêche l'amplification de coûts IA et le relais d'emails). Ne bloque jamais un vrai lead.
-    let throttled = false
-    try {
-      const since = new Date(Date.now() - 10 * 60 * 1000).toISOString()
-      const { count } = await supabaseAdmin
-        .from('leads')
-        .select('id', { count: 'exact', head: true })
-        .eq('artisan_id', artisan.id)
-        .gte('created_at', since)
-      throttled = (count ?? 0) > 8
-    } catch {
-      // en cas de doute sur le comptage, on ne throttle pas (priorité : ne rien perdre)
-    }
+    // Compteur atomique (fail-open : en cas de doute, on ne throttle pas — ne rien perdre).
+    const throttled = !(await consommerLimite(`leads:artisan:${artisan.id}`, MAX_LEADS_PAR_ARTISAN, 10 * 60))
     if (throttled) {
       console.warn('[leads] throttle IA/email pour artisan', artisan.id)
       // Message entrant tout de même tracé : le prospect retrouvera son fil.

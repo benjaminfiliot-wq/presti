@@ -11,7 +11,7 @@ const check = (n, c, i = '') => { console.log(`${c ? '✅' : '❌'} ${n}${i ? ' 
 const stamp = Date.now()
 const email = `factest.${stamp}@example.com`, pw = 'Test123456!'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
-await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Test Facture', metier: 'Plombier', ton_style: 'pro', slug: `factest-${stamp}`, plan: 'business', tva_regime: 'franchise' }) })
+await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Test Facture', metier: 'Plombier', ton_style: 'pro', slug: `factest-${stamp}`, plan: 'business', tva_regime: 'franchise', forme_juridique: 'EI', siret: '55203253400646', adresse: '12 rue des Lilas', code_postal: '17230', ville: 'Marans', assurance_nom: 'AXA France IARD', assurance_contrat: 'DEC-1001' }) })
 const tok = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) })).json()
 const H = { 'Content-Type': 'application/json', Authorization: `Bearer ${tok.access_token}` }
 

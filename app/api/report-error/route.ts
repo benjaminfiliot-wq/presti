@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { consommerLimite } from '@/lib/limites'
+import { notifierEntreprise } from '@/lib/email'
 
 export const runtime = 'nodejs'
 
@@ -15,23 +17,31 @@ export async function POST(req: Request) {
     if (await isBanned(ip)) return NextResponse.json({ ok: true }) // silencieux
     const b = await req.json().catch(() => null)
 
-    // Anti-flood : plus de 20 rapports / 5 min depuis une IP = abus.
-    if (ip !== 'unknown') {
-      try {
-        const since = new Date(Date.now() - 5 * 60 * 1000).toISOString()
-        const { count } = await supabaseAdmin.from('app_errors').select('id', { count: 'exact', head: true }).gte('created_at', since)
-        // borne globale grossière (le rapport reste rare) ; par sécurité on ne bloque jamais un vrai crash isolé
-        if ((count ?? 0) > 400) { await recordAbuse(ip, 'flood report-error'); return NextResponse.json({ ok: true }) }
-      } catch { /* on ne bloque pas */ }
+    // Anti-flood, compté atomiquement PAR IP (lib/limites) : 60 rapports / 5 min, large
+    // pour une boucle de crash légitime, mais un robot qui martèle finit banni.
+    if (ip !== 'unknown' && !(await consommerLimite(`err:ip:${ip}`, 60, 5 * 60))) {
+      await recordAbuse(ip, 'flood report-error')
+      return NextResponse.json({ ok: true })
     }
 
-    await supabaseAdmin.from('app_errors').insert({
+    const rapport = {
       contexte: clip(b?.contexte, 80),
       message: clip(b?.message, 500),
       stack: clip(b?.stack, 4000),
       url: clip(b?.url, 400),
       user_agent: clip(req.headers.get('user-agent'), 300),
-    })
+    }
+    await supabaseAdmin.from('app_errors').insert(rapport)
+
+    // Notification de l'entreprise (sprint J-1 §15) : un crash côté client est une erreur
+    // critique — les fondateurs le savent tout de suite. Plafonné à 5 emails / heure au
+    // total : la route est publique, elle ne doit pas devenir un canon à emails.
+    if (await consommerLimite('notif:erreur-critique', 5, 60 * 60)) {
+      await notifierEntreprise(
+        `Erreur critique — ${rapport.contexte || 'contexte inconnu'}`,
+        `Un rapport d'erreur vient d'arriver.\n\nContexte : ${rapport.contexte || '—'}\nPage : ${rapport.url || '—'}\nMessage : ${rapport.message || '—'}\n\nDétail dans /controle (journal des erreurs).`,
+      )
+    }
     return NextResponse.json({ ok: true })
   } catch (e) {
     console.error('[report-error]', e)

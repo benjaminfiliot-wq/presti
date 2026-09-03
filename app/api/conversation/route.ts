@@ -4,6 +4,7 @@ import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { consommerLimite } from '@/lib/limites'
 
 // Conversation publique côté prospect : il rouvre SON fil via un jeton secret (uuid
 // non devinable) et peut échanger avec l'artisan ; l'IA répond dans le fil. Aucun
@@ -118,10 +119,10 @@ export async function POST(req: Request) {
 
     // Anti-flood au niveau de la conversation : trop de messages du prospect sur une
     // fenêtre courte → on ralentit (et on journalise, ce qui peut déclencher un auto-ban).
+    // Compteur atomique par conversation (audit v4 §3) : 6 messages / 5 min, exactement,
+    // même en rafale parallèle — l'ancien filtre sur l'historique laissait tout passer.
     const history = await loadHistory(lead.id)
-    const ins = history.filter((m) => m.sens === 'in')
-    const recent = ins.filter((m) => Date.now() - new Date(m.sent_at).getTime() < 5 * 60 * 1000)
-    if (recent.length >= 6) {
+    if (!(await consommerLimite(`conv:${lead.id}`, 6, 5 * 60))) {
       await recordAbuse(ip, 'flood /api/conversation')
       return NextResponse.json({ error: 'Un instant — laissez-moi le temps de vous répondre 🙂' }, { status: 429 })
     }

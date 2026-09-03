@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { stripe } from '@/lib/stripe'
 import { planConf } from '@/lib/plans'
+import { notifierEntreprise } from '@/lib/email'
 import type Stripe from 'stripe'
 
 // Webhook Stripe : active/désactive l'abonnement de l'artisan (plan + crédits).
@@ -40,11 +41,24 @@ export async function POST(req: Request) {
           stripe_subscription_id: typeof s.subscription === 'string' ? s.subscription : s.subscription?.id ?? null,
         }).eq('id', uid)
         console.log('[stripe webhook] abonnement activé', uid, plan)
+        // L'entreprise est prévenue (sprint J-1 §15) : un paiement, c'est un artisan qui a dit oui.
+        const { data: a } = await supabaseAdmin.from('artisans').select('nom, email, metier').eq('id', uid).maybeSingle()
+        await notifierEntreprise(
+          `Paiement — ${a?.nom || uid} passe en ${conf.label}`,
+          `Abonnement activé via Stripe.\n\nArtisan : ${a?.nom || '—'} (${a?.metier || '—'})\nEmail : ${a?.email || '—'}\nFormule : ${conf.label} — ${conf.prixMois} €/mois\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}`,
+        )
       }
     } else if (event.type === 'customer.subscription.deleted') {
       const sub = event.data.object as Stripe.Subscription
       const uid = (sub.metadata?.uid as string) || ''
-      if (uid) await supabaseAdmin.from('artisans').update({ plan: 'gratuit', stripe_subscription_id: null }).eq('id', uid)
+      if (uid) {
+        await supabaseAdmin.from('artisans').update({ plan: 'gratuit', stripe_subscription_id: null }).eq('id', uid)
+        const { data: a } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
+        await notifierEntreprise(
+          `Résiliation — ${a?.nom || uid}`,
+          `Abonnement Stripe résilié, retour à la formule gratuite.\n\nArtisan : ${a?.nom || '—'}\nEmail : ${a?.email || '—'}`,
+        )
+      }
     }
   } catch (e) {
     console.error('[stripe webhook] traitement:', e)

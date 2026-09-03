@@ -5,6 +5,7 @@ export const maxDuration = 30
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { ImapFlow } from 'imapflow'
 import { getUserRevocable } from '@/lib/authArtisan'
+import { canalEntreprise } from '@/lib/canaux'
 
 function json(o: unknown, s = 200) {
   return new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json' } })
@@ -18,13 +19,17 @@ export async function GET(req: Request) {
   const { data: me } = await supabaseAdmin.from('artisans').select('is_founder').eq('id', userData.user.id).maybeSingle()
   if (!me?.is_founder) return json({ error: 'Réservé aux fondateurs' }, 403)
 
-  const user = process.env.IMAP_USER
-  const pass = process.env.IMAP_PASS
+  // Boîte de l'entreprise (sprint J-1 §15) : contact@prestiapp.fr chez OVH, identifiants
+  // dans PRESTI_MAIL_IMAP_USER / PRESTI_MAIL_IMAP_PASS (Vercel). Les anciennes variables
+  // IMAP_* restent acceptées. Sans identifiants : `configured:false`, rien d'affiché, rien ne plante.
+  const entreprise = canalEntreprise()
+  const user = process.env.IMAP_USER || entreprise?.identifiant
+  const pass = process.env.IMAP_PASS || entreprise?.motDePasse
   if (!user || !pass) return json({ configured: false })
 
   const client = new ImapFlow({
-    host: process.env.IMAP_HOST || 'imap.gmail.com',
-    port: Number(process.env.IMAP_PORT || 993),
+    host: process.env.IMAP_HOST || entreprise?.imap_hote || 'imap.gmail.com',
+    port: Number(process.env.IMAP_PORT || entreprise?.imap_port || 993),
     secure: true,
     auth: { user, pass },
     logger: false,

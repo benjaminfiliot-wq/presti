@@ -4,6 +4,7 @@ import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { consommerLimite } from '@/lib/limites'
 import { getPlateformeConfig, iaDoitRepondre, type PlateformeConfig } from '@/lib/plateformeConfig'
 
 // Ton de l'assistant (§A4) → persona passée au moteur de rédaction.
@@ -56,8 +57,9 @@ export async function POST(req: Request) {
     if (!lead) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
 
     const history = await loadHistory(lead.id)
-    const recents = history.filter((m) => m.sens === 'in' && Date.now() - new Date(m.sent_at).getTime() < 5 * 60 * 1000)
-    if (recents.length >= 6) {
+    // Même compteur atomique que /api/conversation (clé partagée : les deux routes
+    // alimentent la même conversation) — 6 messages / 5 min, exactement.
+    if (!(await consommerLimite(`conv:${lead.id}`, 6, 5 * 60))) {
       await recordAbuse(ip, 'flood /api/conversation/stream')
       return NextResponse.json({ error: 'Un instant — laissez-moi le temps de vous répondre 🙂' }, { status: 429 })
     }

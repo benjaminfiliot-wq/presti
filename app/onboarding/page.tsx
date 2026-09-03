@@ -54,6 +54,13 @@ export default function Onboarding() {
       setErr(error.message)
       return
     }
+    // L'entreprise apprend qu'un artisan vient de s'inscrire (sprint J-1 §15). Sans attendre,
+    // sans bloquer : si la notification échoue, l'artisan continue quand même.
+    try {
+      const { data } = await supabase.auth.getSession()
+      const jeton = data.session?.access_token
+      if (jeton) void fetch('/api/account/inscription', { method: 'POST', headers: { Authorization: `Bearer ${jeton}` } }).catch(() => {})
+    } catch { /* jamais bloquant */ }
     router.push('/outils')
   }
 

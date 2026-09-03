@@ -1,6 +1,19 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+// Les surfaces de l'artisan (site, plateforme) sont servies sur DES ADRESSES SANS « PRESTI »
+// (v5, demande de Benj). Trois hôtes possibles, résolus ici vers les routes internes :
+//
+//   <slug>.<domaine-neutre>      /            → /site/<slug>
+//                                /demande     → /p/<slug>
+//                                /infos-legales → /site/<slug>/infos-legales
+//   <domaine-neutre>             /<slug>, /<slug>/demande, /<slug>/infos-legales  (sans DNS joker)
+//   <domaine perso de l'artisan> /, /demande, /infos-legales                       (offre Signature)
+//
+// prestiapp.fr, *.vercel.app et localhost ne sont JAMAIS réécrits : ce sont les hôtes maison.
+
+const DOMAINE_NEUTRE = (process.env.NEXT_PUBLIC_DOMAINE_NEUTRE || '').trim().toLowerCase() || null
+
 // Hôtes « maison » (jamais un domaine perso d'artisan) → aucune réécriture multi-tenant.
 function isPrestiHost(host: string): boolean {
   const h = host.replace(/:\d+$/, '')
@@ -9,7 +22,7 @@ function isPrestiHost(host: string): boolean {
 }
 
 // Résout le slug d'un domaine perso (offre Signature) via Supabase REST. Ne s'exécute que pour
-// un hôte custom sur la racine « / » (trafic rare) → coût négligeable sur le chemin chaud.
+// un hôte custom (trafic rare) → coût négligeable sur le chemin chaud.
 async function slugForDomain(host: string): Promise<string | null> {
   const base = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -24,21 +37,58 @@ async function slugForDomain(host: string): Promise<string | null> {
   } catch { return null }
 }
 
+// Un slug d'artisan : lettres, chiffres, tirets. Jamais un point (fichiers), jamais un chemin technique.
+const SLUG_OK = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const CHEMINS_TECHNIQUES = new Set(['api', '_next', 'login', 'signup', 'onboarding', 'cgu', 'faq', 'mentions-legales', 'confidentialite', 'aide', 'site', 'p', 'controle'])
+
+/** Traduit un chemin « à la marque » vers la route interne. `null` si ce n'est pas une surface artisan. */
+function cibleInterne(slug: string, chemin: string): string | null {
+  if (chemin === '/' || chemin === '') return `/site/${slug}`
+  if (chemin === '/demande') return `/p/${slug}`
+  if (chemin === '/infos-legales') return `/site/${slug}/infos-legales`
+  return null
+}
+
 export async function middleware(req: NextRequest) {
   const host = (req.headers.get('host') || '').toLowerCase()
+  const bare = host.replace(/:\d+$/, '')
+  const chemin = req.nextUrl.pathname
 
   // Sous-domaine QG (poste de contrôle) — inchangé.
-  if (host.startsWith('qg.') && req.nextUrl.pathname === '/') {
+  if (bare.startsWith('qg.') && chemin === '/') {
     const url = req.nextUrl.clone(); url.pathname = '/controle'
     return NextResponse.rewrite(url)
   }
 
-  // Domaine perso : la racine du domaine de l'artisan sert son site vitrine.
-  if (req.nextUrl.pathname === '/' && !isPrestiHost(host)) {
-    const bare = host.replace(/:\d+$/, '')
+  if (isPrestiHost(bare)) return NextResponse.next()
+
+  // Domaine neutre de Presti, en sous-domaine : <slug>.<neutre>
+  if (DOMAINE_NEUTRE && bare.endsWith(`.${DOMAINE_NEUTRE}`)) {
+    const slug = bare.slice(0, -(DOMAINE_NEUTRE.length + 1))
+    if (slug === 'www') {
+      // www.<neutre>/<slug>… se comporte comme <neutre>/<slug>…
+    } else if (SLUG_OK.test(slug)) {
+      const cible = cibleInterne(slug, chemin)
+      if (cible) { const url = req.nextUrl.clone(); url.pathname = cible; return NextResponse.rewrite(url) }
+      return NextResponse.next()
+    }
+  }
+
+  // Domaine neutre en chemin : <neutre>/<slug>[/demande|/infos-legales]
+  if (DOMAINE_NEUTRE && (bare === DOMAINE_NEUTRE || bare === `www.${DOMAINE_NEUTRE}`)) {
+    const [, premier = '', ...reste] = chemin.split('/')
+    if (premier && SLUG_OK.test(premier) && !CHEMINS_TECHNIQUES.has(premier)) {
+      const cible = cibleInterne(premier, '/' + reste.join('/'))
+      if (cible) { const url = req.nextUrl.clone(); url.pathname = cible; return NextResponse.rewrite(url) }
+    }
+    return NextResponse.next()
+  }
+
+  // Domaine perso : la racine sert le site, /demande la plateforme, /infos-legales les mentions.
+  if (chemin === '/' || chemin === '/demande' || chemin === '/infos-legales') {
     const slug = await slugForDomain(bare) || (bare.startsWith('www.') ? await slugForDomain(bare.slice(4)) : null)
     if (slug) {
-      const url = req.nextUrl.clone(); url.pathname = `/site/${slug}`
+      const url = req.nextUrl.clone(); url.pathname = cibleInterne(slug, chemin) as string
       return NextResponse.rewrite(url)
     }
   }
@@ -46,4 +96,6 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next()
 }
 
-export const config = { matcher: ['/'] }
+// On ne passe PAS par le middleware pour les fichiers statiques ni l'API : le matcher exclut
+// tout chemin contenant un point (favicon.ico, robots.txt, images) et les routes techniques.
+export const config = { matcher: ['/((?!api|_next|.*\\..*).*)'] }

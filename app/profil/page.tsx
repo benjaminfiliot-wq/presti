@@ -10,6 +10,8 @@ import LogoUpload from '@/app/LogoUpload'
 import PortfolioUpload, { type Realisation } from '@/app/PortfolioUpload'
 import AvantApresUpload, { type AvantApres } from '@/app/AvantApresUpload'
 import { siteMaxForPlan } from '@/lib/plans'
+import { afficher, urlPlateforme, urlSite } from '@/lib/urls'
+import AdresseEditor from '@/app/AdresseEditor'
 import { defaultLayout, SECTION_MIN_TIER, SECTION_ORDER, type SectionId } from '@/lib/siteLayout'
 
 // Libellés artisan des sections (composeur de page).
@@ -141,7 +143,7 @@ export default function ProfilPage() {
   function setMot(i: number, v: string) { setSiteContenu((prev) => { const base = prev ?? CONTENU_VIDE; const m = [...(base.mots_cles ?? [])]; while (m.length <= i) m.push(''); m[i] = v; return { ...base, mots_cles: m } }) }
   function toggleSection(id: SectionId) { if (FIXED.includes(id)) return; setLayout((prev) => prev.map((s) => (s.id === id ? { ...s, on: !s.on } : s))) }
   function moveSection(i: number, dir: -1 | 1) { setLayout((prev) => { const j = i + dir; if (j < 0 || j >= prev.length) return prev; const n = [...prev]; const t = n[i]; n[i] = n[j]; n[j] = t; return n }) }
-  async function copierLien() { try { await navigator.clipboard.writeText(`https://prestiapp.fr/site/${slug}`); setCopied(true); setTimeout(() => setCopied(false), 1800) } catch { setMsg({ type: 'err', text: 'Copie impossible — sélectionnez le lien à la main.' }) } }
+  async function copierLien() { try { await navigator.clipboard.writeText(urlSite(adresse)); setCopied(true); setTimeout(() => setCopied(false), 1800) } catch { setMsg({ type: 'err', text: 'Copie impossible — sélectionnez le lien à la main.' }) } }
 
   async function authToken() { const { data } = await supabase.auth.getSession(); return data.session?.access_token }
   async function refreshDomaine() {
@@ -274,11 +276,13 @@ export default function ProfilPage() {
     setTimeout(() => setMsg(null), 5000)
   }
 
-  const lien = slug ? `prestiapp.fr/p/${slug}` : ''
+  // L'adresse publique — jamais « presti » dès qu'un domaine neutre ou perso existe (lib/urls).
+  const adresse = { slug, domaine: domSaved, domaine_verifie: domStatus?.served ?? false }
+  const lien = slug ? afficher(urlPlateforme(adresse)) : ''
 
   const actions = (
     <>
-      {slug && <a className="psh-btn ghost" href={`/p/${slug}`} target="_blank" rel="noopener">Voir ma page ↗</a>}
+      {slug && <a className="psh-btn ghost" href={urlPlateforme(adresse)} target="_blank" rel="noopener">Voir ma page ↗</a>}
       <button className="psh-btn primary" disabled={saving} onClick={save}>{saving ? 'Enregistrement…' : 'Enregistrer'}</button>
     </>
   )
@@ -509,14 +513,17 @@ export default function ProfilPage() {
             <input type="checkbox" checked={siteActive} onChange={(e) => setSiteActive(e.target.checked)} />
             <span>Mon site est <b>{siteActive ? 'publié' : 'hors ligne'}</b> {siteActive ? '— accessible à tous' : '— visible de vous seul'}</span>
           </label>
+          {slug ? (
+            <AdresseEditor slug={slug} prefixe={afficher(urlSite(adresse)).slice(0, -slug.length)} jeton={authToken} onChange={setSlug} />
+          ) : null}
           {slug && siteActive && (
             <div className="site-publish">
               <div className="site-publish-share">
                 <div className="prof-link" style={{ margin: 0, flex: '1 1 240px' }}>
-                  <span>prestiapp.fr/site/{slug}</span>
+                  <span>{afficher(urlSite(adresse))}</span>
                   <button type="button" className="btn btn--ghost" style={{ width: 'auto' }} onClick={copierLien}>{copied ? 'Copié ✅' : 'Copier le lien'}</button>
                 </div>
-                <a className="btn btn--ghost" style={{ width: 'auto' }} href={`/site/${slug}`} target="_blank" rel="noopener">Voir en grand ↗</a>
+                <a className="btn btn--ghost" style={{ width: 'auto' }} href={urlSite(adresse)} target="_blank" rel="noopener">Voir en grand ↗</a>
               </div>
               <div className="site-preview">
                 <div className="site-preview-bar">

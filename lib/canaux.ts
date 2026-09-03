@@ -15,6 +15,26 @@ export function devineFournisseur(adresse: string) {
   return f ? { imap_hote: f.imap, smtp_hote: f.smtp, fournisseur: f.nom } : null
 }
 
+// ── Boîte de l'ENTREPRISE (sprint J-1 §15) : contact@prestiapp.fr, hébergée chez OVH.
+// Les identifiants ne vivent QUE dans les variables d'environnement Vercel
+// (PRESTI_MAIL_IMAP_USER / PRESTI_MAIL_IMAP_PASS) — jamais dans le dépôt. Tant qu'elles
+// n'existent pas, cette fonction renvoie null et tout ce qui en dépend se tait : rien
+// d'affiché, rien qui plante. `scripts/canal-entreprise.mjs` s'en sert pour enregistrer la
+// boîte comme canal (chiffré) du compte fondateur.
+export const ENTREPRISE_MAIL = {
+  adresse: 'contact@prestiapp.fr',
+  imap_hote: 'ssl0.ovh.net', imap_port: 993,
+  smtp_hote: 'ssl0.ovh.net', smtp_port: 465,
+  libelle: 'Presti — contact@prestiapp.fr',
+} as const
+
+export function canalEntreprise(): (typeof ENTREPRISE_MAIL & { identifiant: string; motDePasse: string }) | null {
+  const identifiant = (process.env.PRESTI_MAIL_IMAP_USER || '').trim()
+  const motDePasse = process.env.PRESTI_MAIL_IMAP_PASS || ''
+  if (!identifiant || !motDePasse) return null
+  return { ...ENTREPRISE_MAIL, identifiant, motDePasse }
+}
+
 /** Teste réellement la connexion IMAP. Messages d'erreur en français, actionnables. */
 export async function testerImap(hote: string, port: number, user: string, pass: string): Promise<{ ok: true } | { ok: false; erreur: string }> {
   try {

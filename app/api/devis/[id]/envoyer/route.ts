@@ -9,6 +9,7 @@ import { buildPdfData } from '@/lib/devisPdfData'
 import { renderPdfToBuffer } from '@/lib/renderPdf'
 import { sendEmail } from '@/lib/email'
 import { getUserRevocable } from '@/lib/authArtisan'
+import { OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, versArtisanLegal } from '@/lib/legalArtisan'
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -25,6 +26,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const { data: lignes } = await supabaseAdmin.from('devis_lignes').select('*').eq('devis_id', id).order('ordre')
     const { data: artisan } = await supabaseAdmin.from('artisans').select('*').eq('id', uid).maybeSingle()
+
+    // Mentions obligatoires BLOQUANTES (audit v4 §3) : un devis sans SIRET ni assurance
+    // décennale ne SORT pas — jusqu'à 3 000 € d'amende pour l'artisan. Le brouillon reste
+    // intact : on refuse l'émission, pas le travail. HTTP 422 + la liste + où remplir.
+    const manquantes = mentionsManquantesEmission(versArtisanLegal(artisan))
+    if (manquantes.length) {
+      return NextResponse.json({
+        error: messageMentionsBloquantes(manquantes, 'ce devis'),
+        code: 'mentions_manquantes', manquantes, lien: OU_REMPLIR.lien,
+      }, { status: 422 })
+    }
 
     const pdfData = buildPdfData(devis, lignes ?? [], artisan ?? {})
     const buffer = await renderPdfToBuffer(React.createElement(DevisPDF, { d: pdfData }))

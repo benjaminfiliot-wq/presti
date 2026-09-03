@@ -4,6 +4,7 @@ import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 import { empreinte } from '@/lib/facturation'
+import { COLONNES_LEGALES, OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, versArtisanLegal } from '@/lib/legalArtisan'
 
 type LigneIn = { designation?: string; quantite?: number; unite?: string; prix_unitaire_ht?: number; tva_taux?: number }
 
@@ -34,7 +35,18 @@ export async function POST(req: Request) {
     if (lignes.length > 200) return NextResponse.json({ error: 'Trop de lignes (200 max).' }, { status: 400 })
 
     // Franchise de TVA (défaut auto-entrepreneur) ⇒ 0 % ; sinon taux conservé (0 réel préservé).
-    const { data: art } = await supabaseAdmin.from('artisans').select('tva_regime').eq('id', uid).maybeSingle()
+    const { data: art } = await supabaseAdmin.from('artisans').select(`tva_regime, ${COLONNES_LEGALES}`).eq('id', uid).maybeSingle()
+
+    // Mentions obligatoires BLOQUANTES (audit v4 §3) : une facture est émise ET scellée à
+    // la création — il n'y a pas de brouillon à préserver ici, donc on refuse AVANT de
+    // consommer un numéro. 15 € par mention manquante, jusqu'à 3 000 € sans l'assurance.
+    const manquantes = mentionsManquantesEmission(versArtisanLegal(art as Record<string, unknown> | null))
+    if (manquantes.length) {
+      return NextResponse.json({
+        error: messageMentionsBloquantes(manquantes, 'cette facture'),
+        code: 'mentions_manquantes', manquantes, lien: OU_REMPLIR.lien,
+      }, { status: 422 })
+    }
     const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
     const eff = lignes.map((l) => normalizeLigne(l, franchise))
     const totals = computeTotals(eff, Number(src.remise_pct) || 0)

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { siteMaxForPlan } from '@/lib/plans'
+import { messageVerrou, peut } from '@/lib/plans'
 import { addDomain, getStatus, removeDomain, normalizeDomain } from '@/lib/vercelDomains'
 import { getUserRevocable } from '@/lib/authArtisan'
 
@@ -30,8 +30,8 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const r = await auth(req)
   if ('error' in r) return NextResponse.json({ error: r.error }, { status: r.status })
-  if (siteMaxForPlan(r.artisan.plan) < 3) {
-    return NextResponse.json({ error: 'Le domaine personnalisé est inclus dans l’offre Signature.' }, { status: 403 })
+  if (!peut(r.artisan.plan, 'site.domaine_perso')) {
+    return NextResponse.json({ error: `Le nom de domaine personnalisé n’est pas dans votre offre. ${messageVerrou('site.domaine_perso')}` }, { status: 403 })
   }
   const body = await req.json().catch(() => null)
   const domaine = normalizeDomain(typeof body?.domaine === 'string' ? body.domaine : '')

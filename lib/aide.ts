@@ -1,0 +1,968 @@
+// Contenu d'aide de Presti — SOURCE UNIQUE pour le panneau « C'est quoi ? » (B1), les
+// info-bulles ⓘ (B2) et le centre d'aide /aide (B4).
+//
+// Règle d'exactitude : chaque phrase décrit un comportement VU dans le code. Le
+// commentaire `// source:` au-dessus de chaque article/info-bulle donne le fichier et
+// la ligne vérifiés au moment de la rédaction — un changement de comportement doit
+// s'accompagner d'une mise à jour ici, sinon l'aide ment.
+//
+// Vocabulaire : pas de jargon. « votre espace de conversation », pas « la plateforme » ;
+// « le modèle », pas « Haiku » ou « Opus » ; « votre site », pas « le site tier 3 ».
+// Vouvoiement partout. Aucune promesse chiffrée non mesurée (pas de « en quelques
+// minutes », pas de pourcentages inventés).
+
+import { CREDIT_COST } from './plans'
+
+export type Article = {
+  id: string
+  page: string
+  titre: string
+  aQuoiCaSert: string
+  commentOnSenSert: string[]
+  pourVosClients: string
+  credits: string
+  reglagesLies: string[]
+  disponibleAvec: 'essentiel' | 'studio' | 'signature'
+}
+
+export type InfoBulle = {
+  cle: string
+  page: string
+  label: string
+  explication: string
+  exemple: string
+}
+
+// Les modèles Standard et Pro coûtent le même prix en crédits ; seul Expert coûte plus.
+// Dérivé de CREDIT_COST (lib/plans.ts) pour ne jamais désynchroniser l'aide du vrai tarif.
+const creditsGeneration = (): string => {
+  const { standard, pro, expert } = CREDIT_COST
+  const base = standard === pro ? `${standard} crédit` : `${standard} à ${pro} crédits`
+  return `${base} (modèle Standard ou Pro), ${expert} crédits (modèle Expert)`
+}
+
+export const ARTICLES: Article[] = [
+  // source: app/outils/page.tsx:56-88 ; app/api/tools/reponse/route.ts:1-40 (aucun verrou de plan)
+  {
+    id: 'outils',
+    page: '/outils',
+    titre: 'Rédiger une réponse à coller à un client',
+    aQuoiCaSert:
+      "Vous collez la demande d'un client, Presti rédige une réponse dans votre ton. " +
+      'La réponse reste modifiable avant que vous la copiiez. Rien ne part tout seul depuis cet écran : ' +
+      "c'est vous qui la collez où vous voulez (SMS, email, Le Bon Coin…).",
+    commentOnSenSert: [
+      "Collez la demande de votre client dans le champ prévu.",
+      'Indiquez son nom si vous le connaissez (facultatif).',
+      'Choisissez le modèle à utiliser.',
+      'Cliquez « Générer la réponse ».',
+      'Relisez, modifiez si besoin, puis cliquez « Copier la réponse ».',
+    ],
+    pourVosClients:
+      "Le client ne reçoit rien automatiquement : la réponse générée ici est à copier-coller vous-même où vous le souhaitez.",
+    credits: creditsGeneration(),
+    reglagesLies: ['/abonnement'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/dashboard/page.tsx:84-180 (KPI, lien de contact, liste des demandes, changement de statut)
+  {
+    id: 'dashboard',
+    page: '/dashboard',
+    titre: 'Votre tableau de bord : demandes reçues et lien de contact',
+    aQuoiCaSert:
+      'Cet écran résume votre activité : demandes reçues, celles à traiter, chantiers gagnés et réponses envoyées ' +
+      "automatiquement par l'assistant. Il affiche aussi votre lien de contact à partager.",
+    commentOnSenSert: [
+      'Copiez votre lien de contact et partagez-le (Le Bon Coin, Google, Facebook, signature mail…).',
+      'Repérez les demandes marquées « à répondre ».',
+      'Cliquez « Voir le détail » pour lire le message du client et la réponse envoyée.',
+      'Changez le statut (Nouveau, Répondu, Gagné, Perdu) au fil du suivi.',
+    ],
+    pourVosClients:
+      'Chaque client qui utilise votre lien crée ici une demande ; toute réponse automatique qui lui a été envoyée est visible dans le détail.',
+    credits: 'Aucun — cet écran ne fait que consulter et changer un statut.',
+    reglagesLies: ['/plateforme', '/profil'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/plateforme/page.tsx:8-223 (réglages de l'assistant, appliqués côté serveur)
+  {
+    id: 'plateforme',
+    page: '/plateforme',
+    titre: "Ma plateforme : comment l'assistant se comporte avec vos clients",
+    aQuoiCaSert:
+      "C'est ici que vous réglez le comportement de l'assistant sur votre espace de conversation : mode de réponse, " +
+      'modèle, ton, horaires, devis et facture automatiques, mots qui déclenchent une alerte. Tout ce que vous réglez ici ' +
+      'est appliqué côté serveur — ce que vous voyez est ce qui se passe réellement.',
+    commentOnSenSert: [
+      'Choisissez le mode de réponse : Automatique, Assistée (vous validez) ou Manuelle.',
+      'Choisissez le modèle et le ton utilisés par l’assistant.',
+      "Réglez les horaires : 24h/24 ou seulement sur une plage horaire.",
+      "Réglez le devis et la facture automatiques, ainsi que les mots qui coupent l'assistant et vous alertent.",
+      'Cliquez « Enregistrer ».',
+    ],
+    pourVosClients:
+      "En mode Automatique, le client reçoit une réponse immédiate rédigée par l'assistant. En Assistée, rien ne part " +
+      'sans votre validation. En Manuelle, vous répondez toujours vous-même.',
+    credits: `Chaque réponse ou devis généré automatiquement consomme un crédit : ${creditsGeneration()}.`,
+    reglagesLies: ['/messages', '/profil', '/abonnement'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/messages/page.tsx:30-288 (boîte de réception unifiée, suggestion IA, devis auto)
+  {
+    id: 'messages',
+    page: '/messages',
+    titre: 'Messages : votre boîte de réception unique',
+    aQuoiCaSert:
+      "Toutes vos conversations arrivent ici — celles de votre espace de conversation et celles des boîtes email que " +
+      "vous avez connectées. Vous pouvez répondre vous-même, demander à l'assistant de proposer une réponse (rien " +
+      "n'est envoyé sans vous), ou générer un devis chiffré directement depuis la conversation.",
+    commentOnSenSert: [
+      'Ouvrez une conversation dans la liste.',
+      "Lisez la demande du client et les photos jointes s'il y en a.",
+      "Cliquez « Proposer une réponse » pour un brouillon rédigé par l'assistant, ou écrivez le vôtre.",
+      'Relisez, puis cliquez « Envoyer ».',
+      'Cliquez « Devis auto » pour générer un devis chiffré à partir de toute la conversation.',
+    ],
+    pourVosClients:
+      "Rien ne part automatiquement depuis cet écran : chaque envoi (réponse, devis) est un geste que vous faites vous-même.",
+    credits: `« Proposer une réponse » et « Devis auto » consomment chacun un crédit : ${creditsGeneration()}, selon le modèle réglé dans Ma plateforme.`,
+    reglagesLies: ['/messages/canaux', '/plateforme'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/messages/canaux/page.tsx:1-171 ; app/api/canaux/route.ts:1-40 (chiffrement + test avant enregistrement)
+  {
+    id: 'canaux',
+    page: '/messages/canaux',
+    titre: 'Canaux : connectez votre boîte email',
+    aQuoiCaSert:
+      'Reliez une adresse email (OVH, Gmail, Orange, Free…) pour que les demandes qui y arrivent se rangent aussi ' +
+      "dans votre boîte de réception Presti. Votre mot de passe est chiffré avant d'être enregistré, et la connexion " +
+      'est testée avant validation. Les boîtes connectées sont relevées automatiquement chaque matin, et à chaque ' +
+      'ouverture de vos messages.',
+    commentOnSenSert: [
+      "Saisissez votre adresse email et son mot de passe (un « mot de passe d'application » pour Gmail ou Outlook).",
+      "Si votre hébergeur n'est pas reconnu, ouvrez « Mon serveur n'est pas reconnu » et indiquez le serveur IMAP et son port.",
+      'Cliquez « Connecter ma boîte ».',
+      'Au besoin, cliquez « Relever maintenant » pour forcer une relève immédiate.',
+    ],
+    pourVosClients: "Rien de visible pour eux — c'est un canal de réception supplémentaire pour vous.",
+    credits: 'Aucun',
+    reglagesLies: ['/messages'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/devis/page.tsx:19-93 (liste, statuts, suppression)
+  {
+    id: 'devis',
+    page: '/devis',
+    titre: 'Devis : tous vos documents au même endroit',
+    aQuoiCaSert:
+      'Cet écran liste tous vos devis avec leur statut (Brouillon, Envoyé, Accepté, Refusé, Expiré) et leur montant TTC. ' +
+      "Vous pouvez ouvrir un devis pour le modifier, ou le supprimer s'il n'a jamais été envoyé.",
+    commentOnSenSert: [
+      'Cliquez « Nouveau devis ».',
+      "Décrivez le chantier pour que l'IA propose un chiffrage.",
+      'Ajustez les lignes, enregistrez.',
+      "Envoyez-le au client ou téléchargez le PDF.",
+    ],
+    pourVosClients:
+      "Rien ne leur arrive tant que vous n'avez pas cliqué « Envoyer au client » depuis l'éditeur d'un devis.",
+    credits: `La génération IA du chiffrage consomme un crédit — voir l'article « Éditeur de devis ».`,
+    reglagesLies: ['/devis/nouveau', '/tarifs'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/devis/[id]/page.tsx:20-432 (chiffrage IA, aperçu live, envoi, création de facture)
+  {
+    id: 'devis.editeur',
+    page: '/devis/[id]',
+    titre: 'Éditeur de devis : chiffrer, personnaliser, envoyer',
+    aQuoiCaSert:
+      "Décrivez le chantier : l'IA propose des lignes chiffrées, en s'appuyant sur votre bibliothèque de tarifs quand " +
+      "elle existe. Vous ajustez chaque ligne, réglez la remise et l'acompte, et l'aperçu à droite montre le PDF " +
+      'exact qui sera envoyé, en direct.',
+    commentOnSenSert: [
+      "Renseignez le client, l'adresse du chantier et l'objet.",
+      "Décrivez le chantier et cliquez « Chiffrer avec l'IA ».",
+      'Ajustez les lignes et les paramètres (validité, remise, acompte).',
+      'Cliquez « Enregistrer ».',
+      'Téléchargez le PDF ou cliquez « Envoyer au client ».',
+      'Une fois le devis accepté, cliquez « Créer la facture » : elle reprend les lignes.',
+    ],
+    pourVosClients:
+      "Le client ne reçoit rien tant que vous n'avez pas cliqué « Envoyer au client ». Sur le PDF, il doit apposer la " +
+      'mention manuscrite « Devis reçu avant l’exécution des travaux » avant de signer.',
+    credits: `« Chiffrer avec l'IA » consomme un crédit : ${creditsGeneration()}.`,
+    reglagesLies: ['/tarifs', '/parametres?onglet=legal'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/factures/page.tsx:17-108 (émise/payée/annulée, jamais supprimable) ; app/api/factures/route.ts:1-30
+  {
+    id: 'factures',
+    page: '/factures',
+    titre: 'Factures : émises, payées, jamais supprimées',
+    aQuoiCaSert:
+      'Une facture se crée depuis un devis, avec le bouton « Créer la facture » — jamais depuis zéro sur cet écran. ' +
+      'Elle liste vos factures avec leur statut. Une facture ne se supprime jamais : elle peut seulement être ' +
+      'annulée, la loi impose de la conserver.',
+    commentOnSenSert: [
+      'Ouvrez un devis accepté et cliquez « Créer la facture ».',
+      'Revenez ici pour voir la liste de vos factures.',
+      'Cliquez sur une ligne ou « PDF » pour ouvrir le document.',
+      'Cliquez « Marquer payée » une fois réglée.',
+      'Cliquez « Annuler » en cas d’erreur — jamais « Supprimer », l’action n’existe pas.',
+    ],
+    pourVosClients: 'Le PDF de facture reprend automatiquement les lignes du devis accepté.',
+    credits: 'Aucun — la facture reprend les lignes du devis, sans nouvel appel à l’IA.',
+    reglagesLies: ['/devis', '/parametres?onglet=legal'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/inventaire/page.tsx:9-213 ; app/api/inventaire/route.ts:11-26 (réservé Studio/Signature)
+  {
+    id: 'inventaire',
+    page: '/inventaire',
+    titre: 'Inventaire : votre stock à l’atelier et dans le camion',
+    aQuoiCaSert:
+      "L'écran s'ouvre sur ce qui manque, pas sur la liste complète : c'est la seule chose qu'un artisan vient " +
+      'vraiment vérifier avant de partir sur un chantier. Vous suivez votre stock par lieu (atelier, camion) et ' +
+      'scannez un code-barres pour ajouter un article ou enregistrer une réception.',
+    commentOnSenSert: [
+      "Ajoutez un article : nom, unité, seuil d'alerte, code-barres facultatif.",
+      'Scannez un code-barres connu à la livraison : une unité est ajoutée automatiquement.',
+      'Utilisez + et − pour un mouvement rapide, ou « Compter » pour saisir une quantité réelle.',
+      'Surveillez le bloc « À racheter » avant de partir sur un chantier.',
+    ],
+    pourVosClients: 'Rien de visible pour eux — c’est un outil interne à votre activité.',
+    credits: 'Aucun',
+    reglagesLies: ['/abonnement'],
+    disponibleAvec: 'studio',
+  },
+
+  // source: app/profil/page.tsx:61-620 (page de contact, apparence, prestations, réalisations, site 3 niveaux)
+  {
+    id: 'profil',
+    page: '/profil',
+    titre: 'Ma page : votre plateforme de contact et votre site',
+    aQuoiCaSert:
+      'Vous réglez ici votre présentation, l’apparence (thème et couleur, appliqués à votre espace de conversation ' +
+      'ET à votre site), vos prestations et vos réalisations, ainsi que votre site vitrine. L’IA peut rédiger les ' +
+      'textes du site à partir de votre profil ; chaque mot reste ensuite modifiable par vous.',
+    commentOnSenSert: [
+      'Complétez votre présentation (bio, zone d’intervention, disponibilités) et vos prestations.',
+      'Choisissez un thème et une couleur d’accent.',
+      'Ajoutez vos réalisations en photo.',
+      'Cliquez « Rédiger mon site avec l’IA », puis relisez et modifiez chaque texte proposé.',
+      'Choisissez le niveau de votre site et publiez-le.',
+      'Cliquez « Enregistrer ».',
+    ],
+    pourVosClients:
+      'Votre page de contact et votre site sont ce que vos clients voient et utilisent pour vous écrire. Si vous la ' +
+      'désactivez, ils voient un message poli au lieu du formulaire.',
+    credits:
+      "Rédiger ou régénérer le site avec l'IA consomme 1 crédit (modèle Pro) — sauf la toute première génération, qui est offerte.",
+    reglagesLies: ['/plateforme', '/parametres?onglet=legal', '/abonnement'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/parametres/page.tsx:156-233 (onglet Entreprise & légal) ; lib/legalArtisan.ts (mentions manquantes)
+  {
+    id: 'parametres.legal',
+    page: '/parametres?onglet=legal',
+    titre: 'Entreprise & légal : les informations obligatoires sur vos documents',
+    aQuoiCaSert:
+      'Ces informations (SIRET, forme juridique, adresse, régime de TVA, assurance décennale, médiateur de la ' +
+      'consommation) apparaissent sur vos devis, vos factures et vos mentions légales. Presti vous indique ' +
+      'précisément ce qu’il vous manque.',
+    commentOnSenSert: [
+      'Renseignez le SIRET et la forme juridique.',
+      "Renseignez l'adresse complète de l'entreprise.",
+      "Cochez si vous êtes assujetti à la TVA — sinon la mention de franchise s'affiche automatiquement sur vos documents.",
+      'Renseignez votre assurance décennale (obligatoire sur les devis du bâtiment).',
+      'Renseignez votre médiateur de la consommation (obligatoire dès que vous travaillez pour des particuliers).',
+      'Cliquez « Enregistrer ».',
+    ],
+    pourVosClients:
+      'Un devis ou une facture avec des mentions manquantes affiche « non communiqué » et n’est pas conforme.',
+    credits: 'Aucun',
+    reglagesLies: ['/devis/nouveau', '/factures'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/parametres/page.tsx:236-248 (onglet Sécurité) ; app/api/securite/sessions/route.ts (révocation réelle)
+  {
+    id: 'parametres.securite',
+    page: '/parametres?onglet=securite',
+    titre: 'Sécurité : mot de passe et sessions',
+    aQuoiCaSert:
+      'Changez votre mot de passe, stocké haché — personne, pas même Presti, ne peut le lire. Vous pouvez aussi ' +
+      'fermer toutes vos autres sessions ouvertes : elles sont réellement invalidées côté serveur, pas seulement ' +
+      'oubliées sur l’appareil.',
+    commentOnSenSert: [
+      'Saisissez un nouveau mot de passe (8 caractères minimum).',
+      'Cliquez « Changer mon mot de passe ».',
+      'En cas de doute sur un appareil utilisé, cliquez « Fermer toutes mes sessions ».',
+      'Reconnectez-vous : vous êtes désormais le seul connecté.',
+    ],
+    pourVosClients: 'Aucun effet visible pour eux.',
+    credits: 'Aucun',
+    reglagesLies: [],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/parametres/page.tsx:250-261 (onglet Données & confidentialité) ; app/api/donnees/export/route.ts
+  {
+    id: 'parametres.donnees',
+    page: '/parametres?onglet=donnees',
+    titre: 'Données & confidentialité : exporter et supprimer',
+    aQuoiCaSert:
+      'Exportez toutes vos données en un seul fichier (profil, conversations, messages, devis, factures, clients), ' +
+      'ou supprimez une partie (site, plateforme, conversation) séparément, sans toucher au reste de votre compte. ' +
+      'Les devis envoyés et factures émises ne sont jamais supprimables : la loi l’impose.',
+    commentOnSenSert: [
+      'Cliquez « Exporter toutes mes données » pour récupérer le fichier.',
+      'Pour supprimer une partie, cliquez « Ouvrir les suppressions ».',
+      'Chaque suppression vous montre d’abord ce qui disparaît et ce qui est conservé, avant de confirmer.',
+    ],
+    pourVosClients: 'Aucun effet, sauf si vous supprimez la plateforme ou le site : ils deviennent alors inaccessibles pour eux.',
+    credits: 'Aucun',
+    reglagesLies: ['/profil#donnees'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/abonnement/page.tsx:15-71 (formules, crédits, Stripe)
+  {
+    id: 'abonnement',
+    page: '/abonnement',
+    titre: 'Abonnement : votre formule et vos crédits',
+    aQuoiCaSert:
+      'Chaque formule vous donne un nombre de crédits chaque mois (1 crédit = 1 génération IA, le modèle Expert en ' +
+      'consomme plus), rechargés à chaque renouvellement, sans engagement. Vous comparez ici les formules et changez ' +
+      'à tout moment.',
+    commentOnSenSert: [
+      'Comparez les formules et ce qu’elles incluent.',
+      'Cliquez « S’abonner à … ».',
+      'Réglez le paiement sur la page Stripe sécurisée.',
+      'Vous êtes redirigé vers votre tableau de bord.',
+    ],
+    pourVosClients: 'Aucun effet direct — cela détermine ce que vous pouvez faire pour eux (modèles, inventaire, niveau de site).',
+    credits: 'Aucun — cette page sert à obtenir des crédits, elle n’en consomme pas.',
+    reglagesLies: ['/tarifs', '/plateforme'],
+    disponibleAvec: 'essentiel',
+  },
+
+  // source: app/tarifs/page.tsx:8-219 ; app/api/tarifs/route.ts:1-30 (aucun verrou de plan)
+  {
+    id: 'tarifs',
+    page: '/tarifs',
+    titre: 'Mes tarifs : les prix que vous payez vraiment',
+    aQuoiCaSert:
+      'Sans vos tarifs, l’IA chiffre vos devis sur des moyennes nationales : plausible, mais faux. Chaque prix que ' +
+      'vous ajoutez ici est repris tel quel dans vos devis, avec sa provenance.',
+    commentOnSenSert: [
+      'Ajoutez un prix à la main (désignation, prix HT, unité, fournisseur).',
+      'Ou importez un fichier CSV — Presti reconnaît les colonnes tout seul.',
+      'Vérifiez l’aperçu (tarifs reconnus, colonnes détectées) avant d’enregistrer.',
+      'Confirmez l’import.',
+    ],
+    pourVosClients: 'Leurs devis reflètent vos vrais prix fournisseurs, pas une moyenne nationale.',
+    credits: 'Aucun',
+    reglagesLies: ['/devis/nouveau'],
+    disponibleAvec: 'essentiel',
+  },
+]
+
+export const INFOBULLES: InfoBulle[] = [
+  // ── /outils ──────────────────────────────────────────────────────────────
+  // source: app/outils/page.tsx:64
+  {
+    cle: 'outils.demande',
+    page: '/outils',
+    label: 'La demande de votre client',
+    explication: 'Collez ici le message tel que le client vous l’a envoyé — Presti s’appuie dessus pour rédiger la réponse.',
+    exemple: 'Vous collez « Bonjour, j’ai une fuite sous mon évier, pouvez-vous passer cette semaine ? » et cliquez Générer.',
+  },
+  // source: app/outils/page.tsx:66
+  {
+    cle: 'outils.nom_client',
+    page: '/outils',
+    label: 'Nom du client (facultatif)',
+    explication: 'Donné à l’assistant pour personnaliser la réponse, par exemple pour l’interpeller par son prénom.',
+    exemple: 'Vous indiquez « Marie » : la réponse générée peut commencer par « Bonjour Marie ».',
+  },
+
+  // ── /dashboard ───────────────────────────────────────────────────────────
+  // source: app/dashboard/page.tsx:166-169
+  {
+    cle: 'dashboard.statut',
+    page: '/dashboard',
+    label: 'Statut',
+    explication: 'Où en est cette demande dans votre suivi : Nouveau, Répondu, Gagné ou Perdu.',
+    exemple: 'Le chantier est signé : vous passez le statut sur « Gagné » pour le sortir de votre liste à traiter.',
+  },
+
+  // ── /plateforme ──────────────────────────────────────────────────────────
+  // source: app/plateforme/page.tsx:133-136
+  {
+    cle: 'plateforme.demandes_pause',
+    page: '/plateforme',
+    label: 'Demandes ouvertes / en pause',
+    explication:
+      'En pause, votre page continue d’enregistrer les demandes mais n’envoie plus rien automatiquement — utile en congés ou en surcharge. Rien n’est perdu.',
+    exemple: 'Vous partez une semaine : vous activez la pause, les demandes s’accumulent, vous les traitez à votre retour.',
+  },
+  // source: app/plateforme/page.tsx:35-39, 138-145
+  {
+    cle: 'plateforme.mode_reponse',
+    page: '/plateforme',
+    label: 'Mode de réponse',
+    explication:
+      'Automatique : l’assistant répond tout de suite à votre place. Assistée : il prépare, vous validez. Manuelle : aucune réponse automatique.',
+    exemple: 'En Assistée, un client écrit à 22 h ; vous voyez la réponse proposée le lendemain matin et l’envoyez d’un clic.',
+  },
+  // source: app/plateforme/page.tsx:43, 147-153 ; lib/models.ts:10-15
+  {
+    cle: 'plateforme.modele',
+    page: '/plateforme',
+    label: 'Modèle utilisé',
+    explication:
+      'Le modèle que l’assistant utilise pour répondre sur votre espace de conversation. Un modèle plus poussé n’est utilisable que si votre formule l’inclut, sinon Presti utilise le meilleur modèle disponible pour vous.',
+    exemple: 'Vous réglez Expert alors que votre formule ne l’inclut pas : Presti rédige quand même, avec le meilleur modèle inclus dans votre formule.',
+  },
+  // source: app/plateforme/page.tsx:40-42, 155-158
+  {
+    cle: 'plateforme.ton',
+    page: '/plateforme',
+    label: 'Ton',
+    explication: 'Le style des réponses générées : Sobre, Chaleureux ou Direct.',
+    exemple: 'Vous choisissez Chaleureux : les réponses de l’assistant commencent par une formule accueillante plutôt qu’un ton neutre.',
+  },
+  // source: app/plateforme/page.tsx:160-172
+  {
+    cle: 'plateforme.auto_24_7',
+    page: '/plateforme',
+    label: 'Répondre 24h/24 / seulement sur une plage',
+    explication:
+      'Hors de la plage choisie, l’assistant ne répond plus automatiquement — c’est vous qui répondez.',
+    exemple: 'Vous réglez la plage 8h–20h : une demande reçue à 23 h attend votre réponse le lendemain.',
+  },
+  // source: app/plateforme/page.tsx:174-186
+  {
+    cle: 'plateforme.devis_auto',
+    page: '/plateforme',
+    label: 'Devis automatique',
+    explication:
+      'Jamais : aucun devis n’est créé seul. Brouillon : un devis est préparé, vous le validez. Envoi auto sous un seuil : Presti l’envoie seul si le total reste sous le montant que vous fixez.',
+    exemple: 'Vous réglez un seuil à 500 € : un devis de 320 € part seul, un devis de 900 € attend votre validation.',
+  },
+  // source: app/plateforme/page.tsx:188-192
+  {
+    cle: 'plateforme.facture_auto',
+    page: '/plateforme',
+    label: 'Facture automatique',
+    explication: 'Jamais : vous créez la facture vous-même. À l’acceptation du devis : elle se crée dès que le client accepte.',
+    exemple: 'Le client répond « c’est bon pour moi » sur un devis : la facture correspondante est créée sans que vous ayez à cliquer.',
+  },
+  // source: app/plateforme/page.tsx:194-200
+  {
+    cle: 'plateforme.escalade_mots',
+    page: '/plateforme',
+    label: 'Mots qui coupent l’assistant et vous alertent',
+    explication: 'Si le client emploie l’un de ces mots, l’assistant se tait et vous recevez une alerte — c’est vous qui répondez.',
+    exemple: 'Un client écrit « fuite » et « urgence » : l’assistant ne répond pas seul, vous êtes alerté pour traiter vous-même.',
+  },
+  // source: app/plateforme/page.tsx:202-206
+  {
+    cle: 'plateforme.limite_messages',
+    page: '/plateforme',
+    label: 'Reprise humaine après',
+    explication: 'Au-delà de ce nombre de réponses de l’assistant dans une même conversation, la main vous revient.',
+    exemple: 'Vous réglez 8 : après 8 réponses de l’assistant sans que la conversation avance, c’est à vous de reprendre la main.',
+  },
+  // source: app/plateforme/page.tsx:213-214
+  {
+    cle: 'plateforme.nom_assistant',
+    page: '/plateforme',
+    label: 'Nom affiché (facultatif)',
+    explication: 'Le nom sous lequel l’assistant se présente à vos clients, à la place de votre propre nom.',
+    exemple: 'Vous indiquez « L’atelier » : le client voit les messages de l’assistant signés « L’atelier », pas votre nom personnel.',
+  },
+  // source: app/plateforme/page.tsx:215-216
+  {
+    cle: 'plateforme.message_accueil',
+    page: '/plateforme',
+    label: 'Message d’accueil (facultatif)',
+    explication: 'Le premier message que voit un client qui ouvre votre espace de conversation.',
+    exemple: '« Décrivez votre projet, je vous réponds tout de suite » — le client le lit avant même d’avoir écrit.',
+  },
+
+  // ── /messages/canaux ─────────────────────────────────────────────────────
+  // source: app/messages/canaux/page.tsx:133-134
+  {
+    cle: 'canaux.adresse',
+    page: '/messages/canaux',
+    label: 'Votre adresse email',
+    explication: 'L’adresse dont les messages reçus doivent venir se ranger dans votre boîte de réception Presti.',
+    exemple: 'Vous connectez contact@mon-entreprise.fr : un client qui vous écrit à cette adresse apparaît dans Messages.',
+  },
+  // source: app/messages/canaux/page.tsx:135-139
+  {
+    cle: 'canaux.mot_de_passe',
+    page: '/messages/canaux',
+    label: 'Mot de passe',
+    explication:
+      'Le mot de passe de cette boîte email, chiffré avant d’être enregistré. Avec Gmail ou Outlook, votre mot de passe habituel ne fonctionne pas : il faut un « mot de passe d’application ».',
+    exemple: 'Vous créez un mot de passe d’application dans les réglages de sécurité de votre compte Gmail, et le collez ici.',
+  },
+
+  // ── /devis/[id] ──────────────────────────────────────────────────────────
+  // source: app/devis/[id]/page.tsx:248
+  {
+    cle: 'devis.client_nom',
+    page: '/devis/[id]',
+    label: 'Nom du client',
+    explication: 'Le nom qui apparaît sur le devis, dans le bloc « Adressé à ».',
+    exemple: 'Vous saisissez « Marie Dupont » : c’est ce nom qui figure en haut du PDF envoyé.',
+  },
+  // source: app/devis/[id]/page.tsx:249
+  {
+    cle: 'devis.client_email',
+    page: '/devis/[id]',
+    label: 'Email',
+    explication: 'L’adresse à laquelle le devis est envoyé quand vous cliquez « Envoyer au client ».',
+    exemple: 'Sans cette adresse renseignée, le bouton « Envoyer au client » refuse d’envoyer le devis.',
+  },
+  // source: app/devis/[id]/page.tsx:251-252
+  {
+    cle: 'devis.client_adresse',
+    page: '/devis/[id]',
+    label: 'Adresse du chantier',
+    explication: 'L’adresse où les travaux ont lieu, affichée sur le devis sous le nom du client.',
+    exemple: '« 12 rue des Lilas, 75011 Paris » apparaît sur le PDF, sous le nom de votre client.',
+  },
+  // source: app/devis/[id]/page.tsx:253-254
+  {
+    cle: 'devis.objet',
+    page: '/devis/[id]',
+    label: 'Objet du devis',
+    explication: 'Le résumé du chantier, affiché en tête du devis.',
+    exemple: '« Rénovation électrique appartement » — c’est ce que le client lit en premier sur le PDF.',
+  },
+  // source: app/devis/[id]/page.tsx:293
+  {
+    cle: 'devis.validite',
+    page: '/devis/[id]',
+    label: 'Validité (jours)',
+    explication: 'Le nombre de jours pendant lesquels les prix indiqués restent valables pour le client.',
+    exemple: 'Réglé à 90 jours, le devis affiche « Valable jusqu’au » une date 90 jours après son émission.',
+  },
+  // source: app/devis/[id]/page.tsx:294
+  {
+    cle: 'devis.remise',
+    page: '/devis/[id]',
+    label: 'Remise globale (%)',
+    explication: 'Un pourcentage retiré du total HT avant calcul de la TVA.',
+    exemple: 'Une remise de 5 % sur un total de 1 000 € HT retire 50 € avant que la TVA soit calculée.',
+  },
+  // source: app/devis/[id]/page.tsx:295, 409, 421-422
+  {
+    cle: 'devis.acompte',
+    page: '/devis/[id]',
+    label: 'Acompte (%)',
+    explication: 'Le pourcentage du total TTC demandé à la commande, affiché en bas du devis.',
+    exemple: 'Un acompte à 30 % sur un devis de 1 000 € TTC affiche « Acompte 30 % à la commande — 300 € ».',
+  },
+  // source: app/devis/[id]/page.tsx:296-300
+  {
+    cle: 'devis.statut',
+    page: '/devis/[id]',
+    label: 'Statut',
+    explication: 'L’état du devis : Brouillon, Envoyé, Accepté, Refusé ou Expiré.',
+    exemple: 'Le client a donné son accord oral : vous passez le devis en « Accepté » avant de créer la facture.',
+  },
+  // source: app/devis/[id]/page.tsx:314-318
+  {
+    cle: 'devis.tva_regime',
+    page: '/devis/[id]',
+    label: 'Régime de TVA',
+    explication:
+      'Franchise en base : aucune TVA n’est facturée, une mention légale l’indique. Assujetti : la TVA est calculée sur chaque ligne.',
+    exemple: 'En franchise, un devis de 1 000 € HT reste à 1 000 € TTC, avec la mention de franchise inscrite en bas de page.',
+  },
+  // source: app/devis/[id]/page.tsx:333
+  {
+    cle: 'devis.iban',
+    page: '/devis/[id]',
+    label: 'IBAN (pour le règlement)',
+    explication: 'Affiché dans les mentions du devis pour que le client sache où virer son paiement.',
+    exemple: 'Vous renseignez votre IBAN une fois : il apparaît ensuite sur tous vos devis, dans les mentions.',
+  },
+  // source: app/devis/[id]/page.tsx:334
+  {
+    cle: 'devis.conditions_paiement',
+    page: '/devis/[id]',
+    label: 'Conditions de paiement',
+    explication: 'Le texte affiché dans les mentions du devis pour préciser vos modalités de règlement.',
+    exemple: '« Acompte 30 %, solde à la fin des travaux » — inscrit tel quel dans les mentions du PDF.',
+  },
+
+  // ── /profil ──────────────────────────────────────────────────────────────
+  // source: app/profil/page.tsx:310-312
+  {
+    cle: 'profil.logo',
+    page: '/profil',
+    label: 'Photo / logo',
+    explication: 'L’image affichée à côté de votre nom, sur votre page de contact et votre site.',
+    exemple: 'Vous mettez votre logo d’entreprise : il apparaît en haut de votre page de contact ET de votre site.',
+  },
+  // source: app/profil/page.tsx:318-319
+  {
+    cle: 'profil.bio',
+    page: '/profil',
+    label: 'Présentation (bio)',
+    explication: 'Le texte de présentation affiché sur votre page de contact et repris par l’IA pour rédiger votre site.',
+    exemple: '« Artisan plombier depuis 15 ans, devis clair et sans surprise » — visible directement par vos clients.',
+  },
+  // source: app/profil/page.tsx:321
+  {
+    cle: 'profil.zone',
+    page: '/profil',
+    label: 'Zone d’intervention',
+    explication: 'La zone géographique où vous vous déplacez, affichée sur votre page et votre site.',
+    exemple: '« La Rochelle et 30 km alentour » — un client hors zone voit tout de suite qu’il n’est pas concerné.',
+  },
+  // source: app/profil/page.tsx:322
+  {
+    cle: 'profil.horaires',
+    page: '/profil',
+    label: 'Disponibilités',
+    explication: 'Vos horaires affichés aux clients, indépendants des horaires de réponse de l’assistant réglés dans Ma plateforme.',
+    exemple: '« Lun–Ven 8h–18h · Urgences 7j/7 » — affiché sur votre page, à titre d’information pour le client.',
+  },
+  // source: app/profil/page.tsx:340-348
+  {
+    cle: 'profil.accent',
+    page: '/profil',
+    label: 'Couleur d’accent',
+    explication: 'La couleur utilisée pour les boutons et éléments mis en avant, sur votre espace de conversation ET votre site.',
+    exemple: 'Vous choisissez un bleu : le bouton « Envoyer » de votre page de contact devient bleu, ainsi que les accents de votre site.',
+  },
+  // source: app/profil/page.tsx:386
+  {
+    cle: 'profil.telephone',
+    page: '/profil',
+    label: 'Téléphone (affiché)',
+    explication: 'Le numéro visible par vos clients sur votre page. Laissez vide pour ne pas l’afficher.',
+    exemple: 'Un client clique sur le numéro affiché et appelle directement depuis son téléphone.',
+  },
+  // source: app/profil/page.tsx:387
+  {
+    cle: 'profil.email',
+    page: '/profil',
+    label: 'Email (affiché)',
+    explication: 'L’adresse visible par vos clients sur votre page. Laissez vide pour ne pas l’afficher.',
+    exemple: 'Un client préfère écrire plutôt qu’appeler : il utilise l’adresse affichée ici.',
+  },
+  // source: app/profil/page.tsx:473-474
+  {
+    cle: 'profil.hero_accroche',
+    page: '/profil',
+    label: 'Signature (accroche sous votre nom)',
+    explication: 'La phrase courte affichée juste sous votre nom, en haut de votre site.',
+    exemple: '« Le bois travaillé avec exigence » — la première phrase que lit un visiteur de votre site.',
+  },
+  // source: app/profil/page.tsx:475-476
+  {
+    cle: 'profil.hero_lede',
+    page: '/profil',
+    label: 'Phrase d’introduction',
+    explication: 'Le texte qui développe votre accroche, juste en dessous, en haut de votre site.',
+    exemple: 'Une ou deux phrases qui expliquent ce que vous faites et pour qui, sous votre signature.',
+  },
+  // source: app/profil/page.tsx:477-484
+  {
+    cle: 'profil.mots_cles',
+    page: '/profil',
+    label: 'Mots-clés géants (jusqu’à 4, affichés en grand)',
+    explication: 'Des mots affichés en très grand sur votre site — réservé au niveau de site Signature.',
+    exemple: '« Précision », « Sur-mesure », « Bois massif », « Garantie » affichés en très grand format, entre vos sections.',
+  },
+  // source: app/profil/page.tsx:485-487
+  {
+    cle: 'profil.manifeste',
+    page: '/profil',
+    label: 'Manifeste (grande phrase pleine page)',
+    explication: 'Une phrase affichée seule, en pleine page, sur votre site — réservé au niveau de site Signature.',
+    exemple: '« Dessiné, taillé, assemblé : le bois prend vie ici. » occupe un écran entier au défilement.',
+  },
+  // source: app/profil/page.tsx:489-490
+  {
+    cle: 'profil.apropos',
+    page: '/profil',
+    label: 'À propos',
+    explication: 'Le texte de présentation plus long affiché dans la section « À propos » de votre site.',
+    exemple: 'Votre parcours, vos valeurs, ce qui vous distingue — un texte plus développé que la bio courte.',
+  },
+  // source: app/profil/page.tsx:504-507
+  {
+    cle: 'profil.contact_integre',
+    page: '/profil',
+    label: 'Formulaire de contact intégré au site / renvoyé vers la plateforme',
+    explication: 'Intégré : le client discute directement sur votre site. Renvoyé : un bouton mène à votre page de contact séparée.',
+    exemple: 'Intégré activé, un visiteur de votre site écrit sans jamais quitter la page ; sinon, il clique un bouton qui l’emmène sur votre page de contact.',
+  },
+  // source: app/profil/page.tsx:508-511
+  {
+    cle: 'profil.site_actif',
+    page: '/profil',
+    label: 'Mon site est publié / hors ligne',
+    explication: 'Publié : accessible à tous à son adresse. Hors ligne : visible de vous seul, en aperçu.',
+    exemple: 'Vous finissez vos réglages et repassez le site en « publié » pour que vos clients puissent le voir.',
+  },
+  // source: app/profil/page.tsx:549-559 (offre Signature)
+  {
+    cle: 'profil.domaine',
+    page: '/profil',
+    label: 'Votre nom de domaine',
+    explication:
+      'Votre propre adresse (ex : mon-entreprise.fr) branchée sur votre site, à la place de l’adresse prestiapp.fr — réservé à l’offre Signature.',
+    exemple: 'Vous connectez mon-entreprise.fr, ajoutez les enregistrements DNS indiqués chez votre hébergeur, puis cliquez « Vérifier ».',
+  },
+
+  // ── /profil → Réglages fins (StyleAvance.tsx) ───────────────────────────
+  // source: app/profil/StyleAvance.tsx:104-107
+  {
+    cle: 'profil.style.taille',
+    page: '/profil',
+    label: 'Taille du texte',
+    explication: 'La taille de base du texte sur votre site.',
+    exemple: 'Vous l’augmentez légèrement pour une clientèle plus âgée qui préfère un texte plus grand à lire.',
+  },
+  // source: app/profil/StyleAvance.tsx:108-111
+  {
+    cle: 'profil.style.echelle',
+    page: '/profil',
+    label: 'Taille des titres',
+    explication: 'Compacte, Normale ou Ample : la taille relative des titres par rapport au texte courant.',
+    exemple: 'En Ample, vos titres de section ressortent nettement plus que le texte qui les suit.',
+  },
+  // source: app/profil/StyleAvance.tsx:112-116
+  {
+    cle: 'profil.style.interlettrage',
+    page: '/profil',
+    label: 'Espacement des lettres, dans les titres',
+    explication: 'Resserre ou aère l’espace entre les lettres des titres.',
+    exemple: 'Un espacement aéré donne un rendu plus « affiche », resserré donne un rendu plus dense.',
+  },
+  // source: app/profil/StyleAvance.tsx:122-128
+  {
+    cle: 'profil.style.accent2',
+    page: '/profil',
+    label: 'Couleur secondaire',
+    explication:
+      'Une deuxième couleur pour votre site, en complément de votre couleur d’accent. Sans réglage, elle est dérivée automatiquement de votre accent.',
+    exemple: 'Vous laissez « dérivée de votre accent » : le site choisit seul une nuance cohérente avec votre couleur principale.',
+  },
+  // source: app/profil/StyleAvance.tsx:129-135
+  {
+    cle: 'profil.style.fond',
+    page: '/profil',
+    label: 'Fond de page',
+    explication: 'La couleur de fond de votre site. Presti vous avertit si le contraste avec le texte devient insuffisant.',
+    exemple: 'Vous choisissez un fond très clair : Presti indique si votre texte reste assez lisible dessus.',
+  },
+  // source: app/profil/StyleAvance.tsx:148-151
+  {
+    cle: 'profil.style.rayon',
+    page: '/profil',
+    label: 'Angles',
+    explication: 'Les angles des cadres et boutons de votre site : carrés, légèrement arrondis, ou très arrondis.',
+    exemple: 'Un métier « Chantier, industriel » va bien avec des angles carrés ; un rendu plus doux avec des angles très arrondis.',
+  },
+  // source: app/profil/StyleAvance.tsx:153-156
+  {
+    cle: 'profil.style.filet',
+    page: '/profil',
+    label: 'Épaisseur des traits',
+    explication: 'L’épaisseur des lignes et bordures affichées sur votre site.',
+    exemple: 'Des traits épais donnent un rendu plus franc et industriel qu’un trait fin.',
+  },
+  // source: app/profil/StyleAvance.tsx:158-161
+  {
+    cle: 'profil.style.bouton',
+    page: '/profil',
+    label: 'Boutons',
+    explication: 'Le style des boutons de votre site : plein (fond coloré), contour, ou souligné seulement.',
+    exemple: 'Un bouton « plein » attire davantage l’œil qu’un bouton « souligné », pour votre appel à contact.',
+  },
+  // source: app/profil/StyleAvance.tsx:167-170
+  {
+    cle: 'profil.style.rythme',
+    page: '/profil',
+    label: 'Hauteur des sections',
+    explication: 'L’espace vertical entre les sections de votre site : Serré, Normal ou Aéré.',
+    exemple: 'Un rythme Aéré donne un site plus posé et respirant, un rythme Serré tient plus de contenu à l’écran.',
+  },
+  // source: app/profil/StyleAvance.tsx:171-175
+  {
+    cle: 'profil.style.largeur',
+    page: '/profil',
+    label: 'Largeur du contenu',
+    explication: 'La largeur maximale du texte et des images sur grand écran.',
+    exemple: 'Une largeur étroite garde des lignes de texte courtes et faciles à lire sur un grand écran.',
+  },
+  // source: app/profil/StyleAvance.tsx:181-184
+  {
+    cle: 'profil.style.texture',
+    page: '/profil',
+    label: 'Texture de fond',
+    explication: 'Un effet de matière discret sur le fond de votre site : aucune, grain photo, papier, ou bruit fin.',
+    exemple: 'La texture « papier » donne un rendu plus artisanal qu’un fond uni.',
+  },
+  // source: app/profil/StyleAvance.tsx:185-191
+  {
+    cle: 'profil.style.texture_force',
+    page: '/profil',
+    label: 'Intensité',
+    explication: 'L’intensité de la texture de fond choisie, de discrète à marquée.',
+    exemple: 'À faible intensité, la texture papier se devine à peine ; à forte intensité, elle devient très visible.',
+  },
+
+  // ── /parametres ──────────────────────────────────────────────────────────
+  // source: app/parametres/page.tsx:174-175
+  {
+    cle: 'parametres.siret',
+    page: '/parametres?onglet=legal',
+    label: 'SIRET',
+    explication: 'Votre numéro d’entreprise, obligatoire sur tous vos devis et factures.',
+    exemple: 'Sans SIRET renseigné, vos mentions légales affichent « non communiqué » à la place de ce numéro.',
+  },
+  // source: app/parametres/page.tsx:176-177
+  {
+    cle: 'parametres.forme_juridique',
+    page: '/parametres?onglet=legal',
+    label: 'Forme juridique',
+    explication: 'Le statut de votre entreprise, affiché sur vos documents (ex : Micro-entreprise, SARL, EI).',
+    exemple: '« Auto-entrepreneur » apparaît sous votre nom sur chaque devis émis.',
+  },
+  // source: app/parametres/page.tsx:178-183
+  {
+    cle: 'parametres.adresse',
+    page: '/parametres?onglet=legal',
+    label: 'Adresse de l’entreprise',
+    explication: 'L’adresse légale de votre entreprise, obligatoire sur vos devis et factures.',
+    exemple: 'Numéro, rue, code postal et ville renseignés une fois, repris sur tous vos documents.',
+  },
+  // source: app/parametres/page.tsx:184-187
+  {
+    cle: 'parametres.assujetti_tva',
+    page: '/parametres?onglet=legal',
+    label: 'Je suis assujetti à la TVA',
+    explication:
+      'Décoché, une mention légale de franchise en base s’affiche automatiquement sur vos devis et factures (0 % de TVA). Coché, vous facturez la TVA.',
+    exemple: 'Vous cochez la case et saisissez votre numéro de TVA : vos prochains devis calculent la TVA sur chaque ligne au lieu d’afficher la franchise.',
+  },
+  // source: app/parametres/page.tsx:188
+  {
+    cle: 'parametres.tva_num',
+    page: '/parametres?onglet=legal',
+    label: 'Numéro de TVA intracommunautaire',
+    explication: 'Votre numéro de TVA, affiché sur vos documents une fois que vous êtes assujetti.',
+    exemple: '« FR… » suivi de vos chiffres, repris sur vos devis et factures dès que la case TVA est cochée.',
+  },
+  // source: app/parametres/page.tsx:193-206 ; lib/facturation.ts:14-30
+  {
+    cle: 'parametres.mention_base',
+    page: '/parametres?onglet=legal',
+    label: 'Référence légale de la mention',
+    explication:
+      'Le texte exact de la mention de franchise dépend de la référence légale choisie : la loi a changé de référence (du CGI au CIBS) le 1er septembre 2026, l’ancienne restant admise jusqu’au 31 décembre 2027.',
+    exemple: 'Votre comptable préfère encore « art. 293 B du CGI » : vous choisissez « CGI (ancienne) » plutôt que « Automatique ».',
+  },
+  // source: app/parametres/page.tsx:208-209
+  {
+    cle: 'parametres.iban',
+    page: '/parametres?onglet=legal',
+    label: 'IBAN (pour le règlement de vos factures)',
+    explication: 'Affiché sur vos factures pour que le client sache où virer son règlement.',
+    exemple: 'Renseigné une fois ici, il apparaît ensuite sur chaque facture émise, sans le ressaisir.',
+  },
+  // source: app/parametres/page.tsx:212-213
+  {
+    cle: 'parametres.assurance_nom',
+    page: '/parametres?onglet=legal',
+    label: 'Assureur',
+    explication: 'Le nom de votre assureur décennale, obligatoire sur les devis du bâtiment.',
+    exemple: '« AXA » apparaît dans le bloc « Assurance professionnelle » de vos devis.',
+  },
+  // source: app/parametres/page.tsx:214-215
+  {
+    cle: 'parametres.assurance_contrat',
+    page: '/parametres?onglet=legal',
+    label: 'N° de contrat',
+    explication: 'Le numéro de votre contrat d’assurance décennale, affiché sur vos devis à côté du nom de l’assureur.',
+    exemple: 'Sans ce numéro, le bloc assurance de vos devis reste incomplet, exposé au même risque de non-conformité.',
+  },
+  // source: app/parametres/page.tsx:216-217
+  {
+    cle: 'parametres.assurance_zone',
+    page: '/parametres?onglet=legal',
+    label: 'Zone géographique couverte',
+    explication: 'La zone géographique garantie par votre assurance décennale, affichée sur vos devis.',
+    exemple: '« France métropolitaine » précise jusqu’où votre garantie décennale s’applique.',
+  },
+  // source: app/parametres/page.tsx:218-219
+  {
+    cle: 'parametres.assurance_activites',
+    page: '/parametres?onglet=legal',
+    label: 'Activités couvertes',
+    explication: 'Les activités garanties par votre assurance décennale, affichées sur vos devis.',
+    exemple: '« Électricité » précise que c’est bien cette activité que couvre votre contrat, pas une autre.',
+  },
+  // source: app/parametres/page.tsx:221-228
+  {
+    cle: 'parametres.mediateur_nom',
+    page: '/parametres?onglet=legal',
+    label: 'Nom du médiateur',
+    explication:
+      'Le médiateur de la consommation auquel vous avez adhéré — obligatoire dès que vous travaillez pour des particuliers. Sans lui, vos mentions légales ne peuvent pas l’afficher.',
+    exemple: '« CM2C — Centre de la médiation de la consommation de conciliateurs de justice » apparaît alors dans vos mentions légales.',
+  },
+  // source: app/parametres/page.tsx:229-230
+  {
+    cle: 'parametres.mediateur_url',
+    page: '/parametres?onglet=legal',
+    label: 'Site du médiateur',
+    explication: 'Le lien vers le site du médiateur, affiché dans vos mentions légales à côté de son nom.',
+    exemple: 'Un client en litige peut cliquer ce lien depuis vos mentions légales pour saisir le médiateur.',
+  },
+  // source: app/parametres/page.tsx:240-242
+  {
+    cle: 'parametres.mot_de_passe',
+    page: '/parametres?onglet=securite',
+    label: 'Nouveau mot de passe',
+    explication: 'Remplace votre mot de passe actuel. Stocké haché : personne ne peut le lire, seulement le remplacer.',
+    exemple: 'Vous saisissez un nouveau mot de passe de 8 caractères ou plus et cliquez « Changer mon mot de passe ».',
+  },
+]
+
+// Recherche plein texte simple sur les articles : insensible à la casse et aux accents.
+const sansAccents = (s: string) =>
+  s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+export const chercher = (q: string): Article[] => {
+  const requete = sansAccents(q.trim())
+  if (!requete) return []
+  const mots = requete.split(/\s+/).filter(Boolean)
+  return ARTICLES.filter((a) => {
+    const hay = sansAccents(
+      [a.titre, a.aQuoiCaSert, a.pourVosClients, a.commentOnSenSert.join(' '), a.id, a.page].join(' '),
+    )
+    return mots.every((m) => hay.includes(m))
+  })
+}

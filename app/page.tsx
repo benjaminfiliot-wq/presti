@@ -2,6 +2,8 @@ import '@/app/globals.css'
 import HeroApp from '@/app/HeroApp'
 import Motion from '@/app/Motion'
 import FeatureShowcase from '@/app/FeatureShowcase'
+import Comparatif from '@/app/Comparatif'
+import { OFFRES, pointsForts } from '@/lib/plans'
 
 /* Icônes SVG (Lucide-style) — jamais d'emoji comme icône. */
 const I = {
@@ -129,36 +131,19 @@ export default function Home() {
             <div className="lp-trial reveal"><b>Essai gratuit</b><em>3 crédits offerts (3 réponses ou devis) sur vos vraies demandes — pour juger la qualité avant de payer. Sans carte.</em><a className="lp-btn lp-btn--g" href="/signup">Essayer</a></div>
 
             <div className="lp-plans reveal-kids">
-              <div className="lp-plan">
-                <div className="lp-pn">Essentiel</div>
-                <div className="lp-pp">29€<small>par mois</small></div>
-                <div className="lp-credits"><b>80</b>&nbsp;crédits / mois</div>
-                <div className="lp-for">Pour l&apos;artisan solo qui ne veut plus louper une demande.</div>
-                <p className="lp-psub">L&apos;essentiel pour répondre vite et bien : chaque demande reçoit une réponse pro dans votre ton, vous générez des devis en quelques mots, et Presti relance tout seul.</p>
-                <ul className="lp-plist"><li>Réponse instantanée dans votre ton</li><li>Génération de devis IA (crédits inclus)</li><li>Relances automatiques J+2 / J+5 / J+10</li><li>Modèles IA Standard &amp; Pro</li></ul>
-                <a className="lp-btn lp-btn--g" href="/signup">Choisir Essentiel</a>
-              </div>
-
-              <div className="lp-plan lp-plan--feat">
-                <div className="lp-pn">Studio</div>
-                <div className="lp-pp">59€<small>par mois</small></div>
-                <div className="lp-credits"><b>250</b>&nbsp;crédits / mois</div>
-                <div className="lp-for">Pour celui qui veut aussi une présence en ligne et toute la puissance.</div>
-                <p className="lp-psub">Tout l&apos;Essentiel, plus l&apos;accès à tous les modèles d&apos;IA — Expert compris — et beaucoup plus de crédits. Votre site web pro clé en main et votre inventaire sont inclus dans ce palier.</p>
-                <ul className="lp-plist"><li>Tout l&apos;Essentiel inclus</li><li>Tous les modèles IA, Expert compris</li><li>Crédits augmentés chaque mois</li><li>Site web pro clé en main</li><li>Inventaire et stock</li></ul>
-                <a className="lp-btn lp-btn--p" href="/signup">Choisir Studio</a>
-              </div>
-
-              <div className="lp-plan">
-                <div className="lp-pn">Signature</div>
-                <div className="lp-pp">99€<small>par mois</small></div>
-                <div className="lp-credits"><b>600</b>&nbsp;crédits / mois</div>
-                <div className="lp-for">Pour l&apos;atelier qui tourne à plein régime.</div>
-                <p className="lp-psub">Le maximum de puissance et de crédits, plusieurs métiers gérés, et un accompagnement dédié pour installer Presti dans votre quotidien.</p>
-                <ul className="lp-plist"><li>Tout Studio inclus</li><li>Crédits élevés (gros volumes)</li><li>Votre nom de domaine personnalisé</li><li>Accompagnement dédié</li></ul>
-                <a className="lp-btn lp-btn--g" href="/signup">Choisir Signature</a>
-              </div>
+              {OFFRES.map((o) => (
+                <div key={o.id} className={`lp-plan${o.id === 'studio' ? ' lp-plan--feat' : ''}`}>
+                  <div className="lp-pn">{o.label}</div>
+                  <div className="lp-pp">{o.prix}€<small>par mois</small></div>
+                  <div className="lp-credits"><b>{o.credits}</b>&nbsp;crédits / mois</div>
+                  <div className="lp-for">{o.accroche}</div>
+                  <ul className="lp-plist">{pointsForts(o.id).slice(0, 5).map((f) => <li key={f}>{f}</li>)}</ul>
+                  <a className={`lp-btn ${o.id === 'studio' ? 'lp-btn--p' : 'lp-btn--g'}`} href="/signup">Choisir {o.label}</a>
+                </div>
+              ))}
             </div>
+            {/* Le tableau « qui a quoi » — la même matrice que les verrous serveur (lib/plans.ts). */}
+            <div className="reveal lp-cmp"><h3>Qui a quoi, ligne par ligne</h3><Comparatif /></div>
             <p className="lp-pnote">1 crédit = 1 génération · Expert = 3 crédits · crédits rechargés chaque mois (non reportés) · sans engagement</p>
           </div>
         </section>

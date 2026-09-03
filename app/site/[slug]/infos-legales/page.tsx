@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { headers } from 'next/headers'
+import { chemins, modeDepuisHote, urlInfosLegales } from '@/lib/urls'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { resolveStyle, styleToCss, styleToData } from '@/lib/siteStyle'
 import { lisibleSur } from '@/lib/contrast'
@@ -30,7 +32,7 @@ type Artisan = ArtisanLegal & {
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin.from('artisans')
-    .select('id, nom, metier, slug, forme_juridique, siret, adresse, code_postal, ville, tel_public, email_public, tva_num, assurance_nom, assurance_contrat, assurance_activites, assurance_zone, zone_intervention, mediateur_nom, mediateur_url, accent, theme, site_style, plateforme_active')
+    .select('id, nom, metier, slug, forme_juridique, siret, adresse, code_postal, ville, tel_public, email_public, tva_num, assurance_nom, assurance_contrat, assurance_activites, assurance_zone, zone_intervention, mediateur_nom, mediateur_url, accent, theme, site_style, plateforme_active, domaine, domaine_verifie')
     .eq('slug', slug).maybeSingle()
   return (data as Artisan) ?? null
 }
@@ -45,9 +47,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     applicationName: a.nom || undefined,
     authors: a.nom ? [{ name: a.nom }] : undefined,
     keywords: [a.metier, 'mentions légales'].filter(Boolean) as string[],
-    alternates: { canonical: `https://prestiapp.fr/site/${slug}/infos-legales` },
+    alternates: { canonical: urlInfosLegales(a) },
     robots: { index: true, follow: true },
-    openGraph: { title: `Informations légales — ${a.nom ?? 'Artisan'}`, type: 'website', url: `https://prestiapp.fr/site/${slug}/infos-legales`, ...(a.nom ? { siteName: a.nom } : {}) },
+    openGraph: { title: `Informations légales — ${a.nom ?? 'Artisan'}`, type: 'website', url: urlInfosLegales(a), ...(a.nom ? { siteName: a.nom } : {}) },
     // Sans cette ligne, la carte Twitter du layout racine — « Presti — Répondez à chaque
     // demande de devis… » — est servie sur la page légale de l'artisan.
     twitter: { card: 'summary', title: `Informations légales — ${a.nom ?? 'Artisan'}`, description: `Mentions légales et protection des données de ${a.nom ?? 'cet artisan'}.` },
@@ -58,6 +60,9 @@ export default async function InfosLegales({ params }: { params: Promise<{ slug:
   const { slug } = await params
   const a = await getArtisan(slug)
   if (!a) notFound()
+  // Liens internes selon l'adresse servie (domaine de l'artisan → « / », jamais « /site/<slug> »).
+  const host = (await headers()).get('host')
+  const ch = chemins(modeDepuisHote(host, a), slug)
 
   const accent = /^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? (a.accent as string) : '#D97757'
   const theme = ['atelier', 'nuit', 'epure', 'chantier', 'bleu', 'vitrine'].includes(a.theme || '') ? (a.theme as string) : 'atelier'
@@ -73,8 +78,8 @@ export default async function InfosLegales({ params }: { params: Promise<{ slug:
       {...styleToData(style)}
     >
       <nav className="site-nav">
-        <a className="site-brand" href={`/site/${slug}`}>{a.nom}</a>
-        <div className="site-links"><a href={`/site/${slug}`}>← Retour au site</a></div>
+        <a className="site-brand" href={ch.site}>{a.nom}</a>
+        <div className="site-links"><a href={ch.site}>← Retour au site</a></div>
       </nav>
 
       <div className="site-block">

@@ -20,8 +20,19 @@ Rôle : chaque email partant au nom d'un artisan est **humain, utile, adapté et
   - **DKIM** : TXT `resend._domainkey` = clé publique `p=…` (signe les messages).
   - **SPF** : TXT `send` = `v=spf1 include:amazonses.com ~all` (autorise l'envoi via SES).
   - **MX** : `send` → `feedback-smtp.eu-west-1.amazonses.com` (priorité 10, boucle de retour).
-- **DMARC** (à renforcer si besoin) : TXT `_dmarc` = `v=DMARC1; p=none; rua=mailto:…`
-  puis durcir vers `p=quarantine`/`reject` une fois la réputation établie.
+- **DMARC — ABSENT au 2026-09-03** (`_dmarc.prestiapp.fr` → aucun enregistrement). Pas
+  d'API OVH dans `.env.local` : c'est Benj qui le pose, à la main, dans la zone DNS OVH :
+  `TXT` · nom `_dmarc` · valeur `v=DMARC1; p=quarantine; rua=mailto:contact@prestiapp.fr; adkim=r; aspf=r`.
+  Vérifier ensuite par `nslookup -type=TXT _dmarc.prestiapp.fr 8.8.8.8`, jamais à l'écran.
+- **Réception** : MX racine `prestiapp.fr` → `mx1/2/3.mail.ovh.net`, SPF racine
+  `v=spf1 include:mx.ovh.com -all`. Une réponse à `contact@prestiapp.fr` atterrit chez OVH,
+  dans une boîte qui doit exister (à créer par Benj, plan 004 §15 J0).
+- **Règle Reply-To** (`lib/email.ts`) : email DE Presti (sans `fromName`) → Reply-To
+  `contact@prestiapp.fr` par défaut ; email AU NOM d'un artisan (`fromName` posé) → Reply-To
+  = l'artisan, jamais l'éditeur. `notifierEntreprise(sujet, corps)` = notification interne.
+- **Boîte de l'entreprise comme canal** : `PRESTI_MAIL_IMAP_USER/PASS` (Vercel) →
+  `lib/canaux.ts:canalEntreprise()` (null si absentes) ; `scripts/canal-entreprise.mjs`
+  enregistre la boîte OVH (`ssl0.ovh.net` 993/465) comme canal chiffré du fondateur.
 - Bonnes pratiques anti-spam : FROM stable, `reply_to` cohérent, sujet non trompeur,
   texte + (idéalement) HTML équilibré, pas de mots « spammy » ni de majuscules criardes,
   ratio texte/lien sain, désinscription claire pour les envois de masse (les relances

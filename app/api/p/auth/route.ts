@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sendEmail } from '@/lib/email'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { cleEmail, consommerLimite } from '@/lib/limites'
 import { COOKIE_SESSION, cookieOptions, consommerLien, creerLienMagique, revoquerSession, sessionCourante } from '@/lib/clientAuth'
 
 // Connexion des CLIENTS de la plateforme par lien magique (v4 §6/§D2).
@@ -44,16 +45,14 @@ export async function POST(req: Request) {
       }
 
       // Rate-limit : par IP et par email (anti-bombardement de boîtes aux lettres).
-      const depuis = new Date(Date.now() - 15 * 60000).toISOString()
-      if (ip !== 'unknown') {
-        const { count } = await supabaseAdmin.from('clients_liens').select('id', { count: 'exact', head: true }).eq('ip', ip).gte('cree_le', depuis)
-        if ((count ?? 0) >= 5) { await recordAbuse(ip, 'flood liens magiques'); return NextResponse.json({ ok: true }) }
+      // Compteurs ATOMIQUES (audit v4 §3, lib/limites) : 5 / 15 min par IP, 3 / 15 min par email.
+      if (ip !== 'unknown' && !(await consommerLimite(`lien:ip:${ip}`, 5, 15 * 60))) {
+        await recordAbuse(ip, 'flood liens magiques'); return NextResponse.json({ ok: true })
       }
-      const { count: parEmail } = await supabaseAdmin.from('clients_liens').select('id', { count: 'exact', head: true }).eq('email', email).gte('cree_le', depuis)
-      if ((parEmail ?? 0) >= 3) return NextResponse.json({ ok: true }) // silencieux : pas d'info donnée
+      if (!(await consommerLimite(cleEmail('lien:email', email), 3, 15 * 60))) return NextResponse.json({ ok: true }) // silencieux : pas d'info donnée
 
       const { data: artisan } = await supabaseAdmin
-        .from('artisans').select('id, nom, slug, plateforme_active').eq('slug', slug).maybeSingle()
+        .from('artisans').select('id, nom, slug, email, plateforme_active').eq('slug', slug).maybeSingle()
       // Réponse IDENTIQUE même si l'artisan n'existe pas → aucune énumération possible.
       if (artisan && artisan.plateforme_active !== false) {
         const jeton = await creerLienMagique(artisan.id, email, ip)
@@ -63,6 +62,7 @@ export async function POST(req: Request) {
           fromName: artisan.nom || undefined, // white-label : le client voit la marque de l'artisan
           subject: `Votre lien de connexion — ${artisan.nom || 'votre espace'}`,
           text: `Bonjour,\n\nVoici votre lien pour accéder à votre espace :\n${lien}\n\nCe lien est valable 20 minutes et ne fonctionne qu'une fois.\nSi vous n'avez rien demandé, ignorez ce message.`,
+          replyTo: artisan.email || undefined, // white-label : une réponse va à l'artisan, jamais à l'éditeur
         }).catch(() => {})
       }
       return NextResponse.json({ ok: true })

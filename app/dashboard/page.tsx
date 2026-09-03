@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
+import { urlPlateforme } from '@/lib/urls'
 
-type Artisan = { id: string; nom: string | null; metier: string | null; slug: string | null }
+type Artisan = { id: string; nom: string | null; metier: string | null; slug: string | null; domaine?: string | null; domaine_verifie?: boolean | null }
 type Lead = { id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null; created_at: string }
 type Message = { lead_id: string; sens: string | null; type: string | null; contenu: string | null }
 
@@ -56,7 +57,7 @@ export default function Dashboard() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
-      const { data: prof } = await supabase.from('artisans').select('id, nom, metier, slug').eq('id', data.session.user.id).maybeSingle()
+      const { data: prof } = await supabase.from('artisans').select('id, nom, metier, slug, domaine, domaine_verifie').eq('id', data.session.user.id).maybeSingle()
       if (!prof) { router.replace('/onboarding'); return }
       setArtisan(prof as Artisan)
       await loadLeads((prof as Artisan).id)
@@ -71,12 +72,12 @@ export default function Dashboard() {
 
   function copyLink() {
     if (!artisan?.slug) return
-    navigator.clipboard?.writeText(`${window.location.origin}/p/${artisan.slug}`)
+    navigator.clipboard?.writeText(urlPlateforme(artisan))
     setCopied(true); setTimeout(() => setCopied(false), 2000)
   }
 
   const prenom = artisan?.nom ? artisan.nom.split(/\s+/)[0] : ''
-  const link = typeof window !== 'undefined' && artisan ? `${window.location.origin}/p/${artisan.slug}` : `/p/${artisan?.slug ?? ''}`
+  const link = artisan ? urlPlateforme(artisan) : ''
   const nouveaux = leads.filter((l) => l.statut === 'nouveau').length
   const gagnes = leads.filter((l) => l.statut === 'gagne').length
   const repondus = Object.keys(replies).length

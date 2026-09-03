@@ -1,16 +1,17 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { permanentRedirect, redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type { SiteContenu } from '@/lib/ai'
 import { Fragment } from 'react'
 import Image from 'next/image'
 import SiteMotion from './SiteMotion'
 import SiteLightbox from './SiteLightbox'
-import SiteMatiere3D from './SiteMatiere3D'
 import SiteAvantApres from './SiteAvantApres'
 import { siteMaxForPlan } from '@/lib/plans'
+import { chemins, modeDepuisHote, urlSite } from '@/lib/urls'
+import { artisanParAncienSlug } from '@/lib/slugRedirect'
 import { resolveLayout, type SectionId } from '@/lib/siteLayout'
 import { resolveStyle, styleToCss, styleToData } from '@/lib/siteStyle'
 import { lisibleSur } from '@/lib/contrast'
@@ -51,7 +52,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const indexable = a.site_active === true && a.site_seo !== false
   // Canonique = domaine perso (offre Signature) une fois vérifié/servi, sinon l'URL Presti.
   // Consolide le SEO sur la marque de l'artisan et évite le duplicate content.
-  const canonical = a.domaine && a.domaine_verifie ? `https://${a.domaine}/` : `https://prestiapp.fr/site/${slug}`
+  // L'adresse publique ne contient jamais « presti » dès qu'un domaine neutre ou perso existe (lib/urls).
+  const canonical = urlSite(a)
   return {
     // Titre + OG ABSOLUS : aucune mention « Presti » (site 100 % white-label, marque de l'artisan seule).
     title: { absolute: t },
@@ -93,8 +95,19 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   // Domaine perso vérifié : on renvoie les visiteurs de l'URL Presti vers la marque de l'artisan
   // (le middleware sert déjà le site sur le domaine → pas de boucle). Redirection non permanente
   // par prudence (un domaine peut redevenir injoignable ; le SEO est consolidé par la canonique).
+  const host = (await headers()).get('host')?.toLowerCase().replace(/:\d+$/, '') || ''
+  // Les liens internes (contact, mentions) suivent l'adresse sur laquelle la page est servie :
+  // sur le domaine de l'artisan, c'est /demande — jamais /p/<slug>, sinon « presti » réapparaît au premier clic.
+  const ch = chemins(modeDepuisHote(host, { slug, domaine: a?.domaine ?? null, domaine_verifie: a?.domaine_verifie ?? null }), slug)
+
+  // Ancienne adresse → nouvelle, définitivement (308) : les cartes de visite imprimées avec
+  // l'ancien lien continuent de mener au bon endroit.
+  if (!a) {
+    const actuel = await artisanParAncienSlug(slug)
+    if (actuel) permanentRedirect(chemins(modeDepuisHote(host, actuel), actuel.slug).site)
+  }
+
   if (a?.domaine && a.domaine_verifie) {
-    const host = (await headers()).get('host')?.toLowerCase().replace(/:\d+$/, '') || ''
     if (host && host !== a.domaine && host !== `www.${a.domaine}`) redirect(`https://${a.domaine}/`)
   }
 
@@ -127,7 +140,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const ext = (h: string) => /^https?:/i.test(h)
   const plateformeActive = a.plateforme_active !== false && !!a.slug
   // Le site RENVOIE vers la plateforme (espace de contact) — il ne l'embarque jamais.
-  const contactHref = plateformeActive ? `/p/${a.slug}` : (telDigits ? `tel:${telDigits}` : '#contact')
+  const contactHref = plateformeActive ? ch.plateforme : (telDigits ? `tel:${telDigits}` : '#contact')
 
   // JSON-LD LocalBusiness — SEO local. Anti-fabrication : uniquement des champs RÉELS
   // fournis par l'artisan (aucun horaire structuré depuis du texte libre, aucun priceRange inventé).
@@ -135,7 +148,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   const ldSameAs = [r.instagram, r.facebook, r.tiktok, r.linkedin, r.google, r.site].filter(Boolean)
   const ld = {
     '@context': 'https://schema.org', '@type': 'LocalBusiness',
-    name: a.nom, url: `https://prestiapp.fr/site/${a.slug}`,
+    name: a.nom, url: urlSite(a),
     ...(a.metier ? { description: a.site_contenu?.meta_description || a.bio || `${a.metier}${zone ? ` à ${zone}` : ''}.` } : {}),
     ...(zone ? { areaServed: zone } : {}),
     ...(a.tel_public ? { telephone: a.tel_public } : {}),
@@ -208,8 +221,6 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={heroShot} alt="" className="site-hero-img" />
             <span className="site-hero-veil" />
-            {/* Signature 3D « matière » — chargée en différé, desktop only, repli = l'image ci-dessus */}
-            <SiteMatiere3D accent={accent} />
           </div>
         ) : null}
         <div className="site-hero-in">
@@ -420,7 +431,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
         <span>{a.metier}{zone ? ` · ${zone}` : ''}</span>
         {/* Obligation LCEN : un site professionnel doit porter ses mentions légales.
             Elles manquaient totalement — trouvé par l'audit du 2026-09-03. */}
-        <a className="site-foot-legal" href={`/site/${slug}/infos-legales`}>Informations légales</a>
+        <a className="site-foot-legal" href={ch.infos}>Informations légales</a>
       </footer>
     </main>
   )

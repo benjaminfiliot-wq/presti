@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
+import { afficher, urlPlateforme } from '@/lib/urls'
 
 // « Ma plateforme → Intelligence » (v4 §A4) : l'artisan règle ici comment son assistant
 // se comporte avec ses clients. Tous les réglages sont APPLIQUÉS CÔTÉ SERVEUR
@@ -47,6 +48,7 @@ export default function PlateformePage() {
   const [ready, setReady] = useState(false)
   const [uid, setUid] = useState('')
   const [slug, setSlug] = useState('')
+  const [dom, setDom] = useState<{ domaine: string | null; domaine_verifie: boolean | null }>({ domaine: null, domaine_verifie: null })
   const [active, setActive] = useState(true)
   const [pause, setPause] = useState(false)
   const [cfg, setCfg] = useState<Cfg>(DEFAUT)
@@ -59,9 +61,9 @@ export default function PlateformePage() {
       if (!data.session) { router.replace('/login'); return }
       const id = data.session.user.id
       setUid(id)
-      const { data: a } = await supabase.from('artisans').select('slug, plateforme_active, reponse_auto, leads_pause').eq('id', id).maybeSingle()
+      const { data: a } = await supabase.from('artisans').select('slug, plateforme_active, reponse_auto, leads_pause, domaine, domaine_verifie').eq('id', id).maybeSingle()
       if (!a) { router.replace('/onboarding'); return }
-      setSlug(a.slug ?? ''); setActive(a.plateforme_active !== false); setPause(a.leads_pause === true)
+      setSlug(a.slug ?? ''); setActive(a.plateforme_active !== false); setPause(a.leads_pause === true); setDom({ domaine: a.domaine ?? null, domaine_verifie: a.domaine_verifie ?? null })
       const { data: c } = await supabase.from('plateforme_config').select('*').eq('artisan_id', id).maybeSingle()
       // Sans configuration, on part du comportement actuel de l'artisan (aucune surprise).
       setCfg(c ? { ...DEFAUT, ...(c as Partial<Cfg>) } : { ...DEFAUT, mode_reponse: a.reponse_auto === false ? 'manuelle' : 'auto' })
@@ -100,7 +102,7 @@ export default function PlateformePage() {
   }
 
   async function copier() {
-    try { await navigator.clipboard.writeText(`https://prestiapp.fr/p/${slug}`); setCopied(true); setTimeout(() => setCopied(false), 1800) } catch { /* ignore */ }
+    try { await navigator.clipboard.writeText(urlPlateforme({ slug, ...dom })); setCopied(true); setTimeout(() => setCopied(false), 1800) } catch { /* ignore */ }
   }
 
   if (!ready) return <AppShell active="plateforme" title="Ma plateforme"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
@@ -116,10 +118,10 @@ export default function PlateformePage() {
           {slug ? (
             <div className="site-publish-share">
               <div className="prof-link" style={{ margin: 0, flex: '1 1 240px' }}>
-                <span>prestiapp.fr/p/{slug}</span>
+                <span>{afficher(urlPlateforme({ slug, ...dom }))}</span>
                 <button type="button" className="btn btn--ghost" style={{ width: 'auto' }} onClick={copier}>{copied ? 'Copié ✅' : 'Copier le lien'}</button>
               </div>
-              <a className="btn btn--ghost" style={{ width: 'auto' }} href={`/p/${slug}`} target="_blank" rel="noopener">Ouvrir ↗</a>
+              <a className="btn btn--ghost" style={{ width: 'auto' }} href={urlPlateforme({ slug, ...dom })} target="_blank" rel="noopener">Ouvrir ↗</a>
             </div>
           ) : null}
           {!active ? <p className="muted" style={{ marginTop: '.8rem', fontSize: '.85rem' }}>⚠️ Votre plateforme est désactivée : le lien affiche un message poli. Réactivez-la depuis <a href="/profil" style={{ color: 'var(--accent-ink)' }}>Ma page</a>.</p> : null}
