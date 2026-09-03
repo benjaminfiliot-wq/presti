@@ -98,9 +98,22 @@ try {
   const court = await poser('azerty12')
   T('« azerty12 » (8 car.) refusé — avant, il passait', court.status === 400, `HTTP ${court.status} ${JSON.stringify(court.corps)}`)
 
-  const fuite = await poser('Chantier2019')
-  T('un mot de passe fuité est refusé', fuite.status === 400, `HTTP ${fuite.status} ${JSON.stringify(fuite.corps)}`)
-  T('et l’artisan sait pourquoi', /fuites de données/.test(fuite.corps?.error ?? ''), fuite.corps?.error)
+  // Il faut un cas qui PASSE les règles de forme et se trouve quand même dans les fuites :
+  // sinon c'est la déni-liste qui refuse, et on n'a rien prouvé sur HIBP. On le choisit
+  // à l'exécution plutôt que de parier sur une constante qui peut sortir des fuites.
+  let piege = null
+  for (const c of ['Liverpool123', 'Sunshine2020', 'Marseille13', 'Chocolat2019', 'Printemps2020']) {
+    if (!evaluerMotDePasse(c).ok) continue
+    const f = await verifierFuite(c, recupererDepuisHibp)
+    if (f.compromis) { piege = { mdp: c, occurrences: f.occurrences }; break }
+  }
+  T('un cas « passe la forme mais est fuité » a été trouvé', Boolean(piege), 'aucun candidat ne convient — élargir la liste')
+  if (piege) {
+    console.log(`     candidat : « ${piege.mdp} » (${piege.occurrences.toLocaleString('fr-FR')} fuites)`)
+    const fuite = await poser(piege.mdp)
+    T('un mot de passe fuité est refusé', fuite.status === 400, `HTTP ${fuite.status} ${JSON.stringify(fuite.corps)}`)
+    T('et l’artisan sait pourquoi', /fuites de données/.test(fuite.corps?.error ?? ''), fuite.corps?.error)
+  }
 
   const bonMdp = await poser(`chantier-caramel-${crypto.randomBytes(5).toString('hex')}`)
   T('un bon mot de passe passe toujours', bonMdp.status === 200, `HTTP ${bonMdp.status} ${JSON.stringify(bonMdp.corps)}`)

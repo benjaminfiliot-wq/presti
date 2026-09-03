@@ -68,7 +68,7 @@ try {
   await page.fill('#mdp-inscription', '12345678')
   await page.waitForTimeout(250)
   const bouton = page.getByRole('button', { name: /Créer/i })
-  T('le bouton est bloqué sur un mot de passe faible', await bouton.isDisabled())
+  T('le bouton est bloqué sur un mot de passe faible', await page.locator('form button').last().isDisabled())
   const dit = await page.locator('.mdp-txt').innerText()
   T('et l’écran explique pourquoi', /caractères|listes d’attaque|chiffres/i.test(dit), dit)
 
@@ -77,13 +77,35 @@ try {
   T('le bouton se débloque sur un bon mot de passe', await bouton.isEnabled())
   T('la jauge est au maximum', await page.locator('.mdp-force').getAttribute('data-niveau') === '3')
 
+  console.log('\n── 5 bis. Un mot de passe fuité, à l’écran')
+  // « Liverpool123 » passe toutes les règles de forme — longueur, familles de caractères,
+  // pas de suite, absent de la déni-liste. Seule la comparaison avec les fuites réelles
+  // l’attrape. C’est précisément ce que fait la fonction payante de Supabase.
+  await page.fill('#mdp-inscription', '')
+  await page.fill('#mdp-inscription', 'Liverpool123')
+  await page.waitForFunction(
+    () => /fuites de données/.test(document.querySelector('.mdp-txt')?.textContent ?? ''),
+    { timeout: 9000 },
+  ).catch(() => {})
+  const texteFuite = await page.locator('.mdp-txt').textContent()
+  T('l’écran annonce la fuite', /fuites de données/.test(texteFuite ?? ''), texteFuite ?? '(vide)')
+  T('la jauge retombe à zéro', await page.locator('.mdp-force').getAttribute('data-niveau') === '0')
+  T('le bouton est bloqué', await page.locator('form button').last().isDisabled())
+
+  await page.fill('#mdp-inscription', '')
+  await page.fill('#mdp-inscription', 'tuile-caramel-vendredi-9174')
+  await page.waitForTimeout(3000)
+  const texteSain = await page.locator('.mdp-txt').textContent()
+  T('un mot de passe inédit n’est PAS accusé à tort', !/fuites de données/.test(texteSain ?? ''), texteSain ?? '(vide)')
+  T('et le bouton se rouvre', !(await page.locator('form button').last().isDisabled()))
+
   console.log('\n── 6. Et le réglage Supabase, qui seul rend la barrière inviolable')
   const pub = createClient(URL, ANON, { auth: { persistSession: false } })
   const mail = `verif-mdp-direct-${Date.now()}@presti-test.invalid`
   const { data, error } = await pub.auth.signUp({ email: mail, password: '12345678' })
   if (data?.user) comptes.push(data.user.id)
   T('l’API refuse aussi les mots de passe faibles', !!error,
-    'la barrière produit tient, mais un appel DIRECT à l’API passe encore : Supabase → Auth → Passwords')
+    'la barrière produit tient, mais un appel DIRECT à l’API passe encore : Supabase → Authentication → Providers → Email → « Minimum password length »')
 
   await nav.close()
 } catch (e) {
