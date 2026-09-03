@@ -1836,3 +1836,35 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .sa-motion small { color: var(--muted); font-size: .78rem; }
 .sa-note { margin: .5rem 0 0; font-size: .82rem; }
 @media (max-width: 620px) { .sa-row > label { flex: 1 1 100%; } }
+
+/* ── Contrôle qualité des photos (Ma page → v4 §7/E3) ─────────────────────── */
+.pf-role {
+  position: absolute; left: 8px; top: 8px; z-index: 2;
+  font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 700;
+  padding: 3px 8px; border-radius: 6px; background: rgba(0, 0, 0, .62); color: #fff;
+}
+.pf-alertes {
+  margin-top: .9rem; padding: .9rem 1rem; border: 1px solid var(--line);
+  border-left: 3px solid #d08a2c; border-radius: 11px; background: color-mix(in srgb, #d08a2c 6%, transparent);
+}
+.pf-alerte + .pf-alerte { margin-top: .7rem; }
+.pf-alerte b { font-size: .85rem; word-break: break-all; }
+.pf-alerte ul { margin: .3rem 0 0; padding-left: 1.1rem; }
+.pf-alerte li { font-size: .85rem; color: var(--muted); margin: .2rem 0; }
+.pf-alerte li.ko { color: var(--crit, #c0392b); }
+.pf-alerte-x {
+  width: auto; margin: .7rem 0 0; background: transparent; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 9px; padding: .32rem .8rem; font-size: .82rem; cursor: pointer;
+}
+.pf-guide-t {
+  width: auto; margin: 0; background: transparent; color: var(--green);
+  border: 0; padding: 0; font-size: .82rem; text-decoration: underline; cursor: pointer;
+}
+.pf-guide {
+  margin-top: .8rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: .7rem;
+  padding: 1rem; border: 1px solid var(--line); border-radius: 12px;
+}
+.pf-guide > div { display: flex; flex-direction: column; gap: .15rem; }
+.pf-guide b { font-size: .86rem; }
+.pf-guide span { font-size: .8rem; color: var(--muted); line-height: 1.4; }
+.pf-guide > .muted { grid-column: 1 / -1; margin: .2rem 0 0; font-size: .8rem; font-style: italic; }

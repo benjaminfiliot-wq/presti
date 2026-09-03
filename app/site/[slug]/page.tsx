@@ -15,7 +15,7 @@ import { resolveLayout, type SectionId } from '@/lib/siteLayout'
 import { resolveStyle, styleToCss, styleToData } from '@/lib/siteStyle'
 
 type Service = { nom?: string; description?: string }
-type Realisation = { image?: string; titre?: string; specialite?: string }
+type Realisation = { image?: string; titre?: string; specialite?: string; blur?: string }
 type Reseaux = { instagram?: string; facebook?: string; tiktok?: string; linkedin?: string; whatsapp?: string; site?: string; google?: string }
 type Artisan = {
   nom: string | null; metier: string | null; slug: string | null; ville: string | null
@@ -274,7 +274,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
           <div className={`site-gallery${tier === 3 ? ' cine' : ''}`}>
             {realisations.map((rz, i) => (
               <figure className={`site-shot site-reveal${tier === 3 && i % 5 === 0 ? ' wide' : ''}`} key={i}>
-                <Image src={rz.image!} alt={rz.titre || 'Réalisation'} fill sizes="(max-width: 680px) 100vw, (max-width: 1180px) 50vw, 33vw" style={{ objectFit: 'cover' }} unoptimized={/^data:/.test(rz.image!)} />
+                <Image src={rz.image!} alt={rz.titre || 'Réalisation'} fill sizes="(max-width: 680px) 100vw, (max-width: 1180px) 50vw, 33vw" style={{ objectFit: 'cover' }} unoptimized={/^data:/.test(rz.image!)} {...(rz.blur ? { placeholder: 'blur' as const, blurDataURL: rz.blur } : {})} />
                 {(rz.titre || rz.specialite) ? (
                   <figcaption>{rz.specialite ? <span className="site-shot-tag">{rz.specialite}</span> : null}{rz.titre ? <b>{rz.titre}</b> : null}</figcaption>
                 ) : null}

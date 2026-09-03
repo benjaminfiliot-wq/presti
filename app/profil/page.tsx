@@ -113,7 +113,7 @@ export default function ProfilPage() {
       setTheme(THEME_IDS.includes(a.theme) ? a.theme : 'atelier')
       setStyleSite(resolveStyle(a.site_style))
       setServices(Array.isArray(a.services) ? (a.services as Service[]).map((s) => ({ nom: s.nom ?? '', description: s.description ?? '' })) : [])
-      setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '' })).filter((r) => r.image) : [])
+      setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '', ...(r.blur ? { blur: r.blur } : {}) })).filter((r) => r.image) : [])
       setAvantApres(Array.isArray(a.avant_apres) ? (a.avant_apres as AvantApres[]).map((p) => ({ avant: p.avant ?? '', apres: p.apres ?? '', titre: p.titre ?? '' })) : [])
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
       setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setReponseAuto(a.reponse_auto !== false); setLeadsPause(a.leads_pause === true)
@@ -180,7 +180,8 @@ export default function ProfilPage() {
   async function save() {
     setSaving(true); setMsg(null)
     const cleanServices = services.map((s) => ({ nom: s.nom.trim().slice(0, 80), description: s.description.trim().slice(0, 200) })).filter((s) => s.nom)
-    const cleanReal = realisations.filter((r) => r.image).slice(0, 12).map((r) => ({ image: r.image, titre: r.titre.trim().slice(0, 80), specialite: r.specialite.trim().slice(0, 50) }))
+    // La vignette floue (blur) est conservée : sans ça, elle disparaîtrait au premier enregistrement.
+    const cleanReal = realisations.filter((r) => r.image).slice(0, 12).map((r) => ({ image: r.image, titre: r.titre.trim().slice(0, 80), specialite: r.specialite.trim().slice(0, 50), ...(r.blur ? { blur: r.blur } : {}) }))
     const cleanReseaux: Reseaux = {}
     for (const { key } of RESEAUX) { const v = (reseaux[key] ?? '').trim().slice(0, 300); if (v) cleanReseaux[key] = v }
     // Contenu du site édité à la main (chaque texte est personnalisable).

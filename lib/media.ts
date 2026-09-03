@@ -29,7 +29,7 @@ export function resizeToBlob(file: File, max: number, type: 'image/jpeg' | 'imag
 }
 
 /** Blob → data URL (base64). */
-function blobToDataUrl(b: Blob): Promise<string> {
+export function blobToDataUrl(b: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const r = new FileReader()
     r.onload = () => resolve(String(r.result))
@@ -64,4 +64,39 @@ export async function uploadArtisanMedia(uid: string, blob: Blob, ext: string): 
   })
   if (error) throw error
   return supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path).data.publicUrl
+}
+
+// ── Préparation d'une photo de réalisation (v4 §7/E3) ─────────────────────────
+// Les réalisations étaient stockées en 1100 px JPEG q0.72, alors que la première
+// d'entre elles sert de fond de hero PLEIN ÉCRAN (avec un scale 1.08 en plus).
+// Sur un écran moderne, c'était de l'agrandissement : flou garanti, quel que soit
+// le soin apporté au reste. On garde donc un master large, en WebP (meilleur rapport
+// qualité/poids que JPEG), et next/image en dérive les tailles et formats servis.
+
+/** Largeur du master conservé, selon l'usage réel de la photo. */
+const TAILLE_MASTER: Record<string, number> = { hero: 2400, galerie: 1800, portrait: 1600, detail: 1400 }
+
+/** Vignette floutée (quelques centaines d'octets) : évite le trou blanc pendant le chargement. */
+async function vignetteFloue(file: File): Promise<string | null> {
+  try {
+    const petit = await resizeToBlob(file, 16, 'image/jpeg', 0.5)
+    const url = await blobToDataUrl(petit)
+    return url.length < 3000 ? url : null
+  } catch { return null }
+}
+
+export type PhotoPreparee = { blob: Blob; ext: string; blur: string | null }
+
+/**
+ * Ré-encode la photo pour le web. Le passage par canvas RETIRE tout l'EXIF au passage —
+ * y compris la GÉOLOCALISATION : un artisan qui publie la photo d'un chantier ne doit
+ * jamais publier l'adresse de son client.
+ */
+export async function preparerPhoto(file: File, role: string = 'galerie'): Promise<PhotoPreparee> {
+  const max = TAILLE_MASTER[role] ?? TAILLE_MASTER.galerie
+  // 0.82 en WebP ≈ qualité visuellement transparente ; en JPEG il aurait fallu 0.9 et le double du poids.
+  let blob = await resizeToBlob(file, max, 'image/webp', 0.82)
+  // Filet de sécurité : au-delà de 1,6 Mo on redescend d'un cran plutôt que d'alourdir la page.
+  if (blob.size > 1_600_000) blob = await resizeToBlob(file, Math.round(max * 0.75), 'image/webp', 0.78)
+  return { blob, ext: 'webp', blur: await vignetteFloue(file) }
 }
