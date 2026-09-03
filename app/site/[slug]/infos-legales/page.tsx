@@ -48,6 +48,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     alternates: { canonical: `https://prestiapp.fr/site/${slug}/infos-legales` },
     robots: { index: true, follow: true },
     openGraph: { title: `Informations légales — ${a.nom ?? 'Artisan'}`, type: 'website', url: `https://prestiapp.fr/site/${slug}/infos-legales`, ...(a.nom ? { siteName: a.nom } : {}) },
+    // Sans cette ligne, la carte Twitter du layout racine — « Presti — Répondez à chaque
+    // demande de devis… » — est servie sur la page légale de l'artisan.
+    twitter: { card: 'summary', title: `Informations légales — ${a.nom ?? 'Artisan'}`, description: `Mentions légales et protection des données de ${a.nom ?? 'cet artisan'}.` },
   }
 }
 
