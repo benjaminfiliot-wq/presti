@@ -69,6 +69,18 @@ export default function MessagesPage() {
       if (!prof) { router.replace('/onboarding'); return }
       await loadLeads()
       setReady(true)
+      // Relève des boîtes email connectées (v4 §B2). En arrière-plan : l'artisan ne doit
+      // jamais attendre le serveur IMAP pour voir sa boîte de réception. Au plus une fois
+      // toutes les 3 minutes, sinon on irait taper le serveur mail à chaque aller-retour.
+      try {
+        const dernier = Number(localStorage.getItem('presti-releve') || 0)
+        if (Date.now() - dernier > 180000) {
+          localStorage.setItem('presti-releve', String(Date.now()))
+          const r = await fetch('/api/canaux/relever', { method: 'POST', headers: { Authorization: `Bearer ${data.session.access_token}` } })
+          const j = await r.json().catch(() => null)
+          if (j?.importes > 0) await loadLeads()
+        }
+      } catch { /* pas de boîte connectée, ou serveur mail indisponible : sans conséquence ici */ }
     })
   }, [router, loadLeads])
 

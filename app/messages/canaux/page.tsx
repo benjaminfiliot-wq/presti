@@ -62,6 +62,17 @@ export default function CanauxPage() {
     await charger()
   }
 
+  async function relever() {
+    if (busy) return
+    setBusy(true); setMsg(null)
+    const t = await jeton()
+    const r = await fetch('/api/canaux/relever', { method: 'POST', headers: { Authorization: `Bearer ${t}` } })
+    const d = await r.json().catch(() => ({}))
+    setBusy(false)
+    setMsg({ type: d.ok ? 'ok' : 'err', text: d.message || d.error || 'Relève impossible.' })
+    await charger()
+  }
+
   async function deconnecter(id: string, adr: string) {
     if (!confirm(`Déconnecter ${adr} ?\n\nVos messages déjà reçus restent dans votre boîte de réception.`)) return
     const t = await jeton()
@@ -98,6 +109,16 @@ export default function CanauxPage() {
               ))}
             </div>
           )}
+          {canaux.length > 0 ? (
+            <>
+              <button className="btn btn--ghost" style={{ width: 'auto', marginTop: '1rem' }} disabled={busy} onClick={relever}>
+                {busy ? 'Relève en cours…' : '↻ Relever maintenant'}
+              </button>
+              <p className="muted" style={{ margin: '.5rem 0 0', fontSize: '.82rem' }}>
+                Vos boîtes sont relevées automatiquement chaque matin, et à chaque fois que vous ouvrez vos messages.
+              </p>
+            </>
+          ) : null}
         </div>
 
         <div className="tool-card">
