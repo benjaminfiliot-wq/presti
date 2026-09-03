@@ -1894,3 +1894,46 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   border: 0; padding: .1rem .3rem; font-size: .9rem; cursor: pointer; line-height: 1;
 }
 .tar-x:hover { color: var(--crit, #c0392b); }
+
+/* ── Inventaire (v4 §9) ────────────────────────────────────────────────────── */
+.inv-alerte { border-left: 3px solid #d08a2c; }
+.inv-alertes { list-style: none; margin: .6rem 0 0; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
+.inv-alertes li { font-size: .9rem; color: var(--muted); }
+.inv-alertes b { color: var(--ink); }
+
+.inv-form { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+.inv-form input { margin: 0; }
+.inv-form input:nth-child(1) { flex: 3 1 240px; }
+.inv-form input:nth-child(2) { flex: 0 0 70px; }
+.inv-form input:nth-child(3) { flex: 0 0 130px; }
+.inv-form input:nth-child(4) { flex: 1 1 180px; }
+
+.inv-barre { display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; }
+.inv-barre input { margin: 0; max-width: 340px; flex: 1 1 220px; }
+.inv-bas td:first-child { box-shadow: inset 3px 0 0 #d08a2c; padding-left: .9rem; }
+.inv-code { margin-left: .4rem; opacity: .5; font-size: .8rem; }
+.inv-mvt { display: flex; gap: .3rem; align-items: center; }
+.inv-mvt button {
+  width: auto; margin: 0; background: transparent; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 8px; padding: .2rem .55rem; font-size: .95rem; cursor: pointer; line-height: 1.3;
+}
+.inv-mvt button:hover:not(:disabled) { border-color: var(--green); }
+.inv-mvt button:disabled { opacity: .45; cursor: default; }
+.inv-mvt .inv-compter { font-size: .8rem; padding: .25rem .6rem; color: var(--muted); }
+
+/* Scan de code-barres */
+.inv-scan { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; background: rgba(8, 7, 6, .92); padding: 1rem; }
+.inv-scan-in { position: relative; width: min(520px, 100%); display: flex; flex-direction: column; gap: .9rem; align-items: center; }
+.inv-scan-x {
+  position: absolute; top: -6px; right: -6px; z-index: 2; width: 40px; height: 40px; margin: 0;
+  display: grid; place-items: center; border-radius: 999px; background: rgba(0, 0, 0, .5);
+  border: 1px solid rgba(255, 255, 255, .25); color: #fff; cursor: pointer;
+}
+.inv-scan-v { width: 100%; border-radius: 14px; background: #000; aspect-ratio: 4/3; object-fit: cover; }
+.inv-scan-viseur {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 72%; height: 30%; border: 2px solid rgba(255, 255, 255, .85); border-radius: 10px; pointer-events: none;
+}
+.inv-scan-t { color: #EDE3D2; font-size: .9rem; text-align: center; margin: 0; max-width: 42ch; }
+.inv-scan-manuel { display: flex; gap: .5rem; width: 100%; }
+.inv-scan-manuel input { margin: 0; flex: 1; }
