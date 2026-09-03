@@ -429,10 +429,13 @@ html.lenis,html.lenis body{height:auto}
   transition:background .15s ease,border-color .15s ease,transform .15s var(--se);
 }
 .site-lb-x{top:-4px;right:-4px}
-.site-lb-nav{top:calc(39vh - 22px)}
+/* Centrées sur la boîte plutôt que sur une hauteur devinée en vh : une image basse
+   ou haute ne fait plus flotter les flèches n'importe où. */
+.site-lb-nav{top:50%;transform:translateY(-50%)}
 .site-lb-nav.p{left:-4px}
 .site-lb-nav.n{right:-4px}
-.site-lb-x:hover,.site-lb-nav:hover{background:rgba(0,0,0,.7);border-color:#fff;transform:scale(1.06)}
+.site-lb-x:hover{background:rgba(0,0,0,.7);border-color:#fff;transform:scale(1.06)}
+.site-lb-nav:hover{background:rgba(0,0,0,.7);border-color:#fff;transform:translateY(-50%) scale(1.06)}
 .site-lb-x:focus-visible,.site-lb-nav:focus-visible{outline:2px solid var(--pc);outline-offset:3px}
 .site-lb-cap{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;justify-content:center;color:#EDE3D2;text-align:center}
 .site-lb-cap b{font-family:var(--sfd);font-size:1.15rem}
@@ -441,7 +444,8 @@ html.lenis,html.lenis body{height:auto}
 .site-gallery .site-shot[role="button"]{cursor:zoom-in}
 .site-gallery .site-shot:focus-visible{outline:2px solid var(--pc);outline-offset:4px}
 @media(max-width:680px){
-  .site-lb-nav{top:auto;bottom:-4px}
+  .site-lb-nav{top:auto;bottom:-4px;transform:none}
+  .site-lb-nav:hover{transform:scale(1.06)}
   .site-lb-img{max-height:64vh}
 }
 
