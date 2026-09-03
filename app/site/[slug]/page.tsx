@@ -169,7 +169,9 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   // Chaque section rend son JSX existant (conditions de contenu conservées → rendu identique).
   const sectionNodes: Partial<Record<SectionId, ReactNode>> = {
       hero: (
-      <section className={`site-hero${tier === 3 && heroShot ? ' site-dark' : ''}`} id="top">
+      // Sans photo exploitable, on ne laisse pas un grand vide et on ne va pas chercher une
+      // image de banque : le hero bascule en composition TYPOGRAPHIQUE (v4 §7/E3, repli digne).
+      <section className={`site-hero${tier === 3 && heroShot ? ' site-dark' : ''}`} id="top" {...(heroShot ? {} : { 'data-hero': 'typo' })}>
         {tier === 3 && heroShot ? (
           <div className="site-hero-media" aria-hidden="true">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -188,6 +190,13 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
             <a className="site-btn p" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis {IC.arrow}</a>
             {showReal ? <a className="site-btn g" href="#realisations">Voir mes réalisations</a> : null}
           </div>
+          {/* Sans photo, l'espace est rempli par du VRAI contenu — les prestations réellement
+              saisies par l'artisan — jamais par de la décoration ni une image inventée. */}
+          {!heroShot && services.length > 0 ? (
+            <ul className="site-hero-strip site-reveal">
+              {services.slice(0, 4).map((s, i) => <li key={i}>{s.nom}</li>)}
+            </ul>
+          ) : null}
           {(telDigits || zone) ? (
             <div className="site-hero-meta site-reveal">
               {telDigits ? <a href={`tel:${telDigits}`}>{IC.phone}{a.tel_public}</a> : null}

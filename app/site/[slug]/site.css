@@ -371,3 +371,32 @@ html.lenis,html.lenis body{height:auto}
 /* « Cinématique » : les révélations prennent leur temps et partent d'un peu plus loin. */
 .site[data-motion="cinematique"] .site-reveal{transition-duration:1.15s}
 .site[data-motion="cinematique"] .site-reveal:not(.in){transform:translateY(34px)}
+
+/* ── Hero sans photo : composition typographique (v4 §7/E3) ─────────────────
+   Interdit de combler avec une image de banque ou une photo générée : on tient
+   l'espace avec de la lettre et du vrai contenu. Hauteur ramenée à une valeur
+   qui se justifie sans image, et texte centré verticalement plutôt que collé en bas. */
+.site-hero[data-hero="typo"]{
+  min-height:clamp(430px,62vh,660px);align-items:center;
+  padding-top:clamp(3rem,9vw,6rem);padding-bottom:clamp(3rem,9vw,6rem);
+}
+/* Lavis d'accent, non figuratif — il donne de la profondeur sans rien raconter de faux. */
+.site-hero[data-hero="typo"]::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(120% 90% at 12% 8%,color-mix(in srgb,var(--pc) 13%,transparent),transparent 62%);
+}
+.site-hero[data-hero="typo"] .site-hero-in{max-width:1000px}
+.site-hero[data-hero="typo"] h1{font-size:calc(clamp(3.2rem,11vw,8rem) * var(--sscale))}
+/* Un filet sous le titre : il structure la composition à la place de l'image. */
+.site-hero[data-hero="typo"] h1::after{
+  content:"";display:block;width:clamp(80px,12vw,160px);height:var(--sbw);
+  background:var(--pc);margin:clamp(1.2rem,2.4vw,1.9rem) 0 0;
+}
+/* Les prestations réelles, en bande typographique — du contenu, pas du remplissage. */
+.site-hero-strip{
+  list-style:none;margin:clamp(1.6rem,3vw,2.4rem) 0 0;padding:0;
+  display:flex;flex-wrap:wrap;gap:.5rem .9rem;
+  font-family:var(--sfm);font-size:.74rem;letter-spacing:.13em;text-transform:uppercase;color:var(--sink2);
+}
+.site-hero-strip li{display:flex;align-items:center;gap:.9rem}
+.site-hero-strip li + li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--pc);flex:none}
