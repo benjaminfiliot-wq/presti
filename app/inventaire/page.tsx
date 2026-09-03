@@ -5,17 +5,28 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import Scanner from '@/app/inventaire/Scanner'
+import Panneau from '@/app/inventaire/Panneau'
+import FicheMateriau from '@/app/inventaire/FicheMateriau'
+import ImportCsv from '@/app/inventaire/ImportCsv'
+import type { Fournisseur } from '@/lib/inventaire/types'
 
 // Inventaire (v4 §9) — ce que l'artisan a en stock, et ce qui va lui manquer.
 //
 // L'écran s'ouvre sur CE QUI MANQUE, pas sur la liste complète : c'est la seule chose
 // qu'un artisan vient réellement vérifier avant de partir sur un chantier.
+//
+// v2 (§8 F1/F2) : la fiche complète s'ouvre en panneau latéral (FicheMateriau), l'import
+// CSV aussi (ImportCsv), et « Mes fournisseurs » a sa page. Les mouvements de stock
+// restent tels quels.
 
 type Materiau = {
   id: string; nom: string; marque: string | null; reference: string | null
   unite: string; code_barres: string | null; fournisseur_prefere: string | null
   prix_dernier_ht: number | null; seuil_alerte: number; quantite_totale: number
   stock: { lieu: string; quantite: number }[]
+  photo_url: string | null; prix_achat_ht: number | null
+  prix_vu_ht: number | null; prix_vu_le: string | null; prix_vu_a_reverifier: boolean
+  fournisseur: { id: string; nom: string } | null
 }
 type Alerte = { id: string; nom: string; unite: string; reste: number; seuil: number }
 
@@ -32,6 +43,11 @@ export default function InventairePage() {
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
   const [busy, setBusy] = useState(false)
   const [scanner, setScanner] = useState(false)
+  const [uid, setUid] = useState('')
+  const [fournisseurs, setFournisseurs] = useState<Fournisseur[]>([])
+  // Panneau latéral : fiche (null = nouvelle) ou import CSV
+  const [fiche, setFiche] = useState<{ id: string | null; prefill?: { code_barres?: string; nom?: string } } | null>(null)
+  const [importer, setImporter] = useState(false)
 
   // Formulaire d'ajout
   const [nom, setNom] = useState('')
@@ -43,20 +59,30 @@ export default function InventairePage() {
 
   const charger = useCallback(async (recherche = '') => {
     const t = await jeton()
-    const r = await fetch(`/api/inventaire${recherche ? `?q=${encodeURIComponent(recherche)}` : ''}`, { headers: { Authorization: `Bearer ${t}` } })
+    // La liste vient de la route v2 : mêmes articles, avec la fiche complète (photo, prix d'achat, prix vu).
+    const r = await fetch(`/api/inventaire/materiaux${recherche ? `?q=${encodeURIComponent(recherche)}` : ''}`, { headers: { Authorization: `Bearer ${t}` } })
     const d = await r.json().catch(() => ({}))
     if (r.status === 403) { setBloque(d.error); return }
     setBloque(null)
     setMateriaux(d.materiaux ?? []); setAlertes(d.alertes ?? [])
   }, [])
 
+  const chargerFournisseurs = useCallback(async () => {
+    const t = await jeton()
+    const r = await fetch('/api/inventaire/fournisseurs', { headers: { Authorization: `Bearer ${t}` } })
+    const d = await r.json().catch(() => ({}))
+    if (r.ok) setFournisseurs(d.fournisseurs ?? [])
+  }, [])
+
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
+      setUid(data.session.user.id)
       await charger()
+      chargerFournisseurs()
       setReady(true)
     })
-  }, [router, charger])
+  }, [router, charger, chargerFournisseurs])
 
   async function bouger(materiau_id: string, type: 'entree' | 'sortie' | 'inventaire', quantite: number) {
     if (busy) return
@@ -105,6 +131,7 @@ export default function InventairePage() {
       await charger(q)
     } else {
       setCode(codeLu)
+      setFiche({ id: null, prefill: { code_barres: codeLu } })
       setMsg({ type: 'ok', text: 'Code inconnu — donnez-lui un nom pour l’ajouter à votre inventaire.' })
     }
   }, [lieu, q, charger])
@@ -129,7 +156,12 @@ export default function InventairePage() {
 
   return (
     <AppShell active="inventaire" title="Inventaire" crumb={materiaux.length ? `${materiaux.length} articles` : 'Votre stock'} wide
-      actions={<button className="btn btn--primary" style={{ width: 'auto', margin: 0 }} onClick={() => setScanner(true)}>⌗ Scanner</button>}>
+      actions={<div className="inv-tete">
+        <a className="btn btn--ghost" href="/inventaire/fournisseurs">Mes fournisseurs{fournisseurs.length ? ` (${fournisseurs.length})` : ''}</a>
+        <button type="button" className="btn btn--ghost" onClick={() => { setMsg(null); setImporter(true) }}>Importer un CSV</button>
+        <button type="button" className="btn btn--ghost" onClick={() => { setMsg(null); setFiche({ id: null }) }}>+ Fiche complète</button>
+        <button type="button" className="btn btn--primary" onClick={() => setScanner(true)}>⌗ Scanner</button>
+      </div>}>
       <div className="prof-grid">
         {alertes.length > 0 ? (
           <div className="tool-card inv-alerte">
@@ -153,6 +185,7 @@ export default function InventairePage() {
           </div>
           <p className="muted" style={{ margin: '.6rem 0 0', fontSize: '.82rem' }}>
             Renseignez le code-barres une fois : ensuite, un scan à la livraison suffit à incrémenter le stock.
+            Pour la marque, le prix d’achat, la photo ou le fournisseur : <button type="button" className="inv-nom" onClick={() => setFiche({ id: null, prefill: { nom, code_barres: code } })}>ouvrir la fiche complète</button>.
           </p>
         </div>
 
@@ -171,7 +204,7 @@ export default function InventairePage() {
             <p className="muted" style={{ margin: '1rem 0 0' }}>{q ? 'Aucun article ne correspond.' : 'Votre inventaire est vide — ajoutez un premier article ou scannez un code-barres.'}</p>
           ) : (
             <table className="tar-table full">
-              <thead><tr><th>Article</th><th className="num">Atelier</th><th className="num">Camion</th><th className="num">Dernier prix</th><th>Mouvement ({lieu})</th></tr></thead>
+              <thead><tr><th>Matériau</th><th className="num">Atelier</th><th className="num">Camion</th><th className="num">Prix d’achat</th><th className="num">Prix vu</th><th>Mouvement ({lieu})</th></tr></thead>
               <tbody>
                 {materiaux.map((m) => {
                   const par = (l: string) => Number((m.stock ?? []).find((s) => s.lieu === l)?.quantite ?? 0)
@@ -179,13 +212,26 @@ export default function InventairePage() {
                   return (
                     <tr key={m.id} className={bas ? 'inv-bas' : ''}>
                       <td>
-                        {m.nom}
+                        {m.photo_url ? <img className="inv-thumb" src={m.photo_url} alt="" /> : null}
+                        <button type="button" className="inv-nom" onClick={() => { setMsg(null); setFiche({ id: m.id }) }} title="Ouvrir la fiche">{m.nom}</button>
+                        {m.marque ? <span className="muted"> · {m.marque}</span> : null}
                         {m.reference ? <span className="muted"> · {m.reference}</span> : null}
                         {m.code_barres ? <span className="inv-code">⌗</span> : null}
+                        {m.fournisseur ? <span className="inv-vu">{m.fournisseur.nom}</span> : null}
                       </td>
                       <td className="num">{par('atelier')} {m.unite}</td>
                       <td className="num">{par('camion')} {m.unite}</td>
-                      <td className="num">{m.prix_dernier_ht !== null ? `${Number(m.prix_dernier_ht).toFixed(2)} €` : <span className="muted">—</span>}</td>
+                      <td className="num">
+                        {m.prix_achat_ht !== null ? `${Number(m.prix_achat_ht).toFixed(2)} €` : m.prix_dernier_ht !== null ? <span title="Dernier prix payé (entrée de stock)">{Number(m.prix_dernier_ht).toFixed(2)} €</span> : <span className="muted">—</span>}
+                      </td>
+                      <td className="num">
+                        {m.prix_vu_ht !== null ? (
+                          <>
+                            {Number(m.prix_vu_ht).toFixed(2)} €
+                            <span className="inv-vu">{m.prix_vu_a_reverifier ? <span className="pill warn">à revérifier</span> : (m.prix_vu_le ? new Date(m.prix_vu_le).toLocaleDateString('fr-FR') : '')}</span>
+                          </>
+                        ) : <span className="muted">—</span>}
+                      </td>
                       <td>
                         <div className="inv-mvt">
                           <button type="button" onClick={() => bouger(m.id, 'sortie', 1)} disabled={busy} aria-label={`Retirer un ${m.nom}`}>−</button>
@@ -208,6 +254,19 @@ export default function InventairePage() {
       </div>
 
       {scanner ? <Scanner onCode={surCode} onFermer={() => setScanner(false)} /> : null}
+
+      {fiche ? (
+        <Panneau titre={fiche.id ? (materiaux.find((m) => m.id === fiche.id)?.nom ?? 'Fiche matériau') : 'Nouveau matériau'} onFermer={() => setFiche(null)}>
+          <FicheMateriau id={fiche.id} uid={uid} fournisseurs={fournisseurs} jeton={jeton} prefill={fiche.prefill}
+            onFermer={() => setFiche(null)}
+            onChange={(m) => { setMsg(m); if (fiche.prefill?.code_barres) setCode(''); charger(q) }} />
+        </Panneau>
+      ) : null}
+      {importer ? (
+        <Panneau titre="Importer un CSV" onFermer={() => setImporter(false)}>
+          <ImportCsv jeton={jeton} fournisseurs={fournisseurs} onFini={(m) => { setMsg(m); setImporter(false); charger(q) }} />
+        </Panneau>
+      ) : null}
     </AppShell>
   )
 }

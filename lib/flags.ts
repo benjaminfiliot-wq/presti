@@ -24,9 +24,9 @@ export const FLAGS = {
   /** §10 H2 — slides 3D de réalisations (Signature). */
   siteSlides3d: false,
   /** §4 B3 — visites guidées à la première ouverture. */
-  aideVisites: false,
+  aideVisites: true,
   /** §4 B4 — centre d'aide /aide. */
-  aideCentre: false,
+  aideCentre: true,
   /** §5 — vidéo hero HyperFrames (sinon : séquence HTML). Décision Benj : après la démo. */
   landingVideo: false,
   /** §9 G2 — persona et apparence avancée de la plateforme. */

@@ -17,7 +17,7 @@ export const maxDuration = 60
 
 type Lead = {
   id: string; artisan_id: string; nom_prospect: string | null
-  contact: string | null; message: string | null; statut: string | null
+  contact: string | null; message: string | null; statut: string | null; prise_en_main: boolean | null
 }
 
 async function authArtisan(req: Request) {
@@ -31,7 +31,7 @@ async function authArtisan(req: Request) {
 async function ownedLead(leadId: string, uid: string): Promise<Lead | null> {
   const { data } = await supabaseAdmin
     .from('leads')
-    .select('id, artisan_id, nom_prospect, contact, message, statut')
+    .select('id, artisan_id, nom_prospect, contact, message, statut, prise_en_main')
     .eq('id', leadId)
     .maybeSingle()
   const lead = (data as Lead) ?? null
@@ -56,12 +56,46 @@ export async function POST(req: Request) {
     const uid = auth.uid
 
     const body = await req.json().catch(() => null)
-    const action = body?.action === 'suggest' ? 'suggest' : 'reply'
+    const ACTIONS = ['reply', 'suggest', 'valider', 'rejeter', 'prise_en_main', 'escalader'] as const
+    type Action = typeof ACTIONS[number]
+    const action: Action = (ACTIONS as readonly string[]).includes(body?.action) ? body.action : 'reply'
     const leadId = typeof body?.lead_id === 'string' ? body.lead_id : ''
     if (!leadId) return NextResponse.json({ error: 'Conversation manquante' }, { status: 400 })
 
     const lead = await ownedLead(leadId, uid)
     if (!lead) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
+
+    // ── Poste de pilotage (v5 §9) : prise de main, escalade, propositions de l'assistant.
+    if (action === 'prise_en_main' || action === 'escalader') {
+      const valeur = action === 'escalader' ? true : body?.valeur !== false
+      await supabaseAdmin.from('leads').update({
+        prise_en_main: valeur, prise_en_main_le: valeur ? new Date().toISOString() : null,
+        ...(action === 'escalader' ? { urgence: 'urgent', lu_le: null } : {}),
+        updated_at: new Date().toISOString(),
+      }).eq('id', lead.id)
+      return NextResponse.json({ ok: true, prise_en_main: valeur })
+    }
+    if (action === 'valider' || action === 'rejeter') {
+      const messageId = typeof body?.message_id === 'string' ? body.message_id : ''
+      const { data: prop } = await supabaseAdmin.from('messages').select('id, contenu, etat').eq('id', messageId).eq('lead_id', lead.id).maybeSingle()
+      if (!prop || prop.etat !== 'proposition') return NextResponse.json({ error: 'Proposition introuvable ou déjà traitée.' }, { status: 404 })
+      if (action === 'rejeter') {
+        await supabaseAdmin.from('messages').update({ etat: 'rejete' }).eq('id', prop.id)
+        return NextResponse.json({ ok: true })
+      }
+      // Valider = le message devient réel pour le client (etat null), à l'instant de la validation,
+      // et part par email si le prospect en a un. Texte éventuellement retouché par l'artisan.
+      const texte = typeof body?.message === 'string' && body.message.trim() ? body.message.trim().slice(0, 4000) : prop.contenu
+      await supabaseAdmin.from('messages').update({ etat: null, contenu: texte, sent_at: new Date().toISOString() }).eq('id', prop.id)
+      await supabaseAdmin.from('leads').update({ statut: lead.statut === 'gagne' || lead.statut === 'perdu' ? lead.statut : 'en_discussion', updated_at: new Date().toISOString(), lu_le: new Date().toISOString() }).eq('id', lead.id)
+      const { data: artisanV } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
+      let emailed = false
+      if (lead.contact && lead.contact.includes('@')) {
+        const r = await sendEmail({ to: lead.contact, fromName: artisanV?.nom || undefined, subject: `Réponse de ${artisanV?.nom ?? 'votre artisan'}`, text: `${texte}\n\n— ${artisanV?.nom ?? ''}`, replyTo: artisanV?.email ?? undefined }).catch(() => ({ ok: false }))
+        emailed = !!r.ok
+      }
+      return NextResponse.json({ ok: true, emailed })
+    }
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')

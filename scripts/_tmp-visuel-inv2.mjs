@@ -1,0 +1,31 @@
+import fs from 'node:fs'
+import { chromium } from 'playwright'
+import { connexion } from './aide-connexion.mjs'
+const BASE = 'http://localhost:3112'
+const OUT = process.env.OUT
+const c = JSON.parse(fs.readFileSync(process.env.COMPTE, 'utf8'))
+const nav = await chromium.launch()
+const { page } = await connexion(nav, { email: c.email, motDePasse: c.password, base: BASE, viewport: { width: 1380, height: 900 } })
+await page.goto(`${BASE}/inventaire`, { waitUntil: 'networkidle' })
+await page.screenshot({ path: `${OUT}/inv-1-liste.png` })
+await page.getByRole('button', { name: '+ Fiche complète' }).click()
+await page.waitForSelector('.inv-panneau')
+await page.getByRole('button', { name: /Plus de détails/ }).click()
+await page.waitForTimeout(400)
+await page.screenshot({ path: `${OUT}/inv-2-fiche.png` })
+await page.keyboard.press('Escape')
+await page.getByRole('button', { name: 'Importer un CSV' }).click()
+await page.waitForSelector('.inv-panneau')
+await page.screenshot({ path: `${OUT}/inv-3-import.png` })
+await page.goto(`${BASE}/inventaire/fournisseurs`, { waitUntil: 'networkidle' })
+await page.getByRole('button', { name: 'Ajouter mes fournisseurs habituels' }).click()
+await page.waitForTimeout(300)
+await page.screenshot({ path: `${OUT}/inv-4-fournisseurs.png` })
+await page.getByRole('button', { name: '+ Fournisseur' }).click()
+await page.waitForSelector('.inv-panneau')
+await page.screenshot({ path: `${OUT}/inv-5-fiche-fournisseur.png` })
+await page.setViewportSize({ width: 390, height: 844 })
+await page.waitForTimeout(300)
+await page.screenshot({ path: `${OUT}/inv-6-mobile.png` })
+await nav.close()
+console.log('ok')

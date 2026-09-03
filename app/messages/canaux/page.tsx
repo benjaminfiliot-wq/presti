@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
+import Info from '@/app/Info'
 
 // Messages → Canaux (v4 §B2). Voie IMAP/SMTP : marche avec N'IMPORTE QUELLE boîte email
 // (OVH, Gmail, Orange, Free…) sans dépendre d'une application OAuth tierce.
@@ -130,9 +131,9 @@ export default function CanauxPage() {
               <p className="muted" style={{ margin: '0 0 1rem' }}>
                 Fonctionne avec <b>n’importe quelle</b> adresse (OVH, Gmail, Orange, Free, La Poste…). On reconnaît les réglages tout seul — vous n’avez que votre adresse et votre mot de passe à saisir.
               </p>
-              <label>Votre adresse email</label>
+              <label>Votre adresse email <Info cle="canaux.adresse" /></label>
               <input type="email" value={adresse} onChange={(e) => setAdresse(e.target.value)} placeholder="contact@mon-entreprise.fr" autoComplete="off" />
-              <label>Mot de passe</label>
+              <label>Mot de passe <Info cle="canaux.mot_de_passe" /></label>
               <input type="password" value={mdp} onChange={(e) => setMdp(e.target.value)} placeholder="Mot de passe de la boîte" autoComplete="new-password" />
               <p className="muted" style={{ margin: '.45rem 0 0', fontSize: '.83rem' }}>
                 ⚠️ Avec <b>Gmail</b> ou <b>Outlook</b>, votre mot de passe habituel ne fonctionne pas : créez un <b>« mot de passe d’application »</b> dans les réglages de sécurité de votre compte, et collez-le ici.

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import { urlPlateforme } from '@/lib/urls'
+import Info from '@/app/Info'
 
 type Artisan = { id: string; nom: string | null; metier: string | null; slug: string | null; domaine?: string | null; domaine_verifie?: boolean | null }
 type Lead = { id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null; created_at: string }
@@ -164,7 +165,7 @@ export default function Dashboard() {
                       {replies[l.id]
                         ? <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap', background: 'var(--accent-tint)', border: '1px solid var(--accent-tint-2)', borderRadius: 10, padding: '.7rem' }}>{replies[l.id]}</p>
                         : <p className="muted" style={{ margin: '0 0 .9rem' }}>Pas encore de réponse automatique pour cette demande.</p>}
-                      <label style={{ fontSize: '.8rem' }}>Statut</label>
+                      <label style={{ fontSize: '.8rem' }}>Statut <Info cle="dashboard.statut" /></label>
                       <select value={l.statut ?? 'nouveau'} onChange={(e) => changeStatut(l.id, e.target.value)} style={{ maxWidth: '16rem' }}>
                         {STATUTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                       </select>

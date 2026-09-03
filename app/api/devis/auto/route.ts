@@ -1,84 +1,26 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { generateDevis } from '@/lib/ai'
-import { resolveModel } from '@/lib/models'
-import { consumeCredit } from '@/lib/credits'
-import { computeTotals } from '@/lib/devisTotals'
-import { normalizeLigne } from '@/lib/lignes'
-import { catalogueDe } from '@/lib/prix'
+import { creerDevisBrouillonPourLead } from '@/lib/devisAuto'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
 
-// Devis AUTOMATIQUE depuis une conversation : lit le fil, en fait un chiffrage IA complet,
-// et crée un devis brouillon pré-rempli (client + lignes), prêt à relire/envoyer en 1 clic.
-// Authentifié + vérif de propriété du lead + décompte crédit (au tier demandé).
+// Devis AUTOMATIQUE depuis une conversation (bouton « Devis auto » de la boîte).
+// Toute la logique vit dans lib/devisAuto.ts — la même que l'outil de l'assistant et
+// les règles d'automatisation. Ici : authentification + décodage du corps, rien d'autre.
 export async function POST(req: Request) {
   try {
     // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).
     const session = await verifierSession(req)
     if (estEchec(session)) return NextResponse.json({ error: session.error }, { status: session.status })
-    const uid = session.uid
 
     const body = await req.json().catch(() => ({}))
     const leadId = typeof body?.lead_id === 'string' ? body.lead_id : ''
     if (!leadId) return NextResponse.json({ error: 'Conversation manquante' }, { status: 400 })
 
-    const { data: lead } = await supabaseAdmin
-      .from('leads').select('id, artisan_id, nom_prospect, contact, message').eq('id', leadId).maybeSingle()
-    if (!lead || lead.artisan_id !== uid) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
-
-    const { data: art } = await supabaseAdmin
-      .from('artisans').select('nom, metier, plan, is_founder, tva_regime, metier').eq('id', uid).maybeSingle()
-    if (!art) return NextResponse.json({ error: 'Profil introuvable' }, { status: 404 })
-
-    // Description = besoin initial + tous les messages du prospect (ce qu'il a dit).
-    const { data: msgs } = await supabaseAdmin
-      .from('messages').select('sens, contenu').eq('lead_id', leadId).order('sent_at')
-    const dits = (msgs ?? []).filter((m) => m.sens === 'in').map((m) => (m.contenu ?? '').trim()).filter(Boolean)
-    const description = (dits.length ? dits.join('\n') : (lead.message ?? '')).slice(0, 4000)
-    if (!description.trim()) return NextResponse.json({ error: 'Pas assez d\'éléments dans la conversation pour chiffrer.' }, { status: 400 })
-
-    const { model, tier } = resolveModel(body?.model, art.plan)
-    const credit = await consumeCredit(uid, tier, !!art.is_founder)
-    if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
-
-    // Catalogue de prix (v4 §8) : SES tarifs d'abord, les ordres de grandeur du marché
-    // en complément. Chaque poste porte sa provenance, que l'IA doit recopier telle quelle.
-    let postes: Awaited<ReturnType<typeof catalogueDe>>['postes'] = []
-    try { postes = (await catalogueDe(uid, art.metier)).postes } catch { /* pas de catalogue */ }
-
-    const result = await generateDevis({ nom: art.nom, metier: art.metier }, description, postes, model)
-
-    // Création du devis (même logique que /api/devis) : numéro, totaux, lignes.
-    const franchise = ((art.tva_regime as string | null) || 'franchise') === 'franchise'
-    const eff = result.lignes.map((l) => normalizeLigne(l, franchise))
-    const totals = computeTotals(eff, 0)
-    const { data: nn } = await supabaseAdmin.rpc('next_numero', { p_artisan: uid, p_type: 'devis' })
-    const numero = `DEV-${new Date().getFullYear()}-${String(nn ?? 1).padStart(4, '0')}`
-    const clientEmail = lead.contact && lead.contact.includes('@') ? lead.contact.slice(0, 200) : null
-
-    const { data: devis, error: dErr } = await supabaseAdmin
-      .from('devis')
-      .insert({
-        artisan_id: uid, lead_id: leadId, // rattache le devis à SA conversation (carte §A3)
-        numero, statut: 'brouillon', validite_jours: 90, remise_pct: 0, acompte_pct: 30,
-        objet: `${art.metier || 'Travaux'} — ${lead.nom_prospect || 'client'}`.slice(0, 300),
-        notes: result.note?.slice(0, 4000) || null,
-        client_nom: (lead.nom_prospect || '').slice(0, 160) || null,
-        client_email: clientEmail,
-        total_ht: totals.total_ht, total_tva: totals.total_tva, total_ttc: totals.total_ttc,
-      })
-      .select('id, numero').single()
-    if (dErr) { console.error('[devis/auto] insert:', dErr.message); return NextResponse.json({ error: 'Création du devis impossible' }, { status: 500 }) }
-
-    if (eff.length) await supabaseAdmin.from('devis_lignes').insert(eff.map((l, i) => ({ devis_id: devis.id, ordre: i, ...l })))
-
-    // On relie la conversation au devis (statut) sans casser gagné/perdu.
-    await supabaseAdmin.from('leads').update({ statut: 'devis', updated_at: new Date().toISOString() }).eq('id', leadId).not('statut', 'in', '("gagne","perdu")')
-
-    return NextResponse.json({ ok: true, id: devis.id, numero: devis.numero, note: result.note })
+    const r = await creerDevisBrouillonPourLead({ artisanId: session.uid, leadId, tier: body?.model, source: 'manuel' })
+    if (!r.ok) return NextResponse.json({ error: r.error, ...(r.outOfCredits ? { outOfCredits: true } : {}) }, { status: r.status })
+    return NextResponse.json({ ok: true, id: r.id, numero: r.numero, note: r.note })
   } catch (e) {
     console.error('[devis/auto]', e)
     return NextResponse.json({ error: "L'IA n'a pas pu générer le devis. Réessaie." }, { status: 500 })

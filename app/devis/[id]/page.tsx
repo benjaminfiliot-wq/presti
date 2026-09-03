@@ -7,6 +7,7 @@ import { computeTotals } from '@/lib/devisTotals'
 import AppShell from '@/app/AppShell'
 import ModelSelect from '@/app/ModelSelect'
 import LogoUpload from '@/app/LogoUpload'
+import Info from '@/app/Info'
 import type { Tier } from '@/lib/models'
 import { mentionFranchise, type BaseMention } from '@/lib/facturation'
 
@@ -245,12 +246,12 @@ export default function DevisEditor() {
             <div className="tool-card">
               <h2>Client</h2>
               <div className="grid2">
-                <div><label>Nom du client</label><input value={clientNom} onChange={(e) => setClientNom(e.target.value)} placeholder="Marie Dupont" /></div>
-                <div><label>Email</label><input value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="marie@email.fr" /></div>
+                <div><label>Nom du client <Info cle="devis.client_nom" /></label><input value={clientNom} onChange={(e) => setClientNom(e.target.value)} placeholder="Marie Dupont" /></div>
+                <div><label>Email <Info cle="devis.client_email" /></label><input value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="marie@email.fr" /></div>
               </div>
-              <label>Adresse du chantier</label>
+              <label>Adresse du chantier <Info cle="devis.client_adresse" /></label>
               <input value={clientAdresse} onChange={(e) => setClientAdresse(e.target.value)} placeholder="12 rue des Lilas, 75011 Paris" />
-              <label>Objet du devis</label>
+              <label>Objet du devis <Info cle="devis.objet" /></label>
               <input value={objet} onChange={(e) => setObjet(e.target.value)} placeholder="Rénovation électrique appartement" />
             </div>
 
@@ -290,10 +291,10 @@ export default function DevisEditor() {
             <div className="tool-card">
               <h2>Paramètres</h2>
               <div className="grid2">
-                <div><label>Validité (jours)</label><input inputMode="numeric" value={validite} onChange={(e) => setValidite(e.target.value)} /></div>
-                <div><label>Remise globale (%)</label><input inputMode="decimal" value={remise} onChange={(e) => setRemise(e.target.value)} /></div>
-                <div><label>Acompte (%)</label><input inputMode="decimal" value={acompte} onChange={(e) => setAcompte(e.target.value)} /></div>
-                <div><label>Statut</label>
+                <div><label>Validité (jours) <Info cle="devis.validite" /></label><input inputMode="numeric" value={validite} onChange={(e) => setValidite(e.target.value)} /></div>
+                <div><label>Remise globale (%) <Info cle="devis.remise" /></label><input inputMode="decimal" value={remise} onChange={(e) => setRemise(e.target.value)} /></div>
+                <div><label>Acompte (%) <Info cle="devis.acompte" /></label><input inputMode="decimal" value={acompte} onChange={(e) => setAcompte(e.target.value)} /></div>
+                <div><label>Statut <Info cle="devis.statut" /></label>
                   <select value={statut} onChange={(e) => setStatut(e.target.value)}>
                     <option value="brouillon">Brouillon</option><option value="envoye">Envoyé</option><option value="accepte">Accepté</option><option value="refuse">Refusé</option><option value="expire">Expiré</option>
                   </select>
@@ -306,12 +307,12 @@ export default function DevisEditor() {
               <div className="collapse-body">
                 <p className="muted" style={{ marginTop: 0 }}>Remplies une fois, reprises sur tous vos devis pour la conformité légale.</p>
                 <div className="grid2">
-                  <div><label>SIRET</label><input value={siret} onChange={(e) => setSiret(e.target.value)} placeholder="123 456 789 00012" /></div>
-                  <div><label>Forme juridique</label><input value={forme} onChange={(e) => setForme(e.target.value)} placeholder="Micro-entreprise" /></div>
+                  <div><label>SIRET <Info cle="parametres.siret" /></label><input value={siret} onChange={(e) => setSiret(e.target.value)} placeholder="123 456 789 00012" /></div>
+                  <div><label>Forme juridique <Info cle="parametres.forme_juridique" /></label><input value={forme} onChange={(e) => setForme(e.target.value)} placeholder="Micro-entreprise" /></div>
                 </div>
-                <label>Adresse de l&apos;entreprise</label>
+                <label>Adresse de l&apos;entreprise <Info cle="parametres.adresse" /></label>
                 <input value={entAdresse} onChange={(e) => setEntAdresse(e.target.value)} placeholder="3 rue du Marché, 75011, Paris" />
-                <label>Régime de TVA</label>
+                <label>Régime de TVA <Info cle="devis.tva_regime" /></label>
                 <select value={tvaRegime} onChange={(e) => setTvaRegime(e.target.value)}>
                   <option value="franchise">Franchise en base (pas de TVA facturée)</option>
                   <option value="reel">Assujetti à la TVA</option>
@@ -319,10 +320,10 @@ export default function DevisEditor() {
                 <div style={{ marginTop: '.6rem', borderTop: '1px solid var(--line)', paddingTop: '.6rem' }}>
                   <div className="mini-label">Assurance décennale (obligatoire sur les devis)</div>
                   <div className="grid2">
-                    <div><label>Assureur</label><input value={assNom} onChange={(e) => setAssNom(e.target.value)} placeholder="Ex : MAAF Pro" /></div>
-                    <div><label>N° de contrat</label><input value={assContrat} onChange={(e) => setAssContrat(e.target.value)} placeholder="Ex : 123456789" /></div>
-                    <div><label>Activités garanties</label><input value={assActivites} onChange={(e) => setAssActivites(e.target.value)} placeholder="Ex : électricité" /></div>
-                    <div><label>Zone géographique</label><input value={assZone} onChange={(e) => setAssZone(e.target.value)} placeholder="Ex : France métropolitaine" /></div>
+                    <div><label>Assureur <Info cle="parametres.assurance_nom" /></label><input value={assNom} onChange={(e) => setAssNom(e.target.value)} placeholder="Ex : MAAF Pro" /></div>
+                    <div><label>N° de contrat <Info cle="parametres.assurance_contrat" /></label><input value={assContrat} onChange={(e) => setAssContrat(e.target.value)} placeholder="Ex : 123456789" /></div>
+                    <div><label>Activités garanties <Info cle="parametres.assurance_activites" /></label><input value={assActivites} onChange={(e) => setAssActivites(e.target.value)} placeholder="Ex : électricité" /></div>
+                    <div><label>Zone géographique <Info cle="parametres.assurance_zone" /></label><input value={assZone} onChange={(e) => setAssZone(e.target.value)} placeholder="Ex : France métropolitaine" /></div>
                   </div>
                 </div>
                 <div style={{ marginTop: '.4rem' }}>
@@ -330,8 +331,8 @@ export default function DevisEditor() {
                   {uid && <LogoUpload uid={uid} value={logoUrl} onChange={setLogoUrl} />}
                 </div>
                 <div className="grid2" style={{ marginTop: '.4rem' }}>
-                  <div><label>IBAN (pour le règlement)</label><input value={iban} onChange={(e) => setIban(e.target.value)} placeholder="FR76 …" /></div>
-                  <div><label>Conditions de paiement</label><input value={condPaiement} onChange={(e) => setCondPaiement(e.target.value)} placeholder="Acompte 30%, solde à la fin" /></div>
+                  <div><label>IBAN (pour le règlement) <Info cle="devis.iban" /></label><input value={iban} onChange={(e) => setIban(e.target.value)} placeholder="FR76 …" /></div>
+                  <div><label>Conditions de paiement <Info cle="devis.conditions_paiement" /></label><input value={condPaiement} onChange={(e) => setCondPaiement(e.target.value)} placeholder="Acompte 30%, solde à la fin" /></div>
                 </div>
                 <button className="btn btn--ghost" style={{ width: 'auto', marginTop: '.9rem' }} disabled={savingInfos} onClick={saveInfos}>{savingInfos ? 'Enregistrement…' : 'Enregistrer mes informations'}</button>
                 {infosMsg && <span className="muted" style={{ marginLeft: '.7rem' }}>{infosMsg}</span>}

@@ -1,9 +1,12 @@
 'use client'
 
 import '@/app/globals.css' // UI de l'espace connecté (toutes les pages console passent par AppShell)
-import { useEffect, useState, type ReactNode } from 'react'
-import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { actif } from '@/lib/flags'
+import AidePanneau, { articlePour } from '@/app/AidePanneau'
+import Visite, { VISITES, type Etape } from '@/app/Visite'
 
 type Nav = { key: string; label: string; href?: string; soon?: boolean; icon: ReactNode }
 
@@ -32,9 +35,22 @@ const NAV: { group: string; items: Nav[] }[] = [
       { key: 'outils', label: 'Réponses instantanées', href: '/outils', icon: ic(<><path d="M12 3 4 7v6c0 4 3.4 6.5 8 8 4.6-1.5 8-4 8-8V7z" /><path d="m9 12 2 2 4-4" /></>) },
     ],
   },
+  // §4 B4 — le centre d'aide n'apparaît que lorsqu'il est fini (drapeau).
+  ...(actif('aideCentre') ? [{
+    group: 'Aide',
+    items: [
+      { key: 'aide', label: 'Centre d’aide', href: '/aide', icon: ic(<><circle cx="12" cy="12" r="9" /><path d="M9.6 9.3a2.5 2.5 0 0 1 4.9.7c0 1.6-2.5 2-2.5 3.5" /><circle cx="12" cy="17" r=".6" fill="currentColor" /></>) },
+    ],
+  }] : []),
 ]
 
-type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null; credits: number | null; logo_url: string | null; email: string | null }
+// §4 B3 — mémoire des visites guidées : la base (artisans.aide_vues) d'abord, localStorage en
+// repli si elle ne répond pas ou si la colonne n'est pas encore migrée.
+const CLE_LOCALE = 'presti.aide_vues'
+const lireLocal = (): string[] => { try { const v = JSON.parse(localStorage.getItem(CLE_LOCALE) || '[]'); return Array.isArray(v) ? v : [] } catch { return [] } }
+const ecrireLocal = (v: string[]) => { try { localStorage.setItem(CLE_LOCALE, JSON.stringify(v)) } catch { /* stockage indisponible : la visite reviendra, ce n'est pas grave */ } }
+
+type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null; credits: number | null; logo_url: string | null; email: string | null; aide_vues?: string[] | null }
 
 // Menu de profil (v4 §C1) — l'accès à tout ce qui touche au compte, au même endroit.
 const PROFIL_MENU: { href: string; label: string; icone: string }[] = [
@@ -69,10 +85,19 @@ export default function AppShell({
   children: ReactNode
 }) {
   const router = useRouter()
+  const pathname = usePathname()
   const [a, setA] = useState<ArtisanInfo | null>(null)
+  const [uid, setUid] = useState<string | null>(null)
   const [menuOuvert, setMenuOuvert] = useState(false)
   const [open, setOpen] = useState(false)
   const [unread, setUnread] = useState(0)
+  // §4 B1/B3 — panneau « C'est quoi ? » et visite guidée
+  const [aideOuverte, setAideOuverte] = useState(false)
+  const [visite, setVisite] = useState(false)
+  const [recherche, setRecherche] = useState('')
+  useEffect(() => { setRecherche(window.location.search) }, [pathname])
+  const article = articlePour(pathname ?? '', recherche, active)
+  const fermerAide = useCallback(() => setAideOuverte(false), [])
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -83,7 +108,14 @@ export default function AppShell({
         .select('*')
         .eq('id', data.session.user.id)
         .maybeSingle()
+      setUid(data.session.user.id)
       if (prof) setA(prof as ArtisanInfo)
+      // Première ouverture de la console : la visite guidée, une seule fois par artisan.
+      if (prof && actif('aideVisites') && VISITES.console?.length) {
+        const vues = (prof as ArtisanInfo).aide_vues
+        const deja = (Array.isArray(vues) ? vues : lireLocal()).includes('visite:console')
+        if (!deja) setTimeout(() => setVisite(true), 700)
+      }
       // Conversations non lues (badge Messages). Tolère l'absence de la colonne lu_le.
       try {
         const { count } = await supabase
@@ -103,10 +135,25 @@ export default function AppShell({
 
   const isFounder = !!a?.is_founder
 
+  // Fin de visite (terminée ou « Plus tard ») : on la marque comme vue, sinon elle
+  // reviendrait à chaque page — et elle reste rejouable depuis le panneau « ? ».
+  const finVisite = useCallback(async () => {
+    setVisite(false); setOpen(false)
+    const cle = 'visite:console'
+    const local = lireLocal()
+    if (!local.includes(cle)) ecrireLocal([...local, cle])
+    if (!uid) return
+    const nouvelles = Array.from(new Set([...(a?.aide_vues ?? []), cle]))
+    setA((p) => (p ? { ...p, aide_vues: nouvelles } : p))
+    const { error } = await supabase.from('artisans').update({ aide_vues: nouvelles }).eq('id', uid)
+    if (error) { /* colonne pas encore migrée ou base muette : le repli localStorage suffit */ }
+  }, [uid, a?.aide_vues])
+  const etapeVisite = useCallback((e: Etape) => setOpen(!!e.menu), [])
+
   return (
     <div className={`psh-app${open ? ' open' : ''}`}>
       <div className="psh-scrim" onClick={() => setOpen(false)} />
-      <aside className="psh-side">
+      <aside className="psh-side" data-visite="sidebar">
         <a className="psh-sbrand" href="/dashboard">
           <span className="psh-logo" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21 L21 21" /><path d="M6 21 L6 10 L12 6 L18 10 L18 21" /><path d="M10 21 L10 15 L14 15 L14 21" /></svg>
@@ -136,7 +183,7 @@ export default function AppShell({
                     {it.icon}{it.label}<span className="count">bientôt</span>
                   </a>
                 ) : (
-                  <a key={it.key} className={it.key === active ? 'on' : ''} href={it.href}>
+                  <a key={it.key} className={it.key === active ? 'on' : ''} href={it.href} data-visite={`nav-${it.key}`}>
                     {it.icon}{it.label}
                     {it.key === 'messages' && unread > 0 && <span className="count alert">{unread}</span>}
                   </a>
@@ -199,9 +246,22 @@ export default function AppShell({
             <h1>{title}</h1>
           </div>
           {actions && <div className="psh-actions">{actions}</div>}
+          {article && (
+            <button type="button" className="psh-aide" data-visite="aide" onClick={() => setAideOuverte(true)} aria-label="C’est quoi, cet écran ?" title="C’est quoi, cet écran ?" aria-haspopup="dialog" aria-expanded={aideOuverte}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.6 9.3a2.5 2.5 0 0 1 4.9.7c0 1.6-2.5 2-2.5 3.5" /><circle cx="12" cy="17" r=".6" fill="currentColor" /></svg>
+            </button>
+          )}
         </div>
         <div className={`psh-content${wide ? ' wide' : ''}`}>{children}</div>
       </div>
+
+      <AidePanneau
+        article={article}
+        open={aideOuverte}
+        onClose={fermerAide}
+        onRevoirVisite={actif('aideVisites') && VISITES.console?.length ? () => { setAideOuverte(false); setTimeout(() => setVisite(true), 250) } : undefined}
+      />
+      {actif('aideVisites') && visite && !aideOuverte && <Visite surface="console" onEtape={etapeVisite} onFin={finVisite} />}
     </div>
   )
 }

@@ -22,12 +22,13 @@ type Lead = {
   contact: string | null
   message: string | null
   statut: string | null
+  prise_en_main: boolean | null
 }
 
 async function leadByToken(token: string): Promise<Lead | null> {
   const { data } = await supabaseAdmin
     .from('leads')
-    .select('id, artisan_id, nom_prospect, contact, message, statut')
+    .select('id, artisan_id, nom_prospect, contact, message, statut, prise_en_main')
     .eq('token', token)
     .maybeSingle()
   return (data as Lead) ?? null
@@ -38,6 +39,7 @@ async function loadHistory(leadId: string): Promise<{ sens: 'in' | 'out'; type: 
     .from('messages')
     .select('sens, type, contenu, sent_at')
     .eq('lead_id', leadId)
+    .is('etat', null) // une proposition en attente ou rejetée n'existe pas pour le client
     .order('sent_at', { ascending: true })
     .limit(120)
   return (data as { sens: 'in' | 'out'; type: string | null; contenu: string; sent_at: string }[]) ?? []
@@ -84,6 +86,8 @@ export async function GET(req: Request) {
       ok: true,
       artisan: { nom: artisan?.nom ?? null, metier: artisan?.metier ?? null, avatar: artisan?.logo_url || artisan?.photo_url || null },
       nom_prospect: lead.nom_prospect,
+      // Le client sait quand un humain a pris la main (loyauté, §A2).
+      prise_en_main: lead.prise_en_main === true,
       messages: history.map((m) => ({ sens: m.sens, type: m.type, contenu: m.contenu, sent_at: m.sent_at })),
       devis: dv ? { ...dv, lignes } : null,
     })
@@ -149,8 +153,8 @@ export async function POST(req: Request) {
       .maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
 
-    // Mode MANUEL : on a déjà tracé le message + notifié plus haut ; pas de réponse IA.
-    if (artisan.reponse_auto === false) {
+    // Mode MANUEL, ou l'artisan a pris la main sur ce fil : pas de réponse IA, on le prévient.
+    if (artisan.reponse_auto === false || lead.prise_en_main) {
       if (artisan.email) {
         await sendEmail({
           to: artisan.email,

@@ -7,6 +7,7 @@ import AppShell from '@/app/AppShell'
 import StyleAvance from '@/app/profil/StyleAvance'
 import { resolveStyle, STYLE_DEFAUT, type SiteStyle } from '@/lib/siteStyle'
 import LogoUpload from '@/app/LogoUpload'
+import Info from '@/app/Info'
 import PortfolioUpload, { type Realisation } from '@/app/PortfolioUpload'
 import AvantApresUpload, { type AvantApres } from '@/app/AvantApresUpload'
 import { siteMaxForPlan } from '@/lib/plans'
@@ -311,7 +312,7 @@ export default function ProfilPage() {
           <h2>Votre présentation</h2>
           <div className="prof-id">
             <div>
-              <label>Photo / logo</label>
+              <label>Photo / logo <Info cle="profil.logo" /></label>
               {uid && <LogoUpload uid={uid} value={logoUrl} onChange={setLogoUrl} />}
             </div>
           </div>
@@ -319,11 +320,11 @@ export default function ProfilPage() {
             <div><label>Nom affiché</label><input value={nom} disabled title="Modifiable dans vos informations" /></div>
             <div><label>Métier</label><input value={metier} disabled title="Modifiable dans vos informations" /></div>
           </div>
-          <label>Présentation (bio)</label>
+          <label>Présentation (bio) <Info cle="profil.bio" /></label>
           <textarea rows={4} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Ex : Artisan plombier depuis 15 ans. Dépannage rapide, travail soigné, devis clair et sans surprise." />
           <div className="grid2" style={{ marginTop: '.6rem' }}>
-            <div><label>Zone d&apos;intervention</label><input value={zone} onChange={(e) => setZone(e.target.value)} placeholder="Ex : La Rochelle et 30 km alentour" /></div>
-            <div><label>Disponibilités</label><input value={horaires} onChange={(e) => setHoraires(e.target.value)} placeholder="Ex : Lun–Ven 8h–18h · Urgences 7j/7" /></div>
+            <div><label>Zone d&apos;intervention <Info cle="profil.zone" /></label><input value={zone} onChange={(e) => setZone(e.target.value)} placeholder="Ex : La Rochelle et 30 km alentour" /></div>
+            <div><label>Disponibilités <Info cle="profil.horaires" /></label><input value={horaires} onChange={(e) => setHoraires(e.target.value)} placeholder="Ex : Lun–Ven 8h–18h · Urgences 7j/7" /></div>
           </div>
         </div>
 
@@ -341,7 +342,7 @@ export default function ProfilPage() {
               </button>
             ))}
           </div>
-          <label style={{ display: 'block', margin: '1.1rem 0 .5rem', fontWeight: 600, fontSize: '.9rem' }}>Couleur d&apos;accent</label>
+          <label style={{ display: 'block', margin: '1.1rem 0 .5rem', fontWeight: 600, fontSize: '.9rem' }}>Couleur d&apos;accent <Info cle="profil.accent" /></label>
           <div className="prof-accent">
             {['#D97757', '#3B82F6', '#10B981', '#8B5CF6', '#EF4444', '#0EA5A0', '#D9A441', '#64748B'].map((c) => (
               <button key={c} type="button" aria-label={c} className={`prof-swatch${accent.toLowerCase() === c.toLowerCase() ? ' on' : ''}`} style={{ background: c }} onClick={() => setAccent(c)} />
@@ -387,8 +388,8 @@ export default function ProfilPage() {
           <h2>Vos contacts &amp; réseaux</h2>
           <p className="muted" style={{ margin: '0 0 .8rem' }}>Affichés sur votre page pour que les clients vous joignent comme ils veulent. Laissez vide ce que vous ne voulez pas montrer.</p>
           <div className="grid2">
-            <div><label>Téléphone (affiché)</label><input value={telPublic} onChange={(e) => setTelPublic(e.target.value)} placeholder="06 12 34 56 78" /></div>
-            <div><label>Email (affiché)</label><input value={emailPublic} onChange={(e) => setEmailPublic(e.target.value)} placeholder="contact@votre-entreprise.fr" /></div>
+            <div><label>Téléphone (affiché) <Info cle="profil.telephone" /></label><input value={telPublic} onChange={(e) => setTelPublic(e.target.value)} placeholder="06 12 34 56 78" /></div>
+            <div><label>Email (affiché) <Info cle="profil.email" /></label><input value={emailPublic} onChange={(e) => setEmailPublic(e.target.value)} placeholder="contact@votre-entreprise.fr" /></div>
           </div>
           <div className="grid2" style={{ marginTop: '.6rem' }}>
             {RESEAUX.map((r) => (
@@ -474,23 +475,23 @@ export default function ProfilPage() {
                 <b>Les textes de votre site</b>
                 <span className="muted">L’IA a écrit une première version — modifiez chaque mot, c’est votre site. Pensez à Enregistrer.</span>
               </div>
-              <label>Signature (accroche sous votre nom)</label>
+              <label>Signature (accroche sous votre nom) <Info cle="profil.hero_accroche" /></label>
               <input value={siteContenu.hero_accroche} onChange={(e) => setC({ hero_accroche: e.target.value })} maxLength={80} placeholder="Ex : Le bois travaillé avec exigence" />
-              <label>Phrase d’introduction</label>
+              <label>Phrase d’introduction <Info cle="profil.hero_lede" /></label>
               <textarea rows={2} value={siteContenu.hero_lede} onChange={(e) => setC({ hero_lede: e.target.value })} maxLength={400} />
               {siteTier === 3 && (
                 <>
-                  <label>Mots-clés géants (jusqu’à 4, affichés en grand)</label>
+                  <label>Mots-clés géants (jusqu’à 4, affichés en grand) <Info cle="profil.mots_cles" /></label>
                   <div className="site-mots">
                     {[0, 1, 2, 3].map((i) => (
                       <input key={i} value={(siteContenu.mots_cles ?? [])[i] ?? ''} onChange={(e) => setMot(i, e.target.value)} maxLength={22} placeholder={`Mot ${i + 1}`} />
                     ))}
                   </div>
-                  <label>Manifeste (grande phrase pleine page)</label>
+                  <label>Manifeste (grande phrase pleine page) <Info cle="profil.manifeste" /></label>
                   <input value={siteContenu.manifeste} onChange={(e) => setC({ manifeste: e.target.value })} maxLength={120} placeholder="Ex : Dessiné, taillé, assemblé : le bois prend vie ici." />
                 </>
               )}
-              <label>À propos</label>
+              <label>À propos <Info cle="profil.apropos" /></label>
               <textarea rows={4} value={siteContenu.apropos} onChange={(e) => setC({ apropos: e.target.value })} maxLength={900} />
               <div className="grid2" style={{ marginTop: '.2rem' }}>
                 <div><label>Intro « Prestations »</label><input value={siteContenu.prestations_intro} onChange={(e) => setC({ prestations_intro: e.target.value })} maxLength={300} /></div>
@@ -508,10 +509,12 @@ export default function ProfilPage() {
           <label className="prof-toggle" style={{ marginTop: '1rem' }}>
             <input type="checkbox" checked={siteContact} onChange={(e) => setSiteContact(e.target.checked)} />
             <span>Formulaire de contact <b>{siteContact ? 'intégré au site' : 'renvoyé vers la plateforme'}</b> {siteContact ? '— le client discute directement sur votre site' : '— un bouton mène à votre page de contact'}</span>
+            <Info cle="profil.contact_integre" />
           </label>
           <label className="prof-toggle" style={{ marginTop: '.7rem' }}>
             <input type="checkbox" checked={siteActive} onChange={(e) => setSiteActive(e.target.checked)} />
             <span>Mon site est <b>{siteActive ? 'publié' : 'hors ligne'}</b> {siteActive ? '— accessible à tous' : '— visible de vous seul'}</span>
+            <Info cle="profil.site_actif" />
           </label>
           {slug ? (
             <AdresseEditor slug={slug} prefixe={afficher(urlSite(adresse)).slice(0, -slug.length)} jeton={authToken} onChange={setSlug} />
@@ -553,7 +556,7 @@ export default function ProfilPage() {
           {siteMax >= 3 ? (
             <div className="site-domain">
               <div className="site-domain-h">
-                <b>Votre nom de domaine</b>
+                <b>Votre nom de domaine <Info cle="profil.domaine" /></b>
                 <span className="muted">Branchez votre propre adresse (ex : mon-entreprise.fr). Inclus dans l’offre Signature.</span>
               </div>
               <div className="site-domain-row">

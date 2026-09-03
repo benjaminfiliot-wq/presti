@@ -59,4 +59,21 @@
 - Tests écrits, **à lancer après migration + déploiement** : `limites-e2e` (12 appels parallèles → exactement 6), `reset-plafond-e2e` (6 demandes → exactement 3 jetons), `mentions-bloquantes-e2e`.
 - Signalé hors périmètre : `limite_messages` (plateformeConfig) reste non atomique ; les réponses depuis la console partent par Resend, pas par le SMTP OVH — « répondre depuis contact@ » serait un chantier à part.
 
-**Cumul : 2 h 10**
+## [H0-c] Réponses de Benj (23:35) — ✅
+- **Pas de domaine neutre** : « je paye rien, ce sera aux artisans de connecter leur nom de domaine ». Le code des adresses neutres reste (dormant, sans variable) ; l'adresse sans « presti » passe par le **domaine perso** — aujourd'hui réservé à Signature dans la grille validée. ⚠️ Question posée à Benj : si tout artisan doit pouvoir brancher son domaine, `site.domaine_perso` doit descendre sur les trois offres. En attendant, la grille validée s'applique.
+- Boîte OVH + variables IMAP : après le sprint.
+- **Mot de passe Postgres : toujours refusé.** `.env.local` n'a pas été modifié depuis 07:30 ; Benj a dit « c'est mis » mais le fichier ne le montre pas. Migrations 0049/0050/0051 **en attente**, déploiement bloqué.
+- Vague 2 (SA4 aide, SA5 IA, SA6 inventaire) coupée par la limite d'usage de la session à ~23:20, **relancée avec leur contexte** dès la remise à zéro.
+
+## [G] §9 Poste de pilotage de la plateforme — 23:20 → 00:40 (1 h 20) — ✅ code
+- **Constat de départ** : le mode « assistée » de `/plateforme` faisait taire l'assistant mais **ne préparait rien** — « rien ne part sans vous » était vrai, « l'assistant prépare, vous validez » ne l'était pas. Et l'artisan ne pouvait ni voir ni reprendre une conversation depuis « Ma plateforme ».
+- **Migration `0050_pilotage.sql`** : `leads.prise_en_main` (+ `_le`), `messages.etat` (`proposition` / `rejete` / null) + `messages.modele`, policy UPDATE restreinte à l'artisan avec **trigger qui fige le contenu** (seul `etat` est modifiable depuis le navigateur), table `regles_automatisation` (RLS), `devis.source` (`manuel`/`outil`/`regle`) + **index uniques partiels** = jamais deux devis automatiques pour une conversation, même en rafale.
+- **`lib/devisAuto.ts`** : `creerDevisBrouillonPourLead()` — LA fonction, extraite de `/api/devis/auto` ; appelée par le bouton, par l'outil de l'assistant (SA5) et par les règles. Idempotente pour les origines automatiques.
+- **`lib/factureDepuisDevis.ts`** : `creerFacture()` — extraite de `/api/factures` (mentions bloquantes → numéro → lignes → scellement), pour que la **facture d'acompte automatique** passe par le même chemin que la facture manuelle.
+- **`lib/regles.ts`** (décision pure : 4 préréglages, `decider()`, `phraseRegle()`) + **`lib/reglesServeur.ts`** (`declencherRegles()` après chaque réponse de l'assistant ; `acompteApresAcceptation()`). « Tout auto » n'envoie jamais sans les mentions obligatoires.
+- **Routes** : stream → prise de main (l'assistant se tait, `raison:'humain'`), mode assisté → **proposition** écrite avec `etat='proposition'` (invisible du client, crédit consommé, artisan notifié), déclenchement des règles après la réponse ; `/api/conversation` GET rend `prise_en_main`, l'historique client **exclut** propositions et rejets ; `/api/messages` : `valider` (le message devient réel à l'instant de la validation, texte retouchable, email si le prospect en a un), `rejeter`, `prise_en_main`, `escalader` ; `/api/conversation/devis` : à l'acceptation, facture d'acompte si la règle le dit.
+- **Interface** : `/plateforme` = trois volets (Conversations · Automatisations · Réglages). `app/plateforme/Conversations.tsx` = la boîte extraite et enrichie (état par conversation : Assistant / Attend votre validation / Vous avez la main / Clos ; filtres ; carte de proposition Valider/Rejeter ; « Je prends la main » ; Créer un devis · Proposer un RDV (aucun créneau inventé) · Escalader). `/messages` rend le même composant. `Automatisations.tsx` : 4 préréglages, la **phrase qui se réécrit** sous les yeux de l'artisan, verrous d'offre sur Pro/Expert/auto. `Reglages.tsx` : l'ancien formulaire.
+- PlatChat : « X vous répond directement » vient désormais du serveur (`prise_en_main`), plus seulement d'une heuristique.
+- typecheck 0 · **build cassé par une compilation parallèle d'un sous-agent** (`.next` partagé) → `next build` interdit aux sous-agents, je rebâtis seul.
+
+**Cumul : 3 h 30**

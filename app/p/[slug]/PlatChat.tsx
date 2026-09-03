@@ -60,6 +60,8 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   const [authEnvoye, setAuthEnvoye] = useState(false)
   const [authBusy, setAuthBusy] = useState(false)
   const [devis, setDevis] = useState<Devis | null>(null)
+  // L'artisan a pris la main sur ce fil (v5 §9) : l'assistant se tait, et on le dit au client.
+  const [priseEnMain, setPriseEnMain] = useState(false)
   const [devisBusy, setDevisBusy] = useState(false)
   const [modifOuvert, setModifOuvert] = useState(false)
   const [modifTexte, setModifTexte] = useState('')
@@ -88,6 +90,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
       const d = await res.json()
       setMsgs(Array.isArray(d.messages) ? d.messages.map((m: Msg, i: number) => ({ id: `s${i}`, sens: m.sens, contenu: m.contenu, type: m.type, etat: 'envoye' as const })) : [])
       setDevis(d.devis ?? null)
+      setPriseEnMain(d.prise_en_main === true)
     } catch { setMsgs([]) }
   }, [])
 
@@ -271,7 +274,8 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
       // eslint-disable-next-line @next/next/no-img-element
       ? <img src={avatar} alt="" /> : <b>{initials(artisanNom)}</b>}</span>
   )
-  const humain = msgs.some((m) => m.sens === 'out' && m.type === 'manuel' && m.contenu.length > 0)
+  // Un humain a la main si l'artisan l'a déclaré (serveur) ou s'il a déjà écrit dans le fil.
+  const humain = priseEnMain || msgs.some((m) => m.sens === 'out' && m.type === 'manuel' && m.contenu.length > 0)
 
   return (
     <div className={`pchat${side ? ' open' : ''}`}>

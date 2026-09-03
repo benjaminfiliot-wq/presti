@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { COUPLES, PRESETS_METIER, STYLE_DEFAUT, type SiteStyle } from '@/lib/siteStyle'
 import { contrastRatio } from '@/lib/contrast'
+import Info from '@/app/Info'
 
 // Mode avancé du site vitrine (v4 §7/E1) — replié par défaut : le thème reste l'entrée simple.
 // Règle de vocabulaire : aucun jargon. Pas de « letter-spacing », pas de « border-radius ».
@@ -101,16 +102,16 @@ export default function StyleAvance({ valeur, onChange, metier, accent, onPreset
               ))}
             </div>
             <div className="sa-row">
-              <label>Taille du texte</label>
+              <label>Taille du texte <Info cle="profil.style.taille" /></label>
               <input type="range" min={15} max={19} step={1} value={valeur.taille} onChange={(e) => set({ taille: Number(e.target.value) })} />
               <span className="sa-val">{valeur.taille} px</span>
             </div>
             <div className="sa-row">
-              <label>Taille des titres</label>
+              <label>Taille des titres <Info cle="profil.style.echelle" /></label>
               <Pastilles options={ECHELLES} valeur={valeur.echelle} onPick={(echelle) => set({ echelle })} />
             </div>
             <div className="sa-row">
-              <label>Espacement des lettres, dans les titres</label>
+              <label>Espacement des lettres, dans les titres <Info cle="profil.style.interlettrage" /></label>
               <input type="range" min={-4} max={2} step={1} value={Math.round(valeur.interlettrage * 100)} onChange={(e) => set({ interlettrage: Number(e.target.value) / 100 })} />
               <span className="sa-val">{valeur.interlettrage === 0 ? 'normal' : valeur.interlettrage < 0 ? 'resserré' : 'aéré'}</span>
             </div>
@@ -120,14 +121,14 @@ export default function StyleAvance({ valeur, onChange, metier, accent, onPreset
           <section className="sa-sec">
             <h3>Couleurs</h3>
             <div className="sa-row">
-              <label>Couleur secondaire</label>
+              <label>Couleur secondaire <Info cle="profil.style.accent2" /></label>
               <label className="sa-color" style={{ background: valeur.accent2 || accent }}>
                 <input type="color" value={valeur.accent2 || accent} onChange={(e) => set({ accent2: e.target.value })} />
               </label>
               {valeur.accent2 ? <button type="button" className="sa-reset" onClick={() => set({ accent2: null })}>Revenir à l’automatique</button> : <span className="muted sa-val">dérivée de votre accent</span>}
             </div>
             <div className="sa-row">
-              <label>Fond de page</label>
+              <label>Fond de page <Info cle="profil.style.fond" /></label>
               <label className="sa-color" style={{ background: fond }}>
                 <input type="color" value={fond} onChange={(e) => set({ fond: e.target.value })} />
               </label>
@@ -146,17 +147,17 @@ export default function StyleAvance({ valeur, onChange, metier, accent, onPreset
           <section className="sa-sec">
             <h3>Formes</h3>
             <div className="sa-row">
-              <label>Angles</label>
+              <label>Angles <Info cle="profil.style.rayon" /></label>
               <input type="range" min={0} max={24} step={2} value={valeur.rayon} onChange={(e) => set({ rayon: Number(e.target.value) })} />
               <span className="sa-val">{valeur.rayon === 0 ? 'carrés' : valeur.rayon >= 20 ? 'très arrondis' : `${valeur.rayon} px`}</span>
             </div>
             <div className="sa-row">
-              <label>Épaisseur des traits</label>
+              <label>Épaisseur des traits <Info cle="profil.style.filet" /></label>
               <input type="range" min={1} max={3} step={1} value={valeur.filet} onChange={(e) => set({ filet: Number(e.target.value) })} />
               <span className="sa-val">{valeur.filet === 1 ? 'fins' : valeur.filet === 2 ? 'marqués' : 'épais'}</span>
             </div>
             <div className="sa-row">
-              <label>Boutons</label>
+              <label>Boutons <Info cle="profil.style.bouton" /></label>
               <Pastilles options={BOUTONS} valeur={valeur.bouton} onPick={(bouton) => set({ bouton })} />
             </div>
           </section>
@@ -165,11 +166,11 @@ export default function StyleAvance({ valeur, onChange, metier, accent, onPreset
           <section className="sa-sec">
             <h3>Rythme</h3>
             <div className="sa-row">
-              <label>Hauteur des sections</label>
+              <label>Hauteur des sections <Info cle="profil.style.rythme" /></label>
               <Pastilles options={RYTHMES} valeur={valeur.rythme} onPick={(rythme) => set({ rythme })} />
             </div>
             <div className="sa-row">
-              <label>Largeur du contenu</label>
+              <label>Largeur du contenu <Info cle="profil.style.largeur" /></label>
               <input type="range" min={900} max={1400} step={20} value={valeur.largeur} onChange={(e) => set({ largeur: Number(e.target.value) })} />
               <span className="sa-val">{valeur.largeur <= 1000 ? 'étroite' : valeur.largeur >= 1300 ? 'très large' : `${valeur.largeur} px`}</span>
             </div>
@@ -179,12 +180,12 @@ export default function StyleAvance({ valeur, onChange, metier, accent, onPreset
           <section className="sa-sec">
             <h3>Matière</h3>
             <div className="sa-row">
-              <label>Texture de fond</label>
+              <label>Texture de fond <Info cle="profil.style.texture" /></label>
               <Pastilles options={TEXTURES} valeur={valeur.texture} onPick={(texture) => set({ texture })} />
             </div>
             {valeur.texture !== 'aucune' ? (
               <div className="sa-row">
-                <label>Intensité</label>
+                <label>Intensité <Info cle="profil.style.texture_force" /></label>
                 <input type="range" min={0} max={100} step={5} value={valeur.texture_force} onChange={(e) => set({ texture_force: Number(e.target.value) })} />
                 <span className="sa-val">{valeur.texture_force} %</span>
               </div>

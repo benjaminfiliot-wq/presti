@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { acompteApresAcceptation } from '@/lib/reglesServeur'
+import { creerFacture } from '@/lib/factureDepuisDevis'
 import { sendEmail } from '@/lib/email'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 
@@ -69,7 +71,23 @@ export async function POST(req: Request) {
           replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
         }).catch(() => {})
       }
-      return NextResponse.json({ ok: true, statut: 'accepte' })
+      // Règle d'automatisation (v5 §9) : « quand le client accepte → facture d'acompte de N % ».
+      // Même chemin que la facture manuelle : mentions bloquantes, numérotation, scellement.
+      // Un refus (mentions manquantes) ne casse pas l'acceptation — l'artisan est prévenu.
+      let facture: { numero: string } | null = null
+      try {
+        const pct = await acompteApresAcceptation(lead.artisan_id)
+        if (pct) {
+          const f = await creerFacture({ artisanId: lead.artisan_id, devisId: devis.id, acomptePct: pct })
+          if (f.ok) {
+            facture = { numero: f.numero }
+            await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'facture_emise', contenu: `Facture d'acompte ${f.numero} (${pct} %)` })
+          } else if (artisan?.email) {
+            await sendEmail({ to: artisan.email, subject: `Facture d'acompte non créée — ${qui}`, text: `Votre règle demande une facture d'acompte de ${pct} % à l'acceptation, mais elle n'a pas pu être créée :\n\n${f.error}\n\nCréez-la depuis votre espace (Factures) une fois le profil complété.`, replyTo: 'contact@prestiapp.fr' }).catch(() => {})
+          }
+        }
+      } catch (e) { console.error('[conversation/devis] acompte:', e) }
+      return NextResponse.json({ ok: true, statut: 'accepte', ...(facture ? { facture } : {}) })
     }
 
     // Demande de modification : on ne touche pas au statut, on fait remonter la demande.

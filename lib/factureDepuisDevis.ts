@@ -1,0 +1,87 @@
+// Création d'une facture — LA fonction, appelée par /api/factures (l'artisan) et par
+// l'acceptation d'un devis quand une règle d'automatisation demande une facture d'acompte.
+// Extraite de la route pour qu'il n'y ait qu'un seul chemin : mentions bloquantes,
+// numérotation, lignes, puis SCELLEMENT (la pièce devient inaltérable).
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { computeTotals } from '@/lib/devisTotals'
+import { normalizeLigne } from '@/lib/lignes'
+import { empreinte } from '@/lib/facturation'
+import { COLONNES_LEGALES, OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, versArtisanLegal } from '@/lib/legalArtisan'
+
+export type LigneIn = { designation?: string; quantite?: number; unite?: string; prix_unitaire_ht?: number; tva_taux?: number }
+
+export type ResultatFacture =
+  | { ok: true; id: string; numero: string }
+  | { ok: false; status: 400 | 404 | 422 | 500; error: string; code?: 'mentions_manquantes'; manquantes?: string[]; lien?: string }
+
+export async function creerFacture(p: {
+  artisanId: string
+  /** Chemin principal : depuis un devis de l'artisan. */
+  devisId?: string
+  /** Sinon : un corps autonome (objet, client, lignes…). */
+  corps?: Record<string, unknown>
+  /** Force le pourcentage d'acompte (facture d'acompte automatique). */
+  acomptePct?: number
+}): Promise<ResultatFacture> {
+  const uid = p.artisanId
+  const devisId = p.devisId
+
+  let src: Record<string, unknown> = {}
+  let lignes: LigneIn[] = []
+  if (devisId) {
+    const { data: devis } = await supabaseAdmin.from('devis').select('*').eq('id', devisId).eq('artisan_id', uid).maybeSingle()
+    if (!devis) return { ok: false, status: 404, error: 'Devis introuvable' }
+    const { data: dl } = await supabaseAdmin.from('devis_lignes').select('*').eq('devis_id', devisId).order('ordre')
+    src = devis
+    lignes = (dl ?? []) as LigneIn[]
+  } else {
+    src = p.corps ?? {}
+    lignes = Array.isArray(src.lignes) ? (src.lignes as LigneIn[]) : []
+  }
+  if (lignes.length > 200) return { ok: false, status: 400, error: 'Trop de lignes (200 max).' }
+
+  const { data: art } = await supabaseAdmin.from('artisans').select(`tva_regime, ${COLONNES_LEGALES}`).eq('id', uid).maybeSingle()
+
+  // Mentions obligatoires BLOQUANTES (audit v4 §3) : une facture est émise ET scellée à la
+  // création — on refuse AVANT de consommer un numéro. 15 € par mention manquante, jusqu'à
+  // 3 000 € sans l'assurance décennale.
+  const manquantes = mentionsManquantesEmission(versArtisanLegal(art as Record<string, unknown> | null))
+  if (manquantes.length) {
+    return { ok: false, status: 422, error: messageMentionsBloquantes(manquantes, 'cette facture'), code: 'mentions_manquantes', manquantes, lien: OU_REMPLIR.lien }
+  }
+  const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
+  const eff = lignes.map((l) => normalizeLigne(l, franchise))
+  const totals = computeTotals(eff, Number(src.remise_pct) || 0)
+
+  const { data: n } = await supabaseAdmin.rpc('next_numero', { p_artisan: uid, p_type: 'facture' })
+  const numero = `FAC-${new Date().getFullYear()}-${String(n ?? 1).padStart(4, '0')}`
+  const echeance = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10)
+  const s = (v: unknown, max: number): string | null => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : null)
+  const acompte = typeof p.acomptePct === 'number' ? p.acomptePct : (Number(src.acompte_pct) || 0)
+
+  const { data: facture, error: fErr } = await supabaseAdmin
+    .from('factures')
+    .insert({
+      artisan_id: uid, devis_id: devisId ?? null, numero,
+      objet: acompte && typeof p.acomptePct === 'number' ? `Acompte ${acompte} % — ${s(src.objet, 260) ?? 'travaux'}` : s(src.objet, 300),
+      statut: 'emise', date_echeance: echeance,
+      remise_pct: Number(src.remise_pct) || 0, acompte_pct: acompte,
+      conditions: s(src.conditions, 4000), notes: s(src.notes, 4000),
+      client_nom: s(src.client_nom, 160), client_email: s(src.client_email, 200), client_adresse: s(src.client_adresse, 300),
+      total_ht: totals.total_ht, total_tva: totals.total_tva, total_ttc: totals.total_ttc,
+    })
+    .select('id, numero').single()
+  if (fErr) { console.error('[factures] insert:', fErr.message); return { ok: false, status: 500, error: 'Création de la facture impossible' } }
+
+  if (eff.length) await supabaseAdmin.from('factures_lignes').insert(eff.map((l, i) => ({ facture_id: facture.id, ordre: i, ...l })))
+
+  // SCELLEMENT — après les lignes, quand le contenu est complet. C'est ici que la pièce
+  // devient inaltérable (le déclencheur d'immuabilité refuserait d'écrire l'empreinte sur
+  // une facture déjà verrouillée). C'est ce qui rend la comptabilité opposable.
+  await supabaseAdmin.from('factures').update({
+    verrouillee: true, emise_le: new Date().toISOString(),
+    empreinte: await empreinte(JSON.stringify({ numero: facture.numero, client: s(src.client_nom, 160), totaux: [totals.total_ht, totals.total_tva, totals.total_ttc], lignes: eff })),
+  }).eq('id', facture.id)
+
+  return { ok: true, id: facture.id, numero: facture.numero }
+}

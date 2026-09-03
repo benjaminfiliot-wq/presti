@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import ModelSelect from '@/app/ModelSelect'
+import Info from '@/app/Info'
 import type { Tier } from '@/lib/models'
 
 export default function Outils() {
@@ -61,9 +62,9 @@ export default function Outils() {
           <div className="tool-card">
             <h2>Répondre à un client</h2>
             <p className="muted" style={{ margin: '0 0 .6rem' }}>Collez la demande de votre client — Presti rédige la réponse à envoyer, dans votre ton.</p>
-            <label>La demande de votre client</label>
+            <label>La demande de votre client <Info cle="outils.demande" /></label>
             <textarea rows={4} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Ex : Bonjour, j'ai une fuite sous mon évier, pouvez-vous passer cette semaine ?" />
-            <label>Nom du client (facultatif)</label>
+            <label>Nom du client (facultatif) <Info cle="outils.nom_client" /></label>
             <input value={nomClient} onChange={(e) => setNomClient(e.target.value)} placeholder="Ex : Marie" />
             <div style={{ marginTop: '.9rem' }}><ModelSelect plan={plan} value={tier} onChange={setTier} /></div>
             <button disabled={loading} onClick={generate}>{loading ? 'Presti rédige…' : 'Générer la réponse'}</button>

@@ -6,6 +6,8 @@ import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 import { getPlateformeConfig, iaDoitRepondre, type PlateformeConfig } from '@/lib/plateformeConfig'
+import { resolveModel } from '@/lib/models'
+import { declencherRegles } from '@/lib/reglesServeur'
 
 // Ton de l'assistant (§A4) → persona passée au moteur de rédaction.
 const TON: Record<PlateformeConfig['ton'], string> = {
@@ -26,14 +28,14 @@ const TOKEN_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
 const MAX_MSG = 4000
 const MAX_TOURS = 60
 
-type Lead = { id: string; artisan_id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null }
+type Lead = { id: string; artisan_id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null; prise_en_main: boolean | null; type_chantier: string | null; photos: unknown }
 
 async function leadByToken(token: string): Promise<Lead | null> {
-  const { data } = await supabaseAdmin.from('leads').select('id, artisan_id, nom_prospect, contact, message, statut').eq('token', token).maybeSingle()
+  const { data } = await supabaseAdmin.from('leads').select('id, artisan_id, nom_prospect, contact, message, statut, prise_en_main, type_chantier, photos').eq('token', token).maybeSingle()
   return (data as Lead) ?? null
 }
 async function loadHistory(leadId: string) {
-  const { data } = await supabaseAdmin.from('messages').select('sens, type, contenu, sent_at').eq('lead_id', leadId).order('sent_at', { ascending: true }).limit(120)
+  const { data } = await supabaseAdmin.from('messages').select('sens, type, contenu, sent_at').eq('lead_id', leadId).is('etat', null).order('sent_at', { ascending: true }).limit(120)
   return (data as { sens: 'in' | 'out'; type: string | null; contenu: string; sent_at: string }[]) ?? []
 }
 
@@ -73,7 +75,7 @@ export async function POST(req: Request) {
     if (history.length >= MAX_TOURS) return NextResponse.json({ ok: true, reply: null, closed: true })
 
     const { data: artisan } = await supabaseAdmin
-      .from('artisans').select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause').eq('id', lead.artisan_id).maybeSingle()
+      .from('artisans').select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause, plan').eq('id', lead.artisan_id).maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
 
     const notifier = async (reply: string | null, alerte?: string) => {
@@ -92,7 +94,41 @@ export async function POST(req: Request) {
     // Un artisan sans configuration garde EXACTEMENT son comportement actuel.
     const cfg = await getPlateformeConfig(artisan.id, artisan.reponse_auto)
     const nbReponsesIA = history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length
+
+    // « Je prends la main » (v5 §9) : l'artisan répond lui-même sur CE fil. L'assistant se tait,
+    // le client le voit (GET /api/conversation rend prise_en_main), l'artisan est prévenu.
+    if (lead.prise_en_main) {
+      await notifier(null, 'Nouveau message — vous avez la main')
+      return NextResponse.json({ ok: true, reply: null, raison: 'humain' })
+    }
+
     const decision = iaDoitRepondre(cfg, { nbReponsesIA, message, pause: artisan.leads_pause === true })
+
+    // Mode ASSISTÉ (v5 §9) : l'assistant prépare, l'artisan valide. Avant, ce réglage se
+    // contentait de faire taire l'assistant — « rien ne part sans vous » était vrai, mais
+    // « l'assistant prépare » ne l'était pas. La proposition est écrite dans le fil avec
+    // etat='proposition' : invisible du client, visible du poste de pilotage.
+    if (!decision.ok && decision.raison === 'assistee') {
+      const credit = await consumeCredit(artisan.id, 'standard', !!artisan.is_founder)
+      if (credit.ok) {
+        try {
+          const { model, tier } = resolveModel(cfg.modele || 'standard', artisan.plan)
+          const turns: ConvTurn[] = [...history.map((m) => ({ sens: m.sens, contenu: m.contenu })), { sens: 'in' as const, contenu: message }]
+          const proposition = await generateConversationReply(
+            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux },
+            { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
+            turns, model,
+          )
+          if (proposition) {
+            await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: proposition, etat: 'proposition', modele: tier })
+            await supabaseAdmin.from('leads').update({ updated_at: new Date().toISOString(), lu_le: null }).eq('id', lead.id)
+          }
+        } catch (e) { console.error('[conversation/stream] proposition:', e) }
+      }
+      await notifier(null, 'Réponse proposée — à valider')
+      return NextResponse.json({ ok: true, reply: null, raison: 'assistee' })
+    }
+
     if (!decision.ok) {
       // L'IA se tait : on prévient l'artisan (alerte renforcée si un mot d'escalade a coupé).
       if (decision.raison === 'escalade') await notifier(null, `Demande sensible (« ${decision.mot} »)`)
@@ -125,6 +161,10 @@ export async function POST(req: Request) {
         if (complet) {
           await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: complet })
           await supabaseAdmin.from('leads').update({ updated_at: new Date().toISOString() }).eq('id', lead.id)
+          // Règles d'automatisation (v5 §9) : qualifié (+ photo) → devis brouillon → notifier.
+          // Après la réponse, jamais avant : le client ne doit pas attendre le chiffrage.
+          try { await declencherRegles({ lead, nbReponsesIA: nbReponsesIA + 1, artisanEmail: artisan.email, artisanNom: artisan.nom }) }
+          catch (e) { console.error('[conversation/stream] règles:', e) }
         }
         await notifier(complet || null)
         envoyer({ t: 'done', v: complet })
