@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
+import StyleAvance from '@/app/profil/StyleAvance'
+import { resolveStyle, STYLE_DEFAUT, type SiteStyle } from '@/lib/siteStyle'
 import LogoUpload from '@/app/LogoUpload'
 import PortfolioUpload, { type Realisation } from '@/app/PortfolioUpload'
 import AvantApresUpload, { type AvantApres } from '@/app/AvantApresUpload'
@@ -93,6 +95,7 @@ export default function ProfilPage() {
   const [siteContenu, setSiteContenu] = useState<SiteContenu | null>(null)
   const [active, setActive] = useState(true)
   const [accent, setAccent] = useState('#D97757')
+  const [styleSite, setStyleSite] = useState<SiteStyle>(STYLE_DEFAUT)
   const [theme, setTheme] = useState('atelier')
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
@@ -108,6 +111,7 @@ export default function ProfilPage() {
       setBio(a.bio ?? ''); setZone(a.zone_intervention ?? ''); setHoraires(a.horaires ?? '')
       setLogoUrl(a.logo_url ?? null); setActive(a.plateforme_active !== false); setAccent(/^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? a.accent : '#D97757')
       setTheme(THEME_IDS.includes(a.theme) ? a.theme : 'atelier')
+      setStyleSite(resolveStyle(a.site_style))
       setServices(Array.isArray(a.services) ? (a.services as Service[]).map((s) => ({ nom: s.nom ?? '', description: s.description ?? '' })) : [])
       setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '' })).filter((r) => r.image) : [])
       setAvantApres(Array.isArray(a.avant_apres) ? (a.avant_apres as AvantApres[]).map((p) => ({ avant: p.avant ?? '', apres: p.apres ?? '', titre: p.titre ?? '' })) : [])
@@ -212,6 +216,7 @@ export default function ProfilPage() {
       plateforme_active: active,
       accent: /^#[0-9a-fA-F]{6}$/.test(accent) ? accent : '#D97757',
       theme: THEME_IDS.includes(theme) ? theme : 'atelier',
+      site_style: styleSite,
     }).eq('id', uid)
     setSaving(false)
     if (error) { setMsg({ type: 'err', text: 'Enregistrement impossible.' }); return }
@@ -341,6 +346,15 @@ export default function ProfilPage() {
             </label>
           </div>
         </div>
+
+        {/* Réglages fins du site (v4 §7/E1) — replié par défaut, l'ambiance reste l'entrée simple. */}
+        <StyleAvance
+          valeur={styleSite}
+          onChange={setStyleSite}
+          metier={metier}
+          accent={accent}
+          onPreset={(t, c) => { setTheme(t); setAccent(c) }}
+        />
 
         {/* Services */}
         <div className="tool-card">

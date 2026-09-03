@@ -11,6 +11,7 @@ import SiteMatiere3D from './SiteMatiere3D'
 import SiteAvantApres from './SiteAvantApres'
 import { siteMaxForPlan } from '@/lib/plans'
 import { resolveLayout, type SectionId } from '@/lib/siteLayout'
+import { resolveStyle, styleToCss, styleToData } from '@/lib/siteStyle'
 
 type Service = { nom?: string; description?: string }
 type Realisation = { image?: string; titre?: string; specialite?: string }
@@ -22,7 +23,7 @@ type Artisan = {
   accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
   tel_public: string | null; email_public: string | null
   site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
-  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null; site_seo: boolean | null; site_layout: unknown
+  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null; site_seo: boolean | null; site_layout: unknown; site_style: unknown
   domaine: string | null; domaine_verifie: boolean | null
   avant_apres: { avant?: string; apres?: string; titre?: string }[] | null
 }
@@ -30,7 +31,7 @@ type Artisan = {
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
     .from('artisans')
-    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout, domaine, domaine_verifie, avant_apres')
+    .select('nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout, site_style, domaine, domaine_verifie, avant_apres')
     .eq('slug', slug)
     .maybeSingle()
   return (data as Artisan) ?? null
@@ -155,6 +156,10 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
   // Composition pilotée par les données : ordre + activation des sections (défaut = dérivé du niveau).
   const layout = resolveLayout(a.site_layout, tier as 1 | 2 | 3)
+  // Réglages fins (v4 §7/E1). Rien de réglé ⇒ objets vides ⇒ rendu strictement identique à avant.
+  const style = resolveStyle(a.site_style)
+  const styleVars = styleToCss(style)
+  const styleData = styleToData(style)
   // « Avant/après » n'est pas géré par le composeur : on l'injecte après la galerie si présent.
   if (showAvantApres && !layout.sections.some((s) => s.id === 'avantapres')) {
     const gi = layout.sections.findIndex((s) => s.id === 'gallery')
@@ -341,7 +346,7 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent }} data-tier={tier} data-theme={theme}>
+    <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent, ...styleVars }} data-tier={tier} data-theme={theme} {...styleData}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
       {c?.faq && c.faq.length ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: c.faq.map((e) => ({ '@type': 'Question', name: e.q, acceptedAnswer: { '@type': 'Answer', text: e.r } })) }).replace(/</g, '\\u003c') }} />

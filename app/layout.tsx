@@ -2,7 +2,7 @@ import './base.css' // fondation seule (reset + tokens). L'UI console/landing (g
                     // importée par AppShell + les pages publiques → /site et /l ne la chargent JAMAIS.
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
-import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono, Fraunces, Archivo_Narrow, IBM_Plex_Sans, Manrope } from 'next/font/google'
+import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono, Fraunces, Archivo_Narrow, IBM_Plex_Sans, Manrope, Newsreader, Instrument_Serif, Syne, Lora } from 'next/font/google'
 import GoogleAnalytics from '@/app/GoogleAnalytics'
 
 // Design system "Chantier" : display grotesque architecturé (Bricolage) + corps net (Hanken) + data (JetBrains Mono).
@@ -15,6 +15,12 @@ const fraunces = Fraunces({ subsets: ['latin'], weight: ['400', '600', '700', '9
 const archivo = Archivo_Narrow({ subsets: ['latin'], weight: ['600', '700'], variable: '--f-archivo', display: 'swap', preload: false })
 const plex = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--f-plex', display: 'swap', preload: false })
 const manrope = Manrope({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'], variable: '--f-manrope', display: 'swap', preload: false })
+// Couples de polices du mode avancé (v4 §7/E1) — preload:false : le navigateur ne télécharge
+// que la police du couple réellement choisi par l'artisan.
+const newsreader = Newsreader({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--f-newsreader', display: 'swap', preload: false })
+const instrument = Instrument_Serif({ subsets: ['latin'], weight: ['400'], style: ['normal', 'italic'], variable: '--f-instrument', display: 'swap', preload: false })
+const syne = Syne({ subsets: ['latin'], weight: ['500', '600', '700', '800'], variable: '--f-syne', display: 'swap', preload: false })
+const lora = Lora({ subsets: ['latin'], weight: ['400', '500', '600', '700'], style: ['normal', 'italic'], variable: '--f-lora', display: 'swap', preload: false })
 
 const TITLE = "Presti — Répondez à chaque demande de devis en moins d'une minute"
 const DESC =
@@ -45,7 +51,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr" className={`${display.variable} ${body.variable} ${mono.variable} ${fraunces.variable} ${archivo.variable} ${plex.variable} ${manrope.variable}`}>
+    <html lang="fr" className={`${display.variable} ${body.variable} ${mono.variable} ${fraunces.variable} ${archivo.variable} ${plex.variable} ${manrope.variable} ${newsreader.variable} ${instrument.variable} ${syne.variable} ${lora.variable}`}>
       <body>{children}<GoogleAnalytics /></body>
     </html>
   )

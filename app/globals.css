@@ -1767,3 +1767,72 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   border: 0; padding: 0; font-size: .85rem; text-decoration: underline; cursor: pointer;
 }
 .canal-avance:hover { color: var(--ink); }
+
+/* ── Réglages fins du site (Ma page → v4 §7/E1) ───────────────────────────── */
+.sa-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.sa-toggle {
+  width: auto; margin: 0; flex: none; background: transparent; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 10px; padding: .45rem .9rem; font-size: .86rem; cursor: pointer;
+}
+.sa-toggle:hover { border-color: var(--accent, var(--green)); }
+.sa-body { margin-top: 1.4rem; display: flex; flex-direction: column; gap: 1.9rem; }
+.sa-sec { display: flex; flex-direction: column; gap: .7rem; }
+.sa-sec h3 { margin: 0; font-size: .93rem; letter-spacing: .02em; text-transform: uppercase; color: var(--muted); }
+.sa-sec > .muted { margin: -.3rem 0 .2rem; font-size: .86rem; }
+.sa-row { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+.sa-row > label { flex: 0 0 210px; font-size: .9rem; }
+.sa-row input[type="range"] { flex: 1 1 180px; min-width: 140px; width: auto; margin: 0; accent-color: var(--green); }
+.sa-val { font-size: .84rem; color: var(--muted); min-width: 92px; }
+
+.sa-pills { display: flex; gap: .4rem; flex-wrap: wrap; }
+.sa-pill {
+  width: auto; margin: 0; background: transparent; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 999px; padding: .34rem .8rem; font-size: .85rem; cursor: pointer;
+}
+.sa-pill.on { background: var(--green); border-color: var(--green); color: #fff; }
+
+.sa-presets { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .5rem; }
+.sa-preset {
+  width: auto; margin: 0; display: flex; align-items: center; gap: .55rem; text-align: left;
+  background: transparent; border: 1px solid var(--line); border-radius: 11px; padding: .6rem .7rem; cursor: pointer; color: var(--ink);
+}
+.sa-preset:hover { border-color: var(--green); }
+.sa-preset b { font-size: .89rem; font-weight: 600; }
+.sa-preset em { font-style: normal; font-size: .72rem; color: var(--green); }
+.sa-preset-sw { width: 16px; height: 16px; border-radius: 5px; flex: none; }
+
+.sa-couples { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .5rem; }
+.sa-couple {
+  width: auto; margin: 0; display: flex; align-items: center; gap: .7rem; text-align: left;
+  background: transparent; border: 1px solid var(--line); border-radius: 11px; padding: .6rem .75rem; cursor: pointer; color: var(--ink);
+}
+.sa-couple.on { border-color: var(--green); background: color-mix(in srgb, var(--green) 8%, transparent); }
+.sa-couple-a { font-size: 1.45rem; line-height: 1; flex: none; }
+.sa-couple-t { display: flex; flex-direction: column; min-width: 0; }
+.sa-couple-t b { font-size: .89rem; }
+.sa-couple-t small { color: var(--muted); font-size: .76rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.sa-color { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); cursor: pointer; flex: none; overflow: hidden; }
+.sa-color input { opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+.sa-reset, .sa-reset-all {
+  width: auto; margin: 0; background: transparent; color: var(--muted);
+  border: 0; padding: 0; font-size: .82rem; text-decoration: underline; cursor: pointer;
+}
+.sa-reset:hover, .sa-reset-all:hover { color: var(--ink); }
+.sa-reset-all { align-self: flex-start; margin-top: .3rem; }
+
+.sa-contrast { margin: .2rem 0 0; font-size: .84rem; }
+.sa-contrast.ok { color: var(--muted); }
+.sa-contrast.warn { color: #d08a2c; }
+.sa-contrast.ko { color: var(--crit, #c0392b); }
+
+.sa-motions { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .5rem; }
+.sa-motion {
+  width: auto; margin: 0; display: flex; flex-direction: column; gap: .15rem; text-align: left;
+  background: transparent; border: 1px solid var(--line); border-radius: 11px; padding: .65rem .8rem; cursor: pointer; color: var(--ink);
+}
+.sa-motion.on { border-color: var(--green); background: color-mix(in srgb, var(--green) 8%, transparent); }
+.sa-motion b { font-size: .89rem; }
+.sa-motion small { color: var(--muted); font-size: .78rem; }
+.sa-note { margin: .5rem 0 0; font-size: .82rem; }
+@media (max-width: 620px) { .sa-row > label { flex: 1 1 100%; } }
