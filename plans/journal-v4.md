@@ -119,3 +119,25 @@
 - **Attrapé à l'œil, pas par les assertions** : le bouton « Connecter ma boîte » se posait **par-dessus** le lien « Mon serveur n'est pas reconnu » — deux `<button>` voisins sont inline-block, donc sur la même ligne. Corrigé (`display:block`), et le test visuel vérifie désormais explicitement que les deux cadres ne se recouvrent pas. Même famille que le scrim orange de B4 : ce sont les captures qui trouvent ça, pas les tests d'API.
 - **Non fait, assumé** : WhatsApp/Instagram/Messenger (application déclarée chez Meta) et SMS (compte facturé) — l'écran le dit à l'artisan en clair au lieu de faire semblant.
 - suivant : [B6] site sur-mesure (§7).
+
+## [B6-1] Site vitrine — réglages fins (§7/E1) — 03:20 → 05:40 (2 h 20) — ✅ terminé
+- **Non-régression par construction**, et c'est le point important : `styleToCss` n'émet QUE ce qui s'écarte du défaut. Un artisan qui n'ouvre jamais le mode avancé reçoit un objet de style vide → exactement le site qu'il avait. Prouvé en prod : aucune variable inline, aucun `data-*`, largeur 1180 px, traits 1 px, Fraunces.
+- **Ce qui est réglable** : 8 couples de polices (`preload:false` → seule celle du couple choisi est téléchargée), taille et échelle du texte, interlettrage des titres, couleur secondaire, fond, rayon des angles, épaisseur des filets, style de boutons, hauteur des sections, largeur du contenu, texture (grain/papier/bruit + intensité), intensité d'animation.
+- **8 presets métier** — c'est eux qui rendent la personnalisation utilisable par quelqu'un qui n'a pas d'avis sur la typographie. Un clic pose ambiance + couleur + polices + formes, puis l'artisan ajuste.
+- **Garde-fou de lisibilité** (`lib/contrast.ts`, WCAG 2.1) : un fond illisible est signalé avec le rapport chiffré, au lieu de laisser publier un site qu'on ne peut pas lire.
+- **Sécurité** : tout ce qui vient de la base est borné et validé (`resolveStyle`). Une couleur non hexadécimale est rejetée — pas d'injection CSS par le champ jsonb.
+- **Repli digne sans photo** (§E3, repéré sur ma propre capture) : un artisan sans photo avait 500 px de crème vide au-dessus de son nom. Interdit de combler avec une banque d'images → composition typographique, titre plus grand, filet d'accent, et les prestations réelles en bande.
+- build : OK · typecheck : OK · migration 0037 appliquée.
+- preuve : `scripts/site-style-e2e.mjs` → **33/33 en prod** (non-régression, bornes, contraste, presets, rendu réel avant/après, mouvement coupé).
+- **Erreur de méthode corrigée** : mon sondage de déploiement validait « le dernier déploiement », qui juste après un push est celui d'AVANT, déjà READY. J'ai conclu à tort que trois assertions échouaient sur du code qui n'était pas en ligne. `scripts/attendre-deploiement.mjs` attend désormais le SHA de HEAD.
+
+## [B6-2] Mouvement et honnêteté du contenu (§7/E2) — 05:40 → 06:50 (1 h 10) — ✅ terminé
+- Skills du repo lus et appliqués (`animate`, `animation-vocabulary`) : courbes et durées prises dans leurs tables, `--se` existant étendu (`--se-io`) plutôt que forké, gating `prefers-reduced-motion` livré avec le mouvement.
+- **Visionneuse de galerie** : elle n'existait pas — les photos de chantier, le contenu le plus convaincant du site, restaient en vignette 300 px. Transition d'élément partagé (View Transitions) pour que l'agrandissement soit visiblement la MÊME image, repli en fondu ailleurs. Accessible d'emblée : rôle dialog, focus piégé, Échap, focus rendu à la vignette, flèches, fond verrouillé.
+- **Survol des prestations** : 160 ms, filet + fond à 4 %. Un survol se voit des dizaines de fois par visite ⇒ imperceptible ou rien.
+- **Révélation par masque** des titres, réservée au niveau « cinématique » choisi par l'artisan.
+- **Transition entre pages** site → plateforme (`@view-transition`) : le passage ne clignote plus.
+- **Pas de compteur animé** : les seuls nombres réels sont le nombre de prestations (3 à 8). Compter de 0 à 5 n'explique rien. Zéro ligne écrite, assumé.
+- **ANTI-FABRICATION — le vrai problème trouvé dans ce bloc** : la bande de réassurance affirmait « Travail assuré », « Devis gratuit », « Sérieux engagé sur chaque chantier ». Des faits sur l'entreprise de l'artisan que **personne n'avait déclarés** — « assuré » sous-entend une assurance décennale. Elle ne contient plus que des données saisies par l'artisan (zone, disponibilités, téléphone, prestations) ou tenues par le produit (réponse rapide, si la plateforme est active), et disparaît s'il en reste moins de deux.
+- preuve : `scripts/site-motion-e2e.mjs` → **21/21 en prod**, dont les quatre mentions inventées vérifiées absentes.
+- suivant : [B6-3] qualité d'image (§E3) — pipeline 5 tailles AVIF/WebP, EXIF (géolocalisation !) retirés, détection de flou, guide de prise de vue.
