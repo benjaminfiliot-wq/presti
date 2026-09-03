@@ -108,7 +108,10 @@ html.lenis,html.lenis body{height:auto}
 .site-mark img{width:100%;height:100%;object-fit:cover}
 .site-links{display:flex;align-items:center;gap:1.6rem;font-size:.95rem;color:var(--sink2)}
 .site-links a:not(.site-nav-cta):hover{color:var(--sink)}
-.site-nav-cta{padding:.6rem 1.1rem;border-radius:999px;background:var(--sink);color:var(--sbg);font-weight:600;transition:transform .14s var(--se),background .15s}
+/* a.site-nav-cta et pas .site-nav-cta : `.site a{color:inherit}` (0,1,1) l'emportait sur
+   (0,1,0), donc le bouton héritait du gris de .site-links — texte gris foncé sur pastille
+   presque noire, 2:1 de contraste. Illisible, et invisible dans les tests d'API. */
+.site a.site-nav-cta,.site-nav-cta{padding:.6rem 1.1rem;border-radius:999px;background:var(--sink);color:var(--sbg);font-weight:600;transition:transform .14s var(--se),background .15s}
 .site-nav-cta:hover{transform:translateY(-1px)}
 @media(max-width:760px){.site-links a:not(.site-nav-cta){display:none}}
 

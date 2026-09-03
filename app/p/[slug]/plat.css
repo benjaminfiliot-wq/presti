@@ -10,7 +10,7 @@ html.lenis,html.lenis body{height:auto}
 /* ===== Plateforme artisan (page /p/[slug]) — mini-site dark cinématique, white-label ===== */
 .plat{
   /* DNA "Atelier" crème éditoriale — même famille que le site vitrine, à l'opposé de la console Presti. */
-  --pb:#F5EFE4; --ps:#FBF7EF; --ps2:#ECE3D4; --pi:#1B1712; --pi2:#5E5548; --pm:#847A6C; --pf:#A99E8C;
+  --pb:#F5EFE4; --ps:#FBF7EF; --ps2:#ECE3D4; --pi:#1B1712; --pi2:#5E5548; --pm:#72695D; --pf:#A99E8C;
   --pc:#D97757; /* accent personnalisable par l'artisan — tout le thème en dérive */
   --pc2:color-mix(in srgb,var(--pc) 78%,#111); --pcd:color-mix(in srgb,var(--pc) 82%,#000000); --psoft:color-mix(in srgb,var(--pc) 14%,transparent);
   --pglow:color-mix(in srgb,var(--pc) 34%,transparent); --pl:color-mix(in srgb,var(--pi) 14%,transparent); --pl2:color-mix(in srgb,var(--pi) 8%,transparent);
@@ -27,25 +27,25 @@ html.lenis,html.lenis body{height:auto}
   --pfd:var(--f-display),system-ui,sans-serif;
 }
 .plat[data-theme="epure"]{
-  --pb:#FBFAF8; --ps:#FFFFFF; --ps2:#F1EEE9; --pi:#171614; --pi2:#5C5A55; --pm:#847C6E; --pf:#A6A29B;
+  --pb:#FBFAF8; --ps:#FFFFFF; --ps2:#F1EEE9; --pi:#171614; --pi2:#5C5A55; --pm:#777063; --pf:#A6A29B;
   --pl:rgba(0,0,0,.1); --pl2:rgba(0,0,0,.05);
   --pfd:var(--f-display),system-ui,sans-serif;
 }
 /* 3 nouveaux thèmes (v3/J5) — cohérents avec le site */
 .plat[data-theme="chantier"]{
-  --pb:#EDEBE6; --ps:#F5F3EE; --ps2:#E2DFD7; --pi:#1A1A17; --pi2:#57534A; --pm:#7A7365; --pf:#9A9384;
+  --pb:#EDEBE6; --ps:#F5F3EE; --ps2:#E2DFD7; --pi:#1A1A17; --pi2:#57534A; --pm:#6E675B; --pf:#9A9384;
   --pl:rgba(26,26,23,.2); --pl2:rgba(26,26,23,.09);
   --pfd:var(--f-archivo),'Arial Narrow',system-ui,sans-serif;
 }
 .plat[data-theme="chantier"] h1,.plat[data-theme="chantier"] h2{text-transform:uppercase;letter-spacing:-.005em}
 .plat[data-theme="chantier"] .plat-nav-cta,.plat[data-theme="chantier"] .plat-btn{border-radius:0}
 .plat[data-theme="bleu"]{
-  --pb:#F3F5F8; --ps:#FFFFFF; --ps2:#E6ECF3; --pi:#16202E; --pi2:#3C4A5E; --pm:#6B7891; --pf:#8A96A8;
+  --pb:#F3F5F8; --ps:#FFFFFF; --ps2:#E6ECF3; --pi:#16202E; --pi2:#3C4A5E; --pm:#626E85; --pf:#8A96A8;
   --pl:rgba(22,32,46,.13); --pl2:rgba(22,32,46,.06);
   --pfd:var(--f-plex),system-ui,sans-serif; --pfb:var(--f-plex),system-ui,sans-serif;
 }
 .plat[data-theme="vitrine"]{
-  --pb:#FAF9F6; --ps:#FFFFFF; --ps2:#F0EEE9; --pi:#14130F; --pi2:#57534A; --pm:#847C6E; --pf:#A8A399;
+  --pb:#FAF9F6; --ps:#FFFFFF; --ps2:#F0EEE9; --pi:#14130F; --pi2:#57534A; --pm:#777063; --pf:#A8A399;
   --pl:rgba(20,19,15,.1); --pl2:rgba(20,19,15,.05);
   --pfd:var(--f-manrope),system-ui,sans-serif; --pfb:var(--f-manrope),system-ui,sans-serif;
 }
