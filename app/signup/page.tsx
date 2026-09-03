@@ -1,10 +1,10 @@
 'use client'
 import '@/app/globals.css'
 
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import { evaluerMotDePasse, messageAuth } from '@/lib/motDePasse'
+import { evaluerMotDePasse, messageAuth, messageFuite, verifierFuite, type Fuite } from '@/lib/motDePasse'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -16,12 +16,45 @@ export default function SignupPage() {
   // Force du mot de passe, évaluée à la frappe. On refuse ce qui figure dans les listes
   // d'attaque — et on DIT pourquoi, au lieu de refuser sans expliquer.
   const force = evaluerMotDePasse(password, email)
+  // Résultat de la recherche dans les fuites, mémorisé AVEC le mot de passe testé :
+  // sinon un verdict rendu pour l'ancienne saisie s'appliquerait à la nouvelle.
+  const [fuite, setFuite] = useState<{ mdp: string; res: Fuite } | null>(null)
+  const [verifEnCours, setVerifEnCours] = useState(false)
+  const verdict = fuite?.mdp === password ? fuite.res : null
+  const compromis = verdict?.compromis === true
+
+  // On interroge pendant la frappe, une fois les règles de forme passées : l'artisan
+  // apprend le problème avant de cliquer, pas après. Une demi-seconde de calme évite
+  // d'envoyer une requête par touche.
+  useEffect(() => {
+    if (!force.ok || verdict) return
+    const mdp = password
+    const minuteur = setTimeout(async () => {
+      setVerifEnCours(true)
+      const res = await verifierFuite(mdp)
+      setVerifEnCours(false)
+      setFuite({ mdp, res })
+    }, 500)
+    return () => clearTimeout(minuteur)
+  }, [password, force.ok, verdict])
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     if (!force.ok) { setMsg({ type: 'err', text: force.probleme ?? 'Choisissez un mot de passe plus solide.' }); return }
     setLoading(true)
     setMsg(null)
+    // Filet : si la frappe a été trop rapide pour que la vérification de fond aboutisse,
+    // on la fait maintenant, en bloquant. Personne ne passe sans avoir été vérifié.
+    let res = verdict
+    if (!res) {
+      res = await verifierFuite(password)
+      setFuite({ mdp: password, res })
+    }
+    if (res.compromis) {
+      setLoading(false)
+      setMsg({ type: 'err', text: messageFuite(res) })
+      return
+    }
     const { data, error } = await supabase.auth.signUp({ email, password })
     setLoading(false)
     if (error) {
@@ -61,12 +94,16 @@ export default function SignupPage() {
             </button>
           </div>
           {password ? (
-            <div className="mdp-force" data-niveau={force.ok ? force.score : 0}>
+            <div className="mdp-force" data-niveau={compromis || !force.ok ? 0 : force.score}>
               <span className="mdp-jauge" aria-hidden="true"><i /><i /><i /></span>
-              <span className="mdp-txt">{force.probleme ?? force.conseil}</span>
+              <span className="mdp-txt">
+                {compromis
+                  ? messageFuite(verdict)
+                  : force.probleme ?? (verifEnCours ? 'Vérification…' : force.conseil)}
+              </span>
             </div>
           ) : null}
-          <button disabled={loading || !force.ok}>{loading ? '…' : 'Créer mon compte'}</button>
+          <button disabled={loading || !force.ok || compromis}>{loading ? '…' : 'Créer mon compte'}</button>
         </form>
         {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`}>{msg.text}</div>}
         <p className="muted" style={{ marginTop: '1rem' }}>

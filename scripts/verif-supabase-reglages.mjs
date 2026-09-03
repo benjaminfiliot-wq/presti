@@ -50,12 +50,20 @@ try {
   const r1 = await rafraichir(ancien)
   T('le rafraîchissement légitime fonctionne', r1.ok, `HTTP ${r1.status}`)
   const nouveau = r1.ok ? (await r1.json()).refresh_token : null
+  // Distinction qui change la case à cocher : si le MEME jeton revient, ce n'est pas la
+  // detection de rejeu qui manque, c'est la ROTATION qui est eteinte. Sans rotation il n'y
+  // a pas d'« ancien » jeton : celui du voleur reste simplement valide, indefiniment.
+  const aTourne = Boolean(nouveau) && nouveau !== ancien
+  console.log(`  rotation : ${aTourne ? 'active (un nouveau jeton est emis)' : 'INACTIVE — le meme jeton est renvoye'}`)
 
-  console.log('  (attente du délai de grâce, 15 s…)')
-  await new Promise((r) => setTimeout(r, 15000))
+  // 70 s : le délai de grâce par défaut est de 10 s, mais il est réglable. Attendre trop
+  // peu ferait conclure « réglage absent » alors qu'on mesure simplement pendant la fenêtre
+  // de tolérance — un test qui accuse à tort est aussi inutile qu'un test qui rassure à tort.
+  console.log('  (attente du délai de grâce, 70 s…)')
+  await new Promise((r) => setTimeout(r, 70000))
   const r2 = await rafraichir(ancien)
   T('rejouer un ANCIEN jeton est refusé', !r2.ok,
-    `HTTP ${r2.status} — un jeton volé se refabrique un accès parallèle invisible · Supabase → Auth → Sessions → « Detect and revoke potentially compromised refresh tokens »`)
+    `HTTP ${r2.status} — ${aTourne ? 'la rotation marche mais l’ancien jeton survit : Sessions → activer la détection de rejeu' : 'la ROTATION est éteinte : Sessions → activer « Refresh token rotation », puis la détection de rejeu'} · https://supabase.com/dashboard/project/_/auth/sessions`)
 
   if (nouveau) {
     const r3 = await rafraichir(nouveau)
@@ -75,7 +83,7 @@ try {
     if (!e && c?.user) { acceptes.push(faible); comptes.push(c.user.id) }
   }
   T('les mots de passe faibles sont refusés à l’inscription', acceptes.length === 0,
-    `encore acceptés : ${acceptes.join(', ')} · Supabase → Auth → Passwords (longueur mini + déni-liste HaveIBeenPwned)`)
+    `encore acceptés : ${acceptes.join(', ')} · Supabase → Authentication → Providers → Email → « Minimum password length » (12). La protection HaveIBeenPwned, elle, est réservée au plan Pro.`)
 } catch (e) {
   ko++; console.log('  ❌ exception :', e.message)
 } finally {

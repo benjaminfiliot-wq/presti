@@ -2,6 +2,7 @@
 import '@/app/globals.css'
 
 import { useEffect, useState, Suspense, type FormEvent } from 'react'
+import { evaluerMotDePasse, messageFuite, verifierFuite, type Fuite } from '@/lib/motDePasse'
 import { useRouter } from 'next/navigation'
 
 // Réinitialisation du mot de passe (flux maîtrisé, email via Resend).
@@ -15,6 +16,25 @@ function ResetInner() {
   const [pw2, setPw2] = useState('')
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+  // Mêmes règles qu'à l'inscription : cet écran ne demandait que 8 caractères, ce qui
+  // en faisait le moyen le plus simple de se remettre un mot de passe faible.
+  const force = evaluerMotDePasse(pw)
+  const [fuite, setFuite] = useState<{ mdp: string; res: Fuite } | null>(null)
+  const [verifEnCours, setVerifEnCours] = useState(false)
+  const verdict = fuite?.mdp === pw ? fuite.res : null
+  const compromis = verdict?.compromis === true
+
+  useEffect(() => {
+    if (!token || !force.ok || verdict) return
+    const mdp = pw
+    const minuteur = setTimeout(async () => {
+      setVerifEnCours(true)
+      const res = await verifierFuite(mdp)
+      setVerifEnCours(false)
+      setFuite({ mdp, res })
+    }, 500)
+    return () => clearTimeout(minuteur)
+  }, [pw, token, force.ok, verdict])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -34,9 +54,12 @@ function ResetInner() {
 
   async function definir(e: FormEvent) {
     e.preventDefault()
-    if (pw.length < 8) { setMsg({ type: 'err', text: 'Choisissez un mot de passe d’au moins 8 caractères.' }); return }
+    if (!force.ok) { setMsg({ type: 'err', text: force.probleme ?? 'Choisissez un mot de passe plus solide.' }); return }
     if (pw !== pw2) { setMsg({ type: 'err', text: 'Les deux mots de passe ne correspondent pas.' }); return }
     setLoading(true); setMsg(null)
+    let verifiee = verdict
+    if (!verifiee) { verifiee = await verifierFuite(pw); setFuite({ mdp: pw, res: verifiee }) }
+    if (verifiee.compromis) { setLoading(false); setMsg({ type: 'err', text: messageFuite(verifiee) }); return }
     const res = await fetch('/api/auth/reset-confirm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, password: pw }) })
     const d = await res.json().catch(() => ({}))
     setLoading(false)
@@ -54,17 +77,25 @@ function ResetInner() {
 
         {token ? (
           <form onSubmit={definir}>
-            <label>Nouveau mot de passe</label>
-            <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} required minLength={8} placeholder="8 caractères minimum" />
-            <label>Confirmer</label>
-            <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} required />
-            <button disabled={loading}>{loading ? '…' : 'Mettre à jour'}</button>
+            <label htmlFor="mdp-nouveau">Nouveau mot de passe</label>
+            <input id="mdp-nouveau" type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} required minLength={10} placeholder="10 caractères minimum" />
+            {pw ? (
+              <div className="mdp-force" data-niveau={compromis || !force.ok ? 0 : force.score}>
+                <span className="mdp-jauge" aria-hidden="true"><i /><i /><i /></span>
+                <span className="mdp-txt">
+                  {compromis ? messageFuite(verdict) : force.probleme ?? (verifEnCours ? 'Vérification…' : force.conseil)}
+                </span>
+              </div>
+            ) : null}
+            <label htmlFor="mdp-confirmation">Confirmer</label>
+            <input id="mdp-confirmation" type="password" autoComplete="new-password" value={pw2} onChange={(e) => setPw2(e.target.value)} required />
+            <button disabled={loading || !force.ok || compromis}>{loading ? '…' : 'Mettre à jour'}</button>
           </form>
         ) : (
           <form onSubmit={demander}>
             <p className="muted" style={{ margin: '0 0 1rem' }}>Saisissez votre email : on vous envoie un lien pour choisir un nouveau mot de passe.</p>
-            <label>Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <label htmlFor="email-reinitialisation">Email</label>
+            <input id="email-reinitialisation" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <button disabled={loading}>{loading ? '…' : 'Envoyer le lien'}</button>
           </form>
         )}
