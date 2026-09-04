@@ -131,7 +131,8 @@ try {
   T('le client accepte le devis', rA.status === 200 && jA.statut === 'accepte', `HTTP ${rA.status} ${JSON.stringify(jA)}`)
   T('une facture d’acompte est créée à l’acceptation', !!jA.facture?.numero, JSON.stringify(jA))
   if (jA.facture?.numero) {
-    const { data: f } = await admin.from('factures').select('acompte_pct, verrouillee, devis_id').eq('numero', jA.facture.numero).maybeSingle()
+    // Le numéro est propre à CHAQUE artisan (FAC-2026-0001 existe chez plusieurs comptes) : filtrer par artisan, sinon maybeSingle() renvoie null.
+    const { data: f } = await admin.from('factures').select('acompte_pct, verrouillee, devis_id').eq('artisan_id', A.uid).eq('numero', jA.facture.numero).maybeSingle()
     T('  …à 30 %, scellée, rattachée au devis', f?.acompte_pct === 30 && f?.verrouillee === true && f?.devis_id === dId, JSON.stringify(f))
   }
 } catch (e) {
