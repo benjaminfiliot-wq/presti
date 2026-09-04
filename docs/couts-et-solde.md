@@ -25,9 +25,9 @@ Chiffres relevés sur des appels réels le 04/09/2026, tarifs Anthropic du momen
 | Recherche chez les fournisseurs, à froid | 0,17 € Standard · 0,21 € Pro · 0,27 € Expert | 2 crédits (3 en Expert) |
 | Recherche servie par le cache | 0 € | gratuit |
 
-Et ce qu'un crédit rapporte, selon la formule :
+Et ce qu'un crédit rapporte, selon la formule. Les montants sont ceux réellement encaissés : l'entreprise est en franchise en base de TVA, elle ne facture aucune taxe (voir la mémoire `presti-facturation-tva`).
 
-| Formule | Prix mensuel HT | Crédits | Valeur d'un crédit |
+| Formule | Prix mensuel | Crédits | Valeur d'un crédit |
 |---|---|---|---|
 | Essentiel | 29 € | 80 | 0,363 € |
 | Studio | 59 € | 250 | 0,236 € |
