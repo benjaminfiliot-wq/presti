@@ -430,7 +430,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
                     <img key={i} src={p} alt="" />
                   ))}</div>
                 ) : null}
-                {m.contenu ? m.contenu.split('\n').map((l, i, arr) => <span key={i}>{l}{i < arr.length - 1 ? <br /> : null}</span>) : null}
+                {m.contenu ? m.contenu.replace(/\*\*(.+?)\*\*/g, '$1').split('\n').map((l, i, arr) => <span key={i}>{l}{i < arr.length - 1 ? <br /> : null}</span>) : null}
                 {m.sens === 'in' ? (
                   <span className={`pchat-etat ${m.etat}`}>
                     {m.etat === 'envoi' ? 'envoi…' : m.etat === 'echec' ? 'non envoyé' : 'envoyé'}

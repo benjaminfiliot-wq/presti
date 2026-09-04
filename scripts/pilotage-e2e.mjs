@@ -55,6 +55,9 @@ async function clientEcrit(token, message) {
   if (ct.includes('application/json')) return { status: r.status, ...(await r.json()) }
   const texte = await r.text()
   const done = [...texte.matchAll(/data: (\{.*\})/g)].map((m) => JSON.parse(m[1])).find((o) => o.t === 'done')
+  // Comme le navigateur du client : une fois la réponse reçue, il déclenche les règles
+  // d'automatisation (route dédiée, idempotente — voir app/api/conversation/regles).
+  if (done?.v) await api('/api/conversation/regles', null, { token }).catch(() => {})
   return { status: r.status, reply: done?.v ?? null, sse: true }
 }
 

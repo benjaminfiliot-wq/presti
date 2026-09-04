@@ -28,7 +28,7 @@ export const FLAGS = {
   /** §4 B4 — centre d'aide /aide. */
   aideCentre: true,
   /** §5 — vidéo hero HyperFrames (sinon : séquence HTML). Décision Benj : après la démo. */
-  landingVideo: false,
+  landingVideo: true,
   /** §9 G2 — persona et apparence avancée de la plateforme. Livré (sprint J-1). */
   plateformePersona: true,
   /** Canaux WhatsApp — vendu dans la grille cible, pas construit. Reste caché tant que c'est vrai. */

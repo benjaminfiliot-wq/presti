@@ -306,7 +306,7 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
               </div>
             ) : (
               <div key={m.id} className={`ibub ${m.sens === 'in' ? 'in' : 'out'}`}>
-                <div className="ibub-txt">{m.contenu.split('\n').map((line, j, arr) => <span key={j}>{line}{j < arr.length - 1 ? <br /> : null}</span>)}</div>
+                <div className="ibub-txt">{m.contenu.replace(/\*\*(.+?)\*\*/g, '$1').split('\n').map((line, j, arr) => <span key={j}>{line}{j < arr.length - 1 ? <br /> : null}</span>)}</div>
                 <span className="ibub-tag">{m.sens === 'in' ? 'Client' : m.type === 'reponse_auto' ? `Assistant${m.modele ? ` · ${MODELE[m.modele] ?? m.modele}` : ''}` : m.type === 'devis_envoye' ? 'Devis' : 'Vous'} · {heure(m.sent_at)}</span>
               </div>
             ))}
