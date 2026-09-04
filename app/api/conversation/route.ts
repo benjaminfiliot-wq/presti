@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { signalerPanneIA } from '@/lib/alerteService'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
@@ -201,6 +202,7 @@ export async function POST(req: Request) {
       )
     } catch (e) {
       console.error('[conversation] IA:', e)
+      void signalerPanneIA('réponse au client', e)
     }
 
     if (reply) {

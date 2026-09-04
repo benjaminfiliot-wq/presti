@@ -7,6 +7,7 @@
 // ce lead → on le rend (`deja: true`) sans en créer un autre. L'index unique partiel de la
 // migration 0050 garantit la même chose en base, même en rafale parallèle.
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { signalerPanneIA } from '@/lib/alerteService'
 import { generateDevis } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
 import type { Tier } from '@/lib/models'
@@ -60,6 +61,7 @@ export async function creerDevisBrouillonPourLead(p: { artisanId: string; leadId
     result = await generateDevis({ nom: art.nom, metier: art.metier, tva_regime: (art as { tva_regime?: string | null }).tva_regime ?? null }, description, postes, model)
   } catch (e) {
     console.error('[devisAuto] IA:', e)
+    void signalerPanneIA('chiffrage automatique d’un devis', e)
     return { ok: false, error: 'L’IA n’a pas pu générer le devis. Réessayez.', status: 500 }
   }
 

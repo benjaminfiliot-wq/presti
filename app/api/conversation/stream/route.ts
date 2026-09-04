@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { signalerPanneIA } from '@/lib/alerteService'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
@@ -122,7 +123,7 @@ export async function POST(req: Request) {
             await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: proposition, etat: 'proposition', modele: tier })
             await supabaseAdmin.from('leads').update({ updated_at: new Date().toISOString(), lu_le: null }).eq('id', lead.id)
           }
-        } catch (e) { console.error('[conversation/stream] proposition:', e) }
+        } catch (e) { console.error('[conversation/stream] proposition:', e); void signalerPanneIA('proposition de réponse', e) }
       }
       await notifier(null, 'Réponse proposée — à valider')
       return NextResponse.json({ ok: true, reply: null, raison: 'assistee' })
@@ -156,6 +157,7 @@ export async function POST(req: Request) {
           )
         } catch (e) {
           console.error('[conversation/stream] IA:', e)
+          void signalerPanneIA('réponse au client (flux)', e)
           envoyer({ t: 'error', v: "La réponse n'a pas pu être générée." })
         }
         if (complet) {
