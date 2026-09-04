@@ -22,3 +22,6 @@ next-env.d.ts
 
 # Secret de webhook Stripe, ecrit par scripts/stripe-verifier.mjs
 .stripe-webhook.local
+
+# Fichiers de valeurs temporaires poses sur Vercel
+.stripe-taxe.local

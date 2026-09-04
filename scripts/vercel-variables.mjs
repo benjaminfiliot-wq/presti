@@ -17,6 +17,7 @@ function charger(fichier) {
 }
 charger('.env.local')
 charger('.stripe-webhook.local')
+charger('.stripe-taxe.local')
 
 const JETON = process.env.VERCEL_TOKEN
 if (!JETON) { console.log('❌ VERCEL_TOKEN absent de .env.local'); process.exit(1) }

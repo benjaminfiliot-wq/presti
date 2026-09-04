@@ -35,8 +35,11 @@ export async function POST(req: Request) {
           product_data: { name: `Presti — ${offre.label}`, description: `${offre.credits} crédits / mois` },
           unit_amount: Math.round(offre.prix * 100),
           recurring: { interval: 'month' },
-          // Le prix affiché est HORS TAXES : nos clients sont des entreprises, elles récupèrent la
-          // TVA. « inclusive » ferait payer la TVA sur notre marge au lieu de l'ajouter.
+          // Le comportement n'a de sens que si la TVA est collectée. L'entreprise est aujourd'hui
+          // en franchise en base (art. 293 B du CGI) : l'interrupteur est baissé, ce bloc dort, et
+          // le montant annoncé est celui qui est payé. Le jour où l'immatriculation existe, lever
+          // l'interrupteur suffit — mais il faudra AUSSI reprendre les prix affichés et les
+          // mentions légales, sans quoi le site dirait une chose et la facture une autre.
           ...(taxeAuto ? { tax_behavior: 'exclusive' as const } : {}),
         },
         quantity: 1,
