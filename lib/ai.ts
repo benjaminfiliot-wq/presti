@@ -499,7 +499,7 @@ export function blocPersona(p: Persona | null | undefined): string {
   if (!p) return ''
   const lignes: string[] = []
   lignes.push(p.vouvoiement === false
-    ? 'Tu TUTOIES le client (« tu », « ton », « te ») — jamais « vous », c\'est le choix de l\'artisan.'
+    ? 'Tu TUTOIES le client (« tu », « ton », « te ») — jamais « vous », c\'est le choix de l\'artisan. Emploie « tu » dès la première phrase ; pas de tournures impersonnelles (« on se cale », « il faudrait ») pour éviter de choisir.'
     : 'Tu VOUVOIES le client (« vous », « votre ») — jamais « tu ».')
   lignes.push(p.emojis ? 'Un émoji de temps en temps est bienvenu — jamais plus d\'un par message, jamais dans une phrase sérieuse (sinistre, litige).' : 'Aucun émoji.')
   const longueur = p.longueur && LONGUEURS[p.longueur] ? p.longueur : 'moyenne'

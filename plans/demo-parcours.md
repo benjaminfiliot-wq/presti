@@ -33,7 +33,8 @@
 1. `node scripts/demo-captures.mjs --garder` → compte propre, mot de passe neuf.
 2. `node scripts/purger-comptes-test.mjs` (après 0054) → plus aucun compte de test à part la démo.
 3. Ouvrir `/p/atelier-du-chene` sur le téléphone, `/plateforme` sur l'ordinateur, connecté.
-4. Réseau : la 1re réponse arrive en ~3 s, le devis de la règle ~20-60 s après (modèle Pro) — parler pendant ce temps, ou rafraîchir la conversation.
+4. **Recherche fournisseurs** : lancer une fois « plaque de plâtre BA13 » (Castorama) depuis `/inventaire/recherche` avant le public — la recherche vit sur le web (25 s, 2 résultats aujourd'hui, mais une fois sur deux séries de tests elle est revenue vide) ; si elle revient vide en direct, montrer le prix déjà **retenu** sur la fiche.
+5. Réseau : la 1re réponse arrive en ~3 s, le devis de la règle ~20-60 s après (modèle Pro) — parler pendant ce temps, ou rafraîchir la conversation.
 
 ## Répétitions
 - **R1** — heure : · compte : · accrocs :
