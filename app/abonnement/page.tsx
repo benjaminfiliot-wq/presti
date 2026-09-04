@@ -53,7 +53,7 @@ export default function Abonnement() {
               return (
                 <div key={o.id} className={`abo-card${o.id === 'studio' ? ' feat' : ''}`}>
                   <div className="abo-name">{o.label}</div>
-                  <div className="abo-price">{o.prix}€<small>/mois</small></div>
+                  <div className="abo-price">{o.prix}€<small>HT /mois</small></div>
                   <div className="abo-credits">{o.credits} crédits / mois</div>
                   <div className="abo-for">{o.accroche}</div>
                   <ul className="abo-list">{pointsForts(o.id).slice(0, 6).map((f) => <li key={f}>{f}</li>)}</ul>

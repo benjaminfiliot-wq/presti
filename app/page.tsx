@@ -141,7 +141,7 @@ export default function Home() {
               {OFFRES.map((o) => (
                 <div key={o.id} className={`lp-plan${o.id === 'studio' ? ' lp-plan--feat' : ''}`}>
                   <div className="lp-pn">{o.label}</div>
-                  <div className="lp-pp">{o.prix}€<small>par mois</small></div>
+                  <div className="lp-pp">{o.prix}€<small>HT par mois</small></div>
                   <div className="lp-credits"><b>{o.credits}</b>&nbsp;crédits / mois</div>
                   <div className="lp-for">{o.accroche}</div>
                   <ul className="lp-plist">{pointsForts(o.id).slice(0, 5).map((f) => <li key={f}>{f}</li>)}</ul>

@@ -21,6 +21,12 @@ export async function POST(req: Request) {
     const { data: artisan } = await supabaseAdmin.from('artisans').select('email, stripe_customer_id').eq('id', uid).maybeSingle()
     const origin = req.headers.get('origin') || 'https://prestiapp.fr'
 
+    // La TVA n'est calculée que si Stripe Tax est configuré côté compte (adresse d'origine et
+    // immatriculations renseignées). Tant que ce n'est pas fait, demander le calcul automatique
+    // ferait ÉCHOUER la création de la session : d'où l'interrupteur, à lever une fois le
+    // tableau de bord Stripe prêt.
+    const taxeAuto = process.env.STRIPE_TAXE_AUTO === '1'
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       line_items: [{
@@ -29,9 +35,25 @@ export async function POST(req: Request) {
           product_data: { name: `Presti — ${offre.label}`, description: `${offre.credits} crédits / mois` },
           unit_amount: Math.round(offre.prix * 100),
           recurring: { interval: 'month' },
+          // Le prix affiché est HORS TAXES : nos clients sont des entreprises, elles récupèrent la
+          // TVA. « inclusive » ferait payer la TVA sur notre marge au lieu de l'ajouter.
+          ...(taxeAuto ? { tax_behavior: 'exclusive' as const } : {}),
         },
         quantity: 1,
       }],
+      ...(taxeAuto
+        ? {
+            automatic_tax: { enabled: true },
+            // Stripe a besoin du pays pour connaître le taux ; sans adresse, pas de calcul.
+            billing_address_collection: 'required' as const,
+            // Le numéro de TVA de l'artisan : il apparaît sur la facture, et pour un client
+            // européen hors de France il déclenche l'autoliquidation.
+            tax_id_collection: { enabled: true },
+            // Obligatoire dès qu'on réutilise un client existant avec le calcul automatique,
+            // sinon Stripe refuse la session.
+            ...(artisan?.stripe_customer_id ? { customer_update: { address: 'auto' as const, name: 'auto' as const } } : {}),
+          }
+        : {}),
       ...(artisan?.stripe_customer_id ? { customer: artisan.stripe_customer_id } : artisan?.email ? { customer_email: artisan.email } : {}),
       client_reference_id: uid,
       metadata: { uid, plan: offre.id, credits: String(offre.credits) },
