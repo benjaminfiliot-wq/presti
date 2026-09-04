@@ -724,13 +724,13 @@ export const INFOBULLES: InfoBulle[] = [
     explication: 'Publié : accessible à tous à son adresse. Hors ligne : visible de vous seul, en aperçu.',
     exemple: 'Vous finissez vos réglages et repassez le site en « publié » pour que vos clients puissent le voir.',
   },
-  // source: app/profil/page.tsx:549-559 (offre Signature)
+  // source: app/profil/page.tsx:549-559 (toutes les offres)
   {
     cle: 'profil.domaine',
     page: '/profil',
     label: 'Votre nom de domaine',
     explication:
-      'Votre propre adresse (ex : mon-entreprise.fr) branchée sur votre site, à la place de l’adresse prestiapp.fr — réservé à l’offre Signature.',
+      'Votre propre adresse (ex : mon-entreprise.fr) branchée sur votre site, à la place de l’adresse prestiapp.fr — inclus dans toutes les offres.',
     exemple: 'Vous connectez mon-entreprise.fr, ajoutez les enregistrements DNS indiqués chez votre hébergeur, puis cliquez « Vérifier ».',
   },
 

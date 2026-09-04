@@ -114,4 +114,10 @@
 - Photos : Openverse (Flickr CC + Commons agrégés, sans clé) lancé en tâche de fond, 12 requêtes, licences CC0/BY/BY-SA, ≥ 1400 px.
 - `parametres-e2e` ajouté au lanceur ; cron de purge fusionné dans celui des relances (Vercel Hobby = 2 crons max, le 3e aurait fait échouer le déploiement).
 
-**Cumul : 6 h 55**
+## [P] Photos du compte de démo — 06:50 → 08:10 (1 h 20) — ✅ 3 photos sous licence
+- Openverse : joignable à la racine, mais **aucune recherche ne répond** (60 s puis coupure) — abandonné. Commons par **catégories réelles** (« Wooden stairs » + sous-catégories, « Stain-grade kitchen cabinets », « Joineries », « Carpenters workshops »…) : 716 candidats libres, planches-contact générées avec PIL pour trier d'un coup d'œil.
+- Retenu : **l'escalier hélicoïdal en bois de Nebotičnik (Ljubljana), deux angles, CC BY-SA 4.0** — niveau Signature — et une cuisine en bois (CC BY-SA 4.0). Écarté : bâtiments d'entreprises réelles avec leur nom, musées, cuisines américaines quelconques (une gardée puis retirée : boîtes de céréales).
+- `public/demo/portfolio/` : WebP 1800 px **ré-encodés (plus d'EXIF)**, `attributions.json` + `ATTRIBUTIONS.md` (« c'est une démonstration »). **L'attribution CC BY-SA est la ligne de fait de chaque slide** — exigée par la licence, et honnête. `demo-captures.mjs` branché dessus ; le compte conservé (`--garder`) écrit ses identifiants dans `.demo-compte.local` (ignoré par git).
+- Vérifié en production locale : hero + slides avec les vraies photos (captures regardées). Piège rencontré : `next start` ne servait pas un fichier ajouté dans `public/` après son démarrage → redémarrage.
+
+**Cumul : 8 h 15**

@@ -88,7 +88,7 @@ export default function ProfilPage() {
   const [layout, setLayout] = useState<{ id: SectionId; on: boolean; opts?: Record<string, unknown> }[]>([]) // composition de la page (ordre + on/off)
   const [previewKey, setPreviewKey] = useState(0) // force le rechargement de l'aperçu après enregistrement
   const [copied, setCopied] = useState(false)
-  // Domaine perso (offre Signature)
+  // Domaine perso — pour toutes les offres depuis le 04/09 (le verrou est dans lib/plans.ts)
   const [domaine, setDomaine] = useState('')
   const [domSaved, setDomSaved] = useState<string | null>(null)
   const [domStatus, setDomStatus] = useState<{ verified: boolean; served: boolean; records: { type: string; name: string; value: string }[] } | null>(null)

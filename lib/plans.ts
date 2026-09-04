@@ -34,8 +34,8 @@ type Plan = {
 
 // Les capacités s'empilent : chaque palier reprend le précédent et ajoute.
 const BASE: Capacite[] = [
-  'plateforme.conversation', 'plateforme.comptes_clients',
-  'site.essentiel',
+  'plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.domaine_perso',
+  'site.essentiel', 'site.domaine_perso', // décision Benj (04/09) : l'adresse sans « presti » est pour tous
   'devis.ia', 'devis.prix_artisan', 'factures', 'factures.electronique',
   'canaux.email', 'relances',
 ]
@@ -48,8 +48,8 @@ const STUDIO: Capacite[] = [
 ]
 const SIGNATURE: Capacite[] = [
   ...STUDIO,
-  'plateforme.ia.expert', 'plateforme.regles', 'plateforme.domaine_perso',
-  'site.signature', 'site.slides3d', 'site.domaine_perso',
+  'plateforme.ia.expert', 'plateforme.regles',
+  'site.signature', 'site.slides3d',
   'canaux.reseaux', 'support.prioritaire',
 ]
 
@@ -58,7 +58,7 @@ export const PLANS: Record<PlanId, Plan> = {
   gratuit: { label: 'Essai', accroche: 'Pour juger sur vos vraies demandes, sans carte.', creditsMois: 3, prixMois: 0, tiers: ['standard'], siteMax: 1, capacites: BASE },
   essentiel: { label: 'Essentiel', accroche: 'Pour ne plus louper une demande.', creditsMois: 80, prixMois: 29, tiers: ['standard'], siteMax: 1, capacites: BASE },
   studio: { label: 'Studio', accroche: 'Présence en ligne soignée, et l’assistant qui répond seul.', creditsMois: 250, prixMois: 59, tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
-  signature: { label: 'Signature', accroche: 'L’atelier à plein régime, image d’agence, votre nom de domaine.', creditsMois: 600, prixMois: 99, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
+  signature: { label: 'Signature', accroche: 'L’atelier à plein régime, image d’agence.', creditsMois: 600, prixMois: 99, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
   // Fondateurs : plan interne, illimité (jamais décompté).
   business: { label: 'Business', accroche: '', creditsMois: 100000, prixMois: 0, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
 }
@@ -115,9 +115,9 @@ const GRILLE_COMPLETE: LigneGrille[] = [
     signature: FLAGS.plateformeRegles ? 'Standard, Pro + Expert · règles d’automatisation' : 'Standard, Pro + Expert',
   } },
   { groupe: 'Plateforme', label: 'Comptes clients (lien magique, historique)', cellules: { essentiel: true, studio: true, signature: true } },
-  { groupe: 'Plateforme', label: 'Personnalisation', cellules: { essentiel: 'Thème + couleur', studio: 'Avancée : polices, fond, avatar, amorces', signature: 'Avancée + votre nom de domaine' }, flag: 'plateformePersona' },
+  { groupe: 'Plateforme', label: 'Personnalisation', cellules: { essentiel: 'Thème + couleur', studio: 'Avancée : polices, fond, avatar, amorces', signature: 'Avancée' }, flag: 'plateformePersona' },
   { groupe: 'Site', label: 'Site vitrine', cellules: { essentiel: 'Essentiel', studio: 'Pro · galerie, à-propos', signature: FLAGS.siteSlides3d ? 'Signature · cinématique, slides 3D' : 'Signature · cinématique' } },
-  { groupe: 'Site', label: 'Votre nom de domaine', cellules: { essentiel: false, studio: false, signature: true } },
+  { groupe: 'Site', label: 'Votre nom de domaine (site et page de conversation)', cellules: { essentiel: true, studio: true, signature: true } },
   { groupe: 'Devis & factures', label: 'Devis chiffrés par l’IA, sur vos prix', cellules: { essentiel: true, studio: true, signature: true } },
   { groupe: 'Devis & factures', label: 'Factures + facture électronique', cellules: { essentiel: true, studio: true, signature: true } },
   { groupe: 'Devis & factures', label: 'Relances automatiques', cellules: { essentiel: true, studio: true, signature: true } },
