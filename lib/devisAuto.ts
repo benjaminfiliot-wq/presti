@@ -57,7 +57,7 @@ export async function creerDevisBrouillonPourLead(p: { artisanId: string; leadId
 
   let result: Awaited<ReturnType<typeof generateDevis>>
   try {
-    result = await generateDevis({ nom: art.nom, metier: art.metier }, description, postes, model)
+    result = await generateDevis({ nom: art.nom, metier: art.metier, tva_regime: (art as { tva_regime?: string | null }).tva_regime ?? null }, description, postes, model)
   } catch (e) {
     console.error('[devisAuto] IA:', e)
     return { ok: false, error: 'L’IA n’a pas pu générer le devis. Réessayez.', status: 500 }

@@ -4,6 +4,7 @@ import { acompteApresAcceptation } from '@/lib/reglesServeur'
 import { creerFacture } from '@/lib/factureDepuisDevis'
 import { notifierArtisan } from '@/lib/notifications'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { consommerLimite } from '@/lib/limites'
 
 // Carte Devis dans la conversation (v4 §A3) : le client ACCEPTE ou DEMANDE UNE MODIFICATION
 // depuis le fil. L'acceptation est horodatée et journalisée (IP + canal) — valeur probante.
@@ -91,6 +92,11 @@ export async function POST(req: Request) {
     }
 
     // Demande de modification : on ne touche pas au statut, on fait remonter la demande.
+    // Même plafond que les autres routes de conversation (6 / 5 min) : chaque demande envoie un email à l'artisan.
+    if (!(await consommerLimite(`conv:${lead.id}`, 6, 5 * 60))) {
+      await recordAbuse(ip, 'flood /api/conversation/devis modifier')
+      return NextResponse.json({ error: "Un instant — laissez le temps à l'artisan de vous répondre 🙂" }, { status: 429 })
+    }
     await supabaseAdmin.from('messages').insert({
       lead_id: lead.id, sens: 'in', type: 'manuel',
       contenu: commentaire || `Bonjour, pouvez-vous modifier le devis ${devis.numero || ''} ?`,

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { getIp, isBanned } from '@/lib/security'
+import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 import { declencherRegles } from '@/lib/reglesServeur'
 
@@ -23,6 +23,8 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => null)
     const token = typeof body?.token === 'string' ? body.token.trim() : ''
     if (!TOKEN_RE.test(token)) return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
+    // Par IP aussi : le chiffrage coûte des crédits à l'artisan (30 déclenchements / h / IP).
+    if (!(await consommerLimite(`regles-ip:${ip}`, 30, 3600))) { await recordAbuse(ip, 'flood /api/conversation/regles'); return NextResponse.json({ ok: true, fait: 'rien', pourquoi: 'plafond' }) }
 
     const { data: lead } = await supabaseAdmin.from('leads')
       .select('id, artisan_id, nom_prospect, contact, type_chantier, photos, prise_en_main').eq('token', token).maybeSingle()

@@ -84,12 +84,20 @@ function normalize(s: string): string {
 
 /** true si l'un des mots-clés (déjà "sans accents") apparaît dans le texte normalisé `n`. */
 function has(n: string, keys: string[]): boolean {
-  return keys.some((k) => n.includes(normalize(k)))
+  // Audit v5 : `includes` prenait « je voudrais SAVoir » pour un SAV (réclamation), « PANNEaux » pour
+  // une panne, « imPORTEant » pour de la menuiserie. Mot entier (pluriel toléré) ; une clé de six
+  // lettres et plus vaut aussi comme début de mot (« inondation », « dépannage »).
+  return keys.some((k) => {
+    const kk = normalize(k)
+    if (!kk) return false
+    const e = kk.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    return new RegExp(kk.length >= 6 ? `(^| )${e}` : `(^| )${e}(s|x|e|es)?( |$)`).test(n)
+  })
 }
 
 // Signaux forts d'une situation d'urgence (sinistre / panne) dans le bâtiment.
 const URGENCE_KEYWORDS = [
-  'fuite', 'degat des eaux', 'degats des eaux', 'inond', 'panne', 'plus de chauffage',
+  'fuite', 'degat des eaux', 'degats des eaux', 'inond', 'inondation', 'inonde', 'panne', 'plus de chauffage',
   'plus d eau chaude', 'plus d eau', 'coupure', 'court circuit', 'odeur de gaz', 'sent le gaz',
   'fuite de gaz', 'urgent', 'urgence', 'au plus vite', 'des que possible', 'tout de suite',
   'immediat', 'sinistre', 'refoul', 'deborde', 'engorge', 'effondr', 'danger', 'ne fonctionne plus',

@@ -52,7 +52,6 @@ export default function Abonnement() {
               const current = plan === o.id
               return (
                 <div key={o.id} className={`abo-card${o.id === 'studio' ? ' feat' : ''}`}>
-                  {o.id === 'studio' && <span className="abo-tag">Le plus choisi</span>}
                   <div className="abo-name">{o.label}</div>
                   <div className="abo-price">{o.prix}€<small>/mois</small></div>
                   <div className="abo-credits">{o.credits} crédits / mois</div>

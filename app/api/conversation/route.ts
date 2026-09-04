@@ -1,5 +1,4 @@
-import { NextResponse, after } from 'next/server'
-import { declencherRegles } from '@/lib/reglesServeur'
+import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
@@ -62,7 +61,7 @@ export async function GET(req: Request) {
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier, accent, logo_url, photo_url')
+      .select('nom, metier, accent, logo_url, photo_url, services, zone_intervention, bio, tva_regime, assurance_nom')
       .eq('id', lead.artisan_id)
       .maybeSingle()
 
@@ -154,7 +153,7 @@ export async function POST(req: Request) {
     // Profil artisan (persona + crédits/fondateur).
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto')
+      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto, services, zone_intervention, bio, tva_regime, assurance_nom')
       .eq('id', lead.artisan_id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
@@ -196,7 +195,7 @@ export async function POST(req: Request) {
       ]
       const cfg = await getPlateformeConfig(artisan.id, artisan.reponse_auto)
       reply = await generateConversationReply(
-        { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style },
+        { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
         { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
         turns, undefined, undefined, { persona: personaDe(cfg) },
       )
@@ -206,9 +205,7 @@ export async function POST(req: Request) {
 
     if (reply) {
       await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: reply })
-      // Règles d'automatisation, après la réponse (le navigateur relance aussi /api/conversation/regles : idempotent).
-      const nbIA = history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length + 1
-      after(async () => { try { await declencherRegles({ lead: { ...lead, type_chantier: null, photos: null }, nbReponsesIA: nbIA, artisanEmail: artisan.email, artisanNom: artisan.nom }) } catch (e) { console.error('[conversation] règles:', e) } })
+      // Règles d'automatisation : déclenchées par le navigateur via /api/conversation/regles (un seul chemin).
       await supabaseAdmin.from('leads').update({ updated_at: new Date().toISOString() }).eq('id', lead.id)
     }
 

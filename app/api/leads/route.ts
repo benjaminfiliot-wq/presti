@@ -69,7 +69,7 @@ export async function POST(req: Request) {
     // 1) Retrouver l'artisan à partir de son slug
     const { data: artisan, error: aErr } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause')
+      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom')
       .eq('slug', slug)
       .maybeSingle()
 
@@ -214,7 +214,7 @@ export async function POST(req: Request) {
       }
 
       const reply = await generateLeadReply(
-        { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style },
+        { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
         { nom_prospect, contact, message },
       )
 

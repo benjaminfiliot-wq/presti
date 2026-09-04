@@ -18,9 +18,9 @@ export const FLAGS = {
   /** §8 F3 — assistant de recherche fournisseurs. Livré et testé le 04/09 (scripts/recherche-e2e.mjs : 37/37, vraie recherche Castorama). */
   inventaireRecherche: true,
   /** §9 G1 — poste de pilotage de la plateforme (conversations, prise de main). */
-  plateformePilotage: false,
+  plateformePilotage: true,
   /** §9 G1 — constructeur de règles d'automatisation. */
-  plateformeRegles: false,
+  plateformeRegles: true,
   /** §10 H2 — slides 3D de réalisations (Signature). Livré, 14/14 en mode production local. */
   siteSlides3d: true,
   /** §4 B3 — visites guidées à la première ouverture. */

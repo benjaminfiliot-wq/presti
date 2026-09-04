@@ -25,6 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .select('slug, created_at')
       .eq('site_active', true)
       .eq('site_seo', true)
+      .not('email', 'like', '%@presti-test.invalid') // jamais un compte de test ou de démonstration dans l'index
       .not('slug', 'is', null)
       .limit(5000)
     for (const a of (data as { slug: string | null; created_at: string | null }[]) ?? []) {

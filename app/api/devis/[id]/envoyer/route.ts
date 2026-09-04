@@ -22,12 +22,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const { data: devis } = await supabaseAdmin.from('devis').select('*').eq('id', id).eq('artisan_id', uid).maybeSingle()
     if (!devis) return NextResponse.json({ error: 'Devis introuvable' }, { status: 404 })
+    if (devis.statut === 'accepte') return NextResponse.json({ error: 'Ce devis est déjà accepté par le client : il ne se renvoie pas. Pour une modification, créez un nouveau devis.' }, { status: 409 })
     if (!devis.client_email && devis.lead_id) {
       // Devis créé par une règle avant que le client ne laisse ses coordonnées : on reprend
       // le contact de la conversation rattachée (uniquement si c'est un email).
       const { data: lead } = await supabaseAdmin.from('leads').select('contact, nom_prospect').eq('id', devis.lead_id).maybeSingle()
       const contact = typeof lead?.contact === 'string' ? lead.contact.trim() : ''
-      if (contact.includes('@')) {
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(contact)) {
         const maj: Record<string, string> = { client_email: contact }
         if (!devis.client_nom && lead?.nom_prospect) maj.client_nom = lead.nom_prospect
         await supabaseAdmin.from('devis').update(maj).eq('id', id)

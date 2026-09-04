@@ -387,7 +387,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
       <section className="pchat-main">
         <header className="pchat-top">
           <button type="button" className="pchat-burger" onClick={() => setSide(true)} aria-label="Mes demandes">☰</button>
-          <span className="pchat-who"><b>{artisanNom}</b>{humain ? <em className="pchat-human">{artisanNom.split(' ')[0]} vous répond directement</em> : null}</span>
+          <span className="pchat-who"><b>{artisanNom}</b>{humain ? <em className="pchat-human">{artisanNom} vous répond directement</em> : null}</span>
         </header>
         {/* Transparence IA — non négociable : le visiteur sait toujours à qui il parle. */}
         <p className="pchat-ia">{nomAss ? <><b>{nomAss}</b>, assistant de l&apos;entreprise</> : <>Assistant de l&apos;entreprise</>} — un humain prend le relais à tout moment.</p>

@@ -1,4 +1,4 @@
-import { NextResponse, after } from 'next/server'
+import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
@@ -7,7 +7,6 @@ import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 import { getPlateformeConfig, iaDoitRepondre, personaDe, type PlateformeConfig } from '@/lib/plateformeConfig'
 import { resolveModel } from '@/lib/models'
-import { declencherRegles } from '@/lib/reglesServeur'
 
 // Ton de l'assistant (§A4) → persona passée au moteur de rédaction.
 const TON: Record<PlateformeConfig['ton'], string> = {
@@ -75,7 +74,7 @@ export async function POST(req: Request) {
     if (history.length >= MAX_TOURS) return NextResponse.json({ ok: true, reply: null, closed: true })
 
     const { data: artisan } = await supabaseAdmin
-      .from('artisans').select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause, plan').eq('id', lead.artisan_id).maybeSingle()
+      .from('artisans').select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause, plan, services, zone_intervention, bio, tva_regime, assurance_nom').eq('id', lead.artisan_id).maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
 
     const notifier = async (reply: string | null, alerte?: string) => {
@@ -115,7 +114,7 @@ export async function POST(req: Request) {
           const { model, tier } = resolveModel(cfg.modele || 'standard', artisan.plan)
           const turns: ConvTurn[] = [...history.map((m) => ({ sens: m.sens, contenu: m.contenu })), { sens: 'in' as const, contenu: message }]
           const proposition = await generateConversationReply(
-            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux },
+            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
             { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
             turns, model, undefined, { persona: personaDe(cfg) },
           )
@@ -148,10 +147,10 @@ export async function POST(req: Request) {
         let complet = ''
         try {
           complet = await generateConversationReply(
-            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux },
+            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
             { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
             turns,
-            undefined,
+            resolveModel(cfg.modele || 'standard', artisan.plan).model, // le modèle réglé par l'artisan (audit v5 : Haiku était servi d'office)
             (d) => { envoyer({ t: 'delta', v: d }) },
             { persona: personaDe(cfg) }, // le TON réglé par l'artisan (§9 G2)
           )
@@ -162,14 +161,8 @@ export async function POST(req: Request) {
         if (complet) {
           await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: complet })
           await supabaseAdmin.from('leads').update({ updated_at: new Date().toISOString() }).eq('id', lead.id)
-          // Règles d'automatisation (v5 §9) : qualifié (+ photo) → devis brouillon → notifier.
-          // `after()` : le chiffrage part une fois la réponse ENVOYÉE au client, hors du flux —
-          // en modèle Pro, réponse + chiffrage dans le même flux dépassaient les 60 s de Vercel
-          // et la fonction était coupée avant le devis ; et le client attendait pour rien.
-          const ctxRegles = { lead, nbReponsesIA: nbReponsesIA + 1, artisanEmail: artisan.email, artisanNom: artisan.nom }
-          after(async () => {
-            try { await declencherRegles(ctxRegles) } catch (e) { console.error('[conversation/stream] règles:', e) }
-          })
+          // Règles d'automatisation (v5 §9) : déclenchées par le navigateur via /api/conversation/regles
+          // (un seul chemin — l'ancien `after()` tournait en parallèle : double crédit, numéro brûlé).
         }
         await notifier(complet || null)
         envoyer({ t: 'done', v: complet })

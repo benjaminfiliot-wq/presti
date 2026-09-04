@@ -17,6 +17,7 @@ export default function DemoVideo() {
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
     setReduit(mq.matches)
+    if (window.innerWidth < 640) setParScene(true) // sur téléphone, une vidéo 16/9 de 340 px est illisible : scène par scène
     const onChange = () => setReduit(mq.matches)
     mq.addEventListener('change', onChange)
     return () => mq.removeEventListener('change', onChange)
@@ -45,7 +46,7 @@ export default function DemoVideo() {
   return (
     <div className="dv">
       <div className="dv-cadre">
-        <video ref={ref} src="/demo/hero.mp4" poster="/demo/scene-1.png" muted loop playsInline preload="metadata"
+        <video ref={ref} src="/demo/hero.mp4" poster="/demo/scene-1.png" muted loop playsInline controls preload="metadata"
           aria-label="Démonstration : une demande arrive le soir, un devis est prêt le matin, le client l'accepte sur son téléphone — cinq captures du vrai produit, sous-titrées." />
       </div>
       <p className="dv-bascule">Cinq captures du produit tel qu'il tourne aujourd'hui, montées bout à bout. <button type="button" onClick={() => setParScene(true)}>Voir scène par scène</button></p>

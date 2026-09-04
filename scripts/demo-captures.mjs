@@ -70,7 +70,7 @@ try {
   }
   await admin.from('artisans').upsert({
     id: uid, email, nom: 'Atelier du Chêne', metier: 'Menuisier', slug, plan: 'signature', credits: 600,
-    ville: 'Marans', zone_intervention: 'La Rochelle et alentours', tel_public: '05 46 00 00 00', email_public: email,
+    ville: 'Marans', zone_intervention: 'La Rochelle et alentours', tel_public: '05 46 00 00 00', email_public: null, site_seo: false, // pas d'adresse de test à l'écran, pas d'indexation de la démo
     bio: 'Menuiserie sur mesure : escaliers, bibliothèques, cuisines et dressings en bois massif.',
     services: [{ nom: 'Escaliers sur mesure' }, { nom: 'Bibliothèques et dressings' }, { nom: 'Cuisines en bois massif' }],
     ton_style: 'Bonjour ! Merci pour votre message. Je regarde ça et je reviens vers vous rapidement.',

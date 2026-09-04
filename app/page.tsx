@@ -1,4 +1,5 @@
 import '@/app/globals.css'
+import type { Metadata } from 'next'
 import HeroApp from '@/app/HeroApp'
 import Motion from '@/app/Motion'
 import DemoSequence from '@/app/DemoSequence'
@@ -6,6 +7,10 @@ import DemoVideo from '@/app/DemoVideo'
 import { FLAGS } from '@/lib/flags'
 import Comparatif from '@/app/Comparatif'
 import { OFFRES, pointsForts } from '@/lib/plans'
+
+// Google Search Console : la balise de vérification n'est posée QUE sur la landing — jamais sur
+// /site ni /p, qui vivent sur le domaine de l'artisan (marque blanche).
+export const metadata: Metadata = process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}
 
 /* Icônes SVG (Lucide-style) — jamais d'emoji comme icône. */
 const I = {
@@ -68,7 +73,7 @@ export default function Home() {
             <a href="/faq">FAQ</a>
           </div>
           <a className="lp-btn lp-btn--g" href="/login">Se connecter</a>
-          <a className="lp-btn lp-btn--p" href="/signup">Commencer</a>
+          <a className="lp-btn lp-btn--p" href="/signup">Essayer gratuitement</a>
         </nav>
       </header>
 
@@ -76,14 +81,14 @@ export default function Home() {
         {/* HERO */}
         <section className="lp-hero">
           <div className="container">
-            <span className="lp-eyebrow"><b />Pour les artisans du bâtiment</span>
+            <span className="lp-eyebrow"><b />Assistant IA pour les artisans du bâtiment</span>
             <h1>Le premier qui répond <span className="g">décroche le chantier.</span></h1>
             <p className="lp-lede">Presti répond à chaque demande de devis en moins d&apos;une minute — dans votre style —, chiffre le devis et relance tout seul jusqu&apos;à la signature. Vous restez sur le chantier, Presti tient le standard.</p>
             <div className="lp-cta">
               <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
               <a className="lp-btn lp-btn--g lp-btn--lg" href="#fonctionnalites">Voir ce que ça fait</a>
             </div>
-            <p className="lp-trust">1 à 3 essais offerts · sans carte bancaire</p>
+            <p className="lp-trust">3 crédits offerts · sans carte bancaire</p>
           </div>
           <div className="container">
             <div className="lp-stage"><span className="lp-beam" aria-hidden="true" /><div className="lp-float"><HeroApp /></div></div>

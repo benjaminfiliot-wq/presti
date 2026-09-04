@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       // pas de catalogue → on chiffre quand même, tout sera marqué « estimation »
     }
 
-    const result = await generateDevis({ nom: artisan.nom, metier: artisan.metier }, description, postes, model)
+    const result = await generateDevis({ nom: artisan.nom, metier: artisan.metier, tva_regime: (artisan as { tva_regime?: string | null }).tva_regime ?? null }, description, postes, model)
     return NextResponse.json({ ok: true, ...result, tier, downgraded })
   } catch (e) {
     console.error('[devis/generer] IA:', e)

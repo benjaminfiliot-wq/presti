@@ -50,8 +50,25 @@ export async function creerFacture(p: {
     return { ok: false, status: 422, error: messageMentionsBloquantes(manquantes, 'cette facture'), code: 'mentions_manquantes', manquantes, lien: OU_REMPLIR.lien }
   }
   const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
-  const eff = lignes.map((l) => normalizeLigne(l, franchise))
-  const totals = computeTotals(eff, Number(src.remise_pct) || 0)
+  const lignesDevis = lignes.map((l) => normalizeLigne(l, franchise))
+  // Facture d'ACOMPTE (audit v5 du 04/09 : la facture « Acompte 30 % » recopiait les lignes et
+  // les totaux COMPLETS du devis — 100 % facturé, scellé). Ici : une ligne par taux de TVA,
+  // au pourcentage demandé, remise du devis déjà appliquée.
+  const acomptePct = typeof p.acomptePct === 'number' && p.acomptePct > 0 && p.acomptePct < 100 ? p.acomptePct : null
+  let remise = Number(src.remise_pct) || 0
+  let eff = lignesDevis
+  if (acomptePct !== null) {
+    const parTaux = new Map<number, number>()
+    for (const l of lignesDevis) parTaux.set(l.tva_taux, (parTaux.get(l.tva_taux) ?? 0) + l.quantite * l.prix_unitaire_ht)
+    const coef = (acomptePct / 100) * (1 - remise / 100)
+    const numeroDevis = typeof src.numero === 'string' ? src.numero : ''
+    eff = [...parTaux.entries()].map(([taux, ht]) => ({
+      designation: `Acompte ${acomptePct} % sur le devis ${numeroDevis}`.trim() + (parTaux.size > 1 ? ` (part soumise à TVA ${taux} %)` : ''),
+      quantite: 1, unite: 'forfait', prix_unitaire_ht: Math.round(ht * coef * 100) / 100, tva_taux: taux,
+    }))
+    remise = 0
+  }
+  const totals = computeTotals(eff, remise)
 
   const { data: n } = await supabaseAdmin.rpc('next_numero', { p_artisan: uid, p_type: 'facture' })
   const numero = `FAC-${new Date().getFullYear()}-${String(n ?? 1).padStart(4, '0')}`
@@ -65,7 +82,7 @@ export async function creerFacture(p: {
       artisan_id: uid, devis_id: devisId ?? null, numero,
       objet: acompte && typeof p.acomptePct === 'number' ? `Acompte ${acompte} % — ${s(src.objet, 260) ?? 'travaux'}` : s(src.objet, 300),
       statut: 'emise', date_echeance: echeance,
-      remise_pct: Number(src.remise_pct) || 0, acompte_pct: acompte,
+      remise_pct: remise, acompte_pct: acompte,
       conditions: s(src.conditions, 4000), notes: s(src.notes, 4000),
       client_nom: s(src.client_nom, 160), client_email: s(src.client_email, 200), client_adresse: s(src.client_adresse, 300),
       total_ht: totals.total_ht, total_tva: totals.total_tva, total_ttc: totals.total_ttc,

@@ -39,7 +39,7 @@ export async function POST(req: Request) {
 
     // Recherche de l'utilisateur par email (stocké sur artisans). Introuvable → on renvoie
     // quand même le message générique (on ne révèle jamais si l'email existe).
-    const { data: art } = await supabaseAdmin.from('artisans').select('id, nom').ilike('email', email).maybeSingle()
+    const { data: art } = await supabaseAdmin.from('artisans').select('id, nom').ilike('email', email.replace(/[%_\\]/g, '\\$&')).maybeSingle()
     if (!art?.id) return generic
 
     // Jeton fort, stocké hashé.
