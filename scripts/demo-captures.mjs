@@ -104,7 +104,13 @@ try {
   await tel.fill('form.pchat-composer textarea', 'Chêne massif, finition huilée, avec 6 étagères réglables et deux portes en bas. Pas de contrainte de délai. L’accès est facile, rez-de-chaussée.')
   await tel.press('form.pchat-composer textarea', 'Enter')
   await reponseFinie()
-  await tel.waitForTimeout(4000) // la règle chiffre après la réponse
+  // La règle chiffre APRÈS la réponse (after) : on attend le devis en base, jusqu'à 90 s (modèle Pro).
+  log('  · attente du devis de la règle')
+  for (let i = 0; i < 45; i++) {
+    const { data: d } = await admin.from('devis').select('id').eq('artisan_id', uid).limit(1)
+    if (d?.length) break
+    await tel.waitForTimeout(2000)
+  }
 
   // ── Scène 3 — 7 h 50 : l'artisan ouvre son espace, le devis brouillon l'attend
   await pc.goto(`${BASE}/login`, { waitUntil: 'networkidle' })
@@ -112,6 +118,8 @@ try {
   await pc.click('form button[type="submit"], form button:not([type="button"])')
   await pc.waitForURL(/\/(outils|dashboard)/, { timeout: 20000 })
   await pc.goto(`${BASE}/plateforme`, { waitUntil: 'networkidle' })
+  // Première ouverture de la console : la visite guidée (§4 B3) recouvre l'écran → « Plus tard ».
+  const plusTard = pc.getByRole('button', { name: /Plus tard/ }); if (await plusTard.count()) { await plusTard.first().click(); await pc.waitForTimeout(400) }
   try {
     await pc.locator('.inbox-item').first().click({ timeout: 15000 })
   } catch {

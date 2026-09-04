@@ -8,14 +8,16 @@ import AppShell from '@/app/AppShell'
 import Conversations from '@/app/plateforme/Conversations'
 import Automatisations from '@/app/plateforme/Automatisations'
 import Reglages from '@/app/plateforme/Reglages'
+import Apparence from '@/app/plateforme/Apparence'
 import { afficher, urlPlateforme } from '@/lib/urls'
 
 // « Ma plateforme » = le poste de pilotage de l'artisan (v5 §9 G1), en trois volets :
 // Conversations (ce que voit le client, en miroir, plus ce qu'il ne voit pas),
-// Automatisations (le lien réponse auto ↔ devis/facture auto), Réglages (l'assistant).
+// Automatisations (le lien réponse auto ↔ devis/facture auto), Apparence (§9 G2 : la page
+// telle que le client la voit, avec aperçu en direct), Réglages (l'assistant).
 // Avant : un formulaire. L'artisan ne pouvait ni voir ni reprendre une conversation d'ici.
 
-type Volet = 'conversations' | 'automatisations' | 'reglages'
+type Volet = 'conversations' | 'automatisations' | 'apparence' | 'reglages'
 
 function PlateformeInner() {
   const router = useRouter()
@@ -31,7 +33,7 @@ function PlateformeInner() {
   const [copied, setCopied] = useState(false)
   const [nonLus, setNonLus] = useState(0)
   const voletParam = params.get('volet')
-  const [volet, setVolet] = useState<Volet>(voletParam === 'automatisations' || voletParam === 'reglages' ? voletParam : 'conversations')
+  const [volet, setVolet] = useState<Volet>(voletParam === 'automatisations' || voletParam === 'reglages' || voletParam === 'apparence' ? voletParam : 'conversations')
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -59,6 +61,7 @@ function PlateformeInner() {
   const VOLETS: { id: Volet; label: string }[] = [
     { id: 'conversations', label: `Conversations${nonLus ? ` · ${nonLus}` : ''}` },
     { id: 'automatisations', label: 'Automatisations' },
+    { id: 'apparence', label: 'Apparence' },
     { id: 'reglages', label: 'Réglages' },
   ]
 
@@ -84,6 +87,7 @@ function PlateformeInner() {
 
       {volet === 'conversations' ? <Conversations onCompte={setNonLus} /> : null}
       {volet === 'automatisations' ? <Automatisations uid={uid} plan={plan} /> : null}
+      {volet === 'apparence' ? <Apparence uid={uid} slug={slug} /> : null}
       {volet === 'reglages' ? <Reglages uid={uid} reponseAuto={reponseAuto} pause={pause} onPause={changerPause} /> : null}
     </AppShell>
   )

@@ -19,7 +19,7 @@ const DUREE = 3600 // une heure : le temps de consulter une demande, pas plus
 
 export async function POST(req: Request) {
   const s = await authArtisan(req)
-  if (estEchec(s)) return NextResponse.json({ error: s.error }, { status: s.status })
+  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
 
   const b = await req.json().catch(() => null)
   const leadId = String(b?.lead || '')

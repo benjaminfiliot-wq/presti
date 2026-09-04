@@ -115,6 +115,8 @@ try {
   await p.fill('input[autocomplete=current-password]', pw); await p.fill('input[autocomplete=new-password]', nouveauPw)
   await p.waitForFunction(() => !document.querySelector('.mdp-txt')?.textContent?.includes('Vérification'), null, { timeout: 15000 })
   T('la jauge dit que le mot de passe est bon avant d’envoyer', /Solide|Correct|Accepté/.test(await p.locator('.mdp-txt').innerText()))
+  // Première ouverture de la console : la visite guidée (§4 B3) peut recouvrir le bouton → « Plus tard ».
+  const plusTard = p.getByRole('button', { name: /Plus tard/ }); if (await plusTard.count()) { await plusTard.first().click(); await p.waitForTimeout(300) }
   await p.getByRole('button', { name: /Changer mon mot de passe/ }).click(); await p.waitForSelector('.msg', { timeout: 20000 })
   T('mot de passe solide accepté depuis la page', /modifié/i.test(await p.locator('.msg').innerText()))
   if (!migre) S('la page Sécurité liste les sessions', 'migration 0052 non appliquée'); else await p.screenshot({ path: `${OUT}/param-3-securite.png`, fullPage: true })

@@ -22,13 +22,24 @@ type Cfg = {
   limite_messages: number
   nom_assistant: string | null
   message_accueil: string | null
+  // Persona (§9 G2, migration 0053) — le TON, jamais des faits.
+  style_exemples: string[]
+  formule_ouverture: string | null
+  formule_cloture: string | null
+  vouvoiement: boolean
+  emojis: boolean
+  longueur: 'courte' | 'moyenne' | 'longue'
 }
 const DEFAUT: Cfg = {
   mode_reponse: 'auto', modele: null, auto_24_7: true, auto_debut: 18, auto_fin: 8,
   devis_auto: 'brouillon', devis_auto_seuil: null, facture_auto: 'jamais', ton: 'chaleureux',
   escalade_mots: ['urgence', 'fuite', 'degat des eaux', 'inondation', 'gaz', 'assurance'],
   limite_messages: 8, nom_assistant: null, message_accueil: null,
+  style_exemples: [], formule_ouverture: null, formule_cloture: null, vouvoiement: true, emojis: false, longueur: 'moyenne',
 }
+const LONGUEURS: { id: Cfg['longueur']; nom: string; desc: string }[] = [
+  { id: 'courte', nom: 'Courte', desc: '1 à 2 phrases' }, { id: 'moyenne', nom: 'Moyenne', desc: '2 à 5 phrases' }, { id: 'longue', nom: 'Longue', desc: 'prend le temps d’expliquer' },
+]
 
 const MODES: { id: Mode; nom: string; desc: string }[] = [
   { id: 'auto', nom: 'Automatique', desc: 'L’assistant répond tout de suite, à votre place. Vous reprenez la main quand vous voulez.' },
@@ -65,6 +76,11 @@ export default function Reglages({ uid, reponseAuto, pause, onPause }: { uid: st
       facture_auto: cfg.facture_auto, ton: cfg.ton, escalade_mots: cfg.escalade_mots,
       limite_messages: Math.max(0, Math.min(40, Number(cfg.limite_messages) || 0)),
       nom_assistant: cfg.nom_assistant?.trim() || null, message_accueil: cfg.message_accueil?.trim() || null,
+      style_exemples: (cfg.style_exemples || []).map((e) => e.trim()).filter((e) => e.length >= 10).slice(0, 5),
+      formule_ouverture: cfg.formule_ouverture?.trim().slice(0, 120) || null,
+      formule_cloture: cfg.formule_cloture?.trim().slice(0, 120) || null,
+      vouvoiement: cfg.vouvoiement !== false, emojis: cfg.emojis === true,
+      longueur: cfg.longueur === 'courte' || cfg.longueur === 'longue' ? cfg.longueur : 'moyenne',
       maj_le: new Date().toISOString(),
     }, { onConflict: 'artisan_id' })
     await supabase.from('artisans').update({ leads_pause: pause }).eq('id', uid)
@@ -137,6 +153,39 @@ export default function Reglages({ uid, reponseAuto, pause, onPause }: { uid: st
         <input id="nom-assistant" value={cfg.nom_assistant ?? ''} onChange={(e) => set('nom_assistant', e.target.value)} placeholder="Ex : L’atelier" maxLength={40} />
         <label htmlFor="accueil-assistant">Message d’accueil (facultatif) <Info cle="plateforme.message_accueil" /></label>
         <textarea id="accueil-assistant" rows={2} value={cfg.message_accueil ?? ''} onChange={(e) => set('message_accueil', e.target.value)} placeholder="Ex : Décrivez votre projet, je vous réponds tout de suite." maxLength={200} />
+
+        {/* ── Persona (§9 G2) : comment l'assistant ÉCRIT. Rien ici n'est un fait sur une demande. */}
+        <label className="pcfg-lab">Votre façon d’écrire <Info cle="plateforme.style_exemples" /></label>
+        <p className="muted" style={{ margin: '0 0 .5rem', fontSize: '.82rem' }}>Collez jusqu’à trois messages que vous avez vraiment écrits à des clients. L’assistant en imite le ton — jamais un prix, un délai ou un détail.</p>
+        <div className="pcfg-exemples">
+          {[0, 1, 2].map((i) => (
+            <textarea key={i} rows={2} maxLength={600} value={cfg.style_exemples[i] ?? ''} placeholder={['Ex : Bonjour Madame, je passe jeudi matin jeter un œil, ça vous va ?', 'Ex : Merci pour les photos, c’est clair. Je vous prépare ça.', 'Ex : Pas de souci, on cale ça ensemble par téléphone.'][i]} aria-label={`Message ${i + 1} écrit par vous`}
+              onChange={(e) => { const next = [...cfg.style_exemples]; while (next.length < 3) next.push(''); next[i] = e.target.value; set('style_exemples', next) }} />
+          ))}
+        </div>
+
+        <label className="pcfg-lab">Vous ou tu <Info cle="plateforme.vouvoiement" /></label>
+        <div className="pcfg-seg">
+          <button type="button" className={cfg.vouvoiement !== false ? 'on' : ''} onClick={() => set('vouvoiement', true)}>Vous</button>
+          <button type="button" className={cfg.vouvoiement === false ? 'on' : ''} onClick={() => set('vouvoiement', false)}>Tu</button>
+        </div>
+
+        <label className="pcfg-lab">Longueur des réponses <Info cle="plateforme.longueur" /></label>
+        <div className="pcfg-seg">
+          {LONGUEURS.map((l) => <button type="button" key={l.id} className={cfg.longueur === l.id ? 'on' : ''} title={l.desc} onClick={() => set('longueur', l.id)}>{l.nom}</button>)}
+        </div>
+
+        <label className="prof-toggle" style={{ marginTop: '1rem' }}>
+          <input type="checkbox" checked={cfg.emojis === true} onChange={(e) => set('emojis', e.target.checked)} />
+          <span>Émojis <Info cle="plateforme.emojis" /> <b>{cfg.emojis ? 'autorisés' : 'jamais'}</b> {cfg.emojis ? '— un de temps en temps, jamais dans un message sérieux' : '— l’assistant n’en met aucun'}</span>
+        </label>
+
+        <label className="pcfg-lab">Formules <Info cle="plateforme.formules" /></label>
+        <div className="pcfg-formules">
+          <input value={cfg.formule_ouverture ?? ''} onChange={(e) => set('formule_ouverture', e.target.value)} placeholder="Ouverture, au premier message — ex : Bonjour et merci pour votre message" maxLength={120} aria-label="Formule d’ouverture" />
+          <input value={cfg.formule_cloture ?? ''} onChange={(e) => set('formule_cloture', e.target.value)} placeholder="Clôture, quand il propose la suite — ex : Je reste à votre disposition" maxLength={120} aria-label="Formule de clôture" />
+        </div>
+        <p className="muted" style={{ margin: '.6rem 0 0', fontSize: '.8rem' }}>L’avatar, les couleurs, les polices et l’écran d’accueil se règlent dans l’onglet <b>Apparence</b>.</p>
         <div style={{ display: 'flex', gap: '.6rem', alignItems: 'center', marginTop: '1rem' }}>
           <button type="button" className="btn btn--primary" style={{ width: 'auto', margin: 0 }} disabled={saving} onClick={enregistrer}>{saving ? '…' : 'Enregistrer'}</button>
           {msg ? <span className={msg.type === 'err' ? 'adr-msg err' : 'adr-msg ok'}>{msg.text}</span> : null}

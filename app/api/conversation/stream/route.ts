@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, after } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
-import { getPlateformeConfig, iaDoitRepondre, type PlateformeConfig } from '@/lib/plateformeConfig'
+import { getPlateformeConfig, iaDoitRepondre, personaDe, type PlateformeConfig } from '@/lib/plateformeConfig'
 import { resolveModel } from '@/lib/models'
 import { declencherRegles } from '@/lib/reglesServeur'
 
@@ -117,7 +117,7 @@ export async function POST(req: Request) {
           const proposition = await generateConversationReply(
             { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux },
             { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
-            turns, model,
+            turns, model, undefined, { persona: personaDe(cfg) },
           )
           if (proposition) {
             await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: proposition, etat: 'proposition', modele: tier })
@@ -153,6 +153,7 @@ export async function POST(req: Request) {
             turns,
             undefined,
             (d) => { envoyer({ t: 'delta', v: d }) },
+            { persona: personaDe(cfg) }, // le TON réglé par l'artisan (§9 G2)
           )
         } catch (e) {
           console.error('[conversation/stream] IA:', e)
@@ -162,9 +163,13 @@ export async function POST(req: Request) {
           await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: complet })
           await supabaseAdmin.from('leads').update({ updated_at: new Date().toISOString() }).eq('id', lead.id)
           // Règles d'automatisation (v5 §9) : qualifié (+ photo) → devis brouillon → notifier.
-          // Après la réponse, jamais avant : le client ne doit pas attendre le chiffrage.
-          try { await declencherRegles({ lead, nbReponsesIA: nbReponsesIA + 1, artisanEmail: artisan.email, artisanNom: artisan.nom }) }
-          catch (e) { console.error('[conversation/stream] règles:', e) }
+          // `after()` : le chiffrage part une fois la réponse ENVOYÉE au client, hors du flux —
+          // en modèle Pro, réponse + chiffrage dans le même flux dépassaient les 60 s de Vercel
+          // et la fonction était coupée avant le devis ; et le client attendait pour rien.
+          const ctxRegles = { lead, nbReponsesIA: nbReponsesIA + 1, artisanEmail: artisan.email, artisanNom: artisan.nom }
+          after(async () => {
+            try { await declencherRegles(ctxRegles) } catch (e) { console.error('[conversation/stream] règles:', e) }
+          })
         }
         await notifier(complet || null)
         envoyer({ t: 'done', v: complet })

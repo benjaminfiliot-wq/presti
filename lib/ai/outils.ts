@@ -19,7 +19,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { rechercherPrix } from '@/lib/prix'
 import { creerDevisBrouillonPourLead } from '@/lib/devisAuto'
-import type { PlateformeConfig } from '@/lib/plateformeConfig'
+import { personaDe, type PlateformeConfig } from '@/lib/plateformeConfig'
 import type { Tier } from '@/lib/models'
 import { preparerConversation, genParams, profilCapacites, type Artisan, type Lead, type ConvTurn } from '@/lib/ai'
 import { routerModele, type Routage } from './routage'
@@ -205,7 +205,7 @@ export async function repondreAvecOutils(params: {
 
   const { system, msgs, insights } = preparerConversation(
     artisan, lead, history,
-    { exemples, avecOutils: true, nomAssistant: cfg.nom_assistant },
+    { exemples, avecOutils: true, nomAssistant: cfg.nom_assistant, persona: personaDe(cfg) },
   )
 
   // Routage : Standard par défaut, Pro sur complexité si l'offre le permet, Expert sur demande.

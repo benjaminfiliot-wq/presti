@@ -51,7 +51,7 @@ function lireUserAgent(ua: string | null | undefined): { appareil: string; navig
 
 export async function GET(req: Request) {
   const s = await authArtisan(req)
-  if (estEchec(s)) return NextResponse.json({ error: s.error }, { status: s.status })
+  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
 
   // La RPC filtre sur auth.uid() : on l'appelle donc AVEC le jeton de l'artisan, pas avec
   // la clé service (qui n'a pas d'uid). Aucun moyen de lister les sessions d'un autre.
@@ -81,7 +81,7 @@ export async function GET(req: Request) {
 
 export async function DELETE(req: Request) {
   const s = await authArtisan(req)
-  if (estEchec(s)) return NextResponse.json({ error: s.error }, { status: s.status })
+  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
   const body = await req.json().catch(() => null)
   const id = typeof body?.id === 'string' ? body.id : ''
   if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ error: 'Session inconnue.' }, { status: 400 })
@@ -98,7 +98,7 @@ export async function DELETE(req: Request) {
 
 export async function POST(req: Request) {
   const s = await authArtisan(req)
-  if (estEchec(s)) return NextResponse.json({ error: s.error }, { status: s.status })
+  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
 
   // On n'annonce JAMAIS un succès qu'on n'a pas. Le premier code répondait « toutes vos
   // sessions ont été fermées » même quand la révocation avait échoué : l'artisan croyait

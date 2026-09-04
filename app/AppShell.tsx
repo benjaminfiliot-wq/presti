@@ -101,6 +101,17 @@ export default function AppShell({
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) return
+      // §6 — 2FA activée mais session au mot de passe seul (jeton aal1) : les routes
+      // refuseraient tout. On demande le code tout de suite, ici, plutôt que d'attendre
+      // qu'un écran affiche « Double authentification requise » à chaque clic.
+      if (actif('mfa')) {
+        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+        if (aal?.nextLevel === 'aal2' && aal.currentLevel !== 'aal2') {
+          const retour = window.location.pathname + window.location.search
+          router.replace(`/login?mfa=1&retour=${encodeURIComponent(retour)}`)
+          return
+        }
+      }
       // select('*') : tolère l'absence de la colonne is_founder tant que la migration 0003 n'est pas appliquée.
       const { data: prof } = await supabase
         .from('artisans')
@@ -125,7 +136,7 @@ export default function AppShell({
         setUnread(count ?? 0)
       } catch { /* colonne pas encore migrée : pas de badge */ }
     })
-  }, [])
+  }, [router])
 
   async function logout() {
     await supabase.auth.signOut()

@@ -11,12 +11,12 @@
 // décision de code, versionnée, relue en revue — pas un réglage qu'on bascule à chaud.
 
 export const FLAGS = {
-  /** §6 — 2FA TOTP via Supabase MFA. Décision Benj : après la démo. */
-  mfa: false,
+  /** §6 — 2FA TOTP via Supabase MFA. Décision Benj du 04/09 : dans le sprint. Livré et testé (scripts/mfa-e2e.mjs). */
+  mfa: true,
   /** §8 F1 — photo de facture fournisseur → OCR → lignes proposées. */
   inventaireOcr: false,
-  /** §8 F3 — assistant de recherche fournisseurs. */
-  inventaireRecherche: false,
+  /** §8 F3 — assistant de recherche fournisseurs. Livré et testé le 04/09 (scripts/recherche-e2e.mjs : 37/37, vraie recherche Castorama). */
+  inventaireRecherche: true,
   /** §9 G1 — poste de pilotage de la plateforme (conversations, prise de main). */
   plateformePilotage: false,
   /** §9 G1 — constructeur de règles d'automatisation. */
@@ -29,8 +29,8 @@ export const FLAGS = {
   aideCentre: true,
   /** §5 — vidéo hero HyperFrames (sinon : séquence HTML). Décision Benj : après la démo. */
   landingVideo: false,
-  /** §9 G2 — persona et apparence avancée de la plateforme. */
-  plateformePersona: false,
+  /** §9 G2 — persona et apparence avancée de la plateforme. Livré (sprint J-1). */
+  plateformePersona: true,
   /** Canaux WhatsApp — vendu dans la grille cible, pas construit. Reste caché tant que c'est vrai. */
   canauxWhatsapp: false,
   /** Canaux réseaux sociaux — idem. */

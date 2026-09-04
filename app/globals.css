@@ -2351,3 +2351,98 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 /* Le style global button{width:100%} ne vaut pas dans les sections de Paramètres : un bouton y a la largeur de son texte. */
 .param-main button.btn,.ava-actions .btn,.param-ligne .btn,.param-grace .btn,.devis-infos-rappel .btn{width:auto}
 .param-main .dz-actions .btn,.abo-deverr .btn{width:100%}
+
+/* ── Assistant de recherche chez les fournisseurs (app/inventaire/recherche, §8 F3) ── */
+.rch-form { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-top: 1rem; }
+.rch-form input { margin: 0; }
+.rch-form input:first-child { flex: 3 1 280px; }
+.rch-form input:nth-child(2) { flex: 0 0 110px; }
+.rch-form .btn { width: auto; margin: 0; }
+.rch-options { display: grid; grid-template-columns: auto 1fr; gap: 1.2rem 2rem; margin-top: 1.1rem; align-items: start; }
+@media (max-width: 720px) { .rch-options { grid-template-columns: 1fr; } }
+.rch-lab { display: block; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .45rem; }
+.sa-pill.locked { opacity: .55; cursor: not-allowed; }
+.rch-four { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
+.rch-four label { display: inline-flex; align-items: center; gap: .55rem; margin: 0; cursor: pointer; font-weight: 500; }
+.rch-four input[type="checkbox"] { width: auto; margin: 0; }
+.rch-note { display: block; font-size: .78rem; color: var(--muted); margin: .1rem 0 .2rem 1.75rem; }
+.rch-attente { display: flex; gap: 1rem; align-items: center; border-left: 3px solid var(--green); }
+.rch-attente b { display: block; margin-bottom: .2rem; }
+.rch-attente .muted { font-size: .86rem; }
+.rch-spin { flex: 0 0 22px; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--green); animation: rchspin .9s linear infinite; }
+@keyframes rchspin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .rch-spin { animation: none; } }
+.rch-entete { display: flex; justify-content: space-between; align-items: center; gap: .8rem; flex-wrap: wrap; }
+.rch-entete h2 { margin: 0; }
+.rch-entete h2 .muted { font-weight: 500; font-size: .9rem; }
+.rch-table td { vertical-align: top; }
+.rch-desig { font-weight: 600; max-width: 42ch; }
+.rch-meta { display: flex; gap: .6rem; flex-wrap: wrap; font-size: .8rem; color: var(--muted); margin-top: .15rem; }
+.rch-extrait { margin: .35rem 0 0; padding: .35rem .6rem; border-left: 2px solid var(--line); font-size: .8rem; color: var(--muted); font-style: italic; max-width: 48ch; }
+.rch-actions { display: flex; flex-direction: column; gap: .3rem; min-width: 200px; }
+.rch-actions .btn { width: auto; margin: 0; padding: .32rem .6rem; font-size: .78rem; justify-content: flex-start; }
+.rch-nonvu { border-left: 3px solid #d08a2c; }
+.rch-nonvu ul { list-style: none; margin: .6rem 0 0; padding: 0; display: flex; flex-direction: column; gap: .35rem; font-size: .9rem; color: var(--muted); }
+.rch-nonvu b { color: var(--ink); }
+.rch-recap { display: grid; grid-template-columns: auto 1fr; gap: .35rem .9rem; margin: 1rem 0 0; font-size: .9rem; }
+.rch-recap dt { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; padding-top: .1rem; }
+.rch-recap dd { margin: 0; overflow-wrap: anywhere; }
+.rch-recap dd.rch-extrait { max-width: none; }
+
+/* ── Persona (volet Réglages, §9 G2) ── */
+.pcfg-exemples{display:flex;flex-direction:column;gap:.45rem}
+.pcfg-exemples textarea{margin:0;font-size:.88rem}
+.pcfg-formules{display:flex;flex-direction:column;gap:.45rem}
+.pcfg-formules input{margin:0}
+
+/* ── Volet « Apparence » du poste de pilotage (§9 G2) : formulaire à gauche, la page du client à droite ── */
+.apz{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,46%);gap:1.2rem;align-items:start}
+@media(max-width:1100px){.apz{grid-template-columns:1fr}}
+.apz-form{display:flex;flex-direction:column;gap:1.2rem;min-width:0}
+.apz-prev{position:sticky;top:1rem;display:flex;flex-direction:column;gap:.7rem}
+.apz-prev-bar{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.apz-prev-bar .spacer{flex:1}
+.apz-frame{position:relative;margin:0 auto;width:100%;height:min(680px,72vh);border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface-2,#1A1E29);transition:width .4s cubic-bezier(.16,1,.3,1)}
+.apz-frame.mobile{width:390px;max-width:100%}
+.apz-frame iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+@media(prefers-reduced-motion:reduce){.apz-frame{transition:none}}
+.apz-themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:.5rem}
+.apz-theme{width:auto;margin:0;display:flex;flex-direction:column;gap:.35rem;padding:.5rem;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;text-align:left;font:inherit;font-size:.82rem;font-weight:600}
+.apz-theme:hover{border-color:var(--accent-tint-2)}
+.apz-theme.on{border-color:var(--accent);background:var(--accent-tint)}
+.apz-theme i{display:block;height:34px;border-radius:6px;border:1px solid rgba(0,0,0,.08)}
+.apz-verrou{display:flex;gap:.6rem;align-items:center;padding:.7rem .9rem;border-radius:10px;background:var(--accent-tint);color:var(--ink);font-size:.86rem;margin:0 0 .4rem}
+.apz-verrou a{font-weight:650;color:var(--accent-ink)}
+.apz-off{opacity:.55;pointer-events:none;user-select:none}
+.apz-amorces{display:flex;flex-direction:column;gap:.4rem}
+.apz-amorces input{margin:0}
+.apz-avatar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.apz-avatar img,.apz-avatar .ph{width:52px;height:52px;border-radius:50%;object-fit:cover;background:var(--surface-2,#eee);display:grid;place-items:center;flex:none;font-weight:700}
+.apz-avatar .btn,.apz-avatar label.btn{width:auto;margin:0;cursor:pointer}
+.apz-fondmode{display:flex;gap:.4rem;flex-wrap:wrap}
+.apz-actions{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.apz-actions .btn{width:auto;margin:0}
+.apz-corr{font-size:.82rem;color:var(--muted);margin:.3rem 0 0}
+
+/* ── Double authentification (sprint J-1 §6 — Paramètres → Sécurité, et /login étape 2) ── */
+.mfa-etat{display:flex;align-items:center;gap:.8rem;padding:.8rem .95rem;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.mfa-etat.on{border-color:var(--accent-tint-2);background:var(--accent-tint)}
+.mfa-pastille{width:10px;height:10px;border-radius:50%;background:var(--faint);flex:none}
+.mfa-etat.on .mfa-pastille{background:var(--green)}
+.mfa-etat-txt{flex:1;min-width:0}
+.mfa-etat-txt b{display:block;font-size:.92rem}
+.mfa-etat-txt small{display:block;color:var(--muted);font-size:.8rem}
+.mfa-etat .btn{margin:0;width:auto;flex:none}
+.mfa-enrol{display:grid;grid-template-columns:196px 1fr;gap:1.2rem;align-items:start;margin-top:1rem}
+.mfa-qr{width:196px;height:196px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:8px;box-sizing:border-box}
+.mfa-qr img{width:100%;height:100%;display:block}
+.mfa-etapes{margin:0;padding-left:1.2rem;font-size:.9rem;line-height:1.55}
+.mfa-etapes li+li{margin-top:.3rem}
+.mfa-secret{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.6rem 0 0}
+.mfa-secret code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;letter-spacing:.08em;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:.35rem .55rem;word-break:break-all}
+.mfa-secret .btn{margin:0;width:auto;padding:.38rem .7rem;font-size:.82rem}
+.mfa-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:1.45rem;letter-spacing:.35em;text-align:center;max-width:240px}
+.mfa-actions{display:flex;gap:.6rem;margin-top:.8rem;flex-wrap:wrap}
+.mfa-actions .btn{margin:0;width:auto}
+@media (max-width:640px){.mfa-enrol{grid-template-columns:1fr}.mfa-qr{margin:0 auto}}
+.wrap .mfa-code{max-width:none}

@@ -3,15 +3,25 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import PlatChat from './PlatChat'
 import { computeResponseDelay } from '@/lib/platStats'
 import { lisibleSur } from '@/lib/contrast'
-import { fondDuTheme } from '@/lib/themeFonds'
+import { FOND_THEME, fondDuTheme } from '@/lib/themeFonds'
 import { headers } from 'next/headers'
 import { notFound, permanentRedirect } from 'next/navigation'
 import { chemins, modeDepuisHote, urlPlateforme } from '@/lib/urls'
 import { artisanParAncienSlug } from '@/lib/slugRedirect'
+import { getPlateformeConfig } from '@/lib/plateformeConfig'
+import {
+  ACCENT_DEFAUT, THEMES_PLAT, decoderApercu, fondEffectif, plateformeStyleToCss, plateformeStyleToData,
+  resolvePlateformeStyle, type ApercuPayload,
+} from '@/lib/plateformeStyle'
 
 // LA PLATEFORME (v4 §A1/§A2) : une application de conversation à la marque de l'artisan,
 // pas une page de contact décorée. La présentation (prestations, réalisations) vit sur le SITE.
 // White-label absolu : aucune mention de Presti.
+//
+// Apparence avancée (§9 G2) : `plateforme_config.apparence` est résolue par lib/plateformeStyle,
+// qui n'émet QUE les écarts au défaut — un artisan qui n'a rien réglé garde sa page au pixel près.
+// Aperçu : `?apercu=1&style=<base64>` applique un style NON enregistré, seulement dans ce mode
+// (la page est noindex quoi qu'il arrive), pour le cadre du volet « Apparence ».
 
 type Service = { nom?: string; description?: string }
 type Artisan = {
@@ -22,6 +32,7 @@ type Artisan = {
   accent: string | null; theme: string | null; leads_pause: boolean | null
   domaine: string | null; domaine_verifie: boolean | null
 }
+type Params = { params: Promise<{ slug: string }>; searchParams?: Promise<Record<string, string | string[] | undefined>> }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin
@@ -60,8 +71,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-export default async function PlateformePage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function PlateformePage({ params, searchParams }: Params) {
   const { slug } = await params
+  const sp = (await searchParams) ?? {}
   const a = await getArtisan(slug)
   const host = (await headers()).get('host')
 
@@ -78,23 +90,56 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
     return <main className="plat"><div className="plat-mid"><div className="plat-404"><b>Page indisponible</b><span>Ce lien de contact n&apos;est plus actif pour le moment.</span></div></div></main>
   }
 
-  const accent = /^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? (a.accent as string) : '#D97757'
-  const theme = ['atelier', 'nuit', 'epure', 'chantier', 'bleu', 'vitrine'].includes(a.theme || '') ? (a.theme as string) : 'atelier'
+  // Persona + apparence enregistrées (défauts si aucune ligne : rien ne change).
+  const cfg = await getPlateformeConfig(a.id, null)
+
+  // Aperçu du volet Apparence : un style passé en query, appliqué UNIQUEMENT avec ?apercu=1.
+  const apercu = sp.apercu === '1'
+  const ap: ApercuPayload | null = apercu ? decoderApercu(typeof sp.style === 'string' ? sp.style : null) : null
+
+  const themeBrut = ap?.theme ?? a.theme
+  const theme = (THEMES_PLAT as readonly string[]).includes(themeBrut || '') ? (themeBrut as string) : 'atelier'
+  const accentBrut = ap?.accent ?? a.accent
+  const accent = /^#[0-9a-fA-F]{6}$/.test(accentBrut || '') ? (accentBrut as string) : ACCENT_DEFAUT
+  const style = resolvePlateformeStyle(ap?.apparence ?? cfg.apparence)
+  const styleVars = plateformeStyleToCss(style, theme)
+  const styleData = plateformeStyleToData(style)
+  const fond = fondEffectif(style, theme)
+  // Accent LISIBLE pour les petits textes : l'accent brut passe rarement 4,5:1 en 12 px.
+  // En schéma « auto », l'encre dépend du réglage de l'appareil du client : les deux variantes
+  // sont posées, plat.css choisit (la variable inline gagnerait sinon sur la media query).
+  const encre = style.schema === 'auto' && !style.fond
+    ? { '--pc-ink-clair': lisibleSur(accent, fondDuTheme(theme)), '--pc-ink-sombre': lisibleSur(accent, FOND_THEME.nuit) }
+    : { '--pc-ink': lisibleSur(accent, fond) }
+
   const services = (Array.isArray(a.services) ? a.services : []).map((s) => (s?.nom || '').trim()).filter(Boolean)
   // Délai de réponse RÉEL mesuré sur 30 j (jamais inventé ; masqué s'il y a trop peu de données).
-  const delai = await computeResponseDelay(a.id)
+  const delai = apercu ? null : await computeResponseDelay(a.id)
+
+  const avatar = (ap && 'avatar_url' in ap ? ap.avatar_url : cfg.avatar_url) || a.logo_url || a.photo_url
+  const amorces = ap && ap.amorces !== undefined ? ap.amorces : cfg.amorces
+  const messageAccueil = ap && ap.message_accueil !== undefined ? ap.message_accueil : cfg.message_accueil
+  const nomAssistant = ap && ap.nom_assistant !== undefined ? ap.nom_assistant : cfg.nom_assistant
 
   return (
-    <main className="plat plat-app" style={{ ['--pc' as string]: accent, ['--pc-ink' as string]: lisibleSur(accent, fondDuTheme(theme)) }} data-theme={theme}>
+    <main className="plat plat-app" style={{ ['--pc' as string]: accent, ...encre, ...styleVars } as React.CSSProperties} data-theme={theme} {...styleData} {...(apercu ? { 'data-apercu': '1' } : {})}>
       <PlatChat
         slug={a.slug as string}
         infosHref={chemins(modeDepuisHote(host, a), a.slug).infos}
         artisanNom={a.nom || 'Votre artisan'}
         metier={a.metier}
-        avatar={a.logo_url || a.photo_url}
+        avatar={avatar}
+        logoUrl={a.logo_url || a.photo_url}
         services={services}
         paused={a.leads_pause === true}
         delai={delai}
+        nomAssistant={nomAssistant}
+        accueilTitre={style.accueil_titre}
+        accueilSousTitre={messageAccueil}
+        amorcesPerso={amorces}
+        apercu={apercu}
+        theme={theme}
+        accent={accent}
       />
     </main>
   )

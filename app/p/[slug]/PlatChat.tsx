@@ -3,6 +3,10 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { compressPhotoToDataUrl } from '@/lib/media'
 import { noticeCollecte } from '@/lib/legalArtisan'
+import { assainirApercu, fondEffectif, plateformeStyleToCss, plateformeStyleToData, resolvePlateformeStyle, type ApercuPayload } from '@/lib/plateformeStyle'
+import { lisibleSur } from '@/lib/contrast'
+import { FOND_THEME, fondDuTheme } from '@/lib/themeFonds'
+import { ETAPES_DEMANDE, type SuiviDemande } from '@/lib/suiviDemande'
 
 // L'APPLICATION DE CONVERSATION de la plateforme (v4 §A2).
 // Ce n'est plus un formulaire décoré : c'est un client de chat — colonne des conversations,
@@ -34,12 +38,23 @@ type Props = {
   services?: string[]
   paused?: boolean
   delai?: string | null
+  // ── Persona et apparence (§9 G2). Tout est facultatif : sans réglage, rendu d'aujourd'hui.
+  /** Logo/photo de l'artisan (colonne de gauche), distinct de l'avatar de l'assistant. */
+  logoUrl?: string | null
+  nomAssistant?: string | null
+  accueilTitre?: string | null
+  accueilSousTitre?: string | null
+  amorcesPerso?: string[] | null
+  /** Mode aperçu du volet Apparence : rien n'est envoyé, rien n'est compté, le style arrive par postMessage. */
+  apercu?: boolean
+  theme?: string
+  accent?: string
 }
 
 const initials = (n: string) => (n || 'A').trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? '').join('') || 'A'
 const titreDe = (t: string) => { const s = t.trim().replace(/\s+/g, ' '); return s.length > 38 ? s.slice(0, 38) + '…' : s || 'Nouvelle demande' }
 
-export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, services = [], paused, delai }: Props) {
+export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, services = [], paused, delai, logoUrl, nomAssistant, accueilTitre, accueilSousTitre, amorcesPerso, apercu, theme = 'atelier', accent = '#D97757' }: Props) {
   const [convs, setConvs] = useState<Conv[]>([])
   const [token, setToken] = useState<string | null>(null)
   const [msgs, setMsgs] = useState<Msg[]>([])
@@ -65,6 +80,10 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   const [devisBusy, setDevisBusy] = useState(false)
   const [modifOuvert, setModifOuvert] = useState(false)
   const [modifTexte, setModifTexte] = useState('')
+  // « Où en est ma demande » : uniquement ce que le serveur atteste (lib/suiviDemande).
+  const [suivi, setSuivi] = useState<SuiviDemande | null>(null)
+  // Aperçu en direct : le dernier style reçu du volet Apparence (jamais enregistré ici).
+  const [ap, setAp] = useState<ApercuPayload | null>(null)
   const threadRef = useRef<HTMLDivElement>(null)
   const taRef = useRef<HTMLTextAreaElement>(null)
   // Clés de stockage local sans marque : elles sont visibles dans les outils du
@@ -72,11 +91,21 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   // On migre l'ancienne clé pour ne perdre aucune conversation en cours.
   const KEY = `conv-${slug}`
 
-  // ── Amorces personnalisées : construites depuis les VRAIES prestations de l'artisan.
-  const amorces = (services.length
-    ? services.slice(0, 3).map((s) => `J'ai besoin de : ${s.toLowerCase()}`)
-    : ["J'ai un problème à réparer", 'Je voudrais un devis', 'Je veux refaire une pièce']
-  ).concat(metier ? [`Une question pour un ${metier.toLowerCase()}`] : []).slice(0, 4)
+  // ── Amorces : celles que l'artisan a écrites (volet Apparence), sinon construites depuis
+  // ses VRAIES prestations — jamais des exemples inventés.
+  const amorcesChoisies = ap && ap.amorces !== undefined ? ap.amorces : amorcesPerso
+  const amorces = amorcesChoisies && amorcesChoisies.length
+    ? amorcesChoisies.slice(0, 4)
+    : (services.length
+      ? services.slice(0, 3).map((s) => `J'ai besoin de : ${s.toLowerCase()}`)
+      : ["J'ai un problème à réparer", 'Je voudrais un devis', 'Je veux refaire une pièce']
+    ).concat(metier ? [`Une question pour un ${metier.toLowerCase()}`] : []).slice(0, 4)
+  // Écran d'accueil et identité de l'assistant : valeurs enregistrées, ou celles de l'aperçu.
+  const styleAp = ap && ap.apparence ? resolvePlateformeStyle(ap.apparence) : null
+  const titreAccueil = (ap ? styleAp?.accueil_titre : accueilTitre) || 'Bonjour 👋'
+  const sousTitreAccueil = (ap && ap.message_accueil !== undefined ? ap.message_accueil : accueilSousTitre) || `Décrivez votre besoin en quelques mots — ${artisanNom} vous répond.`
+  const nomAss = ap && ap.nom_assistant !== undefined ? ap.nom_assistant : nomAssistant
+  const avatarEff = ap && 'avatar_url' in ap ? (ap.avatar_url || logoUrl || null) : avatar
 
   const pushEvent = useCallback((event: 'view' | 'lead' | 'contact') => {
     try { fetch('/api/plat-event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({ slug, event, variant: 'B' }) }).catch(() => {}) } catch { /* ignore */ }
@@ -91,11 +120,45 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
       setMsgs(Array.isArray(d.messages) ? d.messages.map((m: Msg, i: number) => ({ id: `s${i}`, sens: m.sens, contenu: m.contenu, type: m.type, etat: 'envoye' as const })) : [])
       setDevis(d.devis ?? null)
       setPriseEnMain(d.prise_en_main === true)
+      setSuivi(d.suivi && typeof d.suivi.etape === 'number' ? d.suivi : null)
     } catch { setMsgs([]) }
   }, [])
 
+  // ── Aperçu (volet Apparence) : le style arrive par postMessage, même origine, et s'applique
+  // sur la racine sans recharger. Les mêmes fonctions que le serveur : rendu identique.
+  useEffect(() => {
+    if (!apercu) return
+    const root = document.querySelector<HTMLElement>('main.plat')
+    if (!root) return
+    const VARS = ['--pc', '--pc-ink', '--pc-ink-clair', '--pc-ink-sombre', '--pfd', '--pfb', '--pc2', '--pb', '--ps', '--ps2', '--pbg', '--prad', '--prad-s', '--prad-l', '--prad-pill', '--pgap', '--pbub-pad', '--pfs']
+    const appliquer = (p: ApercuPayload) => {
+      const th = p.theme ?? theme
+      const ac = p.accent ?? accent
+      const st = resolvePlateformeStyle(p.apparence ?? {})
+      for (const k of VARS) root.style.removeProperty(k)
+      const vars: Record<string, string> = { '--pc': ac, ...plateformeStyleToCss(st, th) }
+      if (st.schema === 'auto' && !st.fond) { vars['--pc-ink-clair'] = lisibleSur(ac, fondDuTheme(th)); vars['--pc-ink-sombre'] = lisibleSur(ac, FOND_THEME.nuit) }
+      else vars['--pc-ink'] = lisibleSur(ac, fondEffectif(st, th))
+      for (const [k, v] of Object.entries(vars)) root.style.setProperty(k, v)
+      root.setAttribute('data-theme', th)
+      for (const k of ['data-fond', 'data-schema', 'data-composeur']) root.removeAttribute(k)
+      for (const [k, v] of Object.entries(plateformeStyleToData(st))) root.setAttribute(k, v)
+      setAp(p)
+    }
+    const onMsg = (e: MessageEvent) => {
+      if (e.origin !== window.location.origin) return
+      const d = e.data as { type?: string; payload?: unknown } | null
+      if (!d || typeof d !== 'object' || d.type !== 'plat-apercu' || !d.payload || typeof d.payload !== 'object') return
+      appliquer(assainirApercu(d.payload as Record<string, unknown>))
+    }
+    window.addEventListener('message', onMsg)
+    try { window.parent?.postMessage({ type: 'plat-apercu-pret' }, window.location.origin) } catch { /* pas dans un cadre */ }
+    return () => window.removeEventListener('message', onMsg)
+  }, [apercu, theme, accent])
+
   // Chargement initial : conversations locales (+ migration de l'ancien jeton unique).
   useEffect(() => {
+    if (apercu) return // aperçu : ni conversations locales, ni vue comptée
     let list: Conv[] = []
     try {
       list = JSON.parse(localStorage.getItem(KEY) || '[]')
@@ -113,7 +176,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
     setConvs(list)
     if (list[0]) ouvrir(list[0].token)
     try { const vk = `vu-${slug}`; if (!sessionStorage.getItem(vk)) { sessionStorage.setItem(vk, '1'); pushEvent('view') } } catch { /* ignore */ }
-  }, [KEY, slug, ouvrir, pushEvent])
+  }, [KEY, slug, ouvrir, pushEvent, apercu])
 
   // Compte client : on consomme d'abord un éventuel lien magique, puis on lit la session.
   useEffect(() => {
@@ -151,7 +214,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   useEffect(() => { const ta = taRef.current; if (ta) { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 168) + 'px' } }, [draft])
 
   function saveConvs(next: Conv[]) { setConvs(next); try { localStorage.setItem(KEY, JSON.stringify(next)) } catch { /* ignore */ } }
-  function nouvelle() { setToken(null); setMsgs([]); setNeedContact(false); setDraft(''); setPhotos([]); setErr(null); setSide(false); setDevis(null); setModifOuvert(false); taRef.current?.focus() }
+  function nouvelle() { setToken(null); setMsgs([]); setNeedContact(false); setDraft(''); setPhotos([]); setErr(null); setSide(false); setDevis(null); setModifOuvert(false); setSuivi(null); taRef.current?.focus() }
 
   // ── Carte Devis : accepter (horodaté côté serveur) ou demander une modification.
   async function repondreDevis(action: 'accepter' | 'modifier') {
@@ -168,6 +231,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
       if (!res.ok) { setErr(d.error ?? 'Action impossible.') ; return }
       if (action === 'accepter') {
         setDevis((v) => (v ? { ...v, statut: 'accepte', accepte_le: new Date().toISOString() } : v))
+        setSuivi((v) => (v ? { ...v, etape: Math.max(v.etape, 4), preuve: 'devis_accepte' } : v))
         setMsgs((m) => [...m, { id: `da${Date.now()}`, sens: 'out', type: 'manuel', etat: 'envoye', contenu: `Merci ! Votre acceptation est enregistrée et horodatée. ${artisanNom} vous recontacte pour la suite.` }])
       } else {
         setModifOuvert(false)
@@ -190,6 +254,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   // ── Envoi d'un message (1er = création de la demande, suivants = conversation).
   async function envoyer(texte?: string) {
     const contenu = (texte ?? draft).trim()
+    if (apercu) { setDraft(''); return } // aperçu : on ne crée pas de demande
     if ((!contenu && !photos.length) || sending || photoBusy) return
     const localId = `t${Date.now()}`
     const envoyees = photos
@@ -203,7 +268,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
         setThinking(false); setSending(false)
         if (!res.ok) { marquer('echec'); setErr(d.error ?? 'Envoi impossible.'); return }
         marquer('envoye'); pushEvent('lead')
-        if (d.token) { setToken(d.token); saveConvs([{ token: d.token, titre: titreDe(contenu), ts: Date.now() }, ...convs]) }
+        if (d.token) { setToken(d.token); saveConvs([{ token: d.token, titre: titreDe(contenu), ts: Date.now() }, ...convs]); setSuivi({ etape: 1, etapes: ETAPES_DEMANDE, classee: false, preuve: 'lead' }) }
         const rep = d.reply || (d.paused
           ? `Votre demande est bien enregistrée — ${artisanNom} est momentanément indisponible et revient vers vous dès la reprise.`
           : `Bien reçu ! ${artisanNom} a votre demande et vous répond au plus vite.`)
@@ -269,10 +334,10 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
     } catch { setSending(false); setErr('Connexion interrompue.') }
   }
 
-  const Ava = () => (
-    <span className="pchat-ava">{avatar
+  const Ava = ({ src = avatarEff }: { src?: string | null }) => (
+    <span className="pchat-ava">{src
       // eslint-disable-next-line @next/next/no-img-element
-      ? <img src={avatar} alt="" /> : <b>{initials(artisanNom)}</b>}</span>
+      ? <img src={src} alt="" /> : <b>{initials(artisanNom)}</b>}</span>
   )
   // Un humain a la main si l'artisan l'a déclaré (serveur) ou s'il a déjà écrit dans le fil.
   const humain = priseEnMain || msgs.some((m) => m.sens === 'out' && m.type === 'manuel' && m.contenu.length > 0)
@@ -281,7 +346,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
     <div className={`pchat${side ? ' open' : ''}`}>
       {/* ── Colonne des conversations (tiroir sur mobile) */}
       <aside className="pchat-side">
-        <div className="pchat-brand"><Ava /><span><b>{artisanNom}</b>{metier ? <small>{metier}</small> : null}</span></div>
+        <div className="pchat-brand"><Ava src={logoUrl || avatarEff} /><span><b>{artisanNom}</b>{metier ? <small>{metier}</small> : null}</span></div>
         <button type="button" className="pchat-new" onClick={nouvelle}>+ Nouvelle demande</button>
         <nav className="pchat-list" aria-label="Mes demandes">
           {convs.length === 0 ? <p className="pchat-empty">Vos échanges apparaîtront ici.</p> : convs.map((c) => (
@@ -316,14 +381,30 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
           <span className="pchat-who"><b>{artisanNom}</b>{humain ? <em className="pchat-human">{artisanNom.split(' ')[0]} vous répond directement</em> : null}</span>
         </header>
         {/* Transparence IA — non négociable : le visiteur sait toujours à qui il parle. */}
-        <p className="pchat-ia">Assistant de l&apos;entreprise — un humain prend le relais à tout moment.</p>
+        <p className="pchat-ia">{nomAss ? <><b>{nomAss}</b>, assistant de l&apos;entreprise</> : <>Assistant de l&apos;entreprise</>} — un humain prend le relais à tout moment.</p>
+        {apercu ? <p className="pchat-apercu">Aperçu — vos clients écriront ici. Rien n&apos;est envoyé depuis ce cadre.</p> : null}
+
+        {/* « Où en est ma demande » (§9 G2) : frise calculée par le serveur depuis des états RÉELS.
+            Planifié / Terminé restent à venir tant qu'aucune donnée ne les porte — jamais cochés « pour faire joli ». */}
+        {token && suivi ? (
+          <div className={`pchat-suivi${suivi.classee ? ' classee' : ''}`} aria-label="Où en est ma demande">
+            <span className="pchat-suivi-k">{suivi.classee ? 'Demande classée' : 'Ma demande'}</span>
+            <ol>
+              {suivi.etapes.map((e, i) => {
+                const n = i + 1
+                const cls = n < suivi.etape ? 'ok' : n === suivi.etape ? 'now' : 'next'
+                return <li key={e} className={cls} aria-current={n === suivi.etape ? 'step' : undefined}><i aria-hidden="true" /><span>{e}</span></li>
+              })}
+            </ol>
+          </div>
+        ) : null}
 
         <div className="pchat-thread" ref={threadRef} data-lenis-prevent>
           {msgs.length === 0 && !thinking ? (
             <div className="pchat-hello">
               <Ava />
-              <h1>Bonjour 👋</h1>
-              <p>Décrivez votre besoin en quelques mots — {artisanNom} vous répond.{paused ? ' (Réponses momentanément suspendues : votre demande sera bien enregistrée.)' : ''}</p>
+              <h1>{titreAccueil}</h1>
+              <p>{sousTitreAccueil}{paused ? ' (Réponses momentanément suspendues : votre demande sera bien enregistrée.)' : ''}</p>
               <div className="pchat-sugg">
                 {amorces.map((a, i) => <button type="button" key={i} onClick={() => envoyer(a)}>{a}</button>)}
               </div>

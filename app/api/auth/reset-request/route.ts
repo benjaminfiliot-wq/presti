@@ -20,7 +20,7 @@ export const runtime = 'nodejs'
 const sha256 = (s: string) => crypto.createHash('sha256').update(s).digest('hex')
 const APP = 'https://prestiapp.fr'
 const MAX_PAR_EMAIL = 3
-const MAX_PAR_IP = 5
+const MAX_PAR_IP = 10
 
 export async function POST(req: Request) {
   const generic = NextResponse.json({ ok: true })

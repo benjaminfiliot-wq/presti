@@ -39,11 +39,25 @@ export type SectionProps = {
 /** Le jeton courant, pour les routes serveur. */
 export const jeton = async () => (await supabase.auth.getSession()).data.session?.access_token
 
+/**
+ * La route a exigé le second facteur (lib/authArtisan : `code: 'mfa_requise'`) : l'artisan a
+ * activé la 2FA mais cette session n'a que le mot de passe. On l'envoie taper son code, et
+ * on le ramène ici ensuite. Les routes qui ne relaient pas le code renvoient le message.
+ */
+export function mfaRequise(status: number, data: { error?: string; code?: string }): boolean {
+  return status === 401 && (data.code === 'mfa_requise' || /double authentification requise/i.test(data.error ?? ''))
+}
+export function versSecondFacteur() {
+  const retour = window.location.pathname + window.location.search
+  window.location.assign(`/login?mfa=1&retour=${encodeURIComponent(retour)}`)
+}
+
 /** Appel authentifié d'une route de Presti. */
 export async function api<T = Record<string, unknown>>(chemin: string, init: RequestInit = {}): Promise<{ ok: boolean; status: number; data: T & { error?: string } }> {
   const t = await jeton()
   const r = await fetch(chemin, { ...init, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}`, ...(init.headers || {}) } })
-  const data = (await r.json().catch(() => ({}))) as T & { error?: string }
+  const data = (await r.json().catch(() => ({}))) as T & { error?: string; code?: string }
+  if (mfaRequise(r.status, data)) versSecondFacteur()
   return { ok: r.ok, status: r.status, data }
 }
 

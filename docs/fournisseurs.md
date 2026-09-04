@@ -60,3 +60,15 @@ Le seuil de 3 ✅ pour la démo est atteint (Castorama, Brico Dépôt, Tout Fair
 1. **Accès licite à des pages publiques uniquement** : l'assistant ne consulte que des pages accessibles sans authentification, à la demande explicite de l'artisan pour un besoin ponctuel — jamais de contournement d'un mur de connexion, d'un captcha ou d'une protection anti-robot (les fournisseurs ❌ ci-dessus sont exclus pour cette raison précise, constatée par `curl`, pas supposée).
 2. **Extraction ni répétée ni systématique** : chaque recherche est déclenchée par l'artisan, pour sa propre demande, à un instant donné — ce n'est pas un robot qui aspire le catalogue en continu ; aucune tâche planifiée, aucun balayage exhaustif d'un site.
 3. **Aucune base substitutive constituée** — art. **L342-1 du Code de la propriété intellectuelle** (droit sui generis du producteur de bases de données) : les observations de prix ne sont jamais mutualisées entre artisans ni agrégées en une base concurrente du site source ; chaque observation appartient à l'artisan qui l'a demandée, reste horodatée et liée à sa fiche inventaire, et n'est réutilisable par personne d'autre. Les prix négociés ou affichés uniquement après connexion (comptes pro Rexel, Gedimat, BigMat, Legallais, Sonepar…) ne sont, par construction, jamais accessibles à l'assistant — ce n'est pas une limite technique contournable, c'est la frontière licite du dispositif.
+
+## Addendum 04/09/2026 — vérifié en direct par le moteur F3 (`lib/recherche-fournisseurs.ts`)
+
+Quatre recherches réelles « plaque de plâtre BA13 » via les outils serveur d'Anthropic (`web_search_20250305` + `web_fetch_20250910`, `allowed_domains` bornés) :
+
+| Fournisseur | `web_search` | `web_fetch` | Prix lu | Constat |
+|---|---|---|---|---|
+| **Castorama** | ✅ 10 résultats | ✅ fiches ouvertes (≈ 25 000 car.) | ✅ « 8,27 € / M2 soit 6,20 € / plaque » (Planodis 125 × 60, réf. 3334160434670) — 3 fiches avec prix | **Fournisseur de démo.** Certaines fiches portent « Cet article n'est plus proposé à la vente » : rapporté tel quel dans `disponibilite_vue`. |
+| **Brico Dépôt** | ✅ 10 résultats | ❌ `url_not_allowed` sur toutes les fiches (`www.` et sans) | — | Le récupérateur d'Anthropic est refusé sur ce domaine (règle robots.txt / filtrage côté outil), alors que `curl` passe. L'assistant le dit dans « ce que je n'ai pas pu voir ». À garder `prix_publics: true` (le catalogue se cherche), mais ne pas en faire le fournisseur de démo. |
+| **Tout Faire** | non testé en direct (budget IA) | — | — | — |
+
+Temps mesurés : Standard (Haiku, navigation + outils) 16-18 s ; Pro = navigation Haiku puis lecture Sonnet 5 des pages récupérées, 35 s au total. Sonnet 5 **avec** les outils dépassait 50 s (2 essais) — d'où le découpage en deux temps.

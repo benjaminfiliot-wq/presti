@@ -33,7 +33,7 @@ const SUITES = [
   { nom: 'Force des mots de passe', cmd: 'node', args: ['--experimental-strip-types', 'scripts/motdepasse-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Mots de passe fuités (HIBP)', cmd: 'node', args: ['--experimental-strip-types', 'scripts/fuite-mdp-e2e.mjs'], cout: 'gratuit' },
   // ── Sprint v5 (J-1 démo)
-  { nom: 'Offres = verrous (matrice)', cmd: 'node', args: ['--experimental-strip-types', 'scripts/offres-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Offres = verrous (matrice)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/offres-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Limites atomiques', cmd: 'node', args: ['scripts/limites-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Plafond de réinitialisation', cmd: 'node', args: ['scripts/reset-plafond-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Mentions bloquantes à l émission', cmd: 'node', args: ['scripts/mentions-bloquantes-e2e.mjs'], cout: 'gratuit' },

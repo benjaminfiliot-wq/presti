@@ -460,6 +460,62 @@ export type OptionsConversation = {
   avecOutils?: boolean
   /** Nom de l'assistant (persona) si l'artisan en a choisi un. */
   nomAssistant?: string | null
+  /** Persona de la plateforme (§9 G2) : ton par exemples, formules, vouvoiement, émojis, longueur. */
+  persona?: Persona | null
+}
+
+/**
+ * La persona de l'assistant (plateforme_config, migration 0053). Tout ici parle du TON :
+ * rien n'est un fait sur la demande en cours, et le prompt le répète.
+ */
+export type Persona = {
+  nom_assistant?: string | null
+  /** Messages écrits par l'artisan lui-même : EXEMPLES DE TON, jamais des faits. */
+  style_exemples?: string[] | null
+  formule_ouverture?: string | null
+  formule_cloture?: string | null
+  vouvoiement?: boolean | null
+  emojis?: boolean | null
+  longueur?: 'courte' | 'moyenne' | 'longue' | null
+}
+
+const LONGUEURS: Record<'courte' | 'moyenne' | 'longue', string> = {
+  courte: '1 à 2 phrases, pas plus — le strict nécessaire, vivant.',
+  moyenne: '2 à 5 phrases.',
+  longue: '4 à 8 phrases : tu prends le temps d\'expliquer, sans délayer ni te répéter.',
+}
+
+/**
+ * Le cadre « TON » ajouté au prompt système. Chirurgical : il ne remplace aucune règle
+ * de garde-fou (prix, délais, anti-fabrication) — il précise seulement COMMENT écrire.
+ * Sans persona (appelants historiques), rien n'est ajouté : prompt inchangé.
+ */
+export function blocPersona(p: Persona | null | undefined): string {
+  if (!p) return ''
+  const lignes: string[] = []
+  lignes.push(p.vouvoiement === false
+    ? 'Tu TUTOIES le client (« tu », « ton », « te ») — jamais « vous », c\'est le choix de l\'artisan.'
+    : 'Tu VOUVOIES le client (« vous », « votre ») — jamais « tu ».')
+  lignes.push(p.emojis ? 'Un émoji de temps en temps est bienvenu — jamais plus d\'un par message, jamais dans une phrase sérieuse (sinistre, litige).' : 'Aucun émoji.')
+  const longueur = p.longueur && LONGUEURS[p.longueur] ? p.longueur : 'moyenne'
+  if (longueur !== 'moyenne') lignes.push(`LONGUEUR (cette consigne prévaut sur « 2 à 5 phrases ») : ${LONGUEURS[longueur]}`)
+  const ouverture = p.formule_ouverture?.trim()
+  const cloture = p.formule_cloture?.trim()
+  if (ouverture) lignes.push(`Formule d'ouverture de l'artisan, à utiliser UNIQUEMENT au premier message d'un échange (jamais ensuite) : « ${ouverture.slice(0, 120)} ».`)
+  if (cloture) lignes.push(`Formule de clôture de l'artisan, quand tu proposes la suite : « ${cloture.slice(0, 120)} » — adaptée, pas recopiée mot pour mot à chaque message.`)
+  if (p.nom_assistant?.trim()) lignes.push(`Si tu dois te nommer, tu es « ${p.nom_assistant.trim().slice(0, 40)} », l'assistant — jamais l'artisan en personne.`)
+
+  const exemples = (p.style_exemples ?? []).map((e) => String(e ?? '').replace(/\s+/g, ' ').trim()).filter((e) => e.length >= 10).slice(0, 5)
+  const blocExemplesTon = exemples.length
+    ? `
+EXEMPLES DE TON — messages que l'artisan a écrits lui-même à des clients. Ils montrent SA façon d'écrire : ses formules, son rythme, sa chaleur ou sa sobriété, sa longueur. Imite cette manière. Ce ne sont PAS des faits sur la demande actuelle : n'en recopie ni un prix, ni un délai, ni une promesse, ni un détail de chantier — chaque réponse repart de ce que CE client a écrit.
+${exemples.map((e) => `« ${e.slice(0, 600)} »`).join('\n')}`
+    : ''
+
+  return `
+
+TON (réglé par l'artisan) :
+${lignes.map((l) => `- ${l}`).join('\n')}${blocExemplesTon}`
 }
 
 /**
@@ -500,7 +556,7 @@ RÈGLES (garde-fous) :
 - N'invente aucun délai précis intenable (reste sur « rapidement », « au plus vite », « dans la journée » si urgent).
 - Propose une prochaine étape concrète quand c'est pertinent (préciser un point, convenir d'un créneau, établir le devis), sans harceler.
 - Si le prospect a donné assez d'éléments pour chiffrer, tu peux proposer de lui préparer un devis.
-- Renvoie UNIQUEMENT le texte du message : pas d'objet, pas de « Voici la réponse », pas de guillemets, pas de balises.${metierBloc}${outilsBloc}${guidance}${GARDE_FOUS}`
+- Renvoie UNIQUEMENT le texte du message : pas d'objet, pas de « Voici la réponse », pas de guillemets, pas de balises.${metierBloc}${blocPersona(opts.persona)}${outilsBloc}${guidance}${GARDE_FOUS}`
 
   // Historique → messages Anthropic (in=user, out=assistant), en fusionnant les
   // messages consécutifs de même rôle pour garantir l'alternance stricte exigée par l'API.

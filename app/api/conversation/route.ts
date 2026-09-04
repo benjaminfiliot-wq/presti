@@ -5,6 +5,8 @@ import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
+import { getPlateformeConfig, personaDe } from '@/lib/plateformeConfig'
+import { suiviDemande } from '@/lib/suiviDemande'
 
 // Conversation publique côté prospect : il rouvre SON fil via un jeton secret (uuid
 // non devinable) et peut échanger avec l'artisan ; l'IA répond dans le fil. Aucun
@@ -88,6 +90,9 @@ export async function GET(req: Request) {
       nom_prospect: lead.nom_prospect,
       // Le client sait quand un humain a pris la main (loyauté, §A2).
       prise_en_main: lead.prise_en_main === true,
+      statut: lead.statut ?? 'nouveau',
+      // « Où en est ma demande » (§9 G2) : calculée depuis des états RÉELS, jamais devinée.
+      suivi: suiviDemande({ statut: lead.statut, devisStatut: dv?.statut ?? null, priseEnMain: lead.prise_en_main }),
       messages: history.map((m) => ({ sens: m.sens, type: m.type, contenu: m.contenu, sent_at: m.sent_at })),
       devis: dv ? { ...dv, lignes } : null,
     })
@@ -188,10 +193,11 @@ export async function POST(req: Request) {
         ...history.map((m) => ({ sens: m.sens, contenu: m.contenu })),
         { sens: 'in' as const, contenu: message },
       ]
+      const cfg = await getPlateformeConfig(artisan.id, artisan.reponse_auto)
       reply = await generateConversationReply(
         { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style },
         { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
-        turns,
+        turns, undefined, undefined, { persona: personaDe(cfg) },
       )
     } catch (e) {
       console.error('[conversation] IA:', e)

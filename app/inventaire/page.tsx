@@ -9,6 +9,7 @@ import Panneau from '@/app/inventaire/Panneau'
 import FicheMateriau from '@/app/inventaire/FicheMateriau'
 import ImportCsv from '@/app/inventaire/ImportCsv'
 import type { Fournisseur } from '@/lib/inventaire/types'
+import { actif } from '@/lib/flags'
 
 // Inventaire (v4 §9) — ce que l'artisan a en stock, et ce qui va lui manquer.
 //
@@ -158,6 +159,7 @@ export default function InventairePage() {
     <AppShell active="inventaire" title="Inventaire" crumb={materiaux.length ? `${materiaux.length} articles` : 'Votre stock'} wide
       actions={<div className="inv-tete">
         <a className="btn btn--ghost" href="/inventaire/fournisseurs">Mes fournisseurs{fournisseurs.length ? ` (${fournisseurs.length})` : ''}</a>
+        {actif('inventaireRecherche') ? <a className="btn btn--ghost" href="/inventaire/recherche">Recherche</a> : null}
         <button type="button" className="btn btn--ghost" onClick={() => { setMsg(null); setImporter(true) }}>Importer un CSV</button>
         <button type="button" className="btn btn--ghost" onClick={() => { setMsg(null); setFiche({ id: null }) }}>+ Fiche complète</button>
         <button type="button" className="btn btn--primary" onClick={() => setScanner(true)}>⌗ Scanner</button>

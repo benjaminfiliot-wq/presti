@@ -298,16 +298,23 @@ export const ARTICLES: Article[] = [
   {
     id: 'parametres.securite',
     page: '/parametres?onglet=securite',
-    titre: 'Sécurité : mot de passe et sessions',
+    titre: 'Sécurité : mot de passe, sessions et double authentification',
     aQuoiCaSert:
       'Changez votre mot de passe, stocké haché — personne, pas même Presti, ne peut le lire. Vous pouvez aussi ' +
       'fermer toutes vos autres sessions ouvertes : elles sont réellement invalidées côté serveur, pas seulement ' +
-      'oubliées sur l’appareil.',
+      'oubliées sur l’appareil. ' +
+      'La double authentification ajoute un second verrou : à chaque connexion, en plus du mot de passe, Presti ' +
+      'demande un code à 6 chiffres que votre téléphone affiche (application Google Authenticator, Microsoft ' +
+      'Authenticator ou équivalent). Quelqu’un qui aurait deviné ou volé votre mot de passe ne pourrait rien en ' +
+      'faire sans votre téléphone. Exemple : un ancien salarié connaît encore votre mot de passe — sans votre ' +
+      'téléphone, il reste à la porte.',
     commentOnSenSert: [
       'Saisissez un nouveau mot de passe (10 caractères minimum).',
       'Cliquez « Changer mon mot de passe ».',
       'En cas de doute sur un appareil utilisé, cliquez « Fermer toutes mes sessions ».',
       'Reconnectez-vous : vous êtes désormais le seul connecté.',
+      'Pour la double authentification : cliquez « Activer », scannez le QR code avec l’application de votre téléphone, tapez le code à 6 chiffres qu’elle affiche. C’est fait.',
+      'Pour la retirer : cliquez « Désactiver » et tapez un dernier code.',
     ],
     pourVosClients: 'Aucun effet visible pour eux.',
     credits: 'Aucun',
@@ -499,6 +506,92 @@ export const INFOBULLES: InfoBulle[] = [
     label: 'Message d’accueil (facultatif)',
     explication: 'Le premier message que voit un client qui ouvre votre espace de conversation.',
     exemple: '« Décrivez votre projet, je vous réponds tout de suite » — le client le lit avant même d’avoir écrit.',
+  },
+  // source: app/plateforme/Reglages.tsx (persona, §9 G2) — lib/ai.ts blocPersona
+  {
+    cle: 'plateforme.style_exemples',
+    page: '/plateforme',
+    label: 'Votre façon d’écrire',
+    explication: 'Collez jusqu’à trois messages que vous avez écrits vous-même à des clients : l’assistant en imite le ton, les formules et le rythme. Il n’en reprend jamais un prix, un délai ou un détail de chantier.',
+    exemple: 'Vous collez « Bonjour Madame, je passe jeudi matin jeter un œil, ça vous va ? » : l’assistant adopte ce ton simple et direct dans ses réponses.',
+  },
+  {
+    cle: 'plateforme.vouvoiement',
+    page: '/plateforme',
+    label: 'Vous ou tu',
+    explication: 'L’assistant vouvoie vos clients par défaut. Vous pouvez lui demander de tutoyer, si c’est votre habitude.',
+    exemple: 'Vous choisissez « Tu » : l’assistant écrit « je te propose un créneau jeudi » au lieu de « je vous propose ».',
+  },
+  {
+    cle: 'plateforme.longueur',
+    page: '/plateforme',
+    label: 'Longueur des réponses',
+    explication: 'Courte : une ou deux phrases. Moyenne : deux à cinq. Longue : l’assistant prend le temps d’expliquer.',
+    exemple: 'Vous réglez « Courte » : à « c’est possible en cuisine ? », l’assistant répond « Oui, tout à fait. Vous avez une photo du mur ? ».',
+  },
+  {
+    cle: 'plateforme.formules',
+    page: '/plateforme',
+    label: 'Formules d’ouverture et de clôture',
+    explication: 'Votre façon de commencer un échange et de proposer la suite. L’ouverture ne sert qu’au premier message ; la clôture est adaptée, pas recopiée à chaque fois.',
+    exemple: 'Ouverture « Bonjour et merci pour votre message » ; clôture « Je reste à votre disposition » — l’assistant les reprend à sa manière.',
+  },
+  {
+    cle: 'plateforme.emojis',
+    page: '/plateforme',
+    label: 'Émojis',
+    explication: 'Autorise l’assistant à glisser un émoji de temps en temps — jamais plus d’un par message, jamais dans un message sérieux.',
+    exemple: 'Activé : « Bien reçu, je regarde ça ce soir 👍 ». Désactivé : « Bien reçu, je regarde ça ce soir. »',
+  },
+  // source: app/plateforme/Apparence.tsx (§9 G2) — lib/plateformeStyle.ts
+  {
+    cle: 'plateforme.apparence.avatar',
+    page: '/plateforme',
+    label: 'Avatar de l’assistant',
+    explication: 'La petite image à côté des messages de l’assistant. Sans rien régler, c’est votre logo ou votre photo.',
+    exemple: 'Vous envoyez le dessin de votre camion : il apparaît à côté de chaque réponse sur votre page de conversation.',
+  },
+  {
+    cle: 'plateforme.apparence.polices',
+    page: '/plateforme',
+    label: 'Polices',
+    explication: 'Les mêmes huit couples que pour votre site : titres et texte assortis. Sans rien régler, ce sont les polices de l’ambiance.',
+    exemple: 'Vous choisissez « Chantier » : les titres deviennent larges et robustes, comme sur votre site.',
+  },
+  {
+    cle: 'plateforme.apparence.fond',
+    page: '/plateforme',
+    label: 'Fond de la page',
+    explication: 'Une couleur, un dégradé entre deux couleurs, ou une de vos photos en fond. Un fond sombre passe automatiquement le texte en clair.',
+    exemple: 'Vous mettez une photo d’atelier en fond : la conversation se lit sur un voile légèrement flouté par-dessus.',
+  },
+  {
+    cle: 'plateforme.apparence.accent2',
+    page: '/plateforme',
+    label: 'Couleur secondaire',
+    explication: 'La deuxième couleur des dégradés et des petites étiquettes. Si elle est trop pâle pour être lue, elle est assombrie juste ce qu’il faut — on vous le dit.',
+    exemple: 'Accent corail + secondaire bordeaux : vos bulles passent de l’un à l’autre en dégradé.',
+  },
+  {
+    cle: 'plateforme.apparence.composeur',
+    page: '/plateforme',
+    label: 'Zone de saisie',
+    explication: 'La forme de la zone où le client écrit : classique (collée en bas), flottante (détachée, avec une ombre) ou carrée.',
+    exemple: 'Vous choisissez « Flottante » : la zone de saisie se détache du bas de page, comme dans une application de messagerie.',
+  },
+  {
+    cle: 'plateforme.apparence.schema',
+    page: '/plateforme',
+    label: 'Clair, sombre ou automatique',
+    explication: 'Par défaut, l’ambiance décide. « Sombre » force le mode nuit ; « Automatique » suit le réglage du téléphone ou de l’ordinateur du client.',
+    exemple: 'Automatique : un client qui a son téléphone en mode sombre le soir voit votre page en sombre.',
+  },
+  {
+    cle: 'plateforme.apparence.amorces',
+    page: '/plateforme',
+    label: 'Amorces',
+    explication: 'Les phrases proposées au client avant qu’il n’écrive, pour démarrer en un clic. Sans rien régler, elles viennent de vos prestations.',
+    exemple: '« Un devis pour une terrasse », « Une fuite sous l’évier » : le client clique et la conversation démarre.',
   },
 
   // ── /messages/canaux ─────────────────────────────────────────────────────
@@ -948,6 +1041,22 @@ export const INFOBULLES: InfoBulle[] = [
     label: 'Nouveau mot de passe',
     explication: 'Remplace votre mot de passe actuel. Stocké haché : personne ne peut le lire, seulement le remplacer.',
     exemple: 'Vous saisissez un nouveau mot de passe de 10 caractères ou plus et cliquez « Changer mon mot de passe ».',
+  },
+  // source: app/parametres/SectionSecurite.tsx (bloc « Double authentification »)
+  {
+    cle: 'parametres.deux_facteurs',
+    page: '/parametres?onglet=securite',
+    label: 'Double authentification',
+    explication: 'Un second verrou : à chaque connexion, en plus du mot de passe, Presti demande un code à 6 chiffres affiché par une application sur votre téléphone. Un mot de passe volé ne suffit plus.',
+    exemple: 'Vous scannez le QR code avec Google Authenticator, tapez le code affiché, et c’est activé. À la prochaine connexion, après le mot de passe, on vous demande le code du moment.',
+  },
+  // source: app/login/page.tsx (étape 2 de la connexion)
+  {
+    cle: 'connexion.code_2fa',
+    page: '/login',
+    label: 'Code de votre application d’authentification',
+    explication: 'Ouvrez l’application sur votre téléphone (Google Authenticator, Microsoft Authenticator…) : le code à 6 chiffres affiché à côté de « Presti » change toutes les 30 secondes.',
+    exemple: 'L’application affiche 482 913 : vous tapez 482913 et vous êtes connecté. Si le code est refusé, vérifiez que l’heure de votre téléphone est bien réglée automatiquement.',
   },
 ]
 

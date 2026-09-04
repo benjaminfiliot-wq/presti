@@ -18,7 +18,7 @@ export const runtime = 'nodejs'
 
 export async function POST(req: Request) {
   const s = await authArtisan(req)
-  if (estEchec(s)) return NextResponse.json({ error: s.error }, { status: s.status })
+  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
   const body = await req.json().catch(() => null)
   const ancien = String(body?.ancien ?? '')
   const nouveau = String(body?.nouveau ?? '')

@@ -37,7 +37,7 @@ const NAV: { groupe: string; entrees: Entree[] }[] = [
     { id: 'apparence', label: 'Apparence', detail: 'Thème, couleur, style du site', href: '/profil#apparence', icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18c1.2 0 1.7-.8 1.2-1.8-.6-1.2.2-2.2 1.5-2.2H16a5 5 0 0 0 5-5c0-4.9-4-9-9-9z" /><circle cx="8" cy="10" r="1" fill="currentColor" /><circle cx="12" cy="7" r="1" fill="currentColor" /><circle cx="16" cy="10" r="1" fill="currentColor" /></>) },
   ] },
   { groupe: 'Protection', entrees: [
-    { id: 'securite', label: 'Sécurité', detail: 'Mot de passe, sessions ouvertes', icone: ic(<><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>) },
+    { id: 'securite', label: 'Sécurité', detail: actif('mfa') ? 'Mot de passe, sessions, double authentification' : 'Mot de passe, sessions ouvertes', icone: ic(<><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>) },
     { id: 'donnees', label: 'Données & confidentialité', detail: 'Export, suppressions', icone: ic(<><ellipse cx="12" cy="6" rx="8" ry="3" /><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6" /><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" /></>) },
     { id: 'aide', label: 'Aide', detail: actif('aideCentre') ? 'Le centre d’aide, tout expliqué' : 'C’est quoi, cet écran ?', href: actif('aideCentre') ? '/aide' : undefined, icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M9.6 9.3a2.5 2.5 0 0 1 4.9.7c0 1.6-2.5 2-2.5 3.5" /><circle cx="12" cy="17" r=".6" fill="currentColor" /></>) },
   ] },

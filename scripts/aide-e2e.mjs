@@ -138,7 +138,8 @@ try {
   // bascule haut/bas : un ⓘ tout en bas de l'écran doit ouvrir sa bulle au-dessus
   await page.goto(`${BASE}/devis/nouveau`, { waitUntil: 'load' })
   await page.locator('.info').first().waitFor({ state: 'visible', timeout: 15000 })
-  await page.locator('details.collapse summary').click(); await page.waitForTimeout(300)
+  // (le panneau repliable « Vos informations » de l'éditeur a été retiré le 04/09 — consolidé dans Paramètres)
+  if (await page.locator('details.collapse summary').count()) { await page.locator('details.collapse summary').click(); await page.waitForTimeout(300) }
   const bas = page.locator('.info').last()
   await bas.scrollIntoViewIfNeeded()
   await page.evaluate(() => window.scrollBy(0, -140)); await page.waitForTimeout(200)

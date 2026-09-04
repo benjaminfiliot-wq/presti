@@ -320,10 +320,10 @@ html.lenis,html.lenis body{height:auto}
    d'accent à 18 %, ça ne pouvait pas passer. On les met en encre du thème. */
 .pchat-ava{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:color-mix(in srgb,var(--pc) 18%,var(--ps));color:var(--pi);font-size:.74rem;font-weight:700}
 .pchat-ava img{width:100%;height:100%;object-fit:cover}
-.pchat-new{padding:.6rem .8rem;border-radius:11px;border:1px dashed color-mix(in srgb,var(--pi) 26%,transparent);background:none;color:var(--pi2);font-size:.88rem;font-weight:600;cursor:pointer;text-align:left;transition:border-color .15s,color .15s}
+.pchat-new{padding:.6rem .8rem;border-radius:var(--prad-s,11px);border:1px dashed color-mix(in srgb,var(--pi) 26%,transparent);background:none;color:var(--pi2);font-size:.88rem;font-weight:600;cursor:pointer;text-align:left;transition:border-color .15s,color .15s}
 .pchat-new:hover{border-color:var(--pc);color:var(--pc2)}
 .pchat-list{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
-.pchat-conv{text-align:left;padding:.55rem .65rem;border:none;background:none;border-radius:9px;color:var(--pi2);font-size:.86rem;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:background .14s,color .14s}
+.pchat-conv{text-align:left;padding:.55rem .65rem;border:none;background:none;border-radius:var(--prad-s,9px);color:var(--pi2);font-size:.86rem;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:background .14s,color .14s}
 .pchat-conv:hover{background:color-mix(in srgb,var(--pi) 6%,transparent)}
 .pchat-conv.on{background:color-mix(in srgb,var(--pc) 14%,transparent);color:var(--pi);font-weight:600}
 /* --pf est une couleur de FILET, pas de texte : en 12,8 px elle tombe à 2:1. */
@@ -340,21 +340,21 @@ html.lenis,html.lenis body{height:auto}
 .pchat-human{font-style:normal;font-size:.76rem;color:var(--pc2);font-weight:600}
 .pchat-ia{margin:0;padding:.45rem 1.1rem;font-size:.74rem;color:var(--pm);background:color-mix(in srgb,var(--pi) 3%,transparent);border-bottom:1px solid var(--pl2);text-align:center}
 
-.pchat-thread{flex:1;min-height:0;overflow-y:auto;padding:1.2rem clamp(.8rem,4vw,2rem);display:flex;flex-direction:column;gap:.85rem}
+.pchat-thread{flex:1;min-height:0;overflow-y:auto;padding:1.2rem clamp(.8rem,4vw,2rem);display:flex;flex-direction:column;gap:var(--pgap,.85rem)}
 .pchat-hello{margin:auto;text-align:center;max-width:34rem;display:flex;flex-direction:column;align-items:center;gap:.5rem}
 .pchat-hello h1{font-family:var(--pfd);font-size:clamp(1.7rem,4vw,2.3rem);margin:.5rem 0 0;color:var(--pi)}
 .pchat-hello p{margin:0;color:var(--pi2);font-size:.98rem}
 .pchat-sugg{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.9rem}
-.pchat-sugg button{padding:.55rem .9rem;border:1px solid var(--pl);border-radius:999px;background:var(--ps);color:var(--pi2);font-size:.86rem;cursor:pointer;transition:border-color .15s,color .15s,transform .12s}
+.pchat-sugg button{padding:.55rem .9rem;border:1px solid var(--pl);border-radius:var(--prad-pill,999px);background:var(--ps);color:var(--pi2);font-size:.86rem;cursor:pointer;transition:border-color .15s,color .15s,transform .12s}
 .pchat-sugg button:hover{border-color:var(--pc);color:var(--pc2);transform:translateY(-1px)}
 
 .pchat-row{display:flex;gap:.55rem;align-items:flex-end}
 .pchat-row.me{justify-content:flex-end}
-.pchat-bub{max-width:min(74%,640px);padding:.7rem .95rem;border-radius:16px;font-size:.97rem;line-height:1.55;background:var(--ps);border:1px solid var(--pl);color:var(--pi);word-break:break-word}
+.pchat-bub{max-width:min(74%,640px);padding:var(--pbub-pad,.7rem .95rem);border-radius:var(--prad,16px);font-size:var(--pfs,.97rem);line-height:1.55;background:var(--ps);border:1px solid var(--pl);color:var(--pi);word-break:break-word}
 .pchat-row.me .pchat-bub{background:linear-gradient(120deg,var(--pc2),var(--pc));border-color:transparent;color:#1a0f0a;border-bottom-right-radius:6px}
 .pchat-row.them .pchat-bub{border-bottom-left-radius:6px}
 .pchat-photos{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.4rem}
-.pchat-photos img{width:96px;height:96px;object-fit:cover;border-radius:10px;display:block}
+.pchat-photos img{width:96px;height:96px;object-fit:cover;border-radius:var(--prad-s,10px);display:block}
 .pchat-etat{display:flex;align-items:center;gap:.4rem;margin-top:.3rem;font-size:.68rem;opacity:.75}
 .pchat-etat.echec{color:#B4232A;opacity:1;font-weight:600}
 .pchat-etat button{background:none;border:none;text-decoration:underline;color:inherit;font-size:.68rem;cursor:pointer;padding:0}
@@ -364,11 +364,11 @@ html.lenis,html.lenis body{height:auto}
 .pchat-bub.typing span:nth-child(3){animation-delay:.3s}
 @media(prefers-reduced-motion:reduce){.pchat-bub.typing span{animation:none}}
 
-.pchat-capture{display:flex;flex-direction:column;gap:.5rem;align-self:flex-start;max-width:min(88%,460px);padding:.9rem 1rem;border:1.5px solid color-mix(in srgb,var(--pc) 30%,transparent);border-radius:16px;background:color-mix(in srgb,var(--pc) 5%,var(--ps))}
+.pchat-capture{display:flex;flex-direction:column;gap:.5rem;align-self:flex-start;max-width:min(88%,460px);padding:.9rem 1rem;border:1.5px solid color-mix(in srgb,var(--pc) 30%,transparent);border-radius:var(--prad-s,16px);background:color-mix(in srgb,var(--pc) 5%,var(--ps))}
 .pchat-capture span{font-size:.88rem;font-weight:650;color:var(--pi2)}
-.pchat-capture input{width:100%;background:var(--pb);border:1.5px solid var(--pl);border-radius:11px;padding:.65rem .85rem;font-size:.95rem;font-family:inherit;color:var(--pi)}
+.pchat-capture input{width:100%;background:var(--pb);border:1.5px solid var(--pl);border-radius:var(--prad-s,11px);padding:.65rem .85rem;font-size:.95rem;font-family:inherit;color:var(--pi)}
 .pchat-capture input:focus{outline:none;border-color:var(--pc)}
-.pchat-capture button{padding:.7rem;border:none;border-radius:11px;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;font-weight:700;cursor:pointer}
+.pchat-capture button{padding:.7rem;border:none;border-radius:var(--prad-s,11px);background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;font-weight:700;cursor:pointer}
 .pchat-capture button:disabled{opacity:.5;cursor:default}
 
 /* ── Composeur */
@@ -377,7 +377,7 @@ html.lenis,html.lenis body{height:auto}
 .pchat-joint span{position:relative;width:60px;height:60px;border-radius:10px;overflow:hidden;border:1px solid var(--pl)}
 .pchat-joint img{width:100%;height:100%;object-fit:cover;display:block}
 .pchat-joint button{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.6);color:#fff;font-size:13px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}
-.pchat-inputrow{display:flex;align-items:flex-end;gap:.45rem;padding:.35rem .35rem .35rem .6rem;border:1.5px solid var(--pl);border-radius:20px;background:var(--ps);transition:border-color .16s,box-shadow .16s}
+.pchat-inputrow{display:flex;align-items:flex-end;gap:.45rem;padding:.35rem .35rem .35rem .6rem;border:1.5px solid var(--pl);border-radius:var(--prad-l,20px);background:var(--ps);transition:border-color .16s,box-shadow .16s}
 .pchat-inputrow:focus-within{border-color:var(--pc);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 13%,transparent)}
 .pchat-clip{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1rem;color:var(--pm);transition:background .14s}
 .pchat-clip:hover{background:color-mix(in srgb,var(--pi) 7%,transparent)}
@@ -388,7 +388,7 @@ html.lenis,html.lenis body{height:auto}
 .pchat-inputrow>button[type=submit]:disabled{opacity:.38;cursor:default}
 .pchat-inputrow>button[type=submit]:active:not(:disabled){transform:scale(.93)}
 .pchat-hint{display:block;margin-top:.4rem;text-align:center;font-size:.7rem;color:var(--pm)}
-.pchat-err{margin:0 clamp(.8rem,4vw,2rem) .8rem;padding:.6rem .8rem;border-radius:10px;font-size:.85rem;color:#B4232A;background:color-mix(in srgb,#B4232A 10%,transparent)}
+.pchat-err{margin:0 clamp(.8rem,4vw,2rem) .8rem;padding:.6rem .8rem;border-radius:var(--prad-s,10px);font-size:.85rem;color:#B4232A;background:color-mix(in srgb,#B4232A 10%,transparent)}
 
 /* ── Mobile : la colonne devient un tiroir */
 @media(max-width:860px){
@@ -401,7 +401,7 @@ html.lenis,html.lenis body{height:auto}
 @media(max-width:860px) and (prefers-reduced-motion:reduce){.pchat-side{transition:none}}
 
 /* ── Carte Devis dans la conversation (v4 §A3) ── */
-.pchat-carte{align-self:flex-start;max-width:min(92%,520px);display:flex;flex-direction:column;gap:.35rem;padding:1rem 1.1rem;border:1.5px solid color-mix(in srgb,var(--pc) 34%,transparent);border-radius:18px;background:color-mix(in srgb,var(--pc) 6%,var(--ps))}
+.pchat-carte{align-self:flex-start;max-width:min(92%,520px);display:flex;flex-direction:column;gap:.35rem;padding:1rem 1.1rem;border:1.5px solid color-mix(in srgb,var(--pc) 34%,transparent);border-radius:var(--prad-l,18px);background:color-mix(in srgb,var(--pc) 6%,var(--ps))}
 .pchat-carte.ok{border-color:color-mix(in srgb,#2E9E6B 45%,transparent);background:color-mix(in srgb,#2E9E6B 8%,var(--ps))}
 .pchat-carte-k{font-family:var(--pfm);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--pc2)}
 .pchat-carte.ok .pchat-carte-k{color:#2E9E6B}
@@ -410,14 +410,14 @@ html.lenis,html.lenis body{height:auto}
 .pchat-carte-l{margin:.4rem 0 .1rem;padding-left:1.1rem;display:flex;flex-direction:column;gap:.15rem}
 .pchat-carte-l li{font-size:.86rem;color:var(--pi2);line-height:1.45}
 .pchat-carte-act{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
-.pchat-carte-act button{width:auto;margin:0;padding:.6rem 1rem;border:none;border-radius:11px;font-size:.92rem;font-weight:700;cursor:pointer;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;transition:transform .12s,opacity .15s}
+.pchat-carte-act button{width:auto;margin:0;padding:.6rem 1rem;border:none;border-radius:var(--prad-s,11px);font-size:.92rem;font-weight:700;cursor:pointer;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;transition:transform .12s,opacity .15s}
 .pchat-carte-act button.g{background:none;border:1.5px solid var(--pl);color:var(--pi2);font-weight:600}
 .pchat-carte-act button:hover:not(:disabled){transform:translateY(-1px)}
 .pchat-carte-act button:disabled{opacity:.5;cursor:default}
 .pchat-carte-modif{display:flex;flex-direction:column;gap:.45rem;margin-top:.6rem}
-.pchat-carte-modif textarea{width:100%;background:var(--pb);border:1.5px solid var(--pl);border-radius:11px;padding:.6rem .8rem;font-size:.92rem;font-family:inherit;color:var(--pi);resize:vertical}
+.pchat-carte-modif textarea{width:100%;background:var(--pb);border:1.5px solid var(--pl);border-radius:var(--prad-s,11px);padding:.6rem .8rem;font-size:.92rem;font-family:inherit;color:var(--pi);resize:vertical}
 .pchat-carte-modif textarea:focus{outline:none;border-color:var(--pc)}
-.pchat-carte-modif button{width:auto;margin:0;align-self:flex-start;padding:.5rem .9rem;border:none;border-radius:10px;background:var(--pi);color:var(--pb);font-size:.88rem;font-weight:650;cursor:pointer}
+.pchat-carte-modif button{width:auto;margin:0;align-self:flex-start;padding:.5rem .9rem;border:none;border-radius:var(--prad-s,10px);background:var(--pi);color:var(--pb);font-size:.88rem;font-weight:650;cursor:pointer}
 .pchat-carte-ok{font-size:.9rem;font-weight:600;color:#2E9E6B;margin-top:.3rem}
 .pchat-carte-note{font-size:.72rem;color:var(--pm);margin-top:.5rem;line-height:1.4}
 
@@ -426,7 +426,7 @@ html.lenis,html.lenis body{height:auto}
 .pchat-compte form{display:flex;flex-direction:column;gap:.35rem}
 .pchat-compte-t{font-size:.76rem;font-weight:650;color:var(--pi2)}
 .pchat-compte-m{font-size:.76rem;color:var(--pm);line-height:1.45;word-break:break-word}
-.pchat-compte input{width:100%;background:var(--pb);border:1px solid var(--pl);border-radius:9px;padding:.45rem .6rem;font-size:.8rem;font-family:inherit;color:var(--pi)}
+.pchat-compte input{width:100%;background:var(--pb);border:1px solid var(--pl);border-radius:var(--prad-s,9px);padding:.45rem .6rem;font-size:.8rem;font-family:inherit;color:var(--pi)}
 .pchat-compte input:focus{outline:none;border-color:var(--pc)}
 .pchat-compte-b{width:auto;margin:0;align-self:flex-start;background:none;border:none;padding:0;font-size:.76rem;font-weight:600;color:var(--pc-ink,var(--pc2));cursor:pointer;text-decoration:underline}
 .pchat-compte-b:disabled{opacity:.6;cursor:default}
@@ -438,3 +438,53 @@ html.lenis,html.lenis body{height:auto}
   font-size: .72rem; line-height: 1.45; color: var(--pm); max-width: 62ch; margin-left: auto; margin-right: auto;
 }
 .pchat-rgpd a { color: var(--pc-ink, var(--pc2)); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── Apparence avancée (§9 G2, lib/plateformeStyle) — chaque variable a pour repli la valeur d'hier :
+   sans réglage, rien ne change. Fond dégradé / image, schéma sombre / auto, composeur. ── */
+.plat[data-fond="degrade"]{background:var(--pbg) fixed}
+.plat[data-fond="image"]{background:var(--pbg) center/cover fixed no-repeat}
+.plat[data-fond="image"] .pchat-main{background:color-mix(in srgb,var(--pb) 74%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.plat[data-fond="image"] .pchat-side{background:color-mix(in srgb,var(--pb) 86%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+/* Schéma sombre forcé, ou fond sombre choisi à la main : l'encre du thème Nuit. */
+.plat[data-schema="sombre"]{
+  --pb:#0B0906; --ps:#16110D; --ps2:#221D16; --pi:#F5EFEA; --pi2:#C6BDAD; --pm:#908679; --pf:#5A5348;
+  --pl:rgba(255,255,255,.1); --pl2:rgba(255,255,255,.05);
+  --pc2:color-mix(in srgb,var(--pc) 74%,#fff);
+}
+/* Automatique : l'appareil du client décide. L'encre lisible existe en deux variantes (page.tsx). */
+.plat[data-schema="auto"]{--pc-ink:var(--pc-ink-clair,var(--pc2))}
+@media(prefers-color-scheme:dark){
+  .plat[data-schema="auto"]{
+    --pb:#0B0906; --ps:#16110D; --ps2:#221D16; --pi:#F5EFEA; --pi2:#C6BDAD; --pm:#908679; --pf:#5A5348;
+    --pl:rgba(255,255,255,.1); --pl2:rgba(255,255,255,.05);
+    --pc2:color-mix(in srgb,var(--pc) 74%,#fff);
+    --pc-ink:var(--pc-ink-sombre,var(--pc2));
+  }
+}
+.plat[data-composeur="flottant"] .pchat-composer{border-top:none;padding-top:.25rem}
+.plat[data-composeur="flottant"] .pchat-inputrow{border-radius:var(--prad-l,24px);background:var(--ps);box-shadow:0 14px 34px -14px rgba(0,0,0,.38),0 1px 0 var(--pl2)}
+.plat[data-composeur="carre"] .pchat-inputrow,.plat[data-composeur="carre"] .pchat-inputrow>button[type=submit],.plat[data-composeur="carre"] .pchat-clip{border-radius:var(--prad-s,8px)}
+
+/* ── Aperçu (volet Apparence) ── */
+.pchat-apercu{margin:0;padding:.35rem 1.1rem;font-size:.72rem;font-weight:600;color:var(--pc-ink,var(--pc2));background:color-mix(in srgb,var(--pc) 9%,transparent);border-bottom:1px solid var(--pl2)}
+
+/* ── « Où en est ma demande » (§9 G2) : une frise sobre, dans la couleur de l'artisan.
+   Étapes cochées = données réelles ; « à venir » reste gris — jamais coché sans donnée. ── */
+.pchat-suivi{display:flex;align-items:center;gap:.8rem;padding:.55rem clamp(.8rem,4vw,2rem);border-bottom:1px solid var(--pl2);overflow-x:auto;scrollbar-width:none}
+.pchat-suivi::-webkit-scrollbar{display:none}
+.pchat-suivi-k{flex:none;font-family:var(--pfm);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--pm)}
+.pchat-suivi ol{display:flex;align-items:center;margin:0;padding:0;list-style:none;min-width:max-content}
+.pchat-suivi li{position:relative;display:flex;align-items:center;gap:.4rem;font-size:.76rem;color:var(--pm);white-space:nowrap}
+.pchat-suivi li+li::before{content:"";display:block;width:clamp(12px,3vw,32px);height:1px;background:var(--pl);margin:0 .5rem}
+.pchat-suivi li.ok+li::before{background:var(--pc)}
+.pchat-suivi i{flex:none;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--pl);background:transparent;transition:background .3s var(--pe),box-shadow .3s var(--pe)}
+.pchat-suivi li.ok{color:var(--pi2)}
+.pchat-suivi li.ok i{background:var(--pc);border-color:var(--pc)}
+.pchat-suivi li.now{color:var(--pi);font-weight:650}
+.pchat-suivi li.now i{background:var(--pc);border-color:var(--pc);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 22%,transparent)}
+.pchat-suivi li.next{opacity:.7}
+.pchat-suivi.classee ol{opacity:.6}
+@media(max-width:860px){
+  .pchat-suivi li:not(.now) span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .pchat-suivi li+li::before{width:18px}
+}

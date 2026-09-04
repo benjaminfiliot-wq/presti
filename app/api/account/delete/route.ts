@@ -18,7 +18,7 @@ const dateDeSuppression = (demandeeLe: string) => new Date(new Date(demandeeLe).
 
 export async function GET(req: Request) {
   const s = await authArtisan(req)
-  if (estEchec(s)) return NextResponse.json({ error: s.error }, { status: s.status })
+  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
   const [{ data: a }, convs, devis, factures] = await Promise.all([
     supabaseAdmin.from('artisans').select('suppression_demandee_le, site_active, plateforme_active').eq('id', s.uid).maybeSingle(),
     supabaseAdmin.from('leads').select('id', { count: 'exact', head: true }).eq('artisan_id', s.uid),
@@ -47,7 +47,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const s = await authArtisan(req)
-    if (estEchec(s)) return NextResponse.json({ error: s.error }, { status: s.status })
+    if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
     const body = await req.json().catch(() => null)
     if (String(body?.confirm || '').trim().toUpperCase() !== 'SUPPRIMER') {
       return NextResponse.json({ error: 'Confirmation manquante.' }, { status: 400 })
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 /** Annule une suppression programmée, tant que la date n'est pas passée. */
 export async function DELETE(req: Request) {
   const s = await authArtisan(req)
-  if (estEchec(s)) return NextResponse.json({ error: s.error }, { status: s.status })
+  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
   const { error } = await supabaseAdmin.from('artisans').update({ suppression_demandee_le: null }).eq('id', s.uid)
   if (error) return NextResponse.json({ error: 'Annulation impossible pour l’instant.' }, { status: 500 })
   return NextResponse.json({ ok: true })

@@ -4,7 +4,7 @@ import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { consumeCredit } from '@/lib/credits'
 import { resolveModel } from '@/lib/models'
-import { getPlateformeConfig } from '@/lib/plateformeConfig'
+import { getPlateformeConfig, personaDe } from '@/lib/plateformeConfig'
 import { getUserRevocable } from '@/lib/authArtisan'
 
 export const runtime = 'nodejs'
@@ -119,6 +119,8 @@ export async function POST(req: Request) {
         { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
         turns,
         model,
+        undefined,
+        { persona: personaDe(cfg) },
       )
       return NextResponse.json({ ok: true, reply, tier, downgraded })
     }

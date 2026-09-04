@@ -8,7 +8,7 @@ import { messageVerrou, peut } from '@/lib/plans'
 // même révocation réelle (v4 §11), même verrou d'offre `inventaire.stock` — SERVEUR.
 // Masquer l'entrée de menu ne protège rien, l'URL de l'API reste appelable.
 
-export type AuthInventaire = { uid: string } | { error: string; status: 401 | 403 }
+export type AuthInventaire = { uid: string; plan: string; isFounder: boolean } | { error: string; status: 401 | 403 }
 
 export async function authInventaire(req: Request): Promise<AuthInventaire> {
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
@@ -20,7 +20,9 @@ export async function authInventaire(req: Request): Promise<AuthInventaire> {
   if (!art?.is_founder && !peut(plan, 'inventaire.stock')) {
     return { error: `L’inventaire n’est pas dans votre offre. ${messageVerrou('inventaire.stock')}`, status: 403 }
   }
-  return { uid: data.user.id }
+  // Le plan et le statut fondateur remontent avec l'identité : F3 (recherche) en a besoin
+  // pour le verrou `inventaire.recherche_ia`, le niveau de modèle et le décompte de crédits.
+  return { uid: data.user.id, plan, isFounder: !!art?.is_founder }
 }
 
 export const estRefus = (a: AuthInventaire): a is { error: string; status: 401 | 403 } => 'error' in a

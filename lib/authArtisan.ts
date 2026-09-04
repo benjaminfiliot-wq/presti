@@ -19,17 +19,56 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 // (identifiants de canaux, tarifs, suppressions, documents) passent toutes par ici.
 
 export type Session = { uid: string; iat: number }
-export type EchecAuth = { error: string; status: 401 | 403 }
+export type EchecAuth = { error: string; status: 401 | 403; code?: 'mfa_requise' }
 
-/** Lit l'`iat` (date d'émission) du jeton sans vérifier la signature — Supabase l'a déjà fait. */
-function dateEmission(token: string): number | null {
+/** La charge utile du jeton, sans vérifier la signature — Supabase l'a déjà fait. */
+function chargeJeton(token: string): Record<string, unknown> | null {
   try {
     const charge = token.split('.')[1]
     if (!charge) return null
-    const json = Buffer.from(charge.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8')
-    const iat = Number(JSON.parse(json)?.iat)
-    return Number.isFinite(iat) ? iat : null
+    return JSON.parse(Buffer.from(charge.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8'))
   } catch { return null }
+}
+
+/** Lit l'`iat` (date d'émission) du jeton. */
+function dateEmission(token: string): number | null {
+  const iat = Number(chargeJeton(token)?.iat)
+  return Number.isFinite(iat) ? iat : null
+}
+
+// ── Double authentification (sprint J-1 §6) ─────────────────────────────────────
+//
+// Un jeton porte son niveau d'assurance : `aal1` = mot de passe seul, `aal2` = second
+// facteur validé dans cette session. Quand l'artisan a activé une application
+// d'authentification, un jeton `aal1` ne doit plus ouvrir nos routes — sinon un mot de
+// passe volé suffirait, et la 2FA ne serait qu'un décor. Le contrôle est ici, au centre,
+// pour que les 28 routes en héritent sans être réécrites. Un compte SANS facteur vérifié
+// n'est pas touché : même réponse qu'avant, à l'octet près.
+
+export const ERREUR_MFA = 'Double authentification requise.'
+type Facteur = { factor_type?: string; status?: string }
+type UtilisateurJeton = { id: string; factors?: Facteur[] }
+const totpVerifie = (f: Facteur[]) => f.some((x) => x.factor_type === 'totp' && x.status === 'verified')
+
+// GoTrue renvoie les facteurs avec `/user` : on les lit là, sans appel de plus. S'ils
+// manquent (ancienne version), l'API admin fait foi — avec un cache court par artisan.
+const cacheFacteurs = new Map<string, { verifie: boolean; jusqua: number }>()
+async function aUnFacteurVerifie(u: UtilisateurJeton): Promise<boolean> {
+  if (Array.isArray(u.factors)) return totpVerifie(u.factors)
+  const c = cacheFacteurs.get(u.id)
+  if (c && c.jusqua > Date.now()) return c.verifie
+  const { data, error } = await supabaseAdmin.auth.admin.mfa.listFactors({ userId: u.id })
+  // En cas d'erreur de l'API, on ne bloque pas 28 routes sur un incident Supabase — on le note.
+  if (error) { console.error('[mfa] listFactors:', error.message); return false }
+  const verifie = totpVerifie((data?.factors ?? []) as Facteur[])
+  cacheFacteurs.set(u.id, { verifie, jusqua: Date.now() + 60_000 })
+  return verifie
+}
+
+/** Vrai si l'artisan a activé la 2FA mais que ce jeton ne l'a pas passée. */
+async function mfaManquante(token: string, u: UtilisateurJeton): Promise<boolean> {
+  if (chargeJeton(token)?.aal === 'aal2') return false
+  return aUnFacteurVerifie(u)
 }
 
 /**
@@ -51,6 +90,7 @@ export async function authArtisan(req: Request): Promise<Session | EchecAuth> {
   if (seuil && iat !== null && iat < seuil) {
     return { error: 'Cette session a été fermée. Reconnecte-toi.', status: 401 }
   }
+  if (await mfaManquante(token, data.user as UtilisateurJeton)) return { error: ERREUR_MFA, status: 401, code: 'mfa_requise' }
   return { uid: data.user.id, iat: iat ?? 0 }
 }
 
@@ -107,6 +147,10 @@ export async function getUserRevocable(token: string): Promise<ReponseUtilisateu
   if (seuil && iat !== null && iat < seuil) {
     // On rend exactement la forme d'un jeton invalide : la route ne voit pas la différence.
     return { data: { user: null }, error: { message: 'Session fermée', name: 'AuthApiError', status: 401 } } as unknown as ReponseUtilisateur
+  }
+  if (await mfaManquante(token, r.data.user as UtilisateurJeton)) {
+    // Même forme : la route répond 401 avec ce message, et le client sait le reconnaître.
+    return { data: { user: null }, error: { message: ERREUR_MFA, name: 'AuthApiError', status: 401, code: 'mfa_requise' } } as unknown as ReponseUtilisateur
   }
   return r
 }

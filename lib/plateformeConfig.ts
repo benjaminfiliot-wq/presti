@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import type { Persona } from '@/lib/ai'
 
 // Panneau de contrôle IA de la plateforme (v4 §A4).
 // RÈGLE DE NON-RÉGRESSION : un artisan SANS ligne de config garde son comportement actuel
@@ -24,6 +25,16 @@ export type PlateformeConfig = {
   nom_assistant: string | null
   message_accueil: string | null
   amorces: string[] | null
+  // ── Persona (sprint J-1 §9 G2, migration 0053) : le TON de l'assistant, jamais des faits.
+  avatar_url: string | null
+  style_exemples: string[]
+  formule_ouverture: string | null
+  formule_cloture: string | null
+  vouvoiement: boolean
+  emojis: boolean
+  longueur: 'courte' | 'moyenne' | 'longue'
+  /** Apparence avancée (jsonb, écarts au défaut seulement — lib/plateformeStyle). */
+  apparence: Record<string, unknown>
 }
 
 export const CONFIG_DEFAUT: PlateformeConfig = {
@@ -43,6 +54,30 @@ export const CONFIG_DEFAUT: PlateformeConfig = {
   nom_assistant: null,
   message_accueil: null,
   amorces: null,
+  avatar_url: null,
+  style_exemples: [],
+  formule_ouverture: null,
+  formule_cloture: null,
+  vouvoiement: true,
+  emojis: false,
+  longueur: 'moyenne',
+  apparence: {},
+}
+
+/**
+ * La persona telle que le moteur de rédaction (lib/ai) la consomme. Une config par
+ * défaut donne une persona « neutre » : vouvoiement, pas d'émoji, longueur moyenne.
+ */
+export function personaDe(cfg: PlateformeConfig): Persona {
+  return {
+    nom_assistant: cfg.nom_assistant,
+    style_exemples: Array.isArray(cfg.style_exemples) ? cfg.style_exemples : [],
+    formule_ouverture: cfg.formule_ouverture,
+    formule_cloture: cfg.formule_cloture,
+    vouvoiement: cfg.vouvoiement !== false,
+    emojis: cfg.emojis === true,
+    longueur: cfg.longueur === 'courte' || cfg.longueur === 'longue' ? cfg.longueur : 'moyenne',
+  }
 }
 
 /** Lit la configuration d'un artisan. Sans ligne : repli sur son réglage historique. */

@@ -12,6 +12,7 @@ import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 import { PLANS, peut, GRILLE, OFFRES } from '../lib/plans.ts'
+import { FLAGS } from '../lib/flags.ts'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split('\n')) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -38,7 +39,7 @@ try {
   T('les capacités s’empilent (Studio ⊇ Essentiel, Signature ⊇ Studio)',
     PLANS.essentiel.capacites.every((c) => PLANS.studio.capacites.includes(c)) && PLANS.studio.capacites.every((c) => PLANS.signature.capacites.includes(c)))
   T('la plateforme est sur les trois offres', ['essentiel', 'studio', 'signature'].every((p) => peut(p, 'plateforme.conversation')))
-  T('la grille publique ne contient aucune ligne sous drapeau baissé', GRILLE.every((l) => !l.flag), GRILLE.filter((l) => l.flag).map((l) => l.label).join(', '))
+  T('la grille publique ne contient aucune ligne sous drapeau BAISSÉ', GRILLE.every((l) => !l.flag || FLAGS[l.flag]), GRILLE.filter((l) => l.flag && !FLAGS[l.flag]).map((l) => l.label).join(', '))
   T('la plateforme est la PREMIÈRE ligne de la grille', GRILLE[0]?.groupe === 'Plateforme', GRILLE[0]?.groupe)
 
   console.log('\n── 1. Le serveur respecte la matrice, formule par formule')
