@@ -92,10 +92,51 @@ try {
   console.log('Webhook : illisible —', String(e.message).slice(0, 100))
 }
 
-// ── Ce que le code attend
-if (!process.env.STRIPE_WEBHOOK_SECRET) aFaire.push('STRIPE_WEBHOOK_SECRET absent de l’environnement : le webhook sera refusé (signature invérifiable).')
-if (process.env.STRIPE_TAXE_AUTO === '1') console.log('Calcul automatique de la TVA : DEMANDÉ par le code (STRIPE_TAXE_AUTO=1)')
-else aFaire.push('STRIPE_TAXE_AUTO n’est pas à 1 : les paiements passeront SANS TVA. À lever une fois Stripe Tax actif et immatriculé — pas avant, sinon les paiements échouent.')
+// ── Ce que le code attend, EN PRODUCTION et non sur ce poste.
+// Le piège de la première version : elle regardait `process.env` local, donc elle réclamait des
+// variables qui étaient déjà posées sur Vercel. Un vérificateur qui se trompe de machine fait
+// perdre plus de temps qu'il n'en gagne.
+const attendues = ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'STRIPE_TAXE_AUTO']
+if (process.env.VERCEL_TOKEN) {
+  try {
+    const entete = { Authorization: `Bearer ${process.env.VERCEL_TOKEN}` }
+    const { projects } = await (await fetch('https://api.vercel.com/v9/projects?limit=50', { headers: entete })).json()
+    const projet = (projects || []).find((x) => /presti/i.test(x.name))
+    if (!projet) throw new Error('projet Presti introuvable')
+    const { envs } = await (await fetch(`https://api.vercel.com/v9/projects/${projet.id}/env?decrypt=false`, { headers: entete })).json()
+    // On lit les NOMS et les environnements ciblés, jamais les valeurs.
+    const enProd = new Set((envs || []).filter((e) => (e.target || []).includes('production')).map((e) => e.key))
+    console.log(`Vercel (${projet.name}) : ${attendues.map((n) => `${n} ${enProd.has(n) ? '✅' : '❌'}`).join(' · ')}`)
+    for (const n of attendues) {
+      if (!enProd.has(n)) {
+        aFaire.push(n === 'STRIPE_TAXE_AUTO'
+          ? 'STRIPE_TAXE_AUTO absent de la production : les paiements passeraient SANS TVA.'
+          : `${n} absent de la production : le paiement ne fonctionnera pas.`)
+      }
+    }
+  } catch (e) {
+    console.log('Vercel : illisible —', String(e.message).slice(0, 90))
+    aFaire.push('Impossible de vérifier les variables sur Vercel : contrôle-les à la main dans le tableau de bord.')
+  }
+} else {
+  aFaire.push('VERCEL_TOKEN absent : je ne peux pas vérifier que les variables sont bien posées en production.')
+}
+
+// Le contrôle qui compte vraiment : le site déployé refuse-t-il un appel forgé ? Une réponse 400
+// prouve que le secret est chargé ET que la vérification de signature fonctionne ; une 503 dirait
+// que le secret manque et que le webhook est inopérant.
+try {
+  const r = await fetch(URL_WEBHOOK, {
+    method: 'POST',
+    headers: { 'stripe-signature': 't=1,v1=verification', 'Content-Type': 'application/json' },
+    body: '{"id":"evt_verification","type":"ping"}',
+  })
+  if (r.status === 400) console.log('Webhook en production : ✅ un appel non signé est refusé (400)')
+  else if (r.status === 503) aFaire.push('Le webhook déployé répond 503 : son secret n’est pas chargé en production. Redéploie après avoir posé les variables.')
+  else console.log(`Webhook en production : réponse inattendue (${r.status})`)
+} catch (e) {
+  console.log('Webhook en production : injoignable —', String(e.message).slice(0, 80))
+}
 
 console.log(aFaire.length ? `\n${aFaire.length} chose(s) à régler :` : '\n✅ Rien à signaler : la configuration est complète.')
 aFaire.forEach((x, i) => console.log(`  ${i + 1}. ${x}`))
