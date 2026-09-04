@@ -107,6 +107,13 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   const nomAss = ap && ap.nom_assistant !== undefined ? ap.nom_assistant : nomAssistant
   const avatarEff = ap && 'avatar_url' in ap ? (ap.avatar_url || logoUrl || null) : avatar
 
+  // Règles d'automatisation (v5 §9) : déclenchées par le navigateur une fois la réponse reçue —
+  // déterministe et hors du flux (le chiffrage a sa propre fonction serveur, idempotente).
+  const lancerRegles = useCallback((t: string | null) => {
+    if (!t || apercu) return
+    try { fetch('/api/conversation/regles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({ token: t }) }).catch(() => {}) } catch { /* ignore */ }
+  }, [apercu])
+
   const pushEvent = useCallback((event: 'view' | 'lead' | 'contact') => {
     try { fetch('/api/plat-event', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({ slug, event, variant: 'B' }) }).catch(() => {}) } catch { /* ignore */ }
   }, [slug])
@@ -274,6 +281,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
           : `Bien reçu ! ${artisanNom} a votre demande et vous répond au plus vite.`)
         setMsgs((m) => [...m, { id: `r${Date.now()}`, sens: 'out', contenu: rep, type: d.reply ? 'reponse_auto' : 'manuel', etat: 'envoye' }])
         setNeedContact(true)
+        if (d.reply) lancerRegles(d.token ?? null)
         return
       }
       // Réponse DIFFUSÉE au fil de l'eau (SSE) : le texte s'écrit sous les yeux du client.
@@ -287,7 +295,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
       if (!(res.headers.get('content-type') || '').includes('text/event-stream') || !res.body) {
         const d = await res.json().catch(() => ({}))
         setThinking(false); setSending(false)
-        if (d.reply) setMsgs((m) => [...m, { id: `r${Date.now()}`, sens: 'out', contenu: d.reply, type: 'reponse_auto', etat: 'envoye' }])
+        if (d.reply) { setMsgs((m) => [...m, { id: `r${Date.now()}`, sens: 'out', contenu: d.reply, type: 'reponse_auto', etat: 'envoye' }]); lancerRegles(token) }
         return
       }
       const rid = `r${Date.now()}`
@@ -312,6 +320,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
       setSending(false)
       // Si rien n'est arrivé (IA indisponible), on retire la bulle vide plutôt que de laisser un blanc.
       setMsgs((m) => m.filter((x) => !(x.id === rid && !x.contenu.trim())))
+      lancerRegles(token)
     } catch {
       setThinking(false); setSending(false); marquer('echec'); setErr('Connexion interrompue.')
     }

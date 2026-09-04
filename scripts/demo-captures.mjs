@@ -81,20 +81,21 @@ try {
   await tel.waitForTimeout(300)
   await shot(tel, 'scene-1')
   await tel.press('form.pchat-composer textarea', 'Enter')
-  // Le formulaire B peut demander les coordonnées après le premier message.
-  await tel.waitForTimeout(1500)
-  // Coordonnées demandées après le premier message (formulaire B) — PAS le champ email du
-  // tiroir « compte client » (lien magique), qui existe aussi dans la page.
-  const champContact = tel.locator('input[aria-label="Email ou téléphone"]')
-  if (await champContact.count()) {
-    log('  · formulaire de coordonnées')
-    await tel.locator('input[aria-label="Votre nom"]').fill('Claire Dubois').catch(() => {})
-    await champContact.fill('claire.dubois@presti-test.invalid')
-    await champContact.press('Enter')
-    await tel.waitForTimeout(800)
-  }
   log('  · attente de la réponse 1')
   await reponseFinie()
+  // Le formulaire de coordonnées (variante B) n'apparaît qu'APRÈS la première réponse.
+  const capture = tel.locator('form.pchat-capture')
+  await capture.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {})
+  if (await capture.count()) {
+    log('  · formulaire de coordonnées')
+    await capture.locator('input[aria-label="Votre nom"]').fill('Claire Dubois')
+    await capture.locator('input[aria-label="Email ou téléphone"]').fill('claire.dubois@presti-test.invalid')
+    await capture.locator('button[type="submit"]').click()
+    await tel.waitForTimeout(1500)
+  } else {
+    log('  ⚠️ pas de formulaire de coordonnées affiché — contact posé côté serveur pour la suite')
+    await admin.from('leads').update({ contact: 'claire.dubois@presti-test.invalid', nom_prospect: 'Claire Dubois' }).eq('artisan_id', uid)
+  }
 
   // ── Scène 2 — l'assistant a répondu et posé ses questions
   await tel.evaluate(() => { const el = document.querySelector('.pchat-thread, .pchat-msgs, .pchat-body'); if (el) el.scrollTop = el.scrollHeight })

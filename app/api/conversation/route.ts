@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, after } from 'next/server'
+import { declencherRegles } from '@/lib/reglesServeur'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
@@ -205,6 +206,9 @@ export async function POST(req: Request) {
 
     if (reply) {
       await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: reply })
+      // Règles d'automatisation, après la réponse (le navigateur relance aussi /api/conversation/regles : idempotent).
+      const nbIA = history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length + 1
+      after(async () => { try { await declencherRegles({ lead: { ...lead, type_chantier: null, photos: null }, nbReponsesIA: nbIA, artisanEmail: artisan.email, artisanNom: artisan.nom }) } catch (e) { console.error('[conversation] règles:', e) } })
       await supabaseAdmin.from('leads').update({ updated_at: new Date().toISOString() }).eq('id', lead.id)
     }
 
