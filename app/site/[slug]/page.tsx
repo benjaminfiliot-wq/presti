@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { headers } from 'next/headers'
-import { permanentRedirect, redirect } from 'next/navigation'
+import { notFound, permanentRedirect, redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type { SiteContenu } from '@/lib/ai'
 import { Fragment } from 'react'
@@ -112,8 +112,11 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     if (host && host !== a.domaine && host !== `www.${a.domaine}`) redirect(`https://${a.domaine}/`)
   }
 
-  if (!a || a.site_active !== true) {
-    return <main className="site"><div className="site-mid"><div className="site-404"><b>Site indisponible</b><span>Ce site n&apos;existe pas ou n&apos;est pas encore publié.</span></div></div></main>
+  // Vrai 404 (audit v4 : « /site/<inexistant> » répondait 200, page fantôme indexable).
+  // Un site existant mais non publié garde un message poli, non indexé.
+  if (!a) notFound()
+  if (a.site_active !== true) {
+    return <main className="site"><div className="site-mid"><div className="site-404"><b>Site non publié</b><span>Ce site n&apos;est pas encore en ligne.</span></div></div></main>
   }
 
   // Niveau rendu borné par la formule (si l'artisan a rétrogradé, le site suit son plan).

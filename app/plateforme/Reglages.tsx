@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import Info from '@/app/Info'
 
 // Volet « Réglages » du poste de pilotage — l'ancien formulaire de /plateforme, tel quel.
 // Tous les réglages sont APPLIQUÉS CÔTÉ SERVEUR (lib/plateformeConfig) — cet écran n'est que la commande.
@@ -80,10 +81,10 @@ export default function Reglages({ uid, reponseAuto, pause, onPause }: { uid: st
 
         <label className="prof-toggle" style={{ marginBottom: '1.1rem' }}>
           <input type="checkbox" checked={pause} onChange={(e) => onPause(e.target.checked)} />
-          <span>Demandes <b>{pause ? 'en pause' : 'ouvertes'}</b> {pause ? '— votre page enregistre les demandes mais n’envoie plus rien (congés, surcharge). Rien n’est perdu.' : '— vous recevez et traitez les nouvelles demandes normalement'}</span>
+          <span>Demandes <Info cle="plateforme.demandes_pause" /> <b>{pause ? 'en pause' : 'ouvertes'}</b> {pause ? '— votre page enregistre les demandes mais n’envoie plus rien (congés, surcharge). Rien n’est perdu.' : '— vous recevez et traitez les nouvelles demandes normalement'}</span>
         </label>
 
-        <label className="pcfg-lab">Mode de réponse</label>
+        <label className="pcfg-lab">Mode de réponse <Info cle="plateforme.mode_reponse" /></label>
         <div className="pcfg-modes">
           {MODES.map((m) => (
             <button type="button" key={m.id} className={`pcfg-mode${cfg.mode_reponse === m.id ? ' on' : ''}`} onClick={() => set('mode_reponse', m.id)}>
@@ -92,20 +93,20 @@ export default function Reglages({ uid, reponseAuto, pause, onPause }: { uid: st
           ))}
         </div>
 
-        <label className="pcfg-lab">Modèle utilisé</label>
+        <label className="pcfg-lab">Modèle utilisé <Info cle="plateforme.modele" /></label>
         <div className="pcfg-seg">
           {MODELES.map((m) => <button type="button" key={m.id} className={cfg.modele === m.id ? 'on' : ''} onClick={() => set('modele', m.id)}>{m.nom}</button>)}
           <button type="button" className={!cfg.modele ? 'on' : ''} onClick={() => set('modele', null)}>Selon ma formule</button>
         </div>
 
-        <label className="pcfg-lab">Ton</label>
+        <label className="pcfg-lab">Ton <Info cle="plateforme.ton" /></label>
         <div className="pcfg-seg">
           {TONS.map((t) => <button type="button" key={t.id} className={cfg.ton === t.id ? 'on' : ''} onClick={() => set('ton', t.id)}>{t.nom}</button>)}
         </div>
 
         <label className="prof-toggle" style={{ marginTop: '1rem' }}>
           <input type="checkbox" checked={cfg.auto_24_7} onChange={(e) => set('auto_24_7', e.target.checked)} />
-          <span>Répondre <b>{cfg.auto_24_7 ? '24h/24' : 'seulement sur une plage'}</b> {cfg.auto_24_7 ? '— l’assistant est disponible en permanence' : '— en dehors, vous répondez vous-même'}</span>
+          <span>Répondre <Info cle="plateforme.auto_24_7" /> <b>{cfg.auto_24_7 ? '24h/24' : 'seulement sur une plage'}</b> {cfg.auto_24_7 ? '— l’assistant est disponible en permanence' : '— en dehors, vous répondez vous-même'}</span>
         </label>
         {!cfg.auto_24_7 ? (
           <div className="pcfg-heures">
@@ -117,11 +118,11 @@ export default function Reglages({ uid, reponseAuto, pause, onPause }: { uid: st
           </div>
         ) : null}
 
-        <label className="pcfg-lab">Mots qui coupent l’assistant et vous alertent</label>
+        <label className="pcfg-lab">Mots qui coupent l’assistant et vous alertent <Info cle="plateforme.escalade_mots" /></label>
         <input value={(cfg.escalade_mots || []).join(', ')} onChange={(e) => set('escalade_mots', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))} placeholder="urgence, fuite, dégât des eaux…" />
         <p className="muted" style={{ margin: '.35rem 0 0', fontSize: '.8rem' }}>Si le client emploie l’un de ces mots, l’assistant se tait et vous recevez une alerte — c’est vous qui répondez.</p>
 
-        <label className="pcfg-lab">Reprise humaine après</label>
+        <label className="pcfg-lab">Reprise humaine après <Info cle="plateforme.limite_messages" /></label>
         <div className="pcfg-heures">
           <input type="number" min={0} max={40} value={cfg.limite_messages} onChange={(e) => set('limite_messages', Number(e.target.value))} style={{ width: 90 }} />
           <span>réponses de l’assistant dans une même conversation</span>
@@ -132,9 +133,9 @@ export default function Reglages({ uid, reponseAuto, pause, onPause }: { uid: st
       <div className="tool-card">
         <h2>L’assistant</h2>
         <p className="muted" style={{ margin: '0 0 .9rem' }}>Votre client voit toujours qu’il parle à un assistant — c’est une obligation de loyauté, et ça vous protège.</p>
-        <label htmlFor="nom-assistant">Nom affiché (facultatif)</label>
+        <label htmlFor="nom-assistant">Nom affiché (facultatif) <Info cle="plateforme.nom_assistant" /></label>
         <input id="nom-assistant" value={cfg.nom_assistant ?? ''} onChange={(e) => set('nom_assistant', e.target.value)} placeholder="Ex : L’atelier" maxLength={40} />
-        <label htmlFor="accueil-assistant">Message d’accueil (facultatif)</label>
+        <label htmlFor="accueil-assistant">Message d’accueil (facultatif) <Info cle="plateforme.message_accueil" /></label>
         <textarea id="accueil-assistant" rows={2} value={cfg.message_accueil ?? ''} onChange={(e) => set('message_accueil', e.target.value)} placeholder="Ex : Décrivez votre projet, je vous réponds tout de suite." maxLength={200} />
         <div style={{ display: 'flex', gap: '.6rem', alignItems: 'center', marginTop: '1rem' }}>
           <button type="button" className="btn btn--primary" style={{ width: 'auto', margin: 0 }} disabled={saving} onClick={enregistrer}>{saving ? '…' : 'Enregistrer'}</button>

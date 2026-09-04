@@ -1,0 +1,103 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
+
+// La démo de la landing (v5 §5) : pas un catalogue, UN scénario — « Une demande arrive »,
+// en cinq scènes enchaînées. Chaque scène est une CAPTURE DU VRAI PRODUIT (Playwright, sur le
+// code de production, compte de démonstration détruit ensuite — scripts/demo-captures.mjs) :
+// ce qui est montré existe. Rien n'est dessiné à la main.
+//
+// Défilement automatique (4,8 s par scène), pause au survol/focus, flèches et points
+// cliquables, clavier. prefers-reduced-motion : pas de défilement automatique, transitions
+// instantanées — l'histoire se lit à son rythme.
+
+type Scene = {
+  heure: string
+  titre: string
+  texte: string
+  appareil: 'telephone' | 'ordinateur'
+  image: string
+  /** Point d'intérêt pour le cadrage (object-position). */
+  focus?: string
+}
+
+const SCENES: Scene[] = [
+  { heure: '22 h 14', titre: 'Un client écrit sur votre page', texte: 'Sur son téléphone, depuis votre lien. Il décrit ce qu’il veut, avec ses mots.', appareil: 'telephone', image: '/demo/scene-1.png', focus: '50% 100%' },
+  { heure: '22 h 14', titre: 'L’assistant répond, dans la seconde', texte: 'Dans votre ton. Il pose les deux questions qui manquent pour chiffrer — et il dit qu’il est un assistant.', appareil: 'telephone', image: '/demo/scene-2.png', focus: '50% 100%' },
+  { heure: '7 h 50', titre: 'Vous ouvrez votre espace', texte: 'La demande est qualifiée. Un devis brouillon vous attend, chiffré sur vos prix, chaque ligne avec sa provenance.', appareil: 'ordinateur', image: '/demo/scene-3.png', focus: '50% 0%' },
+  { heure: '7 h 52', titre: 'Vous validez, le client accepte', texte: 'Le devis part dans la conversation. Il l’accepte sur son téléphone — acceptation horodatée, conservée avec l’échange.', appareil: 'telephone', image: '/demo/scene-4.png', focus: '50% 100%' },
+  { heure: 'Votre site', titre: 'Tout ça, à votre marque', texte: 'Le site qui amène la demande porte votre nom, votre adresse, vos réalisations. Jamais le nôtre.', appareil: 'ordinateur', image: '/demo/scene-5.png', focus: '50% 0%' },
+]
+
+const DUREE = 4800
+
+export default function DemoSequence() {
+  const [i, setI] = useState(0)
+  const [pause, setPause] = useState(false)
+  const [reduit, setReduit] = useState(false)
+  const [cle, setCle] = useState(0) // relance l'animation de la barre de progression
+  const conteneur = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const mq = matchMedia('(prefers-reduced-motion: reduce)')
+    setReduit(mq.matches)
+    const f = () => setReduit(mq.matches)
+    mq.addEventListener('change', f)
+    return () => mq.removeEventListener('change', f)
+  }, [])
+
+  // Défilement automatique — seulement quand la démo est visible, non survolée, et que
+  // l'utilisateur n'a pas demandé moins de mouvement.
+  useEffect(() => {
+    if (reduit || pause) return
+    const el = conteneur.current
+    let visible = true
+    const io = 'IntersectionObserver' in window && el ? new IntersectionObserver((e) => { visible = e[0]?.isIntersecting ?? true }, { threshold: 0.3 }) : null
+    if (io && el) io.observe(el)
+    const t = setInterval(() => { if (visible) { setI((x) => (x + 1) % SCENES.length); setCle((k) => k + 1) } }, DUREE)
+    return () => { clearInterval(t); io?.disconnect() }
+  }, [reduit, pause])
+
+  const aller = (n: number) => { setI(((n % SCENES.length) + SCENES.length) % SCENES.length); setCle((k) => k + 1) }
+  const s = SCENES[i]
+
+  return (
+    <div className={`dm${reduit ? ' dm-reduit' : ''}`} ref={conteneur}
+      onMouseEnter={() => setPause(true)} onMouseLeave={() => setPause(false)} onFocus={() => setPause(true)} onBlur={() => setPause(false)}
+      onKeyDown={(e) => { if (e.key === 'ArrowRight') aller(i + 1); if (e.key === 'ArrowLeft') aller(i - 1) }}
+      role="region" aria-roledescription="démonstration" aria-label="Une demande arrive : le parcours en cinq scènes">
+
+      <div className="dm-scene">
+        <div className={`dm-device dm-${s.appareil}`} aria-hidden="true">
+          {SCENES.map((sc, k) => (
+            // Toutes les images sont dans le DOM (préchargées) ; seule l'active est visible → transition sans flash.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={sc.image} src={sc.image} alt="" className={k === i ? 'on' : ''} style={{ objectPosition: sc.focus }} loading={k === 0 ? 'eager' : 'lazy'} decoding="async" />
+          ))}
+        </div>
+
+        <div className="dm-txt">
+          <span className="dm-heure" aria-live="polite">{s.heure}</span>
+          <h3 key={`t${i}`}>{s.titre}</h3>
+          <p key={`p${i}`}>{s.texte}</p>
+          <div className="dm-nav">
+            <button type="button" className="dm-fleche" onClick={() => aller(i - 1)} aria-label="Scène précédente">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+            </button>
+            <div className="dm-points" role="tablist" aria-label="Scènes">
+              {SCENES.map((sc, k) => (
+                <button key={sc.image} type="button" role="tab" aria-selected={k === i} aria-label={`Scène ${k + 1} : ${sc.titre}`} className={k === i ? 'on' : ''} onClick={() => aller(k)}>
+                  {k === i && !reduit && !pause ? <span key={cle} className="dm-prog" style={{ animationDuration: `${DUREE}ms` }} /> : null}
+                </button>
+              ))}
+            </div>
+            <button type="button" className="dm-fleche" onClick={() => aller(i + 1)} aria-label="Scène suivante">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+            </button>
+          </div>
+          <small className="dm-note">Captures du produit réel — rien n’est dessiné.</small>
+        </div>
+      </div>
+    </div>
+  )
+}

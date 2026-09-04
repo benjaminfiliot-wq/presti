@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sendEmail } from '@/lib/email'
+import { notifierArtisan } from '@/lib/notifications'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 
 export const runtime = 'nodejs'
@@ -60,8 +61,8 @@ export async function POST(req: Request) {
         .from('artisans').select('email, nom').eq('id', lead.artisan_id).maybeSingle()
       const photoCount = Array.isArray(lead.photos) ? lead.photos.length : 0
       if (artisan?.email) {
-        await sendEmail({
-          to: artisan.email,
+        await notifierArtisan(lead.artisan_id, 'nouvelle_demande', artisan.email, {
+          
           subject: `Nouveau lead — ${nom_prospect || contact}`,
           text: `Un prospect a laissé ses coordonnées après un premier échange sur votre page.\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${lead.message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRetrouvez l'échange dans votre espace (Messages).`,
           replyTo: contact.includes('@') ? contact : undefined,

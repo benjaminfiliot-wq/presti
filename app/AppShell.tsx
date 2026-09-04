@@ -50,16 +50,15 @@ const CLE_LOCALE = 'presti.aide_vues'
 const lireLocal = (): string[] => { try { const v = JSON.parse(localStorage.getItem(CLE_LOCALE) || '[]'); return Array.isArray(v) ? v : [] } catch { return [] } }
 const ecrireLocal = (v: string[]) => { try { localStorage.setItem(CLE_LOCALE, JSON.stringify(v)) } catch { /* stockage indisponible : la visite reviendra, ce n'est pas grave */ } }
 
-type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null; credits: number | null; logo_url: string | null; email: string | null; aide_vues?: string[] | null }
+type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null; credits: number | null; logo_url: string | null; email: string | null; aide_vues?: string[] | null; suppression_demandee_le?: string | null }
 
 // Menu de profil (v4 §C1) — l'accès à tout ce qui touche au compte, au même endroit.
+// Sprint J-1 §6 : trois entrées, celles qu'on cherche vraiment depuis un avatar. Le reste
+// (page, plateforme) est déjà dans la navigation principale — pas deux fois.
 const PROFIL_MENU: { href: string; label: string; icone: string }[] = [
   { href: '/parametres', label: 'Paramètres', icone: '⚙' },
-  { href: '/profil', label: 'Ma page', icone: '👤' },
-  { href: '/abonnement', label: 'Abonnement & facturation', icone: '💳' },
-  { href: '/plateforme', label: 'Ma plateforme', icone: '💬' },
+  { href: '/parametres?onglet=abonnement', label: 'Abonnement & usage', icone: '💳' },
   { href: '/parametres?onglet=securite', label: 'Sécurité', icone: '🔒' },
-  { href: '/parametres?onglet=legal', label: 'Entreprise & légal', icone: '📄' },
 ]
 
 const PLAN_LABEL: Record<string, string> = { gratuit: 'Essai gratuit', essentiel: 'Offre Essentiel', studio: 'Offre Studio', signature: 'Offre Signature', pro: 'Offre Pro', business: 'Offre Business' }
@@ -202,6 +201,10 @@ export default function AppShell({
               <div className="psh-menu-scrim" onClick={() => setMenuOuvert(false)} aria-hidden="true" />
               <div className="psh-menu" role="menu">
                 <div className="psh-menu-id">
+                  {a?.logo_url
+                    // eslint-disable-next-line @next/next/no-img-element
+                    ? <span className="psh-ava has-logo psh-menu-ava"><img src={a.logo_url} alt="" /></span>
+                    : <span className="psh-ava psh-menu-ava">{initials(a?.nom ?? null)}</span>}
                   <b>{a?.nom || 'Mon compte'}</b>
                   {a?.email ? <span>{a.email}</span> : null}
                   <span className="psh-menu-plan">
@@ -252,7 +255,16 @@ export default function AppShell({
             </button>
           )}
         </div>
-        <div className={`psh-content${wide ? ' wide' : ''}`}>{children}</div>
+        <div className={`psh-content${wide ? ' wide' : ''}`}>
+          {/* §6 — suppression du compte programmée : le rappel est partout, l'annulation à un clic. */}
+          {a?.suppression_demandee_le && active !== 'parametres' ? (
+            <a className="psh-grace" href="/parametres?onglet=donnees" role="status">
+              <b>Votre compte sera supprimé le {new Date(new Date(a.suppression_demandee_le).getTime() + 30 * 86400000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}.</b>
+              <span>Annuler ou exporter vos données →</span>
+            </a>
+          ) : null}
+          {children}
+        </div>
       </div>
 
       <AidePanneau

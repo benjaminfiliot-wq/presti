@@ -5,7 +5,7 @@ import { computeResponseDelay } from '@/lib/platStats'
 import { lisibleSur } from '@/lib/contrast'
 import { fondDuTheme } from '@/lib/themeFonds'
 import { headers } from 'next/headers'
-import { permanentRedirect } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { chemins, modeDepuisHote, urlPlateforme } from '@/lib/urls'
 import { artisanParAncienSlug } from '@/lib/slugRedirect'
 
@@ -71,8 +71,10 @@ export default async function PlateformePage({ params }: { params: Promise<{ slu
     if (actuel) permanentRedirect(chemins(modeDepuisHote(host, actuel), actuel.slug).plateforme)
   }
 
-  if (!a || a.plateforme_active === false) {
-    return <main className="plat"><div className="plat-mid"><div className="plat-404"><b>Page introuvable</b><span>Ce lien de contact n&apos;existe pas ou n&apos;est plus actif.</span></div></div></main>
+  // Vrai 404 pour un lien inexistant ; message poli (200) si l'artisan a désactivé sa plateforme.
+  if (!a) notFound()
+  if (a.plateforme_active === false) {
+    return <main className="plat"><div className="plat-mid"><div className="plat-404"><b>Page indisponible</b><span>Ce lien de contact n&apos;est plus actif pour le moment.</span></div></div></main>
   }
 
   const accent = /^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? (a.accent as string) : '#D97757'

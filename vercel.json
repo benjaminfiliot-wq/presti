@@ -1,6 +1,7 @@
 {
   "crons": [
     { "path": "/api/cron/relances", "schedule": "0 8 * * *" },
-    { "path": "/api/canaux/relever", "schedule": "0 7 * * *" }
+    { "path": "/api/canaux/relever", "schedule": "0 7 * * *" },
+    { "path": "/api/cron/purge-comptes", "schedule": "30 3 * * *" }
   ]
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
-import { sendEmail } from '@/lib/email'
+import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
@@ -80,8 +80,8 @@ export async function POST(req: Request) {
 
     const notifier = async (reply: string | null, alerte?: string) => {
       if (!artisan.email) return
-      await sendEmail({
-        to: artisan.email,
+      await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
+        
         subject: alerte
           ? `⚠️ ${alerte} — ${lead.nom_prospect || lead.contact || 'prospect'}`
           : `Échange en cours — ${lead.nom_prospect || lead.contact || 'prospect'}`,

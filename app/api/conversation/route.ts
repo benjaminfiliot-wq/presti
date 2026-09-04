@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
-import { sendEmail } from '@/lib/email'
+import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
@@ -156,8 +156,8 @@ export async function POST(req: Request) {
     // Mode MANUEL, ou l'artisan a pris la main sur ce fil : pas de réponse IA, on le prévient.
     if (artisan.reponse_auto === false || lead.prise_en_main) {
       if (artisan.email) {
-        await sendEmail({
-          to: artisan.email,
+        await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
+          
           subject: `Nouveau message — ${lead.nom_prospect || lead.contact || 'prospect'}`,
           text: `Un prospect vous a écrit sur votre page Presti (réponse manuelle) :\n\n« ${message} »\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
@@ -171,8 +171,8 @@ export async function POST(req: Request) {
     const credit = await consumeCredit(artisan.id, 'standard', !!artisan.is_founder)
     if (!credit.ok) {
       if (artisan.email) {
-        await sendEmail({
-          to: artisan.email,
+        await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
+          
           subject: `Nouveau message — ${lead.nom_prospect || lead.contact || 'prospect'}`,
           text: `Un prospect vous a écrit sur votre page Presti :\n\n« ${message} »\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
@@ -204,8 +204,8 @@ export async function POST(req: Request) {
 
     // Notifie l'artisan qu'un échange est en cours (une fois par message entrant).
     if (artisan.email) {
-      await sendEmail({
-        to: artisan.email,
+      await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
+        
         subject: `Échange en cours — ${lead.nom_prospect || lead.contact || 'prospect'}`,
         text: `Un prospect discute sur votre page Presti.\n\nSon message :\n« ${message} »\n\n${reply ? `Réponse automatique envoyée :\n---\n${reply}` : '(réponse auto indisponible — répondez-lui depuis Messages)'}\n\nRetrouvez et poursuivez l'échange dans votre espace (Messages).`,
         replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,

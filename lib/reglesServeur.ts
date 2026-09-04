@@ -2,7 +2,7 @@
 // lib/regles.ts (pure) ; ici on lit la règle de l'artisan, on regarde l'état réel de la
 // conversation, et on exécute — en ne faisant jamais plus que ce que la règle autorise.
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { sendEmail } from '@/lib/email'
+import { notifierArtisan } from '@/lib/notifications'
 import { creerDevisBrouillonPourLead } from '@/lib/devisAuto'
 import { mentionsManquantesEmission, versArtisanLegal } from '@/lib/legalArtisan'
 import { acompteALAcceptation, decider, normaliserMaillons, type Maillons } from '@/lib/regles'
@@ -52,8 +52,8 @@ export async function declencherRegles(p: { lead: LeadCtx; nbReponsesIA: number;
 
   if (d.puisNotifier && p.artisanEmail) {
     const qui = p.lead.nom_prospect || p.lead.contact || 'un prospect'
-    await sendEmail({
-      to: p.artisanEmail,
+    await notifierArtisan(p.lead.artisan_id, 'proposition', p.artisanEmail, {
+      
       subject: envoye ? `Devis ${r.numero} envoyé à ${qui}` : `Devis brouillon prêt — ${qui}`,
       text: envoye
         ? `Votre règle d'automatisation a chiffré et envoyé le devis ${r.numero} (${r.total_ttc.toFixed(2)} € TTC) dans la conversation avec ${qui}.\n\nRetrouvez-le dans votre espace (Devis).`

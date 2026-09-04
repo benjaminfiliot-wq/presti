@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateLeadReply, qualifyLead } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
+import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
@@ -165,8 +166,8 @@ export async function POST(req: Request) {
         await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
       }
       if (artisan.email && !deferContact) {
-        await sendEmail({
-          to: artisan.email,
+        await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
+          
           subject: `Nouveau contact — ${nom_prospect || contact}`,
           text: `Nouveau contact via votre page Presti (mode réponse manuelle).\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: typeof contact === 'string' && contact.includes('@') ? contact : undefined,
@@ -251,8 +252,8 @@ Besoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photo
 Réponse automatique ${isEmail ? 'envoyée au prospect' : '(prospect sans email — à rappeler)'} :
 ---
 ${reply}`
-          await sendEmail({
-            to: artisan.email,
+          await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
+            
             subject: `Nouveau lead — ${nom_prospect || contact}`,
             text: recap,
             replyTo: isEmail ? contact : undefined,

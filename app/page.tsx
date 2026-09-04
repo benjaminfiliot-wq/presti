@@ -1,7 +1,7 @@
 import '@/app/globals.css'
 import HeroApp from '@/app/HeroApp'
 import Motion from '@/app/Motion'
-import FeatureShowcase from '@/app/FeatureShowcase'
+import DemoSequence from '@/app/DemoSequence'
 import Comparatif from '@/app/Comparatif'
 import { OFFRES, pointsForts } from '@/lib/plans'
 
@@ -112,8 +112,8 @@ export default function Home() {
         {/* FONCTIONNALITÉS — vitrine interactive (clique → la démo se joue) */}
         <section className="lp-blk" id="fonctionnalites">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick">Fonctionnalités</span><h2>Cliquez, regardez Presti travailler.</h2><p>Chaque fonctionnalité en démo. Cliquez un onglet — l&apos;animation vous montre comment ça marche.</p></div>
-            <FeatureShowcase />
+            <div className="lp-head2 c reveal"><span className="lp-kick">Une demande arrive</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir. Le lendemain matin, le devis est prêt, il l&apos;accepte. Cinq scènes, prises sur le vrai produit.</p></div>
+            <DemoSequence />
           </div>
         </section>
 

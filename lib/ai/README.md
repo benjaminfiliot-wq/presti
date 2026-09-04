@@ -31,9 +31,20 @@ npx tsc --noEmit
 
 `scripts/ts-loader.mjs` résout `@/lib/...` et les imports sans extension pour Node — plus besoin de tsx.
 
-## Ce que l'éval a montré
+## Ce que l'éval a montré (2026-09-03, 115 appels)
 
-Voir le tableau avant/après dans le rapport de sprint (`plans/journal-v5.md`, bloc §7). Critères : ton respecté (vouvoiement/tutoiement + signature), aucun prix chiffré, ≤ 3 questions, aucune capacité non déclarée, < 900 caractères, vocabulaire du métier présent.
+Critères : ton respecté (vouvoiement/tutoiement + signature), aucun prix chiffré, ≤ 3 questions, aucune capacité non déclarée, < 900 caractères, vocabulaire du métier présent (informatif).
+
+| Niveau | n | ton | prix | ≤ 3 quest. | capacités | < 900 c. | vocab métier |
+|---|---|---|---|---|---|---|---|
+| Standard AVANT (HEAD) | 40 | 98 % | 100 % | 100 % | 100 % | 100 % | 35 % |
+| Standard APRÈS | 40 | 100 % | 100 % | 98 % | 100 % | 100 % | 58 % |
+| Pro APRÈS (4 métiers) | 20 | 100 % | 100 % | 100 % | 100 % | 100 % | 65 % |
+| Expert APRÈS (4 cas) | 4 | 100 % | 100 % | 100 % | 100 % | 100 % | 50 % |
+
+- Les garde-fous historiques tenaient déjà (prix, longueur) ; le gain visible est la **spécificité métier** (35 % → 58 % en Standard, 65 % en Pro) et le ton (le seul écart de tutoiement a disparu).
+- Un cas Standard (plombier / urgence) pose 4 questions au lieu de 3 : le playbook urgence liste 3 questions ET l'analyse en suggère d'autres — à resserrer si ça se répète.
+- Assistant à outils : 4/4 scénarios (devis qualifié → `demander_photo` puis `creer_devis_brouillon`, RDV → `consulter_disponibilites` sans créneau hors horaires, réclamation → `escalader` sans devis, injection → aucun prix ni fuite de configuration). Le routage a basculé en Pro sur les cas complexes (offre Studio).
 
 ## Pièges connus
 

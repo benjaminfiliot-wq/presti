@@ -6,10 +6,10 @@ import { supabase } from '@/lib/supabaseClient'
 import { computeTotals } from '@/lib/devisTotals'
 import AppShell from '@/app/AppShell'
 import ModelSelect from '@/app/ModelSelect'
-import LogoUpload from '@/app/LogoUpload'
 import Info from '@/app/Info'
 import type { Tier } from '@/lib/models'
 import { mentionFranchise, type BaseMention } from '@/lib/facturation'
+import { mentionsManquantesEmission, OU_REMPLIR } from '@/lib/legalArtisan'
 
 type Ligne = { key: string; designation: string; quantite: string; unite: string; prix_unitaire_ht: string; tva_taux: number }
 
@@ -48,10 +48,16 @@ export default function DevisEditor() {
   // La référence légale de la mention de franchise suit la date et le choix de l'artisan
   // (recodification CGI → CIBS au 01/09/2026, tolérance jusqu'au 31/12/2027).
   const [mentionBase, setMentionBase] = useState<BaseMention>('auto')
+  // Ce qui manque pour émettre ce devis — calculé comme le serveur le fera au moment d'envoyer.
+  const mentionsEmissionManquantes = mentionsManquantesEmission({
+    nom: entNom || null, metier: metier || null, forme_juridique: forme || null, siret: siret || null,
+    adresse: entAdresse.split(',')[0]?.trim() || null, code_postal: entAdresse.split(',')[1]?.trim() || null, ville: entAdresse.split(',').slice(2).join(',').trim() || null,
+    tel_public: null, email_public: null, tva_num: null,
+    assurance_nom: assNom || null, assurance_contrat: assContrat || null, assurance_activites: assActivites || null, assurance_zone: assZone || null,
+    zone_intervention: null, mediateur_nom: null, mediateur_url: null,
+  })
   const mentionTva = mentionFranchise(mentionBase)
   const [logoUrl, setLogoUrl] = useState<string | null>(null)
-  const [savingInfos, setSavingInfos] = useState(false)
-  const [infosMsg, setInfosMsg] = useState('')
 
   // client / devis
   const [clientNom, setClientNom] = useState('')
@@ -114,21 +120,6 @@ export default function DevisEditor() {
 
   function setLigne(key: string, patch: Partial<Ligne>) {
     setLignes((prev) => prev.map((l) => (l.key === key ? { ...l, ...patch } : l)))
-  }
-
-  async function saveInfos() {
-    setSavingInfos(true); setInfosMsg('')
-    const [adr, cp, ville] = (() => {
-      const parts = entAdresse.split(',').map((s) => s.trim())
-      return [parts[0] ?? '', parts[1] ?? '', parts.slice(2).join(', ')]
-    })()
-    await supabase.from('artisans').update({
-      siret, forme_juridique: forme, adresse: adr, code_postal: cp, ville,
-      assurance_nom: assNom, assurance_contrat: assContrat, assurance_activites: assActivites, assurance_zone: assZone,
-      iban, conditions_paiement: condPaiement, tva_regime: tvaRegime,
-    }).eq('id', uid)
-    setSavingInfos(false); setInfosMsg('Enregistré ✅')
-    setTimeout(() => setInfosMsg(''), 2500)
   }
 
   async function chiffrerIA() {
@@ -302,42 +293,19 @@ export default function DevisEditor() {
               </div>
             </div>
 
-            <details className="collapse">
-              <summary>Vos informations (entreprise & assurance)</summary>
-              <div className="collapse-body">
-                <p className="muted" style={{ marginTop: 0 }}>Remplies une fois, reprises sur tous vos devis pour la conformité légale.</p>
-                <div className="grid2">
-                  <div><label>SIRET <Info cle="parametres.siret" /></label><input value={siret} onChange={(e) => setSiret(e.target.value)} placeholder="123 456 789 00012" /></div>
-                  <div><label>Forme juridique <Info cle="parametres.forme_juridique" /></label><input value={forme} onChange={(e) => setForme(e.target.value)} placeholder="Micro-entreprise" /></div>
-                </div>
-                <label>Adresse de l&apos;entreprise <Info cle="parametres.adresse" /></label>
-                <input value={entAdresse} onChange={(e) => setEntAdresse(e.target.value)} placeholder="3 rue du Marché, 75011, Paris" />
-                <label>Régime de TVA <Info cle="devis.tva_regime" /></label>
-                <select value={tvaRegime} onChange={(e) => setTvaRegime(e.target.value)}>
-                  <option value="franchise">Franchise en base (pas de TVA facturée)</option>
-                  <option value="reel">Assujetti à la TVA</option>
-                </select>
-                <div style={{ marginTop: '.6rem', borderTop: '1px solid var(--line)', paddingTop: '.6rem' }}>
-                  <div className="mini-label">Assurance décennale (obligatoire sur les devis)</div>
-                  <div className="grid2">
-                    <div><label>Assureur <Info cle="parametres.assurance_nom" /></label><input value={assNom} onChange={(e) => setAssNom(e.target.value)} placeholder="Ex : MAAF Pro" /></div>
-                    <div><label>N° de contrat <Info cle="parametres.assurance_contrat" /></label><input value={assContrat} onChange={(e) => setAssContrat(e.target.value)} placeholder="Ex : 123456789" /></div>
-                    <div><label>Activités garanties <Info cle="parametres.assurance_activites" /></label><input value={assActivites} onChange={(e) => setAssActivites(e.target.value)} placeholder="Ex : électricité" /></div>
-                    <div><label>Zone géographique <Info cle="parametres.assurance_zone" /></label><input value={assZone} onChange={(e) => setAssZone(e.target.value)} placeholder="Ex : France métropolitaine" /></div>
-                  </div>
-                </div>
-                <div style={{ marginTop: '.4rem' }}>
-                  <label>Logo de l&apos;entreprise</label>
-                  {uid && <LogoUpload uid={uid} value={logoUrl} onChange={setLogoUrl} />}
-                </div>
-                <div className="grid2" style={{ marginTop: '.4rem' }}>
-                  <div><label>IBAN (pour le règlement) <Info cle="devis.iban" /></label><input value={iban} onChange={(e) => setIban(e.target.value)} placeholder="FR76 …" /></div>
-                  <div><label>Conditions de paiement <Info cle="devis.conditions_paiement" /></label><input value={condPaiement} onChange={(e) => setCondPaiement(e.target.value)} placeholder="Acompte 30%, solde à la fin" /></div>
-                </div>
-                <button className="btn btn--ghost" style={{ width: 'auto', marginTop: '.9rem' }} disabled={savingInfos} onClick={saveInfos}>{savingInfos ? 'Enregistrement…' : 'Enregistrer mes informations'}</button>
-                {infosMsg && <span className="muted" style={{ marginLeft: '.7rem' }}>{infosMsg}</span>}
+            {/* Sprint J-1 §6 — les informations de l'entreprise se renseignent à UN seul
+                endroit : Paramètres → Entreprise & légal. Avant, ce panneau avait son propre
+                formulaire et son propre « Enregistrer », et les deux écrans se contredisaient. */}
+            <div className="devis-infos-rappel">
+              <div>
+                <b>Informations de l’entreprise</b>
+                <span className="muted">SIRET, forme juridique, adresse, TVA, assurance, IBAN, conditions de paiement — reprises automatiquement sur ce devis.</span>
+                {mentionsEmissionManquantes.length ? (
+                  <span className="devis-infos-manque">Manque pour émettre : {mentionsEmissionManquantes.join(', ')}.</span>
+                ) : null}
               </div>
-            </details>
+              <a className="btn btn--ghost" href="/parametres?onglet=legal">{OU_REMPLIR.label} →</a>
+            </div>
           </div>
 
           {/* ---------------- APERÇU LIVE (droite) ---------------- */}
@@ -422,7 +390,7 @@ export default function DevisEditor() {
                 {tvaRegime === 'franchise' && <p style={{ margin: '0 0 .35rem' }}>{mentionTva}</p>}
                 <p style={{ margin: 0 }}>
                   <strong>Assurance professionnelle</strong> :{' '}
-                  {assNom ? `${assNom}, contrat n° ${assContrat || '—'}${assActivites ? `, ${assActivites}` : ''}${assZone ? `, ${assZone}` : ''}.` : <span className="doc-todo">à renseigner dans « Vos informations » (obligatoire).</span>}
+                  {assNom ? `${assNom}, contrat n° ${assContrat || '—'}${assActivites ? `, ${assActivites}` : ''}${assZone ? `, ${assZone}` : ''}.` : <span className="doc-todo">à renseigner dans Paramètres → Entreprise & légal (obligatoire).</span>}
                 </p>
               </div>
             </div>

@@ -336,7 +336,7 @@ export default function ProfilPage() {
         </div>
 
         {/* Apparence */}
-        <div className="tool-card">
+        <div className="tool-card" id="apparence">
           <h2>Apparence</h2>
           <p className="muted" style={{ margin: '0 0 .8rem' }}>Le style visuel de votre site <b>et</b> de votre plateforme. Choisissez l&apos;ambiance, puis votre couleur d&apos;accent.</p>
           <div className="prof-themes">

@@ -1,278 +1,114 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { actif } from '@/lib/flags'
 import AppShell from '@/app/AppShell'
-import { mentionFranchise, type BaseMention } from '@/lib/facturation'
-import { mentionsManquantes } from '@/lib/legalArtisan'
+import SectionProfil from './SectionProfil'
+import SectionLegal from './SectionLegal'
+import SectionAbonnement from './SectionAbonnement'
+import SectionSecurite from './SectionSecurite'
+import SectionDonnees from './SectionDonnees'
+import type { Artisan, Message } from './commun'
 
-// Paramètres à onglets (v4 §C2). Choix assumé : on n'a PAS rasé /profil qui fonctionne.
-// Cette page porte les sections qui n'existaient nulle part (entreprise & légal, sécurité,
-// données) et renvoie vers les écrans déjà en place pour le reste.
+// Paramètres (sprint J-1 §6) : une page, une navigation à gauche, l'URL qui suit (`?onglet=`).
+// Les anciens liens `?onglet=legal|securite|donnees` continuent de marcher.
+//
+// Plateforme, Site, Canaux, Apparence et Aide ne sont PAS des copies : ce sont des liens vers
+// les écrans qui existent déjà, avec une ligne qui dit ce qu'on y règle. On n'a pas déplacé
+// ces réglages pour le plaisir de déplacer.
 
-type Onglet = 'legal' | 'securite' | 'donnees' | 'raccourcis'
-const ONGLETS: { id: Onglet; label: string }[] = [
-  { id: 'legal', label: 'Entreprise & légal' },
-  { id: 'securite', label: 'Sécurité' },
-  { id: 'donnees', label: 'Données & confidentialité' },
-  { id: 'raccourcis', label: 'Le reste' },
+type Onglet = 'profil' | 'legal' | 'abonnement' | 'securite' | 'donnees'
+type Entree = { id: string; label: string; detail: string; icone: ReactNode; href?: string }
+
+const ic = (d: ReactNode) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
+
+const NAV: { groupe: string; entrees: Entree[] }[] = [
+  { groupe: 'Compte', entrees: [
+    { id: 'profil', label: 'Profil', detail: 'Photo, nom, adresse, emails reçus', icone: ic(<><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></>) },
+    { id: 'legal', label: 'Entreprise & légal', detail: 'SIRET, TVA, assurance, IBAN', icone: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M8 13h8M8 17h5" /></>) },
+    { id: 'abonnement', label: 'Abonnement & usage', detail: 'Formule, crédits, paiements', icone: ic(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
+  ] },
+  { groupe: 'Vos outils', entrees: [
+    { id: 'plateforme', label: 'Plateforme', detail: 'Assistant, automatisations, reprise en main', href: '/plateforme', icone: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></>) },
+    { id: 'site', label: 'Site', detail: 'Contenu, réalisations, publication', href: '/profil', icone: ic(<><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></>) },
+    { id: 'canaux', label: 'Canaux', detail: 'Votre boîte email branchée', href: '/messages/canaux', icone: ic(<><path d="M4 4h16v16H4z" /><path d="m4 7 8 6 8-6" /></>) },
+    { id: 'apparence', label: 'Apparence', detail: 'Thème, couleur, style du site', href: '/profil#apparence', icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18c1.2 0 1.7-.8 1.2-1.8-.6-1.2.2-2.2 1.5-2.2H16a5 5 0 0 0 5-5c0-4.9-4-9-9-9z" /><circle cx="8" cy="10" r="1" fill="currentColor" /><circle cx="12" cy="7" r="1" fill="currentColor" /><circle cx="16" cy="10" r="1" fill="currentColor" /></>) },
+  ] },
+  { groupe: 'Protection', entrees: [
+    { id: 'securite', label: 'Sécurité', detail: 'Mot de passe, sessions ouvertes', icone: ic(<><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>) },
+    { id: 'donnees', label: 'Données & confidentialité', detail: 'Export, suppressions', icone: ic(<><ellipse cx="12" cy="6" rx="8" ry="3" /><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6" /><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" /></>) },
+    { id: 'aide', label: 'Aide', detail: actif('aideCentre') ? 'Le centre d’aide, tout expliqué' : 'C’est quoi, cet écran ?', href: actif('aideCentre') ? '/aide' : undefined, icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M9.6 9.3a2.5 2.5 0 0 1 4.9.7c0 1.6-2.5 2-2.5 3.5" /><circle cx="12" cy="17" r=".6" fill="currentColor" /></>) },
+  ] },
 ]
-
-type Legal = { siret: string; tva_num: string; iban: string; forme_juridique: string; adresse: string; code_postal: string; ville: string; assurance_nom: string; assurance_contrat: string; assurance_zone: string; assurance_activites: string; mediateur_nom: string; mediateur_url: string }
-const LEGAL_VIDE: Legal = { siret: '', tva_num: '', iban: '', forme_juridique: '', adresse: '', code_postal: '', ville: '', assurance_nom: '', assurance_contrat: '', assurance_zone: '', assurance_activites: '', mediateur_nom: '', mediateur_url: '' }
+const ONGLETS: Onglet[] = ['profil', 'legal', 'abonnement', 'securite', 'donnees']
+const TITRES: Record<Onglet, string> = { profil: 'Profil', legal: 'Entreprise & légal', abonnement: 'Abonnement & usage', securite: 'Sécurité', donnees: 'Données & confidentialité' }
 
 function ParametresInner() {
   const router = useRouter()
   const params = useSearchParams()
-  const [onglet, setOnglet] = useState<Onglet>('legal')
-  const [ready, setReady] = useState(false)
-  const [uid, setUid] = useState('')
-  const [legal, setLegal] = useState<Legal>(LEGAL_VIDE)
-  const [aTva, setATva] = useState(false)
-  const [mentionBase, setMentionBase] = useState<BaseMention>('auto')
-  const [saving, setSaving] = useState(false)
-  const [mdp, setMdp] = useState('')
-  const [busy, setBusy] = useState(false)
-  const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
-
-  useEffect(() => {
-    const o = params.get('onglet') as Onglet | null
-    if (o && ONGLETS.some((x) => x.id === o)) setOnglet(o)
-  }, [params])
+  const [a, setA] = useState<Artisan | null>(null)
+  const [msg, setMsg] = useState<Message>(null)
+  const demande = params.get('onglet')
+  const onglet: Onglet = ONGLETS.includes(demande as Onglet) ? (demande as Onglet) : 'profil'
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) { router.replace('/login'); return }
-      const id = data.session.user.id
-      setUid(id)
-      const { data: a } = await supabase.from('artisans').select('*').eq('id', id).maybeSingle()
-      if (!a) { router.replace('/onboarding'); return }
-      setLegal({
-        siret: a.siret ?? '', tva_num: a.tva_num ?? '', iban: a.iban ?? '',
-        forme_juridique: a.forme_juridique ?? '', adresse: a.adresse ?? '', code_postal: a.code_postal ?? '', ville: a.ville ?? '',
-        mediateur_nom: a.mediateur_nom ?? '', mediateur_url: a.mediateur_url ?? '',
-        assurance_nom: a.assurance_nom ?? '', assurance_contrat: a.assurance_contrat ?? '',
-        assurance_zone: a.assurance_zone ?? '', assurance_activites: a.assurance_activites ?? '',
-      })
-      setATva(!!a.tva_num)
-      setMentionBase((a.mention_tva_base as BaseMention) ?? 'auto')
-      setReady(true)
+      const { data: row } = await supabase.from('artisans').select('*').eq('id', data.session.user.id).maybeSingle()
+      if (!row) { router.replace('/onboarding'); return }
+      setA({ ...(row as Artisan), email: row.email ?? data.session.user.email ?? null })
     })
   }, [router])
 
-  // Même source de vérité que la page de mentions légales : ce qui manque ici est
-  // exactement ce qui s'affichera « non communiqué » sur le site de l'artisan.
-  const manquantes = mentionsManquantes({
-    nom: null, metier: null,
-    forme_juridique: legal.forme_juridique || null, siret: legal.siret || null,
-    adresse: legal.adresse || null, code_postal: legal.code_postal || null, ville: legal.ville || null,
-    tel_public: null, email_public: null, tva_num: legal.tva_num || null,
-    assurance_nom: legal.assurance_nom || null, assurance_contrat: legal.assurance_contrat || null,
-    assurance_activites: legal.assurance_activites || null, assurance_zone: legal.assurance_zone || null,
-    zone_intervention: null,
-    mediateur_nom: legal.mediateur_nom || null, mediateur_url: legal.mediateur_url || null,
-  }).filter((m) => m !== 'Dénomination' && m !== 'Contact') // renseignés dans « Ma page »
+  const patch = useCallback((p: Partial<Artisan>) => setA((prev) => (prev ? { ...prev, ...p } : prev)), [])
+  const signaler = useCallback((m: Message) => {
+    setMsg(m)
+    if (m?.type === 'ok') setTimeout(() => setMsg((cur) => (cur === m ? null : cur)), 3200)
+  }, [])
 
-  function setL<K extends keyof Legal>(k: K, v: string) { setLegal((p) => ({ ...p, [k]: v })) }
-
-  async function enregistrerLegal() {
-    if (saving) return
-    setSaving(true); setMsg(null)
-    const { error } = await supabase.from('artisans').update({
-      siret: legal.siret.trim() || null,
-      forme_juridique: legal.forme_juridique.trim() || null,
-      adresse: legal.adresse.trim() || null,
-      code_postal: legal.code_postal.trim() || null,
-      ville: legal.ville.trim() || null,
-      mediateur_nom: legal.mediateur_nom.trim() || null,
-      mediateur_url: legal.mediateur_url.trim() || null,
-      tva_num: aTva ? (legal.tva_num.trim() || null) : null,
-      // Cette ligne manquait : la case « assujetti à la TVA » n'écrivait que le NUMÉRO,
-      // jamais le RÉGIME. Un artisan qui cochait la case et saisissait son n° de TVA
-      // continuait donc à émettre des devis et factures à 0 % avec la mention
-      // « TVA non applicable ». TVA non collectée sur chaque chantier, mention fausse
-      // sur chaque pièce. Trouvé par l'audit indépendant du 2026-09-03.
-      tva_regime: aTva ? 'reel' : 'franchise',
-      mention_tva_base: mentionBase,
-      iban: legal.iban.replace(/\s+/g, '').toUpperCase() || null,
-      assurance_nom: legal.assurance_nom.trim() || null,
-      assurance_contrat: legal.assurance_contrat.trim() || null,
-      assurance_zone: legal.assurance_zone.trim() || null,
-      assurance_activites: legal.assurance_activites.trim() || null,
-    }).eq('id', uid)
-    setSaving(false)
-    setMsg(error ? { type: 'err', text: 'Enregistrement impossible.' } : { type: 'ok', text: 'Informations enregistrées ✅' })
-    setTimeout(() => setMsg(null), 2600)
+  function aller(e: React.MouseEvent, id: string) {
+    e.preventDefault()
+    setMsg(null)
+    router.replace(`/parametres?onglet=${id}`, { scroll: false })
   }
 
-  async function changerMdp() {
-    if (busy) return
-    if (mdp.length < 8) { setMsg({ type: 'err', text: 'Choisissez au moins 8 caractères.' }); return }
-    setBusy(true); setMsg(null)
-    const { error } = await supabase.auth.updateUser({ password: mdp })
-    setBusy(false); setMdp('')
-    setMsg(error ? { type: 'err', text: 'Changement impossible.' } : { type: 'ok', text: 'Mot de passe modifié ✅' })
-  }
-
-  async function deconnecterAutres() {
-    if (busy) return
-    setBusy(true); setMsg(null)
-    // On passe par le serveur : `signOut({ scope: 'others' })` seul ne révoque que les
-    // jetons de rafraîchissement, et un jeton d'accès déjà copié continuait de fonctionner
-    // jusqu'à une heure. La route pose une date de révocation que toutes les routes de
-    // Presti vérifient — l'effet est immédiat (v4 §11).
-    const t = (await supabase.auth.getSession()).data.session?.access_token
-    const r = await fetch('/api/securite/sessions', { method: 'POST', headers: { Authorization: `Bearer ${t}` } })
-    setBusy(false)
-    if (!r.ok) { setMsg({ type: 'err', text: 'Action impossible.' }); return }
-    setMsg({ type: 'ok', text: 'Toutes vos sessions sont fermées. Reconnexion…' })
-    await supabase.auth.signOut()
-    setTimeout(() => router.replace('/login'), 1200)
-  }
-
-  async function exporter() {
-    const t = (await supabase.auth.getSession()).data.session?.access_token
-    const res = await fetch('/api/donnees/export', { headers: { Authorization: `Bearer ${t}` } })
-    if (!res.ok) { setMsg({ type: 'err', text: 'Export impossible.' }); return }
-    const blob = await res.blob()
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url; a.download = `mes-donnees-presti-${new Date().toISOString().slice(0, 10)}.json`
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
-  }
-
-  if (!ready) return <AppShell active="parametres" title="Paramètres"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
+  const contenu = !a ? <div className="tool-card"><p className="muted">Chargement…</p></div>
+    : onglet === 'profil' ? <SectionProfil a={a} patch={patch} signaler={signaler} />
+    : onglet === 'legal' ? <SectionLegal key={a.id} a={a} patch={patch} signaler={signaler} />
+    : onglet === 'abonnement' ? <SectionAbonnement a={a} patch={patch} signaler={signaler} />
+    : onglet === 'securite' ? <SectionSecurite a={a} patch={patch} signaler={signaler} />
+    : <SectionDonnees a={a} patch={patch} signaler={signaler} />
 
   return (
-    <AppShell active="parametres" title="Paramètres">
-      <div className="param-onglets" role="tablist">
-        {ONGLETS.map((o) => (
-          <button key={o.id} role="tab" aria-selected={onglet === o.id} className={onglet === o.id ? 'on' : ''} onClick={() => setOnglet(o.id)}>{o.label}</button>
-        ))}
-      </div>
-
-      <div className="prof-grid">
-        {onglet === 'legal' ? (
-          <div className="tool-card">
-            <h2>Entreprise &amp; légal</h2>
-            <p className="muted" style={{ margin: '0 0 1rem' }}>Ces informations apparaissent sur vos devis, vos factures et vos mentions légales — elles sont obligatoires pour qu’ils soient conformes.</p>
-
-            {/* L'audit a constaté que 10 comptes sur 10 n'avaient pas de SIRET. Un artisan
-                ne peut pas deviner qu'il lui manque une mention obligatoire : on le lui dit,
-                avec ce qui manque exactement. */}
-            {manquantes.length > 0 ? (
-              <div className="par-manque">
-                <b>Il vous manque {manquantes.length} mention{manquantes.length > 1 ? 's' : ''} obligatoire{manquantes.length > 1 ? 's' : ''}</b>
-                <span>{manquantes.join(' · ')}</span>
-                <em>
-                  Sans elles, vos devis et factures ne sont pas conformes (amende de 15 € par mention manquante),
-                  et vos mentions légales affichent « non communiqué ».
-                </em>
-              </div>
-            ) : null}
-            <label>SIRET</label>
-            <input value={legal.siret} onChange={(e) => setL('siret', e.target.value)} placeholder="14 chiffres" maxLength={20} />
-            <label>Forme juridique</label>
-            <input value={legal.forme_juridique} onChange={(e) => setL('forme_juridique', e.target.value)} placeholder="Ex : SARL au capital de 10 000 € · EI · Auto-entrepreneur" maxLength={120} />
-            <label>Adresse de l’entreprise</label>
-            <input value={legal.adresse} onChange={(e) => setL('adresse', e.target.value)} placeholder="Numéro et rue" maxLength={160} />
-            <div className="par-cp">
-              <input value={legal.code_postal} onChange={(e) => setL('code_postal', e.target.value)} placeholder="Code postal" maxLength={10} />
-              <input value={legal.ville} onChange={(e) => setL('ville', e.target.value)} placeholder="Ville" maxLength={80} />
+    <AppShell active="parametres" title="Paramètres" crumb={TITRES[onglet]} wide>
+      <div className="param-layout">
+        <nav className="param-nav" aria-label="Sections des paramètres">
+          {NAV.map((g) => (
+            <div key={g.groupe} className="param-nav-grp">
+              <div className="param-nav-lab">{g.groupe}</div>
+              {g.entrees.map((e) => e.href ? (
+                <a key={e.id} href={e.href} className="param-nav-lien">
+                  {e.icone}<span><b>{e.label}</b><small>{e.detail}</small></span>
+                  <svg className="param-nav-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+                </a>
+              ) : e.id === 'aide' ? (
+                <button key={e.id} type="button" className="param-nav-lien" onClick={() => (document.querySelector('.psh-aide') as HTMLButtonElement | null)?.click()}>
+                  {e.icone}<span><b>{e.label}</b><small>{e.detail}</small></span>
+                </button>
+              ) : (
+                <a key={e.id} href={`/parametres?onglet=${e.id}`} className={onglet === e.id ? 'on' : ''} aria-current={onglet === e.id ? 'page' : undefined} onClick={(ev) => aller(ev, e.id)}>
+                  {e.icone}<span><b>{e.label}</b><small>{e.detail}</small></span>
+                </a>
+              ))}
             </div>
-            <label className="prof-toggle" style={{ marginTop: '.9rem' }}>
-              <input type="checkbox" checked={aTva} onChange={(e) => setATva(e.target.checked)} />
-              <span>Je suis <b>assujetti à la TVA</b>{aTva ? '' : ' — sinon la mention de franchise ci-dessous est portée sur vos documents'}</span>
-            </label>
-            {aTva ? (<><label>Numéro de TVA intracommunautaire</label><input value={legal.tva_num} onChange={(e) => setL('tva_num', e.target.value)} placeholder="FR…" maxLength={20} /></>) : (
-              <div className="par-mention">
-                {/* La référence légale a changé : la TVA du CGI a été recodifiée vers le CIBS
-                    au 01/09/2026, l'ancienne référence restant admise jusqu'au 31/12/2027.
-                    D'où un choix, et pas une chaîne figée dans le code. */}
-                <label>Référence légale de la mention</label>
-                <div className="sa-pills">
-                  {([['auto', 'Automatique'], ['cibs', 'CIBS (nouvelle)'], ['cgi', 'CGI (ancienne)']] as const).map(([id, nom]) => (
-                    <button key={id} type="button" className={`sa-pill${mentionBase === id ? ' on' : ''}`} onClick={() => setMentionBase(id)}>{nom}</button>
-                  ))}
-                </div>
-                <p className="muted par-apercu">
-                  Portée sur vos devis et factures : <b>{mentionFranchise(mentionBase)}</b>
-                </p>
-                <p className="muted" style={{ fontSize: '.8rem', margin: '.3rem 0 0' }}>
-                  La référence au CGI a été remplacée par le CIBS le 1<sup>er</sup> septembre 2026. L’ancienne reste acceptée
-                  jusqu’au 31 décembre 2027 — gardez-la si votre comptable la préfère, « Automatique » suit la date.
-                </p>
-              </div>
-            )}
-            <label>IBAN (pour le règlement de vos factures)</label>
-            <input value={legal.iban} onChange={(e) => setL('iban', e.target.value)} placeholder="FR76…" maxLength={40} />
-            <h3 style={{ margin: '1.6rem 0 .2rem', fontSize: '1rem' }}>Assurance professionnelle</h3>
-            <p className="muted" style={{ margin: '0 0 .6rem', fontSize: '.85rem' }}>Obligatoire sur les devis et factures du bâtiment (garantie décennale).</p>
-            <label>Assureur</label>
-            <input value={legal.assurance_nom} onChange={(e) => setL('assurance_nom', e.target.value)} placeholder="Ex : AXA" />
-            <label>N° de contrat</label>
-            <input value={legal.assurance_contrat} onChange={(e) => setL('assurance_contrat', e.target.value)} />
-            <label>Zone géographique couverte</label>
-            <input value={legal.assurance_zone} onChange={(e) => setL('assurance_zone', e.target.value)} placeholder="Ex : France métropolitaine" />
-            <label>Activités couvertes</label>
-            <input value={legal.assurance_activites} onChange={(e) => setL('assurance_activites', e.target.value)} placeholder="Ex : menuiserie, agencement" />
-
-            <h3 style={{ margin: '1.6rem 0 .2rem', fontSize: '1rem' }}>Médiateur de la consommation</h3>
-            <p className="muted" style={{ margin: '0 0 .6rem', fontSize: '.85rem' }}>
-              Obligatoire dès que vous travaillez pour des particuliers (art. L.616-1 du code de la consommation) :
-              vous devez adhérer à un dispositif de médiation et en indiquer les coordonnées. Tant que ce n’est pas
-              renseigné, vos mentions légales ne peuvent pas l’afficher — je ne l’invente pas.
-            </p>
-            <label>Nom du médiateur</label>
-            <input value={legal.mediateur_nom} onChange={(e) => setL('mediateur_nom', e.target.value)} placeholder="Ex : CM2C — Centre de la médiation de la consommation de conciliateurs de justice" maxLength={160} />
-            <label>Site du médiateur</label>
-            <input value={legal.mediateur_url} onChange={(e) => setL('mediateur_url', e.target.value)} placeholder="https://…" maxLength={300} />
-
-            <button className="btn btn--primary" style={{ width: 'auto', marginTop: '1.2rem' }} disabled={saving} onClick={enregistrerLegal}>{saving ? '…' : 'Enregistrer'}</button>
-          </div>
-        ) : null}
-
-        {onglet === 'securite' ? (
-          <div className="tool-card">
-            <h2>Sécurité</h2>
-            <p className="muted" style={{ margin: '0 0 1rem' }}>Votre mot de passe est stocké haché : personne, pas même nous, ne peut le lire. On ne peut que le remplacer.</p>
-            <label>Nouveau mot de passe</label>
-            <input type="password" value={mdp} onChange={(e) => setMdp(e.target.value)} placeholder="8 caractères minimum" autoComplete="new-password" />
-            <button className="btn btn--primary" style={{ width: 'auto', marginTop: '.9rem' }} disabled={busy || !mdp} onClick={changerMdp}>{busy ? '…' : 'Changer mon mot de passe'}</button>
-            <hr style={{ border: 0, borderTop: '1px solid var(--line)', margin: '1.4rem 0' }} />
-            <h3 style={{ margin: '0 0 .3rem', fontSize: '1rem' }}>Vos autres appareils</h3>
-            <p className="muted" style={{ margin: '0 0 .8rem', fontSize: '.88rem' }}>Vous avez utilisé un ordinateur qui n’est pas le vôtre ? Fermez toutes les autres sessions — elles seront réellement invalidées, pas seulement oubliées.</p>
-            <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={busy} onClick={deconnecterAutres}>Fermer toutes mes sessions</button>
-          </div>
-        ) : null}
-
-        {onglet === 'donnees' ? (
-          <div className="tool-card">
-            <h2>Données &amp; confidentialité</h2>
-            <p className="muted" style={{ margin: '0 0 1rem' }}>Vos données vous appartiennent. Vous pouvez les emporter à tout moment, et supprimer chaque partie séparément.</p>
-            <button className="btn btn--primary" style={{ width: 'auto' }} onClick={exporter}>Exporter toutes mes données</button>
-            <p className="muted" style={{ margin: '.6rem 0 1.4rem', fontSize: '.85rem' }}>Fichier JSON : profil, conversations, messages, devis, factures, clients.</p>
-            <hr style={{ border: 0, borderTop: '1px solid var(--line)', margin: '0 0 1.2rem' }} />
-            <h3 style={{ margin: '0 0 .3rem', fontSize: '1rem' }}>Supprimer une partie</h3>
-            <p className="muted" style={{ margin: '0 0 .8rem', fontSize: '.88rem' }}>Site, plateforme ou conversation — chacun se supprime séparément, sans toucher à votre compte. Les devis envoyés et factures émises sont conservés : la loi l’impose.</p>
-            <a className="btn btn--ghost" style={{ width: 'auto', display: 'inline-flex' }} href="/profil#donnees">Ouvrir les suppressions</a>
-          </div>
-        ) : null}
-
-        {onglet === 'raccourcis' ? (
-          <div className="tool-card">
-            <h2>Le reste de vos réglages</h2>
-            <p className="muted" style={{ margin: '0 0 1rem' }}>Ces écrans existent déjà et fonctionnent — on ne les a pas déplacés pour le plaisir de déplacer.</p>
-            <div className="dz-actions">
-              <a className="btn btn--ghost" style={{ width: 'auto' }} href="/profil">Ma page<small>Profil, site, apparence, publication</small></a>
-              <a className="btn btn--ghost" style={{ width: 'auto' }} href="/plateforme">Ma plateforme<small>Lien, assistant, automatisations</small></a>
-              <a className="btn btn--ghost" style={{ width: 'auto' }} href="/abonnement">Abonnement<small>Formule, crédits, facturation</small></a>
-            </div>
-          </div>
-        ) : null}
-
-        {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`}>{msg.text}</div>}
+          ))}
+        </nav>
+        <div className="param-main" key={onglet}>
+          {contenu}
+          {msg ? <div className={`msg${msg.type === 'err' ? ' err' : ''}`} role="status">{msg.text}</div> : null}
+        </div>
       </div>
     </AppShell>
   )
