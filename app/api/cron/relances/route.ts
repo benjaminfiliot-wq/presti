@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { purgerComptes } from '@/lib/purgeComptes'
 import { generateRelanceReply, relanceTemplate } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 
@@ -89,5 +90,8 @@ export async function GET(req: Request) {
     sent++
   }
 
-  return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped })
+  // Purge des comptes en fin de grâce (§6) — dans ce cron parce que Vercel Hobby n'en accepte que deux.
+  const purge = await purgerComptes().catch((e) => ({ purges: 0, en_attente: 0, erreur: String(e) }))
+
+  return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped, purge })
 }

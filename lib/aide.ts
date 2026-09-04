@@ -947,7 +947,7 @@ export const INFOBULLES: InfoBulle[] = [
     page: '/parametres?onglet=securite',
     label: 'Nouveau mot de passe',
     explication: 'Remplace votre mot de passe actuel. Stocké haché : personne ne peut le lire, seulement le remplacer.',
-    exemple: 'Vous saisissez un nouveau mot de passe de 8 caractères ou plus et cliquez « Changer mon mot de passe ».',
+    exemple: 'Vous saisissez un nouveau mot de passe de 10 caractères ou plus et cliquez « Changer mon mot de passe ».',
   },
 ]
 

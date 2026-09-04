@@ -100,4 +100,13 @@
 - **Bloqué par ça** : migrations 0047 (aide_vues), 0048 (inventaire v2), 0049 (limites atomiques), 0050 (pilotage), 0051 (adresse modifiable), 0052 (paramètres, en cours) ; tout déploiement (les limites de débit seraient en fail-open sans 0049) ; scènes 3-5 de la démo ; tests `pilotage-e2e`, `offres-e2e`, `limites-e2e`, `reset-plafond-e2e`, `mentions-bloquantes-e2e`, `inventaire-v2-e2e` §3-8, `aide-e2e` (persistance), `slug` e2e.
 - Ce qui a continué sans : tout le code (typecheck 0 hors l'édit en cours de SA7), les tests locaux qui ne touchent pas aux nouvelles colonnes, les slides (14/14), la démo (scènes 1-2).
 
-**Cumul : 5 h 45**
+## [D] §6 Paramètres niveau Claude — livré (SA7, relancé 2 fois) — ✅ code, 49/49 local (5 sautés faute de 0052)
+- Navigation gauche 10 entrées (Plateforme/Site/Canaux = liens vers l'existant, pas des copies), anciens liens conservés. Profil : avatar recadré (canvas, WebP 512), adresse via `AdresseEditor`, **notifications réellement branchées** sur les 11 envois à l'artisan (`lib/notifications.ts`). Abonnement : jauge consommés/inclus (**sans ventilation inventée** : aucun journal par type n'existe), portail Stripe, « ce qui se déverrouille » calculé depuis `GRILLE`. Sécurité : changement de mot de passe (ancien vérifié, politique + fuites, autres sessions fermées), sessions ouvertes + révocation unitaire (RPC 0052). Données : export ZIP en flux **sans dépendance** (`lib/zip.ts`), suppressions avec récap + mot exact, **grâce 30 j** + cron de purge (`vercel.json`, 1 cron/jour Hobby : à vérifier qu'il n'entre pas en conflit avec l'existant).
+- Retiré parce qu'inexistant (règle du sprint) : sélecteur de langue, notification « paiement » à l'artisan, ville des sessions, 2FA, annulation maison.
+- **Consolidation** : le panneau « Vos informations » de l'éditeur de devis (double saisie des mentions légales, défaut signalé par SA1) est remplacé par un rappel + mentions manquantes en rouge + lien Paramètres.
+
+## [I-ter] Incident : feuilles de style des surfaces écrasées — 05:40 → 06:20 (40 min) — ✅ réparé
+- En posant des métadonnées neutres de 404, j'ai **écrit par-dessus** `app/site/[slug]/layout.tsx` et `app/p/[slug]/layout.tsx` sans les avoir lus : ils portaient l'import de `site.css` / `plat.css`. Résultat : plus aucun style sur le site et la plateforme (image du hero à 800 px, débordement mobile, slides « armées » sur téléphone parce que la fenêtre s'élargissait). Trouvé parce que `slides-e2e` est repassé au rouge sur mobile — puis remonté jusqu'à `regleHero: false` dans les feuilles chargées.
+- **Règle que je me redonne** : jamais un `Write` sur un chemin sans l'avoir lu ; l'outil disait « updated », pas « created » — c'était le signal. Restauré avec l'import **et** les métadonnées. `slides-e2e` 14/14, 404 `/site` et `/p` avec titre « Page introuvable », zéro marque Presti hors l'hôte de l'URL de l'image OG.
+
+**Cumul : 6 h 40**
