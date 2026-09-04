@@ -19,3 +19,6 @@ next-env.d.ts
 *.audit.mjs
 .next-prod
 .demo-compte.local
+
+# Secret de webhook Stripe, ecrit par scripts/stripe-verifier.mjs
+.stripe-webhook.local
