@@ -2459,3 +2459,14 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .rch-panne{margin:1rem 0 0;padding:.85rem 1rem;border:1px solid var(--line);border-left:3px solid var(--co,#e08a5a);border-radius:10px;background:rgba(224,138,90,.06);color:var(--ink)}
 .abo-tva{font-size:.72rem;color:var(--muted);margin-top:.15rem}
 .lp-tva{font-size:.72rem;color:var(--muted);margin-top:.2rem}
+
+/* ── Formulaire de contact public (/contact) ── */
+.ct-intro{color:var(--muted);max-width:52ch;margin:.2rem 0 1.6rem}
+.ct-form{display:flex;flex-direction:column;gap:1.05rem;max-width:34rem}
+.ct-champ{display:flex;flex-direction:column;gap:.35rem}
+.ct-champ > span{font-weight:600;font-size:.92rem;color:var(--ink)}
+.ct-champ > em{font-style:normal;font-size:.8rem;color:var(--muted)}
+.ct-form textarea{resize:vertical;min-height:9rem;font-family:inherit}
+.ct-form .btn{align-self:flex-start}
+.ct-ok{margin:0;padding:.7rem .85rem;border-radius:10px;background:rgba(47,130,86,.12);color:var(--ink);font-size:.92rem}
+.ct-err{margin:0;padding:.7rem .85rem;border-radius:10px;border-left:2px solid var(--co,#e08a5a);background:rgba(224,138,90,.1);color:var(--ink);font-size:.92rem}

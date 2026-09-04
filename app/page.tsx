@@ -71,6 +71,7 @@ export default function Home() {
             <a href="#fonctionnalites">Fonctionnalités</a>
             <a href="#tarifs">Tarifs</a>
             <a href="/faq">FAQ</a>
+            <a href="/contact">Nous écrire</a>
           </div>
           <a className="lp-btn lp-btn--g" href="/login">Se connecter</a>
           <a className="lp-btn lp-btn--p" href="/signup">Essayer gratuitement</a>

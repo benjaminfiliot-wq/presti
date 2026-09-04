@@ -16,6 +16,8 @@ const FROM_ADDR = 'contact@prestiapp.fr'
  *  Réglable par variable d'environnement, parce que les ALERTES DE PANNE passent par ici : tant
  *  que la boîte du domaine n'existe pas, elles doivent pouvoir arriver sur une adresse qui, elle,
  *  est relevée. Une alerte envoyée à une boîte inexistante ne prévient personne. */
+const EMAIL_SIMPLE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
 export const EMAIL_ENTREPRISE = process.env.EMAIL_ENTREPRISE?.trim() || 'contact@prestiapp.fr'
 
 // Nettoie un nom d'affichage pour l'en-tête From (pas de retour ligne, guillemets, chevrons).
@@ -72,13 +74,15 @@ export async function sendEmail(opts: {
  * fondateurs). Ne jette jamais : une notification qui échoue ne doit pas casser la route
  * qui l'émet — elle est journalisée, c'est tout.
  */
-export async function notifierEntreprise(sujet: string, corps: string): Promise<SendResult> {
+export async function notifierEntreprise(sujet: string, corps: string, repondreA?: string): Promise<SendResult> {
   try {
     const r = await sendEmail({
       to: EMAIL_ENTREPRISE,
       subject: `[Presti] ${sujet.replace(/[\r\n]/g, ' ').slice(0, 120)}`,
       text: `${corps.slice(0, 4000)}\n\n— Presti (notification automatique)`,
-      replyTo: EMAIL_ENTREPRISE,
+      // Quand la notification vient de QUELQU'UN (formulaire de contact), le bouton Répondre
+      // doit écrire à cette personne, pas à notre propre adresse.
+      replyTo: repondreA && EMAIL_SIMPLE.test(repondreA) ? repondreA : EMAIL_ENTREPRISE,
     })
     if (!r.ok) console.error('[notifierEntreprise]', sujet, '→', r.error)
     return r

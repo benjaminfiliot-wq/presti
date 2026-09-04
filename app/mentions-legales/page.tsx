@@ -25,7 +25,7 @@ export default function MentionsLegales() {
         <div><span className="k">SIREN</span> 109 411 348 (RNE — immatriculée le 1er septembre 2026)</div>
         <div><span className="k">Code APE</span> 6201Z — Programmation informatique</div>
         <div><span className="k">TVA</span> non applicable, art. 293 B du CGI (franchise en base)</div>
-        <div><span className="k">Contact</span> <a href="mailto:contact@prestiapp.fr">contact@prestiapp.fr</a></div>
+        <div><span className="k">Contact</span> <a href="/contact">la page « Nous écrire »</a></div>
         <div><span className="k">Directeur de la publication</span> Benjamin Filiot</div>
       </div>
 
@@ -43,7 +43,7 @@ export default function MentionsLegales() {
       <p>Le traitement des données personnelles est détaillé dans notre <a href="/confidentialite">Politique de confidentialité</a>. Conformément au RGPD, vous disposez de droits d’accès, de rectification et de suppression que vous pouvez exercer à l’adresse ci-dessus.</p>
 
       <h2>Contact</h2>
-      <p>Pour toute question : <a href="mailto:contact@prestiapp.fr">contact@prestiapp.fr</a>.</p>
+      <p>Pour toute question : <a href="/contact">la page « Nous écrire »</a>.</p>
 
       <p style={{ marginTop: '2.4rem' }}><a href="/cgu">Conditions générales</a> · <a href="/confidentialite">Politique de confidentialité</a></p>
     </main>
