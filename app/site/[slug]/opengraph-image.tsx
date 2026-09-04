@@ -21,7 +21,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const reals = Array.isArray(a?.realisations) ? (a!.realisations as { image?: string }[]) : []
   // Une photo réelle si elle existe (jamais une image de décoration inventée) ; sinon la couleur seule.
   const photo = a?.site_active ? (reals.find((r) => r?.image && /^https?:/.test(r.image))?.image || (a?.photo_url && /^https?:/.test(a.photo_url) ? a.photo_url : null)) : null
-  const initiales = (nom || '?').trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? '').join('')
+  const initiales = nom === 'Page introuvable' ? '' : (nom || '?').trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? '').join('')
 
   return new ImageResponse(
     (
@@ -33,7 +33,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
         <div style={{ position: 'absolute', inset: 0, background: photo ? 'linear-gradient(90deg, rgba(20,18,16,.92) 0%, rgba(20,18,16,.55) 60%, rgba(20,18,16,.25) 100%)' : `linear-gradient(135deg, ${accent} 0%, #141210 100%)` }} />
         <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '64px 72px', width: '100%', height: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 22, marginBottom: 28 }}>
-            {a?.logo_url && /^https?:/.test(a.logo_url)
+            {!initiales ? null : a?.logo_url && /^https?:/.test(a.logo_url)
               // eslint-disable-next-line @next/next/no-img-element
               ? <img src={a.logo_url} alt="" width={84} height={84} style={{ width: 84, height: 84, borderRadius: 20, objectFit: 'cover' }} />
               : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 84, height: 84, borderRadius: 20, background: accent, fontSize: 38, fontWeight: 700 }}>{initiales}</div>}

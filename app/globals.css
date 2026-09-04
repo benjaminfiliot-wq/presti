@@ -2348,3 +2348,6 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .devis-infos-rappel .muted{font-size:.84rem;line-height:1.45}
 .devis-infos-manque{font-size:.84rem;font-weight:600;color:var(--crit,#e5735a)}
 .devis-infos-rappel .btn{margin:0;flex:none}
+/* Le style global button{width:100%} ne vaut pas dans les sections de Paramètres : un bouton y a la largeur de son texte. */
+.param-main button.btn,.ava-actions .btn,.param-ligne .btn,.param-grace .btn,.devis-infos-rappel .btn{width:auto}
+.param-main .dz-actions .btn,.abo-deverr .btn{width:100%}

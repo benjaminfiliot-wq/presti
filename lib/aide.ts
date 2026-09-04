@@ -304,7 +304,7 @@ export const ARTICLES: Article[] = [
       'fermer toutes vos autres sessions ouvertes : elles sont réellement invalidées côté serveur, pas seulement ' +
       'oubliées sur l’appareil.',
     commentOnSenSert: [
-      'Saisissez un nouveau mot de passe (8 caractères minimum).',
+      'Saisissez un nouveau mot de passe (10 caractères minimum).',
       'Cliquez « Changer mon mot de passe ».',
       'En cas de doute sur un appareil utilisé, cliquez « Fermer toutes mes sessions ».',
       'Reconnectez-vous : vous êtes désormais le seul connecté.',

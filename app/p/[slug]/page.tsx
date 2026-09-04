@@ -35,7 +35,8 @@ async function getArtisan(slug: string): Promise<Artisan | null> {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const a = await getArtisan(slug)
-  if (!a) return { title: { absolute: 'Page introuvable' }, robots: { index: false } }
+  // Page inexistante : on écrase tout ce que le layout racine fournit (marque Presti).
+  if (!a) return { title: { absolute: 'Page introuvable' }, description: 'Cette page n’existe pas.', applicationName: 'Page introuvable', authors: [], keywords: [], robots: { index: false, follow: false }, alternates: { canonical: undefined }, openGraph: { title: 'Page introuvable', description: 'Cette page n’existe pas.', siteName: ' ' }, twitter: { card: 'summary', title: 'Page introuvable', description: 'Cette page n’existe pas.' } }
   const t = `${a.nom}${a.metier ? ` — ${a.metier}` : ''}`
   const d = a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}. Décrivez votre besoin, réponse rapide.`
   return {

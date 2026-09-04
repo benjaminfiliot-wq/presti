@@ -46,7 +46,9 @@ async function getArtisan(slug: string): Promise<Artisan | null> {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const a = await getArtisan(slug)
-  if (!a) return { title: { absolute: 'Site introuvable' }, robots: { index: false } }
+  // Page inexistante : on écrase TOUT ce que le layout racine fournit (titre, auteur, OG, carte
+  // Twitter « Presti — … »), sinon la 404 d'une surface artisan porte la marque Presti.
+  if (!a) return { title: { absolute: 'Page introuvable' }, description: 'Cette page n’existe pas.', applicationName: 'Page introuvable', authors: [], keywords: [], robots: { index: false, follow: false }, alternates: { canonical: undefined }, openGraph: { title: 'Page introuvable', description: 'Cette page n’existe pas.', siteName: ' ' }, twitter: { card: 'summary', title: 'Page introuvable', description: 'Cette page n’existe pas.' } }
   const t = `${a.nom}${a.metier ? ` — ${a.metier}` : ''}`
   const d = a.site_contenu?.meta_description || a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}.`
   // Un site PUBLIÉ (site_active) est indexable, sauf si l'artisan a coupé le SEO (site_seo=false).

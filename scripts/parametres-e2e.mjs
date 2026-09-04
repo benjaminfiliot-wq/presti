@@ -46,6 +46,8 @@ const migre = sondeSessions.ok
 if (!migre) console.log(`\n⚠️  Migration 0052 absente sur cette base (GET sessions → ${sondeSessions.status}) : sessions, notifications et grâce seront sautées.`)
 
 const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1360, height: 960 } })
+// Pas de visite guidée pendant le test : son voile intercepte les clics.
+await p.addInitScript(() => { try { localStorage.setItem('presti.aide_vues', JSON.stringify(['visite:console'])) } catch {} })
 try {
   console.log('\n── 1. Navigation gauche et anciens liens')
   await p.goto(`${APP}/login`, { waitUntil: 'load' })
@@ -54,6 +56,7 @@ try {
   await p.waitForURL(/dashboard|onboarding|parametres|profil/, { timeout: 20000 }).catch(() => {})
   await p.goto(`${APP}/parametres`, { waitUntil: 'load' })
   await p.waitForSelector('.param-nav', { timeout: 20000 })
+  await p.waitForSelector('.ava-up', { timeout: 20000 })
   const entrees = await p.locator('.param-nav a, .param-nav button').allInnerTexts()
   for (const attendu of ['Profil', 'Entreprise & légal', 'Abonnement & usage', 'Plateforme', 'Site', 'Canaux', 'Apparence', 'Sécurité', 'Données & confidentialité', 'Aide'])
     T(`entrée « ${attendu} »`, entrees.some((e) => e.startsWith(attendu)))
@@ -103,13 +106,20 @@ try {
   const jM = (await connexion(email, pw)).access_token
   const faible = await api('/api/securite/mot-de-passe', jM, { method: 'POST', body: JSON.stringify({ ancien: pw, nouveau: 'azerty123' }) })
   T('mot de passe faible refusé (400 avec explication)', faible.status === 400 && /liste|court|chiffres/i.test((await faible.json()).error || ''))
-  const fuite = await api('/api/securite/mot-de-passe', jM, { method: 'POST', body: JSON.stringify({ ancien: pw, nouveau: 'Chantier2019!' }) })
+  const fuite = await api('/api/securite/mot-de-passe', jM, { method: 'POST', body: JSON.stringify({ ancien: pw, nouveau: 'qwertyuiop1' }) })
   T('mot de passe présent dans les fuites refusé', fuite.status === 400 && /fuites/i.test((await fuite.json()).error || ''))
   const mauvaisAncien = await api('/api/securite/mot-de-passe', jM, { method: 'POST', body: JSON.stringify({ ancien: 'pas-le-bon-du-tout', nouveau: 'brique-lavande-mardi-77' }) })
   T('ancien mot de passe faux → refusé', mauvaisAncien.status === 403)
   const nouveauPw = 'brique-lavande-mardi-77'
-  const bon = await api('/api/securite/mot-de-passe', jM, { method: 'POST', body: JSON.stringify({ ancien: pw, nouveau: nouveauPw }) })
-  T('mot de passe solide accepté', bon.ok, String(bon.status))
+  await p.goto(`${APP}/parametres?onglet=securite`, { waitUntil: 'load' }); await p.waitForSelector('input[autocomplete=current-password]', { timeout: 20000 })
+  await p.fill('input[autocomplete=current-password]', pw); await p.fill('input[autocomplete=new-password]', nouveauPw)
+  await p.waitForFunction(() => !document.querySelector('.mdp-txt')?.textContent?.includes('Vérification'), null, { timeout: 15000 })
+  T('la jauge dit que le mot de passe est bon avant d’envoyer', /Solide|Correct|Accepté/.test(await p.locator('.mdp-txt').innerText()))
+  await p.getByRole('button', { name: /Changer mon mot de passe/ }).click(); await p.waitForSelector('.msg', { timeout: 20000 })
+  T('mot de passe solide accepté depuis la page', /modifié/i.test(await p.locator('.msg').innerText()))
+  if (!migre) S('la page Sécurité liste les sessions', 'migration 0052 non appliquée'); else await p.screenshot({ path: `${OUT}/param-3-securite.png`, fullPage: true })
+  T('la session du navigateur reste ouverte après le changement', (await p.evaluate(async () => (await fetch('/api/donnees?action=site_reinitialiser', { headers: { Authorization: 'Bearer ' + JSON.parse(localStorage.getItem(Object.keys(localStorage).find((k) => k.startsWith('sb-') && k.endsWith('-auth-token')) || '') || '{}').access_token } })).status)) === 200)
+  T('les AUTRES sessions sont fermées par le changement de mot de passe', (await api('/api/securite/mot-de-passe', jM, { method: 'POST', body: JSON.stringify({ ancien: nouveauPw, nouveau: 'x' }) })).status === 401)
   T('l’ancien mot de passe ne connecte plus', !(await connexion(email, pw)).access_token)
   T('le nouveau connecte', !!(await connexion(email, nouveauPw)).access_token)
   if (!migre) S('la session de contrôle n’apparaît pas dans la liste', 'migration 0052 non appliquée'); else {

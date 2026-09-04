@@ -49,10 +49,20 @@ export async function POST(req: Request) {
     if (typeof charge?.session_id === 'string') await supabaseAdmin.rpc('revoquer_session_auth', { p_uid: s.uid, p_session: charge.session_id })
   } catch { /* la session de contrôle expirera d'elle-même */ }
 
-  const { error } = await supabaseAdmin.auth.admin.updateUserById(s.uid, { password: nouveau })
-  if (error) {
-    console.error('[securite/mot-de-passe]', error.message)
+  // Mise à jour AVEC le jeton de l'artisan (PUT /auth/v1/user), pas avec la clé admin :
+  // GoTrue ferme alors toutes ses AUTRES sessions et garde celle-ci. Avec l'API admin, il
+  // fermait tout — y compris la session depuis laquelle l'artisan venait de changer son mot
+  // de passe, qui se retrouvait déconnecté sans comprendre (constaté par le test e2e).
+  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? ''
+  const maj = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`, {
+    method: 'PUT',
+    headers: { apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: nouveau }),
+  })
+  if (!maj.ok) {
+    const d = await maj.json().catch(() => ({})) as { msg?: string; message?: string; error_description?: string }
+    console.error('[securite/mot-de-passe]', maj.status, d.msg || d.message || d.error_description)
     return NextResponse.json({ error: 'Changement impossible pour l’instant.' }, { status: 500 })
   }
-  return NextResponse.json({ ok: true, conseil: force.conseil })
+  return NextResponse.json({ ok: true, conseil: force.conseil, autres_sessions_fermees: true })
 }

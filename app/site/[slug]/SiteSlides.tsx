@@ -33,6 +33,10 @@ export default function SiteSlides({ panneaux, style = 'profondeur', intensite =
     ;(async () => {
       const [{ gsap }, { ScrollTrigger }] = await Promise.all([import('gsap'), import('gsap/ScrollTrigger')])
       if (!vivant) return
+      // Deuxième garde, APRÈS l'import (quelques centaines de ms plus tard) : sur un téléphone,
+      // la largeur de fenêtre peut encore être celle du viewport par défaut au moment du premier
+      // test. Un écran étroit ou tactile ne s'arme jamais.
+      if (innerWidth < 760 || matchMedia('(max-width: 759px)').matches || matchMedia('(pointer: coarse)').matches) return
       gsap.registerPlugin(ScrollTrigger)
       root.classList.add('armed')
       const panels = Array.from(root.querySelectorAll<HTMLElement>('.site-slide'))
