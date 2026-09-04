@@ -169,4 +169,6 @@
 - Reporté et documenté (`apres-demo.md`) : suppression RGPD avec facture émise, `qualifie` toujours vrai, faux positifs anti-fabrication, hero à réordonner.
 - Comptes de test résiduels : 0054 à coller (avec 0055, un seul fichier `_A_COLLER_sql_editor_0054_0055.sql`), puis `node scripts/purger-comptes-test.mjs`.
 
-**Cumul : 15 h 05**
+- 15:40 — Benj a collé 0054 + 0055 : **5 comptes de test purgés** (factures de test comprises), seul `atelier-du-chene` reste ; verrou crédits vérifié par l'effet (tentative `credits = 999999` depuis un jeton navigateur → inchangé), `devis.envoye_le` présente. Base propre pour ce soir.
+
+**Cumul : 15 h 10**
