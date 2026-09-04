@@ -12,8 +12,11 @@
 //    (white-label : la réponse du client ne doit pas atterrir chez l'éditeur).
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const FROM_ADDR = 'contact@prestiapp.fr'
-/** Adresse de l'entreprise : reçoit les réponses aux emails de Presti et les notifications internes. */
-export const EMAIL_ENTREPRISE = 'contact@prestiapp.fr'
+/** Adresse de l'entreprise : reçoit les réponses aux emails de Presti et les notifications internes.
+ *  Réglable par variable d'environnement, parce que les ALERTES DE PANNE passent par ici : tant
+ *  que la boîte du domaine n'existe pas, elles doivent pouvoir arriver sur une adresse qui, elle,
+ *  est relevée. Une alerte envoyée à une boîte inexistante ne prévient personne. */
+export const EMAIL_ENTREPRISE = process.env.EMAIL_ENTREPRISE?.trim() || 'contact@prestiapp.fr'
 
 // Nettoie un nom d'affichage pour l'en-tête From (pas de retour ligne, guillemets, chevrons).
 function fromHeader(name?: string | null): string {
