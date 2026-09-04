@@ -56,11 +56,6 @@ export async function POST(req: Request) {
     if (!(await consommerLimite(`recherche:${a.uid}`, LIMITE_PAR_HEURE, 3600))) {
       return NextResponse.json({ error: `Vous avez lancé ${LIMITE_PAR_HEURE} recherches dans l’heure — c’est la limite. Réessayez un peu plus tard.` }, { status: 429 })
     }
-    if (!(await consommerLimite(`recherche-jour:${a.uid}`, LIMITE_PAR_JOUR, 86_400))) {
-      return NextResponse.json({ error: `Vous avez lancé ${LIMITE_PAR_JOUR} recherches aujourd’hui — c’est la limite quotidienne. Elle repart demain.` }, { status: 429 })
-    }
-    if (!(await consommerLimite(`recherche-mois:${a.uid}`, LIMITE_PAR_MOIS, 30 * 86_400)))
-      return NextResponse.json({ error: `Vous avez lancé ${LIMITE_PAR_MOIS} recherches ce mois-ci — c’est la limite. Écrivez-nous s’il vous en faut plus.` }, { status: 429 })
 
     const { model, tier, downgraded } = resolveModel(typeof b.tier === 'string' ? b.tier : undefined, a.plan)
     // Aucun fournisseur à prix publics → aucun appel, aucun crédit : on répond « non vus » tout de suite.
@@ -83,8 +78,14 @@ export async function POST(req: Request) {
     })
     // Payant seulement si le moteur a vraiment appelé le service, et seulement s'il a abouti :
     // une panne ne se facture pas.
+    // Les plafonds quotidien et mensuel bornent une DÉPENSE : ils ne se consomment donc que
+    // lorsqu'un appel payant a réellement eu lieu. Une réponse servie par le cache est gratuite
+    // pour nous, elle ne doit rien entamer — sinon l'artisan serait puni de chercher souvent,
+    // alors que c'est précisément ce qui remplit le cache.
     let creditsUtilises = 0
     if (sortie.appels > 0 && !sortie.panne) {
+      void consommerLimite(`recherche-jour:${a.uid}`, LIMITE_PAR_JOUR, 86_400)
+      void consommerLimite(`recherche-mois:${a.uid}`, LIMITE_PAR_MOIS, 30 * 86_400)
       const credit = await consumeCredit(a.uid, tier, a.isFounder, cout)
       if (credit.ok) creditsUtilises = a.isFounder ? 0 : cout
     }

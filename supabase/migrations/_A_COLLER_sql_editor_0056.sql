@@ -65,8 +65,12 @@ create table if not exists public.recherche_cache (
   primary key (requete_norm, domaine, version),
   -- Une clé mal normalisée ne casse rien visiblement : elle rate simplement, toujours. Ces
   -- contraintes transforment un bogue silencieux en erreur immédiate.
+  -- Bornée court À DESSEIN : cette table est lue pour d'AUTRES comptes, et la requête est un
+  -- champ libre. « ba13 chantier mme dupont 12 rue des lilas » n'y entre jamais. Le code applique
+  -- la même règle (clePartageable) ; la contrainte est le filet.
   constraint recherche_cache_requete_propre check (
-    length(requete_norm) between 1 and 300
+    length(requete_norm) between 2 and 80
+    and coalesce(array_length(string_to_array(requete_norm, ' '), 1), 1) <= 8
     and requete_norm = lower(requete_norm)
     and requete_norm not like '  %'
     and btrim(requete_norm) = requete_norm

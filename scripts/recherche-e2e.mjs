@@ -116,7 +116,7 @@ try {
   // TEST_TIER=pro valide aussi la lecture séparée par Sonnet (2 appels au lieu d'1).
   const { model, tier } = resolveModel(process.env.TEST_TIER || 'standard', 'studio')
   const t0 = Date.now()
-  const vraie = await rechercherChezFournisseurs({ artisanId: studio.uid, requete: 'plaque de plâtre BA13', quantite: 10, fournisseurs: [CASTO, BRICO, REXEL], tier, model })
+  const vraie = await rechercherChezFournisseurs({ artisanId: studio.uid, requete: 'plaque de plâtre BA13', quantite: 10, fournisseurs: [CASTO, BRICO, REXEL], tier, model, sansCache: true })
   const duree = Date.now() - t0
   console.log(`     ${vraie.resultats.length} résultat(s) en ${Math.round(duree / 1000)} s, ${vraie.appels} appel(s) API, modèle ${vraie.model}`)
   for (const r of vraie.resultats) console.log(`     · ${r.fournisseur} — ${r.designation_vue} — ${r.prix_vu} € ${r.ht_ou_ttc} — ${r.url}\n       « ${r.extrait} »`)

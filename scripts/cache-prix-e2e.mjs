@@ -16,7 +16,7 @@ for (const l of fs.readFileSync('.env.local', 'utf8').split('\n')) {
   if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '')
 }
 
-const { normaliserRequete, DOMAINES_PARTAGEABLES, domainePartageable, lireCache, ecrireCache, HEURES_VALIDITE, VERSION_CACHE } =
+const { normaliserRequete, clePartageable, DOMAINES_PARTAGEABLES, domainePartageable, lireCache, ecrireCache, HEURES_VALIDITE, VERSION_CACHE } =
   await import('../lib/inventaire/cachePrix.ts')
 const { sceller, sceauValide } = await import('../lib/recherche-fournisseurs.ts')
 const { COUT_RECHERCHE, CREDIT_COST } = await import('../lib/plans.ts')
@@ -41,6 +41,12 @@ T('un site à prix masqués n’est PAS partageable', !DOMAINES_PARTAGEABLES.has
 T('un domaine inventé par un artisan n’est pas partageable', !domainePartageable('https://mes-prix-a-moi.example'))
 T('le « www. » ne trompe pas la liste blanche', domainePartageable('https://www.castorama.fr/un-produit'))
 T('une URL vide n’est pas partageable', !domainePartageable(null) && !domainePartageable(''))
+console.log('\n── 2 bis. Ce qui ne se partage JAMAIS : le contexte de chantier')
+T('une désignation courte se partage', clePartageable(normaliserRequete('plaque de platre ba13')))
+T('une requête qui nomme un client ne se partage pas', !clePartageable(normaliserRequete('BA13 chantier Mme Dupont 12 rue des Lilas La Rochelle')))
+T('une requête de plus de huit mots ne se partage pas', !clePartageable(normaliserRequete('un deux trois quatre cinq six sept huit neuf')))
+T('une requête vide ne se partage pas', !clePartageable(''))
+
 
 console.log('\n── 3. Le sceau est refait pour l’artisan qui lit')
 const A = '11111111-1111-4111-8111-111111111111'
@@ -62,6 +68,10 @@ T('la date d’origine traverse le re-scellement sans être réécrite', pourB.v
 const menteur = { ...baseB, vu_le: new Date().toISOString() }
 T('re-dater change le sceau : une date fausse ne peut pas se faire passer pour l’ancienne',
   sceller(B, menteur) !== sceller(B, baseB))
+let jete = false
+try { sceauValide(A, { ...base, sceau: 'é'.repeat(64) }) } catch { jete = true }
+T('un sceau non-ASCII est refusé proprement, sans erreur de service', !jete)
+
 
 console.log('\n── 4. Le tarif')
 T('une recherche coûte plus qu’une génération de texte', COUT_RECHERCHE.standard > CREDIT_COST.standard)

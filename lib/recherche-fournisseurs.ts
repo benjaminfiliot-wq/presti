@@ -11,15 +11,19 @@ import { resolveModel, type Tier } from '@/lib/models'
 // L'équivalent d'un employé qui ouvre trois onglets et note ce qu'il voit : l'assistant
 // cherche (`web_search`, borné aux domaines des fournisseurs cochés), ouvre les fiches
 // produit (`web_fetch`), et rapporte — fournisseur, désignation, prix TEL QU'AFFICHÉ,
-// lien direct, extrait cité. Rien n'est stocké ici : l'artisan valide ensuite (route
-// `/recherche/retenir`), ou pas.
+// lien direct, extrait cité. Rien n'entre dans les données de l'artisan sans son clic
+// « Retenir » (route `/recherche/retenir`).
 //
 // Anti-fabrication absolue : un prix n'est retenu que s'il figure dans l'extrait ET dans le
 // texte des pages réellement récupérées par l'outil serveur. Sinon il n'existe pas, et le
 // fournisseur passe dans « ce que je n'ai pas pu voir » — dit franchement, jamais comblé.
 //
-// Juridique (plan §8) : pages publiques, à la demande, pour CET artisan ; les outils serveur
-// d'Anthropic respectent robots.txt ; aucune base mutualisée n'est constituée.
+// Juridique (plan §8) : pages publiques, à la demande ; les outils serveur d'Anthropic
+// respectent robots.txt. Depuis la migration 0056, les prix PUBLICS relevés chez trois enseignes
+// vérifiées à la main sont mis en commun 72 h entre artisans (`lib/inventaire/cachePrix.ts`) :
+// cela DIVISE le nombre de visites faites à ces sites au lieu de le multiplier. N'y entrent ni
+// le nom que l'artisan donne à ses fournisseurs, ni ses tarifs négociés, ni ses requêtes longues
+// (une désignation courte seulement, jamais un contexte de chantier).
 
 export type HtOuTtc = 'HT' | 'TTC' | 'inconnu'
 
@@ -63,6 +67,9 @@ export type SortieRecherche = {
 }
 
 export type EntreeRecherche = {
+  /** Forcer une lecture fraîche : ignorer le cache mutualisé et aller voir maintenant. Sert aux
+   *  tests, et à un artisan qui veut revérifier un prix qu'il juge dépassé. */
+  sansCache?: boolean
   artisanId: string
   requete: string
   quantite?: number | null
@@ -95,9 +102,12 @@ export function sceller(artisanId: string, r: Scellable): string {
   return crypto.createHmac('sha256', cleSceau()).update(`${artisanId}\n${corps}`).digest('hex')
 }
 export function sceauValide(artisanId: string, r: Scellable & { sceau?: unknown }): boolean {
-  const attendu = sceller(artisanId, r)
-  const recu = String(r.sceau ?? '')
-  return recu.length === attendu.length && crypto.timingSafeEqual(Buffer.from(recu), Buffer.from(attendu))
+  const attendu = Buffer.from(sceller(artisanId, r), 'utf8')
+  // Comparer les OCTETS, pas les caractères : 64 lettres accentuées font 128 octets, et
+  // `timingSafeEqual` jette alors au lieu de répondre « faux ». Un sceau invalide doit être
+  // refusé proprement, jamais provoquer une erreur de service.
+  const recu = Buffer.from(String(r.sceau ?? ''), 'utf8')
+  return recu.length === attendu.length && crypto.timingSafeEqual(recu, attendu)
 }
 
 // ── Vérification « le montant est bien dans le texte » ──────────────────────────
@@ -173,6 +183,9 @@ export type Cadre = {
 export function validerSortie(brute: SortieBrute | null, cadre: Cadre): { resultats: ResultatRecherche[]; nonVus: NonVu[]; rejets: string[] } {
   const resultats: ResultatRecherche[] = []
   const nonVus: NonVu[] = []
+  // Vrai si le plafond de résultats a coupé l'examen : les sites non atteints ne peuvent alors
+  // PAS être présentés comme « rien trouvé » — ils n'ont pas été regardés.
+  let tronque = false
   const rejets: string[] = []
   const vus = new Set<string>()
   const parNom = (nom: string) => cadre.interrogeables.find((i) => i.f.nom.toLowerCase() === nom.toLowerCase()) ?? cadre.interrogeables.find((i) => nom.toLowerCase().includes(i.f.nom.toLowerCase()) || i.f.nom.toLowerCase().includes(nom.toLowerCase()))
@@ -193,7 +206,7 @@ export function validerSortie(brute: SortieBrute | null, cadre: Cadre): { result
     if (!prix || !extrait || !designation) { rejets.push(`${i.f.nom} : prix, extrait ou désignation manquant`); continue }
     if (!prixDansTexte(prix, extrait)) { rejets.push(`${i.f.nom} : le montant ${prix} n’est pas dans l’extrait cité`); continue }
     if (cadre.pages.size > 0 && !prixDansTexte(prix, corpus)) { rejets.push(`${i.f.nom} : le montant ${prix} n’apparaît dans aucune page récupérée`); continue }
-    if (resultats.length >= MAX_RESULTATS) break
+    if (resultats.length >= MAX_RESULTATS) { tronque = true; break }
     const ht = String(b.ht_ou_ttc ?? '').toUpperCase()
     const base: Scellable = {
       fournisseur: i.f.nom, fournisseur_id: i.f.id,
@@ -216,7 +229,9 @@ export function validerSortie(brute: SortieBrute | null, cadre: Cadre): { result
   // Un fournisseur coché sans résultat ni explication : on le dit aussi.
   for (const i of cadre.interrogeables) {
     if (vus.has(i.f.id) || nonVus.some((x) => x.fournisseur_id === i.f.id)) continue
-    nonVus.push({ fournisseur: i.f.nom, fournisseur_id: i.f.id, raison: 'aucune fiche produit avec un prix lisible n’a été trouvée pour cette recherche' })
+    nonVus.push({ fournisseur: i.f.nom, fournisseur_id: i.f.id, raison: tronque
+      ? 'la recherche s’est arrêtée avant d’arriver jusqu’à ce site — relancez avec moins de fournisseurs cochés'
+      : 'aucune fiche produit avec un prix lisible n’a été trouvée pour cette recherche' })
   }
   return { resultats, nonVus, rejets }
 }
@@ -440,7 +455,7 @@ export async function rechercherChezFournisseurs(e: EntreeRecherche): Promise<So
     if (f.prix_publics && d && DOMAINES_PARTAGEABLES.has(d) && !parDomaine.has(d)) parDomaine.set(d, f)
   }
 
-  const cache = parDomaine.size ? await lireCache(e.requete, [...parDomaine.keys()]) : new Map()
+  const cache = parDomaine.size && !e.sansCache ? await lireCache(e.requete, [...parDomaine.keys()]) : new Map()
   const resultatsCache: ResultatRecherche[] = []
   const nonVusCache: NonVu[] = []
   const domainesServis: string[] = []
@@ -458,7 +473,14 @@ export async function rechercherChezFournisseurs(e: EntreeRecherche): Promise<So
   }
   if (domainesServis.length) marquerHits(e.requete, domainesServis)
 
-  const restants = e.fournisseurs.filter((f) => !servis.has(f.id))
+  // Exclure par DOMAINE et non par fiche : un artisan peut avoir deux fiches sur le même site
+  // (« Casto Marans » et « Casto La Rochelle »). Filtrer sur l'identifiant en laissait passer une,
+  // qui refaisait payer une lecture déjà servie par le cache.
+  const domainesServisSet = new Set(domainesServis)
+  const restants = e.fournisseurs.filter((f) => {
+    const d = domaineDe(f.url)
+    return !(d && domainesServisSet.has(d))
+  })
   const journalCache = domainesServis.length ? [`cache : ${domainesServis.join(', ')} servis sans appel`] : []
 
   // Tout était déjà connu : aucune requête, aucun crédit, réponse immédiate.
@@ -479,14 +501,7 @@ export async function rechercherChezFournisseurs(e: EntreeRecherche): Promise<So
       const d = domaineDe(f.url)
       if (!d || !DOMAINES_PARTAGEABLES.has(d) || parDom.has(d)) continue
       parDom.set(d, { domaine: d, prixPublics: f.prix_publics === true, resultats: [], raisonNonVu: null })
-      const sien = direct.resultats.filter((r) => domaineDe(r.url) === d)
-      parDom.get(d)!.resultats = sien
-      if (!sien.length) {
-        const nv = direct.nonVus.find((n) => n.fournisseur_id === f.id)
-        // Une absence n'est rangée que si le fournisseur a VRAIMENT été consulté : un « non vu »
-        // parce que le site demande un compte ne dit rien sur le produit cherché.
-        parDom.get(d)!.raisonNonVu = nv && f.prix_publics === true ? nv.raison : null
-      }
+      parDom.get(d)!.resultats = direct.resultats.filter((r) => domaineDe(r.url) === d)
     }
     const aRanger = [...parDom.values()].filter((x) => x.resultats.length || x.raisonNonVu)
     if (aRanger.length) void ecrireCache(e.requete, aRanger, e.tier)

@@ -60,6 +60,18 @@ export function normaliserRequete(s: string): string {
     .trim()
 }
 
+/** Au-delà, ce n'est plus une désignation de matériau mais du contexte de chantier — donc
+ *  potentiellement le nom ou l'adresse d'un client. Ces requêtes-là ne sont jamais partagées. */
+export const LONGUEUR_MAX_PARTAGE = 80
+export const MOTS_MAX_PARTAGE = 8
+
+/** Une clé peut-elle être mise en commun ? Contrôlé à la lecture ET à l'écriture : c'est la
+ *  frontière entre « information publique sur un produit » et « ce que cet artisan prépare ». */
+export function clePartageable(cle: string): boolean {
+  if (!cle || cle.length > LONGUEUR_MAX_PARTAGE) return false
+  return cle.split(' ').filter(Boolean).length <= MOTS_MAX_PARTAGE
+}
+
 /** Ce qu'on garde d'un résultat : tout sauf ce qui appartient à l'artisan (le nom qu'il a donné
  *  au fournisseur, l'identifiant de SA fiche) et sauf le sceau, recalculé à chaque lecture. */
 export type ResultatEnCache = Omit<ResultatRecherche, 'fournisseur' | 'fournisseur_id' | 'sceau'>
@@ -85,7 +97,7 @@ export async function lireCache(requete: string, domaines: string[]): Promise<Ma
   const trouves = new Map<string, EntreeCache>()
   const cle = normaliserRequete(requete)
   const partageables = domaines.filter((d) => DOMAINES_PARTAGEABLES.has(d))
-  if (!cle || !partageables.length) return trouves
+  if (!clePartageable(cle) || !partageables.length) return trouves
   try {
     const { data, error } = await supabaseAdmin
       .from('recherche_cache')
@@ -122,7 +134,7 @@ export async function ecrireCache(
   tierSource: string,
 ): Promise<number> {
   const cle = normaliserRequete(requete)
-  if (!cle) return 0
+  if (!clePartageable(cle)) return 0
   const maintenant = new Date()
   const expire = new Date(maintenant.getTime() + HEURES_VALIDITE * 3_600_000).toISOString()
   const lignes = entrees
@@ -154,7 +166,7 @@ export async function ecrireCache(
  *  sur des faits plutôt que sur une intuition. */
 export function marquerHits(requete: string, domaines: string[]): void {
   const cle = normaliserRequete(requete)
-  if (!cle || !domaines.length) return
+  if (!clePartageable(cle) || !domaines.length) return
   void supabaseAdmin
     .rpc('incrementer_hits_cache', { p_requete: cle, p_domaines: domaines, p_version: VERSION_CACHE })
     .then(({ error }) => { if (error) console.error('[cachePrix] hits:', error.message) })
