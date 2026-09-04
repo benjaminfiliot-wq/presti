@@ -13,7 +13,7 @@ import { createClient } from '@supabase/supabase-js'
 import { resolveStyle, styleToCss, styleToData, STYLE_DEFAUT, COUPLES, PRESETS_METIER } from '../lib/siteStyle.ts'
 import { contrastRatio, niveauWCAG } from '../lib/contrast.ts'
 
-for (const l of fs.readFileSync('.env.local', 'utf8').split('\n')) {
+for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
   if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '')
 }

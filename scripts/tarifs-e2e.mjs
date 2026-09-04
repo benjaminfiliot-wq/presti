@@ -16,7 +16,7 @@ import { createClient } from '@supabase/supabase-js'
 import { lireCsv, lirePrix } from '../lib/prix/csv.ts'
 import { sourceLigneValide, libelleSource } from '../lib/prix/types.ts'
 
-for (const l of fs.readFileSync('.env.local', 'utf8').split('\n')) {
+for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
   if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '')
 }

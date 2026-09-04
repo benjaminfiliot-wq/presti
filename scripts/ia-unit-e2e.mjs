@@ -12,7 +12,7 @@
 // Usage : node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/ia-unit-e2e.mjs
 import fs from 'node:fs'
 
-if (fs.existsSync('.env.local')) for (const l of fs.readFileSync('.env.local', 'utf8').split('\n')) {
+if (fs.existsSync('.env.local')) for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
   if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '')
 }
