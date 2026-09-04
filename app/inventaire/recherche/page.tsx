@@ -41,7 +41,7 @@ export default function RecherchePage() {
   const [busy, setBusy] = useState(false)
   const [resultats, setResultats] = useState<ResultatRecherche[] | null>(null)
   const [nonVus, setNonVus] = useState<NonVu[]>([])
-  const [derniere, setDerniere] = useState<{ requete: string; tier: Tier; duree_ms: number; downgraded: boolean } | null>(null)
+  const [derniere, setDerniere] = useState<{ requete: string; tier: Tier; duree_ms: number; downgraded: boolean; panne?: 'service' | 'delai' } | null>(null)
   const [tri, setTri] = useState<Tri>('prix')
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
   const [retenue, setRetenue] = useState<Retenue | null>(null)
@@ -96,7 +96,7 @@ export default function RecherchePage() {
     if (!r.ok) { setMsg({ type: 'err', text: d.error ?? 'La recherche n’a pas abouti.' }); return }
     setResultats(d.resultats ?? [])
     setNonVus(d.nonVus ?? [])
-    setDerniere({ requete: q, tier: d.tier, duree_ms: d.duree_ms, downgraded: !!d.downgraded })
+    setDerniere({ requete: q, tier: d.tier, duree_ms: d.duree_ms, downgraded: !!d.downgraded, panne: d.panne })
   }
 
   const tries = useMemo(() => {
@@ -225,7 +225,7 @@ export default function RecherchePage() {
         {resultats && !busy ? (
           <div className="tool-card">
             <div className="rch-entete">
-              <h2>{resultats.length ? `${resultats.length} prix vu${resultats.length > 1 ? 's' : ''}` : 'Aucun prix vu'} <span className="muted">pour « {derniere?.requete} »</span></h2>
+              <h2>{resultats.length ? `${resultats.length} prix vu${resultats.length > 1 ? 's' : ''}` : derniere?.panne ? 'Recherche interrompue' : 'Aucun prix vu'} <span className="muted">pour « {derniere?.requete} »</span></h2>
               <div className="sa-pills" role="group" aria-label="Trier">
                 {([['prix', 'Prix'], ['dispo', 'Disponibilité'], ['preference', 'Préférence']] as [Tri, string][]).map(([k, l]) => (
                   <button key={k} type="button" className={`sa-pill${tri === k ? ' on' : ''}`} onClick={() => setTri(k)}>{l}</button>
@@ -237,7 +237,17 @@ export default function RecherchePage() {
             </p>
 
             {resultats.length === 0 ? (
-              <p className="muted" style={{ margin: '1rem 0 0' }}>Rien de lisible avec un prix sur les sites cochés. Reformulez (désignation plus courante, référence), ou regardez « ce que je n’ai pas pu voir » ci-dessous.</p>
+              derniere?.panne === 'service' ? (
+                <p className="rch-panne" style={{ margin: '1rem 0 0' }}>
+                  <b>Le service de recherche n’a pas répondu.</b> Ce ne sont pas vos fournisseurs : la recherche n’a pas pu être lancée. Réessayez dans un moment.
+                </p>
+              ) : derniere?.panne === 'delai' ? (
+                <p className="rch-panne" style={{ margin: '1rem 0 0' }}>
+                  <b>La recherche a dépassé le temps imparti.</b> Relancez en cochant moins de fournisseurs, ou avec une désignation plus courte.
+                </p>
+              ) : (
+                <p className="muted" style={{ margin: '1rem 0 0' }}>Rien de lisible avec un prix sur les sites cochés. Reformulez (désignation plus courante, référence), ou regardez « ce que je n’ai pas pu voir » ci-dessous.</p>
+              )
             ) : (
               <table className="tar-table full rch-table">
                 <thead><tr><th>Fournisseur</th><th>Ce qui a été vu</th><th className="num">Prix vu</th><th>Dispo</th><th>Actions</th></tr></thead>

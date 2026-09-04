@@ -23,6 +23,12 @@ export const maxDuration = 60
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const LIMITE_PAR_HEURE = 20
+// Plafonds DURS (coût réel : ~0,20 à 0,50 € par recherche en tokens, contre 0,17 à 0,24 € le
+// crédit). Sans eux, un seul artisan pouvait lancer 480 recherches par jour — plusieurs milliers
+// d'euros d'API par mois pour un abonnement à 59 €. Ils s'appliquent AUSSI aux comptes fondateur,
+// qui ne consomment pas de crédits : c'est justement là que la dérive était invisible.
+const LIMITE_PAR_JOUR = 30
+const LIMITE_PAR_MOIS = 200
 
 export async function POST(req: Request) {
   try {
@@ -50,6 +56,11 @@ export async function POST(req: Request) {
     if (!(await consommerLimite(`recherche:${a.uid}`, LIMITE_PAR_HEURE, 3600))) {
       return NextResponse.json({ error: `Vous avez lancé ${LIMITE_PAR_HEURE} recherches dans l’heure — c’est la limite. Réessayez un peu plus tard.` }, { status: 429 })
     }
+    if (!(await consommerLimite(`recherche-jour:${a.uid}`, LIMITE_PAR_JOUR, 86_400))) {
+      return NextResponse.json({ error: `Vous avez lancé ${LIMITE_PAR_JOUR} recherches aujourd’hui — c’est la limite quotidienne. Elle repart demain.` }, { status: 429 })
+    }
+    if (!(await consommerLimite(`recherche-mois:${a.uid}`, LIMITE_PAR_MOIS, 30 * 86_400)))
+      return NextResponse.json({ error: `Vous avez lancé ${LIMITE_PAR_MOIS} recherches ce mois-ci — c’est la limite. Écrivez-nous s’il vous en faut plus.` }, { status: 429 })
 
     const { model, tier, downgraded } = resolveModel(typeof b.tier === 'string' ? b.tier : undefined, a.plan)
     // Aucun fournisseur à prix publics → aucun appel, aucun crédit : on répond « non vus » tout de suite.
@@ -63,7 +74,7 @@ export async function POST(req: Request) {
       artisanId: a.uid, requete, quantite: Number.isFinite(quantite) && quantite > 0 ? Math.min(quantite, 100_000) : null,
       fournisseurs, tier, model,
     })
-    return NextResponse.json({ ok: true, resultats: sortie.resultats, nonVus: sortie.nonVus, tier: sortie.tier, downgraded, duree_ms: sortie.duree_ms, requete })
+    return NextResponse.json({ ok: true, resultats: sortie.resultats, nonVus: sortie.nonVus, tier: sortie.tier, downgraded, duree_ms: sortie.duree_ms, requete, ...(sortie.panne ? { panne: sortie.panne } : {}) })
   } catch (e) {
     console.error('[inventaire/recherche] POST:', e)
     return NextResponse.json({ error: 'L’assistant n’a pas pu terminer la recherche. Réessayez, ou avec moins de fournisseurs.' }, { status: 500 })

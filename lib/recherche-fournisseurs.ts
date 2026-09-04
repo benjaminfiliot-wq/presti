@@ -55,6 +55,8 @@ export type SortieRecherche = {
   appels: number
   /** Trace serveur (pages ouvertes, erreurs d'outil, rejets) — pour les journaux, jamais rendue au client. */
   journal: string[]
+  /** Le service n'a pas répondu (solde d'API, coupure) ou a dépassé son temps — ce n'est pas « aucun prix trouvé ». */
+  panne?: 'service' | 'delai'
 }
 
 export type EntreeRecherche = {
@@ -73,7 +75,7 @@ export type EntreeRecherche = {
 export const MAX_RESULTATS = 6
 const BUDGET_MS_DEFAUT = 50_000
 const MAX_REPRISES = 3
-const MAX_FETCH = 8
+const MAX_FETCH = 4 // 8 auparavant : les pages s'empilent dans le contexte à chaque tour (242 000 tokens mesurés)
 
 // ── Sceau ───────────────────────────────────────────────────────────────────────
 // Clé dérivée d'un secret serveur : un client ne peut pas se fabriquer un résultat « vu par
@@ -225,8 +227,8 @@ export function validerSortie(brute: SortieBrute | null, cadre: Cadre): { result
 const modeleRecent = (model: string) => /claude-(opus|sonnet|fable)-(5($|-)|4-[6-9])/.test(model)
 function outilsPour(domaines: string[]) {
   return [
-    { type: 'web_search_20250305' as const, name: 'web_search' as const, allowed_domains: domaines, max_uses: Math.min(8, 2 * domaines.length + 1), user_location: { type: 'approximate' as const, country: 'FR', timezone: 'Europe/Paris' } },
-    { type: 'web_fetch_20250910' as const, name: 'web_fetch' as const, allowed_domains: domaines, max_uses: MAX_FETCH, max_content_tokens: 12_000 },
+    { type: 'web_search_20250305' as const, name: 'web_search' as const, allowed_domains: domaines, max_uses: Math.min(4, domaines.length + 1), user_location: { type: 'approximate' as const, country: 'FR', timezone: 'Europe/Paris' } },
+    { type: 'web_fetch_20250910' as const, name: 'web_fetch' as const, allowed_domains: domaines, max_uses: MAX_FETCH, max_content_tokens: 6_000 },
   ]
 }
 /** Pro/Expert (lecture) : thinking adaptatif (genParams) mais effort bas — c'est de la lecture, pas du raisonnement, et le budget est de 50 s. */
@@ -322,9 +324,12 @@ export async function rechercherChezFournisseurs(e: EntreeRecherche): Promise<So
     if (!domaine) { nonVus.push({ fournisseur: f.nom, fournisseur_id: f.id, raison: 'aucune adresse de site sur la fiche fournisseur' }); continue }
     interrogeables.push({ f, domaine })
   }
+  // Déclarée AVANT `fini` : cette fonction la lit, et elle est appelée dès la ligne suivante
+  // (aucun fournisseur interrogeable) — une déclaration plus bas plantait en zone morte.
+  let panne: 'service' | 'delai' | null = null
   const requete = e.requete.trim().slice(0, 300)
   const fini = (resultats: ResultatRecherche[], nv: NonVu[], appels: number): SortieRecherche =>
-    ({ resultats, nonVus: [...nonVus, ...nv], tier: e.tier, model: e.model, duree_ms: Date.now() - debut, appels, journal })
+    ({ resultats, nonVus: [...nonVus, ...nv], tier: e.tier, model: e.model, duree_ms: Date.now() - debut, appels, journal, ...(panne ? { panne } : {}) })
   if (!interrogeables.length || !requete) return fini([], [], 0)
   const tousNonVus = (raison: string) => interrogeables.map((i) => ({ fournisseur: i.f.nom, fournisseur_id: i.f.id, raison }))
 
@@ -346,6 +351,10 @@ export async function rechercherChezFournisseurs(e: EntreeRecherche): Promise<So
     const a = await appeler({ ...parametres(MODELE_NAVIGATION), system: promptSysteme(interrogeables, e.quantite, 'outils'), tools, messages }, dispo)
     if ('erreur' in a) {
       journal.push(`navigation ✗ ${a.erreur}`)
+      // Le service lui-même est en panne (solde d'API épuisé, clé invalide, coupure) : ce n'est
+      // PAS « les fournisseurs n'ont rien ». L'écran doit le dire, sinon l'artisan croit que
+      // ses fournisseurs n'affichent pas de prix et recommence pour rien.
+      panne = a.delai ? 'delai' : /credit balance|rate_limit|authentication|invalid x-api-key|overloaded|billing/i.test(a.erreur) ? 'service' : 'service'
       console.error('[recherche-fournisseurs]', journal[journal.length - 1])
       return fini([], tousNonVus(a.delai ? 'l’assistant n’a pas terminé sa lecture dans le temps imparti (50 s) — relancez avec moins de fournisseurs cochés' : 'le service de recherche n’a pas répondu — réessayez dans un instant'), appels)
     }
