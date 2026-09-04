@@ -37,14 +37,38 @@ const realisations = PORTFOLIO.map((p) => ({ image: `/demo/portfolio/${p.fichier
 let uid = null
 const email = GARDER ? 'demo-menuisier@presti-test.invalid' : `demo-captures-${Date.now()}@presti-test.invalid`
 const mdp = crypto.randomBytes(18).toString('base64url')
+const slug = GARDER ? 'atelier-du-chene' : `demo-${Date.now()}`
 try {
   // ── Le compte de démonstration : un menuisier, offre Signature, profil légal complet
   //    (sinon l'envoi du devis est bloqué par les mentions obligatoires — et c'est voulu).
-  const { data: u, error } = await admin.auth.admin.createUser({ email, password: mdp, email_confirm: true })
-  if (error) throw new Error('compte : ' + error.message)
-  uid = u.user.id
-  const slug = GARDER ? 'atelier-du-chene' : `demo-${Date.now()}`
-  await admin.from('artisans').insert({
+  // Compte conservé : s'il existe déjà (exécution précédente), on le RÉUTILISE — mot de passe renouvelé,
+  // conversations/devis remis à zéro. On ne le supprime pas : une facture émise est conservée 10 ans
+  // (trigger factures_conservees) et bloque la suppression ; voir 0054 pour la purge des comptes de test.
+  if (GARDER) {
+    const { data: anciens } = await admin.from('artisans').select('id, email').or(`email.eq.${email},slug.eq.${slug}`)
+    for (const a of anciens ?? []) {
+      const ls0 = (await admin.from('leads').select('id').eq('artisan_id', a.id)).data ?? []
+      for (const l of ls0) await admin.from('messages').delete().eq('lead_id', l.id)
+      const dv0 = (await admin.from('devis').select('id').eq('artisan_id', a.id)).data?.map((d) => d.id) ?? []
+      if (dv0.length) await admin.from('devis_lignes').delete().in('devis_id', dv0)
+      for (const t of ['devis', 'leads', 'regles_automatisation', 'plateforme_config']) await admin.from(t).delete().eq('artisan_id', a.id)
+      if (a.email === email) {
+        uid = a.id
+        const { error: e2 } = await admin.auth.admin.updateUserById(uid, { password: mdp, email_confirm: true })
+        if (e2) throw new Error('mot de passe : ' + e2.message)
+        log('♻️ compte de démonstration réutilisé (mot de passe renouvelé)')
+      } else {
+        await admin.from('artisans').delete().eq('id', a.id)
+        await admin.auth.admin.deleteUser(a.id).catch(() => {})
+      }
+    }
+  }
+  if (!uid) {
+    const { data: u, error } = await admin.auth.admin.createUser({ email, password: mdp, email_confirm: true })
+    if (error) throw new Error('compte : ' + error.message)
+    uid = u.user.id
+  }
+  await admin.from('artisans').upsert({
     id: uid, email, nom: 'Atelier du Chêne', metier: 'Menuisier', slug, plan: 'signature', credits: 600,
     ville: 'Marans', zone_intervention: 'La Rochelle et alentours', tel_public: '05 46 00 00 00', email_public: email,
     bio: 'Menuiserie sur mesure : escaliers, bibliothèques, cuisines et dressings en bois massif.',

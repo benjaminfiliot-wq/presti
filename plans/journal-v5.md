@@ -140,3 +140,12 @@
 - **Décisions Benj** : vidéo HyperFrames et 2FA dans le sprint (SA10 lancé sur la 2FA) ; boîte OVH et DMARC après.
 
 **Cumul : 10 h 55**
+
+## [T3] Scène 4 déterministe + captures complètes + 0053 — 11:00 → 11:35 (35 min) — ✅ 5 captures, compte démo en cours
+- `after()` derrière une réponse en streaming ne s'exécutait pas de façon fiable sur Vercel → la règle ne partait pas. **Correctif : route dédiée `/api/conversation/regles`** (POST `{token}`, 6 appels/h par conversation, idempotente : un seul devis par conversation grâce à l'index unique), appelée par le navigateur du client une fois la réponse terminée (stream, non-stream, premier message). Déployé `97b305e`.
+- Second défaut, révélé par la première capture réussie : le type de chantier est détecté dès le premier message → la règle crée le devis **avant** que le client ait laissé son email → envoi refusé (400). **Correctif : à l'envoi, le devis reprend le contact de la conversation** (uniquement si c'est un email) ; et les coordonnées laissées par le client sont propagées aux devis rattachés qui n'en ont pas. Déployé `b64ba12`. C'est un vrai cas d'usage (pas seulement la démo) : tout artisan en règle « réactif » y serait tombé.
+- **Captures 1→5 en production, regardées** : scène 4 = devis DEV-2026-0001, 1 774 € TTC, 3 lignes, « Accepté le 04/09/2026 » ; scène 5 = site Atelier du Chêne, escalier hélicoïdal en hero. Commitées dans `public/demo/`.
+- **Benj : migration 0053 collée dans le SQL Editor** (« c'est bon pour supabase ») → persona/apparence débloqués, `persona-e2e` à rejouer en prod.
+- Compte démo à conserver (`--garder`, slug `atelier-du-chene`) en cours de création ; vidéo HyperFrames lancée (`compose`, 28 s, 5 scènes, sans son, sous-titres FR).
+
+**Cumul : 11 h 30**
