@@ -2,6 +2,7 @@
 // lib/regles.ts (pure) ; ici on lit la règle de l'artisan, on regarde l'état réel de la
 // conversation, et on exécute — en ne faisant jamais plus que ce que la règle autorise.
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { peut, offreMinimale } from '@/lib/plans'
 import { notifierArtisan } from '@/lib/notifications'
 import { creerDevisBrouillonPourLead } from '@/lib/devisAuto'
 import { mentionsManquantesEmission, versArtisanLegal } from '@/lib/legalArtisan'
@@ -24,6 +25,11 @@ type LeadCtx = { id: string; artisan_id: string; nom_prospect: string | null; co
 export async function declencherRegles(p: { lead: LeadCtx; nbReponsesIA: number; artisanEmail: string | null; artisanNom: string | null }): Promise<{ fait: 'rien' | 'devis_cree' | 'devis_envoye'; pourquoi?: string; devisId?: string }> {
   const regle = await regleDe(p.lead.artisan_id)
   if (!regle) return { fait: 'rien', pourquoi: 'aucune règle' }
+  // Verrou SERVEUR (audit v5 §8, réellement posé le 05/09 : la première tentative avait échoué
+  // sans que je m'en aperçoive). La règle est écrite depuis le navigateur (RLS), mais elle ne
+  // s'exécute que si l'offre le permet — sinon un Essentiel obtiendrait devis auto + acompte.
+  const { data: art } = await supabaseAdmin.from('artisans').select('plan').eq('id', p.lead.artisan_id).maybeSingle()
+  if (!peut(art?.plan, 'plateforme.regles')) return { fait: 'rien', pourquoi: `réservé à l'offre ${offreMinimale('plateforme.regles') ?? 'supérieure'}` }
 
   const { count } = await supabaseAdmin.from('devis').select('id', { count: 'exact', head: true }).eq('lead_id', p.lead.id)
   const photos = Array.isArray(p.lead.photos) ? p.lead.photos.length : 0

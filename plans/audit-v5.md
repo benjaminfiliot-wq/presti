@@ -18,7 +18,7 @@
 |---|---|---|---|
 | 6 | **Verrou des privilèges troué** : 0045 a réécrit `lock_artisan_privileges` depuis 0005 et perdu `credits`, `credits_reset_le`, `stripe_customer_id`, `stripe_subscription_id` (figés par 0007) → `update artisans set credits = 999999` passait depuis le navigateur | sécurité | **Migration 0055** (à coller : `_A_COLLER_sql_editor_0054_0055.sql`) |
 | 7 | `/api/conversation/devis` action `modifier` sans plafond → un email Resend à l'artisan par appel | sécurité | Même plafond que les autres routes de conversation (6 / 5 min) + abus enregistré |
-| 8 | **Règles d'automatisation sans verrou serveur** : un Essentiel écrivait sa règle (RLS) et obtenait devis auto + acompte (Signature) | données | `declencherRegles` vérifie `peut(plan, 'plateforme.regles')` |
+| 8 | **Règles d'automatisation sans verrou serveur** : un Essentiel écrivait sa règle (RLS) et obtenait devis auto + acompte (Signature) | données | ⚠️ **Déclaré corrigé le 04/09 à tort** — le script d'édition avait planté avant ce bloc. Réellement posé le 05/09 (`declencherRegles` vérifie `peut(plan, 'plateforme.regles')`), avec un test dédié. |
 | 9 | Modèle « Pro/Expert » réglé par l'artisan ignoré en conversation live (Haiku d'office) — le compte démo est en Pro | métier | `resolveModel(cfg.modele, plan)` transmis au flux |
 | 10 | `after()` du flux + `/api/conversation/regles` du navigateur tournaient **en parallèle** → double crédit, numéro de devis brûlé | métier | Un seul chemin : la route dédiée (navigateur et tests) |
 | 11 | Renvoyer un devis accepté le repassait « envoyé » → ré-acceptation → seconde facture d'acompte | métier | 409 sur un devis accepté |

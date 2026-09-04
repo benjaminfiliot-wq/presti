@@ -18,7 +18,7 @@ const FROM_ADDR = 'contact@prestiapp.fr'
  *  est relevée. Une alerte envoyée à une boîte inexistante ne prévient personne. */
 const EMAIL_SIMPLE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-export const EMAIL_ENTREPRISE = process.env.EMAIL_ENTREPRISE?.trim() || 'contact@prestiapp.fr'
+export const EMAIL_ENTREPRISE = process.env.PRESTI_ALERTES_EMAIL?.trim() || process.env.EMAIL_ENTREPRISE?.trim() || 'contact@prestiapp.fr'
 
 // Nettoie un nom d'affichage pour l'en-tête From (pas de retour ligne, guillemets, chevrons).
 function fromHeader(name?: string | null): string {
