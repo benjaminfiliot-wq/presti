@@ -55,11 +55,20 @@ try {
   if (!siege) aFaire.push('Aucune adresse de siège dans Stripe Tax : sans elle, aucun taux ne peut être déterminé.')
   if (!codeDefaut) aFaire.push('Aucun code produit par défaut : choisis la catégorie « logiciel en abonnement » (SaaS) dans les paramètres de taxe.')
 
+  // Le régime voulu est celui que déclare le code : l'interrupteur fait foi.
+  const collecteVoulue = process.env.STRIPE_TAXE_AUTO === '1'
   const regs = await stripe.tax.registrations.list({ status: 'active', limit: 20 })
-  if (!regs.data.length) {
-    aFaire.push('Aucune immatriculation à la TVA active. C’est une DÉCLARATION LÉGALE sur ton activité : à faire toi-même dans Stripe (Taxes → Immatriculations). Sans elle, aucune TVA n’est collectée.')
-  } else {
-    console.log(`Immatriculations actives : ${regs.data.map((r) => `${r.country}${r.country_options ? '' : ''}`).join(', ')}`)
+  if (regs.data.length) console.log(`Immatriculations actives : ${regs.data.map((r) => r.country).join(', ')}`)
+  else console.log('Immatriculations actives : aucune')
+
+  if (collecteVoulue && !regs.data.length) {
+    aFaire.push('Le calcul de TVA est demandé mais AUCUNE immatriculation n’est active : rien ne serait collecté. Déclare l’immatriculation, ou baisse STRIPE_TAXE_AUTO.')
+  }
+  if (!collecteVoulue && regs.data.length) {
+    aFaire.push('Des immatriculations sont actives alors que le calcul de TVA est coupé : le régime déclaré et le régime appliqué divergent. Clos-les, ou lève STRIPE_TAXE_AUTO.')
+  }
+  if (!collecteVoulue && !regs.data.length) {
+    console.log('Régime : FRANCHISE EN BASE (art. 293 B du CGI) — aucune TVA facturée, conforme aux mentions légales.')
   }
 } catch (e) {
   console.log('Stripe Tax : illisible —', String(e.message).slice(0, 100))

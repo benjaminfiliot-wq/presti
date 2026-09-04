@@ -67,7 +67,11 @@ const sans = await essai(false)
 const avec = await essai(true)
 
 console.log('')
-if (avec) console.log('✅ STRIPE_TAXE_AUTO=1 peut être activé sans risque : le compte accepte le calcul automatique.')
+const regime = process.env.STRIPE_TAXE_AUTO === '1' ? 'collecte' : 'franchise'
+if (avec && regime === 'franchise') {
+  console.log('✅ Les deux formes passent. Régime actuel : FRANCHISE EN BASE — aucune TVA n’est facturée, et c’est voulu.')
+  console.log('   (Le calcul automatique est techniquement possible ; il ne devra être activé que le jour où une immatriculation existe.)')
+} else if (avec) console.log('✅ Le compte accepte le calcul automatique, et le régime le demande.')
 else if (sans) console.log('⚠️  Laisse STRIPE_TAXE_AUTO à 0 : les paiements passeraient, mais SANS TVA. Le compte n’est pas prêt pour le calcul automatique.')
 else console.log('❌ Même sans TVA la session est refusée : le paiement ne fonctionnerait pas du tout.')
 process.exit(avec ? 0 : 1)
