@@ -37,6 +37,8 @@
 5. Réseau : la 1re réponse arrive en ~3 s, le devis de la règle ~20-60 s après (modèle Pro) — parler pendant ce temps, ou rafraîchir la conversation.
 
 ## Répétitions
-- **R1** — heure : · compte : · accrocs :
-- **R2** — heure : · compte : · accrocs :
-- **R3** — heure : · compte : · accrocs :
+Le parcours complet (client écrit → assistant répond → coordonnées → devis par la règle → envoi → acceptation → facture d'acompte → site) a été rejoué **en production, sur le vrai produit, par Playwright** (`scripts/demo-captures.mjs`), et regardé à l'œil sur les captures :
+- **R1** — 12:26 · compte `atelier-du-chene` · accroc : l'assistant répondait « message difficile à lire » (regex `blocProspect`, corrigée) ; devis créé avant l'email du client → envoi 400 (repli sur le contact de la conversation, corrigé).
+- **R2** — 14:32 · compte `atelier-du-chene` · accroc : astérisques Markdown dans la réponse (règle « texte brut » + affichage, corrigé) ; facture d'acompte à 100 % du devis (audit, corrigé).
+- **R3** — 15:05 · compte `atelier-du-chene` · devis DEV-2026-0004 = 2 634 € TTC accepté → facture FAC-2026-0004 = **790,20 €** (30 %, une ligne, scellée). `pilotage-e2e` 18/18. Aucun accroc.
+- **À faire par Benj avant le public** : une répétition **à la main** sur téléphone + ordinateur (5 min), parce que les auditeurs n'ont pas pu voir un rendu réel du navigateur intégré.

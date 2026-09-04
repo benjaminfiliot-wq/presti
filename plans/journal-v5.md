@@ -159,3 +159,14 @@
 - Recaptures des 5 scènes après le correctif (la réponse de la scène 2/3 contenait la phrase fautive), puis vidéo remontée et compte démo rafraîchi.
 
 **Cumul : 12 h 45**
+
+## [A] Audit final v5 — 12:50 → 15:10 (2 h 20) — ✅ 4 auditeurs + test des 5 secondes, 25 correctifs déployés, `plans/audit-v5.md`
+- Quatre agents en lecture seule (sécurité, parcours/UX, métier, données) et cinq personas sur la landing. Leurs navigateurs étaient hors service (« Policy check temporarily unavailable ») : vérifications sur le HTML servi, le code, et Playwright pour le test des 5 secondes.
+- **Deux bloquants sur le chemin exact de ce soir**, invisibles pour les suites : la facture d'acompte « 30 % » était émise à **100 % du devis** (lignes et totaux recopiés, scellée) ; et la détection d'intention par sous-chaîne (« je voudrais **sav**oir » → réclamation → escalade sans devis ; « **panne**aux » → urgence). Même famille que le bug du matin : mutilation silencieuse du sens. Corrigés, 3 tests unitaires ajoutés (`ia-unit` 99/99).
+- **Sécurité** : le verrou des privilèges avait perdu `credits` et les colonnes Stripe depuis 0045 (`update artisans set credits = 999999` passait du navigateur) → **migration 0055 à coller** ; plafond sur « modifier le devis » (un email par appel sinon) ; plafond par IP sur `/regles`.
+- **Métier** : modèle Pro/Expert réglé par l'artisan enfin servi en conversation (Haiku était servi d'office) ; un seul chemin pour les règles (l'`after()` tournait en parallèle du navigateur : double crédit) ; devis accepté non renvoyable ; profil déclaré transmis à l'assistant (l'anti-fabrication ne s'appliquait jamais) ; TVA transmise au chiffrage ; verrou serveur `peut(plan, 'plateforme.regles')`.
+- **Landing** : nav mobile (boutons hors écran à 390 px — aucune inscription possible), titres centrés cassés (`28ch` calculé sur 16 px), « IA » absent au-dessus de la ligne de flottaison, essai libellé de trois façons, vidéo illisible sur téléphone → scène par scène. Sitemap sans comptes de test, badge « Le plus choisi » retiré, jeton Google hors des domaines perso.
+- Reporté et documenté (`apres-demo.md`) : suppression RGPD avec facture émise, `qualifie` toujours vrai, faux positifs anti-fabrication, hero à réordonner.
+- Comptes de test résiduels : 0054 à coller (avec 0055, un seul fichier `_A_COLLER_sql_editor_0054_0055.sql`), puis `node scripts/purger-comptes-test.mjs`.
+
+**Cumul : 15 h 05**
