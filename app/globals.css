@@ -2222,7 +2222,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .dm-device img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.03);transition:opacity .6s ease,transform 5s linear}
 .dm-device img.on{opacity:1;transform:scale(1)}
 .dm-telephone{width:min(300px,78vw);aspect-ratio:390/844;border-radius:38px;padding:0;border:8px solid #1a1a1f}
-.dm-telephone::before{content:'';position:absolute;top:10px;left:50%;transform:translateX(-50%);width:34%;height:22px;background:#1a1a1f;border-radius:14px;z-index:2}
+.dm-telephone::before{display:none} /* l'encoche recouvrait l'en-tête des captures (audit v5) */
 .dm-ordinateur{width:min(640px,100%);aspect-ratio:16/10;border-radius:14px;border:10px solid #1a1a1f;border-bottom-width:22px}
 .dm-txt{display:flex;flex-direction:column;gap:.6rem;min-width:0}
 .dm-heure{display:inline-flex;align-self:flex-start;padding:.3rem .7rem;border-radius:999px;background:color-mix(in srgb,var(--accent-ink,#C15F3C) 16%,transparent);color:var(--accent-ink,#C15F3C);font-weight:700;font-size:.85rem;letter-spacing:.04em;font-variant-numeric:tabular-nums}
