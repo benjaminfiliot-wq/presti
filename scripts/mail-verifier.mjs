@@ -63,9 +63,11 @@ const user = process.env.PRESTI_MAIL_IMAP_USER
 const pass = process.env.PRESTI_MAIL_IMAP_PASS
 if (!user || !pass) {
   console.log('Boîte      ⏭  identifiants absents (PRESTI_MAIL_IMAP_USER / PRESTI_MAIL_IMAP_PASS)')
-  aFaire.push(alerte && !/contact@prestiapp/.test(alerte)
-    ? 'La boîte contact@ n’est pas branchée : ce qu’on écrit à l’entreprise n’arrive pas dans /messages. Les alertes, elles, partent bien ailleurs.'
-    : 'La boîte contact@ n’est pas branchée, et les alertes lui sont adressées : elles partent dans le vide.')
+  if (alerte && !/contact@prestiapp/.test(alerte)) {
+    console.log('           (le formulaire /contact remplace la boîte : les messages arrivent aux alertes)')
+  } else {
+    aFaire.push('Aucune boîte, et les alertes sont adressées au domaine : elles partent dans le vide. Pose EMAIL_ENTREPRISE sur une adresse relevée.')
+  }
 } else {
   const hote = process.env.PRESTI_MAIL_IMAP_HOST || 'ssl0.ovh.net'
   const ok = await new Promise((res) => {

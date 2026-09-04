@@ -91,3 +91,10 @@ fallu une panne pour s'en apercevoir.
   coûte plus qu'une autre sans que rien ne le distingue.
 - La moitié de la facture d'une recherche vient des résultats de recherche web eux-mêmes, que le
   cache n'évite que lorsqu'il répond. Une requête jamais posée coûte toujours le prix plein.
+
+## L'email, en une ligne
+
+Presti **envoie** par Resend (domaine vérifié, signature DKIM publiée) et ne dépend d'aucune boîte
+pour cela. Presti **reçoit** par le formulaire `/contact`, qui écrit à l'adresse d'alerte. La boîte
+`contact@prestiapp.fr` n'existe pas et n'est plus nécessaire au fonctionnement ; elle ne servirait
+qu'à la fonction « canal entreprise ». Vérification : `node scripts/mail-verifier.mjs`.

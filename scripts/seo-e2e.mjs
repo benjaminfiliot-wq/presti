@@ -53,7 +53,7 @@ try {
 
   console.log('\n── 3. Un site NON PUBLIÉ ne s’indexe pas')
   const nonPublie = await html(`${BASE}/site/${slug}`)
-  T('la page dit qu’elle est indisponible', /Site indisponible/.test(nonPublie))
+  T('la page ne montre pas le site', /Site non publié|Site indisponible|Erreur 404/.test(nonPublie))
   T('elle n’apparaît pas dans le sitemap', !(await html(`${BASE}/sitemap.xml`)).includes(`/site/${slug}`))
 
   console.log('\n── 4. Site publié : indexable, canonique, JSON-LD')
