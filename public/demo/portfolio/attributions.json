@@ -1,0 +1,42 @@
+[
+ {
+  "fichier": "escalier-helicoidal-1.webp",
+  "titre_demo": "Escalier hélicoïdal en chêne",
+  "specialite": "Escalier",
+  "source": "Wooden spiral stairs (Nebotičnik, Ljubljana) croped.jpg",
+  "licence": "CC BY-SA 4.0",
+  "auteur": "Petar Milošević",
+  "page": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana)_croped.jpg",
+  "legende": "Photo : Petar Milošević — CC BY-SA 4.0 (Wikimedia Commons)"
+ },
+ {
+  "fichier": "escalier-helicoidal-2.webp",
+  "titre_demo": "Volée et main courante cintrée",
+  "specialite": "Escalier",
+  "source": "Wooden spiral stairs (Nebotičnik, Ljubljana).jpg",
+  "licence": "CC BY-SA 4.0",
+  "auteur": "Petar Milošević",
+  "page": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "legende": "Photo : Petar Milošević — CC BY-SA 4.0 (Wikimedia Commons)"
+ },
+ {
+  "fichier": "cuisine-ilot.webp",
+  "titre_demo": "Cuisine avec îlot, plan de travail bois",
+  "specialite": "Cuisine",
+  "source": "Blue white kitchen interior (Unsplash).jpg",
+  "licence": "CC0",
+  "auteur": "NeONBRAND neonbrand",
+  "page": "https://commons.wikimedia.org/wiki/File:Blue_white_kitchen_interior_(Unsplash).jpg",
+  "legende": "Photo : NeONBRAND neonbrand — CC0 (Wikimedia Commons)"
+ },
+ {
+  "fichier": "cuisine-bois.webp",
+  "titre_demo": "Cuisine en bois peint",
+  "specialite": "Cuisine",
+  "source": "Hamptons Kitchen Design 1.jpg",
+  "licence": "CC BY-SA 4.0",
+  "auteur": "JessofWoodnCo",
+  "page": "https://commons.wikimedia.org/wiki/File:Hamptons_Kitchen_Design_1.jpg",
+  "legende": "Photo : JessofWoodnCo — CC BY-SA 4.0 (Wikimedia Commons)"
+ }
+]

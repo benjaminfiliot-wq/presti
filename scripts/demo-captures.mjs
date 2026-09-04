@@ -28,6 +28,11 @@ const URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const admin = createClient(URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } })
 const log = (s) => console.log(s)
+// Portfolio du compte de démo : photos Wikimedia Commons sous licence libre, préparées dans
+// public/demo/portfolio (WebP, sans EXIF). L'attribution est OBLIGATOIRE (CC BY-SA) : elle est
+// la « ligne de fait » de chaque slide, et ATTRIBUTIONS.md dit que c'est une démonstration.
+const PORTFOLIO = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'public', 'demo', 'portfolio', 'attributions.json'), 'utf8'))
+const realisations = PORTFOLIO.map((p) => ({ image: `/demo/portfolio/${p.fichier}`, titre: p.titre_demo, specialite: p.specialite }))
 
 let uid = null
 const email = GARDER ? 'demo-menuisier@presti-test.invalid' : `demo-captures-${Date.now()}@presti-test.invalid`
@@ -48,6 +53,12 @@ try {
     plateforme_active: true, reponse_auto: true, site_active: true, site_tier: 3, theme: 'atelier', accent: '#8a5a2b',
     forme_juridique: 'EI', siret: '12345678900012', adresse: '4 rue des Ateliers', code_postal: '17230',
     assurance_nom: 'Assureur Démo', assurance_contrat: 'DEMO-2026', tva_regime: 'franchise',
+    realisations,
+    site_layout: { v: 2, sections: [
+      { id: 'hero', on: true }, { id: 'trust', on: true },
+      { id: 'slides', on: true, opts: { images: realisations.map((r) => r.image), style: 'profondeur', faits: Object.fromEntries(PORTFOLIO.map((p) => [`/demo/portfolio/${p.fichier}`, p.legende])) } },
+      { id: 'words', on: true }, { id: 'gallery', on: true }, { id: 'services', on: true }, { id: 'process', on: true }, { id: 'about', on: true }, { id: 'contact', on: true },
+    ] },
   })
   await admin.from('plateforme_config').upsert({ artisan_id: uid, mode_reponse: 'auto', modele: 'pro', ton: 'chaleureux', nom_assistant: 'L’atelier' }, { onConflict: 'artisan_id' })
   await admin.from('regles_automatisation').upsert({ artisan_id: uid, prereglage: 'reactif', actif: true,
@@ -155,6 +166,7 @@ try {
     await admin.auth.admin.deleteUser(uid).catch(() => {})
     log('🧹 compte de démonstration détruit')
   } else if (uid) {
-    log(`compte conservé : ${email} (mot de passe non affiché — réinitialisable depuis /reset-password)`)
+    fs.writeFileSync(path.join(process.cwd(), '.demo-compte.local'), `email=${email}\nmot_de_passe=${mdp}\nslug=${slug}\n`)
+    log(`compte conservé : ${email} — identifiants écrits dans .demo-compte.local (ignoré par git, jamais dans le chat)`)
   }
 }
