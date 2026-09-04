@@ -5,7 +5,7 @@ import { COLONNES_FOURNISSEUR, type Fournisseur } from '@/lib/inventaire/types'
 import { messageVerrou, peut, COUT_RECHERCHE } from '@/lib/plans'
 import { resolveModel } from '@/lib/models'
 import { consumeCredit } from '@/lib/credits'
-import { consommerLimite } from '@/lib/limites'
+import { consommerLimite, limiteAtteinte } from '@/lib/limites'
 import { actif } from '@/lib/flags'
 import { rechercherChezFournisseurs } from '@/lib/recherche-fournisseurs'
 
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     }
     const b = await req.json().catch(() => null)
     if (!b || typeof b !== 'object') return NextResponse.json({ error: 'Requête vide.' }, { status: 400 })
-    const requete = String(b.requete ?? '').trim().slice(0, 300)
+    const requete = String(b.requete ?? '').replace(/[\r\n\u0000-\u001f\u007f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300)
     if (requete.length < 2) return NextResponse.json({ error: 'Dites-moi ce que vous cherchez.' }, { status: 400 })
     const quantite = Number(b.quantite)
     const ids: string[] | null = Array.isArray(b.fournisseur_ids) ? b.fournisseur_ids.filter((x: unknown) => UUID.test(String(x))).slice(0, 50) : null
@@ -64,6 +64,16 @@ export async function POST(req: Request) {
     // appelé : un résultat servi par le cache mutualisé (0056) est instantané ET gratuit. C'est
     // délibéré — l'artisan qui cherche souvent remplit le cache, ce qui fait baisser le coût de
     // tous. Avant l'appel on se contente de vérifier que son solde permettrait de payer.
+    // Les plafonds de DÉPENSE sont vérifiés ici sans être consommés : on ne sait qu'après la
+    // recherche si elle a coûté quelque chose (un coup de cache est gratuit). Ils sont décomptés
+    // plus bas, uniquement si un appel payant a eu lieu.
+    if (interrogeable && await limiteAtteinte(`recherche-jour:${a.uid}`, LIMITE_PAR_JOUR, 86_400)) {
+      return NextResponse.json({ error: `Vous avez lancé ${LIMITE_PAR_JOUR} recherches aujourd’hui — c’est la limite quotidienne. Elle repart demain.` }, { status: 429 })
+    }
+    if (interrogeable && await limiteAtteinte(`recherche-mois:${a.uid}`, LIMITE_PAR_MOIS, 30 * 86_400)) {
+      return NextResponse.json({ error: `Vous avez lancé ${LIMITE_PAR_MOIS} recherches ce mois-ci — c’est la limite. Écrivez-nous s’il vous en faut plus.` }, { status: 429 })
+    }
+
     const cout = COUT_RECHERCHE[tier] ?? COUT_RECHERCHE.standard
     if (interrogeable && !a.isFounder) {
       const { data: solde } = await supabaseAdmin.from('artisans').select('credits').eq('id', a.uid).maybeSingle()
@@ -84,8 +94,11 @@ export async function POST(req: Request) {
     // alors que c'est précisément ce qui remplit le cache.
     let creditsUtilises = 0
     if (sortie.appels > 0 && !sortie.panne) {
-      void consommerLimite(`recherche-jour:${a.uid}`, LIMITE_PAR_JOUR, 86_400)
-      void consommerLimite(`recherche-mois:${a.uid}`, LIMITE_PAR_MOIS, 30 * 86_400)
+      // Attendus, jamais lancés dans le vide : sur une fonction serverless, une promesse non
+      // attendue peut ne jamais s'exécuter — le compteur resterait à zéro et le plafond
+      // n'existerait que sur le papier.
+      await consommerLimite(`recherche-jour:${a.uid}`, LIMITE_PAR_JOUR, 86_400)
+      await consommerLimite(`recherche-mois:${a.uid}`, LIMITE_PAR_MOIS, 30 * 86_400)
       const credit = await consumeCredit(a.uid, tier, a.isFounder, cout)
       if (credit.ok) creditsUtilises = a.isFounder ? 0 : cout
     }

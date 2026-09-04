@@ -108,7 +108,9 @@ export async function lireCache(requete: string, domaines: string[]): Promise<Ma
       .gt('expire_le', new Date().toISOString())
     if (error) { console.error('[cachePrix] lecture:', error.message); return trouves }
     for (const l of data ?? []) {
-      const resultats = Array.isArray(l.resultats) ? (l.resultats as ResultatEnCache[]) : []
+      // Même contrôle à la lecture : une ligne écrite avant ce garde-fou ne doit pas ressortir.
+      const brut = Array.isArray(l.resultats) ? (l.resultats as ResultatEnCache[]) : []
+      const resultats = brut.filter((r) => domaineDe(r.url) === String(l.domaine))
       trouves.set(String(l.domaine), {
         domaine: String(l.domaine),
         resultats,
@@ -139,6 +141,9 @@ export async function ecrireCache(
   const expire = new Date(maintenant.getTime() + HEURES_VALIDITE * 3_600_000).toISOString()
   const lignes = entrees
     .filter((e) => e.prixPublics && DOMAINES_PARTAGEABLES.has(e.domaine))
+    // Une ligne ne contient QUE des résultats de son propre site. Sans ce contrôle, un résultat
+    // mal rattaché serait ensuite servi aux autres artisans sous le nom du mauvais fournisseur.
+    .filter((e) => e.resultats.every((r) => domaineDe(r.url) === e.domaine))
     .map((e) => ({
       requete_norm: cle,
       domaine: e.domaine,

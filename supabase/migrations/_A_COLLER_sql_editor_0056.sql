@@ -116,6 +116,22 @@ end $$;
 revoke all on function public.purger_cache_recherche() from public, anon, authenticated;
 grant execute on function public.purger_cache_recherche() to service_role;
 
+-- Lire un plafond SANS le consommer. Nécessaire quand la dépense n'est connue qu'APRÈS coup :
+-- on vérifie avant d'engager la dépense, on ne décompte qu'une fois qu'elle a eu lieu. La fenêtre
+-- est calculée exactement comme dans `consommer_limite` (0049) : une formule différente
+-- chercherait une ligne qui n'existe pas, et le plafond ne s'appliquerait jamais.
+create or replace function public.limite_atteinte(p_cle text, p_max int, p_fenetre_s int)
+returns boolean language sql stable security definer set search_path = public as $$
+  select coalesce(
+    (select compteur >= p_max from public.limites
+      where cle = p_cle
+        and fenetre = to_timestamp(floor(extract(epoch from now()) / greatest(p_fenetre_s, 1)) * greatest(p_fenetre_s, 1))),
+    false);
+$$;
+
+revoke all on function public.limite_atteinte(text, int, int) from public, anon, authenticated;
+grant execute on function public.limite_atteinte(text, int, int) to service_role;
+
 -- Compteur d'usage du cache. Une seule requête, pas de lecture préalable : c'est une mesure,
 -- elle ne doit jamais ralentir ni faire échouer la recherche qui l'a déclenchée.
 create or replace function public.incrementer_hits_cache(p_requete text, p_domaines text[], p_version smallint default 1)

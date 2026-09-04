@@ -68,7 +68,10 @@ export async function POST(req: Request) {
 
     // ── Fiche fournisseur. Aucune valeur par défaut inventée : remise, délai, compte restent
     // vides tant que l'artisan ne les a pas donnés.
-    const nom = String(b.nom || '').trim().slice(0, 120)
+    // Les retours à la ligne et caractères de contrôle sont retirés AVANT tout : ce nom est
+    // recopié dans le prompt de l'assistant, où un saut de ligne suffirait à faire passer une
+    // consigne pour une instruction du système.
+    const nom = String(b.nom || '').replace(/[\r\n\u0000-\u001f\u007f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120)
     if (!nom) return NextResponse.json({ error: 'Il faut un nom de fournisseur.' }, { status: 400 })
     const ligne = {
       nom, url: urlHttp(b.url),

@@ -64,6 +64,9 @@ export type SortieRecherche = {
   panne?: 'service' | 'delai'
   /** Les domaines servis depuis le cache mutualisé, donc sans aucun appel payant. */
   depuisCache?: string[]
+  /** Les URL dont le montant a été retrouvé dans une page réellement récupérée de leur propre
+   *  site. Seules celles-là peuvent être partagées avec d'autres artisans. */
+  prouves?: string[]
 }
 
 export type EntreeRecherche = {
@@ -180,7 +183,7 @@ export type Cadre = {
  * extrait cité contenant le montant, et — dès qu'une page a été récupérée — montant présent
  * dans une page récupérée. Tout le reste est rejeté, et on dit pourquoi.
  */
-export function validerSortie(brute: SortieBrute | null, cadre: Cadre): { resultats: ResultatRecherche[]; nonVus: NonVu[]; rejets: string[] } {
+export function validerSortie(brute: SortieBrute | null, cadre: Cadre): { resultats: ResultatRecherche[]; nonVus: NonVu[]; rejets: string[]; prouves: string[] } {
   const resultats: ResultatRecherche[] = []
   const nonVus: NonVu[] = []
   // Vrai si le plafond de résultats a coupé l'examen : les sites non atteints ne peuvent alors
@@ -190,6 +193,17 @@ export function validerSortie(brute: SortieBrute | null, cadre: Cadre): { result
   const vus = new Set<string>()
   const parNom = (nom: string) => cadre.interrogeables.find((i) => i.f.nom.toLowerCase() === nom.toLowerCase()) ?? cadre.interrogeables.find((i) => nom.toLowerCase().includes(i.f.nom.toLowerCase()) || i.f.nom.toLowerCase().includes(nom.toLowerCase()))
   const corpus = [...cadre.pages.values()].join('\n')
+  // La preuve doit être rattachée au SITE. Le texte de chaque page ouverte est rangé sous le
+  // domaine d'où il vient ; un prix n'est « prouvé » que s'il figure dans les pages de SON site.
+  const corpusParDomaine = new Map<string, string>()
+  for (const [u, txt] of cadre.pages) {
+    const hu = hote(u)
+    const dom = hu ? cadre.interrogeables.find((i) => sousDomaine(hu, i.domaine))?.domaine : null
+    if (dom) corpusParDomaine.set(dom, `${corpusParDomaine.get(dom) ?? ''}\n${txt}`)
+  }
+  // Les URL dont le montant a été retrouvé dans les pages de leur propre site : les seules que
+  // l'on accepte de partager avec les autres artisans.
+  const prouves: string[] = []
 
   for (const b of (Array.isArray(brute?.resultats) ? (brute!.resultats as Brut[]) : []).slice(0, 30)) {
     if (!b || typeof b !== 'object') continue
@@ -205,7 +219,15 @@ export function validerSortie(brute: SortieBrute | null, cadre: Cadre): { result
     const designation = texte(b.designation_vue, 300)
     if (!prix || !extrait || !designation) { rejets.push(`${i.f.nom} : prix, extrait ou désignation manquant`); continue }
     if (!prixDansTexte(prix, extrait)) { rejets.push(`${i.f.nom} : le montant ${prix} n’est pas dans l’extrait cité`); continue }
+    const pageExacte = cadre.pages.get(url) ?? null
+    if (pageExacte && !prixDansTexte(prix, pageExacte)) { rejets.push(`${i.f.nom} : le montant ${prix} n’est pas sur la page citée`); continue }
     if (cadre.pages.size > 0 && !prixDansTexte(prix, corpus)) { rejets.push(`${i.f.nom} : le montant ${prix} n’apparaît dans aucune page récupérée`); continue }
+    const corpusDuSite = corpusParDomaine.get(i.domaine) ?? ''
+    // Prouvé = retrouvé dans une page de SON site, réellement récupérée. Sans page récupérée, la
+    // seule « preuve » serait l'extrait écrit par le modèle, cohérent avec lui-même par
+    // construction : cela suffit à montrer un résultat à celui qui l'a demandé, jamais à
+    // l'inscrire dans le cache commun.
+    if (pageExacte ? prixDansTexte(prix, pageExacte) : (corpusDuSite !== '' && prixDansTexte(prix, corpusDuSite))) prouves.push(url)
     if (resultats.length >= MAX_RESULTATS) { tronque = true; break }
     const ht = String(b.ht_ou_ttc ?? '').toUpperCase()
     const base: Scellable = {
@@ -233,7 +255,7 @@ export function validerSortie(brute: SortieBrute | null, cadre: Cadre): { result
       ? 'la recherche s’est arrêtée avant d’arriver jusqu’à ce site — relancez avec moins de fournisseurs cochés'
       : 'aucune fiche produit avec un prix lisible n’a été trouvée pour cette recherche' })
   }
-  return { resultats, nonVus, rejets }
+  return { resultats, nonVus, rejets, prouves }
 }
 
 // ── Outils serveur ───────────────────────────────────────────────────────────────
@@ -346,8 +368,8 @@ async function rechercherEnDirect(e: EntreeRecherche): Promise<SortieRecherche> 
   // (aucun fournisseur interrogeable) — une déclaration plus bas plantait en zone morte.
   let panne: 'service' | 'delai' | null = null
   const requete = e.requete.trim().slice(0, 300)
-  const fini = (resultats: ResultatRecherche[], nv: NonVu[], appels: number): SortieRecherche =>
-    ({ resultats, nonVus: [...nonVus, ...nv], tier: e.tier, model: e.model, duree_ms: Date.now() - debut, appels, journal, ...(panne ? { panne } : {}) })
+  const fini = (resultats: ResultatRecherche[], nv: NonVu[], appels: number, prouves: string[] = []): SortieRecherche =>
+    ({ resultats, nonVus: [...nonVus, ...nv], tier: e.tier, model: e.model, duree_ms: Date.now() - debut, appels, journal, prouves, ...(panne ? { panne } : {}) })
   if (!interrogeables.length || !requete) return fini([], [], 0)
   const tousNonVus = (raison: string) => interrogeables.map((i) => ({ fournisseur: i.f.nom, fournisseur_id: i.f.id, raison }))
 
@@ -418,7 +440,7 @@ async function rechercherEnDirect(e: EntreeRecherche): Promise<SortieRecherche> 
       journal.push(...v2.rejets.map((r) => `rejet lecture : ${r}`))
       if (v2.resultats.length || !v1.resultats.length) {
         if (journal.some((j) => /^rejet/.test(j))) console.warn('[recherche-fournisseurs] rejets :', journal.filter((j) => /^rejet/.test(j)).join(' | '))
-        return fini(v2.resultats, v2.nonVus, appels)
+        return fini(v2.resultats, v2.nonVus, appels, v2.prouves)
       }
       journal.push('lecture sans résultat validé — on garde la lecture de navigation')
     }
@@ -427,7 +449,7 @@ async function rechercherEnDirect(e: EntreeRecherche): Promise<SortieRecherche> 
   }
 
   if (v1.rejets.length) console.warn('[recherche-fournisseurs] rejets :', v1.rejets.join(' | '))
-  return fini(v1.resultats, v1.nonVus, appels)
+  return fini(v1.resultats, v1.nonVus, appels, v1.prouves)
 }
 
 
@@ -501,7 +523,10 @@ export async function rechercherChezFournisseurs(e: EntreeRecherche): Promise<So
       const d = domaineDe(f.url)
       if (!d || !DOMAINES_PARTAGEABLES.has(d) || parDom.has(d)) continue
       parDom.set(d, { domaine: d, prixPublics: f.prix_publics === true, resultats: [], raisonNonVu: null })
-      parDom.get(d)!.resultats = direct.resultats.filter((r) => domaineDe(r.url) === d)
+      // Seuls les prix retrouvés dans une page réellement récupérée du site sont partagés. Un
+      // résultat affiché mais non prouvé reste visible pour l'artisan qui l'a demandé, et lui seul.
+      const prouves = new Set(direct.prouves ?? [])
+      parDom.get(d)!.resultats = direct.resultats.filter((r) => domaineDe(r.url) === d && prouves.has(r.url))
     }
     const aRanger = [...parDom.values()].filter((x) => x.resultats.length || x.raisonNonVu)
     if (aRanger.length) void ecrireCache(e.requete, aRanger, e.tier)

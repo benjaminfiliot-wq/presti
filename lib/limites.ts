@@ -31,3 +31,20 @@ export async function consommerLimite(cle: string, max: number, fenetreSec: numb
 export function cleEmail(prefixe: string, email: string): string {
   return `${prefixe}:${crypto.createHash('sha256').update(email.trim().toLowerCase()).digest('hex').slice(0, 32)}`
 }
+
+/**
+ * Le plafond est-il DÉJÀ atteint ? Lecture seule : rien n'est consommé.
+ * Sert quand la dépense n'est connue qu'après coup — on vérifie avant d'engager, on décompte
+ * une fois la dépense faite. En cas de panne du comptage, on laisse passer (comme `consommerLimite`) :
+ * un compteur cassé ne doit pas fermer le service.
+ */
+export async function limiteAtteinte(cle: string, max: number, fenetreSec: number): Promise<boolean> {
+  try {
+    const { data, error } = await supabaseAdmin.rpc('limite_atteinte', { p_cle: cle, p_max: max, p_fenetre_s: fenetreSec })
+    if (error) { console.error('[limites] rpc limite_atteinte:', error.message, '— clé', cle, '(on laisse passer)'); return false }
+    return data === true
+  } catch (e) {
+    console.error('[limites] limite_atteinte indisponible (on laisse passer):', e instanceof Error ? e.message : e)
+    return false
+  }
+}

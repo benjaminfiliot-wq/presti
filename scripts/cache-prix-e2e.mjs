@@ -18,7 +18,7 @@ for (const l of fs.readFileSync('.env.local', 'utf8').split('\n')) {
 
 const { normaliserRequete, clePartageable, DOMAINES_PARTAGEABLES, domainePartageable, lireCache, ecrireCache, HEURES_VALIDITE, VERSION_CACHE } =
   await import('../lib/inventaire/cachePrix.ts')
-const { sceller, sceauValide } = await import('../lib/recherche-fournisseurs.ts')
+const { sceller, sceauValide, validerSortie } = await import('../lib/recherche-fournisseurs.ts')
 const { COUT_RECHERCHE, CREDIT_COST } = await import('../lib/plans.ts')
 
 let ok = 0, ko = 0
@@ -71,6 +71,26 @@ T('re-dater change le sceau : une date fausse ne peut pas se faire passer pour l
 let jete = false
 try { sceauValide(A, { ...base, sceau: 'é'.repeat(64) }) } catch { jete = true }
 T('un sceau non-ASCII est refusé proprement, sans erreur de service', !jete)
+
+console.log('\n── 3 bis. Un prix ne se partage que s’il a été VU sur son propre site')
+const CASTO = { f: { id: 'f1', nom: 'Castorama', prix_publics: true, url: 'https://www.castorama.fr' }, domaine: 'castorama.fr' }
+const AUTRE = { f: { id: 'f2', nom: 'Le mien', prix_publics: true, url: 'https://mes-prix.example' }, domaine: 'mes-prix.example' }
+const brute = { resultats: [{ fournisseur: 'Castorama', url: 'https://www.castorama.fr/p1', prix_vu: 6.2, extrait: '6,20 € la plaque', designation_vue: 'BA13' }], non_vus: [] }
+
+// Aucune page récupérée : le résultat est montré à qui l’a demandé, mais rien n’est prouvé.
+const sansPage = validerSortie(brute, { artisanId: A, interrogeables: [CASTO], pages: new Map(), vuLe: vuLeOrigine })
+T('sans page récupérée, le résultat est quand même rendu', sansPage.resultats.length === 1)
+T('… mais il n’est PAS prouvé, donc jamais partagé', sansPage.prouves.length === 0)
+
+// Le montant figure sur une page d’un AUTRE site : cela ne prouve rien pour Castorama.
+const pagesAutre = new Map([['https://mes-prix.example/x', 'plaque BA13 6,20 € chez Castorama']])
+const croise = validerSortie(brute, { artisanId: A, interrogeables: [CASTO, AUTRE], pages: pagesAutre, vuLe: vuLeOrigine })
+T('un montant lu sur un autre site ne prouve rien', croise.prouves.length === 0)
+
+// Le montant figure sur la page citée : prouvé.
+const pagesCasto = new Map([['https://www.castorama.fr/p1', 'Plaque BA13 — 6,20 € la plaque']])
+const vrai = validerSortie(brute, { artisanId: A, interrogeables: [CASTO], pages: pagesCasto, vuLe: vuLeOrigine })
+T('un montant retrouvé sur la page citée est prouvé', vrai.prouves.includes('https://www.castorama.fr/p1'))
 
 
 console.log('\n── 4. Le tarif')
