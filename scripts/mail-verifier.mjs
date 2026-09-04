@@ -56,12 +56,16 @@ if (dmarc) {
   aFaire.push('Aucun DMARC : rien ne dit aux serveurs quoi faire d’un message qui se fait passer pour toi. C’est le maillon manquant.')
 }
 
+const alerte = process.env.EMAIL_ENTREPRISE
+
 // ── 4. La boîte de l'entreprise, si ses identifiants sont là
 const user = process.env.PRESTI_MAIL_IMAP_USER
 const pass = process.env.PRESTI_MAIL_IMAP_PASS
 if (!user || !pass) {
   console.log('Boîte      ⏭  identifiants absents (PRESTI_MAIL_IMAP_USER / PRESTI_MAIL_IMAP_PASS)')
-  aFaire.push('La boîte contact@ n’est pas branchée : crée-la chez OVH, puis pose ses identifiants. Sans elle, les alertes de panne partent dans le vide.')
+  aFaire.push(alerte && !/contact@prestiapp/.test(alerte)
+    ? 'La boîte contact@ n’est pas branchée : ce qu’on écrit à l’entreprise n’arrive pas dans /messages. Les alertes, elles, partent bien ailleurs.'
+    : 'La boîte contact@ n’est pas branchée, et les alertes lui sont adressées : elles partent dans le vide.')
 } else {
   const hote = process.env.PRESTI_MAIL_IMAP_HOST || 'ssl0.ovh.net'
   const ok = await new Promise((res) => {
@@ -82,7 +86,6 @@ if (!user || !pass) {
 }
 
 // ── 5. Là où les alertes de panne arrivent
-const alerte = process.env.EMAIL_ENTREPRISE
 console.log(alerte ? `Alertes    ✅ vers ${alerte}` : 'Alertes    ⚠️  vers contact@prestiapp.fr (valeur par défaut)')
 
 console.log(aFaire.length ? `\n${aFaire.length} chose(s) à régler :` : '\n✅ La chaîne mail est complète.')
