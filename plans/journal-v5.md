@@ -109,4 +109,9 @@
 - En posant des métadonnées neutres de 404, j'ai **écrit par-dessus** `app/site/[slug]/layout.tsx` et `app/p/[slug]/layout.tsx` sans les avoir lus : ils portaient l'import de `site.css` / `plat.css`. Résultat : plus aucun style sur le site et la plateforme (image du hero à 800 px, débordement mobile, slides « armées » sur téléphone parce que la fenêtre s'élargissait). Trouvé parce que `slides-e2e` est repassé au rouge sur mobile — puis remonté jusqu'à `regleHero: false` dans les feuilles chargées.
 - **Règle que je me redonne** : jamais un `Write` sur un chemin sans l'avoir lu ; l'outil disait « updated », pas « created » — c'était le signal. Restauré avec l'import **et** les métadonnées. `slides-e2e` 14/14, 404 `/site` et `/p` avec titre « Page introuvable », zéro marque Presti hors l'hôte de l'URL de l'image OG.
 
-**Cumul : 6 h 40**
+## [H0-d] 06:40 — « ok et cherche les photos »
+- Le « ok » n'a pas posé le mot de passe (`.env.local` toujours du 03/09 07:30, six migrations refusées). → `scripts/poser-mot-de-passe-db.mjs` : saisie masquée dans SON terminal, **test sur la base avant écriture**, rien ne transite par le chat. Commande donnée avec le bouton Run.
+- Photos : Openverse (Flickr CC + Commons agrégés, sans clé) lancé en tâche de fond, 12 requêtes, licences CC0/BY/BY-SA, ≥ 1400 px.
+- `parametres-e2e` ajouté au lanceur ; cron de purge fusionné dans celui des relances (Vercel Hobby = 2 crons max, le 3e aurait fait échouer le déploiement).
+
+**Cumul : 6 h 55**

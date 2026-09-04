@@ -41,6 +41,7 @@ const SUITES = [
   { nom: 'Aide (panneau, ⓘ, visite, centre)', cmd: 'node', args: ['scripts/aide-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Inventaire v2 (fiches, fournisseurs, isolation)', cmd: 'node', args: ['scripts/inventaire-v2-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Slides 3D (Signature)', cmd: 'node', args: ['scripts/slides-e2e.mjs'], cout: 'navigateur' },
+  { nom: 'Paramètres (navigation, sécurité, données)', cmd: 'node', args: ['scripts/parametres-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Poste de pilotage (propositions, prise de main, règles)', cmd: 'node', args: ['scripts/pilotage-e2e.mjs'], cout: 'ia' },
   { nom: 'Correctifs de l audit', cmd: 'node', args: ['scripts/audit-correctifs-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Inventaire', cmd: 'node', args: ['scripts/inventaire-e2e.mjs'], cout: 'navigateur' },
