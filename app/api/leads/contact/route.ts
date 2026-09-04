@@ -54,6 +54,10 @@ export async function POST(req: Request) {
     await supabaseAdmin.from('leads')
       .update({ contact, nom_prospect, updated_at: new Date().toISOString() })
       .eq('id', lead.id)
+    // Un devis créé par une règle avant ces coordonnées récupère l'email du client.
+    if (contact.includes('@')) {
+      await supabaseAdmin.from('devis').update({ client_email: contact }).eq('lead_id', lead.id).is('client_email', null)
+    }
 
     // Prévenir l'artisan (maintenant qu'il y a de quoi recontacter) + programmer les relances.
     try {

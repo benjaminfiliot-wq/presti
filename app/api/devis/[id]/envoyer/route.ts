@@ -22,6 +22,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const { data: devis } = await supabaseAdmin.from('devis').select('*').eq('id', id).eq('artisan_id', uid).maybeSingle()
     if (!devis) return NextResponse.json({ error: 'Devis introuvable' }, { status: 404 })
+    if (!devis.client_email && devis.lead_id) {
+      // Devis créé par une règle avant que le client ne laisse ses coordonnées : on reprend
+      // le contact de la conversation rattachée (uniquement si c'est un email).
+      const { data: lead } = await supabaseAdmin.from('leads').select('contact, nom_prospect').eq('id', devis.lead_id).maybeSingle()
+      const contact = typeof lead?.contact === 'string' ? lead.contact.trim() : ''
+      if (contact.includes('@')) {
+        const maj: Record<string, string> = { client_email: contact }
+        if (!devis.client_nom && lead?.nom_prospect) maj.client_nom = lead.nom_prospect
+        await supabaseAdmin.from('devis').update(maj).eq('id', id)
+        Object.assign(devis, maj)
+      }
+    }
     if (!devis.client_email) return NextResponse.json({ error: "Renseigne l'email du client pour l'envoyer." }, { status: 400 })
 
     const { data: lignes } = await supabaseAdmin.from('devis_lignes').select('*').eq('devis_id', id).order('ordre')
