@@ -13,6 +13,23 @@ export const SOURCES_OBSERVATION: Record<SourceObservation, string> = {
 
 /** Un prix vu il y a plus de 30 jours est « à revérifier » (plan §8) : on le montre, on ne s'y fie plus. */
 export const JOURS_REVERIFICATION = 30
+/**
+ * L'âge d'un prix, en trois mots. Depuis que les prix sont mutualisés entre artisans (cache 0056),
+ * un résultat peut avoir été vu il y a deux heures chez un confrère : la date cesse d'être un
+ * détail et devient la preuve. Trois états seulement, parce qu'un artisan ne lit pas un tableau
+ * de dates : ce qui vient d'être lu, ce qui date de quelques jours, ce qui ne vaut plus.
+ */
+export function ageLisible(vuLe: string | null | undefined, maintenant = Date.now()): string {
+  if (!vuLe) return ''
+  const t = new Date(vuLe).getTime()
+  if (!Number.isFinite(t)) return ''
+  const heures = (maintenant - t) / 3_600_000
+  if (heures < 1) return 'à l’instant'
+  if (heures < 24) return `vu il y a ${Math.round(heures)} h`
+  const jours = Math.round(heures / 24)
+  return jours > JOURS_REVERIFICATION ? 'à revérifier' : `vu il y a ${jours} j`
+}
+
 export function aReverifier(vuLe: string | null | undefined, maintenant = Date.now()): boolean {
   if (!vuLe) return false
   const t = new Date(vuLe).getTime()

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { authInventaire, estRefus } from '@/lib/inventaire/auth'
 import { COLONNES_FOURNISSEUR, type Fournisseur } from '@/lib/inventaire/types'
-import { messageVerrou, peut } from '@/lib/plans'
+import { messageVerrou, peut, COUT_RECHERCHE } from '@/lib/plans'
 import { resolveModel } from '@/lib/models'
 import { consumeCredit } from '@/lib/credits'
 import { consommerLimite } from '@/lib/limites'
@@ -65,16 +65,35 @@ export async function POST(req: Request) {
     const { model, tier, downgraded } = resolveModel(typeof b.tier === 'string' ? b.tier : undefined, a.plan)
     // Aucun fournisseur à prix publics → aucun appel, aucun crédit : on répond « non vus » tout de suite.
     const interrogeable = fournisseurs.some((f) => f.prix_publics && f.url)
-    if (interrogeable) {
-      const credit = await consumeCredit(a.uid, tier, a.isFounder)
-      if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
+    // Le crédit se décompte APRÈS la recherche, et seulement si le service a réellement été
+    // appelé : un résultat servi par le cache mutualisé (0056) est instantané ET gratuit. C'est
+    // délibéré — l'artisan qui cherche souvent remplit le cache, ce qui fait baisser le coût de
+    // tous. Avant l'appel on se contente de vérifier que son solde permettrait de payer.
+    const cout = COUT_RECHERCHE[tier] ?? COUT_RECHERCHE.standard
+    if (interrogeable && !a.isFounder) {
+      const { data: solde } = await supabaseAdmin.from('artisans').select('credits').eq('id', a.uid).maybeSingle()
+      if (Number(solde?.credits ?? 0) < cout) {
+        return NextResponse.json({ error: 'Crédits épuisés — renouvellement mensuel ou formule supérieure.', outOfCredits: true }, { status: 402 })
+      }
     }
 
     const sortie = await rechercherChezFournisseurs({
       artisanId: a.uid, requete, quantite: Number.isFinite(quantite) && quantite > 0 ? Math.min(quantite, 100_000) : null,
       fournisseurs, tier, model,
     })
-    return NextResponse.json({ ok: true, resultats: sortie.resultats, nonVus: sortie.nonVus, tier: sortie.tier, downgraded, duree_ms: sortie.duree_ms, requete, ...(sortie.panne ? { panne: sortie.panne } : {}) })
+    // Payant seulement si le moteur a vraiment appelé le service, et seulement s'il a abouti :
+    // une panne ne se facture pas.
+    let creditsUtilises = 0
+    if (sortie.appels > 0 && !sortie.panne) {
+      const credit = await consumeCredit(a.uid, tier, a.isFounder, cout)
+      if (credit.ok) creditsUtilises = a.isFounder ? 0 : cout
+    }
+    return NextResponse.json({
+      ok: true, resultats: sortie.resultats, nonVus: sortie.nonVus, tier: sortie.tier, downgraded,
+      duree_ms: sortie.duree_ms, requete, credits: creditsUtilises,
+      depuisCache: sortie.depuisCache ?? [],
+      ...(sortie.panne ? { panne: sortie.panne } : {}),
+    })
   } catch (e) {
     console.error('[inventaire/recherche] POST:', e)
     return NextResponse.json({ error: 'L’assistant n’a pas pu terminer la recherche. Réessayez, ou avec moins de fournisseurs.' }, { status: 500 })

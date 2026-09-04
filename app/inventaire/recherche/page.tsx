@@ -6,9 +6,9 @@ import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import Panneau from '@/app/inventaire/Panneau'
 import { actif } from '@/lib/flags'
-import { messageVerrou, peut } from '@/lib/plans'
+import { messageVerrou, peut, COUT_RECHERCHE } from '@/lib/plans'
 import { TIERS, tierAllowed, type Tier } from '@/lib/models'
-import { aReverifier, type Fournisseur } from '@/lib/inventaire/types'
+import { ageLisible, aReverifier, type Fournisseur } from '@/lib/inventaire/types'
 import type { NonVu, ResultatRecherche } from '@/lib/recherche-fournisseurs'
 
 // L'assistant de recherche chez les fournisseurs (§8 F3).
@@ -165,7 +165,7 @@ export default function RecherchePage() {
         <div className="tool-card">
           <h2>Que cherchez-vous ?</h2>
           <p className="muted" style={{ margin: 0 }}>
-            Une désignation ou une référence. L’assistant regarde sur les sites cochés et rapporte ce qu’il a vu — prix tel qu’affiché, lien direct, extrait cité. Rien n’est estimé, rien n’est enregistré sans votre validation.
+            Une désignation ou une référence. L’assistant rapporte ce qui a été vu sur les sites cochés, avec la date de lecture — prix tel qu’affiché, lien direct, extrait cité. Rien n’est estimé, rien n’est enregistré sans votre validation.
           </p>
           <form className="rch-form" onSubmit={(e) => { e.preventDefault(); chercher() }}>
             <input value={requete} onChange={(e) => setRequete(e.target.value)} placeholder="Ex : plaque de plâtre BA13, tube PER 16, disjoncteur 20 A…" autoFocus disabled={busy} aria-label="Que cherchez-vous ?" />
@@ -182,7 +182,7 @@ export default function RecherchePage() {
                   return (
                     <button key={t.value} type="button" role="radio" aria-checked={tier === t.value} className={`sa-pill${tier === t.value ? ' on' : ''}${ok ? '' : ' locked'}`}
                       disabled={!ok || busy} onClick={() => setTier(t.value)}
-                      title={ok ? `${t.desc} · ${t.value === 'expert' ? 3 : 1} crédit${t.value === 'expert' ? 's' : ''}` : messageVerrou(t.value === 'expert' ? 'plateforme.ia.expert' : 'inventaire.recherche_ia')}>
+                      title={ok ? `${t.desc} · ${COUT_RECHERCHE[t.value] ?? 2} crédits si l’assistant doit aller voir, gratuit si le prix a déjà été vu récemment` : messageVerrou(t.value === 'expert' ? 'plateforme.ia.expert' : 'inventaire.recherche_ia')}>
                       {ok ? '' : '🔒 '}{t.label}
                     </button>
                   )
@@ -217,7 +217,7 @@ export default function RecherchePage() {
             <span className="rch-spin" aria-hidden />
             <div>
               <b>L’assistant regarde chez {interrogeables.length} fournisseur{interrogeables.length > 1 ? 's' : ''}…</b>
-              <span className="muted">{nomsInterroges || 'aucun site consultable parmi les cochés'} · il ouvre les fiches produit et note ce qu’il voit. Comptez 15 à 45 secondes.</span>
+              <span className="muted">{nomsInterroges || 'aucun site consultable parmi les cochés'} · il ouvre les fiches produit et note ce qu’il voit.</span>
             </div>
           </div>
         ) : null}
@@ -233,7 +233,7 @@ export default function RecherchePage() {
               </div>
             </div>
             <p className="muted" style={{ margin: '.2rem 0 0', fontSize: '.82rem' }}>
-              Vu le {derniere ? dateFr(resultats[0]?.vu_le ?? new Date().toISOString()) : ''} avec le niveau {TIERS.find((t) => t.value === derniere?.tier)?.label ?? 'Standard'}{derniere?.downgraded ? ' (niveau replié selon votre offre)' : ''}{derniere ? ` · ${Math.round(derniere.duree_ms / 1000)} s` : ''}. Les prix sont ceux affichés sur chaque site au moment de la visite : ni convertis, ni estimés.
+              Chaque prix porte la date à laquelle il a été vu sur le site. Niveau {TIERS.find((t) => t.value === derniere?.tier)?.label ?? 'Standard'}{derniere?.downgraded ? ' (niveau replié selon votre offre)' : ''}{derniere ? ` · ${Math.round(derniere.duree_ms / 1000)} s` : ''}. Les prix sont ceux affichés sur chaque site au moment de la visite : ni convertis, ni estimés.
             </p>
 
             {resultats.length === 0 ? (
@@ -267,7 +267,7 @@ export default function RecherchePage() {
                       <td className="num">
                         <b>{prixFr(r.prix_vu)} €</b>
                         <span className="inv-vu">{r.ht_ou_ttc === 'inconnu' ? 'HT/TTC non précisé' : r.ht_ou_ttc}</span>
-                        {aReverifier(r.vu_le) ? <span className="pill warn">à revérifier</span> : null}
+                        <span className={`pill ${aReverifier(r.vu_le) ? 'warn' : 'muted'}`} title={`Vu sur le site le ${dateFr(r.vu_le)}`}>{ageLisible(r.vu_le)}</span>
                       </td>
                       <td>{r.disponibilite_vue ? <span className={`pill ${enStock(r.disponibilite_vue) ? 'ok' : 'muted'}`} title={r.disponibilite_vue}>{r.disponibilite_vue.length > 38 ? `${r.disponibilite_vue.slice(0, 36)}…` : r.disponibilite_vue}</span> : <span className="muted">non indiquée</span>}</td>
                       <td>

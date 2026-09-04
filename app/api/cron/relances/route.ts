@@ -92,6 +92,9 @@ export async function GET(req: Request) {
 
   // Purge des comptes en fin de grâce (§6) — dans ce cron parce que Vercel Hobby n'en accepte que deux.
   const purge = await purgerComptes().catch((e) => ({ purges: 0, en_attente: 0, erreur: String(e) }))
+  // Le cache mutualisé des prix (0056) se purge ici : Vercel n'autorise que deux tâches
+  // planifiées sur cette formule, toutes deux déjà prises.
+  const { data: cachePurge } = await supabaseAdmin.rpc('purger_cache_recherche')
 
-  return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped, purge })
+  return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0) })
 }

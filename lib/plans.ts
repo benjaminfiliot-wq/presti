@@ -66,6 +66,14 @@ export const PLANS: Record<PlanId, Plan> = {
 // Coût en crédits par niveau de modèle.
 export const CREDIT_COST: Record<Tier, number> = { standard: 1, pro: 1, expert: 3 }
 
+// Coût en crédits d'une recherche chez les fournisseurs, quand elle appelle réellement le service.
+// Elle est facturée à part parce qu'elle coûte à peu près dix fois une génération de texte : ouvrir
+// des pages de sites marchands se paie en dizaines de milliers de mots lus. Servie par le cache
+// mutualisé, elle ne coûte rien à personne et ne se facture donc pas — c'est ce qui rend la
+// fonction à la fois rentable pour nous et généreuse pour l'artisan : plus il cherche, plus le
+// cache se remplit, moins chaque recherche coûte.
+export const COUT_RECHERCHE: Record<Tier, number> = { standard: 2, pro: 2, expert: 3 }
+
 export const planConf = (plan: string | null | undefined): Plan => PLANS[(plan || 'gratuit') as PlanId] || PLANS.gratuit
 // Niveau de site max autorisé par la formule (défaut : Essentiel).
 export const siteMaxForPlan = (plan: string | null | undefined): 1 | 2 | 3 => planConf(plan).siteMax ?? 1

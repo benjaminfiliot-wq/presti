@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import Anthropic from '@anthropic-ai/sdk'
 import { genParams } from '@/lib/ai'
+import { lireCache, ecrireCache, marquerHits, DOMAINES_PARTAGEABLES } from '@/lib/inventaire/cachePrix'
 import { NOTE_ACCES_CONNEXION, domaineDe } from '@/lib/inventaire/liste-depart'
 import type { Fournisseur } from '@/lib/inventaire/types'
 import { resolveModel, type Tier } from '@/lib/models'
@@ -57,6 +58,8 @@ export type SortieRecherche = {
   journal: string[]
   /** Le service n'a pas répondu (solde d'API, coupure) ou a dépassé son temps — ce n'est pas « aucun prix trouvé ». */
   panne?: 'service' | 'delai'
+  /** Les domaines servis depuis le cache mutualisé, donc sans aucun appel payant. */
+  depuisCache?: string[]
 }
 
 export type EntreeRecherche = {
@@ -308,7 +311,7 @@ async function appeler(params: Anthropic.MessageCreateParamsNonStreaming, timeou
   }
 }
 
-export async function rechercherChezFournisseurs(e: EntreeRecherche): Promise<SortieRecherche> {
+async function rechercherEnDirect(e: EntreeRecherche): Promise<SortieRecherche> {
   const debut = Date.now()
   const budget = e.budgetMs ?? BUDGET_MS_DEFAUT
   const restant = () => budget - (Date.now() - debut)
@@ -410,4 +413,91 @@ export async function rechercherChezFournisseurs(e: EntreeRecherche): Promise<So
 
   if (v1.rejets.length) console.warn('[recherche-fournisseurs] rejets :', v1.rejets.join(' | '))
   return fini(v1.resultats, v1.nonVus, appels)
+}
+
+
+/**
+ * La recherche telle que le reste du produit l'appelle. Elle consulte d'abord le CACHE MUTUALISÉ
+ * (migration 0056) : ce qu'un autre artisan a fait voir chez Castorama il y a deux heures n'a
+ * aucune raison d'être repayé. Ce qui manque seulement est lu en direct, puis rangé pour les
+ * suivants.
+ *
+ * Trois précautions, chacune payée d'une erreur possible :
+ * · Les résultats du cache sont RE-SCELLÉS pour l'artisan qui lit — le sceau est lié à lui, et
+ *   sans cela son clic « Retenir » n'enregistrerait rien, sans le moindre message.
+ * · Leur date de lecture d'origine est conservée telle quelle. La re-dater ferait signer une
+ *   date fausse par le serveur, qui s'écrirait ensuite dans ses observations de prix.
+ * · Rien n'est rangé après une panne : mettre un échec en cache le figerait trois jours.
+ */
+export async function rechercherChezFournisseurs(e: EntreeRecherche): Promise<SortieRecherche> {
+  const debut = Date.now()
+
+  // Le fournisseur de CET artisan, par domaine — c'est lui qui reprend son nom et son identifiant
+  // sur un résultat venu d'ailleurs. Seuls les domaines à prix publics sont concernés.
+  const parDomaine = new Map<string, Fournisseur>()
+  for (const f of e.fournisseurs) {
+    const d = domaineDe(f.url)
+    if (f.prix_publics && d && DOMAINES_PARTAGEABLES.has(d) && !parDomaine.has(d)) parDomaine.set(d, f)
+  }
+
+  const cache = parDomaine.size ? await lireCache(e.requete, [...parDomaine.keys()]) : new Map()
+  const resultatsCache: ResultatRecherche[] = []
+  const nonVusCache: NonVu[] = []
+  const domainesServis: string[] = []
+  const servis = new Set<string>()
+  for (const [domaine, entree] of cache) {
+    const f = parDomaine.get(domaine)
+    if (!f) continue
+    domainesServis.push(domaine)
+    servis.add(f.id)
+    for (const r of entree.resultats) {
+      const base = { ...r, fournisseur: f.nom, fournisseur_id: f.id }
+      resultatsCache.push({ ...base, sceau: sceller(e.artisanId, base) })
+    }
+    if (entree.raisonNonVu) nonVusCache.push({ fournisseur: f.nom, fournisseur_id: f.id, raison: entree.raisonNonVu })
+  }
+  if (domainesServis.length) marquerHits(e.requete, domainesServis)
+
+  const restants = e.fournisseurs.filter((f) => !servis.has(f.id))
+  const journalCache = domainesServis.length ? [`cache : ${domainesServis.join(', ')} servis sans appel`] : []
+
+  // Tout était déjà connu : aucune requête, aucun crédit, réponse immédiate.
+  if (!restants.length) {
+    return {
+      resultats: resultatsCache, nonVus: nonVusCache, tier: e.tier, model: e.model,
+      duree_ms: Date.now() - debut, appels: 0, journal: journalCache, depuisCache: domainesServis,
+    }
+  }
+
+  const direct = await rechercherEnDirect({ ...e, fournisseurs: restants })
+
+  // Ranger ce qui vient d'être vu, pour les artisans suivants. Jamais après une panne : on
+  // figerait un échec. `prix_publics` est revérifié à l'écriture, pas seulement à l'appel.
+  if (!direct.panne) {
+    const parDom = new Map<string, { domaine: string; prixPublics: boolean; resultats: ResultatRecherche[]; raisonNonVu: string | null }>()
+    for (const f of restants) {
+      const d = domaineDe(f.url)
+      if (!d || !DOMAINES_PARTAGEABLES.has(d) || parDom.has(d)) continue
+      parDom.set(d, { domaine: d, prixPublics: f.prix_publics === true, resultats: [], raisonNonVu: null })
+      const sien = direct.resultats.filter((r) => domaineDe(r.url) === d)
+      parDom.get(d)!.resultats = sien
+      if (!sien.length) {
+        const nv = direct.nonVus.find((n) => n.fournisseur_id === f.id)
+        // Une absence n'est rangée que si le fournisseur a VRAIMENT été consulté : un « non vu »
+        // parce que le site demande un compte ne dit rien sur le produit cherché.
+        parDom.get(d)!.raisonNonVu = nv && f.prix_publics === true ? nv.raison : null
+      }
+    }
+    const aRanger = [...parDom.values()].filter((x) => x.resultats.length || x.raisonNonVu)
+    if (aRanger.length) void ecrireCache(e.requete, aRanger, e.tier)
+  }
+
+  return {
+    ...direct,
+    resultats: [...resultatsCache, ...direct.resultats],
+    nonVus: [...nonVusCache, ...direct.nonVus],
+    duree_ms: Date.now() - debut,
+    journal: [...journalCache, ...direct.journal],
+    depuisCache: domainesServis,
+  }
 }
