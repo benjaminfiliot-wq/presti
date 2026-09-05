@@ -237,8 +237,11 @@ try {
   T('compte fondateur (démonstration) → relance annulée', rf[0]?.envoyee === true)
   T('compte fondateur → aucune trace dans le fil', mf.length === 0, `${mf.length} message(s)`)
   const ri = await relancesDe(invalide), mi = await messagesDe(invalide)
-  T('adresse .invalid → relance annulée', ri[0]?.envoyee === true)
-  T('adresse .invalid → aucune trace dans le fil', mi.length === 0, `${mi.length} message(s)`)
+  // Une adresse .invalid n'est pas sautée par le cron : lib/email.ts la neutralise (rien ne part,
+  // « comme si » c'était parti), donc la relance est traitée et le fil garde sa trace — la preuve
+  // qu'aucun email n'a été expédié est en §7 (journal Resend), en envoi réel seulement.
+  T('adresse .invalid → relance traitée', ri[0]?.envoyee === true)
+  T('adresse .invalid → une trace dans le fil, rien d’expédié', mi.length === 1, `${mi.length} message(s)`)
 
   console.log('\n── 7. Ce que Resend a réellement expédié')
   await new Promise((r) => setTimeout(r, 2000)) // le journal Resend n'est pas instantané
@@ -271,7 +274,7 @@ try {
   const ap2 = await relancesDe(suivi)
   T('les rangs 2 et 3 n’ont pas été avancés', ap2.filter((r) => r.rang > 1).every((r) => r.envoyee === false))
   await new Promise((r) => setTimeout(r, 2000))
-  const jr2 = await journalResend()
+  const jr2 = ENVOI_REEL ? await journalResend() : null
   if (jr2) T('Resend n’a pas expédié de doublon', jr2.filter((e) => e.subject === SUJET_ATTENDU).length === 1)
 } catch (e) {
   ko++; console.log('  ❌ exception —', e instanceof Error ? e.stack : e)
