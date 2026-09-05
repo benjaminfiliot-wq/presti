@@ -4,7 +4,7 @@ import '@/app/globals.css'
 import { useEffect, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import { slugify, randomSuffix } from '@/lib/slug'
+import { slugBase, randomSuffix } from '@/lib/slug'
 
 const METIERS = [
   'Plombier', 'Chauffagiste', 'Électricien', 'Maçon', 'Menuisier', 'Charpentier', 'Couvreur', 'Peintre',
@@ -44,11 +44,14 @@ export default function Onboarding() {
     if (!userId) return
     setLoading(true)
     setErr(null)
-    const slug = `${slugify(nom) || 'artisan'}-${randomSuffix()}`
+    const slug = `${slugBase(nom)}-${randomSuffix()}`
+    // Bornes (audit final, D-1.6) : la base les impose aussi (migration 0058), ici on évite l'erreur.
+    const nomPropre = nom.trim().slice(0, 120)
+    const telPropre = tel.replace(/[^0-9 .+()\-]/g, '').trim().slice(0, 30) || null
     const metierFinal = metier === 'Autre' ? (metierAutre.trim() || 'Artisan') : metier
     const { error } = await supabase
       .from('artisans')
-      .upsert({ id: userId, email, nom, metier: metierFinal, tel, ton_style: ton, slug })
+      .upsert({ id: userId, email, nom: nomPropre, metier: metierFinal.slice(0, 60), tel: telPropre, ton_style: ton, slug })
     setLoading(false)
     if (error) {
       setErr(error.message)
@@ -72,16 +75,16 @@ export default function Onboarding() {
         <p className="muted">Ça sert à personnaliser tes réponses et à créer ton lien de contact.</p>
         <form onSubmit={handleSubmit}>
           <label>Ton nom (ou nom de l'entreprise)</label>
-          <input value={nom} onChange={(e) => setNom(e.target.value)} required placeholder="Ex : Dupont Plomberie" />
+          <input value={nom} onChange={(e) => setNom(e.target.value)} required maxLength={120} placeholder="Ex : Dupont Plomberie" />
           <label>Ton métier</label>
           <select value={metier} onChange={(e) => setMetier(e.target.value)}>
             {METIERS.map((m) => <option key={m} value={m}>{m}</option>)}
           </select>
           {metier === 'Autre' && (
-            <input value={metierAutre} onChange={(e) => setMetierAutre(e.target.value)} required placeholder="Précise ton métier (ex : Cordiste, Enduiseur, Cheministe…)" style={{ marginTop: '.5rem' }} />
+            <input value={metierAutre} onChange={(e) => setMetierAutre(e.target.value)} required maxLength={60} placeholder="Précise ton métier (ex : Cordiste, Enduiseur, Cheministe…)" style={{ marginTop: '.5rem' }} />
           )}
           <label>Ton téléphone</label>
-          <input value={tel} onChange={(e) => setTel(e.target.value)} placeholder="06 12 34 56 78" />
+          <input value={tel} onChange={(e) => setTel(e.target.value)} type="tel" inputMode="tel" maxLength={30} pattern="[0-9 .+()\-]*" title="Chiffres, espaces, points, tirets, parenthèses et + seulement" placeholder="06 12 34 56 78" />
           <label>Le ton de tes réponses (l'IA s'en inspirera)</label>
           <textarea value={ton} onChange={(e) => setTon(e.target.value)} rows={3} style={{ width: '100%', padding: '.7rem .8rem', border: '1px solid var(--line)', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit', resize: 'vertical' }} />
           <button disabled={loading}>{loading ? '…' : 'Enregistrer et continuer'}</button>

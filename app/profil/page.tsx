@@ -82,6 +82,8 @@ export default function ProfilPage() {
   const [reponseAuto, setReponseAuto] = useState(true)
   const [leadsPause, setLeadsPause] = useState(false)
   const [siteActive, setSiteActive] = useState(false)
+  // Ce que la BASE dit (l'état réellement public) — le libellé s'y fie, pas à la case avant Enregistrer (audit final, D-2.6).
+  const [siteActiveEnregistre, setSiteActiveEnregistre] = useState(false)
   const [siteTier, setSiteTier] = useState(3)
   const [siteMax, setSiteMax] = useState<1 | 2 | 3>(3) // niveau de site max inclus dans la formule
   const [plan, setPlan] = useState('gratuit')
@@ -131,7 +133,7 @@ export default function ProfilPage() {
       for (const id of SECTION_ORDER) { if (!seen.has(id)) comp.push({ id, on: false }) }
       setLayout(comp)
       // niveau de site borné par la formule (on ne propose jamais un niveau non inclus)
-      setSiteActive(a.site_active === true); setSiteTier(Math.min([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : max, max) as number); setSiteContact(a.site_contact_integre !== false)
+      setSiteActive(a.site_active === true); setSiteActiveEnregistre(a.site_active === true); setSiteTier(Math.min([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : max, max) as number); setSiteContact(a.site_contact_integre !== false)
       setSiteContenu(a.site_contenu && typeof a.site_contenu === 'object' ? { ...CONTENU_VIDE, ...(a.site_contenu as Partial<SiteContenu>), mots_cles: Array.isArray((a.site_contenu as SiteContenu).mots_cles) ? (a.site_contenu as SiteContenu).mots_cles : [] } : null)
       if (a.domaine) { setDomSaved(a.domaine); setDomaine(a.domaine); refreshDomaine() }
       setReady(true)
@@ -231,6 +233,7 @@ export default function ProfilPage() {
     }).eq('id', uid)
     setSaving(false)
     if (error) { setMsg({ type: 'err', text: 'Enregistrement impossible.' }); return }
+    setSiteActiveEnregistre(siteActive)
     setMsg({ type: 'ok', text: 'Profil enregistré ✅' })
     setPreviewKey((k) => k + 1) // recharge l'aperçu avec la nouvelle composition
     setTimeout(() => setMsg(null), 2500)
@@ -548,14 +551,15 @@ export default function ProfilPage() {
           </label>
           <label className="prof-toggle" style={{ marginTop: '.7rem' }}>
             <input type="checkbox" checked={siteActive} onChange={(e) => setSiteActive(e.target.checked)} />
-            <span>Mon site est <b>{siteActive ? 'publié' : 'hors ligne'}</b> {siteActive ? '— accessible à tous' : '— visible de vous seul'}</span>
+            <span>Mon site est <b>{siteActiveEnregistre ? 'publié' : 'hors ligne'}</b> {siteActiveEnregistre ? '— accessible à tous' : '— visible de vous seul'}{siteActive !== siteActiveEnregistre ? <> — <b>{siteActive ? 'sera publié' : 'sera mis hors ligne'} après Enregistrer</b></> : null}</span>
             <Info cle="profil.site_actif" />
           </label>
           {slug ? (
             <AdresseEditor slug={slug} prefixe={afficher(urlSite(adresse)).slice(0, -slug.length)} jeton={authToken} onChange={setSlug} />
           ) : null}
-          {slug && siteActive && (
+          {slug && (siteActive || siteActiveEnregistre) && (
             <div className="site-publish">
+              {siteActive !== siteActiveEnregistre ? <p className="muted" style={{ margin: '0 0 .6rem' }}>Modification non enregistrée : le site reste {siteActiveEnregistre ? 'public' : 'hors ligne'} tant que vous n’avez pas cliqué sur Enregistrer.</p> : null}
               <div className="site-publish-share">
                 <div className="prof-link" style={{ margin: 0, flex: '1 1 240px' }}>
                   <span>{afficher(urlSite(adresse))}</span>

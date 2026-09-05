@@ -71,6 +71,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   const [err, setErr] = useState<string | null>(null)
   // Compte client (§6) : session portée par un cookie httpOnly, jamais lisible ici.
   const [compte, setCompte] = useState<{ email: string; nom: string | null } | null>(null)
+  const [authErreur, setAuthErreur] = useState<string | null>(null)
   const [authEmail, setAuthEmail] = useState('')
   const [authEnvoye, setAuthEnvoye] = useState(false)
   const [authBusy, setAuthBusy] = useState(false)
@@ -192,7 +193,10 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
         const url = new URL(window.location.href)
         const lien = url.searchParams.get('connexion')
         if (lien) {
-          await fetch('/api/p/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'verifier', token: lien }) })
+          const rv = await fetch('/api/p/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'verifier', token: lien }) })
+          // Un lien vaut 20 minutes et une seule fois : « je clique trop tard » est le cas courant.
+          // Avant, le 400 était avalé et le client ne voyait rien (audit final, D-3.3).
+          if (!rv.ok) setAuthErreur('Ce lien a expiré ou a déjà servi — demandez-en un nouveau ci-dessous.')
           url.searchParams.delete('connexion') // on n'expose pas le jeton dans la barre d'adresse
           window.history.replaceState({}, '', url.toString())
         }
@@ -376,6 +380,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
             <span className="pchat-compte-m">Si un espace existe pour cette adresse, un lien de connexion vient d’être envoyé. Vérifiez votre boîte mail.</span>
           ) : (
             <form onSubmit={demanderLien}>
+              {authErreur ? <span className="pchat-compte-m pchat-compte-err" role="alert">{authErreur}</span> : null}
               <span className="pchat-compte-t">Retrouver mes demandes</span>
               <input type="email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="Votre email" aria-label="Votre email" required />
               <button type="submit" className="pchat-compte-b" disabled={authBusy}>{authBusy ? '…' : 'Recevoir mon lien'}</button>

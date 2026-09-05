@@ -1972,6 +1972,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .mdp-force[data-niveau="3"] .mdp-jauge i { background: var(--green); }
 
 /* ── Comparatif des offres (app/Comparatif.tsx) — rendu depuis lib/plans.ts, v5 §3 ── */
+.pchat-compte-err{color:#B4432A;font-weight:600}
 .cgu-accord{display:flex;gap:.6rem;align-items:flex-start;margin:.9rem 0 .4rem;font-size:.9rem;line-height:1.45;color:var(--muted)}
 .cgu-accord input{margin-top:.25rem;flex:none;width:1.05rem;height:1.05rem;accent-color:var(--accent)}
 .cgu-accord a{color:var(--ink);text-decoration:underline}
@@ -2009,8 +2010,9 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .adr-msg{font-size:.85rem}.adr-msg.ok{color:var(--ok,#1a7f4b)}.adr-msg.err{color:#B42318}
 
 /* ── Poste de pilotage de la plateforme (app/plateforme/*), v5 §9 ── */
-.pil-volets{display:flex;gap:.3rem;margin:0 0 1rem;border-bottom:1px solid var(--line,rgba(0,0,0,.1))}
-.pil-volets button{width:auto;margin:0;padding:.6rem .9rem;background:none;border:none;border-bottom:2px solid transparent;border-radius:0;color:inherit;font:inherit;font-weight:600;opacity:.65;cursor:pointer}
+.pil-volets{display:flex;gap:.3rem;margin:0 0 1rem;border-bottom:1px solid var(--line,rgba(0,0,0,.1));overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.pil-volets::-webkit-scrollbar{display:none}
+.pil-volets button{flex:none;white-space:nowrap;width:auto;margin:0;padding:.6rem .9rem;background:none;border:none;border-bottom:2px solid transparent;border-radius:0;color:inherit;font:inherit;font-weight:600;opacity:.65;cursor:pointer}
 .pil-volets button.on{opacity:1;border-bottom-color:var(--accent-ink,#C15F3C)}
 .pil-volets button:hover{opacity:1}
 .pil-volets button:focus-visible{outline:2px solid var(--accent-ink,#C15F3C);outline-offset:-2px}

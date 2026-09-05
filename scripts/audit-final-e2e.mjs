@@ -141,6 +141,21 @@ try {
   T('M5 — les six chemins signalent une panne IA', routesIA.every((f) => /signalerPanneIA\(/.test(fs.readFileSync(f, 'utf8'))), routesIA.filter((f) => !/signalerPanneIA\(/.test(fs.readFileSync(f, 'utf8'))).join(', '))
   T('M5 — le crédit d’une génération échouée est rendu', /export async function rendreCredit/.test(fs.readFileSync('lib/credits.ts', 'utf8')) && routesIA.slice(0, 5).every((f) => /rendreCredit\(/.test(fs.readFileSync(f, 'utf8'))))
 
+  console.log('\n── D. Parcours : adresse valide, bornes, lien expiré, onglets, libellé du site')
+  const { slugify, slugBase } = await import('../lib/slug.ts')
+  const long = slugBase('Entreprise très longue très longue très longue et encore') + '-abcd'
+  T('D-1.7 — l’adresse générée fait 40 caractères au plus', long.length <= 40, `${long.length} : ${long}`)
+  T('… sans double tiret ni tiret de bord', !/--/.test(long) && !/^-|-$/.test(long) && !/-{2,}|^-|-$/.test(slugify('a----b-')), long)
+  const { error: eNom } = await admin.from('artisans').update({ nom: 'x'.repeat(371) }).eq('id', u.user.id)
+  T('D-1.6 — la base refuse un nom de 371 caractères (migration 0058 à coller sinon)', !!eNom, eNom ? eNom.message.slice(0, 80) : 'accepté : coller supabase/migrations/_A_COLLER_sql_editor_0058.sql')
+  const { error: eTel } = await admin.from('artisans').update({ tel_public: 'abc<script>' }).eq('id', u.user.id)
+  T('D-1.6 — la base refuse un téléphone « abc<script> »', !!eTel, eTel ? eTel.message.slice(0, 80) : 'accepté')
+  await admin.from('artisans').update({ nom: 'Vérif Final', tel_public: null }).eq('id', u.user.id)
+  T('D-3.3 — un lien magique expiré est annoncé au client', /a expiré ou a déjà servi/.test(chat) && /role="alert"/.test(chat))
+  T('D-4.6 — les onglets de /plateforme défilent au lieu de dézoomer', /\.pil-volets\{[^}]*overflow-x:auto/.test(css) && /\.pil-volets button\{flex:none/.test(css))
+  const profilSrc = fs.readFileSync('app/profil/page.tsx', 'utf8')
+  T('D-2.6 — le libellé du site suit l’état enregistré, pas la case', /siteActiveEnregistre/.test(profilSrc) && /après Enregistrer/.test(profilSrc))
+
   console.log('\n── H-bloquant 2. Pas de second abonnement pour un abonné')
   const r = await fetch(`${BASE}/api/subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.session.access_token}` }, body: JSON.stringify({ plan: 'signature' }) })
   const j = await r.json().catch(() => ({}))
