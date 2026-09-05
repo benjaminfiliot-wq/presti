@@ -96,13 +96,23 @@ for (const s of retenues) {
   // Les scripts annoncent leur score : on le reprend tel quel plutôt que de le recompter.
   const score = sortie.match(/(\d+) réussis, (\d+) échoués/)
   const ok = r.status === 0
-  resultats.push({ nom: s.nom, ok, secondes, score: score ? `${score[1]}/${Number(score[1]) + Number(score[2])}` : '', sortie })
-  process.stdout.write(`\r${ok ? '✅' : '❌'} ${s.nom}${score ? ` — ${score[1]}/${Number(score[1]) + Number(score[2])}` : ''} (${secondes}s)\n`)
+  // Code de sortie 2 : la suite ne PEUT pas encore jouer, et dit pourquoi — un préalable qui
+  // n'appartient qu'à un humain (une migration à coller, un réglage Supabase). Ce n'est ni vert
+  // ni cassé : c'est « en attente », compté à part, jamais dans les vertes (mfa-e2e, code-connexion-e2e).
+  const attente = r.status === 2
+  resultats.push({ nom: s.nom, ok, attente, secondes, score: score ? `${score[1]}/${Number(score[1]) + Number(score[2])}` : '', sortie })
+  process.stdout.write(`\r${ok ? '✅' : attente ? '⏳' : '❌'} ${s.nom}${score ? ` — ${score[1]}/${Number(score[1]) + Number(score[2])}` : ''}${attente ? ' — EN ATTENTE d’un préalable humain' : ''} (${secondes}s)\n`)
 }
 
-const echecs = resultats.filter((r) => !r.ok)
+const echecs = resultats.filter((r) => !r.ok && !r.attente)
+const attentes = resultats.filter((r) => r.attente)
 console.log(`\n${'─'.repeat(60)}`)
-console.log(`${resultats.length - echecs.length}/${resultats.length} suites vertes · ${Math.round((Date.now() - debut) / 1000)}s au total`)
+console.log(`${resultats.length - echecs.length - attentes.length}/${resultats.length} suites vertes${attentes.length ? ` · ${attentes.length} en attente d’un préalable humain` : ''}${echecs.length ? ` · ${echecs.length} en échec` : ''} · ${Math.round((Date.now() - debut) / 1000)}s au total`)
+
+for (const a of attentes) {
+  console.log(`\n⏳ ${a.nom} — en attente. Ce que la suite demande :`)
+  console.log(a.sortie.split('\n').filter((l) => /⛔|À faire|À cocher/.test(l)).slice(0, 4).map((l) => '   ' + l.trim()).join('\n'))
+}
 
 if (echecs.length) {
   console.log(`\n${echecs.length} suite(s) en échec — détail :`)
