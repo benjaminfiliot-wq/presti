@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 
 // Système anti-hacker : bannissement d'IP + auto-ban sur abus répété.
@@ -56,4 +57,17 @@ export async function recordAbuse(ip: string, raison: string): Promise<boolean> 
     /* fail-open : ne bloque jamais sur une erreur de comptage */
   }
   return false
+}
+
+/**
+ * Pseudonyme d'une adresse IP (audit final, auditeur B, C7). Les tables que l'artisan peut lire
+ * (`leads.ip`, `devis.accepte_ip`) ne portent plus l'adresse en clair : seulement une empreinte
+ * salée, qui suffit à la finalité déclarée — reconnaître un même émetteur pour lutter contre les
+ * abus — sans révéler l'adresse elle-même. Les bannissements (`ip_bans`, `ip_abus`), eux, restent
+ * en clair côté serveur seul, parce qu'on doit y comparer l'adresse de chaque requête.
+ */
+export function ipPseudonyme(ip: string | null | undefined): string | null {
+  if (!ip || ip === 'unknown') return null
+  const sel = process.env.IP_SEL || process.env.CRON_SECRET || 'presti'
+  return 'ip:' + crypto.createHash('sha256').update(`${sel}|${ip}`).digest('hex').slice(0, 32)
 }

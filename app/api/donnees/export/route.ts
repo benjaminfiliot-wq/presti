@@ -22,7 +22,8 @@ const nomFichier = (numero: unknown, id: unknown) => String(numero || id || 'san
 async function collecter(uid: string) {
   const [artisan, leads, devis, factures, clients, tarifs, inventaire] = await Promise.all([
     supabaseAdmin.from('artisans').select('*').eq('id', uid).maybeSingle(),
-    supabaseAdmin.from('leads').select('*').eq('artisan_id', uid).order('created_at', { ascending: true }),
+    // Sans `ip` : donnée d'un tiers, finalité anti-abus, elle n'a rien à faire dans l'export de l'artisan (C7).
+    supabaseAdmin.from('leads').select('*').eq('artisan_id', uid).order('created_at', { ascending: true }).then((r) => ({ ...r, data: (r.data ?? []).map(({ ip: _ip, ...l }: Record<string, unknown>) => l) })),
     supabaseAdmin.from('devis').select('*').eq('artisan_id', uid).order('created_at', { ascending: true }),
     supabaseAdmin.from('factures').select('*').eq('artisan_id', uid).order('created_at', { ascending: true }).then((r) => r, () => ({ data: [] })),
     supabaseAdmin.from('clients_plateforme').select('*').eq('artisan_id', uid).then((r) => r, () => ({ data: [] })),

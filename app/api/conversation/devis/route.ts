@@ -3,7 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { acompteApresAcceptation } from '@/lib/reglesServeur'
 import { creerFacture } from '@/lib/factureDepuisDevis'
 import { notifierArtisan } from '@/lib/notifications'
-import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { getIp, isBanned, recordAbuse, ipPseudonyme } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 
 // Carte Devis dans la conversation (v4 §A3) : le client ACCEPTE ou DEMANDE UNE MODIFICATION
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
       await supabaseAdmin.from('devis').update({
         statut: 'accepte',
         accepte_le: new Date().toISOString(),
-        accepte_ip: ip === 'unknown' ? null : ip,
+        accepte_ip: ipPseudonyme(ip),
         accepte_canal: 'plateforme',
         updated_at: new Date().toISOString(),
       }).eq('id', devis.id)

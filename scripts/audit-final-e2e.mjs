@@ -90,9 +90,50 @@ try {
   T('à l’écran d’acceptation (L. 221-18, L. 221-25, L. 221-28)', /L\. 221-18/.test(chat) && /L\. 221-25/.test(chat) && /L\. 221-28/.test(chat))
   T('sur le devis PDF', /L\. 221-18/.test(pdf))
 
-  console.log('\n── H-bloquant 2. Pas de second abonnement pour un abonné')
+  console.log('\n── B-A6. Le médiateur figure sur le devis')
+  if (typeof buildPdfData === 'function') {
+    const dm = buildPdfData({ numero: 'D-1' }, [], { nom: 'Test', mediateur_nom: 'CM2C', mediateur_url: 'https://cm2c.net' }, 'devis')
+    T('la donnée PDF porte le médiateur', /CM2C/.test(dm.mediateur ?? ''), JSON.stringify(dm.mediateur))
+    T('… et un avoir se reconnaît', buildPdfData({ numero: 'F-1', avoir_de: 'x' }, [], { nom: 'Test' }, 'facture').avoir === true)
+  }
+
+  console.log('\n── B-A9. Une facture émise s’annule par un avoir, jamais d’un clic')
   const pub = createClient(SB, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } })
   const { data: s } = await pub.auth.signInWithPassword({ email, password: mdp })
+  const H = { 'Content-Type': 'application/json', Authorization: `Bearer ${s.session.access_token}` }
+  const { data: fac } = await admin.from('factures').insert({ artisan_id: u.user.id, numero: 'FAC-TEST-1', client_nom: 'Client', statut: 'emise', date_emission: new Date().toISOString().slice(0, 10), total_ht: 100, total_tva: 0, total_ttc: 100, verrouillee: true, emise_le: new Date().toISOString() }).select('id').single()
+  await admin.from('factures_lignes').insert({ facture_id: fac.id, ordre: 0, designation: 'Main d’œuvre', quantite: 2, unite: 'h', prix_unitaire_ht: 50, tva_taux: 0 })
+  const rp = await fetch(`${BASE}/api/factures/${fac.id}`, { method: 'PATCH', headers: H, body: JSON.stringify({ statut: 'annulee' }) })
+  T('PATCH statut=annulee est refusé (409, avoir requis)', rp.status === 409 && /avoir/i.test((await rp.json().catch(() => ({}))).error ?? ''), String(rp.status))
+  const ra = await fetch(`${BASE}/api/factures/${fac.id}/avoir`, { method: 'POST', headers: H, body: '{}' })
+  const ja = await ra.json().catch(() => ({}))
+  T('POST /avoir crée une pièce numérotée', ra.ok && /^FAC-\d{4}-\d{4}$/.test(ja.numero ?? ''), `${ra.status} ${JSON.stringify(ja).slice(0, 120)}`)
+  const { data: av } = ja.id ? await admin.from('factures').select('total_ttc, verrouillee, avoir_de, statut').eq('id', ja.id).maybeSingle() : { data: null }
+  T('… négative, scellée, qui cite la facture', av && av.total_ttc === -100 && av.verrouillee === true && av.avoir_de === fac.id, JSON.stringify(av))
+  const { data: lav } = ja.id ? await admin.from('factures_lignes').select('prix_unitaire_ht').eq('facture_id', ja.id) : { data: [] }
+  T('… avec les lignes en négatif', (lav ?? []).length === 1 && lav[0].prix_unitaire_ht === -50, JSON.stringify(lav))
+  const { data: orig } = await admin.from('factures').select('statut').eq('id', fac.id).maybeSingle()
+  T('la facture d’origine passe « annulée » par l’avoir', orig?.statut === 'annulee', orig?.statut)
+  const ra2 = await fetch(`${BASE}/api/factures/${fac.id}/avoir`, { method: 'POST', headers: H, body: '{}' })
+  T('un second avoir est refusé', ra2.status === 409, String(ra2.status))
+
+  console.log('\n── B-C7. L’adresse IP d’un prospect n’est jamais lisible en clair par l’artisan')
+  const { ipPseudonyme } = await import('../lib/security.ts')
+  T('le pseudonyme ne contient pas l’adresse', /^ip:[0-9a-f]{32}$/.test(ipPseudonyme('203.0.113.7') ?? '') && !/203/.test(ipPseudonyme('203.0.113.7')))
+  T('… mais reste stable (même émetteur → même empreinte)', ipPseudonyme('203.0.113.7') === ipPseudonyme('203.0.113.7') && ipPseudonyme('203.0.113.7') !== ipPseudonyme('203.0.113.8'))
+  T('inconnue → null', ipPseudonyme('unknown') === null)
+  const src = fs.readFileSync('app/api/leads/route.ts', 'utf8') + fs.readFileSync('app/api/conversation/devis/route.ts', 'utf8')
+  T('plus aucune écriture d’IP en clair dans leads/devis', !/ip === 'unknown' \? null : ip/.test(src))
+
+  console.log('\n── C10. L’annexe de sous-traitance (art. 28) est dans les CGU')
+  T('annexe présente, avec sous-traitants ultérieurs et violation de données', /art\. 28 RGPD/.test(cgu) && /Sous-traitants ultérieurs/.test(cgu) && /Violation de données/.test(cgu))
+
+  console.log('\n── H-majeur. Le client d’un artisan sans crédit n’est pas laissé dans le silence')
+  const st = fs.readFileSync('app/api/conversation/stream/route.ts', 'utf8')
+  T('le serveur dit pourquoi il ne répond pas (raison: credits)', /raison: 'credits'/.test(st))
+  T('le chat affiche une note quand aucune réponse automatique ne vient', /type: 'info'/.test(chat) && /répond en personne/.test(chat))
+
+  console.log('\n── H-bloquant 2. Pas de second abonnement pour un abonné')
   const r = await fetch(`${BASE}/api/subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.session.access_token}` }, body: JSON.stringify({ plan: 'signature' }) })
   const j = await r.json().catch(() => ({}))
   T('/api/subscribe répond 409 et renvoie vers le portail', r.status === 409 && j.portail === true, `${r.status} ${JSON.stringify(j).slice(0, 100)}`)

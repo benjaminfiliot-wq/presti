@@ -4,7 +4,7 @@ import { generateLeadReply, qualifyLead } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit } from '@/lib/credits'
-import { getIp, isBanned, recordAbuse } from '@/lib/security'
+import { getIp, isBanned, recordAbuse, ipPseudonyme } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 
 // Bornes anti-abus (une demande légitime tient largement dedans).
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
         urgence: qualif.urgence,
         type_chantier: qualif.type_chantier,
         ab_variant: variant,
-        ip: ip === 'unknown' ? null : ip,
+        ip: ipPseudonyme(ip),
       })
       .select('id, token')
       .single()

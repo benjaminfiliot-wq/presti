@@ -23,6 +23,7 @@ export type LigneFacture = {
 }
 
 export type DonneesFacturX = {
+  avoir?: boolean                 // note d'avoir (code 381) plutôt que facture (380)
   numero: string
   date_emission: string           // AAAA-MM-JJ
   date_echeance?: string | null
@@ -143,7 +144,7 @@ export function genererFacturX(d: DonneesFacturX): string {
   </rsm:ExchangedDocumentContext>
   <rsm:ExchangedDocument>
     <ram:ID>${x(d.numero)}</ram:ID>
-    <ram:TypeCode>380</ram:TypeCode>
+    <ram:TypeCode>${d.avoir ? 381 : 380}</ram:TypeCode>
     <ram:IssueDateTime><udt:DateTimeString format="102">${date(d.date_emission)}</udt:DateTimeString></ram:IssueDateTime>
   </rsm:ExchangedDocument>
   <rsm:SupplyChainTradeTransaction>

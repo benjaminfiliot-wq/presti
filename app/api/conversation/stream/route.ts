@@ -137,7 +137,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, reply: null, raison: decision.raison })
     }
     const credit = await consumeCredit(artisan.id, 'standard', !!artisan.is_founder)
-    if (!credit.ok) { await notifier(null); return NextResponse.json({ ok: true, reply: null }) }
+    if (!credit.ok) { await notifier(null); return NextResponse.json({ ok: true, reply: null, raison: 'credits' }) }
 
     // ── Flux SSE
     const turns: ConvTurn[] = [...history.map((m) => ({ sens: m.sens, contenu: m.contenu })), { sens: 'in' as const, contenu: message }]

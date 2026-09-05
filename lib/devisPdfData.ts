@@ -6,9 +6,10 @@ type ArtisanRow = {
   nom?: string | null; metier?: string | null; forme_juridique?: string | null
   adresse?: string | null; code_postal?: string | null; ville?: string | null; siret?: string | null
   assurance_nom?: string | null; assurance_contrat?: string | null; assurance_activites?: string | null; assurance_zone?: string | null
-  tva_num?: string | null; tva_regime?: string | null; mention_tva_base?: string | null; conditions_paiement?: string | null; iban?: string | null; logo_url?: string | null
+  mediateur_nom?: string | null; mediateur_url?: string | null; tva_num?: string | null; tva_regime?: string | null; mention_tva_base?: string | null; conditions_paiement?: string | null; iban?: string | null; logo_url?: string | null
 }
 type DevisRow = {
+  avoir_de?: string | null
   numero?: string | null; date_emission?: string | null; validite_jours?: number | null; date_echeance?: string | null
   remise_pct?: number | null; acompte_pct?: number | null; statut?: string | null
   client_nom?: string | null; client_adresse?: string | null; objet?: string | null
@@ -62,5 +63,9 @@ export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: Artis
     franchise, mentionTva: mentionFranchise((artisan.mention_tva_base as BaseMention) || 'auto', emission), assurance, conditions: artisan.conditions_paiement || '', iban: artisan.iban || '',
     type, echeanceDate: dateFr(echeance),
     logoUrl: artisan.logo_url || null, statut: devis.statut || null,
+    avoir: !!devis.avoir_de,
+    // Art. L. 616-1 c. conso : le professionnel communique au consommateur les coordonnées du
+    // médiateur dont il relève. Sur le devis, avant l'engagement — pas seulement sur le site.
+    mediateur: [artisan.mediateur_nom, artisan.mediateur_url].filter(Boolean).join(' — '),
   }
 }

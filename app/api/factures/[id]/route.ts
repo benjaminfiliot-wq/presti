@@ -20,8 +20,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 // I5 — une facture est une pièce comptable : le statut n'évolue qu'en marche avant
-// (émise → payée/annulée, payée → annulée). Jamais de retour en arrière.
-const NEXT_STATUTS: Record<string, string[]> = { emise: ['payee', 'annulee'], payee: ['annulee'], annulee: [] }
+// (émise → payée). Jamais de retour en arrière, et jamais « annulée » à la main : une facture
+// émise s'annule par un AVOIR (POST /api/factures/[id]/avoir), qui pose ce statut lui-même.
+const NEXT_STATUTS: Record<string, string[]> = { emise: ['payee'], payee: [], annulee: [] }
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -32,8 +33,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (!['emise', 'payee', 'annulee'].includes(next)) return NextResponse.json({ error: 'Statut invalide' }, { status: 400 })
   const { data: cur } = await supabaseAdmin.from('factures').select('*').eq('id', id).eq('artisan_id', uid).maybeSingle()
   if (!cur) return NextResponse.json({ error: 'Facture introuvable' }, { status: 404 })
+  if (next === 'annulee' && cur.statut !== 'annulee') {
+    return NextResponse.json({ error: 'Une facture émise ne s’annule pas d’un clic : émettez un avoir (pièce négative numérotée), qui l’annule dans les règles.', code: 'avoir_requis' }, { status: 409 })
+  }
   if (next !== cur.statut && !NEXT_STATUTS[cur.statut]?.includes(next)) {
-    return NextResponse.json({ error: 'Une facture émise ne peut pas revenir en arrière. Pour l’annuler, passez-la en « annulée ».' }, { status: 409 })
+    return NextResponse.json({ error: 'Une facture émise ne peut pas revenir en arrière.' }, { status: 409 })
   }
 
   // Passage à « émise » : la pièce est SCELLÉE (v4 §10.7). On enregistre son empreinte au
@@ -63,5 +67,5 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const uid = await auth(req)
   if (!uid) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
   // Une facture émise ne se supprime pas (séquence continue obligatoire) : on l'annule.
-  return NextResponse.json({ error: 'Une facture ne se supprime pas. Passez-la en « annulée » pour la neutraliser.' }, { status: 403 })
+  return NextResponse.json({ error: 'Une facture ne se supprime pas. Émettez un avoir pour l’annuler.' }, { status: 403 })
 }

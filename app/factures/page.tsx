@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 
-type Facture = { id: string; numero: string | null; objet: string | null; client_nom: string | null; statut: string | null; total_ttc: number | null; date_echeance: string | null }
+type Facture = { id: string; numero: string | null; objet: string | null; client_nom: string | null; statut: string | null; total_ttc: number | null; date_echeance: string | null; avoir_de: string | null }
 
 const BADGE: Record<string, { label: string; pill: string }> = {
   emise: { label: 'Émise', pill: 'info' },
@@ -21,7 +21,7 @@ export default function FacturesList() {
   const [busy, setBusy] = useState<string | null>(null)
 
   async function load() {
-    const { data: fs } = await supabase.from('factures').select('id, numero, objet, client_nom, statut, total_ttc, date_echeance').order('created_at', { ascending: false })
+    const { data: fs } = await supabase.from('factures').select('id, numero, objet, client_nom, statut, total_ttc, date_echeance, avoir_de').order('created_at', { ascending: false })
     setFactures((fs as Facture[]) ?? [])
   }
 
@@ -58,8 +58,15 @@ export default function FacturesList() {
   }
 
   async function annuler(f: Facture) {
-    if (!confirm(`Annuler la facture ${f.numero || ''} ? Elle reste dans la liste (statut « annulée »), comme l'exige la loi — impossible de la supprimer.`)) return
-    await setStatut(f, 'annulee')
+    // Une facture émise s'annule par un AVOIR : pièce négative, numérotée dans la même séquence,
+    // conservée comme la facture (art. 289 CGI). Le statut « annulée » est posé par l'avoir.
+    if (!confirm(`Émettre un avoir qui annule la facture ${f.numero || ''} ? L'avoir est une pièce négative, numérotée et conservée comme la facture — rien n'est supprimé.`)) return
+    setBusy(f.id)
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch(`/api/factures/${f.id}/avoir`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: '{}' })
+    const d = await res.json().catch(() => ({}))
+    if (!res.ok) alert(d.error || 'Avoir impossible. Réessaie dans un instant.')
+    await load(); setBusy(null)
   }
 
   return (
@@ -75,13 +82,13 @@ export default function FacturesList() {
           <div className="doc-list">
             {factures.map((f) => {
               const b = BADGE[f.statut ?? 'emise'] ?? BADGE.emise
-              const active = f.statut !== 'annulee'
+              const active = f.statut !== 'annulee' && !f.avoir_de
               return (
                 <div className="doc-card" key={f.id}>
                   <div className="dc-main" onClick={() => pdf(f)} title="Voir le PDF">
                     <div className="dc-top">
                       <span className="dc-num">{f.numero ?? '—'}</span>
-                      <span className={`pill ${b.pill}`}><span className="pdot" />{b.label}</span>
+                      <span className={`pill ${b.pill}`}><span className="pdot" />{f.avoir_de ? 'Avoir' : b.label}</span>
                     </div>
                     <span className="dc-cli">{f.client_nom || 'Client'}</span>
                     <span className="dc-obj">{f.objet || 'Sans objet'}</span>
@@ -93,7 +100,7 @@ export default function FacturesList() {
                       <button className="btn btn--ghost" disabled={busy === f.id} onClick={() => setStatut(f, 'payee')}>Marquer payée</button>
                     )}
                     {active && (
-                      <button className="btn btn--ghost danger" disabled={busy === f.id} onClick={() => annuler(f)}>Annuler</button>
+                      <button className="btn btn--ghost danger" disabled={busy === f.id} onClick={() => annuler(f)}>Émettre un avoir</button>
                     )}
                   </div>
                 </div>

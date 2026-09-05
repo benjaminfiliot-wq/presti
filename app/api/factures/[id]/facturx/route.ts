@@ -37,6 +37,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     : (MOTIFS_EXONERATION.find((m) => m.code === code)?.mention ?? null)
 
   const donnees: DonneesFacturX = {
+    avoir: !!f.avoir_de,
     numero: f.numero, date_emission: String(f.date_emission || '').slice(0, 10), date_echeance: f.date_echeance,
     devise: f.devise || 'EUR', categorie_operation: f.categorie_operation || 'mixte',
     exoneration_code: code, exoneration_mention: mention,

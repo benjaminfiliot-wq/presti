@@ -147,7 +147,7 @@ export const TRAITEMENTS: { finalite: string; donnees: string; base: string; dur
   },
   {
     finalite: 'Protéger le service contre les abus (envois massifs, robots)',
-    donnees: 'Adresse IP, horodatage des envois',
+    donnees: 'Empreinte pseudonymisée de l’adresse IP (jamais l’adresse en clair), horodatage des envois',
     base: 'Intérêt légitime à préserver le service',
     duree: '12 mois',
   },

@@ -1,5 +1,6 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
+import { TRAITEMENTS, SOUS_TRAITANTS } from '@/lib/legalArtisan'
 
 export const metadata = {
   title: 'Conditions générales',
@@ -70,6 +71,30 @@ export default function CGU() {
 
       <h2>11. Contact</h2>
       <p>Pour toute question sur ces Conditions ou sur le service : <a href="/contact">le formulaire de contact</a>. Les coordonnées complètes de l’éditeur figurent dans les <a href="/mentions-legales">mentions légales</a>.</p>
+
+      <h2 id="sous-traitance">12. Annexe — Traitement des données pour le compte de l’artisan (art. 28 RGPD)</h2>
+      <p>Quand vous utilisez Presti pour recevoir des demandes, converser avec vos clients, établir des devis et des factures, <strong>vous êtes responsable du traitement</strong> des données de vos clients et prospects, et <strong>Presti est votre sous-traitant</strong>. La présente annexe est le contrat écrit qu’exige l’article 28.3 du RGPD ; elle fait partie des Conditions que vous acceptez à l’inscription.</p>
+      <h3>Objet, durée, nature et finalités</h3>
+      <ul>
+        {TRAITEMENTS.map((t) => (
+          <li key={t.finalite}><strong>{t.finalite}</strong> — données : {t.donnees.toLowerCase()} ; durée : {t.duree}.</li>
+        ))}
+      </ul>
+      <p>Le traitement dure le temps de votre compte, puis le temps de la suppression ou de l’anonymisation décrite ci-dessous. Personnes concernées : vos clients et prospects. Nature : hébergement, rédaction assistée des réponses, génération de documents, envoi d’emails, relève de votre messagerie si vous l’avez reliée.</p>
+      <h3>Engagements de Presti</h3>
+      <ul>
+        <li><strong>Instructions</strong> : Presti ne traite ces données que sur vos instructions documentées — celles que vous donnez en configurant votre plateforme (mode de réponse, règles d’automatisation, canaux reliés) — et pour aucune autre finalité. Si une instruction nous paraît contraire au RGPD, nous vous en informons.</li>
+        <li><strong>Confidentialité</strong> : les personnes autorisées à accéder aux données sont tenues à la confidentialité. Presti n’accède aux conversations de vos clients que pour le support, à votre demande, ou pour la sécurité du service.</li>
+        <li><strong>Sécurité</strong> (art. 32) : chiffrement en transit, cloisonnement par compte (politiques de sécurité au niveau des lignes), identifiants de messagerie chiffrés et jamais réaffichés, journal des accès, sauvegardes.</li>
+        <li><strong>Sous-traitants ultérieurs</strong> : vous autorisez le recours aux prestataires suivants, chacun encadré par un contrat imposant les mêmes obligations. Tout changement vous est notifié par email au moins 30 jours avant ; vous pouvez alors vous y opposer en résiliant.
+          <ul>{SOUS_TRAITANTS.filter((s) => s.nom !== 'Presti').map((s) => <li key={s.nom}><strong>{s.nom}</strong> — {s.role} — {s.lieu}</li>)}</ul>
+        </li>
+        <li><strong>Assistance</strong> : Presti vous aide à répondre aux demandes d’exercice de droits de vos clients (accès, rectification, effacement, portabilité) — vous disposez pour cela de la suppression par brique et de l’export depuis Paramètres → Données — et à respecter vos obligations de sécurité, d’analyse d’impact et de consultation de l’autorité, dans la mesure du possible.</li>
+        <li><strong>Violation de données</strong> : Presti vous notifie toute violation affectant ces données sans retard injustifié après en avoir eu connaissance, avec les éléments utiles à votre propre notification à la CNIL.</li>
+        <li><strong>Fin du traitement</strong> : à la suppression de votre compte, vous exportez vos données pendant le délai de grâce de 30 jours, puis Presti supprime les données de vos clients — sauf les pièces comptables que la loi vous impose de conserver dix ans, qui restent accessibles anonymisées de vos coordonnées personnelles.</li>
+        <li><strong>Information et audit</strong> : Presti met à votre disposition les informations nécessaires pour démontrer le respect de ces obligations (cette annexe, la politique de confidentialité, la liste des sous-traitants) et se prête à un audit raisonnable que vous mandateriez, à vos frais, avec un préavis de 30 jours.</li>
+      </ul>
+      <p>Presti tient un registre des catégories d’activités de traitement effectuées pour votre compte (art. 30.2). Cette annexe vous est aussi présentée, sous une forme adaptée à vos clients, sur la page « Informations légales » de votre site et de votre plateforme.</p>
 
       <p style={{ marginTop: '2.4rem' }}><a href="/confidentialite">Politique de confidentialité</a> · <a href="/mentions-legales">Mentions légales</a></p>
     </main>

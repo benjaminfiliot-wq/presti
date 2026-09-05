@@ -296,6 +296,9 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
         const d = await res.json().catch(() => ({}))
         setThinking(false); setSending(false)
         if (d.reply) { setMsgs((m) => [...m, { id: `r${Date.now()}`, sens: 'out', contenu: d.reply, type: 'reponse_auto', etat: 'envoye' }]); lancerRegles(token) }
+        // Pas de réponse automatique (artisan en personne, pause, crédits épuisés…) : le client
+        // doit le SAVOIR, pas fixer un fil muet (audit final, auditeur H). Une seule note par fil.
+        else if (d.ok && !d.closed) setMsgs((m) => m.some((x) => x.type === 'info') ? m : [...m, { id: `i${Date.now()}`, sens: 'out', contenu: `Votre message est bien transmis à ${artisanNom}, qui vous répond en personne dès que possible.`, type: 'info', etat: 'envoye' }])
         return
       }
       const rid = `r${Date.now()}`
