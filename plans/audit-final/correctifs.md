@@ -37,10 +37,20 @@
 | 30 | D-3.3 | majeur | lien magique expiré muet | `audit-final` | message `role="alert"` | ✅ | `23bfbef` |
 | 31 | D-4.6 | majeur | /plateforme à 510 px | `audit-final` (CSS) | onglets défilants | ✅ | `23bfbef` |
 | 32 | D-2.6 | majeur | « hors ligne » avant Enregistrer | `audit-final` | libellé suit l'état enregistré | ✅ | `23bfbef` |
+| 33 | F-1 | majeur | `signalerPanneIA` en `void` avant `return` | `audit-final` (grep) | `await` sur les 10 sites + trace app_errors | ✅ | `67f7283` |
+| 34 | F-2 | majeur | alerte perdue 24 h si l'email échoue | `audit-final` | consignée dans app_errors (second canal) | ✅ | `67f7283` |
+| 35 | F-4 | majeur | ronde « erreurs » : colonne inexistante, fenêtre 10 min | `audit-final` | colonne `contexte`, 24 h glissantes, seuil 10 | ✅ | `67f7283` |
+| 36 | F-5 | majeur | relance marquée envoyée sans être partie | `audit-final` | `envoi.ok` vérifié, relance laissée due | ✅ | `67f7283` |
+| 37 | F-6 | majeur | crédits bas : email chaque matin | code | clé mensuelle par seuil | ✅ | `67f7283` |
+| 38 | F-7 | majeur | aucune borne globale d'emails | `audit-final` | plafond `emails:jour` (80), critiques exemptés | ✅ | `67f7283` |
+| 39 | F-8 | majeur | 34 % de rebonds (adresses .invalid) | `audit-final` (sendEmail) | `.invalid` jamais envoyé | ✅ | `67f7283` |
+| 40 | F-11 | majeur | démo relancée au nom d'un artisan fictif | `audit-final` | pas de relance pour un fondateur | ✅ | `67f7283` |
+| 41 | F-9 | majeur | DMARC absent, `rua` vers boîte morte | — | script corrigé ; enregistrement DNS = **H11** | ⏳ H11 | `67f7283` |
 
 ## Reste (décision humaine ou dashboard) — voir la liste H du journal
 - H-bloquant 1 : configuration du **portail Stripe** en LIVE (tableau de bord, 15 min) — sans elle, `POST /api/stripe/portail` rend 500.
 - B-D2 : email et téléphone de l'éditeur dans les mentions légales (LCEN) — dépend d'une boîte qui fonctionne (contact@ morte) ou d'un choix d'adresse.
 - B-F3 : domaine d'envoi sans « presti » (white-label des emails) — achat/vérification d'un domaine neutre.
 - H7 : pied de facture Stripe (modèle de facture, mention 293 B) pour la PREMIÈRE facture d'un abonnement.
+- F-3 `passages_cron` (H1), F-10 quota `artisan-media` (politique de stockage, `apres-demo`), F-12 sauvegardes (H12).
 - Chiffrés `apres-demo` : A2/A7/A10-A13 (mentions facture/devis), C6/C12/C13 (purges 12 mois / 3 ans), A-CSP nonce, JSON-LD.

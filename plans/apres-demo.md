@@ -43,3 +43,15 @@
 - **Coûts et solde d'API** : tout ce qui précède sur l'économie de la recherche est repris et tenu à jour dans `docs/couts-et-solde.md` — ce que chaque fonction coûte, ce qu'elle rapporte, les trois protections en place, et quoi surveiller chaque semaine. À relire avant toute décision de prix ou avant d'ajouter une fonction qui appelle l'IA.
 - **DMARC et boîte du domaine** : l'enregistrement `_dmarc` n'est pas posé (protection contre l'usurpation ; les emails passent déjà grâce à la signature Resend, donc rien n'est cassé). La boîte `contact@prestiapp.fr` n'existe pas — remplacée fonctionnellement par le formulaire `/contact`, mais la fonction « canal entreprise » (`scripts/canal-entreprise.mjs`) reste dormante tant qu'il n'y a pas de boîte IMAP. Outil prêt : `scripts/ovh.mjs` (jeton d'API limité à la zone DNS et aux comptes email), et `scripts/mail-verifier.mjs` pour contrôler la chaîne. **Bloqué en amont par la validation du titulaire OVH, échéance 01/10.**
 - **Alertes sécurité non couvertes** (prompt v6 §6) : « connexion fondateur depuis un nouvel appareil » demande d'enregistrer une empreinte (IP + agent) à chaque connexion fondateur et de comparer (~2 h) ; « 10 échecs de connexion sur un compte » demande un relais côté client (la connexion se fait directement contre Supabase, le serveur ne voit pas les échecs) vers une route plafonnée (~1 h). Les révocations globales, elles, sont alertées.
+
+## Audit final (05/09) — ce qui reste, chiffré
+- **Domaine perso** : aucune suite ne prouve la promesse « votre nom de domaine » (middleware + `lib/urls` lus seulement). Suite avec un domaine de test pointé sur Vercel — 2 h.
+- **Relances** : aucune suite ne fait partir une relance de bout en bout (cron fermé et logique lue seulement). Suite avec un lead à J-3 et une adresse contrôlée — 1 h 30.
+- **Support prioritaire** (Signature) : engagement humain à formaliser dans les CGU (délai de réponse) — 30 min.
+- **Quota `artisan-media`** (F-10) : aucun plafond par compte ; politique de stockage Supabase (taille et nombre par dossier) + message dans l'éditeur — 1 h.
+- **Purges 12 mois / 3 ans** (B-C6, C12, C13) : IP et horodatages d'abus au-delà de 12 mois, conversations sans suite au-delà de 3 ans, conformément à la politique — 3 h 15.
+- **Mentions facture/devis** (B-A2, A7, A10-A13) : numéro en transaction, mentions secondaires — 4 h.
+- **CSP avec nonce** et **échappement JSON-LD** (A, mineurs) — 2 h.
+- **Détection de rejeu de session** (audit v4, 1/3 restant, rappelé par F) — 2 h.
+- **Emails au nom de l'artisan depuis un domaine neutre** (B-F3 / H10) — 1 h à ½ j après décision.
+- **Client 0 crédit** : le fil affiche désormais une note ; l'artisan à 0 crédit pourrait recevoir un rappel par SMS/push — hors périmètre.

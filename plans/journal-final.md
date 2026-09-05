@@ -68,6 +68,14 @@
 - Pré-commit : typecheck + `garde-commit` (8 régressions connues refusées : boîte morte, IP en clair, tarif standard forcé, annulation sans avoir, clés en clair).
 - Coentreprise `sync-down` : à la main, hors CI (elle touche la réserve Anthropic via les mémoires — pas dans une tâche automatique).
 
+## [3c] Vague 2 : rapport F — 10:00 → 10:15 — ✅ F (0/12/14)
+- **F — fiabilité, coûts, emails** : `signalerPanneIA` lancé en `void` avant `return` (Vercel peut couper) ; alerte perdue 24 h si Resend tombe ; `passages_cron` absente en prod (0057 non collée) ; ronde « erreurs » lisait une colonne inexistante (`route`) sur 10 min ; relance marquée envoyée même si l'email échoue ; crédits bas chaque matin ; aucune borne globale d'emails (Resend gratuit = 100/jour) ; 34 % de rebonds (adresses .invalid des suites) ; DMARC absent ; `artisan-media` sans quota ; démo relancée au nom d'un artisan fictif ; aucune sauvegarde prouvée.
+
+## [5d] Correctifs — majeurs F — 10:15 → 10:45 — ✅ `67f7283`, 57/59 (les 2 rouges attendent 0058)
+- 9 des 12 majeurs fermés par le code (voir `correctifs.md` 33-41). Restent : 0057 (H1), DMARC (H11), quota `artisan-media` (`apres-demo`, 1 h : politique de stockage), sauvegardes (H12).
+
+**Appels IA du sprint : 0**
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
 | # | Action | Où | Effet vérifiable |
 |---|--------|----|------------------|
@@ -78,5 +86,7 @@
 | H8 | Secret GitHub `PRESTI_ENV_LOCAL` (contenu de `.env.local` sans la clé Anthropic) | GitHub → Settings → Secrets → Actions | premier run vert de « Audit récurrent » (workflow_dispatch) |
 | H9 | Email et téléphone de l'éditeur (LCEN) — boîte qui fonctionne ou adresse choisie | décision Benj | mentions légales complètes (auditeur B, D2) |
 | H10 | Domaine d'envoi neutre pour les emails au nom de l'artisan | décision + DNS | From sans « presti » (auditeur B, F3) |
+| H11 | Enregistrement DNS `_dmarc.prestiapp.fr` TXT `v=DMARC1; p=quarantine; rua=mailto:<adresse des alertes>` (ou `node scripts/ovh.mjs dmarc`) | OVH → zone DNS | `nslookup -type=txt _dmarc.prestiapp.fr` répond ; alerte `domaine_mail` se tait |
+| H12 | Sauvegardes : offre Supabase avec sauvegardes quotidiennes (Pro) ou `pg_dump` planifié (mot de passe Postgres à réaligner) | Supabase → Settings → Database | une restauration testée une fois, datée dans le journal (auditeur F, 12) |
 
 **Appels IA du sprint : 0**
