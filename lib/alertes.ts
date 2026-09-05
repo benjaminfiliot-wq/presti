@@ -228,6 +228,13 @@ async function digest(): Promise<Alerte[]> {
 }
 
 // ── L'envoi, avec le verrou « une fois par jour » ────────────────────────────
+/** Envoie des alertes hors ronde (webhook Stripe) : mêmes tuyaux, même verrou quotidien par motif. */
+export async function envoyerAlertes(alertes: Alerte[]): Promise<number> {
+  let n = 0
+  for (const al of alertes) if (await envoyer(al, false)) n++
+  return n
+}
+
 async function envoyer(al: Alerte, simulation: boolean): Promise<boolean> {
   const cle = `alerte:${al.motif}:${al.cle ?? '-'}`
   if (!simulation && !(await consommerLimite(cle, 1, 86_400))) return false

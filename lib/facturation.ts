@@ -17,8 +17,13 @@ export type BaseMention = 'auto' | 'cgi' | 'cibs'
  *
  * Elle n'est PAS codée en dur : la recodification de la TVA du CGI vers le CIBS est
  * entrée en vigueur le 01/09/2026, avec une tolérance jusqu'au 31/12/2027 pendant
- * laquelle l'ancienne référence reste admise. Un artisan dont le comptable exige encore
- * « art. 293 B du CGI » doit pouvoir l'obtenir — tant que la tolérance dure.
+ * laquelle l'ancienne référence reste admise.
+ *
+ * Par défaut (`auto`), on sert « art. 293 B du CGI » TANT QUE la tolérance dure : c'est la
+ * référence que tous les comptables, banques et clients reconnaissent, et celle que Presti
+ * lui-même porte sur ses CGU et ses mentions légales — un document d'artisan et un document
+ * de l'éditeur ne doivent pas se contredire (audit final, auditeur B, A4). Un artisan qui veut
+ * déjà la nouvelle référence choisit `cibs`. Passée la tolérance, tout le monde bascule.
  */
 export function mentionFranchise(base: BaseMention = 'auto', le: Date = new Date()): string {
   const CGI = 'TVA non applicable, art. 293 B du CGI.'
@@ -28,7 +33,7 @@ export function mentionFranchise(base: BaseMention = 'auto', le: Date = new Date
     return le > FIN_TOLERANCE_CGI ? CIBS : CGI
   }
   if (base === 'cibs') return CIBS
-  return le >= DATE_CIBS ? CIBS : CGI
+  return le > FIN_TOLERANCE_CGI ? CIBS : CGI
 }
 
 /** L'ancienne référence est-elle encore admise à cette date ? (sert à expliquer le choix) */

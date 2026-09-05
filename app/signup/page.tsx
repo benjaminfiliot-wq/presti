@@ -6,6 +6,11 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { evaluerMotDePasse, messageAuth, messageFuite, verifierFuite, type Fuite } from '@/lib/motDePasse'
 
+// Version des CGU acceptées : la date de « Dernière mise à jour » de app/cgu/page.tsx. Elle est
+// gravée avec l'heure d'acceptation dans les métadonnées du compte (art. 1119 c. civ. : des
+// conditions générales n'ont d'effet que si elles ont été portées à la connaissance et acceptées).
+const CGU_VERSION = '2026-08-27'
+
 export default function SignupPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
@@ -19,6 +24,7 @@ export default function SignupPage() {
   // Résultat de la recherche dans les fuites, mémorisé AVEC le mot de passe testé :
   // sinon un verdict rendu pour l'ancienne saisie s'appliquerait à la nouvelle.
   const [fuite, setFuite] = useState<{ mdp: string; res: Fuite } | null>(null)
+  const [cgu, setCgu] = useState(false)
   const [verifEnCours, setVerifEnCours] = useState(false)
   const verdict = fuite?.mdp === password ? fuite.res : null
   const compromis = verdict?.compromis === true
@@ -55,7 +61,8 @@ export default function SignupPage() {
       setMsg({ type: 'err', text: messageFuite(res) })
       return
     }
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    if (!cgu) { setLoading(false); setMsg({ type: 'err', text: 'Merci d’accepter les conditions générales pour créer votre compte.' }); return }
+    const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { cgu_acceptees_le: new Date().toISOString(), cgu_version: CGU_VERSION } } })
     setLoading(false)
     if (error) {
       setMsg({ type: 'err', text: messageAuth(error.message) })
@@ -103,7 +110,11 @@ export default function SignupPage() {
               </span>
             </div>
           ) : null}
-          <button disabled={loading || !force.ok || compromis}>{loading ? '…' : 'Créer mon compte'}</button>
+          <label className="cgu-accord" htmlFor="cgu-inscription">
+            <input id="cgu-inscription" type="checkbox" name="cgu" checked={cgu} onChange={(e) => setCgu(e.target.checked)} required />
+            <span>J’ai lu et j’accepte les <a href="/cgu" target="_blank" rel="noopener">conditions générales</a> et la <a href="/confidentialite" target="_blank" rel="noopener">politique de confidentialité</a>.</span>
+          </label>
+          <button disabled={loading || !force.ok || compromis || !cgu}>{loading ? '…' : 'Créer mon compte'}</button>
         </form>
         {msg && <div className={`msg ${msg.type === 'err' ? 'err' : ''}`}>{msg.text}</div>}
         <p className="muted" style={{ marginTop: '1rem' }}>

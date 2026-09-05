@@ -192,7 +192,7 @@ export function DevisPDF({ d }: { d: PDFData }) {
           <Text style={s.legalTitle}>MENTIONS</Text>
           {isFacture
             ? <Text>Facture payable {d.echeanceDate ? `au plus tard le ${d.echeanceDate}` : 'à réception'}. En cas de retard : pénalités au taux de 3 fois le taux d&apos;intérêt légal, plus une indemnité forfaitaire de recouvrement de 40 €.</Text>
-            : <Text>Devis gratuit, valable {d.validiteJours} jours à compter du {d.date}.{d.conditions ? ` Conditions de paiement : ${d.conditions}.` : ''}{d.iban ? ` Règlement par virement — IBAN ${d.iban}.` : ''}</Text>}
+            : <Text>Devis gratuit, valable {d.validiteJours} jours à compter du {d.date}.{d.conditions ? ` Conditions de paiement : ${d.conditions}.` : ''}{d.iban ? ` Règlement par virement — IBAN ${d.iban}.` : ''} Client particulier ayant accepté à distance : droit de rétractation de 14 jours (art. L. 221-18 du code de la consommation), sauf réparations ou entretien urgents à domicile (art. L. 221-28) ; travaux commencés à votre demande avant la fin du délai : la part réalisée reste due (art. L. 221-25).</Text>}
           {d.franchise ? <Text style={{ marginTop: 3 }}>{d.mentionTva}</Text> : null}
           {d.assurance ? <Text style={{ marginTop: 3 }}>Assurance professionnelle : {d.assurance}</Text> : null}
         </View>

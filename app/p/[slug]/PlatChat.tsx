@@ -466,7 +466,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
                       <button type="button" onClick={() => repondreDevis('modifier')} disabled={devisBusy}>Envoyer ma demande</button>
                     </div>
                   ) : null}
-                  <small className="pchat-carte-note">En acceptant, vous validez ce devis. Votre accord est horodaté et conservé avec l’échange.</small>
+                  <small className="pchat-carte-note">En acceptant, vous validez ce devis à distance ; votre accord est horodaté et conservé avec l’échange. Si vous êtes un particulier, vous disposez de 14 jours pour vous rétracter (art. L. 221-18 du code de la consommation) en l’écrivant ici même ; si vous demandez que les travaux commencent avant la fin de ce délai, la part réalisée reste due (art. L. 221-25). Ce droit ne s’applique pas aux réparations ou à l’entretien urgents à votre domicile (art. L. 221-28).</small>
                 </>
               )}
             </div>

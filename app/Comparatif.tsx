@@ -8,15 +8,15 @@ import { GRILLE, OFFRES, type PlanPayant } from '@/lib/plans'
 const COCHE = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7" /></svg>
 
 function Cellule({ v }: { v: boolean | string }) {
-  if (v === true) return <span className="cmp-oui" aria-label="Inclus">{COCHE}</span>
-  if (v === false) return <span className="cmp-non" aria-label="Non inclus">—</span>
+  if (v === true) return <span className="cmp-oui" role="img" aria-label="Inclus">{COCHE}</span>
+  if (v === false) return <span className="cmp-non" role="img" aria-label="Non inclus">—</span>
   return <span className="cmp-txt">{v}</span>
 }
 
 export default function Comparatif({ actuel, misEnAvant = 'studio' }: { actuel?: string | null; misEnAvant?: PlanPayant }) {
   const groupes = Array.from(new Set(GRILLE.map((l) => l.groupe)))
   return (
-    <div className="cmp-wrap">
+    <div className="cmp-wrap" role="region" aria-label="Comparatif des offres, défilement horizontal" tabIndex={0}>
       <table className="cmp">
         <thead>
           <tr>

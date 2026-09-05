@@ -1081,7 +1081,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .lp{
   --co:#D97757; --co2:#E8946F; --co-deep:#B85C3C; --co-glow:rgba(217,119,87,.5);
   --bg:#09090C; --bg2:#0D0C11; --surf:#141319; --surf2:#1B1A22; --elev:#232029;
-  --ink:#ECEAE6; --ink2:#C7C2BA; --muted:#8B867D; --faint:#5B564E;
+  --ink:#ECEAE6; --ink2:#C7C2BA; --muted:#8B867D; --faint:#827D74;
   --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.05);
   --ok:#46C89A;
   background:var(--bg); color:var(--ink); position:relative; overflow-x:clip;
@@ -1972,6 +1972,9 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .mdp-force[data-niveau="3"] .mdp-jauge i { background: var(--green); }
 
 /* ── Comparatif des offres (app/Comparatif.tsx) — rendu depuis lib/plans.ts, v5 §3 ── */
+.cgu-accord{display:flex;gap:.6rem;align-items:flex-start;margin:.9rem 0 .4rem;font-size:.9rem;line-height:1.45;color:var(--muted)}
+.cgu-accord input{margin-top:.25rem;flex:none;width:1.05rem;height:1.05rem;accent-color:var(--accent)}
+.cgu-accord a{color:var(--ink);text-decoration:underline}
 .cmp-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:.4rem}
 .cmp{width:100%;border-collapse:separate;border-spacing:0;font-size:.92rem;min-width:560px}
 .cmp th,.cmp td{padding:.62rem .8rem;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line,rgba(0,0,0,.1))}

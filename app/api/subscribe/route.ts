@@ -18,7 +18,13 @@ export async function POST(req: Request) {
     const offre = OFFRES.find((o) => o.id === b?.plan)
     if (!offre) return NextResponse.json({ error: 'Offre inconnue' }, { status: 400 })
 
-    const { data: artisan } = await supabaseAdmin.from('artisans').select('email, stripe_customer_id').eq('id', uid).maybeSingle()
+    const { data: artisan } = await supabaseAdmin.from('artisans').select('email, stripe_customer_id, stripe_subscription_id').eq('id', uid).maybeSingle()
+    // Déjà abonné : un second paiement créerait un DEUXIÈME abonnement (29 + 59 €/mois), le webhook
+    // écraserait l'ancien identifiant et personne ne le verrait (audit final, auditeur H). Un
+    // changement d'offre ou une résiliation passent par le portail Stripe.
+    if (artisan?.stripe_subscription_id) {
+      return NextResponse.json({ error: 'Vous êtes déjà abonné : changez d’offre ou résiliez depuis votre portail de facturation.', portail: true }, { status: 409 })
+    }
     const origin = req.headers.get('origin') || 'https://prestiapp.fr'
 
     // La TVA n'est calculée que si Stripe Tax est configuré côté compte (adresse d'origine et
@@ -44,19 +50,14 @@ export async function POST(req: Request) {
         },
         quantity: 1,
       }],
-      ...(taxeAuto
-        ? {
-            automatic_tax: { enabled: true },
-            // Stripe a besoin du pays pour connaître le taux ; sans adresse, pas de calcul.
-            billing_address_collection: 'required' as const,
-            // Le numéro de TVA de l'artisan : il apparaît sur la facture, et pour un client
-            // européen hors de France il déclenche l'autoliquidation.
-            tax_id_collection: { enabled: true },
-            // Obligatoire dès qu'on réutilise un client existant avec le calcul automatique,
-            // sinon Stripe refuse la session.
-            ...(artisan?.stripe_customer_id ? { customer_update: { address: 'auto' as const, name: 'auto' as const } } : {}),
-          }
-        : {}),
+      // La facture Stripe EST la facture de Presti à l'artisan (art. 242 nonies A, ann. II CGI) :
+      // elle doit porter l'identité complète du client professionnel — nom, adresse, et son
+      // numéro de TVA s'il en a un. Collectés à chaque paiement, TVA calculée ou non.
+      billing_address_collection: 'required' as const,
+      tax_id_collection: { enabled: true },
+      // Obligatoire dès qu'on réutilise un client existant avec ces collectes, sinon Stripe refuse.
+      ...(artisan?.stripe_customer_id ? { customer_update: { address: 'auto' as const, name: 'auto' as const } } : {}),
+      ...(taxeAuto ? { automatic_tax: { enabled: true } } : {}),
       ...(artisan?.stripe_customer_id ? { customer: artisan.stripe_customer_id } : artisan?.email ? { customer_email: artisan.email } : {}),
       client_reference_id: uid,
       metadata: { uid, plan: offre.id, credits: String(offre.credits) },

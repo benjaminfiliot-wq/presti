@@ -31,6 +31,13 @@ export default function Abonnement() {
     const { data } = await supabase.auth.getSession()
     const res = await fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${data.session?.access_token}` }, body: JSON.stringify({ plan: id }) })
     const d = await res.json().catch(() => ({}))
+    if (res.status === 409 && d.portail) {
+      // Déjà abonné : on l'emmène directement changer d'offre dans son portail de facturation.
+      const p = await fetch('/api/stripe/portail', { method: 'POST', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+      const pd = await p.json().catch(() => ({}))
+      if (p.ok && pd.url) { window.location.href = pd.url as string; return }
+      setBusy(null); setMsg(d.error || 'Vous êtes déjà abonné.'); return
+    }
     if (!res.ok || !d.url) { setBusy(null); setMsg(d.error || 'Abonnement indisponible.'); return }
     window.location.href = d.url as string
   }

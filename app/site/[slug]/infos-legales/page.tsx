@@ -27,12 +27,12 @@ export const revalidate = 3600
 
 type Artisan = ArtisanLegal & {
   id: string; slug: string | null; accent: string | null; theme: string | null
-  site_style: unknown; plateforme_active: boolean | null
+  site_style: unknown; plateforme_active: boolean | null; site_active: boolean | null; site_seo: boolean | null
 }
 
 async function getArtisan(slug: string): Promise<Artisan | null> {
   const { data } = await supabaseAdmin.from('artisans')
-    .select('id, nom, metier, slug, forme_juridique, siret, adresse, code_postal, ville, tel_public, email_public, tva_num, assurance_nom, assurance_contrat, assurance_activites, assurance_zone, zone_intervention, mediateur_nom, mediateur_url, accent, theme, site_style, plateforme_active, domaine, domaine_verifie')
+    .select('id, nom, metier, slug, site_active, site_seo, forme_juridique, siret, adresse, code_postal, ville, tel_public, email_public, tva_num, assurance_nom, assurance_contrat, assurance_activites, assurance_zone, zone_intervention, mediateur_nom, mediateur_url, accent, theme, site_style, plateforme_active, domaine, domaine_verifie')
     .eq('slug', slug).maybeSingle()
   return (data as Artisan) ?? null
 }
@@ -48,7 +48,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     authors: a.nom ? [{ name: a.nom }] : undefined,
     keywords: [a.metier, 'mentions légales'].filter(Boolean) as string[],
     alternates: { canonical: urlInfosLegales(a) },
-    robots: { index: true, follow: true },
+    // Même règle que le site (page.tsx) : publié ET référencement non coupé par l'artisan.
+    robots: { index: a.site_active === true && a.site_seo !== false, follow: true },
     openGraph: { title: `Informations légales — ${a.nom ?? 'Artisan'}`, type: 'website', url: urlInfosLegales(a), ...(a.nom ? { siteName: a.nom } : {}) },
     // Sans cette ligne, la carte Twitter du layout racine — « Presti — Répondez à chaque
     // demande de devis… » — est servie sur la page légale de l'artisan.

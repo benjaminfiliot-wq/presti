@@ -6,7 +6,7 @@ type ArtisanRow = {
   nom?: string | null; metier?: string | null; forme_juridique?: string | null
   adresse?: string | null; code_postal?: string | null; ville?: string | null; siret?: string | null
   assurance_nom?: string | null; assurance_contrat?: string | null; assurance_activites?: string | null; assurance_zone?: string | null
-  tva_regime?: string | null; mention_tva_base?: string | null; conditions_paiement?: string | null; iban?: string | null; logo_url?: string | null
+  tva_num?: string | null; tva_regime?: string | null; mention_tva_base?: string | null; conditions_paiement?: string | null; iban?: string | null; logo_url?: string | null
 }
 type DevisRow = {
   numero?: string | null; date_emission?: string | null; validite_jours?: number | null; date_echeance?: string | null
@@ -43,6 +43,9 @@ export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: Artis
     [artisan.metier, artisan.forme_juridique].filter(Boolean).join(' · '),
     [artisan.adresse, artisan.code_postal, artisan.ville].filter(Boolean).join(', '),
     artisan.siret ? `SIRET ${artisan.siret}` : '',
+    // Art. 242 nonies A, ann. II CGI, 3° : l'assujetti porte son numéro d'identification. Un artisan
+    // en franchise n'en a pas (les paramètres le mettent à null) : la ligne disparaît d'elle-même.
+    artisan.tva_num ? `N° TVA intracommunautaire ${artisan.tva_num}` : '',
   ].filter(Boolean) as string[]
 
   const assurance = artisan.assurance_nom

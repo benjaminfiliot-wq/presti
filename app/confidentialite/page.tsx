@@ -28,6 +28,7 @@ export default function Confidentialite() {
         <li><strong>Activité</strong> : demandes reçues, devis et factures créés, coordonnées de vos clients que vous renseignez.</li>
         <li><strong>Paiement</strong> : gérés par Stripe. <strong>Presti ne stocke jamais vos numéros de carte.</strong></li>
         <li><strong>Techniques</strong> : logs de connexion, données strictement nécessaires au fonctionnement.</li>
+        <li><strong>Messagerie connectée</strong> (option, si vous reliez votre boîte email professionnelle) : vos identifiants de messagerie, chiffrés et jamais réaffichés, et les emails reçus sur cette boîte, relevés chaque jour et rangés dans votre boîte de réception Presti. Leur contenu est traité pour votre compte, jamais pour un autre usage ; vous coupez la relève à tout moment et les identifiants sont alors effacés.</li>
       </ul>
 
       <h2>3. Finalités &amp; bases légales</h2>
@@ -36,6 +37,7 @@ export default function Confidentialite() {
         <li>Traiter les paiements et gérer les abonnements — <em>exécution du contrat / obligation légale</em>.</li>
         <li>Répondre à vos demandes et assurer le support — <em>intérêt légitime</em>.</li>
         <li>Améliorer le service — <em>intérêt légitime</em>.</li>
+        <li>Relever votre messagerie connectée pour vous présenter les demandes reçues par email — <em>exécution du contrat</em>, uniquement si vous avez relié la boîte.</li>
       </ul>
 
       <h2>4. Sous-traitants &amp; destinataires</h2>
