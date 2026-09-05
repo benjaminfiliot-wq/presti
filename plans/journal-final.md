@@ -121,6 +121,10 @@
 - **Confort, pas bloquant** : DMARC (délivrabilité, 2 min chez OVH), clé admin Anthropic (sinon rappel hebdomadaire), clé Stripe de test (les 11 transitions en conditions réelles — le premier abonné réel les prouvera), domaine d'envoi neutre.
 - **Indispensable pour ne pas perdre les sauvegardes** : ranger `cle-sauvegarde.key.pem` hors du disque (gestionnaire de mots de passe + clé USB).
 
+## [13] Preuve finale sur GitHub — 05/09 19:15 — ✅ audit nocturne run #5 : **42/42 suites vertes** (607 s)
+- Le système se revérifie seul, et la dernière exécution est intégralement verte, sans la clé IA.
+- Reste à l'humain : le téléphone LCEN (obligation légale), la fenêtre de tolérance des jetons (H15, durcissement), et le confort (DMARC, clés de test/admin, domaine d'envoi).
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
 | # | Action | Où | Effet vérifiable |
 |---|--------|----|------------------|
@@ -133,9 +137,9 @@
 | H10 | Domaine d'envoi neutre pour les emails au nom de l'artisan | décision + DNS | From sans « presti » (auditeur B, F3) |
 | H13 | Filtre Gmail : « à : benjaminfiliot+presti@gmail.com » → libellé « Presti » (le libellé existe déjà) | Gmail → Paramètres → Filtres | le prochain email d'alerte arrive rangé |
 | ~~H14~~ | ✅ collées par Benj le 05/09 — vérifié : `quota-media-e2e` **32/32** (le navigateur ne peut plus écrire dans le bucket), `purges-rgpd-e2e` 43/43, un doublon de domaine est refusé par la base | — | — |
-| H15 | Détection de rejeu des jetons : **pas encore effective** au 05/09 18 h 40 (la sonde rejoue un ancien jeton → HTTP 200). Supabase → Authentication → Sessions → « Detect and revoke refresh token reuse » doit être coché, puis Save | Supabase | `verif-supabase-reglages.mjs` : 3/3 |
+| H15 | Détection de rejeu : le bouton est **activé** (capture du 05/09), mais la sonde voit encore un ancien jeton accepté à 30 s, 70 s et 200 s, avec la MÊME session renvoyée = fenêtre de tolérance trop longue. Champ « Refresh token reuse interval » (secondes), même page → **10**, Save. Durcissement, pas bloquant pour vendre | Supabase → Authentication → Sessions | `verif-supabase-reglages.mjs` : 3/3 |
 | H16 | Téléphone de l'éditeur dans les mentions légales (LCEN) : une ligne à ajouter, l'emplacement est marqué dans `app/mentions-legales/page.tsx` | décision Benj | `legal-e2e` |
 | H11 | Enregistrement DNS `_dmarc.prestiapp.fr` TXT `v=DMARC1; p=quarantine; rua=mailto:<adresse des alertes>` (ou `node scripts/ovh.mjs dmarc`) | OVH → zone DNS | `nslookup -type=txt _dmarc.prestiapp.fr` répond ; alerte `domaine_mail` se tait |
-| ~~H12~~ | ✅ sauvegarde chiffrée quotidienne (`sauvegarde.yml`) + restauration prouvée 7/7 le 05/09 — **à faire par Benj : mettre `cle-sauvegarde.key.pem` à l'abri** (gestionnaire de mots de passe + clé USB) ; sans elle, les sauvegardes sont illisibles | — | `node scripts/restaurer.mjs --lire <fichier>` ouvre la dernière sauvegarde |
+| ~~H12~~ | ✅ sauvegarde chiffrée quotidienne + restauration prouvée 7/7 ; clé privée **rangée par Benj le 05/09** (déclaré — invérifiable d'ici, et c'est normal) | — | `node scripts/restaurer.mjs --lire <fichier>` ouvre la dernière sauvegarde |
 
 **Appels IA du sprint : 0**
