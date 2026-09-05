@@ -48,6 +48,7 @@ const SUITES = [
   { nom: 'Relances automatiques (bout en bout, sans IA)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/relances-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Domaine perso (routage, marque, vérification)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/domaine-perso-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Motion — CLS des slides, onglets de la démo, boucles hors écran', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/motion-cls-e2e.mjs'], cout: 'navigateur' },
+  { nom: 'Les trois modes de réponse (offre × mode × route, sans IA)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/modes-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Alertes (ronde à sec, huit motifs)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/alertes-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Cache mutualisé des prix', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/cache-prix-e2e.mjs'], cout: 'gratuit' },
   { nom: 'IA — unitaires (métiers, playbooks, anti-fabrication)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/ia-unit-e2e.mjs'], cout: 'gratuit' },
