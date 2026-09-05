@@ -396,7 +396,7 @@ export default function ProfilPage() {
           <h2>Vos contacts &amp; réseaux</h2>
           <p className="muted" style={{ margin: '0 0 .8rem' }}>Affichés sur votre page pour que les clients vous joignent comme ils veulent. Laissez vide ce que vous ne voulez pas montrer.</p>
           <div className="grid2">
-            <div><label>Téléphone (affiché) <Info cle="profil.telephone" /></label><input value={telPublic} onChange={(e) => setTelPublic(e.target.value)} placeholder="06 12 34 56 78" /></div>
+            <div><label>Téléphone (affiché) <Info cle="profil.telephone" /></label><input value={telPublic} type="tel" inputMode="tel" autoComplete="tel" onChange={(e) => setTelPublic(e.target.value)} placeholder="06 12 34 56 78" /></div>
             <div><label>Email (affiché) <Info cle="profil.email" /></label><input value={emailPublic} onChange={(e) => setEmailPublic(e.target.value)} placeholder="contact@votre-entreprise.fr" /></div>
           </div>
           <div className="grid2" style={{ marginTop: '.6rem' }}>

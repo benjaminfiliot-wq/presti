@@ -82,13 +82,13 @@ export default function SectionLegal({ a, patch, signaler }: SectionProps) {
         </div>
       ) : null}
       <label>SIRET <Info cle="parametres.siret" /></label>
-      <input value={legal.siret} onChange={(e) => setL('siret', e.target.value)} placeholder="14 chiffres" maxLength={20} />
+      <input value={legal.siret} onChange={(e) => setL('siret', e.target.value)} inputMode="numeric" autoComplete="off" placeholder="14 chiffres" maxLength={20} />
       <label>Forme juridique <Info cle="parametres.forme_juridique" /></label>
       <input value={legal.forme_juridique} onChange={(e) => setL('forme_juridique', e.target.value)} placeholder="Ex : SARL au capital de 10 000 € · EI · Auto-entrepreneur" maxLength={120} />
       <label>Adresse de l’entreprise <Info cle="parametres.adresse" /></label>
       <input value={legal.adresse} onChange={(e) => setL('adresse', e.target.value)} placeholder="Numéro et rue" maxLength={160} />
       <div className="par-cp">
-        <input value={legal.code_postal} onChange={(e) => setL('code_postal', e.target.value)} placeholder="Code postal" maxLength={10} />
+        <input value={legal.code_postal} onChange={(e) => setL('code_postal', e.target.value)} inputMode="numeric" autoComplete="postal-code" placeholder="Code postal" maxLength={10} />
         <input value={legal.ville} onChange={(e) => setL('ville', e.target.value)} placeholder="Ville" maxLength={80} />
       </div>
       <label className="prof-toggle" style={{ marginTop: '.9rem' }}>
@@ -110,7 +110,7 @@ export default function SectionLegal({ a, patch, signaler }: SectionProps) {
         </div>
       )}
       <label>IBAN (pour le règlement de vos factures) <Info cle="parametres.iban" /></label>
-      <input value={legal.iban} onChange={(e) => setL('iban', e.target.value)} placeholder="FR76…" maxLength={40} />
+      <input value={legal.iban} onChange={(e) => setL('iban', e.target.value)} autoComplete="off" autoCapitalize="characters" spellCheck={false} placeholder="FR76…" maxLength={40} />
 
       <h3 style={{ margin: '1.6rem 0 .2rem', fontSize: '1rem' }}>Assurance professionnelle</h3>
       <p className="muted" style={{ margin: '0 0 .6rem', fontSize: '.85rem' }}>Obligatoire sur les devis et factures du bâtiment (garantie décennale).</p>

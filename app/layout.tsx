@@ -1,7 +1,7 @@
 import './base.css' // fondation seule (reset + tokens). L'UI console/landing (globals.css) est
                     // importée par AppShell + les pages publiques → /site et /l ne la chargent JAMAIS.
 import type { ReactNode } from 'react'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono, Fraunces, Archivo_Narrow, IBM_Plex_Sans, Manrope, Newsreader, Instrument_Serif, Syne, Lora } from 'next/font/google'
 import GoogleAnalytics from '@/app/GoogleAnalytics'
 
@@ -41,6 +41,10 @@ const DESC =
 //     Safari va chercher quand il ne sait pas lire l'icône SVG déclarée (audit final, C/13). Sur
 //     le site d'un artisan, l'icône déclarée est un PNG : Safari la lit et ne descend jamais
 //     jusqu'à ce repli.
+// v8 A1.4 — `viewportFit: 'cover'` : sans lui, les zones sûres d'iOS (encoche, barre d'accueil) valent 0
+// et les barres collées en bas passent sous la barre d'accueil. Le thème et l'app installable : partie B.
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover' }
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://prestiapp.fr'),
   title: { default: TITLE, template: '%s · Presti' },

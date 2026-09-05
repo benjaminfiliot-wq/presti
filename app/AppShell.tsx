@@ -91,6 +91,15 @@ export default function AppShell({
   const [uid, setUid] = useState<string | null>(null)
   const [menuOuvert, setMenuOuvert] = useState(false)
   const [open, setOpen] = useState(false)
+  // v8 A1.2 — le tiroir se referme après une navigation (sinon il masque la page suivante sur mobile),
+  // et à Échap. Le bouton de menu annonce son état (aria-expanded) et ce qu'il ouvre (aria-controls).
+  useEffect(() => { setOpen(false) }, [pathname])
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [open])
   const [unread, setUnread] = useState(0)
   // §4 B1/B3 — panneau « C'est quoi ? » et visite guidée
   const [aideOuverte, setAideOuverte] = useState(false)
@@ -177,7 +186,7 @@ export default function AppShell({
   return (
     <div className={`psh-app${open ? ' open' : ''}`}>
       <div className="psh-scrim" onClick={() => setOpen(false)} />
-      <aside className="psh-side" data-visite="sidebar">
+      <aside className="psh-side" id="psh-side" data-visite="sidebar">
         <a className="psh-sbrand" href="/dashboard">
           <span className="psh-logo marque" aria-hidden="true">
             <Marque size={34} />
@@ -263,7 +272,7 @@ export default function AppShell({
 
       <div className="psh-main">
         <div className="psh-top">
-          <button className="psh-hamb" onClick={() => setOpen(true)} aria-label="Ouvrir le menu">
+          <button className="psh-hamb" onClick={() => setOpen((v) => !v)} aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'} aria-expanded={open} aria-controls="psh-side">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
           <button className="psh-back" onClick={() => router.back()} aria-label="Retour" title="Retour">

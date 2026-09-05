@@ -18,7 +18,7 @@ html.lenis,html.lenis body{height:auto}
   --ink:#EDEFF4;                  /* texte principal */
   --ink-soft:#C3C8D4;
   --muted:#8B93A2;                /* gris froid */
-  --faint:#5C6472;
+  --faint:#7F8797;               /* v8 : 5:1 sur le fond, 4,7:1 sur une carte (était #5C6472, 3,3:1) */
   --line:rgba(255,255,255,.09);
   --line-2:rgba(255,255,255,.055);
 
@@ -58,3 +58,11 @@ a{color:var(--green);text-decoration:none}
 h1,h2,h3{font-family:var(--font-display);letter-spacing:-.008em;line-height:1.14;font-weight:600;margin:0}
 
 :root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-io:cubic-bezier(.77,0,.175,1);--ease-apple:cubic-bezier(.16,1,.3,1)}
+
+/* v8 A1.3 — sur téléphone, tout champ de saisie fait au moins 16 px : en dessous, iOS zoome la page
+   au focus et l'artisan ne voit plus ce qu'il tape. Une seule règle, pour toutes les surfaces
+   (console, landing, site et plateforme des artisans), au-dessus des tailles « compactes ». */
+@media (max-width:1024px){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),textarea,select{font-size:16px!important}
+  input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=hidden]),select{min-height:44px}
+}
