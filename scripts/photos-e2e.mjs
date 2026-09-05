@@ -108,7 +108,8 @@ try {
   const { data: u, error } = await sb.auth.admin.createUser({ email, password: motDePasse, email_confirm: true })
   if (error) throw new Error('compte de test : ' + error.message)
   uid = u.user.id
-  await sb.from('artisans').insert({ id: uid, email, nom: 'Vérif Photo', metier: 'carreleur', slug, plan: 'business', site_active: false })
+  // La visite guidée est mémorisée en BASE (0047, aide_vues) : on la marque vue, sinon son voile intercepte les clics.
+  await sb.from('artisans').insert({ id: uid, email, nom: 'Vérif Photo', metier: 'carreleur', slug, plan: 'business', site_active: false, aide_vues: ['visite:console'] })
 
   await page.fill('input[type="email"]', email)
   await page.fill('input[type="password"]', motDePasse)
