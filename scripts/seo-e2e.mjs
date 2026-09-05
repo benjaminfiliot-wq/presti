@@ -125,7 +125,8 @@ try {
   T('l’accueil déclare une icône d’écran d’accueil iOS', /rel="apple-touch-icon"/.test(accueil))
   const sitePublie = await html(`${BASE}/site/${slug}`)
   T('le site de l’artisan aussi (sa marque, pas la nôtre)', /rel="apple-touch-icon"[^>]*\/site\//.test(sitePublie))
-  T('et aucune icône de Presti ne s’y invite', !/rel="(icon|apple-touch-icon)"[^>]*(favicon\.ico|\/icon\.svg)/.test(sitePublie))
+  T('et aucune icône de Presti ne s’y invite', !/rel="(icon|apple-touch-icon)"[^>]*(favicon\.ico|\/icon\.svg|\/icon1\.png)/.test(sitePublie))
+  T('l’accueil déclare aussi une icône PNG multiple de 48 px (ce que Google affiche dans ses résultats)', /rel="icon"[^>]*\/icon1\.png[^>]*sizes="192x192"/.test(accueil))
 
   console.log('\n── 9. Chaque page porte SA canonique et SON titre (et non ceux de l’accueil)')
   // Piège du layout racine : `alternates.canonical: '/'` descend sur toute page qui ne le
