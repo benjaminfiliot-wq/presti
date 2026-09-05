@@ -1084,6 +1084,15 @@ export const INFOBULLES: InfoBulle[] = [
     explication: 'Ouvrez l’application sur votre téléphone (Google Authenticator, Microsoft Authenticator…) : le code à 6 chiffres affiché à côté de « Presti » change toutes les 30 secondes.',
     exemple: 'L’application affiche 482 913 : vous tapez 482913 et vous êtes connecté. Si le code est refusé, vérifiez que l’heure de votre téléphone est bien réglée automatiquement.',
   },
+  // source: app/login/page.tsx, app/parametres/SectionSecurite.tsx (v7 bloc 2)
+  {
+    cle: 'securite.code_email',
+    page: '/login',
+    label: 'Code envoyé par email',
+    explication:
+      'Depuis un appareil que Presti ne connaît pas, votre mot de passe ne suffit plus : un code à 6 chiffres part à votre adresse, valable 10 minutes, à usage unique, cinq essais. Cochez « Se souvenir de cet appareil » pour ne plus le saisir pendant 30 jours sur celui-ci ; la liste des appareils reconnus est dans Paramètres → Sécurité, et chacun s’y retire d’un clic. Si vous avez activé l’application d’authentification, c’est son code qui est demandé à la place.',
+    exemple: 'Vous ouvrez Presti depuis un nouveau téléphone : l’email « Votre code Presti : 482 913 » arrive en quelques secondes, vous tapez 482913, et vous êtes connecté.',
+  },
 ]
 
 // Recherche plein texte simple sur les articles : insensible à la casse et aux accents.

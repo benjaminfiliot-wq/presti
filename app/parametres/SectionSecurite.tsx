@@ -14,6 +14,7 @@ import { api, dateFr, type SectionProps } from './commun'
 // sprint, derrière le drapeau `mfa`).
 
 type Session = { id: string; appareil: string; navigateur: string; ip: string | null; ouverte_le: string; derniere_activite: string; courante: boolean }
+type Appareil = { id: string; nom: string; cree_le: string; expire_le: string; dernier_usage_le: string | null; courant: boolean }
 
 export default function SectionSecurite({ a, signaler }: SectionProps) {
   const router = useRouter()
@@ -24,6 +25,7 @@ export default function SectionSecurite({ a, signaler }: SectionProps) {
   const [verif, setVerif] = useState(false)
   const [sessions, setSessions] = useState<Session[] | null>(null)
   const [erreurSessions, setErreurSessions] = useState('')
+  const [appareils, setAppareils] = useState<Appareil[] | null>(null)
 
   const force = evaluerMotDePasse(nouveau, a.email ?? '')
   const compromis = !!verdict?.compromis
@@ -47,6 +49,24 @@ export default function SectionSecurite({ a, signaler }: SectionProps) {
     setSessions(r.data.sessions ?? [])
   }, [])
   useEffect(() => { charger() }, [charger])
+
+  // Appareils de confiance (v7 bloc 2) : ceux qui n'auront pas à redonner le code pendant 30 jours.
+  const chargerAppareils = useCallback(async () => {
+    if (!actif('codeEmail')) return
+    const r = await api<{ appareils?: Appareil[] }>('/api/securite/appareils')
+    setAppareils(r.ok ? (r.data.appareils ?? []) : [])
+  }, [])
+  useEffect(() => { chargerAppareils() }, [chargerAppareils])
+
+  async function retirerAppareil(a: Appareil) {
+    if (busy) return
+    setBusy(`app-${a.id}`)
+    const r = await api<{ courant?: boolean }>('/api/securite/appareils', { method: 'DELETE', body: JSON.stringify({ id: a.id }) })
+    setBusy(null)
+    if (!r.ok) { signaler({ type: 'err', text: r.data.error ?? 'Retrait impossible.' }); return }
+    setAppareils((p) => (p ?? []).filter((x) => x.id !== a.id))
+    signaler({ type: 'ok', text: `${a.nom} : le code sera redemandé à la prochaine connexion.` })
+  }
 
   async function changerMdp() {
     if (busy || !force.ok || compromis) return
@@ -132,6 +152,33 @@ export default function SectionSecurite({ a, signaler }: SectionProps) {
         <p className="muted" style={{ margin: '0 0 .7rem', fontSize: '.88rem' }}>Vous avez utilisé un ordinateur qui n’est pas le vôtre ? Fermez tout d’un coup — les sessions sont réellement invalidées, pas seulement oubliées.</p>
         <button type="button" className="btn btn--ghost danger" disabled={!!busy} onClick={fermerToutes}>{busy === 'toutes' ? '…' : 'Fermer toutes mes sessions'}</button>
       </div>
+
+      {actif('codeEmail') ? (
+        <div className="tool-card" data-appareils>
+          <h2>Appareils de confiance <Info cle="securite.code_email" /></h2>
+          <p className="muted" style={{ margin: '0 0 .9rem' }}>À chaque connexion depuis un appareil inconnu, un code vous est envoyé par email. Ceux-ci en sont dispensés pendant 30 jours — retirez ce que vous ne reconnaissez pas.</p>
+          {appareils === null ? <p className="muted">Chargement…</p>
+            : appareils.length === 0 ? <p className="muted" data-appareils-vide>Aucun appareil enregistré : le code est demandé à chaque connexion.</p>
+            : (
+              <ul className="sess">
+                {appareils.map((a) => (
+                  <li key={a.id} className={a.courant ? 'courante' : ''}>
+                    <span className="sess-ic" aria-hidden="true">
+                      {/iPhone|Android|iPad/.test(a.nom)
+                        ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2" /><path d="M11 18h2" /></svg>
+                        : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>}
+                    </span>
+                    <span className="sess-txt">
+                      <b>{a.nom}{a.courant ? <em>Cet appareil</em> : null}</b>
+                      <small>Reconnu le {dateFr(a.cree_le)} · jusqu’au {dateFr(a.expire_le)}{a.dernier_usage_le ? ` · dernière connexion le ${dateFr(a.dernier_usage_le, true)}` : ''}</small>
+                    </span>
+                    <button type="button" className="btn btn--ghost danger" disabled={!!busy} onClick={() => retirerAppareil(a)}>{busy === `app-${a.id}` ? '…' : 'Retirer'}</button>
+                  </li>
+                ))}
+              </ul>
+            )}
+        </div>
+      ) : null}
 
       {actif('mfa') ? <DoubleAuth signaler={signaler} /> : null}
     </>

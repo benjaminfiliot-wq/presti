@@ -112,6 +112,18 @@ export default function AppShell({
           return
         }
       }
+      // v7 bloc 2 — session d'avant le code email, ou obtenue sans lui : toutes les routes
+      // répondraient 401. On le sait tout de suite, ici, et on renvoie se connecter (un code part).
+      if (actif('codeEmail')) {
+        const r = await fetch('/api/auth/code', { headers: { Authorization: `Bearer ${data.session.access_token}` } }).catch(() => null)
+        const d = r ? await r.json().catch(() => ({})) as { code?: string } : {}
+        if (r && r.status === 401 && d.code === 'code_requis') {
+          const retour = window.location.pathname + window.location.search
+          await supabase.auth.signOut().catch(() => {})
+          router.replace(`/login?verif=1&retour=${encodeURIComponent(retour)}`)
+          return
+        }
+      }
       // select('*') : tolère l'absence de la colonne is_founder tant que la migration 0003 n'est pas appliquée.
       const { data: prof } = await supabase
         .from('artisans')

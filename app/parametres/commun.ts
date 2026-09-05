@@ -52,12 +52,27 @@ export function versSecondFacteur() {
   window.location.assign(`/login?mfa=1&retour=${encodeURIComponent(retour)}`)
 }
 
+/**
+ * La route a refusé une session qui n'a pas passé le code email (v7 bloc 2 : `code_requis`) —
+ * une session d'avant la mise en place, ou obtenue sans le code. On la ferme et l'artisan se
+ * reconnecte : un code lui sera envoyé.
+ */
+export function codeRequis(status: number, data: { error?: string; code?: string }): boolean {
+  return status === 401 && data.code === 'code_requis'
+}
+export async function versVerification() {
+  const retour = window.location.pathname + window.location.search
+  await supabase.auth.signOut().catch(() => {})
+  window.location.assign(`/login?verif=1&retour=${encodeURIComponent(retour)}`)
+}
+
 /** Appel authentifié d'une route de Presti. */
 export async function api<T = Record<string, unknown>>(chemin: string, init: RequestInit = {}): Promise<{ ok: boolean; status: number; data: T & { error?: string } }> {
   const t = await jeton()
   const r = await fetch(chemin, { ...init, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}`, ...(init.headers || {}) } })
   const data = (await r.json().catch(() => ({}))) as T & { error?: string; code?: string }
   if (mfaRequise(r.status, data)) versSecondFacteur()
+  else if (codeRequis(r.status, data)) versVerification()
   return { ok: r.ok, status: r.status, data }
 }
 

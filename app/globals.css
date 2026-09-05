@@ -2316,3 +2316,6 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .ct-form .btn{align-self:flex-start}
 .ct-ok{margin:0;padding:.7rem .85rem;border-radius:10px;background:rgba(47,130,86,.12);color:var(--ink);font-size:.92rem}
 .ct-err{margin:0;padding:.7rem .85rem;border-radius:10px;border-left:2px solid var(--co,#e08a5a);background:rgba(224,138,90,.1);color:var(--ink);font-size:.92rem}
+/* v7 bloc 2 — connexion : la case « Se souvenir de cet appareil » */
+.card label.souvenir{display:flex;align-items:center;gap:.55rem;margin:.7rem 0 .2rem;font-weight:500;cursor:pointer}
+.card label.souvenir input{width:auto;margin:0;accent-color:var(--accent)}
