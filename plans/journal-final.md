@@ -199,7 +199,8 @@
 - **Suite enregistrée** dans `tout-verifier.mjs` (coût navigateur) → 45 suites ; WebKit installé dans le workflow nocturne.
 - **Appels IA : 0.**
 - **A n'est pas terminé** tant que Benj n'a pas fait **un vrai passage sur son téléphone** (Safari iOS et Chrome Android si possible) : le simulateur ne voit ni la barre d'adresse, ni le clavier réel, ni le zoom. Liste à vérifier dans le message du 05/09 ; ce qu'il aura vu ira ici.
-- **Suivant** : lanceur complet rejoué (45 suites) ; puis la partie B, après la décision B0 de Benj (recommandation : PWA + Capacitor, même code).
+- **Lanceur complet rejoué (45 suites, 931 s)** : 42/45. Les trois rouges : `audit-final-e2e` G-1.2 lisait l'ancienne règle de repli à 760 px → alignée sur la nouvelle barre (900 px, tiroir, « Se connecter » jamais caché) → **68/68** (`3d7b7b1`) ; `mentions-bloquantes` et `relances` échouent sur le **plafond quotidien d'emails** (`limites.emails:jour` = 95 pour 80, Resend à 100 %) atteint par les rejeux du jour — pas un défaut, remise à zéro à minuit UTC, l'audit nocturne de 4 h 17 tourne après. Attendu au prochain nightly : **45/45**.
+- **Suivant** : le passage réel de Benj sur téléphone (ferme A) ; puis la partie B, après sa décision B0 (recommandation : PWA + Capacitor, même code).
 
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
