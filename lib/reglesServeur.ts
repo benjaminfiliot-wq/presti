@@ -2,6 +2,7 @@
 // lib/regles.ts (pure) ; ici on lit la règle de l'artisan, on regarde l'état réel de la
 // conversation, et on exécute — en ne faisant jamais plus que ce que la règle autorise.
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { qualifyLead } from '@/lib/ai'
 import { peut, offreMinimale } from '@/lib/plans'
 import { notifierArtisan } from '@/lib/notifications'
 import { creerDevisBrouillonPourLead } from '@/lib/devisAuto'
@@ -16,7 +17,7 @@ export async function regleDe(artisanId: string): Promise<Regle | null> {
   return { maillons: normaliserMaillons(data.maillons), actif: data.actif !== false }
 }
 
-type LeadCtx = { id: string; artisan_id: string; nom_prospect: string | null; contact: string | null; type_chantier?: string | null; photos?: unknown; prise_en_main?: boolean | null }
+type LeadCtx = { id: string; artisan_id: string; nom_prospect: string | null; contact: string | null; message?: string | null; type_chantier?: string | null; photos?: unknown; prise_en_main?: boolean | null }
 
 /**
  * À appeler après chaque réponse de l'assistant. Rend ce qui a été fait, pour le journal
@@ -33,8 +34,13 @@ export async function declencherRegles(p: { lead: LeadCtx; nbReponsesIA: number;
 
   const { count } = await supabaseAdmin.from('devis').select('id', { count: 'exact', head: true }).eq('lead_id', p.lead.id)
   const photos = Array.isArray(p.lead.photos) ? p.lead.photos.length : 0
-  // Qualifié = un type de chantier détecté, ou l'assistant a déjà posé ses questions (2 tours).
-  const qualifie = !!p.lead.type_chantier || p.nbReponsesIA >= 2
+  // Qualifié = un type de chantier détecté DANS LE MESSAGE, ou l'assistant a déjà posé ses
+  // questions (2 tours). `lead.type_chantier` ne suffit pas : à la capture, il retombe sur le
+  // métier de l'artisan (« Bonjour, vous êtes disponible ? » chez un plombier → « Plomberie »),
+  // et une règle « tout auto » chiffrait puis ENVOYAIT un devis sur une conversation vide
+  // (audit final, auditeur E, M3).
+  const { type_chantier: typeDuMessage } = qualifyLead(p.lead.message, null)
+  const qualifie = !!typeDuMessage || p.nbReponsesIA >= 2
 
   const d = decider(regle.maillons, regle.actif, { qualifie, nbPhotos: photos, devisExistant: (count ?? 0) > 0, priseEnMain: p.lead.prise_en_main === true })
   if (d.action === 'rien') return { fait: 'rien', pourquoi: d.pourquoi }

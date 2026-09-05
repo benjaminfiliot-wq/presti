@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateSiteContent } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
-import { consumeCredit } from '@/lib/credits'
+import { consumeCredit, rendreCredit } from '@/lib/credits'
+import { signalerPanneIA } from '@/lib/alerteService'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 export const runtime = 'nodejs'
@@ -11,6 +12,7 @@ export const maxDuration = 60
 // Génère (à la demande) le contenu du site vitrine de l'artisan connecté, puis le stocke.
 // Authentifié + décompte d'un crédit (au tier "pro" pour la qualité — génération rare).
 export async function POST(req: Request) {
+  let aRendre: { uid: string; tier: Parameters<typeof rendreCredit>[1]; fondateur: boolean } | null = null
   try {
     // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).
     const session = await verifierSession(req)
@@ -30,6 +32,7 @@ export async function POST(req: Request) {
     if (!first) {
       const credit = await consumeCredit(uid, tier, !!a.is_founder)
       if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
+      aRendre = { uid, tier, fondateur: !!a.is_founder }
     }
 
     const contenu = await generateSiteContent({
@@ -42,6 +45,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, contenu, free: first })
   } catch (e) {
     console.error('[site/generate]', e)
+    void signalerPanneIA('rédaction du site (/api/site/generate)', e)
+    if (aRendre) await rendreCredit(aRendre.uid, aRendre.tier, aRendre.fondateur)
     return NextResponse.json({ error: "L'IA n'a pas pu rédiger le contenu. Réessaie dans un instant." }, { status: 500 })
   }
 }

@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
-import { consumeCredit } from '@/lib/credits'
+import { consumeCredit, rendreCredit } from '@/lib/credits'
+import { signalerPanneIA } from '@/lib/alerteService'
 import { resolveModel } from '@/lib/models'
 import { getPlateformeConfig, personaDe } from '@/lib/plateformeConfig'
 import { getUserRevocable } from '@/lib/authArtisan'
@@ -113,16 +114,24 @@ export async function POST(req: Request) {
       const credit = await consumeCredit(uid, tier, !!artisan?.is_founder)
       if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
       const turns = await history(leadId)
-      if (!turns.length) return NextResponse.json({ error: 'Aucun message à traiter.' }, { status: 400 })
-      const reply = await generateConversationReply(
-        { nom: artisan?.nom ?? null, metier: artisan?.metier ?? null, ton_style: artisan?.ton_style ?? null },
-        { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
-        turns,
-        model,
-        undefined,
-        { persona: personaDe(cfg) },
-      )
-      return NextResponse.json({ ok: true, reply, tier, downgraded })
+      if (!turns.length) { await rendreCredit(uid, tier, !!artisan?.is_founder); return NextResponse.json({ error: 'Aucun message à traiter.' }, { status: 400 }) }
+      try {
+        const reply = await generateConversationReply(
+          { nom: artisan?.nom ?? null, metier: artisan?.metier ?? null, ton_style: artisan?.ton_style ?? null },
+          { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
+          turns,
+          model,
+          undefined,
+          { persona: personaDe(cfg) },
+        )
+        return NextResponse.json({ ok: true, reply, tier, downgraded })
+      } catch (e) {
+        // La suggestion a échoué : l'entreprise le sait, le crédit revient (audit final, E, M5).
+        console.error('[messages] suggestion IA:', e)
+        void signalerPanneIA('suggestion de réponse (/api/messages)', e)
+        await rendreCredit(uid, tier, !!artisan?.is_founder)
+        return NextResponse.json({ error: 'La suggestion n’a pas pu être produite. Réessayez dans un instant.' }, { status: 502 })
+      }
     }
 
     // ── Réponse de l'artisan (envoyée telle quelle dans le fil + par email si possible).

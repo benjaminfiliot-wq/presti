@@ -22,3 +22,20 @@ export async function consumeCredit(uid: string, tier: Tier, isFounder: boolean,
   if (n === -1) return { ok: false, error: 'Crédits épuisés — renouvellement mensuel ou formule supérieure.' }
   return { ok: true, remaining: n }
 }
+
+/**
+ * Rend un crédit débité pour une génération qui a ÉCHOUÉ (panne du modèle, solde Anthropic à
+ * zéro, réseau). Avant, le crédit était débité avant l'appel et jamais rendu : l'artisan payait
+ * une réponse qu'il n'avait pas eue (audit final, auditeur E, M5). Jamais pour un fondateur
+ * (rien n'a été débité), jamais au-delà du plafond mensuel de son offre.
+ */
+export async function rendreCredit(uid: string, tier: Tier, isFounder: boolean, coutForce?: number): Promise<void> {
+  if (isFounder) return
+  try {
+    const { data: a } = await supabaseAdmin.from('artisans').select('credits, plan').eq('id', uid).maybeSingle()
+    if (!a) return
+    const cost = typeof coutForce === 'number' && coutForce >= 0 ? Math.round(coutForce) : (CREDIT_COST[tier] ?? 1)
+    const plafond = planConf(a.plan).creditsMois
+    await supabaseAdmin.from('artisans').update({ credits: Math.min(plafond, (Number(a.credits) || 0) + cost) }).eq('id', uid)
+  } catch (e) { console.error('[credits] rendre :', e instanceof Error ? e.message : e) }
+}

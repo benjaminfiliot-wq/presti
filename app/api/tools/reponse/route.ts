@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateLeadReply } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
-import { consumeCredit } from '@/lib/credits'
+import { consumeCredit, rendreCredit } from '@/lib/credits'
+import { signalerPanneIA } from '@/lib/alerteService'
 import { getUserRevocable } from '@/lib/authArtisan'
 
 // Modèle Expert (opus) possible → au-delà du timeout Vercel par défaut (10 s).
@@ -12,6 +13,7 @@ export const maxDuration = 60
 // Générateur de réponse à la demande : l'artisan connecté colle la demande
 // d'un client, Presti rédige la réponse dans son ton.
 export async function POST(req: Request) {
+  let aRendre: { uid: string; tier: Parameters<typeof rendreCredit>[1]; fondateur: boolean } | null = null
   try {
     // Auth : on vérifie le jeton Supabase de l'artisan connecté (anti-abus + bon profil)
     const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
@@ -39,6 +41,7 @@ export async function POST(req: Request) {
 
     const credit = await consumeCredit(userData.user.id, tier, !!artisan.is_founder)
     if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
+    aRendre = { uid: userData.user.id, tier, fondateur: !!artisan.is_founder }
 
     const reply = await generateLeadReply(
       { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style },
@@ -49,6 +52,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, reply, tier, downgraded })
   } catch (e) {
     console.error('[tools/reponse] IA:', e)
+    void signalerPanneIA('réponse outil (/api/tools/reponse)', e)
+    if (aRendre) await rendreCredit(aRendre.uid, aRendre.tier, aRendre.fondateur)
     return NextResponse.json({ error: "La génération a échoué. Réessaie." }, { status: 500 })
   }
 }

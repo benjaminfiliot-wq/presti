@@ -49,6 +49,13 @@ try {
   T('… et dit pourquoi : réservé à une offre supérieure', /réservé/i.test(r.pourquoi ?? ''), r.pourquoi)
   const { data: dv } = await admin.from('devis').select('id').eq('artisan_id', E.uid)
   T('aucun devis n’a été créé', (dv ?? []).length === 0)
+
+  console.log('\n── Signature : une règle ne chiffre pas une conversation vide (E, M3)')
+  const S = await compte('signature')
+  const rs = await declencherRegles({ lead: { ...S.lead, message: 'Bonjour, vous êtes disponible ?', type_chantier: 'Plomberie' }, nbReponsesIA: 1, artisanEmail: S.email, artisanNom: 'Verrou' })
+  T('rien n’est fait tant que le message ne dit pas le chantier', rs.fait === 'rien', JSON.stringify(rs).slice(0, 140))
+  const { data: dvS } = await admin.from('devis').select('id').eq('artisan_id', S.uid)
+  T('aucun devis créé', (dvS ?? []).length === 0)
 } catch (e) {
   ko++; console.log('  ❌ exception —', e instanceof Error ? e.message : e)
 } finally {

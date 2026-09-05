@@ -3,7 +3,8 @@ import { signalerPanneIA } from '@/lib/alerteService'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
-import { consumeCredit } from '@/lib/credits'
+import { consumeCredit, rendreCredit } from '@/lib/credits'
+import { peut } from '@/lib/plans'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 import { getPlateformeConfig, iaDoitRepondre, personaDe, type PlateformeConfig } from '@/lib/plateformeConfig'
@@ -92,7 +93,11 @@ export async function POST(req: Request) {
 
     // ── Panneau de contrôle IA (§A4) : mode de réponse, escalade, plafond, plage horaire.
     // Un artisan sans configuration garde EXACTEMENT son comportement actuel.
-    const cfg = await getPlateformeConfig(artisan.id, artisan.reponse_auto)
+    const cfgRegle = await getPlateformeConfig(artisan.id, artisan.reponse_auto)
+    // Verrou d'offre côté SERVEUR (audit final, auditeur E, M2) : l'assistant autonome est vendu à
+    // partir de Studio. `mode_reponse` est écrit par le navigateur et vaut 'auto' par défaut : un
+    // Essentiel l'obtiendrait sans ce contrôle. Pour lui, l'assistant prépare, l'artisan valide.
+    const cfg: PlateformeConfig = cfgRegle.mode_reponse === 'auto' && !peut(artisan.plan, 'plateforme.ia.auto') ? { ...cfgRegle, mode_reponse: 'assistee' } : cfgRegle
     const nbReponsesIA = history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length
 
     // « Je prends la main » (v5 §9) : l'artisan répond lui-même sur CE fil. L'assistant se tait,
@@ -109,10 +114,11 @@ export async function POST(req: Request) {
     // « l'assistant prépare » ne l'était pas. La proposition est écrite dans le fil avec
     // etat='proposition' : invisible du client, visible du poste de pilotage.
     if (!decision.ok && decision.raison === 'assistee') {
-      const credit = await consumeCredit(artisan.id, 'standard', !!artisan.is_founder)
+      // Le crédit est débité au tarif du modèle réellement servi (M1 : Expert vaut 3, pas 1).
+      const { model, tier } = resolveModel(cfg.modele || 'standard', artisan.plan)
+      const credit = await consumeCredit(artisan.id, tier, !!artisan.is_founder)
       if (credit.ok) {
         try {
-          const { model, tier } = resolveModel(cfg.modele || 'standard', artisan.plan)
           const turns: ConvTurn[] = [...history.map((m) => ({ sens: m.sens, contenu: m.contenu })), { sens: 'in' as const, contenu: message }]
           const proposition = await generateConversationReply(
             { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
@@ -123,7 +129,7 @@ export async function POST(req: Request) {
             await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: proposition, etat: 'proposition', modele: tier })
             await supabaseAdmin.from('leads').update({ updated_at: new Date().toISOString(), lu_le: null }).eq('id', lead.id)
           }
-        } catch (e) { console.error('[conversation/stream] proposition:', e); void signalerPanneIA('proposition de réponse', e) }
+        } catch (e) { console.error('[conversation/stream] proposition:', e); void signalerPanneIA('proposition de réponse', e); await rendreCredit(artisan.id, tier, !!artisan.is_founder) }
       }
       await notifier(null, 'Réponse proposée — à valider')
       return NextResponse.json({ ok: true, reply: null, raison: 'assistee' })
@@ -136,7 +142,8 @@ export async function POST(req: Request) {
       else if (decision.raison !== 'pause') await notifier(null)
       return NextResponse.json({ ok: true, reply: null, raison: decision.raison })
     }
-    const credit = await consumeCredit(artisan.id, 'standard', !!artisan.is_founder)
+    const { model: modeleRegle, tier: tierRegle } = resolveModel(cfg.modele || 'standard', artisan.plan)
+    const credit = await consumeCredit(artisan.id, tierRegle, !!artisan.is_founder)
     if (!credit.ok) { await notifier(null); return NextResponse.json({ ok: true, reply: null, raison: 'credits' }) }
 
     // ── Flux SSE
@@ -151,7 +158,7 @@ export async function POST(req: Request) {
             { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style || TON[cfg.ton] || TON.chaleureux, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
             { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
             turns,
-            resolveModel(cfg.modele || 'standard', artisan.plan).model, // le modèle réglé par l'artisan (audit v5 : Haiku était servi d'office)
+            modeleRegle, // le modèle réglé par l'artisan (audit v5 : Haiku était servi d'office), débité à son vrai tarif (M1)
             (d) => { envoyer({ t: 'delta', v: d }) },
             { persona: personaDe(cfg) }, // le TON réglé par l'artisan (§9 G2)
           )

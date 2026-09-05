@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { signalerPanneIA } from '@/lib/alerteService'
 import { enregistrerPassage, ronde } from '@/lib/alertes'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { purgerComptes } from '@/lib/purgeComptes'
@@ -64,6 +65,9 @@ export async function GET(req: Request) {
       )
     } catch (e) {
       console.error('[cron/relances] IA indisponible, repli sur template:', e instanceof Error ? e.message : e)
+      // Le repli sur le texte générique n'est plus silencieux : l'entreprise apprend que l'IA est
+      // tombée pendant que des relances partent quand même (audit final, E, M5).
+      void signalerPanneIA('relances (cron)', e)
     }
     if (!text) text = relanceTemplate(artisan?.nom ?? null, lead.nom_prospect, rang)
 

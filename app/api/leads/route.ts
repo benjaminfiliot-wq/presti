@@ -3,7 +3,8 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateLeadReply, qualifyLead } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { notifierArtisan } from '@/lib/notifications'
-import { consumeCredit } from '@/lib/credits'
+import { consumeCredit, rendreCredit } from '@/lib/credits'
+import { signalerPanneIA } from '@/lib/alerteService'
 import { getIp, isBanned, recordAbuse, ipPseudonyme } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 
@@ -284,7 +285,10 @@ ${reply}`
       }
     } catch (e) {
       console.error('[leads] étape 4 (IA/email) a échoué:', e)
-      // lead conservé en 'nouveau' — visible dans le dashboard, rien de perdu
+      // lead conservé en 'nouveau' — visible dans le dashboard, rien de perdu. L'entreprise est
+      // prévenue et le crédit rendu si la réponse n'a pas été produite (audit final, E, M5).
+      void signalerPanneIA('première réponse (/api/leads)', e)
+      if (!replyText) await rendreCredit(artisan.id, 'standard', !!artisan.is_founder)
     }
 
     // On renvoie le jeton (pour ouvrir le fil de conversation côté prospect) et,

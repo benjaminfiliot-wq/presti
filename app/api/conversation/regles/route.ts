@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     if (!(await consommerLimite(`regles-ip:${ip}`, 30, 3600))) { await recordAbuse(ip, 'flood /api/conversation/regles'); return NextResponse.json({ ok: true, fait: 'rien', pourquoi: 'plafond' }) }
 
     const { data: lead } = await supabaseAdmin.from('leads')
-      .select('id, artisan_id, nom_prospect, contact, type_chantier, photos, prise_en_main').eq('token', token).maybeSingle()
+      .select('id, artisan_id, nom_prospect, contact, message, type_chantier, photos, prise_en_main').eq('token', token).maybeSingle()
     if (!lead) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
     // Une conversation ne déclenche pas ses règles plus de 6 fois par heure (le chiffrage coûte).
     if (!(await consommerLimite(`regles:${lead.id}`, 6, 3600))) return NextResponse.json({ ok: true, fait: 'rien', pourquoi: 'plafond' })

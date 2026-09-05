@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateDevis } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
-import { consumeCredit } from '@/lib/credits'
+import { consumeCredit, rendreCredit } from '@/lib/credits'
+import { signalerPanneIA } from '@/lib/alerteService'
 import { catalogueDe } from '@/lib/prix'
 import { getUserRevocable } from '@/lib/authArtisan'
 
@@ -12,6 +13,7 @@ export const maxDuration = 60
 
 // Génère les lignes d'un devis à partir d'une description de chantier.
 export async function POST(req: Request) {
+  let aRendre: { uid: string; tier: Parameters<typeof rendreCredit>[1]; fondateur: boolean } | null = null
   try {
     const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
     if (!token) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
@@ -37,6 +39,7 @@ export async function POST(req: Request) {
 
     const credit = await consumeCredit(userData.user.id, tier, !!artisan.is_founder)
     if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })
+    aRendre = { uid: userData.user.id, tier, fondateur: !!artisan.is_founder }
 
     // Catalogue de prix (v4 §8) : les tarifs de l'artisan d'abord, les ordres de grandeur
     // du marché seulement pour ce qu'il n'a pas. Chaque poste porte sa source et sa date.
@@ -51,6 +54,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, ...result, tier, downgraded })
   } catch (e) {
     console.error('[devis/generer] IA:', e)
+    void signalerPanneIA('chiffrage (/api/devis/generer)', e)
+    if (aRendre) await rendreCredit(aRendre.uid, aRendre.tier, aRendre.fondateur)
     return NextResponse.json(
       { error: "L'IA n'a pas pu générer le devis. Réessaie ou reformule la description." },
       { status: 500 },

@@ -133,6 +133,14 @@ try {
   T('le serveur dit pourquoi il ne répond pas (raison: credits)', /raison: 'credits'/.test(st))
   T('le chat affiche une note quand aucune réponse automatique ne vient', /type: 'info'/.test(chat) && /répond en personne/.test(chat))
 
+  console.log('\n── E. L’IA : coûts justes, verrou d’offre serveur, pannes signalées')
+  const stream = fs.readFileSync('app/api/conversation/stream/route.ts', 'utf8')
+  T('M1 — le crédit est débité au tarif du modèle servi', !/consumeCredit\(artisan\.id, 'standard'/.test(stream))
+  T('M2 — l’assistant autonome est verrouillé côté serveur', /peut\(artisan\.plan, 'plateforme\.ia\.auto'\)/.test(stream))
+  const routesIA = ['app/api/leads/route.ts', 'app/api/devis/generer/route.ts', 'app/api/tools/reponse/route.ts', 'app/api/site/generate/route.ts', 'app/api/messages/route.ts', 'app/api/cron/relances/route.ts']
+  T('M5 — les six chemins signalent une panne IA', routesIA.every((f) => /signalerPanneIA\(/.test(fs.readFileSync(f, 'utf8'))), routesIA.filter((f) => !/signalerPanneIA\(/.test(fs.readFileSync(f, 'utf8'))).join(', '))
+  T('M5 — le crédit d’une génération échouée est rendu', /export async function rendreCredit/.test(fs.readFileSync('lib/credits.ts', 'utf8')) && routesIA.slice(0, 5).every((f) => /rendreCredit\(/.test(fs.readFileSync(f, 'utf8'))))
+
   console.log('\n── H-bloquant 2. Pas de second abonnement pour un abonné')
   const r = await fetch(`${BASE}/api/subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.session.access_token}` }, body: JSON.stringify({ plan: 'signature' }) })
   const j = await r.json().catch(() => ({}))

@@ -52,14 +52,16 @@ const PRESTATIONS = [
   'salle de bain', 'placo', 'platrerie', 'facade', 'ravalement', 'demoussage', 'gouttieres', 'velux',
   'volets', 'stores', 'alarme', 'videosurveillance', 'fibre', 'antenne', 'demenagement', 'debarras',
   'fosse septique', 'assainissement', 'forage', 'dallage', 'pavage', 'cloture', 'terrasse', 'pergola',
-  'veranda', 'extension', 'surelevation', 'combles', 'escalier', 'dressing', 'agencement', 'depannage',
-  'urgence', 'entretien', 'gazon', 'paysagisme', 'jardinage', 'tonte', 'taille de haies',
+  'veranda', 'extension', 'surelevation', 'combles', 'escalier', 'dressing', 'agencement',
+  'gazon', 'paysagisme', 'jardinage', 'tonte', 'taille de haies',
+  // Retirés (audit final, E, M4) : « dépannage », « urgence », « entretien » — ce ne sont pas des
+  // prestations mais des mots de toute conversation d'artisan (« je prends en charge votre urgence »).
 ]
 const VERBES =
   '(?:je|nous|on) (?:fais|faisons|fait|realise|realisons|propose|proposons|installe|installons|pose|posons|assure|assurons|m occupe|nous occupons|gere|gerons|prends en charge|prenons en charge|intervien\\w*|interviens|peux(?: aussi| egalement)? (?:faire|realiser|installer|poser|m occuper de|gerer|intervenir)|pouvons(?: aussi| egalement)? (?:faire|realiser|installer|poser|nous occuper de|gerer|intervenir))'
 const RE_PRESTATION = new RegExp(`\\b${VERBES}\\b[^.!?]{0,40}?\\b(${PRESTATIONS.join('|')})\\b`)
 
-type Motif = { cle: string; label: string; re: RegExp; declare: (profil: string, extrait: string) => boolean }
+type Motif = { cle: string; label: string; re: RegExp; declare: (profil: string, extrait: string, phrase?: string) => boolean }
 
 const contient = (profil: string, ...cles: string[]) => cles.some((c) => profil.includes(c))
 
@@ -93,7 +95,11 @@ export const MOTIFS_CAPACITE: Motif[] = [
     cle: 'permanence',
     label: 'permanence (7j/7, 24h/24, week-end, nuit) non déclarée',
     re: /\b(7 ?j ?7|7 jours sur 7|24 ?h ?24|24 heures sur 24|le week end|ce week end|les week ends?|le dimanche|jours feries|de nuit|la nuit)\b/,
-    declare: (p) => contient(p, '7j', '7 j', '24h', '24 h', 'week', 'dimanche', 'ferie', 'nuit', 'astreinte'),
+    // Une permanence n'est affirmée que si la phrase s'ENGAGE (j'interviens, je suis disponible,
+    // joignable, ouvert, astreinte). « Je vous rappelle après le week-end » ou « la nuit dernière ? »
+    // ne promettent rien (audit final, E, M4).
+    declare: (p, _extrait, phrase) => contient(p, '7j', '7 j', '24h', '24 h', 'week', 'dimanche', 'ferie', 'nuit', 'astreinte')
+      || !/\b(intervien\w*|intervention|disponibl\w*|joignabl\w*|ouvert\w*|astreinte|permanence|me deplace|nous deplacons|repond\w*|garanti\w*|assur\w*)\b/.test(phrase ?? ''),
   },
   {
     cle: 'garantie',
@@ -105,19 +111,28 @@ export const MOTIFS_CAPACITE: Motif[] = [
     cle: 'prestation',
     label: 'prestation absente du profil',
     re: RE_PRESTATION,
-    declare: (p, extrait) => {
+    declare: (p, extrait, phrase) => {
       // Le dernier groupe capturé est la prestation ; le métier lui-même (« plombier » →
-      // « plomberie ») la déclare via un préfixe commun.
-      const m = extrait.match(RE_PRESTATION)
-      const presta = m ? m[2] : extrait
+      // « plomberie ») la déclare via un préfixe commun. On cherche dans la PHRASE entière :
+      // l'extrait transmis n'est que le premier groupe (le verbe), pas la prestation.
+      const m = (phrase ?? extrait).match(RE_PRESTATION)
+      const presta = m ? m[m.length - 1] : extrait
       const racine = presta.slice(0, Math.min(5, presta.length))
-      return p.includes(presta) || (presta.length >= 6 && p.includes(racine))
+      // Le métier implique certaines prestations : un plombier est plombier-chauffagiste dans
+      // l'usage (chaudière, chauffe-eau, sanitaire) — « l'entretien de votre chaudière » n'est
+      // pas une invention (audit final, E, M4).
+      const implique = p.includes('plomb') && ['chauffage', 'chaudiere', 'chauffe eau', 'sanitaire', 'salle de bain'].includes(presta)
+      return implique || p.includes(presta) || (presta.length >= 6 && p.includes(racine))
     },
   },
 ]
 
-// Une phrase niée (« je ne fais pas la clim ») n'est pas une affirmation de capacité.
-const RE_NEGATION = /\b(?:ne|n)\b[^.!?]{0,40}?\b(?:pas|plus|jamais|aucun\w*)\b|\bpas (?:de|d)\b|\bmalheureusement\b|\bne (?:propose|fais|realise|couvre)\b/
+// Une négation JUSTE AVANT l'affirmation (« je n'interviens pas le week-end ») l'annule. Avant, toute
+// phrase contenant « pas de » ou « malheureusement » était sautée entière : « Pas de souci, je me
+// déplace gratuitement et j'interviens sous 24 h » passait sans contrôle (audit final, E, M4).
+const RE_NEGATION_AVANT = /\b(?:ne|n) \w+(?: \w+)? (?:pas|plus|jamais|aucun\w*) [^.!?]{0,12}$|\bpas (?:de|d) $|\bne (?:propose|fais|realise|couvre)\b[^.!?]{0,20}$|\bni $/
+// (conservée pour l'export : l'ancienne règle, à titre documentaire)
+export const RE_NEGATION = /\b(?:ne|n)\b[^.!?]{0,40}?\b(?:pas|plus|jamais|aucun\w*)\b|\bpas (?:de|d)\b|\bmalheureusement\b|\bne (?:propose|fais|realise|couvre)\b/
 
 /** Découpe un texte en phrases (on retire une phrase entière, jamais un demi-mot). */
 export function phrases(texte: string): string[] {
@@ -133,12 +148,13 @@ export function detecterCapacitesNonDeclarees(texte: string, profil: ProfilCapac
   const hits: CapaciteDetectee[] = []
   for (const phrase of phrases(texte)) {
     const n = ' ' + normaliser(phrase) + ' '
-    if (RE_NEGATION.test(n)) continue
     for (const m of MOTIFS_CAPACITE) {
       const hit = n.match(m.re)
       if (!hit) continue
       const extrait = hit[1] ?? hit[0]
-      if (m.declare(ref, extrait.trim())) continue
+      const avant = n.slice(Math.max(0, (hit.index ?? 0) - 48), hit.index ?? 0)
+      if (RE_NEGATION_AVANT.test(avant)) continue
+      if (m.declare(ref, extrait.trim(), n)) continue
       hits.push({ cle: m.cle, label: m.label, extrait: extrait.trim(), phrase })
     }
   }

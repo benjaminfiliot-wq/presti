@@ -22,6 +22,7 @@ const { detecterMetier, profilMetier, blocMetierReponse, blocMetierChiffrage, re
 const { playbookPour, blocPlaybook, compterQuestions, questionsDejaPosees, MAX_QUESTIONS } = await import('../lib/ai/playbooks.ts')
 const { detecterCapacitesNonDeclarees, detecterPrixChiffres, retirerPhrases, assainirReponse, texteProfil } = await import('../lib/ai/antiFabrication.ts')
 const { routerModele } = await import('../lib/ai/routage.ts')
+const { qualifyLead } = await import('../lib/ai.ts')
 const { blocExemples } = await import('../lib/ai/exemples.ts')
 const { analyzeLead, preparerConversation, blocProspect } = await import('../lib/ai.ts')
 const { outilsPour } = await import('../lib/ai/outils.ts')
@@ -157,6 +158,28 @@ console.log('\n── 6. Outils')
 T('devis_auto = jamais → pas d’outil creer_devis_brouillon', !outilsPour({ devis_auto: 'jamais' }).some((t) => t.name === 'creer_devis_brouillon'))
 T('devis_auto = brouillon → 6 outils', outilsPour({ devis_auto: 'brouillon' }).length === 6)
 T('chaque outil a un schéma fermé (additionalProperties: false)', outilsPour({ devis_auto: 'brouillon' }).every((t) => t.input_schema.additionalProperties === false))
+
+console.log('\n── Anti-fabrication : les huit cas de l’audit final (E, M4)')
+{
+  const plombier = { metier: 'Plombier', services: [{ nom: 'Dépannage plomberie' }, { nom: 'Chauffe-eau' }], horaires: 'Lun-Ven 8h-18h', zone: 'Nantes' }
+  const cles = (t) => detecterCapacitesNonDeclarees(t, plombier).map((h) => h.cle)
+  T('« Je prends en charge votre urgence » → rien', cles('Je prends en charge votre urgence.').length === 0, JSON.stringify(cles('Je prends en charge votre urgence.')))
+  T('« Je m’occupe de l’entretien de votre chaudière » → rien', cles('Je m’occupe de l’entretien de votre chaudière.').length === 0, JSON.stringify(cles('Je m’occupe de l’entretien de votre chaudière.')))
+  T('« Je vous rappelle après le week-end » → rien', cles('Je vous rappelle après le week-end.').length === 0, JSON.stringify(cles('Je vous rappelle après le week-end.')))
+  T('« Vous avez eu cette fuite la nuit dernière ? » → rien', cles('Vous avez eu cette fuite la nuit dernière ?').length === 0, JSON.stringify(cles('Vous avez eu cette fuite la nuit dernière ?')))
+  const fn1 = cles('Pas de souci, je me déplace gratuitement et j’interviens sous 24 h.')
+  T('« Pas de souci, je me déplace gratuitement et j’interviens sous 24 h » → déplacement + délai', fn1.includes('deplacement') && fn1.includes('delai'), JSON.stringify(fn1))
+  const fn2 = cles('Malheureusement je suis pris demain, mais je vous garantis une intervention 7j/7.')
+  T('« Malheureusement… je vous garantis une intervention 7j/7 » → permanence', fn2.includes('permanence'), JSON.stringify(fn2))
+  T('« Je n’interviens pas le week-end » → rien (négation juste avant)', cles('Je n’interviens pas le week-end.').length === 0, JSON.stringify(cles('Je n’interviens pas le week-end.')))
+  T('« Je suis disponible le week-end » → permanence', cles('Je suis disponible le week-end.').includes('permanence'), JSON.stringify(cles('Je suis disponible le week-end.')))
+  T('« Je ne fais pas la clim » → rien', cles('Je ne fais pas la clim.').length === 0, JSON.stringify(cles('Je ne fais pas la clim.')))
+  T('« Je fais aussi la clim » → prestation', cles('Je fais aussi la clim.').includes('prestation'), JSON.stringify(cles('Je fais aussi la clim.')))
+}
+
+console.log('\n── Qualification (E, M3) : le message, pas le métier')
+T('« Bonjour, vous êtes disponible ? » sans métier → non typé', qualifyLead('Bonjour, vous êtes disponible ?', null).type_chantier === null)
+T('« Fuite sous l’évier » → Plomberie', qualifyLead('Fuite sous l’évier de la cuisine', null).type_chantier === 'Plomberie', qualifyLead('Fuite sous l’évier de la cuisine', null).type_chantier)
 
 console.log(`\n${ko === 0 ? '✅' : '❌'} ${ok} réussis, ${ko} échoués`)
 process.exit(ko ? 1 : 0)
