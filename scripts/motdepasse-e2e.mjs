@@ -65,6 +65,8 @@ try {
   const page = await (await nav.newContext({ viewport: { width: 1100, height: 900 } })).newPage()
   await page.goto(`${BASE}/signup`, { waitUntil: 'networkidle' })
   await page.fill('input[type="email"]', `verif-mdp-${Date.now()}@presti-test.invalid`)
+  // Depuis l'audit final (E3), le bouton exige aussi la case CGU : on la coche, le test porte sur le mot de passe.
+  await page.check('#cgu-inscription')
   await page.fill('#mdp-inscription', '12345678')
   await page.waitForTimeout(250)
   const bouton = page.getByRole('button', { name: /Créer/i })

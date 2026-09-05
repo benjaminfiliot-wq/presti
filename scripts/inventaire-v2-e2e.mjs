@@ -167,11 +167,14 @@ try {
     const imp = await post(A.appel, '/api/inventaire/materiaux', { csv, fichier: 'tarif.csv', fournisseur_id: fA.id })
     T('l’import enregistre 3 matériaux', imp.statut === 200 && imp.corps.enregistrees === 3, JSON.stringify(imp.corps))
     const apres = (await A.appel('/api/inventaire/materiaux')).corps.materiaux
-    T('l’inventaire compte 4 fiches (la fiche existante n’est pas dupliquée)', apres.length === 4, apres.map((m) => `${m.nom}/${m.reference}`).join(' | '))
+    // La fiche « Coude cuivre 16 / CU16-90 » existe déjà (créée à la main plus haut) : l'import la MET À JOUR
+    // (clé artisan + nom + référence), il ne l'empile pas. 1 existante + 2 nouvelles = 3.
+    T('l’inventaire compte 3 fiches (la fiche existante est mise à jour, pas dupliquée)', apres.length === 3, apres.map((m) => `${m.nom}/${m.reference}`).join(' | '))
+    T('… et garde ce que la main avait saisi (marque)', apres.find((m) => m.nom === 'Coude cuivre 16')?.marque === 'Comap', JSON.stringify(apres.find((m) => m.nom === 'Coude cuivre 16')))
     const per = apres.find((m) => m.nom === 'Tube PER 16')
     T('une fiche importée porte prix d’achat, référence fournisseur et fournisseur', per?.prix_achat_ht === 1.2 && per.reference_fournisseur === 'PER16' && per.unite === 'm' && per.fournisseur_id === fA.id, JSON.stringify(per))
     await post(A.appel, '/api/inventaire/materiaux', { csv, fichier: 'tarif.csv' })
-    T('un ré-import ne crée pas de doublon', (await A.appel('/api/inventaire/materiaux')).corps.materiaux.length === 4)
+    T('un ré-import ne crée pas de doublon', (await A.appel('/api/inventaire/materiaux')).corps.materiaux.length === 3)
     const rech = await A.appel('/api/inventaire/materiaux?q=per')
     T('la recherche trouve par nom / référence', rech.corps?.materiaux?.some((m) => m.nom === 'Tube PER 16'), JSON.stringify(rech.corps?.materiaux?.map((m) => m.nom)))
     const illisible = await post(A.appel, '/api/inventaire/materiaux', { csv: 'bonjour\nceci n est pas un tarif', apercu: true })

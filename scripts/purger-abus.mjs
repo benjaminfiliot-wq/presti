@@ -14,4 +14,6 @@ const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUP
 const ip = (await (await fetch('https://api.ipify.org')).text()).trim()
 const a = await admin.from('ip_abus').delete().eq('ip', ip).select('id')
 const b = await admin.from('ip_bans').delete().eq('ip', ip).select('ip')
-console.log(`🧹 abus purgés pour cette adresse : ${a.data?.length ?? 0} abus, ${b.data?.length ?? 0} bannissement`)
+// Les créneaux de plafond (0049) portant cette adresse : sinon la suite suivante reçoit 429 au lieu de tester.
+const c = await admin.from('limites').delete().ilike('cle', `%${ip}%`).select('cle')
+console.log(`🧹 abus purgés pour cette adresse : ${a.data?.length ?? 0} abus, ${b.data?.length ?? 0} bannissement, ${c.data?.length ?? 0} créneau(x) de plafond`)

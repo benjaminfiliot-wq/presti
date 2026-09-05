@@ -163,6 +163,10 @@ try {
   T('et on explique pourquoi, en français', /trop petite/i.test(texte), texte.slice(0, 120))
 
   console.log('\n── 5. Le guide de prise de vue est accessible')
+  // La visite guidée (aideVisites) s'ouvre sur un compte neuf et couvre la page : on la ferme d'abord.
+  const plusTard = page.getByRole('button', { name: /Plus tard|Fermer|Terminer/ })
+  if (await plusTard.count()) { await plusTard.first().click(); await page.waitForTimeout(500) }
+  await page.keyboard.press('Escape')
   await page.getByRole('button', { name: /Réussir vos photos/i }).click()
   T('les six conseils s’affichent', await page.locator('.pf-guide > div').count() === 6)
 
