@@ -125,6 +125,11 @@
 - Le système se revérifie seul, et la dernière exécution est intégralement verte, sans la clé IA.
 - Reste à l'humain : le téléphone LCEN (obligation légale), la fenêtre de tolérance des jetons (H15, durcissement), et le confort (DMARC, clés de test/admin, domaine d'envoi).
 
+## [14] Deux dernières obligations — 05/09 19:45 — ✅
+- **Téléphone LCEN** publié dans les mentions légales avec l'email ; la suite juridique l'exige.
+- **Détection de rejeu** : le réglage était bon (bouton activé, fenêtre à 10 s) et c'est ma sonde qui se trompait — elle rejouait le parent immédiat, toléré par GoTrue pour absorber un double rafraîchissement. Reprise sur un jeton deux crans en arrière : refusé, chaîne légitime intacte. Leçon : une sonde qui accuse doit d'abord être suspectée elle-même.
+- Il ne reste que du confort à la main de Benj : DMARC, clé admin Anthropic, clé Stripe de test, domaine d'envoi neutre.
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
 | # | Action | Où | Effet vérifiable |
 |---|--------|----|------------------|
@@ -137,8 +142,8 @@
 | H10 | Domaine d'envoi neutre pour les emails au nom de l'artisan | décision + DNS | From sans « presti » (auditeur B, F3) |
 | H13 | Filtre Gmail : « à : benjaminfiliot+presti@gmail.com » → libellé « Presti » (le libellé existe déjà) | Gmail → Paramètres → Filtres | le prochain email d'alerte arrive rangé |
 | ~~H14~~ | ✅ collées par Benj le 05/09 — vérifié : `quota-media-e2e` **32/32** (le navigateur ne peut plus écrire dans le bucket), `purges-rgpd-e2e` 43/43, un doublon de domaine est refusé par la base | — | — |
-| H15 | Détection de rejeu : le bouton est **activé** (capture du 05/09), mais la sonde voit encore un ancien jeton accepté à 30 s, 70 s et 200 s, avec la MÊME session renvoyée = fenêtre de tolérance trop longue. Champ « Refresh token reuse interval » (secondes), même page → **10**, Save. Durcissement, pas bloquant pour vendre | Supabase → Authentication → Sessions | `verif-supabase-reglages.mjs` : 3/3 |
-| H16 | Téléphone de l'éditeur dans les mentions légales (LCEN) : une ligne à ajouter, l'emplacement est marqué dans `app/mentions-legales/page.tsx` | décision Benj | `legal-e2e` |
+| ~~H15~~ | ✅ effective — c'était **ma sonde** qui accusait à tort : elle rejouait le parent immédiat du jeton actif, que GoTrue tolère volontairement (deux onglets). Un jeton deux crans en arrière est bien refusé (400 `refresh_token_already_used`), la chaîne légitime est conservée. Sonde corrigée le 05/09 | — | `verif-supabase-reglages.mjs` : 3/3 |
+| ~~H16~~ | ✅ numéro donné par Benj le 05/09, publié dans les mentions légales (jours ouvrés, 9 h – 18 h) ; `legal-e2e` l'exige désormais | — | `legal-e2e` |
 | H11 | Enregistrement DNS `_dmarc.prestiapp.fr` TXT `v=DMARC1; p=quarantine; rua=mailto:<adresse des alertes>` (ou `node scripts/ovh.mjs dmarc`) | OVH → zone DNS | `nslookup -type=txt _dmarc.prestiapp.fr` répond ; alerte `domaine_mail` se tait |
 | ~~H12~~ | ✅ sauvegarde chiffrée quotidienne + restauration prouvée 7/7 ; clé privée **rangée par Benj le 05/09** (déclaré — invérifiable d'ici, et c'est normal) | — | `node scripts/restaurer.mjs --lire <fichier>` ouvre la dernière sauvegarde |
 

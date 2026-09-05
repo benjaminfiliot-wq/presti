@@ -34,11 +34,10 @@ export default function MentionsLegales() {
             seule. Le jour où la boîte du domaine existe, remplacer les deux occurrences ci-dessous
             ET poser la même adresse sur PRESTI_ALERTES_EMAIL, pour que la publication et la relève
             ne divergent jamais (scripts/legal-e2e.mjs §0 le vérifie).
-            TÉLÉPHONE — la LCEN l'exige aussi d'une personne physique. Le numéro appartient au
-            propriétaire du service : il n'est pas inventé ici. Dès qu'il est choisi, ajouter
-            exactement cette ligne juste en dessous :
-            <div><span className="k">Téléphone</span> +33 X XX XX XX XX (jours ouvrés, 9 h – 18 h)</div> */}
+            TÉLÉPHONE — la LCEN l'exige aussi d'une personne physique. Numéro fourni par le
+            propriétaire le 05/09/2026 ; il est publié en clair, comme l'email, pour la même raison. */}
         <div><span className="k">Email</span> <a href="mailto:benjaminfiliot+presti@gmail.com">benjaminfiliot+presti@gmail.com</a></div>
+        <div><span className="k">Téléphone</span> <a href="tel:+33630781647">06 30 78 16 47</a> (jours ouvrés, 9 h – 18 h)</div>
         <div><span className="k">Formulaire</span> <a href="/contact">la page « Nous écrire »</a> — même destinataire</div>
         <div><span className="k">Directeur de la publication</span> Benjamin Filiot</div>
       </div>

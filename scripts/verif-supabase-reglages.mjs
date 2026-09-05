@@ -56,17 +56,22 @@ try {
   const aTourne = Boolean(nouveau) && nouveau !== ancien
   console.log(`  rotation : ${aTourne ? 'active (un nouveau jeton est emis)' : 'INACTIVE — le meme jeton est renvoye'}`)
 
-  // 70 s : le délai de grâce par défaut est de 10 s, mais il est réglable. Attendre trop
-  // peu ferait conclure « réglage absent » alors qu'on mesure simplement pendant la fenêtre
-  // de tolérance — un test qui accuse à tort est aussi inutile qu'un test qui rassure à tort.
-  console.log('  (attente du délai de grâce, 70 s…)')
-  await new Promise((r) => setTimeout(r, 70000))
+  // Ce que GoTrue TOLÈRE volontairement : rejouer le parent IMMÉDIAT du jeton actif rend la
+  // même session (deux onglets qui rafraîchissent en même temps ne doivent pas se déconnecter).
+  // Ce que la détection ATTRAPE : un jeton deux crans en arrière, rejoué après la fenêtre de
+  // tolérance (10 s par défaut, réglable). On fait donc avancer la chaîne d'un cran de plus,
+  // puis on rejoue le grand-père. Constaté le 05/09 : la sonde à un cran accusait à tort un
+  // réglage pourtant actif.
+  const r1b = nouveau ? await rafraichir(nouveau) : null
+  const nouveau2 = r1b?.ok ? (await r1b.json()).refresh_token : null
+  console.log('  (attente de la fenêtre de tolérance, 20 s…)')
+  await new Promise((r) => setTimeout(r, 20000))
   const r2 = await rafraichir(ancien)
   T('rejouer un ANCIEN jeton est refusé', !r2.ok,
     `HTTP ${r2.status} — ${aTourne ? 'la rotation marche mais l’ancien jeton survit : Sessions → activer la détection de rejeu' : 'la ROTATION est éteinte : Sessions → activer « Refresh token rotation », puis la détection de rejeu'} · https://supabase.com/dashboard/project/_/auth/sessions`)
 
-  if (nouveau) {
-    const r3 = await rafraichir(nouveau)
+  if (nouveau2 || nouveau) {
+    const r3 = await rafraichir(nouveau2 || nouveau)
     console.log(`  ℹ️  la chaîne légitime est ${r3.ok ? 'conservée' : 'révoquée'} après cette tentative`)
   }
 

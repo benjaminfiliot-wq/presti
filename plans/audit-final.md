@@ -8,7 +8,7 @@
 | Auditeurs indépendants | 8 (A attaque, B conformité, C qualité, D parcours, E IA, F fiabilité, G motion, H abonnement) — sous-agents distincts de celui qui corrige |
 | Défauts trouvés | 5 bloquants · 54 majeurs · ≈ 66 mineurs |
 | Fermés | 5 bloquants · 52 majeurs — 15 commits ; les 5 suites IA rejouées le 05/09 (toutes vertes) |
-| Restent à un humain | téléphone LCEN (H16, obligation légale) · fenêtre de tolérance des jetons à 10 s (H15, durcissement) · confort : DMARC (H11), clé admin Anthropic (H5), clé Stripe de test (H4), domaine d'envoi neutre (H10) |
+| Restent à un humain | rien d'obligatoire — confort seulement : DMARC (H11), clé admin Anthropic (H5), clé Stripe de test (H4), domaine d'envoi neutre (H10) |
 | Chiffrés après la démo | plus rien de majeur — les 6 reportés sont livrés le 05/09 (quota, purges, mentions, slides 3D, deux suites) |
 | Lanceur `tout-verifier.mjs` | **42/42 suites vertes** — localement ET sur GitHub (audit nocturne run #5, 05/09 19 h, 607 s, sans clé IA) ; 5 suites IA vertes ; `audit-final-e2e` 68/68 |
 | Couverture (`plans/couverture.md`) | **0 case vide** (73 → 0) : 30 pages, 58 routes, 58 migrations, 12 drapeaux, 29 emails, 2 crons, 23 capacités, 40 suites |

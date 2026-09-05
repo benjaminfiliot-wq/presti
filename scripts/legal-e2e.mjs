@@ -81,8 +81,8 @@ try {
   T('… la même que celle qui reçoit les alertes (PRESTI_ALERTES_EMAIL)',
     !surveillee || publiee === surveillee, `publiée ${publiee} ≠ surveillée ${surveillee}`)
   T('le formulaire reste proposé à côté de l’email', /href="\/contact"/.test(ml))
-  if (/Téléphone<\/span>\s*(?:<!-- -->)?\s*\+?[\d][\d ().-]{7,}/.test(ml)) T('un numéro de téléphone est publié', true)
-  else A('aucun numéro de téléphone publié — la LCEN l’exige d’une personne physique (art. 6-III-1 a, art. 19). Décision du propriétaire : le numéro ne peut pas être inventé ici.')
+  // Depuis le 05/09 le numéro est publié : son absence redevient un défaut (LCEN art. 6-III-1 a).
+  T('un numéro de téléphone est publié (LCEN)', /Téléphone<\/span>[\s\S]{0,80}?06 30 78 16 47/.test(ml))
 
   // Le « support prioritaire » est vendu dans la grille des offres (lib/plans.ts) : ce qu'il
   // recouvre doit être écrit quelque part d'opposable, sinon c'est une promesse invérifiable.
