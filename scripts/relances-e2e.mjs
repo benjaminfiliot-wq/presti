@@ -65,12 +65,18 @@ process.env.CRON_SECRET = SECRET
 
 const SB = process.env.NEXT_PUBLIC_SUPABASE_URL
 const CLE = process.env.SUPABASE_SERVICE_ROLE_KEY
-const ADRESSE = (process.env.PRESTI_ALERTES_EMAIL || process.env.EMAIL_ENTREPRISE || '').trim()
+// Deux régimes. Avec une clé d'envoi (poste de travail) : la relance part POUR DE VRAI vers
+// l'adresse de l'entreprise, on prouve la livraison. Sans clé (intégration continue, qui n'en
+// reçoit volontairement pas) : le contact est une adresse .invalid, que lib/email.ts n'envoie
+// jamais et considère comme partie — on prouve alors la mécanique du cron, pas la livraison.
+const ENVOI_REEL = !!process.env.RESEND_API_KEY && !process.argv.includes('--sans-envoi')
+const ADRESSE = ENVOI_REEL ? (process.env.PRESTI_ALERTES_EMAIL || process.env.EMAIL_ENTREPRISE || '').trim() : 'relance-test@presti-test.invalid'
 if (!SB || !CLE) { console.error('❌ NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY manquantes dans .env.local'); process.exit(1) }
-if (!ADRESSE || /\.invalid$/i.test(ADRESSE)) {
+if (ENVOI_REEL && (!ADRESSE || /\.invalid$/i.test(ADRESSE))) {
   console.error('❌ PRESTI_ALERTES_EMAIL doit être une adresse RÉELLE que tu relèves : c’est elle qui reçoit la relance de test.')
   process.exit(1)
 }
+if (!ENVOI_REEL) console.log('ℹ️  Sans RESEND_API_KEY : contact .invalid, aucun email ne part — la mécanique est prouvée, pas la livraison.')
 
 const admin = createClient(SB, CLE, { auth: { persistSession: false } })
 const { relanceTemplate } = await import('../lib/ai.ts')
@@ -236,8 +242,9 @@ try {
 
   console.log('\n── 7. Ce que Resend a réellement expédié')
   await new Promise((r) => setTimeout(r, 2000)) // le journal Resend n'est pas instantané
-  const jr = await journalResend()
-  if (!jr) NOTE('journal Resend illisible (RESEND_API_KEY absente ou API en erreur) — envoi non vérifié côté fournisseur')
+  const jr = ENVOI_REEL ? await journalResend() : null
+  if (!ENVOI_REEL) NOTE('mode sans envoi : rien n’est parti chez Resend, la livraison n’est pas vérifiée ici (elle l’est sur un poste avec la clé)')
+  else if (!jr) NOTE('journal Resend illisible (RESEND_API_KEY absente ou API en erreur) — envoi non vérifié côté fournisseur')
   else {
     const partis = jr.filter((e) => e.subject === SUJET_ATTENDU)
     T('un email, et un seul, porte le sujet attendu', partis.length === 1, `${partis.length} · sujet « ${SUJET_ATTENDU} »`)

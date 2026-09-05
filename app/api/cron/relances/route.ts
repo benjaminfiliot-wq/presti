@@ -76,7 +76,9 @@ export async function GET(req: Request) {
     // Un compte fondateur est un compte de démonstration : ses « prospects » sont des visiteurs qui
     // essaient le produit, on ne les relance pas au nom d'un artisan fictif (audit final, F, 11).
     // Une adresse de test (.invalid) ne reçoit rien non plus : chaque rebond abîme le domaine.
-    if (artisan?.is_founder || /\.invalid$/i.test(String(lead.contact ?? ''))) {
+    // (les adresses .invalid ne sont plus sautées ici : lib/email.ts ne les envoie jamais et les
+    // considère parties — le fil garde ainsi sa trace, ce que la suite relances-e2e vérifie)
+    if (artisan?.is_founder) {
       await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)
       skipped++
       continue

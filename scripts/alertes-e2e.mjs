@@ -49,4 +49,7 @@ if (!simuler) {
 }
 
 console.log(`\n${ko ? '❌' : '✅'} ${ok} réussis, ${ko} échoués`)
-process.exit(ko ? 1 : 0)
+// Sortie douce : sur Windows, un process.exit() immédiat déclenche parfois une assertion libuv
+// (UV_HANDLE_CLOSING) pendant la fermeture des connexions — un faux rouge dans le lanceur.
+process.exitCode = ko ? 1 : 0
+setTimeout(() => process.exit(process.exitCode), 200)

@@ -93,7 +93,8 @@ try {
     ['celui de Signature', /Signature — 1 jour ouvré/],
     ['la définition du « support prioritaire »', /support prioritaire[\s\S]{0,600}tête de file/],
     ['le décompte en jours ouvrés', /hors jours fériés/],
-    ['ce qui est dû si le délai n’est pas tenu', /résilier immédiatement, sans préavis ni frais/],
+    // Le remboursement au prorata proposé par l'agent a été retiré : c'est au propriétaire d'en décider.
+    ['ce qui est dû si le délai n’est pas tenu', /résilier à tout moment, sans frais/],
   ]) T(`${quoi} figure aux CGU`, motif.test(cgu))
 
   // Médiation et règlement en ligne des litiges : présents, et cohérents avec le reste du

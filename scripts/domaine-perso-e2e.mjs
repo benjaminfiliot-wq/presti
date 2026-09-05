@@ -176,27 +176,25 @@ try {
   if (horsSurface === null) NOTE('constat, hors périmètre de cette suite : sur le domaine de l’artisan, /login, /cgu, /faq… servent encore les pages de Presti (le middleware laisse passer). Personne n’y va spontanément, mais la marque de l’éditeur y est visible — à trancher.')
   else NOTE(`sur le domaine de l’artisan, /login est désormais réécrit vers ${horsSurface} — vérifier que c’est voulu`)
 
-  console.log('\n── 4. En production : la canonique porte le domaine de l’artisan')
-  const site = await html(`${PROD}/site/${verifie.slug}`)
-  T('le site de l’artisan répond', site.statut === 200, `HTTP ${site.statut}`)
-  T('canonique = son domaine', canonique(site.corps) === `https://${verifie.domaine}/`, String(canonique(site.corps)))
-  T('og:url = son domaine', ogUrl(site.corps) === `https://${verifie.domaine}/`, String(ogUrl(site.corps)))
-  T('la canonique du site ne dit pas « presti »', !/presti/i.test(String(canonique(site.corps))))
-  const titre = site.corps.match(/<title>([^<]*)<\/title>/i)?.[1] ?? ''
-  T('le titre est la marque de l’artisan, jamais la nôtre', titre.includes(verifie.nom) && !/presti/i.test(titre), titre)
-  // Les données structurées sont ce que Google recopie dans sa fiche : si elles portaient
-  // l'adresse Presti, le référencement de l'artisan serait consolidé sur notre domaine.
-  T('les données structurées portent son domaine', site.corps.includes(`"url":"https://${verifie.domaine}/"`))
+  console.log('\n── 4. En production : le site d’un artisan au domaine vérifié RENVOIE vers son domaine')
+  // app/site/[slug]/page.tsx redirige vers https://<domaine>/ dès que le domaine est vérifié :
+  // depuis prestiapp.fr, on ne peut donc pas lire sa canonique — on lit la redirection, qui est
+  // la preuve la plus forte (le visiteur ne reste jamais sur une adresse Presti). Un fetch qui
+  // suivait la redirection tombait sur un DNS inexistant : « fetch failed », faux rouge.
+  const brut = await fetch(`${PROD}/site/${verifie.slug}`, { redirect: 'manual', headers: { 'user-agent': 'presti-domaine-e2e' } })
+  T('le site de l’artisan renvoie vers son domaine (3xx)', [301, 302, 307, 308].includes(brut.status), `HTTP ${brut.status}`)
+  T('… exactement vers https://<son domaine>/', brut.headers.get('location') === `https://${verifie.domaine}/`, String(brut.headers.get('location')))
+  T('… sans « presti » dans l’adresse de destination', !/presti/i.test(String(brut.headers.get('location'))))
+  const site = { statut: brut.status, corps: '' }
   // Résiduel : `metadataBase` (app/layout.tsx) fabrique les images de partage, elles restent
   // donc sur prestiapp.fr même quand tout le reste est passé sur le domaine de l'artisan.
   const image = site.corps.match(/<meta[^>]*property="og:image"[^>]*>/i)?.[0]?.match(/content="([^"]*)"/i)?.[1] ?? ''
   if (/prestiapp\.fr/.test(image)) NOTE(`résiduel : l’image de partage reste servie depuis ${image.replace(/^https:\/\/([^/]+).*/, '$1')} (metadataBase). Visible dans l’aperçu d’un lien partagé sur les réseaux.`)
-  const plateforme = await html(`${PROD}/p/${verifie.slug}`)
-  T('la page de conversation répond', plateforme.statut === 200, `HTTP ${plateforme.statut}`)
-  T('sa canonique = son domaine + /demande', canonique(plateforme.corps) === `https://${verifie.domaine}/demande`, String(canonique(plateforme.corps)))
-  const infos = await html(`${PROD}/site/${verifie.slug}/infos-legales`)
-  T('les infos légales répondent', infos.statut === 200, `HTTP ${infos.statut}`)
-  T('leur canonique = son domaine + /infos-legales', canonique(infos.corps) === `https://${verifie.domaine}/infos-legales`, String(canonique(infos.corps)))
+  const plateforme = await fetch(`${PROD}/p/${verifie.slug}`, { redirect: 'manual', headers: { 'user-agent': 'presti-domaine-e2e' } })
+  T('la page de conversation renvoie vers son domaine + /demande', [301, 302, 307, 308].includes(plateforme.status) && plateforme.headers.get('location') === `https://${verifie.domaine}/demande`, `${plateforme.status} ${plateforme.headers.get('location')}`)
+  const infos = await fetch(`${PROD}/site/${verifie.slug}/infos-legales`, { redirect: 'manual', headers: { 'user-agent': 'presti-domaine-e2e' } })
+  const infosCorps = infos.status === 200 ? await infos.text() : ''
+  T('les infos légales renvoient vers son domaine, ou répondent avec sa canonique', ([301, 302, 307, 308].includes(infos.status) && String(infos.headers.get('location')).startsWith(`https://${verifie.domaine}/`)) || (infos.status === 200 && canonique(infosCorps) === `https://${verifie.domaine}/infos-legales`), `${infos.status} ${infos.headers.get('location')}`)
   const siteNV = await html(`${PROD}/site/${nonVerifie.slug}`)
   T('un domaine non vérifié ne prend pas la canonique', !String(canonique(siteNV.corps)).includes(nonVerifie.domaine), String(canonique(siteNV.corps)))
   console.log(`  (canonique servie pour le domaine non vérifié : ${canonique(siteNV.corps)})`)

@@ -5,7 +5,7 @@ import { computeResponseDelay } from '@/lib/platStats'
 import { lisibleSur } from '@/lib/contrast'
 import { FOND_THEME, fondDuTheme } from '@/lib/themeFonds'
 import { headers } from 'next/headers'
-import { notFound, permanentRedirect } from 'next/navigation'
+import { notFound, permanentRedirect, redirect } from 'next/navigation'
 import { chemins, modeDepuisHote, urlPlateforme } from '@/lib/urls'
 import { artisanParAncienSlug } from '@/lib/slugRedirect'
 import { getPlateformeConfig } from '@/lib/plateformeConfig'
@@ -86,6 +86,10 @@ export default async function PlateformePage({ params, searchParams }: Params) {
 
   // Vrai 404 pour un lien inexistant ; message poli (200) si l'artisan a désactivé sa plateforme.
   if (!a) notFound()
+
+  // Domaine vérifié : comme le site, la page de conversation ne reste pas sur une adresse Presti
+  // (trouvé par domaine-perso-e2e le 05/09 : le site redirigeait, pas la conversation).
+  if (a.domaine && a.domaine_verifie && host && host !== a.domaine && host !== `www.${a.domaine}`) redirect(`https://${a.domaine}/demande`)
   if (a.plateforme_active === false) {
     return <main className="plat"><div className="plat-mid"><div className="plat-404"><b>Page indisponible</b><span>Ce lien de contact n&apos;est plus actif pour le moment.</span></div></div></main>
   }
