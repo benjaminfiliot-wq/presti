@@ -12,7 +12,7 @@
 - Garde-fou IA local : la clé Anthropic de `.env.local` est mise en commentaire pour la durée du sprint (tout script local qui l'appellerait échoue en 401 → défaut visible). La prod garde sa clé.
 - Stripe est en **mode RÉEL** (vérifié le 04/09) → §4 attend H4 (clé de test) pour ne rien débiter.
 
-**Appels IA du sprint v6 : 0 · v7 : 3 (rejeu obligatoire de `pilotage-e2e`)**
+**Appels IA du sprint v6 : 0 · v7 : 3 (bloc 1, rejeu obligatoire de `pilotage-e2e`) · bloc 2 : 0**
 
 ## [1] Inventaire et couverture — 01:20 → 01:45 (25 min) — ✅ `scripts/inventaire-produit.mjs`
 - 30 pages · 56 routes · 56 migrations (0047→0056 sondées en base : toutes ✅) · 12 drapeaux (2 morts : `inventaireOcr`, `plateformePilotage`) · 26 envois d'email · 2 crons · 23 capacités · 33 suites → `plans/inventaire-produit.md`, `plans/couverture.md` : **75 cases vides**.
@@ -139,21 +139,35 @@
 - **Reste à Benj** : coller `_A_COLLER_sql_editor_0062.sql` (uniquement le commentaire de colonne — les lignes de config sont déjà posées).
 - **Suivant** : bloc 2, le code email à la connexion.
 
-## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
-| # | Action | Où | Effet vérifiable |
-|---|--------|----|------------------|
-| ~~H1~~ | ✅ fait par Benj le 05/09 — vérifié : `audit-final-e2e` **68/68**, table `passages_cron` présente (première trace au cron de 8 h) | — | — |
-| H4 | Clé Stripe de TEST (`STRIPE_SECRET_KEY_TEST`) dans `.env.local` — **toujours absente au 05/09 16 h** | Stripe → Développeurs → clés de test | `abonnement-e2e` joue ses 11 transitions sans débit |
-| H5 | `ANTHROPIC_ADMIN_KEY` sur Vercel (`node scripts/vercel-env.mjs ANTHROPIC_ADMIN_KEY <clé>`) — le budget (50 €) est posé ; sans la clé, un rappel part chaque lundi | console.anthropic.com → clés d'administration | le rappel hebdomadaire se tait, `?sec=1` mesure le coût réel |
-| ~~H7~~ | ✅ fait par Benj le 05/09 — sondé : portail par défaut avec factures, carte, résiliation en fin de période, changement d'offre ; catalogue 29/59/99 € ; 1 modèle de facture | — | une résiliation réelle reste à observer au premier abonné |
-| ~~H8~~ | ✅ posé par l'API le 05/09 (contenu minimal, sans clés sensibles) — run #1 : 35/37, causes d'environnement corrigées | — | run suivant attendu vert |
-| H9 | Email et téléphone de l'éditeur (LCEN) — boîte qui fonctionne ou adresse choisie | décision Benj | mentions légales complètes (auditeur B, D2) |
-| H10 | Domaine d'envoi neutre pour les emails au nom de l'artisan | décision + DNS | From sans « presti » (auditeur B, F3) |
-| H13 | Filtre Gmail : « à : benjaminfiliot+presti@gmail.com » → libellé « Presti » (le libellé existe déjà) | Gmail → Paramètres → Filtres | le prochain email d'alerte arrive rangé |
-| ~~H14~~ | ✅ collées par Benj le 05/09 — vérifié : `quota-media-e2e` **32/32** (le navigateur ne peut plus écrire dans le bucket), `purges-rgpd-e2e` 43/43, un doublon de domaine est refusé par la base | — | — |
-| ~~H15~~ | ✅ effective — c'était **ma sonde** qui accusait à tort : elle rejouait le parent immédiat du jeton actif, que GoTrue tolère volontairement (deux onglets). Un jeton deux crans en arrière est bien refusé (400 `refresh_token_already_used`), la chaîne légitime est conservée. Sonde corrigée le 05/09 | — | `verif-supabase-reglages.mjs` : 3/3 |
-| ~~H16~~ | ✅ numéro donné par Benj le 05/09, publié dans les mentions légales (jours ouvrés, 9 h – 18 h) ; `legal-e2e` l'exige désormais | — | `legal-e2e` |
-| H11 | Enregistrement DNS `_dmarc.prestiapp.fr` TXT `v=DMARC1; p=quarantine; rua=mailto:<adresse des alertes>` (ou `node scripts/ovh.mjs dmarc`) | OVH → zone DNS | `nslookup -type=txt _dmarc.prestiapp.fr` répond ; alerte `domaine_mail` se tait |
-| ~~H12~~ | ✅ sauvegarde chiffrée quotidienne + restauration prouvée 7/7 ; clé privée **rangée par Benj le 05/09** (déclaré — invérifiable d'ici, et c'est normal) | — | `node scripts/restaurer.mjs --lire <fichier>` ouvre la dernière sauvegarde |
+## [16] v7 · bloc 2 — le code par email à la connexion — 05/09 23:30 — 🟧 livré derrière un drapeau, preuve en prod EN ATTENTE de la migration 0063
+- **Vérifié** : la connexion d'aujourd'hui expose la session au navigateur dès le mot de passe ; la clé anonyme étant publique, n'importe qui avec un mot de passe volé obtient un jeton auprès de GoTrue et ouvre toutes les routes. Le second facteur (TOTP) est optionnel.
+- **Trouvé (preuve, sur le plan lui-même)** : la colonne `connexion_verifiee_le` comparée à l'`auth_time`, telle que proposée, **laisserait passer un intrus** — un jeton obtenu avec le mot de passe volé deviendrait valable dès que le vrai titulaire se reconnecte (une seule date pour tout le compte). Le contrôle est donc **par session** (`sessions_verifiees`, clé = `session_id` du jeton) ; la colonne existe pour l'affichage.
+- **Corrigé** (6 commits `49332f9` → `9b51249`, tous typés, `garde-commit` vert) : migration 0063 (3 tables sans RLS lisibles par les routes seules, RPC atomique `verifier_code_connexion`) · `lib/connexion.ts` (HMAC du code avec un secret serveur dérivé de la clé service, cookie `appareil_confiance` signé httpOnly 30 j, empreinte = sha256(agent | secret) — jamais l'IP) · `lib/authArtisan` : 401 `code_requis` pour toute session non vérifiée d'un compte sans TOTP, fondateurs compris · routes `POST /api/auth/code` (mot de passe vérifié par le serveur, TOTP → l'application remplace l'email, appareil reconnu → vérifiée d'office, sinon session refermée et code envoyé, rien rendu ; anti-énumération à l'octet ; plafonds 30/IP, 10/compte, 3 renvois/15 min) et `/verifier` (mot de passe REDONNÉ avec le code, usage unique, 5 essais, session rendue seulement là) · `/api/securite/appareils` · écran /login, Sécurité → appareils, AppShell et commun.ts (session d'avant → reconnexion), aide `securite.code_email` · purges (codes, appareils, sessions > 90 j) · **37 suites adaptées** (`scripts/lib/connexion-test.mjs` : la session de test est attestée par le service, le code réel étant haché) · suite `code-connexion-e2e` (12 sections, 0 IA, 0 email réel).
+- **Pourquoi un drapeau** : je ne peux pas créer de table en prod (migrations collées par Benj). Avec le verrou levé et sans les tables, `authArtisan` refuserait TOUT (fail-closed, voulu) — Benj compris. Donc `codeEmail: false` jusqu'à la migration ; la connexion d'aujourd'hui est inchangée à l'octet (rejoué : `parametres-e2e` 70/70, `mfa-e2e` 25/25, `motdepasse-e2e` 31/31, `modes-e2e` 35/35).
+- **Preuve en prod** : ⛔ pas encore. `code-connexion-e2e` constate le drapeau baissé (404 sur la route), dit quoi faire et sort en code 2 → lanceur **43/44** jusque-là.
+- **Journal** : appels IA : **0**. Cumul v7 : 3 (bloc 1, rejeu exigé de `pilotage-e2e`).
+- **Limite écrite d'avance** : même levé, le verrou ne couvre pas les lectures directes navigateur → PostgREST (RLS) avec un jeton au mot de passe seul ; le fermer = `connexion_verifiee()` dans chaque politique RLS, chantier à décider. Et GoTrue plafonne les connexions par IP, l'IP vue étant celle de Vercel (à relever dans Auth → Rate limits quand les artisans seront nombreux).
+- **Suivant (H17, 1 minute)** : coller `_A_COLLER_sql_editor_0063.sql` → me le dire → `lib/flags.ts` `codeEmail: true`, déploiement, `code-connexion-e2e` + `mfa`/`parametres`/`motdepasse` rejoués, lanceur 44/44 local et GitHub. Chaque artisan connecté se reconnectera une fois.
+
+## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
+
+**Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
+
+| # | Action | État | Ce qui n'est PAS prouvé tant que ce n'est pas fait |
+|---|--------|------|-----------------------------------------------------|
+| **H17** | Coller `_A_COLLER_sql_editor_0063.sql` (SQL Editor), puis me le dire → drapeau `codeEmail` levé, déploiement | ⛔ **à faire, 1 min** | tout le bloc 2 : code email, appareils de confiance, refus des jetons au mot de passe seul — `code-connexion-e2e` sort en 2, lanceur 43/44 |
+| H4 | Clé Stripe de TEST (`STRIPE_SECRET_KEY_TEST`) dans `.env.local` | ⛔ absente au 05/09 | les **11 transitions d'abonnement** en conditions réelles (`abonnement-e2e`) — le portail est configuré, un abonné réel ne s'est pas présenté |
+| H11 | DNS `_dmarc.prestiapp.fr` TXT `v=DMARC1; p=quarantine; rua=mailto:<alertes>` (ou `node scripts/ovh.mjs dmarc`) | ⛔ pas de jeton OVH trouvé | la délivrabilité des emails de relance et de code (`nslookup -type=txt _dmarc.prestiapp.fr`) |
+| H5 | `ANTHROPIC_ADMIN_KEY` sur Vercel (`node scripts/vercel-env.mjs ANTHROPIC_ADMIN_KEY <clé>`) | ⛔ absente | la lecture réelle du solde Anthropic — d'ici là, rappel hebdomadaire estimé depuis les crédits |
+| H10 | Domaine d'envoi neutre pour les emails au nom de l'artisan | décision | From sans « presti » (auditeur B, F3) |
+| H13 | Filtre Gmail « à : benjaminfiliot+presti@gmail.com » → libellé « Presti » | confort | rien de technique |
+| ~~H1~~ | ✅ fait par Benj le 05/09 — `audit-final-e2e` 68/68, table `passages_cron` présente | — | — |
+| ~~H7~~ | ✅ portail Stripe sondé : factures, carte, résiliation en fin de période, changement d'offre ; catalogue 29/59/99 € | — | — |
+| ~~H8~~ | ✅ secret GitHub posé (sans clé sensible) — audit nocturne run #5 : 42/42 | — | — |
+| ~~H9~~ / ~~H16~~ | ✅ email et téléphone de l'éditeur publiés dans les mentions légales (`legal-e2e` les exige) | — | — |
+| ~~H12~~ | ✅ sauvegarde chiffrée quotidienne, restauration prouvée 7/7 ; clé privée rangée par Benj (déclaré) | — | — |
+| ~~H14~~ | ✅ migrations 0059–0061 collées — `quota-media-e2e` 32/32, `purges-rgpd-e2e` 43/43, doublon de domaine refusé | — | — |
+| ~~H15~~ | ✅ détection de rejeu **effective** (fenêtre 10 s) — ma sonde accusait à tort ; corrigée (jeton deux crans en arrière → 400) | — | — |
+| ~~0062~~ | ✅ lignes de config posées par l'API (6/6) ; `_A_COLLER_sql_editor_0062.sql` ne porte plus que le commentaire de colonne | — | — |
 
 **Appels IA du sprint : 0**

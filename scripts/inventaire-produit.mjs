@@ -196,6 +196,9 @@ fs.writeFileSync(path.join(RACINE, 'plans/inventaire-produit.md'), md.join('\n')
 const cv = []
 cv.push(`# Couverture — qui teste quoi — généré le ${maintenant}\n`)
 cv.push(`> Généré par \`scripts/inventaire-produit.mjs\`. **Une case vide est un test à écrire.** Cases vides : **${vides.length}**.\n`)
+cv.push(`## Règles de couverture\n`)
+cv.push(`- **L'effet d'un réglage = le comportement observé sur chaque route qui le lit.** Prouver qu'un réglage s'enregistre ne prouve rien : le 05/09, les trois modes de réponse s'enregistraient parfaitement et se comportaient pareil (deux sources de vérité, lues dans un ordre différent selon la route). Un réglage est couvert quand une suite l'écrit, appelle CHAQUE route qui le lit, et constate la différence — aller ET retour (\`modes-e2e\`).`)
+cv.push(`- Une case vide est un test à écrire, pas une case à oublier.\n`)
 cv.push(`## Cases vides (${vides.length})\n`)
 if (vides.length) { cv.push(`| Type | Élément |\n|---|---|`); for (const v of vides) cv.push(`| ${v.type} | \`${v.cle}\` |`) } else cv.push('Aucune.')
 for (const [titre, cle, arr] of [['Routes API', 'chemin', couverture.routes], ['Pages', 'chemin', couverture.pages], ['Capacités', 'cap', couverture.capacites], ['Emails', 'fichier', couverture.emails], ['Crons', 'path', couverture.crons], ['Drapeaux', 'nom', couverture.drapeaux]]) {

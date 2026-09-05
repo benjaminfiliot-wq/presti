@@ -1,20 +1,20 @@
-# Inventaire du produit — généré le 2026-09-05 06:39
+# Inventaire du produit — généré le 2026-09-05 16:22
 
 > Produit par `scripts/inventaire-produit.mjs` en lisant le code. Ne pas éditer à la main : relancer.
 
 | Élément | Nombre |
 |---|---|
-| Pages | 30 |
-| Routes API | 58 |
-| Migrations | 58 (dernière : 0058_bornes_artisans.sql) |
-| Drapeaux | 12 (9 levés) |
-| Envois d'email | 29 (+ 5 motifs d'alerte de service) |
+| Pages | 32 |
+| Routes API | 63 |
+| Migrations | 63 (dernière : 0063_code_connexion.sql) |
+| Drapeaux | 13 (9 levés) |
+| Envois d'email | 30 (+ 5 motifs d'alerte de service) |
 | Crons | 2 planifiés · ⚠️ 2 route(s) cron sans planification : /api/cron/alertes, /api/cron/purge-comptes |
 | Capacités | 23 (11 socle, +7 Studio, +5 Signature) |
-| Suites de test | 40 dans le lanceur · ⚠️ 21 script(s) de test hors lanceur |
+| Suites de test | 47 dans le lanceur · ⚠️ 22 script(s) de test hors lanceur |
 
 
-## Pages (30)
+## Pages (32)
 
 | Chemin | Surface | Auth | Rendu | Fichier |
 |---|---|---|---|---|
@@ -40,22 +40,26 @@
 | `/onboarding` | console | oui | client | app/onboarding/page.tsx |
 | `/outils` | console | oui | client | app/outils/page.tsx |
 | `/p/[slug]` | plateforme client | non | serveur | app/p/[slug]/page.tsx |
+| `/p/[slug]/[...reste]` | plateforme client | non | serveur | app/p/[slug]/[...reste]/page.tsx |
 | `/parametres` | console | oui | client | app/parametres/page.tsx |
 | `/plateforme` | console | oui | client | app/plateforme/page.tsx |
 | `/profil` | console | oui | client | app/profil/page.tsx |
 | `/reset-password` | landing | non | client | app/reset-password/page.tsx |
 | `/signup` | landing | non | client | app/signup/page.tsx |
 | `/site/[slug]` | site artisan | non | serveur | app/site/[slug]/page.tsx |
+| `/site/[slug]/[...reste]` | site artisan | non | serveur | app/site/[slug]/[...reste]/page.tsx |
 | `/site/[slug]/infos-legales` | site artisan | non | serveur | app/site/[slug]/infos-legales/page.tsx |
 | `/tarifs` | landing | oui | client | app/tarifs/page.tsx |
 
-## Routes API (58)
+## Routes API (63)
 
 | Route | Méthodes | Auth | Plan requis | Plafonds | Crédits | IA |
 |---|---|---|---|---|---|---|
 | `/api/account/delete` | GET, POST, DELETE | jeton artisan | — | — | — | — |
 | `/api/account/inscription` | POST | jeton artisan | — | inscription:· 1/24*60*60s | — | — |
 | `/api/account/slug` | GET, POST | jeton artisan | — | — | — | — |
+| `/api/auth/code` | POST, GET | jeton artisan | — | code:ip:· 30/600s | — | — |
+| `/api/auth/code/verifier` | POST | publique | — | code:verif:ip:· 60/600s | — | — |
 | `/api/auth/mdp-fuite` | POST | publique | — | — | — | — |
 | `/api/auth/reset-confirm` | POST | publique | — | — | — | — |
 | `/api/auth/reset-request` | POST | publique | — | — | — | — |
@@ -71,7 +75,7 @@
 | `/api/conversation` | GET, POST | jeton de conversation | — | conv:· 6/5*60s | oui | ⚡ |
 | `/api/conversation/devis` | POST | jeton de conversation | — | conv:· 6/5*60s | — | — |
 | `/api/conversation/regles` | POST | jeton de conversation | — | regles-ip:· 30/3600s · regles:· 6/3600s | — | ⚡ |
-| `/api/conversation/stream` | POST | jeton de conversation | plateforme.ia.auto | conv:· 6/5*60s | oui | ⚡ |
+| `/api/conversation/stream` | POST | jeton de conversation | — | conv:· 6/5*60s | oui | ⚡ |
 | `/api/cron/alertes` | GET | secret cron | — | — | — | — |
 | `/api/cron/purge-comptes` | GET | secret cron | — | — | — | — |
 | `/api/cron/relances` | GET | secret cron | — | — | — | — |
@@ -98,11 +102,14 @@
 | `/api/leads` | POST | publique | — | — | oui | ⚡ |
 | `/api/leads/contact` | POST | publique | — | — | — | — |
 | `/api/leads/photos` | POST | jeton artisan | — | — | — | — |
+| `/api/media` | POST, GET | jeton artisan | — | — | — | — |
 | `/api/messages` | POST | jeton artisan | — | — | oui | ⚡ |
 | `/api/p/auth` | GET, POST | publique | — | lien:ip:· 5/15*60s | — | — |
 | `/api/plat-event` | POST | publique | — | — | — | — |
 | `/api/plateforme/apparence` | GET, POST | jeton artisan | plateforme.personnalisation_avancee | — | — | — |
+| `/api/plateforme/config` | GET | jeton artisan | — | — | — | — |
 | `/api/report-error` | POST | publique | — | err:ip:· 60/5*60s | — | — |
+| `/api/securite/appareils` | GET, DELETE | jeton artisan | — | — | — | — |
 | `/api/securite/mot-de-passe` | POST | jeton artisan | — | mdp:· 5/15*60s | — | — |
 | `/api/securite/sessions` | GET, DELETE, POST | jeton artisan | — | — | — | — |
 | `/api/site/generate` | POST | jeton artisan | — | — | oui | — |
@@ -112,30 +119,31 @@
 | `/api/tarifs` | GET, POST, DELETE | jeton artisan | — | — | — | — |
 | `/api/tools/reponse` | POST | jeton artisan | — | — | oui | ⚡ |
 
-## Migrations (58)
+## Migrations (63)
 
 Posées à la main dans le SQL Editor (mot de passe Postgres désaligné). Sondes en base sur les dix dernières :
 
 | Migration | En base |
 |---|---|
-| 0049_limites_atomiques.sql | ✅ |
-| 0050_pilotage.sql | ✅ |
-| 0051_slug_modifiable.sql | ✅ |
-| 0052_parametres.sql | ✅ |
-| 0053_plateforme_persona.sql | ✅ |
 | 0054_purge_comptes_test.sql | ✅ |
 | 0055_verrou_credits_stripe.sql | ✅ |
 | 0056_cache_prix_mutualise.sql | ✅ |
 | 0057_passages_cron.sql | non sondée |
 | 0058_bornes_artisans.sql | non sondée |
+| 0059_quota_media.sql | non sondée |
+| 0060_purges_rgpd.sql | non sondée |
+| 0061_domaine_unique.sql | non sondée |
+| 0062_mode_reponse_unique.sql | non sondée |
+| 0063_code_connexion.sql | non sondée |
 
-Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_sql_editor_0053.sql, _A_COLLER_sql_editor_0054.sql, _A_COLLER_sql_editor_0054_0055.sql, _A_COLLER_sql_editor_0056.sql, _A_COLLER_sql_editor_0057.sql, _A_COLLER_sql_editor_0057_0058.sql.
+Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_sql_editor_0053.sql, _A_COLLER_sql_editor_0054.sql, _A_COLLER_sql_editor_0054_0055.sql, _A_COLLER_sql_editor_0056.sql, _A_COLLER_sql_editor_0057.sql, _A_COLLER_sql_editor_0057_0058.sql, _A_COLLER_sql_editor_0059_0061.sql.
 
-## Drapeaux (12)
+## Drapeaux (13)
 
 | Drapeau | État | Consommé par |
 |---|---|---|
-| `mfa` | levé | app/AppShell.tsx, app/login/page.tsx, app/parametres/commun.ts, app/parametres/page.tsx, app/parametres/SectionSecurite.tsx, lib/authArtisan.ts |
+| `codeEmail` | baissé | app/api/auth/code/route.ts, app/api/auth/code/verifier/route.ts, app/api/securite/appareils/route.ts, app/api/securite/sessions/route.ts, app/AppShell.tsx, app/login/page.tsx, app/parametres/SectionSecurite.tsx, lib/authArtisan.ts, lib/purgesRgpd.ts |
+| `mfa` | levé | app/api/auth/code/route.ts, app/AppShell.tsx, app/login/page.tsx, app/parametres/commun.ts, app/parametres/page.tsx, app/parametres/SectionSecurite.tsx, lib/authArtisan.ts |
 | `inventaireOcr` | baissé | ⚠️ **nulle part** (drapeau mort) |
 | `inventaireRecherche` | levé | app/api/inventaire/recherche/retenir/route.ts, app/api/inventaire/recherche/route.ts, app/inventaire/page.tsx, app/inventaire/recherche/page.tsx, lib/plans.ts |
 | `plateformePilotage` | levé | ⚠️ **nulle part** (drapeau mort) |
@@ -148,37 +156,38 @@ Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_s
 | `canauxWhatsapp` | baissé | lib/plans.ts |
 | `canauxReseaux` | baissé | lib/plans.ts |
 
-## Emails envoyés (29)
+## Emails envoyés (30)
 
 | Où | Fonction | Type / sujet | Destinataire |
 |---|---|---|---|
 | app/api/account/inscription/route.ts:32 | notifierEntreprise | — | entreprise |
+| app/api/auth/code/route.ts:90 | sendEmail | — | email |
 | app/api/auth/reset-request/route.ts:51 | sendEmail | 'Réinitialisation de votre mot de passe — Presti' | email |
 | app/api/contact/route.ts:55 | notifierEntreprise | — | entreprise |
 | app/api/conversation/devis/route.ts:68 | notifierArtisan | devis_accepte | artisan |
 | app/api/conversation/devis/route.ts:87 | notifierArtisan | devis_accepte | artisan |
 | app/api/conversation/devis/route.ts:108 | notifierArtisan | devis_accepte | artisan |
-| app/api/conversation/route.ts:166 | notifierArtisan | nouvelle_demande | artisan |
-| app/api/conversation/route.ts:185 | notifierArtisan | nouvelle_demande | artisan |
-| app/api/conversation/route.ts:220 | notifierArtisan | nouvelle_demande | artisan |
-| app/api/conversation/stream/route.ts:84 | notifierArtisan | nouvelle_demande | artisan |
-| app/api/cron/relances/route.ts:76 | sendEmail | — | lead.contact as string |
+| app/api/conversation/route.ts:170 | notifierArtisan | nouvelle_demande | artisan |
+| app/api/conversation/route.ts:188 | notifierArtisan | nouvelle_demande | artisan |
+| app/api/conversation/route.ts:223 | notifierArtisan | nouvelle_demande | artisan |
+| app/api/conversation/stream/route.ts:83 | notifierArtisan | nouvelle_demande | artisan |
+| app/api/cron/relances/route.ts:87 | sendEmail | — | lead.contact as string |
 | app/api/devis/[id]/envoyer/route.ts:59 | sendEmail | `Votre devis ${devis.numero || ''} — ${nomEnt}` | devis.client_email |
 | app/api/leads/contact/route.ts:68 | notifierArtisan | nouvelle_demande | artisan |
 | app/api/leads/contact/route.ts:78 | sendEmail | `Bien reçu — ${artisan?.nom || 'votre demande'}` | contact |
-| app/api/leads/route.ts:170 | notifierArtisan | nouvelle_demande | artisan |
-| app/api/leads/route.ts:180 | sendEmail | `Bien reçu — ${artisan.nom || 'votre demande'}` | contact |
-| app/api/leads/route.ts:236 | sendEmail | nouvelle_demande | contact |
-| app/api/leads/route.ts:256 | notifierArtisan | nouvelle_demande | artisan |
-| app/api/messages/route.ts:95 | sendEmail | `Réponse de ${artisanV?.nom ?? 'votre artisan'}` | lead.contact |
-| app/api/messages/route.ts:154 | sendEmail | `Réponse de ${artisan?.nom ?? 'votre artisan'}` | lead.contact |
+| app/api/leads/route.ts:193 | notifierArtisan | nouvelle_demande | artisan |
+| app/api/leads/route.ts:203 | sendEmail | `Bien reçu — ${artisan.nom || 'votre demande'}` | contact |
+| app/api/leads/route.ts:259 | sendEmail | nouvelle_demande | contact |
+| app/api/leads/route.ts:279 | notifierArtisan | nouvelle_demande | artisan |
+| app/api/messages/route.ts:98 | sendEmail | `Réponse de ${artisanV?.nom ?? 'votre artisan'}` | lead.contact |
+| app/api/messages/route.ts:157 | sendEmail | `Réponse de ${artisan?.nom ?? 'votre artisan'}` | lead.contact |
 | app/api/p/auth/route.ts:60 | sendEmail | `Votre lien de connexion — ${artisan.nom || 'votre espace'}` | email |
 | app/api/report-error/route.ts:40 | notifierEntreprise | — | entreprise |
 | app/api/stripe/webhook/route.ts:55 | notifierEntreprise | — | entreprise |
 | app/api/stripe/webhook/route.ts:69 | notifierEntreprise | — | entreprise |
 | app/api/stripe/webhook/route.ts:88 | notifierEntreprise | — | entreprise |
-| lib/alertes.ts:244 | notifierEntreprise | `Presti — ${sujet}` | entreprise |
-| lib/alertes.ts:245 | sendEmail | `Presti — ${sujet}` | al.a.email |
+| lib/alertes.ts:303 | notifierEntreprise | `Presti — ${sujet}` | entreprise |
+| lib/alertes.ts:304 | sendEmail | `Presti — ${sujet}` | al.a.email |
 | lib/purgeComptes.ts:129 | notifierEntreprise | — | entreprise |
 | lib/reglesServeur.ts:67 | notifierArtisan | proposition | artisan |
 
@@ -208,7 +217,7 @@ Alertes de service (`lib/alerteService.ts`) : solde, authentification, debit, su
 | `factures.electronique` | essentiel | ⚠️ **aucun verrou serveur** |
 | `canaux.email` | essentiel | ⚠️ **aucun verrou serveur** |
 | `relances` | essentiel | app/api/cron/relances/route.ts, app/api/leads/contact/route.ts, app/api/leads/route.ts, lib/alertes.ts, lib/purgeComptes.ts |
-| `plateforme.ia.auto` | studio | app/api/conversation/stream/route.ts, app/plateforme/Automatisations.tsx, lib/ai/routage.ts |
+| `plateforme.ia.auto` | studio | app/api/plateforme/config/route.ts, app/plateforme/Automatisations.tsx, app/plateforme/Reglages.tsx, lib/ai/routage.ts, lib/plateformeConfig.ts |
 | `plateforme.personnalisation_avancee` | studio | app/api/plateforme/apparence/route.ts |
 | `site.pro` | studio | ⚠️ **aucun verrou serveur** |
 | `inventaire.stock` | studio | app/api/inventaire/route.ts, lib/inventaire/auth.ts |
@@ -221,7 +230,7 @@ Alertes de service (`lib/alerteService.ts`) : solde, authentification, debit, su
 | `canaux.reseaux` | signature | ⚠️ **aucun verrou serveur** |
 | `support.prioritaire` | signature | ⚠️ **aucun verrou serveur** |
 
-## Suites de test (40)
+## Suites de test (47)
 
 | Suite | Script | Coût |
 |---|---|---|
@@ -247,6 +256,13 @@ Alertes de service (`lib/alerteService.ts`) : solde, authentification, debit, su
 | Fermeture des portes (routes, crons, pages, capacités, drapeaux) | scripts/fermeture-e2e.mjs | gratuit |
 | Carte des emails | scripts/emails-e2e.mjs | gratuit |
 | Garde de commit (régressions connues) | scripts/garde-commit.mjs | gratuit |
+| Quota de stockage par compte | scripts/quota-media-e2e.mjs | gratuit |
+| Purges RGPD (12 mois / 3 ans) | scripts/purges-rgpd-e2e.mjs | gratuit |
+| Relances automatiques (bout en bout, sans IA) | scripts/relances-e2e.mjs | gratuit |
+| Domaine perso (routage, marque, vérification) | scripts/domaine-perso-e2e.mjs | gratuit |
+| Motion — CLS des slides, onglets de la démo, boucles hors écran | scripts/motion-cls-e2e.mjs | navigateur |
+| Code par email à la connexion (anti-énumération, essais, appareils de confiance, TOTP) | scripts/code-connexion-e2e.mjs | navigateur |
+| Les trois modes de réponse (offre × mode × route, sans IA) | scripts/modes-e2e.mjs | gratuit |
 | Alertes (ronde à sec, huit motifs) | scripts/alertes-e2e.mjs | gratuit |
 | Cache mutualisé des prix | scripts/cache-prix-e2e.mjs | gratuit |
 | IA — unitaires (métiers, playbooks, anti-fabrication) | scripts/ia-unit-e2e.mjs | gratuit |
@@ -266,4 +282,4 @@ Alertes de service (`lib/alerteService.ts`) : solde, authentification, debit, su
 | Injection de prompt | scripts/injection-e2e.mjs | ia |
 | Provenance dans un devis réel | scripts/devis-source-e2e.mjs | ia |
 
-⚠️ Scripts de test absents du lanceur : `scripts/abonnement-e2e.mjs`, `scripts/comptes-clients-e2e.mjs`, `scripts/conv-e2e.mjs`, `scripts/devis-conversation-e2e.mjs`, `scripts/fact-e2e.mjs`, `scripts/leads-abuse-test.mjs`, `scripts/mail-verifier.mjs`, `scripts/messages-deauto-e2e.mjs`, `scripts/messages-e2e.mjs`, `scripts/mfa-e2e.mjs`, `scripts/pdf-e2e.mjs`, `scripts/persona-e2e.mjs`, `scripts/plateforme-config-e2e.mjs`, `scripts/plateforme-e2e.mjs`, `scripts/plateforme-intelligence-e2e.mjs`, `scripts/purger-comptes-test.mjs`, `scripts/recherche-e2e.mjs`, `scripts/smoke-test.mjs`, `scripts/stripe-session-test.mjs`, `scripts/stripe-verifier.mjs`, `scripts/suppressions-e2e.mjs`
+⚠️ Scripts de test absents du lanceur : `scripts/abonnement-e2e.mjs`, `scripts/comptes-clients-e2e.mjs`, `scripts/conv-e2e.mjs`, `scripts/devis-conversation-e2e.mjs`, `scripts/fact-e2e.mjs`, `scripts/leads-abuse-test.mjs`, `scripts/lib/connexion-test.mjs`, `scripts/mail-verifier.mjs`, `scripts/messages-deauto-e2e.mjs`, `scripts/messages-e2e.mjs`, `scripts/mfa-e2e.mjs`, `scripts/pdf-e2e.mjs`, `scripts/persona-e2e.mjs`, `scripts/plateforme-config-e2e.mjs`, `scripts/plateforme-e2e.mjs`, `scripts/plateforme-intelligence-e2e.mjs`, `scripts/purger-comptes-test.mjs`, `scripts/recherche-e2e.mjs`, `scripts/smoke-test.mjs`, `scripts/stripe-session-test.mjs`, `scripts/stripe-verifier.mjs`, `scripts/suppressions-e2e.mjs`

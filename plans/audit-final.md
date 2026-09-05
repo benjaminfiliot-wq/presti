@@ -32,16 +32,27 @@
 ## Les rapports
 `plans/audit-final/` : `attaque.md`, `conformite.md`, `qualite.md`, `parcours.md`, `ia.md`, `fiabilite.md`, `motion.md`, `abonnement.md`, `triage.md` (liste unique), `correctifs.md` (50 lignes). Journal horodaté : `plans/journal-final.md` (liste H en bas). Reste chiffré : `plans/apres-demo.md` § « Audit final (05/09) ».
 
+## Ce que Benj a trouvé après l'audit (prompt v7, 05/09)
+Le lendemain de l'audit « total », Benj a constaté à la main que **les trois modes de réponse se comportaient pareil** : remettre « Automatique » ne changeait rien, « Assistée » et « Manuelle » non plus selon la route. Aucune des 42 suites ne l'avait vu — et c'est un trou de la matrice, pas un hasard :
+
+- `plateforme-config-e2e` prouvait que le réglage **s'enregistrait** ; aucune suite ne prouvait son **effet** sur les routes qui le lisent (`/api/conversation`, `/api/conversation/stream`, `/api/leads`), ni l'aller-retour auto → assistée → manuelle → auto.
+- Quatre causes, toutes invisibles depuis l'écran : deux sources de vérité (`artisans.reponse_auto` écrit par /profil, `plateforme_config.mode_reponse` écrit par /plateforme) lues dans un ordre différent selon la route ; le verrou d'offre du flux qui se faisait passer pour « assistée » ; pas de « rendre la main » nommé ; un enregistrement du mode noyé dans le bouton global, et un rechargement à chaque re-rendu qui écrasait le choix.
+- Corrigé le 05/09 (5 commits, `bfd044d` → `d263d92`) : une seule source de vérité (migration 0062), **une seule fonction de décision** pour les trois routes avec un motif explicite (`verrou_offre`), verrou visible, enregistrement au clic, « mode appliqué par le serveur » affiché, `rendre_main`. Preuve : `modes-e2e` **35/35** en prod (offre × mode × route, aller-retour, prise/rendue de main, booléen hérité ignoré, 0 IA), `pilotage-e2e` 18/18 rejoué.
+- La leçon est écrite dans `plans/couverture.md` : **l'effet d'un réglage = le comportement observé sur chaque route qui le lit**. Enregistrer n'est pas appliquer.
+
+Dans la foulée, Benj a demandé le **code par email à la connexion** (bloc 2 du même prompt) : livré le 05/09 derrière le drapeau `codeEmail`, **pas encore prouvé en prod** — la migration 0063 (`_A_COLLER_sql_editor_0063.sql`) attend d'être collée ; ensuite : drapeau levé, déploiement, `code-connexion-e2e` (12 sections). Voir le journal, bloc [16].
+
 ## Ce que ce sprint ne prouve pas
 - Les 11 transitions d'abonnement en conditions réelles : dès la clé de test Stripe (H4) — le portail est configuré, un abonné réel ne s'est pas encore présenté.
 - Le DNS d'un domaine perso réel (Vercel refuse tout hôte inconnu) : au premier artisan qui branche le sien.
 - Un sinistre complet : la restauration est prouvée compte par compte (7/7), pas base entière — la procédure est écrite dans `docs/sauvegardes.md`.
+- **Le code par email à la connexion** (v7, bloc 2) : code complet, typé, 37 suites adaptées, suite de 12 sections écrite — mais tant que la migration 0063 n'est pas collée, le drapeau reste baissé et rien de tout cela n'est constaté en production. `code-connexion-e2e` le dit et sort en code 2 ; le lanceur compte donc **43/44** jusque-là.
+- Ce que le code par email **ne couvrira pas même levé**, écrit d'avance : les lectures directes du navigateur vers PostgREST (RLS) restent ouvertes à un jeton au mot de passe seul — le verrou protège les routes de Presti, comme la révocation des sessions. Le fermer demanderait d'ajouter `connexion_verifiee()` à chaque politique RLS : un chantier à part, à décider.
 
-## Les 7 gestes qui restent à Benj (liste H complète dans le journal)
-1. **H1** — coller `supabase/migrations/_A_COLLER_sql_editor_0057_0058.sql` (2 min) → `audit-final-e2e` 69/69, alerte « cron muet » vivante.
-2. **H7** — portail client Stripe en LIVE + pied de facture 293 B (15 min) → la promesse « résiliable » devient vraie.
-3. **H8** — secret GitHub `PRESTI_ENV_LOCAL` (sans la clé Anthropic) puis lancer « Audit récurrent » une fois.
-4. **H4** — clé Stripe de test dans `.env.local` → `abonnement-e2e`.
-5. **H11** — enregistrement DMARC (`node scripts/ovh.mjs dmarc` ou à la main).
-6. **H9 / H10** — décisions : email et téléphone de l'éditeur (LCEN), domaine d'envoi neutre.
-7. **H12 / H13** — sauvegardes Supabase ; filtre Gmail vers le libellé Presti.
+## Les gestes qui restent à Benj (liste H complète et honnête dans le journal)
+Faits et vérifiés par l'effet le 05/09 : H1, H7, H8, H12, H14, H15, H16 (et 0062 rejouée par l'API).
+1. **H17 — obligatoire pour le bloc 2** : coller `_A_COLLER_sql_editor_0063.sql` (SQL Editor, 1 min), puis me le dire → drapeau `codeEmail` levé, déploiement, `code-connexion-e2e`, lanceur **44/44**. Tout artisan connecté devra se reconnecter une fois (un code lui sera envoyé).
+2. **H4** — clé Stripe de test dans `.env.local` → `abonnement-e2e` (11 transitions en conditions réelles, toujours non prouvées).
+3. **H11** — enregistrement DMARC (`node scripts/ovh.mjs dmarc` ou à la main).
+4. **H5** — `ANTHROPIC_ADMIN_KEY` sur Vercel (sinon rappel hebdomadaire du solde).
+5. **H10 / H13** — domaine d'envoi neutre ; filtre Gmail vers le libellé Presti.
