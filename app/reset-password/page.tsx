@@ -4,6 +4,7 @@ import '@/app/globals.css'
 import { useEffect, useState, Suspense, type FormEvent } from 'react'
 import { evaluerMotDePasse, messageFuite, verifierFuite, type Fuite } from '@/lib/motDePasse'
 import { useRouter } from 'next/navigation'
+import Marque from '@/app/Marque'
 
 // Réinitialisation du mot de passe (flux maîtrisé, email via Resend).
 //  A) demande : l'artisan saisit son email → on envoie le lien.
@@ -72,7 +73,7 @@ function ResetInner() {
     <main className="wrap">
       <div className="card">
         <a className="back-link" href="/login"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>Retour</a>
-        <div className="brand"><span className="dot" />Presti</div>
+        <div className="brand"><i className="marque" aria-hidden="true"><Marque size={24} /></i>Presti</div>
         <h1>{token ? 'Nouveau mot de passe' : 'Mot de passe oublié'}</h1>
 
         {token ? (

@@ -5,6 +5,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { slugBase, randomSuffix } from '@/lib/slug'
+import Marque from '@/app/Marque'
 
 const METIERS = [
   'Plombier', 'Chauffagiste', 'Électricien', 'Maçon', 'Menuisier', 'Charpentier', 'Couvreur', 'Peintre',
@@ -70,7 +71,7 @@ export default function Onboarding() {
   return (
     <main className="wrap">
       <div className="card">
-        <div className="brand"><span className="dot" />Presti</div>
+        <div className="brand"><i className="marque" aria-hidden="true"><Marque size={24} /></i>Presti</div>
         <h1>Ton profil</h1>
         <p className="muted">Ça sert à personnaliser tes réponses et à créer ton lien de contact.</p>
         <form onSubmit={handleSubmit}>

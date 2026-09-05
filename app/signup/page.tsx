@@ -5,6 +5,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { evaluerMotDePasse, messageAuth, messageFuite, verifierFuite, type Fuite } from '@/lib/motDePasse'
+import Marque from '@/app/Marque'
 
 // Version des CGU acceptées : la date de « Dernière mise à jour » de app/cgu/page.tsx. Elle est
 // gravée avec l'heure d'acceptation dans les métadonnées du compte (art. 1119 c. civ. : des
@@ -84,7 +85,7 @@ export default function SignupPage() {
     <main className="wrap">
       <div className="card">
         <a className="back-link" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>Retour</a>
-        <div className="brand"><span className="dot" />Presti</div>
+        <div className="brand"><i className="marque" aria-hidden="true"><Marque size={24} /></i>Presti</div>
         <h1>Créer un compte</h1>
         <form onSubmit={handleSubmit}>
           {/* htmlFor/id : sans lien explicite, axe remonte une infraction CRITIQUE et un

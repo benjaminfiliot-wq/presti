@@ -2319,3 +2319,10 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 /* v7 bloc 2 — connexion : la case « Se souvenir de cet appareil » */
 .card label.souvenir{display:flex;align-items:center;gap:.55rem;margin:.7rem 0 .2rem;font-weight:500;cursor:pointer}
 .card label.souvenir input{width:auto;margin:0;accent-color:var(--accent)}
+
+/* ===== Marque « le sceau » (app/Marque.tsx) : la tuile porte sa couleur, le conteneur s'efface ===== */
+.psh-logo.marque,.lp-brand i.marque{background:none;box-shadow:none;border-radius:0;overflow:visible}
+.psh-logo.marque img,.psh-logo.marque svg{width:34px;height:34px;display:block}
+.lp-brand i.marque img,.lp-brand i.marque svg{width:1.6rem;height:1.6rem;display:block;stroke:none}
+.brand i.marque{display:inline-flex;line-height:0}
+.brand i.marque img{width:24px;height:24px;display:block}

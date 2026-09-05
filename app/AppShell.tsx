@@ -1,5 +1,7 @@
 'use client'
 
+import Marque from './Marque'
+
 import '@/app/globals.css' // UI de l'espace connecté (toutes les pages console passent par AppShell)
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -177,8 +179,8 @@ export default function AppShell({
       <div className="psh-scrim" onClick={() => setOpen(false)} />
       <aside className="psh-side" data-visite="sidebar">
         <a className="psh-sbrand" href="/dashboard">
-          <span className="psh-logo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21 L21 21" /><path d="M6 21 L6 10 L12 6 L18 10 L18 21" /><path d="M10 21 L10 15 L14 15 L14 21" /></svg>
+          <span className="psh-logo marque" aria-hidden="true">
+            <Marque size={34} />
           </span>
           <span><b>Presti</b><small>Console artisan</small></span>
         </a>

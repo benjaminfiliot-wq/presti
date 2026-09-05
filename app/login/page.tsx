@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { actif } from '@/lib/flags'
 import Info from '@/app/Info'
 import { messageAuth } from '@/lib/motDePasse'
+import Marque from '@/app/Marque'
 
 // Connexion (prompt v7, bloc 2) : le mot de passe est vérifié par le SERVEUR (api/auth/code),
 // qui décide de la suite —
@@ -162,7 +163,7 @@ export default function LoginPage() {
     <main className="wrap">
       <div className="card">
         <a className="back-link" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>Retour à l’accueil</a>
-        <div className="brand"><span className="dot" />Presti</div>
+        <div className="brand"><i className="marque" aria-hidden="true"><Marque size={24} /></i>Presti</div>
         {etape === 'code' ? (
           <>
             <h1>Vérifiez que c’est bien vous</h1>

@@ -1,4 +1,5 @@
 import '@/app/globals.css'
+import Marque from './Marque'
 import type { Metadata } from 'next'
 import HeroApp from '@/app/HeroApp'
 import Motion from '@/app/Motion'
@@ -65,7 +66,7 @@ export default function Home() {
 
       <header className="lp-head">
         <nav className="lp-nav">
-          <a className="lp-brand" href="/"><i>{I.house}</i>Presti</a>
+          <a className="lp-brand" href="/"><i className="marque"><Marque size={26} /></i>Presti</a>
           <div className="lp-sp" />
           <div className="lp-links">
             <a href="#fonctionnalites">Fonctionnalités</a>
@@ -169,7 +170,7 @@ export default function Home() {
 
       <footer className="lp-foot">
         <div className="container lp-foot-in">
-          <span className="lp-brand" style={{ fontSize: '1.05rem' }}><i>{I.house}</i>Presti</span>
+          <span className="lp-brand" style={{ fontSize: '1.05rem' }}><i className="marque"><Marque size={22} /></i>Presti</span>
           <div style={{ display: 'flex', gap: '1.3rem', flexWrap: 'wrap' }}>
             <a href="/faq">FAQ</a>
             <a href="/cgu">Conditions générales</a>
