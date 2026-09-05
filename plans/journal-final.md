@@ -106,6 +106,15 @@
 
 **Appels IA du sprint : ≈ 100 (les cinq suites, une fois, au niveau Haiku) — < 1 €.**
 
+## [11] Après le déploiement du solde — 05/09 16:30 → 18:00 — ✅ 41 suites vertes sur 42, la 42e attend 0059
+- Prod sondée après déploiement : `og:title` toujours servi (remplissage automatique de Next), `favicon.ico` et `apple-icon` en 200, `script-src-attr 'none'` dans la CSP, `/api/media` en place. Une photo de prospect est toujours enregistrée avant 0059 (sondé par l'effet).
+- Lanceur complet : 37/42 au premier passage. Les cinq rouges relus un par un : **quota** (4 points attendent 0059, colonne et RPC absents — pas une régression) ; **domaine** (le site d'un artisan au domaine vérifié redirige vers son domaine, le test suivait la redirection vers un DNS inexistant → il lit maintenant la redirection, qui est la vraie preuve ; au passage : **la page de conversation ne redirigeait pas, elle**, corrigé) ; **motion** (le hero est sous la ligne de flottaison sur desktop, donc en pause à bon droit : le test l'amène à l'écran ; seuil CLS aligné sur 0,1) ; **alertes** (assertion libuv à la sortie sur Windows, sortie adoucie) ; **juridique** (le test attendait la clause de remboursement retirée).
+- Audit nocturne #2 : 37/42 pour les mêmes causes + `relances` sans clé Resend en CI → la suite a un mode sans envoi (automatique sans clé) qui prouve la mécanique ; le cron ne saute plus les adresses `.invalid` (lib/email les neutralise, le fil garde sa trace). Relances : 26/26 sans envoi, 34/34 avec.
+- **Sauvegarde nocturne #2 : verte**, artefact chiffré déposé. Audit nocturne run final lancé après le dernier commit.
+- État final local : purges 43/43 · relances 34/34 · domaine 36/36 · motion 24/24 · juridique 56/56 · alertes 3/3 · quota 25/31 (les 6 restants = 0059 à coller, H14).
+
+**Appels IA du sprint : ≈ 100, une seule fois, < 1 €.**
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
 | # | Action | Où | Effet vérifiable |
 |---|--------|----|------------------|
