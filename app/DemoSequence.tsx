@@ -34,6 +34,9 @@ const DUREE = 4800
 export default function DemoSequence() {
   const [i, setI] = useState(0)
   const [pause, setPause] = useState(false)
+  // Pause VOULUE (bouton, WCAG 2.2.2) : distincte du survol — sur tactile il n'y a pas de survol (audit final, G-1.1).
+  const [pauseManuel, setPauseManuel] = useState(false)
+  const enPause = pause || pauseManuel
   const [reduit, setReduit] = useState(false)
   const [cle, setCle] = useState(0) // relance l'animation de la barre de progression
   const conteneur = useRef<HTMLDivElement>(null)
@@ -49,14 +52,14 @@ export default function DemoSequence() {
   // Défilement automatique — seulement quand la démo est visible, non survolée, et que
   // l'utilisateur n'a pas demandé moins de mouvement.
   useEffect(() => {
-    if (reduit || pause) return
+    if (reduit || enPause) return
     const el = conteneur.current
     let visible = true
     const io = 'IntersectionObserver' in window && el ? new IntersectionObserver((e) => { visible = e[0]?.isIntersecting ?? true }, { threshold: 0.3 }) : null
     if (io && el) io.observe(el)
     const t = setInterval(() => { if (visible) { setI((x) => (x + 1) % SCENES.length); setCle((k) => k + 1) } }, DUREE)
     return () => { clearInterval(t); io?.disconnect() }
-  }, [reduit, pause])
+  }, [reduit, enPause])
 
   const aller = (n: number) => { setI(((n % SCENES.length) + SCENES.length) % SCENES.length); setCle((k) => k + 1) }
   const s = SCENES[i]
@@ -89,10 +92,15 @@ export default function DemoSequence() {
             <div className="dm-points" role="tablist" aria-label="Scènes">
               {SCENES.map((sc, k) => (
                 <button key={sc.image} type="button" role="tab" aria-selected={k === i} aria-label={`Scène ${k + 1} : ${sc.titre}`} className={k === i ? 'on' : ''} onClick={() => aller(k)}>
-                  {k === i && !reduit && !pause ? <span key={cle} className="dm-prog" style={{ animationDuration: `${DUREE}ms` }} /> : null}
+                  {k === i && !reduit && !enPause ? <span key={cle} className="dm-prog" style={{ animationDuration: `${DUREE}ms` }} /> : null}
                 </button>
               ))}
             </div>
+            <button type="button" className="dm-fleche dm-pause" onClick={() => setPauseManuel((p) => !p)} aria-pressed={pauseManuel} aria-label={pauseManuel ? 'Reprendre le défilement automatique' : 'Mettre en pause le défilement automatique'}>
+              {pauseManuel
+                ? <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                : <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>}
+            </button>
             <button type="button" className="dm-fleche" onClick={() => aller(i + 1)} aria-label="Scène suivante">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
             </button>

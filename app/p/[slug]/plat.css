@@ -378,7 +378,9 @@ html.lenis,html.lenis body{height:auto}
 .pchat-joint img{width:100%;height:100%;object-fit:cover;display:block}
 .pchat-joint button{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.6);color:#fff;font-size:13px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}
 .pchat-inputrow{display:flex;align-items:flex-end;gap:.45rem;padding:.35rem .35rem .35rem .6rem;border:1.5px solid var(--pl);border-radius:var(--prad-l,20px);background:var(--ps);transition:border-color .16s,box-shadow .16s}
-.pchat-inputrow:focus-within{border-color:var(--pc);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 13%,transparent)}
+/* Anneau net (3:1, WCAG 2.4.11) : l'ombre à 7 % était imperceptible (audit final, G-3.2). */
+.pchat-inputrow:focus-within{border-color:var(--pc);outline:2px solid var(--pc);outline-offset:2px;box-shadow:none}
+.pchat-compte input:focus-visible{outline:2px solid var(--pc);outline-offset:2px}
 .pchat-clip{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1rem;color:var(--pm);transition:background .14s}
 .pchat-clip:hover{background:color-mix(in srgb,var(--pi) 7%,transparent)}
 .pchat-inputrow textarea{flex:1;min-width:0;background:none;border:none;padding:.5rem 0;font-size:1rem;font-family:inherit;color:var(--pi);resize:none;max-height:168px;line-height:1.5}

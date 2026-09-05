@@ -95,6 +95,9 @@ export default function SiteLightbox() {
     if (i === null) return
     const avant = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    // Lenis (défilement doux) ignore overflow:hidden : on l'arrête pendant la modale (G-2.2).
+    const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } }).__lenis
+    lenis?.stop()
     const onKey = (ev: KeyboardEvent) => {
       if (ev.key === 'Escape') { ev.preventDefault(); fermer(); return }
       if (ev.key === 'ArrowRight') { ev.preventDefault(); aller(1); return }
@@ -109,7 +112,7 @@ export default function SiteLightbox() {
     }
     document.addEventListener('keydown', onKey)
     boite.current?.querySelector('button')?.focus()
-    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = avant }
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = avant; lenis?.start() }
   }, [i, fermer, aller])
 
   if (i === null || !vues[i]) return null

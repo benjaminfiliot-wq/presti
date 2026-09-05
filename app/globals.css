@@ -1116,7 +1116,8 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .lp-btn--g:hover{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.05)}
 .lp-btn--lg{padding:.95rem 1.6rem;font-size:1.05rem;border-radius:13px}
 .lp-nav .lp-btn{padding:.55rem 1.05rem;font-size:.9rem}
-@media (max-width:640px){.lp-links,.lp-nav .lp-btn--g{display:none}.lp-nav{gap:.8rem;padding:.7rem 1rem}}
+/* 760 et non 640 : entre les deux, les 5 liens + 2 boutons coupaient le CTA hors écran à 200 % de zoom (audit final, G-1.2). */
+@media (max-width:760px){.lp-links,.lp-nav .lp-btn--g{display:none}.lp-nav{gap:.8rem;padding:.7rem 1rem}}
 
 /* typo */
 .lp h1,.lp h2,.lp h3{font-family:var(--font-display);font-weight:700;line-height:1.05;letter-spacing:-.02em;text-wrap:balance;margin:0}

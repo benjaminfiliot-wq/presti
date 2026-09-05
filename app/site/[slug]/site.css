@@ -138,6 +138,8 @@ html.lenis,html.lenis body{height:auto}
 .site-aa-knob::before{left:6px;transform:translateY(-50%);border-right-color:#1a0f0a}
 .site-aa-knob::after{right:6px;transform:translateY(-50%);border-left-color:#1a0f0a}
 .site-aa-range{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;opacity:0;cursor:ew-resize;z-index:4;-webkit-appearance:none;appearance:none;background:transparent}
+/* Le focus est sur le <input type=range> invisible : on le dessine sur le bouton visible (audit final, G-2.3). */
+.site-aa-stage:has(.site-aa-range:focus-visible) .site-aa-knob{outline:3px solid #fff;outline-offset:3px;box-shadow:0 0 0 6px var(--pc),0 6px 18px rgba(0,0,0,.45)}
 .site-aa-range::-webkit-slider-thumb{-webkit-appearance:none;width:44px;height:100%;cursor:ew-resize}
 .site-aa-range::-moz-range-thumb{width:44px;height:100%;border:0;background:transparent;cursor:ew-resize}
 .site-aa figcaption{margin-top:.7rem;font-size:.98rem;color:inherit;opacity:.92}

@@ -112,6 +112,8 @@ export default function SiteMotion() {
     } else {
       try {
         lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 1, touchMultiplier: 1, smoothWheel: true })
+        // Exposé à la visionneuse : `overflow:hidden` sur le body ne suffit pas, Lenis capte la molette (audit final, G-2.2).
+        ;(window as unknown as { __lenis?: unknown }).__lenis = lenis
         lenis.on('scroll', update)
         const raf = (time: number) => { lenis!.raf(time); rafId = requestAnimationFrame(raf) }
         rafId = requestAnimationFrame(raf)
@@ -133,7 +135,7 @@ export default function SiteMotion() {
     const safety = setTimeout(() => { root?.classList.remove('site-armed'); showAll() }, 3200)
     return () => {
       clearTimeout(t0); clearTimeout(safety); io?.disconnect(); ro?.disconnect()
-      if (lenis) { lenis.destroy(); cancelAnimationFrame(rafId); if (onAnchor) document.removeEventListener('click', onAnchor) }
+      if (lenis) { delete (window as unknown as { __lenis?: unknown }).__lenis; lenis.destroy(); cancelAnimationFrame(rafId); if (onAnchor) document.removeEventListener('click', onAnchor) }
       if (onNative) { removeEventListener('scroll', onNative); if (nativeRaf) cancelAnimationFrame(nativeRaf) }
     }
   }, [])

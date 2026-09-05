@@ -62,3 +62,15 @@ Mémoire vivante de la catégorie Animation. Chaque agent AJOUTE une entrée apr
   **Le risque n1** : hero-in opacity inline JS sans fallback CSS. Si JS crash ou désactivé, copie du héro
   (le texte posé sur l'image) passe à opacity:0 et devient invisible. Risque: utilisateur pense qu'il n'y a
   rien au-dessus de la page.
+
+## 2026-09-05 — Audit final G (motion · marque · accessibilité), rapport `plans/audit-final/motion.md`
+
+- **Contexte** : passe Playwright prod (1440, iPhone 13, 720/320 = zoom 200/400 %, reduced-motion, schémas), 0 appel IA (POST `/api/*` abortés côté navigateur), compte de test purgé. 0 bloquant / 9 majeurs / 6 mineurs, ≈ 6 h 30.
+- **Appris — reduced-motion est sain sur les 3 surfaces** : 0 animation en cours, 0 élément laissé à `opacity:0`, CLS 0, séquence immobile en `dm-reduit`, slides empilées à plat. Le filet `Motion.tsx`/`SiteMotion` tient.
+- **Appris — le pin GSAP compte comme CLS** : `pin:true` sur les slides 3D = 1,05 de CLS de terrain (`FIGURE.site-slide` × 2) alors que l'armement lui-même est propre. Préférer `position:sticky` + scrub sur `transform/opacity` seulement.
+- **Appris — Lenis ignore `body{overflow:hidden}`** : la lightbox laisse la page défiler derrière (4 286 → 5 180 px). Toujours `lenis.stop()/start()` autour d'une modale (la classe `.lenis-stopped` existe déjà dans `site.css:7`).
+- **Appris — un `not-found.tsx` de segment ne couvre pas les URL non routées** : `/site/<slug>/xyz` sert la 404 racine Presti (titre, favicon, OG) → fuite white-label ; il faut un `[...reste]/page.tsx` qui appelle `notFound()`.
+- **Appris — un focus mesuré vaut mieux qu'un « à vérifier »** : le composeur `/p` a 1,6 px d'ombre à 7 % d'alpha ; le curseur avant/après pose l'anneau sur un `range` à `opacity:0`. Règle : l'anneau va sur l'élément **visible**, jamais sur le proxy invisible.
+- **Appris — auto-défilement sans bouton = échec 2.2.2 sur tactile** : le survol/focus ne suffit pas ; il faut une commande pause visible, surtout quand les points font 6 px.
+- **Constat** : la vitrine `FeatureShowcase` n'existe pas en prod (0 onglet, CSS `.fs-*` orphelin `globals.css:1434-1512`) ; aucune des 7 fonctionnalités (alertes, anonymisation, verrou des règles, IMAP, inventaire v2, slides 3D, avoir) n'est montrée.
+- **Non fait** : un seul accent testé pour le contraste ; pause par tap non mesurée (cible 6 px) ; captures D/E/F non produites.

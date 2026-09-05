@@ -169,6 +169,22 @@ try {
   T('F11 — pas de relance au nom d’un compte fondateur ni vers une adresse de test', /is_founder \|\| \/\\\.invalid\$\/i/.test(rel))
   T('F7 — plafond quotidien global sur les envois non critiques', /emails:jour/.test(fs.readFileSync('lib/email.ts', 'utf8')))
 
+  console.log('\n── G. Motion, marque, accessibilité')
+  T('G-1.1 — la séquence a un bouton pause (aria-pressed)', /class="dm-fleche dm-pause"[^>]*aria-pressed/.test(landing))
+  T('G-1.2 — les liens d’en-tête se replient dès 760 px', /@media \(max-width:760px\)\{\.lp-links/.test(css))
+  T('G-2.2 — la visionneuse arrête Lenis', /__lenis/.test(fs.readFileSync('app/site/[slug]/SiteLightbox.tsx', 'utf8')) && /lenis\?\.start\(\)/.test(fs.readFileSync('app/site/[slug]/SiteLightbox.tsx', 'utf8')))
+  T('G-2.3 — le curseur avant/après montre son focus', /\.site-aa-range:focus-visible\) \.site-aa-knob/.test(fs.readFileSync('app/site/[slug]/site.css', 'utf8')))
+  const chatSrc = fs.readFileSync('app/p/[slug]/PlatChat.tsx', 'utf8')
+  T('G-3.1 — tiroir mobile : aria-expanded, dialog, Échap, inert', /aria-expanded=\{side\}/.test(chatSrc) && /role: 'dialog'/.test(chatSrc) && /ev\.key === 'Escape'/.test(chatSrc) && /inert=\{side/.test(chatSrc))
+  T('G-3.2 — focus du composeur en anneau net', /\.pchat-inputrow:focus-within\{[^}]*outline:2px solid/.test(fs.readFileSync('app/p/[slug]/plat.css', 'utf8')))
+  T('G-3.3 — le fil est une région live (role=log)', /role="log" aria-live="polite"/.test(chatSrc))
+  for (const u of ['/site/atelier-du-chene/page-inexistante', '/p/atelier-du-chene/page-inexistante']) {
+    const r = await fetch(`${BASE}${u}`, { headers: { 'User-Agent': 'presti-verif' } })
+    const h = await r.text()
+    const titre = (h.match(/<title>([^<]*)<\/title>/) || ['', ''])[1]
+    T(`G-4.1 — ${u} → 404 sans marque Presti`, r.status === 404 && !/presti/i.test(titre) && !/og:site_name" content="Presti/.test(h), `${r.status} « ${titre} »`)
+  }
+
   console.log('\n── H-bloquant 2. Pas de second abonnement pour un abonné')
   const r = await fetch(`${BASE}/api/subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.session.access_token}` }, body: JSON.stringify({ plan: 'signature' }) })
   const j = await r.json().catch(() => ({}))

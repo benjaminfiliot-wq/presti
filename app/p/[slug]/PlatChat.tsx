@@ -86,6 +86,17 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   // Aperçu en direct : le dernier style reçu du volet Apparence (jamais enregistré ici).
   const [ap, setAp] = useState<ApercuPayload | null>(null)
   const threadRef = useRef<HTMLDivElement>(null)
+  const sideRef = useRef<HTMLElement>(null)
+  const burgerRef = useRef<HTMLButtonElement>(null)
+  // Tiroir mobile (audit final, G-3.1) : focus dedans à l'ouverture, Échap ferme, retour du focus sur le bouton.
+  useEffect(() => {
+    if (!side) return
+    const premier = sideRef.current?.querySelector<HTMLElement>('button, a, [tabindex]')
+    premier?.focus()
+    const onKey = (ev: KeyboardEvent) => { if (ev.key === 'Escape') { ev.preventDefault(); setSide(false); burgerRef.current?.focus() } }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [side])
   const taRef = useRef<HTMLTextAreaElement>(null)
   // Clés de stockage local sans marque : elles sont visibles dans les outils du
   // navigateur du CLIENT de l'artisan, sur une surface censée être en marque blanche.
@@ -361,7 +372,7 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   return (
     <div className={`pchat${side ? ' open' : ''}`}>
       {/* ── Colonne des conversations (tiroir sur mobile) */}
-      <aside className="pchat-side">
+      <aside className="pchat-side" id="pchat-side" ref={sideRef} {...(side ? { role: 'dialog', 'aria-modal': true, 'aria-label': 'Mes demandes' } : {})}>
         <div className="pchat-brand"><Ava src={logoUrl || avatarEff} /><span><b>{artisanNom}</b>{metier ? <small>{metier}</small> : null}</span></div>
         <button type="button" className="pchat-new" onClick={nouvelle}>+ Nouvelle demande</button>
         <nav className="pchat-list" aria-label="Mes demandes">
@@ -392,9 +403,9 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
       <button type="button" className="pchat-scrim" onClick={() => setSide(false)} aria-label="Fermer le menu" />
 
       {/* ── Zone de conversation */}
-      <section className="pchat-main">
+      <section className="pchat-main" inert={side || undefined}>
         <header className="pchat-top">
-          <button type="button" className="pchat-burger" onClick={() => setSide(true)} aria-label="Mes demandes">☰</button>
+          <button type="button" className="pchat-burger" ref={burgerRef} onClick={() => setSide(true)} aria-label="Mes demandes" aria-expanded={side} aria-controls="pchat-side">☰</button>
           <span className="pchat-who"><b>{artisanNom}</b>{humain ? <em className="pchat-human">{artisanNom} vous répond directement</em> : null}</span>
         </header>
         {/* Transparence IA — non négociable : le visiteur sait toujours à qui il parle. */}
@@ -416,7 +427,8 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
           </div>
         ) : null}
 
-        <div className="pchat-thread" ref={threadRef} data-lenis-prevent>
+        {/* Région live : la réponse de l'assistant arrive en flux, un lecteur d'écran doit l'entendre (G-3.3). */}
+        <div className="pchat-thread" ref={threadRef} data-lenis-prevent role="log" aria-live="polite" aria-relevant="additions" aria-label="Conversation" aria-busy={thinking || undefined}>
           {msgs.length === 0 && !thinking ? (
             <div className="pchat-hello">
               <Ava />
