@@ -166,7 +166,8 @@ try {
   T('F8 — une adresse de test n’est jamais envoyée (pas de rebond)', skip.ok === true && skip.id === 'ignore-adresse-de-test', JSON.stringify(skip))
   const rel = fs.readFileSync('app/api/cron/relances/route.ts', 'utf8')
   T('F5 — une relance dont l’email échoue reste due', /if \(!envoi\.ok\)/.test(rel))
-  T('F11 — pas de relance au nom d’un compte fondateur ni vers une adresse de test', /is_founder \|\| \/\\\.invalid\$\/i/.test(rel))
+  // Le cron ne saute que les fondateurs ; les adresses .invalid sont neutralisées dans lib/email.ts (jamais envoyées).
+  T('F11 — pas de relance au nom d’un compte fondateur ; adresse de test jamais envoyée', /artisan\?\.is_founder\) \{/.test(rel) && /\.invalid\$\/i\.test\(opts\.to/.test(fs.readFileSync('lib/email.ts', 'utf8')))
   T('F7 — plafond quotidien global sur les envois non critiques', /emails:jour/.test(fs.readFileSync('lib/email.ts', 'utf8')))
 
   console.log('\n── G. Motion, marque, accessibilité')
