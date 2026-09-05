@@ -69,10 +69,53 @@ export async function coutIADuMois(): Promise<{ usd: number; brut?: unknown; err
   }
 }
 
+/**
+ * Estimation de la dépense IA du mois SANS l'API Admin : on compte les crédits réellement
+ * consommés (plafond de l'offre moins ce qu'il reste) et on applique le coût moyen d'une
+ * génération mesuré en juillet-septembre 2026 (docs/couts-et-solde.md). C'est un ordre de
+ * grandeur, pas une facture — mais un ordre de grandeur vaut mieux que le silence qui a
+ * laissé la réserve tomber à zéro en pleine journée le 4 septembre.
+ */
+const COUT_MOYEN_CREDIT_EUR = 0.012
+
+async function estimationDepuisLesCredits(): Promise<{ credits: number; euros: number }> {
+  const { data } = await supabaseAdmin.from('artisans').select('plan, credits, is_founder').not('email', 'like', '%@presti-test.invalid')
+  let credits = 0
+  for (const a of data ?? []) {
+    if (a.is_founder) continue
+    const consommes = planConf(a.plan).creditsMois - (Number(a.credits) || 0)
+    if (consommes > 0) credits += consommes
+  }
+  return { credits, euros: credits * COUT_MOYEN_CREDIT_EUR }
+}
+
 async function verifierSoldeIA(): Promise<Alerte[]> {
   const budget = Number(process.env.BUDGET_IA_MENSUEL_EUR)
   const cout = await coutIADuMois()
-  if (!cout || !Number.isFinite(budget) || budget <= 0) return []
+  // Sans ANTHROPIC_ADMIN_KEY, la ronde rendait [] sans un mot : le budget n'était surveillé par
+  // personne et rien ne le disait (audit final, auditeur F). Désormais elle le dit, une fois par
+  // semaine, avec l'estimation qu'elle sait faire — et se tait dès que la clé est posée.
+  if (!cout) {
+    if (new Date().getUTCDay() !== 1) return []
+    const e = await estimationDepuisLesCredits()
+    return [{ motif: 'solde_ia', a: 'entreprise', cle: `sans-cle:${new Date().toISOString().slice(0, 7)}`,
+      sujet: 'Le budget IA n’est surveillé par personne',
+      corps: `ANTHROPIC_ADMIN_KEY n’est pas posée sur Vercel : impossible de lire la dépense réelle chez Anthropic.
+
+`
+        + `Estimation à partir des crédits consommés ce mois : ${e.credits} génération(s), soit environ ${euros(e.euros)}`
+        + `${Number.isFinite(budget) && budget > 0 ? ` sur un budget de ${euros(budget)}` : ''}.
+`
+        + `C’est un ordre de grandeur (une recherche fournisseurs coûte dix fois une réponse), pas une facture.
+
+`
+        + `À faire une fois : créer une clé d’administration sur console.anthropic.com, puis
+`
+        + `  node scripts/vercel-env.mjs ANTHROPIC_ADMIN_KEY <la clé>
+`
+        + `Ce message s’arrêtera de lui-même.` }]
+  }
+  if (!Number.isFinite(budget) || budget <= 0) return []
   if (cout.erreur) return [{ motif: 'solde_ia', a: 'entreprise', cle: 'lecture',
     sujet: 'Le budget IA ne peut pas être lu',
     corps: `L’API Admin d’Anthropic a répondu : ${cout.erreur}\n\nSans cette lecture, personne ne verra venir la fin du budget. Vérifie ANTHROPIC_ADMIN_KEY sur Vercel.` }]
@@ -135,7 +178,7 @@ async function verifierErreurs(): Promise<Alerte[]> {
 
 // ── 4. Les crons muets ───────────────────────────────────────────────────────
 const CRONS_ATTENDUS: { nom: string; maxHeures: number }[] = [
-  { nom: 'relances', maxHeures: 26 }, { nom: 'canaux-relever', maxHeures: 26 }, { nom: 'alertes', maxHeures: 26 },
+  { nom: 'relances', maxHeures: 26 }, { nom: 'canaux-relever', maxHeures: 26 }, { nom: 'alertes', maxHeures: 26 }, { nom: 'purges-rgpd', maxHeures: 26 },
 ]
 /**
  * Trace serveur d'une erreur ou d'une alerte perdue, dans `app_errors` (0016) — le second canal

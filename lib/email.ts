@@ -37,11 +37,11 @@ export async function sendEmail(opts: {
   attachments?: { filename: string; content: string }[]
   critique?: boolean // alertes et notifications de l'entreprise : jamais bloquées par le plafond
 }): Promise<SendResult> {
-  if (!RESEND_API_KEY) return { ok: false, error: 'RESEND_API_KEY manquante' }
   // Les suites de test créent des comptes en @presti-test.invalid : un envoi réel vers un TLD
   // réservé rebondit à coup sûr et 34 % de rebonds abîmaient la réputation du domaine
   // (audit final, F, majeur 8). On fait comme si c'était parti, sans rien envoyer.
   if (/\.invalid$/i.test(opts.to.trim())) return { ok: true, id: 'ignore-adresse-de-test' }
+  if (!RESEND_API_KEY) return { ok: false, error: 'RESEND_API_KEY manquante' }
   // Plafond global quotidien (F, majeur 7) : l'offre Resend gratuite s'arrête à 100 envois/jour ;
   // sans borne, six prospects par IP suffisaient à l'épuiser en une heure et demie, et plus
   // aucune alerte ni réinitialisation ne partait. Les envois critiques passent toujours.

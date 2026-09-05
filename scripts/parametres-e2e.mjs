@@ -37,7 +37,7 @@ const S = (n, pourquoi) => { saut++; console.log(`  ⏭  ${n} — ${pourquoi}`) 
 const st = Date.now(), email = `param.${st}@presti-test.invalid`, pw = 'tuile-caramel-vendredi-42', slug = `param-${st}`
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 if (!u?.id) { console.error('création du compte impossible', u); process.exit(1) }
-await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'studio', credits: 180, siret: '55203253400646', forme_juridique: 'EI', adresse: '4 rue des Charpentiers', code_postal: '17000', ville: 'La Rochelle', assurance_nom: 'AXA', assurance_contrat: 'DEC-1' }) })
+await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'studio', aide_vues: ['visite:console'], credits: 180, siret: '55203253400646', forme_juridique: 'EI', adresse: '4 rue des Charpentiers', code_postal: '17000', ville: 'La Rochelle', assurance_nom: 'AXA', assurance_contrat: 'DEC-1' }) })
 
 // La base a-t-elle la migration 0052 ?
 const j0 = (await connexion(email, pw)).access_token

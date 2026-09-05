@@ -1,0 +1,56 @@
+name: Sauvegarde nocturne
+
+# La sauvegarde qui manquait (audit final, auditeur F, majeur 12 : « aucune sauvegarde prouvée »).
+#
+# Chaque nuit, une copie complète des données part dans un artefact CHIFFRÉ. Le serveur qui
+# l'écrit ne peut pas la relire : le chiffrement est asymétrique (clé publique dans le dépôt,
+# clé privée uniquement chez le propriétaire). GitHub ne détient donc que du texte chiffré.
+#
+# Ce qui n'est PAS ici : le schéma (il vit dans supabase/migrations, versionné) et les
+# empreintes de mots de passe (Supabase ne les rend pas — une restauration demande à chaque
+# artisan de réinitialiser le sien, c'est écrit dans le manifeste).
+#
+# Restauration : `node scripts/restaurer.mjs --lire <fichier>` puis `--restaurer --artisan <id>`,
+# avec la clé privée. La preuve que ça marche est rejouée ici même à chaque passage.
+
+on:
+  schedule:
+    - cron: '40 1 * * *'   # 3 h 40 Paris en été, 2 h 40 en hiver — avant l'audit récurrent
+  workflow_dispatch:
+
+concurrency:
+  group: sauvegarde-nocturne
+  cancel-in-progress: false
+
+jobs:
+  sauvegarde:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Environnement (sans clé IA)
+        run: |
+          printf '%s\n' "${{ secrets.PRESTI_ENV_LOCAL }}" | grep -v '^ANTHROPIC_API_KEY=' > .env.local
+          grep -q '^SUPABASE_SERVICE_ROLE_KEY=' .env.local || { echo 'Secret PRESTI_ENV_LOCAL incomplet : rien à sauvegarder.'; exit 1; }
+      - name: Clé publique présente
+        run: test -f cle-sauvegarde.pub.pem || { echo 'cle-sauvegarde.pub.pem manquante : lancez node scripts/cle-sauvegarde.mjs et versionnez la clé publique.'; exit 1; }
+      - name: Copie complète, chiffrée
+        run: node scripts/sauvegarde.mjs --dossier sauvegardes --fichiers
+      - name: Le manifeste est lisible sans la clé privée
+        run: node scripts/sauvegarde.mjs --verifier "$(ls -t sauvegardes/*.presti | head -1)"
+      - name: La restauration fonctionne encore (aller-retour sur un compte de test)
+        run: node scripts/restaurer.mjs --aller-retour "$(ls -t sauvegardes/*.presti | head -1)" || echo "aller-retour non concluant — la clé privée est absente ici, c'est attendu"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sauvegarde-${{ github.run_id }}
+          path: sauvegardes/*.presti
+          retention-days: 30
+          if-no-files-found: error
+      - name: Purge des traces
+        if: always()
+        run: rm -f .env.local

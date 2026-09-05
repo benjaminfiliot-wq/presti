@@ -43,6 +43,11 @@ const SUITES = [
   { nom: 'Fermeture des portes (routes, crons, pages, capacités, drapeaux)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/fermeture-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Carte des emails', cmd: 'node', args: ['scripts/emails-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Garde de commit (régressions connues)', cmd: 'node', args: ['scripts/garde-commit.mjs'], cout: 'gratuit' },
+  { nom: 'Quota de stockage par compte', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/quota-media-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Purges RGPD (12 mois / 3 ans)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/purges-rgpd-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Relances automatiques (bout en bout, sans IA)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/relances-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Domaine perso (routage, marque, vérification)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/domaine-perso-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Motion — CLS des slides, onglets de la démo, boucles hors écran', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/motion-cls-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Alertes (ronde à sec, huit motifs)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/alertes-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Cache mutualisé des prix', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/cache-prix-e2e.mjs'], cout: 'gratuit' },
   { nom: 'IA — unitaires (métiers, playbooks, anti-fabrication)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/ia-unit-e2e.mjs'], cout: 'gratuit' },
@@ -74,7 +79,13 @@ console.log(`\n▶ ${retenues.length} suites${rapide ? ' (mode rapide)' : ''}${t
 
 const resultats = []
 const debut = Date.now()
+// Les suites frappent la production depuis UNE seule adresse : sans remise à zéro, la
+// quatrième reçoit 429 au lieu de tester ce qu'elle doit tester (constaté au premier passage
+// de l'audit nocturne). `purger-abus` ne touche qu'à l'adresse d'où le script tourne.
+const purger = () => spawnSync('node', ['scripts/purger-abus.mjs'], { encoding: 'utf8', shell: true, env: process.env })
+
 for (const s of retenues) {
+  if (s.cout !== 'build') purger()
   process.stdout.write(`… ${s.nom}`)
   const t0 = Date.now()
   const r = spawnSync(s.cmd, s.args, { encoding: 'utf8', shell: true, env: process.env })

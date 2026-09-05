@@ -72,9 +72,14 @@ if (commande === 'etat') {
     console.log(`Offre email : illisible — ${String(e.message).slice(0, 120)}`)
   }
 } else if (commande === 'dmarc') {
-  // On commence en surveillance (p=none) : rien n'est rejeté, on observe. Poser « reject »
+  // Deux temps, volontairement. D'abord la SURVEILLANCE (p=none) : rien n'est rejeté, les
+  // rapports arrivent, on voit ce qui part vraiment au nom du domaine. Une semaine plus tard,
+  // `--quarantaine` fait mettre de côté ce qui n'est pas authentifié. Poser la quarantaine
   // d'emblée ferait disparaître de vrais messages sans que personne ne le sache.
-  const valeur = `v=DMARC1; p=quarantine; rua=mailto:${process.env.PRESTI_ALERTES_EMAIL || process.env.EMAIL_ENTREPRISE || 'benjaminfiliot@gmail.com'}`
+  const politique = process.argv.includes('--quarantaine') ? 'quarantine' : 'none'
+  const rapports = process.env.PRESTI_ALERTES_EMAIL || process.env.EMAIL_ENTREPRISE || 'benjaminfiliot@gmail.com'
+  const valeur = `v=DMARC1; p=${politique}; rua=mailto:${rapports}; adkim=r; aspf=r`
+  console.log(`Politique : ${politique}${politique === 'none' ? ' (surveillance — relancez avec --quarantaine dans une semaine)' : ''}`)
   const existants = await api('GET', `/domain/zone/${DOMAINE}/record?fieldType=TXT&subDomain=_dmarc`)
   if (existants.length) {
     await api('PUT', `/domain/zone/${DOMAINE}/record/${existants[0]}`, { target: valeur, ttl: 3600 })
