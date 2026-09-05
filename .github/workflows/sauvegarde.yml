@@ -38,7 +38,10 @@ jobs:
           printf '%s\n' "${{ secrets.PRESTI_ENV_LOCAL }}" | grep -v '^ANTHROPIC_API_KEY=' > .env.local
           grep -q '^SUPABASE_SERVICE_ROLE_KEY=' .env.local || { echo 'Secret PRESTI_ENV_LOCAL incomplet : rien à sauvegarder.'; exit 1; }
       - name: Clé publique présente
-        run: test -f cle-sauvegarde.pub.pem || { echo 'cle-sauvegarde.pub.pem manquante : lancez node scripts/cle-sauvegarde.mjs et versionnez la clé publique.'; exit 1; }
+        # Bloc `|` obligatoire : un « : » dans une ligne simple est pris pour une clé YAML et GitHub
+        # ignore alors tout le fichier (constaté le 05/09 : « does not have workflow_dispatch »).
+        run: |
+          test -f cle-sauvegarde.pub.pem || { echo 'cle-sauvegarde.pub.pem manquante : lancez node scripts/cle-sauvegarde.mjs et versionnez la clé publique.'; exit 1; }
       - name: Copie complète, chiffrée
         run: node scripts/sauvegarde.mjs --dossier sauvegardes --fichiers
       - name: Le manifeste est lisible sans la clé privée
