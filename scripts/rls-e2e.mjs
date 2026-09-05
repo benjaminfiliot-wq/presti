@@ -13,6 +13,7 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -37,6 +38,7 @@ async function creerArtisan(nom) {
   // Connexion réelle : c'est ce jeton, et pas la clé de service, qui doit se heurter à la RLS.
   const pub = createClient(URL, ANON, { auth: { persistSession: false } })
   const { data: s, error: e2 } = await pub.auth.signInWithPassword({ email, password: motDePasse })
+  await verifierSessionTest(s?.session?.access_token)
   if (e2) throw new Error(`connexion ${nom} : ${e2.message}`)
   return {
     uid: u.user.id, email, motDePasse,
@@ -130,6 +132,7 @@ try {
   // On vérifie ici que les routes de Presti le refusent immédiatement.
   const sessionA = (await createClient(URL, ANON, { auth: { persistSession: false } })
     .auth.signInWithPassword({ email: A.email, password: A.motDePasse })).data.session
+  await verifierSessionTest(sessionA?.access_token)
   const jetonA = sessionA.access_token
   const rafraichissementA = sessionA.refresh_token
   const appelTarifs = () => fetch(`${BASE}/api/tarifs`, { headers: { Authorization: `Bearer ${jetonA}` } })

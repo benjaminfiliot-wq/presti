@@ -9,6 +9,7 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -32,6 +33,7 @@ try {
 
   const pub = createClient(URL, ANON, { auth: { persistSession: false } })
   const { data: s } = await pub.auth.signInWithPassword({ email, password: motDePasse })
+  await verifierSessionTest(s?.session?.access_token)
 
   console.log('\n── 1. Durée de vie du jeton d’accès')
   const charge = JSON.parse(Buffer.from(s.session.access_token.split('.')[1], 'base64').toString('utf8'))

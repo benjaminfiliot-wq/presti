@@ -20,6 +20,7 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z0-9_]+)=(.*)$/)
@@ -46,6 +47,7 @@ async function compte(plan) {
   if (eA) throw new Error(eA.message)
   const pub = createClient(SB, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } })
   const { data: s } = await pub.auth.signInWithPassword({ email, password: MDP })
+  await verifierSessionTest(s?.session?.access_token)
   return { uid: u.user.id, email, plan, jeton: s?.session?.access_token ?? null }
 }
 async function regler(uid, mode, reponseAutoLegacy) {

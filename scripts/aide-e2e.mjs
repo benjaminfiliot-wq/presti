@@ -15,6 +15,7 @@ import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { chromium } from 'playwright'
 import { createClient } from '@supabase/supabase-js'
+import { codeEmailSiDemande } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -50,6 +51,7 @@ try {
   await page.fill('input[type=email]', email)
   await page.fill('input[type=password]', pw)
   await page.getByRole('button', { name: /Se connecter/i }).click()
+  await codeEmailSiDemande(page, email)
   await page.waitForURL(/\/(outils|dashboard)/, { timeout: 20000 })
 
   console.log('\n── 1. La visite guidée : première ouverture oui, seconde non')

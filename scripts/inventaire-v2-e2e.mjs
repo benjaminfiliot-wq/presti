@@ -18,6 +18,7 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -43,6 +44,7 @@ async function creer(plan, nom) {
   // Connexion RÉELLE : c'est ce jeton, et pas la clé de service, qui doit se heurter au verrou et à la RLS.
   const pub = createClient(URL_SB, ANON, { auth: { persistSession: false } })
   const { data: s, error: e2 } = await pub.auth.signInWithPassword({ email, password: motDePasse })
+  await verifierSessionTest(s?.session?.access_token)
   if (e2) throw new Error(`connexion ${nom} : ${e2.message}`)
   const token = s.session.access_token
   const appel = async (chemin, init = {}) => {

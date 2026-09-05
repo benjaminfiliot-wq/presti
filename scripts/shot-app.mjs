@@ -1,6 +1,7 @@
 // Capture l'espace connecté (login + pages authentifiées) via un compte test jetable.
 import { chromium } from 'playwright'
 import fs from 'fs'
+import { codeEmailSiDemande } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY
 const url = process.argv[2] || 'http://localhost:3000'
@@ -24,6 +25,7 @@ await page.goto(url + '/login', { waitUntil: 'load' })
 await page.fill('input[type=email]', email)
 await page.fill('input[type=password]', pw)
 await page.click('button[type="submit"], form button:not(.pw-eye)')
+await codeEmailSiDemande(page, email)
 await page.waitForTimeout(2800)
 await shot('app-dashboard', '/dashboard', 1600)
 await shot('app-abonnement', '/abonnement', 1600)

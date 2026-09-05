@@ -44,6 +44,7 @@ import crypto from 'node:crypto'
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
 import { PLANS, OFFRES, CREDIT_COST, COUT_RECHERCHE, peut } from '../lib/plans.ts'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 for (const f of ['.env.local', '.stripe-webhook.local']) {
   if (!fs.existsSync(f)) continue
@@ -99,6 +100,7 @@ async function compte(nomCourt) {
   comptes.push(u.user.id)
   const pub = createClient(URL_SB, ANON, { auth: { persistSession: false } })
   const { data: s } = await pub.auth.signInWithPassword({ email, password: mdp })
+  await verifierSessionTest(s?.session?.access_token)
   const jeton = s?.session?.access_token
   if (!jeton) throw new Error('connexion impossible pour ' + email)
   const nav = createClient(URL_SB, ANON, { auth: { persistSession: false }, global: { headers: { Authorization: `Bearer ${jeton}` } } })

@@ -17,6 +17,7 @@ import os from 'node:os'
 import crypto from 'node:crypto'
 import { chromium } from 'playwright'
 import { createClient } from '@supabase/supabase-js'
+import { codeEmailSiDemande } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -114,6 +115,7 @@ try {
   await page.fill('input[type="email"]', email)
   await page.fill('input[type="password"]', motDePasse)
   await page.getByRole('button', { name: 'Se connecter' }).click()
+  await codeEmailSiDemande(page, email)
   await page.waitForURL(/outils|dashboard|profil/, { timeout: 30000 })
   await page.goto(`${BASE}/profil`, { waitUntil: 'networkidle' })
 

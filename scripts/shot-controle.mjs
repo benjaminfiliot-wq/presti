@@ -1,6 +1,7 @@
 // Capture le poste de contrôle /controle (coentreprise d'agents) avec un fondateur test.
 import { chromium } from 'playwright'
 import fs from 'fs'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY, ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const APP = process.argv[2] || 'http://localhost:3400'
@@ -12,6 +13,7 @@ const st = Date.now(), email = `ctlshot.${st}@example.com`, pw = 'Test123456!'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Fondateur', metier: 'Plombier', slug: `ctlshot-${st}`, plan: 'business', is_founder: true }) })
 const sess = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) })).json()
+await verifierSessionTest(sess.access_token)
 const ref = SB.replace(/^https?:\/\//, '').split('.')[0]
 
 const browser = await chromium.launch()

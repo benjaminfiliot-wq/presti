@@ -1,5 +1,6 @@
 // Test des routes artisan /api/messages (reply + suggest) avec un compte test jetable.
 import fs from 'fs'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY, ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const APP = process.argv[2] || 'http://localhost:3400'
@@ -12,6 +13,7 @@ await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, 
 const [lead] = await (await rest('leads', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ artisan_id: u.id, nom_prospect: 'Paul Durand', contact: 'paul.durand@example.com', message: 'Installation de deux radiateurs dans le séjour, possible ?', statut: 'nouveau' }) })).json()
 await rest('messages', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify([{ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: 'Installation de deux radiateurs dans le séjour, possible ?' }]) })
 const tok = (await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) })).json()).access_token
+await verifierSessionTest(tok)
 const H = { 'Content-Type': 'application/json', Authorization: `Bearer ${tok}` }
 
 console.log('▶ suggest');

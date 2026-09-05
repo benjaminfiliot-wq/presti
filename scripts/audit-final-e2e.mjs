@@ -7,6 +7,7 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -100,6 +101,7 @@ try {
   console.log('\n── B-A9. Une facture émise s’annule par un avoir, jamais d’un clic')
   const pub = createClient(SB, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } })
   const { data: s } = await pub.auth.signInWithPassword({ email, password: mdp })
+  await verifierSessionTest(s?.session?.access_token)
   const H = { 'Content-Type': 'application/json', Authorization: `Bearer ${s.session.access_token}` }
   const { data: fac } = await admin.from('factures').insert({ artisan_id: u.user.id, numero: 'FAC-TEST-1', client_nom: 'Client', statut: 'emise', date_emission: new Date().toISOString().slice(0, 10), total_ht: 100, total_tva: 0, total_ttc: 100, verrouillee: true, emise_le: new Date().toISOString() }).select('id').single()
   await admin.from('factures_lignes').insert({ facture_id: fac.id, ordre: 0, designation: 'Main d’œuvre', quantite: 2, unite: 'h', prix_unitaire_ht: 50, tva_taux: 0 })

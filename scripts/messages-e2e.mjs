@@ -3,6 +3,7 @@
 // (le prospect retrouve la réponse via /api/conversation). Nettoie ses données.
 // Usage : node scripts/messages-e2e.mjs [https://prestiapp.fr]
 import fs from 'fs'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY, ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const APP = process.argv[2] || 'https://prestiapp.fr'
@@ -10,8 +11,7 @@ const admin = (p, o = {}) => fetch(`${SB}/auth/v1/admin/${p}`, { ...o, headers: 
 const rest = (p, o = {}, key = SVC) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apikey: key, Authorization: `Bearer ${o.jwt || key}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
 const fails = []
 const ok = (c, m) => { console.log((c ? 'PASS' : 'FAIL') + ' — ' + m); if (!c) fails.push(m) }
-const signin = async (email, pw) => (await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) })).json()).access_token
-
+const signin = async (email, pw) => { const j = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) })).json(); await verifierSessionTest(j.access_token); return j.access_token }
 const st = Date.now(), email = `mx.${st}@example.com`, pw = 'Test123456!', slug = `mx-${st}`
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Atelier Test', metier: 'Menuisier', slug, plan: 'business', plateforme_active: true, reponse_auto: false }) })

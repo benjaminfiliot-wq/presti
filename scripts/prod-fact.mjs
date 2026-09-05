@@ -1,6 +1,7 @@
 // Reproduit le bug facture sur la PROD : accès à /factures + annulation. Capture erreurs console.
 import fs from 'fs'
 import { chromium } from 'playwright'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 const BASE = 'https://prestiapp.fr'
 const OUT = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/f2774700-2996-4ee8-bfc0-5b67f39c3350/scratchpad/prodfact'
 fs.mkdirSync(OUT, { recursive: true })
@@ -14,6 +15,7 @@ const u = await (await fetch(`${SB}/auth/v1/admin/users`, { method: 'POST', head
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Dupont Plomberie', metier: 'Plombier', ton_style: 'pro', slug: `pf-${st}`, tva_regime: 'franchise' }) })
 const fac = (await (await rest('factures?select=id', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ artisan_id: u.id, numero: 'FAC-2026-0099', objet: 'Test annulation', client_nom: 'Marie Lefèvre', statut: 'emise', total_ttc: 968, date_echeance: '2026-09-27' }) })).json())[0]
 const sess = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pass }) })).json()
+await verifierSessionTest(sess.access_token)
 const ref = SB.match(/https:\/\/([^.]+)\./)[1]
 
 const b = await chromium.launch()

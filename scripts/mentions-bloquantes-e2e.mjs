@@ -14,6 +14,7 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -39,6 +40,7 @@ try {
   await admin.from('artisans').insert({ id: u.user.id, email, nom: 'Sans Mentions', metier: 'Maçon', slug: `verif-mentions-${st}`, plan: 'signature' })
   const pub = createClient(URL, ANON, { auth: { persistSession: false } })
   const { data: s } = await pub.auth.signInWithPassword({ email, password: motDePasse })
+  await verifierSessionTest(s?.session?.access_token)
   const H = { 'Content-Type': 'application/json', Authorization: `Bearer ${s.session.access_token}` }
 
   console.log('\n── 1. Le brouillon n’est jamais bloqué')

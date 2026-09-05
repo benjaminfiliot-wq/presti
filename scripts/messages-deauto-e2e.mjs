@@ -1,5 +1,6 @@
 import { chromium } from 'playwright'
 import fs from 'fs'
+import { codeEmailSiDemande } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY
 const APP = process.argv[2] || 'https://prestiapp.fr'
@@ -15,7 +16,7 @@ const b = await chromium.launch(); const p = await b.newPage({ viewport: { width
 try {
   await p.goto(`${APP}/login`, { waitUntil: 'load' })
   await p.fill('input[type=email]', email); await p.fill('input[type=password]', pw)
-  await p.getByRole('button', { name: /Se connecter/i }).click(); await p.waitForTimeout(3500)
+  await p.getByRole('button', { name: /Se connecter/i }).click(); await codeEmailSiDemande(p, email); await p.waitForTimeout(3500)
   await p.goto(`${APP}/messages`, { waitUntil: 'load' }); await p.waitForSelector('.inbox-item', { timeout: 15000 })
   await p.locator('.inbox-item').first().click(); await p.waitForTimeout(1200)
   ok(await p.locator('.inbox-model').count() === 0, 'le selecteur de modele a disparu de la boite de reception')

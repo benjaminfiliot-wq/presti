@@ -17,6 +17,7 @@
 
 import fs from 'node:fs'
 import { chromium } from 'playwright'
+import { verifierSessionTest, codeEmailSiDemande } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -27,7 +28,7 @@ const APP = process.argv[2] || 'https://prestiapp.fr'
 const OUT = process.env.CAPTURES || 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/f2774700-2996-4ee8-bfc0-5b67f39c3350/scratchpad'
 const admin = (p, o = {}) => fetch(`${SB}/auth/v1/admin/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
 const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
-const connexion = async (email, password, ua = 'presti-e2e') => (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json', 'User-Agent': ua }, body: JSON.stringify({ email, password }) })).json()
+const connexion = async (email, password, ua = 'presti-e2e') => { const j = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json', 'User-Agent': ua }, body: JSON.stringify({ email, password }) })).json(); await verifierSessionTest(j.access_token); return j }
 const api = (chemin, jwt, o = {}) => fetch(`${APP}${chemin}`, { ...o, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}`, ...(o.headers || {}) } })
 
 let ok = 0, ko = 0, saut = 0
@@ -53,6 +54,7 @@ try {
   await p.goto(`${APP}/login`, { waitUntil: 'load' })
   await p.fill('input[type=email]', email); await p.fill('input[type=password]', pw)
   await p.getByRole('button', { name: /Se connecter/i }).click()
+  await codeEmailSiDemande(p, email)
   await p.waitForURL(/dashboard|onboarding|parametres|profil/, { timeout: 20000 }).catch(() => {})
   await p.goto(`${APP}/parametres`, { waitUntil: 'load' })
   await p.waitForSelector('.param-nav', { timeout: 20000 })

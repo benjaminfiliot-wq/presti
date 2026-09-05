@@ -14,6 +14,7 @@
 // tant qu'elle n'est pas appliquée ; elles se rabattent, quand elle existe, sur la route de test
 // `/api/test-persona` de la copie isolée (jamais dans le dépôt).
 import fs from 'fs'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY, ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const APP = process.argv[2] || 'http://localhost:3115'
@@ -36,6 +37,7 @@ await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, 
   plateforme_active: true, reponse_auto: true, is_founder: true,
 }) })
 const session = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pwd }) })).json()
+await verifierSessionTest(session.access_token)
 const jwt = session.access_token
 const api = (p, o = {}) => fetch(`${APP}${p}`, { ...o, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}`, ...(o.headers || {}) } })
 const page = async (q = '') => extraireMain(await (await fetch(`${APP}/p/${slug}${q}`)).text())

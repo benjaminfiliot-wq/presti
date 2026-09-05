@@ -1,6 +1,7 @@
 // Sème 2 devis + 1 facture, se connecte, capture les listes (cartes) desktop+mobile + éditeur mobile.
 import fs from 'fs'
 import { chromium } from 'playwright'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 const BASE = 'http://localhost:3100'
 const OUT = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/f2774700-2996-4ee8-bfc0-5b67f39c3350/scratchpad/lists'
 fs.mkdirSync(OUT, { recursive: true })
@@ -19,6 +20,7 @@ await rest('factures?select=id', { method: 'POST', headers: { Prefer: 'return=re
 
 // session via API + injection dans localStorage (fiable)
 const sess = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pass }) })).json()
+await verifierSessionTest(sess.access_token)
 const ref = SB.match(/https:\/\/([^.]+)\./)[1]
 const b = await chromium.launch()
 const pg = await b.newPage({ viewport: { width: 1440, height: 900 } })

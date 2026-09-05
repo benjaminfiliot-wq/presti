@@ -2,6 +2,7 @@
 // Sème un artisan (avec logo), un devis et une facture, récupère les PDF.
 import fs from 'fs'
 import { chromium } from 'playwright'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 const BASE = process.argv[2] || 'http://localhost:3100'
 const OUT = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/f2774700-2996-4ee8-bfc0-5b67f39c3350/scratchpad/pdf'
@@ -44,6 +45,7 @@ const fac = await (await rest('factures?select=id', { method: 'POST', headers: {
 await rest('factures_lignes', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(lignes(fac[0].id, 'facture_id')) })
 
 const tok = (await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: 'Test123456!' }) })).json()).access_token
+await verifierSessionTest(tok)
 const save = async (url, name) => {
   const r = await fetch(BASE + url, { headers: { Authorization: `Bearer ${tok}` } })
   if (!r.ok) { console.log('🔴', name, r.status, (await r.text()).slice(0, 120)); return }

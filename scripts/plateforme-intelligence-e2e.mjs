@@ -1,6 +1,7 @@
 // Vérif B2-2 : l'écran « Ma plateforme → Intelligence » règle bien la configuration serveur.
 import { chromium } from 'playwright'
 import fs from 'fs'
+import { codeEmailSiDemande } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY
 const APP = process.argv[2] || 'https://prestiapp.fr'
@@ -22,7 +23,7 @@ const p = await browser.newPage({ viewport: { width: 1280, height: 1100 } })
 try {
   await p.goto(`${APP}/login`, { waitUntil: 'load' })
   await p.fill('input[type=email]', email); await p.fill('input[type=password]', pw)
-  await p.getByRole('button', { name: /Se connecter/i }).click(); await p.waitForTimeout(3500)
+  await p.getByRole('button', { name: /Se connecter/i }).click(); await codeEmailSiDemande(p, email); await p.waitForTimeout(3500)
   await p.goto(`${APP}/plateforme`, { waitUntil: 'load' })
   await p.waitForSelector('.pcfg-modes', { timeout: 15000 })
 

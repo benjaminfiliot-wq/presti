@@ -15,6 +15,7 @@
 import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { chromium } from 'playwright'
+import { verifierSessionTest, codeEmailSiDemande } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -26,7 +27,7 @@ const OUT = process.env.CAPTURES || 'C:/Users/benja/AppData/Local/Temp/claude/C-
 const admin = (p, o = {}) => fetch(`${SB}/auth/v1/admin/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
 const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
 const auth = (p, jwt, o = {}) => fetch(`${SB}/auth/v1/${p}`, { ...o, headers: { apikey: ANON, Authorization: `Bearer ${jwt}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
-const connexion = async (email, password) => (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json', 'User-Agent': 'presti-e2e' }, body: JSON.stringify({ email, password }) })).json()
+const connexion = async (email, password) => { const j = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json', 'User-Agent': 'presti-e2e' }, body: JSON.stringify({ email, password }) })).json(); await verifierSessionTest(j.access_token); return j }
 const api = (chemin, jwt, o = {}) => fetch(`${APP}${chemin}`, { ...o, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}`, ...(o.headers || {}) } })
 const claims = (jwt) => JSON.parse(Buffer.from(jwt.split('.')[1], 'base64').toString('utf8'))
 
@@ -80,6 +81,8 @@ const seConnecter = async () => {
   await p.goto(`${APP}/login`, { waitUntil: 'load' })
   await p.fill('input[type=email]', email); await p.fill('input[type=password]', pw)
   await p.getByRole('button', { name: /Se connecter/i }).click()
+  // Avant l'enrôlement TOTP : le code email est demandé ; après : c'est l'application qui prend le relais.
+  await codeEmailSiDemande(p, email, { uid: u.id })
 }
 let secret = ''
 try {

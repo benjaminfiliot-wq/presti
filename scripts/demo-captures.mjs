@@ -15,6 +15,7 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import { chromium } from 'playwright'
 import { createClient } from '@supabase/supabase-js'
+import { codeEmailSiDemande } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -141,6 +142,7 @@ try {
   await pc.goto(`${BASE}/login`, { waitUntil: 'networkidle' })
   await pc.fill('#email-connexion', email); await pc.fill('#mdp-connexion', mdp)
   await pc.click('form button[type="submit"], form button:not([type="button"])')
+  await codeEmailSiDemande(pc, email)
   await pc.waitForURL(/\/(outils|dashboard)/, { timeout: 20000 })
   await pc.goto(`${BASE}/plateforme`, { waitUntil: 'networkidle' })
   // Première ouverture de la console : la visite guidée (§4 B3) recouvre l'écran → « Plus tard ».

@@ -1,6 +1,7 @@
 // Test authentifié du vrai flux facturation : login → devis → chiffrage → facture → /factures.
 import fs from 'fs'
 import { chromium } from 'playwright'
+import { codeEmailSiDemande } from './lib/connexion-test.mjs'
 
 const BASE = 'http://localhost:3100'
 const OUT = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/f2774700-2996-4ee8-bfc0-5b67f39c3350/scratchpad/fact'
@@ -22,6 +23,7 @@ await pg.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' })
 await pg.fill('input[type=email]', email)
 await pg.fill('input[type=password]', pass)
 await pg.click('button[type=submit], button:has-text("Se connecter"), button:has-text("Connexion")')
+await codeEmailSiDemande(pg, email)
 await pg.waitForTimeout(2500)
 console.log('après login, url =', pg.url())
 

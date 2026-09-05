@@ -15,6 +15,7 @@
 // de débit frappe). Les tests qui n'ouvrent qu'une session gardent leur séquence : elle
 // marche, et la remuer sans raison serait un risque pour rien.
 
+import { codeEmailSiDemande } from './lib/connexion-test.mjs'
 /**
  * Ouvre un contexte de navigateur PROPRE et s'y connecte.
  * Un contexte par compte : le localStorage est partagé entre les pages d'un contexte,
@@ -32,6 +33,7 @@ export async function connexion(nav, { email, motDePasse, base = 'https://presti
       await page.fill('input[type="email"]', email)
       await page.fill('input[type="password"]', motDePasse)
       await page.getByRole('button', { name: 'Se connecter' }).click()
+      await codeEmailSiDemande(page, email)
       await page.waitForURL(/outils|dashboard|profil|onboarding/, { timeout: 45000 })
       return { ctx, page }
     } catch (e) {

@@ -1,6 +1,7 @@
 // Vérif B3-1 : suppression granulaire (§C3) — chaque brique séparément, récapitulatif
 // préalable, confirmation obligatoire, compte jamais touché, documents légaux conservés.
 import fs from 'fs'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY, ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const APP = process.argv[2] || 'https://prestiapp.fr'
@@ -26,6 +27,7 @@ const dv = (await (await rest('devis', { method: 'POST', headers: { Prefer: 'ret
 console.log('seed', slug)
 
 const jwt = (await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) })).json()).access_token
+await verifierSessionTest(jwt)
 const H = { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` }
 const recap = async (action, extra = '') => (await (await fetch(`${APP}/api/donnees?action=${action}${extra}`, { headers: H })).json())
 const agir = async (body) => { const r = await fetch(`${APP}/api/donnees`, { method: 'POST', headers: H, body: JSON.stringify(body) }); return { status: r.status, ...(await r.json().catch(() => ({}))) } }

@@ -2,6 +2,7 @@
 // Crée un compte fondateur temporaire, teste routes + endpoints + flux devis, nettoie tout.
 // Usage : node scripts/smoke-test.mjs
 import fs from 'fs'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 const PROD = process.env.PRESTI_URL || 'https://presti-ashen.vercel.app'
 const env = Object.fromEntries(
@@ -42,6 +43,7 @@ async function main() {
   const uid = created.id
   await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: uid, email, nom: 'Smoke Test', metier: 'Plombier', ton_style: 'pro', slug: `smoke-${rnd}`, plan: 'business', is_founder: true, tva_regime: 'franchise' }) })
   const tok = await (await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) })).json()
+  await verifierSessionTest(tok.access_token)
   const H = { 'Content-Type': 'application/json', Authorization: `Bearer ${tok.access_token}` }
   check('login fondateur', !!tok.access_token)
 

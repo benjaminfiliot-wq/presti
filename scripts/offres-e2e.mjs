@@ -13,6 +13,7 @@ import crypto from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 import { PLANS, peut, GRILLE, OFFRES } from '../lib/plans.ts'
 import { FLAGS } from '../lib/flags.ts'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -52,6 +53,7 @@ try {
     await admin.from('artisans').insert({ id: u.user.id, email, nom: `Vérif ${plan}`, metier: 'Plombier', slug: `verif-offres-${plan}-${Date.now()}`, plan })
     const pub = createClient(URL, ANON, { auth: { persistSession: false } })
     const { data: s } = await pub.auth.signInWithPassword({ email, password: mdp })
+    await verifierSessionTest(s?.session?.access_token)
     const jeton = s?.session?.access_token
     if (!jeton) throw new Error('connexion impossible pour ' + plan)
 
