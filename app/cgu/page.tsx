@@ -68,7 +68,7 @@ export default function CGU() {
       <p>Les présentes Conditions sont soumises au <strong>droit français</strong>. En cas de litige, une solution amiable sera recherchée en priorité ; à défaut, les tribunaux français seront compétents (sous réserve des règles protectrices applicables aux consommateurs).</p>
 
       <h2>11. Contact</h2>
-      <p>Pour toute question sur ces Conditions ou sur le service : <a href="mailto:contact@prestiapp.fr">contact@prestiapp.fr</a>. Les coordonnées complètes de l’éditeur figurent dans les <a href="/mentions-legales">mentions légales</a>.</p>
+      <p>Pour toute question sur ces Conditions ou sur le service : <a href="/contact">le formulaire de contact</a>. Les coordonnées complètes de l’éditeur figurent dans les <a href="/mentions-legales">mentions légales</a>.</p>
 
       <p style={{ marginTop: '2.4rem' }}><a href="/confidentialite">Politique de confidentialité</a> · <a href="/mentions-legales">Mentions légales</a></p>
     </main>

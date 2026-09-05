@@ -20,7 +20,7 @@ export default function Confidentialite() {
       <p>Presti attache une grande importance à la protection de vos données personnelles. Cette politique explique quelles données nous collectons, pourquoi, et quels sont vos droits.</p>
 
       <h2>1. Responsable du traitement</h2>
-      <p>Le responsable du traitement est <strong>Benjamin Filiot</strong> (Presti), 17230 Marans, France — <a href="mailto:contact@prestiapp.fr">contact@prestiapp.fr</a>.</p>
+      <p>Le responsable du traitement est <strong>Benjamin Filiot</strong> (Presti), 17230 Marans, France — joignable par <a href="/contact">le formulaire de contact</a>.</p>
 
       <h2>2. Données que nous collectons</h2>
       <ul>
@@ -53,7 +53,7 @@ export default function Confidentialite() {
       <p>Vos données sont conservées le temps de votre utilisation du service, puis supprimées ou anonymisées. Les données de facturation sont conservées 10 ans conformément aux obligations comptables. Vous pouvez demander la suppression de votre compte à tout moment.</p>
 
       <h2>6. Vos droits</h2>
-      <p>Conformément au RGPD, vous disposez des droits d’<strong>accès</strong>, de <strong>rectification</strong>, d’<strong>effacement</strong>, de <strong>portabilité</strong>, de <strong>limitation</strong> et d’<strong>opposition</strong>. Pour les exercer : <a href="mailto:contact@prestiapp.fr">contact@prestiapp.fr</a>.</p>
+      <p>Conformément au RGPD, vous disposez des droits d’<strong>accès</strong>, de <strong>rectification</strong>, d’<strong>effacement</strong>, de <strong>portabilité</strong>, de <strong>limitation</strong> et d’<strong>opposition</strong>. Pour les exercer : <a href="/contact">le formulaire de contact</a>.</p>
       <p>Vous pouvez également introduire une réclamation auprès de la <strong>CNIL</strong> (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).</p>
 
       <h2>7. Sécurité</h2>

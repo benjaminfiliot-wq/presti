@@ -64,7 +64,6 @@ export async function declencherRegles(p: { lead: LeadCtx; nbReponsesIA: number;
       text: envoye
         ? `Votre règle d'automatisation a chiffré et envoyé le devis ${r.numero} (${r.total_ttc.toFixed(2)} € TTC) dans la conversation avec ${qui}.\n\nRetrouvez-le dans votre espace (Devis).`
         : `L'assistant a qualifié la demande de ${qui} et préparé un devis brouillon ${r.numero} (${r.total_ttc.toFixed(2)} € TTC).\n\nRien n'est parti : relisez-le et envoyez-le en un clic depuis votre espace (Devis), ou depuis la conversation.`,
-      replyTo: 'contact@prestiapp.fr',
     }).catch(() => {})
   }
 

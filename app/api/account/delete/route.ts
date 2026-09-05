@@ -11,7 +11,10 @@ export const runtime = 'nodejs'
 // Maintenant : la demande POSE une date (`suppression_demandee_le`) ; le compte continue de
 // fonctionner, un bandeau rappelle l'échéance, et DELETE annule. La purge réelle est faite
 // par /api/cron/purge-comptes une fois les 30 jours écoulés — la suppression de
-// l'utilisateur auth cascade sur `artisans` puis leads, messages, devis, factures.
+// l'utilisateur auth cascade sur `artisans` puis leads, messages, devis… sauf si le compte a
+// émis des factures : elles se conservent dix ans (art. L. 102 B du LPF), le compte est alors
+// ANONYMISÉ et non effacé — voir lib/purgeComptes.ts. Le récapitulatif ci-dessous le dit
+// avant que l'artisan ne confirme, jamais après.
 
 const JOURS_DE_GRACE = 30
 const dateDeSuppression = (demandeeLe: string) => new Date(new Date(demandeeLe).getTime() + JOURS_DE_GRACE * 86400000)
@@ -19,12 +22,15 @@ const dateDeSuppression = (demandeeLe: string) => new Date(new Date(demandeeLe).
 export async function GET(req: Request) {
   const s = await authArtisan(req)
   if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
-  const [{ data: a }, convs, devis, factures] = await Promise.all([
+  const [{ data: a }, convs, devis, factures, emises] = await Promise.all([
     supabaseAdmin.from('artisans').select('suppression_demandee_le, site_active, plateforme_active').eq('id', s.uid).maybeSingle(),
     supabaseAdmin.from('leads').select('id', { count: 'exact', head: true }).eq('artisan_id', s.uid),
     supabaseAdmin.from('devis').select('id', { count: 'exact', head: true }).eq('artisan_id', s.uid),
     supabaseAdmin.from('factures').select('id', { count: 'exact', head: true }).eq('artisan_id', s.uid).then((r) => r, () => ({ count: 0 })),
+    supabaseAdmin.from('factures').select('id', { count: 'exact', head: true }).eq('artisan_id', s.uid).eq('verrouillee', true).then((r) => r, () => ({ count: 0 })),
   ])
+  const nbFactures = (factures as { count?: number | null }).count ?? 0
+  const nbEmises = (emises as { count?: number | null }).count ?? 0
   return NextResponse.json({
     ok: true,
     demandee_le: a?.suppression_demandee_le ?? null,
@@ -34,12 +40,21 @@ export async function GET(req: Request) {
       a?.site_active ? 'Votre site vitrine (dépublié immédiatement à la date de suppression)' : null,
       a?.plateforme_active !== false ? 'Votre plateforme de conversation' : null,
       `${convs.count ?? 0} conversation(s) et leurs messages`,
-      `${devis.count ?? 0} devis et ${(factures as { count?: number | null }).count ?? 0} facture(s)`,
+      nbEmises
+        ? `${devis.count ?? 0} devis non facturé(s) et ${nbFactures - nbEmises} facture(s) brouillon`
+        : `${devis.count ?? 0} devis et ${nbFactures} facture(s)`,
       'Vos tarifs, votre inventaire, vos images',
+      'Vos coordonnées, votre accès : plus personne ne peut se connecter',
     ].filter(Boolean),
-    conserve: [
-      `Rien après ${JOURS_DE_GRACE} jours — exportez vos données avant, vos obligations de conservation comptable (10 ans) vous incombent.`,
-    ],
+    conserve: nbEmises
+      ? [
+          `${nbEmises} facture(s) émise(s), les devis et clients qu'elles citent : la loi impose de les garder 10 ans (art. L. 102 B du LPF). Votre compte est donc anonymisé, pas effacé.`,
+          'Votre identité d’émetteur (nom, forme juridique, SIRET, adresse, n° de TVA) reste sur ces factures : ce sont des mentions légales obligatoires.',
+          `Exportez vos données avant ${JOURS_DE_GRACE} jours — vos propres obligations de conservation comptable vous incombent.`,
+        ]
+      : [
+          `Rien après ${JOURS_DE_GRACE} jours — exportez vos données avant, vos obligations de conservation comptable (10 ans) vous incombent.`,
+        ],
   })
 }
 

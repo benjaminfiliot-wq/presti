@@ -51,6 +51,12 @@ try {
   }
   await sb.from('artisans').insert({ ...commun, site_active: false })
 
+  console.log('\n── 2 bis. Aucune page publique ne renvoie vers une boîte qui n’existe pas')
+  for (const chemin of ['/', '/faq', '/cgu', '/confidentialite', '/mentions-legales', '/contact']) {
+    const h = await html(`${BASE}${chemin}`)
+    T(`${chemin} : aucun mailto:contact@prestiapp.fr (boîte morte — le formulaire /contact, lui, arrive)`, !/mailto:contact@prestiapp\.fr/i.test(h))
+  }
+
   console.log('\n── 3. Un site NON PUBLIÉ ne s’indexe pas')
   const nonPublie = await html(`${BASE}/site/${slug}`)
   T('la page ne montre pas le site', /Site non publié|Site indisponible|Erreur 404/.test(nonPublie))

@@ -84,7 +84,7 @@ export async function POST(req: Request) {
             facture = { numero: f.numero }
             await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'facture_emise', contenu: `Facture d'acompte ${f.numero} (${pct} %)` })
           } else if (artisan?.email) {
-            await notifierArtisan(lead.artisan_id, 'devis_accepte', artisan.email, { subject: `Facture d'acompte non créée — ${qui}`, text: `Votre règle demande une facture d'acompte de ${pct} % à l'acceptation, mais elle n'a pas pu être créée :\n\n${f.error}\n\nCréez-la depuis votre espace (Factures) une fois le profil complété.`, replyTo: 'contact@prestiapp.fr' }).catch(() => {})
+            await notifierArtisan(lead.artisan_id, 'devis_accepte', artisan.email, { subject: `Facture d'acompte non créée — ${qui}`, text: `Votre règle demande une facture d'acompte de ${pct} % à l'acceptation, mais elle n'a pas pu être créée :\n\n${f.error}\n\nCréez-la depuis votre espace (Factures) une fois le profil complété.`}).catch(() => {})
           }
         }
       } catch (e) { console.error('[conversation/devis] acompte:', e) }
