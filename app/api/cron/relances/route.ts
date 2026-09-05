@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { enregistrerPassage, ronde } from '@/lib/alertes'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { purgerComptes } from '@/lib/purgeComptes'
 import { generateRelanceReply, relanceTemplate } from '@/lib/ai'
@@ -96,5 +97,11 @@ export async function GET(req: Request) {
   // planifiées sur cette formule, toutes deux déjà prises.
   const { data: cachePurge } = await supabaseAdmin.rpc('purger_cache_recherche')
 
-  return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0) })
+  // La ronde des alertes (§6) vit ici : Vercel n'accorde que deux tâches planifiées à cette
+  // formule. Elle ne fait jamais échouer les relances — une alerte qui rate est journalisée.
+  let alertes: { envoyees: number; ignorees: number } | { erreur: string } = { envoyees: 0, ignorees: 0 }
+  try { const r = await ronde(); alertes = { envoyees: r.envoyees.length, ignorees: r.ignorees.length }; await enregistrerPassage('alertes', alertes) }
+  catch (e) { alertes = { erreur: e instanceof Error ? e.message : String(e) }; await enregistrerPassage('alertes', alertes, false) }
+  await enregistrerPassage('relances', { due: relances?.length ?? 0, sent, skipped, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0) })
+  return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), alertes })
 }

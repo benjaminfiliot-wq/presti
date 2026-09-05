@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { enregistrerPassage } from '@/lib/alertes'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { releverCanal, type Canal } from '@/lib/releveCanal'
 import { getUserRevocable } from '@/lib/authArtisan'
@@ -25,6 +26,7 @@ export async function GET(req: Request) {
     const r = await releverCanal(c)
     total += r.importes
   }
+  await enregistrerPassage('canaux-relever', {})
   return NextResponse.json({ ok: true, boites: data?.length ?? 0, importes: total })
 }
 

@@ -52,7 +52,7 @@ try {
 } catch (e) {
   ko++; console.log('  ❌ exception —', e instanceof Error ? e.message : e)
 } finally {
-  for (const id of comptes) { await admin.rpc('purger_compte_test', { p_id: id }).catch(() => {}) }
+  for (const id of comptes) { const { error } = await admin.rpc('purger_compte_test', { p_id: id }); if (error) console.log('  ⚠️ purge :', error.message) }
   console.log(`\n🧹 ${comptes.length} compte(s) de test purgé(s)`)
 }
 
