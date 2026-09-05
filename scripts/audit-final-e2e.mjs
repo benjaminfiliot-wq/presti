@@ -170,7 +170,8 @@ try {
   T('F7 — plafond quotidien global sur les envois non critiques', /emails:jour/.test(fs.readFileSync('lib/email.ts', 'utf8')))
 
   console.log('\n── G. Motion, marque, accessibilité')
-  T('G-1.1 — la séquence a un bouton pause (aria-pressed)', /class="dm-fleche dm-pause"[^>]*aria-pressed/.test(landing))
+  // La séquence est montée côté client (pas dans le HTML servi) : on lit le composant.
+  T('G-1.1 — la séquence a un bouton pause (aria-pressed)', /className="dm-fleche dm-pause"[^>]*aria-pressed=\{pauseManuel\}/.test(fs.readFileSync('app/DemoSequence.tsx', 'utf8')))
   T('G-1.2 — les liens d’en-tête se replient dès 760 px', /@media \(max-width:760px\)\{\.lp-links/.test(css))
   T('G-2.2 — la visionneuse arrête Lenis', /__lenis/.test(fs.readFileSync('app/site/[slug]/SiteLightbox.tsx', 'utf8')) && /lenis\?\.start\(\)/.test(fs.readFileSync('app/site/[slug]/SiteLightbox.tsx', 'utf8')))
   T('G-2.3 — le curseur avant/après montre son focus', /\.site-aa-range:focus-visible\) \.site-aa-knob/.test(fs.readFileSync('app/site/[slug]/site.css', 'utf8')))
