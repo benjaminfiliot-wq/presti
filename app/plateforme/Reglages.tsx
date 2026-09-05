@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import Info from '@/app/Info'
+import { peut, offreMinimale, PLANS } from '@/lib/plans'
 
 // Volet « Réglages » du poste de pilotage — l'ancien formulaire de /plateforme, tel quel.
 // Tous les réglages sont APPLIQUÉS CÔTÉ SERVEUR (lib/plateformeConfig) — cet écran n'est que la commande.
@@ -31,7 +32,7 @@ type Cfg = {
   longueur: 'courte' | 'moyenne' | 'longue'
 }
 const DEFAUT: Cfg = {
-  mode_reponse: 'auto', modele: null, auto_24_7: true, auto_debut: 18, auto_fin: 8,
+  mode_reponse: 'assistee', modele: null, auto_24_7: true, auto_debut: 18, auto_fin: 8,
   devis_auto: 'brouillon', devis_auto_seuil: null, facture_auto: 'jamais', ton: 'chaleureux',
   escalade_mots: ['urgence', 'fuite', 'degat des eaux', 'inondation', 'gaz', 'assurance'],
   limite_messages: 8, nom_assistant: null, message_accueil: null,
@@ -51,17 +52,45 @@ const TONS: { id: Cfg['ton']; nom: string }[] = [
 ]
 const MODELES: { id: string; nom: string }[] = [{ id: 'standard', nom: 'Standard' }, { id: 'pro', nom: 'Pro' }, { id: 'expert', nom: 'Expert' }]
 
-export default function Reglages({ uid, reponseAuto, pause, onPause }: { uid: string; reponseAuto: boolean | null; pause: boolean; onPause: (v: boolean) => void }) {
+export default function Reglages({ uid, plan, pause, onPause }: { uid: string; plan: string | null; pause: boolean; onPause: (v: boolean) => void }) {
   const [cfg, setCfg] = useState<Cfg>(DEFAUT)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+  // Ce que le serveur applique VRAIMENT (v7, 1e) : peut différer du mode choisi (verrou d'offre).
+  const [effectif, setEffectif] = useState<{ mode_effectif: Mode; motif: string | null } | null>(null)
+  const [modeMsg, setModeMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+  const verrouAuto = !peut(plan, 'plateforme.ia.auto')
+  const offreAuto = offreMinimale('plateforme.ia.auto')
+  const libelleOffre = offreAuto ? PLANS[offreAuto].label : 'supérieure'
+
+  async function lireEffectif() {
+    const { data } = await supabase.auth.getSession()
+    const t = data.session?.access_token
+    if (!t) return
+    const r = await fetch('/api/plateforme/config', { headers: { Authorization: `Bearer ${t}` } })
+    if (r.ok) setEffectif(await r.json())
+  }
+
+  // Le mode s'enregistre AU CLIC (v7, 1e) : avant, il fallait trouver le bouton « Enregistrer »
+  // plus bas, et un re-rendu pouvait écraser le choix entre-temps. Retour visuel immédiat, et
+  // relecture du mode que le serveur applique.
+  async function choisirMode(id: Mode) {
+    if (id === 'auto' && verrouAuto) return
+    set('mode_reponse', id); setModeMsg(null)
+    const { error } = await supabase.from('plateforme_config').upsert({ artisan_id: uid, mode_reponse: id, maj_le: new Date().toISOString() }, { onConflict: 'artisan_id' })
+    if (error) { setModeMsg({ type: 'err', text: 'Non enregistré — réessayez.' }); return }
+    setModeMsg({ type: 'ok', text: 'Enregistré.' }); setTimeout(() => setModeMsg(null), 2000)
+    await lireEffectif()
+  }
 
   useEffect(() => {
     supabase.from('plateforme_config').select('*').eq('artisan_id', uid).maybeSingle().then(({ data: c }) => {
-      // Sans configuration, on part du comportement actuel de l'artisan (aucune surprise).
-      setCfg(c ? { ...DEFAUT, ...(c as Partial<Cfg>) } : { ...DEFAUT, mode_reponse: reponseAuto === false ? 'manuelle' : 'auto' })
+      // Sans ligne de config (compte tout neuf) : « assistée », comme le serveur (CONFIG_DEFAUT).
+      setCfg(c ? { ...DEFAUT, ...(c as Partial<Cfg>) } : { ...DEFAUT })
     })
-  }, [uid, reponseAuto])
+    lireEffectif()
+    // Au montage seulement : un re-rendu du parent ne doit pas écraser un choix en cours (v7, 1e).
+  }, [uid])
 
   function set<K extends keyof Cfg>(k: K, v: Cfg[K]) { setCfg((p) => ({ ...p, [k]: v })) }
 
@@ -102,12 +131,25 @@ export default function Reglages({ uid, reponseAuto, pause, onPause }: { uid: st
 
         <label className="pcfg-lab">Mode de réponse <Info cle="plateforme.mode_reponse" /></label>
         <div className="pcfg-modes">
-          {MODES.map((m) => (
-            <button type="button" key={m.id} className={`pcfg-mode${cfg.mode_reponse === m.id ? ' on' : ''}`} onClick={() => set('mode_reponse', m.id)}>
-              <b>{m.nom}</b><span>{m.desc}</span>
-            </button>
-          ))}
+          {MODES.map((m) => {
+            // Le verrou d'offre est VISIBLE (v7, 1c) : avant, « Automatique » se laissait choisir en
+            // Essai/Essentiel et le serveur appliquait « assistée » sans le dire.
+            const verrou = m.id === 'auto' && verrouAuto
+            return (
+              <button type="button" key={m.id} className={`pcfg-mode${cfg.mode_reponse === m.id ? ' on' : ''}${verrou ? ' verrou' : ''}`}
+                aria-disabled={verrou} disabled={verrou} onClick={() => choisirMode(m.id)}
+                title={verrou ? `Disponible avec l’offre ${libelleOffre}` : undefined}>
+                <b>{m.nom}{verrou ? ' 🔒' : ''}</b><span>{verrou ? `Disponible avec l’offre ${libelleOffre} — d’ici là, l’assistant prépare et vous validez.` : m.desc}</span>
+              </button>
+            )
+          })}
         </div>
+        <p className="muted pcfg-effectif" aria-live="polite">
+          {effectif
+            ? <>Mode appliqué par le serveur : <b>{MODES.find((m) => m.id === effectif.mode_effectif)?.nom ?? effectif.mode_effectif}</b>{effectif.motif === 'verrou_offre' ? ` — l’assistant autonome est réservé à l’offre ${libelleOffre}` : ''}.</>
+            : <>Mode appliqué par le serveur : lecture…</>}
+          {modeMsg ? <span className={modeMsg.type === 'err' ? 'adr-msg err' : 'adr-msg ok'} style={{ marginLeft: '.6rem' }}>{modeMsg.text}</span> : null}
+        </p>
 
         <label className="pcfg-lab">Modèle utilisé <Info cle="plateforme.modele" /></label>
         <div className="pcfg-seg">

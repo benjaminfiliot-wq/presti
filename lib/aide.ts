@@ -455,7 +455,7 @@ export const INFOBULLES: InfoBulle[] = [
     page: '/plateforme',
     label: 'Mode de réponse',
     explication:
-      'Automatique : l’assistant répond tout de suite à votre place. Assistée : il prépare, vous validez. Manuelle : aucune réponse automatique.',
+      'Automatique : l’assistant répond tout de suite, en direct (offre Studio et au-delà — en Essai et Essentiel, ce mode est verrouillé et l’assistant prépare pour que vous validiez). Assistée : il prépare, vous validez ; le client voit « votre message est bien reçu ». Manuelle : rien n’est préparé, aucun crédit, vous écrivez tout. Et sur n’importe quel fil, « je prends la main » fait taire l’assistant jusqu’à « rendre la main ». Le choix s’enregistre au clic ; la ligne « mode appliqué par le serveur » dit ce qui est réellement en vigueur.',
     exemple: 'En Assistée, un client écrit à 22 h ; vous voyez la réponse proposée le lendemain matin et l’envoyez d’un clic.',
   },
   // source: app/plateforme/page.tsx:43, 147-153 ; lib/models.ts:10-15
