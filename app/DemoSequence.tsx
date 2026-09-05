@@ -82,7 +82,7 @@ export default function DemoSequence() {
             // pesaient 2,4 Mo au chargement (audit final, C1) — `loading="lazy"` ne protège pas des
             // images superposées dans le viewport. La suivante est déjà là → transition sans flash.
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={sc.image} src={sc.image} alt="" className={k === i ? 'on' : ''} style={{ objectPosition: sc.focus }} loading={k === 0 ? 'eager' : 'lazy'} decoding="async" />
+            <img key={sc.image} src={sc.image} srcSet={`${sc.image.replace(/\.webp$/, '-390.webp')} 390w, ${sc.image.replace(/\.webp$/, '-520.webp')} 520w, ${sc.image} 780w`} sizes="(max-width:760px) 62vw, 380px" alt="" className={k === i ? 'on' : ''} style={{ objectPosition: sc.focus }} loading={k === 0 ? 'eager' : 'lazy'} decoding="async" />
           ))}
         </div>
 

@@ -1,8 +1,6 @@
 'use client'
 
 import { useEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 /**
  * Moteur d'animation de la landing (GSAP ScrollTrigger).
@@ -29,8 +27,32 @@ export default function Motion() {
 
     const lp = document.querySelector('.lp')
     lp?.classList.add('reveal-armed') // à partir d'ici, les .reveal sont cachés jusqu'à .in
-    gsap.registerPlugin(ScrollTrigger)
-    const ctx = gsap.context(() => {
+
+    // v8 A1.8 — téléphone (ou écran tactile) : version légère, sans GSAP ni parallax. Les révélations
+    // se font par IntersectionObserver (une classe, une transition CSS), les compteurs sont posés
+    // d'emblée. GSAP ne se charge que sur bureau, à la demande : 70 Ko de moins sur mobile.
+    const mobile = window.innerWidth < 760 || !matchMedia('(hover:hover) and (pointer:fine)').matches
+    if (mobile) {
+      countEls.forEach((e) => { e.textContent = (e.dataset.to || '0') + (e.dataset.suffix || '') })
+      const io = new IntersectionObserver((entries) => {
+        for (const en of entries) if (en.isIntersecting) { (en.target as HTMLElement).classList.add('in'); io.unobserve(en.target) }
+      }, { rootMargin: '0px 0px -8% 0px' })
+      revealEls.forEach((el) => { if (el.getBoundingClientRect().top < window.innerHeight * 0.92) el.classList.add('in'); else io.observe(el) })
+      const stageM = document.querySelector<HTMLElement>('.lp-stage')
+      const ioStageM = stageM ? new IntersectionObserver((e) => { stageM.classList.toggle('hors-champ', !(e[0]?.isIntersecting ?? true)) }) : null
+      if (stageM) ioStageM?.observe(stageM)
+      const safetyM = setTimeout(() => { lp?.classList.remove('reveal-armed'); showAll() }, 4000)
+      return () => { io.disconnect(); ioStageM?.disconnect(); clearTimeout(safetyM) }
+    }
+
+    let annule = false
+    let revert: (() => void) | null = null
+    const refreshes: ReturnType<typeof setTimeout>[] = []
+    ;(async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([import('gsap'), import('gsap/ScrollTrigger')])
+      if (annule) return
+      gsap.registerPlugin(ScrollTrigger)
+      const ctx = gsap.context(() => {
       // Révélations
       revealEls.forEach((el) => {
         if (el.getBoundingClientRect().top < window.innerHeight * 0.9) { el.classList.add('in'); return }
@@ -55,7 +77,10 @@ export default function Motion() {
           onUpdate: () => { el.textContent = Math.round(obj.v) + suf },
         })
       })
-    })
+      })
+      revert = () => ctx.revert()
+      refreshes.push(setTimeout(() => ScrollTrigger.refresh(), 400))
+    })()
 
     // Scène du hero : ses deux animations CSS sont infinies et tournaient encore quand le visiteur
     // était en bas de page (audit final G). On les met en pause dès qu'elle quitte l'écran — c'est
@@ -67,10 +92,9 @@ export default function Motion() {
       ioStage.observe(stage)
     }
 
-    const refresh = setTimeout(() => ScrollTrigger.refresh(), 400)
     // filet : après 4 s on DÉSARME (contenu visible sans dépendre d'une transition/rAF) + reveal complet
     const safety = setTimeout(() => { lp?.classList.remove('reveal-armed'); showAll() }, 4000)
-    return () => { ctx.revert(); clearTimeout(refresh); clearTimeout(safety); ioStage?.disconnect() }
+    return () => { annule = true; revert?.(); refreshes.forEach(clearTimeout); clearTimeout(safety); ioStage?.disconnect() }
   }, [])
 
   return null
