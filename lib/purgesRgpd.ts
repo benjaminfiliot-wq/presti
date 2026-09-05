@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { actif } from '@/lib/flags'
 import { DUREES_MOIS } from '@/lib/legalArtisan'
 
 // Purges RGPD — appliquer les durées que les pages légales annoncent (audit final, auditeur B,
@@ -51,6 +52,8 @@ const LOT = 50
  * jeton mort ne sert plus aucune finalité.
  */
 export const JOURS_GRACE_JETONS = 7
+/** Une session vérifiée par le code email (v7 bloc 2) l'est pour 90 jours : au-delà, le code est redemandé. */
+export const JOURS_SESSIONS_VERIFIEES = 90
 
 export type BilanPurges = {
   /** Journal d'abus au-delà de douze mois. */
@@ -248,6 +251,16 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
     noter(await supprimerAnciennes('password_resets', 'id', 'expires_at', seuilJetons, PLAFOND_LIGNES)) +
     noter(await supprimerAnciennes('clients_sessions', 'id', 'expire_le', seuilJetons, PLAFOND_LIGNES)) +
     noter(await supprimerAnciennes('clients_liens', 'id', 'expire_le', seuilJetons, PLAFOND_LIGNES))
+
+  // 5. Code par email (v7 bloc 2) : codes et appareils de confiance passés de date, et les
+  //    sessions vérifiées de plus de 90 jours — l'artisan retape alors un code, une fois.
+  //    Derrière le drapeau : sans la migration 0063, ces tables n'existent pas.
+  if (actif('codeEmail')) {
+    bilan.jetons +=
+      noter(await supprimerAnciennes('codes_connexion', 'user_id', 'expire_le', seuilJetons, PLAFOND_LIGNES)) +
+      noter(await supprimerAnciennes('appareils_confiance', 'id', 'expire_le', seuilJetons, PLAFOND_LIGNES)) +
+      noter(await supprimerAnciennes('sessions_verifiees', 'session_id', 'verifiee_le', seuilJours(JOURS_SESSIONS_VERIFIEES, maintenant), PLAFOND_LIGNES))
+  }
 
   return bilan
 }

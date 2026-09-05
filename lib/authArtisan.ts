@@ -1,4 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { actif } from '@/lib/flags'
+import { sessionVerifiee } from '@/lib/connexion'
 
 // Authentification des routes serveur, avec RÉVOCATION RÉELLE (v4 §11).
 //
@@ -19,7 +21,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 // (identifiants de canaux, tarifs, suppressions, documents) passent toutes par ici.
 
 export type Session = { uid: string; iat: number }
-export type EchecAuth = { error: string; status: 401 | 403; code?: 'mfa_requise' }
+export type EchecAuth = { error: string; status: 401 | 403; code?: 'mfa_requise' | 'code_requis' }
 
 /** La charge utile du jeton, sans vérifier la signature — Supabase l'a déjà fait. */
 function chargeJeton(token: string): Record<string, unknown> | null {
@@ -71,6 +73,28 @@ async function mfaManquante(token: string, u: UtilisateurJeton): Promise<boolean
   return aUnFacteurVerifie(u)
 }
 
+// ── Le code par email (prompt v7, bloc 2) ────────────────────────────────────────
+//
+// Un compte SANS application d'authentification est protégé par le code envoyé par email :
+// sa session doit figurer dans `sessions_verifiees` (posée par api/auth/code/verifier, ou
+// par un appareil de confiance). Un jeton obtenu directement auprès de GoTrue avec le mot de
+// passe — ce que fait n'importe qui avec la clé anonyme — n'ouvre AUCUNE route tant que le
+// code n'a pas été prouvé. Un compte AVEC application d'authentification est déjà tenu à
+// aal2 (ci-dessus) : c'est elle son second facteur, pas l'email. Même règle pour tous,
+// fondateurs compris.
+
+export const ERREUR_CODE = 'Connexion à vérifier : reconnectez-vous, un code vous sera envoyé par email.'
+
+/** Vrai si ce jeton doit encore prouver le code email. */
+async function codeManquant(token: string, u: UtilisateurJeton): Promise<boolean> {
+  if (!actif('codeEmail')) return false
+  const charge = chargeJeton(token)
+  if (charge?.aal === 'aal2') return false
+  if (await aUnFacteurVerifie(u)) return false // c'est mfaManquante qui juge, juste avant
+  const sid = typeof charge?.session_id === 'string' ? charge.session_id : null
+  return !sid || !(await sessionVerifiee(sid))
+}
+
 /**
  * Vérifie le jeton porté par la requête et renvoie l'identifiant de l'artisan,
  * ou un échec explicite. À utiliser à la place de `auth.getUser` seul.
@@ -91,6 +115,7 @@ export async function authArtisan(req: Request): Promise<Session | EchecAuth> {
     return { error: 'Cette session a été fermée. Reconnecte-toi.', status: 401 }
   }
   if (await mfaManquante(token, data.user as UtilisateurJeton)) return { error: ERREUR_MFA, status: 401, code: 'mfa_requise' }
+  if (await codeManquant(token, data.user as UtilisateurJeton)) return { error: ERREUR_CODE, status: 401, code: 'code_requis' }
   return { uid: data.user.id, iat: iat ?? 0 }
 }
 
@@ -151,6 +176,9 @@ export async function getUserRevocable(token: string): Promise<ReponseUtilisateu
   if (await mfaManquante(token, r.data.user as UtilisateurJeton)) {
     // Même forme : la route répond 401 avec ce message, et le client sait le reconnaître.
     return { data: { user: null }, error: { message: ERREUR_MFA, name: 'AuthApiError', status: 401, code: 'mfa_requise' } } as unknown as ReponseUtilisateur
+  }
+  if (await codeManquant(token, r.data.user as UtilisateurJeton)) {
+    return { data: { user: null }, error: { message: ERREUR_CODE, name: 'AuthApiError', status: 401, code: 'code_requis' } } as unknown as ReponseUtilisateur
   }
   return r
 }

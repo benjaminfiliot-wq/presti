@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { authArtisan, estEchec, revoquerSessions } from '@/lib/authArtisan'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { lireUserAgent } from '@/lib/userAgent'
+import { actif } from '@/lib/flags'
+import { enteteCookieAppareilVide, revoquerAppareils } from '@/lib/connexion'
 
 // Sessions de l'artisan (sprint J-1 §6 — Paramètres → Sécurité).
 //
@@ -21,32 +24,6 @@ function sessionDuJeton(req: Request): string | null {
     const json = JSON.parse(Buffer.from(charge.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8'))
     return typeof json?.session_id === 'string' ? json.session_id : null
   } catch { return null }
-}
-
-/**
- * Lecture du User-Agent, sans bibliothèque : on ne cherche pas l'exhaustivité, juste de
- * quoi reconnaître « mon téléphone » de « l'ordinateur du bureau ». Ce qu'on ne sait pas
- * lire s'affiche « Appareil inconnu », jamais une valeur devinée.
- */
-function lireUserAgent(ua: string | null | undefined): { appareil: string; navigateur: string } {
-  const s = ua || ''
-  let appareil = 'Appareil inconnu'
-  if (/iPhone/i.test(s)) appareil = 'iPhone'
-  else if (/iPad/i.test(s)) appareil = 'iPad'
-  else if (/Android/i.test(s)) appareil = /Mobile/i.test(s) ? 'Téléphone Android' : 'Tablette Android'
-  else if (/Windows/i.test(s)) appareil = 'Ordinateur Windows'
-  else if (/Macintosh|Mac OS X/i.test(s)) appareil = 'Mac'
-  else if (/CrOS/i.test(s)) appareil = 'Chromebook'
-  else if (/Linux/i.test(s)) appareil = 'Ordinateur Linux'
-  let navigateur = 'Navigateur inconnu'
-  if (/Edg\//i.test(s)) navigateur = 'Edge'
-  else if (/OPR\//i.test(s)) navigateur = 'Opera'
-  else if (/SamsungBrowser/i.test(s)) navigateur = 'Samsung Internet'
-  else if (/Firefox\//i.test(s)) navigateur = 'Firefox'
-  else if (/Chrome\//i.test(s)) navigateur = 'Chrome'
-  else if (/Safari\//i.test(s) && /Version\//i.test(s)) navigateur = 'Safari'
-  else if (/Playwright|HeadlessChrome/i.test(s)) navigateur = 'Chrome (test)'
-  return { appareil, navigateur }
 }
 
 export async function GET(req: Request) {
@@ -109,8 +86,15 @@ export async function POST(req: Request) {
     }, { status: 500 })
   }
 
-  return NextResponse.json({
+  // v7 bloc 2 : les appareils de confiance tombent avec les sessions — sinon « fermer tout »
+  // laisserait un ordinateur partagé rentrer sans code au prochain mot de passe.
+  const reponse = NextResponse.json({
     ok: true,
     message: 'Toutes vos sessions ont été fermées, y compris celle-ci. Reconnectez-vous.',
   })
+  if (actif('codeEmail')) {
+    await revoquerAppareils(s.uid)
+    reponse.headers.set('Set-Cookie', enteteCookieAppareilVide())
+  }
+  return reponse
 }

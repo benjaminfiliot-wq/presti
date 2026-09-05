@@ -11,6 +11,10 @@
 // décision de code, versionnée, relue en revue — pas un réglage qu'on bascule à chaud.
 
 export const FLAGS = {
+  /** v7 bloc 2 — code par email à la connexion (routes api/auth/code, verrou lib/authArtisan, appareils de
+   *  confiance). À passer à `true` dès que la migration 0063 est collée : avec le drapeau levé et sans les
+   *  tables, le verrou refuse TOUT (fail-closed, voulu) — d'où l'ordre : coller, puis lever. */
+  codeEmail: false,
   /** §6 — 2FA TOTP via Supabase MFA. Décision Benj du 04/09 : dans le sprint. Livré et testé (scripts/mfa-e2e.mjs). */
   mfa: true,
   /** §8 F1 — photo de facture fournisseur → OCR → lignes proposées. */
