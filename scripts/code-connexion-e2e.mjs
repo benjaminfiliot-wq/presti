@@ -86,7 +86,7 @@ const nettoyer = async () => { for (const id of comptes) await rest('rpc/purger_
 {
   const sonde = await demanderCode('sonde@presti-test.invalid', 'x')
   if (sonde.status === 404) {
-    console.log('\n⛔ Le code par email est désactivé en production (drapeau `codeEmail` baissé).')
+    console.log("\n⛔ Le code par email est désactivé en production (drapeau 'codeEmail' baissé).")
     console.log('   À faire : coller _A_COLLER_sql_editor_0063.sql dans Supabase → SQL Editor, puis lib/flags.ts → codeEmail: true, déployer, relancer.')
     fin(2)
   }
@@ -110,6 +110,7 @@ try {
   const l1 = await ligneCode(A.uid)
   T('une ligne codes_connexion : hachée, 0 essai', !!l1 && /^[0-9a-f]{64}$/.test(l1.hash_code) && l1.essais === 0)
   T('valable 10 minutes', !!l1 && Math.abs(new Date(l1.expire_le).getTime() - Date.now() - 600_000) < 30_000, l1?.expire_le)
+  // L'email part de app/api/auth/code/route.ts (sendEmail, critique) ; les adresses .invalid ne sont jamais envoyées.
   const gab = gabaritCode('482913')
   T('le gabarit d’email porte le code et sa validité', gab.subject === 'Votre code Presti : 482 913' && /482 913/.test(gab.text) && /10 minutes/.test(gab.text))
 

@@ -138,7 +138,9 @@ try {
   console.log('\n── E. L’IA : coûts justes, verrou d’offre serveur, pannes signalées')
   const stream = fs.readFileSync('app/api/conversation/stream/route.ts', 'utf8')
   T('M1 — le crédit est débité au tarif du modèle servi', !/consumeCredit\(artisan\.id, 'standard'/.test(stream))
-  T('M2 — l’assistant autonome est verrouillé côté serveur', /peut\(artisan\.plan, 'plateforme\.ia\.auto'\)/.test(stream))
+  // v7 bloc 1b : le verrou vit dans decisionReponse()/modeEffectif() (lib/plateformeConfig), appelée par les trois routes.
+  const plateformeCfg = fs.readFileSync('lib/plateformeConfig.ts', 'utf8')
+  T('M2 — l’assistant autonome est verrouillé côté serveur (décision unique, motif verrou_offre)', /peut\(plan, 'plateforme\.ia\.auto'\)/.test(plateformeCfg) && /verrou_offre/.test(plateformeCfg) && /decisionReponse\(/.test(stream))
   const routesIA = ['app/api/leads/route.ts', 'app/api/devis/generer/route.ts', 'app/api/tools/reponse/route.ts', 'app/api/site/generate/route.ts', 'app/api/messages/route.ts', 'app/api/cron/relances/route.ts']
   T('M5 — les six chemins signalent une panne IA', routesIA.every((f) => /signalerPanneIA\(/.test(fs.readFileSync(f, 'utf8'))), routesIA.filter((f) => !/signalerPanneIA\(/.test(fs.readFileSync(f, 'utf8'))).join(', '))
   T('M5 — le crédit d’une génération échouée est rendu', /export async function rendreCredit/.test(fs.readFileSync('lib/credits.ts', 'utf8')) && routesIA.slice(0, 5).every((f) => /rendreCredit\(/.test(fs.readFileSync(f, 'utf8'))))

@@ -17,6 +17,7 @@ const T = (n, c, d = '') => { if (c) { ok++; console.log(`  ✅ ${n}`) } else { 
 const CARTE = {
   'app/api/account/inscription/route.ts': 'entreprise : un artisan vient de s’inscrire',
   'app/api/auth/reset-request/route.ts': 'artisan : lien de réinitialisation du mot de passe',
+  'app/api/auth/code/route.ts': 'artisan : code de connexion à 6 chiffres (v7 bloc 2, critique : jamais bloqué par le plafond)',
   'app/api/contact/route.ts': 'entreprise : message du formulaire /contact',
   'app/api/conversation/route.ts': 'artisan : nouveau message / réponse envoyée / demande sensible',
   'app/api/conversation/stream/route.ts': 'artisan : nouveau message sur le fil',

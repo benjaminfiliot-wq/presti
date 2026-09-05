@@ -87,7 +87,8 @@ export async function POST(req: Request) {
   if (eCode) { console.error('[auth/code] codes_connexion:', eCode.message); return NextResponse.json({ error: 'Connexion impossible pour l’instant.' }, { status: 500 }) }
 
   // `critique` : le plafond quotidien d'envois ne doit jamais empêcher quelqu'un d'entrer.
-  const envoi = await sendEmail({ to: email, ...gabaritCode(code), critique: true })
+  const gab = gabaritCode(code)
+  const envoi = await sendEmail({ to: email, subject: gab.subject, text: gab.text, critique: true })
   if (!envoi.ok) { console.error('[auth/code] envoi:', envoi.error); return NextResponse.json({ error: 'L’envoi du code a échoué. Réessayez dans un instant.' }, { status: 500 }) }
   return NextResponse.json({ etape: 'code', expire_dans: MINUTES_CODE * 60 })
 }
