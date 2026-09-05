@@ -76,6 +76,12 @@
 
 **Appels IA du sprint : 0**
 
+## [9] Lanceur complet et adresse dédiée — 11:00 → 11:30 — ✅ 37/37 hors IA
+- `node scripts/tout-verifier.mjs` (37 suites, 434 s, jamais l'IA) : 32/37 au premier passage. Les 5 rouges : 2 suites en retard sur les correctifs (case CGU, import CSV qui met à jour au lieu d'empiler — comportement voulu, test corrigé), 2 suites bloquées par les plafonds (429) parce que les auditeurs et moi frappions la prod depuis la même adresse (`purger-abus` vide maintenant aussi les créneaux), 1 suite recouverte par la visite guidée (mémorisée en base : `aide_vues`). Rejouées une à une : **toutes vertes**. Seuls restent les 2 points de `audit-final-e2e` qui attendent 0058 (H1).
+- **Adresse dédiée aux tâches automatiques** (demande Benj) : `benjaminfiliot+presti@gmail.com` — alias Gmail, rien à créer. Posée en local et sur Vercel (`scripts/vercel-env.mjs PRESTI_ALERTES_EMAIL …`), libellé « Presti » créé dans Gmail, **digest simulé reçu à 11:12** et rangé sous le libellé. Il reste à Benj un filtre Gmail (« à : benjaminfiliot+presti@gmail.com » → libellé Presti) pour que les suivants se rangent seuls.
+
+**Appels IA du sprint : 0**
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
 | # | Action | Où | Effet vérifiable |
 |---|--------|----|------------------|
@@ -86,6 +92,7 @@
 | H8 | Secret GitHub `PRESTI_ENV_LOCAL` (contenu de `.env.local` sans la clé Anthropic) | GitHub → Settings → Secrets → Actions | premier run vert de « Audit récurrent » (workflow_dispatch) |
 | H9 | Email et téléphone de l'éditeur (LCEN) — boîte qui fonctionne ou adresse choisie | décision Benj | mentions légales complètes (auditeur B, D2) |
 | H10 | Domaine d'envoi neutre pour les emails au nom de l'artisan | décision + DNS | From sans « presti » (auditeur B, F3) |
+| H13 | Filtre Gmail : « à : benjaminfiliot+presti@gmail.com » → libellé « Presti » (le libellé existe déjà) | Gmail → Paramètres → Filtres | le prochain email d'alerte arrive rangé |
 | H11 | Enregistrement DNS `_dmarc.prestiapp.fr` TXT `v=DMARC1; p=quarantine; rua=mailto:<adresse des alertes>` (ou `node scripts/ovh.mjs dmarc`) | OVH → zone DNS | `nslookup -type=txt _dmarc.prestiapp.fr` répond ; alerte `domaine_mail` se tait |
 | H12 | Sauvegardes : offre Supabase avec sauvegardes quotidiennes (Pro) ou `pg_dump` planifié (mot de passe Postgres à réaligner) | Supabase → Settings → Database | une restauration testée une fois, datée dans le journal (auditeur F, 12) |
 
