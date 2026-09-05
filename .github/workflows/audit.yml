@@ -37,7 +37,7 @@ jobs:
           test -s .env.local || { echo 'Secret PRESTI_ENV_LOCAL absent : rien à auditer.'; exit 1; }
           grep -q '^NEXT_PUBLIC_SUPABASE_URL=' .env.local || { echo 'PRESTI_ENV_LOCAL incomplet.'; exit 1; }
       - name: Chromium pour les suites navigateur
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium webkit
       - name: Suites gratuites et navigateur — jamais l'IA
         run: node scripts/tout-verifier.mjs
       - name: Inventaire produit et couverture
