@@ -12,7 +12,7 @@
 - Garde-fou IA local : la clé Anthropic de `.env.local` est mise en commentaire pour la durée du sprint (tout script local qui l'appellerait échoue en 401 → défaut visible). La prod garde sa clé.
 - Stripe est en **mode RÉEL** (vérifié le 04/09) → §4 attend H4 (clé de test) pour ne rien débiter.
 
-**Appels IA du sprint : 0**
+**Appels IA du sprint v6 : 0 · v7 : 3 (rejeu obligatoire de `pilotage-e2e`)**
 
 ## [1] Inventaire et couverture — 01:20 → 01:45 (25 min) — ✅ `scripts/inventaire-produit.mjs`
 - 30 pages · 56 routes · 56 migrations (0047→0056 sondées en base : toutes ✅) · 12 drapeaux (2 morts : `inventaireOcr`, `plateformePilotage`) · 26 envois d'email · 2 crons · 23 capacités · 33 suites → `plans/inventaire-produit.md`, `plans/couverture.md` : **75 cases vides**.
@@ -129,6 +129,15 @@
 - **Téléphone LCEN** publié dans les mentions légales avec l'email ; la suite juridique l'exige.
 - **Détection de rejeu** : le réglage était bon (bouton activé, fenêtre à 10 s) et c'est ma sonde qui se trompait — elle rejouait le parent immédiat, toléré par GoTrue pour absorber un double rafraîchissement. Reprise sur un jeton deux crans en arrière : refusé, chaîne légitime intacte. Leçon : une sonde qui accuse doit d'abord être suspectée elle-même.
 - Il ne reste que du confort à la main de Benj : DMARC, clé admin Anthropic, clé Stripe de test, domaine d'envoi neutre.
+
+## [15] v7 · bloc 1 — les trois modes de réponse — 05/09 21:30 — ✅ `modes-e2e` **35/35** en prod, `pilotage-e2e` 18/18
+- **Vérifié** : chaque mode × chaque route × 3 offres, avant correction → **17/35** (test rouge écrit d'abord).
+- **Trouvé (preuve)** : `/api/conversation` lisait `artisans.reponse_auto` AVANT la config (motif absent, mode ignoré) ; `/api/leads` idem ; `/stream` déguisait le verrou d'offre en « assistée » ; `GET /api/plateforme/config` n'existait pas (404) ; `rendre_main` → 400 ; l'écran enregistrait le mode avec le reste et rechargeait à chaque re-rendu.
+- **Corrigé** (5 commits `bfd044d` → `d263d92`) : 1a une seule source de vérité (`plateforme_config.mode_reponse`, migration 0062 rejouée par l'API de service : 6/6 comptes ont leur ligne, le booléen n'est plus jamais lu ni écrit) · 1b `decisionReponse()` unique pour les trois routes, motif explicite `verrou_offre` · 1c verrou visible (🔒 « Disponible avec l'offre Studio », non sélectionnable) · 1d `rendre_main` + bouton dans le bandeau · 1e enregistrement au clic, « Mode appliqué par le serveur » lu sur `GET /api/plateforme/config`.
+- **Preuve en prod** : `modes-e2e` 35/35 (aller-retour auto → assistée → manuelle → auto, verrou, prise/rendue de main, booléen hérité ignoré, 0 message IA, 0 crédit) ; `pilotage-e2e` 18/18 rejoué.
+- **Journal** : appels IA : **3 en prod** (les 2 réponses + 1 chiffrage de `pilotage-e2e`, Haiku, < 0,05 €) — le prompt exige ce rejeu ; `modes-e2e` en fait **0** (comptes à 0 crédit, remise datée dans le futur). Cumul v7 : 3.
+- **Reste à Benj** : coller `_A_COLLER_sql_editor_0062.sql` (uniquement le commentaire de colonne — les lignes de config sont déjà posées).
+- **Suivant** : bloc 2, le code email à la connexion.
 
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
 | # | Action | Où | Effet vérifiable |
