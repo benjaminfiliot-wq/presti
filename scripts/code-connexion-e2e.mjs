@@ -259,7 +259,8 @@ try {
     T('le navigateur porte le cookie httpOnly de l’appareil', !!ck && ck.httpOnly === true && ck.secure === true)
     await p.goto(`${APP}/parametres?onglet=securite`, { waitUntil: 'load' })
     await p.waitForSelector('[data-appareils] .sess li', { timeout: 30000 })
-    T('Sécurité → « Appareils de confiance » liste cet appareil', /Cet appareil/.test(await p.locator('[data-appareils]').innerText()))
+    // innerText rend le texte tel qu'AFFICHÉ : la pastille est en capitales (text-transform) — on regarde la classe, comme parametres-e2e.
+    T('Sécurité → « Appareils de confiance » liste cet appareil, marqué courant', await p.locator('[data-appareils] .sess li.courante').count() === 1 && /cet appareil/i.test(await p.locator('[data-appareils]').innerText()))
     await p.screenshot({ path: `${OUT}/code-2-appareils.png`, fullPage: true })
     // déconnexion (session locale effacée, cookie conservé) → reconnexion sans code
     await p.evaluate(() => localStorage.clear())
