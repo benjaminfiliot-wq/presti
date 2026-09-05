@@ -4,10 +4,9 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
-import { peut } from '@/lib/plans'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
-import { getPlateformeConfig, iaDoitRepondre, personaDe, type PlateformeConfig } from '@/lib/plateformeConfig'
+import { getPlateformeConfig, decisionReponse, personaDe, type PlateformeConfig } from '@/lib/plateformeConfig'
 import { resolveModel } from '@/lib/models'
 
 // Ton de l'assistant (§A4) → persona passée au moteur de rédaction.
@@ -76,7 +75,7 @@ export async function POST(req: Request) {
     if (history.length >= MAX_TOURS) return NextResponse.json({ ok: true, reply: null, closed: true })
 
     const { data: artisan } = await supabaseAdmin
-      .from('artisans').select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause, plan, services, zone_intervention, bio, tva_regime, assurance_nom').eq('id', lead.artisan_id).maybeSingle()
+      .from('artisans').select('id, nom, metier, ton_style, email, is_founder, leads_pause, plan, services, zone_intervention, bio, tva_regime, assurance_nom').eq('id', lead.artisan_id).maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
 
     const notifier = async (reply: string | null, alerte?: string) => {
@@ -93,27 +92,26 @@ export async function POST(req: Request) {
 
     // ── Panneau de contrôle IA (§A4) : mode de réponse, escalade, plafond, plage horaire.
     // Un artisan sans configuration garde EXACTEMENT son comportement actuel.
-    const cfgRegle = await getPlateformeConfig(artisan.id, artisan.reponse_auto)
-    // Verrou d'offre côté SERVEUR (audit final, auditeur E, M2) : l'assistant autonome est vendu à
-    // partir de Studio. `mode_reponse` est écrit par le navigateur et vaut 'auto' par défaut : un
-    // Essentiel l'obtiendrait sans ce contrôle. Pour lui, l'assistant prépare, l'artisan valide.
-    const cfg: PlateformeConfig = cfgRegle.mode_reponse === 'auto' && !peut(artisan.plan, 'plateforme.ia.auto') ? { ...cfgRegle, mode_reponse: 'assistee' } : cfgRegle
+    const cfg = await getPlateformeConfig(artisan.id)
     const nbReponsesIA = history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length
+
+    // UNE décision, la même que /api/conversation et /api/leads (v7, bloc 1b). Le verrou d'offre
+    // (assistant autonome dès Studio) y vit aussi et rend un motif explicite, `verrou_offre`,
+    // au lieu de se faire passer pour « assistée » : l'interface peut enfin dire la vérité.
+    const decision = decisionReponse(artisan, lead, cfg, { nbReponsesIA, message })
 
     // « Je prends la main » (v5 §9) : l'artisan répond lui-même sur CE fil. L'assistant se tait,
     // le client le voit (GET /api/conversation rend prise_en_main), l'artisan est prévenu.
-    if (lead.prise_en_main) {
+    if (!decision.ok && decision.raison === 'humain') {
       await notifier(null, 'Nouveau message — vous avez la main')
       return NextResponse.json({ ok: true, reply: null, raison: 'humain' })
     }
-
-    const decision = iaDoitRepondre(cfg, { nbReponsesIA, message, pause: artisan.leads_pause === true })
 
     // Mode ASSISTÉ (v5 §9) : l'assistant prépare, l'artisan valide. Avant, ce réglage se
     // contentait de faire taire l'assistant — « rien ne part sans vous » était vrai, mais
     // « l'assistant prépare » ne l'était pas. La proposition est écrite dans le fil avec
     // etat='proposition' : invisible du client, visible du poste de pilotage.
-    if (!decision.ok && decision.raison === 'assistee') {
+    if (!decision.ok && decision.comportement === 'preparer') {
       // Le crédit est débité au tarif du modèle réellement servi (M1 : Expert vaut 3, pas 1).
       const { model, tier } = resolveModel(cfg.modele || 'standard', artisan.plan)
       const credit = await consumeCredit(artisan.id, tier, !!artisan.is_founder)
@@ -132,7 +130,7 @@ export async function POST(req: Request) {
         } catch (e) { console.error('[conversation/stream] proposition:', e); await signalerPanneIA('proposition de réponse', e); await rendreCredit(artisan.id, tier, !!artisan.is_founder) }
       }
       await notifier(null, 'Réponse proposée — à valider')
-      return NextResponse.json({ ok: true, reply: null, raison: 'assistee' })
+      return NextResponse.json({ ok: true, reply: null, raison: decision.raison })
     }
 
     if (!decision.ok) {

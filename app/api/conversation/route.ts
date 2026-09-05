@@ -6,7 +6,7 @@ import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
-import { getPlateformeConfig, personaDe } from '@/lib/plateformeConfig'
+import { getPlateformeConfig, decisionReponse, personaDe } from '@/lib/plateformeConfig'
 import { resolveModel } from '@/lib/models'
 import { suiviDemande } from '@/lib/suiviDemande'
 
@@ -155,29 +155,32 @@ export async function POST(req: Request) {
     // Profil artisan (persona + crédits/fondateur).
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email, is_founder, plan, reponse_auto, services, zone_intervention, bio, tva_regime, assurance_nom')
+      .select('id, nom, metier, ton_style, email, is_founder, plan, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom')
       .eq('id', lead.artisan_id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
 
-    // Mode MANUEL, ou l'artisan a pris la main sur ce fil : pas de réponse IA, on le prévient.
-    if (artisan.reponse_auto === false || lead.prise_en_main) {
+    // UNE décision, la même que /stream et /api/leads (v7, bloc 1b). Avant, cette route lisait
+    // l'ancien booléen `reponse_auto` AVANT la config : remettre « auto » dans Ma plateforme ne
+    // changeait rien ici. Le motif est toujours rendu — jamais un silence.
+    const cfg = await getPlateformeConfig(artisan.id)
+    const decision = decisionReponse(artisan, lead, cfg, { nbReponsesIA: history.filter((m) => m.sens === 'out' && m.type === 'reponse_auto').length, message })
+    if (!decision.ok) {
       if (artisan.email) {
         await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
           
           subject: `Nouveau message — ${lead.nom_prospect || lead.contact || 'prospect'}`,
-          text: `Un prospect vous a écrit sur votre page Presti (réponse manuelle) :\n\n« ${message} »\n\nRépondez-lui depuis votre espace (Messages).`,
+          text: `Un prospect vous a écrit sur votre page Presti :\n\n« ${message} »\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
         }).catch(() => {})
       }
-      return NextResponse.json({ ok: true, reply: null })
+      return NextResponse.json({ ok: true, reply: null, raison: decision.raison })
     }
 
     // Crédit pour la réponse IA. Épuisé → message tout de même sauvé, artisan notifié,
     // mais pas de réponse auto (il répondra lui-même depuis sa boîte de réception).
     // Le modèle réglé par l'artisan, débité à son vrai tarif (audit final, E-M1) — avant, cette route
     // servait le modèle par défaut et débitait « standard » quel que soit le réglage.
-    const cfg = await getPlateformeConfig(artisan.id, artisan.reponse_auto)
     const { model: modeleRegle, tier: tierRegle } = resolveModel(cfg.modele || 'standard', artisan.plan)
     const credit = await consumeCredit(artisan.id, tierRegle, !!artisan.is_founder)
     if (!credit.ok) {
@@ -189,7 +192,7 @@ export async function POST(req: Request) {
           replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
         }).catch(() => {})
       }
-      return NextResponse.json({ ok: true, reply: null })
+      return NextResponse.json({ ok: true, reply: null, raison: 'credits' })
     }
 
     // Réponse IA contextuelle (tout l'historique + le nouveau message).

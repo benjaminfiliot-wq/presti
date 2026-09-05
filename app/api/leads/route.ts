@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateLeadReply, qualifyLead } from '@/lib/ai'
+import { getPlateformeConfig, decisionReponse } from '@/lib/plateformeConfig'
 import { sendEmail } from '@/lib/email'
 import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
@@ -71,7 +72,7 @@ export async function POST(req: Request) {
     // 1) Retrouver l'artisan à partir de son slug
     const { data: artisan, error: aErr } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan')
+      .select('id, nom, metier, ton_style, email, is_founder, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan')
       .eq('slug', slug)
       .maybeSingle()
 
@@ -179,9 +180,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token })
     }
 
-    // Mode MANUEL (l'artisan a coupé la réponse auto) : on trace le message + on le
-    // notifie, mais on ne génère PAS de réponse IA. Il répondra depuis sa boîte de réception.
-    if (artisan.reponse_auto === false) {
+    // La même décision que les deux routes de conversation (v7, bloc 1b) — avant, cette route
+    // lisait l'ancien booléen `reponse_auto`, que Ma plateforme n'écrivait plus. Pas de réponse
+    // automatique (manuelle, assistée, verrou d'offre, pause…) : on trace, on notifie, on dit pourquoi.
+    const cfgPlateforme = await getPlateformeConfig(artisan.id)
+    const decision = decisionReponse(artisan, { prise_en_main: false }, cfgPlateforme, { nbReponsesIA: 0, message: message || '' })
+    if (!decision.ok) {
       if (message) {
         await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
       }
@@ -189,7 +193,7 @@ export async function POST(req: Request) {
         await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
           
           subject: `Nouveau contact — ${nom_prospect || contact}`,
-          text: `Nouveau contact via votre page Presti (mode réponse manuelle).\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRépondez-lui depuis votre espace (Messages).`,
+          text: `Nouveau contact via votre page Presti — à vous de répondre.\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: typeof contact === 'string' && contact.includes('@') ? contact : undefined,
         }).catch(() => {})
       }
@@ -204,7 +208,7 @@ export async function POST(req: Request) {
           replyTo: artisan.email ?? undefined,
         }).catch(() => {})
       }
-      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: null })
+      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: null, raison: decision.raison })
     }
 
     // Décompte d'un crédit pour la réponse auto. Si épuisé : le lead est TOUJOURS
@@ -215,7 +219,7 @@ export async function POST(req: Request) {
       if (message) {
         await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
       }
-      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token })
+      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, raison: 'credits' })
     }
 
     // 3) Étape 4 — réponse IA instantanée + emails.
