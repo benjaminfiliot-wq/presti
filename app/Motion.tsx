@@ -57,10 +57,20 @@ export default function Motion() {
       })
     })
 
+    // Scène du hero : ses deux animations CSS sont infinies et tournaient encore quand le visiteur
+    // était en bas de page (audit final G). On les met en pause dès qu'elle quitte l'écran — c'est
+    // le seul endroit de la landing où une boucle sans fin est posée.
+    const stage = document.querySelector<HTMLElement>('.lp-stage')
+    let ioStage: IntersectionObserver | null = null
+    if (stage && 'IntersectionObserver' in window) {
+      ioStage = new IntersectionObserver((e) => { stage.classList.toggle('hors-champ', !(e[0]?.isIntersecting ?? true)) })
+      ioStage.observe(stage)
+    }
+
     const refresh = setTimeout(() => ScrollTrigger.refresh(), 400)
     // filet : après 4 s on DÉSARME (contenu visible sans dépendre d'une transition/rAF) + reveal complet
     const safety = setTimeout(() => { lp?.classList.remove('reveal-armed'); showAll() }, 4000)
-    return () => { ctx.revert(); clearTimeout(refresh); clearTimeout(safety) }
+    return () => { ctx.revert(); clearTimeout(refresh); clearTimeout(safety); ioStage?.disconnect() }
   }, [])
 
   return null

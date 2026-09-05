@@ -127,29 +127,69 @@ export function versArtisanLegal(a: Record<string, unknown> | null | undefined):
   }
 }
 
+// ── Durées de conservation : ce qui est ANNONCÉ est ce qui est APPLIQUÉ.
+//
+// Le défaut trouvé par l'audit final (auditeur B, majeur C6) : ces pages annonçaient
+// « 3 ans », « 12 mois » en toutes lettres, et aucune ligne de code ne les appliquait — rien
+// n'était jamais purgé. Une durée promise que la base ne tient pas est le pire des deux
+// mondes : elle ne protège personne et elle constitue l'écart démontrable qu'un contrôle
+// cherche (RGPD art. 5.1 e « limitation de la conservation », art. 13.2 a « durée annoncée »).
+//
+// Les durées vivent donc ici en NOMBRES DE MOIS, pas en phrases. `lib/purgesRgpd.ts` les
+// exécute, les pages légales les affichent via `libelleDuree`. Changer un chiffre change les
+// deux d'un coup : le document et la base ne peuvent plus diverger.
+
+/** Clés des durées — sert à relier un traitement affiché à la purge qui l'applique. */
+export type CleDuree = 'conversation' | 'comptable' | 'anti_abus'
+
+export const DUREES_MOIS: Record<CleDuree, number> = {
+  /** Conversation (lead + messages) sans nouvel échange. Purgée par `purgerConversationsSansSuite`. */
+  conversation: 36,
+  /**
+   * Pièces comptables : facture émise, et le devis / le client qu'elle cite.
+   * Obligation légale (art. L. 102 B du LPF) : JAMAIS purgées par le cron — la durée figure
+   * ici pour être affichée, pas pour déclencher une suppression automatique.
+   */
+  comptable: 120,
+  /** Anti-abus : empreintes d'IP, horodatages d'abus, bannissements expirés. */
+  anti_abus: 12,
+}
+
+/**
+ * La durée telle qu'elle se lit sur les pages (« 12 mois », « 3 ans »), tirée du nombre
+ * réellement appliqué. En dessous de deux ans on garde les mois : « 1 an » pour douze mois
+ * se lit comme un arrondi, alors que la politique annonce précisément douze mois.
+ */
+export function libelleDuree(mois: number): string {
+  return mois >= 24 && mois % 12 === 0 ? `${mois / 12} ans` : `${mois} mois`
+}
+
 /**
  * Les traitements de données opérés sur les surfaces de l'artisan.
  * Écrits ici une fois pour toutes : l'artisan n'a pas à rédiger une politique de
  * confidentialité, et surtout il ne doit pas avoir à deviner ce que l'outil collecte.
  */
-export const TRAITEMENTS: { finalite: string; donnees: string; base: string; duree: string }[] = [
+export const TRAITEMENTS: { cle: CleDuree; finalite: string; donnees: string; base: string; duree: string }[] = [
   {
+    cle: 'conversation',
     finalite: 'Répondre à votre demande de devis et échanger avec vous',
     donnees: 'Nom, coordonnées (email ou téléphone), description de votre projet, photos que vous envoyez, historique de la conversation',
     base: 'Mesures précontractuelles prises à votre demande (RGPD art. 6.1.b)',
-    duree: '3 ans à compter de notre dernier échange',
+    duree: `${libelleDuree(DUREES_MOIS.conversation)} à compter de notre dernier échange`,
   },
   {
+    cle: 'comptable',
     finalite: 'Établir un devis, puis une facture si les travaux sont réalisés',
     donnees: 'Nom, adresse de facturation, adresse du chantier, détail des prestations et montants',
     base: 'Exécution du contrat, puis obligation légale de conservation comptable',
-    duree: '10 ans pour les pièces comptables (art. L. 102 B du LPF)',
+    duree: `${libelleDuree(DUREES_MOIS.comptable)} pour les pièces comptables (art. L. 102 B du LPF)`,
   },
   {
+    cle: 'anti_abus',
     finalite: 'Protéger le service contre les abus (envois massifs, robots)',
     donnees: 'Empreinte pseudonymisée de l’adresse IP (jamais l’adresse en clair), horodatage des envois',
     base: 'Intérêt légitime à préserver le service',
-    duree: '12 mois',
+    duree: libelleDuree(DUREES_MOIS.anti_abus),
   },
 ]
 
@@ -165,5 +205,7 @@ export const SOUS_TRAITANTS: { nom: string; role: string; lieu: string }[] = [
 /** Phrase d'information affichée AU MOMENT de la collecte (RGPD art. 13). */
 export function noticeCollecte(nomArtisan: string | null): string {
   const qui = nomArtisan?.trim() || 'l’artisan'
-  return `Vos coordonnées et votre message sont transmis à ${qui} pour répondre à votre demande, et conservés 3 ans. Vous pouvez y accéder, les corriger ou les faire supprimer à tout moment.`
+  // La durée vient de DUREES_MOIS : la phrase de collecte et la purge qui l'applique ne
+  // peuvent pas se contredire (audit final, auditeur B, C6).
+  return `Vos coordonnées et votre message sont transmis à ${qui} pour répondre à votre demande, et conservés ${libelleDuree(DUREES_MOIS.conversation)}. Vous pouvez y accéder, les corriger ou les faire supprimer à tout moment.`
 }

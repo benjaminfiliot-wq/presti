@@ -30,7 +30,7 @@ export default function AvantApresUpload({ uid, value, onChange }: { uid: string
     try {
       const url = await upload(file)
       if (url) onChange(value.map((p, j) => (j === i ? { ...p, [side]: url } : p)))
-    } catch { setErr('Import impossible.') } finally { setBusy('') }
+    } catch (e) { setErr(e instanceof Error && e.message ? e.message : 'Import impossible.') } finally { setBusy('') }
   }
 
   function addPair() { if (value.length < MAX) onChange([...value, { avant: '', apres: '', titre: '' }]) }

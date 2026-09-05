@@ -117,7 +117,7 @@ export default function Apparence({ uid, slug }: { uid: string; slug: string }) 
       const url = await uploadArtisanMedia(uid, blob, 'webp')
       if (kind === 'avatar') set({ avatar_url: url })
       else setStyle({ fond_image: url })
-    } catch { setMsg({ type: 'err', text: 'Envoi de l’image impossible.' }) }
+    } catch (e) { setMsg({ type: 'err', text: e instanceof Error && e.message ? e.message : 'Envoi de l’image impossible.' }) }
     setUpBusy(null)
   }
 

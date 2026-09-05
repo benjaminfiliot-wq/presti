@@ -88,18 +88,39 @@
 
 **Appels IA du sprint : 0**
 
+## [10] Solde de l'audit — 05/09 13:00 → 16:30 — ✅ tout ce qui restait, sauf trois gestes humains
+- **Sondes après les gestes de Benj** : 0057/0058 posées (68/68) ; portail Stripe LIVE configuré (résiliation en fin de période, factures, carte, changement d'offre) et catalogue des 3 offres (29/59/99 €) — le champ `products` n'existe plus dans cette version de l'API, le portail s'appuie sur le catalogue ; secret GitHub **absent** → posé par l'API (contenu minimal : Supabase, CANAUX_KEY, adresses — jamais la clé Anthropic, ni Stripe LIVE, ni Vercel, ni Postgres) ; clé Stripe de test et clé admin Anthropic **absentes** ; DMARC **absent** ; détection de rejeu Supabase **toujours éteinte**.
+- **Audit nocturne prouvé** : run #1 lancé à la main → 35/37, les 2 rouges étaient d'environnement (garde `.invalid` placé après le contrôle de clé Resend ; plafonds 429 entre suites depuis une IP fraîche ; visite guidée). Corrigés : le garde passe avant, le lanceur purge les compteurs entre deux suites, la suite des paramètres marque la visite vue en base.
+- **Les cinq suites IA rejouées** (Haiku) : injection 6/6, provenance 7/7, pilotage 18/18 (17/18 le 04/09), recherche 37/37, ai-eval 40 cas 0 erreur (vocabulaire métier 68 %, seul point bas). Coût : < 1 €.
+- **Sauvegardes (F-12)** : `scripts/sauvegarde.mjs` (toutes les tables par l'API de service, comptes, fichiers ; chiffrement AES-256-GCM + RSA-4096, la machine qui écrit ne peut pas relire), `scripts/restaurer.mjs` (--lire, --comparer, --aller-retour, --restaurer --artisan), `scripts/cle-sauvegarde.mjs`, `.github/workflows/sauvegarde.yml` (nocturne, artefact chiffré 30 jours), `docs/sauvegardes.md`. **Aller-retour prouvé 7/7** sur un compte de test effacé puis restauré à l'identique. Le mot de passe Postgres reste désaligné : la connexion directe échoue, d'où l'API.
+- **Budget IA sans clé admin** : la ronde disait [] en silence ; elle envoie désormais un rappel hebdomadaire avec une estimation depuis les crédits consommés. `BUDGET_IA_MENSUEL_EUR=50` et `EMAILS_PAR_JOUR=80` posés sur Vercel.
+- **Chantier en sept domaines** (agents parallèles, fichiers disjoints, 0 appel IA, 0 git) — la vérification adverse a été coupée par la limite de session (13 relecteurs), donc relue à la main :
+  · **Quota de stockage** (F-10) : `/api/media` serveur, plafond par offre (Essai 25 Mo → Signature 1 Go), mesure réelle sur `artisan-media`, compteur + trigger sur `lead-media` ; 0059 ferme la porte du navigateur (à coller APRÈS le déploiement) ; suite `quota-media-e2e` (~40 Mo envoyés pour prouver le plafond). Repris à la main : les 6 composants d'import affichent le message du serveur.
+  · **Purges RGPD** (C6/C12/C13) : `lib/purgesRgpd.ts`, durées tirées de `lib/legalArtisan.ts` (`DUREES_MOIS`), bornées et rejouables, appelées par le cron quotidien ; 0060 = index ; première purge réelle : **0 ligne** aujourd'hui (le produit a deux mois). Ajouté à `CRONS_ATTENDUS`.
+  · **Mentions facture/devis** (A2, A7, A10-A13, E4) : mentions ajoutées au PDF et au Factur-X, formulaire type de rétractation sur le devis, création refusée (422) sans nom de client — l'acompte automatique d'un prospect sans nom notifie l'artisan au lieu d'émettre une facture qui ne désigne personne.
+  · **Motion** (G-2.1 + mineurs) : slides 3D en `position:sticky` + scrub (plus de pin GSAP), `overflow-x:clip` — effet de bord voulu : la barre du site est enfin collante ; onglets de la démo avec `aria-controls`, heure décorative sortie d'`aria-live`, boucles arrêtées hors écran, contraste `.site-shot-tag`, CSS orphelin retiré ; suite `motion-cls-e2e`.
+  · **Suites manquantes** : `relances-e2e` (bout en bout sans IA) et `domaine-perso-e2e`. Cette dernière a trouvé trois défauts réels, corrigés à la main : le middleware servait un domaine **non vérifié** ; deux artisans pouvaient revendiquer le même domaine (0061 + refus 409 avant Vercel) ; `mondomaine.fr/login` servait les pages Presti (attrape-tout → 404 de l'artisan).
+  · **En-tête** (A mineurs, C mineurs) : nonce ÉCARTÉ avec une raison documentée (les pages pré-calculées serviraient des scripts sans nonce → mortes) ; à la place `script-src-attr 'none'` ferme le vecteur réel ; JSON-LD échappé ; favicon.ico + apple-icon (Presti et par artisan) ; canoniques et OG propres aux pages secondaires.
+  · **Textes juridiques** (D2, support, médiation, art. 28) : email de contact publié (l'alias des alertes), article « Support et assistance » avec des délais de première réponse par offre en jours ouvrés, plateforme RLL retirée (fermée le 20/07/2025), aucun médiateur inventé, annexe art. 28 complétée, sous-traitants avec lieux. **Repris à la main** : un remboursement au prorata inventé par l'agent a été retiré (engagement financier = décision du propriétaire) ; `CGU_VERSION` passée au 05/09.
+- Build local vert, typecheck vert, `garde-commit` vert.
+
+**Appels IA du sprint : ≈ 100 (les cinq suites, une fois, au niveau Haiku) — < 1 €.**
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
 | # | Action | Où | Effet vérifiable |
 |---|--------|----|------------------|
 | ~~H1~~ | ✅ fait par Benj le 05/09 — vérifié : `audit-final-e2e` **68/68**, table `passages_cron` présente (première trace au cron de 8 h) | — | — |
-| H4 | Clé Stripe de TEST (`STRIPE_SECRET_KEY_TEST`) dans `.env.local` | Stripe → Développeurs | `abonnement-e2e` joue ses 11 transitions sans débit |
-| H5 | `ANTHROPIC_ADMIN_KEY` + `BUDGET_IA_MENSUEL_EUR` sur Vercel | Vercel → Environment | `GET /api/cron/alertes?sec=1` mesure le coût du mois |
-| H7 | Portail client Stripe activé en LIVE (factures, moyen de paiement, résiliation, changement d'offre) + modèle de facture avec pied « TVA non applicable, art. 293 B du CGI » | Stripe → Paramètres → Facturation | `POST /api/stripe/portail` → 200 (auditeur H, bloquant 1) |
-| H8 | Secret GitHub `PRESTI_ENV_LOCAL` (contenu de `.env.local` sans la clé Anthropic) | GitHub → Settings → Secrets → Actions | premier run vert de « Audit récurrent » (workflow_dispatch) |
+| H4 | Clé Stripe de TEST (`STRIPE_SECRET_KEY_TEST`) dans `.env.local` — **toujours absente au 05/09 16 h** | Stripe → Développeurs → clés de test | `abonnement-e2e` joue ses 11 transitions sans débit |
+| H5 | `ANTHROPIC_ADMIN_KEY` sur Vercel (`node scripts/vercel-env.mjs ANTHROPIC_ADMIN_KEY <clé>`) — le budget (50 €) est posé ; sans la clé, un rappel part chaque lundi | console.anthropic.com → clés d'administration | le rappel hebdomadaire se tait, `?sec=1` mesure le coût réel |
+| ~~H7~~ | ✅ fait par Benj le 05/09 — sondé : portail par défaut avec factures, carte, résiliation en fin de période, changement d'offre ; catalogue 29/59/99 € ; 1 modèle de facture | — | une résiliation réelle reste à observer au premier abonné |
+| ~~H8~~ | ✅ posé par l'API le 05/09 (contenu minimal, sans clés sensibles) — run #1 : 35/37, causes d'environnement corrigées | — | run suivant attendu vert |
 | H9 | Email et téléphone de l'éditeur (LCEN) — boîte qui fonctionne ou adresse choisie | décision Benj | mentions légales complètes (auditeur B, D2) |
 | H10 | Domaine d'envoi neutre pour les emails au nom de l'artisan | décision + DNS | From sans « presti » (auditeur B, F3) |
 | H13 | Filtre Gmail : « à : benjaminfiliot+presti@gmail.com » → libellé « Presti » (le libellé existe déjà) | Gmail → Paramètres → Filtres | le prochain email d'alerte arrive rangé |
+| H14 | Coller `supabase/migrations/_A_COLLER_sql_editor_0059_0061.sql` (quota de stockage, index des purges, domaine unique) — **après** le déploiement du 05/09 | Supabase → SQL Editor | `quota-media-e2e` §6 vert (le navigateur ne peut plus écrire dans le bucket) |
+| H15 | Supabase → Authentication → Sessions → activer la **détection de rejeu** des jetons (audit v4, dernier tiers) | Supabase | `verif-supabase-reglages.mjs` : 3/3 |
+| H16 | Téléphone de l'éditeur dans les mentions légales (LCEN) : une ligne à ajouter, l'emplacement est marqué dans `app/mentions-legales/page.tsx` | décision Benj | `legal-e2e` |
 | H11 | Enregistrement DNS `_dmarc.prestiapp.fr` TXT `v=DMARC1; p=quarantine; rua=mailto:<adresse des alertes>` (ou `node scripts/ovh.mjs dmarc`) | OVH → zone DNS | `nslookup -type=txt _dmarc.prestiapp.fr` répond ; alerte `domaine_mail` se tait |
-| H12 | Sauvegardes : offre Supabase avec sauvegardes quotidiennes (Pro) ou `pg_dump` planifié (mot de passe Postgres à réaligner) | Supabase → Settings → Database | une restauration testée une fois, datée dans le journal (auditeur F, 12) |
+| ~~H12~~ | ✅ sauvegarde chiffrée quotidienne (`sauvegarde.yml`) + restauration prouvée 7/7 le 05/09 — **à faire par Benj : mettre `cle-sauvegarde.key.pem` à l'abri** (gestionnaire de mots de passe + clé USB) ; sans elle, les sauvegardes sont illisibles | — | `node scripts/restaurer.mjs --lire <fichier>` ouvre la dernière sauvegarde |
 
 **Appels IA du sprint : 0**

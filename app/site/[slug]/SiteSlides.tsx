@@ -3,10 +3,16 @@
 import { useEffect, useRef } from 'react'
 
 // Slides 3D de réalisations (Signature, v5 §10 H2) — ce que montrent les références FIND / DRIP :
-// UNE chose par écran, épinglée au scroll, la photo qui arrive du fond et se redresse, le
-// titre qui se révèle par masque, le numéro qui défile. Mise en scène en CSS 3D (perspective +
-// preserve-3d) pilotée par GSAP ScrollTrigger en `scrub`. Pas de WebGL : plus léger, plus
-// fiable, et c'est exactement le rendu des références.
+// UNE chose par écran, tenue à l'écran pendant le scroll, la photo qui arrive du fond et se
+// redresse, le titre qui se révèle par masque, le numéro qui défile. Mise en scène en CSS 3D
+// (perspective + preserve-3d) pilotée par GSAP ScrollTrigger en `scrub`. Pas de WebGL : plus
+// léger, plus fiable, et c'est exactement le rendu des références.
+//
+// L'immobilisation est faite par le CSS (`position:sticky` sur `.site-slides-vue`), PAS par le
+// `pin` de ScrollTrigger : le pin bascule la section en `position:fixed` puis la relâche, ce qui
+// produisait deux décalages de mise en page (CLS 1,05 mesuré en production, seuil « mauvais »
+// 0,25) et pénalisait le référencement du site de l'artisan. GSAP ne pilote plus que des
+// `transform`/`opacity` — rien qui touche au flux. Voir site.css, bloc « Slides 3D ».
 //
 // Repli : sans JS, sous 760 px, en reduced-motion ou en saveData, les panneaux restent des
 // figures empilées en flux normal (rien de cassé, rien d'invisible). Le JS n'est qu'un
@@ -39,6 +45,7 @@ export default function SiteSlides({ panneaux, style = 'profondeur', intensite =
       if (innerWidth < 760 || matchMedia('(max-width: 759px)').matches || matchMedia('(pointer: coarse)').matches) return
       gsap.registerPlugin(ScrollTrigger)
       root.classList.add('armed')
+      const vue = root.querySelector<HTMLElement>('.site-slides-vue')
       const panels = Array.from(root.querySelectorAll<HTMLElement>('.site-slide'))
       const n = panels.length
       const k = Math.max(0.4, Math.min(1.4, intensite))
@@ -52,9 +59,16 @@ export default function SiteSlides({ panneaux, style = 'profondeur', intensite =
         gsap.set(txt, { clipPath: i === 0 ? 'inset(0 0 0% 0)' : 'inset(0 0 100% 0)' })
       })
 
-      // Une timeline scrubée : chaque transition occupe une part égale du défilement épinglé.
+      // Une timeline scrubée : chaque transition occupe une part égale du défilement pendant lequel
+      // la vue reste collée. La course est MESURÉE sur le DOM (rail moins vue) au lieu d'être
+      // recalculée à la main : si le CSS change la hauteur du rail, l'animation reste calée dessus
+      // au lieu de finir avant ou après le décollement. `end` est une fonction → réévaluée à chaque
+      // `refresh` (redimensionnement, polices chargées).
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: root, start: 'top top', end: () => `+=${(n - 1) * innerHeight * 0.9}`, pin: true, scrub: 0.6, anticipatePin: 1 },
+        scrollTrigger: {
+          trigger: root, start: 'top top', scrub: 0.6,
+          end: () => `+=${Math.max(1, root.offsetHeight - (vue?.offsetHeight || innerHeight))}`,
+        },
       })
       for (let i = 1; i < n; i++) {
         const sortant = panels[i - 1], entrant = panels[i]
@@ -101,23 +115,29 @@ export default function SiteSlides({ panneaux, style = 'profondeur', intensite =
 
   if (panneaux.length < 2) return null
   return (
-    <div className="site-slides" ref={ref} data-style={style}>
-      <span className="site-slides-num" aria-hidden="true">01</span>
-      <span className="site-slides-total" aria-hidden="true">/ {String(panneaux.length).padStart(2, '0')}</span>
-      {panneaux.map((p, i) => (
-        <figure className="site-slide" key={p.image + i}>
-          <div className="site-slide-media">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={p.image} alt={p.titre || 'Réalisation'} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
-          </div>
-          <figcaption className="site-slide-txt">
-            <span className="site-slide-n">{String(i + 1).padStart(2, '0')}</span>
-            {p.titre ? <h3>{p.titre}</h3> : null}
-            {p.specialite ? <span className="site-slide-spe">{p.specialite}</span> : null}
-            {p.fait ? <span className="site-slide-fait">{p.fait}</span> : null}
-          </figcaption>
-        </figure>
-      ))}
+    // --slides-n : le rail armé fait EXACTEMENT n écrans, soit la hauteur qu'occupaient les figures
+    // empilées avant l'armement. Le nombre est connu dès le rendu serveur, donc la hauteur totale du
+    // document ne bouge pas quand le JS arrive : rien à décaler, ni au chargement ni au scroll.
+    <div className="site-slides" ref={ref} data-style={style} style={{ ['--slides-n' as string]: String(panneaux.length) }}>
+      {/* La vue collée : c'est elle qui reste à l'écran, les panneaux se superposent dedans. */}
+      <div className="site-slides-vue">
+        <span className="site-slides-num" aria-hidden="true">01</span>
+        <span className="site-slides-total" aria-hidden="true">/ {String(panneaux.length).padStart(2, '0')}</span>
+        {panneaux.map((p, i) => (
+          <figure className="site-slide" key={p.image + i}>
+            <div className="site-slide-media">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={p.image} alt={p.titre || 'Réalisation'} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+            </div>
+            <figcaption className="site-slide-txt">
+              <span className="site-slide-n">{String(i + 1).padStart(2, '0')}</span>
+              {p.titre ? <h3>{p.titre}</h3> : null}
+              {p.specialite ? <span className="site-slide-spe">{p.specialite}</span> : null}
+              {p.fait ? <span className="site-slide-fait">{p.fait}</span> : null}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
     </div>
   )
 }

@@ -4,7 +4,15 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Page introuvable',
+  description: 'Cette page n’existe pas ou a été déplacée.',
   robots: { index: false, follow: true },
+  // Une 404 n'a AUCUNE URL canonique : elle est servie sous n'importe quelle adresse. Sans
+  // cette ligne, elle héritait de celle de la racine et déclarait donc être l'accueil
+  // (audit final, C/11). `null` efface la valeur héritée sans en poser d'autre.
+  alternates: { canonical: null },
+  // Pas de bloc `openGraph` : en redéclarer un remplacerait celui du layout racine EN ENTIER,
+  // image de partage comprise. Le titre et la description ci-dessus servent d'og:title et
+  // d'og:description — un lien mort partagé n'affiche donc plus la carte de l'accueil.
 }
 
 const wrap: React.CSSProperties = {

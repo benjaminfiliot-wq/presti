@@ -55,6 +55,18 @@
 | 48 | G-3.3 | majeur | fil sans région live | `audit-final` | `role="log" aria-live` | ✅ | lot G |
 | 49 | G-4.1 | majeur | 404 Presti sous les adresses d'artisan | `audit-final` (404 prod) | attrape-tout `[...reste]` | ✅ prod | lot G |
 | 50 | G-2.1 | majeur | CLS 1,05 des slides 3D | — | sticky + scrub (1 h 30) | 📋 `apres-demo` | — |
+| 51 | F-12 | majeur | aucune sauvegarde | `restaurer --aller-retour` 7/7 | sauvegarde chiffrée quotidienne + restauration prouvée | ✅ | solde |
+| 52 | F-10 | majeur | `artisan-media` sans quota | `quota-media-e2e` | `/api/media`, plafond par offre, mesure réelle, 0059 | ✅ (0059 → H14) | solde |
+| 53 | B-C6/C12/C13 | majeur | purges 12 mois / 3 ans jamais appliquées | `purges-rgpd-e2e` | `lib/purgesRgpd.ts` + cron + 0060 | ✅ | solde |
+| 54 | B-A2/A7/A10-A13 | majeur | mentions secondaires facture/devis | `facturation-e2e`, `facturx-e2e` | PDF + Factur-X + formulaire type de rétractation | ✅ | solde |
+| 55 | G-2.1 | majeur | CLS 1,05 des slides 3D | `motion-cls-e2e` | sticky + scrub, overflow clip | ✅ | solde |
+| 56 | promesse 16 | majeur | relances sans suite | `relances-e2e` (nouvelle) | — | ✅ | solde |
+| 57 | promesse 13 | majeur | domaine perso sans suite | `domaine-perso-e2e` (nouvelle) | middleware : `domaine_verifie`, attrape-tout ; 0061 + 409 | ✅ | solde |
+| 58 | A mineurs | mineur | CSP `unsafe-inline`, JSON-LD | `seo-e2e` | `script-src-attr 'none'` (nonce écarté, motivé) ; échappement | ✅ | solde |
+| 59 | C mineurs | mineur | favicon, canoniques, OG | `seo-e2e` | icônes, layouts par page | ✅ | solde |
+| 60 | B-D2 | majeur | email de l'éditeur absent (LCEN) | `legal-e2e` | alias publié ; téléphone → H16 | ✅ partiel | solde |
+| 61 | promesse 21 | majeur | support prioritaire sans engagement | `legal-e2e` | article « Support et assistance », délais par offre | ✅ | solde |
+| 62 | F-5b | majeur | budget IA muet sans clé admin | `alertes-e2e` | rappel hebdomadaire + estimation | ✅ | solde |
 
 ## Reste (décision humaine ou dashboard) — voir la liste H du journal
 - H-bloquant 1 : configuration du **portail Stripe** en LIVE (tableau de bord, 15 min) — sans elle, `POST /api/stripe/portail` rend 500.

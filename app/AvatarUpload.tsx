@@ -63,8 +63,8 @@ export default function AvatarUpload({ uid, value, nom, onChange }: { uid: strin
       if (error) throw error
       onChange(publicUrl)
       setImg(null)
-    } catch {
-      setErr('Enregistrement impossible. Réessayez.')
+    } catch (e) {
+      setErr(e instanceof Error && e.message ? e.message : 'Enregistrement impossible. Réessayez.')
     } finally { setBusy(false) }
   }
 

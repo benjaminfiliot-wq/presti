@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { genererFacturX, controlerAvantEmission, type DonneesFacturX } from '@/lib/facturx'
 import { mentionFranchise, codeExonerationParDefaut, MOTIFS_EXONERATION, type BaseMention } from '@/lib/facturation'
+import { mentionsReglement, MENTION_TVA_DEBITS } from '@/lib/devisPdfData'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 
 // Le fichier XML de la facture (v4 §10.3).
@@ -28,7 +29,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const { data: lignes } = await supabaseAdmin.from('factures_lignes')
     .select('designation, quantite, unite, prix_unitaire_ht, tva_taux').eq('facture_id', id).order('ordre')
   const { data: a } = await supabaseAdmin.from('artisans')
-    .select('nom, siret, tva_num, tva_regime, mention_tva_base, adresse, code_postal, ville').eq('id', uid).single()
+    .select('nom, siret, tva_num, tva_regime, mention_tva_base, adresse, code_postal, ville, tva_sur_debits').eq('id', uid).single()
 
   const franchise = (a?.tva_regime || 'franchise') === 'franchise'
   const code = (f.exoneration_code as string | null) ?? codeExonerationParDefaut(a?.tva_regime)
@@ -44,6 +45,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     vendeur: { nom: a?.nom || '', siret: a?.siret, tva: a?.tva_num, adresse: a?.adresse, code_postal: a?.code_postal, ville: a?.ville, pays: 'FR' },
     acheteur: { nom: f.client_nom || '', siren: f.client_siren, adresse: f.client_adresse, pays: f.client_pays || 'FR' },
     adresse_chantier: f.adresse_chantier,
+    date_prestation: f.date_prestation ?? null,
+    // Les mêmes phrases que le PDF, à la lettre : pénalités, indemnité de 40 € seulement si
+    // le client est un professionnel identifié (art. L. 441-10 c. com.), escompte « néant ».
+    mentions_paiement: mentionsReglement(!!f.client_siren).join(' '),
+    // Art. 77 ann. III CGI, et seulement si la TVA est collectée (sans objet en franchise).
+    notes: !franchise && (f.tva_sur_debits === true || a?.tva_sur_debits === true) ? [MENTION_TVA_DEBITS] : [],
     lignes: (lignes ?? []).map((l) => ({
       designation: l.designation ?? '', quantite: Number(l.quantite) || 0, unite: l.unite ?? 'u',
       prix_unitaire_ht: Number(l.prix_unitaire_ht) || 0, tva_taux: Number(l.tva_taux) || 0,

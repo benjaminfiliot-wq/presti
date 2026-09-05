@@ -1,6 +1,15 @@
-// Test permanent — existence juridique des surfaces de l'artisan (correctif d'audit).
+// Test permanent — existence juridique des surfaces, celles de l'artisan ET celles de
+// l'éditeur (correctif d'audit).
 //
-// Ce que l'audit reprochait, et qui est le plus gros risque du produit : le site vitrine
+// § 0 (audit final, B) : les pages de Presti lui-même. Les mentions légales ne portaient ni
+// email ni téléphone alors que la LCEN les exige d'une personne physique (art. 6-III-1 a,
+// art. 19) et que la seule adresse citée par le produit, contact@prestiapp.fr, n'existe pas ;
+// l'offre Signature vendait un « support prioritaire » qu'aucun texte ne définissait ; et
+// l'annexe de sous-traitance (art. 28 RGPD) ne disait ni où ni combien de temps. Ce bloc ne
+// crée aucun compte : il tourne d'abord, et seul, si le reste échoue.
+//
+// §§ 1 à 6 : ce que l'audit reprochait d'abord, et qui reste le plus gros risque du produit :
+// le site vitrine
 // et la plateforme n'avaient AUCUNE mention légale ni information sur les données, alors
 // que la plateforme recueille nom, coordonnées, description de panne, photos de domicile
 // et adresse IP. Le responsable de traitement, c'est l'ARTISAN — c'est lui que la CNIL
@@ -48,7 +57,73 @@ async function creer(complet) {
   return slug
 }
 
+// Un avertissement, pas un échec : ce qui dépend d'une décision du propriétaire (publier son
+// numéro de téléphone) ne doit pas laisser une suite rouge en permanence — une suite toujours
+// rouge finit par n'être plus lue, et c'est alors tout le fichier qui ne sert plus à rien.
+const A = (n) => console.log(`  ⚠️  ${n}`)
+
 try {
+  // ── 0 avant tout : les pages de l'ÉDITEUR. Aucun compte n'est créé pour ce bloc — une
+  // mention légale absente doit se voir même le jour où Supabase refuse la création de comptes.
+  console.log('\n── 0. Les pages légales de l’éditeur (LCEN, support, litiges, art. 28)')
+  const [ml, cgu, conf] = await Promise.all(
+    ['/mentions-legales', '/cgu', '/confidentialite'].map((p) => fetch(`${BASE}${p}`).then((r) => r.text())),
+  )
+
+  // LCEN art. 6-III-1 a et art. 19 : une adresse de courrier électronique, en plus du formulaire.
+  const surveillee = (process.env.PRESTI_ALERTES_EMAIL || process.env.EMAIL_ENTREPRISE || '').trim().toLowerCase()
+  const publiee = (ml.match(/mailto:([^"'\s>]+@[^"'\s>]+)/) || [])[1]?.toLowerCase()
+  T('les mentions légales portent une adresse email (LCEN art. 6-III-1)', !!publiee, 'aucun mailto: dans la page')
+  T('… et c’est une boîte relevée, pas la boîte morte du domaine',
+    publiee !== 'contact@prestiapp.fr' || surveillee === 'contact@prestiapp.fr', String(publiee))
+  // Si la publication et la relève divergent, l'adresse affichée n'est plus lue par personne :
+  // c'est exactement le défaut de contact@prestiapp.fr, en plus discret.
+  T('… la même que celle qui reçoit les alertes (PRESTI_ALERTES_EMAIL)',
+    !surveillee || publiee === surveillee, `publiée ${publiee} ≠ surveillée ${surveillee}`)
+  T('le formulaire reste proposé à côté de l’email', /href="\/contact"/.test(ml))
+  if (/Téléphone<\/span>\s*(?:<!-- -->)?\s*\+?[\d][\d ().-]{7,}/.test(ml)) T('un numéro de téléphone est publié', true)
+  else A('aucun numéro de téléphone publié — la LCEN l’exige d’une personne physique (art. 6-III-1 a, art. 19). Décision du propriétaire : le numéro ne peut pas être inventé ici.')
+
+  // Le « support prioritaire » est vendu dans la grille des offres (lib/plans.ts) : ce qu'il
+  // recouvre doit être écrit quelque part d'opposable, sinon c'est une promesse invérifiable.
+  for (const [quoi, motif] of [
+    ['l’article « Support et assistance »', /id="support"/],
+    ['le délai de l’Essentiel', /Essai et Essentiel — 3 jours ouvrés/],
+    ['celui du Studio', /Studio — 2 jours ouvrés/],
+    ['celui de Signature', /Signature — 1 jour ouvré/],
+    ['la définition du « support prioritaire »', /support prioritaire[\s\S]{0,600}tête de file/],
+    ['le décompte en jours ouvrés', /hors jours fériés/],
+    ['ce qui est dû si le délai n’est pas tenu', /résilier immédiatement, sans préavis ni frais/],
+  ]) T(`${quoi} figure aux CGU`, motif.test(cgu))
+
+  // Médiation et règlement en ligne des litiges : présents, et cohérents avec le reste du
+  // produit — l'artisan a un médiateur (art. L. 616-1), l'éditeur n'en a pas et le dit.
+  for (const [quoi, motif] of [
+    ['l’article « règlement des litiges »', /id="litiges"/],
+    ['la médiation de la consommation', /L\. 611-1 et suivants du code de la consommation/],
+    ['le sort de la plateforme européenne (fermée le 20/07/2025)', /cessé de fonctionner le.{0,40}20 juillet 2025/s],
+    ['le renvoi vers le médiateur de l’artisan', /L\. 616-1 du code de la consommation/],
+  ]) T(`${quoi} figure aux CGU`, motif.test(cgu))
+  T('aucun lien vers la plateforme européenne fermée', !/ec\.europa\.eu\/consumers\/odr/i.test(cgu))
+  T('aucun médiateur inventé pour l’éditeur', !/(nous avons adhéré|notre médiateur)/i.test(cgu))
+
+  // Annexe art. 28 : les quatre points qu'un responsable de traitement doit pouvoir montrer.
+  for (const [quoi, motif] of [
+    ['le lieu du traitement', /stockées dans l’Union européenne/],
+    ['les transferts encadrés', /clauses contractuelles types/],
+    ['les durées de conservation', /Durées de conservation/],
+    ['les mesures de sécurité (art. 32)', /Sécurité<\/strong>\s*(?:<!-- -->)?\s*\(art\. 32\)/],
+    ['le sort des données en fin de contrat', /Sort des données à la fin du contrat/],
+    ['la restitution avant suppression', /export complet/],
+  ]) T(`${quoi} figure à l’annexe`, motif.test(cgu))
+  // Régression surveillée : la version précédente annonçait des sauvegardes que l'audit F-12 a
+  // démenties. Tant qu'aucune sauvegarde n'est prouvée, la mention ne doit pas revenir.
+  T('aucune mesure de sécurité annoncée sans exister (sauvegardes, journal des accès)',
+    !/sauvegardes|journal des accès/i.test(cgu))
+
+  T('la politique de confidentialité publie la même adresse email', !publiee || conf.toLowerCase().includes(publiee))
+  T('… et renvoie vers l’annexe de sous-traitance', /href="\/cgu#sous-traitance"/.test(conf))
+
   const complet = await creer(true)
   const vide = await creer(false)
 

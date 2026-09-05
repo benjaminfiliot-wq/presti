@@ -7,6 +7,7 @@ import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { getIp, isBanned, recordAbuse, ipPseudonyme } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
+import { porteMonnaieConversation } from '@/lib/quotaMedia'
 
 // Bornes anti-abus (une demande légitime tient largement dedans).
 const MAX = { slug: 80, contact: 200, nom: 120, message: 5000 }
@@ -70,7 +71,7 @@ export async function POST(req: Request) {
     // 1) Retrouver l'artisan à partir de son slug
     const { data: artisan, error: aErr } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom')
+      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan')
       .eq('slug', slug)
       .maybeSingle()
 
@@ -108,9 +109,16 @@ export async function POST(req: Request) {
 
     // 2ter) Photos de chantier → bucket `lead-media` (service_role). Non bloquant : si l'upload
     // échoue, le lead est déjà sauvé. On ne stocke QUE l'image ré-encodée (aucun EXIF/géoloc).
+    //
+    // Quota (audit final, auditeur F, 4.4) : ces octets-là, l'artisan ne les choisit pas — ce
+    // sont des inconnus qui les poussent. Deux plafonds donc, et il faut les deux : celui de
+    // la CONVERSATION (un prospect seul ne remplit rien) et celui de l'ARTISAN (mille
+    // conversations sous le plafond de conversation rempliraient quand même le disque).
     let photoCount = 0
     if (photosIn.length) {
       try {
+        // Un fondateur compte comme Business : on ne coupe jamais le compte de démonstration.
+        const porte = await porteMonnaieConversation(artisan.id, artisan.is_founder ? 'business' : artisan.plan)
         const urls: string[] = []
         for (let i = 0; i < photosIn.length; i++) {
           const m = photosIn[i].match(/^data:image\/(webp|jpeg|png);base64,(.+)$/)
@@ -118,6 +126,9 @@ export async function POST(req: Request) {
           const ext = m[1] === 'jpeg' ? 'jpg' : m[1]
           const buf = Buffer.from(m[2], 'base64')
           if (buf.length > 3 * 1024 * 1024) continue // borne dure (le bucket limite déjà à 3 Mo)
+          // Plafond atteint : on écarte la photo, jamais la demande — le message du prospect
+          // vaut infiniment plus que sa pièce jointe.
+          if (!porte.accepte(buf.length)) { console.warn('[leads] photo écartée : plafond de stockage atteint pour', artisan.id); continue }
           const path = `${lead.id}/${i}.${ext}`
           const { error: upErr } = await supabaseAdmin.storage.from('lead-media').upload(path, buf, {
             contentType: `image/${m[1]}`, cacheControl: '31536000', upsert: true,
@@ -130,7 +141,15 @@ export async function POST(req: Request) {
         }
         if (urls.length) {
           photoCount = urls.length
-          await supabaseAdmin.from('leads').update({ photos: urls }).eq('id', lead.id)
+          // `photos_octets` alimente le quota par artisan (0059). Si la colonne n'est pas
+          // encore posée, on réécrit sans elle : perdre les photos d'un vrai prospect pour
+          // une migration en retard serait un très mauvais échange.
+          const { error: eMaj } = await supabaseAdmin.from('leads')
+            .update({ photos: urls, photos_octets: porte.octets() }).eq('id', lead.id)
+          if (eMaj) {
+            console.warn('[leads] photos_octets ignoré (migration 0059 posée ?):', eMaj.message)
+            await supabaseAdmin.from('leads').update({ photos: urls }).eq('id', lead.id)
+          }
         }
       } catch (e) {
         console.warn('[leads] photos ignorées (upload échoué):', e)

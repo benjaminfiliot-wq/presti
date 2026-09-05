@@ -28,7 +28,7 @@ async function slugForDomain(host: string): Promise<string | null> {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!base || !key) return null
   try {
-    const r = await fetch(`${base}/rest/v1/artisans?domaine=eq.${encodeURIComponent(host)}&select=slug&limit=1`, {
+    const r = await fetch(`${base}/rest/v1/artisans?domaine=eq.${encodeURIComponent(host)}&domaine_verifie=is.true&select=slug&limit=1`, {
       headers: { apikey: key, Authorization: `Bearer ${key}` }, cache: 'no-store',
     })
     if (!r.ok) return null
@@ -85,12 +85,15 @@ export async function middleware(req: NextRequest) {
   }
 
   // Domaine perso : la racine sert le site, /demande la plateforme, /infos-legales les mentions.
-  if (chemin === '/' || chemin === '/demande' || chemin === '/infos-legales') {
-    const slug = await slugForDomain(bare) || (bare.startsWith('www.') ? await slugForDomain(bare.slice(4)) : null)
-    if (slug) {
-      const url = req.nextUrl.clone(); url.pathname = cibleInterne(slug, chemin) as string
-      return NextResponse.rewrite(url)
-    }
+  // Domaine perso d'un artisan (vérifié en base — un domaine saisi mais jamais vérifié ne
+  // détourne rien). Les trois surfaces sont réécrites ; TOUT AUTRE chemin est envoyé sous
+  // /site/<slug>/… où l'attrape-tout sert la 404 de l'artisan : avant, mondomaine.fr/login ou
+  // /cgu servaient les pages de Presti sur le domaine de l'artisan (suite domaine-perso-e2e).
+  const slug = await slugForDomain(bare) || (bare.startsWith('www.') ? await slugForDomain(bare.slice(4)) : null)
+  if (slug) {
+    const url = req.nextUrl.clone()
+    url.pathname = cibleInterne(slug, chemin) ?? `/site/${slug}${chemin}`
+    return NextResponse.rewrite(url)
   }
 
   return NextResponse.next()

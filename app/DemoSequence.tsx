@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 
 // La démo de la landing (v5 §5) : pas un catalogue, UN scénario — « Une demande arrive »,
 // en cinq scènes enchaînées. Chaque scène est une CAPTURE DU VRAI PRODUIT (Playwright, sur le
@@ -40,6 +40,11 @@ export default function DemoSequence() {
   const [reduit, setReduit] = useState(false)
   const [cle, setCle] = useState(0) // relance l'animation de la barre de progression
   const conteneur = useRef<HTMLDivElement>(null)
+  // Identifiants stables serveur/client : le motif « onglets » ARIA n'a de sens que si chaque
+  // onglet DÉSIGNE son panneau (aria-controls) et si le panneau dit de quel onglet il vient
+  // (aria-labelledby). Sans ça un lecteur d'écran annonce « onglet 2 sur 5 » sans rien relier.
+  const uid = useId()
+  const idPanneau = `${uid}-panneau`
 
   useEffect(() => {
     const mq = matchMedia('(prefers-reduced-motion: reduce)')
@@ -82,16 +87,21 @@ export default function DemoSequence() {
         </div>
 
         <div className="dm-txt">
-          <span className="dm-heure" aria-live="polite">{s.heure}</span>
-          <h3 key={`t${i}`}>{s.titre}</h3>
-          <p key={`p${i}`}>{s.texte}</p>
+          {/* Le panneau de l'onglet actif. L'heure n'est PLUS une région live : elle était relue
+              toutes les 4,8 s (« 22 h 14 », « 7 h 02 »…) sans le titre de la scène — du bruit, pas
+              de l'information. Le changement de scène est déjà porté par `aria-selected`. */}
+          <div className="dm-panneau" id={idPanneau} role="tabpanel" aria-labelledby={`${uid}-onglet-${i}`}>
+            <span className="dm-heure">{s.heure}</span>
+            <h3 key={`t${i}`}>{s.titre}</h3>
+            <p key={`p${i}`}>{s.texte}</p>
+          </div>
           <div className="dm-nav">
             <button type="button" className="dm-fleche" onClick={() => aller(i - 1)} aria-label="Scène précédente">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
             </button>
             <div className="dm-points" role="tablist" aria-label="Scènes">
               {SCENES.map((sc, k) => (
-                <button key={sc.image} type="button" role="tab" aria-selected={k === i} aria-label={`Scène ${k + 1} : ${sc.titre}`} className={k === i ? 'on' : ''} onClick={() => aller(k)}>
+                <button key={sc.image} type="button" role="tab" id={`${uid}-onglet-${k}`} aria-controls={idPanneau} aria-selected={k === i} aria-label={`Scène ${k + 1} : ${sc.titre}`} className={k === i ? 'on' : ''} onClick={() => aller(k)}>
                   {k === i && !reduit && !enPause ? <span key={cle} className="dm-prog" style={{ animationDuration: `${DUREE}ms` }} /> : null}
                 </button>
               ))}

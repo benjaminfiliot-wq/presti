@@ -34,6 +34,12 @@ export type DonneesFacturX = {
   vendeur: { nom: string; siret?: string | null; tva?: string | null; adresse?: string | null; code_postal?: string | null; ville?: string | null; pays?: string }
   acheteur: { nom: string; siren?: string | null; adresse?: string | null; pays?: string }
   adresse_chantier?: string | null
+  /** Date effective de la prestation (BT-72) — art. 242 nonies A ann. II CGI. */
+  date_prestation?: string | null // AAAA-MM-JJ
+  /** Conditions de règlement en clair (BT-20) : pénalités, indemnité de 40 €, escompte. */
+  mentions_paiement?: string | null
+  /** Mentions légales libres portées par la facture (BT-22), ex. TVA d'après les débits. */
+  notes?: string[]
   lignes: LigneFacture[]
   remise_pct?: number
   total_ht: number
@@ -132,6 +138,32 @@ export function genererFacturX(d: DonneesFacturX): string {
       </ram:ShipToTradeParty>\n`
     : ''
 
+  // BT-72 — date effective de la prestation. Art. 242 nonies A ann. II CGI : elle figure sur
+  // la facture dès qu'elle est déterminée. Absente en base ⇒ balise absente : on ne la déduit
+  // pas de la date d'émission, ce serait une date fausse dans une pièce transmise.
+  const datePrestation = d.date_prestation
+    ? `      <ram:ActualDeliverySupplyChainEvent>
+        <ram:OccurrenceDateTime><udt:DateTimeString format="102">${date(d.date_prestation)}</udt:DateTimeString></ram:OccurrenceDateTime>
+      </ram:ActualDeliverySupplyChainEvent>\n`
+    : ''
+
+  // BT-20 / BT-9 — conditions de règlement puis date d'échéance. L'ORDRE compte : dans CII,
+  // Description précède DueDateDateTime, et un document qui les inverse est rejeté au
+  // contrôle de structure. Le texte est celui du PDF (lib/devisPdfData.ts).
+  const mentionsPaiement = (d.mentions_paiement || '').trim()
+  const reglement = mentionsPaiement || d.date_echeance
+    ? `      <ram:SpecifiedTradePaymentTerms>${mentionsPaiement ? `\n        <ram:Description>${x(mentionsPaiement)}</ram:Description>` : ''}${d.date_echeance ? `\n        <ram:DueDateDateTime><udt:DateTimeString format="102">${date(d.date_echeance)}</udt:DateTimeString></ram:DueDateDateTime>` : ''}
+      </ram:SpecifiedTradePaymentTerms>\n`
+    : ''
+
+  // BT-22 — mentions que la facture doit porter en clair (ex. « TVA acquittée d'après les
+  // débits », art. 77 ann. III CGI). Le PDF et le XML disent alors exactement la même chose.
+  const notes = (d.notes ?? [])
+    .map((n) => String(n ?? '').trim())
+    .filter(Boolean)
+    .map((n) => `    <ram:IncludedNote><ram:Content>${x(n)}</ram:Content></ram:IncludedNote>\n`)
+    .join('')
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rsm:CrossIndustryInvoice
   xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
@@ -146,7 +178,7 @@ export function genererFacturX(d: DonneesFacturX): string {
     <ram:ID>${x(d.numero)}</ram:ID>
     <ram:TypeCode>${d.avoir ? 381 : 380}</ram:TypeCode>
     <ram:IssueDateTime><udt:DateTimeString format="102">${date(d.date_emission)}</udt:DateTimeString></ram:IssueDateTime>
-  </rsm:ExchangedDocument>
+${notes}  </rsm:ExchangedDocument>
   <rsm:SupplyChainTradeTransaction>
 ${lignes}
     <ram:ApplicableHeaderTradeAgreement>
@@ -163,11 +195,11 @@ ${acheteurId}        <ram:Name>${x(d.acheteur.nom)}</ram:Name>
       </ram:BuyerTradeParty>
     </ram:ApplicableHeaderTradeAgreement>
     <ram:ApplicableHeaderTradeDelivery>
-${livraison}    </ram:ApplicableHeaderTradeDelivery>
+${livraison}${datePrestation}    </ram:ApplicableHeaderTradeDelivery>
     <ram:ApplicableHeaderTradeSettlement>
       <ram:InvoiceCurrencyCode>${x(devise)}</ram:InvoiceCurrencyCode>
 ${taxes}
-${d.date_echeance ? `      <ram:SpecifiedTradePaymentTerms><ram:DueDateDateTime><udt:DateTimeString format="102">${date(d.date_echeance)}</udt:DateTimeString></ram:DueDateDateTime></ram:SpecifiedTradePaymentTerms>\n` : ''}      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+${reglement}      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
         <ram:LineTotalAmount>${n2(d.total_ht)}</ram:LineTotalAmount>
         <ram:TaxBasisTotalAmount>${n2(d.total_ht)}</ram:TaxBasisTotalAmount>
         <ram:TaxTotalAmount currencyID="${x(devise)}">${n2(d.total_tva)}</ram:TaxTotalAmount>
@@ -192,6 +224,10 @@ export function controlerAvantEmission(d: DonneesFacturX): string[] {
   if (!d.vendeur.nom?.trim()) soucis.push('Votre raison sociale est absente — renseignez-la dans Paramètres.')
   if (!d.vendeur.siret) soucis.push('Votre SIRET est absent : il est obligatoire sur une facture.')
   if (!d.acheteur.nom?.trim()) soucis.push('Le nom du client est absent.')
+  // Art. 242 nonies A ann. II CGI : l'identité complète du client, ADRESSE comprise. Non
+  // bloquant à la création (la facture d'acompte d'un client venu de la plateforme n'a
+  // parfois que le nom), mais signalé ici tant que la pièce peut encore être corrigée.
+  if (!d.acheteur.adresse?.trim()) soucis.push('L’adresse du client est absente : elle est obligatoire sur une facture.')
   if (!d.lignes.length) soucis.push('La facture ne comporte aucune ligne.')
   if (d.franchise && !d.exoneration_code) soucis.push('Le motif d’exonération de TVA n’est pas codifié.')
   const somme = basesParTaux(d.lignes, d.remise_pct ?? 0).reduce((s, b) => s + b.base_ht, 0)

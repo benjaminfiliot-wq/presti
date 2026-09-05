@@ -363,6 +363,32 @@ export const ARTICLES: Article[] = [
     disponibleAvec: 'essentiel',
   },
 
+  // source: app/cgu/page.tsx §4 « Support et assistance » (délais écrits) ; lib/plans.ts:139
+  // (la grille vend « Support prioritaire » à la seule offre Signature).
+  // La grille annonçait cette ligne sans que le mot ait de sens nulle part : l'aide dit
+  // exactement ce qui est dû, offre par offre, pour qu'un abonné n'ait pas à ouvrir les CGU.
+  {
+    id: 'support',
+    page: '/abonnement',
+    titre: 'Support : qui répond, et en combien de temps',
+    aQuoiCaSert:
+      'Le support répond par écrit, par le formulaire « Nous écrire » ou à l’adresse email des mentions légales — ' +
+      'les deux arrivent au même endroit. Le délai de première réponse dépend de votre formule : 3 jours ouvrés en ' +
+      'Essai et en Essentiel, 2 en Studio, 1 en Signature. C’est cela, le « support prioritaire » de Signature : un ' +
+      'jour ouvré, et le passage en tête de file quand plusieurs demandes attendent.',
+    commentOnSenSert: [
+      'Écrivez depuis la page « Nous écrire », ou par email : décrivez ce que vous faisiez et ce que vous attendiez.',
+      'Les jours ouvrés vont du lundi au vendredi, hors jours fériés ; un message envoyé le samedi compte à partir du lundi.',
+      'Le délai porte sur la première réponse, pas sur la correction : elle dépend du problème, parfois d’un prestataire.',
+      'Un problème de sécurité passe avant tout le reste, quelle que soit votre formule.',
+      'Si le délai n’est pas tenu, dites-le : vous pouvez résilier sans frais et le mois en cours est remboursé au prorata.',
+    ],
+    pourVosClients: 'Aucun effet direct — vos clients écrivent à vous, jamais à Presti.',
+    credits: 'Aucun',
+    reglagesLies: [],
+    disponibleAvec: 'essentiel',
+  },
+
   // source: app/tarifs/page.tsx:8-219 ; app/api/tarifs/route.ts:1-30 (aucun verrou de plan)
   {
     id: 'tarifs',

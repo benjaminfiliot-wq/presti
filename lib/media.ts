@@ -53,17 +53,36 @@ export async function compressPhotoToDataUrl(file: File, maxPx = 1600, maxBytes 
   } catch { return null }
 }
 
-/** Envoie le blob dans `artisan-media/<uid>/…` → renvoie l'URL publique (immuable, cache 1 an). */
+/**
+ * Envoie le blob dans `artisan-media/<uid>/…` → renvoie l'URL publique (immuable, cache 1 an).
+ *
+ * Passe par /api/media et NON plus directement par le stockage (audit final, auditeur F,
+ * majeur 4.3). Raison : le bucket n'avait aucun plafond par compte, et un plafond posé ici
+ * ne vaudrait rien — la clé anon est publique, l'appel au stockage se refait à la main. Le
+ * comptage doit donc vivre côté serveur, et le navigateur n'a plus le droit d'écrire
+ * (migration 0059). `uid` reste dans la signature pour les appelants, mais le serveur ne
+ * l'écoute pas : il écrit dans le dossier de la SESSION.
+ *
+ * L'erreur jetée porte le message du serveur (« Vous avez atteint la limite de … ») : un
+ * appelant qui l'affiche dit à l'artisan ce qui se passe et comment en sortir.
+ */
 export async function uploadArtisanMedia(uid: string, blob: Blob, ext: string): Promise<string> {
-  const rand = Math.random().toString(36).slice(2, 9)
-  const path = `${uid}/${Date.now()}-${rand}.${ext}`
-  const { error } = await supabase.storage.from(MEDIA_BUCKET).upload(path, blob, {
-    contentType: blob.type || (ext === 'png' ? 'image/png' : 'image/jpeg'),
-    cacheControl: '31536000',
-    upsert: false,
+  const { data } = await supabase.auth.getSession()
+  const jeton = data.session?.access_token
+  if (!jeton) throw new Error('Session expirée, reconnecte-toi.')
+
+  // Corps binaire brut (pas de base64) : le JSON aurait gonflé l'envoi d'un tiers, pour rien.
+  const r = await fetch(`/api/media?ext=${encodeURIComponent(ext)}`, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${jeton}`,
+      'content-type': blob.type || (ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg'),
+    },
+    body: blob,
   })
-  if (error) throw error
-  return supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path).data.publicUrl
+  const rep = await r.json().catch(() => null)
+  if (!r.ok || !rep?.url) throw new Error(rep?.error || 'Envoi de l’image impossible.')
+  return String(rep.url)
 }
 
 // ── Préparation d'une photo de réalisation (v4 §7/E3) ─────────────────────────

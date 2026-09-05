@@ -48,8 +48,8 @@ export default function PortfolioUpload({ uid, value, onChange }: { uid: string;
       if (added.length) onChange([...value, ...added])
       if (files.length > room) setErr(`Maximum ${MAX} photos.`)
       setAlertes(remontees)
-    } catch {
-      setErr('Lecture d’une image impossible.')
+    } catch (e) {
+      setErr(e instanceof Error && e.message ? e.message : 'Lecture d’une image impossible.')
     } finally {
       setBusy(false)
     }

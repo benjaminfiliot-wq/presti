@@ -34,6 +34,13 @@ const nextConfig = {
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
+      // Gestionnaires d'événements EN ATTRIBUT (`<img onerror=…>`, `<a onclick=…>`) : interdits.
+      // C'est la moitié utile que `'unsafe-inline'` rendait sinon libre — et la forme d'XSS la
+      // plus courante, parce qu'elle passe par un attribut là où une balise <script> serait
+      // filtrée. React ne pose jamais de gestionnaire en attribut (il attache des écouteurs),
+      // donc rien de légitime ne casse. `script-src-attr` retombe sinon sur `script-src`, donc
+      // sans cette ligne explicite l'attribut restait autorisé.
+      "script-src-attr 'none'",
     ]
     const common = [
       { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -46,6 +53,19 @@ const nextConfig = {
     // 'unsafe-eval' UNIQUEMENT en développement : Next y compile les modules avec eval (source
     // maps). Sans ça, aucun JavaScript client ne s'exécute en local — les pages restent non
     // hydratées et tout test navigateur local ment. En production, jamais.
+    //
+    // POURQUOI 'unsafe-inline' EST TOUJOURS LÀ, ET POURQUOI LE NONCE A ÉTÉ ÉCARTÉ (audit final, A/1).
+    // Un nonce est fabriqué À CHAQUE REQUÊTE : il ne peut donc pas figurer dans un HTML
+    // pré-calculé au build. Or presque toute la surface publique de Presti EST pré-calculée —
+    // la landing, /faq, les pages légales, la 404, `/site/[slug]/infos-legales` (`revalidate =
+    // 3600`), `/site/[slug]/[...reste]` et `/p/[slug]/[...reste]` (`force-static`). Poser un
+    // nonce dans le middleware retirerait 'unsafe-inline' pour tout le monde tout en laissant
+    // ces pages servir des scripts d'hydratation SANS nonce : elles seraient bloquées par la
+    // CSP, donc mortes (HTML visible, plus aucune interaction). Les rendre dynamiques pour
+    // sauver le nonce, c'est payer un rendu serveur par visite sur les pages les plus vues,
+    // pour un risque déjà tenu ailleurs (React échappe, JSON-LD échappé). Décision : on garde
+    // 'unsafe-inline' pour les BALISES <script>, et on ferme la porte des ATTRIBUTS
+    // (`script-src-attr 'none'`, plus bas) — c'est le vecteur réellement exploitable.
     const scriptStrict = "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com" + (process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : '')
     // cdnjs n'est plus autorisé : il ne servait qu'au cube 3D, supprimé (v5 §10 H1).
     const scriptEmbeddable = scriptStrict

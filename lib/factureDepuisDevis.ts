@@ -5,14 +5,14 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
-import { empreinte } from '@/lib/facturation'
+import { empreinte, sirenValide } from '@/lib/facturation'
 import { COLONNES_LEGALES, OU_REMPLIR, mentionsManquantesEmission, messageMentionsBloquantes, versArtisanLegal } from '@/lib/legalArtisan'
 
 export type LigneIn = { designation?: string; quantite?: number; unite?: string; prix_unitaire_ht?: number; tva_taux?: number }
 
 export type ResultatFacture =
   | { ok: true; id: string; numero: string }
-  | { ok: false; status: 400 | 404 | 422 | 500; error: string; code?: 'mentions_manquantes'; manquantes?: string[]; lien?: string }
+  | { ok: false; status: 400 | 404 | 422 | 500; error: string; code?: 'mentions_manquantes' | 'client_incomplet'; manquantes?: string[]; lien?: string }
 
 export async function creerFacture(p: {
   artisanId: string
@@ -40,7 +40,9 @@ export async function creerFacture(p: {
   }
   if (lignes.length > 200) return { ok: false, status: 400, error: 'Trop de lignes (200 max).' }
 
-  const { data: art } = await supabaseAdmin.from('artisans').select(`tva_regime, ${COLONNES_LEGALES}`).eq('id', uid).maybeSingle()
+  const { data: art } = await supabaseAdmin.from('artisans').select(`tva_regime, tva_sur_debits, ${COLONNES_LEGALES}`).eq('id', uid).maybeSingle()
+
+  const s = (v: unknown, max: number): string | null => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : null)
 
   // Mentions obligatoires BLOQUANTES (audit v4 §3) : une facture est émise ET scellée à la
   // création — on refuse AVANT de consommer un numéro. 15 € par mention manquante, jusqu'à
@@ -48,6 +50,20 @@ export async function creerFacture(p: {
   const manquantes = mentionsManquantesEmission(versArtisanLegal(art as Record<string, unknown> | null))
   if (manquantes.length) {
     return { ok: false, status: 422, error: messageMentionsBloquantes(manquantes, 'cette facture'), code: 'mentions_manquantes', manquantes, lien: OU_REMPLIR.lien }
+  }
+
+  // Identité du CLIENT (art. 242 nonies A, ann. II CGI). Sans nom, le PDF sortait
+  // « FACTURÉ À Client » — une facture scellée qui ne désigne personne, et qu'on ne peut
+  // plus corriger. On refuse ici, AVANT le numéro, comme pour les mentions de l'artisan.
+  // L'adresse, elle, ne bloque pas : la facture d'acompte automatique d'un client venu de
+  // la plateforme n'a souvent que son nom. Elle est signalée par le contrôle avant émission
+  // du XML (lib/facturx.ts, controlerAvantEmission).
+  const clientNom = s(src.client_nom, 160)
+  if (!clientNom) {
+    return {
+      ok: false, status: 422, code: 'client_incomplet', manquantes: ['Nom du client'],
+      error: 'Impossible d’émettre cette facture : le nom du client est une mention obligatoire (art. 242 nonies A de l’annexe II au CGI). Renseignez-le sur le devis, puis réessayez.',
+    }
   }
   const franchise = ((art?.tva_regime as string | null) || 'franchise') === 'franchise'
   const lignesDevis = lignes.map((l) => normalizeLigne(l, franchise))
@@ -70,11 +86,24 @@ export async function creerFacture(p: {
   }
   const totals = computeTotals(eff, remise)
 
+  // Le numéro est pris EN DERNIER : tout ce qui peut refuser la facture (mentions de
+  // l'artisan, identité du client, lignes) a déjà été vérifié. Il reste une fenêtre — si
+  // l'insert échoue juste après, le numéro est consommé et la séquence saute. Une rupture
+  // se justifie auprès de l'administration (art. 242 nonies A : séquence chronologique et
+  // continue, ruptures documentées) ; un doublon, non. On ne rend donc JAMAIS un numéro
+  // déjà tiré : la seule vraie correction est de numéroter et d'insérer dans la même
+  // transaction SQL (fonction à écrire côté base — audit final, auditeur B, A7).
   const { data: n } = await supabaseAdmin.rpc('next_numero', { p_artisan: uid, p_type: 'facture' })
   const numero = `FAC-${new Date().getFullYear()}-${String(n ?? 1).padStart(4, '0')}`
   const echeance = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10)
-  const s = (v: unknown, max: number): string | null => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : null)
   const acompte = typeof p.acomptePct === 'number' ? p.acomptePct : (Number(src.acompte_pct) || 0)
+  // SIREN du client et adresse de chantier : le déclencheur d'immuabilité les fige au
+  // scellement, donc si on ne les recopie pas MAINTENANT elles sont perdues pour cette
+  // pièce. Le SIREN n'est repris que s'il passe la clé de Luhn — un identifiant faux part
+  // dans la facture électronique et ne se corrige plus après transmission.
+  const clientSiren = sirenValide(typeof src.client_siren === 'string' ? src.client_siren : null)
+    ? String(src.client_siren).replace(/\s/g, '')
+    : null
 
   const { data: facture, error: fErr } = await supabaseAdmin
     .from('factures')
@@ -84,7 +113,11 @@ export async function creerFacture(p: {
       statut: 'emise', date_echeance: echeance,
       remise_pct: remise, acompte_pct: acompte,
       conditions: s(src.conditions, 4000), notes: s(src.notes, 4000),
-      client_nom: s(src.client_nom, 160), client_email: s(src.client_email, 200), client_adresse: s(src.client_adresse, 300),
+      client_nom: clientNom, client_email: s(src.client_email, 200), client_adresse: s(src.client_adresse, 300),
+      client_siren: clientSiren, adresse_chantier: s(src.adresse_chantier, 300),
+      // Art. 77 ann. III CGI : l'option pour les débits se mentionne sur la facture. On la
+      // fige à l'émission — le régime du jour, pas celui que l'artisan aura dans deux ans.
+      tva_sur_debits: (art as Record<string, unknown> | null)?.tva_sur_debits === true,
       total_ht: totals.total_ht, total_tva: totals.total_tva, total_ttc: totals.total_ttc,
     })
     .select('id, numero').single()
@@ -97,7 +130,7 @@ export async function creerFacture(p: {
   // une facture déjà verrouillée). C'est ce qui rend la comptabilité opposable.
   await supabaseAdmin.from('factures').update({
     verrouillee: true, emise_le: new Date().toISOString(),
-    empreinte: await empreinte(JSON.stringify({ numero: facture.numero, client: s(src.client_nom, 160), totaux: [totals.total_ht, totals.total_tva, totals.total_ttc], lignes: eff })),
+    empreinte: await empreinte(JSON.stringify({ numero: facture.numero, client: clientNom, totaux: [totals.total_ht, totals.total_tva, totals.total_ttc], lignes: eff })),
   }).eq('id', facture.id)
 
   return { ok: true, id: facture.id, numero: facture.numero }

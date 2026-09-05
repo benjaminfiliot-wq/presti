@@ -7,12 +7,12 @@
 |---|---|
 | Auditeurs indépendants | 8 (A attaque, B conformité, C qualité, D parcours, E IA, F fiabilité, G motion, H abonnement) — sous-agents distincts de celui qui corrige |
 | Défauts trouvés | 5 bloquants · 54 majeurs · ≈ 66 mineurs |
-| Fermés par le code | 4 bloquants · 45 majeurs — 14 commits, chacun précédé d'un test rouge |
-| Restent à un humain | 1 bloquant (portail Stripe, H7) · 3 majeurs (LCEN H9, domaine d'envoi H10, DMARC H11) · sauvegardes (H12) · migrations 0057-0058 (H1) |
-| Chiffrés après la démo | 6 majeurs (quota stockage, purges 12 mois/3 ans, mentions secondaires, CLS des slides 3D, relances et domaine perso sans suite) |
-| Lanceur `tout-verifier.mjs` (hors IA) | **37/37 suites vertes** (434 s) — 67/69 points sur `audit-final-e2e`, les 2 rouges attendent 0058 |
+| Fermés | 5 bloquants · 52 majeurs — 15 commits ; les 5 suites IA rejouées le 05/09 (toutes vertes) |
+| Restent à un humain | DMARC (H11, 2 min chez OVH) · téléphone LCEN (H16) · domaine d'envoi neutre (H10, décision) · migrations 0059-0061 à coller (H14) · détection de rejeu Supabase (H15, 1 clic) · clé privée des sauvegardes à mettre à l'abri (H12) · clés de test Stripe et admin Anthropic (H4, H5) |
+| Chiffrés après la démo | plus rien de majeur — les 6 reportés sont livrés le 05/09 (quota, purges, mentions, slides 3D, deux suites) |
+| Lanceur `tout-verifier.mjs` | 42 suites hors IA + 5 IA — voir le journal [10] pour le dernier passage ; `audit-final-e2e` 68/68 |
 | Couverture (`plans/couverture.md`) | **0 case vide** (73 → 0) : 30 pages, 58 routes, 58 migrations, 12 drapeaux, 29 emails, 2 crons, 23 capacités, 40 suites |
-| Promesses (`plans/promesses.md`) | 23 recensées : 17 prouvées le 05/09, 4 dont la partie IA cite son dernier vert, 1 fausse aujourd'hui (« résiliable » → H7), 3 sans suite (chiffrées) |
+| Promesses (`plans/promesses.md`) | 23 recensées, **23 prouvées** le 05/09 (dont « résiliable » depuis le portail Stripe, et les 4 promesses IA rejouées) |
 | Nouvelles suites | `purge-comptes`, `audit-final` (69 points), `fermeture` (55), `emails` (88), `garde-commit`, `abonnement` (11 transitions, attend H4) |
 
 ## Ce qui a changé pour un artisan ou son client
@@ -33,9 +33,9 @@
 `plans/audit-final/` : `attaque.md`, `conformite.md`, `qualite.md`, `parcours.md`, `ia.md`, `fiabilite.md`, `motion.md`, `abonnement.md`, `triage.md` (liste unique), `correctifs.md` (50 lignes). Journal horodaté : `plans/journal-final.md` (liste H en bas). Reste chiffré : `plans/apres-demo.md` § « Audit final (05/09) ».
 
 ## Ce que ce sprint ne prouve pas
-- Les 5 suites IA (dernier vert 03-04/09) : à rejouer avec `--tout` quand la réserve est rechargée.
-- Les 11 transitions d'abonnement en conditions réelles : dès la clé de test Stripe (H4).
-- La restauration d'une sauvegarde : aucune n'existe (H12).
+- Les 11 transitions d'abonnement en conditions réelles : dès la clé de test Stripe (H4) — le portail est configuré, un abonné réel ne s'est pas encore présenté.
+- Le DNS d'un domaine perso réel (Vercel refuse tout hôte inconnu) : au premier artisan qui branche le sien.
+- Un sinistre complet : la restauration est prouvée compte par compte (7/7), pas base entière — la procédure est écrite dans `docs/sauvegardes.md`.
 
 ## Les 7 gestes qui restent à Benj (liste H complète dans le journal)
 1. **H1** — coller `supabase/migrations/_A_COLLER_sql_editor_0057_0058.sql` (2 min) → `audit-final-e2e` 69/69, alerte « cron muet » vivante.

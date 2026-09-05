@@ -128,7 +128,7 @@ export default function FicheMateriau({ id: idInitial, uid, fournisseurs, jeton,
       const url = await uploadArtisanMedia(uid, p.blob, p.ext)
       setC((prev) => ({ ...prev, photo_url: url }))
       setPlus(true)
-    } catch { setErr('Envoi de la photo impossible.') }
+    } catch (e) { setErr(e instanceof Error && e.message ? e.message : 'Envoi de la photo impossible.') }
     setBusy(false)
   }
 

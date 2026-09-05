@@ -33,7 +33,11 @@ html.lenis,html.lenis body{height:auto}
   --sbw:1px;
   --sfd:var(--f-fraunces),Georgia,serif; --sfb:var(--f-body),system-ui,sans-serif; --sfm:var(--f-mono),ui-monospace,monospace;
   background:var(--sbg);color:var(--sink);font-family:var(--sfb);font-size:var(--sfs);line-height:1.6;-webkit-font-smoothing:antialiased;
-  min-height:100vh;overflow-x:hidden;
+  /* `clip` et non `hidden` : `overflow-x:hidden` force `overflow-y` à `auto`, ce qui fait de
+     `.site` un conteneur de défilement — et un `position:sticky` à l'intérieur ne colle alors
+     plus jamais (il se cale sur un scrollport qui ne défile pas). Les slides 3D en dépendent.
+     `clip` coupe pareil le débordement horizontal sans créer de conteneur de défilement. */
+  min-height:100vh;overflow-x:clip;
 }
 .site ::selection{background:var(--psoft);color:var(--sink)}
 .site a{color:inherit;text-decoration:none}
@@ -490,6 +494,11 @@ html.lenis,html.lenis body{height:auto}
 /* L'étiquette de spécialité : encre sombre sur accent vif ne passait pas en 10,5 px.
    Fond assombri + texte blanc — même couleur de marque, lisible. */
 .site-shot-tag,.site-lb-cap .site-shot-tag{background:var(--pc-ink,var(--pc2));color:#fff}
+/* Sauf sur « nuit », le seul thème à fond sombre : là, --pc-ink est ÉCLAIRCI (il doit être lisible
+   SUR le sombre), donc du blanc par-dessus tombait à 3,95:1 en 10,5 px — il faut 4,5:1. Encre sombre
+   sur ce fond clair : même couleur de marque, et le seuil est franchi quel que soit l'accent choisi
+   (lisibleSur garantit ≥ 4,6:1 face à #16110D, ce qui plancherise la clarté du fond de l'étiquette). */
+.site[data-theme="nuit"] .site-shot-tag,.site[data-theme="nuit"] .site-lb-cap .site-shot-tag{color:#1a0f0a}
 /* ── Informations légales de l'artisan (correctif d'audit 2026-09-03) ────────
    Sobre et lisible : c'est une page qu'on consulte, pas qu'on admire. */
 .legal-bloc { margin-top: clamp(2rem, 5vw, 3.4rem); max-width: 78ch; }
@@ -522,7 +531,8 @@ html.lenis,html.lenis body{height:auto}
 
 /* ── Slides 3D de réalisations (SiteSlides.tsx), Signature — v5 §10 H2 ──
    Sans JS / mobile / reduced-motion : panneaux empilés en flux normal (repli galerie plein cadre).
-   Avec JS (.armed) : conteneur épinglé, panneaux superposés, mise en scène 3D pilotée par le scroll. */
+   Avec JS (.armed) : la vue reste COLLÉE en haut (position:sticky), les panneaux se superposent
+   dedans et la mise en scène 3D est pilotée par le scroll. */
 .site-slides{position:relative;margin:0 calc(50% - 50vw);width:100vw}
 .site-slide{position:relative;margin:0;height:100svh;min-height:520px;overflow:hidden;background:var(--sbg2);perspective:1200px}
 .site-slide-media{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;backface-visibility:hidden}
@@ -536,11 +546,21 @@ html.lenis,html.lenis body{height:auto}
 .site-slides-num,.site-slides-total{position:absolute;top:clamp(1rem,4vh,2.4rem);z-index:50;color:#fff;font-size:.9rem;letter-spacing:.16em;opacity:0;pointer-events:none;text-shadow:0 1px 10px rgba(0,0,0,.4);font-variant-numeric:tabular-nums}
 .site-slides-num{left:clamp(1.2rem,6vw,5rem);font-size:1.4rem;font-weight:700}
 .site-slides-total{left:calc(clamp(1.2rem,6vw,5rem) + 2.4rem);top:calc(clamp(1rem,4vh,2.4rem) + .35rem)}
-.site-slides.armed{height:100svh}
-.site-slides.armed .site-slide{position:absolute;inset:0}
+/* Armé : rail haut de n écrans + vue collée. AUCUN épinglage JS.
+   Le `pin:true` de GSAP basculait la section en `position:fixed` puis la relâchait : deux
+   décalages de mise en page mesurés en production (CLS 1,05 alors que le seuil « mauvais » est
+   0,25), donc une pénalité de référencement pour le site de l'artisan. `position:sticky` donne
+   le même effet sans jamais sortir l'élément du flux.
+   La hauteur du rail est exactement celle qu'occupaient les figures empilées (n × un écran) :
+   l'armement lui-même ne décale donc plus rien non plus.
+   Le panneau devient transparent (sa photo couvre tout) — sinon le fond du panneau entrant
+   masque le panneau sortant pendant la transition, et on voit le fond du site à la place. */
+.site-slides.armed{height:calc(var(--slides-n,3) * max(100svh,520px))}
+/* z-index 30 : la vue passe AU-DESSUS de la navigation collée (z-index 20). Pendant les slides,
+   l'écran appartient à la réalisation — sinon la barre translucide recouvrirait le compteur
+   « 01 / 03 », posé à 24 px du haut. La navigation revient dès la section passée. */
+.site-slides.armed .site-slides-vue{position:sticky;top:0;z-index:30;height:max(100svh,520px);overflow:hidden}
+.site-slides.armed .site-slide{position:absolute;inset:0;background:transparent}
 .site-slides.armed .site-slides-num,.site-slides.armed .site-slides-total{opacity:1}
 @media (max-width:759px){.site-slide{height:72svh;min-height:420px}.site-slide-txt h3{font-size:clamp(1.5rem,7vw,2.4rem)}}
 @media (prefers-reduced-motion:reduce){.site-slide-media,.site-slide-txt{will-change:auto}}
-/* Épinglé : le panneau lui-même est transparent (sa photo couvre tout) — sinon le fond du panneau
-   entrant masque le panneau sortant pendant la transition, et on voit le fond du site à la place. */
-.site-slides.armed .site-slide{background:transparent}

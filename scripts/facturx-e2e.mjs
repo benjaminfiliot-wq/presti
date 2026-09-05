@@ -5,6 +5,10 @@
 // agréée le rejette. On vérifie donc que le document est réellement bien formé, que les
 // montants s'y retrouvent, et surtout qu'aucune donnée n'est INVENTÉE quand elle manque.
 //
+// §9 et §10 : les mentions obligatoires que le PDF affiche doivent avoir le même contenu
+// dans le XML (date de prestation, escompte, indemnité de 40 € entre professionnels) —
+// c'est le XML que lit l'administration, pas le PDF.
+//
 // Usage : node scripts/facturx-e2e.mjs
 
 import fs from 'node:fs'
@@ -104,10 +108,47 @@ T('le nom est restitué à l’identique après relecture',
 console.log('\n── 8. Les contrôles attrapent ce qui ferait rejeter la facture')
 T('facture complète : aucun souci', controlerAvantEmission(base).length === 0, JSON.stringify(controlerAvantEmission(base)))
 T('SIRET manquant signalé', controlerAvantEmission({ ...base, vendeur: { ...base.vendeur, siret: null } }).some((s) => /SIRET/.test(s)))
+T('adresse du client manquante signalée (art. 242 nonies A : identité complète)',
+  controlerAvantEmission({ ...base, acheteur: { ...base.acheteur, adresse: null } }).some((s) => /adresse du client/.test(s)))
 T('aucune ligne signalé', controlerAvantEmission({ ...base, lignes: [] }).some((s) => /aucune ligne/.test(s)))
 T('motif d’exonération manquant signalé', controlerAvantEmission({ ...base, exoneration_code: null }).some((s) => /exonération/.test(s)))
 T('total incohérent signalé', controlerAvantEmission({ ...base, total_ht: 500 }).some((s) => /ne correspond pas/.test(s)))
 T('numéro manquant signalé', controlerAvantEmission({ ...base, numero: '' }).some((s) => /numéro/.test(s)))
+
+// ── 9. Les mentions obligatoires du PDF ont leur équivalent dans le XML (audit final,
+// auditeur B : A10 date de prestation et escompte, A11 indemnité de 40 € entre pros).
+// Le risque évité : un PDF conforme et un XML muet, alors que c'est le XML que lit
+// l'administration — ou l'inverse, deux versions de la même facture qui se contredisent.
+console.log('\n── 9. Mentions obligatoires portées aussi par le XML')
+const MENTIONS_PAIEMENT = 'Pénalités de retard : 3 fois le taux d’intérêt légal en vigueur, exigibles sans rappel. Indemnité forfaitaire pour frais de recouvrement : 40 € (art. L. 441-10 du code de commerce). Escompte pour paiement anticipé : néant.'
+const NOTE_DEBITS = 'TVA acquittée d’après les débits (art. 77 de l’annexe III au CGI).'
+const complet = genererFacturX({ ...base, date_prestation: '2026-08-28', mentions_paiement: MENTIONS_PAIEMENT, notes: [NOTE_DEBITS] })
+T('XML valide avec les nouvelles mentions', XMLValidator.validate(complet) === true, JSON.stringify(XMLValidator.validate(complet)))
+const dc = p.parse(complet)['rsm:CrossIndustryInvoice']
+const txc = dc['rsm:SupplyChainTradeTransaction']
+T('date de la prestation (BT-72) au format 102',
+  String(txc['ram:ApplicableHeaderTradeDelivery']['ram:ActualDeliverySupplyChainEvent']['ram:OccurrenceDateTime']['udt:DateTimeString']['#text']) === '20260828',
+  JSON.stringify(txc['ram:ApplicableHeaderTradeDelivery']))
+const termes = txc['ram:ApplicableHeaderTradeSettlement']['ram:SpecifiedTradePaymentTerms']
+T('conditions de règlement (BT-20) : escompte « néant »', /Escompte pour paiement anticipé : néant/.test(termes['ram:Description']), String(termes['ram:Description']))
+T('… et l’indemnité de 40 € pour un client professionnel', /40 €/.test(termes['ram:Description']))
+T('la date d’échéance reste portée', String(termes['ram:DueDateDateTime']['udt:DateTimeString']['#text']) === '20261003')
+T('l’ordre CII est respecté : Description avant DueDateDateTime',
+  complet.indexOf('<ram:Description>') < complet.indexOf('<ram:DueDateDateTime>'))
+T('mention libre (BT-22) : TVA d’après les débits', dc['rsm:ExchangedDocument']['ram:IncludedNote']['ram:Content'] === NOTE_DEBITS)
+T('la note est dans l’en-tête du document, après la date d’émission',
+  complet.indexOf('<ram:IssueDateTime>') < complet.indexOf('<ram:IncludedNote>')
+  && complet.indexOf('<ram:IncludedNote>') < complet.indexOf('</rsm:ExchangedDocument>'))
+
+console.log('\n── 10. Ces mentions non plus ne s’inventent pas')
+const nu = genererFacturX(base)
+T('pas de date de prestation ⇒ pas d’événement de livraison', !nu.includes('ActualDeliverySupplyChainEvent'))
+T('pas de mention de paiement ⇒ pas de Description', !nu.includes('<ram:Description>'))
+T('mais la date d’échéance seule produit quand même ses conditions', nu.includes('<ram:SpecifiedTradePaymentTerms>'))
+T('aucune note ⇒ aucune balise IncludedNote', !nu.includes('IncludedNote'))
+const nuNu = genererFacturX({ ...base, date_echeance: null })
+T('ni échéance ni mention ⇒ aucun bloc de conditions de règlement', !nuNu.includes('SpecifiedTradePaymentTerms'))
+T('le document reste valide dans tous ces cas', XMLValidator.validate(nu) === true && XMLValidator.validate(nuNu) === true)
 
 console.log(`\n${ko === 0 ? '✅' : '❌'} ${ok} réussis, ${ko} échoués\n`)
 process.exit(ko === 0 ? 0 : 1)

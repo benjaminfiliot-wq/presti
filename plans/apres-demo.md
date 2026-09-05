@@ -45,6 +45,8 @@
 - **Alertes sécurité non couvertes** (prompt v6 §6) : « connexion fondateur depuis un nouvel appareil » demande d'enregistrer une empreinte (IP + agent) à chaque connexion fondateur et de comparer (~2 h) ; « 10 échecs de connexion sur un compte » demande un relais côté client (la connexion se fait directement contre Supabase, le serveur ne voit pas les échecs) vers une route plafonnée (~1 h). Les révocations globales, elles, sont alertées.
 
 ## Audit final (05/09) — ce qui reste, chiffré
+
+> **Mis à jour le 05/09 au soir** : tout ce qui suit a été livré dans le chantier de solde (journal [10]) sauf : le téléphone LCEN (décision), le domaine d'envoi neutre (décision), et le remboursement au prorata proposé pour le support (retiré — décision du propriétaire s'il le souhaite). Les lignes sont gardées pour mémoire.
 - **Domaine perso** : aucune suite ne prouve la promesse « votre nom de domaine » (middleware + `lib/urls` lus seulement). Suite avec un domaine de test pointé sur Vercel — 2 h.
 - **Relances** : aucune suite ne fait partir une relance de bout en bout (cron fermé et logique lue seulement). Suite avec un lead à J-3 et une adresse contrôlée — 1 h 30.
 - **Support prioritaire** (Signature) : engagement humain à formaliser dans les CGU (délai de réponse) — 30 min.

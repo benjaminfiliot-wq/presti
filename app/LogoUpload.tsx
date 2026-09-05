@@ -24,8 +24,8 @@ export default function LogoUpload({ uid, value, onChange }: { uid: string; valu
       onChange(publicUrl)
       const { error } = await supabase.from('artisans').update({ logo_url: publicUrl }).eq('id', uid)
       if (error) setErr('Enregistrement du logo impossible.')
-    } catch {
-      setErr('Import de l’image impossible.')
+    } catch (e) {
+      setErr(e instanceof Error && e.message ? e.message : 'Import de l’image impossible.')
     } finally {
       setBusy(false)
     }

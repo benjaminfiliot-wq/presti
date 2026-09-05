@@ -23,6 +23,13 @@ export type PDFData = {
   type?: 'devis' | 'facture'; echeanceDate?: string
   avoir?: boolean; mediateur?: string
   logoUrl?: string | null; statut?: string | null
+  // Mentions obligatoires secondaires — leur TEXTE est écrit dans lib/devisPdfData.ts avec
+  // son fondement : ce fichier ne fait que les poser sur la page. Toutes sont vides quand la
+  // donnée n'existe pas ; aucune n'est inventée ici.
+  clientSiren?: string; adresseChantier?: string; datePrestation?: string
+  mentionsReglement?: string[]; mentionTvaDebits?: string
+  /** Devis d'un particulier : « À l'attention de … » du formulaire de rétractation. */
+  retractationDestinataire?: string
 }
 
 const s = StyleSheet.create({
@@ -74,6 +81,8 @@ const s = StyleSheet.create({
 
   sign: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 22 },
   signBox: { borderWidth: 1, borderStyle: 'dashed', borderColor: '#c9c3b3', borderRadius: 5, padding: 8, width: 230, fontSize: 7.5, color: MUTED },
+  // Formulaire de rétractation : détachable, donc encadré et jamais coupé en deux pages.
+  retract: { marginTop: 14, borderWidth: 1, borderStyle: 'dashed', borderColor: '#c9c3b3', borderRadius: 5, padding: 10, fontSize: 7.5, color: MUTED },
   legal: { marginTop: 18, borderTopWidth: 1, borderTopColor: LINE, paddingTop: 10, fontSize: 7.5, color: MUTED },
   legalTitle: { fontSize: 7, color: FAINT, letterSpacing: 1, marginBottom: 4, fontFamily: 'Helvetica-Bold' },
 })
@@ -103,6 +112,8 @@ export function DevisPDF({ d }: { d: PDFData }) {
             <Text style={s.title}>{d.avoir ? 'AVOIR' : isFacture ? 'FACTURE' : 'DEVIS'}</Text>
             <Text style={s.metaNum}>{d.numero}</Text>
             <Text style={s.metaLine}>Émis le {d.date}</Text>
+            {/* Art. 242 nonies A ann. II CGI : date de la prestation, quand elle est connue. */}
+            {d.datePrestation ? <Text style={s.metaLine}>Prestation du {d.datePrestation}</Text> : null}
             <Text style={s.metaLine}>{isFacture ? `Échéance : ${d.echeanceDate || d.date}` : `Valable jusqu'au ${d.validiteDate}`}</Text>
             {status ? <Text style={[s.statusPill, { backgroundColor: status.bg, color: status.color }]}>{status.label}</Text> : null}
           </View>
@@ -114,6 +125,14 @@ export function DevisPDF({ d }: { d: PDFData }) {
             <Text style={s.label}>{isFacture ? 'FACTURÉ À' : 'ADRESSÉ À'}</Text>
             <Text style={s.bold}>{d.clientNom || 'Client'}</Text>
             {d.clientAdresse ? <Text>{d.clientAdresse}</Text> : null}
+            {d.clientSiren ? <Text>SIREN {d.clientSiren}</Text> : null}
+            {/* Arrêté du 24/01/2017 art. 2 (devis) · art. 242 nonies A ann. II CGI (facture). */}
+            {d.adresseChantier ? (
+              <View style={{ marginTop: 6 }}>
+                <Text style={s.label}>{isFacture ? 'ADRESSE DU CHANTIER' : "LIEU D'EXÉCUTION DES TRAVAUX"}</Text>
+                <Text>{d.adresseChantier}</Text>
+              </View>
+            ) : null}
           </View>
           {d.objet ? (
             <View style={{ maxWidth: 200, textAlign: 'right' }}>
@@ -192,13 +211,36 @@ export function DevisPDF({ d }: { d: PDFData }) {
         <View style={s.legal}>
           <Text style={s.legalTitle}>MENTIONS</Text>
           {isFacture
-            ? <Text>Facture payable {d.echeanceDate ? `au plus tard le ${d.echeanceDate}` : 'à réception'}. En cas de retard : pénalités au taux de 3 fois le taux d&apos;intérêt légal, plus une indemnité forfaitaire de recouvrement de 40 €.</Text>
+            // Pénalités, indemnité de 40 € (entre professionnels SEULEMENT) et escompte :
+            // le texte et ses fondements vivent dans lib/devisPdfData.ts, partagés avec le XML.
+            ? <Text>Facture payable {d.echeanceDate ? `au plus tard le ${d.echeanceDate}` : 'à réception'}. {(d.mentionsReglement ?? []).join(' ')}</Text>
             : <Text>Devis gratuit, valable {d.validiteJours} jours à compter du {d.date}.{d.conditions ? ` Conditions de paiement : ${d.conditions}.` : ''}{d.iban ? ` Règlement par virement — IBAN ${d.iban}.` : ''} Client particulier ayant accepté à distance : droit de rétractation de 14 jours (art. L. 221-18 du code de la consommation), sauf réparations ou entretien urgents à domicile (art. L. 221-28) ; travaux commencés à votre demande avant la fin du délai : la part réalisée reste due (art. L. 221-25).</Text>}
           {d.avoir ? <Text style={{ marginTop: 3 }}>Note d’avoir : cette pièce annule la facture citée en objet ; ses montants sont négatifs.</Text> : null}
           {!isFacture && d.mediateur ? <Text style={{ marginTop: 3 }}>Médiateur de la consommation (art. L. 616-1 c. conso) : {d.mediateur}</Text> : null}
           {d.franchise ? <Text style={{ marginTop: 3 }}>{d.mentionTva}</Text> : null}
+          {d.mentionTvaDebits ? <Text style={{ marginTop: 3 }}>{d.mentionTvaDebits}</Text> : null}
           {d.assurance ? <Text style={{ marginTop: 3 }}>Assurance professionnelle : {d.assurance}</Text> : null}
         </View>
+
+        {/* Formulaire type de rétractation — annexe à l'art. R. 221-1 c. conso, fourni au
+            consommateur avec l'offre (art. L. 221-5). Le texte est celui du modèle légal :
+            il n'est ni résumé ni réécrit, sinon il ne vaut plus modèle. */}
+        {!isFacture && d.retractationDestinataire ? (
+          <View style={s.retract} wrap={false}>
+            <Text style={s.legalTitle}>FORMULAIRE TYPE DE RÉTRACTATION — À DÉTACHER</Text>
+            <Text>(Veuillez compléter et renvoyer le présent formulaire uniquement si vous souhaitez vous rétracter du contrat.)</Text>
+            <Text style={{ marginTop: 6 }}>À l&apos;attention de {d.retractationDestinataire} :</Text>
+            <Text style={{ marginTop: 6 }}>
+              Je/nous (*) vous notifie/notifions (*) par la présente ma/notre (*) rétractation du contrat portant sur la prestation de services ci-dessous{d.objet ? ` : ${d.objet}` : ''}.
+            </Text>
+            <Text style={{ marginTop: 6 }}>Commandé le (*) / reçu le (*) : ............................................</Text>
+            <Text style={{ marginTop: 4 }}>Nom du (des) consommateur(s) : ............................................</Text>
+            <Text style={{ marginTop: 4 }}>Adresse du (des) consommateur(s) : ............................................</Text>
+            <Text style={{ marginTop: 4 }}>Signature du (des) consommateur(s) (uniquement en cas de notification du présent formulaire sur papier) :</Text>
+            <Text style={{ marginTop: 14 }}>Date : ............................................</Text>
+            <Text style={{ marginTop: 6, color: FAINT }}>(*) Rayez la mention inutile.</Text>
+          </View>
+        ) : null}
       </Page>
     </Document>
   )

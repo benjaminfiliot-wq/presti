@@ -26,6 +26,21 @@ const TITLE = "Presti — Répondez à chaque demande de devis en moins d'une mi
 const DESC =
   "Presti répond à vos demandes de devis en moins d'une minute, dans votre ton, et relance automatiquement jusqu'à la réponse. Ne perdez plus jamais un chantier faute de temps."
 
+// ICÔNES — elles n'apparaissent pas dans l'objet ci-dessous, et c'est la bonne façon de faire.
+// Next les découvre par convention de fichier : app/icon.svg (onglets modernes),
+// app/apple-icon.png (écran d'accueil iOS), app/site/[slug]/icon.tsx et apple-icon.tsx pour la
+// marque de l'artisan. Deux règles à ne pas casser :
+//
+//  1. NE JAMAIS déclarer `icons` dans ces métadonnées. Une icône posée là empêche Next de
+//     prendre celles des segments enfants : /site/[slug] et /p/[slug] perdraient l'icône à la
+//     marque de l'artisan et afficheraient celle de Presti (marque blanche démentie).
+//  2. Le .ico est dans public/, PAS dans app/. Un app/favicon.ico est traité par Next comme un
+//     cas spécial : il est ajouté à TOUTES les routes, y compris celles de l'artisan, qu'un
+//     segment enfant redéfinisse ou non ses icônes — même conséquence qu'au point 1. Depuis
+//     public/, il ne produit aucune balise : il sert de repli implicite sur /favicon.ico, ce que
+//     Safari va chercher quand il ne sait pas lire l'icône SVG déclarée (audit final, C/13). Sur
+//     le site d'un artisan, l'icône déclarée est un PNG : Safari la lit et ne descend jamais
+//     jusqu'à ce repli.
 export const metadata: Metadata = {
   metadataBase: new URL('https://prestiapp.fr'),
   title: { default: TITLE, template: '%s · Presti' },
@@ -33,19 +48,30 @@ export const metadata: Metadata = {
   applicationName: 'Presti',
   keywords: ['devis artisan', 'logiciel devis bâtiment', 'réponse devis automatique', 'facture artisan', 'relance devis', 'IA artisan', 'plombier électricien devis'],
   authors: [{ name: 'Presti' }],
+  // PIÈGE : cette canonique est celle de l'ACCUEIL, et elle descend sur toute page qui ne la
+  // redéfinit pas — la page se déclare alors comme étant l'accueil (audit final, C/11 : c'était
+  // le cas de /login, /signup, /abonnement, /reset-password et de la 404). Toute nouvelle page
+  // publique doit poser `alternates: { canonical: '/son-chemin' }`, et une page qui n'a pas
+  // d'URL canonique propre (404) doit poser `alternates: { canonical: null }`.
   alternates: { canonical: '/' },
   robots: { index: true, follow: true },
   // Google Search Console : poser le code dans la variable d'env GOOGLE_SITE_VERIFICATION
   // (Vercel → Settings → Environment Variables) → la balise apparaît, le domaine est vérifié.
+
+  // Aperçu de partage. PAS de `title` ni de `description` ici, et c'est volontaire : Next ne
+  // fusionne pas `openGraph` champ par champ entre segments. Un titre posé ici n'est donc pas
+  // un défaut — c'est un titre GRAVÉ sur toutes les pages, que ni /faq, ni /contact, ni les
+  // pages légales ne pouvaient corriger sans redéclarer tout le bloc (et perdre au passage
+  // l'image de app/opengraph-image.tsx, rattachée au bloc et non au fichier). Laissés vides,
+  // Next les remplit avec le `title` et la `description` PROPRES à chaque page — l'accueil
+  // récupère les siens (TITLE/DESC ci-dessus) sans rien changer (audit final, C/12).
   openGraph: {
     type: 'website',
     locale: 'fr_FR',
     url: 'https://prestiapp.fr',
     siteName: 'Presti',
-    title: TITLE,
-    description: DESC,
   },
-  twitter: { card: 'summary_large_image', title: TITLE, description: DESC },
+  twitter: { card: 'summary_large_image' },
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {

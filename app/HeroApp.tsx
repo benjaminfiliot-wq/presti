@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 
 /** Fenêtre "produit" du hero : le chat se joue tout seul (message → frappe → réponse), en boucle. */
 export default function HeroApp() {
+  const racine = useRef<HTMLDivElement>(null)
   const inB = useRef<HTMLDivElement>(null)
   const typ = useRef<HTMLDivElement>(null)
   const outB = useRef<HTMLDivElement>(null)
@@ -14,20 +15,34 @@ export default function HeroApp() {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
       show(inB, true); show(outB, true); return
     }
-    const timers: ReturnType<typeof setTimeout>[] = []
+    let timers: ReturnType<typeof setTimeout>[] = []
     const scene = () => {
       els.forEach((r) => r.current?.classList.remove('show'))
       timers.push(setTimeout(() => show(inB, true), 450))
       timers.push(setTimeout(() => show(typ, true), 1500))
       timers.push(setTimeout(() => { show(typ, false); show(outB, true) }, 3100))
     }
-    scene()
-    const loop = setInterval(scene, 7200)
-    return () => { clearInterval(loop); timers.forEach(clearTimeout) }
+    let boucle = 0
+    const demarrer = () => { if (boucle) return; scene(); boucle = window.setInterval(scene, 7200) }
+    const arreter = () => {
+      if (boucle) { clearInterval(boucle); boucle = 0 }
+      timers.forEach(clearTimeout); timers = []
+    }
+
+    // La boucle continuait de tourner quand le hero était à cinq écrans du visiteur (audit final G) :
+    // des timers et des transitions CSS payés pour une scène que personne ne regarde. On ne joue
+    // que dans le viewport ; en revenant, la scène repart proprement du début.
+    let io: IntersectionObserver | null = null
+    if ('IntersectionObserver' in window && racine.current) {
+      io = new IntersectionObserver((e) => { if (e[0]?.isIntersecting) demarrer(); else arreter() }, { threshold: 0.15 })
+      io.observe(racine.current)
+    } else demarrer()
+
+    return () => { io?.disconnect(); arreter() }
   }, [])
 
   return (
-    <div className="lp-win">
+    <div className="lp-win" ref={racine}>
       <div className="lp-winbar"><span className="d" /><span className="d" /><span className="d" /><span className="u">presti · réponse en direct</span></div>
       <div className="lp-wingrid">
         <div className="lp-pane">

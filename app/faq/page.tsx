@@ -7,6 +7,10 @@ export const metadata = {
   alternates: { canonical: '/faq' },
   title: 'FAQ',
   description: 'Questions fréquentes sur Presti : fonctionnement, sécurité des données, tarifs, devis, paiements.',
+  // Pas de bloc `openGraph` ici, et c'est voulu : en redéclarer un remplacerait celui du layout
+  // racine EN ENTIER, image de partage comprise. Le titre et le texte ci-dessus suffisent —
+  // Next s'en sert pour og:title et og:description dès lors que le layout racine ne les fige
+  // plus (audit final, C/12).
 }
 
 const FAQ: { q: string; a: string }[] = [
@@ -34,7 +38,10 @@ const schema = {
 export default function FaqPage() {
   return (
     <main className="legal-wrap">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      {/* Les questions sont statiques aujourd'hui, mais le bloc est lu en texte brut jusqu'au
+          premier « fin de balise script » : une réponse qui en contiendrait un livrerait la suite
+          au parseur HTML. On échappe `<`, `>` et `&` — le sens des données ne change pas. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026') }} />
       <Breadcrumb label="FAQ" path="/faq" />
       <h1>Questions fréquentes</h1>
       <div className="legal-updated">Tout ce qu’il faut savoir sur Presti</div>

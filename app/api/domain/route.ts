@@ -37,6 +37,11 @@ export async function POST(req: Request) {
   const domaine = normalizeDomain(typeof body?.domaine === 'string' ? body.domaine : '')
   if (!domaine) return NextResponse.json({ error: 'Domaine invalide. Saisissez-le sans http:// ni chemin (ex : mondomaine.fr).' }, { status: 400 })
 
+  // Un domaine déjà revendiqué par un AUTRE compte est refusé ici, avant Vercel (0061 le refuse
+  // aussi en base — ceinture et bretelles, parce qu'un domaine détourné servirait le site d'un
+  // autre artisan sous sa propre adresse).
+  const { data: autre } = await supabaseAdmin.from('artisans').select('id').ilike('domaine', domaine).neq('id', r.uid).maybeSingle()
+  if (autre) return NextResponse.json({ error: 'Ce domaine est déjà rattaché à un autre compte Presti.' }, { status: 409 })
   const status = await addDomain(domaine)
   if (!status.ok) return NextResponse.json({ error: status.error || 'Ajout impossible.' }, { status: 502 })
   await supabaseAdmin.from('artisans').update({ domaine, domaine_verifie: status.served }).eq('id', r.uid)

@@ -5,6 +5,10 @@
 // dans un index), sitemap, canonique, JSON-LD valide, et white-label absolu — le mot
 // « Presti » ne doit apparaître nulle part sur le site d'un artisan.
 //
+// Ajouté après l'audit final (§7 à §10) : un nom d'artisan hostile ne casse pas le JSON-LD,
+// /favicon.ico existe (Safari), l'icône d'écran d'accueil iOS est déclarée, et chaque page
+// publique porte SA canonique, SON titre et SON aperçu de partage — plus ceux de l'accueil.
+//
 // Usage : node scripts/seo-e2e.mjs
 
 import fs from 'node:fs'
@@ -98,6 +102,72 @@ try {
   const coupe = await html(`${BASE}/site/${slug}`)
   T('la page passe en noindex', /noindex/.test(coupe))
   T('et sort du sitemap', !(await html(`${BASE}/sitemap.xml`)).includes(`/site/${slug}`))
+
+  console.log('\n── 7. Un nom d’artisan hostile ne referme pas la balise de données structurées')
+  // Le contenu d'un bloc application/ld+json est lu en TEXTE BRUT jusqu'au premier « fin de
+  // balise script » : sans échappement, un artisan qui met cette séquence dans son nom livre
+  // la suite du document au parseur HTML. On le prouve avec un vrai nom hostile.
+  await sb.from('artisans').update({ site_seo: true, nom: 'Vérif </script><b>SEO' }).eq('id', uid)
+  const hostile = await html(`${BASE}/site/${slug}`)
+  T('aucune balise refermée par la donnée de l’artisan', !hostile.includes('</script><b>'))
+  const blocsHostiles = [...hostile.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1])
+  let nomRelu = null
+  for (const b of blocsHostiles) { try { const o = JSON.parse(b); if (o.name) nomRelu = o.name } catch { /* signalé juste après */ } }
+  T('les blocs restent du JSON lisible', blocsHostiles.length > 0 && nomRelu !== null)
+  T('et le nom hostile y est intact, seulement échappé', nomRelu === 'Vérif </script><b>SEO', String(nomRelu))
+  await sb.from('artisans').update({ nom: 'Vérif SEO' }).eq('id', uid)
+
+  console.log('\n── 8. Icônes (Safari, écran d’accueil iOS)')
+  const ico = await fetch(`${BASE}/favicon.ico`, { headers: { 'User-Agent': 'presti-verif' } })
+  T('/favicon.ico répond 200 (Safari ne sait pas lire une icône SVG et retombe dessus)', ico.status === 200, `HTTP ${ico.status}`)
+  T('… et sert bien une image', /image|icon/.test(ico.headers.get('content-type') || ''), ico.headers.get('content-type') || 'sans type')
+  const accueil = await html(`${BASE}/`)
+  T('l’accueil déclare une icône d’écran d’accueil iOS', /rel="apple-touch-icon"/.test(accueil))
+  const sitePublie = await html(`${BASE}/site/${slug}`)
+  T('le site de l’artisan aussi (sa marque, pas la nôtre)', /rel="apple-touch-icon"[^>]*\/site\//.test(sitePublie))
+  T('et aucune icône de Presti ne s’y invite', !/rel="(icon|apple-touch-icon)"[^>]*(favicon\.ico|\/icon\.svg)/.test(sitePublie))
+
+  console.log('\n── 9. Chaque page porte SA canonique et SON titre (et non ceux de l’accueil)')
+  // Piège du layout racine : `alternates.canonical: '/'` descend sur toute page qui ne le
+  // redéfinit pas — la page se déclare alors comme étant l'accueil.
+  const canonique = (h) => ((h.match(/<link rel="canonical" href="([^"]+)"/) || [])[1] || '').replace(/\/$/, '')
+  const titre = (h) => (h.match(/<title>([^<]*)<\/title>/) || [])[1] || ''
+  const pagesPubliques = ['/', '/faq', '/contact', '/login', '/signup', '/abonnement', '/reset-password']
+  const titres = new Map()
+  for (const chemin of pagesPubliques) {
+    const h = chemin === '/' ? accueil : await html(`${BASE}${chemin}`)
+    T(`${chemin} : canonique propre`, canonique(h) === `${BASE}${chemin}`.replace(/\/$/, ''), canonique(h) || 'absente')
+    T(`${chemin} : titre non vide`, titre(h).length > 0)
+    titres.set(chemin, titre(h))
+  }
+  T('aucune page ne sert le titre de l’accueil', [...titres].filter(([c, t]) => c !== '/' && t === titres.get('/')).length === 0,
+    [...titres].filter(([c, t]) => c !== '/' && t === titres.get('/')).map(([c]) => c).join(', '))
+  for (const chemin of ['/login', '/signup', '/abonnement', '/reset-password']) {
+    const h = await html(`${BASE}${chemin}`)
+    T(`${chemin} : noindex (page de console, jamais un résultat de recherche)`, /name="robots"[^>]*noindex/.test(h))
+  }
+  const p404 = await html(`${BASE}/verif-404-${Date.now()}`)
+  T('la 404 ne déclare AUCUNE canonique (elle n’a pas d’URL propre)', !/rel="canonical"/.test(p404))
+  T('la 404 a son propre titre', /Page introuvable/.test(titre(p404)), titre(p404))
+
+  console.log('\n── 10. Partage : chaque page a son propre aperçu')
+  // Le layout racine ne fixe plus og:title ni og:description : Next les remplit avec le titre et
+  // la description de chaque page. Le piège inverse est testé juste après — redéclarer un bloc
+  // `openGraph` dans une page remplace celui de la racine EN ENTIER et fait disparaître l'image.
+  const meta = (h, p) => (h.match(new RegExp(`<meta property="${p}" content="([^"]*)"`)) || [])[1] || ''
+  for (const chemin of ['/faq', '/contact', '/cgu', '/confidentialite', '/mentions-legales']) {
+    const h = await html(`${BASE}${chemin}`)
+    T(`${chemin} : og:title n’est pas celui de l’accueil`, meta(h, 'og:title') && meta(h, 'og:title') !== meta(accueil, 'og:title'), meta(h, 'og:title'))
+    // Next décrit l'image générée par app/opengraph-image.tsx en og:image:url/width/height/alt
+    // (descripteur), pas en og:image simple — d'où le test sur le préfixe.
+    T(`${chemin} : l’image de partage est toujours servie`, /property="og:image/.test(h))
+    // og:description ne peut être propre que si la page a une `description`. /cgu,
+    // /confidentialite et /mentions-legales n'en ont pas encore : elles reprennent celle de la
+    // racine — pas un mensonge d'identité, mais un texte de partage à écrire.
+    if (['/faq', '/contact'].includes(chemin)) {
+      T(`${chemin} : og:description n’est pas celle de l’accueil`, meta(h, 'og:description') !== meta(accueil, 'og:description'))
+    }
+  }
 } catch (e) {
   ko++; console.log('  ❌ exception :', e.message)
 } finally {

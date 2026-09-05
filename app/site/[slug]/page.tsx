@@ -19,6 +19,17 @@ import { lisibleSur } from '@/lib/contrast'
 import { fondDuTheme } from '@/lib/themeFonds'
 import { computeResponseDelay } from '@/lib/platStats'
 
+/**
+ * Sérialise un bloc de données structurées pour l'injecter dans `<script type="application/ld+json">`.
+ * Le contenu d'un tel bloc est lu en TEXTE BRUT jusqu'au premier « fin de balise script » : un nom
+ * d'artisan contenant cette séquence refermerait la balise et livrerait tout le reste du document
+ * au parseur HTML (page cassée, et porte ouverte à l'injection). Les trois caractères qui portent
+ * un sens en HTML repartent donc en échappements JSON — le JSON reste strictement équivalent.
+ */
+function jsonLd(donnees: unknown): string {
+  return JSON.stringify(donnees).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026')
+}
+
 type Service = { nom?: string; description?: string }
 type Realisation = { image?: string; titre?: string; specialite?: string; blur?: string }
 type Reseaux = { instagram?: string; facebook?: string; tiktok?: string; linkedin?: string; whatsapp?: string; site?: string; google?: string }
@@ -417,9 +428,13 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
 
   return (
     <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent, ['--pc-ink' as string]: accentLisible, ['--pc-ink-d' as string]: accentLisibleSombre, ...styleVars }} data-tier={tier} data-theme={theme} {...styleData}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
+      {/* Tout ce qui suit vient de l'artisan (nom, services, FAQ) : c'est du contenu non fiable
+          posé dans un bloc que le navigateur lit en texte brut jusqu'au premier `</script>`.
+          On échappe donc `<`, `>` et `&` — `<` seul suffisait à empêcher la fermeture de balise,
+          mais `&` ferme aussi la porte des références de caractères dans un contexte HTML. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
       {c?.faq && c.faq.length ? (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: c.faq.map((e) => ({ '@type': 'Question', name: e.q, acceptedAnswer: { '@type': 'Answer', text: e.r } })) }).replace(/</g, '\\u003c') }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: c.faq.map((e) => ({ '@type': 'Question', name: e.q, acceptedAnswer: { '@type': 'Answer', text: e.r } })) }) }} />
       ) : null}
       <SiteMotion />
       {showReal ? <SiteLightbox /> : null}

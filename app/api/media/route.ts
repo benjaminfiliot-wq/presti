@@ -1,0 +1,146 @@
+import { NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { authArtisan, estEchec } from '@/lib/authArtisan'
+import { MEDIA_BUCKET } from '@/lib/media'
+import { consommerLimite } from '@/lib/limites'
+import {
+  TAILLE_MAX_FICHIER, formaterOctets, messagePlafondImages, octetsImages, plafondImages, verifierQuotaImages,
+} from '@/lib/quotaMedia'
+
+// Téléversement des images de l'artisan — le SEUL chemin d'écriture dans `artisan-media`
+// (audit final, auditeur F, majeur 4.3).
+//
+// Avant, le navigateur écrivait directement dans le bucket avec la clé anon : la seule
+// barrière était « le dossier porte ton identifiant ». Aucun plafond par compte, donc un
+// compte d'essai pouvait remplir l'offre Supabase entière et couper le service de TOUS les
+// artisans. Un plafond posé dans le composant d'import n'aurait rien valu — la clé anon est
+// publique, l'appel se refait à la main en trois lignes. Il fallait donc déplacer l'écriture
+// ici, et fermer la porte du navigateur (migration 0059).
+//
+// Ce que la route garantit, dans cet ordre :
+//   1. la session est valide (et la 2FA passée, cf. authArtisan) ;
+//   2. le fichier est une image d'un format connu, sous la borne par fichier ;
+//   3. la rafale est bornée (compteur atomique) : personne ne fait boucler la route ;
+//   4. l'usage RÉEL du dossier + ce fichier tiennent dans l'offre — mesuré avant l'écriture,
+//      revérifié après (voir la contre-mesure de course, plus bas) ;
+//   5. le dossier d'écriture vient de la SESSION, jamais du client : un identifiant forgé
+//      n'écrit plus chez le voisin.
+//
+// Limite assumée, écrite ici pour que personne ne la découvre plus tard : sur le parcours
+// réel (envois l'un après l'autre) le plafond est exact. Face à quelqu'un qui lance ses
+// envois RIGOUREUSEMENT en même temps, la mesure d'avant est la même pour tous ; la
+// contre-mesure d'après en rattrape la plupart, mais le pire cas reste
+// « plafond + rafale × taille par fichier », soit ~185 Mo pour un compte d'essai — et plus
+// rien ne passe ensuite, tant qu'il n'a pas supprimé. On est très loin du gigaoctet que
+// l'audit a mesuré, et sans table de compteurs à tenir à jour. Le rendre exact demanderait
+// une réservation atomique d'octets en base (comme `consommer_limite` pour les appels) :
+// c'est la suite si le besoin se présente, pas ce que coûtait le défaut.
+
+export const runtime = 'nodejs'
+export const maxDuration = 30
+
+// Formats acceptés = ceux que le parcours d'import produit réellement. Le SVG en est
+// volontairement absent : le bucket est PUBLIC et un SVG est un document exécutable
+// (script inline) — le composant de logo le rasterise déjà en PNG avant d'envoyer.
+const TYPES: Record<string, string> = {
+  webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+}
+
+// Rafale : de quoi importer une galerie complète d'un coup, pas de quoi boucler.
+const MAX_ENVOIS = 40
+const FENETRE_ENVOIS = 10 * 60
+
+/**
+ * L'offre qui décide du plafond. Un fondateur est traité comme Business — la même règle que
+ * les autres verrous du produit : on ne coupe jamais le compte qui fait la démonstration.
+ */
+async function planDe(uid: string): Promise<string> {
+  const { data } = await supabaseAdmin.from('artisans').select('plan, is_founder').eq('id', uid).maybeSingle()
+  return data?.is_founder ? 'business' : ((data?.plan as string) || 'gratuit')
+}
+
+// ── POST : une image → son URL publique.
+export async function POST(req: Request) {
+  const s = await authArtisan(req)
+  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
+
+  const ext = (new URL(req.url).searchParams.get('ext') || '').toLowerCase()
+  const type = TYPES[ext]
+  if (!type) return NextResponse.json({ error: 'Format d’image non accepté (PNG, JPG ou WebP).' }, { status: 400 })
+
+  let corps: Buffer
+  try {
+    corps = Buffer.from(await req.arrayBuffer())
+  } catch {
+    return NextResponse.json({ error: 'Image illisible.' }, { status: 400 })
+  }
+  if (!corps.length) return NextResponse.json({ error: 'Image vide.' }, { status: 400 })
+  if (corps.length > TAILLE_MAX_FICHIER) {
+    return NextResponse.json({ error: `Image trop lourde (${formaterOctets(TAILLE_MAX_FICHIER)} maximum).` }, { status: 413 })
+  }
+
+  // Borne de rafale avant la mesure : elle borne le COÛT (une mesure de stockage par envoi),
+  // pas le plafond — c'est la contre-mesure de course, plus bas, qui tient le plafond.
+  if (!(await consommerLimite(`media:envoi:${s.uid}`, MAX_ENVOIS, FENETRE_ENVOIS))) {
+    return NextResponse.json({ error: 'Trop d’images envoyées coup sur coup. Réessayez dans quelques minutes.' }, { status: 429 })
+  }
+
+  const plan = await planDe(s.uid)
+  const verdict = await verifierQuotaImages(s.uid, plan, corps.length)
+  if (!verdict.ok) {
+    // 413 « charge trop lourde » : c'est bien la taille qui est refusée, pas le droit.
+    return NextResponse.json({ error: verdict.message, utilise: verdict.utilise, plafond: verdict.plafond }, { status: 413 })
+  }
+
+  const rand = Math.random().toString(36).slice(2, 9)
+  const chemin = `${s.uid}/${Date.now()}-${rand}.${ext}`
+  const { error } = await supabaseAdmin.storage.from(MEDIA_BUCKET).upload(chemin, corps, {
+    contentType: type,
+    cacheControl: '31536000', // le nom porte l'horodatage : le fichier est immuable
+    upsert: false,
+  })
+  if (error) {
+    console.error('[media] upload:', error.message)
+    return NextResponse.json({ error: 'Envoi de l’image impossible.' }, { status: 502 })
+  }
+
+  // Contre-mesure de course — la leçon de la migration 0049. Un contrôle « je mesure puis
+  // j'écris » se contourne en parallèle : N envois lisent tous le même usage « sous le
+  // plafond » et passent tous. On remesure donc APRÈS l'écriture et, si le dossier a
+  // débordé, on retire le fichier qu'on vient d'écrire. Le plafond redevient un plafond, pas
+  // une moyenne. Sur le parcours réel (les composants d'import envoient une image après
+  // l'autre) ce contrôle ne retire jamais rien : il ne coûte qu'une mesure.
+  const apres = await octetsImages(s.uid)
+  if (apres !== null && apres > verdict.plafond) {
+    await supabaseAdmin.storage.from(MEDIA_BUCKET).remove([chemin])
+    return NextResponse.json(
+      { error: messagePlafondImages(plan, Math.max(0, apres - corps.length)), utilise: apres - corps.length, plafond: verdict.plafond },
+      { status: 413 },
+    )
+  }
+
+  const url = supabaseAdmin.storage.from(MEDIA_BUCKET).getPublicUrl(chemin).data.publicUrl
+  return NextResponse.json({
+    ok: true, url,
+    utilise: apres ?? verdict.utilise + corps.length,
+    plafond: verdict.plafond,
+  })
+}
+
+// ── GET : où en est l'artisan de son quota (pour l'afficher, et pour le prouver en test).
+export async function GET(req: Request) {
+  const s = await authArtisan(req)
+  if (estEchec(s)) return NextResponse.json({ error: s.error, code: s.code }, { status: s.status })
+
+  const plan = await planDe(s.uid)
+  const utilise = await octetsImages(s.uid)
+  const plafond = plafondImages(plan)
+  return NextResponse.json({
+    ok: true,
+    mesure: utilise !== null, // false = stockage injoignable, le chiffre ci-dessous ne veut rien dire
+    utilise: utilise ?? 0,
+    plafond,
+    reste: Math.max(0, plafond - (utilise ?? 0)),
+    lisible: `${formaterOctets(utilise ?? 0)} sur ${formaterOctets(plafond)}`,
+  })
+}

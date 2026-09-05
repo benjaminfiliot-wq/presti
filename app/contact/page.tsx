@@ -6,6 +6,9 @@ export const metadata = {
   title: 'Nous écrire',
   description: 'Une question sur Presti, avant ou après votre inscription ? Écrivez-nous, la réponse arrive sous 24 h.',
   alternates: { canonical: '/contact' },
+  // Pas de bloc `openGraph` ici, et c'est voulu : en redéclarer un remplacerait celui du layout
+  // racine EN ENTIER, image de partage comprise. Le titre et le texte ci-dessus servent
+  // directement d'og:title et d'og:description (audit final, C/12).
 }
 
 export default function Contact() {
