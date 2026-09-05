@@ -19,7 +19,7 @@
 //          (plans/audit-final/abonnement.md). Compté à part, n'échoue pas — devient ✅ quand c'est corrigé.
 //
 // PRÉREQUIS (dans .env.local, jamais affichés) :
-//   STRIPE_SECRET_KEY_TEST   clé de TEST (sk_test_…). Une clé sk_live est REFUSÉE sauf --reel.
+//   STRIPE_SECRET_KEY_TEST   clé de TEST (sk_test_… ou rk_test_…). Une clé réelle (sk_live / rk_live) est REFUSÉE sauf --reel.
 //   STRIPE_WEBHOOK_SECRET    secret de signature du point de terminaison visé (Vercel → STRIPE_WEBHOOK_SECRET,
 //                            ou .stripe-webhook.local). Sans lui, les webhooks simulés sont sautés.
 //   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY.
@@ -68,7 +68,8 @@ const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET
 const manques = []
 if (!CLE) manques.push('STRIPE_SECRET_KEY_TEST absente de .env.local (action humaine H4 : clé de TEST sk_test_…)')
 else if (CLE.startsWith('sk_live') && !REEL) manques.push('STRIPE_SECRET_KEY_TEST est une clé RÉELLE (sk_live) — refusée sans --reel')
-else if (!CLE.startsWith('sk_test') && !REEL) manques.push('STRIPE_SECRET_KEY_TEST ne ressemble pas à une clé de test (sk_test_…)')
+else if (CLE.startsWith('rk_live') && !REEL) manques.push('STRIPE_SECRET_KEY_TEST est une clé RÉELLE restreinte (rk_live) — « limitée » ne veut pas dire « de test » : refusée')
+else if (!/^(sk|rk)_test_/.test(CLE) && !REEL) manques.push('STRIPE_SECRET_KEY_TEST ne ressemble pas à une clé de test (sk_test_… ou rk_test_…)')
 if (!URL_SB || !ANON || !SERVICE) manques.push('NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY')
 if (manques.length) {
   console.log('\n⛔ Prérequis manquants — la suite ne fait rien :')
