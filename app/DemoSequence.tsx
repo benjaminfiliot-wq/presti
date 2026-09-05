@@ -22,11 +22,11 @@ type Scene = {
 }
 
 const SCENES: Scene[] = [
-  { heure: '22 h 14', titre: 'Un client écrit sur votre page', texte: 'Sur son téléphone, depuis votre lien. Il décrit ce qu’il veut, avec ses mots.', appareil: 'telephone', image: '/demo/scene-1.png', focus: '50% 100%' },
-  { heure: '22 h 14', titre: 'L’assistant répond, dans la seconde', texte: 'Dans votre ton. Il pose les deux questions qui manquent pour chiffrer — et il dit qu’il est un assistant.', appareil: 'telephone', image: '/demo/scene-2.png', focus: '50% 100%' },
-  { heure: '7 h 50', titre: 'Vous ouvrez votre espace', texte: 'La demande est qualifiée. Un devis brouillon vous attend, chiffré sur vos prix, chaque ligne avec sa provenance.', appareil: 'ordinateur', image: '/demo/scene-3.png', focus: '50% 0%' },
-  { heure: '7 h 52', titre: 'Vous validez, le client accepte', texte: 'Le devis part dans la conversation. Il l’accepte sur son téléphone — acceptation horodatée, conservée avec l’échange.', appareil: 'telephone', image: '/demo/scene-4.png', focus: '50% 100%' },
-  { heure: 'Votre site', titre: 'Tout ça, à votre marque', texte: 'Le site qui amène la demande porte votre nom, votre adresse, vos réalisations. Jamais le nôtre.', appareil: 'ordinateur', image: '/demo/scene-5.png', focus: '50% 0%' },
+  { heure: '22 h 14', titre: 'Un client écrit sur votre page', texte: 'Sur son téléphone, depuis votre lien. Il décrit ce qu’il veut, avec ses mots.', appareil: 'telephone', image: '/demo/scene-1.webp', focus: '50% 100%' },
+  { heure: '22 h 14', titre: 'L’assistant répond, dans la seconde', texte: 'Dans votre ton. Il pose les deux questions qui manquent pour chiffrer — et il dit qu’il est un assistant.', appareil: 'telephone', image: '/demo/scene-2.webp', focus: '50% 100%' },
+  { heure: '7 h 50', titre: 'Vous ouvrez votre espace', texte: 'La demande est qualifiée. Un devis brouillon vous attend, chiffré sur vos prix, chaque ligne avec sa provenance.', appareil: 'ordinateur', image: '/demo/scene-3.webp', focus: '50% 0%' },
+  { heure: '7 h 52', titre: 'Vous validez, le client accepte', texte: 'Le devis part dans la conversation. Il l’accepte sur son téléphone — acceptation horodatée, conservée avec l’échange.', appareil: 'telephone', image: '/demo/scene-4.webp', focus: '50% 100%' },
+  { heure: 'Votre site', titre: 'Tout ça, à votre marque', texte: 'Le site qui amène la demande porte votre nom, votre adresse, vos réalisations. Jamais le nôtre.', appareil: 'ordinateur', image: '/demo/scene-5.webp', focus: '50% 0%' },
 ]
 
 const DUREE = 4800
@@ -69,8 +69,10 @@ export default function DemoSequence() {
 
       <div className="dm-scene">
         <div className={`dm-device dm-${s.appareil}`} aria-hidden="true">
-          {SCENES.map((sc, k) => (
-            // Toutes les images sont dans le DOM (préchargées) ; seule l'active est visible → transition sans flash.
+          {SCENES.map((sc, k) => (k === i || k === (i + 1) % SCENES.length) && (
+            // Seules la scène active et la suivante sont montées : sur téléphone, les cinq PNG empilés
+            // pesaient 2,4 Mo au chargement (audit final, C1) — `loading="lazy"` ne protège pas des
+            // images superposées dans le viewport. La suivante est déjà là → transition sans flash.
             // eslint-disable-next-line @next/next/no-img-element
             <img key={sc.image} src={sc.image} alt="" className={k === i ? 'on' : ''} style={{ objectPosition: sc.focus }} loading={k === 0 ? 'eager' : 'lazy'} decoding="async" />
           ))}

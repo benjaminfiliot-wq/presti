@@ -27,7 +27,8 @@ export default function CGU() {
 
       <h2>3. Abonnements, crédits et paiement</h2>
       <ul>
-        <li>Presti propose une offre d’essai gratuite (limitée) et des abonnements payants fonctionnant à base de <strong>crédits</strong>.</li>
+        <li>Le service s’adresse aux <strong>professionnels</strong> (artisans, entreprises du bâtiment et des services) agissant dans le cadre de leur activité. Il n’est pas destiné aux consommateurs.</li>
+        <li>Presti propose une offre d’essai gratuite (limitée) et des abonnements payants fonctionnant à base de <strong>crédits</strong>. Les prix affichés sur la page <a href="/abonnement">Abonnement</a> sont exprimés en euros ; <strong>TVA non applicable, art. 293 B du CGI</strong> (franchise en base) : le montant affiché est le montant payé. Si Presti devient assujetti, les prix et la mention seront mis à jour avant tout prélèvement au nouveau régime.</li>
         <li>Les paiements sont traités par <strong>Stripe</strong>. Les abonnements sont sans engagement et résiliables à tout moment ; l’accès reste actif jusqu’à la fin de la période payée.</li>
         <li>Les crédits inclus dans un abonnement sont valables pour la période concernée et ne sont pas reportables sauf mention contraire.</li>
         <li>Sauf disposition légale impérative, les sommes versées ne sont pas remboursables une fois le service consommé.</li>

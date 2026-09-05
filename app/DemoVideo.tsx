@@ -46,7 +46,7 @@ export default function DemoVideo() {
   return (
     <div className="dv">
       <div className="dv-cadre">
-        <video ref={ref} src="/demo/hero.mp4" poster="/demo/scene-1.png" muted loop playsInline controls preload="metadata"
+        <video ref={ref} src="/demo/hero.mp4" poster="/demo/scene-1.webp" muted loop playsInline controls preload="metadata"
           aria-label="Démonstration : une demande arrive le soir, un devis est prêt le matin, le client l'accepte sur son téléphone — cinq captures du vrai produit, sous-titrées." />
       </div>
       <p className="dv-bascule">Cinq captures du produit tel qu'il tourne aujourd'hui, montées bout à bout. <button type="button" onClick={() => setParScene(true)}>Voir scène par scène</button></p>

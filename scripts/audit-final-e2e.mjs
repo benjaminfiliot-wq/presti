@@ -35,6 +35,8 @@ try {
   T('passé le 31/12/2027, « auto » cite le CIBS', /CIBS/.test(mentionFranchise('auto', new Date('2028-02-01'))))
   const cgu = await html('/cgu')
   T('les CGU de Presti citent la même référence', /293 B du CGI/.test(cgu))
+  const ml = await html('/mentions-legales')
+  T('… et les mentions légales aussi', /293 B du CGI/.test(ml))
 
   console.log('\n── B-A5. Le n° de TVA de l’artisan assujetti est sur le PDF')
   if (typeof buildPdfData === 'function') {
@@ -62,6 +64,12 @@ try {
   const landing = await html('/')
   T('les coches ont un rôle (aria-label sur un span nu est interdit)', /class="cmp-oui" role="img"/.test(landing))
   T('le tableau défilant se prend au clavier', /class="cmp-wrap"[^>]*tabindex="0"/.test(landing))
+
+  console.log('\n── C1. La landing ne charge plus 2,4 Mo d’images sur téléphone')
+  T('les scènes de la démo sont en WebP', /\/demo\/scene-1\.webp/.test(landing) && !/scene-\d\.png/.test(landing))
+  T('deux scènes montées au plus, pas cinq', (landing.match(/\/demo\/scene-\d\.webp/g) || []).length <= 3, `${(landing.match(/\/demo\/scene-\d\.webp/g) || []).length} références`)
+  const poids = (await fetch(`${BASE}/demo/scene-5.webp`, { method: 'HEAD' })).headers.get('content-length')
+  T('la scène la plus lourde pèse moins de 120 Ko', Number(poids) > 0 && Number(poids) < 120_000, `${poids} octets`)
   const css = fs.readFileSync('app/globals.css', 'utf8')
   const faint = (css.match(/--faint:(#[0-9A-Fa-f]{6})/) || [])[1]
   T(`--faint (${faint}) contraste ≥ 4,5:1 sur le fond de la landing`, faint && contraste(faint, '#09090C') >= 4.5, faint ? contraste(faint, '#09090C').toFixed(2) : 'introuvable')
@@ -88,6 +96,9 @@ try {
   const r = await fetch(`${BASE}/api/subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.session.access_token}` }, body: JSON.stringify({ plan: 'signature' }) })
   const j = await r.json().catch(() => ({}))
   T('/api/subscribe répond 409 et renvoie vers le portail', r.status === 409 && j.portail === true, `${r.status} ${JSON.stringify(j).slice(0, 100)}`)
+  await admin.from('artisans').update({ stripe_subscription_id: null, is_founder: true }).eq('id', u.user.id)
+  const rf = await fetch(`${BASE}/api/subscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${s.session.access_token}` }, body: JSON.stringify({ plan: 'signature' }) })
+  T('un fondateur ne peut pas s’abonner par erreur (403)', rf.status === 403, String(rf.status))
 
   console.log('\n── H-majeur. Un ancien abonnement qui se termine ne rétrograde pas l’abonné')
   T('id différent → ignoré', concerneAbonnementCourant('sub_courant', 'sub_ancien') === false)

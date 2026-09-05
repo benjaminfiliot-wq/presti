@@ -18,7 +18,9 @@ export async function POST(req: Request) {
     const offre = OFFRES.find((o) => o.id === b?.plan)
     if (!offre) return NextResponse.json({ error: 'Offre inconnue' }, { status: 400 })
 
-    const { data: artisan } = await supabaseAdmin.from('artisans').select('email, stripe_customer_id, stripe_subscription_id').eq('id', uid).maybeSingle()
+    const { data: artisan } = await supabaseAdmin.from('artisans').select('email, stripe_customer_id, stripe_subscription_id, is_founder').eq('id', uid).maybeSingle()
+    // Un fondateur n'est jamais facturé (lib/credits.ts) : lui vendre une offre serait un débit pour rien.
+    if (artisan?.is_founder) return NextResponse.json({ error: 'Compte fondateur : toutes les fonctions sont déjà ouvertes, sans abonnement.' }, { status: 403 })
     // Déjà abonné : un second paiement créerait un DEUXIÈME abonnement (29 + 59 €/mois), le webhook
     // écraserait l'ancien identifiant et personne ne le verrait (audit final, auditeur H). Un
     // changement d'offre ou une résiliation passent par le portail Stripe.

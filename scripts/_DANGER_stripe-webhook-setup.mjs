@@ -1,3 +1,7 @@
+// ⚠️ DANGER — ce script SUPPRIME et recrée le webhook Stripe de PRODUCTION et écrit dans Vercel.
+// Il n'a plus d'usage courant (stripe-verifier.mjs contrôle l'existant). Il refuse de tourner sans
+// l'argument --je-sais-ce-que-je-fais (audit final, auditeur H).
+if (!process.argv.includes('--je-sais-ce-que-je-fais')) { console.error('Refus : ce script détruit le webhook de prod. Relancez avec --je-sais-ce-que-je-fais si c’est voulu.'); process.exit(2) }
 // Crée l'endpoint webhook Stripe et pose STRIPE_WEBHOOK_SECRET dans Vercel — tout via API.
 // Lit VERCEL_TOKEN depuis .env.local ; récupère STRIPE_SECRET_KEY depuis Vercel.
 import fs from 'fs'
