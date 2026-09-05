@@ -105,7 +105,7 @@ async function verifierCreditsArtisans(lundi: boolean): Promise<Alerte[]> {
     const bas = credits <= 0 || credits <= Math.ceil(max * 0.2)
     if (!bas) continue
     const renouv = a.credits_reset_le ? new Date(a.credits_reset_le).toLocaleDateString('fr-FR') : 'le mois prochain'
-    out.push({ motif: 'credits_artisan', a: { email: a.email, artisanId: a.id }, cle: `${a.id}:${credits <= 0 ? 'zero' : 'bas'}`,
+    out.push({ motif: 'credits_artisan', a: { email: a.email, artisanId: a.id }, cle: `${a.id}:${credits <= 0 ? 'zero' : 'bas'}:${new Date().toISOString().slice(0, 7)}`,
       sujet: credits <= 0 ? 'Vos crédits sont épuisés' : `Il vous reste ${credits} crédits sur ${max}`,
       corps: credits <= 0
         ? `Vos crédits sont à zéro : l’assistant ne répond plus à vos clients et ne chiffre plus de devis jusqu’au renouvellement, ${renouv}.\n\nPour ne rien manquer d’ici là, passez à l’offre supérieure : ${LIEN_APP}/abonnement`
@@ -119,21 +119,36 @@ async function verifierCreditsArtisans(lundi: boolean): Promise<Alerte[]> {
 
 // ── 3. Les erreurs en rafale ─────────────────────────────────────────────────
 async function verifierErreurs(): Promise<Alerte[]> {
-  const depuis = new Date(Date.now() - 10 * 60_000).toISOString()
-  const { data, error } = await supabaseAdmin.from('app_errors').select('route, message, created_at').gte('created_at', depuis).limit(50)
-  if (error || !data || data.length < 5) return []
+  // 24 h glissantes, pas 10 minutes : la ronde passe une fois par jour à 8 h, une rafale de la
+  // veille au soir doit être vue. Colonne `contexte` (0016) — « route » n'existait pas et la
+  // requête échouait en silence (audit final, auditeur F, majeur 4).
+  const depuis = new Date(Date.now() - 24 * 3_600_000).toISOString()
+  const { data, error } = await supabaseAdmin.from('app_errors').select('contexte, message, created_at').gte('created_at', depuis).order('created_at', { ascending: false }).limit(200)
+  if (error || !data || data.length < 10) return []
   const parRoute = new Map<string, number>()
-  for (const e of data) parRoute.set(String(e.route ?? '?'), (parRoute.get(String(e.route ?? '?')) ?? 0) + 1)
+  for (const e of data) parRoute.set(String(e.contexte ?? '?'), (parRoute.get(String(e.contexte ?? '?')) ?? 0) + 1)
   const pire = [...parRoute.entries()].sort((a, b) => b[1] - a[1])[0]
-  return [{ motif: 'erreurs', a: 'entreprise', cle: pire[0],
-    sujet: `Presti a produit ${data.length} erreurs en 10 min`,
-    corps: `${data.length} erreurs entre ${new Date(depuis).toLocaleTimeString('fr-FR')} et maintenant, dont ${pire[1]} sur ${pire[0]}.\n\nExtrait :\n${data.slice(0, 5).map((e) => `- ${e.route ?? '?'} — ${String(e.message ?? '').slice(0, 120)}`).join('\n')}\n\nJournaux : https://vercel.com` }]
+  return [{ motif: 'erreurs', a: 'entreprise', cle: new Date().toISOString().slice(0, 10),
+    sujet: `Presti a produit ${data.length} erreurs en 24 h`,
+    corps: `${data.length} erreurs entre ${new Date(depuis).toLocaleTimeString('fr-FR')} et maintenant, dont ${pire[1]} sur ${pire[0]}.\n\nExtrait :\n${data.slice(0, 5).map((e) => `- ${e.contexte ?? '?'} — ${String(e.message ?? '').slice(0, 120)}`).join('\n')}\n\nJournaux : https://vercel.com` }]
 }
 
 // ── 4. Les crons muets ───────────────────────────────────────────────────────
 const CRONS_ATTENDUS: { nom: string; maxHeures: number }[] = [
   { nom: 'relances', maxHeures: 26 }, { nom: 'canaux-relever', maxHeures: 26 }, { nom: 'alertes', maxHeures: 26 },
 ]
+/**
+ * Trace serveur d'une erreur ou d'une alerte perdue, dans `app_errors` (0016) — le second canal
+ * quand l'email ne part pas (Resend en panne) : la ronde « erreurs » et le digest la liront.
+ * N'échoue jamais vers l'appelant.
+ */
+export async function enregistrerErreur(contexte: string, erreur: unknown, url?: string): Promise<void> {
+  try {
+    const message = erreur instanceof Error ? erreur.message : String(erreur ?? '')
+    await supabaseAdmin.from('app_errors').insert({ contexte: contexte.slice(0, 120), message: message.slice(0, 1000), stack: erreur instanceof Error ? (erreur.stack ?? '').slice(0, 4000) : null, url: url ?? null })
+  } catch (e) { console.error('[alertes] enregistrerErreur', e instanceof Error ? e.message : e) }
+}
+
 export async function enregistrerPassage(nom: string, detail: Record<string, unknown> = {}, reussi = true): Promise<void> {
   try {
     const { error } = await supabaseAdmin.from('passages_cron').upsert({ nom, dernier_passage: new Date().toISOString(), detail, reussi }, { onConflict: 'nom' })
@@ -241,10 +256,14 @@ async function envoyer(al: Alerte, simulation: boolean): Promise<boolean> {
   const sujet = simulation ? `[SIMULATION] ${al.sujet}` : al.sujet
   const corps = simulation ? `${al.corps}\n\n— Ceci est une simulation lancée volontairement (scripts/alertes-e2e.mjs). Aucun incident réel.` : al.corps
   try {
-    if (al.a === 'entreprise') { const r = await notifierEntreprise(sujet, corps); return r.ok }
-    const r = await sendEmail({ to: al.a.email, subject: `Presti — ${sujet}`, text: corps, replyTo: EMAIL_ENTREPRISE })
+    const r = al.a === 'entreprise'
+      ? await notifierEntreprise(sujet, corps)
+      : await sendEmail({ to: al.a.email, subject: `Presti — ${sujet}`, text: corps, replyTo: EMAIL_ENTREPRISE })
+    // Le verrou quotidien est déjà pris : si l'email ne part pas, l'alerte serait perdue 24 h.
+    // On la consigne dans app_errors — le digest et la ronde « erreurs » la reprendront (F, majeur 2).
+    if (!r.ok) await enregistrerErreur(`alerte perdue : ${al.motif}`, new Error(`${sujet} — ${r.error ?? 'envoi refusé'}`))
     return r.ok
-  } catch (e) { console.error('[alertes]', al.motif, e instanceof Error ? e.message : e); return false }
+  } catch (e) { console.error('[alertes]', al.motif, e instanceof Error ? e.message : e); await enregistrerErreur(`alerte perdue : ${al.motif}`, e); return false }
 }
 
 /** Exemples réalistes de chaque motif, pour prouver le tuyau sans attendre l'incident. */

@@ -61,7 +61,7 @@ export async function creerDevisBrouillonPourLead(p: { artisanId: string; leadId
     result = await generateDevis({ nom: art.nom, metier: art.metier, tva_regime: (art as { tva_regime?: string | null }).tva_regime ?? null }, description, postes, model)
   } catch (e) {
     console.error('[devisAuto] IA:', e)
-    void signalerPanneIA('chiffrage automatique d’un devis', e)
+    await signalerPanneIA('chiffrage automatique d’un devis', e)
     return { ok: false, error: 'L’IA n’a pas pu générer le devis. Réessayez.', status: 500 }
   }
 

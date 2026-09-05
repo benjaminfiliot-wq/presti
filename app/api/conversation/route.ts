@@ -206,7 +206,7 @@ export async function POST(req: Request) {
       )
     } catch (e) {
       console.error('[conversation] IA:', e)
-      void signalerPanneIA('réponse au client', e)
+      await signalerPanneIA('réponse au client', e)
     }
 
     if (reply) {

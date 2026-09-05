@@ -128,7 +128,7 @@ export async function POST(req: Request) {
       } catch (e) {
         // La suggestion a échoué : l'entreprise le sait, le crédit revient (audit final, E, M5).
         console.error('[messages] suggestion IA:', e)
-        void signalerPanneIA('suggestion de réponse (/api/messages)', e)
+        await signalerPanneIA('suggestion de réponse (/api/messages)', e)
         await rendreCredit(uid, tier, !!artisan?.is_founder)
         return NextResponse.json({ error: 'La suggestion n’a pas pu être produite. Réessayez dans un instant.' }, { status: 502 })
       }

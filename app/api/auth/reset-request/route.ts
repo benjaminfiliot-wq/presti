@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     await supabaseAdmin.from('password_resets').insert({ uid: art.id, token_hash: sha256(token), expires_at: expires })
 
     const link = `${APP}/reset-password?token=${token}`
-    await sendEmail({
+    await sendEmail({ critique: true,
       to: email,
       subject: 'Réinitialisation de votre mot de passe — Presti',
       text: `Bonjour${art.nom ? ' ' + art.nom : ''},\n\nVous avez demandé à réinitialiser votre mot de passe Presti. Cliquez sur ce lien (valable 30 minutes) pour en choisir un nouveau :\n\n${link}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez simplement cet email — votre mot de passe reste inchangé.\n\n— Presti`,

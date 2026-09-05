@@ -287,7 +287,7 @@ ${reply}`
       console.error('[leads] étape 4 (IA/email) a échoué:', e)
       // lead conservé en 'nouveau' — visible dans le dashboard, rien de perdu. L'entreprise est
       // prévenue et le crédit rendu si la réponse n'a pas été produite (audit final, E, M5).
-      void signalerPanneIA('première réponse (/api/leads)', e)
+      await signalerPanneIA('première réponse (/api/leads)', e)
       if (!replyText) await rendreCredit(artisan.id, 'standard', !!artisan.is_founder)
     }
 

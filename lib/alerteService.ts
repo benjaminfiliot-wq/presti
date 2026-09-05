@@ -1,4 +1,5 @@
 import { consommerLimite } from '@/lib/limites'
+import { enregistrerErreur } from '@/lib/alertes'
 import { notifierEntreprise } from '@/lib/email'
 
 // Alerte « le service d'IA ne répond plus » (constat du 04/09/2026).
@@ -69,7 +70,11 @@ export async function signalerPanneIA(ou: string, erreur: unknown): Promise<Moti
     if (!(await consommerLimite(`alerte-ia:${motif}`, 1, 3600))) return motif
     const t = TEXTE[motif]
     const brut = (erreur instanceof Error ? erreur.message : String(erreur ?? '')).slice(0, 500)
-    await notifierEntreprise(t.sujet, `${t.quoi}\n\nOù : ${ou}\nMessage de l’API : ${brut}\n\nÀ faire : ${t.faire}`)
+    const r = await notifierEntreprise(t.sujet, `${t.quoi}\n\nOù : ${ou}\nMessage de l’API : ${brut}\n\nÀ faire : ${t.faire}`)
+    // Trace serveur dans tous les cas (audit final, F) : l'email peut ne pas partir, la ronde
+    // « erreurs » et le digest doivent quand même voir la panne.
+    await enregistrerErreur(`panne IA (${motif}) : ${ou}`, erreur)
+    if (!r.ok) console.error('[alerteService] alerte non envoyée', r.error)
   } catch (e) {
     console.error('[alerteService]', e instanceof Error ? e.message : e)
   }

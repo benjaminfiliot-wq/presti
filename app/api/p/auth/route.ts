@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       if (artisan && artisan.plateforme_active !== false) {
         const jeton = await creerLienMagique(artisan.id, email, ip)
         const lien = `https://prestiapp.fr/p/${artisan.slug}?connexion=${encodeURIComponent(jeton)}`
-        await sendEmail({
+        await sendEmail({ critique: true,
           to: email,
           fromName: artisan.nom || undefined, // white-label : le client voit la marque de l'artisan
           subject: `Votre lien de connexion — ${artisan.nom || 'votre espace'}`,

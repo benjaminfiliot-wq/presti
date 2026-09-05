@@ -74,7 +74,7 @@ if (commande === 'etat') {
 } else if (commande === 'dmarc') {
   // On commence en surveillance (p=none) : rien n'est rejeté, on observe. Poser « reject »
   // d'emblée ferait disparaître de vrais messages sans que personne ne le sache.
-  const valeur = 'v=DMARC1; p=none; rua=mailto:contact@prestiapp.fr'
+  const valeur = `v=DMARC1; p=quarantine; rua=mailto:${process.env.PRESTI_ALERTES_EMAIL || process.env.EMAIL_ENTREPRISE || 'benjaminfiliot@gmail.com'}`
   const existants = await api('GET', `/domain/zone/${DOMAINE}/record?fieldType=TXT&subDomain=_dmarc`)
   if (existants.length) {
     await api('PUT', `/domain/zone/${DOMAINE}/record/${existants[0]}`, { target: valeur, ttl: 3600 })

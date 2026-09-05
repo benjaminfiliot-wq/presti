@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, reply, tier, downgraded })
   } catch (e) {
     console.error('[tools/reponse] IA:', e)
-    void signalerPanneIA('réponse outil (/api/tools/reponse)', e)
+    await signalerPanneIA('réponse outil (/api/tools/reponse)', e)
     if (aRendre) await rendreCredit(aRendre.uid, aRendre.tier, aRendre.fondateur)
     return NextResponse.json({ error: "La génération a échoué. Réessaie." }, { status: 500 })
   }

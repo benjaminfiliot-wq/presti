@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, ...result, tier, downgraded })
   } catch (e) {
     console.error('[devis/generer] IA:', e)
-    void signalerPanneIA('chiffrage (/api/devis/generer)', e)
+    await signalerPanneIA('chiffrage (/api/devis/generer)', e)
     if (aRendre) await rendreCredit(aRendre.uid, aRendre.tier, aRendre.fondateur)
     return NextResponse.json(
       { error: "L'IA n'a pas pu générer le devis. Réessaie ou reformule la description." },

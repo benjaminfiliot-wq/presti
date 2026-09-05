@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, contenu, free: first })
   } catch (e) {
     console.error('[site/generate]', e)
-    void signalerPanneIA('rédaction du site (/api/site/generate)', e)
+    await signalerPanneIA('rédaction du site (/api/site/generate)', e)
     if (aRendre) await rendreCredit(aRendre.uid, aRendre.tier, aRendre.fondateur)
     return NextResponse.json({ error: "L'IA n'a pas pu rédiger le contenu. Réessaie dans un instant." }, { status: 500 })
   }

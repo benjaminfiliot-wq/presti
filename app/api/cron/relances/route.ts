@@ -49,7 +49,7 @@ export async function GET(req: Request) {
 
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('nom, metier, ton_style, email')
+      .select('nom, metier, ton_style, email, is_founder')
       .eq('id', lead.artisan_id)
       .maybeSingle()
 
@@ -67,13 +67,21 @@ export async function GET(req: Request) {
       console.error('[cron/relances] IA indisponible, repli sur template:', e instanceof Error ? e.message : e)
       // Le repli sur le texte générique n'est plus silencieux : l'entreprise apprend que l'IA est
       // tombée pendant que des relances partent quand même (audit final, E, M5).
-      void signalerPanneIA('relances (cron)', e)
+      await signalerPanneIA('relances (cron)', e)
     }
     if (!text) text = relanceTemplate(artisan?.nom ?? null, lead.nom_prospect, rang)
 
     const isMail = typeof lead.contact === 'string' && lead.contact.includes('@')
+    // Un compte fondateur est un compte de démonstration : ses « prospects » sont des visiteurs qui
+    // essaient le produit, on ne les relance pas au nom d'un artisan fictif (audit final, F, 11).
+    // Une adresse de test (.invalid) ne reçoit rien non plus : chaque rebond abîme le domaine.
+    if (artisan?.is_founder || /\.invalid$/i.test(String(lead.contact ?? ''))) {
+      await supabaseAdmin.from('relances').update({ envoyee: true }).eq('id', r.id)
+      skipped++
+      continue
+    }
     if (isMail) {
-      await sendEmail({
+      const envoi = await sendEmail({
         to: lead.contact as string,
         // Le sujet retombait sur « — Presti » : le prospect d'un artisan recevait une
         // relance signée du nom de l'éditeur. Sans nom d'artisan, on n'écrit rien du tout.
@@ -82,6 +90,9 @@ export async function GET(req: Request) {
         fromName: artisan?.nom ?? undefined,
         replyTo: artisan?.email ?? undefined,
       })
+      // Email refusé (plafond, Resend en panne) : la relance reste due, on réessaiera demain —
+      // avant, elle était marquée envoyée et tracée dans le fil sans être partie (F, majeur 5).
+      if (!envoi.ok) { console.error('[cron/relances] email non parti', r.id, envoi.error); skipped++; continue }
     }
 
     await supabaseAdmin.from('messages').insert({
