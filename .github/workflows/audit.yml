@@ -1,0 +1,57 @@
+name: Audit récurrent
+
+# L'audit qui se rejoue tout seul (prompt v6 §8). Chaque nuit, contre la PRODUCTION :
+#  • toutes les suites GRATUITES du lanceur (aucun appel IA — jamais, c'est une règle) ;
+#  • l'inventaire produit et la couverture, régénérés et déposés en artefact ;
+#  • les réglages Supabase (lecture seule).
+# Ce qui rougit ici est un défaut réel en prod, pas une hypothèse. Les suites « navigateur »
+# (Playwright) tournent aussi, chromium est installé à la volée. Les suites IA ne tournent
+# JAMAIS ici : elles se jouent à la main, quand la réserve Anthropic le permet.
+#
+# Secret attendu (une seule fois, Réglages → Secrets → Actions) : PRESTI_ENV_LOCAL = le contenu
+# complet de .env.local SANS la ligne ANTHROPIC_API_KEY (pour qu'aucun script ne puisse dépenser).
+
+on:
+  schedule:
+    - cron: '17 2 * * *'   # 4 h 17 Paris en été, 3 h 17 en hiver
+  workflow_dispatch:
+
+concurrency:
+  group: audit-recurrent
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Environnement (sans clé IA)
+        run: |
+          printf '%s\n' "${{ secrets.PRESTI_ENV_LOCAL }}" | grep -v '^ANTHROPIC_API_KEY=' > .env.local
+          test -s .env.local || { echo 'Secret PRESTI_ENV_LOCAL absent : rien à auditer.'; exit 1; }
+          grep -q '^NEXT_PUBLIC_SUPABASE_URL=' .env.local || { echo 'PRESTI_ENV_LOCAL incomplet.'; exit 1; }
+      - name: Chromium pour les suites navigateur
+        run: npx playwright install --with-deps chromium
+      - name: Suites gratuites et navigateur — jamais l'IA
+        run: node scripts/tout-verifier.mjs
+      - name: Inventaire produit et couverture
+        run: node scripts/inventaire-produit.mjs
+      - name: Réglages Supabase (lecture seule)
+        run: node scripts/verif-supabase-reglages.mjs || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: inventaire-${{ github.run_id }}
+          path: |
+            plans/inventaire-produit.md
+            plans/couverture.md
+          retention-days: 30
+      - name: Purge des traces
+        if: always()
+        run: rm -f .env.local

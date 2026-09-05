@@ -51,7 +51,7 @@ const pages = marcher('app', (p) => p.endsWith('page.tsx') && !p.startsWith('app
 const routes = marcher('app/api', (p) => p.endsWith('route.ts')).map((p) => {
   const src = lire(p)
   const methodes = [...src.matchAll(/export async function (GET|POST|PUT|PATCH|DELETE)\b/g)].map((m) => m[1])
-  const auth = /getUserRevocable|authInventaire|requireFounder|isFounder/.test(src) ? 'jeton artisan'
+  const auth = /getUserRevocable|authInventaire|requireFounder|isFounder|authArtisan\(|verifierSession\(/.test(src) ? 'jeton artisan'
     : /CRON_SECRET/.test(src) ? 'secret cron'
     : /stripe\.webhooks\.constructEvent/.test(src) ? 'signature Stripe'
     : /leadByToken|\btoken\b.*maybeSingle|TOKEN_RE/.test(src) ? 'jeton de conversation'
@@ -137,14 +137,19 @@ const nonLances = scriptsTest.filter((s) => !suites.some((x) => x.script === s) 
 const corpusTests = Object.fromEntries(scriptsTest.map((s) => [s, lire(s)]))
 function testeurs(motifs) {
   const res = new Set()
-  for (const [s, src] of Object.entries(corpusTests)) if (motifs.some((m) => m && src.includes(m))) res.add(s.replace('scripts/', ''))
+  for (const [s, src] of Object.entries(corpusTests)) if (motifs.some((m) => m && (m instanceof RegExp ? m.test(src) : src.includes(m)))) res.add(s.replace('scripts/', ''))
   return [...res].sort()
 }
+// Un paramètre (:id, [slug]) peut s'écrire ${id}, ${slug} ou un UUID dans un test : on le tolère.
+const PARAM = '[^/\\s\'"`]+'
+const echapper = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const couverture = {
-  routes: routes.map((r) => ({ ...r, testeurs: testeurs([r.chemin.replace(/:[a-z]+/g, '')]) })),
-  pages: pages.map((p) => ({ ...p, testeurs: testeurs([p.chemin === '/' ? "'/'" : p.chemin.replace(/\[[^\]]+\]/g, '')]) })),
+  // Un paramètre (:id, [slug]) peut être écrit ${id}, ${slug}, 00000000-… dans un test : on le tolère.
+  routes: routes.map((r) => ({ ...r, testeurs: testeurs([new RegExp(echapper(r.chemin).replace(/:[a-z]+/g, PARAM))]) })),
+  pages: pages.map((p) => ({ ...p, testeurs: testeurs([p.chemin === '/' ? "'/'" : new RegExp(echapper(p.chemin).replace(/\\\[[^\]]+\\\]/g, PARAM))]) })),
   capacites: capacites.map((c) => ({ ...c, testeurs: testeurs([`'${c.cap}'`]) })),
-  emails: emails.map((e) => ({ ...e, testeurs: testeurs([e.type ? `'${e.type}'` : '', e.sujet.replace(/[`'"]/g, '').slice(0, 25)].filter(Boolean)) })),
+  // Un email est couvert par un test qui cite son fichier (scripts/emails-e2e.mjs tient la carte) ou son sujet.
+  emails: emails.map((e) => ({ ...e, testeurs: testeurs([e.fichier.replace(/:\d+$/, ''), e.type ? `'${e.type}'` : '', e.sujet.replace(/[`'"]/g, '').slice(0, 25)].filter(Boolean)) })),
   crons: crons.map((c) => ({ ...c, testeurs: testeurs([c.path]) })),
   drapeaux: drapeaux.map((d) => ({ ...d, testeurs: testeurs([`'${d.nom}'`, `.${d.nom}`]) })),
 }

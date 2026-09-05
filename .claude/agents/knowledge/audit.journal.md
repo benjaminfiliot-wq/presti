@@ -83,6 +83,30 @@ Mémoire vivante de la catégorie Audit. Chaque agent AJOUTE une entrée après 
 - À retenir : un label « publique » dans `plans/inventaire-produit.md` ≠ route anonyme — le script d'inventaire
   ne voit pas le wrapper `authArtisan`/`getUserRevocable`. Vérifier au fichier, pas au tableau.
 
+## 2026-09-05 — presti-audit-conformite — Audit final B (RGPD · légal artisan · LCEN · conso · white-label)
+- Contexte : audit final v6, contrainte ZÉRO appel IA, éditeur en franchise 293 B (immatriculations Stripe closes le 04/09,
+  `STRIPE_TAXE_AUTO` baissé), boîte contact@prestiapp.fr inexistante remplacée par `/contact`. Rapport : `plans/audit-final/conformite.md`.
+- Constat (preuves : HTML de prod, Stripe LIVE en lecture seule, 5 suites gratuites vertes — facturx 30/30, facturation 34/34,
+  mentions-bloquantes 15/15, seo 26/26, legal 30/30 — comptes de test purgés) :
+  - 🔴 `contact@prestiapp.fr` est **toujours** l'adresse d'exercice des droits sur `/confidentialite:23,56`, `/cgu:71`, `/faq:50`
+    (seules les mentions légales ont été corrigées) ; `lib/reglesServeur.ts:67` et `conversation/devis/route.ts:87` y envoient encore un Reply-To.
+  - 🔴 Suppression de compte avec facture émise : `lib/purgeComptes.ts:24-26` avale l'erreur du trigger `factures_conservees` (0041) ;
+    `/api/account/delete` promet « Rien après 30 jours ». Modèle à décider : anonymiser, conserver les factures.
+  - Majeurs : IP des prospects lisible par l'artisan (`lead_select_own` 0010:16 sans revoke de colonne + export `leads.*`) — le
+    commentaire de 0010:42 affirme le contraire ; médiateur et n° TVA absents du PDF ; défaut de mention `'auto'` = CIBS depuis le
+    01/09 alors que l'éditeur écrit 293 B (texte non confirmable → repasser à `'cgi'`) ; pas de rétractation à l'acceptation en ligne
+    (facture d'acompte immédiate) ; CGU jamais acceptées à l'inscription ; `From: contact@prestiapp.fr` sur les emails white-label ;
+    canaux IMAP (lecture de la boîte de l'artisan) absents de la politique de confidentialité ; pas d'annexe art. 28.
+  - Sain : 293 B cohérent partout côté éditeur (landing, /abonnement, mentions, session Stripe sans taxe, 0 facture Stripe) ;
+    mentions bloquantes + scellement + Factur-X ; bucket `lead-media` privé (sonde anonyme `NoSuchBucket`, 0045:103) ; white-label
+    0 « Presti » textuel sur /site et /p (seules des URL absolues `prestiapp.fr`, et la ligne sous-traitant sur infos-legales — légitime).
+- Décision / action : rapport tableau + plan de correction ordonné (~35 h dont 2 bloquants en 3 h 30). Aucun fichier modifié hors rapport et journal.
+- À retenir : (1) vérifier une policy RLS **par colonne** quand un commentaire promet qu'une colonne « n'est pas lisible » — une policy
+  `select using (auth.uid() = artisan_id)` expose toutes les colonnes, IP comprise, via PostgREST et l'export ; (2) le régime de TVA de
+  l'ÉDITEUR (Stripe, landing, CGU) et celui de CHAQUE ARTISAN (`tva_regime`, mention par document) sont deux vérifications distinctes ;
+  (3) `stripe.invoiceRenderingTemplates.list` + `tax.registrations.list({status})` + `invoices.list` = contrôle lecture seule suffisant
+  pour prouver « 0 TVA facturée » sans ouvrir le tableau de bord ; le pied de page du modèle de facture reste à poser à la main.
+
 ## 2026-09-05 — presti-audit-attaque — Revérification v6 + couverture 0057
 - Contexte : re-passe de l'audit offensif v6, contrainte ZÉRO appel IA tenue. Vérification au fichier:ligne
   des constats du rapport `plans/audit-final/attaque.md` (déjà produit) + prise en compte d'une migration
@@ -108,3 +132,87 @@ Mémoire vivante de la catégorie Audit. Chaque agent AJOUTE une entrée après 
   (modèle `limites`/`recherche_cache`/`passages_cron`) ; c'est le patron qui ferme la surface cliente par défaut.
   Et : une migration peut apparaître APRÈS le dernier inventaire — vérifier `ls supabase/migrations` avant de se
   fier au compte figé du tableau.
+
+## 2026-09-05 — presti-auditeur (auditeur C) — Qualité : 20 points × 3 surfaces (rapport `plans/audit-final/qualite.md`)
+- Contexte : audit final qualité (checklist pré-lancement) sur landing, `/site/atelier-du-chene`, `/p/atelier-du-chene`,
+  0 appel IA, aucun formulaire soumis, Playwright 1440×900 + iPhone 13 + axe-core, `a11y-e2e` 5/5, `budget-perf` ✅ (build local).
+- Constat : 0 bloquant, 4 majeurs, 14 mineurs.
+  - Landing sur téléphone : **2 823 Ko dont 2 417 Ko d'images** — sous 640 px la séquence remplace la vidéo
+    (`DemoVideo.tsx:20`) et ses 5 PNG sont tous dans le DOM au même endroit (`DemoSequence.tsx:75`, `loading="lazy"`
+    inopérant) ; `public/demo/scene-5.png` = 1,59 Mo. Desktop sans reduced-motion : 566 Ko, vidéo non téléchargée avant lecture.
+  - `app/site/[slug]/infos-legales/page.tsx:51` : `robots index,follow` inconditionnel → la page légale d'un artisan
+    `site_seo=false` reste indexable (prouvé sur la démo : site `noindex`, infos-légales `index`).
+  - `app/Comparatif.tsx:11-12` : `aria-label` sur `<span>` sans rôle = ignoré (axe `aria-prohibited-attr` × 26) ;
+    `.cmp-wrap` défilant non focusable. `.lp-trust` (« 3 crédits offerts · sans carte ») 2,73:1 (`--faint` #5B564E).
+  - Canonique `'/'` du layout racine héritée par toute page sans `alternates` (`app/layout.tsx:36`) : /login, /signup,
+    /abonnement, /reset-password et la 404 déclarent `https://prestiapp.fr`. OG title/description hérités sur /faq, /contact, /cgu…
+  - `/favicon.ico` → 404 et aucun `apple-icon` (Safari/iOS sans icône ; `/p` épinglable sans logo).
+  - TTFB dynamique : `/site` 491–685 ms, `/p` 660–1 030 ms (`no-store`, 2–3 requêtes Supabase par rendu) vs landing 47 ms (HIT).
+  - Cookies : 0 sur les 3 surfaces, 0 script externe (GA inerte) → pas de bannière due. Liens 14/14 en 200. `/p` = 0 violation axe.
+- Décision / action : rapport priorisé avec chiffrage (≈ 13 h, majeurs ≈ 3,5 h) ; rien ne bloque la démo. Correctifs délégués au dev principal.
+- À retenir (candidats au socle) :
+  - **Mesurer le poids SANS `reducedMotion:'reduce'`** : ce réglage bascule DemoVideo en séquence et fausse le desktop ;
+    et mesurer sur iPhone, où la séquence est le chemin par défaut.
+  - **`loading="lazy"` ne protège pas des images empilées dans le viewport** (carrousel en `position:absolute`) : ne monter que l'active.
+  - **Tout `metadata` de sous-page doit redéfinir `alternates.canonical`, `openGraph.title/description/url`** sinon Next hérite du
+    layout racine (piège déjà documenté dans `app/faq/page.tsx:5-6`, retrouvé sur 5 pages). Idem `robots` : toute page fille d'une
+    surface artisan doit dériver `indexable` de `site_seo`, pas le coder en dur.
+  - `aria-label` n'est valide que sur un élément avec rôle (pas sur `span`/`div` nus) ; axe le remonte en `aria-prohibited-attr`.
+  - Les fichiers `public/` sont servis par Vercel en `max-age=0, must-revalidate` : les médias lourds passent par `next/image`
+    ou un `headers()` `immutable`.
+
+## 2026-09-05 — presti-ai-engineer (auditeur E) — IA : coûts, anti-fabrication, injection, verrous, observabilité (rapport `plans/audit-final/ia.md`)
+- Contexte : audit final v6 de l'IA, **0 appel au modèle** (réserve Anthropic à zéro, clé `.env.local` en commentaire). Preuves = lecture
+  au fichier:ligne + `ia-unit-e2e.mjs` rejoué (99/99, vérifié sans réseau) + un script hors-ligne sur les modules purs
+  (`antiFabrication.ts`, `qualifyLead`, `findFabrications`) dans le scratchpad. Aucune route IA appelée.
+- Constat : 0 bloquant, 5 majeurs, 9 mineurs (≈ 9 h 30).
+  - 🟠 `/api/conversation/stream:139/154` débite `'standard'` (1 crédit) puis sert `resolveModel(cfg.modele)` → Opus (3 crédits) pour 1.
+  - 🟠 `plateforme.ia.auto` (Studio+) n'existe qu'en UI : `mode_reponse` écrit par le navigateur (RLS 0032, trigger 0053 ne fige
+    que apparence/avatar/amorces), défaut sans config = `'auto'` (`plateformeConfig.ts:89`) → un Essentiel a l'assistant autonome
+    alors que la grille vend « vous validez chaque réponse » (`plans.ts:121`).
+  - 🟠 `qualifie` toujours vrai (reporté le 04/09, non corrigé) : `qualifyLead` retombe sur le métier (`ai.ts:286`) → prouvé :
+    « Bonjour, vous êtes disponible ? » → `Plomberie` → règle « Tout auto » = devis chiffré ET envoyé sur une conversation vide.
+  - 🟠 Filtre anti-fabrication étendu : faux positifs prouvés (« urgence », « entretien », « après le week-end », « la nuit
+    dernière » → phrase retirée) et faux négatifs prouvés (`RE_NEGATION` saute toute phrase contenant « pas de »/« malheureusement » :
+    « Pas de souci, je me déplace gratuitement et j'interviens sous 24 h » passe).
+  - 🟠 Solde à zéro muet sur `/leads`, `/devis/generer`, `/tools/reponse`, `/site/generate`, `/messages` et le cron relances (repli
+    silencieux sur le template) ; crédit débité avant l'appel, jamais rendu.
+  - Sain (prouvé) : crédit/plafond avant chaque appel sur les 9 routes ; bornes (4 000 car., 60 tours, 6/5 min clé partagée, boucle
+    outils 4 tours/40 s, recherche 50 s/`maxRetries:0`) ; `source_prix` revalidée ; prix de recherche seulement si dans l'extrait ET
+    dans une page récupérée ; sceau HMAC vérifié à `/retenir` ; `blocProspect` intact + balises retirées ; outils fermés sur
+    artisan/lead ; IMAP sans génération IA ; photos jamais envoyées au modèle ; IDs de modèles exacts, thinking adaptatif 4.6+/5 seulement,
+    zéro `temperature`.
+  - Code mort à connaître : `repondreAvecOutils` et `routerModele` ne sont appelés par aucune route (seulement `ai-eval`/`ia-unit`).
+- Décision : rapport tableau + ordre de correction (M1 → M3 → M5 → M2 → M4 → mineurs). Aucun fichier modifié hors rapport et journal.
+- À retenir (candidats au socle) :
+  - **Un débit de crédit doit recevoir le tier RÉSOLU, jamais un littéral** : chercher `consumeCredit(…, 'standard'` à côté d'un `resolveModel` — c'est le motif du sous-paiement.
+  - **Une capacité `peut()` lue seulement par l'UI n'est pas un verrou** : pour chaque `Capacite` de `lib/plans.ts`, exiger un appel serveur (grep `peut(` hors `app/*.tsx`). `plateforme.ia.auto` et `plateforme.ia.expert` n'en ont aucun.
+  - **Prouver un filtre déterministe hors-ligne** : les modules purs (`antiFabrication`, `qualifyLead`) se testent en 8 phrases avec
+    `node --experimental-strip-types --import ./scripts/ts-loader.mjs` + clé factice — 0 € et plus précis qu'une suite IA.
+  - Un « reporté dans `apres-demo.md` » n'est pas un « corrigé » : `qualifie` y dort depuis le 04/09 ; l'audit suivant doit relire la
+    liste des reportés et vérifier chacun au fichier:ligne.
+  - Vérifier que `signalerPanneIA` est dans **chaque** `catch` qui entoure un appel `lib/ai` (grep `generate\|repondre` puis `catch`) : une
+    panne de compte est la seule panne qui touche tous les clients, et un `console.error` seul ne réveille personne.
+
+## 2026-09-05 — presti-auditeur (auditeur D) — Parcours & expérience (rapport `plans/audit-final/parcours.md`)
+- Contexte : audit final des parcours artisan + client en prod, 0 appel IA (garde-fou réseau dans Playwright), aucun paiement
+  (arrêt sur Stripe Checkout LIVE), un compte créé PAR L'ÉCRAN `/signup` puis purgé (`purger_compte_test`), iPhone 13 + 1360×900.
+- Constat : 0 bloquant, 5 majeurs, 9 mineurs (≈ 7 h 30).
+  - `lib/slug.ts:7-8` coupe à 40 APRÈS avoir retiré les tirets de bord, puis l'onboarding colle `-xxxx` → slug de 45 car. avec
+    `--` que `problemeSlug` (`lib/urls.ts:83`) et le middleware refusent : Presti génère une adresse que Presti ne valide pas.
+  - Aucune borne sur nom/tel (371 car. et `abc<script>` enregistrés, PostgREST direct, pas de `check`) → `<title>` 381 car., h1 30 lignes.
+  - `PlatChat.tsx:195` avale le 400 d'un lien magique expiré : le client ne voit rien (cas courant : lien de 20 min, usage unique).
+  - `.pil-volets` (`globals.css:2012`) sans repli → `/plateforme` rendu à 510 px sur iPhone (dézoom automatique, seul écran touché).
+  - Décocher « Mon site est publié » affiche « hors ligne — visible de vous seul » et masque le partage alors que `/site` reste 200 public.
+  - Sain : messages d'erreur traduits partout, réponses uniformes (lien magique, reset), suppression/annulation avec effet en base,
+    visite guidée mémorisée serveur, 404 réelles, 0 débordement mobile ailleurs, clavier OK.
+- Décision / action : rapport tableau par parcours + plan ordonné. Aucun fichier modifié hors rapport et journal ; scripts temporaires
+  (`scripts/_audit-d-*-tmp.mjs`) supprimés.
+- À retenir :
+  - **La prod peut changer PENDANT l'audit** (case CGU arrivée entre deux passages) : dater chaque preuve, relire `git status -sb`
+    et le chunk servi (`_next/static/chunks/app/<page>/page-*.js`) quand l'écran contredit le fichier lu une heure plus tôt.
+  - Un `innerWidth` > largeur d'appareil sur mobile = dézoom automatique de Chrome : chercher l'élément dont `right` dépasse,
+    pas le `scrollWidth` du document (il suit le dézoom).
+  - Pour tester « ce que l'écran dit vs ce qui est vrai » : lire l'état RÉEL par HTTP nu ou par la base au même instant que le libellé.
+  - Playwright : `getByRole('button', {name})` peut résoudre un scrim `aria-label="Fermer le menu"` invisible ; viser la classe (`.pchat-burger`).
+  - Un slug généré doit repasser par le validateur qui servira à le modifier (`problemeSlug`) — sinon l'utilisateur hérite d'une adresse « invalide ».

@@ -7,6 +7,7 @@ import { consumeCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 import { getPlateformeConfig, personaDe } from '@/lib/plateformeConfig'
+import { resolveModel } from '@/lib/models'
 import { suiviDemande } from '@/lib/suiviDemande'
 
 // Conversation publique côté prospect : il rouvre SON fil via un jeton secret (uuid
@@ -154,7 +155,7 @@ export async function POST(req: Request) {
     // Profil artisan (persona + crédits/fondateur).
     const { data: artisan } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email, is_founder, reponse_auto, services, zone_intervention, bio, tva_regime, assurance_nom')
+      .select('id, nom, metier, ton_style, email, is_founder, plan, reponse_auto, services, zone_intervention, bio, tva_regime, assurance_nom')
       .eq('id', lead.artisan_id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
@@ -174,7 +175,11 @@ export async function POST(req: Request) {
 
     // Crédit pour la réponse IA. Épuisé → message tout de même sauvé, artisan notifié,
     // mais pas de réponse auto (il répondra lui-même depuis sa boîte de réception).
-    const credit = await consumeCredit(artisan.id, 'standard', !!artisan.is_founder)
+    // Le modèle réglé par l'artisan, débité à son vrai tarif (audit final, E-M1) — avant, cette route
+    // servait le modèle par défaut et débitait « standard » quel que soit le réglage.
+    const cfg = await getPlateformeConfig(artisan.id, artisan.reponse_auto)
+    const { model: modeleRegle, tier: tierRegle } = resolveModel(cfg.modele || 'standard', artisan.plan)
+    const credit = await consumeCredit(artisan.id, tierRegle, !!artisan.is_founder)
     if (!credit.ok) {
       if (artisan.email) {
         await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
@@ -194,11 +199,10 @@ export async function POST(req: Request) {
         ...history.map((m) => ({ sens: m.sens, contenu: m.contenu })),
         { sens: 'in' as const, contenu: message },
       ]
-      const cfg = await getPlateformeConfig(artisan.id, artisan.reponse_auto)
       reply = await generateConversationReply(
         { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
         { nom_prospect: lead.nom_prospect, contact: lead.contact, message: lead.message },
-        turns, undefined, undefined, { persona: personaDe(cfg) },
+        turns, modeleRegle, undefined, { persona: personaDe(cfg) },
       )
     } catch (e) {
       console.error('[conversation] IA:', e)
