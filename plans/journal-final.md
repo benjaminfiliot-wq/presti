@@ -157,13 +157,21 @@
 - **Journal** : appels IA : 0 sur ce bloc. **Cumul v7 : 3** (bloc 1, rejeu exigé de `pilotage-e2e`). Clé Anthropic locale restaurée.
 - **Suivant (Benj, 1 minute)** : H17 — coller `_A_COLLER_sql_editor_0063.sql`, me le dire → drapeau levé, déploiement, `code-connexion-e2e`, 44/44.
 
+## [18] v7 · clôture — migration 0063 collée, code email ACTIF, logo en ligne — 05/09 20:15 — ✅ 44/44
+- **0063 collée par Benj** et constatée par l'effet (3 tables, colonne, RPC → 200). Drapeau `codeEmail` levé (commit `cf562bf`), déployé.
+- **Le code par email prouvé EN PROD** : `code-connexion-e2e` **56/56** (anti-énumération à l'octet, jeton d'avant vérification refusé sur toutes les routes, 5 essais → nouveau code, usage unique, code sans mot de passe refusé, 3 renvois/quart d'heure, code expiré, cookie signé httpOnly 30 j, appareil reconnu = pas de code — même agent seulement, cookie altéré refusé, révocation unitaire et globale, TOTP remplace l'email, fondateur même règle, écran /login + Sécurité). Un seul rouge au premier passage : une assertion (la pastille « cet appareil » rendue en capitales par le CSS) — corrigée (`a667ff1`), pas le produit. Rejoués verts avec le drapeau levé : `mfa-e2e` 25/25, `parametres-e2e` 70/70, `motdepasse-e2e` 31/31.
+- **Lanceur : 44/44** (la suite en attente joue désormais). Le drapeau levé, une session au mot de passe seul n'ouvre plus aucune route d'un compte sans application d'authentification.
+- **Logo « l'aube »** (commit `c1874d2`) : la marque de l'entreprise (demi-soleil au pinceau, trace peinte figée dans `public/marque/*.svg`) posée sur la console, la landing et les quatre écrans d'authentification ; favicon, icône d'onglet, icône iOS et carte de partage Open Graph refaits. Réservé à Presti (marque blanche intacte : jamais sur le site/plateforme d'un artisan). Tous les assets servent 200 en prod. Chantier `_to_delete/` laissé à Benj (variantes superseded).
+- **Appels IA** : 0 sur ce bloc. Cumul v7 : 3.
+- **État vendable** : le site peut partir au premier client. Restent, non bloquants : clé Stripe de test (H4, pour les 11 transitions d'abonnement), DMARC (H11), clé admin Anthropic (H5).
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
 
 | # | Action | État | Ce qui n'est PAS prouvé tant que ce n'est pas fait |
 |---|--------|------|-----------------------------------------------------|
-| **H17** | Coller `_A_COLLER_sql_editor_0063.sql` (SQL Editor), puis me le dire → drapeau `codeEmail` levé, déploiement | ⛔ **à faire, 1 min** | tout le bloc 2 : code email, appareils de confiance, refus des jetons au mot de passe seul — `code-connexion-e2e` sort en 2, lanceur 43/44 |
+| ~~H17~~ | ✅ **fait par Benj le 05/09** — 0063 collée, drapeau levé, déployé ; `code-connexion-e2e` **56/56** en prod, lanceur **44/44** | — | — |
 | H4 | Clé Stripe de TEST (`STRIPE_SECRET_KEY_TEST`) dans `.env.local` | ⛔ absente au 05/09 | les **11 transitions d'abonnement** en conditions réelles (`abonnement-e2e`) — le portail est configuré, un abonné réel ne s'est pas présenté |
 | H11 | DNS `_dmarc.prestiapp.fr` TXT `v=DMARC1; p=quarantine; rua=mailto:<alertes>` (ou `node scripts/ovh.mjs dmarc`) | ⛔ pas de jeton OVH trouvé | la délivrabilité des emails de relance et de code (`nslookup -type=txt _dmarc.prestiapp.fr`) |
 | H5 | `ANTHROPIC_ADMIN_KEY` sur Vercel (`node scripts/vercel-env.mjs ANTHROPIC_ADMIN_KEY <clé>`) | ⛔ absente | la lecture réelle du solde Anthropic — d'ici là, rappel hebdomadaire estimé depuis les crédits |
