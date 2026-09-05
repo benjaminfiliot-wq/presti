@@ -165,6 +165,14 @@
 - **Appels IA** : 0 sur ce bloc. Cumul v7 : 3.
 - **État vendable** : le site peut partir au premier client. Restent, non bloquants : clé Stripe de test (H4, pour les 11 transitions d'abonnement), DMARC (H11), clé admin Anthropic (H5).
 
+## [19] H4 — les 11 transitions d'abonnement prouvées en conditions réelles (mode test Stripe) — 05/09 21:45 — ✅ `abonnement-e2e` **78/78**, 17 écarts connus
+- **Clé** : Benj a d'abord collé deux clés restreintes RÉELLES (`rk_live_`) — refusées : « limitée » règle les droits, pas le compte ; le mode réel rejette les cartes fictives et aurait sali le vrai compte (clients, abonnements, factures). La suite refuse désormais explicitement `rk_live_` et accepte `rk_test_`. Puis la vraie clé de test (`sk_test_`), nommée `STRIPE_SECRET_KEY_TEST` dans `.env.local` (valeur jamais affichée).
+- **Premier passage réel : 74/77, 3 rouges — deux étaient la SUITE, un le bac à sable.** (1) « sans en-tête de signature → refusé » sortait HTTP 200 et le compte passait en Studio : `opts.entete ?? signer()` — `null` retombait sur une signature VALIDE, le test envoyait un vrai paiement. Le produit, lui, refuse bien un webhook non signé (sonde directe : 503) et une signature forgée (400). Corrigé (`=== undefined`). (2) « le compte est toujours en essai » tombait par conséquence. (3) Aucune configuration de portail dans le bac à sable : créée par l'API avec la clé de test — 3 produits/prix miroir du réel (29/59/99 €/mois, `lookup_key presti_*`), portail avec factures, moyen de paiement, résiliation en fin de période, changement d'offre. Rien de réel touché.
+- **Second passage : 78 réussis, 0 échoué, 17 écarts connus (documentés dans `plans/audit-final/abonnement.md`, comptés à part), 5 résorbés.** Prouvé contre la prod : paiement (Studio, 250 crédits, renouvellement posé), rejeu d'événement, forgeries (sans signature 503, forgée 400, autre secret 400, corps modifié 400), échec de prélèvement avec grâce, `invoice.paid`, résiliation (retour à l'essai, client Stripe conservé, crédits gardés, inventaire fermé mais données gardées), réabonnement, résiliation d'un ANCIEN abonnement sans rétrogradation, erreur de traitement → 5xx, portail (GET/POST/401/404 + configuration), fondateurs jamais facturés, crédits atomiques (12 parallèles sur 5 → exactement 5), prospect jamais bloqué à 0 crédit, aucun prix en dur.
+- **Reste dans `.env.local`** : deux lignes nues `rk_live_` (23 et 25) que je n'ai pas touchées — à supprimer par Benj, et ces deux clés à révoquer dans Stripe (elles ont transité par le chat).
+- **Nightly** : la suite reste à la demande (`node scripts/abonnement-e2e.mjs`) — la mettre dans l'audit nocturne demande la clé de test dans le secret GitHub (sans le secret de webhook réel, qui n'y va jamais) : H18, confort.
+- **Appels IA** : 0.
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
@@ -172,7 +180,7 @@
 | # | Action | État | Ce qui n'est PAS prouvé tant que ce n'est pas fait |
 |---|--------|------|-----------------------------------------------------|
 | ~~H17~~ | ✅ **fait par Benj le 05/09** — 0063 collée, drapeau levé, déployé ; `code-connexion-e2e` **56/56** en prod, lanceur **44/44** | — | — |
-| H4 | Clé Stripe de TEST (`STRIPE_SECRET_KEY_TEST`) dans `.env.local` | ⛔ absente au 05/09 | les **11 transitions d'abonnement** en conditions réelles (`abonnement-e2e`) — le portail est configuré, un abonné réel ne s'est pas présenté |
+| ~~H4~~ | ✅ **fait par Benj le 05/09** (clé `sk_test_`) — `abonnement-e2e` **78/78** contre la prod, bac à sable Stripe équipé (3 offres + portail) ; H18 (confort) : la clé de test dans le secret GitHub pour la jouer chaque nuit | — | — |
 | H11 | DNS `_dmarc.prestiapp.fr` TXT `v=DMARC1; p=quarantine; rua=mailto:<alertes>` (ou `node scripts/ovh.mjs dmarc`) | ⛔ pas de jeton OVH trouvé | la délivrabilité des emails de relance et de code (`nslookup -type=txt _dmarc.prestiapp.fr`) |
 | H5 | `ANTHROPIC_ADMIN_KEY` sur Vercel (`node scripts/vercel-env.mjs ANTHROPIC_ADMIN_KEY <clé>`) | ⛔ absente | la lecture réelle du solde Anthropic — d'ici là, rappel hebdomadaire estimé depuis les crédits |
 | H10 | Domaine d'envoi neutre pour les emails au nom de l'artisan | décision | From sans « presti » (auditeur B, F3) |

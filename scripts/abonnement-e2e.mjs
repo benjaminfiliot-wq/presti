@@ -125,7 +125,9 @@ async function signer(payload, secret = WEBHOOK_SECRET) {
 }
 async function livrer(ev, opts = {}) {
   const payload = JSON.stringify(ev)
-  const entete = opts.entete ?? (await signer(opts.payloadSigne ?? payload, opts.secret))
+  // `entete: null` veut dire « aucun en-tête » : avec `??`, null retombait sur une signature VALIDE et le
+  // test « sans en-tête » passait un vrai paiement (constaté au premier passage réel, 05/09).
+  const entete = opts.entete === undefined ? await signer(opts.payloadSigne ?? payload, opts.secret) : opts.entete
   const r = await fetch(`${BASE}/api/stripe/webhook`, {
     method: 'POST', headers: { 'Content-Type': 'application/json', ...(entete ? { 'stripe-signature': entete } : {}) }, body: payload,
   })
