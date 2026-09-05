@@ -8,9 +8,9 @@
 | Auditeurs indépendants | 8 (A attaque, B conformité, C qualité, D parcours, E IA, F fiabilité, G motion, H abonnement) — sous-agents distincts de celui qui corrige |
 | Défauts trouvés | 5 bloquants · 54 majeurs · ≈ 66 mineurs |
 | Fermés | 5 bloquants · 52 majeurs — 15 commits ; les 5 suites IA rejouées le 05/09 (toutes vertes) |
-| Restent à un humain | DMARC (H11, 2 min chez OVH) · téléphone LCEN (H16) · domaine d'envoi neutre (H10, décision) · migrations 0059-0061 à coller (H14) · détection de rejeu Supabase (H15, 1 clic) · clé privée des sauvegardes à mettre à l'abri (H12) · clés de test Stripe et admin Anthropic (H4, H5) |
+| Restent à un humain | téléphone LCEN (H16, obligation légale) · clé privée des sauvegardes à mettre à l'abri (H12) · confort : DMARC (H11), clé admin Anthropic (H5), clé Stripe de test (H4), domaine d'envoi neutre (H10) |
 | Chiffrés après la démo | plus rien de majeur — les 6 reportés sont livrés le 05/09 (quota, purges, mentions, slides 3D, deux suites) |
-| Lanceur `tout-verifier.mjs` | **41/42 suites vertes** hors IA (la 42e, le quota de stockage, attend la migration 0059 — H14) ; 5 suites IA vertes le 05/09 ; `audit-final-e2e` 68/68 |
+| Lanceur `tout-verifier.mjs` | **42/42 suites vertes** hors IA le 05/09 au soir (0059-0061 collées) ; 5 suites IA vertes ; `audit-final-e2e` 68/68 |
 | Couverture (`plans/couverture.md`) | **0 case vide** (73 → 0) : 30 pages, 58 routes, 58 migrations, 12 drapeaux, 29 emails, 2 crons, 23 capacités, 40 suites |
 | Promesses (`plans/promesses.md`) | 23 recensées, **23 prouvées** le 05/09 (dont « résiliable » depuis le portail Stripe, et les 4 promesses IA rejouées) |
 | Nouvelles suites | `purge-comptes`, `audit-final` (69 points), `fermeture` (55), `emails` (88), `garde-commit`, `abonnement` (11 transitions, attend H4) |

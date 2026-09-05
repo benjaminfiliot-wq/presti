@@ -115,6 +115,12 @@
 
 **Appels IA du sprint : ≈ 100, une seule fois, < 1 €.**
 
+## [12] Clôture — 05/09 18:30 — ✅ 42 suites sur 42 localement
+- Benj a collé 0059-0061 et activé la détection de rejeu. Prouvé : quota 32/32, purges 43/43, doublon de domaine refusé (`artisans_domaine_unique_idx`).
+- **Nécessaire pour vendre** : plus rien côté technique. Deux obligations légales restent à la main de Benj : le **téléphone** dans les mentions légales (LCEN, une ligne) et, plus tard, une boîte sur le domaine à la place de l'alias Gmail (confort, pas obligation).
+- **Confort, pas bloquant** : DMARC (délivrabilité, 2 min chez OVH), clé admin Anthropic (sinon rappel hebdomadaire), clé Stripe de test (les 11 transitions en conditions réelles — le premier abonné réel les prouvera), domaine d'envoi neutre.
+- **Indispensable pour ne pas perdre les sauvegardes** : ranger `cle-sauvegarde.key.pem` hors du disque (gestionnaire de mots de passe + clé USB).
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
 | # | Action | Où | Effet vérifiable |
 |---|--------|----|------------------|
@@ -126,8 +132,8 @@
 | H9 | Email et téléphone de l'éditeur (LCEN) — boîte qui fonctionne ou adresse choisie | décision Benj | mentions légales complètes (auditeur B, D2) |
 | H10 | Domaine d'envoi neutre pour les emails au nom de l'artisan | décision + DNS | From sans « presti » (auditeur B, F3) |
 | H13 | Filtre Gmail : « à : benjaminfiliot+presti@gmail.com » → libellé « Presti » (le libellé existe déjà) | Gmail → Paramètres → Filtres | le prochain email d'alerte arrive rangé |
-| H14 | Coller `supabase/migrations/_A_COLLER_sql_editor_0059_0061.sql` (quota de stockage, index des purges, domaine unique) — **après** le déploiement du 05/09 | Supabase → SQL Editor | `quota-media-e2e` §6 vert (le navigateur ne peut plus écrire dans le bucket) |
-| H15 | Supabase → Authentication → Sessions → activer la **détection de rejeu** des jetons (audit v4, dernier tiers) | Supabase | `verif-supabase-reglages.mjs` : 3/3 |
+| ~~H14~~ | ✅ collées par Benj le 05/09 — vérifié : `quota-media-e2e` **32/32** (le navigateur ne peut plus écrire dans le bucket), `purges-rgpd-e2e` 43/43, un doublon de domaine est refusé par la base | — | — |
+| ~~H15~~ | ✅ activée par Benj le 05/09 (détection de rejeu des jetons) | — | `verif-supabase-reglages.mjs` |
 | H16 | Téléphone de l'éditeur dans les mentions légales (LCEN) : une ligne à ajouter, l'emplacement est marqué dans `app/mentions-legales/page.tsx` | décision Benj | `legal-e2e` |
 | H11 | Enregistrement DNS `_dmarc.prestiapp.fr` TXT `v=DMARC1; p=quarantine; rua=mailto:<adresse des alertes>` (ou `node scripts/ovh.mjs dmarc`) | OVH → zone DNS | `nslookup -type=txt _dmarc.prestiapp.fr` répond ; alerte `domaine_mail` se tait |
 | ~~H12~~ | ✅ sauvegarde chiffrée quotidienne (`sauvegarde.yml`) + restauration prouvée 7/7 le 05/09 — **à faire par Benj : mettre `cle-sauvegarde.key.pem` à l'abri** (gestionnaire de mots de passe + clé USB) ; sans elle, les sauvegardes sont illisibles | — | `node scripts/restaurer.mjs --lire <fichier>` ouvre la dernière sauvegarde |
