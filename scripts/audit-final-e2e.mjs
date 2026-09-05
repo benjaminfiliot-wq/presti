@@ -177,7 +177,8 @@ try {
   console.log('\n── G. Motion, marque, accessibilité')
   // La séquence est montée côté client (pas dans le HTML servi) : on lit le composant.
   T('G-1.1 — la séquence a un bouton pause (aria-pressed)', /className="dm-fleche dm-pause".{0,200}?aria-pressed=.pauseManuel./.test(fs.readFileSync('app/DemoSequence.tsx', 'utf8')))
-  T('G-1.2 — les liens d’en-tête se replient dès 760 px', /@media \(max-width:760px\)\{\.lp-links/.test(css))
+  // v8 A1.1 : les liens se replient dès 900 px dans un tiroir, et « Se connecter » n'est PLUS caché (c'était le bug n° 1 du mobile).
+  T('G-1.2 — les liens d’en-tête se replient dès 900 px, dans un tiroir, sans cacher « Se connecter »', /@media \(max-width:900px\)\{\s*\.lp-links\{display:none\}/.test(css) && !/\.lp-nav \.lp-btn--g\{display:none\}/.test(css) && /\.lp-tiroir\.on\{transform:none\}/.test(css))
   T('G-2.2 — la visionneuse arrête Lenis', /__lenis/.test(fs.readFileSync('app/site/[slug]/SiteLightbox.tsx', 'utf8')) && /lenis\?\.start\(\)/.test(fs.readFileSync('app/site/[slug]/SiteLightbox.tsx', 'utf8')))
   T('G-2.3 — le curseur avant/après montre son focus', /\.site-aa-range:focus-visible\) \.site-aa-knob/.test(fs.readFileSync('app/site/[slug]/site.css', 'utf8')))
   const chatSrc = fs.readFileSync('app/p/[slug]/PlatChat.tsx', 'utf8')
