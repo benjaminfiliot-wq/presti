@@ -1,5 +1,6 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
+import PublicNav from '@/app/PublicNav'
 
 export const metadata = {
   // Sans cette ligne, la canonique du layout racine ('/') s'applique : la page se déclare
@@ -37,6 +38,8 @@ const schema = {
 
 export default function FaqPage() {
   return (
+    <>
+    <PublicNav />
     <main className="legal-wrap">
       {/* Les questions sont statiques aujourd'hui, mais le bloc est lu en texte brut jusqu'au
           premier « fin de balise script » : une réponse qui en contiendrait un livrerait la suite
@@ -58,5 +61,6 @@ export default function FaqPage() {
       </p>
       <p><a href="/cgu">Conditions générales</a> · <a href="/confidentialite">Confidentialité</a> · <a href="/mentions-legales">Mentions légales</a></p>
     </main>
+    </>
   )
 }

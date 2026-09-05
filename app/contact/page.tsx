@@ -1,5 +1,6 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
+import PublicNav from '@/app/PublicNav'
 import Formulaire from '@/app/contact/Formulaire'
 
 export const metadata = {
@@ -13,6 +14,8 @@ export const metadata = {
 
 export default function Contact() {
   return (
+    <>
+    <PublicNav />
     <main className="legal-wrap">
       <Breadcrumb label="Nous écrire" path="/contact" />
       <h1>Nous écrire</h1>
@@ -32,5 +35,6 @@ export default function Contact() {
         </p>
       </div>
     </main>
+    </>
   )
 }

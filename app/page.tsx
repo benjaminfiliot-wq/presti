@@ -1,4 +1,5 @@
 import '@/app/globals.css'
+import PublicNav from '@/app/PublicNav'
 import Marque from './Marque'
 import type { Metadata } from 'next'
 import HeroApp from '@/app/HeroApp'
@@ -64,20 +65,7 @@ export default function Home() {
       <div className="lp-noise" aria-hidden="true" />
       <Motion />
 
-      <header className="lp-head">
-        <nav className="lp-nav">
-          <a className="lp-brand" href="/"><i className="marque"><Marque size={26} /></i>Presti</a>
-          <div className="lp-sp" />
-          <div className="lp-links">
-            <a href="#fonctionnalites">Fonctionnalités</a>
-            <a href="#tarifs">Tarifs</a>
-            <a href="/faq">FAQ</a>
-            <a href="/contact">Nous écrire</a>
-          </div>
-          <a className="lp-btn lp-btn--g" href="/login">Se connecter</a>
-          <a className="lp-btn lp-btn--p" href="/signup">Essayer gratuitement</a>
-        </nav>
-      </header>
+      <PublicNav accueil />
 
       <main>
         {/* HERO */}

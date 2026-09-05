@@ -1,5 +1,6 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
+import PublicNav from '@/app/PublicNav'
 
 export const metadata = {
   title: 'Mentions légales',
@@ -12,6 +13,8 @@ const Back = () => <Breadcrumb label="Mentions légales" path="/mentions-legales
 
 export default function MentionsLegales() {
   return (
+    <>
+    <PublicNav />
     <main className="legal-wrap">
       <Back />
       <h1>Mentions légales</h1>
@@ -64,5 +67,6 @@ export default function MentionsLegales() {
 
       <p style={{ marginTop: '2.4rem' }}><a href="/cgu">Conditions générales</a> · <a href="/confidentialite">Politique de confidentialité</a></p>
     </main>
+    </>
   )
 }

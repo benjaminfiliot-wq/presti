@@ -1,5 +1,6 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
+import PublicNav from '@/app/PublicNav'
 
 export const metadata = {
   title: 'Politique de confidentialité',
@@ -12,6 +13,8 @@ const Back = () => <Breadcrumb label="Confidentialité" path="/confidentialite" 
 
 export default function Confidentialite() {
   return (
+    <>
+    <PublicNav />
     <main className="legal-wrap">
       <Back />
       <h1>Politique de confidentialité</h1>
@@ -66,5 +69,6 @@ export default function Confidentialite() {
 
       <p style={{ marginTop: '2.4rem' }}><a href="/cgu">Conditions générales</a> · <a href="/mentions-legales">Mentions légales</a></p>
     </main>
+    </>
   )
 }

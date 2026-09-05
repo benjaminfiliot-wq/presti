@@ -1,5 +1,6 @@
 import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
+import PublicNav from '@/app/PublicNav'
 import { TRAITEMENTS, SOUS_TRAITANTS } from '@/lib/legalArtisan'
 
 export const metadata = {
@@ -13,6 +14,8 @@ const Back = () => <Breadcrumb label="Conditions générales" path="/cgu" />
 
 export default function CGU() {
   return (
+    <>
+    <PublicNav />
     <main className="legal-wrap">
       <Back />
       <h1>Conditions Générales d’Utilisation et de Vente</h1>
@@ -163,5 +166,6 @@ export default function CGU() {
 
       <p style={{ marginTop: '2.4rem' }}><a href="/confidentialite">Politique de confidentialité</a> · <a href="/mentions-legales">Mentions légales</a></p>
     </main>
+    </>
   )
 }
