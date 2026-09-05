@@ -91,7 +91,7 @@
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
 | # | Action | Où | Effet vérifiable |
 |---|--------|----|------------------|
-| H1 | Coller `supabase/migrations/_A_COLLER_sql_editor_0057_0058.sql` | Supabase → SQL Editor | `audit-final-e2e` 52/52 ; `passages_cron` sondée ✅ dans l'inventaire ; `cron_muet` opérationnel |
+| ~~H1~~ | ✅ fait par Benj le 05/09 — vérifié : `audit-final-e2e` **68/68**, table `passages_cron` présente (première trace au cron de 8 h) | — | — |
 | H4 | Clé Stripe de TEST (`STRIPE_SECRET_KEY_TEST`) dans `.env.local` | Stripe → Développeurs | `abonnement-e2e` joue ses 11 transitions sans débit |
 | H5 | `ANTHROPIC_ADMIN_KEY` + `BUDGET_IA_MENSUEL_EUR` sur Vercel | Vercel → Environment | `GET /api/cron/alertes?sec=1` mesure le coût du mois |
 | H7 | Portail client Stripe activé en LIVE (factures, moyen de paiement, résiliation, changement d'offre) + modèle de facture avec pied « TVA non applicable, art. 293 B du CGI » | Stripe → Paramètres → Facturation | `POST /api/stripe/portail` → 200 (auditeur H, bloquant 1) |
