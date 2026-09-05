@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     const uid = auth.uid
 
     const body = await req.json().catch(() => null)
-    const ACTIONS = ['reply', 'suggest', 'valider', 'rejeter', 'prise_en_main', 'escalader'] as const
+    const ACTIONS = ['reply', 'suggest', 'valider', 'rejeter', 'prise_en_main', 'rendre_main', 'escalader'] as const
     type Action = typeof ACTIONS[number]
     const action: Action = (ACTIONS as readonly string[]).includes(body?.action) ? body.action : 'reply'
     const leadId = typeof body?.lead_id === 'string' ? body.lead_id : ''
@@ -67,8 +67,11 @@ export async function POST(req: Request) {
     if (!lead) return NextResponse.json({ error: 'Conversation introuvable' }, { status: 404 })
 
     // ── Poste de pilotage (v5 §9) : prise de main, escalade, propositions de l'assistant.
-    if (action === 'prise_en_main' || action === 'escalader') {
-      const valeur = action === 'escalader' ? true : body?.valeur !== false
+    // « Rendre la main » a son propre nom (v7, 1d) : avant, il fallait savoir envoyer
+    // `prise_en_main` avec `valeur:false` — l'audit l'a cru absent, et l'écran ne l'offrait
+    // qu'en retour du même bouton. Le geste est désormais explicite, dans l'API et à l'écran.
+    if (action === 'prise_en_main' || action === 'rendre_main' || action === 'escalader') {
+      const valeur = action === 'escalader' ? true : action === 'rendre_main' ? false : body?.valeur !== false
       await supabaseAdmin.from('leads').update({
         prise_en_main: valeur, prise_en_main_le: valeur ? new Date().toISOString() : null,
         ...(action === 'escalader' ? { urgence: 'urgent', lu_le: null } : {}),
@@ -109,7 +112,7 @@ export async function POST(req: Request) {
     if (action === 'suggest') {
       // Le modèle ne se choisit plus ici : il vient de « Ma plateforme → Intelligence »
       // (v4 §B1 — l'IA vit dans la plateforme, la boîte de réception ne fait que proposer).
-      const cfg = await getPlateformeConfig(uid, null)
+      const cfg = await getPlateformeConfig(uid)
       const { tier, model, downgraded } = resolveModel(cfg.modele || 'standard', artisan?.plan)
       const credit = await consumeCredit(uid, tier, !!artisan?.is_founder)
       if (!credit.ok) return NextResponse.json({ error: credit.error, outOfCredits: true }, { status: 402 })

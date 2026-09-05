@@ -160,7 +160,7 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
   async function priseEnMain(valeur: boolean) {
     if (!sel || busy) return
     setBusy('main'); setErr(null)
-    const { ok, d } = await appel({ action: 'prise_en_main', lead_id: sel, valeur })
+    const { ok, d } = await appel({ action: valeur ? 'prise_en_main' : 'rendre_main', lead_id: sel })
     setBusy(null)
     if (!ok) { setErr(d.error ?? 'Action impossible.'); return }
     setLeads((prev) => prev.map((x) => (x.id === sel ? { ...x, prise_en_main: valeur } : x)))
@@ -277,7 +277,7 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
             </div>
           </div>
 
-          {selLead.prise_en_main ? <div className="pil-bandeau">Vous avez la main : l’assistant ne répond plus ici, et votre client en est informé.</div> : null}
+          {selLead.prise_en_main ? <div className="pil-bandeau">Vous avez la main sur cette conversation : l’assistant ne répond plus ici, et votre client en est informé. <button type="button" className="pil-bandeau-btn" disabled={busy === 'main'} onClick={() => priseEnMain(false)}>Rendre la main à l’assistant</button></div> : null}
 
           {Array.isArray(selLead.photos) && selLead.photos.length > 0 ? (
             <div className="inbox-photos">
