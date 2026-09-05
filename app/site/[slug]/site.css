@@ -111,12 +111,12 @@ html.lenis,html.lenis body{height:auto}
 .site-mark{width:38px;height:38px;border-radius:var(--srad-s);overflow:hidden;display:grid;place-items:center;background:linear-gradient(135deg,var(--pc2),var(--pc));color:#1a0f0a;font-family:var(--sfd);font-weight:900;font-size:1rem}
 .site-mark img{width:100%;height:100%;object-fit:cover}
 .site-links{display:flex;align-items:center;gap:1.6rem;font-size:.95rem;color:var(--sink2)}
-.site-links a:not(.site-nav-cta):hover{color:var(--sink)}
+@media (hover:hover) and (pointer:fine){.site-links a:not(.site-nav-cta):hover{color:var(--sink)}}
 /* a.site-nav-cta et pas .site-nav-cta : `.site a{color:inherit}` (0,1,1) l'emportait sur
    (0,1,0), donc le bouton héritait du gris de .site-links — texte gris foncé sur pastille
    presque noire, 2:1 de contraste. Illisible, et invisible dans les tests d'API. */
 .site a.site-nav-cta,.site-nav-cta{padding:.6rem 1.1rem;border-radius:999px;background:var(--sink);color:var(--sbg);font-weight:600;transition:transform .14s var(--se),background .15s}
-.site-nav-cta:hover{transform:translateY(-1px)}
+@media (hover:hover) and (pointer:fine){.site-nav-cta:hover{transform:translateY(-1px)}}
 @media(max-width:760px){.site-links a:not(.site-nav-cta){display:none}}
 
 /* HERO */
@@ -162,16 +162,16 @@ html.lenis,html.lenis body{height:auto}
 .site-hero-cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2.2rem}
 .site-btn{display:inline-flex;align-items:center;gap:.55rem;padding:.95rem 1.6rem;border-radius:999px;font-weight:600;font-size:1.02rem;transition:transform .14s var(--se),box-shadow .3s,background .2s}
 .site-btn svg{width:19px;height:19px;transition:transform .2s var(--se)}
-.site-btn:hover svg{transform:translateX(3px)}
+@media (hover:hover) and (pointer:fine){.site-btn:hover svg{transform:translateX(3px)}}
 .site-btn.p{background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;box-shadow:0 18px 44px -18px color-mix(in srgb,var(--pc) 80%,transparent)}
-.site-btn.p:hover{box-shadow:0 24px 54px -18px color-mix(in srgb,var(--pc) 95%,transparent);transform:translateY(-2px)}
+@media (hover:hover) and (pointer:fine){.site-btn.p:hover{box-shadow:0 24px 54px -18px color-mix(in srgb,var(--pc) 95%,transparent);transform:translateY(-2px)}}
 .site-btn.g{background:color-mix(in srgb,var(--sink) 7%,transparent);color:var(--sink);border:var(--sbw) solid var(--sline)}
-.site-btn.g:hover{background:color-mix(in srgb,var(--sink) 12%,transparent)}
+@media (hover:hover) and (pointer:fine){.site-btn.g:hover{background:color-mix(in srgb,var(--sink) 12%,transparent)}}
 .site-btn.lg{padding:1.1rem 2rem;font-size:1.1rem}
 .site-hero-meta{display:flex;flex-wrap:wrap;gap:1.4rem;margin-top:2rem;color:var(--sink2);font-size:.95rem}
 .site-hero-meta a,.site-hero-meta span{display:inline-flex;align-items:center;gap:.5rem}
 .site-hero-meta svg{width:16px;height:16px;stroke:var(--pc2);fill:none}
-.site-hero-meta a:hover{color:var(--sink)}
+@media (hover:hover) and (pointer:fine){.site-hero-meta a:hover{color:var(--sink)}}
 
 /* CONFIANCE (strip) */
 .site-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--sline2);border-top:var(--sbw) solid var(--sline2);border-bottom:var(--sbw) solid var(--sline2)}
@@ -195,7 +195,7 @@ html.lenis,html.lenis body{height:auto}
 .site-shot.wide{grid-column:span 2;aspect-ratio:16/9}
 @media(max-width:680px){.site-shot.wide{grid-column:span 1}}
 .site-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--se)}
-.site-shot:hover img{transform:scale(1.05)}
+@media (hover:hover) and (pointer:fine){.site-shot:hover img{transform:scale(1.05)}}
 /* Révélation cinématique des réalisations : montée + léger scale, plus lente et luxueuse */
 .site-shot.site-reveal{transition:opacity 1s var(--se),transform 1s var(--se)}
 .site-armed .site-shot.site-reveal{transform:translateY(34px) scale(.965)}
@@ -227,7 +227,7 @@ html.lenis,html.lenis body{height:auto}
 .site-embed{margin-top:2.6rem;text-align:left}
 .site-channels{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin-top:2.4rem}
 .site-chan{display:inline-flex;align-items:center;gap:.55rem;padding:.65rem 1.1rem;border-radius:999px;border:var(--sbw) solid var(--sline);background:color-mix(in srgb,var(--sink) 4%,transparent);color:var(--sink);font-size:.92rem;transition:border-color .15s,background .15s,transform .12s var(--se)}
-.site-chan:hover{border-color:var(--pc);background:var(--psoft);transform:translateY(-1px)}
+@media (hover:hover) and (pointer:fine){.site-chan:hover{border-color:var(--pc);background:var(--psoft);transform:translateY(-1px)}}
 .site-chan span{display:grid;place-items:center;width:18px;height:18px}
 .site-chan svg{width:17px;height:17px;stroke:var(--pc2);fill:none}
 
@@ -256,8 +256,8 @@ html.lenis,html.lenis body{height:auto}
 .site-word-n{font-family:var(--sfm);font-size:.8rem;color:var(--sfaint);flex:none;width:2.4rem}
 .site-word-t{font-family:var(--sfd);font-weight:800;font-size:calc(clamp(2.1rem,8vw,5.4rem) * var(--sscale));line-height:1;letter-spacing:-.02em;color:var(--sink);flex:1;transition:color .3s,transform .5s var(--se)}
 .site-word-a{width:clamp(28px,4vw,46px);height:clamp(28px,4vw,46px);stroke:var(--sfaint);flex:none;transition:transform .35s var(--se),stroke .3s}
-.site-word:hover .site-word-t{color:var(--pc2);transform:translateX(14px)}
-.site-word:hover .site-word-a{stroke:var(--pc2);transform:translateX(10px)}
+@media (hover:hover) and (pointer:fine){.site-word:hover .site-word-t{color:var(--pc2);transform:translateX(14px)}}
+@media (hover:hover) and (pointer:fine){.site-word:hover .site-word-a{stroke:var(--pc2);transform:translateX(10px)}}
 
 .site-features{display:flex;flex-direction:column}
 .site-feature{display:grid;grid-template-columns:1fr 1fr;min-height:clamp(420px,58vh,640px);align-items:stretch}
@@ -446,8 +446,8 @@ html.lenis,html.lenis body{height:auto}
 .site-lb-nav{top:50%;transform:translateY(-50%)}
 .site-lb-nav.p{left:-4px}
 .site-lb-nav.n{right:-4px}
-.site-lb-x:hover{background:rgba(0,0,0,.7);border-color:#fff;transform:scale(1.06)}
-.site-lb-nav:hover{background:rgba(0,0,0,.7);border-color:#fff;transform:translateY(-50%) scale(1.06)}
+@media (hover:hover) and (pointer:fine){.site-lb-x:hover{background:rgba(0,0,0,.7);border-color:#fff;transform:scale(1.06)}}
+@media (hover:hover) and (pointer:fine){.site-lb-nav:hover{background:rgba(0,0,0,.7);border-color:#fff;transform:translateY(-50%) scale(1.06)}}
 .site-lb-x:focus-visible,.site-lb-nav:focus-visible{outline:2px solid var(--pc);outline-offset:3px}
 .site-lb-cap{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;justify-content:center;color:#EDE3D2;text-align:center}
 .site-lb-cap b{font-family:var(--sfd);font-size:1.15rem}
@@ -524,7 +524,7 @@ html.lenis,html.lenis body{height:auto}
 }
 .legal-table td { padding: .7rem .8rem .7rem 0; border-bottom: var(--sbw) solid var(--sline2); color: var(--sink2); vertical-align: top; line-height: 1.5; }
 .legal-liste { margin: .6rem 0 0; padding-left: 1.1rem; color: var(--sink2); line-height: 1.7; }
-.legal-lieu { opacity: .75; font-size: .9em; }
+.legal-lieu { font-size: .9em; }
 .legal-note { font-size: .92rem; }
 .site-foot-legal { margin-left: auto; text-decoration: underline; text-underline-offset: 3px; }
 @media(max-width:560px){ .site-foot-legal { margin-left: 0; } }
@@ -564,3 +564,17 @@ html.lenis,html.lenis body{height:auto}
 .site-slides.armed .site-slides-num,.site-slides.armed .site-slides-total{opacity:1}
 @media (max-width:759px){.site-slide{height:72svh;min-height:420px}.site-slide-txt h3{font-size:clamp(1.5rem,7vw,2.4rem)}}
 @media (prefers-reduced-motion:reduce){.site-slide-media,.site-slide-txt{will-change:auto}}
+
+/* v8 A1 — mobile : contrastes du thème sombre (numéro accentué, kicker), cibles de pied de page, lieu légal */
+.site-dark .site-words .site-word:nth-child(1) .site-word-n,.site[data-theme="nuit"] .site-words .site-word:nth-child(1) .site-word-n{color:var(--pc-ink-d,var(--pc2))}
+.site-dark .site-kick,.site[data-theme="nuit"] .site-kick{color:var(--pc-ink-d,var(--pc2))}
+.legal-lieu{color:#6f675b}
+.site-dark .legal-lieu,.site[data-theme="nuit"] .legal-lieu{color:#b8ad9c}
+@media (max-width:1024px){
+  .site-nav a,.site-links a{display:inline-flex;align-items:center;min-height:44px}
+  .site-nav-cta{min-height:44px}
+  .site-brand{min-height:44px}
+  .site a[href^="tel:"],.site a[href^="mailto:"],.site-foot-legal{display:inline-block;padding:.7rem 0;margin:-.7rem 0}
+}
+/* v8 A1 — le kicker du bloc « À propos » (panneau) prend l'encre secondaire, lisible sur son propre fond quel que soit le thème */
+.site-about .site-kick{color:var(--sink2)}

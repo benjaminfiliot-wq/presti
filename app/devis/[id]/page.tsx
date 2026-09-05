@@ -282,11 +282,11 @@ export default function DevisEditor() {
             <div className="tool-card">
               <h2>Paramètres</h2>
               <div className="grid2">
-                <div><label>Validité (jours) <Info cle="devis.validite" /></label><input inputMode="numeric" value={validite} onChange={(e) => setValidite(e.target.value)} /></div>
-                <div><label>Remise globale (%) <Info cle="devis.remise" /></label><input inputMode="decimal" value={remise} onChange={(e) => setRemise(e.target.value)} /></div>
-                <div><label>Acompte (%) <Info cle="devis.acompte" /></label><input inputMode="decimal" value={acompte} onChange={(e) => setAcompte(e.target.value)} /></div>
-                <div><label>Statut <Info cle="devis.statut" /></label>
-                  <select value={statut} onChange={(e) => setStatut(e.target.value)}>
+                <div><label htmlFor="dv-validite">Validité (jours) <Info cle="devis.validite" /></label><input id="dv-validite" inputMode="numeric" value={validite} onChange={(e) => setValidite(e.target.value)} /></div>
+                <div><label htmlFor="dv-remise">Remise globale (%) <Info cle="devis.remise" /></label><input id="dv-remise" inputMode="decimal" value={remise} onChange={(e) => setRemise(e.target.value)} /></div>
+                <div><label htmlFor="dv-acompte">Acompte (%) <Info cle="devis.acompte" /></label><input id="dv-acompte" inputMode="decimal" value={acompte} onChange={(e) => setAcompte(e.target.value)} /></div>
+                <div><label htmlFor="dv-statut">Statut <Info cle="devis.statut" /></label>
+                  <select id="dv-statut" value={statut} onChange={(e) => setStatut(e.target.value)}>
                     <option value="brouillon">Brouillon</option><option value="envoye">Envoyé</option><option value="accepte">Accepté</option><option value="refuse">Refusé</option><option value="expire">Expiré</option>
                   </select>
                 </div>

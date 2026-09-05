@@ -130,7 +130,7 @@ export default async function InfosLegales({ params }: { params: Promise<{ slug:
             Le responsable de ces traitements, c’est moi{a.nom ? `, ${a.nom}` : ''}.
           </p>
 
-          <table className="legal-table">
+          <table className="legal-table" tabIndex={0}>
             <thead><tr><th>Pourquoi</th><th>Quelles informations</th><th>À quel titre</th><th>Combien de temps</th></tr></thead>
             <tbody>
               {TRAITEMENTS.map((t, i) => (

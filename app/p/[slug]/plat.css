@@ -92,7 +92,7 @@ html.lenis,html.lenis body{height:auto}
 .plat-mark img{width:100%;height:100%;object-fit:cover}
 .plat-brand-t{font-family:var(--pfd);font-weight:700;font-size:1.05rem;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .plat-nav-cta{background:var(--pi);color:var(--pb);font-weight:650;font-size:.9rem;padding:.55rem 1.05rem;border-radius:10px;text-decoration:none;white-space:nowrap;transition:transform .14s var(--pe),background .2s,color .2s}
-.plat-nav-cta:hover{background:var(--pc);color:#1a0f0a}
+@media (hover:hover) and (pointer:fine){.plat-nav-cta:hover{background:var(--pc);color:#1a0f0a}}
 .plat-nav-cta:active{transform:scale(.97)}
 
 /* Conteneur des sections */
@@ -110,9 +110,9 @@ html.lenis,html.lenis body{height:auto}
 .plat-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.5rem;border-radius:12px;font-weight:650;font-size:1rem;text-decoration:none;transition:transform .14s var(--pe),box-shadow .3s var(--pe),background .2s,border-color .2s}
 .plat-btn svg{width:18px;height:18px}
 .plat-btn--p{background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;box-shadow:0 16px 40px -14px color-mix(in srgb,var(--pc) 75%,transparent)}
-.plat-btn--p:hover{box-shadow:0 22px 52px -14px color-mix(in srgb,var(--pc) 90%,transparent);transform:translateY(-1px)}
+@media (hover:hover) and (pointer:fine){.plat-btn--p:hover{box-shadow:0 22px 52px -14px color-mix(in srgb,var(--pc) 90%,transparent);transform:translateY(-1px)}}
 .plat-btn--g{background:color-mix(in srgb,var(--pi) 6%,transparent);color:var(--pi);border:1px solid var(--pl)}
-.plat-btn--g:hover{border-color:color-mix(in srgb,var(--pi) 28%,transparent);background:color-mix(in srgb,var(--pi) 10%,transparent)}
+@media (hover:hover) and (pointer:fine){.plat-btn--g:hover{border-color:color-mix(in srgb,var(--pi) 28%,transparent);background:color-mix(in srgb,var(--pi) 10%,transparent)}}
 .plat-btn:active{transform:scale(.97)}
 .plat-live{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.7rem;font-family:var(--pfm);font-size:.82rem;letter-spacing:.03em;color:var(--pi2)}
 .plat-live-dot{width:.5rem;height:.5rem;border-radius:50%;background:#46C89A;box-shadow:0 0 0 0 rgba(70,200,154,.5);animation:plat-pulse 2s infinite}
@@ -189,7 +189,7 @@ html.lenis,html.lenis body{height:auto}
 .plat-form input::placeholder,.plat-form textarea::placeholder{color:var(--pf)}
 .plat-form input:focus,.plat-form textarea:focus{outline:none;border-color:var(--pc);background:var(--ps);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 16%,transparent)}
 .plat-form button{width:100%;margin-top:1.2rem;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;border:none;border-radius:12px;padding:.98rem;font-size:1.04rem;font-weight:700;cursor:pointer;box-shadow:0 16px 36px -14px color-mix(in srgb,var(--pc) 80%,transparent);transition:transform .12s var(--pe),box-shadow .25s}
-.plat-form button:hover{box-shadow:0 22px 48px -14px color-mix(in srgb,var(--pc) 95%,transparent)}
+@media (hover:hover) and (pointer:fine){.plat-form button:hover{box-shadow:0 22px 48px -14px color-mix(in srgb,var(--pc) 95%,transparent)}}
 .plat-form button:active{transform:scale(.985)}
 /* Photos de chantier (facultatif) */
 .plat-photos{margin-top:.95rem}
@@ -197,9 +197,9 @@ html.lenis,html.lenis body{height:auto}
 .plat-photo{position:relative;width:76px;height:76px;border-radius:12px;overflow:hidden;border:1px solid var(--pl);background:var(--ps)}
 .plat-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .plat-form .plat-photo-x{position:absolute;top:2px;right:2px;width:20px;height:20px;margin:0;padding:0;border-radius:50%;border:none;background:rgba(0,0,0,.62);color:#fff;font-size:15px;line-height:1;display:grid;place-items:center;cursor:pointer;box-shadow:none}
-.plat-form .plat-photo-x:hover{background:rgba(0,0,0,.8)}
+@media (hover:hover) and (pointer:fine){.plat-form .plat-photo-x:hover{background:rgba(0,0,0,.8)}}
 .plat-form .plat-photo-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:76px;height:76px;margin:0;padding:0;border:1.5px dashed color-mix(in srgb,var(--pi) 26%,transparent);border-radius:12px;background:var(--pb);color:var(--pi2);cursor:pointer;transition:border-color .15s,color .15s}
-.plat-form .plat-photo-add:hover{border-color:var(--pc);color:var(--pc2)}
+@media (hover:hover) and (pointer:fine){.plat-form .plat-photo-add:hover{border-color:var(--pc);color:var(--pc2)}}
 .plat-form .plat-photo-add span{font-size:1.4rem;line-height:1;font-weight:400}
 .plat-form .plat-photo-add small{font-size:9.5px;text-align:center;line-height:1.15;padding:0 4px}
 .plat-form .plat-photo-add.busy{opacity:.7;cursor:default}
@@ -253,7 +253,7 @@ html.lenis,html.lenis body{height:auto}
 .plat-compose textarea::placeholder{color:var(--pf)}
 .plat-compose textarea:focus{outline:none;box-shadow:none}
 .plat-compose button{flex:none;width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;box-shadow:0 8px 20px -10px color-mix(in srgb,var(--pc) 80%,transparent);transition:transform .12s var(--pe),box-shadow .25s,opacity .15s}
-.plat-compose button:hover{box-shadow:0 12px 26px -10px color-mix(in srgb,var(--pc) 95%,transparent)}
+@media (hover:hover) and (pointer:fine){.plat-compose button:hover{box-shadow:0 12px 26px -10px color-mix(in srgb,var(--pc) 95%,transparent)}}
 .plat-compose button:active{transform:scale(.92)}
 .plat-compose button:disabled{opacity:.4;cursor:default;box-shadow:none}
 
@@ -275,7 +275,7 @@ html.lenis,html.lenis body{height:auto}
 .plat-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
 .plat-shot{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--pl);background:var(--ps);aspect-ratio:4/3;margin:0}
 .plat-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .55s var(--pe)}
-.plat-shot:hover img{transform:scale(1.045)}
+@media (hover:hover) and (pointer:fine){.plat-shot:hover img{transform:scale(1.045)}}
 .plat-shot figcaption{position:absolute;inset:auto 0 0 0;padding:1.6rem .9rem .8rem;display:flex;flex-direction:column;gap:.3rem;background:linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.35) 55%,transparent)}
 .plat-shot figcaption b{color:#fff;font-size:.98rem;font-weight:650;line-height:1.25}
 .plat-shot-tag{align-self:flex-start;font-family:var(--pfm);font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:#1a0f0a;background:var(--pc2);padding:2px 9px;border-radius:20px;font-weight:700}
@@ -283,7 +283,7 @@ html.lenis,html.lenis body{height:auto}
 /* Canaux de contact (tel / email / réseaux) */
 .plat-channels{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin:0 auto 1.5rem;max-width:660px}
 .plat-chan{display:inline-flex;align-items:center;gap:.55rem;padding:.62rem .95rem;border-radius:12px;border:1px solid var(--pl);background:color-mix(in srgb,var(--pi) 4%,transparent);color:var(--pi);text-decoration:none;font-size:.9rem;transition:border-color .15s,background .15s,transform .12s var(--pe)}
-.plat-chan:hover{border-color:var(--pc);background:var(--psoft);transform:translateY(-1px)}
+@media (hover:hover) and (pointer:fine){.plat-chan:hover{border-color:var(--pc);background:var(--psoft);transform:translateY(-1px)}}
 .plat-chan-ic{display:grid;place-items:center;width:20px;height:20px}
 .plat-chan-ic svg{width:18px;height:18px;stroke:var(--pc2);fill:none}
 
@@ -292,7 +292,7 @@ html.lenis,html.lenis body{height:auto}
 .plat-foot-id{display:inline-flex;align-items:center;gap:.9rem;flex-wrap:wrap}
 .plat-foot-soc{display:flex;gap:.5rem;margin-left:auto;flex-wrap:wrap}
 .plat-soc{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;border:1px solid var(--pl);color:var(--pm);transition:border-color .15s,color .15s}
-.plat-soc:hover{border-color:var(--pc);color:var(--pc2)}
+@media (hover:hover) and (pointer:fine){.plat-soc:hover{border-color:var(--pc);color:var(--pc2)}}
 .plat-soc svg{width:18px;height:18px;stroke:currentColor;fill:none}
 .plat-foot b{font-family:var(--pfd);font-size:1.05rem;color:var(--pi)}
 .plat-foot span{display:inline-flex;align-items:center;gap:.3rem}.plat-foot svg{width:14px;height:14px;stroke:var(--pc2)}
@@ -307,6 +307,8 @@ html.lenis,html.lenis body{height:auto}
    NB : base.css impose button{width:100%;margin-top:1.4rem} → on remet à plat ici.
    ═══════════════════════════════════════════════════════════════════════════ */
 .plat-app{height:100dvh;min-height:100dvh;overflow:hidden;display:block}
+/* v8 A1.7 — clavier ouvert : la colonne prend la hauteur de la fenêtre visible (posée par PlatChat) */
+.plat-app.clavier,.plat-app.clavier .pchat,.plat-app.clavier .pchat-main{height:var(--vvh,100dvh);min-height:0}
 .pchat{display:flex;height:100dvh;overflow:hidden;font-family:var(--pfb)}
 .pchat button{width:auto;margin:0}
 
@@ -321,10 +323,10 @@ html.lenis,html.lenis body{height:auto}
 .pchat-ava{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:color-mix(in srgb,var(--pc) 18%,var(--ps));color:var(--pi);font-size:.74rem;font-weight:700}
 .pchat-ava img{width:100%;height:100%;object-fit:cover}
 .pchat-new{padding:.6rem .8rem;border-radius:var(--prad-s,11px);border:1px dashed color-mix(in srgb,var(--pi) 26%,transparent);background:none;color:var(--pi2);font-size:.88rem;font-weight:600;cursor:pointer;text-align:left;transition:border-color .15s,color .15s}
-.pchat-new:hover{border-color:var(--pc);color:var(--pc2)}
+@media (hover:hover) and (pointer:fine){.pchat-new:hover{border-color:var(--pc);color:var(--pc2)}}
 .pchat-list{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
 .pchat-conv{text-align:left;padding:.55rem .65rem;border:none;background:none;border-radius:var(--prad-s,9px);color:var(--pi2);font-size:.86rem;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:background .14s,color .14s}
-.pchat-conv:hover{background:color-mix(in srgb,var(--pi) 6%,transparent)}
+@media (hover:hover) and (pointer:fine){.pchat-conv:hover{background:color-mix(in srgb,var(--pi) 6%,transparent)}}
 .pchat-conv.on{background:color-mix(in srgb,var(--pc) 14%,transparent);color:var(--pi);font-weight:600}
 /* --pf est une couleur de FILET, pas de texte : en 12,8 px elle tombe à 2:1. */
 .pchat-empty{margin:.4rem .3rem;font-size:.8rem;color:var(--pm)}
@@ -346,7 +348,7 @@ html.lenis,html.lenis body{height:auto}
 .pchat-hello p{margin:0;color:var(--pi2);font-size:.98rem}
 .pchat-sugg{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.9rem}
 .pchat-sugg button{padding:.55rem .9rem;border:1px solid var(--pl);border-radius:var(--prad-pill,999px);background:var(--ps);color:var(--pi2);font-size:.86rem;cursor:pointer;transition:border-color .15s,color .15s,transform .12s}
-.pchat-sugg button:hover{border-color:var(--pc);color:var(--pc2);transform:translateY(-1px)}
+@media (hover:hover) and (pointer:fine){.pchat-sugg button:hover{border-color:var(--pc);color:var(--pc2);transform:translateY(-1px)}}
 
 .pchat-row{display:flex;gap:.55rem;align-items:flex-end}
 .pchat-row.me{justify-content:flex-end}
@@ -382,7 +384,7 @@ html.lenis,html.lenis body{height:auto}
 .pchat-inputrow:focus-within{border-color:var(--pc);outline:2px solid var(--pc);outline-offset:2px;box-shadow:none}
 .pchat-compte input:focus-visible{outline:2px solid var(--pc);outline-offset:2px}
 .pchat-clip{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1rem;color:var(--pm);transition:background .14s}
-.pchat-clip:hover{background:color-mix(in srgb,var(--pi) 7%,transparent)}
+@media (hover:hover) and (pointer:fine){.pchat-clip:hover{background:color-mix(in srgb,var(--pi) 7%,transparent)}}
 .pchat-inputrow textarea{flex:1;min-width:0;background:none;border:none;padding:.5rem 0;font-size:1rem;font-family:inherit;color:var(--pi);resize:none;max-height:168px;line-height:1.5}
 .pchat-inputrow textarea:focus{outline:none}
 .pchat-inputrow textarea::placeholder{color:var(--pf)}
@@ -414,7 +416,7 @@ html.lenis,html.lenis body{height:auto}
 .pchat-carte-act{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
 .pchat-carte-act button{width:auto;margin:0;padding:.6rem 1rem;border:none;border-radius:var(--prad-s,11px);font-size:.92rem;font-weight:700;cursor:pointer;background:linear-gradient(120deg,var(--pc2),var(--pc));color:#1a0f0a;transition:transform .12s,opacity .15s}
 .pchat-carte-act button.g{background:none;border:1.5px solid var(--pl);color:var(--pi2);font-weight:600}
-.pchat-carte-act button:hover:not(:disabled){transform:translateY(-1px)}
+@media (hover:hover) and (pointer:fine){.pchat-carte-act button:hover:not(:disabled){transform:translateY(-1px)}}
 .pchat-carte-act button:disabled{opacity:.5;cursor:default}
 .pchat-carte-modif{display:flex;flex-direction:column;gap:.45rem;margin-top:.6rem}
 .pchat-carte-modif textarea{width:100%;background:var(--pb);border:1.5px solid var(--pl);border-radius:var(--prad-s,11px);padding:.6rem .8rem;font-size:.92rem;font-family:inherit;color:var(--pi);resize:vertical}
@@ -490,3 +492,12 @@ html.lenis,html.lenis body{height:auto}
   .pchat-suivi li:not(.now) span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .pchat-suivi li+li::before{width:18px}
 }
+
+/* v8 A1 — cibles ≥ 44 px et champs ≥ 16 px au doigt, tablette comprise (scripts/mobile-e2e.mjs) */
+@media (max-width:1024px){
+  .pchat-new,.pchat-conv,.pchat-compte-b,.pchat-sugg button,.pchat-burger,.pchat-composer button,.pchat-capture button{min-height:44px}
+  .pchat-compte-b{padding:.6rem .8rem}
+  .pchat-burger{min-width:44px}
+  .pchat input,.pchat textarea,.plat-form input,.plat-form textarea,.pchat-capture input{font-size:16px;min-height:44px}
+}
+@media (max-width:1024px){.pchat-composer button[type=submit]{min-width:44px}.pchat-sugg button,.pchat-new,.pchat-conv,.pchat-compte-b{min-height:44px}.pchat-burger{min-width:44px;min-height:44px}}

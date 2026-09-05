@@ -233,6 +233,24 @@ export default function PlatChat({ slug, infosHref, artisanNom, metier, avatar, 
   }
 
   useEffect(() => { const el = threadRef.current; if (el) el.scrollTop = el.scrollHeight }, [msgs, thinking, needContact])
+  // v8 A1.7 — clavier virtuel : la colonne suit la fenêtre VISIBLE (visualViewport), pas la fenêtre de
+  // mise en page, qu'iOS ne réduit pas. Sans ça, le composeur passe sous le clavier.
+  useEffect(() => {
+    const vv = typeof window !== 'undefined' ? window.visualViewport : null
+    if (!vv) return
+    const racine = () => document.querySelector<HTMLElement>('.plat-app, .plat')
+    const appliquer = () => {
+      const r = racine(); if (!r) return
+      const h = Math.round(vv.height)
+      // Clavier ouvert = fenêtre visible nettement plus petite que la fenêtre de mise en page.
+      const clavier = window.innerHeight - h > 120
+      r.style.setProperty('--vvh', clavier ? `${h}px` : '')
+      r.classList.toggle('clavier', clavier)
+      if (clavier) { const el = threadRef.current; if (el) el.scrollTop = el.scrollHeight; window.scrollTo(0, 0) }
+    }
+    vv.addEventListener('resize', appliquer); vv.addEventListener('scroll', appliquer)
+    return () => { vv.removeEventListener('resize', appliquer); vv.removeEventListener('scroll', appliquer) }
+  }, [])
   useEffect(() => { const ta = taRef.current; if (ta) { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 168) + 'px' } }, [draft])
 
   function saveConvs(next: Conv[]) { setConvs(next); try { localStorage.setItem(KEY, JSON.stringify(next)) } catch { /* ignore */ } }

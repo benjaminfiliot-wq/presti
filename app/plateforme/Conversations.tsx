@@ -121,6 +121,23 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
   }, [sel, loadThread, loadLeads])
 
   useEffect(() => { const el = threadRef.current; if (el) el.scrollTop = el.scrollHeight }, [msgs])
+  // v8 A1.7 — clavier virtuel : sur téléphone, le fil ouvert prend la hauteur de la fenêtre VISIBLE
+  // (visualViewport), qu'iOS réduit quand le clavier s'ouvre — la fenêtre de mise en page, non.
+  useEffect(() => {
+    const vv = typeof window !== 'undefined' ? window.visualViewport : null
+    if (!vv || !sel) return
+    const racine = () => document.querySelector<HTMLElement>('.inbox')
+    const appliquer = () => {
+      const r = racine(); if (!r) return
+      const h = Math.round(vv.height)
+      const clavier = window.innerHeight - h > 120
+      r.style.setProperty('--vvh', clavier ? `${h}px` : '')
+      if (clavier) { const el = threadRef.current; if (el) el.scrollTop = el.scrollHeight; window.scrollTo(0, 0) }
+    }
+    appliquer()
+    vv.addEventListener('resize', appliquer); vv.addEventListener('scroll', appliquer)
+    return () => { vv.removeEventListener('resize', appliquer); vv.removeEventListener('scroll', appliquer); racine()?.style.removeProperty('--vvh') }
+  }, [sel])
 
   async function open(l: Lead) {
     setSel(l.id); setErr(null); setDraft(''); setPhotosSignees([]); setEdition({})
