@@ -95,7 +95,7 @@ export default async function PlateformePage({ params, searchParams }: Params) {
   }
 
   // Persona + apparence enregistrées (défauts si aucune ligne : rien ne change).
-  const cfg = await getPlateformeConfig(a.id, null)
+  const cfg = await getPlateformeConfig(a.id)
 
   // Aperçu du volet Apparence : un style passé en query, appliqué UNIQUEMENT avec ?apercu=1.
   const apercu = sp.apercu === '1'

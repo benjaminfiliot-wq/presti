@@ -79,7 +79,6 @@ export default function ProfilPage() {
   const [reseaux, setReseaux] = useState<Reseaux>({})
   const [telPublic, setTelPublic] = useState('')
   const [emailPublic, setEmailPublic] = useState('')
-  const [reponseAuto, setReponseAuto] = useState(true)
   const [leadsPause, setLeadsPause] = useState(false)
   const [siteActive, setSiteActive] = useState(false)
   // Ce que la BASE dit (l'état réellement public) — le libellé s'y fie, pas à la case avant Enregistrer (audit final, D-2.6).
@@ -122,7 +121,7 @@ export default function ProfilPage() {
       setRealisations(Array.isArray(a.realisations) ? (a.realisations as Realisation[]).map((r) => ({ image: r.image ?? '', titre: r.titre ?? '', specialite: r.specialite ?? '', ...(r.blur ? { blur: r.blur } : {}) })).filter((r) => r.image) : [])
       setAvantApres(Array.isArray(a.avant_apres) ? (a.avant_apres as AvantApres[]).map((p) => ({ avant: p.avant ?? '', apres: p.apres ?? '', titre: p.titre ?? '' })) : [])
       setReseaux((a.reseaux && typeof a.reseaux === 'object') ? a.reseaux as Reseaux : {})
-      setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setReponseAuto(a.reponse_auto !== false); setLeadsPause(a.leads_pause === true)
+      setTelPublic(a.tel_public ?? ''); setEmailPublic(a.email_public ?? ''); setLeadsPause(a.leads_pause === true)
       const max = siteMaxForPlan(a.plan); setSiteMax(max); setPlan(a.plan ?? 'gratuit')
       // Composition : depuis site_layout stocké, sinon dérivée du niveau ; on complète avec les
       // sections manquantes (désactivées) pour que l'artisan puisse toutes les gérer.
@@ -219,7 +218,6 @@ export default function ProfilPage() {
       reseaux: cleanReseaux,
       tel_public: telPublic.trim().slice(0, 40) || null,
       email_public: emailPublic.trim().slice(0, 160) || null,
-      reponse_auto: reponseAuto,
       leads_pause: leadsPause,
       site_active: siteActive,
       site_tier: Math.min([1, 2, 3].includes(siteTier) ? siteTier : 3, siteMax),

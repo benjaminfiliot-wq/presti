@@ -25,7 +25,6 @@ function PlateformeInner() {
   const [ready, setReady] = useState(false)
   const [uid, setUid] = useState('')
   const [plan, setPlan] = useState<string | null>(null)
-  const [reponseAuto, setReponseAuto] = useState<boolean | null>(null)
   const [slug, setSlug] = useState('')
   const [dom, setDom] = useState<{ domaine: string | null; domaine_verifie: boolean | null }>({ domaine: null, domaine_verifie: null })
   const [active, setActive] = useState(true)
@@ -40,9 +39,9 @@ function PlateformeInner() {
       if (!data.session) { router.replace('/login'); return }
       const id = data.session.user.id
       setUid(id)
-      const { data: a } = await supabase.from('artisans').select('slug, plan, plateforme_active, reponse_auto, leads_pause, domaine, domaine_verifie').eq('id', id).maybeSingle()
+      const { data: a } = await supabase.from('artisans').select('slug, plan, plateforme_active, leads_pause, domaine, domaine_verifie').eq('id', id).maybeSingle()
       if (!a) { router.replace('/onboarding'); return }
-      setSlug(a.slug ?? ''); setPlan(a.plan ?? null); setReponseAuto(a.reponse_auto ?? null)
+      setSlug(a.slug ?? ''); setPlan(a.plan ?? null)
       setActive(a.plateforme_active !== false); setPause(a.leads_pause === true)
       setDom({ domaine: a.domaine ?? null, domaine_verifie: a.domaine_verifie ?? null })
       setReady(true)
@@ -88,7 +87,7 @@ function PlateformeInner() {
       {volet === 'conversations' ? <Conversations onCompte={setNonLus} /> : null}
       {volet === 'automatisations' ? <Automatisations uid={uid} plan={plan} /> : null}
       {volet === 'apparence' ? <Apparence uid={uid} slug={slug} /> : null}
-      {volet === 'reglages' ? <Reglages uid={uid} reponseAuto={reponseAuto} pause={pause} onPause={changerPause} /> : null}
+      {volet === 'reglages' ? <Reglages uid={uid} plan={plan} pause={pause} onPause={changerPause} /> : null}
     </AppShell>
   )
 }

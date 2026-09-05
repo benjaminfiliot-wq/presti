@@ -1,10 +1,14 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type { Persona } from '@/lib/ai'
+import { peut } from '@/lib/plans'
 
 // Panneau de contrôle IA de la plateforme (v4 §A4).
-// RÈGLE DE NON-RÉGRESSION : un artisan SANS ligne de config garde son comportement actuel
-// (dérivé de `artisans.reponse_auto`). Le défaut « assistée » ne s'applique qu'à ceux qui
-// règlent explicitement leur plateforme.
+//
+// UNE SEULE SOURCE DE VÉRITÉ (prompt v7, bloc 1a) : `plateforme_config.mode_reponse`. L'ancien
+// booléen `artisans.reponse_auto` n'est plus jamais lu ni écrit — deux réglages qui se
+// contredisaient selon la route qui servait (« les trois modes se comportent pareil »). La
+// migration 0062 a créé la ligne de config des comptes qui n'en avaient pas ; un compte créé
+// depuis démarre en « assistée » : rien ne part sans l'artisan tant qu'il n'a pas choisi.
 
 export type ModeReponse = 'auto' | 'assistee' | 'manuelle'
 
@@ -81,12 +85,12 @@ export function personaDe(cfg: PlateformeConfig): Persona {
 }
 
 /** Lit la configuration d'un artisan. Sans ligne : repli sur son réglage historique. */
-export async function getPlateformeConfig(artisanId: string, reponseAuto?: boolean | null): Promise<PlateformeConfig> {
+export async function getPlateformeConfig(artisanId: string): Promise<PlateformeConfig> {
   try {
     const { data } = await supabaseAdmin.from('plateforme_config').select('*').eq('artisan_id', artisanId).maybeSingle()
     if (data) return { ...CONFIG_DEFAUT, ...(data as Partial<PlateformeConfig>) }
   } catch { /* table absente ou erreur : on retombe sur le comportement historique */ }
-  return { ...CONFIG_DEFAUT, mode_reponse: reponseAuto === false ? 'manuelle' : 'auto' }
+  return { ...CONFIG_DEFAUT }
 }
 
 const sansAccents = (s: string) => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -135,4 +139,48 @@ export function iaDoitRepondre(
   if (ctx.nbReponsesIA >= (cfg.limite_messages ?? 8)) return { ok: false, raison: 'limite' }
   if (!dansLaPlage(cfg)) return { ok: false, raison: 'horaire' }
   return { ok: true }
+}
+
+// ── La décision, en un seul endroit (prompt v7, bloc 1b) ──────────────────────────────────────
+//
+// Avant, trois routes décidaient chacune à leur façon (/api/leads lisait un booléen, /api/conversation
+// aussi mais avant la config, /stream lisait la config mais déguisait le verrou d'offre en
+// « assistée »). Résultat : le même artisan n'avait pas le même mode selon le chemin emprunté.
+// Désormais une seule fonction, et un motif EXPLICITE pour chaque non-réponse — l'interface et
+// les tests s'y fient.
+
+export type MotifDecision = Blocage | 'humain' | 'verrou_offre'
+
+/**
+ * Le mode que le serveur APPLIQUE, et pourquoi il diffère du mode choisi le cas échéant.
+ * L'assistant autonome est vendu à partir de Studio : un compte Essai ou Essentiel qui choisit
+ * « auto » est servi en « assistée » — et le motif `verrou_offre` le dit, au lieu de se taire.
+ */
+export function modeEffectif(plan: string | null | undefined, cfg: PlateformeConfig): { mode: ModeReponse; motif: 'verrou_offre' | null } {
+  if (cfg.mode_reponse === 'auto' && !peut(plan, 'plateforme.ia.auto')) return { mode: 'assistee', motif: 'verrou_offre' }
+  return { mode: cfg.mode_reponse, motif: null }
+}
+
+export type Decision =
+  | { ok: true }
+  | { ok: false; raison: MotifDecision; mot?: string; comportement: 'silence' | 'preparer' }
+
+/**
+ * L'assistant doit-il répondre à ce message, maintenant ? `comportement` dit quoi faire quand il
+ * ne répond pas : 'preparer' (assistée, ou auto verrouillé par l'offre : il rédige une proposition
+ * que l'artisan validera), 'silence' (manuel, main prise, pause, escalade, plafond, hors plage).
+ */
+export function decisionReponse(
+  artisan: { plan?: string | null; leads_pause?: boolean | null },
+  lead: { prise_en_main?: boolean | null },
+  cfg: PlateformeConfig,
+  ctx: { nbReponsesIA: number; message: string },
+): Decision {
+  // La main prise sur CE fil prime sur tout : l'artisan a dit « je m'en occupe ».
+  if (lead.prise_en_main) return { ok: false, raison: 'humain', comportement: 'silence' }
+  const eff = modeEffectif(artisan.plan, cfg)
+  const base = iaDoitRepondre({ ...cfg, mode_reponse: eff.mode }, { nbReponsesIA: ctx.nbReponsesIA, message: ctx.message, pause: artisan.leads_pause === true })
+  if (base.ok) return { ok: true }
+  if (base.raison === 'assistee') return { ok: false, raison: eff.motif ?? 'assistee', comportement: 'preparer' }
+  return { ok: false, raison: base.raison, mot: base.mot, comportement: 'silence' }
 }
