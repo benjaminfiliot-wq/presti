@@ -77,7 +77,10 @@ let uid = null
 
 try {
   const nav = await chromium.launch()
-  const page = await (await nav.newContext({ viewport: { width: 1280, height: 1000 } })).newPage()
+  const contexte = await nav.newContext({ viewport: { width: 1280, height: 1000 } })
+  // Pas de visite guidée pendant le test : son voile intercepte les clics (même règle que parametres-e2e).
+  await contexte.addInitScript(() => { try { localStorage.setItem('presti.aide_vues', JSON.stringify(['visite:console'])) } catch {} })
+  const page = await contexte.newPage()
   await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' })
 
   // 1. Le navigateur fabrique les pixels (2000×1400, contrasté pour passer le contrôle de netteté).
