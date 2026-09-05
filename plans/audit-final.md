@@ -6,14 +6,14 @@
 | | |
 |---|---|
 | Auditeurs indépendants | 8 (A attaque, B conformité, C qualité, D parcours, E IA, F fiabilité, G motion, H abonnement) — sous-agents distincts de celui qui corrige |
-| Défauts trouvés | 5 bloquants · 45 majeurs · ≈ 60 mineurs |
-| Fermés par le code | 4 bloquants · 37 majeurs — 13 commits, chacun précédé d'un test rouge |
+| Défauts trouvés | 5 bloquants · 54 majeurs · ≈ 66 mineurs |
+| Fermés par le code | 4 bloquants · 45 majeurs — 14 commits, chacun précédé d'un test rouge |
 | Restent à un humain | 1 bloquant (portail Stripe, H7) · 3 majeurs (LCEN H9, domaine d'envoi H10, DMARC H11) · sauvegardes (H12) · migrations 0057-0058 (H1) |
-| Chiffrés après la démo | 5 majeurs (quota stockage, purges 12 mois/3 ans, mentions secondaires, relances et domaine perso sans suite) |
-| Lanceur `tout-verifier.mjs` (hors IA) | **37/37 suites vertes** (434 s) — 57/59 points sur `audit-final-e2e`, les 2 rouges attendent 0058 |
+| Chiffrés après la démo | 6 majeurs (quota stockage, purges 12 mois/3 ans, mentions secondaires, CLS des slides 3D, relances et domaine perso sans suite) |
+| Lanceur `tout-verifier.mjs` (hors IA) | **37/37 suites vertes** (434 s) — 67/69 points sur `audit-final-e2e`, les 2 rouges attendent 0058 |
 | Couverture (`plans/couverture.md`) | **0 case vide** (73 → 0) : 30 pages, 58 routes, 58 migrations, 12 drapeaux, 29 emails, 2 crons, 23 capacités, 40 suites |
 | Promesses (`plans/promesses.md`) | 23 recensées : 17 prouvées le 05/09, 4 dont la partie IA cite son dernier vert, 1 fausse aujourd'hui (« résiliable » → H7), 3 sans suite (chiffrées) |
-| Nouvelles suites | `purge-comptes`, `audit-final` (59 points), `fermeture` (55), `emails` (88), `garde-commit`, `abonnement` (11 transitions, attend H4) |
+| Nouvelles suites | `purge-comptes`, `audit-final` (69 points), `fermeture` (55), `emails` (88), `garde-commit`, `abonnement` (11 transitions, attend H4) |
 
 ## Ce qui a changé pour un artisan ou son client
 - Un compte qui a émis des factures se supprime vraiment (anonymisé, factures gardées 10 ans) au lieu de rester entier en silence.
@@ -30,7 +30,7 @@
 - **Inventaire** : `node scripts/inventaire-produit.mjs` — une case vide = un test à écrire.
 
 ## Les rapports
-`plans/audit-final/` : `attaque.md`, `conformite.md`, `qualite.md`, `parcours.md`, `ia.md`, `fiabilite.md`, `motion.md`, `abonnement.md`, `triage.md` (liste unique), `correctifs.md` (41 lignes). Journal horodaté : `plans/journal-final.md` (liste H en bas). Reste chiffré : `plans/apres-demo.md` § « Audit final (05/09) ».
+`plans/audit-final/` : `attaque.md`, `conformite.md`, `qualite.md`, `parcours.md`, `ia.md`, `fiabilite.md`, `motion.md`, `abonnement.md`, `triage.md` (liste unique), `correctifs.md` (50 lignes). Journal horodaté : `plans/journal-final.md` (liste H en bas). Reste chiffré : `plans/apres-demo.md` § « Audit final (05/09) ».
 
 ## Ce que ce sprint ne prouve pas
 - Les 5 suites IA (dernier vert 03-04/09) : à rejouer avec `--tout` quand la réserve est rechargée.
@@ -38,7 +38,7 @@
 - La restauration d'une sauvegarde : aucune n'existe (H12).
 
 ## Les 7 gestes qui restent à Benj (liste H complète dans le journal)
-1. **H1** — coller `supabase/migrations/_A_COLLER_sql_editor_0057_0058.sql` (2 min) → `audit-final-e2e` 59/59, alerte « cron muet » vivante.
+1. **H1** — coller `supabase/migrations/_A_COLLER_sql_editor_0057_0058.sql` (2 min) → `audit-final-e2e` 69/69, alerte « cron muet » vivante.
 2. **H7** — portail client Stripe en LIVE + pied de facture 293 B (15 min) → la promesse « résiliable » devient vraie.
 3. **H8** — secret GitHub `PRESTI_ENV_LOCAL` (sans la clé Anthropic) puis lancer « Audit récurrent » une fois.
 4. **H4** — clé Stripe de test dans `.env.local` → `abonnement-e2e`.

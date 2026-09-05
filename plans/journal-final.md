@@ -82,6 +82,12 @@
 
 **Appels IA du sprint : 0**
 
+## [3d] + [5e] Rapport G et correctifs — 12:30 → 13:30 — ✅ G (0/9/6), 8 majeurs fermés
+- **G — motion, marque, accessibilité** (mesures Playwright : reduced-motion, CLS, clavier, white-label) : séquence auto-défilante sans pause tactile ; CTA coupé à 200 % de zoom ; CLS 1,05 des slides 3D (pin GSAP) ; visionneuse dont la molette fait défiler la page derrière ; focus invisible sur le curseur avant/après ; tiroir mobile sans dialog/Échap/inert ; focus du composeur imperceptible ; fil sans région live ; 404 racine Presti servie sous /site/<slug>/xyz et /p/<slug>/xyz. Sain : reduced-motion propre partout, lightbox conforme, /p 0 violation axe en clair/nuit, zoom 400 % sans débordement.
+- 8 des 9 fermés (lot G) ; G-2.1 (slides 3D : remplacer le pin par sticky + scrub, 1 h 30) → `apres-demo`. **Point produit** : la vitrine des fonctionnalités (`FeatureShowcase`) n'existe pas dans le dépôt — la règle « chaque fonctionnalité a son onglet » n'a plus de support ; à trancher avec Benj.
+
+**Appels IA du sprint : 0**
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant)
 | # | Action | Où | Effet vérifiable |
 |---|--------|----|------------------|

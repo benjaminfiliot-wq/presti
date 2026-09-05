@@ -46,6 +46,15 @@
 | 39 | F-8 | majeur | 34 % de rebonds (adresses .invalid) | `audit-final` (sendEmail) | `.invalid` jamais envoyé | ✅ | `67f7283` |
 | 40 | F-11 | majeur | démo relancée au nom d'un artisan fictif | `audit-final` | pas de relance pour un fondateur | ✅ | `67f7283` |
 | 41 | F-9 | majeur | DMARC absent, `rua` vers boîte morte | — | script corrigé ; enregistrement DNS = **H11** | ⏳ H11 | `67f7283` |
+| 42 | G-1.1 | majeur | séquence sans commande de pause | `audit-final` (aria-pressed) | bouton pause/lecture | ✅ | lot G |
+| 43 | G-1.2 | majeur | CTA coupé à 200 % de zoom | `audit-final` (CSS 760) | repli des liens dès 760 px | ✅ | lot G |
+| 44 | G-2.2 | majeur | visionneuse : la molette défile la page derrière | `audit-final` | `lenis.stop()/start()` | ✅ | lot G |
+| 45 | G-2.3 | majeur | focus invisible sur le curseur avant/après | `audit-final` | anneau sur le bouton visible | ✅ | lot G |
+| 46 | G-3.1 | majeur | tiroir mobile sans dialog/Échap/inert | `audit-final` | aria-expanded, dialog, focus, Échap, inert | ✅ | lot G |
+| 47 | G-3.2 | majeur | focus du composeur imperceptible | `audit-final` | anneau 2 px | ✅ | lot G |
+| 48 | G-3.3 | majeur | fil sans région live | `audit-final` | `role="log" aria-live` | ✅ | lot G |
+| 49 | G-4.1 | majeur | 404 Presti sous les adresses d'artisan | `audit-final` (404 prod) | attrape-tout `[...reste]` | ✅ prod | lot G |
+| 50 | G-2.1 | majeur | CLS 1,05 des slides 3D | — | sticky + scrub (1 h 30) | 📋 `apres-demo` | — |
 
 ## Reste (décision humaine ou dashboard) — voir la liste H du journal
 - H-bloquant 1 : configuration du **portail Stripe** en LIVE (tableau de bord, 15 min) — sans elle, `POST /api/stripe/portail` rend 500.

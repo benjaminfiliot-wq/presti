@@ -55,3 +55,5 @@
 - **Détection de rejeu de session** (audit v4, 1/3 restant, rappelé par F) — 2 h.
 - **Emails au nom de l'artisan depuis un domaine neutre** (B-F3 / H10) — 1 h à ½ j après décision.
 - **Client 0 crédit** : le fil affiche désormais une note ; l'artisan à 0 crédit pourrait recevoir un rappel par SMS/push — hors périmètre.
+- **Slides 3D — CLS 1,05** (G-2.1) : le `pin:true` GSAP bascule la section en `position:fixed` ; remplacer par `position:sticky` + scrub sur transform/opacity — 1 h 30. Métrique de terrain (Core Web Vitals des sites artisans), pas un saut visible.
+- **Vitrine des fonctionnalités** : `FeatureShowcase` n'existe pas dans le dépôt (constat G) — soit la construire (un onglet animé par fonctionnalité livrée, règle interne), soit abandonner la règle. Décision Benj.

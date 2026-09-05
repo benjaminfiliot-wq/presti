@@ -11,7 +11,7 @@
 | H-2 | Double abonnement possible | ✅ `cf666ca` |
 | F-3 | `passages_cron` absente en prod (0057 non collée) — recoté bloquant par F pour l'alerte `cron_muet` | ⏳ **H1** (2 min, SQL Editor) |
 
-## Majeurs (45 trouvés → 37 fermés, 3 humains, 5 chiffrés `apres-demo`)
+## Majeurs (54 trouvés → 45 fermés, 3 humains, 6 chiffrés `apres-demo`)
 | Source | Défaut | État |
 |---|---|---|
 | B-A4 | Franchise « auto » ≠ référence de l'éditeur | ✅ `cf666ca` |
@@ -58,6 +58,8 @@
 | H-6 | Changement d'offre impossible (0 produit au catalogue) | ⏳ **H7** (portail avec changement d'offre) |
 | H-7 | Client d'un artisan à 0 crédit dans le silence | ✅ lot 3 |
 | H-8 | Page Stripe sans 293 B ni adresse | ✅ `cf666ca` (adresse) + **H7** (pied) |
+| G-1.1 / 1.2 / 2.2 / 2.3 / 3.1 / 3.2 / 3.3 / 4.1 | Pause de la séquence, CTA au zoom, Lenis sous la modale, focus avant/après, tiroir mobile, focus composeur, fil live, 404 neutre | ✅ lot G |
+| G-2.1 | CLS 1,05 des slides 3D (pin GSAP) | 📋 `apres-demo` (1 h 30) |
 | B-A2/A7/A10-A13 | Mentions secondaires facture/devis | 📋 `apres-demo` (4 h) |
 | B-C6/C12/C13 | Purges 12 mois / 3 ans | 📋 `apres-demo` (3 h 15) |
 
@@ -68,7 +70,7 @@
 - E : `POST /api/conversation` sans `iaDoitRepondre` ; régénération = 2ᵉ appel pour 1 crédit ; SDK sans timeout ; fondateurs sans plafond sur `/p` ; code mort (`repondreAvecOutils`, `routerModele`) ; pas de prompt caching.
 - F : détection de rejeu éteinte (1/3 de l'audit v4), 14 mineurs listés dans `fiabilite.md`.
 - H : fondateur pouvait s'abonner (✅ `303a5fd`), scripts dangereux (✅), idempotence webhook absente.
-- G : voir `motion.md` (en cours).
+- G : animations infinies hors écran, CLS mobile 0,095 sur `.lp-proof`, `role=tab` sans `aria-controls`, heure lue en `aria-live` à chaque scène, `.site-shot-tag` 3,95:1 sur le thème nuit, CSS `.fs-*` orphelin.
 
 ## Ce que ce sprint ne prouve pas
 - Les 5 suites IA (`pilotage`, `injection`, `devis-source`, `ai-eval`, `recherche`) n'ont pas été rejouées — règle : 0 appel. Derniers verts : 03-04/09. À rejouer avec `--tout` quand la réserve est rechargée.
