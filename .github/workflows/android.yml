@@ -41,6 +41,14 @@ jobs:
         with:
           path: ~/.android/debug.keystore
           key: android-debug-keystore-v1
+      # Firebase (M3) : google-services.json vient d'un secret ; absent, l'APK se compile sans notifications natives (drapeau `pushNatif` baissé).
+      - name: google-services.json (secret, jamais dans le dépôt)
+        run: |
+          if [ -n "${{ secrets.ANDROID_GOOGLE_SERVICES_BASE64 }}" ]; then
+            echo "${{ secrets.ANDROID_GOOGLE_SERVICES_BASE64 }}" | base64 -d > mobile/android/app/google-services.json
+            grep -q '"package_name": "fr.prestiapp.app"' mobile/android/app/google-services.json || { echo 'google-services.json : pas pour fr.prestiapp.app'; exit 1; }
+            echo 'Firebase : google-services.json en place.'
+          else echo 'Secret ANDROID_GOOGLE_SERVICES_BASE64 absent : APK sans Firebase (M3).'; fi
       - name: Dépendances et synchronisation Capacitor
         working-directory: mobile
         run: |
@@ -79,6 +87,14 @@ jobs:
         run: |
           test -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" || { echo 'Secret ANDROID_KEYSTORE_BASE64 absent : pas de release signée (M6).'; exit 1; }
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > mobile/android/presti-release.keystore
+      # Firebase (M3) : google-services.json vient d'un secret ; absent, l'APK se compile sans notifications natives (drapeau `pushNatif` baissé).
+      - name: google-services.json (secret, jamais dans le dépôt)
+        run: |
+          if [ -n "${{ secrets.ANDROID_GOOGLE_SERVICES_BASE64 }}" ]; then
+            echo "${{ secrets.ANDROID_GOOGLE_SERVICES_BASE64 }}" | base64 -d > mobile/android/app/google-services.json
+            grep -q '"package_name": "fr.prestiapp.app"' mobile/android/app/google-services.json || { echo 'google-services.json : pas pour fr.prestiapp.app'; exit 1; }
+            echo 'Firebase : google-services.json en place.'
+          else echo 'Secret ANDROID_GOOGLE_SERVICES_BASE64 absent : APK sans Firebase (M3).'; fi
       - name: Dépendances et synchronisation Capacitor
         working-directory: mobile
         run: |

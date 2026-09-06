@@ -61,8 +61,9 @@ captures/
 .externalNativeBuild
 .cxx/
 
-# Google Services (e.g. APIs or Firebase)
-# google-services.json
+# Google Services (e.g. APIs or Firebase) — Presti : fourni par le secret ANDROID_GOOGLE_SERVICES_BASE64, jamais versionné (v9 §4.6)
+google-services.json
+app/google-services.json
 
 # Freeline
 freeline.py

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
+import { estNatif, partagerFichier, vibrer } from '@/lib/natif'
 
 type Facture = { id: string; numero: string | null; objet: string | null; client_nom: string | null; statut: string | null; total_ttc: number | null; date_echeance: string | null; avoir_de: string | null }
 
@@ -36,6 +37,7 @@ export default function FacturesList() {
   }, [router])
 
   async function pdf(f: Facture) {
+    if (estNatif()) return pdfNatif(f) // la coque (v9) : pas d'onglet ni de dossier Téléchargements — la feuille de partage
     // Ouvre un onglet DANS le geste utilisateur (sinon bloqué par le navigateur, surtout mobile).
     const win = window.open('', '_blank')
     setBusy(f.id)
@@ -47,6 +49,18 @@ export default function FacturesList() {
     if (win) win.location.href = url
     else { const a = document.createElement('a'); a.href = url; a.download = `${f.numero || 'facture'}.pdf`; a.click() }
     setTimeout(() => URL.revokeObjectURL(url), 60000)
+  }
+
+  /** Dans l'application : le PDF part par la feuille native (Fichiers, Mail, WhatsApp…). */
+  async function pdfNatif(f: Facture) {
+    setBusy(f.id)
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch(`/api/factures/${f.id}/pdf`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+    setBusy(null)
+    if (!res.ok) { alert('Impossible d’ouvrir le PDF. Réessaie dans un instant.'); return }
+    const r = await partagerFichier(`${f.numero || 'facture'}.pdf`, await res.blob(), { titre: `Facture ${f.numero || ''}`.trim(), texte: 'Votre facture, en pièce jointe.' })
+    if (r === 'natif' || r === 'web') void vibrer('leger')
+    if (r === 'aucun') alert('Partage impossible sur cet appareil.')
   }
 
   async function setStatut(f: Facture, statut: string) {

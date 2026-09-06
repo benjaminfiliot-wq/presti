@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { api, dateFr, jeton, type SectionProps } from './commun'
+import { estNatif, partagerFichier } from '@/lib/natif'
 
 // Données & confidentialité (sprint J-1 §6) : export ZIP, suppressions granulaires
 // (v4 §C3, routes /api/donnees) et suppression du compte avec 30 jours de grâce.
@@ -32,11 +33,19 @@ export default function SectionDonnees({ a, patch, signaler }: SectionProps) {
       const res = await fetch('/api/donnees/export', { headers: { Authorization: `Bearer ${t}` } })
       if (!res.ok) throw new Error()
       const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const el = document.createElement('a')
-      el.href = url; el.download = `mes-donnees-presti-${new Date().toISOString().slice(0, 10)}.zip`
-      document.body.appendChild(el); el.click(); el.remove(); URL.revokeObjectURL(url)
-      signaler({ type: 'ok', text: 'Archive téléchargée ✅' })
+      const nom = `mes-donnees-presti-${new Date().toISOString().slice(0, 10)}.zip`
+      if (estNatif()) {
+        // La coque (v9) : la feuille de partage — Fichiers, Drive, Mail… ; un lien de téléchargement ne fait rien en WebView.
+        const r = await partagerFichier(nom, blob, { titre: 'Mes données Presti', texte: 'Votre archive, en pièce jointe.' })
+        if (r === 'aucun') throw new Error()
+        signaler({ type: 'ok', text: 'Archive prête ✅ Choisissez où la garder.' })
+      } else {
+        const url = URL.createObjectURL(blob)
+        const el = document.createElement('a')
+        el.href = url; el.download = nom
+        document.body.appendChild(el); el.click(); el.remove(); URL.revokeObjectURL(url)
+        signaler({ type: 'ok', text: 'Archive téléchargée ✅' })
+      }
     } catch { signaler({ type: 'err', text: 'Export impossible pour le moment.' }) }
     setBusy(null)
   }
