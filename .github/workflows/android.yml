@@ -1,0 +1,103 @@
+name: Android — coque Presti
+
+# La coque native Android (prompt v9 §5.1). Personne ici n'a de SDK Android : c'est GitHub qui compile.
+#  • à chaque push sur main qui touche mobile/ : `cap sync android` + `assembleDebug` → l'APK de DEBUG en
+#    artefact, installable sur un téléphone Android pour tester (Paramètres → Installer des apps inconnues) ;
+#  • sur un tag mobile-v* : `bundleRelease` signé (keystore en secret, jamais dans le dépôt) → l'AAB en artefact,
+#    puis envoi en test interne Play (M2 + compte de service : quand Benj les a).
+# L'app charge la console déployée (capacitor.config.ts → server.url) : aucune clé, aucun secret dans l'APK.
+
+on:
+  push:
+    branches: [main]
+    paths: ['mobile/**', '.github/workflows/android.yml']
+    tags: ['mobile-v*']
+  workflow_dispatch:
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  debug:
+    if: "!startsWith(github.ref, 'refs/tags/mobile-v')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+      - name: Dépendances et synchronisation Capacitor
+        working-directory: mobile
+        run: |
+          npm ci
+          npx cap sync android
+      - name: APK de debug
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Empreinte SHA-256 du certificat de debug (pour assetlinks.json en test)
+        run: keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android | grep -i 'SHA256' || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: presti-debug-apk
+          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/mobile-v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+      - name: Keystore de signature (secret, jamais dans le dépôt)
+        run: |
+          test -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" || { echo 'Secret ANDROID_KEYSTORE_BASE64 absent : pas de release signée (M6).'; exit 1; }
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > mobile/android/presti-release.keystore
+      - name: Dépendances et synchronisation Capacitor
+        working-directory: mobile
+        run: |
+          npm ci
+          npx cap sync android
+      - name: AAB signé
+        working-directory: mobile/android
+        env:
+          PRESTI_KEYSTORE: presti-release.keystore
+          PRESTI_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          PRESTI_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          PRESTI_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          PRESTI_VERSION_CODE: ${{ github.run_number }}
+        run: |
+          chmod +x gradlew
+          ./gradlew bundleRelease --no-daemon --stacktrace
+      - uses: actions/upload-artifact@v4
+        with:
+          name: presti-release-aab
+          path: mobile/android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+      # Test interne Play (§5.1) — à activer quand M2 est fait : compte de service JSON dans PLAY_SERVICE_ACCOUNT_JSON.
+      # - uses: r0adkll/upload-google-play@v1
+      #   with:
+      #     serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+      #     packageName: fr.prestiapp.app
+      #     releaseFiles: mobile/android/app/build/outputs/bundle/release/app-release.aab
+      #     track: internal
