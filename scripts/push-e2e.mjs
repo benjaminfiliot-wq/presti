@@ -272,7 +272,14 @@ try {
   const pN2 = await api('/api/push/abonner', { method: 'POST', body: JSON.stringify({ type: 'ios', jeton: 'court' }) })
   T('POST abonner natif : jeton hors format → 400', pN2.status === 400, `HTTP ${pN2.status}`)
   const tN = await api('/api/push/test', { method: 'POST' })
-  T('test avec un seul appareil natif et sans compte Firebase → ignoré proprement (natifsIgnores 1, aucune erreur)', tN.status === 200 && tN.data.natifsIgnores === 1 && tN.data.envoyes === 0, JSON.stringify(tN.data))
+  // Deux mondes : sans compte Firebase (avant M3) le natif est ignoré proprement ; avec (M3 fait le 07/09), FCM refuse le
+  // jeton bidon (400 INVALID_ARGUMENT) et l’appareil est retiré — comme un 410 web. Les deux sont des comportements voulus.
+  const avecFirebase = tN.status === 200 && tN.data.natifsIgnores === undefined
+  const apresN = ((await api('/api/push/abonner')).data.appareils || []).some((x) => x.jeton === jetonNatif)
+  T(avecFirebase
+    ? 'test avec un appareil natif ET Firebase : FCM refuse le jeton bidon → appareil retiré (supprimes ≥ 1), aucune erreur'
+    : 'test avec un seul appareil natif et sans compte Firebase → ignoré proprement (natifsIgnores 1, aucune erreur)',
+    tN.status === 200 && tN.data.envoyes === 0 && (avecFirebase ? tN.data.supprimes >= 1 && !apresN : tN.data.natifsIgnores === 1), JSON.stringify(tN.data))
   const dN = await api('/api/push/abonner', { method: 'DELETE', body: JSON.stringify({ jeton: jetonNatif }) })
   T('DELETE par jeton natif → retiré', dN.status === 200 && !((await api('/api/push/abonner')).data.appareils || []).some((x) => x.jeton === jetonNatif))
   let dernier = 0
