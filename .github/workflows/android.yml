@@ -81,7 +81,8 @@ jobs:
       - name: AAB signé
         working-directory: mobile/android
         env:
-          PRESTI_KEYSTORE: presti-release.keystore
+          # chemin ABSOLU : Gradle résout un chemin relatif depuis app/, pas depuis android/ (premier run rouge)
+          PRESTI_KEYSTORE: ${{ github.workspace }}/mobile/android/presti-release.keystore
           PRESTI_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           PRESTI_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           PRESTI_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
