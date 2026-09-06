@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -30,6 +30,7 @@
                 <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/inventaire" />
                 <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/parametres" />
                 <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/dashboard" />
+                <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/abonnement" />
             </intent-filter>
         </activity>
 
@@ -41,6 +42,8 @@
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
         <!-- v9 J3 : icône monochrome, couleur et canal des notifications Firebase -->
+        <!-- ML Kit : le module de lecture de codes-barres se télécharge à l'installation de l'app, pas au premier scan -->
+        <meta-data android:name="com.google.mlkit.vision.DEPENDENCIES" android:value="barcode_ui" />
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_presti" />
         <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/presti_corail" />
         <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="presti" />

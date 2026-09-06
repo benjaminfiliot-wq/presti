@@ -65,6 +65,10 @@ export default function LoginPage() {
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search)
+    if (q.get('verrou') === '1') {
+      setInfo('Presti a été verrouillée : le déverrouillage a échoué ou a été refusé. Reconnectez-vous avec votre mot de passe.')
+      return
+    }
     if (q.get('verif') === '1') {
       supabase.auth.signOut().catch(() => {})
       setInfo('Par sécurité, votre connexion doit être vérifiée : reconnectez-vous, un code vous sera envoyé par email.')

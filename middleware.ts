@@ -45,7 +45,7 @@ const SLUG_OK = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 // hôte qui n'est pas maison. Sans cela, mondomaine.fr/manifest.webmanifest renvoyait le manifeste « Presti »
 // et /sw.js le worker Presti sur le domaine perso d'un artisan (revue v9 J1, 06/09). Ces chemins portent un
 // point : le matcher général les exclut, ils sont donc listés à part dans `config.matcher`.
-const CHEMINS_APP_PRESTI = /^\/(manifest\.webmanifest|sw\.js|hors-ligne(\.html)?|marque\/.*)$/
+const CHEMINS_APP_PRESTI = /^\/(manifest\.webmanifest|sw\.js|hors-ligne(\.html)?|marque\/.*|\.well-known\/.*)$/
 const CHEMINS_TECHNIQUES = new Set(['api', '_next', 'login', 'signup', 'onboarding', 'cgu', 'faq', 'mentions-legales', 'confidentialite', 'aide', 'site', 'p', 'controle'])
 
 /** Traduit un chemin « à la marque » vers la route interne. `null` si ce n'est pas une surface artisan. */
@@ -116,4 +116,4 @@ export async function middleware(req: NextRequest) {
 // On ne passe PAS par le middleware pour les fichiers statiques ni l'API : le matcher exclut
 // tout chemin contenant un point (favicon.ico, robots.txt, images) et les routes techniques.
 // Les chemins de l'app Presti (avec un point) y sont ajoutés explicitement : voir CHEMINS_APP_PRESTI.
-export const config = { matcher: ['/((?!api|_next|.*\\..*).*)', '/manifest.webmanifest', '/sw.js', '/hors-ligne.html', '/marque/:path*', '/.well-known/assetlinks.json', '/.well-known/apple-app-site-association'] }
+export const config = { matcher: ['/((?!api|_next|.*\\..*).*)', '/manifest.webmanifest', '/sw.js', '/hors-ligne.html', '/marque/:path*', '/.well-known/:path*'] }

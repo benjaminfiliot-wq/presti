@@ -29,7 +29,8 @@ function lireCompte(): CompteService | null {
     compte = j.project_id && j.client_email && j.private_key ? { project_id: j.project_id, client_email: j.client_email, private_key: j.private_key.replace(/\\n/g, '\n'), token_uri: j.token_uri } : null
     if (!compte) console.error('[push natif] FIREBASE_SERVICE_ACCOUNT incomplet (project_id, client_email, private_key attendus)')
   } catch (e) {
-    console.error('[push natif] FIREBASE_SERVICE_ACCOUNT illisible :', (e as Error).message)
+    // Pas le message de l'analyseur : il cite un extrait de la valeur, donc du secret (revue du 07/09).
+    console.error('[push natif] FIREBASE_SERVICE_ACCOUNT illisible : ce n’est pas un JSON valide', e instanceof SyntaxError ? '(syntaxe)' : '')
     compte = null
   }
   return compte

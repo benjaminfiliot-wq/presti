@@ -47,6 +47,8 @@ async function serviceWorkerPret(): Promise<ServiceWorkerRegistration | null> {
 
 export default function SectionNotifications({ a, patch, signaler }: SectionProps) {
   const pushDispo = actif('pushWeb')
+  /** La coque sans Firebase (drapeau `pushNatif` baissé) : les notifications natives viendront avec une prochaine version de l'app. */
+  const natifSansPush = estNatif() && !actif('pushNatif')
   const [support, setSupport] = useState<Support>('non')
   const [ios, setIos] = useState(false)
   const [permission, setPermission] = useState<NotificationPermission>('default')
@@ -92,8 +94,9 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
     if (!push?.requestPermissions || !push.register) throw new Error('Notifications natives indisponibles dans cette version de l’application.')
     const p = (await push.requestPermissions()) as { receive?: string }
     setPermission(p.receive === 'granted' ? 'granted' : p.receive === 'denied' ? 'denied' : 'default')
-    if (p.receive !== 'granted') { setErreur(p.receive === 'denied' ? 'Notifications refusées pour Presti dans les réglages du téléphone.' : 'Autorisez les notifications quand le téléphone le demande, puis réessayez.'); return }
+    if (p.receive !== 'granted') { setErreur(p.receive === 'denied' ? (plateforme() === 'ios' ? 'Notifications refusées pour Presti : Réglages → Notifications → Presti.' : 'Notifications refusées pour Presti : Paramètres du téléphone → Applications → Presti → Notifications.') : 'Autorisez les notifications quand le téléphone le demande, puis réessayez.'); return }
     await push.register()
+    await plugin('Preferences')?.set?.({ key: 'presti.push_active', value: '1' }).catch(() => {})
     // Le jeton arrive de façon asynchrone (écouteur `registration` de NatifPont) : on laisse le temps, puis on relit.
     for (let i = 0; i < 20; i++) { await new Promise((r) => setTimeout(r, 400)); const j = jetonNatif(); if (j) { setCourant(j); break } }
     await charger()
@@ -152,6 +155,7 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
     if (estCourant(ap)) {
       if (ap.jeton) {
         try { sessionStorage.removeItem('presti.jeton_natif') } catch { /* stockage indisponible */ }
+        await plugin('Preferences')?.set?.({ key: 'presti.push_active', value: '0' }).catch(() => {})
       } else if ('serviceWorker' in navigator) {
         const reg = await navigator.serviceWorker.getRegistration().catch(() => null)
         const s = await reg?.pushManager.getSubscription().catch(() => null)
@@ -198,7 +202,9 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
             Une notification à la seconde où un client vous écrit, où un devis est accepté, où l’assistant a besoin de vous.
             Jamais le contenu du message : il reste dans Presti.
           </p>
-          {support === 'ios_non_installee' ? (
+          {natifSansPush ? (
+            <p className="notif-etat" data-etat="natif-bientot">Les notifications dans l’application arrivent avec sa prochaine version. En attendant, elles fonctionnent depuis Chrome (Android) ou Presti installée sur l’écran d’accueil (iPhone), et par email.</p>
+          ) : support === 'ios_non_installee' ? (
             <p className="notif-etat" data-etat="ios">
               Sur iPhone, les notifications ne fonctionnent qu’une fois Presti installée sur l’écran d’accueil : dans Safari, touchez
               Partager puis « Sur l’écran d’accueil ». Ouvrez ensuite Presti depuis son icône et revenez ici.
@@ -209,7 +215,9 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
             <p className="notif-etat" data-etat="refuse">
               {ios
                 ? 'Les notifications de Presti sont désactivées sur cet iPhone. Réactivez-les dans Réglages → Notifications → Presti, puis revenez ici.'
-                : 'Les notifications sont bloquées pour Presti dans ce navigateur. Réautorisez-les dans ses réglages du site, puis revenez ici.'}
+                : estNatif()
+                  ? 'Les notifications de Presti sont désactivées sur ce téléphone. Réactivez-les dans Paramètres → Applications → Presti → Notifications, puis revenez ici.'
+                  : 'Les notifications sont bloquées pour Presti dans ce navigateur. Réautorisez-les dans ses réglages du site, puis revenez ici.'}
             </p>
           ) : actifs.some(estCourant) ? (
             <p className="notif-etat" data-etat="actif">✅ Cet appareil reçoit les notifications.</p>

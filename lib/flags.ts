@@ -18,6 +18,9 @@ export const FLAGS = {
   /** v9 J2 — notifications push web (routes api/push, lib/push, Paramètres → Notifications). À lever dès que la
    *  migration 0064 est collée : baissé, les routes répondent 503 et rien n'est proposé à l'artisan. */
   pushWeb: true,
+  /** v9 J3 — notifications NATIVES (coque Capacitor). À lever quand `google-services.json` (M3) est dans mobile/android/app/ :
+   *  sans Firebase, `PushNotifications.register()` plante l'app Android. Baissé : l'app dit « prochaine version ». */
+  pushNatif: false,
   /** §6 — 2FA TOTP via Supabase MFA. Décision Benj du 04/09 : dans le sprint. Livré et testé (scripts/mfa-e2e.mjs). */
   mfa: true,
   /** §8 F1 — photo de facture fournisseur → OCR → lignes proposées. */

@@ -6,6 +6,8 @@ import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono, Fraunces, Archivo_
 import GoogleAnalytics from '@/app/GoogleAnalytics'
 // v9 J3 — dans la coque native, l'écran de lancement se retire au premier rendu, quelle que soit la page (inerte ailleurs).
 import NatifSplash from '@/app/NatifSplash'
+// v9 J4 — verrou biométrique après 5 min d'arrière-plan : toutes les pages authentifiées (/controle, /onboarding compris), jamais /site ni /p.
+import VerrouNatif from '@/app/VerrouNatif'
 
 // Design system "Chantier" : display grotesque architecturé (Bricolage) + corps net (Hanken) + data (JetBrains Mono).
 const display = Bricolage_Grotesque({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--f-display', display: 'swap' })
@@ -89,7 +91,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" className={`${display.variable} ${body.variable} ${mono.variable} ${fraunces.variable} ${archivo.variable} ${plex.variable} ${manrope.variable} ${newsreader.variable} ${instrument.variable} ${syne.variable} ${lora.variable}`}>
-      <body>{children}<GoogleAnalytics /><NatifSplash /></body>
+      <body>{children}<GoogleAnalytics /><NatifSplash /><VerrouNatif /></body>
     </html>
   )
 }

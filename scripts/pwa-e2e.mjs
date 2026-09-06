@@ -14,7 +14,7 @@
 //      page de la console dans les caches ; bandeau « nouvelle version » quand un worker attend, et
 //      rechargement au clic ;
 //   5. la carte d'installation : Android (beforeinstallprompt → bouton → prompt rejoué ; refus mémorisé ;
-//      rien en mode standalone, rien sur bureau, rien sur la landing) et iOS (les deux gestes, Partager) ;
+//      rien en mode standalone, rien sur la landing ; sur bureau : « cet ordinateur ») et iOS (les deux gestes, Partager) ;
 //   6. l'app installée : bouton retour ≥ 44 px sur une page profonde, liens externes et surfaces artisan
 //      ouverts dans un nouvel onglet (sinon l'artisan est piégé sans barre d'adresse).
 //
@@ -353,23 +353,23 @@ const simulerPrompt = (page) => page.evaluate(() => {
   await ctx.close()
 }
 {
-  // bureau à la souris : pas de carte (le navigateur a son bouton, et elle parle « de votre téléphone »)
+  // bureau à la souris : la carte existe (Benj, 07/09 : Presti doit être disponible sur PC) et parle « de cet ordinateur »
   const ctx = await nouveauContexte(cr, { viewport: { width: 1280, height: 800 }, locale: 'fr-FR', reducedMotion: 'reduce' })
   await ctx.addInitScript(initSession, [CLE_SESSION, sess])
   const page = await ctx.newPage()
   await page.goto(`${APP}/dashboard`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {})
   await page.waitForTimeout(600); await simulerPrompt(page); await page.waitForTimeout(800)
-  T('bureau (souris, 1280 px) : aucune carte', (await page.$('.psh-installer')) === null)
+  T('bureau (souris, 1280 px) : carte « Installer Presti sur cet ordinateur » avec bouton', (await page.$('.psh-installer[data-mode="bureau"]')) !== null && /Installer Presti sur cet ordinateur/.test(await page.textContent('.psh-installer').catch(() => '')) && (await page.$('.psh-installer button.psh-btn')) !== null)
   await ctx.close()
 }
 {
-  // bureau à la souris, fenêtre étroite (deux fenêtres côte à côte) : toujours pas de carte — c'est le pointeur qui décide, pas la largeur
+  // bureau à la souris, fenêtre étroite (deux fenêtres côte à côte) : la carte parle toujours de l'ordinateur — c'est le pointeur qui décide, pas la largeur
   const ctx = await nouveauContexte(cr, { viewport: { width: 1000, height: 700 }, locale: 'fr-FR', reducedMotion: 'reduce' })
   await ctx.addInitScript(initSession, [CLE_SESSION, sess])
   const page = await ctx.newPage()
   await page.goto(`${APP}/dashboard`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {})
   await page.waitForTimeout(600); await simulerPrompt(page); await page.waitForTimeout(800)
-  T('bureau (souris, fenêtre de 1000 px) : aucune carte « sur votre téléphone »', (await page.$('.psh-installer')) === null)
+  T('bureau (souris, fenêtre de 1000 px) : la carte dit « cet ordinateur », jamais « votre téléphone »', (await page.$('.psh-installer[data-mode="bureau"]')) !== null && !/votre téléphone/.test(await page.textContent('.psh-installer').catch(() => '')))
   await ctx.close()
 }
 {

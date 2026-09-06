@@ -21,6 +21,11 @@ workflows:
         - presti_ios
       xcode: latest
       node: 22
+      # Signature automatique : Codemagic crée/recharge le profil de distribution App Store via l'intégration
+      # App Store Connect (M5). Le bundle id doit exister dans le compte Apple Developer (M1).
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: fr.prestiapp.app
     integrations:
       app_store_connect: presti-asc
     triggering:

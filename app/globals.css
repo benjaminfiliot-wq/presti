@@ -2493,3 +2493,10 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .psh-verrou h1{font-size:1.4rem;margin:.8rem 0 0}
 .psh-verrou p{color:var(--muted);margin:0 0 1rem;line-height:1.5}
 .psh-verrou .btn{min-height:48px;padding:0 1.6rem}
+
+/* ===== v9 — Paramètres → Application ===== */
+.app-ligne{display:flex;align-items:center;gap:1rem;padding:.4rem 0}
+.app-ligne>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:.15rem}
+.app-ligne>span b{font-size:.95rem}.app-ligne>span small{color:var(--muted);line-height:1.45}
+.app-ligne .btn{flex:none;margin:0;width:auto;min-height:44px}
+@media (max-width:560px){.app-ligne{flex-wrap:wrap}.app-ligne .btn{flex:1 1 100%;justify-content:center}}

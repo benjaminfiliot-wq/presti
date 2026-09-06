@@ -35,6 +35,12 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: android-actions/setup-android@v3
+      # Le keystore de debug est généré au premier build : mis en cache, son empreinte reste la même d'un run à
+      # l'autre (sinon chaque APK de debug est signé autrement, et l'ancien refuse de se mettre à jour).
+      - uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: android-debug-keystore-v1
       - name: Dépendances et synchronisation Capacitor
         working-directory: mobile
         run: |
@@ -88,13 +94,38 @@ jobs:
           PRESTI_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           PRESTI_VERSION_CODE: ${{ github.run_number }}
         run: |
+          # versionName = le tag sans son préfixe (mobile-v0.1.1 → 0.1.1) : ce que le Play Store et l'artisan voient
+          export PRESTI_VERSION_NAME="${GITHUB_REF_NAME#mobile-v}"
+          echo "version $PRESTI_VERSION_NAME (code $PRESTI_VERSION_CODE)"
           chmod +x gradlew
-          ./gradlew bundleRelease --no-daemon --stacktrace
+          ./gradlew bundleRelease assembleRelease --no-daemon --stacktrace
       - uses: actions/upload-artifact@v4
         with:
           name: presti-release-aab
           path: mobile/android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: presti-release-apk
+          path: mobile/android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+      # L'APK signé, téléchargeable par les artisans depuis Paramètres → Application (bucket public `presti-app`,
+      # Supabase Storage) : `presti.apk` = la dernière version, plus une copie nommée par le tag. Le Play Store (M2)
+      # viendra en plus, pas à la place.
+      - name: APK signé publié (Supabase Storage)
+        run: |
+          printf '%s\n' "${{ secrets.PRESTI_ENV_LOCAL }}" | grep -v '^ANTHROPIC_API_KEY=' > .env.ci
+          SB=$(grep '^NEXT_PUBLIC_SUPABASE_URL=' .env.ci | cut -d= -f2-)
+          SVC=$(grep '^SUPABASE_SERVICE_ROLE_KEY=' .env.ci | cut -d= -f2-)
+          rm -f .env.ci
+          test -n "$SB" && test -n "$SVC" || { echo 'PRESTI_ENV_LOCAL incomplet : APK non publié.'; exit 1; }
+          APK=mobile/android/app/build/outputs/apk/release/app-release.apk
+          for nom in presti.apk "presti-${GITHUB_REF_NAME}.apk"; do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$SB/storage/v1/object/presti-app/$nom" \
+              -H "Authorization: Bearer $SVC" -H "x-upsert: true" -H "Content-Type: application/vnd.android.package-archive" \
+              --data-binary @"$APK")
+            echo "$nom → HTTP $code"; test "$code" = "200" || exit 1
+          done
       # Test interne Play (§5.1) — à activer quand M2 est fait : compte de service JSON dans PLAY_SERVICE_ACCOUNT_JSON.
       # - uses: r0adkll/upload-google-play@v1
       #   with:

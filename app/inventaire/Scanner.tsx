@@ -33,6 +33,7 @@ export default function Scanner({ onCode, onFermer }: Props) {
       scannerCodeBarres().then((code) => {
         if (!vivant) return
         if (code === undefined) { setEtat('indisponible'); return }
+        if (code === 'refus') { setEtat('refus'); return }
         if (code) { void vibrer('succes'); onCode(code) } else onFermer()
       })
       return () => { vivant = false }
@@ -92,7 +93,7 @@ export default function Scanner({ onCode, onFermer }: Props) {
 
         {etat === 'refus' ? (
           <p className="inv-scan-t">
-            L’accès à la caméra a été refusé. Autorisez-le dans les réglages de votre navigateur, ou saisissez le code ci-dessous.
+            {estNatif() ? 'L’accès à la caméra est refusé pour Presti. Autorisez-le dans les réglages du téléphone (Applications → Presti → Autorisations), ou saisissez le code ci-dessous.' : 'L’accès à la caméra a été refusé. Autorisez-le dans les réglages de votre navigateur, ou saisissez le code ci-dessous.'}
           </p>
         ) : null}
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import { partagerFichier, vibrer } from '@/lib/natif'
+import { partagerFichier, vibrer, estNatif } from '@/lib/natif'
 import { computeTotals } from '@/lib/devisTotals'
 import AppShell from '@/app/AppShell'
 import ModelSelect from '@/app/ModelSelect'
@@ -163,6 +163,7 @@ export default function DevisEditor() {
 
   async function downloadPdf() {
     if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de télécharger le PDF.' }); return }
+    if (estNatif()) return partagerPdf() // la coque : pas d'onglet ni de dossier Téléchargements — la feuille de partage (Fichiers, Mail…)
     const win = window.open('', '_blank') // dans le geste utilisateur (anti-blocage, mobile)
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/devis/${savedId}/pdf`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })

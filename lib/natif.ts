@@ -1,36 +1,39 @@
+import { Capacitor, registerPlugin } from '@capacitor/core'
+
 // Pont web ↔ natif (prompt v9 §4.2). Chargé par la console ; la coque Capacitor (mobile/) injecte
-// `window.Capacitor` et ses plugins — le code web ne les importe JAMAIS en dur : il les lit derrière
-// `estNatif()`, pour que le bundle web reste exactement le même dans un navigateur.
+// `window.Capacitor` (le pont natif) avant tout script de page. Les plugins s'obtiennent par
+// `registerPlugin(nom)` de @capacitor/core : c'est LUI qui crée le mandataire vers l'implémentation native —
+// `window.Capacitor.Plugins` ne contient que ce qui a été enregistré ainsi (revue du 07/09 : le premier pont
+// y cherchait les plugins et ne trouvait rien ; scan, photo, partage, verrou et push natives étaient muets).
+// Hors coque, `registerPlugin` rend un mandataire sans implémentation : on ne l'appelle jamais (estNatif()).
 //
 // Chaque fonctionnalité a un chemin natif et un repli web, choisis à l'exécution :
 //   partager        : @capacitor/share  → navigator.share → copie du lien
 //   partagerFichier : Filesystem + Share (feuille native avec le PDF) → navigator.share({ files }) → téléchargement
 //   prendrePhoto    : @capacitor/camera (appareil ou galerie, 1600 px, qualité 80) → null (le <input type=file> reste)
-//   scannerCodeBarres : @capacitor-mlkit/barcode-scanning → null (BarcodeDetector du navigateur, ou saisie)
+//   scannerCodeBarres : @capacitor-mlkit/barcode-scanning → undefined (BarcodeDetector du navigateur, ou saisie)
 //   vibrer          : @capacitor/haptics → rien
 //   ouvrirExterne   : @capacitor/browser (navigateur système) → window.open
 //   push natif      : @capacitor/push-notifications (app/NatifPont.tsx) — le web garde Web Push (J2)
 // Rien ici ne parle de Presti à un client d'artisan : ces fonctions ne sont appelées que dans la console.
 
 type PluginCapacitor = Record<string, (...args: unknown[]) => Promise<unknown>>
-type Capacitor = {
-  isNativePlatform?: () => boolean
-  getPlatform?: () => string
-  Plugins?: Record<string, PluginCapacitor | undefined>
-}
-
-const cap = (): Capacitor | null => (typeof window !== 'undefined' ? ((window as Window & { Capacitor?: Capacitor }).Capacitor ?? null) : null)
 
 /** Sommes-nous dans la coque native (iOS ou Android) ? */
-export const estNatif = (): boolean => !!cap()?.isNativePlatform?.()
+export const estNatif = (): boolean => { try { return typeof window !== 'undefined' && Capacitor.isNativePlatform() } catch { return false } }
 
 export const plateforme = (): 'ios' | 'android' | 'web' => {
-  const p = cap()?.getPlatform?.()
-  return p === 'ios' || p === 'android' ? p : 'web'
+  try { const p = Capacitor.getPlatform(); return p === 'ios' || p === 'android' ? p : 'web' } catch { return 'web' }
 }
 
-/** Un plugin natif par son nom (`Share`, `Haptics`, `Camera`…), ou null hors coque. */
-export const plugin = (nom: string): PluginCapacitor | null => (estNatif() ? cap()?.Plugins?.[nom] ?? null : null)
+const mandataires = new Map<string, PluginCapacitor>()
+/** Un plugin natif par son nom (`Share`, `Haptics`, `Camera`, `BarcodeScanner`…), ou null hors coque. */
+export const plugin = (nom: string): PluginCapacitor | null => {
+  if (!estNatif()) return null
+  let m = mandataires.get(nom)
+  if (!m) { m = registerPlugin<PluginCapacitor>(nom); mandataires.set(nom, m) }
+  return m
+}
 
 /** Partage d'un lien ou d'un texte : feuille native → Web Share → copie dans le presse-papiers. */
 export async function partager(o: { titre?: string; texte?: string; url?: string }): Promise<'natif' | 'web' | 'copie' | 'aucun'> {
@@ -107,23 +110,44 @@ export async function prendrePhoto(source: 'appareil' | 'galerie' | 'choix' = 'c
 
 /**
  * Scan d'un code-barres par le module natif (ML Kit) : un lecteur plein écran, rapide, qui marche aussi
- * sur iPhone. Rend le code, ou `null` (annulé, refusé) ; `undefined` hors coque : l'appelant garde alors
- * BarcodeDetector ou la saisie manuelle.
+ * sur iPhone. Rend le code, `null` (annulé), `'refus'` (caméra refusée dans les réglages) ; `undefined`
+ * hors coque : l'appelant garde alors BarcodeDetector ou la saisie manuelle.
+ *
+ * Android : le module de lecture de Google se télécharge à part (revue du 07/09 : `installGoogleBarcodeScannerModule`
+ * rend la main AVANT la fin du téléchargement — on attend l'événement de progression « terminé », 60 s au plus,
+ * sinon le premier scan ouvrait une caméra qui ne lisait rien). Le manifeste demande aussi son installation
+ * dès celle de l'app (`com.google.mlkit.vision.DEPENDENCIES`) : ce chemin ne sert qu'aux premières minutes.
  */
-export async function scannerCodeBarres(): Promise<string | null | undefined> {
+export async function scannerCodeBarres(): Promise<string | null | 'refus' | undefined> {
   const scanner = plugin('BarcodeScanner')
   if (!scanner?.scan) return undefined
   try {
     const p = (await scanner.requestPermissions?.()) as { camera?: string } | undefined
-    if (p && p.camera !== 'granted' && p.camera !== 'limited') return null
+    if (p && p.camera !== 'granted' && p.camera !== 'limited') return 'refus'
     if (plateforme() === 'android' && scanner.isGoogleBarcodeScannerModuleAvailable) {
       const dispo = (await scanner.isGoogleBarcodeScannerModuleAvailable()) as { available?: boolean }
-      if (!dispo?.available && scanner.installGoogleBarcodeScannerModule) await scanner.installGoogleBarcodeScannerModule()
+      if (!dispo?.available && scanner.installGoogleBarcodeScannerModule) await installerModuleLecteur(scanner)
     }
     const r = (await scanner.scan({ formats: ['EAN_13', 'EAN_8', 'CODE_128', 'CODE_39', 'UPC_A', 'UPC_E', 'ITF'] })) as { barcodes?: { rawValue?: string }[] }
     const v = r?.barcodes?.[0]?.rawValue?.trim()
     return v || null
   } catch { return null }
+}
+
+/** Android : lance le téléchargement du module ML Kit et attend qu'il soit vraiment terminé (état 4), 60 s au plus. */
+async function installerModuleLecteur(scanner: PluginCapacitor): Promise<void> {
+  type Ecouteur = { remove: () => Promise<void> }
+  let ecouteur: Ecouteur | undefined
+  const fini = new Promise<void>((resoudre) => {
+    Promise.resolve(scanner.addListener?.('googleBarcodeScannerModuleInstallProgress', (e: { state?: number }) => {
+      // 4 = COMPLETED, 5 = CANCELED, 6 = FAILED (GoogleBarcodeScannerModuleInstallState) : on rend la main dans les trois cas.
+      if (e?.state === 4 || e?.state === 5 || e?.state === 6) resoudre()
+    })).then((h) => { ecouteur = h as Ecouteur | undefined }).catch(() => resoudre())
+  })
+  try {
+    await scanner.installGoogleBarcodeScannerModule?.()
+    await Promise.race([fini, new Promise<void>((r) => setTimeout(r, 60000))])
+  } finally { await ecouteur?.remove?.().catch(() => {}) }
 }
 
 /** Retour haptique léger (validation, envoi, scan réussi). Silencieux hors coque. */
