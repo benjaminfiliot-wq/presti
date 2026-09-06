@@ -281,6 +281,29 @@ try {
     await p.waitForSelector('#code-email', { timeout: 30000 })
     T('après le retrait, le code est redemandé sur cet appareil', p.url().includes('/login'))
   } finally { await b.close() }
+
+  // ── 9. Le compte de relecture des stores (v9 §5.4) ───────────────────────────────────────────────
+  // UN compte désigné (RELECTURE_EMAIL) passe le second facteur avec un code FIXE (RELECTURE_CODE) : les relecteurs
+  // Apple/Google n'ont pas de boîte email. Tout le reste tient : mot de passe exigé, le code fixe n'ouvre aucun autre
+  // compte, un mauvais code est refusé. Variables absentes ici → la section est sautée, jamais prétendue.
+  console.log('\n9. Le compte de relecture des stores (code fixe)')
+  const REL = { email: (process.env.RELECTURE_EMAIL || '').toLowerCase(), code: process.env.RELECTURE_CODE || '', mdp: process.env.RELECTURE_MOT_DE_PASSE || '' }
+  if (REL.email && REL.code && REL.mdp) {
+    await purgerPlafonds()
+    const vOk = await verifier(REL.email, REL.mdp, REL.code)
+    T('compte de relecture : mot de passe + code fixe → session ouverte (200, jetons)', vOk.status === 200 && !!vOk.body.session?.access_token, JSON.stringify(vOk.body).slice(0, 120))
+    if (vOk.body.session?.access_token) {
+      const moi = await api('/api/push/abonner', { headers: { Authorization: `Bearer ${vOk.body.session.access_token}` } })
+      T('compte de relecture : la session ouverte passe la garde des routes (200)', moi.status === 200, `HTTP ${moi.status}`)
+    }
+    const vFaux = await verifier(REL.email, REL.mdp, REL.code === '123456' ? '654321' : '123456')
+    T('compte de relecture : un autre code est refusé (400)', vFaux.status === 400, `HTTP ${vFaux.status} ${JSON.stringify(vFaux.body).slice(0, 80)}`)
+    const vMdp = await verifier(REL.email, 'pas-le-bon-mot-de-passe-9', REL.code)
+    T('compte de relecture : le code fixe n’ouvre rien sans le mot de passe (401)', vMdp.status === 401, `HTTP ${vMdp.status}`)
+    const vAutre = await verifier(`autre-${REL.email}`, REL.mdp, REL.code)
+    T('le code fixe n’est pas un passe-partout : un autre email est refusé (401)', vAutre.status === 401, `HTTP ${vAutre.status}`)
+    await purgerPlafonds()
+  } else console.log('  ℹ️  RELECTURE_EMAIL / RELECTURE_CODE / RELECTURE_MOT_DE_PASSE absents ici : section sautée (scripts/compte-relecture.mjs les pose)')
 } catch (e) {
   ko++; console.log('  ❌ exception :', e?.stack?.split('\n').slice(0, 3).join(' | ') || e)
 } finally {
