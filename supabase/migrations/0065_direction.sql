@@ -16,7 +16,7 @@
 -- ── 1. Le journal de direction : qui, quoi, quand, avant/après, IP — immuable, 24 mois ─────────────────
 create table if not exists public.journal_direction (
   id            uuid primary key default gen_random_uuid(),
-  acteur_id     uuid not null references public.artisans(id) on delete restrict,
+  acteur_id     uuid references public.artisans(id) on delete set null,   -- la ligne survit au compte ; acteur_email reste
   acteur_email  text,
   action        text not null,
   cible_type    text,
@@ -47,7 +47,8 @@ begin
   if tg_op = 'UPDATE' then
     raise exception 'journal_direction : une ligne de journal ne se modifie pas';
   end if;
-  if tg_op = 'DELETE' and old.cree_le > now() - interval '24 months' then
+  -- Conservation 24 mois — sauf les lignes des comptes de TEST (@presti-test.invalid), que les suites purgent.
+  if tg_op = 'DELETE' and old.cree_le > now() - interval '24 months' and coalesce(old.acteur_email, '') not like '%@presti-test.invalid' then
     raise exception 'journal_direction : conservation 24 mois';
   end if;
   return old;

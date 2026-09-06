@@ -47,6 +47,9 @@ async function session(c, attester = true) {
   return s.access_token
 }
 async function nettoyer() {
+  // les lignes de journal des comptes de test : le trigger 0065 les laisse partir (acteur_email @presti-test.invalid)
+  for (const id of comptes) await rest(`journal_direction?acteur_id=eq.${id}`, { method: 'DELETE' }).catch(() => {})
+  await rest(`alertes?cle=eq.e2e-${st}`, { method: 'DELETE' }).catch(() => {})
   for (const id of comptes) await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: id }) }).catch(() => {})
   await rest('ip_bans?ip=in.(203.0.113.7,203.0.113.8)', { method: 'DELETE' }).catch(() => {})
 }
