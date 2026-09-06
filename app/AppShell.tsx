@@ -16,6 +16,8 @@ import MiseAJour from '@/app/MiseAJour'
 import { desabonnerCetAppareil } from '@/lib/pushClient'
 // v9 J3 — la coque native : écran de lancement, notifications natives, bouton retour, réseau. Inerte dans un navigateur.
 import NatifPont from '@/app/NatifPont'
+// v9 J4 — verrou biométrique après 5 min d'arrière-plan (coque seulement).
+import VerrouNatif from '@/app/VerrouNatif'
 
 type Nav = { key: string; label: string; href?: string; soon?: boolean; icon: ReactNode }
 
@@ -324,6 +326,7 @@ export default function AppShell({
       {actif('aideVisites') && visite && !aideOuverte && <Visite surface="console" onEtape={etapeVisite} onFin={finVisite} />}
       <MiseAJour />
       <NatifPont />
+      <VerrouNatif />
     </div>
   )
 }

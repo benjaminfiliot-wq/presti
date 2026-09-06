@@ -2486,3 +2486,10 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 
 /* ===== v9 J3 — coque native : bandeau « hors ligne » (app/NatifPont.tsx) ===== */
 .psh-horsligne{position:fixed;top:calc(8px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:70;max-width:calc(100vw - 24px);padding:.5rem .9rem;border-radius:12px;border:1px solid rgba(240,119,106,.4);background:var(--elev,var(--surface));color:var(--ink);font-size:.86rem;line-height:1.4;box-shadow:var(--shadow,0 12px 32px -8px rgba(0,0,0,.6))}
+
+/* ===== v9 J4 — verrou biométrique de l'app (app/VerrouNatif.tsx) : couvre tout, rien ne se lit derrière ===== */
+.psh-verrou{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:2rem;padding-top:calc(2rem + env(safe-area-inset-top));padding-bottom:calc(2rem + env(safe-area-inset-bottom));background:#0A0C11;color:var(--ink)}
+.psh-verrou-in{max-width:360px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.6rem}
+.psh-verrou h1{font-size:1.4rem;margin:.8rem 0 0}
+.psh-verrou p{color:var(--muted);margin:0 0 1rem;line-height:1.5}
+.psh-verrou .btn{min-height:48px;padding:0 1.6rem}
