@@ -42,6 +42,9 @@ export default function NatifPont() {
       void ecouter(push, 'pushNotificationActionPerformed', (a: { notification?: { data?: { url?: unknown } } }) => {
         router.push(cheminSur(a?.notification?.data?.url))
       })
+      // Android 8+ : le canal « presti » (lib/pushNatif l'adresse) doit exister, sinon la notification tombe dans le canal
+      // par défaut ; idempotent, sans effet sur iOS.
+      if (plateforme() === 'android') push.createChannel?.({ id: 'presti', name: 'Presti', description: 'Demandes, propositions et réponses de vos clients', importance: 5, visibility: 1, vibration: true, lights: true }).catch(() => {})
       // Permission déjà accordée (depuis Paramètres → Notifications) : le jeton se rafraîchit à chaque ouverture.
       push.checkPermissions?.().then((p) => { if ((p as { receive?: string })?.receive === 'granted') return push.register?.() }).catch(() => {})
     }

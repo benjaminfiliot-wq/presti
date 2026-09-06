@@ -40,6 +40,10 @@
             android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
+        <!-- v9 J3 : icône monochrome, couleur et canal des notifications Firebase -->
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_stat_presti" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/presti_corail" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="presti" />
     </application>
 
     <!-- Permissions -->
