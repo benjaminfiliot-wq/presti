@@ -7,7 +7,8 @@ import { api } from '@/app/parametres/commun'
 
 // Le pont côté application (prompt v9 §4.2-4.3). Monté par AppShell, il ne fait RIEN dans un navigateur :
 // tout est derrière `estNatif()`. Dans la coque Capacitor :
-//  • l'écran de lancement se retire quand la première page est rendue (pas sur minuterie) ;
+//  • (l'écran de lancement, lui, se retire au premier rendu de N'IMPORTE quelle page : app/NatifSplash.tsx,
+//    monté par le layout racine — /login n'a pas d'AppShell) ;
 //  • notifications natives : les écouteurs (jeton → /api/push/abonner ; tap → la conversation) — la
 //    PERMISSION, elle, se demande dans Paramètres → Notifications, au clic, jamais au lancement ; si elle
 //    est déjà accordée, le jeton se rafraîchit à chaque ouverture ;
@@ -30,9 +31,7 @@ export default function NatifPont() {
       try { const h = (await p?.addListener?.(nom, cb as (...a: unknown[]) => void)) as Ecouteur | undefined; if (h) ecouteurs.push(h) } catch { /* plugin absent */ }
     }
 
-    plugin('SplashScreen')?.hide?.({ fadeOutDuration: 200 }).catch(() => {})
-    plugin('StatusBar')?.setStyle?.({ style: 'DARK' }).catch(() => {})
-
+    // L'écran de lancement et la barre d'état sont réglés par app/NatifSplash.tsx (layout racine) : ici, la console seulement.
     const push = plugin('PushNotifications')
     if (push) {
       void ecouter(push, 'registration', async (t: { value: string }) => {

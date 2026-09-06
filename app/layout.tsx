@@ -4,6 +4,8 @@ import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono, Fraunces, Archivo_Narrow, IBM_Plex_Sans, Manrope, Newsreader, Instrument_Serif, Syne, Lora } from 'next/font/google'
 import GoogleAnalytics from '@/app/GoogleAnalytics'
+// v9 J3 — dans la coque native, l'écran de lancement se retire au premier rendu, quelle que soit la page (inerte ailleurs).
+import NatifSplash from '@/app/NatifSplash'
 
 // Design system "Chantier" : display grotesque architecturé (Bricolage) + corps net (Hanken) + data (JetBrains Mono).
 const display = Bricolage_Grotesque({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--f-display', display: 'swap' })
@@ -87,7 +89,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" className={`${display.variable} ${body.variable} ${mono.variable} ${fraunces.variable} ${archivo.variable} ${plex.variable} ${manrope.variable} ${newsreader.variable} ${instrument.variable} ${syne.variable} ${lora.variable}`}>
-      <body>{children}<GoogleAnalytics /></body>
+      <body>{children}<GoogleAnalytics /><NatifSplash /></body>
     </html>
   )
 }

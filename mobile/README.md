@@ -20,7 +20,7 @@ Ce dossier ne contient que la coque : `capacitor.config.ts`, les projets natifs 
 
 **En local (Android Studio)** : ouvrir `mobile/android`, laisser Gradle se synchroniser, *Run*. Avant : `cd mobile && npm ci && npx cap sync android`.
 
-**iOS** : il faut un Mac ou Codemagic (`codemagic.yaml`, à venir avec M5). `npx cap add ios` puis Xcode.
+**iOS** : le projet `ios/` est généré en **Swift Package Manager** (`npx cap add ios --packagemanager SPM`, sans CocoaPods ni Mac pour le générer), avec ses icônes, ses écrans de lancement et les textes d'autorisation (caméra, photos, Face ID) dans `App/App/Info.plist`. Le compiler demande un Mac (Xcode, ouvrir `ios/App/App.xcodeproj`) ou **Codemagic** : `codemagic.yaml` est prêt — il attend l'intégration App Store Connect (M1 + M5) et se déclenche sur un tag `mobile-v*`, direction TestFlight. À faire dans Apple Developer avant le premier build : capacités *Push Notifications* et *Associated Domains* (`applinks:qg.prestiapp.fr`) sur `fr.prestiapp.app`, puis `public/.well-known/apple-app-site-association` avec le Team ID.
 
 ## Signer et publier (Android)
 
