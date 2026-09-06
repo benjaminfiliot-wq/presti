@@ -276,9 +276,18 @@ async function digest(): Promise<Alerte[]> {
   const { count: aZero } = await supabaseAdmin.from('artisans').select('id', { count: 'exact', head: true }).lte('credits', 0).eq('is_founder', false)
   const cout = await coutIADuMois()
   const { data: passages } = await supabaseAdmin.from('passages_cron').select('nom, dernier_passage, reussi')
+  // L'application (prompt v9 §7) : appareils abonnés aux notifications, par type ; désactivés après trois échecs ;
+  // ceux qui ont reçu au moins une notification cette semaine. Table absente (0064 pas collée) → une ligne honnête.
+  const { data: appareils, error: errPush } = await supabaseAdmin.from('push_abonnements').select('type, actif, dernier_succes')
+  const push = errPush ? `Notifications push : non mesurées (${errPush.message.slice(0, 50)})` : (() => {
+    const actifs = (appareils ?? []).filter((a) => a.actif)
+    const par = (t: string) => actifs.filter((a) => a.type === t).length
+    const recus = actifs.filter((a) => a.dernier_succes && a.dernier_succes >= depuis).length
+    return `Notifications push : ${actifs.length} appareil${actifs.length > 1 ? 's' : ''} actif${actifs.length > 1 ? 's' : ''} (web ${par('web')} · Android ${par('android')} · iPhone ${par('ios')}), ${(appareils ?? []).length - actifs.length} désactivé${(appareils ?? []).length - actifs.length > 1 ? 's' : ''} après échecs, ${recus} servi${recus > 1 ? 's' : ''} cette semaine`
+  })()
   const lignes = [
     `Inscriptions : ${inscriptions}`, `Demandes reçues : ${leads}`, `Devis créés : ${devis}`, `Factures émises : ${factures}`,
-    `Comptes à zéro crédit : ${aZero ?? 0}`,
+    `Comptes à zéro crédit : ${aZero ?? 0}`, push,
     cout ? (cout.erreur ? `Coût IA du mois : illisible (${cout.erreur.slice(0, 60)})` : `Coût IA du mois : ${euros(cout.usd * (Number(process.env.TAUX_USD_EUR) || 0.92))}`) : 'Coût IA du mois : non mesuré (ANTHROPIC_ADMIN_KEY absente)',
     `Tâches planifiées : ${(passages ?? []).map((p) => `${p.nom} ${p.reussi ? '✅' : '❌'} ${new Date(p.dernier_passage).toLocaleDateString('fr-FR')}`).join(' · ') || 'aucune trace (migration 0057 ?)'}`,
   ]
