@@ -245,6 +245,13 @@
 - **Appels IA du sprint : 0.**
 - **Reste pour fermer J3** : Benj installe l'APK et coche `mobile/TESTS.md` lignes 1-3 (installation, lancement, connexion) ; les push natives attendent **M3** (Firebase : `google-services.json` dans `mobile/android/app/`, plugin `com.google.gms.google-services`, `FIREBASE_SERVICE_ACCOUNT` sur Vercel) ; caméra, scan et partage natifs à brancher dans les écrans (inventaire, fiche client, devis) ; verrou biométrique et trousseau (J4, avec le cookie `httpOnly`) ; liens profonds (`assetlinks.json` avec l'empreinte du keystore de release, M6).
 
+## [25] v9 · J4 — dans l'app : la session au trousseau, le verrou biométrique — 07/09 02:30 — ✅ `8d04a66` en prod, web inchangé (pwa 71/71, code-connexion 56/56, audit final 68/68)
+
+- **Vérifié** : le cookie `httpOnly` (migration `@supabase/ssr`) toucherait 22 écrans, 4 modules, `authArtisan` et toute la connexion par code — un chantier à part, avec ses 47 suites à rejouer ; il n'est pas dans J4. Ce qui protège vraiment en WebView, et qui est livré : (1) la session — jeton de rafraîchissement compris — vit dans le **trousseau natif** (Keychain iOS, Keystore Android, `capacitor-secure-storage-plugin`) : `lib/supabaseClient.ts` donne à supabase-js un stockage asynchrone sûr quand `estNatif()`, et purge toute session héritée du localStorage de la WebView ; dans un navigateur, rien ne change. (2) **Verrou biométrique** (`app/VerrouNatif.tsx`, décision §10 : 5 min d'arrière-plan) : l'heure du passage en arrière-plan est gardée par `Preferences` (survit à la fermeture de l'app) ; au retour ou à l'ouverture, si > 5 min et qu'une biométrie existe, l'écran est couvert (`.psh-verrou`, rien ne se lit derrière) jusqu'à Face ID / empreinte (code du téléphone en secours) ; refus ou échec → session fermée, mot de passe + code (v7). Pas de biométrie → pas de verrou, on ne fait pas semblant. Inerte hors coque.
+- **Preuve** : prod `8d04a66` — `pwa-e2e` 71/71, `code-connexion-e2e` 56/56, `audit-final-e2e` 68/68 (le web ne voit aucune différence) ; la preuve NATIVE est humaine : TESTS.md lignes 6 et 14 (verrou après 5 et 10 min).
+- **Appels IA du sprint : 0.**
+- **Suivant** : projet iOS généré (SPM, sans Mac) pour Codemagic (M5) ; revue adversariale du natif (J3-J4) ; attente de M2 (Play test interne), M3 (Firebase → push natives), M5 (iOS), et du passage de Benj sur TESTS.md.
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
