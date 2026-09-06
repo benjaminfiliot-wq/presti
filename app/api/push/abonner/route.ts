@@ -41,7 +41,7 @@ export async function GET(req: Request) {
   if (estEchec(s)) return refus(s)
   if (!actif('pushWeb')) return NextResponse.json(INDISPONIBLE, { status: 503 })
   const { data, error } = await supabaseAdmin
-    .from('push_abonnements').select('id, type, endpoint, appareil, actif, cree_le, dernier_succes, echecs')
+    .from('push_abonnements').select('id, type, endpoint, jeton, appareil, actif, cree_le, dernier_succes, echecs')
     .eq('artisan_id', s.uid).order('cree_le', { ascending: false })
   if (error) return NextResponse.json({ error: 'Liste indisponible.' }, { status: 503 })
   return NextResponse.json({ cle: clePubliqueVapid(), appareils: data ?? [] })
@@ -53,7 +53,32 @@ export async function POST(req: Request) {
   if (!actif('pushWeb')) return NextResponse.json(INDISPONIBLE, { status: 503 })
   if (!(await consommerLimite(`push:abonner:${s.uid}`, 20, 3600))) return NextResponse.json({ error: 'Trop de tentatives. Patientez quelques minutes.' }, { status: 429 })
 
-  const body = (await req.json().catch(() => null)) as { endpoint?: unknown; keys?: { p256dh?: unknown; auth?: unknown } } | null
+  const body = (await req.json().catch(() => null)) as { endpoint?: unknown; keys?: { p256dh?: unknown; auth?: unknown }; type?: unknown; jeton?: unknown } | null
+  const ua = lireUserAgent(req.headers.get('user-agent'))
+
+  // ── Appareil NATIF (coque Capacitor, J3) : un jeton APNs/FCM, pas d'endpoint ni de clés ──────────────
+  if (body?.type === 'android' || body?.type === 'ios') {
+    const type = body.type
+    const jeton = typeof body.jeton === 'string' ? body.jeton.trim() : ''
+    if (!/^[A-Za-z0-9_:-]{20,400}$/.test(jeton)) return NextResponse.json({ error: 'Jeton invalide.' }, { status: 400 })
+    const appareil = `${type === 'ios' ? 'iPhone' : 'Android'} · application Presti${ua.appareil && !/inconnu/i.test(ua.appareil) ? ` (${ua.appareil})` : ''}`.slice(0, 80)
+    // Un jeton natif appartient à UNE installation de l'app : s'il réapparaît sous un autre compte, l'appareil a changé
+    // de main (autre artisan connecté sur le même téléphone) — le jeton lui-même en est la preuve.
+    const { data: existant } = await supabaseAdmin.from('push_abonnements').select('id, artisan_id').eq('jeton', jeton).maybeSingle()
+    if (existant && existant.artisan_id !== s.uid) await supabaseAdmin.from('push_abonnements').delete().eq('id', existant.id)
+    const reprise = !!existant && existant.artisan_id === s.uid
+    if (!reprise) {
+      const { count } = await supabaseAdmin.from('push_abonnements').select('id', { count: 'exact', head: true }).eq('artisan_id', s.uid).eq('actif', true)
+      if ((count ?? 0) >= MAX_APPAREILS) return NextResponse.json({ error: `${MAX_APPAREILS} appareils sont déjà abonnés : retirez-en un d’abord.` }, { status: 409 })
+    }
+    const ligne = { artisan_id: s.uid, type, jeton, appareil, actif: true, echecs: 0 }
+    const { data, error } = reprise
+      ? await supabaseAdmin.from('push_abonnements').update(ligne).eq('id', existant!.id).select('id, appareil, cree_le').single()
+      : await supabaseAdmin.from('push_abonnements').insert(ligne).select('id, appareil, cree_le').single()
+    if (error) { console.error('[push/abonner natif]', error.message); return NextResponse.json({ error: 'Abonnement non enregistré.' }, { status: 503 }) }
+    return NextResponse.json({ ok: true, appareil: data })
+  }
+
   const endpoint = typeof body?.endpoint === 'string' ? body.endpoint.trim() : ''
   const p256dh = typeof body?.keys?.p256dh === 'string' ? body.keys.p256dh.trim() : ''
   const auth = typeof body?.keys?.auth === 'string' ? body.keys.auth.trim() : ''
@@ -63,7 +88,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Abonnement invalide.' }, { status: 400 })
   }
   if (!serviceConnu(url.hostname)) return NextResponse.json({ error: 'Service de notifications inconnu.' }, { status: 400 })
-  const ua = lireUserAgent(req.headers.get('user-agent'))
   const appareil = `${ua.appareil} · ${ua.navigateur}`.slice(0, 80)
 
   const { data: existant } = await supabaseAdmin.from('push_abonnements').select('id, artisan_id, p256dh, auth').eq('endpoint', endpoint).maybeSingle()
@@ -92,12 +116,13 @@ export async function DELETE(req: Request) {
   const s = await authArtisan(req)
   if (estEchec(s)) return refus(s)
   if (!actif('pushWeb')) return NextResponse.json(INDISPONIBLE, { status: 503 })
-  const body = (await req.json().catch(() => null)) as { id?: unknown; endpoint?: unknown } | null
+  const body = (await req.json().catch(() => null)) as { id?: unknown; endpoint?: unknown; jeton?: unknown } | null
   const id = typeof body?.id === 'string' ? body.id : null
   const endpoint = typeof body?.endpoint === 'string' ? body.endpoint : null
-  if (!id && !endpoint) return NextResponse.json({ error: 'Appareil non précisé.' }, { status: 400 })
+  const jeton = typeof body?.jeton === 'string' ? body.jeton : null
+  if (!id && !endpoint && !jeton) return NextResponse.json({ error: 'Appareil non précisé.' }, { status: 400 })
   let q = supabaseAdmin.from('push_abonnements').delete().eq('artisan_id', s.uid)
-  q = id ? q.eq('id', id) : q.eq('endpoint', endpoint as string)
+  q = id ? q.eq('id', id) : endpoint ? q.eq('endpoint', endpoint) : q.eq('jeton', jeton as string)
   const { error } = await q
   if (error) return NextResponse.json({ error: 'Suppression impossible.' }, { status: 503 })
   return NextResponse.json({ ok: true })

@@ -17,7 +17,12 @@ import { actif } from '@/lib/flags'
 //    rien, et le dit dans `raison`.
 
 export type ChargePush = { titre: string; ligne: string; url: string; tag: string; renotify?: boolean }
-export type ResultatPush = { envoyes: number; supprimes: number; desactives: number; raison?: 'desactive' | 'vapid_absent' | 'plafond' | 'table' | 'aucun_appareil' }
+export type ResultatPush = {
+  envoyes: number; supprimes: number; desactives: number
+  /** Appareils natifs laissés de côté faute de compte de service Firebase (M3). */
+  natifsIgnores?: number
+  raison?: 'desactive' | 'vapid_absent' | 'plafond' | 'table' | 'aucun_appareil'
+}
 
 /** Notifications par artisan et par heure. Au-delà, on se tait — l'app, elle, montre tout. */
 export const PLAFOND_PUSH_HEURE = 30
@@ -62,47 +67,70 @@ export function chargeUtile(c: ChargePush): string {
   return JSON.stringify(manque > 0 ? { ...base, p: ' '.repeat(manque) } : base)
 }
 
-type Abonnement = { id: string; endpoint: string; p256dh: string; auth: string; echecs: number }
+type Abonnement = { id: string; type: 'web' | 'ios' | 'android'; endpoint: string | null; jeton: string | null; p256dh: string | null; auth: string | null; echecs: number }
 
-/** Envoie la même notification à TOUS les appareils web actifs de l'artisan. */
+/** Un envoi raté : ce que le service a répondu, et s'il faut oublier l'appareil. */
+type Echec = { statut?: number; disparu: boolean; message: string }
+
+async function noterSucces(a: Abonnement, r: ResultatPush) {
+  r.envoyes++
+  await supabaseAdmin.from('push_abonnements').update({ dernier_succes: new Date().toISOString(), echecs: 0 }).eq('id', a.id)
+}
+async function noterEchec(a: Abonnement, e: Echec, r: ResultatPush) {
+  if (e.disparu) {
+    // L'abonnement n'existe plus côté service (app désinstallée, permission retirée) : on l'oublie.
+    await supabaseAdmin.from('push_abonnements').delete().eq('id', a.id)
+    r.supprimes++
+  } else if (e.statut && e.statut >= 400 && e.statut < 500 && e.statut !== 429) {
+    // 400/401/403/413… : c'est l'abonnement qui est en cause. Trois fois d'affilée → désactivé.
+    const echecs = (a.echecs ?? 0) + 1
+    const desactiver = echecs >= ECHECS_MAX
+    await supabaseAdmin.from('push_abonnements').update({ echecs, ...(desactiver ? { actif: false } : {}) }).eq('id', a.id)
+    if (desactiver) r.desactives++
+    console.error('[push] abonnement refusé', a.type, e.statut, e.message)
+  } else {
+    // 429, 5xx, panne réseau, Firebase absent : le service, pas l'appareil — pas d'échec définitif contre lui.
+    console.error('[push] envoi raté (service)', a.type, e.statut ?? 'réseau', e.message)
+  }
+}
+
+/** Envoie la même notification à TOUS les appareils actifs de l'artisan — web (VAPID) et natifs (FCM). */
 export async function envoyerPushArtisan(artisanId: string, charge: ChargePush): Promise<ResultatPush> {
   const r: ResultatPush = { envoyes: 0, supprimes: 0, desactives: 0 }
   if (!actif('pushWeb')) return { ...r, raison: 'desactive' }
-  if (!vapidPret()) return { ...r, raison: 'vapid_absent' }
 
   const { data, error } = await supabaseAdmin
-    .from('push_abonnements').select('id, endpoint, p256dh, auth, echecs')
-    .eq('artisan_id', artisanId).eq('type', 'web').eq('actif', true)
+    .from('push_abonnements').select('id, type, endpoint, jeton, p256dh, auth, echecs')
+    .eq('artisan_id', artisanId).eq('actif', true)
   if (error) { console.error('[push] lecture des abonnements :', error.message); return { ...r, raison: 'table' } }
   const abos = (data ?? []) as Abonnement[]
   if (abos.length === 0) return { ...r, raison: 'aucun_appareil' }
+  const webs = abos.filter((a) => a.type === 'web' && a.endpoint && a.p256dh && a.auth)
+  const natifs = abos.filter((a) => a.type !== 'web' && a.jeton)
+  if (webs.length > 0 && !vapidPret()) return { ...r, raison: 'vapid_absent' }
   // Le plafond ne décompte que des envois réellement tentés : un artisan sans appareil ne le consomme pas.
   if (!(await consommerLimite(`push:artisan:${artisanId}`, PLAFOND_PUSH_HEURE, 3600))) return { ...r, raison: 'plafond' }
 
   const corps = chargeUtile(charge)
-  await Promise.all(abos.map(async (a) => {
-    try {
-      await webpush.sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, corps, { TTL: 3600, urgency: 'high' })
-      r.envoyes++
-      await supabaseAdmin.from('push_abonnements').update({ dernier_succes: new Date().toISOString(), echecs: 0 }).eq('id', a.id)
-    } catch (e) {
-      const statut = (e as { statusCode?: number })?.statusCode
-      if (statut === 404 || statut === 410) {
-        // L'abonnement n'existe plus côté service (navigateur désinstallé, permission retirée) : on l'oublie.
-        await supabaseAdmin.from('push_abonnements').delete().eq('id', a.id)
-        r.supprimes++
-      } else if (statut && statut >= 400 && statut < 500 && statut !== 429) {
-        // 400/401/403/413… : c'est l'abonnement qui est en cause. Trois fois d'affilée → désactivé.
-        const echecs = (a.echecs ?? 0) + 1
-        const desactiver = echecs >= ECHECS_MAX
-        await supabaseAdmin.from('push_abonnements').update({ echecs, ...(desactiver ? { actif: false } : {}) }).eq('id', a.id)
-        if (desactiver) r.desactives++
-        console.error('[push] abonnement refusé', statut, (e as Error)?.message?.slice(0, 120) ?? '')
-      } else {
-        // 429, 5xx, panne réseau : le service, pas l'appareil — on ne compte pas un échec définitif contre lui.
-        console.error('[push] envoi raté (service)', statut ?? 'réseau', (e as Error)?.message?.slice(0, 120) ?? '')
+  const { envoyerPushNatif, firebasePret } = await import('@/lib/pushNatif')
+  const natif = { titre: String(charge.titre).slice(0, 60), ligne: String(charge.ligne).slice(0, 120), url: cheminSur(charge.url), tag: String(charge.tag).slice(0, 60) }
+  if (natifs.length > 0 && !firebasePret()) r.natifsIgnores = natifs.length
+
+  await Promise.all([
+    ...webs.map(async (a) => {
+      try {
+        await webpush.sendNotification({ endpoint: a.endpoint!, keys: { p256dh: a.p256dh!, auth: a.auth! } }, corps, { TTL: 3600, urgency: 'high' })
+        await noterSucces(a, r)
+      } catch (e) {
+        const statut = (e as { statusCode?: number })?.statusCode
+        await noterEchec(a, { statut, disparu: statut === 404 || statut === 410, message: (e as Error)?.message?.slice(0, 120) ?? '' }, r)
       }
-    }
-  }))
+    }),
+    ...(firebasePret() ? natifs.map(async (a) => {
+      const res = await envoyerPushNatif(a.jeton!, a.type as 'android' | 'ios', natif)
+      if (res.ok) await noterSucces(a, r)
+      else await noterEchec(a, { statut: res.statut, disparu: res.disparu, message: res.code ?? '' }, r)
+    }) : []),
+  ])
   return r
 }

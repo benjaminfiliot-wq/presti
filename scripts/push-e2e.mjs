@@ -266,6 +266,17 @@ try {
   T('POST test : le vrai service de push répond 404/410 pour l’abonnement mort → il est purgé (supprimé 1)', t1.status === 200 && t1.data.supprimes >= 1 && !apres.includes(mort), JSON.stringify(t1.data))
   const rDel = await api('/api/push/abonner', { method: 'DELETE', body: JSON.stringify({ endpoint: url('/ok/1') }) })
   T('DELETE : retrait d’un appareil par endpoint (200)', rDel.status === 200 && rDel.data.ok === true && !(await abos()).some((x) => x.endpoint === url('/ok/1')))
+  // appareil NATIF (coque Capacitor, J3) : un jeton FCM/APNs — accepté, listé, ignoré sans Firebase, retirable ; hors format → 400
+  const jetonNatif = `e2e-${st}:${crypto.randomBytes(60).toString('base64url')}`
+  const pN = await api('/api/push/abonner', { method: 'POST', body: JSON.stringify({ type: 'android', jeton: jetonNatif }) })
+  const ligneN = ((await api('/api/push/abonner')).data.appareils || []).find((x) => x.jeton === jetonNatif)
+  T('POST abonner natif (type android + jeton) → 200, listé comme appareil Android de l’application', pN.status === 200 && !!ligneN && ligneN.type === 'android' && /Android · application Presti/.test(ligneN.appareil || ''), JSON.stringify({ status: pN.status, ligneN }).slice(0, 160))
+  const pN2 = await api('/api/push/abonner', { method: 'POST', body: JSON.stringify({ type: 'ios', jeton: 'court' }) })
+  T('POST abonner natif : jeton hors format → 400', pN2.status === 400, `HTTP ${pN2.status}`)
+  const tN = await api('/api/push/test', { method: 'POST' })
+  T('test avec un seul appareil natif et sans compte Firebase → ignoré proprement (natifsIgnores 1, aucune erreur)', tN.status === 200 && tN.data.natifsIgnores === 1 && tN.data.envoyes === 0, JSON.stringify(tN.data))
+  const dN = await api('/api/push/abonner', { method: 'DELETE', body: JSON.stringify({ jeton: jetonNatif }) })
+  T('DELETE par jeton natif → retiré', dN.status === 200 && !((await api('/api/push/abonner')).data.appareils || []).some((x) => x.jeton === jetonNatif))
   let dernier = 0
   for (let i = 0; i < 6; i++) dernier = (await api('/api/push/test', { method: 'POST' })).status
   T('POST test : plafond de 5 par heure → 429 ensuite', dernier === 429, `HTTP ${dernier}`)

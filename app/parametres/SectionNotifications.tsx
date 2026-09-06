@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { actif } from '@/lib/flags'
 import { TYPES_NOTIFICATION, notificationActive, pushActive, type Notifications, type TypeNotification } from '@/lib/notificationsTypes'
 import { api, dateFr, type SectionProps } from './commun'
+import { estNatif, plateforme, plugin } from '@/lib/natif'
 
 // Paramètres → Notifications (prompt v9 §3.4).
 //
@@ -18,16 +19,19 @@ import { api, dateFr, type SectionProps } from './commun'
 // service worker pas encore prêt, ancien abonnement sous une autre clé, test parti vers zéro appareil.
 // Sans le drapeau `pushWeb` (migration 0064 pas encore collée), seule la partie email existe.
 
-type Appareil = { id: string; type: string; endpoint: string | null; appareil: string | null; actif: boolean; cree_le: string; dernier_succes: string | null; echecs: number }
+type Appareil = { id: string; type: string; endpoint: string | null; jeton: string | null; appareil: string | null; actif: boolean; cree_le: string; dernier_succes: string | null; echecs: number }
 type Support = 'ok' | 'non' | 'ios_non_installee'
 
 const estIos = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 const estInstallee = () => matchMedia('(display-mode: standalone)').matches || (navigator as Navigator & { standalone?: boolean }).standalone === true
 const supportPush = (): Support => {
+  if (estNatif()) return 'ok' // la coque (J3) : notifications natives, quel que soit le WebView
   const ok = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
   if (estIos() && !estInstallee() && !ok) return 'ios_non_installee'
   return ok ? 'ok' : 'non'
 }
+/** Le jeton natif de CET appareil (posé par app/NatifPont.tsx à l'enregistrement). */
+const jetonNatif = (): string | null => { try { return sessionStorage.getItem('presti.jeton_natif') } catch { return null } }
 /** La clé VAPID (base64url) au format attendu par le navigateur. */
 function cleEnOctets(cle: string): Uint8Array {
   const b64 = (cle + '='.repeat((4 - (cle.length % 4)) % 4)).replace(/-/g, '+').replace(/_/g, '/')
@@ -62,17 +66,45 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
   useEffect(() => {
     if (!pushDispo) return
     setSupport(supportPush()); setIos(estIos())
-    if ('Notification' in window) setPermission(Notification.permission)
     void charger()
+    if (estNatif()) {
+      // La coque : la permission vient du plugin, « cet appareil » est le jeton natif gardé par NatifPont.
+      setCourant(jetonNatif())
+      plugin('PushNotifications')?.checkPermissions?.().then((p) => {
+        const r = (p as { receive?: string })?.receive
+        setPermission(r === 'granted' ? 'granted' : r === 'denied' ? 'denied' : 'default')
+      }).catch(() => {})
+      return
+    }
+    if ('Notification' in window) setPermission(Notification.permission)
     // L'abonnement de CE navigateur, s'il existe : pour dire « cet appareil » dans la liste.
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistration().then((reg) => reg?.pushManager.getSubscription()).then((s) => setCourant(s?.endpoint ?? null)).catch(() => {})
     }
   }, [pushDispo, charger])
 
+  /** Cette ligne de la liste est-elle l'appareil sur lequel on est ? (endpoint web, ou jeton natif) */
+  const estCourant = (ap: Appareil) => !!courant && (ap.endpoint === courant || ap.jeton === courant)
+
+  /** Activation dans la coque : permission native, puis enregistrement — le jeton arrive par NatifPont → /api/push/abonner. */
+  async function activerNatif() {
+    const push = plugin('PushNotifications')
+    if (!push?.requestPermissions || !push.register) throw new Error('Notifications natives indisponibles dans cette version de l’application.')
+    const p = (await push.requestPermissions()) as { receive?: string }
+    setPermission(p.receive === 'granted' ? 'granted' : p.receive === 'denied' ? 'denied' : 'default')
+    if (p.receive !== 'granted') { setErreur(p.receive === 'denied' ? 'Notifications refusées pour Presti dans les réglages du téléphone.' : 'Autorisez les notifications quand le téléphone le demande, puis réessayez.'); return }
+    await push.register()
+    // Le jeton arrive de façon asynchrone (écouteur `registration` de NatifPont) : on laisse le temps, puis on relit.
+    for (let i = 0; i < 20; i++) { await new Promise((r) => setTimeout(r, 400)); const j = jetonNatif(); if (j) { setCourant(j); break } }
+    await charger()
+    if (jetonNatif()) signaler({ type: 'ok', text: `Ce ${plateforme() === 'ios' ? 'iPhone' : 'téléphone'} reçoit maintenant les notifications ✅` })
+    else setErreur('Le téléphone n’a pas rendu de jeton de notification. Vérifiez la connexion, puis réessayez.')
+  }
+
   async function activer() {
     setErreur(null); setBusy('activer')
     try {
+      if (estNatif()) { await activerNatif(); return }
       // La permission est demandée EN PREMIER, dans le geste du clic lui-même : Safari (iPhone installée) refuse
       // toute demande qui arrive après un await (revue du 06/09). Le service worker vient ensuite.
       const perm = await Notification.requestPermission()
@@ -109,10 +141,14 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
     setBusy(`app-${ap.id}`); setErreur(null)
     const r = await api('/api/push/abonner', { method: 'DELETE', body: JSON.stringify({ id: ap.id }) })
     if (!r.ok) { setErreur(r.data.error ?? 'Suppression impossible.'); setBusy(null); return }
-    if (ap.endpoint && ap.endpoint === courant) {
-      const reg = await navigator.serviceWorker.getRegistration().catch(() => null)
-      const s = await reg?.pushManager.getSubscription().catch(() => null)
-      await s?.unsubscribe().catch(() => {})
+    if (estCourant(ap)) {
+      if (ap.jeton) {
+        try { sessionStorage.removeItem('presti.jeton_natif') } catch { /* stockage indisponible */ }
+      } else if ('serviceWorker' in navigator) {
+        const reg = await navigator.serviceWorker.getRegistration().catch(() => null)
+        const s = await reg?.pushManager.getSubscription().catch(() => null)
+        await s?.unsubscribe().catch(() => {})
+      }
       setCourant(null)
     }
     await charger(); setBusy(null)
@@ -167,7 +203,7 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
                 ? 'Les notifications de Presti sont désactivées sur cet iPhone. Réactivez-les dans Réglages → Notifications → Presti, puis revenez ici.'
                 : 'Les notifications sont bloquées pour Presti dans ce navigateur. Réautorisez-les dans ses réglages du site, puis revenez ici.'}
             </p>
-          ) : courant && actifs.some((x) => x.endpoint === courant) ? (
+          ) : actifs.some(estCourant) ? (
             <p className="notif-etat" data-etat="actif">✅ Cet appareil reçoit les notifications.</p>
           ) : (
             <button type="button" className="btn btn--primary" data-activer disabled={busy === 'activer'} onClick={activer}>{busy === 'activer' ? '…' : 'Activer sur cet appareil'}</button>
@@ -180,14 +216,14 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
             : (
               <ul className="sess" data-appareils>
                 {appareils.map((ap) => (
-                  <li key={ap.id} className={ap.endpoint && ap.endpoint === courant ? 'courante' : ''}>
+                  <li key={ap.id} className={estCourant(ap) ? 'courante' : ''}>
                     <span className="sess-ic" aria-hidden="true">
                       {/iPhone|Android|iPad/i.test(ap.appareil ?? '')
                         ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2" /><path d="M11 18h2" /></svg>
                         : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>}
                     </span>
                     <span className="sess-txt">
-                      <b>{ap.appareil || 'Appareil'}{ap.endpoint && ap.endpoint === courant ? <em>Cet appareil</em> : null}{!ap.actif ? <em>Désactivé</em> : null}</b>
+                      <b>{ap.appareil || 'Appareil'}{estCourant(ap) ? <em>Cet appareil</em> : null}{!ap.actif ? <em>Désactivé</em> : null}</b>
                       <small>Abonné le {dateFr(ap.cree_le)}{ap.dernier_succes ? ` · dernière notification le ${dateFr(ap.dernier_succes, true)}` : ''}{!ap.actif ? ' · trois envois ratés : réactivez-le depuis cet appareil' : ''}</small>
                     </span>
                     <button type="button" className="btn btn--ghost danger" aria-label={`Retirer ${ap.appareil || 'cet appareil'}`} disabled={!!busy} onClick={() => retirer(ap)}>{busy === `app-${ap.id}` ? '…' : 'Retirer'}</button>

@@ -14,6 +14,8 @@ import Visite, { VISITES, type Etape } from '@/app/Visite'
 import InstallerApp from '@/app/InstallerApp'
 import MiseAJour from '@/app/MiseAJour'
 import { desabonnerCetAppareil } from '@/lib/pushClient'
+// v9 J3 — la coque native : écran de lancement, notifications natives, bouton retour, réseau. Inerte dans un navigateur.
+import NatifPont from '@/app/NatifPont'
 
 type Nav = { key: string; label: string; href?: string; soon?: boolean; icon: ReactNode }
 
@@ -102,8 +104,11 @@ export default function AppShell({
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    // v9 J3 — bouton retour Android (app/NatifPont.tsx) : tiroir ouvert → il se ferme, et c'était ça, le retour.
+    const onRetour = (e: Event) => { e.preventDefault(); setOpen(false) }
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    window.addEventListener('presti:retour', onRetour)
+    return () => { document.removeEventListener('keydown', onKey); window.removeEventListener('presti:retour', onRetour) }
   }, [open])
   const [unread, setUnread] = useState(0)
   // §4 B1/B3 — panneau « C'est quoi ? » et visite guidée
@@ -318,6 +323,7 @@ export default function AppShell({
       />
       {actif('aideVisites') && visite && !aideOuverte && <Visite surface="console" onEtape={etapeVisite} onFin={finVisite} />}
       <MiseAJour />
+      <NatifPont />
     </div>
   )
 }
