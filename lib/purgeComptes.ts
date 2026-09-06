@@ -91,6 +91,11 @@ async function anonymiser(id: string): Promise<string | null> {
 
   // La ligne artisan : on garde l'identité d'émetteur (nom, forme juridique, SIRET, adresse,
   // n° de TVA, compteurs de numérotation), on efface tout le reste.
+  // v9 J2 — les appareils abonnés aux notifications ne survivent pas à l'anonymisation (revue du 06/09 :
+  // la cascade de 0064 ne joue que quand la ligne artisan est effacée). Table absente (avant 0064) : on passe.
+  const { error: eP } = await supabaseAdmin.from('push_abonnements').delete().eq('artisan_id', id)
+  if (eP && !/push_abonnements/.test(eP.message)) return `notifications : ${eP.message}`
+
   const { error: eA } = await supabaseAdmin.from('artisans').update({
     email: emailAnonyme(id), email_public: null, tel_public: null, bio: null, photo_url: null, logo_url: null,
     horaires: null, reseaux: {}, services: [], realisations: [], avant_apres: [], zone_intervention: null,

@@ -23,8 +23,10 @@ export type { Notifications, TypeNotification } from '@/lib/notificationsTypes'
 // Le nom du client, son message, ses coordonnées restent dans l'app (§3.2).
 
 /** La charge utile push d'un événement : neutre par construction, l'adresse mène à la conversation. */
-export function chargePush(type: TypeNotification, leadId?: string | null): ChargePush {
-  const url = leadId ? `/messages?lead=${encodeURIComponent(leadId)}` : '/messages'
+export function chargePush(type: TypeNotification, lead?: string | null): ChargePush {
+  // Seul un identifiant de conversation (UUID) entre dans l'adresse et le tag : jamais une chaîne libre.
+  const leadId = lead && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(lead) ? lead : null
+  const url = leadId ? `/messages?lead=${leadId}` : '/messages'
   switch (type) {
     case 'nouvelle_demande': return { titre: 'Nouvelle demande', ligne: 'Un client vous a écrit. Ouvrez la conversation.', url, tag: leadId ? `conv-${leadId}` : 'conv', renotify: true }
     case 'proposition': return { titre: 'Proposition à valider', ligne: 'L’assistant a préparé un devis. À vous de valider.', url, tag: leadId ? `prop-${leadId}` : 'prop' }
@@ -35,11 +37,13 @@ export function chargePush(type: TypeNotification, leadId?: string | null): Char
 type Envoi = Omit<Parameters<typeof sendEmail>[0], 'to'> & {
   /** La conversation concernée : la push y mène directement, et les notifications s'y regroupent. */
   leadId?: string | null
+  /** Envoyer la push tout de suite, en attendant sa fin — pour une réponse déjà partie (flux SSE) où `after` n'a plus de réponse à suivre. */
+  pushImmediat?: boolean
 }
 
 /** La push part APRÈS la réponse HTTP quand Next le permet (`after`), sinon tout de suite, sans bloquer. */
 function lancerPush(artisanId: string, charge: ChargePush) {
-  const envoyer = () => envoyerPushArtisan(artisanId, charge).catch(() => {})
+  const envoyer = () => envoyerPushArtisan(artisanId, charge).catch((e) => console.error('[push] envoi :', (e as Error)?.message))
   import('next/server').then((m) => { try { m.after(envoyer) } catch { void envoyer() } }).catch(() => { void envoyer() })
 }
 
@@ -55,7 +59,7 @@ export async function notifierArtisan(
   email: string | null | undefined,
   contenu: Envoi,
 ): Promise<{ envoye: boolean; raison?: 'sans_email' | 'desactive' | 'erreur'; push?: boolean }> {
-  const { leadId, ...courrier } = contenu
+  const { leadId, pushImmediat, ...courrier } = contenu
   let prefs: Notifications | null = null
   try {
     const { data } = await supabaseAdmin.from('artisans').select('notifications').eq('id', artisanId).maybeSingle()
@@ -63,7 +67,10 @@ export async function notifierArtisan(
   } catch { /* préférences illisibles : on considère tout activé, comme un compte neuf */ }
 
   const push = pushActive(prefs, type)
-  if (push) lancerPush(artisanId, chargePush(type, leadId))
+  if (push) {
+    if (pushImmediat) await envoyerPushArtisan(artisanId, chargePush(type, leadId)).catch((e) => console.error('[push] envoi :', (e as Error)?.message))
+    else lancerPush(artisanId, chargePush(type, leadId))
+  }
 
   if (!email) return { envoye: false, raison: 'sans_email', push }
   if (!notificationActive(prefs, type)) return { envoye: false, raison: 'desactive', push }

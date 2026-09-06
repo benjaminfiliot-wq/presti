@@ -142,14 +142,17 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
   // v9 J2 — lien profond depuis une notification push (/messages?lead=<id>) : la conversation s'ouvre d'elle-même.
   const lienOuvert = useRef(false)
   useEffect(() => {
-    if (lienOuvert.current || leads.length === 0) return
+    if (lienOuvert.current || !ready) return
     const id = new URLSearchParams(window.location.search).get('lead')
-    const l = id ? leads.find((x) => x.id === id) : null
-    if (!l) return
+    if (!id) return
     lienOuvert.current = true
-    void open(l)
+    const l = leads.find((x) => x.id === id)
+    if (l) { void open(l); return }
+    // conversation supprimée ou d'un autre compte : on le dit, et l'adresse redevient /messages
+    setErr('Cette conversation n’est plus disponible.')
+    router.replace(window.location.pathname)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [leads])
+  }, [leads, ready])
 
   async function open(l: Lead) {
     setSel(l.id); setErr(null); setDraft(''); setPhotosSignees([]); setEdition({})

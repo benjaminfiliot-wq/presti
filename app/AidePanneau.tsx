@@ -27,6 +27,7 @@ const LIBELLES: Record<string, string> = {
   '/abonnement': 'Abonnement',
   '/outils': 'Réponses instantanées',
   '/parametres': 'Paramètres',
+  '/parametres?onglet=notifications': 'Notifications',
   '/parametres?onglet=legal': 'Entreprise & légal',
   '/parametres?onglet=securite': 'Sécurité',
   '/parametres?onglet=donnees': 'Données & confidentialité',

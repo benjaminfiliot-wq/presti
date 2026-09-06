@@ -294,6 +294,34 @@ export const ARTICLES: Article[] = [
     disponibleAvec: 'essentiel',
   },
 
+  // source: app/parametres/SectionNotifications.tsx (v9 J2) ; lib/notifications.ts (email + push) ; app/api/push/*
+  {
+    id: 'parametres.notifications',
+    page: '/parametres?onglet=notifications',
+    titre: 'Notifications : sur votre téléphone et par email',
+    aQuoiCaSert:
+      'Presti vous prévient quand un client vous écrit, quand l’assistant a préparé un devis à valider, et quand un ' +
+      'client répond à un devis. Par email, toujours ; sur votre téléphone aussi, si vous activez les notifications ' +
+      'sur l’appareil. Une notification ne contient jamais le contenu du message ni le nom du client : elle vous dit ' +
+      'qu’il s’est passé quelque chose et vous ouvre la conversation. Exemple : vous êtes sur un chantier, un client ' +
+      'écrit à 11 h 02 — à 11 h 02 votre téléphone vibre, vous répondez en trente secondes.',
+    commentOnSenSert: [
+      'Sur votre téléphone, ouvrez Presti puis Paramètres → Notifications.',
+      'Touchez « Activer sur cet appareil » et acceptez la demande du navigateur.',
+      'Touchez « M’envoyer un test » : la notification doit arriver dans la seconde.',
+      'Sur iPhone : installez d’abord Presti sur l’écran d’accueil (Safari → Partager → « Sur l’écran d’accueil »), ouvrez-la depuis son icône, puis activez.',
+      'Dans « Ce qui vous est envoyé », cochez ou décochez Email et Push pour chaque événement.',
+      'Un appareil que vous ne reconnaissez pas ? « Retirer » : il ne recevra plus rien.',
+    ],
+    pourVosClients: 'Rien ne change pour eux : ils sont répondus de la même façon, notification ou pas.',
+    credits: 'Aucun crédit : une notification ne coûte rien.',
+    reglagesLies: [
+      'Paramètres → Notifications → « Ce qui vous est envoyé » : Email et Push par événement.',
+      'Se déconnecter retire les notifications de l’appareil ; « Fermer toutes mes sessions » (Sécurité) les retire de tous.',
+    ],
+    disponibleAvec: 'essentiel',
+  },
+
   // source: app/parametres/page.tsx:236-248 (onglet Sécurité) ; app/api/securite/sessions/route.ts (révocation réelle)
   {
     id: 'parametres.securite',

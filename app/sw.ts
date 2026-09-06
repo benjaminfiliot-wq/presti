@@ -58,7 +58,8 @@ serwist.addEventListeners()
 // chemin de même origine (un `//hôte` ou une URL externe retombe sur /dashboard).
 type Charge = { titre?: unknown; ligne?: unknown; url?: unknown; tag?: unknown; renotify?: unknown }
 const texte = (v: unknown, max: number, defaut = '') => (typeof v === 'string' ? v.slice(0, max) : defaut)
-const cheminSur = (v: unknown) => (typeof v === 'string' && /^\/(?!\/)[^\s]*$/.test(v) ? v : '/dashboard')
+// Un chemin Presti seulement : ni URL externe, ni `//hôte`, ni `/\hôte` (new URL le résout vers un autre hôte).
+const cheminSur = (v: unknown) => (typeof v === 'string' && /^\/(?![/\\])[^\s\\]*$/.test(v) ? v : '/dashboard')
 
 self.addEventListener('push', (event) => {
   let c: Charge = {}
@@ -82,7 +83,10 @@ self.addEventListener('notificationclick', (event) => {
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(async (fenetres) => {
       // Une fenêtre Presti est déjà ouverte : on y va, sinon on en ouvre une (l'app installée si elle l'est).
       const f = fenetres.find((w) => 'navigate' in w && 'focus' in w)
-      if (f) { const n = await f.navigate(url).catch(() => null); await (n ?? f).focus(); return }
+      if (f) {
+        const n = await f.navigate(url).catch(() => null)
+        if (n) { await n.focus(); return } // navigation refusée (fenêtre d'une autre origine, onglet figé) : on ouvre plutôt
+      }
       await self.clients.openWindow(url)
     }),
   )

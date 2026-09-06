@@ -7,8 +7,8 @@ import AvatarUpload from '@/app/AvatarUpload'
 import { afficher, urlPlateforme, urlSite } from '@/lib/urls'
 import { jeton, type SectionProps } from './commun'
 
-// Profil : qui vous êtes dans Presti — photo, nom, adresse publique, et les emails que vous
-// voulez recevoir. Chaque réglage s'enregistre seul : pas de gros bouton « Enregistrer »
+// Profil : qui vous êtes dans Presti — photo, nom, adresse publique. Les notifications (emails, push)
+// vivent dans l'onglet Notifications depuis v9 J2. Chaque réglage s'enregistre seul : pas de gros bouton « Enregistrer »
 // en bas qui ferait perdre trois modifications d'un coup.
 
 export default function SectionProfil({ a, patch, signaler }: SectionProps) {

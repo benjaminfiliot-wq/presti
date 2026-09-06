@@ -20,7 +20,9 @@
 //   node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/push-e2e.mjs
 import fs from 'node:fs'
 import http from 'node:http'
+import https from 'node:https'
 import crypto from 'node:crypto'
+import { spawnSync } from 'node:child_process'
 import { chromium, webkit, devices } from 'playwright'
 import { verifierSessionTest } from './lib/connexion-test.mjs'
 
@@ -46,14 +48,30 @@ const b64u = (b) => Buffer.from(b).toString('base64url')
   if (!actif('pushWeb')) { console.log('⏳ push-e2e : drapeau pushWeb baissé (lib/flags.ts) — à lever une fois 0064 collée'); process.exit(2) }
   if (!process.env.VAPID_PRIVATE_KEY || !process.env.VAPID_PUBLIC_KEY) { console.log('⏳ push-e2e : clés VAPID absentes de .env.local'); process.exit(2) }
 }
-// web-push n'envoie qu'en https. Pour le faux service LOCAL (http), on garde tout ce qui compte — le chiffrement
-// aes128gcm et la signature VAPID (generateRequestDetails) — et on ne remplace que le transport. Les vrais
-// services de push (section 3, en production) passent par le chemin normal.
+// Certificat auto-signé du faux service de push (généré une fois avec openssl dans scripts/.certs-test/, ignoré
+// par git). Le serveur local doit lui faire confiance pour le chemin réel :
+//   NODE_EXTRA_CA_CERTS=scripts/.certs-test/cert.pem npx next start -p 3116
+const CERTS = 'scripts/.certs-test'
+let tls = null
+try {
+  if (!fs.existsSync(`${CERTS}/cert.pem`)) {
+    fs.mkdirSync(CERTS, { recursive: true })
+    const r = spawnSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', `${CERTS}/key.pem`, '-out', `${CERTS}/cert.pem`, '-subj', '/CN=127.0.0.1', '-days', '3650', '-addext', 'subjectAltName=IP:127.0.0.1'], { encoding: 'utf8' })
+    if (r.status !== 0) throw new Error((r.stderr || r.error?.message || 'openssl').slice(0, 120))
+  }
+  tls = { key: fs.readFileSync(`${CERTS}/key.pem`), cert: fs.readFileSync(`${CERTS}/cert.pem`) }
+} catch (e) { console.log('  ⚠️  pas de certificat de test (openssl absent ?) : faux service en http, transport remplacé —', String(e.message).slice(0, 80)) }
+
+// Vers le faux service, web-push fait TOUT comme en vrai (chiffrement aes128gcm, signature VAPID, https) : on lui
+// donne seulement l'autorité de certification du certificat de test. Sans certificat (http), on garde le
+// chiffrement et la signature (generateRequestDetails) et on ne remplace que le transport.
 {
   const wp = (await import('web-push')).default
   const vrai = wp.sendNotification.bind(wp)
+  const agentTest = tls ? new https.Agent({ ca: tls.cert }) : null
   wp.sendNotification = (sub, corps, opts) => {
-    if (!/^http:\/\/127\.0\.0\.1:/.test(sub.endpoint)) return vrai(sub, corps, opts)
+    if (!/^https?:\/\/127\.0\.0\.1:/.test(sub.endpoint)) return vrai(sub, corps, opts)
+    if (agentTest) return vrai(sub, corps, { ...opts, agent: agentTest })
     const d = wp.generateRequestDetails(sub, corps, opts)
     return new Promise((resolve, reject) => {
       const req = http.request(d.endpoint, { method: d.method, headers: d.headers }, (res) => {
@@ -64,23 +82,28 @@ const b64u = (b) => Buffer.from(b).toString('base64url')
     })
   }
 }
-const { envoyerPushArtisan, chargeUtile, PLAFOND_PUSH_HEURE } = await import('../lib/push.ts')
+const { envoyerPushArtisan, chargeUtile, PLAFOND_PUSH_HEURE, TAILLE_CHARGE } = await import('../lib/push.ts')
 const { notifierArtisan } = await import('../lib/notifications.ts')
 
 // ── Le faux service de push : reçoit ce que web-push envoie, répond selon le chemin ─────────────────
+// En HTTPS, comme un vrai (web-push n'envoie qu'en https) : certificat auto-signé généré une fois avec openssl
+// dans scripts/.certs-test/ (ignoré par git). Le serveur local doit lui faire confiance pour le chemin réel :
+//   NODE_EXTRA_CA_CERTS=scripts/.certs-test/cert.pem npx next start -p 3116
+// Sans openssl : http, transport remplacé (moins fidèle, dit en clair).
 const recus = []
-const faux = http.createServer((req, res) => {
+const gestionnaire = (req, res) => {
   const morceaux = []
   req.on('data', (c) => morceaux.push(c))
   req.on('end', () => {
     recus.push({ chemin: req.url, headers: req.headers, corps: Buffer.concat(morceaux) })
-    const code = req.url.startsWith('/gone') ? 410 : req.url.startsWith('/ko') ? 500 : 201
+    const code = req.url.startsWith('/gone') ? 410 : req.url.startsWith('/ko') ? 403 : req.url.startsWith('/panne') ? 500 : 201
     res.writeHead(code); res.end()
   })
-})
+}
+const faux = tls ? https.createServer(tls, gestionnaire) : http.createServer(gestionnaire)
 await new Promise((r) => faux.listen(0, '127.0.0.1', r))
 const PORT = faux.address().port
-const url = (chemin) => `http://127.0.0.1:${PORT}${chemin}`
+const url = (chemin) => `${tls ? 'https' : 'http'}://127.0.0.1:${PORT}${chemin}`
 
 /** Les clés d'un « navigateur » : ECDH P-256 + secret d'authentification, comme un vrai abonnement. */
 function appareil() {
@@ -99,7 +122,8 @@ const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ e
 if (!u.id) { console.log('❌ création du compte de test impossible', JSON.stringify(u).slice(0, 120)); process.exit(1) }
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email: EMAIL, nom: 'Push E2E', metier: 'Plombier', ton_style: 'pro', slug: `push-e2e-${st}`, aide_vues: ['visite:console', 'visite:messages', 'visite:devis', 'visite:plateforme', 'visite:inventaire'] }) })
 const UID = u.id
-const nettoyer = async () => { faux.close(); await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: UID }) }).catch(() => {}) }
+const autres = []
+const nettoyer = async () => { faux.close(); for (const id of [UID, ...autres]) await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: id }) }).catch(() => {}) }
 const abos = async () => (await rest(`push_abonnements?artisan_id=eq.${UID}&select=id,endpoint,actif,echecs,dernier_succes&order=cree_le`)).json()
 const inserer = async (endpoint, ap) => rest('push_abonnements', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ artisan_id: UID, type: 'web', endpoint, p256dh: ap.p256dh, auth: ap.auth, appareil: 'Test · e2e' }) })
 
@@ -113,9 +137,11 @@ try {
   T('envoyerPushArtisan : 1 envoyé, 0 supprimé, 0 désactivé', r1.envoyes === 1 && r1.supprimes === 0 && r1.desactives === 0 && !r1.raison, JSON.stringify(r1))
   const q1 = recus.find((x) => x.chemin === '/ok/1')
   T('le faux service a reçu UNE requête : aes128gcm, en-tête VAPID, TTL 3600', !!q1 && q1.headers['content-encoding'] === 'aes128gcm' && /^vapid t=.+, k=.+/.test(q1.headers.authorization || '') && q1.headers.ttl === '3600', q1 ? JSON.stringify({ ce: q1.headers['content-encoding'], ttl: q1.headers.ttl, auth: (q1.headers.authorization || '').slice(0, 12) }) : 'rien reçu')
-  let clair = null
-  try { clair = q1 ? JSON.parse(await dechiffrer(q1.corps, ap1)) : null } catch (e) { console.log('     (déchiffrement :', e.message, ')') }
-  T('déchiffrée avec les clés de l’appareil : exactement titre, ligne, url, tag, renotify', !!clair && Object.keys(clair).sort().join(',') === 'ligne,renotify,tag,titre,url' && clair.titre === charge.titre && clair.ligne === charge.ligne && clair.url === charge.url && clair.tag === charge.tag && clair.renotify === true, JSON.stringify(clair))
+  let clair = null, brut1 = ''
+  try { brut1 = q1 ? await dechiffrer(q1.corps, ap1) : ''; clair = brut1 ? JSON.parse(brut1) : null } catch (e) { console.log('     (déchiffrement :', e.message, ')') }
+  const sansRembourrage = (c) => (c ? Object.keys(c).filter((k) => k !== 'p').sort().join(',') : '')
+  T('déchiffrée avec les clés de l’appareil : exactement titre, ligne, url, tag, renotify (+ rembourrage « p », des espaces)', !!clair && sansRembourrage(clair) === 'ligne,renotify,tag,titre,url' && /^ *$/.test(clair.p ?? '') && clair.titre === charge.titre && clair.ligne === charge.ligne && clair.url === charge.url && clair.tag === charge.tag && clair.renotify === true, JSON.stringify(clair).slice(0, 200))
+  T(`rembourrée à ${TAILLE_CHARGE} octets : la longueur du chiffré ne trahit pas l’événement`, brut1.length === TAILLE_CHARGE, `${brut1.length} octets`)
   T('aucune donnée personnelle dans la charge (ni @, ni téléphone, ni nom)', !!clair && !/@|\+?\d[\d .]{8,}\d|Push E2E/.test(JSON.stringify(clair)))
   const [a1] = await abos()
   T('dernier_succes posé, échecs à 0', !!a1?.dernier_succes && a1.echecs === 0, JSON.stringify(a1))
@@ -128,10 +154,16 @@ try {
   let r3
   for (let i = 0; i < 3; i++) r3 = await envoyerPushArtisan(UID, charge)
   const l3 = (await abos()).find((x) => x.endpoint.includes('/ko/'))
-  T('service répond 500 trois fois → abonnement désactivé (echecs 3, actif false)', !!l3 && l3.echecs === 3 && l3.actif === false && r3.desactives === 1, JSON.stringify({ l3, r3 }))
+  T('service répond 403 trois fois (l’abonnement est en cause) → désactivé (echecs 3, actif false)', !!l3 && l3.echecs === 3 && l3.actif === false && r3.desactives === 1, JSON.stringify({ l3, r3 }))
   const avant = recus.length
   await envoyerPushArtisan(UID, charge)
   T('un abonnement désactivé ne reçoit plus rien', recus.filter((x) => x.chemin.startsWith('/ko/')).length === 3 && recus.length === avant + 1)
+  // une panne du service (5xx) ne compte pas contre l'appareil
+  const ap4 = appareil(); await inserer(url('/panne/4'), ap4)
+  for (let i = 0; i < 3; i++) await envoyerPushArtisan(UID, charge)
+  const l4 = (await abos()).find((x) => x.endpoint.includes('/panne/'))
+  T('service répond 500 trois fois (panne passagère) → l’appareil reste actif, échecs à 0', !!l4 && l4.actif === true && l4.echecs === 0, JSON.stringify(l4))
+  await rest(`push_abonnements?endpoint=eq.${encodeURIComponent(url('/panne/4'))}`, { method: 'DELETE' })
 
   // bornes de la charge utile
   const b = JSON.parse(chargeUtile({ titre: 'T'.repeat(200), ligne: 'L'.repeat(300), url: 'https://evil.example/x', tag: 'x'.repeat(100) }))
@@ -150,22 +182,41 @@ try {
   // ── 2. notifierArtisan : préférences, conversation, regroupement ───────────────────────────────────
   console.log('\n2. notifierArtisan : préférences et lien vers la conversation')
   const nAvant = recus.length
-  const n1 = await notifierArtisan(UID, 'nouvelle_demande', EMAIL, { subject: 'Nouveau message — Jean Dupont', text: 'contenu privé', leadId: 'lead-123' })
+  const LEAD1 = crypto.randomUUID()
+  const n1 = await notifierArtisan(UID, 'nouvelle_demande', EMAIL, { subject: 'Nouveau message — Jean Dupont', text: 'contenu privé', leadId: LEAD1 })
   await new Promise((r) => setTimeout(r, 1500))
   const q2 = recus.slice(nAvant).find((x) => x.chemin === '/ok/1')
   let c2 = null; try { c2 = q2 ? JSON.parse(await dechiffrer(q2.corps, ap1)) : null } catch {}
-  T('nouvelle_demande → push « Nouvelle demande » vers /messages?lead=…, tag par conversation, sans le sujet ni le nom', n1.push === true && !!c2 && c2.titre === 'Nouvelle demande' && c2.url === '/messages?lead=lead-123' && c2.tag === 'conv-lead-123' && !/Dupont|contenu privé/.test(JSON.stringify(c2)), JSON.stringify({ n1, c2 }))
+  T('nouvelle_demande → push « Nouvelle demande » vers /messages?lead=<uuid>, tag par conversation, sans le sujet ni le nom', n1.push === true && !!c2 && c2.titre === 'Nouvelle demande' && c2.url === `/messages?lead=${LEAD1}` && c2.tag === `conv-${LEAD1}` && !/Dupont|contenu privé/.test(JSON.stringify(c2)), JSON.stringify({ n1, c2 }).slice(0, 220))
+  // un identifiant qui n'est pas un UUID (chaîne libre) n'entre ni dans l'adresse ni dans le tag
+  const { chargePush } = await import('../lib/notifications.ts')
+  const cLibre = chargePush('nouvelle_demande', 'jean.dupont@exemple.fr')
+  T('chargePush : un identifiant qui n’est pas un UUID est ignoré (adresse /messages, tag neutre)', cLibre.url === '/messages' && cLibre.tag === 'conv' && !/dupont/.test(JSON.stringify(cLibre)))
   await rest(`artisans?id=eq.${UID}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ notifications: { push: { nouvelle_demande: false } } }) })
   const nAvant2 = recus.length
-  const n2 = await notifierArtisan(UID, 'nouvelle_demande', EMAIL, { subject: 's', text: 't', leadId: 'lead-124' })
+  const n2 = await notifierArtisan(UID, 'nouvelle_demande', EMAIL, { subject: 's', text: 't', leadId: crypto.randomUUID() })
   await new Promise((r) => setTimeout(r, 1200))
   T('push coupée pour ce type → aucune push (l’email suit sa propre règle)', n2.push === false && recus.length === nAvant2, JSON.stringify(n2))
   await rest(`artisans?id=eq.${UID}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ notifications: { devis_accepte: false } }) })
   const nAvant3 = recus.length
-  const n3 = await notifierArtisan(UID, 'devis_accepte', EMAIL, { subject: 's', text: 't', leadId: 'lead-125' })
+  const n3 = await notifierArtisan(UID, 'devis_accepte', EMAIL, { subject: 's', text: 't', leadId: crypto.randomUUID() })
   await new Promise((r) => setTimeout(r, 1200))
   T('email coupé mais push gardée → email non envoyé, push partie', n3.envoye === false && n3.raison === 'desactive' && n3.push === true && recus.length === nAvant3 + 1, JSON.stringify(n3))
   await rest(`artisans?id=eq.${UID}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ notifications: {} }) })
+
+  if (LOCAL) {
+    // Le chemin RÉEL de production (invariant 3) : une demande arrive par /api/leads → la réponse HTTP part →
+    // la push suit (after), sans le message du client. Local seulement : le serveur doit atteindre le faux service.
+    await rest(`artisans?id=eq.${UID}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ notifications: {} }) })
+    const nAvant4 = recus.length, t0 = Date.now()
+    const rl = await fetch(`${APP}/api/leads`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: `push-e2e-${st}`, contact: `client.${st}@presti-test.invalid`, nom: 'Client Test', message: 'Bonjour, je voudrais un devis pour une salle de bain.' }) })
+    const tReponse = Date.now() - t0
+    let attente = 0
+    while (recus.length === nAvant4 && attente < 15000) { await new Promise((r) => setTimeout(r, 250)); attente += 250 }
+    const q4 = recus.slice(nAvant4).find((x) => x.chemin === '/ok/1')
+    let c4 = null; try { c4 = q4 ? JSON.parse(await dechiffrer(q4.corps, ap1)) : null } catch {}
+    T(`chemin réel : POST /api/leads (${rl.status} en ${tReponse} ms) → la push « Nouvelle demande » suit la réponse (${attente} ms), sans le message ni le nom du client`, rl.status < 300 && !!c4 && c4.titre === 'Nouvelle demande' && /^\/messages\?lead=[0-9a-f-]{36}$/.test(c4.url) && !/salle de bain|Client Test/.test(JSON.stringify(c4)), JSON.stringify({ status: rl.status, c4 }).slice(0, 220))
+  } else console.log('  ℹ️  chemin réel /api/leads → push : joué en local seulement (le serveur doit atteindre le faux service)')
 
   // ── 3. Les routes /api/push ────────────────────────────────────────────────────────────────────────
   console.log('\n3. Les routes /api/push')
@@ -183,6 +234,33 @@ try {
   T('GET : la clé publique VAPID et la liste (l’abonnement mort y est)', g1.status === 200 && typeof g1.data.cle === 'string' && g1.data.cle.length > 60 && (g1.data.appareils || []).some((x) => x.endpoint === mort), JSON.stringify(g1.data).slice(0, 100))
   const sansJeton = await fetch(`${APP}/api/push/abonner`)
   T('GET sans jeton → 401', sansJeton.status === 401, `HTTP ${sansJeton.status}`)
+  // isolation entre comptes (invariant 2) : un second artisan ne voit, ne retire ni ne reprend rien de A
+  const EMAIL2 = `push2.${st}@presti-test.invalid`
+  const u2 = await (await admin('users', { method: 'POST', body: JSON.stringify({ email: EMAIL2, password: MDP, email_confirm: true }) })).json()
+  autres.push(u2.id)
+  await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u2.id, email: EMAIL2, nom: 'Push E2E bis', metier: 'Plombier', ton_style: 'pro', slug: `push-e2e-bis-${st}`, aide_vues: ['visite:console'] }) })
+  const sess2 = await (await fetch(`${SB}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: EMAIL2, password: MDP }) })).json()
+  await verifierSessionTest(sess2.access_token)
+  const api2 = async (chemin, o = {}) => { const r = await fetch(`${APP}${chemin}`, { ...o, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sess2.access_token}`, ...(o.headers || {}) } }); return { status: r.status, data: await r.json().catch(() => ({})) } }
+  const g2 = await api2('/api/push/abonner')
+  T('compte B : GET ne liste que ses appareils (aucun de A)', g2.status === 200 && (g2.data.appareils || []).length === 0, JSON.stringify(g2.data).slice(0, 100))
+  const idA = (g1.data.appareils || []).find((x) => x.endpoint === mort)?.id
+  const dB = await api2('/api/push/abonner', { method: 'DELETE', body: JSON.stringify({ id: idA }) })
+  T('compte B : DELETE de l’appareil de A → sans effet sur A', dB.status === 200 && (await abos()).some((x) => x.endpoint === mort))
+  const apB = appareil()
+  const pB = await api2('/api/push/abonner', { method: 'POST', body: JSON.stringify({ endpoint: mort, keys: { p256dh: apB.p256dh, auth: apB.auth } }) })
+  T('compte B : reprendre l’endpoint de A avec d’autres clés → 409, A garde son appareil', pB.status === 409 && (await abos()).some((x) => x.endpoint === mort), `HTTP ${pB.status}`)
+  const pB2 = await api2('/api/push/abonner', { method: 'POST', body: JSON.stringify({ endpoint: mort, keys: { p256dh: apR.p256dh, auth: apR.auth } }) })
+  T('même navigateur (mêmes clés) reconnecté sous B → l’appareil change de main', pB2.status === 200 && !(await abos()).some((x) => x.endpoint === mort), `HTTP ${pB2.status}`)
+  const pA2 = await api('/api/push/abonner', { method: 'POST', body: JSON.stringify({ endpoint: mort, keys: { p256dh: apR.p256dh, auth: apR.auth } }) })
+  T('… et revient à A de la même façon', pA2.status === 200 && (await abos()).some((x) => x.endpoint === mort), `HTTP ${pA2.status}`)
+  const pH = await api('/api/push/abonner', { method: 'POST', body: JSON.stringify({ endpoint: `https://push.evil.example/${st}`, keys: { p256dh: apR.p256dh, auth: apR.auth } }) })
+  T('service de push inconnu (hôte quelconque) → 400 : Presti ne relaie pas de requête signée vers n’importe où', pH.status === 400, `HTTP ${pH.status}`)
+  const pL = await api('/api/push/abonner', { method: 'POST', body: JSON.stringify({ endpoint: `https://fcm.googleapis.com/fcm/send/e2e-long-${st}`, keys: { p256dh: apR.p256dh + 'A'.repeat(200), auth: apR.auth } }) })
+  T('clé p256dh hors format (trop longue) → 400', pL.status === 400, `HTTP ${pL.status}`)
+  for (let i = 0; i < 10; i++) await rest('push_abonnements', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ artisan_id: u2.id, type: 'web', endpoint: `https://fcm.googleapis.com/fcm/send/cap-${st}-${i}`, p256dh: apB.p256dh, auth: apB.auth, appareil: 'cap' }) })
+  const p11 = await api2('/api/push/abonner', { method: 'POST', body: JSON.stringify({ endpoint: `https://fcm.googleapis.com/fcm/send/cap-${st}-11`, keys: { p256dh: apB.p256dh, auth: apB.auth } }) })
+  T('onzième appareil → 409 : dix appareils actifs au plus par compte', p11.status === 409, `HTTP ${p11.status}`)
   const t1 = await api('/api/push/test', { method: 'POST' })
   const apres = (await abos()).map((x) => x.endpoint)
   T('POST test : le vrai service de push répond 404/410 pour l’abonnement mort → il est purgé (supprimé 1)', t1.status === 200 && t1.data.supprimes >= 1 && !apres.includes(mort), JSON.stringify(t1.data))

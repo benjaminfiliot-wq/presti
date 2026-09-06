@@ -13,6 +13,7 @@ import Visite, { VISITES, type Etape } from '@/app/Visite'
 // Montés ICI, dans la console : jamais sur la landing ni sur une surface artisan (white-label).
 import InstallerApp from '@/app/InstallerApp'
 import MiseAJour from '@/app/MiseAJour'
+import { desabonnerCetAppareil } from '@/lib/pushClient'
 
 type Nav = { key: string; label: string; href?: string; soon?: boolean; icon: ReactNode }
 
@@ -166,6 +167,9 @@ export default function AppShell({
   }, [router])
 
   async function logout() {
+    // v9 J2 — cet appareil cesse de recevoir les notifications AVANT que la session se ferme (revue du 06/09).
+    const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }))
+    await desabonnerCetAppareil(data.session?.access_token)
     await supabase.auth.signOut()
     router.replace('/login')
   }

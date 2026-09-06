@@ -82,6 +82,7 @@ export async function POST(req: Request) {
       if (!artisan.email) return
       await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
         leadId: lead.id,
+        pushImmediat: true, // flux SSE : la réponse est déjà partie, `after` n'aurait plus rien à suivre (revue v9 J2)
         subject: alerte
           ? `⚠️ ${alerte} — ${lead.nom_prospect || lead.contact || 'prospect'}`
           : `Échange en cours — ${lead.nom_prospect || lead.contact || 'prospect'}`,

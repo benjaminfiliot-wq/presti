@@ -145,6 +145,10 @@ export async function revoquerSessions(uid: string): Promise<boolean> {
 
   const { error: eSessions } = await supabaseAdmin.rpc('revoquer_sessions_auth', { p_uid: uid })
   if (eSessions) { console.error('[revocation] sessions:', eSessions.message); return false }
+  // v9 J2 — les appareils abonnés aux notifications tombent avec les sessions : un jeton volé ne garde pas
+  // un canal vers l'artisan (revue du 06/09). Au mieux — la révocation, elle, est acquise.
+  const { error: ePush } = await supabaseAdmin.from('push_abonnements').delete().eq('artisan_id', uid)
+  if (ePush && !/push_abonnements/.test(ePush.message)) console.error('[revocation] notifications:', ePush.message)
   return true
 }
 

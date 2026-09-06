@@ -20,7 +20,7 @@ type Ligne = Record<string, unknown>
 const nomFichier = (numero: unknown, id: unknown) => String(numero || id || 'sans-numero').replace(/[^\w.-]+/g, '_')
 
 async function collecter(uid: string) {
-  const [artisan, leads, devis, factures, clients, tarifs, inventaire] = await Promise.all([
+  const [artisan, leads, devis, factures, clients, tarifs, inventaire, appareils] = await Promise.all([
     supabaseAdmin.from('artisans').select('*').eq('id', uid).maybeSingle(),
     // Sans `ip` : donnée d'un tiers, finalité anti-abus, elle n'a rien à faire dans l'export de l'artisan (C7).
     supabaseAdmin.from('leads').select('*').eq('artisan_id', uid).order('created_at', { ascending: true }).then((r) => ({ ...r, data: (r.data ?? []).map(({ ip: _ip, ...l }: Record<string, unknown>) => l) })),
@@ -29,6 +29,8 @@ async function collecter(uid: string) {
     supabaseAdmin.from('clients_plateforme').select('*').eq('artisan_id', uid).then((r) => r, () => ({ data: [] })),
     supabaseAdmin.from('prix_artisan').select('*').eq('artisan_id', uid).then((r) => r, () => ({ data: [] })),
     supabaseAdmin.from('inventaire').select('*').eq('artisan_id', uid).then((r) => r, () => ({ data: [] })),
+    // v9 J2 — appareils abonnés aux notifications : libellé, dates, état (pas les clés de chiffrement ni l'adresse du service).
+    supabaseAdmin.from('push_abonnements').select('type, appareil, actif, cree_le, dernier_succes').eq('artisan_id', uid).then((r) => r, () => ({ data: [] })),
   ])
   // Messages de toutes ses conversations (par lots, pour ne pas charger l'univers).
   const ids = (leads.data ?? []).map((l) => l.id)
@@ -41,7 +43,7 @@ async function collecter(uid: string) {
   return {
     profil: (artisan.data ?? null) as Ligne | null,
     conversations: l(leads), messages, devis: l(devis), factures: l(factures),
-    clients_plateforme: l(clients), tarifs: l(tarifs), inventaire: l(inventaire),
+    clients_plateforme: l(clients), tarifs: l(tarifs), inventaire: l(inventaire), appareils_notifications: l(appareils),
   }
 }
 

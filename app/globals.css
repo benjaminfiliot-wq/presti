@@ -2476,9 +2476,9 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .notif-row>span:first-child{flex:1;min-width:0;display:flex;flex-direction:column;gap:.15rem}
 .notif-row>span:first-child b{font-size:.92rem}.notif-row>span:first-child small{color:var(--muted);line-height:1.4}
 .notif-canaux{display:flex;gap:.9rem;flex:none}
-.notif-canaux label{display:inline-flex;align-items:center;gap:.4rem;min-height:44px;font-size:.86rem;cursor:pointer}
+.notif-canaux label{display:inline-flex;align-items:center;gap:.4rem;min-height:44px;margin:0;font-size:.86rem;font-weight:500;cursor:pointer}
 .notif-canaux input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
-.notif-etat{margin:0 0 .6rem;padding:.7rem .9rem;border-radius:10px;border:1px solid var(--line);background:var(--surface2,rgba(255,255,255,.03));font-size:.9rem;line-height:1.5}
+.notif-etat{margin:0 0 .6rem;padding:.7rem .9rem;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.5}
 .notif-etat[data-etat="actif"]{border-color:rgba(120,200,140,.35)}
 .notif-erreur{margin:.6rem 0 0;color:var(--crit,#e5735a);font-size:.88rem}
 .notif-h3{font-size:.95rem;margin:1.2rem 0 .5rem}

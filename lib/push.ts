@@ -23,33 +23,43 @@ export type ResultatPush = { envoyes: number; supprimes: number; desactives: num
 export const PLAFOND_PUSH_HEURE = 30
 const ECHECS_MAX = 3
 
-let vapidConfigure = false
+let vapidEtat: 'inconnu' | 'ok' | 'ko' = 'inconnu'
 function vapidPret(): boolean {
+  if (vapidEtat !== 'inconnu') return vapidEtat === 'ok'
   const pub = process.env.VAPID_PUBLIC_KEY, priv = process.env.VAPID_PRIVATE_KEY
-  if (!pub || !priv) return false
-  if (!vapidConfigure) {
+  if (!pub || !priv) return false // absentes : on réessaiera (elles peuvent arriver au prochain déploiement)
+  try {
     // Le « sujet » VAPID identifie l'expéditeur auprès du service de push : une URL de contact (pas une boîte email).
     webpush.setVapidDetails(process.env.VAPID_SUBJECT || 'https://prestiapp.fr/contact', pub, priv)
-    vapidConfigure = true
+    vapidEtat = 'ok'
+  } catch (e) {
+    // Clés mal formées : on le dit une fois, et plus aucune route ne tombe en 500 pour ça.
+    console.error('[push] clés VAPID invalides :', (e as Error).message)
+    vapidEtat = 'ko'
   }
-  return true
+  return vapidEtat === 'ok'
 }
 
-/** La clé publique VAPID, telle que le navigateur doit la présenter au service de push. */
-export const clePubliqueVapid = (): string | null => process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || process.env.VAPID_PUBLIC_KEY || null
+/** La clé publique VAPID, telle que le navigateur doit la présenter au service de push — une seule source, côté serveur. */
+export const clePubliqueVapid = (): string | null => process.env.VAPID_PUBLIC_KEY || null
 
-/** Une adresse de destination valide : un chemin Presti, jamais une URL externe ni un `//hôte`. */
-export const cheminSur = (url: string | null | undefined): string => (typeof url === 'string' && /^\/(?!\/)[^\s]*$/.test(url) ? url : '/dashboard')
+/** Une adresse de destination valide : un chemin Presti — jamais une URL externe, ni `//hôte`, ni `/\hôte` (que `new URL` résout aussi vers un autre hôte). */
+export const cheminSur = (url: string | null | undefined): string => (typeof url === 'string' && /^\/(?![/\\])[^\s\\]*$/.test(url) ? url : '/dashboard')
 
-/** La charge utile, bornée et sans champ inattendu — c'est CE JSON qui part, rien d'autre. */
+/** Taille fixe de la charge chiffrée : sa longueur ne révèle pas le type d'événement au service de push. */
+export const TAILLE_CHARGE = 512
+
+/** La charge utile, bornée, sans champ inattendu, rembourrée à taille fixe — c'est CE JSON qui part, rien d'autre. */
 export function chargeUtile(c: ChargePush): string {
-  return JSON.stringify({
+  const base = {
     titre: String(c.titre).slice(0, 60),
     ligne: String(c.ligne).slice(0, 120),
     url: cheminSur(c.url),
     tag: String(c.tag).slice(0, 60),
     renotify: !!c.renotify,
-  })
+  }
+  const manque = TAILLE_CHARGE - JSON.stringify(base).length - ',"p":""'.length
+  return JSON.stringify(manque > 0 ? { ...base, p: ' '.repeat(manque) } : base)
 }
 
 type Abonnement = { id: string; endpoint: string; p256dh: string; auth: string; echecs: number }
@@ -59,7 +69,6 @@ export async function envoyerPushArtisan(artisanId: string, charge: ChargePush):
   const r: ResultatPush = { envoyes: 0, supprimes: 0, desactives: 0 }
   if (!actif('pushWeb')) return { ...r, raison: 'desactive' }
   if (!vapidPret()) return { ...r, raison: 'vapid_absent' }
-  if (!(await consommerLimite(`push:artisan:${artisanId}`, PLAFOND_PUSH_HEURE, 3600))) return { ...r, raison: 'plafond' }
 
   const { data, error } = await supabaseAdmin
     .from('push_abonnements').select('id, endpoint, p256dh, auth, echecs')
@@ -67,6 +76,8 @@ export async function envoyerPushArtisan(artisanId: string, charge: ChargePush):
   if (error) { console.error('[push] lecture des abonnements :', error.message); return { ...r, raison: 'table' } }
   const abos = (data ?? []) as Abonnement[]
   if (abos.length === 0) return { ...r, raison: 'aucun_appareil' }
+  // Le plafond ne décompte que des envois réellement tentés : un artisan sans appareil ne le consomme pas.
+  if (!(await consommerLimite(`push:artisan:${artisanId}`, PLAFOND_PUSH_HEURE, 3600))) return { ...r, raison: 'plafond' }
 
   const corps = chargeUtile(charge)
   await Promise.all(abos.map(async (a) => {
@@ -80,12 +91,16 @@ export async function envoyerPushArtisan(artisanId: string, charge: ChargePush):
         // L'abonnement n'existe plus côté service (navigateur désinstallé, permission retirée) : on l'oublie.
         await supabaseAdmin.from('push_abonnements').delete().eq('id', a.id)
         r.supprimes++
-      } else {
+      } else if (statut && statut >= 400 && statut < 500 && statut !== 429) {
+        // 400/401/403/413… : c'est l'abonnement qui est en cause. Trois fois d'affilée → désactivé.
         const echecs = (a.echecs ?? 0) + 1
         const desactiver = echecs >= ECHECS_MAX
         await supabaseAdmin.from('push_abonnements').update({ echecs, ...(desactiver ? { actif: false } : {}) }).eq('id', a.id)
         if (desactiver) r.desactives++
-        console.error('[push] envoi raté', statut ?? '', (e as Error)?.message?.slice(0, 120) ?? '')
+        console.error('[push] abonnement refusé', statut, (e as Error)?.message?.slice(0, 120) ?? '')
+      } else {
+        // 429, 5xx, panne réseau : le service, pas l'appareil — on ne compte pas un échec définitif contre lui.
+        console.error('[push] envoi raté (service)', statut ?? 'réseau', (e as Error)?.message?.slice(0, 120) ?? '')
       }
     }
   }))

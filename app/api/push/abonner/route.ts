@@ -9,8 +9,13 @@ import { clePubliqueVapid } from '@/lib/push'
 // Appareils abonnés aux notifications push (prompt v9 §3.4 — Paramètres → Notifications).
 //
 //  GET    : la clé publique VAPID et la liste des appareils de l'artisan (libellé, dates, état).
-//  POST   : abonner CET appareil — l'abonnement Web Push tel que le navigateur l'a créé (endpoint https
-//           chez le service de push, clés p256dh/auth). Un endpoint déjà connu est repris, pas dupliqué.
+//  POST   : abonner CET appareil — l'abonnement Web Push tel que le navigateur l'a créé : endpoint https
+//           chez un SERVICE DE PUSH CONNU (Google, Apple, Mozilla, Microsoft, Samsung, Opera — pas un hôte
+//           quelconque : Presti n'est pas un relais de requêtes signées vers n'importe où), clés p256dh/auth
+//           au format et à la taille attendus. Un endpoint déjà connu est repris, pas dupliqué ; s'il est
+//           rattaché à un AUTRE compte, il ne change de main que si les clés sont les mêmes (même navigateur
+//           qui se reconnecte sous un autre compte) — sinon 409, on ne retire pas l'appareil d'un tiers sur
+//           simple connaissance de son adresse. Dix appareils actifs au plus par compte.
 //  DELETE : retirer un appareil (le sien : l'artisan ne voit et ne touche que ses lignes).
 //
 // Le libellé de l'appareil vient du User-Agent (lib/userAgent), jamais de l'adresse IP. Plafond :
@@ -19,7 +24,13 @@ import { clePubliqueVapid } from '@/lib/push'
 export const runtime = 'nodejs'
 
 const INDISPONIBLE = { error: 'Les notifications push ne sont pas encore disponibles.' }
-const B64URL = /^[A-Za-z0-9_-]{16,}$/
+/** Clé publique ECDH P-256 (65 octets) et secret d'authentification (16 octets), en base64url. */
+const P256DH = /^[A-Za-z0-9_-]{86,90}$/
+const AUTH = /^[A-Za-z0-9_-]{20,24}$/
+const MAX_APPAREILS = 10
+/** Les services de push des navigateurs (suffixes d'hôte). */
+const SERVICES_PUSH = ['fcm.googleapis.com', 'android.googleapis.com', 'push.apple.com', 'push.services.mozilla.com', 'notify.windows.com', 'push.samsungosp.com', 'push.opera.com']
+const serviceConnu = (hote: string) => SERVICES_PUSH.some((s) => hote === s || hote.endsWith(`.${s}`))
 
 function refus(s: { error: string; status: number; code?: string }) {
   return NextResponse.json({ error: s.error, ...(s.code ? { code: s.code } : {}) }, { status: s.status })
@@ -48,21 +59,27 @@ export async function POST(req: Request) {
   const auth = typeof body?.keys?.auth === 'string' ? body.keys.auth.trim() : ''
   let url: URL | null = null
   try { url = new URL(endpoint) } catch { url = null }
-  if (!url || url.protocol !== 'https:' || endpoint.length > 2000 || !B64URL.test(p256dh) || !B64URL.test(auth)) {
+  if (!url || url.protocol !== 'https:' || endpoint.length > 2000 || !P256DH.test(p256dh) || !AUTH.test(auth)) {
     return NextResponse.json({ error: 'Abonnement invalide.' }, { status: 400 })
   }
+  if (!serviceConnu(url.hostname)) return NextResponse.json({ error: 'Service de notifications inconnu.' }, { status: 400 })
   const ua = lireUserAgent(req.headers.get('user-agent'))
   const appareil = `${ua.appareil} · ${ua.navigateur}`.slice(0, 80)
 
-  // Même endpoint déjà connu (rechargement, réactivation) : on le remet à jour, quel que soit son état.
-  const { data: existant } = await supabaseAdmin.from('push_abonnements').select('id, artisan_id').eq('endpoint', endpoint).maybeSingle()
+  const { data: existant } = await supabaseAdmin.from('push_abonnements').select('id, artisan_id, p256dh, auth').eq('endpoint', endpoint).maybeSingle()
   if (existant && existant.artisan_id !== s.uid) {
-    // Un endpoint appartient à un navigateur, donc à une seule personne : s'il change de compte, il change de main.
+    // Même navigateur, autre compte : les clés le prouvent. Sinon, on ne touche pas à l'appareil d'un tiers.
+    if (existant.p256dh !== p256dh || existant.auth !== auth) return NextResponse.json({ error: 'Cet appareil est rattaché à un autre compte.' }, { status: 409 })
     await supabaseAdmin.from('push_abonnements').delete().eq('id', existant.id)
   }
+  const reprise = !!existant && existant.artisan_id === s.uid
+  if (!reprise) {
+    const { count } = await supabaseAdmin.from('push_abonnements').select('id', { count: 'exact', head: true }).eq('artisan_id', s.uid).eq('actif', true)
+    if ((count ?? 0) >= MAX_APPAREILS) return NextResponse.json({ error: `${MAX_APPAREILS} appareils sont déjà abonnés : retirez-en un d’abord.` }, { status: 409 })
+  }
   const ligne = { artisan_id: s.uid, type: 'web', endpoint, p256dh, auth, appareil, actif: true, echecs: 0 }
-  const { data, error } = existant && existant.artisan_id === s.uid
-    ? await supabaseAdmin.from('push_abonnements').update(ligne).eq('id', existant.id).select('id, appareil, cree_le').single()
+  const { data, error } = reprise
+    ? await supabaseAdmin.from('push_abonnements').update(ligne).eq('id', existant!.id).select('id, appareil, cree_le').single()
     : await supabaseAdmin.from('push_abonnements').insert(ligne).select('id, appareil, cree_le').single()
   if (error) {
     console.error('[push/abonner]', error.message)
