@@ -40,3 +40,6 @@ public/swe-worker-*.js.map
 
 # Certificat auto-signé du faux service de push (scripts/push-e2e.mjs) — jamais versionné
 scripts/.certs-test/
+
+# Sorties du smoke Android (captures, logcat) : artefact CI, jamais versionnées
+mobile/smoke/
