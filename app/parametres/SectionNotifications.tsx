@@ -41,7 +41,7 @@ function cleEnOctets(cle: string): Uint8Array {
 /** Le service worker de la console : déjà là, ou en train de s'installer (première visite). */
 async function serviceWorkerPret(): Promise<ServiceWorkerRegistration | null> {
   const reg = await navigator.serviceWorker.getRegistration()
-  if (reg) return reg
+  if (reg?.active) return reg // une inscription sans worker ACTIF (première visite, en cours d'installation) ne suffit pas à s'abonner
   return Promise.race([navigator.serviceWorker.ready, new Promise<null>((r) => setTimeout(() => r(null), 8000))])
 }
 
@@ -59,7 +59,7 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
   const charger = useCallback(async () => {
     const r = await api<{ cle?: string | null; appareils?: Appareil[] }>('/api/push/abonner')
     if (!r.ok) { setErreur(r.data.error ?? 'Liste indisponible.'); setAppareils([]); return }
-    setCle(r.data.cle ?? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? null)
+    setCle(r.data.cle ?? null) // une seule source : la clé que le serveur signe
     setAppareils(r.data.appareils ?? [])
   }, [])
 
@@ -113,7 +113,7 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
       if (perm !== 'granted') { setErreur('Autorisez les notifications quand le navigateur le demande, puis réessayez.'); return }
       const reg = await serviceWorkerPret()
       if (!reg) throw new Error('Presti se prépare encore sur cet appareil : patientez quelques secondes, puis réessayez.')
-      const clePublique = cle ?? process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? null
+      const clePublique = cle
       if (!clePublique) throw new Error('Clé de notification absente : réessayez dans un instant.')
       const options = { userVisibleOnly: true, applicationServerKey: cleEnOctets(clePublique) as BufferSource }
       let sub: PushSubscription
@@ -125,8 +125,16 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
         await (await reg.pushManager.getSubscription())?.unsubscribe().catch(() => {})
         sub = await reg.pushManager.subscribe(options)
       }
-      const j = sub.toJSON()
-      const r = await api('/api/push/abonner', { method: 'POST', body: JSON.stringify({ endpoint: j.endpoint, keys: j.keys }) })
+      let j = sub.toJSON()
+      let r = await api<{ code?: string }>('/api/push/abonner', { method: 'POST', body: JSON.stringify({ endpoint: j.endpoint, keys: j.keys }) })
+      if (!r.ok && r.data.code === 'reabonner') {
+        // L'endpoint de ce navigateur est encore rattaché à un autre compte (autre artisan connecté ici avant) :
+        // on se réabonne — nouvel endpoint, nouvelles clés — et on refait la demande une fois.
+        await sub.unsubscribe().catch(() => {})
+        sub = await reg.pushManager.subscribe(options)
+        j = sub.toJSON()
+        r = await api<{ code?: string }>('/api/push/abonner', { method: 'POST', body: JSON.stringify({ endpoint: j.endpoint, keys: j.keys }) })
+      }
       if (!r.ok) { await sub.unsubscribe().catch(() => {}); throw new Error(r.data.error ?? 'Abonnement refusé.') }
       setCourant(sub.endpoint)
       await charger()

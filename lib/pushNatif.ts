@@ -48,7 +48,7 @@ async function jetonAcces(c: CompteService): Promise<string> {
   const corps = b64u(JSON.stringify({ iss: c.client_email, scope: 'https://www.googleapis.com/auth/firebase.messaging', aud: uri, iat: maintenant, exp: maintenant + 3600 }))
   const signature = crypto.sign('RSA-SHA256', Buffer.from(`${entete}.${corps}`), c.private_key)
   const assertion = `${entete}.${corps}.${b64u(signature)}`
-  const r = await fetch(uri, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }) })
+  const r = await fetch(uri, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }), signal: AbortSignal.timeout(5000) })
   const j = (await r.json().catch(() => ({}))) as { access_token?: string; expires_in?: number; error?: string }
   if (!r.ok || !j.access_token) throw new Error(`jeton Google refusé (${r.status}) ${j.error ?? ''}`)
   jetonOAuth = { valeur: j.access_token, expire: maintenant + (j.expires_in ?? 3600) }
@@ -71,6 +71,7 @@ export async function envoyerPushNatif(jeton: string, plateforme: 'android' | 'i
     void plateforme
     const r = await fetch(`https://fcm.googleapis.com/v1/projects/${cs.project_id}/messages:send`, {
       method: 'POST', headers: { Authorization: `Bearer ${acces}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message }),
+      signal: AbortSignal.timeout(5000), // un service muet ne retient jamais une route
     })
     if (r.ok) return { ok: true }
     const j = (await r.json().catch(() => ({}))) as { error?: { status?: string; details?: { errorCode?: string }[] } }

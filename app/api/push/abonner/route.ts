@@ -4,7 +4,7 @@ import { authArtisan, estEchec } from '@/lib/authArtisan'
 import { consommerLimite } from '@/lib/limites'
 import { lireUserAgent } from '@/lib/userAgent'
 import { actif } from '@/lib/flags'
-import { clePubliqueVapid } from '@/lib/push'
+import { clePubliqueVapid, serviceConnu } from '@/lib/push'
 
 // Appareils abonnés aux notifications push (prompt v9 §3.4 — Paramètres → Notifications).
 //
@@ -28,9 +28,6 @@ const INDISPONIBLE = { error: 'Les notifications push ne sont pas encore disponi
 const P256DH = /^[A-Za-z0-9_-]{86,90}$/
 const AUTH = /^[A-Za-z0-9_-]{20,24}$/
 const MAX_APPAREILS = 10
-/** Les services de push des navigateurs (suffixes d'hôte). */
-const SERVICES_PUSH = ['fcm.googleapis.com', 'android.googleapis.com', 'push.apple.com', 'push.services.mozilla.com', 'notify.windows.com', 'push.samsungosp.com', 'push.opera.com']
-const serviceConnu = (hote: string) => SERVICES_PUSH.some((s) => hote === s || hote.endsWith(`.${s}`))
 
 function refus(s: { error: string; status: number; code?: string }) {
   return NextResponse.json({ error: s.error, ...(s.code ? { code: s.code } : {}) }, { status: s.status })
@@ -90,17 +87,18 @@ export async function POST(req: Request) {
   if (!serviceConnu(url.hostname)) return NextResponse.json({ error: 'Service de notifications inconnu.' }, { status: 400 })
   const appareil = `${ua.appareil} · ${ua.navigateur}`.slice(0, 80)
 
-  const { data: existant } = await supabaseAdmin.from('push_abonnements').select('id, artisan_id, p256dh, auth').eq('endpoint', endpoint).maybeSingle()
+  const { data: existant } = await supabaseAdmin.from('push_abonnements').select('id, artisan_id').eq('endpoint', endpoint).maybeSingle()
   if (existant && existant.artisan_id !== s.uid) {
-    // Même navigateur, autre compte : les clés le prouvent. Sinon, on ne touche pas à l'appareil d'un tiers.
-    if (existant.p256dh !== p256dh || existant.auth !== auth) return NextResponse.json({ error: 'Cet appareil est rattaché à un autre compte.' }, { status: 409 })
-    await supabaseAdmin.from('push_abonnements').delete().eq('id', existant.id)
+    // Un endpoint détenu par un autre compte ne change JAMAIS de main ici (contre-revue du 06/09 : un transfert sur
+    // simple possession serait un canal silencieux). Le navigateur se réabonne (nouvel endpoint) et refait la demande.
+    return NextResponse.json({ error: 'Abonnement à refaire sur cet appareil.', code: 'reabonner' }, { status: 409 })
   }
-  const reprise = !!existant && existant.artisan_id === s.uid
-  if (!reprise) {
-    const { count } = await supabaseAdmin.from('push_abonnements').select('id', { count: 'exact', head: true }).eq('artisan_id', s.uid).eq('actif', true)
-    if ((count ?? 0) >= MAX_APPAREILS) return NextResponse.json({ error: `${MAX_APPAREILS} appareils sont déjà abonnés : retirez-en un d’abord.` }, { status: 409 })
-  }
+  const reprise = !!existant
+  // Dix appareils ACTIFS au plus, la ligne reprise exclue du compte (une ligne désactivée reprise ne contourne pas le plafond).
+  let q = supabaseAdmin.from('push_abonnements').select('id', { count: 'exact', head: true }).eq('artisan_id', s.uid).eq('actif', true)
+  if (reprise) q = q.neq('id', existant!.id)
+  const { count } = await q
+  if ((count ?? 0) >= MAX_APPAREILS) return NextResponse.json({ error: `${MAX_APPAREILS} appareils sont déjà abonnés : retirez-en un d’abord.` }, { status: 409 })
   const ligne = { artisan_id: s.uid, type: 'web', endpoint, p256dh, auth, appareil, actif: true, echecs: 0 }
   const { data, error } = reprise
     ? await supabaseAdmin.from('push_abonnements').update(ligne).eq('id', existant!.id).select('id, appareil, cree_le').single()

@@ -64,5 +64,9 @@ export async function POST(req: Request) {
     console.error('[securite/mot-de-passe]', maj.status, d.msg || d.message || d.error_description)
     return NextResponse.json({ error: 'Changement impossible pour l’instant.' }, { status: 500 })
   }
+  // v9 J2 (contre-revue) — un mot de passe changé coupe aussi les notifications des appareils abonnés : ils se
+  // réabonnent depuis Paramètres → Notifications. Au mieux — le changement de mot de passe, lui, est acquis.
+  await supabaseAdmin.from('push_abonnements').delete().eq('artisan_id', s.uid).then(({ error }) => { if (error && !/push_abonnements/.test(error.message)) console.error('[mot-de-passe] notifications :', error.message) })
+
   return NextResponse.json({ ok: true, conseil: force.conseil, autres_sessions_fermees: true })
 }

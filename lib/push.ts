@@ -63,9 +63,16 @@ export function chargeUtile(c: ChargePush): string {
     tag: String(c.tag).slice(0, 60),
     renotify: !!c.renotify,
   }
-  const manque = TAILLE_CHARGE - JSON.stringify(base).length - ',"p":""'.length
+  // En OCTETS UTF-8 (ce que web-push chiffre), pas en unités UTF-16 : « é » ou « ’ » comptent 2 ou 3 octets.
+  const manque = TAILLE_CHARGE - Buffer.byteLength(JSON.stringify(base), 'utf8') - ',"p":""'.length
   return JSON.stringify(manque > 0 ? { ...base, p: ' '.repeat(manque) } : base)
 }
+
+/** Les services de push des navigateurs (suffixes d'hôte) : on n'enrôle et on n'envoie que vers eux. */
+export const SERVICES_PUSH = ['fcm.googleapis.com', 'android.googleapis.com', 'push.apple.com', 'push.services.mozilla.com', 'notify.windows.com', 'push.samsungosp.com', 'push.opera.com']
+export const serviceConnu = (hote: string) => SERVICES_PUSH.some((s) => hote === s || hote.endsWith(`.${s}`))
+/** Le faux service de push des tests, sur la machine seulement. */
+const SERVICE_DE_TEST = /^https?:\/\/127\.0\.0\.1:\d+\//
 
 type Abonnement = { id: string; type: 'web' | 'ios' | 'android'; endpoint: string | null; jeton: string | null; p256dh: string | null; auth: string | null; echecs: number }
 
@@ -105,7 +112,10 @@ export async function envoyerPushArtisan(artisanId: string, charge: ChargePush):
   if (error) { console.error('[push] lecture des abonnements :', error.message); return { ...r, raison: 'table' } }
   const abos = (data ?? []) as Abonnement[]
   if (abos.length === 0) return { ...r, raison: 'aucun_appareil' }
-  const webs = abos.filter((a) => a.type === 'web' && a.endpoint && a.p256dh && a.auth)
+  // Un endpoint web qui n'est pas chez un service connu (ligne d'avant la règle, ou base touchée) ne reçoit jamais rien : désactivé.
+  const suspects = abos.filter((a) => a.type === 'web' && a.endpoint && !SERVICE_DE_TEST.test(a.endpoint) && !serviceConnu(new URL(a.endpoint).hostname))
+  if (suspects.length) await supabaseAdmin.from('push_abonnements').update({ actif: false }).in('id', suspects.map((a) => a.id))
+  const webs = abos.filter((a) => a.type === 'web' && a.endpoint && a.p256dh && a.auth && !suspects.includes(a))
   const natifs = abos.filter((a) => a.type !== 'web' && a.jeton)
   if (webs.length > 0 && !vapidPret()) return { ...r, raison: 'vapid_absent' }
   // Le plafond ne décompte que des envois réellement tentés : un artisan sans appareil ne le consomme pas.
@@ -119,7 +129,8 @@ export async function envoyerPushArtisan(artisanId: string, charge: ChargePush):
   await Promise.all([
     ...webs.map(async (a) => {
       try {
-        await webpush.sendNotification({ endpoint: a.endpoint!, keys: { p256dh: a.p256dh!, auth: a.auth! } }, corps, { TTL: 3600, urgency: 'high' })
+        // `timeout` : un service de push muet ne retient jamais une route (sans lui, web-push attend sans limite).
+        await webpush.sendNotification({ endpoint: a.endpoint!, keys: { p256dh: a.p256dh!, auth: a.auth! } }, corps, { TTL: 3600, urgency: 'high', timeout: 5000 })
         await noterSucces(a, r)
       } catch (e) {
         const statut = (e as { statusCode?: number })?.statusCode

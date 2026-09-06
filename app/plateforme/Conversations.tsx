@@ -358,7 +358,7 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
           </div>
         </div>
       ) : (
-        <div className="inbox-thread empty"><div className="inbox-placeholder muted">Sélectionnez une conversation pour la lire et y répondre.</div></div>
+        <div className="inbox-thread empty">{err ? <div className="msg err" role="alert">{err}</div> : null}<div className="inbox-placeholder muted">Sélectionnez une conversation pour la lire et y répondre.</div></div>
       )}
     </div>
   )

@@ -81,11 +81,17 @@ self.addEventListener('notificationclick', (event) => {
   const url = new URL(cheminSur((event.notification.data as { url?: unknown } | undefined)?.url), self.location.origin).href
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(async (fenetres) => {
-      // Une fenêtre Presti est déjà ouverte : on y va, sinon on en ouvre une (l'app installée si elle l'est).
-      const f = fenetres.find((w) => 'navigate' in w && 'focus' in w)
-      if (f) {
-        const n = await f.navigate(url).catch(() => null)
-        if (n) { await n.focus(); return } // navigation refusée (fenêtre d'une autre origine, onglet figé) : on ouvre plutôt
+      // Une fenêtre de la CONSOLE déjà ouverte : on y va — jamais une surface d'artisan (/p, /site, /l) ni la
+      // landing, et jamais une page où l'artisan est en train de rédiger (devis, facture) : on ne détourne pas son
+      // écran. Déjà sur la cible : on la met devant. Sinon, une nouvelle fenêtre (l'app installée si elle l'est).
+      const chemin = (w: WindowClient) => { try { return new URL(w.url).pathname } catch { return '' } }
+      const console_ = fenetres.filter((w) => { const c = chemin(w); return c !== '' && c !== '/' && !/^\/(p|site|l)\//.test(c) })
+      const dejaLa = console_.find((w) => w.url === url)
+      if (dejaLa) { await dejaLa.focus(); return }
+      const libre = console_.find((w) => !/^\/(devis|factures)\//.test(chemin(w)) && 'navigate' in w)
+      if (libre) {
+        const n = await libre.navigate(url).catch(() => null)
+        if (n) { await n.focus(); return } // navigation refusée : on ouvre plutôt
       }
       await self.clients.openWindow(url)
     }),

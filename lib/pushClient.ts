@@ -4,7 +4,7 @@
 
 export async function desabonnerCetAppareil(jeton: string | null | undefined): Promise<void> {
   const retirer = (corps: Record<string, string>) => (jeton
-    ? fetch('/api/push/abonner', { method: 'DELETE', keepalive: true, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jeton}` }, body: JSON.stringify(corps) }).catch(() => {})
+    ? fetch('/api/push/abonner', { method: 'DELETE', keepalive: true, signal: AbortSignal.timeout(2000), headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jeton}` }, body: JSON.stringify(corps) }).catch(() => {})
     : Promise.resolve())
   // La coque native (J3) : le jeton APNs/FCM de cet appareil, gardé par app/NatifPont.tsx.
   try {

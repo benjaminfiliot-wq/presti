@@ -174,7 +174,7 @@ export default function AppShell({
   async function logout() {
     // v9 J2 — cet appareil cesse de recevoir les notifications AVANT que la session se ferme (revue du 06/09).
     const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }))
-    await desabonnerCetAppareil(data.session?.access_token)
+    await Promise.race([desabonnerCetAppareil(data.session?.access_token), new Promise((r) => setTimeout(r, 2000))])
     await supabase.auth.signOut()
     router.replace('/login')
   }

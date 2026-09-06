@@ -37,11 +37,14 @@ export function chargePush(type: TypeNotification, lead?: string | null): Charge
 type Envoi = Omit<Parameters<typeof sendEmail>[0], 'to'> & {
   /** La conversation concernée : la push y mène directement, et les notifications s'y regroupent. */
   leadId?: string | null
-  /** Envoyer la push tout de suite, en attendant sa fin — pour une réponse déjà partie (flux SSE) où `after` n'a plus de réponse à suivre. */
-  pushImmediat?: boolean
 }
 
-/** La push part APRÈS la réponse HTTP quand Next le permet (`after`), sinon tout de suite, sans bloquer. */
+/**
+ * La push part APRÈS la réponse HTTP quand Next le permet (`after`), sinon tout de suite, sans bloquer.
+ * `after` vaut aussi dans une réponse en flux (SSE) : Next 15.5 exécute ses rappels à la fermeture de la
+ * réponse, donc après `controller.close()` — un envoi « immédiat » y retenait au contraire la réponse
+ * (contre-revue du 06/09). Jamais d'attente d'une push dans une route.
+ */
 function lancerPush(artisanId: string, charge: ChargePush) {
   const envoyer = () => envoyerPushArtisan(artisanId, charge).catch((e) => console.error('[push] envoi :', (e as Error)?.message))
   import('next/server').then((m) => { try { m.after(envoyer) } catch { void envoyer() } }).catch(() => { void envoyer() })
@@ -59,7 +62,7 @@ export async function notifierArtisan(
   email: string | null | undefined,
   contenu: Envoi,
 ): Promise<{ envoye: boolean; raison?: 'sans_email' | 'desactive' | 'erreur'; push?: boolean }> {
-  const { leadId, pushImmediat, ...courrier } = contenu
+  const { leadId, ...courrier } = contenu
   let prefs: Notifications | null = null
   try {
     const { data } = await supabaseAdmin.from('artisans').select('notifications').eq('id', artisanId).maybeSingle()
@@ -67,10 +70,7 @@ export async function notifierArtisan(
   } catch { /* préférences illisibles : on considère tout activé, comme un compte neuf */ }
 
   const push = pushActive(prefs, type)
-  if (push) {
-    if (pushImmediat) await envoyerPushArtisan(artisanId, chargePush(type, leadId)).catch((e) => console.error('[push] envoi :', (e as Error)?.message))
-    else lancerPush(artisanId, chargePush(type, leadId))
-  }
+  if (push) lancerPush(artisanId, chargePush(type, leadId))
 
   if (!email) return { envoye: false, raison: 'sans_email', push }
   if (!notificationActive(prefs, type)) return { envoye: false, raison: 'desactive', push }
