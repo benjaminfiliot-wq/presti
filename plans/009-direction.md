@@ -148,3 +148,10 @@ Vérifié · Trouvé (preuve) · Corrigé (test rouge → diff → test vert, co
 ## Note de réception (07/09, collé par Benj pendant le v9)
 
 Condition de lancement au moment du collage : `pwa-e2e` 71/71, `push-e2e` 39/39, `liens-profonds-e2e` 19/19 ✅ ; jalons v9 **J1–J4 cochés** (journal [22]–[27]) ; **J5 (test interne Play) bloqué par M2**, que Benj a choisi de faire « plus tard » ; soumission aux stores **planifiée** (`mobile/STORES.md` en rédaction). Tout ce qui reste du v9 est côté Benj (téléphone, M2, M1 + M5). Décision : la cartographie de l'existant (lecture seule) commence tout de suite ; le code du J1 commence sous cette hypothèse explicite, sauf contre-ordre.
+
+## Réponses de Benj (07/09, avant J1)
+
+- **H1** : la boîte Gmail de l'entreprise = **la sienne** (son compte Google). L'autorisation OAuth reste un clic de lui, le jour où l'onglet Messagerie existe.
+- **H6 / registre des apports — exigence nouvelle** : « je veux m'assurer qu'il apporte des clients **avec preuve** ». Le registre ne se contente pas d'une case « apporté par Alexandre » : chaque apport porte une **preuve vérifiable**, et l'attribution doit être **automatique** quand c'est possible. Décision : un **lien d'apport** personnel (`prestiapp.fr/a/<code>`), qui pose une empreinte (cookie signé, 90 jours) ; à l'inscription, l'artisan est rattaché à l'apporteur **avec la trace** (date du premier passage, page d'arrivée, date d'inscription, cookie signé). Statuts : `prouve` (lien d'apport ou code saisi à l'inscription), `declare` (ajouté à la main par Benj, avec pièce : email d'introduction, capture), `conteste`, `retire`. Le relevé mensuel du contrat ne compte que les apports `prouve` ou `declare` **avec pièce**, et le dit ligne par ligne. Alexandre voit son registre (lecture) et sa preuve, jamais celui des autres canaux.
+- **H7** : rôle d'Alexandre = la recommandation (lecture clients/abonnements + registre des apports + messagerie assignée ; ni comptabilité, ni réglages). « Je te laisse faire. »
+- H2, H3, H4, H5 : en attente — ne bloquent pas le socle.

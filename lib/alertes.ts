@@ -78,7 +78,7 @@ export async function coutIADuMois(): Promise<{ usd: number; brut?: unknown; err
  */
 const COUT_MOYEN_CREDIT_EUR = 0.012
 
-async function estimationDepuisLesCredits(): Promise<{ credits: number; euros: number }> {
+export async function estimationDepuisLesCredits(): Promise<{ credits: number; euros: number }> {
   const { data } = await supabaseAdmin.from('artisans').select('plan, credits, is_founder').not('email', 'like', '%@presti-test.invalid')
   let credits = 0
   for (const a of data ?? []) {
@@ -177,7 +177,7 @@ async function verifierErreurs(): Promise<Alerte[]> {
 }
 
 // ── 4. Les crons muets ───────────────────────────────────────────────────────
-const CRONS_ATTENDUS: { nom: string; maxHeures: number }[] = [
+export const CRONS_ATTENDUS: { nom: string; maxHeures: number }[] = [
   { nom: 'relances', maxHeures: 26 }, { nom: 'canaux-relever', maxHeures: 26 }, { nom: 'alertes', maxHeures: 26 }, { nom: 'purges-rgpd', maxHeures: 26 },
 ]
 /**
@@ -305,6 +305,9 @@ export async function envoyerAlertes(alertes: Alerte[]): Promise<number> {
 async function envoyer(al: Alerte, simulation: boolean): Promise<boolean> {
   const cle = `alerte:${al.motif}:${al.cle ?? '-'}`
   if (!simulation && !(await consommerLimite(cle, 1, 86_400))) return false
+  // v10 J1 : l'alerte est aussi GARDÉE (table alertes, 0065) pour « À faire » du Centre de direction — non bloquant :
+  // table absente ou doublon du jour (index unique) → on envoie quand même l'email.
+  if (!simulation) await persisterAlerte(al)
   const sujet = simulation ? `[SIMULATION] ${al.sujet}` : al.sujet
   const corps = simulation ? `${al.corps}\n\n— Ceci est une simulation lancée volontairement (scripts/alertes-e2e.mjs). Aucun incident réel.` : al.corps
   try {
@@ -316,6 +319,13 @@ async function envoyer(al: Alerte, simulation: boolean): Promise<boolean> {
     if (!r.ok) await enregistrerErreur(`alerte perdue : ${al.motif}`, new Error(`${sujet} — ${r.error ?? 'envoi refusé'}`))
     return r.ok
   } catch (e) { console.error('[alertes]', al.motif, e instanceof Error ? e.message : e); await enregistrerErreur(`alerte perdue : ${al.motif}`, e); return false }
+}
+
+/** Garde l'alerte en base (v10, table 0065) ; silencieux si la table manque ou si la ligne du jour existe déjà. */
+async function persisterAlerte(al: Alerte): Promise<void> {
+  const gravite = /solde_ia|paiement|securite|cron_muet/.test(al.motif) ? 'critique' : al.motif === 'digest' ? 'info' : 'attention'
+  const { error } = await supabaseAdmin.from('alertes').insert({ motif: al.motif, cle: al.cle ?? null, gravite, sujet: al.sujet.slice(0, 200), corps: al.corps.slice(0, 4000), source: 'lib/alertes.ts' })
+  if (error && !/duplicate|42P01|does not exist|schema cache/i.test(error.message)) console.error('[alertes] persistance :', error.message)
 }
 
 /** Exemples réalistes de chaque motif, pour prouver le tuyau sans attendre l'incident. */

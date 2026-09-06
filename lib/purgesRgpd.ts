@@ -252,6 +252,15 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
     noter(await supprimerAnciennes('clients_sessions', 'id', 'expire_le', seuilJetons, PLAFOND_LIGNES)) +
     noter(await supprimerAnciennes('clients_liens', 'id', 'expire_le', seuilJetons, PLAFOND_LIGNES))
 
+  // 6. Centre de direction (v10, 0065) : journal > 24 mois (le trigger l'autorise passé ce délai), re-confirmations
+  //    expirées > 7 j (sans utilité), alertes acquittées > 12 mois. Derrière le drapeau : sans 0065, pas de tables.
+  if (actif('direction')) {
+    bilan.jetons +=
+      noter(await supprimerAnciennes('journal_direction', 'id', 'cree_le', seuilMois(24, maintenant), PLAFOND_LIGNES)) +
+      noter(await supprimerAnciennes('reconfirmations', 'jeton_hash', 'expire_le', seuilJetons, PLAFOND_LIGNES)) +
+      noter(await supprimerAnciennes('alertes', 'id', 'acquittee_le', seuilMois(12, maintenant), PLAFOND_LIGNES))
+  }
+
   // 5. Code par email (v7 bloc 2) : codes et appareils de confiance passés de date, et les
   //    sessions vérifiées de plus de 90 jours — l'artisan retape alors un code, une fois.
   //    Derrière le drapeau : sans la migration 0063, ces tables n'existent pas.

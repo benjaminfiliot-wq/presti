@@ -23,6 +23,9 @@ export const FLAGS = {
   pushNatif: true,
   /** §6 — 2FA TOTP via Supabase MFA. Décision Benj du 04/09 : dans le sprint. Livré et testé (scripts/mfa-e2e.mjs). */
   mfa: true,
+  /** v10 J1 — le Centre de direction (app/direction, app/api/direction). À lever dès que la migration 0065 est collée :
+   *  levé sans les tables, la garde répond 503 (fail-closed, voulu) — d'où l'ordre : coller, puis lever. Baissé : 404. */
+  direction: false,
   /** §8 F1 — photo de facture fournisseur → OCR → lignes proposées. */
   inventaireOcr: false,
   /** §8 F3 — assistant de recherche fournisseurs. Livré et testé le 04/09 (scripts/recherche-e2e.mjs : 37/37, vraie recherche Castorama). */
