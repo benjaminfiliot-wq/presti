@@ -119,10 +119,11 @@ jobs:
           SVC=$(grep '^SUPABASE_SERVICE_ROLE_KEY=' .env.ci | cut -d= -f2-)
           rm -f .env.ci
           test -n "$SB" && test -n "$SVC" || { echo 'PRESTI_ENV_LOCAL incomplet : APK non publié.'; exit 1; }
+          # apikey EN PLUS de Bearer : les clés Supabase au nouveau format (sb_secret_…) ne sont pas des JWT — sans lui, 400/403 « Invalid Compact JWS » (premier run de 0.1.1)
           APK=mobile/android/app/build/outputs/apk/release/app-release.apk
           for nom in presti.apk "presti-${GITHUB_REF_NAME}.apk"; do
             code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$SB/storage/v1/object/presti-app/$nom" \
-              -H "Authorization: Bearer $SVC" -H "x-upsert: true" -H "Content-Type: application/vnd.android.package-archive" \
+              -H "Authorization: Bearer $SVC" -H "apikey: $SVC" -H "x-upsert: true" -H "Content-Type: application/vnd.android.package-archive" \
               --data-binary @"$APK")
             echo "$nom → HTTP $code"; test "$code" = "200" || exit 1
           done
