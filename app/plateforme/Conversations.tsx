@@ -139,6 +139,18 @@ export default function Conversations({ onCompte }: { onCompte?: (nonLus: number
     return () => { vv.removeEventListener('resize', appliquer); vv.removeEventListener('scroll', appliquer); racine()?.style.removeProperty('--vvh') }
   }, [sel])
 
+  // v9 J2 — lien profond depuis une notification push (/messages?lead=<id>) : la conversation s'ouvre d'elle-même.
+  const lienOuvert = useRef(false)
+  useEffect(() => {
+    if (lienOuvert.current || leads.length === 0) return
+    const id = new URLSearchParams(window.location.search).get('lead')
+    const l = id ? leads.find((x) => x.id === id) : null
+    if (!l) return
+    lienOuvert.current = true
+    void open(l)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [leads])
+
   async function open(l: Lead) {
     setSel(l.id); setErr(null); setDraft(''); setPhotosSignees([]); setEdition({})
     await loadThread(l.id)

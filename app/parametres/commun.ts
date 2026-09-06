@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabaseClient'
+import type { Notifications } from '@/lib/notificationsTypes'
 
 // Ce que chaque section de /parametres reçoit (sprint J-1 §6).
 
@@ -16,7 +17,7 @@ export type Artisan = {
   credits_reset_le: string | null
   stripe_customer_id: string | null
   stripe_subscription_id: string | null
-  notifications: Record<string, boolean> | null
+  notifications: Notifications | null
   suppression_demandee_le: string | null
   site_active: boolean | null
   plateforme_active: boolean | null

@@ -81,7 +81,7 @@ export async function POST(req: Request) {
     const notifier = async (reply: string | null, alerte?: string) => {
       if (!artisan.email) return
       await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
-        
+        leadId: lead.id,
         subject: alerte
           ? `⚠️ ${alerte} — ${lead.nom_prospect || lead.contact || 'prospect'}`
           : `Échange en cours — ${lead.nom_prospect || lead.contact || 'prospect'}`,

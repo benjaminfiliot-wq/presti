@@ -66,7 +66,7 @@ export async function POST(req: Request) {
 
       if (artisan?.email) {
         await notifierArtisan(lead.artisan_id, 'devis_accepte', artisan.email, {
-          
+          leadId: lead.id,
           subject: `✅ Devis accepté — ${qui}`,
           text: `Bonne nouvelle : ${qui} vient d'accepter votre devis ${devis.numero || ''} (${Number(devis.total_ttc || 0).toFixed(2)} € TTC) depuis votre espace de conversation.\n\nL'acceptation est horodatée et conservée avec l'échange.\n\nRetrouvez le dossier dans votre espace (Devis).`,
           replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
             facture = { numero: f.numero }
             await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'facture_emise', contenu: `Facture d'acompte ${f.numero} (${pct} %)` })
           } else if (artisan?.email) {
-            await notifierArtisan(lead.artisan_id, 'devis_accepte', artisan.email, { subject: `Facture d'acompte non créée — ${qui}`, text: `Votre règle demande une facture d'acompte de ${pct} % à l'acceptation, mais elle n'a pas pu être créée :\n\n${f.error}\n\nCréez-la depuis votre espace (Factures) une fois le profil complété.`}).catch(() => {})
+            await notifierArtisan(lead.artisan_id, 'devis_accepte', artisan.email, { leadId: lead.id, subject: `Facture d'acompte non créée — ${qui}`, text: `Votre règle demande une facture d'acompte de ${pct} % à l'acceptation, mais elle n'a pas pu être créée :\n\n${f.error}\n\nCréez-la depuis votre espace (Factures) une fois le profil complété.`}).catch(() => {})
           }
         }
       } catch (e) { console.error('[conversation/devis] acompte:', e) }
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
       .eq('id', lead.id)
     if (artisan?.email) {
       await notifierArtisan(lead.artisan_id, 'devis_accepte', artisan.email, {
-        
+        leadId: lead.id,
         subject: `Modification demandée — devis ${devis.numero || ''}`,
         text: `${qui} demande une modification de votre devis ${devis.numero || ''} :\n\n« ${commentaire || '(sans précision)'} »\n\nRépondez-lui depuis votre espace (Messages).`,
         replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,

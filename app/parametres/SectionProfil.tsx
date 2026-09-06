@@ -5,7 +5,6 @@ import { supabase } from '@/lib/supabaseClient'
 import AdresseEditor from '@/app/AdresseEditor'
 import AvatarUpload from '@/app/AvatarUpload'
 import { afficher, urlPlateforme, urlSite } from '@/lib/urls'
-import { TYPES_NOTIFICATION, notificationActive, type TypeNotification } from '@/lib/notifications'
 import { jeton, type SectionProps } from './commun'
 
 // Profil : qui vous êtes dans Presti — photo, nom, adresse publique, et les emails que vous
@@ -29,13 +28,6 @@ export default function SectionProfil({ a, patch, signaler }: SectionProps) {
     setSaving(false)
     if (error) { signaler({ type: 'err', text: 'Enregistrement impossible.' }); return }
     patch({ nom: v }); signaler({ type: 'ok', text: 'Nom enregistré ✅' })
-  }
-
-  async function basculer(type: TypeNotification, actif: boolean) {
-    const notifications = { ...(a.notifications ?? {}), [type]: actif }
-    patch({ notifications }) // optimiste : la case répond tout de suite
-    const { error } = await supabase.from('artisans').update({ notifications }).eq('id', a.id)
-    if (error) { patch({ notifications: a.notifications }); signaler({ type: 'err', text: 'Réglage non enregistré.' }) }
   }
 
   return (
@@ -63,18 +55,6 @@ export default function SectionProfil({ a, patch, signaler }: SectionProps) {
         {slug ? <AdresseEditor slug={slug} prefixe={prefixe} jeton={jeton} onChange={(s) => patch({ slug: s })} /> : null}
       </div>
 
-      <div className="tool-card">
-        <h2>Emails que vous recevez</h2>
-        <p className="muted" style={{ margin: '0 0 .6rem' }}>
-          Envoyés à <b>{a.email}</b>. Coupez ce que vous ne voulez plus recevoir — vos clients, eux, continuent d’être répondus.
-        </p>
-        {TYPES_NOTIFICATION.map((t) => (
-          <label key={t.id} className="prof-toggle param-notif">
-            <input type="checkbox" checked={notificationActive(a.notifications, t.id)} onChange={(e) => basculer(t.id, e.target.checked)} />
-            <span><b>{t.label}</b><small>{t.detail}</small></span>
-          </label>
-        ))}
-      </div>
     </>
   )
 }

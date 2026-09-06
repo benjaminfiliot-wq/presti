@@ -65,7 +65,7 @@ export async function declencherRegles(p: { lead: LeadCtx; nbReponsesIA: number;
   if (d.puisNotifier && p.artisanEmail) {
     const qui = p.lead.nom_prospect || p.lead.contact || 'un prospect'
     await notifierArtisan(p.lead.artisan_id, 'proposition', p.artisanEmail, {
-      
+      leadId: p.lead.id,
       subject: envoye ? `Devis ${r.numero} envoyé à ${qui}` : `Devis brouillon prêt — ${qui}`,
       text: envoye
         ? `Votre règle d'automatisation a chiffré et envoyé le devis ${r.numero} (${r.total_ttc.toFixed(2)} € TTC) dans la conversation avec ${qui}.\n\nRetrouvez-le dans votre espace (Devis).`

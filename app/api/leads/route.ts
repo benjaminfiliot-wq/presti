@@ -191,7 +191,7 @@ export async function POST(req: Request) {
       }
       if (artisan.email && !deferContact) {
         await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
-          
+          leadId: lead.id,
           subject: `Nouveau contact — ${nom_prospect || contact}`,
           text: `Nouveau contact via votre page Presti — à vous de répondre.\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: typeof contact === 'string' && contact.includes('@') ? contact : undefined,
@@ -277,7 +277,7 @@ Réponse automatique ${isEmail ? 'envoyée au prospect' : '(prospect sans email 
 ---
 ${reply}`
           await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
-            
+            leadId: lead.id,
             subject: `Nouveau lead — ${nom_prospect || contact}`,
             text: recap,
             replyTo: isEmail ? contact : undefined,

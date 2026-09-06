@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       const photoCount = Array.isArray(lead.photos) ? lead.photos.length : 0
       if (artisan?.email) {
         await notifierArtisan(lead.artisan_id, 'nouvelle_demande', artisan.email, {
-          
+          leadId: lead.id,
           subject: `Nouveau lead — ${nom_prospect || contact}`,
           text: `Un prospect a laissé ses coordonnées après un premier échange sur votre page.\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${lead.message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRetrouvez l'échange dans votre espace (Messages).`,
           replyTo: contact.includes('@') ? contact : undefined,

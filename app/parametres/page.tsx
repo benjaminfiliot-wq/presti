@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { actif } from '@/lib/flags'
 import AppShell from '@/app/AppShell'
 import SectionProfil from './SectionProfil'
+import SectionNotifications from './SectionNotifications'
 import SectionLegal from './SectionLegal'
 import SectionAbonnement from './SectionAbonnement'
 import SectionSecurite from './SectionSecurite'
@@ -19,14 +20,15 @@ import type { Artisan, Message } from './commun'
 // les écrans qui existent déjà, avec une ligne qui dit ce qu'on y règle. On n'a pas déplacé
 // ces réglages pour le plaisir de déplacer.
 
-type Onglet = 'profil' | 'legal' | 'abonnement' | 'securite' | 'donnees'
+type Onglet = 'profil' | 'notifications' | 'legal' | 'abonnement' | 'securite' | 'donnees'
 type Entree = { id: string; label: string; detail: string; icone: ReactNode; href?: string }
 
 const ic = (d: ReactNode) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
 
 const NAV: { groupe: string; entrees: Entree[] }[] = [
   { groupe: 'Compte', entrees: [
-    { id: 'profil', label: 'Profil', detail: 'Photo, nom, adresse, emails reçus', icone: ic(<><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></>) },
+    { id: 'profil', label: 'Profil', detail: 'Photo, nom, adresse publique', icone: ic(<><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></>) },
+    { id: 'notifications', label: 'Notifications', detail: actif('pushWeb') ? 'Sur votre téléphone et par email' : 'Emails que vous recevez', icone: ic(<><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></>) },
     { id: 'legal', label: 'Entreprise & légal', detail: 'SIRET, TVA, assurance, IBAN', icone: ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M8 13h8M8 17h5" /></>) },
     { id: 'abonnement', label: 'Abonnement & usage', detail: 'Formule, crédits, paiements', icone: ic(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
   ] },
@@ -42,8 +44,8 @@ const NAV: { groupe: string; entrees: Entree[] }[] = [
     { id: 'aide', label: 'Aide', detail: actif('aideCentre') ? 'Le centre d’aide, tout expliqué' : 'C’est quoi, cet écran ?', href: actif('aideCentre') ? '/aide' : undefined, icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M9.6 9.3a2.5 2.5 0 0 1 4.9.7c0 1.6-2.5 2-2.5 3.5" /><circle cx="12" cy="17" r=".6" fill="currentColor" /></>) },
   ] },
 ]
-const ONGLETS: Onglet[] = ['profil', 'legal', 'abonnement', 'securite', 'donnees']
-const TITRES: Record<Onglet, string> = { profil: 'Profil', legal: 'Entreprise & légal', abonnement: 'Abonnement & usage', securite: 'Sécurité', donnees: 'Données & confidentialité' }
+const ONGLETS: Onglet[] = ['profil', 'notifications', 'legal', 'abonnement', 'securite', 'donnees']
+const TITRES: Record<Onglet, string> = { profil: 'Profil', notifications: 'Notifications', legal: 'Entreprise & légal', abonnement: 'Abonnement & usage', securite: 'Sécurité', donnees: 'Données & confidentialité' }
 
 function ParametresInner() {
   const router = useRouter()
@@ -76,6 +78,7 @@ function ParametresInner() {
 
   const contenu = !a ? <div className="tool-card"><p className="muted">Chargement…</p></div>
     : onglet === 'profil' ? <SectionProfil a={a} patch={patch} signaler={signaler} />
+    : onglet === 'notifications' ? <SectionNotifications a={a} patch={patch} signaler={signaler} />
     : onglet === 'legal' ? <SectionLegal key={a.id} a={a} patch={patch} signaler={signaler} />
     : onglet === 'abonnement' ? <SectionAbonnement a={a} patch={patch} signaler={signaler} />
     : onglet === 'securite' ? <SectionSecurite a={a} patch={patch} signaler={signaler} />

@@ -168,7 +168,7 @@ export async function POST(req: Request) {
     if (!decision.ok) {
       if (artisan.email) {
         await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
-          
+          leadId: lead.id,
           subject: `Nouveau message — ${lead.nom_prospect || lead.contact || 'prospect'}`,
           text: `Un prospect vous a écrit sur votre page Presti :\n\n« ${message} »\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
@@ -186,7 +186,7 @@ export async function POST(req: Request) {
     if (!credit.ok) {
       if (artisan.email) {
         await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
-          
+          leadId: lead.id,
           subject: `Nouveau message — ${lead.nom_prospect || lead.contact || 'prospect'}`,
           text: `Un prospect vous a écrit sur votre page Presti :\n\n« ${message} »\n\nRépondez-lui depuis votre espace (Messages).`,
           replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
@@ -221,7 +221,7 @@ export async function POST(req: Request) {
     // Notifie l'artisan qu'un échange est en cours (une fois par message entrant).
     if (artisan.email) {
       await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
-        
+        leadId: lead.id,
         subject: `Échange en cours — ${lead.nom_prospect || lead.contact || 'prospect'}`,
         text: `Un prospect discute sur votre page Presti.\n\nSon message :\n« ${message} »\n\n${reply ? `Réponse automatique envoyée :\n---\n${reply}` : '(réponse auto indisponible — répondez-lui depuis Messages)'}\n\nRetrouvez et poursuivez l'échange dans votre espace (Messages).`,
         replyTo: lead.contact && lead.contact.includes('@') ? lead.contact : undefined,
