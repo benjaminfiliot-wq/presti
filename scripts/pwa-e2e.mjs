@@ -149,7 +149,8 @@ console.log('\n3. Les en-têtes')
     const req = request({ ...base, path: chemin, method: 'GET', headers: { Host: hote, 'user-agent': 'presti-pwa-e2e' } }, (res) => { const morceaux = []; res.on('data', (c) => morceaux.push(c)); res.on('end', () => resolve({ status: res.statusCode, type: res.headers['content-type'] || '', t: Buffer.concat(morceaux).toString('utf8') })) })
     req.on('error', () => resolve({ status: 0, type: '', t: '' })); req.end()
   })
-  for (const hote of ['qg.prestiapp.fr', 'www.prestiapp.fr']) {
+  // (www.prestiapp.fr n'est pas rattaché au projet Vercel — connexion refusée — : seul qg. est sondé)
+  for (const hote of ['qg.prestiapp.fr']) {
     const r = await Promise.all([sonder(hote, '/sw.js'), sonder(hote, '/manifest.webmanifest'), sonder(hote, '/hors-ligne.html'), sonder(hote, '/marque/presti-marque-corail.svg')])
     const ok = r[0].status === 200 && /javascript/.test(r[0].type) && r[0].t.includes('hors-ligne.html') && r[1].status === 200 && /manifest\+json/.test(r[1].type) && r[2].status === 200 && r[2].t.includes('data-presti-hors-ligne') && r[3].status === 200 && /svg/.test(r[3].type)
     T(`hôte maison ${hote} : sw.js, manifeste, hors-ligne.html et marque servis (200)`, ok, r.map((x) => x.status).join(' '))
