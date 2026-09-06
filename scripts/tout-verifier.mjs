@@ -49,6 +49,7 @@ const SUITES = [
   { nom: 'Domaine perso (routage, marque, vérification)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/domaine-perso-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Motion — CLS des slides, onglets de la démo, boucles hors écran', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/motion-cls-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Mobile (iPhone 14, Pixel 7, iPad Mini : 28 pages, parcours, clavier, Lighthouse)', cmd: 'node', args: ['scripts/mobile-e2e.mjs'], cout: 'navigateur' },
+  { nom: 'App installable (manifeste, white-label, service worker, hors-ligne, carte Android/iOS, mise à jour)', cmd: 'node', args: ['scripts/pwa-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Code par email à la connexion (anti-énumération, essais, appareils de confiance, TOTP)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/code-connexion-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Les trois modes de réponse (offre × mode × route, sans IA)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/modes-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Alertes (ronde à sec, huit motifs)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/alertes-e2e.mjs'], cout: 'gratuit' },

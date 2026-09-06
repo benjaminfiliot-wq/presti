@@ -1,3 +1,7 @@
+import withSerwistInit from '@serwist/next'
+import fs from 'node:fs'
+import crypto from 'node:crypto'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Dossier de build paramétrable : permet une compilation de vérification (PRESTI_DIST=.next-prod)
@@ -24,6 +28,9 @@ const nextConfig = {
     // Directives communes (hors frame-ancestors, qui varie selon la route).
     const cspBase = [
       "default-src 'self'",
+      // v9 §2.3 — le service worker (public/sw.js) est un worker de même origine ; explicite plutôt
+      // qu'hérité de default-src, pour que ce dernier puisse bouger sans casser l'app installée.
+      "worker-src 'self'",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: blob: https://gorcdvmueakcncsmrouo.supabase.co https://www.google-analytics.com", // médias bucket + data URL (legacy) + GA
@@ -100,4 +107,29 @@ const nextConfig = {
     ]
   },
 };
-export default nextConfig;
+// v9 §2.3 — service worker Serwist (app/sw.ts → public/sw.js, généré au build, jamais versionné).
+//  - register: false → c'est app/MiseAJour.tsx qui enregistre, depuis la console seulement ;
+//  - reloadOnOnline: false → pas de rechargement imposé quand le réseau revient ;
+//  - include: rien du build dans la précache : les fichiers /_next/static sont mis en cache à
+//    l'usage (app/sw.ts) — précacher les 1,5 Mo de polices des thèmes artisan n'a aucun sens ;
+//  - la précache = les icônes de marque + la page hors-ligne, révisée à chaque déploiement.
+const withSerwist = withSerwistInit({
+  swSrc: 'app/sw.ts',
+  swDest: 'public/sw.js',
+  swUrl: '/sw.js',
+  scope: '/',
+  register: false,
+  reloadOnOnline: false,
+  cacheOnNavigation: false,
+  disable: process.env.NODE_ENV === 'development',
+  include: [/^$/],
+  // Le plugin n'applique `globPublicPatterns` QUE si `additionalPrecacheEntries` est absent : on liste
+  // donc nous-mêmes les fichiers de marque, révisés par leur empreinte (re-téléchargés seulement s'ils changent).
+  additionalPrecacheEntries: [
+    { url: '/hors-ligne', revision: process.env.VERCEL_GIT_COMMIT_SHA || String(Date.now()) },
+    ...['presti-icone-192.png', 'presti-icone-512.png', 'presti-icone-maskable-192.png', 'presti-icone-maskable-512.png', 'presti-marque-corail.svg']
+      .map((f) => ({ url: `/marque/${f}`, revision: crypto.createHash('md5').update(fs.readFileSync(`public/marque/${f}`)).digest('hex').slice(0, 12) })),
+  ],
+})
+
+export default withSerwist(nextConfig)

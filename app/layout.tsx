@@ -43,13 +43,19 @@ const DESC =
 //     jusqu'à ce repli.
 // v8 A1.4 — `viewportFit: 'cover'` : sans lui, les zones sûres d'iOS (encoche, barre d'accueil) valent 0
 // et les barres collées en bas passent sous la barre d'accueil. Le thème et l'app installable : partie B.
-export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover' }
+// v9 §2.2 — `themeColor` : la barre système prend le fond nuit quand l'app est installée. Le manifeste
+// (app/manifest.ts) et `appleWebApp` ci-dessous sont RETIRÉS par les segments /site et /p (white-label).
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: '#0A0C11' }
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://prestiapp.fr'),
   title: { default: TITLE, template: '%s · Presti' },
   description: DESC,
   applicationName: 'Presti',
+  // v9 §2.2 — installée sur l'écran d'accueil iOS : plein écran, barre d'état translucide, nom « Presti ».
+  appleWebApp: { capable: true, title: 'Presti', statusBarStyle: 'black-translucent' },
+  // Next rend `mobile-web-app-capable` ; les iOS antérieurs à 17.4 ne lisent que la variante `apple-`.
+  other: { 'apple-mobile-web-app-capable': 'yes' },
   keywords: ['devis artisan', 'logiciel devis bâtiment', 'réponse devis automatique', 'facture artisan', 'relance devis', 'IA artisan', 'plombier électricien devis'],
   authors: [{ name: 'Presti' }],
   // PIÈGE : cette canonique est celle de l'ACCUEIL, et elle descend sur toute page qui ne la

@@ -31,3 +31,9 @@ scripts/_*.tmp.mjs
 # Clé privée des sauvegardes — jamais versionnée (scripts/cle-sauvegarde.mjs)
 cle-sauvegarde.key.pem
 sauvegardes/
+
+# Service worker généré au build par @serwist/next (app/sw.ts → public/sw.js) — jamais versionné
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
+public/swe-worker-*.js.map

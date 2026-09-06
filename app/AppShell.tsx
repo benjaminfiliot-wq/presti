@@ -9,6 +9,10 @@ import { supabase } from '@/lib/supabaseClient'
 import { actif } from '@/lib/flags'
 import AidePanneau, { articlePour } from '@/app/AidePanneau'
 import Visite, { VISITES, type Etape } from '@/app/Visite'
+// v9 §2 — l'app installable : invitation (Android/iOS) et service worker + bandeau de mise à jour.
+// Montés ICI, dans la console : jamais sur la landing ni sur une surface artisan (white-label).
+import InstallerApp from '@/app/InstallerApp'
+import MiseAJour from '@/app/MiseAJour'
 
 type Nav = { key: string; label: string; href?: string; soon?: boolean; icon: ReactNode }
 
@@ -297,6 +301,7 @@ export default function AppShell({
               <span>Annuler ou exporter vos données →</span>
             </a>
           ) : null}
+          <InstallerApp />
           {children}
         </div>
       </div>
@@ -308,6 +313,7 @@ export default function AppShell({
         onRevoirVisite={actif('aideVisites') && VISITES.console?.length ? () => { setAideOuverte(false); setTimeout(() => setVisite(true), 250) } : undefined}
       />
       {actif('aideVisites') && visite && !aideOuverte && <Visite surface="console" onEtape={etapeVisite} onFin={finVisite} />}
+      <MiseAJour />
     </div>
   )
 }
