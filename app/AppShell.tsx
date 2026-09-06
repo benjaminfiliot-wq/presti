@@ -284,7 +284,7 @@ export default function AppShell({
           </button>
           <div className="psh-th">
             {crumb && <span className="psh-crumb">{crumb}</span>}
-            <h1>{title}</h1>
+            <h1 tabIndex={-1}>{title}</h1>
           </div>
           {actions && <div className="psh-actions">{actions}</div>}
           {article && (

@@ -75,7 +75,7 @@ const man = await rm.json().catch(() => ({}))
 T('name et short_name « Presti »', man.name === 'Presti' && man.short_name === 'Presti')
 T('id « / », scope « / », start_url /dashboard?source=pwa', man.id === '/' && man.scope === '/' && man.start_url === '/dashboard?source=pwa', `${man.id} ${man.scope} ${man.start_url}`)
 T('display standalone + display_override', man.display === 'standalone' && Array.isArray(man.display_override) && man.display_override[0] === 'standalone')
-T('lang fr, dir ltr, orientation portrait', man.lang === 'fr' && man.dir === 'ltr' && man.orientation === 'portrait')
+T('lang fr, dir ltr, aucun verrou d’orientation (tablette, paysage — WCAG 1.3.4)', man.lang === 'fr' && man.dir === 'ltr' && (!man.orientation || man.orientation === 'any'), `orientation: ${man.orientation}`)
 T('couleurs de fond et de thème #0A0C11', man.background_color === '#0A0C11' && man.theme_color === '#0A0C11')
 T('catégories business/productivity', Array.isArray(man.categories) && man.categories.includes('business') && man.categories.includes('productivity'))
 const sharp = (await import('sharp')).default
@@ -133,9 +133,11 @@ console.log('\n3. Les en-têtes')
   T('/sw.js servi en JavaScript', r.status === 200 && /javascript/.test(r.headers.get('content-type') || ''), `HTTP ${r.status} ${r.headers.get('content-type')}`)
   T('/sw.js sans cache long (le navigateur doit voir les mises à jour)', !/immutable/.test(cc) && !/max-age=\d{4,}/.test(cc), cc)
   const sw = await r.text()
-  T('/sw.js : repli /hors-ligne, exclusion de /p et /site, jamais skipWaiting automatique', sw.includes('/hors-ligne') && /\(p\|site\)/.test(sw) && !/skipWaiting:!0|skipWaiting:true/.test(sw))
-  const { status, t } = await html('/hors-ligne')
-  T('/hors-ligne en ligne : 200, page sobre, sans script obligatoire', status === 200 && t.includes('data-presti-hors-ligne') && t.includes('Vous êtes hors ligne') && t.includes('href="/dashboard"'))
+  T('/sw.js : repli /hors-ligne.html, exclusion de /p, /site et /l, jamais skipWaiting automatique', sw.includes('/hors-ligne.html') && /\(p\|site\|l\)/.test(sw) && !/skipWaiting:!0|skipWaiting:true/.test(sw))
+  const hl = await html('/hors-ligne.html')
+  T('/hors-ligne.html : fichier statique, AUCUN script, « Réessayer » recharge l’adresse demandée (href vide)', hl.status === 200 && hl.t.includes('data-presti-hors-ligne') && hl.t.includes('Vous êtes hors ligne') && !/<script/i.test(hl.t) && /href=""[^>]*>Réessayer</.test(hl.t) && hl.t.includes('href="/dashboard"'))
+  const hl2 = await html('/hors-ligne')
+  T('/hors-ligne (adresse lisible) : réécrite vers le fichier statique', hl2.status === 200 && hl2.t.includes('data-presti-hors-ligne') && !/<script/i.test(hl2.t))
 }
 
 // ── 4. Le service worker (Chromium, Pixel 7) ───────────────────────────────────────────────────────
@@ -171,7 +173,7 @@ const cr = await chromium.launch()
   const toutes = Object.values(caches).flat()
   const interdites = toutes.filter((u) => /^\/(api|auth|p|site)\//.test(u) || /^\/(dashboard|messages|devis|factures|inventaire|parametres|profil|plateforme|abonnement|outils|tarifs|aide)(\/|\?|$)/.test(u))
   T(`caches après le parcours : ${toutes.length} entrées, aucune réponse /api, /auth, /p, /site ni page de la console`, toutes.length > 0 && interdites.length === 0, interdites.slice(0, 6).join(' '))
-  T('précache : /hors-ligne et les icônes de marque y sont', toutes.some((u) => u.startsWith('/hors-ligne')) && toutes.some((u) => u.startsWith('/marque/presti-icone-maskable-512.png')), Object.keys(caches).join(', '))
+  T('précache : /hors-ligne.html et les icônes de marque y sont', toutes.some((u) => u.startsWith('/hors-ligne.html')) && toutes.some((u) => u.startsWith('/marque/presti-icone-maskable-512.png')), Object.keys(caches).join(', '))
   T('/_next/static mis en cache à l’usage', toutes.some((u) => u.startsWith('/_next/static/')))
   fs.writeFileSync(`${OUT}/caches.json`, JSON.stringify(caches, null, 1))
   // hors ligne
@@ -186,6 +188,10 @@ const cr = await chromium.launch()
   const rSite = await page.goto(`${APP}/site/${DEMO.slug}`, { waitUntil: 'load', timeout: 30000 }).catch(() => null)
   const cSite = rSite ? await page.content().catch(() => '') : ''
   T('hors ligne : /site/[slug] ne reçoit PAS la page Presti', !rSite || !cSite.includes('data-presti-hors-ligne'), rSite ? `HTTP ${rSite.status()}` : '')
+  // l'ancienne adresse des plateformes (/l/<slug>, redirigée en ligne) : hors ligne, pas de redirection — et pas de page Presti non plus
+  const rL = await page.goto(`${APP}/l/${DEMO.slug}`, { waitUntil: 'load', timeout: 30000 }).catch(() => null)
+  const cL = rL ? await page.content().catch(() => '') : ''
+  T('hors ligne : /l/[slug] (ancien lien distribué) ne reçoit PAS la page Presti', !rL || !cL.includes('data-presti-hors-ligne'), rL ? `HTTP ${rL.status()}` : '')
   await ctx.setOffline(false)
   // mise à jour : un worker qui attend → bandeau → rechargement au clic
   await page.goto(`${APP}/dashboard`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {})
@@ -193,12 +199,37 @@ const cr = await chromium.launch()
   const bandeau = await page.waitForSelector('[data-presti-maj]', { timeout: 25000 }).catch(() => null)
   T('nouvelle version en attente → bandeau « Une nouvelle version de Presti est prête »', !!bandeau && /nouvelle version/i.test(await page.textContent('[data-presti-maj]').catch(() => '')))
   await page.screenshot({ path: `${OUT}/bandeau-maj-pixel.png` }).catch(() => {})
+  const controleurEst = (p, marque) => p.evaluate((m) => !!navigator.serviceWorker.controller && navigator.serviceWorker.controller.scriptURL.includes(m), marque).catch(() => false)
+  const attendreControleur = async (p, marque) => { for (let i = 0; i < 40; i++) { await p.waitForTimeout(500); if (await controleurEst(p, marque)) return true } return false }
   if (bandeau) {
-    await page.click('[data-presti-maj] button').catch(() => {})
-    let pris = false
-    for (let i = 0; i < 40 && !pris; i++) { await page.waitForTimeout(500); pris = await page.evaluate(() => !!navigator.serviceWorker.controller && /maj=1/.test(navigator.serviceWorker.controller.scriptURL)).catch(() => false) }
-    T('clic « Recharger » → le nouveau worker prend la main et la page est rechargée', pris)
+    await page.click('[data-presti-maj] button.primary').catch(() => {})
+    T('clic « Recharger » → le nouveau worker prend la main et la page est rechargée', await attendreControleur(page, 'maj=1'))
   } else T('clic « Recharger » → le nouveau worker prend la main', false, 'pas de bandeau')
+  // deux onglets (revue du 06/09) : « Recharger » dans A ne recharge PAS B, où un devis est en cours ; B voit le
+  // bandeau, « Plus tard » le masque, et son propre « Recharger » fonctionne bien qu'aucun worker n'attende plus.
+  const pageB = await ctx.newPage()
+  await pageB.goto(`${APP}/devis/nouveau`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {})
+  await pageB.evaluate(() => { window.__onglet_b = 'vivant' })
+  await page.evaluate(() => navigator.serviceWorker.register('/sw.js?maj=2').catch(() => null))
+  const bandeauA = await page.waitForSelector('[data-presti-maj]', { timeout: 25000 }).catch(() => null)
+  if (bandeauA) await page.click('[data-presti-maj] button.primary').catch(() => {})
+  const aPris = await attendreControleur(page, 'maj=2')
+  await pageB.waitForTimeout(1500)
+  const bVivant = await pageB.evaluate(() => window.__onglet_b === 'vivant').catch(() => false)
+  const bControle = await controleurEst(pageB, 'maj=2')
+  const bBandeau = await pageB.waitForSelector('[data-presti-maj]', { timeout: 8000 }).catch(() => null)
+  T('deux onglets : « Recharger » dans A ne recharge pas B (sa saisie reste), B voit le bandeau', !!bandeauA && aPris && bVivant && bControle && !!bBandeau, JSON.stringify({ bandeauA: !!bandeauA, aPris, bVivant, bControle, bBandeau: !!bBandeau }))
+  if (bBandeau) {
+    await pageB.click('[data-presti-maj] button.ghost').catch(() => {})
+    await pageB.waitForTimeout(300)
+    const masque = (await pageB.$('[data-presti-maj]')) === null
+    const memo = await pageB.evaluate(() => sessionStorage.getItem('presti.maj_reportee')).catch(() => null)
+    T('« Plus tard » masque le bandeau pour la session de l’onglet', masque && memo === '1')
+    await pageB.evaluate(() => sessionStorage.removeItem('presti.maj_reportee')).catch(() => {})
+    await pageB.reload({ waitUntil: 'networkidle' }).catch(() => {})
+    T('B rechargé par l’artisan lui-même : sur la nouvelle version', await controleurEst(pageB, 'maj=2'))
+  } else { T('« Plus tard » masque le bandeau', false, 'pas de bandeau dans B'); T('B rechargé par l’artisan lui-même', false, 'pas de bandeau dans B') }
+  await pageB.close()
   await ctx.close()
 }
 
@@ -299,6 +330,16 @@ const simulerPrompt = (page) => page.evaluate(() => {
   await ctx.close()
 }
 {
+  // bureau à la souris, fenêtre étroite (deux fenêtres côte à côte) : toujours pas de carte — c'est le pointeur qui décide, pas la largeur
+  const ctx = await nouveauContexte(cr, { viewport: { width: 1000, height: 700 }, locale: 'fr-FR', reducedMotion: 'reduce' })
+  await ctx.addInitScript(initSession, [CLE_SESSION, sess])
+  const page = await ctx.newPage()
+  await page.goto(`${APP}/dashboard`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {})
+  await page.waitForTimeout(600); await simulerPrompt(page); await page.waitForTimeout(800)
+  T('bureau (souris, fenêtre de 1000 px) : aucune carte « sur votre téléphone »', (await page.$('.psh-installer')) === null)
+  await ctx.close()
+}
+{
   // landing, non connecté : rien (la carte vit dans la console)
   const ctx = await nouveauContexte(cr, { ...pixel, locale: 'fr-FR', reducedMotion: 'reduce' })
   const page = await ctx.newPage()
@@ -319,13 +360,24 @@ await cr.close()
   await page.goto(`${APP}/dashboard`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {})
   const carte = await page.waitForSelector('.psh-installer[data-mode="ios"]', { timeout: 8000 }).catch(() => null)
   const texte = carte ? await page.textContent('.psh-installer').catch(() => '') : ''
-  T(`iPhone (${nomMoteur}) : carte avec les deux gestes — Partager, puis « Sur l’écran d’accueil »`, !!carte && /Partager/.test(texte) && /écran d’accueil/.test(texte) && (await page.$('.psh-installer svg[aria-label="Partager"]')) !== null, texte.slice(0, 80))
+  T(`iPhone (${nomMoteur}) : carte avec les deux gestes — Partager, puis « Sur l’écran d’accueil » (icône décorative, dite une seule fois)`, !!carte && /Partager/.test(texte) && /écran d’accueil/.test(texte) && (await page.$('.psh-installer svg[aria-hidden="true"]')) !== null && (await page.$('.psh-installer svg[aria-label]')) === null, texte.slice(0, 80))
   await page.screenshot({ path: `${OUT}/carte-ios.png` }).catch(() => {})
   await page.click('.psh-installer-x').catch(() => {})
   await page.reload({ waitUntil: 'networkidle' }).catch(() => {})
   await page.waitForTimeout(800)
   T('iPhone : refus mémorisé, plus de carte', (await page.$('.psh-installer')) === null)
-  await ctx.close(); await b.close()
+  await ctx.close()
+  // navigateur intégré (Instagram, Gmail…) ou Chrome iOS : le geste Safari n'existe pas → pas de carte
+  for (const [nom, ua] of [['WebView Instagram', `${devices['iPhone 14'].userAgent} Instagram 300.0.0.0`], ['Chrome iOS', devices['iPhone 14'].userAgent.replace(/Version\/[\d.]+ Mobile/, 'CriOS/126.0.0.0 Mobile')]]) {
+    const c3 = await nouveauContexte(b, { ...devices['iPhone 14'], userAgent: ua, locale: 'fr-FR', reducedMotion: 'reduce' })
+    await c3.addInitScript(initSession, [CLE_SESSION, sess])
+    const p3 = await c3.newPage()
+    await p3.goto(`${APP}/dashboard`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {})
+    await p3.waitForTimeout(1200)
+    T(`iPhone dans ${nom} : aucune carte (le geste « Partager → Sur l’écran d’accueil » n’y existe pas)`, (await p3.$('.psh-installer')) === null)
+    await c3.close()
+  }
+  await b.close()
   void moteur
 }
 

@@ -20,10 +20,11 @@ declare global {
 }
 declare const self: ServiceWorkerGlobalScope
 
-/** Jamais en cache : données personnelles (/api, /auth) et surfaces artisan (/p, /site). */
-const PRIVE = /^\/(api|auth|p|site)\//
+/** Jamais en cache : données personnelles (/api, /auth) et surfaces artisan (/p, /site, et /l, l'ancienne
+ *  adresse des plateformes encore redirigée par next.config.mjs — hors ligne, la redirection n'a pas lieu). */
+const PRIVE = /^\/(api|auth|p|site|l)\//
 /** Surfaces artisan : aucun repli hors-ligne Presti. */
-const surfaceArtisan = (chemin: string) => /^\/(p|site)\//.test(chemin)
+const surfaceArtisan = (chemin: string) => /^\/(p|site|l)\//.test(chemin)
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
@@ -42,7 +43,9 @@ const serwist = new Serwist({
   ],
   fallbacks: {
     entries: [
-      { url: '/hors-ligne', matcher: ({ request }) => request.destination === 'document' && !surfaceArtisan(new URL(request.url).pathname) },
+      // Fichier statique sans script (public/hors-ligne.html) : une page Next réclamait son chunk JS à
+      // l'hydratation et, hors ligne, l'écran d'erreur générique remplaçait la page (revue du 06/09).
+      { url: '/hors-ligne.html', matcher: ({ request }) => request.destination === 'document' && !surfaceArtisan(new URL(request.url).pathname) },
     ],
   },
 })

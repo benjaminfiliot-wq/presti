@@ -100,6 +100,11 @@ const nextConfig = {
   },
   // La plateforme est passée de /l/[slug] à /p/[slug] (v4 §A1). Redirection PERMANENTE :
   // aucun lien déjà distribué par un artisan ne doit casser.
+  // v9 §2.3 — /hors-ligne (adresse lisible) sert le fichier statique public/hors-ligne.html : la page
+  // hors-ligne n'a AUCUN script à charger (revue du 06/09 : une page Next réclamait son chunk hors ligne).
+  async rewrites() {
+    return [{ source: '/hors-ligne', destination: '/hors-ligne.html' }]
+  },
   async redirects() {
     return [
       { source: '/l/:slug', destination: '/p/:slug', permanent: true },
@@ -126,7 +131,7 @@ const withSerwist = withSerwistInit({
   // Le plugin n'applique `globPublicPatterns` QUE si `additionalPrecacheEntries` est absent : on liste
   // donc nous-mêmes les fichiers de marque, révisés par leur empreinte (re-téléchargés seulement s'ils changent).
   additionalPrecacheEntries: [
-    { url: '/hors-ligne', revision: process.env.VERCEL_GIT_COMMIT_SHA || String(Date.now()) },
+    { url: '/hors-ligne.html', revision: crypto.createHash('md5').update(fs.readFileSync('public/hors-ligne.html')).digest('hex').slice(0, 12) },
     ...['presti-icone-192.png', 'presti-icone-512.png', 'presti-icone-maskable-192.png', 'presti-icone-maskable-512.png', 'presti-marque-corail.svg']
       .map((f) => ({ url: `/marque/${f}`, revision: crypto.createHash('md5').update(fs.readFileSync(`public/marque/${f}`)).digest('hex').slice(0, 12) })),
   ],

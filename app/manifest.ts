@@ -20,7 +20,8 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: '/',
     display: 'standalone',
     display_override: ['standalone', 'minimal-ui'],
-    orientation: 'portrait',
+    // Pas d'`orientation` : un verrou portrait bloque la tablette et le téléphone posé en paysage
+    // (WCAG 2.1 1.3.4, revue du 06/09). Si un écran l'exige un jour : screen.orientation.lock() sur cet écran.
     lang: 'fr',
     dir: 'ltr',
     background_color: '#0A0C11',
