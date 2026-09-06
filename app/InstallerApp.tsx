@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import Marque from '@/app/Marque'
 
 // Invitation à installer l'application (prompt v9 §2.4). Montée par AppShell — donc dans la console
@@ -33,11 +34,17 @@ const refusRecent = () => {
   } catch { return false }
 }
 
+// Les écrans de conversation (boîte de réception, pilotage de la plateforme) ont besoin de chaque pixel :
+// sur iPad, la carte poussait le composeur sous le clavier (mobile-e2e, 06/09). La carte vit ailleurs.
+const ECRANS_SANS_CARTE = /^\/(messages|plateforme)(\/|$)/
+
 export default function InstallerApp() {
+  const pathname = usePathname()
   const [mode, setMode] = useState<Mode>('aucun')
   const [evenement, setEvenement] = useState<EvenementInstallation | null>(null)
 
   useEffect(() => {
+    if (ECRANS_SANS_CARTE.test(pathname ?? '')) { setMode('aucun'); return }
     if (estInstallee() || !surTactile() || refusRecent()) return
     if (estIos()) { setMode('ios'); return }
     const onPrompt = (e: Event) => { e.preventDefault(); setEvenement(e as EvenementInstallation); setMode('android') }
@@ -45,7 +52,7 @@ export default function InstallerApp() {
     window.addEventListener('beforeinstallprompt', onPrompt)
     window.addEventListener('appinstalled', onInstallee)
     return () => { window.removeEventListener('beforeinstallprompt', onPrompt); window.removeEventListener('appinstalled', onInstallee) }
-  }, [])
+  }, [pathname])
 
   const fermer = () => {
     try { localStorage.setItem(CLE_REFUS, new Date().toISOString()) } catch { /* stockage indisponible : la carte reviendra, ce n'est pas grave */ }

@@ -219,6 +219,10 @@ const simulerPrompt = (page) => page.evaluate(() => {
   const carte = await page.waitForSelector('.psh-installer[data-mode="android"]', { timeout: 5000 }).catch(() => null)
   T('Android : beforeinstallprompt → carte « Installer Presti sur votre téléphone » avec bouton', !!carte && /Installer Presti sur votre téléphone/.test(await page.textContent('.psh-installer').catch(() => '')) && (await page.$('.psh-installer button.psh-btn')) !== null)
   await page.screenshot({ path: `${OUT}/carte-android.png` }).catch(() => {})
+  // Les styles sont-ils LÀ ? (06/09 : le bloc CSS manquait, la suite passait, la capture montrait une carte nue
+  // et une croix pleine largeur — le style global button{width:100%} s'appliquait.)
+  const styles = await page.evaluate(() => { const c = document.querySelector('.psh-installer'); const x = document.querySelector('.psh-installer-x'); if (!c || !x) return null; const cs = getComputedStyle(c), xs = getComputedStyle(x); const r = x.getBoundingClientRect(); return { display: cs.display, bord: cs.borderTopWidth, xw: Math.round(r.width), xh: Math.round(r.height), xbg: xs.backgroundColor } })
+  T('carte stylée : flex, bordure, croix 44×44 sans fond — le CSS est bien servi', !!styles && styles.display === 'flex' && styles.bord !== '0px' && styles.xw === 44 && styles.xh === 44 && /rgba\(0, 0, 0, 0\)|transparent/.test(styles.xbg), JSON.stringify(styles))
   const bouton = await page.$('.psh-installer button.psh-btn')
   if (bouton) {
     const b = await bouton.boundingBox()
@@ -267,6 +271,12 @@ const simulerPrompt = (page) => page.evaluate(() => {
     const r = await page.goto(`${APP}${s.url}`, { waitUntil: 'domcontentloaded', timeout: 60000 }).catch(() => null)
     await page.waitForTimeout(500)
     T(`raccourci « ${s.name} » (${s.url}) répond connecté`, !!r && r.status() === 200 && !/\/login/.test(page.url()), r ? `HTTP ${r.status()} → ${page.url()}` : 'aucune réponse')
+  }
+  // écrans de conversation : chaque pixel pour le fil — aucune carte (sur iPad elle poussait le composeur sous le clavier)
+  for (const chemin of ['/messages', '/plateforme']) {
+    await page.goto(`${APP}${chemin}`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {})
+    await page.waitForTimeout(600); await simulerPrompt(page); await page.waitForTimeout(800)
+    T(`${chemin} : aucune carte d’installation sur un écran de conversation`, (await page.$('.psh-installer')) === null)
   }
   // liens externes et surfaces artisan : nouvel onglet (sinon l'artisan est piégé sans barre d'adresse)
   const pieges = []
