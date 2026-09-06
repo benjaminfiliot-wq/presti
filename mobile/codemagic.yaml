@@ -1,0 +1,59 @@
+# Codemagic — la coque iOS de Presti (prompt v9 §5.2). Benj est sur Windows : aucun build iOS n'est possible
+# localement ; Codemagic (plan gratuit, 500 min/mois de macOS) compile, signe et envoie sur TestFlight.
+#
+# À faire une fois (M1 + M5) :
+#  1. Apple Developer : App ID `fr.prestiapp.app`, capacités Push Notifications et Associated Domains
+#     (`applinks:qg.prestiapp.fr`) ; clé App Store Connect API (Issuer ID, Key ID, fichier .p8).
+#  2. Codemagic → Teams → Integrations → App Store Connect : coller la clé API (nom : `presti-asc`).
+#  3. Codemagic → l'app → Environment variables : groupe `presti_ios` (rien de secret côté code : la signature
+#     automatique se sert de l'intégration App Store Connect).
+#  4. Déclencheur : un tag `mobile-v*` (comme Android), ou lancement manuel.
+#
+# Le projet iOS est en Swift Package Manager (pas de CocoaPods) : `npx cap add ios --packagemanager SPM`.
+
+workflows:
+  ios-testflight:
+    name: iOS — Presti vers TestFlight
+    max_build_duration: 45
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - presti_ios
+      xcode: latest
+      node: 22
+    integrations:
+      app_store_connect: presti-asc
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'mobile-v*'
+          include: true
+      cancel_previous_builds: true
+    scripts:
+      - name: Dépendances et synchronisation Capacitor
+        script: |
+          cd mobile
+          npm ci
+          npx cap sync ios
+      - name: Signature automatique (App Store Connect)
+        script: |
+          cd mobile/ios/App
+          xcode-project use-profiles
+      - name: Version de build = numéro du build Codemagic
+        script: |
+          cd mobile/ios/App
+          agvtool new-version -all "$BUILD_NUMBER"
+      - name: Archive signée (.ipa)
+        script: |
+          cd mobile/ios/App
+          xcode-project build-ipa --project App.xcodeproj --scheme App
+    artifacts:
+      - mobile/ios/App/build/ios/ipa/*.ipa
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        beta_groups:
+          - Presti — test interne
