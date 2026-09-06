@@ -18,6 +18,19 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- v9 §4.4 : liens profonds (App Links) sur qg.prestiapp.fr, chemins de la console seulement — jamais /p, /site, /l -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/messages" />
+                <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/devis" />
+                <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/factures" />
+                <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/inventaire" />
+                <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/parametres" />
+                <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/dashboard" />
+            </intent-filter>
         </activity>
 
         <provider

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { partagerFichier, vibrer } from '@/lib/natif'
 import { computeTotals } from '@/lib/devisTotals'
 import AppShell from '@/app/AppShell'
 import ModelSelect from '@/app/ModelSelect'
@@ -172,6 +173,17 @@ export default function DevisEditor() {
     setTimeout(() => URL.revokeObjectURL(url), 60000)
   }
 
+  /** Partager le PDF (v9 J3) : feuille native dans l'app (WhatsApp, Mail, AirDrop…), Web Share sur téléphone, sinon téléchargement. */
+  async function partagerPdf() {
+    if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de le partager.' }); return }
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch(`/api/devis/${savedId}/pdf`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+    if (!res.ok) { setMsg({ type: 'err', text: 'PDF indisponible, réessaie.' }); return }
+    const resultat = await partagerFichier(`${numero || 'devis'}.pdf`, await res.blob(), { titre: `Devis ${numero || ''}`.trim(), texte: 'Votre devis, en pièce jointe.' })
+    if (resultat === 'natif' || resultat === 'web') void vibrer('leger')
+    if (resultat === 'aucun') setMsg({ type: 'err', text: 'Partage impossible sur cet appareil : téléchargez le PDF.' })
+  }
+
   async function envoyer() {
     if (!savedId) { setMsg({ type: 'err', text: 'Enregistre le devis avant de l\'envoyer.' }); return }
     if (!clientEmail.trim()) { setMsg({ type: 'err', text: 'Renseigne l\'email du client pour l\'envoyer.' }); return }
@@ -180,7 +192,7 @@ export default function DevisEditor() {
     const res = await fetch(`/api/devis/${savedId}/envoyer`, { method: 'POST', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
     const d = await res.json().catch(() => ({})); setSaving(false)
     if (!res.ok) { setMsg({ type: 'err', text: d.error ?? 'Envoi échoué.' }); return }
-    setStatut('envoye'); setMsg({ type: 'ok', text: 'Devis envoyé au client ✅' })
+    setStatut('envoye'); setMsg({ type: 'ok', text: 'Devis envoyé au client ✅' }); void vibrer('succes')
   }
 
   async function creerFacture() {
@@ -220,6 +232,7 @@ export default function DevisEditor() {
   const actions = (
     <>
       <button className="psh-btn ghost" onClick={downloadPdf}>Télécharger PDF</button>
+      <button className="psh-btn ghost" onClick={partagerPdf} data-partager>Partager</button>
       <button className="psh-btn ghost" onClick={envoyer}>Envoyer au client</button>
       <button className="psh-btn ghost" onClick={creerFacture}>Créer la facture</button>
       {savedId && <button className="psh-btn ghost danger" onClick={supprimerDevis}>Supprimer</button>}

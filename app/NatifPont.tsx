@@ -56,6 +56,10 @@ export default function NatifPont() {
         if (canGoBack) window.history.back(); else app.minimizeApp?.().catch(() => {})
       })
       void ecouter(app, 'appStateChange', ({ isActive }: { isActive: boolean }) => { if (isActive) router.refresh() })
+      // Lien profond (App Links / Universal Links, §4.4) : seulement une adresse de NOTRE origine, et son chemin seul.
+      void ecouter(app, 'appUrlOpen', ({ url }: { url: string }) => {
+        try { const u = new URL(url); if (u.origin === window.location.origin) router.push(cheminSur(u.pathname + u.search)) } catch { /* adresse illisible : ignorée */ }
+      })
     }
 
     const net = plugin('Network')

@@ -116,4 +116,4 @@ export async function middleware(req: NextRequest) {
 // On ne passe PAS par le middleware pour les fichiers statiques ni l'API : le matcher exclut
 // tout chemin contenant un point (favicon.ico, robots.txt, images) et les routes techniques.
 // Les chemins de l'app Presti (avec un point) y sont ajoutés explicitement : voir CHEMINS_APP_PRESTI.
-export const config = { matcher: ['/((?!api|_next|.*\\..*).*)', '/manifest.webmanifest', '/sw.js', '/hors-ligne.html', '/marque/:path*'] }
+export const config = { matcher: ['/((?!api|_next|.*\\..*).*)', '/manifest.webmanifest', '/sw.js', '/hors-ligne.html', '/marque/:path*', '/.well-known/assetlinks.json', '/.well-known/apple-app-site-association'] }

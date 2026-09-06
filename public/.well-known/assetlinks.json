@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "fr.prestiapp.app",
+      "sha256_cert_fingerprints": [
+        "0F:A1:79:B8:80:D0:92:69:B9:E5:25:91:1E:53:44:10:59:AF:F5:D3:3B:2A:3A:AD:21:4C:27:DF:94:1F:E2:4A"
+      ]
+    }
+  }
+]

@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { estNatif, scannerCodeBarres, vibrer } from '@/lib/natif'
 
-// Scan de code-barres (v4 §9/G2).
+// Scan de code-barres (v4 §9/G2 ; natif v9 J3).
 //
 // La raison d'être de ce composant : un artisan ne saisira jamais son stock au clavier.
 // C'est la seule raison pour laquelle les logiciels d'inventaire échouent chez lui.
@@ -25,6 +26,17 @@ export default function Scanner({ onCode, onFermer }: Props) {
   const [manuel, setManuel] = useState('')
 
   useEffect(() => {
+    // Dans l'application (coque Capacitor) : le lecteur natif ML Kit, plein écran, qui marche aussi sur iPhone.
+    // Annulé ou refusé → on ferme, sans faire semblant ; hors coque → le détecteur du navigateur ci-dessous.
+    if (estNatif()) {
+      let vivant = true
+      scannerCodeBarres().then((code) => {
+        if (!vivant) return
+        if (code === undefined) { setEtat('indisponible'); return }
+        if (code) { void vibrer('succes'); onCode(code) } else onFermer()
+      })
+      return () => { vivant = false }
+    }
     const W = window as FenetreAvecDetecteur
     if (typeof W.BarcodeDetector !== 'function') { setEtat('indisponible'); return }
 
@@ -61,6 +73,8 @@ export default function Scanner({ onCode, onFermer }: Props) {
       cancelAnimationFrame(boucle)
       flux?.getTracks().forEach((t) => t.stop())
     }
+    // onFermer n'est lu qu'à l'annulation du lecteur natif : le relancer à chaque rendu du parent rouvrirait la caméra.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onCode])
 
   return (

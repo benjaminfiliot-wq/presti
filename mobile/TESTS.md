@@ -4,7 +4,7 @@ Sur de **vrais appareils** — un Android, un iPhone, et un troisième télépho
 
 | # | Étape | Attendu | Android (date · appareil) | iPhone (date · appareil) |
 |---|---|---|---|---|
-| 1 | Installation (APK de debug / TestFlight) | l'icône Presti sur l'écran d'accueil | | |
+| 1 | Installation (APK de debug / TestFlight) | l'icône Presti sur l'écran d'accueil | 07/09 · APK téléchargé par Benj (« c'est fait ») — appareil et écran d'accueil à confirmer | |
 | 2 | Ouverture | écran de lancement nuit → page de connexion, sans flash blanc | | |
 | 3 | Connexion : mot de passe puis code par email | pavé numérique, code accepté, tableau de bord | | |
 | 4 | Paramètres → Notifications → « Activer sur cet appareil » | l'appareil apparaît dans la liste | | |

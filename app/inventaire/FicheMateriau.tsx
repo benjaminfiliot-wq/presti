@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { preparerPhoto, uploadArtisanMedia } from '@/lib/media'
+import { estNatif, prendrePhoto, vibrer } from '@/lib/natif'
 import { SOURCES_OBSERVATION, type Fournisseur, type Materiau, type Observation } from '@/lib/inventaire/types'
 
 // Fiche matériau (§8 F1) — dans le panneau latéral.
@@ -114,10 +115,7 @@ export default function FicheMateriau({ id: idInitial, uid, fournisseurs, jeton,
     onFermer()
   }
 
-  async function photo(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]
-    if (photoRef.current) photoRef.current.value = ''
-    if (!f) return
+  async function traiterPhoto(f: File) {
     if (!/^image\/(png|jpe?g|webp)$/.test(f.type)) { setErr('Formats acceptés : JPG, PNG, WebP.'); return }
     if (f.size > 12 * 1024 * 1024) { setErr('Photo trop lourde (12 Mo max).'); return }
     setBusy(true); setErr(null)
@@ -128,8 +126,25 @@ export default function FicheMateriau({ id: idInitial, uid, fournisseurs, jeton,
       const url = await uploadArtisanMedia(uid, p.blob, p.ext)
       setC((prev) => ({ ...prev, photo_url: url }))
       setPlus(true)
+      void vibrer('leger')
     } catch (e) { setErr(e instanceof Error && e.message ? e.message : 'Envoi de la photo impossible.') }
     setBusy(false)
+  }
+
+  async function photo(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0]
+    if (photoRef.current) photoRef.current.value = ''
+    if (f) await traiterPhoto(f)
+  }
+
+  /** Dans l'application : la caméra native (ou la galerie), déjà réduite à 1 600 px ; sinon le sélecteur du navigateur. */
+  async function choisirPhoto() {
+    if (estNatif()) {
+      const f = await prendrePhoto('choix')
+      if (f) await traiterPhoto(f)
+      return // annulé : rien
+    }
+    photoRef.current?.click()
   }
 
   async function ajouterObservation() {
@@ -180,7 +195,7 @@ export default function FicheMateriau({ id: idInitial, uid, fournisseurs, jeton,
           <div className="inv-photo">
             {c.photo_url ? <img src={c.photo_url} alt="" /> : <div className="vide" aria-hidden>▢</div>}
             <div className="inv-actions" style={{ marginTop: 0 }}>
-              <button type="button" className="btn btn--ghost" disabled={busy} onClick={() => photoRef.current?.click()}>{c.photo_url ? 'Changer' : 'Ajouter une photo'}</button>
+              <button type="button" className="btn btn--ghost" disabled={busy} onClick={choisirPhoto}>{c.photo_url ? 'Changer' : 'Ajouter une photo'}</button>
               {c.photo_url ? <button type="button" className="btn btn--ghost" disabled={busy} onClick={() => setC((p) => ({ ...p, photo_url: null }))}>Retirer</button> : null}
               <input ref={photoRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={photo} style={{ display: 'none' }} />
             </div>
