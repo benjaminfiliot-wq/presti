@@ -17,7 +17,9 @@ const DOMAINE_NEUTRE = (process.env.NEXT_PUBLIC_DOMAINE_NEUTRE || '').trim().toL
 // Hôtes « maison » (jamais un domaine perso d'artisan) → aucune réécriture multi-tenant.
 function isPrestiHost(host: string): boolean {
   const h = host.replace(/:\d+$/, '')
-  return h === 'prestiapp.fr' || h === 'www.prestiapp.fr' || h.endsWith('.vercel.app')
+  // Tout sous-domaine de prestiapp.fr est maison : qg. (la console), www., et ceux à venir. Sans cette ligne,
+  // les chemins de l'app (manifeste, sw.js, marque) renvoyaient la 404 artisan sur qg.prestiapp.fr (revue v9 J1).
+  return h === 'prestiapp.fr' || h.endsWith('.prestiapp.fr') || h.endsWith('.vercel.app')
     || h === 'localhost' || h.endsWith('.localhost') || h.startsWith('127.0.0.1')
 }
 

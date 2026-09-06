@@ -20,6 +20,8 @@
 //
 // Coût : 0 IA, 0 email réel. Usage : node scripts/pwa-e2e.mjs   (TEST_BASE=http://localhost:3116 pour un build local)
 import fs from 'node:fs'
+import http from 'node:http'
+import https from 'node:https'
 import { chromium, webkit, devices } from 'playwright'
 import { verifierSessionTest } from './lib/connexion-test.mjs'
 
@@ -138,6 +140,26 @@ console.log('\n3. Les en-têtes')
   T('/hors-ligne.html : fichier statique, AUCUN script, « Réessayer » recharge l’adresse demandée (href vide)', hl.status === 200 && hl.t.includes('data-presti-hors-ligne') && hl.t.includes('Vous êtes hors ligne') && !/<script/i.test(hl.t) && /href=""[^>]*>Réessayer</.test(hl.t) && hl.t.includes('href="/dashboard"'))
   const hl2 = await html('/hors-ligne')
   T('/hors-ligne (adresse lisible) : réécrite vers le fichier statique', hl2.status === 200 && hl2.t.includes('data-presti-hors-ligne') && !/<script/i.test(hl2.t))
+  // Par en-tête Host (fetch l'interdit, http/https non) : les fichiers de l'app existent sur les hôtes MAISON
+  // (qg. = la console, www.) et pas sur un hôte d'artisan. Revue du 06/09 : le middleware renvoyait la 404 artisan
+  // sur qg.prestiapp.fr, et aucune sonde ne le voyait.
+  const sonder = (hote, chemin) => new Promise((resolve) => {
+    const { request } = LOCAL ? http : https
+    const base = LOCAL ? { hostname: '127.0.0.1', port: Number(new URL(APP).port || 80) } : { hostname: 'prestiapp.fr', servername: 'prestiapp.fr', port: 443 }
+    const req = request({ ...base, path: chemin, method: 'GET', headers: { Host: hote, 'user-agent': 'presti-pwa-e2e' } }, (res) => { const morceaux = []; res.on('data', (c) => morceaux.push(c)); res.on('end', () => resolve({ status: res.statusCode, type: res.headers['content-type'] || '', t: Buffer.concat(morceaux).toString('utf8') })) })
+    req.on('error', () => resolve({ status: 0, type: '', t: '' })); req.end()
+  })
+  for (const hote of ['qg.prestiapp.fr', 'www.prestiapp.fr']) {
+    const r = await Promise.all([sonder(hote, '/sw.js'), sonder(hote, '/manifest.webmanifest'), sonder(hote, '/hors-ligne.html'), sonder(hote, '/marque/presti-marque-corail.svg')])
+    const ok = r[0].status === 200 && /javascript/.test(r[0].type) && r[0].t.includes('hors-ligne.html') && r[1].status === 200 && /manifest\+json/.test(r[1].type) && r[2].status === 200 && r[2].t.includes('data-presti-hors-ligne') && r[3].status === 200 && /svg/.test(r[3].type)
+    T(`hôte maison ${hote} : sw.js, manifeste, hors-ligne.html et marque servis (200)`, ok, r.map((x) => x.status).join(' '))
+  }
+  const NEUTRE = (process.env.NEXT_PUBLIC_DOMAINE_NEUTRE || '').trim().toLowerCase()
+  if (NEUTRE) {
+    const hote = `${DEMO.slug}.${NEUTRE}`
+    const r = await Promise.all([sonder(hote, '/sw.js'), sonder(hote, '/manifest.webmanifest'), sonder(hote, '/hors-ligne.html'), sonder(hote, '/marque/presti-icone-512.png')])
+    T(`hôte d’artisan ${hote} : aucun fichier de l’app Presti (404, sans « Presti »)`, r.every((x) => x.status === 404 && !/Presti/.test(x.t)), r.map((x) => x.status).join(' '))
+  } else console.log('  ℹ️  NEXT_PUBLIC_DOMAINE_NEUTRE absent ici : la sonde « hôte d’artisan » est jouée par domaine-perso-e2e / en prod')
 }
 
 // ── 4. Le service worker (Chromium, Pixel 7) ───────────────────────────────────────────────────────
@@ -155,6 +177,16 @@ const cr = await chromium.launch()
   await page.waitForTimeout(800)
   const controle = await page.evaluate(() => !!navigator.serviceWorker.controller)
   T('la page est contrôlée sans rechargement (clientsClaim)', controle)
+  if (!LOCAL) {
+    // l'hôte réel de la console : le worker doit s'y enregistrer aussi (revue du 06/09 : 404 sur /sw.js via le middleware)
+    const cq = await cr.newContext({ ...pixel, locale: 'fr-FR', reducedMotion: 'reduce' })
+    await cq.addInitScript(initSession, [CLE_SESSION, sess])
+    const pq = await cq.newPage()
+    await pq.goto('https://qg.prestiapp.fr/dashboard', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {})
+    const rq = await pq.evaluate(() => Promise.race([navigator.serviceWorker.ready.then((r) => ({ scope: r.scope, url: r.active?.scriptURL || '' })), new Promise((r) => setTimeout(() => r(null), 20000))])).catch(() => null)
+    T('qg.prestiapp.fr (hôte de la console) : service worker enregistré, portée https://qg.prestiapp.fr/', !!rq && rq.scope === 'https://qg.prestiapp.fr/' && /\/sw\.js$/.test(rq.url), JSON.stringify(rq))
+    await cq.close()
+  }
   // installabilité (CDP) — l'équivalent de l'ancien audit Lighthouse « Installable »
   const cdp = await ctx.newCDPSession(page)
   const inst = await cdp.send('Page.getInstallabilityErrors').catch((e) => ({ erreur: String(e) }))
@@ -224,7 +256,7 @@ const cr = await chromium.launch()
     await pageB.waitForTimeout(300)
     const masque = (await pageB.$('[data-presti-maj]')) === null
     const memo = await pageB.evaluate(() => sessionStorage.getItem('presti.maj_reportee')).catch(() => null)
-    T('« Plus tard » masque le bandeau pour la session de l’onglet', masque && memo === '1')
+    T('« Plus tard » masque le bandeau pour cet onglet (report horodaté, lié au worker en attente)', masque && !!memo && /"url":/.test(memo) && /"t":\d+/.test(memo), memo || '')
     await pageB.evaluate(() => sessionStorage.removeItem('presti.maj_reportee')).catch(() => {})
     await pageB.reload({ waitUntil: 'networkidle' }).catch(() => {})
     T('B rechargé par l’artisan lui-même : sur la nouvelle version', await controleurEst(pageB, 'maj=2'))
