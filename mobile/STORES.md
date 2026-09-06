@@ -6,7 +6,7 @@
 
 **Date.** 6 septembre 2026.
 
-**Trois choses ont changé depuis les deux propositions de départ** (commits du 06/09) : le drapeau `pushNatif` est **levé** (`flags.ts:23`, M3 Firebase fait, `google-services.json` injecté par secret CI) — les notifications natives Android font donc partie de cette version ; l'écran « prochaine version » de Paramètres → Notifications ne s'affiche plus dans la coque (`SectionNotifications.tsx:51,205` : `natifSansPush` est faux) ; le parcours `mobile/TESTS.md` reste à jouer avec l'APK 0.1.2 (lignes 4, 5, 7, 8 vides). **Rien ne part vers un store tant que la colonne Android de TESTS.md n'est pas pleine** (`TESTS.md:3`), et tant que les trois blocages du §4 ne sont pas corrigés dans le code.
+**Trois choses ont changé depuis les deux propositions de départ** (commits du 06/09) : le drapeau `pushNatif` est **levé** (`flags.ts:23`, M3 Firebase fait, `google-services.json` injecté par secret CI) — les notifications natives Android font donc partie de cette version ; l'écran « prochaine version » de Paramètres → Notifications ne s'affiche plus dans la coque (`SectionNotifications.tsx:51,205` : `natifSansPush` est faux) ; le parcours `mobile/TESTS.md` reste à jouer avec l'APK 0.1.3 (lignes 4, 5, 7, 8 vides). **Rien ne part vers un store tant que la colonne Android de TESTS.md n'est pas pleine** (`TESTS.md:3`), Les trois blocages du §4 **ont été corrigés dans le code le 07/09** (`7ab0ed5`, `1ef74c0` — voir la liste cochée en fin de fichier).
 
 Les comptes de caractères sont indiqués entre crochets (points de code Unicode, apostrophes typographiques comprises — recomptés par script le 06/09).
 
@@ -358,15 +358,15 @@ Texte à donner si Play demande une description :
 ## 3. Ce que Benj doit faire (cochable)
 
 **Dans le code, avant toute soumission (les trois blocages) — à demander à Claude Code :**
-- [ ] **1. Compte de relecture qui passe le second facteur sans boîte email** : code fixe pour un compte désigné par `PRESTI_RELECTURE_EMAIL` / `PRESTI_RELECTURE_CODE` dans `app/api/auth/code/route.ts` (voir §1), compte fictif créé et gardé de la purge, parcours de connexion rejoué depuis un appareil vierge. Sans lui, aucun relecteur n'entre.
-- [ ] **2. Plus d'achat dans la coque** : `app/abonnement/page.tsx:29-43` et `app/parametres/SectionAbonnement.tsx:51-68` redirigent vers Stripe sans aucun `estNatif()` (Apple 3.1.1, politique de paiement Play). Masquer les boutons « S'abonner » / « Passer à… » / « Ouvrir mon portail de facturation » en natif (cartes en lecture seule, phrase « Les offres se gèrent depuis le site »), et retirer `/abonnement` des App Links (`AndroidManifest.xml:33`, `NatifPont.tsx:30`).
-- [ ] **3. Plus de distribution hors store ni d'annonce de version dans la coque** : `app/parametres/SectionApplication.tsx:61-75` rend en natif le lien « Télécharger (APK) » (l. 65), « Le Play Store suivra » (l. 64) et « L'App Store suivra » (l. 73) — Play interdit à une app de se distribuer hors Play, Apple refuse les annonces de fonctions à venir (2.1, 2.3.1). En natif (`ici === 'natif'`), ne rendre que la carte « Presti, partout » avec « ✅ Vous êtes dans l'application ».
-- [ ] 4. `Info.plist` : `ITSAppUsesNonExemptEncryption = false`, `CFBundleDevelopmentRegion = fr`, retirer `localhost` de `WKAppBoundDomains` ; `MARKETING_VERSION` → 0.1.x ; décider `TARGETED_DEVICE_FAMILY` (`"1"` = iPhone seul, pas de captures iPad).
-- [ ] 5. Politique de confidentialité : paragraphe « Application mobile » (caméra, biométrie locale, rapports d'erreur avec l'URL de la page, jeton de notification, adresse IP des sessions, Google Analytics si activé, photos hébergées par lien).
-- [ ] 6. Rapports d'erreur : ne rapporter que `location.pathname` sans identifiants (`app/error.tsx:12`, `app/global-error.tsx`) — sinon garder « Données de plantage : lié » dans App Privacy.
+- [x] **1. Compte de relecture** — fait le 07/09 : `RELECTURE_EMAIL` / `RELECTURE_CODE` (Vercel), `app/api/auth/code/verifier/route.ts` (code fixe pour ce seul compte, temps constant), compte « Atelier Relecture » créé par `scripts/compte-relecture.mjs` (Signature, 2 conversations, 1 devis, sans IA), identifiants dans `Documents/presti-secrets/relecture.txt` ; prouvé par `code-connexion-e2e` 61/61 (section 9).
+- [x] **2. Plus d'achat dans la coque** — fait le 07/09 (`7ab0ed5`) : `/abonnement` et Paramètres → Abonnement n'affichent en natif ni prix, ni bouton, ni portail, ni renvoi (« votre formule se consulte ; sa gestion n'est pas disponible ici ») ; `/abonnement` retiré des App Links et du pont (`liens-profonds-e2e` 18/18).
+- [x] **3. Plus de distribution hors store ni d'annonce** — fait le 07/09 (`7ab0ed5`) : en natif, Paramètres → Application ne rend que « vous êtes dans l'application » ; « prochaine version » retiré de Notifications.
+- [x] 4. `Info.plist` : `ITSAppUsesNonExemptEncryption = false`, `CFBundleDevelopmentRegion = fr`, `localhost` retiré de `WKAppBoundDomains` (07/09) ; `MARKETING_VERSION` suit le tag dans Codemagic ; **reste à décider** `TARGETED_DEVICE_FAMILY` (reco : `"1"`, iPhone seul — pas de captures iPad à produire).
+- [x] 5. Politique de confidentialité : section « 9. Application mobile » ajoutée le 07/09 (caméra, biométrie locale, jeton de notification, session au trousseau, rapports d'erreur sans identifiant, aucune mesure d'audience).
+- [x] 6. Rapports d'erreur : `app/error.tsx` n'envoie plus que le chemin, identifiants masqués (`7ab0ed5`) — App Privacy « Données de plantage : non lié » tient.
 
 **Par Benj (comptes, appareils, consoles) :**
-- [ ] 7. Jouer **tout** `mobile/TESTS.md` sur un Android avec l'APK 0.1.2 (lignes 4, 5, 7, 8 = notifications natives : si elles ratent, retirer le point « Prévenu à la seconde » des deux fiches).
+- [ ] 7. Jouer **tout** `mobile/TESTS.md` sur un Android avec l'APK 0.1.3 (lignes 4, 5, 7, 8 = notifications natives : si elles ratent, retirer le point « Prévenu à la seconde » des deux fiches).
 - [ ] 8. M2 — Play Console (25 $), vérification d'identité.
 - [ ] 9. M6 — vérifier que l'empreinte de `assetlinks.json` est celle du keystore de release (et de Play App Signing).
 - [ ] 10. Captures Android (8 sujets, §2), image de présentation 1024 × 500.

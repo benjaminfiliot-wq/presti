@@ -67,6 +67,17 @@ export default function Confidentialite() {
       <h2>8. Cookies</h2>
       <p>Presti utilise uniquement des cookies strictement nécessaires au fonctionnement (session de connexion). Aucun cookie publicitaire n’est déposé.</p>
 
+      <h2>9. Application mobile</h2>
+      <p>L’application Presti (Android, iPhone) affiche la même console que le site, avec les mêmes données et les mêmes règles. Ce qu’elle fait de plus, et seulement sur votre geste :</p>
+      <ul>
+        <li><strong>Caméra et photos</strong> : pour photographier un chantier ou lire un code-barres. Les images sont traitées sur votre appareil ; seules celles que vous ajoutez à une fiche sont envoyées à Presti.</li>
+        <li><strong>Déverrouillage biométrique</strong> (empreinte, visage) : vérifié par le système de votre téléphone. Presti ne reçoit jamais vos données biométriques, seulement le résultat « déverrouillé ou non ».</li>
+        <li><strong>Notifications</strong> : si vous les activez, un jeton technique propre à votre appareil est conservé pour vous prévenir d’un nouveau message ou d’un devis accepté. Il est supprimé quand vous retirez l’appareil ou fermez votre compte. Le contenu du message ne transite jamais par la notification.</li>
+        <li><strong>Session</strong> : votre connexion est gardée dans l’espace protégé de votre téléphone (Keychain, Keystore) et fermée si le déverrouillage échoue.</li>
+        <li><strong>Rapports d’erreur</strong> : en cas de panne d’un écran, le chemin de la page (sans identifiant ni contenu) et le message technique nous sont envoyés pour corriger.</li>
+      </ul>
+      <p>Aucune mesure d’audience ni publicité n’est intégrée à l’application.</p>
+
       <p style={{ marginTop: '2.4rem' }}><a href="/cgu">Conditions générales</a> · <a href="/mentions-legales">Mentions légales</a></p>
     </main>
     </>

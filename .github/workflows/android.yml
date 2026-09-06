@@ -10,7 +10,7 @@ name: Android — coque Presti
 on:
   push:
     branches: [main]
-    paths: ['mobile/**', '.github/workflows/android.yml']
+    paths: ['mobile/**', '!mobile/*.md', '.github/workflows/android.yml']
     tags: ['mobile-v*']
   workflow_dispatch:
 

@@ -5,7 +5,7 @@
   <key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>fr</string>
 	<key>CFBundleDisplayName</key>
         <string>Presti</string>
 	<key>CFBundleExecutable</key>
@@ -74,11 +74,13 @@
 	<string>Presti peut enregistrer une photo de chantier dans votre galerie.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Face ID déverrouille Presti quand vous revenez dans l’application.</string>
+	<!-- Pas de chiffrement propriétaire : seulement TLS (App Store Connect : question export) -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>WKAppBoundDomains</key>
 	<array>
 		<string>qg.prestiapp.fr</string>
 		<string>prestiapp.fr</string>
-		<string>localhost</string>
 	</array>
 </dict>
 </plist>

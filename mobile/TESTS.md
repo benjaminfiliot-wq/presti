@@ -4,7 +4,7 @@ Sur de **vrais appareils** — un Android, un iPhone, et un troisième télépho
 
 | # | Étape | Attendu | Android (date · appareil) | iPhone (date · appareil) |
 |---|---|---|---|---|
-| 1 | Installation (APK signé 0.1.2 — avec Firebase : Paramètres → Application → « Télécharger (APK) » / TestFlight) | l'icône Presti sur l'écran d'accueil | 07/09 · APK v4 (debug) installé par Benj — **à remplacer par l’APK 0.1.1** (signature différente : désinstaller v4 d’abord) | |
+| 1 | Installation (APK signé 0.1.3 — Firebase, splash nuit : Paramètres → Application → « Télécharger (APK) » / TestFlight) | l'icône Presti sur l'écran d'accueil | 07/09 · APK v4 (debug) installé par Benj — **à remplacer par l’APK 0.1.1** (signature différente : désinstaller v4 d’abord) | |
 | 2 | Ouverture | écran de lancement nuit → page de connexion, sans flash blanc | | |
 | 3 | Connexion : mot de passe puis code par email | pavé numérique, code accepté, tableau de bord | | |
 | 4 | Paramètres → Notifications → « Activer sur cet appareil » | l'appareil apparaît dans la liste | | |
