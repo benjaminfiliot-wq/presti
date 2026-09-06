@@ -49,6 +49,8 @@ workflows:
         script: |
           cd mobile/ios/App
           agvtool new-version -all "$BUILD_NUMBER"
+          # version visible (0.1.x) = le tag sans son préfixe, comme versionName côté Android
+          if [ -n "$CM_TAG" ]; then agvtool new-marketing-version "${CM_TAG#mobile-v}"; fi
       - name: Archive signée (.ipa)
         script: |
           cd mobile/ios/App

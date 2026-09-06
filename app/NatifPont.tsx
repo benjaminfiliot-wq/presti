@@ -27,7 +27,7 @@ type Ecouteur = { remove: () => Promise<void> }
 const CLE_JETON = 'presti.jeton_natif'
 const CLE_PUSH_ACTIVE = 'presti.push_active'
 /** Les chemins que l'app accepte par lien profond — la même liste que le manifeste Android. */
-const CHEMINS_CONSOLE = /^\/(dashboard|messages|devis|factures|inventaire|parametres|abonnement)(\/|\?|$)/
+const CHEMINS_CONSOLE = /^\/(dashboard|messages|devis|factures|inventaire|parametres)(\/|\?|$)/ // pas /abonnement : l'achat n'existe pas dans la coque (stores)
 const cheminSur = (v: unknown) => (typeof v === 'string' && /^\/(?![/\\])[^\s\\]*$/.test(v) && CHEMINS_CONSOLE.test(v) ? v : '/dashboard')
 
 export default function NatifPont() {

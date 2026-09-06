@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { timingSafeEqual } from 'node:crypto'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { actif } from '@/lib/flags'
 import { getIp, isBanned } from '@/lib/security'
@@ -40,7 +41,10 @@ export async function POST(req: Request) {
   const sid = sessionIdDuJeton(data.session.access_token)
   const refermer = () => pub.auth.signOut({ scope: 'local' }).catch(() => {})
 
-  const { data: verdict, error: eRpc } = await supabaseAdmin.rpc('verifier_code_connexion', { p_user: uid, p_hash: hacherCode(uid, code) })
+  // Le compte de RELECTURE des stores (Apple, Google) : personne ne lit sa boîte email — son code est fixe, désigné par
+  // RELECTURE_EMAIL + RELECTURE_CODE (Vercel, jamais dans le dépôt). Mot de passe, plafond par IP et session marquée
+  // restent identiques ; sans ces deux variables, ce chemin n'existe pas.
+  const { data: verdict, error: eRpc } = codeRelecture(email, code) ? { data: 'ok', error: null } : await supabaseAdmin.rpc('verifier_code_connexion', { p_user: uid, p_hash: hacherCode(uid, code) })
   if (eRpc || typeof verdict !== 'string' || !sid) {
     await refermer()
     console.error('[auth/code/verifier] rpc:', eRpc?.message ?? 'verdict inattendu')
@@ -72,4 +76,11 @@ export async function POST(req: Request) {
     if (cookie) reponse.headers.set('Set-Cookie', enteteCookieAppareil(cookie, JOURS_APPAREIL * 86_400))
   }
   return reponse
+}
+
+/** Vrai seulement pour LE compte de relecture désigné (email exact) et son code fixe (comparaison à temps constant). */
+function codeRelecture(email: string, code: string): boolean {
+  const e = (process.env.RELECTURE_EMAIL || '').trim().toLowerCase(), c = (process.env.RELECTURE_CODE || '').trim()
+  if (!e || !/^\d{6}$/.test(c) || email !== e) return false
+  return code.length === c.length && timingSafeEqual(Buffer.from(code), Buffer.from(c))
 }

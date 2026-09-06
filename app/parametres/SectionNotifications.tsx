@@ -203,7 +203,7 @@ export default function SectionNotifications({ a, patch, signaler }: SectionProp
             Jamais le contenu du message : il reste dans Presti.
           </p>
           {natifSansPush ? (
-            <p className="notif-etat" data-etat="natif-bientot">Les notifications dans l’application arrivent avec sa prochaine version. En attendant, elles fonctionnent depuis Chrome (Android) ou Presti installée sur l’écran d’accueil (iPhone), et par email.</p>
+            <p className="notif-etat" data-etat="natif-bientot">Dans l’application, vous êtes prévenu par email.</p>
           ) : support === 'ios_non_installee' ? (
             <p className="notif-etat" data-etat="ios">
               Sur iPhone, les notifications ne fonctionnent qu’une fois Presti installée sur l’écran d’accueil : dans Safari, touchez

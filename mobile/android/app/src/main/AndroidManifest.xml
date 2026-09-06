@@ -30,7 +30,6 @@
                 <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/inventaire" />
                 <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/parametres" />
                 <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/dashboard" />
-                <data android:scheme="https" android:host="qg.prestiapp.fr" android:pathPrefix="/abonnement" />
             </intent-filter>
         </activity>
 

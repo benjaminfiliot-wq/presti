@@ -41,6 +41,17 @@ export default function SectionApplication({ signaler }: SectionProps) {
     else if (r === 'refuse') signaler({ type: 'err', text: 'Installation annulée. Le bouton reste là.' })
   }
 
+  // La coque (stores) : ni lien de téléchargement hors store, ni annonce d'un store « à venir » (critique des fiches, 07/09).
+  if (ici === 'natif') {
+    return (
+      <div className="tool-card" data-application>
+        <h2>Presti, partout</h2>
+        <p className="notif-etat" data-etat="natif">✅ Vous êtes dans l’application Presti ({plateforme() === 'ios' ? 'iPhone' : 'Android'}).</p>
+        <p className="muted" style={{ margin: '.6rem 0 0' }}>La même console, la même adresse, sur votre tablette et votre ordinateur aussi. Vos données restent les mêmes d’un appareil à l’autre.</p>
+      </div>
+    )
+  }
+
   return (
     <>
       <div className="tool-card" data-application>
@@ -48,8 +59,7 @@ export default function SectionApplication({ signaler }: SectionProps) {
         <p className="muted" style={{ margin: '0 0 .9rem' }}>
           La même console, la même adresse, sur votre téléphone, votre tablette et votre ordinateur. Vos données restent les mêmes d’un appareil à l’autre.
         </p>
-        {ici === 'natif' ? <p className="notif-etat" data-etat="natif">✅ Vous êtes dans l’application Presti ({plateforme() === 'ios' ? 'iPhone' : 'Android'}).</p>
-          : ici === 'installee' ? <p className="notif-etat" data-etat="installee">✅ Presti est installée sur cet appareil.</p>
+        {ici === 'installee' ? <p className="notif-etat" data-etat="installee">✅ Presti est installée sur cet appareil.</p>
           : invite ? (
             <div className="app-ligne">
               <span><b>Installer Presti sur {ici === 'android' ? 'ce téléphone' : 'cet ordinateur'}</b><small>Dans sa propre fenêtre, sans onglets, avec ses notifications.</small></span>

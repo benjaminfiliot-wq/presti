@@ -6,9 +6,12 @@ import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import Comparatif from '@/app/Comparatif'
 import { OFFRES, PLANS, pointsForts } from '@/lib/plans'
+import { estNatif } from '@/lib/natif'
 
 // Abonnement — tout vient de la matrice de lib/plans.ts (v5 §3). Avant, cette page portait
 // sa propre liste de fonctionnalités, différente de la landing et des verrous serveur.
+
+const NOTE_NATIF = 'Dans l’application, votre formule se consulte ; sa gestion n’est pas disponible ici.'
 
 export default function Abonnement() {
   const router = useRouter()
@@ -43,10 +46,19 @@ export default function Abonnement() {
   }
 
   const actuel = PLANS[plan as keyof typeof PLANS]
+  // La coque (stores) : l'achat ne passe ni par Stripe ni par un renvoi vers le site — la formule se consulte, point.
+  const natif = estNatif()
 
   return (
     <AppShell active="abonnement" title="Abonnement" crumb="Votre formule">
-      {!ready ? <p className="muted">Chargement…</p> : (
+      {!ready ? <p className="muted">Chargement…</p> : natif ? (
+        <div className="tool-card" data-abonnement-natif>
+          <h2>Votre formule</h2>
+          <p className="muted" style={{ margin: 0 }}>
+            Vous êtes en <b>{actuel?.label ?? 'Essai'}</b>{actuel?.creditsMois ? <> — {actuel.creditsMois} crédits chaque mois</> : null}. {NOTE_NATIF}
+          </p>
+        </div>
+      ) : (
         <>
           {msg && <div className="msg err" style={{ marginTop: 0 }}>{msg}</div>}
           <p className="muted" style={{ margin: '0 0 1.3rem', maxWidth: '58ch' }}>

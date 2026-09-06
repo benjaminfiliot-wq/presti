@@ -45,7 +45,7 @@ fs.writeFileSync(`${OUT}/logcat.txt`, logcat)
 const fatales = logcat.split('\n').filter((l) => /FATAL EXCEPTION|AndroidRuntime.*Process: fr\.prestiapp/.test(l))
 T('aucune exception fatale', fatales.length === 0, fatales.slice(0, 3).join(' | '))
 T('Capacitor a démarré (logcat)', /Capacitor/.test(logcat))
-const chargement = logcat.split('\n').filter((l) => /Capacitor.*(Unable to|Failed|ERR_)/i.test(l))
+const chargement = logcat.split('\n').filter((l) => /Capacitor.*(Unable to|Failed|ERR_)/i.test(l) && !/public\/plugins/.test(l))
 T('aucune erreur de chargement Capacitor', chargement.length === 0, chargement.slice(0, 3).join(' | '))
 
 console.log('\n3. La WebView, par DevTools')
@@ -63,15 +63,36 @@ if (pid) {
 }
 T('page de la WebView joignable', !!page, page ? page.url : '')
 
-/** Runtime.evaluate par WebSocket (Node 22 : WebSocket global), promesses attendues, valeur rendue par valeur. */
-const evaluer = (expression) => new Promise((resolve) => {
-  const ws = new WebSocket(page.webSocketDebuggerUrl)
-  const fin = (v) => { try { ws.close() } catch { /* déjà fermée */ } resolve(v) }
-  const garde = setTimeout(() => fin({ erreur: 'délai' }), 20000)
-  ws.onopen = () => ws.send(JSON.stringify({ id: 1, method: 'Runtime.evaluate', params: { expression, awaitPromise: true, returnByValue: true } }))
-  ws.onmessage = (m) => { const d = JSON.parse(String(m.data)); if (d.id !== 1) return; clearTimeout(garde); if (d.result?.exceptionDetails) fin({ erreur: d.result.exceptionDetails.exception?.description || d.result.exceptionDetails.text }); else fin({ valeur: d.result?.result?.value }) }
-  ws.onerror = () => { clearTimeout(garde); fin({ erreur: 'websocket' }) }
+/**
+ * Runtime.evaluate par DevTools. UNE seule connexion WebSocket pour toute la session (2e smoke : en rouvrir une par
+ * appel, DevTools refusait la suivante — « websocket »), identifiants croissants, promesses attendues, valeur rendue par valeur.
+ */
+let ws = null, prochainId = 1
+const attentes = new Map()
+const connecter = () => new Promise((resolve) => {
+  if (ws && ws.readyState === 1) return resolve(true)
+  const w = new WebSocket(page.webSocketDebuggerUrl)
+  const garde = setTimeout(() => resolve(false), 15000)
+  w.onopen = () => { clearTimeout(garde); ws = w; resolve(true) }
+  w.onerror = () => { clearTimeout(garde); resolve(false) }
+  w.onclose = () => { if (ws === w) ws = null; for (const [, r] of attentes) r({ erreur: 'connexion fermée' }); attentes.clear() }
+  w.onmessage = (m) => {
+    let d; try { d = JSON.parse(String(m.data)) } catch { return }
+    const r = attentes.get(d.id); if (!r) return
+    attentes.delete(d.id)
+    if (d.result?.exceptionDetails) r({ erreur: d.result.exceptionDetails.exception?.description || d.result.exceptionDetails.text })
+    else r({ valeur: d.result?.result?.value })
+  }
 })
+const evaluer = async (expression) => {
+  if (!(await connecter())) return { erreur: 'websocket' }
+  const id = prochainId++
+  return new Promise((resolve) => {
+    const garde = setTimeout(() => { attentes.delete(id); resolve({ erreur: 'délai' }) }, 30000)
+    attentes.set(id, (v) => { clearTimeout(garde); resolve(v) })
+    ws.send(JSON.stringify({ id, method: 'Runtime.evaluate', params: { expression, awaitPromise: true, returnByValue: true } }))
+  })
+}
 const lire = async (expr) => { const r = await evaluer(expr); if (r.erreur) return { erreur: r.erreur }; try { return JSON.parse(r.valeur) } catch { return { brut: r.valeur } } }
 
 if (page) {
@@ -105,6 +126,7 @@ if (page) {
   const marque = await lire(`JSON.stringify({ presti: /Presti/.test(document.body.innerText), site: !!document.querySelector('a[href^="/site/"], a[href^="/p/"]') })`)
   T("l'écran est celui de Presti, sans lien vers une surface d'artisan", marque.presti === true && marque.site === false, JSON.stringify(marque))
 }
+try { ws?.close() } catch { /* déjà fermée */ }
 sh(`adb exec-out screencap -p > ${OUT}/ecran-2.png`)
 fs.writeFileSync(`${OUT}/rapport.json`, JSON.stringify(rapport, null, 2))
 console.log(`\n${rapport.ko ? '❌' : '✅'} smoke-android : ${rapport.ok}/${rapport.ok + rapport.ko}`)

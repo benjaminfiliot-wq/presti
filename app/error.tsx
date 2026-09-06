@@ -9,7 +9,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
     try {
       fetch('/api/report-error', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contexte: 'segment-error', message: error?.message ?? 'erreur inconnue', stack: error?.stack ?? '', url: typeof location !== 'undefined' ? location.href : '' }),
+        body: JSON.stringify({ contexte: 'segment-error', message: error?.message ?? 'erreur inconnue', stack: error?.stack ?? '', url: typeof location !== 'undefined' ? location.pathname.replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '[id]') : '' }),
         keepalive: true,
       }).catch(() => {})
     } catch {}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { GRILLE, OFFRES, PLANS, planConf, type PlanPayant } from '@/lib/plans'
 import { api, dateFr, type SectionProps } from './commun'
+import { estNatif } from '@/lib/natif'
 
 // Abonnement & usage (sprint J-1 §6). Tout ce qui est chiffré vient de la base ou de Stripe :
 //  • la jauge = crédits inclus dans la formule − crédits restants (artisans.credits). Il n'existe
@@ -30,6 +31,8 @@ function deverrouille(actuel: PlanPayant, cible: PlanPayant): string[] {
 }
 
 export default function SectionAbonnement({ a, signaler }: SectionProps) {
+  // La coque (stores) : pas d'achat, pas de portail, pas de renvoi — la formule se consulte (critique des fiches, 07/09).
+  const natif = estNatif()
   const [abo, setAbo] = useState<Abo>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const plan = a.plan ?? 'gratuit'
@@ -97,7 +100,11 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
         )}
       </div>
 
-      {a.stripe_customer_id ? (
+      {natif ? (
+        <p className="muted" data-abonnement-natif style={{ margin: '.2rem 0 0' }}>Dans l’application, votre formule se consulte ; sa gestion n’est pas disponible ici.</p>
+      ) : null}
+
+      {!natif && a.stripe_customer_id ? (
         <div className="tool-card">
           <h2>Paiements &amp; facturation</h2>
           <p className="muted" style={{ margin: '0 0 .9rem' }}>
@@ -108,7 +115,7 @@ export default function SectionAbonnement({ a, signaler }: SectionProps) {
         </div>
       ) : null}
 
-      {!illimite && superieures.length ? (
+      {!natif && !illimite && superieures.length ? (
         <div className="tool-card">
           <h2>Changer d’offre</h2>
           <p className="muted" style={{ margin: '0 0 1rem' }}>Ce que chaque offre débloque par rapport à la vôtre — rien d’autre.</p>
