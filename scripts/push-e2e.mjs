@@ -46,6 +46,24 @@ const b64u = (b) => Buffer.from(b).toString('base64url')
   if (!actif('pushWeb')) { console.log('⏳ push-e2e : drapeau pushWeb baissé (lib/flags.ts) — à lever une fois 0064 collée'); process.exit(2) }
   if (!process.env.VAPID_PRIVATE_KEY || !process.env.VAPID_PUBLIC_KEY) { console.log('⏳ push-e2e : clés VAPID absentes de .env.local'); process.exit(2) }
 }
+// web-push n'envoie qu'en https. Pour le faux service LOCAL (http), on garde tout ce qui compte — le chiffrement
+// aes128gcm et la signature VAPID (generateRequestDetails) — et on ne remplace que le transport. Les vrais
+// services de push (section 3, en production) passent par le chemin normal.
+{
+  const wp = (await import('web-push')).default
+  const vrai = wp.sendNotification.bind(wp)
+  wp.sendNotification = (sub, corps, opts) => {
+    if (!/^http:\/\/127\.0\.0\.1:/.test(sub.endpoint)) return vrai(sub, corps, opts)
+    const d = wp.generateRequestDetails(sub, corps, opts)
+    return new Promise((resolve, reject) => {
+      const req = http.request(d.endpoint, { method: d.method, headers: d.headers }, (res) => {
+        res.resume()
+        res.on('end', () => { if (res.statusCode >= 200 && res.statusCode < 300) resolve({ statusCode: res.statusCode }); else { const e = new Error('HTTP ' + res.statusCode); e.statusCode = res.statusCode; reject(e) } })
+      })
+      req.on('error', reject); req.end(d.body)
+    })
+  }
+}
 const { envoyerPushArtisan, chargeUtile, PLAFOND_PUSH_HEURE } = await import('../lib/push.ts')
 const { notifierArtisan } = await import('../lib/notifications.ts')
 
@@ -79,7 +97,7 @@ async function dechiffrer(corps, ap) {
 const st = Date.now(), EMAIL = `push.${st}@presti-test.invalid`, MDP = 'Push-e2e-' + st + '!Aa'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email: EMAIL, password: MDP, email_confirm: true }) })).json()
 if (!u.id) { console.log('❌ création du compte de test impossible', JSON.stringify(u).slice(0, 120)); process.exit(1) }
-await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email: EMAIL, nom: 'Push E2E', metier: 'Plombier', ton_style: 'pro', slug: `push-e2e-${st}` }) })
+await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email: EMAIL, nom: 'Push E2E', metier: 'Plombier', ton_style: 'pro', slug: `push-e2e-${st}`, aide_vues: ['visite:console', 'visite:messages', 'visite:devis', 'visite:plateforme', 'visite:inventaire'] }) })
 const UID = u.id
 const nettoyer = async () => { faux.close(); await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: UID }) }).catch(() => {}) }
 const abos = async () => (await rest(`push_abonnements?artisan_id=eq.${UID}&select=id,endpoint,actif,echecs,dernier_succes&order=cree_le`)).json()
@@ -187,6 +205,7 @@ try {
   const cr = await chromium.launch()
   {
     const ctx = await cr.newContext({ ...devices['Pixel 7'], locale: 'fr-FR', reducedMotion: 'reduce', permissions: ['notifications'] })
+    await ctx.grantPermissions(['notifications'], { origin: new URL(APP).origin }).catch(() => {})
     await routeLocal(ctx)
     await ctx.addInitScript(init, [CLE, sess])
     const page = await ctx.newPage()
@@ -200,8 +219,15 @@ try {
     const prefs = (await (await rest(`artisans?id=eq.${UID}&select=notifications`)).json())[0]?.notifications
     T('décocher « Push » sur Nouvelle demande → enregistré en base (notifications.push.nouvelle_demande = false)', prefs?.push?.nouvelle_demande === false, JSON.stringify(prefs))
     const carte = await page.$('[data-notif-push]')
+    const permission = await page.evaluate(() => ('Notification' in window ? Notification.permission : 'absente'))
+    console.log(`  ℹ️  Notification.permission dans ce Chrome sans tête : ${permission}`)
     const bouton = await page.$('[data-notif-push] [data-activer]')
-    T('carte « Sur votre téléphone » avec le bouton « Activer sur cet appareil » (Chrome)', !!carte && !!bouton)
+    if (permission === 'denied') {
+      // Chrome sans tête refuse parfois la permission malgré l'octroi : l'écran doit alors le dire, sans bouton qui ne mènerait nulle part.
+      T('carte « Sur votre téléphone » : permission refusée par le navigateur → message clair, aucun bouton', !!carte && !bouton && !!(await page.$('[data-notif-push] [data-etat="refuse"]')))
+    } else {
+      T('carte « Sur votre téléphone » avec le bouton « Activer sur cet appareil » (Chrome)', !!carte && !!bouton)
+    }
     if (bouton) {
       await bouton.click().catch(() => {})
       await page.waitForFunction(() => document.querySelector('[data-etat="actif"], .notif-erreur, [data-appareils]'), null, { timeout: 20000 }).catch(() => {})
