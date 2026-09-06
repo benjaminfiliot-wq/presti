@@ -34,7 +34,7 @@ const CARTE = {
   'lib/purgeComptes.ts': 'entreprise : compte purgé ou anonymisé',
   'lib/reglesServeur.ts': 'artisan : devis préparé ou envoyé par une règle',
 }
-const TYPES = (fs.readFileSync('lib/notifications.ts', 'utf8').match(/export type TypeNotification = ([^\n]+)/) || ['', ''])[1].match(/'([a-z_]+)'/g)?.map((t) => t.replace(/'/g, '')) ?? []
+const TYPES = (fs.readFileSync('lib/notificationsTypes.ts', 'utf8').match(/export type TypeNotification = ([^\n]+)/) || ['', ''])[1].match(/'([a-z_]+)'/g)?.map((t) => t.replace(/'/g, '')) ?? []
 T('les types de notification artisan sont lus', TYPES.length >= 3, TYPES.join(','))
 
 function* fichiers(d) {
