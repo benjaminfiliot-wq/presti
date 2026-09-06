@@ -18,5 +18,8 @@
 
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
+        <!-- Android 12+ : le splash système — fond nuit (le smoke du 07/09 montrait un fond clair, le « flash blanc » que TESTS.md interdit) -->
+        <item name="windowSplashScreenBackground">@color/presti_nuit</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>
 </resources>

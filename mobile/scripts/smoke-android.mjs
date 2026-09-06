@@ -22,7 +22,7 @@ const PLUGINS = ['App', 'Preferences', 'SplashScreen', 'StatusBar', 'PushNotific
 fs.mkdirSync(OUT, { recursive: true })
 const rapport = { ok: 0, ko: 0, lignes: [] }
 const T = (nom, cond, detail = '') => { rapport[cond ? 'ok' : 'ko']++; rapport.lignes.push({ nom, ok: !!cond, detail }); console.log(`  ${cond ? '✅' : '❌'} ${nom}${!cond && detail ? ` — ${detail}` : ''}`) }
-const sh = (c, opt = {}) => { try { return execSync(c, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...opt }).trim() } catch (e) { return `ERREUR ${e.stderr || e.message}` } }
+const sh = (c, opt = {}) => { try { return execSync(c, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024, ...opt }).trim() } catch (e) { return `ERREUR ${e.stderr || e.message}` } }
 const dormir = (ms) => new Promise((r) => setTimeout(r, ms))
 
 console.log(`\nsmoke-android — ${APK}\n`)
@@ -31,9 +31,10 @@ sh('adb wait-for-device')
 const inst = sh(`adb install -r "${APK}"`)
 T('APK installé', /Success/.test(inst), inst.slice(0, 200))
 sh('adb logcat -c')
-const start = sh(`adb shell am start -W -n ${PAQUET}/.MainActivity`)
-T('activité lancée', /Status: ok/.test(start), start.slice(0, 200))
-await dormir(25000) // écran de lancement + chargement de la console par le réseau de l'émulateur
+console.log('  réseau émulateur : dns1 =', sh('adb shell getprop net.dns1') || '(vide)')
+const start = sh(`adb shell am start -n ${PAQUET}/.MainActivity`)
+T('activité lancée', /Starting: Intent/.test(start) && !/Error/.test(start), start.slice(0, 200))
+await dormir(35000) // écran de lancement + chargement de la console par le réseau de l'émulateur
 sh(`adb exec-out screencap -p > ${OUT}/ecran-1.png`)
 const focus = sh('adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp"')
 T("l'app a le focus", focus.includes(PAQUET), focus.slice(0, 200))
@@ -74,6 +75,15 @@ const evaluer = (expression) => new Promise((resolve) => {
 const lire = async (expr) => { const r = await evaluer(expr); if (r.erreur) return { erreur: r.erreur }; try { return JSON.parse(r.valeur) } catch { return { brut: r.valeur } } }
 
 if (page) {
+  // Le réseau de l'émulateur met parfois quelques secondes à exister : si la coque a montré la page de secours au
+  // premier lancement, on rejoue « Réessayer » (la console) une fois — noté, pas compté comme un échec.
+  const premier = await lire(`JSON.stringify({ url: location.href, secours: !!document.querySelector('[data-presti-hors-ligne]') })`)
+  if (premier.secours || !/qg\.prestiapp\.fr/.test(premier.url || '')) {
+    console.log(`  ⚠️  premier lancement : ${premier.url || premier.erreur} — nouvel essai vers la console`)
+    await evaluer(`location.href = 'https://qg.prestiapp.fr/dashboard'`)
+    await dormir(25000)
+    sh(`adb exec-out screencap -p > ${OUT}/ecran-1b.png`)
+  }
   const etat = await lire(`JSON.stringify({ url: location.href, titre: document.title, natif: !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()), plateforme: window.Capacitor && Capacitor.getPlatform ? Capacitor.getPlatform() : null, secours: !!document.querySelector('[data-presti-hors-ligne]'), connexion: !!document.querySelector('input[type=password]'), enregistres: Object.keys((window.Capacitor && Capacitor.Plugins) || {}) })`)
   rapport.etat = etat
   T('la console est chargée (qg.prestiapp.fr, pas la page de secours)', /^https:\/\/qg\.prestiapp\.fr\//.test(etat.url || '') && !etat.secours, etat.url || etat.erreur)

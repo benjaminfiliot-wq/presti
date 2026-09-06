@@ -102,7 +102,8 @@ jobs:
           arch: x86_64
           target: google_apis
           profile: pixel_6
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          # -dns-server : sans lui, l'émulateur des runners GitHub ne résout aucun nom (systemd-resolved) — la console ne chargeait pas (smoke du 07/09)
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -dns-server 8.8.8.8,1.1.1.1
           disable-animations: true
           script: node mobile/scripts/smoke-android.mjs presti-debug-apk/app-debug.apk
       - uses: actions/upload-artifact@v4

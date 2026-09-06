@@ -26,7 +26,7 @@ const config: CapacitorConfig = {
   ios: { contentInset: 'automatic', scheme: 'Presti', limitsNavigationsToAppBoundDomains: true },
   android: { allowMixedContent: false, captureInput: true, webContentsDebuggingEnabled: debug },
   plugins: {
-    SplashScreen: { launchAutoHide: false, backgroundColor: '#0A0C11', androidScaleType: 'CENTER_CROP', showSpinner: false },
+    SplashScreen: { launchAutoHide: true, launchShowDuration: 4000, launchFadeOutDuration: 200, backgroundColor: '#0A0C11', androidScaleType: 'CENTER_CROP', showSpinner: false },
     PushNotifications: { presentationOptions: ['badge', 'sound', 'alert'] },
     Keyboard: { resize: 'body' },
     StatusBar: { style: 'DARK', backgroundColor: '#0A0C11', overlaysWebView: false },
