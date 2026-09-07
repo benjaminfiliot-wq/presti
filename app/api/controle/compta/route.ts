@@ -6,6 +6,7 @@ import { journaliser, refusJournal } from '@/lib/direction/journal'
 import { sourcer } from '@/lib/direction/fraicheur'
 import { encaisseDuMois } from '@/lib/direction/stripe'
 import { stripe } from '@/lib/stripe'
+import { actif } from '@/lib/flags'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -50,6 +51,8 @@ const caDeLAnnee = () => sourcer('compta:ca-annee', 'stripe', async () => {
 }, 300_000)
 
 export async function GET(req: Request) {
+  // Drapeau baissé = cet espace n'existe pas : 404 avant tout, y compris avant l'identité.
+  if (!actif('comptabilite')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'comptabilite', 'voir')
@@ -125,6 +128,8 @@ function centimes(v: unknown): number | null {
 }
 
 export async function POST(req: Request) {
+  // Drapeau baissé = cet espace n'existe pas : 404 avant tout, y compris avant l'identité.
+  if (!actif('comptabilite')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'comptabilite', 'ecrire')

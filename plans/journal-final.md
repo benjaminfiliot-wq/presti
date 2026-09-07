@@ -624,3 +624,112 @@ Trois fois, la mesure disait « défaut » là où il n'y en avait pas, et une f
 | ~~0064~~ | ✅ collée par Benj le 06/09 22:10 — drapeau `pushWeb` levé, `push-e2e` 25/25 en prod | — | — | fait |
 
 Décisions §10 en vigueur (recommandations, tant que Benj ne tranche pas autrement) : nom « Presti » avec repli ; verrou biométrique après 5 min d'arrière-plan ; Crashlytics après les premiers retours ; Android d'abord.
+
+## 07/09 — pourquoi l'audit de nuit ne trouvait rien
+
+Benj demande : « l'audit de nuit d'aujourd'hui a rien trouvé ? » La bonne réponse n'était pas
+« non, rien » : c'était qu'une partie du produit n'était pas auditée, et que le rapport disait le
+contraire.
+
+**Mesuré, pas supposé.** Soixante-huit suites e2e existent. Le lanceur (`tout-verifier.mjs`) en
+appelait cinquante-sept ; l'audit nocturne, qui lance ce script sans `--tout`, en jouait
+cinquante-quatre. **Quinze suites n'étaient jamais jouées** — `abonnement-e2e` (les onze transitions
+d'un abonnement), `mfa-e2e`, `suppressions-e2e`, `comptes-clients-e2e`… Écrites, vertes le jour de
+leur écriture, plus jamais relancées.
+
+**Et le rapport de couverture les comptait quand même.** `plans/couverture.md` annonçait
+« Cases vides : 0 » en s'appuyant sur des suites que la nuit ne joue pas. Dix éléments — dont
+`/api/stripe/portail`, le portail de facturation — n'étaient regardés par personne, sous un rapport
+qui affichait zéro trou. Encore deux chiffres justes qui se contredisent, comme le budget IA et la
+facture Anthropic la semaine dernière.
+
+**Ce qui a été fait**
+
+| Trouvé | Corrigé |
+|---|---|
+| 15 suites jamais lancées | 13 branchées au lanceur avec leur vrai coût (5 gratuites, 5 navigateur, 3 IA jouées seulement à la main) ; `fact-e2e` et `pdf-e2e` exigent un serveur local — écartées **avec leur raison écrite** dans `HORS_LANCEUR` |
+| « Hors lanceur » et « oublié » se ressemblaient | `inventaire-produit.mjs` lit `HORS_LANCEUR` : une suite non déclarée et non lancée est signalée comme oubli |
+| Le rapport comptait une couverture que la nuit ne joue pas | Nouvelle mesure publiée à côté des cases vides : **l'angle mort** — testé, mais par aucune suite jouée la nuit. Passé de 7 à 0 |
+| `/api/controle/barre` et `/api/controle/recherche` : livrées, jamais appelées par une suite | Ajoutées à `fermeture-e2e`, avec les dix autres routes du Poste de contrôle |
+| 6 routes couvertes seulement par des suites payantes en IA | Leur fermeture (401/403 sans identité, jamais 500) vérifiée chaque nuit, sans un centime : `/api/devis/auto`, `/api/inventaire/recherche{,/retenir}`, `/api/plateforme/apparence`, `/api/stripe/portail`, `/api/conversation/regles` |
+| **Le drapeau `comptabilite` cachait l'onglet sans fermer les routes** | `/api/controle/compta` et `/api/controle/releve` répondent 404 quand il est baissé, avant même de demander une identité — comme `courriers` le faisait déjà |
+| La liste des drapeaux vérifiés était tenue à la main : 4 des 20 n'y étaient pas | Carte complète des 20 drapeaux dans `fermeture-e2e`, **avec verrou** : un drapeau absent de la carte fait échouer la suite. Quatre natures distinguées — `route` (le seul vrai verrou), `lu`, `note` (ne ferme rien, et c'est écrit), `mort` (levé, plus personne ne le lit : `plateformePilotage`, `plateformePersona`) |
+
+**Ce qui reste ouvert, et c'est écrit plutôt que caché** : trois envois d'email du Poste de contrôle
+(refus d'apport, message à un artisan, réponse dans un fil) n'ont pas de test. Deux d'entre eux
+journalisent leur intention avant l'envoi — donc ils sont vérifiables par le journal, sans envoyer
+un vrai message. C'est un test à écrire, pas une case à oublier.
+
+**Appels IA : 0.**
+
+## 07/09 — la messagerie de l'entreprise : pourquoi elle ne marchait pas, et ce qu'elle fait maintenant
+
+Benj : « le système de mail de l'entreprise marche pas, je veux qu'il reçoive tous les mails et qu'il
+les traite selon si c'est un client qui nous envoie un message ou un abonnement etc. »
+
+### Le diagnostic, mesuré en production
+
+| Constat | Preuve |
+|---|---|
+| La boîte **est** configurée | `IMAP_USER` et `IMAP_PASS` existent sur Vercel (production) |
+| La relève **est** automatique | elle tourne dans le cron des relances, 8 h — le plan Vercel n'accorde que deux tâches, toutes deux prises |
+| **Elle échoue** | `POST /api/controle/courriers/relever` → 503 « Command failed » en 6 s (`scripts/sonde-boite.mjs`) |
+| **Depuis toujours** | 0 courrier en base |
+| **Sans que personne ne le sache** | `passages_cron` du jour : `{"nom":"relances","reussi":true}` — la relève n'y figurait même pas |
+
+Puis deux causes de fond, trouvées en lisant le code :
+
+1. **Deux fichiers donnaient deux serveurs pour le même compte.** `app/api/control/inbox` proposait
+   `imap.gmail.com`, la relève du Poste de contrôle `ssl0.ovh.net`. L'un des deux avait forcément tort.
+2. **La boîte relevée n'est pas celle où Presti écrit.** `EMAIL_ENTREPRISE` vaut
+   `benjaminfiliot+presti@gmail.com` (via `PRESTI_ALERTES_EMAIL`). Même connexion réussie, la boîte
+   relevée ne contiendrait aucune de nos notifications — et une boîte vide ressemble à une boîte calme.
+
+### Corrigé
+
+- **Une seule résolution de la boîte** dans tout le dépôt (`boiteEntrepriseResolue`), qui devine
+  l'hôte depuis l'adresse avec `devineFournisseur` — la fonction qu'on offre déjà aux artisans. Une
+  adresse Gmail ne se relève plus sur le serveur d'OVH.
+- **L'erreur dit quoi corriger** : « Identifiants refusés… », « Serveur introuvable… », avec l'hôte,
+  le port et le compte réduit à sa première lettre (une erreur finit en capture d'écran).
+- **L'échec remonte** : le résultat de la relève entre dans le détail du passage, et un échec fait
+  échouer le passage — ce qui déclenche l'alerte `cron_muet` qui existait déjà.
+- **Les réglages disent si on relève la BONNE boîte** : « Presti écrit à X, on relève Y — nos propres
+  messages n'arrivent pas ici. »
+- **La relève ne perd plus de courrier.** Elle lisait une fenêtre des N derniers messages *par numéro
+  de séquence* : une salve de 31 messages en faisait glisser six hors de portée, définitivement, sans
+  la moindre trace. Elle reprend maintenant **par UID** depuis le plus haut déjà enregistré, avec
+  garde sur `uidValidity`, et dit ce qui reste à relever. « Tous les mails » veut dire tous.
+
+### Le classement — migration 0072, À COLLER
+
+Neuf natures (`lib/direction/natures.ts`), dix règles **déterministes**, aucun appel de modèle : ça
+se paierait à chaque email reçu, et le rangement d'hier ne serait pas celui d'aujourd'hui.
+
+L'ordre des règles est un **ordre de danger**, pas de fréquence : plus une règle risque d'enterrer un
+message vivant, plus elle est testée tôt. La non-remise passe en premier (elle porte les en-têtes du
+message d'origine, testée tard elle passerait pour « un humain m'a répondu ») ; le formulaire de
+contact passe avant « nos mails = technique » (sinon chaque message du site était enterré) ; l'artisan
+passe avant toute détection de robot (cinq secondes de lecture contre un client perdu).
+
+Une correction faite à la main n'est **jamais** rejouée : ni par la relève du lendemain, ni par un
+reclassement de masse. Sans ce verrou, le cron effacerait chaque matin le rangement de la veille.
+
+### Trois défauts de MON travail, trouvés par la revue adversariale et corrigés avant de coller
+
+1. **`[SIMULATION]` était cherché n'importe où dans le sujet.** Or le sujet du formulaire contient
+   120 caractères que le visiteur écrit : quelqu'un nommé « [SIMULATION] Marc » enterrait son propre
+   message dans la pile des machines. Le marqueur est maintenant ancré là où notre code le pose.
+2. **Le rattachement à un artisan se décidait sur un champ public.** L'adresse tapée dans le
+   formulaire suffisait à faire apparaître un message inconnu sur la fiche d'un vrai client, dans la
+   pile la plus lue de l'écran. Retiré : rattacher redevient un geste humain, tracé au journal.
+3. **La relève perdait du courrier** (voir plus haut) — le plus grave des trois, et celui qui
+   contredisait directement la demande.
+
+### Preuve
+
+`scripts/courriers-e2e.mjs` — 27 cas de classement, le verrou du manuel, les compteurs. Partie A
+(résolution de la boîte) : **6/6**. Le reste attend la migration et sort en code 2, « en attente d'un
+préalable humain », jamais compté comme vert. Typage 0 erreur, build vert, `emails-e2e` 102/102.
+
+**Appels IA : 0.**

@@ -131,7 +131,15 @@ const suites = [...lanceur.matchAll(/\{\s*nom:\s*'([^']+)'[^}]*?args:\s*\[([^\]]
   nom: m[1], script: (m[2].match(/'scripts\/[^']+'/) || [''])[0].replace(/'/g, ''), cout: m[3],
 }))
 const scriptsTest = marcher('scripts', (p) => /-e2e\.mjs$|verifier\.mjs$|-test\.mjs$/.test(p))
-const nonLances = scriptsTest.filter((s) => !suites.some((x) => x.script === s) && !/tout-verifier/.test(s))
+// Ce que le lanceur écarte VOLONTAIREMENT, avec sa raison. On lit le texte, on n'importe pas :
+// importer `tout-verifier.mjs` l'exécuterait, et compter les suites lancerait les suites.
+const ecartes = new Map([...(lanceur.match(/export const HORS_LANCEUR = \{[\s\S]*?\n\}/) ?? [''])[0]
+  .matchAll(/'([^']+\.mjs)':\s*'([^']*)'/g)].map((m) => [m[1], m[2]]))
+const nonLances = scriptsTest.filter((s) => !suites.some((x) => x.script === s) && !/tout-verifier/.test(s) && !ecartes.has(s.replace('scripts/', '')))
+// Ce que l'audit NOCTURNE joue vraiment : `.github/workflows/audit.yml` appelle `tout-verifier.mjs`
+// SANS `--tout`, donc les suites de coût 'ia' sautent, et celles qui manquent au lanceur ne tournent
+// jamais. Une suite qu'aucune nuit ne joue a été vue une fois, à la main, puis plus jamais.
+const jouees = new Set(suites.filter((s) => s.cout !== 'ia').map((s) => s.script.replace('scripts/', '')))
 
 // ── 9. Couverture : qui teste quoi ────────────────────────────────────────────
 const corpusTests = Object.fromEntries(scriptsTest.map((s) => [s, lire(s)]))
@@ -154,13 +162,18 @@ const couverture = {
   drapeaux: drapeaux.map((d) => ({ ...d, testeurs: testeurs([`'${d.nom}'`, `.${d.nom}`]) })),
 }
 const vides = Object.entries(couverture).flatMap(([k, arr]) => arr.filter((x) => !x.testeurs.length).map((x) => ({ type: k, cle: x.chemin ?? x.cap ?? x.path ?? x.nom ?? x.fichier })))
+// L'ANGLE MORT : testé, mais par personne la nuit. Deux chiffres justes se contredisaient — « 0 case
+// vide » et « aucune suite jouée ne touche /api/stripe/portail ». Le second manquait ; il est là.
+const aveugles = Object.entries(couverture).flatMap(([k, arr]) => arr
+  .filter((x) => x.testeurs.length && !x.testeurs.some((t) => jouees.has(t)))
+  .map((x) => ({ type: k, cle: x.chemin ?? x.cap ?? x.path ?? x.nom ?? x.fichier, testeurs: x.testeurs })))
 
 // ── Écriture ──────────────────────────────────────────────────────────────────
 const maintenant = new Date().toISOString().slice(0, 16).replace('T', ' ')
 const md = []
 md.push(`# Inventaire du produit — généré le ${maintenant}\n`)
 md.push(`> Produit par \`scripts/inventaire-produit.mjs\` en lisant le code. Ne pas éditer à la main : relancer.\n`)
-md.push(`| Élément | Nombre |\n|---|---|\n| Pages | ${pages.length} |\n| Routes API | ${routes.length} |\n| Migrations | ${migrations.length} (dernière : ${migrations.at(-1)}) |\n| Drapeaux | ${drapeaux.length} (${drapeaux.filter((d) => d.leve).length} levés) |\n| Envois d'email | ${emails.length} (+ ${alertes.length} motifs d'alerte de service) |\n| Crons | ${crons.length} planifiés${cronsSansPlanif.length ? ` · ⚠️ ${cronsSansPlanif.length} route(s) cron sans planification : ${cronsSansPlanif.join(', ')}` : ''} |\n| Capacités | ${capacites.length} (${BASE.length} socle, +${STUDIO.length} Studio, +${SIGNATURE.length} Signature) |\n| Suites de test | ${suites.length} dans le lanceur${nonLances.length ? ` · ⚠️ ${nonLances.length} script(s) de test hors lanceur` : ''} |\n`)
+md.push(`| Élément | Nombre |\n|---|---|\n| Pages | ${pages.length} |\n| Routes API | ${routes.length} |\n| Migrations | ${migrations.length} (dernière : ${migrations.at(-1)}) |\n| Drapeaux | ${drapeaux.length} (${drapeaux.filter((d) => d.leve).length} levés) |\n| Envois d'email | ${emails.length} (+ ${alertes.length} motifs d'alerte de service) |\n| Crons | ${crons.length} planifiés${cronsSansPlanif.length ? ` · ⚠️ ${cronsSansPlanif.length} route(s) cron sans planification : ${cronsSansPlanif.join(', ')}` : ''} |\n| Capacités | ${capacites.length} (${BASE.length} socle, +${STUDIO.length} Studio, +${SIGNATURE.length} Signature) |\n| Suites de test | ${suites.length} dans le lanceur (${jouees.size} jouées chaque nuit)${nonLances.length ? ` · ⚠️ ${nonLances.length} script(s) de test que rien n’appelle` : ''}${ecartes.size ? ` · ${ecartes.size} écarté(s) volontairement` : ''}${aveugles.length ? ` · ⚠️ ${aveugles.length} élément(s) en angle mort de l’audit` : ''} |\n`)
 
 md.push(`\n## Pages (${pages.length})\n\n| Chemin | Surface | Auth | Rendu | Fichier |\n|---|---|---|---|---|`)
 for (const p of pages) md.push(`| \`${p.chemin}\` | ${p.surface} | ${p.auth ? 'oui' : 'non'} | ${p.client ? 'client' : 'serveur'} | ${p.fichier} |`)
@@ -195,12 +208,17 @@ fs.writeFileSync(path.join(RACINE, 'plans/inventaire-produit.md'), md.join('\n')
 
 const cv = []
 cv.push(`# Couverture — qui teste quoi — généré le ${maintenant}\n`)
-cv.push(`> Généré par \`scripts/inventaire-produit.mjs\`. **Une case vide est un test à écrire.** Cases vides : **${vides.length}**.\n`)
+cv.push(`> Généré par \`scripts/inventaire-produit.mjs\`. **Une case vide est un test à écrire ; un angle mort est un test à brancher.** Cases vides : **${vides.length}** · angles morts de l’audit nocturne : **${aveugles.length}**.\n`)
 cv.push(`## Règles de couverture\n`)
 cv.push(`- **L'effet d'un réglage = le comportement observé sur chaque route qui le lit.** Prouver qu'un réglage s'enregistre ne prouve rien : le 05/09, les trois modes de réponse s'enregistraient parfaitement et se comportaient pareil (deux sources de vérité, lues dans un ordre différent selon la route). Un réglage est couvert quand une suite l'écrit, appelle CHAQUE route qui le lit, et constate la différence — aller ET retour (\`modes-e2e\`).`)
-cv.push(`- Une case vide est un test à écrire, pas une case à oublier.\n`)
+cv.push(`- Une case vide est un test à écrire, pas une case à oublier.`)
+cv.push(`- **Une case remplie par une suite que l’audit ne joue pas ne surveille rien.** L’audit nocturne lance \`tout-verifier.mjs\` sans \`--tout\` : une suite absente du lanceur, ou de coût \`ia\`, n’a été jouée qu’une fois, à la main. L’élément qu’elle seule couvre est un ANGLE MORT — le 07/09, il y en avait dix pendant que ce rapport annonçait « 0 case vide ».\n`)
 cv.push(`## Cases vides (${vides.length})\n`)
 if (vides.length) { cv.push(`| Type | Élément |\n|---|---|`); for (const v of vides) cv.push(`| ${v.type} | \`${v.cle}\` |`) } else cv.push('Aucune.')
+
+cv.push(`\n## Angles morts de l’audit nocturne (${aveugles.length})\n`)
+cv.push(`Testé, mais par aucune suite que la nuit joue. À lire comme : « si ça casse en production, personne ne le saura avant qu’un artisan le dise. »\n`)
+if (aveugles.length) { cv.push(`| Type | Élément | Couvert seulement par |\n|---|---|---|`); for (const a of aveugles) cv.push(`| ${a.type} | \`${a.cle}\` | ${a.testeurs.join(', ')} |`) } else cv.push('Aucun.')
 for (const [titre, cle, arr] of [['Routes API', 'chemin', couverture.routes], ['Pages', 'chemin', couverture.pages], ['Capacités', 'cap', couverture.capacites], ['Emails', 'fichier', couverture.emails], ['Crons', 'path', couverture.crons], ['Drapeaux', 'nom', couverture.drapeaux]]) {
   cv.push(`\n## ${titre}\n\n| Élément | Suites |\n|---|---|`)
   for (const x of arr) cv.push(`| \`${x[cle]}\` | ${x.testeurs.length ? x.testeurs.join(', ') : '**—**'} |`)
@@ -212,4 +230,7 @@ console.log(`Migrations sondées : ${Object.entries(etatMigrations).map(([k, v])
 console.log(`Drapeaux morts : ${drapeaux.filter((d) => !d.usages.length).map((d) => d.nom).join(', ') || 'aucun'}`)
 console.log(`Capacités sans verrou serveur : ${capacites.filter((c) => !c.verrous.length).map((c) => c.cap).join(', ') || 'aucune'}`)
 console.log(`Cases vides de couverture : ${vides.length}`)
+console.log(`Angles morts de l’audit nocturne : ${aveugles.length}${aveugles.length ? ` — ${aveugles.slice(0, 4).map((a) => a.cle).join(', ')}${aveugles.length > 4 ? '…' : ''}` : ''}`)
+if (nonLances.length) console.log(`⚠️  Scripts de test qu’AUCUN lanceur n’appelle et qui ne sont pas déclarés dans HORS_LANCEUR : ${nonLances.length} — ${nonLances.map((s) => s.replace('scripts/', '')).join(', ')}`)
+else console.log(`Scripts de test hors lanceur : 0 non déclaré (${ecartes.size} écartés avec leur raison)`)
 console.log(`→ plans/inventaire-produit.md · plans/couverture.md`)

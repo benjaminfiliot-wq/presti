@@ -20,7 +20,9 @@ export async function GET(req: Request, ctx: { params: Promise<{ fil: string }> 
   const cle = decodeURIComponent(fil).slice(0, 400)
 
   const { data, error } = await supabaseAdmin.from('courriers')
-    .select('id, sens, correspondant_email, correspondant_nom, sujet, corps, recu_le, statut, assigne_a, artisan_id, message_id')
+    // C'est le seul écran où l'on peut montrer POURQUOI un message est rangé là, et proposer la
+    // correction juste à côté : une erreur de classement doit se voir au lieu de se subir.
+    .select('id, sens, correspondant_email, correspondant_nom, sujet, corps, recu_le, statut, assigne_a, artisan_id, message_id, nature, nature_source, nature_motif, nature_auto, repondre_a')
     .eq('fil', cle).order('recu_le', { ascending: true }).limit(100)
   if (error) return NextResponse.json({ error: 'Fil indisponible pour l’instant.' }, { status: 503 })
   if (!data?.length) return NextResponse.json({ error: 'Fil inconnu.' }, { status: 404 })

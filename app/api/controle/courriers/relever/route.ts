@@ -20,9 +20,12 @@ export async function POST(req: Request) {
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const r = await relever(40)
   if (!r.ok) return NextResponse.json({ error: r.erreur }, { status: 503 })
+  // « Il en reste » n'est pas un détail : la relève est bornée par passage, et un retard qu'on ne
+  // dit pas s'accumule sans que personne ne le sache.
+  const suite = r.reste ? ' Il en reste à relever : relancez.' : ''
   return NextResponse.json({
     ...r,
-    message: r.nouveaux === 0 ? `Rien de nouveau (${r.lus} message${r.lus > 1 ? 's' : ''} examiné${r.lus > 1 ? 's' : ''}).`
-      : `${r.nouveaux} nouveau${r.nouveaux > 1 ? 'x' : ''} message${r.nouveaux > 1 ? 's' : ''}.`,
+    message: (r.nouveaux === 0 ? `Rien de nouveau (${r.lus} message${r.lus > 1 ? 's' : ''} examiné${r.lus > 1 ? 's' : ''}).`
+      : `${r.nouveaux} nouveau${r.nouveaux > 1 ? 'x' : ''} message${r.nouveaux > 1 ? 's' : ''}.`) + suite,
   })
 }

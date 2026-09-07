@@ -4,6 +4,8 @@ import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } fr
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { journaliser, refusJournal } from '@/lib/direction/journal'
 import { FLAGS } from '@/lib/flags'
+import { boiteEntrepriseResolue } from '@/lib/canaux'
+import { EMAIL_ENTREPRISE } from '@/lib/email'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -53,7 +55,15 @@ export async function GET(req: Request) {
     { cle: 'anthropic', nom: 'Anthropic (produit)', configure: !!process.env.ANTHROPIC_API_KEY, detail: process.env.ANTHROPIC_WORKSPACE_PRESTI ? 'espace de travail dédié' : 'espace par défaut' },
     { cle: 'anthropic_admin', nom: 'Anthropic (administration)', configure: !!process.env.ANTHROPIC_ADMIN_KEY, detail: 'lecture des coûts' },
     { cle: 'resend', nom: 'Resend', configure: !!process.env.RESEND_API_KEY, detail: null },
-    { cle: 'imap', nom: 'Boîte de l’entreprise', configure: !!(process.env.IMAP_USER || process.env.PRESTI_MAIL_IMAP_USER), detail: null },
+    // Branchée ne suffit pas : encore faut-il que ce soit la boîte où NOTRE courrier arrive. Si
+    // l'adresse à laquelle Presti s'écrit n'est pas celle qu'on relève, la boîte relevée ne contient
+    // aucune de nos notifications — et une boîte vide ressemble à une boîte calme.
+    { cle: 'imap', nom: 'Boîte de l’entreprise', configure: !!boiteEntrepriseResolue(), detail: (() => {
+      const b = boiteEntrepriseResolue()
+      if (!b) return null
+      const alignee = b.user.toLowerCase() === EMAIL_ENTREPRISE.toLowerCase()
+      return `${b.hote}${b.devine ? ' (déduit de l’adresse)' : ''} · ${alignee ? 'c’est bien l’adresse où Presti s’écrit' : `⚠️ Presti écrit à ${EMAIL_ENTREPRISE}, on relève ${b.user} — nos propres messages n’arrivent pas ici`}`
+    })() },
     { cle: 'vercel', nom: 'Vercel', configure: !!process.env.VERCEL_TOKEN, detail: 'déploiements' },
     { cle: 'firebase', nom: 'Firebase', configure: !!process.env.FIREBASE_SERVICE_ACCOUNT, detail: 'notifications natives' },
     { cle: 'vapid', nom: 'Notifications web', configure: !!process.env.VAPID_PRIVATE_KEY, detail: null },

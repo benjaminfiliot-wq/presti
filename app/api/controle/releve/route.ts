@@ -87,6 +87,8 @@ async function construire(mois: string) {
 }
 
 export async function GET(req: Request) {
+  // Drapeau baissé = cet espace n'existe pas : 404 avant tout, y compris avant l'identité.
+  if (!actif('comptabilite')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'releve.partenaire', 'voir')
@@ -128,6 +130,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  // Drapeau baissé = cet espace n'existe pas : 404 avant tout, y compris avant l'identité.
+  if (!actif('comptabilite')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   // Arrêter un relevé engage l'entreprise : c'est de la comptabilité, pas de la lecture.

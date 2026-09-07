@@ -30,6 +30,11 @@ const CARTE = {
   'app/api/p/auth/route.ts': 'client : lien magique de connexion',
   'app/api/report-error/route.ts': 'entreprise : erreur signalée par le navigateur',
   'app/api/stripe/webhook/route.ts': 'entreprise : paiement / résiliation / webhook en erreur',
+  // Poste de controle (v10 J2b / J3, v11) — trois envois signales par l'audit du 07/09 : ils
+  // partaient sans etre declares ici, donc sans que personne ne verifie leur sujet ni leur destinataire.
+  'app/api/controle/apports/[id]/statut/route.ts': 'apporteur : son apport a ete refuse ou conteste',
+  'app/api/controle/clients/[id]/action/route.ts': 'artisan : message ecrit depuis le Poste de controle',
+  'app/api/controle/courriers/[fil]/action/route.ts': 'correspondant : la reponse de Presti dans son fil',
   'lib/alertes.ts': 'entreprise et artisan : les huit motifs d’alerte',
   'lib/purgeComptes.ts': 'entreprise : compte purgé ou anonymisé',
   'lib/reglesServeur.ts': 'artisan : devis préparé ou envoyé par une règle',

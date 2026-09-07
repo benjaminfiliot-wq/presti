@@ -1,9 +1,14 @@
 // Lance toute la suite de vérification (v4 §15) — une seule commande.
 //
-// Pourquoi ce script : 26 fichiers de test, personne ne les lance tous à la main, donc
+// Pourquoi ce script : soixante-dix fichiers de test, personne ne les lance tous à la main, donc
 // personne ne les lance. Ici on a un état global en une commande, et surtout un ORDRE :
 // ce qui ne coûte rien d'abord, ce qui consomme des crédits IA à la fin, pour qu'un
 // échec bête (typage, build) ne se paie pas en appels au modèle.
+//
+// Une suite absente de SUITES n'est jouée par personne — ni ici, ni par l'audit de nuit, qui
+// appelle ce script. Le 07/09 il y en avait quinze, pendant que le rapport de couverture les
+// comptait comme preuve et annonçait « 0 case vide ». Ce qui est écarté volontairement se déclare
+// dans HORS_LANCEUR, avec sa raison ; le reste est un oubli, et l'inventaire le signale.
 //
 // Usage :
 //   node scripts/tout-verifier.mjs          → tout sauf ce qui consomme des crédits
@@ -80,7 +85,44 @@ const SUITES = [
 
   { nom: 'Injection de prompt', cmd: 'node', args: ['scripts/injection-e2e.mjs'], cout: 'ia' },
   { nom: 'Provenance dans un devis réel', cmd: 'node', args: ['scripts/devis-source-e2e.mjs'], cout: 'ia' },
+
+  // ── Branchées le 07/09. Elles existaient depuis des semaines, personne ne les lançait : le
+  //    rapport de couverture les comptait pourtant comme preuve, ce qui a laissé dix éléments
+  //    — dont le portail de facturation Stripe — hors de tout regard nocturne.
+  { nom: 'Courriers de l’entreprise — resolution de la boite et classement par nature', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/courriers-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Abonnement de bout en bout (11 transitions, sans débit)', cmd: 'node', args: ['scripts/abonnement-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Comptes clients de la plateforme (lien à usage unique, révocation serveur)', cmd: 'node', args: ['scripts/comptes-clients-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Messagerie de la console (persistance et remise)', cmd: 'node', args: ['scripts/messages-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Panneau IA : le serveur décide, pas le navigateur', cmd: 'node', args: ['scripts/plateforme-config-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Suppression granulaire (documents légaux conservés)', cmd: 'node', args: ['scripts/suppressions-e2e.mjs'], cout: 'gratuit' },
+  { nom: 'Double authentification (enrôlement, codes de secours)', cmd: 'node', args: ['scripts/mfa-e2e.mjs'], cout: 'navigateur' },
+  { nom: 'Carte Devis dans la conversation (acceptation opposable)', cmd: 'node', args: ['scripts/devis-conversation-e2e.mjs'], cout: 'navigateur' },
+  { nom: 'Messages — désactivation de l’automatique', cmd: 'node', args: ['scripts/messages-deauto-e2e.mjs'], cout: 'navigateur' },
+  { nom: 'App de conversation de la plateforme', cmd: 'node', args: ['scripts/plateforme-e2e.mjs'], cout: 'navigateur' },
+  { nom: 'Écran « Ma plateforme → Intelligence »', cmd: 'node', args: ['scripts/plateforme-intelligence-e2e.mjs'], cout: 'navigateur' },
+  // Ces trois-là appellent vraiment le modèle : jamais la nuit, seulement à la main (`--tout`).
+  { nom: 'Conversation-plateforme (premier contact + relance)', cmd: 'node', args: ['scripts/conv-e2e.mjs'], cout: 'ia' },
+  { nom: 'Persona : le ton réglé change vraiment la réponse', cmd: 'node', args: ['scripts/persona-e2e.mjs'], cout: 'ia' },
+  { nom: 'Recherche chez les fournisseurs (sceau, plafonds)', cmd: 'node', args: ['scripts/recherche-e2e.mjs'], cout: 'ia' },
 ]
+
+/** Les suites délibérément HORS du lanceur, et la raison — relue par `inventaire-produit.mjs`.
+ *
+ *  Sans cette liste, « hors lanceur » et « oublié » se ressemblaient trop : quinze suites ont vécu
+ *  dans cet angle mort. Une suite qui n'est pas ici et pas dans SUITES est un oubli, et l'inventaire
+ *  a le droit de le dire. */
+export const HORS_LANCEUR = {
+  'fact-e2e.mjs': 'exige un serveur local (BASE=localhost:3100 en dur) — l’audit tourne contre la production',
+  'pdf-e2e.mjs': 'exige un serveur local (localhost:3100) : le rendu PDF passe par le bundler de développement',
+  'smoke-test.mjs': 'test de fumée manuel après déploiement, joué à la main',
+  'leads-abuse-test.mjs': 'génère du trafic d’abus : à jouer seul, jamais au milieu des autres',
+  'stripe-session-test.mjs': 'ouvre une session de paiement Stripe — à la main, jamais en série',
+  'stripe-verifier.mjs': 'inspection de compte Stripe, pas une suite de vérification',
+  'mail-verifier.mjs': 'inspection de boîte mail, pas une suite de vérification',
+  'purger-comptes-test.mjs': 'outil de ménage, pas un test',
+  'purger-donnees-test.mjs': 'outil de ménage, pas un test',
+  'lib/connexion-test.mjs': 'bibliothèque partagée par les suites, pas une suite',
+}
 
 const retenues = SUITES.filter((s) => {
   if (rapide) return s.cout === 'gratuit'

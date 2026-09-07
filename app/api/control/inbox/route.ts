@@ -5,7 +5,7 @@ export const maxDuration = 30
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { ImapFlow } from 'imapflow'
 import { getUserRevocable } from '@/lib/authArtisan'
-import { canalEntreprise } from '@/lib/canaux'
+import { boiteEntrepriseResolue } from '@/lib/canaux'
 
 function json(o: unknown, s = 200) {
   return new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json' } })
@@ -22,16 +22,16 @@ export async function GET(req: Request) {
   // Boîte de l'entreprise (sprint J-1 §15) : contact@prestiapp.fr chez OVH, identifiants
   // dans PRESTI_MAIL_IMAP_USER / PRESTI_MAIL_IMAP_PASS (Vercel). Les anciennes variables
   // IMAP_* restent acceptées. Sans identifiants : `configured:false`, rien d'affiché, rien ne plante.
-  const entreprise = canalEntreprise()
-  const user = process.env.IMAP_USER || entreprise?.identifiant
-  const pass = process.env.IMAP_PASS || entreprise?.motDePasse
-  if (!user || !pass) return json({ configured: false })
+  // Même boîte que la relève du Poste de contrôle, donc même résolution : ce fichier proposait
+  // `imap.gmail.com` là où la relève proposait `ssl0.ovh.net`, pour le même compte (07/09).
+  const b = boiteEntrepriseResolue()
+  if (!b) return json({ configured: false })
 
   const client = new ImapFlow({
-    host: process.env.IMAP_HOST || entreprise?.imap_hote || 'imap.gmail.com',
-    port: Number(process.env.IMAP_PORT || entreprise?.imap_port || 993),
+    host: b.hote,
+    port: b.port,
     secure: true,
-    auth: { user, pass },
+    auth: { user: b.user, pass: b.pass },
     logger: false,
   })
 

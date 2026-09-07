@@ -32,6 +32,23 @@ const PROTEGEES = [
   // v10 J1 — le Centre de direction : drapeau baissé → 404 (l'espace n'existe pas), levé → 401 ; jamais 500, jamais 200
   ['/api/controle/etat', 'GET'], ['/api/controle/chiffres', 'GET'], ['/api/controle/a-faire', 'GET'], ['/api/controle/fil', 'GET'], ['/api/controle/journal', 'GET'],
   ['/api/controle/reconfirmer', 'POST', {}], ['/api/controle/securite/bans', 'POST', {}],
+  // v11 J0-J6 — le Poste de contrôle AU COMPLET. `barre` et `recherche` n'étaient appelées par
+  // aucune suite : livrées, déployées, jamais regardées. Les autres sont ici pour que la liste
+  // suive le dossier `app/api/controle/` et non ma mémoire.
+  ['/api/controle/barre', 'GET'], ['/api/controle/recherche', 'GET'],
+  ['/api/controle/apports', 'GET'], ['/api/controle/apports', 'POST', {}],
+  ['/api/controle/clients', 'GET'], ['/api/controle/courriers', 'GET'],
+  ['/api/controle/compta', 'GET'], ['/api/controle/compta', 'POST', {}],
+  ['/api/controle/reglages', 'GET'], ['/api/controle/reglages', 'POST', {}],
+  ['/api/controle/releve', 'GET'], ['/api/controle/releve', 'POST', {}],
+  // Angles morts mesurés le 07/09 : ces routes n'étaient couvertes que par des suites que l'audit
+  // nocturne ne joue jamais (coût IA, ou absentes du lanceur). Les tester à fond chaque nuit
+  // coûterait des crédits ; vérifier qu'elles refusent un inconnu ne coûte rien, et c'est déjà
+  // la différence entre « surveillé » et « on le saura quand un artisan le dira ».
+  ['/api/devis/auto', 'POST', {}],
+  ['/api/inventaire/recherche', 'POST', {}], ['/api/inventaire/recherche/retenir', 'POST', {}],
+  ['/api/plateforme/apparence', 'GET'], ['/api/plateforme/apparence', 'POST', {}],
+  ['/api/stripe/portail', 'GET'], ['/api/stripe/portail', 'POST', {}],
   [`/api/devis/${id}/envoyer`, 'POST', {}], [`/api/devis/${id}/pdf`, 'GET'],
   [`/api/factures/${id}/avoir`, 'POST', {}], [`/api/factures/${id}/facturx`, 'GET'], [`/api/factures/${id}/pdf`, 'GET'],
   ['/api/leads/photos', 'POST', {}],
@@ -55,6 +72,7 @@ const PUBLIQUES = [
   ['/api/account/inscription', 'POST', {}, [401, 400]],
   ['/api/contact', 'POST', {}, [400, 429]],
   ['/api/leads/contact', 'POST', {}, [400, 404, 429]],
+  ['/api/conversation/regles', 'POST', {}, [400, 403, 429]],
   ['/api/plat-event', 'POST', {}, [200, 204, 400, 404]],
   ['/api/report-error', 'POST', {}, [200, 204, 400, 429]],
 ]
@@ -100,11 +118,68 @@ if (FLAGS) {
   T(`aideCentre=${FLAGS.aideCentre} ↔ /aide ${aide.status}`, FLAGS.aideCentre === (aide.status === 200))
   T('inventaireOcr baissé → aucun « OCR » vendu sur la landing ni la FAQ', !FLAGS.inventaireOcr && !/\bOCR\b/.test(landing) && !/\bOCR\b/.test((await page('/faq')).html))
   T('canauxWhatsapp / canauxReseaux baissés → pas vendus sur la landing', !FLAGS.canauxWhatsapp && !FLAGS.canauxReseaux && !/whatsapp/i.test(landing))
-  for (const nom of ['mfa', 'inventaireRecherche', 'plateformePilotage', 'plateformeRegles', 'siteSlides3d', 'aideVisites', 'plateformePersona']) {
-    T(`${nom} est levé (fonction livrée)`, FLAGS[nom] === true)
+  // ── Chaque drapeau, et ce qu'il commande ────────────────────────────────────────────────────
+  // Une liste de sept noms tenue à la main laissait quatre drapeaux livrés sans surveillance
+  // (07/09) : `comptabilite` cachait son onglet sans fermer ses routes, et rien ne le disait.
+  // Le verrou plus bas refuse tout drapeau absent de cette carte — ajouter un drapeau oblige
+  // maintenant à déclarer ce qu'il ferme.
+  //
+  //   ['route', chemin, méthode] → baissé ⇒ 404, levé ⇒ tout sauf 404. Le seul vrai verrou.
+  //   ['lu']                     → lu par le code (garde, menu, écran) : on vérifie qu'il l'est.
+  //   ['note', pourquoi]         → il ne ferme RIEN, et il est baissé : il documente une absence.
+  //   ['mort', pourquoi]         → levé, plus personne ne le lit : à retirer de lib/flags.
+  const CARTE = {
+    'codeEmail': ['route', '/api/auth/code', 'POST', 'app/api/auth/code/route.ts'],
+    'pushWeb': ['route', '/api/push/abonner', 'POST', 'app/api/push/abonner/route.ts'],
+    // `direction` ne se lit pas dans chaque route : la garde partagee le porte pour toutes.
+    // C'est le bon endroit — a condition de le dire, sinon on croit que la route s'en charge.
+    'direction': ['route', '/api/controle/etat', 'GET', 'lib/direction/garde.ts'],
+    'apports': ['route', '/api/controle/apports', 'GET', 'app/api/controle/apports/route.ts'],
+    'actionsArtisan': ['route', `/api/controle/clients/${id}/action`, 'POST', 'app/api/controle/clients/[id]/action/route.ts'],
+    'messagerie': ['route', '/api/controle/courriers', 'GET', 'app/api/controle/courriers/route.ts'],
+    'comptabilite': ['route', '/api/controle/compta', 'GET', 'app/api/controle/compta/route.ts', 'app/api/controle/releve/route.ts'],
+    'inventaireRecherche': ['route', '/api/inventaire/recherche', 'POST', 'app/api/inventaire/recherche/route.ts'],
+    'pushNatif': ['lu'], 'mfa': ['lu'], 'plateformeRegles': ['lu'], 'siteSlides3d': ['lu'],
+    'aideVisites': ['lu'], 'aideCentre': ['lu'], 'landingVideo': ['lu'],
+    'inventaireOcr': ['note', 'rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)'],
+    'canauxWhatsapp': ['note', 'rien ne le lit : la preuve est que WhatsApp n’est pas vendu sur la landing'],
+    'canauxReseaux': ['note', 'rien ne le lit : idem WhatsApp'],
+    'plateformePilotage': ['mort', 'levé, plus aucun usage dans app/ — à retirer'],
+    'plateformePersona': ['mort', 'levé, plus aucun usage : la personnalisation est active sans condition'],
   }
-  const source = fs.readdirSync('app', { recursive: true }).filter((f) => /\.(ts|tsx)$/.test(f)).map((f) => fs.readFileSync(`app/${f}`, 'utf8')).join('\n')
-  T('plateformePilotage : drapeau sans usage — à retirer de lib/flags (documenté)', !/FLAGS\.plateformePilotage/.test(source))
+  const lus = ['app', 'lib', 'components'].filter((d) => fs.existsSync(d)).flatMap((d) =>
+    fs.readdirSync(d, { recursive: true }).filter((f) => /\.(ts|tsx)$/.test(f) && !/flags\.ts$/.test(f))
+      .map((f) => fs.readFileSync(`${d}/${f}`, 'utf8'))).join('\n')
+  const estLu = (nom) => new RegExp(`actif\\(['"\`]${nom}['"\`]\\)|FLAGS\\.${nom}\\b`).test(lus)
+
+  // Le verrou : un drapeau qui n'est pas dans la carte n'est vérifié par personne.
+  const oublies = Object.keys(FLAGS).filter((n) => !CARTE[n])
+  T(`chaque drapeau de lib/flags est dans la carte${oublies.length ? ` — manquent : ${oublies.join(', ')}` : ''}`, oublies.length === 0)
+
+  for (const [nom, [nature, a, b, ...fichiers]] of Object.entries(CARTE)) {
+    if (!(nom in FLAGS)) { T(`${nom} : dans la carte mais plus dans lib/flags — carte à nettoyer`, false); continue }
+    const leve = FLAGS[nom] === true
+    if (nature === 'route') {
+      const r = await appel(a, b, b === 'POST' ? {} : undefined)
+      T(`${nom}=${leve} ↔ ${b} ${a} → ${r.status}`, leve ? r.status !== 404 && r.status < 500 : r.status === 404, r.texte)
+      // « Lu quelque part » ne suffit pas : le 07/09, `comptabilite` était lu par l'écran, qui
+      // masquait l'onglet, pendant que ses deux routes répondaient à qui connaissait l'adresse.
+      // On exige donc que CE fichier de route lise CE drapeau.
+      for (const fichier of fichiers) {
+        const source = fs.existsSync(fichier) ? fs.readFileSync(fichier, 'utf8') : ''
+        T(`${fichier} lit lui-même « ${nom} » (le bouton caché ne ferme pas la porte)`,
+          new RegExp(`actif\\(['"\`]${nom}['"\`]\\)`).test(source), source ? 'le drapeau n’y est pas' : 'fichier introuvable')
+      }
+    } else if (nature === 'lu') {
+      T(`${nom} est lu par le code`, estLu(nom))
+    } else if (nature === 'note') {
+      // Un drapeau « note » LEVÉ n'a plus de sens : il annoncerait une fonctionnalité que rien
+      // n'ouvre. On exige donc qu'il soit baissé, et qu'il reste effectivement sans lecteur.
+      T(`${nom} : baissé, et il ne ferme rien — ${a}`, !leve && !estLu(nom))
+    } else {
+      T(`${nom} : drapeau mort — ${a}`, !estLu(nom))
+    }
+  }
 }
 
 console.log(`\n${ko ? '❌' : '✅'} ${ok} réussis, ${ko} échoués`)

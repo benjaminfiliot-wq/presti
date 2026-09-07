@@ -28,6 +28,34 @@ export const ENTREPRISE_MAIL = {
   libelle: 'Presti — contact@prestiapp.fr',
 } as const
 
+/** Les identifiants de la boîte de l'entreprise, hôte compris — la SEULE résolution du dépôt.
+ *
+ *  Le 07/09, deux fichiers devinaient l'hôte différemment pour le même compte (`imap.gmail.com` dans
+ *  `app/api/control/inbox`, `ssl0.ovh.net` dans la relève du Poste de contrôle). La relève échouait
+ *  sur « Command failed » sans que rien ne dise qu'elle frappait peut-être le mauvais serveur.
+ *
+ *  L'ordre, et pourquoi :
+ *    1. `IMAP_HOST` (ou `PRESTI_MAIL_IMAP_HOST`) posé à la main : c'est une décision, on obéit ;
+ *    2. déduit de l'adresse par `devineFournisseur` — la même fonction qu'on offre aux artisans ;
+ *    3. `ENTREPRISE_MAIL.imap_hote`, dernier recours pour une adresse de domaine propre.
+ *
+ *  Les noms de variables : `IMAP_*` et `PRESTI_MAIL_IMAP_*` ont coexisté, la production utilise les
+ *  premiers, la documentation les seconds. On accepte les deux plutôt que de laisser une boîte muette
+ *  pour une histoire de préfixe. */
+export function boiteEntrepriseResolue(): { hote: string; port: number; user: string; pass: string; devine: boolean } | null {
+  const user = (process.env.IMAP_USER || process.env.PRESTI_MAIL_IMAP_USER || '').trim()
+  const pass = process.env.IMAP_PASS || process.env.PRESTI_MAIL_IMAP_PASS || ''
+  if (!user || !pass) return null
+  const pose = (process.env.IMAP_HOST || process.env.PRESTI_MAIL_IMAP_HOST || '').trim()
+  const devine = devineFournisseur(user)
+  return {
+    user, pass,
+    hote: pose || devine?.imap_hote || ENTREPRISE_MAIL.imap_hote,
+    port: Number(process.env.IMAP_PORT || process.env.PRESTI_MAIL_IMAP_PORT || ENTREPRISE_MAIL.imap_port),
+    devine: !pose && !!devine,
+  }
+}
+
 export function canalEntreprise(): (typeof ENTREPRISE_MAIL & { identifiant: string; motDePasse: string }) | null {
   const identifiant = (process.env.PRESTI_MAIL_IMAP_USER || '').trim()
   const motDePasse = process.env.PRESTI_MAIL_IMAP_PASS || ''

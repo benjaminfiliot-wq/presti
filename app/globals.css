@@ -2399,6 +2399,43 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .inbox.has-sel .inbox-msgs{max-height:none;flex:1;min-height:0}
   .inbox-compose{padding-bottom:calc(.8rem + env(safe-area-inset-bottom))}
   .inbox-thead{padding-left:calc(.6rem + env(safe-area-inset-left))}
+
+  /* L'en-tête du fil ouvert est une BARRE, jamais un panneau.
+     Mesuré le 07/09 sur iPhone 14, clavier ouvert : il prenait 273 px des 344 visibles, les messages
+     tombaient à 35 px et le composeur sortait de l'écran de 45 px. En cause : quatre boutons pleine
+     largeur qui s'empilaient, hérités de la correction de cadrage faite le matin même pour les petits
+     écrans de PC. Ici, la place manque en HAUTEUR, pas en largeur : on empile donc le moins possible. */
+  .inbox.has-sel .inbox-thead{display:grid;grid-template-columns:auto 1fr;
+    grid-template-areas:'retour qui' 'actions actions';
+    flex:none;align-items:center;row-gap:.3rem;column-gap:.55rem;padding-top:.45rem;padding-bottom:.4rem}
+  .inbox.has-sel .inbox-thead .inbox-back{grid-area:retour}
+  /* L'avatar coûtait une colonne pour redire une initiale que le nom donne juste à côté. */
+  .inbox.has-sel .inbox-thead .inbox-ava{display:none}
+  .inbox.has-sel .inbox-thead .inbox-who{grid-area:qui;min-width:0}
+  /* Les étiquettes (urgent, type de chantier, photos) sont déjà lisibles dans la liste des fils :
+     les répéter ici coûtait une ligne entière sur un écran où chaque ligne compte. */
+  .inbox.has-sel .inbox-thead .inbox-tags{display:none}
+  /* Les quatre actions tiennent sur UNE ligne qui défile au doigt. Aucune n'est retirée : les cacher
+     derrière un menu ferait un geste de plus pour « Je prends la main », qui est le geste urgent. */
+  .inbox.has-sel .inbox-actions{grid-area:actions;width:100%;margin-left:0;flex:none;flex-wrap:nowrap;gap:.35rem;
+    overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    padding-bottom:2px}
+  .inbox.has-sel .inbox-actions::-webkit-scrollbar{display:none}
+  .inbox.has-sel .inbox-actions .btn{flex:0 0 auto;width:auto;min-height:40px;white-space:nowrap;font-size:13px;padding:0 .72rem}
+  /* Le composeur ne prend jamais plus du quart de la fenêtre visible : au-delà, il pousse le fil
+     hors de l'écran et on répond à un message qu'on ne voit plus. */
+  /* Le composeur ne prend jamais plus de la moitié de la fenêtre visible, et défile au-delà.
+     C'est la borne qui garantit que rien ne sort de l'écran : un message d'erreur qui s'affiche
+     sous les boutons, un champ agrandi au doigt, une police système plus grande — aucun de ces
+     cas ne peut plus pousser le bouton « Envoyer » sous le clavier. */
+  .inbox.has-sel .inbox-compose{flex:none;max-height:50%;overflow-y:auto;overscroll-behavior:contain;padding-top:.55rem}
+  .inbox.has-sel .inbox-compose textarea{min-height:44px}
+  .inbox.has-sel .inbox-cbar{margin-top:.45rem;flex-wrap:nowrap;gap:.4rem}
+  .inbox.has-sel .inbox-cbar .btn{min-height:40px;white-space:nowrap}
+  /* PAS de plancher ici : `min-height` sur l'element elastique d'une pile contrainte ne « garde pas
+     de la place », il fait deborder le voisin. Mesure le 07/09 : un plancher de 72 px sur les
+     messages poussait le composeur 75 px hors de l'ecran. La zone se comprime, et c'est tres bien. */
+  .inbox.has-sel .inbox-msgs{min-height:0}
 }
 
 /* ===== v8 A1.8 — téléphone : les calques décoratifs coûteux disparaissent (flous, grain, halos) ===== */
@@ -2676,4 +2713,38 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 @media(min-width:561px) and (max-width:900px){
   .inbox-who{min-width:0;flex:1 1 auto}
   .inbox-actions{flex:none}
+}
+
+/* ===== v11 J3 — les piles de la messagerie de l'entreprise (natures) ===== */
+/* Rangées par urgence, jamais par volume : la question du matin est « qu'est-ce qui me demande
+   d'agir ? ». Un groupe ne se coupe pas en deux — « Non remis » détaché de « Ce qui attend une
+   réponse » ne veut plus rien dire. */
+.dir-natures{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;row-gap:.55rem;margin:0 0 .9rem}
+.dir-nature-groupe{display:inline-flex;flex-wrap:wrap;align-items:center;gap:.35rem;padding:.15rem .45rem .15rem .3rem;
+  border-left:2px solid var(--line);border-radius:0 10px 10px 0}
+.dir-nature-groupe>small{margin-right:.15rem;font-size:11.5px;letter-spacing:.02em;text-transform:uppercase}
+.dir-natures .btn{width:auto;margin:0;min-height:34px;padding:0 .7rem;font-size:13px;white-space:nowrap}
+/* Le compteur est DANS le bouton : une pastille séparée se décale d'une ligne dès que ça s'enroule,
+   et on finit par lire le compte d'une autre pile. */
+.dir-compte{display:inline-flex;align-items:center;justify-content:center;min-width:1.35rem;height:1.35rem;
+  margin-left:.4rem;padding:0 .3rem;border-radius:999px;background:var(--line-2);color:var(--muted);
+  font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+.btn--primary .dir-compte{background:rgba(255,255,255,.22);color:#fff}
+
+/* La raison du rangement, sous le titre du fil : une erreur de classement doit se VOIR. */
+.dir-rangement{margin:.2rem 0 1rem;padding:.6rem .75rem;border:1px solid var(--line);border-radius:11px;background:var(--surface-2)}
+.dir-rangement select{width:auto;min-height:34px;margin:0;padding:0 .5rem;font-size:13px}
+
+/* Les pastilles de nature. La couleur ne porte jamais l'information seule : le libellé est écrit. */
+.pill.nat-artisan,.pill.nat-prospect{color:var(--accent);background:var(--accent-tint)}
+.pill.nat-abonnement{color:var(--crit);background:var(--crit-tint)}
+.pill.nat-non_remise{color:var(--crit);background:var(--crit-tint);font-weight:700}
+.pill.nat-a_lire{color:var(--ink);background:var(--line-2)}
+.pill.nat-reponse_auto,.pill.nat-diffusion{color:var(--muted);background:var(--line-2);opacity:.85}
+
+@media (max-width:560px){
+  /* Sur téléphone, la rangée défile au doigt plutôt que d'empiler cinq lignes de boutons. */
+  .dir-natures{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;padding-bottom:2px}
+  .dir-natures::-webkit-scrollbar{display:none}
+  .dir-nature-groupe{flex-wrap:nowrap}
 }

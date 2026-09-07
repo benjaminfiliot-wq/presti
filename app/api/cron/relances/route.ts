@@ -145,6 +145,16 @@ export async function GET(req: Request) {
   let alertes: { envoyees: number; ignorees: number } | { erreur: string } = { envoyees: 0, ignorees: 0 }
   try { const r = await ronde(); alertes = { envoyees: r.envoyees.length, ignorees: r.ignorees.length }; await enregistrerPassage('alertes', alertes) }
   catch (e) { alertes = { erreur: e instanceof Error ? e.message : String(e) }; await enregistrerPassage('alertes', alertes, false) }
-  await enregistrerPassage('relances', { due: relances?.length ?? 0, sent, skipped, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0) })
+  // La relève de la boîte fait partie de ce passage : son résultat doit s'y lire, et son échec doit
+  // le faire échouer. Sans ça, elle a échoué chaque jour sous un « reussi: true » (constaté le 07/09,
+  // zéro courrier en base depuis la mise en service, sans que rien ne le signale).
+  const releveOk = typeof courriers === 'object' && courriers !== null && (courriers as { ok?: boolean }).ok === true
+  const releveResume = courriers === 'messagerie fermée' ? 'drapeau baissé'
+    : releveOk ? `${(courriers as { nouveaux: number }).nouveaux} nouveau(x) sur ${(courriers as { lus: number }).lus} lu(s)`
+    : `ÉCHEC — ${(courriers as { erreur?: string })?.erreur ?? 'raison inconnue'}`.slice(0, 180)
+  await enregistrerPassage('relances', {
+    due: relances?.length ?? 0, sent, skipped, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
+    boite: releveResume,
+  }, courriers === 'messagerie fermée' || releveOk)
   return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes, courriers })
 }
