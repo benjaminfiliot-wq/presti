@@ -478,6 +478,32 @@ Une seule de mes assertions était fausse et je l'ai corrigée : elle attendait 
 - **Pour Benj** : la valeur de la clé « presti — produit » (espace Presti) dans `.env.local`, puis `node scripts/cle-produit.mjs`. Et l'APK sur son téléphone, qui reste le seul blocage de l'application.
 - **Suivant** : §3 — le remodelage de l'interface (colonne dense, compteurs, recherche globale, barre d'état), puis J5, la comptabilité et le relevé du partenaire.
 
+## [42] v11 · §1 — le remodelage : barre d'état, compteurs, recherche au clavier — 07/09 — ✅ `controle-e2e` **72/72**, `controle-droits-e2e` **27/27**, `controle-apports-e2e` **43/43** (`0a6ef79` → `afeabad` en prod)
+
+- **La barre d'état**, permanente sur toutes les vues : service, encaissé du mois, MRR, coût IA, et depuis quand ces chiffres datent. **Une seule requête** pour les cinq — le composant étant monté partout, quatre routes au chargement auraient coûté quatre fois la latence à chaque changement d'onglet. Sa fraîcheur est celle de sa valeur **la plus ancienne** : annoncer la plus récente laisserait croire que tout vient d'être rafraîchi.
+- **Elle n'affiche jamais un zéro qu'elle ne sait pas.** Une valeur absente devient un tiret dont le titre dit la raison : un « 0 € » à la place d'une panne de Stripe se lirait comme une mauvaise nouvelle au lieu d'une information manquante.
+- **Les compteurs du rail** viennent de cette même requête, et n'apparaissent que s'il y a quelque chose à faire. Un « 0 » permanent devient un décor, et un décor ne se remarque plus le jour où il compte.
+- **La recherche** s'ouvre à Ctrl+K, se navigue aux flèches, valide à Entrée, ferme à Échap. Elle cherche dans les artisans, les apports, la messagerie de l'entreprise, les alertes et le journal — **jamais** dans les conversations d'un artisan ni ses devis. Le périmètre du §5 s'y applique : un partenaire qui tape trois lettres ne doit pas découvrir ce que les écrans lui refusent, ce serait la plus bête des fuites.
+
+### Ce que la capture a montré, et qu'aucune assertion n'attrapait
+
+Trois fois le même défaut, en une séance : **deux chiffres justes qui se lisent comme une contradiction.**
+
+- la barre annonçait « **Service normal** » pendant que le bandeau, dix pixels plus bas, disait « **Service dégradé** » — chacun mesurait un sous-ensemble différent des mêmes contrôles. La règle vit désormais dans `lib/controle/sante.ts`, et les deux affichent le même verdict ;
+- « **Coût IA 0,00 € / 50,00 €** » à côté de « **Facture Anthropic 464,97 €** » : l'un mesure l'espace Presti, l'autre l'organisation entière. Chacun porte maintenant le nom de ce qu'il mesure, et le budget ne s'affiche que face au montant qui lui correspond ;
+- « **0,00 €** » à côté de « **≈ 0,07 €** » : l'un facturé, l'autre estimé, la même dépense. Un espace qui n'a rien facturé n'a pas coûté zéro — il n'a pas encore été facturé. La barre reprend l'estimation, avec le même « ≈ ».
+
+**Et un défaut de conception hérité** : le dépassement du budget IA faisait passer le **service** en « dégradé ». Une facture qui dépasse ne dit rien de la santé du produit — le site répond, Stripe encaisse, les emails partent. Confondre les deux apprend à ignorer un bandeau orange, ce qui est le contraire du but d'un bandeau orange.
+
+**Le fil racontait la vie des comptes de test** : « Nouvel artisan : Smoke Test », « Dupont Plomberie » deux fois, onze lignes signées `@presti-test.invalid`. Il raconte désormais la vraie vie de l'entreprise. Les lignes restent au journal, qui est immuable et doit le rester : c'est le **fil** qu'on nettoie, pas l'histoire.
+
+**Fiabilité des suites** : un aléa de connexion Playwright faisait tomber dix-sept assertions d'un coup avec une pile illisible. La connexion rend son issue, et le bloc se saute proprement en le disant.
+
+- **Appels IA du sprint : 0.**
+- **La clé du produit est posée** : « presti produit 3 », espace Presti, validée sans consommer un jeton (404 sur un modèle inexistant, pas 401), déployée. Quatre clés inutiles désactivées ; **l'ancienne est gardée comme filet** tant que personne n'a vu l'IA répondre depuis le nouveau déploiement.
+- **Pour Benj** : révoquer chez Stripe les deux clés restreintes RÉELLES qui traînaient en clair dans `.env.local` (retirées du fichier, mais personne ne sait où elles sont passées) ; faire un devis IA depuis son compte pour que je retire le filet ; et l'APK sur son téléphone.
+- **Suivant** : J5 — la comptabilité et le relevé du partenaire.
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
