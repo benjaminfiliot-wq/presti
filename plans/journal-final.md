@@ -426,6 +426,18 @@ Une seule de mes assertions était fausse et je l'ai corrigée : elle attendait 
 - **Pour Benj, deux choses seulement** : coller `_A_COLLER_sql_editor_0068b.sql` (deux colonnes), et coller dans `.env.local` **puis sur Vercel** la valeur de la clé « presti produit » de l'espace Presti — ou, si elle n'a pas été copiée à sa création, en créer une nouvelle depuis la console **dans l'espace Presti** et me le dire.
 - **Suivant** : le §1 du v11 — fusionner `/direction` dans `/controle`, supprimer Jarvis, rediriger.
 
+## [39] v11 · §1 — une seule interface : `/direction` fusionne dans `/controle`, Jarvis est supprimé — 07/09 — ✅ `controle-e2e` **72/72**, `controle-apports-e2e` **27/27**, `controle-messagerie-e2e` **30/30**, `fermeture-e2e` **65/65** (`2876fbd` en prod)
+
+- **Ce qui était vrai, et que le v11 pointait à raison** : il y avait `/controle` avec son radar « façon Jarvis » (285 lignes) **et** `/direction` avec tout le travail réel. Deux endroits pour la même chose, et **deux entrées dans la navigation menant au même écran**.
+- **Déplacé, pas refait** : tout `app/direction/**` et `app/api/direction/**` est passé sous `/controle` par `git mv` — l'historique de chaque fichier suit. `JarvisHub`, `HudGraph`, l'ancien `page.tsx` et `ControlPanel` sont supprimés (git les conserve).
+- **`/direction` redirige en permanence** (308 vérifié en production). L'adresse a pu être mise en favori ou reçue dans un email d'alerte : rien de ce qui a été partagé ne doit tomber sur un 404, surtout pas l'écran depuis lequel on éteint un incident. `/api/direction/*` répond 404, `/controle` répond 200.
+- **Ce qui n'a PAS été renommé, volontairement** : le vocabulaire du domaine. La table reste `journal_direction`, le rôle reste `direction` (par opposition à `lecture`), `lib/direction/` reste. Ce sont des noms de **métier** — la direction de l'entreprise — pas des noms d'écran, et les changer imposerait une migration de base pour un gain nul. Le v11 demande une interface unique, pas un renommage général.
+- **Deux erreurs de ma part, rattrapées** : mon remplacement de chemins a d'abord réécrit `plans/journal-final.md` et les prompts v10/v11 — **réécrire un journal falsifie l'histoire qu'il sert à garder** ; restaurés. Et une assertion de `controle-e2e` portait l'ancien chemin **échappé dans une expression régulière** (`/^\/api\/direction\//`), invisible pour un remplacement de texte : le test a échoué en désignant le bon symptôme pour la mauvaise raison.
+- **Les quatre suites prennent le nom du v11** : `controle-e2e`, `controle-apports-e2e`, `controle-argent-e2e`, `controle-messagerie-e2e`. Et `/direction` rejoint `/controle` dans `robots.txt` — une redirection n'a pas plus à être indexée que sa destination.
+- **Appels IA du sprint : 0.**
+- **Le seul point rouge**, et il attend une décision : deux comptes de **connexion orphelins** (`wl.…@x.fr`, `j6.…@example.com`) existent dans l'authentification sans fiche artisan. Ils ne comptent dans aucun chiffre et leur mot de passe est aléatoire et perdu, mais ils pourraient techniquement créer une fiche. Je ne les supprime pas sans le dire.
+- **Suivant** : v11 §5 — le cloisonnement d'Alexandre (`peutFaire(role, action, cible)` appelée par chaque route, et une suite qui rejoue **chaque** action interdite avec son jeton en attendant un 403).
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
