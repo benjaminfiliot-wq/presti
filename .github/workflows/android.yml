@@ -176,7 +176,7 @@ jobs:
       # viendra en plus, pas à la place.
       - name: APK signé publié (Supabase Storage)
         run: |
-          printf '%s\n' "${{ secrets.PRESTI_ENV_LOCAL }}" | grep -v '^ANTHROPIC_API_KEY=' > .env.ci
+          printf '%s\n' "${{ secrets.PRESTI_ENV_LOCAL }}" | grep -vE '^(ANTHROPIC_API_KEY|ANTHROPIC_ADMIN_KEY)=' > .env.ci
           SB=$(grep '^NEXT_PUBLIC_SUPABASE_URL=' .env.ci | cut -d= -f2-)
           SVC=$(grep '^SUPABASE_SERVICE_ROLE_KEY=' .env.ci | cut -d= -f2-)
           rm -f .env.ci

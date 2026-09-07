@@ -35,7 +35,7 @@ jobs:
       - run: npm ci
       - name: Environnement (sans clé IA)
         run: |
-          printf '%s\n' "${{ secrets.PRESTI_ENV_LOCAL }}" | grep -v '^ANTHROPIC_API_KEY=' > .env.local
+          printf '%s\n' "${{ secrets.PRESTI_ENV_LOCAL }}" | grep -vE '^(ANTHROPIC_API_KEY|ANTHROPIC_ADMIN_KEY)=' > .env.local
           grep -q '^SUPABASE_SERVICE_ROLE_KEY=' .env.local || { echo 'Secret PRESTI_ENV_LOCAL incomplet : rien à sauvegarder.'; exit 1; }
       - name: Clé publique présente
         # Bloc `|` obligatoire : un « : » dans une ligne simple est pris pour une clé YAML et GitHub

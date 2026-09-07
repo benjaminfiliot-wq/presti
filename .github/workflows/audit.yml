@@ -9,7 +9,8 @@ name: Audit récurrent
 # JAMAIS ici : elles se jouent à la main, quand la réserve Anthropic le permet.
 #
 # Secret attendu (une seule fois, Réglages → Secrets → Actions) : PRESTI_ENV_LOCAL = le contenu
-# complet de .env.local SANS la ligne ANTHROPIC_API_KEY (pour qu'aucun script ne puisse dépenser).
+# complet de .env.local SANS les clés Anthropic (ni celle d'usage — aucun script ne peut dépenser — ni celle
+# d'administration, qui lit les coûts de l'organisation et n'a rien à faire dans un runner).
 
 on:
   schedule:
@@ -33,7 +34,7 @@ jobs:
       - run: npm ci
       - name: Environnement (sans clé IA)
         run: |
-          printf '%s\n' "${{ secrets.PRESTI_ENV_LOCAL }}" | grep -v '^ANTHROPIC_API_KEY=' > .env.local
+          printf '%s\n' "${{ secrets.PRESTI_ENV_LOCAL }}" | grep -vE '^(ANTHROPIC_API_KEY|ANTHROPIC_ADMIN_KEY)=' > .env.local
           test -s .env.local || { echo 'Secret PRESTI_ENV_LOCAL absent : rien à auditer.'; exit 1; }
           grep -q '^NEXT_PUBLIC_SUPABASE_URL=' .env.local || { echo 'PRESTI_ENV_LOCAL incomplet.'; exit 1; }
       - name: Chromium pour les suites navigateur
