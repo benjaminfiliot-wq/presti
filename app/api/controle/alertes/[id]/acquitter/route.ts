@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estDirection, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { lireUserAgent } from '@/lib/userAgent'
 import { oublier } from '@/lib/direction/fraicheur'
 
@@ -16,6 +16,8 @@ export const dynamic = 'force-dynamic'
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const f = await estDirection(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'sante', 'ecrire')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const { id } = await ctx.params
   if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ error: 'Alerte inconnue.' }, { status: 404 })
   const u = lireUserAgent(req.headers.get('user-agent'))

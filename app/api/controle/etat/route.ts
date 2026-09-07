@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estFondateur, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { sourcer, type Sourcee } from '@/lib/direction/fraicheur'
 import { joignable } from '@/lib/direction/stripe'
 import { coutIADuMois, CRONS_ATTENDUS } from '@/lib/alertes'
@@ -52,6 +52,8 @@ const ia = () => sourcer('etat:ia', 'anthropic', async () => {
 export async function GET(req: Request) {
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'sante', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   // La sonde suit le déploiement qui la sert : une préversion mesurait la production, et le disait « en ligne ».
   const origine = new URL(req.url).origin
   const [site, connexion, st, resend, cr, cout] = await Promise.all([sonde(`${origine}/`), sonde(`${origine}/login`), joignable(), domaineResend(), crons(), ia()])

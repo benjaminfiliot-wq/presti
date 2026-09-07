@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estDirection, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { lireUserAgent } from '@/lib/userAgent'
 import { sendEmail, EMAIL_ENTREPRISE } from '@/lib/email'
@@ -25,6 +25,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ fil: string }>
   if (!actif('messagerie')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
   const f = await estDirection(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'messagerie', 'ecrire')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const { fil } = await ctx.params
   const cle = decodeURIComponent(fil).slice(0, 400)
   const b = (await req.json().catch(() => null)) as Corps | null
@@ -33,9 +35,11 @@ export async function POST(req: Request, ctx: { params: Promise<{ fil: string }>
   const agent = `${u.appareil} · ${u.navigateur}`.slice(0, 120)
 
   const { data: messages } = await supabaseAdmin.from('courriers')
-    .select('id, message_id, sens, correspondant_email, correspondant_nom, sujet, statut, artisan_id')
+    .select('id, message_id, sens, correspondant_email, correspondant_nom, sujet, statut, artisan_id, assigne_a')
     .eq('fil', cle).order('recu_le', { ascending: false }).limit(50)
   if (!messages?.length) return NextResponse.json({ error: 'Fil inconnu.' }, { status: 404 })
+  // Même règle en écriture : on ne répond ni ne classe un fil qui ne nous est pas assigné.
+  if (perimetre.borne && !messages.some((m) => m.assigne_a === f.uid)) return NextResponse.json({ error: 'Fil inconnu.' }, { status: 404 })
   const dernier = messages[0]
 
   if (action === 'classer') {

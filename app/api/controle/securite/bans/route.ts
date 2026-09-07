@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estDirection, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { lireUserAgent } from '@/lib/userAgent'
 import { ipPseudonyme } from '@/lib/security'
@@ -41,6 +41,8 @@ export async function GET(req: Request) {
   // Les adresses des visiteurs (bans, abus) ne sont pas dans la matrice du rôle « lecture » : direction seule.
   const f = await estDirection(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'securite', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const depuis = new Date(Date.now() - 24 * 3_600_000).toISOString()
   const [bans, abus] = await Promise.all([
     supabaseAdmin.from('ip_bans').select('ip, raison, auto, created_at, expires_le').order('created_at', { ascending: false }).limit(200),
@@ -60,6 +62,8 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const f = await estDirection(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'securite', 'ecrire')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const corps = lireCorps(await req.json().catch(() => null))
   if ('error' in corps) return NextResponse.json({ error: corps.error }, { status: 400 })
   if (corps.ip === f.ip) return NextResponse.json({ error: 'C’est votre propre adresse : vous fermeriez la direction pour vous-même.', code: 'propre_ip' }, { status: 400 })

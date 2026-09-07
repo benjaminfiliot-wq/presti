@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estDirection, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { libelleStatut, type Statut } from '@/lib/direction/apports'
 import { lireUserAgent } from '@/lib/userAgent'
@@ -20,6 +20,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   if (!actif('apports')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
   const f = await estDirection(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'apports.decision', 'ecrire')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const { id } = await ctx.params
   if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ error: 'Ligne inconnue.' }, { status: 404 })
   const b = (await req.json().catch(() => null)) as { statut?: unknown; motif?: unknown; piece?: unknown } | null

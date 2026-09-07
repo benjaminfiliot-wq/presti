@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estFondateur, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { sourcer, type Sourcee } from '@/lib/direction/fraicheur'
 import { stripe } from '@/lib/stripe'
 import { planConf } from '@/lib/plans'
@@ -62,6 +62,8 @@ const derniereFacture = (client: string | null): Promise<Sourcee<{ montant: numb
 export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'clients', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const { id } = await ctx.params
   if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ error: 'Artisan inconnu.' }, { status: 404 })
 

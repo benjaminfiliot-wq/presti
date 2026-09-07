@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estFondateur, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { sourcer, type Sourcee } from '@/lib/direction/fraicheur'
 import { mrr, encaisseDuMois, conversionsDuJour } from '@/lib/direction/stripe'
 import { coutIADuMois, estimationDepuisLesCredits } from '@/lib/alertes'
@@ -94,6 +94,8 @@ const coutIA = async (): Promise<Sourcee<CoutIA>> => {
 export async function GET(req: Request) {
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'clients', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const [m, p, es, conv, enc, ia, produit, cr] = await Promise.all([mrr(), payants(), essais(), conversionsDuJour(), encaisseDuMois(), coutIA(), coutProduit(), creditsConsommes()])
   return NextResponse.json({ mrr: m, payants: p, essais: es, conversions: conv, encaisse: enc, coutIA: ia, coutProduit: produit, credits: cr, role: f.role, a: new Date().toISOString() })
 }

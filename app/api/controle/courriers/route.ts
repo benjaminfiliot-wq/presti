@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estFondateur, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { boiteEntreprise } from '@/lib/direction/courriers'
 import { actif } from '@/lib/flags'
 
@@ -16,6 +16,8 @@ export async function GET(req: Request) {
   if (!actif('messagerie')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'messagerie', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
 
   const url = new URL(req.url)
   const filtre = url.searchParams.get('statut') ?? 'a_traiter'
@@ -25,6 +27,8 @@ export async function GET(req: Request) {
     .select('id, fil, sens, correspondant_email, correspondant_nom, sujet, apercu, recu_le, statut, assigne_a, artisan_id')
     .order('recu_le', { ascending: false }).limit(300)
   if (filtre !== 'tous') requete = requete.eq('statut', filtre)
+  // Le partenaire ne voit que les fils qui LUI sont assignés (v11 §5) — pas la boîte de l'entreprise.
+  if (perimetre.borne) requete = requete.eq('assigne_a', f.uid)
   if (q) requete = requete.or(`sujet.ilike.%${q}%,correspondant_email.ilike.%${q}%,correspondant_nom.ilike.%${q}%,apercu.ilike.%${q}%`)
   const { data, error } = await requete
   if (error) return NextResponse.json({ error: 'Boîte indisponible pour l’instant.' }, { status: 503 })

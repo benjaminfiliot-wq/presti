@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estFondateur, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { sourcer } from '@/lib/direction/fraicheur'
 import { evenementsRecents } from '@/lib/direction/stripe'
 import { planConf } from '@/lib/plans'
@@ -22,9 +22,14 @@ const LIBELLES_JOURNAL: Record<string, string> = {
 export async function GET(req: Request) {
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'journal', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const [journal, artisans, stripe, alertes, crons] = await Promise.all([
     sourcer('fil:journal', 'supabase', async () => {
-      const { data, error } = await supabaseAdmin.from('journal_direction').select('id, action, acteur_email, cible_id, cree_le').order('cree_le', { ascending: false }).limit(20)
+      // Même règle que le journal : le partenaire suit ses propres actions (v11 §5).
+      let q = supabaseAdmin.from('journal_direction').select('id, action, acteur_email, cible_id, cree_le').order('cree_le', { ascending: false }).limit(20)
+      if (perimetre.borne) q = q.eq('acteur_id', f.uid)
+      const { data, error } = await q
       if (error) throw new Error(error.message)
       return data ?? []
     }),

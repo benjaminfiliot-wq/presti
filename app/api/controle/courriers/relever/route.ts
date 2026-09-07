@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { estFondateur, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { relever } from '@/lib/direction/courriers'
 import { actif } from '@/lib/flags'
 
@@ -16,6 +16,8 @@ export async function POST(req: Request) {
   if (!actif('messagerie')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'messagerie', 'ecrire')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const r = await relever(40)
   if (!r.ok) return NextResponse.json({ error: r.erreur }, { status: 503 })
   return NextResponse.json({

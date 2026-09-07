@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { seulsLesVrais } from '@/lib/direction/perimetre'
-import { estFondateur, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { sourcer } from '@/lib/direction/fraicheur'
 import { planConf } from '@/lib/plans'
 import { verdict, type Statut } from '@/lib/direction/apports'
@@ -22,6 +22,8 @@ export const dynamic = 'force-dynamic'
 export async function GET(req: Request) {
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'clients', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const u = new URL(req.url)
   const q = (u.searchParams.get('q') || '').trim().toLowerCase().slice(0, 60)
   const filtre = u.searchParams.get('offre')

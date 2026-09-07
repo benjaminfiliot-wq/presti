@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estFondateur, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { sourcer, euros } from '@/lib/direction/fraicheur'
 import { echecsRecents } from '@/lib/direction/stripe'
 import { CRONS_ATTENDUS } from '@/lib/alertes'
@@ -41,6 +41,8 @@ const cronsEnRetard = () => sourcer('afaire:crons', 'supabase', async () => {
 export async function GET(req: Request) {
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'sante', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const [echecs, alertes, crons] = await Promise.all([echecsRecents(), alertesOuvertes(), cronsEnRetard()])
   const lignes: Ligne[] = []
   for (const e of echecs.valeur ?? []) lignes.push({

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estFondateur, estDirection, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estFondateur, estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { verdict, preuveLisible, libelleStatut, type Statut } from '@/lib/direction/apports'
 import { lireUserAgent } from '@/lib/userAgent'
@@ -28,9 +28,17 @@ export async function GET(req: Request) {
   if (!actif('apports')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'apports', 'voir')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
   const [{ data: apporteurs, error: eA }, { data: lignes, error: eL }] = await Promise.all([
     supabaseAdmin.from('apporteurs').select('id, code, nom, artisan_id, actif').order('cree_le'),
-    supabaseAdmin.from('registre_apports').select('id, artisan_id, apporteur_id, statut, preuve, piece, motif, premier_contact_le, souscrit_le, offre_souscription, cree_le, maj_le').order('cree_le', { ascending: false }),
+    // Le partenaire ne voit que les apports qu'il a lui-même amenés (v11 §5) : on borne à SES codes.
+    (perimetre.borne
+      ? supabaseAdmin.from('registre_apports').select('id, artisan_id, apporteur_id, statut, preuve, piece, motif, premier_contact_le, souscrit_le, offre_souscription, cree_le, maj_le')
+          .in('apporteur_id', (await supabaseAdmin.from('apporteurs').select('id').eq('artisan_id', f.uid)).data?.map((a) => a.id) ?? ['00000000-0000-0000-0000-000000000000'])
+          .order('cree_le', { ascending: false })
+      : supabaseAdmin.from('registre_apports').select('id, artisan_id, apporteur_id, statut, preuve, piece, motif, premier_contact_le, souscrit_le, offre_souscription, cree_le, maj_le')
+          .order('cree_le', { ascending: false })),
   ])
   if (eA || eL) return NextResponse.json({ error: 'Registre indisponible pour l’instant.' }, { status: 503 })
 
