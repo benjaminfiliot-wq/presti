@@ -43,20 +43,28 @@ const compteurs = (uid: string, borneJournal: boolean, voitMessagerie: boolean) 
     }
   }, 30_000)
 
-/** Le service tient-il debout ? Deux sondes suffisent à la barre ; le détail est dans l'onglet Santé. */
-const service = (origine: string) =>
+/**
+ * Le service tient-il debout ? La barre ne refait PAS sa propre mesure : elle demande le même verdict
+ * que le bandeau, aux mêmes contrôles.
+ *
+ * Sa première version sondait deux pages de son côté, et annonçait « Service normal » pendant que le
+ * bandeau, dix pixels plus bas, disait « Service dégradé » (vu à l'œil le 07/09). Deux affirmations
+ * contradictoires côte à côte détruisent la confiance dans tout l'écran, y compris dans ce qui est juste.
+ */
+const service = (origine: string, jeton: string | null) =>
   sourcer('barre:service', 'app', async () => {
-    const sonde = async (url: string) => {
-      const t = Date.now()
-      try {
-        const r = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(4000), headers: { 'User-Agent': 'presti-barre' } })
-        return { ok: r.status === 200, ms: Date.now() - t }
-      } catch { return { ok: false, ms: Date.now() - t } }
+    const r = await fetch(`${origine}/api/controle/etat`, {
+      cache: 'no-store', signal: AbortSignal.timeout(8000),
+      headers: { 'User-Agent': 'presti-barre', ...(jeton ? { Authorization: `Bearer ${jeton}` } : {}) },
+    })
+    if (!r.ok) throw new Error(`état ${r.status}`)
+    const j = (await r.json()) as { niveau: Etat; controles: { cle: string; etat: string; libelle: string }[] }
+    const verts = j.controles.filter((c) => c.etat === 'ok').length
+    const soucis = j.controles.filter((c) => c.etat === 'crit' || c.etat === 'warn').map((c) => c.libelle)
+    return {
+      etat: j.niveau,
+      detail: j.niveau === 'ok' ? `${verts} contrôles verts` : soucis.slice(0, 2).join(', ') || 'un contrôle en défaut',
     }
-    const [site, connexion] = await Promise.all([sonde(`${origine}/`), sonde(`${origine}/login`)])
-    const etat: Etat = site.ok && connexion.ok ? 'ok' : !site.ok && !connexion.ok ? 'incident' : 'degrade'
-    const lent = Math.max(site.ms, connexion.ms)
-    return { etat, detail: etat === 'ok' ? `site et connexion en ${lent} ms` : etat === 'degrade' ? 'une page ne répond pas' : 'le site ne répond pas', ms: lent }
   }, 60_000)
 
 export async function GET(req: Request) {
@@ -74,7 +82,7 @@ export async function GET(req: Request) {
 
   const [c, s, m, e, ia] = await Promise.all([
     compteurs(f.uid, journalBorne, voit('messagerie')),
-    voitSante ? service(new URL(req.url).origin) : Promise.resolve(null),
+    voitSante ? service(new URL(req.url).origin, req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? null) : Promise.resolve(null),
     voitClients ? mrr() : Promise.resolve(null),
     voitCompta ? encaisseDuMois() : Promise.resolve(null),
     voitCompta ? sourcer('barre:ia', 'anthropic', async () => {
@@ -85,7 +93,9 @@ export async function GET(req: Request) {
       const espace = process.env.ANTHROPIC_WORKSPACE_PRESTI
       const usd = espace && r.parEspace ? (r.parEspace[espace] ?? 0) : r.usd
       const budget = Number(process.env.BUDGET_IA_MENSUEL_EUR) || null
-      return { euros: Math.round(usd * (Number(process.env.TAUX_USD_EUR) || 0.92) * 100) / 100, budget }
+      // C'est le coût du PRODUIT (espace Presti), pas la facture de l'organisation. Les afficher sous
+      // le même nom laissait croire que 0,07 € et 464,97 € se contredisaient.
+      return { euros: Math.round(usd * (Number(process.env.TAUX_USD_EUR) || 0.92) * 100) / 100, budget, perimetre: espace ? 'produit' : 'organisation' }
     }, 300_000) : Promise.resolve(null),
   ])
 

@@ -268,8 +268,9 @@ try {
         await page.fill('input[type=email]', F.email)
         await page.fill('input[type=password]', F.password)
         await page.getByRole('button', { name: /Se connecter/i }).click()
-        await codeEmailSiDemande(page, F.email, { uid: F.uid })
-        await page.waitForURL(/dashboard|outils|direction/, { timeout: 30000 }).catch(() => {})
+        const issue = await codeEmailSiDemande(page, F.email, { uid: F.uid })
+        if (issue === 'bloque') { T(`${nom} : connexion au navigateur`, false, 'la page de connexion n’a pas été quittée (aléa réseau ?) — bloc sauté'); continue }
+        await page.waitForURL(/dashboard|outils|controle/, { timeout: 30000 }).catch(() => {})
         await page.goto(`${APP}/controle`, { waitUntil: 'load', timeout: 45000 })
         const bandeau = await page.waitForSelector('[data-bandeau]', { timeout: 30000 }).catch(() => null)
         T(`${nom} : le bandeau d’état s’affiche`, !!bandeau)

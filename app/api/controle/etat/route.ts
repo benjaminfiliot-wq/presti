@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { sourcer, type Sourcee } from '@/lib/direction/fraicheur'
+import { niveauService } from '@/lib/controle/sante'
 import { joignable } from '@/lib/direction/stripe'
 import { coutIADuMois, CRONS_ATTENDUS } from '@/lib/alertes'
 
@@ -11,8 +12,7 @@ export const dynamic = 'force-dynamic'
 // GET /api/controle/etat — le bandeau d'état (prompt v10 §2.1) : service OK / dégradé / incident.
 // Chaque contrôle est sourcé et daté ; un contrôle qui ne peut pas être fait le dit (« non mesuré »), il ne
 // compte pas comme vert.
-export type Niveau = 'ok' | 'degrade' | 'incident'
-export type Controle = { cle: string; libelle: string; etat: 'ok' | 'warn' | 'crit' | 'info'; detail: string; source: Sourcee<unknown>['source']; a: string; cache: boolean; manque?: string }
+type Controle = import('@/lib/controle/sante').Controle
 
 const sonde = (url: string) => sourcer(`etat:${url}`, 'app', async () => {
   const debut = Date.now()
@@ -74,6 +74,6 @@ export async function GET(req: Request) {
   })
   if (cout.valeur === null && !cout.erreur) controles.push({ cle: 'ia', libelle: 'Facture Anthropic', etat: 'info', detail: 'non mesuré', manque: 'clé Anthropic Admin absente', source: 'anthropic', a: cout.a, cache: false })
   else ajouter('ia', 'Facture Anthropic', cout, (v: { euros: number; budget: number | null }) => ({ etat: v.budget ? (v.euros / v.budget >= 0.9 ? 'crit' : v.euros / v.budget >= 0.7 ? 'warn' : 'ok') : 'ok', detail: v.budget ? `${v.euros.toFixed(2).replace('.', ',')} € sur ${v.budget} €` : `${v.euros.toFixed(2).replace('.', ',')} € ce mois (aucun budget posé)` }))
-  const niveau: Niveau = controles.some((c) => c.etat === 'crit' && ['site', 'connexion', 'stripe'].includes(c.cle)) ? 'incident' : controles.some((c) => c.etat === 'crit' || c.etat === 'warn') ? 'degrade' : 'ok'
+  const niveau = niveauService(controles)
   return NextResponse.json({ niveau, controles, role: f.role, a: new Date().toISOString() })
 }

@@ -80,6 +80,9 @@ export async function codeEmailSiDemande(page, email, { timeout = 30000, uid = n
   const code = await poserCodeTest(id)
   await champ.fill(code)
   await page.getByRole('button', { name: /^Valider$/ }).click()
-  await page.waitForURL((u) => !/\/login/.test(u.pathname), { timeout })
-  return 'code'
+  // Sans ce filet, un aléa de réseau ici faisait remonter une exception Playwright qui emportait TOUT
+  // le bloc navigateur de l'appelant — dix-sept assertions perdues d'un coup, et une pile illisible à
+  // la place du vrai symptôme. On rend l'issue, l'appelant en fait ce qu'il veut.
+  const arrive = await page.waitForURL((u) => !/\/login/.test(u.pathname), { timeout }).then(() => true, () => false)
+  return arrive ? 'code' : 'bloque'
 }

@@ -18,7 +18,7 @@ type Barre = {
   service: S<{ etat: 'ok' | 'degrade' | 'incident'; detail: string; ms: number }> | null
   mrr: S<{ mrr: number; abonnements: number; enPause?: number; abonnementsEnPause?: number }> | null
   encaisse: S<{ brut: number; net: number; paiements: number }> | null
-  coutIA: S<{ euros: number; budget: number | null }> | null
+  coutIA: S<{ euros: number; budget: number | null; perimetre?: string }> | null
   compteurs: S<{ aFaire: number; messages: number | null; clients: number }> | null
   synchro: string
   a: string
@@ -81,7 +81,11 @@ export default function BarreEtat({ onCompteurs, onRecherche }: {
           ) : null}
           <Valeur s={d?.encaisse ?? null} titre="Encaissé ce mois" rendu={(v: { net: number }) => euros(v.net)} />
           <Valeur s={d?.mrr ?? null} titre="MRR" rendu={(v: { mrr: number; abonnementsEnPause?: number }) => `${euros(v.mrr)}${v.abonnementsEnPause ? ` (${v.abonnementsEnPause} en pause)` : ''}`} />
-          <Valeur s={d?.coutIA ?? null} titre="Coût IA" rendu={(v: { euros: number; budget: number | null }) => v.budget ? `${euros(v.euros)} / ${euros(v.budget)}` : euros(v.euros)} />
+          <Valeur s={d?.coutIA ?? null} titre={d?.coutIA?.valeur?.perimetre === 'produit' ? 'Coût IA du produit' : 'Facture Anthropic'}
+            rendu={(v: { euros: number; budget: number | null; perimetre?: string }) =>
+              // Le budget ne s'affiche QUE s'il porte sur la même chose que le montant : mettre le coût
+              // du produit face au budget de l'organisation ferait lire une marge qui n'existe pas.
+              v.budget && v.perimetre !== 'produit' ? `${euros(v.euros)} / ${euros(v.budget)}` : euros(v.euros)} />
           <span className="ctl-barre-fin">
             {d ? <span className="dir-src" title={`Chiffres établis ${relTime(d.synchro, maintenant)}`}>synchro {relTime(d.synchro, maintenant)}</span> : <span className="dir-src">chargement…</span>}
             <button type="button" className="ctl-barre-k" onClick={onRecherche} aria-label="Rechercher (Ctrl+K)" title="Rechercher — Ctrl+K">

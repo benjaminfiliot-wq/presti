@@ -2579,7 +2579,7 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   /* Sur téléphone, la barre garde l'essentiel : l'état du service et l'accès à la recherche. Les
      chiffres se lisent dans « Aujourd'hui », qui est à un doigt. */
   .ctl-barre{gap:0 .9rem;font-size:12px}
-  .ctl-barre-item[data-mesure="MRR"],.ctl-barre-item[data-mesure="Coût IA"]{display:none}
+  .ctl-barre-item[data-mesure="MRR"],.ctl-barre-item[data-mesure^="Coût IA"],.ctl-barre-item[data-mesure="Facture Anthropic"]{display:none}
   .ctl-barre-k kbd{display:none}
 }
 
