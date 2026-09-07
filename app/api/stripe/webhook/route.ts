@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { stripe, concerneAbonnementCourant } from '@/lib/stripe'
 import { planConf } from '@/lib/plans'
+import { alignerSurAbonnement } from '@/lib/abonnementSync'
 import { notifierEntreprise } from '@/lib/email'
 import { alertePaiement, envoyerAlertes } from '@/lib/alertes'
 import { mentionFranchise } from '@/lib/facturation'
@@ -56,6 +57,20 @@ export async function POST(req: Request) {
           `Paiement — ${a?.nom || uid} passe en ${conf.label}`,
           `Abonnement activé via Stripe.\n\nArtisan : ${a?.nom || '—'} (${a?.metier || '—'})\nEmail : ${a?.email || '—'}\nFormule : ${conf.label} — ${conf.prixMois} €/mois\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}`,
         )
+      }
+    } else if (event.type === 'customer.subscription.updated') {
+      // Un changement d'offre venu d'AILLEURS que d'une souscription : le portail de facturation en
+      // autorise un, et rien ne l'appliquait en base (revue du 07/09). L'artisan payait un montant et
+      // gardait les crédits d'un autre. Le montant facturé décide, jamais une métadonnée périmée.
+      const sub = event.data.object as Stripe.Subscription
+      const r = await alignerSurAbonnement(sub)
+      console.log('[stripe webhook] abonnement modifié —', r.raison)
+      if (r.applique && r.avant?.plan !== r.plan) {
+        const { data: a } = await supabaseAdmin.from('artisans').select('nom, email').eq('stripe_subscription_id', sub.id).maybeSingle()
+        await notifierEntreprise(
+          `Changement d’offre — ${a?.nom || sub.id}`,
+          `Offre passée de ${planConf(r.avant?.plan).label} à ${planConf(r.plan).label}.\n\nArtisan : ${a?.nom || '—'}\nEmail : ${a?.email || '—'}\nCrédits : ${r.credits}\n\n${r.raison}.`,
+        ).catch(() => {})
       }
     } else if (event.type === 'customer.subscription.deleted') {
       const sub = event.data.object as Stripe.Subscription

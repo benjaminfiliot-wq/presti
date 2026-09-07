@@ -6,6 +6,7 @@ import { stripe } from '@/lib/stripe'
 import { planConf } from '@/lib/plans'
 import { verdict, preuveLisible, libelleStatut, type Statut } from '@/lib/direction/apports'
 import { actif } from '@/lib/flags'
+import { pauseLisible } from '@/lib/direction/stripe-actions'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -16,7 +17,7 @@ export const dynamic = 'force-dynamic'
 // (inscription, actions de direction le concernant, suspensions), son canal d'arrivée.
 // Ce qu'elle ne montre pas, et ne montrera pas : le contenu de ses conversations, de ses devis, de ses factures.
 // Le §1 est clair — les données de l'artisan restent les siennes. On compte, on ne lit pas.
-type Abonnement = { statut: string; offre: string | null; montant: number | null; periode_fin: string | null; annulation_prevue: boolean; moyen: string | null }
+type Abonnement = { statut: string; offre: string | null; montant: number | null; periode_fin: string | null; annulation_prevue: boolean; moyen: string | null; pause: string | null }
 
 const abonnementStripe = (id: string | null): Promise<Sourcee<Abonnement | null>> => sourcer(`client:abo:${id ?? '-'}`, 'stripe', async () => {
   if (!id) return null
@@ -34,6 +35,9 @@ const abonnementStripe = (id: string | null): Promise<Sourcee<Abonnement | null>
     annulation_prevue: !!s.cancel_at_period_end,
     // La carte n'est jamais lue par Presti : Stripe en rend une description, quatre chiffres et une marque.
     moyen: carte ? `${carte.brand ?? 'carte'} •••• ${carte.last4 ?? '????'}` : null,
+    // Une facturation en pause n'apparaît nulle part dans le statut Stripe (il reste « active ») :
+    // sans cette ligne, la direction croirait prélever alors qu'elle ne prélève rien.
+    pause: pauseLisible(s),
   }
 }, 30_000)
 

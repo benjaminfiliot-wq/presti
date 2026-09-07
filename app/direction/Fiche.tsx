@@ -14,7 +14,7 @@ import { actif } from '@/lib/flags'
 // Ce qu'on peut : offrir des crédits, suspendre, réactiver, lui écrire, ouvrir son portail de facturation.
 // Chaque action demande le mot de passe et laisse une trace.
 type Sourcee<T> = { valeur: T | null; source: string; a: string; cache: boolean; erreur?: string }
-type Abonnement = { statut: string; offre: string | null; montant: number | null; periode_fin: string | null; annulation_prevue: boolean; moyen: string | null }
+type Abonnement = { statut: string; offre: string | null; montant: number | null; periode_fin: string | null; annulation_prevue: boolean; moyen: string | null; pause: string | null }
 type Fiche = {
   artisan: { id: string; nom: string | null; email: string | null; metier: string | null; tel: string | null; slug: string | null; plan: string | null; offre: string; credits: number | null; inscrit_le: string; suppression_demandee_le: string | null; fondateur: boolean; client_stripe: boolean }
   abonnement: Sourcee<Abonnement | null>
@@ -81,6 +81,31 @@ export default function Fiche({ id, role, signaler, onRetour }: { id: string; ro
     const motif = window.prompt('Motif de la réactivation (facultatif) :') ?? ''
     demander({ action: 'reactiver', motif }, 'artisan', 'réactiver ce compte')
   }
+  function changerOffre() {
+    const vers = window.prompt('Vers quelle offre ? essentiel · studio · signature')
+    if (!vers?.trim()) return
+    const motif = window.prompt('Pourquoi ce changement ? (journalisé)')
+    if (!motif?.trim()) return
+    demander({ action: 'offre', vers: vers.trim(), motif: motif.trim() }, 'argent', `passer en ${vers.trim()}`)
+  }
+  function remboursement() {
+    const brut = window.prompt('Combien rembourser en euros ? (vide = tout ce qui reste sur la dernière facture)')
+    if (brut === null) return
+    const montant = brut.trim() === '' ? null : Number(brut.replace(',', '.'))
+    if (montant !== null && !(Number.isFinite(montant) && montant > 0)) return
+    const motif = window.prompt('Motif du remboursement (obligatoire, journalisé)')
+    if (!motif?.trim()) return
+    if (!window.confirm(`Rembourser ${montant === null ? 'la totalité de la dernière facture' : montant.toFixed(2) + ' €'} ? De l’argent quitte le compte.`)) return
+    demander({ action: 'rembourser', montant, motif: motif.trim() }, 'argent', 'rembourser')
+  }
+  function pause() {
+    const enPause = !!abo?.pause
+    const motif = window.prompt(enPause ? 'Motif de la reprise (journalisé)' : 'Pourquoi mettre la facturation en pause ? (journalisé)')
+    if (!motif?.trim()) return
+    if (enPause) { demander({ action: 'reprendre', motif: motif.trim() }, 'argent', 'reprendre la facturation'); return }
+    const date = window.prompt('Reprise le (AAAA-MM-JJ, vide = sans date, 3 mois maximum) :') ?? ''
+    demander({ action: 'pause', jusqu_au: date.trim() || null, motif: motif.trim() }, 'argent', 'mettre la facturation en pause')
+  }
   function ecrire() {
     const modele = window.prompt('Quel message ? bonjour · aide · paiement')
     if (!modele?.trim()) return
@@ -114,6 +139,11 @@ export default function Fiche({ id, role, signaler, onRetour }: { id: string; ro
                     ? <button type="button" className="btn btn--primary" disabled={!!busy} onClick={reactiver} data-action="reactiver">Réactiver</button>
                     : <button type="button" className="btn btn--ghost danger" disabled={!!busy || a.fondateur} onClick={suspendre} data-action="suspendre">Suspendre</button>}
                   <button type="button" className="btn btn--ghost" disabled={!!busy} onClick={ecrire} data-action="email">Lui écrire</button>
+                  {abo ? <>
+                    <button type="button" className="btn btn--ghost" disabled={!!busy} onClick={changerOffre} data-action="offre">Changer d’offre</button>
+                    <button type="button" className="btn btn--ghost" disabled={!!busy} onClick={pause} data-action="pause">{abo.pause ? 'Reprendre la facturation' : 'Mettre en pause'}</button>
+                  </> : null}
+                  {a.client_stripe ? <button type="button" className="btn btn--ghost danger" disabled={!!busy} onClick={remboursement} data-action="rembourser">Rembourser</button> : null}
                   {a.client_stripe ? <button type="button" className="btn btn--ghost" disabled={!!busy} onClick={() => demander({ action: 'portail' }, 'artisan', 'ouvrir son portail de facturation')} data-action="portail">Portail de facturation</button> : null}
                 </>
               ) : <span className="dir-src">{role === 'direction' ? 'actions bientôt disponibles' : 'lecture seule'}</span>}
@@ -130,6 +160,7 @@ export default function Fiche({ id, role, signaler, onRetour }: { id: string; ro
                   {abo.periode_fin ? <> · période jusqu’au {new Date(abo.periode_fin).toLocaleDateString('fr-FR')}</> : null}
                   {abo.annulation_prevue ? <> · <span className="pill warn"><span className="pdot" />résiliation prévue</span></> : null}
                   {abo.moyen ? <> · {abo.moyen}</> : null}
+                  {abo.pause ? <> · <span className="pill warn" data-pause><span className="pdot" />facturation {abo.pause}</span></> : null}
                   <br /><Fraicheur s={d.abonnement} maintenant={maintenant} />
                 </p>
               )}

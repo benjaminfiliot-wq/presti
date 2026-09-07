@@ -8,6 +8,10 @@ import { sendEmail, EMAIL_ENTREPRISE } from '@/lib/email'
 import { journaliser, refusJournal } from '@/lib/direction/journal'
 import { oublier } from '@/lib/direction/fraicheur'
 import { actif } from '@/lib/flags'
+import { type Action } from '@/lib/direction/journal'
+import { changerOffre, rembourser, mettreEnPause, reprendre } from '@/lib/direction/stripe-actions'
+import { alignerSurAbonnement } from '@/lib/abonnementSync'
+import { OFFRES, type PlanPayant } from '@/lib/plans'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -25,7 +29,7 @@ export const dynamic = 'force-dynamic'
 // Ce que cette route ne fait pas : changer d'offre, rembourser, mettre en pause. Ces trois-là écrivent chez
 // Stripe et attendent leur suite en mode test (J2b, seconde moitié) — on ne livre pas un bouton qui touche à
 // l'argent sans l'avoir éprouvé.
-type Corps = { action?: unknown; credits?: unknown; motif?: unknown; message?: unknown; modele?: unknown }
+type Corps = { action?: unknown; credits?: unknown; motif?: unknown; message?: unknown; modele?: unknown; vers?: unknown; montant?: unknown; jusqu_au?: unknown }
 const MODELES: Record<string, { sujet: string; texte: (nom: string) => string }> = {
   bonjour: { sujet: 'Un mot de Presti', texte: (n) => `Bonjour ${n},\n\nJe voulais simplement prendre de vos nouvelles sur votre utilisation de Presti. Si quelque chose coince, répondez à ce message : je lis tout.\n\nBenjamin — Presti` },
   aide: { sujet: 'Besoin d’un coup de main ?', texte: (n) => `Bonjour ${n},\n\nJ’ai vu que votre compte était un peu en veille. Si vous voulez qu’on prenne dix minutes pour le régler ensemble, répondez à ce message avec deux créneaux qui vous vont.\n\nBenjamin — Presti` },
@@ -44,7 +48,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const u = lireUserAgent(req.headers.get('user-agent'))
   const agent = `${u.appareil} · ${u.navigateur}`.slice(0, 120)
 
-  const { data: a } = await supabaseAdmin.from('artisans').select('id, nom, email, is_founder, stripe_customer_id').eq('id', id).maybeSingle()
+  const { data: a } = await supabaseAdmin.from('artisans').select('id, nom, email, plan, is_founder, stripe_customer_id, stripe_subscription_id').eq('id', id).maybeSingle()
   if (!a) return NextResponse.json({ error: 'Artisan inconnu.' }, { status: 404 })
 
   // Le corps est validé AVANT de consommer le jeton (leçon du 07/09 : une demande invalide le brûlait).
@@ -85,6 +89,60 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     if (r?.etat === 'pas_suspendu') return NextResponse.json({ ok: true, deja: true, message: 'Ce compte n’était pas suspendu.' })
     if (r?.etat !== 'ok') return NextResponse.json({ error: 'Réactivation refusée.' }, { status: 400 })
     return NextResponse.json({ ok: true, message: 'Compte réactivé : l’artisan peut se reconnecter.' })
+  }
+
+  // ── Les trois actions qui écrivent chez Stripe ─────────────────────────────────────────────────────
+  // Ici, l'action et sa trace ne peuvent PAS tenir dans une transaction : Stripe est à l'autre bout d'un
+  // réseau. On écrit donc deux lignes — l'intention avant l'appel, le résultat après. Si le journal refuse
+  // l'intention, l'appel n'a pas lieu. Une intention restée seule est exactement le signal qu'il faut
+  // aller regarder chez Stripe : c'est la propriété qu'on veut, pas un défaut.
+  if (action === 'offre' || action === 'rembourser' || action === 'pause' || action === 'reprendre') {
+    if (!stripe) return NextResponse.json({ error: 'Stripe n’est pas configuré.' }, { status: 503 })
+    if (!motif) return NextResponse.json({ error: 'Un motif est obligatoire : il sera dans le journal.' }, { status: 400 })
+
+    const vers = typeof b?.vers === 'string' ? (b.vers as PlanPayant) : null
+    const montant = b?.montant == null ? null : Number(b.montant)
+    const jusquAu = typeof b?.jusqu_au === 'string' && b.jusqu_au ? new Date(b.jusqu_au) : null
+    if (action === 'offre' && (!vers || !OFFRES.some((o) => o.id === vers))) return NextResponse.json({ error: `Offre attendue : ${OFFRES.map((o) => o.id).join(', ')}.` }, { status: 400 })
+    if (action === 'rembourser' && montant != null && !(Number.isFinite(montant) && montant > 0)) return NextResponse.json({ error: 'Montant invalide.' }, { status: 400 })
+    if (action === 'pause' && jusquAu && Number.isNaN(jusquAu.getTime())) return NextResponse.json({ error: 'Date de reprise invalide.' }, { status: 400 })
+    if (action !== 'rembourser' && !a.stripe_subscription_id) return NextResponse.json({ error: 'Cet artisan n’a pas d’abonnement Stripe.' }, { status: 400 })
+    if (action === 'rembourser' && !a.stripe_customer_id) return NextResponse.json({ error: 'Cet artisan n’a pas de compte de facturation Stripe.' }, { status: 400 })
+
+    const refus = await exigerReconfirmation(req, f.uid, 'argent')
+    if (refus) return refus
+
+    const ACTIONS: Record<string, Action> = { offre: 'artisan_offre', rembourser: 'artisan_rembourse', pause: 'artisan_pause', reprendre: 'artisan_pause' }
+    const nom = ACTIONS[action]
+    // La clé d'idempotence tient à l'artisan, à l'action et au motif : deux clics identiques dans la
+    // même minute ne remboursent qu'une fois ; un second remboursement voulu passe par un autre motif.
+    const clef = `${id}:${action}:${motif}`.slice(0, 120)
+    if (!(await journaliser({ acteur: f, action: nom, cible_type: 'artisan', cible_id: id, artisan_id: id, avant: { plan: a.plan }, apres: { statut: 'tenté', action, vers, montant, jusqu_au: jusquAu?.toISOString() ?? null, motif }, reconfirme: true }, req))) return refusJournal()
+
+    let r: Awaited<ReturnType<typeof changerOffre>> | Awaited<ReturnType<typeof rembourser>> | Awaited<ReturnType<typeof mettreEnPause>>
+    try {
+      r = action === 'offre' ? await changerOffre(stripe, a.stripe_subscription_id!, vers!, clef)
+        : action === 'rembourser' ? await rembourser(stripe, a.stripe_customer_id!, montant, motif, clef)
+        : action === 'pause' ? await mettreEnPause(stripe, a.stripe_subscription_id!, jusquAu, clef)
+        : await reprendre(stripe, a.stripe_subscription_id!, clef)
+    } catch (e) {
+      const m = (e as Error).message.slice(0, 160)
+      await journaliser({ acteur: f, action: nom, cible_type: 'artisan', cible_id: id, artisan_id: id, apres: { statut: 'échec', erreur: m } }, req)
+      return NextResponse.json({ error: `Stripe a refusé : ${m}` }, { status: 503 })
+    }
+    if (!r.ok) {
+      await journaliser({ acteur: f, action: nom, cible_type: 'artisan', cible_id: id, artisan_id: id, apres: { statut: 'refusé', raison: r.message } }, req)
+      return NextResponse.json({ error: r.message, code: r.code }, { status: 400 })
+    }
+
+    // Le plan en base suit ce que Stripe facture désormais — une seule fonction écrit cette vérité.
+    let alignement: string | null = null
+    if (action === 'offre' && 'sub' in r.valeur) alignement = (await alignerSurAbonnement(r.valeur.sub)).raison
+    oublier(`client:abo:${a.stripe_subscription_id ?? '-'}`); oublier('chiffres:'); oublier('clients:')
+    if (!(await journaliser({ acteur: f, action: nom, cible_type: 'artisan', cible_id: id, artisan_id: id, avant: { plan: a.plan }, apres: { statut: 'fait', resume: r.message, alignement, motif }, reconfirme: true }, req))) {
+      return NextResponse.json({ ok: true, message: `${r.message} ⚠️ Le résultat n’a pas pu être journalisé — l’intention, elle, l’est. Vérifiez le tableau de bord Stripe.` })
+    }
+    return NextResponse.json({ ok: true, message: alignement ? `${r.message} (${alignement})` : r.message })
   }
 
   if (action === 'portail') {
