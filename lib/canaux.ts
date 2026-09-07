@@ -42,9 +42,20 @@ export const ENTREPRISE_MAIL = {
  *  Les noms de variables : `IMAP_*` et `PRESTI_MAIL_IMAP_*` ont coexisté, la production utilise les
  *  premiers, la documentation les seconds. On accepte les deux plutôt que de laisser une boîte muette
  *  pour une histoire de préfixe. */
-export function boiteEntrepriseResolue(): { hote: string; port: number; user: string; pass: string; devine: boolean } | null {
+/** Un mot de passe d'application Google : seize lettres minuscules que Google AFFICHE en quatre
+ *  groupes de quatre. Les espaces sont une aide à la lecture, ils ne font pas partie du secret —
+ *  et un serveur IMAP qui les reçoit répond « Invalid credentials » (constaté le 07/09).
+ *
+ *  On ne nettoie que cette forme-là, reconnue au motif près. Nettoyer tous les mots de passe serait
+ *  pire : un mot de passe peut contenir un espace pour de bon, et le corriger en douce ferait
+ *  exister deux versions du secret selon qui le lit. */
+const MDP_APPLICATION_GOOGLE = /^[a-z]{4}(?: [a-z]{4}){3}$/
+const nettoyerSiMotDePasseApplication = (p: string) => (MDP_APPLICATION_GOOGLE.test(p.trim()) ? p.trim().replace(/ /g, '') : p)
+
+export function boiteEntrepriseResolue(): { hote: string; port: number; user: string; pass: string; devine: boolean; passNettoye: boolean } | null {
   const user = (process.env.IMAP_USER || process.env.PRESTI_MAIL_IMAP_USER || '').trim()
-  const pass = process.env.IMAP_PASS || process.env.PRESTI_MAIL_IMAP_PASS || ''
+  const brut = process.env.IMAP_PASS || process.env.PRESTI_MAIL_IMAP_PASS || ''
+  const pass = nettoyerSiMotDePasseApplication(brut)
   if (!user || !pass) return null
   const pose = (process.env.IMAP_HOST || process.env.PRESTI_MAIL_IMAP_HOST || '').trim()
   const devine = devineFournisseur(user)
@@ -53,6 +64,7 @@ export function boiteEntrepriseResolue(): { hote: string; port: number; user: st
     hote: pose || devine?.imap_hote || ENTREPRISE_MAIL.imap_hote,
     port: Number(process.env.IMAP_PORT || process.env.PRESTI_MAIL_IMAP_PORT || ENTREPRISE_MAIL.imap_port),
     devine: !pose && !!devine,
+    passNettoye: pass !== brut,
   }
 }
 

@@ -13,7 +13,7 @@ import { boiteEntrepriseResolue, testerImap } from '@/lib/canaux'
 //   • on ne garde que le texte. Le HTML d'un email est du code venu de l'extérieur : ni utile ici,
 //     ni sûr à réafficher. On stocke le `text/plain`, ou le HTML dépouillé de ses balises à défaut.
 
-export type Identifiants = { hote: string; port: number; user: string; pass: string }
+export type Identifiants = { hote: string; port: number; user: string; pass: string; passNettoye: boolean }
 
 /** Les identifiants de la boîte de l'entreprise, ou null si elle n'est pas configurée.
  *
@@ -21,7 +21,7 @@ export type Identifiants = { hote: string; port: number; user: string; pass: str
  *  commentaire — deux fichiers en donnaient deux, et la relève frappait peut-être le mauvais serveur). */
 export function boiteEntreprise(): Identifiants | null {
   const b = boiteEntrepriseResolue()
-  return b ? { hote: b.hote, port: b.port, user: b.user, pass: b.pass } : null
+  return b ? { hote: b.hote, port: b.port, user: b.user, pass: b.pass, passNettoye: b.passNettoye } : null
 }
 
 /** Le texte d'un message, sans HTML. Borné : un email de 2 Mo ne remplit pas une ligne de base. */
@@ -262,8 +262,11 @@ export async function relever(limite = 40): Promise<Releve> {
       // et impossible à vérifier depuis le webmail. On le signale sans y toucher : le corriger en
       // douce ferait exister deux versions du mot de passe selon qui le lit.
       const sali = b.pass !== b.pass.trim() ? ' ⚠️ le mot de passe enregistré commence ou finit par une espace : c’est probablement un copier-coller de trop.' : ''
+      // Dit à voix haute : si on a retiré des espaces et que ça échoue quand même, il faut le savoir,
+      // sinon on cherche un problème d'espaces déjà réglé.
+      const nettoye = b.passNettoye ? ' (les espaces du mot de passe d’application Google ont été retirés avant l’essai)' : ''
       const court = b.pass.trim().length < 6 ? ` ⚠️ le mot de passe enregistré ne fait que ${b.pass.trim().length} caractère(s).` : ''
-      return { ok: false, erreur: `${t.erreur} (${ou}) — le serveur a répondu : « ${t.brut} »${sali}${court}` }
+      return { ok: false, erreur: `${t.erreur} (${ou}) — le serveur a répondu : « ${t.brut} »${nettoye}${sali}${court}` }
     }
     // La connexion passe mais la relève a échoué : c'est la BOÎTE ou le message, pas l'accès.
     return { ok: false, erreur: `La connexion à ${ou} fonctionne, mais la relève s’est arrêtée : ${brut}` }

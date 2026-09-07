@@ -110,9 +110,15 @@ const CAS = [
   // Le formulaire du site : le message le plus important de la boîte. Il vient de NOTRE adresse.
   { nom: 'formulaire du site → prospect (et surtout PAS technique)', de: NOUS, sujet: '[Presti] Message de Claire Dubois',
     attendu: 'prospect', motif: 'formulaire:contact' },
-  { nom: 'un visiteur qui s’appelle « [SIMULATION] » ne se cache pas', de: NOUS, sujet: '[Presti] Message de [SIMULATION] Truc',
-    attendu: 'technique', motif: 'interne:simulation',
-    note: 'la simulation passe AVANT le formulaire, sinon on se cache derrière son propre nom' },
+  // Le marqueur de simulation est ANCRÉ là où notre code le pose. Ces deux cas gardent l'ancrage :
+  // si quelqu'un le rendait à nouveau libre, le second virerait au rouge.
+  { nom: 'une vraie simulation d’alerte → technique', de: NOUS, sujet: '[Presti] [SIMULATION] Budget IA : 70 % consommés',
+    attendu: 'technique', motif: 'interne:simulation' },
+  { nom: 'l’autre forme de simulation (Presti — [SIMULATION] …) aussi', de: NOUS, sujet: 'Presti — [SIMULATION] Votre paiement a échoué',
+    attendu: 'technique', motif: 'interne:simulation' },
+  { nom: 'un visiteur qui s’appelle « [SIMULATION] Marc » reste un prospect', de: NOUS, sujet: '[Presti] Message de [SIMULATION] Marc Dupont',
+    attendu: 'prospect', motif: 'formulaire:contact',
+    note: 'le sujet du formulaire contient 120 caractères écrits par le visiteur : cherché librement, ce marqueur lui permettait d’enterrer son propre message' },
 
   // L'argent : nos propres notifications, malgré leur deuxième personne.
   { nom: 'paiement → abonnement', de: NOUS, sujet: '[Presti] Paiement — Jean Dupont', attendu: 'abonnement', motif: 'interne:argent' },
