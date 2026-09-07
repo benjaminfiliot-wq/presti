@@ -107,10 +107,11 @@ try {
   T('chaque contrôle porte source, date ISO et état', ctr.length >= 5 && ctr.every((c) => c.source && !Number.isNaN(Date.parse(c.a)) && ['ok', 'warn', 'crit', 'info'].includes(c.etat)), ctr.map((c) => `${c.cle}:${c.etat}`).join(' '))
   T('contrôles attendus : site, connexion, stripe, resend, crons, ia', ['site', 'connexion', 'stripe', 'resend', 'crons', 'ia'].every((k) => ctr.some((c) => c.cle === k)))
   const ch = await json(await api('/api/direction/chiffres', {}, jF))
-  const champs = ['mrr', 'payants', 'essais', 'conversions', 'encaisse', 'coutIA', 'credits']
+  const champs = ['mrr', 'payants', 'essais', 'conversions', 'encaisse', 'coutIA', 'coutProduit', 'credits']
   T('chiffres → 200 et chaque champ est { valeur, source, a }', ch.status === 200 && champs.every((k) => ch.body[k] && 'valeur' in ch.body[k] && ch.body[k].source && !Number.isNaN(Date.parse(ch.body[k].a))), champs.map((k) => `${k}:${ch.body[k]?.source}`).join(' '))
   T('un chiffre nul dit pourquoi (erreur ou manque) — jamais un nombre nu', champs.every((k) => ch.body[k]?.valeur !== null || ch.body[k]?.erreur || ch.body[k]?.manque))
-  T('coût IA : réel (anthropic) ou estimation ÉTIQUETÉE avec le manque H2', ch.body.coutIA?.source === 'anthropic' || (ch.body.coutIA?.source === 'estimation' && /H2/.test(ch.body.coutIA?.manque || '') && ch.body.coutIA?.valeur?.estimation === true))
+  T('facture Anthropic : réelle (anthropic) ou estimation ÉTIQUETÉE', ch.body.coutIA?.source === 'anthropic' || (ch.body.coutIA?.source === 'estimation' && /H2|Admin/.test(ch.body.coutIA?.manque || '')))
+  T('le coût du PRODUIT est distinct de la facture de l’organisation, et étiqueté estimation', ch.body.coutProduit?.source === 'estimation' && ch.body.coutProduit?.valeur?.perimetre === 'produit', JSON.stringify(ch.body.coutProduit).slice(0, 120))
   const fil = await json(await api('/api/direction/fil', {}, jF))
   const ev = fil.body.evenements || []
   T('fil → ≤ 20 événements, triés du plus récent au plus ancien, chacun sourcé', fil.status === 200 && ev.length <= 20 && ev.every((e, i) => e.source && (i === 0 || ev[i - 1].a >= e.a)))
@@ -273,17 +274,17 @@ try {
         T(`${nom} : le bandeau d’état s’affiche`, !!bandeau)
         await page.waitForSelector('[data-kpi]', { timeout: 20000 }).catch(() => {})
         const kpis = await page.locator('[data-kpi]').count()
-        T(`${nom} : les sept chiffres du jour sont là`, kpis === 7, `${kpis} tuile(s)`)
+        T(`${nom} : les huit chiffres du jour sont là`, kpis === 8, `${kpis} tuile(s)`)
         // Les valeurs arrivent vraiment : sans cette attente, la capture et les assertions passaient sur un écran
         // entièrement en « chargement… » (constaté à l’œil sur la première capture du 07/09).
         await page.waitForFunction(() => {
           const t = [...document.querySelectorAll('[data-kpi] .dir-src')].map((e) => e.textContent || '')
-          return t.length >= 7 && t.filter((x) => /il y a|à l’instant|non mesuré|injoignable/.test(x)).length >= 6
+          return t.length >= 8 && t.filter((x) => /il y a|à l’instant|non mesuré|injoignable/.test(x)).length >= 7
         }, { timeout: 40000 }).catch(() => {})
         const chargees = await page.evaluate(() => [...document.querySelectorAll('[data-kpi] .dir-src')].filter((e) => /il y a|à l’instant|non mesuré|injoignable/.test(e.textContent || '')).length)
         T(`${nom} : chaque chiffre porte sa source et sa fraîcheur, valeur chargée`, chargees === kpis, `${chargees}/${kpis} chargés`)
         const valeurs = await page.evaluate(() => [...document.querySelectorAll('[data-kpi] .val')].map((e) => (e.textContent || '').trim()))
-        T(`${nom} : les valeurs ne sont plus des points de suspension`, valeurs.filter((v) => v !== '…' && v !== '').length >= 6, valeurs.join(' | '))
+        T(`${nom} : les valeurs ne sont plus des points de suspension`, valeurs.filter((v) => v !== '…' && v !== '').length >= 7, valeurs.join(' | '))
         await page.waitForFunction(() => !/Chargement…/.test(document.querySelector('[data-afaire]')?.textContent || ''), { timeout: 30000 }).catch(() => {})
         const bandeauTexte = await page.locator('[data-bandeau]').innerText()
         T(`${nom} : le bandeau annonce un état, pas « Vérification… »`, /Tout fonctionne|Service dégradé|Incident en cours/.test(bandeauTexte), bandeauTexte.split(String.fromCharCode(10)).join(" · ").slice(0, 100))

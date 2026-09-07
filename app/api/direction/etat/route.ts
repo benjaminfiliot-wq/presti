@@ -70,8 +70,8 @@ export async function GET(req: Request) {
     const retard = v.filter((x) => x.enRetard || x.reussi === false)
     return { etat: retard.length === 0 ? 'ok' : retard.length >= 2 ? 'crit' : 'warn', detail: retard.length ? `en retard ou en échec : ${retard.map((x) => x.nom).join(', ')}` : `${v.length} tâches passées à l’heure` }
   })
-  if (cout.valeur === null && !cout.erreur) controles.push({ cle: 'ia', libelle: 'Budget IA', etat: 'info', detail: 'non mesuré', manque: 'clé Anthropic Admin absente', source: 'anthropic', a: cout.a, cache: false })
-  else ajouter('ia', 'Budget IA', cout, (v: { euros: number; budget: number | null }) => ({ etat: v.budget ? (v.euros / v.budget >= 0.9 ? 'crit' : v.euros / v.budget >= 0.7 ? 'warn' : 'ok') : 'ok', detail: v.budget ? `${v.euros.toFixed(2).replace('.', ',')} € sur ${v.budget} €` : `${v.euros.toFixed(2).replace('.', ',')} € ce mois (aucun budget posé)` }))
+  if (cout.valeur === null && !cout.erreur) controles.push({ cle: 'ia', libelle: 'Facture Anthropic', etat: 'info', detail: 'non mesuré', manque: 'clé Anthropic Admin absente', source: 'anthropic', a: cout.a, cache: false })
+  else ajouter('ia', 'Facture Anthropic', cout, (v: { euros: number; budget: number | null }) => ({ etat: v.budget ? (v.euros / v.budget >= 0.9 ? 'crit' : v.euros / v.budget >= 0.7 ? 'warn' : 'ok') : 'ok', detail: v.budget ? `${v.euros.toFixed(2).replace('.', ',')} € sur ${v.budget} €` : `${v.euros.toFixed(2).replace('.', ',')} € ce mois (aucun budget posé)` }))
   const niveau: Niveau = controles.some((c) => c.etat === 'crit' && ['site', 'connexion', 'stripe'].includes(c.cle)) ? 'incident' : controles.some((c) => c.etat === 'crit' || c.etat === 'warn') ? 'degrade' : 'ok'
   return NextResponse.json({ niveau, controles, role: f.role, a: new Date().toISOString() })
 }

@@ -15,7 +15,7 @@ import { relTime, euros } from '@/lib/direction/fraicheur'
 type Controle = { cle: string; libelle: string; etat: 'ok' | 'warn' | 'crit' | 'info'; detail: string; source: string; a: string; cache: boolean; manque?: string }
 type Etat = { niveau: 'ok' | 'degrade' | 'incident'; controles: Controle[]; role: 'direction' | 'lecture'; a: string }
 type Sourcee<T> = { valeur: T | null; source: string; a: string; cache: boolean; erreur?: string; manque?: string }
-type Chiffres = { mrr: Sourcee<{ mrr: number; abonnements: number }>; payants: Sourcee<number>; essais: Sourcee<number>; conversions: Sourcee<number>; encaisse: Sourcee<{ brut: number; frais: number; net: number; paiements: number; rembourse: number }>; coutIA: Sourcee<{ euros: number; budget: number | null; estimation: boolean; credits?: number }>; credits: Sourcee<{ consommes: number; inclus: number }>; a: string }
+type Chiffres = { mrr: Sourcee<{ mrr: number; abonnements: number }>; payants: Sourcee<number>; essais: Sourcee<number>; conversions: Sourcee<number>; encaisse: Sourcee<{ brut: number; frais: number; net: number; paiements: number; rembourse: number }>; coutIA: Sourcee<{ euros: number; budget: number | null; estimation: boolean; credits?: number; perimetre?: string }>; coutProduit: Sourcee<{ euros: number; credits?: number }>; credits: Sourcee<{ consommes: number; inclus: number }>; a: string }
 type Action = { libelle: string; route?: string; methode?: 'POST' | 'DELETE'; corps?: Record<string, unknown>; reconfirmation: boolean; portee?: string }
 type Ligne = { id: string; type: string; libelleType: string; gravite: 'info' | 'attention' | 'critique'; libelle: string; detail: string; a: string; source: string; action?: Action }
 type AFaire = { lignes: Ligne[]; sources: Record<string, { a: string; erreur?: string }>; a: string }
@@ -158,7 +158,8 @@ export default function Aujourdhui({ role, signaler }: { role: 'direction' | 'le
           {kpi('Essais en cours', val(chiffres?.essais, (v) => String(v)), chiffres?.essais ?? null)}
           {kpi('Abonnements activés aujourd’hui', val(chiffres?.conversions, (v) => String(v)), chiffres?.conversions ?? null)}
           {kpi('Encaissé ce mois', val(chiffres?.encaisse, (v) => euros(v.net)), chiffres?.encaisse ?? null, chiffres?.encaisse?.valeur ? `${euros(chiffres.encaisse.valeur.brut)} brut · ${euros(chiffres.encaisse.valeur.frais)} de frais` : undefined)}
-          {kpi('Coût IA du mois', val(chiffres?.coutIA, (v) => `${v.estimation ? '≈ ' : ''}${euros(v.euros)}`), chiffres?.coutIA ?? null, chiffres?.coutIA?.valeur ? (chiffres.coutIA.valeur.budget ? `sur ${euros(chiffres.coutIA.valeur.budget)} de budget` : 'aucun budget posé') : undefined)}
+          {kpi('Facture Anthropic', val(chiffres?.coutIA, (v) => `${v.estimation ? '≈ ' : ''}${euros(v.euros)}`), chiffres?.coutIA ?? null, chiffres?.coutIA?.valeur ? `toute l’organisation (développement compris)${chiffres.coutIA.valeur.budget ? ` · budget ${euros(chiffres.coutIA.valeur.budget)}` : ''}` : undefined)}
+          {kpi('Coût IA du produit', val(chiffres?.coutProduit, (v) => `≈ ${euros(v.euros)}`), chiffres?.coutProduit ?? null, chiffres?.coutProduit?.valeur ? `${chiffres.coutProduit.valeur.credits ?? 0} crédit${(chiffres.coutProduit.valeur.credits ?? 0) > 1 ? 's' : ''} consommés par les artisans` : undefined)}
           {kpi('Crédits consommés', val(chiffres?.credits, (v) => String(v.consommes)), chiffres?.credits ?? null, chiffres?.credits?.valeur ? `sur ${chiffres.credits.valeur.inclus} inclus ce mois` : undefined)}
         </div>
       </section>

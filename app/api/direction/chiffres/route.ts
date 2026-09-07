@@ -42,21 +42,27 @@ const creditsConsommes = () => sourcer('chiffres:credits', 'supabase', async () 
   return { consommes, inclus }
 })
 
-type CoutIA = { euros: number; budget: number | null; estimation: boolean; credits?: number }
+type CoutIA = { euros: number; budget: number | null; estimation: boolean; credits?: number; perimetre: 'organisation' | 'produit' }
 const budgetPose = () => { const b = Number(process.env.BUDGET_IA_MENSUEL_EUR); return Number.isFinite(b) && b > 0 ? b : null }
+
+/** Le coût imputable au PRODUIT : les crédits réellement consommés par les artisans, au coût moyen mesuré. */
+const coutProduit = (): Promise<Sourcee<CoutIA>> => sourcer('chiffres:produit', 'estimation', async () => {
+  const est = await estimationDepuisLesCredits()
+  return { euros: Math.round(est.euros * 100) / 100, budget: null, estimation: true, credits: est.credits, perimetre: 'produit' as const }
+}, 5 * 60_000)
 
 const coutIA = async (): Promise<Sourcee<CoutIA>> => {
   const reel = await sourcer<CoutIA | null>('chiffres:ia', 'anthropic', async () => {
     const c = await coutIADuMois()
     if (!c) return null
     if (c.erreur) throw new Error(c.erreur)
-    return { euros: Math.round(c.usd * (Number(process.env.TAUX_USD_EUR) || 0.92) * 100) / 100, budget: budgetPose(), estimation: false }
+    return { euros: Math.round(c.usd * (Number(process.env.TAUX_USD_EUR) || 0.92) * 100) / 100, budget: budgetPose(), estimation: false, perimetre: 'organisation' as const }
   }, 5 * 60_000)
   if (reel.valeur || reel.erreur) return reel as Sourcee<CoutIA>
   // Pas de clé Admin (H2) : l'estimation depuis les crédits, ÉTIQUETÉE comme telle — jamais présentée comme la facture.
   const e = await sourcer<CoutIA>('chiffres:ia-estimation', 'estimation', async () => {
     const est = await estimationDepuisLesCredits()
-    return { euros: Math.round(est.euros * 100) / 100, budget: budgetPose(), estimation: true, credits: est.credits }
+    return { euros: Math.round(est.euros * 100) / 100, budget: budgetPose(), estimation: true, credits: est.credits, perimetre: 'produit' as const }
   }, 5 * 60_000)
   return { ...e, manque: 'H2 : clé Anthropic Admin absente — estimation depuis les crédits' }
 }
@@ -64,6 +70,6 @@ const coutIA = async (): Promise<Sourcee<CoutIA>> => {
 export async function GET(req: Request) {
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
-  const [m, p, es, conv, enc, ia, cr] = await Promise.all([mrr(), payants(), essais(), conversionsDuJour(), encaisseDuMois(), coutIA(), creditsConsommes()])
-  return NextResponse.json({ mrr: m, payants: p, essais: es, conversions: conv, encaisse: enc, coutIA: ia, credits: cr, role: f.role, a: new Date().toISOString() })
+  const [m, p, es, conv, enc, ia, produit, cr] = await Promise.all([mrr(), payants(), essais(), conversionsDuJour(), encaisseDuMois(), coutIA(), coutProduit(), creditsConsommes()])
+  return NextResponse.json({ mrr: m, payants: p, essais: es, conversions: conv, encaisse: enc, coutIA: ia, coutProduit: produit, credits: cr, role: f.role, a: new Date().toISOString() })
 }

@@ -37,14 +37,17 @@ const euros = (n: number) => `${n.toFixed(2).replace('.', ',')} €`
 
 // ── 1. Le budget IA du mois ──────────────────────────────────────────────────
 /**
- * Coût cumulé du mois via l'API Admin d'Anthropic. Demande ANTHROPIC_ADMIN_KEY (clé d'organisation,
- * pas la clé d'usage) et BUDGET_IA_MENSUEL_EUR. Sans les deux, la vérification est sautée et le dit.
+ * Facture Anthropic du mois en cours, via l'API d'administration. Demande ANTHROPIC_ADMIN_KEY.
  *
- * ⚠️ La forme exacte de la réponse (montant en dollars ou en centimes, chaîne ou nombre) sera
- * confirmée sur une vraie réponse dès que la clé existera (action humaine H5). D'ici là, le calcul
- * additionne tout champ `amount` numérique et le signale dans `detail` pour contrôle.
+ * Ce que ce chiffre EST : ce que l'organisation Anthropic dépense — le produit Presti, mais aussi le
+ * développement, les recherches, les essais. Ce qu'il n'est PAS : le coût de production de Presti. Tant qu'un
+ * espace de travail dédié n'isole pas la clé du produit, les deux sont confondus chez Anthropic ; l'écran de
+ * direction le dit donc en toutes lettres et affiche à côté l'estimation propre au produit.
+ *
+ * Forme de la réponse CONFIRMÉE le 07/09 sur une vraie lecture : `data[].results[]`, chaque résultat portant
+ * `amount` (dollars, chaîne ou nombre), `workspace_id`, `description`, `model`.
  */
-export async function coutIADuMois(): Promise<{ usd: number; brut?: unknown; erreur?: string } | null> {
+export async function coutIADuMois(): Promise<{ usd: number; parEspace?: Record<string, number>; brut?: unknown; erreur?: string } | null> {
   const cle = process.env.ANTHROPIC_ADMIN_KEY
   if (!cle) return null
   const debut = new Date(); debut.setUTCDate(1); debut.setUTCHours(0, 0, 0, 0)
@@ -54,16 +57,17 @@ export async function coutIADuMois(): Promise<{ usd: number; brut?: unknown; err
     const j = await r.json().catch(() => ({}))
     if (!r.ok) return { usd: 0, erreur: `${r.status} ${JSON.stringify(j).slice(0, 160)}` }
     let total = 0
-    const visiter = (v: unknown) => {
-      if (Array.isArray(v)) v.forEach(visiter)
-      else if (v && typeof v === 'object') {
-        const o = v as Record<string, unknown>
-        if ('amount' in o) { const n = Number(o.amount); if (Number.isFinite(n)) total += n }
-        Object.values(o).forEach(visiter)
+    const parEspace: Record<string, number> = {}
+    for (const bucket of ((j as { data?: { results?: { amount?: unknown; workspace_id?: string | null }[] }[] }).data ?? [])) {
+      for (const it of bucket.results ?? []) {
+        const n = Number(it.amount)
+        if (!Number.isFinite(n)) continue
+        total += n
+        const cle = it.workspace_id ?? 'organisation'
+        parEspace[cle] = (parEspace[cle] ?? 0) + n
       }
     }
-    visiter(j)
-    return { usd: total, brut: Array.isArray((j as { data?: unknown[] }).data) ? (j as { data: unknown[] }).data.slice(0, 1) : j }
+    return { usd: total, parEspace }
   } catch (e) {
     return { usd: 0, erreur: e instanceof Error ? e.message : String(e) }
   }
