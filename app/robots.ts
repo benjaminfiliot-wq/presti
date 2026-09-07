@@ -12,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/dashboard', '/devis', '/factures', '/abonnement', '/outils', '/onboarding', '/controle', '/direction',
           '/messages', '/profil', '/parametres', '/plateforme', '/tarifs', '/inventaire',
-          '/login', '/signup', '/reset-password', '/api/',
+          '/a/', '/login', '/signup', '/reset-password', '/api/',
         ],
       },
     ],

@@ -3,6 +3,8 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
 import { consommerLimite } from '@/lib/limites'
 import { notifierEntreprise } from '@/lib/email'
+import { lireApport, preuveDepuisCookie, CODE } from '@/lib/apports'
+import { actif } from '@/lib/flags'
 
 export const runtime = 'nodejs'
 
@@ -21,6 +23,11 @@ export async function POST(req: Request) {
     const session = await verifierSession(req)
     if (estEchec(session)) return NextResponse.json({ error: session.error }, { status: session.status })
 
+    // Registre des apports (v10 J2) : si ce navigateur porte une empreinte d'apport signée — ou si un code a
+    // été saisi à l'inscription — l'artisan y est inscrit avec sa preuve. Jamais bloquant : une erreur ici ne doit
+    // pas gêner l'artisan qui vient de créer son compte.
+    await rattacherApport(req, session.uid).catch(() => {})
+
     const { data: a } = await supabaseAdmin.from('artisans')
       .select('nom, email, metier, tel, slug, created_at').eq('id', session.uid).maybeSingle()
     if (!a) return NextResponse.json({ ok: true, notifie: false })
@@ -38,4 +45,24 @@ export async function POST(req: Request) {
     console.error('[account/inscription]', e)
     return NextResponse.json({ ok: true, notifie: false }) // jamais bloquant pour l'artisan
   }
+}
+
+/** Inscrit l'artisan au registre des apports, si et seulement si le serveur peut le PROUVER. */
+async function rattacherApport(req: Request, uid: string): Promise<void> {
+  if (!actif('apports')) return
+  const parLien = lireApport(req)
+  let code = parLien?.code ?? null
+  let source: 'lien' | 'code_saisi' = 'lien'
+  let preuve: Record<string, unknown> | null = parLien ? preuveDepuisCookie(parLien) : null
+  if (!code) {
+    // Le code saisi par l'artisan lui-même : moins fort que le lien, et dit comme tel (statut « saisi »).
+    const corps = (await req.clone().json().catch(() => null)) as { code_apport?: unknown } | null
+    const saisi = typeof corps?.code_apport === 'string' ? corps.code_apport.toLowerCase().trim() : ''
+    if (!CODE.test(saisi)) return
+    code = saisi; source = 'code_saisi'
+    preuve = { code: saisi, source: 'code_saisi', inscription: new Date().toISOString() }
+  }
+  const { data, error } = await supabaseAdmin.rpc('rattacher_apport', { p_artisan: uid, p_code: code, p_source: source, p_preuve: preuve })
+  if (error) { console.error('[apports] rattachement :', error.message); return }
+  if (data !== 'ok') console.log('[apports] non rattaché :', data)
 }
