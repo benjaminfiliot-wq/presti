@@ -2549,3 +2549,6 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .dir-bandeau-btn{min-height:52px}
 }
 @media(prefers-reduced-motion:reduce){.dir-dep::after{transition:none}}
+.dir-ligne-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.9rem}
+.dir-ligne-actions .btn{width:auto;margin:0}
+@media(max-width:560px){.dir-ligne-actions .btn{flex:1 1 100%;justify-content:center}}

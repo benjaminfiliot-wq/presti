@@ -46,7 +46,7 @@ const SLUG_OK = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 // et /sw.js le worker Presti sur le domaine perso d'un artisan (revue v9 J1, 06/09). Ces chemins portent un
 // point : le matcher général les exclut, ils sont donc listés à part dans `config.matcher`.
 const CHEMINS_APP_PRESTI = /^\/(manifest\.webmanifest|sw\.js|hors-ligne(\.html)?|marque\/.*|\.well-known\/.*)$/
-const CHEMINS_TECHNIQUES = new Set(['api', '_next', 'login', 'signup', 'onboarding', 'cgu', 'faq', 'mentions-legales', 'confidentialite', 'aide', 'site', 'p', 'controle'])
+const CHEMINS_TECHNIQUES = new Set(['api', '_next', 'a', 'login', 'signup', 'onboarding', 'cgu', 'faq', 'mentions-legales', 'confidentialite', 'aide', 'site', 'p', 'controle'])
 
 /** Traduit un chemin « à la marque » vers la route interne. `null` si ce n'est pas une surface artisan. */
 function cibleInterne(slug: string, chemin: string): string | null {

@@ -8,6 +8,7 @@ import { apiDirection } from './client'
 import Aujourdhui from './Aujourdhui'
 import Journal from './Journal'
 import Clients from './Clients'
+import Fiche from './Fiche'
 import Apports from './Apports'
 import { actif } from '@/lib/flags'
 
@@ -35,6 +36,7 @@ function DirectionInner() {
   const params = useSearchParams()
   const [role, setRole] = useState<'direction' | 'lecture' | null>(null)
   const [refus, setRefus] = useState<string | null>(null)
+  const [fiche, setFiche] = useState<string | null>(null)
   const [msg, setMsg] = useState<Message>(null)
   const minuteur = useRef<number | undefined>(undefined)
   const demande = params.get('onglet')
@@ -60,7 +62,7 @@ function DirectionInner() {
     window.clearTimeout(minuteur.current)
     minuteur.current = window.setTimeout(() => setMsg(null), 6000)
   }, [])
-  function aller(e: React.MouseEvent, id: Onglet) { e.preventDefault(); setMsg(null); router.replace(`/direction?onglet=${id}`, { scroll: false }) }
+  function aller(e: React.MouseEvent, id: Onglet) { e.preventDefault(); setMsg(null); setFiche(null); router.replace(`/direction?onglet=${id}`, { scroll: false }) }
 
   return (
     <AppShell active="direction" title="Direction" crumb={TITRES[onglet]} wide>
@@ -84,7 +86,7 @@ function DirectionInner() {
               <button type="button" className="btn btn--primary" onClick={() => void verifier()}>Réessayer</button>
             </div>
           ) : role === null ? <div className="tool-card"><p className="muted">Vérification de l’accès…</p></div>
-            : onglet === 'clients' ? <Clients />
+            : onglet === 'clients' ? (fiche ? <Fiche id={fiche} role={role} signaler={signaler} onRetour={() => setFiche(null)} /> : <Clients onOuvrir={setFiche} />)
             : onglet === 'apports' ? <Apports role={role} signaler={signaler} />
             : onglet === 'journal' ? <Journal role={role} />
             : <Aujourdhui role={role} signaler={signaler} />}

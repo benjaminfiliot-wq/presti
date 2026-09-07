@@ -21,7 +21,7 @@ import { sessionVerifiee } from '@/lib/connexion'
 // (identifiants de canaux, tarifs, suppressions, documents) passent toutes par ici.
 
 export type Session = { uid: string; iat: number; email: string | null }
-export type EchecAuth = { error: string; status: 401 | 403; code?: 'mfa_requise' | 'code_requis' }
+export type EchecAuth = { error: string; status: 401 | 403; code?: 'mfa_requise' | 'code_requis' | 'suspendu' }
 
 /** La charge utile du jeton, sans vérifier la signature — Supabase l'a déjà fait. */
 function chargeJeton(token: string): Record<string, unknown> | null {
@@ -48,6 +48,8 @@ function dateEmission(token: string): number | null {
 // n'est pas touché : même réponse qu'avant, à l'octet près.
 
 export const ERREUR_MFA = 'Double authentification requise.'
+/** Un compte suspendu (v10 J2b) : l'accès est coupé, les données sont intactes, et c'est réversible. */
+export const ERREUR_SUSPENDU = 'Votre compte est suspendu. Écrivez-nous depuis la page de contact : vos données sont intactes.'
 type Facteur = { factor_type?: string; status?: string }
 type UtilisateurJeton = { id: string; factors?: Facteur[] }
 const totpVerifie = (f: Facteur[]) => f.some((x) => x.factor_type === 'totp' && x.status === 'verified')
@@ -107,8 +109,11 @@ export async function authArtisan(req: Request): Promise<Session | EchecAuth> {
   if (error || !data?.user) return { error: 'Session expirée, reconnecte-toi.', status: 401 }
 
   const iat = dateEmission(token)
+  // Une seule requête : la suspension en cours est imbriquée (PostgREST suit la clé étrangère).
   const { data: art } = await supabaseAdmin.from('artisans')
-    .select('sessions_invalides_avant').eq('id', data.user.id).maybeSingle()
+    .select('sessions_invalides_avant, suspensions!left(id, message, levee_le)').eq('id', data.user.id).maybeSingle()
+  const suspension = ((art as { suspensions?: { id: string; message: string | null; levee_le: string | null }[] } | null)?.suspensions ?? []).find((x) => !x.levee_le)
+  if (suspension) return { error: suspension.message?.trim() || ERREUR_SUSPENDU, status: 403, code: 'suspendu' }
 
   const seuil = art?.sessions_invalides_avant ? Math.floor(new Date(art.sessions_invalides_avant).getTime() / 1000) : 0
   if (seuil && iat !== null && iat < seuil) {

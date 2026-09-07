@@ -12,7 +12,7 @@ type Canal = { type: 'organique' } | { type: 'apporte'; apporteur: string | null
 type Ligne = { id: string; nom: string | null; metier: string | null; plan: string | null; offre: string; credits: number | null; inscrit_le: string; abonne: boolean; derniere_activite: string | null; suppression_demandee_le: string | null; canal: Canal }
 type Reponse = { lignes: Ligne[]; resume: { total: number; payants: number; apportes: number }; source: { source: string; a: string; cache: boolean }; a: string }
 
-export default function Clients() {
+export default function Clients({ onOuvrir }: { onOuvrir: (id: string) => void }) {
   const [d, setD] = useState<Reponse | null>(null)
   const [erreur, setErreur] = useState<string | null>(null)
   const [q, setQ] = useState('')
@@ -47,7 +47,7 @@ export default function Clients() {
               : d.lignes.length === 0 ? <tr><td colSpan={6} className="muted" data-clients-vide>Aucun artisan ne correspond.</td></tr>
               : d.lignes.map((l) => (
                 <tr key={l.id} data-client={l.id}>
-                  <td data-lab="Artisan"><b>{l.nom || 'Sans nom'}</b>{l.metier ? <small className="muted"> · {l.metier}</small> : null}{l.suppression_demandee_le ? <span className="pill warn" style={{ marginLeft: 6 }}><span className="pdot" />suppression demandée</span> : null}</td>
+                  <td data-lab="Artisan"><button type="button" className="dir-dep" onClick={() => onOuvrir(l.id)} data-ouvrir={l.id}>{l.nom || 'Sans nom'}</button>{l.metier ? <small className="muted"> · {l.metier}</small> : null}{l.suppression_demandee_le ? <span className="pill warn" style={{ marginLeft: 6 }}><span className="pdot" />suppression demandée</span> : null}</td>
                   <td data-lab="Offre">{l.offre}{l.abonne ? <span className="pill ok" style={{ marginLeft: 6 }}><span className="pdot" />abonné</span> : null}</td>
                   <td data-lab="Crédits">{l.credits ?? '—'}</td>
                   <td data-lab="Inscrit"><time dateTime={l.inscrit_le}>{relTime(l.inscrit_le, maintenant)}</time></td>

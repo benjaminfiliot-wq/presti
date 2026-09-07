@@ -29,6 +29,9 @@ export const FLAGS = {
   /** v10 J2 — Registre des apports avec preuve (lien /a/<code>, onglets Clients et Apports). À lever quand la
    *  migration 0067 est collée : sans elle, les routes répondent 503 et les onglets ne sont pas proposés. */
   apports: true,
+  /** v10 J2b — agir sur un artisan (crédits, suspension, réactivation, message, portail). À lever quand la
+   *  migration 0068 est collée : sans elle, les routes répondent 404 et la fiche n'affiche aucun bouton. */
+  actionsArtisan: false,
   /** §8 F1 — photo de facture fournisseur → OCR → lignes proposées. */
   inventaireOcr: false,
   /** §8 F3 — assistant de recherche fournisseurs. Livré et testé le 04/09 (scripts/recherche-e2e.mjs : 37/37, vraie recherche Castorama). */
