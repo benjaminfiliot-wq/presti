@@ -141,7 +141,14 @@ try {
   T('déclaration sans pièce → 400, et rien au registre', sansPiece.status === 400 && !(await ligneDe(E.uid)), `HTTP ${sansPiece.status}`)
   const sansJeton = await json(await api('/api/controle/apports', { method: 'POST', body: JSON.stringify({ artisan_id: E.uid, code: CODE_APPORT, piece: 'Email d’introduction du 02/09' }) }, jF))
   T('déclaration sans re-confirmation → 403', sansJeton.status === 403 && sansJeton.body.code === 'reconfirmation_requise', `HTTP ${sansJeton.status}`)
-  const reconf = async () => (await json(await api('/api/controle/reconfirmer', { method: 'POST', body: JSON.stringify({ password: F.password, portee: 'artisan' }) }, jF))).body.jeton
+  // Un jeton frais par geste — ils sont à usage unique. Le plafond nominatif de re-confirmation est
+  // purgé avant chaque demande : il protège la production, pas une suite qui joue huit gestes d'affilée.
+  const reconf = async () => {
+    await purgerPlafondsDe(F.uid)
+    const r = (await json(await api('/api/controle/reconfirmer', { method: 'POST', body: JSON.stringify({ password: F.password, portee: 'artisan' }) }, jF))).body.jeton
+    if (!r) console.log('     ⚠️  aucun jeton de re-confirmation rendu — plafond ?')
+    return r
+  }
   const jeton1 = (await json(await api('/api/controle/reconfirmer', { method: 'POST', body: JSON.stringify({ password: F.password, portee: 'artisan' }) }, jF))).body.jeton
   const avecPiece = await json(await api('/api/controle/apports', { method: 'POST', body: JSON.stringify({ artisan_id: E.uid, code: CODE_APPORT, piece: 'Email d’introduction du 02/09' }) }, jF, jeton1))
   const lE = await ligneDe(E.uid)

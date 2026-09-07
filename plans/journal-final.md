@@ -451,6 +451,33 @@ Une seule de mes assertions était fausse et je l'ai corrigée : elle attendait 
 - **Pour Benj, une chose et c'est la plus importante de la série** : coller `_A_COLLER_sql_editor_0070.sql`. Tant qu'elle ne l'est pas, Alexandre voit les devis et les factures de tous les artisans.
 - **Suivant** : une fois 0070 collée, la suite passe à 27/27 — puis §4, la vérification des apports (origine déclarée par le client, score de confiance et ses signaux, file de revue).
 
+## [41] v11 · §4 et §5 clos — vérifier qu'Alexandre amène de vrais clients, et le cloisonner — 07/09 — ✅ `controle-apports-e2e` **43/43**, `controle-droits-e2e` **27/27**, `controle-e2e` **72/72**, `controle-messagerie-e2e` **30/30** (`795f56b` en prod)
+
+- **0070 collée : le trou est refermé.** La suite qui lisait, avec le jeton d'un partenaire, 5 devis, 5 demandes, 5 factures et les fiches de tous les artisans, n'en lit plus **aucun**. Le partenaire garde son Poste de contrôle, ses apports, son relevé et la lecture des clients ; il perd ce que les artisans confient à Presti.
+- **Un refus qui donnait une raison fausse** : la sécurité répondait « votre rôle est en lecture seule », ce qui laisse croire qu'on pourrait la consulter. Le domaine décide maintenant avant le rôle, et le refus dit la vraie raison.
+
+### §4 — la preuve, en trois pièces
+
+- **La source indépendante** : « Comment as-tu connu Presti ? » est posée à l'inscription, liste **neutre**, aucun nom soufflé. La réponse est **scellée** dès qu'elle est donnée (0068) — sinon elle pourrait être changée après coup, sur demande insistante de celui qui réclame la commission. Elle ne vient ni de Benj ni d'Alexandre : c'est tout son intérêt.
+- **Le faisceau** (`lib/controle/confiance.ts`) : douze signaux, chacun un **fait daté et vérifiable**. En faveur — le client qui confirme et **nomme** l'apporteur, la déclaration faite *avant* l'inscription, le compte qui travaille vraiment, l'abonnement qui passe son renouvellement. En défaveur — le client qui dit « Google », la déclaration tardive près de la limite des 30 jours, le compte inactif après quatorze jours, la **même adresse IP** entre déclaration et inscription, l'email jetable, le remboursement dans les soixante jours.
+- **Ce que le score n'est pas** : une décision. Le §4.6 le dit — aucun système ne prouve qu'une conversation a eu lieu hors ligne. Il **trie** une file de revue et vient toujours avec ses raisons en clair ; un chiffre seul donnerait l'illusion d'un verdict que personne ne pourrait contester utilement, ni Benj, ni Alexandre. L'écran l'écrit sous les signaux.
+- **Les trois décisions** : *valider* date et signe la revue **sans toucher au statut** — un déclaré reste un déclaré, l'histoire n'est pas réécrite ; *contester* applique les 10 % du contrat ; *refuser* ramène à 0. Dans les deux derniers cas l'apporteur est **averti par email avec le motif**. Et aucune ne transforme un déclaré en prouvé : la suite le rejoue, c'est toujours 400.
+- **Ce qui n'est pas fait, et je le dis** : la reprise automatique de commission sur remboursement (§4.4) appartient au **relevé mensuel**, qui n'existe pas encore (J5). Le signal est posé, le calcul viendra avec lui.
+
+### §5 — le cloisonnement, prouvé
+
+- `lib/controle/droits.ts` porte la matrice, **seize routes** la consultent, et `controle-droits-e2e` rejoue **chaque** action interdite avec le jeton d'un partenaire : les neuf gestes sur un artisan, la santé, la sécurité — tous 403. La suite vérifie le **corps** des réponses, pas les écrans : un 200 qui contiendrait la comptabilité serait un échec même invisible.
+- Les filtres sont **dans la requête**. Le journal se borne à ses actions, la messagerie aux fils qui lui sont assignés, le registre à ses apports. Un fil non assigné répond « inconnu » et non « interdit » — dire « interdit » apprendrait qu'il existe.
+
+### Deux corrections de mes propres tests
+
+- Mon test consommait plus de re-confirmations que le plafond n'en autorise : il échouait sur un 403 sans rapport avec ce qu'il vérifiait. Le plafond est purgé entre les gestes — il protège la production, pas une suite qui joue huit gestes d'affilée.
+- Je lisais une colonne `derniere_activite` qui n'existe pas : la requête entière aurait échoué en production.
+
+- **Appels IA du sprint : 0.**
+- **Pour Benj** : la valeur de la clé « presti — produit » (espace Presti) dans `.env.local`, puis `node scripts/cle-produit.mjs`. Et l'APK sur son téléphone, qui reste le seul blocage de l'application.
+- **Suivant** : §3 — le remodelage de l'interface (colonne dense, compteurs, recherche globale, barre d'état), puis J5, la comptabilité et le relevé du partenaire.
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
