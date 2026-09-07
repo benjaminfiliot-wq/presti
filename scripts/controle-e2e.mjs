@@ -74,7 +74,7 @@ try {
   const html = await page.text()
   T('le HTML de /direction est une coquille : aucun chiffre, aucun email, aucune IP', !/@[a-z0-9.-]+\.[a-z]{2,}/i.test(html.replace(/[^<]*<\/script>/g, '')) && !/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(html) && !/journal_direction|MRR\s*:\s*\d/.test(html))
   const robots = await (await fetch(`${APP}/robots.txt`)).text()
-  T('robots.txt interdit /direction', /Disallow:\s*\/direction/.test(robots))
+  T('robots.txt interdit /direction', /Disallow:\s*\/controle/.test(robots))
   const sonde = await rest('journal_direction?select=id&limit=1')
   if (sonde.status === 404) { console.log('  ⛔ À faire (Benj) : la table journal_direction n’existe pas — 0065 n’est pas collée.'); await nettoyer(); fin(2) } else {
   T('table journal_direction présente (0065 collée)', sonde.ok)
@@ -239,7 +239,7 @@ try {
   const af2 = await json(await api('/api/controle/a-faire', {}, jF))
   const ligneAlerte = (af2.body.lignes || []).find((l) => l.id === `alerte:${al?.id}`)
   T('l’alerte non acquittée apparaît dans a-faire avec son action et un type lisible', !!ligneAlerte && ligneAlerte.action?.route === `/api/controle/alertes/${al.id}/acquitter` && ligneAlerte.libelleType === 'Alerte', JSON.stringify(ligneAlerte).slice(0, 120))
-  T('aucune ligne de a-faire ne propose une action vers une route inexistante', (af2.body.lignes || []).every((l) => !l.action || /^\/api\/direction\/(alertes|securite)\//.test(l.action.route)))
+  T('aucune ligne de a-faire ne propose une action vers une route inexistante', (af2.body.lignes || []).every((l) => !l.action || /^\/api\/controle\/(alertes|securite)\//.test(l.action.route)))
   const acq = await json(await api(`/api/controle/alertes/${al.id}/acquitter`, { method: 'POST' }, jF))
   const [alApres] = await (await rest(`alertes?select=acquittee_le,acquittee_par&id=eq.${al.id}`)).json()
   const ja = (await (await rest(`journal_direction?select=avant,apres&acteur_id=eq.${F.uid}&action=eq.alerte_acquittee`)).json())[0]
