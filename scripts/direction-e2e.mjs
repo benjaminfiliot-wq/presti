@@ -55,6 +55,9 @@ async function nettoyer() {
 }
 const purgerPlafonds = async () => { const { spawnSync } = await import('node:child_process'); spawnSync('node', ['scripts/purger-abus.mjs'], { encoding: 'utf8', shell: true }) }
 
+// L'adresse publique vue par le serveur : c'est elle que la route doit refuser de bannir.
+const monIp = await fetch('https://api.ipify.org?format=json').then((r) => r.json()).then((j) => j.ip).catch(() => '0.0.0.0')
+
 console.log(`\ndirection-e2e — ${APP}\n`)
 try {
   // ── 0. Préalables ─────────────────────────────────────────────────────────────────────────────
@@ -130,6 +133,12 @@ try {
   await purgerPlafonds()
 
   console.log('\n7. Écriture AVEC jeton : le ban, journalisé avant/après')
+  // Une durée aberrante est refusée AVANT que le jeton ne soit consommé (revue du 07/09 : elle le brûlait, et
+  // `new Date(Infinity)` levait une 500).
+  const aberrante = await json(await api('/api/direction/securite/bans', { method: 'POST', body: JSON.stringify({ ip: '203.0.113.8', dureeH: 1e300 }) }, jF, bon.body.jeton))
+  T('durée hors bornes → 400, et le jeton n’est pas consommé', aberrante.status === 400, `${aberrante.status} ${JSON.stringify(aberrante.body).slice(0, 80)}`)
+  const propre = await json(await api('/api/direction/securite/bans', { method: 'POST', body: JSON.stringify({ ip: monIp, dureeH: 1 }) }, jF, bon.body.jeton))
+  T('bannir SA PROPRE adresse → 400 (la direction ne se ferme pas sur elle-même)', propre.status === 400 && propre.body.code === 'propre_ip', `${propre.status} ${propre.body.code}`)
   const b1 = await json(await api('/api/direction/securite/bans', { method: 'POST', body: JSON.stringify({ ip: '203.0.113.7', raison: 'test direction-e2e', dureeH: 1 }) }, jF, bon.body.jeton))
   T('POST bans avec le jeton → 200', b1.status === 200 && b1.body.ok === true, `${b1.status} ${JSON.stringify(b1.body).slice(0, 80)}`)
   T('ip_bans contient l’IP', !!(await (await rest('ip_bans?select=ip&ip=eq.203.0.113.7')).json()).length)
@@ -159,9 +168,21 @@ try {
   const del = await rest(`journal_direction?id=eq.${jb.id}`, { method: 'DELETE' })
   const encore = (await (await rest(`journal_direction?select=id&id=eq.${jb.id}`)).json()).length === 1
   T('DELETE d’une ligne fraîche → refusé (conservation 24 mois)', !del.ok && encore, `HTTP ${del.status}`)
-  const rlsA = await (await fetch(`${SB}/rest/v1/journal_direction?select=id`, { headers: { apikey: ANON, Authorization: `Bearer ${jA}` } })).json()
-  const rlsF = await (await fetch(`${SB}/rest/v1/journal_direction?select=id`, { headers: { apikey: ANON, Authorization: `Bearer ${jF}` } })).json()
-  T('RLS : un artisan lit 0 ligne, un fondateur ≥ 1', Array.isArray(rlsA) && rlsA.length === 0 && Array.isArray(rlsF) && rlsF.length >= 1)
+  // Aucune de ces tables ne se lit par un jeton de navigateur, fondateur compris : `is_founder()` ne connaît ni
+  // le second facteur ni les sessions vérifiées, une policy de lecture aurait rouvert ce que la garde ferme
+  // (revue du 07/09). La lecture passe par /api/direction/journal, prouvée aux blocs 4 et 11.
+  const direct = async (jeton, table) => {
+    const r = await fetch(`${SB}/rest/v1/${table}?select=id&limit=1`, { headers: { apikey: ANON, Authorization: `Bearer ${jeton}` } })
+    const b = await r.json().catch(() => null)
+    return { status: r.status, n: Array.isArray(b) ? b.length : null }
+  }
+  const directs = []
+  for (const [nom, jeton] of [['artisan', jA], ['fondateur attesté', jF], ['fondateur sans second facteur', jFnu]])
+    for (const table of ['journal_direction', 'alertes', 'reglages_globaux', 'direction_roles', 'reconfirmations'])
+      directs.push({ nom, table, ...(await direct(jeton, table)) })
+  T('aucune table de direction n’est lisible par un jeton de navigateur (fondateur compris)', directs.every((d) => d.status === 401 || d.status === 403 || d.n === 0), directs.filter((d) => !(d.status === 401 || d.status === 403 || d.n === 0)).map((d) => `${d.nom}/${d.table}:${d.status}:${d.n}`).join(' '))
+  const parApi = await json(await api('/api/direction/journal?limite=5', {}, jF))
+  T('… mais le fondateur lit bien le journal par l’API (≥ 1 ligne)', parApi.status === 200 && (parApi.body.lignes || []).length >= 1, `${parApi.status} ${(parApi.body.lignes || []).length}`)
 
   console.log('\n10. Débannir (nouveau jeton) → journal deban_ip')
   const j5 = (await json(await api('/api/direction/reconfirmer', { method: 'POST', body: JSON.stringify({ password: F.password, portee: 'securite' }) }, jF))).body.jeton
@@ -172,6 +193,12 @@ try {
   console.log('\n11. Rôle « lecture » (Alexandre)')
   const lect = await Promise.all(['/api/direction/etat', '/api/direction/chiffres', '/api/direction/journal', '/api/direction/fil'].map((c) => api(c, {}, jL)))
   T('lecture : les GET → 200', lect.every((r) => r.status === 200), lect.map((r) => r.status).join(' '))
+  const jrL = await json(await api('/api/direction/journal?limite=5', {}, jL))
+  T('lecture : le journal arrive SANS adresse ni appareil', (jrL.body.lignes || []).length > 0 && (jrL.body.lignes || []).every((l) => l.ip === undefined && l.agent === undefined), JSON.stringify((jrL.body.lignes || [])[0] || {}).slice(0, 120))
+  const bansL = await json(await api('/api/direction/securite/bans', {}, jL))
+  T('lecture : la liste des bans et des abus → 403 (ce ne sont pas ses données)', bansL.status === 403, `HTTP ${bansL.status}`)
+  const ancienne = await json(await api('/api/control/security', { method: 'POST', body: JSON.stringify({ ip: '203.0.113.8' }) }, jL))
+  T('lecture : l’ANCIENNE porte (/api/control/security) refuse aussi (403)', ancienne.status === 403 && !(await (await rest('ip_bans?select=ip&ip=eq.203.0.113.8')).json()).length, `HTTP ${ancienne.status}`)
   const lr = await json(await api('/api/direction/reconfirmer', { method: 'POST', body: JSON.stringify({ password: L.password, portee: 'securite' }) }, jL))
   const lb = await json(await api('/api/direction/securite/bans', { method: 'POST', body: JSON.stringify({ ip: '203.0.113.8' }) }, jL))
   T('lecture : reconfirmer et POST bans → 403 lecture_seule', lr.status === 403 && lr.body.code === 'lecture_seule' && lb.status === 403 && lb.body.code === 'lecture_seule', `${lr.status}/${lr.body.code} ${lb.status}/${lb.body.code}`)
@@ -183,6 +210,8 @@ try {
   const corps = []
   for (const j of [jF, jL]) for (const c of ['/api/direction/etat', '/api/direction/chiffres', '/api/direction/a-faire', '/api/direction/fil', '/api/direction/journal', '/api/direction/securite/bans']) corps.push(await (await api(c, {}, j)).text())
   const tout = corps.join('\n')
+  const alertesGardees = JSON.stringify(await (await rest('alertes?select=sujet,corps&limit=200')).json())
+  T('aucune adresse email dans les alertes gardées (elles sont masquées à l’écriture)', !/[\w.+-]+@[\w-]+\.[\w.-]{2,}/.test(alertesGardees.replace(/\[adresse masquée\]/g, '')), alertesGardees.slice(0, 120))
   T('aucune des trois chaînes, ni l’IP du lead, dans aucune réponse (F et L)', !tout.includes(sentinelle.nom) && !tout.includes(sentinelle.contact) && !tout.includes(sentinelle.message) && !tout.includes('198.51.100.9'))
 
   console.log('\n13. Alerte : visible dans « À faire », acquittée, journalisée')
@@ -197,6 +226,12 @@ try {
   T('l’alerte a disparu de a-faire', !(af3.body.lignes || []).some((l) => l.id === `alerte:${al.id}`))
   const acqL = await json(await api(`/api/direction/alertes/${al.id}/acquitter`, { method: 'POST' }, jL))
   T('lecture : acquitter → 403', acqL.status === 403)
+  // Deux clics simultanés : un seul acquittement, une seule ligne de journal (fonction acquitter_alerte).
+  const [al2] = await (await rest('alertes', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ motif: 'erreurs', cle: `e2e-${st}-b`, gravite: 'info', sujet: `Alerte double ${st}`, corps: 'Course', source: 'direction-e2e' }) })).json()
+  const course = await Promise.all([api(`/api/direction/alertes/${al2.id}/acquitter`, { method: 'POST' }, jF), api(`/api/direction/alertes/${al2.id}/acquitter`, { method: 'POST' }, jF)])
+  const lignesCourse = await (await rest(`journal_direction?select=id&action=eq.alerte_acquittee&cible_id=eq.${al2.id}`)).json()
+  T('deux acquittements simultanés → 200 tous les deux, UNE seule ligne de journal', course.every((r) => r.status === 200) && lignesCourse.length === 1, `${course.map((r) => r.status).join(' ')} · ${lignesCourse.length} ligne(s)`)
+  await rest(`alertes?id=eq.${al2.id}`, { method: 'DELETE' })
   await rest(`alertes?id=eq.${al.id}`, { method: 'DELETE' })
 
   console.log('\n14. Plafond par fondateur')

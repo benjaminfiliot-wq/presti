@@ -29,18 +29,21 @@ const ERREUR_FONDATEUR = 'Réservé aux fondateurs.'
 export async function estFondateur(req: Request): Promise<Fondateur | Refus> {
   if (!actif('direction')) return { error: 'Introuvable.', status: 404 }
   const ip = getIp(req)
-  if (await isBanned(ip)) return { error: 'Accès refusé.', status: 403, code: 'banni' }
+  const banni = await isBanned(ip)
   const s = await authArtisan(req)
   if (estEchec(s)) return { error: s.error, status: s.status, code: s.code }
-  const { data: art, error } = await supabaseAdmin.from('artisans').select('is_founder, email').eq('id', s.uid).maybeSingle()
+  const { data: art, error } = await supabaseAdmin.from('artisans').select('is_founder').eq('id', s.uid).maybeSingle()
   if (error) return { error: 'Direction indisponible pour l’instant.', status: 503, code: 'indisponible' }
-  if (!art?.is_founder) return { error: ERREUR_FONDATEUR, status: 403 }
+  // Un fondateur qui a passé le second facteur n'est PAS refoulé par un ban d'adresse : sinon un ban posé sur sa
+  // propre adresse fermait la direction pour toujours, le débannissement compris (revue du 07/09). Le ban garde
+  // tout son effet sur le reste du site et sur quiconque n'est pas fondateur.
+  if (!art?.is_founder) return banni ? { error: 'Accès refusé.', status: 403, code: 'banni' } : { error: ERREUR_FONDATEUR, status: 403 }
   if (!(await consommerLimite(`direction:${s.uid}`, 120, 60))) return { error: 'Trop d’appels. Patientez une minute.', status: 429, code: 'plafond' }
   const { data: r, error: eRole } = await supabaseAdmin.from('direction_roles').select('role').eq('user_id', s.uid).maybeSingle()
   // Table absente (migration 0065 pas collée) ou erreur : on ne devine pas un rôle — l'espace est fermé.
   if (eRole) return { error: 'Direction indisponible : migration 0065 absente ou base injoignable.', status: 503, code: 'indisponible' }
   const role: Role = r?.role === 'lecture' ? 'lecture' : 'direction'
-  return { uid: s.uid, email: art.email ?? null, role, iat: s.iat, ip }
+  return { uid: s.uid, email: s.email, role, iat: s.iat, ip }
 }
 
 /** Comme `estFondateur`, mais refuse le rôle `lecture` : pour toute écriture. */

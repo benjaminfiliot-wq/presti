@@ -321,10 +321,26 @@ async function envoyer(al: Alerte, simulation: boolean): Promise<boolean> {
   } catch (e) { console.error('[alertes]', al.motif, e instanceof Error ? e.message : e); await enregistrerErreur(`alerte perdue : ${al.motif}`, e); return false }
 }
 
-/** Garde l'alerte en base (v10, table 0065) ; silencieux si la table manque ou si la ligne du jour existe déjà. */
+/**
+ * Garde l'alerte en base (v10, table 0065) pour la file « À faire » du Centre de direction ; silencieux si la
+ * table manque ou si la ligne du jour existe déjà.
+ *
+ * Trois règles, de la revue du 07/09 : seules les alertes adressées à L'ENTREPRISE sont gardées (celles qui
+ * partent à un artisan sont des emails, et elles portaient son adresse) ; l'artisan concerné est rattaché par
+ * son identifiant, lu dans la clé de dédoublonnage, pour que la ligne disparaisse avec son compte ; et aucune
+ * adresse email n'entre dans le corps gardé — le sujet porte déjà le nom.
+ */
+const UUID_EN_TETE = /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(:|$)/i
+const sansEmail = (t: string) => t.replace(/[\w.+-]+@[\w-]+\.[\w.-]+/g, '[adresse masquée]')
+
 async function persisterAlerte(al: Alerte): Promise<void> {
+  if (al.a !== 'entreprise') return
   const gravite = /solde_ia|paiement|securite|cron_muet/.test(al.motif) ? 'critique' : al.motif === 'digest' ? 'info' : 'attention'
-  const { error } = await supabaseAdmin.from('alertes').insert({ motif: al.motif, cle: al.cle ?? null, gravite, sujet: al.sujet.slice(0, 200), corps: al.corps.slice(0, 4000), source: 'lib/alertes.ts' })
+  const artisan = (al.cle ?? '').match(UUID_EN_TETE)?.[1] ?? null
+  const { error } = await supabaseAdmin.from('alertes').insert({
+    motif: al.motif, cle: al.cle ?? null, gravite, artisan_id: artisan,
+    sujet: al.sujet.slice(0, 200), corps: sansEmail(al.corps).slice(0, 4000), source: 'lib/alertes.ts',
+  })
   if (error && !/duplicate|42P01|does not exist|schema cache/i.test(error.message)) console.error('[alertes] persistance :', error.message)
 }
 

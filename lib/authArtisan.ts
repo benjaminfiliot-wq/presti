@@ -20,7 +20,7 @@ import { sessionVerifiee } from '@/lib/connexion'
 // PostgREST restent régies par la RLS et l'expiration du jeton. Les actions sensibles
 // (identifiants de canaux, tarifs, suppressions, documents) passent toutes par ici.
 
-export type Session = { uid: string; iat: number }
+export type Session = { uid: string; iat: number; email: string | null }
 export type EchecAuth = { error: string; status: 401 | 403; code?: 'mfa_requise' | 'code_requis' }
 
 /** La charge utile du jeton, sans vérifier la signature — Supabase l'a déjà fait. */
@@ -116,7 +116,7 @@ export async function authArtisan(req: Request): Promise<Session | EchecAuth> {
   }
   if (await mfaManquante(token, data.user as UtilisateurJeton)) return { error: ERREUR_MFA, status: 401, code: 'mfa_requise' }
   if (await codeManquant(token, data.user as UtilisateurJeton)) return { error: ERREUR_CODE, status: 401, code: 'code_requis' }
-  return { uid: data.user.id, iat: iat ?? 0 }
+  return { uid: data.user.id, iat: iat ?? 0, email: data.user.email ?? null }
 }
 
 /**

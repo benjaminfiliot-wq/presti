@@ -15,7 +15,11 @@ async function requireFounder(req: Request): Promise<string | null> {
   const { data: userData } = await getUserRevocable(token)
   if (!userData?.user) return null
   const { data: me } = await supabaseAdmin.from('artisans').select('is_founder').eq('id', userData.user.id).maybeSingle()
-  return me?.is_founder ? userData.user.id : null
+  if (!me?.is_founder) return null
+  // Le rôle « lecture » (direction_roles, migration 0065) n'écrit nulle part — pas même par cette ancienne
+  // route, que /direction remplacera au J6 (revue du 07/09).
+  const { data: r } = await supabaseAdmin.from('direction_roles').select('role').eq('user_id', userData.user.id).maybeSingle()
+  return r?.role === 'lecture' ? null : userData.user.id
 }
 
 // GET : liste des bans + IP les plus abusives (24h).

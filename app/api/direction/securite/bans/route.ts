@@ -1,20 +1,44 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estFondateur, estDirection, estRefus, reponseRefus } from '@/lib/direction/garde'
+import { estDirection, estRefus, reponseRefus } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
-import { journaliser, refusJournal } from '@/lib/direction/journal'
+import { lireUserAgent } from '@/lib/userAgent'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 // /api/direction/securite/bans — les bans d'IP, portés depuis api/control/security (prompt v10 §2.5) avec ce qui
-// manquait : rôle direction pour écrire, RE-CONFIRMATION (portée « securite ») et JOURNAL avant/après. C'est
-// l'écriture « accès » qui prouve la chaîne complète du J1. /controle garde son ancienne route jusqu'au J6.
+// manquait : rôle direction, RE-CONFIRMATION (portée « securite ») et JOURNAL avant/après. C'est l'écriture
+// « accès » qui prouve la chaîne complète du J1. /controle garde son ancienne route jusqu'au J6.
+//
+// Trois leçons de la revue du 07/09, toutes visibles ci-dessous :
+//  • le corps est validé AVANT de consommer le jeton — sinon une durée aberrante brûlait la confirmation sans
+//    rien bannir (et `new Date(Infinity)` levait une 500) ;
+//  • on refuse de bannir SA PROPRE adresse : un ban permanent sur soi fermait la direction, débannissement
+//    compris (la garde refuse avant d'atteindre la route) ;
+//  • l'action et sa ligne de journal se font dans une seule transaction (fonctions `bannir_ip`/`debannir_ip`,
+//    migration 0065) : plus de trace sans ban, ni de ban sans trace.
 type Ban = { ip: string; raison: string | null; auto: boolean; created_at: string; expires_le: string | null }
 const IP = /^[0-9a-fA-F:.]{3,45}$/
+const HEURES_MAX = 8760 // un an ; au-delà, c'est un ban permanent, qui se demande explicitement
+
+const agent = (req: Request) => { const u = lireUserAgent(req.headers.get('user-agent')); return `${u.appareil} · ${u.navigateur}`.slice(0, 120) }
+
+/** Le corps commun à POST et DELETE, validé avant toute consommation de jeton. */
+function lireCorps(b: unknown): { ip: string; raison: string; expire: string | null } | { error: string } {
+  const o = (b ?? {}) as { ip?: unknown; raison?: unknown; dureeH?: unknown; permanent?: unknown }
+  const ip = typeof o.ip === 'string' ? o.ip.trim().slice(0, 64) : ''
+  if (!IP.test(ip)) return { error: 'IP invalide.' }
+  const raison = typeof o.raison === 'string' && o.raison.trim() ? o.raison.trim().slice(0, 200) : 'Ban manuel (direction)'
+  if (o.permanent === true) return { ip, raison, expire: null }
+  const h = o.dureeH === undefined || o.dureeH === null ? 24 : Number(o.dureeH)
+  if (!Number.isFinite(h) || h < 1 || h > HEURES_MAX) return { error: `Durée en heures attendue entre 1 et ${HEURES_MAX} (ou « permanent »).` }
+  return { ip, raison, expire: new Date(Date.now() + h * 3_600_000).toISOString() }
+}
 
 export async function GET(req: Request) {
-  const f = await estFondateur(req)
+  // Les adresses des visiteurs (bans, abus) ne sont pas dans la matrice du rôle « lecture » : direction seule.
+  const f = await estDirection(req)
   if (estRefus(f)) return reponseRefus(f)
   const depuis = new Date(Date.now() - 24 * 3_600_000).toISOString()
   const [bans, abus] = await Promise.all([
@@ -35,41 +59,35 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const f = await estDirection(req)
   if (estRefus(f)) return reponseRefus(f)
+  const corps = lireCorps(await req.json().catch(() => null))
+  if ('error' in corps) return NextResponse.json({ error: corps.error }, { status: 400 })
+  if (corps.ip === f.ip) return NextResponse.json({ error: 'C’est votre propre adresse : vous fermeriez la direction pour vous-même.', code: 'propre_ip' }, { status: 400 })
+  // Le jeton n'est consommé qu'ici, une fois que la demande est sûre d'aboutir.
   const refus = await exigerReconfirmation(req, f.uid, 'securite')
   if (refus) return refus
-  const b = (await req.json().catch(() => null)) as { ip?: unknown; raison?: unknown; dureeH?: unknown } | null
-  const ip = typeof b?.ip === 'string' ? b.ip.trim().slice(0, 64) : ''
-  if (!IP.test(ip)) return NextResponse.json({ error: 'IP invalide.' }, { status: 400 })
-  const raison = typeof b?.raison === 'string' && b.raison.trim() ? b.raison.trim().slice(0, 200) : 'Ban manuel (direction)'
-  const heures = Number(b?.dureeH)
-  const expires_le = Number.isFinite(heures) && heures > 0 ? new Date(Date.now() + heures * 3_600_000).toISOString() : null
-  const { data: avant } = await supabaseAdmin.from('ip_bans').select('ip, raison, auto, expires_le').eq('ip', ip).maybeSingle()
-  const apres = { ip, raison, auto: false, expires_le }
-  const { error } = await supabaseAdmin.from('ip_bans').upsert(apres, { onConflict: 'ip' })
-  if (error) return NextResponse.json({ error: 'Ban impossible.' }, { status: 503 })
-  if (!(await journaliser({ acteur: f, action: 'ban_ip', cible_type: 'ip', cible_id: ip, avant: avant ?? null, apres, reconfirme: true }, req))) {
-    // Pas de journal → pas de ban : on remet l'état d'avant.
-    if (avant) await supabaseAdmin.from('ip_bans').upsert(avant, { onConflict: 'ip' }); else await supabaseAdmin.from('ip_bans').delete().eq('ip', ip)
-    return refusJournal()
-  }
-  return NextResponse.json({ ok: true, ban: apres })
+  const { data, error } = await supabaseAdmin.rpc('bannir_ip', {
+    p_acteur: f.uid, p_acteur_email: f.email, p_ip: corps.ip, p_raison: corps.raison, p_expire: corps.expire,
+    p_ip_acteur: f.ip, p_agent: agent(req),
+  })
+  if (error) { console.error('[direction] bannir_ip :', error.message); return NextResponse.json({ error: 'Ban impossible : rien n’a été fait.', code: 'transaction' }, { status: 503 }) }
+  const r = data as { journal?: string; avant?: unknown; apres?: unknown }
+  return NextResponse.json({ ok: true, ban: r?.apres ?? null, journal: r?.journal ?? null })
 }
 
 export async function DELETE(req: Request) {
   const f = await estDirection(req)
   if (estRefus(f)) return reponseRefus(f)
+  const o = (await req.json().catch(() => null)) as { ip?: unknown } | null
+  const ip = typeof o?.ip === 'string' ? o.ip.trim().slice(0, 64) : ''
+  if (!IP.test(ip)) return NextResponse.json({ error: 'IP invalide.' }, { status: 400 })
+  // Rien à débannir : on le dit sans brûler la confirmation.
+  const { data: avant } = await supabaseAdmin.from('ip_bans').select('ip').eq('ip', ip).maybeSingle()
+  if (!avant) return NextResponse.json({ ok: true, deja: true })
   const refus = await exigerReconfirmation(req, f.uid, 'securite')
   if (refus) return refus
-  const b = (await req.json().catch(() => null)) as { ip?: unknown } | null
-  const ip = typeof b?.ip === 'string' ? b.ip.trim() : ''
-  if (!IP.test(ip)) return NextResponse.json({ error: 'IP invalide.' }, { status: 400 })
-  const { data: avant } = await supabaseAdmin.from('ip_bans').select('ip, raison, auto, expires_le').eq('ip', ip).maybeSingle()
-  if (!avant) return NextResponse.json({ ok: true, deja: true })
-  const { error } = await supabaseAdmin.from('ip_bans').delete().eq('ip', ip)
-  if (error) return NextResponse.json({ error: 'Retrait impossible.' }, { status: 503 })
-  if (!(await journaliser({ acteur: f, action: 'deban_ip', cible_type: 'ip', cible_id: ip, avant, apres: null, reconfirme: true }, req))) {
-    await supabaseAdmin.from('ip_bans').upsert(avant, { onConflict: 'ip' })
-    return refusJournal()
-  }
-  return NextResponse.json({ ok: true })
+  const { data, error } = await supabaseAdmin.rpc('debannir_ip', { p_acteur: f.uid, p_acteur_email: f.email, p_ip: ip, p_ip_acteur: f.ip, p_agent: agent(req) })
+  if (error) { console.error('[direction] debannir_ip :', error.message); return NextResponse.json({ error: 'Retrait impossible : rien n’a été fait.', code: 'transaction' }, { status: 503 }) }
+  const r = data as { etat?: string; journal?: string }
+  if (r?.etat === 'absent') return NextResponse.json({ ok: true, deja: true })
+  return NextResponse.json({ ok: true, journal: r?.journal ?? null })
 }
