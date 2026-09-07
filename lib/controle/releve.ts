@@ -6,7 +6,7 @@
 //
 // LA FORMULE, retrouvée sur les trois cas de l'annexe A du contrat et prouvée par la suite :
 //
-//   résultat distribuable  R = chiffre d'affaires encaissé − coûts directs du mois
+//   résultat distribuable  R = chiffre d'affaires encaissé NET des remboursements − coûts directs
 //   commission             C = 20 % du chiffre d'affaires encaissé des clients APPORTÉS
 //   base d'intéressement   B = R − C
 //   intéressement          I = 20 % × B
@@ -24,6 +24,12 @@
 // Vérification sur l'annexe A — 51 € de résultat avec 59 € de chiffre d'affaires apporté donnent
 // 19,64 € et 31,36 € ; sans apport, 10,20 € et 40,80 € ; et 1 020 € avec 708 € apportés donnent
 // 317,28 € et 702,72 €. Les trois tombent au centime.
+//
+// LES REMBOURSEMENTS (article 5.4) comptent comme des encaissements négatifs du mois où ils ont lieu.
+// La commission d'un client remboursé se reprend donc d'elle-même, et le résultat distribuable baisse
+// du même coup — les deux restent d'accord. Le montant repris est affiché à part pour qu'on puisse le
+// relire, mais il n'est pas calculé à part. Un total dû négatif est rendu tel quel : l'article dit
+// « déduite du relevé suivant », pas « oubliée ».
 //
 // TOUT EST EN CENTIMES, entiers. Un relevé calculé en flottants finit par afficher 19,639999999 ou
 // par perdre un centime au passage — sur de l'argent qu'on doit à quelqu'un, ce n'est pas acceptable.
@@ -43,6 +49,8 @@ export type LigneClient = {
   nom: string | null
   /** Encaissé sur ce client dans le mois, en CENTIMES. */
   encaisse: number
+  /** Remboursé à ce client dans le mois, en CENTIMES, toujours POSITIF (article 5.4). */
+  rembourse?: number
   /** L'apport compte-t-il, et à quel taux (0, 10 ou 20) ? Vient du registre, jamais d'une saisie. */
   tauxApport: number
   statutApport: string | null
@@ -51,8 +59,12 @@ export type LigneClient = {
 export type Releve = {
   /** Le mois, en AAAA-MM. */
   mois: string
-  /** Chiffre d'affaires encaissé, tous clients confondus (centimes). */
+  /** Chiffre d'affaires encaissé NET des remboursements, tous clients confondus (centimes). */
   encaisse: number
+  /** Ce qui a été remboursé dans le mois (centimes, positif) — article 5.4. */
+  rembourse: number
+  /** La commission reprise à cause de ces remboursements (centimes, positif). Déjà déduite. */
+  reprise: number
   /** Coûts directs du mois (centimes). */
   couts: number
   /** R = encaissé − coûts. */
@@ -68,7 +80,7 @@ export type Releve = {
   /** Ce qui reste à Benjamin : 80 % de B. */
   partFondateur: number
   /** Le détail, client par client — un relevé qu'on ne peut pas vérifier ne vaut rien. */
-  clients: (LigneClient & { commission: number })[]
+  clients: (LigneClient & { commission: number; reprise: number; net: number; rembourse: number })[]
 }
 
 /**
@@ -76,12 +88,24 @@ export type Releve = {
  * C'est ce qui permet de le prouver sur les cas de l'annexe A sans monter tout un décor.
  */
 export function calculerReleve(mois: string, clients: LigneClient[], coutsCentimes: number): Releve {
-  const detail = clients.map((c) => ({
-    ...c,
-    // La commission suit le taux du registre : 20 % prouvé ou saisi, 10 % contesté, 0 sinon.
-    commission: Math.round(c.encaisse * (c.tauxApport / 100)),
-  }))
-  const encaisse = detail.reduce((n, c) => n + c.encaisse, 0)
+  const detail = clients.map((c) => {
+    const rembourse = Math.max(0, c.rembourse ?? 0)
+    // Article 5.4 : un remboursement est un encaissement NÉGATIF du mois où il a lieu. Le traiter
+    // comme une ligne à part corrigerait la commission sans corriger le résultat, et les deux se
+    // contrediraient — on ne s'en apercevrait qu'au moment de payer.
+    const net = c.encaisse - rembourse
+    return {
+      ...c, rembourse,
+      // La commission suit le taux du registre : 20 % prouvé ou saisi, 10 % contesté, 0 sinon.
+      commission: Math.round(net * (c.tauxApport / 100)),
+      /** Ce que le remboursement retire au partenaire — affiché, pour que le calcul se relise. */
+      reprise: Math.round(rembourse * (c.tauxApport / 100)),
+      net,
+    }
+  })
+  const encaisse = detail.reduce((n, c) => n + c.net, 0)
+  const rembourse = detail.reduce((n, c) => n + c.rembourse, 0)
+  const reprise = detail.reduce((n, c) => n + c.reprise, 0)
   const commission = detail.reduce((n, c) => n + c.commission, 0)
   const resultat = encaisse - coutsCentimes
   const base = resultat - commission
@@ -91,7 +115,7 @@ export function calculerReleve(mois: string, clients: LigneClient[], coutsCentim
   const interessement = base > 0 ? Math.round(base * TAUX.interessement) : 0
   const partFondateur = base > 0 ? base - interessement : base
   return {
-    mois, encaisse, couts: coutsCentimes, resultat, commission, base,
+    mois, encaisse, rembourse, reprise, couts: coutsCentimes, resultat, commission, base,
     interessement, dûAuPartenaire: commission + interessement, partFondateur,
     clients: detail,
   }

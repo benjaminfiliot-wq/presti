@@ -76,6 +76,42 @@ const api = async (chemin, jeton, init = {}) => {
 async function main() {
   console.log('\n══ Comptabilité et relevé du partenaire ══\n')
 
+  // ── 0. La reprise sur remboursement (contrat, article 5.4) ─────────────────────────────────────
+  console.log('0. La reprise sur remboursement, au centime')
+  {
+    // Le cas nominal : 100 € encaissés d'un client apporté, 40 € remboursés dans le mois.
+    // Encaissé net 60 €, commission 20 % de 60 € = 12 €, et la reprise affichée vaut 20 % de 40 €.
+    const r = calculerReleve('2026-08', [{ artisan_id: 'a', nom: 'Apporté', encaisse: 10000, rembourse: 4000, tauxApport: 20, statutApport: 'prouve' }], 0)
+    T('l’encaissé du mois est NET du remboursement', r.encaisse === 6000, `${eur(r.encaisse)}`)
+    T('la commission porte sur le net : 20 % de 60 € = 12 €', r.commission === 1200, `${eur(r.commission)}`)
+    T('la reprise est affichée à part : 20 % de 40 € = 8 €', r.reprise === 800, `${eur(r.reprise)}`)
+    T('le résultat distribuable baisse AUSSI du remboursement', r.resultat === 6000, `${eur(r.resultat)}`)
+    // 60 € de résultat, 12 € de commission, base 48 €, intéressement 9,60 € → 21,60 € dû.
+    T('le dû au partenaire suit : 12 € + 20 % de 48 € = 21,60 €', r.dûAuPartenaire === 2160, `${eur(r.dûAuPartenaire)}`)
+
+    // Sans remboursement, le même mois donnerait 20 € de commission et 36 € dus : la reprise a bien
+    // retiré 8 € de commission ET la part d'intéressement correspondante.
+    const sans = calculerReleve('2026-08', [{ artisan_id: 'a', nom: 'Apporté', encaisse: 10000, tauxApport: 20, statutApport: 'prouve' }], 0)
+    T('… soit exactement 8 € de commission en moins qu’un mois sans remboursement', sans.commission - r.commission === 800, `${eur(sans.commission)} → ${eur(r.commission)}`)
+
+    // Un remboursement plus gros que l'encaissement du mois : le dû devient négatif, et il le reste.
+    const neg = calculerReleve('2026-08', [{ artisan_id: 'a', nom: 'Apporté', encaisse: 1000, rembourse: 9000, tauxApport: 20, statutApport: 'prouve' }], 0)
+    T('un remboursement plus gros que le mois rend un dû NÉGATIF, pas zéro', neg.dûAuPartenaire < 0, `${eur(neg.dûAuPartenaire)}`)
+    T('… et l’article 5.4 dit « déduite du relevé suivant », donc on ne le tronque pas', neg.commission === -1600, `${eur(neg.commission)}`)
+
+    // Un client jamais apporté : le résultat baisse, mais il n'y a aucune commission à reprendre.
+    const nonApporte = calculerReleve('2026-08', [{ artisan_id: 'b', nom: 'Venu seul', encaisse: 10000, rembourse: 4000, tauxApport: 0, statutApport: null }], 0)
+    T('un client non apporté remboursé : le résultat baisse, la commission reste à zéro',
+      nonApporte.resultat === 6000 && nonApporte.commission === 0 && nonApporte.reprise === 0, JSON.stringify({ r: nonApporte.resultat, c: nonApporte.commission }))
+
+    // Un apport contesté : la reprise se fait au taux contesté, comme la commission.
+    const conteste = calculerReleve('2026-08', [{ artisan_id: 'c', nom: 'Contesté', encaisse: 10000, rembourse: 4000, tauxApport: 10, statutApport: 'conteste' }], 0)
+    T('un apport contesté reprend à 10 %, comme il commissionne à 10 %', conteste.reprise === 400 && conteste.commission === 600, `${eur(conteste.reprise)} / ${eur(conteste.commission)}`)
+
+    // Sans remboursement, rien ne change : la nouveauté ne doit pas déplacer un centime des mois passés.
+    T('un mois sans remboursement calcule exactement comme avant', sans.rembourse === 0 && sans.reprise === 0 && sans.dûAuPartenaire === 3600, `${eur(sans.dûAuPartenaire)}`)
+  }
+
   // ── 1. L'annexe A du contrat, au centime ────────────────────────────────────────────────────────
   console.log('1. L’annexe A du contrat, au centime')
   const cas = [

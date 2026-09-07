@@ -49,6 +49,38 @@ async function encaissementsDuMois(debut: string, fin: string): Promise<Map<stri
   return parClient
 }
 
+/** Les remboursements RÉUSSIS du mois, par client Stripe, en centimes positifs (article 5.4).
+ *
+ *  Une facture remboursée reste « payée » chez Stripe : sans cette lecture, la commission d'un client
+ *  remboursé resterait acquise au partenaire alors que l'argent est reparti. */
+async function remboursementsDuMois(debut: string, fin: string): Promise<Map<string, number>> {
+  const parClient = new Map<string, number>()
+  if (!stripe) return parClient
+  const options = { timeout: 20_000, maxNetworkRetries: 0 } as const
+  let curseur: string | undefined
+  for (let page = 0; page < 10; page++) {
+    const l = await stripe.refunds.list({
+      limit: 100, created: { gte: Math.floor(Date.parse(debut) / 1000), lt: Math.floor(Date.parse(fin) / 1000) },
+      // La charge est développée dans la requête : un appel par remboursement ferait dépasser le
+      // délai de la route dès qu'il y en a quelques dizaines.
+      expand: ['data.charge'],
+      ...(curseur ? { starting_after: curseur } : {}),
+    }, options)
+    for (const r of l.data) {
+      // Un remboursement en attente ou échoué n'a rien retiré à personne : le déduire ferait payer
+      // au partenaire une opération qui n'a pas eu lieu.
+      if (r.status !== 'succeeded') continue
+      const charge = typeof r.charge === 'string' ? null : r.charge
+      const client = typeof charge?.customer === 'string' ? charge.customer : charge?.customer?.id
+      if (!client) continue
+      parClient.set(client, (parClient.get(client) ?? 0) + (r.amount ?? 0))
+    }
+    if (!l.has_more || !l.data.length) break
+    curseur = l.data[l.data.length - 1].id
+  }
+  return parClient
+}
+
 async function construire(mois: string) {
   const bornes = bornesDuMois(mois)
   if (!bornes) return null
@@ -62,7 +94,10 @@ async function construire(mois: string) {
       .gte('date_facture', bornes.debut.slice(0, 10)).lt('date_facture', bornes.fin.slice(0, 10)),
   ])
 
-  const encaisse = await encaissementsDuMois(bornes.debut, bornes.fin)
+  const [encaisse, rembourse] = await Promise.all([
+    encaissementsDuMois(bornes.debut, bornes.fin),
+    remboursementsDuMois(bornes.debut, bornes.fin),
+  ])
   const parApport = new Map((apports ?? []).map((a) => [a.artisan_id, a]))
 
   const clients: LigneClient[] = []
@@ -71,12 +106,13 @@ async function construire(mois: string) {
     // certainement pas dans un relevé qui engage de l'argent.
     if (a.est_demo || a.is_founder || !a.stripe_customer_id) continue
     const cents = encaisse.get(a.stripe_customer_id) ?? 0
+    const rendu = rembourse.get(a.stripe_customer_id) ?? 0
     if (cents <= 0) continue
     const ap = parApport.get(a.id)
     // Le taux vient du REGISTRE, jamais d'une saisie : prouvé ou saisi 20 %, contesté 10 %, sinon 0.
     const v = ap ? verdict(ap as { statut: Statut; piece: string | null; motif: string | null }) : null
     clients.push({
-      artisan_id: a.id, nom: a.nom, encaisse: cents,
+      artisan_id: a.id, nom: a.nom, encaisse: cents, rembourse: rendu,
       tauxApport: v?.compte ? v.taux : 0,
       statutApport: ap?.statut ?? null,
     })
