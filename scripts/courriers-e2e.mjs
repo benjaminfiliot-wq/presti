@@ -175,7 +175,17 @@ const CAS = [
     filConnu: true, attendu: 'prospect', motif: 'fil:reponse' },
   { nom: 'un « Re: » sans fil connu ne suffit pas (Re: se tape à la main)', de: 'client@ailleurs.example', sujet: 'Re: votre devis',
     attendu: 'a_lire', motif: 'defaut' },
-  { nom: 'rapport DMARC agrégé → technique', de: 'noreply-dmarc-support@google.com', sujet: 'Report domain: prestiapp.fr Submitter: google.com',
+  // ARBITRAGE ASSUMÉ : depuis que google.com est dans la liste des fournisseurs (0073), la règle de
+  // domaine mord avant la règle DMARC. Un rapport agrégé est donc rangé en « Fournisseurs ».
+  // On ne corrige pas, et on le dit : aucun DMARC n'est publié sur prestiapp.fr (vérifié le 07/09),
+  // donc aucun rapport n'est envoyé ; et les deux natures appellent le même geste (« lire »).
+  // LE JOUR OÙ LE DMARC SERA PUBLIÉ — c'est déjà réclamé par l'alerte `domaine_mail` — il faudra
+  // remonter la règle 7 avant les règles de domaine. Ce test rougira alors, et c'est le but.
+  { nom: 'rapport DMARC agrégé → fournisseur (le domaine l’emporte, arbitrage documenté)', de: 'noreply-dmarc-support@google.com',
+    sujet: 'Report domain: prestiapp.fr Submitter: google.com',
+    attendu: 'fournisseur', motif: 'domaine:google.com', depuis: '0073' },
+  { nom: 'un rapport DMARC d’un émetteur hors liste reste technique', de: 'dmarc@rapports.example',
+    sujet: 'Report domain: prestiapp.fr Submitter: rapports.example',
     attendu: 'technique', motif: 'dmarc:rapport' },
   { nom: 'un inconnu sans aucun signal → à lire (le doute, jamais une poubelle)', de: 'inconnu@ailleurs.example', sujet: 'Bonjour',
     attendu: 'a_lire', motif: 'defaut' },

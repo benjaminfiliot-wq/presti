@@ -733,3 +733,56 @@ reclassement de masse. Sans ce verrou, le cron effacerait chaque matin le rangem
 préalable humain », jamais compté comme vert. Typage 0 erreur, build vert, `emails-e2e` 102/102.
 
 **Appels IA : 0.**
+
+## 07/09 — la boîte de l'entreprise est relevée, et rangée
+
+Quatre causes empilées, trouvées et levées l'une après l'autre. Chacune suffisait à tout bloquer.
+
+| # | Cause | Comment on l'a su |
+|---|---|---|
+| 1 | Deux fichiers donnaient deux serveurs pour le même compte (`imap.gmail.com` ici, `ssl0.ovh.net` là) | lecture du code ; une seule résolution désormais, qui devine l'hôte depuis l'adresse |
+| 2 | L'échec ne remontait à personne : `passages_cron` disait `reussi: true` | la relève compte maintenant dans le passage, et déclenche l'alerte `cron_muet` |
+| 3 | J'ai fait basculer la boîte sur `contact@prestiapp.fr` — qui **n'existe pas** | un mail de test y a REBONDI en 12 s. Le dépôt le disait déjà dans un commentaire de `api/contact/route.ts` : cette adresse envoie, elle ne reçoit pas. Aller-retour de ma faute |
+| 4 | Google refusait le mot de passe d'application | il est affiché en « abcd efgh ijkl mnop » ; **les espaces n'en font pas partie**. Le code les retire, mais seulement quand la valeur a exactement cette forme |
+
+**Le diagnostic a été construit en même temps que la réparation**, parce que « Command failed » ne
+menait nulle part : on a ajouté le temps de connexion, la réponse brute du serveur, le drapeau
+`authenticationFailed` de la bibliothèque, et le signalement d'un mot de passe sali. C'est ce qui a
+permis de passer de « ça marche pas » à « Google dit : identifiants invalides » en trois essais.
+
+### Le classement, sur du vrai courrier
+
+40 messages relevés. Après 0072 seule : 2 non remis, 18 diffusion, **20 en « À lire »**. En lisant
+ces vingt-là, on a obtenu de vraies adresses d'expédition — ce que le dépôt ne contenait nulle part.
+0073 les ajoute, chacune citant le message qui l'a justifiée. Résultat :
+
+| Pile | Avant 0073 | Après |
+|---|---|---|
+| Abonnements & comptes | 0 | **5** (tous les Stripe, dont un paiement de 29 € et une action requise) |
+| Non remis | 2 | 2 |
+| Fournisseurs | 0 | **15** (Google, OVH, Anthropic) |
+| Diffusion | 18 | 15 |
+| **À lire** | **20** | **3** |
+
+Les trois qui restent sont du doute légitime : FrameRate, Mon espace santé, Skool — des services que
+l'entreprise n'utilise pas. « Fournisseur » veut dire une dépendance de Presti, pas une entreprise
+connue ; les ajouter ferait entrer dans une pile de confiance des messages qui n'y ont rien à faire.
+
+### Ce que la première relève a fait remonter
+
+- **Anthropic, 04/09 13 h 20** — « Your Claude API access is turned off : out of usage credits ».
+  L'assistant s'arrête pour tous les artisans quand ça arrive. Rechargé depuis (12 $ le 04, 117,83 €
+  le 05), mais ce mail dormait dans une boîte que personne ne lisait.
+- **Stripe, 04/09 19 h 45** — « [Action requise] … avant que votre entreprise puisse accepter des
+  paiements et effectuer des virements vers son compte bancaire ».
+
+### Un arbitrage assumé
+
+Depuis que `google.com` est dans la liste des fournisseurs, un rapport DMARC agrégé de Google est
+rangé en « Fournisseurs » plutôt qu'en « Technique » : la règle de domaine mord avant. On ne corrige
+pas — aucun DMARC n'est publié sur le domaine, donc aucun rapport n'est envoyé, et les deux natures
+appellent le même geste. Le jour où le DMARC sera publié, il faudra remonter la règle : c'est écrit
+dans le cas de test, qui rougira à ce moment-là.
+
+**Preuve** : `courriers-e2e` 54/54, `controle-messagerie-e2e` 30/30, typage 0, build vert.
+**Appels IA : 0.**
