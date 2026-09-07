@@ -239,7 +239,17 @@ try {
   const af2 = await json(await api('/api/controle/a-faire', {}, jF))
   const ligneAlerte = (af2.body.lignes || []).find((l) => l.id === `alerte:${al?.id}`)
   T('l’alerte non acquittée apparaît dans a-faire avec son action et un type lisible', !!ligneAlerte && ligneAlerte.action?.route === `/api/controle/alertes/${al.id}/acquitter` && ligneAlerte.libelleType === 'Alerte', JSON.stringify(ligneAlerte).slice(0, 120))
-  T('aucune ligne de a-faire ne propose une action vers une route inexistante', (af2.body.lignes || []).every((l) => !l.action || /^\/api\/controle\/(alertes|securite)\//.test(l.action.route)))
+  // Une action mène soit à une route du Poste de contrôle qui EXISTE, soit — pour une facture
+  // impayée — à la page hébergée par Stripe, où se trouvent le moyen de paiement et le bouton de
+  // relance. Y aller vaut mieux que recoder une relance à moitié ; le test doit donc reconnaître ce
+  // cas au lieu de l'interdire. Ce qui reste interdit : une route inventée du produit.
+  const ROUTES_ACTION = /^\/api\/controle\/(alertes|securite|crons|clients)\//
+  const LIEN_EXTERNE = /^https:\/\/[\w.-]+\.(stripe\.com|prestiapp\.fr)\//
+  const mauvaises = (af2.body.lignes || []).filter((l) => l.action && !ROUTES_ACTION.test(l.action.route) && !LIEN_EXTERNE.test(l.action.route))
+  T(`aucune ligne de a-faire ne propose une action vers une route inexistante${mauvaises.length ? ` — ${mauvaises.map((l) => l.action.route).join(', ')}` : ''}`, mauvaises.length === 0)
+  T('chaque ligne de a-faire propose un geste (une file sans geste ne descend jamais)',
+    (af2.body.lignes || []).every((l) => l.action?.route && l.action?.methode),
+    JSON.stringify((af2.body.lignes || []).filter((l) => !l.action?.route)).slice(0, 160))
   const acq = await json(await api(`/api/controle/alertes/${al.id}/acquitter`, { method: 'POST' }, jF))
   const [alApres] = await (await rest(`alertes?select=acquittee_le,acquittee_par&id=eq.${al.id}`)).json()
   const ja = (await (await rest(`journal_direction?select=avant,apres&acteur_id=eq.${F.uid}&action=eq.alerte_acquittee`)).json())[0]
