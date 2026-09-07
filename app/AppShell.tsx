@@ -211,13 +211,9 @@ export default function AppShell({
           <>
             <div className="psh-navlabel">Fondateur</div>
             <nav className="psh-nav">
-              {actif('direction') && (
-                <a className={active === 'direction' ? 'on' : ''} href="/direction">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 20h18" /><path d="M5 20V9l7-5 7 5v11" /><path d="M10 20v-6h4v6" /></svg>
-                  Direction
-                </a>
-              )}
-              <a className={active === 'controle' ? 'on' : ''} href="/controle">
+              {/* UNE seule entrée (v11 §1) : « Direction » et « Poste de contrôle » menaient au même
+                  endroit depuis la fusion, et deux liens vers un même écran font hésiter pour rien. */}
+              <a className={active === 'controle' || active === 'direction' ? 'on' : ''} href="/controle">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3" /></svg>
                 Poste de contrôle
               </a>

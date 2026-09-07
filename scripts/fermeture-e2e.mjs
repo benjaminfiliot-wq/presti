@@ -30,16 +30,16 @@ const PROTEGEES = [
   ['/api/control/agents', 'POST', {}], ['/api/control/run-agent', 'POST', {}], ['/api/control/security', 'GET'],
   ['/api/control/stats', 'GET'], ['/api/control/stripe', 'GET'], ['/api/control/inbox', 'GET'],
   // v10 J1 — le Centre de direction : drapeau baissé → 404 (l'espace n'existe pas), levé → 401 ; jamais 500, jamais 200
-  ['/api/direction/etat', 'GET'], ['/api/direction/chiffres', 'GET'], ['/api/direction/a-faire', 'GET'], ['/api/direction/fil', 'GET'], ['/api/direction/journal', 'GET'],
-  ['/api/direction/reconfirmer', 'POST', {}], ['/api/direction/securite/bans', 'POST', {}],
+  ['/api/controle/etat', 'GET'], ['/api/controle/chiffres', 'GET'], ['/api/controle/a-faire', 'GET'], ['/api/controle/fil', 'GET'], ['/api/controle/journal', 'GET'],
+  ['/api/controle/reconfirmer', 'POST', {}], ['/api/controle/securite/bans', 'POST', {}],
   [`/api/devis/${id}/envoyer`, 'POST', {}], [`/api/devis/${id}/pdf`, 'GET'],
   [`/api/factures/${id}/avoir`, 'POST', {}], [`/api/factures/${id}/facturx`, 'GET'], [`/api/factures/${id}/pdf`, 'GET'],
   ['/api/leads/photos', 'POST', {}],
 ]
 for (const [chemin, methode, body] of PROTEGEES) {
   const r = await appel(chemin, methode, body)
-  // /api/direction/* : 404 tant que FLAGS.direction est baissé (l'espace n'existe pas), 401 ensuite
-  T(`${methode} ${chemin.replace(id, ':id')} → ${r.status}`, [401, 403].includes(r.status) || (chemin.startsWith('/api/direction/') && r.status === 404), r.texte)
+  // /api/controle/* : 404 tant que FLAGS.direction est baissé (l'espace n'existe pas), 401 ensuite
+  T(`${methode} ${chemin.replace(id, ':id')} → ${r.status}`, [401, 403].includes(r.status) || (chemin.startsWith('/api/controle/') && r.status === 404), r.texte)
 }
 
 console.log('\n── 2. Crons : sans le secret, 401 — les deux planifiés et les deux appelés')

@@ -5,7 +5,7 @@ import { consommerLimite } from '@/lib/limites'
 import { getIp, isBanned } from '@/lib/security'
 import { actif } from '@/lib/flags'
 
-// La garde du Centre de direction (prompt v10 §1, §3) — UNE fois, pour toutes les routes app/api/direction/**.
+// La garde du Centre de direction (prompt v10 §1, §3) — UNE fois, pour toutes les routes app/api/controle/**.
 //
 // Avant : six routes api/control/* recopiaient « jeton → utilisateur → is_founder → 403 » (carte 2.1). Ici :
 //   1. drapeau `direction` levé (sinon 404 : l'espace n'existe pas) ;

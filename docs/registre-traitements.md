@@ -84,7 +84,7 @@
 | **Personnes** | Artisans clients (agrégés ou nommés), fondateurs |
 | **Durée** | Aucun stockage propre : lectures à la source, cache mémoire de 90 secondes pour les sources externes |
 | **Destinataires** | Stripe, Supabase, Resend, Anthropic (coûts, si la clé d'administration est posée) |
-| **Où** | `lib/direction/stripe.ts`, `app/api/direction/*` |
+| **Où** | `lib/direction/stripe.ts`, `app/api/controle/*` |
 
 ## 8. Le compte de relecture des stores *(v9, 7 septembre 2026)*
 
