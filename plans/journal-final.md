@@ -537,6 +537,34 @@ Repris : il **refuse de photographier autre chose que l'écran attendu**, et dit
 - **Pour Benj** : révoquer chez Stripe les deux clés restreintes réelles trouvées en clair ; faire un devis IA depuis son compte pour que je retire le filet de l'ancienne clé Anthropic ; et l'APK sur son téléphone, qui reste le seul blocage de l'application.
 - **Suivant** : J6 — santé, support, réglages.
 
+## [45] v11 · la purge validée, et les Réglages — 07/09 — ✅ toutes les suites du Poste de contrôle vertes (`372b9f5` en prod)
+
+| Suite | Résultat |
+|---|---|
+| `controle-e2e` | **72/72** |
+| `controle-apports-e2e` | **43/43** |
+| `controle-droits-e2e` | **29/29** |
+| `controle-messagerie-e2e` | **30/30** |
+| `controle-compta-e2e` | **27/27** |
+| `zero-demo-e2e` | **9/9** |
+
+### La purge, faite sans forcer aucun verrou
+
+- Benj a donné son accord : « vire-moi toutes les factures, devis et autres faits par des tests ». **Trois comptes supprimés, deux comptes de connexion orphelins effacés**, tout **sauvegardé en JSON** avant la première suppression — une purge sans retour en arrière est une décision qu'on ne peut plus revoir. La sauvegarde reste hors de git : elle contient des données personnelles.
+- **Les factures émises ne se suppriment pas**, et je n'ai pas cherché à contourner le verrou. Dix ans de conservation obligatoires (art. L. 102 B du LPF), appliqués par un trigger depuis 0041. Une table de factures qu'on peut vider sur demande ne vaut plus rien comme preuve, **y compris pour les vraies**. Elles sont marquées, donc absentes de tous les chiffres : présentes et invisibles, comme la loi le veut. Les deux comptes qui les portent restent — une facture doit pouvoir désigner son émetteur.
+- **« Atelier du Chêne » est gardé délibérément** : sa page publique alimente les captures de la vitrine, et **quatre suites s'appuient dessus**. Le supprimer aurait cassé le marketing et les tests pour faire propre. Le v11 §2.3 prévient justement contre cet excès de zèle. Le garde-fou dit désormais **pourquoi** chaque compte conservé l'est, ligne par ligne — sans quoi quelqu'un finira un jour par « terminer le ménage ».
+- **À signaler** : Alexandre porte cinq factures émises sous son propre compte (`FAC-2026-0001` à `0005`). Elles ne sont marquées ni test ni démo, donc elles comptent. Si ce sont des essais de développement, il faut décider quoi en faire — elles ne se suppriment pas plus que les autres.
+
+### Les Réglages (J6)
+
+- Ce qui **se règle** : les valeurs qui changent par décret ou par décision — seuils de TVA, taux et périodicité URSSAF, alerte de budget — et les **rôles de l'équipe**. Chaque changement est re-confirmé et journalisé avant/après.
+- Ce qui **ne se règle pas**, et c'est écrit à l'écran : les **drapeaux de fonctionnalité**. Un drapeau suppose une migration collée *et* du code déployé ; le lever depuis un bouton ferait apparaître un espace vide ou des 503 sans que rien ne prévienne. Ils se lèvent par un commit, relu et versionné. L'écran les montre pour qu'on sache où on en est.
+- **Un secret ne s'affiche jamais.** Les comptes connectés disent s'ils sont branchés et de quel type de clé il s'agit — « clé réelle » ou « clé de test », « espace dédié » ou « espace par défaut » — jamais leur contenu.
+- **Changer un rôle change les deux sources à la fois** (rôle d'entreprise et rôle du Centre) : deux sources pour une même vérité finissent toujours par diverger, et c'est exactement ce qui avait donné à Alexandre l'écriture partout. Et **on ne peut pas se retirer soi-même** — un Poste de contrôle sans personne pour l'ouvrir est irrécupérable.
+- **L'IA de production tourne bien** : un devis a été fabriqué à 14:24, six crédits consommés. Le rapport de coût d'Anthropic a du retard, donc **le filet de l'ancienne clé reste en place** encore quelques heures — il ne coûte rien.
+- **Appels IA du sprint : 0** (le devis est celui de Benj, sur son compte).
+- **Reste du v11** : le support et les tickets (mode support lecture seule, journalisé et notifié à l'artisan), et la partie « Santé » avancée — déploiements Vercel et retour arrière, coûts IA par fonction.
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
