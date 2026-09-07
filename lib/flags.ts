@@ -36,6 +36,9 @@ export const FLAGS = {
    *  À lever quand la migration 0069 est collée : sans elle, les routes répondent 404 et l'onglet
    *  n'apparaît pas dans le Centre. */
   messagerie: true,
+  /** v11 J5 — la comptabilité de l'entreprise et le relevé du partenaire. Levé quand 0071 est collée :
+   *  sans elle, les routes répondent 503 sur des tables absentes et l'onglet n'a rien à montrer. */
+  comptabilite: true,
   /** §8 F1 — photo de facture fournisseur → OCR → lignes proposées. */
   inventaireOcr: false,
   /** §8 F3 — assistant de recherche fournisseurs. Livré et testé le 04/09 (scripts/recherche-e2e.mjs : 37/37, vraie recherche Castorama). */
