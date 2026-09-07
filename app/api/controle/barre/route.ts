@@ -4,7 +4,7 @@ import { estFondateur, estRefus, reponseRefus } from '@/lib/direction/garde'
 import { peutFaire } from '@/lib/controle/droits'
 import { sourcer } from '@/lib/direction/fraicheur'
 import { mrr, encaisseDuMois } from '@/lib/direction/stripe'
-import { coutIADuMois } from '@/lib/alertes'
+import { coutIADuMois, estimationDepuisLesCredits } from '@/lib/alertes'
 import { seulsLesVrais } from '@/lib/direction/perimetre'
 import { actif } from '@/lib/flags'
 
@@ -91,11 +91,17 @@ export async function GET(req: Request) {
       // dira pourquoi il n'affiche rien plutôt que d'écrire « 0 € ».
       if (!r) throw new Error('clé Anthropic Admin absente')
       const espace = process.env.ANTHROPIC_WORKSPACE_PRESTI
-      const usd = espace && r.parEspace ? (r.parEspace[espace] ?? 0) : r.usd
+      const taux = Number(process.env.TAUX_USD_EUR) || 0.92
       const budget = Number(process.env.BUDGET_IA_MENSUEL_EUR) || null
-      // C'est le coût du PRODUIT (espace Presti), pas la facture de l'organisation. Les afficher sous
-      // le même nom laissait croire que 0,07 € et 464,97 € se contredisaient.
-      return { euros: Math.round(usd * (Number(process.env.TAUX_USD_EUR) || 0.92) * 100) / 100, budget, perimetre: espace ? 'produit' : 'organisation' }
+      const facture = Math.round((espace && r.parEspace ? (r.parEspace[espace] ?? 0) : r.usd) * taux * 100) / 100
+      // Un espace qui n'a encore rien facturé n'a pas coûté zéro : il n'a pas encore été facturé. La
+      // barre reprend alors la MÊME estimation que la tuile, marquée comme telle — sans quoi on lisait
+      // « 0,00 € » à côté de « ≈ 0,07 € », deux chiffres justes qui se contredisent à l'œil.
+      if (espace && facture === 0) {
+        const est = await estimationDepuisLesCredits()
+        if (est && est.euros > 0) return { euros: Math.round(est.euros * 100) / 100, budget, perimetre: 'produit', estimation: true }
+      }
+      return { euros: facture, budget, perimetre: espace ? 'produit' : 'organisation', estimation: false }
     }, 300_000) : Promise.resolve(null),
   ])
 
