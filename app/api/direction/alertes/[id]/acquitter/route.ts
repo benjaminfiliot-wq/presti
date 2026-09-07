@@ -27,5 +27,5 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   if (r?.etat === 'inconnue') return NextResponse.json({ error: 'Alerte inconnue.' }, { status: 404 })
   if (r?.etat === 'deja') return NextResponse.json({ ok: true, deja: true })
   oublier('afaire:'); oublier('fil:')
-  return NextResponse.json({ ok: true, journal: r?.journal ?? null })
+  return NextResponse.json({ ok: true, message: 'Alerte acquittée.', journal: r?.journal ?? null })
 }

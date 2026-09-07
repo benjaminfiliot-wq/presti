@@ -1,7 +1,11 @@
 // Chaque chiffre du Centre de direction vient d'une source et porte sa fraîcheur (prompt v10 §1 : « un chiffre
 // sans source n'est pas affiché »). `Sourcee<T>` est la forme unique rendue par toutes les routes de lecture ;
-// `sourcer()` y ajoute un cache mémoire court (60 s par défaut, local au lambda — motif lib/authArtisan.ts) et
-// transforme toute erreur en `{ valeur: null, erreur }` : l'écran dit « Stripe injoignable », jamais 0.
+// `sourcer()` y ajoute un cache mémoire court et transforme toute erreur en `{ valeur: null, erreur }` : l'écran
+// dit « Stripe injoignable », jamais 0.
+//
+// Le cache ne sert QUE les sources externes et lentes (Stripe, sondes HTTP, Resend, Anthropic). Les lectures de
+// notre base coûtent quelques dizaines de millisecondes : les mettre en cache rendait l'écran menteur pendant
+// quinze secondes après une écriture (revue du 07/09 — une alerte acquittée restait dans « À faire »).
 export type Source = 'stripe' | 'supabase' | 'resend' | 'anthropic' | 'vercel' | 'app' | 'estimation'
 
 export type Sourcee<T> = {
@@ -11,21 +15,26 @@ export type Sourcee<T> = {
   a: string
   cache: boolean
   erreur?: string
-  /** Ce qui manque pour mesurer (ex. « H2 » : clé Anthropic Admin absente). */
+  /** Ce qui manque pour mesurer, en français (ex. « clé Anthropic Admin absente »). */
   manque?: string
 }
 
 type Entree = { valeur: unknown; a: string; jusqua: number }
 const memoire = new Map<string, Entree>()
 
-/** Lit à la source (ou au cache), sans jamais lever : la panne devient une valeur nulle sourcée et datée. */
-export async function sourcer<T>(cle: string, source: Source, f: () => Promise<T>, ttlMs = 60_000): Promise<Sourcee<T>> {
-  const m = memoire.get(cle)
-  if (m && m.jusqua > Date.now()) return { valeur: m.valeur as T, source, a: m.a, cache: true }
+/**
+ * Lit à la source (ou au cache), sans jamais lever : la panne devient une valeur nulle sourcée et datée.
+ * `ttlMs = 0` (défaut) : aucune mise en cache — à réserver aux lectures de notre base.
+ */
+export async function sourcer<T>(cle: string, source: Source, f: () => Promise<T>, ttlMs = 0): Promise<Sourcee<T>> {
+  if (ttlMs > 0) {
+    const m = memoire.get(cle)
+    if (m && m.jusqua > Date.now()) return { valeur: m.valeur as T, source, a: m.a, cache: true }
+  }
   try {
     const valeur = await f()
     const a = new Date().toISOString()
-    memoire.set(cle, { valeur, a, jusqua: Date.now() + ttlMs })
+    if (ttlMs > 0) memoire.set(cle, { valeur, a, jusqua: Date.now() + ttlMs })
     return { valeur, source, a, cache: false }
   } catch (e) {
     const erreur = (e instanceof Error ? e.message : String(e)).slice(0, 160)
@@ -49,6 +58,10 @@ export function relTime(iso: string | null | undefined, maintenant = Date.now())
   if (h < 36) return `il y a ${h} h`
   return `il y a ${Math.round(h / 24)} j`
 }
+
+/** Les montants s'écrivent partout pareil, à l'écran comme dans les textes des routes. */
+const FORMAT_EUR = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' })
+export const euros = (n: number | null | undefined): string => (n === null || n === undefined || !Number.isFinite(n) ? '—' : FORMAT_EUR.format(n))
 
 /** Vide le cache (tests, ou après une écriture qui change un chiffre). */
 export const oublier = (prefixe?: string) => { for (const k of memoire.keys()) if (!prefixe || k.startsWith(prefixe)) memoire.delete(k) }

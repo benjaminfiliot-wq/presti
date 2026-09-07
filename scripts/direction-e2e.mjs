@@ -49,11 +49,15 @@ async function session(c, attester = true) {
 async function nettoyer() {
   // les lignes de journal des comptes de test : le trigger 0065 les laisse partir (acteur_email @presti-test.invalid)
   for (const id of comptes) await rest(`journal_direction?acteur_id=eq.${id}`, { method: 'DELETE' }).catch(() => {})
+  await rest(`journal_direction?cible_id=eq.e2e-${st}`, { method: 'DELETE' }).catch(() => {})
+  await purgerPlafondsDe(...comptes)
   await rest(`alertes?cle=eq.e2e-${st}`, { method: 'DELETE' }).catch(() => {})
   for (const id of comptes) await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: id }) }).catch(() => {})
   await rest('ip_bans?ip=in.(203.0.113.7,203.0.113.8)', { method: 'DELETE' }).catch(() => {})
 }
 const purgerPlafonds = async () => { const { spawnSync } = await import('node:child_process'); spawnSync('node', ['scripts/purger-abus.mjs'], { encoding: 'utf8', shell: true }) }
+/** Les plafonds NOMINATIFS du compte (reconf:<uid>, direction:<uid>) — que purger-abus ne connaît pas. */
+const purgerPlafondsDe = async (...uids) => { for (const u of uids) await rest(`limites?cle=in.(reconf:${u},direction:${u})`, { method: 'DELETE' }).catch(() => {}) }
 
 // L'adresse publique vue par le serveur : c'est elle que la route doit refuser de bannir.
 const monIp = await fetch('https://api.ipify.org?format=json').then((r) => r.json()).then((j) => j.ip).catch(() => '0.0.0.0')
@@ -63,14 +67,14 @@ try {
   // ── 0. Préalables ─────────────────────────────────────────────────────────────────────────────
   console.log('0. Préalables')
   const page = await fetch(`${APP}/direction`, { redirect: 'manual', headers: { 'User-Agent': 'presti-direction-e2e' } })
-  if (page.status === 404) { console.log('  ⏳ /direction → 404 : FLAGS.direction baissé (0065 à coller, puis lever). Rien à prouver encore.'); await nettoyer(); fin(2) } else {
+  if (page.status === 404) { console.log('  ⛔ À faire (Benj) : coller supabase/migrations/_A_COLLER_sql_editor_0065.sql dans Supabase → SQL Editor, puis me le dire — je lève FLAGS.direction et cette suite prouve le socle.'); await nettoyer(); fin(2) } else {
   T('/direction répond 200 (drapeau levé)', page.status === 200, `HTTP ${page.status}`)
   const html = await page.text()
   T('le HTML de /direction est une coquille : aucun chiffre, aucun email, aucune IP', !/@[a-z0-9.-]+\.[a-z]{2,}/i.test(html.replace(/[^<]*<\/script>/g, '')) && !/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(html) && !/journal_direction|MRR\s*:\s*\d/.test(html))
   const robots = await (await fetch(`${APP}/robots.txt`)).text()
   T('robots.txt interdit /direction', /Disallow:\s*\/direction/.test(robots))
   const sonde = await rest('journal_direction?select=id&limit=1')
-  if (sonde.status === 404) { console.log('  ⏳ table journal_direction absente : 0065 pas collée.'); await nettoyer(); fin(2) } else {
+  if (sonde.status === 404) { console.log('  ⛔ À faire (Benj) : la table journal_direction n’existe pas — 0065 n’est pas collée.'); await nettoyer(); fin(2) } else {
   T('table journal_direction présente (0065 collée)', sonde.ok)
 
   // ── 1. Sans identité ──────────────────────────────────────────────────────────────────────────
@@ -130,7 +134,7 @@ try {
   let n429 = 0
   for (let i = 0; i < 7; i++) { const r = await api('/api/direction/reconfirmer', { method: 'POST', body: JSON.stringify({ password: 'pas-le-bon-1234', portee: 'securite' }) }, jF); if (r.status === 429) n429++ }
   T('après cinq essais en 15 min → 429', n429 >= 1)
-  await purgerPlafonds()
+  await purgerPlafonds(); await purgerPlafondsDe(F.uid, L.uid)
 
   console.log('\n7. Écriture AVEC jeton : le ban, journalisé avant/après')
   // Une durée aberrante est refusée AVANT que le jeton ne soit consommé (revue du 07/09 : elle le brûlait, et
@@ -157,17 +161,22 @@ try {
   const port = await json(await api('/api/direction/securite/bans', { method: 'POST', body: JSON.stringify({ ip: '203.0.113.8' }) }, jF, j3))
   T('jeton de portée « argent » sur une route « securite » → 403 portee', port.status === 403 && port.body.code === 'portee', `${port.status} ${port.body.code}`)
   const j4 = (await json(await api('/api/direction/reconfirmer', { method: 'POST', body: JSON.stringify({ password: F.password, portee: 'securite' }) }, jF))).body.jeton
-  const autre = await json(await api('/api/direction/securite/bans', { method: 'POST', body: JSON.stringify({ ip: '203.0.113.8' }) }, jL, j4))
-  T('jeton d’un AUTRE fondateur → refusé (403)', autre.status === 403, `${autre.status} ${autre.body.code}`)
+  const F2 = await creer('fondateur2', { fondateur: true }), jF2 = await session(F2)
+  const autre = await json(await api('/api/direction/securite/bans', { method: 'POST', body: JSON.stringify({ ip: '203.0.113.8', dureeH: 1 }) }, jF2, j4))
+  T('jeton d’un AUTRE fondateur → refusé, et c’est bien la re-confirmation qui refuse', autre.status === 403 && autre.body.code === 'reconfirmation_requise', `${autre.status} ${autre.body.code}`)
   T('ip_bans ne contient toujours pas 203.0.113.8', !(await (await rest('ip_bans?select=ip&ip=eq.203.0.113.8')).json()).length)
   await purgerPlafonds()
 
   console.log('\n9. Immuabilité et RLS du journal')
   const upd = await rest(`journal_direction?id=eq.${jb.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ action: 'falsifie' }) })
   T('UPDATE par la clé service → refusé par le trigger', !upd.ok, `HTTP ${upd.status}`)
-  const del = await rest(`journal_direction?id=eq.${jb.id}`, { method: 'DELETE' })
-  const encore = (await (await rest(`journal_direction?select=id&id=eq.${jb.id}`)).json()).length === 1
-  T('DELETE d’une ligne fraîche → refusé (conservation 24 mois)', !del.ok && encore, `HTTP ${del.status}`)
+  const [ligneGardee] = await (await rest('journal_direction', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ action: 'e2e_conservation', acteur_email: null, cible_type: 'e2e', cible_id: `e2e-${st}` }) })).json()
+  const del = await rest(`journal_direction?id=eq.${ligneGardee.id}`, { method: 'DELETE' })
+  const encore = (await (await rest(`journal_direction?select=id&id=eq.${sentinelle.id}`)).json()).length === 1
+  T('DELETE d’une ligne fraîche (hors compte de test) → refusé : conservation 24 mois', !del.ok && encore, `HTTP ${del.status}`)
+  // Les lignes des comptes de test, elles, doivent partir : sinon la purge de fin laisserait des traces.
+  const delTest = await rest(`journal_direction?id=eq.${jb.id}`, { method: 'DELETE' })
+  T('… mais une ligne d’un compte @presti-test.invalid se supprime (purge des suites)', delTest.ok, `HTTP ${delTest.status}`)
   // Aucune de ces tables ne se lit par un jeton de navigateur, fondateur compris : `is_founder()` ne connaît ni
   // le second facteur ni les sessions vérifiées, une policy de lecture aurait rouvert ce que la garde ferme
   // (revue du 07/09). La lecture passe par /api/direction/journal, prouvée aux blocs 4 et 11.
@@ -217,11 +226,13 @@ try {
   console.log('\n13. Alerte : visible dans « À faire », acquittée, journalisée')
   const [al] = await (await rest('alertes', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ motif: 'erreurs', cle: `e2e-${st}`, gravite: 'attention', sujet: `Alerte de test ${st}`, corps: 'Ligne de test direction-e2e', source: 'direction-e2e' }) })).json()
   const af2 = await json(await api('/api/direction/a-faire', {}, jF))
-  T('l’alerte non acquittée apparaît dans a-faire avec son action', (af2.body.lignes || []).some((l) => l.id === `alerte:${al?.id}` && l.action?.route === `/api/direction/alertes/${al.id}/acquitter`))
+  const ligneAlerte = (af2.body.lignes || []).find((l) => l.id === `alerte:${al?.id}`)
+  T('l’alerte non acquittée apparaît dans a-faire avec son action et un type lisible', !!ligneAlerte && ligneAlerte.action?.route === `/api/direction/alertes/${al.id}/acquitter` && ligneAlerte.libelleType === 'Alerte', JSON.stringify(ligneAlerte).slice(0, 120))
+  T('aucune ligne de a-faire ne propose une action vers une route inexistante', (af2.body.lignes || []).every((l) => !l.action || /^\/api\/direction\/(alertes|securite)\//.test(l.action.route)))
   const acq = await json(await api(`/api/direction/alertes/${al.id}/acquitter`, { method: 'POST' }, jF))
   const [alApres] = await (await rest(`alertes?select=acquittee_le,acquittee_par&id=eq.${al.id}`)).json()
   const ja = (await (await rest(`journal_direction?select=avant,apres&acteur_id=eq.${F.uid}&action=eq.alerte_acquittee`)).json())[0]
-  T('acquitter → 200 (sans re-confirmation), acquittee_le posé, journal avant/après', acq.status === 200 && !!alApres?.acquittee_le && alApres.acquittee_par === F.uid && ja?.avant?.acquittee_le === null && !!ja?.apres?.acquittee_le)
+  T('acquitter → 200 (sans re-confirmation), acquittee_le posé, journal avant/après, message en français', acq.status === 200 && !!alApres?.acquittee_le && alApres.acquittee_par === F.uid && ja?.avant?.acquittee_le === null && !!ja?.apres?.acquittee_le && /acquitt/i.test(acq.body.message ?? ''), JSON.stringify(acq.body).slice(0, 100))
   const af3 = await json(await api('/api/direction/a-faire', {}, jF))
   T('l’alerte a disparu de a-faire', !(af3.body.lignes || []).some((l) => l.id === `alerte:${al.id}`))
   const acqL = await json(await api(`/api/direction/alertes/${al.id}/acquitter`, { method: 'POST' }, jL))
@@ -235,9 +246,14 @@ try {
   await rest(`alertes?id=eq.${al.id}`, { method: 'DELETE' })
 
   console.log('\n14. Plafond par fondateur')
+  // Le plafond a une fenêtre FIXE d'une minute : à cheval sur deux minutes, 130 appels se répartissent en deux
+  // fenêtres et aucun n'est refusé. On attend le début d'une minute avant de tirer.
+  const reste = 60 - (Math.floor(Date.now() / 1000) % 60)
+  if (reste < 30) await new Promise((r) => setTimeout(r, reste * 1000))
+  await purgerPlafondsDe(F.uid)
   const rafale = await Promise.all(Array.from({ length: 130 }, () => api('/api/direction/journal?limite=1', {}, jF)))
-  T('130 appels en rafale → au moins un 429', rafale.some((r) => r.status === 429), rafale.map((r) => r.status).filter((s) => s !== 200).join(' ') || 'aucun')
-  await purgerPlafonds()
+  T('130 appels en rafale → au moins un 429', rafale.some((r) => r.status === 429), rafale.map((r) => r.status).filter((x) => x !== 200).join(' ') || 'aucun')
+  await purgerPlafonds(); await purgerPlafondsDe(F.uid, L.uid)
   }}
 } catch (e) {
   ko++; console.log('  ❌ exception :', e?.stack?.split('\n').slice(0, 3).join(' | ') || e)

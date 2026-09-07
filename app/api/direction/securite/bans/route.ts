@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { estDirection, estRefus, reponseRefus } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { lireUserAgent } from '@/lib/userAgent'
+import { ipPseudonyme } from '@/lib/security'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -66,12 +67,13 @@ export async function POST(req: Request) {
   const refus = await exigerReconfirmation(req, f.uid, 'securite')
   if (refus) return refus
   const { data, error } = await supabaseAdmin.rpc('bannir_ip', {
-    p_acteur: f.uid, p_acteur_email: f.email, p_ip: corps.ip, p_raison: corps.raison, p_expire: corps.expire,
+    p_acteur: f.uid, p_acteur_email: f.email, p_ip: corps.ip, p_cible: ipPseudonyme(corps.ip), p_raison: corps.raison, p_expire: corps.expire,
     p_ip_acteur: f.ip, p_agent: agent(req),
   })
   if (error) { console.error('[direction] bannir_ip :', error.message); return NextResponse.json({ error: 'Ban impossible : rien n’a été fait.', code: 'transaction' }, { status: 503 }) }
   const r = data as { journal?: string; avant?: unknown; apres?: unknown }
-  return NextResponse.json({ ok: true, ban: r?.apres ?? null, journal: r?.journal ?? null })
+  const jusqua = corps.expire ? `jusqu’au ${new Date(corps.expire).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}` : 'sans limite de durée'
+  return NextResponse.json({ ok: true, message: `Adresse ${corps.ip} bannie ${jusqua}.`, ban: r?.apres ?? null, journal: r?.journal ?? null })
 }
 
 export async function DELETE(req: Request) {
@@ -85,9 +87,9 @@ export async function DELETE(req: Request) {
   if (!avant) return NextResponse.json({ ok: true, deja: true })
   const refus = await exigerReconfirmation(req, f.uid, 'securite')
   if (refus) return refus
-  const { data, error } = await supabaseAdmin.rpc('debannir_ip', { p_acteur: f.uid, p_acteur_email: f.email, p_ip: ip, p_ip_acteur: f.ip, p_agent: agent(req) })
+  const { data, error } = await supabaseAdmin.rpc('debannir_ip', { p_acteur: f.uid, p_acteur_email: f.email, p_ip: ip, p_cible: ipPseudonyme(ip), p_ip_acteur: f.ip, p_agent: agent(req) })
   if (error) { console.error('[direction] debannir_ip :', error.message); return NextResponse.json({ error: 'Retrait impossible : rien n’a été fait.', code: 'transaction' }, { status: 503 }) }
   const r = data as { etat?: string; journal?: string }
   if (r?.etat === 'absent') return NextResponse.json({ ok: true, deja: true })
-  return NextResponse.json({ ok: true, journal: r?.journal ?? null })
+  return NextResponse.json({ ok: true, message: `Adresse ${ip} débannie.`, journal: r?.journal ?? null })
 }

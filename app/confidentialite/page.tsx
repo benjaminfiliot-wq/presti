@@ -62,7 +62,7 @@ export default function Confidentialite() {
       <p>Vous pouvez également introduire une réclamation auprès de la <strong>CNIL</strong> (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).</p>
 
       <h2>7. Sécurité</h2>
-      <p>Nous mettons en œuvre des mesures techniques et organisationnelles adaptées : mots de passe hachés et refusés s’ils figurent dans une fuite connue, double authentification disponible sur votre compte, cloisonnement des données par compte appliqué par la base elle-même (isolation stricte), connexions chiffrées (HTTPS), secrets stockés côté serveur uniquement, adresses IP pseudonymisées avant tout enregistrement, bornes anti-abus. Le détail des mesures et le sort des données en fin de contrat figurent dans l’<a href="/cgu#sous-traitance">annexe de sous-traitance</a> des conditions générales.</p>
+      <p>Nous mettons en œuvre des mesures techniques et organisationnelles adaptées : mots de passe hachés et refusés s’ils figurent dans une fuite connue, double authentification disponible sur votre compte, cloisonnement des données par compte appliqué par la base elle-même (isolation stricte), connexions chiffrées (HTTPS), secrets stockés côté serveur uniquement, adresses IP pseudonymisées dans tout ce que vous pouvez consulter, et conservées en clair côté serveur uniquement pour bloquer une source d’abus et pour tracer les actions de nos fondateurs. Le détail des mesures et le sort des données en fin de contrat figurent dans l’<a href="/cgu#sous-traitance">annexe de sous-traitance</a> des conditions générales.</p>
 
       <h2>8. Cookies</h2>
       <p>Presti utilise uniquement des cookies strictement nécessaires au fonctionnement (session de connexion). Aucun cookie publicitaire n’est déposé.</p>

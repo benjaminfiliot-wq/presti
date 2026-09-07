@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useCallback, useEffect, useState, type ReactNode } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
@@ -11,6 +11,10 @@ import Journal from './Journal'
 // Le Centre de direction (prompt v10) — un seul écran, des vues (rail d'onglets, motif app/parametres/page.tsx).
 // J1 : « Aujourd'hui » et « Journal ». Les onglets suivants (Clients & abonnements, Messagerie, Comptabilité,
 // Santé, Artisans, Réglages) n'apparaissent que livrés : rien de non fini n'est visible.
+//
+// L'accès se vérifie sur la route la plus LÉGÈRE (`journal?limite=1`, une lecture) et non plus sur l'état complet
+// (six appels réseau) : l'écran s'ouvrait en huit secondes, et une base muette (migration pas encore collée, 503)
+// ou un plafond atteint (429) le laissaient sur « Vérification de l'accès… » pour toujours (revue du 07/09).
 type Onglet = 'aujourdhui' | 'journal'
 type Message = { type: 'ok' | 'err'; text: string } | null
 const ONGLETS: Onglet[] = ['aujourdhui', 'journal']
@@ -25,23 +29,32 @@ function DirectionInner() {
   const router = useRouter()
   const params = useSearchParams()
   const [role, setRole] = useState<'direction' | 'lecture' | null>(null)
+  const [refus, setRefus] = useState<string | null>(null)
   const [msg, setMsg] = useState<Message>(null)
+  const minuteur = useRef<number | undefined>(undefined)
   const demande = params.get('onglet')
   const onglet: Onglet = ONGLETS.includes(demande as Onglet) ? (demande as Onglet) : 'aujourdhui'
 
-  useEffect(() => {
-    // Garde cliente : sans session → connexion ; pas fondateur (403) ou espace fermé (404) → tableau de bord.
-    // La vraie garde est côté API (lib/direction/garde.ts) : cette page ne contient aucune donnée.
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!data.session) { router.replace('/login'); return }
-      const r = await apiDirection<{ role?: 'direction' | 'lecture' }>('/api/direction/etat')
-      if (r.status === 403 || r.status === 404) { router.replace('/dashboard'); return }
-      if (r.status === 401) { router.replace('/login'); return }
-      setRole(r.data.role ?? 'direction')
-    })
+  const verifier = useCallback(async () => {
+    setRefus(null)
+    const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }))
+    if (!data.session) { router.replace(`/login?retour=${encodeURIComponent(window.location.pathname + window.location.search)}`); return }
+    const r = await apiDirection<{ role?: 'direction' | 'lecture' }>('/api/direction/journal?limite=1')
+    if (r.status === 403 || r.status === 404) { router.replace('/dashboard'); return }
+    if (r.status === 401) { router.replace(`/login?retour=${encodeURIComponent(window.location.pathname + window.location.search)}`); return }
+    // 503 (migration absente, base injoignable), 429, réseau : on le DIT, avec de quoi réessayer.
+    if (!r.ok) { setRefus(r.data.error ?? 'Direction indisponible pour l’instant.'); return }
+    setRole(r.data.role ?? 'direction')
   }, [router])
 
-  const signaler = useCallback((m: Exclude<Message, null>) => { setMsg(m); setTimeout(() => setMsg(null), 6000) }, [])
+  useEffect(() => { void verifier() }, [verifier])
+  useEffect(() => () => window.clearTimeout(minuteur.current), [])
+
+  const signaler = useCallback((m: Exclude<Message, null>) => {
+    setMsg(m)
+    window.clearTimeout(minuteur.current)
+    minuteur.current = window.setTimeout(() => setMsg(null), 6000)
+  }, [])
   function aller(e: React.MouseEvent, id: Onglet) { e.preventDefault(); setMsg(null); router.replace(`/direction?onglet=${id}`, { scroll: false }) }
 
   return (
@@ -58,8 +71,15 @@ function DirectionInner() {
           </div>
         </nav>
         <div className="param-main dir-main" key={onglet}>
-          {role === null ? <div className="tool-card"><p className="muted">Vérification de l’accès…</p></div>
-            : onglet === 'journal' ? <Journal />
+          {refus ? (
+            <div className="tool-card" data-direction-refus>
+              <h2>La direction ne répond pas</h2>
+              <p className="notif-erreur" role="alert">{refus}</p>
+              <p className="muted">Si la migration <code>0065</code> vient d’être collée, réessayez. Sinon, l’espace se rouvrira de lui-même dès que la base répondra.</p>
+              <button type="button" className="btn btn--primary" onClick={() => void verifier()}>Réessayer</button>
+            </div>
+          ) : role === null ? <div className="tool-card"><p className="muted">Vérification de l’accès…</p></div>
+            : onglet === 'journal' ? <Journal role={role} />
             : <Aujourdhui role={role} signaler={signaler} />}
           {msg ? <div className={`msg${msg.type === 'err' ? ' err' : ''}`} role="status">{msg.text}</div> : null}
         </div>

@@ -10,7 +10,9 @@ export const dynamic = 'force-dynamic'
 
 // GET /api/direction/fil — les 20 derniers événements de l'entreprise (prompt v10 §2.1), fusionnés :
 // journal de direction, nouveaux artisans (nom + offre, jamais l'email d'un prospect), Stripe, alertes, tâches.
-export type Evenement = { id: string; type: 'journal' | 'artisan' | 'stripe' | 'alerte' | 'cron'; a: string; libelle: string; detail: string | null; lien: string | null; source: string }
+export type Evenement = { id: string; type: 'journal' | 'artisan' | 'stripe' | 'alerte' | 'cron'; libelleType: string; a: string; libelle: string; detail: string | null; onglet: string | null; source: string }
+const LIBELLES_TYPE = { journal: 'Direction', artisan: 'Artisan', stripe: 'Paiement', alerte: 'Alerte', cron: 'Tâche' } as const
+const NOMS_CRON: Record<string, string> = { relances: 'Relances de devis', 'canaux-relever': 'Relève des boîtes email', alertes: 'Ronde des alertes', 'purges-rgpd': 'Purges RGPD' }
 
 const LIBELLES_JOURNAL: Record<string, string> = {
   reconfirmation: 'Re-confirmation', ban_ip: 'IP bannie', deban_ip: 'IP débannie', alerte_acquittee: 'Alerte acquittée',
@@ -25,7 +27,7 @@ export async function GET(req: Request) {
       const { data, error } = await supabaseAdmin.from('journal_direction').select('id, action, acteur_email, cible_id, cree_le').order('cree_le', { ascending: false }).limit(20)
       if (error) throw new Error(error.message)
       return data ?? []
-    }, 10_000),
+    }),
     sourcer('fil:artisans', 'supabase', async () => {
       const { data, error } = await supabaseAdmin.from('artisans').select('id, nom, metier, plan, created_at').eq('is_founder', false).not('email', 'like', '%@presti-test.invalid').order('created_at', { ascending: false }).limit(10)
       if (error) throw new Error(error.message)
@@ -36,19 +38,19 @@ export async function GET(req: Request) {
       const { data, error } = await supabaseAdmin.from('alertes').select('id, motif, sujet, gravite, cree_le, acquittee_le').order('cree_le', { ascending: false }).limit(10)
       if (error) throw new Error(error.message)
       return data ?? []
-    }, 15_000),
+    }),
     sourcer('fil:crons', 'supabase', async () => {
       const { data, error } = await supabaseAdmin.from('passages_cron').select('nom, dernier_passage, reussi')
       if (error) throw new Error(error.message)
       return data ?? []
-    }, 30_000),
+    }),
   ])
   const ev: Evenement[] = []
-  for (const j of journal.valeur ?? []) ev.push({ id: `j:${j.id}`, type: 'journal', a: j.cree_le, libelle: LIBELLES_JOURNAL[j.action] ?? j.action, detail: `${j.acteur_email ?? 'fondateur'}${j.cible_id ? ` · ${j.cible_id}` : ''}`, lien: '/direction?onglet=journal', source: 'supabase' })
-  for (const a of artisans.valeur ?? []) ev.push({ id: `a:${a.id}`, type: 'artisan', a: a.created_at, libelle: `Nouvel artisan : ${a.nom || a.metier || 'sans nom'}`, detail: `${planConf(a.plan).label}${a.metier ? ` · ${a.metier}` : ''}`, lien: null, source: 'supabase' })
-  for (const s of stripe.valeur ?? []) ev.push({ id: `s:${s.id}`, type: 'stripe', a: s.a, libelle: s.libelle, detail: s.objet, lien: null, source: 'stripe' })
-  for (const al of alertes.valeur ?? []) ev.push({ id: `al:${al.id}`, type: 'alerte', a: al.cree_le, libelle: `Alerte : ${al.sujet}`, detail: `${al.gravite}${al.acquittee_le ? ' · acquittée' : ''}`, lien: null, source: 'supabase' })
-  for (const c of crons.valeur ?? []) ev.push({ id: `c:${c.nom}`, type: 'cron', a: c.dernier_passage, libelle: `Tâche « ${c.nom} » ${c.reussi ? 'passée' : 'en échec'}`, detail: null, lien: null, source: 'supabase' })
+  for (const j of journal.valeur ?? []) ev.push({ id: `j:${j.id}`, type: 'journal', libelleType: LIBELLES_TYPE.journal, a: j.cree_le, libelle: LIBELLES_JOURNAL[j.action] ?? j.action, detail: j.acteur_email ?? 'fondateur', onglet: 'journal', source: 'supabase' })
+  for (const a of artisans.valeur ?? []) ev.push({ id: `a:${a.id}`, type: 'artisan', libelleType: LIBELLES_TYPE.artisan, a: a.created_at, libelle: `Nouvel artisan : ${a.nom || a.metier || 'sans nom'}`, detail: `${planConf(a.plan).label}${a.metier ? ` · ${a.metier}` : ''}`, onglet: null, source: 'supabase' })
+  for (const s of stripe.valeur ?? []) ev.push({ id: `s:${s.id}`, type: 'stripe', libelleType: LIBELLES_TYPE.stripe, a: s.a, libelle: s.libelle, detail: s.objet, onglet: null, source: 'stripe' })
+  for (const al of alertes.valeur ?? []) ev.push({ id: `al:${al.id}`, type: 'alerte', libelleType: LIBELLES_TYPE.alerte, a: al.cree_le, libelle: `Alerte : ${al.sujet}`, detail: al.acquittee_le ? 'acquittée' : al.gravite, onglet: null, source: 'supabase' })
+  for (const c of crons.valeur ?? []) ev.push({ id: `c:${c.nom}`, type: 'cron', libelleType: LIBELLES_TYPE.cron, a: c.dernier_passage, libelle: `${NOMS_CRON[c.nom] ?? c.nom} : ${c.reussi ? 'passée' : 'en échec'}`, detail: null, onglet: null, source: 'supabase' })
   ev.sort((x, y) => y.a.localeCompare(x.a))
   const sources = { journal: { a: journal.a, erreur: journal.erreur }, artisans: { a: artisans.a, erreur: artisans.erreur }, stripe: { a: stripe.a, erreur: stripe.erreur }, alertes: { a: alertes.a, erreur: alertes.erreur }, crons: { a: crons.a, erreur: crons.erreur } }
   return NextResponse.json({ evenements: ev.slice(0, 20), sources, role: f.role, a: new Date().toISOString() })

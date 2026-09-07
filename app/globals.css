@@ -2535,3 +2535,17 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .dir-table .psh-dtable td::before{content:attr(data-lab);flex:0 0 5.5rem;color:var(--faint);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;padding-top:.15rem}
 }
 @media(prefers-reduced-motion:reduce){.dir-bandeau,.dir-modale{transition:none}}
+
+/* ---- v10 · Centre de direction : compléments de la revue du 07/09 ---- */
+.dir-h2{font-size:14.5px;font-weight:700;margin:0 0 10px;color:var(--ink)}
+.dir-chiffres{display:flex;flex-direction:column}
+.dir-kpis{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.dir-dep{display:inline-flex;align-items:center;gap:6px;width:auto;margin:0;padding:2px 0;background:none;border:0;color:var(--ink);font:inherit;font-weight:700;text-align:left;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+.dir-dep::after{content:"▸";font-size:.8em;color:var(--muted);transition:transform .15s}
+.dir-dep[aria-expanded="true"]::after{transform:rotate(90deg)}
+@media (hover:hover) and (pointer:fine){.dir-dep:hover{color:var(--accent-ink)}}
+@media(max-width:1024px){
+  .dir-main .btn,.dir-main .psh-btn,.dir-dep{min-height:44px}
+  .dir-bandeau-btn{min-height:52px}
+}
+@media(prefers-reduced-motion:reduce){.dir-dep::after{transition:none}}

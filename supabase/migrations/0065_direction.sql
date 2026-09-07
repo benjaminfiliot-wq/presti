@@ -158,8 +158,10 @@ revoke all on public.reglages_globaux from public, anon, authenticated;
 -- ban (le rappel de l'état d'avant pouvant lui-même échouer, en silence). Une fonction plpgsql = une
 -- transaction : les deux écritures tiennent ou aucune. Elles rendent l'identifiant de la ligne de journal.
 
+-- `p_cible` est le PSEUDONYME de l'adresse bannie (lib/security.ts) : le journal vit 24 mois, `ip_bans` douze —
+-- l'adresse d'un visiteur n'a pas à lui survivre. Celle de l'ACTEUR, elle, reste en clair : c'est la preuve.
 create or replace function public.bannir_ip(
-  p_acteur uuid, p_acteur_email text, p_ip text, p_raison text, p_expire timestamptz,
+  p_acteur uuid, p_acteur_email text, p_ip text, p_cible text, p_raison text, p_expire timestamptz,
   p_ip_acteur text, p_agent text
 ) returns jsonb language plpgsql security definer set search_path = public as $$
 declare v_avant jsonb; v_apres jsonb; v_journal uuid;
@@ -170,15 +172,17 @@ begin
     on conflict (ip) do update set raison = excluded.raison, auto = false, expires_le = excluded.expires_le;
   select to_jsonb(b) - 'created_at' into v_apres from public.ip_bans b where b.ip = p_ip;
   insert into public.journal_direction (acteur_id, acteur_email, action, cible_type, cible_id, avant, apres, ip, agent, reconfirme)
-    values (p_acteur, p_acteur_email, 'ban_ip', 'ip', p_ip, v_avant, v_apres, p_ip_acteur, p_agent, true)
+    values (p_acteur, p_acteur_email, 'ban_ip', 'ip', p_cible,
+            case when v_avant is null then null else jsonb_set(v_avant, '{ip}', to_jsonb(p_cible)) end,
+            jsonb_set(v_apres, '{ip}', to_jsonb(p_cible)), p_ip_acteur, p_agent, true)
     returning id into v_journal;
   return jsonb_build_object('journal', v_journal, 'avant', v_avant, 'apres', v_apres);
 end $$;
-revoke all on function public.bannir_ip(uuid, text, text, text, timestamptz, text, text) from public, anon, authenticated;
-grant execute on function public.bannir_ip(uuid, text, text, text, timestamptz, text, text) to service_role;
+revoke all on function public.bannir_ip(uuid, text, text, text, text, timestamptz, text, text) from public, anon, authenticated;
+grant execute on function public.bannir_ip(uuid, text, text, text, text, timestamptz, text, text) to service_role;
 
 create or replace function public.debannir_ip(
-  p_acteur uuid, p_acteur_email text, p_ip text, p_ip_acteur text, p_agent text
+  p_acteur uuid, p_acteur_email text, p_ip text, p_cible text, p_ip_acteur text, p_agent text
 ) returns jsonb language plpgsql security definer set search_path = public as $$
 declare v_avant jsonb; v_journal uuid;
 begin
@@ -186,12 +190,12 @@ begin
   if v_avant is null then return jsonb_build_object('etat', 'absent'); end if;
   delete from public.ip_bans where ip = p_ip;
   insert into public.journal_direction (acteur_id, acteur_email, action, cible_type, cible_id, avant, apres, ip, agent, reconfirme)
-    values (p_acteur, p_acteur_email, 'deban_ip', 'ip', p_ip, v_avant, null, p_ip_acteur, p_agent, true)
+    values (p_acteur, p_acteur_email, 'deban_ip', 'ip', p_cible, jsonb_set(v_avant, '{ip}', to_jsonb(p_cible)), null, p_ip_acteur, p_agent, true)
     returning id into v_journal;
   return jsonb_build_object('etat', 'ok', 'journal', v_journal, 'avant', v_avant);
 end $$;
-revoke all on function public.debannir_ip(uuid, text, text, text, text) from public, anon, authenticated;
-grant execute on function public.debannir_ip(uuid, text, text, text, text) to service_role;
+revoke all on function public.debannir_ip(uuid, text, text, text, text, text) from public, anon, authenticated;
+grant execute on function public.debannir_ip(uuid, text, text, text, text, text) to service_role;
 
 create or replace function public.acquitter_alerte(
   p_acteur uuid, p_acteur_email text, p_alerte uuid, p_ip_acteur text, p_agent text
@@ -211,3 +215,13 @@ begin
 end $$;
 revoke all on function public.acquitter_alerte(uuid, text, uuid, text, text) from public, anon, authenticated;
 grant execute on function public.acquitter_alerte(uuid, text, uuid, text, text) to service_role;
+
+-- ── 7. Le rôle de départ ──────────────────────────────────────────────────────────────────────────────
+-- Sans ligne, un fondateur est « direction » (lib/direction/garde.ts) : on inscrit explicitement les fondateurs
+-- actuels, pour que le rôle soit une décision écrite et non un défaut. Une personne à qui l'on veut donner la
+-- LECTURE seule reçoit ensuite sa ligne — mais tant que le rôle exige `is_founder`, elle hérite aussi des
+-- policies fondateur de 0004/0006 (devis, leads et factures de TOUS les artisans) : à découpler avant d'ouvrir
+-- cet accès à quelqu'un d'autre que Benj (chantier du J5).
+insert into public.direction_roles (user_id, role)
+  select id, 'direction' from public.artisans where is_founder = true
+  on conflict (user_id) do nothing;
