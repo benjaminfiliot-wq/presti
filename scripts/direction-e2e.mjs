@@ -13,7 +13,8 @@
 // Usage : node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/direction-e2e.mjs
 import fs from 'node:fs'
 import crypto from 'node:crypto'
-import { verifierSessionTest } from './lib/connexion-test.mjs'
+import { chromium } from 'playwright'
+import { verifierSessionTest, codeEmailSiDemande } from './lib/connexion-test.mjs'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) { const m = l.match(/^([A-Z0-9_]+)=(.*)$/); if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '') }
 const SB = process.env.NEXT_PUBLIC_SUPABASE_URL, SVC = process.env.SUPABASE_SERVICE_ROLE_KEY, ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -29,6 +30,7 @@ let ok = 0, ko = 0
 const T = (n, c, d = '') => { if (c) { ok++; console.log(`  ✅ ${n}`) } else { ko++; console.log(`  ❌ ${n}${d ? ` — ${d}` : ''}`) } }
 const fin = (code) => { process.exitCode = code; setTimeout(() => {}, 50) }
 const comptes = []
+const CAPTURES = process.env.CAPTURES || 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/f2774700-2996-4ee8-bfc0-5b67f39c3350/scratchpad'
 
 async function creer(nom, { fondateur = false, role = null } = {}) {
   const email = `direction-${nom}-${st}@presti-test.invalid`, password = `Dir-${crypto.randomBytes(9).toString('base64url')}-1`
@@ -247,6 +249,60 @@ try {
   T('deux acquittements simultanés → 200 tous les deux, UNE seule ligne de journal', course.every((r) => r.status === 200) && lignesCourse.length === 1, `${course.map((r) => r.status).join(' ')} · ${lignesCourse.length} ligne(s)`)
   await rest(`alertes?id=eq.${al2.id}`, { method: 'DELETE' })
   await rest(`alertes?id=eq.${al.id}`, { method: 'DELETE' })
+
+  console.log('\n15. L’écran (Chromium) : bandeau, chiffres sourcés, journal, modale, téléphone')
+  const nav = await chromium.launch()
+  try {
+    for (const [nom, viewport] of [['ordinateur', { width: 1280, height: 900 }], ['téléphone', { width: 390, height: 844 }]]) {
+      const ctx = await nav.newContext({ viewport, locale: 'fr-FR', reducedMotion: 'reduce' })
+      const page = await ctx.newPage()
+      try {
+        await page.goto(`${APP}/login`, { waitUntil: 'load', timeout: 45000 })
+        await page.fill('input[type=email]', F.email)
+        await page.fill('input[type=password]', F.password)
+        await page.getByRole('button', { name: /Se connecter/i }).click()
+        await codeEmailSiDemande(page, F.email, { uid: F.uid })
+        await page.waitForURL(/dashboard|outils|direction/, { timeout: 30000 }).catch(() => {})
+        await page.goto(`${APP}/direction`, { waitUntil: 'load', timeout: 45000 })
+        const bandeau = await page.waitForSelector('[data-bandeau]', { timeout: 30000 }).catch(() => null)
+        T(`${nom} : le bandeau d’état s’affiche`, !!bandeau)
+        await page.waitForSelector('[data-kpi]', { timeout: 20000 }).catch(() => {})
+        const kpis = await page.locator('[data-kpi]').count()
+        T(`${nom} : les sept chiffres du jour sont là`, kpis === 7, `${kpis} tuile(s)`)
+        // Les valeurs arrivent vraiment : sans cette attente, la capture et les assertions passaient sur un écran
+        // entièrement en « chargement… » (constaté à l’œil sur la première capture du 07/09).
+        await page.waitForFunction(() => {
+          const t = [...document.querySelectorAll('[data-kpi] .dir-src')].map((e) => e.textContent || '')
+          return t.length >= 7 && t.filter((x) => /il y a|à l’instant|non mesuré|injoignable/.test(x)).length >= 6
+        }, { timeout: 40000 }).catch(() => {})
+        const chargees = await page.evaluate(() => [...document.querySelectorAll('[data-kpi] .dir-src')].filter((e) => /il y a|à l’instant|non mesuré|injoignable/.test(e.textContent || '')).length)
+        T(`${nom} : chaque chiffre porte sa source et sa fraîcheur, valeur chargée`, chargees === kpis, `${chargees}/${kpis} chargés`)
+        const valeurs = await page.evaluate(() => [...document.querySelectorAll('[data-kpi] .val')].map((e) => (e.textContent || '').trim()))
+        T(`${nom} : les valeurs ne sont plus des points de suspension`, valeurs.filter((v) => v !== '…' && v !== '').length >= 6, valeurs.join(' | '))
+        await page.waitForFunction(() => !/Chargement…/.test(document.querySelector('[data-afaire]')?.textContent || ''), { timeout: 30000 }).catch(() => {})
+        const bandeauTexte = await page.locator('[data-bandeau]').innerText()
+        T(`${nom} : le bandeau annonce un état, pas « Vérification… »`, /Tout fonctionne|Service dégradé|Incident en cours/.test(bandeauTexte), bandeauTexte.split(String.fromCharCode(10)).join(" · ").slice(0, 100))
+        T(`${nom} : « À faire » et le fil sont rendus`, await page.locator('[data-afaire]').count() === 1 && await page.locator('[data-fil]').count() === 1)
+        const deborde = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)
+        T(`${nom} : aucun débordement horizontal`, !deborde)
+        if (viewport.width < 800) {
+          const petits = await page.evaluate(() => [...document.querySelectorAll('.dir-main button, .dir-main a.psh-btn, .dir-bandeau-btn')].filter((e) => e.getBoundingClientRect().height > 0 && e.getBoundingClientRect().height < 44).length)
+          T(`${nom} : toutes les cibles font au moins 44 px`, petits === 0, `${petits} trop petite(s)`)
+        }
+        await page.screenshot({ path: `${CAPTURES}/direction-${nom}.png`, fullPage: true })
+        // Le journal, et son dépliage au clavier.
+        await page.goto(`${APP}/direction?onglet=journal`, { waitUntil: 'load', timeout: 45000 })
+        await page.waitForSelector('[data-journal]', { timeout: 20000 }).catch(() => {})
+        T(`${nom} : le journal liste des actions`, await page.locator('[data-journal] tbody tr').count() >= 1)
+        const dep = page.locator('.dir-dep').first()
+        if (await dep.count()) {
+          await dep.focus(); await page.keyboard.press('Enter')
+          T(`${nom} : le détail avant/après se déplie au clavier`, await page.locator('.dir-json').count() >= 1)
+        }
+        await page.screenshot({ path: `${CAPTURES}/direction-journal-${nom}.png`, fullPage: true })
+      } finally { await ctx.close() }
+    }
+  } finally { await nav.close() }
 
   console.log('\n14. Plafond par fondateur')
   // Le plafond a une fenêtre FIXE d'une minute : à cheval sur deux minutes, 130 appels se répartissent en deux

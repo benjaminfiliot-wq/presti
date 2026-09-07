@@ -40,7 +40,10 @@ export default function Aujourdhui({ role, signaler }: { role: 'direction' | 'le
     // Chaque bloc s'affiche dès qu'il revient : un Stripe lent ne retarde plus le reste de l'écran.
     const suivre = <T,>(chemin: string, poser: (v: T) => void) => {
       void apiDirection<T>(chemin).then((r) => {
-        if (r.ok) { poser(r.data); setPanne(null) } else if (r.status === 0 || r.status >= 500) setPanne(r.data.error ?? 'Une partie de la direction ne répond pas.')
+        if (r.ok) { poser(r.data); setPanne(null); return }
+        // 429 (trop d’appels), 503 (base muette), 0 (réseau) : tout refus se dit. Un bloc silencieux qui reste
+        // « en chargement » pour toujours est le pire des deux mondes (constaté au premier passage du 07/09).
+        setPanne(r.data.error ?? 'Une partie de la direction ne répond pas.')
       })
     }
     suivre<Etat>('/api/direction/etat', setEtat)
@@ -93,8 +96,8 @@ export default function Aujourdhui({ role, signaler }: { role: 'direction' | 'le
       <section className={`dir-bandeau ${etat ? etat.niveau : 'attente'}`} data-bandeau>
         <span className="visually-hidden" aria-live="polite">{n ? `État du service : ${n.texte}.` : ''}</span>
         <button type="button" className="dir-bandeau-btn" onClick={() => setDetailEtat((v) => !v)} aria-expanded={detailEtat}>
-          <span className={`pill ${n ? n.pill : 'muted'}`}><span className="pdot" />{n ? n.texte : 'Vérification…'}</span>
-          <span className="dir-bandeau-txt">{etat ? `${etat.controles.filter((c) => c.etat === 'ok').length} contrôles verts sur ${etat.controles.length}` : 'Site, connexion, Stripe, emails, tâches, budget IA'}</span>
+          <span className={`pill ${n ? n.pill : panne ? 'crit' : 'muted'}`}><span className="pdot" />{n ? n.texte : panne ? 'État non vérifié' : 'Vérification…'}</span>
+          <span className="dir-bandeau-txt">{etat ? `${etat.controles.filter((c) => c.etat === 'ok').length} contrôles verts sur ${etat.controles.length}` : panne ? panne : 'Site, connexion, Stripe, emails, tâches, budget IA'}</span>
           <span className="dir-bandeau-when">{etat ? relTime(etat.a, maintenant) : ''}</span>
         </button>
         {detailEtat && etat ? (
