@@ -80,7 +80,18 @@ async function main() {
   const nonMarques = tests.filter((a) => !a.est_demo)
   T('tout compte de test est marqué « démo », donc hors des chiffres', nonMarques.length === 0,
     nonMarques.map((a) => `${a.email} — ${a.nom ?? 'sans nom'}, créé le ${String(a.created_at).slice(0, 10)} — poser est_demo`).join('\n        '))
-  if (tests.length) console.log(`     ℹ️  ${tests.length} compte(s) de test marqué(s), en attente de la purge validée par Benj (plans/demos-a-supprimer.md).`)
+  if (tests.length) {
+    // La purge du 07/09 a effacé tout ce qui pouvait l'être. Ce qui reste, reste POUR UNE RAISON, et
+    // la raison doit être lisible ici — sinon quelqu'un finira par « finir le ménage » et casser
+    // les captures de la vitrine ou la relecture des stores.
+    console.log(`     ℹ️  ${tests.length} compte(s) conservé(s) volontairement (marqués, hors de tous les chiffres) :`)
+    for (const a of tests) {
+      const pourquoi = a.email === COMPTE_STORE ? 'exigé par Apple et Google pour relire l’application'
+        : a.email === 'demo-menuisier@presti-test.invalid' ? 'alimente les captures de la vitrine, et quatre suites s’appuient dessus'
+        : 'porte une facture émise : dix ans de conservation (art. L. 102 B du LPF)'
+      console.log(`        · ${a.email} — ${pourquoi}`)
+    }
+  }
   T('le compte de relecture des stores est présent et NON fondateur',
     (artisans ?? []).some((a) => a.email === COMPTE_STORE && !a.is_founder),
     (artisans ?? []).find((a) => a.email === COMPTE_STORE) ? 'il est fondateur !' : 'absent — Apple et Google l’exigent')
