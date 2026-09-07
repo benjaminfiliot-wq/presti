@@ -519,6 +519,24 @@ Trois fois le même défaut, en une séance : **deux chiffres justes qui se lise
 - **Pour Benj** : coller `_A_COLLER_sql_editor_0071.sql`, puis la partie production de la suite se déroulera. Restent aussi les deux clés Stripe réelles à révoquer, et un devis IA depuis son compte pour que je retire le filet de l'ancienne clé Anthropic.
 - **Suivant** : l'écran Comptabilité (ventes, achats, TVA, échéances, relevé avec export), puis J6 — santé, support, réglages.
 
+## [44] v11 · J5 ouvert et prouvé — la comptabilité et le relevé du partenaire en production — 07/09 — ✅ `controle-compta-e2e` **27/27** (`7d452ea` → `d3a95eb` en prod)
+
+- **0071 collée**, drapeau levé, onglet **Comptabilité** ouvert : TVA, échéances, relevé du partenaire, achats.
+- **Le seuil de TVA est une jauge, pas un graphique** : ce qu'on veut savoir tient en un coup d'œil — combien de chemin avant que la facturation change. Et quand il approche, l'écran dit **ce qui changera le jour du dépassement** : les prix affichés, les mentions légales, l'interrupteur de TVA chez Stripe. Trois choses le même jour, autant les avoir écrites d'avance.
+- **Le relevé montre son calcul ligne à ligne**, pas seulement son total : encaissé, coûts, résultat, commission, intéressement, dû. Un relevé qu'on ne peut pas recompter à la main ne vaut rien — ni pour celui qui paie, ni pour celui qui reçoit.
+- **Une estimation ne s'affiche jamais comme un montant dû** : elle porte son « ≈ » et l'écrit en toutes lettres. La TVA subie sur les achats est montrée pour mémoire, avec la raison pour laquelle elle ne se récupère pas — sinon quelqu'un finira par croire qu'on l'oublie.
+- **Prouvé en production** : le relevé refuse un mois mal écrit, refuse d'arrêter un mois qui n'est pas fini, rend des entiers de centimes, exclut les comptes de démonstration, et ses deux parts font toujours le résultat. Le partenaire **lit** son relevé et reçoit un 403 s'il tente de l'arrêter — arrêter engage l'entreprise.
+
+### Mon propre outil de vérification m'a menti, le jour même où j'ai écrit la leçon
+
+Le script de capture a photographié la **page de connexion** en annonçant « ✅ débordement horizontal : non ». Il ne s'était pas connecté, et rien ne le vérifiait. C'est exactement le défaut du 06/09 — « tests verts sur un écran en chargement » — reproduit par l'outil censé m'en préserver.
+
+Repris : il **refuse de photographier autre chose que l'écran attendu**, et dit lequel il a pris. Au premier passage corrigé, il a immédiatement trouvé un vrai défaut : le tableau du relevé n'était pas dans un conteneur défilant, et poussait toute la page latéralement sur téléphone — sur l'écran où l'on vient justement vérifier ce qu'on doit à quelqu'un. Corrigé, revérifié à l'œil.
+
+- **Appels IA du sprint : 0.**
+- **Pour Benj** : révoquer chez Stripe les deux clés restreintes réelles trouvées en clair ; faire un devis IA depuis son compte pour que je retire le filet de l'ancienne clé Anthropic ; et l'APK sur son téléphone, qui reste le seul blocage de l'application.
+- **Suivant** : J6 — santé, support, réglages.
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.

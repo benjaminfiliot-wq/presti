@@ -20,7 +20,10 @@ façon **DRIP/Framer** (mouvement fluide, gros typo) mais **100% codé** (pas Fr
 
 ## Composants existants (réutiliser, ne pas réinventer)
 - **AppShell** (`app/AppShell.tsx`) : sidebar espace connecté.
-- **Poste de contrôle** (`app/JarvisHub.tsx`) : HUD circulaire interactif SVG (fondateurs).
+- **Poste de contrôle** (`app/controle/`) : l'écran unique du fondateur — barre d'état permanente
+  (`BarreEtat.tsx`), rail d'onglets avec compteurs, recherche Ctrl+K (`Recherche.tsx`), tableaux denses.
+  Densité d'un outil de travail : pas de grandes cartes décoratives, pas de radar animé. Le HUD
+  circulaire « façon Jarvis » a été supprimé le 07/09 — ne pas le réintroduire.
 - **HeroDemo** (`app/HeroDemo.tsx`) : démo animée (téléphone qui se joue seul).
 - Classes utilitaires : `.btn--primary`, `.sweepborder` (bordure lumineuse), `.pdemo`, `.will-reveal` (reveal scroll), `.faq-item`, `.legal-wrap`.
 
