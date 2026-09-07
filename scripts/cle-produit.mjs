@@ -107,13 +107,21 @@ console.log('     ⚠️  la variable ne prend effet qu’au PROCHAIN déploieme
 
 // ── 4. Ménage des clés devenues inutiles ───────────────────────────────────────────────────────────
 console.log('\n4. Les autres clés')
-const autres = (k.data ?? []).filter((x) => x.id !== connue.id && x.status === 'active')
+// On épargne la clé qui servait jusqu'ici, sauf `--tout`. Tant que personne n'a vu l'IA répondre
+// depuis le nouveau déploiement, la désactiver serait couper le filet sans savoir si le sol est là :
+// la clé est prouvée valide chez Anthropic, mais « Vercel sert bien cette valeur au runtime » ne se
+// prouve qu'au premier vrai appel — et le protocole interdit d'en faire un pour le plaisir.
+const TOUT = process.argv.includes('--tout')
+const actives = (k.data ?? []).filter((x) => x.id !== connue.id && x.status === 'active')
+const filet = TOUT ? null : actives.filter((x) => !x.workspace_id).sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)))[0]
+const autres = actives.filter((x) => x.id !== filet?.id)
 if (!autres.length) console.log('     aucune autre clé active.')
 else if (!MENAGE) {
   console.log('     à désactiver une fois le déploiement vérifié (relancer avec --menage) :')
   for (const x of autres) console.log(`       · « ${x.name} » (${x.workspace_id === ESPACE ? 'espace Presti' : 'espace par défaut'}) — ${x.partial_key_hint}`)
   console.log('\n     ⚠️  PAS maintenant : la production tourne encore avec l’ancienne jusqu’au redéploiement.')
 } else {
+  if (filet) console.log(`     (« ${filet.name} » est gardée comme filet — --tout pour la retirer aussi.)`)
   for (const x of autres) {
     const d = await fetch(`https://api.anthropic.com/v1/organizations/api_keys/${x.id}`, {
       method: 'POST', headers: ah, body: JSON.stringify({ status: 'inactive' }),
