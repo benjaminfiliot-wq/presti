@@ -78,9 +78,17 @@ export async function testerImap(hote: string, port: number, user: string, pass:
     await client.logout()
     return { ok: true, ms: Date.now() - t0 }
   } catch (e) {
-    const brut = (e instanceof Error ? e.message : String(e)).slice(0, 140)
+    // Les DRAPEAUX d'abord, le message ensuite. `imapflow` pose `authenticationFailed` quand c'est
+    // le LOGIN qui a été refusé, et `responseText` porte la phrase exacte du serveur. Le message,
+    // lui, vaut « Command failed » pour à peu près tout : chercher des mots dedans, c'est deviner.
+    const detail = e as { authenticationFailed?: boolean; responseText?: string; serverResponseCode?: string; code?: string }
+    const brut = [detail?.responseText, e instanceof Error ? e.message : String(e), detail?.serverResponseCode, detail?.code]
+      .filter(Boolean).join(' · ').slice(0, 160)
     const m = brut.toLowerCase()
     const ms = Date.now() - t0
+    if (detail?.authenticationFailed === true) {
+      return { ok: false, erreur: 'Identifiants refusés par le serveur. Le compte existe-t-il, et le mot de passe est-il bien celui de la boîte (pas celui de l’espace client) ? Avec Gmail ou Outlook, il faut un « mot de passe d’application ».', brut, ms }
+    }
     // Un délai dépassé et un mot de passe refusé ne se ressemblent pas : le refus revient tout de
     // suite, le délai met dix secondes ou plus. C'est souvent la seule chose qui les distingue,
     // parce que les serveurs ne disent pas toujours pourquoi ils ferment la porte.
