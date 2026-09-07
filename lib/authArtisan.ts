@@ -175,8 +175,16 @@ export async function getUserRevocable(token: string): Promise<ReponseUtilisateu
   if (r.error || !r.data?.user) return r
 
   const iat = dateEmission(token)
+  // La suspension se lit ICI aussi, pas seulement dans `authArtisan` : dix-huit routes passent par
+  // `getUserRevocable` — dont la génération de devis et la souscription — et un compte suspendu y
+  // restait pleinement actif (revue du 07/09). Une suspension qui ne suspend que la moitié du produit
+  // n'en est pas une.
   const { data: art } = await supabaseAdmin.from('artisans')
-    .select('sessions_invalides_avant').eq('id', r.data.user.id).maybeSingle()
+    .select('sessions_invalides_avant, suspensions!left(id, message, levee_le)').eq('id', r.data.user.id).maybeSingle()
+  const suspension = ((art?.suspensions ?? []) as { id: string; message: string | null; levee_le: string | null }[]).find((x) => !x.levee_le)
+  if (suspension) {
+    return { data: { user: null }, error: { message: suspension.message || ERREUR_SUSPENDU, name: 'AuthApiError', status: 403, code: 'suspendu' } } as unknown as ReponseUtilisateur
+  }
   const seuil = art?.sessions_invalides_avant ? Math.floor(new Date(art.sessions_invalides_avant).getTime() / 1000) : 0
   if (seuil && iat !== null && iat < seuil) {
     // On rend exactement la forme d'un jeton invalide : la route ne voit pas la différence.

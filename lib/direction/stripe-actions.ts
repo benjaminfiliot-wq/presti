@@ -100,14 +100,20 @@ export async function rembourser(
   if (!intention) return echec('Stripe ne rattache aucun paiement à la dernière facture.', 'rien')
 
   const paye = (f.amount_paid ?? 0) / 100
-  const dejaRendu = ((f as unknown as { post_payment_credit_notes_amount?: number }).post_payment_credit_notes_amount ?? 0) / 100
-  const plafond = Math.max(0, paye - dejaRendu)
-  if (plafond <= 0) return echec('Cette facture a déjà été remboursée en totalité.', 'deja')
+  // Le déjà-rendu se compte sur le PAIEMENT, pas sur les avoirs : Stripe n'émet pas d'avoir pour un
+  // remboursement fait par l'API, si bien que `post_payment_credit_notes_amount` restait à zéro et que
+  // le plafond ne bougeait jamais. Deux remboursements partiels de 40 € sur une facture de 59 € étaient
+  // acceptés l'un après l'autre — 80 € rendus pour 59 encaissés (revue du 07/09).
+  const rendus = (await s.refunds.list({ payment_intent: intention, limit: 100 }, OPTIONS)).data
+    .filter((r) => r.status !== 'failed' && r.status !== 'canceled')
+    .reduce((n, r) => n + (r.amount ?? 0), 0) / 100
+  const plafond = Math.max(0, paye - rendus)
+  if (plafond <= 0) return echec(`Cette facture a déjà été remboursée en totalité (${rendus.toFixed(2)} € rendus).`, 'deja')
 
   const montant = montantEuros == null ? plafond : montantEuros
   if (!(montant > 0)) return echec('Le montant doit être positif.')
   // Borne dure : on ne rend jamais plus que ce qui a été encaissé sur la dernière facture.
-  if (montant > plafond + 0.005) return echec(`Au maximum ${plafond.toFixed(2)} € : c'est ce qui reste encaissé sur la dernière facture.`, 'plafond')
+  if (montant > plafond + 0.005) return echec(`Au maximum ${plafond.toFixed(2)} € : ${paye.toFixed(2)} € encaissés${rendus > 0 ? `, ${rendus.toFixed(2)} € déjà rendus` : ''}.`, 'plafond')
 
   const refund = await s.refunds.create({
     payment_intent: intention,
@@ -127,15 +133,16 @@ export async function mettreEnPause(
   const sub = await s.subscriptions.retrieve(abonnement, {}, OPTIONS)
   if (sub.pause_collection) return echec('Cet abonnement est déjà en pause.', 'deja')
   if (!['active', 'trialing', 'past_due'].includes(sub.status)) return echec(`Abonnement ${sub.status} : rien à mettre en pause.`, 'statut')
-  if (jusquAu) {
-    const jours = (jusquAu.getTime() - Date.now()) / 86_400_000
-    if (jours < 1) return echec('La reprise doit être au moins demain.')
-    if (jours > 92) return echec('Trois mois au maximum : au-delà, c’est une résiliation, pas une pause.', 'plafond')
-  }
+  // Le plafond de trois mois est une borne dure — il ne doit pas se contourner en omettant la date
+  // (revue du 07/09). Sans date, on en pose une d'office : une pause qu'on oublie n'existe pas.
+  const fin = jusquAu ?? new Date(Date.now() + 92 * 86_400_000)
+  const jours = (fin.getTime() - Date.now()) / 86_400_000
+  if (jours < 1) return echec('La reprise doit être au moins demain.')
+  if (jours > 92) return echec('Trois mois au maximum : au-delà, c’est une résiliation, pas une pause.', 'plafond')
   const modifie = await s.subscriptions.update(sub.id, {
-    pause_collection: { behavior: 'void', ...(jusquAu ? { resumes_at: Math.floor(jusquAu.getTime() / 1000) } : {}) },
-  }, { ...OPTIONS, idempotencyKey: idem(['pause', clefIdem, sub.id, jusquAu?.toISOString() ?? 'sans-fin']) })
-  return { ok: true, valeur: modifie, message: jusquAu ? `Facturation en pause jusqu’au ${jusquAu.toLocaleDateString('fr-FR')} — l’accès continue.` : 'Facturation en pause — l’accès continue.' }
+    pause_collection: { behavior: 'void', resumes_at: Math.floor(fin.getTime() / 1000) },
+  }, { ...OPTIONS, idempotencyKey: idem(['pause', clefIdem, sub.id, fin.toISOString().slice(0, 10)]) })
+  return { ok: true, valeur: modifie, message: `Facturation en pause jusqu’au ${fin.toLocaleDateString('fr-FR')}${jusquAu ? '' : ' (trois mois par défaut)'} — l’accès continue.` }
 }
 
 export async function reprendre(s: Stripe, abonnement: string, clefIdem: string): Promise<Resultat<Stripe.Subscription>> {

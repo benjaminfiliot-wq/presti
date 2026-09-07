@@ -41,6 +41,24 @@ const abonnementStripe = (id: string | null): Promise<Sourcee<Abonnement | null>
   }
 }, 30_000)
 
+/** La dernière facture payée : montant encaissé, déjà rendu, reste. Sans elle, la fiche proposait de
+ *  rembourser « la totalité » sans jamais dire combien d'argent partait (revue du 07/09). */
+const derniereFacture = (client: string | null): Promise<Sourcee<{ montant: number; rendu: number; restant: number; date: string } | null>> =>
+  sourcer(`client:facture:${client ?? '-'}`, 'stripe', async () => {
+    if (!client || !stripe) return null
+    const l = await stripe.invoices.list({ customer: client, status: 'paid', limit: 1, expand: ['data.payments'] }, { timeout: 6000, maxNetworkRetries: 0 })
+    const f = l.data[0]
+    if (!f) return null
+    const paiement = f.payments?.data?.[0]?.payment?.payment_intent
+    const intention = typeof paiement === 'string' ? paiement : undefined
+    const rendu = intention
+      ? (await stripe.refunds.list({ payment_intent: intention, limit: 100 }, { timeout: 6000, maxNetworkRetries: 0 })).data
+          .filter((r) => r.status !== 'failed' && r.status !== 'canceled').reduce((n, r) => n + (r.amount ?? 0), 0) / 100
+      : 0
+    const montant = (f.amount_paid ?? 0) / 100
+    return { montant, rendu, restant: Math.max(0, montant - rendu), date: new Date((f.created ?? 0) * 1000).toISOString() }
+  }, 30_000)
+
 export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
@@ -53,15 +71,18 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
   if (error) return NextResponse.json({ error: 'Fiche indisponible pour l’instant.' }, { status: 503 })
   if (!a) return NextResponse.json({ error: 'Artisan inconnu.' }, { status: 404 })
 
-  const [abo, { data: suspensions }, { data: journal }, leads, devis, factures] = await Promise.all([
+  const [abo, { data: suspensions }, { data: journal }, leads, devis, factures, facture] = await Promise.all([
     abonnementStripe(a.stripe_subscription_id),
     supabaseAdmin.from('suspensions').select('id, motif, message, suspendu_le, levee_le, levee_motif').eq('artisan_id', id).order('suspendu_le', { ascending: false }).limit(10),
     supabaseAdmin.from('journal_direction').select('id, action, acteur_email, avant, apres, cree_le').eq('artisan_id', id).order('cree_le', { ascending: false }).limit(30),
     // On COMPTE, on ne lit pas : ni nom de prospect, ni message, ni montant de devis.
     supabaseAdmin.from('leads').select('id', { count: 'exact', head: true }).eq('artisan_id', id),
     supabaseAdmin.from('devis').select('id', { count: 'exact', head: true }).eq('artisan_id', id),
-    supabaseAdmin.from('factures').select('id', { count: 'exact', head: true }).eq('artisan_id', id).then((r) => ({ count: r.count ?? 0 }), () => ({ count: 0 })),
+    supabaseAdmin.from('factures').select('id', { count: 'exact', head: true }).eq('artisan_id', id).then((r) => ({ count: r.count ?? 0, error: r.error }), (e) => ({ count: 0, error: e as { message: string } })),
+    derniereFacture(a.stripe_customer_id),
   ])
+  // Un comptage raté vaut « — », jamais « 0 » : un zéro affirme que l'artisan n'a rien fait.
+  const erreurUsage = [leads.error, devis.error, factures.error].find(Boolean)
 
   const apport = actif('apports')
     ? (await supabaseAdmin.from('registre_apports').select('id, statut, preuve, piece, motif, apporteur_id').eq('artisan_id', id).maybeSingle()).data
@@ -80,7 +101,8 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     abonnement: abo,
     suspension: enCours ? { motif: enCours.motif, message: enCours.message, depuis: enCours.suspendu_le } : null,
     historique_suspensions: suspensions ?? [],
-    usage: { leads: leads.count ?? 0, devis: devis.count ?? 0, factures: factures.count ?? 0 },
+    usage: { leads: leads.count ?? 0, devis: devis.count ?? 0, factures: factures.count ?? 0, ...(erreurUsage ? { erreur: 'base injoignable' } : {}) },
+    derniereFacture: facture.valeur,
     apport: apport && v ? { statut: apport.statut, statutLisible: libelleStatut(apport.statut as Statut), preuve: preuveLisible(apport as never), compte: v.compte, taux: v.taux, raison: v.raison, apporteur: apporteur?.nom ?? null } : null,
     journal: journal ?? [],
     role: f.role, a: new Date().toISOString(),

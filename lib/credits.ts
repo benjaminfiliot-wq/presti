@@ -27,7 +27,8 @@ export async function consumeCredit(uid: string, tier: Tier, isFounder: boolean,
  * Rend un crédit débité pour une génération qui a ÉCHOUÉ (panne du modèle, solde Anthropic à
  * zéro, réseau). Avant, le crédit était débité avant l'appel et jamais rendu : l'artisan payait
  * une réponse qu'il n'avait pas eue (audit final, auditeur E, M5). Jamais pour un fondateur
- * (rien n'a été débité), jamais au-delà du plafond mensuel de son offre.
+ * (rien n'a été débité). On rend ce qui a été pris — un crédit offert par la direction n'est pas
+ * repris au passage.
  */
 export async function rendreCredit(uid: string, tier: Tier, isFounder: boolean, coutForce?: number): Promise<void> {
   if (isFounder) return
@@ -35,7 +36,12 @@ export async function rendreCredit(uid: string, tier: Tier, isFounder: boolean, 
     const { data: a } = await supabaseAdmin.from('artisans').select('credits, plan').eq('id', uid).maybeSingle()
     if (!a) return
     const cost = typeof coutForce === 'number' && coutForce >= 0 ? Math.round(coutForce) : (CREDIT_COST[tier] ?? 1)
-    const plafond = planConf(a.plan).creditsMois
-    await supabaseAdmin.from('artisans').update({ credits: Math.min(plafond, (Number(a.credits) || 0) + cost) }).eq('id', uid)
+    // On rend EXACTEMENT ce qui a été débité, sans plafonner au forfait de l'offre.
+    //
+    // Le plafond détruisait les crédits offerts par la direction (revue du 07/09) : un artisan de
+    // l'offre Essentiel (80 crédits) à qui on en avait offert 200 tombait à 80 dès le premier appel IA
+    // qui échouait. Le débit ayant déjà été borné par `consume_credit`, la restitution n'a rien à
+    // borner — elle rend ce qui a été pris, ni plus, ni moins.
+    await supabaseAdmin.from('artisans').update({ credits: (Number(a.credits) || 0) + cost }).eq('id', uid)
   } catch (e) { console.error('[credits] rendre :', e instanceof Error ? e.message : e) }
 }

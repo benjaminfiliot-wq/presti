@@ -25,16 +25,23 @@ export const joignable = () => sourcer('stripe:joignable', 'stripe', async () =>
   return { disponible: eur(disponible), enAttente: eur(enAttente), livemode: b.livemode }
 }, TTL)
 
-export type Mrr = { mrr: number; abonnements: number; parPlan: Record<string, { n: number; mrr: number }> }
-/** MRR = somme mensualisée des abonnements actifs (annuel ÷ 12), par plan (metadata.plan posée au checkout). */
+export type Mrr = { mrr: number; abonnements: number; parPlan: Record<string, { n: number; mrr: number }>; enPause: number; abonnementsEnPause: number }
+/**
+ * MRR = somme mensualisée des abonnements actifs (annuel ÷ 12), par plan (metadata.plan posée au checkout).
+ *
+ * Les abonnements en PAUSE en sont retirés et comptés à part. Stripe les laisse au statut « active »
+ * alors qu'il n'encaissera rien : sans ce tri, la mise en pause d'un artisan à 99 € laissait ces 99 €
+ * dans le MRR affiché, et le seul chiffre censé trahir l'oubli d'une pause disait le contraire
+ * (revue du 07/09).
+ */
 export const mrr = (): Promise<Sourcee<Mrr>> => sourcer('stripe:mrr', 'stripe', async () => {
   const parPlan: Mrr['parPlan'] = {}
   let total = 0, n = 0
   // Deux pages au plus : au-delà de 200 abonnements, ce chiffre passera par un agrégat en base (J2).
   const l = await client().subscriptions.list({ status: 'active', limit: 100 }, OPTIONS)
   const abonnements = l.has_more ? [...l.data, ...(await client().subscriptions.list({ status: 'active', limit: 100, starting_after: l.data[l.data.length - 1]?.id }, OPTIONS)).data] : l.data
+  let enPause = 0, nPause = 0
   for (const s of abonnements) {
-    n++
     const plan = String(s.metadata?.plan || 'inconnu')
     let m = 0
     for (const it of s.items.data) {
@@ -42,10 +49,12 @@ export const mrr = (): Promise<Sourcee<Mrr>> => sourcer('stripe:mrr', 'stripe', 
       const brut = (p.unit_amount ?? 0) * (it.quantity ?? 1)
       m += p.recurring?.interval === 'year' ? brut / 12 : p.recurring?.interval === 'week' ? brut * 4.33 : brut
     }
+    if (s.pause_collection) { nPause++; enPause += m; continue }
+    n++
     total += m
     const e = (parPlan[plan] ||= { n: 0, mrr: 0 }); e.n++; e.mrr += eur(m)
   }
-  return { mrr: eur(total), abonnements: n, parPlan }
+  return { mrr: eur(total), abonnements: n, parPlan, enPause: eur(enPause), abonnementsEnPause: nPause }
 }, TTL)
 
 export type Encaisse = { brut: number; frais: number; net: number; paiements: number; rembourse: number }

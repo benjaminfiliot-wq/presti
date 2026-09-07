@@ -15,7 +15,7 @@ import { relTime, euros } from '@/lib/direction/fraicheur'
 type Controle = { cle: string; libelle: string; etat: 'ok' | 'warn' | 'crit' | 'info'; detail: string; source: string; a: string; cache: boolean; manque?: string }
 type Etat = { niveau: 'ok' | 'degrade' | 'incident'; controles: Controle[]; role: 'direction' | 'lecture'; a: string }
 type Sourcee<T> = { valeur: T | null; source: string; a: string; cache: boolean; erreur?: string; manque?: string }
-type Chiffres = { mrr: Sourcee<{ mrr: number; abonnements: number }>; payants: Sourcee<number>; essais: Sourcee<number>; conversions: Sourcee<number>; encaisse: Sourcee<{ brut: number; frais: number; net: number; paiements: number; rembourse: number }>; coutIA: Sourcee<{ euros: number; budget: number | null; estimation: boolean; credits?: number; perimetre?: string }>; coutProduit: Sourcee<{ euros: number; credits?: number; estimation?: boolean }>; credits: Sourcee<{ consommes: number; inclus: number }>; a: string }
+type Chiffres = { mrr: Sourcee<{ mrr: number; abonnements: number; enPause?: number; abonnementsEnPause?: number }>; payants: Sourcee<number>; essais: Sourcee<number>; conversions: Sourcee<number>; encaisse: Sourcee<{ brut: number; frais: number; net: number; paiements: number; rembourse: number }>; coutIA: Sourcee<{ euros: number; budget: number | null; estimation: boolean; credits?: number; perimetre?: string }>; coutProduit: Sourcee<{ euros: number; credits?: number; estimation?: boolean }>; credits: Sourcee<{ consommes: number; inclus: number }>; a: string }
 type Action = { libelle: string; route?: string; methode?: 'POST' | 'DELETE'; corps?: Record<string, unknown>; reconfirmation: boolean; portee?: string }
 type Ligne = { id: string; type: string; libelleType: string; gravite: 'info' | 'attention' | 'critique'; libelle: string; detail: string; a: string; source: string; action?: Action }
 type AFaire = { lignes: Ligne[]; sources: Record<string, { a: string; erreur?: string }>; a: string }
@@ -153,7 +153,7 @@ export default function Aujourdhui({ role, signaler }: { role: 'direction' | 'le
       <section className="dir-chiffres" aria-labelledby="dir-chiffres-t" data-chiffres>
         <h2 id="dir-chiffres-t" className="dir-h2">Chiffres du jour</h2>
         <div className="psh-kpis dir-kpis">
-          {kpi('MRR', val(chiffres?.mrr, (v) => euros(v.mrr)), chiffres?.mrr ?? null, chiffres?.mrr?.valeur ? `${chiffres.mrr.valeur.abonnements} abonnement${chiffres.mrr.valeur.abonnements > 1 ? 's' : ''}` : undefined)}
+          {kpi('MRR', val(chiffres?.mrr, (v) => euros(v.mrr)), chiffres?.mrr ?? null, chiffres?.mrr?.valeur ? `${chiffres.mrr.valeur.abonnements} abonnement${chiffres.mrr.valeur.abonnements > 1 ? 's' : ''}${chiffres.mrr.valeur.abonnementsEnPause ? ` · ${chiffres.mrr.valeur.abonnementsEnPause} en pause (${euros(chiffres.mrr.valeur.enPause ?? 0)} non facturés)` : ''}` : undefined)}
           {kpi('Artisans payants', val(chiffres?.payants, (v) => String(v)), chiffres?.payants ?? null)}
           {kpi('Essais en cours', val(chiffres?.essais, (v) => String(v)), chiffres?.essais ?? null)}
           {kpi('Abonnements activés aujourd’hui', val(chiffres?.conversions, (v) => String(v)), chiffres?.conversions ?? null)}

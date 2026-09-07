@@ -36,13 +36,23 @@ export async function POST(req: Request) {
       if (uid && plan) {
         const conf = planConf(plan)
         const next = new Date(); next.setMonth(next.getMonth() + 1)
-        await supabaseAdmin.from('artisans').update({
+        const abo = typeof s.subscription === 'string' ? s.subscription : s.subscription?.id ?? null
+        // Les crédits ne s'ÉCRASENT pas : un artisan à qui la direction vient d'offrir 200 crédits ne
+        // doit pas les perdre à l'instant où il paie (revue du 07/09). On garde le plus favorable.
+        const { data: avant } = await supabaseAdmin.from('artisans').select('credits, stripe_subscription_id').eq('id', uid).maybeSingle()
+        // Rejeu du même événement : Stripe le fait, et il ne doit pas recharger un forfait déjà servi.
+        const dejaServi = !!abo && avant?.stripe_subscription_id === abo
+        const { error: eMaj } = await supabaseAdmin.from('artisans').update({
           plan,
-          credits: conf.creditsMois,
-          credits_reset_le: next.toISOString().slice(0, 10),
+          ...(dejaServi ? {} : { credits: Math.max(avant?.credits ?? 0, conf.creditsMois), credits_reset_le: next.toISOString().slice(0, 10) }),
           stripe_customer_id: typeof s.customer === 'string' ? s.customer : s.customer?.id ?? null,
-          stripe_subscription_id: typeof s.subscription === 'string' ? s.subscription : s.subscription?.id ?? null,
+          stripe_subscription_id: abo,
         }).eq('id', uid)
+        // ⚠️ Sans ce contrôle, une panne d'écriture passait inaperçue : la route rendait 200, Stripe
+        // considérait l'événement traité et ne le rejouait JAMAIS. L'artisan était prélevé et restait
+        // sur l'offre d'essai, la fiche affichait « aucun abonnement », et il pouvait même payer une
+        // seconde fois (le garde-fou de /api/subscribe lit stripe_subscription_id, resté vide).
+        if (eMaj) throw new Error(`écriture de l'abonnement impossible : ${eMaj.message}`)
         console.log('[stripe webhook] abonnement activé', uid, plan)
         // Pied de page des factures Stripe à venir : la mention de franchise en base, tant que
         // l'entreprise n'est pas assujettie (audit final, B3). La première facture, déjà émise
@@ -63,8 +73,12 @@ export async function POST(req: Request) {
       // autorise un, et rien ne l'appliquait en base (revue du 07/09). L'artisan payait un montant et
       // gardait les crédits d'un autre. Le montant facturé décide, jamais une métadonnée périmée.
       const sub = event.data.object as Stripe.Subscription
-      const r = await alignerSurAbonnement(sub)
+      const client = stripe
+      const r = await alignerSurAbonnement(sub, (id) => client.subscriptions.retrieve(id, {}, { timeout: 6000, maxNetworkRetries: 0 }))
       console.log('[stripe webhook] abonnement modifié —', r.raison)
+      // Une écriture refusée n'est pas « rien à appliquer » : on tombe dans le `catch`, qui alerte et
+      // rend 500 — Stripe rejouera pendant trois jours plutôt que d'oublier le changement d'offre.
+      if (r.echec) throw new Error(`alignement impossible : ${r.raison}`)
       if (r.applique && r.avant?.plan !== r.plan) {
         const { data: a } = await supabaseAdmin.from('artisans').select('nom, email').eq('stripe_subscription_id', sub.id).maybeSingle()
         await notifierEntreprise(
@@ -79,7 +93,8 @@ export async function POST(req: Request) {
       if (uid && !concerneAbonnementCourant(enBase?.stripe_subscription_id, sub.id)) {
         console.log('[stripe webhook] fin d’un ancien abonnement ignorée', uid, sub.id)
       } else if (uid) {
-        await supabaseAdmin.from('artisans').update({ plan: 'gratuit', stripe_subscription_id: null }).eq('id', uid)
+        const { error: eFin } = await supabaseAdmin.from('artisans').update({ plan: 'gratuit', stripe_subscription_id: null }).eq('id', uid)
+        if (eFin) throw new Error(`retour à l'offre gratuite impossible : ${eFin.message}`)
         const { data: a } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
         await notifierEntreprise(
           `Résiliation — ${a?.nom || uid}`,

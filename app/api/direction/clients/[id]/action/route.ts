@@ -8,6 +8,7 @@ import { sendEmail, EMAIL_ENTREPRISE } from '@/lib/email'
 import { journaliser, refusJournal } from '@/lib/direction/journal'
 import { oublier } from '@/lib/direction/fraicheur'
 import { actif } from '@/lib/flags'
+import { createHash } from 'node:crypto'
 import { type Action } from '@/lib/direction/journal'
 import { changerOffre, rembourser, mettreEnPause, reprendre } from '@/lib/direction/stripe-actions'
 import { alignerSurAbonnement } from '@/lib/abonnementSync'
@@ -114,9 +115,15 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
     const ACTIONS: Record<string, Action> = { offre: 'artisan_offre', rembourser: 'artisan_rembourse', pause: 'artisan_pause', reprendre: 'artisan_pause' }
     const nom = ACTIONS[action]
-    // La clé d'idempotence tient à l'artisan, à l'action et au motif : deux clics identiques dans la
-    // même minute ne remboursent qu'une fois ; un second remboursement voulu passe par un autre motif.
-    const clef = `${id}:${action}:${motif}`.slice(0, 120)
+    // La clé d'idempotence tient au JETON de re-confirmation, pas au motif.
+    //
+    // Avec le motif, elle était à la fois trop large et trop étroite (revue du 07/09) : deux gestes
+    // voulus, identiques et légitimes, se heurtaient au rejeu d'idempotence de Stripe, qui renvoyait
+    // la réponse de la première fois — la base, le journal et l'écran affirmaient alors un changement
+    // que Stripe n'avait pas refait. Le jeton, lui, est à usage unique : un geste voulu deux fois
+    // passe par deux mots de passe, donc deux clés, donc deux appels réels.
+    const jeton = req.headers.get('x-presti-reconfirmation') ?? ''
+    const clef = createHash('sha256').update(`${id}:${action}:${jeton}`).digest('hex').slice(0, 48)
     if (!(await journaliser({ acteur: f, action: nom, cible_type: 'artisan', cible_id: id, artisan_id: id, avant: { plan: a.plan }, apres: { statut: 'tenté', action, vers, montant, jusqu_au: jusquAu?.toISOString() ?? null, motif }, reconfirme: true }, req))) return refusJournal()
 
     let r: Awaited<ReturnType<typeof changerOffre>> | Awaited<ReturnType<typeof rembourser>> | Awaited<ReturnType<typeof mettreEnPause>>
@@ -147,13 +154,24 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
   if (action === 'portail') {
     // Un lien pour LUI, à lui transmettre — on ne se connecte pas à sa place, et rien n'est modifié.
+    // Mais ce lien ouvre son moyen de paiement et sa résiliation : il se re-confirme comme le reste
+    // (revue du 07/09 — il partait sans mot de passe, et sa trace disait « artisan_email »).
     if (!a.stripe_customer_id) return NextResponse.json({ error: 'Cet artisan n’a pas de compte de facturation Stripe.' }, { status: 400 })
     if (!stripe) return NextResponse.json({ error: 'Stripe n’est pas configuré.' }, { status: 503 })
+    if (!motif) return NextResponse.json({ error: 'Un motif est obligatoire : il sera dans le journal.' }, { status: 400 })
+    const refus = await exigerReconfirmation(req, f.uid, 'argent')
+    if (refus) return refus
+    // L'intention AVANT l'appel : un lien créé sans trace serait pire qu'une trace sans lien.
+    if (!(await journaliser({ acteur: f, action: 'artisan_portail', cible_type: 'artisan', cible_id: id, artisan_id: id, apres: { statut: 'tenté', motif }, reconfirme: true }, req))) return refusJournal()
     try {
       const p = await stripe.billingPortal.sessions.create({ customer: a.stripe_customer_id, return_url: 'https://prestiapp.fr/parametres?onglet=abonnement' }, { timeout: 6000, maxNetworkRetries: 0 })
-      if (!(await journaliser({ acteur: f, action: 'artisan_email', cible_type: 'artisan', cible_id: id, artisan_id: id, apres: { portail: 'lien généré' } }, req))) return refusJournal()
+      await journaliser({ acteur: f, action: 'artisan_portail', cible_type: 'artisan', cible_id: id, artisan_id: id, apres: { statut: 'lien créé', motif }, reconfirme: true }, req)
       return NextResponse.json({ ok: true, url: p.url, message: 'Lien de portail créé — valable quelques minutes, à transmettre à l’artisan.' })
-    } catch (e) { return NextResponse.json({ error: `Stripe : ${(e as Error).message.slice(0, 120)}` }, { status: 503 }) }
+    } catch (e) {
+      const m = (e as Error).message.slice(0, 160)
+      await journaliser({ acteur: f, action: 'artisan_portail', cible_type: 'artisan', cible_id: id, artisan_id: id, apres: { statut: 'échec', erreur: m } }, req)
+      return NextResponse.json({ error: `Stripe : ${m}` }, { status: 503 })
+    }
   }
 
   if (action === 'email') {
@@ -163,8 +181,12 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     if (!a.email) return NextResponse.json({ error: 'Cet artisan n’a pas d’adresse.' }, { status: 400 })
     const refus = await exigerReconfirmation(req, f.uid, 'artisan')
     if (refus) return refus
+    // L'intention AVANT l'envoi. Auparavant l'email partait, PUIS on journalisait : si le journal
+    // tombait, la route répondait « action refusée » alors que l'artisan avait reçu le message, et il
+    // n'en restait aucune trace (revue du 07/09). Un email ne se rattrape pas.
+    if (!(await journaliser({ acteur: f, action: 'artisan_email', cible_type: 'artisan', cible_id: id, artisan_id: id, apres: { statut: 'tenté', modele }, reconfirme: true }, req))) return refusJournal()
     const r = await sendEmail({ to: a.email, subject: m.sujet, text: m.texte(a.nom || 'à vous'), replyTo: EMAIL_ENTREPRISE })
-    if (!(await journaliser({ acteur: f, action: 'artisan_email', cible_type: 'artisan', cible_id: id, artisan_id: id, apres: { modele, envoye: r.ok }, reconfirme: true }, req))) return refusJournal()
+    await journaliser({ acteur: f, action: 'artisan_email', cible_type: 'artisan', cible_id: id, artisan_id: id, apres: { statut: r.ok ? 'envoyé' : 'échec', modele }, reconfirme: true }, req)
     if (!r.ok) return NextResponse.json({ error: 'L’email n’est pas parti.' }, { status: 503 })
     return NextResponse.json({ ok: true, message: 'Message envoyé depuis l’adresse de Presti.' })
   }

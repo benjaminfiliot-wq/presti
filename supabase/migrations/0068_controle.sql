@@ -54,7 +54,13 @@ begin
   insert into public.suspensions (artisan_id, motif, message, suspendu_par)
     values (p_artisan, p_motif, p_message, p_acteur) returning id into v_id;
   -- Les sessions ouvertes se ferment : une suspension qui laisse l'artisan connecté ne suspend rien.
+  --
+  -- Le seuil ci-dessous invalide les jetons d'ACCÈS déjà émis. Il ne suffit pas : le navigateur en
+  -- redemande un avec son jeton de rafraîchissement, et repart pour une heure (revue du 07/09 — la
+  -- route annonçait « sessions fermées » sans les fermer). On révoque donc les deux, avec la fonction
+  -- écrite pour ça en 0043.
   update public.artisans set sessions_invalides_avant = now() + interval '1 second' where id = p_artisan;
+  perform public.revoquer_sessions_auth(p_artisan);
   insert into public.journal_direction (acteur_id, acteur_email, action, cible_type, cible_id, artisan_id, avant, apres, ip, agent, reconfirme)
     values (p_acteur, p_acteur_email, 'artisan_suspendu', 'artisan', p_artisan::text, p_artisan,
             jsonb_build_object('suspendu', false),
@@ -105,6 +111,16 @@ end $$;
 revoke all on function public.offrir_credits(uuid, text, uuid, int, text, text, text) from public, anon, authenticated;
 grant execute on function public.offrir_credits(uuid, text, uuid, int, text, text, text) to service_role;
 
+-- ── Mémoire du forfait servi : un aller-retour d'offre ne recharge pas deux fois ──────────────────────
+--
+-- Trouvé par la revue du 07/09 : monter en Signature créditait 600, redescendre n'en retirait aucun
+-- (à raison), remonter en recréditait 600. Stripe facturait un prorata net proche de zéro et l'artisan
+-- repartait avec le double. On mémorise donc ce qui a été servi, et pour quelle période.
+alter table public.artisans add column if not exists credits_forfait_servi int;
+alter table public.artisans add column if not exists credits_periode       date;
+comment on column public.artisans.credits_forfait_servi is 'Le plus haut forfait mensuel déjà servi pour la période en cours. Une montée d''offre ne sert que la DIFFÉRENCE.';
+comment on column public.artisans.credits_periode is 'Début de la période de facturation Stripe pour laquelle le forfait ci-dessus a été servi.';
+
 -- ══ 2. Rôle interne, compte de démonstration, origine déclarée (v11 §2, §4.2, §5) ═════════════════════
 
 alter table public.artisans add column if not exists role_interne      text;
@@ -146,6 +162,8 @@ begin
     new.plan := old.plan;
     new.credits := old.credits;
     new.credits_reset_le := old.credits_reset_le;
+    new.credits_forfait_servi := old.credits_forfait_servi;
+    new.credits_periode := old.credits_periode;
     new.stripe_customer_id := old.stripe_customer_id;
     new.stripe_subscription_id := old.stripe_subscription_id;
     new.compteur_devis := old.compteur_devis;

@@ -150,7 +150,12 @@ async function main() {
       T('la montée est appliquée en base', r.applique && r.plan === 'signature', r.raison)
       const apres = (await admin.from('artisans').select('plan, credits').eq('id', uid).single()).data
       T('le plan en base est celui que Stripe facture', apres?.plan === 'signature', String(apres?.plan))
-      T('les crédits montent au niveau de la nouvelle offre', apres?.credits === PLANS.signature.creditsMois, `${apres?.credits} au lieu de ${PLANS.signature.creditsMois}`)
+      // La montée sert la DIFFÉRENCE des forfaits, pas le forfait entier : l'artisan avait 12 crédits
+      // sur Essentiel (80), il en avait donc consommé 68 ; en Signature (600) il doit en avoir 532,
+      // pas 600. Servir le forfait entier était le bug trouvé par la revue du 07/09 — un aller-retour
+      // d'offre donnait alors des crédits sans fin pour un prorata net nul.
+      const attendus = 12 + (PLANS.signature.creditsMois - PLANS.essentiel.creditsMois)
+      T('la montée sert la différence des forfaits, jamais le forfait entier', apres?.credits === attendus, `${apres?.credits} au lieu de ${attendus}`)
 
       // Descente : on ne retire RIEN de ce qui reste du mois.
       await admin.from('artisans').update({ credits: 40 }).eq('id', uid)
