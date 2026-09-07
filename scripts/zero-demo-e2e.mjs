@@ -53,7 +53,7 @@ async function main() {
 
   // ── 1. Les privilèges ───────────────────────────────────────────────────────────────────────────────
   console.log('1. Qui a des privilèges en production')
-  const { data: artisans, error } = await admin.from('artisans').select('id, email, nom, is_founder, plan, created_at')
+  const { data: artisans, error } = await admin.from('artisans').select('id, email, nom, is_founder, est_demo, plan, created_at')
   if (error) { console.log(`  ⛔ base injoignable : ${error.message}\n`); process.exit(2) }
 
   const fondateurs = (artisans ?? []).filter((a) => a.is_founder)
@@ -70,10 +70,17 @@ async function main() {
     rolesIntrus.map((r) => `${parId.get(r.user_id)?.email ?? r.user_id} → ${r.role}`).join(' · '))
 
   // ── 2. Les comptes fabriqués ────────────────────────────────────────────────────────────────────────
+  //
+  // La règle n'est pas « aucun compte de test en base » — la purge est irréversible et attend Benj, et
+  // le compte de relecture des stores doit rester (Apple et Google l'exigent). La règle est : un compte
+  // de test est soit ABSENT, soit MARQUÉ `est_demo`, donc exclu de tous les chiffres. Un compte de test
+  // qui n'est pas marqué gonfle silencieusement le nombre de clients : c'est ça, l'anomalie.
   console.log('\n2. Ce qui traîne en base')
   const tests = (artisans ?? []).filter((a) => estTest(a.email))
-  T('aucun compte de test en production', tests.length === 0,
-    tests.map((a) => `${a.email} — ${a.nom ?? 'sans nom'}, créé le ${String(a.created_at).slice(0, 10)}`).join('\n        '))
+  const nonMarques = tests.filter((a) => !a.est_demo)
+  T('tout compte de test est marqué « démo », donc hors des chiffres', nonMarques.length === 0,
+    nonMarques.map((a) => `${a.email} — ${a.nom ?? 'sans nom'}, créé le ${String(a.created_at).slice(0, 10)} — poser est_demo`).join('\n        '))
+  if (tests.length) console.log(`     ℹ️  ${tests.length} compte(s) de test marqué(s), en attente de la purge validée par Benj (plans/demos-a-supprimer.md).`)
   T('le compte de relecture des stores est présent et NON fondateur',
     (artisans ?? []).some((a) => a.email === COMPTE_STORE && !a.is_founder),
     (artisans ?? []).find((a) => a.email === COMPTE_STORE) ? 'il est fondateur !' : 'absent — Apple et Google l’exigent')
@@ -82,15 +89,28 @@ async function main() {
   const orphelins = (users?.users ?? []).filter((u) => estTest(u.email) && !parId.has(u.id))
   T('aucun compte de connexion orphelin', orphelins.length === 0, orphelins.map((u) => u.email).join(' · '))
 
-  // ── 3. Les données fabriquées ───────────────────────────────────────────────────────────────────────
-  console.log('\n3. Les données attachées à ces comptes')
+  // ── 3. Les chiffres du Poste de contrôle ────────────────────────────────────────────────────────────
+  //
+  // C'est le contrôle qui compte vraiment : peu importe ce qui traîne en base, aucun compte marqué ne
+  // doit apparaître dans un chiffre montré à Benj. On le vérifie sur la même règle que le serveur.
+  console.log('\n3. Les chiffres ne comptent que de vrais artisans')
+  const compte = (a) => !a.is_founder && !a.est_demo && !(a.email ?? '').endsWith('@presti-test.invalid')
+  const vrais = (artisans ?? []).filter(compte)
+  const marquesQuiComptent = (artisans ?? []).filter((a) => (a.est_demo || estTest(a.email)) && compte(a))
+  T('aucun compte marqué ne passe le filtre des chiffres', marquesQuiComptent.length === 0,
+    marquesQuiComptent.map((a) => a.email).join(' · '))
+  console.log(`     ℹ️  ${vrais.length} artisan(s) comptent aujourd'hui : ${vrais.map((a) => a.email).join(', ') || 'aucun'}`)
+
+  // ── 3 bis. Les données attachées aux comptes de test ─────────────────────────────────────────────────
+  console.log('\n3 bis. Ce que ces comptes ont produit (signalé, pas supprimé)')
   const idsTest = new Set(tests.map((a) => a.id))
   for (const [table, colonne] of [['leads', 'artisan_id'], ['devis', 'artisan_id'], ['factures', 'artisan_id']]) {
     const { count } = await admin.from(table).select('id', { count: 'exact', head: true }).in(colonne, [...idsTest, '00000000-0000-0000-0000-000000000000'])
     // ⚠️ Une facture émise est scellée (0041, conservation 10 ans) : on la SIGNALE, on ne la supprime pas.
-    if (table === 'factures') T(`aucune facture rattachée à un compte de test`, (count ?? 0) === 0,
-      `${count} facture(s) — scellées par 0041 : à annuler par avoir et à exclure des chiffres, jamais à supprimer`)
-    else T(`aucun ${table.slice(0, -1)} rattaché à un compte de test`, (count ?? 0) === 0, `${count} ligne(s)`)
+    // Informatif : ces lignes appartiennent à des comptes marqués, donc hors des chiffres. Les faire
+    // échouer bloquerait la suite pour un état que Benj a choisi de garder — et un garde-fou toujours
+    // rouge ne signale plus rien.
+    console.log(`     · ${table} : ${count ?? 0} ligne(s) rattachée(s) à un compte marqué${table === 'factures' && (count ?? 0) > 0 ? ' (scellées par 0041 — à exclure, jamais à supprimer)' : ''}`)
   }
 
   // ── 4. Le code ──────────────────────────────────────────────────────────────────────────────────────

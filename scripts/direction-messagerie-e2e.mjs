@@ -237,16 +237,41 @@ async function main() {
   T('les courriers de test sont effacés', !eDel, eDel?.message ?? '')
   const { count: reste } = await admin.from('courriers').select('id', { count: 'exact', head: true }).like('message_id', `%${marque}%`)
   T('rien ne reste derrière', reste === 0, `${reste} lignes restantes`)
-  await admin.from('journal_direction').delete().like('action', 'e2e\\_%')
+  // Les comptes, eux, sont purgés par le `finally` — il tourne même si la suite s'arrête plus haut.
 
   console.log(`\n══ ${ok} vérifications passées, ${ko} en échec ══\n`)
-  process.exit(ko === 0 ? 0 : 1)
 }
 
-main().catch(async (e) => {
-  console.error('\n💥 La suite s’est arrêtée :', e?.message ?? e)
-  if (aEffacer.length) await admin.from('courriers').delete().in('id', aEffacer)
-  for (const id of comptes) { await admin.rpc('purger_compte_test', { p_id: id }).catch(() => {}); await admin.auth.admin.deleteUser(id).catch(() => {}) }
-  console.error('   (le rangement a quand même été fait)\n')
-  process.exit(1)
-})
+/**
+ * Le ménage, garanti — et il retire les PRIVILÈGES avant de supprimer.
+ *
+ * Cette suite crée un fondateur en production (la garde du Centre l'exige). Si elle s'arrête avant
+ * de l'effacer, ce compte reste administrateur de l'entreprise. C'est arrivé le 07/09 avec
+ * `smoke-test`, puis avec celle-ci : d'où le `finally`, et l'ordre — on désarme d'abord, on
+ * supprime ensuite, parce qu'une suppression peut échouer alors qu'un `update` passe.
+ */
+async function menage() {
+  if (aEffacer.length) await admin.from('courriers').delete().in('id', aEffacer).then(() => {}, () => {})
+  await admin.from('courriers').delete().like('message_id', `%${marque}%`).then(() => {}, () => {})
+  for (const id of comptes) {
+    await admin.from('direction_roles').delete().eq('user_id', id).then(() => {}, () => {})
+    await admin.from('artisans').update({ is_founder: false, plan: 'gratuit' }).eq('id', id).then(() => {}, () => {})
+    await admin.from('journal_direction').delete().eq('acteur_id', id).then(() => {}, () => {})
+    await admin.rpc('purger_compte_test', { p_id: id }).then(() => {}, () => {})
+    await admin.from('artisans').delete().eq('id', id).then(() => {}, () => {})
+    await admin.auth.admin.deleteUser(id).catch(() => {})
+  }
+  const { count } = await admin.from('artisans').select('id', { count: 'exact', head: true }).like('email', `%${marque}%`)
+  if (count) console.error(`  ⚠️  ${count} compte(s) de test SUBSISTENT — vérifiez-les à la main, ils portent des privilèges.`)
+  else if (comptes.length) console.log(`  🧹 ${comptes.length} compte(s) de test purgé(s)`)
+}
+
+main()
+  .catch(async (e) => {
+    console.error('\n💥 La suite s’est arrêtée :', e?.message ?? e)
+    ko++
+  })
+  .finally(async () => {
+    await menage()
+    process.exit(ko === 0 ? 0 : 1)
+  })

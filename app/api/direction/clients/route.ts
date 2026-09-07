@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { seulsLesVrais } from '@/lib/direction/perimetre'
 import { estFondateur, estRefus, reponseRefus } from '@/lib/direction/garde'
 import { sourcer } from '@/lib/direction/fraicheur'
 import { planConf } from '@/lib/plans'
@@ -17,7 +18,6 @@ export const dynamic = 'force-dynamic'
 //
 // Le statut Stripe n'est pas recopié en base : il est lu en direct pour la fiche (J2b). Ici on ne dit que ce
 // que la base sait, avec sa fraîcheur.
-const HORS_CHAMP = '%@presti-test.invalid'
 
 export async function GET(req: Request) {
   const f = await estFondateur(req)
@@ -27,9 +27,8 @@ export async function GET(req: Request) {
   const filtre = u.searchParams.get('offre')
 
   const liste = await sourcer('clients:liste', 'supabase', async () => {
-    let req = supabaseAdmin.from('artisans')
-      .select('id, nom, email, metier, plan, credits, credits_reset_le, stripe_customer_id, stripe_subscription_id, created_at, suppression_demandee_le')
-      .eq('is_founder', false).not('email', 'like', HORS_CHAMP)
+    let req = seulsLesVrais(supabaseAdmin.from('artisans')
+      .select('id, nom, email, metier, plan, credits, credits_reset_le, stripe_customer_id, stripe_subscription_id, created_at, suppression_demandee_le'))
       .order('created_at', { ascending: false }).limit(500)
     if (filtre && ['gratuit', 'essentiel', 'studio', 'signature'].includes(filtre)) req = req.eq('plan', filtre)
     const { data, error } = await req

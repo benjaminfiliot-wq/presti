@@ -5,41 +5,45 @@ import { sourcer, type Sourcee } from '@/lib/direction/fraicheur'
 import { mrr, encaisseDuMois, conversionsDuJour } from '@/lib/direction/stripe'
 import { coutIADuMois, estimationDepuisLesCredits } from '@/lib/alertes'
 import { planConf } from '@/lib/plans'
+import { seulsLesVrais } from '@/lib/direction/perimetre'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 // GET /api/direction/chiffres — les chiffres du jour (prompt v10 §2.1), chacun `{ valeur, source, a }`.
 // Jamais un nombre nu : sans source, la valeur est nulle et la raison est dite (`erreur` ou `manque`).
-const HORS_CHAMP = '%@presti-test.invalid'
 const PAYANTS = ['essentiel', 'studio', 'signature']
 
 const payants = () => sourcer('chiffres:payants', 'supabase', async () => {
-  const { count, error } = await supabaseAdmin.from('artisans').select('id', { count: 'exact', head: true })
-    .eq('is_founder', false).not('email', 'like', HORS_CHAMP).in('plan', PAYANTS).not('stripe_subscription_id', 'is', null)
+  const { count, error } = await seulsLesVrais(supabaseAdmin.from('artisans').select('id', { count: 'exact', head: true }))
+    .in('plan', PAYANTS).not('stripe_subscription_id', 'is', null)
   if (error) throw new Error(error.message)
   return count ?? 0
 })
 
 const essais = () => sourcer('chiffres:essais', 'supabase', async () => {
-  const { count, error } = await supabaseAdmin.from('artisans').select('id', { count: 'exact', head: true })
-    .eq('is_founder', false).not('email', 'like', HORS_CHAMP).eq('plan', 'gratuit').is('suppression_demandee_le', null)
+  const { count, error } = await seulsLesVrais(supabaseAdmin.from('artisans').select('id', { count: 'exact', head: true }))
+    .eq('plan', 'gratuit').is('suppression_demandee_le', null)
   if (error) throw new Error(error.message)
   return count ?? 0
 })
 
 const creditsConsommes = () => sourcer('chiffres:credits', 'supabase', async () => {
-  const { data, error } = await supabaseAdmin.from('artisans').select('plan, credits, is_founder').not('email', 'like', HORS_CHAMP)
+  const { data, error } = await seulsLesVrais(supabaseAdmin.from('artisans').select('plan, credits, is_founder'))
   if (error) throw new Error(error.message)
-  let consommes = 0, inclus = 0
+  // La consommation se déduit du solde : forfait moins ce qu'il reste. La méthode a une limite connue
+  // — un artisan à qui la direction a offert des crédits peut avoir PLUS que son forfait, et sa
+  // consommation devient alors invisible ici. On compte ces comptes à part et on le dit, plutôt que
+  // d'afficher un chiffre qui se croit exact (revue du 07/09).
+  let consommes = 0, inclus = 0, offerts = 0
   for (const a of data ?? []) {
-    if (a.is_founder) continue
     const mois = planConf(a.plan).creditsMois
     inclus += mois
     const c = mois - (Number(a.credits) || 0)
     if (c > 0) consommes += c
+    else if (c < 0) offerts++
   }
-  return { consommes, inclus }
+  return { consommes, inclus, ...(offerts ? { comptesHorsMesure: offerts } : {}) }
 })
 
 type CoutIA = { euros: number; budget: number | null; estimation: boolean; credits?: number; perimetre: 'organisation' | 'produit' }
