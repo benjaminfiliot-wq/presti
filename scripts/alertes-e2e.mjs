@@ -35,7 +35,14 @@ if (!simuler) {
   const cout = await coutIADuMois()
   if (!cout) console.log('  ⏭  budget IA non mesuré : ANTHROPIC_ADMIN_KEY absente (action humaine H5)')
   else if (cout.erreur) T('l’API Admin Anthropic répond', false, cout.erreur)
-  else { T('l’API Admin Anthropic répond', true); console.log(`  coût du mois lu : ${cout.usd.toFixed(2)} $ — échantillon brut : ${JSON.stringify(cout.brut).slice(0, 200)}`) }
+  else {
+    T('l’API Admin Anthropic répond', true)
+    const parEspace = cout.parEspace ?? {}
+    const detail = Object.entries(parEspace).map((e) => e[0] + ' ' + Number(e[1]).toFixed(2) + ' $').join(' · ')
+    console.log('  facture de l’organisation ce mois : ' + cout.usd.toFixed(2) + ' $' + (detail ? ' (' + detail + ')' : ''))
+    console.log('  (toute l’organisation, développement compris — le coût du PRODUIT est estimé à part)')
+    T('la facture est ventilée par espace de travail', typeof cout.parEspace === 'object' && cout.parEspace !== null)
+  }
   T('chaque motif a une simulation', MOTIFS.every((m) => true) && MOTIFS.length === 8, `${MOTIFS.length} motifs`)
 } else {
   const liste = simuler === 'tous' ? MOTIFS : [simuler]
