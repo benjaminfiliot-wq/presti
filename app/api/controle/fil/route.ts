@@ -4,6 +4,7 @@ import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } fr
 import { sourcer } from '@/lib/direction/fraicheur'
 import { evenementsRecents } from '@/lib/direction/stripe'
 import { planConf } from '@/lib/plans'
+import { seulsLesVrais } from '@/lib/direction/perimetre'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -27,14 +28,17 @@ export async function GET(req: Request) {
   const [journal, artisans, stripe, alertes, crons] = await Promise.all([
     sourcer('fil:journal', 'supabase', async () => {
       // Même règle que le journal : le partenaire suit ses propres actions (v11 §5).
-      let q = supabaseAdmin.from('journal_direction').select('id, action, acteur_email, cible_id, cree_le').order('cree_le', { ascending: false }).limit(20)
+      let q = supabaseAdmin.from('journal_direction').select('id, action, acteur_email, cible_id, cree_le')
+        .not('acteur_email', 'like', '%@presti-test.invalid')
+        .order('cree_le', { ascending: false }).limit(20)
       if (perimetre.borne) q = q.eq('acteur_id', f.uid)
       const { data, error } = await q
       if (error) throw new Error(error.message)
       return data ?? []
     }),
     sourcer('fil:artisans', 'supabase', async () => {
-      const { data, error } = await supabaseAdmin.from('artisans').select('id, nom, metier, plan, created_at').eq('is_founder', false).not('email', 'like', '%@presti-test.invalid').order('created_at', { ascending: false }).limit(10)
+      const { data, error } = await seulsLesVrais(supabaseAdmin.from('artisans').select('id, nom, metier, plan, created_at'))
+        .order('created_at', { ascending: false }).limit(10)
       if (error) throw new Error(error.message)
       return data ?? []
     }),
