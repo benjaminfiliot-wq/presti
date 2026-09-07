@@ -5,6 +5,10 @@
 import fs from 'fs'
 import { verifierSessionTest } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
+// Les aides partagées (connexion-test, etc.) lisent `process.env`, pas cet objet : sans cette
+// ligne, leurs URL commencent par « undefined ». On ne remplace jamais une variable déjà posée.
+for (const [cle, valeur] of Object.entries(env)) if (!process.env[cle]) process.env[cle] = valeur
+
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY, ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const APP = process.argv[2] || 'https://prestiapp.fr'
 const admin = (p, o = {}) => fetch(`${SB}/auth/v1/admin/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })

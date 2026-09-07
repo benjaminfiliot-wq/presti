@@ -3,6 +3,10 @@ import { chromium } from 'playwright'
 import fs from 'fs'
 import { codeEmailSiDemande } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
+// Les aides partagées (connexion-test, etc.) lisent `process.env`, pas cet objet : sans cette
+// ligne, leurs URL commencent par « undefined ». On ne remplace jamais une variable déjà posée.
+for (const [cle, valeur] of Object.entries(env)) if (!process.env[cle]) process.env[cle] = valeur
+
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY
 const APP = process.argv[2] || 'https://prestiapp.fr'
 const OUT = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/f2774700-2996-4ee8-bfc0-5b67f39c3350/scratchpad'

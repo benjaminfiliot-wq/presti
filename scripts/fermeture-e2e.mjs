@@ -182,5 +182,51 @@ if (FLAGS) {
   }
 }
 
+console.log('\n── 7. Aucune suite « gratuite » ne fait répondre le modèle (la réserve ne se dépense pas la nuit)')
+{
+  // Le 07/09, deux suites postant sur `/api/conversation/stream` ont été branchées en « gratuit » :
+  // l'audit nocturne les aurait fait dépenser chaque nuit. Elles avaient été classées en cherchant
+  // le mot « anthropic » dans leur source — il n'y est pas, l'appel passe par une route du produit.
+  // Ce verrou remplace cette mémoire-là : le coût se déduit de ce que la suite APPELLE vraiment.
+  //
+  // Citer une route n'est pas l'appeler : `emails-e2e` les liste dans sa carte des envois,
+  // `audit-final-e2e` les lit dans le code source. Un verrou qui crie pour rien finit éteint.
+  const POST_SEULEMENT = ['/api/conversation/stream', '/api/devis/auto', '/api/devis/generer',
+    '/api/tools/reponse', '/api/site/generate', '/api/inventaire/recherche']
+
+  /** Ces suites appellent une route d'IA sans rien dépenser, et voici pourquoi. */
+  const SANS_COUT = {
+    'fermeture-e2e.mjs': 'elle porte cette liste elle-même, et n’appelle rien',
+    // Ses comptes de test naissent avec `credits: 0` : l'assistant s'arrête sur « crédits épuisés »
+    // AVANT d'appeler le modèle, et c'est justement ce que la suite prouve. Si un jour ces comptes
+    // recevaient des crédits, elle dépenserait — le `credits: 0` est donc load-bearing, pas cosmétique.
+    'modes-e2e.mjs': 'ses comptes ont zéro crédit : la route refuse avant le modèle, et c’est ce qu’elle prouve',
+  }
+
+  const lanceur = fs.readFileSync('scripts/tout-verifier.mjs', 'utf8')
+  const declarees = [...lanceur.matchAll(/args:\s*\[([^\]]*)\][^}]*cout:\s*'(\w+)'/g)]
+    .flatMap((m) => [...m[1].matchAll(/scripts\/([\w-]+\.mjs)/g)].map((f) => ({ fichier: f[1], cout: m[2] })))
+
+  const fautives = []
+  for (const d of declarees) {
+    if (d.cout === 'ia' || SANS_COUT[d.fichier]) continue
+    const chemin = `scripts/${d.fichier}`
+    if (!fs.existsSync(chemin)) continue
+    const lignes = fs.readFileSync(chemin, 'utf8').split(/\r?\n/)
+    const touchees = new Set()
+    lignes.forEach((ligne, i) => {
+      if (!/fetch\(|await post|await api\(/.test(ligne)) return
+      for (const r of POST_SEULEMENT) if (ligne.includes(r)) touchees.add(r)
+      // `/api/conversation` a un GET qui lit le fil : seul le POST fait répondre le modèle.
+      if (/\/api\/conversation[?'"`]/.test(ligne)) {
+        const bloc = lignes.slice(i, i + 4).join(' ')
+        if (/method:\s*'POST'/.test(bloc)) touchees.add('/api/conversation (POST)')
+      }
+    })
+    if (touchees.size) fautives.push(`${d.fichier} (${d.cout}) → ${[...touchees].join(', ')}`)
+  }
+  T(`aucune suite non-IA ne fait répondre le modèle${fautives.length ? ` — ${fautives.join(' · ')}` : ''}`, fautives.length === 0)
+}
+
 console.log(`\n${ko ? '❌' : '✅'} ${ok} réussis, ${ko} échoués`)
 process.exit(ko ? 1 : 0)

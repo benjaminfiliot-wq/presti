@@ -90,10 +90,16 @@ const SUITES = [
   //    rapport de couverture les comptait pourtant comme preuve, ce qui a laissé dix éléments
   //    — dont le portail de facturation Stripe — hors de tout regard nocturne.
   { nom: 'Courriers de l’entreprise — resolution de la boite et classement par nature', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/courriers-e2e.mjs'], cout: 'gratuit' },
-  { nom: 'Abonnement de bout en bout (11 transitions, sans débit)', cmd: 'node', args: ['scripts/abonnement-e2e.mjs'], cout: 'gratuit' },
+  // Elle importe `lib/plans.ts` (d'où le chargeur TypeScript) ET elle poste sur
+  // `/api/conversation/stream`, qui fait une VRAIE réponse d'IA — d'où le coût 'ia'. Je l'avais
+  // classée « gratuit » le 07/09 en cherchant le mot « anthropic » dans sa source : il n'y est pas,
+  // parce que l'appel passe par une route du produit. Mauvaise méthode, deux réponses dépensées.
+  { nom: 'Abonnement de bout en bout (11 transitions, sans débit)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/abonnement-e2e.mjs'], cout: 'ia' },
   { nom: 'Comptes clients de la plateforme (lien à usage unique, révocation serveur)', cmd: 'node', args: ['scripts/comptes-clients-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Messagerie de la console (persistance et remise)', cmd: 'node', args: ['scripts/messages-e2e.mjs'], cout: 'gratuit' },
-  { nom: 'Panneau IA : le serveur décide, pas le navigateur', cmd: 'node', args: ['scripts/plateforme-config-e2e.mjs'], cout: 'gratuit' },
+  // Son premier cas vérifie que l'IA répond quand aucune configuration ne l'en empêche : c'est une
+  // vraie réponse, donc un vrai coût. Les autres cas prouvent qu'elle se TAIT, et ne coûtent rien.
+  { nom: 'Panneau IA : le serveur décide, pas le navigateur', cmd: 'node', args: ['scripts/plateforme-config-e2e.mjs'], cout: 'ia' },
   { nom: 'Suppression granulaire (documents légaux conservés)', cmd: 'node', args: ['scripts/suppressions-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Double authentification (enrôlement, codes de secours)', cmd: 'node', args: ['scripts/mfa-e2e.mjs'], cout: 'navigateur' },
   { nom: 'Carte Devis dans la conversation (acceptation opposable)', cmd: 'node', args: ['scripts/devis-conversation-e2e.mjs'], cout: 'navigateur' },
