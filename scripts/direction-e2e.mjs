@@ -174,7 +174,11 @@ try {
   console.log('\n9. Immuabilité et RLS du journal')
   const upd = await rest(`journal_direction?id=eq.${jb.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ action: 'falsifie' }) })
   T('UPDATE par la clé service → refusé par le trigger', !upd.ok, `HTTP ${upd.status}`)
-  const [ligneGardee] = await (await rest('journal_direction', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ action: 'e2e_conservation', acteur_email: null, cible_type: 'e2e', cible_id: `e2e-${st}` }) })).json()
+  // La conservation se prouve sur une ligne NON exemptée (acteur_email null). On RÉUTILISE celle des passages
+  // précédents s’il y en a une : le trigger interdisant de la supprimer, en créer une à chaque nuit polluerait
+  // le journal de production pour vingt-quatre mois (constaté à l’œil sur la capture du 07/09).
+  let [ligneGardee] = await (await rest('journal_direction?select=id&action=eq.e2e_conservation&limit=1')).json()
+  if (!ligneGardee) [ligneGardee] = await (await rest('journal_direction', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ action: 'e2e_conservation', acteur_email: null, cible_type: 'e2e', cible_id: 'e2e-conservation' }) })).json()
   const del = await rest(`journal_direction?id=eq.${ligneGardee.id}`, { method: 'DELETE' })
   const encore = (await (await rest(`journal_direction?select=id&id=eq.${ligneGardee.id}`)).json()).length === 1
   T('DELETE d’une ligne fraîche (hors compte de test) → refusé : conservation 24 mois', !del.ok && encore, `HTTP ${del.status}`)
@@ -250,6 +254,7 @@ try {
   await rest(`alertes?id=eq.${al2.id}`, { method: 'DELETE' })
   await rest(`alertes?id=eq.${al.id}`, { method: 'DELETE' })
 
+  await purgerPlafonds(); await purgerPlafondsDe(F.uid, L.uid)
   console.log('\n15. L’écran (Chromium) : bandeau, chiffres sourcés, journal, modale, téléphone')
   const nav = await chromium.launch()
   try {
