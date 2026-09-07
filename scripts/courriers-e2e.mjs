@@ -179,11 +179,36 @@ const CAS = [
     attendu: 'technique', motif: 'dmarc:rapport' },
   { nom: 'un inconnu sans aucun signal → à lire (le doute, jamais une poubelle)', de: 'inconnu@ailleurs.example', sujet: 'Bonjour',
     attendu: 'a_lire', motif: 'defaut' },
+
+  // ── Domaines OBSERVÉS dans la vraie boîte le 07/09 (migration 0073). Chacun cite son message.
+  { nom: 'Stripe → abonnement', de: 'notifications@stripe.com', sujet: 'Paiement de 29,00 € effectué par alexandre f',
+    attendu: 'abonnement', motif: 'domaine:stripe.com', depuis: '0073' },
+  { nom: 'OVH → fournisseur', de: 'support@services.ovhcloud.com', sujet: 'Une facture est disponible dans votre espace',
+    attendu: 'fournisseur', motif: 'domaine:ovhcloud.com', depuis: '0073' },
+  { nom: 'Anthropic → fournisseur', de: 'invoice+statements@mail.anthropic.com', sujet: 'Your receipt from Anthropic, PBC',
+    attendu: 'fournisseur', motif: 'domaine:anthropic.com', depuis: '0073' },
+  { nom: 'Google → fournisseur', de: 'firebase-no-reply@google.com', sujet: 'Welcome to Firebase',
+    attendu: 'fournisseur', motif: 'domaine:google.com', depuis: '0073' },
+  { nom: 'un fournisseur qui pose un en-tête de liste reste un fournisseur', de: 'noreply-accounts@google.com',
+    sujet: 'Vous avez partagé certaines données de votre compte Google', entetes: { list_unsubscribe: '<https://google.com/stop>' },
+    attendu: 'fournisseur', motif: 'domaine:google.com', depuis: '0073',
+    note: 'le domaine passe AVANT l’en-tête de liste : la moitié de ces services en posent un même sur leurs messages importants' },
+  { nom: 'un service que l’entreprise n’utilise pas reste « à lire »', de: 'noreply@skool.com', sujet: 'Weekly digest',
+    attendu: 'a_lire', motif: 'defaut', depuis: '0073',
+    note: '« fournisseur » veut dire une dépendance de Presti, pas une entreprise connue' },
 ]
 
 async function classement() {
   console.log('\n── B et C. Le classement, règle par règle (aucune boîte relevée, aucun appel IA)')
+  // Les listes de domaines arrivent avec 0073 : tant qu'elles sont vides, les cas qui en dépendent
+  // se sautent en le disant. Un rouge qu'on apprend à ignorer coûte plus cher qu'un test manquant.
+  const { data: sonde0073 } = await admin.rpc('nature_courrier', {
+    p_email: 'notifications@stripe.com', p_sujet: 'x', p_entetes: {}, p_est_artisan: false, p_fil_connu: false,
+  })
+  const a0073 = sonde0073?.motif === 'domaine:stripe.com'
+  if (!a0073) console.log('  ⏭  migration 0073 pas encore collée : les cas de domaines observés sont sautés.')
   for (const c of CAS) {
+    if (c.depuis === '0073' && !a0073) continue
     const { data, error } = await admin.rpc('nature_courrier', {
       p_email: c.de, p_sujet: c.sujet, p_entetes: c.entetes ?? {},
       p_est_artisan: !!c.estArtisan, p_fil_connu: !!c.filConnu,
