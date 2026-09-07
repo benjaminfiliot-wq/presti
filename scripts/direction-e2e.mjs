@@ -147,7 +147,9 @@ try {
   T('POST bans avec le jeton → 200', b1.status === 200 && b1.body.ok === true, `${b1.status} ${JSON.stringify(b1.body).slice(0, 80)}`)
   T('ip_bans contient l’IP', !!(await (await rest('ip_bans?select=ip&ip=eq.203.0.113.7')).json()).length)
   const jb = (await (await rest(`journal_direction?select=*&acteur_id=eq.${F.uid}&action=eq.ban_ip`)).json())[0]
-  T('journal ban_ip : avant null, après.ip, reconfirme true, IP et agent renseignés', !!jb && jb.avant === null && jb.apres?.ip === '203.0.113.7' && jb.reconfirme === true && !!jb.ip && !!jb.agent && jb.cible_id === '203.0.113.7', JSON.stringify(jb).slice(0, 160))
+  T('journal ban_ip : avant null, reconfirme true, adresse et navigateur de l’ACTEUR renseignés', !!jb && jb.avant === null && jb.reconfirme === true && !!jb.ip && !!jb.agent, JSON.stringify(jb).slice(0, 160))
+  // L’adresse de la CIBLE est pseudonymisée : le journal vit 24 mois, ip_bans douze (revue du 07/09).
+  T('journal ban_ip : la cible est un pseudonyme, l’adresse bannie n’apparaît nulle part', !!jb && /^ip:[0-9a-f]{32}$/.test(jb.cible_id ?? '') && /^ip:[0-9a-f]{32}$/.test(jb.apres?.ip ?? '') && !JSON.stringify(jb).includes('203.0.113.7'), `cible ${jb?.cible_id} · après ${jb?.apres?.ip}`)
 
   console.log('\n8. Rejeu, expiration, portée, autre fondateur')
   const rejeu = await json(await api('/api/direction/securite/bans', { method: 'POST', body: JSON.stringify({ ip: '203.0.113.8' }) }, jF, bon.body.jeton))
@@ -172,7 +174,7 @@ try {
   T('UPDATE par la clé service → refusé par le trigger', !upd.ok, `HTTP ${upd.status}`)
   const [ligneGardee] = await (await rest('journal_direction', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ action: 'e2e_conservation', acteur_email: null, cible_type: 'e2e', cible_id: `e2e-${st}` }) })).json()
   const del = await rest(`journal_direction?id=eq.${ligneGardee.id}`, { method: 'DELETE' })
-  const encore = (await (await rest(`journal_direction?select=id&id=eq.${sentinelle.id}`)).json()).length === 1
+  const encore = (await (await rest(`journal_direction?select=id&id=eq.${ligneGardee.id}`)).json()).length === 1
   T('DELETE d’une ligne fraîche (hors compte de test) → refusé : conservation 24 mois', !del.ok && encore, `HTTP ${del.status}`)
   // Les lignes des comptes de test, elles, doivent partir : sinon la purge de fin laisserait des traces.
   const delTest = await rest(`journal_direction?id=eq.${jb.id}`, { method: 'DELETE' })
@@ -189,7 +191,8 @@ try {
   for (const [nom, jeton] of [['artisan', jA], ['fondateur attesté', jF], ['fondateur sans second facteur', jFnu]])
     for (const table of ['journal_direction', 'alertes', 'reglages_globaux', 'direction_roles', 'reconfirmations'])
       directs.push({ nom, table, ...(await direct(jeton, table)) })
-  T('aucune table de direction n’est lisible par un jeton de navigateur (fondateur compris)', directs.every((d) => d.status === 401 || d.status === 403 || d.n === 0), directs.filter((d) => !(d.status === 401 || d.status === 403 || d.n === 0)).map((d) => `${d.nom}/${d.table}:${d.status}:${d.n}`).join(' '))
+  const muet = (d) => d.status >= 400 || d.n === 0
+  T('aucune table de direction n’est lisible par un jeton de navigateur (fondateur compris)', directs.every(muet), directs.filter((d) => !muet(d)).map((d) => `${d.nom}/${d.table}:${d.status}:${d.n}`).join(' '))
   const parApi = await json(await api('/api/direction/journal?limite=5', {}, jF))
   T('… mais le fondateur lit bien le journal par l’API (≥ 1 ligne)', parApi.status === 200 && (parApi.body.lignes || []).length >= 1, `${parApi.status} ${(parApi.body.lignes || []).length}`)
 
@@ -197,7 +200,7 @@ try {
   const j5 = (await json(await api('/api/direction/reconfirmer', { method: 'POST', body: JSON.stringify({ password: F.password, portee: 'securite' }) }, jF))).body.jeton
   const d1 = await json(await api('/api/direction/securite/bans', { method: 'DELETE', body: JSON.stringify({ ip: '203.0.113.7' }) }, jF, j5))
   const jd = (await (await rest(`journal_direction?select=avant,apres&acteur_id=eq.${F.uid}&action=eq.deban_ip`)).json())[0]
-  T('DELETE bans → 200, journal deban_ip avec avant.ip', d1.status === 200 && jd?.avant?.ip === '203.0.113.7' && jd.apres === null, `${d1.status} ${JSON.stringify(jd).slice(0, 80)}`)
+  T('DELETE bans → 200, journal deban_ip : avant pseudonymisé, après null, adresse jamais en clair', d1.status === 200 && /^ip:[0-9a-f]{32}$/.test(jd?.avant?.ip ?? '') && jd.apres === null && !JSON.stringify(jd).includes('203.0.113.7'), `${d1.status} ${JSON.stringify(jd).slice(0, 90)}`)
 
   console.log('\n11. Rôle « lecture » (Alexandre)')
   const lect = await Promise.all(['/api/direction/etat', '/api/direction/chiffres', '/api/direction/journal', '/api/direction/fil'].map((c) => api(c, {}, jL)))
