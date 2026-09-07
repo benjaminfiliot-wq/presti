@@ -2651,3 +2651,24 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .psh-foot{padding-top:8px}
   .psh-founder{padding:.5rem .6rem}
 }
+
+/* ── L'en-tête d'une conversation, sur petit écran ──────────────────────────────────────────────────
+   Les actions (« Je prends la main », « Créer un devis ») étaient en `flex:none` à côté d'un nom qui,
+   lui, pouvait rétrécir. Sous 560 px, le résultat était net et mauvais : les boutons passaient
+   PAR-DESSUS le nom du client et le dernier sortait de l'écran. Signalé par Benj le 07/09 : « sur
+   mobile, on voit que la moitié de l'interface de messages ».
+
+   Les actions passent donc à la ligne et prennent toute la largeur. Un bouton qu'on ne peut pas
+   atteindre ne sert à rien, et un nom de client illisible non plus. */
+@media(max-width:560px){
+  .inbox-thead{flex-wrap:wrap;row-gap:.6rem}
+  .inbox-who{flex:1 1 auto;min-width:0}
+  .inbox-actions{margin-left:0;width:100%;flex-wrap:wrap}
+  .inbox-actions .btn{flex:1 1 auto;justify-content:center;min-height:44px}
+}
+/* Entre 561 et 900 px, les actions tiennent encore sur la ligne mais le nom doit pouvoir se couper
+   plutôt que de les pousser dehors. */
+@media(min-width:561px) and (max-width:900px){
+  .inbox-who{min-width:0;flex:1 1 auto}
+  .inbox-actions{flex:none}
+}
