@@ -43,3 +43,9 @@ scripts/.certs-test/
 
 # Sorties du smoke Android (captures, logcat) : artefact CI, jamais versionnées
 mobile/smoke/
+
+# Sorties de compilation Android et cache TypeScript : lourds, régénérables, jamais versionnés.
+presti-debug-apk/
+presti-debug-apk.zip
+*.apk
+tsconfig.tsbuildinfo
