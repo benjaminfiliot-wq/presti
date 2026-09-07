@@ -11,6 +11,8 @@ import Clients from './Clients'
 import Fiche from './Fiche'
 import Apports from './Apports'
 import Messagerie from './Messagerie'
+import BarreEtat from './BarreEtat'
+import Recherche from './Recherche'
 import { actif } from '@/lib/flags'
 
 // Le Poste de contrôle (prompt v11 §1) — UN seul écran depuis lequel Benj dirige l'entreprise.
@@ -49,6 +51,10 @@ function PosteInner() {
   const [fiche, setFiche] = useState<string | null>(null)
   const [msg, setMsg] = useState<Message>(null)
   const minuteur = useRef<number | undefined>(undefined)
+  // Les compteurs du rail viennent de la barre d'état : une seule requête les porte déjà, en refaire
+  // une par onglet serait payer deux fois la même information.
+  const [compteurs, setCompteurs] = useState<{ aFaire: number; messages: number | null }>({ aFaire: 0, messages: null })
+  const [recherche, setRecherche] = useState(false)
   const demande = params.get('onglet')
   const onglet: Onglet = ONGLETS.includes(demande as Onglet) ? (demande as Onglet) : 'aujourdhui'
 
@@ -67,6 +73,15 @@ function PosteInner() {
   useEffect(() => { void verifier() }, [verifier])
   useEffect(() => () => window.clearTimeout(minuteur.current), [])
 
+  // Ctrl+K (⌘K sur Mac) ouvre la recherche depuis n'importe où — sauf pendant qu'on écrit ailleurs.
+  useEffect(() => {
+    const sur = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setRecherche(true) }
+    }
+    window.addEventListener('keydown', sur)
+    return () => window.removeEventListener('keydown', sur)
+  }, [])
+
   const signaler = useCallback((m: Exclude<Message, null>) => {
     setMsg(m)
     window.clearTimeout(minuteur.current)
@@ -76,15 +91,21 @@ function PosteInner() {
 
   return (
     <AppShell active="controle" title="Poste de contrôle" crumb={TITRES[onglet]} wide>
+      <BarreEtat onCompteurs={setCompteurs} onRecherche={() => setRecherche(true)} />
       <div className="param-layout dir-layout">
         <nav className="param-nav" aria-label="Vues du Poste de contrôle">
           <div className="param-nav-grp">
             <div className="param-nav-lab">Poste de contrôle{role === 'lecture' ? ' · lecture' : ''}</div>
-            {NAV.filter((e) => ONGLETS.includes(e.id)).map((e) => (
-              <a key={e.id} href={`/controle?onglet=${e.id}`} className={onglet === e.id ? 'on' : ''} aria-current={onglet === e.id ? 'page' : undefined} onClick={(ev) => aller(ev, e.id)}>
-                {e.icone}<span><b>{e.label}</b><small>{e.detail}</small></span>
-              </a>
-            ))}
+            {NAV.filter((e) => ONGLETS.includes(e.id)).map((e) => {
+              // Un compteur ne s'affiche que s'il y a quelque chose à faire : un « 0 » permanent
+              // devient un décor, et un décor ne se remarque plus le jour où il compte.
+              const n = e.id === 'aujourdhui' ? compteurs.aFaire : e.id === 'messagerie' ? compteurs.messages ?? 0 : 0
+              return (
+                <a key={e.id} href={`/controle?onglet=${e.id}`} className={onglet === e.id ? 'on' : ''} aria-current={onglet === e.id ? 'page' : undefined} onClick={(ev) => aller(ev, e.id)}>
+                  {e.icone}<span><b>{e.label}{n > 0 ? <span className="ctl-compteur" aria-label={`${n} en attente`}>{n > 99 ? '99+' : n}</span> : null}</b><small>{e.detail}</small></span>
+                </a>
+              )
+            })}
           </div>
         </nav>
         <div className="param-main dir-main" key={onglet}>
@@ -104,6 +125,17 @@ function PosteInner() {
           {msg ? <div className={`msg${msg.type === 'err' ? ' err' : ''}`} role="status">{msg.text}</div> : null}
         </div>
       </div>
+      <Recherche
+        ouvert={recherche}
+        onFermer={() => setRecherche(false)}
+        onAller={(r) => {
+          // On va où le résultat vit : la fiche pour un artisan, le fil pour un message.
+          setMsg(null)
+          if (r.type === 'artisan' && r.cible) { setFiche(r.cible); router.replace('/controle?onglet=clients', { scroll: false }); return }
+          setFiche(null)
+          router.replace(`/controle?onglet=${r.onglet}`, { scroll: false })
+        }}
+      />
     </AppShell>
   )
 }

@@ -2552,3 +2552,59 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .dir-ligne-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.9rem}
 .dir-ligne-actions .btn{width:auto;margin:0}
 @media(max-width:560px){.dir-ligne-actions .btn{flex:1 1 100%;justify-content:center}}
+
+/* ── Poste de contrôle : la barre d'état permanente (v11 §1) ────────────────────────────────────────
+   Densité d'un outil de travail : une ligne, des chiffres alignés, aucune carte décorative. Elle est
+   montée sur toutes les vues — elle doit se lire d'un coup d'œil et ne jamais attirer l'attention
+   pour rien. Le seul moment où elle change de couleur, c'est quand le service ne va pas. */
+.ctl-barre{display:flex;align-items:center;flex-wrap:wrap;gap:0 1.4rem;padding:.55rem .9rem;margin-bottom:1rem;
+  background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--line);border-radius:var(--radius);
+  font-size:12.5px;line-height:1.5;min-height:40px}
+.ctl-barre.ok{border-left-color:var(--ok,#38CD8C)}
+.ctl-barre.warn{border-left-color:var(--warn,#E4B45A)}
+.ctl-barre.crit{border-left-color:var(--crit,#F0776A)}
+.ctl-barre-item{display:inline-flex;align-items:baseline;gap:.4rem;white-space:nowrap;min-height:22px}
+.ctl-barre-lab{color:var(--faint);font-size:11.5px}
+.ctl-barre-val{color:var(--ink);font-family:var(--font-mono);font-weight:600;font-variant-numeric:tabular-nums}
+/* Une valeur absente est un tiret discret, jamais un zéro : un « 0 € » se lirait comme une mauvaise
+   nouvelle au lieu d'une information manquante. Son titre en dit la raison. */
+.ctl-barre-vide{color:var(--faint);font-family:var(--font-mono);cursor:help}
+.ctl-barre-fin{display:inline-flex;align-items:center;gap:.7rem;margin-left:auto}
+.ctl-barre-k{display:inline-flex;align-items:center;gap:.4rem;background:none;border:1px solid var(--line);
+  border-radius:6px;color:var(--muted);padding:.2rem .5rem;cursor:pointer;font:inherit;width:auto;margin:0;min-height:26px}
+.ctl-barre-k:hover{border-color:var(--line-2);color:var(--ink)}
+.ctl-barre-k svg{width:13px;height:13px}
+.ctl-barre-k kbd{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.02em;color:var(--faint)}
+@media(max-width:760px){
+  /* Sur téléphone, la barre garde l'essentiel : l'état du service et l'accès à la recherche. Les
+     chiffres se lisent dans « Aujourd'hui », qui est à un doigt. */
+  .ctl-barre{gap:0 .9rem;font-size:12px}
+  .ctl-barre-item[data-mesure="MRR"],.ctl-barre-item[data-mesure="Coût IA"]{display:none}
+  .ctl-barre-k kbd{display:none}
+}
+
+/* Le compteur d'un onglet : il n'apparaît que s'il y a quelque chose à faire. Un « 0 » permanent
+   devient un décor, et un décor ne se remarque plus le jour où il compte. */
+.ctl-compteur{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:.45rem;
+  border-radius:999px;background:var(--crit-tint,rgba(240,119,106,.16));color:var(--crit,#F0776A);
+  font-family:var(--font-mono);font-size:10.5px;font-weight:700;vertical-align:middle}
+
+/* ── La recherche globale (Ctrl+K) ──────────────────────────────────────────────────────────────── */
+.ctl-recherche-voile{align-items:flex-start;padding-top:12vh}
+.ctl-recherche{width:min(560px,100%);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.ctl-recherche-champ{display:flex;align-items:center;gap:.6rem;padding:.7rem .9rem;border-bottom:1px solid var(--line-2)}
+.ctl-recherche-champ svg{width:16px;height:16px;color:var(--faint);flex:none}
+.ctl-recherche-champ input{flex:1;background:none;border:0;color:var(--ink);font:inherit;font-size:15px;padding:0;margin:0}
+.ctl-recherche-champ input:focus{outline:none}
+.ctl-recherche-vide{margin:0;padding:1rem .9rem;font-size:13px}
+.ctl-recherche-liste{list-style:none;margin:0;padding:.3rem;max-height:52vh;overflow-y:auto}
+.ctl-recherche-liste button{display:grid;grid-template-columns:auto 1fr;gap:.2rem .6rem;width:100%;margin:0;
+  padding:.5rem .6rem;background:none;border:0;border-radius:8px;color:var(--ink);text-align:left;font:inherit;cursor:pointer}
+.ctl-recherche-liste button.on{background:var(--surface-2)}
+.ctl-recherche-type{grid-row:1/3;align-self:center;font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--faint);border:1px solid var(--line);border-radius:5px;padding:.15rem .4rem;min-width:62px;text-align:center}
+.ctl-recherche-titre{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctl-recherche-detail{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctl-recherche-aide{margin:0;padding:.5rem .9rem;border-top:1px solid var(--line-2);font-size:11px}
+@media(max-width:560px){.ctl-recherche-voile{padding-top:6vh}.ctl-recherche-aide{display:none}}
