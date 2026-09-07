@@ -149,12 +149,18 @@ export async function GET(req: Request) {
   // le faire échouer. Sans ça, elle a échoué chaque jour sous un « reussi: true » (constaté le 07/09,
   // zéro courrier en base depuis la mise en service, sans que rien ne le signale).
   const releveOk = typeof courriers === 'object' && courriers !== null && (courriers as { ok?: boolean }).ok === true
+  // Une boîte NON CONFIGURÉE n'est pas une panne : c'est une absence de réglage, comme un drapeau
+  // baissé. Sans cette distinction, une suite lancée depuis un poste sans identifiants IMAP écrivait
+  // un « échec » dans la base de PRODUCTION et faisait apparaître une alerte critique dans le Poste
+  // de contrôle — arrivé le 07/09 à 21 h 50, une heure après que la vraie boîte se soit mise à marcher.
+  const releveNonConfiguree = /n’est pas configurée|n'est pas configurée/.test(String((courriers as { erreur?: string })?.erreur ?? ''))
   const releveResume = courriers === 'messagerie fermée' ? 'drapeau baissé'
     : releveOk ? `${(courriers as { nouveaux: number }).nouveaux} nouveau(x) sur ${(courriers as { lus: number }).lus} lu(s)`
+    : releveNonConfiguree ? 'boîte non configurée sur cet environnement'
     : `ÉCHEC — ${(courriers as { erreur?: string })?.erreur ?? 'raison inconnue'}`.slice(0, 180)
   await enregistrerPassage('relances', {
     due: relances?.length ?? 0, sent, skipped, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0),
     boite: releveResume,
-  }, courriers === 'messagerie fermée' || releveOk)
+  }, courriers === 'messagerie fermée' || releveOk || releveNonConfiguree)
   return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes, courriers })
 }

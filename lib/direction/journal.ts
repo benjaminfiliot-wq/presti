@@ -13,7 +13,7 @@ export type Action =
   | 'reglage_modifie' | 'role_modifie' | 'artisan_offre' | 'artisan_credits' | 'artisan_essai' | 'artisan_rembourse'
   | 'artisan_pause' | 'artisan_suspendu' | 'artisan_reactive' | 'artisan_email' | 'support_vu_comme'
   | 'apport_ajoute' | 'apport_modifie' | 'achat_ajoute' | 'obligation_modifiee' | 'reversement_modifie'
-  | 'courrier_classe' | 'courrier_repondu' | 'artisan_portail'
+  | 'courrier_classe' | 'courrier_repondu' | 'artisan_portail' | 'cron_relance'
 
 export type Entree = {
   acteur: Fondateur

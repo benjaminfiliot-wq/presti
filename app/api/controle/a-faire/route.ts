@@ -15,7 +15,9 @@ export const dynamic = 'force-dynamic'
 // J3 (emails > 24 h) et J4 (obligations, factures fournisseurs) s'ajoutent ici — pas avant d'exister.
 //
 // Aucun cache sur nos propres tables : une alerte acquittée doit disparaître au rafraîchissement suivant.
-export type Action = { libelle: string; route: string; methode: 'POST' | 'DELETE'; corps?: Record<string, unknown>; reconfirmation: boolean; portee?: string }
+// `methode: 'GET'` veut dire OUVRIR, pas exécuter : l'écran suit le lien au lieu de poster. C'est le
+// seul geste sensé devant une facture impayée — la relance se décide en la regardant, pas en cliquant.
+export type Action = { libelle: string; route: string; methode: 'POST' | 'DELETE' | 'GET'; corps?: Record<string, unknown>; reconfirmation: boolean; portee?: string }
 export type Ligne = { id: string; type: 'paiement' | 'alerte' | 'cron'; libelleType: string; gravite: 'info' | 'attention' | 'critique'; libelle: string; detail: string; a: string; source: string; action?: Action }
 
 const LIBELLES_TYPE = { paiement: 'Paiement', alerte: 'Alerte', cron: 'Tâche' } as const
@@ -49,18 +51,40 @@ export async function GET(req: Request) {
     id: `paiement:${e.id}`, type: 'paiement', libelleType: LIBELLES_TYPE.paiement, gravite: 'critique',
     libelle: `Paiement échoué${e.client ? ` — ${e.client}` : ''}`,
     detail: `${euros(e.montant)} · ${e.tentatives} tentative${e.tentatives > 1 ? 's' : ''}`, a: e.depuis, source: 'stripe',
+    // Le geste utile devant un paiement échoué, c'est d'ouvrir la fiche du client : de là partent la
+    // relance, le changement d'offre et le message. Une ligne sans geste ne descend jamais.
+    // La facture hébergée par Stripe porte tout : le montant, les tentatives, le moyen de paiement
+    // et le bouton de relance. C'est là qu'on va, plutôt que de recoder une relance à moitié.
+    action: { libelle: e.lien ? 'Ouvrir la facture' : 'Voir les clients', route: e.lien ?? '/controle?onglet=clients', methode: 'GET', reconfirmation: false },
   })
   for (const a of alertes.valeur ?? []) lignes.push({
     id: `alerte:${a.id}`, type: 'alerte', libelleType: LIBELLES_TYPE.alerte, gravite: (a.gravite as Ligne['gravite']) ?? 'attention',
     libelle: a.sujet, detail: (a.corps ?? '').split('\n')[0].slice(0, 160), a: a.cree_le, source: 'supabase',
     action: { libelle: 'Acquitter', route: `/api/controle/alertes/${a.id}/acquitter`, methode: 'POST', reconfirmation: false },
   })
-  for (const c of crons.valeur ?? []) lignes.push({
-    id: `cron:${c.nom}`, type: 'cron', libelleType: LIBELLES_TYPE.cron, gravite: c.reussi === false ? 'critique' : 'attention',
-    libelle: `${NOMS_CRON[c.nom] ?? c.nom} : ${c.reussi === false ? 'en échec' : 'aucun passage récent'}`,
-    detail: c.dernier ? `dernier passage ${new Date(c.dernier).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}${c.detail ? ` · ${c.detail}` : ''}` : 'aucun passage enregistré',
-    a: c.dernier ?? new Date().toISOString(), source: 'supabase',
-  })
+  // Le détail d'un passage est un objet : le coller dans une phrase donnait « · [object Object] »
+  // à l'écran (constaté le 07/09). On le met en forme, en gardant ce qui parle et rien d'autre.
+  const detailLisible = (d: unknown): string => {
+    if (d == null) return ''
+    if (typeof d === 'string') return d
+    if (typeof d !== 'object') return String(d)
+    const paires = Object.entries(d as Record<string, unknown>)
+      .filter(([, v]) => v !== null && v !== '' && v !== 0 && !(Array.isArray(v) && !v.length))
+      .map(([k, v]) => `${k} ${typeof v === 'object' ? JSON.stringify(v).slice(0, 60) : String(v)}`)
+    return paires.join(' · ').slice(0, 200)
+  }
+  for (const c of crons.valeur ?? []) {
+    const detail = detailLisible(c.detail)
+    lignes.push({
+      id: `cron:${c.nom}`, type: 'cron', libelleType: LIBELLES_TYPE.cron, gravite: c.reussi === false ? 'critique' : 'attention',
+      libelle: `${NOMS_CRON[c.nom] ?? c.nom} : ${c.reussi === false ? 'en échec' : 'aucun passage récent'}`,
+      detail: c.dernier ? `dernier passage ${new Date(c.dernier).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}${detail ? ` · ${detail}` : ''}` : 'aucun passage enregistré',
+      a: c.dernier ?? new Date().toISOString(), source: 'supabase',
+      // Devant une tâche en échec, le geste est de la relancer. Le secret de cron reste au serveur :
+      // c'est un secret de machine à machine, il n'a rien à faire dans un navigateur.
+      action: { libelle: 'Relancer', route: `/api/controle/crons/${c.nom}/relancer`, methode: 'POST', reconfirmation: false },
+    })
+  }
   const ordre = { critique: 0, attention: 1, info: 2 }
   lignes.sort((x, y) => ordre[x.gravite] - ordre[y.gravite] || y.a.localeCompare(x.a))
   const sources = { stripe: { a: echecs.a, erreur: echecs.erreur }, alertes: { a: alertes.a, erreur: alertes.erreur }, crons: { a: crons.a, erreur: crons.erreur } }
