@@ -565,6 +565,26 @@ Repris : il **refuse de photographier autre chose que l'écran attendu**, et dit
 - **Appels IA du sprint : 0** (le devis est celui de Benj, sur son compte).
 - **Reste du v11** : le support et les tickets (mode support lecture seule, journalisé et notifié à l'artisan), et la partie « Santé » avancée — déploiements Vercel et retour arrière, coûts IA par fonction.
 
+## [46] L'interface ne tenait pas sur un écran de portable — trois défauts réels, trouvés à l'œil — 07/09 — ✅ sept tailles d'écran, trois pages, rien ne dépasse (`f594d6b` → `b9c57fe` en prod)
+
+Benj : « sur mon PC qui est petit, on ne voit pas tout », « Escalade, par exemple, c'est un peu coupé », « sur mobile, on voit que la moitié de l'interface de messages ». Trois défauts distincts, tous réels.
+
+- **La carte du compte sortait de l'écran.** À 1280×720, elle descendait à 739 px — dix-neuf pixels sous la ligne de flottaison, **déconnexion comprise**. La barre latérale était un seul bloc défilant avec son pied poussé en bas par `margin-top: auto` : ça tient tant que tout rentre, mais dès que le contenu dépasse, `margin-top: auto` ne fait plus rien et le pied part avec le défilement. Désormais : marque fixe, navigation défilante, compte fixe. Le `min-height: 0` sur la zone défilante est indispensable — sans lui, un enfant flex refuse de rétrécir sous sa taille de contenu et déborde au lieu de défiler.
+- **Sur mobile, les boutons recouvraient le nom du client.** Dans l'en-tête d'une conversation, « Je prends la main » et « Créer un devis » étaient en `flex:none` à côté d'un nom qui, lui, pouvait rétrécir. Résultat : les boutons passaient par-dessus le nom, et le dernier sortait de l'écran. C'est ça, « la moitié de l'interface ».
+- **« Escalader » sortait du cadre sur PC.** Ma première correction ne visait que les petits **écrans** : elle réglait le téléphone et laissait le PC cassé. Ce qui manque n'est pas la place sur l'écran mais dans le **conteneur** — à 1280 px de large, la colonne du fil ne fait que 640 px. Le `flex-wrap` est donc sur l'en-tête lui-même, sans media query : quand la place est là, tout reste en ligne ; quand elle manque, les actions passent dessous.
+- Et les badges « Assistant » et « Nouveau » se chevauchaient : deux familles de styles avec des hauteurs de ligne différentes, normalisées localement.
+
+### Trois fausses pistes écartées avant de « corriger » ce qui allait bien
+
+- **Le premier diagnostic ne trouvait rien** : le compte de test n'avait aucune conversation, donc l'écran était vide et le défaut ne pouvait pas se produire. Il a fallu fabriquer de vraies conversations, avec des noms longs.
+- **Les deux bulles apparaissaient du même côté** — j'ai failli corriger l'affichage du sens des messages. C'était mon jeu de test qui écrivait « entrant »/« sortant » là où le produit attend « in »/« out ». Le produit n'avait rien.
+- **Mon détecteur signalait la barre latérale « hors cadre » sous 960 px** : elle y est **délibérément**, derrière le menu hamburger. Puis il a signalé « Centre d'aide » à 1024×640 : il est dans une zone qui défile, et défiler n'est pas déborder.
+
+Trois fois, la mesure disait « défaut » là où il n'y en avait pas, et une fois elle disait « rien » là où il y en avait trois. **Une mesure ne remplace pas un regard** — et un regard sans données réelles ne voit rien non plus.
+
+- **Les factures d'essai d'Alexandre** (`FAC-2026-0001` à `0005`) sont annotées « essai de développement ». Elles restent en base : émises, elles relèvent des dix ans de conservation. Le verrou de 0041 ne gèle que les champs comptables — numéro, montants, date, client, empreinte — donc la note, elle, reste modifiable. C'est exactement le bon endroit pour dire ce qu'est une pièce sans toucher à ce qu'elle prouve.
+- **Appels IA du sprint : 0.**
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
