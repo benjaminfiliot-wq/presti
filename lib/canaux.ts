@@ -63,21 +63,33 @@ export function canalEntreprise(): (typeof ENTREPRISE_MAIL & { identifiant: stri
   return { ...ENTREPRISE_MAIL, identifiant, motDePasse }
 }
 
-/** Teste réellement la connexion IMAP. Messages d'erreur en français, actionnables. */
-export async function testerImap(hote: string, port: number, user: string, pass: string): Promise<{ ok: true } | { ok: false; erreur: string }> {
+/** Teste réellement la connexion IMAP. Messages d'erreur en français, actionnables.
+ *
+ *  Le message BRUT du serveur est rendu à part : les trois cas reconnus ci-dessous ne couvrent pas
+ *  tout, et quand aucun ne tombe juste, une phrase générique ne permet plus d'avancer — on essaie
+ *  des choses au hasard (constaté le 07/09, deux heures perdues sur « Connexion impossible »).
+ *  Ce message ne contient ni identifiant ni mot de passe : c'est la réponse du serveur. */
+export async function testerImap(hote: string, port: number, user: string, pass: string): Promise<{ ok: true; ms: number } | { ok: false; erreur: string; brut: string; ms: number }> {
+  const t0 = Date.now()
   try {
     const { ImapFlow } = await import('imapflow')
     const client = new ImapFlow({ host: hote, port, secure: port === 993, auth: { user, pass }, logger: false })
     await client.connect()
     await client.logout()
-    return { ok: true }
+    return { ok: true, ms: Date.now() - t0 }
   } catch (e) {
-    const m = (e instanceof Error ? e.message : String(e)).toLowerCase()
-    if (m.includes('auth') || m.includes('credential') || m.includes('login')) {
-      return { ok: false, erreur: 'Identifiants refusés. Avec Gmail ou Outlook, il faut créer un « mot de passe d’application » — le mot de passe habituel ne fonctionne pas.' }
+    const brut = (e instanceof Error ? e.message : String(e)).slice(0, 140)
+    const m = brut.toLowerCase()
+    const ms = Date.now() - t0
+    // Un délai dépassé et un mot de passe refusé ne se ressemblent pas : le refus revient tout de
+    // suite, le délai met dix secondes ou plus. C'est souvent la seule chose qui les distingue,
+    // parce que les serveurs ne disent pas toujours pourquoi ils ferment la porte.
+    if (m.includes('auth') || m.includes('credential') || m.includes('login') || m.includes('invalid')) {
+      return { ok: false, erreur: 'Identifiants refusés. Avec Gmail ou Outlook, il faut créer un « mot de passe d’application » — le mot de passe habituel ne fonctionne pas.', brut, ms }
     }
-    if (m.includes('enotfound') || m.includes('getaddrinfo')) return { ok: false, erreur: 'Serveur IMAP introuvable — vérifiez l’adresse du serveur.' }
-    if (m.includes('timeout') || m.includes('etimedout')) return { ok: false, erreur: 'Le serveur ne répond pas (délai dépassé).' }
-    return { ok: false, erreur: 'Connexion impossible. Vérifiez le serveur, le port et les identifiants.' }
+    if (m.includes('enotfound') || m.includes('getaddrinfo')) return { ok: false, erreur: 'Serveur IMAP introuvable — vérifiez l’adresse du serveur.', brut, ms }
+    if (m.includes('timeout') || m.includes('etimedout') || ms > 8000) return { ok: false, erreur: `Le serveur ne répond pas (délai dépassé après ${Math.round(ms / 1000)} s). Vérifiez le nom du serveur : chez OVH, ce n’est pas toujours ssl0.ovh.net.`, brut, ms }
+    if (m.includes('econnrefused')) return { ok: false, erreur: 'Le serveur refuse la connexion sur ce port.', brut, ms }
+    return { ok: false, erreur: 'Connexion impossible. Vérifiez le serveur, le port et les identifiants.', brut, ms }
   }
 }

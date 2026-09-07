@@ -254,7 +254,9 @@ export async function relever(limite = 40): Promise<Releve> {
     const brut = (e as Error).message.slice(0, 200)
     const t = await testerImap(b.hote, b.port, b.user, b.pass)
     const ou = `${b.hote}:${b.port}, compte ${identifiantReduit(b.user)}`
-    if (!t.ok) return { ok: false, erreur: `${t.erreur} (${ou})` }
+    // Le message du serveur est repris tel quel, à la fin : c'est lui qui départage quand aucun des
+    // cas reconnus ne tombe juste, et il ne contient ni identifiant ni mot de passe.
+    if (!t.ok) return { ok: false, erreur: `${t.erreur} (${ou}) — le serveur a répondu : « ${t.brut} »` }
     // La connexion passe mais la relève a échoué : c'est la BOÎTE ou le message, pas l'accès.
     return { ok: false, erreur: `La connexion à ${ou} fonctionne, mais la relève s’est arrêtée : ${brut}` }
   }

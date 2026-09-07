@@ -54,11 +54,12 @@ do $garde$ begin
   if not exists (select 1 from pg_constraint where conname = 'courriers_nature_source_chk') then
     alter table public.courriers add constraint courriers_nature_source_chk check (nature_source in ('auto','manuel'));
   end if;
-  if not exists (select 1 from pg_constraint where conname = 'courriers_entetes_borne') then
-    -- Une liste blanche d'en-têtes est bornée par nature : 4 Ko est déjà très large. Sans borne,
-    -- un jsonb devient un dépotoir où finit par atterrir ce qu'on avait juré de ne pas garder.
-    alter table public.courriers add constraint courriers_entetes_borne check (pg_column_size(entetes) <= 4096) not valid;
-  end if;
+  -- Pas de contrainte de taille sur `entetes`, et c'est un choix.
+  -- La première version posait `check (pg_column_size(entetes) <= 4096)` : PostgreSQL l'a refusée,
+  -- parce qu'un CHECK n'accepte que des fonctions IMMUTABLE et que `pg_column_size` est STABLE.
+  -- Plutôt que d'inventer un trigger pour sauver une ceinture par-dessus des bretelles : ce jsonb
+  -- est écrit par `lib/direction/courriers.ts` et par personne d'autre, avec une liste blanche de
+  -- onze clés dont chaque valeur est coupée à 256 caractères. La borne est dans le code qui écrit.
 end $garde$;
 
 create index if not exists courriers_nature_idx on public.courriers (nature, recu_le desc);
@@ -71,11 +72,15 @@ create index if not exists courriers_pile_idx   on public.courriers (nature, rec
 -- On ne mémorise pas le piège, on le supprime : tous les motifs sont écrits en minuscules,
 -- apostrophe droite, tiret ASCII. Les accents, eux, sont conservés — ils ne posent pas de problème.
 create or replace function public.sujet_norme(p text) returns text language sql immutable as $fn$
+  -- Les caractères sont écrits en clair plutôt qu'en U&'\2019' : cette syntaxe dépend d'un réglage
+  -- du serveur et déroute les éditeurs SQL, alors que le fichier est en UTF-8 et déjà plein d'accents.
+  -- Dans l'ordre : apostrophe typographique ’, apostrophe ouvrante ‘, accent aigu ´,
+  -- cadratin —, demi-cadratin –, espace insécable.
   select btrim(regexp_replace(
     replace(replace(replace(replace(replace(replace(
       lower(coalesce(p, '')),
-      U&'\2019', ''''), U&'\2018', ''''), U&'\00B4', ''''),
-      U&'\2014', '-'),  U&'\2013', '-'),  U&'\00A0', ' '),
+      '’', ''''), '‘', ''''), '´', ''''),
+      '—', '-'),  '–', '-'),  ' ', ' '),
     '\s+', ' ', 'g'))
 $fn$;
 
