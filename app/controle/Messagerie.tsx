@@ -13,7 +13,7 @@ import { NATURES, GROUPES, libelleNature, raisonDuMotif } from '@/lib/direction/
 // par email), les réponses des artisans. Groupés par fil, avec un statut qu'on fait descendre.
 // Ce qu'on n'y verra jamais : les conversations d'un artisan avec ses clients.
 type Fil = { fil: string; sujet: string | null; correspondant: string; email: string; dernier: string; messages: number; statut: string; artisan_id: string | null; nature: string; nature_source: string; nature_motif: string | null }
-type Liste = { fils: Fil[]; aTraiter: number; parNature: Record<string, number>; nature: string; configuree: boolean; role: 'direction' | 'lecture'; source: { source: string; a: string; cache: boolean }; a: string }
+type Liste = { fils: Fil[]; aTraiter: number; parNature: Record<string, number>; nature: string; natureConnue?: boolean; configuree: boolean; role: 'direction' | 'lecture'; source: { source: string; a: string; cache: boolean }; a: string }
 type Message = { id: string; sens: string; correspondant_email: string; correspondant_nom: string | null; sujet: string | null; corps: string | null; recu_le: string; statut: string; nature?: string; nature_source?: string; nature_motif?: string | null; repondre_a?: string | null }
 type Detail = { fil: string; messages: Message[]; artisan: { id: string; nom: string | null; metier: string | null } | null; role: string }
 
@@ -106,6 +106,9 @@ export default function Messagerie({ role, signaler, onArtisan }: { role: 'direc
         </div>
         {/* Les piles, par URGENCE. Aucune n'est masquée : « Rien à faire » décrit le geste attendu,
             pas un dossier caché — du courrier qu'on ne voit plus est du courrier perdu. */}
+        {/* Rien à proposer tant que la base ne sait pas classer : un filtre qui ne filtre rien
+            est pire que pas de filtre du tout. */}
+        {d && d.natureConnue === false ? null : (
         <div className="dir-natures" data-natures>
           <button type="button" className={`btn ${nature === 'toutes' ? 'btn--primary' : 'btn--ghost'}`} onClick={() => setNature('toutes')} data-nature="toutes">Toutes</button>
           {GROUPES.map((g) => (
@@ -122,6 +125,7 @@ export default function Messagerie({ role, signaler, onArtisan }: { role: 'direc
             </span>
           ))}
         </div>
+        )}
         <label htmlFor="dir-msg-q" className="visually-hidden">Rechercher dans la messagerie</label>
         <input id="dir-msg-q" type="search" placeholder="Chercher un sujet, une adresse, un mot…" value={q} onChange={(e) => setQ(e.target.value)} style={{ maxWidth: 380, marginBottom: '.9rem' }} />
 
@@ -138,7 +142,7 @@ export default function Messagerie({ role, signaler, onArtisan }: { role: 'direc
                     {f.correspondant} · {relTime(f.dernier, maintenant)}
                     {f.messages > 1 ? ` · ${f.messages} messages` : ''}
                     {f.statut === 'a_traiter' ? <span className="pill warn" style={{ marginLeft: 6 }}><span className="pdot" />à traiter</span> : null}
-                    <span className={`pill nat-${f.nature}`} style={{ marginLeft: 6 }} data-fil-nature={f.nature}>{libelleNature(f.nature)}</span>
+                    {f.nature ? <span className={`pill nat-${f.nature}`} style={{ marginLeft: 6 }} data-fil-nature={f.nature}>{libelleNature(f.nature)}</span> : null}
                     {f.artisan_id ? <button type="button" className="dir-dep" style={{ marginLeft: 6 }} onClick={() => onArtisan(f.artisan_id!)}>voir l’artisan</button> : null}
                   </small>
                 </li>

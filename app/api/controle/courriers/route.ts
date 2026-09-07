@@ -28,15 +28,38 @@ export async function GET(req: Request) {
   const nat = url.searchParams.get('nature') ?? 'toutes'
   if (nat !== 'toutes' && !estNature(nat)) return NextResponse.json({ error: 'Cette nature n’existe pas.' }, { status: 400 })
 
-  let requete = supabaseAdmin.from('courriers')
-    .select('id, fil, sens, correspondant_email, correspondant_nom, sujet, apercu, recu_le, statut, assigne_a, artisan_id, nature, nature_source, nature_motif')
-    .order('recu_le', { ascending: false }).limit(300)
-  if (filtre !== 'tous') requete = requete.eq('statut', filtre)
-  if (nat !== 'toutes') requete = requete.eq('nature', nat)
-  // Le partenaire ne voit que les fils qui LUI sont assignés (v11 §5) — pas la boîte de l'entreprise.
-  if (perimetre.borne) requete = requete.eq('assigne_a', f.uid)
-  if (q) requete = requete.or(`sujet.ilike.%${q}%,correspondant_email.ilike.%${q}%,correspondant_nom.ilike.%${q}%,apercu.ilike.%${q}%`)
-  const { data, error } = await requete
+  // Les colonnes de nature arrivent avec la migration 0072. Tant qu'elle n'est pas collée, les
+  // demander fait échouer la requête entière et l'écran répond 503 : la boîte devient illisible
+  // pour une fonctionnalité qui n'est même pas encore ouverte (constaté en production le 07/09).
+  // On lit donc avec, puis sans — un courrier lisible sans son rangement vaut mieux qu'une erreur.
+  // Écrites en toutes lettres : le typage de supabase-js analyse le LITTÉRAL du select pour déduire
+  // la forme du résultat. Un template le rend aveugle, et plus aucune colonne n'est vérifiée.
+  const lire = (avecNature: boolean) => {
+    let r = supabaseAdmin.from('courriers')
+      .select(avecNature
+        ? 'id, fil, sens, correspondant_email, correspondant_nom, sujet, apercu, recu_le, statut, assigne_a, artisan_id, nature, nature_source, nature_motif'
+        : 'id, fil, sens, correspondant_email, correspondant_nom, sujet, apercu, recu_le, statut, assigne_a, artisan_id')
+      .order('recu_le', { ascending: false }).limit(300)
+    if (filtre !== 'tous') r = r.eq('statut', filtre)
+    if (avecNature && nat !== 'toutes') r = r.eq('nature', nat)
+    // Le partenaire ne voit que les fils qui LUI sont assignés (v11 §5) — pas la boîte de l'entreprise.
+    if (perimetre.borne) r = r.eq('assigne_a', f.uid)
+    if (q) r = r.or(`sujet.ilike.%${q}%,correspondant_email.ilike.%${q}%,correspondant_nom.ilike.%${q}%,apercu.ilike.%${q}%`)
+    return r
+  }
+  type Ligne = { id: string; fil: string; sens: string; correspondant_email: string; correspondant_nom: string | null
+    sujet: string | null; apercu: string | null; recu_le: string; statut: string; assigne_a: string | null; artisan_id: string | null
+    nature?: string | null; nature_source?: string | null; nature_motif?: string | null }
+  const premier = await lire(true)
+  let data = premier.data as Ligne[] | null
+  let error = premier.error
+  let natureConnue = true
+  if (error && /column|does not exist|42703|schema cache/i.test(error.message)) {
+    console.warn('[courriers] migration 0072 absente : la boîte s’affiche sans les natures.')
+    natureConnue = false
+    const r = await lire(false)
+    data = r.data as Ligne[] | null; error = r.error
+  }
   if (error) return NextResponse.json({ error: 'Boîte indisponible pour l’instant.' }, { status: 503 })
 
   const parFil = new Map<string, { fil: string; sujet: string | null; correspondant: string; email: string; dernier: string; messages: number; statut: string; artisan_id: string | null; sens: string; nature: string; nature_source: string; nature_motif: string | null }>()
@@ -65,10 +88,15 @@ export async function GET(req: Request) {
   const { count: aTraiter } = await supabaseAdmin.from('courriers').select('id', { count: 'exact', head: true }).eq('statut', 'a_traiter')
   // Les compteurs viennent de la BASE, pas des 300 lignes chargées plus haut : une pastille dérivée
   // d'une page mentirait dès que la boîte grossit, et un compteur qui ment est pire qu'aucun.
-  const { data: parNature } = await supabaseAdmin.rpc('compter_courriers_par_nature', { p_assigne: perimetre.borne ? f.uid : null })
+  const { data: parNature } = natureConnue
+    ? await supabaseAdmin.rpc('compter_courriers_par_nature', { p_assigne: perimetre.borne ? f.uid : null })
+    : { data: null }
 
   return NextResponse.json({
     fils, aTraiter: aTraiter ?? 0, parNature: (parNature as Record<string, number>) ?? {}, nature: nat,
+    // L'écran cache la rangée des piles tant que la base ne sait pas classer : proposer un filtre
+    // qui ne filtre rien serait pire que ne rien proposer.
+    natureConnue,
     configuree: !!boiteEntreprise(), role: f.role,
     source: { source: 'base', a: new Date().toISOString(), cache: false },
     a: new Date().toISOString(),
