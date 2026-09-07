@@ -256,7 +256,15 @@ export async function relever(limite = 40): Promise<Releve> {
     const ou = `${b.hote}:${b.port}, compte ${identifiantReduit(b.user)}`
     // Le message du serveur est repris tel quel, à la fin : c'est lui qui départage quand aucun des
     // cas reconnus ne tombe juste, et il ne contient ni identifiant ni mot de passe.
-    if (!t.ok) return { ok: false, erreur: `${t.erreur} (${ou}) — le serveur a répondu : « ${t.brut} »` }
+    if (!t.ok) {
+      // Ce que seul le code peut voir : un mot de passe collé dans un champ web arrive souvent avec
+      // une espace ou un retour à la ligne en trop. Invisible à l'œil, fatal pour un serveur IMAP,
+      // et impossible à vérifier depuis le webmail. On le signale sans y toucher : le corriger en
+      // douce ferait exister deux versions du mot de passe selon qui le lit.
+      const sali = b.pass !== b.pass.trim() ? ' ⚠️ le mot de passe enregistré commence ou finit par une espace : c’est probablement un copier-coller de trop.' : ''
+      const court = b.pass.trim().length < 6 ? ` ⚠️ le mot de passe enregistré ne fait que ${b.pass.trim().length} caractère(s).` : ''
+      return { ok: false, erreur: `${t.erreur} (${ou}) — le serveur a répondu : « ${t.brut} »${sali}${court}` }
+    }
     // La connexion passe mais la relève a échoué : c'est la BOÎTE ou le message, pas l'accès.
     return { ok: false, erreur: `La connexion à ${ou} fonctionne, mais la relève s’est arrêtée : ${brut}` }
   }
