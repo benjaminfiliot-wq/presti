@@ -35,6 +35,9 @@ export async function sendEmail(opts: {
   replyTo?: string
   fromName?: string // marque de l'artisan (défaut : Presti)
   attachments?: { filename: string; content: string }[]
+  /** En-têtes bruts — sert à répondre DANS un fil (`In-Reply-To`, `References`). Sans eux, la réponse
+   *  ouvre une conversation neuve chez le destinataire, et le fil se lit à trous des deux côtés. */
+  entetes?: Record<string, string>
   critique?: boolean // alertes et notifications de l'entreprise : jamais bloquées par le plafond
 }): Promise<SendResult> {
   // Les suites de test créent des comptes en @presti-test.invalid : un envoi réel vers un TLD
@@ -71,6 +74,7 @@ export async function sendEmail(opts: {
         subject: opts.subject,
         text: opts.text,
         ...(replyTo ? { reply_to: replyTo } : {}),
+        ...(opts.entetes && Object.keys(opts.entetes).length ? { headers: opts.entetes } : {}),
         ...(opts.attachments && opts.attachments.length ? { attachments: opts.attachments } : {}),
       }),
     })

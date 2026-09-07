@@ -6,6 +6,8 @@ import { purgerComptes } from '@/lib/purgeComptes'
 import { purgerRgpd } from '@/lib/purgesRgpd'
 import { generateRelanceReply, relanceTemplate } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
+import { relever } from '@/lib/direction/courriers'
+import { actif } from '@/lib/flags'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
@@ -17,6 +19,15 @@ export async function GET(req: Request) {
   const auth = req.headers.get('authorization')
   if (!secret || auth !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  }
+
+  // La boîte de l'entreprise se relève ici plutôt que dans sa propre tâche : le plan Vercel de Presti
+  // n'en autorise que deux, toutes deux déjà prises. Bornée et à l'abri d'un `try` — un serveur de
+  // messagerie qui ne répond pas ne doit pas empêcher les relances de partir.
+  let courriers: unknown = 'messagerie fermée'
+  if (actif('messagerie')) {
+    try { courriers = await relever(25) } catch (e) { courriers = { ok: false, erreur: (e as Error).message.slice(0, 160) } }
+    console.log('[cron] relève de la boîte :', JSON.stringify(courriers))
   }
 
   const nowIso = new Date().toISOString()
@@ -135,5 +146,5 @@ export async function GET(req: Request) {
   try { const r = await ronde(); alertes = { envoyees: r.envoyees.length, ignorees: r.ignorees.length }; await enregistrerPassage('alertes', alertes) }
   catch (e) { alertes = { erreur: e instanceof Error ? e.message : String(e) }; await enregistrerPassage('alertes', alertes, false) }
   await enregistrerPassage('relances', { due: relances?.length ?? 0, sent, skipped, purge: (purge as { purges?: number }).purges ?? 0, cache_purge: Number(cachePurge ?? 0) })
-  return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes })
+  return NextResponse.json({ ok: true, due: relances?.length ?? 0, sent, skipped, purge, cache_purge: Number(cachePurge ?? 0), purges_rgpd: purges, alertes, courriers })
 }

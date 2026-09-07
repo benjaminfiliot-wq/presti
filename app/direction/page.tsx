@@ -10,6 +10,7 @@ import Journal from './Journal'
 import Clients from './Clients'
 import Fiche from './Fiche'
 import Apports from './Apports'
+import Messagerie from './Messagerie'
 import { actif } from '@/lib/flags'
 
 // Le Centre de direction (prompt v10) — un seul écran, des vues (rail d'onglets, motif app/parametres/page.tsx).
@@ -19,15 +20,22 @@ import { actif } from '@/lib/flags'
 // L'accès se vérifie sur la route la plus LÉGÈRE (`journal?limite=1`, une lecture) et non plus sur l'état complet
 // (six appels réseau) : l'écran s'ouvrait en huit secondes, et une base muette (migration pas encore collée, 503)
 // ou un plafond atteint (429) le laissaient sur « Vérification de l'accès… » pour toujours (revue du 07/09).
-type Onglet = 'aujourdhui' | 'clients' | 'apports' | 'journal'
+type Onglet = 'aujourdhui' | 'clients' | 'apports' | 'messagerie' | 'journal'
 type Message = { type: 'ok' | 'err'; text: string } | null
-const ONGLETS: Onglet[] = actif('apports') ? ['aujourdhui', 'clients', 'apports', 'journal'] : ['aujourdhui', 'journal']
-const TITRES: Record<Onglet, string> = { aujourdhui: 'Aujourd’hui', clients: 'Clients & abonnements', apports: 'Apports', journal: 'Journal' }
+// Le rail ne montre que ce qui existe : un onglet dont la migration n'est pas collée mènerait à un 404.
+const ONGLETS: Onglet[] = [
+  'aujourdhui' as const,
+  ...(actif('apports') ? (['clients', 'apports'] as const) : []),
+  ...(actif('messagerie') ? (['messagerie'] as const) : []),
+  'journal' as const,
+]
+const TITRES: Record<Onglet, string> = { aujourdhui: 'Aujourd’hui', clients: 'Clients & abonnements', apports: 'Apports', messagerie: 'Messagerie', journal: 'Journal' }
 const ic = (d: ReactNode) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
 const NAV: { id: Onglet; label: string; detail: string; icone: ReactNode }[] = [
   { id: 'aujourdhui', label: 'Aujourd’hui', detail: 'État, à faire, chiffres, fil', icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>) },
   { id: 'clients', label: 'Clients', detail: 'Offres, crédits, canal d’arrivée', icone: ic(<><circle cx="9" cy="8" r="3" /><path d="M3 20v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1" /><path d="M17 8h4M19 6v4" /></>) },
   { id: 'apports', label: 'Apports', detail: 'Qui a amené qui, et la preuve', icone: ic(<><path d="M4 12h8M12 8l4 4-4 4" /><path d="M16 4h4v16h-4" /></>) },
+  { id: 'messagerie', label: 'Messagerie', detail: 'Les emails de l’entreprise', icone: ic(<><path d="M3 6h18v12H3z" /><path d="m3 7 9 6 9-6" /></>) },
   { id: 'journal', label: 'Journal', detail: 'Chaque action, avant et après', icone: ic(<><path d="M4 4h12l4 4v12H4z" /><path d="M8 12h8M8 16h5" /></>) },
 ]
 
@@ -88,6 +96,7 @@ function DirectionInner() {
           ) : role === null ? <div className="tool-card"><p className="muted">Vérification de l’accès…</p></div>
             : onglet === 'clients' ? (fiche ? <Fiche id={fiche} role={role} signaler={signaler} onRetour={() => setFiche(null)} /> : <Clients onOuvrir={setFiche} />)
             : onglet === 'apports' ? <Apports role={role} signaler={signaler} />
+            : onglet === 'messagerie' ? <Messagerie role={role} signaler={signaler} onArtisan={(id) => { setFiche(id); router.replace('/direction?onglet=clients', { scroll: false }) }} />
             : onglet === 'journal' ? <Journal role={role} />
             : <Aujourdhui role={role} signaler={signaler} />}
           {msg ? <div className={`msg${msg.type === 'err' ? ' err' : ''}`} role="status">{msg.text}</div> : null}

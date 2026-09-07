@@ -32,6 +32,10 @@ export const FLAGS = {
   /** v10 J2b — agir sur un artisan (crédits, suspension, réactivation, message, portail). À lever quand la
    *  migration 0068 est collée : sans elle, les routes répondent 404 et la fiche n'affiche aucun bouton. */
   actionsArtisan: false,
+  /** v10 J3 — la messagerie de l'entreprise (boîte unifiée, classement, réponse dans le fil).
+   *  À lever quand la migration 0069 est collée : sans elle, les routes répondent 404 et l'onglet
+   *  n'apparaît pas dans le Centre. */
+  messagerie: false,
   /** §8 F1 — photo de facture fournisseur → OCR → lignes proposées. */
   inventaireOcr: false,
   /** §8 F3 — assistant de recherche fournisseurs. Livré et testé le 04/09 (scripts/recherche-e2e.mjs : 37/37, vraie recherche Castorama). */
