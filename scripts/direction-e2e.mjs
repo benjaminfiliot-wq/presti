@@ -175,14 +175,15 @@ try {
   console.log('\n9. Immuabilité et RLS du journal')
   const upd = await rest(`journal_direction?id=eq.${jb.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ action: 'falsifie' }) })
   T('UPDATE par la clé service → refusé par le trigger', !upd.ok, `HTTP ${upd.status}`)
-  // La conservation se prouve sur une ligne NON exemptée (acteur_email null). On RÉUTILISE celle des passages
-  // précédents s’il y en a une : le trigger interdisant de la supprimer, en créer une à chaque nuit polluerait
-  // le journal de production pour vingt-quatre mois (constaté à l’œil sur la capture du 07/09).
-  let [ligneGardee] = await (await rest('journal_direction?select=id&action=eq.e2e_conservation&limit=1')).json()
-  if (!ligneGardee) [ligneGardee] = await (await rest('journal_direction', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ action: 'e2e_conservation', acteur_email: null, cible_type: 'e2e', cible_id: 'e2e-conservation' }) })).json()
-  const del = await rest(`journal_direction?id=eq.${ligneGardee.id}`, { method: 'DELETE' })
-  const encore = (await (await rest(`journal_direction?select=id&id=eq.${ligneGardee.id}`)).json()).length === 1
-  T('DELETE d’une ligne fraîche (hors compte de test) → refusé : conservation 24 mois', !del.ok && encore, `HTTP ${del.status}`)
+  // La conservation 24 mois se prouve sur une ligne RÉELLE : ni un compte de test, ni une action « e2e_ », que
+  // le trigger laisse volontairement partir (0066). On n'en fabrique pas : en créer une serait poser dans le
+  // journal de production une ligne indestructible pour deux ans. S'il n'y en a pas encore, on le dit.
+  const [reelle] = await (await rest('journal_direction?select=id,action,acteur_email&action=not.like.e2e*&or=(acteur_email.is.null,acteur_email.not.like.*@presti-test.invalid)&limit=1')).json()
+  if (reelle?.id) {
+    const del = await rest(`journal_direction?id=eq.${reelle.id}`, { method: 'DELETE' })
+    const encore = (await (await rest(`journal_direction?select=id&id=eq.${reelle.id}`)).json()).length === 1
+    T('DELETE d’une ligne réelle et fraîche → refusé : conservation 24 mois', !del.ok && encore, `HTTP ${del.status}`)
+  } else console.log('  ℹ️  aucune ligne réelle dans le journal : la conservation se vérifiera dès la première action de Benj')
   // Les lignes des comptes de test, elles, doivent partir : sinon la purge de fin laisserait des traces.
   const delTest = await rest(`journal_direction?id=eq.${jb.id}`, { method: 'DELETE' })
   T('… mais une ligne d’un compte @presti-test.invalid se supprime (purge des suites)', delTest.ok, `HTTP ${delTest.status}`)
@@ -286,6 +287,7 @@ try {
         const valeurs = await page.evaluate(() => [...document.querySelectorAll('[data-kpi] .val')].map((e) => (e.textContent || '').trim()))
         T(`${nom} : les valeurs ne sont plus des points de suspension`, valeurs.filter((v) => v !== '…' && v !== '').length >= 7, valeurs.join(' | '))
         await page.waitForFunction(() => !/Chargement…/.test(document.querySelector('[data-afaire]')?.textContent || ''), { timeout: 30000 }).catch(() => {})
+        await page.waitForFunction(() => /Tout fonctionne|Service dégradé|Incident en cours|État non vérifié/.test(document.querySelector('[data-bandeau]')?.textContent || ''), { timeout: 45000 }).catch(() => {})
         const bandeauTexte = await page.locator('[data-bandeau]').innerText()
         T(`${nom} : le bandeau annonce un état, pas « Vérification… »`, /Tout fonctionne|Service dégradé|Incident en cours/.test(bandeauTexte), bandeauTexte.split(String.fromCharCode(10)).join(" · ").slice(0, 100))
         T(`${nom} : « À faire » et le fil sont rendus`, await page.locator('[data-afaire]').count() === 1 && await page.locator('[data-fil]').count() === 1)

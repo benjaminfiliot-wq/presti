@@ -53,7 +53,9 @@ export async function coutIADuMois(): Promise<{ usd: number; parEspace?: Record<
   const debut = new Date(); debut.setUTCDate(1); debut.setUTCHours(0, 0, 0, 0)
   const url = `https://api.anthropic.com/v1/organizations/cost_report?starting_at=${debut.toISOString()}&bucket_width=1d&limit=31`
   try {
-    const r = await fetch(url, { headers: { 'x-api-key': cle, 'anthropic-version': '2023-06-01' } })
+    // Six secondes au plus : sans délai, une lenteur d'Anthropic laissait le bandeau d'état sur « Vérification… »
+    // (constaté sur téléphone le 07/09, une fois la clé posée).
+    const r = await fetch(url, { headers: { 'x-api-key': cle, 'anthropic-version': '2023-06-01' }, signal: AbortSignal.timeout(6000) })
     const j = await r.json().catch(() => ({}))
     if (!r.ok) return { usd: 0, erreur: `${r.status} ${JSON.stringify(j).slice(0, 160)}` }
     let total = 0
