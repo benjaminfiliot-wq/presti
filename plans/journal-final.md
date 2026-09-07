@@ -370,6 +370,46 @@
 - **Appels IA du sprint : 0.**
 - **Suivant** : intégrer la revue adversariale des lots J2b/J2c (en cours), puis le §1 du v11 — fusionner `/direction` dans `/controle`, supprimer Jarvis, rediriger.
 
+## [37] v10/v11 · la revue adversariale intégrée — 30 défauts retenus sur 41, dont trois critiques — 07/09 — ✅ `direction-argent-e2e` **52/52**, `direction-e2e` **72/72**, `direction-apports-e2e` **27/27** (`bd8597d` en prod)
+
+- **Le dispositif** : 128 agents, cinq dimensions relues à l'aveugle les unes des autres (argent, cohérence Stripe ↔ base, accès et trace, vie privée, écran), puis **trois sceptiques par trouvaille**, chargés de la *réfuter* et de trancher en faveur du doute. Onze trouvailles sont tombées à la vérification. Trente tiennent, et sont corrigées.
+
+### Les trois critiques
+
+- **Le webhook Stripe jetait le résultat de ses écritures et répondait 200.** Une panne de base pendant un paiement, et l'événement était perdu **à jamais** : Stripe le considérait traité et ne le rejouait pas. L'artisan était prélevé 99 €, restait sur l'offre d'essai, la fiche affichait « aucun abonnement Stripe », et il pouvait **repayer** — le garde-fou de `/api/subscribe` lit `stripe_subscription_id`, resté vide. Le commentaire du fichier promettait pourtant « 500 : Stripe réessaiera » ; le code ne le tenait que pour les exceptions, et supabase-js ne lève pas. Les erreurs font désormais lever.
+- **Un compte suspendu gardait dix-huit routes**, dont la génération de devis et la souscription : la suspension n'était lue que par `authArtisan`, pas par `getUserRevocable`. Une suspension qui ne suspend que la moitié du produit n'en est pas une.
+- **La clé d'idempotence Stripe portait le motif saisi.** Deux gestes voulus et identiques se heurtaient au rejeu de Stripe, qui renvoyait la réponse de la première fois : la base, le journal et l'écran affirmaient un changement que Stripe n'avait pas refait. Elle porte maintenant le **jeton de re-confirmation**, à usage unique par construction — un geste voulu deux fois passe par deux mots de passe, donc deux appels réels.
+
+### Ce qui touche à l'argent
+
+- le **plafond de remboursement** ignorait les remboursements déjà faits : il se calculait sur les avoirs, or Stripe n'en émet pas pour un remboursement fait par l'API. Deux fois 40 € sur une facture de 59 € passaient l'un après l'autre. Il compte désormais les remboursements réels du paiement ;
+- **le paiement écrasait les crédits offerts** par la direction : 200 crédits offerts disparaissaient à l'instant où l'artisan payait ;
+- **un aller-retour d'offre servait le forfait entier à chaque montée** : monter en Signature créditait 600, redescendre n'en retirait aucun (à raison), remonter recréditait 600 — des crédits sans fin pour un prorata net nul. On sert désormais la **différence** avec ce qui a déjà été servi dans la période ;
+- **un événement livré après une résiliation ressuscitait l'offre payante** : on relit l'abonnement chez Stripe avant d'écrire, c'est l'état d'aujourd'hui qui décide ;
+- **le MRR comptait les abonnements en pause**, que Stripe n'encaissera jamais — donc le seul chiffre censé trahir l'oubli d'une pause disait le contraire ;
+- **`rendreCredit` plafonnait au forfait** et détruisait les crédits offerts : un artisan d'Essentiel à qui on avait offert 200 crédits tombait à 80 au premier appel IA qui échouait.
+
+### Ce qui touche aux accès et à la trace
+
+- la **suspension ne fermait pas les jetons de rafraîchissement** : le navigateur en redemandait un et repartait pour une heure. La route annonçait « sessions fermées » sans les fermer ;
+- le **lien de portail de facturation** partait **sans mot de passe** et se journalisait sous le nom d'une autre action (`artisan_email`) ;
+- l'**email et le portail agissaient AVANT de journaliser** : journal en panne, l'email était parti, la route répondait « action refusée », et il n'en restait aucune trace.
+
+### L'écran
+
+La fiche parlait par `window.prompt`. Elle ne savait ni **nommer le montant** qu'elle remboursait (« la totalité de la dernière facture » ne dit pas combien d'argent part), ni **valider une date** (03/09/2026 relu par `new Date` devient le 9 mars), ni distinguer **« Annuler » de « laissé vide »** — si bien qu'annuler la seconde question lançait quand même l'action. Le résultat s'affichait en haut de page, hors de l'écran quand on agit depuis le bas d'une fiche, et s'effaçait en six secondes, erreurs comprises. Le lien de portail s'ouvrait dans un onglet : il connectait le fondateur au compte Stripe d'un artisan, et sur téléphone le bloqueur de fenêtres le faisait disparaître sans rien dire.
+
+Désormais : un bouton par offre et par modèle d'email, le montant et la date de la facture affichés avant de rembourser, la date de reprise en ISO validée côté client, le texte de l'email montré avant l'envoi, le résultat rendu **dans** la fiche (une erreur ne s'efface pas toute seule), et le lien de portail **posé et copiable**, jamais ouvert.
+
+### Ce que la suite a trouvé toute seule
+
+En rejouant `direction-argent-e2e` après mes correctifs, elle a signalé une **régression que j'introduisais** : mon code lisait deux colonnes que la migration 0068, non collée, n'a pas encore créées — et le webhook n'est derrière aucun drapeau. En production, entre le déploiement et le collage, un changement d'offre aurait échoué sur « aucun artisan ne porte cet abonnement ». La lecture se replie maintenant, et le repli disparaîtra au collage.
+
+Une seule de mes assertions était fausse et je l'ai corrigée : elle attendait qu'une montée d'offre porte les crédits **au forfait entier** (600), alors que la bonne réponse est 532 — l'artisan avait consommé 68 crédits, il les a consommés. Servir le forfait entier était précisément le défaut signalé.
+
+- **Appels IA du sprint : 0.**
+- **Suivant** : le §1 du v11 — fusionner `/direction` dans `/controle`, supprimer Jarvis, rediriger.
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
