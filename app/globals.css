@@ -566,7 +566,12 @@ button:disabled{opacity:.55;cursor:default}
 .inbox-thread{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;min-height:min(70vh,620px)}
 .inbox-thread.empty{align-items:center;justify-content:center}
 .inbox-placeholder{padding:2rem;text-align:center}
-.inbox-thead{display:flex;align-items:center;gap:.7rem;padding:.75rem 1rem;border-bottom:1px solid var(--line);background:var(--surface-2)}
+/* L'en-tête d'une conversation passe à la ligne quand ses actions ne tiennent plus. Le `flex-wrap`
+   est ici et pas dans une media query, parce que ce qui manque est la place dans le CONTENEUR, pas
+   sur l'écran : à 1280 px de large, la colonne du fil ne fait que 640 px, et « Je prends la main »,
+   « Créer un devis » et « Escalader » n'y tiennent pas côte à côte (constaté le 07/09). */
+.inbox-thead{display:flex;align-items:center;flex-wrap:wrap;gap:.7rem;row-gap:.6rem;padding:.75rem 1rem;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.inbox-thead .inbox-who{flex:1 1 12rem;min-width:0}
 .inbox-back{display:none;background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;border-radius:8px}
 @media (hover:hover) and (pointer:fine){.inbox-back:hover{background:var(--line-2)}}
 .inbox-who{display:flex;flex-direction:column;min-width:0}
