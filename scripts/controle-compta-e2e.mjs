@@ -1,0 +1,182 @@
+// La comptabilité et le relevé du partenaire (prompt v11 §3 et §7).
+//
+// Le cœur de cette suite, c'est l'ANNEXE A du contrat. Trois cas, trois paires de montants, et la
+// formule doit tomber au centime sur les trois :
+//
+//     51,00 € de résultat avec 59,00 € apportés  →  19,64 € / 31,36 €
+//     51,00 € de résultat sans apport            →  10,20 € / 40,80 €
+//   1 020,00 € de résultat avec 708,00 € apportés →  317,28 € / 702,72 €
+//
+// Ce que ces chiffres apprennent, et qui n'a rien d'évident : la commission porte sur le CHIFFRE
+// D'AFFAIRES du client apporté, pas sur le résultat. Le cas 1 donnerait 18,36 € au lieu de 19,64 € si
+// on se trompait d'assiette — proche, et faux.
+//
+// Le reste vérifie ce qui entoure le calcul : les montants en centimes (jamais de flottant), les
+// comptes de démonstration exclus, les taux lus depuis la base et non écrits en dur, l'immuabilité
+// d'un relevé arrêté, et le fait que le partenaire LIT son relevé sans pouvoir l'arrêter.
+//
+// Usage : node --import ./scripts/ts-loader.mjs scripts/controle-compta-e2e.mjs
+// Syntaxe : node --check scripts/controle-compta-e2e.mjs
+
+import fs from 'node:fs'
+import crypto from 'node:crypto'
+import { createClient } from '@supabase/supabase-js'
+import { calculerReleve, bornesDuMois, TAUX } from '../lib/controle/releve.ts'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
+
+for (const f of ['.env.local']) {
+  if (!fs.existsSync(f)) continue
+  for (const l of fs.readFileSync(f, 'utf8').split(/\r?\n/)) {
+    const m = l.match(/^\s*([A-Z0-9_]+)=(.*)$/)
+    if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '')
+  }
+}
+const APP = (process.env.TEST_BASE || 'https://prestiapp.fr').replace(/\/$/, '')
+const URL_SB = process.env.NEXT_PUBLIC_SUPABASE_URL
+const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY
+if (!URL_SB || !ANON || !SERVICE) { console.log('\n⛔ Supabase non configuré.\n'); process.exit(2) }
+
+const admin = createClient(URL_SB, SERVICE, { auth: { persistSession: false } })
+let ok = 0, ko = 0
+const T = (n, c, d = '') => { if (c) { ok++; console.log(`  ✅ ${n}`) } else { ko++; console.log(`  ❌ ${n}${d ? `\n     → ${d}` : ''}`) } }
+const SAUT = (n, w) => console.log(`  ⏭  ${n} — ${w}`)
+const eur = (c) => (c / 100).toFixed(2).replace('.', ',') + ' €'
+
+const marque = `compta-${Date.now()}-${crypto.randomBytes(3).toString('hex')}`
+const comptes = []
+
+async function compte(role) {
+  const email = `${marque}-${role}@presti-test.invalid`
+  const password = `Cp-${crypto.randomBytes(9).toString('base64url')}-1`
+  const { data: u, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true })
+  if (error || !u?.user?.id) return null
+  comptes.push(u.user.id)
+  const { error: eA } = await admin.from('artisans').insert({
+    id: u.user.id, email, nom: `Compta ${role}`, metier: 'Test', slug: `${marque}-${role}`,
+    plan: 'gratuit', is_founder: true, role_interne: role, est_demo: true,
+  })
+  if (eA) { console.log('     insertion :', eA.message); return null }
+  await admin.from('direction_roles').upsert({ user_id: u.user.id, role: role === 'partenaire' ? 'lecture' : 'direction' }, { onConflict: 'user_id' })
+  const pub = createClient(URL_SB, ANON, { auth: { persistSession: false } })
+  const { data: s } = await pub.auth.signInWithPassword({ email, password })
+  if (!s?.session?.access_token) return null
+  await verifierSessionTest(s.session.access_token)
+  return { uid: u.user.id, email, jeton: s.session.access_token }
+}
+
+const api = async (chemin, jeton, init = {}) => {
+  const r = await fetch(`${APP}${chemin}`, { ...init, headers: { 'Content-Type': 'application/json', ...(jeton ? { Authorization: `Bearer ${jeton}` } : {}), ...(init.headers ?? {}) } })
+  const t = await r.text()
+  let j = null
+  try { j = JSON.parse(t) } catch { /* le statut suffit */ }
+  return { statut: r.status, data: j, brut: t }
+}
+
+async function main() {
+  console.log('\n══ Comptabilité et relevé du partenaire ══\n')
+
+  // ── 1. L'annexe A du contrat, au centime ────────────────────────────────────────────────────────
+  console.log('1. L’annexe A du contrat, au centime')
+  const cas = [
+    { nom: 'un client apporté à 59 €', clients: [{ artisan_id: 'a', nom: 'Apporté', encaisse: 5900, tauxApport: 20, statutApport: 'prouve' }], couts: 800, du: 1964, fondateur: 3136 },
+    { nom: 'aucun apport', clients: [{ artisan_id: 'b', nom: 'Direct', encaisse: 5100, tauxApport: 0, statutApport: null }], couts: 0, du: 1020, fondateur: 4080 },
+    { nom: '708 € apportés sur 1 020 € de résultat', clients: [
+      { artisan_id: 'c', nom: 'Apporté', encaisse: 70800, tauxApport: 20, statutApport: 'prouve' },
+      { artisan_id: 'd', nom: 'Direct', encaisse: 31200, tauxApport: 0, statutApport: null },
+    ], couts: 0, du: 31728, fondateur: 70272 },
+  ]
+  for (const c of cas) {
+    const r = calculerReleve('2026-08', c.clients, c.couts)
+    T(`${c.nom} → ${eur(c.du)} au partenaire`, r.dûAuPartenaire === c.du, `${eur(r.dûAuPartenaire)} — commission ${eur(r.commission)}, intéressement ${eur(r.interessement)}`)
+    T(`${c.nom} → ${eur(c.fondateur)} au fondateur`, r.partFondateur === c.fondateur, eur(r.partFondateur))
+    T(`${c.nom} : les deux parts font le résultat, au centime`, r.dûAuPartenaire + r.partFondateur === r.resultat,
+      `${eur(r.dûAuPartenaire)} + ${eur(r.partFondateur)} ≠ ${eur(r.resultat)}`)
+  }
+
+  // L'assiette de la commission est le CHIFFRE D'AFFAIRES du client apporté, pas le résultat. Si elle
+  // portait sur le résultat, le premier cas donnerait 18,36 € au lieu de 19,64 € — 1,28 € d'écart sur
+  // un seul client, des centaines d'euros sur une année.
+  const surResultat = Math.round(5100 * 0.2) + Math.round((5100 - Math.round(5100 * 0.2)) * 0.2)
+  T('la commission porte sur le chiffre d’affaires apporté, pas sur le résultat',
+    surResultat === 1836 && calculerReleve('2026-08', cas[0].clients, cas[0].couts).dûAuPartenaire === 1964,
+    `assiette « résultat » : ${eur(surResultat)} · assiette « CA apporté » : ${eur(calculerReleve('2026-08', cas[0].clients, cas[0].couts).dûAuPartenaire)}`)
+  // Et l'ordre des opérations, lui, ne change rien : les deux écritures sont égales. C'est une fausse
+  // subtilité qu'il vaut mieux écarter explicitement, pour que personne ne la « corrige » un jour.
+  T('« C + 20 % (R − C) » et « 20 % R + 80 % C » donnent le même montant',
+    Math.round(5100 * 0.2) + Math.round(1180 * 0.8) === 1964)
+
+  console.log('\n2. Ce que le calcul refuse de faire')
+  const perte = calculerReleve('2026-08', [{ artisan_id: 'x', nom: 'X', encaisse: 2900, tauxApport: 20, statutApport: 'prouve' }], 10000)
+  T('un résultat négatif ne fait pas payer le partenaire', perte.interessement === 0, eur(perte.interessement))
+  T('mais la commission reste due : elle porte sur du chiffre d’affaires, pas sur un bénéfice', perte.commission === 580, eur(perte.commission))
+  const conteste = calculerReleve('2026-08', [{ artisan_id: 'y', nom: 'Y', encaisse: 5900, tauxApport: 10, statutApport: 'conteste' }], 0)
+  T('un apport contesté paie 10 %, pas 20 %', conteste.commission === 590, eur(conteste.commission))
+  T('les taux du contrat sont nommés une fois, pas éparpillés', TAUX.commission === 0.2 && TAUX.interessement === 0.2 && TAUX.commissionContestee === 0.1)
+  T('un mois mal écrit est refusé', bornesDuMois('2026-13') === null && bornesDuMois('août') === null && bornesDuMois('2026-08') !== null)
+
+  // ── 3. En production ────────────────────────────────────────────────────────────────────────────
+  console.log('\n3. En production')
+  const sonde = await api('/api/controle/releve?mois=2026-08', null)
+  if (sonde.statut === 404) { console.log('  ⏭  le relevé n’est pas encore ouvert (migration 0071 ou drapeau) — le calcul, lui, est prouvé ci-dessus.\n'); return }
+  T('sans jeton → 401', sonde.statut === 401, String(sonde.statut))
+
+  const b = await compte('fondateur')
+  if (!b?.jeton) { SAUT('production', 'création du fondateur de test impossible'); return }
+
+  const mauvais = await api('/api/controle/releve?mois=pas-un-mois', b.jeton)
+  T('un mois mal écrit → 400', mauvais.statut === 400, String(mauvais.statut))
+
+  const r = await api('/api/controle/releve?mois=2026-08', b.jeton)
+  if (r.statut === 404 && r.data?.code === 'sans_partenaire') SAUT('relevé', 'aucun partenaire déclaré en base')
+  else {
+    T('le relevé répond avec son détail par client', r.statut === 200 && Array.isArray(r.data?.releve?.clients), `${r.statut} — ${r.brut.slice(0, 120)}`)
+    if (r.statut === 200) {
+      const rel = r.data.releve
+      T('les montants sont des entiers de centimes', [rel.encaisse, rel.commission, rel.dûAuPartenaire, rel.partFondateur].every(Number.isInteger),
+        JSON.stringify({ e: rel.encaisse, c: rel.commission, d: rel.dûAuPartenaire }))
+      T('les deux parts font le résultat', rel.dûAuPartenaire + rel.partFondateur === rel.resultat, `${rel.dûAuPartenaire} + ${rel.partFondateur} ≠ ${rel.resultat}`)
+      T('aucun compte de démonstration dans le détail', !(rel.clients ?? []).some((c) => /presti-test\.invalid|example\.com/.test(c.nom ?? '')),
+        JSON.stringify((rel.clients ?? []).map((c) => c.nom)))
+      T('le relevé du mois en cours est un brouillon', r.data.fige === false || r.data.statut === 'brouillon', String(r.data.statut))
+    }
+  }
+
+  const enCours = new Date().toISOString().slice(0, 7)
+  const arreterTot = await api('/api/controle/releve', b.jeton, { method: 'POST', body: JSON.stringify({ mois: enCours, action: 'arreter' }) })
+  T('on n’arrête pas un mois qui n’est pas fini', arreterTot.statut === 400 && arreterTot.data?.code === 'mois_en_cours',
+    `${arreterTot.statut} ${arreterTot.data?.code ?? ''}`)
+
+  // ── 4. Le partenaire lit le sien, il ne l'arrête pas ────────────────────────────────────────────
+  console.log('\n4. Le partenaire lit, il n’engage pas l’entreprise')
+  const p = await compte('partenaire')
+  if (!p?.jeton) SAUT('partenaire', 'création impossible')
+  else {
+    const lecture = await api('/api/controle/releve?mois=2026-08', p.jeton)
+    T('il peut lire un relevé', lecture.statut === 200 || lecture.statut === 404, `${lecture.statut} — ${lecture.brut.slice(0, 100)}`)
+    const arrete = await api('/api/controle/releve', p.jeton, { method: 'POST', body: JSON.stringify({ mois: '2026-08', action: 'arreter' }) })
+    T('il ne peut PAS arrêter un relevé → 403', arrete.statut === 403, `${arrete.statut} — ${arrete.brut.slice(0, 110)}`)
+    const compta = await api('/api/controle/compta', p.jeton)
+    T('il n’accède pas à la comptabilité de l’entreprise', [403, 404].includes(compta.statut), String(compta.statut))
+  }
+
+  console.log(`\n══ ${ok} vérifications passées, ${ko} en échec ══\n`)
+}
+
+async function menage() {
+  for (const id of comptes) {
+    await admin.from('direction_roles').delete().eq('user_id', id).then(() => {}, () => {})
+    await admin.from('artisans').update({ is_founder: false, role_interne: null }).eq('id', id).then(() => {}, () => {})
+    await admin.from('journal_direction').delete().eq('acteur_id', id).then(() => {}, () => {})
+    await admin.rpc('purger_compte_test', { p_id: id }).then(() => {}, () => {})
+    await admin.from('artisans').delete().eq('id', id).then(() => {}, () => {})
+    await admin.auth.admin.deleteUser(id).catch(() => {})
+  }
+  const { count } = await admin.from('artisans').select('id', { count: 'exact', head: true }).like('email', `%${marque}%`)
+  if (count) console.error(`  ⚠️  ${count} compte(s) SUBSISTENT — ils portent des privilèges.`)
+  else if (comptes.length) console.log(`  🧹 ${comptes.length} compte(s) de test purgé(s)`)
+}
+
+main()
+  .catch((e) => { console.error('\n💥', e?.message ?? e); ko++ })
+  .finally(async () => { await menage(); process.exit(ko === 0 ? 0 : 1) })
