@@ -89,6 +89,8 @@ const SUITES = [
   // ── Branchées le 07/09. Elles existaient depuis des semaines, personne ne les lançait : le
   //    rapport de couverture les comptait pourtant comme preuve, ce qui a laissé dix éléments
   //    — dont le portail de facturation Stripe — hors de tout regard nocturne.
+  { nom: 'Mode support — la matrice des droits (unitaire, sans reseau)', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/support-droits-unit.mjs'], cout: 'gratuit' },
+  { nom: 'Mode support — la porte : un ticket n’autorise rien, l’artisan seul ouvre, chaque lecture trace', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/support-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Courriers de l’entreprise — resolution de la boite et classement par nature', cmd: 'node', args: ['--experimental-strip-types', '--import', './scripts/ts-loader.mjs', 'scripts/courriers-e2e.mjs'], cout: 'gratuit' },
   // Elle importe `lib/plans.ts` (d'où le chargeur TypeScript) ET elle poste sur
   // `/api/conversation/stream`, qui fait une VRAIE réponse d'IA — d'où le coût 'ia'. Je l'avais

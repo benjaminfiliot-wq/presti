@@ -1,17 +1,17 @@
-# Inventaire du produit — généré le 2026-09-07 18:08
+# Inventaire du produit — généré le 2026-09-07 21:15
 
 > Produit par `scripts/inventaire-produit.mjs` en lisant le code. Ne pas éditer à la main : relancer.
 
 | Élément | Nombre |
 |---|---|
 | Pages | 33 |
-| Routes API | 87 |
-| Migrations | 72 (dernière : 0072_courriers_nature.sql) |
-| Drapeaux | 20 (17 levés) |
-| Envois d'email | 34 (+ 5 motifs d'alerte de service) |
+| Routes API | 86 |
+| Migrations | 74 (dernière : 0074_support.sql) |
+| Drapeaux | 21 (17 levés) |
+| Envois d'email | 36 (+ 5 motifs d'alerte de service) |
 | Crons | 2 planifiés · ⚠️ 2 route(s) cron sans planification : /api/cron/alertes, /api/cron/purge-comptes |
 | Capacités | 23 (11 socle, +7 Studio, +5 Signature) |
-| Suites de test | 72 dans le lanceur (65 jouées chaque nuit) · 10 écarté(s) volontairement |
+| Suites de test | 74 dans le lanceur (65 jouées chaque nuit) · 10 écarté(s) volontairement |
 
 
 ## Pages (33)
@@ -52,7 +52,7 @@
 | `/site/[slug]/infos-legales` | site artisan | non | serveur | app/site/[slug]/infos-legales/page.tsx |
 | `/tarifs` | landing | oui | client | app/tarifs/page.tsx |
 
-## Routes API (87)
+## Routes API (86)
 
 | Route | Méthodes | Auth | Plan requis | Plafonds | Crédits | IA |
 |---|---|---|---|---|---|---|
@@ -67,12 +67,6 @@
 | `/api/canaux` | GET, POST, DELETE | jeton artisan | — | — | — | — |
 | `/api/canaux/relever` | GET, POST | jeton artisan | — | — | — | — |
 | `/api/contact` | POST | publique | — | contact:· 3/3600s | — | — |
-| `/api/control/agents` | POST | jeton artisan | — | — | — | — |
-| `/api/control/inbox` | GET | jeton artisan | — | — | — | — |
-| `/api/control/run-agent` | POST, GET | jeton artisan | — | — | — | — |
-| `/api/control/security` | GET, POST, DELETE | jeton artisan | — | — | — | — |
-| `/api/control/stats` | GET | jeton artisan | — | — | — | — |
-| `/api/control/stripe` | GET | jeton artisan | — | — | — | — |
 | `/api/controle/a-faire` | GET | publique | — | — | — | — |
 | `/api/controle/alertes/:id/acquitter` | POST | publique | — | — | — | — |
 | `/api/controle/apports` | GET, POST | publique | — | — | — | — |
@@ -87,6 +81,7 @@
 | `/api/controle/courriers/:fil` | GET | publique | — | — | — | — |
 | `/api/controle/courriers/:fil/action` | POST | publique | — | — | — | — |
 | `/api/controle/courriers/relever` | POST | publique | — | — | — | — |
+| `/api/controle/crons/:nom/relancer` | POST | secret cron | — | — | — | — |
 | `/api/controle/etat` | GET | publique | — | — | — | — |
 | `/api/controle/fil` | GET | publique | — | — | — | — |
 | `/api/controle/journal` | GET | publique | — | — | — | — |
@@ -95,6 +90,8 @@
 | `/api/controle/reglages` | GET, POST | publique | — | — | — | — |
 | `/api/controle/releve` | GET, POST | publique | — | — | — | — |
 | `/api/controle/securite/bans` | GET, POST, DELETE | publique | — | — | — | — |
+| `/api/controle/support/demander` | POST | publique | — | — | — | — |
+| `/api/controle/support/lire` | GET | publique | — | — | — | — |
 | `/api/conversation` | GET, POST | jeton de conversation | — | conv:· 6/5*60s | oui | ⚡ |
 | `/api/conversation/devis` | POST | jeton de conversation | — | conv:· 6/5*60s | — | — |
 | `/api/conversation/regles` | POST | jeton de conversation | — | regles-ip:· 30/3600s · regles:· 6/3600s | — | ⚡ |
@@ -134,6 +131,7 @@
 | `/api/push/abonner` | GET, POST, DELETE | jeton artisan | — | push:abonner:· 20/3600s | — | — |
 | `/api/push/test` | POST | jeton artisan | — | push:test:· 5/3600s | — | — |
 | `/api/report-error` | POST | publique | — | err:ip:· 60/5*60s | — | — |
+| `/api/securite/acces-support` | GET, POST | jeton artisan | — | — | — | — |
 | `/api/securite/appareils` | GET, DELETE | jeton artisan | — | — | — | — |
 | `/api/securite/mot-de-passe` | POST | jeton artisan | — | mdp:· 5/15*60s | — | — |
 | `/api/securite/sessions` | GET, DELETE, POST | jeton artisan | — | — | — | — |
@@ -141,17 +139,16 @@
 | `/api/stripe/portail` | GET, POST | jeton artisan | — | — | — | — |
 | `/api/stripe/webhook` | POST | signature Stripe | — | — | — | — |
 | `/api/subscribe` | POST | jeton artisan | — | — | — | — |
+| `/api/support/demande` | POST | jeton artisan | — | — | — | — |
 | `/api/tarifs` | GET, POST, DELETE | jeton artisan | — | — | — | — |
 | `/api/tools/reponse` | POST | jeton artisan | — | — | oui | ⚡ |
 
-## Migrations (72)
+## Migrations (74)
 
 Posées à la main dans le SQL Editor (mot de passe Postgres désaligné). Sondes en base sur les dix dernières :
 
 | Migration | En base |
 |---|---|
-| 0063_code_connexion.sql | non sondée |
-| 0064_push.sql | non sondée |
 | 0065_direction.sql | non sondée |
 | 0066_direction_menage.sql | non sondée |
 | 0067_apports.sql | non sondée |
@@ -160,10 +157,12 @@ Posées à la main dans le SQL Editor (mot de passe Postgres désaligné). Sonde
 | 0070_partenaire.sql | non sondée |
 | 0071_comptabilite.sql | non sondée |
 | 0072_courriers_nature.sql | non sondée |
+| 0073_courriers_domaines.sql | non sondée |
+| 0074_support.sql | non sondée |
 
-Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_sql_editor_0053.sql, _A_COLLER_sql_editor_0054.sql, _A_COLLER_sql_editor_0054_0055.sql, _A_COLLER_sql_editor_0056.sql, _A_COLLER_sql_editor_0057.sql, _A_COLLER_sql_editor_0057_0058.sql, _A_COLLER_sql_editor_0059_0061.sql, _A_COLLER_sql_editor_0065.sql, _A_COLLER_sql_editor_0066.sql, _A_COLLER_sql_editor_0067.sql, _A_COLLER_sql_editor_0068.sql, _A_COLLER_sql_editor_0068b.sql, _A_COLLER_sql_editor_0069.sql, _A_COLLER_sql_editor_0070.sql, _A_COLLER_sql_editor_0071.sql, _A_COLLER_sql_editor_0072.sql.
+Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_sql_editor_0053.sql, _A_COLLER_sql_editor_0054.sql, _A_COLLER_sql_editor_0054_0055.sql, _A_COLLER_sql_editor_0056.sql, _A_COLLER_sql_editor_0057.sql, _A_COLLER_sql_editor_0057_0058.sql, _A_COLLER_sql_editor_0059_0061.sql, _A_COLLER_sql_editor_0065.sql, _A_COLLER_sql_editor_0066.sql, _A_COLLER_sql_editor_0067.sql, _A_COLLER_sql_editor_0068.sql, _A_COLLER_sql_editor_0068b.sql, _A_COLLER_sql_editor_0069.sql, _A_COLLER_sql_editor_0070.sql, _A_COLLER_sql_editor_0071.sql, _A_COLLER_sql_editor_0072.sql, _A_COLLER_sql_editor_0072_NU.sql, _A_COLLER_sql_editor_0073.sql, _A_COLLER_sql_editor_0073_NU.sql, _A_COLLER_sql_editor_0074.sql, _A_COLLER_sql_editor_0074_NU.sql.
 
-## Drapeaux (20)
+## Drapeaux (21)
 
 | Drapeau | État | Consommé par |
 |---|---|---|
@@ -171,11 +170,12 @@ Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_s
 | `pushWeb` | levé | app/api/push/abonner/route.ts, app/api/push/test/route.ts, app/parametres/page.tsx, app/parametres/SectionNotifications.tsx, lib/push.ts |
 | `pushNatif` | levé | app/NatifPont.tsx, app/parametres/SectionNotifications.tsx, lib/push.ts |
 | `mfa` | levé | app/api/auth/code/route.ts, app/AppShell.tsx, app/login/page.tsx, app/parametres/commun.ts, app/parametres/page.tsx, app/parametres/SectionSecurite.tsx, lib/authArtisan.ts |
-| `direction` | levé | app/api/control/agents/route.ts, app/api/control/run-agent/route.ts, app/api/control/security/route.ts, app/api/controle/a-faire/route.ts, app/api/controle/alertes/[id]/acquitter/route.ts, app/api/controle/apports/route.ts, app/api/controle/apports/[id]/statut/route.ts, app/api/controle/barre/route.ts, app/api/controle/chiffres/route.ts, app/api/controle/clients/route.ts, app/api/controle/clients/[id]/action/route.ts, app/api/controle/clients/[id]/route.ts, app/api/controle/compta/route.ts, app/api/controle/courriers/relever/route.ts, app/api/controle/courriers/route.ts, app/api/controle/courriers/[fil]/action/route.ts, app/api/controle/courriers/[fil]/route.ts, app/api/controle/etat/route.ts, app/api/controle/fil/route.ts, app/api/controle/journal/route.ts, app/api/controle/recherche/route.ts, app/api/controle/reconfirmer/route.ts, app/api/controle/reglages/route.ts, app/api/controle/releve/route.ts, app/api/controle/securite/bans/route.ts, app/api/cron/relances/route.ts, app/api/donnees/export/route.ts, app/api/stripe/webhook/route.ts, app/AppShell.tsx, app/controle/Apports.tsx, app/controle/Aujourdhui.tsx, app/controle/BarreEtat.tsx, app/controle/client.ts, app/controle/Clients.tsx, app/controle/Comptabilite.tsx, app/controle/Fiche.tsx, app/controle/Fraicheur.tsx, app/controle/Journal.tsx, app/controle/layout.tsx, app/controle/Messagerie.tsx, app/controle/page.tsx, app/controle/Reglages.tsx, app/direction/page.tsx, app/robots.ts, lib/abonnementSync.ts, lib/alertes.ts, lib/controle/sante.ts, lib/credits.ts, lib/direction/courriers.ts, lib/direction/fraicheur.ts, lib/direction/garde.ts, lib/direction/journal.ts, lib/direction/reconfirmation.ts, lib/direction/stripe-actions.ts, lib/direction/stripe.ts, lib/purgesRgpd.ts |
+| `direction` | levé | app/api/controle/a-faire/route.ts, app/api/controle/alertes/[id]/acquitter/route.ts, app/api/controle/apports/route.ts, app/api/controle/apports/[id]/statut/route.ts, app/api/controle/barre/route.ts, app/api/controle/chiffres/route.ts, app/api/controle/clients/route.ts, app/api/controle/clients/[id]/action/route.ts, app/api/controle/clients/[id]/route.ts, app/api/controle/compta/route.ts, app/api/controle/courriers/relever/route.ts, app/api/controle/courriers/route.ts, app/api/controle/courriers/[fil]/action/route.ts, app/api/controle/courriers/[fil]/route.ts, app/api/controle/crons/[nom]/relancer/route.ts, app/api/controle/etat/route.ts, app/api/controle/fil/route.ts, app/api/controle/journal/route.ts, app/api/controle/recherche/route.ts, app/api/controle/reconfirmer/route.ts, app/api/controle/reglages/route.ts, app/api/controle/releve/route.ts, app/api/controle/securite/bans/route.ts, app/api/controle/support/demander/route.ts, app/api/controle/support/lire/route.ts, app/api/cron/relances/route.ts, app/api/donnees/export/route.ts, app/api/stripe/webhook/route.ts, app/AppShell.tsx, app/controle/Apports.tsx, app/controle/Aujourdhui.tsx, app/controle/BarreEtat.tsx, app/controle/client.ts, app/controle/Clients.tsx, app/controle/Comptabilite.tsx, app/controle/Fiche.tsx, app/controle/Fraicheur.tsx, app/controle/Journal.tsx, app/controle/layout.tsx, app/controle/Messagerie.tsx, app/controle/page.tsx, app/controle/Reglages.tsx, app/direction/page.tsx, app/robots.ts, lib/abonnementSync.ts, lib/alertes.ts, lib/controle/sante.ts, lib/credits.ts, lib/direction/courriers.ts, lib/direction/fraicheur.ts, lib/direction/garde.ts, lib/direction/journal.ts, lib/direction/reconfirmation.ts, lib/direction/stripe-actions.ts, lib/direction/stripe.ts, lib/purgesRgpd.ts |
 | `apports` | levé | app/a/[code]/route.ts, app/api/account/inscription/route.ts, app/api/controle/apports/route.ts, app/api/controle/apports/[id]/statut/route.ts, app/api/controle/clients/route.ts, app/api/controle/clients/[id]/route.ts, app/api/controle/recherche/route.ts, app/api/controle/releve/route.ts, app/controle/Apports.tsx, app/controle/Clients.tsx, app/controle/Comptabilite.tsx, app/controle/page.tsx, app/controle/Reglages.tsx, lib/controle/confiance.ts, lib/controle/droits.ts, lib/direction/apports.ts, lib/direction/garde.ts |
 | `actionsArtisan` | levé | app/api/controle/clients/[id]/action/route.ts, app/controle/Fiche.tsx |
-| `messagerie` | levé | app/api/controle/barre/route.ts, app/api/controle/courriers/relever/route.ts, app/api/controle/courriers/route.ts, app/api/controle/courriers/[fil]/action/route.ts, app/api/controle/courriers/[fil]/route.ts, app/api/controle/recherche/route.ts, app/api/cron/relances/route.ts, app/cgu/page.tsx, app/confidentialite/page.tsx, app/controle/Messagerie.tsx, app/controle/page.tsx, app/controle/Reglages.tsx, lib/aide.ts, lib/controle/droits.ts, lib/direction/courriers.ts, lib/direction/garde.ts, lib/direction/natures.ts |
+| `messagerie` | levé | app/api/controle/barre/route.ts, app/api/controle/courriers/relever/route.ts, app/api/controle/courriers/route.ts, app/api/controle/courriers/[fil]/action/route.ts, app/api/controle/courriers/[fil]/route.ts, app/api/controle/recherche/route.ts, app/api/cron/relances/route.ts, app/api/support/demande/route.ts, app/cgu/page.tsx, app/confidentialite/page.tsx, app/controle/Messagerie.tsx, app/controle/page.tsx, app/controle/Reglages.tsx, lib/aide.ts, lib/controle/droits.ts, lib/direction/courriers.ts, lib/direction/garde.ts, lib/direction/natures.ts |
 | `comptabilite` | levé | app/api/controle/barre/route.ts, app/api/controle/compta/route.ts, app/api/controle/releve/route.ts, app/controle/page.tsx, lib/controle/droits.ts |
+| `supportArtisan` | baissé | app/api/controle/support/demander/route.ts, app/api/controle/support/lire/route.ts, app/api/securite/acces-support/route.ts, app/api/support/demande/route.ts |
 | `inventaireOcr` | baissé | ⚠️ **nulle part** (drapeau mort) |
 | `inventaireRecherche` | levé | app/api/inventaire/recherche/retenir/route.ts, app/api/inventaire/recherche/route.ts, app/inventaire/page.tsx, app/inventaire/recherche/page.tsx, lib/plans.ts |
 | `plateformePilotage` | levé | ⚠️ **nulle part** (drapeau mort) |
@@ -188,7 +188,7 @@ Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_s
 | `canauxWhatsapp` | baissé | lib/plans.ts |
 | `canauxReseaux` | baissé | lib/plans.ts |
 
-## Emails envoyés (34)
+## Emails envoyés (36)
 
 | Où | Fonction | Type / sujet | Destinataire |
 |---|---|---|---|
@@ -199,6 +199,7 @@ Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_s
 | app/api/controle/apports/[id]/statut/route.ts:92 | sendEmail | — | dest.email |
 | app/api/controle/clients/[id]/action/route.ts:190 | sendEmail | — | a.email |
 | app/api/controle/courriers/[fil]/action/route.ts:91 | sendEmail | — | destinataire |
+| app/api/controle/support/demander/route.ts:85 | sendEmail | 'Presti demande à regarder un élément de votre compte' | a.email |
 | app/api/conversation/devis/route.ts:68 | notifierArtisan | devis_accepte | artisan |
 | app/api/conversation/devis/route.ts:87 | notifierArtisan | devis_accepte | artisan |
 | app/api/conversation/devis/route.ts:108 | notifierArtisan | devis_accepte | artisan |
@@ -222,6 +223,7 @@ Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_s
 | app/api/stripe/webhook/route.ts:84 | notifierEntreprise | — | entreprise |
 | app/api/stripe/webhook/route.ts:99 | notifierEntreprise | — | entreprise |
 | app/api/stripe/webhook/route.ts:118 | notifierEntreprise | — | entreprise |
+| app/api/support/demande/route.ts:57 | notifierEntreprise | — | entreprise |
 | lib/alertes.ts:321 | notifierEntreprise | `Presti — ${sujet}` | entreprise |
 | lib/alertes.ts:322 | sendEmail | `Presti — ${sujet}` | al.a.email |
 | lib/purgeComptes.ts:134 | notifierEntreprise | — | entreprise |
@@ -249,7 +251,7 @@ Alertes de service (`lib/alerteService.ts`) : solde, authentification, debit, su
 | `site.domaine_perso` | essentiel | app/api/domain/route.ts |
 | `devis.ia` | essentiel | ⚠️ **aucun verrou serveur** |
 | `devis.prix_artisan` | essentiel | ⚠️ **aucun verrou serveur** |
-| `factures` | essentiel | app/aide/page.tsx, app/api/account/delete/route.ts, app/api/control/agents/route.ts, app/api/controle/clients/[id]/route.ts, app/api/donnees/export/route.ts, app/api/factures/[id]/avoir/route.ts, app/api/factures/[id]/facturx/route.ts, app/api/factures/[id]/pdf/route.ts, app/api/factures/[id]/route.ts, app/AppShell.tsx, app/factures/page.tsx, lib/aide.ts, lib/alertes.ts, lib/factureDepuisDevis.ts, lib/purgeComptes.ts |
+| `factures` | essentiel | app/aide/page.tsx, app/api/account/delete/route.ts, app/api/controle/clients/[id]/route.ts, app/api/donnees/export/route.ts, app/api/factures/[id]/avoir/route.ts, app/api/factures/[id]/facturx/route.ts, app/api/factures/[id]/pdf/route.ts, app/api/factures/[id]/route.ts, app/AppShell.tsx, app/factures/page.tsx, lib/aide.ts, lib/alertes.ts, lib/factureDepuisDevis.ts, lib/purgeComptes.ts |
 | `factures.electronique` | essentiel | ⚠️ **aucun verrou serveur** |
 | `canaux.email` | essentiel | ⚠️ **aucun verrou serveur** |
 | `relances` | essentiel | app/api/cron/relances/route.ts, app/api/leads/contact/route.ts, app/api/leads/route.ts, lib/alertes.ts, lib/purgeComptes.ts |
@@ -266,7 +268,7 @@ Alertes de service (`lib/alerteService.ts`) : solde, authentification, debit, su
 | `canaux.reseaux` | signature | ⚠️ **aucun verrou serveur** |
 | `support.prioritaire` | signature | ⚠️ **aucun verrou serveur** |
 
-## Suites de test (72)
+## Suites de test (74)
 
 | Suite | Script | Coût |
 |---|---|---|
@@ -328,11 +330,13 @@ Alertes de service (`lib/alerteService.ts`) : solde, authentification, debit, su
 | Canaux — interface | scripts/canaux-visuel.mjs | navigateur |
 | Injection de prompt | scripts/injection-e2e.mjs | ia |
 | Provenance dans un devis réel | scripts/devis-source-e2e.mjs | ia |
+| Mode support — la matrice des droits (unitaire, sans reseau) | scripts/support-droits-unit.mjs | gratuit |
+| Mode support — la porte : un ticket n’autorise rien, l’artisan seul ouvre, chaque lecture trace | scripts/support-e2e.mjs | gratuit |
 | Courriers de l’entreprise — resolution de la boite et classement par nature | scripts/courriers-e2e.mjs | gratuit |
-| Abonnement de bout en bout (11 transitions, sans débit) | scripts/abonnement-e2e.mjs | gratuit |
+| Abonnement de bout en bout (11 transitions, sans débit) | scripts/abonnement-e2e.mjs | ia |
 | Comptes clients de la plateforme (lien à usage unique, révocation serveur) | scripts/comptes-clients-e2e.mjs | gratuit |
 | Messagerie de la console (persistance et remise) | scripts/messages-e2e.mjs | gratuit |
-| Panneau IA : le serveur décide, pas le navigateur | scripts/plateforme-config-e2e.mjs | gratuit |
+| Panneau IA : le serveur décide, pas le navigateur | scripts/plateforme-config-e2e.mjs | ia |
 | Suppression granulaire (documents légaux conservés) | scripts/suppressions-e2e.mjs | gratuit |
 | Double authentification (enrôlement, codes de secours) | scripts/mfa-e2e.mjs | navigateur |
 | Carte Devis dans la conversation (acceptation opposable) | scripts/devis-conversation-e2e.mjs | navigateur |

@@ -1,0 +1,250 @@
+// Test permanent — le mode support (migration 0074, prompt v11 §3 et §5).
+//
+// Ce que cette suite prouve, dans l'ordre où ça compte :
+//
+//   A. UN TICKET N'AUTORISE RIEN. Le fondateur ouvre un ticket, demande un accès : tant que
+//      l'artisan n'a pas cliqué, la lecture est refusée. C'est le cœur du dispositif — la condition
+//      du v11 §5 (« sauf ticket support ouvert ») est nécessaire, jamais suffisante.
+//   B. PAS D'EMAIL, PAS DE PORTE. Une fenêtre non notifiée ne s'ouvre pas, même avec le bon jeton.
+//   C. L'ARTISAN OUVRE, ET LUI SEUL. Le fondateur n'a aucun chemin vers l'ouverture.
+//   D. CHAQUE LECTURE LAISSE DEUX TRACES, dont une que l'artisan peut lire.
+//   E. LA FORME, JAMAIS LE FOND. On vérifie mot par mot qu'aucun contenu, coordonnée ou désignation
+//      ne sort — c'est la promesse la plus facile à casser par accident.
+//   F. FERMER, EXPIRER, REFUSER, VERROUILLER : les quatre façons dont la porte se referme.
+//   G. LE PARTENAIRE est refusé partout, jeton en main.
+//
+// Aucun appel IA. Aucun email réel : les comptes sont en @presti-test.invalid, que lib/email.ts
+// accepte sans rien envoyer — c'est ce qui permet de prouver « pas d'email, pas de porte » sans
+// écrire à personne.
+//
+// Usage : node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/support-e2e.mjs
+
+import crypto from 'node:crypto'
+import fs from 'node:fs'
+import { createClient } from '@supabase/supabase-js'
+import { verifierSessionTest } from './lib/connexion-test.mjs'
+
+const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8')
+  .split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
+for (const [k, v] of Object.entries(env)) if (!process.env[k]) process.env[k] = v
+
+const BASE = process.argv[2] || 'https://prestiapp.fr'
+const admin = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } })
+let ok = 0, ko = 0
+const T = (n, c, d = '') => { if (c) { ok++; console.log(`  ✅ ${n}`) } else { ko++; console.log(`  ❌ ${n}${d ? `\n     → ${d}` : ''}`) } }
+const SAUT = (n, w) => console.log(`  ⏭  ${n} — ${w}`)
+
+const marque = `support-${Date.now()}-${crypto.randomBytes(3).toString('hex')}`
+const comptes = []
+const sortir = (code) => { process.exitCode = code; setTimeout(() => process.exit(code), 200) }
+
+async function compte(role) {
+  const email = `${marque}-${role}@presti-test.invalid`
+  const password = `Sup-${crypto.randomBytes(9).toString('base64url')}-1`
+  const { data: u, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true })
+  if (error || !u?.user?.id) throw new Error(`création ${role} : ${error?.message}`)
+  comptes.push(u.user.id)
+  const { error: eA } = await admin.from('artisans').insert({
+    id: u.user.id, email, nom: `Support ${role}`, metier: 'Test', slug: `${marque}-${role}`, plan: 'gratuit',
+    is_founder: role !== 'artisan', role_interne: role === 'partenaire' ? 'partenaire' : role === 'fondateur' ? 'fondateur' : null,
+  })
+  if (eA) throw new Error(`fiche ${role} : ${eA.message}`)
+  const pub = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, { auth: { persistSession: false } })
+  const { data: s } = await pub.auth.signInWithPassword({ email, password })
+  if (!s?.session?.access_token) throw new Error(`session ${role}`)
+  await verifierSessionTest(s.session.access_token)
+  return { uid: u.user.id, email, jeton: s.session.access_token }
+}
+
+const api = async (chemin, jeton, init = {}) => {
+  const r = await fetch(`${BASE}${chemin}`, { ...init, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jeton}`, ...(init.headers ?? {}) } })
+  const t = await r.text()
+  let j = null
+  try { j = JSON.parse(t) } catch { /* le statut reste lisible sans JSON */ }
+  return { statut: r.status, data: j, brut: t.slice(0, 200) }
+}
+
+/** Le ménage, garanti : ces comptes portent `is_founder`. Privilèges retirés d'abord. */
+async function menage() {
+  await admin.from('acces_support_lectures').delete().in('artisan_id', comptes).then(() => {}, () => {})
+  await admin.from('acces_support').delete().in('artisan_id', comptes).then(() => {}, () => {})
+  await admin.from('tickets').delete().in('artisan_id', comptes).then(() => {}, () => {})
+  await admin.from('support_verrou').delete().in('artisan_id', comptes).then(() => {}, () => {})
+  await admin.from('courriers').delete().like('message_id', `%${marque}%`).then(() => {}, () => {})
+  for (const id of comptes) {
+    await admin.from('direction_roles').delete().eq('user_id', id).then(() => {}, () => {})
+    await admin.from('artisans').update({ is_founder: false, role_interne: null }).eq('id', id).then(() => {}, () => {})
+    await admin.from('journal_direction').delete().eq('acteur_id', id).then(() => {}, () => {})
+    await admin.from('journal_direction').delete().eq('artisan_id', id).then(() => {}, () => {})
+    await admin.rpc('purger_compte_test', { p_id: id }).then(() => {}, () => {})
+    await admin.from('artisans').delete().eq('id', id).then(() => {}, () => {})
+    await admin.auth.admin.deleteUser(id).catch(() => {})
+  }
+  const { count } = await admin.from('artisans').select('id', { count: 'exact', head: true }).like('email', `%${marque}%`)
+  if (count) console.error(`\n⚠️  ${count} compte(s) de test SUBSISTENT — ils portent des privilèges, à vérifier à la main.`)
+  else if (comptes.length) console.log(`\n  🧹 ${comptes.length} compte(s) de test purgé(s)`)
+}
+
+async function main() {
+  console.log('\n══ Le mode support : une porte que seul l’artisan ouvre ══\n')
+
+  // La migration est-elle collée ? Sans elle, rien de ce qui suit ne peut jouer — et ce n'est ni un
+  // échec ni un succès : c'est un préalable qui n'appartient qu'à un humain.
+  const { error: sonde } = await admin.from('acces_support').select('id').limit(1)
+  if (sonde && /does not exist|schema cache|PGRST205/i.test(sonde.message)) {
+    console.log('⛔ La migration 0074 n’est pas collée : la porte ne peut pas être vérifiée.')
+    console.log('   À faire : coller supabase/migrations/_A_COLLER_sql_editor_0074_NU.sql dans le SQL Editor.\n')
+    sortir(2); return
+  }
+
+  const artisan = await compte('artisan')
+  const fondateur = await compte('fondateur')
+  const partenaire = await compte('partenaire')
+
+  // Un élément qui appartient à l'artisan : une demande, avec un message dont on connaît le texte.
+  const SECRET = `phrase-temoin-${marque}`
+  const { data: lead } = await admin.from('leads').insert({
+    artisan_id: artisan.uid, nom_prospect: 'Client Témoin', contact: 'temoin@exemple.fr',
+    message: SECRET, statut: 'nouveau', token: crypto.randomBytes(24).toString('hex'),
+  }).select('id').single()
+  await admin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'texte', contenu: SECRET })
+
+  console.log('A. Un ticket n’autorise rien par lui-même')
+  const { data: ticket } = await admin.from('tickets').insert({
+    artisan_id: artisan.uid, fil: `<${marque}@presti-test.invalid>`, sujet: 'Demande de test',
+  }).select('id').single()
+  T('le ticket existe', !!ticket?.id)
+
+  const dem = await api('/api/controle/support/demander', fondateur.jeton, {
+    method: 'POST', body: JSON.stringify({ ticket: ticket.id, type: 'lead', element: lead.id, titre: 'Conversation de test', motif: 'Le client dit ne pas recevoir les réponses.' }),
+  })
+  // La re-confirmation est exigée : c'est attendu, et ça prouve que la demande n'est pas gratuite.
+  if (dem.statut === 401 && /reconfirmation/i.test(JSON.stringify(dem.data))) {
+    SAUT('la demande exige une re-confirmation au mot de passe', 'attendu : la porte n’est pas gratuite')
+  } else T('la demande passe ou exige une re-confirmation', [200, 401, 403].includes(dem.statut), `HTTP ${dem.statut} ${dem.brut}`)
+
+  // On crée la demande directement en base pour éprouver la suite sans jouer la re-confirmation.
+  const { data: dAcces } = await admin.rpc('demander_acces_support', {
+    p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: ticket.id, p_type: 'lead',
+    p_element: lead.id, p_titre: 'Conversation de test', p_motif: 'Test automatisé', p_ip: '127.0.0.1', p_agent: 'suite',
+  })
+  const acces = dAcces?.acces
+  T('la demande est enregistrée', dAcces?.etat === 'ok' && !!acces, JSON.stringify(dAcces))
+
+  const avantClic = await api(`/api/controle/support/lire?acces=${acces}&vue=forme`, fondateur.jeton)
+  T('⭑ sans le clic de l’artisan, la lecture est REFUSÉE', avantClic.statut === 403, `HTTP ${avantClic.statut} ${avantClic.brut}`)
+
+  console.log('\nB. Pas d’email, pas de porte')
+  const ouvertureSansNotif = await admin.rpc('ouvrir_acces_support', {
+    p_acces: acces, p_artisan: artisan.uid, p_artisan_email: artisan.email, p_ip: '127.0.0.1', p_agent: 'suite',
+  })
+  T('une fenêtre non notifiée ne s’ouvre pas, même par son propriétaire',
+    ouvertureSansNotif.data?.etat === 'non_notifie', JSON.stringify(ouvertureSansNotif.data))
+
+  await admin.rpc('notifier_acces_support', { p_acces: acces, p_envoi: 'test' })
+
+  console.log('\nC. L’artisan ouvre, et lui seul')
+  const parUnAutre = await admin.rpc('ouvrir_acces_support', {
+    p_acces: acces, p_artisan: fondateur.uid, p_artisan_email: fondateur.email, p_ip: '127.0.0.1', p_agent: 'suite',
+  })
+  T('⭑ le fondateur ne peut pas ouvrir la fenêtre à la place de l’artisan',
+    parUnAutre.data?.etat === 'inconnu', JSON.stringify(parUnAutre.data))
+
+  const ouverture = await api('/api/securite/acces-support', artisan.jeton, {
+    method: 'POST', body: JSON.stringify({ acces, decision: 'ouvrir' }),
+  })
+  T('l’artisan ouvre depuis son espace', ouverture.statut === 200 && !!ouverture.data?.expire_le, `HTTP ${ouverture.statut} ${ouverture.brut}`)
+
+  console.log('\nD. Chaque lecture laisse deux traces')
+  const lu = await api(`/api/controle/support/lire?acces=${acces}&vue=forme`, fondateur.jeton)
+  T('la lecture passe une fois la porte ouverte', lu.statut === 200, `HTTP ${lu.statut} ${lu.brut}`)
+  const { count: nJournal } = await admin.from('journal_direction')
+    .select('id', { count: 'exact', head: true }).eq('action', 'support_vu_comme').eq('artisan_id', artisan.uid)
+  T('une ligne dans le journal de Presti', (nJournal ?? 0) >= 1, `${nJournal}`)
+  const { data: vues } = await admin.from('acces_support_lectures').select('vue, acteur_nom').eq('acces_id', acces)
+  T('une ligne LISIBLE PAR L’ARTISAN, avec le nom de la personne',
+    (vues ?? []).length >= 1 && vues[0].vue === 'forme' && !!vues[0].acteur_nom, JSON.stringify(vues))
+
+  console.log('\nE. La forme, jamais le fond')
+  const brut = JSON.stringify(lu.data ?? {})
+  T('⭑ le contenu du message ne sort PAS', !brut.includes(SECRET), brut.slice(0, 160))
+  T('⭑ le nom du client ne sort pas', !brut.includes('Client Témoin'))
+  T('⭑ l’adresse du client ne sort pas en clair', !brut.includes('temoin@exemple.fr'))
+  T('… mais son domaine, oui : une non-remise est une affaire de domaine', brut.includes('exemple.fr'), brut.slice(0, 200))
+  T('la longueur du message sort, elle', /"longueur":\s*\d+/.test(brut), brut.slice(0, 200))
+  const { data: leadLu } = await admin.from('leads').select('token').eq('id', lead.id).maybeSingle()
+  T('⭑ le jeton de la conversation ne sort jamais — c’est une CLÉ, pas une donnée', !brut.includes(leadLu?.token ?? 'jamais'))
+
+  console.log('\nF. Les quatre façons de refermer')
+  const fermeture = await api('/api/securite/acces-support', artisan.jeton, {
+    method: 'POST', body: JSON.stringify({ acces, decision: 'fermer' }),
+  })
+  T('l’artisan ferme sans confirmation', fermeture.statut === 200, `HTTP ${fermeture.statut} ${fermeture.brut}`)
+  const apresFermeture = await api(`/api/controle/support/lire?acces=${acces}&vue=forme`, fondateur.jeton)
+  T('⭑ après fermeture, la lecture est refusée immédiatement', apresFermeture.statut === 403, `HTTP ${apresFermeture.statut}`)
+
+  // Expiration : on recule l'heure de fin d'une fenêtre ouverte.
+  const { data: d2 } = await admin.rpc('demander_acces_support', {
+    p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: ticket.id, p_type: 'lead',
+    p_element: lead.id, p_titre: 'Deuxième', p_motif: 'Test expiration', p_ip: '127.0.0.1', p_agent: 'suite',
+  })
+  await admin.rpc('notifier_acces_support', { p_acces: d2.acces, p_envoi: 'test' })
+  await admin.rpc('ouvrir_acces_support', { p_acces: d2.acces, p_artisan: artisan.uid, p_artisan_email: artisan.email, p_ip: '127.0.0.1', p_agent: 'suite' })
+  await admin.from('acces_support').update({ expire_le: new Date(Date.now() - 60_000).toISOString() }).eq('id', d2.acces)
+  const expire = await api(`/api/controle/support/lire?acces=${d2.acces}&vue=forme`, fondateur.jeton)
+  T('⭑ une fenêtre expirée ne lit plus rien', expire.statut === 403 && /expiré/i.test(JSON.stringify(expire.data)), `HTTP ${expire.statut} ${expire.brut}`)
+
+  // Refus, puis le refroidissement de 24 h sur le même élément.
+  const { data: d3 } = await admin.rpc('demander_acces_support', {
+    p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: ticket.id, p_type: 'lead',
+    p_element: lead.id, p_titre: 'Troisième', p_motif: 'Test refus', p_ip: '127.0.0.1', p_agent: 'suite',
+  })
+  await admin.rpc('notifier_acces_support', { p_acces: d3.acces, p_envoi: 'test' })
+  const refus = await api('/api/securite/acces-support', artisan.jeton, {
+    method: 'POST', body: JSON.stringify({ acces: d3.acces, decision: 'refuser', motif: 'non merci' }),
+  })
+  T('l’artisan refuse, sans avoir à se justifier', refus.statut === 200, `HTTP ${refus.statut} ${refus.brut}`)
+  const { data: d4 } = await admin.rpc('demander_acces_support', {
+    p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: ticket.id, p_type: 'lead',
+    p_element: lead.id, p_titre: 'Quatrième', p_motif: 'Test redemande', p_ip: '127.0.0.1', p_agent: 'suite',
+  })
+  T('⭑ on ne redemande pas le même élément dans les 24 h — un refus est une réponse',
+    d4?.etat === 'refuse_recemment', JSON.stringify(d4))
+
+  // Le verrou personnel.
+  await admin.from('support_verrou').insert({ artisan_id: artisan.uid })
+  const { data: d5 } = await admin.rpc('demander_acces_support', {
+    p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: ticket.id, p_type: 'lead',
+    p_element: lead.id, p_titre: 'Cinquième', p_motif: 'Test verrou', p_ip: '127.0.0.1', p_agent: 'suite',
+  })
+  T('⭑ le verrou de l’artisan bloque la demande AVANT qu’elle l’atteigne', d5?.etat === 'verrouille', JSON.stringify(d5))
+  await admin.from('support_verrou').delete().eq('artisan_id', artisan.uid)
+
+  console.log('\nG. Le partenaire est refusé, jeton en main')
+  const pDemande = await api('/api/controle/support/demander', partenaire.jeton, {
+    method: 'POST', body: JSON.stringify({ ticket: ticket.id, type: 'lead', element: lead.id, motif: 'Je regarde juste' }),
+  })
+  T('le partenaire ne peut pas demander d’accès', [403, 404].includes(pDemande.statut), `HTTP ${pDemande.statut} ${pDemande.brut}`)
+  const pLire = await api(`/api/controle/support/lire?acces=${acces}&vue=forme`, partenaire.jeton)
+  T('le partenaire ne peut pas lire sous support', [403, 404].includes(pLire.statut), `HTTP ${pLire.statut} ${pLire.brut}`)
+  T('… et le refus lui dit pourquoi, en français', /Benjamin|périmètre|confient/i.test(JSON.stringify(pLire.data)), pLire.brut)
+
+  console.log('\nH. La trace ne se réécrit pas')
+  const { data: trace } = await admin.from('acces_support_lectures').select('id').eq('acces_id', acces).limit(1).maybeSingle()
+  if (trace?.id) {
+    const { error: eMod } = await admin.from('acces_support_lectures').update({ vue: 'chiffres' }).eq('id', trace.id)
+    T('⭑ une trace de lecture ne se modifie pas, même en service_role', !!eMod, eMod?.message ?? '(modification acceptée)')
+    const { error: eSup } = await admin.from('acces_support_lectures').delete().eq('id', trace.id)
+    // Les comptes de test sont tolérés par le trigger : c'est ce qui permet le ménage.
+    T('… et sa suppression n’est tolérée que pour un compte de test', !eSup, eSup?.message)
+  } else SAUT('immuabilité de la trace', 'aucune trace à éprouver')
+}
+
+main()
+  .catch((e) => { console.error('\n💥 La suite s’est arrêtée :', e?.message ?? e); ko++ })
+  .finally(async () => {
+    if (process.exitCode === 2) return
+    await menage()
+    console.log(`\n${ko ? '❌' : '✅'} ${ok} réussis, ${ko} échoués\n`)
+    sortir(ko ? 1 : 0)
+  })

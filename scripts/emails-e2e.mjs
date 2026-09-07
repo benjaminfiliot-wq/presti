@@ -35,6 +35,8 @@ const CARTE = {
   'app/api/controle/apports/[id]/statut/route.ts': 'apporteur : son apport a ete refuse ou conteste',
   'app/api/controle/clients/[id]/action/route.ts': 'artisan : message ecrit depuis le Poste de controle',
   'app/api/controle/courriers/[fil]/action/route.ts': 'correspondant : la reponse de Presti dans son fil',
+  'app/api/support/demande/route.ts': 'entreprise : un artisan demande de l’aide depuis sa console',
+  'app/api/controle/support/demander/route.ts': 'artisan : Presti demande à regarder un élément de son compte',
   'lib/alertes.ts': 'entreprise et artisan : les huit motifs d’alerte',
   'lib/purgeComptes.ts': 'entreprise : compte purgé ou anonymisé',
   'lib/reglesServeur.ts': 'artisan : devis préparé ou envoyé par une règle',

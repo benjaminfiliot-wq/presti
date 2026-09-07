@@ -1,4 +1,4 @@
-# Couverture — qui teste quoi — généré le 2026-09-07 18:08
+# Couverture — qui teste quoi — généré le 2026-09-07 21:15
 
 > Généré par `scripts/inventaire-produit.mjs`. **Une case vide est un test à écrire ; un angle mort est un test à brancher.** Cases vides : **0** · angles morts de l’audit nocturne : **0**.
 
@@ -33,12 +33,6 @@ Aucun.
 | `/api/canaux` | canaux-e2e.mjs, fermeture-e2e.mjs |
 | `/api/canaux/relever` | fermeture-e2e.mjs |
 | `/api/contact` | emails-e2e.mjs, fermeture-e2e.mjs |
-| `/api/control/agents` | fermeture-e2e.mjs |
-| `/api/control/inbox` | fermeture-e2e.mjs, smoke-test.mjs |
-| `/api/control/run-agent` | fermeture-e2e.mjs |
-| `/api/control/security` | controle-e2e.mjs, fermeture-e2e.mjs |
-| `/api/control/stats` | code-connexion-e2e.mjs, fermeture-e2e.mjs, smoke-test.mjs |
-| `/api/control/stripe` | fermeture-e2e.mjs, smoke-test.mjs |
 | `/api/controle/a-faire` | controle-droits-e2e.mjs, controle-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/alertes/:id/acquitter` | controle-e2e.mjs |
 | `/api/controle/apports` | controle-apports-e2e.mjs, controle-droits-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs |
@@ -53,7 +47,8 @@ Aucun.
 | `/api/controle/courriers/:fil` | controle-messagerie-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/courriers/:fil/action` | controle-messagerie-e2e.mjs, emails-e2e.mjs |
 | `/api/controle/courriers/relever` | controle-messagerie-e2e.mjs |
-| `/api/controle/etat` | controle-droits-e2e.mjs, controle-e2e.mjs, fermeture-e2e.mjs |
+| `/api/controle/crons/:nom/relancer` | fermeture-e2e.mjs |
+| `/api/controle/etat` | code-connexion-e2e.mjs, controle-droits-e2e.mjs, controle-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/fil` | controle-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/journal` | controle-droits-e2e.mjs, controle-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/recherche` | fermeture-e2e.mjs |
@@ -61,10 +56,12 @@ Aucun.
 | `/api/controle/reglages` | controle-droits-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/releve` | controle-compta-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/securite/bans` | controle-droits-e2e.mjs, controle-e2e.mjs, fermeture-e2e.mjs |
-| `/api/conversation` | abonnement-e2e.mjs, audit-final-e2e.mjs, conv-e2e.mjs, devis-conversation-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs, messages-e2e.mjs, modes-e2e.mjs, persona-e2e.mjs, pilotage-e2e.mjs, plateforme-config-e2e.mjs |
+| `/api/controle/support/demander` | emails-e2e.mjs, fermeture-e2e.mjs, support-e2e.mjs |
+| `/api/controle/support/lire` | fermeture-e2e.mjs, support-e2e.mjs |
+| `/api/conversation` | abonnement-e2e.mjs, audit-final-e2e.mjs, conv-e2e.mjs, devis-conversation-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs, messages-e2e.mjs, modes-e2e.mjs, persona-e2e.mjs, pilotage-e2e.mjs, plateforme-config-e2e.mjs, tout-verifier.mjs |
 | `/api/conversation/devis` | audit-final-e2e.mjs, devis-conversation-e2e.mjs, emails-e2e.mjs, pilotage-e2e.mjs |
 | `/api/conversation/regles` | fermeture-e2e.mjs, pilotage-e2e.mjs |
-| `/api/conversation/stream` | abonnement-e2e.mjs, audit-final-e2e.mjs, emails-e2e.mjs, modes-e2e.mjs, persona-e2e.mjs, pilotage-e2e.mjs, plateforme-config-e2e.mjs |
+| `/api/conversation/stream` | abonnement-e2e.mjs, audit-final-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs, modes-e2e.mjs, persona-e2e.mjs, pilotage-e2e.mjs, plateforme-config-e2e.mjs, tout-verifier.mjs |
 | `/api/cron/alertes` | fermeture-e2e.mjs |
 | `/api/cron/purge-comptes` | fermeture-e2e.mjs |
 | `/api/cron/relances` | audit-final-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs, relances-e2e.mjs |
@@ -73,7 +70,7 @@ Aucun.
 | `/api/devis/:id/envoyer` | emails-e2e.mjs, fermeture-e2e.mjs, mentions-bloquantes-e2e.mjs |
 | `/api/devis/:id/pdf` | fermeture-e2e.mjs, pdf-e2e.mjs, smoke-test.mjs |
 | `/api/devis/auto` | fermeture-e2e.mjs, injection-e2e.mjs |
-| `/api/devis/generer` | audit-final-e2e.mjs, devis-source-e2e.mjs |
+| `/api/devis/generer` | audit-final-e2e.mjs, devis-source-e2e.mjs, fermeture-e2e.mjs |
 | `/api/domain` | domaine-perso-e2e.mjs, offres-e2e.mjs |
 | `/api/donnees` | parametres-e2e.mjs, quota-media-e2e.mjs, rls-e2e.mjs, suppressions-e2e.mjs |
 | `/api/donnees/export` | parametres-e2e.mjs |
@@ -100,15 +97,17 @@ Aucun.
 | `/api/push/abonner` | code-connexion-e2e.mjs, fermeture-e2e.mjs, push-e2e.mjs |
 | `/api/push/test` | push-e2e.mjs |
 | `/api/report-error` | emails-e2e.mjs, fermeture-e2e.mjs |
+| `/api/securite/acces-support` | fermeture-e2e.mjs, support-e2e.mjs |
 | `/api/securite/appareils` | code-connexion-e2e.mjs |
 | `/api/securite/mot-de-passe` | parametres-e2e.mjs |
 | `/api/securite/sessions` | code-connexion-e2e.mjs, mfa-e2e.mjs, parametres-e2e.mjs, rls-e2e.mjs |
-| `/api/site/generate` | audit-final-e2e.mjs |
+| `/api/site/generate` | audit-final-e2e.mjs, fermeture-e2e.mjs |
 | `/api/stripe/portail` | abonnement-e2e.mjs, fermeture-e2e.mjs |
 | `/api/stripe/webhook` | abonnement-e2e.mjs, audit-final-e2e.mjs, emails-e2e.mjs, stripe-verifier.mjs |
 | `/api/subscribe` | abonnement-e2e.mjs, audit-final-e2e.mjs, stripe-session-test.mjs |
+| `/api/support/demande` | emails-e2e.mjs, fermeture-e2e.mjs |
 | `/api/tarifs` | rls-e2e.mjs, tarifs-e2e.mjs |
-| `/api/tools/reponse` | audit-final-e2e.mjs |
+| `/api/tools/reponse` | audit-final-e2e.mjs, fermeture-e2e.mjs |
 
 ## Pages
 
@@ -120,7 +119,7 @@ Aucun.
 | `/cgu` | audit-final-e2e.mjs, domaine-perso-e2e.mjs, legal-e2e.mjs, mobile-e2e.mjs, seo-e2e.mjs, smoke-test.mjs |
 | `/confidentialite` | audit-final-e2e.mjs, legal-e2e.mjs, mobile-e2e.mjs, seo-e2e.mjs, smoke-test.mjs |
 | `/contact` | alertes-e2e.mjs, emails-e2e.mjs, facturation-e2e.mjs, fermeture-e2e.mjs, legal-e2e.mjs, mail-verifier.mjs, mobile-e2e.mjs, seo-e2e.mjs |
-| `/controle` | controle-apports-e2e.mjs, controle-argent-e2e.mjs, controle-compta-e2e.mjs, controle-droits-e2e.mjs, controle-e2e.mjs, controle-messagerie-e2e.mjs, domaine-perso-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs, seo-e2e.mjs, tout-verifier.mjs |
+| `/controle` | code-connexion-e2e.mjs, controle-apports-e2e.mjs, controle-argent-e2e.mjs, controle-compta-e2e.mjs, controle-droits-e2e.mjs, controle-e2e.mjs, controle-messagerie-e2e.mjs, domaine-perso-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs, seo-e2e.mjs, smoke-test.mjs, support-e2e.mjs, tout-verifier.mjs |
 | `/dashboard` | abonnement-e2e.mjs, aide-e2e.mjs, controle-e2e.mjs, mobile-e2e.mjs, parametres-e2e.mjs, push-e2e.mjs, pwa-e2e.mjs, seo-e2e.mjs, stripe-session-test.mjs |
 | `/devis` | aide-e2e.mjs, audit-final-e2e.mjs, devis-conversation-e2e.mjs, devis-source-e2e.mjs, emails-e2e.mjs, fact-e2e.mjs, facturation-e2e.mjs, fermeture-e2e.mjs, injection-e2e.mjs, mentions-bloquantes-e2e.mjs, mobile-e2e.mjs, parametres-e2e.mjs, pdf-e2e.mjs, pilotage-e2e.mjs, pwa-e2e.mjs, smoke-test.mjs, suppressions-e2e.mjs, tout-verifier.mjs |
 | `/devis/[id]` | aide-e2e.mjs, audit-final-e2e.mjs, devis-source-e2e.mjs, emails-e2e.mjs, fact-e2e.mjs, fermeture-e2e.mjs, injection-e2e.mjs, mentions-bloquantes-e2e.mjs, mobile-e2e.mjs, parametres-e2e.mjs, pdf-e2e.mjs, pwa-e2e.mjs, smoke-test.mjs, suppressions-e2e.mjs |
@@ -157,7 +156,7 @@ Aucun.
 | `plateforme.domaine_perso` | fermeture-e2e.mjs |
 | `site.essentiel` | fermeture-e2e.mjs |
 | `site.domaine_perso` | offres-e2e.mjs |
-| `devis.ia` | abonnement-e2e.mjs |
+| `devis.ia` | abonnement-e2e.mjs, fermeture-e2e.mjs |
 | `devis.prix_artisan` | fermeture-e2e.mjs |
 | `factures` | audit-correctifs-e2e.mjs, audit-final-e2e.mjs, controle-droits-e2e.mjs, facturation-e2e.mjs, mentions-bloquantes-e2e.mjs, pilotage-e2e.mjs, purge-comptes-e2e.mjs, purger-donnees-test.mjs, purges-rgpd-e2e.mjs, rls-e2e.mjs, zero-demo-e2e.mjs |
 | `factures.electronique` | fermeture-e2e.mjs |
@@ -187,6 +186,7 @@ Aucun.
 | `app/api/controle/apports/[id]/statut/route.ts:92` | emails-e2e.mjs |
 | `app/api/controle/clients/[id]/action/route.ts:190` | emails-e2e.mjs, fermeture-e2e.mjs |
 | `app/api/controle/courriers/[fil]/action/route.ts:91` | emails-e2e.mjs |
+| `app/api/controle/support/demander/route.ts:85` | emails-e2e.mjs, fermeture-e2e.mjs |
 | `app/api/conversation/devis/route.ts:68` | audit-final-e2e.mjs, devis-conversation-e2e.mjs, emails-e2e.mjs, persona-e2e.mjs, push-e2e.mjs |
 | `app/api/conversation/devis/route.ts:87` | audit-final-e2e.mjs, devis-conversation-e2e.mjs, emails-e2e.mjs, persona-e2e.mjs, push-e2e.mjs |
 | `app/api/conversation/devis/route.ts:108` | audit-final-e2e.mjs, devis-conversation-e2e.mjs, emails-e2e.mjs, persona-e2e.mjs, push-e2e.mjs |
@@ -210,6 +210,7 @@ Aucun.
 | `app/api/stripe/webhook/route.ts:84` | abonnement-e2e.mjs, audit-final-e2e.mjs, emails-e2e.mjs, stripe-verifier.mjs |
 | `app/api/stripe/webhook/route.ts:99` | abonnement-e2e.mjs, audit-final-e2e.mjs, emails-e2e.mjs, stripe-verifier.mjs |
 | `app/api/stripe/webhook/route.ts:118` | abonnement-e2e.mjs, audit-final-e2e.mjs, emails-e2e.mjs, stripe-verifier.mjs |
+| `app/api/support/demande/route.ts:57` | emails-e2e.mjs |
 | `lib/alertes.ts:321` | abonnement-e2e.mjs, alertes-e2e.mjs, audit-final-e2e.mjs, emails-e2e.mjs |
 | `lib/alertes.ts:322` | abonnement-e2e.mjs, alertes-e2e.mjs, audit-final-e2e.mjs, emails-e2e.mjs |
 | `lib/purgeComptes.ts:134` | emails-e2e.mjs, purge-comptes-e2e.mjs |
@@ -235,6 +236,7 @@ Aucun.
 | `actionsArtisan` | fermeture-e2e.mjs |
 | `messagerie` | fermeture-e2e.mjs |
 | `comptabilite` | fermeture-e2e.mjs |
+| `supportArtisan` | fermeture-e2e.mjs |
 | `inventaireOcr` | fermeture-e2e.mjs |
 | `inventaireRecherche` | fermeture-e2e.mjs |
 | `plateformePilotage` | fermeture-e2e.mjs |

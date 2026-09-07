@@ -43,6 +43,12 @@ const PROTEGEES = [
   // nocturne ne joue jamais (coût IA, ou absentes du lanceur). Les tester à fond chaque nuit
   // coûterait des crédits ; vérifier qu'elles refusent un inconnu ne coûte rien, et c'est déjà
   // la différence entre « surveillé » et « on le saura quand un artisan le dira ».
+  // Écrites le 07/09 : une route neuve que personne ne teste est une route qu'on découvre ouverte
+  // six mois plus tard.
+  ['/api/controle/crons/relances/relancer', 'POST', {}],
+  ['/api/support/demande', 'POST', {}],
+  ['/api/securite/acces-support', 'GET'],
+  ['/api/controle/support/lire', 'GET'],
   ['/api/devis/auto', 'POST', {}],
   ['/api/inventaire/recherche', 'POST', {}], ['/api/inventaire/recherche/retenir', 'POST', {}],
   ['/api/plateforme/apparence', 'GET'], ['/api/plateforme/apparence', 'POST', {}],
@@ -54,7 +60,12 @@ const PROTEGEES = [
 for (const [chemin, methode, body] of PROTEGEES) {
   const r = await appel(chemin, methode, body)
   // /api/controle/* : 404 tant que FLAGS.direction est baissé (l'espace n'existe pas), 401 ensuite
-  T(`${methode} ${chemin.replace(id, ':id')} → ${r.status}`, [401, 403].includes(r.status) || (chemin.startsWith('/api/controle/') && r.status === 404), r.texte)
+  // Un 404 est LÉGITIME derrière un drapeau baissé : la fonctionnalité n'existe pas encore, et c'est
+  // précisément ce qu'un drapeau doit produire. La liste est nommée, pas devinée — sinon un vrai 404
+  // (une route supprimée par erreur) passerait pour une porte fermée.
+  const DERRIERE_UN_DRAPEAU = ['/api/support/demande', '/api/securite/acces-support', '/api/controle/support/']
+  const toleree = chemin.startsWith('/api/controle/') || DERRIERE_UN_DRAPEAU.some((d) => chemin.startsWith(d))
+  T(`${methode} ${chemin.replace(id, ':id')} → ${r.status}`, [401, 403].includes(r.status) || (toleree && r.status === 404), r.texte)
 }
 
 console.log('\n── 1 bis. L’ancien poste de contrôle n’existe plus (fuite mesurée le 07/09)')
@@ -112,7 +123,7 @@ const { peut, offreMinimale } = await import('../lib/plans.ts').catch(() => ({})
 if (peut) {
   // L'essai (gratuit) = l'Essentiel avec 3 crédits (décision Benj 04/09) : le socle est ouvert à tous.
   const ATTENDU = {
-    'site.essentiel': 'gratuit', 'plateforme.comptes_clients': 'gratuit', 'devis.prix_artisan': 'gratuit', 'factures.electronique': 'gratuit', 'canaux.email': 'gratuit', 'plateforme.domaine_perso': 'gratuit',
+    'site.essentiel': 'gratuit', 'plateforme.comptes_clients': 'gratuit', 'devis.prix_artisan': 'gratuit', 'devis.ia': 'gratuit', 'factures.electronique': 'gratuit', 'canaux.email': 'gratuit', 'plateforme.domaine_perso': 'gratuit',
     'export': 'studio', 'site.pro': 'studio', 'plateforme.personnalisation_avancee': 'studio', 'inventaire.recherche_ia': 'studio', 'canaux.whatsapp': 'studio',
     'site.signature': 'signature', 'plateforme.ia.expert': 'signature', 'canaux.reseaux': 'signature', 'support.prioritaire': 'signature',
   }
