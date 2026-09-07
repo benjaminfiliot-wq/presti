@@ -45,11 +45,31 @@ const creditsConsommes = () => sourcer('chiffres:credits', 'supabase', async () 
 type CoutIA = { euros: number; budget: number | null; estimation: boolean; credits?: number; perimetre: 'organisation' | 'produit' }
 const budgetPose = () => { const b = Number(process.env.BUDGET_IA_MENSUEL_EUR); return Number.isFinite(b) && b > 0 ? b : null }
 
-/** Le coût imputable au PRODUIT : les crédits réellement consommés par les artisans, au coût moyen mesuré. */
-const coutProduit = (): Promise<Sourcee<CoutIA>> => sourcer('chiffres:produit', 'estimation', async () => {
-  const est = await estimationDepuisLesCredits()
-  return { euros: Math.round(est.euros * 100) / 100, budget: null, estimation: true, credits: est.credits, perimetre: 'produit' as const }
-}, 5 * 60_000)
+/**
+ * Le coût imputable au PRODUIT. Deux sources, dans cet ordre :
+ *  1. l'espace de travail Anthropic dédié à Presti (ANTHROPIC_WORKSPACE_PRESTI) — un vrai montant facturé ;
+ *  2. à défaut, l'estimation depuis les crédits consommés par les artisans, étiquetée comme telle.
+ * L'espace existe depuis le 07/09 ; il ne dépense rien tant que la clé du produit n'y a pas été recréée
+ * (Anthropic n'autorise pas à déplacer une clé). L'écran le dit plutôt que d'afficher un « 0 € » trompeur.
+ */
+const coutProduit = async (): Promise<Sourcee<CoutIA>> => {
+  const espace = (process.env.ANTHROPIC_WORKSPACE_PRESTI || '').trim()
+  if (espace) {
+    const reel = await sourcer<CoutIA | null>('chiffres:produit-reel', 'anthropic', async () => {
+      const c = await coutIADuMois()
+      if (!c || c.erreur) return null
+      const usd = c.parEspace?.[espace]
+      if (!usd || usd <= 0) return null
+      return { euros: Math.round(usd * (Number(process.env.TAUX_USD_EUR) || 0.92) * 100) / 100, budget: budgetPose(), estimation: false, perimetre: 'produit' as const }
+    }, 5 * 60_000)
+    if (reel.valeur) return reel as Sourcee<CoutIA>
+  }
+  const e = await sourcer<CoutIA>('chiffres:produit', 'estimation', async () => {
+    const est = await estimationDepuisLesCredits()
+    return { euros: Math.round(est.euros * 100) / 100, budget: null, estimation: true, credits: est.credits, perimetre: 'produit' as const }
+  }, 5 * 60_000)
+  return { ...e, manque: espace ? 'la clé du produit n’est pas encore dans l’espace de travail Presti' : 'aucun espace de travail dédié au produit' }
+}
 
 const coutIA = async (): Promise<Sourcee<CoutIA>> => {
   const reel = await sourcer<CoutIA | null>('chiffres:ia', 'anthropic', async () => {
