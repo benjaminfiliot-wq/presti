@@ -181,6 +181,7 @@ export default function Comptabilite({ role, signaler }: { role: 'direction' | '
         </div>
         {!rel?.releve ? <p className="muted">Aucun relevé pour ce mois.</p> : (
           <>
+            <div className="psh-tablewrap dir-table">
             <table className="psh-dtable" data-releve-detail>
               <thead><tr><th>Client</th><th>Encaissé</th><th>Apport</th><th>Commission</th></tr></thead>
               <tbody>
@@ -195,6 +196,7 @@ export default function Comptabilite({ role, signaler }: { role: 'direction' | '
                   ))}
               </tbody>
             </table>
+            </div>
             {/* Le calcul, écrit ligne à ligne : un relevé qu'on ne peut pas recompter à la main ne vaut rien. */}
             <ul className="dir-controles" style={{ marginTop: '.8rem' }} data-releve-calcul>
               <li><span>Encaissé</span><span /><b>{enEuros(rel.releve.encaisse)}</b></li>
