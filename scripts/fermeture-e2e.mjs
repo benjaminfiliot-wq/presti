@@ -27,8 +27,6 @@ console.log('\n── 1. Routes protégées : sans identité, rien ne passe (401
 const PROTEGEES = [
   ['/api/account/slug', 'GET'], ['/api/account/slug', 'POST', { slug: 'x' }],
   ['/api/canaux/relever', 'POST', {}],
-  ['/api/control/agents', 'POST', {}], ['/api/control/run-agent', 'POST', {}], ['/api/control/security', 'GET'],
-  ['/api/control/stats', 'GET'], ['/api/control/stripe', 'GET'], ['/api/control/inbox', 'GET'],
   // v10 J1 — le Centre de direction : drapeau baissé → 404 (l'espace n'existe pas), levé → 401 ; jamais 500, jamais 200
   ['/api/controle/etat', 'GET'], ['/api/controle/chiffres', 'GET'], ['/api/controle/a-faire', 'GET'], ['/api/controle/fil', 'GET'], ['/api/controle/journal', 'GET'],
   ['/api/controle/reconfirmer', 'POST', {}], ['/api/controle/securite/bans', 'POST', {}],
@@ -57,6 +55,23 @@ for (const [chemin, methode, body] of PROTEGEES) {
   const r = await appel(chemin, methode, body)
   // /api/controle/* : 404 tant que FLAGS.direction est baissé (l'espace n'existe pas), 401 ensuite
   T(`${methode} ${chemin.replace(id, ':id')} → ${r.status}`, [401, 403].includes(r.status) || (chemin.startsWith('/api/controle/') && r.status === 404), r.texte)
+}
+
+console.log('\n── 1 bis. L’ancien poste de contrôle n’existe plus (fuite mesurée le 07/09)')
+{
+  // Ces six routes gardaient leur porte avec `artisans.is_founder`, la COLONNE — alors que 0070
+  // avait corrigé la FONCTION `is_founder()` pour en exclure le partenaire. Une colonne n'est pas
+  // une fonction. Résultat mesuré en production avant suppression, avec un compte partenaire :
+  // /api/control/stats rendait 9 prospects avec nom, contact et message, plus 8 devis ; /inbox
+  // rendait 25 emails de l'entreprise. Aucune trace, aucun journal, un simple GET.
+  //
+  // On n'exige plus qu'elles se ferment : on exige qu'elles n'existent plus. Une route morte qui
+  // répond est une route qui finira par répondre à quelqu'un.
+  for (const c of ['/api/control/stats', '/api/control/inbox', '/api/control/security',
+                   '/api/control/stripe', '/api/control/agents', '/api/control/run-agent']) {
+    const r = await appel(c, 'GET')
+    T(`${c} n’existe plus → ${r.status}`, r.status === 404, r.texte)
+  }
 }
 
 console.log('\n── 2. Crons : sans le secret, 401 — les deux planifiés et les deux appelés')

@@ -218,7 +218,10 @@ try {
   const bansL = await json(await api('/api/controle/securite/bans', {}, jL))
   T('lecture : la liste des bans et des abus → 403 (ce ne sont pas ses données)', bansL.status === 403, `HTTP ${bansL.status}`)
   const ancienne = await json(await api('/api/control/security', { method: 'POST', body: JSON.stringify({ ip: '203.0.113.8' }) }, jL))
-  T('lecture : l’ANCIENNE porte (/api/control/security) refuse aussi (403)', ancienne.status === 403 && !(await (await rest('ip_bans?select=ip&ip=eq.203.0.113.8')).json()).length, `HTTP ${ancienne.status}`)
+  // Cette porte a ete SUPPRIMEE le 07/09 : sa garde lisait la colonne `is_founder` au lieu de la
+  // fonction, et un partenaire y lisait les prospects de tous les artisans. On n'exige plus qu'elle
+  // refuse, on exige qu'elle n'existe plus.
+  T('lecture : l’ANCIENNE porte (/api/control/security) n’existe plus (404)', ancienne.status === 404 && !(await (await rest('ip_bans?select=ip&ip=eq.203.0.113.8')).json()).length, `HTTP ${ancienne.status}`)
   const lr = await json(await api('/api/controle/reconfirmer', { method: 'POST', body: JSON.stringify({ password: L.password, portee: 'securite' }) }, jL))
   const lb = await json(await api('/api/controle/securite/bans', { method: 'POST', body: JSON.stringify({ ip: '203.0.113.8' }) }, jL))
   T('lecture : reconfirmer et POST bans → 403 lecture_seule', lr.status === 403 && lr.body.code === 'lecture_seule' && lb.status === 403 && lb.body.code === 'lecture_seule', `${lr.status}/${lr.body.code} ${lb.status}/${lb.body.code}`)

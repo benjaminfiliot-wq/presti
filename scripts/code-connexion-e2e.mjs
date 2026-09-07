@@ -231,7 +231,9 @@ try {
   const d11 = await demanderCode(C.email, pw)
   T('un fondateur reçoit un code comme tout le monde', d11.status === 200 && d11.body.etape === 'code' && !d11.body.session, JSON.stringify(d11.body))
   const brutC = await grant(C.email, pw)
-  T('son jeton au mot de passe seul n’ouvre pas le poste de contrôle', (await route('/api/control/stats', brutC.access_token)).status === 401)
+  // On interroge le poste ACTUEL (/api/controle, avec un « e ») : l'ancien a ete supprime le 07/09,
+  // et un 404 aurait fait passer ce test pour de mauvaises raisons.
+  T('son jeton au mot de passe seul n’ouvre pas le poste de contrôle', (await route('/api/controle/etat', brutC.access_token)).status === 401)
 
   console.log('\n── 12. L’écran de connexion, tel que l’artisan le voit')
   await purgerPlafonds()

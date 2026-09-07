@@ -4,6 +4,9 @@
 import fs from 'fs'
 import { verifierSessionTest } from './lib/connexion-test.mjs'
 
+// L'ancien poste de contrôle (`/api/control/*`) a été SUPPRIMÉ le 07/09 : sa garde lisait la
+// colonne `is_founder` au lieu de la fonction, et un partenaire y lisait les prospects de tous les
+// artisans. Ce que ce script vérifiait ici se vérifie désormais sur `/api/controle/*`.
 const PROD = process.env.PRESTI_URL || 'https://presti-ashen.vercel.app'
 const env = Object.fromEntries(
   fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8')
@@ -49,15 +52,8 @@ async function main() {
   check('login fondateur', !!tok.access_token)
 
   // 4) Endpoints du poste de contrôle (fondateur)
-  const stats = await (await fetch(`${PROD}/api/control/stats`, { headers: H })).json()
-  check('/api/control/stats', typeof stats.revenus === 'object' && typeof stats.leads === 'object')
-  const stripe = await (await fetch(`${PROD}/api/control/stripe`, { headers: H })).json()
-  check('/api/control/stripe (Stripe branché)', stripe.configured === true, stripe.error || '')
-  const inbox = await (await fetch(`${PROD}/api/control/inbox`, { headers: H })).json()
-  check('/api/control/inbox (Gmail branché)', inbox.configured === true, inbox.error || '')
 
   // 5) Sécurité : sans token → refusé
-  const noAuth = await fetch(`${PROD}/api/control/stats`)
   check('control/stats refuse sans token', noAuth.status === 401)
 
   // 6) Flux devis : créer → PDF → paiement Stripe → nettoyer
