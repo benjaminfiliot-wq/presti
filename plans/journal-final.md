@@ -342,6 +342,19 @@
 - **Pour Benj, deux choses** : coller `supabase/migrations/_A_COLLER_sql_editor_0068.sql` (suspensions et crédits offerts) — sans elle, la fiche reste en lecture ; et **la valeur** de la clé « presti produit » créée dans l'espace Anthropic « Presti » (l'API ne rend jamais la valeur d'une clé, et `ANTHROPIC_API_KEY_NOUVELLE` n'est pas dans `.env.local`) : tant qu'elle n'y est pas, le coût IA du produit se mesure sur l'ancien espace, où mes propres appels de développement se mélangent aux siens.
 - **Suivant** : la revue adversariale de ce lot, puis J3 — la messagerie d'entreprise (Gmail).
 
+## [35] v10 · J3 — la messagerie de l'entreprise, livrée et fermée — 07/09 — ✅ `direction-messagerie-e2e` **4/4** (les quatre routes en 404, drapeau baissé) — `491011c` en prod
+
+- **Ce que c'est** : la boîte de Presti — `contact@prestiapp.fr`, les messages du formulaire « Nous écrire » (qui y arrivent par email), les réponses des artisans — groupée **par fil**, avec un statut qu'on fait descendre : à traiter, répondu, classé. On classe, on assigne à un fondateur, on rattache à un artisan (son courrier apparaît alors sur sa fiche), et on **répond depuis le Centre**, dans le même fil.
+- **Ce que ce n'est pas, et ne sera pas** : les conversations d'un artisan avec ses clients. Ce n'est pas la messagerie du produit, c'est celle de l'entreprise.
+- **Bonne surprise** : la boîte est déjà branchée en production — `IMAP_USER` / `IMAP_PASS` existent sur Vercel depuis le sprint J-1. Aucune action de Benj pour la connecter, contrairement à ce que le prompt supposait (il parlait d'un OAuth Gmail ; la boîte de l'entreprise est chez OVH, et c'est elle qui reçoit tout ce qui compte).
+- **Deux principes tenus dans le code** : la relève est **rejouable** — chaque message est identifié par son `Message-ID`, jamais par son numéro IMAP, qui change dès qu'on réorganise la boîte ; relever deux fois ne duplique rien et **n'écrase ni le statut, ni l'assignation, ni le rattachement faits la veille**. Et on ne garde que le **texte** : le HTML d'un email est du code venu de l'extérieur, ni utile ici, ni sûr à réafficher.
+- **Le fil suit `In-Reply-To`, jamais le sujet** — sinon deux « Bonjour » sans rapport finiraient dans la même conversation. Répondre pose `In-Reply-To` et `References`, ce que l'envoi d'email de Presti ne savait pas faire : sans eux, la réponse ouvre une conversation neuve chez le destinataire et le fil se lit à trous des deux côtés.
+- **La table n'a aucune policy de lecture, volontairement** : un jeton obtenu au mot de passe seul ne doit pas pouvoir lire la boîte par PostgREST. C'est la leçon du journal de direction, appliquée d'emblée plutôt qu'après coup.
+- **Une contrainte découverte en chemin** : le plan Vercel de Presti n'autorise que **deux** tâches planifiées, toutes deux déjà prises. La relève automatique se greffe donc sur celle des relances, bornée à 25 messages et à l'abri d'un `try` — un serveur de messagerie qui ne répond pas ne doit pas empêcher les relances de partir. (Vérifié avant de pousser : un troisième cron aurait fait échouer le déploiement.)
+- **Appels IA du sprint : 0.**
+- **Pour Benj** : coller `supabase/migrations/_A_COLLER_sql_editor_0069.sql`, puis me le dire — je lève le drapeau et la suite prouve le reste en production.
+- **Suivant** : intégrer la revue adversariale des lots J2b/J2c (en cours), puis J4 — la comptabilité et le relevé du partenaire.
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
