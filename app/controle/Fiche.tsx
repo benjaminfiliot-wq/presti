@@ -34,6 +34,14 @@ const MODELES = {
   paiement: { libelle: 'Paiement refusé', sujet: 'Votre paiement n’est pas passé', apercu: 'Votre dernier paiement a été refusé par votre banque. Rien n’est perdu…' },
 } as const satisfies Record<string, { libelle: string; sujet: string; apercu: string }>
 const ACTIONS_JOURNAL: Record<string, string> = {
+  // Le mode support (0074) : sans ces libellés, l'écran afficherait la clé technique — un
+  // journal que l'artisan ne pourrait pas lire s'il le demandait.
+  support_acces_demande: 'Accès de support demandé',
+  support_acces_ouvert: 'Accès de support OUVERT par l’artisan',
+  support_acces_refuse: 'Accès de support refusé par l’artisan',
+  support_acces_ferme: 'Accès de support fermé',
+  support_ticket_ouvert: 'Ticket ouvert',
+  support_ticket_ferme: 'Ticket fermé',
   artisan_credits: 'Crédits offerts', artisan_suspendu: 'Compte suspendu', artisan_reactive: 'Compte réactivé',
   artisan_email: 'Message envoyé', artisan_portail: 'Lien de portail', artisan_offre: 'Changement d’offre',
   artisan_rembourse: 'Remboursement', artisan_pause: 'Facturation en pause', artisan_essai: 'Essai prolongé',

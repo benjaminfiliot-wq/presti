@@ -14,6 +14,9 @@ export type Action =
   | 'artisan_pause' | 'artisan_suspendu' | 'artisan_reactive' | 'artisan_email' | 'support_vu_comme'
   | 'apport_ajoute' | 'apport_modifie' | 'achat_ajoute' | 'obligation_modifiee' | 'reversement_modifie'
   | 'courrier_classe' | 'courrier_repondu' | 'artisan_portail' | 'cron_relance'
+  // Le mode support (0074). `support_vu_comme` existait déjà : c'est la LECTURE elle-même.
+  | 'support_ticket_ouvert' | 'support_ticket_ferme' | 'support_acces_demande'
+  | 'support_acces_refuse' | 'support_acces_ouvert' | 'support_acces_ferme'
 
 export type Entree = {
   acteur: Fondateur

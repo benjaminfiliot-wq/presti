@@ -39,6 +39,11 @@ export const FLAGS = {
   /** v11 J5 — la comptabilité de l'entreprise et le relevé du partenaire. Levé quand 0071 est collée :
    *  sans elle, les routes répondent 503 sur des tables absentes et l'onglet n'a rien à montrer. */
   comptabilite: true,
+  /** v11 §3 — le mode support : l'artisan ouvre lui-même une fenêtre d'une heure sur UN élément, on
+   *  n'y lit que la forme, chaque lecture est tracée des deux côtés. Baissé jusqu'à ce que la
+   *  migration 0074 soit collée ET que la suite le prouve : une fonctionnalité qui touche aux données
+   *  des clients d'un artisan ne s'ouvre pas le jour où son code arrive. */
+  supportArtisan: false,
   /** §8 F1 — photo de facture fournisseur → OCR → lignes proposées. */
   inventaireOcr: false,
   /** §8 F3 — assistant de recherche fournisseurs. Livré et testé le 04/09 (scripts/recherche-e2e.mjs : 37/37, vraie recherche Castorama). */

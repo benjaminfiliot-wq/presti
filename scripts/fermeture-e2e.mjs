@@ -156,6 +156,8 @@ if (FLAGS) {
     'inventaireRecherche': ['route', '/api/inventaire/recherche', 'POST', 'app/api/inventaire/recherche/route.ts'],
     'pushNatif': ['lu'], 'mfa': ['lu'], 'plateformeRegles': ['lu'], 'siteSlides3d': ['lu'],
     'aideVisites': ['lu'], 'aideCentre': ['lu'], 'landingVideo': ['lu'],
+    // Baissé tant que 0074 n'est pas collée : la route doit alors répondre 404, comme partout.
+    'supportArtisan': ['route', '/api/controle/support/demander', 'POST', 'app/api/controle/support/demander/route.ts'],
     'inventaireOcr': ['note', 'rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)'],
     'canauxWhatsapp': ['note', 'rien ne le lit : la preuve est que WhatsApp n’est pas vendu sur la landing'],
     'canauxReseaux': ['note', 'rien ne le lit : idem WhatsApp'],

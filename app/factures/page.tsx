@@ -21,8 +21,11 @@ export default function FacturesList() {
   const [factures, setFactures] = useState<Facture[]>([])
   const [busy, setBusy] = useState<string | null>(null)
 
+  // Le filtre est ici EN PLUS de la RLS, pas à sa place : la migration 0074 a retiré aux
+  // fondateurs la vue sur les lignes des autres, et cette ligne dit la même chose une seconde
+  // fois. Deux verrous pour la même porte, parce que celui du navigateur se lit plus vite.
   async function load() {
-    const { data: fs } = await supabase.from('factures').select('id, numero, objet, client_nom, statut, total_ttc, date_echeance, avoir_de').order('created_at', { ascending: false })
+    const { data: fs } = await supabase.from('factures').select('id, numero, objet, client_nom, statut, total_ttc, date_echeance, avoir_de').eq('artisan_id', (await supabase.auth.getUser()).data.user?.id ?? '').order('created_at', { ascending: false })
     setFactures((fs as Facture[]) ?? [])
   }
 

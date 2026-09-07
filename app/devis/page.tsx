@@ -22,8 +22,11 @@ export default function DevisList() {
   const [devis, setDevis] = useState<Devis[]>([])
   const [busy, setBusy] = useState<string | null>(null)
 
+  // Le filtre est ici EN PLUS de la RLS, pas à sa place : la migration 0074 a retiré aux
+  // fondateurs la vue sur les lignes des autres, et cette ligne dit la même chose une seconde
+  // fois. Deux verrous pour la même porte, parce que celui du navigateur se lit plus vite.
   async function load() {
-    const { data: ds } = await supabase.from('devis').select('id, numero, objet, client_nom, statut, total_ttc, date_emission').order('created_at', { ascending: false })
+    const { data: ds } = await supabase.from('devis').select('id, numero, objet, client_nom, statut, total_ttc, date_emission').eq('artisan_id', (await supabase.auth.getUser()).data.user?.id ?? '').order('created_at', { ascending: false })
     setDevis((ds as Devis[]) ?? [])
   }
 

@@ -43,6 +43,12 @@ export type Domaine =
   | 'reglages'
   /** Le journal des actions. Le partenaire n'y voit que LES SIENNES. */
   | 'journal'
+  /** Le mode support : demander un accès aux données d'un artisan, et lire sous cette fenêtre.
+   *
+   *  C'est le seul domaine qui touche aux clients D'UN CLIENT. Le v11 §5 le réserve au fondateur, et
+   *  encore : seulement sous une fenêtre que l'artisan a ouverte lui-même, pour une heure, tracée des
+   *  deux côtés. Le partenaire n'y a rien à faire, jamais, même sous ticket. */
+  | 'support'
 
 /** La matrice, écrite une fois. `false` = refusé, `'siennes'` = autorisé mais borné à ses propres lignes. */
 const PARTENAIRE: Record<Domaine, { voir: boolean | 'siennes'; ecrire: boolean | 'siennes' }> = {
@@ -57,6 +63,10 @@ const PARTENAIRE: Record<Domaine, { voir: boolean | 'siennes'; ecrire: boolean |
   securite:            { voir: false,     ecrire: false },
   reglages:            { voir: false,     ecrire: false },
   journal:             { voir: 'siennes', ecrire: false },
+  // Pas 'siennes', pas 'borne' : rien. Un partenaire qui pourrait demander un accès de support
+  // pourrait, en insistant, lire les clients d'un artisan — et le contrat lui interdit jusqu'a leur
+  // existence. C'est la seule ligne de cette matrice ou les deux colonnes sont false sans nuance.
+  support:             { voir: false,     ecrire: false },
 }
 
 export type Verdict =
@@ -93,6 +103,7 @@ const RAISONS: Partial<Record<Domaine, string>> = {
   journal: 'Vous voyez le journal de vos propres actions.',
   messagerie: 'Vous voyez les fils qui vous sont assignés.',
   'releve.partenaire': 'Votre relevé est en lecture.',
+  support: 'Le support technique est réservé à Benjamin : il touche aux données que les artisans confient à Presti.',
 }
 
 /** Vrai raccourci de lecture : `permis` sans devoir déballer le verdict. */
