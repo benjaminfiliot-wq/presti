@@ -227,15 +227,22 @@ declare n_recu int; n_env int;
 begin
   update public.courriers c
      set nature = x.n, nature_auto = x.n, nature_motif = x.m, nature_le = now()
-    from lateral (select (r->>'nature') as n,
-                         (r->>'motif') || case when c.entetes = '{}'::jsonb then ':retro' else '' end as m
-                    from public.nature_courrier(c.correspondant_email, c.sujet, c.entetes,
-                                                c.artisan_id is not null,
-                                                exists (select 1 from public.courriers p
-                                                         where p.fil = c.fil and p.recu_le < c.recu_le)) r) x
-   where c.sens = 'recu'
-     and c.nature_source = 'auto'
-     and c.recu_le >= coalesce(p_depuis, '-infinity');
+    from (
+      select src.id,
+             (calc.j->>'nature') as n,
+             (calc.j->>'motif') || case when src.entetes = '{}'::jsonb then ':retro' else '' end as m
+        from public.courriers src
+        cross join lateral (
+          select public.nature_courrier(src.correspondant_email, src.sujet, src.entetes,
+                                        src.artisan_id is not null,
+                                        exists (select 1 from public.courriers p
+                                                 where p.fil = src.fil and p.recu_le < src.recu_le)) as j
+        ) calc
+       where src.sens = 'recu'
+         and src.nature_source = 'auto'
+         and src.recu_le >= coalesce(p_depuis, '-infinity')
+    ) x
+   where c.id = x.id;
   get diagnostics n_recu = row_count;
 
   update public.courriers e
