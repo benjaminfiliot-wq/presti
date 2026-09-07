@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { lireUserAgent } from '@/lib/userAgent'
 import { ipPseudonyme } from '@/lib/security'
@@ -38,11 +38,14 @@ function lireCorps(b: unknown): { ip: string; raison: string; expire: string | n
 }
 
 export async function GET(req: Request) {
-  // Les adresses des visiteurs (bans, abus) ne sont pas dans la matrice du rôle « lecture » : direction seule.
-  const f = await estDirection(req)
+  // Les adresses des visiteurs (bans, abus) sont fermées au partenaire — ENTIÈREMENT, pas seulement en
+  // écriture. On demande donc le domaine avant le rôle du v10 : sinon le refus disait « votre rôle est
+  // en lecture seule », ce qui laisse croire qu'il pourrait les consulter.
+  const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'securite', 'voir')
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
+  if (f.role !== 'direction') return reponseRefus({ error: 'Votre rôle est en lecture seule.', status: 403, code: 'lecture_seule' })
   const depuis = new Date(Date.now() - 24 * 3_600_000).toISOString()
   const [bans, abus] = await Promise.all([
     supabaseAdmin.from('ip_bans').select('ip, raison, auto, created_at, expires_le').order('created_at', { ascending: false }).limit(200),
@@ -60,10 +63,11 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const f = await estDirection(req)
+  const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'securite', 'ecrire')
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
+  if (f.role !== 'direction') return reponseRefus({ error: 'Votre rôle est en lecture seule.', status: 403, code: 'lecture_seule' })
   const corps = lireCorps(await req.json().catch(() => null))
   if ('error' in corps) return NextResponse.json({ error: corps.error }, { status: 400 })
   if (corps.ip === f.ip) return NextResponse.json({ error: 'C’est votre propre adresse : vous fermeriez la direction pour vous-même.', code: 'propre_ip' }, { status: 400 })
@@ -81,8 +85,11 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const f = await estDirection(req)
+  const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'securite', 'ecrire')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
+  if (f.role !== 'direction') return reponseRefus({ error: 'Votre rôle est en lecture seule.', status: 403, code: 'lecture_seule' })
   const o = (await req.json().catch(() => null)) as { ip?: unknown } | null
   const ip = typeof o?.ip === 'string' ? o.ip.trim().slice(0, 64) : ''
   if (!IP.test(ip)) return NextResponse.json({ error: 'IP invalide.' }, { status: 400 })

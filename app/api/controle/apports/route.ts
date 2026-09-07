@@ -6,6 +6,7 @@ import { verdict, preuveLisible, libelleStatut, type Statut } from '@/lib/direct
 import { lireUserAgent } from '@/lib/userAgent'
 import { CODE } from '@/lib/apports'
 import { actif } from '@/lib/flags'
+import { peserEtEnregistrer, verdictLisible } from '@/lib/controle/confiance'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -34,10 +35,10 @@ export async function GET(req: Request) {
     supabaseAdmin.from('apporteurs').select('id, code, nom, artisan_id, actif').order('cree_le'),
     // Le partenaire ne voit que les apports qu'il a lui-même amenés (v11 §5) : on borne à SES codes.
     (perimetre.borne
-      ? supabaseAdmin.from('registre_apports').select('id, artisan_id, apporteur_id, statut, preuve, piece, motif, premier_contact_le, souscrit_le, offre_souscription, cree_le, maj_le')
+      ? supabaseAdmin.from('registre_apports').select('id, artisan_id, apporteur_id, statut, preuve, piece, motif, premier_contact_le, souscrit_le, offre_souscription, cree_le, maj_le, score, signaux, revue_le, score_maj_le')
           .in('apporteur_id', (await supabaseAdmin.from('apporteurs').select('id').eq('artisan_id', f.uid)).data?.map((a) => a.id) ?? ['00000000-0000-0000-0000-000000000000'])
           .order('cree_le', { ascending: false })
-      : supabaseAdmin.from('registre_apports').select('id, artisan_id, apporteur_id, statut, preuve, piece, motif, premier_contact_le, souscrit_le, offre_souscription, cree_le, maj_le')
+      : supabaseAdmin.from('registre_apports').select('id, artisan_id, apporteur_id, statut, preuve, piece, motif, premier_contact_le, souscrit_le, offre_souscription, cree_le, maj_le, score, signaux, revue_le, score_maj_le')
           .order('cree_le', { ascending: false })),
   ])
   if (eA || eL) return NextResponse.json({ error: 'Registre indisponible pour l’instant.' }, { status: 503 })
@@ -50,6 +51,21 @@ export async function GET(req: Request) {
   const { data: artisans } = ids.length
     ? await supabaseAdmin.from('artisans').select('id, nom, metier, plan, created_at').in('id', ids)
     : { data: [] as { id: string; nom: string | null; metier: string | null; plan: string | null; created_at: string }[] }
+
+  // Le score se recalcule quand il date de plus d'une heure : les faits qui le composent bougent —
+  // le compte se met à travailler, l'abonnement passe son renouvellement, une pièce est jointe. Un
+  // score figé au moment de la déclaration serait faux au bout d'une semaine.
+  const maintenant = Date.now()
+  const aRepeser = visibles.filter((l) => {
+    const x = l as LigneBase & { statut: string; score_maj_le?: string | null }
+    if (x.statut === 'prouve' || x.statut === 'retire') return false
+    return !x.score_maj_le || maintenant - Date.parse(x.score_maj_le) > 3_600_000
+  })
+  const frais = new Map<string, { score: number; signaux: unknown[] }>()
+  for (const l of aRepeser.slice(0, 40)) {
+    const c = await peserEtEnregistrer((l as LigneBase).id, maintenant).catch(() => null)
+    if (c) frais.set((l as LigneBase).id, { score: c.score, signaux: c.signaux })
+  }
 
   const parCode = new Map((apporteurs ?? []).map((a) => [a.id, a]))
   const parArtisan = new Map((artisans ?? []).map((a) => [a.id, a]))
@@ -67,6 +83,18 @@ export async function GET(req: Request) {
       piece: ligne.piece, motif: ligne.motif,
       offre: ligne.offre_souscription, souscrit_le: ligne.souscrit_le, premier_contact_le: ligne.premier_contact_le,
       compte: v.compte, taux: v.taux, raison: v.raison,
+      // Le score TRIE la file de revue, il ne décide de rien (v11 §4.6). Il vient toujours avec ses
+      // signaux : un chiffre seul donnerait l'illusion d'un verdict, et personne ne pourrait le
+      // contester utilement — ni Benj, ni l'apporteur.
+      score: frais.get(ligne.id)?.score ?? (ligne as { score?: number | null }).score ?? null,
+      signaux: frais.get(ligne.id)?.signaux ?? (ligne as { signaux?: unknown }).signaux ?? [],
+      confiance: (() => { const n = frais.get(ligne.id)?.score ?? (ligne as { score?: number | null }).score; return typeof n === 'number' ? verdictLisible(n) : null })(),
+      revue_le: (ligne as { revue_le?: string | null }).revue_le ?? null,
+      // Les trois files du §4.4 : à valider, signalés, validés.
+      file: (ligne as { revue_le?: string | null }).revue_le ? 'valides'
+        : ligne.statut === 'prouve' ? 'valides'
+        : (frais.get(ligne.id)?.score ?? (ligne as { score?: number | null }).score ?? 50) < 40 ? 'signales'
+        : 'a_valider',
       maj_le: ligne.maj_le,
     }
   })

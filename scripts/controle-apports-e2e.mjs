@@ -141,6 +141,7 @@ try {
   T('déclaration sans pièce → 400, et rien au registre', sansPiece.status === 400 && !(await ligneDe(E.uid)), `HTTP ${sansPiece.status}`)
   const sansJeton = await json(await api('/api/controle/apports', { method: 'POST', body: JSON.stringify({ artisan_id: E.uid, code: CODE_APPORT, piece: 'Email d’introduction du 02/09' }) }, jF))
   T('déclaration sans re-confirmation → 403', sansJeton.status === 403 && sansJeton.body.code === 'reconfirmation_requise', `HTTP ${sansJeton.status}`)
+  const reconf = async () => (await json(await api('/api/controle/reconfirmer', { method: 'POST', body: JSON.stringify({ password: F.password, portee: 'artisan' }) }, jF))).body.jeton
   const jeton1 = (await json(await api('/api/controle/reconfirmer', { method: 'POST', body: JSON.stringify({ password: F.password, portee: 'artisan' }) }, jF))).body.jeton
   const avecPiece = await json(await api('/api/controle/apports', { method: 'POST', body: JSON.stringify({ artisan_id: E.uid, code: CODE_APPORT, piece: 'Email d’introduction du 02/09' }) }, jF, jeton1))
   const lE = await ligneDe(E.uid)
@@ -183,6 +184,55 @@ try {
   const fuite = (cli.body.lignes || []).filter((l) => comptes.includes(l.id))
   T('aucun compte de test n’apparaît dans la liste des clients', fuite.length === 0, fuite.map((l) => l.nom).join(' '))
   T('chaque ligne porte un canal d’acquisition (organique ou apporté)', (cli.body.lignes || []).every((l) => l.canal?.type === 'organique' || (l.canal?.type === 'apporte' && typeof l.canal.compte === 'boolean')))
+  console.log('\n12. Le faisceau d\u2019indices (v11 \u00a74.3) : un score qui TRIE, avec ses raisons')
+  // Le score n'a de valeur que s'il r\u00e9agit aux faits. On pose sur l'artisan une origine d\u00e9clar\u00e9e qui
+  // CONTREDIT la d\u00e9claration d'apport, et on v\u00e9rifie que le signal appara\u00eet et fait chuter le score.
+  const repeser = async () => {
+    await rest(`registre_apports?id=eq.${lE.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ score_maj_le: null }) })
+    const r = await json(await api('/api/controle/apports', {}, jF))
+    return (r.body.lignes || []).find((l) => l.id === lE.id)
+  }
+  await rest(`artisans?id=eq.${E.uid}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ origine_declaree: 'google', origine_precision: null }) })
+  const bas = await repeser()
+  T('la ligne porte un score et ses signaux', typeof bas?.score === 'number' && Array.isArray(bas?.signaux), JSON.stringify(bas ?? {}).slice(0, 140))
+  const contre = (bas?.signaux || []).find((x) => x.cle === 'origine_autre')
+  T('le client qui dit \u00ab Google \u00bb produit un signal CONTRE, d\u00e9taill\u00e9 en fran\u00e7ais',
+    !!contre && contre.sens === 'contre' && /Google/i.test(contre.detail), JSON.stringify(bas?.signaux ?? []).slice(0, 200))
+  T('le score reste born\u00e9 entre 0 et 100', typeof bas?.score === 'number' && bas.score >= 0 && bas.score <= 100, String(bas?.score))
+  T('il vient avec un verdict en fran\u00e7ais, jamais un nombre nu', typeof bas?.confiance === 'string' && bas.confiance.length > 3, String(bas?.confiance))
+
+  // L'inverse : le client confirme, en nommant l'apporteur.
+  await rest(`artisans?id=eq.${E.uid}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ origine_declaree: 'presente', origine_precision: 'Alexandre' }) })
+  const haut = await repeser()
+  const pour = (haut?.signaux || []).find((x) => x.cle === 'origine_presente')
+  T('le client qui confirme produit un signal POUR', !!pour && pour.sens === 'pour', JSON.stringify(haut?.signaux ?? []).slice(0, 200))
+  T('et le score monte', (haut?.score ?? 0) > (bas?.score ?? 0), `${bas?.score} puis ${haut?.score}`)
+  T('chaque ligne est rang\u00e9e dans une des trois files', ['a_valider', 'signales', 'valides'].includes(haut?.file), String(haut?.file))
+
+  console.log('\n13. Les trois d\u00e9cisions (v11 \u00a74.4)')
+  const sansMotif13 = await json(await api(`/api/controle/apports/${lE.id}/statut`, { method: 'POST', body: JSON.stringify({ decision: 'refuser' }) }, jF, await reconf()))
+  T('refuser sans motif \u2192 400', sansMotif13.status === 400, `${sansMotif13.status} ${JSON.stringify(sansMotif13.body).slice(0, 90)}`)
+
+  const avantV = await (await rest(`registre_apports?id=eq.${lE.id}&select=statut,taux:statut`)).json()
+  const valide = await json(await api(`/api/controle/apports/${lE.id}/statut`, { method: 'POST', body: JSON.stringify({ decision: 'valider' }) }, jF, await reconf()))
+  T('valider \u2192 200', valide.status === 200, `${valide.status} ${JSON.stringify(valide.body).slice(0, 110)}`)
+  const [apresV] = await (await rest(`registre_apports?id=eq.${lE.id}&select=statut,revue_le,revue_par`)).json()
+  T('la revue est dat\u00e9e et sign\u00e9e', !!apresV?.revue_le && apresV?.revue_par === F.uid, JSON.stringify(apresV))
+  T('valider ne CHANGE PAS le statut : l\u2019histoire n\u2019est pas r\u00e9\u00e9crite', apresV?.statut === avantV[0]?.statut, `${avantV[0]?.statut} puis ${apresV?.statut}`)
+  const reg13 = await json(await api('/api/controle/apports', {}, jF))
+  T('la ligne rejoint la file \u00ab valid\u00e9s \u00bb', (reg13.body.lignes || []).find((l) => l.id === lE.id)?.file === 'valides', String((reg13.body.lignes || []).find((l) => l.id === lE.id)?.file))
+  const jrV = await (await rest(`journal_direction?cible_id=eq.${lE.id}&action=eq.apport_modifie&order=cree_le.desc&limit=1`)).json()
+  T('la validation est journalis\u00e9e, avant et apr\u00e8s', jrV[0]?.apres?.revue === 'valid\u00e9e', JSON.stringify(jrV[0]?.apres ?? {}).slice(0, 120))
+
+  const versPreuve = await json(await api(`/api/controle/apports/${lE.id}/statut`, { method: 'POST', body: JSON.stringify({ statut: 'prouve', motif: 'tentative' }) }, jF, await reconf()))
+  T('aucune d\u00e9cision ne transforme un d\u00e9clar\u00e9 en prouv\u00e9', versPreuve.status === 400, `${versPreuve.status} ${JSON.stringify(versPreuve.body).slice(0, 90)}`)
+
+  const refuse = await json(await api(`/api/controle/apports/${lE.id}/statut`, { method: 'POST', body: JSON.stringify({ decision: 'refuser', motif: 'test e2e : refus' }) }, jF, await reconf()))
+  T('refuser avec motif \u2192 200', refuse.status === 200, `${refuse.status} ${JSON.stringify(refuse.body).slice(0, 110)}`)
+  const reg13b = await json(await api('/api/controle/apports', {}, jF))
+  const apresR = (reg13b.body.lignes || []).find((l) => l.id === lE.id)
+  T('l\u2019apport refus\u00e9 ne compte plus, et le taux tombe \u00e0 0', apresR?.compte === false && apresR?.taux === 0, `compte=${apresR?.compte} taux=${apresR?.taux}`)
+
   await purgerPlafonds(); await purgerPlafondsDe(F.uid, L.uid)
   }
 } catch (e) {

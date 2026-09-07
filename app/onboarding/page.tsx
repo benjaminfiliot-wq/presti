@@ -26,6 +26,13 @@ export default function Onboarding() {
   const [ton, setTon] = useState(
     "Bonjour, merci pour votre demande ! Je reviens vers vous très vite avec un devis. À bientôt.",
   )
+  // « Comment avez-vous connu Presti ? » (v11 §4.2). C'est la source INDÉPENDANTE de la preuve
+  // d'apport : quand quelqu'un déclare avoir amené cet artisan, c'est la réponse de l'artisan
+  // lui-même qui corrobore ou contredit. Elle est scellée en base dès qu'elle est donnée (0068), pour
+  // qu'elle ne puisse pas être changée après coup sur demande insistante de celui qui réclame la
+  // commission. D'où aussi la neutralité de la liste : aucun nom n'est soufflé.
+  const [origine, setOrigine] = useState('')
+  const [origineNom, setOrigineNom] = useState('')
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
 
@@ -52,7 +59,11 @@ export default function Onboarding() {
     const metierFinal = metier === 'Autre' ? (metierAutre.trim() || 'Artisan') : metier
     const { error } = await supabase
       .from('artisans')
-      .upsert({ id: userId, email, nom: nomPropre, metier: metierFinal.slice(0, 60), tel: telPropre, ton_style: ton, slug })
+      .upsert({
+        id: userId, email, nom: nomPropre, metier: metierFinal.slice(0, 60), tel: telPropre, ton_style: ton, slug,
+        origine_declaree: origine || null,
+        origine_precision: origine === 'presente' ? (origineNom.trim().slice(0, 120) || null) : null,
+      })
     setLoading(false)
     if (error) {
       setErr(error.message)
@@ -86,6 +97,19 @@ export default function Onboarding() {
           )}
           <label>Ton téléphone</label>
           <input value={tel} onChange={(e) => setTel(e.target.value)} type="tel" inputMode="tel" maxLength={30} pattern="[0-9 .+()\-]*" title="Chiffres, espaces, points, tirets, parenthèses et + seulement" placeholder="06 12 34 56 78" />
+          <label htmlFor="origine">Comment as-tu connu Presti ?</label>
+          <select id="origine" value={origine} onChange={(e) => setOrigine(e.target.value)} required>
+            <option value="" disabled>Choisis une réponse</option>
+            <option value="google">Recherche Google</option>
+            <option value="reseaux">Réseaux sociaux</option>
+            <option value="bouche_a_oreille">Bouche-à-oreille</option>
+            <option value="presente">On m’a présenté Presti</option>
+            <option value="autre">Autre</option>
+          </select>
+          {origine === 'presente' && (
+            <input value={origineNom} onChange={(e) => setOrigineNom(e.target.value)} required maxLength={120}
+              placeholder="Qui te l’a présenté ? (son nom)" style={{ marginTop: '.5rem' }} />
+          )}
           <label>Le ton de tes réponses (l'IA s'en inspirera)</label>
           <textarea value={ton} onChange={(e) => setTon(e.target.value)} rows={3} style={{ width: '100%', padding: '.7rem .8rem', border: '1px solid var(--line)', borderRadius: '8px', fontSize: '1rem', fontFamily: 'inherit', resize: 'vertical' }} />
           <button disabled={loading}>{loading ? '…' : 'Enregistrer et continuer'}</button>
