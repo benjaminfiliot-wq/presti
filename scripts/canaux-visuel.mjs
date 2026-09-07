@@ -39,7 +39,10 @@ try {
   await page.fill('input[type="password"]', motDePasse)
   await page.getByRole('button', { name: 'Se connecter' }).click()
   await codeEmailSiDemande(page, email)
-  await page.waitForURL(/outils|dashboard|onboarding|messages/, { timeout: 30000 })
+  // 60 s et non 30 : sous la charge de l’audit — soixante-dix suites d’affilée contre la production —
+  // une connexion dépasse parfois trente secondes. Cette suite passait seule et échouait dans le
+  // lanceur ; un faux rouge finit par masquer les vrais, et personne ne lit plus le rapport.
+  await page.waitForURL(/outils|dashboard|onboarding|messages/, { timeout: 60000 })
 
   await page.goto(`${BASE}/messages/canaux`, { waitUntil: 'networkidle' })
   await page.waitForSelector('text=Connecter une boîte email', { timeout: 20000 })

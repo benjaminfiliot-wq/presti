@@ -52,7 +52,7 @@ try {
   await page.fill('input[type=password]', pw)
   await page.getByRole('button', { name: /Se connecter/i }).click()
   await codeEmailSiDemande(page, email)
-  await page.waitForURL(/\/(outils|dashboard)/, { timeout: 20000 })
+  await page.waitForURL(/\/(outils|dashboard)/, { timeout: 60000 })
 
   console.log('\n── 1. La visite guidée : première ouverture oui, seconde non')
   await page.goto(`${BASE}/dashboard`, { waitUntil: 'load' })
