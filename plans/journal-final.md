@@ -504,6 +504,21 @@ Trois fois le même défaut, en une séance : **deux chiffres justes qui se lise
 - **Pour Benj** : révoquer chez Stripe les deux clés restreintes RÉELLES qui traînaient en clair dans `.env.local` (retirées du fichier, mais personne ne sait où elles sont passées) ; faire un devis IA depuis son compte pour que je retire le filet ; et l'APK sur son téléphone.
 - **Suivant** : J5 — la comptabilité et le relevé du partenaire.
 
+## [43] v11 · J5 — la comptabilité et le relevé du partenaire : l'annexe A au centime — 07/09 — ✅ `controle-compta-e2e` **17/17** sur le calcul (la partie production attend 0071)
+
+- **La formule du contrat, retrouvée puis prouvée.** Le v11 §7 donnait trois paires de montants sans la règle qui les produit : `19,64 / 31,36`, `40,80 / 10,20`, `317,28 / 702,72`. Je ne l'ai pas devinée — je l'ai cherchée, vérifiée sur les trois cas avant d'écrire une ligne de code, et elle tombe **au centime** :
+  - résultat `R` = encaissé − coûts directs ; commission `C` = 20 % du **chiffre d'affaires encaissé des clients apportés** ; intéressement = 20 % × (R − C) ; part du fondateur = 80 % × (R − C) ; **dû au partenaire = C + intéressement**.
+- **Le point qui n'a rien d'évident** : la commission porte sur le **chiffre d'affaires** du client apporté, pas sur le résultat. Se tromper d'assiette donne 18,36 € au lieu de 19,64 € sur le premier cas — 1,28 € d'écart sur un client, des centaines d'euros sur une année.
+- **Mon explication était fausse, et le test l'a montré.** J'avais écrit que la subtilité tenait à l'ordre des opérations — « la commission sort avant le partage, pas après ». Or `C + 20 % (R − C)` et `20 % R + 80 % C` sont **algébriquement égales** : l'assertion censée le prouver prouvait le contraire. Corrigé aux deux endroits, et la fausse subtilité est maintenant écartée **explicitement**, pour que personne ne la « corrige » un jour. Une explication fausse dans un commentaire est pire que pas d'explication : on s'y fie.
+- **Tout est en centimes entiers.** Un relevé en flottants finit par afficher 19,639999999 ou par perdre un centime au passage. Sur de l'argent qu'on doit à quelqu'un, ce n'est pas acceptable.
+- **Ce que le calcul refuse de faire** : réclamer au partenaire sa part des pertes — le contrat ne le prévoit pas — tout en gardant la commission due, puisqu'elle porte sur du chiffre d'affaires et non sur un bénéfice.
+- **Un relevé arrêté est figé** (trigger 0071) : recalculer un mois clos changerait un montant déjà annoncé, et plus personne ne pourrait se fier à ce qu'il a reçu. Seuls le paiement et la réception de sa facture restent modifiables — ce sont des faits qui arrivent après, pas des chiffres qu'on révise. Et **on n'arrête pas un mois qui n'est pas fini** : son dernier encaissement n'a pas eu lieu.
+- **Les seuils et les taux vivent en base**, pas dans le code : seuil de franchise de TVA, seuil majoré, alerte à 80 %, taux et périodicité URSSAF. Ils changent par décret, et un décret ne doit pas demander un déploiement.
+- **Le partenaire lit son relevé, il ne l'arrête pas** : arrêter engage l'entreprise, c'est de la comptabilité — domaine qui lui est fermé (§5). La suite le rejoue et attend un 403.
+- **Appels IA du sprint : 0.**
+- **Pour Benj** : coller `_A_COLLER_sql_editor_0071.sql`, puis la partie production de la suite se déroulera. Restent aussi les deux clés Stripe réelles à révoquer, et un devis IA depuis son compte pour que je retire le filet de l'ancienne clé Anthropic.
+- **Suivant** : l'écran Comptabilité (ventes, achats, TVA, échéances, relevé avec export), puis J6 — santé, support, réglages.
+
 ## Liste H — actions humaines (vérifiées par l'effet, jamais en demandant) — état honnête au 05/09 23:30
 
 **Prouvé (44 suites = 42 du v6 + `modes-e2e` + `code-connexion-e2e`)** : 43 vertes en local et sur GitHub au dernier passage cité (v6 run #5 : 42/42 ; v7 : `modes-e2e` 35/35 en prod). **Pas encore prouvé** : ce qui suit, sans exception.
