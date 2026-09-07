@@ -207,6 +207,9 @@ export default function AppShell({
           <span><b>Presti</b><small>Console artisan</small></span>
         </a>
 
+        {/* La navigation défile ; la marque et le pied restent. Sans ce conteneur, le menu du compte
+            partait sous la ligne de flottaison dès qu'un écran faisait moins de 740 px de haut. */}
+        <div className="psh-side-scroll">
         {isFounder && (
           <>
             <div className="psh-navlabel">Fondateur</div>
@@ -240,6 +243,7 @@ export default function AppShell({
             </nav>
           </div>
         ))}
+        </div>
 
         <div className="psh-foot">
           {/* Menu de profil (§C1) : tout ce qui touche au compte, au même endroit. */}

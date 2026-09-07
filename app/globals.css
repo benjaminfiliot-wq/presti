@@ -379,7 +379,18 @@ button:disabled{opacity:.55;cursor:default}
 /* ---- App shell (espace connecté) ---- */
 .psh-app{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh;min-height:100dvh}
 .psh-scrim{display:none;position:fixed;inset:0;background:rgba(20,24,31,.4);z-index:55}
-.psh-side{position:sticky;top:0;align-self:start;height:100vh;height:100dvh;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;padding:18px 14px;overflow-y:auto}
+/* La barre latérale : marque fixe en haut, navigation défilante au milieu, compte fixe en bas.
+   Avant, tout défilait ensemble et le `margin-top:auto` du pied ne tenait plus dès que le contenu
+   dépassait : sur un écran de 720 px, la carte du compte — et donc la déconnexion — sortait de
+   l'écran. Signalé par Benj le 07/09 : « sur mon PC qui est petit, on ne voit pas tout ». */
+.psh-side{position:sticky;top:0;align-self:start;height:100vh;height:100dvh;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;padding:18px 14px;overflow:hidden}
+.psh-sbrand{flex:none}
+/* `min-height:0` est indispensable : sans lui, un enfant flex refuse de rétrécir sous sa taille
+   de contenu, et le conteneur déborde au lieu de défiler. */
+.psh-side-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:4px;
+  scrollbar-width:thin;overscroll-behavior:contain}
+.psh-side-scroll::-webkit-scrollbar{width:6px}
+.psh-side-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
 .psh-sbrand{display:flex;align-items:center;gap:11px;padding:6px 8px 14px;text-decoration:none}
 .psh-logo{width:34px;height:34px;border-radius:9px;flex:none;background:var(--ink);display:grid;place-items:center;color:#fff}
 .psh-logo svg{width:20px;height:20px}
@@ -395,7 +406,7 @@ button:disabled{opacity:.55;cursor:default}
 .psh-nav a.on svg{opacity:1}
 .psh-nav a.on .count{background:var(--accent-tint-2);color:var(--accent-ink)}
 .psh-nav a .ndot{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--hi);box-shadow:0 0 0 3px color-mix(in srgb,var(--hi) 22%,transparent)}
-.psh-foot{margin-top:auto;padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.psh-foot{flex:none;padding-top:12px;display:flex;flex-direction:column;gap:8px}
 .psh-founder{border:1px solid var(--line);border-radius:12px;padding:10px 11px;background:var(--surface-2);display:flex;align-items:center;gap:10px}
 .psh-ava{width:34px;height:34px;border-radius:9px;flex:none;background:linear-gradient(135deg,var(--accent-2),var(--accent));color:#1a0f0a;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:13px}
 .psh-ava.has-logo{background:#fff;overflow:hidden}
@@ -2616,3 +2627,27 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .ctl-jauge span.warn{background:var(--warn,#E4B45A)}
 .ctl-jauge span.crit{background:var(--crit,#F0776A)}
 @media(prefers-reduced-motion:reduce){.ctl-jauge span{transition:none}}
+
+/* ── Boîte de réception : les badges tiennent leur ligne ────────────────────────────────────────────
+   Le badge d'état (.pil-etat) et celui de statut (.pill) venaient de deux familles de styles avec des
+   hauteurs de ligne et des rembourrages différents. Côte à côte, ils se décalaient verticalement au
+   point de se chevaucher — signalé par Benj le 07/09 sur son téléphone. On les normalise ici plutôt
+   que de retoucher deux familles utilisées partout ailleurs. */
+.inbox-tags{align-items:center;row-gap:5px}
+.inbox-tags>*{flex:0 0 auto;line-height:1.35;min-height:20px;display:inline-flex;align-items:center;vertical-align:middle}
+/* Le nom du prospect a besoin de toute la largeur qui reste : sans `min-width:0`, un nom long pousse
+   l'heure hors de la carte au lieu de se couper proprement. */
+.inbox-top{min-width:0}
+.inbox-top b{min-width:0;flex:1 1 auto}
+
+/* ── Petits écrans en HAUTEUR (ordinateurs portables, fenêtres réduites) ────────────────────────────
+   Sous 760 px de haut, on resserre la barre latérale pour que la navigation entière et la carte du
+   compte tiennent sans défiler. C'est la hauteur réelle d'un portable 13 pouces à 125 % de zoom. */
+@media(max-height:760px) and (min-width:961px){
+  .psh-side{padding:12px 12px;gap:2px}
+  .psh-sbrand{margin-bottom:4px}
+  .psh-nav a{padding:7px 10px;font-size:13.5px}
+  .psh-navlabel{margin-top:8px}
+  .psh-foot{padding-top:8px}
+  .psh-founder{padding:.5rem .6rem}
+}
