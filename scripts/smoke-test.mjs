@@ -41,6 +41,7 @@ async function main() {
   const email = `smoke.test.${rnd}@example.com`, pw = 'Smoke123456!'
   const created = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
   const uid = created.id
+  globalThis.__smokeUid = uid // le ménage du `finally` doit le connaître même si la suite s'arrête ici
   await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: uid, email, nom: 'Smoke Test', metier: 'Plombier', ton_style: 'pro', slug: `smoke-${rnd}`, plan: 'business', is_founder: true, tva_regime: 'franchise' }) })
   const tok = await (await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pw }) })).json()
   await verifierSessionTest(tok.access_token)
