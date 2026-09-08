@@ -52,6 +52,7 @@ export type LigneClient = {
   /** Remboursé à ce client dans le mois, en CENTIMES, toujours POSITIF (article 5.4). */
   rembourse?: number
   /** L'apport compte-t-il, et à quel taux (0, 10 ou 20) ? Vient du registre, jamais d'une saisie. */
+  /** Pourcentage ENTIER (0, 10 à 20) — jamais une fraction. Voir lib/direction/apports.ts. */
   tauxApport: number
   statutApport: string | null
 }

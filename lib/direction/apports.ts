@@ -15,9 +15,14 @@ export type LigneApport = {
   premier_contact_le: string | null
   souscrit_le: string | null
   offre_souscription: string | null
+  /** Le taux décidé par Benjamin pour CET apport (0077). NULL = il n'a rien décidé. */
+  taux_pct?: number | null
 }
 
-export type Verdict = { compte: boolean; taux: number; raison: string }
+// `tauxPct` et non `taux` : un pourcentage ENTIER (20, 10, 0). Le nom porte l'unité parce que
+// l'ancien ne la portait pas — verdict() rendait 0.2, le relevé le redivisait par 100, et la
+// commission d'Alexandre valait douze centimes au lieu de onze euros quatre-vingts.
+export type Verdict = { compte: boolean; tauxPct: number; raison: string }
 
 /**
  * Compte-t-elle, et à quel taux ?
@@ -27,16 +32,30 @@ export type Verdict = { compte: boolean; taux: number; raison: string }
  *  • contesté : oui, 10 % (art. 5 : en cas de désaccord, la commission est ramenée à 10 %) ;
  *  • retiré : non.
  */
-export function verdict(l: Pick<LigneApport, 'statut' | 'piece' | 'motif'>): Verdict {
+/** Les bornes du contrat (art. 5) : Benjamin décide entre les deux, jamais en dehors. */
+export const TAUX_MIN = 10
+export const TAUX_PLEIN = 20
+export const TAUX_CONTESTE = 10
+export const tauxValide = (n: unknown): n is number =>
+  typeof n === 'number' && Number.isFinite(n) && n >= TAUX_MIN && n <= TAUX_PLEIN
+
+export function verdict(l: Pick<LigneApport, 'statut' | 'piece' | 'motif'> & { taux_pct?: number | null }): Verdict {
+  // Le taux décidé prime sur le taux par défaut — c'est le sens de la fourchette du contrat. Mais
+  // un apport CONTESTÉ reste plafonné à 10 % quoi qu'il y ait dans le réglage : le contrat prime
+  // sur la décision, sinon la clause de désaccord ne servirait à rien.
+  const choisi = tauxValide(l.taux_pct) ? l.taux_pct : null
+  const plein = choisi ?? TAUX_PLEIN
+  const conteste = Math.min(choisi ?? TAUX_CONTESTE, TAUX_CONTESTE)
+  const dit = (n: number) => (choisi === null ? '' : ` (taux réglé à ${n} %)`)
   switch (l.statut) {
-    case 'prouve': return { compte: true, taux: 0.2, raison: 'Prouvé : arrivé par le lien d’apport, empreinte vérifiée par le serveur.' }
-    case 'saisi': return { compte: true, taux: 0.2, raison: 'Code d’apport saisi par l’artisan à son inscription.' }
+    case 'prouve': return { compte: true, tauxPct: plein, raison: `Prouvé : arrivé par le lien d’apport, empreinte vérifiée par le serveur.${dit(plein)}` }
+    case 'saisi': return { compte: true, tauxPct: plein, raison: `Code d’apport saisi par l’artisan à son inscription.${dit(plein)}` }
     case 'declare': return l.piece && l.piece.trim()
-      ? { compte: true, taux: 0.2, raison: 'Déclaré, avec pièce au dossier.' }
-      : { compte: false, taux: 0, raison: 'Déclaré sans pièce : ne compte pas tant qu’une pièce n’est pas jointe.' }
-    case 'conteste': return { compte: true, taux: 0.1, raison: `Contesté${l.motif ? ` : ${l.motif}` : ''} — commission ramenée à 10 % (contrat, art. 5).` }
-    case 'retire': return { compte: false, taux: 0, raison: `Retiré du registre${l.motif ? ` : ${l.motif}` : ''}.` }
-    default: return { compte: false, taux: 0, raison: 'Statut inconnu.' }
+      ? { compte: true, tauxPct: plein, raison: `Déclaré, avec pièce au dossier.${dit(plein)}` }
+      : { compte: false, tauxPct: 0, raison: 'Déclaré sans pièce : ne compte pas tant qu’une pièce n’est pas jointe.' }
+    case 'conteste': return { compte: true, tauxPct: conteste, raison: `Contesté${l.motif ? ` : ${l.motif}` : ''} — commission ramenée à ${conteste} % (contrat, art. 5).` }
+    case 'retire': return { compte: false, tauxPct: 0, raison: `Retiré du registre${l.motif ? ` : ${l.motif}` : ''}.` }
+    default: return { compte: false, tauxPct: 0, raison: 'Statut inconnu.' }
   }
 }
 

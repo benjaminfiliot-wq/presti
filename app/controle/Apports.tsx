@@ -16,7 +16,7 @@ type Ligne = {
   artisan: { id: string; nom?: string | null; metier?: string | null; plan?: string | null; inscrit_le?: string }
   apporteur: { code: string; nom: string } | null
   statut: string; statutLisible: string; preuve: string; piece: string | null; motif: string | null
-  offre: string | null; souscrit_le: string | null; compte: boolean; taux: number; raison: string; maj_le: string
+  offre: string | null; souscrit_le: string | null; compte: boolean; tauxPct: number; taux_pct: number | null; raison: string; maj_le: string
   score: number | null
   signaux: { cle: string; sens: 'pour' | 'contre'; poids: number; detail: string; constate_le: string }[]
   confiance: string | null
@@ -68,6 +68,22 @@ export default function Apports({ role, signaler }: { role: 'direction' | 'lectu
     } finally { setBusy(null) }
   }, [charger, signaler])
 
+  // 0077 — la fourchette du contrat (art. 5). Benjamin décide, entre les deux, apport par apport.
+  const reglerTaux = useCallback(async (l: Ligne, valeur: number | null) => {
+    setBusy(l.id)
+    try {
+      const r = await apiDirection<{ message?: string }>('/api/controle/apports', {
+        method: 'PATCH', body: JSON.stringify({ artisan_id: l.artisan.id, taux_pct: valeur }),
+      }, true)
+      if (r.ok) { signaler({ type: 'ok', text: r.data.message ?? 'C’est fait.' }); void charger(); return }
+      if (['reconfirmation_requise', 'expire', 'rejoue', 'portee'].includes(r.data.code ?? '')) {
+        setAConfirmer({ action: `régler la commission à ${valeur === null ? 'la valeur par défaut' : valeur + ' %'}`, faire: async () => { await reglerTaux(l, valeur) } })
+        return
+      }
+      signaler({ type: 'err', text: r.data.error ?? 'Action refusée.' })
+    } finally { setBusy(null) }
+  }, [charger, signaler])
+
   function demander(l: Ligne, decision: Decision) {
     let motif = ''
     if (decision !== 'valider') {
@@ -78,7 +94,7 @@ export default function Apports({ role, signaler }: { role: 'direction' | 'lectu
       if (saisi === null) return
       motif = saisi.trim()
       if (!motif) { signaler({ type: 'err', text: 'Un motif est obligatoire : il part à l’apporteur et reste au journal.' }); return }
-    } else if (!window.confirm(`Valider cet apport ? La commission de ${l.taux} % sera due sur ${l.artisan.nom || 'cet artisan'}.`)) return
+    } else if (!window.confirm(`Valider cet apport ? La commission de ${l.tauxPct} % sera due sur ${l.artisan.nom || 'cet artisan'}.`)) return
     if (!reconfirmationValide('artisan')) { setAConfirmer({ action: LIBELLE[decision], faire: async () => { await changer(l, decision, motif) } }); return }
     void changer(l, decision, motif)
   }
@@ -138,8 +154,21 @@ export default function Apports({ role, signaler }: { role: 'direction' | 'lectu
                       <small className="muted" style={{ display: 'block', marginTop: 4 }}>{l.preuve}</small>
                     </td>
                     <td data-lab="Compte ?">
-                      {l.compte ? <span className="pill ok"><span className="pdot" />{Math.round(l.taux * 100)} %</span> : <span className="pill muted"><span className="pdot" />non</span>}
+                      {l.compte ? <span className="pill ok"><span className="pdot" />{l.tauxPct} %</span> : <span className="pill muted"><span className="pdot" />non</span>}
                       <small className="muted" style={{ display: 'block', marginTop: 4 }}>{l.raison}</small>
+                      {/* Le taux affiché vient du serveur : un apport contesté montre 10 % même réglé à 20,
+                          parce que c'est le contrat qui tranche, pas le réglage. */}
+                      {l.compte ? (
+                        <label className="apport-taux">
+                          <span>Commission</span>
+                          <select value={l.taux_pct ?? ''} disabled={busy === l.id}
+                            onChange={(e) => reglerTaux(l, e.target.value === '' ? null : Number(e.target.value))}
+                            aria-label={`Commission pour ${l.artisan.nom || 'cet artisan'}`}>
+                            <option value="">par défaut</option>
+                            {[10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((n) => <option key={n} value={n}>{n} %</option>)}
+                          </select>
+                        </label>
+                      ) : null}
                       {l.score !== null && l.statut !== 'prouve' ? (
                         <>
                           <button type="button" className="dir-dep" style={{ marginTop: 4 }} onClick={() => setOuvert(ouvert === l.id ? null : l.id)} data-signaux={l.id}>

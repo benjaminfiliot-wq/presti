@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { estFondateur, estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
-import { verdict, preuveLisible, libelleStatut, type Statut } from '@/lib/direction/apports'
+import { verdict, preuveLisible, libelleStatut, tauxValide, TAUX_MIN, TAUX_PLEIN, type Statut } from '@/lib/direction/apports'
 import { lireUserAgent } from '@/lib/userAgent'
 import { CODE } from '@/lib/apports'
+import { journaliser } from '@/lib/direction/journal'
 import { actif } from '@/lib/flags'
 import { peserEtEnregistrer, verdictLisible } from '@/lib/controle/confiance'
 
@@ -82,7 +83,7 @@ export async function GET(req: Request) {
       preuve: preuveLisible(ligne as never),
       piece: ligne.piece, motif: ligne.motif,
       offre: ligne.offre_souscription, souscrit_le: ligne.souscrit_le, premier_contact_le: ligne.premier_contact_le,
-      compte: v.compte, taux: v.taux, raison: v.raison,
+      compte: v.compte, tauxPct: v.tauxPct, taux_pct: (ligne as { taux_pct?: number | null }).taux_pct ?? null, raison: v.raison,
       // Le score TRIE la file de revue, il ne décide de rien (v11 §4.6). Il vient toujours avec ses
       // signaux : un chiffre seul donnerait l'illusion d'un verdict, et personne ne pourrait le
       // contester utilement — ni Benj, ni l'apporteur.
@@ -101,7 +102,7 @@ export async function GET(req: Request) {
   const comptes = sorties.filter((s) => s.compte)
   return NextResponse.json({
     lignes: sorties,
-    resume: { total: sorties.length, comptes: comptes.length, a_20: comptes.filter((s) => s.taux === 0.2).length, a_10: comptes.filter((s) => s.taux === 0.1).length },
+    resume: { total: sorties.length, comptes: comptes.length, a_20: comptes.filter((s) => s.tauxPct === 20).length, a_10: comptes.filter((s) => s.tauxPct === 10).length },
     apporteurs: (apporteurs ?? []).filter((a) => f.role === 'direction' || a.artisan_id === f.uid).map((a) => ({ code: a.code, nom: a.nom, actif: a.actif, lien: `https://prestiapp.fr/a/${a.code}` })),
     role: f.role, a: new Date().toISOString(),
   })
@@ -133,4 +134,54 @@ export async function POST(req: Request) {
   }
   if (r?.etat !== 'ok') return NextResponse.json({ error: messages[r?.etat ?? ''] ?? 'Déclaration refusée.', code: r?.etat }, { status: 400 })
   return NextResponse.json({ ok: true, message: 'Apport déclaré, avec sa pièce.', ligne: r.ligne })
+}
+
+// PATCH : régler la commission d'UN apport, dans la fourchette du contrat (0077).
+//
+// Un verbe à part, et non un champ de plus sur le POST : déclarer un apport crée une ligne,
+// changer son taux touche à de l'argent déjà dû. Les mélanger aurait rendu impossible de
+// journaliser l'un sans l'autre — et c'est précisément cette trace qu'un désaccord réclamera.
+export async function PATCH(req: Request) {
+  if (!actif('apports')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const f = await estDirection(req)
+  if (estRefus(f)) return reponseRefus(f)
+
+  const b = (await req.json().catch(() => null)) as { artisan_id?: unknown; taux_pct?: unknown } | null
+  const artisan = typeof b?.artisan_id === 'string' ? b.artisan_id.trim() : ''
+  if (!/^[0-9a-f-]{36}$/i.test(artisan)) return NextResponse.json({ error: 'Artisan inconnu.' }, { status: 400 })
+  // `null` est une valeur légitime : « je ne décide rien, applique la règle par défaut ».
+  const brut = b?.taux_pct
+  const remis = brut === null || brut === ''
+  const taux = typeof brut === 'number' ? brut : Number(brut)
+  if (!remis && !tauxValide(taux)) {
+    return NextResponse.json({ error: `La commission doit rester entre ${TAUX_MIN} % et ${TAUX_PLEIN} % (contrat, art. 5).` }, { status: 400 })
+  }
+
+  const refus = await exigerReconfirmation(req, f.uid, 'artisan')
+  if (refus) return refus
+
+  const { data: avant } = await supabaseAdmin.from('registre_apports')
+    .select('id, taux_pct, statut').eq('artisan_id', artisan).maybeSingle()
+  if (!avant) return NextResponse.json({ error: 'Cet artisan n’est pas au registre.' }, { status: 400 })
+
+  const valeur = remis ? null : Math.round(taux)
+  const { error } = await supabaseAdmin.from('registre_apports')
+    .update({ taux_pct: valeur, maj_le: new Date().toISOString(), maj_par: f.uid }).eq('id', avant.id)
+  if (error) { console.error('[direction] taux apport :', error.message); return NextResponse.json({ error: 'Rien n’a été fait.', code: 'transaction' }, { status: 503 }) }
+
+  await journaliser({
+    acteur: f, action: 'apport_modifie', cible_type: 'artisan', cible_id: artisan, artisan_id: artisan,
+    avant: { taux_pct: avant.taux_pct }, apres: { taux_pct: valeur }, reconfirme: true,
+  }, req).catch(() => {})
+
+  // Le verdict est recalculé ici plutôt que par l'écran : deux endroits qui déduiraient le taux
+  // chacun de leur côté finiraient par ne pas dire la même chose (c'est ce bug qu'on répare).
+  const v = verdict({ ...(avant as { statut: Statut }), piece: null, motif: null, taux_pct: valeur })
+  return NextResponse.json({
+    ok: true, taux_pct: valeur, tauxPct: v.tauxPct,
+    message: remis
+      ? `Taux remis au défaut : ${v.tauxPct} %.`
+      : v.tauxPct === valeur ? `Commission réglée à ${valeur} % pour cet artisan.`
+        : `Réglé à ${valeur} %, mais cet apport est contesté : le contrat le plafonne à ${v.tauxPct} %.`,
+  })
 }

@@ -105,7 +105,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     historique_suspensions: suspensions ?? [],
     usage: { leads: leads.count ?? 0, devis: devis.count ?? 0, factures: factures.count ?? 0, ...(erreurUsage ? { erreur: 'base injoignable' } : {}) },
     derniereFacture: facture.valeur,
-    apport: apport && v ? { statut: apport.statut, statutLisible: libelleStatut(apport.statut as Statut), preuve: preuveLisible(apport as never), compte: v.compte, taux: v.taux, raison: v.raison, apporteur: apporteur?.nom ?? null } : null,
+    apport: apport && v ? { statut: apport.statut, statutLisible: libelleStatut(apport.statut as Statut), preuve: preuveLisible(apport as never), compte: v.compte, tauxPct: v.tauxPct, raison: v.raison, apporteur: apporteur?.nom ?? null } : null,
     journal: journal ?? [],
     role: f.role, a: new Date().toISOString(),
   })

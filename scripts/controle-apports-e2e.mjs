@@ -131,7 +131,7 @@ try {
   const F = await creer('fondateur', { fondateur: true }), jF = await session(F)
   const reg = await json(await api('/api/controle/apports', {}, jF))
   const vue = (reg.body.lignes || []).find((l) => l.artisan?.id === A.uid)
-  T('la ligne apparaît avec sa preuve en clair et son verdict', reg.status === 200 && !!vue && vue.compte === true && vue.taux === 0.2 && /lien/i.test(vue.preuve), JSON.stringify(vue?.preuve ?? '').slice(0, 120))
+  T('la ligne apparaît avec sa preuve en clair et son verdict', reg.status === 200 && !!vue && vue.compte === true && vue.tauxPct === 20 && /lien/i.test(vue.preuve), JSON.stringify(vue?.preuve ?? '').slice(0, 120))
   T('le lien d’apport est donné pour être copié', (reg.body.apporteurs || []).some((a) => a.code === CODE_APPORT && a.lien.endsWith(`/a/${CODE_APPORT}`)))
 
   console.log('\n7. Déclarer à la main : la pièce est obligatoire')
@@ -170,7 +170,7 @@ try {
   const conteste = await json(await api(`/api/controle/apports/${lE.id}/statut`, { method: 'POST', body: JSON.stringify({ statut: 'conteste', motif: 'Contact antérieur au lien' }) }, jF, jeton4))
   const reg2 = await json(await api('/api/controle/apports', {}, jF))
   const vue2 = (reg2.body.lignes || []).find((l) => l.id === lE.id)
-  T('contesté → 200, compte à 10 %, motif rendu dans la raison', conteste.status === 200 && vue2?.compte === true && vue2?.taux === 0.1 && /antérieur/.test(vue2?.raison ?? ''), JSON.stringify(vue2?.raison ?? '').slice(0, 120))
+  T('contesté → 200, compte à 10 %, motif rendu dans la raison', conteste.status === 200 && vue2?.compte === true && vue2?.tauxPct === 10 && /antérieur/.test(vue2?.raison ?? ''), JSON.stringify(vue2?.raison ?? '').slice(0, 120))
   const jm = (await (await rest(`journal_direction?select=avant,apres&acteur_id=eq.${F.uid}&action=eq.apport_modifie`)).json())[0]
   T('le changement est journalisé avant/après', jm?.avant?.statut === 'declare' && jm?.apres?.statut === 'conteste')
 
@@ -238,7 +238,7 @@ try {
   T('refuser avec motif \u2192 200', refuse.status === 200, `${refuse.status} ${JSON.stringify(refuse.body).slice(0, 110)}`)
   const reg13b = await json(await api('/api/controle/apports', {}, jF))
   const apresR = (reg13b.body.lignes || []).find((l) => l.id === lE.id)
-  T('l\u2019apport refus\u00e9 ne compte plus, et le taux tombe \u00e0 0', apresR?.compte === false && apresR?.taux === 0, `compte=${apresR?.compte} taux=${apresR?.taux}`)
+  T('l\u2019apport refus\u00e9 ne compte plus, et le taux tombe \u00e0 0', apresR?.compte === false && apresR?.tauxPct === 0, `compte=${apresR?.compte} taux=${apresR?.tauxPct}`)
 
   await purgerPlafonds(); await purgerPlafondsDe(F.uid, L.uid)
   }

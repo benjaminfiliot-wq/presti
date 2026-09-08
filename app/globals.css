@@ -2273,6 +2273,11 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .sup-verrou span{flex:1 1 24ch;color:var(--muted);font-size:.84rem;line-height:1.45}
 .sup-verrou .btn{margin:0;width:auto}
 
+/* Le selecteur de commission d un apport (0077) : dans la cellule qui affiche deja le taux,
+   pas dans un ecran a part -- deux endroits qui parlent du meme nombre, c est le bug qu on repare. */
+.apport-taux{display:flex;align-items:center;gap:.4rem;margin-top:.45rem;font-size:.78rem;color:var(--muted)}
+.apport-taux select{width:auto;padding:.25rem .4rem;font-size:.8rem;margin:0}
+
 /* Le bloc Support du Poste de contrôle. L'état de la porte se lit d'un coup d'œil : gris = rien en
    cours, ambre = on attend SA réponse, rouge = ouvert, quelqu'un peut regarder maintenant. */
 .dir-bloc h3{margin:0 0 .7rem;font-size:1rem}

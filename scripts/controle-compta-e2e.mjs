@@ -22,6 +22,7 @@ import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 import { calculerReleve, bornesDuMois, TAUX } from '../lib/controle/releve.ts'
+import { verdict } from '../lib/direction/apports.ts'
 import { verifierSessionTest } from './lib/connexion-test.mjs'
 
 for (const f of ['.env.local']) {
@@ -110,6 +111,40 @@ async function main() {
 
     // Sans remboursement, rien ne change : la nouveauté ne doit pas déplacer un centime des mois passés.
     T('un mois sans remboursement calcule exactement comme avant', sans.rembourse === 0 && sans.reprise === 0 && sans.dûAuPartenaire === 3600, `${eur(sans.dûAuPartenaire)}`)
+  }
+
+  // ── 0 bis. Du registre au relevé, sans retaper le taux au milieu ────────────────────────────────
+  //
+  // C'est le test qui manquait le 08/09, et son absence a coûté un facteur 100 sur la commission
+  // d'Alexandre : `verdict()` rendait 0.2, `calculerReleve` redivisait par 100. Les deux moitiés
+  // étaient testées séparément et passaient — celle-ci écrivait `tauxApport: 20` à la main, donc
+  // elle testait sa propre constante, pas le chemin.
+  console.log('0 bis. Du registre au relevé, sans retaper le taux')
+  {
+    const parLeRegistre = (ligne, encaisse) => {
+      const v = verdict(ligne)
+      return calculerReleve('2026-08', [{ artisan_id: 'x', nom: 'Apporté', encaisse, tauxApport: v.compte ? v.tauxPct : 0, statutApport: ligne.statut }], 0)
+    }
+    const prouve = parLeRegistre({ statut: 'prouve', piece: null, motif: null }, 5900)
+    T('⭑ un apport prouvé à 59 € commissionne 11,80 € — le taux traverse sans se faire diviser',
+      prouve.commission === 1180, `${eur(prouve.commission)} (attendu 11,80 €)`)
+
+    const conteste2 = parLeRegistre({ statut: 'conteste', piece: null, motif: 'désaccord' }, 5900)
+    T('un apport contesté commissionne 5,90 € (10 %)', conteste2.commission === 590, eur(conteste2.commission))
+
+    const sansPiece = parLeRegistre({ statut: 'declare', piece: null, motif: null }, 5900)
+    T('un apport déclaré sans pièce ne commissionne rien', sansPiece.commission === 0, eur(sansPiece.commission))
+
+    // 0077 — le taux que Benjamin décide traverse lui aussi, et le contrat garde le dernier mot.
+    const regle15 = parLeRegistre({ statut: 'prouve', piece: null, motif: null, taux_pct: 15 }, 5900)
+    T('⭑ le taux réglé à 15 % donne 8,85 €, pas le taux par défaut', regle15.commission === 885, eur(regle15.commission))
+
+    const contesteRegle = parLeRegistre({ statut: 'conteste', piece: null, motif: 'désaccord', taux_pct: 20 }, 5900)
+    T('⭑ un apport contesté reste plafonné à 10 % même réglé à 20 % : le contrat prime',
+      contesteRegle.commission === 590, eur(contesteRegle.commission))
+
+    const horsBornes = verdict({ statut: 'prouve', piece: null, motif: null, taux_pct: 45 })
+    T('un taux hors de la fourchette du contrat est ignoré, pas appliqué', horsBornes.tauxPct === 20, `${horsBornes.tauxPct} %`)
   }
 
   // ── 1. L'annexe A du contrat, au centime ────────────────────────────────────────────────────────

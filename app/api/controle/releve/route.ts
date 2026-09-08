@@ -113,7 +113,7 @@ async function construire(mois: string) {
     const v = ap ? verdict(ap as { statut: Statut; piece: string | null; motif: string | null }) : null
     clients.push({
       artisan_id: a.id, nom: a.nom, encaisse: cents, rembourse: rendu,
-      tauxApport: v?.compte ? v.taux : 0,
+      tauxApport: v?.compte ? v.tauxPct : 0,
       statutApport: ap?.statut ?? null,
     })
   }
