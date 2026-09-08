@@ -14,7 +14,15 @@ const display = Bricolage_Grotesque({ subsets: ['latin'], weight: ['500', '600',
 const body = Hanken_Grotesk({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--f-body', display: 'swap' })
 const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['500', '700'], variable: '--f-mono', display: 'swap' })
 // Site vitrine (constructeur 3 niveaux) : serif éditoriale à caractère (Fraunces) pour un rendu premium.
-const fraunces = Fraunces({ subsets: ['latin'], weight: ['400', '600', '700', '900'], style: ['normal', 'italic'], variable: '--f-fraunces', display: 'swap' })
+//
+// `preload: false` — mesuré le 08/09. Elle était préchargée depuis le layout RACINE, donc sur toutes
+// les pages, alors qu'elle ne sert QUE dans site.css et plat.css : `globals.css`, qui habille la
+// vitrine Presti et toute la console, ne la nomme nulle part. Quatre polices se disputaient donc la
+// bande passante du premier écran, dont une inutile — et l'élément qui décide du plus grand rendu sur
+// la page d'accueil est le mot « Presti » du bandeau, c'est-à-dire du TEXTE, qui attend sa police.
+// Sans préchargement, Fraunces reste déclarée et disponible : les pages qui l'utilisent la demandent
+// en découvrant leur CSS, et `display: swap` fait qu'aucun texte n'attend jamais après elle.
+const fraunces = Fraunces({ subsets: ['latin'], weight: ['400', '600', '700', '900'], style: ['normal', 'italic'], variable: '--f-fraunces', display: 'swap', preload: false })
 // Polices des THÈMES de site artisan (preload:false → chargées seulement quand le thème les utilise).
 const archivo = Archivo_Narrow({ subsets: ['latin'], weight: ['600', '700'], variable: '--f-archivo', display: 'swap', preload: false })
 const plex = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--f-plex', display: 'swap', preload: false })
