@@ -28,6 +28,10 @@ const SUITES = [
   { nom: 'Budgets de performance', cmd: 'node', args: ['scripts/budget-perf.mjs'], cout: 'gratuit' },
   // Le 08/09 un fichier a coller ne se parsait plus, et Benj l'a decouvert en le collant.
   { nom: 'Fichiers a coller', cmd: 'node', args: ['scripts/migrations-jumelles-e2e.mjs'], cout: 'gratuit' },
+  // La fenetre d'a cote : ce qu'un jeton de navigateur voit des donnees des AUTRES artisans.
+  // Branchee le 08/09 -- elle existait depuis la veille sans etre jouee par personne, et c'est
+  // ainsi que la sixieme policy fondateur a survecu au menage de 0074.
+  { nom: 'RLS : ce qu un jeton de navigateur voit des autres', cmd: 'node', args: ['scripts/sonde-rls-fondateur.mjs'], cout: 'gratuit' },
 
   { nom: 'Chiffrement des canaux', cmd: 'node', args: ['scripts/canaux-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Lecture des emails', cmd: 'node', args: ['--experimental-strip-types', 'scripts/maillite-e2e.mjs'], cout: 'gratuit' },

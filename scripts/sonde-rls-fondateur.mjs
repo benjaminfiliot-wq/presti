@@ -79,18 +79,31 @@ try {
     return { n: data?.length ?? 0, erreur: error?.message }
   }
 
-  for (const [table, colonne] of [['devis', 'id, artisan_id'], ['factures', 'id, artisan_id'], ['leads', 'id, artisan_id']]) {
+  // `artisans` a été ajoutée le 08/09 : la sonde ne regardait que devis, factures et demandes, et
+  // c'est exactement pour ça que `founders_read_artisans` a survécu au ménage de 0074 pendant une
+  // journée. Cette table porte les IBAN : c'est la plus sensible des quatre.
+  const fuites = []
+  for (const [table, colonne] of [['devis', 'id, artisan_id'], ['factures', 'id, artisan_id'], ['leads', 'id, artisan_id'], ['artisans', 'id']]) {
     const vuArtisan = await lire(artisan, table, colonne)
     const vuFondateur = await lire(fondateur, table, colonne)
     const vuPartenaire = await lire(partenaire, table, colonne)
-    const propres = (vuFondateur.n ?? 0) === 0
-    console.log(`  ${table.padEnd(9)} l’artisan voit ${String(vuArtisan.n).padStart(4)} ligne(s) · le fondateur en voit ${String(vuFondateur.n).padStart(5)} ${propres ? '✅' : '⛔ il voit celles des autres'}`)
-    console.log(`  ${' '.repeat(9)} le PARTENAIRE (profil d’Alexandre) en voit ${String(vuPartenaire.n).padStart(4)} ${vuPartenaire.n === 0 ? '✅ exclu par 0070' : '⛔ FUITE'}`)
+    // Sur `artisans`, chacun voit SA ligne (`artisan_select_own`, 0001) : le seuil normal est 1,
+    // pas 0. Une sonde qui crie au feu sur le comportement normal finit par être ignorée.
+    const sien = table === 'artisans' ? 1 : 0
+    const propres = (vuFondateur.n ?? 0) <= sien
+    const partenairePropre = (vuPartenaire.n ?? 0) <= sien
+    if (!propres || !partenairePropre) fuites.push(table)
+    console.log(`  ${table.padEnd(9)} l’artisan voit ${String(vuArtisan.n).padStart(4)} ligne(s) · le fondateur en voit ${String(vuFondateur.n).padStart(5)} ${propres ? '✅' : `⛔ dont ${vuFondateur.n - sien} qui ne sont pas à lui`}`)
+    console.log(`  ${' '.repeat(9)} le PARTENAIRE (profil d’Alexandre) en voit ${String(vuPartenaire.n).padStart(4)} ${partenairePropre ? '✅ exclu par 0070' : '⛔ FUITE'}`)
     if (vuFondateur.erreur) console.log(`             (${vuFondateur.erreur.slice(0, 70)})`)
   }
   console.log('\n  Rappel v11 §5 : « Données des clients des artisans — fondateur : INTERDIT, sauf ticket')
   console.log('  support ouvert, journalisé et notifié. » Si les chiffres de droite ne sont pas nuls,')
   console.log('  la porte étroite du mode support ne protège rien : la fenêtre d’à côté est ouverte.\n')
+  // Un code de sortie, pour qu'un lanceur puisse la jouer : une sonde qui écrit « FUITE » et sort
+  // zéro n'est jamais branchée nulle part, donc jamais jouée, donc inutile le jour où ça compte.
+  if (fuites.length) { console.log(`❌ ${fuites.length} table(s) laissent voir les lignes des autres : ${fuites.join(', ')}\n`); process.exitCode = 1 }
+  else console.log('✅ aucune table ne laisse voir les lignes des autres\n')
 } catch (e) {
   console.error('\n💥', e?.message ?? e)
 } finally {
