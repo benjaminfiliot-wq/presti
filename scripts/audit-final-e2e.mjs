@@ -103,8 +103,17 @@ try {
   const { data: s } = await pub.auth.signInWithPassword({ email, password: mdp })
   await verifierSessionTest(s?.session?.access_token)
   const H = { 'Content-Type': 'application/json', Authorization: `Bearer ${s.session.access_token}` }
-  const { data: fac } = await admin.from('factures').insert({ artisan_id: u.user.id, numero: 'FAC-TEST-1', client_nom: 'Client', statut: 'emise', date_emission: new Date().toISOString().slice(0, 10), total_ht: 100, total_tva: 0, total_ttc: 100, verrouillee: true, emise_le: new Date().toISOString() }).select('id').single()
-  await admin.from('factures_lignes').insert({ facture_id: fac.id, ordre: 0, designation: 'Main d’œuvre', quantite: 2, unite: 'h', prix_unitaire_ht: 50, tva_taux: 0 })
+  // Les lignes d'ABORD, le scellement ENSUITE — c'est l'ordre du produit (lib/factureDepuisDevis.ts
+  // le dit en toutes lettres : « SCELLEMENT — après les lignes, quand le contenu est complet »), et
+  // depuis 0078 c'est le seul qui fonctionne : un trigger refuse d'écrire dans les lignes d'une
+  // facture verrouillée. Le test créait la pièce scellée puis lui ajoutait sa ligne : un chemin que
+  // la production n'emprunte pas, et l'avoir recopiait donc zéro ligne.
+  const { data: fac } = await admin.from('factures').insert({ artisan_id: u.user.id, numero: 'FAC-TEST-1', client_nom: 'Client', statut: 'emise', date_emission: new Date().toISOString().slice(0, 10), total_ht: 100, total_tva: 0, total_ttc: 100 }).select('id').single()
+  const { error: eLigne } = await admin.from('factures_lignes').insert({ facture_id: fac.id, ordre: 0, designation: 'Main d’œuvre', quantite: 2, unite: 'h', prix_unitaire_ht: 50, tva_taux: 0 })
+  T('la ligne s’écrit tant que la facture n’est pas scellée', !eLigne, eLigne?.message)
+  await admin.from('factures').update({ verrouillee: true, emise_le: new Date().toISOString() }).eq('id', fac.id)
+  const { error: eApres } = await admin.from('factures_lignes').insert({ facture_id: fac.id, ordre: 9, designation: 'Ajoutée après coup', quantite: 1, unite: 'u', prix_unitaire_ht: 999, tva_taux: 0 })
+  T('⭑ … et plus du tout une fois scellée (0078)', !!eApres && /scellée/i.test(eApres.message ?? ''), eApres?.message ?? '(ligne acceptée sur une pièce scellée)')
   const rp = await fetch(`${BASE}/api/factures/${fac.id}`, { method: 'PATCH', headers: H, body: JSON.stringify({ statut: 'annulee' }) })
   T('PATCH statut=annulee est refusé (409, avoir requis)', rp.status === 409 && /avoir/i.test((await rp.json().catch(() => ({}))).error ?? ''), String(rp.status))
   const ra = await fetch(`${BASE}/api/factures/${fac.id}/avoir`, { method: 'POST', headers: H, body: '{}' })
