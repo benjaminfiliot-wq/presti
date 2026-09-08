@@ -885,3 +885,44 @@ attend.
 **Preuve** : section vérifiée en production (les 4 titres, la phrase de fin, les tarifs intacts),
 `fermeture-e2e` 116/116, `support-e2e` 34/34 contre la prod, typage 0, build vert.
 **Appels IA : 0.**
+
+---
+
+## 08/09 (soir) — L'audit des sept angles : 61 défauts, tous traités
+
+Benj a demandé « le site est entièrement bon maintenant ? ». La réponse honnête était non, et il a
+fallu un audit pour le savoir : sept angles que les suites ne couvrent pas par construction, chaque
+trouvaille passée devant un sceptique chargé de la détruire. **61 ont survécu : 7 graves, 27
+moyens, 27 mineurs.** Tous corrigés, avec un test à chaque fois.
+
+**Les sept graves.** La commission d'Alexandre divisée par 100 (un nom, `taux`, qui ne disait pas
+s'il valait 0.2 ou 20). Un avoir qui remboursait plus que la facture. Un remboursement disparu du
+relevé. Le tableau de bord annonçant « envoyée automatiquement » une réponse que l'artisan avait
+REJETÉE. La route DELETE qui supprimait un devis envoyé malgré quatre écrans promettant le
+contraire. Les lignes d'une facture scellée modifiables depuis un navigateur (0044 visait une
+policy qui n'a jamais existé sous ce nom). Et ma propre 0074, qui rendait un compte
+**indestructible** dès qu'une lecture de support avait eu lieu.
+
+**Le motif qui revient.** Presque partout, le défaut n'était pas dans le code mais dans ce qui
+était censé le surveiller :
+
+  · `support-e2e` fabriquait ses tickets en base — elle était donc verte pendant que le mode support
+    était **inatteignable**, faute d'écran pour en créer un ;
+  · `suppressions-e2e` prouvait l'invariant sur la porte qui le respecte, jamais sur celle qui le
+    violait — le motif exact de `/api/control` sans « e » ;
+  · `controle-compta-e2e` écrivait `tauxApport: 20` à la main : elle testait sa propre constante ;
+  · le détecteur d'angles morts en avait un (neuf scripts qu'il ne voyait pas) ;
+  · quatre assertions ne pouvaient pas rougir, dont un `T(…, true)` joué chaque nuit.
+
+**Deux erreurs de ma part, dites parce qu'elles ont coûté des allers-retours.** L'export RGPD que
+j'avais « réparé » le matin produisait `donnees/donnees/….json.json` avec un contenu doublement
+encodé — j'avais copié un motif fautif sans regarder ce que la boucle en faisait. Et 0074, plus
+haut.
+
+**Ce que j'ai appris à vérifier avant d'agir.** Sur les quatre derniers mineurs, deux étaient du
+code mort et deux étaient des ÉCRANS MANQUANTS. `global-error.tsx` figurait dans la liste des
+composants « jamais importés » : c'est un fichier spécial de Next.js, et le supprimer aurait retiré
+la page d'erreur de dernier recours.
+
+**Migrations collées** : 0074 → 0082. **Preuve** : voir l'état d'ensemble ci-dessous.
+**Appels IA : 0.**
