@@ -153,7 +153,9 @@ async function main() {
   if (apports.statut === 200) {
     const lignes = apports.data?.lignes ?? apports.data?.apports ?? []
     T('le registre ne lui montre que ses apports (aucun ici)', lignes.length === 0, `${lignes.length} ligne(s)`)
-  } else SAUT('registre des apports', `HTTP ${apports.statut}`)
+    // Un SAUT est légitime quand le PRÉALABLE manque, pas quand la route répond mal : un 500,
+    // ou un 403 qui signalerait une régression de droits, faisait passer la suite au vert.
+  } else T('le registre des apports répond au partenaire', false, `HTTP ${apports.statut} — ${apports.brut.slice(0, 120)}`)
 
   // ── 5. Le trou du 07/09 : PostgREST ─────────────────────────────────────────────────────────────
   console.log('\n5. Avec son jeton de navigateur, la base ne lui donne rien')

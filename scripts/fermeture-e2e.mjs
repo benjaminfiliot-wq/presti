@@ -68,7 +68,11 @@ for (const [chemin, methode, body] of PROTEGEES) {
   // routes doivent désormais répondre 401, et un 404 y serait une route disparue, pas une porte
   // fermée. Une tolérance qu'on laisse traîner après sa raison d'être est un trou qui attend.
   const DERRIERE_UN_DRAPEAU = []
-  const toleree = chemin.startsWith('/api/controle/') || DERRIERE_UN_DRAPEAU.some((d) => chemin.startsWith(d))
+  // `/api/controle/*` ne bénéficie plus de la tolérance : `direction` est levé depuis longtemps,
+  // donc ces routes DOIVENT répondre 401 à un inconnu. Tant que le 404 était accepté, une route
+  // supprimée par erreur passait pour une porte fermée — ce que le commentaire ci-dessus dit
+  // précisément vouloir éviter. Une tolérance qui survit à sa raison d'être est un trou qui attend.
+  const toleree = DERRIERE_UN_DRAPEAU.some((d) => chemin.startsWith(d))
   T(`${methode} ${chemin.replace(id, ':id')} → ${r.status}`, [401, 403].includes(r.status) || (toleree && r.status === 404), r.texte)
 }
 

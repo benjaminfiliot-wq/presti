@@ -32,6 +32,9 @@ const SUITES = [
   // Branchee le 08/09 -- elle existait depuis la veille sans etre jouee par personne, et c'est
   // ainsi que la sixieme policy fondateur a survecu au menage de 0074.
   { nom: 'RLS : ce qu un jeton de navigateur voit des autres', cmd: 'node', args: ['scripts/sonde-rls-fondateur.mjs'], cout: 'gratuit' },
+  // Les six routes de la fuite du 07/09 doivent RESTER supprimées : c'est exactement le genre de
+  // chose qui revient par un merge malheureux, et personne ne le verrait.
+  { nom: 'L ancien poste de controle reste supprime', cmd: 'node', args: ['scripts/sonde-ancien-poste.mjs'], cout: 'gratuit' },
 
   { nom: 'Chiffrement des canaux', cmd: 'node', args: ['scripts/canaux-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Lecture des emails', cmd: 'node', args: ['--experimental-strip-types', 'scripts/maillite-e2e.mjs'], cout: 'gratuit' },
@@ -136,6 +139,17 @@ export const HORS_LANCEUR = {
   'purger-comptes-test.mjs': 'outil de ménage, pas un test',
   'purger-donnees-test.mjs': 'outil de ménage, pas un test',
   'lib/connexion-test.mjs': 'bibliothèque partagée par les suites, pas une suite',
+  // Sondes de diagnostic : écrites pour répondre à UNE question un jour donné, gardées parce
+  // qu'elles resservent. Elles ne s'exécutent pas la nuit — mais elles le disent ici, sinon on ne
+  // distingue plus « écarté volontairement » de « oublié ».
+  'sonde-a-faire.mjs': 'sonde ponctuelle : ce que la file À faire propose comme geste',
+  'sonde-boite.mjs': 'sonde ponctuelle : ce que contient la boîte de l’entreprise (compte, jamais lit)',
+  'sonde-composeur.mjs': 'sonde ponctuelle : le cadrage du composeur sur mobile',
+  'sonde-lighthouse.mjs': 'sonde ponctuelle : une mesure Lighthouse isolée, hors du budget',
+  'sonde-releve-erreur.mjs': 'sonde ponctuelle : reproduire une erreur de relève IMAP',
+  'axe-noeuds.mjs': 'outil de diagnostic a11y ; le contrôle, lui, est dans accessibilite-e2e',
+  'cle-produit.mjs': 'outil d’inventaire, pas une vérification',
+  'csp-smoke.mjs': 'N’ASSERTIONNE RIEN pour l’instant (trouvé le 08/09) : à réparer ou à supprimer, mais surtout à ne pas citer comme une preuve',
 }
 
 const retenues = SUITES.filter((s) => {

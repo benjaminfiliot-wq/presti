@@ -22,12 +22,21 @@ export async function GET(req: Request) {
   }
   const { data } = await supabaseAdmin.from('canaux').select(CHAMPS).eq('actif', true).eq('type', 'email').limit(50)
   let total = 0
+  // `releverCanal` rend `{ importes, erreur? }` : identifiants illisibles, échec d'authentification
+  // IMAP. L'erreur était jetée, et le passage s'enregistrait comme réussi. Toutes les boîtes
+  // pouvaient échouer sans que rien ne l'annonce : la surveillance disait « ça tourne » pendant
+  // qu'aucun message n'arrivait plus chez aucun artisan.
+  const echecs: string[] = []
   for (const c of (data ?? []) as Canal[]) {
     const r = await releverCanal(c)
     total += r.importes
+    if (r.erreur) echecs.push(`${c.id}: ${r.erreur}`.slice(0, 120))
   }
-  await enregistrerPassage('canaux-relever', {})
-  return NextResponse.json({ ok: true, boites: data?.length ?? 0, importes: total })
+  const boites = data?.length ?? 0
+  const reussi = echecs.length === 0
+  if (!reussi) console.error('[canaux/relever] échecs :', echecs.length, 'sur', boites)
+  await enregistrerPassage('canaux-relever', { boites, importes: total, echecs: echecs.length }, reussi)
+  return NextResponse.json({ ok: reussi, boites, importes: total, echecs: echecs.length })
 }
 
 // ── À la demande : l'artisan relève ses propres boîtes.

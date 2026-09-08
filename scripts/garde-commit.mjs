@@ -15,6 +15,11 @@ const REGLES = [
   { re: /sk_live_[A-Za-z0-9]{8,}/, ou: ['app', 'lib', 'scripts', 'plans', '.claude'], quoi: 'clé Stripe LIVE en clair dans le dépôt' },
   { re: /sk-ant-[A-Za-z0-9_-]{12,}/, ou: ['app', 'lib', 'scripts', 'plans', '.claude'], quoi: 'clé Anthropic en clair dans le dépôt' },
   { re: /eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9_-]{20,}/, ou: ['app', 'lib', 'scripts', 'plans', '.claude'], quoi: 'jeton Supabase (service role ?) en clair dans le dépôt' },
+  // Les clés Supabase actuelles ne sont PLUS des JWT : la regex ci-dessus épingle l'en-tête base64
+  // du format légataire, et laissait passer un `sb_secret_…` copié dans un fichier. La garde
+  // protégeait contre le format qu'on n'utilise plus.
+  { re: /sb_secret_[A-Za-z0-9_-]{12,}/, ou: ['app', 'lib', 'scripts', 'plans', '.claude'], quoi: 'clé de service Supabase (format actuel) en clair dans le dépôt' },
+  { re: /rk_live_[A-Za-z0-9]{8,}/, ou: ['app', 'lib', 'scripts', 'plans', '.claude'], quoi: 'clé Stripe restreinte LIVE en clair dans le dépôt' },
 ]
 const EXT = new Set(['.ts', '.tsx', '.mjs', '.js', '.md', '.sql', '.json', '.yml'])
 

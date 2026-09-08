@@ -39,7 +39,11 @@ const tailleDe = (fichiers) => {
 let ko = 0
 for (const b of BUDGETS) {
   const clef = Object.keys(app).find((k) => k === `${b.route}/page` || k === b.route || k.startsWith(`${b.route}/`))
-  if (!clef) { console.log(`⚠️  ${b.route} — route absente du manifeste, contrôle ignoré`); continue }
+  // Une route absente du manifeste est un ÉCHEC, pas un avertissement. C'est le seul contrôle de
+  // poids du dépôt et il bloque les PR : le jour où une route est renommée, il cessait de mesurer
+  // quoi que ce soit tout en continuant d'imprimer du vert. Un budget qui s'éteint tout seul ne
+  // protège de rien — et c'est justement quand on renomme qu'on a besoin de lui.
+  if (!clef) { console.log(`❌ ${b.route} — route ABSENTE du manifeste : le budget ne mesure plus rien. Renommée ? Corrigez BUDGETS.`); ko++; continue }
   const kilos = Math.round(tailleDe(app[clef]) / 1024)
   const ok = kilos <= b.maxKo
   if (!ok) ko++

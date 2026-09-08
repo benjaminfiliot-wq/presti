@@ -130,7 +130,10 @@ const lanceur = existe('scripts/tout-verifier.mjs') ? lire('scripts/tout-verifie
 const suites = [...lanceur.matchAll(/\{\s*nom:\s*'([^']+)'[^}]*?args:\s*\[([^\]]*)\][^}]*?cout:\s*'([a-z]+)'/g)].map((m) => ({
   nom: m[1], script: (m[2].match(/'scripts\/[^']+'/) || [''])[0].replace(/'/g, ''), cout: m[3],
 }))
-const scriptsTest = marcher('scripts', (p) => /-e2e\.mjs$|verifier\.mjs$|-test\.mjs$/.test(p))
+// Ce filtre définit ce qu'est « un script de vérification » pour tout le reste du fichier. Il ne
+// matchait que `-e2e`, `verifier` et `-test` : ni les sondes, ni les unitaires, ni les gardes.
+// L'outil censé trouver les angles morts en avait un, et annonçait « 0 script non déclaré ».
+const scriptsTest = marcher('scripts', (p) => /-e2e\.mjs$|verifier\.mjs$|-test\.mjs$|-unit\.mjs$|-visuel\.mjs$|\/sonde-[^/]+\.mjs$|\/(garde-commit|budget-perf|csp-smoke|axe-noeuds|cle-produit)\.mjs$/.test(p))
 // Ce que le lanceur écarte VOLONTAIREMENT, avec sa raison. On lit le texte, on n'importe pas :
 // importer `tout-verifier.mjs` l'exécuterait, et compter les suites lancerait les suites.
 const ecartes = new Map([...(lanceur.match(/export const HORS_LANCEUR = \{[\s\S]*?\n\}/) ?? [''])[0]
