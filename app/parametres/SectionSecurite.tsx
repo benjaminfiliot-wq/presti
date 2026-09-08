@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { actif } from '@/lib/flags'
 import Info from '@/app/Info'
+import CarteSupport from './CarteSupport'
 import { evaluerMotDePasse, messageFuite, verifierFuite, type Fuite } from '@/lib/motDePasse'
 import { api, dateFr, type SectionProps } from './commun'
 
@@ -180,6 +181,7 @@ export default function SectionSecurite({ a, signaler }: SectionProps) {
         </div>
       ) : null}
 
+      {actif('supportArtisan') ? <CarteSupport signaler={signaler} /> : null}
       {actif('mfa') ? <DoubleAuth signaler={signaler} /> : null}
     </>
   )

@@ -59,6 +59,10 @@ const CLE_LOCALE = 'presti.aide_vues'
 const lireLocal = (): string[] => { try { const v = JSON.parse(localStorage.getItem(CLE_LOCALE) || '[]'); return Array.isArray(v) ? v : [] } catch { return [] } }
 const ecrireLocal = (v: string[]) => { try { localStorage.setItem(CLE_LOCALE, JSON.stringify(v)) } catch { /* stockage indisponible : la visite reviendra, ce n'est pas grave */ } }
 
+// Le bandeau ne lit que la FORME de l'accès : un état, un titre, une heure de fin. Ni le motif
+// détaillé, ni le jeton, ni rien de l'élément concerné.
+type AccesSupport = { id: string; etat: string; element_titre: string | null; expire_le: string | null }
+
 type ArtisanInfo = { nom: string | null; metier: string | null; plan: string | null; is_founder: boolean | null; credits: number | null; logo_url: string | null; email: string | null; aide_vues?: string[] | null; suppression_demandee_le?: string | null }
 
 // Menu de profil (v4 §C1) — l'accès à tout ce qui touche au compte, au même endroit.
@@ -111,6 +115,7 @@ export default function AppShell({
     return () => { document.removeEventListener('keydown', onKey); window.removeEventListener('presti:retour', onRetour) }
   }, [open])
   const [unread, setUnread] = useState(0)
+  const [support, setSupport] = useState<AccesSupport | null>(null)
   // §4 B1/B3 — panneau « C'est quoi ? » et visite guidée
   const [aideOuverte, setAideOuverte] = useState(false)
   const [visite, setVisite] = useState(false)
@@ -160,14 +165,31 @@ export default function AppShell({
         if (!deja) setTimeout(() => setVisite(true), 700)
       }
       // Conversations non lues (badge Messages). Tolère l'absence de la colonne lu_le.
+      // `.eq('artisan_id')` : sans lui, un fondateur comptait les conversations de TOUS les
+      // artisans — la policy `founders_all_leads` le lui permettait, et son badge mentait.
       try {
         const { count } = await supabase
           .from('leads')
           .select('id', { count: 'exact', head: true })
+          .eq('artisan_id', data.session.user.id)
           .is('lu_le', null)
           .in('statut', ['nouveau', 'en_discussion'])
         setUnread(count ?? 0)
       } catch { /* colonne pas encore migrée : pas de badge */ }
+
+      // Mode support : si Presti attend une réponse, ou regarde en ce moment, ça se voit sur TOUS
+      // les écrans. Un accès qu'on ne peut voir qu'en allant le chercher dans les Paramètres est un
+      // accès qu'on oublie ouvert.
+      if (actif('supportArtisan')) {
+        try {
+          const r = await fetch('/api/securite/acces-support', { headers: { Authorization: `Bearer ${data.session.access_token}` } })
+          if (r.ok) {
+            const d = (await r.json()) as { acces?: AccesSupport[] }
+            // L'ouvert passe avant l'attente : c'est celui où quelqu'un peut regarder maintenant.
+            setSupport(d.acces?.find((x) => x.etat === 'ouvert') ?? d.acces?.find((x) => x.etat === 'en_attente') ?? null)
+          }
+        } catch { /* le bandeau n'est pas une raison de casser la console */ }
+      }
     })
   }, [router])
 
@@ -314,6 +336,23 @@ export default function AppShell({
             <a className="psh-grace" href="/parametres?onglet=donnees" role="status">
               <b>Votre compte sera supprimé le {new Date(new Date(a.suppression_demandee_le).getTime() + 30 * 86400000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}.</b>
               <span>Annuler ou exporter vos données →</span>
+            </a>
+          ) : null}
+          {/* Mode support — le bandeau dit ce qui est vrai MAINTENANT, et rappelle qu'une demande
+              ne montre rien. C'est la différence entre « on me demande » et « on me regarde ». */}
+          {support && active !== 'parametres' ? (
+            <a className={`psh-support${support.etat === 'ouvert' ? ' ouvert' : ''}`} href="/parametres?onglet=securite" role="status">
+              {support.etat === 'ouvert' ? (
+                <>
+                  <b>Presti peut consulter {support.element_titre || 'élément de votre compte'}{support.expire_le ? ` jusqu’à ${new Date(support.expire_le).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}` : ''}.</b>
+                  <span>Fermer maintenant →</span>
+                </>
+              ) : (
+                <>
+                  <b>Presti demande à regarder {support.element_titre || 'un élément de votre compte'}.</b>
+                  <span>Rien n’est visible tant que vous n’avez pas ouvert. Répondre →</span>
+                </>
+              )}
             </a>
           ) : null}
           <InstallerApp />

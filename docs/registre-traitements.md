@@ -107,8 +107,26 @@
 | **Durée** | 30 jours (artefact chiffré) |
 | **Où** | `docs/sauvegardes.md`, `.github/workflows/sauvegarde.yml` |
 
+## 10. Le mode support — accès ponctuel à un élément d'un compte *(v11 §5, 8 septembre 2026)*
+
+Il ne s'agit **pas** d'ouvrir une session « en tant que » l'artisan. Une telle session produirait des
+traces attribuées à lui : ses propres journaux diraient qu'il a consulté ses données, et il n'aurait
+aucun moyen de distinguer ses actes des nôtres. Ici, chaque lecture porte le nom de la personne qui
+lit, et l'artisan la voit.
+
+| | |
+|---|---|
+| **Finalité** | Répondre à une demande d'aide portant sur un élément précis (un devis, une facture, une conversation) que l'artisan a lui-même désigné |
+| **Données** | La **forme** de l'élément : statut, dates, nombre de lignes, montants, nombre et poids des photos, état d'envoi. **Jamais** le contenu des échanges, les coordonnées des clients de l'artisan, ni les photos elles-mêmes. Plus, pour chaque lecture : le nom de la personne, la vue consultée, l'horodatage |
+| **Base légale** | Exécution du contrat (art. 6.1.b) pour l'assistance, **et consentement exprès de l'artisan (art. 7)** pour chaque accès : la fenêtre naît fermée et ne s'ouvre que par son clic |
+| **Personnes** | L'artisan ; indirectement ses clients, dont **aucune donnée d'identité ne transite** par cette porte — il peut consentir pour lui, pas pour eux |
+| **Durée** | La fenêtre : **60 minutes**, ou moins s'il la referme. Les traces : **24 mois**, comme le journal de direction — la preuve doit vivre aussi longtemps que l'action qu'elle documente |
+| **Garanties** | Un ticket qu'il a ouvert est requis ; sans élément désigné par lui, aucun accès n'est demandable ; **pas d'email parti, pas de porte** ; trois demandes au maximum par ticket ; un refus vaut 24 h ; il peut poser un **verrou définitif** « ne plus jamais me demander » ; les traces sont immuables et partent avec son export |
+| **Destinataires** | Supabase, Resend (la notification). Aucun tiers |
+| **Où** | `supabase/migrations/0074_support.sql`, `0075_support_element.sql`, `app/api/controle/support/`, `app/api/securite/acces-support/`, `app/parametres/CarteSupport.tsx` |
+
 ---
 
 **Droits des personnes.** Les artisans exercent leurs droits depuis Paramètres → Données (export complet, suppression du compte avec 30 jours de grâce). Les fondateurs sont les seules personnes concernées par le journal de direction ; l'adresse IP y est une preuve d'action, conservée 24 mois puis effacée. Toute demande peut être adressée par le formulaire de contact du site.
 
-**À revoir au prochain jalon.** J3 (messagerie de l'entreprise : emails reçus, conservation, assignation), J4 (comptabilité : factures fournisseurs, relevés du partenaire), J5 (mode support « voir comme lui » : journalisé et notifié à l'artisan).
+**À revoir au prochain jalon.** J3 (messagerie de l'entreprise : emails reçus, conservation, assignation), J4 (comptabilité : factures fournisseurs, relevés du partenaire), — le mode support est traité au § 10.

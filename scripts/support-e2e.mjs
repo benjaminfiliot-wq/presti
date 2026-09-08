@@ -96,6 +96,14 @@ async function main() {
     console.log('   À faire : coller supabase/migrations/_A_COLLER_sql_editor_0074_NU.sql dans le SQL Editor.\n')
     sortir(2); return
   }
+  // 0075 ajoute les colonnes d'élément sur `tickets`. Sans elles, `demander_acces_support` refuse
+  // TOUT (« ticket_sans_element ») : la suite serait rouge partout pour une seule et même raison.
+  const { error: sonde75 } = await admin.from('tickets').select('element_id').limit(1)
+  if (sonde75 && /does not exist|schema cache|column/i.test(sonde75.message)) {
+    console.log('⛔ La migration 0075 n’est pas collée : sans elle, aucune demande ne peut aboutir.')
+    console.log('   À faire : coller supabase/migrations/_A_COLLER_sql_editor_0075_NU.sql dans le SQL Editor.')
+    sortir(2); return
+  }
 
   const artisan = await compte('artisan')
   const fondateur = await compte('fondateur')
@@ -112,6 +120,8 @@ async function main() {
   console.log('A. Un ticket n’autorise rien par lui-même')
   const { data: ticket } = await admin.from('tickets').insert({
     artisan_id: artisan.uid, fil: `<${marque}@presti-test.invalid>`, sujet: 'Demande de test',
+    // 0075 — le ticket porte l'élément que l'ARTISAN a désigné. Sans lui, rien n'est demandable.
+    element_type: 'lead', element_id: lead.id, element_titre: 'Conversation de test',
   }).select('id').single()
   T('le ticket existe', !!ticket?.id)
 
@@ -219,6 +229,58 @@ async function main() {
   })
   T('⭑ le verrou de l’artisan bloque la demande AVANT qu’elle l’atteigne', d5?.etat === 'verrouille', JSON.stringify(d5))
   await admin.from('support_verrou').delete().eq('artisan_id', artisan.uid)
+
+  console.log('\nF bis. Ce que l’artisan a désigné, et rien d’autre (0075)')
+  // Un ticket sans élément n'ouvre aucun accès. « Je n'arrive pas à me connecter » se règle en
+  // parlant, pas en regardant les affaires de ses clients.
+  const { data: tNu } = await admin.from('tickets').insert({
+    artisan_id: artisan.uid, fil: `<${marque}-nu@presti-test.invalid>`, sujet: 'Sans élément',
+  }).select('id').single()
+  const { data: dNu } = await admin.rpc('demander_acces_support', {
+    p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: tNu.id, p_type: 'lead',
+    p_element: lead.id, p_titre: 'Tentative', p_motif: 'Test 0075', p_ip: '127.0.0.1', p_agent: 'suite',
+  })
+  T('⭑ un ticket sans élément désigné n’ouvre AUCUN accès', dNu?.etat === 'ticket_sans_element', JSON.stringify(dNu))
+
+  // Et sur un ticket qui désigne un élément, on ne peut pas en demander un autre — même à lui.
+  const { data: autre } = await admin.from('leads').insert({
+    artisan_id: artisan.uid, nom_prospect: 'Autre Client', contact: 'autre@exemple.fr',
+    message: 'autre message', statut: 'nouveau', token: crypto.randomBytes(24).toString('hex'),
+  }).select('id').single()
+  const { data: dAutre } = await admin.rpc('demander_acces_support', {
+    p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: ticket.id, p_type: 'lead',
+    p_element: autre.id, p_titre: 'Substitution', p_motif: 'Test 0075', p_ip: '127.0.0.1', p_agent: 'suite',
+  })
+  T('⭑ on ne peut pas demander un AUTRE élément que celui qu’il a désigné',
+    dAutre?.etat === 'element_non_designe', JSON.stringify(dAutre))
+
+  console.log('\nF ter. Le verrou se pose par l’artisan, et ferme ce qui était ouvert')
+  // Une fenêtre ouverte, puis le verrou : « personne ne peut me demander » ne doit pas cohabiter
+  // avec quelqu'un en train de regarder.
+  const { data: aOuvert } = await admin.rpc('demander_acces_support', {
+    p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: ticket.id, p_type: 'lead',
+    p_element: lead.id, p_titre: 'Conversation de test', p_motif: 'Test verrou', p_ip: '127.0.0.1', p_agent: 'suite',
+  })
+  if (aOuvert?.etat === 'ok') {
+    await admin.rpc('notifier_acces_support', { p_acces: aOuvert.acces, p_journal: aOuvert.journal })
+    await admin.rpc('ouvrir_acces_support', {
+      p_acces: aOuvert.acces, p_artisan: artisan.uid, p_artisan_email: artisan.email, p_ip: '127.0.0.1', p_agent: 'suite',
+    })
+    const pose = await api('/api/securite/acces-support', artisan.jeton, {
+      method: 'POST', body: JSON.stringify({ decision: 'verrouiller' }),
+    })
+    T('l’artisan pose son verrou depuis SON espace', pose.statut === 200, `HTTP ${pose.statut} ${pose.brut}`)
+    const { data: apres } = await admin.from('acces_support').select('ferme_le, ferme_motif').eq('id', aOuvert.acces).maybeSingle()
+    T('⭑ poser le verrou FERME la fenêtre encore ouverte', !!apres?.ferme_le, JSON.stringify(apres))
+    const relire = await api(`/api/controle/support/lire?acces=${aOuvert.acces}&vue=forme`, fondateur.jeton)
+    T('… et la lecture est refusée immédiatement après', relire.statut === 403, `HTTP ${relire.statut} ${relire.brut}`)
+    const leve = await api('/api/securite/acces-support', artisan.jeton, {
+      method: 'POST', body: JSON.stringify({ decision: 'deverrouiller' }),
+    })
+    T('le verrou se lève aussi facilement qu’il se pose', leve.statut === 200, `HTTP ${leve.statut} ${leve.brut}`)
+    const { data: reste } = await admin.from('support_verrou').select('artisan_id').eq('artisan_id', artisan.uid).maybeSingle()
+    T('… et il ne reste rien en base', !reste)
+  } else SAUT('le verrou ferme les fenêtres ouvertes', `la demande préalable a rendu ${aOuvert?.etat}`)
 
   console.log('\nG. Le partenaire est refusé, jeton en main')
   const pDemande = await api('/api/controle/support/demander', partenaire.jeton, {

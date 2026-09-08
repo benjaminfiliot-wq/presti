@@ -49,6 +49,7 @@ const PROTEGEES = [
   ['/api/support/demande', 'POST', {}],
   ['/api/securite/acces-support', 'GET'],
   ['/api/controle/support/lire', 'GET'],
+  ['/api/controle/support?artisan=00000000-0000-0000-0000-000000000000', 'GET'],
   ['/api/devis/auto', 'POST', {}],
   ['/api/inventaire/recherche', 'POST', {}], ['/api/inventaire/recherche/retenir', 'POST', {}],
   ['/api/plateforme/apparence', 'GET'], ['/api/plateforme/apparence', 'POST', {}],
@@ -63,7 +64,7 @@ for (const [chemin, methode, body] of PROTEGEES) {
   // Un 404 est LÉGITIME derrière un drapeau baissé : la fonctionnalité n'existe pas encore, et c'est
   // précisément ce qu'un drapeau doit produire. La liste est nommée, pas devinée — sinon un vrai 404
   // (une route supprimée par erreur) passerait pour une porte fermée.
-  const DERRIERE_UN_DRAPEAU = ['/api/support/demande', '/api/securite/acces-support', '/api/controle/support/']
+  const DERRIERE_UN_DRAPEAU = ['/api/support/demande', '/api/securite/acces-support', '/api/controle/support']
   const toleree = chemin.startsWith('/api/controle/') || DERRIERE_UN_DRAPEAU.some((d) => chemin.startsWith(d))
   T(`${methode} ${chemin.replace(id, ':id')} → ${r.status}`, [401, 403].includes(r.status) || (toleree && r.status === 404), r.texte)
 }

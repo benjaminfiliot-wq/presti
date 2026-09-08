@@ -486,3 +486,44 @@ begin
 end $fn$;
 revoke all on function public.lire_sous_support(uuid, text, text, uuid, text, text, text) from public, anon, authenticated;
 grant execute on function public.lire_sous_support(uuid, text, text, uuid, text, text, text) to service_role;
+
+-- ══ 10. Le verrou : poser et lever — le seul écrit de l'artisan sur sa propre porte ═════════════
+--
+-- Une fonction pour les deux sens, et non deux fonctions : un interrupteur ne se livre pas à moitié.
+--
+-- Poser le verrou FERME les fenêtres encore ouvertes. Sans ça, l'artisan lirait « personne ne peut me
+-- demander d'accès » pendant que quelqu'un regarde encore : c'est précisément le genre d'écart entre
+-- l'écran et la vérité que tout ce chantier existe pour supprimer.
+--
+-- `p_artisan` vient de la SESSION, jamais du corps de la requête — comme partout ailleurs ici.
+create or replace function public.regler_verrou_support(
+  p_artisan uuid, p_pose boolean, p_email text, p_ip text, p_agent text
+) returns jsonb language plpgsql security definer set search_path = public as $fn$
+declare v_deja boolean; a record; v_n int := 0;
+begin
+  if p_artisan is null then return jsonb_build_object('etat', 'inconnu'); end if;
+  select exists(select 1 from public.support_verrou where artisan_id = p_artisan) into v_deja;
+  if v_deja = p_pose then return jsonb_build_object('etat', 'deja', 'pose', p_pose); end if;
+
+  if p_pose then
+    insert into public.support_verrou (artisan_id) values (p_artisan) on conflict do nothing;
+    -- Les fenêtres ouvertes se referment avec le verrou : le verrou est un état, pas une intention.
+    for a in select id from public.acces_support
+             where artisan_id = p_artisan and ouvert_le is not null and ferme_le is null loop
+      perform public.fermer_acces_support(a.id, 'artisan', p_artisan, p_email, p_ip, p_agent);
+      v_n := v_n + 1;
+    end loop;
+  else
+    delete from public.support_verrou where artisan_id = p_artisan;
+  end if;
+
+  insert into public.journal_direction (acteur_id, acteur_email, action, cible_type, cible_id, artisan_id, avant, apres, ip, agent, reconfirme)
+    values (p_artisan, p_email, case when p_pose then 'support_verrou_pose' else 'support_verrou_leve' end,
+            'artisan', p_artisan::text, p_artisan,
+            jsonb_build_object('verrou', v_deja),
+            jsonb_build_object('verrou', p_pose, 'fenetres_fermees', v_n),
+            p_ip, p_agent, false);
+  return jsonb_build_object('etat', 'ok', 'pose', p_pose, 'fenetres', v_n);
+end $fn$;
+revoke all on function public.regler_verrou_support(uuid, boolean, text, text, text) from public, anon, authenticated;
+grant execute on function public.regler_verrou_support(uuid, boolean, text, text, text) to service_role;

@@ -261,6 +261,18 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
       noter(await supprimerAnciennes('alertes', 'id', 'acquittee_le', seuilMois(12, maintenant), PLAFOND_LIGNES))
   }
 
+  // 7. Mode support (v11 §5, 0074) : 24 mois, le même délai que `journal_direction` et pour la même
+  //    raison — une trace de lecture est la preuve que l'artisan peut nous opposer, et la garder
+  //    moins longtemps que l'action qu'elle documente laisserait une action sans sa contrepartie.
+  //    Les lectures partent EN PREMIER : elles référencent les accès, qui référencent les tickets.
+  //    Derrière le drapeau : sans 0074, ces tables n'existent pas.
+  if (actif('supportArtisan')) {
+    bilan.jetons +=
+      noter(await supprimerAnciennes('acces_support_lectures', 'id', 'lu_le', seuilMois(24, maintenant), PLAFOND_LIGNES)) +
+      noter(await supprimerAnciennes('acces_support', 'id', 'demande_le', seuilMois(24, maintenant), PLAFOND_LIGNES)) +
+      noter(await supprimerAnciennes('tickets', 'id', 'ouvert_le', seuilMois(24, maintenant), PLAFOND_LIGNES))
+  }
+
   // 5. Code par email (v7 bloc 2) : codes et appareils de confiance passés de date, et les
   //    sessions vérifiées de plus de 90 jours — l'artisan retape alors un code, une fois.
   //    Derrière le drapeau : sans la migration 0063, ces tables n'existent pas.

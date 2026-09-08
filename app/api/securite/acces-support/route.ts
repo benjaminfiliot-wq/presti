@@ -11,6 +11,7 @@ export const dynamic = 'force-dynamic'
 //
 //   GET  → ses demandes, ses accès, ce qui a été lu, et son verrou.
 //   POST → { acces, decision: 'ouvrir' | 'refuser' | 'fermer' }
+//          { decision: 'verrouiller' | 'deverrouiller' }  — sans `acces` : ça porte sur le compte.
 //
 // Le fondateur n'a aucun chemin vers cette route : elle passe par `authArtisan`, et l'identifiant
 // transmis aux fonctions SQL vient de la SESSION, jamais du corps de la requête. Les fonctions
@@ -68,12 +69,35 @@ export async function POST(req: Request) {
   const b = (await req.json().catch(() => null)) as { acces?: unknown; decision?: unknown; motif?: unknown } | null
   const acces = typeof b?.acces === 'string' && /^[0-9a-f-]{36}$/i.test(b.acces) ? b.acces : ''
   const decision = typeof b?.decision === 'string' ? b.decision : ''
-  if (!acces) return NextResponse.json({ error: 'Demande inconnue.' }, { status: 400 })
-  if (!['ouvrir', 'refuser', 'fermer'].includes(decision)) return NextResponse.json({ error: 'Décision inconnue.' }, { status: 400 })
+  // Le verrou porte sur le COMPTE, pas sur une fenêtre : lui réclamer un identifiant d'accès serait
+  // un refus incompréhensible pour l'artisan qui veut juste fermer la porte une fois pour toutes.
+  const SUR_UNE_FENETRE = ['ouvrir', 'refuser', 'fermer']
+  const SUR_LE_COMPTE = ['verrouiller', 'deverrouiller']
+  if (![...SUR_UNE_FENETRE, ...SUR_LE_COMPTE].includes(decision)) return NextResponse.json({ error: 'Décision inconnue.' }, { status: 400 })
+  if (SUR_UNE_FENETRE.includes(decision) && !acces) return NextResponse.json({ error: 'Demande inconnue.' }, { status: 400 })
 
   const { data: a } = await supabaseAdmin.from('artisans').select('email').eq('id', s.uid).maybeSingle()
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null
   const agent = 'espace artisan'
+
+  if (SUR_LE_COMPTE.includes(decision)) {
+    const pose = decision === 'verrouiller'
+    const { data, error } = await supabaseAdmin.rpc('regler_verrou_support', {
+      p_artisan: s.uid, p_pose: pose, p_email: a?.email ?? '', p_ip: ip, p_agent: agent,
+    })
+    if (error) { console.error('[support] verrou :', error.message); return NextResponse.json({ error: 'Rien n’a été fait.' }, { status: 503 }) }
+    const r = data as { etat?: string; fenetres?: number }
+    if (r?.etat === 'deja') return NextResponse.json({ ok: true, verrou: pose, message: pose ? 'Le verrou était déjà posé.' : 'Le verrou était déjà levé.' })
+    if (r?.etat !== 'ok') return NextResponse.json({ error: 'Rien n’a été fait.' }, { status: 400 })
+    // Le nombre de fenêtres refermées est dit, jamais tu : poser le verrou ferme ce qui était ouvert,
+    // et l'artisan doit savoir que ça vient de se produire.
+    return NextResponse.json({
+      ok: true, verrou: pose,
+      message: pose
+        ? `Verrou posé. Personne ne peut plus demander à regarder votre compte${r.fenetres ? ` — ${r.fenetres} accès en cours ${r.fenetres > 1 ? 'ont été fermés' : 'a été fermé'}` : ''}.`
+        : 'Verrou levé. Presti pourra de nouveau demander — et vous devrez toujours accepter.',
+    })
+  }
 
   if (decision === 'ouvrir') {
     const { data, error } = await supabaseAdmin.rpc('ouvrir_acces_support', {

@@ -2229,6 +2229,62 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .psh-menu-ava{width:40px;height:40px;margin-bottom:.35rem}
 .psh-grace{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .8rem;padding:.7rem 1rem;border:1px solid rgba(240,119,106,.4);border-radius:12px;background:var(--crit-tint,rgba(240,119,106,.1));text-decoration:none;color:var(--ink);font-size:.88rem}
 .psh-grace b{color:var(--crit,#e5735a)}.psh-grace span{color:var(--muted)}
+/* Mode support — deux tons pour deux faits distincts : une demande (on attend votre réponse,
+   rien n'est visible) et un accès ouvert (quelqu'un peut regarder en ce moment). Le second est
+   plus vif : c'est celui qu'on doit pouvoir refermer d'un geste. */
+.psh-support{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .8rem;padding:.7rem 1rem;border:1px solid rgba(224,168,90,.45);border-radius:12px;background:rgba(224,168,90,.1);text-decoration:none;color:var(--ink);font-size:.88rem}
+.psh-support b{color:#a9752a}.psh-support span{color:var(--muted)}
+.psh-support.ouvert{border-color:rgba(240,119,106,.45);background:var(--crit-tint,rgba(240,119,106,.1))}
+.psh-support.ouvert b{color:var(--crit,#e5735a)}
+
+/* Acces du support (Parametres) — la mise en page tient la promesse : ouvrir et refuser font la
+   MEME largeur, et le verrou est un bloc a part, pas une case a cocher perdue en bas. */
+.sup-titre{margin:1.2rem 0 .5rem;font-size:.94rem;font-weight:650;color:var(--ink)}
+.sup-demande{padding:.9rem 1rem;border:1px solid var(--bord);border-radius:12px;background:var(--fond2,rgba(0,0,0,.02));margin-bottom:.6rem}
+.sup-demande.ouvert{border-color:rgba(240,119,106,.4);background:var(--crit-tint,rgba(240,119,106,.08))}
+.sup-demande b{display:block;font-size:.95rem}
+.sup-demande small{display:block;margin-top:.25rem;color:var(--muted);font-size:.84rem;line-height:1.45}
+.sup-motif{margin:.35rem 0 0;font-size:.88rem;font-style:italic;color:var(--ink)}
+.sup-choix{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.8rem}
+.sup-choix.un{grid-template-columns:1fr}
+.sup-choix .btn{width:100%;margin:0}
+.sup-lectures{list-style:none;margin:.4rem 0 0;padding:0;display:flex;flex-direction:column;gap:.35rem}
+.sup-lectures li{padding:.45rem .7rem;border-left:2px solid var(--bord);font-size:.85rem;color:var(--muted)}
+.sup-lectures li b{color:var(--ink)}
+.sup-verrou{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .9rem;margin-top:1.2rem;padding:.9rem 1.1rem;border:1px dashed var(--bord);border-radius:12px}
+.sup-verrou.on{margin:0 0 1rem;border-style:solid;border-color:rgba(240,119,106,.4);background:var(--crit-tint,rgba(240,119,106,.08))}
+.sup-verrou b{flex:1 1 100%;font-size:.92rem}
+.sup-verrou span{flex:1 1 24ch;color:var(--muted);font-size:.84rem;line-height:1.45}
+.sup-verrou .btn{margin:0;width:auto}
+
+/* Le bloc Support du Poste de contrôle. L'état de la porte se lit d'un coup d'œil : gris = rien en
+   cours, ambre = on attend SA réponse, rouge = ouvert, quelqu'un peut regarder maintenant. */
+.dir-bloc h3{margin:0 0 .7rem;font-size:1rem}
+.sup-ticket{padding:.85rem 1rem;border:1px solid var(--bord);border-radius:12px;margin-bottom:.7rem}
+.sup-ticket > b{display:block;font-size:.94rem}
+.sup-ticket > small{display:block;margin-top:.15rem}
+.sup-acces{margin-top:.6rem;padding:.6rem .8rem;border-left:3px solid var(--bord);border-radius:0 8px 8px 0;background:var(--fond2,rgba(0,0,0,.02));font-size:.86rem}
+.sup-acces[data-etat="en_attente"]{border-left-color:#e0a85a;background:rgba(224,168,90,.09)}
+.sup-acces[data-etat="ouvert"]{border-left-color:var(--crit,#e5735a);background:var(--crit-tint,rgba(240,119,106,.09))}
+.sup-acces[data-etat="refuse"],.sup-acces[data-etat="non_notifie"]{color:var(--muted)}
+.sup-acces-etat{display:block;line-height:1.5}
+.sup-vues{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.sup-vues .btn{margin:0;padding:.35rem .7rem;font-size:.82rem;width:auto}
+.sup-demander{margin-top:.7rem;display:flex;flex-direction:column;gap:.35rem}
+.sup-demander label{font-size:.83rem;color:var(--muted)}
+.sup-demander input{width:100%}
+.sup-demander .btn{margin:0;width:auto;align-self:flex-start}
+.sup-demander small{font-size:.8rem;line-height:1.45}
+.sup-clos{margin-top:.5rem;font-size:.85rem;color:var(--muted)}
+.sup-clos summary{cursor:pointer}
+.sup-clos ul{margin:.4rem 0 0;padding-left:1.1rem}
+.sup-lu{margin-top:.8rem;padding:.85rem 1rem;border:1px solid var(--bord);border-radius:12px;background:var(--fond2,rgba(0,0,0,.02))}
+.sup-lu-tete{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.5rem}
+.sup-lu-corps{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.5rem .9rem;margin:0}
+.sup-lu-corps div{display:flex;flex-direction:column}
+.sup-lu-corps dt{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.sup-lu-corps dd{margin:0;font-size:.92rem;font-variant-numeric:tabular-nums}
+.sup-lu small{display:block;margin-top:.7rem;line-height:1.45}
 /* Éditeur de devis — rappel : les informations de l entreprise vivent dans Paramètres (sprint J-1 §6) */
 .devis-infos-rappel{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:.9rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow-sm)}
 .devis-infos-rappel>div{display:flex;flex-direction:column;gap:.2rem;flex:1 1 30ch;min-width:0}

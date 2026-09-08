@@ -17,6 +17,7 @@ export type Action =
   // Le mode support (0074). `support_vu_comme` existait déjà : c'est la LECTURE elle-même.
   | 'support_ticket_ouvert' | 'support_ticket_ferme' | 'support_acces_demande'
   | 'support_acces_refuse' | 'support_acces_ouvert' | 'support_acces_ferme'
+  | 'support_verrou_pose' | 'support_verrou_leve'
 
 export type Entree = {
   acteur: Fondateur

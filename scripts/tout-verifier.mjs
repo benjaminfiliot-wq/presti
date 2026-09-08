@@ -26,6 +26,8 @@ const SUITES = [
   { nom: 'Typage', cmd: 'npx', args: ['tsc', '--noEmit'], cout: 'gratuit' },
   { nom: 'Build', cmd: 'npx', args: ['next', 'build'], cout: 'gratuit' },
   { nom: 'Budgets de performance', cmd: 'node', args: ['scripts/budget-perf.mjs'], cout: 'gratuit' },
+  // Le 08/09 un fichier a coller ne se parsait plus, et Benj l'a decouvert en le collant.
+  { nom: 'Fichiers a coller', cmd: 'node', args: ['scripts/migrations-jumelles-e2e.mjs'], cout: 'gratuit' },
 
   { nom: 'Chiffrement des canaux', cmd: 'node', args: ['scripts/canaux-e2e.mjs'], cout: 'gratuit' },
   { nom: 'Lecture des emails', cmd: 'node', args: ['--experimental-strip-types', 'scripts/maillite-e2e.mjs'], cout: 'gratuit' },

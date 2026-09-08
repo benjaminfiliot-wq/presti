@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { apiDirection, reconfirmationValide } from './client'
 import Fraicheur from './Fraicheur'
 import Reconfirmer, { type Portee } from './Reconfirmer'
+import BlocSupport from './BlocSupport'
 import { relTime, euros } from '@/lib/direction/fraicheur'
 import { actif } from '@/lib/flags'
 
@@ -40,6 +41,8 @@ const ACTIONS_JOURNAL: Record<string, string> = {
   support_acces_ouvert: 'Accès de support OUVERT par l’artisan',
   support_acces_refuse: 'Accès de support refusé par l’artisan',
   support_acces_ferme: 'Accès de support fermé',
+  support_verrou_pose: 'Verrou posé par l’artisan (plus aucune demande possible)',
+  support_verrou_leve: 'Verrou levé par l’artisan',
   support_ticket_ouvert: 'Ticket ouvert',
   support_ticket_ferme: 'Ticket fermé',
   artisan_credits: 'Crédits offerts', artisan_suspendu: 'Compte suspendu', artisan_reactive: 'Compte réactivé',
@@ -287,6 +290,22 @@ export default function Fiche({ id, role, signaler, onRetour }: { id: string; ro
                 <br />{d.apport.preuve}
                 <br /><small>{d.apport.raison}</small>
               </p>
+            </div>
+          ) : null}
+
+          {/* Le mode support. Place ici, entre ce qu'il fait et ce que la direction a fait : demander
+              a regarder est une action, et elle se lit dans le meme fil que les autres. */}
+          {actif('supportArtisan') ? (
+            <div className="tool-card" data-support-carte>
+              <BlocSupport
+                artisan={a.id}
+                role={role}
+                signaler={dire}
+                confirmer={(libelle, faire) => {
+                  if (!reconfirmationValide('artisan')) { setAConfirmer({ action: libelle, portee: 'artisan', faire }); return }
+                  void faire()
+                }}
+              />
             </div>
           ) : null}
 
