@@ -11,7 +11,11 @@ const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apike
 const fails = []
 const ok = (c, m) => { console.log((c ? 'PASS' : 'FAIL') + ' — ' + m); if (!c) fails.push(m) }
 
-const st = Date.now(), slug = `dv-${st}`, email = `dv.${st}@x.fr`
+// Le compte de test doit pouvoir etre PURGE : `purger_compte_test` n'accepte que le domaine
+// @presti-test.invalid. Ces suites creaient des comptes en @x.fr, que la purge refusait — une
+// execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
+// client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
+const st = Date.now(), slug = `dv-${st}`, email = `dv.${st}@presti-test.invalid`
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!', email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
   id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'business', plateforme_active: true, reponse_auto: false,
@@ -72,7 +76,8 @@ try {
   const [d3b] = await (await rest(`devis?id=eq.${d3.id}&select=statut`)).json()
   ok(d3b.statut === 'envoye', 'une demande de modification ne change pas le statut du devis')
 } catch (e) { ok(false, 'exception: ' + (e?.message || e)) } finally {
-  await browser.close(); await admin(`users/${u.id}`, { method: 'DELETE' })
+  await browser.close(); await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: u.id }) })
+  await admin(`users/${u.id}`, { method: 'DELETE' })
   console.log('nettoyé —', fails.length ? `❌ ${fails.length} FAIL` : '✅ TOUT PASSE')
   process.exit(fails.length ? 1 : 0)
 }

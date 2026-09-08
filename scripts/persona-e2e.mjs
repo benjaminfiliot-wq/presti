@@ -16,6 +16,12 @@
 import fs from 'fs'
 import { verifierSessionTest } from './lib/connexion-test.mjs'
 const env = Object.fromEntries(fs.readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { const i = l.indexOf('='); return [l.slice(0, i).trim(), l.slice(i + 1).trim().replace(/^"|"$/g, '')] }))
+// Les aides partagees (connexion-test, etc.) lisent `process.env`, pas cet objet : sans cette
+// ligne, leurs URL commencent par « undefined » — la suite ne tournait que lancee par
+// `tout-verifier`, jamais seule, et l'echec ne disait pas pourquoi. On ne remplace jamais une
+// variable deja posee.
+for (const [cle, valeur] of Object.entries(env)) if (!process.env[cle]) process.env[cle] = valeur
+
 const SB = env.NEXT_PUBLIC_SUPABASE_URL, SVC = env.SUPABASE_SERVICE_ROLE_KEY, ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const APP = process.argv[2] || 'http://localhost:3115'
 const admin = (p, o = {}) => fetch(`${SB}/auth/v1/admin/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
@@ -29,7 +35,11 @@ const extraireMain = (html) => (html.match(/<main[^>]*class="plat plat-app"[^>]*
 const lum = (hex) => { const n = parseInt(hex.slice(1), 16); const c = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }; return 0.2126 * c((n >> 16) & 255) + 0.7152 * c((n >> 8) & 255) + 0.0722 * c(n & 255) }
 const contraste = (a, b) => { const [h, l] = lum(a) > lum(b) ? [lum(a), lum(b)] : [lum(b), lum(a)]; return (h + 0.05) / (l + 0.05) }
 
-const st = Date.now(), slug = `pe-${st}`, email = `pe.${st}@x.fr`, pwd = 'Test123456!'
+// Le compte de test doit pouvoir etre PURGE : `purger_compte_test` n'accepte que le domaine
+// @presti-test.invalid. Ces suites creaient des comptes en @x.fr, que la purge refusait — une
+// execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
+// client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
+const st = Date.now(), slug = `pe-${st}`, email = `pe.${st}@presti-test.invalid`, pwd = 'Test123456!'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pwd, email_confirm: true }) })).json()
 if (!u?.id) { console.error('création utilisateur impossible', u); process.exit(1) }
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
@@ -172,6 +182,7 @@ try {
 } catch (e) { ok(false, 'exception: ' + (e?.stack || e?.message || e)) } finally {
   await rest(`devis?artisan_id=eq.${u.id}`, { method: 'DELETE' }).catch(() => {})
   await rest(`leads?artisan_id=eq.${u.id}`, { method: 'DELETE' }).catch(() => {})
+  await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: u.id }) })
   await admin(`users/${u.id}`, { method: 'DELETE' })
   console.log('nettoyé —', fails.length ? `❌ ${fails.length} FAIL` : '✅ TOUT PASSE', skips.length ? `(${skips.length} sauté·s : migration 0053)` : '')
   process.exit(fails.length ? 1 : 0)

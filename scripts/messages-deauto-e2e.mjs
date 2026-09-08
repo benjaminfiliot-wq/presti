@@ -11,7 +11,11 @@ const APP = process.argv[2] || 'https://prestiapp.fr'
 const admin = (p, o = {}) => fetch(`${SB}/auth/v1/admin/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
 const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json', ...(o.headers || {}) } })
 const fails = []; const ok = (c, m) => { console.log((c ? 'PASS' : 'FAIL') + ' — ' + m); if (!c) fails.push(m) }
-const st = Date.now(), email = `b5.${st}@x.fr`, pw = 'Test123456!', slug = `b5-${st}`
+// Le compte de test doit pouvoir etre PURGE : `purger_compte_test` n'accepte que le domaine
+// @presti-test.invalid. Ces suites creaient des comptes en @x.fr, que la purge refusait — une
+// execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
+// client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
+const st = Date.now(), email = `b5.${st}@presti-test.invalid`, pw = 'Test123456!', slug = `b5-${st}`
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'business', plateforme_active: true, reponse_auto: true }) })
 const lead = (await (await rest('leads', { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ artisan_id: u.id, nom_prospect: 'Marc', contact: 'marc@example.com', message: 'Un escalier', canal: 'formulaire', statut: 'nouveau' }) })).json())[0]
@@ -46,6 +50,7 @@ try {
   const txt = await p.locator('body').innerText()
   ok(/en pause|ouvertes/i.test(txt), 'la mise en pause est desormais dans Ma plateforme')
 } catch (e) { ok(false, 'exception: ' + (e?.message || e)) } finally {
-  await b.close(); await admin(`users/${u.id}`, { method: 'DELETE' })
+  await b.close(); await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: u.id }) })
+  await admin(`users/${u.id}`, { method: 'DELETE' })
   console.log('nettoyé —', fails.length ? `❌ ${fails.length} FAIL` : '✅ TOUT PASSE'); process.exit(fails.length ? 1 : 0)
 }

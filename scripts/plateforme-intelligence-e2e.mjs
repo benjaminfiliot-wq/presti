@@ -15,7 +15,11 @@ const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apike
 const fails = []
 const ok = (c, m) => { console.log((c ? 'PASS' : 'FAIL') + ' — ' + m); if (!c) fails.push(m) }
 
-const st = Date.now(), slug = `in-${st}`, email = `in.${st}@x.fr`, pw = 'Test123456!'
+// Le compte de test doit pouvoir etre PURGE : `purger_compte_test` n'accepte que le domaine
+// @presti-test.invalid. Ces suites creaient des comptes en @x.fr, que la purge refusait — une
+// execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
+// client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
+const st = Date.now(), slug = `in-${st}`, email = `in.${st}@presti-test.invalid`, pw = 'Test123456!'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
   id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'business', plateforme_active: true, reponse_auto: true,
@@ -91,7 +95,8 @@ try {
   await p.reload({ waitUntil: 'load' }); await p.waitForSelector('.pcfg-modes', { timeout: 15000 })
   ok(await p.locator('.pcfg-mode.on b').innerText() === 'Assistée', 'après rechargement, le mode enregistré est repris')
 } catch (e) { ok(false, 'exception: ' + (e?.message || e)) } finally {
-  await browser.close(); await admin(`users/${u.id}`, { method: 'DELETE' })
+  await browser.close(); await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: u.id }) })
+  await admin(`users/${u.id}`, { method: 'DELETE' })
   console.log('nettoyé —', fails.length ? `❌ ${fails.length} FAIL` : '✅ TOUT PASSE')
   process.exit(fails.length ? 1 : 0)
 }

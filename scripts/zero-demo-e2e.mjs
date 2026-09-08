@@ -128,6 +128,16 @@ async function main() {
   const orphelins = (users?.users ?? []).filter((u) => estTest(u.email) && !parId.has(u.id))
   T('aucun compte de connexion orphelin', orphelins.length === 0, orphelins.map((u) => u.email).join(' · '))
 
+  // Et l'INVERSE, qui n'était surveillé nulle part : une fiche `artisans` sans compte de connexion.
+  //
+  // C'est le résidu exact que laisse une suite dont le ménage se limite à supprimer l'utilisateur :
+  // `auth.users` part, la ligne `artisans` reste — et elle compte dans les chiffres. Le compte
+  // signalé le 08/09 était de ceux-là. Un sens de la vérification était couvert, pas l'autre.
+  const idsAuth = new Set((users?.users ?? []).map((u) => u.id))
+  const fiches = (artisans ?? []).filter((a) => !idsAuth.has(a.id))
+  T('aucune fiche artisan sans compte de connexion', fiches.length === 0,
+    fiches.map((a) => `${a.email} — ${a.est_demo ? 'marquée' : 'NON marquée, donc comptée'} ; purger ou marquer`).join('\n        '))
+
   // ── 3. Les chiffres du Poste de contrôle ────────────────────────────────────────────────────────────
   //
   // C'est le contrôle qui compte vraiment : peu importe ce qui traîne en base, aucun compte marqué ne

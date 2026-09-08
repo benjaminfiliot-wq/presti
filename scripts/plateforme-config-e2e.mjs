@@ -13,7 +13,11 @@ const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apike
 const fails = []
 const ok = (c, m) => { console.log((c ? 'PASS' : 'FAIL') + ' — ' + m); if (!c) fails.push(m) }
 
-const st = Date.now(), slug = `cf-${st}`, email = `cf.${st}@x.fr`
+// Le compte de test doit pouvoir etre PURGE : `purger_compte_test` n'accepte que le domaine
+// @presti-test.invalid. Ces suites creaient des comptes en @x.fr, que la purge refusait — une
+// execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
+// client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
+const st = Date.now(), slug = `cf-${st}`, email = `cf.${st}@presti-test.invalid`
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!', email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
   id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'business',
@@ -31,10 +35,18 @@ const parler = async (token, message) => {
 const setCfg = (patch) => rest('plateforme_config?on_conflict=artisan_id', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ artisan_id: u.id, ...patch }) })
 
 try {
-  // 1) SANS configuration → l'IA répond comme avant (non-régression)
+  // 1) SANS configuration → l'IA ne répond PAS, et elle dit pourquoi.
+  //
+  // Cette assertion exigeait un streaming « comportement inchangé ». C'est l'inverse de la règle
+  // posée par le v7 (bloc 1a) : `artisans.reponse_auto` n'est plus jamais lu, le défaut est
+  // `assistee`, et « rien ne part sans l'artisan tant qu'il n'a pas choisi ». Elle demandait donc
+  // au produit d'être MOINS prudent qu'il ne l'est — et un compte neuf enverrait des messages à un
+  // prospect sans que l'artisan ait rien réglé. Mesuré en production le 08/09 : le serveur répond
+  // `{"ok":true,"reply":null,"raison":"assistee"}`. C'est le bon comportement ; on le fige.
   const t1 = await nouvelleConv('Bonjour, un escalier en chêne serait possible ?')
   const r1 = await parler(t1, 'Quelle essence me conseillez-vous pour un escalier ?')
-  ok(r1.sse === true, 'sans config : l’IA répond en streaming (comportement inchangé)')
+  ok(r1.sse === false && r1.raison === 'assistee',
+    `⭑ sans config : rien ne part vers le prospect, et le serveur dit pourquoi (raison=${r1.raison})`)
 
   // 2) Mode MANUELLE → l'IA se tait
   await setCfg({ mode_reponse: 'manuelle' })
@@ -69,6 +81,7 @@ try {
   const lignes = await vol.json().catch(() => [])
   ok(Array.isArray(lignes) && lignes.length === 0, `RLS : un anonyme ne lit aucune config (${Array.isArray(lignes) ? lignes.length : 'err'} ligne)`)
 } catch (e) { ok(false, 'exception: ' + (e?.message || e)) } finally {
+  await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: u.id }) })
   await admin(`users/${u.id}`, { method: 'DELETE' })
   console.log('nettoyé —', fails.length ? `❌ ${fails.length} FAIL` : '✅ TOUT PASSE')
   process.exit(fails.length ? 1 : 0)

@@ -14,7 +14,11 @@ const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { apike
 const fails = []
 const ok = (c, m) => { console.log((c ? 'PASS' : 'FAIL') + ' — ' + m); if (!c) fails.push(m) }
 
-const st = Date.now(), slug = `sp-${st}`, email = `sp.${st}@x.fr`, pw = 'Test123456!'
+// Le compte de test doit pouvoir etre PURGE : `purger_compte_test` n'accepte que le domaine
+// @presti-test.invalid. Ces suites creaient des comptes en @x.fr, que la purge refusait — une
+// execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
+// client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
+const st = Date.now(), slug = `sp-${st}`, email = `sp.${st}@presti-test.invalid`, pw = 'Test123456!'
 const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: pw, email_confirm: true }) })).json()
 await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({
   id: u.id, email, nom: 'Atelier Vasseur', metier: 'Menuisier', slug, plan: 'business',
@@ -99,7 +103,27 @@ try {
   // 6) On ne touche pas aux données d'un autre artisan
   const autre = await agir({ action: 'conversation_supprimer', lead_id: '00000000-0000-0000-0000-000000000000', confirm: 'SUPPRIMER' })
   ok(autre.status === 404, `une conversation qui ne vous appartient pas est refusée (${autre.status})`)
+
+  // 7) La conservation ET le ménage doivent tenir ENSEMBLE — le défaut du 08/09.
+  //
+  // Rien ne vérifiait cette coexistence. J'ai posé deux gardes de conservation (0078) sans les
+  // lever dans `purger_compte_test` : la purge des comptes de test échouait, et ils restaient en
+  // production — ce qu'une AUTRE suite interdit par ailleurs. Corrigé en deux fois (0083 pour les
+  // lignes de facture, 0085 pour les devis) parce que je n'avais compté qu'une garde sur deux.
+  //
+  // Les deux assertions sont indissociables : la première seule passerait si les gardes étaient
+  // restées baissées — ce qui serait pire que la panne. La suppression du devis envoyé, refusée
+  // au point 6 juste au-dessus, est ce qui prouve qu'elles sont bien en place au moment où la
+  // purge, elle, passe quand même.
+  {
+    const r = await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: u.id }) })
+    const detail = await r.text()
+    ok(r.ok, `⭑ la purge d'un compte de test passe MALGRÉ les gardes de conservation (${r.status}) ${r.ok ? '' : detail.slice(0, 120)}`)
+    const restant = await (await rest(`artisans?id=eq.${u.id}&select=id`)).json()
+    ok(Array.isArray(restant) && restant.length === 0, '⭑ … et la fiche artisan est réellement partie, pas seulement le compte de connexion')
+  }
 } catch (e) { ok(false, 'exception: ' + (e?.message || e)) } finally {
+  await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: u.id }) })
   await admin(`users/${u.id}`, { method: 'DELETE' })
   console.log('nettoyé —', fails.length ? `❌ ${fails.length} FAIL` : '✅ TOUT PASSE')
   process.exit(fails.length ? 1 : 0)

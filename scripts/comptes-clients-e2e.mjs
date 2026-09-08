@@ -14,7 +14,11 @@ const auth = (body, cookie) => fetch(`${APP}/api/p/auth`, { method: 'POST', head
 
 const st = Date.now()
 const mk = async (n) => {
-  const email = `ca${n}.${st}@x.fr`, slug = `ca${n}-${st}`
+// Le compte de test doit pouvoir etre PURGE : `purger_compte_test` n'accepte que le domaine
+// @presti-test.invalid. Ces suites creaient des comptes en @x.fr, que la purge refusait — une
+// execution interrompue laissait donc une ligne `artisans` en production, comptee comme un
+// client. C'est exactement le compte que zero-demo-e2e a signale le 08/09.
+  const email = `ca${n}.${st}@presti-test.invalid`, slug = `ca${n}-${st}`
   const u = await (await admin('users', { method: 'POST', body: JSON.stringify({ email, password: 'Test123456!', email_confirm: true }) })).json()
   await rest('artisans', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify({ id: u.id, email, nom: `Atelier ${n}`, metier: 'Menuisier', slug, plan: 'business', plateforme_active: true }) })
   return { id: u.id, slug }
@@ -76,6 +80,7 @@ try {
   const fuite = await (await fetch(`${SB}/rest/v1/clients_sessions?select=*`, { headers: { apikey: anon, Authorization: `Bearer ${anon}` } })).json()
   ok(Array.isArray(fuite) && fuite.length === 0, `RLS : les sessions clients ne fuient pas (${Array.isArray(fuite) ? fuite.length : 'err'})`)
 } catch (e) { ok(false, 'exception: ' + (e?.message || e)) } finally {
+  for (const c of [A, B]) await rest('rpc/purger_compte_test', { method: 'POST', body: JSON.stringify({ p_id: c.id }) })
   await admin(`users/${A.id}`, { method: 'DELETE' }); await admin(`users/${B.id}`, { method: 'DELETE' })
   console.log('nettoyé —', fails.length ? `❌ ${fails.length} FAIL` : '✅ TOUT PASSE')
   process.exit(fails.length ? 1 : 0)
