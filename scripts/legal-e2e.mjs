@@ -211,6 +211,22 @@ try {
 }
 
 
+// ── La mesure d'audience n'atteint pas les surfaces de l'artisan ───────────────────────────
+//
+// Le layout racine enveloppe TOUTES les routes et un layout de segment ne peut pas s'en soustraire.
+// Le jour où NEXT_PUBLIC_GA_ID est posée, gtag se chargerait sur le site de chaque artisan — dont
+// la page légale affirme « ce site ne dépose aucun cookie publicitaire et ne vous suit sur aucun
+// autre site ». Nous ferions mentir l'artisan sur SON site, à SES visiteurs, sous SA responsabilité.
+{
+  const fsp = await import('node:fs/promises')
+  const ga = await fsp.readFile(new URL('../app/GoogleAnalytics.tsx', import.meta.url), 'utf8').catch(() => '')
+  T('GoogleAnalytics lit le chemin avant de se charger', /usePathname/.test(ga), 'aucune garde de chemin')
+  for (const surface of ['/site/', '/p/', '/demande', '/reset-password']) {
+    T(`… et la mesure d'audience est interdite sur ${surface}`, ga.includes(`'${surface}'`),
+      `absent de la liste des chemins interdits`)
+  }
+}
+
 // ── Les pages publiques ne se contredisent pas entre elles ──────────────────────────────────────
 //
 // La FAQ a dit « vos mots de passe sont chiffrés » pendant que la page de confidentialité disait

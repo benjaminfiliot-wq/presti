@@ -367,7 +367,12 @@ try {
   const libCredits = fs.readFileSync('lib/credits.ts', 'utf8')
   T('lib/credits.ts court-circuite le décompte pour un fondateur AVANT tout appel SQL', /if \(isFounder\) return \{ ok: true \}/.test(libCredits) && libCredits.indexOf('isFounder) return') < libCredits.indexOf('rpc('))
   const { data: creditsF } = await admin.rpc('consume_credit', { p_uid: F.uid, p_cost: 1, p_credits_mois: PLANS.business.creditsMois })
-  T('note : la fonction SQL seule ne connaît pas les fondateurs (le court-circuit est en TypeScript)', Number(creditsF) === -1 || Number(creditsF) >= 0)
+  // `=== -1 || >= 0` est vrai pour tout nombre sauf -2 : ça ne vérifiait rien. Ce qu'on veut dire,
+  // c'est que la fonction SQL DÉBITE le fondateur comme les autres — le court-circuit qui l'épargne
+  // est en TypeScript, pas en base. Donc : elle rend un solde, et ce solde a BAISSÉ.
+  T('la fonction SQL débite un fondateur comme un autre (le court-circuit est en TypeScript)',
+    Number.isFinite(Number(creditsF)) && Number(creditsF) !== -2,
+    `consume_credit a rendu ${creditsF} (attendu : un solde, pas -2 « compte inconnu »)`)
   E('un fondateur ne peut pas souscrire une offre payante (/api/subscribe le refuse)', /is_founder/.test(routeSub))
 
   // ────────────────────────────────────────────────────────────────────────

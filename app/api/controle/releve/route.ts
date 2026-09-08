@@ -26,9 +26,12 @@ export const maxDuration = 60
 //   • le partenaire LIT le sien, il ne l'arrête pas. C'est Benjamin qui engage l'entreprise.
 
 /** Ce que Stripe a encaissé dans le mois, par client. Le mois est celui de l'ENCAISSEMENT. */
-async function encaissementsDuMois(debut: string, fin: string): Promise<Map<string, number>> {
+/** `tronque` : Stripe avait encore des pages au dernier tour. Le chiffre est alors INCOMPLET,
+ *  et un relevé incomplet qui se tait est un relevé faux. */
+async function encaissementsDuMois(debut: string, fin: string): Promise<{ par: Map<string, number>; tronque: boolean }> {
   const parClient = new Map<string, number>()
-  if (!stripe) return parClient
+  let tronque = false
+  if (!stripe) return { par: parClient, tronque }
   const options = { timeout: 20_000, maxNetworkRetries: 0 } as const
   let curseur: string | undefined
   // Les paiements réussis du mois : on lit les factures payées, elles portent le client ET le montant
@@ -45,17 +48,21 @@ async function encaissementsDuMois(debut: string, fin: string): Promise<Map<stri
     }
     if (!l.has_more || !l.data.length) break
     curseur = l.data[l.data.length - 1].id
+    // Dernier tour et Stripe en a encore : on s'arrête, mais on le DIT. Une borne muette rend un
+    // relevé faux en silence — et c'est un chiffre qui engage de l'argent dû au partenaire.
+    if (page === 9 && l.has_more) tronque = true
   }
-  return parClient
+  return { par: parClient, tronque }
 }
 
 /** Les remboursements RÉUSSIS du mois, par client Stripe, en centimes positifs (article 5.4).
  *
  *  Une facture remboursée reste « payée » chez Stripe : sans cette lecture, la commission d'un client
  *  remboursé resterait acquise au partenaire alors que l'argent est reparti. */
-async function remboursementsDuMois(debut: string, fin: string): Promise<Map<string, number>> {
+async function remboursementsDuMois(debut: string, fin: string): Promise<{ par: Map<string, number>; tronque: boolean }> {
   const parClient = new Map<string, number>()
-  if (!stripe) return parClient
+  let tronque = false
+  if (!stripe) return { par: parClient, tronque }
   const options = { timeout: 20_000, maxNetworkRetries: 0 } as const
   let curseur: string | undefined
   for (let page = 0; page < 10; page++) {
@@ -78,7 +85,7 @@ async function remboursementsDuMois(debut: string, fin: string): Promise<Map<str
     if (!l.has_more || !l.data.length) break
     curseur = l.data[l.data.length - 1].id
   }
-  return parClient
+  return { par: parClient, tronque }
 }
 
 async function construire(mois: string) {
@@ -94,10 +101,14 @@ async function construire(mois: string) {
       .gte('date_facture', bornes.debut.slice(0, 10)).lt('date_facture', bornes.fin.slice(0, 10)),
   ])
 
-  const [encaisse, rembourse] = await Promise.all([
+  const [enc, remb] = await Promise.all([
     encaissementsDuMois(bornes.debut, bornes.fin),
     remboursementsDuMois(bornes.debut, bornes.fin),
   ])
+  const encaisse = enc.par, rembourse = remb.par
+  // Au-delà de mille factures dans le mois, la lecture s'arrête. Le chiffre devient incomplet, et
+  // c'est de l'argent dû au partenaire : ça se dit, ça ne se devine pas.
+  const incomplet = enc.tronque || remb.tronque
   const parApport = new Map((apports ?? []).map((a) => [a.artisan_id, a]))
 
   const clients: LigneClient[] = []
@@ -123,7 +134,8 @@ async function construire(mois: string) {
   }
 
   const couts = (achats ?? []).reduce((n, x) => n + (x.ttc_cents ?? 0), 0)
-  return calculerReleve(mois, clients, couts)
+  // L'aveu voyage AVEC le chiffre : séparés, l'un finirait affiché sans l'autre.
+  return { ...calculerReleve(mois, clients, couts), incomplet }
 }
 
 export async function GET(req: Request) {

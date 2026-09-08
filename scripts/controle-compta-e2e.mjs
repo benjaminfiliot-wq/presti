@@ -189,7 +189,10 @@ async function main() {
   // ── 3. En production ────────────────────────────────────────────────────────────────────────────
   console.log('\n3. En production')
   const sonde = await api('/api/controle/releve?mois=2026-08', null)
-  if (sonde.statut === 404) { console.log('  ⏭  le relevé n’est pas encore ouvert (migration 0071 ou drapeau) — le calcul, lui, est prouvé ci-dessus.\n'); return }
+  // 0071 est collée et le drapeau est levé depuis longtemps : un 404 ici n'est plus « pas encore
+  // ouvert », c'est une route disparue. Le `return` faisait sortir la suite au vert sans avoir
+  // éprouvé une seule fois la porte du relevé.
+  T('le relevé existe (0071 collée, drapeau levé)', sonde.statut !== 404, `HTTP ${sonde.statut}`)
   T('sans jeton → 401', sonde.statut === 401, String(sonde.statut))
 
   const b = await compte('fondateur')
@@ -224,7 +227,9 @@ async function main() {
   if (!p?.jeton) SAUT('partenaire', 'création impossible')
   else {
     const lecture = await api('/api/controle/releve?mois=2026-08', p.jeton)
-    T('il peut lire un relevé', lecture.statut === 200 || lecture.statut === 404, `${lecture.statut} — ${lecture.brut.slice(0, 100)}`)
+    // « 200 ou 404 » passait quoi qu'il arrive, y compris le jour où on retirerait ce droit au
+    // partenaire par erreur. Le contrat lui donne accès à SON relevé : c'est 200, ou c'est un bug.
+    T('il peut lire un relevé (contrat, annexe A)', lecture.statut === 200, `${lecture.statut} — ${lecture.brut.slice(0, 120)}`)
     const arrete = await api('/api/controle/releve', p.jeton, { method: 'POST', body: JSON.stringify({ mois: '2026-08', action: 'arreter' }) })
     T('il ne peut PAS arrêter un relevé → 403', arrete.statut === 403, `${arrete.statut} — ${arrete.brut.slice(0, 110)}`)
     const compta = await api('/api/controle/compta', p.jeton)

@@ -51,7 +51,9 @@ try {
   console.log('\n── Rendu')
   T('la page s’affiche (pas de redirection vers /login)', !page.url().includes('/login'), page.url())
   T('le titre est là', await page.locator('h1, .app-title').filter({ hasText: /Canaux/i }).count() > 0)
-  T('aucune trace de « Presti » dans l’aide au client', true) // console artisan : la marque est normale ici
+  // Il n'y a rien à vérifier ici : c'est la console de l'artisan, la marque Presti y est normale.
+  // L'ancienne version écrivait `T(…, true)` — une vérification comptée sans rien vérifier, dans
+  // une suite que le lanceur joue chaque nuit. Ne rien dire vaut mieux que dire un faux vert.
 
   // Le piège maison : button { width:100%; background:var(--green) } dans globals.css.
   const b = page.locator('button', { hasText: 'Connecter ma boîte' })

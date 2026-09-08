@@ -27,7 +27,8 @@ type Compta = {
 }
 type Releve = {
   mois: string; fige: boolean; statut: string; partenaire: { nom: string | null }
-  releve: { encaisse: number; couts: number; resultat: number; commission: number; interessement: number; dûAuPartenaire: number; partFondateur: number; clients: { nom: string | null; encaisse: number; commission: number; tauxApport: number; statutApport: string | null }[] }
+  /** `incomplet` : la lecture Stripe s'est arrêtée à mille factures. Le chiffre est partiel. */
+  releve: { encaisse: number; couts: number; resultat: number; commission: number; interessement: number; dûAuPartenaire: number; partFondateur: number; incomplet?: boolean; clients: { nom: string | null; encaisse: number; commission: number; tauxApport: number; statutApport: string | null }[] }
   arrete_le?: string | null; paye_le?: string | null; facture_recue?: boolean
 }
 
@@ -100,7 +101,7 @@ export default function Comptabilite({ role, signaler }: { role: 'direction' | '
 
   function arreter() {
     if (!rel?.releve) return
-    if (!window.confirm(`Arrêter le relevé de ${mois} ?\n\n${enEuros(rel.releve.dûAuPartenaire)} seront dus à ${rel.partenaire.nom ?? 'le partenaire'}.\n\nUne fois arrêté, ses chiffres sont figés : ils lui auront été annoncés.`)) return
+    if (!window.confirm(`${rel.releve.incomplet ? '⚠️ Ce relevé est INCOMPLET : la lecture Stripe s’est arrêtée à mille factures pour ce mois. Ne l’arrêtez pas en l’état.\n\n' : ''}Arrêter le relevé de ${mois} ?\n\n${enEuros(rel.releve.dûAuPartenaire)} seront dus à ${rel.partenaire.nom ?? 'le partenaire'}.\n\nUne fois arrêté, ses chiffres sont figés : ils lui auront été annoncés.`)) return
     demander('/api/controle/releve', { mois, action: 'arreter' }, 'arrêter ce relevé')
   }
 
