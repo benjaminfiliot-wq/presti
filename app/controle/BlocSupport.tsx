@@ -87,6 +87,20 @@ export default function BlocSupport({ artisan, role, signaler, confirmer }: {
     void envoyer(t, m)
   }
 
+  // Clore un ticket referme du même geste toutes ses fenêtres (0074). Sans ce bouton, une demande
+  // réglée laissait ses accès courir jusqu'à expiration.
+  async function clore(t: Ticket) {
+    if (busy) return
+    if (!window.confirm(`Clore « ${t.sujet || 'Demande d’aide'} » ?
+
+Les accès encore ouverts sur ce ticket se refermeront avec lui.`)) return
+    setBusy(`c-${t.id}`)
+    const r = await apiDirection<{ message?: string }>('/api/controle/support', { method: 'POST', body: JSON.stringify({ ticket: t.id }) })
+    setBusy(null)
+    signaler(r.ok ? { type: 'ok', text: r.data.message ?? 'Ticket clos.' } : { type: 'err', text: r.data.error ?? 'Rien n’a été fait.' })
+    if (r.ok) charger()
+  }
+
   async function lire(acces: string, vue: string) {
     if (busy) return
     setBusy(`${acces}-${vue}`)
@@ -126,6 +140,12 @@ export default function BlocSupport({ artisan, role, signaler, confirmer }: {
         <div className="sup-ticket" key={t.id}>
           <b>{t.sujet || 'Demande d’aide'}</b>
           <small className="muted">Ouverte {relTime(t.ouvert_le, maintenant)}{t.element_titre ? ` · à propos de ${t.element_titre}` : ' · aucun élément joint'}</small>
+          {role === 'direction' ? (
+            <button type="button" className="dir-dep" style={{ marginTop: 4 }} disabled={!!busy}
+              onClick={() => clore(t)} data-action="support-clore">
+              {busy === `c-${t.id}` ? '…' : 'Clore cette demande'}
+            </button>
+          ) : null}
 
           {t.acces.map((a) => (
             <div className="sup-acces" key={a.id} data-etat={a.etat}>

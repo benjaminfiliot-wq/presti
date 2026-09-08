@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { apiDirection, reconfirmationValide } from './client'
+import Bans from './Bans'
 import Reconfirmer from './Reconfirmer'
 import { relTime } from '@/lib/direction/fraicheur'
 
@@ -73,6 +74,10 @@ export default function Reglages({ role, signaler }: { role: 'direction' | 'lect
   return (
     <>
       {erreur ? <div className="tool-card"><p className="notif-erreur" role="alert">{erreur}</p><button type="button" className="btn btn--primary" onClick={() => void charger()}>Réessayer</button></div> : null}
+
+      {/* Les adresses bannies : la route existait depuis le J1, sans écran pour l'appeler. Le geste
+          qui manquait le plus est le retour en arrière — le bannissement, lui, se fait tout seul. */}
+      <Bans role={role} signaler={signaler} />
 
       <div className="tool-card" data-equipe>
         <h2>L’équipe</h2>

@@ -71,3 +71,39 @@ export async function GET(req: Request) {
     a: new Date().toISOString(),
   })
 }
+
+// POST /api/controle/support  { ticket }
+//
+// Clore une demande d'aide. `fermer_ticket` (0074) referme du même geste toutes les fenêtres encore
+// ouvertes dessus — c'est sa raison d'être : « la fenêtre suit le motif, jamais l'horloge seule ».
+// Elle était écrite, journalisée, et appelée par personne : une demande réglée laissait ses accès
+// courir jusqu'à expiration.
+//
+// Ce POST ne lit AUCUNE donnée de client d'artisan : il ferme. La lecture, elle, reste sur `lire`,
+// qui n'a toujours ni POST ni PATCH ni DELETE.
+export async function POST(req: Request) {
+  if (!actif('supportArtisan')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const f = await estFondateur(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const perimetre = exigerDomaine(f, 'support', 'ecrire')
+  if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
+  if (f.role !== 'direction') return reponseRefus({ error: 'Votre rôle est en lecture seule.', status: 403, code: 'lecture_seule' })
+
+  const b = (await req.json().catch(() => null)) as { ticket?: unknown } | null
+  const ticket = typeof b?.ticket === 'string' && /^[0-9a-f-]{36}$/i.test(b.ticket) ? b.ticket : ''
+  if (!ticket) return NextResponse.json({ error: 'Ticket inconnu.' }, { status: 400 })
+
+  const { data, error } = await supabaseAdmin.rpc('fermer_ticket', {
+    p_ticket: ticket, p_par: f.uid, p_par_email: f.email, p_ip: f.ip, p_agent: 'poste de contrôle',
+  })
+  if (error) { console.error('[support] fermer_ticket :', error.message); return NextResponse.json({ error: 'Rien n’a été fait.' }, { status: 503 }) }
+  const r = data as { etat?: string; fenetres?: number }
+  if (r?.etat === 'deja') return NextResponse.json({ ok: true, message: 'Ce ticket était déjà clos.' })
+  if (r?.etat !== 'ok') return NextResponse.json({ error: 'Ce ticket n’existe pas.' }, { status: 400 })
+  return NextResponse.json({
+    ok: true,
+    message: r.fenetres
+      ? `Ticket clos, et ${r.fenetres} accès refermé${r.fenetres > 1 ? 's' : ''} avec lui.`
+      : 'Ticket clos.',
+  })
+}
