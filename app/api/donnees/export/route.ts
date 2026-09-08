@@ -20,7 +20,7 @@ type Ligne = Record<string, unknown>
 const nomFichier = (numero: unknown, id: unknown) => String(numero || id || 'sans-numero').replace(/[^\w.-]+/g, '_')
 
 async function collecter(uid: string) {
-  const [artisan, leads, devis, factures, clients, tarifs, inventaire, appareils, direction] = await Promise.all([
+  const [artisan, leads, devis, factures, clients, tarifs, inventaire, appareils, direction, supportAcces, supportLectures] = await Promise.all([
     supabaseAdmin.from('artisans').select('*').eq('id', uid).maybeSingle(),
     // Sans `ip` : donnée d'un tiers, finalité anti-abus, elle n'a rien à faire dans l'export de l'artisan (C7).
     supabaseAdmin.from('leads').select('*').eq('artisan_id', uid).order('created_at', { ascending: true }).then((r) => ({ ...r, data: (r.data ?? []).map(({ ip: _ip, ...l }: Record<string, unknown>) => l) })),
@@ -34,6 +34,16 @@ async function collecter(uid: string) {
     // Ce que le Centre de direction a fait SUR ce compte (v10) : l'action et son avant/après, jamais l'adresse
     // ni l'appareil du fondateur — ce sont des données de l'entreprise, pas de l'artisan.
     supabaseAdmin.from('journal_direction').select('action, cible_type, avant, apres, reconfirme, cree_le').eq('artisan_id', uid).order('cree_le', { ascending: true }).then((r) => r, () => ({ data: [] })),
+    // v11 §5 — le mode support. Les fenêtres qu'on lui a demandées, et CE QUI A ÉTÉ CONSULTÉ derrière.
+    // Sans ça, la phrase de son écran de sécurité (« cette liste part avec vos données ») était fausse.
+    // Le nom de la personne qui a lu reste : c'est le point de la trace — il doit pouvoir constater
+    // qui, exactement. En revanche pas d'IP ni d'appareil : données de l'entreprise, comme au-dessus.
+    supabaseAdmin.from('acces_support')
+      .select('element_type, element_titre, motif, demande_le, notifie_le, ouvert_le, expire_le, refuse_le, refuse_motif, ferme_le, ferme_motif')
+      .eq('artisan_id', uid).order('demande_le', { ascending: true }).then((r) => r, () => ({ data: [] })),
+    supabaseAdmin.from('acces_support_lectures')
+      .select('acces_id, vue, element_type, acteur_nom, lu_le')
+      .eq('artisan_id', uid).order('lu_le', { ascending: true }).then((r) => r, () => ({ data: [] })),
   ])
   // Messages de toutes ses conversations (par lots, pour ne pas charger l'univers).
   const ids = (leads.data ?? []).map((l) => l.id)
@@ -48,6 +58,8 @@ async function collecter(uid: string) {
     conversations: l(leads), messages, devis: l(devis), factures: l(factures),
     clients_plateforme: l(clients), tarifs: l(tarifs), inventaire: l(inventaire), appareils_notifications: l(appareils),
       'donnees/actions_de_direction.json': JSON.stringify(direction.data ?? [], null, 2),
+      'donnees/acces_du_support.json': JSON.stringify(supportAcces.data ?? [], null, 2),
+      'donnees/acces_du_support_consultations.json': JSON.stringify(supportLectures.data ?? [], null, 2),
   }
 }
 

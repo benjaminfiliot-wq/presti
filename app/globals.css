@@ -1230,6 +1230,22 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .lp-head2 p{color:var(--muted);font-size:1.08rem;margin:1.1rem 0 0}
 
 /* proof — grand chiffre */
+/* CONFIANCE — quatre mécanismes, pas quatre adjectifs. Les cartes reprennent la grille et la
+   respiration de `.lp-reassure` : c'est la même famille de promesse, en plus détaillé. La phrase de
+   fin est isolée et centrée — c'est celle qu'on retient. */
+.lp-conf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1.6rem}
+.lp-cc{display:flex;flex-direction:column;gap:.55rem;background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:1.3rem 1.2rem}
+.lp-cc .i{width:2rem;height:2rem;border-radius:9px;background:rgba(217,119,87,.12);display:grid;place-items:center;color:var(--co2)}
+.lp-cc .i svg{width:17px;height:17px;stroke:var(--co2);fill:none}
+.lp-cc b{font-size:1rem;letter-spacing:-.01em}
+.lp-cc em{font-style:normal;font-size:.9rem;line-height:1.55;color:var(--ink-soft)}
+.lp-cc em b{font-size:inherit;color:var(--ink)}
+.lp-conf-fin{margin:1.8rem auto 0;max-width:44ch;text-align:center;font-size:1.05rem;line-height:1.6;color:var(--ink-soft)}
+.lp-conf-fin b{display:block;margin-top:.2rem;color:var(--ink);font-size:1.15rem}
+@media(max-width:960px){.lp-conf-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.lp-conf-grid{grid-template-columns:1fr}}
+@media (hover:hover) and (pointer:fine){.lp-cc{transition:transform .4s var(--ease-apple),border-color .25s}.lp-cc:hover{transform:translateY(-2px);border-color:var(--co2)}}
+
 .lp-proof{text-align:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(217,119,87,.05),transparent 45%)}
 .lp-bignum{font-family:var(--font-display);font-weight:800;font-size:clamp(5rem,17vw,12rem);line-height:.9;letter-spacing:-.05em;background:linear-gradient(180deg,#fff,var(--co2) 58%,var(--co));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 20px 60px rgba(217,119,87,.32))}
 .lp-proof p{color:var(--ink2);font-size:1.15rem;max-width:42ch;margin:1rem auto 0}

@@ -64,7 +64,10 @@ for (const [chemin, methode, body] of PROTEGEES) {
   // Un 404 est LÉGITIME derrière un drapeau baissé : la fonctionnalité n'existe pas encore, et c'est
   // précisément ce qu'un drapeau doit produire. La liste est nommée, pas devinée — sinon un vrai 404
   // (une route supprimée par erreur) passerait pour une porte fermée.
-  const DERRIERE_UN_DRAPEAU = ['/api/support/demande', '/api/securite/acces-support', '/api/controle/support']
+  // Le mode support est sorti de cette liste le 08/09, en même temps que son drapeau se levait : ses
+  // routes doivent désormais répondre 401, et un 404 y serait une route disparue, pas une porte
+  // fermée. Une tolérance qu'on laisse traîner après sa raison d'être est un trou qui attend.
+  const DERRIERE_UN_DRAPEAU = []
   const toleree = chemin.startsWith('/api/controle/') || DERRIERE_UN_DRAPEAU.some((d) => chemin.startsWith(d))
   T(`${methode} ${chemin.replace(id, ':id')} → ${r.status}`, [401, 403].includes(r.status) || (toleree && r.status === 404), r.texte)
 }
