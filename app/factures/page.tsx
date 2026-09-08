@@ -54,6 +54,24 @@ export default function FacturesList() {
     setTimeout(() => URL.revokeObjectURL(url), 60000)
   }
 
+  /** Le XML Factur-X : la même pièce que le PDF, dans le format que réclament les comptables et
+   *  les donneurs d'ordre publics. Téléchargé plutôt qu'ouvert : aucun navigateur ne sait l'afficher. */
+  async function facturx(f: Facture) {
+    setBusy(f.id)
+    const { data } = await supabase.auth.getSession()
+    const res = await fetch(`/api/factures/${f.id}/facturx`, { headers: { Authorization: `Bearer ${data.session?.access_token}` } })
+    setBusy(null)
+    if (!res.ok) {
+      const corps = await res.json().catch(() => ({} as { error?: string }))
+      alert(corps.error ?? 'Impossible de produire la facture électronique pour l’instant.')
+      return
+    }
+    const url = URL.createObjectURL(await res.blob())
+    const a = document.createElement('a')
+    a.href = url; a.download = `${f.numero || 'facture'}.xml`; a.click()
+    setTimeout(() => URL.revokeObjectURL(url), 60000)
+  }
+
   /** Dans l'application : le PDF part par la feuille native (Fichiers, Mail, WhatsApp…). */
   async function pdfNatif(f: Facture) {
     setBusy(f.id)
@@ -113,6 +131,12 @@ export default function FacturesList() {
                   <span className="dc-amt">{eur(f.total_ttc ?? 0)}</span>
                   <div className="dc-actions">
                     <button className="btn btn--ghost" disabled={busy === f.id} onClick={() => pdf(f)}>PDF</button>
+                    {/* Factur-X : vendu dans les trois offres, et jusqu'au 08/09 aucun écran ne
+                        permettait de l'obtenir. Seulement sur une facture émise : un brouillon
+                        n'a pas de pièce électronique à produire. */}
+                    {f.statut && f.statut !== 'brouillon'
+                      ? <button className="btn btn--ghost" disabled={busy === f.id} onClick={() => facturx(f)} title="Facture électronique (Factur-X), pour votre comptable ou un donneur d'ordre public">XML</button>
+                      : null}
                     {active && f.statut !== 'payee' && (
                       <button className="btn btn--ghost" disabled={busy === f.id} onClick={() => setStatut(f, 'payee')}>Marquer payée</button>
                     )}

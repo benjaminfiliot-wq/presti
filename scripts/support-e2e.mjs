@@ -119,6 +119,23 @@ async function main() {
   }).select('id').single()
   await admin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'texte', contenu: SECRET })
 
+  console.log('A zero. La porte d’entrée existe : l’artisan crée son ticket lui-même')
+  // La suite fabriquait ses tickets en base. Elle était donc verte pendant que le mode support
+  // était inatteignable, faute d'écran pour en créer un. Un test qui contourne l'entrée ne prouve
+  // pas qu'il y en a une.
+  {
+    const dem = await api('/api/support/demande', artisan.jeton, {
+      method: 'POST',
+      body: JSON.stringify({ sujet: 'Test de la porte', message: 'Mon devis ne part pas, je ne comprends pas pourquoi.', element: { type: 'lead', id: lead.id } }),
+    })
+    T('⭑ l’artisan crée un ticket depuis SON espace', dem.statut === 200, `HTTP ${dem.statut} — ${dem.brut.slice(0, 140)}`)
+    const { data: t0 } = await admin.from('tickets').select('id, element_type, element_id, element_titre').eq('artisan_id', artisan.uid).order('ouvert_le', { ascending: false }).limit(1).maybeSingle()
+    T('… et l’élément qu’il a désigné est porté par le ticket',
+      t0?.element_id === lead.id && t0?.element_type === 'lead', JSON.stringify(t0))
+    T('… avec un titre résolu par le SERVEUR, pas recopié du navigateur',
+      !!t0?.element_titre && /Conversation du/.test(t0.element_titre), t0?.element_titre ?? '(vide)')
+  }
+
   console.log('A. Un ticket n’autorise rien par lui-même')
   const { data: ticket } = await admin.from('tickets').insert({
     artisan_id: artisan.uid, fil: `<${marque}@presti-test.invalid>`, sujet: 'Demande de test',

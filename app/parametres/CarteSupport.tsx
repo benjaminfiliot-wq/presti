@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabaseClient'
 import { api, dateFr, type SectionProps } from './commun'
 
 // Accès du support (v11 §5) — l'écran où la porte s'ouvre, et le seul.
@@ -26,6 +27,8 @@ type Acces = {
 }
 type Lecture = { id: string; acces_id: string; vue: string; element_type: string; acteur_nom: string; lu_le: string }
 type Etat = { acces: Acces[]; lectures: Lecture[]; verrou: { pose_le: string } | null; promesse: string }
+/** Ce que l'artisan peut désigner en demandant de l'aide. Ses propres pièces, lues sous RLS. */
+type Element = { type: 'devis' | 'facture' | 'lead'; id: string; libelle: string }
 
 const VUES: Record<string, string> = {
   forme: 'la forme (statut, dates, nombre de lignes)',
@@ -40,12 +43,53 @@ export default function CarteSupport({ signaler }: { signaler: SectionProps['sig
   const [e, setE] = useState<Etat | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const [detail, setDetail] = useState<string | null>(null)
+  const [ouvrirDemande, setOuvrirDemande] = useState(false)
+  const [sujet, setSujet] = useState('')
+  const [message, setMessage] = useState('')
+  const [element, setElement] = useState('')
+  const [elements, setElements] = useState<Element[]>([])
 
   const charger = useCallback(async () => {
     const r = await api<Etat>('/api/securite/acces-support')
     setE(r.ok ? r.data : { acces: [], lectures: [], verrou: null, promesse: '' })
   }, [])
   useEffect(() => { charger() }, [charger])
+
+  // Ses pièces récentes, lues sous RLS avec son propre jeton : c'est LUI qui désigne ce dont il
+  // parle, et Presti ne pourra demander à regarder que ça (0075).
+  useEffect(() => {
+    if (!ouvrirDemande || elements.length) return
+    void (async () => {
+      const uid = (await supabase.auth.getUser()).data.user?.id ?? ''
+      if (!uid) return
+      const [d, f, l] = await Promise.all([
+        supabase.from('devis').select('id, numero').eq('artisan_id', uid).order('created_at', { ascending: false }).limit(10),
+        supabase.from('factures').select('id, numero').eq('artisan_id', uid).order('created_at', { ascending: false }).limit(10),
+        supabase.from('leads').select('id, created_at').eq('artisan_id', uid).order('created_at', { ascending: false }).limit(10),
+      ])
+      setElements([
+        ...(d.data ?? []).map((x) => ({ type: 'devis' as const, id: x.id, libelle: `Devis n° ${x.numero ?? '?'}` })),
+        ...(f.data ?? []).map((x) => ({ type: 'facture' as const, id: x.id, libelle: `Facture n° ${x.numero ?? '?'}` })),
+        ...(l.data ?? []).map((x) => ({ type: 'lead' as const, id: x.id, libelle: `Conversation du ${new Date(x.created_at).toLocaleDateString('fr-FR')}` })),
+      ])
+    })()
+  }, [ouvrirDemande, elements.length])
+
+  async function envoyerDemande() {
+    if (busy) return
+    if (message.trim().length < 10) { signaler({ type: 'err', text: 'Décrivez votre problème en quelques mots.' }); return }
+    setBusy('demande')
+    const el = elements.find((x) => `${x.type}:${x.id}` === element)
+    const r = await api<{ message?: string; note?: string }>('/api/support/demande', {
+      method: 'POST',
+      body: JSON.stringify({ sujet: sujet.trim(), message: message.trim(), ...(el ? { element: { type: el.type, id: el.id } } : {}) }),
+    })
+    setBusy(null)
+    if (!r.ok) { signaler({ type: 'err', text: r.data.error ?? 'Votre message n’est pas parti.' }); return }
+    signaler({ type: 'ok', text: [r.data.message, r.data.note].filter(Boolean).join(' ') })
+    setSujet(''); setMessage(''); setElement(''); setOuvrirDemande(false)
+    charger()
+  }
 
   async function decider(acces: string, decision: 'ouvrir' | 'refuser' | 'fermer', cle: string) {
     if (busy) return
@@ -76,6 +120,36 @@ export default function CarteSupport({ signaler }: { signaler: SectionProps['sig
     <div className="tool-card">
       <h2>Accès du support</h2>
       <p className="muted" style={{ margin: '0 0 .9rem' }}>{e.promesse || 'Un accès de support dure une heure, ne montre que la forme de l’élément, et chaque consultation est inscrite ci-dessous.'}</p>
+
+      {/* La porte d'entrée. Sans elle, rien de ce qui suit ne peut jamais commencer : un accès de
+          support exige un ticket, et c'est le seul endroit qui en crée un. */}
+      {!ouvrirDemande ? (
+        <button type="button" className="btn btn--ghost" style={{ width: 'auto', margin: '0 0 1rem' }} onClick={() => setOuvrirDemande(true)} data-support-demander>
+          Demander de l’aide
+        </button>
+      ) : (
+        <div className="sup-demande" style={{ marginBottom: '1rem' }}>
+          <b>Demander de l’aide</b>
+          <label htmlFor="sup-sujet">En deux mots</label>
+          <input id="sup-sujet" value={sujet} maxLength={160} onChange={(ev) => setSujet(ev.target.value)} placeholder="Mon devis ne part pas" />
+          <label htmlFor="sup-message">Ce qui se passe</label>
+          <textarea id="sup-message" value={message} rows={4} onChange={(ev) => setMessage(ev.target.value)} placeholder="Décrivez ce que vous avez fait et ce qui arrive…" />
+          <label htmlFor="sup-element">À propos de quoi ? (facultatif)</label>
+          <select id="sup-element" value={element} onChange={(ev) => setElement(ev.target.value)}>
+            <option value="">Rien en particulier</option>
+            {elements.map((x) => <option key={`${x.type}:${x.id}`} value={`${x.type}:${x.id}`}>{x.libelle}</option>)}
+          </select>
+          <small className="muted">
+            {element
+              ? 'Si nous avons besoin de regarder cet élément, nous vous le demanderons — c’est vous qui ouvrez, pour une heure.'
+              : 'Sans élément joint, nous ne pourrons rien demander à regarder : nous répondrons par écrit.'}
+          </small>
+          <div className="sup-choix">
+            <button type="button" className="btn btn--primary" disabled={!!busy} onClick={envoyerDemande}>{busy === 'demande' ? '…' : 'Envoyer'}</button>
+            <button type="button" className="btn btn--ghost" disabled={!!busy} onClick={() => setOuvrirDemande(false)}>Annuler</button>
+          </div>
+        </div>
+      )}
 
       {verrouille && e.verrou ? (
         <div className="sup-verrou on">
