@@ -133,6 +133,16 @@ async function main() {
     T('il n’y voit AUCUNE action d’un autre', etrangeres.length === 0,
       `${etrangeres.length} ligne(s) d’autrui, ex. ${JSON.stringify(etrangeres[0] ?? {}).slice(0, 100)}`)
   }
+  // ÉCRIRE dans la messagerie : `relever` va chercher la boîte IMAP de l'entreprise ENTIÈRE et
+  // inscrit les courriers de tout le monde. Le partenaire a `messagerie.ecrire` — borné à « les
+  // siennes », sauf qu'une boîte commune n'a pas de version sienne. La route ne relisait pas la
+  // borne ; la suite n'éprouvait que la lecture.
+  const releve = await api('/api/controle/courriers/relever', p.jeton, { method: 'POST' })
+  T('⭑ le partenaire ne déclenche pas la relève de la boîte commune',
+    [403, 404].includes(releve.statut), `HTTP ${releve.statut} — ${releve.brut.slice(0, 120)}`)
+  if (releve.statut === 403) T('… et le refus dit pourquoi, en français',
+    /commune|périmètre|vôtres/i.test(releve.brut), releve.brut.slice(0, 120))
+
   const courriers = await api('/api/controle/courriers?statut=tous', p.jeton)
   if (courriers.statut === 200) {
     const fils = courriers.data?.fils ?? []

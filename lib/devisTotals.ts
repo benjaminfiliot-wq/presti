@@ -16,10 +16,18 @@ export function computeTotals(lignes: LigneCalc[], remisePct = 0) {
     tva += t
     parTaux[taux] = (parTaux[taux] || 0) + t
   }
+  // Les totaux se déduisent de ce qui est AFFICHÉ, pas des sommes exactes. Le document imprime le
+  // détail de TVA par taux, puis Total HT, Total TVA, Total TTC : si le TTC vient d'une somme non
+  // arrondie, les trois lignes ne s'additionnent plus. Mesuré : 6 × 50 € remisés de 15 % à 5,5 %
+  // donnaient 255,00 + 14,03 = 269,02. Un centime qui manque sur une pièce scellée fait douter de
+  // tout le reste — et on ne peut plus la corriger.
+  const detail = Object.fromEntries(Object.entries(parTaux).map(([k, v]) => [k, round2(v)]))
+  const htArrondi = round2(ht)
+  const tvaArrondie = round2(Object.values(detail).reduce((a, b) => a + b, 0))
   return {
-    total_ht: round2(ht),
-    total_tva: round2(tva),
-    total_ttc: round2(ht + tva),
-    tva_par_taux: Object.fromEntries(Object.entries(parTaux).map(([k, v]) => [k, round2(v)])),
+    total_ht: htArrondi,
+    total_tva: tvaArrondie,
+    total_ttc: round2(htArrondi + tvaArrondie),
+    tva_par_taux: detail,
   }
 }

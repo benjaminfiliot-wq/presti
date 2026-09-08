@@ -25,6 +25,7 @@ import {
   mentionFranchise, sirenValide, basesParTaux, empreinte,
   toleranceCgiEncoreValable, codeExonerationParDefaut, MOTIFS_EXONERATION,
 } from '../lib/facturation.ts'
+import { computeTotals } from '../lib/devisTotals.ts'
 
 for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   const m = l.match(/^([A-Z_0-9]+)=(.*)$/)
@@ -119,6 +120,29 @@ T('… et la mention TVA d’après les débits (art. 77 ann. III CGI)', facture
 T('assurance : assureur, n° de contrat ET couverture géographique (art. L. 243-2 c. ass.)',
   /AXA France IARD/.test(facturePro.assurance) && /DEC-778812/.test(facturePro.assurance) && /France métropolitaine/.test(facturePro.assurance),
   facturePro.assurance)
+
+// ── Les trois lignes du bas s'additionnent ────────────────────────────────────────────────
+//
+// Total HT et Total TVA étaient arrondis chacun de leur côté, le TTC arrondissait la somme NON
+// arrondie : 6 × 50 € remisés de 15 % à 5,5 % imprimaient 255,00 + 14,03 = 269,02. Un centime qui
+// manque sur une pièce scellée fait douter de tout le reste, et on ne peut plus la corriger.
+{
+  const cas = [
+    { nom: '6 × 50 € à 5,5 % remisés de 15 %', lignes: Array.from({ length: 6 }, () => ({ quantite: 1, prix_unitaire_ht: 50, tva_taux: 5.5 })), remise: 15 },
+    { nom: 'deux taux, remise de 7 %', lignes: [{ quantite: 3, prix_unitaire_ht: 33.33, tva_taux: 20 }, { quantite: 2, prix_unitaire_ht: 12.5, tva_taux: 10 }], remise: 7 },
+    { nom: 'un mille euros remisé de 10 %', lignes: [{ quantite: 1, prix_unitaire_ht: 1000, tva_taux: 20 }], remise: 10 },
+    { nom: 'centimes répétés', lignes: Array.from({ length: 7 }, () => ({ quantite: 3, prix_unitaire_ht: 4.17, tva_taux: 10 })), remise: 3 },
+  ]
+  for (const c of cas) {
+    const t = computeTotals(c.lignes, c.remise)
+    T(`⭑ ${c.nom} : Total HT + Total TVA = Total TTC`,
+      Math.abs(t.total_ht + t.total_tva - t.total_ttc) < 1e-9,
+      `${t.total_ht} + ${t.total_tva} = ${(t.total_ht + t.total_tva).toFixed(2)} mais le document imprime ${t.total_ttc}`)
+    const sommeDetail = Object.values(t.tva_par_taux).reduce((a, b) => a + b, 0)
+    T(`… et le détail par taux fait bien le Total TVA`, Math.abs(sommeDetail - t.total_tva) < 1e-9,
+      `${sommeDetail.toFixed(2)} contre ${t.total_tva}`)
+  }
+}
 
 // ── L'avoir rend EXACTEMENT ce que la facture a encaissé ────────────────────────────────────────
 //

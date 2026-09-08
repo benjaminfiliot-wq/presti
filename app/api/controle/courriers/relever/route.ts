@@ -18,6 +18,15 @@ export async function POST(req: Request) {
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'messagerie', 'ecrire')
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
+  // Un périmètre BORNÉ n'est pas un périmètre accordé. Le partenaire a `messagerie.ecrire` borné à
+  // « les siennes » — or la boîte de l'entreprise n'a pas de version sienne : il n'y en a qu'une, et
+  // la relever inscrit les courriers de tout le monde. Pour CE geste, une borne vaut un refus.
+  if (perimetre.borne) {
+    return reponseRefus({
+      error: 'La boîte de l’entreprise est commune : la relever inscrirait les courriers de tout le monde. Vous voyez les vôtres, vous ne déclenchez pas la relève.',
+      status: 403, code: 'hors_perimetre',
+    })
+  }
   const r = await relever(40)
   if (!r.ok) return NextResponse.json({ error: r.erreur }, { status: 503 })
   // « Il en reste » n'est pas un détail : la relève est bornée par passage, et un retard qu'on ne

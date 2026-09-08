@@ -74,14 +74,19 @@ export function genererFacturX(d: DonneesFacturX): string {
   const date = (s: string) => String(s).slice(0, 10).replace(/-/g, '')
   const bases: BaseTaux[] = basesParTaux(d.lignes, d.remise_pct ?? 0)
 
+  // La remise s'applique aux LIGNES comme elle s'applique aux bases (`basesParTaux` ci-dessus).
+  // Sans elle, une facture de 1 000 € remisée de 10 % déclarait 1 000 en lignes et 900 en total,
+  // sans AllowanceTotalAmount (BT-107) pour expliquer l'écart : le document ne s'équilibre pas et
+  // un validateur le rejette. Un seul endroit décide de la remise, ici comme ailleurs.
+  const coef = 1 - Math.max(0, Math.min(100, Number(d.remise_pct) || 0)) / 100
   const lignes = d.lignes.map((l, i) => {
-    const ht = Math.round(Number(l.quantite) * Number(l.prix_unitaire_ht) * 100) / 100
+    const ht = Math.round(Number(l.quantite) * Number(l.prix_unitaire_ht) * coef * 100) / 100
     const cat = categorieTva(Number(l.tva_taux), d.franchise)
     return `    <ram:IncludedSupplyChainTradeLineItem>
       <ram:AssociatedDocumentLineDocument><ram:LineID>${i + 1}</ram:LineID></ram:AssociatedDocumentLineDocument>
       <ram:SpecifiedTradeProduct><ram:Name>${x(l.designation)}</ram:Name></ram:SpecifiedTradeProduct>
       <ram:SpecifiedLineTradeAgreement>
-        <ram:NetPriceProductTradePrice><ram:ChargeAmount>${n2(l.prix_unitaire_ht)}</ram:ChargeAmount></ram:NetPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice><ram:ChargeAmount>${n2(Number(l.prix_unitaire_ht) * coef)}</ram:ChargeAmount></ram:NetPriceProductTradePrice>
       </ram:SpecifiedLineTradeAgreement>
       <ram:SpecifiedLineTradeDelivery>
         <ram:BilledQuantity unitCode="${codeUnite(l.unite)}">${n2(l.quantite)}</ram:BilledQuantity>
