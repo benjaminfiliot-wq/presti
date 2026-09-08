@@ -47,13 +47,21 @@ export async function POST(req: Request) {
     if (action === 'accepter') {
       // Idempotent : un devis déjà accepté ne change pas d'horodatage (la preuve est figée).
       if (devis.statut === 'accepte') return NextResponse.json({ ok: true, deja: true })
-      await supabaseAdmin.from('devis').update({
+
+      // … et l'idempotence est TENUE PAR LA BASE, pas par le test au-dessus. Un lire-puis-écrire
+      // laisse passer deux requêtes concurrentes — double-clic du prospect, renvoi automatique du
+      // navigateur sur réseau instable — et chacune émet alors sa facture d'acompte SCELLÉE. Deux
+      // pièces numérotées dans la séquence continue, qu'on ne peut plus supprimer : il faudrait un
+      // avoir pour réparer. Avec `.eq('statut', 'envoye')`, c'est Postgres qui arbitre, et une seule
+      // des deux requêtes voit une ligne revenir.
+      const { data: prise } = await supabaseAdmin.from('devis').update({
         statut: 'accepte',
         accepte_le: new Date().toISOString(),
         accepte_ip: ipPseudonyme(ip),
         accepte_canal: 'plateforme',
         updated_at: new Date().toISOString(),
-      }).eq('id', devis.id)
+      }).eq('id', devis.id).neq('statut', 'accepte').select('id')
+      if (!prise || prise.length === 0) return NextResponse.json({ ok: true, deja: true })
 
       // Trace dans le fil : l'échange porte la preuve, pas seulement la table devis.
       await supabaseAdmin.from('messages').insert({

@@ -3,7 +3,7 @@ import { signalerPanneIA } from '@/lib/alerteService'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
-import { consumeCredit } from '@/lib/credits'
+import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 import { getPlateformeConfig, decisionReponse, personaDe } from '@/lib/plateformeConfig'
@@ -210,6 +210,10 @@ export async function POST(req: Request) {
     } catch (e) {
       console.error('[conversation] IA:', e)
       await signalerPanneIA('réponse au client', e)
+      // Le crédit est pris AVANT l'appel : si le modèle tombe, il repart. C'est la règle écrite en
+      // tête de lib/credits.ts, appliquée dans stream/route.ts et oubliée ici : l'artisan payait une
+      // réponse qu'il n'a jamais eue.
+      if (credit?.ok) await rendreCredit(artisan.id, tierRegle, !!artisan.is_founder)
     }
 
     if (reply) {

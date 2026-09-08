@@ -11,7 +11,7 @@ import { signalerPanneIA } from '@/lib/alerteService'
 import { generateDevis } from '@/lib/ai'
 import { resolveModel } from '@/lib/models'
 import type { Tier } from '@/lib/models'
-import { consumeCredit } from '@/lib/credits'
+import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { computeTotals } from '@/lib/devisTotals'
 import { normalizeLigne } from '@/lib/lignes'
 import { catalogueDe } from '@/lib/prix'
@@ -62,6 +62,8 @@ export async function creerDevisBrouillonPourLead(p: { artisanId: string; leadId
   } catch (e) {
     console.error('[devisAuto] IA:', e)
     await signalerPanneIA('chiffrage automatique d’un devis', e)
+    // Même règle qu'ailleurs : une panne de notre côté ne se facture pas à l'artisan.
+    if (credit?.ok) await rendreCredit(uid, tier, !!art.is_founder)
     return { ok: false, error: 'L’IA n’a pas pu générer le devis. Réessayez.', status: 500 }
   }
 
