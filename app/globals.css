@@ -2423,7 +2423,11 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .dv-cadre{border-radius:18px;overflow:hidden;background:#f4efe6;box-shadow:0 30px 80px -30px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.06)}
 .dv-cadre video{display:block;width:100%;height:auto;aspect-ratio:16/9}
 .dv-bascule{margin:.9rem 0 0;text-align:center;font-size:.92rem;color:var(--muted,#6b665e)}
-.dv-bascule button{background:none;border:0;padding:0;font:inherit;color:var(--ink,#1b1a17);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+/* La bascule video / scene par scene est un BOUTON, pas un lien : il lui faut une vraie cible pour
+   le pouce. Il mesurait 24 px de haut -- la hauteur de sa ligne de texte -- soit la moitie du
+   minimum de 44 px (WCAG 2.5.5, et les regles d'Apple). Le padding agrandit la zone touchable, la
+   marge negative la reprend dans le flux : rien ne bouge a l'oeil, tout se rattrape au doigt. */
+.dv-bascule button{background:none;border:0;padding:10px 4px;margin:-10px -4px;font:inherit;color:var(--ink,#1b1a17);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .dv-bascule button:focus-visible{outline:2px solid var(--ink,#1b1a17);outline-offset:3px;border-radius:4px}
 .rch-panne{margin:1rem 0 0;padding:.85rem 1rem;border:1px solid var(--line);border-left:3px solid var(--co,#e08a5a);border-radius:10px;background:rgba(224,138,90,.06);color:var(--ink)}
 .abo-tva{font-size:.72rem;color:var(--muted);margin-top:.15rem}
