@@ -28,7 +28,9 @@ try {
   await p.goto(`${APP}/login`, { waitUntil: 'load' })
   await p.fill('input[type=email]', email); await p.fill('input[type=password]', pw)
   await p.getByRole('button', { name: /Se connecter/i }).click(); await codeEmailSiDemande(p, email); await p.waitForTimeout(3500)
-  await p.goto(`${APP}/plateforme`, { waitUntil: 'load' })
+  // `/plateforme` ouvre sur Conversations : l'écran Intelligence est le volet « reglages ». Taper
+  // l'URL nue faisait attendre à cette suite un sélecteur qui n'était sur aucune page affichée.
+  await p.goto(`${APP}/plateforme?volet=reglages`, { waitUntil: 'load' })
   await p.waitForSelector('.pcfg-modes', { timeout: 15000 })
 
   ok(await p.locator('.pcfg-mode').count() === 3, 'les 3 modes de réponse sont proposés')

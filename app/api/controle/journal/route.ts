@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   const avant = u.searchParams.get('avant')
   const action = u.searchParams.get('action')
   const artisan = u.searchParams.get('artisan')
-  // Le rôle « lecture » (Alexandre) suit les actions, pas les adresses : ni `ip` ni `agent` ne sortent pour lui
+  // Le rôle « lecture » (un partenaire) suit les actions, pas les adresses : ni `ip` ni `agent` ne sortent pour lui
   // (revue du 07/09 — sa matrice, v10 §2.7, ne les contient pas).
   const colonnes = 'id, acteur_id, acteur_email, action, cible_type, cible_id, artisan_id, avant, apres, reconfirme, cree_le' + (f.role === 'direction' ? ', ip, agent' : '')
   let q = supabaseAdmin.from('journal_direction').select(colonnes).order('cree_le', { ascending: false }).limit(limite)

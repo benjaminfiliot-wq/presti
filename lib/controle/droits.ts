@@ -8,10 +8,16 @@
 //
 //   `fondateur`  — Benjamin. Tout, avec re-confirmation au mot de passe sur ce qui touche à l'argent,
 //                  aux accès et aux données d'un artisan.
-//   `partenaire` — Alexandre. Ce que le contrat lui accorde (article 7) : ses apports, son relevé, la
+//   `partenaire` — un associé apporteur d'affaires. Ce que le contrat type lui accorde (article 7) :
+//                  ses apports, son relevé, la
 //                  LECTURE des clients et des abonnements, et les fils de messagerie qui lui sont
 //                  assignés. Pas la comptabilité de l'entreprise, pas les réglages, pas les actions sur
 //                  un artisan, pas la santé du système, pas le journal des autres.
+//
+// LE POSTE EST VACANT depuis le 08/09/2026 : Alexandre MESROUA, seul partenaire qu'ait eu Presti, a
+// quitté l'entreprise, et la migration 0084 lui a retiré ses accès. Le rôle reste écrit et éprouvé
+// — c'est un rôle, pas une personne, et le jour où Benj reprend un associé la matrice est déjà là,
+// avec ses suites. On ne supprime pas une serrure parce que le locataire est parti.
 //
 // Ce que personne ne peut faire, pas même Benjamin : lire les conversations d'un artisan avec ses
 // clients, ses devis, ses photos. Le Poste de contrôle COMPTE, il ne lit pas. La seule exception prévue

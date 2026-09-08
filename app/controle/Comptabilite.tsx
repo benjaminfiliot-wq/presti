@@ -10,7 +10,7 @@ import { enEuros } from '@/lib/controle/releve'
 // Poste de contrôle → Comptabilité (prompt v11 §3, J5).
 //
 // Ce que Benj vient y chercher, dans cet ordre : où j'en suis du seuil de TVA, ce que je dois payer
-// bientôt, ce que j'ai dépensé, et ce que je dois à Alexandre ce mois-ci.
+// bientôt, ce que j'ai dépensé, et ce que je dois à un apporteur ce mois-ci.
 //
 // La règle de l'écran : **une estimation ne s'affiche jamais comme un montant dû**. Un chiffre estimé
 // porte son « ≈ » et le dit en toutes lettres ; un seuil vient de la base et son origine est écrite.

@@ -1,6 +1,7 @@
 // Le relevé mensuel du partenaire (contrat, article 4.2 — prompt v11 §3).
 //
-// Ce fichier calcule ce que Presti doit à Alexandre pour un mois donné. C'est de l'argent réel entre
+// Ce fichier calcule ce que Presti doit à un apporteur d'affaires pour un mois donné.
+// (Aucun n'est en poste depuis le 08/09/2026 ; le calcul, lui, reste juste et éprouvé.) C'est de l'argent réel entre
 // deux personnes qui travaillent ensemble : il vaut mieux qu'il soit juste, lisible, et qu'il se
 // vérifie à la main en deux minutes.
 //

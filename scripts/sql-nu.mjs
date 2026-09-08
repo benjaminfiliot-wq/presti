@@ -50,7 +50,9 @@ if (!appeleEnLigneDeCommande) { /* import seul */ } else {
 
 const args = process.argv.slice(2)
 const verifierSeul = args[0] === '--verifier'
-const [src, dst] = verifierSeul ? args.slice(1) : args
+// `--controle <f>` est retiré ici : ce qui reste est <source> <destination>, comme avant.
+const positionnels = args.filter((v, i) => v !== '--controle' && args[i - 1] !== '--controle')
+const [src, dst] = verifierSeul ? positionnels.slice(1) : positionnels
 if (!src || !dst) { console.error('Usage : node scripts/sql-nu.mjs <source.sql> <destination.sql>'); process.exit(2) }
 
 const source = fs.readFileSync(src, 'utf8')
@@ -78,7 +80,16 @@ if (apostrophes % 2 !== 0) { console.error(`❌ ${apostrophes} apostrophes : une
 const TETE = '-'.repeat(28) + ` ${dst.split(/[\/]/).pop()} — coller ce fichier EN ENTIER. Cette ligne est un commentaire : elle peut être abîmée sans conséquence.
 `
 // Et un contrôle à la fin : voir ce qui a été créé vaut mieux que le supposer.
-const PIED = `
+//
+// Ce contrôle était figé sur le mode support (0074-0083). Un fichier qui pose autre chose affichait
+// donc, après collage, l'état de tables sans rapport — un rapport qui parle d'autre chose ne rassure
+// pas, il désoriente. `--controle <fichier.sql>` permet de fournir le sien ; sans lui, celui-ci.
+const iControle = args.indexOf('--controle')
+const controleSurMesure = iControle >= 0 ? fs.readFileSync(args[iControle + 1], 'utf8').trimEnd() : null
+const PIED = controleSurMesure ? `
+${MARQUE_CONTROLE}
+${controleSurMesure}
+` : `
 ${MARQUE_CONTROLE}
 select 'tables' as quoi, string_agg(table_name, ', ' order by table_name) as resultat
   from information_schema.tables where table_schema = 'public'

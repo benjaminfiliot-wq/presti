@@ -1,8 +1,8 @@
 // Le Registre des apports : ce qui compte, et pourquoi (contrat art. 5 ; demande de Benj du 07/09).
 //
 // Une seule règle, ici, réutilisée telle quelle par l'écran, par le relevé mensuel (J4) et par les tests. Elle
-// rend TOUJOURS une raison lisible : Benj doit pouvoir dire à Alexandre, ligne par ligne, pourquoi elle compte
-// ou non — et Alexandre doit pouvoir la lire lui-même.
+// rend TOUJOURS une raison lisible : Benj doit pouvoir dire à l'apporteur, ligne par ligne, pourquoi elle
+// compte ou non — et l'apporteur doit pouvoir la lire lui-même.
 export type Statut = 'prouve' | 'saisi' | 'declare' | 'conteste' | 'retire'
 
 export type LigneApport = {

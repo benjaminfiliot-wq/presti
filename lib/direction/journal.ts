@@ -18,6 +18,9 @@ export type Action =
   | 'support_ticket_ouvert' | 'support_ticket_ferme' | 'support_acces_demande'
   | 'support_acces_refuse' | 'support_acces_ouvert' | 'support_acces_ferme'
   | 'support_verrou_pose' | 'support_verrou_leve'
+  // Le départ d'un associé (0084) : le retrait des privilèges est une action de direction comme une
+  // autre — et de celles qui doivent laisser une trace datée, avec l'état d'avant et celui d'après.
+  | 'partenaire_retire'
 
 export type Entree = {
   acteur: Fondateur

@@ -15,7 +15,8 @@ import { peutFaire, type Domaine, type Verbe, type RoleInterne } from '@/lib/con
 //      rien à réimplémenter, c'est la même règle que pour tout artisan ;
 //   4. `is_founder` (colonne gelée par le trigger 0055 : un jeton navigateur ne peut pas se l'attribuer) ;
 //   5. plafond par fondateur (120 appels / min : un outil de travail, pas une API publique) ;
-//   6. rôle (`direction_roles`) : `direction` = lecture + écriture, `lecture` = Alexandre (art. 7 du contrat).
+//   6. rôle (`direction_roles`) : `direction` = lecture + écriture, `lecture` = un partenaire (art. 7 du
+//      contrat type). Personne ne porte ce rôle depuis le 08/09/2026 — voir lib/controle/droits.ts.
 //
 // FAIL-CLOSED, et c'est voulu : une table absente (0065 pas collée), une erreur Supabase, un doute → refus
 // (503 ou 403), jamais « au mieux ». Les briques appelées (`consommerLimite`, `isBanned`) sont fail-open par

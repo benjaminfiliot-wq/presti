@@ -410,7 +410,7 @@ export default function ProfilPage() {
         <div className="tool-card">
           <h2>Réponses aux demandes</h2>
           <p className="muted" style={{ margin: '0 0 .7rem' }}>Quand un client vous écrit sur votre page, choisissez comment il reçoit sa première réponse. Dans tous les cas, la conversation arrive dans votre boîte de réception.</p>
-          <p className="muted" style={{ margin: 0 }}>Le comportement de votre assistant (réponse automatique ou non, modèle, ton, devis auto, mise en pause) se règle désormais dans <a href="/plateforme" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>Ma plateforme → Intelligence</a> — tout au même endroit.</p>
+          <p className="muted" style={{ margin: 0 }}>Le comportement de votre assistant (réponse automatique ou non, modèle, ton, devis auto, mise en pause) se règle désormais dans <a href="/plateforme?volet=reglages" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>Ma plateforme → Intelligence</a> — tout au même endroit.</p>
         </div>
 
         {/* Site web (constructeur 3 niveaux) */}

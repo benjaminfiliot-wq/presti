@@ -13,7 +13,13 @@
 //
 // Elle doit rester verte POUR TOUJOURS. Si elle échoue, ce n'est pas elle qu'on ajuste : c'est la base
 // ou le code qu'on nettoie. La seule modification légitime de la liste close ci-dessous est l'arrivée
-// d'un vrai fondateur, décidée par Benj.
+// — ou le DÉPART — d'un associé, décidée par Benj. Le 08/09/2026 : départ d'Alexandre MESROUA, seul
+// partenaire qu'ait eu Presti (migration 0084). La liste est repassée à un seul nom.
+//
+// Et un angle mort levé le même jour : cette suite contrôlait `is_founder` et `direction_roles`, pas
+// `artisans.role_interne` — or c'est LUI qui décide du périmètre depuis le v11 (lib/controle/droits.ts),
+// et c'est lui que 0068 posait par une instruction nommée. Un rôle d'entreprise accordé hors de la
+// liste serait passé inaperçu. Il est contrôlé ci-dessous.
 //
 // Usage : node scripts/zero-demo-e2e.mjs
 // Contrôle de syntaxe : node --check scripts/zero-demo-e2e.mjs
@@ -36,7 +42,7 @@ const admin = createClient(URL_SB, SERVICE, { auth: { persistSession: false } })
 
 // ── La liste close ────────────────────────────────────────────────────────────────────────────────────
 // Les seules adresses autorisées à porter un privilège en production. Toute autre est une anomalie.
-const FONDATEURS = ['benjaminfiliot@gmail.com', 'alexandremesroua@gmail.com']
+const FONDATEURS = ['benjaminfiliot@gmail.com']
 // Le compte que les stores exigent pour relire l'application. Il n'est PAS fondateur, et ne compte
 // dans aucun chiffre (v11 §2.3).
 const COMPTE_STORE = 'relecture-stores@presti-test.invalid'
@@ -53,7 +59,7 @@ async function main() {
 
   // ── 1. Les privilèges ───────────────────────────────────────────────────────────────────────────────
   console.log('1. Qui a des privilèges en production')
-  const { data: artisans, error } = await admin.from('artisans').select('id, email, nom, is_founder, est_demo, plan, created_at')
+  const { data: artisans, error } = await admin.from('artisans').select('id, email, nom, is_founder, role_interne, est_demo, plan, created_at')
   if (error) { console.log(`  ⛔ base injoignable : ${error.message}\n`); process.exit(2) }
 
   const fondateurs = (artisans ?? []).filter((a) => a.is_founder)
@@ -62,6 +68,13 @@ async function main() {
     intrus.map((a) => `${a.email} (créé le ${String(a.created_at).slice(0, 10)}) — retirer is_founder et supprimer`).join(' · '))
   T('les deux fondateurs attendus sont là', FONDATEURS.every((e) => fondateurs.some((a) => (a.email ?? '').toLowerCase() === e)),
     `trouvés : ${fondateurs.map((a) => a.email).join(', ')}`)
+
+  // Le rôle d'ENTREPRISE — celui qui décide réellement du périmètre (v11 §5). Il se pose par
+  // migration nommée, donc il survit à tout, y compris à un départ : à contrôler comme les autres.
+  const avecRole = (artisans ?? []).filter((a) => a.role_interne)
+  const rolesInternesIntrus = avecRole.filter((a) => !FONDATEURS.includes((a.email ?? '').toLowerCase()))
+  T('aucun rôle d’entreprise accordé hors des fondateurs', rolesInternesIntrus.length === 0,
+    rolesInternesIntrus.map((a) => `${a.email} → role_interne = ${a.role_interne}`).join(' · '))
 
   const { data: roles } = await admin.from('direction_roles').select('user_id, role')
   const parId = new Map((artisans ?? []).map((a) => [a.id, a]))
@@ -86,12 +99,27 @@ async function main() {
     // les captures de la vitrine ou la relecture des stores.
     console.log(`     ℹ️  ${tests.length} compte(s) conservé(s) volontairement (marqués, hors de tous les chiffres) :`)
     for (const a of tests) {
+      // La raison est CALCULÉE, pas supposée. Elle était écrite en dur — « porte une facture émise »
+      // pour tout compte qui n'était ni le compte des stores ni la démo. Le 08/09, un compte affichait
+      // donc cette raison avec zéro facture : la suite justifiait sa présence par un fait qu'elle
+      // n'avait pas vérifié. Un garde-fou qui invente ses raisons finit par couvrir n'importe quoi.
+      const { count: nFactures } = await admin.from('factures').select('id', { count: 'exact', head: true }).eq('artisan_id', a.id)
       const pourquoi = a.email === COMPTE_STORE ? 'exigé par Apple et Google pour relire l’application'
         : a.email === 'demo-menuisier@presti-test.invalid' ? 'alimente les captures de la vitrine, et quatre suites s’appuient dessus'
-        : 'porte une facture émise : dix ans de conservation (art. L. 102 B du LPF)'
+        : (nFactures ?? 0) > 0 ? `porte ${nFactures} facture(s) émise(s) : dix ans de conservation (art. L. 102 B du LPF)`
+        : 'AUCUNE raison identifiée — hors des chiffres, mais purgeable : il ne tient à rien'
       console.log(`        · ${a.email} — ${pourquoi}`)
     }
   }
+  // Un compte marqué « démo » dont l'adresse n'a rien d'un compte de test : c'est un compte INTERNE,
+  // écarté des chiffres parce qu'il n'est pas un client. Sans cette ligne, personne ne saurait dans six
+  // mois pourquoi une vraie adresse porte le marqueur — et quelqu'un finirait par le retirer.
+  const internes = (artisans ?? []).filter((a) => a.est_demo && !estTest(a.email))
+  if (internes.length) {
+    console.log(`     ℹ️  ${internes.length} compte(s) interne(s), écarté(s) des chiffres sans être des comptes de test :`)
+    for (const a of internes) console.log(`        · ${a.email} — ${a.plan}, offert ; n'est pas un client`)
+  }
+
   T('le compte de relecture des stores est présent et NON fondateur',
     (artisans ?? []).some((a) => a.email === COMPTE_STORE && !a.is_founder),
     (artisans ?? []).find((a) => a.email === COMPTE_STORE) ? 'il est fondateur !' : 'absent — Apple et Google l’exigent')

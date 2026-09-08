@@ -29,9 +29,15 @@ try {
   await p.goto(`${APP}/profil`, { waitUntil: 'load' }); await p.waitForTimeout(2500)
   const html = await p.content()
   ok(/Ma plateforme.{0,40}Intelligence/s.test(html.replace(/<[^>]+>/g, ' ')), 'profil renvoie vers Ma plateforme -> Intelligence')
+  // Et il faut que le lien MÈNE là où sa phrase le promet. Cette assertion vérifiait le texte, pas la
+  // destination : le lien pointait sur /plateforme, qui ouvre sur Conversations, et l'artisan à qui on
+  // venait d'écrire « ça se règle dans Intelligence » tombait sur ses conversations. Le test restait
+  // vert parce qu'il lisait la promesse au lieu de la suivre (08/09).
   ok(!/checked[^>]*reponseAuto/.test(html), 'le reglage de reponse auto n est plus dans profil')
   // la pause est bien dans /plateforme
-  await p.goto(`${APP}/plateforme`, { waitUntil: 'load' }); await p.waitForSelector('.pcfg-modes', { timeout: 15000 })
+  await p.getByRole('link', { name: /Ma plateforme.{0,40}Intelligence/s }).click()
+  await p.waitForSelector('.pcfg-modes', { timeout: 15000 })
+  ok(true, 'et le lien du profil ouvre bien l ecran Intelligence, sans detour')
   const txt = (await p.locator('.tool-card').nth(1).innerText())
   ok(/en pause|ouvertes/i.test(txt), 'la mise en pause est desormais dans Ma plateforme')
 } catch (e) { ok(false, 'exception: ' + (e?.message || e)) } finally {
