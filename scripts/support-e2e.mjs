@@ -66,7 +66,9 @@ const api = async (chemin, jeton, init = {}) => {
 
 /** Le ménage, garanti : ces comptes portent `is_founder`. Privilèges retirés d'abord. */
 async function menage() {
-  await admin.from('acces_support_lectures').delete().in('artisan_id', comptes).then(() => {}, () => {})
+  // Les traces ne se suppriment plus une par une (0076) : elles partent avec le compte, en cascade,
+  // par le même chemin qu'un vrai artisan qui demande son effacement. Le ménage éprouve donc lui
+  // aussi la production, au lieu d'emprunter une porte de service.
   await admin.from('acces_support').delete().in('artisan_id', comptes).then(() => {}, () => {})
   await admin.from('tickets').delete().in('artisan_id', comptes).then(() => {}, () => {})
   await admin.from('support_verrou').delete().in('artisan_id', comptes).then(() => {}, () => {})
@@ -302,9 +304,31 @@ async function main() {
   if (trace?.id) {
     const { error: eMod } = await admin.from('acces_support_lectures').update({ vue: 'chiffres' }).eq('id', trace.id)
     T('⭑ une trace de lecture ne se modifie pas, même en service_role', !!eMod, eMod?.message ?? '(modification acceptée)')
+    // Une trace SEULE ne se supprime pas — y compris sur un compte de test. L'ancienne version
+    // tolérait la suppression « pour un compte de test » : c'était l'anesthésiant qui a caché
+    // pendant une journée qu'un VRAI compte devenait indestructible (0076).
     const { error: eSup } = await admin.from('acces_support_lectures').delete().eq('id', trace.id)
-    // Les comptes de test sont tolérés par le trigger : c'est ce qui permet le ménage.
-    T('… et sa suppression n’est tolérée que pour un compte de test', !eSup, eSup?.message)
+    T('⭑ une trace SEULE ne se supprime pas, même en service_role, même sur un compte de test',
+      !!eSup && /conservation 24 mois/i.test(eSup.message ?? ''), eSup?.message ?? '(suppression acceptée)')
+
+    // Et le chemin qui compte vraiment : l'artisan s'en va, ses traces partent avec lui. Sans ça,
+    // une seule consultation de support suffisait à rendre son compte impossible à supprimer,
+    // pendant que son écran affichait « Votre compte sera supprimé le… ».
+    const { data: jetable } = await admin.auth.admin.createUser({
+      email: `${marque}-purge@presti-test.invalid`, password: `Pg-${crypto.randomBytes(9).toString('base64url')}-1`, email_confirm: true,
+    })
+    if (jetable?.user?.id) {
+      const u = jetable.user.id
+      await admin.from('artisans').insert({ id: u, email: `${marque}-purge@presti-test.invalid`, nom: 'Purge', metier: 'Test', slug: `${marque}-purge`, plan: 'gratuit' })
+      await admin.from('acces_support_lectures').insert({
+        artisan_id: u, acces_id: acces, vue: 'forme', element_type: 'lead', acteur_nom: 'Sonde', acteur_id: fondateur.uid,
+      }).then(() => {}, () => {})
+      const { error: ePurge } = await admin.from('artisans').delete().eq('id', u)
+      T('⭑ supprimer le compte de l’artisan emporte ses traces (droit à l’effacement)', !ePurge, ePurge?.message)
+      const { count: reste } = await admin.from('acces_support_lectures').select('id', { count: 'exact', head: true }).eq('artisan_id', u)
+      T('… et il n’en reste aucune', !reste, `${reste} trace(s) survivante(s)`)
+      await admin.auth.admin.deleteUser(u).catch(() => {})
+    } else SAUT('la suppression du compte emporte les traces', 'compte jetable non créé')
   } else SAUT('immuabilité de la trace', 'aucune trace à éprouver')
 }
 

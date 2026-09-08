@@ -201,16 +201,27 @@ else {
       if (!SEULE_PAGE) {
         for (const [chemin, sel] of [['/messages', '.inbox-compose textarea, textarea'], [`/p/${DEMO.slug}`, 'form textarea, form input[type=text], textarea']]) {
           await p2.goto(`${APP}${chemin}`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => null)
-          const premier = p2.locator('.inbox-item, .pil-item, [data-conv]').first()
-          if (await premier.count()) await premier.click().catch(() => {})
-          await p2.waitForTimeout(500)
+          // La liste arrive après le montage : `networkidle` ne suffit pas, et sans cette attente
+          // l'échec se lit « aucun composeur » alors que la vraie cause est « liste pas encore là ».
+          const liste = p2.locator('.inbox-item, .pil-item, [data-conv]')
+          await liste.first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {})
+          const nbItems = await liste.count()
+          if (nbItems) await liste.first().click().catch(() => {})
+          await p2.waitForTimeout(800)
+          const url = p2.url()
           await p2.setViewportSize({ width: profil.device.viewport.width, height: profil.device.viewport.height - 320 })
           await p2.waitForTimeout(400)
           const champ = p2.locator(sel).first()
           const present = await champ.count()
           const boite = present ? await champ.boundingBox() : null
           const vh = profil.device.viewport.height - 320
-          T(`${chemin} [${profil.id}] : le composeur reste visible, fenêtre réduite de 320 px`, !!boite && boite.y >= 0 && boite.y + boite.height <= vh + 1, present ? (boite ? `composeur à y=${Math.round(boite.y)}…${Math.round(boite.y + boite.height)} pour ${vh} px` : 'composeur sans boîte') : 'aucun composeur trouvé')
+          // Le message dit laquelle des trois causes s'est produite : redirigé, liste vide, ou fil fermé.
+          const cause = !present
+            ? (url.includes('/login') ? `redirigé vers ${url} — la session n'a pas tenu`
+              : nbItems === 0 ? 'aucune conversation dans la liste : le compte de démo n’a plus de données, ou la liste n’a pas chargé'
+              : `${nbItems} conversation(s) listée(s) mais le fil ne s’est pas ouvert au clic`)
+            : (boite ? `composeur à y=${Math.round(boite.y)}…${Math.round(boite.y + boite.height)} pour ${vh} px` : 'composeur présent mais sans boîte (caché)')
+          T(`${chemin} [${profil.id}] : le composeur reste visible, fenêtre réduite de 320 px`, !!boite && boite.y >= 0 && boite.y + boite.height <= vh + 1, cause)
           await p2.setViewportSize(profil.device.viewport)
         }
       }
