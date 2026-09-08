@@ -17,6 +17,9 @@
 import fs from 'node:fs'
 
 /** Découpe le SQL en segments {texte, dans} où `dans` vaut 'code' | 'chaine' | 'dollar' | 'ligne'. */
+/** Ce que le générateur ajoute en fin de fichier, et que la suite doit savoir ignorer. */
+export const MARQUE_CONTROLE = '-- CONTROLE APRES COLLAGE (ne modifie rien) : ce qui suit ne fait que LIRE.'
+
 export function sansCommentaires(sql) {
   let out = '', i = 0
   while (i < sql.length) {
@@ -69,7 +72,25 @@ if (verifierSeul) {
 const horsBlocs = sansCommentaires(nu).replace(/\$([A-Za-z_]*)\$[\s\S]*?\$\1\$/g, '$$$$')
 const apostrophes = (horsBlocs.match(/'/g) ?? []).length
 if (apostrophes % 2 !== 0) { console.error(`❌ ${apostrophes} apostrophes : une chaîne n'est pas refermée. Rien écrit.`); process.exit(1) }
-fs.writeFileSync(dst, nu, 'utf8')
+// L'éditeur a déjà mordu les deux premières lettres d'un fichier (« drop » arrivé en « op », 08/09).
+// Cette bande de tirets absorbe la morsure : il faut en perdre 29 pour que ça cesse d'être un
+// commentaire. On ne demande pas à quelqu'un de mieux coller, on rend le collage insensible.
+const TETE = '-'.repeat(28) + ` ${dst.split(/[\/]/).pop()} — coller ce fichier EN ENTIER. Cette ligne est un commentaire : elle peut être abîmée sans conséquence.
+`
+// Et un contrôle à la fin : voir ce qui a été créé vaut mieux que le supposer.
+const PIED = `
+${MARQUE_CONTROLE}
+select 'tables' as quoi, string_agg(table_name, ', ' order by table_name) as resultat
+  from information_schema.tables where table_schema = 'public'
+   and table_name in ('tickets', 'acces_support', 'acces_support_lectures', 'support_verrou')
+union all
+select 'fonctions', string_agg(routine_name, ', ' order by routine_name)
+  from information_schema.routines where routine_schema = 'public' and routine_name like '%support%'
+union all
+select 'policies fondateur restantes', coalesce(string_agg(policyname, ', '), 'aucune (attendu)')
+  from pg_policies where schemaname = 'public' and policyname like 'founders_all_%';
+`
+fs.writeFileSync(dst, TETE + nu + PIED, 'utf8')
 console.log(`✅ ${dst} — ${nu.split('\n').length} lignes de SQL, chaînes équilibrées`)
 
 }

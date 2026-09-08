@@ -20,7 +20,7 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
-import { sansCommentaires } from './sql-nu.mjs'
+import { sansCommentaires, MARQUE_CONTROLE } from './sql-nu.mjs'
 
 const DIR = 'supabase/migrations'
 let ok = 0, ko = 0
@@ -74,7 +74,11 @@ for (const j of jumeaux) {
   const src = migrationsDe(j, migrations)
   if (!src.length) { T(`${j} → ses migrations sont retrouvables`, false, 'aucun numéro exploitable dans le nom'); continue }
   const attendu = lignes(src.map((f) => fs.readFileSync(path.join(DIR, f), 'utf8')).join('\n'))
-  const trouve = lignes(fs.readFileSync(path.join(DIR, j), 'utf8'))
+  // Le générateur ajoute en fin de fichier un bloc qui LIT l'état de la base après collage, pour
+  // que Benj voie ce qui a été créé au lieu de le supposer. Il ne modifie rien, et il n'a donc pas
+  // à se retrouver dans la migration. On coupe dessus au lieu d'élargir une regex à vue.
+  const brutJ = fs.readFileSync(path.join(DIR, j), 'utf8')
+  const trouve = lignes(brutJ.split(MARQUE_CONTROLE)[0])
 
   let i = 0, perdue = null
   for (const l of trouve) {

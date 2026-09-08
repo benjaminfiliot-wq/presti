@@ -1,3 +1,4 @@
+---------------------------- _A_COLLER_sql_editor_0074_NU.sql — coller ce fichier EN ENTIER. Cette ligne est un commentaire : elle peut être abîmée sans conséquence.
 drop policy if exists founders_all_devis        on public.devis;
 drop policy if exists founders_all_devis_lignes on public.devis_lignes;
 drop policy if exists founders_all_leads        on public.leads;
@@ -393,3 +394,14 @@ begin
 end $fn$;
 revoke all on function public.regler_verrou_support(uuid, boolean, text, text, text) from public, anon, authenticated;
 grant execute on function public.regler_verrou_support(uuid, boolean, text, text, text) to service_role;
+
+-- CONTROLE APRES COLLAGE (ne modifie rien) : ce qui suit ne fait que LIRE.
+select 'tables' as quoi, string_agg(table_name, ', ' order by table_name) as resultat
+  from information_schema.tables where table_schema = 'public'
+   and table_name in ('tickets', 'acces_support', 'acces_support_lectures', 'support_verrou')
+union all
+select 'fonctions', string_agg(routine_name, ', ' order by routine_name)
+  from information_schema.routines where routine_schema = 'public' and routine_name like '%support%'
+union all
+select 'policies fondateur restantes', coalesce(string_agg(policyname, ', '), 'aucune (attendu)')
+  from pg_policies where schemaname = 'public' and policyname like 'founders_all_%';
