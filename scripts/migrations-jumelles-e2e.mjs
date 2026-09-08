@@ -110,5 +110,26 @@ for (const f of [...jumeaux, ...migrations]) {
 }
 T(`aucun littéral U&'…' dans une migration`, pieges.length === 0, pieges.join('\n        '))
 
+// Le second piege, mesure le 08/09 en collant 0084 : le mot-cle CONSTANT dans un DECLARE.
+//
+// L'editeur SQL a repondu « syntax error at or near "constant", LINE 2 » sur :
+//     do $sortie$
+//     declare
+//       v_email    constant text := '...';
+//
+// Ma premiere explication etait « les blocs do ne passent pas ». Elle est FAUSSE, et ce controle
+// l'a prouve en rougissant sur 0072 et 0080 -- qui portent tous deux « do $tag$ / declare ... »
+// et sont passes sans un mot. La seule difference avec 0084 tient dans ce mot-la. On interdit
+// donc CONSTANT, pas les blocs do : une regle large aurait allume un rouge permanent sur deux
+// migrations qui marchent, et un garde-fou toujours rouge ne signale plus rien.
+//
+// Il ne coute rien a abandonner : une variable de bloc de migration n'est jamais reassignee.
+const constantes = []
+for (const f of jumeaux) {
+  const noc = sansCommentairesPartout(fs.readFileSync(path.join(DIR, f), 'utf8'))
+  if (/constant/i.test(noc)) constantes.push(`${f} : mot-cle CONSTANT -- refuse a la lecture par l'editeur SQL (08/09)`)
+}
+T('aucun CONSTANT dans un fichier a coller', constantes.length === 0, constantes.join('\n        '))
+
 console.log(`\n${ko ? '❌' : '✅'} ${ok} réussis, ${ko} échoués\n`)
 process.exitCode = ko ? 1 : 0

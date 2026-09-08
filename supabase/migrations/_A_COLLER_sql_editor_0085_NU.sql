@@ -60,16 +60,13 @@ revoke all on function public.purger_compte_test(uuid) from public, anon, authen
 grant execute on function public.purger_compte_test(uuid) to service_role;
 
 -- CONTROLE APRES COLLAGE (ne modifie rien) : ce qui suit ne fait que LIRE.
-select 'gardes de conservation posees' as quoi,
-       string_agg(t.tgname, ', ' order by t.tgname) as resultat
-  from pg_trigger t join pg_class c on c.oid = t.tgrelid
- where not t.tgisinternal and c.relname in ('factures', 'factures_lignes', 'devis')
+select 'garde devis levee par la purge' as quoi,
+       case when pg_get_functiondef('public.purger_compte_test(uuid)'::regprocedure)
+                 like '%disable trigger devis_envoye_conserve%' then 'oui' else 'NON (anormal)' end as resultat
 union all
-select 'gardes levees par purger_compte_test',
-       coalesce(string_agg(m[1], ', ' order by m[1]), 'AUCUNE — anormal')
-  from (select distinct regexp_matches(
-          pg_get_functiondef('public.purger_compte_test(uuid)'::regprocedure),
-          'disable trigger (\w+)', 'g') as m) x
+select 'garde lignes de facture levee par la purge',
+       case when pg_get_functiondef('public.purger_compte_test(uuid)'::regprocedure)
+                 like '%disable trigger factures_lignes_immuables%' then 'oui' else 'NON (anormal)' end
 union all
 select 'comptes de test restants',
        coalesce(string_agg(email, ', '), 'aucun')

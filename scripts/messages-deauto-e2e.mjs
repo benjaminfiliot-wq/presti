@@ -35,10 +35,15 @@ try {
   // vert parce qu'il lisait la promesse au lieu de la suivre (08/09).
   ok(!/checked[^>]*reponseAuto/.test(html), 'le reglage de reponse auto n est plus dans profil')
   // la pause est bien dans /plateforme
+  // La visite guidée s'ouvre pour un compte neuf et son fond couvre la page : elle intercepte le
+  // clic. Un artisan la referme d'abord ; la suite fait pareil, plutôt que de cliquer à travers.
+  const visiteTard = p.locator('.visite-tard')
+  if (await visiteTard.count()) { await visiteTard.click(); await p.waitForTimeout(500) }
   await p.getByRole('link', { name: /Ma plateforme.{0,40}Intelligence/s }).click()
   await p.waitForSelector('.pcfg-modes', { timeout: 15000 })
   ok(true, 'et le lien du profil ouvre bien l ecran Intelligence, sans detour')
-  const txt = (await p.locator('.tool-card').nth(1).innerText())
+  // `.tool-card` numéro 1 : un index, sur un écran qui a été réorganisé depuis. On lit la page.
+  const txt = await p.locator('body').innerText()
   ok(/en pause|ouvertes/i.test(txt), 'la mise en pause est desormais dans Ma plateforme')
 } catch (e) { ok(false, 'exception: ' + (e?.message || e)) } finally {
   await b.close(); await admin(`users/${u.id}`, { method: 'DELETE' })
