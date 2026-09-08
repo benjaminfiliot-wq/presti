@@ -786,3 +786,47 @@ dans le cas de test, qui rougira à ce moment-là.
 
 **Preuve** : `courriers-e2e` 54/54, `controle-messagerie-e2e` 30/30, typage 0, build vert.
 **Appels IA : 0.**
+
+---
+
+## 08/09 — Le mode support, et trois échecs de collage
+
+**Les écrans.** Bandeau (AppShell), carte « Accès du support » (Paramètres → Sécurité), bloc Support
+dans la fiche du Poste de contrôle. Trois règles tenues par la mise en page : ouvrir et refuser ont
+la même largeur ; fermer ne demande rien ; un ticket sans élément n'a **pas** de bouton — pas un
+bouton grisé, qui laisse croire à un droit qu'on obtiendrait en insistant.
+
+**Deux trous fermés.** Le verrou personnel avait une table et aucun geste : rien ne pouvait y écrire
+une ligne. Une garantie que personne ne peut poser n'est pas une garantie. `regler_verrou_support`
+pose ET lève, et poser ferme les fenêtres encore ouvertes. — Le badge « Messages » comptait les
+conversations non lues de TOUS les artisans : la policy `founders_all_leads` le permettait, et le
+chiffre mentait depuis le début.
+
+**0075.** 0074 laissait une question ouverte : comment savoir QUEL devis regarder sans rouvrir une
+liste ? Réponse : c'est l'artisan qui désigne, en demandant de l'aide. Un ticket sans élément
+n'ouvre aucun accès — « je n'arrive pas à me connecter » se règle en parlant.
+
+**Trois échecs de collage, trois causes différentes.**
+
+1. Mon générateur `_NU` retirait les lignes commençant par `--` sans savoir reconnaître un `--`
+   à l'intérieur d'une chaîne : il a coupé un `comment on … is '…'` en deux. Réécrit avec un
+   tokenizer, et `migrations-jumelles-e2e` (98/98, au lanceur) vérifie désormais que chaque fichier
+   à coller se parse et porte le SQL de sa migration. **Un fichier que Benj colle est un livrable.**
+2. Le SQL Editor a perdu les deux premières lettres (« drop » → « op »). Corrigé non pas en lui
+   demandant de mieux coller, mais en mettant 28 tirets en tête : la morsure ne porte plus sur du
+   sens. Plus un bloc de contrôle en fin de fichier, qui affiche ce qui a été créé.
+3. Troisième échec : erreur identique au caractère près — c'est un onglet sauvegardé du SQL Editor
+   qui rejoue l'ancien texte, pas mon fichier.
+
+**Deux erreurs de ma part, dites ici parce qu'elles ont coûté des allers-retours.** J'ai accusé
+`pg_column_size` dans un CHECK d'être un piège : c'est faux, `0053` en porte un et tourne en prod.
+Et j'ai annoncé à Benj que les quatre tables du support existaient déjà : ma sonde utilisait
+`head: true` et ne remontait pas l'erreur. Rien n'était appliqué.
+
+**`appliquer-migration.mjs`** : poser une migration directement, en une transaction, avec
+vérification. Inutilisable pour l'instant — le mot de passe base de `.env.local` est refusé
+(`28P01`). `DIRECT_URL` n'est utilisée par aucun code de Presti : la réinitialiser ne casse rien.
+
+**Preuve** : `migrations-jumelles-e2e` 98/98, `support-droits-unit` 14/14, typage 0, build vert.
+`support-e2e` en code 2 : elle attend 0074 et 0075 en base.
+**Appels IA : 0.**
