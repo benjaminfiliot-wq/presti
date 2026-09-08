@@ -290,11 +290,33 @@ else {
       await ctx.addInitScript(([k, s]) => { try { localStorage.setItem(k, JSON.stringify(s)); localStorage.setItem('presti.aide_vues', JSON.stringify(['visite:console'])) } catch {} }, [storeKey, session])
       const p = await ctx.newPage()
       await p.goto(`${APP}/dashboard`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => null)
+      // Une seule passe ne suffit pas a juger une performance, et ce n'est pas un aveu : c'est la
+      // recommandation de Google pour Lighthouse en local. Mesure du 08/09, TROIS passes de suite sur
+      // le MEME code deploye : 72, 73, puis 95 -- le Total Blocking Time allait de 960 ms a 60 ms selon
+      // ce que la machine faisait par ailleurs. Un seuil juge sur un tirage pareil ne mesure pas le
+      // site, il mesure l'humeur du portable, et un rouge qui vient du bruit finit par etre ignore.
+      //
+      // On ne relache donc pas le seuil : on relance. Premiere passe verte, on s'arrete la (le cas
+      // courant, et la suite reste rapide). Premiere passe rouge, deux passes de plus, et c'est la
+      // MEDIANE qui tranche -- la valeur du milieu, insensible a une passe aberrante dans un sens
+      // comme dans l'autre. Le detail des trois est imprime : une vraie regression les fait toutes
+      // baisser ensemble, du bruit non, et la difference se lit a l'oeil.
+      const median = (t) => [...t].sort((x, y) => x - y)[Math.floor(t.length / 2)]
       for (const chemin of ['/', '/login', '/dashboard', `/p/${DEMO.slug}`]) {
         try {
-          const r = await lighthouseMobile(`${APP}${chemin}`, port)
+          let r = await lighthouseMobile(`${APP}${chemin}`, port)
+          const perfs = [r.perf], a11ys = [r.a11y]
+          if (r.perf < 90) {
+            for (let i = 0; i < 2; i++) {
+              const bis = await lighthouseMobile(`${APP}${chemin}`, port)
+              perfs.push(bis.perf); a11ys.push(bis.a11y)
+              if (bis.perf > r.perf) r = bis // on garde les audits de la meilleure passe pour le detail
+            }
+            console.log(`     i  ${chemin} : trois passes ${perfs.join(', ')} -> mediane ${median(perfs)}`)
+          }
+          const perf = median(perfs), a11y = median(a11ys)
           const pires = Object.values(r.audits).filter((a) => a.score !== null && a.score < 0.5 && a.details?.type !== 'debugdata').slice(0, 4).map((a) => a.id)
-          T(`Lighthouse ${chemin} : perf ${r.perf} ≥ 90 · a11y ${r.a11y} = 100`, r.perf >= 90 && r.a11y === 100, pires.length ? `audits faibles : ${pires.join(', ')}` : '')
+          T(`Lighthouse ${chemin} : perf ${perf} >= 90 · a11y ${a11y} = 100`, perf >= 90 && a11y === 100, pires.length ? `audits faibles : ${pires.join(', ')}` : '')
         } catch (e) { T(`Lighthouse ${chemin}`, false, e.message.split('\n')[0].slice(0, 120)) }
       }
       await b.close()
