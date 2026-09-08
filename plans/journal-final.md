@@ -830,3 +830,32 @@ vérification. Inutilisable pour l'instant — le mot de passe base de `.env.loc
 **Preuve** : `migrations-jumelles-e2e` 98/98, `support-droits-unit` 14/14, typage 0, build vert.
 `support-e2e` en code 2 : elle attend 0074 et 0075 en base.
 **Appels IA : 0.**
+
+### 08/09 (suite) — Les migrations sont passées, le drapeau est levé
+
+Benj a collé 0074 et 0075. Vérifié en base plutôt que cru : 4 tables, 8 fonctions, les colonnes
+`element_*` de 0075.
+
+**`support-e2e` : 34/34, contre un vrai serveur.** C'était la première fois qu'elle tournait — elle
+sortait en code 2 depuis sa naissance. Une suite qui n'a jamais tourné n'est pas une suite verte, et
+elle a rendu trois défauts dès le premier lancement :
+
+1. `leads.token` est de type `uuid` ; la suite y écrivait 48 caractères hexadécimaux. Elle plantait
+   **avant le premier test**, et le code 2 le masquait intégralement.
+2. Le bloc du verrou réutilisait un élément refusé depuis moins de 24 h : la demande était écartée
+   pour cette raison-là, et on ne savait plus ce qu'on éprouvait. Il a désormais son ticket.
+3. Le partenaire recevait « Votre rôle est en lecture seule » — un message qui laisse croire qu'un
+   rôle supérieur lui ouvrirait la porte. **Aucun rôle ne la lui ouvre.** Le périmètre passe
+   maintenant avant le rôle sur les trois routes support ; sans ça, la phrase française de
+   `RAISONS.support` n'était lue par personne et le test unitaire gardait du code mort.
+
+**La fenêtre d'à côté est fermée.** `sonde-rls-fondateur` : 0 devis, 0 factures, 0 demandes, là où
+il y en avait 9, 12 et 9. C'était la condition qui donnait un sens à tout le reste : une porte
+étroite ne protège rien tant que la baie vitrée d'à côté est ouverte.
+
+Drapeau `supportArtisan` **levé**, après les deux conditions que je m'étais données : les migrations
+en base, et la suite qui prouve la porte.
+
+**Preuve** : `support-e2e` 34/34, `sonde-rls-fondateur` 0/0/0, `migrations-jumelles` 98/98,
+`support-droits-unit` 14/14, typage 0, build vert.
+**Appels IA : 0.**
