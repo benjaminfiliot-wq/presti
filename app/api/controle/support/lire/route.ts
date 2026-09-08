@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { actif } from '@/lib/flags'
 
 export const runtime = 'nodejs'
@@ -24,10 +24,14 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
   if (!actif('supportArtisan')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
-  const f = await estDirection(req)
+  // Le périmètre AVANT le rôle : un partenaire doit s'entendre dire que le support n'est pas dans son
+  // périmètre, et non « votre rôle est en lecture seule » — qui laisserait croire qu'un rôle
+  // supérieur lui ouvrirait la porte. Il n'y a pas de rôle qui la lui ouvre.
+  const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'support', 'voir')
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
+  if (f.role !== 'direction') return reponseRefus({ error: 'Votre rôle est en lecture seule.', status: 403, code: 'lecture_seule' })
 
   const url = new URL(req.url)
   const acces = url.searchParams.get('acces') ?? ''

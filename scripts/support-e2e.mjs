@@ -113,7 +113,7 @@ async function main() {
   const SECRET = `phrase-temoin-${marque}`
   const { data: lead } = await admin.from('leads').insert({
     artisan_id: artisan.uid, nom_prospect: 'Client Témoin', contact: 'temoin@exemple.fr',
-    message: SECRET, statut: 'nouveau', token: crypto.randomBytes(24).toString('hex'),
+    message: SECRET, statut: 'nouveau', token: crypto.randomUUID(),
   }).select('id').single()
   await admin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'texte', contenu: SECRET })
 
@@ -245,7 +245,7 @@ async function main() {
   // Et sur un ticket qui désigne un élément, on ne peut pas en demander un autre — même à lui.
   const { data: autre } = await admin.from('leads').insert({
     artisan_id: artisan.uid, nom_prospect: 'Autre Client', contact: 'autre@exemple.fr',
-    message: 'autre message', statut: 'nouveau', token: crypto.randomBytes(24).toString('hex'),
+    message: 'autre message', statut: 'nouveau', token: crypto.randomUUID(),
   }).select('id').single()
   const { data: dAutre } = await admin.rpc('demander_acces_support', {
     p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: ticket.id, p_type: 'lead',
@@ -257,12 +257,18 @@ async function main() {
   console.log('\nF ter. Le verrou se pose par l’artisan, et ferme ce qui était ouvert')
   // Une fenêtre ouverte, puis le verrou : « personne ne peut me demander » ne doit pas cohabiter
   // avec quelqu'un en train de regarder.
+  // Son PROPRE ticket, sur son PROPRE élément : le ticket précédent porte un refus de moins de 24 h,
+  // et la demande serait écartée pour cette raison-là — on ne saurait plus ce qu'on éprouve.
+  const { data: tVerrou } = await admin.from('tickets').insert({
+    artisan_id: artisan.uid, fil: `<${marque}-verrou@presti-test.invalid>`, sujet: 'Verrou',
+    element_type: 'lead', element_id: autre.id, element_titre: 'Autre conversation',
+  }).select('id').single()
   const { data: aOuvert } = await admin.rpc('demander_acces_support', {
-    p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: ticket.id, p_type: 'lead',
-    p_element: lead.id, p_titre: 'Conversation de test', p_motif: 'Test verrou', p_ip: '127.0.0.1', p_agent: 'suite',
+    p_acteur: fondateur.uid, p_acteur_email: fondateur.email, p_ticket: tVerrou.id, p_type: 'lead',
+    p_element: autre.id, p_titre: 'Autre conversation', p_motif: 'Test verrou', p_ip: '127.0.0.1', p_agent: 'suite',
   })
   if (aOuvert?.etat === 'ok') {
-    await admin.rpc('notifier_acces_support', { p_acces: aOuvert.acces, p_journal: aOuvert.journal })
+    await admin.rpc('notifier_acces_support', { p_acces: aOuvert.acces, p_envoi: 'test' })
     await admin.rpc('ouvrir_acces_support', {
       p_acces: aOuvert.acces, p_artisan: artisan.uid, p_artisan_email: artisan.email, p_ip: '127.0.0.1', p_agent: 'suite',
     })

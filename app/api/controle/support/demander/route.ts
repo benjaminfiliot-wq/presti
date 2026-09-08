@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { sendEmail, EMAIL_ENTREPRISE } from '@/lib/email'
 import { actif } from '@/lib/flags'
@@ -25,10 +25,13 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
   if (!actif('supportArtisan')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
-  const f = await estDirection(req)
+  // Le périmètre AVANT le rôle : le partenaire doit entendre que le support n'est pas dans son
+  // périmètre, pas « lecture seule » — aucun rôle ne le lui ouvre.
+  const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'support', 'ecrire')
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
+  if (f.role !== 'direction') return reponseRefus({ error: 'Votre rôle est en lecture seule.', status: 403, code: 'lecture_seule' })
 
   const b = (await req.json().catch(() => null)) as { ticket?: unknown; type?: unknown; element?: unknown; titre?: unknown; motif?: unknown } | null
   const UUID = /^[0-9a-f-]{36}$/i

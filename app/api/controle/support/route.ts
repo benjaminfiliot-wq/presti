@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { actif } from '@/lib/flags'
 
 export const runtime = 'nodejs'
@@ -20,7 +20,9 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
   if (!actif('supportArtisan')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
-  const f = await estDirection(req)
+  // Voir l'état d'une porte n'est pas lire ce qu'il y a derrière : un fondateur en lecture seule y a
+  // droit. C'est `lire` qui exige le rôle direction, pas ce listage.
+  const f = await estFondateur(req)
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'support', 'voir')
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
