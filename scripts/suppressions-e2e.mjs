@@ -82,6 +82,20 @@ try {
   const [D] = await (await rest(`devis?id=eq.${dv.id}&select=id,statut`)).json()
   ok(!!D && D.statut === 'envoye', '⭑ le DEVIS ENVOYÉ est toujours là (obligation de conservation)')
 
+  // 5 bis) La porte qui VIOLAIT l'invariant : DELETE /api/devis/<id>
+  //
+  // Jusqu'au 08/09 elle supprimait n'importe quel devis, accepté compris, alors que quatre écrans
+  // promettent « les devis envoyés ne sont jamais supprimés ». La suite prouvait l'invariant sur la
+  // porte qui le respecte et jamais sur celle qui le violait — le motif exact de /api/control.
+  {
+    const sup = await fetch(`${APP}/api/devis/${dv.id}`, { method: 'DELETE', headers: H })
+    const corps = await sup.json().catch(() => ({}))
+    ok(sup.status === 409, `⭑ DELETE sur un devis ENVOYÉ est refusé (${sup.status})`)
+    ok(/conserv|loi/i.test(corps.error || ''), 'le refus dit POURQUOI : la conservation, pas une panne')
+    const [encore] = await (await rest(`devis?id=eq.${dv.id}&select=id`)).json()
+    ok(!!encore, '⭑ … et le devis est toujours là après la tentative')
+  }
+
   // 6) On ne touche pas aux données d'un autre artisan
   const autre = await agir({ action: 'conversation_supprimer', lead_id: '00000000-0000-0000-0000-000000000000', confirm: 'SUPPRIMER' })
   ok(autre.status === 404, `une conversation qui ne vous appartient pas est refusée (${autre.status})`)

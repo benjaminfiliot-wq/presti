@@ -83,7 +83,11 @@ export default function DevisList() {
                   <span className="dc-amt">{eur(d.total_ttc ?? 0)}</span>
                   <div className="dc-actions">
                     <button className="btn btn--ghost" onClick={() => router.push(`/devis/${d.id}`)}>Ouvrir</button>
-                    <button className="btn btn--ghost danger" disabled={busy === d.id} onClick={() => supprimer(d)}>Supprimer</button>
+                    {/* Un devis parti chez le client se conserve (art. L. 123-22 c. com.) : le bouton
+                        n'existe pas, plutôt que d'exister et de répondre 409. */}
+                    {(d.statut ?? 'brouillon') === 'brouillon'
+                      ? <button className="btn btn--ghost danger" disabled={busy === d.id} onClick={() => supprimer(d)}>Supprimer</button>
+                      : <span className="muted" style={{ fontSize: '.78rem', alignSelf: 'center' }} title="La loi impose de conserver un devis envoyé">conservé</span>}
                   </div>
                 </div>
               )

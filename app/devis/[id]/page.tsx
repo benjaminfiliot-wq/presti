@@ -216,8 +216,11 @@ export default function DevisEditor() {
     if (!confirm('Supprimer définitivement ce devis ?')) return
     const { data } = await supabase.auth.getSession()
     const res = await fetch(`/api/devis/${savedId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${data.session?.access_token}` } })
-    if (res.ok) router.push('/devis')
-    else setMsg({ type: 'err', text: 'Suppression impossible.' })
+    if (res.ok) { router.push('/devis'); return }
+    // Le serveur dit POURQUOI (obligation de conservation, et ce qu'on peut faire à la place) :
+    // « Suppression impossible » laissait l'artisan croire à une panne.
+    const corps = await res.json().catch(() => ({} as { error?: string }))
+    setMsg({ type: 'err', text: corps.error ?? 'Suppression impossible.' })
   }
 
   const lignesPleines = lignes.filter((l) => l.designation.trim())

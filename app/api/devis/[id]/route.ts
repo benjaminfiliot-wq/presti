@@ -65,7 +65,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
 }
 
-// Supprime un devis (et ses lignes). Un devis n'est pas une pièce comptable → suppression libre.
+// Supprime un devis (et ses lignes) — UNIQUEMENT tant qu'il est brouillon.
+//
+// L'ancien commentaire disait « un devis n'est pas une pièce comptable → suppression libre », et
+// c'était faux dès qu'il est parti : quatre écrans promettent à l'artisan que « les devis envoyés
+// et factures émises ne sont jamais supprimés — la loi impose de les conserver »
+// (app/parametres/SectionDonnees.tsx, app/profil/page.tsx, app/api/donnees/route.ts), et
+// lib/purgeComptes.ts les garde déjà à la purge. Un devis accepté supprimé emportait en plus le
+// `devis_id` de la facture qu'il a produite (0006 : `on delete set null`), qui perdait sa pièce
+// d'origine sans un mot.
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
@@ -73,8 +81,14 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const { data: userData } = await getUserRevocable(token)
   if (!userData?.user) return NextResponse.json({ error: 'Session expirée' }, { status: 401 })
   const uid = userData.user.id
-  const { data: owned } = await supabaseAdmin.from('devis').select('id').eq('id', id).eq('artisan_id', uid).maybeSingle()
+  const { data: owned } = await supabaseAdmin.from('devis').select('id, statut, numero').eq('id', id).eq('artisan_id', uid).maybeSingle()
   if (!owned) return NextResponse.json({ error: 'Devis introuvable' }, { status: 404 })
+  if ((owned.statut ?? 'brouillon') !== 'brouillon') {
+    return NextResponse.json({
+      error: `Le devis ${owned.numero ?? ''} est parti chez votre client : il ne peut plus être supprimé, seulement refusé ou laissé expirer. La loi impose de le conserver.`.trim(),
+      code: 'conservation',
+    }, { status: 409 })
+  }
   await supabaseAdmin.from('devis_lignes').delete().eq('devis_id', id)
   const { error } = await supabaseAdmin.from('devis').delete().eq('id', id).eq('artisan_id', uid)
   if (error) return NextResponse.json({ error: 'Suppression impossible' }, { status: 500 })

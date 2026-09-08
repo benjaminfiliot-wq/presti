@@ -120,6 +120,28 @@ T('assurance : assureur, n° de contrat ET couverture géographique (art. L. 243
   /AXA France IARD/.test(facturePro.assurance) && /DEC-778812/.test(facturePro.assurance) && /France métropolitaine/.test(facturePro.assurance),
   facturePro.assurance)
 
+// ── L'avoir rend EXACTEMENT ce que la facture a encaissé ────────────────────────────────────────
+//
+// Le 08/09, l'avoir posait `remise_pct: 0` en recopiant les lignes de la facture annulée. La base
+// stockait le bon total (-900), mais le PDF ne lit pas les totaux scellés : il recalcule depuis
+// les lignes et la remise. Le client recevait donc -1 000 pour une facture de 900 — cent euros
+// rendus en trop, sur une pièce scellée qu'on ne peut plus corriger.
+//
+// Ce test regarde ce que le CLIENT reçoit. Un test qui aurait vérifié la base serait passé.
+{
+  const lignesAvoir = lignesPdf.map((l) => ({ ...l, prix_unitaire_ht: -Math.abs(l.prix_unitaire_ht) }))
+  const facture = buildPdfData({ numero: 'FAC-2026-0100', date_emission: '2026-09-08', client_nom: 'Mme Durand', remise_pct: 10 }, lignesPdf, artisanPdf, 'facture')
+  const avoir = buildPdfData({ numero: 'FAC-2026-0101', date_emission: '2026-09-08', client_nom: 'Mme Durand', remise_pct: 10, avoir_de: 'x' }, lignesAvoir, artisanPdf, 'facture')
+  T('⭑ un avoir rend exactement ce que sa facture a facturé, remise comprise',
+    Math.abs(avoir.totalTtc + facture.totalTtc) < 0.005,
+    `facture ${facture.totalTtc} ↔ avoir ${avoir.totalTtc}`)
+
+  const avoirSansRemise = buildPdfData({ numero: 'FAC-2026-0102', date_emission: '2026-09-08', client_nom: 'Mme Durand', remise_pct: 0, avoir_de: 'x' }, lignesAvoir, artisanPdf, 'facture')
+  T('… et sans la remise reportée, il rendrait trop — c’est le défaut du 08/09',
+    Math.abs(avoirSansRemise.totalTtc) > Math.abs(facture.totalTtc),
+    `${avoirSansRemise.totalTtc} contre ${facture.totalTtc}`)
+}
+
 const facturePart = buildPdfData({ numero: 'FAC-2026-0043', date_emission: '2026-09-03', client_nom: 'Mme Durand' }, lignesPdf, artisanPdf, 'facture')
 T('facture d’un particulier : aucune indemnité de 40 €', !(facturePart.mentionsReglement ?? []).some((m) => /40 €/.test(m)))
 T('aucune date de prestation inventée quand la donnée manque', facturePart.datePrestation === '', facturePart.datePrestation)

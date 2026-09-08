@@ -42,7 +42,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { data: avoir, error } = await supabaseAdmin.from('factures').insert({
     artisan_id: uid, devis_id: cur.devis_id ?? null, client_id: cur.client_id ?? null, numero,
     objet: `Avoir annulant la facture ${cur.numero ?? ''}${motif ? ` — ${motif}` : ''}`.trim(),
-    statut: 'emise', date_emission: aujourdhui, date_echeance: aujourdhui, remise_pct: 0, acompte_pct: 0,
+    // La remise de la facture annulée est REPORTÉE, pas remise à zéro. Le PDF ne lit pas les totaux
+    // scellés : il les recalcule depuis les lignes et `remise_pct` (lib/devisPdfData.ts). Avec 0 ici,
+    // une facture de 1 000 EUR remisée à 10 % — donc 900 encaissés — sortait imprimée à -1 000 :
+    // cent euros rendus en trop, sur une pièce scellée qu'on ne peut plus corriger.
+    statut: 'emise', date_emission: aujourdhui, date_echeance: aujourdhui,
+    remise_pct: Number(cur.remise_pct) || 0, acompte_pct: 0,
     conditions: null, notes: cur.notes ?? null,
     client_nom: cur.client_nom, client_email: cur.client_email ?? null, client_adresse: cur.client_adresse ?? null,
     client_siren: cur.client_siren ?? null, client_pays: cur.client_pays ?? 'FR', adresse_chantier: cur.adresse_chantier ?? null,

@@ -49,7 +49,14 @@ export default function Dashboard() {
   async function loadLeads(artisanId: string) {
     const { data: ls } = await supabase.from('leads').select('id, nom_prospect, contact, message, statut, created_at').eq('artisan_id', artisanId).order('created_at', { ascending: false })
     setLeads((ls as Lead[]) ?? [])
-    const { data: ms } = await supabase.from('messages').select('lead_id, sens, type, contenu').eq('sens', 'out').eq('type', 'reponse_auto')
+    // `.is('etat', null)` : une proposition en attente porte `etat: 'proposition'`, une proposition
+    // refusée `etat: 'rejete'` — ni l'une ni l'autre n'est jamais partie chez le client. Sans ce
+    // filtre, l'écran annonçait « Réponse envoyée automatiquement » pour un message que l'artisan
+    // avait lui-même rejeté : il croyait son prospect servi et ne rappelait pas.
+    // `.order` : sans lui, « la première trouvée » n'était pas la dernière envoyée.
+    const { data: ms } = await supabase.from('messages').select('lead_id, sens, type, contenu, sent_at')
+      .eq('sens', 'out').eq('type', 'reponse_auto').is('etat', null)
+      .order('sent_at', { ascending: false })
     const map: Record<string, string> = {}
     for (const m of (ms as Message[]) ?? []) if (m.lead_id && m.contenu && !map[m.lead_id]) map[m.lead_id] = m.contenu
     setReplies(map)

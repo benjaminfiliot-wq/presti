@@ -107,7 +107,11 @@ async function construire(mois: string) {
     if (a.est_demo || a.is_founder || !a.stripe_customer_id) continue
     const cents = encaisse.get(a.stripe_customer_id) ?? 0
     const rendu = rembourse.get(a.stripe_customer_id) ?? 0
-    if (cents <= 0) continue
+    // Un mois sans encaissement mais AVEC un remboursement compte quand même : l'article 5.4 traite
+    // le remboursement comme un encaissement négatif, et l'écarter ici revenait à garder une
+    // commission sur de l'argent reparti. C'est la doctrine écrite en tête de lib/controle/releve.ts,
+    // que ce filtre contredisait deux lignes après l'avoir lue.
+    if (cents <= 0 && rendu <= 0) continue
     const ap = parApport.get(a.id)
     // Le taux vient du REGISTRE, jamais d'une saisie : prouvé ou saisi 20 %, contesté 10 %, sinon 0.
     const v = ap ? verdict(ap as { statut: Statut; piece: string | null; motif: string | null }) : null
