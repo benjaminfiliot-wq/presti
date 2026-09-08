@@ -859,3 +859,29 @@ en base, et la suite qui prouve la porte.
 **Preuve** : `support-e2e` 34/34, `sonde-rls-fondateur` 0/0/0, `migrations-jumelles` 98/98,
 `support-droits-unit` 14/14, typage 0, build vert.
 **Appels IA : 0.**
+
+### 08/09 (fin) — La garantie devient un argument, et une promesse fausse est réparée
+
+Benj : « rajoute une section, ça a un atout marketing ». Section **Confiance** en ligne sur
+`prestiapp.fr`, entre la vitrine et les tarifs — la question « et vous, vous voyez quoi ? » se pose
+juste après avoir vu ce que Presti fait des messages du client, et juste avant le prix.
+
+Quatre **mécanismes**, pas quatre adjectifs : « sécurisé » ne veut rien dire, tout le monde l'écrit.
+La porte naît fermée ; la forme jamais le fond ; chaque coup d'œil est écrit dans SON espace ; un
+verrou définitif. Et la phrase qui reste : « Ce n'est pas un paragraphe dans des conditions
+générales. C'est du code, et il refuse. » Sous le drapeau `supportArtisan` : une promesse
+commerciale ne doit pas survivre à ce qui la tient.
+
+**Une des quatre promesses était fausse, et c'est moi qui l'avais écrite.** « Ça part avec vos
+données quand vous les exportez » figurait déjà dans l'écran Paramètres et dans le registre — mais
+rien ne collectait ces lignes. Vérifier AVANT d'écrire la page l'a rattrapée. L'export rend
+maintenant `acces_du_support.json` et `acces_du_support_consultations.json` ; le nom de la personne
+qui a lu y reste (c'est le point de la trace), ni IP ni appareil.
+
+Retiré aussi la tolérance du 404 sur les routes support dans `fermeture-e2e` : elle existait pour un
+drapeau baissé, le drapeau est levé. Une tolérance qui survit à sa raison d'être est un trou qui
+attend.
+
+**Preuve** : section vérifiée en production (les 4 titres, la phrase de fin, les tarifs intacts),
+`fermeture-e2e` 116/116, `support-e2e` 34/34 contre la prod, typage 0, build vert.
+**Appels IA : 0.**
