@@ -118,6 +118,9 @@ export async function creerFacture(p: {
       // Art. 77 ann. III CGI : l'option pour les débits se mentionne sur la facture. On la
       // fige à l'émission — le régime du jour, pas celui que l'artisan aura dans deux ans.
       tva_sur_debits: (art as Record<string, unknown> | null)?.tva_sur_debits === true,
+      // 0081 — le régime est FIGÉ ici, à côté de `tva_sur_debits` et pour la même raison : le PDF
+      // est regénéré à la demande, et doit rendre la pièce telle qu'elle a été émise.
+      tva_regime: franchise ? 'franchise' : 'reel',
       total_ht: totals.total_ht, total_tva: totals.total_tva, total_ttc: totals.total_ttc,
     })
     .select('id, numero').single()

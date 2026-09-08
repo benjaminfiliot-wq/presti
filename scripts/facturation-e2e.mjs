@@ -121,6 +121,34 @@ T('assurance : assureur, n° de contrat ET couverture géographique (art. L. 243
   /AXA France IARD/.test(facturePro.assurance) && /DEC-778812/.test(facturePro.assurance) && /France métropolitaine/.test(facturePro.assurance),
   facturePro.assurance)
 
+// ── Une facture émise garde SON régime de TVA ──────────────────────────────────────────────
+//
+// Le PDF n'est jamais stocké : il est regénéré depuis les lignes. Le régime venait du profil lu EN
+// DIRECT, donc une facture émise à 20 % se réimprimait à 0 % le jour où l'artisan repassait en
+// franchise — Total TTC = Total HT, mention de franchise en bas d'une pièce qui a facturé de la TVA.
+// Le client, lui, garde l'autre version. Invisible tant qu'on ne joue pas le changement de régime.
+{
+  const auReel = { ...artisanPdf, tva_regime: 'reel' }
+  const enFranchise = { ...artisanPdf, tva_regime: 'franchise' }
+  const piece = { numero: 'FAC-2026-0200', date_emission: '2026-03-01', client_nom: 'Mme Durand', tva_regime: 'reel' }
+
+  const aLEmission = buildPdfData(piece, lignesPdf, auReel, 'facture')
+  const plusTard = buildPdfData(piece, lignesPdf, enFranchise, 'facture')
+  T('⭑ une facture émise au réel garde sa TVA quand l’artisan repasse en franchise',
+    Math.abs(aLEmission.totalTtc - plusTard.totalTtc) < 0.005 && plusTard.totalTtc > plusTard.totalHt,
+    `à l’émission ${aLEmission.totalTtc} → aujourd’hui ${plusTard.totalTtc} (HT ${plusTard.totalHt})`)
+
+  // Un DEVIS se refait : lui doit suivre le régime courant, sinon on proposerait un prix périmé.
+  const devisFranchise = buildPdfData({ numero: 'DEV-1', date_emission: '2026-03-01', client_nom: 'X' }, lignesPdf, enFranchise, 'devis')
+  T('… alors qu’un devis suit le régime d’aujourd’hui (il se refait)',
+    Math.abs(devisFranchise.totalTtc - devisFranchise.totalHt) < 0.005, `${devisFranchise.totalTtc} / ${devisFranchise.totalHt}`)
+
+  // Une facture d'avant 0081 n'a pas de régime figé : on retombe sur le courant, explicitement.
+  const ancienne = buildPdfData({ numero: 'FAC-2025-0001', date_emission: '2025-11-02', client_nom: 'Y' }, lignesPdf, auReel, 'facture')
+  T('une facture antérieure à 0081 retombe sur le régime courant, sans planter',
+    ancienne.totalTtc > ancienne.totalHt, `${ancienne.totalTtc} / ${ancienne.totalHt}`)
+}
+
 // ── Les trois lignes du bas s'additionnent ────────────────────────────────────────────────
 //
 // Total HT et Total TVA étaient arrondis chacun de leur côté, le TTC arrondissait la somme NON

@@ -53,6 +53,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     client_siren: cur.client_siren ?? null, client_pays: cur.client_pays ?? 'FR', adresse_chantier: cur.adresse_chantier ?? null,
     categorie_operation: cur.categorie_operation ?? 'mixte', devise: cur.devise ?? 'EUR',
     exoneration_code: cur.exoneration_code ?? null, tva_sur_debits: cur.tva_sur_debits ?? false,
+    // Un avoir hérite du régime de la facture qu'il annule (0081) : sinon il la contredirait,
+    // et deux pièces liées diraient deux choses différentes de la même opération.
+    tva_regime: (cur as { tva_regime?: string | null }).tva_regime ?? null,
     total_ht: neg(cur.total_ht), total_tva: neg(cur.total_tva), total_ttc: neg(cur.total_ttc),
     avoir_de: id,
   }).select('id, numero').single()

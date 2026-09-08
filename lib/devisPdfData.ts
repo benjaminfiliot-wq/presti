@@ -55,7 +55,14 @@ export function buildPdfData(devis: DevisRow, lignes: LigneRow[], artisan: Artis
   // La MENTION qui l'accompagne n'est pas figée : la recodification CGI → CIBS est entrée
   // en vigueur le 01/09/2026 avec une tolérance jusqu'au 31/12/2027. Elle se calcule donc
   // à la date du document et selon le choix de l'artisan (lib/facturation.ts).
-  const franchise = (artisan.tva_regime || 'franchise') === 'franchise'
+  // Pour une FACTURE, le régime est celui figé à l'émission (0081), pas celui d'aujourd'hui : le
+  // PDF est regénéré à la demande, et une facture émise à 20 % se réimprimait à 0 % le jour où
+  // l'artisan repassait en franchise. Le client, lui, garde l'autre version dans ses archives.
+  // Une facture antérieure à 0081 n'a pas de régime figé : on retombe alors sur le courant,
+  // faute de pouvoir le deviner sans risquer d'inventer. Un devis, lui, se refait : son régime
+  // est toujours le courant.
+  const regimeFige = type === 'facture' ? (devis as { tva_regime?: string | null }).tva_regime : null
+  const franchise = ((regimeFige || artisan.tva_regime) || 'franchise') === 'franchise'
   const ls = (lignes || []).map((l) => {
     const tv = Number(l.tva_taux)
     return {
