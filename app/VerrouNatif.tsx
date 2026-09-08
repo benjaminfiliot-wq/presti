@@ -2,9 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabaseClient'
 import { estNatif, plugin } from '@/lib/natif'
-import { desabonnerCetAppareil } from '@/lib/pushClient'
 import Marque from '@/app/Marque'
 
 // Verrou biométrique de l'application (prompt v9 §4.3, décision §10 : après 5 min d'arrière-plan).
@@ -27,6 +25,25 @@ const CLE = 'presti.arriere_plan_le'
 const SURFACES_ARTISAN = /^\/(p|site|l)\//
 const ANNULATIONS = /userCancel|systemCancel|appCancel|userFallback/i
 
+// Ce verrou ne sert QUE dans l'application native — l'en-tete ci-dessus le dit : « jamais actif sur une
+// surface d'artisan ni dans un navigateur ». Mais il est monte par le layout RACINE, donc ses imports
+// partaient dans le bundle de toutes les pages, la vitrine publique comprise : chaque visiteur de
+// prestiapp.fr telechargeait, parsait et executait le client Supabase (un chunk de 181 Ko) et le client
+// de notifications, pour un composant qui ne fait rien chez lui. Mesure du 08/09 sur la page d'accueil :
+// 763 Ko de JavaScript et 1 440 ms de Total Blocking Time sur le mobile simule de Lighthouse.
+//
+// On ne differe PAS le composant lui-meme : il se monte comme avant. Le differer aurait ouvert une
+// course avec `NatifSplash`, qui retire l'ecran de lancement des le premier rendu — l'application serait
+// restee visible quelques instants sans son verrou. On ne troque pas une garantie contre des points.
+//
+// `charger()` est appele des le debut de l'effet natif, donc l'import est deja en vol quand `verifier()`
+// en a besoin : rien n'est rallonge cote application. Et il n'est JAMAIS appele dans un navigateur.
+let modulesLourds = null
+const charger = () => (modulesLourds ??= Promise.all([
+  import('@/lib/supabaseClient'),
+  import('@/lib/pushClient'),
+]).then(([sb, push]) => ({ supabase: sb.supabase, desabonnerCetAppareil: push.desabonnerCetAppareil })))
+
 export default function VerrouNatif() {
   const router = useRouter()
   const pathname = usePathname()
@@ -35,6 +52,7 @@ export default function VerrouNatif() {
   const bouton = useRef<HTMLButtonElement>(null)
 
   const fermerSession = useCallback(async () => {
+    const { supabase, desabonnerCetAppareil } = await charger()
     const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }))
     await Promise.race([desabonnerCetAppareil(data.session?.access_token), new Promise((r) => setTimeout(r, 2000))])
     await supabase.auth.signOut().catch(() => {})
@@ -65,8 +83,10 @@ export default function VerrouNatif() {
     if (!estNatif() || SURFACES_ARTISAN.test(pathname ?? '')) return
     const app = plugin('App'), prefs = plugin('Preferences'), bio = plugin('BiometricAuthNative')
     if (!app || !prefs) return
+    charger() // en vol des maintenant : `verifier()` ne l'attendra pas
     const verifier = async () => {
       try {
+        const { supabase } = await charger()
         const { data } = await supabase.auth.getSession()
         if (!data.session) return
         const r = (await prefs.get({ key: CLE }).catch(() => null)) as { value?: string | null } | null
