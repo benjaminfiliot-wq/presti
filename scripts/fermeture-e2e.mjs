@@ -34,6 +34,16 @@ const PROTEGEES = [
   // aucune suite : livrées, déployées, jamais regardées. Les autres sont ici pour que la liste
   // suive le dossier `app/api/controle/` et non ma mémoire.
   ['/api/controle/barre', 'GET'], ['/api/controle/recherche', 'GET'],
+  // Les huit à paramètre dynamique, oubliées jusqu'au 08/09 : invisibles à une relecture, et
+  // pourtant ce sont les plus dangereuses — elles agissent, là où les autres listent.
+  [`/api/controle/alertes/${id}/acquitter`, 'POST', {}],
+  [`/api/controle/apports/${id}/statut`, 'POST', {}],
+  [`/api/controle/clients/${id}`, 'GET'],
+  [`/api/controle/clients/${id}/action`, 'POST', {}],
+  [`/api/controle/courriers/${id}`, 'GET'],
+  [`/api/controle/courriers/${id}/action`, 'POST', {}],
+  ['/api/controle/courriers/relever', 'POST', {}],
+  ['/api/controle/crons/relances/relancer', 'POST', {}],
   ['/api/controle/apports', 'GET'], ['/api/controle/apports', 'POST', {}],
   ['/api/controle/clients', 'GET'], ['/api/controle/courriers', 'GET'],
   ['/api/controle/compta', 'GET'], ['/api/controle/compta', 'POST', {}],
@@ -49,6 +59,7 @@ const PROTEGEES = [
   ['/api/support/demande', 'POST', {}],
   ['/api/securite/acces-support', 'GET'],
   ['/api/controle/support/lire', 'GET'],
+  ['/api/controle/support/demander', 'POST', {}],
   ['/api/controle/support?artisan=00000000-0000-0000-0000-000000000000', 'GET'],
   ['/api/devis/auto', 'POST', {}],
   ['/api/inventaire/recherche', 'POST', {}], ['/api/inventaire/recherche/retenir', 'POST', {}],
@@ -74,6 +85,32 @@ for (const [chemin, methode, body] of PROTEGEES) {
   // précisément vouloir éviter. Une tolérance qui survit à sa raison d'être est un trou qui attend.
   const toleree = DERRIERE_UN_DRAPEAU.some((d) => chemin.startsWith(d))
   T(`${methode} ${chemin.replace(id, ':id')} → ${r.status}`, [401, 403].includes(r.status) || (toleree && r.status === 404), r.texte)
+}
+
+// ── 1 ter. La liste suit le DOSSIER, pas ma mémoire ──────────────────────────────────
+//
+// C'est ce que le commentaire de PROTEGEES annonçait déjà — et huit routes manquaient quand même,
+// toutes à paramètre dynamique, invisibles à une relecture. Une intention écrite ne tient pas une
+// liste à jour ; un test qui lit le dossier, si. Une route neuve du Poste de contrôle fait rougir
+// la suite le jour où elle est écrite, pas six mois plus tard.
+{
+  const fsp = await import('node:fs/promises')
+  const trouver = async (dossier, prefixe = '') => {
+    const out = []
+    for (const e of await fsp.readdir(dossier, { withFileTypes: true })) {
+      if (e.isDirectory()) out.push(...await trouver(new URL(`${e.name}/`, dossier), `${prefixe}/${e.name}`))
+      else if (e.name === 'route.ts') out.push(prefixe)
+    }
+    return out
+  }
+  const surDisque = (await trouver(new URL('../app/api/controle/', import.meta.url)).catch(() => [])).sort()
+  // Les segments dynamiques sont ramenés à un jeton commun des deux côtés : la liste porte un
+  // identifiant factice là où le dossier porte [id], [fil] ou [nom].
+  const jeton = (c) => c.replace(/^\/api\/controle/, '').replace(/\?.*$/, '')
+    .replace(new RegExp(id, 'g'), 'X').replace(/\/relances\//, '/X/').replace(/\/\[[^\]]+\]/g, '/X')
+  const listees = new Set(PROTEGEES.map(([c]) => jeton(c)))
+  const oubliees = surDisque.filter((c) => !listees.has(jeton('/api/controle' + c)))
+  T(`⭑ les ${surDisque.length} routes du Poste de contrôle sont toutes dans PROTEGEES${oubliees.length ? ' — manquent : ' + oubliees.join(', ') : ''}`, oubliees.length === 0)
 }
 
 console.log('\n── 1 bis. L’ancien poste de contrôle n’existe plus (fuite mesurée le 07/09)')
@@ -178,15 +215,22 @@ if (FLAGS) {
     // Baissé tant que 0074 n'est pas collée : la route doit alors répondre 404, comme partout.
     'supportArtisan': ['route', '/api/controle/support/demander', 'POST', 'app/api/controle/support/demander/route.ts'],
     'inventaireOcr': ['note', 'rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)'],
-    'canauxWhatsapp': ['note', 'rien ne le lit : la preuve est que WhatsApp n’est pas vendu sur la landing'],
-    'canauxReseaux': ['note', 'rien ne le lit : idem WhatsApp'],
+    // Ces trois-là étaient mal classés tant que le détecteur ignorait les lectures par index
+    // dynamique (`FLAGS[l.flag]` dans lib/plans.ts). Deux étaient dits « ne ferment rien » sur un
+    // raisonnement marketing (« pas vendu sur la landing ») et non sur le code ; le troisième était
+    // marqué « à retirer », ce qui aurait ouvert la personnalisation à toutes les offres.
+    'canauxWhatsapp': ['lu'],
+    'canauxReseaux': ['lu'],
     'plateformePilotage': ['mort', 'levé, plus aucun usage dans app/ — à retirer'],
-    'plateformePersona': ['mort', 'levé, plus aucun usage : la personnalisation est active sans condition'],
+    'plateformePersona': ['lu'],
   }
   const lus = ['app', 'lib', 'components'].filter((d) => fs.existsSync(d)).flatMap((d) =>
     fs.readdirSync(d, { recursive: true }).filter((f) => /\.(ts|tsx)$/.test(f) && !/flags\.ts$/.test(f))
       .map((f) => fs.readFileSync(`${d}/${f}`, 'utf8'))).join('\n')
-  const estLu = (nom) => new RegExp(`actif\\(['"\`]${nom}['"\`]\\)|FLAGS\\.${nom}\\b`).test(lus)
+  // `flag: 'x'` : lib/plans.ts lit trois drapeaux par index dynamique (`FLAGS[l.flag]`), invisibles
+  // aux deux premières formes. Ils passaient donc pour morts alors qu'ils ferment des capacités
+  // vendues — et « drapeau mort » est une invitation à le retirer.
+  const estLu = (nom) => new RegExp(`actif\\(['\"\`]${nom}['\"\`]\\)|FLAGS\\.${nom}\\b|flag:\\s*['\"\`]${nom}['\"\`]`).test(lus)
 
   // Le verrou : un drapeau qui n'est pas dans la carte n'est vérifié par personne.
   const oublies = Object.keys(FLAGS).filter((n) => !CARTE[n])

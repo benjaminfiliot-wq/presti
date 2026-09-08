@@ -27,9 +27,14 @@ export const dynamic = 'force-dynamic'
 //   portail     — un lien de portail Stripe POUR LE CLIENT, à lui transmettre ; rien n'est modifié
 //   email       — un message depuis l'adresse de Presti, avec un modèle, jamais un texte inventé sur son dos
 //
-// Ce que cette route ne fait pas : changer d'offre, rembourser, mettre en pause. Ces trois-là écrivent chez
-// Stripe et attendent leur suite en mode test (J2b, seconde moitié) — on ne livre pas un bouton qui touche à
-// l'argent sans l'avoir éprouvé.
+//   offre       — changement d'offre chez Stripe, au prorata
+//   rembourser  — remboursement borné au dernier paiement
+//   pause       — et `reprendre` : la facturation s'arrête et repart
+//
+// Ces quatre-là écrivent chez Stripe. Le bandeau disait encore qu'elles n'étaient pas livrées (« J2b,
+// seconde moitié ») alors qu'elles le sont et qu'elles sont éprouvées en mode test par
+// `controle-argent-e2e`. Un en-tête qui décrit une version passée du fichier fait hésiter celui qui
+// le lit — ou pire, le rassure sur ce qui n'est plus vrai.
 type Corps = { action?: unknown; credits?: unknown; motif?: unknown; message?: unknown; modele?: unknown; vers?: unknown; montant?: unknown; jusqu_au?: unknown }
 const MODELES: Record<string, { sujet: string; texte: (nom: string) => string }> = {
   bonjour: { sujet: 'Un mot de Presti', texte: (n) => `Bonjour ${n},\n\nJe voulais simplement prendre de vos nouvelles sur votre utilisation de Presti. Si quelque chose coince, répondez à ce message : je lis tout.\n\nBenjamin — Presti` },

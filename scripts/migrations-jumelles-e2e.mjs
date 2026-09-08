@@ -44,12 +44,17 @@ function migrationsDe(jumeau, toutes) {
   return [...new Set(cherchees)].sort()
 }
 
+// Trois jumeaux vivent à la RACINE du dépôt : ils échappaient à la suite écrite exactement pour
+// les surveiller. Un fichier à coller reste un livrable, où qu'il soit rangé.
+const aLaRacine = fs.readdirSync('.').filter((f) => f.startsWith('_A_COLLER_') && f.endsWith('.sql'))
 const fichiers = fs.readdirSync(DIR)
 const migrations = fichiers.filter((f) => /^\d{4}_.*\.sql$/.test(f)).sort()
 const jumeaux = fichiers.filter((f) => f.startsWith('_A_COLLER_') && f.endsWith('.sql')).sort()
 
 console.log('\n══ Les fichiers « à coller » ══\n')
 T(`des jumeaux à vérifier (${jumeaux.length} trouvés)`, jumeaux.length > 0, 'aucun _A_COLLER_ : la suite ne prouve rien')
+T(`aucun fichier à coller n'est resté à la racine${aLaRacine.length ? ' — ' + aLaRacine.join(', ') : ''}`,
+  aLaRacine.length === 0, 'déplacez-les dans supabase/migrations/ pour qu’ils soient vérifiés')
 
 console.log('\n1. Ils se parsent — le contrôle que le 08/09 a rendu obligatoire')
 for (const j of jumeaux) {

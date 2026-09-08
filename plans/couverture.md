@@ -1,4 +1,4 @@
-# Couverture — qui teste quoi — généré le 2026-09-08 11:13
+# Couverture — qui teste quoi — généré le 2026-09-08 12:20
 
 > Généré par `scripts/inventaire-produit.mjs`. **Une case vide est un test à écrire ; un angle mort est un test à brancher.** Cases vides : **0** · angles morts de l’audit nocturne : **0**.
 
@@ -34,9 +34,9 @@ Aucun.
 | `/api/canaux/relever` | fermeture-e2e.mjs |
 | `/api/contact` | emails-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/a-faire` | controle-droits-e2e.mjs, controle-e2e.mjs, fermeture-e2e.mjs, sonde-a-faire.mjs |
-| `/api/controle/alertes/:id/acquitter` | controle-e2e.mjs |
+| `/api/controle/alertes/:id/acquitter` | controle-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/apports` | controle-apports-e2e.mjs, controle-droits-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs |
-| `/api/controle/apports/:id/statut` | controle-apports-e2e.mjs, emails-e2e.mjs |
+| `/api/controle/apports/:id/statut` | controle-apports-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/barre` | fermeture-e2e.mjs |
 | `/api/controle/chiffres` | controle-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/clients` | controle-apports-e2e.mjs, controle-droits-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs |
@@ -45,8 +45,8 @@ Aucun.
 | `/api/controle/compta` | controle-compta-e2e.mjs, controle-droits-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/courriers` | controle-droits-e2e.mjs, controle-messagerie-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs, sonde-boite.mjs |
 | `/api/controle/courriers/:fil` | controle-droits-e2e.mjs, controle-messagerie-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs, sonde-boite.mjs |
-| `/api/controle/courriers/:fil/action` | controle-messagerie-e2e.mjs, emails-e2e.mjs |
-| `/api/controle/courriers/relever` | controle-droits-e2e.mjs, controle-messagerie-e2e.mjs, sonde-boite.mjs |
+| `/api/controle/courriers/:fil/action` | controle-messagerie-e2e.mjs, emails-e2e.mjs, fermeture-e2e.mjs |
+| `/api/controle/courriers/relever` | controle-droits-e2e.mjs, controle-messagerie-e2e.mjs, fermeture-e2e.mjs, sonde-boite.mjs |
 | `/api/controle/crons/:nom/relancer` | fermeture-e2e.mjs |
 | `/api/controle/etat` | code-connexion-e2e.mjs, controle-droits-e2e.mjs, controle-e2e.mjs, fermeture-e2e.mjs |
 | `/api/controle/fil` | controle-e2e.mjs, fermeture-e2e.mjs |
@@ -141,7 +141,7 @@ Aucun.
 | `/parametres` | code-connexion-e2e.mjs, mentions-bloquantes-e2e.mjs, mfa-e2e.mjs, mobile-e2e.mjs, parametres-e2e.mjs, push-e2e.mjs, pwa-e2e.mjs, seo-e2e.mjs, tout-verifier.mjs |
 | `/plateforme` | abonnement-e2e.mjs, audit-final-e2e.mjs, code-connexion-e2e.mjs, fermeture-e2e.mjs, messages-deauto-e2e.mjs, mobile-e2e.mjs, modes-e2e.mjs, parametres-e2e.mjs, persona-e2e.mjs, plateforme-config-e2e.mjs, plateforme-intelligence-e2e.mjs, pwa-e2e.mjs, seo-e2e.mjs, tout-verifier.mjs |
 | `/profil` | aide-e2e.mjs, audit-final-e2e.mjs, messages-deauto-e2e.mjs, mobile-e2e.mjs, parametres-e2e.mjs, photos-e2e.mjs, pwa-e2e.mjs, seo-e2e.mjs |
-| `/reset-password` | fermeture-e2e.mjs, mobile-e2e.mjs, seo-e2e.mjs |
+| `/reset-password` | fermeture-e2e.mjs, legal-e2e.mjs, mobile-e2e.mjs, seo-e2e.mjs |
 | `/signup` | audit-final-e2e.mjs, mobile-e2e.mjs, motdepasse-e2e.mjs, seo-e2e.mjs, smoke-test.mjs |
 | `/site/[slug]` | a11y-e2e.mjs, audit-final-e2e.mjs, budget-perf.mjs, domaine-perso-e2e.mjs, fermeture-e2e.mjs, legal-e2e.mjs, mobile-e2e.mjs, motion-cls-e2e.mjs, pwa-e2e.mjs, seo-e2e.mjs, site-motion-e2e.mjs, site-style-e2e.mjs, slides-e2e.mjs, smoke-test.mjs |
 | `/site/[slug]/[...reste]` | audit-final-e2e.mjs, domaine-perso-e2e.mjs, fermeture-e2e.mjs, legal-e2e.mjs, mobile-e2e.mjs, pwa-e2e.mjs |
@@ -185,7 +185,7 @@ Aucun.
 | `app/api/auth/reset-request/route.ts:51` | emails-e2e.mjs |
 | `app/api/contact/route.ts:55` | emails-e2e.mjs |
 | `app/api/controle/apports/[id]/statut/route.ts:92` | emails-e2e.mjs |
-| `app/api/controle/clients/[id]/action/route.ts:190` | emails-e2e.mjs, fermeture-e2e.mjs |
+| `app/api/controle/clients/[id]/action/route.ts:195` | emails-e2e.mjs, fermeture-e2e.mjs |
 | `app/api/controle/courriers/[fil]/action/route.ts:91` | emails-e2e.mjs |
 | `app/api/controle/support/demander/route.ts:88` | emails-e2e.mjs, fermeture-e2e.mjs |
 | `app/api/conversation/devis/route.ts:76` | audit-final-e2e.mjs, devis-conversation-e2e.mjs, emails-e2e.mjs, persona-e2e.mjs, push-e2e.mjs |
@@ -235,7 +235,7 @@ Aucun.
 | `direction` | controle-argent-e2e.mjs, controle-compta-e2e.mjs, controle-droits-e2e.mjs, controle-e2e.mjs, fermeture-e2e.mjs |
 | `apports` | controle-apports-e2e.mjs, controle-droits-e2e.mjs, fermeture-e2e.mjs, support-droits-unit.mjs |
 | `actionsArtisan` | fermeture-e2e.mjs |
-| `messagerie` | fermeture-e2e.mjs, support-droits-unit.mjs |
+| `messagerie` | fermeture-e2e.mjs |
 | `comptabilite` | fermeture-e2e.mjs, support-droits-unit.mjs |
 | `supportArtisan` | fermeture-e2e.mjs |
 | `inventaireOcr` | fermeture-e2e.mjs |

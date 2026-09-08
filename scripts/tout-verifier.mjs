@@ -168,7 +168,11 @@ const debut = Date.now()
 const purger = () => spawnSync('node', ['scripts/purger-abus.mjs'], { encoding: 'utf8', shell: true, env: process.env })
 
 for (const s of retenues) {
-  if (s.cout !== 'build') purger()
+  // `cout` ne vaut jamais 'build' (les trois valeurs sont 'gratuit', 'navigateur', 'ia') : la
+  // condition d'avant ne pouvait pas être fausse. Ce qu'on veut dire, c'est « ne purge pas avant
+  // une suite qui ne parle à personne » — le typage et le build ne touchent pas au réseau.
+  const parleAuReseau = !['Typage', 'Build'].includes(s.nom)
+  if (parleAuReseau) purger()
   process.stdout.write(`… ${s.nom}`)
   const t0 = Date.now()
   const r = spawnSync(s.cmd, s.args, { encoding: 'utf8', shell: true, env: process.env })

@@ -51,7 +51,10 @@ const pages = marcher('app', (p) => p.endsWith('page.tsx') && !p.startsWith('app
 const routes = marcher('app/api', (p) => p.endsWith('route.ts')).map((p) => {
   const src = lire(p)
   const methodes = [...src.matchAll(/export async function (GET|POST|PUT|PATCH|DELETE)\b/g)].map((m) => m[1])
-  const auth = /getUserRevocable|authInventaire|requireFounder|isFounder|authArtisan\(|verifierSession\(/.test(src) ? 'jeton artisan'
+  // `estFondateur` / `estDirection` manquaient : les 26 routes du Poste de contrôle tombaient dans
+  // le dernier cas et étaient listées « publique ». On lit cet inventaire pour savoir où regarder.
+  const auth = /estFondateur\(|estDirection\(|exigerDomaine\(/.test(src) ? 'jeton fondateur'
+    : /getUserRevocable|authInventaire|requireFounder|isFounder|authArtisan\(|verifierSession\(/.test(src) ? 'jeton artisan'
     : /CRON_SECRET/.test(src) ? 'secret cron'
     : /stripe\.webhooks\.constructEvent/.test(src) ? 'signature Stripe'
     : /leadByToken|\btoken\b.*maybeSingle|TOKEN_RE/.test(src) ? 'jeton de conversation'

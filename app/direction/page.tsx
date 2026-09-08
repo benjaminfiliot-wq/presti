@@ -1,4 +1,4 @@
-import { redirect, permanentRedirect } from 'next/navigation'
+import { permanentRedirect } from 'next/navigation'
 
 export const dynamic = 'force-static'
 
@@ -8,6 +8,7 @@ export const dynamic = 'force-static'
 // depuis un email d'alerte, ou tapée de mémoire. Rien de ce qui a été partagé ne doit tomber sur un
 // 404 — surtout pas l'écran depuis lequel on éteint un incident.
 export default function AncienneDirection() {
+  // `permanentRedirect` lève : rien après cette ligne ne s'exécute. Un second appel donnait à croire
+  // à un repli qui n'existe pas.
   permanentRedirect('/controle')
-  redirect('/controle')
 }

@@ -1,4 +1,4 @@
-# Inventaire du produit — généré le 2026-09-08 11:13
+# Inventaire du produit — généré le 2026-09-08 12:20
 
 > Produit par `scripts/inventaire-produit.mjs` en lisant le code. Ne pas éditer à la main : relancer.
 
@@ -6,7 +6,7 @@
 |---|---|
 | Pages | 33 |
 | Routes API | 87 |
-| Migrations | 80 (dernière : 0080_credits_et_acompte.sql) |
+| Migrations | 81 (dernière : 0081_facture_regime_fige.sql) |
 | Drapeaux | 21 (18 levés) |
 | Envois d'email | 36 (+ 5 motifs d'alerte de service) |
 | Crons | 2 planifiés · ⚠️ 2 route(s) cron sans planification : /api/cron/alertes, /api/cron/purge-comptes |
@@ -67,32 +67,32 @@
 | `/api/canaux` | GET, POST, DELETE | jeton artisan | — | — | — | — |
 | `/api/canaux/relever` | GET, POST | jeton artisan | — | — | — | — |
 | `/api/contact` | POST | publique | — | contact:· 3/3600s | — | — |
-| `/api/controle/a-faire` | GET | publique | — | — | — | — |
-| `/api/controle/alertes/:id/acquitter` | POST | publique | — | — | — | — |
-| `/api/controle/apports` | GET, POST, PATCH | publique | — | — | — | — |
-| `/api/controle/apports/:id/statut` | POST | publique | — | — | — | — |
-| `/api/controle/barre` | GET | publique | — | — | — | — |
-| `/api/controle/chiffres` | GET | publique | — | — | — | — |
-| `/api/controle/clients` | GET | publique | — | — | — | — |
-| `/api/controle/clients/:id` | GET | publique | — | — | — | — |
-| `/api/controle/clients/:id/action` | POST | publique | — | — | — | — |
-| `/api/controle/compta` | GET, POST | publique | — | — | — | — |
-| `/api/controle/courriers` | GET | publique | — | — | — | — |
-| `/api/controle/courriers/:fil` | GET | publique | — | — | — | — |
-| `/api/controle/courriers/:fil/action` | POST | publique | — | — | — | — |
-| `/api/controle/courriers/relever` | POST | publique | — | — | — | — |
-| `/api/controle/crons/:nom/relancer` | POST | secret cron | — | — | — | — |
-| `/api/controle/etat` | GET | publique | — | — | — | — |
-| `/api/controle/fil` | GET | publique | — | — | — | — |
-| `/api/controle/journal` | GET | publique | — | — | — | — |
-| `/api/controle/recherche` | GET | publique | — | — | — | — |
-| `/api/controle/reconfirmer` | POST | publique | — | reconf:· 5/15*60s | — | — |
-| `/api/controle/reglages` | GET, POST | publique | — | — | — | — |
-| `/api/controle/releve` | GET, POST | publique | — | — | — | — |
-| `/api/controle/securite/bans` | GET, POST, DELETE | publique | — | — | — | — |
-| `/api/controle/support` | GET | publique | — | — | — | — |
-| `/api/controle/support/demander` | POST | publique | — | — | — | — |
-| `/api/controle/support/lire` | GET | publique | — | — | — | — |
+| `/api/controle/a-faire` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/alertes/:id/acquitter` | POST | jeton fondateur | — | — | — | — |
+| `/api/controle/apports` | GET, POST, PATCH | jeton fondateur | — | — | — | — |
+| `/api/controle/apports/:id/statut` | POST | jeton fondateur | — | — | — | — |
+| `/api/controle/barre` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/chiffres` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/clients` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/clients/:id` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/clients/:id/action` | POST | jeton fondateur | — | — | — | — |
+| `/api/controle/compta` | GET, POST | jeton fondateur | — | — | — | — |
+| `/api/controle/courriers` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/courriers/:fil` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/courriers/:fil/action` | POST | jeton fondateur | — | — | — | — |
+| `/api/controle/courriers/relever` | POST | jeton fondateur | — | — | — | — |
+| `/api/controle/crons/:nom/relancer` | POST | jeton fondateur | — | — | — | — |
+| `/api/controle/etat` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/fil` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/journal` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/recherche` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/reconfirmer` | POST | jeton fondateur | — | reconf:· 5/15*60s | — | — |
+| `/api/controle/reglages` | GET, POST | jeton fondateur | — | — | — | — |
+| `/api/controle/releve` | GET, POST | jeton fondateur | — | — | — | — |
+| `/api/controle/securite/bans` | GET, POST, DELETE | jeton fondateur | — | — | — | — |
+| `/api/controle/support` | GET | jeton fondateur | — | — | — | — |
+| `/api/controle/support/demander` | POST | jeton fondateur | — | — | — | — |
+| `/api/controle/support/lire` | GET | jeton fondateur | — | — | — | — |
 | `/api/conversation` | GET, POST | jeton de conversation | — | conv:· 6/5*60s | oui | ⚡ |
 | `/api/conversation/devis` | POST | jeton de conversation | — | conv:· 6/5*60s | — | — |
 | `/api/conversation/regles` | POST | jeton de conversation | — | regles-ip:· 30/3600s · regles:· 6/3600s | — | ⚡ |
@@ -144,13 +144,12 @@
 | `/api/tarifs` | GET, POST, DELETE | jeton artisan | — | — | — | — |
 | `/api/tools/reponse` | POST | jeton artisan | — | — | oui | ⚡ |
 
-## Migrations (80)
+## Migrations (81)
 
 Posées à la main dans le SQL Editor (mot de passe Postgres désaligné). Sondes en base sur les dix dernières :
 
 | Migration | En base |
 |---|---|
-| 0071_comptabilite.sql | non sondée |
 | 0072_courriers_nature.sql | non sondée |
 | 0073_courriers_domaines.sql | non sondée |
 | 0074_support.sql | non sondée |
@@ -160,8 +159,9 @@ Posées à la main dans le SQL Editor (mot de passe Postgres désaligné). Sonde
 | 0078_conservation.sql | non sondée |
 | 0079_profils_fondateur.sql | non sondée |
 | 0080_credits_et_acompte.sql | non sondée |
+| 0081_facture_regime_fige.sql | non sondée |
 
-Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_sql_editor_0053.sql, _A_COLLER_sql_editor_0054.sql, _A_COLLER_sql_editor_0054_0055.sql, _A_COLLER_sql_editor_0056.sql, _A_COLLER_sql_editor_0057.sql, _A_COLLER_sql_editor_0057_0058.sql, _A_COLLER_sql_editor_0059_0061.sql, _A_COLLER_sql_editor_0065.sql, _A_COLLER_sql_editor_0066.sql, _A_COLLER_sql_editor_0067.sql, _A_COLLER_sql_editor_0068.sql, _A_COLLER_sql_editor_0068b.sql, _A_COLLER_sql_editor_0069.sql, _A_COLLER_sql_editor_0070.sql, _A_COLLER_sql_editor_0071.sql, _A_COLLER_sql_editor_0072.sql, _A_COLLER_sql_editor_0072_NU.sql, _A_COLLER_sql_editor_0073.sql, _A_COLLER_sql_editor_0073_NU.sql, _A_COLLER_sql_editor_0074.sql, _A_COLLER_sql_editor_0074_NU.sql, _A_COLLER_sql_editor_0075.sql, _A_COLLER_sql_editor_0075_NU.sql, _A_COLLER_sql_editor_0076.sql, _A_COLLER_sql_editor_0076_NU.sql, _A_COLLER_sql_editor_0077.sql, _A_COLLER_sql_editor_0077_NU.sql, _A_COLLER_sql_editor_0078.sql, _A_COLLER_sql_editor_0078_NU.sql, _A_COLLER_sql_editor_0079.sql, _A_COLLER_sql_editor_0079_NU.sql, _A_COLLER_sql_editor_0080.sql, _A_COLLER_sql_editor_0080_NU.sql.
+Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_sql_editor_0053.sql, _A_COLLER_sql_editor_0054.sql, _A_COLLER_sql_editor_0054_0055.sql, _A_COLLER_sql_editor_0056.sql, _A_COLLER_sql_editor_0057.sql, _A_COLLER_sql_editor_0057_0058.sql, _A_COLLER_sql_editor_0059_0061.sql, _A_COLLER_sql_editor_0062.sql, _A_COLLER_sql_editor_0063.sql, _A_COLLER_sql_editor_0064.sql, _A_COLLER_sql_editor_0065.sql, _A_COLLER_sql_editor_0066.sql, _A_COLLER_sql_editor_0067.sql, _A_COLLER_sql_editor_0068.sql, _A_COLLER_sql_editor_0068b.sql, _A_COLLER_sql_editor_0069.sql, _A_COLLER_sql_editor_0070.sql, _A_COLLER_sql_editor_0071.sql, _A_COLLER_sql_editor_0072.sql, _A_COLLER_sql_editor_0072_NU.sql, _A_COLLER_sql_editor_0073.sql, _A_COLLER_sql_editor_0073_NU.sql, _A_COLLER_sql_editor_0074.sql, _A_COLLER_sql_editor_0074_NU.sql, _A_COLLER_sql_editor_0075.sql, _A_COLLER_sql_editor_0075_NU.sql, _A_COLLER_sql_editor_0076.sql, _A_COLLER_sql_editor_0076_NU.sql, _A_COLLER_sql_editor_0077.sql, _A_COLLER_sql_editor_0077_NU.sql, _A_COLLER_sql_editor_0078.sql, _A_COLLER_sql_editor_0078_NU.sql, _A_COLLER_sql_editor_0079.sql, _A_COLLER_sql_editor_0079_NU.sql, _A_COLLER_sql_editor_0080.sql, _A_COLLER_sql_editor_0080_NU.sql, _A_COLLER_sql_editor_0081.sql, _A_COLLER_sql_editor_0081_NU.sql.
 
 ## Drapeaux (21)
 
@@ -198,7 +198,7 @@ Fichiers à coller présents : _A_COLLER_sql_editor_0047_a_0052.sql, _A_COLLER_s
 | app/api/auth/reset-request/route.ts:51 | sendEmail | 'Réinitialisation de votre mot de passe — Presti' | email |
 | app/api/contact/route.ts:55 | notifierEntreprise | — | entreprise |
 | app/api/controle/apports/[id]/statut/route.ts:92 | sendEmail | — | dest.email |
-| app/api/controle/clients/[id]/action/route.ts:190 | sendEmail | — | a.email |
+| app/api/controle/clients/[id]/action/route.ts:195 | sendEmail | — | a.email |
 | app/api/controle/courriers/[fil]/action/route.ts:91 | sendEmail | — | destinataire |
 | app/api/controle/support/demander/route.ts:88 | sendEmail | 'Presti demande à regarder un élément de votre compte' | a.email |
 | app/api/conversation/devis/route.ts:76 | notifierArtisan | devis_accepte | artisan |

@@ -32,8 +32,14 @@ T('le refus est une phrase française qui dit pourquoi, pas « accès refusé »
   vuePartenaire.permis === false ? vuePartenaire.raison : '(permis)')
 
 console.log('\n2. Aucune raison oubliée — `RAISONS` est un Partial, l’oubli y est silencieux')
-const DOMAINES = ['clients', 'artisan.actions', 'apports', 'apports.decision', 'messagerie',
-  'comptabilite', 'releve.partenaire', 'sante', 'securite', 'reglages', 'journal', 'support']
+// Les domaines viennent du TYPE, pas d'une recopie : ce fichier affirme qu'aucun domaine n'a été
+// oublié dans `RAISONS`, et une liste tapée à la main ne peut pas soutenir cette affirmation — elle
+// prouve ce qu'on y a mis. Un domaine ajouté demain sans sa raison fait rougir ce test.
+const source = await (await import('node:fs/promises')).readFile(new URL('../lib/controle/droits.ts', import.meta.url), 'utf8')
+const bloc = /export type Domaine[^=]*=([\s\S]*?)\n\n/.exec(source)?.[1] ?? ''
+const DOMAINES = [...bloc.matchAll(/'([a-z][a-z._]*)'/g)].map((m) => m[1])
+
+T(`la liste des domaines vient du type source (${DOMAINES.length} trouvés)`, DOMAINES.length >= 10, DOMAINES.join(', '))
 const sansRaison = []
 for (const d of DOMAINES) {
   for (const v of ['voir', 'ecrire']) {

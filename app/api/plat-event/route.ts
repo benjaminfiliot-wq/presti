@@ -18,7 +18,11 @@ export async function POST(req: Request) {
     if (!/^[a-z0-9-]{1,80}$/.test(slug) || !EVENTS.has(event)) {
       return NextResponse.json({ ok: false }, { status: 400 })
     }
-    // Cap souple : pas plus de 40 events / IP / 10 min (anti-gonflage des stats).
+    // Plafond souple, PAR SLUG et non par IP : 400 événements sur dix minutes pour une même page.
+    // Le commentaire disait « 40 par IP » ; le code n'a jamais filtré sur l'IP, qui ne sert ici qu'à
+    // écarter les requêtes sans adresse. Un plafond par slug protège la STATISTIQUE de la page
+    // (c'est ce qu'on veut : qu'un chiffre affiché à l'artisan reste crédible), pas contre une
+    // personne seule — et il ne faut pas croire le contraire en lisant cette ligne.
     const ip = getIp(req)
     if (ip !== 'unknown') {
       const since = new Date(Date.now() - 10 * 60 * 1000).toISOString()
