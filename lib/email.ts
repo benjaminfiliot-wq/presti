@@ -51,7 +51,10 @@ export async function sendEmail(opts: {
   if (!opts.critique) {
     const { consommerLimite } = await import('@/lib/limites')
     if (!(await consommerLimite('emails:jour', Number(process.env.EMAILS_PAR_JOUR) || 80, 86_400))) {
-      console.error('[email] plafond quotidien atteint — envoi refusé', opts.to)
+      // L'adresse ne va PAS dans le journal : deux chemins non critiques passent ici avec celle
+      // d'un client d'artisan (le prospect qui vient d'écrire, la réponse de l'artisan). Le
+      // domaine suffit à diagnostiquer un plafond ; l'adresse complète n'ajoute rien qu'un risque.
+      console.error('[email] plafond quotidien atteint — envoi refusé (destinataire en @' + String(opts.to ?? '').split('@')[1] + ')')
       return { ok: false, error: 'plafond quotidien d’envois atteint' }
     }
   }

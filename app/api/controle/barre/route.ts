@@ -25,17 +25,23 @@ export const dynamic = 'force-dynamic'
 // remplacé par la raison de son absence.
 type Etat = 'ok' | 'degrade' | 'incident'
 
-const compteurs = (uid: string, borneJournal: boolean, voitMessagerie: boolean) =>
-  sourcer(`barre:compteurs:${uid}`, 'supabase', async () => {
+const compteurs = (uid: string, borneJournal: boolean, voitMessagerie: boolean, voitAlertes: boolean) =>
+  // La clé de cache porte le périmètre : sans ça, la réponse mise en cache pour un fondateur
+  // serait resservie au partenaire trente secondes plus tard, avec le compteur qu'on vient de lui
+  // fermer. Un cache qui ignore les droits les annule.
+  sourcer(`barre:compteurs:${uid}:${voitAlertes ? 'a' : '-'}${voitMessagerie ? 'm' : '-'}`, 'supabase', async () => {
     const [alertes, courriers, artisans] = await Promise.all([
-      supabaseAdmin.from('alertes').select('id', { count: 'exact', head: true }).is('acquittee_le', null),
+      voitAlertes
+        ? supabaseAdmin.from('alertes').select('id', { count: 'exact', head: true }).is('acquittee_le', null)
+        : Promise.resolve({ count: null }),
       actif('messagerie') && voitMessagerie
         ? supabaseAdmin.from('courriers').select('id', { count: 'exact', head: true }).eq('statut', 'a_traiter')
         : Promise.resolve({ count: null }),
       seulsLesVrais(supabaseAdmin.from('artisans').select('id', { count: 'exact', head: true })),
     ])
     return {
-      aFaire: alertes.count ?? 0,
+      // `null` et non 0 : l'écran doit pouvoir dire « pas dans votre périmètre », pas « rien à faire ».
+      aFaire: voitAlertes ? (alertes.count ?? 0) : null,
       messages: courriers.count ?? null,
       clients: artisans.count ?? 0,
       // Le journal n'a pas de compteur : rien n'y « attend », il se consulte.
@@ -81,7 +87,10 @@ export async function GET(req: Request) {
   const journalBorne = !vJournal.permis || vJournal.borne
 
   const [c, s, m, e, ia] = await Promise.all([
-    compteurs(f.uid, journalBorne, voit('messagerie')),
+    // Le compteur d'alertes relève du domaine `sante`, que la matrice ferme au partenaire : la
+    // barre le lui rendait alors que /api/controle/a-faire le lui refuse. Deux écrans, deux
+    // réponses — et c'est toujours le plus bavard qui gagne.
+    compteurs(f.uid, journalBorne, voit('messagerie'), voitSante),
     voitSante ? service(new URL(req.url).origin, req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? null) : Promise.resolve(null),
     voitClients ? mrr() : Promise.resolve(null),
     voitCompta ? encaisseDuMois() : Promise.resolve(null),

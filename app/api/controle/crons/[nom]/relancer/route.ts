@@ -28,6 +28,10 @@ const TACHES: Record<string, { chemin: string; libelle: string }> = {
   alertes: { chemin: '/api/cron/alertes', libelle: 'Ronde des alertes' },
   'canaux-relever': { chemin: '/api/canaux/relever', libelle: 'Relève des canaux' },
   'purge-comptes': { chemin: '/api/cron/purge-comptes', libelle: 'Purge des comptes' },
+  // 'purges-rgpd' vient de CRONS_ATTENDUS (lib/alertes.ts) : sans lui ici, le bouton
+  // « Relancer » de la file À faire menait à un 404 précisément pour la tâche qu'on a le plus
+  // besoin de relancer — celle qui efface des données qu'on a promis d'effacer.
+  'purges-rgpd': { chemin: '/api/cron/relances', libelle: 'Purges RGPD (même passage que les relances)' },
 }
 
 export async function POST(req: Request, ctx: { params: Promise<{ nom: string }> }) {

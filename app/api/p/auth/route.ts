@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { urlPlateforme } from '@/lib/urls'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sendEmail } from '@/lib/email'
 import { getIp, isBanned, recordAbuse } from '@/lib/security'
@@ -52,11 +53,14 @@ export async function POST(req: Request) {
       if (!(await consommerLimite(cleEmail('lien:email', email), 3, 15 * 60))) return NextResponse.json({ ok: true }) // silencieux : pas d'info donnée
 
       const { data: artisan } = await supabaseAdmin
-        .from('artisans').select('id, nom, slug, email, plateforme_active').eq('slug', slug).maybeSingle()
+        .from('artisans').select('id, nom, slug, email, plateforme_active, domaine, domaine_verifie').eq('slug', slug).maybeSingle()
       // Réponse IDENTIQUE même si l'artisan n'existe pas → aucune énumération possible.
       if (artisan && artisan.plateforme_active !== false) {
         const jeton = await creerLienMagique(artisan.id, email, ip)
-        const lien = `https://prestiapp.fr/p/${artisan.slug}?connexion=${encodeURIComponent(jeton)}`
+        // `lib/urls.ts` existe pour ça, et le dit en tête : UN seul endroit qui les construit. En
+        // dur, un client venu de mondomaine.fr recevait un lien vers prestiapp.fr — il apprenait
+        // l'existence de l'éditeur, ce que l'artisan Signature paie précisément pour éviter.
+        const lien = `${urlPlateforme(artisan)}?connexion=${encodeURIComponent(jeton)}`
         await sendEmail({ critique: true,
           to: email,
           fromName: artisan.nom || undefined, // white-label : le client voit la marque de l'artisan

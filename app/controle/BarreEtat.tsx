@@ -19,7 +19,7 @@ type Barre = {
   mrr: S<{ mrr: number; abonnements: number; enPause?: number; abonnementsEnPause?: number }> | null
   encaisse: S<{ brut: number; net: number; paiements: number }> | null
   coutIA: S<{ euros: number; budget: number | null; perimetre?: string; estimation?: boolean }> | null
-  compteurs: S<{ aFaire: number; messages: number | null; clients: number }> | null
+  compteurs: S<{ aFaire: number | null; messages: number | null; clients: number }> | null
   synchro: string
   a: string
 }
@@ -41,7 +41,7 @@ function Valeur({ s, rendu, titre }: { s: S<unknown> | null; rendu: (v: never) =
 }
 
 export default function BarreEtat({ onCompteurs, onRecherche }: {
-  onCompteurs?: (c: { aFaire: number; messages: number | null }) => void
+  onCompteurs?: (c: { aFaire: number | null; messages: number | null }) => void
   onRecherche?: () => void
 }) {
   const [d, setD] = useState<Barre | null>(null)

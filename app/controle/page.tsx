@@ -59,7 +59,7 @@ function PosteInner() {
   const minuteur = useRef<number | undefined>(undefined)
   // Les compteurs du rail viennent de la barre d'état : une seule requête les porte déjà, en refaire
   // une par onglet serait payer deux fois la même information.
-  const [compteurs, setCompteurs] = useState<{ aFaire: number; messages: number | null }>({ aFaire: 0, messages: null })
+  const [compteurs, setCompteurs] = useState<{ aFaire: number | null; messages: number | null }>({ aFaire: null, messages: null })
   const [recherche, setRecherche] = useState(false)
   const demande = params.get('onglet')
   const onglet: Onglet = ONGLETS.includes(demande as Onglet) ? (demande as Onglet) : 'aujourdhui'
@@ -105,7 +105,9 @@ function PosteInner() {
             {NAV.filter((e) => ONGLETS.includes(e.id)).map((e) => {
               // Un compteur ne s'affiche que s'il y a quelque chose à faire : un « 0 » permanent
               // devient un décor, et un décor ne se remarque plus le jour où il compte.
-              const n = e.id === 'aujourdhui' ? compteurs.aFaire : e.id === 'messagerie' ? compteurs.messages ?? 0 : 0
+              //  : hors périmètre, le compteur vaut null et l'onglet n'affiche simplement rien --
+              // il ne dit surtout pas « 0 en attente », ce qui serait une information qu'on n'a pas.
+              const n = e.id === 'aujourdhui' ? (compteurs.aFaire ?? 0) : e.id === 'messagerie' ? (compteurs.messages ?? 0) : 0
               return (
                 <a key={e.id} href={`/controle?onglet=${e.id}`} className={onglet === e.id ? 'on' : ''} aria-current={onglet === e.id ? 'page' : undefined} onClick={(ev) => aller(ev, e.id)}>
                   {e.icone}<span><b>{e.label}{n > 0 ? <span className="ctl-compteur" aria-label={`${n} en attente`}>{n > 99 ? '99+' : n}</span> : null}</b><small>{e.detail}</small></span>
