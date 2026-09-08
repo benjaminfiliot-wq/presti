@@ -12,7 +12,13 @@ import VerrouNatif from '@/app/VerrouNatif'
 // Design system "Chantier" : display grotesque architecturé (Bricolage) + corps net (Hanken) + data (JetBrains Mono).
 const display = Bricolage_Grotesque({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--f-display', display: 'swap' })
 const body = Hanken_Grotesk({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--f-body', display: 'swap' })
-const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['500', '700'], variable: '--f-mono', display: 'swap' })
+// `preload: false` — le mono n'habille que des details : horodatages de 9,5 px, references de piece,
+// colonnes de chiffres. Il etait precharge au meme rang que la police d'affichage et celle du corps,
+// dont depend l'element qui decide du plus grand rendu (le mot « Presti » du bandeau). Trois polices
+// se partageaient la bande passante du premier ecran pour que deux comptent. Il reste declare : les
+// ecrans qui l'utilisent le demandent en decouvrant leur CSS, et `display: swap` fait qu'aucun texte
+// n'attend apres lui — au pire, un horodatage s'affiche une fraction de seconde en mono systeme.
+const mono = JetBrains_Mono({ subsets: ['latin'], weight: ['500', '700'], variable: '--f-mono', display: 'swap', preload: false })
 // Site vitrine (constructeur 3 niveaux) : serif éditoriale à caractère (Fraunces) pour un rendu premium.
 //
 // `preload: false` — mesuré le 08/09. Elle était préchargée depuis le layout RACINE, donc sur toutes
