@@ -187,7 +187,10 @@ export const TRAITEMENTS: { cle: CleDuree; finalite: string; donnees: string; ba
   {
     cle: 'anti_abus',
     finalite: 'Protéger le service contre les abus (envois massifs, robots)',
-    donnees: 'Empreinte pseudonymisée de l’adresse IP (jamais l’adresse en clair), horodatage des envois',
+    // Cette ligne est rendue sur la page publique de chaque artisan, en face de la finalité
+    // anti-abus — or c'est exactement celle qui conserve l'adresse en clair (lib/security.ts).
+    // Faire dire à l'artisan « jamais l'adresse en clair » l'exposait à notre place.
+    donnees: 'Adresse IP (en clair dans le registre anti-abus, côté serveur uniquement ; pseudonymisée partout ailleurs), horodatage des envois',
     base: 'Intérêt légitime à préserver le service',
     duree: libelleDuree(DUREES_MOIS.anti_abus),
   },

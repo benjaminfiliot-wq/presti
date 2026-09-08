@@ -57,9 +57,13 @@ async function collecter(uid: string) {
     profil: (artisan.data ?? null) as Ligne | null,
     conversations: l(leads), messages, devis: l(devis), factures: l(factures),
     clients_plateforme: l(clients), tarifs: l(tarifs), inventaire: l(inventaire), appareils_notifications: l(appareils),
-      'donnees/actions_de_direction.json': JSON.stringify(direction.data ?? [], null, 2),
-      'donnees/acces_du_support.json': JSON.stringify(supportAcces.data ?? [], null, 2),
-      'donnees/acces_du_support_consultations.json': JSON.stringify(supportLectures.data ?? [], null, 2),
+    // Des CLÉS, pas des chemins : la boucle de `GET` ajoute déjà `donnees/` et `.json`, et
+    // sérialise elle-même. Écrire le chemin ici produisait `donnees/donnees/….json.json` avec, pour
+    // contenu, une chaîne JSON échappée — illisible, dans l'export qu'on remet à un artisan qui
+    // exerce son droit d'accès.
+    actions_de_direction: (direction.data ?? []) as Ligne[],
+    acces_du_support: (supportAcces.data ?? []) as Ligne[],
+    acces_du_support_consultations: (supportLectures.data ?? []) as Ligne[],
   }
 }
 

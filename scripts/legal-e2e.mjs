@@ -210,5 +210,28 @@ try {
   if (comptes.length) console.log(`\n🧹 ${comptes.length} artisans de test supprimés`)
 }
 
+
+// ── Les pages publiques ne se contredisent pas entre elles ──────────────────────────────────────
+//
+// La FAQ a dit « vos mots de passe sont chiffrés » pendant que la page de confidentialité disait
+// « hachés — personne ne peut le relire, pas même nous ». « Chiffré » désigne une opération
+// RÉVERSIBLE : un artisan en concluait que Presti peut lui redonner son mot de passe. Deux pages
+// du même site, deux vérités — et c'est la plus rassurante qui sera opposée le jour d'un contrôle.
+{
+  const fsp = await import('node:fs/promises')
+  const INTERDIT = [
+    [/mots? de passe[^.]{0,40}chiffr/i, 'un mot de passe est HACHÉ, pas chiffré : « chiffré » laisse croire qu’on peut le relire'],
+    [/IP[^.]{0,60}pseudonymisées? avant tout enregistrement/i, 'l’anti-abus conserve l’adresse EN CLAIR : cette phrase est fausse'],
+    [/jamais l’adresse en clair/i, 'le registre anti-abus garde l’adresse en clair, côté serveur'],
+  ]
+  for (const f of ['app/faq/page.tsx', 'app/cgu/page.tsx', 'app/confidentialite/page.tsx', 'lib/legalArtisan.ts']) {
+    const txt = await fsp.readFile(new URL(`../${f}`, import.meta.url), 'utf8').catch(() => '')
+    for (const [re, pourquoi] of INTERDIT) {
+      const m = re.exec(txt)
+      T(`${f} : ${pourquoi}`, !m, m ? `trouvé : « ${m[0].slice(0, 90)} »` : '')
+    }
+  }
+}
+
 console.log(`\n${ko === 0 ? '✅' : '❌'} ${ok} réussis, ${ko} échoués\n`)
 process.exit(ko === 0 ? 0 : 1)

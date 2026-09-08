@@ -169,9 +169,29 @@ try {
   const buf = Buffer.from(await ex.arrayBuffer())
   T('signature ZIP valide et répertoire central présent', buf.readUInt32LE(0) === 0x04034b50 && buf.includes(Buffer.from([0x50, 0x4b, 0x05, 0x06])))
   const noms = [...buf.toString('latin1').matchAll(/PK\x01\x02[\s\S]{24}([\s\S]{2})[\s\S]{16}/g)].map((m) => { const n = m[1].charCodeAt(0) + (m[1].charCodeAt(1) << 8); return buf.toString('utf8', m.index + 46, m.index + 46 + n) })
-  for (const f of ['LISEZ-MOI.txt', 'donnees/profil.json', 'donnees/conversations.json', 'donnees/messages.json', 'donnees/devis.json', 'donnees/factures.json', 'donnees/clients_plateforme.json'])
+  for (const f of ['LISEZ-MOI.txt', 'donnees/profil.json', 'donnees/conversations.json', 'donnees/messages.json', 'donnees/devis.json', 'donnees/factures.json', 'donnees/clients_plateforme.json', 'donnees/actions_de_direction.json'])
     T(`l’archive contient ${f}`, noms.includes(f))
+  // Ce que la liste blanche ci-dessus ne dit pas : ce qu'il y a EN PLUS, et si c'est lisible.
+  // `donnees/donnees/actions_de_direction.json.json` vivait dans l'export depuis v10 — une clé qui
+  // portait déjà son chemin, dans un objet dont la boucle rajoute le chemin. Son contenu était une
+  // chaîne JSON échappée : un fichier illisible dans l'archive qu'on remet à quelqu'un qui exerce
+  // son droit d'accès.
+  const aberrants = noms.filter((f) => /donnees\/donnees\/|\.json\.json$|\/\//.test(f))
+  T(`⭑ aucun nom de fichier aberrant dans l'archive${aberrants.length ? ' — ' + aberrants.join(', ') : ''}`, aberrants.length === 0)
+
   const { inflateRawSync } = await import('node:zlib')
+  // Chaque .json de l'archive doit être un OBJET ou un TABLEAU, jamais une chaîne : une chaîne
+  // signifie qu'on a sérialisé deux fois, et l'artisan reçoit du texte échappé au lieu de ses données.
+  const lire = (nom) => {
+    const i = buf.indexOf(Buffer.from(nom))
+    if (i < 0) return null
+    const h = i - 30
+    const c = buf.readUInt32LE(h + 18), nl = buf.readUInt16LE(h + 26)
+    try { return JSON.parse(inflateRawSync(buf.subarray(h + 30 + nl, h + 30 + nl + c)).toString('utf8')) } catch { return undefined }
+  }
+  const doublement = noms.filter((f) => f.endsWith('.json')).filter((f) => typeof lire(f) === 'string')
+  T(`⭑ aucun fichier JSON doublement encodé${doublement.length ? ' — ' + doublement.join(', ') : ''}`, doublement.length === 0)
+
   const iProfil = buf.indexOf(Buffer.from('donnees/profil.json'))
   const hdr = iProfil - 30
   const comp = buf.readUInt32LE(hdr + 18), nomLen = buf.readUInt16LE(hdr + 26)
