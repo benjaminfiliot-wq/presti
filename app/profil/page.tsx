@@ -10,7 +10,7 @@ import LogoUpload from '@/app/LogoUpload'
 import Info from '@/app/Info'
 import PortfolioUpload, { type Realisation } from '@/app/PortfolioUpload'
 import AvantApresUpload, { type AvantApres } from '@/app/AvantApresUpload'
-import { siteMaxForPlan } from '@/lib/plans'
+import { siteMaxForPlan, peut } from '@/lib/plans'
 import { afficher, urlPlateforme, urlSite } from '@/lib/urls'
 import AdresseEditor from '@/app/AdresseEditor'
 import { defaultLayout, SECTION_MIN_TIER, SECTION_ORDER, slidesOpts, type SectionId, type SlidesOpts } from '@/lib/siteLayout'
@@ -589,12 +589,19 @@ export default function ProfilPage() {
             </div>
           ) : null}
 
-          {/* Domaine personnalisé — offre Signature (niveau 3) */}
-          {siteMax >= 3 ? (
+          {/* Domaine personnalisé — dans TOUTES les formules, essai compris.
+              ⚠️ Ce bloc était conditionné à `siteMax >= 3` (Signature). C'était en contradiction
+              avec lib/plans.ts:38, qui met `site.domaine_perso` dans BASE depuis la décision du
+              04/09 (« l'adresse sans presti est pour tous »), et avec app/api/domain/route.ts:33
+              qui autorise déjà la route pour toutes les formules. L'artisan à 29 € avait donc le
+              DROIT sans avoir le CHAMP. Repéré le 2026-09-10 en sourçant une publicité qui
+              annonçait « votre nom de domaine dès la formule d'entrée » : la pub disait vrai sur
+              le papier, l'écran disait non. */}
+          {peut(plan, 'site.domaine_perso') ? (
             <div className="site-domain">
               <div className="site-domain-h">
                 <b>Votre nom de domaine <Info cle="profil.domaine" /></b>
-                <span className="muted">Branchez votre propre adresse (ex : mon-entreprise.fr). Inclus dans l’offre Signature.</span>
+                <span className="muted">Branchez votre propre adresse (ex : mon-entreprise.fr). Compris dans toutes les formules, essai inclus. Le nom de domaine s’achète chez un hébergeur et reste à vous.</span>
               </div>
               <div className="site-domain-row">
                 <input value={domaine} onChange={(e) => setDomaine(e.target.value)} placeholder="mon-entreprise.fr" spellCheck={false} disabled={domBusy} />
