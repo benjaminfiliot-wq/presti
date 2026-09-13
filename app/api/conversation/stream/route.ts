@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { suspensionEnCours } from '@/lib/suspension'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
@@ -77,6 +78,8 @@ export async function POST(req: Request) {
     const { data: artisan } = await supabaseAdmin
       .from('artisans').select('id, nom, metier, ton_style, email, is_founder, leads_pause, plan, services, zone_intervention, bio, tva_regime, assurance_nom').eq('id', lead.artisan_id).maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
+    // Compte suspendu par la direction (v15 §5) : le moteur se tait, comme si l'artisan était en pause.
+    if (await suspensionEnCours(artisan.id)) return NextResponse.json({ ok: true, reply: null, indisponible: true })
 
     const notifier = async (reply: string | null, alerte?: string) => {
       if (!artisan.email) return

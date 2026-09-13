@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { suspensionEnCours, MESSAGE_PUBLIC_INDISPONIBLE } from '@/lib/suspension'
 import PlatChat from './PlatChat'
 import { computeResponseDelay } from '@/lib/platStats'
 import { lisibleSur } from '@/lib/contrast'
@@ -90,6 +91,10 @@ export default async function PlateformePage({ params, searchParams }: Params) {
   // Domaine vérifié : comme le site, la page de conversation ne reste pas sur une adresse Presti
   // (trouvé par domaine-perso-e2e le 05/09 : le site redirigeait, pas la conversation).
   if (a.domaine && a.domaine_verifie && host && host !== a.domaine && host !== `www.${a.domaine}`) redirect(`https://${a.domaine}/demande`)
+  // Compte suspendu par la direction (v15 §5) : la même page neutre — le client d'un artisan n'a pas à savoir.
+  if (await suspensionEnCours(a.id)) {
+    return <main className="plat"><div className="plat-mid"><div className="plat-404"><b>Page indisponible</b><span>{MESSAGE_PUBLIC_INDISPONIBLE}</span></div></div></main>
+  }
   if (a.plateforme_active === false) {
     return <main className="plat"><div className="plat-mid"><div className="plat-404"><b>Page indisponible</b><span>Ce lien de contact n&apos;est plus actif pour le moment.</span></div></div></main>
   }

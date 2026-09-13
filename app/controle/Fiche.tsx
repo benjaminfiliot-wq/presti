@@ -101,6 +101,8 @@ export default function Fiche({ id, role, signaler, onRetour }: { id: string; ro
         return
       }
       dire({ type: 'err', text: r.data.error ?? 'Action refusée.' })
+      // Un refus (« déjà suspendu », etc.) rafraîchit aussi l'écran : l'état affiché redevient l'état réel.
+      void charger()
     } finally { setBusy(null) }
   }, [charger, id, dire])
 
@@ -131,7 +133,7 @@ export default function Fiche({ id, role, signaler, onRetour }: { id: string; ro
   }
   function suspendre() {
     const motif = demanderTexte('Pourquoi suspendre ce compte ? (motif interne, journalisé)')
-    if (motif === null) return
+    if (motif === null) { dire({ type: 'err', text: 'Suspension annulée : aucun motif saisi.' }); return }
     const message = window.prompt('Message affiché à l’artisan quand il tentera de se connecter (facultatif) :')
     if (message === null) return
     demander({ action: 'suspendre', motif, message: message.trim() }, 'artisan', 'suspendre ce compte')

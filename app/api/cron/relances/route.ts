@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { enregistrerPassage, ronde } from '@/lib/alertes'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { suspensionEnCours } from '@/lib/suspension'
 import { purgerComptes } from '@/lib/purgeComptes'
 import { purgerRgpd } from '@/lib/purgesRgpd'
 import { generateRelanceReply, relanceTemplate } from '@/lib/ai'
@@ -64,6 +65,10 @@ export async function GET(req: Request) {
       .select('nom, metier, ton_style, email, is_founder')
       .eq('id', lead.artisan_id)
       .maybeSingle()
+
+    // Compte suspendu par la direction (v15 §5) : on n'écrit pas à ses prospects en son nom. La relance n'est pas
+    // marquée envoyée : elle repart à la réactivation.
+    if (await suspensionEnCours(lead.artisan_id)) { skipped++; continue }
 
     const rang = r.rang ?? 1
 

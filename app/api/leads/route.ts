@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { suspensionEnCours, MESSAGE_PUBLIC_INDISPONIBLE } from '@/lib/suspension'
 import { generateLeadReply, qualifyLead } from '@/lib/ai'
 import { getPlateformeConfig, decisionReponse } from '@/lib/plateformeConfig'
 import { sendEmail } from '@/lib/email'
@@ -81,6 +82,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
     }
     if (!artisan) return NextResponse.json({ error: 'Artisan introuvable' }, { status: 404 })
+    // Compte suspendu par la direction (v15 §5) : le lien ne prend plus de demandes — refus neutre, sans trace.
+    if (await suspensionEnCours(artisan.id)) return NextResponse.json({ error: MESSAGE_PUBLIC_INDISPONIBLE }, { status: 410 })
 
     // Qualification silencieuse (déterministe, 0 coût IA) : urgence + type de chantier → tri de l'inbox.
     const qualif = qualifyLead(message, artisan.metier)

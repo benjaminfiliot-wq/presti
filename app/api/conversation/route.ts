@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { suspensionEnCours } from '@/lib/suspension'
 import { generateConversationReply, type ConvTurn } from '@/lib/ai'
 import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
@@ -159,6 +160,8 @@ export async function POST(req: Request) {
       .eq('id', lead.artisan_id)
       .maybeSingle()
     if (!artisan) return NextResponse.json({ ok: true, reply: null })
+    // Compte suspendu par la direction (v15 §5) : le moteur se tait, comme si l'artisan était en pause.
+    if (await suspensionEnCours(artisan.id)) return NextResponse.json({ ok: true, reply: null, indisponible: true })
 
     // UNE décision, la même que /stream et /api/leads (v7, bloc 1b). Avant, cette route lisait
     // l'ancien booléen `reponse_auto` AVANT la config : remettre « auto » dans Ma plateforme ne
