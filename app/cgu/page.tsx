@@ -52,6 +52,14 @@ export default function CGU() {
           24 h » du formulaire de contact : cette dernière décrit l'usage constaté, celui-ci est
           l'engagement — l'engagement ne doit jamais être plus court que ce qu'on peut tenir un
           jour de chantier. */}
+      <h2 id="site">3 bis. Le site à la demande</h2>
+      <ul>
+        <li>Le site vitrine n’est pas compris dans les abonnements. Il se commande à part, au prix indiqué au moment de la commande (TVA non applicable, art. 293 B du CGI), payé une seule fois via <strong>Stripe</strong>. Aucune fabrication ne commence avant le paiement.</li>
+        <li>Le site est livré après une <strong>validation humaine</strong> par Presti, dans un délai annoncé de 48 h ouvrées après cette validation. Presti ne promet ni position dans les moteurs de recherche, ni délai de classement : le référencement local est fait selon les règles de l’art ; le classement dépend du temps, des avis et de la concurrence.</li>
+        <li>Le nom de domaine reste la propriété de l’artisan, à son nom. Les textes et photos qu’il fournit restent les siens ; il garantit en détenir les droits.</li>
+        <li><strong>Si le compte Presti est supprimé</strong>, le site commandé reste en ligne <strong>douze mois</strong> à compter de la suppression, sans frais ; à l’issue de ce délai, ou avant sur simple demande, l’artisan reçoit le dossier complet de son site (pages, images, plan du site) pour l’héberger où il le souhaite. Passé ce délai, le site est retiré.</li>
+      </ul>
+
       <h2 id="support">4. Support et assistance</h2>
       <p>Le support se fait <strong>par écrit et en français</strong>, par <a href="/contact">le formulaire de contact</a> ou à l’adresse email des <a href="/mentions-legales">mentions légales</a> : les deux arrivent au même endroit.</p>
       <ul>
