@@ -24,6 +24,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawn, execFileSync } from 'node:child_process'
+import { fichiersVides } from './lib/preuves.mjs'
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const VAULT = path.resolve(RACINE, '..', 'SaaS')
@@ -212,8 +213,11 @@ async function verifier(id) {
   const journal = path.join(ORCH, D.preuves, id, 'verifier.log')
   ecrire(journal, `$ ${t.entete.verifier}\n# ${maintenant()} · code ${r.code} · ${duree}s\n\n${sortie}`)
   const lignes = sortie.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
-  const verdict = r.code === 0 ? 'PASS' : 'FAIL'
-  const ligne = verdict === 'PASS' ? '' : (r.expire
+  // Une preuve de 0 octet est un mensonge, pas une preuve (quatre « captures » vides livrées le 13/09) : refus, même si la
+  // commande est verte. Le vérificateur d'une tâche ne peut pas être plus indulgent que le chef de gare.
+  const vides = fichiersVides(path.join(ORCH, D.preuves, id)).map((v) => path.basename(v))
+  const verdict = r.code === 0 && !vides.length ? 'PASS' : 'FAIL'
+  const ligne = verdict === 'PASS' ? '' : vides.length ? `preuve vide : ${vides.slice(0, 4).join(', ')}` : (r.expire
     ? `délai dépassé (${minutes} min)`
     : (lignes.find((l) => /ÉCHEC|ECHEC|FAIL|✗|Error|Erreur|not ok|AssertionError/i.test(l)) || lignes.at(-1) || `code ${r.code}`)).slice(0, 160)
   const lock = lireLock(id)

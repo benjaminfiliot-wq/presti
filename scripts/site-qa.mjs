@@ -37,6 +37,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import http from 'node:http'
+import net from 'node:net'
+import os from 'node:os'
 
 const BARRE = {
   // Lighthouse mobile — les quatre scores. 95, pas 90 : un site vendu comme « techniquement irréprochable » ne se
@@ -72,6 +74,39 @@ export const TYPES_METIER = {
 // lui-même (dossier de commande). Une licence absente de cette liste est un refus, pas une tolérance.
 export const LICENCES_PERMISES = ['CC0', 'domaine public', 'CC BY 4.0', 'CC BY 3.0', 'CC BY 2.0', 'CC BY-SA 4.0', 'CC BY-SA 3.0', 'CC BY-SA 2.0', 'propriétaire']
 let AUTEURS = []
+// La direction artistique par métier, telle que plans/cerveau-site.md la fixe (§3) : l'accent et la police display.
+// Le juge ne juge pas le goût — mais il vérifie que le site a SUIVI la direction, pas un thème système par défaut.
+export const DA_METIER = {
+  plombier: { accent: '#1E6FA8', display: 'Manrope' },
+  electricien: { accent: '#E8B93B', display: 'Space Grotesk' },
+  chauffagiste: { accent: '#D2622A', display: 'Newsreader' },
+  macon: { accent: '#8A8177', display: 'Archivo Narrow' },
+  menuisier: { accent: '#A9743F', display: 'Fraunces' },
+  peintre: { accent: '#C2543F', display: 'Instrument Serif' },
+  carreleur: { accent: '#3C6E63', display: 'Manrope' },
+  couvreur: { accent: '#6B4A3A', display: 'Archivo Narrow' },
+  serrurier: { accent: '#35506B', display: 'Syne' },
+  paysagiste: { accent: '#4A7B3F', display: 'Lora' },
+  generique: { accent: '#3B4E63', display: 'Manrope' },
+}
+// La substance : ce qu'un squelette « qui passe » n'a pas (constaté le 13/09 : police système, aucune mise en page,
+// un bloc gris pour photo, 70 Ko en tout — vert au SEO, vide pour un client). Des seuils bas, mais des seuils.
+const SUBSTANCE = { CSS_MIN: 6000, POLICES_MIN: 1, POLICE_OCTETS_MIN: 5000, PHOTOS_MIN: 3, PHOTO_OCTETS_MIN: 25_000, PHOTO_LARGEUR_MIN: 800, TEXTE_ACCUEIL_MIN: 1200, H2_ACCUEIL_MIN: 4, TEXTE_COMMUNE_MIN: 400 }
+/** La largeur d'un WebP lue dans son en-tête (VP8X, VP8L, VP8) ; 0 si ce n'en est pas un. */
+function largeurWebp(fichier) {
+  try {
+    const b = Buffer.alloc(32); const fd = fs.openSync(fichier, 'r'); fs.readSync(fd, b, 0, 32, 0); fs.closeSync(fd)
+    if (b.toString('ascii', 0, 4) !== 'RIFF' || b.toString('ascii', 8, 12) !== 'WEBP') return 0
+    const chunk = b.toString('ascii', 12, 16)
+    if (chunk === 'VP8X') return 1 + (b[24] | (b[25] << 8) | (b[26] << 16))
+    if (chunk === 'VP8L') return 1 + (((b[22] & 0x3f) << 8) | b[21])
+    if (chunk === 'VP8 ') return b.readUInt16LE(26) & 0x3fff
+    return 0
+  } catch { return 0 }
+}
+// Une attribution inventée (« John Doe », source « Wikimedia » sans lien — le 13/09) n'est pas une attribution.
+const AUTEURS_BIDON = /^(john doe|jane doe|auteur|author|inconnu|unknown|anonyme|anonymous|test|n\/a|-)$/i
+const attributionCredible = (a) => !!a.auteur && a.auteur.length >= 3 && !AUTEURS_BIDON.test(a.auteur.trim()) && /^https?:\/\/\S+\.\S+/.test(String(a.source || '')) && LICENCES_PERMISES.includes(a.licence)
 const TYPES_MIME = {
   '.html': 'text/html; charset=utf-8', '.xml': 'application/xml; charset=utf-8', '.txt': 'text/plain; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -153,8 +188,8 @@ function jugerContrat(dossier, contrat) {
     try { attributions = JSON.parse(fs.readFileSync(fAttr, 'utf8')) } catch { /* jugé juste en dessous */ }
     const liste = Array.isArray(attributions) ? attributions : []
     const sans = images.filter((i) => !liste.some((a) => a.fichier === i || `images/${a.fichier}` === i))
-    const incompletes = liste.filter((a) => !LICENCES_PERMISES.includes(a.licence) || !a.auteur || !a.source)
-    ok('attributions.json : chaque image a un auteur, une source et une licence permise', !!attributions && sans.length === 0 && incompletes.length === 0, attributions ? `${sans.length} sans attribution · ${incompletes.length} incomplète(s)` : 'attributions.json absent ou illisible', `toutes ; licences : ${LICENCES_PERMISES.join(', ')}`)
+    const incompletes = liste.filter((a) => !attributionCredible(a))
+    ok('attributions.json : chaque image a un auteur réel, une source en URL et une licence permise', !!attributions && sans.length === 0 && incompletes.length === 0, attributions ? `${sans.length} sans attribution · ${incompletes.length} non crédible(s) (auteur bidon, source sans URL ou licence)` : 'attributions.json absent ou illisible', `toutes ; licences : ${LICENCES_PERMISES.join(', ')}`)
     AUTEURS = [...new Set(liste.map((a) => a.auteur).filter(Boolean))]
   }
   const sitemap = existe(dossier, 'sitemap.xml') ? fs.readFileSync(path.join(dossier, 'sitemap.xml'), 'utf8') : ''
@@ -209,17 +244,51 @@ function jugerPage(html, page, contrat, typeAttendu, titres, descriptions) {
   return t
 }
 
+// ── La substance et la direction artistique ──────────────────────────────────────────────────────────────────
+function jugerSubstance(dossier, contrat, pages) {
+  const t = []
+  const ok = (nom, passe, mesure = '', attendu = '') => t.push({ nom, passe: !!passe, mesure: String(mesure), attendu: String(attendu) })
+  const fichiers = marcher(dossier)
+  const lireHtml = (p) => { const f = path.join(dossier, p.chemin.replace(/^\//, ''), 'index.html'); return fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : '' }
+  const accueil = lireHtml(pages.find((p) => p.type === 'accueil') || { chemin: '/' })
+  // Le CSS : les feuilles du dossier + les <style> inline de l'accueil.
+  const css = fichiers.filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(f, 'utf8')).join('\n') + [...accueil.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n') + [...accueil.matchAll(/style=["']([^"']*)["']/gi)].map((m) => m[1]).join('\n')
+  ok(`CSS réel (≥ ${SUBSTANCE.CSS_MIN} signes)`, css.length >= SUBSTANCE.CSS_MIN, `${css.length} signes`, `≥ ${SUBSTANCE.CSS_MIN}`)
+  const polices = fichiers.filter((f) => /\.woff2?$/i.test(f) && fs.statSync(f).size >= SUBSTANCE.POLICE_OCTETS_MIN)
+  ok('polices auto-hébergées (woff2 dans le dossier, licence OFL à côté)', polices.length >= SUBSTANCE.POLICES_MIN && fichiers.some((f) => /OFL\.txt$/i.test(f)), `${polices.length} police(s)${fichiers.some((f) => /OFL\.txt$/i.test(f)) ? ', OFL.txt' : ', pas d’OFL.txt'}`, `≥ ${SUBSTANCE.POLICES_MIN} woff2 + OFL.txt`)
+  ok('aucune police chargée depuis un service tiers', !/fonts\.googleapis|fonts\.gstatic|use\.typekit|cdnjs|jsdelivr|unpkg/i.test(accueil + css), 'lu', 'tout est dans le dossier')
+  // Une photo se reconnaît à sa largeur, lue dans l'en-tête WebP — pas à son nom (six « photos » de 600 octets le 13/09).
+  const photos = fichiers.filter((f) => /\.webp$/i.test(f)).map((f) => ({ f, octets: fs.statSync(f).size, largeur: largeurWebp(f) })).filter((p) => p.octets >= SUBSTANCE.PHOTO_OCTETS_MIN && p.largeur >= SUBSTANCE.PHOTO_LARGEUR_MIN)
+  ok(`des photos réelles (≥ ${SUBSTANCE.PHOTOS_MIN} WebP de ≥ ${SUBSTANCE.PHOTO_LARGEUR_MIN} px et ≥ ${SUBSTANCE.PHOTO_OCTETS_MIN / 1000} Ko)`, photos.length >= SUBSTANCE.PHOTOS_MIN, `${photos.length} photo(s) réelle(s)`, `≥ ${SUBSTANCE.PHOTOS_MIN}`)
+  const texte = texteDe(accueil).trim()
+  ok(`accueil : du texte (≥ ${SUBSTANCE.TEXTE_ACCUEIL_MIN} signes) et des sections (≥ ${SUBSTANCE.H2_ACCUEIL_MIN} <h2>)`, texte.length >= SUBSTANCE.TEXTE_ACCUEIL_MIN && (accueil.match(/<h2\b/gi) || []).length >= SUBSTANCE.H2_ACCUEIL_MIN, `${texte.length} signes · ${(accueil.match(/<h2\b/gi) || []).length} h2`, `≥ ${SUBSTANCE.TEXTE_ACCUEIL_MIN} · ≥ ${SUBSTANCE.H2_ACCUEIL_MIN}`)
+  const communesCourtes = pages.filter((p) => p.type === 'commune').filter((p) => texteDe(lireHtml(p)).trim().length < SUBSTANCE.TEXTE_COMMUNE_MIN)
+  ok(`pages de commune : du texte (≥ ${SUBSTANCE.TEXTE_COMMUNE_MIN} signes chacune)`, communesCourtes.length === 0, communesCourtes.map((p) => p.chemin).slice(0, 3).join(', ') || 'toutes', '0 page creuse')
+  const da = DA_METIER[contrat?.metier]
+  if (da) {
+    ok(`direction artistique du métier : l'accent ${da.accent} est dans le CSS`, new RegExp(da.accent.replace('#', '#?'), 'i').test(css), /(#[0-9a-f]{6})/i.test(css) ? 'couleurs présentes' : 'aucune couleur', da.accent)
+    ok(`direction artistique du métier : la police display « ${da.display} »`, new RegExp(da.display.replace(/\s+/g, '\\s*'), 'i').test(css), (css.match(/font-family\s*:\s*([^;]+)/i)?.[1] ?? '(aucune font-family)').slice(0, 60), da.display)
+  }
+  ok("pas de carrousel automatique ni de police système déguisée en identité", !/autoplay|setInterval\([^)]*slide|swiper|slick/i.test(accueil), 'lu', 'aucun défilement automatique')
+  return t
+}
+
 // ── Lighthouse mobile ────────────────────────────────────────────────────────────────────────────────────────
 async function jugerLighthouse(url, lighthouse, port) {
   const t = []
   const ok = (nom, passe, mesure = '', attendu = '') => t.push({ nom, passe: !!passe, mesure: String(mesure), attendu: String(attendu) })
   let lhr
-  try {
-    const r = await lighthouse(url, { port, output: 'json', logLevel: 'error', onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'] })
-    lhr = r.lhr
-  } catch (e) {
-    ok('Lighthouse a tourné', false, e.message.slice(0, 120), 'un rapport')
-    return t
+  // Deux essais : une mesure de laboratoire varie d'un passage à l'autre, on garde le meilleur des deux — mais on ne
+  // relance que si le premier est sous la barre (un site vert du premier coup ne paie qu'une mesure).
+  const minScore = (r) => Math.min(...['performance', 'accessibility', 'best-practices', 'seo'].map((c) => Math.round((r.categories[c]?.score ?? 0) * 100)))
+  for (let essai = 1; essai <= 2; essai++) {
+    try {
+      const r = await lighthouse(url, { port, output: 'json', logLevel: 'error', onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'] })
+      if (!lhr || minScore(r.lhr) > minScore(lhr)) lhr = r.lhr
+      if (minScore(lhr) >= BARRE.SCORE_MIN) break
+    } catch (e) {
+      if (essai === 2 && !lhr) { ok('Lighthouse a tourné', false, e.message.slice(0, 120), 'un rapport'); return t }
+    }
   }
   for (const [cle, nom] of [['performance', 'Performance'], ['accessibility', 'Accessibilité'], ['best-practices', 'Bonnes pratiques'], ['seo', 'SEO']]) {
     const score = Math.round((lhr.categories[cle]?.score ?? 0) * 100)
@@ -236,6 +305,27 @@ async function jugerLighthouse(url, lighthouse, port) {
 function marcher(d) { const out = []; const rec = (x) => { for (const e of fs.readdirSync(x, { withFileTypes: true })) { const p = path.join(x, e.name); if (e.isDirectory()) rec(p); else out.push(p) } }; rec(d); return out.sort() }
 const existe = (d, f) => fs.existsSync(path.join(d, f))
 const existeEt = (f, cond) => fs.existsSync(f) && cond(fs.readFileSync(f, 'utf8'))
+/** Un port TCP libre, choisi par le système : deux juges en parallèle n'ouvrent jamais le même Chrome. */
+const portLibre = () => new Promise((r, x) => { const s = net.createServer(); s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => r(p)) }); s.on('error', x) })
+// Un seul Lighthouse à la fois sur la machine : les autres juges attendent leur tour (jusqu'à 20 min), un verrou de
+// plus de 25 min est considéré abandonné. Sans ça, sept mesures simultanées se parasitent (CPU) — Performance 0.
+const VERROU = path.join(os.tmpdir(), 'site-qa-lighthouse.lock')
+const attendre = (ms) => new Promise((r) => setTimeout(r, ms))
+const vivant = (pid) => { try { process.kill(pid, 0); return true } catch { return false } }
+async function prendreVerrou() {
+  const debut = Date.now()
+  for (;;) {
+    try { fs.writeFileSync(VERROU, `${process.pid} ${new Date().toISOString()}\n`, { flag: 'wx' }); return VERROU } catch { /* pris */ }
+    // Un détenteur mort (juge tué, machine redémarrée) ne bloque personne : le verrou est levé sur-le-champ.
+    try {
+      const [pid] = fs.readFileSync(VERROU, 'utf8').trim().split(/\s+/)
+      if (!vivant(Number(pid)) || Date.now() - fs.statSync(VERROU).mtimeMs > 25 * 60_000) { fs.unlinkSync(VERROU); continue }
+    } catch { continue }
+    if (Date.now() - debut > 20 * 60_000) throw new Error('un autre juge tient Lighthouse depuis plus de 20 min')
+    await attendre(3000)
+  }
+}
+const libererVerrou = (v) => { try { fs.unlinkSync(v) } catch { /* déjà levé */ } }
 const V = '\x1b[32m', R = '\x1b[31m', G = '\x1b[90m', Z = '\x1b[0m'
 function afficher(titreBloc, tests, json) {
   if (json) return
@@ -264,6 +354,8 @@ bloc('site.json — le contrat', [{ nom: 'site.json présent et lisible', passe:
 const { t: tContrat, pages, type } = jugerContrat(dossier, contrat)
 bloc('Le dossier — pages, communes, sitemap, robots', tContrat)
 
+bloc('La substance et la direction artistique', jugerSubstance(dossier, contrat, pages))
+
 const titres = new Set(), descriptions = new Set()
 for (const page of pages) {
   const f = path.join(dossier, page.chemin.replace(/^\//, ''), 'index.html')
@@ -274,12 +366,15 @@ for (const page of pages) {
 if (!statique) {
   const { srv, origine } = await servir(dossier)
   let navigateur = null
+  let verrou = null
   try {
     const { chromium } = await import('playwright')
     const { default: lighthouse } = await import('lighthouse')
-    // Port de débogage fixe (comme scripts/sonde-lighthouse.mjs, sur 9222) : 9333 ici pour ne pas se marcher dessus
-    // avec la sonde ; deux juges en parallèle se gêneraient — un à la fois.
-    const port = 9333
+    // Plusieurs juges tournent en même temps (un agent par site) : un port de débogage LIBRE à chaque fois, et un verrou
+    // de fichier pour que Lighthouse ne mesure qu'un site à la fois — sinon les mesures se parasitent (Performance 0
+    // constaté le 13/09 avec sept juges sur le même port 9333).
+    const port = await portLibre()
+    verrou = await prendreVerrou()
     navigateur = await chromium.launch({ args: [`--remote-debugging-port=${port}`] })
     const cibles = pages.filter((p) => p.type !== 'legal').slice(0, maxPages)
     for (const page of cibles) bloc(`Lighthouse mobile — ${page.chemin}`, await jugerLighthouse(origine + page.chemin, lighthouse, port))
@@ -288,6 +383,7 @@ if (!statique) {
     bloc('Lighthouse', [{ nom: 'Playwright + Lighthouse disponibles', passe: false, mesure: e.message.slice(0, 120), attendu: 'npm i (playwright, lighthouse)' }])
   } finally {
     if (navigateur) await navigateur.close().catch(() => {})
+    if (verrou) libererVerrou(verrou)
     srv.close()
   }
 }

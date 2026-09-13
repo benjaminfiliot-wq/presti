@@ -7,6 +7,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { pngValide } from './lib/preuves.mjs'
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 let ko = 0
@@ -51,7 +52,7 @@ T('rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/controle/Sites.
 
 console.log('── 4. La capture')
 const preuves = path.join(RACINE, '.orchestre', 'preuves', '014-14')
-T('onglet-sites.png dans .orchestre/preuves/014-14/', fs.existsSync(path.join(preuves, 'onglet-sites.png')))
+T('onglet-sites.png dans .orchestre/preuves/014-14/ — un vrai PNG (≥ 10 Ko)', pngValide(path.join(preuves, 'onglet-sites.png')))
 
 console.log('── 5. Typecheck et garde de commit')
 const tc = spawnSync('npm', ['run', 'typecheck'], { cwd: RACINE, encoding: 'utf8', shell: process.platform === 'win32' })

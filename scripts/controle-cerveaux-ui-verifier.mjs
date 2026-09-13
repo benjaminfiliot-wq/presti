@@ -6,6 +6,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { pngValide } from './lib/preuves.mjs'
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 let ko = 0
@@ -39,7 +40,7 @@ const hors = chemins(porcelain).filter((p) => SENSIBLE.test(p) && !dejaSales.has
 T('rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/controle/Cerveaux.tsx et app/controle/page.tsx', hors.length === 0, hors.slice(0, 6).join(', '))
 
 console.log('── 4. La capture')
-T('onglet-cerveaux.png dans .orchestre/preuves/014-16/', fs.existsSync(path.join(RACINE, '.orchestre', 'preuves', '014-16', 'onglet-cerveaux.png')))
+T('onglet-cerveaux.png dans .orchestre/preuves/014-16/ — un vrai PNG (≥ 10 Ko)', pngValide(path.join(RACINE, '.orchestre', 'preuves', '014-16', 'onglet-cerveaux.png')))
 
 console.log('── 5. Typecheck et garde de commit')
 const tc = spawnSync('npm', ['run', 'typecheck'], { cwd: RACINE, encoding: 'utf8', shell: process.platform === 'win32' })

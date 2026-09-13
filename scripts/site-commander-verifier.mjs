@@ -8,6 +8,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { pngValide } from './lib/preuves.mjs'
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DOSSIER = path.join(RACINE, 'app', 'site', 'commander')
@@ -60,8 +61,8 @@ const horsPerimetre = chemins(porcelain).filter((p) => SENSIBLE.test(p) && !deja
 T('rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/site/commander/** et app/AppShell.tsx', horsPerimetre.length === 0, horsPerimetre.slice(0, 6).join(', '))
 
 console.log('── 5. Les captures')
-const captures = fs.existsSync(PREUVES) ? fs.readdirSync(PREUVES).filter((f) => /^ecran-[1-4]\.png$/.test(f)) : []
-T('quatre captures ecran-1.png … ecran-4.png dans .orchestre/preuves/014-01/', captures.length === 4, `${captures.length} trouvée(s)`)
+const captures = [1, 2, 3, 4].map((n) => path.join(PREUVES, `ecran-${n}.png`)).filter((f) => pngValide(f))
+T('quatre VRAIES captures ecran-1.png … ecran-4.png (PNG, ≥ 10 Ko) dans .orchestre/preuves/014-01/', captures.length === 4, `${captures.length} valide(s) sur 4 — un fichier vide n'est pas une capture`)
 
 console.log('── 6. Typecheck et garde de commit')
 const tc = spawnSync('npm', ['run', 'typecheck'], { cwd: RACINE, encoding: 'utf8', shell: process.platform === 'win32' })

@@ -15,6 +15,8 @@ import { fileURLToPath } from 'node:url'
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const STATIQUE = process.argv.includes('--statique')
+// --garder : ne pas effacer le dossier temporaire et imprimer son chemin (pour lancer le juge à la main dessus).
+const GARDER = process.argv.includes('--garder')
 // Un WebP 1×1 valide (sans perte) : assez pour que le juge lise un format, un alt, des dimensions.
 const WEBP = Buffer.from('UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA==', 'base64')
 
@@ -36,30 +38,44 @@ const ld = (type) => JSON.stringify({
   address: { '@type': 'PostalAddress', streetAddress: '12 rue des Artisans', postalCode: '69003', addressLocality: 'Lyon', addressCountry: 'FR' },
   openingHours: 'Mo-Fr 08:00-18:00', areaServed: CONTRAT.communes,
 })
+const PARAGRAPHE = 'Martin Plomberie intervient pour le dépannage, l’installation et la rénovation de plomberie : arrivée d’eau, groupe de sécurité, mitigeur, réseaux en PER, cuivre ou multicouche. Chaque intervention commence par un diagnostic sur place — jamais à distance — et un devis clair, sans surprise. '
 function page({ titre, description, h1, texte, chemin, type = 'Plumber', casse = {} }) {
   const robots = casse.noindex ? '<meta name="robots" content="noindex, nofollow">' : '<meta name="robots" content="index, follow">'
   const alt = casse.altVide ? '' : 'Rénovation d’une salle de bain à Lyon'
+  const sections = ['Nos prestations', 'Nos réalisations', 'Communes servies', 'Comment ça se passe', 'Questions fréquentes'].map((s) => `<section><h2>${s}</h2><p>${PARAGRAPHE}</p></section>`).join('')
   return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${titre}</title><meta name="description" content="${description}">${robots}
 <link rel="canonical" href="https://martin-plomberie.example${chemin}">
 <meta property="og:title" content="${titre}"><meta property="og:description" content="${description}"><meta property="og:image" content="https://martin-plomberie.example/images/hero.webp">
-<script type="application/ld+json">${ld(type)}</script>
-<style>body{font-family:system-ui;margin:0;color:#111;background:#fff}main{padding:24px;max-width:720px;margin:auto}img{max-width:100%;height:auto}footer{padding:24px;font-size:14px}</style></head>
-<body><main><h1>${h1}</h1><img src="/images/hero.webp" alt="${alt}" width="1" height="1"><p>${texte}</p><img src="/images/chantier.webp" alt="Chantier terminé à Villeurbanne" width="1" height="1" loading="lazy">
-<p><a href="/demande/">Demander un devis</a></p></main><footer><a href="/mentions-legales/">Mentions légales</a> · <a href="/confidentialite/">Politique de confidentialité</a></footer></body></html>`
+<link rel="stylesheet" href="/styles.css">
+<script type="application/ld+json">${ld(type)}</script></head>
+<body><main><h1>${h1}</h1><img src="/images/hero.webp" alt="${alt}" width="1600" height="1067" fetchpriority="high"><p>${texte} ${PARAGRAPHE}</p>${sections}<img src="/images/chantier.webp" alt="Chantier terminé à Villeurbanne" width="1600" height="1067" loading="lazy"><img src="/images/cuisine.webp" alt="Cuisine rénovée" width="1600" height="1067" loading="lazy">
+<p><a class="btn" href="/demande/">Demander un devis</a></p></main><footer><a href="/mentions-legales/">Mentions légales</a> · <a href="/confidentialite/">Politique de confidentialité</a></footer></body></html>`
 }
+// Les trois photos libres du dépôt (public/demo/portfolio, CC BY-SA 4.0, Wikimedia Commons) : de vraies photos, de vrais
+// auteurs — le juge lit la largeur dans l'en-tête et refuse un auteur bidon.
+const PORTFOLIO = path.join(RACINE, 'public', 'demo', 'portfolio')
+const PHOTOS = [
+  { source: 'escalier-helicoidal-1.webp', cible: 'hero.webp', auteur: 'Petar Milošević', url: 'https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg', legende: 'Escalier hélicoïdal en bois' },
+  { source: 'escalier-helicoidal-2.webp', cible: 'chantier.webp', auteur: 'Petar Milošević', url: 'https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg', legende: 'Escalier, vue rapprochée' },
+  { source: 'cuisine-bois.webp', cible: 'cuisine.webp', auteur: 'JessofWoodnCo', url: 'https://commons.wikimedia.org/wiki/File:Wooden_kitchen.jpg', legende: 'Cuisine en bois' },
+]
+// Une police auto-hébergée factice mais reconnaissable (signature wOF2 + remplissage) et un CSS de vraie taille : le
+// témoin prouve la mécanique du juge, pas la beauté d'un site.
+const WOFF2 = Buffer.concat([Buffer.from('wOF2'), Buffer.alloc(8000, 1)])
+const CSS = `@font-face{font-family:'Manrope';src:url('/fonts/manrope.woff2') format('woff2');font-display:swap}\nhtml{background:#F6F8FA;color:#10233A}\nbody{font-family:'Manrope',system-ui,sans-serif;margin:0;line-height:1.55}\nh1,h2{font-family:'Manrope',system-ui,sans-serif}\na.btn{background:#1E6FA8;color:#fff;padding:12px 20px;border-radius:12px;display:inline-block}\nmain{padding:24px;max-width:720px;margin:auto}img{max-width:100%;height:auto}footer{padding:24px;font-size:14px}\n` + Array.from({ length: 60 }, (_, i) => `.s${i}{padding:${i}px;margin:${i}px;color:#10233A;border-radius:${i % 13}px;transition:opacity .4s ease-out}`).join('\n')
 function fabriquer(dossier, casse = {}) {
   fs.rmSync(dossier, { recursive: true, force: true })
   fs.mkdirSync(path.join(dossier, 'images'), { recursive: true })
-  fs.writeFileSync(path.join(dossier, 'images', 'hero.webp'), WEBP)
-  fs.writeFileSync(path.join(dossier, 'images', 'chantier.webp'), WEBP)
+  fs.mkdirSync(path.join(dossier, 'fonts'), { recursive: true })
+  for (const p of PHOTOS) fs.copyFileSync(path.join(PORTFOLIO, p.source), path.join(dossier, 'images', p.cible))
+  fs.writeFileSync(path.join(dossier, 'fonts', 'manrope.woff2'), WOFF2)
+  fs.writeFileSync(path.join(dossier, 'fonts', 'OFL.txt'), 'SIL Open Font License 1.1 — témoin.\n')
+  fs.writeFileSync(path.join(dossier, 'styles.css'), CSS)
   const contrat = JSON.parse(JSON.stringify(CONTRAT))
   if (casse.sansDecennale) delete contrat.decennale
   contrat.demo = true
-  const attributions = [
-    { fichier: 'images/hero.webp', auteur: 'Auteur Témoin', source: 'https://commons.wikimedia.org/wiki/File:Temoin.jpg', licence: 'CC BY-SA 4.0', legende: 'Salle de bain rénovée' },
-    { fichier: 'images/chantier.webp', auteur: 'Autre Auteur', source: 'https://commons.wikimedia.org/wiki/File:Temoin2.jpg', licence: 'CC BY 4.0', legende: 'Chantier terminé' },
-  ]
+  const attributions = PHOTOS.map((p) => ({ fichier: `images/${p.cible}`, auteur: p.auteur, source: p.url, licence: 'CC BY-SA 4.0', legende: p.legende }))
   fs.writeFileSync(path.join(dossier, 'attributions.json'), JSON.stringify(casse.sansAttribution ? attributions.slice(0, 1) : attributions, null, 2))
   // La page satellite est DÉCLARÉE comme page de commune : c'est le cas réaliste d'un générateur trop zélé.
   if (casse.satellite) contrat.pages.push({ chemin: '/plombier-marseille/', type: 'commune', cible: 'Marseille' })
@@ -72,7 +88,7 @@ function fabriquer(dossier, casse = {}) {
   ecrire('/chauffagiste/', page({ titre: 'Chauffagiste à Lyon — Martin Plomberie', description: 'Entretien, dépannage et remplacement de chaudière à Lyon par Martin Plomberie, chauffagiste assuré. Devis clair.', h1: 'Chauffagiste à Lyon', texte: 'Entretien annuel, dépannage et remplacement de chaudières.', chemin: '/chauffagiste/' }))
   if (casse.satellite) ecrire('/plombier-marseille/', page({ titre: 'Plombier à Marseille — Martin Plomberie', description: desc('Marseille'), h1: 'Plombier à Marseille', texte: 'Page satellite : la commune n’est pas servie.', chemin: '/plombier-marseille/' }))
   const legal = (titre, h1, corps, chemin) => page({ titre, description: `${h1} de Martin Plomberie, plombier à Lyon : identité de l’entreprise, assurance et vos droits sur vos données.`, h1, texte: corps, chemin })
-  ecrire('/mentions-legales/', legal('Mentions légales — Martin Plomberie', 'Mentions légales', `Martin Plomberie, entreprise individuelle, SIREN ${CONTRAT.siren}, 12 rue des Artisans 69003 Lyon. Assurance décennale : ${CONTRAT.decennale.assureur}, contrat n° ${CONTRAT.decennale.numero}. Hébergeur : Vercel Inc. Site de démonstration : entreprise fictive. Crédits photos : Auteur Témoin (CC BY-SA 4.0), Autre Auteur (CC BY 4.0), Wikimedia Commons.`, '/mentions-legales/'))
+  ecrire('/mentions-legales/', legal('Mentions légales — Martin Plomberie', 'Mentions légales', `Martin Plomberie, entreprise individuelle, SIREN ${CONTRAT.siren}, 12 rue des Artisans 69003 Lyon. Assurance décennale : ${CONTRAT.decennale.assureur}, contrat n° ${CONTRAT.decennale.numero}. Hébergeur : Vercel Inc. Site de démonstration : entreprise fictive. Crédits photos : Petar Milošević, JessofWoodnCo (CC BY-SA 4.0, Wikimedia Commons).`, '/mentions-legales/'))
   ecrire('/confidentialite/', legal('Politique de confidentialité — Martin Plomberie', 'Politique de confidentialité', 'Les données du formulaire de demande servent uniquement à vous répondre. Vous pouvez demander leur suppression à tout moment.', '/confidentialite/'))
   const pages = contrat.pages.filter((p) => p.type !== 'legal').map((p) => p.chemin).concat(casse.satellite ? ['/plombier-marseille/'] : [])
   fs.writeFileSync(path.join(dossier, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${pages.map((p) => `<url><loc>https://martin-plomberie.example${p}</loc></url>`).join('')}</urlset>`)
@@ -110,7 +126,8 @@ try {
   const rs = juger(vert, ['--statique'])
   T('code de sortie 1 sans contrat', rs.code === 1 && rs.echecs.some((e) => /site\.json/.test(e)), rs.echecs.slice(0, 3).join(' | '))
 } finally {
-  fs.rmSync(tmp, { recursive: true, force: true })
+  if (GARDER) console.log(`(dossier gardé : ${tmp})`)
+  else fs.rmSync(tmp, { recursive: true, force: true })
 }
 console.log(`\n${ko === 0 ? '✅' : '❌'} ${ok} réussis, ${ko} échoués`)
 process.exit(ko === 0 ? 0 : 1)
