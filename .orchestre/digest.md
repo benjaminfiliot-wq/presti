@@ -1,4 +1,4 @@
-# Digest — 2026-09-13T14:49:22Z
+# Digest — 2026-09-13T14:50:37Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 

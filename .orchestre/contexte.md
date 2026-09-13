@@ -1,4 +1,4 @@
-# Carte du code — Presti (2026-09-13T13:49:14Z)
+# Carte du code — Presti (2026-09-13T14:50:37Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -31,12 +31,12 @@
 - `/site` : [slug]/[...reste], [slug]/infos-legales, [slug]
 - `/tarifs` : ·
 
-## API (89) — `app/api/**/route.ts`, préfixe `/api`
+## API (92) — `app/api/**/route.ts`, préfixe `/api`
 - `/account` : delete [GET POST DELETE], inscription [POST], slug [GET POST]
 - `/auth` : code [POST GET], code/verifier [POST], mdp-fuite [POST], reset-confirm [POST], reset-request [POST]
 - `/canaux` : relever [GET POST], · [GET POST DELETE]
 - `/contact` : · [POST]
-- `/controle` : a-faire [GET], alertes/[id]/acquitter [POST], apports/[id]/statut [POST], apports [GET POST PATCH], barre [GET], chiffres [GET], clients/[id]/action [POST], clients/[id] [GET], clients [GET], compta [GET POST], courriers/[fil]/action [POST], courriers/[fil] [GET], courriers/relever [POST], courriers [GET], crons/[nom]/relancer [POST], etat [GET], fil [GET], journal [GET], recherche [GET], reconfirmer [POST], reglages [GET POST], releve [GET POST], securite/bans [GET POST DELETE], support/demander [POST], support/lire [GET], support [GET POST]
+- `/controle` : a-faire [GET], alertes/[id]/acquitter [POST], apports/[id]/statut [POST], apports [GET POST PATCH], barre [GET], cerveaux [GET], chiffres [GET], clients/[id]/action [POST], clients/[id] [GET], clients [GET], compta [GET POST], courriers/[fil]/action [POST], courriers/[fil] [GET], courriers/relever [POST], courriers [GET], crons/[nom]/relancer [POST], etat [GET], fil [GET], journal [GET], recherche [GET], reconfirmer [POST], reglages [GET POST], releve [GET POST], securite/bans [GET POST DELETE], sites/[id] [POST], sites [GET], support/demander [POST], support/lire [GET], support [GET POST]
 - `/conversation` : devis [POST], regles [POST], · [GET POST], stream [POST]
 - `/cron` : alertes [GET], purge-comptes [GET], relances [GET]
 - `/devis` : [id]/envoyer [POST], [id]/pdf [GET], [id] [POST DELETE], auto [POST], generer [POST], · [POST]
@@ -66,9 +66,9 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 ## Formules — `lib/plans.ts`
 - plans : gratuit (Essai, 0 €/mois, BASE) · essentiel (Essentiel, 29 €/mois, BASE) · studio (Studio, 59 €/mois, STUDIO) · signature (Signature, 99 €/mois, SIGNATURE) · business (Business, 0 €/mois, SIGNATURE)
 - capacités (0) : (non extraites)
-- grille complète (17 lignes) : Page de conversation à votre marque · Assistant IA · Comptes clients (lien magique, historique) · Personnalisation · Site vitrine · Votre nom de domaine (site et page de conversation) · Devis chiffrés par l’IA, sur vos prix · Factures + facture électronique · Relances automatiques · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Crédits chaque mois · Export de vos données · Support prioritaire
+- grille complète (16 lignes) : Page de conversation à votre marque · Assistant IA · Comptes clients (lien magique, historique) · Personnalisation · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA, sur vos prix · Factures + facture électronique · Relances automatiques · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Crédits chaque mois · Export de vos données · Support prioritaire
 
-## Bibliothèque — `lib/` (97 fichiers, exports nommés)
+## Bibliothèque — `lib/` (99 fichiers, exports nommés)
 - `lib/DevisPDF.tsx` (3) : PDFLigne, PDFData, DevisPDF
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
 - `lib/ai.ts` (23) : genParams, Artisan, Lead, LeadInsights, analyzeLead, qualifyLead, blocProspect, generateLeadReply, …
@@ -151,27 +151,29 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 - `lib/renderPdf.ts` (1) : renderPdfToBuffer
 - `lib/secretBox.ts` (4) : chiffrementDisponible, chiffrer, dechiffrer, masque
 - `lib/security.ts` (4) : getIp, isBanned, recordAbuse, ipPseudonyme
-- `lib/siteCommande.ts` (21) : PRIX_SITE_CENTS, PRIX_SITE_TEXTE, DELAI_ANNONCE, ETATS, EtatCommande, TRANSITIONS, transitionValide, LIBELLE_ETAT, …
+- `lib/siteCommande.ts` (22) : PRIX_SITE_CENTS, PRIX_SITE_TEXTE, DELAI_ANNONCE, SITE_A_LA_DEMANDE, ETATS, EtatCommande, TRANSITIONS, transitionValide, …
 - `lib/siteCommandeServeur.ts` (6) : brouillonDe, commandesDe, enregistrerBrouillon, poserSessionStripe, Encaissement, encaisserCommandeSite
 - `lib/siteLayout.ts` (9) : SectionId, SlidesOpts, slidesOpts, SiteSection, SiteLayout, SECTION_MIN_TIER, SECTION_ORDER, defaultLayout, …
 - `lib/siteStyle.ts` (13) : CoupleId, Echelle, Bouton, Rythme, Texture, Motion, SiteStyle, STYLE_DEFAUT, …
+- `lib/sitesGeneres.ts` (9) : BUCKET_SITES, PREFIXE_ROUTE, TYPES_MIME, typeMime, cheminObjet, FichierServi, lireFichier, siteDepose, …
 - `lib/slug.ts` (3) : slugify, slugBase, randomSuffix
 - `lib/slugRedirect.ts` (1) : artisanParAncienSlug
 - `lib/stripe.ts` (2) : stripe, concerneAbonnementCourant
 - `lib/suiviDemande.ts` (5) : ETAPES_DEMANDE, EtapeDemande, SuiviDemande, DonneesSuivi, suiviDemande
 - `lib/supabaseAdmin.ts` (1) : supabaseAdmin
 - `lib/supabaseClient.ts` (1) : supabase
+- `lib/suspension.ts` (3) : SuspensionEnCours, suspensionEnCours, MESSAGE_PUBLIC_INDISPONIBLE
 - `lib/themeFonds.ts` (2) : FOND_THEME, fondDuTheme
 - `lib/urls.ts` (14) : ArtisanAdresse, BASE_PRESTI, DOMAINE_NEUTRE, SOUS_DOMAINES, SLUGS_RESERVES, ModeUrl, modeUrl, chemins, …
 - `lib/userAgent.ts` (1) : lireUserAgent
 - `lib/vercelDomains.ts` (6) : DnsRecord, DomainStatus, normalizeDomain, addDomain, getStatus, removeDomain
 - `lib/zip.ts` (2) : crc32, ZipFlux
 
-## Migrations — `supabase/migrations` (88)
-- dernières : 0084_sortie_partenaire.sql, 0085_purger_compte_test_devis.sql, 0086_canaux_apport.sql, 0087_canal_instagram.sql, 0088_site_commande.sql
+## Migrations — `supabase/migrations` (89)
+- dernières : 0085_purger_compte_test_devis.sql, 0086_canaux_apport.sql, 0087_canal_instagram.sql, 0088_site_commande.sql, 0089_sites_bucket.sql
 - les `_A_COLLER_sql_editor_NNNN(.NU).sql` sont les versions à coller dans l’éditeur SQL Supabase (CLAUDE.md « Poser une migration ») — une migration n’existe en prod que collée.
 
-## Scripts — `scripts/` (166 .mjs, dont 73 suites e2e ; l’enchaînement : `tout-verifier.mjs`)
+## Scripts — `scripts/` (172 .mjs, dont 73 suites e2e ; l’enchaînement : `tout-verifier.mjs`)
 
-## Orchestre — file : 0 · en cours : 0 · faites : 1 · refusées : 1
+## Orchestre — file : 18 · en cours : 0 · faites : 1 · refusées : 1
 
