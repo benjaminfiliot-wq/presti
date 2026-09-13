@@ -91,11 +91,15 @@ async function connectCall(ctx, methode, corps) {
   try { json = JSON.parse(texte) } catch { /* pas du JSON : erreur brute, laissée dans texte */ }
   return { ok: r.ok, statut: r.status, texte, json }
 }
-async function modeleOrAliasClaude(ctx, modele) {
-  const label = CATALOGUE_CLAUDE[modele]
+async function catalogueModeles(ctx) {
   const r = await connectCall(ctx, 'GetCascadeModelConfigData', {})
-  const config = (r.json?.clientModelConfigs || []).find((c) => c.label === label)
-  if (!config) throw new Error(`« ${label} » absent du catalogue de modèles du jour (quota, ou modèle renommé/retiré) : ${r.texte.slice(0, 200)}`)
+  return (r.json?.clientModelConfigs || []).map((c) => ({ label: c.label, modelOrAlias: c.modelOrAlias, modelId: c.modelId }))
+}
+async function modeleOrAliasClaude(ctx, modele) {
+  const voulu = CATALOGUE_CLAUDE[modele] || modele
+  const liste = await catalogueModeles(ctx)
+  const config = liste.find((c) => c.label === voulu) || liste.find((c) => c.label.toLowerCase().includes(String(voulu).toLowerCase()))
+  if (!config) throw new Error(`« ${voulu} » absent du catalogue de modèles du jour (quota, ou modèle renommé/retiré). Catalogue : ${liste.map((c) => c.label).join(' · ')}`)
   return config.modelOrAlias
 }
 // StartCascade (sans modèle) + SendUserCascadeMessage (modèle posé dans cascadeConfig.plannerConfig.requestedModel).
@@ -148,7 +152,7 @@ async function lancer(ctx, agent, tache, modele) {
   if (!MODELES.includes(modele)) { console.error(`modèle : ${MODELES.join(' | ')}`); process.exit(2) }
   const prompt = PROMPT(agent, tache)
   let id
-  if (CATALOGUE_CLAUDE[modele]) {
+  if (!MODELES_GEMINI.includes(modele)) {
     id = await lancerCascadeClaude(ctx, modele, prompt)
   } else {
     const r = api(ctx, 'new-conversation', `--model=${modele}`, `--title=${tache ? tache + ' · ' : ''}${agent}`, prompt)
@@ -211,7 +215,7 @@ function dire(ctx, agent, message) {
 async function sonde(ctx, modele) {
   const promptSonde = 'Réponds uniquement par le mot OK, sans ouvrir ni modifier aucun fichier.'
   let id
-  if (CATALOGUE_CLAUDE[modele]) {
+  if (!MODELES_GEMINI.includes(modele)) {
     id = await lancerCascadeClaude(ctx, modele, promptSonde)
   } else {
     const r = api(ctx, 'new-conversation', `--model=${modele}`, '--title=orchestre : sonde de quota', promptSonde)
@@ -230,6 +234,7 @@ async function sonde(ctx, modele) {
 try {
   switch (commande) {
     case 'etat': etat(); break
+    case 'catalogue': { const liste = await catalogueModeles(contexte()); console.log(liste.map((c) => `${c.label}  →  ${JSON.stringify(c.modelOrAlias)}${c.modelId ? '  (' + c.modelId + ')' : ''}`).join('\n') || '(catalogue vide)'); break }
     case 'sonde': process.exit(await sonde(contexte(), option('model', 'flash_lite'))); break
     case 'lancer': { if (!positionnels[0]) { console.error('lancer <agent> [--tache=<id>] [--model=pro]'); process.exit(2) } await lancer(contexte(), positionnels[0], option('tache'), option('model', 'pro')); break }
     case 'flotte': await flotte(contexte(), Number(option('n', '6')) || 6, option('model', 'pro')); break
