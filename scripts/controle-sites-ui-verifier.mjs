@@ -52,7 +52,17 @@ T('rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/controle/Sites.
 
 console.log('── 4. La capture')
 const preuves = path.join(RACINE, '.orchestre', 'preuves', '014-14')
-T('onglet-sites.png dans .orchestre/preuves/014-14/ — un vrai PNG (≥ 10 Ko)', pngValide(path.join(preuves, 'onglet-sites.png')))
+// Prise par le juge, pas par l'agent (13/09 : trois captures fabriquées en un jour) — scripts/lib/capture.mjs.
+const { capturer } = await import('./lib/capture.mjs')
+let cap = []
+try {
+  cap = await capturer({ racine: RACINE, dossier: preuves, largeur: 1280, hauteur: 900, role: 'direction', ecrans: [{ nom: 'onglet-sites', chemin: '/controle?onglet=sites', attendre: 'commande' }] })
+} catch (e) { T('le juge a pu capturer (serveur, compte direction de test, navigateur)', false, e.message.slice(0, 300)) }
+if (cap.length) {
+  const c = cap[0]
+  T('l\'onglet Sites se rend pour la direction et parle de commandes (liste ou « aucune commande »)', c.ok && c.attendu === true && !/ERREUR 404|introuvable/i.test(c.texte), `${c.url} · ${c.texte.replace(/\s+/g, ' ').slice(0, 80)}`)
+  T('onglet-sites.png — un vrai PNG (≥ 10 Ko), pris par le juge', pngValide(c.fichier))
+}
 
 console.log('── 5. Typecheck et garde de commit')
 const tc = spawnSync('npm', ['run', 'typecheck'], { cwd: RACINE, encoding: 'utf8', shell: process.platform === 'win32' })
