@@ -7,11 +7,22 @@
 //
 // Usage :
 //   node scripts/antigravity.mjs etat                                l'état de chaque agent lancé (et des tâches)
-//   node scripts/antigravity.mjs lancer <agent> [--tache=<id>] [--model=pro|flash|flash_lite]
+//   node scripts/antigravity.mjs lancer <agent> [--tache=<id>] [--model=pro|flash|flash_lite|opus|sonnet]
 //   node scripts/antigravity.mjs flotte [--n=6] [--model=pro]          un agent par tâche de file/ (périmètres disjoints), n au plus
 //   node scripts/antigravity.mjs repondre <id> <n> [ligne]             pose <id>.reponse.md ET le dit dans la conversation de l'agent
 //   node scripts/antigravity.mjs dire <agent> <message>                envoie un message à l'agent (relance, précision)
 // Codes : 0 ok ; 1 Antigravity injoignable ou refus ; 2 usage.
+//
+// --model=opus|sonnet (Claude, quand le quota Gemini est épuisé) : le binaire agentapi.exe ne connaît que
+// pro|flash|flash_lite (validé côté CLI, avant même le réseau). Pour Claude on contourne agentapi.exe et on
+// parle nous-mêmes en Connect-JSON au serveur local déjà utilisé par contexte()/api() :
+//   1. GetCascadeModelConfigData relit le catalogue du jour (le numéro interne du modèle, ex. MODEL_PLACEHOLDER_M26
+//      pour « Claude Opus 4.6 (Thinking) », change à chaque mise à jour d'Antigravity — jamais le coder en dur).
+//   2. StartCascade (source CORTEX_TRAJECTORY_SOURCE_AGENT_API) crée la conversation, sans modèle.
+//   3. SendUserCascadeMessage porte le modèle dans cascadeConfig.plannerConfig.requestedModel (le champ que lit
+//      cortex/config/experiments.go:getResolvedModel — poser le modèle sur StartCascadeRequest ne suffit pas,
+//      ça échoue avec « neither PlanModel nor RequestedModel specified »).
+// Prouvé le 2026-09-13 : conversation 63a459df-abb7-4c38-a934-5ea95d3410a1, le modèle répond "Claude Opus 4.6 (Thinking)".
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -23,7 +34,10 @@ const ORCH = path.join(RACINE, '.orchestre')
 const AGENTS = path.join(ORCH, 'agents.jsonl')
 const LS = path.join(process.env.LOCALAPPDATA || '', 'Programs', 'antigravity', 'resources', 'bin', 'language_server.exe')
 const GEMINI = path.join(os.homedir(), '.gemini')
-const MODELES = ['pro', 'flash', 'flash_lite']
+const MODELES_GEMINI = ['pro', 'flash', 'flash_lite']
+// Label exact du catalogue GetCascadeModelConfigData (celui affiché dans le sélecteur de modèle d'Antigravity).
+const CATALOGUE_CLAUDE = { opus: 'Claude Opus 4.6 (Thinking)', sonnet: 'Claude Sonnet 4.6 (Thinking)' }
+const MODELES = [...MODELES_GEMINI, ...Object.keys(CATALOGUE_CLAUDE)]
 
 const args = process.argv.slice(2)
 const commande = args[0]
@@ -65,6 +79,40 @@ function api(ctx, ...a) {
   try { return JSON.parse(sortie) } catch { return { error: sortie.slice(0, 300) } }
 }
 
+// ── Connect-JSON brut (pour Claude) : même serveur local, même jeton, mais sans passer par agentapi.exe ──────
+async function connectCall(ctx, methode, corps) {
+  const r = await fetch(`http://${ctx.env.ANTIGRAVITY_LS_ADDRESS}/exa.language_server_pb.LanguageServerService/${methode}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Connect-Protocol-Version': '1', 'x-codeium-csrf-token': ctx.env.ANTIGRAVITY_CSRF_TOKEN },
+    body: JSON.stringify(corps),
+  })
+  const texte = await r.text()
+  let json = null
+  try { json = JSON.parse(texte) } catch { /* pas du JSON : erreur brute, laissée dans texte */ }
+  return { ok: r.ok, statut: r.status, texte, json }
+}
+async function modeleOrAliasClaude(ctx, modele) {
+  const label = CATALOGUE_CLAUDE[modele]
+  const r = await connectCall(ctx, 'GetCascadeModelConfigData', {})
+  const config = (r.json?.clientModelConfigs || []).find((c) => c.label === label)
+  if (!config) throw new Error(`« ${label} » absent du catalogue de modèles du jour (quota, ou modèle renommé/retiré) : ${r.texte.slice(0, 200)}`)
+  return config.modelOrAlias
+}
+// StartCascade (sans modèle) + SendUserCascadeMessage (modèle posé dans cascadeConfig.plannerConfig.requestedModel).
+async function lancerCascadeClaude(ctx, modele, prompt) {
+  const requestedModel = await modeleOrAliasClaude(ctx, modele)
+  const debut = await connectCall(ctx, 'StartCascade', { source: 'CORTEX_TRAJECTORY_SOURCE_AGENT_API' })
+  const cascadeId = debut.json?.cascadeId
+  if (!cascadeId) throw new Error(`StartCascade refusé : ${debut.texte.slice(0, 300)}`)
+  const envoi = await connectCall(ctx, 'SendUserCascadeMessage', {
+    cascadeId,
+    items: [{ text: prompt }],
+    cascadeConfig: { plannerConfig: { requestedModel } },
+  })
+  if (!envoi.ok) throw new Error(`SendUserCascadeMessage refusé (cascade ${cascadeId} créée mais vide) : ${envoi.texte.slice(0, 300)}`)
+  return cascadeId
+}
+
 // ── Le registre des agents lancés ─────────────────────────────────────────────────────────────────────────
 const agents = () => fs.existsSync(AGENTS) ? fs.readFileSync(AGENTS, 'utf8').split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l) } catch { return null } }).filter(Boolean) : []
 const enregistrer = (a) => fs.appendFileSync(AGENTS, JSON.stringify(a) + '\n')
@@ -96,16 +144,22 @@ Ensuite, dans le dossier presti :
 Règles : français ; zéro donnée réelle (comptes @presti-test.invalid, supprimés après) ; une fonctionnalité non finie n'apparaît pas ; aucun chiffre non sourcé ; aucun secret dans un fichier versionné ; tu ne modifies ni scripts/orchestre.mjs, ni scripts/antigravity.mjs, ni les vérificateurs, ni plans/cerveau-site.md.`
 
 // ── Commandes ────────────────────────────────────────────────────────────────────────────────────────────
-function lancer(ctx, agent, tache, modele) {
+async function lancer(ctx, agent, tache, modele) {
   if (!MODELES.includes(modele)) { console.error(`modèle : ${MODELES.join(' | ')}`); process.exit(2) }
-  const r = api(ctx, 'new-conversation', `--model=${modele}`, `--title=${tache ? tache + ' · ' : ''}${agent}`, PROMPT(agent, tache))
-  const id = r?.response?.newConversation?.conversationId
-  if (!id) { console.error(`✗ lancement refusé : ${JSON.stringify(r).slice(0, 300)}`); process.exit(1) }
+  const prompt = PROMPT(agent, tache)
+  let id
+  if (CATALOGUE_CLAUDE[modele]) {
+    id = await lancerCascadeClaude(ctx, modele, prompt)
+  } else {
+    const r = api(ctx, 'new-conversation', `--model=${modele}`, `--title=${tache ? tache + ' · ' : ''}${agent}`, prompt)
+    id = r?.response?.newConversation?.conversationId
+    if (!id) { console.error(`✗ lancement refusé : ${JSON.stringify(r).slice(0, 300)}`); process.exit(1) }
+  }
   enregistrer({ agent, tache: tache || null, modele, conversationId: id, date: maintenant() })
   console.log(`✓ ${agent}${tache ? ' → ' + tache : ''} lancé (${modele}) · conversation ${id}`)
   return id
 }
-function flotte(ctx, n, modele) {
+async function flotte(ctx, n, modele) {
   const file = fs.existsSync(path.join(ORCH, 'file')) ? fs.readdirSync(path.join(ORCH, 'file')).filter((f) => f.endsWith('.md')).sort() : []
   const dejaVisees = new Set(agents().map((a) => a.tache).filter(Boolean))
   const prefixe = (g) => String(g).split(/[*?{]/)[0]
@@ -118,7 +172,7 @@ function flotte(ctx, n, modele) {
     const per = (m ? m[1].split(',') : []).map((x) => prefixe(x.trim()))
     if (per.some((p) => perimetres.some((q) => p.startsWith(q) || q.startsWith(p)))) { console.log(`  ${id} : chevauche une tâche déjà lancée, attendra`); continue }
     perimetres.push(...per)
-    lancer(ctx, `ag-${id.replace(/^0+/, '').replace(/-/g, '')}`, id, modele)
+    await lancer(ctx, `ag-${id.replace(/^0+/, '').replace(/-/g, '')}`, id, modele)
     lancees.push(id)
     if (lancees.length >= n) break
   }
@@ -155,9 +209,15 @@ function dire(ctx, agent, message) {
 // Le quota Gemini du compte s'épuise (RESOURCE_EXHAUSTED 429, le 13/09 après douze agents pro) : la sonde lance une
 // conversation minuscule sans l'enregistrer et dit si Antigravity répond encore — code 0 si oui, 1 si le flux est coupé.
 async function sonde(ctx, modele) {
-  const r = api(ctx, 'new-conversation', `--model=${modele}`, '--title=orchestre : sonde de quota', 'Réponds uniquement par le mot OK, sans ouvrir ni modifier aucun fichier.')
-  const id = r?.response?.newConversation?.conversationId
-  if (!id) { console.log(`✗ sonde : ${JSON.stringify(r).slice(0, 200)}`); return 1 }
+  const promptSonde = 'Réponds uniquement par le mot OK, sans ouvrir ni modifier aucun fichier.'
+  let id
+  if (CATALOGUE_CLAUDE[modele]) {
+    id = await lancerCascadeClaude(ctx, modele, promptSonde)
+  } else {
+    const r = api(ctx, 'new-conversation', `--model=${modele}`, '--title=orchestre : sonde de quota', promptSonde)
+    id = r?.response?.newConversation?.conversationId
+    if (!id) { console.log(`✗ sonde : ${JSON.stringify(r).slice(0, 200)}`); return 1 }
+  }
   for (let i = 0; i < 12; i++) {
     await new Promise((res) => setTimeout(res, 5000))
     const t = transcript(id)
@@ -171,10 +231,10 @@ try {
   switch (commande) {
     case 'etat': etat(); break
     case 'sonde': process.exit(await sonde(contexte(), option('model', 'flash_lite'))); break
-    case 'lancer': { if (!positionnels[0]) { console.error('lancer <agent> [--tache=<id>] [--model=pro]'); process.exit(2) } lancer(contexte(), positionnels[0], option('tache'), option('model', 'pro')); break }
-    case 'flotte': flotte(contexte(), Number(option('n', '6')) || 6, option('model', 'pro')); break
+    case 'lancer': { if (!positionnels[0]) { console.error('lancer <agent> [--tache=<id>] [--model=pro]'); process.exit(2) } await lancer(contexte(), positionnels[0], option('tache'), option('model', 'pro')); break }
+    case 'flotte': await flotte(contexte(), Number(option('n', '6')) || 6, option('model', 'pro')); break
     case 'repondre': repondre(contexte(), positionnels[0], positionnels[1], positionnels.slice(2).join(' ')); break
     case 'dire': { if (positionnels.length < 2) { console.error('dire <agent> <message>'); process.exit(2) } dire(contexte(), positionnels[0], positionnels.slice(1).join(' ')); break }
-    default: console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').filter((l) => l.startsWith('//')).slice(8, 15).map((l) => l.replace(/^\/\/ ?/, '')).join('\n')); process.exit(commande ? 2 : 0)
+    default: console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').filter((l) => l.startsWith('//')).slice(8, 14).map((l) => l.replace(/^\/\/ ?/, '')).join('\n')); process.exit(commande ? 2 : 0)
   }
 } catch (e) { console.error(`✗ ${e.message}`); process.exit(1) }
