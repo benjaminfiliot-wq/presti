@@ -12,7 +12,9 @@ next-env.d.ts
 !.env.local.example
 
 # Skills installes localement (npx skills add)
-.agents/
+.agents/*
+!.agents/rules/
+!.agents/workflows/
 
 # Fichiers temporaires d'audit (créés par les relecteurs, jamais versionnés)
 .audit-*
@@ -49,3 +51,18 @@ presti-debug-apk/
 presti-debug-apk.zip
 *.apk
 tsconfig.tsbuildinfo
+
+# intermédiaires de la vidéo de présentation (scripts/promo-video.mjs)
+.promo-tmp/
+
+# (Les vidéos de publication vivaient ici jusqu'au 2026-09-10 ; elles sont maintenant rendues
+# directement dans `publications/`, ignoré plus bas. Règle conservée : une exécution d'un ancien
+# script remettrait des MP4 ici, et ils n'ont rien à faire dans le dépôt.)
+public/promo/pub-*/
+
+# Le dossier de travail des publications (scripts/publications-ranger.mjs).
+# Il est ENTIÈREMENT dérivé : les textes sont découpés de plans/publications-10.md, les vidéos
+# rendues depuis promo-src/hf/publications.mjs. Le versionner ferait un deuxième original du texte
+# — celui qu'on corrigerait par erreur, sans que rien ne le signale — et ajouterait 68 Mo de MP4
+# dérivés d'une liste de plans de 300 lignes. Une commande le refait entièrement.
+publications/

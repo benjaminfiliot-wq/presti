@@ -1,0 +1,4 @@
+{"id":"000-test","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T13:13:12Z","duree_s":1,"agent":"simulation","executant":"antigravity","lignes":2,"dossier":"en-cours"}
+{"id":"000-test","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T13:13:13Z","duree_s":0,"agent":"simulation","executant":"antigravity","lignes":2,"dossier":"fait"}
+{"id":"002-mal-formee","verdict":"REFUSÉE","ligne":"en-tête : champ obligatoire absent ou vide : perimetre","code":null,"date":"2026-09-13T13:13:15Z","duree_s":0,"agent":"simulation","executant":"antigravity","lignes":0,"dossier":"refuse"}
+{"id":"001-test-echec","verdict":"FAIL","ligne":"ÉCHEC voulu : cette ligne doit apparaître telle quelle dans digest.md","code":1,"date":"2026-09-13T13:13:17Z","duree_s":0,"agent":"ag-2","executant":"antigravity","lignes":0,"dossier":"fait"}

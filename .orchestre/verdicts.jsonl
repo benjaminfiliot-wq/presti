@@ -1,0 +1,3 @@
+{"id":"000-test","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T13:21:10Z","duree_s":0,"agent":"ag-1","executant":"antigravity","lignes":1,"dossier":"en-cours"}
+{"id":"000-test","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T13:21:30Z","duree_s":0,"agent":"ag-1","executant":"antigravity","lignes":1,"dossier":"fait"}
+{"id":"001-test-echec","verdict":"FAIL","ligne":"ÉCHEC voulu : cette ligne doit apparaître telle quelle dans digest.md","code":1,"date":"2026-09-13T13:22:03Z","duree_s":0,"agent":"ag-2","executant":"antigravity","lignes":0,"dossier":"fait"}
