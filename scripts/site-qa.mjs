@@ -336,6 +336,22 @@ function jugerSubstance(dossier, contrat, pages) {
   ok(`des photos réelles (≥ ${SUBSTANCE.PHOTOS_MIN} WebP de ≥ ${SUBSTANCE.PHOTO_LARGEUR_MIN} px et ≥ ${SUBSTANCE.PHOTO_OCTETS_MIN / 1000} Ko)`, photos.length >= SUBSTANCE.PHOTOS_MIN, `${photos.length} photo(s) réelle(s)`, `≥ ${SUBSTANCE.PHOTOS_MIN}`)
   const texte = texteDe(accueil).trim()
   ok(`accueil : du texte (≥ ${SUBSTANCE.TEXTE_ACCUEIL_MIN} signes) et des sections (≥ ${SUBSTANCE.H2_ACCUEIL_MIN} <h2>)`, texte.length >= SUBSTANCE.TEXTE_ACCUEIL_MIN && (accueil.match(/<h2\b/gi) || []).length >= SUBSTANCE.H2_ACCUEIL_MIN, `${texte.length} signes · ${(accueil.match(/<h2\b/gi) || []).length} h2`, `≥ ${SUBSTANCE.TEXTE_ACCUEIL_MIN} · ≥ ${SUBSTANCE.H2_ACCUEIL_MIN}`)
+  // Du texte écrit, pas répété : une phrase qui revient trois fois, ou moins de 70 % de suites de cinq mots distinctes,
+  // c'est du remplissage. Jugé sur l'accueil et sur chaque page de commune.
+  const repetition = (txt) => {
+    const phrases = txt.split(/[.!?]+\s+/).map((x) => x.trim().toLowerCase()).filter((x) => x.length >= 25)
+    const compte = {}
+    for (const ph of phrases) compte[ph] = (compte[ph] || 0) + 1
+    const pire = Object.entries(compte).sort((a, b) => b[1] - a[1])[0] || ['', 0]
+    const mots = txt.toLowerCase().replace(/[^a-zà-ÿ0-9]+/gi, ' ').trim().split(/\s+/)
+    const suites = new Set(); let total = 0
+    for (let i = 0; i + 5 <= mots.length; i++) { suites.add(mots.slice(i, i + 5).join(' ')); total++ }
+    return { pirePhrase: pire[0].slice(0, 60), pireCompte: pire[1], distinctes: total ? suites.size / total : 1 }
+  }
+  const rAccueil = repetition(texte)
+  ok('accueil : du texte écrit, pas répété (aucune phrase plus de deux fois, ≥ 70 % de suites de cinq mots distinctes)', rAccueil.pireCompte <= 2 && rAccueil.distinctes >= 0.7, `« ${rAccueil.pirePhrase}… » ×${rAccueil.pireCompte} · ${Math.round(rAccueil.distinctes * 100)} % distinctes`, '≤ 2 · ≥ 70 %')
+  const communesRepetees = pages.filter((p) => p.type === 'commune').map((p) => ({ p, r: repetition(texteDe(lireHtml(p))) })).filter(({ r }) => r.pireCompte > 2 || r.distinctes < 0.7)
+  ok('pages de commune : du texte écrit, pas répété', communesRepetees.length === 0, communesRepetees.slice(0, 3).map(({ p, r }) => `${p.chemin} (×${r.pireCompte}, ${Math.round(r.distinctes * 100)} %)`).join(', ') || 'toutes', '≤ 2 · ≥ 70 %')
   const communesCourtes = pages.filter((p) => p.type === 'commune').filter((p) => texteDe(lireHtml(p)).trim().length < SUBSTANCE.TEXTE_COMMUNE_MIN)
   ok(`pages de commune : du texte (≥ ${SUBSTANCE.TEXTE_COMMUNE_MIN} signes chacune)`, communesCourtes.length === 0, communesCourtes.map((p) => p.chemin).slice(0, 3).join(', ') || 'toutes', '0 page creuse')
   const da = DA_METIER[contrat?.metier]
