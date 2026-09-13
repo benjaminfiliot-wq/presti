@@ -6,9 +6,10 @@ import HeroApp from '@/app/HeroApp'
 import Motion from '@/app/Motion'
 import DemoSequence from '@/app/DemoSequence'
 import DemoVideo from '@/app/DemoVideo'
-import { FLAGS } from '@/lib/flags'
+import { FLAGS, actif } from '@/lib/flags'
 import Comparatif from '@/app/Comparatif'
 import { OFFRES, pointsForts } from '@/lib/plans'
+import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 
 // Google Search Console : la balise de vérification n'est posée QUE sur la landing — jamais sur
 // /site ni /p, qui vivent sur le domaine de l'artisan (marque blanche).
@@ -168,6 +169,17 @@ export default function Home() {
             {/* Le tableau « qui a quoi » — la même matrice que les verrous serveur (lib/plans.ts). */}
             <div className="reveal lp-cmp"><h3>Qui a quoi, ligne par ligne</h3><Comparatif /></div>
             <p className="lp-pnote">1 crédit = 1 génération · Expert = 3 crédits · crédits rechargés chaque mois (non reportés) · sans engagement</p>
+            {actif('siteCommandeVente') && (
+              <div className="reveal" style={{ marginTop: '2.5rem', padding: '2rem', background: 'var(--surface-subtle, rgba(255,255,255,0.02))', border: '1px solid var(--border, rgba(255,255,255,0.08))', borderRadius: '1rem', textAlign: 'center' }}>
+                <h3 style={{ fontSize: '1.3rem', fontWeight: 600, marginBottom: '.8rem' }}>{SITE_A_LA_DEMANDE.titre}</h3>
+                {SITE_A_LA_DEMANDE.phrases.map((p, i) => (
+                  <p key={i} className="muted" style={{ margin: '.4rem auto', maxWidth: '60ch' }}>{p}</p>
+                ))}
+                <div style={{ marginTop: '1.2rem' }}>
+                  <a className="lp-btn lp-btn--p" href={SITE_A_LA_DEMANDE.lien}>{SITE_A_LA_DEMANDE.bouton}</a>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 

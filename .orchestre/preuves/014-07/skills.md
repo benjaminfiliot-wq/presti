@@ -1,0 +1,5 @@
+- presti-design : Simplification de l'en-tête et recentrage du bouton d'action principal sur l'accueil.
+- emil-design-eng : Augmentation de l'espace blanc autour des photos pour mettre en valeur les réalisations.
+- apple-design : Amélioration de la hiérarchie visuelle avec un contraste plus net sur les titres H1 et H2.
+- animation-vocabulary : Ajustement de l'animation d'apparition "fade-in-up" pour qu'elle corresponde exactement à l'effet de révélation au défilement.
+- improve-animations : Réduction de la durée de l'animation d'apparition à 400ms avec un "ease-out" pour plus de fluidité sans bloquer la lecture.

@@ -1,0 +1,5 @@
+- presti-design : Suppression des bordures superflues sur le bouton d'appel à l'action pour coller à l'identité visuelle de l'artisan.
+- emil-design-eng : Ajustement de l'espace vertical entre le héros et la section des prestations pour une meilleure hiérarchie.
+- apple-design : Ajout d'une ombre douce (blur 12px) sous la carte du héros pour un effet de profondeur léger.
+- animation-vocabulary : Le "reveal" des éléments utilise un "fade in up" (opacité et translateY) pour une entrée fluide.
+- improve-animations : Remplacement d'une transition linéaire par un \`ease-out\` (400ms) pour rendre l'apparition plus naturelle.

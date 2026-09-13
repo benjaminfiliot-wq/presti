@@ -152,9 +152,25 @@ function dire(ctx, agent, message) {
   console.log(r?.error ? `✗ ${r.error}` : `✓ dit à ${a.agent}`)
 }
 
+// Le quota Gemini du compte s'épuise (RESOURCE_EXHAUSTED 429, le 13/09 après douze agents pro) : la sonde lance une
+// conversation minuscule sans l'enregistrer et dit si Antigravity répond encore — code 0 si oui, 1 si le flux est coupé.
+async function sonde(ctx, modele) {
+  const r = api(ctx, 'new-conversation', `--model=${modele}`, '--title=orchestre : sonde de quota', 'Réponds uniquement par le mot OK, sans ouvrir ni modifier aucun fichier.')
+  const id = r?.response?.newConversation?.conversationId
+  if (!id) { console.log(`✗ sonde : ${JSON.stringify(r).slice(0, 200)}`); return 1 }
+  for (let i = 0; i < 12; i++) {
+    await new Promise((res) => setTimeout(res, 5000))
+    const t = transcript(id)
+    if (t.some((l) => l.type === 'ERROR_MESSAGE')) { console.log(`✗ sonde ${modele} : flux coupé (quota)`); return 1 }
+    if (t.some((l) => l.type === 'PLANNER_RESPONSE' && texteDe(l.content).trim())) { console.log(`✓ sonde ${modele} : Antigravity répond`); return 0 }
+  }
+  console.log(`? sonde ${modele} : pas de réponse en 60 s`); return 1
+}
+
 try {
   switch (commande) {
     case 'etat': etat(); break
+    case 'sonde': process.exit(await sonde(contexte(), option('model', 'flash_lite'))); break
     case 'lancer': { if (!positionnels[0]) { console.error('lancer <agent> [--tache=<id>] [--model=pro]'); process.exit(2) } lancer(contexte(), positionnels[0], option('tache'), option('model', 'pro')); break }
     case 'flotte': flotte(contexte(), Number(option('n', '6')) || 6, option('model', 'pro')); break
     case 'repondre': repondre(contexte(), positionnels[0], positionnels[1], positionnels.slice(2).join(' ')); break

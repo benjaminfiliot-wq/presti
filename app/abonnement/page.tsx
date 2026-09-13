@@ -7,6 +7,8 @@ import AppShell from '@/app/AppShell'
 import Comparatif from '@/app/Comparatif'
 import { OFFRES, PLANS, pointsForts } from '@/lib/plans'
 import { estNatif } from '@/lib/natif'
+import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
+import { actif } from '@/lib/flags'
 
 // Abonnement — tout vient de la matrice de lib/plans.ts (v5 §3). Avant, cette page portait
 // sa propre liste de fonctionnalités, différente de la landing et des verrous serveur.
@@ -87,6 +89,18 @@ export default function Abonnement() {
 
           <h2 style={{ margin: '2rem 0 .8rem' }}>Qui a quoi, ligne par ligne</h2>
           <Comparatif actuel={plan} />
+
+          {actif('siteCommandeVente') && (
+            <div className="tool-card" style={{ marginTop: '2rem' }}>
+              <h2>{SITE_A_LA_DEMANDE.titre}</h2>
+              {SITE_A_LA_DEMANDE.phrases.map((p, i) => (
+                <p key={i} className="muted" style={{ margin: '.5rem 0' }}>{p}</p>
+              ))}
+              <div style={{ marginTop: '1rem' }}>
+                <a className="psh-btn primary" href={SITE_A_LA_DEMANDE.lien} style={{ display: 'inline-block', width: 'auto' }}>{SITE_A_LA_DEMANDE.bouton}</a>
+              </div>
+            </div>
+          )}
 
           <p className="muted" style={{ marginTop: '1.4rem', fontSize: '.85rem' }}>Paiement sécurisé par Stripe. Vous pouvez résilier à tout moment.</p>
         </>

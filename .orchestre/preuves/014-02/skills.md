@@ -1,0 +1,5 @@
+- presti-design : utilisation des couleurs sobres et professionnelles (bleu marine et gris) et d'une typographie lisible sans fioritures pour inspirer confiance.
+- emil-design-eng : alignements rigoureux, lisibilité au premier coup d'œil, et retrait des distractions (background clean).
+- apple-design : design centré sur la clarté avec des cartes aérées, des bordures douces (border-radius: 12px) et des marges généreuses (40px) pour respirer.
+- animation-vocabulary : utilisation de transitions "Fade-in / Slide-up" douces avec l'intersection observer (reveal) pour introduire les éléments.
+- improve-animations : ajout d'une classe `.reveal` avec durée, opacity et `transform: translateY(12px)` qui se déclenche dynamiquement, tout en respectant `prefers-reduced-motion`.

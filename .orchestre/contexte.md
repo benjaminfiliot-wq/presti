@@ -1,9 +1,9 @@
-# Carte du code — Presti (2026-09-13T14:50:37Z)
+# Carte du code — Presti (2026-09-13T16:58:40Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
 
-## Pages (33) — `app/**/page.tsx`
+## Pages (34) — `app/**/page.tsx`
 - `/abonnement` : ·
 - `/aide` : ·
 - `/cgu` : ·
@@ -28,7 +28,7 @@
 - `/profil` : ·
 - `/reset-password` : ·
 - `/signup` : ·
-- `/site` : [slug]/[...reste], [slug]/infos-legales, [slug]
+- `/site` : [slug]/[...reste], [slug]/infos-legales, [slug], commander
 - `/tarifs` : ·
 
 ## API (92) — `app/api/**/route.ts`, préfixe `/api`
@@ -173,7 +173,7 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 - dernières : 0085_purger_compte_test_devis.sql, 0086_canaux_apport.sql, 0087_canal_instagram.sql, 0088_site_commande.sql, 0089_sites_bucket.sql
 - les `_A_COLLER_sql_editor_NNNN(.NU).sql` sont les versions à coller dans l’éditeur SQL Supabase (CLAUDE.md « Poser une migration ») — une migration n’existe en prod que collée.
 
-## Scripts — `scripts/` (172 .mjs, dont 73 suites e2e ; l’enchaînement : `tout-verifier.mjs`)
+## Scripts — `scripts/` (177 .mjs, dont 73 suites e2e ; l’enchaînement : `tout-verifier.mjs`)
 
-## Orchestre — file : 18 · en cours : 0 · faites : 1 · refusées : 1
+## Orchestre — file : 15 · en cours : 0 · faites : 4 · refusées : 2
 

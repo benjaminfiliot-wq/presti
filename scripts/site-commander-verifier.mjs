@@ -53,16 +53,29 @@ try { porcelain = execFileSync('git', ['status', '--porcelain'], { cwd: RACINE, 
 const chemins = (txt) => txt.split('\n').filter(Boolean).map((l) => l.slice(3).trim().replace(/^"|"$/g, ''))
 // L'état de l'arbre quand la tâche a été prise (écrit par orchestre.mjs prochaine) : on ne reproche à la tâche que
 // ce qui a changé depuis — le dépôt porte souvent d'autres chantiers non committés, qui ne sont pas de son fait.
-const avant = path.join(RACINE, '.orchestre', 'en-cours', '014-01.avant.txt')
+const avant = [path.join(RACINE, '.orchestre', 'en-cours', '014-01.avant.txt'), path.join(RACINE, '.orchestre', 'preuves', '014-01', 'avant.txt')].find((p) => fs.existsSync(p)) || ''
 const dejaSales = new Set(fs.existsSync(avant) ? chemins(fs.readFileSync(avant, 'utf8')) : [])
 // Seules les zones sensibles comptent (app/, lib/, supabase/, scripts/, middleware).
 const SENSIBLE = /^(app\/|lib\/|supabase\/|scripts\/|middleware\.ts$)/
 const horsPerimetre = chemins(porcelain).filter((p) => SENSIBLE.test(p) && !dejaSales.has(p) && !PERIMETRE.some((re) => re.test(p)))
 T('rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/site/commander/** et app/AppShell.tsx', horsPerimetre.length === 0, horsPerimetre.slice(0, 6).join(', '))
 
-console.log('── 5. Les captures')
-const captures = [1, 2, 3, 4].map((n) => path.join(PREUVES, `ecran-${n}.png`)).filter((f) => pngValide(f))
-T('quatre VRAIES captures ecran-1.png … ecran-4.png (PNG, ≥ 10 Ko) dans .orchestre/preuves/014-01/', captures.length === 4, `${captures.length} valide(s) sur 4 — un fichier vide n'est pas une capture`)
+console.log('── 5. Les captures — prises par le juge, pas par l\'agent (13/09 : quatre fichiers identiques livrés pour quatre écrans)')
+// Chaque écran doit être adressable : /site/commander?etape=domaine|zone|matiere|paiement. Le juge lance le serveur,
+// crée un compte artisan de test, capture en 390 px, supprime le compte. Les captures écrasent tout ce que l'agent a déposé.
+const { capturer, distinctes } = await import('./lib/capture.mjs')
+// Le titre (h3) de chaque écran, tel que la page l'écrit : le fil d'Ariane, lui, nomme les quatre étapes sur tous les écrans.
+const ETAPES = [['domaine', 'Nom de domaine'], ['zone', 'Métier & Zone'], ['matiere', 'La matière'], ['paiement', 'Paiement']]
+let ecrans = []
+try {
+  ecrans = await capturer({ racine: RACINE, dossier: PREUVES, largeur: 390, hauteur: 844, role: 'artisan', ecrans: ETAPES.map(([e, titre], i) => ({ nom: `ecran-${i + 1}`, chemin: `/site/commander?etape=${e}`, attendre: { dans: 'h3', texte: titre } })) })
+} catch (e) { T('le juge a pu capturer (serveur next dev, compte de test, navigateur)', false, e.message.slice(0, 300)) }
+if (ecrans.length === 4) {
+  T('les quatre écrans se rendent connecté (pas de renvoi vers /login, pas de 404)', ecrans.every((r) => r.ok && !/\/login/.test(r.url) && !/404|introuvable|not found/i.test(r.texte)), ecrans.map((r) => `${r.nom} → ${r.url}`).join(' · '))
+  T('quatre captures différentes : la page honore ?etape=domaine|zone|matiere|paiement', distinctes(ecrans), 'des captures identiques — la page ignore ?etape=')
+  T('chaque écran ouvre sur son propre titre (h3 : Nom de domaine / Métier & Zone / La matière / Paiement)', ecrans.every((r) => r.attendu === true), ecrans.filter((r) => r.attendu !== true).map((r) => `${r.nom} (${r.chemin}) n'affiche pas son h3`).join(' · '))
+  T('les quatre captures sont de vrais PNG (≥ 10 Ko)', ecrans.every((r) => pngValide(r.fichier)))
+}
 
 console.log('── 6. Typecheck et garde de commit')
 const tc = spawnSync('npm', ['run', 'typecheck'], { cwd: RACINE, encoding: 'utf8', shell: process.platform === 'win32' })

@@ -43,7 +43,7 @@ console.log('── 3. Rien hors périmètre depuis la prise de la tâche')
 let porcelain = ''
 try { porcelain = spawnSync('git', ['status', '--porcelain'], { cwd: RACINE, encoding: 'utf8' }).stdout } catch { /* hors git */ }
 const chemins = (txt) => txt.split('\n').filter(Boolean).map((l) => l.slice(3).trim().replace(/^"|"$/g, ''))
-const avant = path.join(RACINE, '.orchestre', 'en-cours', '014-14.avant.txt')
+const avant = [path.join(RACINE, '.orchestre', 'en-cours', '014-14.avant.txt'), path.join(RACINE, '.orchestre', 'preuves', '014-14', 'avant.txt')].find((p) => fs.existsSync(p)) || ''
 const dejaSales = new Set(fs.existsSync(avant) ? chemins(lire(avant)) : [])
 const SENSIBLE = /^(app\/|lib\/|supabase\/|scripts\/|middleware\.ts$)/
 const PERIMETRE = [/^app\/controle\/Sites\.tsx$/, /^app\/controle\/page\.tsx$/]

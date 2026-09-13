@@ -1,0 +1,5 @@
+- presti-design : couleurs exactes du carreleur appliquées (fond #F4F6F5, accent #3C6E63) et pas de fioriture.
+- emil-design-eng : grille aérée, paddings larges, lisibilité de la typographie Manrope (taille 18px, line-height 1.55).
+- apple-design : hiérarchie visuelle stricte avec un seul bouton d'action principal bien contrasté.
+- animation-vocabulary : utilisation de l'effet fade-in-up (opacité + translation 12px) décrit dans le vocabulaire.
+- improve-animations : reveal au défilement déclenché par un IntersectionObserver, avec fallback sur prefers-reduced-motion.

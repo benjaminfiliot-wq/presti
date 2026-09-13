@@ -13,6 +13,7 @@ import Apports from './Apports'
 import Messagerie from './Messagerie'
 import Comptabilite from './Comptabilite'
 import Reglages from './Reglages'
+import Cerveaux from './Cerveaux'
 import BarreEtat from './BarreEtat'
 import Recherche from './Recherche'
 import { actif } from '@/lib/flags'
@@ -25,8 +26,8 @@ import { actif } from '@/lib/flags'
 //
 // L'accès se vérifie sur la route la plus LÉGÈRE (`journal?limite=1`, une lecture) et non plus sur l'état complet
 // (six appels réseau) : l'écran s'ouvrait en huit secondes, et une base muette (migration pas encore collée, 503)
-// ou un plafond atteint (429) le laissaient sur « Vérification de l'accès… » pour toujours (revue du 07/09).
-type Onglet = 'aujourdhui' | 'clients' | 'apports' | 'messagerie' | 'comptabilite' | 'journal' | 'reglages'
+// ou un plafond atteint (429) le laissaient sur « Vérification de l’accès… » pour toujours (revue du 07/09).
+type Onglet = 'aujourdhui' | 'clients' | 'apports' | 'messagerie' | 'comptabilite' | 'cerveaux' | 'journal' | 'reglages'
 type Message = { type: 'ok' | 'err'; text: string } | null
 // Le rail ne montre que ce qui existe : un onglet dont la migration n'est pas collée mènerait à un 404.
 const ONGLETS: Onglet[] = [
@@ -34,10 +35,11 @@ const ONGLETS: Onglet[] = [
   ...(actif('apports') ? (['clients', 'apports'] as const) : []),
   ...(actif('messagerie') ? (['messagerie'] as const) : []),
   ...(actif('comptabilite') ? (['comptabilite'] as const) : []),
+  'cerveaux' as const,
   'journal' as const,
   'reglages' as const,
 ]
-const TITRES: Record<Onglet, string> = { aujourdhui: 'Aujourd’hui', clients: 'Clients & abonnements', apports: 'Apports', messagerie: 'Messagerie', comptabilite: 'Comptabilité', journal: 'Journal', reglages: 'Réglages' }
+const TITRES: Record<Onglet, string> = { aujourdhui: 'Aujourd’hui', clients: 'Clients & abonnements', apports: 'Apports', messagerie: 'Messagerie', comptabilite: 'Comptabilité', cerveaux: 'Cerveaux', journal: 'Journal', reglages: 'Réglages' }
 const ic = (d: ReactNode) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
 const NAV: { id: Onglet; label: string; detail: string; icone: ReactNode }[] = [
   { id: 'aujourdhui', label: 'Aujourd’hui', detail: 'État, à faire, chiffres, fil', icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>) },
@@ -45,6 +47,7 @@ const NAV: { id: Onglet; label: string; detail: string; icone: ReactNode }[] = [
   { id: 'apports', label: 'Apports', detail: 'Qui a amené qui, et la preuve', icone: ic(<><path d="M4 12h8M12 8l4 4-4 4" /><path d="M16 4h4v16h-4" /></>) },
   { id: 'messagerie', label: 'Messagerie', detail: 'Les emails de l’entreprise', icone: ic(<><path d="M3 6h18v12H3z" /><path d="m3 7 9 6 9-6" /></>) },
   { id: 'comptabilite', label: 'Comptabilité', detail: 'TVA, achats, échéances, relevé', icone: ic(<><path d="M4 4h16v16H4z" /><path d="M8 9h8M8 13h5" /><path d="M15 17h3" /></>) },
+  { id: 'cerveaux', label: 'Cerveaux', detail: 'Scores, cas et dernière amélioration', icone: ic(<><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" /><path d="M12 6v6l4 2" /></>) },
   { id: 'journal', label: 'Journal', detail: 'Chaque action, avant et après', icone: ic(<><path d="M4 4h12l4 4v12H4z" /><path d="M8 12h8M8 16h5" /></>) },
   { id: 'reglages', label: 'Réglages', detail: 'Équipe, seuils, comptes connectés', icone: ic(<><circle cx="12" cy="12" r="3" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" /></>) },
 ]
@@ -130,6 +133,7 @@ function PosteInner() {
             : onglet === 'comptabilite' ? <Comptabilite role={role} signaler={signaler} />
             : onglet === 'reglages' ? <Reglages role={role} signaler={signaler} />
             : onglet === 'messagerie' ? <Messagerie role={role} signaler={signaler} onArtisan={(id) => { setFiche(id); router.replace('/controle?onglet=clients', { scroll: false }) }} />
+            : onglet === 'cerveaux' ? <Cerveaux role={role} />
             : onglet === 'journal' ? <Journal role={role} />
             : <Aujourdhui role={role} signaler={signaler} />}
           {msg ? <div className={`msg${msg.type === 'err' ? ' err' : ''}`} role="status">{msg.text}</div> : null}

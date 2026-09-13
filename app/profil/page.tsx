@@ -14,6 +14,8 @@ import { siteMaxForPlan, peut } from '@/lib/plans'
 import { afficher, urlPlateforme, urlSite } from '@/lib/urls'
 import AdresseEditor from '@/app/AdresseEditor'
 import { defaultLayout, SECTION_MIN_TIER, SECTION_ORDER, slidesOpts, type SectionId, type SlidesOpts } from '@/lib/siteLayout'
+import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
+import { actif } from '@/lib/flags'
 
 // Libellés artisan des sections (composeur de page).
 const SECTION_LABELS: Record<SectionId, string> = {
@@ -413,32 +415,41 @@ export default function ProfilPage() {
           <p className="muted" style={{ margin: 0 }}>Le comportement de votre assistant (réponse automatique ou non, modèle, ton, devis auto, mise en pause) se règle désormais dans <a href="/plateforme?volet=reglages" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>Ma plateforme → Intelligence</a> — tout au même endroit.</p>
         </div>
 
-        {/* Site web (constructeur 3 niveaux) */}
+        {/* Site web */}
         <div className="tool-card">
           <h2>Votre site web</h2>
-          <p className="muted" style={{ margin: '0 0 .9rem' }}>Un vrai site vitrine, généré depuis votre profil (présentation, réalisations, prestations, contacts). Choisissez le niveau, publiez, partagez.</p>
-          <div className="site-tiers">
-            {TIERS.map((t) => {
-              const locked = t.n > siteMax
-              return (
-                <button key={t.n} type="button" className={`site-tier${siteTier === t.n ? ' on' : ''}${locked ? ' locked' : ''}`} onClick={() => { if (!locked) setSiteTier(t.n) }} disabled={locked} aria-disabled={locked}>
-                  <span className="st-n">Niveau {t.n}{locked ? ' · 🔒' : ''}</span>
-                  <b>{t.nom}</b>
-                  <span className="st-d">{t.desc}</span>
-                  {locked ? <span className="st-lock">Inclus dès {t.n === 2 ? 'Studio' : 'Signature'}</span> : null}
-                </button>
-              )
-            })}
-          </div>
-          {siteMax < 3 ? (
-            <p className="muted" style={{ margin: '.6rem 0 0', fontSize: '.83rem' }}>
-              Votre formule inclut le site <b>{siteMax === 1 ? 'Essentiel' : 'Pro'}</b>. <a href="/abonnement" style={{ color: 'var(--accent-ink)', fontWeight: 600 }}>Passez à {siteMax === 1 ? 'Studio ou Signature' : 'Signature'}</a> pour débloquer les niveaux supérieurs{siteMax === 1 ? ' (galerie, cinématique)' : ' (cinématique, niveau agence)'}.
-            </p>
-          ) : null}
-          <div style={{ marginTop: '1rem', display: 'flex', gap: '.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
-            <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={genSite} onClick={genererSite}>{genSite ? 'L’IA rédige votre site…' : (siteContenu ? '⚡ Régénérer avec l’IA' : '⚡ Rédiger mon site avec l’IA')}</button>
-            <span className="muted" style={{ fontSize: '.85rem' }}>Titres, accroches et à-propos rédigés sur-mesure à partir de votre profil.</span>
-          </div>
+          {siteActive ? (
+            <>
+              <p className="muted" style={{ margin: '0 0 .9rem' }}>Un vrai site vitrine, généré depuis votre profil (présentation, réalisations, prestations, contacts). Choisissez le niveau, publiez, partagez.</p>
+              <div className="site-tiers">
+                {TIERS.map((t) => {
+                  const locked = t.n > siteMax
+                  return (
+                    <button key={t.n} type="button" className={`site-tier${siteTier === t.n ? ' on' : ''}${locked ? ' locked' : ''}`} onClick={() => { if (!locked) setSiteTier(t.n) }} disabled={locked} aria-disabled={locked}>
+                      <span className="st-n">Niveau {t.n}{locked ? ' · 🔒' : ''}</span>
+                      <b>{t.nom}</b>
+                      <span className="st-d">{t.desc}</span>
+                      {locked ? <span className="st-lock">Inclus dès {t.n === 2 ? 'Studio' : 'Signature'}</span> : null}
+                    </button>
+                  )
+                })}
+              </div>
+              <div style={{ marginTop: '1rem', display: 'flex', gap: '.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <button className="btn btn--ghost" style={{ width: 'auto' }} disabled={genSite} onClick={genererSite}>{genSite ? 'L’IA rédige votre site…' : (siteContenu ? '⚡ Régénérer avec l’IA' : '⚡ Rédiger mon site avec l’IA')}</button>
+                <span className="muted" style={{ fontSize: '.85rem' }}>Titres, accroches et à-propos rédigés sur-mesure à partir de votre profil.</span>
+              </div>
+            </>
+          ) : (
+            <div>
+              <p className="muted" style={{ margin: '0 0 .7rem', fontWeight: 600 }}>{SITE_A_LA_DEMANDE.titre}</p>
+              <p className="muted" style={{ margin: '0 0 1rem' }}>{SITE_A_LA_DEMANDE.phrases[0]}</p>
+              {actif('siteCommandeVente') && (
+                <a className="btn btn--primary" href={SITE_A_LA_DEMANDE.lien} style={{ display: 'inline-block', width: 'auto' }}>
+                  {SITE_A_LA_DEMANDE.bouton}
+                </a>
+              )}
+            </div>
+          )}
 
           {/* Composeur de page — l'artisan agence ses sections (ordre + affichage). Le gating par niveau reste côté serveur. */}
           {layout.length > 0 && (

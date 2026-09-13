@@ -102,6 +102,33 @@ const URGENCE_KEYWORDS = [
   'fuite de gaz', 'urgent', 'urgence', 'au plus vite', 'des que possible', 'tout de suite',
   'immediat', 'sinistre', 'refoul', 'deborde', 'engorge', 'effondr', 'danger', 'ne fonctionne plus',
   'ne marche plus', 'tombe en panne', 'en rade', 'ce soir', 'aujourd hui', 'des maintenant',
+  // Ajoutés le 13/09 d'après les 88 urgences que le corpus synthétique (cas.jsonl, origine 014-15) faisait manquer :
+  // l'eau qui entre, ce qui se rompt ou s'effondre, ce qui brûle ou fait des étincelles, ce qui menace de tomber sur
+  // quelqu'un. Un mot seul ici doit être une urgence à lui seul, quel que soit le reste de la phrase.
+  'infiltr', 'rupture', 'affaiss', 'ecroul', 'eboul', 'arrache', 'fracass', 'bris de glace', 'bris de vitre',
+  'bris vitre', 'vandalis', 'explos', 'etincelle', 'arc electrique', 'surchauffe', 'odeur de brule', 'odeur de chaud',
+  'odeur suspecte', 'sent le brule', 'disjoncte', 'saute en boucle', 'rearmer', 'hors service', 'menace de tomber',
+  'menacant', 'risque de chute', 'pret a tomber', 'prete a tomber', 'voie publique', 'domaine public', 'sur pietons',
+  'sur les pietons', 'coule en continu', 'deracine', 'chute d arbre', 'chute de branche', 'chute de tuile',
+  'chute de pierre', 'chute de parpaing', 'chute d enduit', 'coup de belier', 'plus de courant', 'plus d electricite',
+  'risque electrique', 'risque sanitaire', 'seisme', 'tremblement de terre', 'entree d eau', 'plus de lumiere', 'plus rien ne marche',
+]
+
+// Ce que le client NIE : « sans urgence », « pas urgent », « pas pressé » — le mot d'urgence est là, mais retourné.
+// Le client décide : un artisan sérieux ne rappelle pas dans l'heure quelqu'un qui a écrit « sans urgence ».
+// Trouvé par normal-04 le 13/09 (« changer une serrure… sans urgence » ressortait urgent).
+const URGENCE_NIEE = [
+  'sans urgence', 'pas urgent', 'non urgent', 'aucune urgence', 'pas d urgence', 'rien d urgent', 'pas presse',
+  'peu urgent', 'pas une urgence', 'pas de panique', 'pas de precipitation', 'aucune precipitation',
+  'quand vous pouvez', 'quand vous aurez le temps', 'quand vous voulez', 'ca peut attendre', 'peut attendre',
+]
+
+// Ce qui ressemble à une casse sans en être une : « anti-effraction », « détecteur de fumée » — un produit, pas un
+// sinistre. Retiré du texte avant la détection (vitrier-s-30 : « verre feuilleté anti-effraction » ressortait urgent).
+const URGENCE_LEURRES = [
+  'anti effraction', 'anti casse', 'anti bris', 'anti cambriolage', 'anti chute', 'anti fuite', 'anti inondation',
+  'anti panne', 'anti coupure', 'anti intrusion', 'anti vandalisme', 'detecteur de fumee', 'detecteurs de fumee',
+  'detecteur de fuite', 'detecteur de gaz', 'alarme incendie',
 ]
 
 // Ce qu'un mot seul ne dit pas : une vitre n'est pas une urgence, une vitre CASSÉE l'est — et une porte qui a claqué
@@ -109,8 +136,22 @@ const URGENCE_KEYWORDS = [
 // corrigé le 13/09) est le premier cas de lib/ai/cerveaux/urgence/cas.jsonl. Une paire = un objet fragile ET un mot
 // de casse ou de blocage, n'importe où dans le message (mêmes règles de mot entier que `has`).
 const URGENCE_PAIRES: [string[], string[]][] = [
-  [['vitre', 'vitrine', 'carreau', 'vitrage', 'baie vitree', 'porte fenetre', 'fenetre', 'verre'], ['casse', 'brise', 'eclate', 'explose', 'fissure', 'effraction', 'cambriol']],
-  [['porte', 'serrure', 'cle', 'clef', 'verrou'], ['claque', 'bloque', 'coince', 'casse', 'force', 'effraction', 'cambriol', 'enferme dehors', 'bloque dehors', 'plus fermer', 'ne ferme plus', 'perdu']],
+  [['vitre', 'vitrine', 'carreau', 'vitrage', 'baie vitree', 'porte fenetre', 'fenetre', 'verre', 'glace'], ['casse', 'brise', 'eclate', 'explose', 'fissure', 'effraction', 'cambriol', 'fracass', 'bris', 'vandal', 'arrache']],
+  [['porte', 'serrure', 'cle', 'clef', 'verrou', 'volet', 'portail', 'store', 'cylindre', 'rideau', 'grille', 'baie', 'coulissant', 'garage', 'mecanisme'], ['claque', 'bloque', 'blocage', 'coince', 'casse', 'force', 'effraction', 'cambriol', 'enferme dehors', 'bloque dehors', 'plus fermer', 'ne ferme plus', 'perdu', 'arrache', 'entrouvert', 'hors service', 'endommage', 'tentative', 'vandal', 'fracass', 'gel', 'rupture', 'plus ouvrir', 'ne s ouvre plus', 'impossible d ouvrir', 'impossible de fermer']],
+  // Le toit (13/09) : une tuile cassée ou une gouttière arrachée, c'est de l'eau qui entre au prochain orage.
+  [['toit', 'toiture', 'tuile', 'ardoise', 'faitage', 'solin', 'gouttiere', 'cheminee', 'souche', 'velux', 'fenetre de toit', 'bac acier', 'zinc', 'charpente', 'couverture'], ['casse', 'arrache', 'chute', 'tombe', 'envole', 'infiltr', 'entree d eau', 'penche', 'pendant', 'effondr', 'affaiss', 'tempete', 'foudre', 'fuit', 'fuite', 'ecroul', 'endommage']],
+  // La structure (13/09) : ce qui s'affaisse, fléchit ou se fissure en grand — pas la fissure à reboucher avant peinture.
+  [['dalle', 'plancher', 'poutre', 'charpente', 'mur', 'facade', 'cloison', 'pilier', 'seuil', 'soutenement', 'terrasse', 'balcon', 'escalier', 'plafond', 'linteau', 'fondation', 'maison', 'batiment', 'parpaing', 'enduit', 'carrelage', 'faience', 'chape', 'chappe'], ['affaiss', 'effondr', 'ecroul', 'eboul', 'flechi', 'beante', 'traversante', 'evolutive', 'fissuration', 'mouvement de terrain', 'seisme', 'cavite', 'chute', 'choc', 'vermoulu', 'degradation severe', 'penche', 'explose', 'souleve', 'soulevement', 'decollement', 'humide', 'infiltr', 'trou important']],
+  // L'électricité (13/09) : ce qui chauffe, sent ou saute au tableau — un incendie qui se prépare.
+  [['tableau', 'disjoncteur', 'differentiel', 'compteur', 'cable', 'gaine', 'prise', 'interrupteur', 'installation electrique', 'courant', 'fil'], ['odeur', 'brule', 'chaud', 'surchauffe', 'etincelle', 'arc', 'eclair', 'bourdonn', 'fum', 'saute', 'disjoncte', 'rearmer', 'hors service', 'bloque', 'grille', 'fondu', 'noirci', 'en boucle']],
+  // Le chauffage (13/09) : une chaudière en sécurité ou qui sent le brûlé, un radiateur qui explose.
+  [['chaudiere', 'bruleur', 'chauffe eau', 'ballon', 'radiateur', 'poele', 'cumulus', 'pac', 'pompe a chaleur', 'chauffage'], ['en securite', 'defaut', 'code erreur', 'explose', 'fuit', 'fuite', 'surchauffe', 'assourdissant', 'craquement', 'vapeur', 'odeur', 'brule', 'fumee', 'disjoncte', 'bloque', 'hors service', 'plus rien', 'ne demarre plus', 'ne se rallume', 'impossible de relancer', 'evacuation des fumees']],
+  // L'eau (13/09) : un flexible rompu, une vanne coincée, une canalisation percée — l'eau coule tant qu'on n'est pas venu.
+  [['flexible', 'tuyau', 'canalisation', 'conduite', 'raccord', 'joint', 'vanne', 'robinet', 'siphon', 'evacuation', 'colonne', 'wc', 'toilette', 'chasse', 'douche', 'baignoire', 'evier', 'lavabo'], ['rupture', 'rompu', 'casse', 'perce', 'eclate', 'fendu', 'coince', 'bloque', 'impossible de couper', 'impossible de fermer', 'explose', 'arrache', 'coule en continu', 'ne s arrete plus', 'plus de pression', 'bouche']],
+  // Le gaz (13/09) : une odeur, un sifflement, des fumées mal évacuées — on ne discute pas.
+  [['gaz', 'monoxyde', 'chaudiere gaz'], ['odeur', 'sent', 'suspect', 'fuite', 'fumee', 'evacuation', 'siffl', 'detecteur', 'alarme', 'sonne']],
+  // La végétation (13/09) : un arbre arraché ou une branche cassée au-dessus de quelque chose ou de quelqu'un.
+  [['arbre', 'branche', 'tronc', 'palme', 'sapin', 'chene', 'peuplier', 'haie', 'racine'], ['arrache', 'casse', 'brise', 'deracine', 'tombe', 'chute', 'menace', 'penche', 'suspendu', 'pret a tomber', 'prete a tomber', 'foudre', 'tempete', 'bloque', 'sur la route', 'sur la ligne', 'sur la toiture', 'sur le toit', 'sur la cloture', 'sur vehicule', 'sur terrasse']],
 ]
 
 // Insatisfaction / SAV sur un travail déjà réalisé (à traiter avec doigté, sans reconnaître de faute).
@@ -170,8 +211,12 @@ const COMPLEXE_KEYWORDS = [
 
 /** Détecte une demande potentiellement urgente à partir du message du prospect. */
 function isUrgent(message: string): boolean {
-  const n = normalize(message)
+  let n = normalize(message)
   if (!n) return false
+  // Le client qui écrit « sans urgence » a le dernier mot, quoi qu'il décrive ensuite.
+  if (has(n, URGENCE_NIEE)) return false
+  // « anti-effraction », « détecteur de fumée » : on retire le leurre du texte, on ne juge que le reste.
+  for (const l of URGENCE_LEURRES) n = n.split(normalize(l)).join(' ')
   if (has(n, URGENCE_KEYWORDS)) return true
   return URGENCE_PAIRES.some(([objets, casses]) => has(n, objets) && has(n, casses))
 }

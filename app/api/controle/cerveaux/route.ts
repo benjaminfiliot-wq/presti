@@ -43,7 +43,7 @@ export async function GET(req: Request) {
     } catch { /* pas de cas */ }
     let derniereEntree: string | null = null
     try {
-      const m = fs.readFileSync(path.join(d, 'journal.md'), 'utf8').match(/^## (.+)$/m)
+      const m = [...fs.readFileSync(path.join(d, 'journal.md'), 'utf8').matchAll(/^## (.+)$/gm)].at(-1) // la DERNIÈRE entrée, pas la première
       derniereEntree = m ? m[1].trim().slice(0, 160) : null
     } catch { /* pas de journal */ }
     return { id, score: score?.score ?? null, reussis: score?.reussis ?? null, total: score?.total ?? null, date: score?.date ?? null, cas, ouverts, derniereEntree }

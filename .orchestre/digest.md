@@ -1,29 +1,30 @@
-# Digest — 2026-09-13T14:50:37Z
+# Digest — 2026-09-13T16:58:40Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (Antigravity) : 1 tâche(s) PASS, 1 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
-**État** — file : 18 · en cours : 0 · faites : 1 · refusées : 1
+**Mesure** — déléguées (Antigravity) : 4 tâche(s) PASS, 691 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
+**État** — file : 15 · en cours : 0 · faites : 4 · refusées : 2
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 014-01 | feature | file | antigravity | — | Les quatre écrans de commande du site à la demande sur /site/commander (domaine → métier et zone → matière → paiement), branchés sur l'API existante et testée |
-| 014-02 | boucle-qa | file | antigravity | — | Le site de démonstration « Plombier » — un dossier statique complet dans public/sites-demo/plombier, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
-| 014-03 | boucle-qa | file | antigravity | — | Le site de démonstration « Électricien » — un dossier statique complet dans public/sites-demo/electricien, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
-| 014-04 | boucle-qa | file | antigravity | — | Le site de démonstration « Chauffagiste » — un dossier statique complet dans public/sites-demo/chauffagiste, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
-| 014-05 | boucle-qa | file | antigravity | — | Le site de démonstration « Maçon » — un dossier statique complet dans public/sites-demo/macon, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
-| 014-06 | boucle-qa | file | antigravity | — | Le site de démonstration « Menuisier » — un dossier statique complet dans public/sites-demo/menuisier, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
+| 014-06 | boucle-qa | file | ag-1406 | — | Le site de démonstration « Menuisier » — un dossier statique complet dans public/sites-demo/menuisier, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
 | 014-07 | boucle-qa | file | antigravity | — | Le site de démonstration « Peintre en bâtiment » — un dossier statique complet dans public/sites-demo/peintre, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
 | 014-08 | boucle-qa | file | antigravity | — | Le site de démonstration « Carreleur » — un dossier statique complet dans public/sites-demo/carreleur, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
+| 014-03 | boucle-qa | file | ag-1403 | — | Le site de démonstration « Électricien » — un dossier statique complet dans public/sites-demo/electricien, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
+| 014-02 | boucle-qa | file | antigravity | — | Le site de démonstration « Plombier » — un dossier statique complet dans public/sites-demo/plombier, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
+| 014-04 | boucle-qa | file | antigravity | — | Le site de démonstration « Chauffagiste » — un dossier statique complet dans public/sites-demo/chauffagiste, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
+| 014-05 | boucle-qa | file | antigravity | — | Le site de démonstration « Maçon » — un dossier statique complet dans public/sites-demo/macon, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
 | 014-09 | boucle-qa | file | antigravity | — | Le site de démonstration « Couvreur » — un dossier statique complet dans public/sites-demo/couvreur, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
 | 014-10 | boucle-qa | file | antigravity | — | Le site de démonstration « Serrurier » — un dossier statique complet dans public/sites-demo/serrurier, généré d'après plans/cerveau-site.md, vert au juge scripts/site-qa.mjs |
-| 014-12 | contenu | file | antigravity | — | Le site vitrine n'est plus inclus dans aucune formule — l'interface et tous les textes le disent (landing, /abonnement, aide, éditeur de site, publications, guide de démarchage), et le bloc de vente « Le site, à la demande » existe derrière le drapeau siteCommandeVente |
 | 014-13 | test | file | antigravity | — | La suite scripts/controle-sites-e2e.mjs — la validation humaine d'un site généré depuis le Poste de contrôle, prouvée de bout en bout (lecture, valider, régénérer avec consigne, refus sans consigne, rôle lecture, journal) |
 | 014-14 | feature | file | antigravity | — | L'onglet « Sites » du Poste de contrôle — la liste des commandes de site et l'écran de validation humaine (Valider / Renvoyer en génération avec une consigne), branché sur /api/controle/sites |
-| 014-15 | contenu | file | antigravity | — | Cinquante cas synthétiques par métier pour le cerveau « urgence » (lib/ai/cerveaux/urgence/cas.jsonl), écrits à partir du vocabulaire et des pièges de lib/ai/metiers.ts — les cas qui passent en « reference », ceux qui échouent en « ouvert » |
-| 014-16 | feature | file | antigravity | — | L'onglet « Cerveaux » du Poste de contrôle — le tableau des scores des cerveaux (score accepté, cas, ouverts, dernière amélioration), branché sur /api/controle/cerveaux |
 | 014-17 | test | file | antigravity | — | La suite scripts/suspension-e2e.mjs — suspendre un compte depuis le Poste de contrôle a un effet partout (connexion refusée, page de conversation neutre, nouveau lead refusé, moteur muet, relances sautées), et réactiver ramène tout |
 | 014-18 | feature | file | antigravity | — | Dans l'onglet « Sites » du Poste de contrôle — le lien d'aperçu privé d'une commande générée, le bouton « Mettre en ligne » d'une commande validée, et les enregistrements DNS rendus à l'artisan |
 | 014-19 | test | file | antigravity | — | La suite scripts/site-hebergement-e2e.mjs — un site déposé n'est lisible qu'avec son jeton tant qu'il n'est pas en ligne, se sert avec les bons types une fois en ligne, et « mettre en ligne » exige un dépôt et journalise |
+| 014-20 | contenu | file | antigravity | — | Réécrire les 544 cas synthétiques du cerveau « urgence » (lib/ai/cerveaux/urgence/cas.jsonl) dans le français que les clients écrivent vraiment — accents, SMS avec fautes, longs messages oraux — et ajouter les pièges qui manquent (cinq normaux avec un mot d'urgence et cinq urgents sans aucun mot de la liste, par métier) |
+| 014-16 | feature | fait | claude-code | PASS | 2026-09-13T16:58:40Z · 30s · 140 l. |
+| 014-01 | feature | refuse | antigravity | FAIL | ❌ ÉCHEC : rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/site/commander/** et app/AppShell.tsx — app/abonnement/page.tsx, app/api/controle/apport |
+| 014-12 | contenu | fait | antigravity | PASS | 2026-09-13T16:23:08Z · 10s · 0 l. |
+| 014-15 | contenu | fait | ag-1415 | PASS | 2026-09-13T16:22:08Z · 1s · 550 l. |
 | 001-test-echec | test | refuse | ag-2 | FAIL | ÉCHEC voulu : cette ligne doit apparaître telle quelle dans digest.md |
 | 000-test | test | fait | ag-1 | PASS | 2026-09-13T13:21:30Z · 0s · 1 l. |

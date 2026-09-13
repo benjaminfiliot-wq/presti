@@ -121,7 +121,7 @@ function trouver(id, dossiers = [D.enCours, D.fait, D.refuse, D.file]) {
 }
 
 const PIED_DE_TACHE = (id) => `Quand tu as fini :
-1. Dépose ta preuve dans .orchestre/preuves/${id}/ (sortie de la commande \`verifier\`, captures).
+1. Dépose ta preuve dans .orchestre/preuves/${id}/ (la sortie de la commande \`verifier\`). Les captures d'écran, c'est le JUGE qui les prend (scripts/lib/capture.mjs) quand le vérificateur le prévoit : ne dépose jamais une image que tu n'as pas vue s'afficher — un fichier fabriqué est un refus.
 2. Tant que la tâche est en en-cours/, lance \`node scripts/orchestre.mjs verifier ${id}\` autant de fois que nécessaire.
 3. Quand c'est vert : déplace le fichier de en-cours/ vers fait/, puis relance \`node scripts/orchestre.mjs verifier ${id}\` — c'est ce verdict-là qui compte.
 Bloqué ? Écris .orchestre/en-cours/${id}.question.md avec deux ou trois options numérotées, puis attends ${id}.reponse.md. Jamais un paragraphe.
@@ -130,6 +130,16 @@ Ne touche à rien hors \`perimetre\`. \`interdit\` est interdit même pour aider
 // ── prochaine ─────────────────────────────────────────────────────────────────────────────────────
 function prochaine(agent, tacheVoulue = null) {
   preparer()
+  // Un agent, une tâche : le registre du pilote (agents.jsonl) dit laquelle. Un agent inscrit n'en reçoit pas d'autre
+  // dans la même conversation — le 13/09, un agent a « pris 014-01 dans la foulée » de 014-12 et l'a rendue avec quatre
+  // captures identiques ; un autre a ignoré son --tache et pris la première de la file.
+  const REGISTRE = path.join(ORCH, 'agents.jsonl')
+  const inscrit = fs.existsSync(REGISTRE) ? fs.readFileSync(REGISTRE, 'utf8').split(/\r?\n/).filter(Boolean).map((l) => { try { return JSON.parse(l) } catch { return null } }).filter((a) => a && a.agent === agent).at(-1) : null
+  if (inscrit?.tache) {
+    if (tacheVoulue && tacheVoulue !== inscrit.tache) { console.log(`✗ ${agent} est inscrit sur ${inscrit.tache} : un agent, une tâche. ${tacheVoulue} attendra une autre conversation.`); process.exit(2) }
+    tacheVoulue = inscrit.tache
+    if (!fs.existsSync(path.join(ORCH, D.file, `${tacheVoulue}.md`))) { console.log(`✗ ${tacheVoulue} n'est plus dans file/ (prise, faite ou refusée) : ${agent} a terminé — rien d'autre dans cette conversation.`); process.exit(2) }
+  }
   const enCours = taches(path.join(ORCH, D.enCours)).map((f) => lireTache(path.join(ORCH, D.enCours, f))).filter((t) => t.entete)
   const ignorees = []
   // `--tache=<id>` : le pilote (scripts/antigravity.mjs) attribue une tâche précise à un agent ; sans lui, la première compatible.
@@ -152,7 +162,11 @@ function prochaine(agent, tacheVoulue = null) {
     ecrire(cheminLock(t.entete.id), `agent: ${agent}\ndepuis: ${maintenant()}\nsha: ${git(['rev-parse', 'HEAD']) || '(hors git)'}\n`)
     // L'état de l'arbre à la prise : un vérificateur ne reproche à la tâche que ce qui a changé DEPUIS — le dépôt
     // porte souvent d'autres chantiers non committés, qui ne sont pas de son fait.
-    ecrire(path.join(ORCH, D.enCours, `${t.entete.id}.avant.txt`), `${git(['status', '--porcelain'])}\n`)
+    const avant = `${git(['status', '--porcelain'])}\n`
+    ecrire(path.join(ORCH, D.enCours, `${t.entete.id}.avant.txt`), avant)
+    // La copie dans preuves/ survit au déplacement de la tâche (fait/, refuse/) : un verdict rejoué plus tard compare au même « avant ».
+    fs.mkdirSync(path.join(ORCH, D.preuves, t.entete.id), { recursive: true })
+    ecrire(path.join(ORCH, D.preuves, t.entete.id, 'avant.txt'), avant)
     digest()
     console.log(`# Tâche ${t.entete.id} prise par ${agent} — ${rel(dest)}\n`)
     console.log(lire(dest).trim())
@@ -391,7 +405,7 @@ Tu n'explores pas le dépôt : tu lis \`.orchestre/contexte.md\` (ce que le code
 
 1. \`node scripts/orchestre.mjs prochaine --agent=<ton-nom>\` — la tâche s'affiche en entier, avec ce qu'il faut faire à la fin.
 2. Tu travailles UNIQUEMENT dans \`perimetre\`. \`interdit\` reste intact, même pour « aider ». Le \`budget\` (fichiers, minutes) est une limite, pas une cible.
-3. Tu déposes ta preuve dans \`.orchestre/preuves/<id>/\` : la sortie de la commande \`verifier\`, tes captures.
+3. Tu déposes ta preuve dans \`.orchestre/preuves/<id>/\` : la sortie de la commande \`verifier\`. Les captures d'écran sont prises par le juge (\`scripts/lib/capture.mjs\`) quand le vérificateur le prévoit — jamais une image fabriquée, jamais un fichier copié : c'est un refus, et la tâche repart en file.
 4. Tu lances \`node scripts/orchestre.mjs verifier <id>\` autant de fois que nécessaire tant que la tâche est en \`en-cours/\`.
 5. Vert ? Tu déplaces le fichier de \`en-cours/\` vers \`fait/\` et tu relances \`verifier <id>\` : ce verdict-là compte.
 6. Bloqué ? \`.orchestre/en-cours/<id>.question.md\` avec deux ou trois options numérotées. Tu attends \`<id>.reponse.md\`. Jamais un paragraphe.

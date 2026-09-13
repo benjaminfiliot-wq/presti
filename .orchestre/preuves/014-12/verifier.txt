@@ -1,0 +1,28 @@
+── 1. La grille (lib/plans.ts)
+  ✅ aucune capacité site.essentiel/pro/signature/slides3d dans BASE, STUDIO, SIGNATURE
+  ✅ plus de ligne « Site vitrine » dans la grille
+  ✅ le domaine s'appelle « Votre nom de domaine sur la page de conversation »
+── 2. Le bloc de vente, horn grille, derrière le drapeau
+  ✅ app/page.tsx rend SITE_A_LA_DEMANDE (lib/siteCommande)
+  ✅ app/page.tsx le conditionne à actif('siteCommandeVente')
+  ✅ app/page.tsx n'écrit pas 300 € en dur
+  ✅ app/abonnement/page.tsx rend SITE_A_LA_DEMANDE (lib/siteCommande)
+  ✅ app/abonnement/page.tsx le conditionne à actif('siteCommandeVente')
+  ✅ app/abonnement/page.tsx n'écrit pas 300 € en dur
+── 3. Plus rien ne promet le site inclus
+  ✅ presti/app/aide/page.tsx : aucune promesse de site inclus
+  ✅ presti/lib/aide.ts : aucune promesse de site inclus
+  ✅ presti/app/profil/page.tsx : aucune promesse de site inclus
+  ✅ presti/app/page.tsx : aucune promesse de site inclus
+  ✅ presti/app/abonnement/layout.tsx : aucune promesse de site inclus
+  ✅ presti/app/abonnement/page.tsx : aucune promesse de site inclus
+  ✅ presti/plans/publications-lancement.md : aucune promesse de site inclus
+  ✅ SaaS/Prospection/Guide-Presti-Demarchage.md : aucune promesse de site inclus
+  ✅ app/profil : l'éditeur de site n'est offert qu'aux sites existants (site_active) — les autres voient le site à la demande
+  ✅ le guide de démarchage dit « à la demande, 300 € une fois … pas compris dans l’abonnement »
+  ✅ plans/publications-lancement.md ne dit plus « inclus dès l’Essentiel »
+── 4. Typecheck et garde de commit
+  ✅ tsc --noEmit
+  ✅ garde-commit
+
+✓ Tout passe.

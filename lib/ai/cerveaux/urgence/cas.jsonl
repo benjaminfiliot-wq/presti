@@ -14,7 +14,551 @@
 {"id":"normal-01","message":"Bonjour, je voudrais un devis pour repeindre mon salon et deux chambres, 60 m² environ.","metier":"peintre","attendu":"normal","origine":"garde-fou contre le sur-déclenchement (2026-09-13)","statut":"reference"}
 {"id":"normal-02","message":"Combien coûte le remplacement d'une vitre de véranda ? C'est pour un projet l'an prochain.","metier":"vitrier","attendu":"normal","origine":"garde-fou : « vitre » sans casse n'est pas une urgence (2026-09-13)","statut":"reference"}
 {"id":"normal-03","message":"Pouvez-vous passer un jour pour voir ma toiture et me faire un devis d'entretien ?","metier":"couvreur","attendu":"normal","origine":"garde-fou (2026-09-13)","statut":"reference"}
-{"id":"normal-04","message":"Je cherche un serrurier pour changer une serrure par une serrure 3 points, sans urgence.","metier":"serrurier","attendu":"normal","origine":"cas ouvert (2026-09-13) : « sans urgence » contient le mot « urgence » — le détecteur ne lit pas la négation","statut":"ouvert"}
+{"id":"normal-04","message":"Je cherche un serrurier pour changer une serrure par une serrure 3 points, sans urgence.","metier":"serrurier","attendu":"normal","origine":"cas ouvert (2026-09-13) : « sans urgence » contient le mot « urgence » — le détecteur ne lit pas la négation — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
 {"id":"normal-05","message":"Bonjour, pourriez-vous me dire vos horaires et si vous intervenez à Villeurbanne ?","metier":"plombier","attendu":"normal","origine":"garde-fou (2026-09-13)","statut":"reference"}
 {"id":"normal-06","message":"Devis pour poser du carrelage dans une salle de bain de 8 m², photos en pièce jointe.","metier":"carreleur","attendu":"normal","origine":"garde-fou (2026-09-13)","statut":"reference"}
 {"id":"normal-07","message":"Je voudrais faire installer une porte-fenêtre neuve dans la cuisine au printemps.","metier":"menuisier","attendu":"normal","origine":"garde-fou : « porte-fenêtre » sans casse n'est pas une urgence (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-01","message":"Grosse fuite d'eau sous l'evier de la cuisine, ca inonde partout.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-02","message":"Plus d'eau chaude depuis ce matin dans toute la maison.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-03","message":"Tuyau perce dans la cave, fuite importante en cours.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-04","message":"Canalisation des WC bouchee, ca refoule dans la baignoire, urgent svp.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-05","message":"Odeur suspecte de gaz dans la cuisine, que faire ?","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"plombier-s-06","message":"Rupture de flexible de douche, l'eau coule en continu.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"plombier-s-07","message":"Chauffe-eau en panne totale avec disjonction electrique.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-08","message":"Fuite sur le groupe de securite, ca pisse dru.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-09","message":"Vanne d'arret coincee, impossible de couper l'eau de l'appartement.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"plombier-s-10","message":"Inondation dans la buanderie suite a la machine a laver.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-11","message":"Fuite d'eau sur la colonne principale, ca coule chez le voisin.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-12","message":"Radiateur explose dans le salon, grande quantite d'eau au sol.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"plombier-s-13","message":"Panne de chaudiere gaz avec fuite de raccordement.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-14","message":"Evacuation de cuisine completement engorgee et debordante.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-15","message":"Urgence absolue, arrivee d'eau cassee dans le garage.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-16","message":"Fuite importante sur le reseau encastre, tache d'humidite grandissante.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-17","message":"Siphon de lavabo arrache, fuite continue.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-18","message":"Panne d'eau totale au cabinet medical, situation critique.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-19","message":"Chauffe-eau qui fuit par le corps de chauffe, risque electrique.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"plombier-s-20","message":"Degat des eaux en cours dans la cuisine suite a rupture de tuyau.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-21","message":"Fuite sur vanne principale d'arrivee d'eau.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-22","message":"Canalisation principale cassee lors de travaux.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"plombier-s-23","message":"Urgence fuite d'eau appartement loue vide mais ouvert.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-24","message":"Debordement d'egout dans la cave.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-25","message":"Urgence fuite sur mitigeur douche.","metier":"plombier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-26","message":"Bonjour, je voudrais un devis pour remplacer mon vieux mitigeur de cuisine.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-27","message":"Combien coute la pose d'un nouveau chauffe-eau thermodynamique l'an prochain ?","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-28","message":"Devis pour deplacer l'arrivee d'eau de la machine a laver dans la buanderie.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-29","message":"Je souhaite installer un systeme de filtration d'eau sous evier.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-30","message":"Rendez-vous pour une revision de l'installation sanitaire de la maison.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-31","message":"Quel est votre tarif horaire pour une installation de plomberie neuve ?","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-32","message":"Devis creation d'une salle de bain complete au premier etage.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-33","message":"Pouvez-vous venir voir pour installer un WC suspendu ?","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-34","message":"Renseignement pour poser un adoucisseur d'eau sans urgence.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"plombier-s-35","message":"Devis remplacement de tous les robinets de l'appartement.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-36","message":"Installation de deux vasques dans la salle de bain principale.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-37","message":"Combien coute le raccordement d'un evier en cuisine ?","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-38","message":"Projet de renovation de plomberie pour l'automne prochain.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-39","message":"Devis pour installer une douche italienne a la place d'une baignoire.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-40","message":"Informations sur vos disponibilites pour un chantier en fevrier.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-41","message":"Devis evacuation supplementaire pour un frigo americain.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-42","message":"Question sur l'entretien d'un chauffe-eau solaire.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-43","message":"Remplacement de joints de baignoire pour prevention.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-44","message":"Devis pour un reseau d'arrosage integre alimente par la maison.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-45","message":"Demande de chiffrage pour equipement sanitaire PMR.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-46","message":"Devis pose d'un nouveau radiateur decoratif a eau.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-47","message":"Peut-on prevoir un deplacement pour etudier un plan de plomberie ?","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-48","message":"Devis installation arrivee d'eau exterieure pour jardin.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-49","message":"Renseignements sur les types de tuyauterie PER ou multicouche.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"plombier-s-50","message":"Demande de devis general pour plomberie maison neuve.","metier":"plombier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-01","message":"Le tableau electrique a disjoncte, odeur de brule persistante.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"electricien-s-02","message":"Court-circuit dans le salon, etincelles sur une prise murale.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-03","message":"Coupure de courant totale dans toute la maison avec grignotement.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-04","message":"Prise electrique fondue suite a une surchauffe, danger.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-05","message":"Panne d'electricite complete suite a un orage.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-06","message":"Disjoncteur general qui saute en boucle sans pouvoir le rearmer.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"electricien-s-07","message":"Odeur de chaud suspecte pres du tableau electrique.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"electricien-s-08","message":"Fils electriques denudes suite a un degat des eaux.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-09","message":"Panne d'eclairage totale et danger sur un interrupteur.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-10","message":"Etincelles visibles dans la gaine technique de l'immeuble.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"electricien-s-11","message":"Appareil electro-menager en feu suite a court-circuit.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-12","message":"Tableau electrique completement en panne et disjoncte.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-13","message":"Urgence securite electrique suite a prise arrachee et fils a l'air.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-14","message":"Disjoncteur differentiel bloque en position ouverte.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"electricien-s-15","message":"Surchauffe sur cable electrique principal.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"electricien-s-16","message":"Panne electrique avec risque d'electrocution sur partie metallique.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-17","message":"Eclairs et bourdonnements au niveau du compteur.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"electricien-s-18","message":"Urgence court-circuit chauffe-eau.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-19","message":"Panne de courant dans tout l'etage avec odeur de crame.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-20","message":"Disjoncteur principal hors service.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"electricien-s-21","message":"Cables electriques endommages par un rongeur avec court-circuit.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-22","message":"Urgence securite enfant sur prise endommagee.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-23","message":"Panne electrique generale dans local professionnel.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-24","message":"Arc electrique observe sur le tableau.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"electricien-s-25","message":"Urgence panne secteur avec equipement medical vital.","metier":"electricien","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-26","message":"Bonjour, devis pour rajouter quatre prises dans le bureau.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-27","message":"Combien coute la pose de luminaires LED au plafond ?","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-28","message":"Devis pour installation d'une borne de recharge pour voiture electrique.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-29","message":"Mise aux normes complete d'un appartement t3 pour location.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-30","message":"Rendez-vous pour etudier l'installation d'un interphone video.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-31","message":"Devis pour deplacer un interrupteur dans la chambre.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-32","message":"Installation de detecteurs de fumee conformes a la reglementation.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-33","message":"Quel est votre tarif pour poser des radiateurs electriques connectes ?","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-34","message":"Devis tableau electrique secondaire pour abri de jardin.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-35","message":"Preparation installation electrique pour future cuisine equipee.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-36","message":"Devis pose de volets roulants electriques filaires.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-37","message":"Verification installation electrique avant achat immobilier.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-38","message":"Demande de chiffrage eclairage exterieur de terrasse.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-39","message":"Devis installation VMC simple flux.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-40","message":"Renseignements pour passer en triphase.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-41","message":"Devis pose de prises RJ45 reseau internet.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-42","message":"Projet renovation electrique complete pour l'an prochain.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-43","message":"Devis eclairage de mise en valeur facade.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-44","message":"Installation d'un délesteur electrique.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-45","message":"Demande de devis pour domotique eclairage.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-46","message":"Remplacement de vieux interrupteurs par des modeles design.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-47","message":"Devis pour alimentation electrique portail automatique.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-48","message":"Etude d'installation photovoltaique autoconsommation.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-49","message":"Devis pose de spots encastres en cuisine.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"electricien-s-50","message":"Renseignements pour mise en conformite NFC 15-100.","metier":"electricien","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-01","message":"Plus de chauffage depuis ce matin, il fait 12 degres dans la maison.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-02","message":"Panne totale de chaudiere en plein hiver, avec enfants en bas age.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-03","message":"Fuite importante sur le circuit de chauffage central, la pression tombe a zero.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-04","message":"Chaudiere en securite defaut F28, impossible de relancer le chauffage.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"chauffagiste-s-05","message":"Odeur de gaz pres de la chaudiere murale.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-06","message":"Radiateur en fonte fissure avec fuite d'eau bouillante.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-07","message":"Panne de pompe a chaleur en plein gel.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-08","message":"Bruit assourdissant et surchauffe sur la chaudiere.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"chauffagiste-s-09","message":"Urgence chaudiere bloquee code erreur rouge.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-10","message":"Fuite d'eau chaude sous la chaudiere.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-11","message":"Plus d'eau chaude ni chauffage par grand froid.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-12","message":"Vanne de securite chaudiere explosee.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"chauffagiste-s-13","message":"Panne de chauffage dans un local commercial ouvert au public.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-14","message":"Odeur de brule au niveau du bruleur de chaudiere.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"chauffagiste-s-15","message":"Arret d'urgence chaudiere fioul.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-16","message":"Fuite sur vanne de radiateur inondant le parquet.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-17","message":"Panne totale plancher chauffant en hiver.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-18","message":"Defaut d'evacuation des fumees chaudiere gaz.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"chauffagiste-s-19","message":"Urgence gel canalisation chauffage.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-20","message":"Chute de pression immediate sur chaudiere gaz.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-21","message":"Panne de thermostat d'ambiance avec blocage chauffage.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-22","message":"Urgence fuite raccordement PAC.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-23","message":"Chaudiere qui disjoncte en boucle a l'allumage.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"chauffagiste-s-24","message":"Bruit de craquement et vapeur sur chaudiere bois.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"chauffagiste-s-25","message":"Urgence panne chauffage bureau.","metier":"chauffagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-26","message":"Bonjour, devis pour l'entretien annuel de ma chaudiere gaz.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-27","message":"Combien coute le remplacement d'un radiateur acier par un modele plat ?","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-28","message":"Devis installation d'un thermostat connecte.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-29","message":"Rendez-vous pour un bilan energetique de chauffage.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-30","message":"Projet d'installation d'une pompe a chaleur air eau pour l'ete.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-31","message":"Devis deplacement d'un radiateur pour amenagement de piece.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-32","message":"Renseignements sur les aides MaPrimeRenov pour chaudiere.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-33","message":"Devis installation plancher chauffant neuf.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-34","message":"Entretien preventif reseau de radiateurs.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-35","message":"Devis pour pose d'un seche-serviettes dans la salle de bain.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-36","message":"Remplacement d'un robinet thermostatique defectueux l'an prochain.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-37","message":"Etude technique pour basculer fioul vers gaz.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-38","message":"Devis climatisation reversible multizone.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-39","message":"Demande de chiffrage installation poele a granules.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-40","message":"Renseignements contrat de maintenance chaudiere.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-41","message":"Devis tubage conduit de cheminee.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-42","message":"Projet installation chauffe-thermodynamique.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-43","message":"Devis deblocage et purge complete radiateurs.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-44","message":"Informations sur les pac air air.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-45","message":"Devis installation ballon tampon.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-46","message":"Remplacement vannes de reglage chauffage.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-47","message":"Devis bouclage eau chaude sanitaire.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-48","message":"Etude reseau hydraulique radiateurs fonte.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-49","message":"Devis calorifugeage reseau chaufferie.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"chauffagiste-s-50","message":"Demande de rendez-vous devis chauffage.","metier":"chauffagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-01","message":"Mur porteur qui presente une enorme fissure traversante subite, danger.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-02","message":"Effondrement partiel d'un pan de mur dans la cour.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-03","message":"Affaissement soudain de la dalle du rez-de-chaussee.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-04","message":"Linteau de fenetre brise avec pierres qui menacent de tomber.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-05","message":"Apparition de fissures beantes sur la facade apres mouvement de terrain.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-06","message":"Poutre maitresse qui flechit de facon inquietante.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-07","message":"Ecroulement de la cheminee sur le toit.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-08","message":"Urgence etaiement mur porteur suite a choc vehicule.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-09","message":"Effondrement de talus contre le mur de cloture.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-10","message":"Trou important dans la chappe suite a affaissement.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-11","message":"Urgence structurelle fissure angle de maison.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-12","message":"Chute de parpaings sur le domaine public.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-13","message":"Affaissement de plancher bois vermoulu.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-14","message":"Fissure evolutive rapide sur mur exterieur.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-15","message":"Urgence affaissement de marche d'escalier beton.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-16","message":"Rupture de soutènement de terrasse.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-17","message":"Decouvertes de cavites sous la maison.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-18","message":"Chute d'enduit lourd en facade sur pietons.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-19","message":"Urgence infiltration massive par rupture de mur de cave.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-20","message":"Fissure traversante cloison portante.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-21","message":"Affaissement de seuil de porte cochere.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-22","message":"Urgence stabilite poteau beton arme.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-23","message":"Degradation severe suite a choc camion sur pilier.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-24","message":"Fissuration acceleree suite seisme local.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"macon-s-25","message":"Urgence danger chute maconnerie.","metier":"macon","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-26","message":"Bonjour, devis pour creer une ouverture dans un mur de cloture.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-27","message":"Combien coute la creation d'une dalle beton pour abri de jardin 20m2 ?","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-28","message":"Devis pour un enduit de facade gratte sur maison individuelle.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-29","message":"Rendez-vous pour etudier l'agrandissement de la maison par une extension.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-30","message":"Devis construction d'un muret de cloture avec chaperons.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-31","message":"Creation d'une terrasse sur plots ou dalle beton.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-32","message":"Renseignements pour rehausser un mur mitoyen.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-33","message":"Devis pose de parpaings pour garage.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-34","message":"Chiffrage chemisage de mur de cave.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-35","message":"Devis creation d'un escalier exterieur en beton.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-36","message":"Projet ouverture mur non porteur pour cuisine ouverte.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-37","message":"Devis pose de pavés autobloquants allee.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-38","message":"Restauration de pierres de taille anciennes.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-39","message":"Devis isolation thermique exterieure ITE.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-40","message":"Demande de devis pour chape de ragreage.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-41","message":"Etude de faisabilité surélévation ossature bois.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-42","message":"Devis creation de soubassement.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-43","message":"Renseignements reglementation PLU pour cloture.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-44","message":"Devis pose de bordures de jardin.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-45","message":"Chiffrage scellement de portail.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-46","message":"Devis impermeabilisation de sous-sol.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-47","message":"Projet creation cave enterree.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-48","message":"Devis maconnerie generale renovation.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-49","message":"Rendez-vous pour chiffrage gros oeuvre.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"macon-s-50","message":"Demande de devis macon.","metier":"macon","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-01","message":"Porte-fenetre cassee suite a effraction, logement ouvert.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-02","message":"Vitre de la porte d'entree brisee, besoin de securisation urgente.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-03","message":"Porte d'entree coincee impossible a ouvrir ni a fermer ce soir.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-04","message":"Volet roulant bloque en position ouverte au rez-de-chaussee.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"menuisier-s-05","message":"Fenetre explosee par le vent, debris partout.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-06","message":"Porte de garage bloquee fermee avec voiture coincee dedans pour urgence pro.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-07","message":"Effraction cette nuit sur porte fenetre, impossible de fermer.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-08","message":"Serrure de porte d'entree cassee en position fermee avec cle coincee.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-09","message":"Baie vitree brisee par un choc.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-10","message":"Porte blindee bloquee securite coincee.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-11","message":"Chute de store banne arrache.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"menuisier-s-12","message":"Porte de service forcee et entr'ouverte.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-13","message":"Vitrine de magasin en bois fracassee.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"menuisier-s-14","message":"Volet bloque en position entrouverte la nuit.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"menuisier-s-15","message":"Urgence securisation fenetre cassee.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-16","message":"Clanche de porte d'entree cassee net.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-17","message":"Portail automatique coince entrouvert sur rue.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"menuisier-s-18","message":"Porte interieure coincee personne coincee dans piece.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-19","message":"Casse de panneau de porte d'entree.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-20","message":"Urgence blocage porte coupe-feu.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-21","message":"Fenetre de toit velux arrachee par tempete.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"menuisier-s-22","message":"Charniere de porte d'entree cassee net.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-23","message":"Urgence effraction fenetre.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-24","message":"Brise de vitre atelier menuiserie.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-25","message":"Blocage mecanisme coulissant baie vitree.","metier":"menuisier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"menuisier-s-26","message":"Bonjour, devis pour remplacer toutes les fenetres en PVC double vitrage.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-27","message":"Combien coute la creation d'un placard sur mesure sous combles ?","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-28","message":"Devis pour la pose de portes interieures stratifiees.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-29","message":"Rendez-vous pour etudier un dressing sur mesure.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-30","message":"Devis pose de parquet stratifie dans trois chambres.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-31","message":"Remplacement de volets battants bois par du modele alu.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-32","message":"Devis creation d'une bibliotheque sur mesure murale.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-33","message":"Renseignements isolation phonique portes interieures.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-34","message":"Devis pose de plinthes en bois.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-35","message":"Chiffrage bardage bois exterieur facade.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-36","message":"Devis pergola bioclimatique aluminium.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-37","message":"Restauration de vieux volets en bois.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-38","message":"Devis pose de claustras interieurs.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-39","message":"Projet aménagement de combles en bois.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-40","message":"Devis portes de placard coulissantes.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-41","message":"Renseignements normes PMR portes.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-42","message":"Devis habillage escalier bois.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-43","message":"Creation de meuble TV sur mesure.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-44","message":"Devis pose de plinthes et cimaises.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-45","message":"Rendez-vous pour projet menuiserie exterieure.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-46","message":"Devis portail bois sur mesure.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-47","message":"Chiffrage fenetres alu coulissantes.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-48","message":"Devis pose de mains courantes en bois.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-49","message":"Renseignements essences de bois menuiserie.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"menuisier-s-50","message":"Demande de devis menuisier general.","metier":"menuisier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-01","message":"Degat des eaux important au plafond, peinture cloquee et qui coule.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-02","message":"Inondation de la piece, murs imbibes et peinture detruite.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-03","message":"Urgence nettoyage et assainissement murs suite a moisissure toxique.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-04","message":"Refection peinture urgente suite a incendie de cuisine suie.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-05","message":"Degat des eaux toiture, murs ruisselants de peinture ecaillee.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-06","message":"Urgence remise en etat appartement avant etat des lieux de sortie demain.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-07","message":"Plafond effondre suite degat des eaux, besoin enduit peinture rapide.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-08","message":"Infiltration murale avec cloquage massif de peinture.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"peintre-s-09","message":"Urgence reparation suite vandalisme tags sur murs interieurs.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-10","message":"Degat des eaux salle de bain peinture completement decollee.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-11","message":"Urgence sechage et peinture chambre suite fuite.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-12","message":"Moisissures noires envahissantes et urgence sanitaire murs.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-13","message":"Degat des eaux cage d'escalier.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-14","message":"Urgence peinture suite fuite canalisation encastree.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-15","message":"Plafond humide avec chute de peinture.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"peintre-s-16","message":"Urgence remise en peinture locaux professionnels inondes.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-17","message":"Degat des eaux cuisine suite fuite lave-vaisselle.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-18","message":"Urgence traitement salpetre murs humides.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-19","message":"Infiltration fenetre avec degradation peinture.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"peintre-s-20","message":"Urgence sinistre degat des eaux salon.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-21","message":"Plafond tache suie suite cheminee refoulee.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-22","message":"Urgence lessivage murs apres sinistre.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-23","message":"Degat des eaux buanderie.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-24","message":"Urgence renovation peinture suite degat.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-25","message":"Sinistre humidite murs.","metier":"peintre","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-26","message":"Bonjour, devis pour repeindre le salon et l'entree (environ 50 m²).","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-27","message":"Combien coute la pose d'une toile de verre et peinture murs ?","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-28","message":"Devis pour ravalement de facade exterieure.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-29","message":"Rendez-vous pour choisir des teintes de peinture murale.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-30","message":"Devis pour repeindre les boiseries et volets de la maison.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-31","message":"Application d'une peinture decorative effet beton cire.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-32","message":"Renseignements preparation des supports avant peinture.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-33","message":"Devis ratissage complet des murs pour lissage parfait.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-34","message":"Chiffrage peinture plafonds appartement t4.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-35","message":"Devis pose de papier peint intisse.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-36","message":"Restauration peinture portes interieures.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-37","message":"Devis peinture cage d'escalier copropriete.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-38","message":"Projet decoration interieure chambre parentale.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-39","message":"Devis lasure poutres apparentes bois.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-40","message":"Demande de chiffrage pour peinture garage.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-41","message":"Renseignements peintures ecologiques depolluantes.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-42","message":"Devis nettoyage et peinture de cloture.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-43","message":"Preparation et mise en peinture cuisine.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-44","message":"Devis enduit decoratif stucco.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-45","message":"Rendez-vous pour devis peinture generale.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-46","message":"Devis peinture sol garage epoxy.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-47","message":"Chiffrage peinture radiateurs fonte.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-48","message":"Devis pose moulures et corniches peintes.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-49","message":"Renseignements finitions mates ou satinees.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"peintre-s-50","message":"Demande de devis peintre.","metier":"peintre","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-01","message":"Fuite sous receveur de douche italienne avec infiltration carrelage desele.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-02","message":"Carrelage de cuisine explose et souleve suite a coup de belier ou choc.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"carreleur-s-03","message":"Degat des eaux avec decollement massif de carrelage mural.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-04","message":"Infiltration d'eau sous sol carrelle, risque sanitaire.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"carreleur-s-05","message":"Urgence securisation carreaux casses tranchants dans piece de vie.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-06","message":"Casse importante de carrelage au sol dans restaurant ouvert au public.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"ouvert"}
+{"id":"carreleur-s-07","message":"Infiltration douche avec affaissement carrelage.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"carreleur-s-08","message":"Urgence fuite siphon de sol carrelé.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-09","message":"Decollement total de faience murale en cuisine sur plan de travail.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"carreleur-s-10","message":"Casse de marches d'escalier carrelées dangereuses.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-11","message":"Urgence sol glissant suite degat sur carrelage.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-12","message":"Infiltration par joints de douche defectueux.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"carreleur-s-13","message":"Carrelage fissure avec risque de coupure.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-14","message":"Urgence fuite bac a douche carrelé.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-15","message":"Soulèvement brutal de carrelage sur plancher.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"carreleur-s-16","message":"Degat des eaux salle de bain carrelage.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-17","message":"Urgence refonte sol carrelé brise.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-18","message":"Infiltration terrasse carree.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"carreleur-s-19","message":"Casse carreaux grand format passage.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-20","message":"Urgence etancheite douche carree.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-21","message":"Degradation sol carrelé suite sinistre.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-22","message":"Urgence securite sol douche.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-23","message":"Infiltration eau sous carrelage cuisine.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"carreleur-s-24","message":"Casse carrelage palier.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"ouvert"}
+{"id":"carreleur-s-25","message":"Urgence revetement sol endommage.","metier":"carreleur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-26","message":"Bonjour, devis pour poser 40m2 de carrelage grand format au sol.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-27","message":"Combien coute la pose de faience dans une cuisine equipee ?","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-28","message":"Devis pour un ragreage et pose de parquet stratifie.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-29","message":"Rendez-vous pour etudier la pose de mosaique en douche.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-30","message":"Devis depose ancien carrelage et pose nouveau sol.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-31","message":"Pose de plinthes assorties au carrelage.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-32","message":"Renseignements etancheite sous carrelage SPEC.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-33","message":"Devis carrelage terrasse exterieure anti-derapant.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-34","message":"Chiffrage pose carrelage en diagonale.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-35","message":"Devis ragreage fibré avant pose.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-36","message":"Restauration joints de carrelage encrasses.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-37","message":"Devis pose travertin sur plage de piscine.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-38","message":"Projet creation douche italienne complete.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-39","message":"Devis pose carreaux de ciment.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-40","message":"Demande de chiffrage plinthes carrelage.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-41","message":"Renseignements formats de carrelage tendance.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-42","message":"Devis pose carrelage cave.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-43","message":"Preparation support chape pour carrelage.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-44","message":"Devis ragreage et sol souple PVC.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-45","message":"Rendez-vous pour devis carreleur.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-46","message":"Devis pose marbre interieur.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-47","message":"Chiffrage creation seuil de porte carrelé.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-48","message":"Devis pose faience wc.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-49","message":"Renseignements colles specifiques carrelage.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"carreleur-s-50","message":"Demande de devis carreleur pose.","metier":"carreleur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-01","message":"Tempete cette nuit, plusieurs tuiles envolees et fuite active dans les combles.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-02","message":"Infiltration d'eau majeure dans la chambre sous le toit.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-03","message":"Chute de tuiles sur la voie publique suite aux intemperies.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-04","message":"Fuite de toiture importante au dessus du tableau electrique.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-05","message":"Gouttiere arrachee pendante au dessus de l'entree.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-06","message":"Effondrement d'une partie de la chesnaie ou liteaux de toiture.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-07","message":"Urgence bachetage toiture suite a grele et trous.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-08","message":"Infiltration d'eau par le solin de cheminee.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-09","message":"Tuile canal cassee avec entree d'eau directe.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-10","message":"Urgence fuite velux pendant tempete.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-11","message":"Affaissement de charpente localise sous forte charge.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-12","message":"Infiltration d'eau active dans salon par toiture plate.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-13","message":"Casse de zinc de noue avec fuite.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-14","message":"Urgence securisation toiture menacee.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-15","message":"Chute de souche de cheminee endommagee.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-16","message":"Infiltration toiture bac acier.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-17","message":"Urgence bachetage apres tempete.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-18","message":"Fuite active noue toiture.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-19","message":"Casse tuile faitage infiltration.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-20","message":"Urgence infiltration combles aménages.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-21","message":"Rupture descente eaux pluviales avec inondation facade.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-22","message":"Urgence degat toiture vent.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-23","message":"Infiltration active toiture tuiles romaines.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-24","message":"Casse ardoises toiture.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-25","message":"Urgence reparation fuite toit.","metier":"couvreur","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-26","message":"Bonjour, devis pour un demoussage et nettoyage de toiture.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-27","message":"Combien coute le remplacement de toutes les gouttières enzinc ?","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-28","message":"Devis pour l'installation d'un fenetre de toit Velux.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-29","message":"Rendez-vous pour un diagnostic d'etancheite de toiture.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-30","message":"Devis pour l'isolation des combles perdus par soufflage.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-31","message":"Pose d'ecran sous-toiture lors de renovation.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-32","message":"Renseignements traitement hydrofuge toiture.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-33","message":"Devis reparation solin de cheminee en zinc.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-34","message":"Chiffrage remplacement de faitage.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-35","message":"Devis pose de grilles anti-pigeons sur toiture.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-36","message":"Restauration toiture en ardoises naturelles.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-37","message":"Devis nettoyage et demoussage toiture tuiles.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-38","message":"Projet creation abergement de cheminee.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-39","message":"Devis pose pare-feuilles gouttieres.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-40","message":"Demande de chiffrage toiture neuve.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-41","message":"Renseignements tuiles terre cuite.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-42","message":"Devis pose ganivelles et descentes.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-43","message":"Rendez-vous pour devis couvreur.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-44","message":"Devis refection complete toiture 100m2.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-45","message":"Chiffrage habillagebandeaux de toit.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-46","message":"Devis recherche de fuite toiture non urgente.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"couvreur-s-47","message":"Renseignements normes isolation toiture.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-48","message":"Demande de devis couvreur zingueur.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-49","message":"Etude ventilation sous toiture.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"couvreur-s-50","message":"Devis pose echelle de toit.","metier":"couvreur","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-02","message":"Serrure bloquee impossible de tourner la cle, impossible de rentrer chez moi.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-03","message":"Cambriolage cette nuit, la porte d'entree ne ferme plus du tout.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-04","message":"Cle cassee dans le cylindre de la serrure.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-05","message":"Porte forcee par effraction, situation d'urgence securite.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-06","message":"Serrure de portail coincee avec enfants bloques a l'interieur.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-07","message":"Perte de cles et impossible d'acceder au logement ce soir.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-08","message":"Serrure 3 points coincee en position fermee.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-09","message":"Urgence ouverture de porte claquee claquage.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-10","message":"Barillet coince, cle coincee bloquee.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-11","message":"Tentative de cambriolage, cylindre arrache.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"serrurier-s-12","message":"Urgence securisation porte apres effraction.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-13","message":"Cle coincee dans la serrure du local poubelle bloquee.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-14","message":"Porte coincee de l'exterieur blocage mecanique.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-15","message":"Urgence serrure bloquee porte blindee.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-16","message":"Clanche cassee porte bloquee.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-17","message":"Serrure coincee par du mastic, vandalisme.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-18","message":"Urgence ouverture porte cle oubliee interieur.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-19","message":"Rupture pneute serrure securite.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"serrurier-s-20","message":"Urgence blocage porte entree commerce.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-21","message":"Cle perdue transport urgence.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-22","message":"Urgence serrurier porte coincee.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-23","message":"Serrure endommagee gel.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"serrurier-s-24","message":"Urgence cambriolage serrure.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-25","message":"Blocage serrure electrique.","metier":"serrurier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"serrurier-s-26","message":"Bonjour, je cherche un serrurier pour changer une serrure par un modele 3 points.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-27","message":"Combien coute la pose d'une porte blindee A2P 2 etoiles ?","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-28","message":"Devis pour installer un coffre-fort encastre.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-29","message":"Rendez-vous pour etudier le blindage d'une porte existante.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-30","message":"Devis installation d'un controle d'acces par badge.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-31","message":"Remplacement de cylindre simple avec double de cles.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-32","message":"Renseignements serrures connectees code.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-33","message":"Devis pose de cornières anti-pince.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-34","message":"Chiffrage installation ferme-porte hydraulique.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-35","message":"Devis serrure multipoints pour cave.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-36","message":"Restauration ancienne serrure de porte en bois.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-37","message":"Devis installation poignee de securite.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-38","message":"Projet securisation complete appartement.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-39","message":"Devis pose de verrou supplementaire.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-40","message":"Demande de chiffrage serrurerie.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-41","message":"Renseignements normes A2P.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-42","message":"Devis remplacement gache electrique.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-43","message":"Rendez-vous pour devis serrurier.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-44","message":"Devis installation grille de defense fenetre.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-45","message":"Chiffrage serrure carenee.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-46","message":"Devis depannage serrurerie programmée.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-47","message":"Renseignements marques de serrures.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-48","message":"Demande de devis serrurier blindage.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-49","message":"Etude securite entree immeuble.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"serrurier-s-50","message":"Devis pose barre anti-panique.","metier":"serrurier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-02","message":"Vitre brisee suite a une effraction cette nuit, impossible de fermer.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-06","message":"Baie vitree explosee suite a un choc thermique.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-07","message":"Carreau de fenetre brise par tempete, eclats de verre dangereux.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-08","message":"Vitre de porte d'entree fracassee par vandalisme.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"vitrier-s-09","message":"Urgence securisation fenetre brisee double vitrage.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-10","message":"Verre brise sur terrasse fenetre cassee.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-11","message":"Vitre de veranda explosee grele.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-12","message":"Urgence vitrerie apres cambriolage vitre cassee.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-13","message":"Fenetre de toit brisee en verre securit.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-14","message":"Vitre brisee chambre d'enfant danger.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-15","message":"Urgence bachetage vitre cassee.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-16","message":"Bris de glace sur vitrine commerce.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"vitrier-s-17","message":"Vitre fenetre cassee par intemperie.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-18","message":"Urgence remplacement vitre brisee.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-19","message":"Eclatement vitre cheminee.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-20","message":"Urgence vitrage brise facade.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-21","message":"Casse vitre bureau.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-22","message":"Urgence bris de verre.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-23","message":"Vitre cassee cage d'escalier.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-24","message":"Urgence securite vitrerie.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-25","message":"Bris vitre balcon.","metier":"vitrier","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"vitrier-s-27","message":"Bonjour, devis pour poser un double vitrage renforce isolation.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-28","message":"Devis pour la creation d'une dalle de verre de sol interieure.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-29","message":"Rendez-vous pour mesurer des miroirs sur mesure.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-30","message":"Devis pose de verre feuillete anti-effraction.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"vitrier-s-31","message":"Remplacement de simple vitrage par double vitrage phonique.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-32","message":"Renseignements verres decoratifs sables.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-33","message":"Devis cloison vitree interieure bureau.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-34","message":"Chiffrage pose de credencenverre laque.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-35","message":"Devis miroir mural grand format salle de bain.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-36","message":"Restauration vitrail ancien.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-37","message":"Devis pose de garde-corps tout verre.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-38","message":"Projet veranda verriere atelier.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-39","message":"Devis verre trempe pour table.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-40","message":"Demande de chiffrage vitrerie.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-41","message":"Renseignements coefficients thermiques vitrage.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-42","message":"Devis pose porte tout verre.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-43","message":"Rendez-vous pour devis vitrier.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-44","message":"Devis remplacement vitre opaline.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-45","message":"Chiffrage verre securise.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-46","message":"Devis pose vitrage insert cheminee.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-47","message":"Renseignements epaisseurs de verre.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-48","message":"Demande de devis vitrier pose.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-49","message":"Etude isolation fenetre vitrage.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"vitrier-s-50","message":"Devis pose etancheite vitrage.","metier":"vitrier","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-01","message":"Grand arbre arrache par la tempete, menace de tomber sur la toiture.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-02","message":"Branche d'arbre cassee suspendue au-dessus de la ligne electrique.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-03","message":"Chute d'arbre bloque l'acces du garage de la maison.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-04","message":"Urgence elagage branche menacante sur portail.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-05","message":"Arbre deracine sur la cloture du voisin suite vent fort.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-06","message":"Urgence evacuation arbre tombe sur allee.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-07","message":"Branche menacante prete a tomber sur vehicules.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-08","message":"Urgence securite espace vert apres tempete.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-09","message":"Chute de grosse branche sur terrasse.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-10","message":"Urgence elagage d'urgence fil electrique.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-11","message":"Arbre penche dangereusement sur maison.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-12","message":"Urgence debroussaillage obligatoire incendie imminent.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-13","message":"Branche cassee risque chute sur pietons.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-14","message":"Urgence abattage arbre en peril.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-15","message":"Degradation cloture par chute arbre.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-16","message":"Urgence securite jardin intemperies.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-17","message":"Chute arbre passage pieton.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-18","message":"Urgence elagage sanitaire urgent.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-19","message":"Arbre brise par la foudre.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-20","message":"Urgence danger public espace vert.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-21","message":"Chute de palme sur chemin.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-22","message":"Urgence degat tempete jardin.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-23","message":"Arbre de racines casse.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13) — promu le 2026-09-13 (négation, leurres, paires étendues)","statut":"reference"}
+{"id":"paysagiste-s-24","message":"Urgence elagage urgence.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-25","message":"Danger chute vegetal.","metier":"paysagiste","attendu":"urgent","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-26","message":"Bonjour, devis pour la creation d'un gazon et plantation de massifs.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-27","message":"Combien coute l'entretien annuel de mon jardin (taille et tonte) ?","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-28","message":"Devis pour la pose d'une cloture rigide occultante.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-29","message":"Rendez-vous pour etudier un projet d'amenagement paysager de terrasse.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-30","message":"Devis abattage d'un vieux sapin en automne.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-31","message":"Creation d'un systeme d'arrosage automatique enterre.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-32","message":"Renseignements pose de gazon synthetique.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-33","message":"Devis taille de haie de thuya (20 metres).","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-34","message":"Chiffrage empierrement allee carrossable.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-35","message":"Devis pose de dalles sur lit de sable.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-36","message":"Entretien paysager pelouse et massifs.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-37","message":"Devis creation bassin de jardin aquatique.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-38","message":"Projet paysagiste paysagement complet.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-39","message":"Devis pose de bordures paysageres.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-40","message":"Demande de chiffrage cloture bois.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-41","message":"Renseignements essences arbustes persistants.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-42","message":"Devis elagage d'entretien programme.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-43","message":"Rendez-vous pour devis paysagiste.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-44","message":"Devis creation massif de fleurs vivaces.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-45","message":"Chiffrage engazonnement par semis.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-46","message":"Devis pose de paillage mineral massifs.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-47","message":"Renseignements abattage arbres reglementation.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-48","message":"Demande de devis paysagiste amenagement.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-49","message":"Etude paysagere cloture et portail.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}
+{"id":"paysagiste-s-50","message":"Devis entretien saisonnier jardin.","metier":"paysagiste","attendu":"normal","origine":"synthétique 014-15 (2026-09-13)","statut":"reference"}

@@ -251,14 +251,12 @@ export const ARTICLES: Article[] = [
     titre: 'Ma page : votre plateforme de contact et votre site',
     aQuoiCaSert:
       'Vous réglez ici votre présentation, l’apparence (thème et couleur, appliqués à votre espace de conversation ' +
-      'ET à votre site), vos prestations et vos réalisations, ainsi que votre site vitrine. L’IA peut rédiger les ' +
-      'textes du site à partir de votre profil ; chaque mot reste ensuite modifiable par vous.',
+      'ET à votre site si vous en avez un), vos prestations et vos réalisations. L’IA peut rédiger les ' +
+      'textes de votre profil ; chaque mot reste ensuite modifiable par vous.',
     commentOnSenSert: [
       'Complétez votre présentation (bio, zone d’intervention, disponibilités) et vos prestations.',
       'Choisissez un thème et une couleur d’accent.',
       'Ajoutez vos réalisations en photo.',
-      'Cliquez « Rédiger mon site avec l’IA », puis relisez et modifiez chaque texte proposé.',
-      'Choisissez le niveau de votre site et publiez-le.',
       'Cliquez « Enregistrer ».',
     ],
     pourVosClients:

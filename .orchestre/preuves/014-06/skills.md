@@ -1,0 +1,5 @@
+- presti-design: suppression des ombres portées et alignement sur une grille 8px, passage du bouton principal en aplat plein sans dégradé.
+- emil-design-eng: ajustement du rythme vertical (augmentation du padding inter-sections à 96px sur desktop).
+- apple-design: taille de police du héros augmentée et tracking (letter-spacing) resserré pour un rendu plus massif et lisible.
+- animation-vocabulary: les fondus d'apparition au scroll (reveal) utilisent maintenant une courbe ease-out et une translation slide-up de 12px.
+- improve-animations: uniformisation de la durée d'apparition des sections (reveal) à 400ms pour garantir un mouvement fluide sans effet de traîne.

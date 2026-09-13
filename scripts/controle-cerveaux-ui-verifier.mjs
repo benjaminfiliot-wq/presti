@@ -32,15 +32,25 @@ console.log('── 3. Rien hors périmètre depuis la prise de la tâche')
 let porcelain = ''
 try { porcelain = spawnSync('git', ['status', '--porcelain'], { cwd: RACINE, encoding: 'utf8' }).stdout } catch { /* hors git */ }
 const chemins = (txt) => txt.split('\n').filter(Boolean).map((l) => l.slice(3).trim().replace(/^"|"$/g, ''))
-const avant = path.join(RACINE, '.orchestre', 'en-cours', '014-16.avant.txt')
+const avant = [path.join(RACINE, '.orchestre', 'en-cours', '014-16.avant.txt'), path.join(RACINE, '.orchestre', 'preuves', '014-16', 'avant.txt')].find((p) => fs.existsSync(p)) || ''
 const dejaSales = new Set(fs.existsSync(avant) ? chemins(lire(avant)) : [])
 const SENSIBLE = /^(app\/|lib\/|supabase\/|scripts\/|middleware\.ts$)/
 const PERIMETRE = [/^app\/controle\/Cerveaux\.tsx$/, /^app\/controle\/page\.tsx$/]
 const hors = chemins(porcelain).filter((p) => SENSIBLE.test(p) && !dejaSales.has(p) && !PERIMETRE.some((re) => re.test(p)))
 T('rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/controle/Cerveaux.tsx et app/controle/page.tsx', hors.length === 0, hors.slice(0, 6).join(', '))
 
-console.log('── 4. La capture')
-T('onglet-cerveaux.png dans .orchestre/preuves/014-16/ — un vrai PNG (≥ 10 Ko)', pngValide(path.join(RACINE, '.orchestre', 'preuves', '014-16', 'onglet-cerveaux.png')))
+console.log('── 4. La capture — prise par le juge, pas par l\'agent (13/09 : un « PNG » de 15 000 octets de zéros livré)')
+const { capturer } = await import('./lib/capture.mjs')
+let cap = []
+try {
+  cap = await capturer({ racine: RACINE, dossier: path.join(RACINE, '.orchestre', 'preuves', '014-16'), largeur: 1280, hauteur: 900, role: 'direction', ecrans: [{ nom: 'onglet-cerveaux', chemin: '/controle?onglet=cerveaux', attendre: 'urgence' }] })
+} catch (e) { T('le juge a pu capturer (serveur next dev, compte direction de test, navigateur)', false, e.message.slice(0, 300)) }
+if (cap.length) {
+  const c = cap[0]
+  T('l\'onglet Cerveaux se rend pour la direction et la ligne du cerveau « urgence » arrive (API)', c.ok && c.attendu === true, `${c.url} · ${c.texte.replace(/\s+/g, ' ').slice(0, 80)}`)
+  T('le cerveau « urgence » et son score (N %) sont affichés', /urgence/i.test(c.texte) && /\d+\s?%/.test(c.texte))
+  T('la capture est un vrai PNG (≥ 10 Ko)', pngValide(c.fichier))
+}
 
 console.log('── 5. Typecheck et garde de commit')
 const tc = spawnSync('npm', ['run', 'typecheck'], { cwd: RACINE, encoding: 'utf8', shell: process.platform === 'win32' })
