@@ -55,6 +55,12 @@ function fabriquer(dossier, casse = {}) {
   fs.writeFileSync(path.join(dossier, 'images', 'chantier.webp'), WEBP)
   const contrat = JSON.parse(JSON.stringify(CONTRAT))
   if (casse.sansDecennale) delete contrat.decennale
+  contrat.demo = true
+  const attributions = [
+    { fichier: 'images/hero.webp', auteur: 'Auteur Témoin', source: 'https://commons.wikimedia.org/wiki/File:Temoin.jpg', licence: 'CC BY-SA 4.0', legende: 'Salle de bain rénovée' },
+    { fichier: 'images/chantier.webp', auteur: 'Autre Auteur', source: 'https://commons.wikimedia.org/wiki/File:Temoin2.jpg', licence: 'CC BY 4.0', legende: 'Chantier terminé' },
+  ]
+  fs.writeFileSync(path.join(dossier, 'attributions.json'), JSON.stringify(casse.sansAttribution ? attributions.slice(0, 1) : attributions, null, 2))
   // La page satellite est DÉCLARÉE comme page de commune : c'est le cas réaliste d'un générateur trop zélé.
   if (casse.satellite) contrat.pages.push({ chemin: '/plombier-marseille/', type: 'commune', cible: 'Marseille' })
   fs.writeFileSync(path.join(dossier, 'site.json'), JSON.stringify(contrat, null, 2))
@@ -66,7 +72,7 @@ function fabriquer(dossier, casse = {}) {
   ecrire('/chauffagiste/', page({ titre: 'Chauffagiste à Lyon — Martin Plomberie', description: 'Entretien, dépannage et remplacement de chaudière à Lyon par Martin Plomberie, chauffagiste assuré. Devis clair.', h1: 'Chauffagiste à Lyon', texte: 'Entretien annuel, dépannage et remplacement de chaudières.', chemin: '/chauffagiste/' }))
   if (casse.satellite) ecrire('/plombier-marseille/', page({ titre: 'Plombier à Marseille — Martin Plomberie', description: desc('Marseille'), h1: 'Plombier à Marseille', texte: 'Page satellite : la commune n’est pas servie.', chemin: '/plombier-marseille/' }))
   const legal = (titre, h1, corps, chemin) => page({ titre, description: `${h1} de Martin Plomberie, plombier à Lyon : identité de l’entreprise, assurance et vos droits sur vos données.`, h1, texte: corps, chemin })
-  ecrire('/mentions-legales/', legal('Mentions légales — Martin Plomberie', 'Mentions légales', `Martin Plomberie, entreprise individuelle, SIREN ${CONTRAT.siren}, 12 rue des Artisans 69003 Lyon. Assurance décennale : ${CONTRAT.decennale.assureur}, contrat n° ${CONTRAT.decennale.numero}. Hébergeur : Vercel Inc.`, '/mentions-legales/'))
+  ecrire('/mentions-legales/', legal('Mentions légales — Martin Plomberie', 'Mentions légales', `Martin Plomberie, entreprise individuelle, SIREN ${CONTRAT.siren}, 12 rue des Artisans 69003 Lyon. Assurance décennale : ${CONTRAT.decennale.assureur}, contrat n° ${CONTRAT.decennale.numero}. Hébergeur : Vercel Inc. Site de démonstration : entreprise fictive. Crédits photos : Auteur Témoin (CC BY-SA 4.0), Autre Auteur (CC BY 4.0), Wikimedia Commons.`, '/mentions-legales/'))
   ecrire('/confidentialite/', legal('Politique de confidentialité — Martin Plomberie', 'Politique de confidentialité', 'Les données du formulaire de demande servent uniquement à vous répondre. Vous pouvez demander leur suppression à tout moment.', '/confidentialite/'))
   const pages = contrat.pages.filter((p) => p.type !== 'legal').map((p) => p.chemin).concat(casse.satellite ? ['/plombier-marseille/'] : [])
   fs.writeFileSync(path.join(dossier, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${pages.map((p) => `<url><loc>https://martin-plomberie.example${p}</loc></url>`).join('')}</urlset>`)
@@ -93,10 +99,10 @@ try {
 
   console.log('── 2. Le témoin cassé doit échouer, sur les bons critères')
   const rouge = path.join(tmp, 'rouge')
-  fabriquer(rouge, { noindex: true, satellite: true, altVide: true, titreDouble: true, sansDecennale: true })
+  fabriquer(rouge, { noindex: true, satellite: true, altVide: true, titreDouble: true, sansDecennale: true, sansAttribution: true })
   const rr = juger(rouge, ['--statique'])
   T('code de sortie 1', rr.code === 1, `code ${rr.code}`)
-  const attendu = [/noindex/i, /satellite/i, /alt rédigé/i, /title unique/i, /décennale/i]
+  const attendu = [/noindex/i, /satellite/i, /alt rédigé/i, /title unique/i, /décennale/i, /attribution/i]
   for (const re of attendu) T(`échec attendu : ${re.source}`, rr.echecs.some((e) => re.test(e)), rr.echecs.slice(0, 8).join(' | '))
 
   console.log('── 3. Sans site.json, le juge refuse')

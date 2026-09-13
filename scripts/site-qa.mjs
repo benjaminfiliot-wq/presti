@@ -68,6 +68,10 @@ export const TYPES_METIER = {
   paysagiste: 'HomeAndConstructionBusiness',
   generique: 'HomeAndConstructionBusiness',
 }
+// Les licences acceptées pour une photo qui n'est pas celle de l'artisan. « propriétaire » = la photo de l'artisan
+// lui-même (dossier de commande). Une licence absente de cette liste est un refus, pas une tolérance.
+export const LICENCES_PERMISES = ['CC0', 'domaine public', 'CC BY 4.0', 'CC BY 3.0', 'CC BY 2.0', 'CC BY-SA 4.0', 'CC BY-SA 3.0', 'CC BY-SA 2.0', 'propriétaire']
+let AUTEURS = []
 const TYPES_MIME = {
   '.html': 'text/html; charset=utf-8', '.xml': 'application/xml; charset=utf-8', '.txt': 'text/plain; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -139,6 +143,20 @@ function jugerContrat(dossier, contrat) {
   ok('une page par métier secondaire', secondaires.every((m) => pagesMetier.some((p) => sansAccents(p.cible ?? '') === m)) && pagesMetier.every((p) => secondaires.includes(sansAccents(p.cible ?? ''))), `${pagesMetier.length} page(s)`, `${secondaires.length} métier(s)`)
   ok('pages légales : mentions légales et confidentialité', pages.some((p) => p.type === 'legal' && /mentions/.test(p.chemin)) && pages.some((p) => p.type === 'legal' && /confidentialite/.test(p.chemin)), pages.filter((p) => p.type === 'legal').map((p) => p.chemin).join(', ') || 'aucune', '/mentions-legales/ et /confidentialite/')
   ok('robots.txt présent, sans Disallow global, avec Sitemap', existeEt(path.join(dossier, 'robots.txt'), (s) => !/^\s*Disallow:\s*\/\s*$/m.test(s) && /^\s*Sitemap:\s*\S+/m.test(s)), existe(dossier, 'robots.txt') ? 'présent' : 'absent', 'Sitemap: … et pas de Disallow: /')
+  // Photos qui ne sont pas celles de l'artisan (démo, banque libre) : chacune porte une attribution lisible avec une
+  // licence qu'on a le droit d'utiliser sur un site — et jamais dans un film (BY-SA : partage à l'identique).
+  const images = marcher(dossier).filter((f) => /\.(webp|avif|png|jpe?g)$/i.test(f)).map((f) => path.relative(dossier, f).split(path.sep).join('/'))
+  const fAttr = path.join(dossier, 'attributions.json')
+  AUTEURS = []
+  if (contrat?.demo || fs.existsSync(fAttr)) {
+    let attributions = null
+    try { attributions = JSON.parse(fs.readFileSync(fAttr, 'utf8')) } catch { /* jugé juste en dessous */ }
+    const liste = Array.isArray(attributions) ? attributions : []
+    const sans = images.filter((i) => !liste.some((a) => a.fichier === i || `images/${a.fichier}` === i))
+    const incompletes = liste.filter((a) => !LICENCES_PERMISES.includes(a.licence) || !a.auteur || !a.source)
+    ok('attributions.json : chaque image a un auteur, une source et une licence permise', !!attributions && sans.length === 0 && incompletes.length === 0, attributions ? `${sans.length} sans attribution · ${incompletes.length} incomplète(s)` : 'attributions.json absent ou illisible', `toutes ; licences : ${LICENCES_PERMISES.join(', ')}`)
+    AUTEURS = [...new Set(liste.map((a) => a.auteur).filter(Boolean))]
+  }
   const sitemap = existe(dossier, 'sitemap.xml') ? fs.readFileSync(path.join(dossier, 'sitemap.xml'), 'utf8') : ''
   const locs = [...sitemap.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((m) => chemin(m[1])).filter(Boolean)
   const nonListees = htmls.filter((h) => !locs.includes(h) && !pages.some((p) => p.chemin === h && p.type === 'legal'))
@@ -185,6 +203,8 @@ function jugerPage(html, page, contrat, typeAttendu, titres, descriptions) {
   if (page.type === 'legal' && /mentions/.test(page.chemin)) {
     ok('mentions légales : SIREN affiché', contient(html, contrat?.siren ?? '∅'), 'lu', contrat?.siren)
     ok('mentions légales : assurance décennale (assureur et numéro)', contient(html, 'décennale') && contient(html, contrat?.decennale?.assureur ?? '∅') && contient(html, contrat?.decennale?.numero ?? '∅'), 'lu', `${contrat?.decennale?.assureur} · ${contrat?.decennale?.numero}`)
+    if (AUTEURS.length) ok('mentions légales : crédits photos — chaque auteur cité', AUTEURS.every((a) => contient(html, a)), AUTEURS.filter((a) => !contient(html, a)).slice(0, 3).join(', ') || 'tous cités', AUTEURS.join(', '))
+    if (contrat?.demo) ok('site de démonstration : dit comme tel', contient(html, 'démonstration'), 'lu', 'le mot « démonstration » dans les mentions')
   }
   return t
 }
