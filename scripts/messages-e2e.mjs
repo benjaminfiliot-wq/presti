@@ -46,9 +46,14 @@ try {
   const conv = await (await fetch(`${APP}/api/conversation?token=${encodeURIComponent(lead.token)}`)).json()
   ok(Array.isArray(conv.messages) && conv.messages.some((m) => m.sens === 'out' && m.contenu === REP), 'prospect retrouve la réponse via /api/conversation (remise plateforme)')
 
-  // 5) statut du lead passé en discussion
+  // 5) statut du lead : « repondu » — l'artisan a parlé en dernier, la balle est chez le prospect.
+  //    (« en_discussion » veut dire l'inverse et sert de condition d'ARRÊT aux relances.)
   const [lr] = await (await rest(`leads?id=eq.${lead.id}&select=statut`)).json()
-  ok(lr?.statut === 'en_discussion', `statut passé à en_discussion (${lr?.statut})`)
+  ok(lr?.statut === 'repondu', `statut passé à repondu (${lr?.statut})`)
+
+  // 6) La grille vend « Relances automatiques » dès l'Essentiel : une réponse à la main les arme.
+  const rel = await (await rest(`relances?lead_id=eq.${lead.id}&select=rang,envoyee&order=rang`)).json()
+  ok(Array.isArray(rel) && rel.length === 3, `trois relances armées par la réponse manuelle (${Array.isArray(rel) ? rel.length : 'ERR'})`)
 } catch (e) { ok(false, 'exception: ' + (e?.message || e)) } finally {
   await admin(`users/${u.id}`, { method: 'DELETE' })
   console.log('nettoyé —', fails.length ? `❌ ${fails.length} FAIL` : '✅ TOUT PASSE')

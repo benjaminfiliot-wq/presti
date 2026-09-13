@@ -145,6 +145,12 @@ export async function peserEtEnregistrer(id: string, maintenant = Date.now()): P
   if (!data) return null
   // Un apport prouvé par le lien signé n'a rien à peser : la preuve est établie par le serveur.
   if (data.statut === 'prouve' || data.statut === 'retire') return null
+  // 0086 — ni un CANAL d'acquisition : peser « ce client vient-il vraiment de Facebook ? » n'a pas
+  // de sens (personne ne réclame rien) et ferait tourner huit requêtes par arrivée organique. La
+  // requête échoue tant que 0086 n'est pas collée : `data` est alors nul, on pèse comme avant.
+  const { data: canal } = await supabaseAdmin.from('apporteurs')
+    .select('id').eq('id', data.apporteur_id).eq('canal', true).maybeSingle()
+  if (canal) return null
   const c = await peser(data as never, maintenant)
   await supabaseAdmin.from('registre_apports')
     .update({ score: c.score, signaux: c.signaux, score_maj_le: new Date(maintenant).toISOString() }).eq('id', id)

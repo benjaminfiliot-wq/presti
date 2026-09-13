@@ -5,6 +5,7 @@ import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { journaliser, refusJournal } from '@/lib/direction/journal'
 import { calculerReleve, bornesDuMois, type LigneClient } from '@/lib/controle/releve'
 import { verdict, type Statut } from '@/lib/direction/apports'
+import { lireApporteurs, estCanal, type Apporteur } from '@/lib/direction/canaux'
 import { stripe } from '@/lib/stripe'
 import { actif } from '@/lib/flags'
 
@@ -88,18 +89,31 @@ async function remboursementsDuMois(debut: string, fin: string): Promise<{ par: 
   return { par: parClient, tronque }
 }
 
+/** Rend le relevé, `null` si le mois est mal écrit, ou 'panne' si on ne peut pas le calculer JUSTE. */
 async function construire(mois: string) {
   const bornes = bornesDuMois(mois)
   if (!bornes) return null
 
-  const [{ data: artisans }, { data: apports }, { data: achats }] = await Promise.all([
+  // `apporteur_id` voyage avec l'apport depuis 0086 : c'est lui qui dit si la ligne vient d'un
+  // apporteur (commission due, art. 5) ou d'un CANAL d'acquisition — Facebook, LinkedIn — derrière
+  // lequel il n'y a personne à payer. Sans cette jointure, une arrivée par prestiapp.fr/a/facebook
+  // entrerait au registre en « prouvé » et ouvrirait 20 % de commission due à personne.
+  const [{ data: artisans }, { data: apports }, { data: achats }, apporteurs] = await Promise.all([
     supabaseAdmin.from('artisans').select('id, nom, stripe_customer_id, est_demo, is_founder'),
     actif('apports')
-      ? supabaseAdmin.from('registre_apports').select('artisan_id, statut, piece, motif')
-      : Promise.resolve({ data: [] as { artisan_id: string; statut: string; piece: string | null; motif: string | null }[] }),
+      // `taux_pct` n'est PAS décoratif : c'est la fourchette 10-20 % de 0077, décidée apport par
+      // apport. Il manquait à ce select, donc `verdict()` ne le voyait jamais et retombait sur les
+      // 20 % pleins : un apport réglé à 12 % était payé 20 %, en silence, sur l'écran qui engage
+      // l'argent. Le réglage n'existait que dans l'écran Apports.
+      ? supabaseAdmin.from('registre_apports').select('artisan_id, statut, piece, motif, apporteur_id, taux_pct')
+      : Promise.resolve({ data: [] as { artisan_id: string; statut: string; piece: string | null; motif: string | null; apporteur_id: string; taux_pct: number | null }[] }),
     supabaseAdmin.from('achats').select('ttc_cents, date_facture')
       .gte('date_facture', bornes.debut.slice(0, 10)).lt('date_facture', bornes.fin.slice(0, 10)),
+    actif('apports') ? lireApporteurs().catch(() => null) : Promise.resolve(new Map<string, Apporteur>()),
   ])
+  // Sans la table des apporteurs, impossible de dire qui est un canal : on rendrait une commission
+  // sur des clients venus de Facebook. Un relevé qu'on ne sait pas calculer juste ne se rend pas.
+  if (!apporteurs) return 'panne' as const
 
   const [enc, remb] = await Promise.all([
     encaissementsDuMois(bornes.debut, bornes.fin),
@@ -124,12 +138,18 @@ async function construire(mois: string) {
     // que ce filtre contredisait deux lignes après l'avoir lue.
     if (cents <= 0 && rendu <= 0) continue
     const ap = parApport.get(a.id)
-    // Le taux vient du REGISTRE, jamais d'une saisie : prouvé ou saisi 20 %, contesté 10 %, sinon 0.
-    const v = ap ? verdict(ap as { statut: Statut; piece: string | null; motif: string | null }) : null
+    // Le taux vient du REGISTRE, jamais d'une saisie : le taux réglé s'il y en a un (0077, borné
+    // 10-20 % en base), sinon 20 % pleins ; un apport contesté reste plafonné à 10 % quoi qu'il
+    // arrive, et un apport sans pièce ne compte pas.
+    // Et 0 pour un canal d'acquisition, quel que soit son statut — c'est verdict() qui tranche, ici
+    // comme dans les écrans : deux endroits qui décideraient chacun de leur côté finiraient par ne
+    // pas dire la même chose, et l'un des deux serait celui qui paie.
+    const canal = estCanal(apporteurs, ap?.apporteur_id)
+    const v = ap ? verdict({ ...(ap as { statut: Statut; piece: string | null; motif: string | null; taux_pct: number | null }), canal }) : null
     clients.push({
       artisan_id: a.id, nom: a.nom, encaisse: cents, rembourse: rendu,
       tauxApport: v?.compte ? v.tauxPct : 0,
-      statutApport: ap?.statut ?? null,
+      statutApport: canal ? 'canal' : ap?.statut ?? null,
     })
   }
 
@@ -173,6 +193,7 @@ export async function GET(req: Request) {
   }
 
   const releve = await construire(mois)
+  if (releve === 'panne') return NextResponse.json({ error: 'Relevé indisponible : le registre des apporteurs est illisible, et sans lui la commission serait fausse.', code: 'apporteurs' }, { status: 503 })
   if (!releve) return NextResponse.json({ error: 'Mois invalide.' }, { status: 400 })
   return NextResponse.json({
     mois, fige: false, statut: 'brouillon', partenaire: { nom: partenaire.nom }, releve,
@@ -208,6 +229,8 @@ export async function POST(req: Request) {
     const refus = await exigerReconfirmation(req, f.uid, 'argent')
     if (refus) return refus
     const r = await construire(mois)
+    // Arrêter un relevé le FIGE (trigger 0071) : mieux vaut ne pas l'arrêter que le figer faux.
+    if (r === 'panne') return NextResponse.json({ error: 'Relevé non arrêté : le registre des apporteurs est illisible, et sans lui la commission serait fausse.', code: 'apporteurs' }, { status: 503 })
     if (!r) return NextResponse.json({ error: 'Mois invalide.' }, { status: 400 })
 
     if (!(await journaliser({

@@ -30,8 +30,9 @@ Tout vit dans `lib/ai.ts`. Trois fonctions exportées : `generateLeadReply`, `ge
 4. **Thinking adaptatif** : `genParams(model, baseMaxTokens)` active `thinking:{type:'adaptive'}` + élargit
    `max_tokens` sur les modèles 4.6+/5-series (Pro/Expert) ; Haiku reste rapide. Le raisonnement s'auto-dose.
    Le parsing ne collecte que les blocs `text` (les blocs `thinking` sont ignorés) — **ne pas casser ça**.
-5. **Chiffrage** : `guideMetier` (repères de prix par métier) + `tvaContexte` + bibliothèque `postes_types` de
-   l'artisan. Sortie JSON strict re-validée (`normalizeLigne`-like : quantité>0, TVA ∈ [0,5.5,10,20]).
+5. **Chiffrage** : `guideMetier` (STRUCTURE du chiffrage : postes, unités, TVA — **aucun montant**, la garde
+   de pré-commit le refuse) + `tvaContexte` + les prix, dont la source unique est la table `postes_types`
+   servie par `lib/prix`, que l'artisan peut surcharger avec ses propres tarifs. Sortie JSON strict re-validée (`normalizeLigne`-like : quantité>0, TVA ∈ [0,5.5,10,20]).
 
 ## Règles de sécurité API (dérive fréquente — vérifier avant d'écrire)
 - **`temperature` est DÉPRÉCIÉ** sur le 5-series (Sonnet-5/Opus-5) → 400. Ne jamais le remettre.

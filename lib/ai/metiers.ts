@@ -14,8 +14,14 @@ export type MetierId =
 export type ProfilMetier = {
   id: MetierId
   label: string
-  /** Radicaux (sans accents) reconnus dans `artisans.metier`, par ordre de priorité. */
+  /** Radicaux (sans accents) reconnus EN DÉBUT DE MOT dans `artisans.metier`, par ordre de priorité. */
   alias: string[]
+  /**
+   * Mots reconnus ENTIERS seulement — pour les radicaux trop courts, qui mordraient sinon sur
+   * d'autres métiers. « sol » en radical attrapait « i-sol-ation », « sol-ier » et « panneaux
+   * sol-aires » : trois artisans à qui l'on servait le vocabulaire du carreleur, devant leurs clients.
+   */
+  motsExacts?: string[]
   vocabulaire: string[]
   /** Les questions qui font avancer un chiffrage — 3 max, on ne pose que celles qui manquent. */
   questions: string[]
@@ -71,7 +77,7 @@ export const PROFILS_METIER: ProfilMetier[] = [
     tva: `${TVA_RENOV}.`,
   },
   {
-    id: 'carreleur', label: 'carreleur', alias: ['carrel', 'faienc', 'sol', 'revet', 'parquet'],
+    id: 'carreleur', label: 'carreleur', alias: ['carrel', 'faienc', 'revet', 'parquet', 'solier', 'moquett'], motsExacts: ['sol', 'sols'],
     vocabulaire: ['ragréage', 'dépose', 'pose droite / diagonale', 'grand format', 'joints', 'plinthes', 'étanchéité (SPEC)', 'chape', 'faïence', 'découpes'],
     questions: ['Quelle surface (m²) et quelle pièce (sol, murs, douche) ?', 'Le support actuel : ancien carrelage à déposer, chape brute, plancher bois ?', 'Le carrelage est-il déjà choisi / acheté (format, épaisseur) — une photo du support ?'],
     pieges: ['ne pas chiffrer sans surface ni état du support', 'ne pas oublier la dépose, le ragréage et les plinthes', 'douche à l’italienne = étanchéité obligatoire'],
@@ -108,17 +114,26 @@ export const PROFIL_GENERIQUE: ProfilMetier = {
 const normaliser = (s: string) => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim()
 
 /**
+ * Un alias est un RADICAL : il doit COMMENCER un mot (« carrel » attrape « carrelage », mais
+ * « sol » n'attrape plus « i-sol-ation »). Un `motExact` doit être le mot entier.
+ */
+const correspond = (p: ProfilMetier, n: string): boolean =>
+  p.alias.some((a) => n.includes(` ${a}`)) || (p.motsExacts ?? []).some((m) => n.includes(` ${m} `))
+
+/**
  * Sélection SOUPLE du profil depuis `artisans.metier` : « Plombier-chauffagiste » → plombier,
  * « Électricien général » → électricien. Le premier profil dont un alias apparaît gagne
  * (l'ordre du tableau règle les cas mixtes : « plombier chauffagiste » reste plombier).
  */
 export function detecterMetier(metier: string | null | undefined): MetierId {
+  // `n` est encadré d'espaces : la frontière de mot s'écrit alors en une simple concaténation,
+  // et les alias en deux mots (« gros oeuvre ») continuent de marcher.
   const n = ' ' + normaliser(metier || '') + ' '
   if (!n.trim()) return 'generique'
   // On regarde d'abord le PREMIER mot (le métier principal), puis le reste.
-  const premier = n.trim().split(' ')[0]
-  for (const p of PROFILS_METIER) if (p.alias.some((a) => premier.startsWith(a.replace(/\s/g, '')))) return p.id
-  for (const p of PROFILS_METIER) if (p.alias.some((a) => n.includes(a))) return p.id
+  const premier = ' ' + n.trim().split(' ')[0] + ' '
+  for (const p of PROFILS_METIER) if (correspond(p, premier)) return p.id
+  for (const p of PROFILS_METIER) if (correspond(p, n)) return p.id
   return 'generique'
 }
 

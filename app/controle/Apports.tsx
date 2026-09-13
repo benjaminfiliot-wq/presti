@@ -28,7 +28,15 @@ const FILES: { id: Ligne['file']; label: string }[] = [
   { id: 'signales', label: 'Signalés' },
   { id: 'valides', label: 'Validés' },
 ]
-type Reponse = { lignes: Ligne[]; resume: { total: number; comptes: number; a_20: number; a_10: number }; apporteurs: { code: string; nom: string; actif: boolean; lien: string }[]; role: 'direction' | 'lecture'; a: string }
+// `canal` (0086) : un lien /a/<code> qui sert à savoir par où l'artisan est arrivé — Facebook,
+// LinkedIn — et derrière lequel il n'y a personne à rémunérer. Ses arrivées ne figurent pas dans
+// le registre ci-dessous : il n'y a rien à y décider. Elles se comptent à côté de son lien.
+type Reponse = {
+  lignes: Ligne[]
+  resume: { total: number; comptes: number; a_20: number; a_10: number; arriveesParCanal?: number }
+  apporteurs: { code: string; nom: string; actif: boolean; lien: string; canal?: boolean; arrivees?: number }[]
+  role: 'direction' | 'lecture'; a: string
+}
 
 export default function Apports({ role, signaler }: { role: 'direction' | 'lecture'; signaler: (m: { type: 'ok' | 'err'; text: string }) => void }) {
   const [d, setD] = useState<Reponse | null>(null)
@@ -107,15 +115,19 @@ export default function Apports({ role, signaler }: { role: 'direction' | 'lectu
   return (
     <>
       <div className="tool-card" data-apports-liens>
-        <h2>Le lien d’apport</h2>
+        <h2>Les liens de suivi</h2>
         <p className="muted" style={{ margin: '0 0 .9rem' }}>
-          Quand quelqu’un arrive par ce lien puis crée son compte, il entre au registre avec sa preuve : la date d’arrivée et l’empreinte posée par le serveur. C’est cette empreinte qui fait la différence entre « apporté » et « déclaré ».
+          Quand quelqu’un arrive par un de ces liens puis crée son compte, il entre au registre avec sa preuve : la date d’arrivée et l’empreinte posée par le serveur. C’est cette empreinte qui fait la différence entre « apporté » et « déclaré ».
+          <br />Un lien marqué <b>canal</b> sert seulement à savoir par où les artisans arrivent : il n’y a personne derrière à rémunérer, donc aucune commission, et ses arrivées ne descendent pas dans le registre.
         </p>
         {!d ? <p className="muted">Chargement…</p> : d.apporteurs.length === 0 ? <p className="muted">Aucun apporteur pour l’instant.</p> : (
           <ul className="sess" data-apporteurs>
             {d.apporteurs.map((a) => (
-              <li key={a.code}>
-                <span className="sess-txt"><b>{a.nom}{!a.actif ? <em>inactif</em> : null}</b><small><code>{a.lien}</code></small></span>
+              <li key={a.code} data-canal={a.canal ? a.code : undefined}>
+                <span className="sess-txt">
+                  <b>{a.nom}{!a.actif ? <em>inactif</em> : null}{a.canal ? <span className="pill info" style={{ marginLeft: 6 }}><span className="pdot" />canal</span> : null}</b>
+                  <small><code>{a.lien}</code>{a.canal && a.arrivees ? ` · ${a.arrivees} arrivée${a.arrivees > 1 ? 's' : ''}` : ''}</small>
+                </span>
                 <button type="button" className="btn btn--ghost" onClick={() => void copier(a.lien)}>{copie === a.lien ? 'Copié ✅' : 'Copier'}</button>
               </li>
             ))}
@@ -126,7 +138,7 @@ export default function Apports({ role, signaler }: { role: 'direction' | 'lectu
       <div className="tool-card" data-apports>
         <h2>Registre des apports</h2>
         <p className="muted" style={{ margin: '0 0 .9rem' }}>
-          {d ? <>{d.resume.total} ligne{d.resume.total > 1 ? 's' : ''} · {d.resume.comptes} compte{d.resume.comptes > 1 ? 'nt' : ''} pour la commission ({d.resume.a_20} à 20 %, {d.resume.a_10} à 10 %)</> : 'Chargement…'}
+          {d ? <>{d.resume.total} ligne{d.resume.total > 1 ? 's' : ''} · {d.resume.comptes} compte{d.resume.comptes > 1 ? 'nt' : ''} pour la commission ({d.resume.a_20} à 20 %, {d.resume.a_10} à 10 %){d.resume.arriveesParCanal ? <> · {d.resume.arriveesParCanal} arrivée{d.resume.arriveesParCanal > 1 ? 's' : ''} par un canal, hors registre</> : null}</> : 'Chargement…'}
         </p>
         {erreur ? <p className="notif-erreur" role="alert">{erreur}</p> : null}
         <div className="dir-ligne-actions" style={{ marginBottom: '.8rem' }}>

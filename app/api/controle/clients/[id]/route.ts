@@ -5,6 +5,7 @@ import { sourcer, type Sourcee } from '@/lib/direction/fraicheur'
 import { stripe } from '@/lib/stripe'
 import { planConf } from '@/lib/plans'
 import { verdict, preuveLisible, libelleStatut, type Statut } from '@/lib/direction/apports'
+import { lireApporteurs } from '@/lib/direction/canaux'
 import { actif } from '@/lib/flags'
 import { pauseLisible } from '@/lib/direction/stripe-actions'
 
@@ -89,8 +90,14 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
   const apport = actif('apports')
     ? (await supabaseAdmin.from('registre_apports').select('id, statut, preuve, piece, motif, apporteur_id').eq('artisan_id', id).maybeSingle()).data
     : null
-  const apporteur = apport ? (await supabaseAdmin.from('apporteurs').select('code, nom').eq('id', apport.apporteur_id).maybeSingle()).data : null
-  const v = apport ? verdict(apport as { statut: Statut; piece: string | null; motif: string | null }) : null
+  // 0086 — la fiche doit dire « arrivé par Facebook », pas « apporté par Facebook, 20 % dus » : la
+  // colonne `canal` distingue un canal d'acquisition d'un apporteur rémunéré, et verdict() en tire
+  // la conséquence, ici comme dans le relevé.
+  // Table illisible : on n'affiche PAS le bloc « Arrivé par » plutôt que d'afficher « apporté,
+  // 20 % » sur un artisan qui vient peut-être d'un canal. Un blanc se remarque, pas un faux.
+  const connus = apport ? await lireApporteurs().catch(() => null) : null
+  const apporteur = connus?.get(apport!.apporteur_id) ?? null
+  const v = apport && connus ? verdict({ ...(apport as { statut: Statut; piece: string | null; motif: string | null }), canal: apporteur?.canal }) : null
   const enCours = (suspensions ?? []).find((s) => !s.levee_le) ?? null
 
   return NextResponse.json({
@@ -105,7 +112,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     historique_suspensions: suspensions ?? [],
     usage: { leads: leads.count ?? 0, devis: devis.count ?? 0, factures: factures.count ?? 0, ...(erreurUsage ? { erreur: 'base injoignable' } : {}) },
     derniereFacture: facture.valeur,
-    apport: apport && v ? { statut: apport.statut, statutLisible: libelleStatut(apport.statut as Statut), preuve: preuveLisible(apport as never), compte: v.compte, tauxPct: v.tauxPct, raison: v.raison, apporteur: apporteur?.nom ?? null } : null,
+    apport: apport && v ? { statut: apport.statut, statutLisible: libelleStatut(apport.statut as Statut), preuve: preuveLisible(apport as never), compte: v.compte, tauxPct: v.tauxPct, raison: v.raison, apporteur: apporteur?.nom ?? null, canal: apporteur?.canal === true } : null,
     journal: journal ?? [],
     role: f.role, a: new Date().toISOString(),
   })

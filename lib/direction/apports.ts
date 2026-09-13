@@ -19,6 +19,15 @@ export type LigneApport = {
   taux_pct?: number | null
 }
 
+/**
+ * L'apporteur de cette ligne est-il un CANAL d'acquisition (0086) ? La réponse vient de la colonne
+ * `apporteurs.canal`, jamais d'une déduction sur le code ou sur le nom — un jour, quelqu'un
+ * s'appellera « Facebook ». Absent = false, c'est-à-dire le comportement d'avant 0086.
+ */
+export type AvecCanal = { canal?: boolean | null }
+export const RAISON_CANAL =
+  'Canal d’acquisition, pas un apporteur : personne n’est à rémunérer, aucune commission n’est due.'
+
 // `tauxPct` et non `taux` : un pourcentage ENTIER (20, 10, 0). Le nom porte l'unité parce que
 // l'ancien ne la portait pas — verdict() rendait 0.2, le relevé le redivisait par 100, et la
 // commission d'Alexandre valait douze centimes au lieu de onze euros quatre-vingts.
@@ -39,7 +48,15 @@ export const TAUX_CONTESTE = 10
 export const tauxValide = (n: unknown): n is number =>
   typeof n === 'number' && Number.isFinite(n) && n >= TAUX_MIN && n <= TAUX_PLEIN
 
-export function verdict(l: Pick<LigneApport, 'statut' | 'piece' | 'motif'> & { taux_pct?: number | null }): Verdict {
+export function verdict(l: Pick<LigneApport, 'statut' | 'piece' | 'motif'> & { taux_pct?: number | null } & AvecCanal): Verdict {
+  // 0086 — un CANAL d'acquisition d'abord, AVANT le statut, et notamment avant « prouvé ».
+  //
+  // C'est exactement là qu'était le piège : une arrivée par prestiapp.fr/a/facebook produit le
+  // statut le plus fort du registre (« prouvé », posé par le serveur lui-même), donc 20 % de
+  // commission — due à personne. Le relevé du mois s'en trouvait faussé en silence. Tester le
+  // canal en tête est la seule place qui ferme tous les chemins d'un coup : prouvé, saisi,
+  // déclaré avec pièce, contesté, et n'importe quel taux réglé à la main par la suite.
+  if (l.canal) return { compte: false, tauxPct: 0, raison: RAISON_CANAL }
   // Le taux décidé prime sur le taux par défaut — c'est le sens de la fourchette du contrat. Mais
   // un apport CONTESTÉ reste plafonné à 10 % quoi qu'il y ait dans le réglage : le contrat prime
   // sur la décision, sinon la clause de désaccord ne servirait à rien.

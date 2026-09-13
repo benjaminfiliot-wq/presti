@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { estFondateur, estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { verdict, preuveLisible, libelleStatut, tauxValide, TAUX_MIN, TAUX_PLEIN, type Statut } from '@/lib/direction/apports'
+import { lireApporteurs, estCanal, canalParCode } from '@/lib/direction/canaux'
 import { lireUserAgent } from '@/lib/userAgent'
 import { CODE } from '@/lib/apports'
 import { journaliser } from '@/lib/direction/journal'
@@ -32,8 +33,13 @@ export async function GET(req: Request) {
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'apports', 'voir')
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
-  const [{ data: apporteurs, error: eA }, { data: lignes, error: eL }] = await Promise.all([
-    supabaseAdmin.from('apporteurs').select('id, code, nom, artisan_id, actif').order('cree_le'),
+  const [tous, { data: lignes, error: eL }] = await Promise.all([
+    // Un seul lecteur pour la table des apporteurs (lib/direction/canaux) : c'est lui qui sait
+    // distinguer un apporteur rémunéré d'un CANAL d'acquisition, et qui tient debout tant que
+    // 0086 n'est pas collée.
+    // Illisible = 503, comme avant 0086 : on ne montre pas un registre dont on ne sait plus qui
+    // est un apporteur et qui est un canal.
+    lireApporteurs().catch((e) => { console.error('[apports] apporteurs :', e instanceof Error ? e.message : e); return null }),
     // Le partenaire ne voit que les apports qu'il a lui-même amenés (v11 §5) : on borne à SES codes.
     (perimetre.borne
       ? supabaseAdmin.from('registre_apports').select('id, artisan_id, apporteur_id, statut, preuve, piece, motif, premier_contact_le, souscrit_le, offre_souscription, cree_le, maj_le, score, signaux, revue_le, score_maj_le')
@@ -42,11 +48,21 @@ export async function GET(req: Request) {
       : supabaseAdmin.from('registre_apports').select('id, artisan_id, apporteur_id, statut, preuve, piece, motif, premier_contact_le, souscrit_le, offre_souscription, cree_le, maj_le, score, signaux, revue_le, score_maj_le')
           .order('cree_le', { ascending: false })),
   ])
-  if (eA || eL) return NextResponse.json({ error: 'Registre indisponible pour l’instant.' }, { status: 503 })
+  if (eL || !tous) return NextResponse.json({ error: 'Registre indisponible pour l’instant.' }, { status: 503 })
+  const apporteurs = [...tous.values()]
 
   // Le rôle « lecture » ne voit que SON registre (il est apporteur), et sans les pièces des autres.
-  const miens = (apporteurs ?? []).filter((a) => a.artisan_id === f.uid).map((a) => a.id)
-  const visibles = f.role === 'direction' ? (lignes ?? []) : (lignes ?? []).filter((l) => miens.includes(l.apporteur_id))
+  const miens = apporteurs.filter((a) => a.artisan_id === f.uid).map((a) => a.id)
+  const toutes = f.role === 'direction' ? (lignes ?? []) : (lignes ?? []).filter((l) => miens.includes(l.apporteur_id))
+
+  // 0086 — les arrivées par un CANAL (Facebook, LinkedIn) sortent du registre : il n'y a rien à
+  // décider dessus. Les laisser dans la file « à valider » demanderait chaque semaine à Benj de
+  // trancher une commission qui n'existe pas, et la vraie file — celle où de l'argent est en jeu —
+  // serait noyée dedans. Le suivi par canal, lui, se lit dans l'onglet Clients, colonne « Arrivé
+  // par », et se compte ci-dessous, à côté du lien de chaque canal.
+  const visibles = toutes.filter((l) => !estCanal(tous, l.apporteur_id))
+  const arrivees = new Map<string, number>()
+  for (const l of toutes) arrivees.set(l.apporteur_id, (arrivees.get(l.apporteur_id) ?? 0) + 1)
 
   const ids = [...new Set(visibles.map((l) => l.artisan_id))]
   const { data: artisans } = ids.length
@@ -68,12 +84,13 @@ export async function GET(req: Request) {
     if (c) frais.set((l as LigneBase).id, { score: c.score, signaux: c.signaux })
   }
 
-  const parCode = new Map((apporteurs ?? []).map((a) => [a.id, a]))
   const parArtisan = new Map((artisans ?? []).map((a) => [a.id, a]))
   const sorties = visibles.map((l) => {
     const ligne = l as LigneBase
-    const v = verdict(ligne)
-    const ap = parCode.get(ligne.apporteur_id)
+    const ap = tous.get(ligne.apporteur_id)
+    // `canal` est passé même ici, où la liste n'en contient plus : la règle vit dans verdict(), et
+    // un filtre en amont n'est pas une garde — il suffirait de le déplacer pour rouvrir la brèche.
+    const v = verdict({ ...ligne, canal: ap?.canal })
     const ar = parArtisan.get(ligne.artisan_id)
     return {
       id: ligne.id,
@@ -102,8 +119,16 @@ export async function GET(req: Request) {
   const comptes = sorties.filter((s) => s.compte)
   return NextResponse.json({
     lignes: sorties,
-    resume: { total: sorties.length, comptes: comptes.length, a_20: comptes.filter((s) => s.tauxPct === 20).length, a_10: comptes.filter((s) => s.tauxPct === 10).length },
-    apporteurs: (apporteurs ?? []).filter((a) => f.role === 'direction' || a.artisan_id === f.uid).map((a) => ({ code: a.code, nom: a.nom, actif: a.actif, lien: `https://prestiapp.fr/a/${a.code}` })),
+    resume: {
+      total: sorties.length, comptes: comptes.length,
+      a_20: comptes.filter((s) => s.tauxPct === 20).length, a_10: comptes.filter((s) => s.tauxPct === 10).length,
+      // Ce que les canaux ont amené, à part : c'est une mesure d'acquisition, pas une dette.
+      arriveesParCanal: apporteurs.filter((a) => a.canal).reduce((n, a) => n + (arrivees.get(a.id) ?? 0), 0),
+    },
+    apporteurs: apporteurs.filter((a) => f.role === 'direction' || a.artisan_id === f.uid).map((a) => ({
+      code: a.code, nom: a.nom, actif: a.actif, lien: `https://prestiapp.fr/a/${a.code}`,
+      canal: a.canal, arrivees: arrivees.get(a.id) ?? 0,
+    })),
     role: f.role, a: new Date().toISOString(),
   })
 }
@@ -119,6 +144,17 @@ export async function POST(req: Request) {
   if (!/^[0-9a-f-]{36}$/i.test(artisan)) return NextResponse.json({ error: 'Artisan inconnu.' }, { status: 400 })
   if (!CODE.test(code)) return NextResponse.json({ error: 'Code d’apport invalide.' }, { status: 400 })
   if (!piece) return NextResponse.json({ error: 'Une pièce est obligatoire : un apport déclaré sans preuve ne compte pas.', code: 'piece_requise' }, { status: 400 })
+  // 0086 — on ne déclare pas un apport « par Facebook » : un canal n'a présenté personne, et la
+  // ligne créée irait s'asseoir dans la file de revue en attendant une décision impossible.
+  // Table illisible : on refuse plutôt que de déclarer à l'aveugle — une ligne créée ici ouvre une
+  // commission, et on ne sait plus dire si ce code est un apporteur ou un canal.
+  const connus = await lireApporteurs().catch(() => null)
+  if (!connus) return NextResponse.json({ error: 'Déclaration impossible : rien n’a été fait.', code: 'transaction' }, { status: 503 })
+  const canal = canalParCode(connus, code)
+  if (canal) return NextResponse.json({
+    error: `« ${canal.nom} » est un canal d’acquisition, pas un apporteur : il n’y a personne à rémunérer. Les arrivées par ce lien se lisent dans l’onglet Clients.`,
+    code: 'canal',
+  }, { status: 400 })
   const refus = await exigerReconfirmation(req, f.uid, 'artisan')
   if (refus) return refus
   const { data, error } = await supabaseAdmin.rpc('declarer_apport', {
@@ -161,8 +197,17 @@ export async function PATCH(req: Request) {
   if (refus) return refus
 
   const { data: avant } = await supabaseAdmin.from('registre_apports')
-    .select('id, taux_pct, statut').eq('artisan_id', artisan).maybeSingle()
+    .select('id, taux_pct, statut, apporteur_id').eq('artisan_id', artisan).maybeSingle()
   if (!avant) return NextResponse.json({ error: 'Cet artisan n’est pas au registre.' }, { status: 400 })
+  // 0086 — régler une commission sur un canal n'aurait aucun destinataire. Le refus est ici en plus
+  // du verdict : celui-ci rend déjà 0 %, mais un écran qui accepte un réglage sans effet fait
+  // croire qu'il a pris.
+  const apporteurs = await lireApporteurs().catch(() => null)
+  if (!apporteurs) return NextResponse.json({ error: 'Rien n’a été fait.', code: 'transaction' }, { status: 503 })
+  if (estCanal(apporteurs, avant.apporteur_id)) return NextResponse.json({
+    error: `Cet artisan est arrivé par un canal d’acquisition (${apporteurs.get(avant.apporteur_id)?.nom ?? 'canal'}) : il n’y a aucune commission à régler.`,
+    code: 'canal',
+  }, { status: 400 })
 
   const valeur = remis ? null : Math.round(taux)
   const { error } = await supabaseAdmin.from('registre_apports')

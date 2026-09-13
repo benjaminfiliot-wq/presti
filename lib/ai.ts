@@ -780,57 +780,71 @@ export type DevisLigne = {
 // Le catalogue de prix vient de lib/prix : chaque poste porte sa source et sa date.
 type Poste = PosteePrix
 
-// Aides à la décomposition par métier — orientent le CHIFFRAGE (postes, unités, TVA)
-// avec des ordres de grandeur France crédibles (HT, à ajuster). Ce ne sont PAS des prix fermes :
-// le modèle affine selon le chantier réel.
-const METIER_GUIDES: { keys: string[]; guide: string }[] = [
+// Aides à la décomposition par métier — elles orientent la STRUCTURE du chiffrage
+// (postes attendus, unités, règles de TVA) et RIEN D'AUTRE.
+//
+// ⚠️ Aucun montant ici, volontairement. Les fourchettes de prix ont une seule source :
+// la table `postes_types` (voir lib/prix/marche.ts), que l'artisan peut consulter et
+// surcharger avec ses propres tarifs. Un montant recopié dans ce fichier serait un
+// second jeu de vérités, figé dans le code, invisible pour l'artisan et impossible à
+// corriger sans déploiement — c'est exactement ce qui avait fait diverger 23 postes des
+// deux sources. La garde de pré-commit (scripts/garde-commit.mjs) refuse tout € ici.
+// Une clé est un RADICAL qui doit COMMENCER un mot (cf. detecterMetier, lib/ai/metiers.ts) ;
+// `motsExacts` sert aux radicaux trop courts, qui mordraient sinon sur un autre métier.
+const METIER_GUIDES: { keys: string[]; motsExacts?: string[]; guide: string }[] = [
   {
     keys: ['plomb', 'sanitaire', 'chauffagi', 'chauffage'],
     guide:
-      "Plomberie/chauffage : dépose de l'existant, fourniture (mitigeur, WC, ballon, chaudière, radiateur, PAC), tuyauterie (ml), pose + raccordements eau/évacuation/gaz, main d'œuvre (h), mise en service/essais. Ordres de grandeur HT France : MO 45-70€/h ; mitigeur fourni-posé 120-300€ ; WC suspendu fourni-posé 400-900€ ; ballon ECS 300-900€ + pose ; chaudière gaz à condensation 2500-5000€ fourni-posé ; PAC air/eau 9000-15000€ fourni-posé ; radiateur 150-600€ + pose ; tuyauterie 30-60€/ml. TVA 5,5% pour la rénovation énergétique (PAC, chaudière à condensation, ballon thermodynamique), sinon 10% en rénovation.",
+      "Plomberie/chauffage : dépose de l'existant, fourniture (mitigeur, WC, ballon, chaudière, radiateur, PAC), tuyauterie (ml), pose + raccordements eau/évacuation/gaz, main d'œuvre (h), mise en service/essais. Sépare la fourniture de la pose dès que l'appareil pèse lourd dans le total. TVA 5,5% pour la rénovation énergétique (PAC, chaudière à condensation, ballon thermodynamique), sinon 10% en rénovation.",
   },
   {
     keys: ['elec', 'electric', 'electrici', 'domotique'],
     guide:
-      "Électricité : dépose, fourniture (tableau, disjoncteurs, prises, points lumineux, câble au ml), tirage/pose (au point ou ml), mise aux normes du tableau (forfait), attestation Consuel/essais. Ordres de grandeur HT France : MO 40-60€/h ; point (prise/interrupteur/lumineux) 80-150€ posé ; tableau électrique 1000-2500€ ; rénovation complète 90-150€/m² ; Consuel ~150€. TVA 10% en rénovation, 20% dans le neuf.",
+      "Électricité : dépose, fourniture (tableau, disjoncteurs, prises, points lumineux, câble au ml), tirage/pose (au point ou ml), mise aux normes du tableau (forfait), attestation Consuel (forfait), essais. Une rénovation complète se chiffre au m² de surface ; les interventions ponctuelles au point posé. TVA 10% en rénovation, 20% dans le neuf.",
   },
   {
     keys: ['macon', 'maconn', 'gros oeuvre', 'gros œuvre', 'beton', 'terrasse', 'dalle', 'fondation'],
     guide:
-      "Maçonnerie : démolition + évacuation des gravats (m³ ou forfait), fourniture matériaux (m²/m³), ouverture de mur porteur + linteau/IPN (u), dalle/chape béton (m²), enduit (m²), main d'œuvre maçon (h/m²). Ordres de grandeur HT France : MO 45-70€/h ; ouverture mur porteur + IPN 1500-4000€/u ; dalle béton 60-120€/m² ; enduit façade 30-60€/m². TVA 10% en rénovation, 20% pour le neuf/extension.",
+      "Maçonnerie : démolition + évacuation des gravats (m³ ou forfait), fourniture matériaux (m²/m³), ouverture de mur porteur + linteau/IPN (u), dalle/chape béton (m²), enduit (m²), main d'œuvre maçon (h ou m²). TVA 10% en rénovation, 20% pour le neuf/extension.",
   },
   {
     keys: ['peint', 'peintre', 'ravalement', 'decoration', 'enduit'],
     guide:
-      'Peinture : préparation des supports (rebouchage, ponçage, sous-couche) au m², application 2 couches au m², traitement des boiseries (ml/u), protection + nettoyage (forfait). Ordres de grandeur HT France : peinture murs/plafonds avec prépa 25-45€/m² ; sous-couche 5-10€/m² ; boiseries 20-40€/ml ou /u. TVA 10% en rénovation.',
+      "Peinture : préparation des supports (rebouchage, ponçage, sous-couche) au m², application 2 couches au m², traitement des boiseries (ml ou u), protection + nettoyage (forfait). Dis clairement si la préparation est comprise dans le prix au m² ou facturée à part. TVA 10% en rénovation.",
   },
   {
     keys: ['menuis', 'menuiserie', 'fenetre', 'porte', 'placard', 'agencement', 'volet', 'veranda'],
     guide:
-      "Menuiserie : fourniture des ouvrages (fenêtre, porte, placard) à l'unité, dépose de l'ancien (u), pose + étanchéité/calfeutrement (u), habillage/finitions (ml). Ordres de grandeur HT France : fenêtre PVC double vitrage fournie-posée 400-900€/u ; fenêtre alu 700-1500€/u ; porte d'entrée 900-2500€/u ; placard sur mesure 300-800€/ml ; dépose 50-120€/u. Menuiseries isolantes améliorant la performance thermique → TVA 5,5%, sinon 10% en rénovation.",
+      "Menuiserie : fourniture des ouvrages (fenêtre, porte intérieure ou d'entrée, placard au ml) à l'unité, dépose de l'ancien (u), pose + étanchéité/calfeutrement (u), habillage/finitions (ml). Le matériau (PVC, alu, bois) change tout : nomme-le dans la désignation plutôt que de chiffrer une « fenêtre » générique. Menuiseries isolantes améliorant la performance thermique → TVA 5,5%, sinon 10% en rénovation.",
   },
   {
-    keys: ['carrel', 'carrelage', 'faience', 'sol', 'parquet', 'revetement'],
+    keys: ['carrel', 'carrelage', 'faience', 'parquet', 'revetement', 'solier', 'moquett'],
+    motsExacts: ['sol', 'sols'],
     guide:
-      'Carrelage/sols : dépose du revêtement existant (m²), préparation/ragréage du support (m²), fourniture carrelage/faïence (m²), pose (m²), plinthes (ml), joints/finitions (forfait). Ordres de grandeur HT France : pose carrelage sol 40-70€/m² (pose seule) + fourniture 20-60€/m² ; faïence murale 45-80€/m² posée ; ragréage 15-30€/m² ; dépose 10-25€/m² ; plinthes 8-15€/ml. TVA 10% en rénovation.',
+      "Carrelage/sols : dépose du revêtement existant (m²), préparation/ragréage du support (m²), fourniture carrelage/faïence (m²), pose (m²), plinthes (ml), joints/finitions (forfait). Sépare la fourniture de la pose : le choix du carreau fait varier la première bien plus que la seconde. TVA 10% en rénovation.",
   },
   {
-    keys: ['couvr', 'couverture', 'toiture', 'toit', 'zinguerie', 'charpente', 'tuile', 'ardoise'],
+    keys: ['couvr', 'couverture', 'toiture', 'toit', 'zinguerie', 'tuile', 'ardoise'],
     guide:
-      "Couverture/toiture : dépose de la couverture existante (m²), fourniture (tuiles/ardoises, liteaux, écran sous-toiture, zinguerie), pose (m²), gouttières/descentes (ml), faîtage, échafaudage (forfait). Ordres de grandeur HT France : MO couvreur 45-70€/h ; réfection toiture tuiles 100-250€/m² ; zinguerie/gouttières 40-90€/ml ; démoussage/traitement 15-40€/m² ; Velux fourni-posé 800-2000€/u ; isolation combles 20-60€/m² (TVA 5,5%). TVA 10% en rénovation, 5,5% pour l'isolation, 20% dans le neuf.",
+      "Couverture/toiture : dépose de la couverture existante (m²), fourniture (tuiles/ardoises, liteaux, écran sous-toiture, zinguerie), pose (m²), gouttières/descentes (ml), faîtage, fenêtres de toit (u), démoussage/traitement (m²), isolation des combles (m²), échafaudage (forfait), main d'œuvre (h). TVA 10% en rénovation, 5,5% pour l'isolation, 20% dans le neuf.",
   },
   {
     keys: ['multi', 'renovation', 'rénovation', 'batiment', 'tous corps', 'general', 'tce'],
     guide:
-      'Multiservices/rénovation : décompose le chantier par LOT (démolition, plomberie, élec, peinture, sols, menuiserie…). Chiffre chaque lot avec ses propres unités et ordres de grandeur, et choisis la TVA lot par lot selon sa nature (10% rénovation, 5,5% rénovation énergétique, 20% neuf). Consigne clairement les hypothèses de découpage dans "note".',
+      'Multiservices/rénovation : décompose le chantier par LOT (démolition, plomberie, élec, peinture, sols, menuiserie…). Chiffre chaque lot avec ses propres unités, et choisis la TVA lot par lot selon sa nature (10% rénovation, 5,5% rénovation énergétique, 20% neuf). Consigne clairement les hypothèses de découpage dans "note".',
   },
 ]
 
 /** Renvoie l'aide de décomposition la plus pertinente pour le métier donné. */
-function guideMetier(metier: string): string {
-  const n = normalize(metier)
-  const hit = METIER_GUIDES.find((g) => g.keys.some((k) => n.includes(normalize(k))))
-  return hit ? `\nRepères de chiffrage pour ce métier : ${hit.guide}` : ''
+export function guideMetier(metier: string): string {
+  // Même règle que `detecterMetier` (lib/ai/metiers.ts) : une clé est un RADICAL, elle doit
+  // commencer un mot ; « sol » n'est reconnu qu'en mot entier. Sans ça, « Isolation (ITE/ITI) »
+  // et « Panneaux solaires » repartaient avec les postes et les prix du carrelage sur leur devis.
+  const n = ' ' + normalize(metier) + ' '
+  const hit = METIER_GUIDES.find(
+    (g) => g.keys.some((k) => n.includes(' ' + normalize(k))) || (g.motsExacts ?? []).some((m) => n.includes(` ${m} `)),
+  )
+  return hit ? `\nStructure de chiffrage (postes, unités, TVA — les montants viennent du catalogue ci-dessus, jamais d’ici) pour ce métier : ${hit.guide}` : ''
 }
 
 /** Indice de contexte TVA déduit de la description (soft hint, l'IA décide ligne par ligne). */

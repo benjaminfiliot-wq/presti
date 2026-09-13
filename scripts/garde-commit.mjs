@@ -32,7 +32,42 @@ function* fichiers(dossier) {
   }
 }
 
-let ko = 0
+// Règle à part : elle n'inspecte pas un fichier entier mais les seules chaînes `guide` de
+// METIER_GUIDES (lib/ai.ts). Ces mémos décrivent la STRUCTURE d'un chiffrage ; les montants,
+// eux, ont une source unique — la table `postes_types`, que l'artisan peut voir et surcharger.
+// Quand les deux portaient des prix, 23 postes sur 24 avaient fini par diverger (réfection
+// toiture 80-200 en base contre 100-250 dans le code). Un € qui revient ici recrée cette
+// double vérité, et le modèle reçoit à nouveau deux prix pour le même poste.
+const MONTANTS = [
+  /\d[\d\s.,]*\s*(?:€|EUR\b|euros?\b)/i,   // « 250 € », « 40 euros »
+  /\d[\d.,]*\s*[-–]\s*\d[\d.,]*\s*\/\s*(?:h|j|m²|m2|m³|m3|ml|u)\b/i, // « 45-70/h » sans €
+]
+
+function guidesSansMontant() {
+  const src = fs.readFileSync('lib/ai.ts', 'utf8')
+  const tableau = src.match(/const METIER_GUIDES[^=]*=\s*\[([\s\S]*?)\n\]/)
+  if (!tableau) {
+    console.error("  ❌ lib/ai.ts — METIER_GUIDES introuvable : la garde des mémos ne s'applique plus")
+    return 1
+  }
+  const guides = [...tableau[1].matchAll(/guide:\s*\n?\s*(['"`])([\s\S]*?)\1,\r?\n/g)].map((m) => m[2])
+  if (!guides.length) {
+    console.error('  ❌ lib/ai.ts — aucun mémo `guide` lisible : la garde ne vérifie plus rien')
+    return 1
+  }
+  let n = 0
+  for (const g of guides) {
+    // Les taux de TVA (10%, 5,5%) et les comptages (« 2 couches ») restent permis.
+    const m = MONTANTS.map((re) => g.match(re)).find(Boolean)
+    if (!m) continue
+    n++
+    const extrait = g.slice(Math.max(0, m.index - 40), m.index + 40).trim()
+    console.error(`  ❌ lib/ai.ts — montant dans un mémo \`guide\` : les prix viennent de la table postes_types, pas du code\n     « …${extrait}… »`)
+  }
+  return n
+}
+
+let ko = guidesSansMontant()
 for (const r of REGLES) {
   for (const racine of r.ou) {
     for (const f of fichiers(racine)) {

@@ -106,7 +106,8 @@ async function journalResend() {
 
 async function creerArtisan(prefixe, nom, fondateur) {
   const email = `${prefixe}-${Date.now()}-${crypto.randomBytes(2).toString('hex')}@presti-test.invalid`
-  const { data: u, error } = await admin.auth.admin.createUser({ email, password: 'Relances-' + crypto.randomBytes(8).toString('hex'), email_confirm: true })
+  const motDePasse = 'Relances-' + crypto.randomBytes(8).toString('hex') + '-Aa1'
+  const { data: u, error } = await admin.auth.admin.createUser({ email, password: motDePasse, email_confirm: true })
   if (error) throw new Error(`création du compte ${prefixe} : ${error.message}`)
   const id = u.user.id
   comptes.push({ id, email })
@@ -119,7 +120,7 @@ async function creerArtisan(prefixe, nom, fondateur) {
     reponse_auto: true, leads_pause: false, plateforme_active: true,
   })
   if (e2) throw new Error(`profil ${prefixe} : ${e2.message}`)
-  return { id, email, nom }
+  return { id, email, nom, motDePasse }
 }
 
 // Un lead avec sa demande DATÉE : les relances se calculent depuis cette date, comme le fait
@@ -133,10 +134,13 @@ async function creerLead(artisanId, { nomProspect, contact, statut, ilYAJours, r
     created_at: new Date(depart).toISOString(), updated_at: new Date(depart).toISOString(),
   }).select('id').single()
   if (error) throw new Error(`lead ${nomProspect} : ${error.message}`)
-  const { error: e2 } = await admin.from('relances').insert(rangs.map((j, i) => ({
-    lead_id: lead.id, planifiee_le: new Date(depart + j * JOUR).toISOString(), rang: i + 1, envoyee: false,
-  })))
-  if (e2) throw new Error(`relances ${nomProspect} : ${e2.message}`)
+  // `rangs: []` = aucune relance posée à la main : c'est au PRODUIT de les armer (§9).
+  if (rangs.length) {
+    const { error: e2 } = await admin.from('relances').insert(rangs.map((j, i) => ({
+      lead_id: lead.id, planifiee_le: new Date(depart + j * JOUR).toISOString(), rang: i + 1, envoyee: false,
+    })))
+    if (e2) throw new Error(`relances ${nomProspect} : ${e2.message}`)
+  }
   return lead.id
 }
 
@@ -276,6 +280,82 @@ try {
   await new Promise((r) => setTimeout(r, 2000))
   const jr2 = ENVOI_REEL ? await journalResend() : null
   if (jr2) T('Resend n’a pas expédié de doublon', jr2.filter((e) => e.subject === SUJET_ATTENDU).length === 1)
+
+  // ── 9. La promesse tenue quand c'est l'ARTISAN qui répond (Essentiel, mode assisté)
+  //
+  // Le trou comblé le 10/09 : jusque-là, les trois relances n'étaient posées QUE dans la branche de
+  // /api/leads qui suit une réponse écrite par l'assistant tout seul. Or l'assistant autonome se vend
+  // à partir de Studio (`plateforme.ia.auto`) et le mode par défaut est « assistée » : un artisan en
+  // Essentiel à 29 € — qui a pourtant « Relances automatiques » coché dans sa grille — n'en avait
+  // jamais aucune, et un Studio en mode assisté non plus. Sur le code d'avant, cette section échoue :
+  // zéro relance armée, et le lead restait en `en_discussion`, que le cron traite comme un ARRÊT.
+  console.log('\n── 9. L’artisan répond de sa main (Essentiel, mode assisté)')
+  const { verifierSessionTest } = await import('./lib/connexion-test.mjs')
+  const { POST: posterMessage } = await import('../app/api/messages/route.ts')
+  const { getPlateformeConfig } = await import('../lib/plateformeConfig.ts')
+
+  const solo = await creerArtisan('relances-essentiel', `Menuiserie du Pont ${MARQUE}`, false)
+  // Le mode par défaut, écrit noir sur blanc : l'assistant prépare, l'artisan envoie.
+  const { error: eCfg } = await admin.from('plateforme_config').upsert({ artisan_id: solo.id, mode_reponse: 'assistee' })
+  if (eCfg) throw new Error(`config plateforme : ${eCfg.message}`)
+  const cfgSolo = await getPlateformeConfig(solo.id)
+  T('le compte est en Essentiel, mode assisté', cfgSolo.mode_reponse === 'assistee', String(cfgSolo.mode_reponse))
+
+  // Contact `.invalid` : cette section ne doit expédier aucun email, quel que soit le régime.
+  const aLaMain = await creerLead(solo.id, { nomProspect: 'Lucie', contact: CONTACT_INVALIDE, statut: 'nouveau', ilYAJours: 0, rangs: [] })
+  T('au départ, aucune relance — c’est au produit de les armer', (await relancesDe(aLaMain)).length === 0)
+
+  // /api/messages exige un porteur révocable : il faut une VRAIE session, pas la clé service.
+  const jetonSolo = await (async () => {
+    const r = await fetch(`${SB}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: solo.email, password: solo.motDePasse }),
+    })
+    const j = await r.json()
+    await verifierSessionTest(j.access_token)
+    return j.access_token
+  })()
+  T('l’artisan a une session ouverte', !!jetonSolo)
+
+  const repondreALaMain = (texte) => posterMessage(new Request('https://prestiapp.fr/api/messages', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', authorization: `Bearer ${jetonSolo}` },
+    body: JSON.stringify({ action: 'reply', lead_id: aLaMain, message: texte }),
+  }))
+
+  const rep1 = await repondreALaMain('Bonjour Lucie, je peux passer jeudi matin prendre les mesures.')
+  const jrep1 = await rep1.json().catch(() => ({}))
+  T('la réponse manuelle part', rep1.status === 200 && jrep1.ok === true, `${rep1.status} · ${JSON.stringify(jrep1).slice(0, 120)}`)
+
+  const { data: leadApres } = await admin.from('leads').select('statut').eq('id', aLaMain).maybeSingle()
+  // `repondu` = « on a parlé en dernier ». `en_discussion` dit l'inverse et sert de condition
+  // d'ARRÊT au cron (§5) : le poser ici éteignait les relances de sa propre réponse.
+  T('le lead passe à « repondu », pas « en_discussion »', leadApres?.statut === 'repondu', String(leadApres?.statut))
+
+  const posees = await relancesDe(aLaMain)
+  T('les trois relances sont armées', posees.length === 3, `${posees.length} ligne(s)`)
+  const dans = (i) => Math.round((Date.parse(posees[i]?.planifiee_le) - Date.now()) / JOUR)
+  T('… à J+2, J+5 et J+10 depuis la réponse', posees.length === 3 && dans(0) === 2 && dans(1) === 5 && dans(2) === 10,
+    posees.map((_, i) => dans(i)).join(' / '))
+
+  await repondreALaMain('Petite précision : je serai là vers 9 h.')
+  T('une deuxième réponse ne double pas la cadence', (await relancesDe(aLaMain)).length === 3)
+
+  // La cadence vendue est celle que le code POSE — et un seul fichier l'écrit désormais.
+  const sourceRelances = fs.readFileSync('lib/relances.ts', 'utf8')
+  T('le planificateur du produit pose bien [2, 5, 10]', /CADENCE_RELANCES\s*=\s*\[\s*2\s*,\s*5\s*,\s*10\s*\]/.test(sourceRelances))
+
+  // ── 10. Le cron prend ces relances-là : même filtre `statut = 'repondu'` que pour l'assistant.
+  console.log('\n── 10. Le cron traite une relance née d’une réponse manuelle')
+  await admin.from('relances').update({ planifiee_le: new Date(Date.now() - 3_600_000).toISOString() }).eq('lead_id', aLaMain).eq('rang', 1)
+  const res3 = await appel(`Bearer ${SECRET}`)
+  T('la ronde répond 200', res3.status === 200, String(res3.status))
+  const apresCron = await relancesDe(aLaMain)
+  T('la relance échue est traitée', apresCron.find((r) => r.rang === 1)?.envoyee === true, JSON.stringify(apresCron))
+  T('les deux suivantes restent dues', apresCron.filter((r) => r.rang > 1).every((r) => r.envoyee === false))
+  const filSolo = await messagesDe(aLaMain)
+  T('une trace « relance » dans le fil, au nom de l’artisan', filSolo.length === 1 && filSolo[0].contenu.includes(solo.nom), `${filSolo.length} message(s)`)
 } catch (e) {
   ko++; console.log('  ❌ exception —', e instanceof Error ? e.stack : e)
 } finally {

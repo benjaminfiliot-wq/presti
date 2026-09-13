@@ -20,7 +20,7 @@
 | 13 | « Votre nom de domaine (site et page de conversation) » | grille | **`domaine-perso-e2e`** (05/09) : `lib/urls`, liens internes, middleware exécuté, domaine non vérifié inerte, unicité (0061) ; ce que Vercel refuse sans DNS réel est dit dans le fichier | 05/09 | ✅ (preuve DNS réelle au premier artisan) |
 | 14 | « Devis chiffrés par l'IA, sur vos prix » | grille | `tarifs-e2e` (sans IA) + **`devis-source-e2e` 7/7 rejoué le 05/09** : sur un vrai chiffrage, chaque ligne porte une provenance honnête et le prix de l'artisan prime | 05/09 | ✅ |
 | 15 | « Factures + facture électronique » | grille | `facturation-e2e`, `facturx-e2e`, `audit-final-e2e` (avoir 381, PDF AVOIR) | 05/09 | ✅ |
-| 16 | « Relances automatiques » | grille | **`relances-e2e`** (05/09) : une relance part une fois, s'arrête si le prospect répond ou le devis est accepté, jamais pour un fondateur ni vers `.invalid`, au nom de l'artisan | 05/09 | ✅ |
+| 16 | « Relances automatiques » | grille | **`relances-e2e` 39/39 (10/09)** : une relance part une fois, s'arrête si le prospect répond ou le devis est accepté, jamais pour un fondateur ni vers `.invalid`, au nom de l'artisan — **et §9-10 : elles s'ARMENT quand l'artisan répond de sa main, en Essentiel, mode assisté** | 10/09 | ✅ |
 | 17 | « Stock par lieu, scan, seuils » | grille | `inventaire-v2-e2e`, `inventaire-e2e` | 05/09 | ✅ |
 | 18 | « Recherche IA chez vos fournisseurs » | grille | **`recherche-e2e` 37/37 rejoué le 05/09** (un vrai appel, prix rejeté s'il n'est pas dans une page récupérée), `cache-prix-e2e` 38/38 | 05/09 | ✅ |
 | 19 | « Votre boîte email branchée » | grille | `canaux-e2e`, `maillite-e2e`, politique de confidentialité (C15 depuis `cf666ca`) | 05/09 | ✅ |
@@ -28,6 +28,33 @@
 | 21 | « Support prioritaire » | grille (Signature) | CGU art. 4 « Support et assistance » : première réponse en 1 jour ouvré (Signature), 2 (Studio), 3 (Essai/Essentiel), passage en tête de file ; `legal-e2e` | 05/09 | ✅ |
 | 22 | « WhatsApp », « Réseaux sociaux » | grille cible | drapeaux baissés → **absents** de la landing et du comparatif (`fermeture-e2e` §6) | 05/09 | ✅ (non vendus tant que non construits) |
 | 23 | Étude HBR « The Short Life of Online Sales Leads » (2 241 entreprises) | hero | source citée avec titre et périmètre ; lien externe non vérifié par une suite | — | ✅ (citation sourcée) |
+
+## Révision du 10/09 — la promesse 16 était verte à moitié
+
+En confrontant le guide de démarchage au code, un décalage : la grille cochait « Relances automatiques »
+pour les trois offres, alors que **le produit ne les planifiait jamais en Essentiel**.
+
+- Les trois relances n'avaient que deux points d'insertion, et le principal (`app/api/leads/route.ts`)
+  vit dans la branche qui suit une réponse écrite par l'assistant **tout seul**.
+- Or l'assistant autonome se vend à partir de Studio (`plateforme.ia.auto`, absent de `BASE`) et le mode
+  par défaut est « assistée ». Un artisan à 29 € qui répond de sa main — le parcours **normal** de sa
+  formule — n'avait aucune relance. Un Studio en mode assisté non plus.
+- Second défaut, trouvé dans la foulée : le cron n'agit que sur les leads en `repondu`, et la réponse
+  manuelle de l'artisan posait `en_discussion` — le statut qui sert justement de condition d'**arrêt**.
+  Le lead éteignait les relances de sa propre réponse.
+
+Correctif produit (plutôt que rabotage de la grille) : `lib/relances.ts` porte la cadence et le
+planificateur ; `app/api/messages/route.ts` pose `repondu` et arme les relances **dans ses deux
+branches** — la réponse libre et la validation d'une proposition de l'assistant. La garde d'idempotence
+porte sur les relances **en attente**, pour qu'un lead réarme sa cadence après un cycle consommé.
+
+Ce que la preuve vaut : `relances-e2e` §9-10 échoue sur le code d'avant (6 rouges, dont « 0 ligne(s) »)
+et passe après — vérifié le 10/09, 39/39.
+
+**Reste à faire** : `app/api/leads/route.ts` et `app/api/leads/contact/route.ts` écrivent encore leur
+propre `[2, 5, 10]` au lieu d'appeler `planifierRelances`. Volontairement laissé de côté : aucune suite
+n'exerce leur planification (seule une regex sur le source la garde), donc les refondre serait un
+changement non prouvé sur un chemin qui marche.
 
 ## Bilan au 05/09 après-midi
 - **23 promesses prouvées sur 23**, toutes datées du 05/09.

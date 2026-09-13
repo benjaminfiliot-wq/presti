@@ -8,9 +8,15 @@ import { relTime } from '@/lib/direction/fraicheur'
 // Direction → Clients (prompt v10 §2.2, J2) : qui sont-ils, où en sont-ils, et **par qui sont-ils arrivés**.
 // Le canal d'acquisition vient du Registre des apports : « organique », ou « apporté par X » avec la force de
 // la preuve. Jamais une saisie libre, jamais une déclaration non étayée.
-type Canal = { type: 'organique' } | { type: 'apporte'; apporteur: string | null; code: string | null; statut: string; compte: boolean; raison: string }
+// Trois arrivées possibles, et pas deux (0086) : venu seul, amené par un APPORTEUR (commission due,
+// art. 5), ou arrivé par un CANAL — Facebook, LinkedIn. Le canal se suit comme un apport, il ne se
+// paie pas comme un apport : derrière un lien /a/facebook, il n'y a personne à rémunérer.
+type Canal =
+  | { type: 'organique' }
+  | { type: 'apporte'; apporteur: string | null; code: string | null; statut: string; compte: boolean; raison: string }
+  | { type: 'canal'; apporteur: string; code: string; statut: string; compte: false; raison: string }
 type Ligne = { id: string; nom: string | null; metier: string | null; plan: string | null; offre: string; credits: number | null; inscrit_le: string; abonne: boolean; derniere_activite: string | null; suppression_demandee_le: string | null; canal: Canal }
-type Reponse = { lignes: Ligne[]; resume: { total: number; payants: number; apportes: number }; source: { source: string; a: string; cache: boolean }; a: string }
+type Reponse = { lignes: Ligne[]; resume: { total: number; payants: number; apportes: number; canaux?: number }; source: { source: string; a: string; cache: boolean }; a: string }
 
 export default function Clients({ onOuvrir }: { onOuvrir: (id: string) => void }) {
   const [d, setD] = useState<Reponse | null>(null)
@@ -33,7 +39,7 @@ export default function Clients({ onOuvrir }: { onOuvrir: (id: string) => void }
     <div className="tool-card" data-clients>
       <h2>Clients &amp; abonnements</h2>
       <p className="muted" style={{ margin: '0 0 .9rem' }}>
-        {d ? <>{d.resume.total} artisan{d.resume.total > 1 ? 's' : ''} · {d.resume.payants} abonné{d.resume.payants > 1 ? 's' : ''} · {d.resume.apportes} apporté{d.resume.apportes > 1 ? 's' : ''}</> : 'Chargement…'}
+        {d ? <>{d.resume.total} artisan{d.resume.total > 1 ? 's' : ''} · {d.resume.payants} abonné{d.resume.payants > 1 ? 's' : ''} · {d.resume.apportes} apporté{d.resume.apportes > 1 ? 's' : ''}{d.resume.canaux ? <> · {d.resume.canaux} par un canal</> : null}</> : 'Chargement…'}
         {d ? <> · <Fraicheur s={d.source} maintenant={maintenant} /></> : null}
       </p>
       <label htmlFor="dir-cli-q" className="visually-hidden">Rechercher un artisan</label>
@@ -53,12 +59,21 @@ export default function Clients({ onOuvrir }: { onOuvrir: (id: string) => void }
                   <td data-lab="Inscrit"><time dateTime={l.inscrit_le}>{relTime(l.inscrit_le, maintenant)}</time></td>
                   <td data-lab="Dernière activité">{l.derniere_activite ? relTime(l.derniere_activite, maintenant) : <span className="muted">jamais</span>}</td>
                   <td data-lab="Arrivé par">
-                    {l.canal.type === 'organique' ? <span className="muted">Organique</span> : (
-                      <span title={l.canal.raison}>
-                        <b>{l.canal.apporteur ?? 'Apporteur'}</b>
-                        <span className={`pill ${l.canal.compte ? 'ok' : 'warn'}`} style={{ marginLeft: 6 }}><span className="pdot" />{l.canal.statut === 'prouve' ? 'prouvé' : l.canal.statut}</span>
-                      </span>
-                    )}
+                    {l.canal.type === 'organique' ? <span className="muted">Organique</span>
+                      : l.canal.type === 'canal' ? (
+                        // Un canal : le nom suffit. Pas de pastille « prouvé / ne compte pas » — la
+                        // commission ne se pose pas ici, et une pastille de plus laisserait croire
+                        // qu'elle s'est posée et qu'on a répondu non.
+                        <span title={l.canal.raison} data-canal={l.canal.code}>
+                          <b>{l.canal.apporteur}</b>
+                          <span className="pill info" style={{ marginLeft: 6 }}><span className="pdot" />canal</span>
+                        </span>
+                      ) : (
+                        <span title={l.canal.raison}>
+                          <b>{l.canal.apporteur ?? 'Apporteur'}</b>
+                          <span className={`pill ${l.canal.compte ? 'ok' : 'warn'}`} style={{ marginLeft: 6 }}><span className="pdot" />{l.canal.statut === 'prouve' ? 'prouvé' : l.canal.statut}</span>
+                        </span>
+                      )}
                   </td>
                 </tr>
               ))}

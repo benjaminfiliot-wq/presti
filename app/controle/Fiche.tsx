@@ -22,7 +22,8 @@ type Fiche = {
   suspension: { motif: string; message: string | null; depuis: string } | null
   usage: { leads: number; devis: number; factures: number; erreur?: string }
   derniereFacture: { montant: number; rendu: number; restant: number; date: string } | null
-  apport: { statutLisible: string; preuve: string; compte: boolean; taux: number; raison: string; apporteur: string | null } | null
+  /** `canal` (0086) : arrivé par Facebook ou LinkedIn — un canal d'acquisition, pas un apporteur. */
+  apport: { statutLisible: string; preuve: string; compte: boolean; taux: number; raison: string; apporteur: string | null; canal?: boolean } | null
   journal: { id: string; action: string; acteur_email: string | null; avant: unknown; apres: unknown; cree_le: string }[]
   a: string
 }
@@ -288,7 +289,10 @@ export default function Fiche({ id, role, signaler, onRetour }: { id: string; ro
             <div className="tool-card" data-apport>
               <h2>Arrivé par</h2>
               <p className="muted" style={{ margin: 0 }}>
-                <b>{d.apport.apporteur ?? 'Apporteur'}</b> · <span className={`pill ${d.apport.compte ? 'ok' : 'muted'}`}><span className="pdot" />{d.apport.statutLisible}</span>
+                {/* Un canal se dit « canal » : afficher « Prouvé » à côté de Facebook ferait croire
+                    à un apport établi, donc à une commission — c'est exactement l'idée fausse que
+                    0086 corrige. */}
+                <b>{d.apport.apporteur ?? 'Apporteur'}</b> · <span className={`pill ${d.apport.canal ? 'info' : d.apport.compte ? 'ok' : 'muted'}`}><span className="pdot" />{d.apport.canal ? 'canal' : d.apport.statutLisible}</span>
                 <br />{d.apport.preuve}
                 <br /><small>{d.apport.raison}</small>
               </p>

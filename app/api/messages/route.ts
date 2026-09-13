@@ -7,6 +7,7 @@ import { signalerPanneIA } from '@/lib/alerteService'
 import { resolveModel } from '@/lib/models'
 import { getPlateformeConfig, personaDe } from '@/lib/plateformeConfig'
 import { getUserRevocable } from '@/lib/authArtisan'
+import { planifierRelances } from '@/lib/relances'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -91,7 +92,11 @@ export async function POST(req: Request) {
       // et part par email si le prospect en a un. Texte éventuellement retouché par l'artisan.
       const texte = typeof body?.message === 'string' && body.message.trim() ? body.message.trim().slice(0, 4000) : prop.contenu
       await supabaseAdmin.from('messages').update({ etat: null, contenu: texte, sent_at: new Date().toISOString() }).eq('id', prop.id)
-      await supabaseAdmin.from('leads').update({ statut: lead.statut === 'gagne' || lead.statut === 'perdu' ? lead.statut : 'en_discussion', updated_at: new Date().toISOString(), lu_le: new Date().toISOString() }).eq('id', lead.id)
+      // `repondu`, pas `en_discussion` : une réponse vient de partir au nom de l'artisan, la balle
+      // est chez le prospect. C'est le parcours NORMAL de l'Essentiel (l'assistant prépare, l'artisan
+      // valide) — et c'est ce statut que le cron des relances exige.
+      await supabaseAdmin.from('leads').update({ statut: lead.statut === 'gagne' || lead.statut === 'perdu' ? lead.statut : 'repondu', updated_at: new Date().toISOString(), lu_le: new Date().toISOString() }).eq('id', lead.id)
+      if (lead.statut !== 'gagne' && lead.statut !== 'perdu') await planifierRelances(lead.id)
       const { data: artisanV } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
       let emailed = false
       if (lead.contact && lead.contact.includes('@')) {
@@ -142,14 +147,21 @@ export async function POST(req: Request) {
     if (!contenu) return NextResponse.json({ error: 'Message vide' }, { status: 400 })
 
     await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'out', type: 'manuel', contenu })
+    // `repondu` : l'artisan vient de parler, la balle repasse au prospect. `en_discussion` dit
+    // l'inverse (le prospect a parlé en dernier) et sert de condition d'ARRÊT au cron — le poser
+    // ici revenait à éteindre les relances de sa propre réponse.
     await supabaseAdmin
       .from('leads')
       .update({
-        statut: lead.statut === 'gagne' || lead.statut === 'perdu' ? lead.statut : 'en_discussion',
+        statut: lead.statut === 'gagne' || lead.statut === 'perdu' ? lead.statut : 'repondu',
         updated_at: new Date().toISOString(),
         lu_le: new Date().toISOString(),
       })
       .eq('id', lead.id)
+
+    // La promesse « Relances automatiques » de la grille, vraie dès l'Essentiel : elle ne dépend
+    // plus de l'assistant autonome (vendu à partir de Studio), mais du fait qu'une réponse est partie.
+    if (lead.statut !== 'gagne' && lead.statut !== 'perdu') await planifierRelances(lead.id)
 
     // Email au prospect si son contact est un email (sinon il verra la réponse sur la plateforme).
     let emailed = false

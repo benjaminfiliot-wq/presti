@@ -24,7 +24,7 @@ const { detecterCapacitesNonDeclarees, detecterPrixChiffres, retirerPhrases, ass
 const { routerModele } = await import('../lib/ai/routage.ts')
 const { qualifyLead } = await import('../lib/ai.ts')
 const { blocExemples } = await import('../lib/ai/exemples.ts')
-const { analyzeLead, preparerConversation, blocProspect } = await import('../lib/ai.ts')
+const { analyzeLead, preparerConversation, blocProspect, guideMetier } = await import('../lib/ai.ts')
 const { outilsPour } = await import('../lib/ai/outils.ts')
 
 let ok = 0, ko = 0
@@ -45,6 +45,73 @@ T('au régime réel, la TVA du métier est énoncée (10 % / 20 %)', /10 %/.test
 T('le chiffrage en franchise impose tva_taux 0', /"tva_taux": 0/.test(blocMetierChiffrage(profilMetier('menuisier'), 'franchise')))
 T('le chiffrage au réel donne les unités du métier', /Unités usuelles/.test(blocMetierChiffrage(profilMetier('carreleur'), 'reel')))
 
+
+console.log('\n── 1 bis. Le menu d’inscription, libellé par libellé')
+// La collision « sol » (« i-SOL-ation », « SOL-ier », « panneaux SOL-aires » → carreleur) a vécu
+// parce que personne n'avait jamais rejoué `detecterMetier` sur la liste que le produit propose
+// lui-même à l'inscription. Ce tableau la fige, pour les DEUX chemins que voit le client :
+//   • le profil de rédaction  (lib/ai/metiers.ts → vocabulaire, questions, pièges des réponses) ;
+//   • le mémo de chiffrage    (lib/ai.ts → postes et ordres de grandeur du devis), '—' = aucun.
+// La liste n'est pas recopiée : elle est LUE dans app/onboarding/page.tsx. Ajouter un métier au
+// menu sans écrire ici ce qu'il doit rendre fait rougir le test — c'est tout l'intérêt.
+const ATTENDU_MENU = [
+  ['Plombier', 'plombier', 'Plomberie/chauffage'],
+  ['Chauffagiste', 'plombier', 'Plomberie/chauffage'],
+  ['Électricien', 'electricien', 'Électricité'],
+  ['Maçon', 'macon', 'Maçonnerie'],
+  ['Menuisier', 'menuisier', 'Menuiserie'],
+  ['Charpentier', 'couvreur', '—'],
+  ['Couvreur', 'couvreur', 'Couverture/toiture'],
+  ['Peintre', 'peintre', 'Peinture'],
+  ['Carreleur', 'carreleur', 'Carrelage/sols'],
+  ['Plaquiste / Plâtrier', 'peintre', '—'],
+  ['Serrurier / Métallier', 'generique', '—'],
+  ['Ferronnier', 'generique', '—'],
+  ['Vitrier', 'generique', '—'],
+  // Un solier pose des revêtements de sol souples : ragréage, dépose, plinthes, m² — le profil
+  // carreleur lui va. Il y arrive maintenant par son propre nom, plus par accident.
+  ['Solier / Moquettiste', 'carreleur', 'Carrelage/sols'],
+  ['Façadier / Ravaleur', 'generique', '—'], // à trancher : le profil peintre (ravalement) irait
+  ['Étancheur', 'couvreur', '—'],
+  // Ni carreleur (c'était le bug), ni couvreur, ni peintre : l'ITE/ITI est à cheval sur les trois.
+  // Générique n'injecte AUCUN vocabulaire — mieux vaut ne rien dire que dire « faïence ».
+  ['Isolation (ITE/ITI)', 'generique', '—'],
+  ['Climaticien / Frigoriste', 'plombier', '—'],
+  ['Domoticien', 'generique', '—'], // à trancher : l'alias « domotiq » de l'électricien ne l'attrape pas
+  ['Cuisiniste', 'generique', '—'], // à trancher : le profil menuisier (agencement) irait
+  ['Ébéniste / Agenceur', 'menuisier', '—'],
+  ['Pisciniste', 'generique', '—'],
+  ['Paysagiste', 'paysagiste', '—'],
+  ['Terrassier / Maçon VRD', 'paysagiste', 'Maçonnerie'], // à trancher : profil et mémo divergent
+  ['Ramoneur', 'generique', '—'],
+  ['Poêlier / Fumiste', 'generique', '—'],
+  ['Store & fermeture', 'generique', '—'],
+  ['Multiservices / Rénovation', 'macon', 'Multiservices/rénovation'],
+  ['Autre', 'generique', '—'], // « Autre » n'atteint jamais la base : remplacé par la saisie libre
+]
+const srcOnboarding = fs.readFileSync('app/onboarding/page.tsx', 'utf8')
+const blocMenu = srcOnboarding.match(/const METIERS = \[([\s\S]*?)\n\]/)
+const LIBELLES_MENU = blocMenu ? [...blocMenu[1].matchAll(/'([^']+)'/g)].map((m) => m[1]) : []
+const memoDe = (l) => { const m = guideMetier(l).match(/métier : ([^:]+) :/); return m ? m[1].trim() : '—' }
+T(`le menu est lu dans app/onboarding/page.tsx (${LIBELLES_MENU.length} libellés)`, LIBELLES_MENU.length >= 20)
+const orphelins = LIBELLES_MENU.filter((l) => !ATTENDU_MENU.some(([lib]) => lib === l))
+T('chaque libellé du menu a son attente figée ici', orphelins.length === 0, `sans attente : ${orphelins.join(', ')}`)
+for (const [libelle, profilAttendu, memoAttendu] of ATTENDU_MENU) {
+  const p = detecterMetier(libelle), g = memoDe(libelle)
+  T(`« ${libelle} » → ${profilAttendu} / mémo ${memoAttendu}`, p === profilAttendu && g === memoAttendu, `obtenu ${p} / mémo ${g}`)
+}
+
+console.log('\n── 1 ter. La collision « sol » ne doit pas revenir')
+// Hors menu (saisie libre « Autre »), mais c'est le même accident.
+T('« Panneaux solaires » n’est PAS un carreleur', detecterMetier('Panneaux solaires') === 'generique', detecterMetier('Panneaux solaires'))
+T('« Panneaux solaires » n’a PAS le mémo carrelage', memoDe('Panneaux solaires') === '—', memoDe('Panneaux solaires'))
+T('« Photovoltaïque » → générique', detecterMetier('Photovoltaïque') === 'generique', detecterMetier('Photovoltaïque'))
+T('« Isolation des combles » → générique', detecterMetier('Isolation des combles') === 'generique', detecterMetier('Isolation des combles'))
+// …et ce que l'alias servait vraiment à attraper doit continuer de tomber sur carreleur.
+for (const l of ['carrelage sol et murs', 'pose de sol souple', 'revêtement de sol', 'Revetement sols et murs', 'Parquet flottant', 'Moquettiste']) {
+  T(`« ${l} » → carreleur`, detecterMetier(l) === 'carreleur', detecterMetier(l))
+  T(`« ${l} » → mémo Carrelage/sols`, memoDe(l) === 'Carrelage/sols', memoDe(l))
+}
 console.log('\n── 2. Playbooks')
 T('MAX_QUESTIONS = 3', MAX_QUESTIONS === 3)
 for (const i of ['urgence', 'reclamation', 'rdv', 'prix', 'info']) T(`playbook ${i} : ≤ 3 questions`, playbookPour(i, profilMetier('plombier')).questions.length <= 3)
