@@ -61,3 +61,7 @@
 {"id":"014-09","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:42:16Z","duree_s":109,"agent":"ag-09-g37","executant":"antigravity","lignes":17032,"dossier":"fait"}
 {"id":"014-09","verdict":"FAIL","ligne":"file:///C:/Users/benja/Documents/presti/node_modules/lighthouse/core/lib/lh-error.js:160","code":1,"date":"2026-09-13T23:42:49Z","duree_s":73,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
 {"id":"014-09","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:44:23Z","duree_s":53,"agent":"claude-code","executant":"antigravity","lignes":17032,"dossier":"fait"}
+{"id":"014-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:48:49Z","duree_s":76,"agent":"ag-02-g38","executant":"antigravity","lignes":11371,"dossier":"en-cours"}
+{"id":"014-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:50:36Z","duree_s":146,"agent":"ag-02-g38","executant":"antigravity","lignes":11371,"dossier":"en-cours"}
+{"id":"014-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:51:30Z","duree_s":153,"agent":"ag-02-g38","executant":"antigravity","lignes":11371,"dossier":"fait"}
+{"id":"014-02","verdict":"FAIL","ligne":"ÉCHEC les feuilles de style du dossier sont chargées par l'accueil (<link rel=\"stylesheet\">) styles.css                     attendu aucune feuille orpheline","code":1,"date":"2026-09-13T23:51:47Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}

@@ -266,7 +266,9 @@ async function jugerRendu(navigateur, origine, pages, da) {
       await page.evaluate(async () => { const h = document.documentElement.scrollHeight; for (let y = 0; y < h; y += 400) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 100)) } window.scrollTo(0, 0) })
       await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {})
       await page.waitForTimeout(500)
+      await page.evaluate(() => document.fonts.ready).catch(() => {})
       return await page.evaluate(() => {
+        const polices = [...document.fonts].map((f) => ({ famille: f.family.replace(/["']/g, ''), statut: f.status }))
         const vis = (el) => { const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) < 0.9) return false; const b = el.getBoundingClientRect(); return b.width > 4 && b.height > 4 }
         const imgs = [...document.images]
         const imgsOk = imgs.filter((i) => i.complete && i.naturalWidth > 0 && vis(i)).length
@@ -285,7 +287,7 @@ async function jugerRendu(navigateur, origine, pages, da) {
         if (hauteurDoc - fin > maxVide) maxVide = hauteurDoc - fin
         const h1 = document.querySelector('h1')
         const largeurContenu = Math.max(0, ...[...document.querySelectorAll('main, section, header, footer, article')].map((e) => e.getBoundingClientRect().width))
-        return { imgs: imgs.length, imgsOk, maxVide: Math.round(maxVide), police: h1 ? getComputedStyle(h1).fontFamily : '(pas de h1)', largeurContenu: Math.round(largeurContenu), hauteurDoc: Math.round(hauteurDoc) }
+        return { imgs: imgs.length, imgsOk, maxVide: Math.round(maxVide), police: h1 ? getComputedStyle(h1).fontFamily : '(pas de h1)', polices, largeurContenu: Math.round(largeurContenu), hauteurDoc: Math.round(hauteurDoc) }
       })
     } finally { await ctx.close().catch(() => {}) }
   }
@@ -295,7 +297,11 @@ async function jugerRendu(navigateur, origine, pages, da) {
     ok('bureau : aucun vide vertical de plus de 700 px sans contenu visible', bureau.maxVide <= 700, `${bureau.maxVide} px (page de ${bureau.hauteurDoc} px)`, '≤ 700 px')
     ok('bureau : le contenu occupe la largeur (≥ 900 px sur 1280)', bureau.largeurContenu >= 900, `${bureau.largeurContenu} px`, '≥ 900 px')
     ok('mobile : images visibles et aucun vide de plus de 900 px', mobile.imgsOk === mobile.imgs && mobile.maxVide <= 900, `${mobile.imgsOk}/${mobile.imgs} · vide max ${mobile.maxVide} px`, '≤ 900 px')
-    if (da) ok(`le h1 est composé en « ${da.display} » (police du métier appliquée, pas seulement déclarée)`, new RegExp(da.display.replace(/\s+/g, '\\s*'), 'i').test(bureau.police), bureau.police.slice(0, 60), da.display)
+    if (da) {
+      ok(`le h1 est composé en « ${da.display} » (police du métier appliquée, pas seulement déclarée)`, new RegExp(da.display.replace(/\s+/g, '\\s*'), 'i').test(bureau.police), bureau.police.slice(0, 60), da.display)
+      const chargee = (bureau.polices || []).find((p) => new RegExp(da.display.replace(/\s+/g, '\\s*'), 'i').test(p.famille) && p.statut === 'loaded')
+      ok(`la police « ${da.display} » est réellement chargée par le navigateur (fichier woff2 valide)`, !!chargee, (bureau.polices || []).map((p) => `${p.famille}:${p.statut}`).join(', ').slice(0, 80) || 'aucune @font-face', 'loaded')
+    }
   } catch (e) { ok('le rendu a pu être mesuré (Playwright)', false, e.message.slice(0, 120), 'accueil chargé en 60 s') }
   return t
 }
@@ -308,7 +314,11 @@ function jugerSubstance(dossier, contrat, pages) {
   const lireHtml = (p) => { const f = path.join(dossier, p.chemin.replace(/^\//, ''), 'index.html'); return fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : '' }
   const accueil = lireHtml(pages.find((p) => p.type === 'accueil') || { chemin: '/' })
   // Le CSS : les feuilles du dossier + les <style> inline de l'accueil.
-  const css = fichiers.filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(f, 'utf8')).join('\n') + [...accueil.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n') + [...accueil.matchAll(/style=["']([^"']*)["']/gi)].map((m) => m[1]).join('\n')
+  const feuillesLiees = [...accueil.matchAll(/<link\b[^>]*rel=["']stylesheet["'][^>]*>/gi)].map((m) => (m[0].match(/href=["']([^"']+)["']/i) || [])[1]).filter(Boolean)
+    .map((h) => path.join(dossier, h.replace(/^https?:\/\/[^/]+/, '').replace(/[?#].*$/, '').replace(/^\//, ''))).filter((f) => fs.existsSync(f))
+  const feuillesOrphelines = fichiers.filter((f) => f.endsWith('.css') && !feuillesLiees.includes(f))
+  ok('les feuilles de style du dossier sont chargées par l\'accueil (<link rel="stylesheet">)', feuillesOrphelines.length === 0, feuillesOrphelines.map((f) => path.relative(dossier, f)).join(', ') || 'toutes liées', 'aucune feuille orpheline')
+  const css = feuillesLiees.map((f) => fs.readFileSync(f, 'utf8')).join('\n') + [...accueil.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n') + [...accueil.matchAll(/style=["']([^"']*)["']/gi)].map((m) => m[1]).join('\n')
   const htmlTous = pages.map(lireHtml).join('\n') + accueil
   const classes = new Set(), ids = new Set()
   for (const m of htmlTous.matchAll(/\bclass\s*=\s*["']([^"']*)["']/gi)) for (const c of m[1].split(/\s+/)) if (c) classes.add(c)
