@@ -1,2 +1,3 @@
 npm run typecheck
 node scripts/garde-commit.mjs
+node --experimental-strip-types --import ./scripts/ts-loader.mjs lib/ai/cerveaux/urgence/evaluer.mjs

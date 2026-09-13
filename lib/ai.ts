@@ -104,6 +104,15 @@ const URGENCE_KEYWORDS = [
   'ne marche plus', 'tombe en panne', 'en rade', 'ce soir', 'aujourd hui', 'des maintenant',
 ]
 
+// Ce qu'un mot seul ne dit pas : une vitre n'est pas une urgence, une vitre CASSÉE l'est — et une porte qui a claqué
+// avec les clés dedans aussi. Le vitrier dont « ma vitre de salon est cassée » ressortait en normal (trouvé le 09/09,
+// corrigé le 13/09) est le premier cas de lib/ai/cerveaux/urgence/cas.jsonl. Une paire = un objet fragile ET un mot
+// de casse ou de blocage, n'importe où dans le message (mêmes règles de mot entier que `has`).
+const URGENCE_PAIRES: [string[], string[]][] = [
+  [['vitre', 'vitrine', 'carreau', 'vitrage', 'baie vitree', 'porte fenetre', 'fenetre', 'verre'], ['casse', 'brise', 'eclate', 'explose', 'fissure', 'effraction', 'cambriol']],
+  [['porte', 'serrure', 'cle', 'clef', 'verrou'], ['claque', 'bloque', 'coince', 'casse', 'force', 'effraction', 'cambriol', 'enferme dehors', 'bloque dehors', 'plus fermer', 'ne ferme plus', 'perdu']],
+]
+
 // Insatisfaction / SAV sur un travail déjà réalisé (à traiter avec doigté, sans reconnaître de faute).
 const RECLAMATION_KEYWORDS = [
   'malfacon', 'mal facon', 'pas satisfait', 'insatisfait', 'decu', 'deception', 'decevant',
@@ -163,7 +172,8 @@ const COMPLEXE_KEYWORDS = [
 function isUrgent(message: string): boolean {
   const n = normalize(message)
   if (!n) return false
-  return has(n, URGENCE_KEYWORDS)
+  if (has(n, URGENCE_KEYWORDS)) return true
+  return URGENCE_PAIRES.some(([objets, casses]) => has(n, objets) && has(n, casses))
 }
 
 /** Détecte une demande trop floue pour être chiffrée/traitée sans précisions. */
