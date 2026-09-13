@@ -1,0 +1,52 @@
+{
+  "metier": "couvreur",
+  "nom": "Démo Couvreur Strasbourg",
+  "metiers_secondaires": [],
+  "communes": [
+    "Strasbourg",
+    "Schiltigheim",
+    "Illkirch-Graffenstaden",
+    "Lingolsheim"
+  ],
+  "telephone": "+33 4 00 00 00 00",
+  "siren": "000000000",
+  "decennale": {
+    "assureur": "Assureur fictif",
+    "numero": "DEMO-0001"
+  },
+  "demo": true,
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/couvreur-strasbourg/",
+      "type": "commune",
+      "cible": "Strasbourg"
+    },
+    {
+      "chemin": "/couvreur-schiltigheim/",
+      "type": "commune",
+      "cible": "Schiltigheim"
+    },
+    {
+      "chemin": "/couvreur-illkirch-graffenstaden/",
+      "type": "commune",
+      "cible": "Illkirch-Graffenstaden"
+    },
+    {
+      "chemin": "/couvreur-lingolsheim/",
+      "type": "commune",
+      "cible": "Lingolsheim"
+    },
+    {
+      "chemin": "/mentions-legales/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/confidentialite/",
+      "type": "legal"
+    }
+  ]
+}

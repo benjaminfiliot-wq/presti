@@ -371,13 +371,15 @@ async function jugerLighthouse(url, lighthouse, port) {
   // Deux essais : une mesure de laboratoire varie d'un passage à l'autre, on garde le meilleur des deux — mais on ne
   // relance que si le premier est sous la barre (un site vert du premier coup ne paie qu'une mesure).
   const minScore = (r) => Math.min(...['performance', 'accessibility', 'best-practices', 'seo'].map((c) => Math.round((r.categories[c]?.score ?? 0) * 100)))
-  for (let essai = 1; essai <= 2; essai++) {
+  // Trois essais : « Protocol error … Target closed » (14/09) est un hoquet de Chromium, pas une note du site.
+  for (let essai = 1; essai <= 3; essai++) {
     try {
       const r = await lighthouse(url, { port, output: 'json', logLevel: 'error', onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'] })
       if (!lhr || minScore(r.lhr) > minScore(lhr)) lhr = r.lhr
       if (minScore(lhr) >= BARRE.SCORE_MIN) break
     } catch (e) {
-      if (essai === 2 && !lhr) { ok('Lighthouse a tourné', false, e.message.slice(0, 120), 'un rapport'); return t }
+      if (essai === 3 && !lhr) { ok('Lighthouse a tourné', false, e.message.slice(0, 120), 'un rapport'); return t }
+      await new Promise((r) => setTimeout(r, 3000))
     }
   }
   for (const [cle, nom] of [['performance', 'Performance'], ['accessibility', 'Accessibilité'], ['best-practices', 'Bonnes pratiques'], ['seo', 'SEO']]) {

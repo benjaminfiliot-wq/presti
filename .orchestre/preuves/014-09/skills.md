@@ -1,0 +1,5 @@
+- presti-design : DA Couvreur fidèle (fond #F1EDE8, accent #6B4A3A, encre #1D1714, texture grain SVG 55%, angles 0, filets 2px) sans aucune mention de la plateforme Presti.
+- emil-design-eng : Hiérarchie typographique stricte avec Archivo Narrow condensé pour les titres, IBM Plex Sans pour le corps (17px, line-height 1.55), et boutons d'action nets.
+- apple-design : Espacements aérés, contraste WCAG AAA sur l'accent et le texte, structure claire en sections lisibles avec un CTA d'urgence bien mis en valeur.
+- animation-vocabulary : Révélation au défilement en fade-slide-up subtil (translation Y 12px, opacité 0 à 1, transition 0.45s cubic-bezier(0.16, 1, 0.3, 1)).
+- improve-animations : Déclenchement performant par IntersectionObserver (threshold 0.1), désactivation sous prefers-reduced-motion: reduce, et affichage instantané sans JS (noscript et .no-js).

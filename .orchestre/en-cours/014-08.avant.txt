@@ -1,25 +1,18 @@
-M .orchestre/agents.jsonl
+M  .orchestre/agents.jsonl
  M .orchestre/contexte.md
- M .orchestre/digest.md
- M .orchestre/en-cours/014-02.avant.txt
- M .orchestre/en-cours/014-02.lock
- M .orchestre/en-cours/014-02.md
- M .orchestre/en-cours/014-04.avant.txt
- M .orchestre/en-cours/014-04.lock
- M .orchestre/en-cours/014-04.md
- D .orchestre/file/014-03.md
- D .orchestre/file/014-04.md
- D .orchestre/file/014-05.md
- D .orchestre/file/014-06.md
- D .orchestre/file/014-07.md
- D .orchestre/file/014-08.md
- D .orchestre/file/014-09.md
- D .orchestre/file/014-17.md
+M  .orchestre/digest.md
+A  .orchestre/en-cours/014-10.avant.txt
+A  .orchestre/en-cours/014-10.lock
+A  .orchestre/en-cours/014-10.md
+R  .orchestre/en-cours/014-09.md -> .orchestre/fait/014-09.md
+RD .orchestre/fait/014-08.md -> .orchestre/file/014-08.md
+ D .orchestre/file/014-10.md
  M .orchestre/preuves/014-03/skills.md
  M .orchestre/preuves/014-04/skills.md
  M .orchestre/preuves/014-14/avant.txt
  M .orchestre/preuves/014-14/onglet-sites.png
- M .orchestre/verdicts.jsonl
+M  .orchestre/verdicts.jsonl
+M  scripts/site-qa.mjs
 ?? .claude/skills/captions-overlay/
 ?? .claude/skills/changelog-video/
 ?? .claude/skills/cut-the-curve/
@@ -46,32 +39,12 @@ M .orchestre/agents.jsonl
 ?? .claude/skills/seam-craft/
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
-?? .orchestre/en-cours/014-03.avant.txt
-?? .orchestre/en-cours/014-03.lock
-?? .orchestre/en-cours/014-03.md
-?? .orchestre/en-cours/014-05.avant.txt
-?? .orchestre/en-cours/014-05.lock
-?? .orchestre/en-cours/014-05.md
-?? .orchestre/en-cours/014-06.avant.txt
-?? .orchestre/en-cours/014-06.lock
-?? .orchestre/en-cours/014-06.md
-?? .orchestre/en-cours/014-07.avant.txt
-?? .orchestre/en-cours/014-07.lock
-?? .orchestre/en-cours/014-07.md
 ?? .orchestre/en-cours/014-08.lock
 ?? .orchestre/en-cours/014-08.md
-?? .orchestre/en-cours/014-09.lock
-?? .orchestre/en-cours/014-09.md
-?? .orchestre/en-cours/014-17.avant.txt
-?? .orchestre/en-cours/014-17.lock
-?? .orchestre/en-cours/014-17.md
 ?? .orchestre/preuves/014-02/avant.txt
 ?? .orchestre/preuves/014-03/avant.txt
 ?? .orchestre/preuves/014-04/avant.txt
 ?? .orchestre/preuves/014-05/
-?? .orchestre/preuves/014-06/avant.txt
-?? .orchestre/preuves/014-07/avant.txt
-?? .orchestre/preuves/014-08/avant.txt
 ?? .orchestre/preuves/014-09/
 ?? .orchestre/preuves/014-10/
 ?? .orchestre/preuves/014-13/
@@ -101,7 +74,13 @@ M .orchestre/agents.jsonl
 ?? plans/vague2-faits-verifies.md
 ?? promo-src/
 ?? public/promo/
-?? public/sites-demo/
+?? public/sites-demo/build.mjs
+?? public/sites-demo/chauffagiste/
+?? public/sites-demo/couvreur/
+?? public/sites-demo/electricien/
+?? public/sites-demo/macon/
+?? public/sites-demo/plombier/
+?? public/sites-demo/serrurier/
 ?? qa-output.txt
 ?? qa_out_sync.txt
 ?? qa_out_temp.txt

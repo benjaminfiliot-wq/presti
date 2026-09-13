@@ -58,3 +58,6 @@
 {"id":"014-08","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:38:47Z","duree_s":65,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
 {"id":"014-09","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:40:18Z","duree_s":284,"agent":"ag-09-g37","executant":"antigravity","lignes":17032,"dossier":"en-cours"}
 {"id":"014-08","verdict":"FAIL","ligne":"ÉCHEC accueil : du texte écrit, pas répété (aucune phrase plus de deux fois, ≥ 70 % de suites de cinq mots distinctes) « c'est notre métier et nous le faisons a","code":1,"date":"2026-09-13T23:40:51Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
+{"id":"014-09","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:42:16Z","duree_s":109,"agent":"ag-09-g37","executant":"antigravity","lignes":17032,"dossier":"fait"}
+{"id":"014-09","verdict":"FAIL","ligne":"file:///C:/Users/benja/Documents/presti/node_modules/lighthouse/core/lib/lh-error.js:160","code":1,"date":"2026-09-13T23:42:49Z","duree_s":73,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
+{"id":"014-09","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:44:23Z","duree_s":53,"agent":"claude-code","executant":"antigravity","lignes":17032,"dossier":"fait"}
