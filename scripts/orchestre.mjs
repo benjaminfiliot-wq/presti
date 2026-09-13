@@ -127,11 +127,14 @@ Bloqué ? Écris .orchestre/en-cours/${id}.question.md avec deux ou trois option
 Ne touche à rien hors \`perimetre\`. \`interdit\` est interdit même pour aider. Zéro donnée réelle. Identifiants en français.`
 
 // ── prochaine ─────────────────────────────────────────────────────────────────────────────────────
-function prochaine(agent) {
+function prochaine(agent, tacheVoulue = null) {
   preparer()
   const enCours = taches(path.join(ORCH, D.enCours)).map((f) => lireTache(path.join(ORCH, D.enCours, f))).filter((t) => t.entete)
   const ignorees = []
-  for (const f of taches(path.join(ORCH, D.file))) {
+  // `--tache=<id>` : le pilote (scripts/antigravity.mjs) attribue une tâche précise à un agent ; sans lui, la première compatible.
+  const candidates = taches(path.join(ORCH, D.file)).filter((f) => !tacheVoulue || f === `${tacheVoulue}.md` || f.startsWith(`${tacheVoulue}-`))
+  if (tacheVoulue && !candidates.length) { console.log(`Aucune tâche ${tacheVoulue} dans file/ (déjà prise, faite ou inexistante).`); process.exit(2) }
+  for (const f of candidates) {
     const t = lireTache(path.join(ORCH, D.file, f))
     if (t.erreurs.length) {
       const dest = path.join(ORCH, D.refuse, f)
@@ -432,7 +435,7 @@ switch (commande) {
   case 'prochaine': {
     const agent = option('agent')
     if (!agent) { console.error('✗ --agent=<nom> obligatoire : le verrou porte le nom de qui travaille'); process.exit(1) }
-    prochaine(agent); break
+    prochaine(agent, option('tache')); break
   }
   case 'verifier': if (!args[0]) { console.error('✗ verifier <id>'); process.exit(1) } await verifier(args[0]); break
   case 'digest': digest(); console.log(`✓ ${rel(DIGEST)} régénéré`); break
