@@ -1,4 +1,4 @@
-# Carte du code — Presti (2026-09-13T17:57:38Z)
+# Carte du code — Presti (2026-09-13T18:31:35Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -71,7 +71,7 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 ## Bibliothèque — `lib/` (99 fichiers, exports nommés)
 - `lib/DevisPDF.tsx` (3) : PDFLigne, PDFData, DevisPDF
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
-- `lib/ai.ts` (22) : genParams, Artisan, Lead, LeadInsights, analyzeLead, qualifyLead, blocProspect, generateLeadReply, …
+- `lib/ai.ts` (23) : genParams, Artisan, Lead, LeadInsights, analyzeLead, qualifyLead, blocProspect, generateLeadReply, …
 - `lib/ai/antiFabrication.ts` (12) : ProfilCapacites, CapaciteDetectee, normaliser, texteProfil, MOTIFS_CAPACITE, RE_NEGATION, phrases, detecterCapacitesNonDeclarees, …
 - `lib/ai/exemples.ts` (6) : ExempleDevis, ExemplesArtisan, EXEMPLES_VIDES, PLAFOND_EXEMPLES, chargerExemples, blocExemples
 - `lib/ai/metiers.ts` (9) : MetierId, ProfilMetier, PROFILS_METIER, PROFIL_GENERIQUE, detecterMetier, profilMetier, regleTva, blocMetierReponse, …
@@ -95,7 +95,7 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 - `lib/devisAuto.ts` (3) : SourceDevis, ResultatDevisAuto, creerDevisBrouillonPourLead
 - `lib/devisPdfData.ts` (3) : mentionsReglement, MENTION_TVA_DEBITS, buildPdfData
 - `lib/devisTotals.ts` (2) : LigneCalc, computeTotals
-- `lib/direction/apports.ts` (10) : Statut, LigneApport, Verdict, TAUX_MIN, TAUX_PLEIN, TAUX_CONTESTE, tauxValide, verdict, …
+- `lib/direction/apports.ts` (12) : Statut, LigneApport, AvecCanal, RAISON_CANAL, Verdict, TAUX_MIN, TAUX_PLEIN, TAUX_CONTESTE, …
 - `lib/direction/canaux.ts` (4) : Apporteur, lireApporteurs, estCanal, canalParCode
 - `lib/direction/courriers.ts` (6) : Identifiants, boiteEntreprise, Releve, relever, correspondantLisible, sujetReponse
 - `lib/direction/fraicheur.ts` (7) : Source, Sourcee, sourcer, nonMesure, relTime, euros, oublier
@@ -173,7 +173,7 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 - dernières : 0085_purger_compte_test_devis.sql, 0086_canaux_apport.sql, 0087_canal_instagram.sql, 0088_site_commande.sql, 0089_sites_bucket.sql
 - les `_A_COLLER_sql_editor_NNNN(.NU).sql` sont les versions à coller dans l’éditeur SQL Supabase (CLAUDE.md « Poser une migration ») — une migration n’existe en prod que collée.
 
-## Scripts — `scripts/` (177 .mjs, dont 73 suites e2e ; l’enchaînement : `tout-verifier.mjs`)
+## Scripts — `scripts/` (179 .mjs, dont 73 suites e2e ; l’enchaînement : `tout-verifier.mjs`)
 
-## Orchestre — file : 14 · en cours : 0 · faites : 5 · refusées : 2
+## Orchestre — file : 11 · en cours : 2 · faites : 6 · refusées : 2
 

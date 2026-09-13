@@ -1,37 +1,28 @@
- M .claude/agents/presti-ai-engineer.md
+M .claude/agents/presti-ai-engineer.md
  M .claude/skills/presti-design/SKILL.md
+ M .orchestre/agents.jsonl
+ M .orchestre/digest.md
+ D .orchestre/refuse/014-01.md
  M README.md
- M app/abonnement/page.tsx
+ M app/AppShell.tsx
  M app/api/controle/apports/route.ts
  M app/api/controle/clients/[id]/route.ts
  M app/api/controle/clients/route.ts
  M app/api/controle/releve/route.ts
  M app/api/messages/route.ts
- M app/controle/page.tsx
  M app/globals.css
- M app/page.tsx
- M app/profil/page.tsx
  M lib/ai.ts
- M lib/ai/cerveaux/urgence/cas.jsonl
- M lib/ai/cerveaux/urgence/journal.md
- M lib/ai/cerveaux/urgence/score.json
  M lib/ai/metiers.ts
- M lib/aide.ts
  M lib/controle/confiance.ts
  M lib/direction/apports.ts
  M package-lock.json
  M package.json
  M plans/journal-final.md
  M plans/promesses.md
- M scripts/antigravity.mjs
- M scripts/controle-cerveaux-ui-verifier.mjs
  M scripts/garde-commit.mjs
  M scripts/ia-unit-e2e.mjs
- M scripts/lib/preuves.mjs
  M scripts/messages-e2e.mjs
- M scripts/orchestre.mjs
  M scripts/relances-e2e.mjs
- M scripts/site-commander-verifier.mjs
  M scripts/tout-verifier.mjs
  M skills-lock.json
 ?? .claude/skills/captions-overlay/
@@ -60,9 +51,9 @@
 ?? .claude/skills/seam-craft/
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
-?? CLAUDE.md
+?? .orchestre/en-cours/
 ?? ChromeSetup.exe
-?? app/controle/Cerveaux.tsx
+?? app/site/commander/
 ?? fix_home.py
 ?? fix_html.py
 ?? fix_newlines.py
@@ -79,7 +70,6 @@
 ?? plans/patch-transitions.md
 ?? plans/preuve-skills.md
 ?? plans/publications-10.md
-?? plans/publications-lancement.md
 ?? plans/repondre-aux-artisans.md
 ?? plans/vague2-faits-verifies.md
 ?? promo-src/
@@ -102,12 +92,10 @@
 ?? scripts/build-014-06.mjs
 ?? scripts/captures-014-04.mjs
 ?? scripts/captures-console.mjs
-?? scripts/cas-urgence-verifier.mjs
 ?? scripts/controle-canaux-e2e.mjs
 ?? scripts/hf-composer.mjs
 ?? scripts/hf-recadrer.mjs
 ?? scripts/hf-rendre.mjs
-?? scripts/lib/capture.mjs
 ?? scripts/musique-poser.mjs
 ?? scripts/patch-plans-figes.mjs
 ?? scripts/patch-transitions.mjs

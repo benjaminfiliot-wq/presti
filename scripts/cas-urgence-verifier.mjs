@@ -38,6 +38,22 @@ for (const c of synth) { const d = c.message.toLowerCase().split(/\s+/).slice(0,
 const pire = Object.entries(debuts).sort((a, b) => b[1] - a[1])[0]
 T(`aucun début de message répété plus de 12 fois (pire : « ${pire[0]} » ×${pire[1]})`, pire[1] <= 12)
 
+console.log('── 2 bis. Du français, pas un gabarit (livraison 014-20 refusée le 13/09 : « Critique (carreleur) [carreleur] : Attention (carreleur)… »)')
+// Un vrai message de client est fait de mots-outils (je, ma, le, pour, ça…) et ne cite ni son métier entre parenthèses,
+// ni son identifiant, ni des crochets. Un gabarit qui gagne les critères de forme sans être une phrase est un refus.
+const OUTILS = new Set(['je', 'j', 'ai', 'mon', 'ma', 'mes', 'le', 'la', 'les', 'un', 'une', 'des', 'de', 'du', 'et', 'est', 'pour', 'dans', 'sur', 'ca', 'on', 'pas', 'il', 'elle', 'y', 'a', 'au', 'aux', 'en', 'ne', 'qui', 'que', 'chez', 'avec', 'nous', 'vous', 'me', 'se', 'tout', 'plus', 'bien', 'faut', 'peut', 'depuis', 'ce', 'cette', 'c', 'd', 'l', 'n', 's', 'qu', 'si', 'ou', 'car', 'mais', 'donc', 'alors', 'quand', 'comme', 'sans', 'sous', 'vers', 'trop', 'tres', 'deja', 'encore', 'toujours', 'jamais', 'rien', 'hier', 'demain', 'matin', 'soir', 'bonjour', 'bonsoir', 'merci', 'svp', 'stp', 'urgent', 'vite'])
+const mots = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim().split(/\s+/).filter(Boolean)
+const gabarits = synth.filter((c) => {
+  const m = c.message
+  if (/[\[\]{}#|]/.test(m) || /\((plombier|electricien|électricien|chauffagiste|macon|maçon|menuisier|peintre|carreleur|couvreur|serrurier|vitrier|paysagiste)[^)]*\)/i.test(m) || m.includes(c.id) || /\bref \d+/i.test(m)) return true
+  const w = mots(m)
+  if (w.length >= 6 && w.filter((x) => OUTILS.has(x)).length / w.length < 0.15) return true
+  const compte = {}
+  for (const x of w) if (x.length > 3) { compte[x] = (compte[x] || 0) + 1; if (compte[x] >= 4) return true }
+  return false
+})
+T(`aucun message en forme de gabarit (crochets, métier entre parenthèses, identifiant cité, mot répété, moins de 15 % de mots-outils) — ${gabarits.length} trouvé(s)`, gabarits.length === 0, gabarits.slice(0, 3).map((c) => `${c.id} : ${c.message.slice(0, 60)}`).join(' · '))
+
 console.log('── 3. Pas deux fois le même message')
 const norm = (s) => new Set(s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean))
 const doublons = []

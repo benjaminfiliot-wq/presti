@@ -34,6 +34,7 @@ const NAV: { group: string; items: Nav[] }[] = [
       { key: 'tarifs', label: 'Mes tarifs', href: '/tarifs', icon: ic(<><path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h9z" /><circle cx="7.5" cy="7.5" r="1.4" /></>) },
       { key: 'inventaire', label: 'Inventaire', href: '/inventaire', icon: ic(<><path d="M3 7l9-4 9 4v10l-9 4-9-4z" /><path d="M3 7l9 4 9-4M12 11v10" /></>) },
       { key: 'profil', label: 'Ma page', href: '/profil', icon: ic(<><circle cx="12" cy="8" r="4" /><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" /></>) },
+      ...(actif('siteCommandeVente') ? [{ key: 'site', label: 'Commander mon site', href: '/site/commander', icon: ic(<><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><path d="M8 21h8M12 17v4" /></>) }] : []),
       { key: 'plateforme', label: 'Ma plateforme', href: '/plateforme', icon: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></>) },
       { key: 'abonnement', label: 'Abonnement', href: '/abonnement', icon: ic(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
     ],

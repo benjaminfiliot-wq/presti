@@ -128,9 +128,14 @@ export async function capturer({ racine, dossier, ecrans, largeur = 390, hauteur
     // un compte neuf la reçoit par-dessus l'écran, et la capture montrerait le tutoriel au lieu de la page).
     const local = { [compte.cleLocale]: JSON.stringify(compte.sess), 'presti.aide_vues': JSON.stringify(['visite:console']), ...stockageLocal }
     await page.addInitScript((entrees) => { try { for (const [k, v] of Object.entries(entrees)) localStorage.setItem(k, v) } catch { /* stockage indisponible */ } }, local)
+    // Les réponses d'API en erreur (≥ 400) pendant la capture : un écran figé sur « Chargement… » a presque toujours
+    // une 401/403/500 derrière — le vérificateur l'affiche au lieu de deviner.
+    let erreursApi = []
+    page.on('response', (r) => { if (r.status() >= 400 && /\/api\//.test(r.url())) erreursApi.push(`${r.status()} ${r.request().method()} ${new URL(r.url()).pathname}`) })
     for (const e of ecrans) {
       const fichier = path.join(dossier, `${e.nom}.png`)
       let ok = true, attendu = null
+      erreursApi = []
       try { await page.goto(srv.base + e.chemin, { waitUntil: 'load', timeout: 150_000 }) } catch { ok = false }
       // `attendre` : un texte (n'importe où), ou { texte, dans } — le texte dans un élément précis (« h3 »), pour
       // distinguer le titre de l'écran actif d'un libellé de fil d'Ariane qui, lui, est sur tous les écrans.
@@ -142,7 +147,7 @@ export async function capturer({ racine, dossier, ecrans, largeur = 390, hauteur
       await page.screenshot({ path: fichier, fullPage: pleinePage })
       const texte = await page.evaluate(() => document.body?.innerText || '').catch(() => '')
       const octets = fs.statSync(fichier).size
-      resultats.push({ nom: e.nom, chemin: e.chemin, fichier, octets, md5: crypto.createHash('md5').update(fs.readFileSync(fichier)).digest('hex'), texte, ok, attendu, url: page.url() })
+      resultats.push({ nom: e.nom, chemin: e.chemin, fichier, octets, md5: crypto.createHash('md5').update(fs.readFileSync(fichier)).digest('hex'), texte, ok, attendu, url: page.url(), erreursApi: [...erreursApi] })
     }
   } finally {
     await navigateur?.close().catch(() => {})

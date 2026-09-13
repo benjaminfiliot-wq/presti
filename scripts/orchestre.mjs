@@ -125,7 +125,8 @@ const PIED_DE_TACHE = (id) => `Quand tu as fini :
 2. Tant que la tâche est en en-cours/, lance \`node scripts/orchestre.mjs verifier ${id}\` autant de fois que nécessaire.
 3. Quand c'est vert : déplace le fichier de en-cours/ vers fait/, puis relance \`node scripts/orchestre.mjs verifier ${id}\` — c'est ce verdict-là qui compte.
 Bloqué ? Écris .orchestre/en-cours/${id}.question.md avec deux ou trois options numérotées, puis attends ${id}.reponse.md. Jamais un paragraphe.
-Ne touche à rien hors \`perimetre\`. \`interdit\` est interdit même pour aider. Zéro donnée réelle. Identifiants en français.`
+Ne touche à rien hors \`perimetre\`. \`interdit\` est interdit même pour aider. Zéro donnée réelle. Identifiants en français.
+Le dépôt porte d'autres chantiers non committés : ils ne sont PAS à toi. INTERDIT, sans exception : \`git restore\`, \`git checkout <fichier>\`, \`git stash\`, \`git reset\`, \`git clean\`, \`git revert\`, et supprimer ou vider un fichier hors périmètre (\`del\`, \`remove-item\`, \`rm\`). Le 13/09, un agent a « nettoyé » ainsi trois jours de travail de trois sessions : perte sèche. Si le vérificateur te reproche un fichier que tu n'as pas touché, écris \`.orchestre/en-cours/<id>.question.md\` et attends — n'y touche pas.`
 
 // ── prochaine ─────────────────────────────────────────────────────────────────────────────────────
 function prochaine(agent, tacheVoulue = null) {

@@ -56,7 +56,7 @@ const preuves = path.join(RACINE, '.orchestre', 'preuves', '014-14')
 const { capturer } = await import('./lib/capture.mjs')
 let cap = []
 try {
-  cap = await capturer({ racine: RACINE, dossier: preuves, largeur: 1280, hauteur: 900, role: 'direction', ecrans: [{ nom: 'onglet-sites', chemin: '/controle?onglet=sites', attendre: 'commande' }] })
+  cap = await capturer({ racine: RACINE, dossier: preuves, largeur: 1280, hauteur: 900, role: 'direction', ecrans: [{ nom: 'onglet-sites', chemin: '/controle?onglet=sites', attendre: { dans: 'td', texte: 'commande' } }] })
 } catch (e) { T('le juge a pu capturer (serveur, compte direction de test, navigateur)', false, e.message.slice(0, 300)) }
 if (cap.length) {
   const c = cap[0]
