@@ -45,3 +45,5 @@
 {"id":"014-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T18:31:34Z","duree_s":50,"agent":"ag-1403","executant":"antigravity","lignes":16781,"dossier":"fait"}
 {"id":"014-14","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T18:41:34Z","duree_s":64,"agent":"claude-code","executant":"antigravity","lignes":0,"dossier":"fait"}
 {"id":"014-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T18:43:53Z","duree_s":154,"agent":"ag-1404","executant":"antigravity","lignes":2553,"dossier":"fait"}
+{"id":"014-03","verdict":"FAIL","ligne":"ÉCHEC attributions.json : chaque image a un auteur réel, la page source (pas la racine d'un site), une légende bien encodée et une licence permise 0 sans attrib","code":1,"date":"2026-09-13T19:23:31Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
+{"id":"014-04","verdict":"FAIL","ligne":"ÉCHEC CSS réel et UTILISÉ (≥ 6000 signes de règles dont les classes existent dans les pages) 3136 signes utiles sur 15372 · 202 règle(s) sans emploi attendu ≥ 6","code":1,"date":"2026-09-13T19:23:31Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}

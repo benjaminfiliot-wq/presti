@@ -437,7 +437,12 @@ for (const page of pages) {
   bloc(`Page ${page.chemin} (${page.type}${page.cible ? ' · ' + page.cible : ''})`, jugerPage(fs.readFileSync(f, 'utf8'), page, contrat, type || 'LocalBusiness', titres, descriptions))
 }
 
-if (!statique) {
+// Un site qui échoue déjà sur le dossier, la substance ou les pages n'est pas mesuré au navigateur ni par Lighthouse : ça
+// coûte cinq minutes et un verrou pour rien — corriger d'abord (--tout force la mesure quand même).
+const mesurerQuandMeme = args.includes('--tout')
+if (echecTotal && !statique && !mesurerQuandMeme && !json) console.log(`
+${G}  ${echecTotal} échec(s) avant le navigateur : rendu et Lighthouse non mesurés (corrige d'abord, ou --tout).${Z}`)
+if (!statique && (!echecTotal || mesurerQuandMeme)) {
   const { srv, origine } = await servir(dossier)
   let navigateur = null
   let verrou = null
