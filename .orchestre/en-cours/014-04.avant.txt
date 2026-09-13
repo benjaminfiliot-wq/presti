@@ -1,20 +1,64 @@
 M .orchestre/agents.jsonl
  M .orchestre/contexte.md
  M .orchestre/digest.md
- M .orchestre/en-cours/014-02.avant.txt
- M .orchestre/en-cours/014-02.lock
- M .orchestre/en-cours/014-02.md
+ D .orchestre/en-cours/014-02.md
  D .orchestre/en-cours/014-04.avant.txt
  M .orchestre/en-cours/014-04.lock
- M .orchestre/en-cours/014-04.md
- D .orchestre/file/014-03.md
- D .orchestre/file/014-04.md
- D .orchestre/file/014-17.md
+ D .orchestre/en-cours/014-05.avant.txt
+ D .orchestre/en-cours/014-05.lock
+ D .orchestre/en-cours/014-05.md
+ M .orchestre/preuves/014-02/accueil.png
+ M .orchestre/preuves/014-02/commune.png
+ M .orchestre/preuves/014-02/mentions.png
+ M .orchestre/preuves/014-02/realisations.png
+ M .orchestre/preuves/014-02/skills.md
+ M .orchestre/preuves/014-03/accueil.png
+ M .orchestre/preuves/014-03/commune.png
+ M .orchestre/preuves/014-03/mentions.png
+ M .orchestre/preuves/014-03/realisations.png
  M .orchestre/preuves/014-03/skills.md
  M .orchestre/preuves/014-04/skills.md
+ M .orchestre/preuves/014-08/avant.txt
  M .orchestre/preuves/014-14/avant.txt
  M .orchestre/preuves/014-14/onglet-sites.png
  M .orchestre/verdicts.jsonl
+ M public/sites-demo/carreleur/attributions.json
+ M public/sites-demo/carreleur/carreleur-allauch/index.html
+ M public/sites-demo/carreleur/carreleur-aubagne/index.html
+ M public/sites-demo/carreleur/carreleur-la-ciotat/index.html
+ M public/sites-demo/carreleur/carreleur-marseille/index.html
+ M public/sites-demo/carreleur/confidentialite/index.html
+ D public/sites-demo/carreleur/images/photo_1_1600.avif
+ D public/sites-demo/carreleur/images/photo_1_1600.webp
+ D public/sites-demo/carreleur/images/photo_1_480.avif
+ D public/sites-demo/carreleur/images/photo_1_480.webp
+ D public/sites-demo/carreleur/images/photo_1_960.avif
+ D public/sites-demo/carreleur/images/photo_1_960.webp
+ D public/sites-demo/carreleur/images/photo_2_1600.avif
+ D public/sites-demo/carreleur/images/photo_2_1600.webp
+ D public/sites-demo/carreleur/images/photo_2_480.avif
+ D public/sites-demo/carreleur/images/photo_2_480.webp
+ D public/sites-demo/carreleur/images/photo_2_960.avif
+ D public/sites-demo/carreleur/images/photo_2_960.webp
+ D public/sites-demo/carreleur/images/photo_3_1600.avif
+ D public/sites-demo/carreleur/images/photo_3_1600.webp
+ D public/sites-demo/carreleur/images/photo_3_480.avif
+ D public/sites-demo/carreleur/images/photo_3_480.webp
+ D public/sites-demo/carreleur/images/photo_3_960.avif
+ D public/sites-demo/carreleur/images/photo_3_960.webp
+ D public/sites-demo/carreleur/images/photo_4_1600.avif
+ D public/sites-demo/carreleur/images/photo_4_1600.webp
+ D public/sites-demo/carreleur/images/photo_4_480.avif
+ D public/sites-demo/carreleur/images/photo_4_480.webp
+ D public/sites-demo/carreleur/images/photo_4_960.avif
+ D public/sites-demo/carreleur/images/photo_4_960.webp
+ M public/sites-demo/carreleur/index.html
+ M public/sites-demo/carreleur/mentions-legales/index.html
+ M public/sites-demo/carreleur/robots.txt
+ M public/sites-demo/carreleur/site.js
+ M public/sites-demo/carreleur/site.json
+ M public/sites-demo/carreleur/sitemap.xml
+ M public/sites-demo/carreleur/styles.css
 ?? .claude/skills/captions-overlay/
 ?? .claude/skills/changelog-video/
 ?? .claude/skills/cut-the-curve/
@@ -41,20 +85,12 @@ M .orchestre/agents.jsonl
 ?? .claude/skills/seam-craft/
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
-?? .orchestre/en-cours/014-03.avant.txt
-?? .orchestre/en-cours/014-03.lock
-?? .orchestre/en-cours/014-03.md
-?? .orchestre/en-cours/014-17.avant.txt
-?? .orchestre/en-cours/014-17.lock
-?? .orchestre/en-cours/014-17.md
+?? .orchestre/fait/014-02.md
+?? .orchestre/file/014-05.md
 ?? .orchestre/preuves/014-02/avant.txt
 ?? .orchestre/preuves/014-03/avant.txt
 ?? .orchestre/preuves/014-04/avant.txt
 ?? .orchestre/preuves/014-05/
-?? .orchestre/preuves/014-06/avant.txt
-?? .orchestre/preuves/014-07/avant.txt
-?? .orchestre/preuves/014-08/avant.txt
-?? .orchestre/preuves/014-09/
 ?? .orchestre/preuves/014-10/
 ?? .orchestre/preuves/014-13/
 ?? .orchestre/preuves/014-17/
@@ -77,15 +113,60 @@ M .orchestre/agents.jsonl
 ?? plans/013-niveau-superieur-video-voix-automatisation.md
 ?? plans/accroches-par-metier.md
 ?? plans/demarchage-linkedin.md
-?? plans/journal-publications.md
 ?? plans/patch-transitions.md
 ?? plans/preuve-skills.md
-?? plans/publications-10.md
 ?? plans/repondre-aux-artisans.md
 ?? plans/vague2-faits-verifies.md
 ?? promo-src/
 ?? public/promo/
-?? public/sites-demo/
+?? public/sites-demo/build.mjs
+?? public/sites-demo/carreleur/images/carreaux_hexagonaux-1600.avif
+?? public/sites-demo/carreleur/images/carreaux_hexagonaux-1600.webp
+?? public/sites-demo/carreleur/images/carreaux_hexagonaux-480.avif
+?? public/sites-demo/carreleur/images/carreaux_hexagonaux-480.webp
+?? public/sites-demo/carreleur/images/carreaux_hexagonaux-960.avif
+?? public/sites-demo/carreleur/images/carreaux_hexagonaux-960.webp
+?? public/sites-demo/carreleur/images/carrelage_sol-1600.avif
+?? public/sites-demo/carreleur/images/carrelage_sol-1600.webp
+?? public/sites-demo/carreleur/images/carrelage_sol-480.avif
+?? public/sites-demo/carreleur/images/carrelage_sol-480.webp
+?? public/sites-demo/carreleur/images/carrelage_sol-960.avif
+?? public/sites-demo/carreleur/images/carrelage_sol-960.webp
+?? public/sites-demo/carreleur/images/douche_italienne-1600.avif
+?? public/sites-demo/carreleur/images/douche_italienne-1600.webp
+?? public/sites-demo/carreleur/images/douche_italienne-480.avif
+?? public/sites-demo/carreleur/images/douche_italienne-480.webp
+?? public/sites-demo/carreleur/images/douche_italienne-960.avif
+?? public/sites-demo/carreleur/images/douche_italienne-960.webp
+?? public/sites-demo/carreleur/images/faience_salle_de_bain-1600.avif
+?? public/sites-demo/carreleur/images/faience_salle_de_bain-1600.webp
+?? public/sites-demo/carreleur/images/faience_salle_de_bain-480.avif
+?? public/sites-demo/carreleur/images/faience_salle_de_bain-480.webp
+?? public/sites-demo/carreleur/images/faience_salle_de_bain-960.avif
+?? public/sites-demo/carreleur/images/faience_salle_de_bain-960.webp
+?? public/sites-demo/carreleur/images/gres_cerame-1600.avif
+?? public/sites-demo/carreleur/images/gres_cerame-1600.webp
+?? public/sites-demo/carreleur/images/gres_cerame-480.avif
+?? public/sites-demo/carreleur/images/gres_cerame-480.webp
+?? public/sites-demo/carreleur/images/gres_cerame-960.avif
+?? public/sites-demo/carreleur/images/gres_cerame-960.webp
+?? public/sites-demo/carreleur/images/mosaique_calepinage-1600.avif
+?? public/sites-demo/carreleur/images/mosaique_calepinage-1600.webp
+?? public/sites-demo/carreleur/images/mosaique_calepinage-480.avif
+?? public/sites-demo/carreleur/images/mosaique_calepinage-480.webp
+?? public/sites-demo/carreleur/images/mosaique_calepinage-960.avif
+?? public/sites-demo/carreleur/images/mosaique_calepinage-960.webp
+?? public/sites-demo/carreleur/images/revetement_ceramique-1600.avif
+?? public/sites-demo/carreleur/images/revetement_ceramique-1600.webp
+?? public/sites-demo/carreleur/images/revetement_ceramique-480.avif
+?? public/sites-demo/carreleur/images/revetement_ceramique-480.webp
+?? public/sites-demo/carreleur/images/revetement_ceramique-960.avif
+?? public/sites-demo/carreleur/images/revetement_ceramique-960.webp
+?? public/sites-demo/chauffagiste/
+?? public/sites-demo/electricien/
+?? public/sites-demo/macon/
+?? public/sites-demo/plombier/
+?? public/sites-demo/serrurier/
 ?? qa-output.txt
 ?? qa_out_sync.txt
 ?? qa_out_temp.txt
@@ -116,7 +197,6 @@ M .orchestre/agents.jsonl
 ?? scripts/musique-poser.mjs
 ?? scripts/patch-plans-figes.mjs
 ?? scripts/patch-transitions.mjs
-?? scripts/pipeline.mjs
 ?? scripts/promo-couverture.mjs
 ?? scripts/promo-heberger.mjs
 ?? scripts/promo-video.mjs
