@@ -149,7 +149,7 @@ Règles : français ; zéro donnée réelle (comptes @presti-test.invalid, suppr
 
 // ── Commandes ────────────────────────────────────────────────────────────────────────────────────────────
 async function lancer(ctx, agent, tache, modele) {
-  if (!MODELES.includes(modele)) { console.error(`modèle : ${MODELES.join(' | ')}`); process.exit(2) }
+  // Un palier Gemini (agentapi), un alias (opus, sonnet) ou n'importe quel libellé du catalogue (« Gemini 3.8 Flash (High) ») — voir `catalogue`.
   const prompt = PROMPT(agent, tache)
   let id
   if (!MODELES_GEMINI.includes(modele)) {
