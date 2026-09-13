@@ -1,0 +1,53 @@
+{
+  "metier": "peintre",
+  "nom": "Démo Peintre en bâtiment Bordeaux",
+  "telephone": "+33 4 00 00 00 00",
+  "siren": "000000000",
+  "decennale": {
+    "assureur": "Assureur fictif",
+    "numero": "DEMO-0001"
+  },
+  "communes": [
+    "Bordeaux",
+    "Mérignac",
+    "Pessac",
+    "Talence"
+  ],
+  "metiers_secondaires": [],
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/peintre-bordeaux/",
+      "type": "commune",
+      "cible": "Bordeaux"
+    },
+    {
+      "chemin": "/peintre-merignac/",
+      "type": "commune",
+      "cible": "Mérignac"
+    },
+    {
+      "chemin": "/peintre-pessac/",
+      "type": "commune",
+      "cible": "Pessac"
+    },
+    {
+      "chemin": "/peintre-talence/",
+      "type": "commune",
+      "cible": "Talence"
+    },
+    {
+      "chemin": "/mentions-legales/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/confidentialite/",
+      "type": "legal"
+    }
+  ],
+  "demo": true,
+  "url_base": "https://peintre.demo.invalid"
+}

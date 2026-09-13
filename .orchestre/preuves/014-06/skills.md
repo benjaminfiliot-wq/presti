@@ -1,5 +1,5 @@
-- presti-design: suppression des ombres portées et alignement sur une grille 8px, passage du bouton principal en aplat plein sans dégradé.
-- emil-design-eng: ajustement du rythme vertical (augmentation du padding inter-sections à 96px sur desktop).
-- apple-design: taille de police du héros augmentée et tracking (letter-spacing) resserré pour un rendu plus massif et lisible.
-- animation-vocabulary: les fondus d'apparition au scroll (reveal) utilisent maintenant une courbe ease-out et une translation slide-up de 12px.
-- improve-animations: uniformisation de la durée d'apparition des sections (reveal) à 400ms pour garantir un mouvement fluide sans effet de traîne.
+- presti-design: identité de menuiserie bois sobre en Fraunces (#A9743F / #2A1E12 / #F7F1E6), angles arrondis 6px et contrastes stricts >= 4.5:1.
+- emil-design-eng: rythme vertical régulier (padding 48px mobile, 64px desktop), conteneur centré 1140px et hiérarchie sans aucun vide vertical supérieur à 160px.
+- apple-design: grand titre héros serif chaleureux (52px desktop), visuel plein format avec cadre contrasté et un seul appel à l'action principal par écran.
+- animation-vocabulary: reveal progressif au défilement en slide-up de 12px avec courbe ease-out (450ms) et temporisation fluide.
+- improve-animations: neutralisation complète via prefers-reduced-motion et filet de secours noscript garantissant un affichage instantané sans JavaScript.

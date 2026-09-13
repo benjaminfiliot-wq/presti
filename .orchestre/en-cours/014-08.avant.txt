@@ -1,0 +1,147 @@
+M .orchestre/agents.jsonl
+ M .orchestre/contexte.md
+ M .orchestre/digest.md
+ M .orchestre/en-cours/014-02.avant.txt
+ M .orchestre/en-cours/014-02.lock
+ M .orchestre/en-cours/014-02.md
+ M .orchestre/en-cours/014-04.avant.txt
+ M .orchestre/en-cours/014-04.lock
+ M .orchestre/en-cours/014-04.md
+ D .orchestre/file/014-03.md
+ D .orchestre/file/014-04.md
+ D .orchestre/file/014-05.md
+ D .orchestre/file/014-06.md
+ D .orchestre/file/014-07.md
+ D .orchestre/file/014-08.md
+ D .orchestre/file/014-09.md
+ D .orchestre/file/014-17.md
+ M .orchestre/preuves/014-03/skills.md
+ M .orchestre/preuves/014-04/skills.md
+ M .orchestre/preuves/014-14/avant.txt
+ M .orchestre/preuves/014-14/onglet-sites.png
+ M .orchestre/verdicts.jsonl
+?? .claude/skills/captions-overlay/
+?? .claude/skills/changelog-video/
+?? .claude/skills/cut-the-curve/
+?? .claude/skills/embedded-captions/
+?? .claude/skills/faceless-explainer/
+?? .claude/skills/figma/
+?? .claude/skills/general-video/
+?? .claude/skills/hyperframes-animation/
+?? .claude/skills/hyperframes-audio/
+?? .claude/skills/hyperframes-cli/
+?? .claude/skills/hyperframes-core/
+?? .claude/skills/hyperframes-creative/
+?? .claude/skills/hyperframes-keyframes/
+?? .claude/skills/hyperframes-registry/
+?? .claude/skills/hyperframes/
+?? .claude/skills/media-use/
+?? .claude/skills/motion-doctrine/
+?? .claude/skills/motion-graphics/
+?? .claude/skills/music-to-video/
+?? .claude/skills/oversized-cursor/
+?? .claude/skills/pr-to-video/
+?? .claude/skills/product-launch-video/
+?? .claude/skills/remotion-to-hyperframes/
+?? .claude/skills/seam-craft/
+?? .claude/skills/slideshow/
+?? .claude/skills/talking-head-recut/
+?? .orchestre/en-cours/014-03.avant.txt
+?? .orchestre/en-cours/014-03.lock
+?? .orchestre/en-cours/014-03.md
+?? .orchestre/en-cours/014-05.avant.txt
+?? .orchestre/en-cours/014-05.lock
+?? .orchestre/en-cours/014-05.md
+?? .orchestre/en-cours/014-06.avant.txt
+?? .orchestre/en-cours/014-06.lock
+?? .orchestre/en-cours/014-06.md
+?? .orchestre/en-cours/014-07.avant.txt
+?? .orchestre/en-cours/014-07.lock
+?? .orchestre/en-cours/014-07.md
+?? .orchestre/en-cours/014-08.lock
+?? .orchestre/en-cours/014-08.md
+?? .orchestre/en-cours/014-09.lock
+?? .orchestre/en-cours/014-09.md
+?? .orchestre/en-cours/014-17.avant.txt
+?? .orchestre/en-cours/014-17.lock
+?? .orchestre/en-cours/014-17.md
+?? .orchestre/preuves/014-02/avant.txt
+?? .orchestre/preuves/014-03/avant.txt
+?? .orchestre/preuves/014-04/avant.txt
+?? .orchestre/preuves/014-05/
+?? .orchestre/preuves/014-06/avant.txt
+?? .orchestre/preuves/014-07/avant.txt
+?? .orchestre/preuves/014-08/avant.txt
+?? .orchestre/preuves/014-09/
+?? .orchestre/preuves/014-10/
+?? .orchestre/preuves/014-13/
+?? .orchestre/preuves/014-17/
+?? .orchestre/preuves/014-20/
+?? .orchestre/scratch/
+?? ChromeSetup.exe
+?? build-demo.mjs
+?? build-menuisier-1.mjs
+?? build-menuisier-2.mjs
+?? build-menuisier.mjs
+?? build-plombier.mjs
+?? fix.js
+?? fix_home.py
+?? fix_html.py
+?? fix_newlines.py
+?? full_qa_output.txt
+?? generate-site.mjs
+?? plans/011-video-et-premiere-publication.md
+?? plans/012-dix-publications-et-videos.md
+?? plans/013-niveau-superieur-video-voix-automatisation.md
+?? plans/accroches-par-metier.md
+?? plans/demarchage-linkedin.md
+?? plans/patch-transitions.md
+?? plans/preuve-skills.md
+?? plans/repondre-aux-artisans.md
+?? plans/vague2-faits-verifies.md
+?? promo-src/
+?? public/promo/
+?? public/sites-demo/
+?? qa-output.txt
+?? qa_out_sync.txt
+?? qa_out_temp.txt
+?? qa_output.txt
+?? qa_output2.txt
+?? qa_output2_utf8.txt
+?? qa_output3.txt
+?? qa_output_utf8.txt
+?? report.json
+?? scratch-fetch.mjs
+?? scratch-generator.mjs
+?? scratch-screenshot.mjs
+?? screenshot.mjs
+?? scripts/audit-accroches.mjs
+?? scripts/audit-drapeaux.mjs
+?? scripts/audit-fb.mjs
+?? scripts/audit-humanizer.mjs
+?? scripts/build-014-06.mjs
+?? scripts/build-carreleur-fix.mjs
+?? scripts/captures-014-04.mjs
+?? scripts/captures-console.mjs
+?? scripts/controle-sites-e2e.mjs
+?? scripts/gen-chauffagiste.mjs
+?? scripts/gen-html.mjs
+?? scripts/hf-composer.mjs
+?? scripts/hf-recadrer.mjs
+?? scripts/hf-rendre.mjs
+?? scripts/musique-poser.mjs
+?? scripts/patch-plans-figes.mjs
+?? scripts/patch-transitions.mjs
+?? scripts/promo-couverture.mjs
+?? scripts/promo-heberger.mjs
+?? scripts/promo-video.mjs
+?? scripts/publications-ranger.mjs
+?? scripts/publora-verifier.mjs
+?? scripts/reparer-env.mjs
+?? scripts/shot-richard.mjs
+?? scripts/video-qa.mjs
+?? scripts/voix-fiche.mjs
+?? scripts/voix-mixer.mjs
+?? shot_cerveaux.mjs
+?? test.jpg
+?? videos/

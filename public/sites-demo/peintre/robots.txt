@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://peintre.demo.invalid/sitemap.xml

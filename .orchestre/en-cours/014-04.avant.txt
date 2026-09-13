@@ -1,42 +1,20 @@
-M .claude/agents/presti-ai-engineer.md
- M .claude/skills/presti-design/SKILL.md
- M .orchestre/agents.jsonl
+M .orchestre/agents.jsonl
+ M .orchestre/contexte.md
  M .orchestre/digest.md
- D .orchestre/file/014-02.md
+ M .orchestre/en-cours/014-02.avant.txt
+ M .orchestre/en-cours/014-02.lock
+ M .orchestre/en-cours/014-02.md
+ D .orchestre/en-cours/014-04.avant.txt
+ M .orchestre/en-cours/014-04.lock
+ M .orchestre/en-cours/014-04.md
  D .orchestre/file/014-03.md
  D .orchestre/file/014-04.md
- M .orchestre/preuves/014-01/avant.txt
- M .orchestre/preuves/014-01/ecran-2.png
- M .orchestre/preuves/014-01/ecran-3.png
- M .orchestre/preuves/014-01/ecran-4.png
+ D .orchestre/file/014-17.md
+ M .orchestre/preuves/014-03/skills.md
+ M .orchestre/preuves/014-04/skills.md
+ M .orchestre/preuves/014-14/avant.txt
+ M .orchestre/preuves/014-14/onglet-sites.png
  M .orchestre/verdicts.jsonl
- M README.md
- M app/AppShell.tsx
- M app/api/controle/apports/route.ts
- M app/api/controle/clients/[id]/route.ts
- M app/api/controle/clients/route.ts
- M app/api/controle/releve/route.ts
- M app/api/messages/route.ts
- M app/controle/Apports.tsx
- M app/controle/Clients.tsx
- M app/controle/Fiche.tsx
- M app/controle/page.tsx
- M lib/ai.ts
- M lib/ai/metiers.ts
- M lib/controle/confiance.ts
- M lib/direction/apports.ts
- M package.json
- M plans/journal-final.md
- M plans/promesses.md
- M scripts/cas-urgence-verifier.mjs
- M scripts/controle-sites-ui-verifier.mjs
- M scripts/garde-commit.mjs
- M scripts/ia-unit-e2e.mjs
- M scripts/lib/capture.mjs
- M scripts/messages-e2e.mjs
- M scripts/orchestre.mjs
- M scripts/relances-e2e.mjs
- M skills-lock.json
 ?? .claude/skills/captions-overlay/
 ?? .claude/skills/changelog-video/
 ?? .claude/skills/cut-the-curve/
@@ -63,21 +41,37 @@ M .claude/agents/presti-ai-engineer.md
 ?? .claude/skills/seam-craft/
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
-?? .orchestre/en-cours/
+?? .orchestre/en-cours/014-03.avant.txt
+?? .orchestre/en-cours/014-03.lock
+?? .orchestre/en-cours/014-03.md
+?? .orchestre/en-cours/014-17.avant.txt
+?? .orchestre/en-cours/014-17.lock
+?? .orchestre/en-cours/014-17.md
 ?? .orchestre/preuves/014-02/avant.txt
-?? .orchestre/preuves/014-14/
+?? .orchestre/preuves/014-03/avant.txt
+?? .orchestre/preuves/014-04/avant.txt
+?? .orchestre/preuves/014-05/
+?? .orchestre/preuves/014-06/avant.txt
+?? .orchestre/preuves/014-07/avant.txt
+?? .orchestre/preuves/014-08/avant.txt
+?? .orchestre/preuves/014-09/
+?? .orchestre/preuves/014-10/
+?? .orchestre/preuves/014-13/
+?? .orchestre/preuves/014-17/
 ?? .orchestre/preuves/014-20/
-?? .orchestre/refuse/014-14.md
+?? .orchestre/scratch/
 ?? ChromeSetup.exe
-?? app/controle/Sites.tsx
-?? app/site/commander/
+?? build-demo.mjs
+?? build-menuisier-1.mjs
+?? build-menuisier-2.mjs
+?? build-menuisier.mjs
+?? build-plombier.mjs
+?? fix.js
 ?? fix_home.py
 ?? fix_html.py
 ?? fix_newlines.py
 ?? full_qa_output.txt
 ?? generate-site.mjs
-?? lib/direction/canaux.ts
-?? lib/relances.ts
 ?? plans/011-video-et-premiere-publication.md
 ?? plans/012-dix-publications-et-videos.md
 ?? plans/013-niveau-superieur-video-voix-automatisation.md
@@ -97,7 +91,10 @@ M .claude/agents/presti-ai-engineer.md
 ?? qa_out_temp.txt
 ?? qa_output.txt
 ?? qa_output2.txt
+?? qa_output2_utf8.txt
 ?? qa_output3.txt
+?? qa_output_utf8.txt
+?? report.json
 ?? scratch-fetch.mjs
 ?? scratch-generator.mjs
 ?? scratch-screenshot.mjs
@@ -107,9 +104,12 @@ M .claude/agents/presti-ai-engineer.md
 ?? scripts/audit-fb.mjs
 ?? scripts/audit-humanizer.mjs
 ?? scripts/build-014-06.mjs
+?? scripts/build-carreleur-fix.mjs
 ?? scripts/captures-014-04.mjs
 ?? scripts/captures-console.mjs
-?? scripts/controle-canaux-e2e.mjs
+?? scripts/controle-sites-e2e.mjs
+?? scripts/gen-chauffagiste.mjs
+?? scripts/gen-html.mjs
 ?? scripts/hf-composer.mjs
 ?? scripts/hf-recadrer.mjs
 ?? scripts/hf-rendre.mjs
@@ -128,11 +128,5 @@ M .claude/agents/presti-ai-engineer.md
 ?? scripts/voix-fiche.mjs
 ?? scripts/voix-mixer.mjs
 ?? shot_cerveaux.mjs
-?? supabase/migrations/0086_canaux_apport.sql
-?? supabase/migrations/0087_canal_instagram.sql
-?? supabase/migrations/_A_COLLER_sql_editor_0086.sql
-?? supabase/migrations/_A_COLLER_sql_editor_0086_NU.sql
-?? supabase/migrations/_A_COLLER_sql_editor_0087.sql
-?? supabase/migrations/_A_COLLER_sql_editor_0087_NU.sql
 ?? test.jpg
 ?? videos/
