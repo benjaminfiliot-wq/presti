@@ -93,8 +93,20 @@ for (const n of NUMS) {
   }
 }
 if (!fichiers.length) arret('aucune vidéo à juger')
-const juge = spawnSync('node', [path.join(RACINE, 'scripts', 'video-qa.mjs'), ...fichiers], { stdio: 'inherit' })
-if (juge.status !== 0) arret('le juge a recalé au moins une vidéo — on ne publie pas une vidéo recalée')
+// --juge-vert=<journal du juge> : le juge a déjà tourné sur ces fichiers (lancé à la main, sous le pipeline il restait parfois
+// suspendu après la dernière vidéo, 14/09). On accepte SEULEMENT un journal de moins de 30 min, sans ÉCHEC, avec un
+// « Tout passe » par fichier : la règle « jamais une vidéo recalée » tient.
+const JUGE_VERT = (args.find((x) => x.startsWith('--juge-vert=')) || '').slice(12)
+if (JUGE_VERT) {
+  if (!fs.existsSync(JUGE_VERT) || Date.now() - fs.statSync(JUGE_VERT).mtimeMs > 30 * 60_000) arret('--juge-vert : journal absent ou vieux de plus de 30 min')
+  const j = fs.readFileSync(JUGE_VERT, 'utf8')
+  const verts = (j.match(/Tout passe/g) || []).length
+  if (/ÉCHEC|✗/.test(j) || verts < fichiers.length) arret(`--juge-vert : ${verts} « Tout passe » pour ${fichiers.length} fichiers, ou un ÉCHEC dans le journal`)
+  console.log(`  (--juge-vert : ${verts} vidéos vertes dans ${path.basename(JUGE_VERT)}, il y a ${Math.round((Date.now() - fs.statSync(JUGE_VERT).mtimeMs) / 60000)} min)`)
+} else {
+  const juge = spawnSync('node', [path.join(RACINE, 'scripts', 'video-qa.mjs'), ...fichiers], { stdio: 'inherit' })
+  if (juge.status !== 0) arret('le juge a recalé au moins une vidéo — on ne publie pas une vidéo recalée')
+}
 console.log(`\n✓ ${fichiers.length} fichiers, tous verts.`)
 
 // ── 3. Le calendrier ──────────────────────────────────────────────────────────────────────────
@@ -172,7 +184,11 @@ const PROGRAMMER = args.includes('--programmer')
 const JOURS = { lundi: 1, mardi: 2, mercredi: 3, jeudi: 4, vendredi: 5, samedi: 6, dimanche: 0 }
 const depart = new Date()
 const ancre = new Date(depart); ancre.setHours(0, 0, 0, 0)
-ancre.setDate(ancre.getDate() + (((8 - ancre.getDay()) % 7) || 7))   // lundi > aujourd'hui
+// --ancre=AAAA-MM-JJ : le lundi de référence, imposé. Le 14/09 à 0 h 40, « le prochain lundi strictement après aujourd'hui »
+// venait de sauter au 21 : les parutions de la semaine en cours partaient une semaine trop tard, hors de l'horizon Publora.
+const ANCRE = (args.find((x) => x.startsWith('--ancre=')) || '').slice(8)
+if (ANCRE) { const [y, mo, d] = ANCRE.split('-').map(Number); ancre.setFullYear(y, mo - 1, d) }
+else ancre.setDate(ancre.getDate() + (((8 - ancre.getDay()) % 7) || 7))   // lundi > aujourd'hui
 const quand = (p) => {
   const cible = JOURS[p.jour.toLowerCase()]
   if (cible === undefined) arret(`jour illisible dans le calendrier : « ${p.jour} »`)
@@ -181,6 +197,9 @@ const quand = (p) => {
   const d = new Date(ancre)
   d.setDate(d.getDate() + (p.semaine - 1) * 7 + ((cible - 1 + 7) % 7))
   d.setHours(Number(m[1]), Number(m[2] || 0), 0, 0)
+  // --passe-maintenant : un créneau déjà passé part tout de suite (dans trois minutes) au lieu d'arrêter le pipeline —
+  // c'est la suite du postage par tâche planifiée (scripts/publier-suite.mjs), où un créneau peut être manqué de peu.
+  if (d <= depart && args.includes('--passe-maintenant')) { const m3 = new Date(depart.getTime() + 3 * 60_000); console.log(`  ⏱ pub-${p.num} ${p.variante} ${p.canal} : créneau passé (${d.toISOString()}) → part maintenant (${m3.toISOString()})`); return m3 }
   if (d <= depart) arret(`la date calculée est passée : ${p.jour} S${p.semaine} → ${d.toISOString()}`)
   return d
 }
@@ -251,7 +270,7 @@ if (manquants.length) arret(`aucune connexion saine pour : ${manquants.join(', '
 
 
 // ── 4c. L'envoi ───────────────────────────────────────────────────────────────────────────────
-const aFaire = UNE_SEULE ? plan.slice(0, 1) : plan
+let aFaire = UNE_SEULE ? plan.slice(0, 1) : plan
 if (UNE_SEULE) console.log("\n  --une-seule : UNE publication, on lit ce que l'API répond, on ajuste.")
 if (!PROGRAMMER) console.log('\n  Sans --programmer : les posts sont créés en BROUILLON (scheduledTime omis).')
 
@@ -278,10 +297,12 @@ if (fs.existsSync(JOURNAL)) {
     if (c.length >= 7 && /^\d{4}-\d{2}-\d{2}$/.test(c[1])) dejaCrees.add(`${c[4]}|${c[5]}|${c[3]}`)
   }
 }
-for (const p of aFaire) {
-  if (dejaCrees.has(`${p.num}|${p.variante}|${p.canal}`) && !args.includes('--forcer-doublon')) {
-    arret(`pub-${p.num} variante ${p.variante} sur ${p.canal} est DÉJÀ dans ${path.relative(RACINE, JOURNAL)} — supprimer le brouillon chez Publora d'abord, ou --forcer-doublon`)
-  }
+// Une ligne déjà au journal n'est pas une erreur : elle a été créée (le 13/09, trois parutions programmées avant que
+// l'horizon Publora n'arrête le reste) — on la saute et on continue avec les autres. --forcer-doublon la recrée quand même.
+const dejaFaites = aFaire.filter((p) => dejaCrees.has(`${p.num}|${p.variante}|${p.canal}`))
+if (dejaFaites.length && !args.includes('--forcer-doublon')) {
+  console.log(`  déjà au journal, sautée(s) : ${dejaFaites.map((p) => `pub-${p.num} ${p.variante} ${p.canal}`).join(' · ')}`)
+  aFaire = aFaire.filter((p) => !dejaFaites.includes(p))
 }
 // 2. La variante envoyée doit être écrite pour le réseau de la ligne. Le 2026-09-10, la 06 partait
 //    sur Instagram avec le texte Facebook — et son lien /a/facebook, non cliquable là-bas.
