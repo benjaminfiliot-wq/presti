@@ -9,6 +9,7 @@ import { alignerSurAbonnement } from '@/lib/abonnementSync'
 import { notifierEntreprise } from '@/lib/email'
 import { alertePaiement, envoyerAlertes } from '@/lib/alertes'
 import { mentionFranchise } from '@/lib/facturation'
+import { encaisserCommandeSite } from '@/lib/siteCommandeServeur'
 import type Stripe from 'stripe'
 
 // Webhook Stripe : active/désactive l'abonnement de l'artisan (plan + crédits).
@@ -33,7 +34,14 @@ export async function POST(req: Request) {
       const s = event.data.object as Stripe.Checkout.Session
       const uid = (s.metadata?.uid as string) || (s.client_reference_id as string) || ''
       const plan = (s.metadata?.plan as string) || ''
-      if (uid && plan) {
+      // Paiement UNIQUE — le site à la demande (v15 §3.1). Une session en mode 'payment' n'a pas de plan :
+      // sans cette branche, l'événement tombait dans le vide et l'artisan avait payé pour rien. On encaisse
+      // (brouillon → payee) ; 'introuvable' remonte en erreur pour que Stripe rejoue et qu'un humain voie.
+      if (s.mode === 'payment' && s.metadata?.type === 'commande_site') {
+        const r = await encaisserCommandeSite(s)
+        if (r === 'introuvable') throw new Error(`paiement de site sans dossier : session ${s.id}`)
+        console.log('[stripe webhook] commande de site', r, s.metadata?.commande_id)
+      } else if (uid && plan) {
         const conf = planConf(plan)
         const next = new Date(); next.setMonth(next.getMonth() + 1)
         const abo = typeof s.subscription === 'string' ? s.subscription : s.subscription?.id ?? null

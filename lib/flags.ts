@@ -68,6 +68,14 @@ export const FLAGS = {
   canauxWhatsapp: false,
   /** Canaux réseaux sociaux — idem. */
   canauxReseaux: false,
+  /** v15 §3 — le site à la demande : la page /site/commander, le dossier (api/site/commander/brouillon) et le
+   *  paiement unique (api/site/commander). À lever dès que la migration 0088 est collée : levé sans la table,
+   *  les routes répondent 503 (fail-closed, voulu) — d'où l'ordre : coller, puis lever. Baissé : 404. */
+  siteCommande: true,
+  /** v15 §4 — la VENTE du site : le bloc « Le site, à la demande — 300 € une fois » et le bouton « Commander mon
+   *  site » sur la landing et /abonnement. Ne se lève qu'après l'étape 7 verte et un site de démonstration
+   *  regardé par Benj (H5). Tant qu'il est baissé, la page n'est atteignable que par son adresse. */
+  siteCommandeVente: false,
 } as const
 
 export type Flag = keyof typeof FLAGS
