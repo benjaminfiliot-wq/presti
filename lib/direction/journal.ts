@@ -21,6 +21,9 @@ export type Action =
   // Le départ d'un associé (0084) : le retrait des privilèges est une action de direction comme une
   // autre — et de celles qui doivent laisser une trace datée, avec l'état d'avant et celui d'après.
   | 'partenaire_retire'
+  // Le site à la demande (v15 §3.2) : la validation humaine d'un site généré, et son renvoi en génération
+  // avec une consigne — deux gestes de direction qui laissent une trace datée.
+  | 'site_valide' | 'site_regeneration'
 
 export type Entree = {
   acteur: Fondateur

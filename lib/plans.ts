@@ -27,7 +27,9 @@ type Plan = {
   creditsMois: number
   prixMois: number
   tiers: Tier[]
-  /** Niveau de site vitrine maximum inclus (1 Essentiel, 2 Pro, 3 Signature). */
+  /** Niveau de site vitrine des sites HISTORIQUES (origine « abonnement », §2.2 du v15) : 1 Essentiel, 2 Pro, 3 Signature.
+   *  Depuis le 2026-09-13 le site n'est plus inclus dans aucune formule — il se commande à part (lib/siteCommande.ts) ;
+   *  cette valeur ne sert qu'à continuer de servir les sites qui existaient, tels quels. */
   siteMax: 1 | 2 | 3
   capacites: Capacite[]
 }
@@ -35,21 +37,19 @@ type Plan = {
 // Les capacités s'empilent : chaque palier reprend le précédent et ajoute.
 const BASE: Capacite[] = [
   'plateforme.conversation', 'plateforme.comptes_clients', 'plateforme.domaine_perso',
-  'site.essentiel', 'site.domaine_perso', // décision Benj (04/09) : l'adresse sans « presti » est pour tous
+  'site.domaine_perso', // décision Benj (04/09) : l'adresse sans « presti » est pour tous. Le site vitrine, lui, est sorti des formules (v15 §2.1)
   'devis.ia', 'devis.prix_artisan', 'factures', 'factures.electronique',
   'canaux.email', 'relances',
 ]
 const STUDIO: Capacite[] = [
   ...BASE,
   'plateforme.ia.auto', 'plateforme.personnalisation_avancee',
-  'site.pro',
   'inventaire.stock', 'inventaire.recherche_ia',
   'canaux.whatsapp', 'export',
 ]
 const SIGNATURE: Capacite[] = [
   ...STUDIO,
   'plateforme.ia.expert', 'plateforme.regles',
-  'site.signature', 'site.slides3d',
   'canaux.reseaux', 'support.prioritaire',
 ]
 
@@ -124,8 +124,7 @@ const GRILLE_COMPLETE: LigneGrille[] = [
   } },
   { groupe: 'Plateforme', label: 'Comptes clients (lien magique, historique)', cellules: { essentiel: true, studio: true, signature: true } },
   { groupe: 'Plateforme', label: 'Personnalisation', cellules: { essentiel: 'Thème + couleur', studio: 'Avancée : polices, fond, avatar, amorces', signature: 'Avancée' }, flag: 'plateformePersona' },
-  { groupe: 'Site', label: 'Site vitrine', cellules: { essentiel: 'Essentiel', studio: 'Pro · galerie, à-propos', signature: FLAGS.siteSlides3d ? 'Signature · cinématique, slides 3D' : 'Signature · cinématique' } },
-  { groupe: 'Site', label: 'Votre nom de domaine (site et page de conversation)', cellules: { essentiel: true, studio: true, signature: true } },
+  { groupe: 'Site', label: 'Votre nom de domaine sur la page de conversation', cellules: { essentiel: true, studio: true, signature: true } },
   { groupe: 'Devis & factures', label: 'Devis chiffrés par l’IA, sur vos prix', cellules: { essentiel: true, studio: true, signature: true } },
   { groupe: 'Devis & factures', label: 'Factures + facture électronique', cellules: { essentiel: true, studio: true, signature: true } },
   { groupe: 'Devis & factures', label: 'Relances automatiques', cellules: { essentiel: true, studio: true, signature: true } },

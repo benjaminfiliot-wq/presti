@@ -10,6 +10,20 @@ export const PRIX_SITE_CENTS = 30000
 export const PRIX_SITE_TEXTE = '300 €'
 export const DELAI_ANNONCE = '48 h ouvrées'
 
+/** Le bloc de vente (v15 §2.1), rendu par la landing et /abonnement HORS grille d'abonnement, uniquement quand le
+ *  drapeau `siteCommandeVente` est levé. Trois phrases, pas une promesse de classement, pas un délai autre que le
+ *  nôtre. Le prix vient d'ici, comme partout. */
+export const SITE_A_LA_DEMANDE = {
+  titre: `Le site, à la demande — ${PRIX_SITE_TEXTE} une fois`,
+  phrases: [
+    'Un site à votre nom, avec une page par commune que vous servez vraiment : c’est ça, le référencement local bien fait.',
+    'Vos photos, votre métier, vos coordonnées — rien d’inventé — et votre page de conversation pour que la demande arrive chez vous.',
+    `${PRIX_SITE_TEXTE} une fois, sans abonnement, TVA non applicable (art. 293 B du CGI). Livré sous ${DELAI_ANNONCE} après validation.`,
+  ],
+  bouton: 'Commander mon site',
+  lien: '/site/commander',
+} as const
+
 export const ETATS = ['brouillon', 'payee', 'generee', 'validee', 'en_ligne'] as const
 export type EtatCommande = (typeof ETATS)[number]
 /** Les seuls passages permis. « Renvoyer en génération avec une consigne » = retour de generee à payee. */
