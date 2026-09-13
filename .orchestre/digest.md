@@ -1,9 +1,9 @@
-# Digest — 2026-09-13T14:21:52Z
+# Digest — 2026-09-13T14:35:03Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (Antigravity) : 1 tâche(s) PASS, 1 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
-**État** — file : 13 · en cours : 0 · faites : 1 · refusées : 1
+**État** — file : 15 · en cours : 0 · faites : 1 · refusées : 1
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
@@ -20,5 +20,7 @@
 | 014-12 | contenu | file | antigravity | — | Le site vitrine n'est plus inclus dans aucune formule — l'interface et tous les textes le disent (landing, /abonnement, aide, éditeur de site, publications, guide de démarchage), et le bloc de vente « Le site, à la demande » existe derrière le drapeau siteCommandeVente |
 | 014-13 | test | file | antigravity | — | La suite scripts/controle-sites-e2e.mjs — la validation humaine d'un site généré depuis le Poste de contrôle, prouvée de bout en bout (lecture, valider, régénérer avec consigne, refus sans consigne, rôle lecture, journal) |
 | 014-14 | feature | file | antigravity | — | L'onglet « Sites » du Poste de contrôle — la liste des commandes de site et l'écran de validation humaine (Valider / Renvoyer en génération avec une consigne), branché sur /api/controle/sites |
+| 014-15 | contenu | file | antigravity | — | Cinquante cas synthétiques par métier pour le cerveau « urgence » (lib/ai/cerveaux/urgence/cas.jsonl), écrits à partir du vocabulaire et des pièges de lib/ai/metiers.ts — les cas qui passent en « reference », ceux qui échouent en « ouvert » |
+| 014-16 | feature | file | antigravity | — | L'onglet « Cerveaux » du Poste de contrôle — le tableau des scores des cerveaux (score accepté, cas, ouverts, dernière amélioration), branché sur /api/controle/cerveaux |
 | 001-test-echec | test | refuse | ag-2 | FAIL | ÉCHEC voulu : cette ligne doit apparaître telle quelle dans digest.md |
 | 000-test | test | fait | ag-1 | PASS | 2026-09-13T13:21:30Z · 0s · 1 l. |

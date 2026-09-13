@@ -10,3 +10,8 @@
 - **Après** : **95 %** (19/20). Les 158 unitaires IA existants (`scripts/ia-unit-e2e.mjs`) restent verts ; `tsc` propre.
 - **Reste ouvert** : `normal-04` — « changer une serrure… **sans urgence** » ressort `urgent` : le détecteur ne lit pas la négation. À traiter au prochain cycle (proposition attendue d'Antigravity : une liste de négations « sans / pas / aucune » devant « urgence / urgent », à condition que les 19 autres tiennent).
 - **Branché** : `scripts/tout-verifier.mjs` (suite « IA — cerveau urgence ») et `.husky/pre-commit` — un score qui baisse bloque le commit.
+
+## 2026-09-13 — le score ne compte que les références
+
+- Un cas **ouvert** (défaut connu, entré le jour même) ne compte plus dans le score : sinon documenter un défaut bloquait le commit. Le score protège la vérité établie ; les ouverts sont le carnet de travail, affichés à part, avec l'invitation à les promouvoir quand ils passent.
+- **Score : 100 % sur 19 références**, 1 ouvert (`normal-04`). Accepté.
