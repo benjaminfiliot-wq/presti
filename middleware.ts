@@ -39,6 +39,21 @@ async function slugForDomain(host: string): Promise<string | null> {
   } catch { return null }
 }
 
+// Un site à la demande EN LIGNE sur son domaine (v15 §3.2) : tout le domaine est le site généré, servi par
+// app/site-genere/[commande]. Même mécanique que slugForDomain : REST, hôte custom seulement, coût négligeable.
+async function commandeForDomain(host: string): Promise<string | null> {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!base || !key) return null
+  try {
+    const r = await fetch(`${base}/rest/v1/sites_commandes?domaine=eq.${encodeURIComponent(host)}&etat=eq.en_ligne&select=id&limit=1`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` }, cache: 'no-store',
+    })
+    if (!r.ok) return null
+    const rows = await r.json()
+    return Array.isArray(rows) && rows[0]?.id ? String(rows[0].id) : null
+  } catch { return null }
+}
 // Un slug d'artisan : lettres, chiffres, tirets. Jamais un point (fichiers), jamais un chemin technique.
 const SLUG_OK = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 // Chemins de l'APPLICATION Presti (manifeste, service worker, page hors-ligne, marque) : jamais servis sur un
@@ -103,6 +118,13 @@ export async function middleware(req: NextRequest) {
   // détourne rien). Les trois surfaces sont réécrites ; TOUT AUTRE chemin est envoyé sous
   // /site/<slug>/… où l'attrape-tout sert la 404 de l'artisan : avant, mondomaine.fr/login ou
   // /cgu servaient les pages de Presti sur le domaine de l'artisan (suite domaine-perso-e2e).
+  // Un site généré en ligne sur ce domaine : tout le domaine est le site (chemins, fichiers, tout).
+  const commande = await commandeForDomain(bare) || (bare.startsWith('www.') ? await commandeForDomain(bare.slice(4)) : null)
+  if (commande) {
+    const url = req.nextUrl.clone()
+    url.pathname = `/site-genere/${commande}${chemin}`
+    return NextResponse.rewrite(url)
+  }
   const slug = await slugForDomain(bare) || (bare.startsWith('www.') ? await slugForDomain(bare.slice(4)) : null)
   if (slug) {
     const url = req.nextUrl.clone()
@@ -116,4 +138,4 @@ export async function middleware(req: NextRequest) {
 // On ne passe PAS par le middleware pour les fichiers statiques ni l'API : le matcher exclut
 // tout chemin contenant un point (favicon.ico, robots.txt, images) et les routes techniques.
 // Les chemins de l'app Presti (avec un point) y sont ajoutés explicitement : voir CHEMINS_APP_PRESTI.
-export const config = { matcher: ['/((?!api|_next|.*\\..*).*)', '/manifest.webmanifest', '/sw.js', '/hors-ligne.html', '/marque/:path*', '/.well-known/:path*'] }
+export const config = { matcher: ['/((?!api|_next/).*)'] }

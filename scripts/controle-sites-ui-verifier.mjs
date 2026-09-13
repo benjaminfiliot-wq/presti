@@ -22,7 +22,14 @@ T("il envoie POST /api/controle/sites/<id> avec action valider et regenerer", /a
 T('la consigne de régénération est demandée avant d’envoyer', /consigne/.test(comp))
 T('les libellés d’état viennent de LIBELLE_ETAT (lib/siteCommande)', /LIBELLE_ETAT/.test(comp) && /from '@\/lib\/siteCommande'/.test(comp))
 T('les quatre scores Lighthouse sont affichés quand ils existent', /scores/.test(comp) && /(performance|Performance)/.test(comp) && /(seo|SEO)/.test(comp))
-T("pas d'aperçu ni de mise en ligne inventés (fonctionnalités pas encore construites)", !/mettre_en_ligne|apercu_jeton|Mettre en ligne/.test(comp))
+// 014-14 livre l'onglet sans aperçu ni mise en ligne ; 014-18 (--avec-hebergement) les ajoute, une fois les routes prêtes.
+const AVEC_HEBERGEMENT = process.argv.includes('--avec-hebergement')
+if (!AVEC_HEBERGEMENT) T("pas d'aperçu ni de mise en ligne inventés (fonctionnalités pas encore construites)", !/mettre_en_ligne|apercu_jeton|Mettre en ligne/.test(comp))
+else {
+  T("le lien d'aperçu privé (`apercu`) est affiché quand il existe", /\.apercu\b|apercu\b/.test(comp) && /noopener/.test(comp))
+  T("« Mettre en ligne » envoie action: 'mettre_en_ligne', réservé à l'état validee", /action:\s*'mettre_en_ligne'/.test(comp) && /'validee'/.test(comp))
+  T('les enregistrements DNS rendus sont affichés (type, nom, valeur)', /dns/.test(comp) && /value/.test(comp))
+}
 
 console.log('── 2. Le rail du Poste de contrôle')
 const page = lire(path.join(RACINE, 'app', 'controle', 'page.tsx'))

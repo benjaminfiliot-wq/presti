@@ -29,5 +29,11 @@ export async function GET(req: Request) {
   const ids = [...new Set((data ?? []).map((c) => c.artisan_id).filter(Boolean))] as string[]
   const { data: artisans } = ids.length ? await supabaseAdmin.from('artisans').select('id, nom, metier, slug').in('id', ids) : { data: [] }
   const parId = new Map((artisans ?? []).map((a) => [a.id, a]))
-  return NextResponse.json({ commandes: (data ?? []).map((c) => ({ ...c, artisan: c.artisan_id ? parId.get(c.artisan_id) ?? null : null })) })
+  // Le lien d'aperçu privé n'est donné qu'à la direction : le rôle lecture voit l'état, pas le site avant validation.
+  const jetons = new Map<string, string | null>()
+  if (f.role === 'direction' && (data ?? []).length) {
+    const { data: j } = await supabaseAdmin.from('sites_commandes').select('id, apercu_jeton').in('id', (data ?? []).map((c) => c.id))
+    for (const x of j ?? []) jetons.set(x.id, x.apercu_jeton)
+  }
+  return NextResponse.json({ commandes: (data ?? []).map((c) => ({ ...c, artisan: c.artisan_id ? parId.get(c.artisan_id) ?? null : null, apercu: jetons.get(c.id) ? `/site-genere/${c.id}/?apercu=${jetons.get(c.id)}` : null })) })
 }

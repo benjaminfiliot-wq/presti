@@ -1,9 +1,9 @@
-# Digest — 2026-09-13T14:42:49Z
+# Digest — 2026-09-13T14:49:22Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (Antigravity) : 1 tâche(s) PASS, 1 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
-**État** — file : 16 · en cours : 0 · faites : 1 · refusées : 1
+**État** — file : 18 · en cours : 0 · faites : 1 · refusées : 1
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
@@ -23,5 +23,7 @@
 | 014-15 | contenu | file | antigravity | — | Cinquante cas synthétiques par métier pour le cerveau « urgence » (lib/ai/cerveaux/urgence/cas.jsonl), écrits à partir du vocabulaire et des pièges de lib/ai/metiers.ts — les cas qui passent en « reference », ceux qui échouent en « ouvert » |
 | 014-16 | feature | file | antigravity | — | L'onglet « Cerveaux » du Poste de contrôle — le tableau des scores des cerveaux (score accepté, cas, ouverts, dernière amélioration), branché sur /api/controle/cerveaux |
 | 014-17 | test | file | antigravity | — | La suite scripts/suspension-e2e.mjs — suspendre un compte depuis le Poste de contrôle a un effet partout (connexion refusée, page de conversation neutre, nouveau lead refusé, moteur muet, relances sautées), et réactiver ramène tout |
+| 014-18 | feature | file | antigravity | — | Dans l'onglet « Sites » du Poste de contrôle — le lien d'aperçu privé d'une commande générée, le bouton « Mettre en ligne » d'une commande validée, et les enregistrements DNS rendus à l'artisan |
+| 014-19 | test | file | antigravity | — | La suite scripts/site-hebergement-e2e.mjs — un site déposé n'est lisible qu'avec son jeton tant qu'il n'est pas en ligne, se sert avec les bons types une fois en ligne, et « mettre en ligne » exige un dépôt et journalise |
 | 001-test-echec | test | refuse | ag-2 | FAIL | ÉCHEC voulu : cette ligne doit apparaître telle quelle dans digest.md |
 | 000-test | test | fait | ag-1 | PASS | 2026-09-13T13:21:30Z · 0s · 1 l. |
