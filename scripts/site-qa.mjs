@@ -106,7 +106,12 @@ function largeurWebp(fichier) {
 }
 // Une attribution inventée (« John Doe », source « Wikimedia » sans lien — le 13/09) n'est pas une attribution.
 const AUTEURS_BIDON = /^(john doe|jane doe|auteur|author|inconnu|unknown|anonyme|anonymous|test|n\/a|-)$/i
-const attributionCredible = (a) => !!a.auteur && a.auteur.length >= 3 && !AUTEURS_BIDON.test(a.auteur.trim()) && /^https?:\/\/\S+\.\S+/.test(String(a.source || '')) && LICENCES_PERMISES.includes(a.licence)
+// Le 13/09 (site « Électricien ») : source « https://commons.wikimedia.org » tout court — la racine d'un site n'est
+// pas une source, il faut la page du fichier ; et des légendes en « Ã© » (UTF-8 lu en latin-1) — un texte mal encodé
+// n'ira sur aucun site. `mojibake` sert aussi aux pages HTML.
+export const mojibake = (txt) => /Ã[\x80-\xBF©¨ªà«®¯§¹¼»¢]|\uFFFD|Â[\xA0«»]/.test(String(txt || ''))
+const sourcePrecise = (u) => { try { const x = new URL(String(u || '')); return /^https?:$/.test(x.protocol) && x.pathname.replace(/\/+$/, '').length >= 8 } catch { return false } }
+const attributionCredible = (a) => !!a.auteur && a.auteur.length >= 3 && !AUTEURS_BIDON.test(a.auteur.trim()) && !mojibake(a.auteur) && !mojibake(a.legende) && sourcePrecise(a.source) && LICENCES_PERMISES.includes(a.licence)
 const TYPES_MIME = {
   '.html': 'text/html; charset=utf-8', '.xml': 'application/xml; charset=utf-8', '.txt': 'text/plain; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -189,7 +194,7 @@ function jugerContrat(dossier, contrat) {
     const liste = Array.isArray(attributions) ? attributions : []
     const sans = images.filter((i) => !liste.some((a) => a.fichier === i || `images/${a.fichier}` === i))
     const incompletes = liste.filter((a) => !attributionCredible(a))
-    ok('attributions.json : chaque image a un auteur réel, une source en URL et une licence permise', !!attributions && sans.length === 0 && incompletes.length === 0, attributions ? `${sans.length} sans attribution · ${incompletes.length} non crédible(s) (auteur bidon, source sans URL ou licence)` : 'attributions.json absent ou illisible', `toutes ; licences : ${LICENCES_PERMISES.join(', ')}`)
+    ok('attributions.json : chaque image a un auteur réel, la page source (pas la racine d\'un site), une légende bien encodée et une licence permise', !!attributions && sans.length === 0 && incompletes.length === 0, attributions ? `${sans.length} sans attribution · ${incompletes.length} non crédible(s) (auteur bidon, source sans page, « Ã© », licence)` : 'attributions.json absent ou illisible', `toutes ; licences : ${LICENCES_PERMISES.join(', ')}`)
     AUTEURS = [...new Set(liste.map((a) => a.auteur).filter(Boolean))]
   }
   const sitemap = existe(dossier, 'sitemap.xml') ? fs.readFileSync(path.join(dossier, 'sitemap.xml'), 'utf8') : ''
@@ -244,7 +249,58 @@ function jugerPage(html, page, contrat, typeAttendu, titres, descriptions) {
   return t
 }
 
-// ── La substance et la direction artistique ──────────────────────────────────────────────────────────────────
+// ── Le rendu réel ─────────────────────────────────────────────────────────────────────────────────────────
+// Le 13/09, un site « tout vert » (Lighthouse 99/100/100/100, 12 photos, CSS au seuil) était à l'écran un squelette : listes
+// à puces, section « Nos réalisations » vide, contenu dans une colonne de 840 px sur un fond noir. Ce que les compteurs ne
+// voient pas, le navigateur le voit : on charge l'accueil, on le fait défiler (images paresseuses, reveals), et on mesure
+// ce qui est VISIBLE — images chargées et opaques, vides verticaux, largeur du contenu, police du métier vraiment appliquée.
+async function jugerRendu(navigateur, origine, pages, da) {
+  const t = []
+  const ok = (nom, passe, mesure = '', attendu = '') => t.push({ nom, passe: !!passe, mesure: String(mesure), attendu: String(attendu) })
+  const accueil = (pages.find((p) => p.type === 'accueil') || { chemin: '/' }).chemin
+  const mesurer = async (largeur, hauteur, js) => {
+    const ctx = await navigateur.newContext({ viewport: { width: largeur, height: hauteur }, javaScriptEnabled: js })
+    const page = await ctx.newPage()
+    try {
+      await page.goto(origine + accueil, { waitUntil: 'load', timeout: 60_000 })
+      await page.evaluate(async () => { const h = document.documentElement.scrollHeight; for (let y = 0; y < h; y += 400) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 100)) } window.scrollTo(0, 0) })
+      await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {})
+      await page.waitForTimeout(500)
+      return await page.evaluate(() => {
+        const vis = (el) => { const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) < 0.9) return false; const b = el.getBoundingClientRect(); return b.width > 4 && b.height > 4 }
+        const imgs = [...document.images]
+        const imgsOk = imgs.filter((i) => i.complete && i.naturalWidth > 0 && vis(i)).length
+        const boites = []
+        for (const el of document.body.querySelectorAll('*')) {
+          if (!vis(el)) continue
+          const b = el.getBoundingClientRect(), top = b.top + scrollY, tag = el.tagName
+          if (tag === 'IMG' || tag === 'VIDEO' || tag === 'svg' || tag === 'SVG') boites.push([top, top + b.height])
+          else if (el.childElementCount === 0 && (el.textContent || '').trim().length >= 3) boites.push([top, top + b.height])
+          else if (getComputedStyle(el).backgroundImage !== 'none' && b.height > 40) boites.push([top, top + b.height])
+        }
+        boites.sort((a, b) => a[0] - b[0])
+        let maxVide = 0, fin = 0
+        for (const [a, b] of boites) { if (a - fin > maxVide) maxVide = a - fin; fin = Math.max(fin, b) }
+        const hauteurDoc = document.documentElement.scrollHeight
+        if (hauteurDoc - fin > maxVide) maxVide = hauteurDoc - fin
+        const h1 = document.querySelector('h1')
+        const largeurContenu = Math.max(0, ...[...document.querySelectorAll('main, section, header, footer, article')].map((e) => e.getBoundingClientRect().width))
+        return { imgs: imgs.length, imgsOk, maxVide: Math.round(maxVide), police: h1 ? getComputedStyle(h1).fontFamily : '(pas de h1)', largeurContenu: Math.round(largeurContenu), hauteurDoc: Math.round(hauteurDoc) }
+      })
+    } finally { await ctx.close().catch(() => {}) }
+  }
+  try {
+    const bureau = await mesurer(1280, 900, true), mobile = await mesurer(390, 844, true)
+    ok('bureau : toutes les images chargées et visibles après défilement (opacité ≥ 0,9)', bureau.imgs > 0 && bureau.imgsOk === bureau.imgs, `${bureau.imgsOk}/${bureau.imgs}`, 'toutes')
+    ok('bureau : aucun vide vertical de plus de 700 px sans contenu visible', bureau.maxVide <= 700, `${bureau.maxVide} px (page de ${bureau.hauteurDoc} px)`, '≤ 700 px')
+    ok('bureau : le contenu occupe la largeur (≥ 900 px sur 1280)', bureau.largeurContenu >= 900, `${bureau.largeurContenu} px`, '≥ 900 px')
+    ok('mobile : images visibles et aucun vide de plus de 900 px', mobile.imgsOk === mobile.imgs && mobile.maxVide <= 900, `${mobile.imgsOk}/${mobile.imgs} · vide max ${mobile.maxVide} px`, '≤ 900 px')
+    if (da) ok(`le h1 est composé en « ${da.display} » (police du métier appliquée, pas seulement déclarée)`, new RegExp(da.display.replace(/\s+/g, '\\s*'), 'i').test(bureau.police), bureau.police.slice(0, 60), da.display)
+  } catch (e) { ok('le rendu a pu être mesuré (Playwright)', false, e.message.slice(0, 120), 'accueil chargé en 60 s') }
+  return t
+}
+
+// ── La substance et la direction artistique ────────────────────────────────────────────────────────────
 function jugerSubstance(dossier, contrat, pages) {
   const t = []
   const ok = (nom, passe, mesure = '', attendu = '') => t.push({ nom, passe: !!passe, mesure: String(mesure), attendu: String(attendu) })
@@ -253,7 +309,25 @@ function jugerSubstance(dossier, contrat, pages) {
   const accueil = lireHtml(pages.find((p) => p.type === 'accueil') || { chemin: '/' })
   // Le CSS : les feuilles du dossier + les <style> inline de l'accueil.
   const css = fichiers.filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(f, 'utf8')).join('\n') + [...accueil.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n') + [...accueil.matchAll(/style=["']([^"']*)["']/gi)].map((m) => m[1]).join('\n')
-  ok(`CSS réel (≥ ${SUBSTANCE.CSS_MIN} signes)`, css.length >= SUBSTANCE.CSS_MIN, `${css.length} signes`, `≥ ${SUBSTANCE.CSS_MIN}`)
+  const htmlTous = pages.map(lireHtml).join('\n') + accueil
+  const classes = new Set(), ids = new Set()
+  for (const m of htmlTous.matchAll(/\bclass\s*=\s*["']([^"']*)["']/gi)) for (const c of m[1].split(/\s+/)) if (c) classes.add(c)
+  for (const m of htmlTous.matchAll(/\bid\s*=\s*["']([^"']*)["']/gi)) if (m[1]) ids.add(m[1].trim())
+  // Une règle compte si chacune de ses classes et chacun de ses ids existent dans une page (les règles sans classe ni id
+  // — balises, @font-face, @keyframes, pseudo-éléments — comptent toujours). 300 « .util-margin-N » sans emploi = 0 signe.
+  let cssUtile = 0, reglesInutiles = 0
+  for (const morceau of css.split('}')) {
+    const parts = morceau.split('{'); if (parts.length < 2) continue
+    const decl = parts.pop(), sel = parts.pop().trim()
+    const cls = [...sel.matchAll(/\.([A-Za-z_-][\w-]*)/g)].map((m) => m[1]), idl = [...sel.matchAll(/#([A-Za-z_-][\w-]*)/g)].map((m) => m[1])
+    const utile = cls.every((c) => classes.has(c)) && idl.every((i) => ids.has(i))
+    if (utile) cssUtile += sel.length + decl.length + 2; else reglesInutiles++
+  }
+  ok(`CSS réel et UTILISÉ (≥ ${SUBSTANCE.CSS_MIN} signes de règles dont les classes existent dans les pages)`, cssUtile >= SUBSTANCE.CSS_MIN, `${cssUtile} signes utiles sur ${css.length}${reglesInutiles ? ` · ${reglesInutiles} règle(s) sans emploi` : ''}`, `≥ ${SUBSTANCE.CSS_MIN}`)
+  // Un contenu masqué en attendant JavaScript (reveal au défilement : opacity 0 → 1) doit avoir un filet : sans script
+  // (lecteur, robot, erreur JS), le site ne doit pas rester vide. Règle du design system Presti, vérifiée ici sans navigateur.
+  const masques = [...css.matchAll(/([^{}]+)\{[^}]*opacity\s*:\s*0(?:\.0+)?\s*[;}]/g)].map((m) => m[1].trim()).filter((sel) => [...sel.matchAll(/\.([A-Za-z_-][\w-]*)/g)].some((m) => classes.has(m[1])))
+  ok('un contenu masqué en attendant JavaScript (opacity: 0) a un filet de sécurité (<noscript><style>, ou règle sous html.js / .no-js)', masques.length === 0 || /<noscript>\s*<style/i.test(accueil) || /html\.js\b|\.no-js\b|\.js\s+\./i.test(css), masques.length ? `${masques.length} sélecteur(s) à opacité 0 : ${masques.slice(0, 3).join(', ')}` : 'aucun contenu masqué', 'un filet, ou rien de masqué')
   const polices = fichiers.filter((f) => /\.woff2?$/i.test(f) && fs.statSync(f).size >= SUBSTANCE.POLICE_OCTETS_MIN)
   ok('polices auto-hébergées (woff2 dans le dossier, licence OFL à côté)', polices.length >= SUBSTANCE.POLICES_MIN && fichiers.some((f) => /OFL\.txt$/i.test(f)), `${polices.length} police(s)${fichiers.some((f) => /OFL\.txt$/i.test(f)) ? ', OFL.txt' : ', pas d’OFL.txt'}`, `≥ ${SUBSTANCE.POLICES_MIN} woff2 + OFL.txt`)
   ok('aucune police chargée depuis un service tiers', !/fonts\.googleapis|fonts\.gstatic|use\.typekit|cdnjs|jsdelivr|unpkg/i.test(accueil + css), 'lu', 'tout est dans le dossier')
@@ -374,8 +448,9 @@ if (!statique) {
     // de fichier pour que Lighthouse ne mesure qu'un site à la fois — sinon les mesures se parasitent (Performance 0
     // constaté le 13/09 avec sept juges sur le même port 9333).
     const port = await portLibre()
-    verrou = await prendreVerrou()
     navigateur = await chromium.launch({ args: [`--remote-debugging-port=${port}`] })
+    bloc('Le rendu réel — bureau et mobile', await jugerRendu(navigateur, origine, pages, DA_METIER[contrat?.metier]))
+    verrou = await prendreVerrou()
     const cibles = pages.filter((p) => p.type !== 'legal').slice(0, maxPages)
     for (const page of cibles) bloc(`Lighthouse mobile — ${page.chemin}`, await jugerLighthouse(origine + page.chemin, lighthouse, port))
     if (pages.filter((p) => p.type !== 'legal').length > cibles.length && !json) console.log(`${G}  (Lighthouse limité à ${cibles.length} page(s) par --pages ; les autres ne sont pas jugées)${Z}`)

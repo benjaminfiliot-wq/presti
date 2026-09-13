@@ -43,3 +43,5 @@
 {"id":"014-20","verdict":"FAIL","ligne":"❌ ÉCHEC : aucun message en forme de gabarit (crochets, métier entre parenthèses, identifiant cité, mot répété, moins de 15 % de mots-outils) — 665 trouvé(s) — p","code":1,"date":"2026-09-13T17:53:34Z","duree_s":9,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
 {"id":"014-14","verdict":"FAIL","ligne":"❌ ÉCHEC : rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/controle/Sites.tsx et app/controle/page.tsx — scripts/cas-urgence-verifier.mjs, scripts/","code":1,"date":"2026-09-13T17:55:03Z","duree_s":39,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
 {"id":"014-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T18:31:34Z","duree_s":50,"agent":"ag-1403","executant":"antigravity","lignes":16781,"dossier":"fait"}
+{"id":"014-14","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T18:41:34Z","duree_s":64,"agent":"claude-code","executant":"antigravity","lignes":0,"dossier":"fait"}
+{"id":"014-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T18:43:53Z","duree_s":154,"agent":"ag-1404","executant":"antigravity","lignes":2553,"dossier":"fait"}
