@@ -1,5 +1,7 @@
-- presti-design : couleurs exactes du carreleur appliquées (fond #F4F6F5, accent #3C6E63) et pas de fioriture.
-- emil-design-eng : grille aérée, paddings larges, lisibilité de la typographie Manrope (taille 18px, line-height 1.55).
-- apple-design : hiérarchie visuelle stricte avec un seul bouton d'action principal bien contrasté.
-- animation-vocabulary : utilisation de l'effet fade-in-up (opacité + translation 12px) décrit dans le vocabulaire.
-- improve-animations : reveal au défilement déclenché par un IntersectionObserver, avec fallback sur prefers-reduced-motion.
+# Application des skills design
+
+1. **presti-design** : Application des couleurs de la charte de l'artisan, notamment `#3C6E63` comme couleur d'accent pour les boutons et les liens, et un fond neutre `#F4F6F5` pour un contraste optimal.
+2. **emil-design-eng** : Attention portée aux détails invisibles. Les marges et l'espacement ont été revus pour éviter toute impression de "vide". Le layout est construit pour que le composant de base s'intègre harmonieusement sur tous les écrans, sans ruptures brutales.
+3. **apple-design** : Réduction du bruit visuel et priorité au feedback naturel. Utilisation de la police `Manrope` (avec un fallback natif robuste) et de classes CSS réduisant la complexité. Des `media queries` ont été intégrés pour que les grandes typographies (comme les h1 à 56px) soient réservées aux grands écrans, assurant une lecture spatiale cohérente typique des interfaces iOS/macOS.
+4. **animation-vocabulary** : Nommage explicite des effets. L'effet d'apparition au scroll a été structuré avec la classe `.reveal` et l'état `.visible`, implémentant un *slide-up fade* (opacité de 0 à 1, translation Y de 12px à 0) de 0.5s de durée avec une courbe *ease-out*.
+5. **improve-animations** : Dégradation gracieuse et accessibilité. La règle `@media (prefers-reduced-motion: reduce)` annule les transitions pour les utilisateurs sensibles, assurant que l'animation ne soit jamais un obstacle à l'accès au contenu. La classe `js` est utilisée sur la balise HTML de manière à ce que les éléments restent visibles si JavaScript échoue, ou pour le SEO.

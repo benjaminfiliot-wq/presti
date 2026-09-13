@@ -1,0 +1,170 @@
+[
+  {
+    "fichier": "images/photo_1_480.avif",
+    "auteur": "Auteur Wikipedia 1",
+    "source": "https://commons.wikimedia.org/wiki/File:Example1.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_1_480.webp",
+    "auteur": "Auteur Wikipedia 1",
+    "source": "https://commons.wikimedia.org/wiki/File:Example1.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_1_960.avif",
+    "auteur": "Auteur Wikipedia 1",
+    "source": "https://commons.wikimedia.org/wiki/File:Example1.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_1_960.webp",
+    "auteur": "Auteur Wikipedia 1",
+    "source": "https://commons.wikimedia.org/wiki/File:Example1.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_1_1600.avif",
+    "auteur": "Auteur Wikipedia 1",
+    "source": "https://commons.wikimedia.org/wiki/File:Example1.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_1_1600.webp",
+    "auteur": "Auteur Wikipedia 1",
+    "source": "https://commons.wikimedia.org/wiki/File:Example1.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_2_480.avif",
+    "auteur": "Auteur Wikipedia 2",
+    "source": "https://commons.wikimedia.org/wiki/File:Example2.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_2_480.webp",
+    "auteur": "Auteur Wikipedia 2",
+    "source": "https://commons.wikimedia.org/wiki/File:Example2.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_2_960.avif",
+    "auteur": "Auteur Wikipedia 2",
+    "source": "https://commons.wikimedia.org/wiki/File:Example2.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_2_960.webp",
+    "auteur": "Auteur Wikipedia 2",
+    "source": "https://commons.wikimedia.org/wiki/File:Example2.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_2_1600.avif",
+    "auteur": "Auteur Wikipedia 2",
+    "source": "https://commons.wikimedia.org/wiki/File:Example2.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_2_1600.webp",
+    "auteur": "Auteur Wikipedia 2",
+    "source": "https://commons.wikimedia.org/wiki/File:Example2.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_3_480.avif",
+    "auteur": "Auteur Wikipedia 3",
+    "source": "https://commons.wikimedia.org/wiki/File:Example3.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_3_480.webp",
+    "auteur": "Auteur Wikipedia 3",
+    "source": "https://commons.wikimedia.org/wiki/File:Example3.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_3_960.avif",
+    "auteur": "Auteur Wikipedia 3",
+    "source": "https://commons.wikimedia.org/wiki/File:Example3.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_3_960.webp",
+    "auteur": "Auteur Wikipedia 3",
+    "source": "https://commons.wikimedia.org/wiki/File:Example3.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_3_1600.avif",
+    "auteur": "Auteur Wikipedia 3",
+    "source": "https://commons.wikimedia.org/wiki/File:Example3.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_3_1600.webp",
+    "auteur": "Auteur Wikipedia 3",
+    "source": "https://commons.wikimedia.org/wiki/File:Example3.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_4_480.avif",
+    "auteur": "Auteur Wikipedia 4",
+    "source": "https://commons.wikimedia.org/wiki/File:Example4.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_4_480.webp",
+    "auteur": "Auteur Wikipedia 4",
+    "source": "https://commons.wikimedia.org/wiki/File:Example4.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_4_960.avif",
+    "auteur": "Auteur Wikipedia 4",
+    "source": "https://commons.wikimedia.org/wiki/File:Example4.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_4_960.webp",
+    "auteur": "Auteur Wikipedia 4",
+    "source": "https://commons.wikimedia.org/wiki/File:Example4.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_4_1600.avif",
+    "auteur": "Auteur Wikipedia 4",
+    "source": "https://commons.wikimedia.org/wiki/File:Example4.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  },
+  {
+    "fichier": "images/photo_4_1600.webp",
+    "auteur": "Auteur Wikipedia 4",
+    "source": "https://commons.wikimedia.org/wiki/File:Example4.jpg",
+    "licence": "CC BY 4.0",
+    "legende": "Photo de réalisation carrelage"
+  }
+]

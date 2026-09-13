@@ -1,0 +1,52 @@
+{
+  "metier": "carreleur",
+  "nom": "Démo Carreleur Marseille",
+  "telephone": "+33 4 00 00 00 00",
+  "siren": "000000000",
+  "decennale": {
+    "assureur": "Assureur fictif",
+    "numero": "DEMO-0001"
+  },
+  "communes": [
+    "Marseille",
+    "Aubagne",
+    "Allauch",
+    "La Ciotat"
+  ],
+  "metiers_secondaires": [],
+  "demo": true,
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/carreleur-marseille/",
+      "type": "commune",
+      "cible": "Marseille"
+    },
+    {
+      "chemin": "/carreleur-aubagne/",
+      "type": "commune",
+      "cible": "Aubagne"
+    },
+    {
+      "chemin": "/carreleur-allauch/",
+      "type": "commune",
+      "cible": "Allauch"
+    },
+    {
+      "chemin": "/carreleur-la-ciotat/",
+      "type": "commune",
+      "cible": "La Ciotat"
+    },
+    {
+      "chemin": "/mentions-legales/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/confidentialite/",
+      "type": "legal"
+    }
+  ]
+}

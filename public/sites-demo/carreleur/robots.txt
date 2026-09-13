@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://carreleur.demo.invalid/sitemap.xml

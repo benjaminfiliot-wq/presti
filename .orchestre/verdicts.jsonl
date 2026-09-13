@@ -52,3 +52,7 @@
 {"id":"014-06","verdict":"FAIL","ligne":"ÉCHEC robots.txt présent, sans Disallow global, avec Sitemap     présent                        attendu Sitemap: … et pas de Disallow: /","code":1,"date":"2026-09-13T23:28:08Z","duree_s":0,"agent":"ag-06-g38","executant":"antigravity","lignes":145341,"dossier":"en-cours"}
 {"id":"014-06","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:33:47Z","duree_s":61,"agent":"ag-06-g38","executant":"antigravity","lignes":15114,"dossier":"en-cours"}
 {"id":"014-07","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:34:33Z","duree_s":63,"agent":"ag-07-g38","executant":"antigravity","lignes":23483,"dossier":"en-cours"}
+{"id":"014-06","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:36:21Z","duree_s":129,"agent":"ag-06-g38","executant":"antigravity","lignes":2221,"dossier":"fait"}
+{"id":"014-07","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:37:23Z","duree_s":156,"agent":"ag-07-g38","executant":"antigravity","lignes":3038,"dossier":"fait"}
+{"id":"014-08","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:38:11Z","duree_s":66,"agent":"ag-08-pro","executant":"antigravity","lignes":14030,"dossier":"fait"}
+{"id":"014-08","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:38:47Z","duree_s":65,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
