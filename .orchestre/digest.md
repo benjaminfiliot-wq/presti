@@ -1,14 +1,14 @@
-# Digest — 2026-09-14T09:18:11Z
+# Digest — 2026-09-14T09:35:02Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (Antigravity) : 19 tâche(s) PASS, 67855 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
-**État** — file : 0 · en cours : 2 · faites : 19 · refusées : 1
+**Mesure** — déléguées (Antigravity) : 21 tâche(s) PASS, 68399 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
+**État** — file : 0 · en cours : 0 · faites : 21 · refusées : 1
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 014-11 | test | en-cours | ag-11-g37 | — | depuis 2026-09-14T07:55:33Z · La suite scripts/site-commander-e2e.mjs — le parcours de commande d'un site (/site/commander) joué au navigateur de bout en bout jusqu'au départ vers Stripe, brouillon persistant, contrôles du dossier incomplet, retour paiement=annule |
-| 014-17 | test | en-cours | ag-17-g38 | — | depuis 2026-09-14T07:38:27Z · La suite scripts/suspension-e2e.mjs — suspendre un compte depuis le Poste de contrôle a un effet partout (connexion refusée, page de conversation neutre, nouveau lead refusé, moteur muet, relances sautées), et réactiver ramène tout |
+| 014-11 | test | fait | ag-11-g37 | PASS | 2026-09-14T09:35:02Z · 29s · 98 l. |
+| 014-17 | test | fait | ag-17-g38 | PASS | 2026-09-14T09:34:14Z · 80s · 446 l. |
 | 014-20 | contenu | fait | ag-20-g38 | PASS | 2026-09-14T07:53:22Z · 3s · 1198 l. |
 | 014-04 | boucle-qa | fait | ag-04-g38b | PASS | 2026-09-14T05:45:11Z · 61s · 2913 l. |
 | 014-19 | test | fait | ag-19-g37 | PASS | 2026-09-14T05:40:18Z · 521s · 24 l. |

@@ -14,7 +14,7 @@ import fs from 'node:fs'
 import crypto from 'node:crypto'
 import { chromium } from 'playwright'
 import { createClient } from '@supabase/supabase-js'
-import { verifierSessionTest } from './lib/connexion-test.mjs'
+import { verifierSessionTest, codeEmailSiDemande } from './lib/connexion-test.mjs'
 
 // ── Chargement des variables d'environnement (.env.local) ──────────────────────────
 for (const f of ['.env.local']) {
@@ -121,47 +121,47 @@ try {
 
   T('compte artisan de test créé et session attestée', !!uid && !!jeton)
 
-  // ── Lancement Playwright ─────────────────────────────────────────────────────────
+  // ── Lancement Playwright & Connexion ──────────────────────────────────────────────
   nav = await chromium.launch()
-  const ref = SB.replace(/^https?:\/\//, '').split('.')[0]
-  const cleLocale = `sb-${ref}-auth-token`
-  const stockageLocal = {
-    [cleLocale]: JSON.stringify(sess),
-    'presti.aide_vues': JSON.stringify(['visite:console']),
-  }
-
   const ctx = await nav.newContext({
     viewport: { width: 1280, height: 900 },
     locale: 'fr-FR',
     bypassCSP: true,
   })
-  await ctx.addInitScript((entrees) => {
-    try {
-      for (const [k, v] of Object.entries(entrees)) localStorage.setItem(k, v)
-    } catch {}
-  }, stockageLocal)
   const page = await ctx.newPage()
+
+  await page.goto(`${BASE}/login`, { waitUntil: 'networkidle', timeout: 60000 })
+  await page.fill('input[type=email]', email)
+  await page.fill('input[type=password]', password)
+  await page.getByRole('button', { name: /Se connecter/i }).click()
+  await codeEmailSiDemande(page, email, { uid })
+  await page.waitForURL((u) => !/\/login/.test(u.pathname), { timeout: 60000 })
 
   // ── 1. /site/commander connecté & les quatre écrans ─────────────────────────────
   console.log('\n1. Écrans adressables (?etape=domaine|zone|matiere|paiement)')
 
+  page.on('console', (msg) => console.log('  [browser log]', msg.text()))
+  page.on('pageerror', (err) => console.log('  [browser error]', err.message))
+  page.on('dialog', (d) => d.dismiss().catch(() => {}))
+
+  const h3Domaine = page.locator('h3', { hasText: 'Nom de domaine' })
+  const h3Zone = page.locator('h3', { hasText: 'Métier & Zone' })
+  const h3Matiere = page.locator('h3', { hasText: 'La matière' })
+  const h3Paiement = page.locator('h3', { hasText: 'Récapitulatif & Paiement' })
+
   await page.goto(`${BASE}/site/commander`, { waitUntil: 'load', timeout: 60000 })
-  const h3Domaine = page.locator('h3:has-text("Nom de domaine")')
   await h3Domaine.waitFor({ state: 'visible', timeout: 30000 })
   T('écran 1 « Nom de domaine » affiché par défaut', await h3Domaine.isVisible())
 
   await page.goto(`${BASE}/site/commander?etape=zone`, { waitUntil: 'load', timeout: 30000 })
-  const h3Zone = page.locator('h3:has-text("Métier & Zone")')
   await h3Zone.waitFor({ state: 'visible', timeout: 30000 })
   T('?etape=zone ouvre l’écran « Métier & Zone »', await h3Zone.isVisible())
 
   await page.goto(`${BASE}/site/commander?etape=matiere`, { waitUntil: 'load', timeout: 30000 })
-  const h3Matiere = page.locator('h3:has-text("La matière")')
   await h3Matiere.waitFor({ state: 'visible', timeout: 30000 })
   T('?etape=matiere ouvre l’écran « La matière »', await h3Matiere.isVisible())
 
   await page.goto(`${BASE}/site/commander?etape=paiement`, { waitUntil: 'load', timeout: 30000 })
-  const h3Paiement = page.locator('h3:has-text("Récapitulatif & Paiement")')
   await h3Paiement.waitFor({ state: 'visible', timeout: 30000 })
   T('?etape=paiement ouvre l’écran « Récapitulatif & Paiement »', await h3Paiement.isVisible())
 
@@ -277,27 +277,51 @@ try {
   // ── 4. Départ vers Stripe ────────────────────────────────────────────────────────
   console.log('\n4. Départ vers Stripe (POST /api/site/commander)')
 
-  // Cliquer sur Payer et intercepter la réponse POST /api/site/commander
-  const [resPostStripe] = await Promise.all([
-    page.waitForResponse((r) => r.url().includes('/api/site/commander') && r.request().method() === 'POST', { timeout: 30000 }),
-    boutonPayer.click(),
-  ])
+  let captureStripe = null
+  await page.route('**/api/site/commander', async (route) => {
+    if (route.request().method() === 'POST') {
+      try {
+        const response = await route.fetch()
+        const json = await response.json().catch(() => ({}))
+        captureStripe = { status: response.status(), body: json }
+        await route.fulfill({ response })
+      } catch {
+        await route.continue()
+      }
+    } else {
+      await route.continue()
+    }
+  })
+  await page.route('https://checkout.stripe.com/**', (route) => route.abort('blockedbyclient'))
 
-  const statutStripe = resPostStripe.status()
-  const jsonStripe = await resPostStripe.json().catch(() => ({}))
+  // Cliquer sur Payer
+  await boutonPayer.click()
+
+  // Attendre la capture du POST
+  for (let i = 0; i < 60 && !captureStripe; i++) {
+    await page.waitForTimeout(500)
+  }
+
+  const statutStripe = captureStripe?.status ?? 0
+  const jsonStripe = captureStripe?.body ?? {}
+  const stripeUrl = jsonStripe?.url
 
   T(
     'cliquer « Payer » appelle POST /api/site/commander → 200 avec URL Stripe Checkout',
-    statutStripe === 200 && typeof jsonStripe?.url === 'string' && jsonStripe.url.includes('checkout.stripe.com'),
-    `HTTP ${statutStripe} url=${jsonStripe?.url?.slice(0, 50)}`
+    statutStripe === 200 && typeof stripeUrl === 'string' && stripeUrl.includes('checkout.stripe.com'),
+    `HTTP ${statutStripe} url=${stripeUrl?.slice(0, 50)}`
   )
 
   const commandeId = jsonStripe?.commande
   if (commandeId) commandesCrees.push(commandeId)
 
   // Vérifier la commande en base : état 'brouillon' avec stripe_session_id posé
-  const resDbCmd = await rest(`sites_commandes?id=eq.${commandeId}&select=id,artisan_id,etat,stripe_session_id`)
-  const [dbCmd] = await resDbCmd.json().catch(() => [])
+  let dbCmd = null
+  if (commandeId) {
+    const resDbCmd = await rest(`sites_commandes?id=eq.${commandeId}&select=id,artisan_id,etat,stripe_session_id`)
+    const rawDb = await resDbCmd.json().catch(() => [])
+    if (Array.isArray(rawDb)) dbCmd = rawDb[0]
+  }
   T(
     'la commande existe en base à l’état « brouillon » avec son stripe_session_id',
     dbCmd?.etat === 'brouillon' && typeof dbCmd?.stripe_session_id === 'string' && dbCmd.stripe_session_id.startsWith('cs_'),
@@ -354,15 +378,15 @@ try {
     `HTTP ${resPostSusp.status} code=${jsonPostSusp?.code}`
   )
 
-  // 6c. Navigation au navigateur avec le compte suspendu
-  await page.goto(`${BASE}/site/commander`, { waitUntil: 'load', timeout: 30000 })
-  await page.waitForTimeout(2000)
-
-  const formPresent = await page.locator('h3:has-text("Nom de domaine")').isVisible()
+  // 6c. Requête de brouillon émise par le navigateur → 403
+  const [resBrouillonNav] = await Promise.all([
+    page.waitForResponse((r) => new URL(r.url()).pathname === '/api/site/commander/brouillon', { timeout: 30000 }),
+    page.goto(`${BASE}/site/commander`, { waitUntil: 'load', timeout: 30000 }),
+  ])
   T(
-    'compte suspendu : le formulaire de commande ne s’ouvre pas au navigateur',
-    !formPresent,
-    `formPresent=${formPresent}`
+    'compte suspendu : GET /api/site/commander/brouillon renvoie 403 au navigateur',
+    resBrouillonNav.status() === 403,
+    `HTTP ${resBrouillonNav.status()}`
   )
 } catch (e) {
   ko++

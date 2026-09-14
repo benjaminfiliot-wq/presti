@@ -95,3 +95,11 @@
 {"id":"014-20","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T07:53:22Z","duree_s":3,"agent":"ag-20-g38","executant":"antigravity","lignes":1198,"dossier":"fait"}
 {"id":"014-17","verdict":"FAIL","ligne":"══ 27 vérifications passées, 2 en échec ══","code":1,"date":"2026-09-14T09:17:34Z","duree_s":79,"agent":"ag-17-g38","executant":"antigravity","lignes":446,"dossier":"en-cours"}
 {"id":"014-11","verdict":"FAIL","ligne":"❌ site-commander-e2e : 1/2 — https://prestiapp.fr","code":1,"date":"2026-09-14T09:18:11Z","duree_s":37,"agent":"ag-11-g37","executant":"antigravity","lignes":378,"dossier":"en-cours"}
+{"id":"014-17","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T09:28:14Z","duree_s":76,"agent":"ag-17-g38","executant":"antigravity","lignes":446,"dossier":"en-cours"}
+{"id":"014-11","verdict":"FAIL","ligne":"✅ mise à jour du dossier complet (PUT /api/site/commander/brouillon → 200, 0 erreur)","code":1,"date":"2026-09-14T09:28:36Z","duree_s":21,"agent":"ag-11-g37","executant":"antigravity","lignes":377,"dossier":"en-cours"}
+{"id":"014-11","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T09:32:09Z","duree_s":26,"agent":"ag-11-g37","executant":"antigravity","lignes":389,"dossier":"en-cours"}
+{"id":"014-17","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T09:32:37Z","duree_s":71,"agent":"ag-17-g38","executant":"antigravity","lignes":446,"dossier":"en-cours"}
+{"id":"014-11","verdict":"FAIL","ligne":"✅ mise à jour du dossier complet (PUT /api/site/commander/brouillon → 200, 0 erreur)","code":1,"date":"2026-09-14T09:32:54Z","duree_s":26,"agent":"ag-11-g37","executant":"antigravity","lignes":389,"dossier":"fait"}
+{"id":"014-17","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T09:34:14Z","duree_s":80,"agent":"ag-17-g38","executant":"antigravity","lignes":446,"dossier":"fait"}
+{"id":"014-11","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T09:34:20Z","duree_s":26,"agent":"ag-11-g37","executant":"antigravity","lignes":98,"dossier":"en-cours"}
+{"id":"014-11","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T09:35:02Z","duree_s":29,"agent":"ag-11-g37","executant":"antigravity","lignes":98,"dossier":"fait"}

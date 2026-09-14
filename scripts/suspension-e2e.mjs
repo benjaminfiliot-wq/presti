@@ -103,6 +103,7 @@ const api = async (chemin, jeton, init = {}) => {
 
 const purgerPlafondsDe = async (...uids) => {
   for (const u of uids) await admin.from('limites').delete().in('cle', [`reconf:${u}`, `direction:${u}`, `inscription:${u}`]).then(() => {}, () => {})
+  await admin.from('limites').delete().like('cle', 'leads:ip:%').then(() => {}, () => {})
 }
 
 /** Obtenir un jeton de re-confirmation pour le fondateur. */
