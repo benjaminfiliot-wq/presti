@@ -1,5 +1,5 @@
 // scripts/deploiement-etat.mjs — les derniers déploiements de production Vercel et leur état, avec la première ligne
-// d'erreur d'un build raté. Le 14/09, neuf déploiements de suite étaient en ERROR depuis 32ef4e6 (13/09 17 h 57 UTC) :
+// d'erreur d'un build raté. Le 14/09, 37 déploiements de suite étaient en ERROR depuis 32ef4e6 (13/09 17 h 57 UTC) :
 // tout ce qui a été poussé pendant la nuit (site à la demande, suspension, cerveau urgence) n'était pas en ligne, et
 // personne ne l'a vu — Vercel ne prévient pas, et « poussé » se lisait comme « déployé ». Après chaque push : ce script.
 //
