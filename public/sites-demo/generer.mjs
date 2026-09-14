@@ -77,12 +77,24 @@ function photo(a, rel, { eager = false, sizes = '(max-width: 900px) 100vw, 60vw'
   return `<picture${classe ? ` class="${classe}"` : ''}><source type="image/avif" srcset="${srcsetDe(a, rel, 'avif')}" sizes="${sizes}"><source type="image/webp" srcset="${srcsetDe(a, rel, 'webp')}" sizes="${sizes}"><img src="${rel}images/${a.base}-${defaut}.webp" alt="${esc(a.alt || a.legende)}" width="${a.largeur}" height="${a.hauteur}"${eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}></picture>`
 }
 
+// Une démo est servie par Next depuis public/ : `/sites-demo/x/` y est redirigé (308) vers `/sites-demo/x`, et depuis cette
+// adresse sans barre finale, `styles.css` ou `images/…` se résolvent dans `/sites-demo/` — la page arrive nue (constaté en
+// production le 14/09). Les liens internes d'une démo visent donc `index.html` explicitement : la page garde son dossier.
+function liensIndex(html) {
+  return html.replace(/\shref="([^"]*)"/g, (tout, v) => {
+    if (/^(?:[a-z]+:|\/\/|#)/i.test(v) || /\.(?:css|js|woff2|webp|avif|png|jpg|xml|txt|html)(?:#.*)?$/i.test(v)) return tout
+    const [chemin, ancre] = v.split('#')
+    const vers = chemin === '' || chemin === './' ? 'index.html' : chemin.endsWith('/') ? `${chemin}index.html` : chemin
+    return ` href="${vers}${ancre !== undefined ? '#' + ancre : ''}"`
+  })
+}
+
 function generer(metier) {
   const dossier = path.join(ICI, metier)
   const site = JSON.parse(fs.readFileSync(path.join(dossier, 'site.json'), 'utf8'))
   const contenu = JSON.parse(fs.readFileSync(path.join(dossier, 'contenu.json'), 'utf8'))
   const attributions = JSON.parse(fs.readFileSync(path.join(dossier, 'attributions.json'), 'utf8'))
-  const da = { ...DA.generique, ...(DA[site.metier] || {}) }
+  const da = { ...DA.generique, ...(DA[site.metier] || {}), ...(site.da && DA[site.da] ? DA[site.da] : {}) }
   const BASE = site.url_base || `https://${metier}.demo.invalid`
   const ville = site.communes[0]
   const tel = site.telephone
@@ -125,7 +137,7 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
     const ld = (contenu.pages[page.chemin]?.jsonld?.[0] || contenu.pages['/']?.jsonld?.[0])
     const ldPage = ld ? { ...ld, url, image: BASE + '/images/' + hero.base + '-1600.webp' } : null
     return `<!doctype html>
-<html lang="fr" class="no-js${da.texture === 'grain' ? ' texture--grain' : da.texture === 'papier' ? ' texture--papier' : ''}">
+<html lang="fr" class="no-js${da.texture === 'grain' ? ' texture--grain' : da.texture === 'papier' ? ' texture--papier' : ''}${da.monumental ? ' da--monumental' : ''}${da.lumiere ? ' da--lumiere' : ''}${da.raccords ? ' da--raccords' : ''}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -214,10 +226,10 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     let corps = '', alt = false, contact = null
     for (const s of c.sections) {
       const { g, intro, items } = analyser(s)
-      const classe = `section${alt ? ' section--alt' : ''}`
+      const classe = `section${da.sombre === g ? ' section--sombre' : alt ? ' section--alt' : ''}`
       if (g === 'prestations') { corps += `<section class="${classe}" id="prestations"><div class="conteneur">${entete('Prestations', s.h2, intro)}${cartes(items)}</div></section>`; alt = !alt }
       else if (g === 'engagements') { corps += `<section class="${classe}"><div class="conteneur">${entete('Engagements', s.h2, intro)}${cartes(items)}</div></section>`; alt = !alt }
-      else if (g === 'galerie') { corps += `<section class="${classe}" id="realisations"><div class="conteneur">${entete('Réalisations', s.h2, intro)}${galerieHtml(galerie.length >= 3 ? galerie : photos, rel)}</div></section>`; alt = !alt }
+      else if (g === 'galerie') { corps += `<section class="${classe}" id="realisations"><div class="conteneur">${entete('Réalisations', s.h2, intro)}${galerieHtml(Array.isArray(da.galerie) ? da.galerie.map((b) => photos.find((p) => p.base === b)).filter(Boolean) : (galerie.length >= 3 ? galerie : photos), rel)}</div></section>`; alt = !alt }
       else if (g === 'communes') { corps += `<section class="${classe}" id="communes"><div class="conteneur"><div class="deux"><div>${entete('Zone d’intervention', s.h2, intro)}${items.map((it) => `<h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}`).join('')}</div>${communesHtml(communes, rel)}</div></div></section>`; alt = !alt }
       else if (g === 'etapes') { corps += `<section class="${classe}" id="etapes"><div class="conteneur"><div class="etapes"><div class="etapes__tete reveal"><span class="mono">Comment ça se passe</span><h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div><ol class="etapes__liste">${items.map((it, i) => `<li class="etape"><span class="mono">Étape ${String(i + 1).padStart(2, '0')}</span><h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</li>`).join('')}</ol></div></div></section>`; alt = !alt }
       else if (g === 'faq') { corps += `<section class="${classe}" id="questions"><div class="conteneur">${entete('Questions fréquentes', s.h2, intro)}<div class="faq reveal">${items.map((it) => `<details><summary>${esc(it.titre)}</summary><div class="faq__corps">${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</div></details>`).join('')}</div></div></section>`; alt = !alt }
@@ -225,7 +237,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       else { corps += `<section class="${classe}"><div class="conteneur"><div class="prose reveal"><h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}${items.map((it) => `<h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}`).join('')}</div></div></section>`; alt = !alt }
     }
     if (!contact) contact = { titre: 'Échangeons sur votre projet', textes: [], tous: [] }
-    return tete(page, rel, { titre: c.title, description: c.description }) + heroHtml + `<div class="defile" aria-hidden="true"><div class="defile__piste">${groupe}${groupe}</div></div>` + faits + corps + bande(contact, infosContact(contact.tous), rel) + pied(rel)
+    return tete(page, rel, { titre: c.title, description: c.description }) + heroHtml + `<div class="defile${da.bandeAccent ? ' defile--accent' : ''}" aria-hidden="true"><div class="defile__piste">${groupe}${groupe}</div></div>` + faits + corps + bande(contact, infosContact(contact.tous), rel) + pied(rel)
   }
 
   // ── Une page intérieure (commune, métier secondaire) ────────────────────────────────────────────────────────
@@ -239,7 +251,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     let alt = true, premierePhoto = true, contact = null
     for (const s of c.sections) {
       const { g, intro, items } = analyser(s)
-      const classe = `section${alt ? ' section--alt' : ''}`
+      const classe = `section${da.sombre === g ? ' section--sombre' : alt ? ' section--alt' : ''}`
       if (g === 'prestations' && items.length) { corps += `<section class="${classe}"><div class="conteneur">${entete('Prestations', s.h2, intro)}${cartes(items)}</div></section>`; alt = !alt }
       else if (g === 'galerie') { corps += `<section class="${classe}"><div class="conteneur">${entete('Réalisations', s.h2, intro)}${galerieHtml(mesPhotos, rel, premierePhoto)}</div></section>`; premierePhoto = false; alt = !alt }
       else if (g === 'communes') { corps += `<section class="${classe}"><div class="conteneur"><div class="deux"><div>${entete('À proximité', s.h2, intro)}</div>${communesHtml([...voisines, ...(page.type === 'commune' ? [] : [])], rel, page.cible)}</div><p style="margin-top:2rem"><a class="bouton bouton--contour" href="${rel}">Retour à l’accueil</a></p></div></section>`; alt = !alt }
@@ -279,7 +291,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     if (!contenu.pages[page.chemin]) { console.log(`  ✗ ${metier}${page.chemin} : pas de contenu extrait`); continue }
     const html = page.type === 'accueil' ? accueil(page) : page.type === 'legal' ? legale(page) : interieure(page, indexInterieure++)
     const f = path.join(dossier, page.chemin.replace(/^\//, ''), 'index.html')
-    fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, html); n++
+    fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, site.demo ? liensIndex(html) : html); n++
   }
   const publiques = pages.filter((p) => p.type !== 'legal')
   fs.writeFileSync(path.join(dossier, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${publiques.map((p) => `  <url><loc>${BASE}${p.chemin}</loc><lastmod>${AUJOURDHUI}</lastmod></url>`).join('\n')}\n</urlset>\n`)
