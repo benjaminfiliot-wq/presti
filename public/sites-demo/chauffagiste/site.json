@@ -1,0 +1,59 @@
+{
+  "metier": "chauffagiste",
+  "nom": "Démo Chauffagiste Lille",
+  "telephone": "+33 4 00 00 00 00",
+  "siren": "000000000",
+  "decennale": {
+    "assureur": "Assureur fictif",
+    "numero": "DEMO-0001"
+  },
+  "communes": [
+    "Lille",
+    "Villeneuve-d'Ascq",
+    "Roubaix",
+    "Lambersart"
+  ],
+  "metiers_secondaires": [
+    "plombier"
+  ],
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/plombier/",
+      "type": "metier",
+      "cible": "plombier"
+    },
+    {
+      "chemin": "/mentions-legales/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/confidentialite/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/chauffagiste-lille/",
+      "type": "commune",
+      "cible": "Lille"
+    },
+    {
+      "chemin": "/chauffagiste-villeneuve-d-ascq/",
+      "type": "commune",
+      "cible": "Villeneuve-d'Ascq"
+    },
+    {
+      "chemin": "/chauffagiste-roubaix/",
+      "type": "commune",
+      "cible": "Roubaix"
+    },
+    {
+      "chemin": "/chauffagiste-lambersart/",
+      "type": "commune",
+      "cible": "Lambersart"
+    }
+  ],
+  "demo": true
+}
