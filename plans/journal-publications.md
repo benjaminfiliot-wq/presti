@@ -16,3 +16,15 @@
 | 2026-09-14 | 2026-09-14T08:12:23.477Z | facebook | 08 | A | 6aa7acfa6a6cfbfe1a5cee75 |
 | 2026-09-14 | 2026-09-14T08:16:49.644Z | linkedin | 09 | A | 6aa7adb5ad3983ed8ab8ac2a |
 | 2026-09-14 | 2026-09-14T08:16:49.644Z | facebook | 10 | A | 6aa7adc66a6cfbfe1a5cfba2 |
+
+## 2026-09-14 — tout est parti
+
+| Date | Parution | Canal | Note |
+|---|---|---|---|
+| 14/09 10 h 10 | pub-01 A | LinkedIn | « publier maintenant » depuis le tableau de bord Publora |
+| 14/09 10 h 11 | pub-01 B | Facebook | idem |
+| 14/09 10 h 11 | pub-07 A | Instagram | idem |
+| 14/09 10 h 12 | pub-02, 04, 06 B, 05, 08 | LinkedIn, Facebook, Instagram, LinkedIn, Facebook | pipeline, créneau passé → publication immédiate |
+| 14/09 10 h 17 | pub-09, 10 | LinkedIn, Facebook | idem |
+
+Publora : Published 10, Failed 0. Pub-03 exclue (postée à la main par Benj). La tâche planifiée « Presti publications » est retirée : plus rien à programmer.
