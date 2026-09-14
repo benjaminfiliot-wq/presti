@@ -18,6 +18,16 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const ACTIONS = { valider: 'validee', regenerer: 'payee', mettre_en_ligne: 'en_ligne' } as const
+
+// Un appel Supabase qui échoue une fois n'est pas encore une panne : on réessaie UNE fois après 400 ms (constaté le 14/09,
+// trois suites e2e en parallèle sur la production → 503 intermittents sur des lectures et des écritures saines).
+// L'écriture reste sûre à rejouer : elle est conditionnée à l'état lu (`.eq('etat', avant.etat)`).
+async function reprise<T>(f: () => PromiseLike<T>, ok: (r: T) => boolean): Promise<T> {
+  const r = await f()
+  if (ok(r)) return r
+  await new Promise((res) => setTimeout(res, 400))
+  return f()
+}
 type Action = keyof typeof ACTIONS
 
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -33,7 +43,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const consigne = String(corps.consigne ?? '').replace(/<[^>]*>/g, '').trim().slice(0, 1000)
   if (action === 'regenerer' && consigne.length < 10) return NextResponse.json({ error: 'Une consigne de régénération est obligatoire (au moins 10 signes) : dire ce qui ne va pas.' }, { status: 400 })
 
-  const { data: avant, error: eLecture } = await supabaseAdmin.from('sites_commandes').select('id, artisan_id, etat, regenerations, consigne, scores, domaine, domaine_mode').eq('id', id).maybeSingle()
+  const { data: avant, error: eLecture } = await reprise(() => supabaseAdmin.from('sites_commandes').select('id, artisan_id, etat, regenerations, consigne, scores, domaine, domaine_mode').eq('id', id).maybeSingle(), (r) => !r.error)
   if (eLecture) return NextResponse.json({ error: 'Commande indisponible.', code: 'indisponible' }, { status: 503 })
   if (!avant) return NextResponse.json({ error: 'Commande introuvable.' }, { status: 404 })
   const vers = ACTIONS[action]
@@ -60,13 +70,13 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
       ? { etat: vers, en_ligne_le: maintenant, modifie_le: maintenant }
     : { etat: vers, consigne, regenerations: (avant.regenerations ?? 0) + 1, genere_le: null, scores: null, verifications: null, modifie_le: maintenant }
   // Le journal d'abord : s'il ne s'écrit pas, rien ne bouge.
-  const journalise = await journaliser({
+  const journalise = await reprise(() => journaliser({
     acteur: f, action: action === 'valider' ? 'site_valide' : action === 'regenerer' ? 'site_regeneration' : 'site_en_ligne', cible_type: 'site_commande', cible_id: id, artisan_id: avant.artisan_id ?? undefined,
     avant: { etat: avant.etat, regenerations: avant.regenerations }, apres: { etat: vers, ...(action === 'regenerer' ? { consigne } : {}) }, reconfirme: false,
-  }, req).catch(() => false)
+  }, req).catch(() => false), (ok) => ok === true)
   if (!journalise) return NextResponse.json({ error: 'Le journal de direction est indisponible : geste refusé.', code: 'indisponible' }, { status: 503 })
   // La condition sur l'état fait la sûreté : deux validations en même temps ne passent pas deux fois.
-  const { data: passe, error: eMaj } = await supabaseAdmin.from('sites_commandes').update(maj).eq('id', id).eq('etat', avant.etat).select('id, etat, valide_le, regenerations, consigne')
+  const { data: passe, error: eMaj } = await reprise(() => supabaseAdmin.from('sites_commandes').update(maj).eq('id', id).eq('etat', avant.etat).select('id, etat, valide_le, regenerations, consigne'), (r) => !r.error)
   if (eMaj) return NextResponse.json({ error: 'Écriture impossible.', code: 'indisponible' }, { status: 503 })
   if (!passe || passe.length === 0) return NextResponse.json({ error: 'La commande a changé entre-temps : rechargez.' }, { status: 409 })
   // Le site livré est un site « commande » : l'origine de l'artisan change (§2.2), son site historique n'est pas touché.
