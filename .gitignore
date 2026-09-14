@@ -74,3 +74,8 @@ publications/
 # captures clés rangées dans <vague>/cles/, le reste reste sur la machine qui a jugé.
 .orchestre/preuves/017-*/*
 !.orchestre/preuves/017-*/cles
+
+# Photos candidates et originaux téléchargés pour choisir (plusieurs dizaines de Mo) : ils restent sur la machine.
+# Le 14/09/2026, 57 Mo d'originaux sont partis dans le commit 80472e8 parce qu'un dossier de preuves a été ajouté entier.
+.orchestre/preuves/*/photos/
+**/originaux/
