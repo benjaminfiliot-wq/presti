@@ -66,3 +66,6 @@ public/promo/pub-*/
 # — celui qu'on corrigerait par erreur, sans que rien ne le signale — et ajouterait 68 Mo de MP4
 # dérivés d'une liste de plans de 300 lignes. Une commande le refait entièrement.
 publications/
+
+# aperçus vidéo téléchargés pour les images-clés (droits MotionSites) : jamais versionnés
+.orchestre/preuves/refs/*.mp4
