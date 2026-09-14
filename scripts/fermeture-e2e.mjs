@@ -62,6 +62,9 @@ const PROTEGEES = [
   ['/api/controle/support/demander', 'POST', {}],
   ['/api/controle/support?artisan=00000000-0000-0000-0000-000000000000', 'GET'],
   ['/api/controle/audience', 'GET'], ['/api/controle/audience?historique=1', 'GET'],
+  // v15 — les sites à la demande vus du Poste (liste ; valider, régénérer, mettre en ligne) et le tableau des
+  // cerveaux (§8.3). Livrés sans passer par ici : c'est le verrou 1 ter qui les a signalés, pas une relecture.
+  ['/api/controle/sites', 'GET'], [`/api/controle/sites/${id}`, 'POST', {}], ['/api/controle/cerveaux', 'GET'],
   ['/api/devis/auto', 'POST', {}],
   ['/api/inventaire/recherche', 'POST', {}], ['/api/inventaire/recherche/retenir', 'POST', {}],
   ['/api/plateforme/apparence', 'GET'], ['/api/plateforme/apparence', 'POST', {}],
@@ -171,15 +174,22 @@ const { peut, offreMinimale } = await import('../lib/plans.ts').catch(() => ({})
 if (peut) {
   // L'essai (gratuit) = l'Essentiel avec 3 crédits (décision Benj 04/09) : le socle est ouvert à tous.
   const ATTENDU = {
-    'site.essentiel': 'gratuit', 'plateforme.comptes_clients': 'gratuit', 'devis.prix_artisan': 'gratuit', 'devis.ia': 'gratuit', 'factures.electronique': 'gratuit', 'canaux.email': 'gratuit', 'plateforme.domaine_perso': 'gratuit',
-    'export': 'studio', 'site.pro': 'studio', 'plateforme.personnalisation_avancee': 'studio', 'inventaire.recherche_ia': 'studio', 'canaux.whatsapp': 'studio',
-    'site.signature': 'signature', 'plateforme.ia.expert': 'signature', 'canaux.reseaux': 'signature', 'support.prioritaire': 'signature',
+    'plateforme.comptes_clients': 'gratuit', 'devis.prix_artisan': 'gratuit', 'devis.ia': 'gratuit', 'factures.electronique': 'gratuit', 'canaux.email': 'gratuit', 'plateforme.domaine_perso': 'gratuit', 'site.domaine_perso': 'gratuit',
+    'export': 'studio', 'plateforme.personnalisation_avancee': 'studio', 'inventaire.recherche_ia': 'studio', 'canaux.whatsapp': 'studio',
+    'plateforme.ia.expert': 'signature', 'canaux.reseaux': 'signature', 'support.prioritaire': 'signature',
   }
   const ORDRE = ['gratuit', 'essentiel', 'studio', 'signature']
   for (const [cap, min] of Object.entries(ATTENDU)) {
     const iMin = ORDRE.indexOf(min)
     const coherent = ORDRE.every((plan, i) => peut(plan, cap) === (i >= iMin))
     T(`${cap} : ouvert à partir de « ${min} », fermé en dessous${min !== 'gratuit' ? ` (offreMinimale = ${offreMinimale(cap)})` : ''}`, coherent && (min === 'gratuit' || offreMinimale(cap) === min), ORDRE.map((p) => `${p}:${peut(p, cap) ? 'oui' : 'non'}`).join(' '))
+  }
+  // Le site vitrine est sorti des formules le 13/09 (v15 §2.1, 6891728) : il se commande à part, 300 € une fois
+  // (lib/siteCommande.ts), et siteMax ne sert plus qu'aux sites historiques. Aucune offre, pas même Business, ne
+  // doit rouvrir ces capacités : ce serait revendre un site « inclus » que plus rien ne livre.
+  const TOUTES = [...ORDRE, 'business']
+  for (const cap of ['site.essentiel', 'site.pro', 'site.signature', 'site.slides3d']) {
+    T(`${cap} : fermé à toutes les offres, le site se commande à part (offreMinimale = ${offreMinimale(cap)})`, TOUTES.every((p) => !peut(p, cap)) && offreMinimale(cap) === null, TOUTES.map((p) => `${p}:${peut(p, cap) ? 'oui' : 'non'}`).join(' '))
   }
 } else T('lib/plans importable', false)
 
@@ -192,6 +202,9 @@ if (FLAGS) {
   T(`aideCentre=${FLAGS.aideCentre} ↔ /aide ${aide.status}`, FLAGS.aideCentre === (aide.status === 200))
   T('inventaireOcr baissé → aucun « OCR » vendu sur la landing ni la FAQ', !FLAGS.inventaireOcr && !/\bOCR\b/.test(landing) && !/\bOCR\b/.test((await page('/faq')).html))
   T('canauxWhatsapp / canauxReseaux baissés → pas vendus sur la landing', !FLAGS.canauxWhatsapp && !FLAGS.canauxReseaux && !/whatsapp/i.test(landing))
+  // Le bouton est la vente. Le bloc de la démo (app/DemoSite.tsx, landingDemoSite) cite le prix sans bouton : il montre,
+  // il ne vend pas — c'est donc le bouton qu'on cherche, pas le prix.
+  T(`siteCommandeVente=${FLAGS.siteCommandeVente} ↔ « Commander mon site » ${/Commander mon site/.test(landing) ? 'présent' : 'absent'} sur la landing`, FLAGS.siteCommandeVente === /Commander mon site/.test(landing))
   // ── Chaque drapeau, et ce qu'il commande ────────────────────────────────────────────────────
   // Une liste de sept noms tenue à la main laissait quatre drapeaux livrés sans surveillance
   // (07/09) : `comptabilite` cachait son onglet sans fermer ses routes, et rien ne le disait.
@@ -213,8 +226,18 @@ if (FLAGS) {
     'messagerie': ['route', '/api/controle/courriers', 'GET', 'app/api/controle/courriers/route.ts'],
     'comptabilite': ['route', '/api/controle/compta', 'GET', 'app/api/controle/compta/route.ts', 'app/api/controle/releve/route.ts'],
     'inventaireRecherche': ['route', '/api/inventaire/recherche', 'POST', 'app/api/inventaire/recherche/route.ts'],
-    'pushNatif': ['lu'], 'mfa': ['lu'], 'plateformeRegles': ['lu'], 'siteSlides3d': ['lu'],
-    'aideVisites': ['lu'], 'aideCentre': ['lu'], 'landingVideo': ['lu'],
+    'pushNatif': ['lu'], 'mfa': ['lu'], 'plateformeRegles': ['lu'],
+    'aideVisites': ['lu'], 'aideCentre': ['lu'], 'landingVideo': ['lu'], 'landingDemoSite': ['lu'],
+    // Le site à la demande (v15 §3) : le dossier, le paiement unique, et la page que voit un inconnu (notFound).
+    // Les routes /api/controle/sites ne lisent PAS ce drapeau — seul l'onglet du Poste le lit : elles sont derrière
+    // la garde fondateur (1 et 1 ter), et le commentaire de lib/flags ne les range pas dans son périmètre.
+    'siteCommande': ['route', '/api/site/commander/brouillon', 'GET', 'app/api/site/commander/brouillon/route.ts', 'app/api/site/commander/route.ts', 'app/site/commander/page.tsx'],
+    // Baissé et lu (landing, /abonnement, profil, menu) : la preuve qu'il ne vend rien est le test du bouton, plus haut.
+    'siteCommandeVente': ['lu'],
+    // Son seul lecteur a jamais été le libellé de la ligne « Site vitrine » de lib/plans.ts (vérifié dans l'historique
+    // git) ; aucun code de rendu ne l'a testé — les slides se rendent selon le niveau du site. La ligne est partie avec
+    // le site sorti des formules (6891728) : il ne commande plus rien.
+    'siteSlides3d': ['mort', 'levé, plus lu depuis que la ligne « Site vitrine » a quitté la grille (6891728) — à retirer'],
     // Baissé tant que 0074 n'est pas collée : la route doit alors répondre 404, comme partout.
     'supportArtisan': ['route', '/api/controle/support/demander', 'POST', 'app/api/controle/support/demander/route.ts'],
     // La garde du Poste passe AVANT le drapeau (401 à un inconnu, levé ou non) : la sonde est donc la route publique,
