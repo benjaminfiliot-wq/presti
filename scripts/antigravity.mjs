@@ -42,7 +42,8 @@ const MODELES = [...MODELES_GEMINI, ...Object.keys(CATALOGUE_CLAUDE)]
 const args = process.argv.slice(2)
 const commande = args[0]
 const positionnels = args.slice(1).filter((a) => !a.startsWith('--'))
-const option = (nom, defaut = null) => { const a = args.find((x) => x.startsWith(`--${nom}=`)); return a ? a.slice(nom.length + 3) : defaut }
+// --nom=valeur, ou --nom tout seul (drapeau) : le 14/09, `--duo` sans « = » passait inaperçu et l'agent recevait le prompt ordinaire.
+const option = (nom, defaut = null) => { const a = args.find((x) => x.startsWith(`--${nom}=`)); if (a) return a.slice(nom.length + 3); return args.includes(`--${nom}`) ? 'oui' : defaut }
 const maintenant = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 
 // ── Découverte : processus, jeton, port, projet ────────────────────────────────────────────────────────────
