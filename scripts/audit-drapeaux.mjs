@@ -35,7 +35,6 @@ for (const m of flagsSrc.matchAll(/^\s*(\w+)\s*:\s*(true|false)\s*,/gm)) FLAGS[m
 const MOTS = {
   canauxWhatsapp: [/whatsapp/i],
   canauxReseaux: [/r[ée]seaux sociaux/i, /\bles r[ée]seaux\b/i],
-  siteSlides3d: [/slides?\s*3d/i, /diapos?\s*3d/i],
   plateformePersona: [/persona\b/i],
   inventaireRecherche: [/recherche fournisseurs?/i, /recherche chez vos fournisseurs/i],
   plateformeRegles: [/r[èe]gles? d[’']automatisation/i],
