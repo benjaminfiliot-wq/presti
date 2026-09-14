@@ -1,23 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://peintre.demo.invalid/</loc>
-    <lastmod>2026-09-14</lastmod>
-  </url>
-  <url>
-    <loc>https://peintre.demo.invalid/peintre-bordeaux/</loc>
-    <lastmod>2026-09-14</lastmod>
-  </url>
-  <url>
-    <loc>https://peintre.demo.invalid/peintre-merignac/</loc>
-    <lastmod>2026-09-14</lastmod>
-  </url>
-  <url>
-    <loc>https://peintre.demo.invalid/peintre-pessac/</loc>
-    <lastmod>2026-09-14</lastmod>
-  </url>
-  <url>
-    <loc>https://peintre.demo.invalid/peintre-talence/</loc>
-    <lastmod>2026-09-14</lastmod>
-  </url>
+  <url><loc>https://peintre.demo.invalid/</loc><lastmod>2026-09-14</lastmod></url>
+  <url><loc>https://peintre.demo.invalid/peintre-bordeaux/</loc><lastmod>2026-09-14</lastmod></url>
+  <url><loc>https://peintre.demo.invalid/peintre-merignac/</loc><lastmod>2026-09-14</lastmod></url>
+  <url><loc>https://peintre.demo.invalid/peintre-pessac/</loc><lastmod>2026-09-14</lastmod></url>
+  <url><loc>https://peintre.demo.invalid/peintre-talence/</loc><lastmod>2026-09-14</lastmod></url>
 </urlset>

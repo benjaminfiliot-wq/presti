@@ -1,254 +1,482 @@
 [
-  {
-    "fichier": "images/hero-480.webp",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mur traditionnel en briques foraines et mortier"
-  },
-  {
-    "fichier": "images/hero-480.avif",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mur traditionnel en briques foraines et mortier"
-  },
-  {
-    "fichier": "images/hero-960.webp",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mur traditionnel en briques foraines et mortier"
-  },
-  {
-    "fichier": "images/hero-960.avif",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mur traditionnel en briques foraines et mortier"
-  },
-  {
-    "fichier": "images/hero-1600.webp",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mur traditionnel en briques foraines et mortier"
-  },
-  {
-    "fichier": "images/hero-1600.avif",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mur traditionnel en briques foraines et mortier"
-  },
-  {
-    "fichier": "images/realisation1-480.webp",
-    "auteur": "Artaxerxes",
-    "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coffrage et fondations en béton armé"
-  },
-  {
-    "fichier": "images/realisation1-480.avif",
-    "auteur": "Artaxerxes",
-    "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coffrage et fondations en béton armé"
-  },
-  {
-    "fichier": "images/realisation1-960.webp",
-    "auteur": "Artaxerxes",
-    "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coffrage et fondations en béton armé"
-  },
-  {
-    "fichier": "images/realisation1-960.avif",
-    "auteur": "Artaxerxes",
-    "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coffrage et fondations en béton armé"
-  },
-  {
-    "fichier": "images/realisation1-1600.webp",
-    "auteur": "Artaxerxes",
-    "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coffrage et fondations en béton armé"
-  },
-  {
-    "fichier": "images/realisation1-1600.avif",
-    "auteur": "Artaxerxes",
-    "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coffrage et fondations en béton armé"
-  },
-  {
-    "fichier": "images/realisation2-480.webp",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Brickwork_in_Russia._Moscow_region._img_02.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Élévation de murs porteurs en maçonnerie"
-  },
-  {
-    "fichier": "images/realisation2-480.avif",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Brickwork_in_Russia._Moscow_region._img_02.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Élévation de murs porteurs en maçonnerie"
-  },
-  {
-    "fichier": "images/realisation2-960.webp",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Brickwork_in_Russia._Moscow_region._img_02.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Élévation de murs porteurs en maçonnerie"
-  },
-  {
-    "fichier": "images/realisation2-960.avif",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Brickwork_in_Russia._Moscow_region._img_02.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Élévation de murs porteurs en maçonnerie"
-  },
-  {
-    "fichier": "images/realisation2-1600.webp",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Brickwork_in_Russia._Moscow_region._img_02.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Élévation de murs porteurs en maçonnerie"
-  },
-  {
-    "fichier": "images/realisation2-1600.avif",
-    "auteur": "Dmitry Makeev",
-    "source": "https://commons.wikimedia.org/wiki/File:Brickwork_in_Russia._Moscow_region._img_02.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Élévation de murs porteurs en maçonnerie"
-  },
-  {
-    "fichier": "images/realisation3-480.webp",
-    "auteur": "Vsatinet",
-    "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coulage de dalle béton armé et nivellement"
-  },
-  {
-    "fichier": "images/realisation3-480.avif",
-    "auteur": "Vsatinet",
-    "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coulage de dalle béton armé et nivellement"
-  },
-  {
-    "fichier": "images/realisation3-960.webp",
-    "auteur": "Vsatinet",
-    "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coulage de dalle béton armé et nivellement"
-  },
-  {
-    "fichier": "images/realisation3-960.avif",
-    "auteur": "Vsatinet",
-    "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coulage de dalle béton armé et nivellement"
-  },
-  {
-    "fichier": "images/realisation3-1600.webp",
-    "auteur": "Vsatinet",
-    "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coulage de dalle béton armé et nivellement"
-  },
-  {
-    "fichier": "images/realisation3-1600.avif",
-    "auteur": "Vsatinet",
-    "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Coulage de dalle béton armé et nivellement"
-  },
-  {
-    "fichier": "images/realisation4-480.webp",
-    "auteur": "Dosseman",
-    "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mur de soutènement maçonné en pierres de taille"
-  },
-  {
-    "fichier": "images/realisation4-480.avif",
-    "auteur": "Dosseman",
-    "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mur de soutènement maçonné en pierres de taille"
-  },
-  {
-    "fichier": "images/realisation4-960.webp",
-    "auteur": "Dosseman",
-    "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mur de soutènement maçonné en pierres de taille"
-  },
-  {
-    "fichier": "images/realisation4-960.avif",
-    "auteur": "Dosseman",
-    "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mur de soutènement maçonné en pierres de taille"
-  },
-  {
-    "fichier": "images/realisation4-1600.webp",
-    "auteur": "Dosseman",
-    "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mur de soutènement maçonné en pierres de taille"
-  },
-  {
-    "fichier": "images/realisation4-1600.avif",
-    "auteur": "Dosseman",
-    "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mur de soutènement maçonné en pierres de taille"
-  },
-  {
-    "fichier": "images/realisation5-480.webp",
-    "auteur": "Les Chatfield",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Pose de parement maçonné et finitions soignées"
-  },
-  {
-    "fichier": "images/realisation5-480.avif",
-    "auteur": "Les Chatfield",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Pose de parement maçonné et finitions soignées"
-  },
-  {
-    "fichier": "images/realisation5-960.webp",
-    "auteur": "Les Chatfield",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Pose de parement maçonné et finitions soignées"
-  },
-  {
-    "fichier": "images/realisation5-960.avif",
-    "auteur": "Les Chatfield",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Pose de parement maçonné et finitions soignées"
-  },
-  {
-    "fichier": "images/realisation5-1600.webp",
-    "auteur": "Les Chatfield",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Pose de parement maçonné et finitions soignées"
-  },
-  {
-    "fichier": "images/realisation5-1600.avif",
-    "auteur": "Les Chatfield",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Pose de parement maçonné et finitions soignées"
-  }
+ {
+  "fichier": "images/hero-1600.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Mur traditionnel en briques et mortier",
+  "alt": "Mur traditionnel en briques et mortier",
+  "auteur": "Dmitry Makeev",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
+  "titre_commons": "File:Old brickwork. Red brick.jpg"
+ },
+ {
+  "fichier": "images/hero-1600.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Mur traditionnel en briques et mortier",
+  "alt": "Mur traditionnel en briques et mortier",
+  "auteur": "Dmitry Makeev",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
+  "titre_commons": "File:Old brickwork. Red brick.jpg"
+ },
+ {
+  "fichier": "images/hero-960.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Mur traditionnel en briques et mortier",
+  "alt": "Mur traditionnel en briques et mortier",
+  "auteur": "Dmitry Makeev",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
+  "titre_commons": "File:Old brickwork. Red brick.jpg"
+ },
+ {
+  "fichier": "images/hero-960.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Mur traditionnel en briques et mortier",
+  "alt": "Mur traditionnel en briques et mortier",
+  "auteur": "Dmitry Makeev",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
+  "titre_commons": "File:Old brickwork. Red brick.jpg"
+ },
+ {
+  "fichier": "images/hero-720.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Mur traditionnel en briques et mortier",
+  "alt": "Mur traditionnel en briques et mortier",
+  "auteur": "Dmitry Makeev",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
+  "titre_commons": "File:Old brickwork. Red brick.jpg"
+ },
+ {
+  "fichier": "images/hero-720.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Mur traditionnel en briques et mortier",
+  "alt": "Mur traditionnel en briques et mortier",
+  "auteur": "Dmitry Makeev",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
+  "titre_commons": "File:Old brickwork. Red brick.jpg"
+ },
+ {
+  "fichier": "images/hero-480.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Mur traditionnel en briques et mortier",
+  "alt": "Mur traditionnel en briques et mortier",
+  "auteur": "Dmitry Makeev",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
+  "titre_commons": "File:Old brickwork. Red brick.jpg"
+ },
+ {
+  "fichier": "images/hero-480.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Mur traditionnel en briques et mortier",
+  "alt": "Mur traditionnel en briques et mortier",
+  "auteur": "Dmitry Makeev",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Old_brickwork._Red_brick.jpg",
+  "titre_commons": "File:Old brickwork. Red brick.jpg"
+ },
+ {
+  "fichier": "images/fondations-1600.webp",
+  "base": "fondations",
+  "largeur": 1600,
+  "hauteur": 960,
+  "legende": "Coffrage et fondations en béton armé",
+  "alt": "Coffrage et fondations en béton armé",
+  "auteur": "Artaxerxes",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
+  "titre_commons": "File:Concrete foundation preparation downtown Littleton NH August 2017.jpg"
+ },
+ {
+  "fichier": "images/fondations-1600.avif",
+  "base": "fondations",
+  "largeur": 1600,
+  "hauteur": 960,
+  "legende": "Coffrage et fondations en béton armé",
+  "alt": "Coffrage et fondations en béton armé",
+  "auteur": "Artaxerxes",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
+  "titre_commons": "File:Concrete foundation preparation downtown Littleton NH August 2017.jpg"
+ },
+ {
+  "fichier": "images/fondations-960.webp",
+  "base": "fondations",
+  "largeur": 1600,
+  "hauteur": 960,
+  "legende": "Coffrage et fondations en béton armé",
+  "alt": "Coffrage et fondations en béton armé",
+  "auteur": "Artaxerxes",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
+  "titre_commons": "File:Concrete foundation preparation downtown Littleton NH August 2017.jpg"
+ },
+ {
+  "fichier": "images/fondations-960.avif",
+  "base": "fondations",
+  "largeur": 1600,
+  "hauteur": 960,
+  "legende": "Coffrage et fondations en béton armé",
+  "alt": "Coffrage et fondations en béton armé",
+  "auteur": "Artaxerxes",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
+  "titre_commons": "File:Concrete foundation preparation downtown Littleton NH August 2017.jpg"
+ },
+ {
+  "fichier": "images/fondations-720.webp",
+  "base": "fondations",
+  "largeur": 1600,
+  "hauteur": 960,
+  "legende": "Coffrage et fondations en béton armé",
+  "alt": "Coffrage et fondations en béton armé",
+  "auteur": "Artaxerxes",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
+  "titre_commons": "File:Concrete foundation preparation downtown Littleton NH August 2017.jpg"
+ },
+ {
+  "fichier": "images/fondations-720.avif",
+  "base": "fondations",
+  "largeur": 1600,
+  "hauteur": 960,
+  "legende": "Coffrage et fondations en béton armé",
+  "alt": "Coffrage et fondations en béton armé",
+  "auteur": "Artaxerxes",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
+  "titre_commons": "File:Concrete foundation preparation downtown Littleton NH August 2017.jpg"
+ },
+ {
+  "fichier": "images/fondations-480.webp",
+  "base": "fondations",
+  "largeur": 1600,
+  "hauteur": 960,
+  "legende": "Coffrage et fondations en béton armé",
+  "alt": "Coffrage et fondations en béton armé",
+  "auteur": "Artaxerxes",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
+  "titre_commons": "File:Concrete foundation preparation downtown Littleton NH August 2017.jpg"
+ },
+ {
+  "fichier": "images/fondations-480.avif",
+  "base": "fondations",
+  "largeur": 1600,
+  "hauteur": 960,
+  "legende": "Coffrage et fondations en béton armé",
+  "alt": "Coffrage et fondations en béton armé",
+  "auteur": "Artaxerxes",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Concrete_foundation_preparation_downtown_Littleton_NH_August_2017.jpg",
+  "titre_commons": "File:Concrete foundation preparation downtown Littleton NH August 2017.jpg"
+ },
+ {
+  "fichier": "images/coulage-1600.webp",
+  "base": "coulage",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Coulage d'une dalle béton et nivellement",
+  "alt": "Coulage d'une dalle béton et nivellement",
+  "auteur": "Vsatinet",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
+  "titre_commons": "File:Pouring of Concrete Foundation.jpg"
+ },
+ {
+  "fichier": "images/coulage-1600.avif",
+  "base": "coulage",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Coulage d'une dalle béton et nivellement",
+  "alt": "Coulage d'une dalle béton et nivellement",
+  "auteur": "Vsatinet",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
+  "titre_commons": "File:Pouring of Concrete Foundation.jpg"
+ },
+ {
+  "fichier": "images/coulage-960.webp",
+  "base": "coulage",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Coulage d'une dalle béton et nivellement",
+  "alt": "Coulage d'une dalle béton et nivellement",
+  "auteur": "Vsatinet",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
+  "titre_commons": "File:Pouring of Concrete Foundation.jpg"
+ },
+ {
+  "fichier": "images/coulage-960.avif",
+  "base": "coulage",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Coulage d'une dalle béton et nivellement",
+  "alt": "Coulage d'une dalle béton et nivellement",
+  "auteur": "Vsatinet",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
+  "titre_commons": "File:Pouring of Concrete Foundation.jpg"
+ },
+ {
+  "fichier": "images/coulage-720.webp",
+  "base": "coulage",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Coulage d'une dalle béton et nivellement",
+  "alt": "Coulage d'une dalle béton et nivellement",
+  "auteur": "Vsatinet",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
+  "titre_commons": "File:Pouring of Concrete Foundation.jpg"
+ },
+ {
+  "fichier": "images/coulage-720.avif",
+  "base": "coulage",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Coulage d'une dalle béton et nivellement",
+  "alt": "Coulage d'une dalle béton et nivellement",
+  "auteur": "Vsatinet",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
+  "titre_commons": "File:Pouring of Concrete Foundation.jpg"
+ },
+ {
+  "fichier": "images/coulage-480.webp",
+  "base": "coulage",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Coulage d'une dalle béton et nivellement",
+  "alt": "Coulage d'une dalle béton et nivellement",
+  "auteur": "Vsatinet",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
+  "titre_commons": "File:Pouring of Concrete Foundation.jpg"
+ },
+ {
+  "fichier": "images/coulage-480.avif",
+  "base": "coulage",
+  "largeur": 1600,
+  "hauteur": 1064,
+  "legende": "Coulage d'une dalle béton et nivellement",
+  "alt": "Coulage d'une dalle béton et nivellement",
+  "auteur": "Vsatinet",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Pouring_of_Concrete_Foundation.jpg",
+  "titre_commons": "File:Pouring of Concrete Foundation.jpg"
+ },
+ {
+  "fichier": "images/soutenement-1600.webp",
+  "base": "soutenement",
+  "largeur": 1600,
+  "hauteur": 1065,
+  "legende": "Mur de soutènement en pierres de taille",
+  "alt": "Mur de soutènement en pierres de taille",
+  "auteur": "Dosseman",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
+  "titre_commons": "File:Arykanda State Agora Retaining wall 5071.jpg"
+ },
+ {
+  "fichier": "images/soutenement-1600.avif",
+  "base": "soutenement",
+  "largeur": 1600,
+  "hauteur": 1065,
+  "legende": "Mur de soutènement en pierres de taille",
+  "alt": "Mur de soutènement en pierres de taille",
+  "auteur": "Dosseman",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
+  "titre_commons": "File:Arykanda State Agora Retaining wall 5071.jpg"
+ },
+ {
+  "fichier": "images/soutenement-960.webp",
+  "base": "soutenement",
+  "largeur": 1600,
+  "hauteur": 1065,
+  "legende": "Mur de soutènement en pierres de taille",
+  "alt": "Mur de soutènement en pierres de taille",
+  "auteur": "Dosseman",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
+  "titre_commons": "File:Arykanda State Agora Retaining wall 5071.jpg"
+ },
+ {
+  "fichier": "images/soutenement-960.avif",
+  "base": "soutenement",
+  "largeur": 1600,
+  "hauteur": 1065,
+  "legende": "Mur de soutènement en pierres de taille",
+  "alt": "Mur de soutènement en pierres de taille",
+  "auteur": "Dosseman",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
+  "titre_commons": "File:Arykanda State Agora Retaining wall 5071.jpg"
+ },
+ {
+  "fichier": "images/soutenement-720.webp",
+  "base": "soutenement",
+  "largeur": 1600,
+  "hauteur": 1065,
+  "legende": "Mur de soutènement en pierres de taille",
+  "alt": "Mur de soutènement en pierres de taille",
+  "auteur": "Dosseman",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
+  "titre_commons": "File:Arykanda State Agora Retaining wall 5071.jpg"
+ },
+ {
+  "fichier": "images/soutenement-720.avif",
+  "base": "soutenement",
+  "largeur": 1600,
+  "hauteur": 1065,
+  "legende": "Mur de soutènement en pierres de taille",
+  "alt": "Mur de soutènement en pierres de taille",
+  "auteur": "Dosseman",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
+  "titre_commons": "File:Arykanda State Agora Retaining wall 5071.jpg"
+ },
+ {
+  "fichier": "images/soutenement-480.webp",
+  "base": "soutenement",
+  "largeur": 1600,
+  "hauteur": 1065,
+  "legende": "Mur de soutènement en pierres de taille",
+  "alt": "Mur de soutènement en pierres de taille",
+  "auteur": "Dosseman",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
+  "titre_commons": "File:Arykanda State Agora Retaining wall 5071.jpg"
+ },
+ {
+  "fichier": "images/soutenement-480.avif",
+  "base": "soutenement",
+  "largeur": 1600,
+  "hauteur": 1065,
+  "legende": "Mur de soutènement en pierres de taille",
+  "alt": "Mur de soutènement en pierres de taille",
+  "auteur": "Dosseman",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Arykanda_State_Agora_Retaining_wall_5071.jpg",
+  "titre_commons": "File:Arykanda State Agora Retaining wall 5071.jpg"
+ },
+ {
+  "fichier": "images/parement-1600.webp",
+  "base": "parement",
+  "largeur": 1600,
+  "hauteur": 1194,
+  "legende": "Pose de parement maçonné et finitions",
+  "alt": "Pose de parement maçonné et finitions",
+  "auteur": "Les Chatfield",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
+  "titre_commons": "File:Wall decoration and insulation with Masonry Veneer.jpg"
+ },
+ {
+  "fichier": "images/parement-1600.avif",
+  "base": "parement",
+  "largeur": 1600,
+  "hauteur": 1194,
+  "legende": "Pose de parement maçonné et finitions",
+  "alt": "Pose de parement maçonné et finitions",
+  "auteur": "Les Chatfield",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
+  "titre_commons": "File:Wall decoration and insulation with Masonry Veneer.jpg"
+ },
+ {
+  "fichier": "images/parement-960.webp",
+  "base": "parement",
+  "largeur": 1600,
+  "hauteur": 1194,
+  "legende": "Pose de parement maçonné et finitions",
+  "alt": "Pose de parement maçonné et finitions",
+  "auteur": "Les Chatfield",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
+  "titre_commons": "File:Wall decoration and insulation with Masonry Veneer.jpg"
+ },
+ {
+  "fichier": "images/parement-960.avif",
+  "base": "parement",
+  "largeur": 1600,
+  "hauteur": 1194,
+  "legende": "Pose de parement maçonné et finitions",
+  "alt": "Pose de parement maçonné et finitions",
+  "auteur": "Les Chatfield",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
+  "titre_commons": "File:Wall decoration and insulation with Masonry Veneer.jpg"
+ },
+ {
+  "fichier": "images/parement-720.webp",
+  "base": "parement",
+  "largeur": 1600,
+  "hauteur": 1194,
+  "legende": "Pose de parement maçonné et finitions",
+  "alt": "Pose de parement maçonné et finitions",
+  "auteur": "Les Chatfield",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
+  "titre_commons": "File:Wall decoration and insulation with Masonry Veneer.jpg"
+ },
+ {
+  "fichier": "images/parement-720.avif",
+  "base": "parement",
+  "largeur": 1600,
+  "hauteur": 1194,
+  "legende": "Pose de parement maçonné et finitions",
+  "alt": "Pose de parement maçonné et finitions",
+  "auteur": "Les Chatfield",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
+  "titre_commons": "File:Wall decoration and insulation with Masonry Veneer.jpg"
+ },
+ {
+  "fichier": "images/parement-480.webp",
+  "base": "parement",
+  "largeur": 1600,
+  "hauteur": 1194,
+  "legende": "Pose de parement maçonné et finitions",
+  "alt": "Pose de parement maçonné et finitions",
+  "auteur": "Les Chatfield",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
+  "titre_commons": "File:Wall decoration and insulation with Masonry Veneer.jpg"
+ },
+ {
+  "fichier": "images/parement-480.avif",
+  "base": "parement",
+  "largeur": 1600,
+  "hauteur": 1194,
+  "legende": "Pose de parement maçonné et finitions",
+  "alt": "Pose de parement maçonné et finitions",
+  "auteur": "Les Chatfield",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wall_decoration_and_insulation_with_Masonry_Veneer.jpg",
+  "titre_commons": "File:Wall decoration and insulation with Masonry Veneer.jpg"
+ }
 ]

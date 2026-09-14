@@ -1,0 +1,993 @@
+{
+ "metier": "electricien",
+ "extrait_le": "2026-09-14",
+ "pages": {
+  "/": {
+   "type": "accueil",
+   "title": "Artisan Électricien Nantes — Démo Électricien Nantes",
+   "description": "Artisan électricien à Nantes : remise aux normes NF C 15-100, tableau électrique, dépannage et sécurité. Devis clair et gratuit pour vos travaux.",
+   "h1": "Électricien à Nantes — Démo Électricien Nantes",
+   "kicker": "Artisan électricien qualifié",
+   "chapeau": "Installations fiables, conformité NF C 15-100 et dépannage soigné à Nantes et dans toute l'agglomération pour particuliers et professionnels.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Garanties & Engagements",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Assuré décennale (Assureur fictif)"
+      },
+      {
+       "type": "p",
+       "texte": "Couverture décennale complète n° DEMO-0001 sur l'ensemble de nos réalisations électriques."
+      },
+      {
+       "type": "h3",
+       "texte": "SIREN 000000000"
+      },
+      {
+       "type": "p",
+       "texte": "Entreprise locale enregistrée et établie au 1 rue de la Démonstration à Nantes."
+      },
+      {
+       "type": "h3",
+       "texte": "Devis clair et gratuit"
+      },
+      {
+       "type": "p",
+       "texte": "Chiffrage transparent détaillé sans surprise préalable avant tout début de chantier."
+      }
+     ]
+    },
+    {
+     "h2": "Nos prestations électriques",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Mise aux normes NF C 15-100"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation complète des circuits vétustes, intégration des disjoncteurs différentiels 30 mA et mise en sécurité générale."
+      },
+      {
+       "type": "h3",
+       "texte": "Remplacement de tableau électrique"
+      },
+      {
+       "type": "p",
+       "texte": "Pose de tableaux modulaires modernes, étiquetage clair des lignes et préparation rigoureuse au passage du Consuel."
+      },
+      {
+       "type": "h3",
+       "texte": "Recherche de panne & dépannage"
+      },
+      {
+       "type": "p",
+       "texte": "Diagnostic précis au multimètre, identification des courts-circuits et réparation sécurisée sans promesse hâtive."
+      },
+      {
+       "type": "h3",
+       "texte": "Réseau prises & éclairage"
+      },
+      {
+       "type": "p",
+       "texte": "Création de circuits sous gaine ICTA, pose d'appareillages encastrés ou en saillie et raccordement de luminaires."
+      },
+      {
+       "type": "h3",
+       "texte": "Mise à la terre méthodique"
+      },
+      {
+       "type": "p",
+       "texte": "Mesure de la boucle de terre, raccordement équipotentiel et protection optimale des personnes contre les fuites de courant."
+      },
+      {
+       "type": "h3",
+       "texte": "Circuits dédiés & puissance"
+      },
+      {
+       "type": "p",
+       "texte": "Alimentation spécifique pour gros électroménager, plaque induction, chauffe-eau et raccordement de bornes adaptées."
+      }
+     ]
+    },
+    {
+     "h2": "Nos réalisations électriques",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "photo-2",
+       "alt": "Raccordement et distribution sécurisée pour armoire."
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement et distribution sécurisée pour armoire."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Bonvallite (CC BY-SA 3.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-3",
+       "alt": "Pose d'un tableau modulaire avec disjoncteurs 30 mA."
+      },
+      {
+       "type": "p",
+       "texte": "Pose d'un tableau modulaire avec disjoncteurs 30 mA."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : CharlesMJames (CC BY-SA 4.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-4",
+       "alt": "Cheminement sous gaine ICTA et raccordement au sol."
+      },
+      {
+       "type": "p",
+       "texte": "Cheminement sous gaine ICTA et raccordement au sol."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Grendelkhan (CC BY-SA 4.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-5",
+       "alt": "Diagnostic et remplacement d'anciennes installations vétustes."
+      },
+      {
+       "type": "p",
+       "texte": "Diagnostic et remplacement d'anciennes installations vétustes."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : W.carter (CC BY-SA 4.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-6",
+       "alt": "Repérage des circuits et mise à la terre méthodique."
+      },
+      {
+       "type": "p",
+       "texte": "Repérage des circuits et mise à la terre méthodique."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : W.carter (domaine public via Wikimedia Commons)"
+      }
+     ]
+    },
+    {
+     "h2": "Zone d'intervention en Loire-Atlantique",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Centre-ville, Chantenay, Doulon, Île de Nantes et tous quartiers."
+      },
+      {
+       "type": "p",
+       "texte": "Pont-Rousseau, Trentemoult, Ragon et secteurs sud Loire."
+      },
+      {
+       "type": "p",
+       "texte": "Preux, Crémetterie, Atlantis et ouest métropole nantaise."
+      },
+      {
+       "type": "p",
+       "texte": "Bourg, Petit Chantilly, Bugallière et nord de l'agglomération."
+      }
+     ]
+    },
+    {
+     "h2": "Comment se déroulent vos travaux",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Demande en ligne"
+      },
+      {
+       "type": "p",
+       "texte": "Vous nous décrivez vos besoins électriques ou votre panne via notre formulaire direct."
+      },
+      {
+       "type": "h3",
+       "texte": "Visite technique"
+      },
+      {
+       "type": "p",
+       "texte": "Examen du tableau, repérage des gaines existantes et évaluation des contraintes sur place."
+      },
+      {
+       "type": "h3",
+       "texte": "Devis détaillé"
+      },
+      {
+       "type": "p",
+       "texte": "Envoi d'un devis clair et chiffré poste par poste, respectant les normes de sécurité en vigueur."
+      },
+      {
+       "type": "h3",
+       "texte": "Réalisation soignée"
+      },
+      {
+       "type": "p",
+       "texte": "Exécution des travaux par un artisan électricien qualifié et nettoyage complet du chantier."
+      }
+     ]
+    },
+    {
+     "h2": "Foire aux questions électricité",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Pourquoi mon disjoncteur saute-t-il régulièrement ?"
+      },
+      {
+       "type": "p",
+       "texte": "Un disjoncteur qui déclenche indique une surcharge sur la ligne ou un défaut d'isolement vers la terre. En cas de doute ou d'odeur de chaud, coupez le disjoncteur général et contactez-nous pour une vérification technique sur place."
+      },
+      {
+       "type": "h3",
+       "texte": "Délivrez-vous l'attestation de conformité Consuel ?"
+      },
+      {
+       "type": "p",
+       "texte": "Nous préparons chaque installation neuve ou rénovée selon les prescriptions strictes de la norme NF C 15-100 et nous vous accompagnons dans la constitution du dossier Consuel avant le raccordement définitif."
+      },
+      {
+       "type": "h3",
+       "texte": "Faut-il refaire tout le tableau pour ajouter une prise ?"
+      },
+      {
+       "type": "p",
+       "texte": "Pas nécessairement si votre tableau dispose encore d'emplacements disponibles et d'une protection différentielle conforme. Une visite technique permettra de vérifier l'état du peigne et des protections modulaires."
+      },
+      {
+       "type": "h3",
+       "texte": "Quel est le délai pour recevoir un chiffrage ?"
+      },
+      {
+       "type": "p",
+       "texte": "Après notre échange ou notre visite d'évaluation sur place à Nantes ou dans l'agglomération, nous vous transmettons votre devis détaillé sans frais dans les meilleurs délais."
+      }
+     ]
+    },
+    {
+     "h2": "Contact & Devis gratuit",
+     "blocs": []
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Electrician",
+     "name": "Démo Électricien Nantes",
+     "url": "https://electricien.demo.invalid/",
+     "telephone": "+33 4 00 00 00 00",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "44000",
+      "addressLocality": "Nantes",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      {
+       "@type": "City",
+       "name": "Nantes"
+      },
+      {
+       "@type": "City",
+       "name": "Rezé"
+      },
+      {
+       "@type": "City",
+       "name": "Saint-Herblain"
+      },
+      {
+       "@type": "City",
+       "name": "Orvault"
+      }
+     ],
+     "image": "https://electricien.demo.invalid/images/hero-960.webp"
+    }
+   ]
+  },
+  "/electricien-nantes/": {
+   "type": "commune",
+   "cible": "Nantes",
+   "title": "Électricien à Nantes — Démo Électricien Nantes",
+   "description": "Artisan électricien intervenant à Nantes (44000) : rénovation de tableau, mise aux normes NF C 15-100 et dépannage soigné. Devis gratuit.",
+   "h1": "Électricien à Nantes",
+   "kicker": "Intervention locale · Nantes",
+   "chapeau": "Démo Électricien Nantes intervient dans tous les quartiers de Nantes (centre historique, Île de Nantes, Doulon, Saint-Félix, Chantenay) pour vos rénovations de tableaux, dépannages rapides et mises en conformité NF C 15-100.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Prestations électriques à Nantes",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Mise en conformité NF C 15-100"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation technique pour les logements et locaux professionnels situés à Nantes. Remplacement des conducteurs et protections différentielles."
+      },
+      {
+       "type": "h3",
+       "texte": "Installation de tableau modulaire"
+      },
+      {
+       "type": "p",
+       "texte": "Changement complet de tableau avec pose de disjoncteurs divisionnaires calibrés et repérage de l'ensemble des départs."
+      },
+      {
+       "type": "h3",
+       "texte": "Dépannage & recherche de panne"
+      },
+      {
+       "type": "p",
+       "texte": "Détection méthodique des coupures et surcharges sur vos lignes électriques à Nantes et intervention sécurisée."
+      }
+     ]
+    },
+    {
+     "h2": "Nos réalisations électriques",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "photo-2",
+       "alt": "Raccordement et distribution sécurisée pour armoire."
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement et distribution sécurisée pour armoire."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Bonvallite (CC BY-SA 3.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-3",
+       "alt": "Pose d'un tableau modulaire avec disjoncteurs 30 mA."
+      },
+      {
+       "type": "p",
+       "texte": "Pose d'un tableau modulaire avec disjoncteurs 30 mA."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : CharlesMJames (CC BY-SA 4.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-4",
+       "alt": "Cheminement sous gaine ICTA et raccordement au sol."
+      },
+      {
+       "type": "p",
+       "texte": "Cheminement sous gaine ICTA et raccordement au sol."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Grendelkhan (CC BY-SA 4.0 via Wikimedia Commons)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes voisines desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Intervention et devis gratuit pour travaux électriques à Rezé."
+      },
+      {
+       "type": "p",
+       "texte": "Intervention et devis gratuit pour travaux électriques à Saint-Herblain."
+      }
+     ]
+    },
+    {
+     "h2": "Contact & Devis gratuit",
+     "blocs": []
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Electrician",
+     "name": "Démo Électricien Nantes",
+     "url": "https://electricien.demo.invalid/electricien-nantes/",
+     "telephone": "+33 4 00 00 00 00",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "44000",
+      "addressLocality": "Nantes",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      {
+       "@type": "City",
+       "name": "Nantes"
+      },
+      {
+       "@type": "City",
+       "name": "Rezé"
+      },
+      {
+       "@type": "City",
+       "name": "Saint-Herblain"
+      },
+      {
+       "@type": "City",
+       "name": "Orvault"
+      }
+     ],
+     "image": "https://electricien.demo.invalid/images/hero-960.webp"
+    }
+   ]
+  },
+  "/electricien-reze/": {
+   "type": "commune",
+   "cible": "Rezé",
+   "title": "Électricien à Rezé — Démo Électricien Nantes",
+   "description": "Artisan électricien intervenant à Rezé (44400) : rénovation de tableau, mise aux normes NF C 15-100 et dépannage soigné. Devis gratuit.",
+   "h1": "Électricien à Rezé",
+   "kicker": "Intervention locale · Rezé",
+   "chapeau": "Démo Électricien Nantes se déplace à Rezé et sur le sud de la métropole nantaise (Pont-Rousseau, Trentemoult, Ragon, Château) pour la pose de tableaux électriques divisionnaires, la réfection de prises et la sécurité de vos circuits.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Prestations électriques à Rezé",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Mise en conformité NF C 15-100"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation technique pour les logements et locaux professionnels situés à Rezé. Remplacement des conducteurs et protections différentielles."
+      },
+      {
+       "type": "h3",
+       "texte": "Installation de tableau modulaire"
+      },
+      {
+       "type": "p",
+       "texte": "Changement complet de tableau avec pose de disjoncteurs divisionnaires calibrés et repérage de l'ensemble des départs."
+      },
+      {
+       "type": "h3",
+       "texte": "Dépannage & recherche de panne"
+      },
+      {
+       "type": "p",
+       "texte": "Détection méthodique des coupures et surcharges sur vos lignes électriques à Rezé et intervention sécurisée."
+      }
+     ]
+    },
+    {
+     "h2": "Nos réalisations électriques",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "photo-2",
+       "alt": "Raccordement et distribution sécurisée pour armoire."
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement et distribution sécurisée pour armoire."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Bonvallite (CC BY-SA 3.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-3",
+       "alt": "Pose d'un tableau modulaire avec disjoncteurs 30 mA."
+      },
+      {
+       "type": "p",
+       "texte": "Pose d'un tableau modulaire avec disjoncteurs 30 mA."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : CharlesMJames (CC BY-SA 4.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-4",
+       "alt": "Cheminement sous gaine ICTA et raccordement au sol."
+      },
+      {
+       "type": "p",
+       "texte": "Cheminement sous gaine ICTA et raccordement au sol."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Grendelkhan (CC BY-SA 4.0 via Wikimedia Commons)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes voisines desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Intervention et devis gratuit pour travaux électriques à Nantes."
+      },
+      {
+       "type": "p",
+       "texte": "Intervention et devis gratuit pour travaux électriques à Saint-Herblain."
+      }
+     ]
+    },
+    {
+     "h2": "Contact & Devis gratuit",
+     "blocs": []
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Electrician",
+     "name": "Démo Électricien Nantes",
+     "url": "https://electricien.demo.invalid/electricien-reze/",
+     "telephone": "+33 4 00 00 00 00",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "44000",
+      "addressLocality": "Nantes",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      {
+       "@type": "City",
+       "name": "Nantes"
+      },
+      {
+       "@type": "City",
+       "name": "Rezé"
+      },
+      {
+       "@type": "City",
+       "name": "Saint-Herblain"
+      },
+      {
+       "@type": "City",
+       "name": "Orvault"
+      }
+     ],
+     "image": "https://electricien.demo.invalid/images/hero-960.webp"
+    }
+   ]
+  },
+  "/electricien-saint-herblain/": {
+   "type": "commune",
+   "cible": "Saint-Herblain",
+   "title": "Électricien à Saint-Herblain — Démo Électricien Nantes",
+   "description": "Artisan électricien intervenant à Saint-Herblain (44800) : rénovation de tableau, mise aux normes NF C 15-100 et dépannage soigné. Devis gratuit.",
+   "h1": "Électricien à Saint-Herblain",
+   "kicker": "Intervention locale · Saint-Herblain",
+   "chapeau": "Démo Électricien Nantes assure tous travaux d'électricité générale à Saint-Herblain (Preux, Crémetterie, Bourg, secteur Atlantis) : recherche de défaut d'isolement, pose de lignes spécialisées et mise à la terre sécurisée.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Prestations électriques à Saint-Herblain",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Mise en conformité NF C 15-100"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation technique pour les logements et locaux professionnels situés à Saint-Herblain. Remplacement des conducteurs et protections différentielles."
+      },
+      {
+       "type": "h3",
+       "texte": "Installation de tableau modulaire"
+      },
+      {
+       "type": "p",
+       "texte": "Changement complet de tableau avec pose de disjoncteurs divisionnaires calibrés et repérage de l'ensemble des départs."
+      },
+      {
+       "type": "h3",
+       "texte": "Dépannage & recherche de panne"
+      },
+      {
+       "type": "p",
+       "texte": "Détection méthodique des coupures et surcharges sur vos lignes électriques à Saint-Herblain et intervention sécurisée."
+      }
+     ]
+    },
+    {
+     "h2": "Nos réalisations électriques",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "photo-2",
+       "alt": "Raccordement et distribution sécurisée pour armoire."
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement et distribution sécurisée pour armoire."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Bonvallite (CC BY-SA 3.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-3",
+       "alt": "Pose d'un tableau modulaire avec disjoncteurs 30 mA."
+      },
+      {
+       "type": "p",
+       "texte": "Pose d'un tableau modulaire avec disjoncteurs 30 mA."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : CharlesMJames (CC BY-SA 4.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-4",
+       "alt": "Cheminement sous gaine ICTA et raccordement au sol."
+      },
+      {
+       "type": "p",
+       "texte": "Cheminement sous gaine ICTA et raccordement au sol."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Grendelkhan (CC BY-SA 4.0 via Wikimedia Commons)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes voisines desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Intervention et devis gratuit pour travaux électriques à Nantes."
+      },
+      {
+       "type": "p",
+       "texte": "Intervention et devis gratuit pour travaux électriques à Orvault."
+      }
+     ]
+    },
+    {
+     "h2": "Contact & Devis gratuit",
+     "blocs": []
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Electrician",
+     "name": "Démo Électricien Nantes",
+     "url": "https://electricien.demo.invalid/electricien-saint-herblain/",
+     "telephone": "+33 4 00 00 00 00",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "44000",
+      "addressLocality": "Nantes",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      {
+       "@type": "City",
+       "name": "Nantes"
+      },
+      {
+       "@type": "City",
+       "name": "Rezé"
+      },
+      {
+       "@type": "City",
+       "name": "Saint-Herblain"
+      },
+      {
+       "@type": "City",
+       "name": "Orvault"
+      }
+     ],
+     "image": "https://electricien.demo.invalid/images/hero-960.webp"
+    }
+   ]
+  },
+  "/electricien-orvault/": {
+   "type": "commune",
+   "cible": "Orvault",
+   "title": "Électricien à Orvault — Démo Électricien Nantes",
+   "description": "Artisan électricien intervenant à Orvault (44700) : rénovation de tableau, mise aux normes NF C 15-100 et dépannage soigné. Devis gratuit.",
+   "h1": "Électricien à Orvault",
+   "kicker": "Intervention locale · Orvault",
+   "chapeau": "Démo Électricien Nantes intervient sur la commune d'Orvault (Bourg, Petit Chantilly, Bois Raguenet, Bugallière) pour installer vos protections différentielles 30 mA, rénover vos armoires électriques et sécuriser votre habitat.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Prestations électriques à Orvault",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Mise en conformité NF C 15-100"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation technique pour les logements et locaux professionnels situés à Orvault. Remplacement des conducteurs et protections différentielles."
+      },
+      {
+       "type": "h3",
+       "texte": "Installation de tableau modulaire"
+      },
+      {
+       "type": "p",
+       "texte": "Changement complet de tableau avec pose de disjoncteurs divisionnaires calibrés et repérage de l'ensemble des départs."
+      },
+      {
+       "type": "h3",
+       "texte": "Dépannage & recherche de panne"
+      },
+      {
+       "type": "p",
+       "texte": "Détection méthodique des coupures et surcharges sur vos lignes électriques à Orvault et intervention sécurisée."
+      }
+     ]
+    },
+    {
+     "h2": "Nos réalisations électriques",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "photo-2",
+       "alt": "Raccordement et distribution sécurisée pour armoire."
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement et distribution sécurisée pour armoire."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Bonvallite (CC BY-SA 3.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-3",
+       "alt": "Pose d'un tableau modulaire avec disjoncteurs 30 mA."
+      },
+      {
+       "type": "p",
+       "texte": "Pose d'un tableau modulaire avec disjoncteurs 30 mA."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : CharlesMJames (CC BY-SA 4.0 via Wikimedia Commons)"
+      },
+      {
+       "type": "img",
+       "fichier": "photo-4",
+       "alt": "Cheminement sous gaine ICTA et raccordement au sol."
+      },
+      {
+       "type": "p",
+       "texte": "Cheminement sous gaine ICTA et raccordement au sol."
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Grendelkhan (CC BY-SA 4.0 via Wikimedia Commons)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes voisines desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Intervention et devis gratuit pour travaux électriques à Nantes."
+      },
+      {
+       "type": "p",
+       "texte": "Intervention et devis gratuit pour travaux électriques à Saint-Herblain."
+      }
+     ]
+    },
+    {
+     "h2": "Contact & Devis gratuit",
+     "blocs": []
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Electrician",
+     "name": "Démo Électricien Nantes",
+     "url": "https://electricien.demo.invalid/electricien-orvault/",
+     "telephone": "+33 4 00 00 00 00",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "44000",
+      "addressLocality": "Nantes",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      {
+       "@type": "City",
+       "name": "Nantes"
+      },
+      {
+       "@type": "City",
+       "name": "Rezé"
+      },
+      {
+       "@type": "City",
+       "name": "Saint-Herblain"
+      },
+      {
+       "@type": "City",
+       "name": "Orvault"
+      }
+     ],
+     "image": "https://electricien.demo.invalid/images/hero-960.webp"
+    }
+   ]
+  },
+  "/mentions-legales/": {
+   "type": "legal",
+   "title": "Mentions légales — Démo Électricien Nantes",
+   "description": "Mentions légales, coordonnées juridiques, assurance décennale et crédits photos du site Démo Électricien Nantes.",
+   "h1": "Mentions légales",
+   "kicker": "",
+   "chapeau": "Site de démonstration : entreprise fictive créée pour illustrer les capacités de la plateforme Presti.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Avertissement démonstration",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Site de démonstration : entreprise fictive créée pour illustrer les capacités de la plateforme Presti."
+      }
+     ]
+    },
+    {
+     "h2": "Éditeur du site",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Dénomination : Démo Électricien Nantes"
+      },
+      {
+       "type": "p",
+       "texte": "Forme juridique : Entreprise artisanale individuelle (fictive)"
+      },
+      {
+       "type": "p",
+       "texte": "SIREN : 000000000"
+      },
+      {
+       "type": "p",
+       "texte": "Siège social : 1 rue de la Démonstration, 44000 Nantes, France"
+      },
+      {
+       "type": "p",
+       "texte": "Téléphone : +33 4 00 00 00 00"
+      },
+      {
+       "type": "p",
+       "texte": "Email : contact@electricien.demo.invalid"
+      },
+      {
+       "type": "p",
+       "texte": "Directeur de publication : L'artisan responsable"
+      }
+     ]
+    },
+    {
+     "h2": "Assurance responsabilité décennale",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Compagnie d'assurance : Assureur fictif"
+      },
+      {
+       "type": "p",
+       "texte": "Numéro de contrat : DEMO-0001"
+      },
+      {
+       "type": "p",
+       "texte": "Couverture géographique : France métropolitaine"
+      }
+     ]
+    },
+    {
+     "h2": "Hébergement",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Hébergeur : Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis."
+      }
+     ]
+    },
+    {
+     "h2": "Crédits photos & Propriété intellectuelle",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les photographies illustrant ce site proviennent de Wikimedia Commons et sont exploitées sous licences libres. Auteurs des prises de vue : ArjanH, Bonvallite, CharlesMJames, Grendelkhan, W.carter. Le détail exhaustif de chaque fichier, son URL source sur Wikimedia Commons et sa licence exacte (Creative Commons CC BY-SA 3.0, CC BY-SA 4.0 ou domaine public) figurent dans le fichier attributions.json mis à disposition sur le site."
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  },
+  "/confidentialite/": {
+   "type": "legal",
+   "title": "Politique de confidentialité — Démo Électricien Nantes",
+   "description": "Politique de protection des données personnelles et respect de la vie privée du site Démo Électricien Nantes.",
+   "h1": "Politique de confidentialité",
+   "kicker": "",
+   "chapeau": "Les données collectées via nos formulaires de contact et notre plateforme de demande (nom, numéro de téléphone, adresse postale et description des travaux) sont strictement destinées au traitement technique de votre demande de devis et au suivi de vos chantiers.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Collecte des données personnelles",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les données collectées via nos formulaires de contact et notre plateforme de demande (nom, numéro de téléphone, adresse postale et description des travaux) sont strictement destinées au traitement technique de votre demande de devis et au suivi de vos chantiers."
+      }
+     ]
+    },
+    {
+     "h2": "Durée de conservation & Sécurité",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les données sont conservées pendant la durée légale nécessaire à la gestion de la relation commerciale et à l'exécution de nos obligations contractuelles et d'assurance décennale. Elles ne sont jamais revendues ni cédées à des tiers à des fins publicitaires."
+      }
+     ]
+    },
+    {
+     "h2": "Cookies et traceurs",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ce site n'utilise aucun cookie publicitaire, traceur tiers ni outil d'analyse intrusive. Seuls les éléments techniques indispensables au bon fonctionnement et à l'affichage rapide des pages sont utilisés."
+      }
+     ]
+    },
+    {
+     "h2": "Vos droits RGPD",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, de portabilité et d'effacement de vos données personnelles. Vous pouvez exercer ce droit à tout moment par email à contact@electricien.demo.invalid."
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  }
+ }
+}

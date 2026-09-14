@@ -93,3 +93,5 @@
 {"id":"014-20","verdict":"FAIL","ligne":"❌ ÉCHEC : au moins 80 % des messages synthétiques portent un accent (3 %)","code":1,"date":"2026-09-14T07:39:23Z","duree_s":1,"agent":"ag-20-g38","executant":"antigravity","lignes":0,"dossier":"en-cours"}
 {"id":"014-20","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T07:52:59Z","duree_s":3,"agent":"ag-20-g38","executant":"antigravity","lignes":1198,"dossier":"en-cours"}
 {"id":"014-20","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T07:53:22Z","duree_s":3,"agent":"ag-20-g38","executant":"antigravity","lignes":1198,"dossier":"fait"}
+{"id":"014-17","verdict":"FAIL","ligne":"══ 27 vérifications passées, 2 en échec ══","code":1,"date":"2026-09-14T09:17:34Z","duree_s":79,"agent":"ag-17-g38","executant":"antigravity","lignes":446,"dossier":"en-cours"}
+{"id":"014-11","verdict":"FAIL","ligne":"❌ site-commander-e2e : 1/2 — https://prestiapp.fr","code":1,"date":"2026-09-14T09:18:11Z","duree_s":37,"agent":"ag-11-g37","executant":"antigravity","lignes":378,"dossier":"en-cours"}

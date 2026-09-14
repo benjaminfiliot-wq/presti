@@ -1,254 +1,674 @@
 [
-  {
-    "fichier": "images/hero-480.webp",
-    "auteur": "MatthewG",
-    "source": "https://commons.wikimedia.org/wiki/File:Locksmith_at_work.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une serrure haute sécurité"
-  },
-  {
-    "fichier": "images/hero-480.avif",
-    "auteur": "MatthewG",
-    "source": "https://commons.wikimedia.org/wiki/File:Locksmith_at_work.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une serrure haute sécurité"
-  },
-  {
-    "fichier": "images/hero-960.webp",
-    "auteur": "MatthewG",
-    "source": "https://commons.wikimedia.org/wiki/File:Locksmith_at_work.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une serrure haute sécurité"
-  },
-  {
-    "fichier": "images/hero-960.avif",
-    "auteur": "MatthewG",
-    "source": "https://commons.wikimedia.org/wiki/File:Locksmith_at_work.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une serrure haute sécurité"
-  },
-  {
-    "fichier": "images/hero-1600.webp",
-    "auteur": "MatthewG",
-    "source": "https://commons.wikimedia.org/wiki/File:Locksmith_at_work.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une serrure haute sécurité"
-  },
-  {
-    "fichier": "images/hero-1600.avif",
-    "auteur": "MatthewG",
-    "source": "https://commons.wikimedia.org/wiki/File:Locksmith_at_work.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une serrure haute sécurité"
-  },
-  {
-    "fichier": "images/serrure1-480.webp",
-    "auteur": "Alno",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mécanisme de serrure multipoints"
-  },
-  {
-    "fichier": "images/serrure1-480.avif",
-    "auteur": "Alno",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mécanisme de serrure multipoints"
-  },
-  {
-    "fichier": "images/serrure1-960.webp",
-    "auteur": "Alno",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mécanisme de serrure multipoints"
-  },
-  {
-    "fichier": "images/serrure1-960.avif",
-    "auteur": "Alno",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mécanisme de serrure multipoints"
-  },
-  {
-    "fichier": "images/serrure1-1600.webp",
-    "auteur": "Alno",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mécanisme de serrure multipoints"
-  },
-  {
-    "fichier": "images/serrure1-1600.avif",
-    "auteur": "Alno",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Mécanisme de serrure multipoints"
-  },
-  {
-    "fichier": "images/cylindre-480.webp",
-    "auteur": "Santeri Viinamäki",
-    "source": "https://commons.wikimedia.org/wiki/File:Cylinder_lock.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Cylindre de porte européen"
-  },
-  {
-    "fichier": "images/cylindre-480.avif",
-    "auteur": "Santeri Viinamäki",
-    "source": "https://commons.wikimedia.org/wiki/File:Cylinder_lock.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Cylindre de porte européen"
-  },
-  {
-    "fichier": "images/cylindre-960.webp",
-    "auteur": "Santeri Viinamäki",
-    "source": "https://commons.wikimedia.org/wiki/File:Cylinder_lock.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Cylindre de porte européen"
-  },
-  {
-    "fichier": "images/cylindre-960.avif",
-    "auteur": "Santeri Viinamäki",
-    "source": "https://commons.wikimedia.org/wiki/File:Cylinder_lock.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Cylindre de porte européen"
-  },
-  {
-    "fichier": "images/cylindre-1600.webp",
-    "auteur": "Santeri Viinamäki",
-    "source": "https://commons.wikimedia.org/wiki/File:Cylinder_lock.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Cylindre de porte européen"
-  },
-  {
-    "fichier": "images/cylindre-1600.avif",
-    "auteur": "Santeri Viinamäki",
-    "source": "https://commons.wikimedia.org/wiki/File:Cylinder_lock.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Cylindre de porte européen"
-  },
-  {
-    "fichier": "images/cylindre2-480.webp",
-    "auteur": "Roby",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock_cylinder.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Changement de cylindre"
-  },
-  {
-    "fichier": "images/cylindre2-480.avif",
-    "auteur": "Roby",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock_cylinder.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Changement de cylindre"
-  },
-  {
-    "fichier": "images/cylindre2-960.webp",
-    "auteur": "Roby",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock_cylinder.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Changement de cylindre"
-  },
-  {
-    "fichier": "images/cylindre2-960.avif",
-    "auteur": "Roby",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock_cylinder.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Changement de cylindre"
-  },
-  {
-    "fichier": "images/cylindre2-1600.webp",
-    "auteur": "Roby",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock_cylinder.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Changement de cylindre"
-  },
-  {
-    "fichier": "images/cylindre2-1600.avif",
-    "auteur": "Roby",
-    "source": "https://commons.wikimedia.org/wiki/File:Door_lock_cylinder.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Changement de cylindre"
-  },
-  {
-    "fichier": "images/cles-480.webp",
-    "auteur": "Pxhere",
-    "source": "https://commons.wikimedia.org/wiki/File:Keys_and_locks.jpg",
-    "licence": "CC0",
-    "legende": "Clés sécurisées"
-  },
-  {
-    "fichier": "images/cles-480.avif",
-    "auteur": "Pxhere",
-    "source": "https://commons.wikimedia.org/wiki/File:Keys_and_locks.jpg",
-    "licence": "CC0",
-    "legende": "Clés sécurisées"
-  },
-  {
-    "fichier": "images/cles-960.webp",
-    "auteur": "Pxhere",
-    "source": "https://commons.wikimedia.org/wiki/File:Keys_and_locks.jpg",
-    "licence": "CC0",
-    "legende": "Clés sécurisées"
-  },
-  {
-    "fichier": "images/cles-960.avif",
-    "auteur": "Pxhere",
-    "source": "https://commons.wikimedia.org/wiki/File:Keys_and_locks.jpg",
-    "licence": "CC0",
-    "legende": "Clés sécurisées"
-  },
-  {
-    "fichier": "images/cles-1600.webp",
-    "auteur": "Pxhere",
-    "source": "https://commons.wikimedia.org/wiki/File:Keys_and_locks.jpg",
-    "licence": "CC0",
-    "legende": "Clés sécurisées"
-  },
-  {
-    "fichier": "images/cles-1600.avif",
-    "auteur": "Pxhere",
-    "source": "https://commons.wikimedia.org/wiki/File:Keys_and_locks.jpg",
-    "licence": "CC0",
-    "legende": "Clés sécurisées"
-  },
-  {
-    "fichier": "images/cle_serrure-480.webp",
-    "auteur": "Nenad Stojkovic",
-    "source": "https://commons.wikimedia.org/wiki/File:Key_in_door_lock.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Ouverture de porte bloquée"
-  },
-  {
-    "fichier": "images/cle_serrure-480.avif",
-    "auteur": "Nenad Stojkovic",
-    "source": "https://commons.wikimedia.org/wiki/File:Key_in_door_lock.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Ouverture de porte bloquée"
-  },
-  {
-    "fichier": "images/cle_serrure-960.webp",
-    "auteur": "Nenad Stojkovic",
-    "source": "https://commons.wikimedia.org/wiki/File:Key_in_door_lock.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Ouverture de porte bloquée"
-  },
-  {
-    "fichier": "images/cle_serrure-960.avif",
-    "auteur": "Nenad Stojkovic",
-    "source": "https://commons.wikimedia.org/wiki/File:Key_in_door_lock.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Ouverture de porte bloquée"
-  },
-  {
-    "fichier": "images/cle_serrure-1600.webp",
-    "auteur": "Nenad Stojkovic",
-    "source": "https://commons.wikimedia.org/wiki/File:Key_in_door_lock.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Ouverture de porte bloquée"
-  },
-  {
-    "fichier": "images/cle_serrure-1600.avif",
-    "auteur": "Nenad Stojkovic",
-    "source": "https://commons.wikimedia.org/wiki/File:Key_in_door_lock.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Ouverture de porte bloquée"
-  }
+ {
+  "fichier": "images/hero-1600.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Cylindre de serrure sur porte métallique",
+  "alt": "Cylindre de serrure sur porte métallique",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handle_with_lock_on_a_car_trailer.jpg",
+  "titre_commons": "File:Handle with lock on a car trailer.jpg"
+ },
+ {
+  "fichier": "images/hero-1600.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Cylindre de serrure sur porte métallique",
+  "alt": "Cylindre de serrure sur porte métallique",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handle_with_lock_on_a_car_trailer.jpg",
+  "titre_commons": "File:Handle with lock on a car trailer.jpg"
+ },
+ {
+  "fichier": "images/hero-960.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Cylindre de serrure sur porte métallique",
+  "alt": "Cylindre de serrure sur porte métallique",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handle_with_lock_on_a_car_trailer.jpg",
+  "titre_commons": "File:Handle with lock on a car trailer.jpg"
+ },
+ {
+  "fichier": "images/hero-960.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Cylindre de serrure sur porte métallique",
+  "alt": "Cylindre de serrure sur porte métallique",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handle_with_lock_on_a_car_trailer.jpg",
+  "titre_commons": "File:Handle with lock on a car trailer.jpg"
+ },
+ {
+  "fichier": "images/hero-720.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Cylindre de serrure sur porte métallique",
+  "alt": "Cylindre de serrure sur porte métallique",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handle_with_lock_on_a_car_trailer.jpg",
+  "titre_commons": "File:Handle with lock on a car trailer.jpg"
+ },
+ {
+  "fichier": "images/hero-720.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Cylindre de serrure sur porte métallique",
+  "alt": "Cylindre de serrure sur porte métallique",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handle_with_lock_on_a_car_trailer.jpg",
+  "titre_commons": "File:Handle with lock on a car trailer.jpg"
+ },
+ {
+  "fichier": "images/hero-480.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Cylindre de serrure sur porte métallique",
+  "alt": "Cylindre de serrure sur porte métallique",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handle_with_lock_on_a_car_trailer.jpg",
+  "titre_commons": "File:Handle with lock on a car trailer.jpg"
+ },
+ {
+  "fichier": "images/hero-480.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Cylindre de serrure sur porte métallique",
+  "alt": "Cylindre de serrure sur porte métallique",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handle_with_lock_on_a_car_trailer.jpg",
+  "titre_commons": "File:Handle with lock on a car trailer.jpg"
+ },
+ {
+  "fichier": "images/ferronnerie-1600.webp",
+  "base": "ferronnerie",
+  "largeur": 1600,
+  "hauteur": 1164,
+  "legende": "Serrure et ferronnerie d'une porte ancienne",
+  "alt": "Serrure et ferronnerie d'une porte ancienne",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Serralongue_door_lock.jpg",
+  "titre_commons": "File:Serralongue door lock.jpg"
+ },
+ {
+  "fichier": "images/ferronnerie-1600.avif",
+  "base": "ferronnerie",
+  "largeur": 1600,
+  "hauteur": 1164,
+  "legende": "Serrure et ferronnerie d'une porte ancienne",
+  "alt": "Serrure et ferronnerie d'une porte ancienne",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Serralongue_door_lock.jpg",
+  "titre_commons": "File:Serralongue door lock.jpg"
+ },
+ {
+  "fichier": "images/ferronnerie-960.webp",
+  "base": "ferronnerie",
+  "largeur": 1600,
+  "hauteur": 1164,
+  "legende": "Serrure et ferronnerie d'une porte ancienne",
+  "alt": "Serrure et ferronnerie d'une porte ancienne",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Serralongue_door_lock.jpg",
+  "titre_commons": "File:Serralongue door lock.jpg"
+ },
+ {
+  "fichier": "images/ferronnerie-960.avif",
+  "base": "ferronnerie",
+  "largeur": 1600,
+  "hauteur": 1164,
+  "legende": "Serrure et ferronnerie d'une porte ancienne",
+  "alt": "Serrure et ferronnerie d'une porte ancienne",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Serralongue_door_lock.jpg",
+  "titre_commons": "File:Serralongue door lock.jpg"
+ },
+ {
+  "fichier": "images/ferronnerie-720.webp",
+  "base": "ferronnerie",
+  "largeur": 1600,
+  "hauteur": 1164,
+  "legende": "Serrure et ferronnerie d'une porte ancienne",
+  "alt": "Serrure et ferronnerie d'une porte ancienne",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Serralongue_door_lock.jpg",
+  "titre_commons": "File:Serralongue door lock.jpg"
+ },
+ {
+  "fichier": "images/ferronnerie-720.avif",
+  "base": "ferronnerie",
+  "largeur": 1600,
+  "hauteur": 1164,
+  "legende": "Serrure et ferronnerie d'une porte ancienne",
+  "alt": "Serrure et ferronnerie d'une porte ancienne",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Serralongue_door_lock.jpg",
+  "titre_commons": "File:Serralongue door lock.jpg"
+ },
+ {
+  "fichier": "images/ferronnerie-480.webp",
+  "base": "ferronnerie",
+  "largeur": 1600,
+  "hauteur": 1164,
+  "legende": "Serrure et ferronnerie d'une porte ancienne",
+  "alt": "Serrure et ferronnerie d'une porte ancienne",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Serralongue_door_lock.jpg",
+  "titre_commons": "File:Serralongue door lock.jpg"
+ },
+ {
+  "fichier": "images/ferronnerie-480.avif",
+  "base": "ferronnerie",
+  "largeur": 1600,
+  "hauteur": 1164,
+  "legende": "Serrure et ferronnerie d'une porte ancienne",
+  "alt": "Serrure et ferronnerie d'une porte ancienne",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Serralongue_door_lock.jpg",
+  "titre_commons": "File:Serralongue door lock.jpg"
+ },
+ {
+  "fichier": "images/gache-1600.webp",
+  "base": "gache",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Gâche et pêne d'une serrure de porte",
+  "alt": "Gâche et pêne d'une serrure de porte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Geb%C3%A4ude_29,_Schloss_--_2023_--_8100.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Gebäude 29, Schloss -- 2023 -- 8100.jpg"
+ },
+ {
+  "fichier": "images/gache-1600.avif",
+  "base": "gache",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Gâche et pêne d'une serrure de porte",
+  "alt": "Gâche et pêne d'une serrure de porte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Geb%C3%A4ude_29,_Schloss_--_2023_--_8100.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Gebäude 29, Schloss -- 2023 -- 8100.jpg"
+ },
+ {
+  "fichier": "images/gache-960.webp",
+  "base": "gache",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Gâche et pêne d'une serrure de porte",
+  "alt": "Gâche et pêne d'une serrure de porte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Geb%C3%A4ude_29,_Schloss_--_2023_--_8100.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Gebäude 29, Schloss -- 2023 -- 8100.jpg"
+ },
+ {
+  "fichier": "images/gache-960.avif",
+  "base": "gache",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Gâche et pêne d'une serrure de porte",
+  "alt": "Gâche et pêne d'une serrure de porte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Geb%C3%A4ude_29,_Schloss_--_2023_--_8100.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Gebäude 29, Schloss -- 2023 -- 8100.jpg"
+ },
+ {
+  "fichier": "images/gache-720.webp",
+  "base": "gache",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Gâche et pêne d'une serrure de porte",
+  "alt": "Gâche et pêne d'une serrure de porte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Geb%C3%A4ude_29,_Schloss_--_2023_--_8100.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Gebäude 29, Schloss -- 2023 -- 8100.jpg"
+ },
+ {
+  "fichier": "images/gache-720.avif",
+  "base": "gache",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Gâche et pêne d'une serrure de porte",
+  "alt": "Gâche et pêne d'une serrure de porte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Geb%C3%A4ude_29,_Schloss_--_2023_--_8100.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Gebäude 29, Schloss -- 2023 -- 8100.jpg"
+ },
+ {
+  "fichier": "images/gache-480.webp",
+  "base": "gache",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Gâche et pêne d'une serrure de porte",
+  "alt": "Gâche et pêne d'une serrure de porte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Geb%C3%A4ude_29,_Schloss_--_2023_--_8100.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Gebäude 29, Schloss -- 2023 -- 8100.jpg"
+ },
+ {
+  "fichier": "images/gache-480.avif",
+  "base": "gache",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Gâche et pêne d'une serrure de porte",
+  "alt": "Gâche et pêne d'une serrure de porte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Geb%C3%A4ude_29,_Schloss_--_2023_--_8100.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Gebäude 29, Schloss -- 2023 -- 8100.jpg"
+ },
+ {
+  "fichier": "images/verrou-1600.webp",
+  "base": "verrou",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Verrou et mécanisme de fermeture",
+  "alt": "Verrou et mécanisme de fermeture",
+  "auteur": "Timothy A",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Metal_Lock_Door_Padmanabhapuram_Mar24_A7C_10156.jpg",
+  "titre_commons": "File:Metal Lock Door Padmanabhapuram Mar24 A7C 10156.jpg"
+ },
+ {
+  "fichier": "images/verrou-1600.avif",
+  "base": "verrou",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Verrou et mécanisme de fermeture",
+  "alt": "Verrou et mécanisme de fermeture",
+  "auteur": "Timothy A",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Metal_Lock_Door_Padmanabhapuram_Mar24_A7C_10156.jpg",
+  "titre_commons": "File:Metal Lock Door Padmanabhapuram Mar24 A7C 10156.jpg"
+ },
+ {
+  "fichier": "images/verrou-960.webp",
+  "base": "verrou",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Verrou et mécanisme de fermeture",
+  "alt": "Verrou et mécanisme de fermeture",
+  "auteur": "Timothy A",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Metal_Lock_Door_Padmanabhapuram_Mar24_A7C_10156.jpg",
+  "titre_commons": "File:Metal Lock Door Padmanabhapuram Mar24 A7C 10156.jpg"
+ },
+ {
+  "fichier": "images/verrou-960.avif",
+  "base": "verrou",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Verrou et mécanisme de fermeture",
+  "alt": "Verrou et mécanisme de fermeture",
+  "auteur": "Timothy A",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Metal_Lock_Door_Padmanabhapuram_Mar24_A7C_10156.jpg",
+  "titre_commons": "File:Metal Lock Door Padmanabhapuram Mar24 A7C 10156.jpg"
+ },
+ {
+  "fichier": "images/verrou-720.webp",
+  "base": "verrou",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Verrou et mécanisme de fermeture",
+  "alt": "Verrou et mécanisme de fermeture",
+  "auteur": "Timothy A",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Metal_Lock_Door_Padmanabhapuram_Mar24_A7C_10156.jpg",
+  "titre_commons": "File:Metal Lock Door Padmanabhapuram Mar24 A7C 10156.jpg"
+ },
+ {
+  "fichier": "images/verrou-720.avif",
+  "base": "verrou",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Verrou et mécanisme de fermeture",
+  "alt": "Verrou et mécanisme de fermeture",
+  "auteur": "Timothy A",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Metal_Lock_Door_Padmanabhapuram_Mar24_A7C_10156.jpg",
+  "titre_commons": "File:Metal Lock Door Padmanabhapuram Mar24 A7C 10156.jpg"
+ },
+ {
+  "fichier": "images/verrou-480.webp",
+  "base": "verrou",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Verrou et mécanisme de fermeture",
+  "alt": "Verrou et mécanisme de fermeture",
+  "auteur": "Timothy A",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Metal_Lock_Door_Padmanabhapuram_Mar24_A7C_10156.jpg",
+  "titre_commons": "File:Metal Lock Door Padmanabhapuram Mar24 A7C 10156.jpg"
+ },
+ {
+  "fichier": "images/verrou-480.avif",
+  "base": "verrou",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Verrou et mécanisme de fermeture",
+  "alt": "Verrou et mécanisme de fermeture",
+  "auteur": "Timothy A",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Metal_Lock_Door_Padmanabhapuram_Mar24_A7C_10156.jpg",
+  "titre_commons": "File:Metal Lock Door Padmanabhapuram Mar24 A7C 10156.jpg"
+ },
+ {
+  "fichier": "images/heurtoirs-1600.webp",
+  "base": "heurtoirs",
+  "largeur": 1600,
+  "hauteur": 1852,
+  "legende": "Heurtoirs et serrure d'une porte en bois",
+  "alt": "Heurtoirs et serrure d'une porte en bois",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Prunet-et-Belpuig_La_Trinit%C3%A9_door_lock.jpg",
+  "titre_commons": "File:Prunet-et-Belpuig La Trinité door lock.jpg"
+ },
+ {
+  "fichier": "images/heurtoirs-1600.avif",
+  "base": "heurtoirs",
+  "largeur": 1600,
+  "hauteur": 1852,
+  "legende": "Heurtoirs et serrure d'une porte en bois",
+  "alt": "Heurtoirs et serrure d'une porte en bois",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Prunet-et-Belpuig_La_Trinit%C3%A9_door_lock.jpg",
+  "titre_commons": "File:Prunet-et-Belpuig La Trinité door lock.jpg"
+ },
+ {
+  "fichier": "images/heurtoirs-960.webp",
+  "base": "heurtoirs",
+  "largeur": 1600,
+  "hauteur": 1852,
+  "legende": "Heurtoirs et serrure d'une porte en bois",
+  "alt": "Heurtoirs et serrure d'une porte en bois",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Prunet-et-Belpuig_La_Trinit%C3%A9_door_lock.jpg",
+  "titre_commons": "File:Prunet-et-Belpuig La Trinité door lock.jpg"
+ },
+ {
+  "fichier": "images/heurtoirs-960.avif",
+  "base": "heurtoirs",
+  "largeur": 1600,
+  "hauteur": 1852,
+  "legende": "Heurtoirs et serrure d'une porte en bois",
+  "alt": "Heurtoirs et serrure d'une porte en bois",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Prunet-et-Belpuig_La_Trinit%C3%A9_door_lock.jpg",
+  "titre_commons": "File:Prunet-et-Belpuig La Trinité door lock.jpg"
+ },
+ {
+  "fichier": "images/heurtoirs-720.webp",
+  "base": "heurtoirs",
+  "largeur": 1600,
+  "hauteur": 1852,
+  "legende": "Heurtoirs et serrure d'une porte en bois",
+  "alt": "Heurtoirs et serrure d'une porte en bois",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Prunet-et-Belpuig_La_Trinit%C3%A9_door_lock.jpg",
+  "titre_commons": "File:Prunet-et-Belpuig La Trinité door lock.jpg"
+ },
+ {
+  "fichier": "images/heurtoirs-720.avif",
+  "base": "heurtoirs",
+  "largeur": 1600,
+  "hauteur": 1852,
+  "legende": "Heurtoirs et serrure d'une porte en bois",
+  "alt": "Heurtoirs et serrure d'une porte en bois",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Prunet-et-Belpuig_La_Trinit%C3%A9_door_lock.jpg",
+  "titre_commons": "File:Prunet-et-Belpuig La Trinité door lock.jpg"
+ },
+ {
+  "fichier": "images/heurtoirs-480.webp",
+  "base": "heurtoirs",
+  "largeur": 1600,
+  "hauteur": 1852,
+  "legende": "Heurtoirs et serrure d'une porte en bois",
+  "alt": "Heurtoirs et serrure d'une porte en bois",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Prunet-et-Belpuig_La_Trinit%C3%A9_door_lock.jpg",
+  "titre_commons": "File:Prunet-et-Belpuig La Trinité door lock.jpg"
+ },
+ {
+  "fichier": "images/heurtoirs-480.avif",
+  "base": "heurtoirs",
+  "largeur": 1600,
+  "hauteur": 1852,
+  "legende": "Heurtoirs et serrure d'une porte en bois",
+  "alt": "Heurtoirs et serrure d'une porte en bois",
+  "auteur": "Palauenc05",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Prunet-et-Belpuig_La_Trinit%C3%A9_door_lock.jpg",
+  "titre_commons": "File:Prunet-et-Belpuig La Trinité door lock.jpg"
+ },
+ {
+  "fichier": "images/ornement-1600.webp",
+  "base": "ornement",
+  "largeur": 1600,
+  "hauteur": 2561,
+  "legende": "Serrure ornementée, entrée de clé",
+  "alt": "Serrure ornementée, entrée de clé",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wien,_Stephansdom_--_2018_--_3059.jpg",
+  "titre_commons": "File:Wien, Stephansdom -- 2018 -- 3059.jpg"
+ },
+ {
+  "fichier": "images/ornement-1600.avif",
+  "base": "ornement",
+  "largeur": 1600,
+  "hauteur": 2561,
+  "legende": "Serrure ornementée, entrée de clé",
+  "alt": "Serrure ornementée, entrée de clé",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wien,_Stephansdom_--_2018_--_3059.jpg",
+  "titre_commons": "File:Wien, Stephansdom -- 2018 -- 3059.jpg"
+ },
+ {
+  "fichier": "images/ornement-960.webp",
+  "base": "ornement",
+  "largeur": 1600,
+  "hauteur": 2561,
+  "legende": "Serrure ornementée, entrée de clé",
+  "alt": "Serrure ornementée, entrée de clé",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wien,_Stephansdom_--_2018_--_3059.jpg",
+  "titre_commons": "File:Wien, Stephansdom -- 2018 -- 3059.jpg"
+ },
+ {
+  "fichier": "images/ornement-960.avif",
+  "base": "ornement",
+  "largeur": 1600,
+  "hauteur": 2561,
+  "legende": "Serrure ornementée, entrée de clé",
+  "alt": "Serrure ornementée, entrée de clé",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wien,_Stephansdom_--_2018_--_3059.jpg",
+  "titre_commons": "File:Wien, Stephansdom -- 2018 -- 3059.jpg"
+ },
+ {
+  "fichier": "images/ornement-720.webp",
+  "base": "ornement",
+  "largeur": 1600,
+  "hauteur": 2561,
+  "legende": "Serrure ornementée, entrée de clé",
+  "alt": "Serrure ornementée, entrée de clé",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wien,_Stephansdom_--_2018_--_3059.jpg",
+  "titre_commons": "File:Wien, Stephansdom -- 2018 -- 3059.jpg"
+ },
+ {
+  "fichier": "images/ornement-720.avif",
+  "base": "ornement",
+  "largeur": 1600,
+  "hauteur": 2561,
+  "legende": "Serrure ornementée, entrée de clé",
+  "alt": "Serrure ornementée, entrée de clé",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wien,_Stephansdom_--_2018_--_3059.jpg",
+  "titre_commons": "File:Wien, Stephansdom -- 2018 -- 3059.jpg"
+ },
+ {
+  "fichier": "images/ornement-480.webp",
+  "base": "ornement",
+  "largeur": 1600,
+  "hauteur": 2561,
+  "legende": "Serrure ornementée, entrée de clé",
+  "alt": "Serrure ornementée, entrée de clé",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wien,_Stephansdom_--_2018_--_3059.jpg",
+  "titre_commons": "File:Wien, Stephansdom -- 2018 -- 3059.jpg"
+ },
+ {
+  "fichier": "images/ornement-480.avif",
+  "base": "ornement",
+  "largeur": 1600,
+  "hauteur": 2561,
+  "legende": "Serrure ornementée, entrée de clé",
+  "alt": "Serrure ornementée, entrée de clé",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wien,_Stephansdom_--_2018_--_3059.jpg",
+  "titre_commons": "File:Wien, Stephansdom -- 2018 -- 3059.jpg"
+ },
+ {
+  "fichier": "images/coffre-1600.webp",
+  "base": "coffre",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Serrure à pêne sur porte peinte",
+  "alt": "Serrure à pêne sur porte peinte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Bunker_26_--_2023_--_6716.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Bunker 26 -- 2023 -- 6716.jpg"
+ },
+ {
+  "fichier": "images/coffre-1600.avif",
+  "base": "coffre",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Serrure à pêne sur porte peinte",
+  "alt": "Serrure à pêne sur porte peinte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Bunker_26_--_2023_--_6716.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Bunker 26 -- 2023 -- 6716.jpg"
+ },
+ {
+  "fichier": "images/coffre-960.webp",
+  "base": "coffre",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Serrure à pêne sur porte peinte",
+  "alt": "Serrure à pêne sur porte peinte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Bunker_26_--_2023_--_6716.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Bunker 26 -- 2023 -- 6716.jpg"
+ },
+ {
+  "fichier": "images/coffre-960.avif",
+  "base": "coffre",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Serrure à pêne sur porte peinte",
+  "alt": "Serrure à pêne sur porte peinte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Bunker_26_--_2023_--_6716.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Bunker 26 -- 2023 -- 6716.jpg"
+ },
+ {
+  "fichier": "images/coffre-720.webp",
+  "base": "coffre",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Serrure à pêne sur porte peinte",
+  "alt": "Serrure à pêne sur porte peinte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Bunker_26_--_2023_--_6716.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Bunker 26 -- 2023 -- 6716.jpg"
+ },
+ {
+  "fichier": "images/coffre-720.avif",
+  "base": "coffre",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Serrure à pêne sur porte peinte",
+  "alt": "Serrure à pêne sur porte peinte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Bunker_26_--_2023_--_6716.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Bunker 26 -- 2023 -- 6716.jpg"
+ },
+ {
+  "fichier": "images/coffre-480.webp",
+  "base": "coffre",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Serrure à pêne sur porte peinte",
+  "alt": "Serrure à pêne sur porte peinte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Bunker_26_--_2023_--_6716.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Bunker 26 -- 2023 -- 6716.jpg"
+ },
+ {
+  "fichier": "images/coffre-480.avif",
+  "base": "coffre",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Serrure à pêne sur porte peinte",
+  "alt": "Serrure à pêne sur porte peinte",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Bunker_26_--_2023_--_6716.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Bunker 26 -- 2023 -- 6716.jpg"
+ }
 ]

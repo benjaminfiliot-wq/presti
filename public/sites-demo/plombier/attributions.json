@@ -1,212 +1,674 @@
 [
-  {
-    "fichier": "images/hero-480.webp",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation de robinetterie"
-  },
-  {
-    "fichier": "images/hero-960.webp",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation de robinetterie"
-  },
-  {
-    "fichier": "images/hero-1600.webp",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation de robinetterie"
-  },
-  {
-    "fichier": "images/hero-480.avif",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation de robinetterie"
-  },
-  {
-    "fichier": "images/hero-960.avif",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation de robinetterie"
-  },
-  {
-    "fichier": "images/hero-1600.avif",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation de robinetterie"
-  },
-  {
-    "fichier": "images/pipes-480.webp",
-    "auteur": "Brycemilton",
-    "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Réseau de tuyauterie cuivre"
-  },
-  {
-    "fichier": "images/pipes-960.webp",
-    "auteur": "Brycemilton",
-    "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Réseau de tuyauterie cuivre"
-  },
-  {
-    "fichier": "images/pipes-1600.webp",
-    "auteur": "Brycemilton",
-    "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Réseau de tuyauterie cuivre"
-  },
-  {
-    "fichier": "images/pipes-480.avif",
-    "auteur": "Brycemilton",
-    "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Réseau de tuyauterie cuivre"
-  },
-  {
-    "fichier": "images/pipes-960.avif",
-    "auteur": "Brycemilton",
-    "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Réseau de tuyauterie cuivre"
-  },
-  {
-    "fichier": "images/pipes-1600.avif",
-    "auteur": "Brycemilton",
-    "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Réseau de tuyauterie cuivre"
-  },
-  {
-    "fichier": "images/repair-480.webp",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Unprofessional_plumbing_pipe_repair.jpg",
-    "licence": "CC0",
-    "legende": "Réparation de fuite"
-  },
-  {
-    "fichier": "images/repair-960.webp",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Unprofessional_plumbing_pipe_repair.jpg",
-    "licence": "CC0",
-    "legende": "Réparation de fuite"
-  },
-  {
-    "fichier": "images/repair-1600.webp",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Unprofessional_plumbing_pipe_repair.jpg",
-    "licence": "CC0",
-    "legende": "Réparation de fuite"
-  },
-  {
-    "fichier": "images/repair-480.avif",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Unprofessional_plumbing_pipe_repair.jpg",
-    "licence": "CC0",
-    "legende": "Réparation de fuite"
-  },
-  {
-    "fichier": "images/repair-960.avif",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Unprofessional_plumbing_pipe_repair.jpg",
-    "licence": "CC0",
-    "legende": "Réparation de fuite"
-  },
-  {
-    "fichier": "images/repair-1600.avif",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Unprofessional_plumbing_pipe_repair.jpg",
-    "licence": "CC0",
-    "legende": "Réparation de fuite"
-  },
-  {
-    "fichier": "images/tools-480.webp",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_tools_in_2004_Paris.jpg",
-    "licence": "CC0",
-    "legende": "Outils de plombier professionnels"
-  },
-  {
-    "fichier": "images/tools-960.webp",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_tools_in_2004_Paris.jpg",
-    "licence": "CC0",
-    "legende": "Outils de plombier professionnels"
-  },
-  {
-    "fichier": "images/tools-1600.webp",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_tools_in_2004_Paris.jpg",
-    "licence": "CC0",
-    "legende": "Outils de plombier professionnels"
-  },
-  {
-    "fichier": "images/tools-480.avif",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_tools_in_2004_Paris.jpg",
-    "licence": "CC0",
-    "legende": "Outils de plombier professionnels"
-  },
-  {
-    "fichier": "images/tools-960.avif",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_tools_in_2004_Paris.jpg",
-    "licence": "CC0",
-    "legende": "Outils de plombier professionnels"
-  },
-  {
-    "fichier": "images/tools-1600.avif",
-    "auteur": "Syced",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_tools_in_2004_Paris.jpg",
-    "licence": "CC0",
-    "legende": "Outils de plombier professionnels"
-  },
-  {
-    "fichier": "images/store-480.webp",
-    "auteur": "Andykatib",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_World_Dunedin,_5_May_2026.jpg",
-    "licence": "CC0",
-    "legende": "Matériel de plomberie"
-  },
-  {
-    "fichier": "images/store-960.webp",
-    "auteur": "Andykatib",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_World_Dunedin,_5_May_2026.jpg",
-    "licence": "CC0",
-    "legende": "Matériel de plomberie"
-  },
-  {
-    "fichier": "images/store-1600.webp",
-    "auteur": "Andykatib",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_World_Dunedin,_5_May_2026.jpg",
-    "licence": "CC0",
-    "legende": "Matériel de plomberie"
-  },
-  {
-    "fichier": "images/store-480.avif",
-    "auteur": "Andykatib",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_World_Dunedin,_5_May_2026.jpg",
-    "licence": "CC0",
-    "legende": "Matériel de plomberie"
-  },
-  {
-    "fichier": "images/store-960.avif",
-    "auteur": "Andykatib",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_World_Dunedin,_5_May_2026.jpg",
-    "licence": "CC0",
-    "legende": "Matériel de plomberie"
-  },
-  {
-    "fichier": "images/store-1600.avif",
-    "auteur": "Andykatib",
-    "source": "https://commons.wikimedia.org/wiki/File:Plumbing_World_Dunedin,_5_May_2026.jpg",
-    "licence": "CC0",
-    "legende": "Matériel de plomberie"
-  }
+ {
+  "fichier": "images/hero-1600.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1069,
+  "legende": "Salle de bains avec double vasque et robinetterie posée",
+  "alt": "Salle de bains avec double vasque et robinetterie posée",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/hero-1600.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1069,
+  "legende": "Salle de bains avec double vasque et robinetterie posée",
+  "alt": "Salle de bains avec double vasque et robinetterie posée",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/hero-960.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1069,
+  "legende": "Salle de bains avec double vasque et robinetterie posée",
+  "alt": "Salle de bains avec double vasque et robinetterie posée",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/hero-960.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1069,
+  "legende": "Salle de bains avec double vasque et robinetterie posée",
+  "alt": "Salle de bains avec double vasque et robinetterie posée",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/hero-720.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1069,
+  "legende": "Salle de bains avec double vasque et robinetterie posée",
+  "alt": "Salle de bains avec double vasque et robinetterie posée",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/hero-720.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1069,
+  "legende": "Salle de bains avec double vasque et robinetterie posée",
+  "alt": "Salle de bains avec double vasque et robinetterie posée",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/hero-480.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1069,
+  "legende": "Salle de bains avec double vasque et robinetterie posée",
+  "alt": "Salle de bains avec double vasque et robinetterie posée",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/hero-480.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1069,
+  "legende": "Salle de bains avec double vasque et robinetterie posée",
+  "alt": "Salle de bains avec double vasque et robinetterie posée",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/robinetterie-1600.webp",
+  "base": "robinetterie",
+  "largeur": 1600,
+  "hauteur": 1225,
+  "legende": "Robinetterie chromée sur évier, raccords en eau",
+  "alt": "Robinetterie chromée sur évier, raccords en eau",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_3_BW.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 3 BW.jpg"
+ },
+ {
+  "fichier": "images/robinetterie-1600.avif",
+  "base": "robinetterie",
+  "largeur": 1600,
+  "hauteur": 1225,
+  "legende": "Robinetterie chromée sur évier, raccords en eau",
+  "alt": "Robinetterie chromée sur évier, raccords en eau",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_3_BW.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 3 BW.jpg"
+ },
+ {
+  "fichier": "images/robinetterie-960.webp",
+  "base": "robinetterie",
+  "largeur": 1600,
+  "hauteur": 1225,
+  "legende": "Robinetterie chromée sur évier, raccords en eau",
+  "alt": "Robinetterie chromée sur évier, raccords en eau",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_3_BW.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 3 BW.jpg"
+ },
+ {
+  "fichier": "images/robinetterie-960.avif",
+  "base": "robinetterie",
+  "largeur": 1600,
+  "hauteur": 1225,
+  "legende": "Robinetterie chromée sur évier, raccords en eau",
+  "alt": "Robinetterie chromée sur évier, raccords en eau",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_3_BW.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 3 BW.jpg"
+ },
+ {
+  "fichier": "images/robinetterie-720.webp",
+  "base": "robinetterie",
+  "largeur": 1600,
+  "hauteur": 1225,
+  "legende": "Robinetterie chromée sur évier, raccords en eau",
+  "alt": "Robinetterie chromée sur évier, raccords en eau",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_3_BW.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 3 BW.jpg"
+ },
+ {
+  "fichier": "images/robinetterie-720.avif",
+  "base": "robinetterie",
+  "largeur": 1600,
+  "hauteur": 1225,
+  "legende": "Robinetterie chromée sur évier, raccords en eau",
+  "alt": "Robinetterie chromée sur évier, raccords en eau",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_3_BW.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 3 BW.jpg"
+ },
+ {
+  "fichier": "images/robinetterie-480.webp",
+  "base": "robinetterie",
+  "largeur": 1600,
+  "hauteur": 1225,
+  "legende": "Robinetterie chromée sur évier, raccords en eau",
+  "alt": "Robinetterie chromée sur évier, raccords en eau",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_3_BW.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 3 BW.jpg"
+ },
+ {
+  "fichier": "images/robinetterie-480.avif",
+  "base": "robinetterie",
+  "largeur": 1600,
+  "hauteur": 1225,
+  "legende": "Robinetterie chromée sur évier, raccords en eau",
+  "alt": "Robinetterie chromée sur évier, raccords en eau",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_3_BW.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 3 BW.jpg"
+ },
+ {
+  "fichier": "images/douches-1600.webp",
+  "base": "douches",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Espace douche carrelé, alimentations encastrées",
+  "alt": "Espace douche carrelé, alimentations encastrées",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Indoor_pool_and_showers_of_the_spa_at_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Indoor pool and showers of the spa at Amantaka luxury Resort & Hotel in Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/douches-1600.avif",
+  "base": "douches",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Espace douche carrelé, alimentations encastrées",
+  "alt": "Espace douche carrelé, alimentations encastrées",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Indoor_pool_and_showers_of_the_spa_at_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Indoor pool and showers of the spa at Amantaka luxury Resort & Hotel in Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/douches-960.webp",
+  "base": "douches",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Espace douche carrelé, alimentations encastrées",
+  "alt": "Espace douche carrelé, alimentations encastrées",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Indoor_pool_and_showers_of_the_spa_at_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Indoor pool and showers of the spa at Amantaka luxury Resort & Hotel in Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/douches-960.avif",
+  "base": "douches",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Espace douche carrelé, alimentations encastrées",
+  "alt": "Espace douche carrelé, alimentations encastrées",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Indoor_pool_and_showers_of_the_spa_at_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Indoor pool and showers of the spa at Amantaka luxury Resort & Hotel in Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/douches-720.webp",
+  "base": "douches",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Espace douche carrelé, alimentations encastrées",
+  "alt": "Espace douche carrelé, alimentations encastrées",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Indoor_pool_and_showers_of_the_spa_at_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Indoor pool and showers of the spa at Amantaka luxury Resort & Hotel in Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/douches-720.avif",
+  "base": "douches",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Espace douche carrelé, alimentations encastrées",
+  "alt": "Espace douche carrelé, alimentations encastrées",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Indoor_pool_and_showers_of_the_spa_at_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Indoor pool and showers of the spa at Amantaka luxury Resort & Hotel in Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/douches-480.webp",
+  "base": "douches",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Espace douche carrelé, alimentations encastrées",
+  "alt": "Espace douche carrelé, alimentations encastrées",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Indoor_pool_and_showers_of_the_spa_at_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Indoor pool and showers of the spa at Amantaka luxury Resort & Hotel in Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/douches-480.avif",
+  "base": "douches",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Espace douche carrelé, alimentations encastrées",
+  "alt": "Espace douche carrelé, alimentations encastrées",
+  "auteur": "Basile Morin",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Indoor_pool_and_showers_of_the_spa_at_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg",
+  "titre_commons": "File:Indoor pool and showers of the spa at Amantaka luxury Resort & Hotel in Luang Prabang Laos.jpg"
+ },
+ {
+  "fichier": "images/colonne-1600.webp",
+  "base": "colonne",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Colonne de douche et mitigeur thermostatique",
+  "alt": "Colonne de douche et mitigeur thermostatique",
+  "auteur": "Matti Blume",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Silesian_Stadium,_Chorzow_(DBR45830).jpg",
+  "titre_commons": "File:Silesian Stadium, Chorzow (DBR45830).jpg"
+ },
+ {
+  "fichier": "images/colonne-1600.avif",
+  "base": "colonne",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Colonne de douche et mitigeur thermostatique",
+  "alt": "Colonne de douche et mitigeur thermostatique",
+  "auteur": "Matti Blume",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Silesian_Stadium,_Chorzow_(DBR45830).jpg",
+  "titre_commons": "File:Silesian Stadium, Chorzow (DBR45830).jpg"
+ },
+ {
+  "fichier": "images/colonne-960.webp",
+  "base": "colonne",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Colonne de douche et mitigeur thermostatique",
+  "alt": "Colonne de douche et mitigeur thermostatique",
+  "auteur": "Matti Blume",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Silesian_Stadium,_Chorzow_(DBR45830).jpg",
+  "titre_commons": "File:Silesian Stadium, Chorzow (DBR45830).jpg"
+ },
+ {
+  "fichier": "images/colonne-960.avif",
+  "base": "colonne",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Colonne de douche et mitigeur thermostatique",
+  "alt": "Colonne de douche et mitigeur thermostatique",
+  "auteur": "Matti Blume",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Silesian_Stadium,_Chorzow_(DBR45830).jpg",
+  "titre_commons": "File:Silesian Stadium, Chorzow (DBR45830).jpg"
+ },
+ {
+  "fichier": "images/colonne-720.webp",
+  "base": "colonne",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Colonne de douche et mitigeur thermostatique",
+  "alt": "Colonne de douche et mitigeur thermostatique",
+  "auteur": "Matti Blume",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Silesian_Stadium,_Chorzow_(DBR45830).jpg",
+  "titre_commons": "File:Silesian Stadium, Chorzow (DBR45830).jpg"
+ },
+ {
+  "fichier": "images/colonne-720.avif",
+  "base": "colonne",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Colonne de douche et mitigeur thermostatique",
+  "alt": "Colonne de douche et mitigeur thermostatique",
+  "auteur": "Matti Blume",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Silesian_Stadium,_Chorzow_(DBR45830).jpg",
+  "titre_commons": "File:Silesian Stadium, Chorzow (DBR45830).jpg"
+ },
+ {
+  "fichier": "images/colonne-480.webp",
+  "base": "colonne",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Colonne de douche et mitigeur thermostatique",
+  "alt": "Colonne de douche et mitigeur thermostatique",
+  "auteur": "Matti Blume",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Silesian_Stadium,_Chorzow_(DBR45830).jpg",
+  "titre_commons": "File:Silesian Stadium, Chorzow (DBR45830).jpg"
+ },
+ {
+  "fichier": "images/colonne-480.avif",
+  "base": "colonne",
+  "largeur": 1600,
+  "hauteur": 2400,
+  "legende": "Colonne de douche et mitigeur thermostatique",
+  "alt": "Colonne de douche et mitigeur thermostatique",
+  "auteur": "Matti Blume",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Silesian_Stadium,_Chorzow_(DBR45830).jpg",
+  "titre_commons": "File:Silesian Stadium, Chorzow (DBR45830).jpg"
+ },
+ {
+  "fichier": "images/canalisations-1600.webp",
+  "base": "canalisations",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Canalisations prêtes à la pose",
+  "alt": "Canalisations prêtes à la pose",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Haltern_am_See,_Sythen,_Werkzeughalle_der_Quarzwerke_--_2015_--_4989.jpg",
+  "titre_commons": "File:Haltern am See, Sythen, Werkzeughalle der Quarzwerke -- 2015 -- 4989.jpg"
+ },
+ {
+  "fichier": "images/canalisations-1600.avif",
+  "base": "canalisations",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Canalisations prêtes à la pose",
+  "alt": "Canalisations prêtes à la pose",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Haltern_am_See,_Sythen,_Werkzeughalle_der_Quarzwerke_--_2015_--_4989.jpg",
+  "titre_commons": "File:Haltern am See, Sythen, Werkzeughalle der Quarzwerke -- 2015 -- 4989.jpg"
+ },
+ {
+  "fichier": "images/canalisations-960.webp",
+  "base": "canalisations",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Canalisations prêtes à la pose",
+  "alt": "Canalisations prêtes à la pose",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Haltern_am_See,_Sythen,_Werkzeughalle_der_Quarzwerke_--_2015_--_4989.jpg",
+  "titre_commons": "File:Haltern am See, Sythen, Werkzeughalle der Quarzwerke -- 2015 -- 4989.jpg"
+ },
+ {
+  "fichier": "images/canalisations-960.avif",
+  "base": "canalisations",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Canalisations prêtes à la pose",
+  "alt": "Canalisations prêtes à la pose",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Haltern_am_See,_Sythen,_Werkzeughalle_der_Quarzwerke_--_2015_--_4989.jpg",
+  "titre_commons": "File:Haltern am See, Sythen, Werkzeughalle der Quarzwerke -- 2015 -- 4989.jpg"
+ },
+ {
+  "fichier": "images/canalisations-720.webp",
+  "base": "canalisations",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Canalisations prêtes à la pose",
+  "alt": "Canalisations prêtes à la pose",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Haltern_am_See,_Sythen,_Werkzeughalle_der_Quarzwerke_--_2015_--_4989.jpg",
+  "titre_commons": "File:Haltern am See, Sythen, Werkzeughalle der Quarzwerke -- 2015 -- 4989.jpg"
+ },
+ {
+  "fichier": "images/canalisations-720.avif",
+  "base": "canalisations",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Canalisations prêtes à la pose",
+  "alt": "Canalisations prêtes à la pose",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Haltern_am_See,_Sythen,_Werkzeughalle_der_Quarzwerke_--_2015_--_4989.jpg",
+  "titre_commons": "File:Haltern am See, Sythen, Werkzeughalle der Quarzwerke -- 2015 -- 4989.jpg"
+ },
+ {
+  "fichier": "images/canalisations-480.webp",
+  "base": "canalisations",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Canalisations prêtes à la pose",
+  "alt": "Canalisations prêtes à la pose",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Haltern_am_See,_Sythen,_Werkzeughalle_der_Quarzwerke_--_2015_--_4989.jpg",
+  "titre_commons": "File:Haltern am See, Sythen, Werkzeughalle der Quarzwerke -- 2015 -- 4989.jpg"
+ },
+ {
+  "fichier": "images/canalisations-480.avif",
+  "base": "canalisations",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Canalisations prêtes à la pose",
+  "alt": "Canalisations prêtes à la pose",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Haltern_am_See,_Sythen,_Werkzeughalle_der_Quarzwerke_--_2015_--_4989.jpg",
+  "titre_commons": "File:Haltern am See, Sythen, Werkzeughalle der Quarzwerke -- 2015 -- 4989.jpg"
+ },
+ {
+  "fichier": "images/reseau-1600.webp",
+  "base": "reseau",
+  "largeur": 977,
+  "hauteur": 759,
+  "legende": "Réseau de tuyauterie cuivre et vannes",
+  "alt": "Réseau de tuyauterie cuivre et vannes",
+  "auteur": "Brycemilton",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
+  "titre_commons": "File:International Fountain pipework.jpg"
+ },
+ {
+  "fichier": "images/reseau-1600.avif",
+  "base": "reseau",
+  "largeur": 977,
+  "hauteur": 759,
+  "legende": "Réseau de tuyauterie cuivre et vannes",
+  "alt": "Réseau de tuyauterie cuivre et vannes",
+  "auteur": "Brycemilton",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
+  "titre_commons": "File:International Fountain pipework.jpg"
+ },
+ {
+  "fichier": "images/reseau-960.webp",
+  "base": "reseau",
+  "largeur": 977,
+  "hauteur": 759,
+  "legende": "Réseau de tuyauterie cuivre et vannes",
+  "alt": "Réseau de tuyauterie cuivre et vannes",
+  "auteur": "Brycemilton",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
+  "titre_commons": "File:International Fountain pipework.jpg"
+ },
+ {
+  "fichier": "images/reseau-960.avif",
+  "base": "reseau",
+  "largeur": 977,
+  "hauteur": 759,
+  "legende": "Réseau de tuyauterie cuivre et vannes",
+  "alt": "Réseau de tuyauterie cuivre et vannes",
+  "auteur": "Brycemilton",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
+  "titre_commons": "File:International Fountain pipework.jpg"
+ },
+ {
+  "fichier": "images/reseau-720.webp",
+  "base": "reseau",
+  "largeur": 977,
+  "hauteur": 759,
+  "legende": "Réseau de tuyauterie cuivre et vannes",
+  "alt": "Réseau de tuyauterie cuivre et vannes",
+  "auteur": "Brycemilton",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
+  "titre_commons": "File:International Fountain pipework.jpg"
+ },
+ {
+  "fichier": "images/reseau-720.avif",
+  "base": "reseau",
+  "largeur": 977,
+  "hauteur": 759,
+  "legende": "Réseau de tuyauterie cuivre et vannes",
+  "alt": "Réseau de tuyauterie cuivre et vannes",
+  "auteur": "Brycemilton",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
+  "titre_commons": "File:International Fountain pipework.jpg"
+ },
+ {
+  "fichier": "images/reseau-480.webp",
+  "base": "reseau",
+  "largeur": 977,
+  "hauteur": 759,
+  "legende": "Réseau de tuyauterie cuivre et vannes",
+  "alt": "Réseau de tuyauterie cuivre et vannes",
+  "auteur": "Brycemilton",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
+  "titre_commons": "File:International Fountain pipework.jpg"
+ },
+ {
+  "fichier": "images/reseau-480.avif",
+  "base": "reseau",
+  "largeur": 977,
+  "hauteur": 759,
+  "legende": "Réseau de tuyauterie cuivre et vannes",
+  "alt": "Réseau de tuyauterie cuivre et vannes",
+  "auteur": "Brycemilton",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:International_Fountain_pipework.jpg",
+  "titre_commons": "File:International Fountain pipework.jpg"
+ },
+ {
+  "fichier": "images/lavabo-1600.webp",
+  "base": "lavabo",
+  "largeur": 1600,
+  "hauteur": 1259,
+  "legende": "Lavabo, siphon et robinetterie installés",
+  "alt": "Lavabo, siphon et robinetterie installés",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 6.jpg"
+ },
+ {
+  "fichier": "images/lavabo-1600.avif",
+  "base": "lavabo",
+  "largeur": 1600,
+  "hauteur": 1259,
+  "legende": "Lavabo, siphon et robinetterie installés",
+  "alt": "Lavabo, siphon et robinetterie installés",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 6.jpg"
+ },
+ {
+  "fichier": "images/lavabo-960.webp",
+  "base": "lavabo",
+  "largeur": 1600,
+  "hauteur": 1259,
+  "legende": "Lavabo, siphon et robinetterie installés",
+  "alt": "Lavabo, siphon et robinetterie installés",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 6.jpg"
+ },
+ {
+  "fichier": "images/lavabo-960.avif",
+  "base": "lavabo",
+  "largeur": 1600,
+  "hauteur": 1259,
+  "legende": "Lavabo, siphon et robinetterie installés",
+  "alt": "Lavabo, siphon et robinetterie installés",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 6.jpg"
+ },
+ {
+  "fichier": "images/lavabo-720.webp",
+  "base": "lavabo",
+  "largeur": 1600,
+  "hauteur": 1259,
+  "legende": "Lavabo, siphon et robinetterie installés",
+  "alt": "Lavabo, siphon et robinetterie installés",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 6.jpg"
+ },
+ {
+  "fichier": "images/lavabo-720.avif",
+  "base": "lavabo",
+  "largeur": 1600,
+  "hauteur": 1259,
+  "legende": "Lavabo, siphon et robinetterie installés",
+  "alt": "Lavabo, siphon et robinetterie installés",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 6.jpg"
+ },
+ {
+  "fichier": "images/lavabo-480.webp",
+  "base": "lavabo",
+  "largeur": 1600,
+  "hauteur": 1259,
+  "legende": "Lavabo, siphon et robinetterie installés",
+  "alt": "Lavabo, siphon et robinetterie installés",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 6.jpg"
+ },
+ {
+  "fichier": "images/lavabo-480.avif",
+  "base": "lavabo",
+  "largeur": 1600,
+  "hauteur": 1259,
+  "legende": "Lavabo, siphon et robinetterie installés",
+  "alt": "Lavabo, siphon et robinetterie installés",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
+  "titre_commons": "File:Sink and taps in the men's locker room 6.jpg"
+ }
 ]

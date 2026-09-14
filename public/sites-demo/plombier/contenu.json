@@ -1,0 +1,1048 @@
+{
+ "metier": "plombier",
+ "extrait_le": "2026-09-14",
+ "pages": {
+  "/": {
+   "type": "accueil",
+   "title": "Plombier à Lyon — Démo Plombier Lyon",
+   "description": "Démo Plombier Lyon : artisan plombier sanitaire à Lyon. Installations de tuyauterie, mitigeurs, chauffe-eau et dépannage soigné. Devis gratuit.",
+   "h1": "Plombier à Lyon — Démo Plombier Lyon",
+   "kicker": "Artisan sanitaire qualifié",
+   "chapeau": "Installation soignée, rénovation complète et maintenance de vos réseaux de plomberie sanitaire dans toute la métropole lyonnaise.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "hero",
+     "alt": "Installation de robinetterie sanitaire et mitigeur de lavabo"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Nos prestations de plomberie sanitaire",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Des solutions durables et conformes aux normes pour tous vos équipements d'eau."
+      },
+      {
+       "type": "h3",
+       "texte": "Arrivée d'eau et tuyauterie"
+      },
+      {
+       "type": "p",
+       "texte": "Conception et modification de réseaux d'alimentation en cuivre brasé, multicouche et PER avec raccords sertis haute fiabilité."
+      },
+      {
+       "type": "h3",
+       "texte": "Groupe de sécurité et chauffe-eau"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement préventif et pose de groupes de sécurité neufs pour protéger votre ballon d'eau chaude contre les surpressions."
+      },
+      {
+       "type": "h3",
+       "texte": "Robinetterie et mitigeurs"
+      },
+      {
+       "type": "p",
+       "texte": "Pose soignée de mitigeurs thermostatiques, mélangeurs muraux et colonnes de douche pour optimiser votre confort et débit."
+      },
+      {
+       "type": "h3",
+       "texte": "Rénovation de pièces d'eau"
+      },
+      {
+       "type": "p",
+       "texte": "Reprise complète des évacuations PVC et des distributions sanitaires pour vos projets de réaménagement de salle de bain."
+      },
+      {
+       "type": "h3",
+       "texte": "Mécanismes WC et bâtis"
+      },
+      {
+       "type": "p",
+       "texte": "Installation de bâtis-supports suspendus, robinets d'arrêt silencieux et flotteurs économes en consommation d'eau."
+      },
+      {
+       "type": "h3",
+       "texte": "Recherche de fuite et réfection"
+      },
+      {
+       "type": "p",
+       "texte": "Localisation méthodique d'infiltrations d'eau non destructives et réfection rapide des sections endommagées."
+      }
+     ]
+    },
+    {
+     "h2": "Nos réalisations d'installations",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Découvrez en images la rigueur de nos assemblages hydrauliques et la propreté de nos finitions."
+      },
+      {
+       "type": "img",
+       "fichier": "pipes",
+       "alt": "Réseau de tuyauterie cuivre pour distribution sanitaire"
+      },
+      {
+       "type": "p",
+       "texte": "Réseau de distribution en tuyauterie cuivre (Photo Brycemilton, licence CC BY-SA 4.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "repair",
+       "alt": "Réparation et purge de circuit hydraulique sur conduite d'eau"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation de circuit hydraulique sanitaire (Photo Syced, domaine public CC0)"
+      },
+      {
+       "type": "img",
+       "fichier": "store",
+       "alt": "Matériel et raccords de plomberie certifiés CSTB"
+      },
+      {
+       "type": "p",
+       "texte": "Matériel sanitaire sélectionné chez nos partenaires (Photo Andykatib, domaine public CC0)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes desservies dans le Rhône",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous nous déplaçons quotidiennement sur Lyon et les communes limitrophes pour vos chantiers."
+      }
+     ]
+    },
+    {
+     "h2": "Comment se déroule votre projet",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Une organisation transparente en 4 étapes claires pour sécuriser chaque intervention."
+      },
+      {
+       "type": "h3",
+       "texte": "Prise de contact"
+      },
+      {
+       "type": "p",
+       "texte": "Vous décrivez vos besoins d'installation ou votre panne directement en ligne ou par téléphone."
+      },
+      {
+       "type": "h3",
+       "texte": "Examen technique"
+      },
+      {
+       "type": "p",
+       "texte": "Nous validons la configuration de votre réseau d'eau, les diamètres de tuyauterie et les accès."
+      },
+      {
+       "type": "h3",
+       "texte": "Devis détaillé"
+      },
+      {
+       "type": "p",
+       "texte": "Émission d'un devis clair et gratuit détaillant les fournitures sanitaires et la main d'œuvre."
+      },
+      {
+       "type": "h3",
+       "texte": "Réalisation soignée"
+      },
+      {
+       "type": "p",
+       "texte": "Exécution des travaux selon les normes DTU en vigueur et contrôle d'étanchéité sous pression."
+      }
+     ]
+    },
+    {
+     "h2": "Questions fréquentes sur la plomberie",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Quelques réponses concrètes pour vous guider avant toute intervention."
+      },
+      {
+       "type": "h3",
+       "texte": "Peut-on établir un diagnostic précis sans visiter l'installation ?"
+      },
+      {
+       "type": "p",
+       "texte": "Une première estimation d'orientation est possible par échange téléphonique, mais la validation définitive des raccordements et des pressions nécessite un contrôle visuel sur place afin d'éviter toute mauvaise surprise."
+      },
+      {
+       "type": "h3",
+       "texte": "Quels matériaux privilégier pour une rénovation de tuyauterie ?"
+      },
+      {
+       "type": "p",
+       "texte": "Le cuivre reste la référence historique pour sa robustesse et sa longévité. Le multicouche offre une excellente résistance sans dilatation excessive. Nous sélectionnons la solution la plus adaptée à la configuration de vos cloisons."
+      },
+      {
+       "type": "h3",
+       "texte": "Quand faut-il remplacer le groupe de sécurité d'un chauffe-eau ?"
+      },
+      {
+       "type": "p",
+       "texte": "Le groupe de sécurité doit être actionné une fois par mois pour chasser le calcaire. En cas d'écoulement permanent en dehors des heures de chauffe ou de blocage mécanique, son remplacement s'impose pour protéger la cuve."
+      },
+      {
+       "type": "h3",
+       "texte": "Vos interventions sont-elles couvertes par une assurance ?"
+      },
+      {
+       "type": "p",
+       "texte": "Oui, tous nos chantiers de pose et rénovation bénéficient de notre garantie assurance décennale souscrite auprès de Assureur fictif sous le contrat DEMO-0001."
+      }
+     ]
+    },
+    {
+     "h2": "Échangeons sur votre projet",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Contactez notre équipe pour toute question technique ou demande de chiffrage."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 69003 Lyon"
+      },
+      {
+       "type": "p",
+       "texte": "Lundi–vendredi 8 h–18 h"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      },
+      {
+       "type": "p",
+       "texte": "contact@plombier.demo.invalid"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Plumber",
+     "name": "Démo Plombier Lyon",
+     "url": "https://plombier.demo.invalid/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "69003",
+      "addressLocality": "Lyon",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lyon",
+      "Villeurbanne",
+      "Bron",
+      "Vénissieux"
+     ],
+     "image": "https://plombier.demo.invalid/images/hero-1600.webp"
+    }
+   ]
+  },
+  "/chauffagiste/": {
+   "type": "metier",
+   "cible": "chauffagiste",
+   "title": "Chauffagiste à Lyon — Démo Plombier Lyon",
+   "description": "Artisan chauffagiste à Lyon : entretien, rénovation et installation de systèmes de chauffage et chauffe-eau par Démo Plombier Lyon. Devis gratuit.",
+   "h1": "Chauffagiste à Lyon",
+   "kicker": "Activité complémentaire",
+   "chapeau": "En complément de notre activité de plomberie sanitaire, Démo Plombier Lyon assure la maintenance thermique, le remplacement de chauffe-eau et l'équilibrage de vos réseaux de radiateurs.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "hero",
+     "alt": "Artisan chauffagiste raccordant un circuit thermique à Lyon"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Prestations de chauffage à Lyon",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Des solutions adaptées pour un confort thermique optimal et des consommations d'énergie maîtrisées."
+      },
+      {
+       "type": "h3",
+       "texte": "Remplacement de chauffe-eau"
+      },
+      {
+       "type": "p",
+       "texte": "Pose de ballons d'eau chaude thermodynamiques ou électriques à haut rendement avec groupe de sécurité neuf."
+      },
+      {
+       "type": "h3",
+       "texte": "Circuits de radiateurs"
+      },
+      {
+       "type": "p",
+       "texte": "Purge, désembouage méthodique et pose de robinets thermostatiques pour équilibrer la température pièce par pièce."
+      },
+      {
+       "type": "h3",
+       "texte": "Raccordement hydraulique"
+      },
+      {
+       "type": "p",
+       "texte": "Création de boucles de circulation en cuivre et vanne d'équilibrage pour optimiser le transfert de calories."
+      }
+     ]
+    },
+    {
+     "h2": "Équipements et installations",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Consultez nos réalisations sur circuits d'eau chaude et liaisons hydrauliques."
+      },
+      {
+       "type": "img",
+       "fichier": "pipes",
+       "alt": "Raccordement de tuyauteries hydrauliques en cuivre"
+      },
+      {
+       "type": "p",
+       "texte": "Tuyauterie hydraulique (Photo Brycemilton, CC BY-SA 4.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "store",
+       "alt": "Composants et raccords de chauffage professionnel"
+      },
+      {
+       "type": "p",
+       "texte": "Équipements thermiques professionnels (Photo Andykatib, CC0)"
+      }
+     ]
+    },
+    {
+     "h2": "Contacter votre chauffagiste",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Discutons ensemble de vos besoins d'amélioration thermique ou de production d'eau chaude."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 69003 Lyon"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Plumber",
+     "name": "Démo Plombier Lyon",
+     "url": "https://plombier.demo.invalid/chauffagiste/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "69003",
+      "addressLocality": "Lyon",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lyon",
+      "Villeurbanne",
+      "Bron",
+      "Vénissieux"
+     ],
+     "image": "https://plombier.demo.invalid/images/hero-1600.webp"
+    }
+   ]
+  },
+  "/plombier-lyon/": {
+   "type": "commune",
+   "cible": "Lyon",
+   "title": "Plombier à Lyon — Démo Plombier Lyon Dépannage",
+   "description": "Artisan plombier qualifié à Lyon : travaux de plomberie sanitaire, remplacement de chauffe-eau, tuyauterie et dépannage soigné. Devis clair et gratuit.",
+   "h1": "Plombier à Lyon",
+   "kicker": "Intervention locale à Lyon",
+   "chapeau": "Démo Plombier Lyon intervient à Lyon et alentours pour la pose de robinetterie, rénovation de tuyauterie cuivre et PER, recherche de fuite et urgences sanitaires.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "hero",
+     "alt": "Plombier artisan en intervention sanitaire à Lyon"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Travaux de plomberie sanitaire à Lyon",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous assurons des interventions pérennes pour tous vos aménagements et réparations de canalisations."
+      },
+      {
+       "type": "h3",
+       "texte": "Canalisations et arrivées d'eau"
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement d'eau froide et eau chaude sanitaire, sertissage de conduites multicouche et cuivre à Lyon."
+      },
+      {
+       "type": "h3",
+       "texte": "Chauffe-eau et sécurité"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de chauffe-eau électrique, vidange et pose de groupe de sécurité certifié à Lyon."
+      },
+      {
+       "type": "h3",
+       "texte": "Robinetterie sanitaire"
+      },
+      {
+       "type": "p",
+       "texte": "Montage de mitigeurs thermostatiques, réfection de joints d'étanchéité et pose d'éviers à Lyon."
+      }
+     ]
+    },
+    {
+     "h2": "Exemples de chantiers récents",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu de nos raccordements et outillages utilisés lors de nos interventions."
+      },
+      {
+       "type": "img",
+       "fichier": "tools",
+       "alt": "Outillage professionnel de plomberie sanitaire"
+      },
+      {
+       "type": "p",
+       "texte": "Outillage de plomberie professionnelle (Photo Syced, CC0)"
+      },
+      {
+       "type": "img",
+       "fichier": "pipes",
+       "alt": "Réseau hydraulique cuivre avec vannes d'arrêt"
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement soigné de tuyauterie (Photo Brycemilton, CC BY-SA 4.0)"
+      }
+     ]
+    },
+    {
+     "h2": "Autres communes desservies à proximité",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Lyon :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre plombier à Lyon",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un projet de plomberie à Lyon ? Contactez notre atelier pour convenir d'une visite technique."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 69003 Lyon"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Plumber",
+     "name": "Démo Plombier Lyon",
+     "url": "https://plombier.demo.invalid/plombier-lyon/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "69003",
+      "addressLocality": "Lyon",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lyon",
+      "Villeurbanne",
+      "Bron",
+      "Vénissieux"
+     ],
+     "image": "https://plombier.demo.invalid/images/hero-1600.webp"
+    }
+   ]
+  },
+  "/plombier-villeurbanne/": {
+   "type": "commune",
+   "cible": "Villeurbanne",
+   "title": "Plombier à Villeurbanne — Démo Plombier Lyon",
+   "description": "Artisan plombier qualifié à Villeurbanne : travaux de plomberie sanitaire, remplacement de chauffe-eau, tuyauterie et dépannage soigné. Devis clair et gratuit.",
+   "h1": "Plombier à Villeurbanne",
+   "kicker": "Intervention locale à Villeurbanne",
+   "chapeau": "Démo Plombier Lyon intervient à Villeurbanne et alentours pour la pose de robinetterie, rénovation de tuyauterie cuivre et PER, recherche de fuite et urgences sanitaires.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "hero",
+     "alt": "Plombier artisan en intervention sanitaire à Villeurbanne"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Travaux de plomberie sanitaire à Villeurbanne",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous assurons des interventions pérennes pour tous vos aménagements et réparations de canalisations."
+      },
+      {
+       "type": "h3",
+       "texte": "Canalisations et arrivées d'eau"
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement d'eau froide et eau chaude sanitaire, sertissage de conduites multicouche et cuivre à Villeurbanne."
+      },
+      {
+       "type": "h3",
+       "texte": "Chauffe-eau et sécurité"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de chauffe-eau électrique, vidange et pose de groupe de sécurité certifié à Villeurbanne."
+      },
+      {
+       "type": "h3",
+       "texte": "Robinetterie sanitaire"
+      },
+      {
+       "type": "p",
+       "texte": "Montage de mitigeurs thermostatiques, réfection de joints d'étanchéité et pose d'éviers à Villeurbanne."
+      }
+     ]
+    },
+    {
+     "h2": "Exemples de chantiers récents",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu de nos raccordements et outillages utilisés lors de nos interventions."
+      },
+      {
+       "type": "img",
+       "fichier": "tools",
+       "alt": "Outillage professionnel de plomberie sanitaire"
+      },
+      {
+       "type": "p",
+       "texte": "Outillage de plomberie professionnelle (Photo Syced, CC0)"
+      },
+      {
+       "type": "img",
+       "fichier": "pipes",
+       "alt": "Réseau hydraulique cuivre avec vannes d'arrêt"
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement soigné de tuyauterie (Photo Brycemilton, CC BY-SA 4.0)"
+      }
+     ]
+    },
+    {
+     "h2": "Autres communes desservies à proximité",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Villeurbanne :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre plombier à Villeurbanne",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un projet de plomberie à Villeurbanne ? Contactez notre atelier pour convenir d'une visite technique."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 69003 Lyon"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Plumber",
+     "name": "Démo Plombier Lyon",
+     "url": "https://plombier.demo.invalid/plombier-villeurbanne/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "69003",
+      "addressLocality": "Lyon",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lyon",
+      "Villeurbanne",
+      "Bron",
+      "Vénissieux"
+     ],
+     "image": "https://plombier.demo.invalid/images/hero-1600.webp"
+    }
+   ]
+  },
+  "/plombier-bron/": {
+   "type": "commune",
+   "cible": "Bron",
+   "title": "Plombier à Bron — Démo Plombier Lyon",
+   "description": "Artisan plombier qualifié à Bron : travaux de plomberie sanitaire, remplacement de chauffe-eau, tuyauterie et dépannage soigné. Devis clair et gratuit.",
+   "h1": "Plombier à Bron",
+   "kicker": "Intervention locale à Bron",
+   "chapeau": "Démo Plombier Lyon intervient à Bron et alentours pour la pose de robinetterie, rénovation de tuyauterie cuivre et PER, recherche de fuite et urgences sanitaires.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "hero",
+     "alt": "Plombier artisan en intervention sanitaire à Bron"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Travaux de plomberie sanitaire à Bron",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous assurons des interventions pérennes pour tous vos aménagements et réparations de canalisations."
+      },
+      {
+       "type": "h3",
+       "texte": "Canalisations et arrivées d'eau"
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement d'eau froide et eau chaude sanitaire, sertissage de conduites multicouche et cuivre à Bron."
+      },
+      {
+       "type": "h3",
+       "texte": "Chauffe-eau et sécurité"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de chauffe-eau électrique, vidange et pose de groupe de sécurité certifié à Bron."
+      },
+      {
+       "type": "h3",
+       "texte": "Robinetterie sanitaire"
+      },
+      {
+       "type": "p",
+       "texte": "Montage de mitigeurs thermostatiques, réfection de joints d'étanchéité et pose d'éviers à Bron."
+      }
+     ]
+    },
+    {
+     "h2": "Exemples de chantiers récents",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu de nos raccordements et outillages utilisés lors de nos interventions."
+      },
+      {
+       "type": "img",
+       "fichier": "tools",
+       "alt": "Outillage professionnel de plomberie sanitaire"
+      },
+      {
+       "type": "p",
+       "texte": "Outillage de plomberie professionnelle (Photo Syced, CC0)"
+      },
+      {
+       "type": "img",
+       "fichier": "pipes",
+       "alt": "Réseau hydraulique cuivre avec vannes d'arrêt"
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement soigné de tuyauterie (Photo Brycemilton, CC BY-SA 4.0)"
+      }
+     ]
+    },
+    {
+     "h2": "Autres communes desservies à proximité",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Bron :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre plombier à Bron",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un projet de plomberie à Bron ? Contactez notre atelier pour convenir d'une visite technique."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 69003 Lyon"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Plumber",
+     "name": "Démo Plombier Lyon",
+     "url": "https://plombier.demo.invalid/plombier-bron/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "69003",
+      "addressLocality": "Lyon",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lyon",
+      "Villeurbanne",
+      "Bron",
+      "Vénissieux"
+     ],
+     "image": "https://plombier.demo.invalid/images/hero-1600.webp"
+    }
+   ]
+  },
+  "/plombier-venissieux/": {
+   "type": "commune",
+   "cible": "Vénissieux",
+   "title": "Plombier à Vénissieux — Démo Plombier Lyon",
+   "description": "Artisan plombier qualifié à Vénissieux : travaux de plomberie sanitaire, remplacement de chauffe-eau, tuyauterie et dépannage soigné. Devis clair et gratuit.",
+   "h1": "Plombier à Vénissieux",
+   "kicker": "Intervention locale à Vénissieux",
+   "chapeau": "Démo Plombier Lyon intervient à Vénissieux et alentours pour la pose de robinetterie, rénovation de tuyauterie cuivre et PER, recherche de fuite et urgences sanitaires.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "hero",
+     "alt": "Plombier artisan en intervention sanitaire à Vénissieux"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Travaux de plomberie sanitaire à Vénissieux",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous assurons des interventions pérennes pour tous vos aménagements et réparations de canalisations."
+      },
+      {
+       "type": "h3",
+       "texte": "Canalisations et arrivées d'eau"
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement d'eau froide et eau chaude sanitaire, sertissage de conduites multicouche et cuivre à Vénissieux."
+      },
+      {
+       "type": "h3",
+       "texte": "Chauffe-eau et sécurité"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de chauffe-eau électrique, vidange et pose de groupe de sécurité certifié à Vénissieux."
+      },
+      {
+       "type": "h3",
+       "texte": "Robinetterie sanitaire"
+      },
+      {
+       "type": "p",
+       "texte": "Montage de mitigeurs thermostatiques, réfection de joints d'étanchéité et pose d'éviers à Vénissieux."
+      }
+     ]
+    },
+    {
+     "h2": "Exemples de chantiers récents",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu de nos raccordements et outillages utilisés lors de nos interventions."
+      },
+      {
+       "type": "img",
+       "fichier": "tools",
+       "alt": "Outillage professionnel de plomberie sanitaire"
+      },
+      {
+       "type": "p",
+       "texte": "Outillage de plomberie professionnelle (Photo Syced, CC0)"
+      },
+      {
+       "type": "img",
+       "fichier": "pipes",
+       "alt": "Réseau hydraulique cuivre avec vannes d'arrêt"
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement soigné de tuyauterie (Photo Brycemilton, CC BY-SA 4.0)"
+      }
+     ]
+    },
+    {
+     "h2": "Autres communes desservies à proximité",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Vénissieux :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre plombier à Vénissieux",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un projet de plomberie à Vénissieux ? Contactez notre atelier pour convenir d'une visite technique."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 69003 Lyon"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Plumber",
+     "name": "Démo Plombier Lyon",
+     "url": "https://plombier.demo.invalid/plombier-venissieux/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "69003",
+      "addressLocality": "Lyon",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lyon",
+      "Villeurbanne",
+      "Bron",
+      "Vénissieux"
+     ],
+     "image": "https://plombier.demo.invalid/images/hero-1600.webp"
+    }
+   ]
+  },
+  "/mentions-legales/": {
+   "type": "legal",
+   "title": "Mentions légales — Démo Plombier Lyon",
+   "description": "Mentions légales et informations réglementaires du site de démonstration Démo Plombier Lyon, entreprise artisanale fictive.",
+   "h1": "Mentions légales",
+   "kicker": "",
+   "chapeau": "Site de démonstration : entreprise fictive créée pour illustrer les capacités techniques et de référencement de la solution Presti.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Nature du site",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Site de démonstration : entreprise fictive créée pour illustrer les capacités techniques et de référencement de la solution Presti."
+      }
+     ]
+    },
+    {
+     "h2": "Identité de l'entreprise",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Dénomination : Démo Plombier Lyon"
+      },
+      {
+       "type": "p",
+       "texte": "Adresse : 1 rue de la Démonstration, 69003 Lyon, France"
+      },
+      {
+       "type": "p",
+       "texte": "Téléphone : +33 4 00 00 00 00"
+      },
+      {
+       "type": "p",
+       "texte": "Email : contact@plombier.demo.invalid"
+      },
+      {
+       "type": "p",
+       "texte": "Numéro SIREN : 000000000"
+      },
+      {
+       "type": "p",
+       "texte": "Directeur de la publication : Responsable Démo Plombier"
+      }
+     ]
+    },
+    {
+     "h2": "Garantie et assurance décennale",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "L'entreprise est couverte au titre de son assurance décennale obligatoire :"
+      },
+      {
+       "type": "p",
+       "texte": "Assureur : Assureur fictif"
+      },
+      {
+       "type": "p",
+       "texte": "Numéro de contrat : DEMO-0001"
+      },
+      {
+       "type": "p",
+       "texte": "Couverture géographique : France métropolitaine"
+      }
+     ]
+    },
+    {
+     "h2": "Hébergement du site",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ce site statique est hébergé localement dans le cadre de son environnement de démonstration technique."
+      }
+     ]
+    },
+    {
+     "h2": "Crédits photographiques",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les photographies illustrant ce site de démonstration sont issues de Wikimedia Commons et publiées sous licences libres certifiées :"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie de robinetterie : auteur W.carter (licence CC BY-SA 4.0, source Wikimedia Commons)"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie de tuyauteries : auteur Brycemilton (licence CC BY-SA 4.0, source Wikimedia Commons)"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie de réparation : auteur Syced (domaine public CC0, source Wikimedia Commons)"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie d'outillage de plomberie : auteur Syced (domaine public CC0, source Wikimedia Commons)"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie de fournitures sanitaires : auteur Andykatib (domaine public CC0, source Wikimedia Commons)"
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  },
+  "/confidentialite/": {
+   "type": "legal",
+   "title": "Politique de confidentialité — Démo Plombier Lyon",
+   "description": "Politique de confidentialité et protection des données personnelles de Démo Plombier Lyon. Aucun traceur ni cookie tiers.",
+   "h1": "Politique de confidentialité",
+   "kicker": "",
+   "chapeau": "Ce site de démonstration ne dépose aucun cookie traceur, aucun cookie publicitaire et ne met en œuvre aucun outil tiers de profilage ou de mesure d'audience.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Collecte des données personnelles",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ce site de démonstration ne dépose aucun cookie traceur, aucun cookie publicitaire et ne met en œuvre aucun outil tiers de profilage ou de mesure d'audience."
+      }
+     ]
+    },
+    {
+     "h2": "Formulaire de contact",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les coordonnées éventuellement saisies par un utilisateur pour demander un devis ou poser une question technique (nom, téléphone, adresse email) sont strictement destinées au traitement de la demande de contact direct."
+      },
+      {
+       "type": "p",
+       "texte": "Aucune donnée n'est cédée, louée ou commercialisée à des tiers."
+      }
+     ]
+    },
+    {
+     "h2": "Durée de conservation",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les échanges techniques sont conservés uniquement pendant la durée nécessaire à l'établissement du devis et au suivi du chantier, dans le respect des obligations légales de facturation et d'archivage."
+      }
+     ]
+    },
+    {
+     "h2": "Vos droits",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification et de suppression des informations vous concernant, exerçable sur simple demande auprès de contact@plombier.demo.invalid."
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  }
+ }
+}

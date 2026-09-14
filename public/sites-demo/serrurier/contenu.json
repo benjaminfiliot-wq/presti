@@ -1,0 +1,876 @@
+{
+ "metier": "serrurier",
+ "extrait_le": "2026-09-14",
+ "pages": {
+  "/": {
+   "type": "accueil",
+   "title": "Serrurier à Montpellier — Démo Serrurier Montpellier",
+   "description": "Démo Serrurier Montpellier : dépannage rapide, ouverture de porte et changement de serrure à Montpellier et environs. Devis gratuit et clair.",
+   "h1": "Serrurier à Montpellier — Démo Serrurier Montpellier",
+   "kicker": "",
+   "chapeau": "Artisan serrurier à Montpellier et ses communes voisines. Dépannage rapide en cas de porte claquée, remplacement de serrure multipoints et sécurisation après effraction avec garantie décennale.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Nos prestations de serrurerie à Montpellier",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous réalisons l'ensemble des interventions de serrurerie résidentielle et professionnelle dans le respect des règles de l'art et des normes de sécurité."
+      },
+      {
+       "type": "h3",
+       "texte": "Ouverture de porte fine"
+      },
+      {
+       "type": "p",
+       "texte": "Technique d'ouverture non destructive à la radio ou au crochetage pour les portes simplement claquées, sans abîmer le dormant ni la serrure."
+      },
+      {
+       "type": "h3",
+       "texte": "Cylindres haute sécurité"
+      },
+      {
+       "type": "p",
+       "texte": "Installation de barillets européens certifiés protégés contre le crochetage, le perçage et la casse, fournis avec carte de propriété et clés brevetées."
+      },
+      {
+       "type": "h3",
+       "texte": "Serrures multipoints A2P"
+      },
+      {
+       "type": "p",
+       "texte": "Pose en applique ou à larder de serrures multipoints homologuées par les assurances, offrant une résistance accrue aux tentatives d'arrachement."
+      },
+      {
+       "type": "h3",
+       "texte": "Blindage & sécurisation"
+      },
+      {
+       "type": "p",
+       "texte": "Renforcement de porte d'entrée par blindage d'acier, cornières anti-pinces et paumelles renforcées pour retarder toute tentative d'intrusion."
+      }
+     ]
+    },
+    {
+     "h2": "Nos réalisations récentes",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Découvrez nos derniers chantiers de pose de serrures de sécurité, remplacement de cylindres et ajustement de fermetures à Montpellier."
+      },
+      {
+       "type": "img",
+       "fichier": "serrure1",
+       "alt": "Mécanisme de serrure multipoints"
+      },
+      {
+       "type": "h3",
+       "texte": "Serrure multipoints à larder"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement d'une serrure vétuste par un mécanisme 3 points certifié avec tringlerie dissimulée."
+      },
+      {
+       "type": "img",
+       "fichier": "cylindre",
+       "alt": "Cylindre européen de porte"
+      },
+      {
+       "type": "h3",
+       "texte": "Cylindre européen renforcé"
+      },
+      {
+       "type": "p",
+       "texte": "Pose d'un cylindre débrayable à double entrée avec pastille anti-perçage en acier trempé."
+      },
+      {
+       "type": "img",
+       "fichier": "cylindre2",
+       "alt": "Changement de cylindre de serrure"
+      },
+      {
+       "type": "h3",
+       "texte": "Remplacement après perte de clés"
+      },
+      {
+       "type": "p",
+       "texte": "Changement immédiat du barillet d'une porte palière pour sécuriser les lieux suite à un oubli de trousseau."
+      }
+     ]
+    },
+    {
+     "h2": "Comment se déroule votre dépannage",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Une méthode d'intervention claire, transparente et sans stress pour résoudre votre problème de serrure au plus vite."
+      },
+      {
+       "type": "h3",
+       "texte": "Échange et pré-diagnostic"
+      },
+      {
+       "type": "p",
+       "texte": "Vous nous expliquez la situation : porte claquée ou verrouillée, modèle de clé et marque pour préparer les outils nécessaires."
+      },
+      {
+       "type": "h3",
+       "texte": "Devis clair avant toute action"
+      },
+      {
+       "type": "p",
+       "texte": "Sur place, l'artisan examine la porte, vous détaille la méthode préconisée et présente un devis gratuit avant de commencer."
+      },
+      {
+       "type": "h3",
+       "texte": "Intervention technique soignée"
+      },
+      {
+       "type": "p",
+       "texte": "Mise en œuvre des méthodes les moins destructives pour ouvrir la porte ou installer proprement votre nouveau mécanisme."
+      },
+      {
+       "type": "h3",
+       "texte": "Vérification et remise des clés"
+      },
+      {
+       "type": "p",
+       "texte": "Test complet du bon fonctionnement du pêne et de la gâche, puis remise en main propre des nouvelles clés scellées."
+      }
+     ]
+    },
+    {
+     "h2": "Zone d'intervention autour de Montpellier",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Notre atelier mobile dessert quotidiennement Montpellier ainsi que les communes périphériques pour tous travaux de serrurerie."
+      },
+      {
+       "type": "h3",
+       "texte": "Montpellier"
+      },
+      {
+       "type": "p",
+       "texte": "Serrurerie résidentielle et dépannage dans tous les quartiers montpelliérains."
+      },
+      {
+       "type": "h3",
+       "texte": "Castelnau-le-Lez"
+      },
+      {
+       "type": "p",
+       "texte": "Intervention rapide pour ouverture de porte et sécurisation d'accès."
+      },
+      {
+       "type": "h3",
+       "texte": "Lattes"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de serrures, cylindres et verrous de haute résistance."
+      },
+      {
+       "type": "h3",
+       "texte": "Pérols"
+      },
+      {
+       "type": "p",
+       "texte": "Sécurisation après tentative d'effraction et pose de serrures multipoints."
+      }
+     ]
+    },
+    {
+     "h2": "Questions fréquentes sur nos prestations de serrurier",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les réponses aux questions que vous vous posez avant de faire appel à un artisan serrurier."
+      },
+      {
+       "type": "h3",
+       "texte": "Peut-on ouvrir une porte claquée sans abîmer la serrure ?"
+      },
+      {
+       "type": "p",
+       "texte": "Dans l'immense majorité des cas, une porte simplement claquée (non verrouillée à clé) s'ouvre par méthode fine à la feuille de radio ou au by-pass sans endommager le cylindre ni la poignée."
+      },
+      {
+       "type": "h3",
+       "texte": "Que signifie la certification A2P pour une serrure ?"
+      },
+      {
+       "type": "p",
+       "texte": "Délivrée par le CNPP, la marque A2P garantit la résistance du mécanisme aux attaques destructives : une étoile pour 5 minutes, deux étoiles pour 10 minutes et trois étoiles pour 15 minutes face aux outillages de cambriolage."
+      },
+      {
+       "type": "h3",
+       "texte": "Pourquoi faut-il changer son cylindre après une perte de clés ?"
+      },
+      {
+       "type": "p",
+       "texte": "Conserver un cylindre dont les clés circulent dans la nature expose votre logement à une intrusion sans trace d'effraction, ce qui complique les prises en charge par votre compagnie d'assurance habitation."
+      },
+      {
+       "type": "h3",
+       "texte": "Fournissez-vous une facture conforme pour les assurances ?"
+      },
+      {
+       "type": "p",
+       "texte": "Toutes nos factures comportent le détail précis des pièces remplacées, les numéros de série, le taux de TVA en vigueur ainsi que les mentions de notre garantie décennale obligatoire."
+      }
+     ]
+    },
+    {
+     "h2": "Contactez votre artisan serrurier",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Une question sur la sécurisation de votre logement ou un besoin d'intervention rapide ? Contactez-nous directement."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration 34000 Montpellier"
+      },
+      {
+       "type": "p",
+       "texte": "Lundi–vendredi 8 h–18 h"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Locksmith",
+     "name": "Démo Serrurier Montpellier",
+     "url": "https://serrurier.demo.invalid/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://serrurier.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "34000",
+      "addressLocality": "Montpellier",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Montpellier",
+      "Castelnau-le-Lez",
+      "Lattes",
+      "Pérols"
+     ]
+    }
+   ]
+  },
+  "/serrurier-montpellier/": {
+   "type": "commune",
+   "cible": "Montpellier",
+   "title": "Artisan Serrurier à Montpellier — Démo Serrurier Montpellier",
+   "description": "Votre serrurier artisan à Montpellier pour ouverture de porte claquée, blindage et changement de cylindre haute sécurité. Intervention soignée.",
+   "h1": "Serrurier à Montpellier",
+   "kicker": "Montpellier",
+   "chapeau": "Démo Serrurier Montpellier intervient au cœur de Montpellier et dans l'ensemble de ses quartiers pour sécuriser vos accès, ouvrir vos portes bloquées et remplacer vos mécanismes usés.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Serrurerie de précision et dépannage à Montpellier",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Dans une métropole animée comme Montpellier, la sécurité des portes d'entrée et des accès collectifs requiert des équipements fiables et adaptés aux spécificités des immeubles anciens comme des résidences contemporaines."
+      },
+      {
+       "type": "p",
+       "texte": "Notre serrurier se déplace avec un outillage complet pour réaliser des ouvertures fines, procéder au remplacement immédiat de barillets endommagés et poser des verrous de renfort certifiés pour dissuader toute effraction."
+      },
+      {
+       "type": "h3",
+       "texte": "Ouverture sans dégât"
+      },
+      {
+       "type": "p",
+       "texte": "Ouverture de porte claquée par crochetage fin ou feuille de radio, sans endommager votre bâti."
+      },
+      {
+       "type": "h3",
+       "texte": "Cylindre haute sécurité"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de barillet aux normes A2P avec clés protégées contre la copie non autorisée."
+      },
+      {
+       "type": "h3",
+       "texte": "Blindage de porte"
+      },
+      {
+       "type": "p",
+       "texte": "Installation de blindage pivot et cornières anti-pinces pour sécuriser efficacement votre entrée."
+      }
+     ]
+    },
+    {
+     "h2": "Nos travaux en images",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "serrure1",
+       "alt": "Mécanisme de serrure posé à Montpellier"
+      },
+      {
+       "type": "h3",
+       "texte": "Serrure multipoints certifiée"
+      },
+      {
+       "type": "p",
+       "texte": "Pose d'un système à tringles renforcées assurant 3 points d'ancrage robustes."
+      },
+      {
+       "type": "img",
+       "fichier": "cylindre",
+       "alt": "Cylindre de serrure installé à Montpellier"
+      },
+      {
+       "type": "h3",
+       "texte": "Cylindre européen débrayable"
+      },
+      {
+       "type": "p",
+       "texte": "Installation d'un cylindre haute sécurité avec carte de reproduction exclusive."
+      }
+     ]
+    },
+    {
+     "h2": "Autres communes proches desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Montpellier :"
+      },
+      {
+       "type": "h3",
+       "texte": "Serrurier à Castelnau-le-Lez"
+      },
+      {
+       "type": "p",
+       "texte": "Dépannage d'urgence et installation de serrures à Castelnau-le-Lez."
+      },
+      {
+       "type": "h3",
+       "texte": "Serrurier à Lattes"
+      },
+      {
+       "type": "p",
+       "texte": "Dépannage d'urgence et installation de serrures à Lattes."
+      }
+     ]
+    },
+    {
+     "h2": "Intervention serrurier à Montpellier",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Besoin d'une ouverture de porte ou du remplacement d'une serrure défectueuse à Montpellier ? Contactez notre artisan."
+      },
+      {
+       "type": "p",
+       "texte": "Lundi–vendredi 8 h–18 h"
+      },
+      {
+       "type": "p",
+       "texte": "Montpellier et alentours"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Locksmith",
+     "name": "Démo Serrurier Montpellier",
+     "url": "https://serrurier.demo.invalid/serrurier-montpellier/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://serrurier.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "34000",
+      "addressLocality": "Montpellier",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Montpellier",
+      "Castelnau-le-Lez",
+      "Lattes",
+      "Pérols"
+     ]
+    }
+   ]
+  },
+  "/serrurier-castelnau-le-lez/": {
+   "type": "commune",
+   "cible": "Castelnau-le-Lez",
+   "title": "Serrurier à Castelnau-le-Lez — Démo Serrurier Montpellier",
+   "description": "Intervention serrurerie à Castelnau-le-Lez : installation de serrures multipoints et dépannage de porte fermée à clé. Devis sans engagement.",
+   "h1": "Serrurier à Castelnau-le-Lez",
+   "kicker": "Castelnau-le-Lez",
+   "chapeau": "Notre équipe se déplace à Castelnau-le-Lez pour répondre à toutes vos demandes de dépannage serrurier : portes verrouillées par mégarde, clés cassées dans le rotor ou modernisation de crémones.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Serrurerie de précision et dépannage à Castelnau-le-Lez",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "À Castelnau-le-Lez, nous équipons les pavillons et appartements de serrures multipoints à larder ou en applique, permettant un verrouillage haut et bas synchronisé avec une seule clé de sécurité brevetée."
+      },
+      {
+       "type": "p",
+       "texte": "En cas de défaillance mécanique ou de perte de clé, nous privilégions toujours la solution technique la plus économique et la moins intrusive avant d'envisager le remplacement complet de votre quincaillerie."
+      },
+      {
+       "type": "h3",
+       "texte": "Ouverture sans dégât"
+      },
+      {
+       "type": "p",
+       "texte": "Ouverture de porte claquée par crochetage fin ou feuille de radio, sans endommager votre bâti."
+      },
+      {
+       "type": "h3",
+       "texte": "Cylindre haute sécurité"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de barillet aux normes A2P avec clés protégées contre la copie non autorisée."
+      },
+      {
+       "type": "h3",
+       "texte": "Blindage de porte"
+      },
+      {
+       "type": "p",
+       "texte": "Installation de blindage pivot et cornières anti-pinces pour sécuriser efficacement votre entrée."
+      }
+     ]
+    },
+    {
+     "h2": "Nos travaux en images",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "serrure1",
+       "alt": "Mécanisme de serrure posé à Castelnau-le-Lez"
+      },
+      {
+       "type": "h3",
+       "texte": "Serrure multipoints certifiée"
+      },
+      {
+       "type": "p",
+       "texte": "Pose d'un système à tringles renforcées assurant 3 points d'ancrage robustes."
+      },
+      {
+       "type": "img",
+       "fichier": "cylindre",
+       "alt": "Cylindre de serrure installé à Castelnau-le-Lez"
+      },
+      {
+       "type": "h3",
+       "texte": "Cylindre européen débrayable"
+      },
+      {
+       "type": "p",
+       "texte": "Installation d'un cylindre haute sécurité avec carte de reproduction exclusive."
+      }
+     ]
+    },
+    {
+     "h2": "Autres communes proches desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Castelnau-le-Lez :"
+      },
+      {
+       "type": "h3",
+       "texte": "Serrurier à Montpellier"
+      },
+      {
+       "type": "p",
+       "texte": "Dépannage d'urgence et installation de serrures à Montpellier."
+      },
+      {
+       "type": "h3",
+       "texte": "Serrurier à Pérols"
+      },
+      {
+       "type": "p",
+       "texte": "Dépannage d'urgence et installation de serrures à Pérols."
+      }
+     ]
+    },
+    {
+     "h2": "Intervention serrurier à Castelnau-le-Lez",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Besoin d'une ouverture de porte ou du remplacement d'une serrure défectueuse à Castelnau-le-Lez ? Contactez notre artisan."
+      },
+      {
+       "type": "p",
+       "texte": "Lundi–vendredi 8 h–18 h"
+      },
+      {
+       "type": "p",
+       "texte": "Castelnau-le-Lez et alentours"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Locksmith",
+     "name": "Démo Serrurier Montpellier",
+     "url": "https://serrurier.demo.invalid/serrurier-castelnau-le-lez/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://serrurier.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "34000",
+      "addressLocality": "Montpellier",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Montpellier",
+      "Castelnau-le-Lez",
+      "Lattes",
+      "Pérols"
+     ]
+    }
+   ]
+  },
+  "/serrurier-lattes/": {
+   "type": "commune",
+   "cible": "Lattes",
+   "title": "Serrurier à Lattes — Démo Serrurier Montpellier",
+   "description": "Dépannage de serrure et sécurisation d'accès à Lattes par un artisan qualifié. Remplacement de barillet et pose de verrous certifiés A2P.",
+   "h1": "Serrurier à Lattes",
+   "kicker": "Lattes",
+   "chapeau": "Basés dans l'agglomération, nous couvrons la commune de Lattes pour installer des verrous additionnels, débloquer des pênes coincés et adapter des barillets de haute sécurité sur vos accès.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Serrurerie de précision et dépannage à Lattes",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "La proximité des zones lagunaires et du littoral à Lattes impose de veiller à la résistance des alliages contre l'oxydation. Nous sélectionnons des cylindres en laiton massif et mécanismes inoxydables conçus pour durer."
+      },
+      {
+       "type": "p",
+       "texte": "Que ce soit pour une porte de garage, un portillon extérieur ou une porte principale, notre artisan effectue un diagnostic rigoureux sur place et vous remet un chiffrage clair sans mauvaises surprises."
+      },
+      {
+       "type": "h3",
+       "texte": "Ouverture sans dégât"
+      },
+      {
+       "type": "p",
+       "texte": "Ouverture de porte claquée par crochetage fin ou feuille de radio, sans endommager votre bâti."
+      },
+      {
+       "type": "h3",
+       "texte": "Cylindre haute sécurité"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de barillet aux normes A2P avec clés protégées contre la copie non autorisée."
+      },
+      {
+       "type": "h3",
+       "texte": "Blindage de porte"
+      },
+      {
+       "type": "p",
+       "texte": "Installation de blindage pivot et cornières anti-pinces pour sécuriser efficacement votre entrée."
+      }
+     ]
+    },
+    {
+     "h2": "Nos travaux en images",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "serrure1",
+       "alt": "Mécanisme de serrure posé à Lattes"
+      },
+      {
+       "type": "h3",
+       "texte": "Serrure multipoints certifiée"
+      },
+      {
+       "type": "p",
+       "texte": "Pose d'un système à tringles renforcées assurant 3 points d'ancrage robustes."
+      },
+      {
+       "type": "img",
+       "fichier": "cylindre",
+       "alt": "Cylindre de serrure installé à Lattes"
+      },
+      {
+       "type": "h3",
+       "texte": "Cylindre européen débrayable"
+      },
+      {
+       "type": "p",
+       "texte": "Installation d'un cylindre haute sécurité avec carte de reproduction exclusive."
+      }
+     ]
+    },
+    {
+     "h2": "Autres communes proches desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Lattes :"
+      },
+      {
+       "type": "h3",
+       "texte": "Serrurier à Montpellier"
+      },
+      {
+       "type": "p",
+       "texte": "Dépannage d'urgence et installation de serrures à Montpellier."
+      },
+      {
+       "type": "h3",
+       "texte": "Serrurier à Pérols"
+      },
+      {
+       "type": "p",
+       "texte": "Dépannage d'urgence et installation de serrures à Pérols."
+      }
+     ]
+    },
+    {
+     "h2": "Intervention serrurier à Lattes",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Besoin d'une ouverture de porte ou du remplacement d'une serrure défectueuse à Lattes ? Contactez notre artisan."
+      },
+      {
+       "type": "p",
+       "texte": "Lundi–vendredi 8 h–18 h"
+      },
+      {
+       "type": "p",
+       "texte": "Lattes et alentours"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Locksmith",
+     "name": "Démo Serrurier Montpellier",
+     "url": "https://serrurier.demo.invalid/serrurier-lattes/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://serrurier.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "34000",
+      "addressLocality": "Montpellier",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Montpellier",
+      "Castelnau-le-Lez",
+      "Lattes",
+      "Pérols"
+     ]
+    }
+   ]
+  },
+  "/serrurier-perols/": {
+   "type": "commune",
+   "cible": "Pérols",
+   "title": "Serrurier à Pérols — Démo Serrurier Montpellier",
+   "description": "Artisan serrurier intervenant à Pérols pour vos serrures bloquées, cylindres européens et fermetures de sécurité. Diagnostic clair et rapide.",
+   "h1": "Serrurier à Pérols",
+   "kicker": "Pérols",
+   "chapeau": "Pour vos urgences ou vos travaux de rénovation de quincaillerie de sécurité à Pérols, notre atelier mobile apporte des solutions fiables et pérennes adaptées à votre budget.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Serrurerie de précision et dépannage à Pérols",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "À Pérols, nous intervenons régulièrement pour remplacer les serrures monopoint par des ensembles de sécurité A2P dotés de protecteurs de cylindre en acier trempé pour résister aux coups de masse."
+      },
+      {
+       "type": "p",
+       "texte": "Chaque prestation est couverte par notre assurance décennale et fait l'objet de tests approfondis d'ouverture et de fermeture avant restitution définitive des jeux de clés d'origine à l'occupant."
+      },
+      {
+       "type": "h3",
+       "texte": "Ouverture sans dégât"
+      },
+      {
+       "type": "p",
+       "texte": "Ouverture de porte claquée par crochetage fin ou feuille de radio, sans endommager votre bâti."
+      },
+      {
+       "type": "h3",
+       "texte": "Cylindre haute sécurité"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de barillet aux normes A2P avec clés protégées contre la copie non autorisée."
+      },
+      {
+       "type": "h3",
+       "texte": "Blindage de porte"
+      },
+      {
+       "type": "p",
+       "texte": "Installation de blindage pivot et cornières anti-pinces pour sécuriser efficacement votre entrée."
+      }
+     ]
+    },
+    {
+     "h2": "Nos travaux en images",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "serrure1",
+       "alt": "Mécanisme de serrure posé à Pérols"
+      },
+      {
+       "type": "h3",
+       "texte": "Serrure multipoints certifiée"
+      },
+      {
+       "type": "p",
+       "texte": "Pose d'un système à tringles renforcées assurant 3 points d'ancrage robustes."
+      },
+      {
+       "type": "img",
+       "fichier": "cylindre",
+       "alt": "Cylindre de serrure installé à Pérols"
+      },
+      {
+       "type": "h3",
+       "texte": "Cylindre européen débrayable"
+      },
+      {
+       "type": "p",
+       "texte": "Installation d'un cylindre haute sécurité avec carte de reproduction exclusive."
+      }
+     ]
+    },
+    {
+     "h2": "Autres communes proches desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Pérols :"
+      },
+      {
+       "type": "h3",
+       "texte": "Serrurier à Lattes"
+      },
+      {
+       "type": "p",
+       "texte": "Dépannage d'urgence et installation de serrures à Lattes."
+      },
+      {
+       "type": "h3",
+       "texte": "Serrurier à Castelnau-le-Lez"
+      },
+      {
+       "type": "p",
+       "texte": "Dépannage d'urgence et installation de serrures à Castelnau-le-Lez."
+      }
+     ]
+    },
+    {
+     "h2": "Intervention serrurier à Pérols",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Besoin d'une ouverture de porte ou du remplacement d'une serrure défectueuse à Pérols ? Contactez notre artisan."
+      },
+      {
+       "type": "p",
+       "texte": "Lundi–vendredi 8 h–18 h"
+      },
+      {
+       "type": "p",
+       "texte": "Pérols et alentours"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "Locksmith",
+     "name": "Démo Serrurier Montpellier",
+     "url": "https://serrurier.demo.invalid/serrurier-perols/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://serrurier.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "34000",
+      "addressLocality": "Montpellier",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Montpellier",
+      "Castelnau-le-Lez",
+      "Lattes",
+      "Pérols"
+     ]
+    }
+   ]
+  },
+  "/mentions-legales/": {
+   "type": "legal",
+   "title": "Mentions Légales — Démo Serrurier Montpellier",
+   "description": "Mentions légales du site de démonstration Démo Serrurier Montpellier : informations juridiques, garanties professionnelles et crédits photos.",
+   "h1": "Mentions légales",
+   "kicker": "Mentions légales",
+   "chapeau": "Site de démonstration : entreprise fictive créée pour illustrer les fonctionnalités de la solution Presti.",
+   "heroImages": [],
+   "sections": [],
+   "jsonld": []
+  },
+  "/confidentialite/": {
+   "type": "legal",
+   "title": "Politique de Confidentialité — Démo Serrurier Montpellier",
+   "description": "Politique de confidentialité et protection des données personnelles du site Démo Serrurier Montpellier. Respect scrupuleux des normes RGPD.",
+   "h1": "Politique de confidentialité",
+   "kicker": "Politique de confidentialité",
+   "chapeau": "Dans le cadre de son activité de démonstration, Démo Serrurier Montpellier s'engage à respecter scrupuleusement la confidentialité des informations communiquées par les visiteurs, conformément au Règlement Général sur la Protection des Données (RGPD).",
+   "heroImages": [],
+   "sections": [],
+   "jsonld": []
+  }
+ }
+}

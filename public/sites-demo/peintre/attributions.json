@@ -1,296 +1,674 @@
 [
-  {
-    "fichier": "images/salon_spacieux-480.avif",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Rénovation des peintures d'un salon spacieux"
-  },
-  {
-    "fichier": "images/salon_spacieux-480.webp",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Rénovation des peintures d'un salon spacieux"
-  },
-  {
-    "fichier": "images/salon_spacieux-960.avif",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Rénovation des peintures d'un salon spacieux"
-  },
-  {
-    "fichier": "images/salon_spacieux-960.webp",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Rénovation des peintures d'un salon spacieux"
-  },
-  {
-    "fichier": "images/salon_spacieux-1600.avif",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Rénovation des peintures d'un salon spacieux"
-  },
-  {
-    "fichier": "images/salon_spacieux-1600.webp",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Rénovation des peintures d'un salon spacieux"
-  },
-  {
-    "fichier": "images/salon_moderne-480.avif",
-    "auteur": "Fatma005",
-    "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Finition velours et mise en valeur des volumes intérieurs"
-  },
-  {
-    "fichier": "images/salon_moderne-480.webp",
-    "auteur": "Fatma005",
-    "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Finition velours et mise en valeur des volumes intérieurs"
-  },
-  {
-    "fichier": "images/salon_moderne-960.avif",
-    "auteur": "Fatma005",
-    "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Finition velours et mise en valeur des volumes intérieurs"
-  },
-  {
-    "fichier": "images/salon_moderne-960.webp",
-    "auteur": "Fatma005",
-    "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Finition velours et mise en valeur des volumes intérieurs"
-  },
-  {
-    "fichier": "images/salon_moderne-1600.avif",
-    "auteur": "Fatma005",
-    "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Finition velours et mise en valeur des volumes intérieurs"
-  },
-  {
-    "fichier": "images/salon_moderne-1600.webp",
-    "auteur": "Fatma005",
-    "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Finition velours et mise en valeur des volumes intérieurs"
-  },
-  {
-    "fichier": "images/application_rouleau-480.avif",
-    "auteur": "Michael Cory",
-    "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Application soignée au rouleau professionnel"
-  },
-  {
-    "fichier": "images/application_rouleau-480.webp",
-    "auteur": "Michael Cory",
-    "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Application soignée au rouleau professionnel"
-  },
-  {
-    "fichier": "images/application_rouleau-960.avif",
-    "auteur": "Michael Cory",
-    "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Application soignée au rouleau professionnel"
-  },
-  {
-    "fichier": "images/application_rouleau-960.webp",
-    "auteur": "Michael Cory",
-    "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Application soignée au rouleau professionnel"
-  },
-  {
-    "fichier": "images/application_rouleau-1600.avif",
-    "auteur": "Michael Cory",
-    "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Application soignée au rouleau professionnel"
-  },
-  {
-    "fichier": "images/application_rouleau-1600.webp",
-    "auteur": "Michael Cory",
-    "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Application soignée au rouleau professionnel"
-  },
-  {
-    "fichier": "images/teinte_murale-480.avif",
-    "auteur": "Marc Falardeau",
-    "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Mise en peinture murale et teintes personnalisées"
-  },
-  {
-    "fichier": "images/teinte_murale-480.webp",
-    "auteur": "Marc Falardeau",
-    "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Mise en peinture murale et teintes personnalisées"
-  },
-  {
-    "fichier": "images/teinte_murale-960.avif",
-    "auteur": "Marc Falardeau",
-    "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Mise en peinture murale et teintes personnalisées"
-  },
-  {
-    "fichier": "images/teinte_murale-960.webp",
-    "auteur": "Marc Falardeau",
-    "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Mise en peinture murale et teintes personnalisées"
-  },
-  {
-    "fichier": "images/teinte_murale-1600.avif",
-    "auteur": "Marc Falardeau",
-    "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Mise en peinture murale et teintes personnalisées"
-  },
-  {
-    "fichier": "images/teinte_murale-1600.webp",
-    "auteur": "Marc Falardeau",
-    "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Mise en peinture murale et teintes personnalisées"
-  },
-  {
-    "fichier": "images/preparation_chantier-480.avif",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Préparation minutieuse des surfaces et protection du chantier"
-  },
-  {
-    "fichier": "images/preparation_chantier-480.webp",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Préparation minutieuse des surfaces et protection du chantier"
-  },
-  {
-    "fichier": "images/preparation_chantier-960.avif",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Préparation minutieuse des surfaces et protection du chantier"
-  },
-  {
-    "fichier": "images/preparation_chantier-960.webp",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Préparation minutieuse des surfaces et protection du chantier"
-  },
-  {
-    "fichier": "images/preparation_chantier-1600.avif",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Préparation minutieuse des surfaces et protection du chantier"
-  },
-  {
-    "fichier": "images/preparation_chantier-1600.webp",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Préparation minutieuse des surfaces et protection du chantier"
-  },
-  {
-    "fichier": "images/enduit_ratissage-480.avif",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Travaux d'enduit, ratissage et lissage des murs"
-  },
-  {
-    "fichier": "images/enduit_ratissage-480.webp",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Travaux d'enduit, ratissage et lissage des murs"
-  },
-  {
-    "fichier": "images/enduit_ratissage-960.avif",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Travaux d'enduit, ratissage et lissage des murs"
-  },
-  {
-    "fichier": "images/enduit_ratissage-960.webp",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Travaux d'enduit, ratissage et lissage des murs"
-  },
-  {
-    "fichier": "images/enduit_ratissage-1600.avif",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Travaux d'enduit, ratissage et lissage des murs"
-  },
-  {
-    "fichier": "images/enduit_ratissage-1600.webp",
-    "auteur": "Shixart1985",
-    "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Travaux d'enduit, ratissage et lissage des murs"
-  },
-  {
-    "fichier": "images/rechampi_pinceau-480.avif",
-    "auteur": "Pixel.la",
-    "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
-    "licence": "CC0",
-    "legende": "Rechampi soigné et finitions de précision au pinceau"
-  },
-  {
-    "fichier": "images/rechampi_pinceau-480.webp",
-    "auteur": "Pixel.la",
-    "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
-    "licence": "CC0",
-    "legende": "Rechampi soigné et finitions de précision au pinceau"
-  },
-  {
-    "fichier": "images/rechampi_pinceau-960.avif",
-    "auteur": "Pixel.la",
-    "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
-    "licence": "CC0",
-    "legende": "Rechampi soigné et finitions de précision au pinceau"
-  },
-  {
-    "fichier": "images/rechampi_pinceau-960.webp",
-    "auteur": "Pixel.la",
-    "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
-    "licence": "CC0",
-    "legende": "Rechampi soigné et finitions de précision au pinceau"
-  },
-  {
-    "fichier": "images/rechampi_pinceau-1600.avif",
-    "auteur": "Pixel.la",
-    "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
-    "licence": "CC0",
-    "legende": "Rechampi soigné et finitions de précision au pinceau"
-  },
-  {
-    "fichier": "images/rechampi_pinceau-1600.webp",
-    "auteur": "Pixel.la",
-    "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
-    "licence": "CC0",
-    "legende": "Rechampi soigné et finitions de précision au pinceau"
-  }
+ {
+  "fichier": "images/hero-1600.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "alt": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "auteur": "marc falardeau from toronto",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
+  "titre_commons": "File:Blue paint roller (6819216874).jpg"
+ },
+ {
+  "fichier": "images/hero-1600.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "alt": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "auteur": "marc falardeau from toronto",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
+  "titre_commons": "File:Blue paint roller (6819216874).jpg"
+ },
+ {
+  "fichier": "images/hero-960.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "alt": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "auteur": "marc falardeau from toronto",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
+  "titre_commons": "File:Blue paint roller (6819216874).jpg"
+ },
+ {
+  "fichier": "images/hero-960.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "alt": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "auteur": "marc falardeau from toronto",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
+  "titre_commons": "File:Blue paint roller (6819216874).jpg"
+ },
+ {
+  "fichier": "images/hero-720.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "alt": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "auteur": "marc falardeau from toronto",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
+  "titre_commons": "File:Blue paint roller (6819216874).jpg"
+ },
+ {
+  "fichier": "images/hero-720.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "alt": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "auteur": "marc falardeau from toronto",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
+  "titre_commons": "File:Blue paint roller (6819216874).jpg"
+ },
+ {
+  "fichier": "images/hero-480.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "alt": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "auteur": "marc falardeau from toronto",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
+  "titre_commons": "File:Blue paint roller (6819216874).jpg"
+ },
+ {
+  "fichier": "images/hero-480.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "alt": "Mise en peinture d'un mur, rouleau et teinte bleue",
+  "auteur": "marc falardeau from toronto",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg",
+  "titre_commons": "File:Blue paint roller (6819216874).jpg"
+ },
+ {
+  "fichier": "images/rouleau-1600.webp",
+  "base": "rouleau",
+  "largeur": 1600,
+  "hauteur": 1075,
+  "legende": "Application soignée au rouleau",
+  "alt": "Application soignée au rouleau",
+  "auteur": "Michael Cory",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
+  "titre_commons": "File:Paint roller 4.jpg"
+ },
+ {
+  "fichier": "images/rouleau-1600.avif",
+  "base": "rouleau",
+  "largeur": 1600,
+  "hauteur": 1075,
+  "legende": "Application soignée au rouleau",
+  "alt": "Application soignée au rouleau",
+  "auteur": "Michael Cory",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
+  "titre_commons": "File:Paint roller 4.jpg"
+ },
+ {
+  "fichier": "images/rouleau-960.webp",
+  "base": "rouleau",
+  "largeur": 1600,
+  "hauteur": 1075,
+  "legende": "Application soignée au rouleau",
+  "alt": "Application soignée au rouleau",
+  "auteur": "Michael Cory",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
+  "titre_commons": "File:Paint roller 4.jpg"
+ },
+ {
+  "fichier": "images/rouleau-960.avif",
+  "base": "rouleau",
+  "largeur": 1600,
+  "hauteur": 1075,
+  "legende": "Application soignée au rouleau",
+  "alt": "Application soignée au rouleau",
+  "auteur": "Michael Cory",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
+  "titre_commons": "File:Paint roller 4.jpg"
+ },
+ {
+  "fichier": "images/rouleau-720.webp",
+  "base": "rouleau",
+  "largeur": 1600,
+  "hauteur": 1075,
+  "legende": "Application soignée au rouleau",
+  "alt": "Application soignée au rouleau",
+  "auteur": "Michael Cory",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
+  "titre_commons": "File:Paint roller 4.jpg"
+ },
+ {
+  "fichier": "images/rouleau-720.avif",
+  "base": "rouleau",
+  "largeur": 1600,
+  "hauteur": 1075,
+  "legende": "Application soignée au rouleau",
+  "alt": "Application soignée au rouleau",
+  "auteur": "Michael Cory",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
+  "titre_commons": "File:Paint roller 4.jpg"
+ },
+ {
+  "fichier": "images/rouleau-480.webp",
+  "base": "rouleau",
+  "largeur": 1600,
+  "hauteur": 1075,
+  "legende": "Application soignée au rouleau",
+  "alt": "Application soignée au rouleau",
+  "auteur": "Michael Cory",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
+  "titre_commons": "File:Paint roller 4.jpg"
+ },
+ {
+  "fichier": "images/rouleau-480.avif",
+  "base": "rouleau",
+  "largeur": 1600,
+  "hauteur": 1075,
+  "legende": "Application soignée au rouleau",
+  "alt": "Application soignée au rouleau",
+  "auteur": "Michael Cory",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg",
+  "titre_commons": "File:Paint roller 4.jpg"
+ },
+ {
+  "fichier": "images/salon-spacieux-1600.webp",
+  "base": "salon-spacieux",
+  "largeur": 1600,
+  "hauteur": 1188,
+  "legende": "Rénovation des peintures d'un salon spacieux",
+  "alt": "Rénovation des peintures d'un salon spacieux",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
+  "titre_commons": "File:Empty apartment living room.jpg"
+ },
+ {
+  "fichier": "images/salon-spacieux-1600.avif",
+  "base": "salon-spacieux",
+  "largeur": 1600,
+  "hauteur": 1188,
+  "legende": "Rénovation des peintures d'un salon spacieux",
+  "alt": "Rénovation des peintures d'un salon spacieux",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
+  "titre_commons": "File:Empty apartment living room.jpg"
+ },
+ {
+  "fichier": "images/salon-spacieux-960.webp",
+  "base": "salon-spacieux",
+  "largeur": 1600,
+  "hauteur": 1188,
+  "legende": "Rénovation des peintures d'un salon spacieux",
+  "alt": "Rénovation des peintures d'un salon spacieux",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
+  "titre_commons": "File:Empty apartment living room.jpg"
+ },
+ {
+  "fichier": "images/salon-spacieux-960.avif",
+  "base": "salon-spacieux",
+  "largeur": 1600,
+  "hauteur": 1188,
+  "legende": "Rénovation des peintures d'un salon spacieux",
+  "alt": "Rénovation des peintures d'un salon spacieux",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
+  "titre_commons": "File:Empty apartment living room.jpg"
+ },
+ {
+  "fichier": "images/salon-spacieux-720.webp",
+  "base": "salon-spacieux",
+  "largeur": 1600,
+  "hauteur": 1188,
+  "legende": "Rénovation des peintures d'un salon spacieux",
+  "alt": "Rénovation des peintures d'un salon spacieux",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
+  "titre_commons": "File:Empty apartment living room.jpg"
+ },
+ {
+  "fichier": "images/salon-spacieux-720.avif",
+  "base": "salon-spacieux",
+  "largeur": 1600,
+  "hauteur": 1188,
+  "legende": "Rénovation des peintures d'un salon spacieux",
+  "alt": "Rénovation des peintures d'un salon spacieux",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
+  "titre_commons": "File:Empty apartment living room.jpg"
+ },
+ {
+  "fichier": "images/salon-spacieux-480.webp",
+  "base": "salon-spacieux",
+  "largeur": 1600,
+  "hauteur": 1188,
+  "legende": "Rénovation des peintures d'un salon spacieux",
+  "alt": "Rénovation des peintures d'un salon spacieux",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
+  "titre_commons": "File:Empty apartment living room.jpg"
+ },
+ {
+  "fichier": "images/salon-spacieux-480.avif",
+  "base": "salon-spacieux",
+  "largeur": 1600,
+  "hauteur": 1188,
+  "legende": "Rénovation des peintures d'un salon spacieux",
+  "alt": "Rénovation des peintures d'un salon spacieux",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg",
+  "titre_commons": "File:Empty apartment living room.jpg"
+ },
+ {
+  "fichier": "images/salon-1600.webp",
+  "base": "salon",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Pièce à vivre aux murs repeints en finition mate",
+  "alt": "Pièce à vivre aux murs repeints en finition mate",
+  "auteur": "Fatma005",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
+  "titre_commons": "File:Modern Living Room.jpg"
+ },
+ {
+  "fichier": "images/salon-1600.avif",
+  "base": "salon",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Pièce à vivre aux murs repeints en finition mate",
+  "alt": "Pièce à vivre aux murs repeints en finition mate",
+  "auteur": "Fatma005",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
+  "titre_commons": "File:Modern Living Room.jpg"
+ },
+ {
+  "fichier": "images/salon-960.webp",
+  "base": "salon",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Pièce à vivre aux murs repeints en finition mate",
+  "alt": "Pièce à vivre aux murs repeints en finition mate",
+  "auteur": "Fatma005",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
+  "titre_commons": "File:Modern Living Room.jpg"
+ },
+ {
+  "fichier": "images/salon-960.avif",
+  "base": "salon",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Pièce à vivre aux murs repeints en finition mate",
+  "alt": "Pièce à vivre aux murs repeints en finition mate",
+  "auteur": "Fatma005",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
+  "titre_commons": "File:Modern Living Room.jpg"
+ },
+ {
+  "fichier": "images/salon-720.webp",
+  "base": "salon",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Pièce à vivre aux murs repeints en finition mate",
+  "alt": "Pièce à vivre aux murs repeints en finition mate",
+  "auteur": "Fatma005",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
+  "titre_commons": "File:Modern Living Room.jpg"
+ },
+ {
+  "fichier": "images/salon-720.avif",
+  "base": "salon",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Pièce à vivre aux murs repeints en finition mate",
+  "alt": "Pièce à vivre aux murs repeints en finition mate",
+  "auteur": "Fatma005",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
+  "titre_commons": "File:Modern Living Room.jpg"
+ },
+ {
+  "fichier": "images/salon-480.webp",
+  "base": "salon",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Pièce à vivre aux murs repeints en finition mate",
+  "alt": "Pièce à vivre aux murs repeints en finition mate",
+  "auteur": "Fatma005",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
+  "titre_commons": "File:Modern Living Room.jpg"
+ },
+ {
+  "fichier": "images/salon-480.avif",
+  "base": "salon",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Pièce à vivre aux murs repeints en finition mate",
+  "alt": "Pièce à vivre aux murs repeints en finition mate",
+  "auteur": "Fatma005",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg",
+  "titre_commons": "File:Modern Living Room.jpg"
+ },
+ {
+  "fichier": "images/preparation-1600.webp",
+  "base": "preparation",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Préparation des surfaces et protection du chantier",
+  "alt": "Préparation des surfaces et protection du chantier",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
+  "titre_commons": "File:Ladder stands against wall in room during home renovation work.jpg"
+ },
+ {
+  "fichier": "images/preparation-1600.avif",
+  "base": "preparation",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Préparation des surfaces et protection du chantier",
+  "alt": "Préparation des surfaces et protection du chantier",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
+  "titre_commons": "File:Ladder stands against wall in room during home renovation work.jpg"
+ },
+ {
+  "fichier": "images/preparation-960.webp",
+  "base": "preparation",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Préparation des surfaces et protection du chantier",
+  "alt": "Préparation des surfaces et protection du chantier",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
+  "titre_commons": "File:Ladder stands against wall in room during home renovation work.jpg"
+ },
+ {
+  "fichier": "images/preparation-960.avif",
+  "base": "preparation",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Préparation des surfaces et protection du chantier",
+  "alt": "Préparation des surfaces et protection du chantier",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
+  "titre_commons": "File:Ladder stands against wall in room during home renovation work.jpg"
+ },
+ {
+  "fichier": "images/preparation-720.webp",
+  "base": "preparation",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Préparation des surfaces et protection du chantier",
+  "alt": "Préparation des surfaces et protection du chantier",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
+  "titre_commons": "File:Ladder stands against wall in room during home renovation work.jpg"
+ },
+ {
+  "fichier": "images/preparation-720.avif",
+  "base": "preparation",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Préparation des surfaces et protection du chantier",
+  "alt": "Préparation des surfaces et protection du chantier",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
+  "titre_commons": "File:Ladder stands against wall in room during home renovation work.jpg"
+ },
+ {
+  "fichier": "images/preparation-480.webp",
+  "base": "preparation",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Préparation des surfaces et protection du chantier",
+  "alt": "Préparation des surfaces et protection du chantier",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
+  "titre_commons": "File:Ladder stands against wall in room during home renovation work.jpg"
+ },
+ {
+  "fichier": "images/preparation-480.avif",
+  "base": "preparation",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Préparation des surfaces et protection du chantier",
+  "alt": "Préparation des surfaces et protection du chantier",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg",
+  "titre_commons": "File:Ladder stands against wall in room during home renovation work.jpg"
+ },
+ {
+  "fichier": "images/enduit-1600.webp",
+  "base": "enduit",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Enduit, ratissage et lissage des murs avant peinture",
+  "alt": "Enduit, ratissage et lissage des murs avant peinture",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
+  "titre_commons": "File:Room in renovation with partially painted wall and painting supplies.jpg"
+ },
+ {
+  "fichier": "images/enduit-1600.avif",
+  "base": "enduit",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Enduit, ratissage et lissage des murs avant peinture",
+  "alt": "Enduit, ratissage et lissage des murs avant peinture",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
+  "titre_commons": "File:Room in renovation with partially painted wall and painting supplies.jpg"
+ },
+ {
+  "fichier": "images/enduit-960.webp",
+  "base": "enduit",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Enduit, ratissage et lissage des murs avant peinture",
+  "alt": "Enduit, ratissage et lissage des murs avant peinture",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
+  "titre_commons": "File:Room in renovation with partially painted wall and painting supplies.jpg"
+ },
+ {
+  "fichier": "images/enduit-960.avif",
+  "base": "enduit",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Enduit, ratissage et lissage des murs avant peinture",
+  "alt": "Enduit, ratissage et lissage des murs avant peinture",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
+  "titre_commons": "File:Room in renovation with partially painted wall and painting supplies.jpg"
+ },
+ {
+  "fichier": "images/enduit-720.webp",
+  "base": "enduit",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Enduit, ratissage et lissage des murs avant peinture",
+  "alt": "Enduit, ratissage et lissage des murs avant peinture",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
+  "titre_commons": "File:Room in renovation with partially painted wall and painting supplies.jpg"
+ },
+ {
+  "fichier": "images/enduit-720.avif",
+  "base": "enduit",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Enduit, ratissage et lissage des murs avant peinture",
+  "alt": "Enduit, ratissage et lissage des murs avant peinture",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
+  "titre_commons": "File:Room in renovation with partially painted wall and painting supplies.jpg"
+ },
+ {
+  "fichier": "images/enduit-480.webp",
+  "base": "enduit",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Enduit, ratissage et lissage des murs avant peinture",
+  "alt": "Enduit, ratissage et lissage des murs avant peinture",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
+  "titre_commons": "File:Room in renovation with partially painted wall and painting supplies.jpg"
+ },
+ {
+  "fichier": "images/enduit-480.avif",
+  "base": "enduit",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Enduit, ratissage et lissage des murs avant peinture",
+  "alt": "Enduit, ratissage et lissage des murs avant peinture",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Room_in_renovation_with_partially_painted_wall_and_painting_supplies.jpg",
+  "titre_commons": "File:Room in renovation with partially painted wall and painting supplies.jpg"
+ },
+ {
+  "fichier": "images/rechampi-1600.webp",
+  "base": "rechampi",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Rechampi et finitions au pinceau",
+  "alt": "Rechampi et finitions au pinceau",
+  "auteur": "www.Pixel.la Free Stock Photos",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
+  "titre_commons": "File:Art-wall-brush-painting (23698214684).jpg"
+ },
+ {
+  "fichier": "images/rechampi-1600.avif",
+  "base": "rechampi",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Rechampi et finitions au pinceau",
+  "alt": "Rechampi et finitions au pinceau",
+  "auteur": "www.Pixel.la Free Stock Photos",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
+  "titre_commons": "File:Art-wall-brush-painting (23698214684).jpg"
+ },
+ {
+  "fichier": "images/rechampi-960.webp",
+  "base": "rechampi",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Rechampi et finitions au pinceau",
+  "alt": "Rechampi et finitions au pinceau",
+  "auteur": "www.Pixel.la Free Stock Photos",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
+  "titre_commons": "File:Art-wall-brush-painting (23698214684).jpg"
+ },
+ {
+  "fichier": "images/rechampi-960.avif",
+  "base": "rechampi",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Rechampi et finitions au pinceau",
+  "alt": "Rechampi et finitions au pinceau",
+  "auteur": "www.Pixel.la Free Stock Photos",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
+  "titre_commons": "File:Art-wall-brush-painting (23698214684).jpg"
+ },
+ {
+  "fichier": "images/rechampi-720.webp",
+  "base": "rechampi",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Rechampi et finitions au pinceau",
+  "alt": "Rechampi et finitions au pinceau",
+  "auteur": "www.Pixel.la Free Stock Photos",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
+  "titre_commons": "File:Art-wall-brush-painting (23698214684).jpg"
+ },
+ {
+  "fichier": "images/rechampi-720.avif",
+  "base": "rechampi",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Rechampi et finitions au pinceau",
+  "alt": "Rechampi et finitions au pinceau",
+  "auteur": "www.Pixel.la Free Stock Photos",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
+  "titre_commons": "File:Art-wall-brush-painting (23698214684).jpg"
+ },
+ {
+  "fichier": "images/rechampi-480.webp",
+  "base": "rechampi",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Rechampi et finitions au pinceau",
+  "alt": "Rechampi et finitions au pinceau",
+  "auteur": "www.Pixel.la Free Stock Photos",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
+  "titre_commons": "File:Art-wall-brush-painting (23698214684).jpg"
+ },
+ {
+  "fichier": "images/rechampi-480.avif",
+  "base": "rechampi",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Rechampi et finitions au pinceau",
+  "alt": "Rechampi et finitions au pinceau",
+  "auteur": "www.Pixel.la Free Stock Photos",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg",
+  "titre_commons": "File:Art-wall-brush-painting (23698214684).jpg"
+ }
 ]

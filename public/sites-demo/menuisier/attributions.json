@@ -1,296 +1,482 @@
 [
-  {
-    "fichier": "images/hero-bois-480.webp",
-    "auteur": "Steve Ryan",
-    "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
-    "licence": "CC BY-SA 2.0",
-    "legende": "Détail d'assemblage bois d'onglet avec clés de renfort"
-  },
-  {
-    "fichier": "images/hero-bois-480.avif",
-    "auteur": "Steve Ryan",
-    "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
-    "licence": "CC BY-SA 2.0",
-    "legende": "Détail d'assemblage bois d'onglet avec clés de renfort"
-  },
-  {
-    "fichier": "images/hero-bois-960.webp",
-    "auteur": "Steve Ryan",
-    "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
-    "licence": "CC BY-SA 2.0",
-    "legende": "Détail d'assemblage bois d'onglet avec clés de renfort"
-  },
-  {
-    "fichier": "images/hero-bois-960.avif",
-    "auteur": "Steve Ryan",
-    "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
-    "licence": "CC BY-SA 2.0",
-    "legende": "Détail d'assemblage bois d'onglet avec clés de renfort"
-  },
-  {
-    "fichier": "images/hero-bois-1600.webp",
-    "auteur": "Steve Ryan",
-    "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
-    "licence": "CC BY-SA 2.0",
-    "legende": "Détail d'assemblage bois d'onglet avec clés de renfort"
-  },
-  {
-    "fichier": "images/hero-bois-1600.avif",
-    "auteur": "Steve Ryan",
-    "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
-    "licence": "CC BY-SA 2.0",
-    "legende": "Détail d'assemblage bois d'onglet avec clés de renfort"
-  },
-  {
-    "fichier": "images/escalier-colimacon-480.webp",
-    "auteur": "Petar Milošević",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Escalier hélicoïdal sur mesure en chêne massif"
-  },
-  {
-    "fichier": "images/escalier-colimacon-480.avif",
-    "auteur": "Petar Milošević",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Escalier hélicoïdal sur mesure en chêne massif"
-  },
-  {
-    "fichier": "images/escalier-colimacon-960.webp",
-    "auteur": "Petar Milošević",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Escalier hélicoïdal sur mesure en chêne massif"
-  },
-  {
-    "fichier": "images/escalier-colimacon-960.avif",
-    "auteur": "Petar Milošević",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Escalier hélicoïdal sur mesure en chêne massif"
-  },
-  {
-    "fichier": "images/escalier-colimacon-1600.webp",
-    "auteur": "Petar Milošević",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Escalier hélicoïdal sur mesure en chêne massif"
-  },
-  {
-    "fichier": "images/escalier-colimacon-1600.avif",
-    "auteur": "Petar Milošević",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Escalier hélicoïdal sur mesure en chêne massif"
-  },
-  {
-    "fichier": "images/escalier-tournant-480.webp",
-    "auteur": "Tim Sheerman-Chase",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Escalier suspendu et rampe en bois sculpté"
-  },
-  {
-    "fichier": "images/escalier-tournant-480.avif",
-    "auteur": "Tim Sheerman-Chase",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Escalier suspendu et rampe en bois sculpté"
-  },
-  {
-    "fichier": "images/escalier-tournant-960.webp",
-    "auteur": "Tim Sheerman-Chase",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Escalier suspendu et rampe en bois sculpté"
-  },
-  {
-    "fichier": "images/escalier-tournant-960.avif",
-    "auteur": "Tim Sheerman-Chase",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Escalier suspendu et rampe en bois sculpté"
-  },
-  {
-    "fichier": "images/escalier-tournant-1600.webp",
-    "auteur": "Tim Sheerman-Chase",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Escalier suspendu et rampe en bois sculpté"
-  },
-  {
-    "fichier": "images/escalier-tournant-1600.avif",
-    "auteur": "Tim Sheerman-Chase",
-    "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Escalier suspendu et rampe en bois sculpté"
-  },
-  {
-    "fichier": "images/mobilier-lit-480.webp",
-    "auteur": "MajestyWoodworks",
-    "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
-    "licence": "CC BY 4.0",
-    "legende": "Mobilier contemporain suspendu en noyer massif"
-  },
-  {
-    "fichier": "images/mobilier-lit-480.avif",
-    "auteur": "MajestyWoodworks",
-    "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
-    "licence": "CC BY 4.0",
-    "legende": "Mobilier contemporain suspendu en noyer massif"
-  },
-  {
-    "fichier": "images/mobilier-lit-960.webp",
-    "auteur": "MajestyWoodworks",
-    "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
-    "licence": "CC BY 4.0",
-    "legende": "Mobilier contemporain suspendu en noyer massif"
-  },
-  {
-    "fichier": "images/mobilier-lit-960.avif",
-    "auteur": "MajestyWoodworks",
-    "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
-    "licence": "CC BY 4.0",
-    "legende": "Mobilier contemporain suspendu en noyer massif"
-  },
-  {
-    "fichier": "images/mobilier-lit-1600.webp",
-    "auteur": "MajestyWoodworks",
-    "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
-    "licence": "CC BY 4.0",
-    "legende": "Mobilier contemporain suspendu en noyer massif"
-  },
-  {
-    "fichier": "images/mobilier-lit-1600.avif",
-    "auteur": "MajestyWoodworks",
-    "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
-    "licence": "CC BY 4.0",
-    "legende": "Mobilier contemporain suspendu en noyer massif"
-  },
-  {
-    "fichier": "images/bibliotheque-bois-480.webp",
-    "auteur": "Micheli Design",
-    "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
-    "licence": "CC0",
-    "legende": "Bibliothèque sur mesure en chêne et structure acier"
-  },
-  {
-    "fichier": "images/bibliotheque-bois-480.avif",
-    "auteur": "Micheli Design",
-    "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
-    "licence": "CC0",
-    "legende": "Bibliothèque sur mesure en chêne et structure acier"
-  },
-  {
-    "fichier": "images/bibliotheque-bois-960.webp",
-    "auteur": "Micheli Design",
-    "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
-    "licence": "CC0",
-    "legende": "Bibliothèque sur mesure en chêne et structure acier"
-  },
-  {
-    "fichier": "images/bibliotheque-bois-960.avif",
-    "auteur": "Micheli Design",
-    "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
-    "licence": "CC0",
-    "legende": "Bibliothèque sur mesure en chêne et structure acier"
-  },
-  {
-    "fichier": "images/bibliotheque-bois-1600.webp",
-    "auteur": "Micheli Design",
-    "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
-    "licence": "CC0",
-    "legende": "Bibliothèque sur mesure en chêne et structure acier"
-  },
-  {
-    "fichier": "images/bibliotheque-bois-1600.avif",
-    "auteur": "Micheli Design",
-    "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
-    "licence": "CC0",
-    "legende": "Bibliothèque sur mesure en chêne et structure acier"
-  },
-  {
-    "fichier": "images/cuisine-bois-480.webp",
-    "auteur": "Kotivalo",
-    "source": "https://commons.wikimedia.org/wiki/File:Brown_wood_kitchen_in_attic.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Aménagement de cuisine sous combles en bois massif"
-  },
-  {
-    "fichier": "images/cuisine-bois-480.avif",
-    "auteur": "Kotivalo",
-    "source": "https://commons.wikimedia.org/wiki/File:Brown_wood_kitchen_in_attic.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Aménagement de cuisine sous combles en bois massif"
-  },
-  {
-    "fichier": "images/cuisine-bois-960.webp",
-    "auteur": "Kotivalo",
-    "source": "https://commons.wikimedia.org/wiki/File:Brown_wood_kitchen_in_attic.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Aménagement de cuisine sous combles en bois massif"
-  },
-  {
-    "fichier": "images/cuisine-bois-960.avif",
-    "auteur": "Kotivalo",
-    "source": "https://commons.wikimedia.org/wiki/File:Brown_wood_kitchen_in_attic.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Aménagement de cuisine sous combles en bois massif"
-  },
-  {
-    "fichier": "images/cuisine-bois-1600.webp",
-    "auteur": "Kotivalo",
-    "source": "https://commons.wikimedia.org/wiki/File:Brown_wood_kitchen_in_attic.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Aménagement de cuisine sous combles en bois massif"
-  },
-  {
-    "fichier": "images/cuisine-bois-1600.avif",
-    "auteur": "Kotivalo",
-    "source": "https://commons.wikimedia.org/wiki/File:Brown_wood_kitchen_in_attic.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Aménagement de cuisine sous combles en bois massif"
-  },
-  {
-    "fichier": "images/parquet-massif-480.webp",
-    "auteur": "Amada44",
-    "source": "https://commons.wikimedia.org/wiki/File:Parquet_flooring_in_Mus%C3%A9e_des_arts_d%C3%A9coratifs_de_Strasbourg.jpg",
-    "licence": "CC BY 3.0",
-    "legende": "Pose de parquet point de Hongrie en chêne de tradition"
-  },
-  {
-    "fichier": "images/parquet-massif-480.avif",
-    "auteur": "Amada44",
-    "source": "https://commons.wikimedia.org/wiki/File:Parquet_flooring_in_Mus%C3%A9e_des_arts_d%C3%A9coratifs_de_Strasbourg.jpg",
-    "licence": "CC BY 3.0",
-    "legende": "Pose de parquet point de Hongrie en chêne de tradition"
-  },
-  {
-    "fichier": "images/parquet-massif-960.webp",
-    "auteur": "Amada44",
-    "source": "https://commons.wikimedia.org/wiki/File:Parquet_flooring_in_Mus%C3%A9e_des_arts_d%C3%A9coratifs_de_Strasbourg.jpg",
-    "licence": "CC BY 3.0",
-    "legende": "Pose de parquet point de Hongrie en chêne de tradition"
-  },
-  {
-    "fichier": "images/parquet-massif-960.avif",
-    "auteur": "Amada44",
-    "source": "https://commons.wikimedia.org/wiki/File:Parquet_flooring_in_Mus%C3%A9e_des_arts_d%C3%A9coratifs_de_Strasbourg.jpg",
-    "licence": "CC BY 3.0",
-    "legende": "Pose de parquet point de Hongrie en chêne de tradition"
-  },
-  {
-    "fichier": "images/parquet-massif-1600.webp",
-    "auteur": "Amada44",
-    "source": "https://commons.wikimedia.org/wiki/File:Parquet_flooring_in_Mus%C3%A9e_des_arts_d%C3%A9coratifs_de_Strasbourg.jpg",
-    "licence": "CC BY 3.0",
-    "legende": "Pose de parquet point de Hongrie en chêne de tradition"
-  },
-  {
-    "fichier": "images/parquet-massif-1600.avif",
-    "auteur": "Amada44",
-    "source": "https://commons.wikimedia.org/wiki/File:Parquet_flooring_in_Mus%C3%A9e_des_arts_d%C3%A9coratifs_de_Strasbourg.jpg",
-    "licence": "CC BY 3.0",
-    "legende": "Pose de parquet point de Hongrie en chêne de tradition"
-  }
+ {
+  "fichier": "images/hero-1600.webp",
+  "base": "hero",
+  "largeur": 1280,
+  "hauteur": 853,
+  "legende": "Assemblage d'onglet avec clés de renfort, détail",
+  "alt": "Assemblage d'onglet avec clés de renfort, détail",
+  "auteur": "Steve Ryan",
+  "licence": "CC BY-SA 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+  "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg"
+ },
+ {
+  "fichier": "images/hero-1600.avif",
+  "base": "hero",
+  "largeur": 1280,
+  "hauteur": 853,
+  "legende": "Assemblage d'onglet avec clés de renfort, détail",
+  "alt": "Assemblage d'onglet avec clés de renfort, détail",
+  "auteur": "Steve Ryan",
+  "licence": "CC BY-SA 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+  "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg"
+ },
+ {
+  "fichier": "images/hero-960.webp",
+  "base": "hero",
+  "largeur": 1280,
+  "hauteur": 853,
+  "legende": "Assemblage d'onglet avec clés de renfort, détail",
+  "alt": "Assemblage d'onglet avec clés de renfort, détail",
+  "auteur": "Steve Ryan",
+  "licence": "CC BY-SA 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+  "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg"
+ },
+ {
+  "fichier": "images/hero-960.avif",
+  "base": "hero",
+  "largeur": 1280,
+  "hauteur": 853,
+  "legende": "Assemblage d'onglet avec clés de renfort, détail",
+  "alt": "Assemblage d'onglet avec clés de renfort, détail",
+  "auteur": "Steve Ryan",
+  "licence": "CC BY-SA 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+  "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg"
+ },
+ {
+  "fichier": "images/hero-720.webp",
+  "base": "hero",
+  "largeur": 1280,
+  "hauteur": 853,
+  "legende": "Assemblage d'onglet avec clés de renfort, détail",
+  "alt": "Assemblage d'onglet avec clés de renfort, détail",
+  "auteur": "Steve Ryan",
+  "licence": "CC BY-SA 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+  "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg"
+ },
+ {
+  "fichier": "images/hero-720.avif",
+  "base": "hero",
+  "largeur": 1280,
+  "hauteur": 853,
+  "legende": "Assemblage d'onglet avec clés de renfort, détail",
+  "alt": "Assemblage d'onglet avec clés de renfort, détail",
+  "auteur": "Steve Ryan",
+  "licence": "CC BY-SA 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+  "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg"
+ },
+ {
+  "fichier": "images/hero-480.webp",
+  "base": "hero",
+  "largeur": 1280,
+  "hauteur": 853,
+  "legende": "Assemblage d'onglet avec clés de renfort, détail",
+  "alt": "Assemblage d'onglet avec clés de renfort, détail",
+  "auteur": "Steve Ryan",
+  "licence": "CC BY-SA 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+  "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg"
+ },
+ {
+  "fichier": "images/hero-480.avif",
+  "base": "hero",
+  "largeur": 1280,
+  "hauteur": 853,
+  "legende": "Assemblage d'onglet avec clés de renfort, détail",
+  "alt": "Assemblage d'onglet avec clés de renfort, détail",
+  "auteur": "Steve Ryan",
+  "licence": "CC BY-SA 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+  "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg"
+ },
+ {
+  "fichier": "images/escalier-colimacon-1600.webp",
+  "base": "escalier-colimacon",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg"
+ },
+ {
+  "fichier": "images/escalier-colimacon-1600.avif",
+  "base": "escalier-colimacon",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg"
+ },
+ {
+  "fichier": "images/escalier-colimacon-960.webp",
+  "base": "escalier-colimacon",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg"
+ },
+ {
+  "fichier": "images/escalier-colimacon-960.avif",
+  "base": "escalier-colimacon",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg"
+ },
+ {
+  "fichier": "images/escalier-colimacon-720.webp",
+  "base": "escalier-colimacon",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg"
+ },
+ {
+  "fichier": "images/escalier-colimacon-720.avif",
+  "base": "escalier-colimacon",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg"
+ },
+ {
+  "fichier": "images/escalier-colimacon-480.webp",
+  "base": "escalier-colimacon",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg"
+ },
+ {
+  "fichier": "images/escalier-colimacon-480.avif",
+  "base": "escalier-colimacon",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg"
+ },
+ {
+  "fichier": "images/escalier-tournant-1600.webp",
+  "base": "escalier-tournant",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Escalier tournant et rampe en bois sculpté",
+  "alt": "Escalier tournant et rampe en bois sculpté",
+  "auteur": "Tim Sheerman-Chase",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
+  "titre_commons": "File:Wooden Spiral Staircase, Leeds Castle.jpg"
+ },
+ {
+  "fichier": "images/escalier-tournant-1600.avif",
+  "base": "escalier-tournant",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Escalier tournant et rampe en bois sculpté",
+  "alt": "Escalier tournant et rampe en bois sculpté",
+  "auteur": "Tim Sheerman-Chase",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
+  "titre_commons": "File:Wooden Spiral Staircase, Leeds Castle.jpg"
+ },
+ {
+  "fichier": "images/escalier-tournant-960.webp",
+  "base": "escalier-tournant",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Escalier tournant et rampe en bois sculpté",
+  "alt": "Escalier tournant et rampe en bois sculpté",
+  "auteur": "Tim Sheerman-Chase",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
+  "titre_commons": "File:Wooden Spiral Staircase, Leeds Castle.jpg"
+ },
+ {
+  "fichier": "images/escalier-tournant-960.avif",
+  "base": "escalier-tournant",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Escalier tournant et rampe en bois sculpté",
+  "alt": "Escalier tournant et rampe en bois sculpté",
+  "auteur": "Tim Sheerman-Chase",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
+  "titre_commons": "File:Wooden Spiral Staircase, Leeds Castle.jpg"
+ },
+ {
+  "fichier": "images/escalier-tournant-720.webp",
+  "base": "escalier-tournant",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Escalier tournant et rampe en bois sculpté",
+  "alt": "Escalier tournant et rampe en bois sculpté",
+  "auteur": "Tim Sheerman-Chase",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
+  "titre_commons": "File:Wooden Spiral Staircase, Leeds Castle.jpg"
+ },
+ {
+  "fichier": "images/escalier-tournant-720.avif",
+  "base": "escalier-tournant",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Escalier tournant et rampe en bois sculpté",
+  "alt": "Escalier tournant et rampe en bois sculpté",
+  "auteur": "Tim Sheerman-Chase",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
+  "titre_commons": "File:Wooden Spiral Staircase, Leeds Castle.jpg"
+ },
+ {
+  "fichier": "images/escalier-tournant-480.webp",
+  "base": "escalier-tournant",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Escalier tournant et rampe en bois sculpté",
+  "alt": "Escalier tournant et rampe en bois sculpté",
+  "auteur": "Tim Sheerman-Chase",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
+  "titre_commons": "File:Wooden Spiral Staircase, Leeds Castle.jpg"
+ },
+ {
+  "fichier": "images/escalier-tournant-480.avif",
+  "base": "escalier-tournant",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Escalier tournant et rampe en bois sculpté",
+  "alt": "Escalier tournant et rampe en bois sculpté",
+  "auteur": "Tim Sheerman-Chase",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg",
+  "titre_commons": "File:Wooden Spiral Staircase, Leeds Castle.jpg"
+ },
+ {
+  "fichier": "images/lit-1600.webp",
+  "base": "lit",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "alt": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "auteur": "MajestyWoodworks",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
+  "titre_commons": "File:Handcrafted custom floating walnut bed.jpg"
+ },
+ {
+  "fichier": "images/lit-1600.avif",
+  "base": "lit",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "alt": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "auteur": "MajestyWoodworks",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
+  "titre_commons": "File:Handcrafted custom floating walnut bed.jpg"
+ },
+ {
+  "fichier": "images/lit-960.webp",
+  "base": "lit",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "alt": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "auteur": "MajestyWoodworks",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
+  "titre_commons": "File:Handcrafted custom floating walnut bed.jpg"
+ },
+ {
+  "fichier": "images/lit-960.avif",
+  "base": "lit",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "alt": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "auteur": "MajestyWoodworks",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
+  "titre_commons": "File:Handcrafted custom floating walnut bed.jpg"
+ },
+ {
+  "fichier": "images/lit-720.webp",
+  "base": "lit",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "alt": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "auteur": "MajestyWoodworks",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
+  "titre_commons": "File:Handcrafted custom floating walnut bed.jpg"
+ },
+ {
+  "fichier": "images/lit-720.avif",
+  "base": "lit",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "alt": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "auteur": "MajestyWoodworks",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
+  "titre_commons": "File:Handcrafted custom floating walnut bed.jpg"
+ },
+ {
+  "fichier": "images/lit-480.webp",
+  "base": "lit",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "alt": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "auteur": "MajestyWoodworks",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
+  "titre_commons": "File:Handcrafted custom floating walnut bed.jpg"
+ },
+ {
+  "fichier": "images/lit-480.avif",
+  "base": "lit",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "alt": "Lit suspendu en noyer massif, fabrication sur mesure",
+  "auteur": "MajestyWoodworks",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg",
+  "titre_commons": "File:Handcrafted custom floating walnut bed.jpg"
+ },
+ {
+  "fichier": "images/bibliotheque-1600.webp",
+  "base": "bibliotheque",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Bibliothèque sur mesure en chêne et acier",
+  "alt": "Bibliothèque sur mesure en chêne et acier",
+  "auteur": "Micheli Design",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
+  "titre_commons": "File:Custom-made industrial wood and metal bookcase – Micheli Design.jpg"
+ },
+ {
+  "fichier": "images/bibliotheque-1600.avif",
+  "base": "bibliotheque",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Bibliothèque sur mesure en chêne et acier",
+  "alt": "Bibliothèque sur mesure en chêne et acier",
+  "auteur": "Micheli Design",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
+  "titre_commons": "File:Custom-made industrial wood and metal bookcase – Micheli Design.jpg"
+ },
+ {
+  "fichier": "images/bibliotheque-960.webp",
+  "base": "bibliotheque",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Bibliothèque sur mesure en chêne et acier",
+  "alt": "Bibliothèque sur mesure en chêne et acier",
+  "auteur": "Micheli Design",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
+  "titre_commons": "File:Custom-made industrial wood and metal bookcase – Micheli Design.jpg"
+ },
+ {
+  "fichier": "images/bibliotheque-960.avif",
+  "base": "bibliotheque",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Bibliothèque sur mesure en chêne et acier",
+  "alt": "Bibliothèque sur mesure en chêne et acier",
+  "auteur": "Micheli Design",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
+  "titre_commons": "File:Custom-made industrial wood and metal bookcase – Micheli Design.jpg"
+ },
+ {
+  "fichier": "images/bibliotheque-720.webp",
+  "base": "bibliotheque",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Bibliothèque sur mesure en chêne et acier",
+  "alt": "Bibliothèque sur mesure en chêne et acier",
+  "auteur": "Micheli Design",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
+  "titre_commons": "File:Custom-made industrial wood and metal bookcase – Micheli Design.jpg"
+ },
+ {
+  "fichier": "images/bibliotheque-720.avif",
+  "base": "bibliotheque",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Bibliothèque sur mesure en chêne et acier",
+  "alt": "Bibliothèque sur mesure en chêne et acier",
+  "auteur": "Micheli Design",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
+  "titre_commons": "File:Custom-made industrial wood and metal bookcase – Micheli Design.jpg"
+ },
+ {
+  "fichier": "images/bibliotheque-480.webp",
+  "base": "bibliotheque",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Bibliothèque sur mesure en chêne et acier",
+  "alt": "Bibliothèque sur mesure en chêne et acier",
+  "auteur": "Micheli Design",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
+  "titre_commons": "File:Custom-made industrial wood and metal bookcase – Micheli Design.jpg"
+ },
+ {
+  "fichier": "images/bibliotheque-480.avif",
+  "base": "bibliotheque",
+  "largeur": 1600,
+  "hauteur": 1060,
+  "legende": "Bibliothèque sur mesure en chêne et acier",
+  "alt": "Bibliothèque sur mesure en chêne et acier",
+  "auteur": "Micheli Design",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
+  "titre_commons": "File:Custom-made industrial wood and metal bookcase – Micheli Design.jpg"
+ }
 ]

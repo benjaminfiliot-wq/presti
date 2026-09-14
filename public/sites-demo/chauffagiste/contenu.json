@@ -1,0 +1,1052 @@
+{
+ "metier": "chauffagiste",
+ "extrait_le": "2026-09-14",
+ "pages": {
+  "/": {
+   "type": "accueil",
+   "title": "Chauffagiste à Lille — Démo Chauffagiste Lille",
+   "description": "Démo Chauffagiste Lille : artisan chauffagiste qualifié à Lille. Installation chaudière condensation, pompe à chaleur et dépannage soigné. Devis gratuit.",
+   "h1": "Chauffagiste à Lille — Démo Chauffagiste Lille",
+   "kicker": "Artisan thermique qualifié",
+   "chapeau": "Installation soignée de chaudières gaz à condensation, pose certifiée de pompes à chaleur air-eau et maintenance de vos circuits hydrauliques dans toute la métropole lilloise.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "img1",
+     "alt": "Chaudière gaz murale à condensation raccordée avec conduit ventouse"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Nos prestations de chauffage et génie climatique",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Des solutions thermiques pérennes et conformes aux normes pour votre confort d'hiver."
+      },
+      {
+       "type": "h3",
+       "texte": "Chaudières gaz à condensation"
+      },
+      {
+       "type": "p",
+       "texte": "Pose et remplacement de chaudières murales ou au sol à très haute performance énergétique, raccordement ventouse ou tubage de cheminée."
+      },
+      {
+       "type": "h3",
+       "texte": "Pompes à chaleur air-eau"
+      },
+      {
+       "type": "p",
+       "texte": "Dimensionnement thermique précis et raccordement hydraulique de groupes extérieurs avec régulation modulante pour réduire vos dépenses d'énergie."
+      },
+      {
+       "type": "h3",
+       "texte": "Radiateurs et robinets thermostatiques"
+      },
+      {
+       "type": "p",
+       "texte": "Pose soignée de radiateurs basse température en fonte d'aluminium et montage de têtes thermostatiques pour un équilibrage thermique pièce par pièce."
+      },
+      {
+       "type": "h3",
+       "texte": "Plancher chauffant hydraulique"
+      },
+      {
+       "type": "p",
+       "texte": "Pose de collecteurs régulés, calpinage de tubes PER avec barrière anti-oxygène et mise en épreuve hydrostatique avant coulage de chape."
+      },
+      {
+       "type": "h3",
+       "texte": "Désembouage hydrodynamique du circuit"
+      },
+      {
+       "type": "p",
+       "texte": "Nettoyage complet des boues ferreuses et calcaires par circulation d'eau sous pression pulsée avec injection d'inhibiteur anticorrosion protecteur."
+      },
+      {
+       "type": "h3",
+       "texte": "Entretien annuel réglementaire"
+      },
+      {
+       "type": "p",
+       "texte": "Nettoyage du brûleur, analyse de combustion avec mesure de monoxyde de carbone, contrôle du vase d'expansion et remise de l'attestation légale."
+      }
+     ]
+    },
+    {
+     "h2": "Nos réalisations d'installations thermiques",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Découvrez en images nos raccordements hydrauliques et la propreté de nos chaufferies rénovées."
+      },
+      {
+       "type": "img",
+       "fichier": "img2",
+       "alt": "Chaudière à condensation murale avec circuit hydraulique"
+      },
+      {
+       "type": "p",
+       "texte": "Chaudière à condensation murale avec circuit hydraulique (Photo Boulderhydronics, licence CC BY-SA 3.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "img3",
+       "alt": "Composants intérieurs d'une pompe à chaleur réversible"
+      },
+      {
+       "type": "p",
+       "texte": "Composants intérieurs d'une pompe à chaleur réversible (Photo ArnoldReinhold, licence CC BY-SA 4.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "img4",
+       "alt": "Radiateur en acier avec vanne thermostatique"
+      },
+      {
+       "type": "p",
+       "texte": "Radiateur en acier avec vanne thermostatique (Photo Tiia Monto, licence CC BY-SA 3.0)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes desservies dans le Nord",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous nous déplaçons rapidement dans toute la métropole lilloise pour vos travaux et dépannages."
+      }
+     ]
+    },
+    {
+     "h2": "Comment se déroule votre projet thermique",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Une organisation rigoureuse en 4 étapes pour garantir la fiabilité de vos installations."
+      },
+      {
+       "type": "h3",
+       "texte": "Prise de contact"
+      },
+      {
+       "type": "p",
+       "texte": "Vous présentez les caractéristiques de votre logement et de votre installation de chauffage actuelle."
+      },
+      {
+       "type": "h3",
+       "texte": "Visite technique"
+      },
+      {
+       "type": "p",
+       "texte": "Nous examinons la faisabilité hydraulique, le réseau d'émetteurs et les conduits d'évacuation des fumées."
+      },
+      {
+       "type": "h3",
+       "texte": "Devis détaillé"
+      },
+      {
+       "type": "p",
+       "texte": "Émission d'un devis clair et sans surprise listant les références des appareils certifiés et la main d'œuvre."
+      },
+      {
+       "type": "h3",
+       "texte": "Mise en service"
+      },
+      {
+       "type": "p",
+       "texte": "Raccordement soigneux, réglage fin des courbes de chauffe et contrôle d'étanchéité sous pression."
+      }
+     ]
+    },
+    {
+     "h2": "Questions fréquentes sur le chauffage",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Des réponses précises à vos interrogations techniques courantes."
+      },
+      {
+       "type": "h3",
+       "texte": "Peut-on diagnostiquer précisément une panne de chaudière sans examen sur place ?"
+      },
+      {
+       "type": "p",
+       "texte": "Une première orientation technique est envisageable par téléphone, mais la vérification des organes de sécurité gaz et des composants hydrauliques impose un examen direct sur site afin de garantir une totale sécurité."
+      },
+      {
+       "type": "h3",
+       "texte": "Quelle différence entre une chaudière à condensation et une pompe à chaleur ?"
+      },
+      {
+       "type": "p",
+       "texte": "La chaudière valorise les vapeurs d'eau issues de la combustion du gaz pour augmenter son rendement global, alors que la pompe à chaleur capte les calories gratuites de l'air ambiant. L'analyse de vos déperditions thermiques guide le bon choix."
+      },
+      {
+       "type": "h3",
+       "texte": "Pourquoi le désembouage d'un circuit de chauffage est-il indispensable ?"
+      },
+      {
+       "type": "p",
+       "texte": "L'accumulation d'oxydes métalliques et de boues freine la circulation de l'eau chaude et dégrade le rendement des échangeurs thermiques. Un désembouage régulier rétablit une diffusion homogène de la chaleur dans les radiateurs."
+      },
+      {
+       "type": "h3",
+       "texte": "Vos travaux bénéficient-ils d'une assurance décennale ?"
+      },
+      {
+       "type": "p",
+       "texte": "Oui, tous nos chantiers d'installation et de rénovation thermique sont couverts par notre contrat d'assurance décennale souscrit auprès de Assureur fictif sous le numéro DEMO-0001."
+      }
+     ]
+    },
+    {
+     "h2": "Échangeons sur votre projet thermique",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Contactez notre équipe pour toute question sur votre chaudière ou votre projet de pompe à chaleur."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 59000 Lille"
+      },
+      {
+       "type": "p",
+       "texte": "Lundi–vendredi 8 h–18 h"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      },
+      {
+       "type": "p",
+       "texte": "contact@chauffagiste.demo.invalid"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HVACBusiness",
+     "name": "Démo Chauffagiste Lille",
+     "url": "https://chauffagiste.demo.invalid/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "59000",
+      "addressLocality": "Lille",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lille",
+      "Villeneuve-d'Ascq",
+      "Roubaix",
+      "Lambersart"
+     ],
+     "image": "https://chauffagiste.demo.invalid/images/img1-1600.webp"
+    }
+   ]
+  },
+  "/plombier/": {
+   "type": "metier",
+   "cible": "plombier",
+   "title": "Plombier sanitaire à Lille — Démo Chauffagiste Lille",
+   "description": "Démo Chauffagiste Lille prend en charge vos travaux de plomberie sanitaire à Lille : cumulus, réseau cuivre, robinetterie et urgences. Devis gratuit.",
+   "h1": "Plombier à Lille",
+   "kicker": "Activité complémentaire",
+   "chapeau": "En complément de nos prestations de génie thermique, Démo Chauffagiste Lille prend en charge l'ensemble de vos besoins en plomberie sanitaire, canalisations d'alimentation et remplacement de chauffe-eau.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "img5",
+     "alt": "Raccordement de conduites hydrauliques et de tuyauteries sanitaires"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Travaux de plomberie sanitaire à Lille",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Des réseaux d'alimentation et d'évacuation posés dans le respect des règles de l'art."
+      },
+      {
+       "type": "h3",
+       "texte": "Cumulus et chauffe-eau électrique"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de ballons d'eau chaude entartrés, installation de réducteurs de pression et contrôle des groupes de sécurité."
+      },
+      {
+       "type": "h3",
+       "texte": "Réseaux cuivre et multicouche"
+      },
+      {
+       "type": "p",
+       "texte": "Création de lignes d'alimentation encastrées ou apparentes, piquages de raccordement et sertissage mécanique garanti sans fuite."
+      },
+      {
+       "type": "h3",
+       "texte": "Robinetterie et éviers"
+      },
+      {
+       "type": "p",
+       "texte": "Pose de mitigeurs thermostatiques de salle de bain, mélangeurs d'évier et vannes de coupure générale facilement accessibles."
+      }
+     ]
+    },
+    {
+     "h2": "Nos installations sanitaires en images",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Exemples d'aménagements de distribution d'eau et de raccordements thermiques."
+      },
+      {
+       "type": "img",
+       "fichier": "img5",
+       "alt": "Chaudière murale moderne intégrée dans une cuisine"
+      },
+      {
+       "type": "p",
+       "texte": "Chaudière murale moderne en cuisine (Photo Turbojet, licence CC BY-SA 4.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "img6",
+       "alt": "Chaufferie complète avec tuyauteries et régulateurs"
+      },
+      {
+       "type": "p",
+       "texte": "Chaufferie complète avec tuyauteries (Photo Oliksiy Yakovlyev, licence CC0)"
+      }
+     ]
+    },
+    {
+     "h2": "Contacter notre service plomberie",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Discutons ensemble de vos besoins d'amélioration sanitaire ou de changement de cumulus."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 59000 Lille"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HVACBusiness",
+     "name": "Démo Chauffagiste Lille",
+     "url": "https://chauffagiste.demo.invalid/plombier/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "59000",
+      "addressLocality": "Lille",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lille",
+      "Villeneuve-d'Ascq",
+      "Roubaix",
+      "Lambersart"
+     ],
+     "image": "https://chauffagiste.demo.invalid/images/img1-1600.webp"
+    }
+   ]
+  },
+  "/mentions-legales/": {
+   "type": "legal",
+   "title": "Mentions légales — Démo Chauffagiste Lille",
+   "description": "Mentions légales et informations réglementaires de Démo Chauffagiste Lille. Site de démonstration représentant une entreprise artisanale fictive.",
+   "h1": "Mentions légales",
+   "kicker": "",
+   "chapeau": "Site de démonstration : entreprise fictive créée pour illustrer les performances techniques, le design sur-mesure et le référencement local de la solution Presti.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Nature du site",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Site de démonstration : entreprise fictive créée pour illustrer les performances techniques, le design sur-mesure et le référencement local de la solution Presti."
+      }
+     ]
+    },
+    {
+     "h2": "Identité de l'entreprise",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Dénomination commerciale : Démo Chauffagiste Lille"
+      },
+      {
+       "type": "p",
+       "texte": "Adresse du siège : 1 rue de la Démonstration, 59000 Lille, France"
+      },
+      {
+       "type": "p",
+       "texte": "Téléphone : +33 4 00 00 00 00"
+      },
+      {
+       "type": "p",
+       "texte": "Email : contact@chauffagiste.demo.invalid"
+      },
+      {
+       "type": "p",
+       "texte": "Numéro SIREN : 000000000"
+      },
+      {
+       "type": "p",
+       "texte": "Directeur de la publication : Responsable Démo Chauffagiste"
+      }
+     ]
+    },
+    {
+     "h2": "Garantie et assurance décennale",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "L'entreprise dispose d'une garantie assurance décennale obligatoire couvrant les travaux thermiques et sanitaires :"
+      },
+      {
+       "type": "p",
+       "texte": "Compagnie d'assurance : Assureur fictif"
+      },
+      {
+       "type": "p",
+       "texte": "Numéro de police : DEMO-0001"
+      },
+      {
+       "type": "p",
+       "texte": "Champ d'application : France métropolitaine"
+      }
+     ]
+    },
+    {
+     "h2": "Hébergement du site",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ce site statique est hébergé localement dans le cadre de la suite de démonstration technique Presti."
+      }
+     ]
+    },
+    {
+     "h2": "Crédits photographiques",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les photographies illustrant ce site de démonstration sont issues de Wikimedia Commons et publiées sous licences libres vérifiées :"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie de chaudière gaz murale : auteur Patrick and Lyon (licence CC BY-SA 4.0, source Wikimedia Commons)"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie de chaudière à condensation : auteur Boulderhydronics (licence CC BY-SA 3.0, source Wikimedia Commons)"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie de pompe à chaleur réversible : auteur ArnoldReinhold (licence CC BY-SA 4.0, source Wikimedia Commons)"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie de radiateur thermostatique : auteur Tiia Monto (licence CC BY-SA 3.0, source Wikimedia Commons)"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie de chaudière murale moderne : auteur Turbojet (licence CC BY-SA 4.0, source Wikimedia Commons)"
+      },
+      {
+       "type": "li",
+       "texte": "Photographie de chaufferie complète : auteur Oliksiy Yakovlyev (licence CC0, source Wikimedia Commons)"
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  },
+  "/confidentialite/": {
+   "type": "legal",
+   "title": "Politique de confidentialité — Démo Chauffagiste Lille",
+   "description": "Politique de confidentialité et protection des données personnelles du site Démo Chauffagiste Lille. Aucun cookie traceur ni outil tiers.",
+   "h1": "Politique de confidentialité",
+   "kicker": "",
+   "chapeau": "Ce site de démonstration ne dépose aucun cookie traceur, aucun cookie publicitaire et ne met en œuvre aucun outil tiers de profilage ou de mesure d'audience.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Collecte des données personnelles",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ce site de démonstration ne dépose aucun cookie traceur, aucun cookie publicitaire et ne met en œuvre aucun outil tiers de profilage ou de mesure d'audience."
+      }
+     ]
+    },
+    {
+     "h2": "Traitement des demandes de contact",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les informations éventuellement saisies par un visiteur pour formuler une demande de devis technique (nom, téléphone, adresse email) sont exclusivement destinées au suivi de la relation commerciale directe."
+      },
+      {
+       "type": "p",
+       "texte": "Aucune information n'est transmise, louée ou cédée à des partenaires tiers."
+      }
+     ]
+    },
+    {
+     "h2": "Conservation des données",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les données transmises sont conservées pendant la durée strictement nécessaire à l'établissement du chiffrage et au suivi des travaux, conformément aux délais réglementaires de conservation des pièces comptables."
+      }
+     ]
+    },
+    {
+     "h2": "Exercice de vos droits",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification et d'effacement de vos données personnelles sur simple demande par email à contact@chauffagiste.demo.invalid."
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  },
+  "/chauffagiste-lille/": {
+   "type": "commune",
+   "cible": "Lille",
+   "title": "Chauffagiste à Lille — Démo Chauffagiste Lille Expert",
+   "description": "Artisan chauffagiste à Lille : pose de chaudières à condensation, pompes à chaleur, radiateurs et entretien préventif. Devis technique gratuit.",
+   "h1": "Chauffagiste à Lille",
+   "kicker": "Intervention locale à Lille",
+   "chapeau": "Démo Chauffagiste Lille prend en charge l'ensemble des installations de chauffage pour les résidences lilloises et les locaux professionnels. Notre équipe se déplace du Vieux-Lille jusqu'à Wazemmes pour la modernisation de chaufferies anciennes, le remplacement de radiateurs défaillants et l'installation de chaudières murales à condensation conformes aux dernières exigences énergétiques.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "img1",
+     "alt": "Chauffagiste artisan en intervention thermique à Lille"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Travaux de chauffage et thermique à Lille",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Des prestations méthodiques pour garantir la sécurité et la performance de vos générateurs de chaleur."
+      },
+      {
+       "type": "h3",
+       "texte": "Chaudières à condensation"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de vieilles installations gaz par des modèles récents plus économes avec évacuation ventouse sécurisée à Lille."
+      },
+      {
+       "type": "h3",
+       "texte": "Pompes à chaleur certifiées"
+      },
+      {
+       "type": "p",
+       "texte": "Intégration de groupes extérieurs aérothermiques avec raccordements électriques et hydrauliques certifiés dans la commune de Lille."
+      },
+      {
+       "type": "h3",
+       "texte": "Équilibrage de réseau de chauffe"
+      },
+      {
+       "type": "p",
+       "texte": "Purge de l'air emprisonné, contrôle des pressions de service et réglage méthodique des débits d'eau chaude vers vos radiateurs à Lille."
+      }
+     ]
+    },
+    {
+     "h2": "Aperçu de nos interventions",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Exemples d'équipements thermiques posés et entretenus par notre équipe."
+      },
+      {
+       "type": "img",
+       "fichier": "img2",
+       "alt": "Chaudière à condensation murale installée à Lille"
+      },
+      {
+       "type": "p",
+       "texte": "Chaudière à condensation murale (Photo Boulderhydronics, licence CC BY-SA 3.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "img3",
+       "alt": "Raccordement de pompe à chaleur performante à Lille"
+      },
+      {
+       "type": "p",
+       "texte": "Équipement thermique réversible (Photo ArnoldReinhold, licence CC BY-SA 4.0)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes limitrophes de Lille",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous nous déplaçons également avec le même soin dans les localités voisines :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre chauffagiste à Lille",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un projet d'installation ou un entretien à planifier à Lille ? Contactez notre atelier pour obtenir une étude préalable."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 59000 Lille"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HVACBusiness",
+     "name": "Démo Chauffagiste Lille",
+     "url": "https://chauffagiste.demo.invalid/chauffagiste-lille/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "59000",
+      "addressLocality": "Lille",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lille",
+      "Villeneuve-d'Ascq",
+      "Roubaix",
+      "Lambersart"
+     ],
+     "image": "https://chauffagiste.demo.invalid/images/img1-1600.webp"
+    }
+   ]
+  },
+  "/chauffagiste-villeneuve-d-ascq/": {
+   "type": "commune",
+   "cible": "Villeneuve-d'Ascq",
+   "title": "Chauffagiste à Villeneuve-d'Ascq — Démo Chauffagiste Lille",
+   "description": "Chauffagiste à Villeneuve-d'Ascq : installation de pompe à chaleur, remplacement de chaudière gaz et désembouage de circuit. Devis clair et gratuit.",
+   "h1": "Chauffagiste à Villeneuve-d'Ascq",
+   "kicker": "Intervention locale à Villeneuve-d'Ascq",
+   "chapeau": "Nous accompagnons les propriétaires et gestionnaires de Villeneuve-d'Ascq pour le renouvellement énergétique de leurs équipements de chauffe. Des quartiers d'Annappes jusqu'à Ascq, nous assurons la pose de pompes à chaleur air-eau silencieuses, l'installation de planchers chauffants et le désembouage complet des canalisations pour réduire les déperditions thermiques.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "img1",
+     "alt": "Chauffagiste artisan en intervention thermique à Villeneuve-d'Ascq"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Travaux de chauffage et thermique à Villeneuve-d'Ascq",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Des prestations méthodiques pour garantir la sécurité et la performance de vos générateurs de chaleur."
+      },
+      {
+       "type": "h3",
+       "texte": "Chaudières à condensation"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de vieilles installations gaz par des modèles récents plus économes avec évacuation ventouse sécurisée à Villeneuve-d'Ascq."
+      },
+      {
+       "type": "h3",
+       "texte": "Pompes à chaleur certifiées"
+      },
+      {
+       "type": "p",
+       "texte": "Intégration de groupes extérieurs aérothermiques avec raccordements électriques et hydrauliques certifiés dans la commune de Villeneuve-d'Ascq."
+      },
+      {
+       "type": "h3",
+       "texte": "Équilibrage de réseau de chauffe"
+      },
+      {
+       "type": "p",
+       "texte": "Purge de l'air emprisonné, contrôle des pressions de service et réglage méthodique des débits d'eau chaude vers vos radiateurs à Villeneuve-d'Ascq."
+      }
+     ]
+    },
+    {
+     "h2": "Aperçu de nos interventions",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Exemples d'équipements thermiques posés et entretenus par notre équipe."
+      },
+      {
+       "type": "img",
+       "fichier": "img2",
+       "alt": "Chaudière à condensation murale installée à Villeneuve-d'Ascq"
+      },
+      {
+       "type": "p",
+       "texte": "Chaudière à condensation murale (Photo Boulderhydronics, licence CC BY-SA 3.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "img3",
+       "alt": "Raccordement de pompe à chaleur performante à Villeneuve-d'Ascq"
+      },
+      {
+       "type": "p",
+       "texte": "Équipement thermique réversible (Photo ArnoldReinhold, licence CC BY-SA 4.0)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes limitrophes de Villeneuve-d'Ascq",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous nous déplaçons également avec le même soin dans les localités voisines :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre chauffagiste à Villeneuve-d'Ascq",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un projet d'installation ou un entretien à planifier à Villeneuve-d'Ascq ? Contactez notre atelier pour obtenir une étude préalable."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 59000 Lille"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HVACBusiness",
+     "name": "Démo Chauffagiste Lille",
+     "url": "https://chauffagiste.demo.invalid/chauffagiste-villeneuve-d-ascq/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "59000",
+      "addressLocality": "Lille",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lille",
+      "Villeneuve-d'Ascq",
+      "Roubaix",
+      "Lambersart"
+     ],
+     "image": "https://chauffagiste.demo.invalid/images/img1-1600.webp"
+    }
+   ]
+  },
+  "/chauffagiste-roubaix/": {
+   "type": "commune",
+   "cible": "Roubaix",
+   "title": "Chauffagiste à Roubaix — Démo Chauffagiste Lille",
+   "description": "Votre chauffagiste à Roubaix : mise en service de chaudière, maintenance de radiateurs et réglages thermiques haute performance. Devis gratuit.",
+   "h1": "Chauffagiste à Roubaix",
+   "kicker": "Intervention locale à Roubaix",
+   "chapeau": "À Roubaix, notre savoir-faire s'adresse aux particuliers souhaitant sécuriser leur confort thermique tout au long de l'hiver. Nous intervenons du centre-ville jusqu'aux abords du parc Barbieux pour remplacer les générateurs vétustes par des systèmes gaz modernes et installer des robinets thermostatiques apportant une régulation fine pièce par pièce.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "img1",
+     "alt": "Chauffagiste artisan en intervention thermique à Roubaix"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Travaux de chauffage et thermique à Roubaix",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Des prestations méthodiques pour garantir la sécurité et la performance de vos générateurs de chaleur."
+      },
+      {
+       "type": "h3",
+       "texte": "Chaudières à condensation"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de vieilles installations gaz par des modèles récents plus économes avec évacuation ventouse sécurisée à Roubaix."
+      },
+      {
+       "type": "h3",
+       "texte": "Pompes à chaleur certifiées"
+      },
+      {
+       "type": "p",
+       "texte": "Intégration de groupes extérieurs aérothermiques avec raccordements électriques et hydrauliques certifiés dans la commune de Roubaix."
+      },
+      {
+       "type": "h3",
+       "texte": "Équilibrage de réseau de chauffe"
+      },
+      {
+       "type": "p",
+       "texte": "Purge de l'air emprisonné, contrôle des pressions de service et réglage méthodique des débits d'eau chaude vers vos radiateurs à Roubaix."
+      }
+     ]
+    },
+    {
+     "h2": "Aperçu de nos interventions",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Exemples d'équipements thermiques posés et entretenus par notre équipe."
+      },
+      {
+       "type": "img",
+       "fichier": "img2",
+       "alt": "Chaudière à condensation murale installée à Roubaix"
+      },
+      {
+       "type": "p",
+       "texte": "Chaudière à condensation murale (Photo Boulderhydronics, licence CC BY-SA 3.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "img3",
+       "alt": "Raccordement de pompe à chaleur performante à Roubaix"
+      },
+      {
+       "type": "p",
+       "texte": "Équipement thermique réversible (Photo ArnoldReinhold, licence CC BY-SA 4.0)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes limitrophes de Roubaix",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous nous déplaçons également avec le même soin dans les localités voisines :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre chauffagiste à Roubaix",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un projet d'installation ou un entretien à planifier à Roubaix ? Contactez notre atelier pour obtenir une étude préalable."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 59000 Lille"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HVACBusiness",
+     "name": "Démo Chauffagiste Lille",
+     "url": "https://chauffagiste.demo.invalid/chauffagiste-roubaix/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "59000",
+      "addressLocality": "Lille",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lille",
+      "Villeneuve-d'Ascq",
+      "Roubaix",
+      "Lambersart"
+     ],
+     "image": "https://chauffagiste.demo.invalid/images/img1-1600.webp"
+    }
+   ]
+  },
+  "/chauffagiste-lambersart/": {
+   "type": "commune",
+   "cible": "Lambersart",
+   "title": "Chauffagiste à Lambersart — Démo Chauffagiste Lille",
+   "description": "Intervention chauffagiste à Lambersart : rénovation de chauffage central, pose de pompe à chaleur et optimisation de circuit. Devis sans engagement.",
+   "h1": "Chauffagiste à Lambersart",
+   "kicker": "Intervention locale à Lambersart",
+   "chapeau": "Pour vos projets thermiques à Lambersart, notre entreprise garantit des interventions respectueuses de votre intérieur et des finitions soignées. Du Canon d'Or jusqu'au Bourg, nous procédons aux raccordements de chaudières haute performance, à l'équilibrage des réseaux de radiateurs et à la maintenance préventive de vos circuits hydrauliques.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "img1",
+     "alt": "Chauffagiste artisan en intervention thermique à Lambersart"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Travaux de chauffage et thermique à Lambersart",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Des prestations méthodiques pour garantir la sécurité et la performance de vos générateurs de chaleur."
+      },
+      {
+       "type": "h3",
+       "texte": "Chaudières à condensation"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de vieilles installations gaz par des modèles récents plus économes avec évacuation ventouse sécurisée à Lambersart."
+      },
+      {
+       "type": "h3",
+       "texte": "Pompes à chaleur certifiées"
+      },
+      {
+       "type": "p",
+       "texte": "Intégration de groupes extérieurs aérothermiques avec raccordements électriques et hydrauliques certifiés dans la commune de Lambersart."
+      },
+      {
+       "type": "h3",
+       "texte": "Équilibrage de réseau de chauffe"
+      },
+      {
+       "type": "p",
+       "texte": "Purge de l'air emprisonné, contrôle des pressions de service et réglage méthodique des débits d'eau chaude vers vos radiateurs à Lambersart."
+      }
+     ]
+    },
+    {
+     "h2": "Aperçu de nos interventions",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Exemples d'équipements thermiques posés et entretenus par notre équipe."
+      },
+      {
+       "type": "img",
+       "fichier": "img2",
+       "alt": "Chaudière à condensation murale installée à Lambersart"
+      },
+      {
+       "type": "p",
+       "texte": "Chaudière à condensation murale (Photo Boulderhydronics, licence CC BY-SA 3.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "img3",
+       "alt": "Raccordement de pompe à chaleur performante à Lambersart"
+      },
+      {
+       "type": "p",
+       "texte": "Équipement thermique réversible (Photo ArnoldReinhold, licence CC BY-SA 4.0)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes limitrophes de Lambersart",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous nous déplaçons également avec le même soin dans les localités voisines :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre chauffagiste à Lambersart",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un projet d'installation ou un entretien à planifier à Lambersart ? Contactez notre atelier pour obtenir une étude préalable."
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 59000 Lille"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HVACBusiness",
+     "name": "Démo Chauffagiste Lille",
+     "url": "https://chauffagiste.demo.invalid/chauffagiste-lambersart/",
+     "telephone": "+33 4 00 00 00 00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "59000",
+      "addressLocality": "Lille",
+      "addressCountry": "FR"
+     },
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "areaServed": [
+      "Lille",
+      "Villeneuve-d'Ascq",
+      "Roubaix",
+      "Lambersart"
+     ],
+     "image": "https://chauffagiste.demo.invalid/images/img1-1600.webp"
+    }
+   ]
+  }
+ }
+}

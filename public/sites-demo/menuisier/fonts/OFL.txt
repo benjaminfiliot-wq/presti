@@ -1,5 +1,1 @@
-Copyright 2020 The Fraunces Project Authors (https://github.com/undercasetype/Fraunces)
-
-This Font Software is licensed under the SIL Open Font License, Version 1.1.
-This license is available with a FAQ at:
-https://openfontlicense.org
+Fraunces — SIL Open Font License 1.1 (https://openfontlicense.org). Police distribuée par Google Fonts (https://fonts.gstatic.com/s/fraunces/v38/6NUu8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7hzFUPJH58nib14c7qv8.woff2). Sous-ensemble latin, graisse 400 (et 700 si servie).

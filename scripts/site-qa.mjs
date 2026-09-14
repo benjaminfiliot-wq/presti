@@ -238,7 +238,7 @@ function jugerPage(html, page, contrat, typeAttendu, titres, descriptions) {
     ok('aucune promesse de classement', !/premi[èe]re page|position(n)?[ée]? sur google|num[ée]ro 1 sur google|top ?1/i.test(texteDe(html)), 'texte lu', 'ni « première page » ni « n° 1 sur Google »')
   }
   if (page.type === 'commune') {
-    ok('page de commune : la commune dans le title et le h1', !!page.cible && sansAccents(ti).includes(sansAccents(page.cible)) && sansAccents(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1] ?? '').includes(sansAccents(page.cible)), ti, page.cible)
+    ok('page de commune : la commune dans le title et le h1', !!page.cible && sansAccents(ti).includes(sansAccents(page.cible)) && sansAccents((html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1] ?? '').replace(/<[^>]+>/g, '')).includes(sansAccents(page.cible)), ti, page.cible)
   }
   if (page.type === 'legal' && /mentions/.test(page.chemin)) {
     ok('mentions légales : SIREN affiché', contient(html, contrat?.siren ?? '∅'), 'lu', contrat?.siren)
@@ -258,16 +258,24 @@ async function jugerRendu(navigateur, origine, pages, da) {
   const t = []
   const ok = (nom, passe, mesure = '', attendu = '') => t.push({ nom, passe: !!passe, mesure: String(mesure), attendu: String(attendu) })
   const accueil = (pages.find((p) => p.type === 'accueil') || { chemin: '/' }).chemin
-  const mesurer = async (largeur, hauteur, js) => {
-    const ctx = await navigateur.newContext({ viewport: { width: largeur, height: hauteur }, javaScriptEnabled: js })
+  const mesurer = async (largeur, hauteur, js, reduit = false) => {
+    const ctx = await navigateur.newContext({ viewport: { width: largeur, height: hauteur }, javaScriptEnabled: js, reducedMotion: reduit ? 'reduce' : 'no-preference' })
     const page = await ctx.newPage()
     try {
       await page.goto(origine + accueil, { waitUntil: 'load', timeout: 60_000 })
+      // avant tout défilement : ce qui est sous la ligne de flottaison doit attendre son dévoilement (sauf en mouvement réduit)
+      await page.waitForTimeout(1600)
+      const avant = await page.evaluate(() => {
+        const rv = [...document.querySelectorAll('.reveal')]
+        const bas = rv.filter((e) => e.getBoundingClientRect().top > innerHeight)
+        const h1 = document.querySelector('h1'); const cs = h1 ? getComputedStyle(h1) : null
+        return { total: rv.length, bas: bas.length, masquesBas: bas.filter((e) => parseFloat(getComputedStyle(e).opacity) < 0.1).length, mots: document.querySelectorAll('.mot').length, h1: cs ? { taille: parseFloat(cs.fontSize), approche: parseFloat(cs.letterSpacing) || 0, opacite: parseFloat(cs.opacity) } : null }
+      })
       await page.evaluate(async () => { const h = document.documentElement.scrollHeight; for (let y = 0; y < h; y += 400) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 100)) } window.scrollTo(0, 0) })
       await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {})
-      await page.waitForTimeout(500)
+      await page.waitForTimeout(1500)   // le dévoilement dure 0,95 s + 0,27 s de cascade : on le laisse finir avant de mesurer
       await page.evaluate(() => document.fonts.ready).catch(() => {})
-      return await page.evaluate(() => {
+      const r = await page.evaluate(() => {
         const polices = [...document.fonts].map((f) => ({ famille: f.family.replace(/["']/g, ''), statut: f.status }))
         const vis = (el) => { const cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) < 0.9) return false; const b = el.getBoundingClientRect(); return b.width > 4 && b.height > 4 }
         const imgs = [...document.images]
@@ -287,8 +295,9 @@ async function jugerRendu(navigateur, origine, pages, da) {
         if (hauteurDoc - fin > maxVide) maxVide = hauteurDoc - fin
         const h1 = document.querySelector('h1')
         const largeurContenu = Math.max(0, ...[...document.querySelectorAll('main, section, header, footer, article')].map((e) => e.getBoundingClientRect().width))
-        return { imgs: imgs.length, imgsOk, maxVide: Math.round(maxVide), police: h1 ? getComputedStyle(h1).fontFamily : '(pas de h1)', polices, largeurContenu: Math.round(largeurContenu), hauteurDoc: Math.round(hauteurDoc) }
+        return { revealsCaches: [...document.querySelectorAll('.reveal')].filter((e) => parseFloat(getComputedStyle(e).opacity) < 0.9).length, imgs: imgs.length, imgsOk, maxVide: Math.round(maxVide), police: h1 ? getComputedStyle(h1).fontFamily : '(pas de h1)', polices, largeurContenu: Math.round(largeurContenu), hauteurDoc: Math.round(hauteurDoc) }
       })
+      return { ...r, avant }
     } finally { await ctx.close().catch(() => {}) }
   }
   try {
@@ -302,11 +311,44 @@ async function jugerRendu(navigateur, origine, pages, da) {
       const chargee = (bureau.polices || []).find((p) => new RegExp(da.display.replace(/\s+/g, '\\s*'), 'i').test(p.famille) && p.statut === 'loaded')
       ok(`la police « ${da.display} » est réellement chargée par le navigateur (fichier woff2 valide)`, !!chargee, (bureau.polices || []).map((p) => `${p.famille}:${p.statut}`).join(', ').slice(0, 80) || 'aucune @font-face', 'loaded')
     }
+    // le geste, mesuré : le h1 composé grand, le dévoilement réel, et le mouvement réduit qui montre tout d'emblée
+    ok('le geste : le h1 est composé grand sur bureau (≥ 56 px), approche négative, et lisible après le mot à mot', !!bureau.avant.h1 && bureau.avant.h1.taille >= 56 && bureau.avant.h1.approche < 0, bureau.avant.h1 ? `${Math.round(bureau.avant.h1.taille)} px, approche ${bureau.avant.h1.approche.toFixed(2)} px` : 'pas de h1', '≥ 56 px, approche < 0')
+    ok('le geste : sous la ligne de flottaison, le contenu attend son dévoilement puis apparaît en entier (bureau et mobile)', bureau.avant.bas > 0 && bureau.avant.masquesBas >= Math.min(6, bureau.avant.bas) && bureau.revealsCaches === 0 && mobile.revealsCaches === 0, `${bureau.avant.masquesBas}/${bureau.avant.bas} masqués avant · ${bureau.revealsCaches + mobile.revealsCaches} encore caché(s) après`, 'masqués avant, 0 caché après')
+    const reduit = await mesurer(1280, 900, true, true)
+    ok('le geste : en mouvement réduit (prefers-reduced-motion), tout est visible sans défiler', reduit.avant.masquesBas === 0 && reduit.revealsCaches === 0, `${reduit.avant.masquesBas} masqué(s) avant, ${reduit.revealsCaches} après`, '0 et 0')
   } catch (e) { ok('le rendu a pu être mesuré (Playwright)', false, e.message.slice(0, 120), 'accueil chargé en 60 s') }
   return t
 }
 
 // ── La substance et la direction artistique ────────────────────────────────────────────────────────────
+// ── Le geste : ce qu'un site « propre » n'a pas (14/09, verdict de Benj sur les démos v1 : « très nul ») ────────────
+// La substance mesure qu'il y a du texte, des photos, du CSS ; ici on mesure qu'il y a un métier de design : le h1 mot à
+// mot, le dévoilement en cascade, un rideau, une bande qui défile, un panneau d'étapes, un accordéon, des survols
+// travaillés, une courbe d'accélération, le mouvement réduit respecté, et rien qui anime la mise en page (largeur,
+// hauteur, position). Les valeurs sont celles de plans/cerveau-site-motifs.md §5.
+function jugerGeste(dossier, pages) {
+  const t = []
+  const ok = (nom, passe, mesure = '', attendu = '') => t.push({ nom, passe: !!passe, mesure: String(mesure), attendu: String(attendu) })
+  const accueilPage = pages.find((p) => p.type === 'accueil') || { chemin: '/' }
+  const fAccueil = path.join(dossier, accueilPage.chemin.replace(/^\//, ''), 'index.html')
+  const accueil = fs.existsSync(fAccueil) ? fs.readFileSync(fAccueil, 'utf8') : ''
+  const css = marcher(dossier).filter((f) => /\.css$/i.test(f)).map((f) => fs.readFileSync(f, 'utf8')).join('\n')
+  const n = (re) => (accueil.match(re) || []).length
+  ok('le h1 est composé mot à mot (≥ 3 <span class="mot">, dans le HTML : pas de décalage de mise en page)', n(/class="mot"/g) >= 3, n(/class="mot"/g), '≥ 3')
+  ok('un dévoilement au défilement en cascade (≥ 12 éléments .reveal sur l’accueil)', n(/class="[^"]*\breveal\b/g) >= 12, n(/class="[^"]*\breveal\b/g), '≥ 12')
+  const pieces = { 'rideau d’ouverture': /class="splash/, 'bande qui défile': /class="defile/, 'panneau d’étapes': /class="etapes/, 'accordéon <details>': /<details\b/, 'galerie': /class="galerie/ }
+  const manquantes = Object.entries(pieces).filter(([, re]) => !re.test(accueil)).map(([k]) => k)
+  ok('les pièces du geste : rideau, bande qui défile, galerie, panneau d’étapes, accordéon', manquantes.length === 0, manquantes.join(', ') || 'toutes', 'toutes')
+  const survols = (css.match(/:hover/g) || []).length
+  ok('des survols travaillés (≥ 8 règles :hover) et une courbe d’accélération maison (cubic-bezier)', survols >= 8 && /cubic-bezier\(/.test(css), `${survols} :hover${/cubic-bezier\(/.test(css) ? ', cubic-bezier' : ', aucun cubic-bezier'}`, '≥ 8 + cubic-bezier')
+  ok('prefers-reduced-motion : reduce est traité dans le CSS', /@media[^{]*prefers-reduced-motion:\s*reduce/.test(css), 'lu', 'un bloc @media (prefers-reduced-motion: reduce)')
+  // rien n'anime la mise en page : transition/animation sur width/height/top/left/padding/margin — sauf la ligne des étapes
+  // (1 px de large) et l'accordéon natif (::details-content)
+  const fautes = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].filter(([, sel, decl]) => /transition\s*:[^;]*\b(width|height|top|left|padding(?:-\w+)?|margin(?:-\w+)?)\b/.test(decl) && !/etapes__liste::after|details-content/.test(sel)).map(([, sel]) => sel.trim().slice(0, 40))
+  ok('rien n’anime la mise en page (width/height/top/left/padding/margin en transition), hors ligne des étapes et accordéon', fautes.length === 0, fautes.slice(0, 3).join(' · ') || 'aucune', 'transform / opacity seulement')
+  return t
+}
+
 function jugerSubstance(dossier, contrat, pages) {
   const t = []
   const ok = (nom, passe, mesure = '', attendu = '') => t.push({ nom, passe: !!passe, mesure: String(mesure), attendu: String(attendu) })
@@ -457,6 +499,7 @@ const { t: tContrat, pages, type } = jugerContrat(dossier, contrat)
 bloc('Le dossier — pages, communes, sitemap, robots', tContrat)
 
 bloc('La substance et la direction artistique', jugerSubstance(dossier, contrat, pages))
+bloc('Le geste — le mouvement et le métier de design', jugerGeste(dossier, pages))
 
 const titres = new Set(), descriptions = new Set()
 for (const page of pages) {

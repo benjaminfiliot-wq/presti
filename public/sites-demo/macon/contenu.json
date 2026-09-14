@@ -1,0 +1,922 @@
+{
+ "metier": "macon",
+ "extrait_le": "2026-09-14",
+ "pages": {
+  "/": {
+   "type": "accueil",
+   "title": "Artisan Maçon à Toulouse — Démo Maçon Toulouse",
+   "description": "Démo Maçon Toulouse : travaux de maçonnerie générale, gros œuvre, fondations et dalles béton à Toulouse et son agglomération. Devis gratuit.",
+   "h1": "Maçon à Toulouse — Démo Maçon Toulouse",
+   "kicker": "",
+   "chapeau": "Artisan maçon spécialisé en maçonnerie générale, fondations solides, élévation de murs porteurs et rénovation lourde sur Toulouse et sa région.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Nos prestations de maçonnerie générale",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous prenons en charge la structure porteuse de vos bâtiments neufs ou anciens avec une exigence absolue de stabilité et de respect des normes DTU."
+      },
+      {
+       "type": "h3",
+       "texte": "Fondations & Dalles béton"
+      },
+      {
+       "type": "p",
+       "texte": "Terrassement, semelles filantes en béton armé, hérisson ventilé et coulage de dalle lisse pour extensions ou maisons neuves."
+      },
+      {
+       "type": "h3",
+       "texte": "Murs porteurs & Briques"
+      },
+      {
+       "type": "p",
+       "texte": "Montage de murs en briques foraines traditionnelles, briques alvéolaires ou parpaings avec chaînages horizontaux et verticaux."
+      },
+      {
+       "type": "h3",
+       "texte": "Ouvertures & Pose d'IPN"
+      },
+      {
+       "type": "p",
+       "texte": "Création de baies vitrées et élargissement de passages avec pose sécurisée de poutres métalliques IPN ou HEB sous étaiement lourd."
+      },
+      {
+       "type": "h3",
+       "texte": "Clôtures & Soutènement"
+      },
+      {
+       "type": "p",
+       "texte": "Murets de clôture maçonnés avec couvertines, piliers d'entrée renforcés et murs de soutènement drainés contre les poussées de terre."
+      }
+     ]
+    },
+    {
+     "h2": "Nos réalisations sur chantier",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Quelques exemples représentatifs de travaux de gros œuvre et d'aménagements maçonnés conduits récemment dans l'agglomération toulousaine."
+      },
+      {
+       "type": "img",
+       "fichier": "realisation1",
+       "alt": "Coulage de fondations en béton armé"
+      },
+      {
+       "type": "h3",
+       "texte": "Fondations d'extension"
+      },
+      {
+       "type": "p",
+       "texte": "Ferraillage et coulage de semelles filantes en béton armé hydrofuge pour une extension de plain-pied."
+      },
+      {
+       "type": "img",
+       "fichier": "realisation2",
+       "alt": "Élévation de mur porteur en briques"
+      },
+      {
+       "type": "h3",
+       "texte": "Élévation de mur briques"
+      },
+      {
+       "type": "p",
+       "texte": "Construction d'un mur porteur en maçonnerie traditionnelle de briques rouges avec mortier dosé à 350 kg/m³."
+      },
+      {
+       "type": "img",
+       "fichier": "realisation3",
+       "alt": "Dalle béton armé pour terrasse"
+      },
+      {
+       "type": "h3",
+       "texte": "Dallage béton extérieur"
+      },
+      {
+       "type": "p",
+       "texte": "Préparation du sol, pose d'un treillis soudé ST25C et coulage d'une dalle extérieure pour future terrasse carrelée."
+      }
+     ]
+    },
+    {
+     "h2": "Secteur d'intervention en Haute-Garonne",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons avec nos camions et engins de chantier sur Toulouse métropole et les communes voisines pour vos projets de gros œuvre."
+      }
+     ]
+    },
+    {
+     "h2": "Déroulement de votre chantier",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Une méthode de travail éprouvée qui garantit la conformité réglementaire, le respect des délais convenus et une propreté de site irréprochable."
+      },
+      {
+       "type": "h3",
+       "texte": "Visite préparatoire"
+      },
+      {
+       "type": "p",
+       "texte": "Reconnaissance du sol, prise de cotes altimétriques et analyse des contraintes de charge du bâtiment existant."
+      },
+      {
+       "type": "h3",
+       "texte": "Devis technique"
+      },
+      {
+       "type": "p",
+       "texte": "Élaboration d'un chiffrage détaillé poste par poste avec descriptif précis des volumes de béton et armatures."
+      },
+      {
+       "type": "h3",
+       "texte": "Préparation & Sécurité"
+      },
+      {
+       "type": "p",
+       "texte": "Installation du périmètre de sécurité, pose des étais de soutènement et approvisionnement des matériaux."
+      },
+      {
+       "type": "h3",
+       "texte": "Exécution & Réception"
+      },
+      {
+       "type": "p",
+       "texte": "Mise en œuvre soignée dans les règles de l'art, respect des temps de séchage et nettoyage complet du chantier."
+      }
+     ]
+    },
+    {
+     "h2": "Questions fréquentes sur la maçonnerie",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les réponses techniques aux interrogations courantes concernant vos travaux de structure, ouvertures et dalles."
+      },
+      {
+       "type": "h3",
+       "texte": "Peut-on ouvrir un mur porteur sans calcul de charge préalable ?"
+      },
+      {
+       "type": "p",
+       "texte": "Non, abattre ou ouvrir un mur porteur engage la stabilité mécanique de l'ouvrage. Nous procédons toujours à une inspection rigoureuse et mettons en œuvre des linteaux ou poutres IPN dimensionnés pour reprendre l'intégralité des descentes de charges."
+      },
+      {
+       "type": "h3",
+       "texte": "Quel temps de séchage faut-il prévoir pour une dalle béton ?"
+      },
+      {
+       "type": "p",
+       "texte": "Le béton atteint 80 % de sa résistance mécanique en 7 jours, mais le temps de cure normalisé selon les règles professionnelles est de 28 jours avant toute pose de revêtement lourd ou élévation de nouveaux murs porteurs."
+      },
+      {
+       "type": "h3",
+       "texte": "Établissez-vous des chiffrages sans voir le chantier ?"
+      },
+      {
+       "type": "p",
+       "texte": "Un chiffrage sérieux de maçonnerie requiert obligatoirement une inspection visuelle des accès, de la nature du sol et des structures attenantes. Contactez-nous pour convenir d'un rendez-vous sur place."
+      }
+     ]
+    },
+    {
+     "h2": "Contactez votre maçon",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Présentez-nous votre projet de construction, extension ou rénovation de maçonnerie pour obtenir un rendez-vous rapide."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "GeneralContractor",
+     "name": "Démo Maçon Toulouse",
+     "url": "https://macon.demo.invalid/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://macon.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "31000",
+      "addressLocality": "Toulouse",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Toulouse",
+      "Colomiers",
+      "Blagnac",
+      "Tournefeuille"
+     ]
+    }
+   ]
+  },
+  "/macon-toulouse/": {
+   "type": "commune",
+   "cible": "Toulouse",
+   "title": "Maçon à Toulouse — Travaux de Maçonnerie & Gros Œuvre",
+   "description": "Démo Maçon Toulouse réalise vos travaux de maçonnerie générale, fondations et dalles à Toulouse. Devis gratuit et garantie décennale.",
+   "h1": "Maçon à Toulouse",
+   "kicker": "Secteur Toulouse",
+   "chapeau": "Artisan maçon à Toulouse pour tous vos travaux de gros œuvre, ouverture de murs porteurs et fondations.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Travaux de gros œuvre et maçonnerie à Toulouse",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Implantée au cœur de la métropole, notre entreprise de maçonnerie accompagne les propriétaires et gestionnaires toulousains dans leurs projets de rénovation lourde comme de construction neuve."
+      },
+      {
+       "type": "p",
+       "texte": "Qu'il s'agisse de consolider des fondations existantes, de bâtir des extensions en briques foraines ou d'aménager des terrasses planes en béton armé, nous mettons en pratique les techniques traditionnelles adaptées aux sols argileux de la région."
+      },
+      {
+       "type": "p",
+       "texte": "Chaque intervention respecte scrupuleusement les exigences des DTU en vigueur ainsi que les contraintes patrimoniales locales, avec une garantie décennale active dès l'ouverture de chantier."
+      }
+     ]
+    },
+    {
+     "h2": "Interventions courantes sur Toulouse",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Création d'ouvertures"
+      },
+      {
+       "type": "p",
+       "texte": "Élargissement de baies et démolition sous étais avec mise en place de linteaux béton armé ou fers IPN."
+      },
+      {
+       "type": "h3",
+       "texte": "Dallage sur terre-plein"
+      },
+      {
+       "type": "p",
+       "texte": "Mise en place de hérissons compactés, polyane anti-remontée et coulage de dalle fibrée de niveau."
+      },
+      {
+       "type": "h3",
+       "texte": "Maçonnerie foraine"
+      },
+      {
+       "type": "p",
+       "texte": "Restauration de murs en briques anciennes et rejointoiement à la chaux hydraulique naturelle."
+      }
+     ]
+    },
+    {
+     "h2": "Chantiers réalisés près de chez vous",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "realisation1",
+       "alt": "Semelles filantes en béton armé pour chantier à Toulouse"
+      },
+      {
+       "type": "h3",
+       "texte": "Fondations et semelles"
+      },
+      {
+       "type": "p",
+       "texte": "Terrassement mécanique et coulage de semelles de fondations avec aciers haute adhérence."
+      },
+      {
+       "type": "img",
+       "fichier": "realisation2",
+       "alt": "Montage de mur porteur en briques rouges à Toulouse"
+      },
+      {
+       "type": "h3",
+       "texte": "Mur porteur brique"
+      },
+      {
+       "type": "p",
+       "texte": "Élévation soignée d'un mur séparatif porteur avec chaînage horizontal en tête de maçonnerie."
+      }
+     ]
+    },
+    {
+     "h2": "Communes limitrophes également couvertes",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Notre équipe de maçons qualifiés déploie régulièrement ses moyens techniques dans les secteurs adjacents."
+      },
+      {
+       "type": "li",
+       "texte": "Maçon à Colomiers",
+       "lien": "/macon-colomiers/"
+      },
+      {
+       "type": "li",
+       "texte": "Maçon à Blagnac",
+       "lien": "/macon-blagnac/"
+      }
+     ]
+    },
+    {
+     "h2": "Votre projet de maçonnerie à Toulouse",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Sollicitez une intervention ou un chiffrage personnalisé pour vos travaux de bâtiment."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "GeneralContractor",
+     "name": "Démo Maçon Toulouse",
+     "url": "https://macon.demo.invalid/macon-toulouse/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://macon.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "31000",
+      "addressLocality": "Toulouse",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Toulouse"
+     ]
+    }
+   ]
+  },
+  "/macon-colomiers/": {
+   "type": "commune",
+   "cible": "Colomiers",
+   "title": "Maçon à Colomiers — Travaux de Maçonnerie & Gros Œuvre",
+   "description": "Artisan maçon intervenant à Colomiers pour vos projets de gros œuvre, dalles béton et murs porteurs. Devis gratuit sous 48 heures.",
+   "h1": "Maçon à Colomiers",
+   "kicker": "Secteur Colomiers",
+   "chapeau": "Entreprise artisanale de maçonnerie à Colomiers pour vos fondations, agrandissements et dalles béton.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Travaux de gros œuvre et maçonnerie à Colomiers",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous réalisons à Colomiers l'ensemble des travaux structurants pour pavillons et résidences individuelles, en neuf comme en agrandissement de bâti."
+      },
+      {
+       "type": "p",
+       "texte": "Notre expertise couvre le terrassement préliminaire, l'ancrage de fondations profondes, le montage de cloisons en blocs manufacturés et la réalisation de chapes pour terrasses et vérandas."
+      },
+      {
+       "type": "p",
+       "texte": "Nous étudions sur site les caractéristiques topographiques de votre terrain afin de calibrer les armatures métalliques requises et prévenir tout tassement différentiel."
+      }
+     ]
+    },
+    {
+     "h2": "Interventions courantes sur Colomiers",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Semelles et fondations"
+      },
+      {
+       "type": "p",
+       "texte": "Fouilles en rigoles, ferraillage renforcé et bétonnage conforme aux études géotechniques."
+      },
+      {
+       "type": "h3",
+       "texte": "Murs de refend"
+      },
+      {
+       "type": "p",
+       "texte": "Élévation de murs porteurs intérieurs assurant la reprise des planchers d'étage."
+      },
+      {
+       "type": "h3",
+       "texte": "Dalles de terrasses"
+      },
+      {
+       "type": "p",
+       "texte": "Coulage de dalles extérieures pente intégrée avec treillis métallique et joints de fractionnement."
+      }
+     ]
+    },
+    {
+     "h2": "Chantiers réalisés près de chez vous",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "realisation2",
+       "alt": "Chantier de mur porteur à Colomiers"
+      },
+      {
+       "type": "h3",
+       "texte": "Structure porteuse"
+      },
+      {
+       "type": "p",
+       "texte": "Montage d'une façade arrière d'extension avec linteau préfabriqué et coffrage soigné."
+      },
+      {
+       "type": "img",
+       "fichier": "realisation3",
+       "alt": "Terrasse béton armé coulée à Colomiers"
+      },
+      {
+       "type": "h3",
+       "texte": "Plateforme béton"
+      },
+      {
+       "type": "p",
+       "texte": "Nivellement laser et finition talochée pour réception d'une future chape de carrelage."
+      }
+     ]
+    },
+    {
+     "h2": "Communes limitrophes également couvertes",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Notre équipe de maçons qualifiés déploie régulièrement ses moyens techniques dans les secteurs adjacents."
+      },
+      {
+       "type": "li",
+       "texte": "Maçon à Toulouse",
+       "lien": "/macon-toulouse/"
+      },
+      {
+       "type": "li",
+       "texte": "Maçon à Tournefeuille",
+       "lien": "/macon-tournefeuille/"
+      }
+     ]
+    },
+    {
+     "h2": "Votre projet de maçonnerie à Colomiers",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Sollicitez une intervention ou un chiffrage personnalisé pour vos travaux de bâtiment."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "GeneralContractor",
+     "name": "Démo Maçon Toulouse",
+     "url": "https://macon.demo.invalid/macon-colomiers/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://macon.demo.invalid/images/realisation1-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "31000",
+      "addressLocality": "Toulouse",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Colomiers"
+     ]
+    }
+   ]
+  },
+  "/macon-blagnac/": {
+   "type": "commune",
+   "cible": "Blagnac",
+   "title": "Maçon à Blagnac — Travaux de Maçonnerie & Rénovation",
+   "description": "Entreprise de maçonnerie générale à Blagnac : fondations, ouvertures IPN et aménagements extérieurs maçonnés. Chiffrage gratuit.",
+   "h1": "Maçon à Blagnac",
+   "kicker": "Secteur Blagnac",
+   "chapeau": "Spécialiste de la maçonnerie à Blagnac pour la reprise en sous-œuvre, le dallage et les extensions.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Travaux de gros œuvre et maçonnerie à Blagnac",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Basée à proximité immédiate de Blagnac, notre équipe intervient avec rapidité pour tous vos chantiers de consolidation, transformation intérieure et gros œuvre."
+      },
+      {
+       "type": "p",
+       "texte": "De la création d'une ouverture traversante pour pose de baie coulissante jusqu'au coulage d'une terrasse d'agrément, nous mettons notre rigueur professionnelle au service de votre habitat."
+      },
+      {
+       "type": "p",
+       "texte": "Toutes nos interventions sont exécutées par des ouvriers maçons qualifiés et bénéficient des garanties légales obligatoires, notamment la garantie décennale nominative."
+      }
+     ]
+    },
+    {
+     "h2": "Interventions courantes sur Blagnac",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Reprise en sous-œuvre"
+      },
+      {
+       "type": "p",
+       "texte": "Pose de poutrelles métalliques et poteaux de soutien pour agrandir les espaces habitables."
+      },
+      {
+       "type": "h3",
+       "texte": "Murs de soutènement"
+      },
+      {
+       "type": "p",
+       "texte": "Construction de parois maçonnées renforcées avec barbacanes pour évacuation des eaux de pluie."
+      },
+      {
+       "type": "h3",
+       "texte": "Chapes et dallages"
+      },
+      {
+       "type": "p",
+       "texte": "Réalisation de chapes adhérentes ou flottantes pour mise à niveau impeccable des sols."
+      }
+     ]
+    },
+    {
+     "h2": "Chantiers réalisés près de chez vous",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "realisation3",
+       "alt": "Coulage de dalle extérieure à Blagnac"
+      },
+      {
+       "type": "h3",
+       "texte": "Coulage dalle terrasse"
+      },
+      {
+       "type": "p",
+       "texte": "Mise en place de film d'étanchéité sous dalle et lissage de finition pour extérieur."
+      },
+      {
+       "type": "img",
+       "fichier": "realisation4",
+       "alt": "Mur de pierres maçonnées réalisé à Blagnac"
+      },
+      {
+       "type": "h3",
+       "texte": "Ouvrage de clôture"
+      },
+      {
+       "type": "p",
+       "texte": "Édification d'un muret en pierres avec jointoiement plein et couvertines de protection."
+      }
+     ]
+    },
+    {
+     "h2": "Communes limitrophes également couvertes",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Notre équipe de maçons qualifiés déploie régulièrement ses moyens techniques dans les secteurs adjacents."
+      },
+      {
+       "type": "li",
+       "texte": "Maçon à Toulouse",
+       "lien": "/macon-toulouse/"
+      },
+      {
+       "type": "li",
+       "texte": "Maçon à Colomiers",
+       "lien": "/macon-colomiers/"
+      }
+     ]
+    },
+    {
+     "h2": "Votre projet de maçonnerie à Blagnac",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Sollicitez une intervention ou un chiffrage personnalisé pour vos travaux de bâtiment."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "GeneralContractor",
+     "name": "Démo Maçon Toulouse",
+     "url": "https://macon.demo.invalid/macon-blagnac/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://macon.demo.invalid/images/realisation2-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "31000",
+      "addressLocality": "Toulouse",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Blagnac"
+     ]
+    }
+   ]
+  },
+  "/macon-tournefeuille/": {
+   "type": "commune",
+   "cible": "Tournefeuille",
+   "title": "Maçon à Tournefeuille — Entreprise de Maçonnerie Générale",
+   "description": "Votre maçon de confiance à Tournefeuille pour tous travaux de fondations, terrasses béton et surélévations. Devis clair et gratuit.",
+   "h1": "Maçon à Tournefeuille",
+   "kicker": "Secteur Tournefeuille",
+   "chapeau": "Votre artisan maçon à Tournefeuille pour construire, agrandir et rénover vos ouvrages de maçonnerie.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Travaux de gros œuvre et maçonnerie à Tournefeuille",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons sur la commune de Tournefeuille pour réaliser vos ouvrages de maçonnerie lourde, terrassement de fondations et surélévations de bâtis."
+      },
+      {
+       "type": "p",
+       "texte": "Sensibles aux impératifs d'isolation et d'intégration architecturale, nous sélectionnons des blocs de maçonnerie à forte inertie thermique et des liants adaptés à chaque environnement."
+      },
+      {
+       "type": "p",
+       "texte": "Nous vous assistons dès la phase de conception afin de planifier les étapes clés du gros œuvre et assurer une exécution sans surprise dans les délais impartis."
+      }
+     ]
+    },
+    {
+     "h2": "Interventions courantes sur Tournefeuille",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Agrandissement de maison"
+      },
+      {
+       "type": "p",
+       "texte": "Fondations étanches, chaînage parasismique et maçonnerie isolante pour extensions modernes."
+      },
+      {
+       "type": "h3",
+       "texte": "Aménagement extérieur"
+      },
+      {
+       "type": "p",
+       "texte": "Création de murets de délimitation, seuils de portail renforcés et dalles de circulation."
+      },
+      {
+       "type": "h3",
+       "texte": "Réfection de façades"
+      },
+      {
+       "type": "p",
+       "texte": "Décapage des joints friables, repointage au mortier respirant et pose d'enduits d'imperméabilisation."
+      }
+     ]
+    },
+    {
+     "h2": "Chantiers réalisés près de chez vous",
+     "blocs": [
+      {
+       "type": "img",
+       "fichier": "realisation4",
+       "alt": "Mur maçonné de soutènement à Tournefeuille"
+      },
+      {
+       "type": "h3",
+       "texte": "Mur de restanque"
+      },
+      {
+       "type": "p",
+       "texte": "Parement maçonné avec drainage en gravier roulé pour stabiliser un talus résidentiel."
+      },
+      {
+       "type": "img",
+       "fichier": "realisation5",
+       "alt": "Parement mural maçonné à Tournefeuille"
+      },
+      {
+       "type": "h3",
+       "texte": "Parement maçonné"
+      },
+      {
+       "type": "p",
+       "texte": "Habillage de façade en plaquettes minérales posées au mortier-colle haute résistance."
+      }
+     ]
+    },
+    {
+     "h2": "Communes limitrophes également couvertes",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Notre équipe de maçons qualifiés déploie régulièrement ses moyens techniques dans les secteurs adjacents."
+      },
+      {
+       "type": "li",
+       "texte": "Maçon à Colomiers",
+       "lien": "/macon-colomiers/"
+      },
+      {
+       "type": "li",
+       "texte": "Maçon à Toulouse",
+       "lien": "/macon-toulouse/"
+      }
+     ]
+    },
+    {
+     "h2": "Votre projet de maçonnerie à Tournefeuille",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Sollicitez une intervention ou un chiffrage personnalisé pour vos travaux de bâtiment."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "GeneralContractor",
+     "name": "Démo Maçon Toulouse",
+     "url": "https://macon.demo.invalid/macon-tournefeuille/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://macon.demo.invalid/images/realisation3-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "31000",
+      "addressLocality": "Toulouse",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Tournefeuille"
+     ]
+    }
+   ]
+  },
+  "/mentions-legales/": {
+   "type": "legal",
+   "title": "Mentions Légales — Démo Maçon Toulouse",
+   "description": "Mentions légales et informations réglementaires du site de démonstration Démo Maçon Toulouse. Artisan maçon à Toulouse.",
+   "h1": "Mentions Légales",
+   "kicker": "",
+   "chapeau": "Site de démonstration : entreprise fictive créée à des fins de présentation technique et commerciale.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "1. Éditeur de la démonstration",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Dénomination : Démo Maçon Toulouse (Société fictive de démonstration)"
+      },
+      {
+       "type": "p",
+       "texte": "Siège social : 1 rue de la Démonstration, 31000 Toulouse"
+      },
+      {
+       "type": "p",
+       "texte": "Numéro SIREN : 000000000"
+      },
+      {
+       "type": "p",
+       "texte": "Téléphone : +33 4 00 00 00 00"
+      },
+      {
+       "type": "p",
+       "texte": "Courriel : contact@macon.demo.invalid"
+      },
+      {
+       "type": "p",
+       "texte": "Directeur de publication : L'artisan exploitant fictif"
+      }
+     ]
+    },
+    {
+     "h2": "2. Assurance et garantie décennale",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Conformément aux dispositions de l'article L. 241-1 du Code des assurances, l'entreprise souscrit une assurance de responsabilité civile professionnelle et garantie décennale obligatoire :"
+      },
+      {
+       "type": "p",
+       "texte": "Compagnie d'assurance décennale : Assureur fictif"
+      },
+      {
+       "type": "p",
+       "texte": "Numéro de contrat : DEMO-0001"
+      },
+      {
+       "type": "p",
+       "texte": "Couverture géographique : France métropolitaine"
+      }
+     ]
+    },
+    {
+     "h2": "3. Hébergement du site",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ce site statique est hébergé sur une infrastructure de diffusion locale et décentralisée assurant la disponibilité des ressources sans recours à des serveurs tiers intrusifs."
+      }
+     ]
+    },
+    {
+     "h2": "4. Crédits et attributions photographiques",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les photographies illustrant cette démonstration sont des œuvres sous licence libre issues de la médiathèque Wikimedia Commons. Nous remercions les auteurs pour leur mise à disposition :"
+      },
+      {
+       "type": "li",
+       "texte": "Dmitry Makeev — Photographie de maçonnerie et mur en briques foraines (Licences CC BY-SA 3.0 et CC BY-SA 4.0). Source : Wikimedia Commons."
+      },
+      {
+       "type": "li",
+       "texte": "Artaxerxes — Photographie de coffrage et fondations en béton armé (Licence CC BY-SA 4.0). Source : Wikimedia Commons."
+      },
+      {
+       "type": "li",
+       "texte": "Vsatinet — Photographie de coulage de dalle béton armé (Licence CC BY-SA 4.0). Source : Wikimedia Commons."
+      },
+      {
+       "type": "li",
+       "texte": "Dosseman — Photographie de mur de soutènement maçonné en pierres de taille (Licence CC BY-SA 4.0). Source : Wikimedia Commons."
+      },
+      {
+       "type": "li",
+       "texte": "Les Chatfield — Photographie de parement maçonné et finitions soignées (Licence CC BY 2.0). Source : Wikimedia Commons."
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  },
+  "/confidentialite/": {
+   "type": "legal",
+   "title": "Politique de Confidentialité — Démo Maçon Toulouse",
+   "description": "Politique de confidentialité et protection des données personnelles du site Démo Maçon Toulouse. Conformité RGPD et respect de la vie privée.",
+   "h1": "Politique de Confidentialité",
+   "kicker": "",
+   "chapeau": "La protection de votre vie privée et de vos données à caractère personnel constitue un engagement fondamental de notre démarche artisanale.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "1. Données collectées",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les seules données à caractère personnel susceptibles d'être recueillies sur ce site sont celles transmises volontairement par vos soins lors d'une prise de contact par téléphone ou courriel électronique (nom, adresse de chantier, coordonnées de contact, descriptif du projet de maçonnerie)."
+      }
+     ]
+    },
+    {
+     "h2": "2. Finalité et base légale",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ces données sont strictement réservées au traitement de votre demande de devis et à la gestion de la relation précontractuelle ou contractuelle qui en découle. Aucune donnée n'est cédée, louée ni communiquée à des organismes commerciaux tiers."
+      }
+     ]
+    },
+    {
+     "h2": "3. Absence totale de traceurs et cookies tiers",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ce site web ne dépose aucun cookie publicitaire, aucun traceur de profilage ni aucun outil de mesure d'audience requérant le consentement préalable des internautes."
+      }
+     ]
+    },
+    {
+     "h2": "4. Vos droits d'accès et rectification",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, vous disposez d'un droit permanent d'accès, de rectification, de limitation et d'effacement de vos données personnelles sur simple demande adressée à contact@macon.demo.invalid."
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  }
+ }
+}

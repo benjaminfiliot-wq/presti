@@ -14,7 +14,7 @@ const DA_METIER = Object.fromEntries([...fs.readFileSync(path.join(RACINE, 'scri
 const DOSSIER = path.join(RACINE, 'public', 'sites-demo', '_polices')
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36'
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-const familles = [...new Set(Object.values(DA_METIER).map((d) => d.display))]
+const familles = [...new Set([...Object.values(DA_METIER).map((d) => d.display), 'IBM Plex Sans'])]  // + la police de texte des sites v2
 fs.mkdirSync(DOSSIER, { recursive: true })
 let ok = 0
 for (const famille of familles) {

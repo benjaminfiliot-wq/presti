@@ -1,254 +1,674 @@
 [
-  {
-    "fichier": "images/hero-480.webp",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Couverture en tuiles de terre cuite"
-  },
-  {
-    "fichier": "images/hero-480.avif",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Couverture en tuiles de terre cuite"
-  },
-  {
-    "fichier": "images/hero-960.webp",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Couverture en tuiles de terre cuite"
-  },
-  {
-    "fichier": "images/hero-960.avif",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Couverture en tuiles de terre cuite"
-  },
-  {
-    "fichier": "images/hero-1600.webp",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Couverture en tuiles de terre cuite"
-  },
-  {
-    "fichier": "images/hero-1600.avif",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Couverture en tuiles de terre cuite"
-  },
-  {
-    "fichier": "images/realisation1-480.webp",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chantier de charpente et couverture"
-  },
-  {
-    "fichier": "images/realisation1-480.avif",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chantier de charpente et couverture"
-  },
-  {
-    "fichier": "images/realisation1-960.webp",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chantier de charpente et couverture"
-  },
-  {
-    "fichier": "images/realisation1-960.avif",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chantier de charpente et couverture"
-  },
-  {
-    "fichier": "images/realisation1-1600.webp",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chantier de charpente et couverture"
-  },
-  {
-    "fichier": "images/realisation1-1600.avif",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chantier de charpente et couverture"
-  },
-  {
-    "fichier": "images/realisation2-480.webp",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tuiles de toiture nettoyées"
-  },
-  {
-    "fichier": "images/realisation2-480.avif",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tuiles de toiture nettoyées"
-  },
-  {
-    "fichier": "images/realisation2-960.webp",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tuiles de toiture nettoyées"
-  },
-  {
-    "fichier": "images/realisation2-960.avif",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tuiles de toiture nettoyées"
-  },
-  {
-    "fichier": "images/realisation2-1600.webp",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tuiles de toiture nettoyées"
-  },
-  {
-    "fichier": "images/realisation2-1600.avif",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tuiles de toiture nettoyées"
-  },
-  {
-    "fichier": "images/realisation3-480.webp",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Pose de tuiles mécaniques neuves"
-  },
-  {
-    "fichier": "images/realisation3-480.avif",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Pose de tuiles mécaniques neuves"
-  },
-  {
-    "fichier": "images/realisation3-960.webp",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Pose de tuiles mécaniques neuves"
-  },
-  {
-    "fichier": "images/realisation3-960.avif",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Pose de tuiles mécaniques neuves"
-  },
-  {
-    "fichier": "images/realisation3-1600.webp",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Pose de tuiles mécaniques neuves"
-  },
-  {
-    "fichier": "images/realisation3-1600.avif",
-    "auteur": "Sverdrup",
-    "source": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Pose de tuiles mécaniques neuves"
-  },
-  {
-    "fichier": "images/realisation4-480.webp",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation de charpente et toiture"
-  },
-  {
-    "fichier": "images/realisation4-480.avif",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation de charpente et toiture"
-  },
-  {
-    "fichier": "images/realisation4-960.webp",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation de charpente et toiture"
-  },
-  {
-    "fichier": "images/realisation4-960.avif",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation de charpente et toiture"
-  },
-  {
-    "fichier": "images/realisation4-1600.webp",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation de charpente et toiture"
-  },
-  {
-    "fichier": "images/realisation4-1600.avif",
-    "auteur": "Friedrich Haag",
-    "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation de charpente et toiture"
-  },
-  {
-    "fichier": "images/realisation5-480.webp",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Contrôle d'étanchéité de toiture"
-  },
-  {
-    "fichier": "images/realisation5-480.avif",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Contrôle d'étanchéité de toiture"
-  },
-  {
-    "fichier": "images/realisation5-960.webp",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Contrôle d'étanchéité de toiture"
-  },
-  {
-    "fichier": "images/realisation5-960.avif",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Contrôle d'étanchéité de toiture"
-  },
-  {
-    "fichier": "images/realisation5-1600.webp",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Contrôle d'étanchéité de toiture"
-  },
-  {
-    "fichier": "images/realisation5-1600.avif",
-    "auteur": "Noah Wulf",
-    "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Contrôle d'étanchéité de toiture"
-  }
+ {
+  "fichier": "images/hero-1600.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Pose de tuiles neuves sur écran de sous-toiture",
+  "alt": "Pose de tuiles neuves sur écran de sous-toiture",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/hero-1600.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Pose de tuiles neuves sur écran de sous-toiture",
+  "alt": "Pose de tuiles neuves sur écran de sous-toiture",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/hero-960.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Pose de tuiles neuves sur écran de sous-toiture",
+  "alt": "Pose de tuiles neuves sur écran de sous-toiture",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/hero-960.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Pose de tuiles neuves sur écran de sous-toiture",
+  "alt": "Pose de tuiles neuves sur écran de sous-toiture",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/hero-720.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Pose de tuiles neuves sur écran de sous-toiture",
+  "alt": "Pose de tuiles neuves sur écran de sous-toiture",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/hero-720.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Pose de tuiles neuves sur écran de sous-toiture",
+  "alt": "Pose de tuiles neuves sur écran de sous-toiture",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/hero-480.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Pose de tuiles neuves sur écran de sous-toiture",
+  "alt": "Pose de tuiles neuves sur écran de sous-toiture",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/hero-480.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Pose de tuiles neuves sur écran de sous-toiture",
+  "alt": "Pose de tuiles neuves sur écran de sous-toiture",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/tuiles-1600.webp",
+  "base": "tuiles",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tuiles de terre cuite avant pose",
+  "alt": "Tuiles de terre cuite avant pose",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_packed_in_crate_1.jpg",
+  "titre_commons": "File:Roof tiles packed in crate 1.jpg"
+ },
+ {
+  "fichier": "images/tuiles-1600.avif",
+  "base": "tuiles",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tuiles de terre cuite avant pose",
+  "alt": "Tuiles de terre cuite avant pose",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_packed_in_crate_1.jpg",
+  "titre_commons": "File:Roof tiles packed in crate 1.jpg"
+ },
+ {
+  "fichier": "images/tuiles-960.webp",
+  "base": "tuiles",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tuiles de terre cuite avant pose",
+  "alt": "Tuiles de terre cuite avant pose",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_packed_in_crate_1.jpg",
+  "titre_commons": "File:Roof tiles packed in crate 1.jpg"
+ },
+ {
+  "fichier": "images/tuiles-960.avif",
+  "base": "tuiles",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tuiles de terre cuite avant pose",
+  "alt": "Tuiles de terre cuite avant pose",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_packed_in_crate_1.jpg",
+  "titre_commons": "File:Roof tiles packed in crate 1.jpg"
+ },
+ {
+  "fichier": "images/tuiles-720.webp",
+  "base": "tuiles",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tuiles de terre cuite avant pose",
+  "alt": "Tuiles de terre cuite avant pose",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_packed_in_crate_1.jpg",
+  "titre_commons": "File:Roof tiles packed in crate 1.jpg"
+ },
+ {
+  "fichier": "images/tuiles-720.avif",
+  "base": "tuiles",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tuiles de terre cuite avant pose",
+  "alt": "Tuiles de terre cuite avant pose",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_packed_in_crate_1.jpg",
+  "titre_commons": "File:Roof tiles packed in crate 1.jpg"
+ },
+ {
+  "fichier": "images/tuiles-480.webp",
+  "base": "tuiles",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tuiles de terre cuite avant pose",
+  "alt": "Tuiles de terre cuite avant pose",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_packed_in_crate_1.jpg",
+  "titre_commons": "File:Roof tiles packed in crate 1.jpg"
+ },
+ {
+  "fichier": "images/tuiles-480.avif",
+  "base": "tuiles",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tuiles de terre cuite avant pose",
+  "alt": "Tuiles de terre cuite avant pose",
+  "auteur": "W.carter",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_packed_in_crate_1.jpg",
+  "titre_commons": "File:Roof tiles packed in crate 1.jpg"
+ },
+ {
+  "fichier": "images/faitage-1600.webp",
+  "base": "faitage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "alt": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "auteur": "José Luiz",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_-_Cathedral_of_Monreale_-_Italy_2015.JPG",
+  "titre_commons": "File:Roof tiles - Cathedral of Monreale - Italy 2015.JPG"
+ },
+ {
+  "fichier": "images/faitage-1600.avif",
+  "base": "faitage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "alt": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "auteur": "José Luiz",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_-_Cathedral_of_Monreale_-_Italy_2015.JPG",
+  "titre_commons": "File:Roof tiles - Cathedral of Monreale - Italy 2015.JPG"
+ },
+ {
+  "fichier": "images/faitage-960.webp",
+  "base": "faitage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "alt": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "auteur": "José Luiz",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_-_Cathedral_of_Monreale_-_Italy_2015.JPG",
+  "titre_commons": "File:Roof tiles - Cathedral of Monreale - Italy 2015.JPG"
+ },
+ {
+  "fichier": "images/faitage-960.avif",
+  "base": "faitage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "alt": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "auteur": "José Luiz",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_-_Cathedral_of_Monreale_-_Italy_2015.JPG",
+  "titre_commons": "File:Roof tiles - Cathedral of Monreale - Italy 2015.JPG"
+ },
+ {
+  "fichier": "images/faitage-720.webp",
+  "base": "faitage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "alt": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "auteur": "José Luiz",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_-_Cathedral_of_Monreale_-_Italy_2015.JPG",
+  "titre_commons": "File:Roof tiles - Cathedral of Monreale - Italy 2015.JPG"
+ },
+ {
+  "fichier": "images/faitage-720.avif",
+  "base": "faitage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "alt": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "auteur": "José Luiz",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_-_Cathedral_of_Monreale_-_Italy_2015.JPG",
+  "titre_commons": "File:Roof tiles - Cathedral of Monreale - Italy 2015.JPG"
+ },
+ {
+  "fichier": "images/faitage-480.webp",
+  "base": "faitage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "alt": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "auteur": "José Luiz",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_-_Cathedral_of_Monreale_-_Italy_2015.JPG",
+  "titre_commons": "File:Roof tiles - Cathedral of Monreale - Italy 2015.JPG"
+ },
+ {
+  "fichier": "images/faitage-480.avif",
+  "base": "faitage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "alt": "Toiture en tuiles vernissées, faîtage et arêtiers",
+  "auteur": "José Luiz",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Roof_tiles_-_Cathedral_of_Monreale_-_Italy_2015.JPG",
+  "titre_commons": "File:Roof tiles - Cathedral of Monreale - Italy 2015.JPG"
+ },
+ {
+  "fichier": "images/ancienne-1600.webp",
+  "base": "ancienne",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Toiture ancienne en tuiles et pierres",
+  "alt": "Toiture ancienne en tuiles et pierres",
+  "auteur": "László Szalai (Beyond silence)",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_roof_in_Dubrovnik.jpg",
+  "titre_commons": "File:Tiled roof in Dubrovnik.jpg"
+ },
+ {
+  "fichier": "images/ancienne-1600.avif",
+  "base": "ancienne",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Toiture ancienne en tuiles et pierres",
+  "alt": "Toiture ancienne en tuiles et pierres",
+  "auteur": "László Szalai (Beyond silence)",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_roof_in_Dubrovnik.jpg",
+  "titre_commons": "File:Tiled roof in Dubrovnik.jpg"
+ },
+ {
+  "fichier": "images/ancienne-960.webp",
+  "base": "ancienne",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Toiture ancienne en tuiles et pierres",
+  "alt": "Toiture ancienne en tuiles et pierres",
+  "auteur": "László Szalai (Beyond silence)",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_roof_in_Dubrovnik.jpg",
+  "titre_commons": "File:Tiled roof in Dubrovnik.jpg"
+ },
+ {
+  "fichier": "images/ancienne-960.avif",
+  "base": "ancienne",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Toiture ancienne en tuiles et pierres",
+  "alt": "Toiture ancienne en tuiles et pierres",
+  "auteur": "László Szalai (Beyond silence)",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_roof_in_Dubrovnik.jpg",
+  "titre_commons": "File:Tiled roof in Dubrovnik.jpg"
+ },
+ {
+  "fichier": "images/ancienne-720.webp",
+  "base": "ancienne",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Toiture ancienne en tuiles et pierres",
+  "alt": "Toiture ancienne en tuiles et pierres",
+  "auteur": "László Szalai (Beyond silence)",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_roof_in_Dubrovnik.jpg",
+  "titre_commons": "File:Tiled roof in Dubrovnik.jpg"
+ },
+ {
+  "fichier": "images/ancienne-720.avif",
+  "base": "ancienne",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Toiture ancienne en tuiles et pierres",
+  "alt": "Toiture ancienne en tuiles et pierres",
+  "auteur": "László Szalai (Beyond silence)",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_roof_in_Dubrovnik.jpg",
+  "titre_commons": "File:Tiled roof in Dubrovnik.jpg"
+ },
+ {
+  "fichier": "images/ancienne-480.webp",
+  "base": "ancienne",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Toiture ancienne en tuiles et pierres",
+  "alt": "Toiture ancienne en tuiles et pierres",
+  "auteur": "László Szalai (Beyond silence)",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_roof_in_Dubrovnik.jpg",
+  "titre_commons": "File:Tiled roof in Dubrovnik.jpg"
+ },
+ {
+  "fichier": "images/ancienne-480.avif",
+  "base": "ancienne",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Toiture ancienne en tuiles et pierres",
+  "alt": "Toiture ancienne en tuiles et pierres",
+  "auteur": "László Szalai (Beyond silence)",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_roof_in_Dubrovnik.jpg",
+  "titre_commons": "File:Tiled roof in Dubrovnik.jpg"
+ },
+ {
+  "fichier": "images/ardoise-1600.webp",
+  "base": "ardoise",
+  "largeur": 1600,
+  "hauteur": 2134,
+  "legende": "Clocher couvert d'ardoises",
+  "alt": "Clocher couvert d'ardoises",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Hermann-Leeser-Schule,_Turm_--_2026_--_2181.jpg",
+  "titre_commons": "File:Dülmen, Hermann-Leeser-Schule, Turm -- 2026 -- 2181.jpg"
+ },
+ {
+  "fichier": "images/ardoise-1600.avif",
+  "base": "ardoise",
+  "largeur": 1600,
+  "hauteur": 2134,
+  "legende": "Clocher couvert d'ardoises",
+  "alt": "Clocher couvert d'ardoises",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Hermann-Leeser-Schule,_Turm_--_2026_--_2181.jpg",
+  "titre_commons": "File:Dülmen, Hermann-Leeser-Schule, Turm -- 2026 -- 2181.jpg"
+ },
+ {
+  "fichier": "images/ardoise-960.webp",
+  "base": "ardoise",
+  "largeur": 1600,
+  "hauteur": 2134,
+  "legende": "Clocher couvert d'ardoises",
+  "alt": "Clocher couvert d'ardoises",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Hermann-Leeser-Schule,_Turm_--_2026_--_2181.jpg",
+  "titre_commons": "File:Dülmen, Hermann-Leeser-Schule, Turm -- 2026 -- 2181.jpg"
+ },
+ {
+  "fichier": "images/ardoise-960.avif",
+  "base": "ardoise",
+  "largeur": 1600,
+  "hauteur": 2134,
+  "legende": "Clocher couvert d'ardoises",
+  "alt": "Clocher couvert d'ardoises",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Hermann-Leeser-Schule,_Turm_--_2026_--_2181.jpg",
+  "titre_commons": "File:Dülmen, Hermann-Leeser-Schule, Turm -- 2026 -- 2181.jpg"
+ },
+ {
+  "fichier": "images/ardoise-720.webp",
+  "base": "ardoise",
+  "largeur": 1600,
+  "hauteur": 2134,
+  "legende": "Clocher couvert d'ardoises",
+  "alt": "Clocher couvert d'ardoises",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Hermann-Leeser-Schule,_Turm_--_2026_--_2181.jpg",
+  "titre_commons": "File:Dülmen, Hermann-Leeser-Schule, Turm -- 2026 -- 2181.jpg"
+ },
+ {
+  "fichier": "images/ardoise-720.avif",
+  "base": "ardoise",
+  "largeur": 1600,
+  "hauteur": 2134,
+  "legende": "Clocher couvert d'ardoises",
+  "alt": "Clocher couvert d'ardoises",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Hermann-Leeser-Schule,_Turm_--_2026_--_2181.jpg",
+  "titre_commons": "File:Dülmen, Hermann-Leeser-Schule, Turm -- 2026 -- 2181.jpg"
+ },
+ {
+  "fichier": "images/ardoise-480.webp",
+  "base": "ardoise",
+  "largeur": 1600,
+  "hauteur": 2134,
+  "legende": "Clocher couvert d'ardoises",
+  "alt": "Clocher couvert d'ardoises",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Hermann-Leeser-Schule,_Turm_--_2026_--_2181.jpg",
+  "titre_commons": "File:Dülmen, Hermann-Leeser-Schule, Turm -- 2026 -- 2181.jpg"
+ },
+ {
+  "fichier": "images/ardoise-480.avif",
+  "base": "ardoise",
+  "largeur": 1600,
+  "hauteur": 2134,
+  "legende": "Clocher couvert d'ardoises",
+  "alt": "Clocher couvert d'ardoises",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Hermann-Leeser-Schule,_Turm_--_2026_--_2181.jpg",
+  "titre_commons": "File:Dülmen, Hermann-Leeser-Schule, Turm -- 2026 -- 2181.jpg"
+ },
+ {
+  "fichier": "images/charpente-1600.webp",
+  "base": "charpente",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Chantier de charpente et couverture en cours",
+  "alt": "Chantier de charpente et couverture en cours",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/charpente-1600.avif",
+  "base": "charpente",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Chantier de charpente et couverture en cours",
+  "alt": "Chantier de charpente et couverture en cours",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/charpente-960.webp",
+  "base": "charpente",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Chantier de charpente et couverture en cours",
+  "alt": "Chantier de charpente et couverture en cours",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/charpente-960.avif",
+  "base": "charpente",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Chantier de charpente et couverture en cours",
+  "alt": "Chantier de charpente et couverture en cours",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/charpente-720.webp",
+  "base": "charpente",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Chantier de charpente et couverture en cours",
+  "alt": "Chantier de charpente et couverture en cours",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/charpente-720.avif",
+  "base": "charpente",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Chantier de charpente et couverture en cours",
+  "alt": "Chantier de charpente et couverture en cours",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/charpente-480.webp",
+  "base": "charpente",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Chantier de charpente et couverture en cours",
+  "alt": "Chantier de charpente et couverture en cours",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/charpente-480.avif",
+  "base": "charpente",
+  "largeur": 1600,
+  "hauteur": 1183,
+  "legende": "Chantier de charpente et couverture en cours",
+  "alt": "Chantier de charpente et couverture en cours",
+  "auteur": "Friedrich Haag",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg",
+  "titre_commons": "File:Unfertige Dinge 003 2022 10 26.jpg"
+ },
+ {
+  "fichier": "images/nettoyage-1600.webp",
+  "base": "nettoyage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tuiles de toiture après nettoyage",
+  "alt": "Tuiles de toiture après nettoyage",
+  "auteur": "Noah Wulf",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
+  "titre_commons": "File:Wet Roof Tiles.jpg"
+ },
+ {
+  "fichier": "images/nettoyage-1600.avif",
+  "base": "nettoyage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tuiles de toiture après nettoyage",
+  "alt": "Tuiles de toiture après nettoyage",
+  "auteur": "Noah Wulf",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
+  "titre_commons": "File:Wet Roof Tiles.jpg"
+ },
+ {
+  "fichier": "images/nettoyage-960.webp",
+  "base": "nettoyage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tuiles de toiture après nettoyage",
+  "alt": "Tuiles de toiture après nettoyage",
+  "auteur": "Noah Wulf",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
+  "titre_commons": "File:Wet Roof Tiles.jpg"
+ },
+ {
+  "fichier": "images/nettoyage-960.avif",
+  "base": "nettoyage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tuiles de toiture après nettoyage",
+  "alt": "Tuiles de toiture après nettoyage",
+  "auteur": "Noah Wulf",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
+  "titre_commons": "File:Wet Roof Tiles.jpg"
+ },
+ {
+  "fichier": "images/nettoyage-720.webp",
+  "base": "nettoyage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tuiles de toiture après nettoyage",
+  "alt": "Tuiles de toiture après nettoyage",
+  "auteur": "Noah Wulf",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
+  "titre_commons": "File:Wet Roof Tiles.jpg"
+ },
+ {
+  "fichier": "images/nettoyage-720.avif",
+  "base": "nettoyage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tuiles de toiture après nettoyage",
+  "alt": "Tuiles de toiture après nettoyage",
+  "auteur": "Noah Wulf",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
+  "titre_commons": "File:Wet Roof Tiles.jpg"
+ },
+ {
+  "fichier": "images/nettoyage-480.webp",
+  "base": "nettoyage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tuiles de toiture après nettoyage",
+  "alt": "Tuiles de toiture après nettoyage",
+  "auteur": "Noah Wulf",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
+  "titre_commons": "File:Wet Roof Tiles.jpg"
+ },
+ {
+  "fichier": "images/nettoyage-480.avif",
+  "base": "nettoyage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tuiles de toiture après nettoyage",
+  "alt": "Tuiles de toiture après nettoyage",
+  "auteur": "Noah Wulf",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg",
+  "titre_commons": "File:Wet Roof Tiles.jpg"
+ }
 ]

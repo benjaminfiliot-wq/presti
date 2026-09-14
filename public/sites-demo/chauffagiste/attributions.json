@@ -1,254 +1,674 @@
 [
-  {
-    "fichier": "img1-480.webp",
-    "auteur": "Patrick and Lyon",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_Installation_gas_safe.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une chaudière à condensation gaz"
-  },
-  {
-    "fichier": "img1-480.avif",
-    "auteur": "Patrick and Lyon",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_Installation_gas_safe.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une chaudière à condensation gaz"
-  },
-  {
-    "fichier": "img1-960.webp",
-    "auteur": "Patrick and Lyon",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_Installation_gas_safe.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une chaudière à condensation gaz"
-  },
-  {
-    "fichier": "img1-960.avif",
-    "auteur": "Patrick and Lyon",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_Installation_gas_safe.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une chaudière à condensation gaz"
-  },
-  {
-    "fichier": "img1-1600.webp",
-    "auteur": "Patrick and Lyon",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_Installation_gas_safe.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une chaudière à condensation gaz"
-  },
-  {
-    "fichier": "img1-1600.avif",
-    "auteur": "Patrick and Lyon",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_Installation_gas_safe.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Installation d'une chaudière à condensation gaz"
-  },
-  {
-    "fichier": "img2-480.webp",
-    "auteur": "Boulderhydronics",
-    "source": "https://commons.wikimedia.org/wiki/File:Vitodens_200_condensing_boiler.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Chaudière à condensation murale avec circuit hydraulique"
-  },
-  {
-    "fichier": "img2-480.avif",
-    "auteur": "Boulderhydronics",
-    "source": "https://commons.wikimedia.org/wiki/File:Vitodens_200_condensing_boiler.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Chaudière à condensation murale avec circuit hydraulique"
-  },
-  {
-    "fichier": "img2-960.webp",
-    "auteur": "Boulderhydronics",
-    "source": "https://commons.wikimedia.org/wiki/File:Vitodens_200_condensing_boiler.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Chaudière à condensation murale avec circuit hydraulique"
-  },
-  {
-    "fichier": "img2-960.avif",
-    "auteur": "Boulderhydronics",
-    "source": "https://commons.wikimedia.org/wiki/File:Vitodens_200_condensing_boiler.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Chaudière à condensation murale avec circuit hydraulique"
-  },
-  {
-    "fichier": "img2-1600.webp",
-    "auteur": "Boulderhydronics",
-    "source": "https://commons.wikimedia.org/wiki/File:Vitodens_200_condensing_boiler.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Chaudière à condensation murale avec circuit hydraulique"
-  },
-  {
-    "fichier": "img2-1600.avif",
-    "auteur": "Boulderhydronics",
-    "source": "https://commons.wikimedia.org/wiki/File:Vitodens_200_condensing_boiler.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Chaudière à condensation murale avec circuit hydraulique"
-  },
-  {
-    "fichier": "img3-480.webp",
-    "auteur": "ArnoldReinhold",
-    "source": "https://commons.wikimedia.org/wiki/File:Mitsubishi_Heat_pump_innards.agr.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Composants intérieurs d'une pompe à chaleur réversible"
-  },
-  {
-    "fichier": "img3-480.avif",
-    "auteur": "ArnoldReinhold",
-    "source": "https://commons.wikimedia.org/wiki/File:Mitsubishi_Heat_pump_innards.agr.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Composants intérieurs d'une pompe à chaleur réversible"
-  },
-  {
-    "fichier": "img3-960.webp",
-    "auteur": "ArnoldReinhold",
-    "source": "https://commons.wikimedia.org/wiki/File:Mitsubishi_Heat_pump_innards.agr.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Composants intérieurs d'une pompe à chaleur réversible"
-  },
-  {
-    "fichier": "img3-960.avif",
-    "auteur": "ArnoldReinhold",
-    "source": "https://commons.wikimedia.org/wiki/File:Mitsubishi_Heat_pump_innards.agr.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Composants intérieurs d'une pompe à chaleur réversible"
-  },
-  {
-    "fichier": "img3-1600.webp",
-    "auteur": "ArnoldReinhold",
-    "source": "https://commons.wikimedia.org/wiki/File:Mitsubishi_Heat_pump_innards.agr.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Composants intérieurs d'une pompe à chaleur réversible"
-  },
-  {
-    "fichier": "img3-1600.avif",
-    "auteur": "ArnoldReinhold",
-    "source": "https://commons.wikimedia.org/wiki/File:Mitsubishi_Heat_pump_innards.agr.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Composants intérieurs d'une pompe à chaleur réversible"
-  },
-  {
-    "fichier": "img4-480.webp",
-    "auteur": "Tiia Monto",
-    "source": "https://commons.wikimedia.org/wiki/File:Heat_radiator.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Radiateur en acier avec vanne thermostatique"
-  },
-  {
-    "fichier": "img4-480.avif",
-    "auteur": "Tiia Monto",
-    "source": "https://commons.wikimedia.org/wiki/File:Heat_radiator.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Radiateur en acier avec vanne thermostatique"
-  },
-  {
-    "fichier": "img4-960.webp",
-    "auteur": "Tiia Monto",
-    "source": "https://commons.wikimedia.org/wiki/File:Heat_radiator.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Radiateur en acier avec vanne thermostatique"
-  },
-  {
-    "fichier": "img4-960.avif",
-    "auteur": "Tiia Monto",
-    "source": "https://commons.wikimedia.org/wiki/File:Heat_radiator.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Radiateur en acier avec vanne thermostatique"
-  },
-  {
-    "fichier": "img4-1600.webp",
-    "auteur": "Tiia Monto",
-    "source": "https://commons.wikimedia.org/wiki/File:Heat_radiator.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Radiateur en acier avec vanne thermostatique"
-  },
-  {
-    "fichier": "img4-1600.avif",
-    "auteur": "Tiia Monto",
-    "source": "https://commons.wikimedia.org/wiki/File:Heat_radiator.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Radiateur en acier avec vanne thermostatique"
-  },
-  {
-    "fichier": "img5-480.webp",
-    "auteur": "Turbojet",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_mounted_boiler_in_kitchen.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chaudière murale moderne intégrée dans une cuisine"
-  },
-  {
-    "fichier": "img5-480.avif",
-    "auteur": "Turbojet",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_mounted_boiler_in_kitchen.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chaudière murale moderne intégrée dans une cuisine"
-  },
-  {
-    "fichier": "img5-960.webp",
-    "auteur": "Turbojet",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_mounted_boiler_in_kitchen.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chaudière murale moderne intégrée dans une cuisine"
-  },
-  {
-    "fichier": "img5-960.avif",
-    "auteur": "Turbojet",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_mounted_boiler_in_kitchen.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chaudière murale moderne intégrée dans une cuisine"
-  },
-  {
-    "fichier": "img5-1600.webp",
-    "auteur": "Turbojet",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_mounted_boiler_in_kitchen.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chaudière murale moderne intégrée dans une cuisine"
-  },
-  {
-    "fichier": "img5-1600.avif",
-    "auteur": "Turbojet",
-    "source": "https://commons.wikimedia.org/wiki/File:Wall_mounted_boiler_in_kitchen.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Chaudière murale moderne intégrée dans une cuisine"
-  },
-  {
-    "fichier": "img6-480.webp",
-    "auteur": "Oliksiy Yakovlyev",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_room_%E2%80%93_Preview_(Oliksiy_Yakovlyev_via_Poly_Haven).png",
-    "licence": "CC0",
-    "legende": "Chaufferie complète avec tuyauteries et régulateurs"
-  },
-  {
-    "fichier": "img6-480.avif",
-    "auteur": "Oliksiy Yakovlyev",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_room_%E2%80%93_Preview_(Oliksiy_Yakovlyev_via_Poly_Haven).png",
-    "licence": "CC0",
-    "legende": "Chaufferie complète avec tuyauteries et régulateurs"
-  },
-  {
-    "fichier": "img6-960.webp",
-    "auteur": "Oliksiy Yakovlyev",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_room_%E2%80%93_Preview_(Oliksiy_Yakovlyev_via_Poly_Haven).png",
-    "licence": "CC0",
-    "legende": "Chaufferie complète avec tuyauteries et régulateurs"
-  },
-  {
-    "fichier": "img6-960.avif",
-    "auteur": "Oliksiy Yakovlyev",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_room_%E2%80%93_Preview_(Oliksiy_Yakovlyev_via_Poly_Haven).png",
-    "licence": "CC0",
-    "legende": "Chaufferie complète avec tuyauteries et régulateurs"
-  },
-  {
-    "fichier": "img6-1600.webp",
-    "auteur": "Oliksiy Yakovlyev",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_room_%E2%80%93_Preview_(Oliksiy_Yakovlyev_via_Poly_Haven).png",
-    "licence": "CC0",
-    "legende": "Chaufferie complète avec tuyauteries et régulateurs"
-  },
-  {
-    "fichier": "img6-1600.avif",
-    "auteur": "Oliksiy Yakovlyev",
-    "source": "https://commons.wikimedia.org/wiki/File:Boiler_room_%E2%80%93_Preview_(Oliksiy_Yakovlyev_via_Poly_Haven).png",
-    "licence": "CC0",
-    "legende": "Chaufferie complète avec tuyauteries et régulateurs"
-  }
+ {
+  "fichier": "images/hero-1600.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Chaufferie : collecteurs, vannes et manomètres",
+  "alt": "Chaufferie : collecteurs, vannes et manomètres",
+  "auteur": "Wolfmann",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Teknisk_rom_(School_build._Lilleh._Norway_2024-09._Mechan._room_Air_ventil._Hot_water_Heat_recov._unit)_varmtvann_isolerte_r%C3%B8r_m%C3%A5lere_termometere_sirkulasjonspumpe_strupeventil_radiatorer_gulvvarme_elkabler_vannkran_etc_IMG_0349.jpg",
+  "titre_commons": "File:Teknisk rom (School build. Lilleh. Norway 2024-09. Mechan. room Air ventil. Hot water Heat recov. unit) varmtvann isolerte rør målere termometere sirkulasjonspumpe strupeventil radiatorer gulvvarme elkabler vannkran etc IMG 0349.jpg"
+ },
+ {
+  "fichier": "images/hero-1600.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Chaufferie : collecteurs, vannes et manomètres",
+  "alt": "Chaufferie : collecteurs, vannes et manomètres",
+  "auteur": "Wolfmann",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Teknisk_rom_(School_build._Lilleh._Norway_2024-09._Mechan._room_Air_ventil._Hot_water_Heat_recov._unit)_varmtvann_isolerte_r%C3%B8r_m%C3%A5lere_termometere_sirkulasjonspumpe_strupeventil_radiatorer_gulvvarme_elkabler_vannkran_etc_IMG_0349.jpg",
+  "titre_commons": "File:Teknisk rom (School build. Lilleh. Norway 2024-09. Mechan. room Air ventil. Hot water Heat recov. unit) varmtvann isolerte rør målere termometere sirkulasjonspumpe strupeventil radiatorer gulvvarme elkabler vannkran etc IMG 0349.jpg"
+ },
+ {
+  "fichier": "images/hero-960.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Chaufferie : collecteurs, vannes et manomètres",
+  "alt": "Chaufferie : collecteurs, vannes et manomètres",
+  "auteur": "Wolfmann",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Teknisk_rom_(School_build._Lilleh._Norway_2024-09._Mechan._room_Air_ventil._Hot_water_Heat_recov._unit)_varmtvann_isolerte_r%C3%B8r_m%C3%A5lere_termometere_sirkulasjonspumpe_strupeventil_radiatorer_gulvvarme_elkabler_vannkran_etc_IMG_0349.jpg",
+  "titre_commons": "File:Teknisk rom (School build. Lilleh. Norway 2024-09. Mechan. room Air ventil. Hot water Heat recov. unit) varmtvann isolerte rør målere termometere sirkulasjonspumpe strupeventil radiatorer gulvvarme elkabler vannkran etc IMG 0349.jpg"
+ },
+ {
+  "fichier": "images/hero-960.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Chaufferie : collecteurs, vannes et manomètres",
+  "alt": "Chaufferie : collecteurs, vannes et manomètres",
+  "auteur": "Wolfmann",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Teknisk_rom_(School_build._Lilleh._Norway_2024-09._Mechan._room_Air_ventil._Hot_water_Heat_recov._unit)_varmtvann_isolerte_r%C3%B8r_m%C3%A5lere_termometere_sirkulasjonspumpe_strupeventil_radiatorer_gulvvarme_elkabler_vannkran_etc_IMG_0349.jpg",
+  "titre_commons": "File:Teknisk rom (School build. Lilleh. Norway 2024-09. Mechan. room Air ventil. Hot water Heat recov. unit) varmtvann isolerte rør målere termometere sirkulasjonspumpe strupeventil radiatorer gulvvarme elkabler vannkran etc IMG 0349.jpg"
+ },
+ {
+  "fichier": "images/hero-720.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Chaufferie : collecteurs, vannes et manomètres",
+  "alt": "Chaufferie : collecteurs, vannes et manomètres",
+  "auteur": "Wolfmann",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Teknisk_rom_(School_build._Lilleh._Norway_2024-09._Mechan._room_Air_ventil._Hot_water_Heat_recov._unit)_varmtvann_isolerte_r%C3%B8r_m%C3%A5lere_termometere_sirkulasjonspumpe_strupeventil_radiatorer_gulvvarme_elkabler_vannkran_etc_IMG_0349.jpg",
+  "titre_commons": "File:Teknisk rom (School build. Lilleh. Norway 2024-09. Mechan. room Air ventil. Hot water Heat recov. unit) varmtvann isolerte rør målere termometere sirkulasjonspumpe strupeventil radiatorer gulvvarme elkabler vannkran etc IMG 0349.jpg"
+ },
+ {
+  "fichier": "images/hero-720.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Chaufferie : collecteurs, vannes et manomètres",
+  "alt": "Chaufferie : collecteurs, vannes et manomètres",
+  "auteur": "Wolfmann",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Teknisk_rom_(School_build._Lilleh._Norway_2024-09._Mechan._room_Air_ventil._Hot_water_Heat_recov._unit)_varmtvann_isolerte_r%C3%B8r_m%C3%A5lere_termometere_sirkulasjonspumpe_strupeventil_radiatorer_gulvvarme_elkabler_vannkran_etc_IMG_0349.jpg",
+  "titre_commons": "File:Teknisk rom (School build. Lilleh. Norway 2024-09. Mechan. room Air ventil. Hot water Heat recov. unit) varmtvann isolerte rør målere termometere sirkulasjonspumpe strupeventil radiatorer gulvvarme elkabler vannkran etc IMG 0349.jpg"
+ },
+ {
+  "fichier": "images/hero-480.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Chaufferie : collecteurs, vannes et manomètres",
+  "alt": "Chaufferie : collecteurs, vannes et manomètres",
+  "auteur": "Wolfmann",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Teknisk_rom_(School_build._Lilleh._Norway_2024-09._Mechan._room_Air_ventil._Hot_water_Heat_recov._unit)_varmtvann_isolerte_r%C3%B8r_m%C3%A5lere_termometere_sirkulasjonspumpe_strupeventil_radiatorer_gulvvarme_elkabler_vannkran_etc_IMG_0349.jpg",
+  "titre_commons": "File:Teknisk rom (School build. Lilleh. Norway 2024-09. Mechan. room Air ventil. Hot water Heat recov. unit) varmtvann isolerte rør målere termometere sirkulasjonspumpe strupeventil radiatorer gulvvarme elkabler vannkran etc IMG 0349.jpg"
+ },
+ {
+  "fichier": "images/hero-480.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Chaufferie : collecteurs, vannes et manomètres",
+  "alt": "Chaufferie : collecteurs, vannes et manomètres",
+  "auteur": "Wolfmann",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Teknisk_rom_(School_build._Lilleh._Norway_2024-09._Mechan._room_Air_ventil._Hot_water_Heat_recov._unit)_varmtvann_isolerte_r%C3%B8r_m%C3%A5lere_termometere_sirkulasjonspumpe_strupeventil_radiatorer_gulvvarme_elkabler_vannkran_etc_IMG_0349.jpg",
+  "titre_commons": "File:Teknisk rom (School build. Lilleh. Norway 2024-09. Mechan. room Air ventil. Hot water Heat recov. unit) varmtvann isolerte rør målere termometere sirkulasjonspumpe strupeventil radiatorer gulvvarme elkabler vannkran etc IMG 0349.jpg"
+ },
+ {
+  "fichier": "images/plancher-1600.webp",
+  "base": "plancher",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Plancher chauffant, boucles posées avant chape",
+  "alt": "Plancher chauffant, boucles posées avant chape",
+  "auteur": "Viii23dawari",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Underfloor_heating_pipes_1.jpg",
+  "titre_commons": "File:Underfloor heating pipes 1.jpg"
+ },
+ {
+  "fichier": "images/plancher-1600.avif",
+  "base": "plancher",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Plancher chauffant, boucles posées avant chape",
+  "alt": "Plancher chauffant, boucles posées avant chape",
+  "auteur": "Viii23dawari",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Underfloor_heating_pipes_1.jpg",
+  "titre_commons": "File:Underfloor heating pipes 1.jpg"
+ },
+ {
+  "fichier": "images/plancher-960.webp",
+  "base": "plancher",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Plancher chauffant, boucles posées avant chape",
+  "alt": "Plancher chauffant, boucles posées avant chape",
+  "auteur": "Viii23dawari",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Underfloor_heating_pipes_1.jpg",
+  "titre_commons": "File:Underfloor heating pipes 1.jpg"
+ },
+ {
+  "fichier": "images/plancher-960.avif",
+  "base": "plancher",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Plancher chauffant, boucles posées avant chape",
+  "alt": "Plancher chauffant, boucles posées avant chape",
+  "auteur": "Viii23dawari",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Underfloor_heating_pipes_1.jpg",
+  "titre_commons": "File:Underfloor heating pipes 1.jpg"
+ },
+ {
+  "fichier": "images/plancher-720.webp",
+  "base": "plancher",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Plancher chauffant, boucles posées avant chape",
+  "alt": "Plancher chauffant, boucles posées avant chape",
+  "auteur": "Viii23dawari",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Underfloor_heating_pipes_1.jpg",
+  "titre_commons": "File:Underfloor heating pipes 1.jpg"
+ },
+ {
+  "fichier": "images/plancher-720.avif",
+  "base": "plancher",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Plancher chauffant, boucles posées avant chape",
+  "alt": "Plancher chauffant, boucles posées avant chape",
+  "auteur": "Viii23dawari",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Underfloor_heating_pipes_1.jpg",
+  "titre_commons": "File:Underfloor heating pipes 1.jpg"
+ },
+ {
+  "fichier": "images/plancher-480.webp",
+  "base": "plancher",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Plancher chauffant, boucles posées avant chape",
+  "alt": "Plancher chauffant, boucles posées avant chape",
+  "auteur": "Viii23dawari",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Underfloor_heating_pipes_1.jpg",
+  "titre_commons": "File:Underfloor heating pipes 1.jpg"
+ },
+ {
+  "fichier": "images/plancher-480.avif",
+  "base": "plancher",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Plancher chauffant, boucles posées avant chape",
+  "alt": "Plancher chauffant, boucles posées avant chape",
+  "auteur": "Viii23dawari",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Underfloor_heating_pipes_1.jpg",
+  "titre_commons": "File:Underfloor heating pipes 1.jpg"
+ },
+ {
+  "fichier": "images/per-1600.webp",
+  "base": "per",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tubes PER pour réseau de chauffage",
+  "alt": "Tubes PER pour réseau de chauffage",
+  "auteur": "David Rosenberger",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze_(3).JPG",
+  "titre_commons": "File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze (3).JPG"
+ },
+ {
+  "fichier": "images/per-1600.avif",
+  "base": "per",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tubes PER pour réseau de chauffage",
+  "alt": "Tubes PER pour réseau de chauffage",
+  "auteur": "David Rosenberger",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze_(3).JPG",
+  "titre_commons": "File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze (3).JPG"
+ },
+ {
+  "fichier": "images/per-960.webp",
+  "base": "per",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tubes PER pour réseau de chauffage",
+  "alt": "Tubes PER pour réseau de chauffage",
+  "auteur": "David Rosenberger",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze_(3).JPG",
+  "titre_commons": "File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze (3).JPG"
+ },
+ {
+  "fichier": "images/per-960.avif",
+  "base": "per",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tubes PER pour réseau de chauffage",
+  "alt": "Tubes PER pour réseau de chauffage",
+  "auteur": "David Rosenberger",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze_(3).JPG",
+  "titre_commons": "File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze (3).JPG"
+ },
+ {
+  "fichier": "images/per-720.webp",
+  "base": "per",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tubes PER pour réseau de chauffage",
+  "alt": "Tubes PER pour réseau de chauffage",
+  "auteur": "David Rosenberger",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze_(3).JPG",
+  "titre_commons": "File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze (3).JPG"
+ },
+ {
+  "fichier": "images/per-720.avif",
+  "base": "per",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tubes PER pour réseau de chauffage",
+  "alt": "Tubes PER pour réseau de chauffage",
+  "auteur": "David Rosenberger",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze_(3).JPG",
+  "titre_commons": "File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze (3).JPG"
+ },
+ {
+  "fichier": "images/per-480.webp",
+  "base": "per",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tubes PER pour réseau de chauffage",
+  "alt": "Tubes PER pour réseau de chauffage",
+  "auteur": "David Rosenberger",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze_(3).JPG",
+  "titre_commons": "File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze (3).JPG"
+ },
+ {
+  "fichier": "images/per-480.avif",
+  "base": "per",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Tubes PER pour réseau de chauffage",
+  "alt": "Tubes PER pour réseau de chauffage",
+  "auteur": "David Rosenberger",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze_(3).JPG",
+  "titre_commons": "File:Porovnani-kvality-Multibeton-a-bezne-potrubi-reference-zkusensoti-recenze (3).JPG"
+ },
+ {
+  "fichier": "images/cuivre-1600.webp",
+  "base": "cuivre",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Raccordements cuivre d'une chaudière",
+  "alt": "Raccordements cuivre d'une chaudière",
+  "auteur": "PeterEastern",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ecodan_outdoor_unit_Internal_view.jpg",
+  "titre_commons": "File:Ecodan outdoor unit Internal view.jpg"
+ },
+ {
+  "fichier": "images/cuivre-1600.avif",
+  "base": "cuivre",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Raccordements cuivre d'une chaudière",
+  "alt": "Raccordements cuivre d'une chaudière",
+  "auteur": "PeterEastern",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ecodan_outdoor_unit_Internal_view.jpg",
+  "titre_commons": "File:Ecodan outdoor unit Internal view.jpg"
+ },
+ {
+  "fichier": "images/cuivre-960.webp",
+  "base": "cuivre",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Raccordements cuivre d'une chaudière",
+  "alt": "Raccordements cuivre d'une chaudière",
+  "auteur": "PeterEastern",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ecodan_outdoor_unit_Internal_view.jpg",
+  "titre_commons": "File:Ecodan outdoor unit Internal view.jpg"
+ },
+ {
+  "fichier": "images/cuivre-960.avif",
+  "base": "cuivre",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Raccordements cuivre d'une chaudière",
+  "alt": "Raccordements cuivre d'une chaudière",
+  "auteur": "PeterEastern",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ecodan_outdoor_unit_Internal_view.jpg",
+  "titre_commons": "File:Ecodan outdoor unit Internal view.jpg"
+ },
+ {
+  "fichier": "images/cuivre-720.webp",
+  "base": "cuivre",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Raccordements cuivre d'une chaudière",
+  "alt": "Raccordements cuivre d'une chaudière",
+  "auteur": "PeterEastern",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ecodan_outdoor_unit_Internal_view.jpg",
+  "titre_commons": "File:Ecodan outdoor unit Internal view.jpg"
+ },
+ {
+  "fichier": "images/cuivre-720.avif",
+  "base": "cuivre",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Raccordements cuivre d'une chaudière",
+  "alt": "Raccordements cuivre d'une chaudière",
+  "auteur": "PeterEastern",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ecodan_outdoor_unit_Internal_view.jpg",
+  "titre_commons": "File:Ecodan outdoor unit Internal view.jpg"
+ },
+ {
+  "fichier": "images/cuivre-480.webp",
+  "base": "cuivre",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Raccordements cuivre d'une chaudière",
+  "alt": "Raccordements cuivre d'une chaudière",
+  "auteur": "PeterEastern",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ecodan_outdoor_unit_Internal_view.jpg",
+  "titre_commons": "File:Ecodan outdoor unit Internal view.jpg"
+ },
+ {
+  "fichier": "images/cuivre-480.avif",
+  "base": "cuivre",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Raccordements cuivre d'une chaudière",
+  "alt": "Raccordements cuivre d'une chaudière",
+  "auteur": "PeterEastern",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Ecodan_outdoor_unit_Internal_view.jpg",
+  "titre_commons": "File:Ecodan outdoor unit Internal view.jpg"
+ },
+ {
+  "fichier": "images/pac-1600.webp",
+  "base": "pac",
+  "largeur": 1600,
+  "hauteur": 1114,
+  "legende": "Unité extérieure de pompe à chaleur",
+  "alt": "Unité extérieure de pompe à chaleur",
+  "auteur": "Tony Webster",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Carrier_Outdoor_Split_Air_Conditioner_Heat_Pump_System_(55005181522).jpg",
+  "titre_commons": "File:Carrier Outdoor Split Air Conditioner Heat Pump System (55005181522).jpg"
+ },
+ {
+  "fichier": "images/pac-1600.avif",
+  "base": "pac",
+  "largeur": 1600,
+  "hauteur": 1114,
+  "legende": "Unité extérieure de pompe à chaleur",
+  "alt": "Unité extérieure de pompe à chaleur",
+  "auteur": "Tony Webster",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Carrier_Outdoor_Split_Air_Conditioner_Heat_Pump_System_(55005181522).jpg",
+  "titre_commons": "File:Carrier Outdoor Split Air Conditioner Heat Pump System (55005181522).jpg"
+ },
+ {
+  "fichier": "images/pac-960.webp",
+  "base": "pac",
+  "largeur": 1600,
+  "hauteur": 1114,
+  "legende": "Unité extérieure de pompe à chaleur",
+  "alt": "Unité extérieure de pompe à chaleur",
+  "auteur": "Tony Webster",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Carrier_Outdoor_Split_Air_Conditioner_Heat_Pump_System_(55005181522).jpg",
+  "titre_commons": "File:Carrier Outdoor Split Air Conditioner Heat Pump System (55005181522).jpg"
+ },
+ {
+  "fichier": "images/pac-960.avif",
+  "base": "pac",
+  "largeur": 1600,
+  "hauteur": 1114,
+  "legende": "Unité extérieure de pompe à chaleur",
+  "alt": "Unité extérieure de pompe à chaleur",
+  "auteur": "Tony Webster",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Carrier_Outdoor_Split_Air_Conditioner_Heat_Pump_System_(55005181522).jpg",
+  "titre_commons": "File:Carrier Outdoor Split Air Conditioner Heat Pump System (55005181522).jpg"
+ },
+ {
+  "fichier": "images/pac-720.webp",
+  "base": "pac",
+  "largeur": 1600,
+  "hauteur": 1114,
+  "legende": "Unité extérieure de pompe à chaleur",
+  "alt": "Unité extérieure de pompe à chaleur",
+  "auteur": "Tony Webster",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Carrier_Outdoor_Split_Air_Conditioner_Heat_Pump_System_(55005181522).jpg",
+  "titre_commons": "File:Carrier Outdoor Split Air Conditioner Heat Pump System (55005181522).jpg"
+ },
+ {
+  "fichier": "images/pac-720.avif",
+  "base": "pac",
+  "largeur": 1600,
+  "hauteur": 1114,
+  "legende": "Unité extérieure de pompe à chaleur",
+  "alt": "Unité extérieure de pompe à chaleur",
+  "auteur": "Tony Webster",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Carrier_Outdoor_Split_Air_Conditioner_Heat_Pump_System_(55005181522).jpg",
+  "titre_commons": "File:Carrier Outdoor Split Air Conditioner Heat Pump System (55005181522).jpg"
+ },
+ {
+  "fichier": "images/pac-480.webp",
+  "base": "pac",
+  "largeur": 1600,
+  "hauteur": 1114,
+  "legende": "Unité extérieure de pompe à chaleur",
+  "alt": "Unité extérieure de pompe à chaleur",
+  "auteur": "Tony Webster",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Carrier_Outdoor_Split_Air_Conditioner_Heat_Pump_System_(55005181522).jpg",
+  "titre_commons": "File:Carrier Outdoor Split Air Conditioner Heat Pump System (55005181522).jpg"
+ },
+ {
+  "fichier": "images/pac-480.avif",
+  "base": "pac",
+  "largeur": 1600,
+  "hauteur": 1114,
+  "legende": "Unité extérieure de pompe à chaleur",
+  "alt": "Unité extérieure de pompe à chaleur",
+  "auteur": "Tony Webster",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Carrier_Outdoor_Split_Air_Conditioner_Heat_Pump_System_(55005181522).jpg",
+  "titre_commons": "File:Carrier Outdoor Split Air Conditioner Heat Pump System (55005181522).jpg"
+ },
+ {
+  "fichier": "images/radiateur-1600.webp",
+  "base": "radiateur",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Radiateur à panneaux et robinet thermostatique",
+  "alt": "Radiateur à panneaux et robinet thermostatique",
+  "auteur": "Sahaib",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Radiator_in_Newton,_South_Lanarkshire_(62).jpg",
+  "titre_commons": "File:Radiator in Newton, South Lanarkshire (62).jpg"
+ },
+ {
+  "fichier": "images/radiateur-1600.avif",
+  "base": "radiateur",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Radiateur à panneaux et robinet thermostatique",
+  "alt": "Radiateur à panneaux et robinet thermostatique",
+  "auteur": "Sahaib",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Radiator_in_Newton,_South_Lanarkshire_(62).jpg",
+  "titre_commons": "File:Radiator in Newton, South Lanarkshire (62).jpg"
+ },
+ {
+  "fichier": "images/radiateur-960.webp",
+  "base": "radiateur",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Radiateur à panneaux et robinet thermostatique",
+  "alt": "Radiateur à panneaux et robinet thermostatique",
+  "auteur": "Sahaib",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Radiator_in_Newton,_South_Lanarkshire_(62).jpg",
+  "titre_commons": "File:Radiator in Newton, South Lanarkshire (62).jpg"
+ },
+ {
+  "fichier": "images/radiateur-960.avif",
+  "base": "radiateur",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Radiateur à panneaux et robinet thermostatique",
+  "alt": "Radiateur à panneaux et robinet thermostatique",
+  "auteur": "Sahaib",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Radiator_in_Newton,_South_Lanarkshire_(62).jpg",
+  "titre_commons": "File:Radiator in Newton, South Lanarkshire (62).jpg"
+ },
+ {
+  "fichier": "images/radiateur-720.webp",
+  "base": "radiateur",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Radiateur à panneaux et robinet thermostatique",
+  "alt": "Radiateur à panneaux et robinet thermostatique",
+  "auteur": "Sahaib",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Radiator_in_Newton,_South_Lanarkshire_(62).jpg",
+  "titre_commons": "File:Radiator in Newton, South Lanarkshire (62).jpg"
+ },
+ {
+  "fichier": "images/radiateur-720.avif",
+  "base": "radiateur",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Radiateur à panneaux et robinet thermostatique",
+  "alt": "Radiateur à panneaux et robinet thermostatique",
+  "auteur": "Sahaib",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Radiator_in_Newton,_South_Lanarkshire_(62).jpg",
+  "titre_commons": "File:Radiator in Newton, South Lanarkshire (62).jpg"
+ },
+ {
+  "fichier": "images/radiateur-480.webp",
+  "base": "radiateur",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Radiateur à panneaux et robinet thermostatique",
+  "alt": "Radiateur à panneaux et robinet thermostatique",
+  "auteur": "Sahaib",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Radiator_in_Newton,_South_Lanarkshire_(62).jpg",
+  "titre_commons": "File:Radiator in Newton, South Lanarkshire (62).jpg"
+ },
+ {
+  "fichier": "images/radiateur-480.avif",
+  "base": "radiateur",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Radiateur à panneaux et robinet thermostatique",
+  "alt": "Radiateur à panneaux et robinet thermostatique",
+  "auteur": "Sahaib",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Radiator_in_Newton,_South_Lanarkshire_(62).jpg",
+  "titre_commons": "File:Radiator in Newton, South Lanarkshire (62).jpg"
+ },
+ {
+  "fichier": "images/thermostat-1600.webp",
+  "base": "thermostat",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Réglage du thermostat d'ambiance",
+  "alt": "Réglage du thermostat d'ambiance",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Adjusting_the_temperature_on_a_thermostat_in_a_home_setting.jpg",
+  "titre_commons": "File:Adjusting the temperature on a thermostat in a home setting.jpg"
+ },
+ {
+  "fichier": "images/thermostat-1600.avif",
+  "base": "thermostat",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Réglage du thermostat d'ambiance",
+  "alt": "Réglage du thermostat d'ambiance",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Adjusting_the_temperature_on_a_thermostat_in_a_home_setting.jpg",
+  "titre_commons": "File:Adjusting the temperature on a thermostat in a home setting.jpg"
+ },
+ {
+  "fichier": "images/thermostat-960.webp",
+  "base": "thermostat",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Réglage du thermostat d'ambiance",
+  "alt": "Réglage du thermostat d'ambiance",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Adjusting_the_temperature_on_a_thermostat_in_a_home_setting.jpg",
+  "titre_commons": "File:Adjusting the temperature on a thermostat in a home setting.jpg"
+ },
+ {
+  "fichier": "images/thermostat-960.avif",
+  "base": "thermostat",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Réglage du thermostat d'ambiance",
+  "alt": "Réglage du thermostat d'ambiance",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Adjusting_the_temperature_on_a_thermostat_in_a_home_setting.jpg",
+  "titre_commons": "File:Adjusting the temperature on a thermostat in a home setting.jpg"
+ },
+ {
+  "fichier": "images/thermostat-720.webp",
+  "base": "thermostat",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Réglage du thermostat d'ambiance",
+  "alt": "Réglage du thermostat d'ambiance",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Adjusting_the_temperature_on_a_thermostat_in_a_home_setting.jpg",
+  "titre_commons": "File:Adjusting the temperature on a thermostat in a home setting.jpg"
+ },
+ {
+  "fichier": "images/thermostat-720.avif",
+  "base": "thermostat",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Réglage du thermostat d'ambiance",
+  "alt": "Réglage du thermostat d'ambiance",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Adjusting_the_temperature_on_a_thermostat_in_a_home_setting.jpg",
+  "titre_commons": "File:Adjusting the temperature on a thermostat in a home setting.jpg"
+ },
+ {
+  "fichier": "images/thermostat-480.webp",
+  "base": "thermostat",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Réglage du thermostat d'ambiance",
+  "alt": "Réglage du thermostat d'ambiance",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Adjusting_the_temperature_on_a_thermostat_in_a_home_setting.jpg",
+  "titre_commons": "File:Adjusting the temperature on a thermostat in a home setting.jpg"
+ },
+ {
+  "fichier": "images/thermostat-480.avif",
+  "base": "thermostat",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Réglage du thermostat d'ambiance",
+  "alt": "Réglage du thermostat d'ambiance",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Adjusting_the_temperature_on_a_thermostat_in_a_home_setting.jpg",
+  "titre_commons": "File:Adjusting the temperature on a thermostat in a home setting.jpg"
+ }
 ]

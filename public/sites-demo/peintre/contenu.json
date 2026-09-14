@@ -1,0 +1,989 @@
+{
+ "metier": "peintre",
+ "extrait_le": "2026-09-14",
+ "pages": {
+  "/": {
+   "type": "accueil",
+   "title": "Peintre en bâtiment à Bordeaux — Démo Peintre Bordeaux",
+   "description": "Artisan peintre en bâtiment à Bordeaux : travaux de peinture intérieure, préparation des murs et finitions soignées. Devis gratuit et décennale.",
+   "h1": "Peintre en bâtiment à Bordeaux — Démo Peintre Bordeaux",
+   "kicker": "Artisan Peintre en Gironde",
+   "chapeau": "Artisan peintre qualifié pour tous vos travaux de peinture intérieure, ratissage des murs, laquage des boiseries et finitions décoratives soignées à Bordeaux et métropole.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "salon_spacieux",
+     "alt": "Rénovation complète d'un salon lumineux à Bordeaux"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Nos prestations de peinture en bâtiment",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "De la préparation minutieuse des supports à l'application soignée des finitions, nous prenons en charge l'ensemble de vos travaux intérieurs."
+      },
+      {
+       "type": "h3",
+       "texte": "Peinture murs et plafonds"
+      },
+      {
+       "type": "p",
+       "texte": "Application méticuleuse de deux couches de peinture acrylique ou alkyde de qualité professionnelle. Finitions mates pour masquer les imperfections, velours pour un rendu soyeux, ou satinées pour une grande facilité d'entretien."
+      },
+      {
+       "type": "h3",
+       "texte": "Préparation et ratissage"
+      },
+      {
+       "type": "p",
+       "texte": "La qualité d'une peinture repose sur la préparation : rebouchage des trous et fissures, ratissage complet à l'enduit de lissage, ponçage mécanique soigné et pose d'une sous-couche d'impression régulatrice."
+      },
+      {
+       "type": "h3",
+       "texte": "Boiseries et menuiseries"
+      },
+      {
+       "type": "p",
+       "texte": "Mise en peinture et laquage des portes intérieures, plinthes, bâtis, fenêtres et escaliers en bois. Égrenage préalable soigné et finitions lisses résistantes aux chocs du quotidien."
+      },
+      {
+       "type": "h3",
+       "texte": "Revêtements et toile de verre"
+      },
+      {
+       "type": "p",
+       "texte": "Pose experte de toile de verre, intissé à peindre et revêtements muraux techniques. Idéal pour consolider durablement les murs anciens fissurés avant mise en peinture personnalisée."
+      },
+      {
+       "type": "h3",
+       "texte": "Rénovation après sinistre"
+      },
+      {
+       "type": "p",
+       "texte": "Remise en état après dégât des eaux : vérification préalable du séchage complet des murs, décapage des parties altérées, traitement des taches résiduelles et peinture isolante spéciale."
+      },
+      {
+       "type": "h3",
+       "texte": "Protection et propreté"
+      },
+      {
+       "type": "p",
+       "texte": "Chaque chantier commence par le calfeutrement minutieux de vos menuiseries et la protection intégrale des sols par bâchage lourd. Nettoyage méticuleux des pièces restituées à l'artisan."
+      }
+     ]
+    },
+    {
+     "h2": "Nos chantiers de peinture récents",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Découvrez nos réalisations d'intérieurs peints avec précision, rigueur et le sens du détail architectural."
+      },
+      {
+       "type": "img",
+       "fichier": "salon_spacieux",
+       "alt": "Salon spacieux avec murs peints en blanc doux"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation complète d'un séjour avec peinture mate velours blanc chaud"
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Downtowngal (Wikimedia Commons, CC BY-SA 3.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "salon_moderne",
+       "alt": "Salon contemporain aux finitions velours"
+      },
+      {
+       "type": "p",
+       "texte": "Finition velours et mise en valeur des volumes intérieurs"
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Fatma005 (Wikimedia Commons, CC BY-SA 4.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "application_rouleau",
+       "alt": "Application de peinture murale au rouleau"
+      },
+      {
+       "type": "p",
+       "texte": "Application régulière au rouleau microfibre sur mur préparé"
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Michael Cory (Wikimedia Commons, CC BY 2.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "teinte_murale",
+       "alt": "Application d une teinte bleutee au rouleau"
+      },
+      {
+       "type": "p",
+       "texte": "Mise en peinture murale et teintes personnalisées"
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Marc Falardeau (Wikimedia Commons, CC BY 2.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "preparation_chantier",
+       "alt": "Chantier protégé avec échelle et bâches"
+      },
+      {
+       "type": "p",
+       "texte": "Préparation minutieuse des surfaces et protection du chantier"
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Shixart1985 (Wikimedia Commons, CC BY 2.0)"
+      },
+      {
+       "type": "img",
+       "fichier": "enduit_ratissage",
+       "alt": "Ratissage et enduit des murs en rénovation"
+      },
+      {
+       "type": "p",
+       "texte": "Travaux d'enduit, ratissage et lissage des murs"
+      },
+      {
+       "type": "p",
+       "texte": "Photo : Shixart1985 (Wikimedia Commons, CC BY 2.0)"
+      }
+     ]
+    },
+    {
+     "h2": "Communes desservies en Gironde",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons à Bordeaux et dans les communes limitrophes pour tous vos travaux de rénovation et embellissement intérieur."
+      }
+     ]
+    },
+    {
+     "h2": "Comment se déroule votre chantier",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Une méthode claire et rigoureuse pour garantir la sérénité de vos travaux de peinture du premier contact à la réception."
+      },
+      {
+       "type": "li",
+       "texte": "1 Demande et premier échange Vous nous décrivez votre projet : nombre de pièces, surfaces estimées, état actuel des murs et délais souhaités pour vos travaux."
+      },
+      {
+       "type": "li",
+       "texte": "2 Visite sur place et diagnostic Nous nous déplaçons pour analyser l'état réel des fonds, vérifier l'absence d'humidité et vous conseiller sur le nuancier de teintes et finitions."
+      },
+      {
+       "type": "li",
+       "texte": "3 Devis transparent et détaillé Vous recevez un devis gratuit détaillant chaque poste : protection, préparation des supports, types d'enduits et peintures appliquées."
+      },
+      {
+       "type": "li",
+       "texte": "4 Réalisation soignée et réception Application des couches d'impression et de finition selon les règles de l'art, nettoyage complet du lieu et validation conjointe des travaux."
+      }
+     ]
+    },
+    {
+     "h2": "Questions fréquentes sur nos peintures",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Retrouvez les réponses aux interrogations régulières concernant les travaux de rénovation de peinture."
+      },
+      {
+       "type": "h3",
+       "texte": "Pourquoi la préparation des murs est-elle essentielle ?"
+      },
+      {
+       "type": "p",
+       "texte": "La préparation représente souvent plus de la moitié du temps de travail sur un chantier de qualité. Sans rebouchage des microfissures, ratissage complet et sous-couche adaptée, la peinture risque de s'écailler, de marquer les ombres ou d'absorber la lumière de manière hétérogène."
+      },
+      {
+       "type": "h3",
+       "texte": "Quelle différence entre finition mate, velours et satinée ?"
+      },
+      {
+       "type": "p",
+       "texte": "La finition mate absorbe la lumière et masque parfaitement les irrégularités (recommandée sur les plafonds). La finition velours offre un compromis moderne et doux, idéal pour les séjours et chambres. La finition satinée reflète la lumière et résiste au lessivage régulier, parfaite pour cuisines et salles d'eau."
+      },
+      {
+       "type": "h3",
+       "texte": "Peut-on repeindre immédiatement un mur après un dégât des eaux ?"
+      },
+      {
+       "type": "p",
+       "texte": "Non, il ne faut jamais appliquer de peinture sur un plâtre ou une plaque encore humide. Nous vérifions systématiquement le taux d'hygrométrie du support avant toute intervention. Un assèchement complet préalable est obligatoire pour éviter le cloquage et l'apparition de moisissures sous la peinture neuve."
+      },
+      {
+       "type": "h3",
+       "texte": "Comment tester les teintes avant d'arrêter son choix ?"
+      },
+      {
+       "type": "p",
+       "texte": "La lumière d'une pièce varie selon son orientation (nord, sud) et les heures de la journée. Nous vous accompagnons avec des nuanciers professionnels et pouvons appliquer des échantillons d'essai sur un pan de mur pour valider le rendu réel in situ."
+      }
+     ]
+    },
+    {
+     "h2": "Demandez votre devis de peinture",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Vous avez un projet de rénovation ou de décoration à Bordeaux, Mérignac, Pessac ou Talence ? Contactez votre artisan peintre pour une étude gratuite."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HousePainter",
+     "name": "Démo Peintre en bâtiment Bordeaux",
+     "url": "https://peintre.demo.invalid/",
+     "telephone": "+33 4 00 00 00 00",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "addressLocality": "Bordeaux",
+      "postalCode": "33000",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Bordeaux",
+      "Mérignac",
+      "Pessac",
+      "Talence"
+     ],
+     "image": "https://peintre.demo.invalid/images/salon_spacieux-960.webp"
+    }
+   ]
+  },
+  "/peintre-bordeaux/": {
+   "type": "commune",
+   "cible": "Bordeaux",
+   "title": "Peintre en bâtiment à Bordeaux — Démo Peintre en bâtiment",
+   "description": "Démo Peintre en bâtiment Bordeaux réalise vos travaux de peinture à Bordeaux : rénovation des murs, plafonds et boiseries. Devis clair et décennale.",
+   "h1": "Peintre à Bordeaux",
+   "kicker": "Intervention locale",
+   "chapeau": "Démo Peintre en bâtiment Bordeaux intervient à Bordeaux et dans les secteurs voisins pour la rénovation soignée de vos peintures intérieures, préparation des murs et finitions haut de gamme.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "salon_spacieux",
+     "alt": "Travaux de peinture intérieure réalisés à Bordeaux"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Nos services de peinture à Bordeaux",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un travail minutieux adapté aux spécificités de votre habitat, en maison individuelle comme en appartement à Bordeaux."
+      },
+      {
+       "type": "h3",
+       "texte": "Peinture intérieure complète"
+      },
+      {
+       "type": "p",
+       "texte": "Mise en peinture des murs, plafonds et cloisons avec des peintures écologiques et durables. Finitions mates sans reflets, velours élégantes ou satinées lessivables."
+      },
+      {
+       "type": "h3",
+       "texte": "Ratissage et enduits"
+      },
+      {
+       "type": "p",
+       "texte": "Rebouchage méthodique des fissures, ratissage complet des surfaces abîmées et ponçage minutieux pour une planéité irréprochable avant peinture."
+      },
+      {
+       "type": "h3",
+       "texte": "Laquage de menuiseries"
+      },
+      {
+       "type": "p",
+       "texte": "Restauration et laquage des boiseries intérieures, encadrements, plinthes et portes pour apporter une finition soignée et durable à votre intérieur."
+      }
+     ]
+    },
+    {
+     "h2": "Exemple de finition sur nos chantiers",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu du travail d'application soignée et de protection mis en œuvre sur nos chantiers à Bordeaux."
+      },
+      {
+       "type": "img",
+       "fichier": "salon_spacieux",
+       "alt": "Mise en peinture intérieure à Bordeaux"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation d'un salon avec peinture mate velours blanc chaud"
+      },
+      {
+       "type": "p",
+       "texte": "Réalisation d'artisan peintre qualifié"
+      },
+      {
+       "type": "img",
+       "fichier": "salon_moderne",
+       "alt": "Préparation et peinture de qualité à Bordeaux"
+      },
+      {
+       "type": "p",
+       "texte": "Préparation des fonds et application au rouleau professionnel"
+      },
+      {
+       "type": "p",
+       "texte": "Chantier soigné avec protection intégrale"
+      }
+     ]
+    },
+    {
+     "h2": "Interventions à proximité de Bordeaux",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également régulièrement sur les communes voisines suivantes :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre devis de peinture à Bordeaux",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Besoin d'un peintre qualifié à Bordeaux ? Contactez-nous par téléphone pour échanger sur votre projet ou obtenir une estimation gratuite."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HousePainter",
+     "name": "Démo Peintre en bâtiment Bordeaux",
+     "url": "https://peintre.demo.invalid/peintre-bordeaux/",
+     "telephone": "+33 4 00 00 00 00",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "addressLocality": "Bordeaux",
+      "postalCode": "33000",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Bordeaux",
+      "Mérignac",
+      "Pessac",
+      "Talence"
+     ],
+     "image": "https://peintre.demo.invalid/images/salon_spacieux-960.webp"
+    }
+   ]
+  },
+  "/peintre-merignac/": {
+   "type": "commune",
+   "cible": "Mérignac",
+   "title": "Peintre en bâtiment à Mérignac — Démo Peintre en bâtiment",
+   "description": "Artisan peintre qualifié à Mérignac pour vos rénovations de peintures intérieures, ratissage et laquage. Devis gratuit et assurance décennale.",
+   "h1": "Peintre à Mérignac",
+   "kicker": "Intervention locale",
+   "chapeau": "Démo Peintre en bâtiment Bordeaux intervient à Mérignac et dans les secteurs voisins pour la rénovation soignée de vos peintures intérieures, préparation des murs et finitions haut de gamme.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "salon_moderne",
+     "alt": "Travaux de peinture intérieure réalisés à Mérignac"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Nos services de peinture à Mérignac",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un travail minutieux adapté aux spécificités de votre habitat, en maison individuelle comme en appartement à Mérignac."
+      },
+      {
+       "type": "h3",
+       "texte": "Peinture intérieure complète"
+      },
+      {
+       "type": "p",
+       "texte": "Mise en peinture des murs, plafonds et cloisons avec des peintures écologiques et durables. Finitions mates sans reflets, velours élégantes ou satinées lessivables."
+      },
+      {
+       "type": "h3",
+       "texte": "Ratissage et enduits"
+      },
+      {
+       "type": "p",
+       "texte": "Rebouchage méthodique des fissures, ratissage complet des surfaces abîmées et ponçage minutieux pour une planéité irréprochable avant peinture."
+      },
+      {
+       "type": "h3",
+       "texte": "Laquage de menuiseries"
+      },
+      {
+       "type": "p",
+       "texte": "Restauration et laquage des boiseries intérieures, encadrements, plinthes et portes pour apporter une finition soignée et durable à votre intérieur."
+      }
+     ]
+    },
+    {
+     "h2": "Exemple de finition sur nos chantiers",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu du travail d'application soignée et de protection mis en œuvre sur nos chantiers à Mérignac."
+      },
+      {
+       "type": "img",
+       "fichier": "salon_moderne",
+       "alt": "Mise en peinture intérieure à Mérignac"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation d'un salon avec peinture mate velours blanc chaud"
+      },
+      {
+       "type": "p",
+       "texte": "Réalisation d'artisan peintre qualifié"
+      },
+      {
+       "type": "img",
+       "fichier": "preparation_chantier",
+       "alt": "Préparation et peinture de qualité à Mérignac"
+      },
+      {
+       "type": "p",
+       "texte": "Préparation des fonds et application au rouleau professionnel"
+      },
+      {
+       "type": "p",
+       "texte": "Chantier soigné avec protection intégrale"
+      }
+     ]
+    },
+    {
+     "h2": "Interventions à proximité de Mérignac",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également régulièrement sur les communes voisines suivantes :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre devis de peinture à Mérignac",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Besoin d'un peintre qualifié à Mérignac ? Contactez-nous par téléphone pour échanger sur votre projet ou obtenir une estimation gratuite."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HousePainter",
+     "name": "Démo Peintre en bâtiment Bordeaux",
+     "url": "https://peintre.demo.invalid/peintre-merignac/",
+     "telephone": "+33 4 00 00 00 00",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "addressLocality": "Mérignac",
+      "postalCode": "33000",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Bordeaux",
+      "Mérignac",
+      "Pessac",
+      "Talence"
+     ],
+     "image": "https://peintre.demo.invalid/images/salon_spacieux-960.webp"
+    }
+   ]
+  },
+  "/peintre-pessac/": {
+   "type": "commune",
+   "cible": "Pessac",
+   "title": "Peintre en bâtiment à Pessac — Démo Peintre en bâtiment",
+   "description": "Travaux soignés de peinture intérieure à Pessac : préparation minutieuse des supports, finitions soignées et devis gratuit garanti sous décennale.",
+   "h1": "Peintre à Pessac",
+   "kicker": "Intervention locale",
+   "chapeau": "Démo Peintre en bâtiment Bordeaux intervient à Pessac et dans les secteurs voisins pour la rénovation soignée de vos peintures intérieures, préparation des murs et finitions haut de gamme.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "teinte_murale",
+     "alt": "Travaux de peinture intérieure réalisés à Pessac"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Nos services de peinture à Pessac",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un travail minutieux adapté aux spécificités de votre habitat, en maison individuelle comme en appartement à Pessac."
+      },
+      {
+       "type": "h3",
+       "texte": "Peinture intérieure complète"
+      },
+      {
+       "type": "p",
+       "texte": "Mise en peinture des murs, plafonds et cloisons avec des peintures écologiques et durables. Finitions mates sans reflets, velours élégantes ou satinées lessivables."
+      },
+      {
+       "type": "h3",
+       "texte": "Ratissage et enduits"
+      },
+      {
+       "type": "p",
+       "texte": "Rebouchage méthodique des fissures, ratissage complet des surfaces abîmées et ponçage minutieux pour une planéité irréprochable avant peinture."
+      },
+      {
+       "type": "h3",
+       "texte": "Laquage de menuiseries"
+      },
+      {
+       "type": "p",
+       "texte": "Restauration et laquage des boiseries intérieures, encadrements, plinthes et portes pour apporter une finition soignée et durable à votre intérieur."
+      }
+     ]
+    },
+    {
+     "h2": "Exemple de finition sur nos chantiers",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu du travail d'application soignée et de protection mis en œuvre sur nos chantiers à Pessac."
+      },
+      {
+       "type": "img",
+       "fichier": "teinte_murale",
+       "alt": "Mise en peinture intérieure à Pessac"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation d'un salon avec peinture mate velours blanc chaud"
+      },
+      {
+       "type": "p",
+       "texte": "Réalisation d'artisan peintre qualifié"
+      },
+      {
+       "type": "img",
+       "fichier": "enduit_ratissage",
+       "alt": "Préparation et peinture de qualité à Pessac"
+      },
+      {
+       "type": "p",
+       "texte": "Préparation des fonds et application au rouleau professionnel"
+      },
+      {
+       "type": "p",
+       "texte": "Chantier soigné avec protection intégrale"
+      }
+     ]
+    },
+    {
+     "h2": "Interventions à proximité de Pessac",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également régulièrement sur les communes voisines suivantes :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre devis de peinture à Pessac",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Besoin d'un peintre qualifié à Pessac ? Contactez-nous par téléphone pour échanger sur votre projet ou obtenir une estimation gratuite."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HousePainter",
+     "name": "Démo Peintre en bâtiment Bordeaux",
+     "url": "https://peintre.demo.invalid/peintre-pessac/",
+     "telephone": "+33 4 00 00 00 00",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "addressLocality": "Pessac",
+      "postalCode": "33000",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Bordeaux",
+      "Mérignac",
+      "Pessac",
+      "Talence"
+     ],
+     "image": "https://peintre.demo.invalid/images/salon_spacieux-960.webp"
+    }
+   ]
+  },
+  "/peintre-talence/": {
+   "type": "commune",
+   "cible": "Talence",
+   "title": "Peintre en bâtiment à Talence — Démo Peintre en bâtiment",
+   "description": "Entreprise de peinture en bâtiment à Talence : mise en peinture des murs, boiseries et plafonds avec des finitions durables. Devis sans engagement.",
+   "h1": "Peintre à Talence",
+   "kicker": "Intervention locale",
+   "chapeau": "Démo Peintre en bâtiment Bordeaux intervient à Talence et dans les secteurs voisins pour la rénovation soignée de vos peintures intérieures, préparation des murs et finitions haut de gamme.",
+   "heroImages": [
+    {
+     "type": "img",
+     "fichier": "application_rouleau",
+     "alt": "Travaux de peinture intérieure réalisés à Talence"
+    }
+   ],
+   "sections": [
+    {
+     "h2": "Nos services de peinture à Talence",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Un travail minutieux adapté aux spécificités de votre habitat, en maison individuelle comme en appartement à Talence."
+      },
+      {
+       "type": "h3",
+       "texte": "Peinture intérieure complète"
+      },
+      {
+       "type": "p",
+       "texte": "Mise en peinture des murs, plafonds et cloisons avec des peintures écologiques et durables. Finitions mates sans reflets, velours élégantes ou satinées lessivables."
+      },
+      {
+       "type": "h3",
+       "texte": "Ratissage et enduits"
+      },
+      {
+       "type": "p",
+       "texte": "Rebouchage méthodique des fissures, ratissage complet des surfaces abîmées et ponçage minutieux pour une planéité irréprochable avant peinture."
+      },
+      {
+       "type": "h3",
+       "texte": "Laquage de menuiseries"
+      },
+      {
+       "type": "p",
+       "texte": "Restauration et laquage des boiseries intérieures, encadrements, plinthes et portes pour apporter une finition soignée et durable à votre intérieur."
+      }
+     ]
+    },
+    {
+     "h2": "Exemple de finition sur nos chantiers",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu du travail d'application soignée et de protection mis en œuvre sur nos chantiers à Talence."
+      },
+      {
+       "type": "img",
+       "fichier": "application_rouleau",
+       "alt": "Mise en peinture intérieure à Talence"
+      },
+      {
+       "type": "p",
+       "texte": "Rénovation d'un salon avec peinture mate velours blanc chaud"
+      },
+      {
+       "type": "p",
+       "texte": "Réalisation d'artisan peintre qualifié"
+      },
+      {
+       "type": "img",
+       "fichier": "salon_spacieux",
+       "alt": "Préparation et peinture de qualité à Talence"
+      },
+      {
+       "type": "p",
+       "texte": "Préparation des fonds et application au rouleau professionnel"
+      },
+      {
+       "type": "p",
+       "texte": "Chantier soigné avec protection intégrale"
+      }
+     ]
+    },
+    {
+     "h2": "Interventions à proximité de Talence",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également régulièrement sur les communes voisines suivantes :"
+      }
+     ]
+    },
+    {
+     "h2": "Votre devis de peinture à Talence",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Besoin d'un peintre qualifié à Talence ? Contactez-nous par téléphone pour échanger sur votre projet ou obtenir une estimation gratuite."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "HousePainter",
+     "name": "Démo Peintre en bâtiment Bordeaux",
+     "url": "https://peintre.demo.invalid/peintre-talence/",
+     "telephone": "+33 4 00 00 00 00",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "addressLocality": "Talence",
+      "postalCode": "33000",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Bordeaux",
+      "Mérignac",
+      "Pessac",
+      "Talence"
+     ],
+     "image": "https://peintre.demo.invalid/images/salon_spacieux-960.webp"
+    }
+   ]
+  },
+  "/mentions-legales/": {
+   "type": "legal",
+   "title": "Mentions légales — Démo Peintre en bâtiment Bordeaux",
+   "description": "Mentions légales et informations juridiques du site de démonstration Démo Peintre en bâtiment Bordeaux. Entreprise fictive et assurance décennale.",
+   "h1": "Mentions légales",
+   "kicker": "",
+   "chapeau": "Site de démonstration : entreprise fictive.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "1. Identification de l'entreprise",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Site de démonstration : entreprise fictive."
+      },
+      {
+       "type": "p",
+       "texte": "Le présent site internet est une vitrine de démonstration technique réalisée pour illustrer les fonctionnalités de la solution Presti pour les artisans peintres en bâtiment."
+      },
+      {
+       "type": "li",
+       "texte": "Nom commercial : Démo Peintre en bâtiment Bordeaux"
+      },
+      {
+       "type": "li",
+       "texte": "Forme juridique : Entreprise artisanale (démonstration)"
+      },
+      {
+       "type": "li",
+       "texte": "Numéro SIREN : 000000000"
+      },
+      {
+       "type": "li",
+       "texte": "Adresse du siège : 1 rue de la Démonstration, 33000 Bordeaux, France"
+      },
+      {
+       "type": "li",
+       "texte": "Téléphone : +33 4 00 00 00 00"
+      },
+      {
+       "type": "li",
+       "texte": "Adresse email : contact@peintre.demo.invalid"
+      },
+      {
+       "type": "li",
+       "texte": "Directeur de la publication : L'artisan peintre en démonstration"
+      }
+     ]
+    },
+    {
+     "h2": "2. Assurance responsabilité civile et décennale",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "L'entreprise dispose d'un contrat d'assurance décennale et responsabilité civile professionnelle conformément aux articles L. 241-1 et suivants du Code des assurances :"
+      },
+      {
+       "type": "li",
+       "texte": "Compagnie d'assurance : Assureur fictif"
+      },
+      {
+       "type": "li",
+       "texte": "Numéro de police décennale : DEMO-0001"
+      },
+      {
+       "type": "li",
+       "texte": "Couverture géographique : France métropolitaine"
+      }
+     ]
+    },
+    {
+     "h2": "3. Hébergement du site",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Le site internet est hébergé sur une infrastructure de serveurs sécurisée conforme aux normes en vigueur :"
+      },
+      {
+       "type": "li",
+       "texte": "Hébergeur : Vercel Inc."
+      },
+      {
+       "type": "li",
+       "texte": "Adresse : 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis"
+      },
+      {
+       "type": "li",
+       "texte": "Site web : https://vercel.com"
+      }
+     ]
+    },
+    {
+     "h2": "4. Crédits photographiques",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les photographies d'illustration utilisées sur ce site de démonstration proviennent de Wikimedia Commons sous licences libres autorisées :"
+      },
+      {
+       "type": "li",
+       "texte": "Downtowngal : Empty apartment living room (Licence CC BY-SA 3.0) — Source : Wikimedia Commons",
+       "lien": "https://commons.wikimedia.org/wiki/File:Empty_apartment_living_room.jpg"
+      },
+      {
+       "type": "li",
+       "texte": "Fatma005 : Modern Living Room (Licence CC BY-SA 4.0) — Source : Wikimedia Commons",
+       "lien": "https://commons.wikimedia.org/wiki/File:Modern_Living_Room.jpg"
+      },
+      {
+       "type": "li",
+       "texte": "Michael Cory : Paint roller 4 (Licence CC BY 2.0) — Source : Wikimedia Commons",
+       "lien": "https://commons.wikimedia.org/wiki/File:Paint_roller_4.jpg"
+      },
+      {
+       "type": "li",
+       "texte": "Marc Falardeau : Blue paint roller (Licence CC BY 2.0) — Source : Wikimedia Commons",
+       "lien": "https://commons.wikimedia.org/wiki/File:Blue_paint_roller_(6819216874).jpg"
+      },
+      {
+       "type": "li",
+       "texte": "Shixart1985 : Ladder stands against wall & Room in renovation (Licence CC BY 2.0) — Source : Wikimedia Commons",
+       "lien": "https://commons.wikimedia.org/wiki/File:Ladder_stands_against_wall_in_room_during_home_renovation_work.jpg"
+      },
+      {
+       "type": "li",
+       "texte": "Pixel.la : Art wall brush painting (Licence CC0) — Source : Wikimedia Commons",
+       "lien": "https://commons.wikimedia.org/wiki/File:Art-wall-brush-painting_(23698214684).jpg"
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  },
+  "/confidentialite/": {
+   "type": "legal",
+   "title": "Politique de confidentialité — Démo Peintre Bordeaux",
+   "description": "Politique de protection des données personnelles et respect de la vie privée sur le site de démonstration Démo Peintre en bâtiment Bordeaux.",
+   "h1": "Politique de confidentialité",
+   "kicker": "",
+   "chapeau": "Dans le cadre de son activité de démonstration technique, le site ne collecte aucune donnée à des fins commerciales ou publicitaires. Les informations pouvant être transmises lors d'une simulation de demande de devis (nom, numéro de téléphone, adresse courriel, description du projet) sont exclusivement réservées au traitement de la demande de contact.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "1. Collecte des données personnelles",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Dans le cadre de son activité de démonstration technique, le site ne collecte aucune donnée à des fins commerciales ou publicitaires. Les informations pouvant être transmises lors d'une simulation de demande de devis (nom, numéro de téléphone, adresse courriel, description du projet) sont exclusivement réservées au traitement de la demande de contact."
+      },
+      {
+       "type": "p",
+       "texte": "Aucune donnée n'est cédée, louée ou transmise à des tiers ni utilisée pour du démarchage non sollicité."
+      }
+     ]
+    },
+    {
+     "h2": "2. Finalité et durée de conservation",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les données de contact collectées pour l'établissement d'un devis sont conservées pendant la durée strictement nécessaire à l'échange commercial et aux obligations légales applicables aux artisans du bâtiment (jusqu'à 3 ans en phase de prospection, et archivage selon les règles comptables en cas de contrat)."
+      }
+     ]
+    },
+    {
+     "h2": "3. Cookies et traceurs tiers",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ce site internet respecte scrupuleusement la vie privée de ses visiteurs :"
+      },
+      {
+       "type": "li",
+       "texte": "Aucun cookie publicitaire : aucun réseau d'annonceurs ni pixel de ciblage n'est installé."
+      },
+      {
+       "type": "li",
+       "texte": "Aucun outil de pistage invasif : aucune mesure d'audience intrusive n'est déposée sur votre navigateur."
+      },
+      {
+       "type": "li",
+       "texte": "Autonomie technique : l'intégralité des polices, images et scripts sont auto-hébergés sans faire appel à des serveurs tiers."
+      }
+     ]
+    },
+    {
+     "h2": "4. Vos droits (RGPD)",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, d'effacement et de portabilité de vos données personnelles."
+      },
+      {
+       "type": "p",
+       "texte": "Pour toute demande, vous pouvez contacter l'artisan par courriel à l'adresse suivante : contact@peintre.demo.invalid ."
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  }
+ }
+}

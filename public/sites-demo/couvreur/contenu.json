@@ -1,0 +1,905 @@
+{
+ "metier": "couvreur",
+ "extrait_le": "2026-09-14",
+ "pages": {
+  "/": {
+   "type": "accueil",
+   "title": "Artisan Couvreur à Strasbourg — Démo Couvreur Strasbourg",
+   "description": "Démo Couvreur Strasbourg : travaux de couverture, charpente et zinguerie à Strasbourg et dans tout le Bas-Rhin. Devis gratuit sous 48h.",
+   "h1": "Couvreur à Strasbourg — Démo Couvreur Strasbourg",
+   "kicker": "",
+   "chapeau": "Artisan couvreur zingueur à Strasbourg et dans le Bas-Rhin. Rénovation de toiture, pose de tuiles, étanchéité, zinguerie et réparation de fuites avec garantie décennale.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Nos prestations de toiture",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous réalisons l'ensemble de vos travaux de couverture et zinguerie dans les règles de l'art pour assurer la pérennité et l'isolation thermique de votre maison."
+      },
+      {
+       "type": "h3",
+       "texte": "Rénovation de toiture"
+      },
+      {
+       "type": "p",
+       "texte": "Dépose de l'ancienne couverture, réfection du liteonnage, pose d'écran sous-toiture HPV et installation de tuiles mécaniques ou plates."
+      },
+      {
+       "type": "h3",
+       "texte": "Zinguerie & étanchéité"
+      },
+      {
+       "type": "p",
+       "texte": "Façonnage et pose de gouttières en zinc, chéneaux, abergements de cheminée, noues et solins pour une évacuation parfaite des eaux pluviales."
+      },
+      {
+       "type": "h3",
+       "texte": "Charpente & isolation"
+      },
+      {
+       "type": "p",
+       "texte": "Contrôle de l'ossature bois, remplacement de chevrons endommagés, traitement fongicide et pose d'isolant sous toiture."
+      },
+      {
+       "type": "h3",
+       "texte": "Recherche de fuites"
+      },
+      {
+       "type": "p",
+       "texte": "Diagnostic précis des infiltrations, remplacement de tuiles cassées, réfection d'étanchéité et mise en sécurité d'urgence."
+      }
+     ]
+    },
+    {
+     "h2": "Nos réalisations récentes",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Découvrez quelques exemples de chantiers de couverture et zinguerie réalisés dans l'agglomération strasbourgeoise."
+      },
+      {
+       "type": "img",
+       "fichier": "realisation1",
+       "alt": "Chantier de charpente et couverture"
+      },
+      {
+       "type": "img",
+       "fichier": "realisation2",
+       "alt": "Toiture nettoyée et étanchéifiée"
+      },
+      {
+       "type": "img",
+       "fichier": "realisation3",
+       "alt": "Pose de tuiles neuves"
+      }
+     ]
+    },
+    {
+     "h2": "Zone d'intervention dans le Bas-Rhin",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons sur l'ensemble de l'Eurométropole de Strasbourg et dans les communes limitrophes pour tous vos travaux de toiture :"
+      }
+     ]
+    },
+    {
+     "h2": "Comment se déroule votre projet",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Prise de contact"
+      },
+      {
+       "type": "p",
+       "texte": "Vous nous décrivez votre projet par téléphone ou via notre formulaire en ligne."
+      },
+      {
+       "type": "h3",
+       "texte": "Visite sur site"
+      },
+      {
+       "type": "p",
+       "texte": "Nous examinons la toiture, mesurons les surfaces et identifions les contraintes techniques."
+      },
+      {
+       "type": "h3",
+       "texte": "Devis détaillé"
+      },
+      {
+       "type": "p",
+       "texte": "Nous vous adressons un devis complet avec le détail des matériaux et des interventions."
+      },
+      {
+       "type": "h3",
+       "texte": "Réalisation"
+      },
+      {
+       "type": "p",
+       "texte": "Nous planifions et exécutons le chantier avec rigueur, dans le respect des normes en vigueur."
+      }
+     ]
+    },
+    {
+     "h2": "Questions fréquentes sur la toiture",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Comment savoir si ma toiture a besoin d'être rénovée ?"
+      },
+      {
+       "type": "p",
+       "texte": "Des signes visibles comme des tuiles poreuses, ébréchées ou déplacées, des traces d'humidité dans les combles, ou la présence excessive de mousse indiquent qu'un diagnostic de votre couverture est nécessaire."
+      },
+      {
+       "type": "h3",
+       "texte": "Intervenez-vous en cas de météo défavorable ?"
+      },
+      {
+       "type": "p",
+       "texte": "Pour des raisons évidentes de sécurité des artisans et pour préserver l'étanchéité de votre habitation, les chantiers de toiture ne peuvent être engagés sous de fortes intempéries. En cas d'urgence, nous posons un bâchage temporaire."
+      },
+      {
+       "type": "h3",
+       "texte": "Quelles garanties couvrent vos travaux de couverture ?"
+      },
+      {
+       "type": "p",
+       "texte": "L'ensemble de nos travaux de réfection de toiture et de charpente bénéficie de la garantie décennale (Assureur fictif, police n° DEMO-0001), vous protégeant contre tout vice pendant 10 ans."
+      },
+      {
+       "type": "h3",
+       "texte": "Quelle est l'importance de la zinguerie sur une toiture ?"
+      },
+      {
+       "type": "p",
+       "texte": "Les éléments de zinguerie (abergements, chéneaux, noues, gouttières) assurent la jonction étanche entre les différents pans de toiture et les maçonneries. Une zinguerie défaillante est la cause principale des infiltrations d'eau."
+      }
+     ]
+    },
+    {
+     "h2": "Demander un devis gratuit",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Adresse"
+      },
+      {
+       "type": "p",
+       "texte": "1 rue de la Démonstration, 67000 Strasbourg"
+      },
+      {
+       "type": "h3",
+       "texte": "Téléphone"
+      },
+      {
+       "type": "p",
+       "texte": "+33 4 00 00 00 00"
+      },
+      {
+       "type": "h3",
+       "texte": "Horaires d'ouverture"
+      },
+      {
+       "type": "p",
+       "texte": "Lundi–vendredi 8 h–18 h"
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "RoofingContractor",
+     "name": "Démo Couvreur Strasbourg",
+     "url": "https://couvreur.demo.invalid/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://couvreur.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "67000",
+      "addressLocality": "Strasbourg",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Strasbourg",
+      "Schiltigheim",
+      "Illkirch-Graffenstaden",
+      "Lingolsheim"
+     ]
+    }
+   ]
+  },
+  "/couvreur-strasbourg/": {
+   "type": "commune",
+   "cible": "Strasbourg",
+   "title": "Couvreur Zingueur à Strasbourg — Démo Couvreur Strasbourg",
+   "description": "Artisan couvreur intervenant à Strasbourg pour la réfection de toiture, pose de tuiles, zinguerie et réparation de fuites. Devis rapide.",
+   "h1": "Couvreur à Strasbourg",
+   "kicker": ">",
+   "chapeau": "Démo Couvreur Strasbourg intervient à Strasbourg et dans les communes voisines pour la rénovation de toiture, le remplacement de tuiles, les travaux de zinguerie et la réparation de fuites. Nous mettons notre savoir-faire artisanal au service de la protection de votre habitation.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Nos travaux de toiture à Strasbourg",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Chaque toiture présente ses spécificités selon son exposition et les matériaux utilisés. À Strasbourg, nous réalisons l'ensemble des interventions de couverture :"
+      },
+      {
+       "type": "h3",
+       "texte": "Réfection de toiture"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de tuiles abîmées ou poreuses, pose de liteaux neufs et écran pare-pluie pour une étanchéité parfaite à Strasbourg."
+      },
+      {
+       "type": "h3",
+       "texte": "Travaux de zinguerie"
+      },
+      {
+       "type": "p",
+       "texte": "Installation et remplacement de gouttières, noues, rives et abergements de cheminées pour une canalisation idéale des eaux pluviales."
+      },
+      {
+       "type": "h3",
+       "texte": "Entretien & démoussage"
+      },
+      {
+       "type": "p",
+       "texte": "Nettoyage soigné, traitement anti-mousse préventif et curatif, et application d'hydrofuge pour prolonger la vie de vos tuiles."
+      }
+     ]
+    },
+    {
+     "h2": "Exemples de réalisations sur toiture",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu de nos réalisations de couverture et zinguerie dans le secteur :"
+      },
+      {
+       "type": "img",
+       "fichier": "realisation4",
+       "alt": "Rénovation de toiture à Strasbourg"
+      },
+      {
+       "type": "img",
+       "fichier": "realisation5",
+       "alt": "Contrôle d'étanchéité à Strasbourg"
+      }
+     ]
+    },
+    {
+     "h2": "Déroulement d'une intervention à Strasbourg",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Diagnostic initial"
+      },
+      {
+       "type": "p",
+       "texte": "Nous convenons d'un rendez-vous sur place à Strasbourg pour évaluer précisément l'état de votre toiture et charpente."
+      },
+      {
+       "type": "h3",
+       "texte": "Chiffrage gratuit"
+      },
+      {
+       "type": "p",
+       "texte": "Nous établissons un devis clair et transparent sans aucun engagement, mentionnant chaque poste de travaux."
+      },
+      {
+       "type": "h3",
+       "texte": "Travaux garantis"
+      },
+      {
+       "type": "p",
+       "texte": "Nous exécutons le chantier avec soin et appliquons la garantie décennale sur l'ensemble des travaux de couverture."
+      }
+     ]
+    },
+    {
+     "h2": "Communes voisines également desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Strasbourg :"
+      }
+     ]
+    },
+    {
+     "h2": "Besoin d'un couvreur à Strasbourg ?",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Contactez-nous au +33 4 00 00 00 00 ou demandez votre devis gratuit en quelques clics."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "RoofingContractor",
+     "name": "Démo Couvreur Strasbourg",
+     "url": "https://couvreur.demo.invalid/couvreur-strasbourg/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://couvreur.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "67000",
+      "addressLocality": "Strasbourg",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Strasbourg",
+      "Schiltigheim",
+      "Illkirch-Graffenstaden",
+      "Lingolsheim"
+     ]
+    }
+   ]
+  },
+  "/couvreur-schiltigheim/": {
+   "type": "commune",
+   "cible": "Schiltigheim",
+   "title": "Couvreur à Schiltigheim — Démo Couvreur Strasbourg",
+   "description": "Travaux de toiture à Schiltigheim : réfection de couverture en tuiles, étanchéité, zinguerie et réparation. Artisan assuré décennale.",
+   "h1": "Couvreur à Schiltigheim",
+   "kicker": ">",
+   "chapeau": "Démo Couvreur Strasbourg intervient à Schiltigheim et dans les communes voisines pour la rénovation de toiture, le remplacement de tuiles, les travaux de zinguerie et la réparation de fuites. Nous mettons notre savoir-faire artisanal au service de la protection de votre habitation.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Nos travaux de toiture à Schiltigheim",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Chaque toiture présente ses spécificités selon son exposition et les matériaux utilisés. À Schiltigheim, nous réalisons l'ensemble des interventions de couverture :"
+      },
+      {
+       "type": "h3",
+       "texte": "Réfection de toiture"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de tuiles abîmées ou poreuses, pose de liteaux neufs et écran pare-pluie pour une étanchéité parfaite à Schiltigheim."
+      },
+      {
+       "type": "h3",
+       "texte": "Travaux de zinguerie"
+      },
+      {
+       "type": "p",
+       "texte": "Installation et remplacement de gouttières, noues, rives et abergements de cheminées pour une canalisation idéale des eaux pluviales."
+      },
+      {
+       "type": "h3",
+       "texte": "Entretien & démoussage"
+      },
+      {
+       "type": "p",
+       "texte": "Nettoyage soigné, traitement anti-mousse préventif et curatif, et application d'hydrofuge pour prolonger la vie de vos tuiles."
+      }
+     ]
+    },
+    {
+     "h2": "Exemples de réalisations sur toiture",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu de nos réalisations de couverture et zinguerie dans le secteur :"
+      },
+      {
+       "type": "img",
+       "fichier": "realisation4",
+       "alt": "Rénovation de toiture à Schiltigheim"
+      },
+      {
+       "type": "img",
+       "fichier": "realisation5",
+       "alt": "Contrôle d'étanchéité à Schiltigheim"
+      }
+     ]
+    },
+    {
+     "h2": "Déroulement d'une intervention à Schiltigheim",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Diagnostic initial"
+      },
+      {
+       "type": "p",
+       "texte": "Nous convenons d'un rendez-vous sur place à Schiltigheim pour évaluer précisément l'état de votre toiture et charpente."
+      },
+      {
+       "type": "h3",
+       "texte": "Chiffrage gratuit"
+      },
+      {
+       "type": "p",
+       "texte": "Nous établissons un devis clair et transparent sans aucun engagement, mentionnant chaque poste de travaux."
+      },
+      {
+       "type": "h3",
+       "texte": "Travaux garantis"
+      },
+      {
+       "type": "p",
+       "texte": "Nous exécutons le chantier avec soin et appliquons la garantie décennale sur l'ensemble des travaux de couverture."
+      }
+     ]
+    },
+    {
+     "h2": "Communes voisines également desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Schiltigheim :"
+      }
+     ]
+    },
+    {
+     "h2": "Besoin d'un couvreur à Schiltigheim ?",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Contactez-nous au +33 4 00 00 00 00 ou demandez votre devis gratuit en quelques clics."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "RoofingContractor",
+     "name": "Démo Couvreur Strasbourg",
+     "url": "https://couvreur.demo.invalid/couvreur-schiltigheim/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://couvreur.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "67000",
+      "addressLocality": "Strasbourg",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Strasbourg",
+      "Schiltigheim",
+      "Illkirch-Graffenstaden",
+      "Lingolsheim"
+     ]
+    }
+   ]
+  },
+  "/couvreur-illkirch-graffenstaden/": {
+   "type": "commune",
+   "cible": "Illkirch-Graffenstaden",
+   "title": "Couvreur à Illkirch-Graffenstaden — Démo Couvreur Strasbourg",
+   "description": "Couvreur professionnel à Illkirch-Graffenstaden : pose de tuiles, réparation de toiture, étanchéité et gouttières. Devis gratuit.",
+   "h1": "Couvreur à Illkirch-Graffenstaden",
+   "kicker": ">",
+   "chapeau": "Démo Couvreur Strasbourg intervient à Illkirch-Graffenstaden et dans les communes voisines pour la rénovation de toiture, le remplacement de tuiles, les travaux de zinguerie et la réparation de fuites. Nous mettons notre savoir-faire artisanal au service de la protection de votre habitation.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Nos travaux de toiture à Illkirch-Graffenstaden",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Chaque toiture présente ses spécificités selon son exposition et les matériaux utilisés. À Illkirch-Graffenstaden, nous réalisons l'ensemble des interventions de couverture :"
+      },
+      {
+       "type": "h3",
+       "texte": "Réfection de toiture"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de tuiles abîmées ou poreuses, pose de liteaux neufs et écran pare-pluie pour une étanchéité parfaite à Illkirch-Graffenstaden."
+      },
+      {
+       "type": "h3",
+       "texte": "Travaux de zinguerie"
+      },
+      {
+       "type": "p",
+       "texte": "Installation et remplacement de gouttières, noues, rives et abergements de cheminées pour une canalisation idéale des eaux pluviales."
+      },
+      {
+       "type": "h3",
+       "texte": "Entretien & démoussage"
+      },
+      {
+       "type": "p",
+       "texte": "Nettoyage soigné, traitement anti-mousse préventif et curatif, et application d'hydrofuge pour prolonger la vie de vos tuiles."
+      }
+     ]
+    },
+    {
+     "h2": "Exemples de réalisations sur toiture",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu de nos réalisations de couverture et zinguerie dans le secteur :"
+      },
+      {
+       "type": "img",
+       "fichier": "realisation4",
+       "alt": "Rénovation de toiture à Illkirch-Graffenstaden"
+      },
+      {
+       "type": "img",
+       "fichier": "realisation5",
+       "alt": "Contrôle d'étanchéité à Illkirch-Graffenstaden"
+      }
+     ]
+    },
+    {
+     "h2": "Déroulement d'une intervention à Illkirch-Graffenstaden",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Diagnostic initial"
+      },
+      {
+       "type": "p",
+       "texte": "Nous convenons d'un rendez-vous sur place à Illkirch-Graffenstaden pour évaluer précisément l'état de votre toiture et charpente."
+      },
+      {
+       "type": "h3",
+       "texte": "Chiffrage gratuit"
+      },
+      {
+       "type": "p",
+       "texte": "Nous établissons un devis clair et transparent sans aucun engagement, mentionnant chaque poste de travaux."
+      },
+      {
+       "type": "h3",
+       "texte": "Travaux garantis"
+      },
+      {
+       "type": "p",
+       "texte": "Nous exécutons le chantier avec soin et appliquons la garantie décennale sur l'ensemble des travaux de couverture."
+      }
+     ]
+    },
+    {
+     "h2": "Communes voisines également desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Illkirch-Graffenstaden :"
+      }
+     ]
+    },
+    {
+     "h2": "Besoin d'un couvreur à Illkirch-Graffenstaden ?",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Contactez-nous au +33 4 00 00 00 00 ou demandez votre devis gratuit en quelques clics."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "RoofingContractor",
+     "name": "Démo Couvreur Strasbourg",
+     "url": "https://couvreur.demo.invalid/couvreur-illkirch-graffenstaden/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://couvreur.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "67000",
+      "addressLocality": "Strasbourg",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Strasbourg",
+      "Schiltigheim",
+      "Illkirch-Graffenstaden",
+      "Lingolsheim"
+     ]
+    }
+   ]
+  },
+  "/couvreur-lingolsheim/": {
+   "type": "commune",
+   "cible": "Lingolsheim",
+   "title": "Couvreur à Lingolsheim — Démo Couvreur Strasbourg",
+   "description": "Artisan couvreur à Lingolsheim pour vos travaux de couverture, réfection de toiture et charpente. Intervention soignée et garantie.",
+   "h1": "Couvreur à Lingolsheim",
+   "kicker": ">",
+   "chapeau": "Démo Couvreur Strasbourg intervient à Lingolsheim et dans les communes voisines pour la rénovation de toiture, le remplacement de tuiles, les travaux de zinguerie et la réparation de fuites. Nous mettons notre savoir-faire artisanal au service de la protection de votre habitation.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Nos travaux de toiture à Lingolsheim",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Chaque toiture présente ses spécificités selon son exposition et les matériaux utilisés. À Lingolsheim, nous réalisons l'ensemble des interventions de couverture :"
+      },
+      {
+       "type": "h3",
+       "texte": "Réfection de toiture"
+      },
+      {
+       "type": "p",
+       "texte": "Remplacement de tuiles abîmées ou poreuses, pose de liteaux neufs et écran pare-pluie pour une étanchéité parfaite à Lingolsheim."
+      },
+      {
+       "type": "h3",
+       "texte": "Travaux de zinguerie"
+      },
+      {
+       "type": "p",
+       "texte": "Installation et remplacement de gouttières, noues, rives et abergements de cheminées pour une canalisation idéale des eaux pluviales."
+      },
+      {
+       "type": "h3",
+       "texte": "Entretien & démoussage"
+      },
+      {
+       "type": "p",
+       "texte": "Nettoyage soigné, traitement anti-mousse préventif et curatif, et application d'hydrofuge pour prolonger la vie de vos tuiles."
+      }
+     ]
+    },
+    {
+     "h2": "Exemples de réalisations sur toiture",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Aperçu de nos réalisations de couverture et zinguerie dans le secteur :"
+      },
+      {
+       "type": "img",
+       "fichier": "realisation4",
+       "alt": "Rénovation de toiture à Lingolsheim"
+      },
+      {
+       "type": "img",
+       "fichier": "realisation5",
+       "alt": "Contrôle d'étanchéité à Lingolsheim"
+      }
+     ]
+    },
+    {
+     "h2": "Déroulement d'une intervention à Lingolsheim",
+     "blocs": [
+      {
+       "type": "h3",
+       "texte": "Diagnostic initial"
+      },
+      {
+       "type": "p",
+       "texte": "Nous convenons d'un rendez-vous sur place à Lingolsheim pour évaluer précisément l'état de votre toiture et charpente."
+      },
+      {
+       "type": "h3",
+       "texte": "Chiffrage gratuit"
+      },
+      {
+       "type": "p",
+       "texte": "Nous établissons un devis clair et transparent sans aucun engagement, mentionnant chaque poste de travaux."
+      },
+      {
+       "type": "h3",
+       "texte": "Travaux garantis"
+      },
+      {
+       "type": "p",
+       "texte": "Nous exécutons le chantier avec soin et appliquons la garantie décennale sur l'ensemble des travaux de couverture."
+      }
+     ]
+    },
+    {
+     "h2": "Communes voisines également desservies",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nous intervenons également dans les localités voisines de Lingolsheim :"
+      }
+     ]
+    },
+    {
+     "h2": "Besoin d'un couvreur à Lingolsheim ?",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Contactez-nous au +33 4 00 00 00 00 ou demandez votre devis gratuit en quelques clics."
+      }
+     ]
+    }
+   ],
+   "jsonld": [
+    {
+     "@context": "https://schema.org",
+     "@type": "RoofingContractor",
+     "name": "Démo Couvreur Strasbourg",
+     "url": "https://couvreur.demo.invalid/couvreur-lingolsheim/",
+     "telephone": "+33 4 00 00 00 00",
+     "image": "https://couvreur.demo.invalid/images/hero-960.webp",
+     "openingHours": "Mo-Fr 08:00-18:00",
+     "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 rue de la Démonstration",
+      "postalCode": "67000",
+      "addressLocality": "Strasbourg",
+      "addressCountry": "FR"
+     },
+     "areaServed": [
+      "Strasbourg",
+      "Schiltigheim",
+      "Illkirch-Graffenstaden",
+      "Lingolsheim"
+     ]
+    }
+   ]
+  },
+  "/mentions-legales/": {
+   "type": "legal",
+   "title": "Mentions légales — Démo Couvreur Strasbourg",
+   "description": "Mentions légales et informations obligatoires de l'entreprise Démo Couvreur Strasbourg. Site de démonstration fictif.",
+   "h1": "Mentions légales",
+   "kicker": ">",
+   "chapeau": "Site de démonstration : entreprise fictive.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Éditeur du site",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Nom commercial : Démo Couvreur Strasbourg"
+      },
+      {
+       "type": "p",
+       "texte": "Activité : Travaux de couverture, charpente et zinguerie"
+      },
+      {
+       "type": "p",
+       "texte": "Adresse : 1 rue de la Démonstration, 67000 Strasbourg"
+      },
+      {
+       "type": "p",
+       "texte": "Téléphone : +33 4 00 00 00 00"
+      },
+      {
+       "type": "p",
+       "texte": "Email : contact@couvreur.demo.invalid"
+      },
+      {
+       "type": "p",
+       "texte": "Numéro SIREN : 000000000"
+      },
+      {
+       "type": "p",
+       "texte": "Directeur de la publication : Le gérant de Démo Couvreur Strasbourg"
+      }
+     ]
+    },
+    {
+     "h2": "Assurance décennale",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Assureur : Assureur fictif"
+      },
+      {
+       "type": "p",
+       "texte": "Numéro de contrat : DEMO-0001"
+      },
+      {
+       "type": "p",
+       "texte": "Couverture géographique : France métropolitaine"
+      }
+     ]
+    },
+    {
+     "h2": "Hébergement",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ce site statique est hébergé par Vercel Inc., 340 S Lemon Ave #4133 Walnut, CA 91789, USA."
+      }
+     ]
+    },
+    {
+     "h2": "Crédits photographiques",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les photographies utilisées sur ce site de démonstration sont issues de Wikimedia Commons et publiées sous licences libres :"
+      },
+      {
+       "type": "li",
+       "texte": "Sverdrup : Rooftiles.JPG (Licence CC BY-SA 3.0)",
+       "lien": "https://commons.wikimedia.org/wiki/File:Rooftiles.JPG"
+      },
+      {
+       "type": "li",
+       "texte": "Friedrich Haag : Unfertige_Dinge_003_2022_10_26.jpg (Licence CC BY-SA 4.0)",
+       "lien": "https://commons.wikimedia.org/wiki/File:Unfertige_Dinge_003_2022_10_26.jpg"
+      },
+      {
+       "type": "li",
+       "texte": "Noah Wulf : Wet_Roof_Tiles.jpg (Licence CC BY-SA 4.0)",
+       "lien": "https://commons.wikimedia.org/wiki/File:Wet_Roof_Tiles.jpg"
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  },
+  "/confidentialite/": {
+   "type": "legal",
+   "title": "Politique de confidentialité — Démo Couvreur Strasbourg",
+   "description": "Politique de confidentialité et protection des données personnelles du site Démo Couvreur Strasbourg. Aucune donnée cédée.",
+   "h1": "Politique de confidentialité",
+   "kicker": ">",
+   "chapeau": "Protection de vos données personnelles et respect de votre vie privée.",
+   "heroImages": [],
+   "sections": [
+    {
+     "h2": "Collecte et utilisation des données",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Les seules informations recueillies sur ce site sont celles transmises volontairement lorsque vous effectuez une demande de devis ou de renseignement via notre formulaire de contact ou par téléphone."
+      },
+      {
+       "type": "p",
+       "texte": "Ces données (nom, coordonnées téléphoniques, adresse email, adresse du chantier et description de votre projet de toiture) sont exclusivement utilisées pour étudier votre demande, établir votre devis et organiser une éventuelle intervention."
+      }
+     ]
+    },
+    {
+     "h2": "Conservation des données",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Vos données sont conservées pendant la durée nécessaire à la gestion de la relation commerciale et au suivi des travaux, conformément aux obligations légales de garantie décennale."
+      }
+     ]
+    },
+    {
+     "h2": "Cookies et traceurs tiers",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Ce site statique n'utilise aucun cookie traceur, aucun outil d'analyse d'audience tiers et aucun cookie publicitaire. Votre navigation est totalement privée."
+      }
+     ]
+    },
+    {
+     "h2": "Vos droits",
+     "blocs": [
+      {
+       "type": "p",
+       "texte": "Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit d'accès, de rectification, de portabilité et d'effacement de vos données personnelles. Vous pouvez exercer ce droit à tout moment en nous contactant à l'adresse : contact@couvreur.demo.invalid ."
+      }
+     ]
+    }
+   ],
+   "jsonld": []
+  }
+ }
+}

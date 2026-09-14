@@ -1,254 +1,674 @@
 [
-  {
-    "fichier": "images/hero-1600.avif",
-    "auteur": "ArjanH",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_cell_Nuon.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Tableau et armoire électrique solaire"
-  },
-  {
-    "fichier": "images/hero-1600.webp",
-    "auteur": "ArjanH",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_cell_Nuon.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Tableau et armoire électrique solaire"
-  },
-  {
-    "fichier": "images/hero-480.avif",
-    "auteur": "ArjanH",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_cell_Nuon.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Tableau et armoire électrique solaire"
-  },
-  {
-    "fichier": "images/hero-480.webp",
-    "auteur": "ArjanH",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_cell_Nuon.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Tableau et armoire électrique solaire"
-  },
-  {
-    "fichier": "images/hero-960.avif",
-    "auteur": "ArjanH",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_cell_Nuon.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Tableau et armoire électrique solaire"
-  },
-  {
-    "fichier": "images/hero-960.webp",
-    "auteur": "ArjanH",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_cell_Nuon.jpg",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Tableau et armoire électrique solaire"
-  },
-  {
-    "fichier": "images/photo-2-1600.avif",
-    "auteur": "Bonvallite",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Warehouse.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Raccordement armoire industrielle"
-  },
-  {
-    "fichier": "images/photo-2-1600.webp",
-    "auteur": "Bonvallite",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Warehouse.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Raccordement armoire industrielle"
-  },
-  {
-    "fichier": "images/photo-2-480.avif",
-    "auteur": "Bonvallite",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Warehouse.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Raccordement armoire industrielle"
-  },
-  {
-    "fichier": "images/photo-2-480.webp",
-    "auteur": "Bonvallite",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Warehouse.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Raccordement armoire industrielle"
-  },
-  {
-    "fichier": "images/photo-2-960.avif",
-    "auteur": "Bonvallite",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Warehouse.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Raccordement armoire industrielle"
-  },
-  {
-    "fichier": "images/photo-2-960.webp",
-    "auteur": "Bonvallite",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Warehouse.JPG",
-    "licence": "CC BY-SA 3.0",
-    "legende": "Raccordement armoire industrielle"
-  },
-  {
-    "fichier": "images/photo-3-1600.avif",
-    "auteur": "CharlesMJames",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Clipart.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tableau de répartition divisionnaire"
-  },
-  {
-    "fichier": "images/photo-3-1600.webp",
-    "auteur": "CharlesMJames",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Clipart.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tableau de répartition divisionnaire"
-  },
-  {
-    "fichier": "images/photo-3-480.avif",
-    "auteur": "CharlesMJames",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Clipart.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tableau de répartition divisionnaire"
-  },
-  {
-    "fichier": "images/photo-3-480.webp",
-    "auteur": "CharlesMJames",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Clipart.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tableau de répartition divisionnaire"
-  },
-  {
-    "fichier": "images/photo-3-960.avif",
-    "auteur": "CharlesMJames",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Clipart.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tableau de répartition divisionnaire"
-  },
-  {
-    "fichier": "images/photo-3-960.webp",
-    "auteur": "CharlesMJames",
-    "source": "https://commons.wikimedia.org/wiki/File:Solar_Panel_Clipart.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Tableau de répartition divisionnaire"
-  },
-  {
-    "fichier": "images/photo-4-1600.avif",
-    "auteur": "Grendelkhan",
-    "source": "https://commons.wikimedia.org/wiki/File:Ground_mounted_solar_panels.gk.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Câblage et raccordement électrique au sol"
-  },
-  {
-    "fichier": "images/photo-4-1600.webp",
-    "auteur": "Grendelkhan",
-    "source": "https://commons.wikimedia.org/wiki/File:Ground_mounted_solar_panels.gk.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Câblage et raccordement électrique au sol"
-  },
-  {
-    "fichier": "images/photo-4-480.avif",
-    "auteur": "Grendelkhan",
-    "source": "https://commons.wikimedia.org/wiki/File:Ground_mounted_solar_panels.gk.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Câblage et raccordement électrique au sol"
-  },
-  {
-    "fichier": "images/photo-4-480.webp",
-    "auteur": "Grendelkhan",
-    "source": "https://commons.wikimedia.org/wiki/File:Ground_mounted_solar_panels.gk.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Câblage et raccordement électrique au sol"
-  },
-  {
-    "fichier": "images/photo-4-960.avif",
-    "auteur": "Grendelkhan",
-    "source": "https://commons.wikimedia.org/wiki/File:Ground_mounted_solar_panels.gk.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Câblage et raccordement électrique au sol"
-  },
-  {
-    "fichier": "images/photo-4-960.webp",
-    "auteur": "Grendelkhan",
-    "source": "https://commons.wikimedia.org/wiki/File:Ground_mounted_solar_panels.gk.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Câblage et raccordement électrique au sol"
-  },
-  {
-    "fichier": "images/photo-5-1600.avif",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_distribution_board_in_workshop.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation tableau atelier ancien"
-  },
-  {
-    "fichier": "images/photo-5-1600.webp",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_distribution_board_in_workshop.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation tableau atelier ancien"
-  },
-  {
-    "fichier": "images/photo-5-480.avif",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_distribution_board_in_workshop.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation tableau atelier ancien"
-  },
-  {
-    "fichier": "images/photo-5-480.webp",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_distribution_board_in_workshop.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation tableau atelier ancien"
-  },
-  {
-    "fichier": "images/photo-5-960.avif",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_distribution_board_in_workshop.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation tableau atelier ancien"
-  },
-  {
-    "fichier": "images/photo-5-960.webp",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Old_distribution_board_in_workshop.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Rénovation tableau atelier ancien"
-  },
-  {
-    "fichier": "images/photo-6-1600.avif",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Distribution_board_and_wall_in_workshop.jpg",
-    "licence": "domaine public",
-    "legende": "Mise en sécurité tableau modulaire"
-  },
-  {
-    "fichier": "images/photo-6-1600.webp",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Distribution_board_and_wall_in_workshop.jpg",
-    "licence": "domaine public",
-    "legende": "Mise en sécurité tableau modulaire"
-  },
-  {
-    "fichier": "images/photo-6-480.avif",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Distribution_board_and_wall_in_workshop.jpg",
-    "licence": "domaine public",
-    "legende": "Mise en sécurité tableau modulaire"
-  },
-  {
-    "fichier": "images/photo-6-480.webp",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Distribution_board_and_wall_in_workshop.jpg",
-    "licence": "domaine public",
-    "legende": "Mise en sécurité tableau modulaire"
-  },
-  {
-    "fichier": "images/photo-6-960.avif",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Distribution_board_and_wall_in_workshop.jpg",
-    "licence": "domaine public",
-    "legende": "Mise en sécurité tableau modulaire"
-  },
-  {
-    "fichier": "images/photo-6-960.webp",
-    "auteur": "W.carter",
-    "source": "https://commons.wikimedia.org/wiki/File:Distribution_board_and_wall_in_workshop.jpg",
-    "licence": "domaine public",
-    "legende": "Mise en sécurité tableau modulaire"
-  }
+ {
+  "fichier": "images/hero-1600.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Borne de connexion rapide sur conducteur cuivre",
+  "alt": "Borne de connexion rapide sur conducteur cuivre",
+  "auteur": "Lucasbosch",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wago_221-413_splicing_connector_with_stranded_wire.jpg",
+  "titre_commons": "File:Wago 221-413 splicing connector with stranded wire.jpg"
+ },
+ {
+  "fichier": "images/hero-1600.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Borne de connexion rapide sur conducteur cuivre",
+  "alt": "Borne de connexion rapide sur conducteur cuivre",
+  "auteur": "Lucasbosch",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wago_221-413_splicing_connector_with_stranded_wire.jpg",
+  "titre_commons": "File:Wago 221-413 splicing connector with stranded wire.jpg"
+ },
+ {
+  "fichier": "images/hero-960.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Borne de connexion rapide sur conducteur cuivre",
+  "alt": "Borne de connexion rapide sur conducteur cuivre",
+  "auteur": "Lucasbosch",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wago_221-413_splicing_connector_with_stranded_wire.jpg",
+  "titre_commons": "File:Wago 221-413 splicing connector with stranded wire.jpg"
+ },
+ {
+  "fichier": "images/hero-960.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Borne de connexion rapide sur conducteur cuivre",
+  "alt": "Borne de connexion rapide sur conducteur cuivre",
+  "auteur": "Lucasbosch",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wago_221-413_splicing_connector_with_stranded_wire.jpg",
+  "titre_commons": "File:Wago 221-413 splicing connector with stranded wire.jpg"
+ },
+ {
+  "fichier": "images/hero-720.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Borne de connexion rapide sur conducteur cuivre",
+  "alt": "Borne de connexion rapide sur conducteur cuivre",
+  "auteur": "Lucasbosch",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wago_221-413_splicing_connector_with_stranded_wire.jpg",
+  "titre_commons": "File:Wago 221-413 splicing connector with stranded wire.jpg"
+ },
+ {
+  "fichier": "images/hero-720.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Borne de connexion rapide sur conducteur cuivre",
+  "alt": "Borne de connexion rapide sur conducteur cuivre",
+  "auteur": "Lucasbosch",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wago_221-413_splicing_connector_with_stranded_wire.jpg",
+  "titre_commons": "File:Wago 221-413 splicing connector with stranded wire.jpg"
+ },
+ {
+  "fichier": "images/hero-480.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Borne de connexion rapide sur conducteur cuivre",
+  "alt": "Borne de connexion rapide sur conducteur cuivre",
+  "auteur": "Lucasbosch",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wago_221-413_splicing_connector_with_stranded_wire.jpg",
+  "titre_commons": "File:Wago 221-413 splicing connector with stranded wire.jpg"
+ },
+ {
+  "fichier": "images/hero-480.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Borne de connexion rapide sur conducteur cuivre",
+  "alt": "Borne de connexion rapide sur conducteur cuivre",
+  "auteur": "Lucasbosch",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wago_221-413_splicing_connector_with_stranded_wire.jpg",
+  "titre_commons": "File:Wago 221-413 splicing connector with stranded wire.jpg"
+ },
+ {
+  "fichier": "images/cable-1600.webp",
+  "base": "cable",
+  "largeur": 1600,
+  "hauteur": 1148,
+  "legende": "Câble électrique multiconducteur, gaine et cuivre",
+  "alt": "Câble électrique multiconducteur, gaine et cuivre",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Electric_guide_3%C3%972.5_mm.jpg",
+  "titre_commons": "File:Electric guide 3×2.5 mm.jpg"
+ },
+ {
+  "fichier": "images/cable-1600.avif",
+  "base": "cable",
+  "largeur": 1600,
+  "hauteur": 1148,
+  "legende": "Câble électrique multiconducteur, gaine et cuivre",
+  "alt": "Câble électrique multiconducteur, gaine et cuivre",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Electric_guide_3%C3%972.5_mm.jpg",
+  "titre_commons": "File:Electric guide 3×2.5 mm.jpg"
+ },
+ {
+  "fichier": "images/cable-960.webp",
+  "base": "cable",
+  "largeur": 1600,
+  "hauteur": 1148,
+  "legende": "Câble électrique multiconducteur, gaine et cuivre",
+  "alt": "Câble électrique multiconducteur, gaine et cuivre",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Electric_guide_3%C3%972.5_mm.jpg",
+  "titre_commons": "File:Electric guide 3×2.5 mm.jpg"
+ },
+ {
+  "fichier": "images/cable-960.avif",
+  "base": "cable",
+  "largeur": 1600,
+  "hauteur": 1148,
+  "legende": "Câble électrique multiconducteur, gaine et cuivre",
+  "alt": "Câble électrique multiconducteur, gaine et cuivre",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Electric_guide_3%C3%972.5_mm.jpg",
+  "titre_commons": "File:Electric guide 3×2.5 mm.jpg"
+ },
+ {
+  "fichier": "images/cable-720.webp",
+  "base": "cable",
+  "largeur": 1600,
+  "hauteur": 1148,
+  "legende": "Câble électrique multiconducteur, gaine et cuivre",
+  "alt": "Câble électrique multiconducteur, gaine et cuivre",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Electric_guide_3%C3%972.5_mm.jpg",
+  "titre_commons": "File:Electric guide 3×2.5 mm.jpg"
+ },
+ {
+  "fichier": "images/cable-720.avif",
+  "base": "cable",
+  "largeur": 1600,
+  "hauteur": 1148,
+  "legende": "Câble électrique multiconducteur, gaine et cuivre",
+  "alt": "Câble électrique multiconducteur, gaine et cuivre",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Electric_guide_3%C3%972.5_mm.jpg",
+  "titre_commons": "File:Electric guide 3×2.5 mm.jpg"
+ },
+ {
+  "fichier": "images/cable-480.webp",
+  "base": "cable",
+  "largeur": 1600,
+  "hauteur": 1148,
+  "legende": "Câble électrique multiconducteur, gaine et cuivre",
+  "alt": "Câble électrique multiconducteur, gaine et cuivre",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Electric_guide_3%C3%972.5_mm.jpg",
+  "titre_commons": "File:Electric guide 3×2.5 mm.jpg"
+ },
+ {
+  "fichier": "images/cable-480.avif",
+  "base": "cable",
+  "largeur": 1600,
+  "hauteur": 1148,
+  "legende": "Câble électrique multiconducteur, gaine et cuivre",
+  "alt": "Câble électrique multiconducteur, gaine et cuivre",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Electric_guide_3%C3%972.5_mm.jpg",
+  "titre_commons": "File:Electric guide 3×2.5 mm.jpg"
+ },
+ {
+  "fichier": "images/variateur-1600.webp",
+  "base": "variateur",
+  "largeur": 1600,
+  "hauteur": 2073,
+  "legende": "Variateur de tension, commandes et repérage",
+  "alt": "Variateur de tension, commandes et repérage",
+  "auteur": "Benoît Prieur",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Variateur_de_tension_permettant_de_modifier_l%27a%C3%A9ration_du_restaurant_Riz_Pai_(Lyon).jpg",
+  "titre_commons": "File:Variateur de tension permettant de modifier l'aération du restaurant Riz Pai (Lyon).jpg"
+ },
+ {
+  "fichier": "images/variateur-1600.avif",
+  "base": "variateur",
+  "largeur": 1600,
+  "hauteur": 2073,
+  "legende": "Variateur de tension, commandes et repérage",
+  "alt": "Variateur de tension, commandes et repérage",
+  "auteur": "Benoît Prieur",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Variateur_de_tension_permettant_de_modifier_l%27a%C3%A9ration_du_restaurant_Riz_Pai_(Lyon).jpg",
+  "titre_commons": "File:Variateur de tension permettant de modifier l'aération du restaurant Riz Pai (Lyon).jpg"
+ },
+ {
+  "fichier": "images/variateur-960.webp",
+  "base": "variateur",
+  "largeur": 1600,
+  "hauteur": 2073,
+  "legende": "Variateur de tension, commandes et repérage",
+  "alt": "Variateur de tension, commandes et repérage",
+  "auteur": "Benoît Prieur",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Variateur_de_tension_permettant_de_modifier_l%27a%C3%A9ration_du_restaurant_Riz_Pai_(Lyon).jpg",
+  "titre_commons": "File:Variateur de tension permettant de modifier l'aération du restaurant Riz Pai (Lyon).jpg"
+ },
+ {
+  "fichier": "images/variateur-960.avif",
+  "base": "variateur",
+  "largeur": 1600,
+  "hauteur": 2073,
+  "legende": "Variateur de tension, commandes et repérage",
+  "alt": "Variateur de tension, commandes et repérage",
+  "auteur": "Benoît Prieur",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Variateur_de_tension_permettant_de_modifier_l%27a%C3%A9ration_du_restaurant_Riz_Pai_(Lyon).jpg",
+  "titre_commons": "File:Variateur de tension permettant de modifier l'aération du restaurant Riz Pai (Lyon).jpg"
+ },
+ {
+  "fichier": "images/variateur-720.webp",
+  "base": "variateur",
+  "largeur": 1600,
+  "hauteur": 2073,
+  "legende": "Variateur de tension, commandes et repérage",
+  "alt": "Variateur de tension, commandes et repérage",
+  "auteur": "Benoît Prieur",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Variateur_de_tension_permettant_de_modifier_l%27a%C3%A9ration_du_restaurant_Riz_Pai_(Lyon).jpg",
+  "titre_commons": "File:Variateur de tension permettant de modifier l'aération du restaurant Riz Pai (Lyon).jpg"
+ },
+ {
+  "fichier": "images/variateur-720.avif",
+  "base": "variateur",
+  "largeur": 1600,
+  "hauteur": 2073,
+  "legende": "Variateur de tension, commandes et repérage",
+  "alt": "Variateur de tension, commandes et repérage",
+  "auteur": "Benoît Prieur",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Variateur_de_tension_permettant_de_modifier_l%27a%C3%A9ration_du_restaurant_Riz_Pai_(Lyon).jpg",
+  "titre_commons": "File:Variateur de tension permettant de modifier l'aération du restaurant Riz Pai (Lyon).jpg"
+ },
+ {
+  "fichier": "images/variateur-480.webp",
+  "base": "variateur",
+  "largeur": 1600,
+  "hauteur": 2073,
+  "legende": "Variateur de tension, commandes et repérage",
+  "alt": "Variateur de tension, commandes et repérage",
+  "auteur": "Benoît Prieur",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Variateur_de_tension_permettant_de_modifier_l%27a%C3%A9ration_du_restaurant_Riz_Pai_(Lyon).jpg",
+  "titre_commons": "File:Variateur de tension permettant de modifier l'aération du restaurant Riz Pai (Lyon).jpg"
+ },
+ {
+  "fichier": "images/variateur-480.avif",
+  "base": "variateur",
+  "largeur": 1600,
+  "hauteur": 2073,
+  "legende": "Variateur de tension, commandes et repérage",
+  "alt": "Variateur de tension, commandes et repérage",
+  "auteur": "Benoît Prieur",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Variateur_de_tension_permettant_de_modifier_l%27a%C3%A9ration_du_restaurant_Riz_Pai_(Lyon).jpg",
+  "titre_commons": "File:Variateur de tension permettant de modifier l'aération du restaurant Riz Pai (Lyon).jpg"
+ },
+ {
+  "fichier": "images/armoire-1600.webp",
+  "base": "armoire",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Armoire électrique câblée et repérée",
+  "alt": "Armoire électrique câblée et repérée",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Schaltkasten_--_2023_--_6756.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Schaltkasten -- 2023 -- 6756.jpg"
+ },
+ {
+  "fichier": "images/armoire-1600.avif",
+  "base": "armoire",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Armoire électrique câblée et repérée",
+  "alt": "Armoire électrique câblée et repérée",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Schaltkasten_--_2023_--_6756.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Schaltkasten -- 2023 -- 6756.jpg"
+ },
+ {
+  "fichier": "images/armoire-960.webp",
+  "base": "armoire",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Armoire électrique câblée et repérée",
+  "alt": "Armoire électrique câblée et repérée",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Schaltkasten_--_2023_--_6756.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Schaltkasten -- 2023 -- 6756.jpg"
+ },
+ {
+  "fichier": "images/armoire-960.avif",
+  "base": "armoire",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Armoire électrique câblée et repérée",
+  "alt": "Armoire électrique câblée et repérée",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Schaltkasten_--_2023_--_6756.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Schaltkasten -- 2023 -- 6756.jpg"
+ },
+ {
+  "fichier": "images/armoire-720.webp",
+  "base": "armoire",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Armoire électrique câblée et repérée",
+  "alt": "Armoire électrique câblée et repérée",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Schaltkasten_--_2023_--_6756.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Schaltkasten -- 2023 -- 6756.jpg"
+ },
+ {
+  "fichier": "images/armoire-720.avif",
+  "base": "armoire",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Armoire électrique câblée et repérée",
+  "alt": "Armoire électrique câblée et repérée",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Schaltkasten_--_2023_--_6756.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Schaltkasten -- 2023 -- 6756.jpg"
+ },
+ {
+  "fichier": "images/armoire-480.webp",
+  "base": "armoire",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Armoire électrique câblée et repérée",
+  "alt": "Armoire électrique câblée et repérée",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Schaltkasten_--_2023_--_6756.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Schaltkasten -- 2023 -- 6756.jpg"
+ },
+ {
+  "fichier": "images/armoire-480.avif",
+  "base": "armoire",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Armoire électrique câblée et repérée",
+  "alt": "Armoire électrique câblée et repérée",
+  "auteur": "Dietmar Rabich",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Kirchspiel,_ehem._Sondermunitionslager_Visbeck,_Schaltkasten_--_2023_--_6756.jpg",
+  "titre_commons": "File:Dülmen, Kirchspiel, ehem. Sondermunitionslager Visbeck, Schaltkasten -- 2023 -- 6756.jpg"
+ },
+ {
+  "fichier": "images/reseau-1600.webp",
+  "base": "reseau",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Intervention sur réseau aérien",
+  "alt": "Intervention sur réseau aérien",
+  "auteur": "Ermell",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Elektriker_bei_der_Arbeit_0809.jpg",
+  "titre_commons": "File:Elektriker bei der Arbeit 0809.jpg"
+ },
+ {
+  "fichier": "images/reseau-1600.avif",
+  "base": "reseau",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Intervention sur réseau aérien",
+  "alt": "Intervention sur réseau aérien",
+  "auteur": "Ermell",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Elektriker_bei_der_Arbeit_0809.jpg",
+  "titre_commons": "File:Elektriker bei der Arbeit 0809.jpg"
+ },
+ {
+  "fichier": "images/reseau-960.webp",
+  "base": "reseau",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Intervention sur réseau aérien",
+  "alt": "Intervention sur réseau aérien",
+  "auteur": "Ermell",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Elektriker_bei_der_Arbeit_0809.jpg",
+  "titre_commons": "File:Elektriker bei der Arbeit 0809.jpg"
+ },
+ {
+  "fichier": "images/reseau-960.avif",
+  "base": "reseau",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Intervention sur réseau aérien",
+  "alt": "Intervention sur réseau aérien",
+  "auteur": "Ermell",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Elektriker_bei_der_Arbeit_0809.jpg",
+  "titre_commons": "File:Elektriker bei der Arbeit 0809.jpg"
+ },
+ {
+  "fichier": "images/reseau-720.webp",
+  "base": "reseau",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Intervention sur réseau aérien",
+  "alt": "Intervention sur réseau aérien",
+  "auteur": "Ermell",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Elektriker_bei_der_Arbeit_0809.jpg",
+  "titre_commons": "File:Elektriker bei der Arbeit 0809.jpg"
+ },
+ {
+  "fichier": "images/reseau-720.avif",
+  "base": "reseau",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Intervention sur réseau aérien",
+  "alt": "Intervention sur réseau aérien",
+  "auteur": "Ermell",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Elektriker_bei_der_Arbeit_0809.jpg",
+  "titre_commons": "File:Elektriker bei der Arbeit 0809.jpg"
+ },
+ {
+  "fichier": "images/reseau-480.webp",
+  "base": "reseau",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Intervention sur réseau aérien",
+  "alt": "Intervention sur réseau aérien",
+  "auteur": "Ermell",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Elektriker_bei_der_Arbeit_0809.jpg",
+  "titre_commons": "File:Elektriker bei der Arbeit 0809.jpg"
+ },
+ {
+  "fichier": "images/reseau-480.avif",
+  "base": "reseau",
+  "largeur": 1600,
+  "hauteur": 2133,
+  "legende": "Intervention sur réseau aérien",
+  "alt": "Intervention sur réseau aérien",
+  "auteur": "Ermell",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Elektriker_bei_der_Arbeit_0809.jpg",
+  "titre_commons": "File:Elektriker bei der Arbeit 0809.jpg"
+ },
+ {
+  "fichier": "images/interrupteur-1600.webp",
+  "base": "interrupteur",
+  "largeur": 1600,
+  "hauteur": 1449,
+  "legende": "Interrupteur mural, finition propre",
+  "alt": "Interrupteur mural, finition propre",
+  "auteur": "PumpkinSky",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Double_Light_Switch.jpg",
+  "titre_commons": "File:Double Light Switch.jpg"
+ },
+ {
+  "fichier": "images/interrupteur-1600.avif",
+  "base": "interrupteur",
+  "largeur": 1600,
+  "hauteur": 1449,
+  "legende": "Interrupteur mural, finition propre",
+  "alt": "Interrupteur mural, finition propre",
+  "auteur": "PumpkinSky",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Double_Light_Switch.jpg",
+  "titre_commons": "File:Double Light Switch.jpg"
+ },
+ {
+  "fichier": "images/interrupteur-960.webp",
+  "base": "interrupteur",
+  "largeur": 1600,
+  "hauteur": 1449,
+  "legende": "Interrupteur mural, finition propre",
+  "alt": "Interrupteur mural, finition propre",
+  "auteur": "PumpkinSky",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Double_Light_Switch.jpg",
+  "titre_commons": "File:Double Light Switch.jpg"
+ },
+ {
+  "fichier": "images/interrupteur-960.avif",
+  "base": "interrupteur",
+  "largeur": 1600,
+  "hauteur": 1449,
+  "legende": "Interrupteur mural, finition propre",
+  "alt": "Interrupteur mural, finition propre",
+  "auteur": "PumpkinSky",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Double_Light_Switch.jpg",
+  "titre_commons": "File:Double Light Switch.jpg"
+ },
+ {
+  "fichier": "images/interrupteur-720.webp",
+  "base": "interrupteur",
+  "largeur": 1600,
+  "hauteur": 1449,
+  "legende": "Interrupteur mural, finition propre",
+  "alt": "Interrupteur mural, finition propre",
+  "auteur": "PumpkinSky",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Double_Light_Switch.jpg",
+  "titre_commons": "File:Double Light Switch.jpg"
+ },
+ {
+  "fichier": "images/interrupteur-720.avif",
+  "base": "interrupteur",
+  "largeur": 1600,
+  "hauteur": 1449,
+  "legende": "Interrupteur mural, finition propre",
+  "alt": "Interrupteur mural, finition propre",
+  "auteur": "PumpkinSky",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Double_Light_Switch.jpg",
+  "titre_commons": "File:Double Light Switch.jpg"
+ },
+ {
+  "fichier": "images/interrupteur-480.webp",
+  "base": "interrupteur",
+  "largeur": 1600,
+  "hauteur": 1449,
+  "legende": "Interrupteur mural, finition propre",
+  "alt": "Interrupteur mural, finition propre",
+  "auteur": "PumpkinSky",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Double_Light_Switch.jpg",
+  "titre_commons": "File:Double Light Switch.jpg"
+ },
+ {
+  "fichier": "images/interrupteur-480.avif",
+  "base": "interrupteur",
+  "largeur": 1600,
+  "hauteur": 1449,
+  "legende": "Interrupteur mural, finition propre",
+  "alt": "Interrupteur mural, finition propre",
+  "auteur": "PumpkinSky",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Double_Light_Switch.jpg",
+  "titre_commons": "File:Double Light Switch.jpg"
+ },
+ {
+  "fichier": "images/luminaires-1600.webp",
+  "base": "luminaires",
+  "largeur": 1600,
+  "hauteur": 900,
+  "legende": "Ampoules et douilles laiton, éclairage décoratif",
+  "alt": "Ampoules et douilles laiton, éclairage décoratif",
+  "auteur": "Ka23 13",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Switches_20201003_110916.jpg",
+  "titre_commons": "File:Switches 20201003 110916.jpg"
+ },
+ {
+  "fichier": "images/luminaires-1600.avif",
+  "base": "luminaires",
+  "largeur": 1600,
+  "hauteur": 900,
+  "legende": "Ampoules et douilles laiton, éclairage décoratif",
+  "alt": "Ampoules et douilles laiton, éclairage décoratif",
+  "auteur": "Ka23 13",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Switches_20201003_110916.jpg",
+  "titre_commons": "File:Switches 20201003 110916.jpg"
+ },
+ {
+  "fichier": "images/luminaires-960.webp",
+  "base": "luminaires",
+  "largeur": 1600,
+  "hauteur": 900,
+  "legende": "Ampoules et douilles laiton, éclairage décoratif",
+  "alt": "Ampoules et douilles laiton, éclairage décoratif",
+  "auteur": "Ka23 13",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Switches_20201003_110916.jpg",
+  "titre_commons": "File:Switches 20201003 110916.jpg"
+ },
+ {
+  "fichier": "images/luminaires-960.avif",
+  "base": "luminaires",
+  "largeur": 1600,
+  "hauteur": 900,
+  "legende": "Ampoules et douilles laiton, éclairage décoratif",
+  "alt": "Ampoules et douilles laiton, éclairage décoratif",
+  "auteur": "Ka23 13",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Switches_20201003_110916.jpg",
+  "titre_commons": "File:Switches 20201003 110916.jpg"
+ },
+ {
+  "fichier": "images/luminaires-720.webp",
+  "base": "luminaires",
+  "largeur": 1600,
+  "hauteur": 900,
+  "legende": "Ampoules et douilles laiton, éclairage décoratif",
+  "alt": "Ampoules et douilles laiton, éclairage décoratif",
+  "auteur": "Ka23 13",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Switches_20201003_110916.jpg",
+  "titre_commons": "File:Switches 20201003 110916.jpg"
+ },
+ {
+  "fichier": "images/luminaires-720.avif",
+  "base": "luminaires",
+  "largeur": 1600,
+  "hauteur": 900,
+  "legende": "Ampoules et douilles laiton, éclairage décoratif",
+  "alt": "Ampoules et douilles laiton, éclairage décoratif",
+  "auteur": "Ka23 13",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Switches_20201003_110916.jpg",
+  "titre_commons": "File:Switches 20201003 110916.jpg"
+ },
+ {
+  "fichier": "images/luminaires-480.webp",
+  "base": "luminaires",
+  "largeur": 1600,
+  "hauteur": 900,
+  "legende": "Ampoules et douilles laiton, éclairage décoratif",
+  "alt": "Ampoules et douilles laiton, éclairage décoratif",
+  "auteur": "Ka23 13",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Switches_20201003_110916.jpg",
+  "titre_commons": "File:Switches 20201003 110916.jpg"
+ },
+ {
+  "fichier": "images/luminaires-480.avif",
+  "base": "luminaires",
+  "largeur": 1600,
+  "hauteur": 900,
+  "legende": "Ampoules et douilles laiton, éclairage décoratif",
+  "alt": "Ampoules et douilles laiton, éclairage décoratif",
+  "auteur": "Ka23 13",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Switches_20201003_110916.jpg",
+  "titre_commons": "File:Switches 20201003 110916.jpg"
+ }
 ]

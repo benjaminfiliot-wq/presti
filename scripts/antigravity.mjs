@@ -237,7 +237,9 @@ async function sonde(ctx, modele) {
   console.log(`? sonde ${modele} : pas de réponse en 60 s`); return 1
 }
 
-try {
+// Le CLI ne tourne que si ce fichier est lancé directement : scripts/executant.mjs importe PROMPT et PROMPT_DUO sans rien lancer.
+const estPrincipal = !!process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+if (estPrincipal) try {
   switch (commande) {
     case 'etat': etat(); break
     case 'catalogue': { const liste = await catalogueModeles(contexte()); console.log(liste.map((c) => `${c.label}  →  ${JSON.stringify(c.modelOrAlias)}${c.modelId ? '  (' + c.modelId + ')' : ''}`).join('\n') || '(catalogue vide)'); break }
@@ -249,3 +251,5 @@ try {
     default: console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').filter((l) => l.startsWith('//')).slice(8, 14).map((l) => l.replace(/^\/\/ ?/, '')).join('\n')); process.exit(commande ? 2 : 0)
   }
 } catch (e) { console.error(`✗ ${e.message}`); process.exit(1) }
+
+export { PROMPT }

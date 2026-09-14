@@ -1,296 +1,482 @@
 [
-  {
-    "fichier": "images/carrelage_sol-480.webp",
-    "auteur": "Fanti Salms",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Floor_Tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose soignée de carrelage au sol en intérieur"
-  },
-  {
-    "fichier": "images/carrelage_sol-480.avif",
-    "auteur": "Fanti Salms",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Floor_Tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose soignée de carrelage au sol en intérieur"
-  },
-  {
-    "fichier": "images/carrelage_sol-960.webp",
-    "auteur": "Fanti Salms",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Floor_Tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose soignée de carrelage au sol en intérieur"
-  },
-  {
-    "fichier": "images/carrelage_sol-960.avif",
-    "auteur": "Fanti Salms",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Floor_Tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose soignée de carrelage au sol en intérieur"
-  },
-  {
-    "fichier": "images/carrelage_sol-1600.webp",
-    "auteur": "Fanti Salms",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Floor_Tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose soignée de carrelage au sol en intérieur"
-  },
-  {
-    "fichier": "images/carrelage_sol-1600.avif",
-    "auteur": "Fanti Salms",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Floor_Tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose soignée de carrelage au sol en intérieur"
-  },
-  {
-    "fichier": "images/faience_salle_de_bain-480.webp",
-    "auteur": "Ameerahraheem",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose de faïence murale et aménagement de salle de bain"
-  },
-  {
-    "fichier": "images/faience_salle_de_bain-480.avif",
-    "auteur": "Ameerahraheem",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose de faïence murale et aménagement de salle de bain"
-  },
-  {
-    "fichier": "images/faience_salle_de_bain-960.webp",
-    "auteur": "Ameerahraheem",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose de faïence murale et aménagement de salle de bain"
-  },
-  {
-    "fichier": "images/faience_salle_de_bain-960.avif",
-    "auteur": "Ameerahraheem",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose de faïence murale et aménagement de salle de bain"
-  },
-  {
-    "fichier": "images/faience_salle_de_bain-1600.webp",
-    "auteur": "Ameerahraheem",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose de faïence murale et aménagement de salle de bain"
-  },
-  {
-    "fichier": "images/faience_salle_de_bain-1600.avif",
-    "auteur": "Ameerahraheem",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Pose de faïence murale et aménagement de salle de bain"
-  },
-  {
-    "fichier": "images/douche_italienne-480.webp",
-    "auteur": "Bart Everson",
-    "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Douche à l'italienne carrelée avec étanchéité sous carrelage"
-  },
-  {
-    "fichier": "images/douche_italienne-480.avif",
-    "auteur": "Bart Everson",
-    "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Douche à l'italienne carrelée avec étanchéité sous carrelage"
-  },
-  {
-    "fichier": "images/douche_italienne-960.webp",
-    "auteur": "Bart Everson",
-    "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Douche à l'italienne carrelée avec étanchéité sous carrelage"
-  },
-  {
-    "fichier": "images/douche_italienne-960.avif",
-    "auteur": "Bart Everson",
-    "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Douche à l'italienne carrelée avec étanchéité sous carrelage"
-  },
-  {
-    "fichier": "images/douche_italienne-1600.webp",
-    "auteur": "Bart Everson",
-    "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Douche à l'italienne carrelée avec étanchéité sous carrelage"
-  },
-  {
-    "fichier": "images/douche_italienne-1600.avif",
-    "auteur": "Bart Everson",
-    "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
-    "licence": "CC BY 2.0",
-    "legende": "Douche à l'italienne carrelée avec étanchéité sous carrelage"
-  },
-  {
-    "fichier": "images/carreaux_hexagonaux-480.webp",
-    "auteur": "Epolk",
-    "source": "https://commons.wikimedia.org/wiki/File:Hexagonal_floor_tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Calepinage géométrique et carreaux hexagonaux"
-  },
-  {
-    "fichier": "images/carreaux_hexagonaux-480.avif",
-    "auteur": "Epolk",
-    "source": "https://commons.wikimedia.org/wiki/File:Hexagonal_floor_tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Calepinage géométrique et carreaux hexagonaux"
-  },
-  {
-    "fichier": "images/carreaux_hexagonaux-960.webp",
-    "auteur": "Epolk",
-    "source": "https://commons.wikimedia.org/wiki/File:Hexagonal_floor_tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Calepinage géométrique et carreaux hexagonaux"
-  },
-  {
-    "fichier": "images/carreaux_hexagonaux-960.avif",
-    "auteur": "Epolk",
-    "source": "https://commons.wikimedia.org/wiki/File:Hexagonal_floor_tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Calepinage géométrique et carreaux hexagonaux"
-  },
-  {
-    "fichier": "images/carreaux_hexagonaux-1600.webp",
-    "auteur": "Epolk",
-    "source": "https://commons.wikimedia.org/wiki/File:Hexagonal_floor_tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Calepinage géométrique et carreaux hexagonaux"
-  },
-  {
-    "fichier": "images/carreaux_hexagonaux-1600.avif",
-    "auteur": "Epolk",
-    "source": "https://commons.wikimedia.org/wiki/File:Hexagonal_floor_tiles.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Calepinage géométrique et carreaux hexagonaux"
-  },
-  {
-    "fichier": "images/mosaique_calepinage-480.webp",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mosaïque décorative et motifs géométriques"
-  },
-  {
-    "fichier": "images/mosaique_calepinage-480.avif",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mosaïque décorative et motifs géométriques"
-  },
-  {
-    "fichier": "images/mosaique_calepinage-960.webp",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mosaïque décorative et motifs géométriques"
-  },
-  {
-    "fichier": "images/mosaique_calepinage-960.avif",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mosaïque décorative et motifs géométriques"
-  },
-  {
-    "fichier": "images/mosaique_calepinage-1600.webp",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mosaïque décorative et motifs géométriques"
-  },
-  {
-    "fichier": "images/mosaique_calepinage-1600.avif",
-    "auteur": "Downtowngal",
-    "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Mosaïque décorative et motifs géométriques"
-  },
-  {
-    "fichier": "images/gres_cerame-480.webp",
-    "auteur": "Kritzolina",
-    "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Dallage en grès cérame et motifs provençaux"
-  },
-  {
-    "fichier": "images/gres_cerame-480.avif",
-    "auteur": "Kritzolina",
-    "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Dallage en grès cérame et motifs provençaux"
-  },
-  {
-    "fichier": "images/gres_cerame-960.webp",
-    "auteur": "Kritzolina",
-    "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Dallage en grès cérame et motifs provençaux"
-  },
-  {
-    "fichier": "images/gres_cerame-960.avif",
-    "auteur": "Kritzolina",
-    "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Dallage en grès cérame et motifs provençaux"
-  },
-  {
-    "fichier": "images/gres_cerame-1600.webp",
-    "auteur": "Kritzolina",
-    "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Dallage en grès cérame et motifs provençaux"
-  },
-  {
-    "fichier": "images/gres_cerame-1600.avif",
-    "auteur": "Kritzolina",
-    "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Dallage en grès cérame et motifs provençaux"
-  },
-  {
-    "fichier": "images/revetement_ceramique-480.webp",
-    "auteur": "Niren 65",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Revêtement céramique mural pour pièce d'eau"
-  },
-  {
-    "fichier": "images/revetement_ceramique-480.avif",
-    "auteur": "Niren 65",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Revêtement céramique mural pour pièce d'eau"
-  },
-  {
-    "fichier": "images/revetement_ceramique-960.webp",
-    "auteur": "Niren 65",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Revêtement céramique mural pour pièce d'eau"
-  },
-  {
-    "fichier": "images/revetement_ceramique-960.avif",
-    "auteur": "Niren 65",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Revêtement céramique mural pour pièce d'eau"
-  },
-  {
-    "fichier": "images/revetement_ceramique-1600.webp",
-    "auteur": "Niren 65",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Revêtement céramique mural pour pièce d'eau"
-  },
-  {
-    "fichier": "images/revetement_ceramique-1600.avif",
-    "auteur": "Niren 65",
-    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
-    "licence": "CC BY-SA 4.0",
-    "legende": "Revêtement céramique mural pour pièce d'eau"
-  }
+ {
+  "fichier": "images/hero-1600.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1106,
+  "legende": "Mosaïque de sol et motifs géométriques",
+  "alt": "Mosaïque de sol et motifs géométriques",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
+  "titre_commons": "File:Tesselated tile floor pattern.jpg"
+ },
+ {
+  "fichier": "images/hero-1600.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1106,
+  "legende": "Mosaïque de sol et motifs géométriques",
+  "alt": "Mosaïque de sol et motifs géométriques",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
+  "titre_commons": "File:Tesselated tile floor pattern.jpg"
+ },
+ {
+  "fichier": "images/hero-960.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1106,
+  "legende": "Mosaïque de sol et motifs géométriques",
+  "alt": "Mosaïque de sol et motifs géométriques",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
+  "titre_commons": "File:Tesselated tile floor pattern.jpg"
+ },
+ {
+  "fichier": "images/hero-960.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1106,
+  "legende": "Mosaïque de sol et motifs géométriques",
+  "alt": "Mosaïque de sol et motifs géométriques",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
+  "titre_commons": "File:Tesselated tile floor pattern.jpg"
+ },
+ {
+  "fichier": "images/hero-720.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1106,
+  "legende": "Mosaïque de sol et motifs géométriques",
+  "alt": "Mosaïque de sol et motifs géométriques",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
+  "titre_commons": "File:Tesselated tile floor pattern.jpg"
+ },
+ {
+  "fichier": "images/hero-720.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1106,
+  "legende": "Mosaïque de sol et motifs géométriques",
+  "alt": "Mosaïque de sol et motifs géométriques",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
+  "titre_commons": "File:Tesselated tile floor pattern.jpg"
+ },
+ {
+  "fichier": "images/hero-480.webp",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1106,
+  "legende": "Mosaïque de sol et motifs géométriques",
+  "alt": "Mosaïque de sol et motifs géométriques",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
+  "titre_commons": "File:Tesselated tile floor pattern.jpg"
+ },
+ {
+  "fichier": "images/hero-480.avif",
+  "base": "hero",
+  "largeur": 1600,
+  "hauteur": 1106,
+  "legende": "Mosaïque de sol et motifs géométriques",
+  "alt": "Mosaïque de sol et motifs géométriques",
+  "auteur": "Downtowngal",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
+  "titre_commons": "File:Tesselated tile floor pattern.jpg"
+ },
+ {
+  "fichier": "images/douche-1600.webp",
+  "base": "douche",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Douche carrelée, étanchéité sous carrelage",
+  "alt": "Douche carrelée, étanchéité sous carrelage",
+  "auteur": "Bart Everson",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
+  "titre_commons": "File:Mid-City New Orleans Bathroom - Tile in the Shower.jpg"
+ },
+ {
+  "fichier": "images/douche-1600.avif",
+  "base": "douche",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Douche carrelée, étanchéité sous carrelage",
+  "alt": "Douche carrelée, étanchéité sous carrelage",
+  "auteur": "Bart Everson",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
+  "titre_commons": "File:Mid-City New Orleans Bathroom - Tile in the Shower.jpg"
+ },
+ {
+  "fichier": "images/douche-960.webp",
+  "base": "douche",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Douche carrelée, étanchéité sous carrelage",
+  "alt": "Douche carrelée, étanchéité sous carrelage",
+  "auteur": "Bart Everson",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
+  "titre_commons": "File:Mid-City New Orleans Bathroom - Tile in the Shower.jpg"
+ },
+ {
+  "fichier": "images/douche-960.avif",
+  "base": "douche",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Douche carrelée, étanchéité sous carrelage",
+  "alt": "Douche carrelée, étanchéité sous carrelage",
+  "auteur": "Bart Everson",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
+  "titre_commons": "File:Mid-City New Orleans Bathroom - Tile in the Shower.jpg"
+ },
+ {
+  "fichier": "images/douche-720.webp",
+  "base": "douche",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Douche carrelée, étanchéité sous carrelage",
+  "alt": "Douche carrelée, étanchéité sous carrelage",
+  "auteur": "Bart Everson",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
+  "titre_commons": "File:Mid-City New Orleans Bathroom - Tile in the Shower.jpg"
+ },
+ {
+  "fichier": "images/douche-720.avif",
+  "base": "douche",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Douche carrelée, étanchéité sous carrelage",
+  "alt": "Douche carrelée, étanchéité sous carrelage",
+  "auteur": "Bart Everson",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
+  "titre_commons": "File:Mid-City New Orleans Bathroom - Tile in the Shower.jpg"
+ },
+ {
+  "fichier": "images/douche-480.webp",
+  "base": "douche",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Douche carrelée, étanchéité sous carrelage",
+  "alt": "Douche carrelée, étanchéité sous carrelage",
+  "auteur": "Bart Everson",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
+  "titre_commons": "File:Mid-City New Orleans Bathroom - Tile in the Shower.jpg"
+ },
+ {
+  "fichier": "images/douche-480.avif",
+  "base": "douche",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "legende": "Douche carrelée, étanchéité sous carrelage",
+  "alt": "Douche carrelée, étanchéité sous carrelage",
+  "auteur": "Bart Everson",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
+  "titre_commons": "File:Mid-City New Orleans Bathroom - Tile in the Shower.jpg"
+ },
+ {
+  "fichier": "images/dallage-1600.webp",
+  "base": "dallage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Dallage à motifs, calepinage traditionnel",
+  "alt": "Dallage à motifs, calepinage traditionnel",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
+  "titre_commons": "File:Tiled floor in the Medina of Tunis.jpg"
+ },
+ {
+  "fichier": "images/dallage-1600.avif",
+  "base": "dallage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Dallage à motifs, calepinage traditionnel",
+  "alt": "Dallage à motifs, calepinage traditionnel",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
+  "titre_commons": "File:Tiled floor in the Medina of Tunis.jpg"
+ },
+ {
+  "fichier": "images/dallage-960.webp",
+  "base": "dallage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Dallage à motifs, calepinage traditionnel",
+  "alt": "Dallage à motifs, calepinage traditionnel",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
+  "titre_commons": "File:Tiled floor in the Medina of Tunis.jpg"
+ },
+ {
+  "fichier": "images/dallage-960.avif",
+  "base": "dallage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Dallage à motifs, calepinage traditionnel",
+  "alt": "Dallage à motifs, calepinage traditionnel",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
+  "titre_commons": "File:Tiled floor in the Medina of Tunis.jpg"
+ },
+ {
+  "fichier": "images/dallage-720.webp",
+  "base": "dallage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Dallage à motifs, calepinage traditionnel",
+  "alt": "Dallage à motifs, calepinage traditionnel",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
+  "titre_commons": "File:Tiled floor in the Medina of Tunis.jpg"
+ },
+ {
+  "fichier": "images/dallage-720.avif",
+  "base": "dallage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Dallage à motifs, calepinage traditionnel",
+  "alt": "Dallage à motifs, calepinage traditionnel",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
+  "titre_commons": "File:Tiled floor in the Medina of Tunis.jpg"
+ },
+ {
+  "fichier": "images/dallage-480.webp",
+  "base": "dallage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Dallage à motifs, calepinage traditionnel",
+  "alt": "Dallage à motifs, calepinage traditionnel",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
+  "titre_commons": "File:Tiled floor in the Medina of Tunis.jpg"
+ },
+ {
+  "fichier": "images/dallage-480.avif",
+  "base": "dallage",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Dallage à motifs, calepinage traditionnel",
+  "alt": "Dallage à motifs, calepinage traditionnel",
+  "auteur": "Kritzolina",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
+  "titre_commons": "File:Tiled floor in the Medina of Tunis.jpg"
+ },
+ {
+  "fichier": "images/faience-1600.webp",
+  "base": "faience",
+  "largeur": 1080,
+  "hauteur": 1920,
+  "legende": "Faïence murale d'une salle de bains",
+  "alt": "Faïence murale d'une salle de bains",
+  "auteur": "Ameerahraheem",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
+  "titre_commons": "File:Bathroom Tiles.jpg"
+ },
+ {
+  "fichier": "images/faience-1600.avif",
+  "base": "faience",
+  "largeur": 1080,
+  "hauteur": 1920,
+  "legende": "Faïence murale d'une salle de bains",
+  "alt": "Faïence murale d'une salle de bains",
+  "auteur": "Ameerahraheem",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
+  "titre_commons": "File:Bathroom Tiles.jpg"
+ },
+ {
+  "fichier": "images/faience-960.webp",
+  "base": "faience",
+  "largeur": 1080,
+  "hauteur": 1920,
+  "legende": "Faïence murale d'une salle de bains",
+  "alt": "Faïence murale d'une salle de bains",
+  "auteur": "Ameerahraheem",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
+  "titre_commons": "File:Bathroom Tiles.jpg"
+ },
+ {
+  "fichier": "images/faience-960.avif",
+  "base": "faience",
+  "largeur": 1080,
+  "hauteur": 1920,
+  "legende": "Faïence murale d'une salle de bains",
+  "alt": "Faïence murale d'une salle de bains",
+  "auteur": "Ameerahraheem",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
+  "titre_commons": "File:Bathroom Tiles.jpg"
+ },
+ {
+  "fichier": "images/faience-720.webp",
+  "base": "faience",
+  "largeur": 1080,
+  "hauteur": 1920,
+  "legende": "Faïence murale d'une salle de bains",
+  "alt": "Faïence murale d'une salle de bains",
+  "auteur": "Ameerahraheem",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
+  "titre_commons": "File:Bathroom Tiles.jpg"
+ },
+ {
+  "fichier": "images/faience-720.avif",
+  "base": "faience",
+  "largeur": 1080,
+  "hauteur": 1920,
+  "legende": "Faïence murale d'une salle de bains",
+  "alt": "Faïence murale d'une salle de bains",
+  "auteur": "Ameerahraheem",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
+  "titre_commons": "File:Bathroom Tiles.jpg"
+ },
+ {
+  "fichier": "images/faience-480.webp",
+  "base": "faience",
+  "largeur": 1080,
+  "hauteur": 1920,
+  "legende": "Faïence murale d'une salle de bains",
+  "alt": "Faïence murale d'une salle de bains",
+  "auteur": "Ameerahraheem",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
+  "titre_commons": "File:Bathroom Tiles.jpg"
+ },
+ {
+  "fichier": "images/faience-480.avif",
+  "base": "faience",
+  "largeur": 1080,
+  "hauteur": 1920,
+  "legende": "Faïence murale d'une salle de bains",
+  "alt": "Faïence murale d'une salle de bains",
+  "auteur": "Ameerahraheem",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
+  "titre_commons": "File:Bathroom Tiles.jpg"
+ },
+ {
+  "fichier": "images/ceramique-1600.webp",
+  "base": "ceramique",
+  "largeur": 1600,
+  "hauteur": 2844,
+  "legende": "Revêtement céramique mural pour pièce d'eau",
+  "alt": "Revêtement céramique mural pour pièce d'eau",
+  "auteur": "Niren 65",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
+  "titre_commons": "File:Bathroom tile.jpg"
+ },
+ {
+  "fichier": "images/ceramique-1600.avif",
+  "base": "ceramique",
+  "largeur": 1600,
+  "hauteur": 2844,
+  "legende": "Revêtement céramique mural pour pièce d'eau",
+  "alt": "Revêtement céramique mural pour pièce d'eau",
+  "auteur": "Niren 65",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
+  "titre_commons": "File:Bathroom tile.jpg"
+ },
+ {
+  "fichier": "images/ceramique-960.webp",
+  "base": "ceramique",
+  "largeur": 1600,
+  "hauteur": 2844,
+  "legende": "Revêtement céramique mural pour pièce d'eau",
+  "alt": "Revêtement céramique mural pour pièce d'eau",
+  "auteur": "Niren 65",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
+  "titre_commons": "File:Bathroom tile.jpg"
+ },
+ {
+  "fichier": "images/ceramique-960.avif",
+  "base": "ceramique",
+  "largeur": 1600,
+  "hauteur": 2844,
+  "legende": "Revêtement céramique mural pour pièce d'eau",
+  "alt": "Revêtement céramique mural pour pièce d'eau",
+  "auteur": "Niren 65",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
+  "titre_commons": "File:Bathroom tile.jpg"
+ },
+ {
+  "fichier": "images/ceramique-720.webp",
+  "base": "ceramique",
+  "largeur": 1600,
+  "hauteur": 2844,
+  "legende": "Revêtement céramique mural pour pièce d'eau",
+  "alt": "Revêtement céramique mural pour pièce d'eau",
+  "auteur": "Niren 65",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
+  "titre_commons": "File:Bathroom tile.jpg"
+ },
+ {
+  "fichier": "images/ceramique-720.avif",
+  "base": "ceramique",
+  "largeur": 1600,
+  "hauteur": 2844,
+  "legende": "Revêtement céramique mural pour pièce d'eau",
+  "alt": "Revêtement céramique mural pour pièce d'eau",
+  "auteur": "Niren 65",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
+  "titre_commons": "File:Bathroom tile.jpg"
+ },
+ {
+  "fichier": "images/ceramique-480.webp",
+  "base": "ceramique",
+  "largeur": 1600,
+  "hauteur": 2844,
+  "legende": "Revêtement céramique mural pour pièce d'eau",
+  "alt": "Revêtement céramique mural pour pièce d'eau",
+  "auteur": "Niren 65",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
+  "titre_commons": "File:Bathroom tile.jpg"
+ },
+ {
+  "fichier": "images/ceramique-480.avif",
+  "base": "ceramique",
+  "largeur": 1600,
+  "hauteur": 2844,
+  "legende": "Revêtement céramique mural pour pièce d'eau",
+  "alt": "Revêtement céramique mural pour pièce d'eau",
+  "auteur": "Niren 65",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
+  "titre_commons": "File:Bathroom tile.jpg"
+ }
 ]
