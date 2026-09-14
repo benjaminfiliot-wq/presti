@@ -32,11 +32,18 @@ if (process.argv.includes('--retirer')) {
 const fichiers = []
 for (let n = 1; n <= 10; n++) for (const f of ['paysage', 'carre', 'vertical']) { const p = path.join(RACINE, 'publications', `pub-${String(n).padStart(2, '0')}`, `${f}.mp4`); if (fs.existsSync(p)) fichiers.push(p) }
 const jugeLog = path.join(os.tmpdir(), 'presti-vqa-suite.log')
-const juge = spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'video-qa.mjs'), ...fichiers], { cwd: RACINE, encoding: 'utf8', timeout: 600_000 })
-fs.writeFileSync(jugeLog, (juge.stdout || '') + (juge.stderr || ''))
-const verts = ((juge.stdout || '').match(/Tout passe/g) || []).length
-log(`juge : code ${juge.status} · ${verts}/${fichiers.length} vertes`)
-if (juge.status !== 0 || verts < fichiers.length) { log('arrêt : le juge n\'est pas vert, rien n\'est envoyé'); process.exit(1) }
+// Le juge fichier par fichier, chacun sous un délai : lancé d'un bloc sur trente fichiers depuis un processus node, video-qa
+// reste parfois suspendu après la dernière vidéo (14/09, 6 h : la tâche planifiée a été tuée sans rien écrire).
+let sortieJuge = '', verts = 0, echecs = 0
+for (const f of fichiers) {
+  const j = spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'video-qa.mjs'), f], { cwd: RACINE, encoding: 'utf8', timeout: 90_000 })
+  const txt = (j.stdout || '') + (j.stderr || '')
+  sortieJuge += txt
+  if (j.status === 0 && /Tout passe/.test(txt)) verts++; else echecs++
+}
+fs.writeFileSync(jugeLog, sortieJuge)
+log(`juge : ${verts}/${fichiers.length} vertes, ${echecs} échec(s) ou délai(s)`)
+if (echecs) { log('arrêt : le juge n\'est pas vert, rien n\'est envoyé'); process.exit(1) }
 
 const p = spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'pipeline.mjs'), '--sans-rendu', '--programmer', '--sauf=03', `--ancre=${ANCRE}`, `--juge-vert=${jugeLog}`, '--passe-maintenant'], { cwd: RACINE, encoding: 'utf8', timeout: 600_000 })
 const sortie = ((p.stdout || '') + (p.stderr || '')).replace(/\x1b\[[0-9;]*m/g, '')
