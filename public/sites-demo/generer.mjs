@@ -141,7 +141,7 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
 <meta property="og:url" content="${url}">
 <meta property="og:locale" content="fr_FR">
 <link rel="preload" href="${rel}fonts/${slug(da.display)}.woff2" as="font" type="font/woff2" crossorigin>
-${page.type === 'accueil' ? `<link rel="preload" as="image" type="image/avif" imagesrcset="${srcsetDe(hero, rel, 'avif')}" imagesizes="${da.hero === 'plein' ? '100vw' : da.hero === 'aplat' ? '(max-width: 960px) 100vw, 50vw' : '(max-width: 960px) 100vw, 45vw'}" fetchpriority="high">` : ''}
+${page.type === 'accueil' ? `<link rel="preload" as="image" type="image/avif" imagesrcset="${srcsetDe(hero, rel, 'avif')}" imagesizes="${da.hero === 'plein' ? '(max-width: 480px) 95vw, 100vw' : da.hero === 'aplat' ? '(max-width: 960px) calc(100vw - 2.5rem), 50vw' : '(max-width: 960px) calc(100vw - 2.5rem), 45vw'}" fetchpriority="high">` : ''}
 <link rel="stylesheet" href="${rel}styles.css">
 <script>document.documentElement.classList.replace('no-js','js');try{if(sessionStorage.getItem('rideau'))document.documentElement.classList.add('splash-vu')}catch(e){}</script>
 <script src="${rel}site.js" defer></script>
@@ -201,9 +201,11 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     const kicker = c.kicker || `${da.label} · ${ville}`
     const heroTexte = `<span class="mono entre" style="--d:.3s">${esc(kicker)}</span><h1>${mots(c.h1)}</h1><p class="chapeau entre" style="--d:1.1s">${esc(c.chapeau)}</p><div class="hero__actions entre" style="--d:1.3s"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a><a class="hero__tel" href="tel:${tel}">${telAffiche(tel)}</a></div>`
     let heroHtml
-    if (da.hero === 'plein') heroHtml = `<section class="hero hero--plein"><div class="hero__media">${photo(hero, rel, { eager: true, sizes: '100vw' })}</div>${da.filigrane ? `<div class="hero__filigrane" aria-hidden="true">${esc(da.filigrane)}</div>` : ''}<div class="conteneur"><div class="hero__contenu">${heroTexte}</div></div><div class="hero__indice">Défiler</div></section>`
-    else if (da.hero === 'aplat') heroHtml = `<section class="hero hero--aplat"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div class="hero__media entre" style="--d:.9s">${photo(hero, rel, { eager: true, sizes: '(max-width: 960px) 100vw, 50vw' })}</div></div></section>`
-    else heroHtml = `<section class="hero hero--scinde"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div class="hero__cadre entre" style="--d:.9s" data-legende="${esc(hero.legende)}"><div class="hero__media">${photo(hero, rel, { eager: true, sizes: '(max-width: 960px) 100vw, 45vw' })}</div></div></div></section>`
+    // sizes : un téléphone de 412 px à 1,75× demande 721 px — un pixel de plus que la variante 720, et il prendrait la 960 (deux fois plus lourde) ;
+    // 95vw sous 480 px la lui fait choisir (5 % d'agrandissement, invisible en plein cadre)
+    if (da.hero === 'plein') heroHtml = `<section class="hero hero--plein"><div class="hero__media">${photo(hero, rel, { eager: true, sizes: '(max-width: 480px) 95vw, 100vw' })}</div>${da.filigrane ? `<div class="hero__filigrane" aria-hidden="true">${esc(da.filigrane)}</div>` : ''}<div class="conteneur"><div class="hero__contenu">${heroTexte}</div></div><div class="hero__indice">Défiler</div></section>`
+    else if (da.hero === 'aplat') heroHtml = `<section class="hero hero--aplat"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div class="hero__media entre" style="--d:.9s">${photo(hero, rel, { eager: true, sizes: '(max-width: 960px) calc(100vw - 2.5rem), 50vw' })}</div></div></section>`
+    else heroHtml = `<section class="hero hero--scinde"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div class="hero__cadre entre" style="--d:.9s" data-legende="${esc(hero.legende)}"><div class="hero__media">${photo(hero, rel, { eager: true, sizes: '(max-width: 960px) calc(100vw - 2.5rem), 45vw' })}</div></div></div></section>`
 
     const defile = [...prestationsTitres, ...communes.map((x) => `${da.label} à ${x}`)]
     const groupe = `<div class="defile__groupe">${defile.map((t) => `<span>${esc(t)}</span>`).join('')}</div>`
