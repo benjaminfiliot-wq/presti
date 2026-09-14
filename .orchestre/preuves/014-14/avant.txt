@@ -1,32 +1,7 @@
-M .claude/agents/presti-ai-engineer.md
- M .claude/skills/presti-design/SKILL.md
- M .orchestre/agents.jsonl
- M .orchestre/digest.md
- D .orchestre/file/014-14.md
- M .orchestre/preuves/014-01/avant.txt
- D .orchestre/refuse/014-01.md
- M README.md
- M app/AppShell.tsx
- M app/api/controle/apports/route.ts
- M app/api/controle/clients/[id]/route.ts
- M app/api/controle/clients/route.ts
- M app/api/controle/releve/route.ts
- M app/api/messages/route.ts
- M app/globals.css
- M lib/ai.ts
- M lib/ai/metiers.ts
- M lib/controle/confiance.ts
- M lib/direction/apports.ts
- M package-lock.json
- M package.json
- M plans/journal-final.md
- M plans/promesses.md
- M scripts/garde-commit.mjs
- M scripts/ia-unit-e2e.mjs
- M scripts/messages-e2e.mjs
- M scripts/relances-e2e.mjs
- M scripts/tout-verifier.mjs
- M skills-lock.json
+M .orchestre/digest.md
+ M .orchestre/preuves/014-03/skills.md
+ M .orchestre/preuves/014-04/skills.md
+ D .orchestre/refuse/014-14.md
 ?? .claude/skills/captions-overlay/
 ?? .claude/skills/changelog-video/
 ?? .claude/skills/cut-the-curve/
@@ -53,16 +28,21 @@ M .claude/agents/presti-ai-engineer.md
 ?? .claude/skills/seam-craft/
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
-?? .orchestre/en-cours/
+?? .orchestre/en-cours/014-14.lock
+?? .orchestre/en-cours/014-14.md
+?? .orchestre/fait/014-03.md
+?? .orchestre/preuves/014-02/avant.txt
+?? .orchestre/preuves/014-03/avant.txt
+?? .orchestre/preuves/014-04/avant.txt
+?? .orchestre/preuves/014-20/
 ?? ChromeSetup.exe
-?? app/site/commander/
+?? build-plombier.mjs
+?? fix.js
 ?? fix_home.py
 ?? fix_html.py
 ?? fix_newlines.py
 ?? full_qa_output.txt
 ?? generate-site.mjs
-?? lib/direction/canaux.ts
-?? lib/relances.ts
 ?? plans/011-video-et-premiere-publication.md
 ?? plans/012-dix-publications-et-videos.md
 ?? plans/013-niveau-superieur-video-voix-automatisation.md
@@ -82,7 +62,9 @@ M .claude/agents/presti-ai-engineer.md
 ?? qa_out_temp.txt
 ?? qa_output.txt
 ?? qa_output2.txt
+?? qa_output2_utf8.txt
 ?? qa_output3.txt
+?? qa_output_utf8.txt
 ?? scratch-fetch.mjs
 ?? scratch-generator.mjs
 ?? scratch-screenshot.mjs
@@ -94,7 +76,8 @@ M .claude/agents/presti-ai-engineer.md
 ?? scripts/build-014-06.mjs
 ?? scripts/captures-014-04.mjs
 ?? scripts/captures-console.mjs
-?? scripts/controle-canaux-e2e.mjs
+?? scripts/gen-chauffagiste.mjs
+?? scripts/gen-html.mjs
 ?? scripts/hf-composer.mjs
 ?? scripts/hf-recadrer.mjs
 ?? scripts/hf-rendre.mjs
@@ -113,11 +96,5 @@ M .claude/agents/presti-ai-engineer.md
 ?? scripts/voix-fiche.mjs
 ?? scripts/voix-mixer.mjs
 ?? shot_cerveaux.mjs
-?? supabase/migrations/0086_canaux_apport.sql
-?? supabase/migrations/0087_canal_instagram.sql
-?? supabase/migrations/_A_COLLER_sql_editor_0086.sql
-?? supabase/migrations/_A_COLLER_sql_editor_0086_NU.sql
-?? supabase/migrations/_A_COLLER_sql_editor_0087.sql
-?? supabase/migrations/_A_COLLER_sql_editor_0087_NU.sql
 ?? test.jpg
 ?? videos/

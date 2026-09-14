@@ -25,6 +25,7 @@ type Commande = {
   regenerations: number
   cree_le: string
   modifie_le: string
+  apercu?: string | null
 }
 
 const ETATS_FILTRE = [
@@ -42,6 +43,7 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
   const [erreur, setErreur] = useState<string | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
   const [consignes, setConsignes] = useState<Record<string, string>>({})
+  const [dnsParCommande, setDnsParCommande] = useState<Record<string, { type: string; name: string; value: string }[]>>({})
 
   const charger = useCallback(async (filtre: string) => {
     const url = `/api/controle/sites${filtre ? `?etat=${filtre}` : ''}`
@@ -82,6 +84,36 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
         setOuverte(null)
       } else {
         signaler?.({ type: 'err', text: r.data.error ?? 'Action refusée.' })
+      }
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  const mettreEnLigne = async (c: Commande) => {
+    if (c.etat !== 'validee') return
+    const domaineTexte = c.domaine || 'son domaine'
+    if (!window.confirm(`Le site sera servi sur ${domaineTexte} — les enregistrements DNS seront à donner à l'artisan.`)) {
+      return
+    }
+    setBusyId(c.id)
+    try {
+      const r = await apiDirection<{ ok?: boolean; commande?: Commande; dns?: { type: string; name: string; value: string }[]; error?: string }>(
+        `/api/controle/sites/${c.id}`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ action: 'mettre_en_ligne' }),
+        },
+        true
+      )
+      if (r.ok) {
+        signaler?.({ type: 'ok', text: 'Site mis en ligne.' })
+        if (r.data.dns && r.data.dns.length > 0) {
+          setDnsParCommande((prev) => ({ ...prev, [c.id]: r.data.dns! }))
+        }
+        void charger(etatFiltre)
+      } else {
+        signaler?.({ type: 'err', text: r.data.error ?? 'Mise en ligne refusée.' })
       }
     } finally {
       setBusyId(null)
@@ -176,6 +208,23 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
                             </details>
                           ) : null}
 
+                          {c.apercu && (
+                            <div style={{ marginTop: '.6rem' }}>
+                              <a
+                                href={c.apercu}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn--ghost"
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem' }}
+                              >
+                                Ouvrir l'aperçu privé ↗
+                              </a>
+                              <p style={{ margin: '.3rem 0 0', fontSize: '.8rem', fontStyle: 'italic' }} className="muted">
+                                lien privé, ne pas le partager ; il ne s'indexe pas.
+                              </p>
+                            </div>
+                          )}
+
                           {c.etat === 'generee' && role === 'direction' && (
                             <div style={{ marginTop: '.8rem', padding: '.6rem', background: 'rgba(0,0,0,0.03)', borderRadius: '6px' }}>
                               <div style={{ display: 'flex', gap: '.5rem', marginBottom: '.5rem' }}>
@@ -205,6 +254,65 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
                                 >
                                   {busyId === c.id ? 'Patientez…' : 'Renvoyer en génération'}
                                 </button>
+                              </div>
+                            </div>
+                          )}
+
+                          {c.etat === 'validee' && role === 'direction' && (
+                            <div style={{ marginTop: '.8rem', padding: '.6rem', background: 'rgba(0,0,0,0.03)', borderRadius: '6px' }}>
+                              <button
+                                type="button"
+                                className="btn btn--primary"
+                                disabled={busyId === c.id}
+                                onClick={() => void mettreEnLigne(c)}
+                              >
+                                {busyId === c.id ? 'Patientez…' : 'Mettre en ligne'}
+                              </button>
+                            </div>
+                          )}
+
+                          {dnsParCommande[c.id] && dnsParCommande[c.id].length > 0 && (
+                            <div style={{ marginTop: '.8rem', padding: '.6rem', background: 'rgba(0,0,0,0.03)', borderRadius: '6px' }} data-dns>
+                              <strong style={{ fontSize: '.85rem' }}>Enregistrements DNS à fournir :</strong>
+                              <ul style={{ listStyle: 'none', padding: 0, margin: '.4rem 0 .5rem', fontSize: '.85rem' }}>
+                                {dnsParCommande[c.id].map((rec, idx) => (
+                                  <li key={idx} style={{ display: 'flex', gap: '.5rem', alignItems: 'center', marginBottom: '.3rem', flexWrap: 'wrap' }}>
+                                    <span>type : <code>{rec.type}</code></span> ·{' '}
+                                    <span>nom : <code>{rec.name}</code></span> ·{' '}
+                                    <span>valeur : <code>{rec.value}</code></span>
+                                    <button
+                                      type="button"
+                                      className="btn btn--ghost"
+                                      style={{ fontSize: '.75rem', padding: '.1rem .4rem' }}
+                                      onClick={() => void navigator.clipboard?.writeText(rec.value)}
+                                      title="Copier la valeur"
+                                    >
+                                      Copier valeur
+                                    </button>
+                                  </li>
+                                ))}
+                              </ul>
+                              <p style={{ margin: 0, fontSize: '.8rem', fontStyle: 'italic' }} className="muted">
+                                à poser chez le registrar du domaine par l'artisan ; le sitemap est à soumettre dans la Search Console (Benj).
+                              </p>
+                            </div>
+                          )}
+
+                          {c.etat === 'en_ligne' && (
+                            <div style={{ marginTop: '.8rem', padding: '.6rem', background: 'rgba(0,0,0,0.03)', borderRadius: '6px' }}>
+                              <div style={{ fontSize: '.85rem' }}>
+                                <strong>Site public :</strong>{' '}
+                                <a href={`/site-genere/${c.id}/`} target="_blank" rel="noopener noreferrer">
+                                  /site-genere/{c.id}/
+                                </a>
+                                {c.domaine ? (
+                                  <>
+                                    {' · '}
+                                    <a href={`https://${c.domaine}`} target="_blank" rel="noopener noreferrer">
+                                      https://{c.domaine}
+                                    </a>
+                                  </>
+                                ) : null}
                               </div>
                             </div>
                           )}
