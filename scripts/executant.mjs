@@ -1,5 +1,5 @@
 // scripts/executant.mjs — un second exécutant quand Antigravity est à sec (ses quotas tombent en minutes dès que deux
-// agents tournent, 13-14/09). Gemini CLI (compte Google, gratuit) ou Qwen Code (compte Qwen, gratuit), pilotés sans les
+// agents tournent, 13-14/09). Gemini CLI (clé d'API gratuite) ou Qwen Code (compte Qwen, gratuit), pilotés sans les
 // mains, avec le MÊME contrat de tâche que scripts/antigravity.mjs (le prompt est importé de là : une seule source).
 //
 // Usage :
@@ -8,7 +8,9 @@
 //   node scripts/executant.mjs pas <agent> --tache=<id> <message…>          → un pas de plus (duo) : l'histoire est dans le fichier de prompt
 //   node scripts/executant.mjs etat                                          → les lancements et leurs journaux
 // Première fois (une seule, par Benj, dans un terminal) :
-//   Gemini : `npx @google/gemini-cli` → « Login with Google » (gratuit) ; ou GEMINI_API_KEY=… dans .env.local (clé gratuite, aistudio.google.com)
+//   Gemini : GEMINI_API_KEY=… dans .env.local (clé gratuite, aistudio.google.com). « Login with Google » ne marche plus : le
+//            14/09/2026, Google a refusé l'offre gratuite à ce client (IneligibleTierError UNSUPPORTED_CLIENT, « migrate to
+//            the Antigravity suite ») après une connexion pourtant réussie — Gemini gratuit passe désormais par Antigravity.
 //   Qwen   : `npx @qwen-code/qwen-code` → /auth → « Qwen OAuth » (gratuit)
 // Les journaux vont dans .orchestre/travail/executant/ ; le registre « un agent, une tâche » est le même (.orchestre/agents.jsonl).
 import fs from 'node:fs'
@@ -24,7 +26,7 @@ const ORCH = path.join(RACINE, '.orchestre')
 const TRAVAIL = path.join(ORCH, 'travail', 'executant')
 const AGENTS = path.join(ORCH, 'agents.jsonl')
 const MOTEURS = {
-  gemini: { paquet: '@google/gemini-cli', modele: 'gemini-2.5-pro', cle: 'GEMINI_API_KEY', auth: /auth method|GEMINI_API_KEY|login|unauthenticated|401|403/i },
+  gemini: { paquet: '@google/gemini-cli', modele: 'gemini-2.5-pro', cle: 'GEMINI_API_KEY', auth: /auth method|GEMINI_API_KEY|login|unauthenticated|IneligibleTier|no longer supported|401|403/i },
   qwen: { paquet: '@qwen-code/qwen-code', modele: null, cle: null, auth: /auth|login|unauthenticated|401|403/i },
 }
 const args = process.argv.slice(2)
@@ -68,7 +70,7 @@ function executer(moteur, instruction, modele, journal, delaiMs) {
 async function sonde(moteur) {
   const journal = path.join(TRAVAIL, `sonde-${moteur}-${horodatage()}.log`)
   const r = await executer(moteur, 'Réponds uniquement le mot OK, rien d autre.', option('model', MOTEURS[moteur].modele), journal, 120_000)
-  if (r.auth) { console.log(`\n✗ ${moteur} : pas authentifié. ${moteur === 'gemini' ? 'Dans un terminal : npx @google/gemini-cli → Login with Google ; ou GEMINI_API_KEY dans .env.local.' : 'Dans un terminal : npx @qwen-code/qwen-code → /auth → Qwen OAuth.'}`); return 1 }
+  if (r.auth) { console.log(`\n✗ ${moteur} : pas authentifié. ${moteur === 'gemini' ? 'Mettre GEMINI_API_KEY dans .env.local (aistudio.google.com) : la connexion Google est refusée par Google depuis le 14/09/2026 (UNSUPPORTED_CLIENT).' : 'Dans un terminal : npx @qwen-code/qwen-code → /auth → Qwen OAuth.'}`); return 1 }
   const ok = r.code === 0 && /\bOK\b/.test(r.sortie)
   console.log(`\n${ok ? '✓' : '?'} ${moteur} : ${ok ? 'répond' : 'sortie inattendue'} en ${r.duree} s (code ${r.code}) · journal ${path.relative(RACINE, journal)}`)
   return ok ? 0 : 1
