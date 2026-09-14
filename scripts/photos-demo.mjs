@@ -27,6 +27,9 @@ const REQUETES = {
   electricien: ['electrical panel circuit breakers', 'electrician working wires', 'electrical wiring installation', 'light switch wall modern', 'led lighting ceiling interior', 'electrical cable copper', 'electric meter cabinet'],
   chauffagiste: ['boiler heating installation', 'radiator heating home', 'heat pump outdoor unit', 'underfloor heating pipes', 'thermostat wall', 'gas boiler condensing', 'heating pipes copper manifold'],
   macon: ['bricklaying wall construction', 'concrete foundation pouring', 'stone wall masonry', 'construction site building brick', 'mason trowel mortar', 'reinforced concrete rebar', 'block wall construction'],
+  'menuisier-agenceur': ['woodworking workshop bench', 'carpenter workshop wood shavings', 'oak wood grain planks', 'wooden staircase modern interior', 'built-in wardrobe oak', 'kitchen wooden cabinets custom', 'joinery wood joint detail', 'wood panelling interior modern'],
+  // la démo v16 : l'atelier, la matière, l'agencement — requêtes multilingues (Commons est riche en allemand et en français)
+  lestraque: ['Tischlerei Werkstatt', 'Schreinerei Hobelbank', 'menuiserie atelier bois', 'woodworking bench chisels', 'wood shavings plane', 'oak board grain close-up', 'fitted kitchen wood interior', 'wooden staircase interior design', 'timber joinery dovetail', 'bibliothèque bois sur mesure'],
   menuisier: ['woodworking workshop joinery', 'wooden staircase custom', 'oak wood furniture handmade', 'wooden window frame', 'carpenter planing wood', 'hardwood floor installation', 'wooden door workshop'],
   peintre: ['painting wall roller interior', 'paint brush wall renovation', 'painter ladder room', 'freshly painted room white', 'wall painting color samples', 'exterior house painting facade', 'plaster wall preparation'],
   carreleur: ['tile installation floor', 'bathroom tiles mosaic', 'ceramic tiles pattern floor', 'tiler laying tiles', 'walk-in shower tiled', 'kitchen backsplash tiles', 'hexagonal tiles floor'],
@@ -51,12 +54,40 @@ async function api(params) {
   return r.json()
 }
 
+// Openverse (openverse.org, WordPress Foundation) agrège les images sous licence Creative Commons de Flickr, Wikimedia et
+// d'autres, avec l'auteur, la licence et la page d'origine dans l'API — sans clé pour un usage modéré. Plus riche que la
+// recherche plein texte de Commons pour des photos « de magazine » (atelier, matière, intérieur).
+async function chercherOpenverse(metier, reqs) {
+  const vus = new Map()
+  for (const q of reqs) {
+    if (vus.size >= 36) break
+    const u = new URL('https://api.openverse.org/v1/images/')
+    // --fournisseur=flickr : les photos d'atelier et d'intérieur « de magazine » sont sur Flickr, pas sur Wikimedia (constaté le 14/09)
+    const fournisseur = (process.argv.find((a) => a.startsWith('--fournisseur=')) || '').slice(14)
+    u.search = new URLSearchParams({ q, license: 'by,by-sa,cc0', size: 'large', page_size: '20', mature: 'false', category: 'photograph', ...(fournisseur ? { source: fournisseur } : {}), ...(process.argv.includes('--large') ? { aspect_ratio: 'wide' } : {}) })
+    let j
+    try { const r = await fetch(u, { headers: { 'User-Agent': UA, Accept: 'application/json' } }); if (!r.ok) { console.log(`  ? openverse ${r.status} pour « ${q} »`); continue } j = await r.json() } catch (e) { console.log(`  ? openverse : ${e.message}`); continue }
+    for (const it of j.results || []) {
+      if (!it.url || !it.creator || (it.width || 0) < 1600 || (it.height || 0) < 900) continue
+      const lic = String(it.license || '').toLowerCase(), ver = String(it.license_version || '')
+      const licence = lic === 'cc0' ? 'CC0' : `CC ${lic.toUpperCase()} ${ver}`
+      if (!LICENCES_OK.test(licence)) continue
+      const cle = it.foreign_landing_url || it.url
+      if (vus.has(cle)) continue
+      vus.set(cle, { titre: it.title || it.id, requete: q, largeur: it.width, hauteur: it.height, url: it.url, vignette: it.thumbnail || it.url, page: it.foreign_landing_url, auteur: String(it.creator).slice(0, 40), licence, description: String(it.title || '').slice(0, 140), source: 'openverse', fournisseur: it.source })
+    }
+    await new Promise((r) => setTimeout(r, 400))
+  }
+  return [...vus.values()]
+}
+
 async function chercher(metier) {
   const reqs = REQUETES[metier]; if (!reqs) throw new Error(`pas de requêtes pour ${metier}`)
   const vus = new Map()
+  if (process.argv.includes('--source=openverse')) { for (const c of await chercherOpenverse(metier, reqs)) vus.set(c.titre, c) }
   // D'abord parmi les « Quality images » de Commons (cadrage, netteté, exposition jugés par des pairs), puis en plein texte.
   // --simple : plein texte seulement (les « Quality images » sont belles mais souvent hors sujet pour un métier du bâtiment)
-  const passes = process.argv.includes('--simple') ? reqs : [...reqs.map((q) => `incategory:"Quality images" ${q}`), ...reqs.map((q) => `incategory:"Quality images" ${q.split(' ').slice(0, 2).join(' ')}`), ...reqs]
+  const passes = process.argv.includes('--source=openverse') ? [] : process.argv.includes('--simple') ? reqs : [...reqs.map((q) => `incategory:"Quality images" ${q}`), ...reqs.map((q) => `incategory:"Quality images" ${q.split(' ').slice(0, 2).join(' ')}`), ...reqs]
   for (const q of passes) {
     if (vus.size >= 36) break
     const j = await api({ action: 'query', generator: 'search', gsrsearch: `${q} filetype:bitmap`, gsrnamespace: '6', gsrlimit: '10', prop: 'imageinfo', iiprop: 'url|size|user|extmetadata', iiurlwidth: '320' })
@@ -123,7 +154,7 @@ async function prendre(metier, choix) {
     }
     const { width, height } = await sharp(path.join(images, `${nom}-1600.webp`)).metadata()
     // une entrée par fichier (le juge rapproche chaque image du dossier d'une attribution), la première porte le 1600 webp
-    for (const l of [...LARGEURS].reverse()) for (const ext of ['webp', 'avif']) attributions.push({ fichier: `images/${nom}-${l}.${ext}`, base: nom, largeur: width, hauteur: height, legende, alt: legende, auteur: cand.auteur, licence: licenceJuge(cand.licence), source: cand.page, titre_commons: cand.titre })
+    for (const l of [...LARGEURS].reverse()) for (const ext of ['webp', 'avif']) attributions.push({ fichier: `images/${nom}-${l}.${ext}`, base: nom, largeur: width, hauteur: height, legende, alt: legende, auteur: cand.auteur, licence: licenceJuge(cand.licence), source: cand.page, titre_commons: cand.source === 'openverse' ? undefined : cand.titre, origine: cand.source === 'openverse' ? { via: 'openverse', fournisseur: cand.fournisseur, image: cand.url } : undefined })
     console.log(`  ✓ ${nom} ← ${cand.titre.replace(/^File:/, '').slice(0, 60)} (${cand.auteur}, ${cand.licence}) ${width}×${height}`)
     await new Promise((r) => setTimeout(r, 400))
   }

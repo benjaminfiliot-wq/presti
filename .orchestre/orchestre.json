@@ -1,0 +1,38 @@
+{
+  "projet": "presti",
+  "description": "SaaS pour les artisans du bâtiment : plateforme de conversation, devis, factures, site à la demande",
+  "pile": "Next.js + Supabase + Vercel",
+  "source": "C:/Users/benja/Documents/orchestre",
+  "carte": {
+    "pages": "app/**/page.tsx",
+    "api": "app/api/**/route.ts",
+    "lib": "lib/**/*.ts",
+    "migrations": "supabase/migrations",
+    "drapeaux": "lib/flags.ts",
+    "formules": "lib/plans.ts"
+  },
+  "juges": {
+    "code": {
+      "lint": "npm run lint",
+      "typecheck": "npm run typecheck"
+    }
+  },
+  "executants": [
+    "antigravity",
+    "claude-code",
+    "gemini-cli",
+    "qwen"
+  ],
+  "maxMinutes": 30,
+  "lectureLibre": [
+    ".orchestre/**",
+    "plans/**"
+  ],
+  "vault": "../SaaS",
+  "carteVault": "Produit/Carte-du-code.md",
+  "methodeSupplement": [
+    "**Poussé n'est pas déployé** : après chaque push sur `main`, `node scripts/deploiement-etat.mjs` (le 13-14/09, 37 déploiements de production en ERROR à la suite, près de quinze heures sans que personne ne le voie) ; avant de pousser une page, `npm run build` en local.",
+    "**Quand Antigravity est à sec** : `scripts/executant.mjs` (Gemini CLI ou Qwen Code, gratuits, même contrat de tâche). Un site de démonstration se **génère** (`public/sites-demo/generer.mjs`, kit et direction artistique dans `_kit/`), ses photos viennent de `scripts/photos-demo.mjs` et leur provenance se prouve (`scripts/photos-provenance.mjs`) — une attribution déclarée ne vaut rien.",
+    "**Routage des modèles (v16 §1.3)** : jugement (schéma, argent, sécurité, cerveaux, verdicts) → Claude Code ; exploration et résumés de fichiers → sous-agent `haiku` ; volume (pages, variantes, tests, boucles QA) → Antigravity ou `executant.mjs` ; recherche web → Perplexity ; navigation et captures → navigateur d'Antigravity ou Claude in Chrome. Claude Code lit `digest.md` et `contexte.md`, pas le dépôt ; `node scripts/orchestre.mjs budget --tous` dit s'il lit trop."
+  ]
+}

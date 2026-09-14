@@ -1,13 +1,22 @@
-# Digest — 2026-09-14T10:22:03Z
+<!-- budget:debut -->
+🔴 Claude Code lit trop au lieu de faire lire (part lue 89 % > 60 %) — **Budget jetons** (tous les projets, 2026-09-14T11:07:51Z, `node scripts/orchestre.mjs budget --tous`)
+- session courante (`fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d`) : lu (nouveau) 131 423 888 · relu depuis le cache 4 488 050 479 · produit 15 744 941 · part lue 89 % · 18 593 réponse(s)
+- aujourd'hui : lu (nouveau) 25 256 332 · relu depuis le cache 853 791 579 · produit 3 149 505 · part lue 89 % · 2 025 réponse(s)
+- sept derniers jours : lu (nouveau) 175 353 239 · relu depuis le cache 7 656 446 637 · produit 24 771 227 · part lue 88 % · 28 623 réponse(s)
+- part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
+<!-- budget:fin -->
+
+# Digest — 2026-09-14T11:05:42Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (Antigravity) : 22 tâche(s) PASS, 133212 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
-**État** — file : 0 · en cours : 0 · faites : 22 · refusées : 1
+**Mesure** — déléguées (antigravity, gemini-cli, qwen) : 22 tâche(s) PASS, 68399 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
+**État** — file : 0 · en cours : 1 · faites : 22 · refusées : 1
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 016-01 | contenu | fait | ag-01-gemini38flas | PASS | 2026-09-14T10:22:00Z · 0s · 64813 l. |
+| 016-02 | feature | en-cours | claude-code | — | depuis 2026-09-14T10:30:39Z · LA démo (prompt v16 §3) — un seul site de démonstration, « Atelier Lestraque », menuisier-agenceur fictif à Rennes, poussé au niveau des références MotionSites (grille C1–C8 ≥ médiane), jugé par site-qa (Lighthouse mobile ≥ 95), grille-qa et code-qa |
+| 016-01 | contenu | fait | antigravity | PASS | 2026-09-14T11:05:42Z · 1s · 0 l. |
 | 014-11 | test | fait | ag-11-g37 | PASS | 2026-09-14T09:35:02Z · 29s · 98 l. |
 | 014-17 | test | fait | ag-17-g38 | PASS | 2026-09-14T09:34:14Z · 80s · 446 l. |
 | 014-20 | contenu | fait | ag-20-g38 | PASS | 2026-09-14T07:53:22Z · 3s · 1198 l. |

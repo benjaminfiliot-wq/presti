@@ -46,6 +46,19 @@ for (const m of METIERS) {
   for (const a of liste) { const src = a.source || a.url || a.page || ''; if (!parSource.has(src)) parSource.set(src, a) }
   for (const [src, a] of parSource) {
     total++
+    // Une photo venue par Openverse (Flickr…) : pas d'API Commons, mais l'image d'origine est connue — on la compare.
+    if (a.origine?.via === 'openverse' && a.origine.image) {
+      const base = String(a.fichier).replace(/-(480|720|960|1600)\.(avif|webp|jpg|png)$/i, '')
+      const local = ['-1600.webp', '-960.webp', '-720.webp', '-480.webp'].map((s) => path.join(dossier, base + s)).find(fs.existsSync)
+      try {
+        const rv = await fetch(a.origine.image, { headers: { 'User-Agent': UA } })
+        const dist = hamming(await empreinte(Buffer.from(await rv.arrayBuffer())), await empreinte(fs.readFileSync(local)))
+        if (dist <= 12 && a.auteur && a.auteur.length >= 3) console.log(`✓ ${m} ${path.basename(local)} = ${a.origine.fournisseur || 'openverse'} ${src.slice(0, 60)} (${a.licence}, distance ${dist})`)
+        else { faux++; console.log(`✗ ${m} ${a.fichier} : photo différente de l'image d'origine (distance ${dist}) ou auteur absent`) }
+      } catch (e) { console.log(`? ${m} ${a.fichier} : origine injoignable (${e.message})`) }
+      await new Promise((r) => setTimeout(r, 250))
+      continue
+    }
     const mt = /File:(.+)$/.exec(decodeURIComponent(src))
     if (!mt) { faux++; console.log(`✗ ${m} ${a.fichier} : source sans page de fichier (${src})`); continue }
     let info

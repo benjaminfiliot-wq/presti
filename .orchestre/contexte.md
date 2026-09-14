@@ -1,7 +1,9 @@
-# Carte du code — Presti (2026-09-14T10:22:00Z)
+# Carte du code — presti (2026-09-14T11:05:42Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
+
+SaaS pour les artisans du bâtiment : plateforme de conversation, devis, factures, site à la demande Pile : Next.js + Supabase + Vercel.
 
 ## Pages (34) — `app/**/page.tsx`
 - `/abonnement` : ·
@@ -65,11 +67,9 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 
 ## Formules — `lib/plans.ts`
 - plans : gratuit (Essai, 0 €/mois, BASE) · essentiel (Essentiel, 29 €/mois, BASE) · studio (Studio, 59 €/mois, STUDIO) · signature (Signature, 99 €/mois, SIGNATURE) · business (Business, 0 €/mois, SIGNATURE)
-- capacités (0) : (non extraites)
 - grille complète (16 lignes) : Page de conversation à votre marque · Assistant IA · Comptes clients (lien magique, historique) · Personnalisation · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA, sur vos prix · Factures + facture électronique · Relances automatiques · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Crédits chaque mois · Export de vos données · Support prioritaire
 
-## Bibliothèque — `lib/` (99 fichiers, exports nommés)
-- `lib/DevisPDF.tsx` (3) : PDFLigne, PDFData, DevisPDF
+## Bibliothèque — `lib/**/*.ts` (98 fichiers, exports nommés)
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
 - `lib/ai.ts` (23) : genParams, Artisan, Lead, LeadInsights, analyzeLead, qualifyLead, blocProspect, generateLeadReply, …
 - `lib/ai/antiFabrication.ts` (12) : ProfilCapacites, CapaciteDetectee, normaliser, texteProfil, MOTIFS_CAPACITE, RE_NEGATION, phrases, detecterCapacitesNonDeclarees, …
@@ -171,9 +171,8 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 
 ## Migrations — `supabase/migrations` (89)
 - dernières : 0085_purger_compte_test_devis.sql, 0086_canaux_apport.sql, 0087_canal_instagram.sql, 0088_site_commande.sql, 0089_sites_bucket.sql
-- les `_A_COLLER_sql_editor_NNNN(.NU).sql` sont les versions à coller dans l’éditeur SQL Supabase (CLAUDE.md « Poser une migration ») — une migration n’existe en prod que collée.
 
-## Scripts — `scripts/` (193 .mjs, dont 77 suites e2e ; l’enchaînement : `tout-verifier.mjs`)
+## Scripts — `scripts/` (196 .mjs, dont 77 suites e2e)
 
-## Orchestre — file : 0 · en cours : 0 · faites : 22 · refusées : 1
+## Orchestre — file : 0 · en cours : 1 · faites : 22 · refusées : 1
 
