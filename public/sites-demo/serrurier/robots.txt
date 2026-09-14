@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://serrurier.demo.invalid/sitemap.xml

@@ -1,0 +1,5 @@
+- presti-design : Respect strict du white-label, palette métier #35506B et #F5F7F9, typographie Syne/Manrope, zéro promesse mensongère.
+- emil-design-eng : Rythme visuel serré avec bordures franches 2px et border-radius 2px adapté à la rigueur de la serrurerie.
+- apple-design : Hiérarchie typographique nette, contraste élevé (6.5:1), un seul geste fort par écran avec appel téléphonique direct dans le héros.
+- animation-vocabulary : Transition de révélation au défilement fluide (translation verticale de 12px avec courbe ease-out 400ms), aucun carrousel.
+- improve-animations : Dégradation gracieuse avec filet no-js/noscript et respect strict de prefers-reduced-motion pour éliminer tout lag sur mobile.

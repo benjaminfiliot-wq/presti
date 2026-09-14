@@ -1,0 +1,52 @@
+{
+  "metier": "serrurier",
+  "nom": "Démo Serrurier Montpellier",
+  "telephone": "+33 4 00 00 00 00",
+  "siren": "000000000",
+  "decennale": {
+    "assureur": "Assureur fictif",
+    "numero": "DEMO-0001"
+  },
+  "communes": [
+    "Montpellier",
+    "Castelnau-le-Lez",
+    "Lattes",
+    "Pérols"
+  ],
+  "metiers_secondaires": [],
+  "demo": true,
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/serrurier-montpellier/",
+      "type": "commune",
+      "cible": "Montpellier"
+    },
+    {
+      "chemin": "/serrurier-castelnau-le-lez/",
+      "type": "commune",
+      "cible": "Castelnau-le-Lez"
+    },
+    {
+      "chemin": "/serrurier-lattes/",
+      "type": "commune",
+      "cible": "Lattes"
+    },
+    {
+      "chemin": "/serrurier-perols/",
+      "type": "commune",
+      "cible": "Pérols"
+    },
+    {
+      "chemin": "/mentions-legales/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/confidentialite/",
+      "type": "legal"
+    }
+  ]
+}
