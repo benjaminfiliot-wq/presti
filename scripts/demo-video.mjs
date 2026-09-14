@@ -129,6 +129,47 @@ async function enregistrer(nom, viewport, visite) {
   return { f, plans }
 }
 
+async function executerPlan(page, temps, nom, duree, action) {
+  const debut = Number(temps().toFixed(2))
+  const vis0 = await releverImages(page)
+  const r0 = { t: debut, visibles: vis0 }
+
+  const pAction = action ? action() : null
+
+  const tMilieuAttendu = debut + duree / 2
+  const attenteMilieu = Math.max(0, (tMilieuAttendu - temps()) * 1000)
+  if (attenteMilieu > 0) await page.waitForTimeout(attenteMilieu)
+  const t1 = Number(temps().toFixed(2))
+  const vis1 = await releverImages(page)
+  const r1 = { t: t1, visibles: vis1 }
+
+  // Le dernier relevé est pris À LA FIN DU PLAN, à son heure réelle, et seulement ensuite on laisse l'action se terminer.
+  // Avant la relecture de 018-07 par Claude Code (14/09/2026), on attendait la fin de l'action puis on remplaçait l'heure
+  // mesurée par l'heure attendue dès que l'écart dépassait 0,12 s : un horodatage faux dans plans.json.
+  const tFinAttendu = debut + duree
+  const attenteFin = Math.max(0, (tFinAttendu - temps()) * 1000)
+  if (attenteFin > 0) await page.waitForTimeout(attenteFin)
+  const t2 = Number(temps().toFixed(2))
+  const vis2 = await releverImages(page)
+  const r2 = { t: t2, visibles: vis2 }
+  if (pAction) await pAction
+
+  const releves = [r0, r1, r2]
+  const unionMap = new Map()
+  for (const r of releves) {
+    for (const v of r.visibles) {
+      if (!unionMap.has(v.base)) unionMap.set(v.base, v)
+    }
+  }
+  return {
+    nom,
+    debut,
+    duree: Number(duree.toFixed(2)),
+    releves,
+    visibles: Array.from(unionMap.values()),
+  }
+}
+
 async function visiterBureau(page, temps) {
   const plans = []
   const sections = []
@@ -145,15 +186,17 @@ async function visiterBureau(page, temps) {
   // Héros si présent
   const secHeros = sections.find((s) => s.nom === 'heros')
   if (secHeros) {
-    const tDebut = temps() + 0.2
-    const visHeros = await releverImages(page)
-    await page.waitForTimeout(1900)
-    plans.push({ nom: 'heros', debut: tDebut, duree: 1.0, visibles: visHeros })
+    await page.waitForTimeout(200)
+    const planHeros = await executerPlan(page, temps, 'heros', 1.0, () => page.waitForTimeout(1000))
+    plans.push(planHeros)
+    await page.waitForTimeout(700)
 
-    const tSouris = temps() + 0.1
-    for (let i = 0; i <= 18; i++) { await page.mouse.move(640 + i * 30, 600 - i * 20); await page.waitForTimeout(35) }
-    for (let i = 0; i <= 18; i++) { await page.mouse.move(1180 - i * 24, 240 + i * 14); await page.waitForTimeout(35) }
-    plans.push({ nom: 'heros_souris', debut: tSouris, duree: 1.3, visibles: visHeros })
+    await page.waitForTimeout(100)
+    const planSouris = await executerPlan(page, temps, 'heros_souris', 1.35, async () => {
+      for (let i = 0; i <= 18; i++) { await page.mouse.move(640 + i * 30, 600 - i * 20); await page.waitForTimeout(30) }
+      for (let i = 0; i <= 18; i++) { await page.mouse.move(1180 - i * 24, 240 + i * 14); await page.waitForTimeout(30) }
+    })
+    plans.push(planSouris)
     await page.waitForTimeout(300)
   }
 
@@ -163,51 +206,49 @@ async function visiterBureau(page, temps) {
     await glisser(page, sec.sel, 1400)
     await page.waitForTimeout(200)
 
-    const tDebut = temps()
-    const visibles = await releverImages(page)
-
     if (sec.nom === 'questions') {
-      const pGlide = glisserRelatif(page, 100, 1300)
-      await page.click('.faq summary').catch(() => {})
-      await pGlide
+      const plan = await executerPlan(page, temps, sec.nom, 1.35, async () => {
+        const pGlide = glisserRelatif(page, 100, 1250)
+        await page.click('.faq summary').catch(() => {})
+        await pGlide
+      })
+      plans.push(plan)
     } else if (sec.nom === 'etapes') {
-      await glisserRelatif(page, 140, 1300)
-      plans.push({ nom: sec.nom, debut: tDebut, duree: 1.3, visibles })
+      const plan = await executerPlan(page, temps, sec.nom, 1.35, () => glisserRelatif(page, 140, 1250))
+      plans.push(plan)
 
       const elListe = await page.$('.etapes__liste')
       if (elListe) {
         await glisser(page, '.etapes__liste', 1200, 40)
         await page.waitForTimeout(150)
-        const tDebutListe = temps()
-        const visListe = await releverImages(page)
-        await glisserRelatif(page, 120, 1300)
-        plans.push({ nom: 'etapes_liste', debut: tDebutListe, duree: 1.3, visibles: visListe })
+        const planListe = await executerPlan(page, temps, 'etapes_liste', 1.35, () => glisserRelatif(page, 120, 1250))
+        plans.push(planListe)
       }
       continue
     } else if (sec.nom === 'realisations') {
-      await glisserRelatif(page, 140, 1300)
-      plans.push({ nom: sec.nom, debut: tDebut, duree: 1.3, visibles })
+      const plan = await executerPlan(page, temps, sec.nom, 1.35, () => glisserRelatif(page, 140, 1250))
+      plans.push(plan)
 
       const elGalerie = await page.$('.galerie')
       if (elGalerie) {
         await glisser(page, '.galerie', 1200, 40)
         await page.waitForTimeout(150)
-        const tDebutGal = temps()
-        const visGal = await releverImages(page)
-        await glisserRelatif(page, 120, 1300)
-        plans.push({ nom: 'galerie', debut: tDebutGal, duree: 1.3, visibles: visGal })
+        const planGal = await executerPlan(page, temps, 'galerie', 1.35, () => glisserRelatif(page, 120, 1250))
+        plans.push(planGal)
       }
       continue
     } else {
-      const pGlide = glisserRelatif(page, 140, 1300)
-      for (let i = 0; i <= 6; i++) {
-        await page.mouse.move(500 + i * 40, 300 + i * 15)
-        await page.waitForTimeout(50)
-      }
-      await pGlide
+      const plan = await executerPlan(page, temps, sec.nom, 1.35, async () => {
+        const pGlide = glisserRelatif(page, 140, 1250)
+        for (let i = 0; i <= 6; i++) {
+          await page.mouse.move(500 + i * 40, 300 + i * 15)
+          await page.waitForTimeout(50)
+        }
+        await pGlide
+      })
+      plans.push(plan)
     }
 
-    plans.push({ nom: sec.nom, debut: tDebut, duree: 1.3, visibles })
     await page.waitForTimeout(200)
   }
 
@@ -229,10 +270,10 @@ async function visiterMobile(page, temps) {
 
   const secHeros = sections.find((s) => s.nom === 'heros')
   if (secHeros) {
-    const tDebut = temps() + 0.3
-    const visHeros = await releverImages(page)
-    await page.waitForTimeout(2400)
-    plans.push({ nom: 'heros', debut: tDebut, duree: 1.1, visibles: visHeros })
+    await page.waitForTimeout(300)
+    const planHeros = await executerPlan(page, temps, 'heros', 1.1, () => page.waitForTimeout(1100))
+    plans.push(planHeros)
+    await page.waitForTimeout(1000)
   }
 
   for (const sec of sections) {
@@ -240,10 +281,8 @@ async function visiterMobile(page, temps) {
     await glisser(page, sec.sel, 1400)
     await page.waitForTimeout(200)
 
-    const tDebut = temps()
-    const visibles = await releverImages(page)
-    await glisserRelatif(page, 150, 1300)
-    plans.push({ nom: sec.nom, debut: tDebut, duree: 1.3, visibles })
+    const plan = await executerPlan(page, temps, sec.nom, 1.35, () => glisserRelatif(page, 150, 1250))
+    plans.push(plan)
     await page.waitForTimeout(200)
   }
 
@@ -264,16 +303,37 @@ for (const pb of bureau.plans) {
     srcFichier: bureau.f,
     debut: pb.debut,
     duree: pb.duree,
+    releves: pb.releves,
     visibles: pb.visibles,
   })
 
   // Appariement avec mobile pour effet côte à côte
   const pm = mobile.plans.find((p) => p.nom === pb.nom)
   if (pm) {
-    const visiblesCombines = [...pm.visibles]
-    for (const vb of pb.visibles) {
-      if (!visiblesCombines.some((v) => v.base === vb.base)) visiblesCombines.push(vb)
+    const nReleves = Math.max(pm.releves?.length || 0, pb.releves?.length || 0)
+    const relevesCombines = []
+    for (let k = 0; k < nReleves; k++) {
+      const rm = pm.releves?.[k] || pm.releves?.[pm.releves.length - 1]
+      const rb = pb.releves?.[k] || pb.releves?.[pb.releves.length - 1]
+      const mapK = new Map()
+      for (const v of (rm?.visibles || [])) mapK.set(v.base, v)
+      for (const v of (rb?.visibles || [])) {
+        if (!mapK.has(v.base)) mapK.set(v.base, v)
+      }
+      relevesCombines.push({
+        t: rm ? rm.t : pm.debut,
+        visibles: Array.from(mapK.values()),
+      })
     }
+
+    const unionCombinee = new Map()
+    for (const r of relevesCombines) {
+      for (const v of r.visibles) {
+        if (!unionCombinee.has(v.base)) unionCombinee.set(v.base, v)
+      }
+    }
+    const visiblesCombines = Array.from(unionCombinee.values())
+
     if (!(sansSa && aLicenceSA(visiblesCombines))) {
       plansFinaux.push({
         nom: `${pm.nom}_mobile`,
@@ -282,6 +342,7 @@ for (const pb of bureau.plans) {
         debut: pm.debut,
         duree: pm.duree,
         pairBureau: pb.debut,
+        releves: relevesCombines,
         visibles: visiblesCombines,
       })
     } else if (!(sansSa && aLicenceSA(pm.visibles))) {
@@ -291,6 +352,7 @@ for (const pb of bureau.plans) {
         srcFichier: mobile.f,
         debut: pm.debut,
         duree: pm.duree,
+        releves: pm.releves,
         visibles: pm.visibles,
       })
     }
@@ -334,6 +396,12 @@ for (const kbps of [Math.floor((POIDS_MAX * 8 * 0.9) / dureeTotale / 1000), 520,
 const premierPlanPropre = plansFinaux.find((p) => !aLicenceSA(p.visibles))
 const tempsAffiche = premierPlanPropre ? Math.min(premierPlanPropre.duree / 2, 0.8) : 1.0
 const visiblesAffiche = premierPlanPropre ? premierPlanPropre.visibles : []
+const relevesAffiche = [
+  {
+    t: Number(tempsAffiche.toFixed(2)),
+    visibles: visiblesAffiche,
+  },
+]
 
 const affichePath = path.join(SORTIE, `${nomSite}-affiche.webp`)
 ff(['-ss', tempsAffiche.toFixed(2), '-i', final, '-frames:v', '1', '-vf', 'scale=1280:-2', '-c:v', 'libwebp', '-quality', '72', affichePath])
@@ -347,10 +415,12 @@ const sortiePlans = {
     source: p.source,
     debut: Number(p.debut.toFixed(2)),
     duree: Number(p.duree.toFixed(2)),
+    releves: p.releves,
     visibles: p.visibles,
   })),
   affiche: {
     temps: Number(tempsAffiche.toFixed(2)),
+    releves: relevesAffiche,
     visibles: visiblesAffiche,
   },
 }

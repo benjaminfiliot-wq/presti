@@ -1,0 +1,231 @@
+M .orchestre/agents.jsonl
+ M .orchestre/contexte.md
+ M .orchestre/digest.md
+ D .orchestre/file/018-04.md
+ D .orchestre/file/018-07.md
+ M .orchestre/verdicts.jsonl
+ M AGENTS.md
+ M CLAUDE.md
+ M public/sites-demo/_kit/da.json
+ M public/sites-demo/_kit/kit.css
+ M public/sites-demo/_kit/kit.js
+ M public/sites-demo/generer.mjs
+ M public/sites-demo/lestraque/confidentialite/index.html
+ M public/sites-demo/lestraque/contenu.json
+ D public/sites-demo/lestraque/fonts/ibm-plex-sans.woff2
+ D public/sites-demo/lestraque/images/atelier-1600.avif
+ D public/sites-demo/lestraque/images/atelier-1600.webp
+ D public/sites-demo/lestraque/images/atelier-480.avif
+ D public/sites-demo/lestraque/images/atelier-480.webp
+ D public/sites-demo/lestraque/images/atelier-720.avif
+ D public/sites-demo/lestraque/images/atelier-720.webp
+ D public/sites-demo/lestraque/images/atelier-960.avif
+ D public/sites-demo/lestraque/images/atelier-960.webp
+ D public/sites-demo/lestraque/images/bibliotheque-1600.avif
+ D public/sites-demo/lestraque/images/bibliotheque-1600.webp
+ D public/sites-demo/lestraque/images/bibliotheque-480.avif
+ D public/sites-demo/lestraque/images/bibliotheque-480.webp
+ D public/sites-demo/lestraque/images/bibliotheque-720.avif
+ D public/sites-demo/lestraque/images/bibliotheque-720.webp
+ D public/sites-demo/lestraque/images/bibliotheque-960.avif
+ D public/sites-demo/lestraque/images/bibliotheque-960.webp
+ D public/sites-demo/lestraque/images/copeaux-1600.avif
+ D public/sites-demo/lestraque/images/copeaux-1600.webp
+ D public/sites-demo/lestraque/images/copeaux-480.avif
+ D public/sites-demo/lestraque/images/copeaux-480.webp
+ D public/sites-demo/lestraque/images/copeaux-720.avif
+ D public/sites-demo/lestraque/images/copeaux-720.webp
+ D public/sites-demo/lestraque/images/copeaux-960.avif
+ D public/sites-demo/lestraque/images/copeaux-960.webp
+ D public/sites-demo/lestraque/images/escalier-colimacon-1600.avif
+ D public/sites-demo/lestraque/images/escalier-colimacon-1600.webp
+ D public/sites-demo/lestraque/images/escalier-colimacon-480.avif
+ D public/sites-demo/lestraque/images/escalier-colimacon-480.webp
+ D public/sites-demo/lestraque/images/escalier-colimacon-720.avif
+ D public/sites-demo/lestraque/images/escalier-colimacon-720.webp
+ D public/sites-demo/lestraque/images/escalier-colimacon-960.avif
+ D public/sites-demo/lestraque/images/escalier-colimacon-960.webp
+ D public/sites-demo/lestraque/images/escalier-tournant-1600.avif
+ D public/sites-demo/lestraque/images/escalier-tournant-1600.webp
+ D public/sites-demo/lestraque/images/escalier-tournant-480.avif
+ D public/sites-demo/lestraque/images/escalier-tournant-480.webp
+ D public/sites-demo/lestraque/images/escalier-tournant-720.avif
+ D public/sites-demo/lestraque/images/escalier-tournant-720.webp
+ D public/sites-demo/lestraque/images/escalier-tournant-960.avif
+ D public/sites-demo/lestraque/images/escalier-tournant-960.webp
+ D public/sites-demo/lestraque/images/hero-1600.avif
+ D public/sites-demo/lestraque/images/hero-1600.webp
+ D public/sites-demo/lestraque/images/hero-480.avif
+ D public/sites-demo/lestraque/images/hero-480.webp
+ D public/sites-demo/lestraque/images/hero-720.avif
+ D public/sites-demo/lestraque/images/hero-720.webp
+ D public/sites-demo/lestraque/images/hero-960.avif
+ D public/sites-demo/lestraque/images/hero-960.webp
+ M public/sites-demo/lestraque/images/heros-escalier-1600.avif
+ M public/sites-demo/lestraque/images/heros-escalier-1600.webp
+ M public/sites-demo/lestraque/images/heros-escalier-2400.avif
+ M public/sites-demo/lestraque/images/heros-escalier-2400.webp
+ M public/sites-demo/lestraque/images/heros-escalier-2880.avif
+ M public/sites-demo/lestraque/images/heros-escalier-2880.webp
+ M public/sites-demo/lestraque/images/heros-escalier-480.avif
+ M public/sites-demo/lestraque/images/heros-escalier-480.webp
+ M public/sites-demo/lestraque/images/heros-escalier-720.avif
+ M public/sites-demo/lestraque/images/heros-escalier-720.webp
+ M public/sites-demo/lestraque/images/heros-escalier-960.avif
+ M public/sites-demo/lestraque/images/heros-escalier-960.webp
+ M public/sites-demo/lestraque/images/heros-escalier-portrait-1080.avif
+ M public/sites-demo/lestraque/images/heros-escalier-portrait-1080.webp
+ M public/sites-demo/lestraque/images/heros-escalier-portrait-720.avif
+ M public/sites-demo/lestraque/images/heros-escalier-portrait-720.webp
+ D public/sites-demo/lestraque/images/lit-1600.avif
+ D public/sites-demo/lestraque/images/lit-1600.webp
+ D public/sites-demo/lestraque/images/lit-480.avif
+ D public/sites-demo/lestraque/images/lit-480.webp
+ D public/sites-demo/lestraque/images/lit-720.avif
+ D public/sites-demo/lestraque/images/lit-720.webp
+ D public/sites-demo/lestraque/images/lit-960.avif
+ D public/sites-demo/lestraque/images/lit-960.webp
+ D public/sites-demo/lestraque/images/rabot-japonais-1600.avif
+ D public/sites-demo/lestraque/images/rabot-japonais-1600.webp
+ D public/sites-demo/lestraque/images/rabot-japonais-480.avif
+ D public/sites-demo/lestraque/images/rabot-japonais-480.webp
+ D public/sites-demo/lestraque/images/rabot-japonais-720.avif
+ D public/sites-demo/lestraque/images/rabot-japonais-720.webp
+ D public/sites-demo/lestraque/images/rabot-japonais-960.avif
+ D public/sites-demo/lestraque/images/rabot-japonais-960.webp
+ D public/sites-demo/lestraque/images/tournage-1600.avif
+ D public/sites-demo/lestraque/images/tournage-1600.webp
+ D public/sites-demo/lestraque/images/tournage-480.avif
+ D public/sites-demo/lestraque/images/tournage-480.webp
+ D public/sites-demo/lestraque/images/tournage-720.avif
+ D public/sites-demo/lestraque/images/tournage-720.webp
+ D public/sites-demo/lestraque/images/tournage-960.avif
+ D public/sites-demo/lestraque/images/tournage-960.webp
+ D public/sites-demo/lestraque/images/vastringue-1600.avif
+ D public/sites-demo/lestraque/images/vastringue-1600.webp
+ D public/sites-demo/lestraque/images/vastringue-480.avif
+ D public/sites-demo/lestraque/images/vastringue-480.webp
+ D public/sites-demo/lestraque/images/vastringue-720.avif
+ D public/sites-demo/lestraque/images/vastringue-720.webp
+ D public/sites-demo/lestraque/images/vastringue-960.avif
+ D public/sites-demo/lestraque/images/vastringue-960.webp
+ D public/sites-demo/lestraque/images/veinage-1600.avif
+ D public/sites-demo/lestraque/images/veinage-1600.webp
+ D public/sites-demo/lestraque/images/veinage-480.avif
+ D public/sites-demo/lestraque/images/veinage-480.webp
+ D public/sites-demo/lestraque/images/veinage-720.avif
+ D public/sites-demo/lestraque/images/veinage-720.webp
+ D public/sites-demo/lestraque/images/veinage-960.avif
+ D public/sites-demo/lestraque/images/veinage-960.webp
+ M public/sites-demo/lestraque/index.html
+ M public/sites-demo/lestraque/mentions-legales/index.html
+ M public/sites-demo/lestraque/menuisier-bruz/index.html
+ M public/sites-demo/lestraque/menuisier-cesson-sevigne/index.html
+ M public/sites-demo/lestraque/menuisier-rennes/index.html
+ M public/sites-demo/lestraque/menuisier-saint-gregoire/index.html
+ M public/sites-demo/lestraque/site.js
+ M public/sites-demo/lestraque/site.json
+ M public/sites-demo/lestraque/styles.css
+ M scripts/demo-video-licences-test.mjs
+ M scripts/demo-video.mjs
+ M scripts/photos-demo.mjs
+ M scripts/site-qa.mjs
+?? .claude/skills/captions-overlay/
+?? .claude/skills/changelog-video/
+?? .claude/skills/cut-the-curve/
+?? .claude/skills/embedded-captions/
+?? .claude/skills/faceless-explainer/
+?? .claude/skills/figma/
+?? .claude/skills/general-video/
+?? .claude/skills/hyperframes-animation/
+?? .claude/skills/hyperframes-audio/
+?? .claude/skills/hyperframes-cli/
+?? .claude/skills/hyperframes-core/
+?? .claude/skills/hyperframes-creative/
+?? .claude/skills/hyperframes-keyframes/
+?? .claude/skills/hyperframes-registry/
+?? .claude/skills/hyperframes/
+?? .claude/skills/media-use/
+?? .claude/skills/motion-doctrine/
+?? .claude/skills/motion-graphics/
+?? .claude/skills/music-to-video/
+?? .claude/skills/oversized-cursor/
+?? .claude/skills/pr-to-video/
+?? .claude/skills/product-launch-video/
+?? .claude/skills/remotion-to-hyperframes/
+?? .claude/skills/seam-craft/
+?? .claude/skills/slideshow/
+?? .claude/skills/talking-head-recut/
+?? .orchestre/en-cours/
+?? .orchestre/preuves/017-vague-2/
+?? .orchestre/preuves/018-01/landing-bureau-bloc.png
+?? .orchestre/preuves/018-01/landing-bureau-haut.png
+?? .orchestre/preuves/018-01/landing-mobile-bloc.png
+?? .orchestre/preuves/018-01/landing-mobile-haut.png
+?? .orchestre/preuves/018-03/avant.txt
+?? .orchestre/preuves/018-03/essai-42-bis/
+?? .orchestre/preuves/018-03/essai-7/
+?? .orchestre/preuves/018-07/
+?? .orchestre/preuves/018-08/
+?? .orchestre/travail/
+?? ChromeSetup.exe
+?? build-demo.mjs
+?? build-menuisier-1.mjs
+?? build-menuisier-2.mjs
+?? build-menuisier.mjs
+?? build-plombier.mjs
+?? fix.js
+?? fix_home.py
+?? fix_html.py
+?? fix_newlines.py
+?? full_qa_output.txt
+?? generate-site.mjs
+?? promo-src/
+?? public/promo/facebook-couverture-1640x856.png
+?? public/promo/facebook-couverture-GUIDE.png
+?? public/promo/presti-carre-miniature.jpg
+?? public/promo/presti-carre.mp4
+?? public/promo/presti-paysage-miniature.jpg
+?? public/promo/presti-paysage.mp4
+?? public/promo/presti-vertical-miniature.jpg
+?? public/promo/presti-vertical.mp4
+?? public/promo/voix/
+?? public/sites-demo/_kit/monogrammes/
+?? public/sites-demo/_polices/ibm-plex-sans/couverture.json
+?? public/sites-demo/_polices/ibm-plex-sans/ibm-plex-sans-400.woff2
+?? public/sites-demo/_polices/ibm-plex-sans/ibm-plex-sans-600.woff2
+?? public/sites-demo/_polices/ibm-plex-sans/ibm-plex-sans-latin-ext.woff2
+?? public/sites-demo/lestraque/favicon.svg
+?? public/sites-demo/lestraque/fonts/ibm-plex-sans-400.woff2
+?? public/sites-demo/lestraque/fonts/ibm-plex-sans-600.woff2
+?? public/sites-demo/lestraque/images/atelier-poncage-portrait-1080.avif
+?? public/sites-demo/lestraque/images/atelier-poncage-portrait-1080.webp
+?? public/sites-demo/lestraque/images/atelier-poncage-portrait-720.avif
+?? public/sites-demo/lestraque/images/atelier-poncage-portrait-720.webp
+?? public/sites-demo/lestraque/images/boiserie-2400.avif
+?? public/sites-demo/lestraque/images/boiserie-2400.webp
+?? public/sites-demo/lestraque/images/cuisine-bois-2400.avif
+?? public/sites-demo/lestraque/images/cuisine-bois-2400.webp
+?? public/sites-demo/lestraque/images/heros-escalier-portrait-1440.avif
+?? public/sites-demo/lestraque/images/heros-escalier-portrait-1440.webp
+?? qa-output.txt
+?? qa_out_sync.txt
+?? qa_out_temp.txt
+?? qa_output.txt
+?? qa_output2.txt
+?? qa_output2_utf8.txt
+?? qa_output3.txt
+?? qa_output_utf8.txt
+?? report.json
+?? scratch-fetch.mjs
+?? scratch-generator.mjs
+?? scratch-screenshot.mjs
+?? screenshot.mjs
+?? scripts/monogramme-demo.py
+?? scripts/photos-contraste.mjs
+?? scripts/photos-heros-qa.mjs
+?? scripts/photos-heros.mjs
+?? scripts/polices-plex-sous-ensemble.py
+?? shot_cerveaux.mjs
+?? test.jpg
+?? videos/

@@ -39,8 +39,17 @@ const proposition = lireJson(path.join(PREUVES, 'proposition.json'), null)
 if (nouvelles.length < 4) echecs.push(`${nouvelles.length} nouvelle(s) base(s) dans attributions.json, au moins 4 attendues`)
 if (!Array.isArray(proposition)) echecs.push('proposition.json absent ou pas un tableau [{ base, sujet, legende }]')
 
-const generer = fs.readFileSync(path.join(R, 'public', 'sites-demo', 'generer.mjs'), 'utf8')
-if (/['"]reserve['"]/.test(generer)) echecs.push('generer.mjs lit la valeur « reserve » : elle ne met plus les photos à l\'abri')
+// Les photos en réserve ne doivent être ni affichées ni créditées par les pages générées. On le vérifie sur les pages
+// elles-mêmes : chercher le mot « reserve » dans generer.mjs était faux, puisque depuis le 14/09/2026 le générateur le lit
+// précisément pour les écarter (usage !== 'reserve').
+const pagesHtml = []
+const parcourir = (d) => { for (const x of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, x.name); if (x.isDirectory() && x.name !== 'images') parcourir(p); else if (x.name.endsWith('.html')) pagesHtml.push(p) } }
+parcourir(SITE)
+for (const base of nouvelles) {
+  const e = parBase.get(base)[0]
+  const fuites = pagesHtml.filter((p) => { const t = fs.readFileSync(p, 'utf8'); return t.includes(`images/${base}-`) || (e.auteur && t.includes(e.auteur) && !attributions.some((a) => a.usage !== 'reserve' && a.auteur === e.auteur)) })
+  if (fuites.length) echecs.push(`« ${base} » est en réserve mais apparaît dans ${fuites.map((p) => path.relative(SITE, p)).join(', ')} (image ou crédit)`)
+}
 
 for (const base of nouvelles) {
   const e = parBase.get(base)[0]

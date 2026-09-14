@@ -1,0 +1,529 @@
+{
+  "site": "public\\sites-demo\\lestraque",
+  "sansSa": true,
+  "plans": [
+    {
+      "nom": "atelier",
+      "source": "bureau",
+      "debut": 13.11,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 13.11,
+          "visibles": [
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 13.79,
+          "visibles": [
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 14.47,
+          "visibles": [
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "atelier-poncage",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "atelier_mobile",
+      "source": "mobile",
+      "debut": 11.18,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 11.18,
+          "visibles": [
+            {
+              "base": "atelier-poncage-portrait",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 11.86,
+          "visibles": [
+            {
+              "base": "atelier-poncage-portrait",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 12.54,
+          "visibles": [
+            {
+              "base": "atelier-poncage-portrait",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "atelier-poncage-portrait",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "atelier-poncage",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "realisations",
+      "source": "bureau",
+      "debut": 16.32,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 16.32,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 17,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 17.68,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "cuisine-bois",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "penderie",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "realisations_mobile",
+      "source": "mobile",
+      "debut": 14.37,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 14.37,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 15.06,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 15.73,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "cuisine-bois",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "penderie",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "communes",
+      "source": "bureau",
+      "debut": 22.12,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 22.12,
+          "visibles": []
+        },
+        {
+          "t": 22.8,
+          "visibles": []
+        },
+        {
+          "t": 23.47,
+          "visibles": []
+        }
+      ],
+      "visibles": []
+    },
+    {
+      "nom": "communes_mobile",
+      "source": "mobile",
+      "debut": 17.55,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 17.55,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 18.24,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 18.91,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "etapes",
+      "source": "bureau",
+      "debut": 25.3,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 25.3,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 25.99,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 26.66,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "etapes_mobile",
+      "source": "mobile",
+      "debut": 20.73,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 20.73,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 21.42,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 22.09,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "cuisine-bois",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "etapes_liste",
+      "source": "bureau",
+      "debut": 28.06,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 28.06,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 28.75,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 29.42,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "questions",
+      "source": "bureau",
+      "debut": 31.05,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 31.05,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 31.74,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 32.51,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "cuisine-bois",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "questions_mobile",
+      "source": "mobile",
+      "debut": 23.93,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 23.93,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 24.61,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 25.28,
+          "visibles": [
+            {
+              "base": "cuisine-bois",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "cuisine-bois",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    }
+  ],
+  "affiche": {
+    "temps": 0.68,
+    "releves": [
+      {
+        "t": 0.68,
+        "visibles": [
+          {
+            "base": "atelier-poncage",
+            "licence": "CC BY 2.0"
+          }
+        ]
+      }
+    ],
+    "visibles": [
+      {
+        "base": "atelier-poncage",
+        "licence": "CC BY 2.0"
+      }
+    ]
+  }
+}
