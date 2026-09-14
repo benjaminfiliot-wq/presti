@@ -111,7 +111,10 @@ export async function authArtisan(req: Request): Promise<Session | EchecAuth> {
   const iat = dateEmission(token)
   // Une seule requête : la suspension en cours est imbriquée (PostgREST suit la clé étrangère).
   const { data: art } = await supabaseAdmin.from('artisans')
-    .select('sessions_invalides_avant, suspensions!left(id, message, levee_le)').eq('id', data.user.id).maybeSingle()
+    // « suspensions!artisan_id » : la table a trois clés vers artisans (artisan_id, suspendu_par, levee_par) ; sans le nom de la clé,
+    // PostgREST refuse (PGRST201), la lecture échoue en silence et la suspension n'est jamais vue — c'est LE défaut du prompt v15 §5,
+    // reproduit par scripts/suspension-e2e.mjs le 14/09 (un artisan suspendu obtenait 200 au lieu de 403).
+    .select('sessions_invalides_avant, suspensions!artisan_id(id, message, levee_le)').eq('id', data.user.id).maybeSingle()
   const suspension = ((art as { suspensions?: { id: string; message: string | null; levee_le: string | null }[] } | null)?.suspensions ?? []).find((x) => !x.levee_le)
   if (suspension) return { error: suspension.message?.trim() || ERREUR_SUSPENDU, status: 403, code: 'suspendu' }
 
@@ -180,7 +183,7 @@ export async function getUserRevocable(token: string): Promise<ReponseUtilisateu
   // restait pleinement actif (revue du 07/09). Une suspension qui ne suspend que la moitié du produit
   // n'en est pas une.
   const { data: art } = await supabaseAdmin.from('artisans')
-    .select('sessions_invalides_avant, suspensions!left(id, message, levee_le)').eq('id', r.data.user.id).maybeSingle()
+    .select('sessions_invalides_avant, suspensions!artisan_id(id, message, levee_le)').eq('id', r.data.user.id).maybeSingle()
   const suspension = ((art?.suspensions ?? []) as { id: string; message: string | null; levee_le: string | null }[]).find((x) => !x.levee_le)
   if (suspension) {
     return { data: { user: null }, error: { message: suspension.message || ERREUR_SUSPENDU, name: 'AuthApiError', status: 403, code: 'suspendu' } } as unknown as ReponseUtilisateur
