@@ -141,7 +141,8 @@ export async function capturer({ racine, dossier, ecrans, largeur = 390, hauteur
       // distinguer le titre de l'écran actif d'un libellé de fil d'Ariane qui, lui, est sur tous les écrans.
       if (e.attendre) {
         const cible = typeof e.attendre === 'string' ? page.getByText(e.attendre, { exact: false }) : page.locator(e.attendre.dans, { hasText: e.attendre.texte })
-        attendu = await cible.first().waitFor({ state: 'visible', timeout: 25_000 }).then(() => true).catch(() => false)
+        // Un serveur que le juge vient de lancer compile la page au premier passage (le Poste de contrôle : souvent plus de 25 s).
+        attendu = await cible.first().waitFor({ state: 'visible', timeout: srv.lance ? 90_000 : 25_000 }).then(() => true).catch(() => false)
         await page.waitForTimeout(600)
       } else await page.waitForTimeout(2500)
       await page.screenshot({ path: fichier, fullPage: pleinePage })
