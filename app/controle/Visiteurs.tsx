@@ -41,9 +41,9 @@ const SERIES = [
 ] as const
 type CleSerie = (typeof SERIES)[number]['cle']
 
+// Pas de drapeau émoji : Windows ne les dessine pas et affiche deux lettres (« FR France », vu à la capture du 14/09).
 const regions = (() => { try { return new Intl.DisplayNames(['fr'], { type: 'region' }) } catch { return null } })()
-const drapeau = (code: string) => (/^[A-Z]{2}$/.test(code) ? String.fromCodePoint(...[...code].map((c) => 127397 + c.charCodeAt(0))) : '')
-const nomPays = (code: string | null) => (!code || code === '??' ? 'Pays inconnu' : `${drapeau(code)} ${regions?.of(code) ?? code}`)
+const nomPays = (code: string | null) => (!code || code === '??' ? 'Pays inconnu' : regions?.of(code) ?? code)
 const dateCourte = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', timeZone: 'Europe/Paris' })
 
 function Barres({ lignes, libelle, vide }: { lignes: Paire[]; libelle: (cle: string) => string; vide: string }) {

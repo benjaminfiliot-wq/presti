@@ -504,7 +504,8 @@ button:disabled{opacity:.55;cursor:default}
 .pill .pdot{width:6px;height:6px;border-radius:50%;background:currentColor}
 .pill.ok{color:var(--ok);background:var(--ok-tint)}
 .pill.warn{color:var(--warn);background:var(--warn-tint)}
-.pill.info{color:var(--accent-ink);background:var(--accent-tint)}
+/* .info (la bulle d’aide, plus bas) porte le même nom : sans ces valeurs, toute pastille « info » devenait un rond de 18 px — « Arrivée » (Visiteurs), « canal » (Clients, Apports, Fiche), « Répondu », « Envoyé » (capture du 14/09) */
+.pill.info{color:var(--accent-ink);background:var(--accent-tint);display:inline-flex;width:auto;height:auto;margin:0;padding:3px 9px;border-radius:20px;place-items:normal;vertical-align:baseline;cursor:inherit}
 .pill.crit{color:var(--crit);background:var(--crit-tint)}
 .pill.muted{color:var(--muted);background:var(--line-2)}
 
