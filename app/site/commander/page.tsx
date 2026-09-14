@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { Suspense, useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { notFound } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
@@ -23,7 +23,7 @@ const ETAPES: { id: Etape; nom: string }[] = [
   { id: 'paiement', nom: 'Le paiement' },
 ]
 
-export default function CommanderSitePage() {
+function CommanderSite() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const p_paiement = searchParams?.get('paiement')
@@ -440,5 +440,11 @@ export default function CommanderSitePage() {
       </div>
     </AppShell>
   )
+}
+// `useSearchParams` (l'écran ouvert par ?etape=) impose une frontière Suspense au prérendu, sinon `next build` refuse la page
+// — et avec elle tout le déploiement : de 32ef4e6 (13/09 17 h 57 UTC) à f5b1695, neuf déploiements de production en ERROR,
+// rien de la nuit n'était en ligne (constaté le 14/09 via l'API Vercel, en cherchant pourquoi la suspension restait sans effet).
+export default function CommanderSitePage() {
+  return <Suspense fallback={null}><CommanderSite /></Suspense>
 }
 // Utilise POST /api/media via uploadArtisanMedia
