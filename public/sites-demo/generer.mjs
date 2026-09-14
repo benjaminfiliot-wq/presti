@@ -118,10 +118,14 @@ function generer(metier) {
   fs.copyFileSync(path.join(ICI, '_polices', slug(da.display), 'OFL.txt'), path.join(fonts, 'OFL.txt'))
 
   // styles.css = la direction artistique (tokens + @font-face) + le kit
-  const faces = familles.map((f) => `@font-face{font-family:'${f}';src:url('fonts/${slug(f)}.woff2') format('woff2');font-weight:300 800;font-display:swap}`).join('\n')
+  // La police de titre (l'identité, préchargée, vérifiée par le juge) en swap ; la police de texte en optional : arrivée
+  // après le premier rendu, elle refaisait toute la mise en page de la page (seconde longue tâche de 112 à 196 ms à
+  // 500 ms, trace mobile CPU ×4 du 14/09). Absente au premier rendu, elle sert à la page suivante, depuis le cache.
+  const faces = familles.map((f) => `@font-face{font-family:'${f}';src:url('fonts/${slug(f)}.woff2') format('woff2');font-weight:300 800;font-display:${f === da.display ? 'swap' : 'optional'}}`).join('\n')
   const tokens = `:root{--accent:${da.accent};--accent-texte:${da.accentTexte};--fond:${da.fond};--fond-2:${da.fond2};--encre:${da.encre};--encre-2:${da.encre2};--ligne:${da.ligne};--rayon:${da.rayon};--police-display:'${da.display}',Georgia,serif;--police-texte:'${da.texte}',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--graisse-titre:${da.graisse || 700};--approche-titre:${da.approche || '-0.025em'};--ombre:${da.ombre || '0 30px 60px -28px rgba(20,25,35,.35)'};--grain:${da.grain || '.12'};--grain-mode:${da.grainMode || 'multiply'}${da.motif ? `;--motif:${da.motif}` : ''}}
 .mono{color:var(--accent-texte)}
 ${da.casse ? `h1,h2{text-transform:${da.casse};letter-spacing:.01em}` : ''}
+${da.revele ? `@media(min-width:1024px) and (prefers-reduced-motion:no-preference){.da--revele .hero__revele{background-image:image-set(url("images/${da.revele}-1600.avif") type("image/avif"),url("images/${da.revele}-1600.webp") type("image/webp"))}}` : ''}
 ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
   // les URL de polices sont relatives à styles.css, qui est à la racine du site : « fonts/… » vaut depuis toute page
   fs.writeFileSync(path.join(dossier, 'styles.css'), `/* ${site.nom} — direction artistique « ${da.label} » (cerveau site v2, ${AUJOURDHUI}) */\n${faces}\n${tokens}\n${KIT_CSS}`)
@@ -137,7 +141,7 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
     const ld = (contenu.pages[page.chemin]?.jsonld?.[0] || contenu.pages['/']?.jsonld?.[0])
     const ldPage = ld ? { ...ld, url, image: BASE + '/images/' + hero.base + '-1600.webp' } : null
     return `<!doctype html>
-<html lang="fr" class="no-js${da.texture === 'grain' ? ' texture--grain' : da.texture === 'papier' ? ' texture--papier' : ''}${da.monumental ? ' da--monumental' : ''}${da.lumiere ? ' da--lumiere' : ''}${da.raccords ? ' da--raccords' : ''}">
+<html lang="fr" class="no-js${da.texture === 'grain' ? ' texture--grain' : da.texture === 'papier' ? ' texture--papier' : ''}${da.monumental ? ' da--monumental' : ''}${da.lumiere ? ' da--lumiere' : ''}${da.raccords ? ' da--raccords' : ''}${da.revele ? ' da--revele' : ''}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -215,7 +219,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     let heroHtml
     // sizes : un téléphone de 412 px à 1,75× demande 721 px — un pixel de plus que la variante 720, et il prendrait la 960 (deux fois plus lourde) ;
     // 95vw sous 480 px la lui fait choisir (5 % d'agrandissement, invisible en plein cadre)
-    if (da.hero === 'plein') heroHtml = `<section class="hero hero--plein"><div class="hero__media">${photo(hero, rel, { eager: true, sizes: '(max-width: 480px) 95vw, 100vw' })}</div>${da.filigrane ? `<div class="hero__filigrane" aria-hidden="true">${esc(da.filigrane)}</div>` : ''}<div class="conteneur"><div class="hero__contenu">${heroTexte}</div></div><div class="hero__indice">Défiler</div></section>`
+    if (da.hero === 'plein') heroHtml = `<section class="hero hero--plein"><div class="hero__media">${photo(hero, rel, { eager: true, sizes: '(max-width: 480px) 95vw, 100vw' })}</div>${da.revele ? '<div class="hero__revele" aria-hidden="true"></div>' : ''}${da.filigrane ? `<div class="hero__filigrane" aria-hidden="true">${esc(da.filigrane)}</div>` : ''}<div class="conteneur"><div class="hero__contenu">${heroTexte}</div></div><div class="hero__indice">Défiler</div></section>`
     else if (da.hero === 'aplat') heroHtml = `<section class="hero hero--aplat"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div class="hero__media entre" style="--d:.9s">${photo(hero, rel, { eager: true, sizes: '(max-width: 960px) calc(100vw - 2.5rem), 50vw' })}</div></div></section>`
     else heroHtml = `<section class="hero hero--scinde"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div class="hero__cadre entre" style="--d:.9s" data-legende="${esc(hero.legende)}"><div class="hero__media">${photo(hero, rel, { eager: true, sizes: '(max-width: 960px) calc(100vw - 2.5rem), 45vw' })}</div></div></div></section>`
 

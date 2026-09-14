@@ -106,3 +106,5 @@
 {"id":"016-01","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T10:21:45Z","duree_s":0,"agent":"ag-01-gemini38flas","executant":"antigravity","lignes":64813,"dossier":"en-cours"}
 {"id":"016-01","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T10:22:00Z","duree_s":0,"agent":"ag-01-gemini38flas","executant":"antigravity","lignes":64813,"dossier":"fait"}
 {"id":"016-01","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T11:05:42Z","duree_s":1,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
+{"id":"016-02","verdict":"FAIL","ligne":"✗ site-qa (89 s) : ✗ 2 critère(s) en échec.","code":1,"date":"2026-09-14T11:43:18Z","duree_s":89,"agent":"claude-code","executant":"claude-code","lignes":3189,"dossier":"fait"}
+{"id":"016-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T11:53:45Z","duree_s":67,"agent":"claude-code","executant":"claude-code","lignes":279,"dossier":"fait"}

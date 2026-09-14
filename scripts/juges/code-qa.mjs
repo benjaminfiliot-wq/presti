@@ -58,6 +58,10 @@ function commandes() {
   const resultat = {}
   for (const etape of ETAPES) {
     if (code && typeof code[etape] === 'string' && code[etape].trim()) { resultat[etape] = { commande: code[etape].trim(), origine: 'orchestre.json' }; continue }
+    // Quand orchestre.json déclare juges.code, la liste est complète : une étape absente est voulue (Presti n'a pas de
+    // configuration ESLint — `next lint` ouvrirait son assistant au lieu de juger, 14/09). On ne retombe sur package.json
+    // que si le projet n'a rien déclaré.
+    if (code) { resultat[etape] = { commande: null, origine: 'orchestre.json', nonConfiguree: true }; continue }
     const [script, cmd] = SCRIPTS_NPM[etape]
     if (typeof scripts[script] === 'string' && scripts[script].trim()) { resultat[etape] = { commande: cmd, origine: 'package.json' }; continue }
     resultat[etape] = null
@@ -115,6 +119,7 @@ let echoue = false
 for (const nom of ETAPES) {
   const c = cmds[nom]
   if (!c) { etapes.push({ nom, commande: null, etat: 'sautee', duree_ms: 0, erreur: '', detail: 'aucune commande (ni orchestre.json, ni package.json)' }); continue }
+  if (c.nonConfiguree) { etapes.push({ nom, commande: null, etat: 'sautee', duree_ms: 0, erreur: '', detail: 'non configurée dans orchestre.json (juges.code)' }); continue }
   if (echoue && !tout) { etapes.push({ nom, commande: c.commande, etat: 'non-lancee', duree_ms: 0, erreur: '', detail: 'échec en amont' }); continue }
   const r = executer(c.commande)
   etapes.push({ nom, commande: c.commande, origine: c.origine, etat: r.etat, duree_ms: r.duree, erreur: r.erreur, detail: '' })

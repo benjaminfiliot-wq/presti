@@ -1,17 +1,31 @@
 {
-  "juge": "Claude Code, d'après quatre images-clés par référence (planche-refs.jpg) — notes provisoires des références ; la démo n'est pas encore notée",
+  "juge": "sous-agent indépendant (sonnet), d'après les images-clés — sans avoir lu les notes antérieures",
   "date": "2026-09-14",
-  "captures": ["planche-refs.jpg"],
+  "captures": ["refs/planche-refs.jpg", "016-02/planche-demo.jpg"],
   "references": {
-    "arceage-services": { "C1": 5, "C2": 5, "C3": 3, "C4": 3, "C5": 2, "C6": 5, "C7": 5, "C8": 3 },
-    "agency-services": { "C1": 2, "C2": 2, "C3": 5, "C4": 5, "C5": 2, "C6": 2, "C7": 5, "C8": 4 },
-    "cinematic-brand": { "C1": 5, "C2": 5, "C3": 4, "C4": 2, "C5": 2, "C6": 5, "C7": 4, "C8": 3 },
-    "luxury-real-estate": { "C1": 4, "C2": 3, "C3": 5, "C4": 5, "C5": 5, "C6": 3, "C7": 4, "C8": 5 },
-    "reveal-hero": { "C1": 5, "C2": 4, "C3": 3, "C4": 4, "C5": 2, "C6": 4, "C7": 5, "C8": 4 },
-    "stellar-launch": { "C1": 5, "C2": 5, "C3": 4, "C4": 4, "C5": 4, "C6": 5, "C7": 4, "C8": 4 },
-    "cinematic-landing-page": { "C1": 5, "C2": 3, "C3": 3, "C4": 4, "C5": 4, "C6": 4, "C7": 4, "C8": 4 },
-    "vision-reveal": { "C1": 4, "C2": 5, "C3": 5, "C4": 3, "C5": 3, "C6": 3, "C7": 5, "C8": 5 },
-    "art-landing": { "C1": 5, "C2": 4, "C3": 5, "C4": 4, "C5": 5, "C6": 5, "C7": 3, "C8": 4 }
+    "arceage-services": { "C1": 4, "C2": 2, "C3": 2, "C4": 2, "C5": 2, "C6": 3, "C7": 4, "C8": 2 },
+    "agency-services":   { "C1": 1, "C2": 1, "C3": 5, "C4": 5, "C5": 2, "C6": 1, "C7": 5, "C8": 4 },
+    "cinematic-brand":   { "C1": 5, "C2": 5, "C3": 3, "C4": 2, "C5": 2, "C6": 5, "C7": 3, "C8": 4 },
+    "luxury-real-estate":{ "C1": 5, "C2": 2, "C3": 5, "C4": 5, "C5": 5, "C6": 4, "C7": 4, "C8": 4 },
+    "reveal-hero":       { "C1": 5, "C2": 1, "C3": 2, "C4": 1, "C5": 1, "C6": 4, "C7": 3, "C8": 1 },
+    "stellar-launch":    { "C1": 5, "C2": 5, "C3": 3, "C4": 4, "C5": 5, "C6": 5, "C7": 3, "C8": 5 },
+    "cinematic-landing-page": { "C1": 5, "C2": 4, "C3": 3, "C4": 4, "C5": 5, "C6": 5, "C7": 2, "C8": 4 },
+    "vision-reveal":     { "C1": 4, "C2": 4, "C3": 2, "C4": 2, "C5": 1, "C6": 3, "C7": 4, "C8": 3 },
+    "art-landing":       { "C1": 5, "C2": 4, "C3": 3, "C4": 4, "C5": 5, "C6": 5, "C7": 2, "C8": 5 }
   },
-  "demo": {}
+  "repasse": "2026-09-14, révélation lisible, balayage retiré",
+  "demo": { "C1": 5, "C2": 5, "C3": 5, "C4": 4, "C5": 3, "C6": 5, "C7": 5, "C8": 4 },
+  "justification_demo": {
+    "C1": "La révélation est maintenant nette et lisible : l'escalier hélicoïdal doré se reconnaît clairement dans le cercle (bureau-t06 à t80), plus de tache floue — l'ouvrage n'est plus étiré sur tout le héros mais posé à droite (58vw, styles.css l.330), donc la lentille tombe toujours sur une zone en focus ; le dispositif à deux images (brut → fini) reste au niveau des références les plus fortes, en mieux exécuté qu'au passage précédent.",
+    "C2": "J'ai refait le diff pixel (bureau-t06→t80) : le cercle se déplace nettement, centré haut vers (925,300) à bureau-t06/t25 puis redescendu d'environ 100px vers (915,400) à bureau-t50/t80 — un mouvement bien visible à l'œil sans outil ; le balayage diagonal a disparu (retiré par design quand la révélation est active, styles.css l.335 « un seul geste signature ») mais la lentille qui dérive fait à elle seule un « projecteur » qui vit d'une image à l'autre, au niveau des meilleures références.",
+    "C3": "« Menuisier / à Rennes » (bureau-t06) occupe toujours deux lignes en serif énorme (≈12vw), kicker mono fin au-dessus, fort contraste blanc sur photo — inchangé.",
+    "C4": "Le plein page (bureau-page.png) montre toujours les mêmes listes numérotées qui structurent le défilement (01-03 faits, 01-06 prestations, 4 communes, galerie de 6 photos) — inchangé.",
+    "C5": "bureau-page.png alterne toujours surtout des beiges très proches et seulement deux bandes vraiment sombres (« Comment se déroule votre projet », bandeau contact) — inchangé.",
+    "C6": "La lentille révèle maintenant un grain de bois net et détaillé (montants, marches, veinage de l'escalier) au lieu d'un aplat flou, en plus des copeaux et du flou de profondeur de la photo de base — encore plus de matière qu'au passage précédent, la révélation ayant gagné en définition.",
+    "C7": "Non, ce n'est pas un gadget, et la réserve du passage précédent est levée : le CSS confirme qu'« un seul geste signature » reste actif sur la photo — le balayage diagonal se coupe explicitement quand la révélation est présente (styles.css l.335, animation:none) — donc le héros ne cumule plus deux effets de lumière concurrents ; il reste un cercle, thématiquement justifié, une nav sobre à 4 liens et un seul CTA principal.",
+    "C8": "Les quatre captures du héros restent visiblement différentes (position de la lentille, cadrage de l'escalier révélé) — toujours aucun figement ; le reste du défilement (bureau-d30/d60/d100) garde la même cadence correcte qu'aux passages précédents, donc pas de gain au-delà du héros."
+  },
+  "ce_qui_manque": [
+    "Rien ne bloque plus (grille : PASS, marge confortable sur sept critères sur huit). Seul C5 reste juste au-dessus de la médiane plutôt que loin devant : les fonds clairs (faits/prestations/réalisations/communes) restent proches en valeur, avec seulement deux bandes sombres pour rythmer — non bloquant, mais c'est la marge la plus fine de la grille."
+  ]
 }

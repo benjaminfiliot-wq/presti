@@ -101,3 +101,18 @@ Un site v1 propre passe la substance ; il ne passe pas ceci :
 - ≥ 8 règles `:hover` avec transition, un `cubic-bezier` dans le CSS, `@media (prefers-reduced-motion: reduce)` présent ;
 - en mouvement réduit (émulé), tout est visible sans défiler ;
 - aucune animation sur `width/height/top/left` hors ligne des étapes et accordéon.
+
+## 6. Les gestes à la carte (v16, démo « Atelier Lestraque »)
+
+Posés par la direction artistique (`_kit/da.json` → drapeaux), jamais par défaut : les neuf démos v2 ne changent pas.
+
+| Drapeau `da.json` | Ce qui se voit | Valeurs | Garde-fous |
+|---|---|---|---|
+| `monumental` | un seul titre, 12,5 vw (160 px sur 1280), interligne 0,9, approche −0,035 em | `clamp(3.1rem,12.5vw,12rem)` | le h1 reste « <Métier> à <Ville> » (juge SEO) ; la promesse va dans le kicker |
+| `lumiere` | un balayage de lumière dans le cadre la moitié d'un cycle de 6 s ; une poussée lente de la photo (13 % + translation, 12 s) ; une lueur chaude qui dérive en continu (bureau ≥ 900 px) | `balayage`, `respire`, `lueur` — transform/opacity seulement | rien en mouvement réduit ; **mesuré** : différence entre images-clés du héros ≥ 0,05 |
+| `sombre` | la section d'un genre donné (`etapes`…) passe en fond atelier `#1F160E`, grain en surimpression, accents `#D4A574` (contraste 8:1) | `.section--sombre` | les couleurs de texte sont redéfinies dans la section (Lighthouse Accessibilité) |
+| `raccords` | la section sombre entre et sort en biais | `clip-path` fixe à 3,5 vw, marge négative | `clip-path` non animé |
+| `bandeAccent` | la bande qui défile sur l'accent sombre `accentTexte`, texte clair | `.defile--accent` | contraste ≥ 4,5:1 même en petit |
+| `galerie` | la galerie de l'accueil est une liste choisie (six photos : le motif bento 4-2-2 / 2-2-4 reste propre) | liste de `base` | les autres photos servent les pages de commune |
+
+**La leçon qui a coûté une passe :** un geste écrit n'est pas un geste vu. Le premier balayage (240 % de large) ne traversait l'écran que 1,5 s sur 7 ; la grille l'a noté 2/5 (« quatre images identiques »). Avant de déclarer un mouvement ambiant, prendre les images-clés (`scripts/demo-images-cles.mjs`) et mesurer la différence entre elles. Et un effet qui se voit mais ne se comprend pas (la « révélation » : une tache floue sur l'outil) est pire que rien.

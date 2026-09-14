@@ -1,4 +1,4 @@
-# Carte du code — presti (2026-09-14T11:05:42Z)
+# Carte du code — presti (2026-09-14T11:53:45Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -62,8 +62,8 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/tarifs` : · [GET POST DELETE]
 - `/tools` : reponse [POST]
 
-## Drapeaux — `lib/flags.ts` (23) : une fonctionnalité non finie n'apparaît pas
-codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformePilotage=true · plateformeRegles=true · siteSlides3d=true · aideVisites=true · aideCentre=true · landingVideo=true · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · siteCommande=true · siteCommandeVente=false
+## Drapeaux — `lib/flags.ts` (24) : une fonctionnalité non finie n'apparaît pas
+codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformePilotage=true · plateformeRegles=true · siteSlides3d=true · aideVisites=true · aideCentre=true · landingVideo=true · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · siteCommande=true · siteCommandeVente=false · landingDemoSite=true
 
 ## Formules — `lib/plans.ts`
 - plans : gratuit (Essai, 0 €/mois, BASE) · essentiel (Essentiel, 29 €/mois, BASE) · studio (Studio, 59 €/mois, STUDIO) · signature (Signature, 99 €/mois, SIGNATURE) · business (Business, 0 €/mois, SIGNATURE)
@@ -172,7 +172,7 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 ## Migrations — `supabase/migrations` (89)
 - dernières : 0085_purger_compte_test_devis.sql, 0086_canaux_apport.sql, 0087_canal_instagram.sql, 0088_site_commande.sql, 0089_sites_bucket.sql
 
-## Scripts — `scripts/` (196 .mjs, dont 77 suites e2e)
+## Scripts — `scripts/` (200 .mjs, dont 77 suites e2e)
 
-## Orchestre — file : 0 · en cours : 1 · faites : 22 · refusées : 1
+## Orchestre — file : 0 · en cours : 1 · faites : 23 · refusées : 1
 

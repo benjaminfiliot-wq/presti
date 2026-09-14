@@ -1,0 +1,113 @@
+M .orchestre/decisions.md
+ M .orchestre/orchestre.json
+ M .orchestre/preuves/016-02/bureau-d100.png
+ M .orchestre/preuves/016-02/bureau-page.png
+ M .orchestre/preuves/016-02/bureau-t06.png
+ M .orchestre/preuves/016-02/bureau-t25.png
+ M .orchestre/preuves/016-02/bureau-t50.png
+ M .orchestre/preuves/016-02/bureau-t80.png
+ M .orchestre/preuves/016-02/mobile-t25.png
+ M .orchestre/preuves/016-02/planche-demo.jpg
+ M .orchestre/preuves/refs/grille.json
+ M app/globals.css
+ M app/page.tsx
+ M lib/flags.ts
+ M plans/cerveau-site-motifs.md
+ M plans/journal-v16.md
+ M public/sites-demo/_kit/da.json
+ M public/sites-demo/_kit/kit.css
+ M public/sites-demo/_kit/kit.js
+ M public/sites-demo/carreleur/site.js
+ M public/sites-demo/carreleur/styles.css
+ M public/sites-demo/chauffagiste/site.js
+ M public/sites-demo/chauffagiste/styles.css
+ M public/sites-demo/couvreur/site.js
+ M public/sites-demo/couvreur/styles.css
+ M public/sites-demo/electricien/site.js
+ M public/sites-demo/electricien/styles.css
+ M public/sites-demo/generer.mjs
+ M public/sites-demo/lestraque/confidentialite/index.html
+ M public/sites-demo/lestraque/index.html
+ M public/sites-demo/lestraque/mentions-legales/index.html
+ M public/sites-demo/lestraque/menuisier-bruz/index.html
+ M public/sites-demo/lestraque/menuisier-cesson-sevigne/index.html
+ M public/sites-demo/lestraque/menuisier-rennes/index.html
+ M public/sites-demo/lestraque/menuisier-saint-gregoire/index.html
+ M public/sites-demo/lestraque/site.js
+ M public/sites-demo/lestraque/styles.css
+ M public/sites-demo/macon/site.js
+ M public/sites-demo/macon/styles.css
+ M public/sites-demo/menuisier/site.js
+ M public/sites-demo/menuisier/styles.css
+ M public/sites-demo/peintre/site.js
+ M public/sites-demo/peintre/styles.css
+ M public/sites-demo/plombier/site.js
+ M public/sites-demo/plombier/styles.css
+ M public/sites-demo/serrurier/site.js
+ M public/sites-demo/serrurier/styles.css
+ M scripts/juges/code-qa.mjs
+ M scripts/video-qa.mjs
+?? .claude/skills/captions-overlay/
+?? .claude/skills/changelog-video/
+?? .claude/skills/cut-the-curve/
+?? .claude/skills/embedded-captions/
+?? .claude/skills/faceless-explainer/
+?? .claude/skills/figma/
+?? .claude/skills/general-video/
+?? .claude/skills/hyperframes-animation/
+?? .claude/skills/hyperframes-audio/
+?? .claude/skills/hyperframes-cli/
+?? .claude/skills/hyperframes-core/
+?? .claude/skills/hyperframes-creative/
+?? .claude/skills/hyperframes-keyframes/
+?? .claude/skills/hyperframes-registry/
+?? .claude/skills/hyperframes/
+?? .claude/skills/media-use/
+?? .claude/skills/motion-doctrine/
+?? .claude/skills/motion-graphics/
+?? .claude/skills/music-to-video/
+?? .claude/skills/oversized-cursor/
+?? .claude/skills/pr-to-video/
+?? .claude/skills/product-launch-video/
+?? .claude/skills/remotion-to-hyperframes/
+?? .claude/skills/seam-craft/
+?? .claude/skills/slideshow/
+?? .claude/skills/talking-head-recut/
+?? .orchestre/en-cours/016-02.avant.txt
+?? .orchestre/en-cours/016-02.lock
+?? .orchestre/en-cours/016-03.lock
+?? .orchestre/en-cours/016-03.md
+?? ChromeSetup.exe
+?? app/DemoSite.tsx
+?? build-demo.mjs
+?? build-menuisier-1.mjs
+?? build-menuisier-2.mjs
+?? build-menuisier.mjs
+?? build-plombier.mjs
+?? fix.js
+?? fix_home.py
+?? fix_html.py
+?? fix_newlines.py
+?? full_qa_output.txt
+?? generate-site.mjs
+?? plans/015-systeme-universel-et-demo-site.md
+?? promo-src/
+?? public/promo/
+?? qa-output.txt
+?? qa_out_sync.txt
+?? qa_out_temp.txt
+?? qa_output.txt
+?? qa_output2.txt
+?? qa_output2_utf8.txt
+?? qa_output3.txt
+?? qa_output_utf8.txt
+?? report.json
+?? scratch-fetch.mjs
+?? scratch-generator.mjs
+?? scratch-screenshot.mjs
+?? screenshot.mjs
+?? scripts/capture-url.mjs
+?? scripts/demo-video.mjs
+?? shot_cerveaux.mjs
+?? test.jpg
+?? videos/

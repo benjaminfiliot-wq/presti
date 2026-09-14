@@ -76,6 +76,11 @@ export const FLAGS = {
    *  site » sur la landing et /abonnement. Ne se lève qu'après l'étape 7 verte et un site de démonstration
    *  regardé par Benj (H5). Tant qu'il est baissé, la page n'est atteignable que par son adresse. */
   siteCommandeVente: false,
+  /** v16 §3.4 — le bloc « Et le site qui va avec » sous la séquence de la landing : la capture animée de LA démo
+   *  (Atelier Lestraque) et le lien vers le site réel. Il MONTRE, il ne vend pas (pas de bouton de commande). Se lève
+   *  quand la démo est validée sans Benj : site-qa + grille-qa + code-qa verts (scripts/demo-verifier.mjs) et la vidéo
+   *  passée au juge (scripts/video-qa.mjs public/promo/demo-site/lestraque.mp4). */
+  landingDemoSite: true,
 } as const
 
 export type Flag = keyof typeof FLAGS

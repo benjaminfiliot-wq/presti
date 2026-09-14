@@ -32,13 +32,17 @@
     addEventListener('scroll', function () { if (!attendu) { attendu = true; requestAnimationFrame(parallaxe) } }, { passive: true })
   }
 
+  // La ligne des étapes ne mesure rien tant que la liste n'approche pas de l'écran : lue au chargement, sa position force
+  // une mise en page complète d'une page longue (longues tâches de 260 ms dans site.js, TBT 241 ms sur mobile, 14/09).
+  // Quand la liste est proche, une seule mesure par image (rAF), jamais plus.
   var liste = d.querySelector('.etapes__liste')
-  if (liste) {
-    var avancer = function () { var r = liste.getBoundingClientRect(); var a = (innerHeight * 0.72 - r.top) / r.height; liste.style.setProperty('--avancee', Math.min(1, Math.max(0, a)).toFixed(3)) }
-    // la première mesure attend une image : lue tout de suite, elle force une mise en page complète (822 ms de fil principal
-    // attribués à site.js par Lighthouse mobile, 14/09)
-    addEventListener('scroll', avancer, { passive: true }); requestAnimationFrame(function () { requestAnimationFrame(avancer) })
-  }
+  if (liste && 'IntersectionObserver' in window) {
+    var enAttente = false, proche = false
+    var avancer = function () { enAttente = false; var r = liste.getBoundingClientRect(); var a = (innerHeight * 0.72 - r.top) / r.height; liste.style.setProperty('--avancee', Math.min(1, Math.max(0, a)).toFixed(3)) }
+    var surDefilement = function () { if (proche && !enAttente) { enAttente = true; requestAnimationFrame(avancer) } }
+    new IntersectionObserver(function (es) { proche = es[0].isIntersecting; if (proche) surDefilement() }, { rootMargin: '25% 0px 25% 0px' }).observe(liste)
+    addEventListener('scroll', surDefilement, { passive: true })
+  } else if (liste) liste.style.setProperty('--avancee', '1')
 
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) d.querySelectorAll('.carte').forEach(function (c) {
     c.addEventListener('pointermove', function (e) { var r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px') })
@@ -52,6 +56,20 @@
       if (cible) { e.preventDefault(); cible.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'start' }); history.replaceState(null, '', h.slice(i)) }
     })
   })
+
+  // la révélation du héros (da.revele) : le cercle suit la souris, puis reprend son chemin après 2,5 s de repos
+  var revele = d.querySelector('.hero__revele'), heroPlein = d.querySelector('.hero--plein')
+  if (revele && heroPlein && !reduit && matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)').matches) {
+    var repos = null
+    heroPlein.addEventListener('pointermove', function (e) {
+      var r = heroPlein.getBoundingClientRect()
+      revele.classList.add('suit')
+      revele.style.setProperty('--rx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%')
+      revele.style.setProperty('--ry', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%')
+      clearTimeout(repos)
+      repos = setTimeout(function () { revele.classList.remove('suit'); revele.style.removeProperty('--rx'); revele.style.removeProperty('--ry') }, 2500)
+    }, { passive: true })
+  }
 
   var details = d.querySelectorAll('.faq details')
   details.forEach(function (x) { x.addEventListener('toggle', function () { if (x.open) details.forEach(function (y) { if (y !== x) y.open = false }) }) })

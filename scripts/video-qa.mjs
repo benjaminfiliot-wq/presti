@@ -164,18 +164,29 @@ function analyse(fichier) {
 }
 
 // ─── Le verdict ──────────────────────────────────────────────────────────────────────────────
+// Deux profils. « reseaux » (défaut) : un film pour LinkedIn/Facebook/Instagram — formats des réseaux, débit élevé, fond
+// sonore. « landing » (--profil=landing, prompt v16 §3.4) : une capture qui tourne en boucle sur la landing — muette (la
+// lecture automatique l'exige), 16:9, et légère (≤ 1,5 Mo : elle se charge sur un téléphone). Les deux profils gardent la
+// même exigence sur ce qui fait une vidéo vivante : aucun plan figé, l'image vit, le rythme des coupes, le cadre rempli.
+const PROFIL = (process.argv.find((x) => x.startsWith('--profil=')) || '--profil=reseaux').slice(9)
+const LANDING = { POIDS_MAX: 1_500_000, LARGEURS: [1280, 1920] }
 function juge(a) {
   const t = []
   const ok = (nom, passe, mesure, attendu) => t.push({ nom, passe, mesure, attendu })
+  const landing = PROFIL === 'landing'
 
-  ok('Format reconnu', a.nomFormat !== null,
+  if (landing) ok('Format 16:9 (landing)', LANDING.LARGEURS.includes(a.meta.largeur) && Math.abs(a.meta.largeur / a.meta.hauteur - 16 / 9) < 0.01,
+    `${a.meta.largeur}×${a.meta.hauteur}`, '1280×720 ou 1920×1080')
+  else ok('Format reconnu', a.nomFormat !== null,
     `${a.meta.largeur}×${a.meta.hauteur}${a.nomFormat ? ` (${a.nomFormat})` : ''}`,
     '1080×1920, 1080×1350 ou 1920×1080')
   ok('Durée', a.meta.duree >= BARRE.DUREE[0] && a.meta.duree <= BARRE.DUREE[1],
     `${a.meta.duree.toFixed(1)} s`, `${BARRE.DUREE[0]}–${BARRE.DUREE[1]} s`)
   ok('Images par seconde', a.meta.fps >= BARRE.FPS_MIN,
     a.meta.fps.toFixed(1), `≥ ${BARRE.FPS_MIN}`)
-  ok('Débit', a.meta.debit >= BARRE.DEBIT_MIN,
+  if (landing) ok('Poids (landing)', a.meta.poids <= LANDING.POIDS_MAX,
+    `${(a.meta.poids / 1e6).toFixed(2)} Mo`, `≤ ${(LANDING.POIDS_MAX / 1e6).toFixed(1)} Mo`)
+  else ok('Débit', a.meta.debit >= BARRE.DEBIT_MIN,
     `${a.meta.debit} kbps`, `≥ ${BARRE.DEBIT_MIN} kbps`)
 
   ok('Aucun plan figé', a.figeSecondes <= BARRE.PLAN_FIGE_MAX,
@@ -192,7 +203,8 @@ function juge(a) {
     `≥ ${BARRE.OCCUP_PART * 100} % des images à ≥ ${BARRE.OCCUP_MIN * 100} % de largeur`)
   ok('Dernière image non blanche', a.finLumiere <= BARRE.FIN_LUMIERE_MAX,
     a.finLumiere.toFixed(0), `≤ ${BARRE.FIN_LUMIERE_MAX}`)
-  ok('Une piste audio, au niveau d’un fond', !!a.audio && a.audio.lufs >= BARRE.LUFS_MIN && a.audio.lufs <= BARRE.LUFS_MAX,
+  if (landing) ok('Muette (landing)', !a.audio, a.audio ? 'piste audio présente' : 'aucune piste', 'aucune piste : la lecture automatique l’exige')
+  else ok('Une piste audio, au niveau d’un fond', !!a.audio && a.audio.lufs >= BARRE.LUFS_MIN && a.audio.lufs <= BARRE.LUFS_MAX,
     a.audio ? (Number.isFinite(a.audio.lufs) ? `${a.audio.lufs.toFixed(1)} LUFS` : 'niveau illisible') : 'AUCUNE PISTE',
     `piste présente, ${BARRE.LUFS_MIN} à ${BARRE.LUFS_MAX} LUFS`)
 

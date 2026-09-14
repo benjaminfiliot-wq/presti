@@ -6,16 +6,17 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-14T11:05:42Z
+# Digest — 2026-09-14T11:53:45Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, gemini-cli, qwen) : 22 tâche(s) PASS, 68399 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
-**État** — file : 0 · en cours : 1 · faites : 22 · refusées : 1
+**Mesure** — déléguées (antigravity, gemini-cli, qwen) : 22 tâche(s) PASS, 68399 ligne(s) · faites par Claude Code : 1 tâche(s) PASS, 279 ligne(s).
+**État** — file : 0 · en cours : 1 · faites : 23 · refusées : 1
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 016-02 | feature | en-cours | claude-code | — | depuis 2026-09-14T10:30:39Z · LA démo (prompt v16 §3) — un seul site de démonstration, « Atelier Lestraque », menuisier-agenceur fictif à Rennes, poussé au niveau des références MotionSites (grille C1–C8 ≥ médiane), jugé par site-qa (Lighthouse mobile ≥ 95), grille-qa et code-qa |
+| 016-03 | feature | en-cours | claude-code | — | depuis 2026-09-14T11:41:47Z · La landing (prompt v16 §3.4) — le bloc « Et le site qui va avec » sous la séquence de |
+| 016-02 | feature | fait | claude-code | PASS | 2026-09-14T11:53:45Z · 67s · 279 l. |
 | 016-01 | contenu | fait | antigravity | PASS | 2026-09-14T11:05:42Z · 1s · 0 l. |
 | 014-11 | test | fait | ag-11-g37 | PASS | 2026-09-14T09:35:02Z · 29s · 98 l. |
 | 014-17 | test | fait | ag-17-g38 | PASS | 2026-09-14T09:34:14Z · 80s · 446 l. |

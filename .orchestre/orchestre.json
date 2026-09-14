@@ -13,9 +13,9 @@
   },
   "juges": {
     "code": {
-      "lint": "npm run lint",
       "typecheck": "npm run typecheck"
-    }
+    },
+    "_note_code": "pas de lint : aucune configuration ESLint dans le dépôt (constaté le 2026-09-14) ; npm run build avant chaque push de page"
   },
   "executants": [
     "antigravity",

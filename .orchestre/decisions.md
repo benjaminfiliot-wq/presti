@@ -25,3 +25,14 @@ Ce fichier évite qu'un agent s'arrête pour une question qui a déjà une répo
 ## Décisions ajoutées par les agents
 
 <!-- une ligne par décision, du plus récent au plus ancien : | question | défaut retenu (date, id) | réversible ? | -->
+
+| Question | Défaut retenu | Réversible ? |
+|---|---|---|
+| Le juge vidéo exige 3 000 kbps et une piste son ; la capture de la landing doit être muette et ≤ 1,5 Mo ? | Un profil `--profil=landing` dans `scripts/video-qa.mjs` (16:9, muette, ≤ 1,5 Mo), mêmes seuils de figé, d'énergie et de coupes ; le profil réseaux ne change pas (2026-09-14, 016-03) | Oui |
+| Qui note la démo sur la grille C1–C8 ? | Un sous-agent qui n'a pas construit la démo et n'a pas lu les notes antérieures, et qui re-note aussi les références (2026-09-14, 016-02) | Oui |
+| Les leçons Design Rocket et les prompts MotionSites premium sont payants (compte de Benj en Free Plan) ? | Ne rien débloquer, rien cliquer ; fixer le niveau sur les aperçus publics (images-clés des WebP/MP4 du catalogue) — l'abonnement est une question d'argent pour Benj (2026-09-14, 016-01) | Oui |
+| Le navigateur d'Antigravity n'a pas les sessions de Benj ? | Aperçus publics pour MotionSites ; Claude in Chrome (le vrai Chrome de Benj) pour ce qui exige sa session, en lecture seule (2026-09-14, 016-01) | Oui |
+| Nom de la démo unique ? | « Atelier Lestraque », Rennes — 0 résultat au registre (`recherche-entreprises.api.gouv.fr`) ; « Bellevigne » et « Vernet » écartés (homonymes) (2026-09-14, 016-02) | Oui |
+| Photos de la démo : Unsplash/Pexels (clé API à créer) ou Commons ? | Commons, recherche par catégories, provenance prouvée par `photos-provenance.mjs` ; pas de compte à créer (2026-09-14, 016-02) | Oui |
+| Le h1 « Le bois, sur mesure » (plus beau) ou « Menuisier à Rennes » (exigé par le juge SEO) ? | « Menuisier à Rennes » en titre monumental, la promesse en kicker (2026-09-14, 016-02) | Oui |
+| Une démo servie par Next depuis `public/` perd ses styles sans barre finale ? | Liens internes des démos vers `index.html` (générateur) plutôt qu'une règle globale `trailingSlash` dans `next.config.mjs` (2026-09-14, 016-02) | Oui |

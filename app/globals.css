@@ -2835,3 +2835,15 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
   .dir-natures::-webkit-scrollbar{display:none}
   .dir-nature-groupe{flex-wrap:nowrap}
 }
+
+/* v16 §3.4 — « Et le site qui va avec » (app/DemoSite.tsx) : la capture animée de la démo, le lien, une ligne de prix. */
+.ds{margin-top:clamp(3.5rem,8vw,6rem)}
+.ds .lp-head2{margin-bottom:clamp(1.5rem,4vw,2.5rem)}
+.ds-cadre{display:block;border-radius:18px;overflow:hidden;background:#1f160e;box-shadow:0 30px 80px -30px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.06);transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s ease}
+.ds-cadre video,.ds-cadre img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+@media (hover:hover) and (pointer:fine){.ds-cadre:hover{transform:translateY(-4px);box-shadow:0 40px 90px -30px rgba(0,0,0,.45),0 0 0 1px rgba(0,0,0,.08)}}
+.ds-cadre:focus-visible{outline:2px solid var(--ink,#1b1a17);outline-offset:4px}
+.ds-lien{margin:1.1rem 0 0;text-align:center;font-size:1rem}
+.ds-lien a{color:var(--ink,#1b1a17);font-weight:600;text-decoration:underline;text-underline-offset:4px;padding:10px 4px}
+.ds-prix{margin:.35rem 0 0;text-align:center;font-size:.95rem;color:var(--muted,#6b665e)}
+@media (prefers-reduced-motion:reduce){.ds-cadre{transition:none}}
