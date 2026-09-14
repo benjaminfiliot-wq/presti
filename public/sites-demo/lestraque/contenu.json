@@ -162,20 +162,36 @@
        "texte": "Un parcours transparent en quatre étapes pour garantir la conformité esthétique et technique de votre réalisation."
       },
       {
-       "type": "li",
-       "texte": "1 Prise de contact Vous décrivez vos envies, contraintes d'espace et préférences de matériaux par téléphone ou via notre formulaire."
+       "type": "h3",
+       "texte": "Prise de contact"
       },
       {
-       "type": "li",
-       "texte": "2 Visite technique Relevé métrique précis sur votre chantier, vérification des aplombs, de l'hygrométrie et des accès."
+       "type": "p",
+       "texte": "Vous décrivez vos envies, contraintes d'espace et préférences de matériaux par téléphone ou via notre formulaire."
       },
       {
-       "type": "li",
-       "texte": "3 Devis & sélection Remise d'une proposition détaillée avec plan d'agencement et choix définitif des essences et ferrures."
+       "type": "h3",
+       "texte": "Visite technique"
       },
       {
-       "type": "li",
-       "texte": "4 Fabrication & pose Usinage en atelier, assemblage soigné et installation à votre domicile dans le respect des délais convenus."
+       "type": "p",
+       "texte": "Relevé métrique précis sur votre chantier, vérification des aplombs, de l'hygrométrie et des accès."
+      },
+      {
+       "type": "h3",
+       "texte": "Devis & sélection"
+      },
+      {
+       "type": "p",
+       "texte": "Remise d'une proposition détaillée avec plan d'agencement et choix définitif des essences et ferrures."
+      },
+      {
+       "type": "h3",
+       "texte": "Fabrication & pose"
+      },
+      {
+       "type": "p",
+       "texte": "Usinage en atelier, assemblage soigné et installation à votre domicile dans le respect des délais convenus."
       }
      ]
     },

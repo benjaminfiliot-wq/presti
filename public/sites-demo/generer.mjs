@@ -49,9 +49,21 @@ function decouper(blocs) {
 // Les sections v1 n'ont pas toutes des <h3> : des étapes numérotées en paragraphes, des questions en paragraphes qui
 // finissent par « ? ». On les reconstruit ici plutôt que de les aplatir en prose.
 const avantImage = (blocs) => { const i = blocs.findIndex((b) => b.type === 'img'); return i < 0 ? blocs : blocs.slice(0, i) }
-const enItems = (paras) => paras.map((p) => p.replace(/^\s*(?:étape\s*)?\d+\s*[.)\-–—:]?\s*/i, '')).map((p) => {
+// Un paragraphe numéroté : « 1. Titre : texte », « Étape 2 — Titre. Texte », ou sans ponctuation « 1 Prise de contact Vous
+// décrivez… » (les li de contenu.json : avant le 14/09, ce dernier cas n'était pas reconnu et la liste des étapes sortait vide)
+const NUMERO = /^\s*(?:étape\s*)?\d+(?:\s*[.)\-–—:]|\s)\s*(?=\S)/i
+const enItems = (paras) => paras.map((p) => p.replace(NUMERO, '')).map((p) => {
   const m = /^(.{8,90}?)\s*(?:[:—–]|\.\s)\s*(.+)$/.exec(p)
-  return m ? { titre: m[1].replace(/[.:]$/, ''), textes: [m[2]] } : { titre: p.split(' ').slice(0, 6).join(' '), textes: [p] }
+  // Sans « : » ni « . » entre le titre et le texte, le titre s'arrête avant le premier mot à majuscule initiale suivie d'une
+  // minuscule (« Prise de contact | Vous décrivez… ») ; sinon les six premiers mots faisaient le titre (« Prise de contact
+  // Vous décrivez vos »). La ponctuation garde la main quand elle coupe plus tôt (« Visite : nous passons à Rennes »).
+  const ms = p.split(/\s+/)
+  const k = ms.findIndex((w, i) => i > 0 && /^\p{Lu}\p{Ll}/u.test(w))
+  if (k > 0) {
+    const titre = ms.slice(0, k).join(' '), texte = ms.slice(k).join(' ')
+    if (titre.length <= 70 && texte.length >= 20 && (!m || titre.length < m[1].length)) return { titre, textes: [texte] }
+  }
+  return m ? { titre: m[1].replace(/[.:]$/, ''), textes: [m[2]] } : { titre: ms.slice(0, 6).join(' '), textes: [p] }
 })
 function faqDepuisParagraphes(paras) {
   const intro = [], items = []; let courant = null
@@ -63,11 +75,27 @@ function analyser(s) {
   let { intro, items } = decouper(g === 'galerie' ? avantImage(s.blocs) : s.blocs)
   intro = intro.filter((p) => !/^photo\b|wikimedia|licence cc|\(photo /i.test(p))
   if (!items.length && (g === 'etapes' || g === 'prestations' || g === 'engagements')) {
-    const num = intro.filter((p) => /^\s*(?:étape\s*)?\d+\s*[.)\-–—:]/i.test(p))
+    const num = intro.filter((p) => NUMERO.test(p))
     if (num.length >= 3) { items = enItems(num); intro = intro.filter((p) => !num.includes(p)) }
   }
   if (!items.length && g === 'faq') { const r = faqDepuisParagraphes(intro); if (r.items.length >= 2) ({ intro, items } = r) }
   return { g, intro, items }
+}
+
+// Garde-fous de sortie : ce qu'une capture ne montre pas (une liste vide dans une section sombre, un h3 orphelin sous un
+// en-tête) arrête la génération au lieu de partir en ligne — la liste des étapes de Lestraque est sortie vide le 14/09.
+function gardeFous(html, ou) {
+  const vide = /<(ol|ul)\b[^>]*>\s*<\/\1>/i.exec(html)
+  if (vide) throw new Error(`${ou} : liste <${vide[1]}> vide, après « ${html.slice(Math.max(0, vide.index - 120), vide.index).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(-80)} »`)
+  const nu = /<div class="entete\b[^"]*"[^>]*>(?:(?!<\/div>)[\s\S])*<\/div>\s*<h3\b/i.exec(html)
+  if (nu) throw new Error(`${ou} : un <h3> nu suit un .entete (« ${nu[0].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 90)} »)`)
+}
+
+// Les actes de licence, pour les crédits détaillés (une photo CC BY / BY-SA se crédite avec un lien vers sa licence)
+const LICENCES_URL = {
+  'CC0': 'https://creativecommons.org/publicdomain/zero/1.0/deed.fr',
+  'CC BY 2.0': 'https://creativecommons.org/licenses/by/2.0/deed.fr', 'CC BY 3.0': 'https://creativecommons.org/licenses/by/3.0/deed.fr', 'CC BY 4.0': 'https://creativecommons.org/licenses/by/4.0/deed.fr',
+  'CC BY-SA 2.0': 'https://creativecommons.org/licenses/by-sa/2.0/deed.fr', 'CC BY-SA 3.0': 'https://creativecommons.org/licenses/by-sa/3.0/deed.fr', 'CC BY-SA 4.0': 'https://creativecommons.org/licenses/by-sa/4.0/deed.fr',
 }
 
 // les variantes disponibles (480/720/960/1600 selon la date du téléchargement) sont lues dans attributions.json
@@ -141,7 +169,7 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
     const ld = (contenu.pages[page.chemin]?.jsonld?.[0] || contenu.pages['/']?.jsonld?.[0])
     const ldPage = ld ? { ...ld, url, image: BASE + '/images/' + hero.base + '-1600.webp' } : null
     return `<!doctype html>
-<html lang="fr" class="no-js${da.texture === 'grain' ? ' texture--grain' : da.texture === 'papier' ? ' texture--papier' : ''}${da.monumental ? ' da--monumental' : ''}${da.lumiere ? ' da--lumiere' : ''}${da.raccords ? ' da--raccords' : ''}${da.revele ? ' da--revele' : ''}">
+<html lang="fr" class="no-js${da.texture === 'grain' ? ' texture--grain' : da.texture === 'papier' ? ' texture--papier' : ''}${da.monumental ? ' da--monumental' : ''}${da.lumiere ? ' da--lumiere' : ''}${da.raccords ? ' da--raccords' : ''}${da.revele ? ' da--revele' : ''}${da.etapesMonumentales ? ' da--etapes' : ''}${da.communesMonumentales ? ' da--communes' : ''}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -196,8 +224,26 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
   const entete = (kicker, h2, intro, i = 0) => `<div class="entete reveal" style="--i:${i}"><span class="mono">${esc(kicker)}</span><h2>${esc(h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div>`
   const cartes = (items, depart = 0) => `<div class="cartes">${items.map((it, i) => `<article class="carte reveal" style="--i:${(i % 3) + 1}"><span class="mono">${String(depart + i + 1).padStart(2, '0')}</span><h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</article>`).join('')}</div>`
   // le dévoilement porte sur le rail entier : sur mobile, les photos hors de l'écran (défilement horizontal) ne croisent jamais l'observateur
-  const galerieHtml = (liste, rel, eagerPremier = false) => `<div class="galerie reveal">${liste.map((a, i) => `<figure class="galerie__item"><div class="galerie__cadre">${photo(a, rel, { eager: eagerPremier && i === 0, sizes: '(max-width: 900px) 80vw, 40vw' })}</div><figcaption><span>${esc(a.legende)}</span><small>Photo ${esc(a.auteur)} · ${esc(a.licence)}</small></figcaption></figure>`).join('')}</div>`
-  const communesHtml = (liste, rel, sauf) => `<div class="communes">${liste.filter((c) => c !== sauf).map((c) => { const p = pageDe(c); return p ? `<a class="commune reveal" href="${rel}${p.chemin.slice(1)}"><span>${esc(c)}</span><small>${esc(da.label)} à ${esc(c)}</small>${FLECHE}</a>` : `<span class="commune reveal"><span>${esc(c)}</span></span>` }).join('')}</div>`
+  // Les crédits : dans chaque légende (défaut), ou — da.creditsGroupes — sur UNE ligne sous la galerie (auteurs, licences, lien
+  // vers le détail des mentions légales, où chaque photo a sa page source et son acte de licence) : la légende seule tient sur
+  // deux lignes à 390 px, au lieu d'être écrasée mot par mot par « Photo X · CC BY-SA 4.0 » en nowrap (priorité 2, 14/09).
+  const creditsLigne = (liste, rel) => {
+    const uniques = [...new Map(liste.map((a) => [`${a.auteur}|${a.licence}`, a])).values()]
+    return `<p class="galerie__credits">Photographies : ${uniques.map((a) => `${esc(a.auteur)} (${esc(a.licence)})`).join(', ')} — redimensionnées pour le web. <a href="${rel}mentions-legales/#credits">Sources et licences</a></p>`
+  }
+  const galerieHtml = (liste, rel, eagerPremier = false) => `<div class="galerie reveal">${liste.map((a, i) => `<figure class="galerie__item"><div class="galerie__cadre">${photo(a, rel, { eager: eagerPremier && i === 0, sizes: '(max-width: 900px) 80vw, 40vw' })}</div><figcaption><span>${esc(a.legende)}</span>${da.creditsGroupes ? '' : `<small>Photo ${esc(a.auteur)} · ${esc(a.licence)}</small>`}</figcaption></figure>`).join('')}</div>${da.creditsGroupes ? creditsLigne(liste, rel) : ''}`
+  // plus d'étiquette <small> « Menuisier à X » à côté du nom : au survol, le nom glissait dessus (« RennesMenuisier à Rennes »)
+  const communesHtml = (liste, rel, sauf) => `<div class="communes">${liste.filter((c) => c !== sauf).map((c) => { const p = pageDe(c); return p ? `<a class="commune reveal" href="${rel}${p.chemin.slice(1)}"><span>${esc(c)}</span>${FLECHE}</a>` : `<span class="commune reveal"><span>${esc(c)}</span></span>` }).join('')}</div>`
+  // Les étapes : au moins deux, sinon la génération échoue. da.etapesMonumentales : un grand numéro par étape, qui s'allume
+  // quand la ligne --avancee (kit.js) atteint son seuil --k (le haut de l'étape, en fraction de la liste).
+  const etapesHtml = (s, intro, items, classe, id, ou) => {
+    if (items.length < 2) throw new Error(`${ou} : la section étapes « ${s.h2} » n'a que ${items.length} étape(s) lisible(s), 2 au moins attendues`)
+    const lis = items.map((it, i) => {
+      const nn = String(i + 1).padStart(2, '0'), corps = `<h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}`
+      return da.etapesMonumentales ? `<li class="etape" style="--k:${((i + 0.15) / items.length).toFixed(3)}"><span class="etape__num" aria-hidden="true">${nn}</span><div class="etape__corps">${corps}</div></li>` : `<li class="etape"><span class="mono">Étape ${nn}</span>${corps}</li>`
+    }).join('')
+    return `<section class="${classe}"${id ? ` id="${id}"` : ''}><div class="conteneur"><div class="etapes"><div class="etapes__tete reveal"><span class="mono">Comment ça se passe</span><h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div><ol class="etapes__liste">${lis}</ol></div></div></section>`
+  }
   const bande = (intro, infos, rel) => `<section class="section" id="contact"><div class="conteneur"><div class="bande reveal"><div><span class="mono">Parlons de votre projet</span><h2 style="margin-top:1rem">${esc(intro.titre)}</h2>${intro.textes.map((t) => `<p style="margin-top:1rem;opacity:.85">${esc(t)}</p>`).join('')}<div class="hero__actions" style="margin-top:2rem"><a class="bouton" href="tel:${tel}">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a><a class="hero__tel" href="tel:${tel}">${telAffiche(tel)}</a></div></div><div class="bande__infos">${infos.map((x) => `<div><strong>${esc(x.k)}</strong>${x.href ? `<a href="${x.href}">${esc(x.v)}</a>` : esc(x.v)}</div>`).join('')}</div></div></div></section>`
   const infosContact = (textes) => {
     const out = [{ k: 'Téléphone', v: telAffiche(tel), href: `tel:${tel}` }]
@@ -234,8 +280,10 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       if (g === 'prestations') { corps += `<section class="${classe}" id="prestations"><div class="conteneur">${entete('Prestations', s.h2, intro)}${cartes(items)}</div></section>`; alt = !alt }
       else if (g === 'engagements') { corps += `<section class="${classe}"><div class="conteneur">${entete('Engagements', s.h2, intro)}${cartes(items)}</div></section>`; alt = !alt }
       else if (g === 'galerie') { corps += `<section class="${classe}" id="realisations"><div class="conteneur">${entete('Réalisations', s.h2, intro)}${galerieHtml(Array.isArray(da.galerie) ? da.galerie.map((b) => photos.find((p) => p.base === b)).filter(Boolean) : (galerie.length >= 3 ? galerie : photos), rel)}</div></section>`; alt = !alt }
-      else if (g === 'communes') { corps += `<section class="${classe}" id="communes"><div class="conteneur"><div class="deux"><div>${entete('Zone d’intervention', s.h2, intro)}${items.map((it) => `<h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}`).join('')}</div>${communesHtml(communes, rel)}</div></div></section>`; alt = !alt }
-      else if (g === 'etapes') { corps += `<section class="${classe}" id="etapes"><div class="conteneur"><div class="etapes"><div class="etapes__tete reveal"><span class="mono">Comment ça se passe</span><h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div><ol class="etapes__liste">${items.map((it, i) => `<li class="etape"><span class="mono">Étape ${String(i + 1).padStart(2, '0')}</span><h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</li>`).join('')}</ol></div></div></section>`; alt = !alt }
+      // les items h3/p d'une section communes ne sont plus imprimés sur l'accueil : ils répétaient quatre fois la même phrase
+      // « … à X » sous l'en-tête ; le texte propre à chaque commune vit sur sa page /metier-commune/
+      else if (g === 'communes') { corps += da.communesMonumentales ? `<section class="${classe}" id="communes"><div class="conteneur">${entete('Zone d’intervention', s.h2, intro)}</div>${communesHtml(communes, rel)}</section>` : `<section class="${classe}" id="communes"><div class="conteneur"><div class="deux"><div>${entete('Zone d’intervention', s.h2, intro)}</div>${communesHtml(communes, rel)}</div></div></section>`; alt = !alt }
+      else if (g === 'etapes') { corps += etapesHtml(s, intro, items, classe, 'etapes', `${metier}${page.chemin}`); alt = !alt }
       else if (g === 'faq') { corps += `<section class="${classe}" id="questions"><div class="conteneur">${entete('Questions fréquentes', s.h2, intro)}<div class="faq reveal">${items.map((it) => `<details><summary>${esc(it.titre)}</summary><div class="faq__corps">${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</div></details>`).join('')}</div></div></section>`; alt = !alt }
       else if (g === 'contact') contact = { titre: s.h2, textes: intro.filter((t) => !(/\b\d{5}\b/.test(t) && /rue|avenue|chemin|place|boulevard/i.test(t)) && !(/lundi|mardi|samedi/i.test(t) && t.length < 90)), tous: intro }
       else { corps += `<section class="${classe}"><div class="conteneur"><div class="prose reveal"><h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}${items.map((it) => `<h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}`).join('')}</div></div></section>`; alt = !alt }
@@ -259,7 +307,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       if (g === 'prestations' && items.length) { corps += `<section class="${classe}"><div class="conteneur">${entete('Prestations', s.h2, intro)}${cartes(items)}</div></section>`; alt = !alt }
       else if (g === 'galerie') { corps += `<section class="${classe}"><div class="conteneur">${entete('Réalisations', s.h2, intro)}${galerieHtml(mesPhotos, rel, premierePhoto)}</div></section>`; premierePhoto = false; alt = !alt }
       else if (g === 'communes') { corps += `<section class="${classe}"><div class="conteneur"><div class="deux"><div>${entete('À proximité', s.h2, intro)}</div>${communesHtml([...voisines, ...(page.type === 'commune' ? [] : [])], rel, page.cible)}</div><p style="margin-top:2rem"><a class="bouton bouton--contour" href="${rel}">Retour à l’accueil</a></p></div></section>`; alt = !alt }
-      else if (g === 'etapes' && items.length) { corps += `<section class="${classe}"><div class="conteneur"><div class="etapes"><div class="etapes__tete reveal"><span class="mono">Comment ça se passe</span><h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div><ol class="etapes__liste">${items.map((it, i) => `<li class="etape"><span class="mono">Étape ${String(i + 1).padStart(2, '0')}</span><h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</li>`).join('')}</ol></div></div></section>`; alt = !alt }
+      else if (g === 'etapes') { corps += etapesHtml(s, intro, items, classe, '', `${metier}${page.chemin}`); alt = !alt }
       else if (g === 'faq' && items.length) { corps += `<section class="${classe}"><div class="conteneur">${entete('Questions', s.h2, intro)}<div class="faq reveal">${items.map((it) => `<details><summary>${esc(it.titre)}</summary><div class="faq__corps">${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</div></details>`).join('')}</div></div></section>`; alt = !alt }
       else if (g === 'contact' && !items.length) contact = { titre: s.h2, textes: intro, tous: intro }
       else { corps += `<section class="${classe}"><div class="conteneur"><div class="prose reveal"><h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}${items.map((it) => `<h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}`).join('')}</div></div></section>`; alt = !alt }
@@ -274,26 +322,33 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
   function legale(page) {
     const c = contenu.pages[page.chemin]
     const rel = '../'
+    const creditsListe = `<ul class="credits">${photos.map((p) => `<li><span>${esc(p.legende)}</span><span>— ${esc(p.auteur)}</span><span>(${LICENCES_URL[p.licence] ? `<a href="${LICENCES_URL[p.licence]}" rel="license noopener" target="_blank">${esc(p.licence)}</a>` : esc(p.licence)})</span><a href="${p.source}" rel="noopener" target="_blank">page du fichier</a></li>`).join('')}</ul>`
     let corps = `<section class="hero hero--page"><div class="conteneur"><div class="hero__contenu"><nav class="ariane" aria-label="Fil d’Ariane"><a href="${rel}">Accueil</a><span>/</span><span>${esc(c.h1)}</span></nav><h1>${mots(c.h1)}</h1>${c.chapeau ? `<p class="chapeau">${esc(c.chapeau)}</p>` : ''}</div></div></section><section class="section"><div class="conteneur"><div class="prose">`
     for (const s of c.sections) {
       const { intro, items } = decouper(s.blocs)
       if (/cr[ée]dit/i.test(s.h2)) {
-        corps += `<h2>${esc(s.h2)}</h2><p>Les photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence et la page d’origine.</p><ul class="credits">${photos.map((p) => `<li><span>${esc(p.legende)}</span><span>— ${esc(p.auteur)}</span><span>(${esc(p.licence)})</span><a href="${p.source}" rel="license noopener" target="_blank">page du fichier</a></li>`).join('')}</ul>`
+        corps += `<h2 id="credits">${esc(s.h2)}</h2><p>Les photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence et la page d’origine. Les fichiers ont été redimensionnés et convertis pour le web.</p>${creditsListe}`
         continue
       }
       corps += `<h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}${items.map((it) => `<h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}`).join('')}`
     }
-    if (/mentions/.test(page.chemin) && !c.sections.some((s) => /cr[ée]dit/i.test(s.h2))) corps += `<h2>Crédits photographiques</h2><ul class="credits">${photos.map((p) => `<li><span>${esc(p.legende)}</span><span>— ${esc(p.auteur)}</span><span>(${esc(p.licence)})</span><a href="${p.source}" rel="license noopener" target="_blank">page du fichier</a></li>`).join('')}</ul>`
+    if (/mentions/.test(page.chemin) && !c.sections.some((s) => /cr[ée]dit/i.test(s.h2))) corps += `<h2 id="credits">Crédits photographiques</h2><p>Fichiers redimensionnés et convertis pour le web.</p>${creditsListe}`
     if (/mentions/.test(page.chemin) && site.demo && !JSON.stringify(c.sections).toLowerCase().includes('démonstration')) corps += `<p><strong>Site de démonstration :</strong> entreprise fictive, coordonnées fictives.</p>`
     corps += `</div></div></section>`
     return tete(page, rel, { titre: c.title, description: c.description }) + corps + pied(rel)
   }
 
   // ── Écriture ────────────────────────────────────────────────────────────────────────────────────────────────
+  // toutes les pages sont rendues et passées aux garde-fous AVANT d'écrire : un échec ne laisse pas un site à moitié régénéré
   let n = 0, indexInterieure = 0
+  const rendues = []
   for (const page of pages) {
     if (!contenu.pages[page.chemin]) { console.log(`  ✗ ${metier}${page.chemin} : pas de contenu extrait`); continue }
     const html = page.type === 'accueil' ? accueil(page) : page.type === 'legal' ? legale(page) : interieure(page, indexInterieure++)
+    gardeFous(html, `${metier}${page.chemin}`)
+    rendues.push({ page, html })
+  }
+  for (const { page, html } of rendues) {
     const f = path.join(dossier, page.chemin.replace(/^\//, ''), 'index.html')
     fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, site.demo ? liensIndex(html) : html); n++
   }

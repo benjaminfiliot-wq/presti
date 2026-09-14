@@ -14,7 +14,14 @@ const DEMOS = path.join(RACINE, 'public', 'sites-demo')
 const METIERS = process.argv.slice(2).length ? process.argv.slice(2) : ['plombier', 'electricien', 'chauffagiste', 'macon', 'menuisier', 'peintre', 'carreleur', 'couvreur', 'serrurier']
 const UA = 'PrestiDemoProvenance/1.0 (https://prestiapp.fr; contact@prestiapp.fr)'
 
-async function empreinte(buf) {
+// recadrage : [gauche, haut, largeur, hauteur] en fractions (photos-demo.mjs --recadrer / variante) — la même découpe est
+// appliquée à la vignette distante avant de comparer, sinon un portrait 4:5 serait jugé « photo différente »
+async function empreinte(buf, recadrage = null) {
+  if (recadrage) {
+    const { width, height } = await sharp(buf).metadata()
+    const [g, h, l, H] = recadrage
+    buf = await sharp(buf).extract({ left: Math.round(g * width), top: Math.round(h * height), width: Math.max(1, Math.round(l * width)), height: Math.max(1, Math.round(H * height)) }).toBuffer()
+  }
   const px = await sharp(buf).greyscale().resize(8, 8, { fit: 'fill' }).raw().toBuffer()
   const moy = px.reduce((s, v) => s + v, 0) / px.length
   let bits = ''
@@ -42,17 +49,21 @@ for (const m of METIERS) {
   const attr = JSON.parse(fs.readFileSync(path.join(dossier, 'attributions.json'), 'utf8'))
   const liste = Array.isArray(attr) ? attr : (attr.images || attr.photos || Object.values(attr).flat())
   // Une entrée par photo (les variantes -480/-960/-1600 .avif/.webp partagent la source)
+  // (une variante recadrée — le portrait du héros — est une autre base de la même source : elle est vérifiée à part)
   const parSource = new Map()
-  for (const a of liste) { const src = a.source || a.url || a.page || ''; if (!parSource.has(src)) parSource.set(src, a) }
-  for (const [src, a] of parSource) {
+  for (const a of liste) { const src = a.source || a.url || a.page || ''; const cle = src + '|' + (a.base || ''); if (!parSource.has(cle)) parSource.set(cle, a) }
+  // les webp locaux d'une base, du plus large au plus étroit, quelles que soient ses largeurs (480 à 2880)
+  const localesDe = (base) => { const d = path.dirname(path.join(dossier, base)), b = path.basename(base); return fs.readdirSync(d).map((x) => [x, /^(.+)-(\d+)\.webp$/.exec(x)]).filter(([, m]) => m && m[1] === b).sort((x, y) => Number(y[1][2]) - Number(x[1][2])).map(([x]) => path.join(d, x)) }
+  for (const [cle, a] of parSource) {
+    const src = cle.slice(0, cle.lastIndexOf('|'))
     total++
     // Une photo venue par Openverse (Flickr…) : pas d'API Commons, mais l'image d'origine est connue — on la compare.
     if (a.origine?.via === 'openverse' && a.origine.image) {
-      const base = String(a.fichier).replace(/-(480|720|960|1600)\.(avif|webp|jpg|png)$/i, '')
-      const local = ['-1600.webp', '-960.webp', '-720.webp', '-480.webp'].map((s) => path.join(dossier, base + s)).find(fs.existsSync)
+      const base = String(a.fichier).replace(/-\d+\.(avif|webp|jpg|png)$/i, '')
+      const local = localesDe(base)[0]
       try {
         const rv = await fetch(a.origine.image, { headers: { 'User-Agent': UA } })
-        const dist = hamming(await empreinte(Buffer.from(await rv.arrayBuffer())), await empreinte(fs.readFileSync(local)))
+        const dist = hamming(await empreinte(Buffer.from(await rv.arrayBuffer()), a.recadrage), await empreinte(fs.readFileSync(local)))
         if (dist <= 12 && a.auteur && a.auteur.length >= 3) console.log(`✓ ${m} ${path.basename(local)} = ${a.origine.fournisseur || 'openverse'} ${src.slice(0, 60)} (${a.licence}, distance ${dist})`)
         else { faux++; console.log(`✗ ${m} ${a.fichier} : photo différente de l'image d'origine (distance ${dist}) ou auteur absent`) }
       } catch (e) { console.log(`? ${m} ${a.fichier} : origine injoignable (${e.message})`) }
@@ -65,13 +76,13 @@ for (const m of METIERS) {
     try { info = await commons('File:' + mt[1]) } catch (e) { console.log(`? ${m} ${a.fichier} : ${e.message}`); continue }
     if (!info) { faux++; console.log(`✗ ${m} ${a.fichier} : ${mt[1]} n'existe pas sur Commons`); continue }
     // l'image locale la plus grande en webp
-    const base = String(a.fichier).replace(/-(480|960|1600)\.(avif|webp|jpg|png)$/i, '')
-    const cands = ['-1600.webp', '-960.webp', '-480.webp', '.webp', '.jpg'].map((s) => path.join(dossier, base + s)).filter(fs.existsSync)
+    const base = String(a.fichier).replace(/-\d+\.(avif|webp|jpg|png)$/i, '')
+    const cands = [...localesDe(base), ...['.webp', '.jpg'].map((s) => path.join(dossier, base + s)).filter(fs.existsSync)]
     if (!cands.length) { faux++; console.log(`✗ ${m} ${a.fichier} : fichier local introuvable`); continue }
     let dist = null
     try {
       const rv = await fetch(info.vignette, { headers: { 'User-Agent': UA } })
-      const distante = await empreinte(Buffer.from(await rv.arrayBuffer()))
+      const distante = await empreinte(Buffer.from(await rv.arrayBuffer()), a.recadrage)
       const locale = await empreinte(fs.readFileSync(cands[0]))
       dist = hamming(distante, locale)
     } catch (e) { console.log(`? ${m} ${a.fichier} : vignette ${e.message}`) }

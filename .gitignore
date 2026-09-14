@@ -69,3 +69,8 @@ publications/
 
 # aperçus vidéo téléchargés pour les images-clés (droits MotionSites) : jamais versionnés
 .orchestre/preuves/refs/*.mp4
+
+# Captures des juges des vagues de retouche de la démo (017-*) : des centaines de Mo par vague ; on ne suit que les
+# captures clés rangées dans <vague>/cles/, le reste reste sur la machine qui a jugé.
+.orchestre/preuves/017-*/*
+!.orchestre/preuves/017-*/cles
