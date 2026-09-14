@@ -33,3 +33,6 @@
 {"agent":"ag-04-g38","tache":"014-04","modele":"Gemini 3.8 Flash (High)","conversationId":"d921277d-890c-41b9-82c6-c2dffc3e96c5","date":"2026-09-13T23:49:56Z"}
 {"agent":"ag-05-g38","tache":"014-05","modele":"Gemini 3.8 Flash (High)","conversationId":"382c895f-7678-4600-a225-31cba71ce9a3","date":"2026-09-13T23:50:01Z"}
 {"agent":"ag-02-g38b","tache":"014-02","modele":"Gemini 3.8 Flash (High)","conversationId":"7aaaf62d-db8f-417d-8a40-74bdd831c737","date":"2026-09-13T23:51:54Z"}
+{"agent":"ag-20-opus","tache":"014-20","modele":"opus","conversationId":"0255dfd1-3143-4858-a15e-e269d6d0907d","date":"2026-09-14T01:01:38Z"}
+{"agent":"ag-02-opus","tache":"014-02","modele":"opus","conversationId":"2cb3c130-250c-46d4-9be1-99669c6e22fb","date":"2026-09-14T01:01:41Z"}
+{"agent":"ag-02-sonnet","tache":"014-02","modele":"sonnet","conversationId":"c5283fb4-0db5-4b05-8d11-380e3337fc2d","date":"2026-09-14T01:01:48Z"}
