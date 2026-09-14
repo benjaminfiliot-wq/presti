@@ -38,15 +38,21 @@ const st = crypto.randomBytes(3).toString('hex')
 const H = { apikey: SVC, Authorization: `Bearer ${SVC}`, 'Content-Type': 'application/json' }
 const rest = (p, o = {}) => fetch(`${SB}/rest/v1/${p}`, { ...o, headers: { ...H, ...(o.headers || {}) } })
 const admin = (p, o = {}) => fetch(`${SB}/auth/v1/admin/${p}`, { ...o, headers: { ...H, ...(o.headers || {}) } })
-const api = (chemin, o = {}, jeton) => fetch(`${APP}${chemin}`, {
-  ...o,
-  headers: {
-    'Content-Type': 'application/json',
-    'User-Agent': 'presti-site-hebergement-e2e (Chrome; Windows)',
-    ...(jeton ? { Authorization: `Bearer ${jeton}` } : {}),
-    ...(o.headers || {}),
-  },
-})
+const api = async (chemin, o = {}, jeton, retries = 2) => {
+  for (let i = 0; i <= retries; i++) {
+    const res = await fetch(`${APP}${chemin}`, {
+      ...o,
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'presti-site-hebergement-e2e (Chrome; Windows)',
+        ...(jeton ? { Authorization: `Bearer ${jeton}` } : {}),
+        ...(o.headers || {}),
+      },
+    })
+    if ((res.status !== 503 && res.status !== 502) || i === retries) return res
+    await new Promise((r) => setTimeout(r, 2000))
+  }
+}
 const json = async (r) => ({ status: r.status, headers: r.headers, body: await r.json().catch(() => ({})) })
 
 let ok = 0, ko = 0

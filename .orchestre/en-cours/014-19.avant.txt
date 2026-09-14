@@ -1,13 +1,9 @@
-M .orchestre/agents.jsonl
- M .orchestre/contexte.md
+M .orchestre/contexte.md
  M .orchestre/digest.md
- D .orchestre/en-cours/014-05.avant.txt
- D .orchestre/en-cours/014-05.lock
- D .orchestre/file/014-18.md
- D .orchestre/file/014-19.md
+ D .orchestre/en-cours/014-19.avant.txt
+ M .orchestre/en-cours/014-19.lock
+ D .orchestre/fait/014-19.md
  M .orchestre/preuves/014-04/skills.md
- M .orchestre/preuves/014-14/avant.txt
- M .orchestre/preuves/014-14/onglet-sites.png
  M .orchestre/verdicts.jsonl
 ?? .claude/skills/captions-overlay/
 ?? .claude/skills/changelog-video/
@@ -35,14 +31,9 @@ M .orchestre/agents.jsonl
 ?? .claude/skills/seam-craft/
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
-?? .orchestre/en-cours/014-18.avant.txt
-?? .orchestre/en-cours/014-18.lock
-?? .orchestre/en-cours/014-18.md
-?? .orchestre/en-cours/014-19.lock
 ?? .orchestre/en-cours/014-19.md
 ?? .orchestre/preuves/014-04/avant.txt
 ?? .orchestre/preuves/014-17/
-?? .orchestre/preuves/014-18/
 ?? .orchestre/preuves/014-20/
 ?? .orchestre/scratch/
 ?? ChromeSetup.exe
