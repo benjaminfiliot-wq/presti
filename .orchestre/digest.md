@@ -1,12 +1,13 @@
-# Digest — 2026-09-14T09:35:02Z
+# Digest — 2026-09-14T10:22:03Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (Antigravity) : 21 tâche(s) PASS, 68399 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
-**État** — file : 0 · en cours : 0 · faites : 21 · refusées : 1
+**Mesure** — déléguées (Antigravity) : 22 tâche(s) PASS, 133212 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
+**État** — file : 0 · en cours : 0 · faites : 22 · refusées : 1
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
+| 016-01 | contenu | fait | ag-01-gemini38flas | PASS | 2026-09-14T10:22:00Z · 0s · 64813 l. |
 | 014-11 | test | fait | ag-11-g37 | PASS | 2026-09-14T09:35:02Z · 29s · 98 l. |
 | 014-17 | test | fait | ag-17-g38 | PASS | 2026-09-14T09:34:14Z · 80s · 446 l. |
 | 014-20 | contenu | fait | ag-20-g38 | PASS | 2026-09-14T07:53:22Z · 3s · 1198 l. |

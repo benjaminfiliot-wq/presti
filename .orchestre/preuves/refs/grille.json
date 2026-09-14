@@ -1,0 +1,17 @@
+{
+  "juge": "Claude Code, d'après quatre images-clés par référence (planche-refs.jpg) — notes provisoires des références ; la démo n'est pas encore notée",
+  "date": "2026-09-14",
+  "captures": ["planche-refs.jpg"],
+  "references": {
+    "arceage-services": { "C1": 5, "C2": 5, "C3": 3, "C4": 3, "C5": 2, "C6": 5, "C7": 5, "C8": 3 },
+    "agency-services": { "C1": 2, "C2": 2, "C3": 5, "C4": 5, "C5": 2, "C6": 2, "C7": 5, "C8": 4 },
+    "cinematic-brand": { "C1": 5, "C2": 5, "C3": 4, "C4": 2, "C5": 2, "C6": 5, "C7": 4, "C8": 3 },
+    "luxury-real-estate": { "C1": 4, "C2": 3, "C3": 5, "C4": 5, "C5": 5, "C6": 3, "C7": 4, "C8": 5 },
+    "reveal-hero": { "C1": 5, "C2": 4, "C3": 3, "C4": 4, "C5": 2, "C6": 4, "C7": 5, "C8": 4 },
+    "stellar-launch": { "C1": 5, "C2": 5, "C3": 4, "C4": 4, "C5": 4, "C6": 5, "C7": 4, "C8": 4 },
+    "cinematic-landing-page": { "C1": 5, "C2": 3, "C3": 3, "C4": 4, "C5": 4, "C6": 4, "C7": 4, "C8": 4 },
+    "vision-reveal": { "C1": 4, "C2": 5, "C3": 5, "C4": 3, "C5": 3, "C6": 3, "C7": 5, "C8": 5 },
+    "art-landing": { "C1": 5, "C2": 4, "C3": 5, "C4": 4, "C5": 5, "C6": 5, "C7": 3, "C8": 4 }
+  },
+  "demo": {}
+}

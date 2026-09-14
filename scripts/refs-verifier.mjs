@@ -19,8 +19,10 @@ const CHAMPS = ['Catégorie', 'Ce qui bouge', 'Comment', 'Rythme', 'Typographie'
 const texte = fs.existsSync(FICHIER) ? fs.readFileSync(FICHIER, 'utf8') : ''
 const blocs = texte.split(/^### Fiche /m).slice(1)
 const pngs = fs.existsSync(CAPTURES) ? fs.readdirSync(CAPTURES).filter((f) => /\.png$/i.test(f)).map((f) => path.join(CAPTURES, f)) : []
-const valides = pngs.filter((f) => pngValide(f, 800))
-const distinctes = fichiersDistincts(valides)
+// largeur lue dans l'en-tête IHDR (octets 16-19, grand-boutiste) : une capture d'écran fait au moins 800 px de large
+const largeurPng = (f) => { try { const b = Buffer.alloc(24); const fd = fs.openSync(f, 'r'); fs.readSync(fd, b, 0, 24, 0); fs.closeSync(fd); return b.readUInt32BE(16) } catch { return 0 } }
+const valides = pngs.filter((f) => pngValide(f) && largeurPng(f) >= 800)
+const distinctes = fichiersDistincts(valides) ? valides : []
 const fiches = blocs.map((b) => {
   const id = (b.match(/^\s*\d+\s*—\s*([^\n]+)/) || [])[1]?.trim() || '?'
   const manquants = CHAMPS.filter((c) => { const m = new RegExp(`^- ${c.replace(/[’']/g, "[’']")}\\s*:\\s*(.*)$`, 'mi').exec(b); return !m || m[1].replace(/\/5.*$/, '').trim().length < 8 })

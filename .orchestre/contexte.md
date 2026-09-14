@@ -1,4 +1,4 @@
-# Carte du code — Presti (2026-09-14T10:08:48Z)
+# Carte du code — Presti (2026-09-14T10:22:00Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -173,7 +173,7 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 - dernières : 0085_purger_compte_test_devis.sql, 0086_canaux_apport.sql, 0087_canal_instagram.sql, 0088_site_commande.sql, 0089_sites_bucket.sql
 - les `_A_COLLER_sql_editor_NNNN(.NU).sql` sont les versions à coller dans l’éditeur SQL Supabase (CLAUDE.md « Poser une migration ») — une migration n’existe en prod que collée.
 
-## Scripts — `scripts/` (192 .mjs, dont 77 suites e2e ; l’enchaînement : `tout-verifier.mjs`)
+## Scripts — `scripts/` (193 .mjs, dont 77 suites e2e ; l’enchaînement : `tout-verifier.mjs`)
 
-## Orchestre — file : 0 · en cours : 0 · faites : 21 · refusées : 1
+## Orchestre — file : 0 · en cours : 0 · faites : 22 · refusées : 1
 
