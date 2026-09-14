@@ -2,6 +2,11 @@
   "metier": "carreleur",
   "nom": "Démo Carreleur Marseille",
   "telephone": "+33 4 00 00 00 00",
+  "email": "contact@carreleur.demo.invalid",
+  "adresse": "1 rue de la Démonstration",
+  "code_postal": "13001",
+  "ville": "Marseille",
+  "horaires": "Lundi–vendredi 8 h–18 h",
   "siren": "000000000",
   "decennale": {
     "assureur": "Assureur fictif",
@@ -15,6 +20,7 @@
   ],
   "metiers_secondaires": [],
   "demo": true,
+  "url_base": "https://carreleur.demo.invalid",
   "pages": [
     {
       "chemin": "/",
