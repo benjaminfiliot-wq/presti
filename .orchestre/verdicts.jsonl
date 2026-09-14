@@ -117,3 +117,6 @@
 {"id":"018-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:34:26Z","duree_s":6,"agent":"ag-21-flash","executant":"antigravity","lignes":18721,"dossier":"en-cours"}
 {"id":"018-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:34:53Z","duree_s":64,"agent":"codex-2","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"018-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:36:11Z","duree_s":9,"agent":"ag-21-flash","executant":"antigravity","lignes":18721,"dossier":"fait"}
+{"id":"018-04","verdict":"FAIL","ligne":"✗ journal et vault : FAIL — Récap-Projet : « validée par Benj » — Benj ne l'a pas validée","code":1,"date":"2026-09-14T19:41:27Z","duree_s":2,"agent":"codex-3","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"018-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:42:36Z","duree_s":2,"agent":"codex-3","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"018-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:42:39Z","duree_s":2,"agent":"codex-3","executant":"codex","lignes":0,"dossier":"fait"}

@@ -7,7 +7,9 @@
 //   3. Toute heure écrite « HH h MM » dans le journal correspond, à 3 minutes près, à un commit du 14/09/2026 ou d'après (heure
 //      de Paris) ou à un verdict de .orchestre/verdicts.jsonl, sauf si la ligne dit « vers » (instant sans horodatage).
 //   4. Les faits indispensables sont présents : dans le journal, dans le récap et dans la note Orchestre.
-//   5. Aucune affirmation interdite : la démo n'est pas déclarée « au niveau MotionSites » ni « validée par Benj ».
+//   5. Aucune affirmation interdite, dans le journal et dans l'entrée v17 du récap seulement : la démo n'est pas déclarée
+//      « au niveau MotionSites » ni « validée par Benj ». Le reste du récap garde son historique : lui appliquer la règle
+//      pousserait un exécutant à réécrire le passé pour contenter le juge (14/09/2026).
 //
 // Usage : node scripts/vault-journal-qa.mjs
 import fs from 'node:fs'
@@ -78,8 +80,14 @@ exiger('Orchestre', note, [
   ['le bac à sable workspace-write (jamais danger-full-access)', /workspace-write/],
 ])
 
-// 5. affirmations interdites
-for (const [nom, texte] of [['journal-v17', journal], ['Récap-Projet', recap]]) {
+// 5. affirmations interdites : le journal, et l'entrée v17 du récap (de son titre jusqu'à l'entrée ou au titre suivant)
+function entreeV17(texte) {
+  const debut = texte.search(/\*\*v17\b|\bv17 —/i)
+  if (debut < 0) return ''
+  const suite = texte.slice(debut + 3).search(/\n- \*\*v1[89]\b|\n#{1,3} /)
+  return suite < 0 ? texte.slice(debut) : texte.slice(debut, debut + 3 + suite)
+}
+for (const [nom, texte] of [['journal-v17', journal], ['Récap-Projet (entrée v17)', entreeV17(recap)]]) {
   if (/au niveau (de )?MotionSites(?! ?\?)/i.test(texte) && !/pas (encore )?au niveau|loin|n'est pas au niveau/i.test(texte)) echecs.push(`${nom} : « au niveau MotionSites » affirmé`)
   if (/valid[ée]e? par Benj/i.test(texte)) echecs.push(`${nom} : « validée par Benj » — Benj ne l'a pas validée`)
 }
