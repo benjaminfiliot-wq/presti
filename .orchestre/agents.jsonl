@@ -46,3 +46,7 @@
 {"agent":"ag-11-g37","tache":"014-11","modele":"Gemini 3.7 Flash (High)","conversationId":"3c285c4d-a4b7-47c9-88c7-802c1fa84e84","date":"2026-09-14T07:55:21Z"}
 {"agent":"ag-01-gemini38flas","tache":"016-01","modele":"Gemini 3.8 Flash (High)","conversationId":"c36a36ff-fcb2-4542-aa43-252cf32864ef","date":"2026-09-14T10:10:25Z"}
 {"agent":"ag-01-gemini37flas","tache":"016-01","modele":"Gemini 3.7 Flash (High)","conversationId":"2507d791-506b-482c-8c35-f7ce9523a320","date":"2026-09-14T10:10:40Z"}
+{"agent":"codex-1","tache":"018-01","modele":"codex:défaut","conversationId":"executant-018-01-2026-09-14-19-18-10","date":"2026-09-14T19:18:10Z"}
+{"agent":"ag-21-flash","tache":"018-03","modele":"flash","conversationId":"6a091910-9f77-4223-aa94-a19bf7232da9","date":"2026-09-14T19:27:52Z"}
+{"agent":"codex-2","tache":"018-02","modele":"codex:défaut","conversationId":"executant-018-02-2026-09-14-19-28-07","date":"2026-09-14T19:28:07Z"}
+{"agent":"codex-3","tache":"018-04","modele":"codex:défaut","conversationId":"executant-018-04-2026-09-14-19-37-35","date":"2026-09-14T19:37:35Z"}

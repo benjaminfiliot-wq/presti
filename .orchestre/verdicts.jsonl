@@ -113,3 +113,7 @@
 {"id":"016-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T12:12:18Z","duree_s":29,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"018-01","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:25:13Z","duree_s":15,"agent":"codex-1","executant":"codex","lignes":0,"dossier":"en-cours"}
 {"id":"018-01","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:27:44Z","duree_s":12,"agent":"codex-1","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"018-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:33:48Z","duree_s":64,"agent":"codex-2","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"018-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:34:26Z","duree_s":6,"agent":"ag-21-flash","executant":"antigravity","lignes":18721,"dossier":"en-cours"}
+{"id":"018-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:34:53Z","duree_s":64,"agent":"codex-2","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"018-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T19:36:11Z","duree_s":9,"agent":"ag-21-flash","executant":"antigravity","lignes":18721,"dossier":"fait"}

@@ -29,10 +29,14 @@ for (const [nom, vp, echelle] of [['bureau', { width: 1280, height: 800 }, 1], [
     const statuts = []
     for (const l of liens) {
       const r = await page.request.get(l)
-      const css = new URL('styles.css', l).href
-      const rc = await page.request.get(css)
-      statuts.push(`${new URL(l).pathname} ${r.status()} · styles.css ${rc.status()}`)
-      if (r.status() !== 200 || rc.status() !== 200) echec++
+      // La feuille de style telle que la page liée la déclare : une page intérieure écrit « ../styles.css ». Deviner
+      // « styles.css » à côté de la page donnait un faux 404 sur /mentions-legales/ (14/09/2026, lien des crédits photo).
+      const html = r.ok() ? await r.text() : ''
+      const href = [...html.matchAll(/<link\b[^>]*>/gi)].map((m) => m[0]).filter((t) => /rel=["']?stylesheet/i.test(t)).map((t) => (t.match(/href=["']([^"']+)["']/i) || [])[1]).find(Boolean)
+      const css = href ? new URL(href, l).href : null
+      const rc = css ? await page.request.get(css) : null
+      statuts.push(`${new URL(l).pathname} ${r.status()} · ${css ? `${href} ${rc.status()}` : 'aucune feuille de style déclarée'}`)
+      if (r.status() !== 200 || !rc || rc.status() !== 200) echec++
     }
     console.log(`${nom} : vidéo ${etat.video ? (etat.video.joue ? `joue (${etat.video.temps} s)` : 'en pause') : etat.image ? 'affiche (mouvement réduit)' : 'absente'} · ${statuts.join(' ; ') || 'aucun lien vers la démo'}${erreurs.length ? ' · erreurs : ' + erreurs.join(' | ').slice(0, 200) : ''}`)
     if (!liens.length) echec++
