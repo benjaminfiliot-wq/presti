@@ -37,6 +37,28 @@ function controlerVisibles(ou, visibles) {
   }
 }
 
+// --continu (tâche 018-07) : un relevé au seul début d'un plan ne voit pas la photo qui entre dans le cadre PENDANT le plan
+// (défilement de 120 à 140 px, galerie en travelling). Chaque plan doit alors porter au moins trois relevés, le premier au
+// début et le dernier à la fin (± 0,15 s), chacun contrôlé, et visibles doit contenir l'union de leurs images.
+const CONTINU = process.argv.includes('--continu')
+function controlerReleves(ou, objet, debut, duree, minimum) {
+  const releves = Array.isArray(objet && objet.releves) ? objet.releves : []
+  if (releves.length < minimum) { echecs.push(`${ou} : ${releves.length} relevé(s), au moins ${minimum} attendu(s) avec --continu`); return }
+  if (debut !== null) {
+    const ts = releves.map((r) => Number(r.t)).filter((t) => Number.isFinite(t)).sort((a, b) => a - b)
+    if (ts.length !== releves.length) echecs.push(`${ou} : chaque relevé doit porter un instant t numérique`)
+    else {
+      if (Math.abs(ts[0] - debut) > 0.15) echecs.push(`${ou} : premier relevé à ${ts[0].toFixed(2)} s, attendu au début du plan (${debut.toFixed(2)} s ± 0,15)`)
+      if (Math.abs(ts[ts.length - 1] - (debut + duree)) > 0.15) echecs.push(`${ou} : dernier relevé à ${ts[ts.length - 1].toFixed(2)} s, attendu à la fin du plan (${(debut + duree).toFixed(2)} s ± 0,15)`)
+    }
+  }
+  const union = new Set((objet.visibles || []).map((v) => v && v.base))
+  releves.forEach((r, k) => {
+    controlerVisibles(`${ou}, relevé ${k + 1}`, r && r.visibles)
+    for (const v of (r && r.visibles) || []) if (v && v.base && !union.has(v.base)) echecs.push(`${ou} : « ${v.base} » vu au relevé ${k + 1} mais absent de visibles (l'union des relevés)`)
+  })
+}
+
 if (plans) {
   if (plans.sansSa !== true) echecs.push('plans.json : sansSa doit valoir true (lancer avec --sans-sa)')
   const liste = Array.isArray(plans.plans) ? plans.plans : []
@@ -46,9 +68,13 @@ if (plans) {
     if (!p || !['bureau', 'mobile'].includes(p.source)) echecs.push(`${ou} : source bureau|mobile attendue`)
     if (!(p && p.duree > 0)) echecs.push(`${ou} : durée > 0 attendue`)
     controlerVisibles(ou, p && p.visibles)
+    if (CONTINU && p) controlerReleves(ou, p, Number(p.debut), Number(p.duree), 3)
   })
   if (!plans.affiche) echecs.push('plans.json : relevé de l\'affiche absent')
-  else controlerVisibles('affiche', plans.affiche.visibles)
+  else {
+    controlerVisibles('affiche', plans.affiche.visibles)
+    if (CONTINU) controlerReleves('affiche', plans.affiche, null, 0, 1)
+  }
 }
 
 for (const f of ['lestraque.mp4', 'lestraque-affiche.webp']) {

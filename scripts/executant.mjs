@@ -126,6 +126,13 @@ async function boucleCodex(agent, tache, modele, fPrompt, journal) {
       : `Relis le fichier ${relPrompt} du depot : sa derniere section contient le retour du verificateur lance hors bac a sable. Corrige ce qui echoue, dans le perimetre de la tache ${tache}, puis termine par la ligne ${tache} : PRÊT.`
     const r = await executer('codex', instruction, modele, journal, minutes)
     if (r.auth) { console.log('\n✗ codex : pas authentifié (voir sonde)'); process.exit(1) }
+    // Quota de l'abonnement ChatGPT épuisé (vu le 14/09/2026 à 22 h 16 : « You've hit your usage limit … try again at Sep 15th,
+    // 2026 2:17 AM ») : les tours suivants échoueraient en une seconde chacun. On s'arrête et on dit quand reprendre.
+    const limite = r.sortie.match(/hit your usage limit[^\n]*?(try again at [^\n]+)?$/im)
+    if (limite) {
+      console.log(`\n✗ codex : quota de l'abonnement épuisé${limite[1] ? ' — ' + limite[1].trim() : ''}. La tâche ${tache} reste où elle est : node scripts/orchestre.mjs liberer ${tache} pour la confier à un autre exécutant.`)
+      process.exit(3)
+    }
     const enCours = path.join(ORCH, 'en-cours', `${tache}.md`)
     if (!fs.existsSync(enCours)) { console.log(`\n✗ tour ${tour} : ${tache} n'est pas dans en-cours/ (Codex ne l'a pas prise ?) · journal ${path.relative(RACINE, journal)}`); process.exit(1) }
     const v = verifierHorsBac(tache)
