@@ -195,7 +195,8 @@ function jugerContrat(dossier, contrat) {
     const sans = images.filter((i) => !liste.some((a) => a.fichier === i || `images/${a.fichier}` === i))
     const incompletes = liste.filter((a) => !attributionCredible(a))
     ok('attributions.json : chaque image a un auteur réel, la page source (pas la racine d\'un site), une légende bien encodée et une licence permise', !!attributions && sans.length === 0 && incompletes.length === 0, attributions ? `${sans.length} sans attribution · ${incompletes.length} non crédible(s) (auteur bidon, source sans page, « Ã© », licence)` : 'attributions.json absent ou illisible', `toutes ; licences : ${LICENCES_PERMISES.join(', ')}`)
-    AUTEURS = [...new Set(liste.map((a) => a.auteur).filter(Boolean))]
+    // une photo en réserve (usage: "reserve") n'est affichée nulle part : les mentions légales n'ont pas à créditer son auteur
+    AUTEURS = [...new Set(liste.filter((a) => a.usage !== 'reserve').map((a) => a.auteur).filter(Boolean))]
   }
   const sitemap = existe(dossier, 'sitemap.xml') ? fs.readFileSync(path.join(dossier, 'sitemap.xml'), 'utf8') : ''
   const locs = [...sitemap.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((m) => chemin(m[1])).filter(Boolean)
@@ -287,6 +288,9 @@ async function jugerRendu(navigateur, origine, pages, da) {
           if (tag === 'IMG' || tag === 'VIDEO' || tag === 'svg' || tag === 'SVG') boites.push([top, top + b.height])
           else if (el.childElementCount === 0 && (el.textContent || '').trim().length >= 3) boites.push([top, top + b.height])
           else if (getComputedStyle(el).backgroundImage !== 'none' && b.height > 40) boites.push([top, top + b.height])
+          // un bloc épinglé (position: sticky) reste à l'écran sur toute la hauteur de son parent : le travelling des réalisations
+          // (1,4 écran de défilement, photos à l'écran d'un bout à l'autre) était lu comme 1 413 px de vide, page mesurée en haut
+          if (getComputedStyle(el).position === 'sticky' && el.parentElement && (el.textContent || '').trim().length >= 3) { const p = el.parentElement.getBoundingClientRect(); boites.push([p.top + scrollY, p.top + scrollY + p.height]) }
         }
         boites.sort((a, b) => a[0] - b[0])
         let maxVide = 0, fin = 0
@@ -298,6 +302,38 @@ async function jugerRendu(navigateur, origine, pages, da) {
         return { revealsCaches: [...document.querySelectorAll('.reveal')].filter((e) => parseFloat(getComputedStyle(e).opacity) < 0.9).length, imgs: imgs.length, imgsOk, maxVide: Math.round(maxVide), police: h1 ? getComputedStyle(h1).fontFamily : '(pas de h1)', polices, largeurContenu: Math.round(largeurContenu), hauteurDoc: Math.round(hauteurDoc) }
       })
       return { ...r, avant }
+    } finally { await ctx.close().catch(() => {}) }
+  }
+  // Le menu du téléphone, à l'usage (critique du 14/09) : la croix passait SOUS le panneau (la nav fixe crée son propre contexte
+  // d'empilement), rien ne voilait la page, et la pilule du panneau avait la couleur du panneau. Tap sur le burger, puis
+  // elementFromPoint au centre du burger ; tap sur la croix ; tap hors du panneau. null : la page n'a pas de burger.
+  const menuMobile = async () => {
+    const ctx = await navigateur.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true })
+    const page = await ctx.newPage()
+    try {
+      await page.goto(origine + accueil, { waitUntil: 'load', timeout: 60_000 })
+      if (!(await page.$('.burger'))) return null
+      const c = await page.evaluate(() => { const b = document.querySelector('.burger').getBoundingClientRect(); return { x: b.left + b.width / 2, y: b.top + b.height / 2 } })
+      const ouvert = () => page.evaluate(() => document.querySelector('.burger').getAttribute('aria-expanded') === 'true')
+      await page.touchscreen.tap(c.x, c.y); await page.waitForTimeout(700)
+      const etat = await page.evaluate(({ x, y }) => {
+        const el = document.elementFromPoint(x, y)
+        const rgb = (s) => (s.match(/[\d.]+/g) || []).map(Number)
+        const lum = ([r, g, b]) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b) }
+        const bouton = document.querySelector('.panneau .bouton'), panneau = document.querySelector('.panneau')
+        let contraste = null
+        if (bouton && panneau) { const a = lum(rgb(getComputedStyle(bouton).backgroundColor)), b = lum(rgb(getComputedStyle(panneau).backgroundColor)); contraste = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) }
+        const p = panneau ? panneau.getBoundingClientRect() : { bottom: 0 }
+        return { dessus: !!(el && el.closest('.burger')), element: el ? `${el.tagName.toLowerCase()}${el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/).join('.') : ''}` : '(rien)', contraste, dehors: { x: innerWidth / 2, y: Math.round(Math.min(innerHeight - 12, p.bottom + (innerHeight - p.bottom) / 2)) } }
+      }, c)
+      const estOuvert = await ouvert()
+      await page.touchscreen.tap(c.x, c.y); await page.waitForTimeout(600)
+      const fermeCroix = estOuvert && !(await ouvert())
+      await page.touchscreen.tap(c.x, c.y); await page.waitForTimeout(600)
+      const rouvert = await ouvert()
+      await page.touchscreen.tap(etat.dehors.x, etat.dehors.y); await page.waitForTimeout(600)
+      const fermeDehors = rouvert && !(await ouvert())
+      return { ouvert: estOuvert, dessus: etat.dessus, element: etat.element, contraste: etat.contraste, fermeCroix, fermeDehors }
     } finally { await ctx.close().catch(() => {}) }
   }
   try {
@@ -316,6 +352,12 @@ async function jugerRendu(navigateur, origine, pages, da) {
     ok('le geste : sous la ligne de flottaison, le contenu attend son dévoilement puis apparaît en entier (bureau et mobile)', bureau.avant.bas > 0 && bureau.avant.masquesBas >= Math.min(6, bureau.avant.bas) && bureau.revealsCaches === 0 && mobile.revealsCaches === 0, `${bureau.avant.masquesBas}/${bureau.avant.bas} masqués avant · ${bureau.revealsCaches + mobile.revealsCaches} encore caché(s) après`, 'masqués avant, 0 caché après')
     const reduit = await mesurer(1280, 900, true, true)
     ok('le geste : en mouvement réduit (prefers-reduced-motion), tout est visible sans défiler', reduit.avant.masquesBas === 0 && reduit.revealsCaches === 0, `${reduit.avant.masquesBas} masqué(s) avant, ${reduit.revealsCaches} après`, '0 et 0')
+    const m = await menuMobile()
+    if (m) {
+      ok('menu mobile (390 px, ouvert) : elementFromPoint au centre du burger renvoie le burger (la croix reste au-dessus du panneau)', m.ouvert && m.dessus, `${m.ouvert ? 'ouvert' : 'resté fermé'} · au centre : ${m.element}`, 'le burger')
+      ok('menu mobile : un tap sur la croix le ferme, un tap hors du panneau (voile) aussi', m.fermeCroix && m.fermeDehors, `croix : ${m.fermeCroix ? 'fermé' : 'resté ouvert'} · dehors : ${m.fermeDehors ? 'fermé' : 'resté ouvert'}`, 'fermé et fermé')
+      if (m.contraste !== null) ok('menu mobile : la pilule du panneau se détache de son fond (contraste ≥ 3:1)', m.contraste >= 3, `${m.contraste.toFixed(2)}:1`, '≥ 3:1')
+    }
   } catch (e) { ok('le rendu a pu être mesuré (Playwright)', false, e.message.slice(0, 120), 'accueil chargé en 60 s') }
   return t
 }
@@ -336,9 +378,13 @@ function jugerGeste(dossier, pages) {
   const n = (re) => (accueil.match(re) || []).length
   ok('le h1 est composé mot à mot (≥ 3 <span class="mot">, dans le HTML : pas de décalage de mise en page)', n(/class="mot"/g) >= 3, n(/class="mot"/g), '≥ 3')
   ok('un dévoilement au défilement en cascade (≥ 12 éléments .reveal sur l’accueil)', n(/class="[^"]*\breveal\b/g) >= 12, n(/class="[^"]*\breveal\b/g), '≥ 12')
-  const pieces = { 'rideau d’ouverture': /class="splash/, 'bande qui défile': /class="defile/, 'panneau d’étapes': /class="etapes/, 'accordéon <details>': /<details\b/, 'galerie': /class="galerie/ }
+  // 14/09 (synthèse des sept angles, contradiction 12 et priorités 3-4) : le rideau cachait l'entrée du titre et la bande de
+  // mots-clés tranchait la photo au premier coup de molette — retirés tous deux ; à leur place, le plateau noir des chiffres.
+  // Le juge exige désormais qu'ils soient ABSENTS de l'accueil.
+  const pieces = { 'plateau « une phrase et trois chiffres »': /class="plateau/, 'panneau d’étapes': /class="etapes/, 'accordéon <details>': /<details\b/, 'galerie': /class="galerie/ }
   const manquantes = Object.entries(pieces).filter(([, re]) => !re.test(accueil)).map(([k]) => k)
-  ok('les pièces du geste : rideau, bande qui défile, galerie, panneau d’étapes, accordéon', manquantes.length === 0, manquantes.join(', ') || 'toutes', 'toutes')
+  const retirees = Object.entries({ 'rideau d’ouverture': /class="splash/, 'bande qui défile': /class="defile/, 'lentille du héros': /hero__revele/ }).filter(([, re]) => re.test(accueil)).map(([k]) => k)
+  ok('les pièces du geste : plateau des chiffres, galerie, panneau d’étapes, accordéon — sans rideau, bande qui défile ni lentille', manquantes.length === 0 && retirees.length === 0, [...manquantes, ...retirees.map((k) => `${k} encore là`)].join(', ') || 'toutes', 'toutes, et aucune pièce retirée')
   const survols = (css.match(/:hover/g) || []).length
   ok('des survols travaillés (≥ 8 règles :hover) et une courbe d’accélération maison (cubic-bezier)', survols >= 8 && /cubic-bezier\(/.test(css), `${survols} :hover${/cubic-bezier\(/.test(css) ? ', cubic-bezier' : ', aucun cubic-bezier'}`, '≥ 8 + cubic-bezier')
   ok('prefers-reduced-motion : reduce est traité dans le CSS', /@media[^{]*prefers-reduced-motion:\s*reduce/.test(css), 'lu', 'un bloc @media (prefers-reduced-motion: reduce)')

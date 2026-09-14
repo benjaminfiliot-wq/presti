@@ -1,7 +1,7 @@
 {
   "metier": "menuisier",
   "nom": "Atelier Lestraque",
-  "telephone": "+33 4 00 00 00 00",
+  "telephone": "+33 2 61 91 38 47",
   "siren": "000000000",
   "decennale": {
     "assureur": "Assureur fictif",
@@ -50,5 +50,49 @@
     }
   ],
   "url_base": "https://lestraque.demo.invalid",
-  "da": "lestraque"
+  "da": "lestraque",
+  "devis": {
+    "_": "Le formulaire de devis de la carte contact. Sur une démo (demo: true), rien n’est envoyé : la page montre l’état « demande reçue » et le dit. Chez un vrai artisan, la demande arrive dans la messagerie Presti.",
+    "projets": [
+      "Escalier",
+      "Dressing ou placard",
+      "Cuisine",
+      "Bibliothèque",
+      "Autre ouvrage"
+    ],
+    "delais": [
+      "Dans les trois mois",
+      "Dans trois à six mois",
+      "Plus tard, je me renseigne"
+    ],
+    "rappel": "Je vous rappelle sous deux jours ouvrés pour fixer une visite."
+  },
+  "artisan": {
+    "_": "La voix du site : la personne derrière l’atelier. Fictive mais vraisemblable (le pied de page déclare l’entreprise fictive) ; aucun avis inventé, la voix passe par la citation signée (plateau noir sous le héros). Chez un vrai artisan, il remplit ces champs lui-même. Prénom épicène : les mains de la photo du plateau ne disent pas qui travaille.",
+    "prenom": "Camille",
+    "nom": "Lestraque",
+    "installation": 2011,
+    "parcours": "CAP puis brevet professionnel de menuisier, huit ans dans un atelier d’escaliers avant d’ouvrir le mien.",
+    "citation": "Du premier relevé à la dernière marche posée, c’est la même main qui travaille."
+  },
+  "plateau": {
+    "_": "Le plateau noir sous le héros : la citation signée de l’artisan (site.json → artisan) et trois chiffres que le vrai artisan remplit. Démo : valeurs vraisemblables, jamais des zéros ; le pied de page déclare l’entreprise fictive. Téléphone : plage 02 61 91 réservée à la fiction par l’Arcep (décision 2019-0954, art. 2.5.12).",
+    "chiffres": [
+      {
+        "valeur": "10",
+        "unite": "ans",
+        "legende": "de garantie décennale sur chaque ouvrage posé"
+      },
+      {
+        "valeur": "180",
+        "unite": "m²",
+        "legende": "d’atelier à Rennes, où chaque pièce est fabriquée"
+      },
+      {
+        "valeur": "8",
+        "unite": "semaines",
+        "legende": "délai type d’un escalier, du relevé à la pose"
+      }
+    ]
+  }
 }

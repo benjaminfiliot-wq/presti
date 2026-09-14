@@ -79,3 +79,8 @@ publications/
 # Le 14/09/2026, 57 Mo d'originaux sont partis dans le commit 80472e8 parce qu'un dossier de preuves a été ajouté entier.
 .orchestre/preuves/*/photos/
 **/originaux/
+
+# Dossier de travail des agents (sauvegardes d'images, essais) : jamais suivi.
+.orchestre/travail/
+# Captures clés des vagues de la démo : seules les versions JPG allégées sont suivies (les PNG pèsent des dizaines de Mo).
+.orchestre/preuves/017-*/cles/*.png
