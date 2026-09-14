@@ -8,6 +8,7 @@ import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { pngValide } from './lib/preuves.mjs'
+import { horsPerimetre } from './lib/perimetre.mjs'
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 let ko = 0
@@ -39,16 +40,10 @@ T("ONGLETS ajoute 'sites' derrière actif('siteCommande')", /actif\('siteCommand
 T('TITRES et NAV connaissent sites', /sites:\s*'/.test(page) && /id:\s*'sites'/.test(page))
 T('Sites.tsx est rendu pour cet onglet', /<Sites\b/.test(page) && /from '@\/app\/controle\/Sites'|from '\.\/Sites'/.test(page))
 
-console.log('── 3. Rien hors périmètre depuis la prise de la tâche')
-let porcelain = ''
-try { porcelain = spawnSync('git', ['status', '--porcelain'], { cwd: RACINE, encoding: 'utf8' }).stdout } catch { /* hors git */ }
-const chemins = (txt) => txt.split('\n').filter(Boolean).map((l) => l.slice(3).trim().replace(/^"|"$/g, ''))
-const avant = [path.join(RACINE, '.orchestre', 'en-cours', '014-14.avant.txt'), path.join(RACINE, '.orchestre', 'preuves', '014-14', 'avant.txt')].find((p) => fs.existsSync(p)) || ''
-const dejaSales = new Set(fs.existsSync(avant) ? chemins(lire(avant)) : [])
-const SENSIBLE = /^(app\/|lib\/|supabase\/|scripts\/|middleware\.ts$)/
+console.log('── 3. Rien hors périmètre depuis la prise de la tâche (les chantiers des autres tâches en cours ne comptent pas)')
 const PERIMETRE = [/^app\/controle\/Sites\.tsx$/, /^app\/controle\/page\.tsx$/]
-const hors = chemins(porcelain).filter((p) => SENSIBLE.test(p) && !dejaSales.has(p) && !PERIMETRE.some((re) => re.test(p)))
-T('rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/controle/Sites.tsx et app/controle/page.tsx', hors.length === 0, hors.slice(0, 6).join(', '))
+const hors = horsPerimetre(RACINE, AVEC_HEBERGEMENT ? '014-18' : '014-14', PERIMETRE)
+T('rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/controle/Sites.tsx et app/controle/page.tsx', hors.length === 0, hors.slice(0, 6).join(', ') + (hors.length ? ' — ces fichiers ne sont pas à toi : ne les restaure pas, ne les supprime pas (git restore/checkout/stash interdits) ; pose une question dans .orchestre/en-cours/<id>.question.md' : ''))
 
 console.log('── 4. La capture')
 const preuves = path.join(RACINE, '.orchestre', 'preuves', '014-14')
