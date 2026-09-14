@@ -1,0 +1,58 @@
+{
+  "metier": "macon",
+  "nom": "Démo Maçon Toulouse",
+  "communes": [
+    "Toulouse",
+    "Colomiers",
+    "Blagnac",
+    "Tournefeuille"
+  ],
+  "adresse": "1 rue de la Démonstration",
+  "code_postal": "31000",
+  "ville": "Toulouse",
+  "telephone": "+33 4 00 00 00 00",
+  "email": "contact@macon.demo.invalid",
+  "horaires": "Lundi–vendredi 8 h–18 h",
+  "siren": "000000000",
+  "decennale": {
+    "assureur": "Assureur fictif",
+    "numero": "DEMO-0001"
+  },
+  "metiers_secondaires": [],
+  "demo": true,
+  "url_base": "https://macon.demo.invalid",
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/macon-toulouse/",
+      "type": "commune",
+      "cible": "Toulouse"
+    },
+    {
+      "chemin": "/macon-colomiers/",
+      "type": "commune",
+      "cible": "Colomiers"
+    },
+    {
+      "chemin": "/macon-blagnac/",
+      "type": "commune",
+      "cible": "Blagnac"
+    },
+    {
+      "chemin": "/macon-tournefeuille/",
+      "type": "commune",
+      "cible": "Tournefeuille"
+    },
+    {
+      "chemin": "/mentions-legales/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/confidentialite/",
+      "type": "legal"
+    }
+  ]
+}

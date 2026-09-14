@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://macon.demo.invalid/sitemap.xml
