@@ -67,3 +67,7 @@
 {"id":"014-02","verdict":"FAIL","ligne":"ÉCHEC les feuilles de style du dossier sont chargées par l'accueil (<link rel=\"stylesheet\">) styles.css                     attendu aucune feuille orpheline","code":1,"date":"2026-09-13T23:51:47Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
 {"id":"014-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T23:52:34Z","duree_s":153,"agent":"ag-03-g38","executant":"antigravity","lignes":16144,"dossier":"en-cours"}
 {"id":"014-03","verdict":"FAIL","ligne":"ÉCHEC la police « Space Grotesk » est réellement chargée par le navigateur (fichier woff2 valide) Space Grotesk:error, IBM Plex Sans:error attendu loaded","code":1,"date":"2026-09-13T23:55:43Z","duree_s":45,"agent":"ag-03-g38","executant":"antigravity","lignes":16144,"dossier":"en-cours"}
+{"id":"014-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T04:30:00Z","duree_s":66,"agent":"duo-02","executant":"antigravity","lignes":13612,"dossier":"en-cours"}
+{"id":"014-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T04:31:39Z","duree_s":87,"agent":"duo-02","executant":"antigravity","lignes":13612,"dossier":"fait"}
+{"id":"014-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T04:32:52Z","duree_s":68,"agent":"ag-03-g38","executant":"antigravity","lignes":15466,"dossier":"en-cours"}
+{"id":"014-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T04:34:21Z","duree_s":79,"agent":"ag-03-g38","executant":"antigravity","lignes":15466,"dossier":"fait"}

@@ -150,7 +150,12 @@ Règles : français ; zéro donnée réelle (comptes @presti-test.invalid, suppr
 // ── Commandes ────────────────────────────────────────────────────────────────────────────────────────────
 async function lancer(ctx, agent, tache, modele) {
   // Un palier Gemini (agentapi), un alias (opus, sonnet) ou n'importe quel libellé du catalogue (« Gemini 3.8 Flash (High) ») — voir `catalogue`.
-  const prompt = PROMPT(agent, tache)
+// Le duo (plans/duo-antigravity.md) : l'agent prend sa tâche, la lit, et ATTEND les pas de Claude Code — un à la fois.
+const PROMPT_DUO = (agent, tache) => [
+  'Tu travailles en duo avec Claude Code, qui dirige, dans le dépôt presti (C:/Users/benja/Documents/presti de cet espace de travail). Règles : tu ne touches qu’au périmètre de ta tâche ; jamais git restore, git checkout <fichier>, git stash, git reset, git clean, ni de suppression hors périmètre ; zéro donnée réelle ; tu ne fabriques aucun fichier de preuve (police, photo, capture) — tu copies des sources réelles ou tu dis que tu ne trouves pas.',
+  'Maintenant : (1) lance « node scripts/orchestre.mjs prochaine --agent=' + agent + ' --tache=' + tache + ' » dans presti et lis la tâche affichée ; (2) lance la commande « verifier » de la tâche UNE fois (avec --statique si c’est site-qa) et note les lignes ÉCHEC ; (3) réponds seulement « prêt — N échecs au juge statique » suivi des lignes ÉCHEC, puis ATTENDS le pas 1. Tu ne fais rien d’autre tant que Claude Code ne t’a pas envoyé un pas. Chaque pas se termine par la commande qui le prouve ; tu me rends uniquement les lignes ÉCHEC restantes (ou « aucune »).',
+].join('\n')
+  const prompt = option('duo') ? PROMPT_DUO(agent, tache) : PROMPT(agent, tache)
   let id
   if (!MODELES_GEMINI.includes(modele)) {
     id = await lancerCascadeClaude(ctx, modele, prompt)

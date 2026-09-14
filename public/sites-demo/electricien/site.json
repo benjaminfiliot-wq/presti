@@ -1,0 +1,52 @@
+{
+  "metier": "electricien",
+  "nom": "Démo Électricien Nantes",
+  "telephone": "+33 4 00 00 00 00",
+  "siren": "000000000",
+  "decennale": {
+    "assureur": "Assureur fictif",
+    "numero": "DEMO-0001"
+  },
+  "communes": [
+    "Nantes",
+    "Rezé",
+    "Saint-Herblain",
+    "Orvault"
+  ],
+  "metiers_secondaires": [],
+  "demo": true,
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/electricien-nantes/",
+      "type": "commune",
+      "cible": "Nantes"
+    },
+    {
+      "chemin": "/electricien-reze/",
+      "type": "commune",
+      "cible": "Rezé"
+    },
+    {
+      "chemin": "/electricien-saint-herblain/",
+      "type": "commune",
+      "cible": "Saint-Herblain"
+    },
+    {
+      "chemin": "/electricien-orvault/",
+      "type": "commune",
+      "cible": "Orvault"
+    },
+    {
+      "chemin": "/mentions-legales/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/confidentialite/",
+      "type": "legal"
+    }
+  ]
+}

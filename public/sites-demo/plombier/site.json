@@ -1,0 +1,59 @@
+{
+  "metier": "plombier",
+  "nom": "Démo Plombier Lyon",
+  "telephone": "+33 4 00 00 00 00",
+  "siren": "000000000",
+  "decennale": {
+    "assureur": "Assureur fictif",
+    "numero": "DEMO-0001"
+  },
+  "communes": [
+    "Lyon",
+    "Villeurbanne",
+    "Bron",
+    "Vénissieux"
+  ],
+  "metiers_secondaires": [
+    "chauffagiste"
+  ],
+  "demo": true,
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/chauffagiste/",
+      "type": "metier",
+      "cible": "chauffagiste"
+    },
+    {
+      "chemin": "/plombier-lyon/",
+      "type": "commune",
+      "cible": "Lyon"
+    },
+    {
+      "chemin": "/plombier-villeurbanne/",
+      "type": "commune",
+      "cible": "Villeurbanne"
+    },
+    {
+      "chemin": "/plombier-bron/",
+      "type": "commune",
+      "cible": "Bron"
+    },
+    {
+      "chemin": "/plombier-venissieux/",
+      "type": "commune",
+      "cible": "Vénissieux"
+    },
+    {
+      "chemin": "/mentions-legales/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/confidentialite/",
+      "type": "legal"
+    }
+  ]
+}

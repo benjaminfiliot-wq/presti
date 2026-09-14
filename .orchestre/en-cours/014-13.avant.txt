@@ -1,10 +1,13 @@
 M .orchestre/agents.jsonl
  M .orchestre/contexte.md
  M .orchestre/digest.md
- M .orchestre/en-cours/014-03.md
- D .orchestre/file/014-02.md
- D .orchestre/file/014-05.md
- D .orchestre/file/014-20.md
+ D .orchestre/en-cours/014-02.avant.txt
+ D .orchestre/en-cours/014-02.lock
+ D .orchestre/en-cours/014-02.md
+ D .orchestre/en-cours/014-03.avant.txt
+ D .orchestre/en-cours/014-03.lock
+ D .orchestre/en-cours/014-03.md
+ D .orchestre/file/014-13.md
  M .orchestre/preuves/014-02/accueil.png
  M .orchestre/preuves/014-02/commune.png
  M .orchestre/preuves/014-02/mentions.png
@@ -16,7 +19,11 @@ M .orchestre/agents.jsonl
  M .orchestre/preuves/014-03/realisations.png
  M .orchestre/preuves/014-03/skills.md
  M .orchestre/preuves/014-04/skills.md
+ M .orchestre/preuves/014-08/accueil.png
  M .orchestre/preuves/014-08/avant.txt
+ M .orchestre/preuves/014-08/commune.png
+ M .orchestre/preuves/014-08/mentions.png
+ M .orchestre/preuves/014-08/realisations.png
  M .orchestre/preuves/014-14/avant.txt
  M .orchestre/preuves/014-14/onglet-sites.png
  M .orchestre/verdicts.jsonl
@@ -57,6 +64,7 @@ M .orchestre/agents.jsonl
  M public/sites-demo/carreleur/site.json
  M public/sites-demo/carreleur/sitemap.xml
  M public/sites-demo/carreleur/styles.css
+ M scripts/antigravity.mjs
 ?? .claude/skills/captions-overlay/
 ?? .claude/skills/changelog-video/
 ?? .claude/skills/cut-the-curve/
@@ -83,11 +91,10 @@ M .orchestre/agents.jsonl
 ?? .claude/skills/seam-craft/
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
-?? .orchestre/en-cours/014-02.lock
-?? .orchestre/en-cours/014-02.md
-?? .orchestre/en-cours/014-20.avant.txt
-?? .orchestre/en-cours/014-20.lock
-?? .orchestre/en-cours/014-20.md
+?? .orchestre/en-cours/014-13.lock
+?? .orchestre/en-cours/014-13.md
+?? .orchestre/fait/014-02.md
+?? .orchestre/fait/014-03.md
 ?? .orchestre/preuves/014-02/avant.txt
 ?? .orchestre/preuves/014-03/avant.txt
 ?? .orchestre/preuves/014-04/avant.txt
@@ -205,6 +212,7 @@ M .orchestre/agents.jsonl
 ?? scripts/publora-verifier.mjs
 ?? scripts/reparer-env.mjs
 ?? scripts/shot-richard.mjs
+?? scripts/suspension-e2e.mjs
 ?? scripts/video-qa.mjs
 ?? scripts/voix-fiche.mjs
 ?? scripts/voix-mixer.mjs

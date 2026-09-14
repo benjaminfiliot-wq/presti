@@ -36,3 +36,5 @@
 {"agent":"ag-20-opus","tache":"014-20","modele":"opus","conversationId":"0255dfd1-3143-4858-a15e-e269d6d0907d","date":"2026-09-14T01:01:38Z"}
 {"agent":"ag-02-opus","tache":"014-02","modele":"opus","conversationId":"2cb3c130-250c-46d4-9be1-99669c6e22fb","date":"2026-09-14T01:01:41Z"}
 {"agent":"ag-02-sonnet","tache":"014-02","modele":"sonnet","conversationId":"c5283fb4-0db5-4b05-8d11-380e3337fc2d","date":"2026-09-14T01:01:48Z"}
+{"agent":"duo-02","tache":"014-02","modele":"Gemini 3.8 Flash (High)","conversationId":"aa539c57-368f-4977-b5b1-b2ec7c01ee57","date":"2026-09-14T04:25:53Z"}
+{"agent":"ag-13-gemini37flas","tache":"014-13","modele":"Gemini 3.7 Flash (High)","conversationId":"045febc3-ab4e-4074-b4c8-18b4e6eb763c","date":"2026-09-14T04:36:42Z"}

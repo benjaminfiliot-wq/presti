@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://electricien.demo.invalid/sitemap.xml
