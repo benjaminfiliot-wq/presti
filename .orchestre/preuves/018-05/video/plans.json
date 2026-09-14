@@ -1,0 +1,154 @@
+{
+  "site": "public\\sites-demo\\lestraque",
+  "sansSa": true,
+  "plans": [
+    {
+      "nom": "atelier",
+      "source": "bureau",
+      "debut": 13.77,
+      "duree": 1.3,
+      "visibles": [
+        {
+          "base": "atelier-poncage",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "atelier_mobile",
+      "source": "mobile",
+      "debut": 10.89,
+      "duree": 1.3,
+      "visibles": [
+        {
+          "base": "atelier-poncage-portrait",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "atelier-poncage",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "realisations",
+      "source": "bureau",
+      "debut": 16.97,
+      "duree": 1.3,
+      "visibles": [
+        {
+          "base": "cuisine-bois",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "penderie",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "realisations_mobile",
+      "source": "mobile",
+      "debut": 14.04,
+      "duree": 1.3,
+      "visibles": [
+        {
+          "base": "cuisine-bois",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "penderie",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "communes",
+      "source": "bureau",
+      "debut": 22.74,
+      "duree": 1.3,
+      "visibles": []
+    },
+    {
+      "nom": "communes_mobile",
+      "source": "mobile",
+      "debut": 17.18,
+      "duree": 1.3,
+      "visibles": [
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "etapes",
+      "source": "bureau",
+      "debut": 25.88,
+      "duree": 1.3,
+      "visibles": [
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "etapes_mobile",
+      "source": "mobile",
+      "debut": 20.33,
+      "duree": 1.3,
+      "visibles": [
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "etapes_liste",
+      "source": "bureau",
+      "debut": 28.59,
+      "duree": 1.3,
+      "visibles": [
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "questions",
+      "source": "bureau",
+      "debut": 31.54,
+      "duree": 1.3,
+      "visibles": [
+        {
+          "base": "cuisine-bois",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "questions_mobile",
+      "source": "mobile",
+      "debut": 23.48,
+      "duree": 1.3,
+      "visibles": [
+        {
+          "base": "cuisine-bois",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    }
+  ],
+  "affiche": {
+    "temps": 0.65,
+    "visibles": [
+      {
+        "base": "atelier-poncage",
+        "licence": "CC BY 2.0"
+      }
+    ]
+  }
+}

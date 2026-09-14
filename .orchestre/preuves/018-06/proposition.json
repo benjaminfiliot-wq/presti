@@ -1,0 +1,26 @@
+[
+  {
+    "base": "reserve-cuisine-poutres",
+    "sujet": "cuisine",
+    "legende": "Cuisine sous poutres avec plan de travail en bois",
+    "pourquoi": "Vue d’ensemble lumineuse : proposition pour une carte cuisine ou une page ouvrage, pour varier la cuisine déjà présente."
+  },
+  {
+    "base": "reserve-bibliotheque",
+    "sujet": "bibliotheque",
+    "legende": "Bibliothèque en bois et niches ouvertes",
+    "pourquoi": "Cadrage vertical sur les niches et les montants : proposition pour remplacer la penderie vide dans les ouvrages finis."
+  },
+  {
+    "base": "reserve-cuisine-tasseaux",
+    "sujet": "cuisine",
+    "legende": "Cuisine en bois et cloison à tasseaux",
+    "pourquoi": "Vue en profondeur montrant les façades et la cloison ajourée : proposition pour illustrer l’agencement intérieur sans répéter le héros."
+  },
+  {
+    "base": "reserve-porte-panneaux",
+    "sujet": "porte",
+    "legende": "Porte intérieure en bois à panneaux",
+    "pourquoi": "Ouvrage posé, cadré de face, dans une famille absente des cartes actuelles : proposition pour une carte menuiserie intérieure."
+  }
+]
