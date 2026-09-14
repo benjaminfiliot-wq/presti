@@ -61,6 +61,7 @@ const PROTEGEES = [
   ['/api/controle/support/lire', 'GET'],
   ['/api/controle/support/demander', 'POST', {}],
   ['/api/controle/support?artisan=00000000-0000-0000-0000-000000000000', 'GET'],
+  ['/api/controle/audience', 'GET'], ['/api/controle/audience?historique=1', 'GET'],
   ['/api/devis/auto', 'POST', {}],
   ['/api/inventaire/recherche', 'POST', {}], ['/api/inventaire/recherche/retenir', 'POST', {}],
   ['/api/plateforme/apparence', 'GET'], ['/api/plateforme/apparence', 'POST', {}],
@@ -145,6 +146,8 @@ const PUBLIQUES = [
   ['/api/leads/contact', 'POST', {}, [400, 404, 429]],
   ['/api/conversation/regles', 'POST', {}, [400, 403, 429]],
   ['/api/plat-event', 'POST', {}, [200, 204, 400, 404]],
+  // 404 tant que FLAGS.audience est baissé ; ensuite 204, vue écrite ou non (app/api/audience).
+  ['/api/audience', 'POST', {}, [204, 404]],
   ['/api/report-error', 'POST', {}, [200, 204, 400, 429]],
 ]
 for (const [chemin, methode, body, attendus] of PUBLIQUES) {
@@ -214,6 +217,9 @@ if (FLAGS) {
     'aideVisites': ['lu'], 'aideCentre': ['lu'], 'landingVideo': ['lu'],
     // Baissé tant que 0074 n'est pas collée : la route doit alors répondre 404, comme partout.
     'supportArtisan': ['route', '/api/controle/support/demander', 'POST', 'app/api/controle/support/demander/route.ts'],
+    // La garde du Poste passe AVANT le drapeau (401 à un inconnu, levé ou non) : la sonde est donc la route publique,
+    // et les DEUX routes doivent lire le drapeau elles-mêmes.
+    'audience': ['route', '/api/audience', 'POST', 'app/api/audience/route.ts', 'app/api/controle/audience/route.ts'],
     'inventaireOcr': ['note', 'rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)'],
     // Ces trois-là étaient mal classés tant que le détecteur ignorait les lectures par index
     // dynamique (`FLAGS[l.flag]` dans lib/plans.ts). Deux étaient dits « ne ferment rien » sur un

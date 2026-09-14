@@ -1,6 +1,7 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { actif } from '@/lib/flags'
 import { DUREES_MOIS } from '@/lib/legalArtisan'
+import { MOIS_AUDIENCE } from '@/lib/audience'
 
 // Purges RGPD — appliquer les durées que les pages légales annoncent (audit final, auditeur B,
 // majeur C6).
@@ -68,6 +69,8 @@ export type BilanPurges = {
   conversations: number
   /** Jetons expirés effacés, toutes tables confondues. */
   jetons: number
+  /** Mesure d'audience (0090, 0091) : empreintes effacées à la clôture des jours finis, créneaux de plafond terminés, vues de plus de MOIS_AUDIENCE mois. */
+  audience: number
   /** Vrai si un plafond a été atteint : il reste des lignes à purger au prochain passage. */
   reste: boolean
   erreurs: string[]
@@ -220,7 +223,7 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
   const seuilJetons = seuilJours(JOURS_GRACE_JETONS, maintenant)
 
   const bilan: BilanPurges = {
-    ip_abus: 0, ip_bans: 0, leads_ip: 0, devis_ip: 0, conversations: 0, jetons: 0,
+    ip_abus: 0, ip_bans: 0, leads_ip: 0, devis_ip: 0, conversations: 0, jetons: 0, audience: 0,
     reste: false, erreurs: [],
   }
   const noter = (r: Resultat): number => {
@@ -281,6 +284,21 @@ export async function purgerRgpd(maintenant: Date = new Date()): Promise<BilanPu
       noter(await supprimerAnciennes('codes_connexion', 'user_id', 'expire_le', seuilJetons, PLAFOND_LIGNES)) +
       noter(await supprimerAnciennes('appareils_confiance', 'id', 'expire_le', seuilJetons, PLAFOND_LIGNES)) +
       noter(await supprimerAnciennes('sessions_verifiees', 'session_id', 'verifiee_le', seuilJours(JOURS_SESSIONS_VERIFIEES, maintenant), PLAFOND_LIGNES))
+  }
+
+  // 8. Mesure d'audience (0090, 0091) : UNE fonction SQL, dans cet ordre — chaque jour fini verse ses visiteurs dans
+  //    `audience_jours`, PUIS ses empreintes sont effacées (dans l'ordre inverse, le compte du jour serait perdu),
+  //    puis les créneaux de plafond `audience:%` terminés, puis les vues de plus de MOIS_AUDIENCE mois, en une
+  //    instruction — par PostgREST, 500 lignes par passage ne tenaient plus la durée au-delà de 500 vues par jour.
+  //    PAS derrière le drapeau : une mesure coupée laisse ses lignes, et elles doivent partir quand même (revue du
+  //    14/09). Sans les migrations, la fonction manque : ce n'est pas une erreur de purge.
+  {
+    const { data, error } = await supabaseAdmin.rpc('audience_cloturer', { p_mois: MOIS_AUDIENCE })
+    if (error) { if (!/does not exist|schema cache|could not find/i.test(error.message)) bilan.erreurs.push(`audience_cloturer : ${error.message}`) }
+    else if (data && typeof data === 'object') {
+      const r = data as { empreintes?: number; plafonds?: number; vues?: number }
+      bilan.audience += (r.empreintes ?? 0) + (r.plafonds ?? 0) + (r.vues ?? 0)
+    }
   }
 
   return bilan

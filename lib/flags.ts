@@ -81,6 +81,13 @@ export const FLAGS = {
    *  quand la démo est validée sans Benj : site-qa + grille-qa + code-qa verts (scripts/demo-verifier.mjs) et la vidéo
    *  passée au juge (scripts/video-qa.mjs public/promo/demo-site/lestraque.mp4). */
   landingDemoSite: true,
+  /** 14/09 — la mesure d'audience de la vitrine, sans cookie (lib/audience.ts, app/Audience.tsx, api/audience, onglet
+   *  Visiteurs du Poste). Levé le 14/09 : migrations 0090 à 0092 appliquées (MCP Supabase, feu vert de Benj), après une
+   *  revue adversariale (20 défauts) et une contre-revue (8), tous corrigés, et audience-e2e vert. Levé sans les tables,
+   *  les vues se perdraient (204, erreur en console) et l'onglet répondrait 503. Baissé : rien n'est envoyé ni écrit, la
+   *  route répond 404, l'onglet n'existe pas, /confidentialite ne décrit pas la mesure — mais la purge quotidienne
+   *  continue d'effacer ce qui a été écrit (lib/purgesRgpd.ts, étape 8, hors drapeau). */
+  audience: true,
 } as const
 
 export type Flag = keyof typeof FLAGS

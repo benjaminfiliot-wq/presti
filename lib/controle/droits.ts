@@ -55,6 +55,8 @@ export type Domaine =
    *  encore : seulement sous une fenêtre que l'artisan a ouverte lui-même, pour une heure, tracée des
    *  deux côtés. Le partenaire n'y a rien à faire, jamais, même sous ticket. */
   | 'support'
+  /** La fréquentation de la vitrine (0090) : vues, sources, visiteurs du jour — des statistiques anonymes. */
+  | 'audience'
 
 /** La matrice, écrite une fois. `false` = refusé, `'siennes'` = autorisé mais borné à ses propres lignes. */
 const PARTENAIRE: Record<Domaine, { voir: boolean | 'siennes'; ecrire: boolean | 'siennes' }> = {
@@ -73,6 +75,8 @@ const PARTENAIRE: Record<Domaine, { voir: boolean | 'siennes'; ecrire: boolean |
   // pourrait, en insistant, lire les clients d'un artisan — et le contrat lui interdit jusqu'a leur
   // existence. C'est la seule ligne de cette matrice ou les deux colonnes sont false sans nuance.
   support:             { voir: false,     ecrire: false },
+  // Des chiffres de l'entreprise, absents de l'article 7 du contrat : fermé tant qu'un avenant ne l'ouvre pas.
+  audience:            { voir: false,     ecrire: false },
 }
 
 export type Verdict =
@@ -110,6 +114,7 @@ const RAISONS: Partial<Record<Domaine, string>> = {
   messagerie: 'Vous voyez les fils qui vous sont assignés.',
   'releve.partenaire': 'Votre relevé est en lecture.',
   support: 'Le support technique est réservé à Benjamin : il touche aux données que les artisans confient à Presti.',
+  audience: 'La fréquentation du site est réservée à Benjamin.',
 }
 
 /** Vrai raccourci de lecture : `permis` sans devoir déballer le verdict. */

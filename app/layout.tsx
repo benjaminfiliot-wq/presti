@@ -4,6 +4,8 @@ import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono, Fraunces, Archivo_Narrow, IBM_Plex_Sans, Manrope, Newsreader, Instrument_Serif, Syne, Lora } from 'next/font/google'
 import GoogleAnalytics from '@/app/GoogleAnalytics'
+// 14/09 — mesure d'audience maison, sans cookie : inerte hors des pages publiques de prestiapp.fr (lib/audience.ts).
+import Audience from '@/app/Audience'
 // v9 J3 — dans la coque native, l'écran de lancement se retire au premier rendu, quelle que soit la page (inerte ailleurs).
 import NatifSplash from '@/app/NatifSplash'
 // v9 J4 — verrou biométrique après 5 min d'arrière-plan : toutes les pages authentifiées (/controle, /onboarding compris), jamais /site ni /p.
@@ -105,7 +107,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" className={`${display.variable} ${body.variable} ${mono.variable} ${fraunces.variable} ${archivo.variable} ${plex.variable} ${manrope.variable} ${newsreader.variable} ${instrument.variable} ${syne.variable} ${lora.variable}`}>
-      <body>{children}<GoogleAnalytics /><NatifSplash /><VerrouNatif /></body>
+      <body>{children}<GoogleAnalytics /><Audience /><NatifSplash /><VerrouNatif /></body>
     </html>
   )
 }

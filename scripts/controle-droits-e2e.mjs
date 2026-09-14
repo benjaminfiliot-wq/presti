@@ -97,6 +97,7 @@ async function main() {
     ['les bannissements', '/api/controle/securite/bans'],
     ['les réglages', '/api/controle/reglages'],
     ['la comptabilité', '/api/controle/compta'],
+    ['la fréquentation du site', '/api/controle/audience'],
   ]) {
     const r = await api(chemin, p.jeton)
     T(`${nom} → 403`, r.statut === 403 && r.data?.code === 'hors_perimetre', `${r.statut} ${r.data?.code ?? ''} — ${r.brut.slice(0, 100)}`)

@@ -2847,3 +2847,30 @@ h1 .g,.hero h1 .g{background:linear-gradient(120deg,var(--accent),var(--accent-2
 .ds-lien a{color:var(--ink,#1b1a17);font-weight:600;text-decoration:underline;text-underline-offset:4px;padding:10px 4px}
 .ds-prix{margin:.35rem 0 0;text-align:center;font-size:.95rem;color:var(--muted,#6b665e)}
 @media (prefers-reduced-motion:reduce){.ds-cadre{transition:none}}
+
+/* ── Poste de contrôle · Visiteurs (0090) ─────────────────────────────────────────────────── */
+.vis-grille{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:1rem;align-items:start}
+.vis-col{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.vis-trois{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;align-items:start}
+@media (max-width:980px){.vis-grille,.vis-trois{grid-template-columns:1fr}}
+.vis-direct{display:inline-flex;align-items:center;gap:6px}
+.vis-pouls{width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none;animation:vis-pouls 2s ease-out infinite}
+@keyframes vis-pouls{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.vis-pouls{animation:none}}
+.vis-barres{list-style:none;margin:0;padding:12px 17px 14px;display:flex;flex-direction:column;gap:9px}
+.vis-barres li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;font-size:13px;color:var(--ink);align-items:baseline}
+.vis-barres li>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vis-barres .n{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.vis-barres .jauge{grid-column:1/-1;height:6px;border-radius:3px;background:var(--line-2);overflow:hidden}
+.vis-barres .jauge span{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .4s var(--ease,ease)}
+.vis-vide{margin:0;padding:14px 17px;font-size:13px;color:var(--muted)}
+.vis-note{margin:0;padding:0 17px 14px;font-size:12.5px;line-height:1.5;color:var(--muted)}
+.vis-note:first-of-type{padding-top:12px}
+.vis-histo{padding:14px 17px 10px}
+.vis-histo-barres{display:flex;align-items:flex-end;gap:3px;height:150px;border-bottom:1px solid var(--line-2)}
+.vis-histo-barres .b{flex:1;min-width:0;height:2%;background:var(--accent);border-radius:3px 3px 0 0;opacity:.85}
+.vis-histo-barres .b.zero{background:var(--line-2);opacity:1}
+.vis-histo-axe{display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:11px;color:var(--faint);font-family:var(--font-mono)}
+.vis-onglets{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.dir-main .vis-onglets button{font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;min-height:28px}
+.dir-main .vis-onglets button[aria-pressed="true"]{background:var(--accent-tint);color:var(--accent-ink);border-color:transparent;font-weight:700}
