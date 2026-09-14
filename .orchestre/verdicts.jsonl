@@ -86,3 +86,6 @@
 {"id":"014-19","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T05:16:11Z","duree_s":425,"agent":"ag-19-g37","executant":"antigravity","lignes":372,"dossier":"en-cours"}
 {"id":"014-19","verdict":"FAIL","ligne":"❌ 014-19 : FAIL — site-hebergement-e2e : 18/23 — https://prestiapp.fr","code":1,"date":"2026-09-14T05:23:35Z","duree_s":429,"agent":"ag-19-g37","executant":"antigravity","lignes":371,"dossier":"fait"}
 {"id":"014-19","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T05:31:26Z","duree_s":428,"agent":"ag-19-g37","executant":"antigravity","lignes":24,"dossier":"en-cours"}
+{"id":"014-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T05:38:45Z","duree_s":60,"agent":"ag-04-g38b","executant":"antigravity","lignes":3323,"dossier":"en-cours"}
+{"id":"014-19","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T05:40:18Z","duree_s":521,"agent":"ag-19-g37","executant":"antigravity","lignes":24,"dossier":"fait"}
+{"id":"014-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T05:43:58Z","duree_s":59,"agent":"ag-04-g38b","executant":"antigravity","lignes":2913,"dossier":"en-cours"}
