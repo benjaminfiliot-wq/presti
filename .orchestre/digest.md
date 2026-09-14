@@ -1,15 +1,15 @@
-# Digest — 2026-09-14T05:44:44Z
+# Digest — 2026-09-14T07:53:22Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (Antigravity) : 18 tâche(s) PASS, 66657 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
-**État** — file : 0 · en cours : 2 · faites : 18 · refusées : 1
+**Mesure** — déléguées (Antigravity) : 19 tâche(s) PASS, 67855 ligne(s) · faites par Claude Code : 0 tâche(s) PASS, 0 ligne(s).
+**État** — file : 0 · en cours : 1 · faites : 19 · refusées : 1
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 014-20 | contenu | en-cours | ag-20-opus | — | depuis 2026-09-14T01:01:56Z · Réécrire les 544 cas synthétiques du cerveau « urgence » (lib/ai/cerveaux/urgence/cas.jsonl) dans le français que les clients écrivent vraiment — accents, SMS avec fautes, longs messages oraux — et ajouter les pièges qui manquent (cinq normaux avec un mot d'urgence et cinq urgents sans aucun mot de la liste, par métier) |
-| 014-17 | test | en-cours | test-claude-opus | — | depuis 2026-09-13T20:02:09Z · La suite scripts/suspension-e2e.mjs — suspendre un compte depuis le Poste de contrôle a un effet partout (connexion refusée, page de conversation neutre, nouveau lead refusé, moteur muet, relances sautées), et réactiver ramène tout |
-| 014-04 | boucle-qa | fait | ag-04-g38b | PASS | 2026-09-14T05:43:58Z · 59s · 2913 l. |
+| 014-17 | test | en-cours | ag-17-g38 | — | depuis 2026-09-14T07:38:27Z · La suite scripts/suspension-e2e.mjs — suspendre un compte depuis le Poste de contrôle a un effet partout (connexion refusée, page de conversation neutre, nouveau lead refusé, moteur muet, relances sautées), et réactiver ramène tout |
+| 014-20 | contenu | fait | ag-20-g38 | PASS | 2026-09-14T07:53:22Z · 3s · 1198 l. |
+| 014-04 | boucle-qa | fait | ag-04-g38b | PASS | 2026-09-14T05:45:11Z · 61s · 2913 l. |
 | 014-19 | test | fait | ag-19-g37 | PASS | 2026-09-14T05:40:18Z · 521s · 24 l. |
 | 014-18 | feature | fait | ag-18-g38 | PASS | 2026-09-14T04:51:14Z · 40s · 108 l. |
 | 014-10 | boucle-qa | fait | ag-10-g38 | PASS | 2026-09-14T04:41:54Z · 174s · 4839 l. |

@@ -1,26 +1,20 @@
 M .orchestre/agents.jsonl
  M .orchestre/contexte.md
  M .orchestre/digest.md
- M .orchestre/en-cours/014-02.md
- M .orchestre/en-cours/014-04.avant.txt
- M .orchestre/en-cours/014-04.lock
- M .orchestre/en-cours/014-04.md
- D .orchestre/file/014-03.md
- D .orchestre/file/014-04.md
- D .orchestre/file/014-05.md
- D .orchestre/file/014-06.md
- D .orchestre/file/014-07.md
- D .orchestre/file/014-08.md
- D .orchestre/file/014-09.md
- D .orchestre/file/014-10.md
- D .orchestre/file/014-13.md
- D .orchestre/file/014-17.md
- M .orchestre/preuves/014-03/skills.md
- M .orchestre/preuves/014-04/skills.md
- M .orchestre/preuves/014-14/avant.txt
- M .orchestre/preuves/014-14/onglet-sites.png
+ D .orchestre/en-cours/014-04.avant.txt
+ D .orchestre/en-cours/014-04.lock
+ D .orchestre/en-cours/014-17.avant.txt
+ M .orchestre/en-cours/014-17.lock
+ D .orchestre/en-cours/014-20.avant.txt
+ M .orchestre/en-cours/014-20.lock
  M .orchestre/verdicts.jsonl
- M scripts/antigravity.mjs
+ M public/sites-demo/chauffagiste/chauffagiste-lambersart/index.html
+ M public/sites-demo/chauffagiste/chauffagiste-lille/index.html
+ M public/sites-demo/chauffagiste/chauffagiste-roubaix/index.html
+ M public/sites-demo/chauffagiste/chauffagiste-villeneuve-d-ascq/index.html
+ M public/sites-demo/chauffagiste/index.html
+ M public/sites-demo/chauffagiste/mentions-legales/index.html
+ M public/sites-demo/chauffagiste/styles.css
 ?? .claude/skills/captions-overlay/
 ?? .claude/skills/changelog-video/
 ?? .claude/skills/cut-the-curve/
@@ -47,44 +41,7 @@ M .orchestre/agents.jsonl
 ?? .claude/skills/seam-craft/
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
-?? .orchestre/en-cours/014-03.avant.txt
-?? .orchestre/en-cours/014-03.lock
-?? .orchestre/en-cours/014-03.md
-?? .orchestre/en-cours/014-05.avant.txt
-?? .orchestre/en-cours/014-05.lock
-?? .orchestre/en-cours/014-05.md
-?? .orchestre/en-cours/014-06.avant.txt
-?? .orchestre/en-cours/014-06.lock
-?? .orchestre/en-cours/014-06.md
-?? .orchestre/en-cours/014-07.avant.txt
-?? .orchestre/en-cours/014-07.lock
-?? .orchestre/en-cours/014-07.md
-?? .orchestre/en-cours/014-07.question.md
-?? .orchestre/en-cours/014-07.reponse.md
-?? .orchestre/en-cours/014-08.avant.txt
-?? .orchestre/en-cours/014-08.lock
-?? .orchestre/en-cours/014-08.md
-?? .orchestre/en-cours/014-09.avant.txt
-?? .orchestre/en-cours/014-09.lock
-?? .orchestre/en-cours/014-09.md
-?? .orchestre/en-cours/014-10.avant.txt
-?? .orchestre/en-cours/014-10.lock
-?? .orchestre/en-cours/014-10.md
-?? .orchestre/en-cours/014-13.avant.txt
-?? .orchestre/en-cours/014-13.lock
-?? .orchestre/en-cours/014-13.md
-?? .orchestre/en-cours/014-17.lock
-?? .orchestre/en-cours/014-17.md
-?? .orchestre/preuves/014-02/avant.txt
-?? .orchestre/preuves/014-03/avant.txt
-?? .orchestre/preuves/014-04/avant.txt
-?? .orchestre/preuves/014-05/
-?? .orchestre/preuves/014-06/avant.txt
-?? .orchestre/preuves/014-07/avant.txt
-?? .orchestre/preuves/014-08/avant.txt
-?? .orchestre/preuves/014-09/
-?? .orchestre/preuves/014-10/
-?? .orchestre/preuves/014-13/
+?? .orchestre/preuves/014-17/
 ?? .orchestre/preuves/014-20/
 ?? .orchestre/scratch/
 ?? ChromeSetup.exe
@@ -104,15 +61,14 @@ M .orchestre/agents.jsonl
 ?? plans/013-niveau-superieur-video-voix-automatisation.md
 ?? plans/accroches-par-metier.md
 ?? plans/demarchage-linkedin.md
-?? plans/journal-publications.md
 ?? plans/patch-transitions.md
 ?? plans/preuve-skills.md
-?? plans/publications-10.md
 ?? plans/repondre-aux-artisans.md
 ?? plans/vague2-faits-verifies.md
 ?? promo-src/
 ?? public/promo/
-?? public/sites-demo/
+?? public/sites-demo/build.mjs
+?? public/sites-demo/chauffagiste/plombier/
 ?? qa-output.txt
 ?? qa_out_sync.txt
 ?? qa_out_temp.txt
@@ -134,7 +90,6 @@ M .orchestre/agents.jsonl
 ?? scripts/build-carreleur-fix.mjs
 ?? scripts/captures-014-04.mjs
 ?? scripts/captures-console.mjs
-?? scripts/controle-sites-e2e.mjs
 ?? scripts/gen-chauffagiste.mjs
 ?? scripts/gen-html.mjs
 ?? scripts/hf-composer.mjs
@@ -143,7 +98,6 @@ M .orchestre/agents.jsonl
 ?? scripts/musique-poser.mjs
 ?? scripts/patch-plans-figes.mjs
 ?? scripts/patch-transitions.mjs
-?? scripts/pipeline.mjs
 ?? scripts/promo-couverture.mjs
 ?? scripts/promo-heberger.mjs
 ?? scripts/promo-video.mjs
@@ -151,6 +105,7 @@ M .orchestre/agents.jsonl
 ?? scripts/publora-verifier.mjs
 ?? scripts/reparer-env.mjs
 ?? scripts/shot-richard.mjs
+?? scripts/suspension-e2e.mjs
 ?? scripts/video-qa.mjs
 ?? scripts/voix-fiche.mjs
 ?? scripts/voix-mixer.mjs

@@ -2,15 +2,19 @@ M .orchestre/agents.jsonl
  M .orchestre/contexte.md
  M .orchestre/digest.md
  D .orchestre/en-cours/014-04.avant.txt
- M .orchestre/en-cours/014-04.lock
- M .orchestre/en-cours/014-19.avant.txt
- M .orchestre/en-cours/014-19.lock
- D .orchestre/fait/014-19.md
- M .orchestre/preuves/014-04/skills.md
- M .orchestre/preuves/014-19/avant.txt
+ D .orchestre/en-cours/014-04.lock
+ D .orchestre/en-cours/014-17.avant.txt
+ M .orchestre/en-cours/014-17.lock
+ D .orchestre/en-cours/014-20.avant.txt
+ M .orchestre/en-cours/014-20.lock
  M .orchestre/verdicts.jsonl
-MM app/api/controle/sites/[id]/route.ts
- M scripts/site-hebergement-e2e.mjs
+ M public/sites-demo/chauffagiste/chauffagiste-lambersart/index.html
+ M public/sites-demo/chauffagiste/chauffagiste-lille/index.html
+ M public/sites-demo/chauffagiste/chauffagiste-roubaix/index.html
+ M public/sites-demo/chauffagiste/chauffagiste-villeneuve-d-ascq/index.html
+ M public/sites-demo/chauffagiste/index.html
+ M public/sites-demo/chauffagiste/mentions-legales/index.html
+ M public/sites-demo/chauffagiste/styles.css
 ?? .claude/skills/captions-overlay/
 ?? .claude/skills/changelog-video/
 ?? .claude/skills/cut-the-curve/
@@ -37,8 +41,6 @@ MM app/api/controle/sites/[id]/route.ts
 ?? .claude/skills/seam-craft/
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
-?? .orchestre/en-cours/014-19.md
-?? .orchestre/preuves/014-04/avant.txt
 ?? .orchestre/preuves/014-17/
 ?? .orchestre/preuves/014-20/
 ?? .orchestre/scratch/
@@ -66,7 +68,7 @@ MM app/api/controle/sites/[id]/route.ts
 ?? promo-src/
 ?? public/promo/
 ?? public/sites-demo/build.mjs
-?? public/sites-demo/chauffagiste/
+?? public/sites-demo/chauffagiste/plombier/
 ?? qa-output.txt
 ?? qa_out_sync.txt
 ?? qa_out_temp.txt

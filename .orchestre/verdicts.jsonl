@@ -89,3 +89,7 @@
 {"id":"014-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T05:38:45Z","duree_s":60,"agent":"ag-04-g38b","executant":"antigravity","lignes":3323,"dossier":"en-cours"}
 {"id":"014-19","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T05:40:18Z","duree_s":521,"agent":"ag-19-g37","executant":"antigravity","lignes":24,"dossier":"fait"}
 {"id":"014-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T05:43:58Z","duree_s":59,"agent":"ag-04-g38b","executant":"antigravity","lignes":2913,"dossier":"en-cours"}
+{"id":"014-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T05:45:11Z","duree_s":61,"agent":"ag-04-g38b","executant":"antigravity","lignes":2913,"dossier":"fait"}
+{"id":"014-20","verdict":"FAIL","ligne":"❌ ÉCHEC : au moins 80 % des messages synthétiques portent un accent (3 %)","code":1,"date":"2026-09-14T07:39:23Z","duree_s":1,"agent":"ag-20-g38","executant":"antigravity","lignes":0,"dossier":"en-cours"}
+{"id":"014-20","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T07:52:59Z","duree_s":3,"agent":"ag-20-g38","executant":"antigravity","lignes":1198,"dossier":"en-cours"}
+{"id":"014-20","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T07:53:22Z","duree_s":3,"agent":"ag-20-g38","executant":"antigravity","lignes":1198,"dossier":"fait"}
