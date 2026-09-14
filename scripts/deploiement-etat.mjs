@@ -28,6 +28,8 @@ for (const d of deployments) {
   }
 }
 const dernier = deployments[0]
-if (!dernier) { console.log('aucun déploiement'); process.exit(1) }
+// Pas de process.exit() après un fetch : sous Windows, Node sort alors avant que les connexions ne soient fermées et plante
+// sur une assertion libuv (code ≠ 0 alors que le déploiement est READY — une chaîne gardée s'est arrêtée à tort, 14/09).
+if (!dernier) { console.log('aucun déploiement'); process.exitCode = 1 }
 console.log(dernier.state === 'READY' ? `\n✓ la production est à jour (${(dernier.meta?.githubCommitSha || '').slice(0, 7)})` : `\n✗ le dernier déploiement est ${dernier.state} : la production sert encore un build plus ancien`)
 process.exit(dernier.state === 'READY' ? 0 : 1)

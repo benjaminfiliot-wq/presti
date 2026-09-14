@@ -4,7 +4,7 @@
 // Comment : Playwright enregistre la démo servie en local (bureau 1280×800 puis mobile 390×844) pendant une visite scriptée —
 // le rideau, le titre qui entre, la lumière, le défilement jusqu'aux réalisations, l'atelier sombre, une question qui
 // s'ouvre, la bande d'appel. ffmpeg découpe ensuite des plans de 1,5 s pris là où quelque chose bouge, les met au même
-// cadre 1280×720 (le mobile est posé au centre sur le fond de la démo), les enchaîne en coupes franches, et encode en
+// cadre 1280×720 (un plan mobile est posé à côté de l'ordinateur sur la même section : 880 + 400 px), les enchaîne en coupes franches, et encode en
 // H.264 sans son, débit plafonné pour tenir sous 1,5 Mo. Le résultat et son affiche vont dans public/promo/demo-site/.
 //
 // Usage : node scripts/demo-video.mjs [dossier=public/sites-demo/lestraque] [--garder]
@@ -46,6 +46,8 @@ async function glisser(page, selecteur, duree = 1400, decalage = -80) {
 async function enregistrer(nom, viewport, visite) {
   const nav = await chromium.launch()
   const ctx = await nav.newContext({ viewport, deviceScaleFactor: 1, recordVideo: { dir: TRAVAIL, size: viewport } })
+  // le téléphone ne filme pas le rideau d'ouverture : en plan étroit, il donnait une colonne orange au milieu du cadre (14/09)
+  if (nom === 'mobile') await ctx.addInitScript(() => { try { sessionStorage.setItem('rideau', '1') } catch (e) {} })
   const page = await ctx.newPage()
   const t0 = Date.now()
   const marques = {}
@@ -62,7 +64,12 @@ async function enregistrer(nom, viewport, visite) {
 const bureau = await enregistrer('bureau', { width: 1280, height: 800 }, async (page, marquer) => {
   marquer('debut'); await page.waitForTimeout(1900)                    // rideau, mot à mot, Ken Burns, la lentille apparaît
   // la souris promène la lentille (la révélation suit le pointeur) : le plan bouge, et il montre l'interaction
-  marquer('souris'); for (let i = 0; i <= 28; i++) { await page.mouse.move(700 + i * 12, 560 - i * 9); await page.waitForTimeout(45) } await page.waitForTimeout(900)
+  // un aller-retour ample et rapide : au premier essai (12 px par pas), la lentille bougeait trop peu pour se voir à l'échelle
+  // d'analyse du juge (1,25 s « figées », 14/09) ; ici elle traverse la moitié droite du héros et revient
+  marquer('souris')
+  for (let i = 0; i <= 18; i++) { await page.mouse.move(640 + i * 30, 600 - i * 20); await page.waitForTimeout(35) }
+  for (let i = 0; i <= 18; i++) { await page.mouse.move(1180 - i * 24, 240 + i * 14); await page.waitForTimeout(35) }
+  await page.waitForTimeout(500)
   marquer('realisations'); await glisser(page, '#realisations', 1600); await page.waitForTimeout(1200)
   marquer('galerie'); await glisser(page, '.galerie', 1400, 40); await page.waitForTimeout(900)
   marquer('etapes'); await glisser(page, '#etapes', 1600); await page.waitForTimeout(1400)
@@ -87,22 +94,27 @@ const b = bureau.marques, m = mobile.marques
 const plans = [
   [bureau.f, b.debut + 0.2, 0.9],
   [bureau.f, b.souris + 0.1, 1.3],
-  [mobile.f, m.debut + 0.3, 1.1],
+  [mobile.f, m.debut + 0.3, 1.1, b.souris + 0.8],
   [bureau.f, b.realisations + 0.2, D], [bureau.f, b.galerie + 0.1, D],
-  [mobile.f, m.defile + 0.2, D],
+  [mobile.f, m.defile + 1.0, D, b.realisations + 0.3],
   [bureau.f, b.etapes + 0.1, D], [bureau.f, b.liste + 0.1, D],
-  [mobile.f, m.galerie + 0.1, D],
+  [mobile.f, m.galerie + 0.6, 1.2, b.galerie + 0.1],
   [bureau.f, b.questions + 0.3, D], [bureau.f, b.contact + 0.1, D],
 ]
 const fond = '#1F160E'
 const morceaux = []
-plans.forEach(([src, debut, duree], i) => {
+plans.forEach(([src, debut, duree, pairBureau], i) => {
   const out = path.join(TRAVAIL, `plan-${String(i).padStart(2, '0')}.mp4`)
   const estMobile = src === mobile.f
   const filtre = estMobile
     ? `scale=-2:720,pad=1280:720:(ow-iw)/2:0:color=${fond},fps=30,format=yuv420p`
     : `scale=1280:-2,crop=1280:720:0:0,fps=30,format=yuv420p`   // recadré par le bas : la navigation reste entière (affiche du 14/09 coupée en haut)
-  ff(['-ss', debut.toFixed(2), '-t', duree.toFixed(2), '-i', src, '-an', '-vf', filtre, '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', out])
+  if (estMobile && pairBureau !== undefined) {
+    // ordinateur 880×720 à gauche (recadré depuis le bord gauche : le titre reste entier), téléphone 400×720 à droite (le haut de l'écran), côte à côte
+    ff(['-ss', pairBureau.toFixed(2), '-t', duree.toFixed(2), '-i', bureau.f, '-ss', debut.toFixed(2), '-t', duree.toFixed(2), '-i', src, '-an',
+      '-filter_complex', `[0:v]scale=1280:-2,crop=880:720:0:0[g];[1:v]scale=400:-2,crop=400:720:0:0[d];[g][d]hstack=inputs=2,fps=30,format=yuv420p[v]`, '-map', '[v]',
+      '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', out])
+  } else ff(['-ss', debut.toFixed(2), '-t', duree.toFixed(2), '-i', src, '-an', '-vf', filtre, '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', out])
   morceaux.push(out)
 })
 const liste = path.join(TRAVAIL, 'liste.txt')
