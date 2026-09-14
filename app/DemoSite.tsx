@@ -40,6 +40,7 @@ export default function DemoSite() {
           : <video ref={ref} src="/promo/demo-site/lestraque.mp4" poster="/promo/demo-site/lestraque-affiche.webp" muted loop playsInline preload="none" width={1280} height={720}
               aria-label="Capture animée du site de démonstration Atelier Lestraque : l'accueil, les réalisations, l'atelier, les questions, sur ordinateur et sur téléphone" />}
       </a>
+      <p className="ds-credits">Photos de la démo : Wikimedia Commons, sous licences libres — <a href="/sites-demo/lestraque/mentions-legales/index.html#credits" target="_blank" rel="noopener">auteurs et licences</a></p>
       <p className="ds-lien"><a href={DEMO} target="_blank" rel="noopener">Voir le site de démonstration</a></p>
       <p className="ds-prix">Le site, à la demande — {PRIX_SITE_TEXTE}, une fois.</p>
     </div>
