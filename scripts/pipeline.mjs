@@ -199,7 +199,7 @@ const quand = (p) => {
   d.setHours(Number(m[1]), Number(m[2] || 0), 0, 0)
   // --passe-maintenant : un créneau déjà passé part tout de suite (dans trois minutes) au lieu d'arrêter le pipeline —
   // c'est la suite du postage par tâche planifiée (scripts/publier-suite.mjs), où un créneau peut être manqué de peu.
-  if (d <= depart && args.includes('--passe-maintenant')) { const m3 = new Date(depart.getTime() + 3 * 60_000); console.log(`  ⏱ pub-${p.num} ${p.variante} ${p.canal} : créneau passé (${d.toISOString()}) → part maintenant (${m3.toISOString()})`); return m3 }
+  if (d <= depart && args.includes('--passe-maintenant')) { const m3 = new Date(depart.getTime() - 60_000) /* une minute dans le passé : Publora publie tout de suite, sans occuper un créneau programmé */; console.log(`  ⏱ pub-${p.num} ${p.variante} ${p.canal} : créneau passé (${d.toISOString()}) → part maintenant (${m3.toISOString()})`); return m3 }
   if (d <= depart) arret(`la date calculée est passée : ${p.jour} S${p.semaine} → ${d.toISOString()}`)
   return d
 }

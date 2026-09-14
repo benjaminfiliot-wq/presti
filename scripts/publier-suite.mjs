@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url'
 
 const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const JOURNAL = path.join(RACINE, 'publications', 'journal-suite.log')
-const ANCRE = '2026-09-14'   // le lundi de la semaine des dix parutions (calendrier resserré du 13/09)
+const ANCRE = process.env.PRESTI_ANCRE || '2026-09-14'   // le lundi de référence ; PRESTI_ANCRE=2026-09-07 fait partir tout de suite ce qui reste (créneaux passés)
 const TACHE = 'Presti publications'
 const log = (m) => { fs.appendFileSync(JOURNAL, `${new Date().toISOString()} ${m}\n`) }
 
