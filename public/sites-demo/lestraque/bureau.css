@@ -28,3 +28,21 @@ html.js .chiffres--compte .chiffre__vrai{opacity:0}
 .atelier__pause:hover{background:rgba(10,7,4,.68);border-color:rgba(244,237,226,.62)}
 .atelier__pause:focus-visible{outline:2px solid #F4EDE2;outline-offset:3px;box-shadow:0 0 0 7px rgba(10,7,4,.55)}
 }
+.scene--presta.scene--survol ol.presta{position:relative;margin-top:calc(var(--sv-marge,0) * 1px)}
+.scene--presta.scene--survol .presta__ligne{position:static}
+.scene--presta.scene--survol .presta__vignette{left:0;top:0;width:min(24vw,26rem);aspect-ratio:4/5;translate:calc(var(--sx,0) * 1px) calc(var(--sy,0) * 1px);rotate:calc(var(--sr,0) * 1deg);clip-path:inset(50% 0 50% 0);transition:none}
+.scene--presta.scene--survol .presta__vignette img{scale:1.15;transition:none}
+.scene--presta.scene--survol .presta__vignette.est-ouverte{clip-path:inset(0);transition:clip-path .55s cubic-bezier(.16,1,.3,1)}
+.scene--presta.scene--survol .presta__vignette.est-ouverte img{scale:1;transition:scale .9s cubic-bezier(.16,1,.3,1)}
+.scene--presta.scene--survol .presta__vignette.est-sortie{transition:clip-path .2s cubic-bezier(.16,1,.3,1)}
+.scene--presta.scene--survol .presta__vignette.est-sortie img{scale:1}
+.scene--presta.scene--survol .est-sortie[data-sens=b]{clip-path:inset(100% 0 0 0)}
+.scene--presta.scene--survol .est-sortie[data-sens=h]{clip-path:inset(0 0 100% 0)}
+.scene--presta.scene--survol .est-sortie[data-sens=d]{clip-path:inset(0 0 0 100%)}
+.scene--presta.scene--survol .est-sortie[data-sens=g]{clip-path:inset(0 100% 0 0)}
+.scene--presta.scene--survol.survol--calme ol.presta{transition-property:none}
+.scene--presta.scene--survol.survol--calme .presta__vignette{clip-path:none;opacity:0;transition:opacity .2s cubic-bezier(.16,1,.3,1)}
+.scene--presta.scene--survol.survol--calme .presta__vignette.est-ouverte{opacity:1}
+.scene--presta.scene--survol.survol--calme .presta__vignette img{scale:1;transition:none}
+.presta__declencheur{font:inherit;color:inherit;letter-spacing:inherit;text-align:inherit;background:none;border:0;padding:0;margin:0}
+.presta__declencheur:focus-visible{outline:2px solid var(--accent-texte);outline-offset:.2em;border-radius:.1em}
