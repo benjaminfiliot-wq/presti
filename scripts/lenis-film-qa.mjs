@@ -10,7 +10,15 @@
 //        par film, arretMs (du dernier événement à l'arrêt de scrollY) et rafP95Ms ; Lenis 1.3.26 avec lerp 0.1, smoothWheel
 //        true, syncTouch false ; et Lenis s'arrête plus tard que le natif (sinon il n'a pas été injecté) ;
 //   LN-4 rien dans le site : package.json et package-lock.json identiques au dépôt, aucun fichier lenis non suivi sous public/
-//        ou scripts/, aucune trace de Lenis dans public/sites-demo/lestraque (index.html, site.js).
+//        ou scripts/, aucune trace de Lenis dans public/sites-demo/lestraque (index.html, site.js) ;
+//   LN-5 des films représentatifs (ajouté le 15/09 après le 1er tournage, PASS mais trompeur : molette de 350 à 500 px par
+//        événement, page à 12-15 images/s pendant l'enregistrement, 57 images figées sur 60 en natif) :
+//        - une vraie molette : chaque événement |dy| ≤ 120 px, gestes (événements à moins de 0,3 s d'écart) d'au moins 3 crans ;
+//        - la page tient la cadence : rafP95Ms ≤ 25 ms dans les deux films, mesuré sur le même programme de molette (pendant
+//          le tournage, ou dans une passe sans capture quand le film est tourné en temps virtuel, image par image) ;
+//        - Lenis se voit : dans lenis.mp4, de 0,1 à 0,9 s après le début de chaque geste, au plus 25 % d'images figées
+//          (écart < 0,002 à la précédente) ;
+//        - natif.lisseNatif (booléen) dit si le défilement doux de Chrome était actif ; la part figée du natif est affichée.
 //
 // Usage : node scripts/lenis-film-qa.mjs [--dossier=<preuve>]   (essai du juge sur un autre dossier)
 import fs from 'node:fs'
@@ -76,6 +84,36 @@ if (m) {
     faits.push(`arrêt après la dernière molette : natif ${m.natif.arretMs} ms, Lenis ${m.lenis.arretMs} ms`)
     if (!(m.lenis.arretMs > m.natif.arretMs)) echecs.push('LN-3 : Lenis ne s\'arrête pas plus tard que le natif : il n\'a pas agi')
   }
+}
+
+// LN-5
+if (m && Array.isArray(m.programme) && m.programme.length) {
+  const prog = m.programme
+  const gros = prog.filter((e) => Math.abs(e.dy) > 120)
+  if (gros.length) echecs.push(`LN-5 : ${gros.length} événement(s) de molette au-delà de 120 px (jusqu'à ${Math.max(...gros.map((e) => Math.abs(e.dy)))} px) : ce n'est pas une molette réelle`)
+  const gestes = []
+  for (const e of prog) { const g = gestes[gestes.length - 1]; if (g && e.t - g[g.length - 1].t < 0.3) g.push(e); else gestes.push([e]) }
+  const courts = gestes.filter((g) => g.length < 3).length
+  if (courts) echecs.push(`LN-5 : ${courts} geste(s) de molette de moins de 3 crans`)
+  for (const film of ['natif', 'lenis']) if (!(typeof m[film]?.rafP95Ms === 'number' && m[film].rafP95Ms <= 25)) echecs.push(`LN-5 : ${film} a tourné à rafP95Ms ${m[film]?.rafP95Ms} ms, 25 au plus : le film ne montre pas la vraie fluidité`)
+  if (typeof m.natif?.lisseNatif !== 'boolean') echecs.push('LN-5 : natif.lisseNatif (défilement doux de Chrome actif ou non) absent')
+  const partFigee = (f) => {
+    const parts = []
+    for (const g of gestes) {
+      const t0 = g[0].t + 0.1
+      if (t0 + 0.8 > n.duree) continue
+      const brut = spawnSync('ffmpeg', ['-v', 'error', '-ss', String(t0), '-t', '0.8', '-i', path.join(P, f), '-vf', 'scale=160:100,format=gray', '-f', 'rawvideo', '-'], { maxBuffer: 1 << 26 }).stdout
+      const k = Math.floor(brut.length / 16000)
+      let figees = 0
+      for (let i = 1; i < k; i++) { let s = 0; for (let j = 0; j < 16000; j++) s += Math.abs(brut[i * 16000 + j] - brut[(i - 1) * 16000 + j]); if (s / 16000 / 255 < 0.002) figees++ }
+      if (k > 1) parts.push(figees / (k - 1))
+    }
+    return parts.length ? Math.max(...parts) : null
+  }
+  const figeLenis = partFigee('lenis.mp4'), figeNatif = partFigee('natif.mp4')
+  faits.push(`images figées au pire geste : Lenis ${figeLenis === null ? '—' : `${Math.round(100 * figeLenis)} %`}, natif ${figeNatif === null ? '—' : `${Math.round(100 * figeNatif)} %`}${typeof m.natif?.lisseNatif === 'boolean' ? ` (défilement doux de Chrome ${m.natif.lisseNatif ? 'actif' : 'inactif'})` : ''}`)
+  if (figeLenis === null) echecs.push('LN-5 : aucun geste mesurable dans lenis.mp4')
+  else if (figeLenis > 0.25) echecs.push(`LN-5 : Lenis saccade dans son film (${Math.round(100 * figeLenis)} % d'images figées pendant un geste, 25 % au plus)`)
 }
 
 // LN-4

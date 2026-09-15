@@ -88,7 +88,12 @@ try {
     await page.goto(`${base}/index.html`, { waitUntil: 'load' })
     await page.waitForTimeout(2500)
 
-    const haut = await appelsVisibles(page)
+    // Sous charge (autres agents et films en cours sur la machine), la barre peut rendre sa bascule avec quelques images de retard :
+    // une mesure en défaut est refaite 900 ms plus tard, et n'échoue que si le défaut persiste. Le 15/09, deux faux échecs de
+    // 021-01 sous charge (1 position sans appel, puis 2 appels en haut), qui passaient tous deux rejoués à part. Un défaut qui
+    // dure, comme le trou de 1 500 px de 019-01, échoue toujours.
+    const stable = async (ok) => { let vus = await appelsVisibles(page); if (!ok(vus)) { await page.waitForTimeout(900); vus = await appelsVisibles(page) } return vus }
+    const haut = await stable((v) => v.length === 1 && !v[0].barre)
     if (haut.length !== 1) echecs.push(`${nomVp}, haut de l'accueil : ${haut.length} appels visibles, 1 attendu (le bouton du héros) — ${decrire(haut)}`)
     else if (haut[0].barre) echecs.push(`${nomVp}, haut de l'accueil : le seul appel visible est dans la barre (${decrire(haut)}), le bouton du héros attendu`)
     else faits.push(`${nomVp}, haut : ${decrire(haut)}`)
@@ -97,7 +102,7 @@ try {
     for (const sel of ['#prestations', '#realisations']) {
       if (!(await page.$(sel))) { echecs.push(`${nomVp} : section ${sel} introuvable`); continue }
       await allerA(page, sel)
-      const vus = (await appelsVisibles(page)).filter((v) => v.barre)
+      const vus = (await stable((v) => { const b = v.filter((x) => x.barre); return b.length === 1 && b[0].devis })).filter((v) => v.barre)
       if (vus.length !== 1 || !vus[0].devis) echecs.push(`${nomVp}, ${sel} : la barre montre ${vus.length} appel(s) — ${decrire(vus)} — attendu : « Devis » seul`)
       else faits.push(`${nomVp}, ${sel} : barre ${decrire(vus)}`)
     }
@@ -114,7 +119,7 @@ try {
     for (let y = 0; y <= finOuverture + vp.height; y += 150) {
       await page.evaluate((v) => scrollTo({ top: v, behavior: 'instant' }), y)
       await page.waitForTimeout(450)
-      const vus = await appelsVisibles(page)
+      const vus = await stable((v) => v.length === 1)
       if (vus.length === 0) trous.push(y)
       if (vus.length > 1) doublons.push(`${y} px (${decrire(vus)})`)
     }

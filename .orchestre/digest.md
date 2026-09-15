@@ -6,15 +6,20 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-15T11:56:34Z
+# Digest — 2026-09-15T13:21:29Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 42 tâche(s) PASS, 170307 ligne(s) · faites par Claude Code : 2 tâche(s) PASS, 279 ligne(s).
-**État** — file : 0 · en cours : 0 · faites : 44 · refusées : 1
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 45 tâche(s) PASS, 171410 ligne(s) · faites par Claude Code : 2 tâche(s) PASS, 279 ligne(s).
+**État** — file : 0 · en cours : 2 · faites : 47 · refusées : 1
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
+| 021-10 | contenu | en-cours | ag-33-flash | — | depuis 2026-09-15T13:03:41Z · Démo Atelier Lestraque, vague 5 — trouver, télécharger, regarder et décrire 6 à 10 plans vidéo libres de droits de mains qui travaillent le bois, licence relevée sur la page de chaque plan, pour que Benj choisisse sur pièces s'il veut une vraie vidéo d'atelier au bureau |
+| 021-14 | contenu | en-cours | ag-32-flash | — | depuis 2026-09-15T12:58:40Z · Démo Atelier Lestraque, vague 5 — refaire le film comparatif natif / Lenis (2e prise de 021-09) pour qu'il montre la vraie sensation - molette réelle par crans, page à pleine cadence pendant le tournage, Lenis visiblement fluide - afin que Benj choisisse sur un film honnête |
+| 021-04 | contenu | fait | ag-29-flash | PASS | 2026-09-15T13:21:29Z · 2s · 246 l. |
+| 021-01 | feature | fait | claude-code | PASS | 2026-09-15T13:21:27Z · 172s · 291 l. |
+| 021-09 | contenu | fait | ag-31-flash | PASS | 2026-09-15T12:54:04Z · 4s · 566 l. |
 | 020-15 | feature | fait | codex-14 | PASS | 2026-09-15T11:56:34Z · 123s · 0 l. |
 | 020-02 | feature | fait | codex-13 | PASS | 2026-09-15T11:35:17Z · 107s · 0 l. |
 | 020-13 | contenu | fait | ag-28-flash | PASS | 2026-09-15T11:34:45Z · 1s · 5784 l. |

@@ -9,6 +9,7 @@
 // Usage : node public/sites-demo/generer.mjs lestraque
 import fs from 'node:fs'
 import path from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 const ICI = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'))
 const DA = JSON.parse(fs.readFileSync(path.join(ICI, '_kit', 'da.json'), 'utf8'))
@@ -272,12 +273,33 @@ function liensIndex(html) {
   })
 }
 
-function generer(metier) {
-  const dossier = path.join(ICI, metier)
-  const site = JSON.parse(fs.readFileSync(path.join(dossier, 'site.json'), 'utf8'))
-  const contenu = JSON.parse(fs.readFileSync(path.join(dossier, 'contenu.json'), 'utf8'))
-  const attributions = JSON.parse(fs.readFileSync(path.join(dossier, 'attributions.json'), 'utf8'))
-  const da = { ...DA.generique, ...(DA[site.metier] || {}), ...(site.da && DA[site.da] ? DA[site.da] : {}) }
+async function generer(metier, options = {}) {
+  const dossierSource = path.join(ICI, metier)
+  const dossier = options.sortie || dossierSource
+  const site = JSON.parse(fs.readFileSync(path.join(dossierSource, 'site.json'), 'utf8'))
+  const contenu = JSON.parse(fs.readFileSync(path.join(dossierSource, 'contenu.json'), 'utf8'))
+  const remplacementDa = options.da ? JSON.parse(fs.readFileSync(options.da, 'utf8')) : null
+  const da = { ...DA.generique, ...(DA[site.metier] || {}), ...(site.da && DA[site.da] ? DA[site.da] : {}), ...(remplacementDa || {}) }
+  const famillesActives = options.familles ?? (Array.isArray(da.familles) ? da.familles : [])
+  const dossierFamilles = path.join(ICI, '_kit', 'familles')
+  const famillesChargees = []
+  for (const nom of famillesActives) {
+    if (!/^[a-z0-9-]+$/.test(nom)) throw new Error(`${metier} : nom de famille invalide : ${nom}`)
+    const css = path.join(dossierFamilles, `${nom}.css`)
+    const js = path.join(dossierFamilles, `${nom}.js`)
+    const module = path.join(dossierFamilles, `${nom}.mjs`)
+    famillesChargees.push({
+      nom,
+      css: fs.existsSync(css) ? fs.readFileSync(css, 'utf8') : '',
+      js: fs.existsSync(js) ? fs.readFileSync(js, 'utf8') : '',
+      crochets: fs.existsSync(module) ? (await import(pathToFileURL(module).href)).default || {} : {},
+    })
+  }
+  let attributions = JSON.parse(fs.readFileSync(path.join(dossierSource, 'attributions.json'), 'utf8'))
+  for (const { nom } of famillesChargees) {
+    const fichier = path.join(dossierSource, nom, 'attributions.json')
+    if (fs.existsSync(fichier)) attributions = attributions.concat(JSON.parse(fs.readFileSync(fichier, 'utf8')))
+  }
   const BASE = site.url_base || `https://${metier}.demo.invalid`
   const ville = site.communes[0]
   const tel = site.telephone
@@ -287,10 +309,12 @@ function generer(metier) {
   const baseDe = (a) => a.base || String(a.fichier).replace(/^images\//, '').replace(/-(\d+)\.\w+$/, '')
   // `usage: "reserve"` : photos mises de côté (tâche 018-06), pas encore branchées. Elles ne sont ni affichées, ni créditées, ni
   // comptées comme orphelines : la génération échouait sur elles et bloquait la voix et le devis (juge du 14/09, 22 h 06).
-  const photos = [...new Map(attributions.filter((a) => a.usage !== 'reserve').map((a) => [baseDe(a), a])).values()]
-  for (const p of photos) p.largeurs = [...new Set(attributions.filter((x) => baseDe(x) === baseDe(p)).map((x) => Number((/-(\d+)\.(avif|webp)$/.exec(x.fichier) || [])[1])).filter(Boolean))].sort((x, y) => x - y)
+  const attributionsPhotos = attributions.filter((a) => !['video', 'rendu'].includes(a.type))
+  const photos = [...new Map(attributionsPhotos.filter((a) => a.usage !== 'reserve').map((a) => [baseDe(a), a])).values()]
+  for (const p of photos) p.largeurs = [...new Set(attributionsPhotos.filter((x) => baseDe(x) === baseDe(p)).map((x) => Number((/-(\d+)\.(avif|webp)$/.exec(x.fichier) || [])[1])).filter(Boolean))]
+    .sort((x, y) => x - y)
   if (!photos.length) throw new Error(`${metier} : aucune photo dans attributions.json`)
-  const photoDe = (base, role) => { const p = photos.find((x) => x.base === base); if (!p) throw new Error(`${metier} : photo « ${base} » (${role}) absente d'attributions.json`); for (const l of p.largeurs) for (const ext of ['avif', 'webp']) if (!fs.existsSync(path.join(dossier, 'images', `${base}-${l}.${ext}`))) throw new Error(`${metier} : images/${base}-${l}.${ext} manque sur le disque`); return p }
+  const photoDe = (base, role) => { const p = photos.find((x) => x.base === base); if (!p) throw new Error(`${metier} : photo « ${base} » (${role}) absente d'attributions.json`); for (const l of p.largeurs) for (const ext of ['avif', 'webp']) if (!fs.existsSync(path.join(dossierSource, 'images', `${base}-${l}.${ext}`))) throw new Error(`${metier} : images/${base}-${l}.${ext} manque sur le disque`); return p }
   const heros = da.heros ? photoDe(da.heros, 'héros') : (photos.find((p) => p.base === 'hero') || photos[0])
   const herosMobile = da.herosMobile ? photoDe(da.herosMobile, 'héros mobile') : null
   const galerieAccueil = Array.isArray(da.galerie) ? da.galerie.map((b) => photoDe(b, 'galerie')) : null
@@ -339,8 +363,23 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
   // styles.css bloque le rendu : les commentaires du kit (le « pourquoi » de chaque règle, un bon quart du fichier) restent dans
   // _kit/kit.css et ne partent pas en ligne. Le h1 est l'élément LCP du téléphone, peint après styles.css (Lighthouse, 14/09).
   const sansCommentaires = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/[ \t]*\n[ \t]*/g, '\n').replace(/\n{2,}/g, '\n').trim()
-  const stylesCss = `/* ${site.nom} — direction artistique « ${da.label} » (cerveau site v2, ${AUJOURDHUI}) — source commentée : _kit/kit.css */\n${faces}\n${tokens}\n${sansCommentaires(KIT_CSS)}\n`
+  const cssFamilles = famillesChargees.map((famille) => sansCommentaires(famille.css)).filter(Boolean)
+  const stylesCss = `/* ${site.nom} — direction artistique « ${da.label} » (cerveau site v2, ${AUJOURDHUI}) — source commentée : _kit/kit.css */\n${faces}\n${tokens}\n${sansCommentaires(KIT_CSS)}\n${cssFamilles.length ? `${cssFamilles.join('\n')}\n` : ''}`
   if (/ui-monospace|Consolas|SFMono/.test(stylesCss)) throw new Error(`${metier} : styles.css renvoie encore à une pile monospace du système`)
+
+  let pageCourante = null
+  const contexte = (rel) => ({ metier, da, site, contenu, rel, photoDe, esc, page: pageCourante })
+  const crochetDernier = (nom, valeur, args, rel) => {
+    for (const famille of famillesChargees) {
+      const crochet = famille.crochets[nom]
+      if (typeof crochet === 'function') valeur = crochet(...args, contexte(rel))
+    }
+    return valeur
+  }
+  const crochetConcatene = (nom, args, rel) => famillesChargees.map((famille) => {
+    const crochet = famille.crochets[nom]
+    return typeof crochet === 'function' ? crochet(...args, contexte(rel)) : ''
+  }).filter((html) => html != null).join('')
 
   // ── La marque : un monogramme tiré de la police de titre (nav, pied de page, favicon) ─────────────────────────
   let marque = '<i></i>', favicon = null
@@ -475,7 +514,8 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     // da.etapesPhoto : une photo sous le titre (colonne collante sur bureau, pleine largeur au téléphone)
     const ep = da.etapesPhoto ? photoDe(da.etapesPhoto, 'photo des étapes') : null
     const photoEtapes = ep ? `<div class="etapes__photo">${photo(ep, rel, { sizes: '(max-width: 959px) 100vw, 30rem' })}</div>` : ''
-    return `<section class="${classe}"${id ? ` id="${id}"` : ''}${nuit(classe)}><div class="conteneur"><div class="etapes"><div class="etapes__tete reveal">${surtitre}<h2>${titreScene(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}${photoEtapes}</div><ol class="etapes__liste">${lis}</ol>${da.etapesMonumentales ? '<div class="etapes__jauge" aria-hidden="true"><span></span></div>' : ''}</div></div></section>`
+    const mediaFamille = crochetDernier('etapesMedia', null, [], rel)
+    return `<section class="${classe}"${id ? ` id="${id}"` : ''}${nuit(classe)}><div class="conteneur"><div class="etapes"><div class="etapes__tete reveal">${surtitre}<h2>${titreScene(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}${mediaFamille ?? photoEtapes}</div><ol class="etapes__liste">${lis}</ol>${da.etapesMonumentales ? '<div class="etapes__jauge" aria-hidden="true"><span></span></div>' : ''}</div></div></section>`
   }
 
   // ── Les scènes (da.scenes, priorité 8) : un gabarit par genre de section au lieu d'entete() + cartes() partout ─────────
@@ -497,7 +537,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     if (!da.atelier) throw new Error(`${metier} : section « ${s.h2} » (atelier) sans photo (da.json → atelier)`)
     const a = photoDe(da.atelier, 'bande « Dans l’atelier »'), m = da.atelierMobile ? photoDe(da.atelierMobile, 'bande « Dans l’atelier », téléphone') : null
     // au téléphone, le 9:16 couvre 100svh : sa largeur affichée vaut 56,25 % de la hauteur quand l'écran est plus étroit que 9:16
-    return `<section class="scene atelier" id="atelier" data-nav="sombre"><div class="atelier__media">${photoHeros(a, m, rel, { lazy: true, sizesMobile: '(max-aspect-ratio: 9/16) 56.25vh, 100vw' })}</div><div class="atelier__contenu"><h2 class="atelier__titre reveal">${titreScene(s.h2)}</h2>${intro.map((p) => `<p class="atelier__phrase reveal" style="--i:2">${esc(p)}</p>`).join('')}<p class="atelier__legende">${esc(a.legende)}</p></div></section>`
+    return `<section class="scene atelier" id="atelier" data-nav="sombre"><div class="atelier__media">${photoHeros(a, m, rel, { lazy: true, sizesMobile: '(max-aspect-ratio: 9/16) 56.25vh, 100vw' })}</div><div class="atelier__contenu"><h2 class="atelier__titre reveal">${titreScene(s.h2)}</h2>${intro.map((p) => `<p class="atelier__phrase reveal" style="--i:2">${crochetDernier('atelierPhrase', esc(p), [p], rel)}</p>`).join('')}<p class="atelier__legende">${esc(a.legende)}</p></div></section>`
   }
   // Les réalisations sur noir : chaque photo est son propre .reveal ; à l'accueil, un travelling épinglé (kit.css, bureau et
   // view() seulement) avec un compteur 01/05 lié à la position ; ailleurs, une rangée de trois ouvrages
@@ -592,10 +632,21 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     // n'était qu'une phrase et trois chiffres, sans aucune image (juge du 14/09, priorité 10)
     const ph = da.plateauPhoto ? photoDe(da.plateauPhoto, 'photo du plateau') : null
     const photoPlateau = ph ? `<div class="plateau__photo reveal" style="--i:1">${photo(ph, '', { sizes: '(max-width: 767px) 100vw, 40vw' })}</div>` : ''
-    return `<section class="plateau" data-nav="sombre" aria-label="L’atelier en bref"><div class="plateau__inner"><div class="plateau__haut"><figure class="plateau__citation reveal"><blockquote><p>${esc(site.artisan.citation)}</p></blockquote><figcaption><span class="plateau__signe">${esc(`${site.artisan.prenom} ${site.artisan.nom}`)} · <span>${esc(signatureDe(site.artisan, ville).split(' · ')[1])}</span></span><span class="plateau__parcours">${esc(site.artisan.parcours)}</span></figcaption></figure>${photoPlateau}</div><dl class="chiffres">${p.chiffres.map((x, i) => `<div class="chiffre reveal" style="--i:${i + 1}"><dt>${esc(x.legende)}</dt><dd><span class="chiffre__valeur">${esc(x.valeur)}</span>${x.unite ? `<span class="chiffre__unite">${esc(x.unite)}</span>` : ''}</dd></div>`).join('')}</dl></div></section>`
+    return `<section class="plateau" data-nav="sombre" aria-label="L’atelier en bref"><div class="plateau__inner"><div class="plateau__haut"><figure class="plateau__citation reveal"><blockquote><p>${crochetDernier('plateauCitation', esc(site.artisan.citation), [site.artisan.citation], '')}</p></blockquote><figcaption><span class="plateau__signe">${esc(`${site.artisan.prenom} ${site.artisan.nom}`)} · <span>${esc(signatureDe(site.artisan, ville).split(' · ')[1])}</span></span><span class="plateau__parcours">${esc(site.artisan.parcours)}</span></figcaption></figure>${photoPlateau}</div><dl class="chiffres">${p.chiffres.map((x, i) => `<div class="chiffre reveal" style="--i:${i + 1}"><dt>${esc(x.legende)}</dt><dd>${crochetDernier('plateauValeur', `<span class="chiffre__valeur">${esc(x.valeur)}</span>`, [x, i], '')}${x.unite ? `<span class="chiffre__unite">${esc(x.unite)}</span>` : ''}</dd></div>`).join('')}</dl></div></section>`
   }
 
   // ── L'accueil ────────────────────────────────────────────────────────────────────────────────────────────────
+  const attributsRelief = (rel) => {
+    if (!da.relief) return ''
+    const valeurOuSignature = (cle) => Object.hasOwn(da.relief, cle) ? da.relief[cle] === true : !!da.signature
+    let attributs = ` data-relief="${rel}relief.js" data-relief-fil="${rel}relief-fil.js" data-relief-profondeur="${rel}${esc(da.relief.profondeur)}" data-relief-oeil="${da.relief.oeil.join(',')}"`
+    if (valeurOuSignature('calme')) attributs += ' data-relief-calme'
+    if (valeurOuSignature('lumiereCss')) attributs += ' data-relief-lumiere-css'
+    if (da.relief.descente != null) attributs += ` data-relief-descente="${esc(JSON.stringify(da.relief.descente))}"`
+    if (da.relief.texture) attributs += ` data-relief-texture="${esc(da.relief.texture)}"`
+    return attributs
+  }
+
   function accueil(page) {
     const c = contenu.pages['/']
     const rel = ''
@@ -605,8 +656,8 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       // une phrase d'atelier. Plus de rabot, de lentille, de rideau ni de balayage : l'escalier seul, et un seul geste (kit.css).
       if (!c.h1Ligne) throw new Error(`${metier}/ : contenu.json → pages["/"].h1Ligne manque (la ligne display du h1)`)
       // da.relief : le relief WebGL du héros (bureau seulement, chargé par kit.js après load) — la page ne porte que trois attributs
-      const relief = da.relief ? ` data-relief="${rel}relief.js" data-relief-fil="${rel}relief-fil.js" data-relief-profondeur="${rel}${esc(da.relief.profondeur)}" data-relief-oeil="${da.relief.oeil.join(',')}"${da.signature ? ' data-relief-calme data-relief-lumiere-css' : ''}` : ''
-      heroHtml = `<section class="hero hero--plein" data-nav="sombre"${relief}><div class="hero__media">${photoHeros(heros, herosMobile, rel)}</div><div class="hero__contenu"><h1><span class="h1__cle"><span>${esc(c.h1)}</span></span> <span class="h1__ligne"><span class="h1__ligne-in">${mots(c.h1Ligne)}</span></span></h1><div class="hero__pied"><p class="chapeau">${esc(c.chapeau)}</p><div class="hero__actions"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
+      const relief = attributsRelief(rel)
+      heroHtml = `<section class="hero hero--plein" data-nav="sombre"${relief}><div class="hero__media">${photoHeros(heros, herosMobile, rel)}${crochetConcatene('herosMedia', [], rel)}</div><div class="hero__contenu"><h1><span class="h1__cle"><span>${esc(c.h1)}</span></span> <span class="h1__ligne"><span class="h1__ligne-in">${mots(c.h1Ligne)}</span></span></h1><div class="hero__pied"><p class="chapeau">${esc(c.chapeau)}</p><div class="hero__actions"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
     } else {
       const heroTexte = `<span class="mono entre" style="--d:.3s">${esc(c.kicker || `${da.label} · ${ville}`)}</span><h1>${mots(c.h1)}</h1><p class="chapeau entre" style="--d:1.1s">${esc(c.chapeau)}</p><div class="hero__actions entre" style="--d:1.3s"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div>`
       if (da.hero === 'aplat') heroHtml = `<section class="hero hero--aplat"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div class="hero__media entre" style="--d:.9s">${photo(heros, rel, { eager: true, sizes: '(max-width: 960px) calc(100vw - 2.5rem), 50vw' })}</div></div></section>`
@@ -787,6 +838,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       if (orphelines.length) throw new Error(`${metier} : ${orphelines.length} photo(s) d’attributions.json qu’aucune page n’affiche (${orphelines.map((p) => p.base).join(', ')}) — les retirer d’attributions.json et d’images/`)
       photosUtilisees = photos.filter((p) => vues.has(p.base))
     }
+    pageCourante = page
     const html = page.type === 'accueil' ? accueil(page) : page.type === 'legal' ? legale(page) : interieure(page, indexInterieure++)
     const ou = `${metier}${page.chemin}`
     gardeFous(html, ou, couverture)
@@ -794,6 +846,11 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     if (site.devis && page.type !== 'legal') gardeFousDevis(html, ou)
     gardeFousVoix(html, ou, { accueil: page.type === 'accueil', artisan: site.artisan })
     if (da.scenes && page.type !== 'legal') gardeFousScenes(html, ou)
+    const relPage = page.type === 'accueil' ? '' : '../'.repeat(page.chemin.split('/').filter(Boolean).length)
+    for (const famille of famillesChargees) {
+      const garde = famille.crochets.garde
+      if (typeof garde === 'function') garde(html, contexte(relPage))
+    }
     if (page.type === 'commune' && da.hero === 'plein') {
       const h1 = texteDe(/<h1\b[\s\S]*?<\/h1>/.exec(html)?.[0] || '').replace(/\s+/g, ' ').trim()
       const h1Accueil = texteDe(/<h1\b[\s\S]*?<\/h1>/.exec(rendues.find((r) => r.page.type === 'accueil')?.html || '')?.[0] || '').replace(/\s+/g, ' ').trim()
@@ -814,20 +871,39 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     }
     rendues.push({ page, html })
   }
+  pageCourante = null
   if (!rendues.some((r) => r.page.type === 'accueil')) throw new Error(`${metier} : aucune page d'accueil rendue`)
   // le relief : sa photo est bien le héros, sa carte existe (scripts/relief-profondeur.mjs), son module est dans le kit
   const KIT_RELIEF = path.join(ICI, '_kit', 'relief.js'), KIT_RELIEF_FIL = path.join(ICI, '_kit', 'relief-fil.js')
   if (da.relief) {
     if (da.relief.photo !== heros.base) throw new Error(`${metier} : da.json → relief.photo (« ${da.relief.photo} ») n’est pas le héros (« ${heros.base} »)`)
-    if (!fs.existsSync(path.join(dossier, da.relief.profondeur)) || fs.statSync(path.join(dossier, da.relief.profondeur)).size < 1024) throw new Error(`${metier} : carte de profondeur ${da.relief.profondeur} absente ou vide — node scripts/relief-profondeur.mjs`)
+    if (!fs.existsSync(path.join(dossierSource, da.relief.profondeur)) || fs.statSync(path.join(dossierSource, da.relief.profondeur)).size < 1024) throw new Error(`${metier} : carte de profondeur ${da.relief.profondeur} absente ou vide — node scripts/relief-profondeur.mjs`)
     if (!Array.isArray(da.relief.oeil) || da.relief.oeil.length !== 2 || da.relief.oeil.some((v) => !(v > 0 && v < 1))) throw new Error(`${metier} : da.json → relief.oeil doit être deux fractions entre 0 et 1`)
+    if (da.relief.descente != null) {
+      const d = da.relief.descente
+      if (!d || d.palier !== 0.30) throw new Error(`${metier} : da.json → relief.descente.palier doit valoir 0.30`)
+      if (!(d.dmax1 > 0 && d.dmax1 <= 0.26)) throw new Error(`${metier} : da.json → relief.descente.dmax1 doit être dans ]0 ; 0.26]`)
+      if (d.dmax15 > d.dmax1) throw new Error(`${metier} : da.json → relief.descente.dmax15 ne peut pas dépasser dmax1`)
+      if (![ -1, 1 ].includes(d.h)) throw new Error(`${metier} : da.json → relief.descente.h doit valoir -1 ou 1`)
+      if (d.gamma !== 0.6) throw new Error(`${metier} : da.json → relief.descente.gamma doit valoir 0.6`)
+      if (d.rw !== 0.045) throw new Error(`${metier} : da.json → relief.descente.rw doit valoir 0.045`)
+    }
+    if (da.relief.texture) {
+      const texture = path.join(dossierSource, da.relief.texture)
+      if (!fs.existsSync(texture) || fs.statSync(texture).size < 1024) throw new Error(`${metier} : texture de relief ${da.relief.texture} absente ou vide`)
+    }
     for (const f of [KIT_RELIEF, KIT_RELIEF_FIL]) if (!fs.existsSync(f)) throw new Error(`${metier} : _kit/${path.basename(f)} manque`)
   }
 
+  if (dossier !== dossierSource) {
+    fs.mkdirSync(path.dirname(dossier), { recursive: true })
+    fs.cpSync(dossierSource, dossier, { recursive: true })
+  }
   const fonts = path.join(dossier, 'fonts'); fs.rmSync(fonts, { recursive: true, force: true }); fs.mkdirSync(fonts)
   for (const { src, nom } of fichiersPolice) fs.copyFileSync(src, path.join(fonts, nom))
   fs.writeFileSync(path.join(dossier, 'styles.css'), stylesCss)
-  fs.writeFileSync(path.join(dossier, 'site.js'), KIT_JS)
+  const jsFamilles = famillesChargees.map((famille) => famille.js).filter(Boolean)
+  fs.writeFileSync(path.join(dossier, 'site.js'), [KIT_JS, ...jsFamilles].join('\n;\n'))
   for (const f of [KIT_RELIEF, KIT_RELIEF_FIL]) { if (da.relief) fs.copyFileSync(f, path.join(dossier, path.basename(f))); else fs.rmSync(path.join(dossier, path.basename(f)), { force: true }) }
   if (favicon) fs.writeFileSync(path.join(dossier, 'favicon.svg'), favicon)
   let n = 0
@@ -844,6 +920,17 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
 
 const args = process.argv.slice(2)
 if (args.includes('--tous')) { console.error('--tous est retiré (14/09) : une seule démo vit, Lestraque ; les neuf autres sont gelées. Usage : node public/sites-demo/generer.mjs lestraque'); process.exit(2) }
+const valeurSortie = args.find((a) => a.startsWith('--sortie='))?.slice('--sortie='.length)
+const valeurFamilles = args.find((a) => a.startsWith('--familles='))?.slice('--familles='.length)
+const valeurDa = args.find((a) => a.startsWith('--da='))?.slice('--da='.length)
+if (valeurSortie === '') { console.error('--sortie attend un dossier'); process.exit(2) }
+if (valeurDa === '') { console.error('--da attend un fichier JSON'); process.exit(2) }
 const METIERS = args.filter((a) => !a.startsWith('--'))
 if (!METIERS.length) { console.error('usage : node public/sites-demo/generer.mjs lestraque'); process.exit(2) }
-for (const m of METIERS) { try { generer(m) } catch (e) { console.log(`  ✗ ${m} : ${e.message}`); process.exitCode = 1 } }
+if (valeurSortie !== undefined && METIERS.length !== 1) { console.error('--sortie accepte un seul métier'); process.exit(2) }
+const options = {
+  sortie: valeurSortie === undefined ? null : path.resolve(valeurSortie),
+  familles: valeurFamilles === undefined ? null : valeurFamilles.split(',').map((x) => x.trim()).filter(Boolean),
+  da: valeurDa === undefined ? null : path.resolve(valeurDa),
+}
+for (const m of METIERS) { try { await generer(m, options) } catch (e) { console.log(`  ✗ ${m} : ${e.message}`); process.exitCode = 1 } }

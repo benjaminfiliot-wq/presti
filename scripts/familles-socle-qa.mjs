@@ -25,7 +25,7 @@ import { fileURLToPath } from 'node:url'
 const R = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SD = path.join(R, 'public', 'sites-demo')
 const BASE = 'e33aec0' // le dernier commit avant 021-01 : son générateur est la référence de SO-1
-const T = path.join(R, '.orchestre', 'travail', 'socle-qa')
+const T = path.join(R, '.orchestre', 'travail', `socle-qa-${process.pid}`) // un dossier par lancement : deux juges peuvent tourner ensemble
 const DESCENTE = { palier: 0.30, dmax1: 0.116, dmax15: 0.066, roulisParDelta: 0, gamma: 0.6, rw: 0.045, h: -1 }
 const TEXTURE = 'images/heros-escalier-2880.avif'
 const echecs = [], faits = []
@@ -100,7 +100,7 @@ try {
       const desc = attribut(balise, 'data-relief-descente')
       let d = null; try { d = JSON.parse(deco(desc || '')) } catch {}
       if (!d || !memeJson(d, DESCENTE)) echecs.push(`SO-4 : data-relief-descente du dépôt ${desc === null ? 'absent' : `vaut ${deco(desc)}`}, attendu ${JSON.stringify(DESCENTE)}`)
-      if (attribut(balise, 'data-relief-texture') !== null) echecs.push('SO-4 : data-relief-texture posé par da.json du dépôt, alors que la texture 2880 n\'existe pas encore (021-02)')
+      if (attribut(balise, 'data-relief-texture') !== null) echecs.push('SO-4 : data-relief-texture posé par da.json du dépôt, alors que la clé texture revient à 021-02')
     }
 
     // ── SO-2 ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -175,14 +175,27 @@ try {
     fs.writeFileSync(fValide, JSON.stringify(daValide))
     const rValide = gen(COPIE, [`--da=${fValide}`, '--familles=', `--sortie=${sValide}`])
     if (rValide.code !== 0 || !fs.existsSync(path.join(sValide, 'index.html'))) echecs.push(`SO-3 : la même entrée --da= valide est refusée (${rValide.sortie.trim().slice(-300)})`)
+    // le garde-fou « manque sur le disque » reste strict : une variante listée dans attributions.json et absente est refusée
+    // (ajouté après le 2e tour de Codex, qui l'avait remplacé par un filtre silencieux)
+    const VARIANTE = 'tournage-copeaux-480.webp', fVar = path.join(COPIE, 'lestraque', 'images', VARIANTE)
+    if (fs.existsSync(fVar)) {
+      fs.rmSync(fVar)
+      const sVar = path.join(T, 'sortie-variante')
+      const rVar = gen(COPIE, ['--familles=', `--sortie=${sVar}`])
+      if (rVar.code === 0) echecs.push(`SO-3 : la variante ${VARIANTE}, listée dans attributions.json et absente du disque, est acceptée : le garde-fou « manque sur le disque » a été affaibli`)
+      if (fs.existsSync(sVar) && fs.readdirSync(sVar).length) echecs.push('SO-3 : variante absente refusée après avoir écrit dans le dossier de sortie')
+      fs.copyFileSync(path.join(SD, 'lestraque', 'images', VARIANTE), fVar)
+    }
 
     // ── SO-4 (--da= avec texture) ───────────────────────────────────────────────────────────────────────────
-    const fTex = path.join(COPIE, 'lestraque', TEXTURE)
-    fs.writeFileSync(fTex, crypto.randomBytes(2048))
+    // heros-escalier-2880.avif existe dans le site (variante du héros) : le juge ne l'écrase ni ne l'efface ; il ne crée un
+    // fichier de test que s'il manque
+    const fTex = path.join(COPIE, 'lestraque', TEXTURE), texCreee = !fs.existsSync(fTex)
+    if (texCreee) fs.writeFileSync(fTex, crypto.randomBytes(2048))
     const fDaTex = path.join(T, 'da-texture.json'), sTex = path.join(T, 'sortie-texture')
     fs.writeFileSync(fDaTex, JSON.stringify({ ...daValide, relief: { ...daValide.relief, texture: TEXTURE } }))
     const rTex = gen(COPIE, [`--da=${fDaTex}`, '--familles=', `--sortie=${sTex}`])
-    fs.rmSync(fTex, { force: true })
+    if (texCreee) fs.rmSync(fTex, { force: true })
     if (rTex.code !== 0) echecs.push(`SO-4 : génération avec texture présente en échec (${rTex.sortie.trim().slice(-300)})`)
     else {
       const b = baliseHeros(lire(path.join(sTex, 'index.html')))
