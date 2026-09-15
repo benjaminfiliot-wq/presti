@@ -16,6 +16,41 @@
   // première lecture dans la frame suivante : lire scrollY pendant l'exécution du script forçait la mise en page de toute la page
   // dans la tâche du script (longue tâche de 194 ms attribuée à site.js, Lighthouse mobile du 14/09)
   requestAnimationFrame(surNav); addEventListener('scroll', surNav, { passive: true })
+  // Sur la démo qui demande une barre retenue, le bouton du héros et « Devis » dans la nav se passent le relais au bureau.
+  // Le pilote n'est activé qu'avec IntersectionObserver : sans lui (ou sans JS), le chemin de devis de la nav reste visible.
+  var appelHeros = d.querySelector('.hero .hero__actions .bouton'), devisNav = nav && nav.querySelector('.nav__devis')
+  if (h.classList.contains('da--nav-retenue') && nav && appelHeros && devisNav && 'IntersectionObserver' in window && matchMedia('(min-width: 960px)').matches) {
+    nav.classList.add('nav--retenue')
+    var montrerAppelNav = function (montrer) {
+      nav.classList.toggle('nav--appel', montrer)
+      if (montrer) devisNav.removeAttribute('tabindex'); else devisNav.setAttribute('tabindex', '-1')
+    }
+    montrerAppelNav(false)
+    var appelCoupeEcran = true, appelAttendu = false
+    var appelVisible = function () {
+      appelAttendu = false
+      if (!appelCoupeEcran) return montrerAppelNav(true)
+      var r = appelHeros.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2
+      if (x < 0 || x >= innerWidth || y < 0 || y >= innerHeight) return montrerAppelNav(true)
+      var dessus = d.elementFromPoint(x, y), opacite = 1
+      for (var n = appelHeros; n && n.nodeType === 1; n = n.parentElement) opacite *= Number(getComputedStyle(n).opacity)
+      montrerAppelNav(!(opacite >= 0.2 && dessus && (dessus === appelHeros || appelHeros.contains(dessus))))
+    }
+    var demanderAppel = function () {
+      if (!appelAttendu) { appelAttendu = true; requestAnimationFrame(appelVisible) }
+    }
+    new IntersectionObserver(function (es) {
+      var e = es[0], r = e.boundingClientRect
+      // Le rectangle livré par l'observateur est la porte fiable : Chromium peut émettre une première entrée
+      // isIntersecting=false pendant la mise en place du héros collant alors que son bouton est déjà à l'écran.
+      appelCoupeEcran = r.width > 0 && r.height > 0 && r.right > 0 && r.left < innerWidth && r.bottom > 0 && r.top < innerHeight
+      if (appelCoupeEcran) demanderAppel(); else montrerAppelNav(true)
+    }, { threshold: 0 }).observe(appelHeros)
+    demanderAppel()
+    appelHeros.closest('.hero').addEventListener('animationend', demanderAppel)
+    addEventListener('scroll', demanderAppel, { passive: true })
+    addEventListener('resize', demanderAppel)
+  }
   // au téléphone, les scènes lointaines sont en content-visibility:auto (kit.css) : une adresse avec ancre rend tout d'abord
   if (location.hash) h.classList.add('tout-rendu')
   // au premier défilement, dans un moment libre, tout est mis en page une fois : le gain reste au chargement, et une capture

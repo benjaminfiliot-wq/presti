@@ -51,6 +51,15 @@ strong{font-weight:600}
 .nav--claire:not(.solide) .burger{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3)}
 .nav--claire:not(.solide) .burger span{background:#fff}
 @media(min-width:960px){.nav__liens{display:flex}.nav__tel{display:inline}.nav__devis{display:inline-flex}}
+@media(min-width:960px){
+.da--nav-retenue .nav__tel,.da--nav-retenue .burger{display:none}
+.da--nav-retenue .nav__devis{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 240ms cubic-bezier(.23,1,.32,1),transform 240ms cubic-bezier(.23,1,.32,1),visibility 0s,background .3s ease,color .3s ease}
+.da--nav-retenue .nav.nav--retenue:not(.nav--appel) .nav__devis{opacity:0;transform:translateY(-6px);visibility:hidden;pointer-events:none;transition:opacity 240ms cubic-bezier(.23,1,.32,1),transform 240ms cubic-bezier(.23,1,.32,1),visibility 0s 240ms,background .3s ease,color .3s ease}
+}
+@media(min-width:960px) and (prefers-reduced-motion:reduce){
+.da--nav-retenue .nav__devis,.da--nav-retenue .nav.nav--retenue:not(.nav--appel) .nav__devis{transform:none;transition:opacity 240ms cubic-bezier(.23,1,.32,1),visibility 0s,background .3s ease,color .3s ease}
+.da--nav-retenue .nav.nav--retenue:not(.nav--appel) .nav__devis{transition-delay:0s,240ms,0s,0s}
+}
 .burger{width:46px;height:46px;border-radius:50%;border:1px solid var(--ligne);background:var(--fond-2);display:grid;place-content:center;cursor:pointer;transition:background .3s,transform .3s;position:relative;z-index:60}
 .burger span{display:block;width:20px;height:2px;background:var(--encre);transition:transform .35s cubic-bezier(.16,1,.3,1),background .3s;margin:2.5px 0}
 .burger:hover{transform:scale(1.06)}
