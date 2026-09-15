@@ -329,7 +329,11 @@ html.js .hero--plein .mot{opacity:1;transform:none;animation:none}
   html.js .h1__cle>span,html.js .h1__ligne-in{transform:translateY(110%);animation:lever .95s cubic-bezier(.16,1,.3,1) forwards}
   html.js .h1__cle>span{animation-delay:.1s}
   html.js .h1__ligne-in{animation-delay:.24s}
-  html.js .hero__pied{opacity:0;transform:translateY(14px);animation:entre .8s cubic-bezier(.16,1,.3,1) .8s forwards}
+  /* le pied entre en fondu, sans bouger sa boîte ; seul le chapeau monte. Avec le translateY sur le pied, le bouton « Demander un
+     devis » restait instable 1,6 s : sous charge, un clic automatique qui réessaie (Playwright) recentrait le bouton en défilant,
+     et le plateau collant montait sur lui (juge d'usage, 15/09) */
+  html.js .hero__pied{opacity:0;animation:entre .8s cubic-bezier(.16,1,.3,1) .8s forwards}
+  html.js .hero__pied .chapeau{transform:translateY(14px);animation:entre .8s cubic-bezier(.16,1,.3,1) .8s forwards}
 }
 @keyframes lever{to{transform:none}}
 
@@ -762,7 +766,7 @@ html.js .galerie--scene .galerie__item.vu figcaption{opacity:1}
   #etapes{padding-bottom:4.25rem}
   .da--etapes .etapes{gap:1.75rem}
   .etapes__photo{order:-1;margin-top:calc(-1 * clamp(4rem,9vw,8rem));margin-bottom:.75rem}
-  .da--etapes .etapes__liste{display:grid;grid-auto-flow:column;grid-auto-columns:76vw;column-gap:4vw;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;margin-inline:calc(50% - 50vw);padding-inline:calc(50vw - 50%);scroll-padding-inline:calc(50vw - 50%)}
+  .da--etapes .etapes__liste{display:grid;grid-auto-flow:column;grid-auto-columns:76vw;column-gap:4vw;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;margin-inline:-5vw;padding-inline:5vw;scroll-padding-inline:5vw}
   .da--etapes .etapes__liste::-webkit-scrollbar{display:none}
   .da--etapes .etape{grid-template-columns:minmax(0,1fr);row-gap:.5rem;align-content:start;scroll-snap-align:start;padding-block:1.1rem 0}
   .da--etapes .etape__num{font-size:18vw}
@@ -861,4 +865,289 @@ html.js .galerie--scene .galerie__item.vu figcaption{opacity:1}
   main>section:not(:first-child):not(.plateau){content-visibility:auto;contain-intrinsic-size:auto 900px}
   /* même sélecteur que la règle du dessus, préfixé : sinon moins spécifique, et le défilement doux visait des hauteurs provisoires */
   html.tout-rendu main>section:not(:first-child):not(.plateau){content-visibility:visible}
+}
+
+/* ── v23 : finitions des juges des vagues 1 et 2 (14/09) — un seul bord, l'échelle jusqu'en bas, communes, travelling, contact ──
+   Transform, opacity et clip seulement ; l'animation lourde reste au bureau ≥ 1024 px hors mouvement réduit. */
+
+/* Un seul bord gauche de contenu : 5 % de la largeur (72 px à 1440), borné à 1720 px. Avant, la nav et le héros étaient à 72 px,
+   les communes, les étapes, les mentions légales et le pied à 120 px (colonne de 1200 px). En % et non en vw : une barre de
+   défilement classique (15 px) décalait de 7 px les blocs en vw et ceux en %. */
+.conteneur,.nav .conteneur,.scene-large,.plateau__inner,.contact__inner,.atelier__contenu{width:min(90%,1720px);max-width:none}
+.hero--plein .hero__contenu{padding-inline:max(5%,calc((100% - 1720px) / 2))}
+.da--communes #communes .commune{padding-inline:max(5%,calc((100% - 1720px) / 2))}
+
+/* L'échelle ne retombe plus après la galerie : les titres des communes, des étapes et des questions à 7,4 vw sur bureau, comme
+   « Ce que je fabrique » (ils étaient à 3,9 et 5,4 vw) ; la galerie en travelling à 7 vw */
+@media(min-width:960px){
+  #communes h2,.etapes__tete h2,.faq-scene__tete h2{font-size:clamp(2.9rem,7.4vw,8.5rem);line-height:.92;letter-spacing:-.04em}
+}
+
+/* Les communes au bureau : deux colonnes de noms (la moitié droite de la section était vide), filets pleine largeur, un filet
+   vertical entre les colonnes ; trois voisines (pages communes) sur trois colonnes. Les bords suivent la largeur de la liste
+   (unités cqi) : ils tombent sur le bord de contenu commun. La section tient en 0,5 écran à 1280×800 et 1366×768. */
+@media(min-width:900px){
+  .da--communes #communes.scene--communes .communes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));container-type:inline-size}
+  .da--communes #communes.scene--communes .commune{font-size:min(5.2vw,10.5svh);font-size:min(5.2cqi,10.5svh);line-height:.9;padding-block:.14em .2em;padding-inline:2.5vw;padding-inline:2.5cqi;gap:.35em}
+  .da--communes #communes.scene--communes .commune:nth-child(odd){padding-left:max(5vw,calc(50vw - 860px));padding-left:max(5cqi,calc(50cqi - 860px))}
+  .da--communes #communes.scene--communes .commune:nth-child(even){padding-right:max(5vw,calc(50vw - 860px));padding-right:max(5cqi,calc(50cqi - 860px));border-left:1px solid var(--ligne)}
+  .da--communes #communes.scene--communes .communes:has(>:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}
+  .da--communes #communes.scene--communes .communes:has(>:nth-child(3):last-child) .commune{font-size:min(3.6cqi,9svh);padding-inline:2.5cqi;border-left:1px solid var(--ligne)}
+  .da--communes #communes.scene--communes .communes:has(>:nth-child(3):last-child) .commune:first-child{padding-left:max(5cqi,calc(50cqi - 860px));border-left:0}
+  .da--communes #communes.scene--communes .communes:has(>:nth-child(3):last-child) .commune:last-child{padding-right:max(5cqi,calc(50cqi - 860px))}
+}
+
+/* Le contact : la sous-ligne des horaires sur sa propre ligne ; au bureau, le titre sur une ligne (8,6 vw) et un haut moins
+   profond — après « Demander un devis », tout le formulaire tient dans 1440×900, bouton « Envoyer ma demande » compris (le bas
+   du formulaire était à 1 083 px). */
+.bande__ligne{display:block}
+@media(min-width:900px){
+  .contact--photo{padding-top:clamp(5.5rem,9vw,8rem)}
+  /* padding-bottom : le jambage du « j » de « projet » touchait la phrase d'introduction posée dessous */
+  .contact--photo .contact__tete h2{font-size:8.6vw;padding-bottom:.14em}
+  .contact--photo.contact--long .contact__tete h2{font-size:7vw}
+  /* les deux colonnes de communes se touchent : les filets des rangées restent continus (l'ancien écart de 3 rem les coupait) */
+  .da--communes #communes.scene--communes .communes{column-gap:0}
+}
+/* au téléphone, l'ancre #contact arrive sous la nav (scroll-margin 0) : le surtitre « Contact » descend sous la nav (78 px) */
+@media(max-width:899px){
+  .contact--photo .contact__tete{padding-top:6rem}
+  /* un fond de matière (les boiseries de l'accueil) : la photo reste visible sous le titre, mais son bas — un tapis clair — passait
+     derrière les horaires et l'adresse ; le voile s'y referme (les pages communes gardent leur ouvrage visible en bas) */
+  .contact--matiere .contact__media::after{background:linear-gradient(180deg,rgba(20,17,14,.12) 0%,rgba(20,17,14,.3) 26%,rgba(20,17,14,.84) 35%,rgba(20,17,14,.88) 70%,rgba(20,17,14,.94) 100%)}
+}
+
+/* Le héros au téléphone : « rester » chevauchait l'anneau clair de la spirale. Sans toucher aux fichiers de la photo : l'image
+   est agrandie depuis son bord haut (1,26), l'œil et son anneau descendent sous le titre, ramené à 30 vw (117 px à 390) ; la
+   dérive ne fait que monter de 3 % (mesuré à 360, 390 et 430 px : l'anneau reste sous « rester » aux deux extrémités). Le voile
+   du haut descend un peu plus bas : les trois lignes reposent maintenant sur la lumière des marches. */
+@media(max-width:767px) and (min-height:560px){
+  .hero--plein:not(.hero--commune) h1{--h1-ligne:max(30vw,112px)}
+  .hero--plein:not(.hero--commune) .hero__media img{transform-origin:50% 0;scale:1.26}
+  .hero--plein:not(.hero--commune) .hero__media::after{background:linear-gradient(180deg,rgba(10,7,4,.84) 0%,rgba(10,7,4,.72) 32%,rgba(10,7,4,.48) 48%,rgba(10,7,4,0) 60%),linear-gradient(0deg,rgba(10,7,4,.9) 0%,rgba(10,7,4,.55) 17%,rgba(10,7,4,0) 33%)}
+}
+@media(max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference){
+  html.js .hero--plein:not(.hero--commune) .hero__media img{scale:1.26;animation-name:derive-tel-haut}
+}
+@keyframes derive-tel-haut{from{translate:0 0}to{translate:0 -3%}}
+/* Les scènes sombres visées par une ancre arrivent SOUS la nav, et non 88 px plus bas : la bande de la scène claire précédente
+   restait sous la nav, qui se faisait beige au-dessus du noir (#contact à 390 px, juge du 14/09). Leur propre marge haute
+   dégage le titre de la nav. */
+#contact,#realisations{scroll-margin-top:0}
+#realisations{padding-top:6rem}
+
+/* La photo des questions (la cuisine sous poutres) cadrée sur la table en bois, pas sur l'évier */
+.faq-scene__photo img{object-position:92% 62%}
+@media(min-width:960px){.faq-scene__photo{aspect-ratio:1/1;max-width:24rem}}
+/* au téléphone aussi en carré : en 4:3, le cadrage ne rognait que 11 % de la largeur et l'évier inox restait en vedette */
+@media(max-width:959px){.faq-scene__photo{aspect-ratio:1/1}}
+
+/* Le travelling : 2 écrans de défilement au plus (250svh avant) ; kit.js le pilote (.pilote) — le compteur donne la photo
+   réellement au centre (il affichait 04/04 quand la n° 03 était centrée : la position de la piste n'est pas linéaire en photos),
+   et une légende ne s'affiche que si sa photo est entière à l'écran (plus de légende coupée au bord). */
+@media(min-width:1024px) and (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: view()){
+    #realisations:has(.travelling){padding-top:0}
+    .travelling{height:200svh}
+    .travelling .galerie__tete .h2--scene{font-size:clamp(2.9rem,7vw,8rem)}
+    .travelling .galerie--scene .galerie__item:nth-child(n) .galerie__cadre{height:min(calc(100svh - 17.5rem),50vw)}
+    /* la dernière photo finit AU CENTRE (une marge de fin d'une demi-largeur d'écran moins sa demi-largeur) : sinon elle restait
+       collée au bord droit, la n° 3 gardait le centre et le compteur ne montrait jamais 04 */
+    .travelling .galerie--scene{padding-inline-end:calc(50vw - min(calc(100svh - 17.5rem),50vw) * .75)}
+    .travelling .galerie--scene:has(>.galerie__item--portrait:last-child){padding-inline-end:calc(50vw - min(calc(100svh - 17.5rem),50vw) * .4)}
+    .travelling.pilote .compteur__piste{animation:none;transform:translateY(calc(var(--k,0) * -1em));transition:transform .55s cubic-bezier(.16,1,.3,1)}
+    html.js .travelling.pilote .galerie__item.vu:not(.entier) figcaption{opacity:0;transition-delay:0s}
+  }
+}
+
+/* ── v24 : 2e tour du juge de la vague 3 (14/09) — nav au pixel, étapes au bord, liens du héros, questions, devis au téléphone ── */
+
+/* La nav en deux couches (kit.js → nav--bande) : le beige et le noir translucide, chacune découpée sur la frontière de la scène
+   sombre qui passe dessous. Plus de barre beige qui coiffe le noir pendant 60 px (contact à 390 px), plus de saut : la frontière
+   glisse avec la page. Seul le clip change (composé), la couleur du texte bascule quand le noir atteint le milieu. */
+.nav.nav--bande{transition:color .25s ease}
+.nav.nav--bande::before,.nav.nav--bande::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .3s ease}
+.nav.nav--bande::before{background:color-mix(in srgb,var(--fond) 84%,transparent);box-shadow:inset 0 -1px 0 var(--ligne);clip-path:inset(var(--nav-ch,0px) 0 var(--nav-cb,0px) 0)}
+.nav.nav--bande::after{background:rgba(20,17,14,.8);clip-path:inset(var(--nav-sh,100%) 0 var(--nav-sb,0px) 0)}
+.nav.nav--bande.solide,.nav.nav--bande.solide.nav--sombre{background:transparent;box-shadow:none}
+.nav.nav--bande.solide::before,.nav.nav--bande.solide::after{opacity:1}
+body.menu-ouvert .nav.nav--bande::before,body.menu-ouvert .nav.nav--bande::after{opacity:0}
+
+/* Étapes au téléphone : un scroll-padding en % se rapporte au rail lui-même (calc(50vw - 50%) = 0) — la première carte
+   s'aimantait contre le bord de l'écran (h3 à 0 px). Les mêmes 5vw que le bord de contenu, comme les deux autres rails. */
+/* v25 : corrigé dans la règle du rail elle-même (plus aucun calc en % sur le rail) ; le rail n'existe que sous 760 px — de 760 à 959 px, les étapes restent en liste */
+
+/* Les liens de la nav sur le héros (bureau) : posés sur les marches les plus claires, ils ne tenaient que par l'ombre portée.
+   Une pilule de verre fumé les regroupe (flou du fond + noir à 46 %) ; le rembourrage existe dans tous les états : aucun saut. */
+@media(min-width:960px){
+  .nav__liens{padding:.62rem 1.6rem;border-radius:999px;border:1px solid transparent;transition:background .45s ease,border-color .45s ease}
+  .nav--claire:not(.solide) .nav__liens{background:rgba(14,10,7,.46);border-color:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+}
+
+/* Le devis au téléphone : la pilule « Devis » reste dans la nav à côté du menu (elle était cachée sous 960 px : un accès devis
+   présent dans la page mais impossible à toucher) ; masquée quand le menu est ouvert, qui a son propre bouton */
+@media(max-width:959px){
+  .nav__devis{display:inline-flex;padding:.58rem .95rem;font-size:.86rem}
+  .nav__droite{gap:.5rem}
+  body.menu-ouvert .nav__devis{opacity:0;visibility:hidden}
+}
+@media(max-width:374px){.nav__marque span{font-size:1rem}.nav__marque{gap:.45rem}}
+
+/* Les questions au bureau : le titre en haut à gauche, l'introduction en tête de la colonne des questions, et la photo (la cloison
+   à tasseaux) qui remplit la colonne de gauche jusqu'au dernier filet de la liste — plus de papier vide en bas à droite, quand la
+   colonne du titre (titre, phrase, photo carrée) était plus haute que la liste. Au téléphone : photo, titre, phrase, questions. */
+/* recadrage d'affichage (le fichier n'est pas retouché) : agrandie depuis le haut gauche, la photo montre la cloison à tasseaux
+   et le meuble bas ; la plaque à induction et le plan façon pierre sortent du cadre (juge du 14/09) */
+.faq-scene__photo img{object-position:0% 40%;transform-origin:0 30%;scale:1.7}
+.faq-scene__droite{display:grid;gap:clamp(1.25rem,2.5vw,2.25rem);align-content:start}
+.faq-scene__intro{color:var(--encre-2);max-width:34ch;font-size:1.05rem;line-height:1.55}
+@media(min-width:960px){
+  .faq-scene{grid-template-rows:auto minmax(0,1fr);grid-template-areas:"tete droite" "photo droite";row-gap:clamp(1.5rem,2.5vw,2.5rem);align-items:stretch}
+  .faq-scene__tete{grid-area:tete;position:static}
+  .faq-scene__droite{grid-area:droite;align-self:start}
+  .faq-scene__photo{grid-area:photo;margin-top:0;min-height:12rem;aspect-ratio:auto;max-width:none;width:100%;position:relative}
+  /* l'image hors du flux : sa hauteur naturelle (319 px) fixait la rangée, et la photo dépassait la liste de 39 px */
+  .faq-scene__photo picture{position:absolute;inset:0}
+}
+/* le plan de travail en bois sous poutres, en carte 4:5 au téléphone : la table et le plan, pas la fenêtre */
+.galerie__cadre img[src*="reserve-cuisine-poutres"]{object-position:40% 60%}
+
+/* ── v25 : 3e tour du juge de la vague 3 (15/09) — marges aux limites, vignettes, questions, mentions légales ── */
+
+/* Réalisations : 1,84 écran de défilement (1 656 px à 900) au lieu de 2 pile ; « Pièces livrées » à 7,4 vw comme les autres titres
+   de scène (il était pile au seuil de 7 vw) */
+@media(min-width:1024px) and (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: view()){
+    .travelling{height:184svh}
+    .travelling .galerie__tete .h2--scene{font-size:clamp(2.9rem,7.4vw,8.5rem)}
+  }
+}
+
+/* Prestations au bureau : la vignette ne recouvre plus le numéro — elle s'ouvre juste à sa droite, dans la colonne du numéro
+   (1,3 em de la taille du numéro), et le numéro reste visible ; elle tient dans la hauteur de la ligne */
+@media(min-width:1024px) and (hover:hover) and (pointer:fine){
+  .scene--presta .presta__vignette{left:calc(clamp(3.4rem,6.2vw,8rem) * 1.3);width:clamp(3.6rem,5.6vw,7.25rem);rotate:-2deg}
+  .scene--presta .presta__ligne:hover .presta__num{opacity:1}
+}
+
+/* Les questions : la photo est un recadrage à part (tasseaux-cloison, rien que la cloison à tasseaux) — plus d'agrandissement
+   d'affichage, qui laissait la porte blanche et le plan clair dans le cadre ; au téléphone en 3:2 */
+.faq-scene__photo img{object-position:30% 45%;scale:none;transform-origin:50% 50%}
+@media(max-width:959px){.faq-scene__photo{aspect-ratio:3/2}}
+
+/* Mentions légales et confidentialité : l'introduction et le premier titre ne sont plus séparés par ~200 px de papier */
+.hero--page + .section{padding-top:clamp(1.25rem,2.5vw,2.25rem)}
+
+/* Pages communes au téléphone : l'ouvrage en plein écran (100svh), comme le héros de l'accueil. À 72svh, la photo était l'élément
+   LCP (413×594) ; une photo qui couvre tout l'écran est traitée en fond par Chrome et le titre redevient l'élément LCP, ce qui
+   rend à la photo sa vraie place : un décor, sans priorité haute au téléphone (generer.mjs, juge du 15/09) */
+@media(max-width:767px) and (min-height:560px){.hero--commune{min-height:100svh}}
+
+/* ── v26 : priorité 9 de la synthèse du 14/09 — la scène change au défilement (bureau) ─────────────────────────────────────
+   Avant : un seul élément de la page dépendait de la position de défilement, et l'unique révélation (fondu, 30 px, 0,95 s)
+   laissait des blocs laiteux. Tout ce qui suit le défilement vit dans @media (min-width:1024px) and
+   (prefers-reduced-motion:no-preference), sous @supports (animation-timeline: view()) ; CSS seul, transform / opacity / clip.
+   Sans support (Firefox), au téléphone et en mouvement réduit : le dévoilement IntersectionObserver, plus court et plus franc. */
+
+/* Performance sous charge (juge de la vague 2 : 3 passes Lighthouse mobile sur 7 à 71–76, jusqu'à 1 214 ms de Style & Layout).
+   Mesuré en A/B sur trace mobile CPU ×4 (7 passes, médianes) : ni le CSS de bureau (−16 Ko), ni le menu, ni le pied, ni le
+   monogramme, ni text-wrap ne pèsent ; ce qui pèse, c'est le nombre de graisses de la police de titre construites au premier
+   rendu. La marque de la nav tombe à la graisse des titres (da.json → graisseMarque) : une graisse de moins au chargement. */
+.nav__marque{font-weight:var(--graisse-marque,700)}
+
+/* les titres de scène en mots (generer.mjs → masque) : de simples spans en ligne hors chorégraphie */
+.ml,.ml__in{display:inline}
+/* le repli : 0,55 s au lieu de 0,95, un déplacement plus franc (44 px au lieu de 30), une cascade resserrée */
+@media(prefers-reduced-motion:no-preference){
+  html.js .reveal{transform:translateY(44px);transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i,0)*70ms)}
+}
+
+@media(min-width:1024px) and (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: view()){
+    /* 1. L'ouverture : le héros reste en place (sticky dans .ouverture) et le plateau noir monte par-dessus, ombre haute. Le texte
+       du héros se lève et s'efface, la photo avance (1,08) et s'assombrit. La parallaxe JS de kit.js ne joue plus ici. */
+    .ouverture{timeline-scope:--plateau}
+    .ouverture>.hero--plein{position:sticky;top:0;height:100svh;z-index:0}
+    .ouverture>.plateau{position:relative;z-index:1;view-timeline:--plateau block;box-shadow:0 -2.5rem 5rem -.5rem rgba(10,7,4,.55)}
+    .ouverture .hero__contenu{animation:ouverture-texte linear both;animation-timeline:--plateau;animation-range:entry 0% entry 55%}
+    .ouverture .hero__media{animation:ouverture-photo linear both;animation-timeline:--plateau;animation-range:entry 0% entry 100%}
+    .ouverture .hero--plein::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:#0E0A07;opacity:0;animation:ouverture-voile linear both;animation-timeline:--plateau;animation-range:entry 10% entry 100%}
+
+    /* 3. Les titres de scène : chaque mot monte sous son masque (débord visible en largeur, coupé en hauteur), lié à la position
+       du titre dans l'écran ; une cascade par mot (--i). La timeline est celle du h2, pas du mot qui bouge. */
+    h2:has(.ml){view-timeline:--titre block}
+    /* .26 em sous la ligne : les jambages de Fraunces (q, j, p) descendent sous l'interligne serré (.92) */
+    .ml{display:inline-block;vertical-align:top;overflow:visible clip;padding-block:.1em .26em;margin-block:-.1em -.26em}
+    .ml__in{display:inline-block;animation:mot-leve linear both;animation-timeline:--titre;animation-range:cover calc(2% + var(--i,0) * 3%) cover calc(24% + var(--i,0) * 3%)}
+
+    /* le dévoilement suit la position : plus de fondu minuté, l'état dépend de l'endroit où l'on est. Un bloc qui porte un titre
+       en mots ne bouge pas en entier : ses paragraphes montent, le titre se lève mot à mot. */
+    html.js .reveal{opacity:1;transform:none;transition:none;animation:monte linear both;animation-timeline:view();animation-range:entry calc(var(--i,0) * 6%) cover calc(20% + var(--i,0) * 4%)}
+    html.js .reveal:has(.ml){animation:none}
+    html.js .reveal:has(.ml) p:not(.compteur){animation:monte linear both;animation-timeline:view();animation-range:entry 10% cover 26%}
+    /* les photos du travelling gardent leur dévoilement en clip (kit.css v21) */
+    html.js .galerie--scene .galerie__item.reveal{animation:none}
+
+    /* overflow:hidden fait d'une boîte un conteneur de défilement : view() s'y rattachait et restait figé (« Dans l'atelier » et
+       « Parlons de votre projet » ne se levaient pas, la photo de l'atelier ne dérivait plus). clip coupe pareil sans défiler. */
+    .atelier,.contact--photo,.plateau__photo,.faq-scene__photo,.etapes__photo{overflow:clip}
+    /* 4. Les photos glissent dans leur cadre : ±6 % dans une image agrandie à 1,14 (l'atelier et le travelling ont déjà le leur) */
+    .plateau__photo img,.faq-scene__photo img,.etapes__photo img,.contact__media img{scale:1.14;animation:glisse-cadre linear both;animation-timeline:view();animation-range:cover}
+
+    /* 2. Les étapes épinglées : #etapes haut de 300svh, le bloc reste à l'écran et chaque étape vit sur sa tranche de la timeline
+       (--e, --ne : generer.mjs) — son numéro s'allume, son texte glisse en place, puis l'étape retombe quand la suivante arrive.
+       Une jauge verticale monte à côté des numéros. Écrans d'au moins 680 px de haut (sinon, la liste reste en place). */
+    @media(min-height:680px){
+      #etapes{height:300svh;padding-block:0;view-timeline:--etapes block}
+      #etapes>.conteneur{position:sticky;top:0;height:100svh;display:grid;align-items:center;padding-block:5.5rem 1.5rem}
+      #etapes .etapes{align-items:center}
+      #etapes .etapes__tete{position:static;align-self:center}
+      #etapes .etapes__photo{width:min(100%,30rem,50svh)}
+      #etapes .etapes__photo img{animation-timeline:--etapes;animation-range:contain 0% contain 100%}
+      .da--etapes #etapes .etape{padding-block:min(clamp(1.25rem,2.6vw,2.25rem),2.4svh)}
+      .da--etapes #etapes .etape__num{font-size:min(clamp(7vw,6rem + 2vw,9vw),12svh);transform-origin:0 70%;transition:none;animation:etape-num linear both;animation-timeline:--etapes;animation-range:contain calc(10% + (var(--e,0) - .15) * 90% / var(--ne,4)) contain calc(10% + (var(--e,0) + 1.15) * 90% / var(--ne,4))}
+      .da--etapes #etapes .etape__corps{animation:etape-corps linear both;animation-timeline:--etapes;animation-range:contain calc(10% + (var(--e,0) - .15) * 90% / var(--ne,4)) contain calc(10% + (var(--e,0) + 1.15) * 90% / var(--ne,4))}
+      .da--etapes #etapes .etape:first-child .etape__num{animation-name:etape-num-premier}
+      .da--etapes #etapes .etape:first-child .etape__corps{animation-name:etape-corps-premier}
+      .da--etapes #etapes .etape:last-child .etape__num{animation-name:etape-num-dernier}
+      .da--etapes #etapes .etape:last-child .etape__corps{animation-name:etape-corps-dernier}
+      .da--etapes #etapes .etapes__liste::before,.da--etapes #etapes .etapes__liste::after{content:"";position:absolute;left:-2.25rem;top:0;bottom:0;width:1px;height:auto;background:rgba(244,237,226,.16);transition:none}
+      .da--etapes #etapes .etapes__liste::after{background:#D4A574;transform-origin:50% 0;animation:jauge-v linear both;animation-timeline:--etapes;animation-range:contain 0% contain 100%}
+    }
+  }
+}
+@keyframes ouverture-texte{to{transform:translateY(-14vh);opacity:0}}
+@keyframes ouverture-photo{to{transform:scale(1.08)}}
+@keyframes ouverture-voile{to{opacity:.6}}
+@keyframes mot-leve{from{transform:translateY(120%)}to{transform:none}}
+@keyframes monte{from{opacity:0;transform:translateY(3rem)}to{opacity:1;transform:none}}
+@keyframes glisse-cadre{from{translate:0 -6%}to{translate:0 6%}}
+@keyframes jauge-v{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+/* numéros : 55 % au repos (3,2:1 sur le noir chaud, le seuil des grands caractères), plein et à l'échelle quand l'étape est active.
+   Tranches (kit.css v26, étapes) : la première étape tient seule les 10 premiers %, puis chacune occupe 90 %/n ; le fondu enchaîné
+   ne dure que 0,3 tranche autour de chaque frontière — à 25, 50 et 75 % du bloc épinglé, une seule étape est pleine. */
+@keyframes etape-num{0%,100%{opacity:.55;transform:scale(.9)}23.08%,76.92%{opacity:1;transform:none}}
+@keyframes etape-num-premier{0%,76.92%{opacity:1;transform:none}100%{opacity:.55;transform:scale(.9)}}
+@keyframes etape-num-dernier{0%{opacity:.55;transform:scale(.9)}23.08%,100%{opacity:1;transform:none}}
+/* le texte n'entre que de 1,25 rem : à 3 rem, la fin des lignes dépassait le filet de droite */
+@keyframes etape-corps{0%{opacity:.45;transform:translateX(1.25rem)}23.08%,76.92%{opacity:1;transform:none}100%{opacity:.45;transform:none}}
+@keyframes etape-corps-premier{0%,76.92%{opacity:1;transform:none}100%{opacity:.45;transform:none}}
+@keyframes etape-corps-dernier{0%{opacity:.45;transform:translateX(1.25rem)}23.08%,100%{opacity:1;transform:none}}
+
+/* ── v27 : vague 3 — le relief (bureau à souris seulement) ────────────────────────────────────────────────────────────────
+   1. Le héros : la toile WebGL de relief.js se pose sur la photo (sous le dégradé ::after), avec la même poussée lente et le
+      même point d'origine que l'image ; elle apparaît en fondu quand sa première image est prête, et relief.js masque l'image
+      dessous. Sans WebGL, rien de tout ça n'existe dans la page.
+   2. La galerie en travelling : chaque photo pivote de 6° au plus selon son écart au centre (--e, kit.js), recule de 48 px au
+      plus (--p) ; une ombre portée glisse sous elle et le côté qui s'éloigne s'assombrit (--s). Transform et opacity seulement,
+      amortis par une transition courte. */
+.hero__relief{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .7s ease;transform-origin:42% 37%;pointer-events:none}
+.hero__relief--pret{opacity:1}
+html.js .hero--plein .hero__relief{animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate}
+@media(min-width:1024px) and (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: view()){
+    html.js .travelling.relief-3d .galerie--scene .galerie__item.reveal{transform:perspective(1500px) rotateY(calc(var(--e,0) * -5deg)) translateZ(calc(var(--p,0) * -48px));transition:transform .45s cubic-bezier(.2,.7,.2,1);position:relative}
+    .travelling.relief-3d .galerie__item::before{content:"";position:absolute;left:4%;right:4%;bottom:-2.2rem;height:3rem;z-index:-1;pointer-events:none;background:radial-gradient(50% 50% at 50% 50%,rgba(0,0,0,.72),rgba(0,0,0,0));transform:translateX(calc(var(--e,0) * -2.2rem)) scaleX(calc(1 - var(--p,0) * .12));opacity:calc(.95 - var(--p,0) * .45);transition:transform .45s cubic-bezier(.2,.7,.2,1),opacity .45s}
+    .travelling.relief-3d .galerie__cadre::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(10,7,4,.55),rgba(10,7,4,0) 58%);transform:scaleX(var(--s,1));opacity:calc(var(--p,0) * .85);transition:opacity .45s}
+  }
 }

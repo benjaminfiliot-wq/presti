@@ -18,8 +18,13 @@ const AUJOURDHUI = new Date().toISOString().slice(0, 10)
 const slug = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 const telAffiche = (t) => { const d = String(t).replace(/\D/g, ''); const n = d.startsWith('33') ? '0' + d.slice(2) : d; return n.replace(/(\d{2})(?=\d)/g, '$1 ') }
+// le lien d'appel au format RFC 3966 (« tel:+33261913847 ») : des espaces dans l'URI ne sont pas valides (juge du 14/09)
+const telHref = (t) => `tel:${String(t).replace(/[^\d+]/g, '')}`
 // des espaces réels entre les mots : le texte reste lisible tel quel (juge, lecteur d'écran, copier-coller)
 const mots = (h1) => h1.split(/\s+/).map((m, i) => `<span class="mot" style="--i:${i}">${esc(m)}</span>`).join(' ')
+// Un titre de scène en mots masqués (priorité 9) : chaque mot monte sous son propre masque, lié à la position de défilement, sur
+// bureau seulement (kit.css v26). Ailleurs, les deux spans restent en ligne : aucun effet sur le texte ni sur sa mise en page.
+const masque = (t) => t.split(/\s+/).map((m, i) => `<span class="ml"><span class="ml__in" style="--i:${i}">${esc(m)}</span></span>`).join(' ')
 const nbMots = (s) => String(s ?? '').trim().split(/\s+/).filter(Boolean).length
 const texteDe = (html) => html.replace(/<script\b[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/\s+/g, ' ')
 const FLECHE = '<svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M5 13L13 5M13 5H6M13 5V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
@@ -105,6 +110,12 @@ function gardeFous(html, ou, couverture = null) {
   // le texte visible : apostrophes typographiques seulement (« d'escaliers » et « l’atelier » se côtoyaient dans les cartes,
   // juge du 14/09), et aucun caractère que la police de texte ne rend pas
   const visible = texteDe(html.slice(html.indexOf('<body')))
+  // les liens d'appel au format RFC 3966 : « tel:+33261913847 », sans espace ni point
+  const telFaux = /href="tel:([^"]*)"/.exec([...html.matchAll(/href="tel:[^"]*"/g)].map((m) => m[0]).find((h) => !/^href="tel:\+?\d+"$/.test(h)) || '')
+  if (telFaux) throw new Error(`${ou} : lien tel:${telFaux[1]} hors du format RFC 3966 (chiffres et « + » seulement)`)
+  // « gratuit » est un engagement commercial que l'artisan n'a pas pris (title, description, FAQ : retirés le 14/09)
+  const gratuit = /gratuit/i.exec(html)
+  if (gratuit) throw new Error(`${ou} : « ${html.slice(Math.max(0, gratuit.index - 40), gratuit.index + 12).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()} » — la gratuité du devis n’est pas un engagement validé`)
   const droite = /\p{L}'(?=\p{L})/u.exec(visible)
   if (droite) throw new Error(`${ou} : apostrophe droite dans le texte (« ${visible.slice(Math.max(0, droite.index - 30), droite.index + 20).trim()} ») — ’ partout`)
   if (couverture) {
@@ -113,8 +124,16 @@ function gardeFous(html, ou, couverture = null) {
   }
 }
 // L'accueil : ce que les priorités 3, 4 et 5 promettent, vérifié sur le HTML rendu (et non sur les données d'entrée)
-function gardeFousAccueil(html, ou, { site, tel, chapeau }) {
+function gardeFousAccueil(html, ou, { site, tel, chapeau, sourceDe = new Map() }) {
   const corps = html.slice(html.indexOf('<body'), html.indexOf('<footer'))
+  // Aucune photo plus de deux fois sur l'accueil (l'escalier revenait quatre fois, la cuisine trois, juge du 14/09) : compté par
+  // <picture> et par fichier Commons d'origine — le héros et son recadrage 4:5 pour téléphone sont une seule photo
+  const vues = new Map()
+  for (const pic of corps.match(/<picture\b[\s\S]*?<\/picture>/g) || []) {
+    for (const src of new Set([...pic.matchAll(/images\/([a-z0-9-]+)-\d+\.(?:avif|webp)/g)].map((m) => sourceDe.get(m[1]) || m[1]))) vues.set(src, (vues.get(src) || 0) + 1)
+  }
+  const trop = [...vues].filter(([, n]) => n > 2)
+  if (trop.length) throw new Error(`${ou} : ${trop.map(([s, n]) => `« ${decodeURIComponent(s.split('File:').pop())} » ${n} fois`).join(', ')} sur l’accueil (2 au plus)`)
   const hero = /<section class="hero\b[\s\S]*?<\/section>/.exec(corps)?.[0] || ''
   const h1 = texteDe(/<h1\b[\s\S]*?<\/h1>/.exec(html)?.[0] || '')
   if (!/Menuisier/.test(h1) || !/Rennes/.test(h1)) throw new Error(`${ou} : le h1 doit garder « Menuisier » et « Rennes » (lu : « ${h1.trim()} »)`)
@@ -176,6 +195,8 @@ function verifierArtisan(a, ou) {
   if (!Number.isInteger(an) || an < 1960 || an > maintenant) throw new Error(`${ou} : artisan.installation « ${a.installation} » n’est pas une année plausible`)
   if (a.parcours.length > 140) throw new Error(`${ou} : artisan.parcours de ${a.parcours.length} signes (une ligne : 140 au plus)`)
   if (a.citation.length < 20 || a.citation.length > 160) throw new Error(`${ou} : artisan.citation hors 20-160 signes`)
+  // une phrase signée se dit à la première personne (« c’est la même main qui travaille » restait impersonnelle, juge du 14/09)
+  if (!/(?<![\p{L}])(?:je|me|moi|mon|ma|mes)(?![\p{L}])|(?<![\p{L}])[jm]’(?=\p{L})/iu.test(a.citation)) throw new Error(`${ou} : artisan.citation « ${a.citation} » n’est pas à la première personne`)
 }
 const signatureDe = (a, ville) => `${a.prenom} ${a.nom} · à ${ville} depuis ${a.installation}`
 // Les formules d'un texte de générateur : refusées dans tout le texte visible (pages légales comprises)
@@ -217,9 +238,11 @@ const partageIdentique = (licence) => /BY-SA/i.test(licence)
 // ── Images ────────────────────────────────────────────────────────────────────────────────────────────────────
 // les variantes disponibles (480 à 2880 selon la date du téléchargement) sont lues dans attributions.json
 const srcsetDe = (a, rel, ext) => (a.largeurs || [480, 960, 1600]).map((l) => `${rel}images/${a.base}-${l}.${ext} ${l}w`).join(', ')
-function photo(a, rel, { eager = false, sizes = '(max-width: 900px) 100vw, 60vw', classe = '', alt = null } = {}) {
+// position : le cadrage d'affichage (object-position) quand la case recadre la photo — la vignette « porte » montre la porte des
+// boiseries et non le coussin du premier plan ; les fichiers ne sont jamais retouchés pour ça
+function photo(a, rel, { eager = false, sizes = '(max-width: 900px) 100vw, 60vw', classe = '', alt = null, position = null } = {}) {
   const defaut = (a.largeurs || [480, 960, 1600]).filter((l) => l <= 960).at(-1) || a.largeurs?.[0] || 960
-  return `<picture${classe ? ` class="${classe}"` : ''}><source type="image/avif" srcset="${srcsetDe(a, rel, 'avif')}" sizes="${sizes}"><source type="image/webp" srcset="${srcsetDe(a, rel, 'webp')}" sizes="${sizes}"><img src="${rel}images/${a.base}-${defaut}.webp" alt="${esc(alt ?? (a.alt || a.legende))}" width="${a.largeur}" height="${a.hauteur}"${eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}></picture>`
+  return `<picture${classe ? ` class="${classe}"` : ''}><source type="image/avif" srcset="${srcsetDe(a, rel, 'avif')}" sizes="${sizes}"><source type="image/webp" srcset="${srcsetDe(a, rel, 'webp')}" sizes="${sizes}"><img src="${rel}images/${a.base}-${defaut}.webp" alt="${esc(alt ?? (a.alt || a.legende))}" width="${a.largeur}" height="${a.hauteur}"${position ? ` style="object-position:${esc(position)}"` : ''}${eager === true ? ' fetchpriority="high"' : eager ? '' : ' loading="lazy" decoding="async"'}></picture>`
 }
 // Le héros : la photo de bureau (jusqu'à 2880 px, nette en DPR 2 à 1440) et, sous 768 px, la version recadrée en 4:5 autour
 // de l'œil de la spirale. Le héros couvre 100svh : sur un téléphone, l'image affichée est plus large que l'écran (hauteur
@@ -278,13 +301,18 @@ function generer(metier) {
   // ── Polices : lues et vérifiées ici, copiées seulement après les garde-fous ──────────────────────────────────
   const familles = [...new Set([da.display, da.texte])]
   const statiques = Array.isArray(da.texteStatiques) && da.texte !== da.display ? da.texteStatiques : null
+  // La police de titre en graisses statiques (da.displayStatiques, préchargées : da.displayPrecharge) : la variable unique servait
+  // quatre graisses au premier rendu du téléphone, quatre instances à construire (TBT 338 → 213 ms en trace CPU ×4, 15/09 ;
+  // scripts/polices-fraunces-statiques.py)
+  const statiquesDisplay = Array.isArray(da.displayStatiques) && da.texte !== da.display ? da.displayStatiques : null
+  const prechargeDisplay = statiquesDisplay ? (da.displayPrecharge || statiquesDisplay) : null
   const fichiersPolice = []   // { src, nom }
   for (const f of familles) {
     const s = slug(f)
-    const noms = f === da.texte && statiques ? statiques.map((w) => `${s}-${w}.woff2`) : [`${s}.woff2`]
+    const noms = f === da.texte && statiques ? statiques.map((w) => `${s}-${w}.woff2`) : f === da.display && statiquesDisplay ? statiquesDisplay.map((w) => `${s}-${w}.woff2`) : [`${s}.woff2`]
     for (const nom of noms) {
       const src = path.join(ICI, '_polices', s, nom)
-      if (!fs.existsSync(src) || fs.statSync(src).size < 8000) throw new Error(`police absente ou tronquée : ${src} (node scripts/polices-demo.mjs${statiques ? ' puis python scripts/polices-plex-sous-ensemble.py' : ''})`)
+      if (!fs.existsSync(src) || fs.statSync(src).size < 8000) throw new Error(`police absente ou tronquée : ${src} (node scripts/polices-demo.mjs${statiques ? ' puis python scripts/polices-plex-sous-ensemble.py' : ''}${statiquesDisplay ? ' et python scripts/polices-fraunces-statiques.py' : ''})`)
       fichiersPolice.push({ src, nom })
     }
   }
@@ -300,8 +328,10 @@ function generer(metier) {
   // Lestraque, deux graisses statiques en sous-ensemble (~12 Ko chacune), préchargées.
   const faces = familles.map((f) => f === da.texte && statiques
     ? statiques.map((w) => `@font-face{font-family:'${f}';src:url('fonts/${slug(f)}-${w}.woff2') format('woff2');font-weight:${w};font-display:optional}`).join('\n')
+    : f === da.display && statiquesDisplay
+    ? statiquesDisplay.map((w) => `@font-face{font-family:'${f}';src:url('fonts/${slug(f)}-${w}.woff2') format('woff2');font-weight:${w};font-display:swap}`).join('\n')
     : `@font-face{font-family:'${f}';src:url('fonts/${slug(f)}.woff2') format('woff2');font-weight:100 900;font-display:${f === da.display ? 'swap' : 'optional'}}`).join('\n')
-  const tokens = `:root{--accent:${da.accent};--accent-texte:${da.accentTexte};--fond:${da.fond};--fond-2:${da.fond2};--encre:${da.encre};--encre-2:${da.encre2};--ligne:${da.ligne};--rayon:${da.rayon};--police-display:'${da.display}',Georgia,serif;--police-texte:'${da.texte}',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--graisse-titre:${da.graisse || 700};--graisse-ligne:${da.graisseLigne || da.graisse || 700};--approche-titre:${da.approche || '-0.025em'};--ombre:${da.ombre || '0 30px 60px -28px rgba(20,25,35,.35)'};--grain:${da.grain || '.12'};--grain-mode:${da.grainMode || 'multiply'}${da.motif ? `;--motif:${da.motif}` : ''}}
+  const tokens = `:root{--accent:${da.accent};--accent-texte:${da.accentTexte};--fond:${da.fond};--fond-2:${da.fond2};--encre:${da.encre};--encre-2:${da.encre2};--ligne:${da.ligne};--rayon:${da.rayon};--police-display:'${da.display}',Georgia,serif;--police-texte:'${da.texte}',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--graisse-titre:${da.graisse || 700};--graisse-ligne:${da.graisseLigne || da.graisse || 700};--graisse-marque:${da.graisseMarque || 700};--approche-titre:${da.approche || '-0.025em'};--ombre:${da.ombre || '0 30px 60px -28px rgba(20,25,35,.35)'};--grain:${da.grain || '.12'};--grain-mode:${da.grainMode || 'multiply'}${da.motif ? `;--motif:${da.motif}` : ''}}
 .mono{color:var(--accent-texte)}
 ${da.casse ? `h1,h2{text-transform:${da.casse};letter-spacing:.01em}` : ''}
 ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
@@ -330,17 +360,21 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
   const pageDe = (commune) => pages.find((p) => p.type === 'commune' && p.cible === commune)
   const prestationsTitres = (() => { const s = contenu.pages['/']?.sections.find((x) => genreDe(x) === 'prestations'); return s ? decouper(s.blocs).items.map((i) => i.titre) : [] })()
 
-  function tete(page, rel, { titre, description, image }) {
+  function tete(page, rel, { titre, description, image, bandeau = null }) {
     const url = BASE + page.chemin
     const ld = (contenu.pages[page.chemin]?.jsonld?.[0] || contenu.pages['/']?.jsonld?.[0])
     const ldPage = ld ? { ...ld, url, telephone: tel, image: BASE + '/images/' + heros.base + '-1600.webp' } : null
     const precharges = [
-      `<link rel="preload" href="${rel}fonts/${slug(da.display)}.woff2" as="font" type="font/woff2" crossorigin>`,
+      ...(prechargeDisplay ? prechargeDisplay.map((w) => `${slug(da.display)}-${w}`) : [slug(da.display)]).map((n) => `<link rel="preload" href="${rel}fonts/${n}.woff2" as="font" type="font/woff2" crossorigin>`),
       ...(statiques ? statiques.map((w) => `<link rel="preload" href="${rel}fonts/${slug(da.texte)}-${w}.woff2" as="font" type="font/woff2" crossorigin>`) : []),
     ]
     if (page.type === 'accueil' && da.hero === 'plein') {
       if (herosMobile) precharges.push(`<link rel="preload" as="image" type="image/avif" media="${MEDIA_MOBILE}" imagesrcset="${srcsetDe(herosMobile, rel, 'avif')}" imagesizes="${SIZES_HEROS_MOBILE}">`)
       precharges.push(`<link rel="preload" as="image" type="image/avif"${herosMobile ? ' media="(min-width: 768px)"' : ''} imagesrcset="${srcsetDe(heros, rel, 'avif')}" imagesizes="${SIZES_HEROS}" fetchpriority="high">`)
+    } else if (bandeau) {
+      // le bandeau d'une page commune : préchargé en priorité haute au bureau seulement ; au téléphone (plein écran, kit.css v25), l'élément
+      // LCP est le titre, et l'image n'a ni priorité haute ni chargement paresseux (site-qa exige un héros non paresseux)
+      precharges.push(`<link rel="preload" as="image" type="image/avif" media="(min-width: 768px)" imagesrcset="${srcsetDe(bandeau, rel, 'avif')}" imagesizes="100vw" fetchpriority="high">`)
     } else if (page.type === 'accueil') precharges.push(`<link rel="preload" as="image" type="image/avif" imagesrcset="${srcsetDe(heros, rel, 'avif')}" imagesizes="${da.hero === 'aplat' ? '(max-width: 960px) calc(100vw - 2.5rem), 50vw' : '(max-width: 960px) calc(100vw - 2.5rem), 45vw'}" fetchpriority="high">`)
     // UNE liste d'entrées pour la nav de bureau et le panneau du téléphone ; « Accueil » seulement hors de l'accueil. Le devis vise
     // le formulaire de la page quand elle en a un (accueil, communes), celui de l'accueil sinon (pages légales)
@@ -373,7 +407,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
 <header class="nav${navClaire ? ' nav--claire' : ''}"><div class="conteneur nav__inner">
 <a class="nav__marque" href="${rel || './'}">${marque}<span>${esc(site.nom)}</span></a>
 <nav class="nav__liens" aria-label="Sections">${liens}</nav>
-<div class="nav__droite"><a class="nav__tel" href="tel:${tel}">${telAffiche(tel)}</a>${site.devis ? `<a class="nav__devis" href="${versContact}">Devis</a>` : ''}<button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="panneau"><span></span><span></span></button></div>
+<div class="nav__droite"><a class="nav__tel" href="${telHref(tel)}">${telAffiche(tel)}</a>${site.devis ? `<a class="nav__devis" href="${versContact}">Devis</a>` : ''}<button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="panneau"><span></span><span></span></button></div>
 </div></header>
 <div class="voile" aria-hidden="true"></div>
 <div class="panneau" id="panneau">
@@ -389,7 +423,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     return `</main>
 <footer class="pied${nuit ? ' pied--nuit' : ''}"><div class="conteneur">
 <div class="pied__grille">
-<div><div class="nav__marque" style="margin-bottom:.75rem">${marque}<span>${esc(site.nom)}</span></div><p>${esc(da.label)} à ${esc(ville)} · <a href="tel:${tel}">${telAffiche(tel)}</a></p><p>SIREN ${esc(site.siren)} · Assurance décennale ${esc(site.decennale.assureur)} n° ${esc(site.decennale.numero)}</p></div>
+<div><div class="nav__marque" style="margin-bottom:.75rem">${marque}<span>${esc(site.nom)}</span></div><p>${esc(da.label)} à ${esc(ville)} · <a href="${telHref(tel)}">${telAffiche(tel)}</a></p><p>SIREN ${esc(site.siren)} · Assurance décennale ${esc(site.decennale.assureur)} n° ${esc(site.decennale.numero)}</p></div>
 <div><p class="pied__titre">Communes servies</p><ul>${communes.map((c) => { const p = pageDe(c); return `<li>${p ? `<a href="${rel}${p.chemin.slice(1)}">${esc(c)}</a>` : esc(c)}</li>` }).join('')}</ul></div>
 <div><p class="pied__titre">Le site</p><ul><li><a href="${rel || './'}">Accueil</a></li>${pages.filter((p) => p.type === 'metier').map((p) => `<li><a href="${rel}${p.chemin.slice(1)}">${esc(p.cible)}</a></li>`).join('')}<li><a href="${rel}mentions-legales/">Mentions légales</a></li><li><a href="${rel}confidentialite/">Confidentialité</a></li></ul></div>
 </div>
@@ -407,6 +441,8 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
   const prestaListe = (items) => `<ol class="presta">${items.map((it, i) => `<li class="presta__ligne reveal"><span class="presta__num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span><h3>${esc(it.titre)}</h3><div class="presta__texte">${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</div></li>`).join('')}</ol>`
   // une scène sombre ou noire fait passer la nav en noir translucide (kit.js)
   const nuit = (classe) => (/section--(?:sombre|noir)\b/.test(classe) ? ' data-nav="sombre"' : '')
+  // les h2 des scènes (da.scenes) en mots masqués : ils se lèvent au défilement sur bureau (kit.css v26)
+  const titreScene = (t) => (da.scenes ? masque(t) : esc(t))
   const classeDe = (g, alt) => `section${da.sombre === g ? ' section--sombre' : (da.noires || []).includes(g) ? ' section--noir' : alt && !da.sansAlt ? ' section--alt' : ''}`
   // Les crédits : dans chaque légende (défaut), ou — da.creditsGroupes — sur UNE ligne sous la galerie (auteurs, licences, lien
   // vers le détail des mentions légales, où chaque photo a sa page source, son acte de licence et ses modifications). Une photo
@@ -433,33 +469,35 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     if (items.length < 2) throw new Error(`${ou} : la section étapes « ${s.h2} » n'a que ${items.length} étape(s) lisible(s), 2 au moins attendues`)
     const lis = items.map((it, i) => {
       const nn = String(i + 1).padStart(2, '0'), corps = `<h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}`
-      return da.etapesMonumentales ? `<li class="etape" style="--k:${((i + 0.15) / items.length).toFixed(3)}"><span class="etape__num" aria-hidden="true">${nn}</span><div class="etape__corps">${corps}</div></li>` : `<li class="etape"><span class="mono">Étape ${nn}</span>${corps}</li>`
+      return da.etapesMonumentales ? `<li class="etape" style="--k:${((i + 0.15) / items.length).toFixed(3)};--e:${i};--ne:${items.length}"><span class="etape__num" aria-hidden="true">${nn}</span><div class="etape__corps">${corps}</div></li>` : `<li class="etape"><span class="mono">Étape ${nn}</span>${corps}</li>`
     }).join('')
     const surtitre = da.scenes ? kicker('etapes', 'Comment ça se passe') : '<span class="mono">Comment ça se passe</span>'
     // da.etapesPhoto : une photo sous le titre (colonne collante sur bureau, pleine largeur au téléphone)
     const ep = da.etapesPhoto ? photoDe(da.etapesPhoto, 'photo des étapes') : null
     const photoEtapes = ep ? `<div class="etapes__photo">${photo(ep, rel, { sizes: '(max-width: 959px) 100vw, 30rem' })}</div>` : ''
-    return `<section class="${classe}"${id ? ` id="${id}"` : ''}${nuit(classe)}><div class="conteneur"><div class="etapes"><div class="etapes__tete reveal">${surtitre}<h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}${photoEtapes}</div><ol class="etapes__liste">${lis}</ol>${da.etapesMonumentales ? '<div class="etapes__jauge" aria-hidden="true"><span></span></div>' : ''}</div></div></section>`
+    return `<section class="${classe}"${id ? ` id="${id}"` : ''}${nuit(classe)}><div class="conteneur"><div class="etapes"><div class="etapes__tete reveal">${surtitre}<h2>${titreScene(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}${photoEtapes}</div><ol class="etapes__liste">${lis}</ol>${da.etapesMonumentales ? '<div class="etapes__jauge" aria-hidden="true"><span></span></div>' : ''}</div></div></section>`
   }
 
   // ── Les scènes (da.scenes, priorité 8) : un gabarit par genre de section au lieu d'entete() + cartes() partout ─────────
   // Deux fonds seulement, le papier et le noir chaud, plus la photo ; le surtitre ne reste que sur les scènes de da.kickers.
   const kicker = (g, texte) => ((da.kickers || []).includes(g) ? `<span class="mono">${esc(texte)}</span>` : '')
   // la vignette d'une prestation : la première clé de da.prestationsPhotos contenue dans le h3 (« escalier », « parquet »…)
-  const vignetteDe = (titre) => { const k = Object.keys(da.prestationsPhotos || {}).find((x) => slug(titre).includes(x)); return k ? photoDe(da.prestationsPhotos[k], `vignette de « ${titre} »`) : null }
-  const vignettesAccueil = () => Object.values(da.prestationsPhotos || {}).map((b) => photoDe(b, 'vignette de prestation'))
-  // Les prestations : numéro, titre, filet, texte ; sur bureau à la souris, la photo de l'ouvrage remplace le numéro au survol
+  // une entrée de prestationsPhotos : le nom de base, ou { base, position } pour cadrer l'affichage
+  const refPhoto = (v) => (typeof v === 'string' ? { base: v, position: null } : { base: v?.base, position: v?.position || null })
+  const vignetteDe = (titre) => { const k = Object.keys(da.prestationsPhotos || {}).find((x) => slug(titre).includes(x)); if (!k) return null; const r = refPhoto(da.prestationsPhotos[k]); return { p: photoDe(r.base, `vignette de « ${titre} »`), position: r.position } }
+  const vignettesAccueil = () => Object.values(da.prestationsPhotos || {}).map((v) => photoDe(refPhoto(v).base, 'vignette de prestation'))
+  // Les prestations : numéro, titre, filet, texte ; sur bureau à la souris, la photo de l'ouvrage s'ouvre à côté du numéro au survol
   // (chargée seulement là : display:none ailleurs + loading=lazy) ; au téléphone, un rail aimanté (kit.css)
-  const prestaScene = (s, intro, items, rel, id) => `<section class="scene scene--papier scene--presta"${id ? ` id="${id}"` : ''}><div class="scene-large"><div class="scene__tete scene__tete--deux reveal">${kicker('prestations', 'Prestations')}<h2 class="h2--scene">${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div><ol class="presta">${items.map((it, i) => {
+  const prestaScene = (s, intro, items, rel, id) => `<section class="scene scene--papier scene--presta"${id ? ` id="${id}"` : ''}><div class="scene-large"><div class="scene__tete scene__tete--deux reveal">${kicker('prestations', 'Prestations')}<h2 class="h2--scene">${titreScene(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div><ol class="presta">${items.map((it, i) => {
     const v = vignetteDe(it.titre)
-    return `<li class="presta__ligne reveal" style="--i:${Math.min(i, 2)}"><span class="presta__num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span><h3>${esc(it.titre)}</h3><div class="presta__texte">${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</div>${v ? `<div class="presta__vignette" aria-hidden="true">${photo(v, rel, { sizes: '(max-width: 767px) 80vw, 11rem' })}</div>` : ''}</li>`
+    return `<li class="presta__ligne reveal" style="--i:${Math.min(i, 2)}"><span class="presta__num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span><h3>${esc(it.titre)}</h3><div class="presta__texte">${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</div>${v ? `<div class="presta__vignette" aria-hidden="true" data-nav="sombre">${photo(v.p, rel, { sizes: '(max-width: 767px) 80vw, 11rem', position: v.position })}</div>` : ''}</li>`
   }).join('')}</ol><div class="presta__jauge" aria-hidden="true"><span></span></div></div></section>`
   // La bande plein cadre « Dans l’atelier » : les mains, une phrase de l'artisan, la légende de la photo
   const atelierScene = (s, intro, rel) => {
     if (!da.atelier) throw new Error(`${metier} : section « ${s.h2} » (atelier) sans photo (da.json → atelier)`)
     const a = photoDe(da.atelier, 'bande « Dans l’atelier »'), m = da.atelierMobile ? photoDe(da.atelierMobile, 'bande « Dans l’atelier », téléphone') : null
     // au téléphone, le 9:16 couvre 100svh : sa largeur affichée vaut 56,25 % de la hauteur quand l'écran est plus étroit que 9:16
-    return `<section class="scene atelier" id="atelier" data-nav="sombre"><div class="atelier__media">${photoHeros(a, m, rel, { lazy: true, sizesMobile: '(max-aspect-ratio: 9/16) 56.25vh, 100vw' })}</div><div class="atelier__contenu"><h2 class="atelier__titre reveal">${esc(s.h2)}</h2>${intro.map((p) => `<p class="atelier__phrase reveal" style="--i:2">${esc(p)}</p>`).join('')}<p class="atelier__legende">${esc(a.legende)}</p></div></section>`
+    return `<section class="scene atelier" id="atelier" data-nav="sombre"><div class="atelier__media">${photoHeros(a, m, rel, { lazy: true, sizesMobile: '(max-aspect-ratio: 9/16) 56.25vh, 100vw' })}</div><div class="atelier__contenu"><h2 class="atelier__titre reveal">${titreScene(s.h2)}</h2>${intro.map((p) => `<p class="atelier__phrase reveal" style="--i:2">${esc(p)}</p>`).join('')}<p class="atelier__legende">${esc(a.legende)}</p></div></section>`
   }
   // Les réalisations sur noir : chaque photo est son propre .reveal ; à l'accueil, un travelling épinglé (kit.css, bureau et
   // view() seulement) avec un compteur 01/05 lié à la position ; ailleurs, une rangée de trois ouvrages
@@ -468,7 +506,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     const items = liste.map((a, i) => `<figure class="galerie__item${enPortrait(a) ? ' galerie__item--portrait' : ''} reveal" style="--i:${i}"><div class="galerie__cadre">${photo(a, rel, { sizes: travelling ? '(max-width: 767px) 85vw, (max-width: 1023px) 58vw, 56vw' : '(max-width: 767px) 85vw, 32vw' })}</div><figcaption><span class="galerie__n">${String(i + 1).padStart(2, '0')}</span><span>${esc(a.legende)}</span></figcaption></figure>`).join('')
     const nn = (k) => String(k).padStart(2, '0')
     const compteur = travelling ? `<p class="compteur" aria-hidden="true"><span class="compteur__fenetre"><span class="compteur__piste" style="--n:${n}">${liste.map((_, i) => `<span>${nn(i + 1)}</span>`).join('')}</span></span><span class="compteur__total">/ ${nn(n)}</span></p>` : ''
-    const tete = `<div class="scene__tete galerie__tete reveal"><div>${kicker('galerie', 'Réalisations')}<h2 class="h2--scene">${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div>${compteur}</div>`
+    const tete = `<div class="scene__tete galerie__tete reveal"><div>${kicker('galerie', 'Réalisations')}<h2 class="h2--scene">${titreScene(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div>${compteur}</div>`
     const credits = da.creditsGroupes ? creditsLigne([...new Set([...autres, ...liste])], rel) : ''
     // la jauge du rail au téléphone (kit.css : affichée seulement sous 768 px, avec scroll-timeline)
     const jauge = '<div class="galerie__jauge" aria-hidden="true"><span></span></div>'
@@ -479,11 +517,13 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       ? `${debut}<div class="travelling" style="--n:${n}"><div class="travelling__epingle"><div class="scene-large">${tete}</div><div class="travelling__fenetre"><div class="galerie galerie--scene">${items}</div>${jauge}</div><div class="scene-large travelling__credits">${credits}</div></div></div></section>`
       : `${debut}<div class="scene-large">${tete}<div class="galerie galerie--scene galerie--rangee">${items}</div>${jauge}${credits}</div></section>`
   }
-  const communesScene = (s, intro, liste, rel, sauf, retour) => `<section class="scene scene--papier scene--communes" id="communes"><div class="conteneur"><div class="scene__tete scene__tete--deux reveal">${kicker('communes', 'Zone d’intervention')}<h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div></div>${communesHtml(liste, rel, sauf)}${retour ? `<div class="conteneur"><p class="retour"><a href="${rel}">${FLECHE}Retour à l’accueil</a></p></div>` : ''}</section>`
+  const communesScene = (s, intro, liste, rel, sauf, retour) => `<section class="scene scene--papier scene--communes" id="communes"><div class="conteneur"><div class="scene__tete scene__tete--deux reveal">${kicker('communes', 'Zone d’intervention')}<h2>${titreScene(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}</div></div>${communesHtml(liste, rel, sauf)}${retour ? `<div class="conteneur"><p class="retour"><a href="${rel}">${FLECHE}Retour à l’accueil</a></p></div>` : ''}</section>`
   // Les questions en deux colonnes : le titre à gauche, les questions à droite (accordéon, une seule ouverte : kit.js)
   // da.faqPhoto : une photo sous le titre (la colonne de gauche était un grand vide de papier à 1440, juge du 14/09) ; la première
   // question est ouverte d'emblée, les deux colonnes s'équilibrent
-  const faqScene = (s, intro, items, id, rel = '') => `<section class="scene scene--papier scene--faq"${id ? ` id="${id}"` : ''}><div class="scene-large faq-scene"><div class="faq-scene__tete reveal">${kicker('faq', 'Questions fréquentes')}<h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}${da.faqPhoto ? `<div class="faq-scene__photo">${photo(photoDe(da.faqPhoto, 'photo des questions'), rel, { sizes: '(max-width: 959px) 100vw, 36vw' })}</div>` : ''}</div><div class="faq reveal">${items.map((it) => `<details><summary>${esc(it.titre)}</summary><div class="faq__corps">${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</div></details>`).join('')}</div></div></section>`
+  // Vague 3, 2e tour : la photo n'est plus sous le titre mais sa voisine de grille (colonne de gauche, 2e rangée), et l'introduction
+  // ouvre la colonne des questions — la colonne du titre, plus haute que la liste, laissait du papier vide en bas à droite (juge du 14/09)
+  const faqScene = (s, intro, items, id, rel = '') => `<section class="scene scene--papier scene--faq"${id ? ` id="${id}"` : ''}><div class="scene-large faq-scene"><div class="faq-scene__tete reveal">${kicker('faq', 'Questions fréquentes')}<h2>${titreScene(s.h2)}</h2></div>${da.faqPhoto ? `<div class="faq-scene__photo" data-nav="sombre">${photo(photoDe(da.faqPhoto, 'photo des questions'), rel, { sizes: '(max-width: 959px) 100vw, 36vw' })}</div>` : ''}<div class="faq-scene__droite">${intro.map((p) => `<p class="faq-scene__intro reveal">${esc(p)}</p>`).join('')}<div class="faq reveal">${items.map((it) => `<details><summary>${esc(it.titre)}</summary><div class="faq__corps">${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</div></details>`).join('')}</div></div></div></section>`
   // Le formulaire de devis (site.json → devis) : « Demander un devis » menait à une carte sans formulaire, qui n'offrait qu'un
   // lien tel: (critique et juge du 14/09). Sur une démo, rien ne part : kit.js montre l'état « demande reçue » et le dit.
   const formDevis = (cible) => {
@@ -517,13 +557,16 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
   // une page commune), avec exactement les sources et le sizes de l'image du haut : servie depuis le cache du navigateur
   const bande = (intro, infos, rel, cible, fond = null) => {
     const form = formDevis(cible)
-    const infosHtml = `<div class="bande__infos">${infos.map((x) => `<div><strong>${esc(x.k)}</strong>${x.href ? `<a href="${x.href}">${esc(x.v)}</a>` : esc(x.v)}</div>`).join('')}</div>`
-    const appel = form ? `<p class="bande__tel">Ou par téléphone : <a href="tel:${tel}">${telAffiche(tel)}</a></p>` : `<div class="hero__actions" style="margin-top:2rem"><a class="bouton" href="tel:${tel}">${telAffiche(tel)} <span class="bouton__cercle">${FLECHE}</span></a></div>`
-    const media = fond ? `<div class="contact__media" aria-hidden="true">${fond.hero ? photoHeros(fond.a, fond.m, rel, { lazy: true }) : photo(fond.a, rel, { sizes: '100vw' })}</div>` : ''
-    const classes = `contact${fond ? ' contact--photo' : ''}${fond && intro.titre.length > 26 ? ' contact--long' : ''}`
+    // une info peut tenir sur deux lignes (v2) : « Lundi–vendredi, 8 h–18 h » puis « Intervention sur rendez-vous » — collées
+    // dans le même paragraphe, elles se lisaient d'une traite (juge du 14/09)
+    const infosHtml = `<div class="bande__infos">${infos.map((x) => `<div><strong>${esc(x.k)}</strong> ${x.href ? `<a href="${x.href}">${esc(x.v)}</a>` : `<span class="bande__ligne">${esc(x.v)}</span>`}${x.v2 ? ` <span class="bande__ligne">${esc(x.v2)}</span>` : ''}</div>`).join('')}</div>`
+    const appel = form ? `<p class="bande__tel">Ou par téléphone : <a href="${telHref(tel)}">${telAffiche(tel)}</a></p>` : `<div class="hero__actions" style="margin-top:2rem"><a class="bouton" href="${telHref(tel)}">${telAffiche(tel)} <span class="bouton__cercle">${FLECHE}</span></a></div>`
+    // au téléphone, le contact est haut (≈ 2 écrans) : une photo en largeur y est affichée à ≈ 2 fois la largeur de l'écran
+    const media = fond ? `<div class="contact__media" aria-hidden="true">${fond.hero ? photoHeros(fond.a, fond.m, rel, { lazy: true }) : photo(fond.a, rel, { sizes: '(max-width: 899px) 200vw, 100vw', position: fond.position })}</div>` : ''
+    const classes = `contact${fond ? ' contact--photo' : ''}${fond?.matiere ? ' contact--matiere' : ''}${fond && intro.titre.length > 26 ? ' contact--long' : ''}`
     const surtitre = da.scenes ? kicker('contact', 'Contact') : '<span class="mono">Contact</span>'
     // avec un formulaire : un plateau noir pleine largeur, dans l'ordre du pouce (titre, formulaire, numéro et infos)
-    if (form) return `<section class="${classes}" id="contact" data-nav="sombre">${media}<div class="contact__inner"><div class="contact__tete reveal">${surtitre}<h2>${esc(intro.titre)}</h2>${intro.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</div>${form}<div class="contact__infos">${appel}${infosHtml}</div></div></section>`
+    if (form) return `<section class="${classes}" id="contact" data-nav="sombre">${media}<div class="contact__inner"><div class="contact__tete reveal">${surtitre}<h2>${titreScene(intro.titre)}</h2>${intro.textes.map((t) => `<p>${esc(t)}</p>`).join('')}</div>${form}<div class="contact__infos">${appel}${infosHtml}</div></div></section>`
     return `<section class="section" id="contact"><div class="conteneur"><div class="bande${form ? ' bande--devis' : ''} reveal"><div><span class="mono">Contact</span><h2 style="margin-top:1rem">${esc(intro.titre)}</h2>${intro.textes.map((t) => `<p style="margin-top:1rem;opacity:.85">${esc(t)}</p>`).join('')}${appel}${form ? infosHtml : ''}</div>${form || infosHtml}</div></div></section>`
   }
   const infosContact = (textes) => {
@@ -531,6 +574,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     for (const t of textes) {
       if (/\b\d{5}\b/.test(t) && /rue|avenue|chemin|place|boulevard|allée|route|impasse/i.test(t)) out.push({ k: 'Adresse', v: t })
       else if (/lundi|mardi|samedi|\d\s?h/i.test(t) && t.length < 90) out.push({ k: 'Horaires', v: t })
+      else if (/sur rendez-vous/i.test(t) && t.length < 60 && out.some((x) => x.k === 'Horaires' && !x.v2)) out.find((x) => x.k === 'Horaires').v2 = t
       else if (/@/.test(t)) out.push({ k: 'Email', v: t })
     }
     out.push({ k: 'Intervention', v: communes.join(', ') })
@@ -560,7 +604,9 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       // Une idée monumentale DANS le h1, qui garde le mot-clé en petit (« Menuisier à Rennes ») : le SEO garde son h1, l'œil lit
       // une phrase d'atelier. Plus de rabot, de lentille, de rideau ni de balayage : l'escalier seul, et un seul geste (kit.css).
       if (!c.h1Ligne) throw new Error(`${metier}/ : contenu.json → pages["/"].h1Ligne manque (la ligne display du h1)`)
-      heroHtml = `<section class="hero hero--plein" data-nav="sombre"><div class="hero__media">${photoHeros(heros, herosMobile, rel)}</div><div class="hero__contenu"><h1><span class="h1__cle"><span>${esc(c.h1)}</span></span> <span class="h1__ligne"><span class="h1__ligne-in">${mots(c.h1Ligne)}</span></span></h1><div class="hero__pied"><p class="chapeau">${esc(c.chapeau)}</p><div class="hero__actions"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
+      // da.relief : le relief WebGL du héros (bureau seulement, chargé par kit.js après load) — la page ne porte que trois attributs
+      const relief = da.relief ? ` data-relief="${rel}relief.js" data-relief-fil="${rel}relief-fil.js" data-relief-profondeur="${rel}${esc(da.relief.profondeur)}" data-relief-oeil="${da.relief.oeil.join(',')}"` : ''
+      heroHtml = `<section class="hero hero--plein" data-nav="sombre"${relief}><div class="hero__media">${photoHeros(heros, herosMobile, rel)}</div><div class="hero__contenu"><h1><span class="h1__cle"><span>${esc(c.h1)}</span></span> <span class="h1__ligne"><span class="h1__ligne-in">${mots(c.h1Ligne)}</span></span></h1><div class="hero__pied"><p class="chapeau">${esc(c.chapeau)}</p><div class="hero__actions"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
     } else {
       const heroTexte = `<span class="mono entre" style="--d:.3s">${esc(c.kicker || `${da.label} · ${ville}`)}</span><h1>${mots(c.h1)}</h1><p class="chapeau entre" style="--d:1.1s">${esc(c.chapeau)}</p><div class="hero__actions entre" style="--d:1.3s"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div>`
       if (da.hero === 'aplat') heroHtml = `<section class="hero hero--aplat"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div class="hero__media entre" style="--d:.9s">${photo(heros, rel, { eager: true, sizes: '(max-width: 960px) calc(100vw - 2.5rem), 50vw' })}</div></div></section>`
@@ -581,7 +627,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
           // « Pièces livrées » promet des ouvrages : des mains sur une planche et un tournage y sont passés (juge du 14/09)
           const horsOuvrages = galerieAccueil.filter((p) => !(da.ouvrages || []).includes(p.base))
           if (horsOuvrages.length) throw new Error(`${metier}/ : la galerie des réalisations montre ${horsOuvrages.map((p) => p.base).join(', ')}, qui n’est pas un ouvrage fini (da.json → ouvrages)`)
-          const autres = [heros, herosMobile, da.atelier && photoDe(da.atelier, 'atelier'), da.atelierMobile && photoDe(da.atelierMobile, 'atelier'), ...vignettesAccueil(), ...['plateauPhoto', 'etapesPhoto', 'faqPhoto'].map((k) => da[k] && photoDe(da[k], k))].filter(Boolean)
+          const autres = [heros, herosMobile, da.atelier && photoDe(da.atelier, 'atelier'), da.atelierMobile && photoDe(da.atelierMobile, 'atelier'), ...vignettesAccueil(), ...['plateauPhoto', 'etapesPhoto', 'faqPhoto', 'contactPhoto'].map((k) => da[k] && photoDe(refPhoto(da[k]).base, k))].filter(Boolean)
           corps += galerieScene(s, intro, galerieAccueil, rel, autres, { id: 'realisations' })
         }
         else if (g === 'communes') corps += communesScene(s, intro, communes, rel, null, false)
@@ -591,7 +637,14 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
         else throw new Error(`${metier}/ : section « ${s.h2} » (genre ${g}) sans gabarit de scène`)
       }
       if (!contact) contact = { titre: 'Parlons de votre projet', textes: [], tous: [] }
-      return tete(page, rel, { titre: c.title, description: c.description }) + heroHtml + plateauHtml() + corps + bande(contact, infosContact(contact.tous), rel, ville, { a: heros, m: herosMobile, hero: true }) + pied(rel)
+      // da.contactPhoto : le contact sur une autre photo que le héros — l'escalier revenait quatre fois sur l'accueil (juge du 14/09)
+      const refContact = da.contactPhoto ? refPhoto(da.contactPhoto) : null
+      // matiere : une photo de fond (des boiseries) et non un ouvrage — au téléphone, son bas (le tapis clair) passe sous un voile plus dense
+      const fondContact = refContact ? { a: photoDe(refContact.base, 'fond du contact'), position: refContact.position, matiere: true } : { a: heros, m: herosMobile, hero: true }
+      // l'ouverture (priorité 9) : le héros et le plateau dans un même parent — sur bureau, le héros reste (sticky) et le plateau
+      // noir monte dessus (kit.css v26) ; ailleurs, ce parent n'a aucun style
+      const ouverture = da.hero === 'plein' && site.plateau ? `<div class="ouverture">${heroHtml}${plateauHtml()}</div>` : heroHtml + plateauHtml()
+      return tete(page, rel, { titre: c.title, description: c.description }) + ouverture + corps + bande(contact, infosContact(contact.tous), rel, ville, fondContact) + pied(rel)
     }
     for (const s of c.sections) {
       const { g, intro, items } = analyser(s)
@@ -628,7 +681,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     // 4 photos (ou 2), jamais 3 avec une orpheline dans la grille ; sans le bandeau de la page
     const mesPhotos = (() => { const l = galerie.filter((p) => p !== bandeau); const n = l.length >= 4 ? 4 : l.length >= 2 ? 2 : l.length; return Array.from({ length: n }, (_, k) => l[(index + k) % l.length]) })()
     let corps = bandeau
-      ? `<section class="hero hero--plein hero--commune${enPortrait(bandeau) ? ' hero--portrait' : ''}" data-nav="sombre"><div class="hero__media">${photo(bandeau, rel, { eager: true, sizes: '100vw' })}</div><div class="hero__contenu"><nav class="ariane" aria-label="Fil d’Ariane"><a href="${rel}">Accueil</a><span>/</span><span>${esc(page.cible)}</span></nav><h1><span class="h1__cle"><span>${esc(c.h1)}</span></span> <span class="h1__ligne"><span class="h1__ligne-in">${mots(c.h1Ligne)}</span></span></h1><div class="hero__pied">${c.chapeau ? `<p class="chapeau">${esc(c.chapeau)}</p>` : ''}<div class="hero__actions"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
+      ? `<section class="hero hero--plein hero--commune${enPortrait(bandeau) ? ' hero--portrait' : ''}" data-nav="sombre"><div class="hero__media">${photo(bandeau, rel, { eager: 'sans-priorite', sizes: '100vw' })}</div><div class="hero__contenu"><nav class="ariane" aria-label="Fil d’Ariane"><a href="${rel}">Accueil</a><span>/</span><span>${esc(page.cible)}</span></nav><h1><span class="h1__cle"><span>${esc(c.h1)}</span></span> <span class="h1__ligne"><span class="h1__ligne-in">${mots(c.h1Ligne)}</span></span></h1><div class="hero__pied">${c.chapeau ? `<p class="chapeau">${esc(c.chapeau)}</p>` : ''}<div class="hero__actions"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
       : `<section class="hero hero--page"><div class="conteneur"><div class="hero__contenu"><nav class="ariane entre" style="--d:.2s" aria-label="Fil d’Ariane"><a href="${rel}">Accueil</a><span>/</span><span>${esc(page.cible)}</span></nav><span class="mono entre" style="--d:.3s">${esc(kicker)}</span><h1>${mots(c.h1)}</h1>${c.chapeau ? `<p class="chapeau entre" style="--d:1s">${esc(c.chapeau)}</p>` : ''}<div class="hero__actions entre" style="--d:1.2s"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
     const creditsBandeau = bandeau ? [bandeau] : []
     // Les scènes sur une page commune : bandeau d'ouvrage (photo) · prestations (papier) · trois ouvrages sur noir · communes
@@ -651,7 +704,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       if (!aGalerie) corps += galerieScene({ h2: 'Quelques ouvrages' }, [], rangee, rel, creditsBandeau, { travelling: false })
       if (page.type === 'commune' && !aCommunes) corps += communesScene({ h2: 'Autres communes desservies' }, [], voisines, rel, page.cible, true)
       if (!contactS) contactS = { titre: `Votre ${da.label.toLowerCase()} à ${page.cible}`, textes: [], tous: [] }
-      return tete(page, rel, { titre: c.title, description: c.description, image: bandeau || rangee[0] }) + corps + bande(contactS, infosContact(contactS.tous), rel, page.type === 'commune' ? page.cible : ville, bandeau ? { a: bandeau } : null) + pied(rel)
+      return tete(page, rel, { titre: c.title, description: c.description, image: bandeau || rangee[0], bandeau }) + corps + bande(contactS, infosContact(contactS.tous), rel, page.type === 'commune' ? page.cible : ville, bandeau ? { a: bandeau } : null) + pied(rel)
     }
     let alt = true, premierePhoto = true, contact = null
     for (const s of c.sections) {
@@ -671,7 +724,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     if (!c.sections.some((s) => genreDe(s) === 'galerie') && mesPhotos.length) corps += `<section class="section"><div class="conteneur">${entete('Réalisations', 'Quelques chantiers', [])}${galerieHtml(mesPhotos, rel, premierePhoto && !bandeau, creditsBandeau)}</div></section>`
     if (page.type === 'commune' && !c.sections.some((s) => genreDe(s) === 'communes')) corps += `<section class="section section--alt"><div class="conteneur"><div class="deux"><div>${entete('À proximité', 'Autres communes desservies', [])}</div>${communesHtml(voisines, rel, page.cible)}</div></div></section>`
     if (!contact) contact = { titre: `Votre ${da.label.toLowerCase()} à ${page.cible}`, textes: [], tous: [] }
-    return tete(page, rel, { titre: c.title, description: c.description, image: bandeau || mesPhotos[0] }) + corps + bande(contact, infosContact(contact.tous), rel, page.type === 'commune' ? page.cible : ville) + pied(rel)
+    return tete(page, rel, { titre: c.title, description: c.description, image: bandeau || mesPhotos[0], bandeau }) + corps + bande(contact, infosContact(contact.tous), rel, page.type === 'commune' ? page.cible : ville) + pied(rel)
   }
 
   // ── Les pages légales ───────────────────────────────────────────────────────────────────────────────────────
@@ -689,6 +742,8 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       const recadrage = /^recadrée[^,]*/i.exec(d)?.[0]
       // le recadrage ne vaut que pour la version qui le porte (la 4:5 du téléphone) : on le dit
       if (recadrage && details.some((x) => !/recadr/i.test(x))) d = `${d.slice(recadrage.length).replace(/^,\s*/, '')} ; ${recadrage} pour la version téléphone`
+      // le relief du héros déforme la photo à l’écran (carte de profondeur tirée de l’image) : c’est une modification, dite ici
+      if (da.relief && groupe.some((x) => x.base === da.relief.photo)) d = `${d} ; sur ordinateur, animée en relief à partir d’une carte de profondeur calculée depuis la photo`
       modif = partageIdentique(p.licence)
         ? `Modifiée — adaptation : ${d}, par Presti. L’adaptation est diffusée sous la même licence, ${p.licence}.`
         : `Modifiée : ${d}, par Presti.`
@@ -735,7 +790,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     const html = page.type === 'accueil' ? accueil(page) : page.type === 'legal' ? legale(page) : interieure(page, indexInterieure++)
     const ou = `${metier}${page.chemin}`
     gardeFous(html, ou, couverture)
-    if (page.type === 'accueil' && da.hero === 'plein') gardeFousAccueil(html, ou, { site, tel, chapeau: contenu.pages['/'].chapeau })
+    if (page.type === 'accueil' && da.hero === 'plein') gardeFousAccueil(html, ou, { site, tel, chapeau: contenu.pages['/'].chapeau, sourceDe: new Map(photos.map((p) => [p.base, p.source])) })
     if (site.devis && page.type !== 'legal') gardeFousDevis(html, ou)
     gardeFousVoix(html, ou, { accueil: page.type === 'accueil', artisan: site.artisan })
     if (da.scenes && page.type !== 'legal') gardeFousScenes(html, ou)
@@ -760,11 +815,20 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     rendues.push({ page, html })
   }
   if (!rendues.some((r) => r.page.type === 'accueil')) throw new Error(`${metier} : aucune page d'accueil rendue`)
+  // le relief : sa photo est bien le héros, sa carte existe (scripts/relief-profondeur.mjs), son module est dans le kit
+  const KIT_RELIEF = path.join(ICI, '_kit', 'relief.js'), KIT_RELIEF_FIL = path.join(ICI, '_kit', 'relief-fil.js')
+  if (da.relief) {
+    if (da.relief.photo !== heros.base) throw new Error(`${metier} : da.json → relief.photo (« ${da.relief.photo} ») n’est pas le héros (« ${heros.base} »)`)
+    if (!fs.existsSync(path.join(dossier, da.relief.profondeur)) || fs.statSync(path.join(dossier, da.relief.profondeur)).size < 1024) throw new Error(`${metier} : carte de profondeur ${da.relief.profondeur} absente ou vide — node scripts/relief-profondeur.mjs`)
+    if (!Array.isArray(da.relief.oeil) || da.relief.oeil.length !== 2 || da.relief.oeil.some((v) => !(v > 0 && v < 1))) throw new Error(`${metier} : da.json → relief.oeil doit être deux fractions entre 0 et 1`)
+    for (const f of [KIT_RELIEF, KIT_RELIEF_FIL]) if (!fs.existsSync(f)) throw new Error(`${metier} : _kit/${path.basename(f)} manque`)
+  }
 
   const fonts = path.join(dossier, 'fonts'); fs.rmSync(fonts, { recursive: true, force: true }); fs.mkdirSync(fonts)
   for (const { src, nom } of fichiersPolice) fs.copyFileSync(src, path.join(fonts, nom))
   fs.writeFileSync(path.join(dossier, 'styles.css'), stylesCss)
   fs.writeFileSync(path.join(dossier, 'site.js'), KIT_JS)
+  for (const f of [KIT_RELIEF, KIT_RELIEF_FIL]) { if (da.relief) fs.copyFileSync(f, path.join(dossier, path.basename(f))); else fs.rmSync(path.join(dossier, path.basename(f)), { force: true }) }
   if (favicon) fs.writeFileSync(path.join(dossier, 'favicon.svg'), favicon)
   let n = 0
   for (const { page, html } of rendues) {

@@ -255,7 +255,7 @@ function jugerPage(html, page, contrat, typeAttendu, titres, descriptions) {
 // à puces, section « Nos réalisations » vide, contenu dans une colonne de 840 px sur un fond noir. Ce que les compteurs ne
 // voient pas, le navigateur le voit : on charge l'accueil, on le fait défiler (images paresseuses, reveals), et on mesure
 // ce qui est VISIBLE — images chargées et opaques, vides verticaux, largeur du contenu, police du métier vraiment appliquée.
-async function jugerRendu(navigateur, origine, pages, da) {
+async function jugerRendu(navigateur, origine, pages, da, demo = false) {
   const t = []
   const ok = (nom, passe, mesure = '', attendu = '') => t.push({ nom, passe: !!passe, mesure: String(mesure), attendu: String(attendu) })
   const accueil = (pages.find((p) => p.type === 'accueil') || { chemin: '/' }).chemin
@@ -321,10 +321,19 @@ async function jugerRendu(navigateur, origine, pages, da) {
         const rgb = (s) => (s.match(/[\d.]+/g) || []).map(Number)
         const lum = ([r, g, b]) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b) }
         const bouton = document.querySelector('.panneau .bouton'), panneau = document.querySelector('.panneau')
-        let contraste = null
-        if (bouton && panneau) { const a = lum(rgb(getComputedStyle(bouton).backgroundColor)), b = lum(rgb(getComputedStyle(panneau).backgroundColor)); contraste = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) }
+        const ratio = (x, y) => (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05)
+        // une couleur translucide se mélange à ce qui est dessous (alpha) avant d'être comparée
+        const melange = (haut, bas) => { const [r, g, b, a = 1] = rgb(haut); const [r2, g2, b2] = rgb(bas); return [r * a + r2 * (1 - a), g * a + g2 * (1 - a), b * a + b2 * (1 - a)] }
+        let contraste = null, contrasteTexte = null
+        if (bouton && panneau) {
+          const fondPanneau = getComputedStyle(panneau).backgroundColor, fondPilule = melange(getComputedStyle(bouton).backgroundColor, fondPanneau)
+          contraste = ratio(lum(fondPilule), lum(rgb(fondPanneau)))
+          // le TEXTE de la pilule contre la pilule (≥ 4,5:1) : un fond qui se détache du panneau ne dit rien de la lisibilité du libellé
+          const texte = [...bouton.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) ? bouton : bouton.querySelector('span:not(.bouton__cercle)') || bouton
+          contrasteTexte = ratio(lum(melange(getComputedStyle(texte).color, `rgb(${fondPilule.join(',')})`)), lum(fondPilule))
+        }
         const p = panneau ? panneau.getBoundingClientRect() : { bottom: 0 }
-        return { dessus: !!(el && el.closest('.burger')), element: el ? `${el.tagName.toLowerCase()}${el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/).join('.') : ''}` : '(rien)', contraste, dehors: { x: innerWidth / 2, y: Math.round(Math.min(innerHeight - 12, p.bottom + (innerHeight - p.bottom) / 2)) } }
+        return { dessus: !!(el && el.closest('.burger')), element: el ? `${el.tagName.toLowerCase()}${el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/).join('.') : ''}` : '(rien)', contraste, contrasteTexte, dehors: { x: innerWidth / 2, y: Math.round(Math.min(innerHeight - 12, p.bottom + (innerHeight - p.bottom) / 2)) } }
       }, c)
       const estOuvert = await ouvert()
       await page.touchscreen.tap(c.x, c.y); await page.waitForTimeout(600)
@@ -333,7 +342,54 @@ async function jugerRendu(navigateur, origine, pages, da) {
       const rouvert = await ouvert()
       await page.touchscreen.tap(etat.dehors.x, etat.dehors.y); await page.waitForTimeout(600)
       const fermeDehors = rouvert && !(await ouvert())
-      return { ouvert: estOuvert, dessus: etat.dessus, element: etat.element, contraste: etat.contraste, fermeCroix, fermeDehors }
+      return { ouvert: estOuvert, dessus: etat.dessus, element: etat.element, contraste: etat.contraste, contrasteTexte: etat.contrasteTexte, fermeCroix, fermeDehors }
+    } finally { await ctx.close().catch(() => {}) }
+  }
+  // Le parcours de devis, à l'usage (juges du 14/09 : un bouton sans issue, un bas de formulaire hors de l'écran) : le lien
+  // « Demander un devis » du héros mène à un <form> présent dans la cible de son ancre ; au bureau (1440×900), le formulaire
+  // entier tient dans l'écran après le clic, bouton d'envoi compris ; sur une démo, l'envoi ne fait partir AUCUNE requête
+  // (ni document, ni fetch, ni beacon) et la confirmation dit « Démonstration ». null : l'accueil n'a aucun lien de devis.
+  const parcoursDevis = async (largeur, hauteur, mobile) => {
+    const ctx = await navigateur.newContext({ viewport: { width: largeur, height: hauteur }, hasTouch: mobile, isMobile: mobile })
+    const page = await ctx.newPage()
+    try {
+      await page.goto(origine + accueil, { waitUntil: 'load', timeout: 60_000 })
+      await page.waitForTimeout(800)
+      const poignee = await page.evaluateHandle(() => {
+        const liens = [...document.querySelectorAll('main a[href*="#"]')].filter((a) => /devis/i.test(a.textContent))
+        return liens.find((a) => a.closest('.hero')) || liens[0] || null
+      })
+      const lien = poignee.asElement()
+      if (!lien) return null
+      const href = await lien.getAttribute('href')
+      await lien.click()
+      await page.waitForTimeout(2200)
+      const id = (href.split('#')[1] || '').trim()
+      const apres = await page.evaluate((id) => {
+        const cible = id ? document.getElementById(id) : null
+        const form = cible ? (cible.matches('form') ? cible : cible.querySelector('form')) : null
+        if (!form) return { form: false }
+        const f = form.getBoundingClientRect(), envoi = form.querySelector('[type=submit]')
+        const e = envoi ? envoi.getBoundingClientRect() : f
+        return { form: true, envoi: !!envoi, haut: Math.round(f.top), bas: Math.round(Math.max(f.bottom, e.bottom)), nav: Math.round(document.querySelector('.nav')?.getBoundingClientRect().bottom || 0), hauteur: innerHeight }
+      }, id)
+      if (!apres.form || !apres.envoi) return { href, ...apres }
+      const avantUrl = page.url()
+      const parties = []
+      page.on('request', (r) => { if (!['image', 'font', 'stylesheet'].includes(r.resourceType())) parties.push(`${r.method()} ${r.resourceType()} ${r.url().slice(0, 70)}`) })
+      await page.evaluate((id) => {
+        const form = document.getElementById(id).querySelector('form')
+        for (const s of form.querySelectorAll('select[required]')) { const o = [...s.options].find((x) => x.getAttribute('value') !== ''); if (o) s.value = o.value }
+        for (const c of form.querySelectorAll('input[required], textarea[required]')) c.value = c.type === 'email' ? 'demo@exemple.invalid' : 'Essai du juge'
+      }, id)
+      await page.locator(`[id="${id}"] form [type=submit]`).first().click()
+      await page.waitForTimeout(1800)
+      const etat = await page.evaluate((id) => {
+        const c = document.getElementById(id), m = c.querySelector('[role=status]')
+        const vue = !!m && !m.hidden && m.getBoundingClientRect().height > 0
+        return { merci: vue, demo: vue && /démonstration/i.test(m.textContent) }
+      }, id)
+      return { href, ...apres, parties, memeUrl: page.url().split('#')[0] === avantUrl.split('#')[0], ...etat }
     } finally { await ctx.close().catch(() => {}) }
   }
   try {
@@ -357,6 +413,15 @@ async function jugerRendu(navigateur, origine, pages, da) {
       ok('menu mobile (390 px, ouvert) : elementFromPoint au centre du burger renvoie le burger (la croix reste au-dessus du panneau)', m.ouvert && m.dessus, `${m.ouvert ? 'ouvert' : 'resté fermé'} · au centre : ${m.element}`, 'le burger')
       ok('menu mobile : un tap sur la croix le ferme, un tap hors du panneau (voile) aussi', m.fermeCroix && m.fermeDehors, `croix : ${m.fermeCroix ? 'fermé' : 'resté ouvert'} · dehors : ${m.fermeDehors ? 'fermé' : 'resté ouvert'}`, 'fermé et fermé')
       if (m.contraste !== null) ok('menu mobile : la pilule du panneau se détache de son fond (contraste ≥ 3:1)', m.contraste >= 3, `${m.contraste.toFixed(2)}:1`, '≥ 3:1')
+      if (m.contrasteTexte != null) ok('menu mobile : le texte de la pilule se lit sur la pilule (contraste ≥ 4,5:1)', m.contrasteTexte >= 4.5, `${m.contrasteTexte.toFixed(2)}:1`, '≥ 4,5:1')
+    }
+    for (const [nom, l, h, mobile] of [['bureau 1440×900', 1440, 900, false], ['téléphone 390×844', 390, 844, true]]) {
+      const dv = await parcoursDevis(l, h, mobile)
+      if (!dv) continue
+      ok(`devis (${nom}) : « Demander un devis » mène à un <form> présent, avec son bouton d’envoi`, dv.form && dv.envoi, `${dv.href} → ${dv.form ? (dv.envoi ? 'formulaire et bouton' : 'formulaire sans bouton d’envoi') : 'aucun formulaire'}`, 'un <form> dans la cible de l’ancre')
+      if (!dv.form || !dv.envoi) continue
+      if (!mobile) ok('devis (bureau 1440×900) : après le clic, tout le formulaire tient dans l’écran, bouton d’envoi compris', dv.haut >= dv.nav - 1 && dv.bas <= dv.hauteur, `de ${dv.haut} à ${dv.bas} px (nav jusqu’à ${dv.nav}, écran ${dv.hauteur})`, `sous la nav et ≤ ${dv.hauteur} px`)
+      if (demo) ok(`devis (${nom}) : l’envoi de démonstration ne part pas en réseau et affiche « Démonstration »`, dv.parties.length === 0 && dv.memeUrl && dv.merci && dv.demo, `${dv.parties.length} requête(s)${dv.parties[0] ? ` (${dv.parties[0]})` : ''}${dv.memeUrl ? '' : ' · la page a changé d’adresse'} · confirmation ${dv.merci ? 'affichée' : 'absente'}, ${dv.demo ? 'avec' : 'sans'} la mention`, '0 requête, même page, « Démonstration » affiché')
     }
   } catch (e) { ok('le rendu a pu être mesuré (Playwright)', false, e.message.slice(0, 120), 'accueil chargé en 60 s') }
   return t
@@ -392,6 +457,56 @@ function jugerGeste(dossier, pages) {
   // (1 px de large) et l'accordéon natif (::details-content)
   const fautes = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].filter(([, sel, decl]) => /transition\s*:[^;]*\b(width|height|top|left|padding(?:-\w+)?|margin(?:-\w+)?)\b/.test(decl) && !/etapes__liste::after|details-content/.test(sel)).map(([, sel]) => sel.trim().slice(0, 40))
   ok('rien n’anime la mise en page (width/height/top/left/padding/margin en transition), hors ligne des étapes et accordéon', fautes.length === 0, fautes.slice(0, 3).join(' · ') || 'aucune', 'transform / opacity seulement')
+  return t
+}
+
+// ── Le parcours de devis, au texte (juges du 14/09 : « Demander un devis » menait à une carte sans formulaire ; l'étape 1
+// promettait un formulaire absent). Chaque lien ou bouton dont le libellé dit « devis » doit mener à un <form> : un lien, à la
+// cible de son ancre (sur sa page ou sur une autre page du dossier) ; un bouton, en étant dans un <form>. Un texte qui parle de
+// « formulaire » exige un <form> sur sa page (pages légales : celui de l'accueil, qu'elles désignent). La cible d'une ancre est
+// lue jusqu'au </section> suivant : les scènes ne s'emboîtent pas.
+function jugerDevis(dossier, pages) {
+  const t = []
+  const ok = (nom, passe, mesure = '', attendu = '') => t.push({ nom, passe: !!passe, mesure: String(mesure), attendu: String(attendu) })
+  const lire = (ch) => { const f = path.join(dossier, ch.replace(/^\//, ''), 'index.html'); return fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : null }
+  const formDans = (html, id) => {
+    const i = html.search(new RegExp(`\\sid=["']${id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["']`))
+    if (i < 0) return false
+    const debut = html.lastIndexOf('<', i)
+    if (/^<form\b/i.test(html.slice(debut))) return true
+    const fin = html.indexOf('</section>', i)
+    return /<form\b/i.test(html.slice(debut, fin < 0 ? undefined : fin))
+  }
+  const accueil = lire((pages.find((p) => p.type === 'accueil') || { chemin: '/' }).chemin) || ''
+  const sansIssue = [], parlent = []
+  let n = 0
+  for (const page of pages) {
+    const html = lire(page.chemin)
+    if (!html) continue
+    const corps = html.slice(html.search(/<body\b/i))
+    for (const m of corps.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+      const libelle = texteDe(m[2]).trim()
+      if (!/devis/i.test(libelle)) continue
+      n++
+      const href = attributs(m[1]).href || ''
+      let u = null
+      try { u = new URL(href, `http://x${page.chemin}`) } catch { /* jugé juste en dessous */ }
+      const id = u ? decodeURIComponent(u.hash.slice(1)) : ''
+      const chemin = u ? u.pathname.replace(/index\.html$/, '') : ''
+      const cible = chemin === page.chemin ? html : lire(chemin)
+      if (!id || !cible || !formDans(cible, id)) sansIssue.push(`${page.chemin} « ${libelle} » → ${href || '(sans href)'}`)
+    }
+    for (const m of corps.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/gi)) {
+      const libelle = texteDe(m[1]).trim()
+      if (!/devis/i.test(libelle)) continue
+      n++
+      const avant = corps.slice(0, m.index)
+      if (avant.lastIndexOf('<form') <= avant.lastIndexOf('</form>')) sansIssue.push(`${page.chemin} bouton « ${libelle} » hors d’un <form>`)
+    }
+    if (/formulaire/i.test(texteDe(corps)) && !/<form\b/i.test(page.type === 'legal' ? accueil : corps)) parlent.push(page.chemin)
+  }
+  ok('parcours de devis : chaque lien ou bouton « devis » mène à un <form> présent', sansIssue.length === 0, sansIssue.slice(0, 2).join(' · ') || `${n} lien(s) ou bouton(s), tous vers un formulaire`, 'aucun sans issue')
+  ok('un texte qui parle de « formulaire » a un <form> (pages légales : celui de l’accueil)', parlent.length === 0, parlent.join(', ') || 'aucune page sans formulaire', 'aucune page')
   return t
 }
 
@@ -546,6 +661,7 @@ bloc('Le dossier — pages, communes, sitemap, robots', tContrat)
 
 bloc('La substance et la direction artistique', jugerSubstance(dossier, contrat, pages))
 bloc('Le geste — le mouvement et le métier de design', jugerGeste(dossier, pages))
+bloc('Le parcours de devis — liens, boutons et formulaire', jugerDevis(dossier, pages))
 
 const titres = new Set(), descriptions = new Set()
 for (const page of pages) {
@@ -571,7 +687,7 @@ if (!statique && (!echecTotal || mesurerQuandMeme)) {
     // constaté le 13/09 avec sept juges sur le même port 9333).
     const port = await portLibre()
     navigateur = await chromium.launch({ args: [`--remote-debugging-port=${port}`] })
-    bloc('Le rendu réel — bureau et mobile', await jugerRendu(navigateur, origine, pages, DA_METIER[contrat?.metier]))
+    bloc('Le rendu réel — bureau et mobile', await jugerRendu(navigateur, origine, pages, DA_METIER[contrat?.metier], !!contrat?.demo))
     verrou = await prendreVerrou()
     const cibles = pages.filter((p) => p.type !== 'legal').slice(0, maxPages)
     for (const page of cibles) bloc(`Lighthouse mobile — ${page.chemin}`, await jugerLighthouse(origine + page.chemin, lighthouse, port))

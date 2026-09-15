@@ -5,16 +5,9 @@
     "/": {
       "type": "accueil",
       "title": "Menuisier à Rennes — Atelier Lestraque",
-      "description": "Atelier Lestraque, menuisier à Rennes : escaliers, dressings et bibliothèques en bois massif, fabriqués à l’atelier et posés chez vous. Devis gratuit.",
+      "description": "Atelier Lestraque, menuisier à Rennes : escaliers, dressings et bibliothèques en bois massif, fabriqués à l’atelier et posés chez vous. Devis après visite.",
       "h1": "Menuisier à Rennes",
       "chapeau": "Escaliers, dressings et bibliothèques en bois massif, que je dessine, fabrique et pose.",
-      "heroImages": [
-        {
-          "type": "img",
-          "fichier": "hero-bois",
-          "alt": "Détail d’assemblage bois de menuiserie d’art à Rennes"
-        }
-      ],
       "sections": [
         {
           "h2": "Ce que je fabrique",
@@ -90,36 +83,6 @@
             {
               "type": "p",
               "texte": "Quelques ouvrages sortis de l’atelier, du relevé à la pose."
-            },
-            {
-              "type": "img",
-              "fichier": "escalier-colimacon",
-              "alt": "Escalier hélicoïdal sur mesure en chêne massif"
-            },
-            {
-              "type": "img",
-              "fichier": "escalier-tournant",
-              "alt": "Escalier suspendu et rampe en bois sculpté"
-            },
-            {
-              "type": "img",
-              "fichier": "mobilier-lit",
-              "alt": "Mobilier contemporain suspendu en noyer massif"
-            },
-            {
-              "type": "img",
-              "fichier": "bibliotheque-bois",
-              "alt": "Bibliothèque sur mesure en chêne et structure acier"
-            },
-            {
-              "type": "img",
-              "fichier": "cuisine-bois",
-              "alt": "Aménagement de cuisine sous combles en bois massif"
-            },
-            {
-              "type": "img",
-              "fichier": "parquet-massif",
-              "alt": "Pose de parquet point de Hongrie en chêne de tradition"
             }
           ],
           "genre": "galerie"
@@ -241,11 +204,11 @@
             },
             {
               "type": "h3",
-              "texte": "Vos devis de menuiserie sont-ils gratuits ?"
+              "texte": "Comment se passe le devis ?"
             },
             {
               "type": "p",
-              "texte": "Oui : la visite et le devis sont gratuits, et ne vous engagent à rien."
+              "texte": "Je viens voir la pièce et relever les cotes. Vous recevez ensuite le plan coté, le choix des essences et un devis détaillé ligne par ligne, que vous relisez à votre rythme."
             }
           ],
           "genre": "faq"
@@ -279,7 +242,11 @@
             },
             {
               "type": "p",
-              "texte": "Lundi–vendredi 8 h–18 h Intervention sur rendez-vous"
+              "texte": "Lundi–vendredi, 8 h–18 h"
+            },
+            {
+              "type": "p",
+              "texte": "Intervention sur rendez-vous"
             }
           ],
           "genre": "contact"
@@ -315,17 +282,10 @@
       "type": "commune",
       "cible": "Rennes",
       "title": "Artisan menuisier à Rennes — Atelier Lestraque",
-      "description": "Menuisier à Rennes : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis gratuit.",
+      "description": "Menuisier à Rennes : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis après visite.",
       "h1": "Menuisier à Rennes",
       "kicker": "",
       "chapeau": "Escaliers, dressings et bibliothèques fabriqués à l’atelier, à Rennes, et posés chez vous.",
-      "heroImages": [
-        {
-          "type": "img",
-          "fichier": "hero-bois",
-          "alt": "Menuisier intervenant à Rennes pour vos travaux de bois"
-        }
-      ],
       "sections": [
         {
           "h2": "Menuiserie sur mesure à Rennes",
@@ -362,27 +322,17 @@
           "genre": "prestations"
         },
         {
-          "h2": "Réalisations en atelier et sur chantier",
+          "h2": "Pièces livrées",
           "blocs": [
             {
               "type": "p",
               "texte": "Quelques ouvrages sortis de l’atelier."
-            },
-            {
-              "type": "img",
-              "fichier": "escalier-colimacon",
-              "alt": "Fabrication d’escalier sur mesure pour chantier à Rennes"
-            },
-            {
-              "type": "img",
-              "fichier": "bibliotheque-bois",
-              "alt": "Agencement de bibliothèque salon pour maison à Rennes"
             }
           ],
           "genre": "galerie"
         },
         {
-          "h2": "Communes limitrophes et voisines",
+          "h2": "Aussi sur ma route",
           "blocs": [
             {
               "type": "p",
@@ -412,11 +362,11 @@
           "genre": "communes"
         },
         {
-          "h2": "Prendre contact pour un projet à Rennes",
+          "h2": "Votre projet à Rennes",
           "blocs": [
             {
               "type": "p",
-              "texte": "Après la visite, je vous remets un devis détaillé, gratuit."
+              "texte": "Après la visite, je vous remets un plan coté et un devis détaillé, ligne par ligne."
             },
             {
               "type": "h3",
@@ -476,17 +426,10 @@
       "type": "commune",
       "cible": "Cesson-Sévigné",
       "title": "Artisan menuisier à Cesson-Sévigné — Atelier Lestraque",
-      "description": "Menuisier à Cesson-Sévigné : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis gratuit.",
+      "description": "Menuisier à Cesson-Sévigné : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis après visite.",
       "h1": "Menuisier à Cesson-Sévigné",
       "kicker": "",
       "chapeau": "Escaliers, dressings et bibliothèques fabriqués à l’atelier de Rennes, posés chez vous à Cesson-Sévigné.",
-      "heroImages": [
-        {
-          "type": "img",
-          "fichier": "hero-bois",
-          "alt": "Menuisier intervenant à Cesson-Sévigné pour vos travaux de bois"
-        }
-      ],
       "sections": [
         {
           "h2": "Menuiserie sur mesure à Cesson-Sévigné",
@@ -523,27 +466,17 @@
           "genre": "prestations"
         },
         {
-          "h2": "Réalisations en atelier et sur chantier",
+          "h2": "Pièces livrées",
           "blocs": [
             {
               "type": "p",
               "texte": "Quelques ouvrages sortis de l’atelier."
-            },
-            {
-              "type": "img",
-              "fichier": "escalier-colimacon",
-              "alt": "Fabrication d’escalier sur mesure pour chantier à Cesson-Sévigné"
-            },
-            {
-              "type": "img",
-              "fichier": "bibliotheque-bois",
-              "alt": "Agencement de bibliothèque salon pour maison à Cesson-Sévigné"
             }
           ],
           "genre": "galerie"
         },
         {
-          "h2": "Communes limitrophes et voisines",
+          "h2": "Aussi sur ma route",
           "blocs": [
             {
               "type": "p",
@@ -573,11 +506,11 @@
           "genre": "communes"
         },
         {
-          "h2": "Prendre contact pour un projet à Cesson-Sévigné",
+          "h2": "Votre projet à Cesson-Sévigné",
           "blocs": [
             {
               "type": "p",
-              "texte": "Après la visite, je vous remets un devis détaillé, gratuit."
+              "texte": "Après la visite, je vous remets un plan coté et un devis détaillé, ligne par ligne."
             },
             {
               "type": "h3",
@@ -637,17 +570,10 @@
       "type": "commune",
       "cible": "Bruz",
       "title": "Artisan menuisier à Bruz — Atelier Lestraque",
-      "description": "Menuisier à Bruz : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis gratuit.",
+      "description": "Menuisier à Bruz : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis après visite.",
       "h1": "Menuisier à Bruz",
       "kicker": "",
       "chapeau": "Escaliers, dressings et bibliothèques fabriqués à l’atelier de Rennes, posés chez vous à Bruz.",
-      "heroImages": [
-        {
-          "type": "img",
-          "fichier": "hero-bois",
-          "alt": "Menuisier intervenant à Bruz pour vos travaux de bois"
-        }
-      ],
       "sections": [
         {
           "h2": "Menuiserie sur mesure à Bruz",
@@ -684,27 +610,17 @@
           "genre": "prestations"
         },
         {
-          "h2": "Réalisations en atelier et sur chantier",
+          "h2": "Pièces livrées",
           "blocs": [
             {
               "type": "p",
               "texte": "Quelques ouvrages sortis de l’atelier."
-            },
-            {
-              "type": "img",
-              "fichier": "escalier-colimacon",
-              "alt": "Fabrication d’escalier sur mesure pour chantier à Bruz"
-            },
-            {
-              "type": "img",
-              "fichier": "bibliotheque-bois",
-              "alt": "Agencement de bibliothèque salon pour maison à Bruz"
             }
           ],
           "genre": "galerie"
         },
         {
-          "h2": "Communes limitrophes et voisines",
+          "h2": "Aussi sur ma route",
           "blocs": [
             {
               "type": "p",
@@ -734,11 +650,11 @@
           "genre": "communes"
         },
         {
-          "h2": "Prendre contact pour un projet à Bruz",
+          "h2": "Votre projet à Bruz",
           "blocs": [
             {
               "type": "p",
-              "texte": "Après la visite, je vous remets un devis détaillé, gratuit."
+              "texte": "Après la visite, je vous remets un plan coté et un devis détaillé, ligne par ligne."
             },
             {
               "type": "h3",
@@ -798,17 +714,10 @@
       "type": "commune",
       "cible": "Saint-Grégoire",
       "title": "Artisan menuisier à Saint-Grégoire — Atelier Lestraque",
-      "description": "Menuisier à Saint-Grégoire : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis gratuit.",
+      "description": "Menuisier à Saint-Grégoire : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis après visite.",
       "h1": "Menuisier à Saint-Grégoire",
       "kicker": "",
       "chapeau": "Escaliers, dressings et bibliothèques fabriqués à l’atelier de Rennes, posés chez vous à Saint-Grégoire.",
-      "heroImages": [
-        {
-          "type": "img",
-          "fichier": "hero-bois",
-          "alt": "Menuisier intervenant à Saint-Grégoire pour vos travaux de bois"
-        }
-      ],
       "sections": [
         {
           "h2": "Menuiserie sur mesure à Saint-Grégoire",
@@ -845,27 +754,17 @@
           "genre": "prestations"
         },
         {
-          "h2": "Réalisations en atelier et sur chantier",
+          "h2": "Pièces livrées",
           "blocs": [
             {
               "type": "p",
               "texte": "Quelques ouvrages sortis de l’atelier."
-            },
-            {
-              "type": "img",
-              "fichier": "escalier-colimacon",
-              "alt": "Fabrication d’escalier sur mesure pour chantier à Saint-Grégoire"
-            },
-            {
-              "type": "img",
-              "fichier": "bibliotheque-bois",
-              "alt": "Agencement de bibliothèque salon pour maison à Saint-Grégoire"
             }
           ],
           "genre": "galerie"
         },
         {
-          "h2": "Communes limitrophes et voisines",
+          "h2": "Aussi sur ma route",
           "blocs": [
             {
               "type": "p",
@@ -895,11 +794,11 @@
           "genre": "communes"
         },
         {
-          "h2": "Prendre contact pour un projet à Saint-Grégoire",
+          "h2": "Votre projet à Saint-Grégoire",
           "blocs": [
             {
               "type": "p",
-              "texte": "Après la visite, je vous remets un devis détaillé, gratuit."
+              "texte": "Après la visite, je vous remets un plan coté et un devis détaillé, ligne par ligne."
             },
             {
               "type": "h3",
@@ -962,7 +861,6 @@
       "h1": "Mentions légales",
       "kicker": "Mentions légales",
       "chapeau": "Site de démonstration : entreprise fictive créée à des fins de présentation technique des capacités logicielles.",
-      "heroImages": [],
       "sections": [
         {
           "h2": "Identification de l’entreprise",
@@ -1078,7 +976,6 @@
       "h1": "Politique de confidentialité",
       "kicker": "Confidentialité",
       "chapeau": "Ce que le formulaire de devis recueille, pourquoi, et combien de temps je le garde.",
-      "heroImages": [],
       "sections": [
         {
           "h2": "Protection de vos données personnelles",

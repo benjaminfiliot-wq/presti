@@ -73,7 +73,7 @@
     "nom": "Lestraque",
     "installation": 2011,
     "parcours": "CAP puis brevet professionnel de menuisier, huit ans dans un atelier d’escaliers avant d’ouvrir le mien.",
-    "citation": "Du premier relevé à la dernière marche posée, c’est la même main qui travaille."
+    "citation": "Du premier relevé à la dernière marche posée, je ne passe la main à personne."
   },
   "plateau": {
     "_": "Le plateau noir sous le héros : la citation signée de l’artisan (site.json → artisan) et trois chiffres que le vrai artisan remplit. Démo : valeurs vraisemblables, jamais des zéros ; le pied de page déclare l’entreprise fictive. Téléphone : plage 02 61 91 réservée à la fiction par l’Arcep (décision 2019-0954, art. 2.5.12).",

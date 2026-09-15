@@ -6,6 +6,9 @@
   var d = document, h = d.documentElement
   h.classList.remove('no-js'); h.classList.add('js')
   var reduit = matchMedia('(prefers-reduced-motion: reduce)').matches
+  // la chorégraphie de bureau (kit.css v26 : plateau sur le héros, étapes épinglées) — les mêmes conditions que le CSS ; quand
+  // elle joue, la parallaxe du héros et la ligne des étapes en JS se taisent (un écouteur de défilement de moins chacune)
+  var choregraphie = !reduit && matchMedia('(min-width: 1024px)').matches && !!(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()'))
   // plus de rideau d'ouverture (14/09, priorité 3) : il cachait l'entrée du titre, et son sessionStorage ne sert plus
 
   var nav = d.querySelector('.nav')
@@ -25,14 +28,81 @@
   addEventListener('scroll', rendreTout, { passive: true })
   // Sur une scène sombre (héros, plateau noir, étapes), la nav passe en noir translucide : une barre beige au-dessus du
   // plateau cassait la coupure franche noir contre photo (juge, 14/09). Une bande de 1 px sous le haut de la nav suffit.
+  // La ligne est lue au milieu de la nav (mesurée dans une frame, jamais pendant l'exécution du script) et recalculée quand la
+  // fenêtre change de hauteur (barre d'adresse du téléphone) : une ligne figée au chargement décalait la bascule.
+  // Vague 3, 2e tour : une bascule au milieu de la nav laissait la barre beige coiffer le noir du contact sur 60 px de
+  // défilement (juge du 14/09, 390 px). La nav a maintenant deux couches (kit.css → nav--bande) : le beige et le noir
+  // translucide, chacune découpée (clip-path) au pixel près sur la frontière de la scène sombre qui passe dessous. Seules les
+  // scènes sombres qui touchent la bande de la nav sont mesurées (IntersectionObserver), une fois par image.
   var sombres = d.querySelectorAll('[data-nav="sombre"]')
   if (nav && sombres.length && 'IntersectionObserver' in window) {
-    var dessous = new Set()
-    var obs = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) dessous.add(e.target); else dessous.delete(e.target) })
-      nav.classList.toggle('nav--sombre', dessous.size > 0)
-    }, { rootMargin: '-40px 0px -' + Math.max(0, innerHeight - 41) + 'px 0px' })
-    sombres.forEach(function (s) { obs.observe(s) })
+    nav.classList.add('nav--bande')
+    var dessous = new Set(), obs = null, tRes = 0, hNav = 0, tBande = false, cle = ''
+    var bande = function () {
+      tBande = false
+      var a = hNav, b = hNav, vide = true
+      dessous.forEach(function (s) {
+        var r = s.getBoundingClientRect(), t = Math.max(0, Math.round(r.top)), u = Math.min(hNav, Math.round(r.bottom))
+        // une photo sombre sur une scène claire ne compte que si elle couvre au moins la moitié de la largeur sous la nav (la photo
+        // des questions et les cartes du rail des prestations au téléphone) ; au bureau, une vignette ou une photo de colonne laisse
+        // la nav sur le papier (juge du 15/09 : barre beige sur la photo à tasseaux, 43 lignes à 390 px)
+        if (Math.min(innerWidth, r.right) - Math.max(0, r.left) < innerWidth / 2) return
+        if (u > t) { if (vide) { a = t; b = u; vide = false } else { a = Math.min(a, t); b = Math.max(b, u) } }
+      })
+      var k = a + ',' + b
+      if (k === cle) return
+      cle = k
+      // le noir couvre [a, b] de la nav ; le beige, le reste (au-dessus quand le noir arrive par le bas, dessous sinon)
+      nav.style.setProperty('--nav-sh', a + 'px'); nav.style.setProperty('--nav-sb', (hNav - b) + 'px')
+      nav.style.setProperty('--nav-ch', (vide || a > 0 ? 0 : b) + 'px'); nav.style.setProperty('--nav-cb', (vide || a <= 0 ? 0 : hNav - a) + 'px')
+      nav.classList.toggle('nav--sombre', !vide && a <= hNav / 2 && b >= hNav / 2)
+    }
+    var demander = function () { if (!tBande) { tBande = true; requestAnimationFrame(bande) } }
+    var observer = function () {
+      if (obs) obs.disconnect()
+      dessous.clear(); cle = ''
+      hNav = Math.max(1, Math.round(nav.offsetHeight))
+      obs = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) dessous.add(e.target); else dessous.delete(e.target) })
+        demander()
+      }, { rootMargin: '0px 0px -' + Math.max(0, innerHeight - hNav) + 'px 0px' })
+      sombres.forEach(function (s) { obs.observe(s) })
+    }
+    requestAnimationFrame(observer)
+    // en capture : le défilement horizontal d'un rail (qui ne remonte pas jusqu'à window) déplace aussi ses photos sous la nav
+    addEventListener('scroll', function () { if (dessous.size || cle !== hNav + ',' + hNav) demander() }, { passive: true, capture: true })
+    addEventListener('resize', function () { clearTimeout(tRes); tRes = setTimeout(observer, 150) })
+  }
+
+  // Le travelling des réalisations (bureau ≥ 1024 px, view(), mouvement permis — les mêmes conditions que kit.css) : le compteur
+  // donne la photo la plus proche du centre de l'écran, et seule une photo entière montre sa légende. Une mesure par image, et
+  // seulement quand la scène est à l'écran.
+  var trav = d.querySelector('.travelling')
+  if (trav && !reduit && matchMedia('(min-width: 1024px)').matches && window.CSS && CSS.supports('animation-timeline: view()') && 'IntersectionObserver' in window) {
+    var photos = trav.querySelectorAll('.galerie__item'), piste = trav.querySelector('.compteur__piste'), tAtt = false, actif = false
+    trav.classList.add('pilote')
+    // vague 3 : l'épaisseur d'un objet posé (kit.css → relief-3d) — chaque photo pivote de quelques degrés selon son écart au
+    // centre de l'écran (--e, de -1,2 à 1,2 : × 5° dans kit.css, donc 6° au plus), recule de 48 px au plus (--p, borné à 1) et porte
+    // son ombre du côté qui s'éloigne (--s). Souris fine seulement.
+    var relief3d = matchMedia('(hover: hover) and (pointer: fine)').matches
+    if (relief3d) trav.classList.add('relief-3d')
+    var suivre = function () {
+      tAtt = false
+      var cx = innerWidth / 2, k = 0, mieux = Infinity
+      photos.forEach(function (it, i) {
+        var r = it.getBoundingClientRect(), centre = r.left + r.width / 2 - cx, ecart = Math.abs(centre)
+        if (ecart < mieux) { mieux = ecart; k = i }
+        it.classList.toggle('entier', r.left >= -1 && r.right <= innerWidth + 1)
+        if (relief3d) {
+          var e = Math.max(-1.2, Math.min(1.2, centre / cx))
+          it.style.setProperty('--e', e.toFixed(3)); it.style.setProperty('--p', Math.min(1, Math.abs(e)).toFixed(3)); it.style.setProperty('--s', e < 0 ? '-1' : '1')
+        }
+      })
+      if (piste) piste.style.setProperty('--k', k)
+    }
+    new IntersectionObserver(function (es) { actif = es[0].isIntersecting; if (actif) requestAnimationFrame(suivre) }).observe(trav)
+    addEventListener('scroll', function () { if (actif && !tAtt) { tAtt = true; requestAnimationFrame(suivre) } }, { passive: true })
+    addEventListener('resize', function () { if (actif) requestAnimationFrame(suivre) })
   }
 
   // Le menu : la croix reste AU-DESSUS du panneau (kit.css), un voile couvre la page et ferme au tap ; un tap ne traverse
@@ -58,8 +128,63 @@
     reveals.forEach(function (el) { (el.classList.contains('galerie__item') ? ioPhoto : io).observe(el) })
   } else reveals.forEach(function (el) { el.classList.add('vu') })
 
+  // Le relief du héros (vague 3) : ordinateur à souris, mouvement permis, ≥ 1024 px, workers et OffscreenCanvas, ET une carte
+  // graphique que CETTE page a le droit d'utiliser — sinon rien n'est demandé et la photo reste telle quelle.
+  // La présence des interfaces ne prouve rien : lancé avec --disable-webgl --disable-3d-apis (ou carte en liste noire), le fil
+  // principal n'obtient aucun contexte, mais un OffscreenCanvas dans un worker en obtient un (juge du 15/09 : Chromium et Chrome 152).
+  // D'où une sonde ici, sur une toile de 1 px : elle ne demande que « la page a-t-elle droit à un contexte ? ». Le rendu logiciel
+  // (SwiftShader, llvmpipe…) est refusé par son nom dans le worker : failIfMajorPerformanceCaveat ne l'écarte pas partout. Lire ce
+  // nom ici et rendre le contexte dans la même tâche coûtait 30 ms de plus (tâche de 108 ms sur un navigateur neuf, 15/09) : la
+  // sonde passe dans un moment libre, et le contexte est rendu dans la tâche suivante.
+  // Le PREMIER contexte WebGL d'un navigateur fraîchement lancé coûte 370 à 410 ms (la carte s'initialise ; Intel/D3D11, 15/09) ;
+  // les suivants, 4 à 40 ms. Sur le fil principal, ce serait une tâche longue : le fil de rendu (relief-fil.js) naît donc d'abord
+  // et ouvre, hors du fil principal, un contexte d'1 px qu'il rend aussitôt (message « sonde », rendu logiciel refusé) ; la sonde
+  // d'ici ne passe qu'après, à chaud. Pas de worker en URL blob : la CSP de production (next.config.mjs) dit worker-src 'self'.
+  // Sans WebGL, seule la requête de relief-fil.js part (≈ 4 Ko compressés) : ni relief.js, ni la carte, ni la photo du relief.
+  // Sans réponse en 4 s, ou worker impossible : pas de relief (jamais de sonde à froid ici).
+  // Accepté, le worker est passé à relief.js (hero.reliefFil), injecté en <script type="module"> dans la tâche suivante (pas de
+  // import() : ce fichier reste lisible par un vieux navigateur). data-relief-etat : « sans » (refusé), puis « pret » ou « echec ».
+  var heroRelief = d.querySelector('.hero--plein[data-relief]')
+  if (heroRelief && 'IntersectionObserver' in window && 'ResizeObserver' in window && 'Worker' in window && ('WebGL2RenderingContext' in window || 'WebGLRenderingContext' in window) && window.HTMLCanvasElement && 'transferControlToOffscreen' in HTMLCanvasElement.prototype && matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches) {
+    var reliefSonde = function () {
+      try {
+        var c = d.createElement('canvas'); c.width = c.height = 1
+        return c.getContext('webgl', { failIfMajorPerformanceCaveat: true, alpha: false, antialias: false, depth: false, stencil: false })
+      } catch (e) { return null }
+    }
+    var reliefGo = function () {
+      var fil = null, tFin = 0, fait = false
+      var conclure = function (gl) {
+        setTimeout(function () {
+          if (!gl) { if (fil) fil.terminate(); heroRelief.setAttribute('data-relief-etat', 'sans'); return }
+          var perdre = gl.getExtension('WEBGL_lose_context'); if (perdre) perdre.loseContext()
+          heroRelief.reliefFil = fil
+          setTimeout(function () { var s = d.createElement('script'); s.type = 'module'; s.src = heroRelief.getAttribute('data-relief'); d.head.appendChild(s) }, 0)
+        }, 0)
+      }
+      var decider = function (possible) {
+        if (fait) return
+        fait = true; clearTimeout(tFin)
+        if (!possible) return conclure(null)
+        // à chaud (le worker garde son contexte d'1 px ouvert jusqu'à l'init), et dans un moment libre
+        var sonder = function () { conclure(reliefSonde()) }
+        if ('requestIdleCallback' in window) requestIdleCallback(sonder, { timeout: 800 }); else setTimeout(sonder, 50)
+      }
+      try {
+        fil = new Worker(heroRelief.getAttribute('data-relief-fil'))
+        fil.onmessage = function (e) { decider(!!(e.data && e.data.type === 'sonde' && e.data.ok)) }
+        fil.onerror = function () { decider(false) }
+        tFin = setTimeout(function () { decider(false) }, 4000)
+        fil.postMessage({ type: 'sonde' })
+      } catch (e) { decider(false) }
+    }
+    // 1,2 s au plus d'attente d'un moment libre : à 2,5 s, sous charge, le relief n'était pas encore visible 4,6 s après l'arrivée
+    var reliefApresLoad = function () { if ('requestIdleCallback' in window) requestIdleCallback(reliefGo, { timeout: 1200 }); else setTimeout(reliefGo, 300) }
+    if (d.readyState === 'complete') reliefApresLoad(); else addEventListener('load', reliefApresLoad)
+  }
+
   var media = d.querySelector('.hero--plein .hero__media img')
-  if (media && !reduit && matchMedia('(min-width: 900px)').matches) {
+  if (media && !reduit && matchMedia('(min-width: 900px)').matches && !(choregraphie && media.closest('.ouverture'))) {
     var attendu = false
     var parallaxe = function () { var y = Math.min(scrollY, innerHeight); media.style.translate = '0 ' + (y * 0.16).toFixed(1) + 'px'; attendu = false }
     addEventListener('scroll', function () { if (!attendu) { attendu = true; requestAnimationFrame(parallaxe) } }, { passive: true })
@@ -69,6 +194,8 @@
   // une mise en page complète d'une page longue (longues tâches de 260 ms dans site.js, TBT 241 ms sur mobile, 14/09).
   // Quand la liste est proche, une seule mesure par image (rAF), jamais plus.
   var liste = d.querySelector('.etapes__liste')
+  // étapes épinglées (kit.css v26, écran d'au moins 680 px de haut) : chaque numéro suit sa tranche de la timeline en CSS
+  if (liste && choregraphie && liste.closest('#etapes') && matchMedia('(min-height: 680px)').matches) liste = null
   if (liste && 'IntersectionObserver' in window) {
     var enAttente = false, proche = false
     var avancer = function () { enAttente = false; var r = liste.getBoundingClientRect(); var a = (innerHeight * 0.72 - r.top) / r.height; liste.style.setProperty('--avancee', Math.min(1, Math.max(0, a)).toFixed(3)) }

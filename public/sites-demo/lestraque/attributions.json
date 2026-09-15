@@ -1998,366 +1998,6 @@
   }
  },
  {
-  "fichier": "images/cuisine-bois-2400.webp",
-  "base": "cuisine-bois",
-  "largeur": 2400,
-  "hauteur": 1602,
-  "legende": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "auteur": "Shixart1985",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:This_cozy_kitchen_showcases_modern_design_elements.jpg",
-  "titre_commons": "File:This cozy kitchen showcases modern design elements.jpg",
-  "largeur_source": 6016,
-  "hauteur_source": 4016,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1.0043,
-    0.9983,
-    0.8961
-   ],
-   "saturation": 1,
-   "gamma": 1.204,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 0,
-   "cibleB": 19,
-   "fenetre": 3,
-   "cibleL": 34,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  }
- },
- {
-  "fichier": "images/cuisine-bois-2400.avif",
-  "base": "cuisine-bois",
-  "largeur": 2400,
-  "hauteur": 1602,
-  "legende": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "auteur": "Shixart1985",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:This_cozy_kitchen_showcases_modern_design_elements.jpg",
-  "titre_commons": "File:This cozy kitchen showcases modern design elements.jpg",
-  "largeur_source": 6016,
-  "hauteur_source": 4016,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1.0043,
-    0.9983,
-    0.8961
-   ],
-   "saturation": 1,
-   "gamma": 1.204,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 0,
-   "cibleB": 19,
-   "fenetre": 3,
-   "cibleL": 34,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  }
- },
- {
-  "fichier": "images/cuisine-bois-1600.webp",
-  "base": "cuisine-bois",
-  "largeur": 2400,
-  "hauteur": 1602,
-  "legende": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "auteur": "Shixart1985",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:This_cozy_kitchen_showcases_modern_design_elements.jpg",
-  "titre_commons": "File:This cozy kitchen showcases modern design elements.jpg",
-  "largeur_source": 6016,
-  "hauteur_source": 4016,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1.0043,
-    0.9983,
-    0.8961
-   ],
-   "saturation": 1,
-   "gamma": 1.204,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 0,
-   "cibleB": 19,
-   "fenetre": 3,
-   "cibleL": 34,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  }
- },
- {
-  "fichier": "images/cuisine-bois-1600.avif",
-  "base": "cuisine-bois",
-  "largeur": 2400,
-  "hauteur": 1602,
-  "legende": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "auteur": "Shixart1985",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:This_cozy_kitchen_showcases_modern_design_elements.jpg",
-  "titre_commons": "File:This cozy kitchen showcases modern design elements.jpg",
-  "largeur_source": 6016,
-  "hauteur_source": 4016,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1.0043,
-    0.9983,
-    0.8961
-   ],
-   "saturation": 1,
-   "gamma": 1.204,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 0,
-   "cibleB": 19,
-   "fenetre": 3,
-   "cibleL": 34,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  }
- },
- {
-  "fichier": "images/cuisine-bois-960.webp",
-  "base": "cuisine-bois",
-  "largeur": 2400,
-  "hauteur": 1602,
-  "legende": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "auteur": "Shixart1985",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:This_cozy_kitchen_showcases_modern_design_elements.jpg",
-  "titre_commons": "File:This cozy kitchen showcases modern design elements.jpg",
-  "largeur_source": 6016,
-  "hauteur_source": 4016,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1.0043,
-    0.9983,
-    0.8961
-   ],
-   "saturation": 1,
-   "gamma": 1.204,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 0,
-   "cibleB": 19,
-   "fenetre": 3,
-   "cibleL": 34,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  }
- },
- {
-  "fichier": "images/cuisine-bois-960.avif",
-  "base": "cuisine-bois",
-  "largeur": 2400,
-  "hauteur": 1602,
-  "legende": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "auteur": "Shixart1985",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:This_cozy_kitchen_showcases_modern_design_elements.jpg",
-  "titre_commons": "File:This cozy kitchen showcases modern design elements.jpg",
-  "largeur_source": 6016,
-  "hauteur_source": 4016,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1.0043,
-    0.9983,
-    0.8961
-   ],
-   "saturation": 1,
-   "gamma": 1.204,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 0,
-   "cibleB": 19,
-   "fenetre": 3,
-   "cibleL": 34,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  }
- },
- {
-  "fichier": "images/cuisine-bois-720.webp",
-  "base": "cuisine-bois",
-  "largeur": 2400,
-  "hauteur": 1602,
-  "legende": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "auteur": "Shixart1985",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:This_cozy_kitchen_showcases_modern_design_elements.jpg",
-  "titre_commons": "File:This cozy kitchen showcases modern design elements.jpg",
-  "largeur_source": 6016,
-  "hauteur_source": 4016,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1.0043,
-    0.9983,
-    0.8961
-   ],
-   "saturation": 1,
-   "gamma": 1.204,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 0,
-   "cibleB": 19,
-   "fenetre": 3,
-   "cibleL": 34,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  }
- },
- {
-  "fichier": "images/cuisine-bois-720.avif",
-  "base": "cuisine-bois",
-  "largeur": 2400,
-  "hauteur": 1602,
-  "legende": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "auteur": "Shixart1985",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:This_cozy_kitchen_showcases_modern_design_elements.jpg",
-  "titre_commons": "File:This cozy kitchen showcases modern design elements.jpg",
-  "largeur_source": 6016,
-  "hauteur_source": 4016,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1.0043,
-    0.9983,
-    0.8961
-   ],
-   "saturation": 1,
-   "gamma": 1.204,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 0,
-   "cibleB": 19,
-   "fenetre": 3,
-   "cibleL": 34,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  }
- },
- {
-  "fichier": "images/cuisine-bois-480.webp",
-  "base": "cuisine-bois",
-  "largeur": 2400,
-  "hauteur": 1602,
-  "legende": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "auteur": "Shixart1985",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:This_cozy_kitchen_showcases_modern_design_elements.jpg",
-  "titre_commons": "File:This cozy kitchen showcases modern design elements.jpg",
-  "largeur_source": 6016,
-  "hauteur_source": 4016,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1.0043,
-    0.9983,
-    0.8961
-   ],
-   "saturation": 1,
-   "gamma": 1.204,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 0,
-   "cibleB": 19,
-   "fenetre": 3,
-   "cibleL": 34,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  }
- },
- {
-  "fichier": "images/cuisine-bois-480.avif",
-  "base": "cuisine-bois",
-  "largeur": 2400,
-  "hauteur": 1602,
-  "legende": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "alt": "Cuisine au plan de travail en bois massif, claustra à lames",
-  "auteur": "Shixart1985",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:This_cozy_kitchen_showcases_modern_design_elements.jpg",
-  "titre_commons": "File:This cozy kitchen showcases modern design elements.jpg",
-  "largeur_source": 6016,
-  "hauteur_source": 4016,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1.0043,
-    0.9983,
-    0.8961
-   ],
-   "saturation": 1,
-   "gamma": 1.204,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 0,
-   "cibleB": 19,
-   "fenetre": 3,
-   "cibleL": 34,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  }
- },
- {
   "fichier": "images/tournage-copeaux-1600.webp",
   "base": "tournage-copeaux",
   "largeur": 1600,
@@ -2967,8 +2607,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-2880.avif",
@@ -3004,8 +2643,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-2400.webp",
@@ -3041,8 +2679,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-2400.avif",
@@ -3078,8 +2715,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-1600.webp",
@@ -3115,8 +2751,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-1600.avif",
@@ -3152,8 +2787,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-960.webp",
@@ -3189,8 +2823,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-960.avif",
@@ -3226,8 +2859,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-720.webp",
@@ -3263,8 +2895,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-720.avif",
@@ -3300,8 +2931,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-480.webp",
@@ -3337,8 +2967,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-tasseaux-480.avif",
@@ -3374,328 +3003,31 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
-  "fichier": "images/reserve-porte-panneaux-2400.webp",
-  "base": "reserve-porte-panneaux",
-  "largeur": 2400,
-  "hauteur": 3588,
-  "legende": "Porte intérieure en bois à panneaux",
-  "alt": "Porte intérieure en bois à panneaux",
-  "auteur": "Hanooz",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Wooden_door_@_Narenjestan_e_Ghavam_(18708817148).jpg",
-  "titre_commons": "File:Wooden door @ Narenjestan e Ghavam (18708817148).jpg",
-  "largeur_source": 2504,
-  "hauteur_source": 3743,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1,
-    1,
-    0.9338
-   ],
-   "saturation": 1,
-   "gamma": 1.037,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 6,
-   "cibleB": 18,
-   "fenetre": 2,
-   "cibleL": 38,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  },
-  "usage": "reserve"
- },
- {
-  "fichier": "images/reserve-porte-panneaux-2400.avif",
-  "base": "reserve-porte-panneaux",
-  "largeur": 2400,
-  "hauteur": 3588,
-  "legende": "Porte intérieure en bois à panneaux",
-  "alt": "Porte intérieure en bois à panneaux",
-  "auteur": "Hanooz",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Wooden_door_@_Narenjestan_e_Ghavam_(18708817148).jpg",
-  "titre_commons": "File:Wooden door @ Narenjestan e Ghavam (18708817148).jpg",
-  "largeur_source": 2504,
-  "hauteur_source": 3743,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1,
-    1,
-    0.9338
-   ],
-   "saturation": 1,
-   "gamma": 1.037,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 6,
-   "cibleB": 18,
-   "fenetre": 2,
-   "cibleL": 38,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  },
-  "usage": "reserve"
- },
- {
-  "fichier": "images/reserve-porte-panneaux-1600.webp",
-  "base": "reserve-porte-panneaux",
-  "largeur": 1600,
-  "hauteur": 2392,
-  "legende": "Porte intérieure en bois à panneaux",
-  "alt": "Porte intérieure en bois à panneaux",
-  "auteur": "Hanooz",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Wooden_door_@_Narenjestan_e_Ghavam_(18708817148).jpg",
-  "titre_commons": "File:Wooden door @ Narenjestan e Ghavam (18708817148).jpg",
-  "largeur_source": 2504,
-  "hauteur_source": 3743,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1,
-    1,
-    0.9338
-   ],
-   "saturation": 1,
-   "gamma": 1.037,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 6,
-   "cibleB": 18,
-   "fenetre": 2,
-   "cibleL": 38,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  },
-  "usage": "reserve"
- },
- {
-  "fichier": "images/reserve-porte-panneaux-1600.avif",
-  "base": "reserve-porte-panneaux",
-  "largeur": 1600,
-  "hauteur": 2392,
-  "legende": "Porte intérieure en bois à panneaux",
-  "alt": "Porte intérieure en bois à panneaux",
-  "auteur": "Hanooz",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Wooden_door_@_Narenjestan_e_Ghavam_(18708817148).jpg",
-  "titre_commons": "File:Wooden door @ Narenjestan e Ghavam (18708817148).jpg",
-  "largeur_source": 2504,
-  "hauteur_source": 3743,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1,
-    1,
-    0.9338
-   ],
-   "saturation": 1,
-   "gamma": 1.037,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 6,
-   "cibleB": 18,
-   "fenetre": 2,
-   "cibleL": 38,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  },
-  "usage": "reserve"
- },
- {
-  "fichier": "images/reserve-porte-panneaux-960.webp",
-  "base": "reserve-porte-panneaux",
-  "largeur": 960,
-  "hauteur": 1435,
-  "legende": "Porte intérieure en bois à panneaux",
-  "alt": "Porte intérieure en bois à panneaux",
-  "auteur": "Hanooz",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Wooden_door_@_Narenjestan_e_Ghavam_(18708817148).jpg",
-  "titre_commons": "File:Wooden door @ Narenjestan e Ghavam (18708817148).jpg",
-  "largeur_source": 2504,
-  "hauteur_source": 3743,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1,
-    1,
-    0.9338
-   ],
-   "saturation": 1,
-   "gamma": 1.037,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 6,
-   "cibleB": 18,
-   "fenetre": 2,
-   "cibleL": 38,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  },
-  "usage": "reserve"
- },
- {
-  "fichier": "images/reserve-porte-panneaux-960.avif",
-  "base": "reserve-porte-panneaux",
-  "largeur": 960,
-  "hauteur": 1435,
-  "legende": "Porte intérieure en bois à panneaux",
-  "alt": "Porte intérieure en bois à panneaux",
-  "auteur": "Hanooz",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Wooden_door_@_Narenjestan_e_Ghavam_(18708817148).jpg",
-  "titre_commons": "File:Wooden door @ Narenjestan e Ghavam (18708817148).jpg",
-  "largeur_source": 2504,
-  "hauteur_source": 3743,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1,
-    1,
-    0.9338
-   ],
-   "saturation": 1,
-   "gamma": 1.037,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 6,
-   "cibleB": 18,
-   "fenetre": 2,
-   "cibleL": 38,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  },
-  "usage": "reserve"
- },
- {
-  "fichier": "images/reserve-porte-panneaux-720.webp",
-  "base": "reserve-porte-panneaux",
-  "largeur": 720,
-  "hauteur": 1076,
-  "legende": "Porte intérieure en bois à panneaux",
-  "alt": "Porte intérieure en bois à panneaux",
-  "auteur": "Hanooz",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Wooden_door_@_Narenjestan_e_Ghavam_(18708817148).jpg",
-  "titre_commons": "File:Wooden door @ Narenjestan e Ghavam (18708817148).jpg",
-  "largeur_source": 2504,
-  "hauteur_source": 3743,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1,
-    1,
-    0.9338
-   ],
-   "saturation": 1,
-   "gamma": 1.037,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 6,
-   "cibleB": 18,
-   "fenetre": 2,
-   "cibleL": 38,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  },
-  "usage": "reserve"
- },
- {
-  "fichier": "images/reserve-porte-panneaux-720.avif",
-  "base": "reserve-porte-panneaux",
-  "largeur": 720,
-  "hauteur": 1076,
-  "legende": "Porte intérieure en bois à panneaux",
-  "alt": "Porte intérieure en bois à panneaux",
-  "auteur": "Hanooz",
-  "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Wooden_door_@_Narenjestan_e_Ghavam_(18708817148).jpg",
-  "titre_commons": "File:Wooden door @ Narenjestan e Ghavam (18708817148).jpg",
-  "largeur_source": 2504,
-  "hauteur_source": 3743,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
-  "etalonnage": {
-   "version": 2,
-   "gains": [
-    1,
-    1,
-    0.9338
-   ],
-   "saturation": 1,
-   "gamma": 1.037,
-   "ton": {
-    "a": 0.92,
-    "b": 12
-   },
-   "grain": 6,
-   "cibleB": 18,
-   "fenetre": 2,
-   "cibleL": 38,
-   "fenetreL": 6,
-   "aMin": 4,
-   "aMax": 8
-  },
-  "usage": "reserve"
- },
- {
-  "fichier": "images/reserve-porte-panneaux-480.webp",
-  "base": "reserve-porte-panneaux",
+  "fichier": "images/tasseaux-cloison-480.webp",
+  "base": "tasseaux-cloison",
   "largeur": 480,
-  "hauteur": 717,
-  "legende": "Porte intérieure en bois à panneaux",
-  "alt": "Porte intérieure en bois à panneaux",
-  "auteur": "Hanooz",
+  "hauteur": 615,
+  "legende": "Cloison à tasseaux de bois",
+  "alt": "Cloison à tasseaux de bois",
+  "auteur": "Shixart1985",
   "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Wooden_door_@_Narenjestan_e_Ghavam_(18708817148).jpg",
-  "titre_commons": "File:Wooden door @ Narenjestan e Ghavam (18708817148).jpg",
-  "largeur_source": 2504,
-  "hauteur_source": 3743,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis recadrée sur la cloison à tasseaux (sans la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration",
   "etalonnage": {
    "version": 2,
    "gains": [
     1,
     1,
-    0.9338
+    0.9361
    ],
    "saturation": 1,
-   "gamma": 1.037,
+   "gamma": 1.261,
    "ton": {
     "a": 0.92,
     "b": 12
@@ -3708,31 +3040,37 @@
    "aMin": 4,
    "aMax": 8
   },
-  "usage": "reserve"
+  "recadrage": {
+   "depuis": "images/reserve-cuisine-tasseaux-2880.webp",
+   "left": 0,
+   "top": 250,
+   "width": 780,
+   "height": 1000
+  }
  },
  {
-  "fichier": "images/reserve-porte-panneaux-480.avif",
-  "base": "reserve-porte-panneaux",
+  "fichier": "images/tasseaux-cloison-480.avif",
+  "base": "tasseaux-cloison",
   "largeur": 480,
-  "hauteur": 717,
-  "legende": "Porte intérieure en bois à panneaux",
-  "alt": "Porte intérieure en bois à panneaux",
-  "auteur": "Hanooz",
+  "hauteur": 615,
+  "legende": "Cloison à tasseaux de bois",
+  "alt": "Cloison à tasseaux de bois",
+  "auteur": "Shixart1985",
   "licence": "CC BY 2.0",
-  "source": "https://commons.wikimedia.org/wiki/File:Wooden_door_@_Narenjestan_e_Ghavam_(18708817148).jpg",
-  "titre_commons": "File:Wooden door @ Narenjestan e Ghavam (18708817148).jpg",
-  "largeur_source": 2504,
-  "hauteur_source": 3743,
-  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis recadrée sur la cloison à tasseaux (sans la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration",
   "etalonnage": {
    "version": 2,
    "gains": [
     1,
     1,
-    0.9338
+    0.9361
    ],
    "saturation": 1,
-   "gamma": 1.037,
+   "gamma": 1.261,
    "ton": {
     "a": 0.92,
     "b": 12
@@ -3745,7 +3083,99 @@
    "aMin": 4,
    "aMax": 8
   },
-  "usage": "reserve"
+  "recadrage": {
+   "depuis": "images/reserve-cuisine-tasseaux-2880.webp",
+   "left": 0,
+   "top": 250,
+   "width": 780,
+   "height": 1000
+  }
+ },
+ {
+  "fichier": "images/tasseaux-cloison-780.webp",
+  "base": "tasseaux-cloison",
+  "largeur": 780,
+  "hauteur": 1000,
+  "legende": "Cloison à tasseaux de bois",
+  "alt": "Cloison à tasseaux de bois",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis recadrée sur la cloison à tasseaux (sans la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9361
+   ],
+   "saturation": 1,
+   "gamma": 1.261,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  },
+  "recadrage": {
+   "depuis": "images/reserve-cuisine-tasseaux-2880.webp",
+   "left": 0,
+   "top": 250,
+   "width": 780,
+   "height": 1000
+  }
+ },
+ {
+  "fichier": "images/tasseaux-cloison-780.avif",
+  "base": "tasseaux-cloison",
+  "largeur": 780,
+  "hauteur": 1000,
+  "legende": "Cloison à tasseaux de bois",
+  "alt": "Cloison à tasseaux de bois",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis recadrée sur la cloison à tasseaux (sans la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9361
+   ],
+   "saturation": 1,
+   "gamma": 1.261,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  },
+  "recadrage": {
+   "depuis": "images/reserve-cuisine-tasseaux-2880.webp",
+   "left": 0,
+   "top": 250,
+   "width": 780,
+   "height": 1000
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-2880.webp",
@@ -3781,8 +3211,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-2880.avif",
@@ -3818,8 +3247,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-2400.webp",
@@ -3855,8 +3283,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-2400.avif",
@@ -3892,8 +3319,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-1600.webp",
@@ -3929,8 +3355,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-1600.avif",
@@ -3966,8 +3391,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-960.webp",
@@ -4003,8 +3427,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-960.avif",
@@ -4040,8 +3463,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-720.webp",
@@ -4077,8 +3499,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-720.avif",
@@ -4114,8 +3535,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-480.webp",
@@ -4151,8 +3571,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-cuisine-poutres-480.avif",
@@ -4188,8 +3607,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-2880.webp",
@@ -4225,8 +3643,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-2880.avif",
@@ -4262,8 +3679,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-2400.webp",
@@ -4299,8 +3715,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-2400.avif",
@@ -4336,8 +3751,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-1600.webp",
@@ -4373,8 +3787,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-1600.avif",
@@ -4410,8 +3823,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-960.webp",
@@ -4447,8 +3859,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-960.avif",
@@ -4484,8 +3895,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-720.webp",
@@ -4521,8 +3931,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-720.avif",
@@ -4558,8 +3967,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-480.webp",
@@ -4595,8 +4003,7 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  },
  {
   "fichier": "images/reserve-bibliotheque-480.avif",
@@ -4632,7 +4039,6 @@
    "fenetreL": 6,
    "aMin": 4,
    "aMax": 8
-  },
-  "usage": "reserve"
+  }
  }
 ]

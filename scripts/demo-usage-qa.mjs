@@ -153,6 +153,9 @@ try {
             if (profil === 'telephone') await cible.tap()
             else await cible.click()
             await page.waitForTimeout(1200)
+            // le défilement doux vers #contact se pose vers 2 s : on attend que scrollY ne bouge plus (300 ms stables, 4 s au plus) —
+            // capturée à 1 200 ms, la nav paraissait décalée de 13 à 36 px en plein défilement (juge du 15/09)
+            await page.evaluate(() => new Promise((ok) => { let y = scrollY, stable = 0; const fin = Date.now() + 4000; const t = setInterval(() => { if (scrollY === y) stable += 100; else { stable = 0; y = scrollY } if (stable >= 300 || Date.now() > fin) { clearInterval(t); ok() } }, 100) })).catch(() => {})
             destination = nouvellesPages[0] || page
             await destination.waitForLoadState('load')
             const limite = Date.now() + 3500
@@ -195,9 +198,20 @@ try {
       await page.evaluate(() => new Promise((resoudre) => requestAnimationFrame(() => requestAnimationFrame(resoudre))))
       const { root } = await cdp.send('DOM.getDocument')
       const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector: selecteur })
-      const { fonts } = await cdp.send('CSS.getPlatformFontsForNode', { nodeId })
+      let { fonts } = await cdp.send('CSS.getPlatformFontsForNode', { nodeId })
+      // CSS.getPlatformFontsForNode ne compte que le texte DIRECT du nœud : un h1 composé en spans (mot-clé, puis la ligne
+      // display mot à mot) rendait polices=[] et un faux rouge (juge de la vague 3, 14/09). On mesure alors le premier
+      // descendant qui rend des glyphes, dans l'ordre du document — le contrôle reste le même : des polices web, jamais le système.
+      let mesure = 'nœud'
+      if (!fonts.some((police) => police.glyphCount > 0)) {
+        const { nodeIds } = await cdp.send('DOM.querySelectorAll', { nodeId, selector: '*' })
+        for (const id of nodeIds.slice(0, 80)) {
+          const lu = await cdp.send('CSS.getPlatformFontsForNode', { nodeId: id })
+          if (lu.fonts.some((police) => police.glyphCount > 0)) { fonts = lu.fonts; mesure = 'premier descendant avec du texte'; break }
+        }
+      }
       const polices = fonts.filter((police) => police.glyphCount > 0)
-      mesures.push({ element: nom, polices, ok: polices.length > 0 && polices.every((police) => police.isCustomFont) })
+      mesures.push({ element: nom, mesure, polices, ok: polices.length > 0 && polices.every((police) => police.isCustomFont) })
     }
     resultat.ok = mesures.every((mesure) => mesure.ok)
     resultat.preuve = `Contexte neuf, cache désactivé, polices réellement rendues via CDP (isCustomFont distingue les fichiers web des polices système) : ${JSON.stringify(mesures)}`
