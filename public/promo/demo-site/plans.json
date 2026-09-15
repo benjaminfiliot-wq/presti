@@ -1,0 +1,1510 @@
+{
+  "site": "public\\sites-demo\\lestraque",
+  "sansSa": false,
+  "plans": [
+    {
+      "nom": "heros",
+      "source": "bureau",
+      "debut": 2.88,
+      "duree": 0.8,
+      "releves": [
+        {
+          "t": 2.88,
+          "visibles": [
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        },
+        {
+          "t": 3.32,
+          "visibles": [
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        },
+        {
+          "t": 3.68,
+          "visibles": [
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "heros-escalier",
+          "licence": "CC BY-SA 4.0"
+        }
+      ]
+    },
+    {
+      "nom": "heros_mobile",
+      "source": "mobile",
+      "debut": 1.21,
+      "duree": 1.1,
+      "releves": [
+        {
+          "t": 1.21,
+          "visibles": [
+            {
+              "base": "heros-escalier-portrait",
+              "licence": "CC BY-SA 4.0"
+            },
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        },
+        {
+          "t": 1.77,
+          "visibles": [
+            {
+              "base": "heros-escalier-portrait",
+              "licence": "CC BY-SA 4.0"
+            },
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        },
+        {
+          "t": 2.31,
+          "visibles": [
+            {
+              "base": "heros-escalier-portrait",
+              "licence": "CC BY-SA 4.0"
+            },
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "heros-escalier-portrait",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "base": "heros-escalier",
+          "licence": "CC BY-SA 4.0"
+        }
+      ]
+    },
+    {
+      "nom": "heros_souris",
+      "source": "bureau",
+      "debut": 5.18,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 5.18,
+          "visibles": [
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        },
+        {
+          "t": 5.9,
+          "visibles": [
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        },
+        {
+          "t": 6.56,
+          "visibles": [
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "heros-escalier",
+          "licence": "CC BY-SA 4.0"
+        }
+      ]
+    },
+    {
+      "nom": "chiffres",
+      "source": "bureau",
+      "debut": 16.11,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 16.11,
+          "visibles": [
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            },
+            {
+              "base": "mains-noyer",
+              "licence": "CC0"
+            }
+          ]
+        },
+        {
+          "t": 16.81,
+          "visibles": [
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            },
+            {
+              "base": "mains-noyer",
+              "licence": "CC0"
+            }
+          ]
+        },
+        {
+          "t": 17.59,
+          "visibles": [
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            },
+            {
+              "base": "mains-noyer",
+              "licence": "CC0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "heros-escalier",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "base": "mains-noyer",
+          "licence": "CC0"
+        }
+      ]
+    },
+    {
+      "nom": "chiffres_mobile",
+      "source": "mobile",
+      "debut": 5.02,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 5.02,
+          "visibles": [
+            {
+              "base": "heros-escalier-portrait",
+              "licence": "CC BY-SA 4.0"
+            },
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            },
+            {
+              "base": "mains-noyer",
+              "licence": "CC0"
+            }
+          ]
+        },
+        {
+          "t": 5.7,
+          "visibles": [
+            {
+              "base": "mains-noyer",
+              "licence": "CC0"
+            },
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        },
+        {
+          "t": 6.37,
+          "visibles": [
+            {
+              "base": "mains-noyer",
+              "licence": "CC0"
+            },
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "heros-escalier-portrait",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "base": "heros-escalier",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "base": "mains-noyer",
+          "licence": "CC0"
+        }
+      ]
+    },
+    {
+      "nom": "prestations",
+      "source": "bureau",
+      "debut": 20.41,
+      "duree": 1.6,
+      "releves": [
+        {
+          "t": 20.41,
+          "visibles": [
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            },
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 21.27,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 22.01,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "heros-escalier",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "penderie",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "reserve-bibliotheque",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "atelier-poncage",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "prestations_mobile",
+      "source": "mobile",
+      "debut": 8.21,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 8.21,
+          "visibles": [
+            {
+              "base": "mains-noyer",
+              "licence": "CC0"
+            },
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 8.89,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 9.57,
+          "visibles": [
+            {
+              "base": "tournage-copeaux",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "mains-noyer",
+          "licence": "CC0"
+        },
+        {
+          "base": "tournage-copeaux",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "heros-escalier",
+          "licence": "CC BY-SA 4.0"
+        },
+        {
+          "base": "penderie",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "reserve-bibliotheque",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "atelier-poncage",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "atelier",
+      "source": "bureau",
+      "debut": 24.11,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 24.11,
+          "visibles": [
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 24.79,
+          "visibles": [
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 25.47,
+          "visibles": [
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "boiserie",
+          "licence": "CC0"
+        },
+        {
+          "base": "atelier-poncage",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "atelier_mobile",
+      "source": "mobile",
+      "debut": 11.41,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 11.41,
+          "visibles": [
+            {
+              "base": "atelier-poncage-portrait",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 12.09,
+          "visibles": [
+            {
+              "base": "atelier-poncage-portrait",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 12.76,
+          "visibles": [
+            {
+              "base": "atelier-poncage-portrait",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            },
+            {
+              "base": "atelier-poncage",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "atelier-poncage-portrait",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "boiserie",
+          "licence": "CC0"
+        },
+        {
+          "base": "atelier-poncage",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "realisations",
+      "source": "bureau",
+      "debut": 27.38,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 27.38,
+          "visibles": [
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-cuisine-poutres",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 28.07,
+          "visibles": [
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-cuisine-poutres",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 28.72,
+          "visibles": [
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-cuisine-poutres",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "reserve-bibliotheque",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "reserve-cuisine-poutres",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "penderie",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "realisations_mobile",
+      "source": "mobile",
+      "debut": 14.59,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 14.59,
+          "visibles": [
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-cuisine-poutres",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 15.27,
+          "visibles": [
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-cuisine-poutres",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 15.94,
+          "visibles": [
+            {
+              "base": "reserve-bibliotheque",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "reserve-cuisine-poutres",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "reserve-bibliotheque",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "reserve-cuisine-poutres",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "penderie",
+          "licence": "CC BY 2.0"
+        }
+      ]
+    },
+    {
+      "nom": "galerie",
+      "source": "bureau",
+      "debut": 30.23,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 30.23,
+          "visibles": [
+            {
+              "base": "reserve-cuisine-poutres",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        },
+        {
+          "t": 30.91,
+          "visibles": [
+            {
+              "base": "reserve-cuisine-poutres",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        },
+        {
+          "t": 31.58,
+          "visibles": [
+            {
+              "base": "reserve-cuisine-poutres",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "penderie",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "heros-escalier",
+              "licence": "CC BY-SA 4.0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "reserve-cuisine-poutres",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "penderie",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "heros-escalier",
+          "licence": "CC BY-SA 4.0"
+        }
+      ]
+    },
+    {
+      "nom": "communes",
+      "source": "bureau",
+      "debut": 33.32,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 33.32,
+          "visibles": []
+        },
+        {
+          "t": 34,
+          "visibles": [
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        },
+        {
+          "t": 34.67,
+          "visibles": [
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "calque-limon",
+          "licence": null
+        },
+        {
+          "base": "assemble",
+          "licence": null
+        }
+      ]
+    },
+    {
+      "nom": "communes_mobile",
+      "source": "mobile",
+      "debut": 17.78,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 17.78,
+          "visibles": [
+            {
+              "base": "eclate",
+              "licence": null
+            }
+          ]
+        },
+        {
+          "t": 18.45,
+          "visibles": [
+            {
+              "base": "eclate",
+              "licence": null
+            },
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        },
+        {
+          "t": 19.13,
+          "visibles": [
+            {
+              "base": "eclate",
+              "licence": null
+            },
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "eclate",
+          "licence": null
+        },
+        {
+          "base": "calque-limon",
+          "licence": null
+        },
+        {
+          "base": "assemble",
+          "licence": null
+        }
+      ]
+    },
+    {
+      "nom": "etapes",
+      "source": "bureau",
+      "debut": 37.38,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 37.38,
+          "visibles": []
+        },
+        {
+          "t": 38.07,
+          "visibles": [
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "calque-contremarche",
+              "licence": null
+            },
+            {
+              "base": "calque-marche",
+              "licence": null
+            },
+            {
+              "base": "calque-vis",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        },
+        {
+          "t": 38.74,
+          "visibles": [
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "calque-contremarche",
+              "licence": null
+            },
+            {
+              "base": "calque-marche",
+              "licence": null
+            },
+            {
+              "base": "calque-vis",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "calque-limon",
+          "licence": null
+        },
+        {
+          "base": "calque-contremarche",
+          "licence": null
+        },
+        {
+          "base": "calque-marche",
+          "licence": null
+        },
+        {
+          "base": "calque-vis",
+          "licence": null
+        },
+        {
+          "base": "assemble",
+          "licence": null
+        }
+      ]
+    },
+    {
+      "nom": "etapes_mobile",
+      "source": "mobile",
+      "debut": 20.98,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 20.98,
+          "visibles": [
+            {
+              "base": "eclate",
+              "licence": null
+            }
+          ]
+        },
+        {
+          "t": 21.65,
+          "visibles": [
+            {
+              "base": "eclate",
+              "licence": null
+            },
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "calque-contremarche",
+              "licence": null
+            },
+            {
+              "base": "calque-marche",
+              "licence": null
+            },
+            {
+              "base": "calque-vis",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        },
+        {
+          "t": 22.34,
+          "visibles": [
+            {
+              "base": "eclate",
+              "licence": null
+            },
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "calque-contremarche",
+              "licence": null
+            },
+            {
+              "base": "calque-marche",
+              "licence": null
+            },
+            {
+              "base": "calque-vis",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "eclate",
+          "licence": null
+        },
+        {
+          "base": "calque-limon",
+          "licence": null
+        },
+        {
+          "base": "calque-contremarche",
+          "licence": null
+        },
+        {
+          "base": "calque-marche",
+          "licence": null
+        },
+        {
+          "base": "calque-vis",
+          "licence": null
+        },
+        {
+          "base": "assemble",
+          "licence": null
+        }
+      ]
+    },
+    {
+      "nom": "etapes_eclate",
+      "source": "bureau",
+      "debut": 39.07,
+      "duree": 1.6,
+      "releves": [
+        {
+          "t": 39.07,
+          "visibles": [
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "calque-contremarche",
+              "licence": null
+            },
+            {
+              "base": "calque-marche",
+              "licence": null
+            },
+            {
+              "base": "calque-vis",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        },
+        {
+          "t": 39.86,
+          "visibles": [
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "calque-contremarche",
+              "licence": null
+            },
+            {
+              "base": "calque-marche",
+              "licence": null
+            },
+            {
+              "base": "calque-vis",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        },
+        {
+          "t": 40.67,
+          "visibles": [
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "calque-contremarche",
+              "licence": null
+            },
+            {
+              "base": "calque-marche",
+              "licence": null
+            },
+            {
+              "base": "calque-vis",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "calque-limon",
+          "licence": null
+        },
+        {
+          "base": "calque-contremarche",
+          "licence": null
+        },
+        {
+          "base": "calque-marche",
+          "licence": null
+        },
+        {
+          "base": "calque-vis",
+          "licence": null
+        },
+        {
+          "base": "assemble",
+          "licence": null
+        }
+      ]
+    },
+    {
+      "nom": "etapes_liste",
+      "source": "bureau",
+      "debut": 40.95,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 40.95,
+          "visibles": [
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "calque-contremarche",
+              "licence": null
+            },
+            {
+              "base": "calque-marche",
+              "licence": null
+            },
+            {
+              "base": "calque-vis",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        },
+        {
+          "t": 41.64,
+          "visibles": [
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "calque-contremarche",
+              "licence": null
+            },
+            {
+              "base": "calque-marche",
+              "licence": null
+            },
+            {
+              "base": "calque-vis",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        },
+        {
+          "t": 42.3,
+          "visibles": [
+            {
+              "base": "calque-limon",
+              "licence": null
+            },
+            {
+              "base": "calque-contremarche",
+              "licence": null
+            },
+            {
+              "base": "calque-marche",
+              "licence": null
+            },
+            {
+              "base": "calque-vis",
+              "licence": null
+            },
+            {
+              "base": "assemble",
+              "licence": null
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "calque-limon",
+          "licence": null
+        },
+        {
+          "base": "calque-contremarche",
+          "licence": null
+        },
+        {
+          "base": "calque-marche",
+          "licence": null
+        },
+        {
+          "base": "calque-vis",
+          "licence": null
+        },
+        {
+          "base": "assemble",
+          "licence": null
+        }
+      ]
+    },
+    {
+      "nom": "questions",
+      "source": "bureau",
+      "debut": 43.92,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 43.92,
+          "visibles": [
+            {
+              "base": "tasseaux-cloison",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 44.6,
+          "visibles": [
+            {
+              "base": "tasseaux-cloison",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 45.27,
+          "visibles": [
+            {
+              "base": "tasseaux-cloison",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "tasseaux-cloison",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "boiserie",
+          "licence": "CC0"
+        }
+      ]
+    },
+    {
+      "nom": "questions_mobile",
+      "source": "mobile",
+      "debut": 24.16,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 24.16,
+          "visibles": [
+            {
+              "base": "tasseaux-cloison",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 24.83,
+          "visibles": [
+            {
+              "base": "tasseaux-cloison",
+              "licence": "CC BY 2.0"
+            }
+          ]
+        },
+        {
+          "t": 25.52,
+          "visibles": [
+            {
+              "base": "tasseaux-cloison",
+              "licence": "CC BY 2.0"
+            },
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "tasseaux-cloison",
+          "licence": "CC BY 2.0"
+        },
+        {
+          "base": "boiserie",
+          "licence": "CC0"
+        }
+      ]
+    },
+    {
+      "nom": "contact",
+      "source": "bureau",
+      "debut": 47.43,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 47.43,
+          "visibles": [
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            }
+          ]
+        },
+        {
+          "t": 48.12,
+          "visibles": [
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            }
+          ]
+        },
+        {
+          "t": 48.78,
+          "visibles": [
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "boiserie",
+          "licence": "CC0"
+        }
+      ]
+    },
+    {
+      "nom": "contact_mobile",
+      "source": "mobile",
+      "debut": 27.35,
+      "duree": 1.35,
+      "releves": [
+        {
+          "t": 27.35,
+          "visibles": [
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            }
+          ]
+        },
+        {
+          "t": 28.02,
+          "visibles": [
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            }
+          ]
+        },
+        {
+          "t": 28.7,
+          "visibles": [
+            {
+              "base": "boiserie",
+              "licence": "CC0"
+            }
+          ]
+        }
+      ],
+      "visibles": [
+        {
+          "base": "boiserie",
+          "licence": "CC0"
+        }
+      ]
+    }
+  ],
+  "affiche": {
+    "temps": 0.68,
+    "releves": [
+      {
+        "t": 0.68,
+        "visibles": [
+          {
+            "base": "boiserie",
+            "licence": "CC0"
+          },
+          {
+            "base": "atelier-poncage",
+            "licence": "CC BY 2.0"
+          }
+        ]
+      }
+    ],
+    "visibles": [
+      {
+        "base": "boiserie",
+        "licence": "CC0"
+      },
+      {
+        "base": "atelier-poncage",
+        "licence": "CC BY 2.0"
+      }
+    ]
+  }
+}

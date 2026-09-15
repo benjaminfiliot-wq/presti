@@ -38,9 +38,9 @@ export default function DemoSite() {
         {reduit
           ? <img src="/promo/demo-site/lestraque-affiche.webp" alt="Le site de démonstration Atelier Lestraque : un escalier en bois en plein cadre sous le titre « Fait pour rester »" width={1280} height={720} loading="lazy" />
           : <video ref={ref} src="/promo/demo-site/lestraque.mp4" poster="/promo/demo-site/lestraque-affiche.webp" muted loop playsInline preload="none" width={1280} height={720}
-              aria-label="Capture animée du site de démonstration Atelier Lestraque : l'escalier en bois sous le titre « Fait pour rester », puis l'atelier, les réalisations et le devis" />}
+              aria-label="Capture animée du site de démonstration Atelier Lestraque : la plongée dans l'escalier sous le titre « Fait pour rester », l'aperçu des prestations au survol, la vidéo de l'atelier, puis l'escalier qui s'éclate pièce par pièce en quatre temps jusqu'au devis" />}
       </a>
-      <p className="ds-credits">Photos de la démo : Wikimedia Commons, sous licences libres — <a href="/sites-demo/lestraque/mentions-legales/index.html#credits" target="_blank" rel="noopener">auteurs et licences</a></p>
+      <p className="ds-credits">Photos de la démo : Wikimedia Commons, sous licences libres ; vidéo d&apos;atelier : Mixkit — <a href="/sites-demo/lestraque/mentions-legales/index.html#credits" target="_blank" rel="noopener">auteurs et licences</a></p>
       <p className="ds-lien"><a href={DEMO} target="_blank" rel="noopener">Voir le site de démonstration</a></p>
       <p className="ds-prix">Le site, à la demande — {PRIX_SITE_TEXTE}, une fois.</p>
     </div>

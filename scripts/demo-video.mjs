@@ -148,6 +148,10 @@ async function enregistrer(nom, viewport, visite) {
   const t0 = Date.now()
   const temps = () => (Date.now() - t0) / 1000
   await page.goto(url, { waitUntil: 'domcontentloaded' })
+  // Le flash A doit tomber dans une image enregistrée : avec la page de la vague 5, plus lourde, l'enregistrement mobile ne
+  // commençait qu'après lui (« mobile : 1 repère blanc au lieu de 2 », 15/09/2026). On attend le chargement et une image peinte.
+  await page.waitForLoadState('load').catch(() => {})
+  await page.waitForTimeout(600)
   const repereA = await flash(page, temps)
   const plans = await visite(page, temps)
   const repereB = await flash(page, temps)
@@ -161,7 +165,19 @@ async function enregistrer(nom, viewport, visite) {
   // Découpés à l'heure du script, les plans commençaient une demi-seconde trop tard : la partie rapide de chaque geste
   // tombait avant la coupe et l'attente d'après dedans (plans figés au juge vidéo, quatre essais de suite). Les heures des
   // plans sont donc recalées sur les deux repères retrouvés dans la vidéo, par interpolation entre le début et la fin.
-  const vus = reperesBlancs(f)
+  let vus = reperesBlancs(f)
+  // Une image blanche parasite peut s'ajouter (page encore blanche avant le premier rendu, ou image très claire de la page :
+  // « 3 repères (0.00, 3.64, 48.20) », 15/09/2026). On garde la paire dont l'écart colle à celui des deux flashs dans l'horloge
+  // du script (la vidéo n'en dérive que de moins d'une seconde) et dont le premier tombe près du flash A.
+  if (vus.length > 2) {
+    const paires = []
+    for (let i = 0; i < vus.length; i++) for (let j = i + 1; j < vus.length; j++) {
+      const erreur = Math.abs(vus[j] - vus[i] - (repereB - repereA)), ecart = vus[i] - repereA
+      if (erreur < 1.5 && ecart > -1 && ecart < 2) paires.push({ i, j, erreur })
+    }
+    paires.sort((a, b) => a.erreur - b.erreur)
+    if (paires.length) vus = [vus[paires[0].i], vus[paires[0].j]]
+  }
   if (vus.length !== 2) throw new Error(`${nom} : ${vus.length} repère(s) blanc(s) dans la vidéo au lieu de 2 (${vus.map((v) => v.toFixed(2)).join(', ')}) — horloge impossible à recaler`)
   const ecartA = vus[0] - repereA, ecartB = vus[1] - repereB
   const versVideo = (w) => Number(Math.max(0, w + ecartA + ((ecartB - ecartA) * (w - repereA)) / (repereB - repereA)).toFixed(2))
@@ -265,6 +281,19 @@ async function visiterBureau(page, temps) {
     await glisser(page, sec.sel, 1400)
     await page.waitForTimeout(200)
 
+    if (sec.nom === 'prestations') {
+      // Vague 5 : le survol (famille survol) ne se voit qu'à la souris. Pendant un défilement lent, le curseur passe sur les
+      // titres visibles, de ligne en ligne, pour que le grand aperçu apparaisse et suive (règle vitrine, 15/09/2026)
+      const plan = await executerPlan(page, temps, sec.nom, 1.6, async () => {
+        const pGlide = glisserRelatif(page, 160, 1500)
+        const boites = await page.$$eval('#prestations ol.presta h3', (hs) => hs.map((h) => { const r = h.getBoundingClientRect(); return { x: r.left + Math.min(r.width, 320) / 2, y: r.top + r.height / 2 } }).filter((b) => b.y > 90 && b.y < innerHeight - 40))
+        for (const b of boites.slice(0, 4)) { for (let i = 0; i <= 8; i++) { await page.mouse.move(b.x + i * 12, b.y); await page.waitForTimeout(35) } }
+        await pGlide
+      })
+      plans.push(plan)
+      continue
+    }
+
     if (sec.nom === 'questions') {
       const plan = await executerPlan(page, temps, sec.nom, 1.35, async () => {
         const pGlide = glisserRelatif(page, 100, 1250)
@@ -280,6 +309,15 @@ async function visiterBureau(page, temps) {
       await page.waitForTimeout(150)
       const plan = await executerPlan(page, temps, sec.nom, 1.35, () => glisserRelatif(page, 560, 1300))
       plans.push(plan)
+
+      // Vague 5 : l'escalier s'éclate pièce par pièce vers C3 (famille eclate, centre à 66,25 % de la plage épinglée). Le plan
+      // part juste avant l'éclatement et défile 520 px : les pièces s'écartent et se nomment (règle vitrine, 15/09/2026)
+      if (await page.$('.eclate__rendu')) {
+        const r = await page.evaluate((sel) => { const s = document.querySelector(sel); return { top: s.getBoundingClientRect().top + scrollY, plage: s.offsetHeight - innerHeight } }, sec.sel)
+        await page.evaluate((y) => scrollTo({ top: y, behavior: 'instant' }), Math.round(r.top + 0.46 * r.plage))
+        await page.waitForTimeout(250)
+        plans.push(await executerPlan(page, temps, 'etapes_eclate', 1.6, () => glisserRelatif(page, 520, 1500)))
+      }
 
       const elListe = await page.$('.etapes__liste')
       if (elListe) {
