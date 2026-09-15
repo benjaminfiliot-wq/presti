@@ -1,0 +1,9 @@
+[
+ { "type": "rendu", "fichier": "eclate/assemble.avif", "legende": "Tronçon d'escalier en chêne, assemblé", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierce" },
+ { "type": "rendu", "fichier": "eclate/eclate.avif", "legende": "Tronçon d'escalier en chêne, éclaté en ses pièces", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierce" },
+ { "type": "rendu", "fichier": "eclate/calque-limon.avif", "legende": "Limon à la française et ses entailles", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierce" },
+ { "type": "rendu", "fichier": "eclate/calque-marche.avif", "legende": "Marches en chêne de 40 mm", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierce" },
+ { "type": "rendu", "fichier": "eclate/calque-contremarche.avif", "legende": "Contremarches", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierce" },
+ { "type": "rendu", "fichier": "eclate/calque-vis.avif", "legende": "Vis de fixation des marches", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierce" },
+ { "type": "rendu", "fichier": "eclate/releve.avif", "legende": "Relevé au trait du tronçon d'escalier, coté", "auteur": "Presti", "licence": "rendu procédural, sans œuvre tierce" }
+]

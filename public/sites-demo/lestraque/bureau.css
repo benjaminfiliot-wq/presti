@@ -46,3 +46,56 @@ html.js .chiffres--compte .chiffre__vrai{opacity:0}
 .scene--presta.scene--survol.survol--calme .presta__vignette img{scale:1;transition:none}
 .presta__declencheur{font:inherit;color:inherit;letter-spacing:inherit;text-align:inherit;background:none;border:0;padding:0;margin:0}
 .presta__declencheur:focus-visible{outline:2px solid var(--accent-texte);outline-offset:.2em;border-radius:.1em}
+@media (min-width:1024px) and (min-height:680px) and (prefers-reduced-motion:no-preference){
+@supports (animation-timeline: view()){
+#etapes:has(.eclate){height:450svh;container:eclate-page/inline-size}
+#etapes:has(.eclate)>.conteneur{--eclate-liste:clamp(30rem,42cqw,44rem);--eclate-gap:clamp(1.5rem,2.2cqw,2rem);align-items:stretch;grid-template-rows:minmax(0,1fr)}
+#etapes:has(.eclate) .etapes{height:100%;min-height:0;grid-template-columns:minmax(0,1fr) var(--eclate-liste);column-gap:var(--eclate-gap);align-items:stretch}
+#etapes:has(.eclate) .etapes__liste{align-self:center}
+.da--etapes #etapes:has(.eclate) .etapes__liste::before,.da--etapes #etapes:has(.eclate) .etapes__liste::after{left:calc(var(--eclate-gap) / -2)}
+#etapes:has(.eclate) .etapes__tete{align-self:stretch;min-height:0;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto minmax(0,1fr);gap:.75rem 1rem}
+#etapes:has(.eclate) .etapes__tete>*{grid-column:1/-1}
+#etapes:has(.eclate) .etapes__tete h2{font-size:clamp(2.75rem,calc((min(90cqw,1720px) - var(--eclate-liste) - var(--eclate-gap)) / 7.4),6rem)}
+#etapes .etapes__photo.eclate{grid-row:4;width:auto;max-width:none;height:auto;min-height:0;aspect-ratio:auto;margin:.5rem 0 0 calc((min(90cqw,1720px) - 100cqw) / 2);background:none;container-type:size;overflow:visible}
+#etapes .eclate__rendu{width:min(100cqw,133.333cqh);height:auto;aspect-ratio:4/3;container-type:size}
+#etapes .etapes__photo.eclate .eclate__eclate,#etapes .eclate__pastille,#etapes:has(.eclate) .eclate__legende{display:none}
+#etapes .eclate__assemble,#etapes .eclate__calque,#etapes .eclate__etiquette,#etapes .eclate__cote{display:block}
+#etapes .eclate__assemble{left:0;top:0;width:100%;height:100%}
+#etapes .etapes__photo.eclate img.eclate__calque{animation:eclate-ouvre linear both,eclate-remonte linear forwards,eclate-apparait linear both,eclate-efface linear forwards;animation-timeline:--etapes;animation-range:contain calc(46.75% + var(--r,0) * 2.5%) contain calc(55.75% + var(--r,0) * 2.5%),contain calc(70.94% + var(--o,0) * 2.5%) contain calc(79.94% + var(--o,0) * 2.5%),contain 46.75% contain 46.85%,contain 87.34% contain 87.44%}
+#etapes .etapes__photo.eclate img.eclate__assemble{animation:eclate-efface linear both,eclate-apparait linear forwards;animation-timeline:--etapes;animation-range:contain 46.75% contain 47.25%,contain 86.94% contain 87.44%}
+#etapes .eclate__cote{position:absolute;width:0;height:0;left:var(--cx);top:var(--cy);animation:eclate-apparait linear both,eclate-efface linear forwards;animation-timeline:--etapes;animation-range:contain 35.875% contain 38.875%,contain 46.75% contain 47.75%}
+#etapes .eclate__trait{position:absolute;left:-.3125rem;top:calc(var(--ch) * -.5cqh);width:.625rem;max-width:none;height:calc(var(--ch) * 1cqh);overflow:visible;fill:none;stroke:#F4EDE2;stroke-width:1.5px;animation:eclate-trace linear both;animation-timeline:--etapes;animation-range:contain 35.875% contain 38.875%}
+#etapes .eclate__trait path{vector-effect:non-scaling-stroke}
+#etapes .eclate__etiquette{position:absolute;width:0;height:0;animation:eclate-ouvre linear both,eclate-apparait linear both,eclate-efface linear forwards;animation-timeline:--etapes;animation-range:contain calc(46.75% + var(--r,0) * 2.5%) contain calc(55.75% + var(--r,0) * 2.5%),contain calc(58.5% + var(--k,0) * .8%) contain calc(60.05% + var(--k,0) * .8%),contain 69.25% contain 70.94%}
+#etapes .eclate__etiquette .eclate__texte{animation:eclate-leve cubic-bezier(.16,1,.3,1) both;animation-timeline:--etapes;animation-range:contain calc(58.5% + var(--k,0) * .8%) contain calc(60.05% + var(--k,0) * .8%)}
+#etapes .eclate__point{position:absolute;left:-.3125rem;top:-.3125rem;width:.625rem;height:.625rem;border-radius:50%;background:#F4EDE2;box-shadow:0 0 0 2px #14110E,0 0 0 3px #D4A574}
+#etapes .eclate__rendu .eclate__filet{position:absolute;left:0;top:-.5px;height:1px;background:#D4A574;transform-origin:0 50%}
+#etapes .eclate__rendu .eclate__texte{position:absolute;left:calc(var(--dx,0) * 1cqw);top:calc(var(--dy,0) * 1cqh);transform:translate(calc(var(--ax,0) * -100%),-50%);white-space:nowrap;padding:.3em .65em;font:400 max(.875rem,1.95cqw)/1.2 var(--police-texte);letter-spacing:.01em;color:#F4EDE2;background:rgba(20,17,14,.92);border:1px solid rgba(212,165,116,.45);border-radius:2px}
+#etapes:has(.eclate) .eclate__compteur{grid-row:4;grid-column:2;align-self:start;justify-self:end;position:relative;display:flex;align-items:baseline;gap:.35em;margin-top:1.25rem;font-family:var(--police-display);font-weight:var(--graisse-ligne,300);font-size:clamp(2.2rem,3.4vw,3.8rem);line-height:1;letter-spacing:-.03em;font-variant-numeric:lining-nums tabular-nums;color:#F4EDE2;pointer-events:none}
+#etapes .eclate__compteur .compteur__piste{animation:eclate-compteur linear both;animation-timing-function:steps(4,jump-none);animation-timeline:--etapes;animation-range:contain 10% contain 100%}
+html.js #etapes .eclate__fiche{display:grid;position:absolute;inset:0;margin:auto;width:min(80cqw,36rem);height:fit-content;grid-template-columns:max-content max-content minmax(0,1fr);column-gap:.9em;font:400 max(.875rem,2.2cqw)/1.2 var(--police-texte);color:#F4EDE2;pointer-events:none;animation:eclate-fiche cubic-bezier(.2,.7,.3,1) both;animation-timeline:--etapes;animation-range:contain 29.125% contain 35.875%}
+html.js #etapes .eclate__champ{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:baseline;padding-block:.8em;border-top:1px solid rgba(244,237,226,.16)}
+html.js #etapes .eclate__champ:last-child{border-bottom:1px solid rgba(244,237,226,.16)}
+html.js #etapes .eclate__libelle{text-transform:uppercase;letter-spacing:.12em;color:rgba(244,237,226,.72)}
+html.js #etapes .eclate__tiret{color:#D4A574}
+html.js #etapes .eclate__valeur{font-family:var(--police-display);font-weight:var(--graisse-ligne,300);font-size:2em;line-height:1.05;letter-spacing:-.01em}
+html.js #etapes .etapes__photo.eclate img.eclate__assemble{animation:eclate-apparait linear both,eclate-volet linear none,eclate-efface linear forwards,eclate-apparait linear forwards;animation-timeline:--etapes;animation-range:contain 29.125% contain 29.2%,contain 29.125% contain 35.875%,contain 46.75% contain 47.25%,contain 86.94% contain 87.44%}
+html.js #etapes .eclate__releve{display:block;position:absolute;inset:0;pointer-events:none;animation:eclate-apparait linear both,eclate-volet linear none,eclate-efface linear forwards;animation-timeline:--etapes;animation-range:contain 29.125% contain 29.2%,contain 29.125% contain 35.875%,contain 46.75% contain 48.75%}
+html.js #etapes .etapes__tete.vu .eclate__releve{background:url(eclate/releve.avif) center/100% 100% no-repeat}
+html.js #etapes .eclate__cote{left:var(--rx,var(--cx));top:var(--ry,var(--cy))}
+html.js #etapes .eclate__cote-entaille{display:block;position:absolute;width:0;height:0;animation:eclate-apparait linear both,eclate-efface linear forwards;animation-timeline:--etapes;animation-range:contain 35.875% contain 38.875%,contain 46.75% contain 47.75%}
+html.js #etapes .eclate__cote-entaille .eclate__trait{top:calc(var(--cl) * -.5cqw);height:calc(var(--cl) * 1cqw);rotate:var(--ca)}
+html.js #etapes .eclate__numero{display:grid;place-items:center;position:absolute;z-index:1;width:1.625rem;height:1.625rem;margin:-.8125rem 0 0 -.8125rem;border-radius:50%;background:#F4EDE2;color:#14110E;font:600 .875rem/1 var(--police-texte);font-variant-numeric:lining-nums tabular-nums;box-shadow:0 0 0 2px #14110E,0 0 0 3px #D4A574;pointer-events:none;animation:eclate-ouvre linear both,eclate-apparait linear both,eclate-pose cubic-bezier(.16,1,.3,1) both,eclate-efface linear forwards;animation-timeline:--etapes;animation-range:contain calc(46.75% + var(--r,0) * 2.5%) contain calc(55.75% + var(--r,0) * 2.5%),contain calc(58.5% + var(--k,0) * .8%) contain calc(60.05% + var(--k,0) * .8%),contain calc(58.5% + var(--k,0) * .8%) contain calc(60.05% + var(--k,0) * .8%),contain 69.25% contain 70.94%}
+html.js #etapes .eclate__phrase{display:block;position:absolute;left:0;right:0;top:85cqh;margin:0;max-width:none;text-align:center;font:400 max(1.25rem,4cqw)/1.15 var(--police-display);letter-spacing:-.01em;color:#F4EDE2;pointer-events:none;animation:eclate-leve linear both,eclate-apparait linear both;animation-timeline:--etapes;animation-range:contain 87.44% contain 90%,contain 87.44% contain 90%}
+@keyframes eclate-fiche{from{opacity:1;translate:0 0}55%,to{opacity:0;translate:0 -1.5rem}}
+@keyframes eclate-volet{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)}}
+@keyframes eclate-pose{from{scale:.6}to{scale:1}}
+@keyframes eclate-ouvre{from{translate:0 0}to{translate:calc(var(--vx,0) * 1cqw) calc(var(--vy,0) * 1cqh)}}
+@keyframes eclate-remonte{from{translate:calc(var(--vx,0) * 1cqw) calc(var(--vy,0) * 1cqh)}to{translate:0 0}}
+@keyframes eclate-apparait{from{opacity:0}to{opacity:1}}
+@keyframes eclate-efface{from{opacity:1}to{opacity:0}}
+@keyframes eclate-leve{from{translate:0 .5rem}to{translate:0 0}}
+@keyframes eclate-trace{from{scale:1 .6}to{scale:1 1}}
+@keyframes eclate-compteur{to{translate:0 -75%}}
+}
+}

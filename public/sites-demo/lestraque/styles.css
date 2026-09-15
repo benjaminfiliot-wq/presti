@@ -881,3 +881,16 @@ html.js .travelling.relief-3d .galerie--scene .galerie__item.reveal{transform:pe
 .travelling.relief-3d .galerie__cadre::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(10,7,4,.55),rgba(10,7,4,0) 58%);transform:scaleX(var(--s,1));opacity:calc(var(--p,0) * .85);transition:opacity .45s}
 }
 }
+.etapes__photo.eclate{aspect-ratio:4/3;background:#14110E}
+#etapes .etapes__photo.eclate img{animation:none;scale:none;translate:none}
+.eclate__rendu{position:relative;width:100%;height:100%}
+.eclate__rendu>img{position:absolute;max-width:none}
+.eclate__eclate{left:0;top:0}
+.eclate__assemble,.eclate__calque,.eclate__etiquette,.eclate__cote,.eclate__compteur{display:none}
+.eclate__pastille{position:absolute;width:1.625rem;height:1.625rem;margin:-.8125rem 0 0 -.8125rem;display:grid;place-items:center;border-radius:50%;background:#F4EDE2;color:#14110E;font:600 .875rem/1 var(--police-texte);font-variant-numeric:lining-nums tabular-nums;box-shadow:0 0 0 2px rgba(20,17,14,.85)}
+.eclate__legende{list-style:none;margin:0;padding:0;counter-reset:eclate;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:.5rem 1rem;font-size:.875rem;line-height:1.35;color:rgba(244,237,226,.86)}
+.eclate__legende li{counter-increment:eclate;display:flex;align-items:baseline;gap:.5rem;min-width:0}
+.eclate__legende li::before{content:counter(eclate);flex:none;display:inline-grid;place-items:center;width:1.25rem;height:1.25rem;border-radius:50%;background:rgba(244,237,226,.14);color:#F4EDE2;font-weight:600;font-size:.75rem;line-height:1;font-variant-numeric:lining-nums tabular-nums;translate:0 .1rem}
+@media(max-width:759px){.eclate__legende{order:-1;margin-bottom:.5rem}}
+.eclate__fiche,.eclate__releve,.eclate__cote-entaille,.eclate__numero,.eclate__phrase{display:none}
+.eclate__ligne{display:contents}

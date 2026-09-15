@@ -190,7 +190,8 @@ for (const [nom, motif] of [['la commande Blender (--background)', /--background
 const PHOTO = 'public/sites-demo/lestraque/images/heros-escalier-1600.avif'
 const git = (...a) => spawnSync('git', a, { cwd: R, encoding: 'utf8' }).stdout.trim()
 if (git('hash-object', PHOTO) !== git('rev-parse', `HEAD:${PHOTO}`)) echecs.push(`OB-8 : ${PHOTO} diffère du dépôt : la photo se lit, elle ne s'écrit pas`)
-const intrus = git('ls-files', '--others', '--exclude-standard', '--', 'public').split('\n').filter((f) => /eclate|calque-|assemble|\.blend|\.py$/i.test(f))
+// public/sites-demo/lestraque/eclate/ est la recopie faite par la tâche suivante (021-22), pas une écriture de 021-04
+const intrus = git('ls-files', '--others', '--exclude-standard', '--', 'public').split('\n').filter((f) => /eclate|calque-|assemble|\.blend|\.py$/i.test(f) && !f.startsWith('public/sites-demo/lestraque/eclate/'))
 if (intrus.length) echecs.push(`OB-8 : fichiers de rendu sous public/ : ${intrus.join(', ')}`)
 
 fin()
