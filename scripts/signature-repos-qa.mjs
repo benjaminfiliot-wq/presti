@@ -29,7 +29,10 @@ import sharp from 'sharp'
 
 const R = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DEMOS = path.join(R, 'public', 'sites-demo')
-const SITE = path.join(DEMOS, 'lestraque')
+// Le site est généré dans une copie (--sortie, 021-01) et servi de là : le juge ne réécrit jamais public/ pendant que d'autres
+// tâches y travaillent (contre-expertise du cahier de la vague 5, 15/09)
+const SITE = path.join(R, '.orchestre', 'travail', `site-signature-repos-${process.pid}`)
+process.on('exit', () => fs.rmSync(SITE, { recursive: true, force: true }))
 const echecs = [], faits = []
 const fin = () => {
   console.log(faits.map((f) => `  · ${f}`).join('\n'))
@@ -37,7 +40,7 @@ const fin = () => {
   process.exitCode = echecs.length ? 1 : 0
 }
 
-const gen = spawnSync(process.execPath, [path.join(DEMOS, 'generer.mjs'), 'lestraque'], { cwd: R, encoding: 'utf8' })
+const gen = spawnSync(process.execPath, [path.join(DEMOS, 'generer.mjs'), 'lestraque', `--sortie=${SITE}`], { cwd: R, encoding: 'utf8' })
 if (gen.status !== 0) { echecs.push(`la génération échoue : ${(gen.stderr || gen.stdout || '').trim().split('\n').slice(-2).join(' | ').slice(0, 240)}`); fin(); process.exit(1) }
 
 const accueil = fs.readFileSync(path.join(SITE, 'index.html'), 'utf8')

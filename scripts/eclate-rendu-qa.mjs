@@ -9,7 +9,7 @@
 //        pixels écartés de plus de 24 niveaux ≤ 1 % ;
 //   OB-5 aire opaque (alpha > 128) de chaque pièce ≥ 0,2 % du cadre ; le calque des vis ≥ 0,4 % ;
 //   OB-6 déterminisme : rendus-bis/ (second lancement) contre rendus/ : écart moyen < 0,006 par fichier ;
-//   OB-7 rapport.md ≥ 800 caractères, avec la commande Blender, la version 5.2, la graine et des médianes L*a*b* ;
+//   OB-7 rapport.md ≥ 800 caractères, avec la commande Blender, la version 5.2, la graine, des médianes L*a*b* et la qualité AVIF ;
 //   OB-8 le site n'est pas touché : heros-escalier-1600.avif identique au dépôt ; aucun fichier de rendu non suivi sous public/ ;
 //   OB-9 teinte du chêne : ΔE00 ≤ 10 entre la médiane L*a*b* des pixels opaques de calque-marche.avif et celle de deux zones
 //        de marches brunes de heros-escalier-1600.avif (zones regardées par Claude Code le 15/09 : 33,3 / 17,0 / 39,1).
@@ -99,8 +99,32 @@ const partEcartes = ecartes / (L * H)
 faits.push(`composite des calques contre eclate.avif : ${(100 * partEcartes).toFixed(2)} % de pixels écartés`)
 if (partEcartes > 0.01) echecs.push(`OB-4 : ${(100 * partEcartes).toFixed(2)} % de pixels écartés entre le composite et eclate.avif, 1 % au plus`)
 
-// OB-9 : la teinte du chêne, contre les marches de la photo du héros
+// OB-10 : rien de coupé par le cadre. Dans les deux vues, la boîte de chaque calque reste à 2 % au moins des bords (1er rendu,
+// 15/09 : dans l'éclaté, deux vis et le haut du limon sortaient par le bord haut)
+for (const p of j.pieces) {
+  for (const [vue, dx, dy] of [['assemblée', 0, 0], ['éclatée', p.vecteur[0], p.vecteur[1]]]) {
+    const x0 = p.x + dx, y0 = p.y + dy, x1 = x0 + p.l, y1 = y0 + p.h
+    if (x0 < 0.02 || y0 < 0.02 || x1 > 0.98 || y1 > 0.98) echecs.push(`OB-10 : vue ${vue}, ${p.nom} touche ou dépasse le bord du cadre (boîte ${x0.toFixed(3)}–${x1.toFixed(3)} × ${y0.toFixed(3)}–${y1.toFixed(3)}, marge de 0,02 attendue)`)
+  }
+}
+// OB-11 : pas de trou noir dans le bois. Pixels opaques quasi noirs (L* < 8) ≤ 1 % de chaque calque de bois (1er rendu : les
+// entailles traversaient le limon de part en part et laissaient des triangles noirs)
 const lin = (c) => { c /= 255; return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4 }
+for (const nom of ['limon', 'contremarche', 'marche']) {
+  const { data } = await sharp(path.join(REN, `calque-${nom}.avif`)).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  let opaques = 0, noirs = 0
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] <= 200) continue
+    opaques++
+    const Y = 0.2126 * lin(data[i]) + 0.7152 * lin(data[i + 1]) + 0.0722 * lin(data[i + 2])
+    if (116 * (Y > 216 / 24389 ? Math.cbrt(Y) : (24389 / 27 * Y + 16) / 116) - 16 < 8) noirs++
+  }
+  const part = opaques ? noirs / opaques : 1
+  faits.push(`${nom} : ${(100 * part).toFixed(2)} % de pixels quasi noirs`)
+  if (part > 0.01) echecs.push(`OB-11 : ${nom} a ${(100 * part).toFixed(1)} % de pixels quasi noirs (trou, entaille traversante ou face non éclairée), 1 % au plus`)
+}
+
+// OB-9 : la teinte du chêne, contre les marches de la photo du héros
 const versLab = (r, g, b) => {
   const Rl = lin(r), G = lin(g), B = lin(b)
   const X = (0.4124 * Rl + 0.3576 * G + 0.1805 * B) / 0.95047, Y = 0.2126 * Rl + 0.7152 * G + 0.0722 * B, Z = (0.0193 * Rl + 0.1192 * G + 0.9505 * B) / 1.08883
@@ -159,7 +183,7 @@ for (const f of FICHIERS.filter((x) => x.endsWith('.avif'))) {
 // OB-7 : rapport
 const rapport = fs.existsSync(path.join(P, 'rapport.md')) ? fs.readFileSync(path.join(P, 'rapport.md'), 'utf8') : ''
 if (rapport.length < 800) echecs.push(`OB-7 : rapport.md de ${rapport.length} caractères, 800 au moins`)
-for (const [nom, motif] of [['la commande Blender (--background)', /--background/], ['la version 5.2', /5\.2/], ['la graine', /graine|seed/i], ['des médianes L*a*b*', /L\*|Lab/]]) if (!motif.test(rapport)) echecs.push(`OB-7 : rapport.md sans ${nom}`)
+for (const [nom, motif] of [['la commande Blender (--background)', /--background/], ['la version 5.2', /5\.2/], ['la graine', /graine|seed/i], ['des médianes L*a*b*', /L\*|Lab/], ['la qualité AVIF employée', /qualit[ée][^\n]{0,40}avif|avif[^\n]{0,40}(qualit|quality)/i], ['la durée des rendus', /durée/i], ['un avis sur le rendu (section « Avis »)', /^#+.*avis/im]]) if (!motif.test(rapport)) echecs.push(`OB-7 : rapport.md sans ${nom}`)
 
 // OB-8 : le site n'est pas touché. D'autres tâches écrivent dans public/ en même temps (021-01) : le juge vise ce que 021-04
 // pourrait y laisser — la photo qu'il lit, et des fichiers de rendu

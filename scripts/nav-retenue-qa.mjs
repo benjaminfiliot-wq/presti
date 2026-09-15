@@ -28,10 +28,13 @@ import { chromium } from 'playwright'
 
 const R = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DEMOS = path.join(R, 'public', 'sites-demo')
-const SITE = path.join(DEMOS, 'lestraque')
+// Le site est généré dans une copie (--sortie, 021-01) et servi de là : le juge ne réécrit jamais public/ pendant que d'autres
+// tâches y travaillent (contre-expertise du cahier de la vague 5, 15/09)
+const SITE = path.join(R, '.orchestre', 'travail', `site-nav-retenue-${process.pid}`)
+process.on('exit', () => fs.rmSync(SITE, { recursive: true, force: true }))
 const echecs = [], faits = []
 
-const gen = spawnSync(process.execPath, [path.join(DEMOS, 'generer.mjs'), 'lestraque'], { cwd: R, encoding: 'utf8' })
+const gen = spawnSync(process.execPath, [path.join(DEMOS, 'generer.mjs'), 'lestraque', `--sortie=${SITE}`], { cwd: R, encoding: 'utf8' })
 if (gen.status !== 0) {
   console.log(`✗ barre retenue : FAIL — la génération échoue : ${(gen.stderr || gen.stdout || '').trim().split('\n').slice(-3).join(' | ').slice(0, 300)}`)
   process.exit(1)
@@ -89,10 +92,12 @@ try {
     await page.waitForTimeout(2500)
 
     // Sous charge (autres agents et films en cours sur la machine), la barre peut rendre sa bascule avec quelques images de retard :
-    // une mesure en défaut est refaite 900 ms plus tard, et n'échoue que si le défaut persiste. Le 15/09, deux faux échecs de
-    // 021-01 sous charge (1 position sans appel, puis 2 appels en haut), qui passaient tous deux rejoués à part. Un défaut qui
-    // dure, comme le trou de 1 500 px de 019-01, échoue toujours.
-    const stable = async (ok) => { let vus = await appelsVisibles(page); if (!ok(vus)) { await page.waitForTimeout(900); vus = await appelsVisibles(page) } return vus }
+    // une mesure en défaut est refaite 2 s plus tard, et n'échoue que si le défaut persiste. Le 15/09, trois faux échecs sous
+    // charge (Blender et deux tournages Chromium en même temps : 1 position sans appel, 2 appels en haut, puis encore un trou à
+    // 150 px malgré une remesure à 900 ms), qui passaient tous rejoués à part ; avec le processeur bridé ×6 (CDP) et 1,5 s
+    // d'attente, le relais tient à chaque position de 0 à 1 800 px. Un défaut qui dure, comme le trou de 1 500 px de 019-01,
+    // échoue toujours.
+    const stable = async (ok) => { let vus = await appelsVisibles(page); if (!ok(vus)) { await page.waitForTimeout(2000); vus = await appelsVisibles(page) } return vus }
     const haut = await stable((v) => v.length === 1 && !v[0].barre)
     if (haut.length !== 1) echecs.push(`${nomVp}, haut de l'accueil : ${haut.length} appels visibles, 1 attendu (le bouton du héros) — ${decrire(haut)}`)
     else if (haut[0].barre) echecs.push(`${nomVp}, haut de l'accueil : le seul appel visible est dans la barre (${decrire(haut)}), le bouton du héros attendu`)
