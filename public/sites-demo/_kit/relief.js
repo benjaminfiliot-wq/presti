@@ -47,6 +47,7 @@ function demarrer(hero) {
   }
 
   media.appendChild(toile)
+  let fini = false
   // toutes les animations de la toile reprennent exactement la phase de leur homologue sur la photo
   const synchroniser = () => {
     if (!img.getAnimations || !toile.getAnimations) return
@@ -54,12 +55,18 @@ function demarrer(hero) {
     for (const animationImage of img.getAnimations()) {
       if (!animationImage.animationName) continue
       const animationToile = animationsToile.find((a) => a.animationName === animationImage.animationName)
-      if (animationToile) animationToile.currentTime = animationImage.currentTime
+      if (!animationToile) continue
+      // Une animation CSS nouvellement créée peut encore être « pending » : lui affecter startTime tout de suite
+      // serait écrasé quand elle démarre réellement. L'alignement définitif se fait donc une fois les deux prêtes.
+      Promise.all([animationImage.ready, animationToile.ready]).then(() => {
+        if (fini || !toile.isConnected) return
+        if (animationImage.startTime != null) animationToile.startTime = animationImage.startTime
+        else animationToile.currentTime = animationImage.currentTime
+      }).catch(() => {})
     }
   }
   synchroniser()
 
-  let fini = false
   const fin = () => {
     if (fini) return; fini = true
     fil.terminate(); img.style.visibility = ''; hero.setAttribute('data-relief-etat', 'echec')
@@ -74,6 +81,9 @@ function demarrer(hero) {
     const m = e.data
     if (m.type === 'pret') {
       hero.setAttribute('data-relief-etat', 'pret')
+      // Le fil ne démarre les trois secondes d'attente de la texture détaillée qu'après publication
+      // de l'état prêt dans la page : une file de messages chargée ne peut plus rogner ce délai observable.
+      fil.postMessage({ type: 'pret-visible' })
       toile.addEventListener('transitionend', () => { if (!fini && toile.isConnected) img.style.visibility = 'hidden' }, { once: true })
       requestAnimationFrame(() => { if (!fini) toile.classList.add('hero__relief--pret') })
       // Publier un premier état stable après l'introduction : les bancs et outils de diagnostic qui
@@ -81,8 +91,13 @@ function demarrer(hero) {
       setTimeout(() => { if (!fini) fil.postMessage({ type: 'compte' }) }, 2600)
     } else if (m.type === 'echec' || m.type === 'perdu') fin()
   }
+  const texture = hero.getAttribute('data-relief-texture')
+  // Le navigateur peut choisir la variante 2880 comme currentSrc sur un écran dense. Le premier rendu du fil
+  // repart volontairement de la source de repli de l'élément (1600) : la 2880 reste réservée au remplacement tardif.
+  const imageInitiale = img.getAttribute('src') || img.src
   fil.postMessage({
-    type: 'init', toile: offscreen, image: new URL(img.currentSrc || img.src, location.href).href,
+    type: 'init', toile: offscreen, image: new URL(imageInitiale, location.href).href,
+    texture: texture ? new URL(texture, location.href).href : '',
     profondeur: new URL(hero.getAttribute('data-relief-profondeur'), location.href).href,
     oeil: (hero.getAttribute('data-relief-oeil') || '0.4,0.39').split(',').map(Number),
     aspect: img.naturalWidth / img.naturalHeight, largeurNaturelle: img.naturalWidth,

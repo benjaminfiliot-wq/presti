@@ -53,6 +53,9 @@ let W = 1, H = 1, dpr = 1, dw = 1, dh = 1, aspect = 4 / 3, pos = [0.5, 0.5], oei
 let boucle = false, dernier = 0, dessine = 0, temps = 0, debut = -1, defile = 0, images = 0, tours = 0
 let voile = 0.5, geste = -1e9, derive = 0, calme = false, lumiereCss = false
 let deriveAppliquee = 0, lumiereAppliquee = 0
+let textureImage = null, textureUrl = '', economie = false, texturePlanifiee = false
+let textureEtat = { largeur: 0, mipmaps: false }
+const dureesImages = []
 const souris = { x: 0, y: 0 }, visee = { x: 0, y: 0 }
 const LOGICIEL = /swiftshader|llvmpipe|softpipe|software|basic render/i
 let chaud = null
@@ -105,16 +108,67 @@ function image() {
   gl.uniform1f(u.uLumiere, lumiereAppliquee)
   gl.uniform1f(u.uAngle, 0.9 + temps * 0.105)
   gl.uniform2f(u.uPousse, -vx * 14 * dpr / dw * intro, -vy * 9 * dpr / dh * intro)
+  const avantDessin = performance.now()
   gl.drawArrays(gl.TRIANGLES, 0, 3)
+  dureesImages.push(performance.now() - avantDessin)
+  if (dureesImages.length > 120) dureesImages.shift()
   images++
-  if (!pret) { pret = true; postMessage({ type: 'pret' }) }
+  if (!pret) {
+    pret = true
+    postMessage({ type: 'pret' })
+  }
   boucle = true; demander(image)
 }
 const relancer = () => { if (actif && charge && !perdu && !boucle) { dernier = 0; boucle = true; demander(image) } }
 
+// La texture détaillée ne participe jamais au premier rendu : son réseau ne commence qu'une fois le relief prêt.
+// Le délai garde une petite marge sur les 3 s afin que les horloges du fil et de la page ne puissent pas l'arrondir en dessous.
+function planifierTexture() {
+  if (texturePlanifiee || economie || !textureUrl) return
+  texturePlanifiee = true
+  setTimeout(() => {
+    if (!gl || perdu || gl.isContextLost()) return
+    fetch(textureUrl, { cache: 'force-cache' }).then((r) => { if (!r.ok) throw new Error(r.status); return r.blob() })
+      .then((b) => createImageBitmap(b))
+      .then((photo) => {
+        if (!gl || perdu || gl.isContextLost()) { if (photo.close) photo.close(); return }
+        // Le bitmap est prêt avant de toucher à WebGL. Le téléversement et les mipmaps sont synchrones dans ce tour du fil :
+        // aucune image ne peut donc être dessinée avec une texture partiellement remplacée.
+        const precedente = textureImage, suivante = gl.createTexture()
+        try {
+          gl.activeTexture(gl.TEXTURE0)
+          gl.bindTexture(gl.TEXTURE_2D, suivante)
+          for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v)
+          while (gl.getError() !== gl.NO_ERROR) { /* vider les erreurs antérieures */ }
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, photo)
+          gl.generateMipmap(gl.TEXTURE_2D)
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR)
+          if (gl.getError() !== gl.NO_ERROR) throw new Error('mipmaps refusées')
+          textureImage = suivante
+          textureEtat = { largeur: photo.width, mipmaps: true }
+          gl.deleteTexture(precedente)
+          dessine = 0
+          relancer()
+        } catch (e) {
+          gl.bindTexture(gl.TEXTURE_2D, precedente)
+          gl.deleteTexture(suivante)
+        } finally {
+          if (photo.close) photo.close()
+        }
+      }).catch(() => { /* la texture affichée reste celle du premier rendu */ })
+  }, 3100)
+}
+
+function dureeP95() {
+  if (!dureesImages.length) return 0
+  const triees = [...dureesImages].sort((a, b) => a - b)
+  return triees[Math.max(0, Math.ceil(triees.length * 0.95) - 1)]
+}
+
 function init(m) {
   toile = m.toile; W = m.W; H = m.H; dpr = m.dpr; aspect = m.aspect; pos = m.pos; oeil = m.oeil; voile = m.voile ?? voile
   calme = !!m.calme; lumiereCss = !!m.lumiereCss
+  textureUrl = m.texture || ''; economie = !!m.economie
   const o = { alpha: false, antialias: false, depth: false, stencil: false, premultipliedAlpha: false, failIfMajorPerformanceCaveat: true }
   try { gl = toile.getContext('webgl2', o) || toile.getContext('webgl', o) } catch (e) { gl = null }
   if (chaud) { const l = chaud.getExtension('WEBGL_lose_context'); if (l) l.loseContext(); chaud = null }
@@ -156,12 +210,17 @@ function init(m) {
     gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0)
     for (const n of ['uImage', 'uProf', 'uEchelle', 'uDecal', 'uCentre', 'uOeil', 'uPousse', 'uAspect', 'uCreuse', 'uLumiere', 'uAngle', 'uMarge', 'uVoile']) u[n] = gl.getUniformLocation(prog, n)
     const texture = (unite, source) => {
-      gl.activeTexture(gl.TEXTURE0 + unite); gl.bindTexture(gl.TEXTURE_2D, gl.createTexture())
+      const objet = gl.createTexture()
+      gl.activeTexture(gl.TEXTURE0 + unite); gl.bindTexture(gl.TEXTURE_2D, objet)
       for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D, k, v)
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source)
+      const largeur = source.width || 0
       if (source.close) source.close()
+      return { objet, largeur }
     }
-    texture(0, photo); texture(1, prof)
+    const imageInitiale = texture(0, photo); texture(1, prof)
+    textureImage = imageInitiale.objet
+    textureEtat = { largeur: imageInitiale.largeur, mipmaps: false }
     gl.uniform1i(u.uImage, 0); gl.uniform1i(u.uProf, 1)
     gl.uniform2f(u.uOeil, oeil[0], oeil[1]); gl.uniform1f(u.uAspect, aspect)
     cadrer()
@@ -195,6 +254,7 @@ onmessage = (e) => {
   }
   else if (m.type === 'defile') defile = m.v
   else if (m.type === 'actif') { actif = m.v; relancer() }
+  else if (m.type === 'pret-visible') planifierTexture()
   // le nombre d'images dessinées : la preuve, pour un banc, que la boucle s'arrête bien hors de l'écran
-  else if (m.type === 'compte') postMessage({ type: 'compte', n: images, tours, calme, derive: deriveAppliquee, lumiere: lumiereAppliquee })
+  else if (m.type === 'compte') postMessage({ type: 'compte', n: images, tours, calme, derive: deriveAppliquee, lumiere: lumiereAppliquee, texture: textureEtat, dureeP95: dureeP95() })
 }
