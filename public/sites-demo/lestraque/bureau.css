@@ -16,3 +16,15 @@ html.js .chiffres--compte .chiffre__vrai{opacity:0}
 @keyframes chiffres-entre{from{opacity:0;transform:translateY(1rem)}to{opacity:1;transform:none}}
 }
 }
+@media (prefers-reduced-motion:no-preference){
+.atelier__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;opacity:0;transition:opacity .55s cubic-bezier(.16,1,.3,1)}
+.atelier__video.atelier__video--lue{opacity:1}
+.atelier__media.atelier__media--video img{animation-play-state:paused}
+.atelier__pause{position:absolute;z-index:1;right:max(5%,50% - 860px);bottom:calc(clamp(1.5rem,3.5vw,2.75rem) - .45rem);display:inline-flex;align-items:center;gap:.8em;margin:0;padding:.8em 1.2em .8em 1.05em;font:600 .72rem/1 var(--police-texte);letter-spacing:.16em;text-transform:uppercase;color:#F4EDE2;background:rgba(10,7,4,.46);border:1px solid rgba(244,237,226,.32);border-radius:999px;cursor:pointer;transition:opacity .55s cubic-bezier(.16,1,.3,1)}
+.atelier__pause[hidden]{display:none}
+@starting-style{.atelier__pause{opacity:0}}
+.atelier__pause::before{content:"";flex:none;box-sizing:border-box;width:.6em;height:.78em;border-inline:.2em solid currentColor}
+.atelier__pause[aria-pressed="true"]::before{width:.68em;border-style:solid;border-width:.39em 0 .39em .68em;border-color:transparent currentColor}
+.atelier__pause:hover{background:rgba(10,7,4,.68);border-color:rgba(244,237,226,.62)}
+.atelier__pause:focus-visible{outline:2px solid #F4EDE2;outline-offset:3px;box-shadow:0 0 0 7px rgba(10,7,4,.55)}
+}

@@ -1,0 +1,15 @@
+[
+  {
+    "type": "video",
+    "base": "atelier",
+    "fichiers": ["video/atelier.av1.mp4", "video/atelier.h264.mp4"],
+    "legende": "Images d'illustration : mains qui poncent une pièce de bois à l'atelier",
+    "titre": "Carpenter sanding a piece of lumber",
+    "auteur": "Marco Lopez",
+    "banque": "Mixkit",
+    "source": "https://mixkit.co/free-stock-video/carpenter-sanding-a-piece-of-lumber-776/",
+    "licence": "Mixkit Stock Video Free License",
+    "licenceUrl": "https://mixkit.co/license/#videoFree",
+    "modifiee": "Oui — extrait de 6,006 s, recadré (bande du haut retirée), retourné en miroir, réencodé en AV1 et H.264"
+  }
+]

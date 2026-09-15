@@ -1,0 +1,28 @@
+/* video.bureau.css — famille « video » (vague 5, 021-13) : la vidéo d'atelier et son bouton pause, au bureau seulement.
+   Liée par generer.mjs avec media="(min-width: 1024px)" ; aucune video.css, le téléphone ne reçoit rien. Les deux éléments
+   n'existent que si video.js les crée (mouvement permis, sans économie de données) : sans JavaScript, ces règles ne visent rien.
+   Propriété animée : opacity seulement. */
+@media (prefers-reduced-motion:no-preference){
+  /* Sous le voile ::after de .atelier__media (la vidéo vient avant lui dans l'arbre), au cadrage de la photo. Jamais de scale, de
+     translate ni de filter, aucun voile en plus : la lisibilité de la phrase est mesurée sur ce cadrage et sous ce voile-là.
+     Invisible jusqu'à « playing » : ni image noire ni première image figée ne passe sur la photo pendant le chargement. */
+  .atelier__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;opacity:0;transition:opacity .55s cubic-bezier(.16,1,.3,1)}
+  .atelier__video.atelier__video--lue{opacity:1}
+  /* la dérive de la photo s'arrête sous la vidéo : un seul mouvement à l'écran, et plus rien à composer pour une image cachée */
+  .atelier__media.atelier__media--video img{animation-play-state:paused}
+
+  /* Le bouton pause (WCAG 2.2.2 : un mouvement automatique de plus de 5 s doit pouvoir s'arrêter). Coin bas droit, aligné sur la
+     colonne du contenu (90 %, 1 720 px au plus) et centré sur la ligne de la légende, dont il reprend la typographie : un
+     contrôle discret, pas un appel à l'action. Fond sombre translucide : lisible quelle que soit l'image du plan dessous. */
+  .atelier__pause{position:absolute;z-index:1;right:max(5%,50% - 860px);bottom:calc(clamp(1.5rem,3.5vw,2.75rem) - .45rem);display:inline-flex;align-items:center;gap:.8em;margin:0;padding:.8em 1.2em .8em 1.05em;font:600 .72rem/1 var(--police-texte);letter-spacing:.16em;text-transform:uppercase;color:#F4EDE2;background:rgba(10,7,4,.46);border:1px solid rgba(244,237,226,.32);border-radius:999px;cursor:pointer;transition:opacity .55s cubic-bezier(.16,1,.3,1)}
+  /* l'attribut hidden perd contre display:inline-flex : il faut le redire */
+  .atelier__pause[hidden]{display:none}
+  /* il entre avec la vidéo, dans le même fondu (un seul geste) */
+  @starting-style{.atelier__pause{opacity:0}}
+  /* l'icône en bordures, sans image : deux barres en lecture, un triangle en pause */
+  .atelier__pause::before{content:"";flex:none;box-sizing:border-box;width:.6em;height:.78em;border-inline:.2em solid currentColor}
+  .atelier__pause[aria-pressed="true"]::before{width:.68em;border-style:solid;border-width:.39em 0 .39em .68em;border-color:transparent currentColor}
+  .atelier__pause:hover{background:rgba(10,7,4,.68);border-color:rgba(244,237,226,.62)}
+  /* anneau crème cerné de sombre : visible sur le bois clair comme sur l'ombre */
+  .atelier__pause:focus-visible{outline:2px solid #F4EDE2;outline-offset:3px;box-shadow:0 0 0 7px rgba(10,7,4,.55)}
+}
