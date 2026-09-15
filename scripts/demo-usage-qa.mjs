@@ -137,13 +137,30 @@ try {
         const observation = { profil, indice, texte: (await cible.innerText()).trim(), ok: false }
         let destination = page
         try {
+          let menu = null
           if (!await cible.isVisible()) {
-            const menu = await boutonMenu(page).catch(() => null)
+            menu = await boutonMenu(page).catch(() => null)
             if (menu) {
               if (profil === 'telephone') await menu.tap()
               else await menu.click()
               await page.waitForTimeout(900)
+            } else if (profil === 'bureau') {
+              // Barre retenue (019-01, 15/09/2026) : au bureau, « Devis » de la barre reste masqué tant que le bouton du héros est
+              // visible, et apparaît dès qu'il est recouvert ou sorti. On défile comme un visiteur, par pas de 150 px.
+              for (let y = 150; y <= 4000 && !await cible.isVisible(); y += 150) {
+                await page.evaluate((v) => scrollTo({ top: v, behavior: 'instant' }), y)
+                await page.waitForTimeout(350)
+              }
             }
+          }
+          if (!await cible.isVisible() && !menu && await cible.evaluate((element) => !!element.closest('#panneau'))) {
+            // Un lien du menu mobile, à un format où aucun bouton de menu n'existe (au bureau depuis 019-01) : ce n'est pas un
+            // accès pour ce profil. Toute autre invisibilité reste un échec (le clic ci-dessous expire).
+            observation.horsProfil = 'lien du menu mobile, sans bouton de menu à ce format'
+            observation.ok = true
+            observations.push(observation)
+            resultat.preuve = `Chaque accès devis, bureau puis téléphone : ${JSON.stringify(observations)}`
+            continue
           }
           observation.href = await cible.getAttribute('href')
           const nouvellesPages = []
@@ -174,7 +191,10 @@ try {
         if (destination !== page) await destination.close()
       }
     })
-    resultat.ok = observations.length > 0 && observations.every((observation) => observation.ok)
+    // Les liens hors profil (menu mobile au bureau) ne suffisent jamais : chaque profil doit avoir au moins un accès atteignable
+    // qui mène au formulaire.
+    const accesAtteignables = ['bureau', 'telephone'].every((profil) => observations.some((observation) => observation.profil === profil && observation.ok && !observation.horsProfil))
+    resultat.ok = observations.length > 0 && observations.every((observation) => observation.ok) && accesAtteignables
     resultat.preuve = `Chaque accès devis, bureau puis téléphone : ${JSON.stringify(observations)}`
   })
 
