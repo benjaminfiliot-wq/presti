@@ -1,0 +1,34 @@
+{
+  "candidat": "RL",
+  "nom": "la cage tourne et la lumière (L1)",
+  "decisionBenj": "15/09/2026 à 13h15 : RL utilise le projecteur L1 (seul geste tenant la cible C2)",
+  "date": "2026-09-15T11:31:24.741Z",
+  "1088x800": {
+    "C2a": [
+      0.652,
+      0.629
+    ],
+    "C2bPlageFigee": 0.13,
+    "C2bEcartMoyen": 0.0079,
+    "C2cClignote": false,
+    "R12Min": 3.343
+  },
+  "1440x900": {
+    "C2a": [
+      0.703,
+      0.671
+    ],
+    "C2bPlageFigee": 0.13,
+    "C2bEcartMoyen": 0.0092,
+    "C2cClignote": false,
+    "R12Min": 3.211
+  },
+  "R4": {
+    "statut": "aucun coin découvert",
+    "Eb": 1.07,
+    "cas1": 0,
+    "cas2": 0,
+    "cas4": 0,
+    "details": "Scale statique Eb = 1.07 couvrant l'amplitude de 2.25deg en 34/25 et 4deg en 16/10 sans découvrir de coin (conforme R §8.1)."
+  }
+}

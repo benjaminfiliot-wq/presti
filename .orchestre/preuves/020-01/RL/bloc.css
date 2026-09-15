@@ -1,0 +1,32 @@
+/* Candidat RL « la cage tourne et la lumière » (cahier-des-charges.md §3.5)
+   Composition de R (rotation de la photo avec E_b = 1,07) et L1 (projecteur tournant 9 s, conic-gradient deux faisceaux),
+   avec l'animation de lumière décalée d'un quart de période de la rotation (animation-delay: -2.5s).
+   Choix de Benj du 15/09 à 13h15 : L1 retenue car c'est le seul geste tenant la cible C2 (part > 8 recalculée > 0.57).
+   Accueil seulement (.ouverture>) : chaque règle cible .ouverture.
+   Propriétés animées : rotate, scale, translate.
+   Lisibilité : calque ::before en z-index:1 sous le dégradé du titre ::after en z-index:2. */
+@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){
+  html.js.da--signature .ouverture>.hero--plein .hero__media>picture{position:absolute;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}
+  html.js.da--signature .ouverture>.hero--plein .hero__media img{object-position:50% 50%}
+  html.js.da--signature .ouverture>.hero--plein .hero__relief{inset:auto;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}
+  html.js.da--signature .ouverture>.hero--plein .hero__media img,
+  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:2.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-2 10s cubic-bezier(.37,0,.63,1) infinite alternate}
+  html.js.da--signature .ouverture>.hero--plein .hero__media::before{
+    content:"";position:absolute;z-index:1;pointer-events:none;
+    left:calc(40.4% - 85vw);top:calc(42% - 2.55vw - 85vw);
+    width:170vw;height:170vw;
+    background:conic-gradient(from 0deg,rgba(255,214,150,0.4) 0deg,rgba(255,214,150,0.2) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.475) 65deg,rgba(10,7,4,0.95) 90deg,rgba(10,7,4,0.475) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.2) 155deg,rgba(255,214,150,0.4) 180deg,rgba(255,214,150,0.2) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.475) 245deg,rgba(10,7,4,0.95) 270deg,rgba(10,7,4,0.475) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.2) 335deg,rgba(255,214,150,0.4) 360deg);
+    -webkit-mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);
+    mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);
+    mix-blend-mode:soft-light;
+    animation:signature-projecteur 9s linear -2.5s infinite;
+  }
+  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}
+}
+@media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motion:no-preference){
+  html.js.da--signature .ouverture>.hero--plein .hero__media img,
+  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:4;animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-4 10s cubic-bezier(.37,0,.63,1) infinite alternate}
+}
+@keyframes signature-tourne-2{from{rotate:2.25deg}to{rotate:-2.25deg}}
+@keyframes signature-tourne-4{from{rotate:4deg}to{rotate:-4deg}}
+@keyframes signature-projecteur{to{rotate:-360deg}}
