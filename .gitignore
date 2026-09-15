@@ -88,3 +88,7 @@ publications/
 # Moment signature (020) : images et films de travail, jamais versionnés (planches et instants en JPEG, JSON et scripts oui)
 .orchestre/preuves/020-*/**/*.png
 .orchestre/preuves/020-*/**/*.mp4
+.orchestre/preuves/021-*/**/*.png
+.orchestre/preuves/021-*/**/*.mp4
+.orchestre/preuves/021-*/**/*.avif
+.orchestre/preuves/021-*/**/*.jpg
