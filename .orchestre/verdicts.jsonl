@@ -157,3 +157,6 @@
 {"id":"020-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T11:33:30Z","duree_s":107,"agent":"codex-13","executant":"codex","lignes":0,"dossier":"en-cours"}
 {"id":"020-13","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T11:34:45Z","duree_s":1,"agent":"ag-28-flash","executant":"antigravity","lignes":5784,"dossier":"fait"}
 {"id":"020-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T11:35:17Z","duree_s":107,"agent":"codex-13","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"020-15","verdict":"FAIL","ligne":"✗ relief de la signature : FAIL — calme : pas de réponse à « compte »","code":1,"date":"2026-09-15T11:49:46Z","duree_s":127,"agent":"codex-14","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"020-15","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T11:54:31Z","duree_s":123,"agent":"codex-14","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"020-15","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T11:56:34Z","duree_s":123,"agent":"codex-14","executant":"codex","lignes":0,"dossier":"fait"}

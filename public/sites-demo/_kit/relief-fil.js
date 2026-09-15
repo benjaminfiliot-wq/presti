@@ -51,7 +51,8 @@ void main(){
 let gl = null, toile = null, u = {}, charge = false, pret = false, actif = false, perdu = false
 let W = 1, H = 1, dpr = 1, dw = 1, dh = 1, aspect = 4 / 3, pos = [0.5, 0.5], oeil = [0.4, 0.39]
 let boucle = false, dernier = 0, dessine = 0, temps = 0, debut = -1, defile = 0, images = 0, tours = 0
-let voile = 0.5, geste = -1e9, derive = 0
+let voile = 0.5, geste = -1e9, derive = 0, calme = false, lumiereCss = false
+let deriveAppliquee = 0, lumiereAppliquee = 0
 const souris = { x: 0, y: 0 }, visee = { x: 0, y: 0 }
 const LOGICIEL = /swiftshader|llvmpipe|softpipe|software|basic render/i
 let chaud = null
@@ -85,8 +86,8 @@ function image() {
   souris.x += (visee.x - souris.x) * k; souris.y += (visee.y - souris.y) * k
   temps += dt
   // la dérive monte en 2,5 s environ quand la souris se tait depuis 2 s, et retombe en moins d'une seconde dès qu'elle bouge
-  const calme = now - geste > 2000
-  derive += ((calme ? 1 : 0) - derive) * (1 - Math.exp(-dt * (calme ? 0.8 : 3)))
+  const sourisCalme = now - geste > 2000
+  derive += ((sourisCalme ? 1 : 0) - derive) * (1 - Math.exp(-dt * (sourisCalme ? 0.8 : 3)))
   const bouge = Math.abs(visee.x - souris.x) + Math.abs(visee.y - souris.y) > 0.002
   // souris au repos : 30 images par seconde suffisent à une lumière qui fait un tour par minute et à une dérive de 2 px/s
   if (pret && !bouge && now - dessine < 30) { boucle = true; demander(image); return }
@@ -95,11 +96,13 @@ function image() {
   const m = debut < 0 ? 0 : Math.min(1, Math.max(0, (temps - debut - 0.7) / 1.8))
   const intro = m * m * (3 - 2 * m)
   // point de vue = souris amortie + dérive, borné à la course de la souris (14 × 9 px) : la marge de surbalayage suffit toujours
-  const vx = Math.max(-1, Math.min(1, souris.x + derive * 0.6 * Math.sin(temps * 2 * Math.PI / 23)))
-  const vy = Math.max(-1, Math.min(1, souris.y + derive * 0.5 * Math.sin(temps * 2 * Math.PI / 31 + 1.3)))
+  deriveAppliquee = calme ? 0 : derive
+  const vx = Math.max(-1, Math.min(1, souris.x + deriveAppliquee * 0.6 * Math.sin(temps * 2 * Math.PI / 23)))
+  const vy = Math.max(-1, Math.min(1, souris.y + deriveAppliquee * 0.5 * Math.sin(temps * 2 * Math.PI / 31 + 1.3)))
   gl.uniform1f(u.uMarge, 0.024 * intro)
-  gl.uniform1f(u.uCreuse, intro * (0.024 + 0.014 * Math.sin(temps * 2 * Math.PI / 17) + defile * 0.05))
-  gl.uniform1f(u.uLumiere, 0.18 * intro)
+  gl.uniform1f(u.uCreuse, intro * (0.024 + (calme ? 0 : 0.014 * Math.sin(temps * 2 * Math.PI / 17)) + defile * 0.05))
+  lumiereAppliquee = calme && lumiereCss ? 0 : 0.18 * intro
+  gl.uniform1f(u.uLumiere, lumiereAppliquee)
   gl.uniform1f(u.uAngle, 0.9 + temps * 0.105)
   gl.uniform2f(u.uPousse, -vx * 14 * dpr / dw * intro, -vy * 9 * dpr / dh * intro)
   gl.drawArrays(gl.TRIANGLES, 0, 3)
@@ -111,6 +114,7 @@ const relancer = () => { if (actif && charge && !perdu && !boucle) { dernier = 0
 
 function init(m) {
   toile = m.toile; W = m.W; H = m.H; dpr = m.dpr; aspect = m.aspect; pos = m.pos; oeil = m.oeil; voile = m.voile ?? voile
+  calme = !!m.calme; lumiereCss = !!m.lumiereCss
   const o = { alpha: false, antialias: false, depth: false, stencil: false, premultipliedAlpha: false, failIfMajorPerformanceCaveat: true }
   try { gl = toile.getContext('webgl2', o) || toile.getContext('webgl', o) } catch (e) { gl = null }
   if (chaud) { const l = chaud.getExtension('WEBGL_lose_context'); if (l) l.loseContext(); chaud = null }
@@ -183,7 +187,7 @@ onmessage = (e) => {
     postMessage({ type: 'sonde', ok })
   }
   else if (m.type === 'init') init(m)
-  else if (m.type === 'taille') { W = m.W; H = m.H; dpr = m.dpr; if (m.voile !== undefined) voile = m.voile; cadrer(); dessine = 0; relancer() }
+  else if (m.type === 'taille') { W = m.W; H = m.H; dpr = m.dpr; if (m.pos) pos = m.pos; if (m.voile !== undefined) voile = m.voile; cadrer(); dessine = 0; relancer() }
   else if (m.type === 'souris') {
     // un geste, pas un simple rappel de position (relief.js renvoie la dernière à chaque réactivation)
     if (Math.abs(m.x - visee.x) + Math.abs(m.y - visee.y) > 0.001) geste = performance.now()
@@ -192,5 +196,5 @@ onmessage = (e) => {
   else if (m.type === 'defile') defile = m.v
   else if (m.type === 'actif') { actif = m.v; relancer() }
   // le nombre d'images dessinées : la preuve, pour un banc, que la boucle s'arrête bien hors de l'écran
-  else if (m.type === 'compte') postMessage({ type: 'compte', n: images, tours })
+  else if (m.type === 'compte') postMessage({ type: 'compte', n: images, tours, calme, derive: deriveAppliquee, lumiere: lumiereAppliquee })
 }

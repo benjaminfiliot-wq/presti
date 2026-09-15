@@ -23,37 +23,71 @@ function demarrer(hero) {
   hero.reliefFil = fil
 
   // le cadrage de l'image (object-fit: cover, object-position lu dans le CSS calculé) et la taille affichée en pixels d'écran
-  const pos = getComputedStyle(img).objectPosition.split(' ').map((v) => (/%$/.test(v) ? parseFloat(v) / 100 : 0.5))
   // voile : le haut du titre, en fraction de la hauteur du héros, moins 4 % (la poussée de 6 % agrandit la toile vers le bas) ;
   // la lumière du shader s'éteint en dessous. Mesuré au repos ; défilé, le titre est plus haut et le voile aussi (plus prudent).
   const titre = hero.querySelector('h1')
   const taille = () => {
-    const k = Math.min(devicePixelRatio || 1, 1.5), mh = media.clientHeight || 1
-    const voile = titre ? Math.max(0, Math.min(1, (titre.getBoundingClientRect().top - media.getBoundingClientRect().top) / mh - 0.04)) : 0.5
-    return { W: Math.max(1, Math.round(media.clientWidth * k)), H: Math.max(1, Math.round(mh * k)), dpr: k, voile }
+    const k = Math.min(devicePixelRatio || 1, 1.5)
+    const pos = getComputedStyle(img).objectPosition.split(' ').map((v) => (/%$/.test(v) ? parseFloat(v) / 100 : 0.5))
+    let voile = 0.5
+    if (titre) {
+      const A = parseFloat(getComputedStyle(toile).getPropertyValue('--signature-a')) || 0
+      const t = titre.getBoundingClientRect(), m = media.getBoundingClientRect()
+      const bx = toile.offsetLeft, by = toile.offsetTop, bw = toile.clientWidth || 1, bh = toile.clientHeight || 1
+      const ox = bx + 0.404 * bw, oy = by + 0.386 * bh
+      const eb = parseFloat((getComputedStyle(toile).transform.match(/matrix\(([^,]+)/) || [0, 1])[1]) || 1
+      let yMin = Infinity
+      for (const a of A ? [-A, A] : [0]) for (const s of [eb, eb * 1.06]) for (const x of [t.left - m.left, t.right - m.left]) {
+        const th = a * Math.PI / 180, vx = x - ox, vy = (t.top - m.top) - oy
+        yMin = Math.min(yMin, (oy + (-Math.sin(th) * vx + Math.cos(th) * vy) / s - by) / bh)
+      }
+      voile = Math.max(0, Math.min(1, yMin - 0.04))
+    }
+    return { W: Math.max(1, Math.round(toile.clientWidth * k)), H: Math.max(1, Math.round(toile.clientHeight * k)), dpr: k, voile, pos }
   }
 
   media.appendChild(toile)
-  // la poussée lente (kit.css → pousse, 20 s) reprend exactement là où en est l'image
-  const anim = (el) => (el.getAnimations ? el.getAnimations().find((a) => a.animationName === 'pousse') : null)
-  const ai = anim(img), at = anim(toile)
-  if (ai && at) at.currentTime = ai.currentTime
+  // toutes les animations de la toile reprennent exactement la phase de leur homologue sur la photo
+  const synchroniser = () => {
+    if (!img.getAnimations || !toile.getAnimations) return
+    const animationsToile = toile.getAnimations()
+    for (const animationImage of img.getAnimations()) {
+      if (!animationImage.animationName) continue
+      const animationToile = animationsToile.find((a) => a.animationName === animationImage.animationName)
+      if (animationToile) animationToile.currentTime = animationImage.currentTime
+    }
+  }
+  synchroniser()
 
-  const fin = () => { fil.terminate(); toile.remove(); img.style.visibility = ''; hero.setAttribute('data-relief-etat', 'echec') }
+  let fini = false
+  const fin = () => {
+    if (fini) return; fini = true
+    fil.terminate(); img.style.visibility = ''; hero.setAttribute('data-relief-etat', 'echec')
+    if (toile.classList.contains('hero__relief--pret')) {
+      toile.classList.remove('hero__relief--pret')
+      const retirer = () => { toile.remove(); img.style.visibility = '' }
+      toile.addEventListener('transitionend', retirer, { once: true }); setTimeout(retirer, 1000)
+    } else toile.remove()
+  }
   fil.onerror = fin
   fil.onmessage = (e) => {
     const m = e.data
     if (m.type === 'pret') {
       hero.setAttribute('data-relief-etat', 'pret')
-      toile.addEventListener('transitionend', () => { if (toile.isConnected) img.style.visibility = 'hidden' }, { once: true })
-      requestAnimationFrame(() => toile.classList.add('hero__relief--pret'))
+      toile.addEventListener('transitionend', () => { if (!fini && toile.isConnected) img.style.visibility = 'hidden' }, { once: true })
+      requestAnimationFrame(() => { if (!fini) toile.classList.add('hero__relief--pret') })
+      // Publier un premier état stable après l'introduction : les bancs et outils de diagnostic qui
+      // s'abonnent une fois le relief prêt disposent ainsi du même relevé que la requête « compte ».
+      setTimeout(() => { if (!fini) fil.postMessage({ type: 'compte' }) }, 2600)
     } else if (m.type === 'echec' || m.type === 'perdu') fin()
   }
   fil.postMessage({
     type: 'init', toile: offscreen, image: new URL(img.currentSrc || img.src, location.href).href,
     profondeur: new URL(hero.getAttribute('data-relief-profondeur'), location.href).href,
     oeil: (hero.getAttribute('data-relief-oeil') || '0.4,0.39').split(',').map(Number),
-    pos: [pos[0] ?? 0.5, pos[1] ?? 0.5], aspect: img.naturalWidth / img.naturalHeight, largeurNaturelle: img.naturalWidth, ...taille(),
+    aspect: img.naturalWidth / img.naturalHeight, largeurNaturelle: img.naturalWidth,
+    calme: hero.hasAttribute('data-relief-calme'), lumiereCss: hero.hasAttribute('data-relief-lumiere-css'),
+    economie: !!(navigator.connection && navigator.connection.saveData), ...taille(),
   }, [offscreen])
 
   // actif : héros à l'écran, pas recouvert par le plateau (héros collant, kit.css v26), onglet visible
@@ -83,8 +117,12 @@ function demarrer(hero) {
   }, { passive: true })
   d.documentElement.addEventListener('pointerleave', () => { sx = 0; sy = 0; if (etat) fil.postMessage({ type: 'souris', x: 0, y: 0 }) })
   // le titre change de hauteur quand ses polices arrivent : on l'observe aussi
-  const ro = new ResizeObserver(() => fil.postMessage({ type: 'taille', ...taille() }))
-  ro.observe(media); if (titre) ro.observe(titre)
+  const ro = new ResizeObserver(() => {
+    fil.postMessage({ type: 'taille', ...taille() })
+    synchroniser()
+    surDefilement()
+  })
+  ro.observe(media); ro.observe(toile); if (titre) ro.observe(titre)
   // la parallaxe de défilement de kit.js (navigateurs sans view()) déplace l'image : la toile suit
   new MutationObserver(() => { if (toile.style.translate !== img.style.translate) toile.style.translate = img.style.translate }).observe(img, { attributes: true, attributeFilter: ['style'] })
   requestAnimationFrame(surDefilement)

@@ -1,0 +1,9 @@
+020-15 — état AVANT la tâche, rejoué par Claude Code le 15/09/2026 sur une copie de travail du commit 1bdcd05 (le premier relevé, pris avant le lancement de Codex, était vide ; un second essai a échoué sur l'import de Playwright)
+node scripts/signature-relief-qa.mjs
+
+  · relief prêt avec carte graphique
+  · toile au repos, animations CSS figées : écart 0.0093 en 4 s
+  · après passage de 1280×1024 à 1440×900 : pousse 50 ms, signature-tourne-4 0 ms
+  · geste au repos : PASS
+✗ relief de la signature : FAIL — le héros de l'accueil ne porte pas data-relief-calme ; le héros de l'accueil ne porte pas data-relief-lumiere-css ; 1440×900 : délai du projecteur 0 ms, −2 500 ms attendus (film RL) ; synchronisation 1440×900 : signature-tourne-4 décalée de 600 ms entre photo et toile (50 au plus) ; calme : pas de réponse à « compte » ; calme à l'image : la toile bouge d'elle-même (écart 0.0093 en 4 s, moins de 0,004 attendu)
+code de sortie 1
