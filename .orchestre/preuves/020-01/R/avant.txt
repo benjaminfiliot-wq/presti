@@ -1,0 +1,3 @@
+020-10 — état AVANT (juge lancé par Claude Code le 15/09/2026)
+  · R (film 1088×800, recalculé) : part > 8 0.484 / 0.532 · plage figée 9.00 s · écart moyen 0.0048 · pic 0.022
+✗ films des candidats : FAIL — R : la règle « @media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motio » ne vise pas .ouverture (le geste ne doit toucher que le héros de l'accueil) ; R : la règle « @media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motio » ne vise pas .ouverture (le geste ne doit toucher que le héros de l'accueil) ; R : mesures.json ne suit pas le contrat (clé "1088x800" avec C2a [deux nombres], C2bPlageFigee, C2bEcartMoyen, C2cClignote, R12Min)

@@ -61,3 +61,7 @@
 {"agent":"codex-8","tache":"019-01","modele":"codex:gpt-5.6-sol","conversationId":"executant-019-01-2026-09-15-07-06-04","date":"2026-09-15T07:06:04Z"}
 {"agent":"codex-9","tache":"019-02","modele":"codex:gpt-5.6-sol","conversationId":"executant-019-02-2026-09-15-07-18-45","date":"2026-09-15T07:18:45Z"}
 {"agent":"codex-10","tache":"019-03","modele":"codex:gpt-5.6-sol","conversationId":"executant-019-03-2026-09-15-07-45-17","date":"2026-09-15T07:45:17Z"}
+{"agent":"ag-26-flash","tache":"020-11","modele":"flash","conversationId":"6722ebfe-61ed-49fa-adb8-d07adc558be0","date":"2026-09-15T10:28:57Z"}
+{"agent":"codex-11","tache":"020-10","modele":"codex:gpt-5.6-sol","conversationId":"executant-020-10-2026-09-15-10-28-59","date":"2026-09-15T10:28:59Z"}
+{"agent":"ag-27-flash","tache":"020-12","modele":"flash","conversationId":"3b569965-b867-4d65-a268-79825ed0bac1","date":"2026-09-15T10:28:59Z"}
+{"agent":"codex-12","tache":"020-14","modele":"codex:gpt-5.6-sol","conversationId":"executant-020-14-2026-09-15-10-37-06","date":"2026-09-15T10:37:06Z"}

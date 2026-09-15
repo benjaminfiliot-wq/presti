@@ -143,3 +143,9 @@
 {"id":"019-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T07:29:47Z","duree_s":40,"agent":"codex-9","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"019-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T07:48:50Z","duree_s":2,"agent":"codex-10","executant":"codex","lignes":0,"dossier":"en-cours"}
 {"id":"019-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T07:48:53Z","duree_s":2,"agent":"codex-10","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"020-10","verdict":"FAIL","ligne":"✗ films des candidats : FAIL — R : la règle « @media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motio » ne vise pas .ouverture (le gest","code":1,"date":"2026-09-15T10:30:27Z","duree_s":1,"agent":"codex-11","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"020-10","verdict":"FAIL","ligne":"✗ films des candidats : FAIL — R : plage figée déclarée 10 s, le film montre 9.00 s","code":1,"date":"2026-09-15T10:33:14Z","duree_s":3,"agent":"codex-11","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"020-10","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T10:34:32Z","duree_s":1,"agent":"codex-11","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"020-10","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T10:34:33Z","duree_s":1,"agent":"codex-11","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"020-14","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T10:39:44Z","duree_s":48,"agent":"codex-12","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"020-14","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T10:40:33Z","duree_s":48,"agent":"codex-12","executant":"codex","lignes":0,"dossier":"fait"}

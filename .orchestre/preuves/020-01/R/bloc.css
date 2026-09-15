@@ -1,0 +1,23 @@
+/* v28 : le moment signature (da--signature), 1. au repos : la cage tourne (candidat R ; annexe A si un autre geste est retenu).
+   Accueil seulement (.ouverture>) : les héros des pages communes ne changent pas. E_b 1,07 couvre les coins dans les deux sens.
+   Source : cahier-des-charges.md §7.3, bloc 1, recopié sans changement (candidat R du §3.5 corrigé).
+   Six contraintes du §3.5 :
+   1. CSS seul, sous html.js.da--signature .ouverture>.hero--plein, (min-width:1024px) et (prefers-reduced-motion:no-preference) ;
+   2. propriétés animées : rotate (signature-tourne-*) et scale (pousse, inchangée) ; E_b par transform statique ; ni filter ni opacity ;
+   3. joue en 1088×800 : (min-aspect-ratio:34/25) inclut 1088/800 = 1,36 ; sous 34/25, la poussée reste seule ;
+   4. aller-retour sinusoïdal cubic-bezier(.37,0,.63,1), 10 s par demi-cycle, infinite alternate ;
+   5. coins : E_b 1,07 >= borne des deux sens (1,0646 à -4° en 16:10 ; 2,25° en 34/25 laisse 3,55 px, relecture/amplitude.json) ;
+   6. masqué sous le titre : aucune couche ajoutée au-dessus du dégradé ::after (kit.css:319) ; contraste mesuré (R-12). */
+@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){
+  html.js.da--signature .ouverture>.hero--plein .hero__media>picture{position:absolute;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}
+  html.js.da--signature .ouverture>.hero--plein .hero__media img{object-position:50% 50%}
+  html.js.da--signature .ouverture>.hero--plein .hero__relief{inset:auto;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}
+  html.js.da--signature .ouverture>.hero--plein .hero__media img,
+  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:2.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-2 10s cubic-bezier(.37,0,.63,1) infinite alternate}
+}
+@media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motion:no-preference){
+  html.js.da--signature .ouverture>.hero--plein .hero__media img,
+  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:4;animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-4 10s cubic-bezier(.37,0,.63,1) infinite alternate}
+}
+@keyframes signature-tourne-2{from{rotate:2.25deg}to{rotate:-2.25deg}}
+@keyframes signature-tourne-4{from{rotate:4deg}to{rotate:-4deg}}

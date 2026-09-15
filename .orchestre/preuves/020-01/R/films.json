@@ -1,0 +1,185 @@
+{
+ "date": "2026-09-15T09:55:41.959Z",
+ "variante": {
+  "nom": "V6-inverse-asym",
+  "a34": [
+   -3.25,
+   2.25
+  ],
+  "a16": [
+   -4,
+   6
+  ],
+  "P": 10,
+  "E_b": 1.07,
+  "origine": "40.4% 38.6%",
+  "easing": "cubic-bezier(.37,0,.63,1)",
+  "pourquoi": "Meilleure C2-a des variantes à 10 s par demi-cycle (1088×800 : 0,493 / 0,540 ; 1440×900 : 0,611 / 0,645, variantes.json). V4 et V5 (5 s) montent plus haut mais doublent la vitesse (57 px/s au coin le plus loin en 1440×900 pour V5) sans tenir C2-b pour autant ; aucune variante ne tient C2-b."
+ },
+ "films": {
+  "1440x900": {
+   "fichier": "C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/R/film-1440x900.mp4",
+   "relief": "sans",
+   "scrollY": 0,
+   "sonde": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+     {
+      "codec_name": "h264",
+      "width": 1440,
+      "height": 900,
+      "pix_fmt": "yuv420p",
+      "r_frame_rate": "30/1",
+      "nb_read_frames": "300"
+     }
+    ],
+    "format": {
+     "duration": "10.000000",
+     "size": "2706591"
+    }
+   },
+   "rotationsParSeconde": [
+    [
+     0,
+     "-4deg",
+     "1"
+    ],
+    [
+     1,
+     "-3.75926deg",
+     "1.00026"
+    ],
+    [
+     2,
+     "-3.05872deg",
+     "1.00105"
+    ],
+    [
+     3,
+     "-1.95859deg",
+     "1.00245"
+    ],
+    [
+     4,
+     "-0.55968deg",
+     "1.00449"
+    ],
+    [
+     5,
+     "1deg",
+     "1.00721"
+    ],
+    [
+     6,
+     "2.55968deg",
+     "1.01063"
+    ],
+    [
+     7,
+     "3.95859deg",
+     "1.01473"
+    ],
+    [
+     8,
+     "5.05872deg",
+     "1.01943"
+    ],
+    [
+     9,
+     "5.75926deg",
+     "1.02459"
+    ]
+   ],
+   "videoQaSurLeFilm": {
+    "images": 80,
+    "plusLongueFige_s": 2,
+    "ecartMoyen": 0.0071,
+    "ecartMax": 0.0255,
+    "note": "film de 0 à 10 s : les entrées du texte (lever, entre, jusqu’à 1,6 s) y comptent"
+   }
+  },
+  "1088x800": {
+   "fichier": "C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/R/film-1088x800.mp4",
+   "relief": "sans",
+   "scrollY": 0,
+   "sonde": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+     {
+      "codec_name": "h264",
+      "width": 1088,
+      "height": 800,
+      "pix_fmt": "yuv420p",
+      "r_frame_rate": "30/1",
+      "nb_read_frames": "300"
+     }
+    ],
+    "format": {
+     "duration": "10.000000",
+     "size": "2084497"
+    }
+   },
+   "rotationsParSeconde": [
+    [
+     0,
+     "-3.25deg",
+     "1"
+    ],
+    [
+     1,
+     "-3.1176deg",
+     "1.00026"
+    ],
+    [
+     2,
+     "-2.73229deg",
+     "1.00105"
+    ],
+    [
+     3,
+     "-2.12723deg",
+     "1.00245"
+    ],
+    [
+     4,
+     "-1.35782deg",
+     "1.00449"
+    ],
+    [
+     5,
+     "-0.5deg",
+     "1.00721"
+    ],
+    [
+     6,
+     "0.357824deg",
+     "1.01063"
+    ],
+    [
+     7,
+     "1.12723deg",
+     "1.01473"
+    ],
+    [
+     8,
+     "1.73229deg",
+     "1.01943"
+    ],
+    [
+     9,
+     "2.1176deg",
+     "1.02459"
+    ]
+   ],
+   "videoQaSurLeFilm": {
+    "images": 80,
+    "plusLongueFige_s": 9,
+    "ecartMoyen": 0.0048,
+    "ecartMax": 0.0216,
+    "note": "film de 0 à 10 s : les entrées du texte (lever, entre, jusqu’à 1,6 s) y comptent"
+   }
+  }
+ }
+}

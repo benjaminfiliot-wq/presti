@@ -1,0 +1,2463 @@
+{
+ "methode": {
+  "date": "2026-09-15T09:51:41.589Z",
+  "page": "https://prestiapp.fr/sites-demo/lestraque/index.html (commit c62c866 en ligne), classe da--signature et bloc injectés dans le HTML servi au navigateur de test (page.route)",
+  "navigateur": "chromium.launch() nu (sans carte graphique) ; data-relief-etat relevé par format",
+  "temps": "t = currentTime des animations du document (départ commun, verif/verif.json), images figées puis capturées en PNG",
+  "reduction": "sharp resize(160) greyscale, fonctions gris/ecart de cahier/cdc-c2-variantes.mjs",
+  "C2a": "part > 8 entre t 2500 et 5000 ms, et 5000 et 8000 ms ; cible ≥ 0,56 par paire (§3.3)",
+  "C2b": "81 images de t 8000 à 18000 ms au pas de 125 ms ; plage figée = plus longue suite de paires < 0,006 (video-qa.mjs:131-143) ; cible ≤ 0,8 s ou écart moyen ≥ 0,020",
+  "C2c": "aucune paire > 0,085",
+  "C6a": "zone des marches x 150-500, y 120-420 en 1440×900 mise à l’échelle ; t 2500 contre t 8000 ; trois écarts donnés (§3.4 ne précise pas lequel)",
+  "R12": "texte transparent, capture de la boîte de .hero h1, luminance relative sRGB, p90, 1,05/(L+0,05) ; ici 40 instants (pas de 1 s) du cycle de 40 s + extrêmes rotation × poussée",
+  "coins": "feuille magenta de R-4, détecteur |R−255|<40, G<60, |B−255|<40 ; témoin photo cachée ; extrêmes rotation (départ, fin de demi-cycle) × poussée (0, 19 999 ms)"
+ },
+ "variantes": {
+  "T0-en-ligne": {
+   "parametres": {
+    "a34": null,
+    "a16": null,
+    "P": null,
+    "E_b": null,
+    "origine": null,
+    "easing": null
+   },
+   "note": "témoin : page en ligne sans injection (poussée seule)",
+   "css": null,
+   "formats": {
+    "1088x800": {
+     "relief": "sans",
+     "anims": [
+      "CSSTransition@4933(+67)",
+      "CSSTransition@4933(+67)",
+      "CSSTransition@4933(+67)",
+      "CSSTransition@4933(+67)",
+      "CSSTransition@4933(+67)",
+      "pousse@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.0112,
+        "part8": 0.076,
+        "rotate": [
+         "none",
+         "none"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.023,
+        "part8": 0.187,
+        "rotate": [
+         "none",
+         "none"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.076,
+      "tient056": false,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0101,
+        "part8": 0.065,
+        "rotate": [
+         "none",
+         "none"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.0219,
+        "part8": 0.178,
+        "rotate": [
+         "none",
+         "none"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0074,
+      "ecartGrisMoyen": 0.0066,
+      "ecartAbsoluParPixel": 0.0422
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 10,
+      "figeDebutIndex": 0,
+      "ecartMoyenParImage": 0.0013,
+      "ecartMax": 0.0017,
+      "pairesSous0006": 80,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 54,
+       "y": 464,
+       "width": 980,
+       "height": 167
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.31,
+      "maxCycle": 3.411,
+      "extremes": {
+       "pousse1": {
+        "p90": 3.31,
+        "rotate": "none",
+        "scale": "1"
+       },
+       "pousse106": {
+        "p90": 3.411,
+        "rotate": "none",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.31,
+      "tient3": true
+     }
+    },
+    "1440x900": {
+     "relief": "sans",
+     "anims": [
+      "CSSTransition@5000(+0)",
+      "CSSTransition@5000(+0)",
+      "CSSTransition@5000(+0)",
+      "CSSTransition@5000(+0)",
+      "CSSTransition@5000(+0)",
+      "pousse@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.0108,
+        "part8": 0.072,
+        "rotate": [
+         "none",
+         "none"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.0222,
+        "part8": 0.182,
+        "rotate": [
+         "none",
+         "none"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.072,
+      "tient056": false,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0097,
+        "part8": 0.062,
+        "rotate": [
+         "none",
+         "none"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.0211,
+        "part8": 0.172,
+        "rotate": [
+         "none",
+         "none"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0067,
+      "ecartGrisMoyen": 0.0063,
+      "ecartAbsoluParPixel": 0.0411
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 10,
+      "figeDebutIndex": 0,
+      "ecartMoyenParImage": 0.0012,
+      "ecartMax": 0.0016,
+      "pairesSous0006": 80,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 72,
+       "y": 489,
+       "width": 1296,
+       "height": 217
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.361,
+      "maxCycle": 3.406,
+      "extremes": {
+       "pousse1": {
+        "p90": 3.405,
+        "rotate": "none",
+        "scale": "1"
+       },
+       "pousse106": {
+        "p90": 3.361,
+        "rotate": "none",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.361,
+      "tient3": true
+     }
+    }
+   }
+  },
+  "V1-nominal": {
+   "parametres": {
+    "a34": [
+     2.25,
+     -2.25
+    ],
+    "a16": [
+     4,
+     -4
+    ],
+    "P": 10,
+    "E_b": 1.07,
+    "origine": "40.4% 38.6%",
+    "easing": "cubic-bezier(.37,0,.63,1)"
+   },
+   "note": "bloc.css tel quel : §3.5 corrigé, §7.3 bloc 1",
+   "css": "/* v28 : le moment signature (da--signature), 1. au repos : la cage tourne (candidat R ; annexe A si un autre geste est retenu).\n   Accueil seulement (.ouverture>) : les héros des pages communes ne changent pas. E_b 1,07 couvre les coins dans les deux sens.\n   Source : cahier-des-charges.md §7.3, bloc 1, recopié sans changement (candidat R du §3.5 corrigé).\n   Six contraintes du §3.5 :\n   1. CSS seul, sous html.js.da--signature .ouverture>.hero--plein, (min-width:1024px) et (prefers-reduced-motion:no-preference) ;\n   2. propriétés animées : rotate (signature-tourne-*) et scale (pousse, inchangée) ; E_b par transform statique ; ni filter ni opacity ;\n   3. joue en 1088×800 : (min-aspect-ratio:34/25) inclut 1088/800 = 1,36 ; sous 34/25, la poussée reste seule ;\n   4. aller-retour sinusoïdal cubic-bezier(.37,0,.63,1), 10 s par demi-cycle, infinite alternate ;\n   5. coins : E_b 1,07 >= borne des deux sens (1,0646 à -4° en 16:10 ; 2,25° en 34/25 laisse 3,55 px, relecture/amplitude.json) ;\n   6. masqué sous le titre : aucune couche ajoutée au-dessus du dégradé ::after (kit.css:319) ; contraste mesuré (R-12). */\n@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media>picture{position:absolute;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img{object-position:50% 50%}\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{inset:auto;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:2.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-2 10s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:4;animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-4 10s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@keyframes signature-tourne-2{from{rotate:2.25deg}to{rotate:-2.25deg}}\n@keyframes signature-tourne-4{from{rotate:4deg}to{rotate:-4deg}}\n",
+   "formats": {
+    "1088x800": {
+     "relief": "sans",
+     "anims": [
+      "CSSTransition@4933(+67)",
+      "CSSTransition@4933(+67)",
+      "CSSTransition@4933(+67)",
+      "CSSTransition@4933(+67)",
+      "CSSTransition@4933(+67)",
+      "pousse@5000(+0)",
+      "signature-tourne-2@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.0509,
+        "part8": 0.408,
+        "rotate": [
+         "1.59897deg",
+         "0deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.0566,
+        "part8": 0.444,
+        "rotate": [
+         "0deg",
+         "-1.82642deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.408,
+      "tient056": false,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0491,
+        "part8": 0.395,
+        "rotate": [
+         "1.75834deg",
+         "0.242365deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.0581,
+        "part8": 0.449,
+        "rotate": [
+         "0.242365deg",
+         "-1.67639deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0083,
+      "ecartGrisMoyen": 0.0084,
+      "ecartAbsoluParPixel": 0.1177
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 10,
+      "figeDebutIndex": 0,
+      "ecartMoyenParImage": 0.0034,
+      "ecartMax": 0.005,
+      "pairesSous0006": 80,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 54,
+       "y": 464,
+       "width": 980,
+       "height": 167
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.3,
+      "maxCycle": 3.556,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.491,
+        "rotate": "2.25deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.278,
+        "rotate": "-2.25deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.556,
+        "rotate": "2.25deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.322,
+        "rotate": "-2.25deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.278,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 804266,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "-2.25deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "-2.25deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       2.25,
+       -2.25
+      ],
+      "oeilEcran_px": [
+       439.6,
+       308.3
+      ],
+      "vitesseAngulairePic_deg_s": 0.714,
+      "coinLePlusLoin_px_s": 10.1,
+      "centreTitre_px_s": 3.5
+     }
+    },
+    "1440x900": {
+     "relief": "sans",
+     "anims": [
+      "pousse@5000(+0)",
+      "signature-tourne-4@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.0729,
+        "part8": 0.538,
+        "rotate": [
+         "2.84261deg",
+         "0deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.078,
+        "part8": 0.557,
+        "rotate": [
+         "0deg",
+         "-3.24697deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.538,
+      "tient056": false,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0704,
+        "part8": 0.525,
+        "rotate": [
+         "3.12594deg",
+         "0.430872deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.0806,
+        "part8": 0.565,
+        "rotate": [
+         "0.430872deg",
+         "-2.98025deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0049,
+      "ecartGrisMoyen": 0.0029,
+      "ecartAbsoluParPixel": 0.173
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 4.75,
+      "figeDebutIndex": 0,
+      "ecartMoyenParImage": 0.0051,
+      "ecartMax": 0.0078,
+      "pairesSous0006": 46,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 72,
+       "y": 489,
+       "width": 1296,
+       "height": 217
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.187,
+      "maxCycle": 3.318,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.279,
+        "rotate": "4deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.193,
+        "rotate": "-4deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.275,
+        "rotate": "4deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.185,
+        "rotate": "-4deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.185,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 1207825,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "4deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "4deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       4,
+       -4
+      ],
+      "oeilEcran_px": [
+       581.8,
+       341.3
+      ],
+      "vitesseAngulairePic_deg_s": 1.27,
+      "coinLePlusLoin_px_s": 22.7,
+      "centreTitre_px_s": 7.1
+     }
+    }
+   }
+  },
+  "V2-sens-inverse": {
+   "parametres": {
+    "a34": [
+     -2.25,
+     2.25
+    ],
+    "a16": [
+     -4,
+     4
+    ],
+    "P": 10,
+    "E_b": 1.07,
+    "origine": "40.4% 38.6%",
+    "easing": "cubic-bezier(.37,0,.63,1)"
+   },
+   "note": "sens : départ à −A au lieu de +A",
+   "css": "@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media>picture{position:absolute;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img{object-position:50% 50%}\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{inset:auto;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:2.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-2 10s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:4;animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-4 10s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@keyframes signature-tourne-2{from{rotate:-2.25deg}to{rotate:2.25deg}}\n@keyframes signature-tourne-4{from{rotate:-4deg}to{rotate:4deg}}\n",
+   "formats": {
+    "1088x800": {
+     "relief": "sans",
+     "anims": [
+      "pousse@5000(+0)",
+      "signature-tourne-2@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.058,
+        "part8": 0.45,
+        "rotate": [
+         "-1.59897deg",
+         "0deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.0696,
+        "part8": 0.509,
+        "rotate": [
+         "0deg",
+         "1.82642deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.45,
+      "tient056": false,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0559,
+        "part8": 0.444,
+        "rotate": [
+         "-1.75834deg",
+         "-0.242365deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.0709,
+        "part8": 0.515,
+        "rotate": [
+         "-0.242365deg",
+         "1.67639deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0047,
+      "ecartGrisMoyen": 0.0047,
+      "ecartAbsoluParPixel": 0.1384
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 10,
+      "figeDebutIndex": 0,
+      "ecartMoyenParImage": 0.0031,
+      "ecartMax": 0.0045,
+      "pairesSous0006": 80,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 54,
+       "y": 464,
+       "width": 980,
+       "height": 167
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.278,
+      "maxCycle": 3.532,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.278,
+        "rotate": "-2.25deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.491,
+        "rotate": "2.25deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.322,
+        "rotate": "-2.25deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.556,
+        "rotate": "2.25deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.278,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 804266,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "-2.25deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "-2.25deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       -2.25,
+       2.25
+      ],
+      "oeilEcran_px": [
+       439.6,
+       308.3
+      ],
+      "vitesseAngulairePic_deg_s": 0.714,
+      "coinLePlusLoin_px_s": 10.1,
+      "centreTitre_px_s": 3.5
+     }
+    },
+    "1440x900": {
+     "relief": "sans",
+     "anims": [
+      "CSSTransition@4633(+367)",
+      "CSSTransition@4633(+367)",
+      "CSSTransition@4633(+367)",
+      "CSSTransition@4633(+367)",
+      "CSSTransition@4633(+367)",
+      "pousse@5000(+0)",
+      "signature-tourne-4@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.079,
+        "part8": 0.568,
+        "rotate": [
+         "-2.84261deg",
+         "0deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.0902,
+        "part8": 0.612,
+        "rotate": [
+         "0deg",
+         "3.24697deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.568,
+      "tient056": true,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0762,
+        "part8": 0.556,
+        "rotate": [
+         "-3.12594deg",
+         "-0.430872deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.092,
+        "part8": 0.619,
+        "rotate": [
+         "-0.430872deg",
+         "2.98025deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0055,
+      "ecartGrisMoyen": 0.0079,
+      "ecartAbsoluParPixel": 0.1919
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 5.25,
+      "figeDebutIndex": 0,
+      "ecartMoyenParImage": 0.0048,
+      "ecartMax": 0.0073,
+      "pairesSous0006": 51,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 72,
+       "y": 489,
+       "width": 1296,
+       "height": 217
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.185,
+      "maxCycle": 3.318,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.193,
+        "rotate": "-4deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.279,
+        "rotate": "4deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.185,
+        "rotate": "-4deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.275,
+        "rotate": "4deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.185,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 1207825,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "4deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "4deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       -4,
+       4
+      ],
+      "oeilEcran_px": [
+       581.8,
+       341.3
+      ],
+      "vitesseAngulairePic_deg_s": 1.27,
+      "coinLePlusLoin_px_s": 22.7,
+      "centreTitre_px_s": 7.1
+     }
+    }
+   }
+  },
+  "V3-asymetrique": {
+   "parametres": {
+    "a34": [
+     2.25,
+     -3.25
+    ],
+    "a16": [
+     6,
+     -4
+    ],
+    "P": 10,
+    "E_b": 1.07,
+    "origine": "40.4% 38.6%",
+    "easing": "cubic-bezier(.37,0,.63,1)"
+   },
+   "note": "intensité : chaque sens poussé vers sa borne de couverture (bornes-plage.json : 34/25→16/10 −3,65° ; 16/10+ +6,75°), marge du pire coin ≥ 2,25 px",
+   "css": "@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media>picture{position:absolute;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img{object-position:50% 50%}\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{inset:auto;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:3.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-2 10s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:6;animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-4 10s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@keyframes signature-tourne-2{from{rotate:2.25deg}to{rotate:-3.25deg}}\n@keyframes signature-tourne-4{from{rotate:6deg}to{rotate:-4deg}}\n",
+   "formats": {
+    "1088x800": {
+     "relief": "sans",
+     "anims": [
+      "pousse@5000(+0)",
+      "signature-tourne-2@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.0583,
+        "part8": 0.443,
+        "rotate": [
+         "1.4543deg",
+         "-0.5deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.0642,
+        "part8": 0.48,
+        "rotate": [
+         "-0.5deg",
+         "-2.73229deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.443,
+      "tient056": false,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0564,
+        "part8": 0.434,
+        "rotate": [
+         "1.64908deg",
+         "-0.203776deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.0659,
+        "part8": 0.484,
+        "rotate": [
+         "-0.203776deg",
+         "-2.54892deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0081,
+      "ecartGrisMoyen": 0.0079,
+      "ecartAbsoluParPixel": 0.135
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 10,
+      "figeDebutIndex": 0,
+      "ecartMoyenParImage": 0.0039,
+      "ecartMax": 0.0057,
+      "pairesSous0006": 80,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 54,
+       "y": 464,
+       "width": 980,
+       "height": 167
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.263,
+      "maxCycle": 3.556,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.491,
+        "rotate": "2.25deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.249,
+        "rotate": "-3.25deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.556,
+        "rotate": "2.25deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.285,
+        "rotate": "-3.25deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.249,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 804266,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "-3.25deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "-3.25deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       2.25,
+       -3.25
+      ],
+      "oeilEcran_px": [
+       439.6,
+       308.3
+      ],
+      "vitesseAngulairePic_deg_s": 0.873,
+      "coinLePlusLoin_px_s": 12.4,
+      "centreTitre_px_s": 4.3
+     }
+    },
+    "1440x900": {
+     "relief": "sans",
+     "anims": [
+      "pousse@5000(+0)",
+      "signature-tourne-4@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.084,
+        "part8": 0.577,
+        "rotate": [
+         "4.55327deg",
+         "1deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.0899,
+        "part8": 0.6,
+        "rotate": [
+         "1deg",
+         "-3.05872deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.577,
+      "tient056": true,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0816,
+        "part8": 0.569,
+        "rotate": [
+         "4.90742deg",
+         "1.53859deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.0925,
+        "part8": 0.61,
+        "rotate": [
+         "1.53859deg",
+         "-2.72531deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0073,
+      "ecartGrisMoyen": 0.0058,
+      "ecartAbsoluParPixel": 0.1951
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 4,
+      "figeDebutIndex": 0,
+      "ecartMoyenParImage": 0.0061,
+      "ecartMax": 0.0093,
+      "pairesSous0006": 34,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 72,
+       "y": 489,
+       "width": 1296,
+       "height": 217
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.187,
+      "maxCycle": 3.305,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.278,
+        "rotate": "6deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.193,
+        "rotate": "-4deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.276,
+        "rotate": "6deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.185,
+        "rotate": "-4deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.185,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 1207825,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "6deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "6deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       6,
+       -4
+      ],
+      "oeilEcran_px": [
+       581.8,
+       341.3
+      ],
+      "vitesseAngulairePic_deg_s": 1.587,
+      "coinLePlusLoin_px_s": 28.4,
+      "centreTitre_px_s": 8.8
+     }
+    }
+   }
+  },
+  "V4-periode-5s": {
+   "parametres": {
+    "a34": [
+     2.25,
+     -2.25
+    ],
+    "a16": [
+     4,
+     -4
+    ],
+    "P": 5,
+    "E_b": 1.07,
+    "origine": "40.4% 38.6%",
+    "easing": "cubic-bezier(.37,0,.63,1)"
+   },
+   "note": "période : 5 s par demi-cycle",
+   "css": "@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media>picture{position:absolute;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img{object-position:50% 50%}\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{inset:auto;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:2.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-2 5s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:4;animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-4 5s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@keyframes signature-tourne-2{from{rotate:2.25deg}to{rotate:-2.25deg}}\n@keyframes signature-tourne-4{from{rotate:4deg}to{rotate:-4deg}}\n",
+   "formats": {
+    "1088x800": {
+     "relief": "sans",
+     "anims": [
+      "pousse@5000(+0)",
+      "signature-tourne-2@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.0638,
+        "part8": 0.47,
+        "rotate": [
+         "0deg",
+         "-2.25deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.0892,
+        "part8": 0.586,
+        "rotate": [
+         "-2.25deg",
+         "0.701856deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.47,
+      "tient056": false,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0724,
+        "part8": 0.515,
+        "rotate": [
+         "0.48179deg",
+         "-2.19967deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.08,
+        "part8": 0.554,
+        "rotate": [
+         "-2.19967deg",
+         "0.228161deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0081,
+      "ecartGrisMoyen": 0.008,
+      "ecartAbsoluParPixel": 0.0604
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 2.375,
+      "figeDebutIndex": 7,
+      "ecartMoyenParImage": 0.0056,
+      "ecartMax": 0.0088,
+      "pairesSous0006": 38,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 54,
+       "y": 464,
+       "width": 980,
+       "height": 167
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.282,
+      "maxCycle": 3.556,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.491,
+        "rotate": "2.25deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.278,
+        "rotate": "-2.25deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.556,
+        "rotate": "2.25deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.322,
+        "rotate": "-2.25deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.278,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 804266,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "-2.25deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "-2.25deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       2.25,
+       -2.25
+      ],
+      "oeilEcran_px": [
+       439.6,
+       308.3
+      ],
+      "vitesseAngulairePic_deg_s": 1.428,
+      "coinLePlusLoin_px_s": 20.3,
+      "centreTitre_px_s": 7.1
+     }
+    },
+    "1440x900": {
+     "relief": "sans",
+     "anims": [
+      "CSSTransition@5000(+0)",
+      "CSSTransition@5000(+0)",
+      "CSSTransition@5000(+0)",
+      "pousse@5000(+0)",
+      "signature-tourne-4@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.0904,
+        "part8": 0.605,
+        "rotate": [
+         "0deg",
+         "-4deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.1133,
+        "part8": 0.682,
+        "rotate": [
+         "-4deg",
+         "1.24774deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.605,
+      "tient056": true,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.1001,
+        "part8": 0.637,
+        "rotate": [
+         "0.856515deg",
+         "-3.91052deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.1039,
+        "part8": 0.654,
+        "rotate": [
+         "-3.91052deg",
+         "0.40562deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0075,
+      "ecartGrisMoyen": 0.0081,
+      "ecartAbsoluParPixel": 0.0771
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 1.375,
+      "figeDebutIndex": 11,
+      "ecartMoyenParImage": 0.0091,
+      "ecartMax": 0.0144,
+      "pairesSous0006": 22,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 72,
+       "y": 489,
+       "width": 1296,
+       "height": 217
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.185,
+      "maxCycle": 3.295,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.279,
+        "rotate": "4deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.193,
+        "rotate": "-4deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.275,
+        "rotate": "4deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.185,
+        "rotate": "-4deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.185,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 1207825,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "4deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "4deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       4,
+       -4
+      ],
+      "oeilEcran_px": [
+       581.8,
+       341.3
+      ],
+      "vitesseAngulairePic_deg_s": 2.539,
+      "coinLePlusLoin_px_s": 45.4,
+      "centreTitre_px_s": 14.1
+     }
+    }
+   }
+  },
+  "V5-asym-5s": {
+   "parametres": {
+    "a34": [
+     2.25,
+     -3.25
+    ],
+    "a16": [
+     6,
+     -4
+    ],
+    "P": 5,
+    "E_b": 1.07,
+    "origine": "40.4% 38.6%",
+    "easing": "cubic-bezier(.37,0,.63,1)"
+   },
+   "note": "V3 + V4",
+   "css": "@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media>picture{position:absolute;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img{object-position:50% 50%}\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{inset:auto;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:3.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-2 5s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:6;animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-4 5s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@keyframes signature-tourne-2{from{rotate:2.25deg}to{rotate:-3.25deg}}\n@keyframes signature-tourne-4{from{rotate:6deg}to{rotate:-4deg}}\n",
+   "formats": {
+    "1088x800": {
+     "relief": "sans",
+     "anims": [
+      "pousse@5000(+0)",
+      "signature-tourne-2@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.0735,
+        "part8": 0.522,
+        "rotate": [
+         "-0.5deg",
+         "-3.25deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.0988,
+        "part8": 0.626,
+        "rotate": [
+         "-3.25deg",
+         "0.357824deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.522,
+      "tient056": false,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0825,
+        "part8": 0.558,
+        "rotate": [
+         "0.088854deg",
+         "-3.18848deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.089,
+        "part8": 0.587,
+        "rotate": [
+         "-3.18848deg",
+         "-0.221136deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0063,
+      "ecartGrisMoyen": 0.0065,
+      "ecartAbsoluParPixel": 0.0645
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 1.875,
+      "figeDebutIndex": 9,
+      "ecartMoyenParImage": 0.0067,
+      "ecartMax": 0.0105,
+      "pairesSous0006": 30,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 54,
+       "y": 464,
+       "width": 980,
+       "height": 167
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.251,
+      "maxCycle": 3.556,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.491,
+        "rotate": "2.25deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.249,
+        "rotate": "-3.25deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.556,
+        "rotate": "2.25deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.285,
+        "rotate": "-3.25deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.249,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 804266,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "-3.25deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "-3.25deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       2.25,
+       -3.25
+      ],
+      "oeilEcran_px": [
+       439.6,
+       308.3
+      ],
+      "vitesseAngulairePic_deg_s": 1.746,
+      "coinLePlusLoin_px_s": 24.8,
+      "centreTitre_px_s": 8.7
+     }
+    },
+    "1440x900": {
+     "relief": "sans",
+     "anims": [
+      "pousse@5000(+0)",
+      "signature-tourne-4@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.1023,
+        "part8": 0.643,
+        "rotate": [
+         "1deg",
+         "-4deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.1227,
+        "part8": 0.713,
+        "rotate": [
+         "-4deg",
+         "2.55968deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.643,
+      "tient056": true,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.1109,
+        "part8": 0.674,
+        "rotate": [
+         "2.07064deg",
+         "-3.88815deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.1141,
+        "part8": 0.685,
+        "rotate": [
+         "-3.88815deg",
+         "1.50703deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0042,
+      "ecartGrisMoyen": 0.0048,
+      "ecartAbsoluParPixel": 0.088
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 1.125,
+      "figeDebutIndex": 12,
+      "ecartMoyenParImage": 0.0112,
+      "ecartMax": 0.0175,
+      "pairesSous0006": 17,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 72,
+       "y": 489,
+       "width": 1296,
+       "height": 217
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.185,
+      "maxCycle": 3.308,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.278,
+        "rotate": "6deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.193,
+        "rotate": "-4deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.276,
+        "rotate": "6deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.185,
+        "rotate": "-4deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.185,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 1207825,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "6deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "6deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       6,
+       -4
+      ],
+      "oeilEcran_px": [
+       581.8,
+       341.3
+      ],
+      "vitesseAngulairePic_deg_s": 3.174,
+      "coinLePlusLoin_px_s": 56.7,
+      "centreTitre_px_s": 17.7
+     }
+    }
+   }
+  },
+  "V6-inverse-asym": {
+   "parametres": {
+    "a34": [
+     -3.25,
+     2.25
+    ],
+    "a16": [
+     -4,
+     6
+    ],
+    "P": 10,
+    "E_b": 1.07,
+    "origine": "40.4% 38.6%",
+    "easing": "cubic-bezier(.37,0,.63,1)"
+   },
+   "note": "V2 + V3 : sens inversé (meilleur gain sobre de V2) et amplitude asymétrique de V3, période nominale de 10 s",
+   "css": "@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media>picture{position:absolute;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img{object-position:50% 50%}\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{inset:auto;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:3.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-2 10s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:6;animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-4 10s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@keyframes signature-tourne-2{from{rotate:-3.25deg}to{rotate:2.25deg}}\n@keyframes signature-tourne-4{from{rotate:-4deg}to{rotate:6deg}}\n",
+   "formats": {
+    "1088x800": {
+     "relief": "sans",
+     "anims": [
+      "CSSTransition@4917(+83)",
+      "CSSTransition@4917(+83)",
+      "CSSTransition@4917(+83)",
+      "CSSTransition@4917(+83)",
+      "CSSTransition@4917(+83)",
+      "pousse@5000(+0)",
+      "signature-tourne-2@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.0656,
+        "part8": 0.493,
+        "rotate": [
+         "-2.4543deg",
+         "-0.5deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.0775,
+        "part8": 0.54,
+        "rotate": [
+         "-0.5deg",
+         "1.73229deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.493,
+      "tient056": false,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.063,
+        "part8": 0.479,
+        "rotate": [
+         "-2.64908deg",
+         "-0.796224deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.079,
+        "part8": 0.548,
+        "rotate": [
+         "-0.796224deg",
+         "1.54892deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartLuminanceRelativeMoyenne": 0.0047,
+      "ecartGrisMoyen": 0.0049,
+      "ecartAbsoluParPixel": 0.1556
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 10,
+      "figeDebutIndex": 0,
+      "ecartMoyenParImage": 0.0036,
+      "ecartMax": 0.0051,
+      "pairesSous0006": 80,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 54,
+       "y": 464,
+       "width": 980,
+       "height": 167
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.249,
+      "maxCycle": 3.532,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.249,
+        "rotate": "-3.25deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.491,
+        "rotate": "2.25deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.285,
+        "rotate": "-3.25deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.556,
+        "rotate": "2.25deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.249,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 804266,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "-3.25deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "-3.25deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "2.25deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       -3.25,
+       2.25
+      ],
+      "oeilEcran_px": [
+       439.6,
+       308.3
+      ],
+      "vitesseAngulairePic_deg_s": 0.873,
+      "coinLePlusLoin_px_s": 12.4,
+      "centreTitre_px_s": 4.3
+     }
+    },
+    "1440x900": {
+     "relief": "sans",
+     "anims": [
+      "pousse@5000(+0)",
+      "signature-tourne-4@5000(+0)",
+      "lever@5000(+0)",
+      "lever@5000(+0)",
+      "entre@5000(+0)",
+      "entre@5000(+0)"
+     ],
+     "C2a": {
+      "paires": [
+       {
+        "de": 2500,
+        "a": 5000,
+        "moyen": 0.09,
+        "part8": 0.611,
+        "rotate": [
+         "-2.55327deg",
+         "1deg"
+        ],
+        "scale": [
+         "1.00167",
+         "1.00721"
+        ]
+       },
+       {
+        "de": 5000,
+        "a": 8000,
+        "moyen": 0.1012,
+        "part8": 0.645,
+        "rotate": [
+         "1deg",
+         "5.05872deg"
+        ],
+        "scale": [
+         "1.00721",
+         "1.01943"
+        ]
+       }
+      ],
+      "min": 0.611,
+      "tient056": true,
+      "decale340ms": [
+       {
+        "de": 2160,
+        "a": 4660,
+        "moyen": 0.0868,
+        "part8": 0.593,
+        "rotate": [
+         "-2.90742deg",
+         "0.461411deg"
+        ],
+        "scale": [
+         "1.00124",
+         "1.00621"
+        ]
+       },
+       {
+        "de": 4660,
+        "a": 7660,
+        "moyen": 0.103,
+        "part8": 0.651,
+        "rotate": [
+         "0.461411deg",
+         "4.72531deg"
+        ],
+        "scale": [
+         "1.00621",
+         "1.01777"
+        ]
+       }
+      ]
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartLuminanceRelativeMoyenne": 0.003,
+      "ecartGrisMoyen": 0.005,
+      "ecartAbsoluParPixel": 0.2102
+     },
+     "C2bc": {
+      "images": 81,
+      "paires": 80,
+      "plusLongueFige_s": 4.5,
+      "figeDebutIndex": 0,
+      "ecartMoyenParImage": 0.0058,
+      "ecartMax": 0.0088,
+      "pairesSous0006": 39,
+      "pairesAu_dessusDe0085": 0,
+      "C2b": false,
+      "C2c": true
+     },
+     "R12": {
+      "boite": {
+       "x": 72,
+       "y": 489,
+       "width": 1296,
+       "height": 217
+      },
+      "instantsCycle": 40,
+      "minCycle": 3.185,
+      "maxCycle": 3.306,
+      "extremes": {
+       "rotDepart_pousse1": {
+        "p90": 3.193,
+        "rotate": "-4deg",
+        "scale": "1"
+       },
+       "rotFin_pousse1": {
+        "p90": 3.278,
+        "rotate": "6deg",
+        "scale": "1"
+       },
+       "rotDepart_pousse106": {
+        "p90": 3.185,
+        "rotate": "-4deg",
+        "scale": "1.06"
+       },
+       "rotFin_pousse106": {
+        "p90": 3.276,
+        "rotate": "6deg",
+        "scale": "1.06"
+       }
+      },
+      "min": 3.185,
+      "tient3": true
+     },
+     "coinsExtremes": {
+      "temoinPhotoCachee": 1207825,
+      "rotDepart_pousse1": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1"
+      },
+      "rotFin_pousse1": {
+       "magenta": 0,
+       "rotate": "6deg",
+       "scale": "1"
+      },
+      "rotDepart_pousse106": {
+       "magenta": 0,
+       "rotate": "-4deg",
+       "scale": "1.06"
+      },
+      "rotFin_pousse106": {
+       "magenta": 0,
+       "rotate": "6deg",
+       "scale": "1.06"
+      },
+      "total": 0
+     },
+     "vitesse": {
+      "amplitude": [
+       -4,
+       6
+      ],
+      "oeilEcran_px": [
+       581.8,
+       341.3
+      ],
+      "vitesseAngulairePic_deg_s": 1.587,
+      "coinLePlusLoin_px_s": 28.4,
+      "centreTitre_px_s": 8.8
+     }
+    }
+   }
+  }
+ }
+}

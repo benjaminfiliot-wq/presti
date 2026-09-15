@@ -1,0 +1,1547 @@
+{
+ "date": "2026-09-15T09:55:37.272Z",
+ "1088x800": {
+  "C2a": [
+   0.493,
+   0.54
+  ],
+  "C2bPlageFigee": 10,
+  "C2bEcartMoyen": 0.0036,
+  "C2cClignote": false,
+  "R12Min": 3.247
+ },
+ "1440x900": {
+  "C2a": [
+   0.611,
+   0.645
+  ],
+  "C2bPlageFigee": 4.5,
+  "C2bEcartMoyen": 0.0058,
+  "C2cClignote": false,
+  "R12Min": 3.185
+ },
+ "variante": {
+  "nom": "V6-inverse-asym",
+  "a34": [
+   -3.25,
+   2.25
+  ],
+  "a16": [
+   -4,
+   6
+  ],
+  "P": 10,
+  "E_b": 1.07,
+  "origine": "40.4% 38.6%",
+  "easing": "cubic-bezier(.37,0,.63,1)",
+  "pourquoi": "Meilleure C2-a des variantes à 10 s par demi-cycle (1088×800 : 0,493 / 0,540 ; 1440×900 : 0,611 / 0,645, variantes.json). V4 et V5 (5 s) montent plus haut mais doublent la vitesse (57 px/s au coin le plus loin en 1440×900 pour V5) sans tenir C2-b pour autant ; aucune variante ne tient C2-b."
+ },
+ "css": "@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media>picture{position:absolute;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img{object-position:50% 50%}\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{inset:auto;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:3.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-2 10s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media img,\n  html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:6;animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-4 10s cubic-bezier(.37,0,.63,1) infinite alternate}\n}\n@keyframes signature-tourne-2{from{rotate:-3.25deg}to{rotate:2.25deg}}\n@keyframes signature-tourne-4{from{rotate:-4deg}to{rotate:6deg}}\n",
+ "methode": {
+  "page": "https://prestiapp.fr/sites-demo/lestraque/index.html (c62c866 en ligne) ; classe da--signature + bloc injectés dans le HTML servi au navigateur de test (page.route)",
+  "navigateur": "Chromium de Playwright, chromium.launch() nu (sans carte graphique)",
+  "temps": "t = currentTime des animations du document, figées (départ commun : verif/verif.json) ; captures PNG",
+  "reduction": "sharp resize(160) greyscale ; gris/ecart de cahier/cdc-c2-variantes.mjs",
+  "C2b": "81 images, t 8000 → 18000 ms, pas 125 ms (R-2) ; plage figée = plus longue suite de paires < 0,006 / 8",
+  "C6a": "zone x 150-500, y 120-420 en 1440×900, à l’échelle (x × W/1440, y × H/900) ; t 2500 contre t 8000",
+  "R12": "texte transparent, boîte de .hero h1, luminance relative sRGB, p90, 1,05/(L+0,05) ; 80 instants (pas 500 ms) + 4 extrêmes",
+  "R4": "feuille magenta et détecteur de R-4 ; témoin photo cachée ; 0 pixel exigé"
+ },
+ "formats": {
+  "1088x800": {
+   "relief": {
+    "etat": "sans",
+    "toile": false
+   },
+   "requetesMedia": {
+    "r34_25": true,
+    "r16_10": false,
+    "largeur1024": true,
+    "mouvementPermis": true
+   },
+   "nature": [
+    {
+     "nom": "ouverture-photo",
+     "cible": "DIV",
+     "proprietes": [
+      "transform"
+     ],
+     "valeurs": [
+      "none",
+      "scale(1.08)"
+     ],
+     "easingImages": [
+      "linear",
+      "linear"
+     ],
+     "duree": "auto",
+     "direction": "normal",
+     "iterations": 1,
+     "timeline": "defilement"
+    },
+    {
+     "nom": "pousse",
+     "cible": "IMG",
+     "proprietes": [
+      "scale"
+     ],
+     "valeurs": [
+      "1",
+      "1.06"
+     ],
+     "easingImages": [
+      "cubic-bezier(0.45, 0, 0.55, 1)",
+      "cubic-bezier(0.45, 0, 0.55, 1)"
+     ],
+     "duree": 20000,
+     "direction": "alternate",
+     "iterations": null,
+     "timeline": "document"
+    },
+    {
+     "nom": "signature-tourne-2",
+     "cible": "IMG",
+     "proprietes": [
+      "rotate"
+     ],
+     "valeurs": [
+      "-3.25deg",
+      "2.25deg"
+     ],
+     "easingImages": [
+      "cubic-bezier(0.37, 0, 0.63, 1)",
+      "cubic-bezier(0.37, 0, 0.63, 1)"
+     ],
+     "duree": 10000,
+     "direction": "alternate",
+     "iterations": null,
+     "timeline": "document"
+    }
+   ],
+   "C2a": {
+    "paires": [
+     {
+      "de": 2500,
+      "a": 5000,
+      "moyen": 0.0656,
+      "part8": 0.493,
+      "rotate": [
+       "-2.4543deg",
+       "-0.5deg"
+      ],
+      "scale": [
+       "1.00167",
+       "1.00721"
+      ]
+     },
+     {
+      "de": 5000,
+      "a": 8000,
+      "moyen": 0.0775,
+      "part8": 0.54,
+      "rotate": [
+       "-0.5deg",
+       "1.73229deg"
+      ],
+      "scale": [
+       "1.00721",
+       "1.01943"
+      ]
+     }
+    ],
+    "min": 0.493,
+    "cible056": false,
+    "decale340ms": [
+     {
+      "de": 2160,
+      "a": 4660,
+      "moyen": 0.063,
+      "part8": 0.479,
+      "rotate": [
+       "-2.64908deg",
+       "-0.796224deg"
+      ],
+      "scale": [
+       "1.00124",
+       "1.00621"
+      ]
+     },
+     {
+      "de": 4660,
+      "a": 7660,
+      "moyen": 0.079,
+      "part8": 0.548,
+      "rotate": [
+       "-0.796224deg",
+       "1.54892deg"
+      ],
+      "scale": [
+       "1.00621",
+       "1.01777"
+      ]
+     }
+    ]
+   },
+   "C6a": {
+    "zone": {
+     "left": 113,
+     "top": 107,
+     "width": 264,
+     "height": 267
+    },
+    "ecartLuminanceRelativeMoyenne": 0.0047,
+    "ecartGrisMoyen": 0.0049,
+    "ecartAbsoluParPixel": 0.1556
+   },
+   "C2bc": {
+    "images": 81,
+    "paires": 80,
+    "plusLongueFige_s": 10,
+    "figeDebutIndex": 0,
+    "ecartMoyenParImage": 0.0036,
+    "ecartMax": 0.0051,
+    "pairesSous0006": 80,
+    "pairesAu_dessusDe0085": 0,
+    "C2b": false,
+    "C2c": true
+   },
+   "R12": {
+    "boite": {
+     "x": 54,
+     "y": 464,
+     "width": 980,
+     "height": 167
+    },
+    "instants": 80,
+    "minCycle": 3.247,
+    "instantMin_ms": 500,
+    "maxCycle": 3.532,
+    "mediane": 3.399,
+    "extremes": {
+     "rotDepart_pousse0": {
+      "p90": 3.249,
+      "rotate": "-3.25deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "p90": 3.491,
+      "rotate": "2.25deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "p90": 3.285,
+      "rotate": "-3.25deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "p90": 3.556,
+      "rotate": "2.25deg",
+      "scale": "1.06"
+     }
+    },
+    "min": 3.247,
+    "tient3": true
+   },
+   "rotateRelevee": {
+    "min_deg": -3.25,
+    "max_deg": 2.25
+   }
+  },
+  "1280x800": {
+   "relief": {
+    "etat": "sans",
+    "toile": false
+   },
+   "requetesMedia": {
+    "r34_25": true,
+    "r16_10": true,
+    "largeur1024": true,
+    "mouvementPermis": true
+   },
+   "nature": [
+    {
+     "nom": "ouverture-photo",
+     "cible": "DIV",
+     "proprietes": [
+      "transform"
+     ],
+     "valeurs": [
+      "none",
+      "scale(1.08)"
+     ],
+     "easingImages": [
+      "linear",
+      "linear"
+     ],
+     "duree": "auto",
+     "direction": "normal",
+     "iterations": 1,
+     "timeline": "defilement"
+    },
+    {
+     "nom": "pousse",
+     "cible": "IMG",
+     "proprietes": [
+      "scale"
+     ],
+     "valeurs": [
+      "1",
+      "1.06"
+     ],
+     "easingImages": [
+      "cubic-bezier(0.45, 0, 0.55, 1)",
+      "cubic-bezier(0.45, 0, 0.55, 1)"
+     ],
+     "duree": 20000,
+     "direction": "alternate",
+     "iterations": null,
+     "timeline": "document"
+    },
+    {
+     "nom": "signature-tourne-4",
+     "cible": "IMG",
+     "proprietes": [
+      "rotate"
+     ],
+     "valeurs": [
+      "-4deg",
+      "6deg"
+     ],
+     "easingImages": [
+      "cubic-bezier(0.37, 0, 0.63, 1)",
+      "cubic-bezier(0.37, 0, 0.63, 1)"
+     ],
+     "duree": 10000,
+     "direction": "alternate",
+     "iterations": null,
+     "timeline": "document"
+    }
+   ],
+   "C2a": {
+    "paires": [
+     {
+      "de": 2500,
+      "a": 5000,
+      "moyen": 0.0887,
+      "part8": 0.603,
+      "rotate": [
+       "-2.55327deg",
+       "1deg"
+      ],
+      "scale": [
+       "1.00167",
+       "1.00721"
+      ]
+     },
+     {
+      "de": 5000,
+      "a": 8000,
+      "moyen": 0.0999,
+      "part8": 0.64,
+      "rotate": [
+       "1deg",
+       "5.05872deg"
+      ],
+      "scale": [
+       "1.00721",
+       "1.01943"
+      ]
+     }
+    ],
+    "min": 0.603,
+    "cible056": true,
+    "decale340ms": [
+     {
+      "de": 2160,
+      "a": 4660,
+      "moyen": 0.0856,
+      "part8": 0.589,
+      "rotate": [
+       "-2.90742deg",
+       "0.461411deg"
+      ],
+      "scale": [
+       "1.00124",
+       "1.00621"
+      ]
+     },
+     {
+      "de": 4660,
+      "a": 7660,
+      "moyen": 0.102,
+      "part8": 0.644,
+      "rotate": [
+       "0.461411deg",
+       "4.72531deg"
+      ],
+      "scale": [
+       "1.00621",
+       "1.01777"
+      ]
+     }
+    ]
+   },
+   "C6a": {
+    "zone": {
+     "left": 133,
+     "top": 107,
+     "width": 311,
+     "height": 267
+    },
+    "ecartLuminanceRelativeMoyenne": 0.003,
+    "ecartGrisMoyen": 0.005,
+    "ecartAbsoluParPixel": 0.2105
+   },
+   "C2bc": {
+    "images": 81,
+    "paires": 80,
+    "plusLongueFige_s": 4.5,
+    "figeDebutIndex": 0,
+    "ecartMoyenParImage": 0.0058,
+    "ecartMax": 0.0087,
+    "pairesSous0006": 39,
+    "pairesAu_dessusDe0085": 0,
+    "C2b": false,
+    "C2c": true
+   },
+   "R12": {
+    "boite": {
+     "x": 64,
+     "y": 420,
+     "width": 1152,
+     "height": 194
+    },
+    "instants": 80,
+    "minCycle": 3.107,
+    "instantMin_ms": 0,
+    "maxCycle": 3.199,
+    "mediane": 3.177,
+    "extremes": {
+     "rotDepart_pousse0": {
+      "p90": 3.107,
+      "rotate": "-4deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "p90": 3.182,
+      "rotate": "6deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "p90": 3.131,
+      "rotate": "-4deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "p90": 3.175,
+      "rotate": "6deg",
+      "scale": "1.06"
+     }
+    },
+    "min": 3.107,
+    "tient3": true
+   },
+   "rotateRelevee": {
+    "min_deg": -4,
+    "max_deg": 6
+   }
+  },
+  "1440x900": {
+   "relief": {
+    "etat": "sans",
+    "toile": false
+   },
+   "requetesMedia": {
+    "r34_25": true,
+    "r16_10": true,
+    "largeur1024": true,
+    "mouvementPermis": true
+   },
+   "nature": [
+    {
+     "nom": "ouverture-photo",
+     "cible": "DIV",
+     "proprietes": [
+      "transform"
+     ],
+     "valeurs": [
+      "none",
+      "scale(1.08)"
+     ],
+     "easingImages": [
+      "linear",
+      "linear"
+     ],
+     "duree": "auto",
+     "direction": "normal",
+     "iterations": 1,
+     "timeline": "defilement"
+    },
+    {
+     "nom": "pousse",
+     "cible": "IMG",
+     "proprietes": [
+      "scale"
+     ],
+     "valeurs": [
+      "1",
+      "1.06"
+     ],
+     "easingImages": [
+      "cubic-bezier(0.45, 0, 0.55, 1)",
+      "cubic-bezier(0.45, 0, 0.55, 1)"
+     ],
+     "duree": 20000,
+     "direction": "alternate",
+     "iterations": null,
+     "timeline": "document"
+    },
+    {
+     "nom": "signature-tourne-4",
+     "cible": "IMG",
+     "proprietes": [
+      "rotate"
+     ],
+     "valeurs": [
+      "-4deg",
+      "6deg"
+     ],
+     "easingImages": [
+      "cubic-bezier(0.37, 0, 0.63, 1)",
+      "cubic-bezier(0.37, 0, 0.63, 1)"
+     ],
+     "duree": 10000,
+     "direction": "alternate",
+     "iterations": null,
+     "timeline": "document"
+    }
+   ],
+   "C2a": {
+    "paires": [
+     {
+      "de": 2500,
+      "a": 5000,
+      "moyen": 0.09,
+      "part8": 0.611,
+      "rotate": [
+       "-2.55327deg",
+       "1deg"
+      ],
+      "scale": [
+       "1.00167",
+       "1.00721"
+      ]
+     },
+     {
+      "de": 5000,
+      "a": 8000,
+      "moyen": 0.1012,
+      "part8": 0.645,
+      "rotate": [
+       "1deg",
+       "5.05872deg"
+      ],
+      "scale": [
+       "1.00721",
+       "1.01943"
+      ]
+     }
+    ],
+    "min": 0.611,
+    "cible056": true,
+    "decale340ms": [
+     {
+      "de": 2160,
+      "a": 4660,
+      "moyen": 0.0868,
+      "part8": 0.593,
+      "rotate": [
+       "-2.90742deg",
+       "0.461411deg"
+      ],
+      "scale": [
+       "1.00124",
+       "1.00621"
+      ]
+     },
+     {
+      "de": 4660,
+      "a": 7660,
+      "moyen": 0.103,
+      "part8": 0.651,
+      "rotate": [
+       "0.461411deg",
+       "4.72531deg"
+      ],
+      "scale": [
+       "1.00621",
+       "1.01777"
+      ]
+     }
+    ]
+   },
+   "C6a": {
+    "zone": {
+     "left": 150,
+     "top": 120,
+     "width": 350,
+     "height": 300
+    },
+    "ecartLuminanceRelativeMoyenne": 0.003,
+    "ecartGrisMoyen": 0.005,
+    "ecartAbsoluParPixel": 0.2102
+   },
+   "C2bc": {
+    "images": 81,
+    "paires": 80,
+    "plusLongueFige_s": 4.5,
+    "figeDebutIndex": 0,
+    "ecartMoyenParImage": 0.0058,
+    "ecartMax": 0.0088,
+    "pairesSous0006": 39,
+    "pairesAu_dessusDe0085": 0,
+    "C2b": false,
+    "C2c": true
+   },
+   "R12": {
+    "boite": {
+     "x": 72,
+     "y": 489,
+     "width": 1296,
+     "height": 217
+    },
+    "instants": 80,
+    "minCycle": 3.185,
+    "instantMin_ms": 20000,
+    "maxCycle": 3.306,
+    "mediane": 3.271,
+    "extremes": {
+     "rotDepart_pousse0": {
+      "p90": 3.193,
+      "rotate": "-4deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "p90": 3.278,
+      "rotate": "6deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "p90": 3.185,
+      "rotate": "-4deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "p90": 3.276,
+      "rotate": "6deg",
+      "scale": "1.06"
+     }
+    },
+    "min": 3.185,
+    "tient3": true
+   },
+   "rotateRelevee": {
+    "min_deg": -4,
+    "max_deg": 6
+   }
+  }
+ },
+ "R4": {
+  "cas1et2": {
+   "1088x800": {
+    "barre_px": 0,
+    "relief": "sans",
+    "picture": [
+     0,
+     -6.7,
+     1088,
+     816
+    ],
+    "temoinPhotoCachee": 804266,
+    "temoinValide": true,
+    "rotate_deg": [
+     -3.25,
+     2.25
+    ],
+    "cas1": {
+     "instants": 80,
+     "total": 0,
+     "max": 0,
+     "avecMagenta": []
+    },
+    "cas2": {
+     "rotDepart_pousse0": {
+      "magenta": 0,
+      "rotate": "-3.25deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "magenta": 0,
+      "rotate": "2.25deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "magenta": 0,
+      "rotate": "-3.25deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "magenta": 0,
+      "rotate": "2.25deg",
+      "scale": "1.06"
+     }
+    },
+    "totalCas1et2": 0
+   },
+   "1280x800": {
+    "barre_px": 0,
+    "relief": "sans",
+    "picture": [
+     0,
+     -67.2,
+     1280,
+     960
+    ],
+    "temoinPhotoCachee": 945847,
+    "temoinValide": true,
+    "rotate_deg": [
+     -4,
+     6
+    ],
+    "cas1": {
+     "instants": 80,
+     "total": 0,
+     "max": 0,
+     "avecMagenta": []
+    },
+    "cas2": {
+     "rotDepart_pousse0": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1.06"
+     }
+    },
+    "totalCas1et2": 0
+   },
+   "1366x768": {
+    "barre_px": 0,
+    "relief": "sans",
+    "picture": [
+     0,
+     -107.7,
+     1366,
+     1024.5
+    ],
+    "temoinPhotoCachee": 965466,
+    "temoinValide": true,
+    "rotate_deg": [
+     -4,
+     6
+    ],
+    "cas1": {
+     "instants": 80,
+     "total": 0,
+     "max": 0,
+     "avecMagenta": []
+    },
+    "cas2": {
+     "rotDepart_pousse0": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1.06"
+     }
+    },
+    "totalCas1et2": 0
+   },
+   "1440x900": {
+    "barre_px": 0,
+    "relief": "sans",
+    "picture": [
+     0,
+     -75.6,
+     1440,
+     1080
+    ],
+    "temoinPhotoCachee": 1207825,
+    "temoinValide": true,
+    "rotate_deg": [
+     -4,
+     6
+    ],
+    "cas1": {
+     "instants": 80,
+     "total": 0,
+     "max": 0,
+     "avecMagenta": []
+    },
+    "cas2": {
+     "rotDepart_pousse0": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1.06"
+     }
+    },
+    "totalCas1et2": 0
+   },
+   "1920x1080": {
+    "barre_px": 0,
+    "relief": "sans",
+    "picture": [
+     0,
+     -151.2,
+     1920,
+     1440
+    ],
+    "temoinPhotoCachee": 1955393,
+    "temoinValide": true,
+    "rotate_deg": [
+     -4,
+     6
+    ],
+    "cas1": {
+     "instants": 80,
+     "total": 0,
+     "max": 0,
+     "avecMagenta": []
+    },
+    "cas2": {
+     "rotDepart_pousse0": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1.06"
+     }
+    },
+    "totalCas1et2": 0
+   },
+   "1920x1200": {
+    "barre_px": 0,
+    "relief": "sans",
+    "picture": [
+     0,
+     -100.8,
+     1920,
+     1440
+    ],
+    "temoinPhotoCachee": 2185833,
+    "temoinValide": true,
+    "rotate_deg": [
+     -4,
+     6
+    ],
+    "cas1": {
+     "instants": 80,
+     "total": 0,
+     "max": 0,
+     "avecMagenta": []
+    },
+    "cas2": {
+     "rotDepart_pousse0": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1.06"
+     }
+    },
+    "totalCas1et2": 0
+   },
+   "2560x1080": {
+    "barre_px": 0,
+    "relief": "sans",
+    "picture": [
+     0,
+     -352.8,
+     2560,
+     1920
+    ],
+    "temoinPhotoCachee": 2606561,
+    "temoinValide": true,
+    "rotate_deg": [
+     -4,
+     6
+    ],
+    "cas1": {
+     "instants": 80,
+     "total": 6,
+     "max": 1,
+     "avecMagenta": [
+      [
+       12500,
+       1,
+       "4.55327deg",
+       "1.04299"
+      ],
+      [
+       16500,
+       1,
+       "-1.28862deg",
+       "1.05661"
+      ],
+      [
+       17500,
+       1,
+       "-2.55327deg",
+       "1.05833"
+      ],
+      [
+       22500,
+       1,
+       "-2.55327deg",
+       "1.05833"
+      ],
+      [
+       23500,
+       1,
+       "-1.28862deg",
+       "1.05661"
+      ],
+      [
+       27500,
+       1,
+       "4.55327deg",
+       "1.04299"
+      ]
+     ]
+    },
+    "cas2": {
+     "rotDepart_pousse0": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1.06"
+     }
+    },
+    "totalCas1et2": 6
+   }
+  },
+  "cas4": {
+   "1440x900": {
+    "barre_px": 15,
+    "relief": "sans",
+    "picture": [
+     0,
+     -75.6,
+     1425,
+     1080
+    ],
+    "temoinPhotoCachee": 1195273,
+    "temoinValide": true,
+    "rotate_deg": [
+     -4,
+     6
+    ],
+    "cas1": {
+     "instants": 80,
+     "total": 0,
+     "max": 0,
+     "avecMagenta": []
+    },
+    "cas2": {
+     "rotDepart_pousse0": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "magenta": 0,
+      "rotate": "-4deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "magenta": 0,
+      "rotate": "6deg",
+      "scale": "1.06"
+     }
+    },
+    "totalCas1et2": 0
+   },
+   "1088x800": {
+    "barre_px": 15,
+    "relief": "sans",
+    "picture": [
+     0,
+     -6.7,
+     1073,
+     816
+    ],
+    "temoinPhotoCachee": 793193,
+    "temoinValide": true,
+    "rotate_deg": [
+     -3.25,
+     2.25
+    ],
+    "cas1": {
+     "instants": 80,
+     "total": 0,
+     "max": 0,
+     "avecMagenta": []
+    },
+    "cas2": {
+     "rotDepart_pousse0": {
+      "magenta": 0,
+      "rotate": "-3.25deg",
+      "scale": "1"
+     },
+     "rotFin_pousse0": {
+      "magenta": 0,
+      "rotate": "2.25deg",
+      "scale": "1"
+     },
+     "rotDepart_pousse19999": {
+      "magenta": 0,
+      "rotate": "-3.25deg",
+      "scale": "1.06"
+     },
+     "rotFin_pousse19999": {
+      "magenta": 0,
+      "rotate": "2.25deg",
+      "scale": "1.06"
+     }
+    },
+    "totalCas1et2": 0
+   }
+  },
+  "enquete2560x1080": {
+   "source": "scripts/coins-2560.mjs -> verif/coins-2560.json",
+   "retenue_6instants_2essais": [
+    {
+     "essai": 1,
+     "t": 12500,
+     "rotate": "4.55327deg",
+     "pixels": [
+      [
+       1092,
+       999
+      ]
+     ]
+    },
+    {
+     "essai": 1,
+     "t": 16500,
+     "rotate": "-1.28862deg",
+     "pixels": [
+      [
+       1154,
+       932
+      ]
+     ]
+    },
+    {
+     "essai": 1,
+     "t": 17500,
+     "rotate": "-2.55327deg",
+     "pixels": [
+      [
+       2231,
+       7
+      ]
+     ]
+    },
+    {
+     "essai": 1,
+     "t": 22500,
+     "rotate": "-2.55327deg",
+     "pixels": [
+      [
+       2231,
+       7
+      ]
+     ]
+    },
+    {
+     "essai": 1,
+     "t": 23500,
+     "rotate": "-1.28862deg",
+     "pixels": [
+      [
+       1154,
+       932
+      ]
+     ]
+    },
+    {
+     "essai": 1,
+     "t": 27500,
+     "rotate": "4.55327deg",
+     "pixels": [
+      [
+       1092,
+       999
+      ]
+     ]
+    },
+    {
+     "essai": 2,
+     "t": 12500,
+     "rotate": "4.55327deg",
+     "pixels": [
+      [
+       1092,
+       999
+      ]
+     ]
+    },
+    {
+     "essai": 2,
+     "t": 16500,
+     "rotate": "-1.28862deg",
+     "pixels": [
+      [
+       1154,
+       932
+      ]
+     ]
+    },
+    {
+     "essai": 2,
+     "t": 17500,
+     "rotate": "-2.55327deg",
+     "pixels": [
+      [
+       2231,
+       7
+      ]
+     ]
+    },
+    {
+     "essai": 2,
+     "t": 22500,
+     "rotate": "-2.55327deg",
+     "pixels": [
+      [
+       2231,
+       7
+      ]
+     ]
+    },
+    {
+     "essai": 2,
+     "t": 23500,
+     "rotate": "-1.28862deg",
+     "pixels": [
+      [
+       1154,
+       932
+      ]
+     ]
+    },
+    {
+     "essai": 2,
+     "t": 27500,
+     "rotate": "4.55327deg",
+     "pixels": [
+      [
+       1092,
+       999
+      ]
+     ]
+    }
+   ],
+   "temoinEnLigneSansRotation_80instants": 0,
+   "blocNominalV1_80instants": {
+    "total": 4,
+    "detail": [
+     {
+      "t": 9000,
+      "rotate": "-3.80741deg",
+      "pixels": [
+       [
+        2002,
+        6
+       ],
+       [
+        1987,
+        7
+       ]
+      ]
+     },
+     {
+      "t": 31000,
+      "rotate": "-3.80741deg",
+      "pixels": [
+       [
+        2002,
+        6
+       ],
+       [
+        1987,
+        7
+       ]
+      ]
+     }
+    ]
+   },
+   "grosPlans": [
+    "verif/coin2560-magenta-gros-plan.png",
+    "verif/coin2560-normal-gros-plan.png"
+   ],
+   "lecture": "pixels isolés à l intérieur de l image (pas dans un coin), identiques d un essai à l autre, absents sans rotation : trou d un pixel dans le rendu logiciel de l image tournée ; au rendu normal, un point quasi noir (fond du héros). R-4 exige 0 pixel : échec en 2560x1080."
+  }
+ },
+ "controles": {
+  "1024x768": {
+   "anims": [
+    "pousse"
+   ],
+   "rotate": "none",
+   "transform": "none",
+   "objectPosition": "50% 42%",
+   "r34_25": false
+  },
+  "mouvementReduit_1440x900": {
+   "anims": [],
+   "rotate": "none",
+   "transform": "none"
+  },
+  "communeBruz_1440x900": {
+   "sansInjection": {
+    "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue",
+    "ouverture": false,
+    "anims": [
+     "pousse"
+    ],
+    "picture": [
+     0,
+     0,
+     1440,
+     648
+    ],
+    "objectPosition": "50% 6%",
+    "transform": "none",
+    "rotate": "none"
+   },
+   "avecInjection": {
+    "classesHtml": "js da--signature texture--papier da--etapes da--communes da--nav-retenue",
+    "ouverture": false,
+    "anims": [
+     "pousse"
+    ],
+    "picture": [
+     0,
+     0,
+     1440,
+     648
+    ],
+    "objectPosition": "50% 6%",
+    "transform": "none",
+    "rotate": "none"
+   },
+   "ecartCaptures": {
+    "moyen": 0,
+    "part8": 0
+   }
+  }
+ },
+ "synthese": {
+  "1088x800": {
+   "relief": "sans",
+   "C2a": [
+    0.493,
+    0.54
+   ],
+   "C2a_tient": false,
+   "C2b_fige_s": 10,
+   "C2b_ecartMoyen": 0.0036,
+   "C2b_tient": false,
+   "C2c_tient": true,
+   "C6a": {
+    "zone": {
+     "left": 113,
+     "top": 107,
+     "width": 264,
+     "height": 267
+    },
+    "ecartLuminanceRelativeMoyenne": 0.0047,
+    "ecartGrisMoyen": 0.0049,
+    "ecartAbsoluParPixel": 0.1556
+   },
+   "R12_min": 3.247,
+   "R12_tient": true
+  },
+  "1280x800": {
+   "relief": "sans",
+   "C2a": [
+    0.603,
+    0.64
+   ],
+   "C2a_tient": true,
+   "C2b_fige_s": 4.5,
+   "C2b_ecartMoyen": 0.0058,
+   "C2b_tient": false,
+   "C2c_tient": true,
+   "C6a": {
+    "zone": {
+     "left": 133,
+     "top": 107,
+     "width": 311,
+     "height": 267
+    },
+    "ecartLuminanceRelativeMoyenne": 0.003,
+    "ecartGrisMoyen": 0.005,
+    "ecartAbsoluParPixel": 0.2105
+   },
+   "R12_min": 3.107,
+   "R12_tient": true
+  },
+  "1440x900": {
+   "relief": "sans",
+   "C2a": [
+    0.611,
+    0.645
+   ],
+   "C2a_tient": true,
+   "C2b_fige_s": 4.5,
+   "C2b_ecartMoyen": 0.0058,
+   "C2b_tient": false,
+   "C2c_tient": true,
+   "C6a": {
+    "zone": {
+     "left": 150,
+     "top": 120,
+     "width": 350,
+     "height": 300
+    },
+    "ecartLuminanceRelativeMoyenne": 0.003,
+    "ecartGrisMoyen": 0.005,
+    "ecartAbsoluParPixel": 0.2102
+   },
+   "R12_min": 3.185,
+   "R12_tient": true
+  },
+  "R4": {
+   "cas1et2": {
+    "1088x800": {
+     "temoin": 804266,
+     "magenta": 0
+    },
+    "1280x800": {
+     "temoin": 945847,
+     "magenta": 0
+    },
+    "1366x768": {
+     "temoin": 965466,
+     "magenta": 0
+    },
+    "1440x900": {
+     "temoin": 1207825,
+     "magenta": 0
+    },
+    "1920x1080": {
+     "temoin": 1955393,
+     "magenta": 0
+    },
+    "1920x1200": {
+     "temoin": 2185833,
+     "magenta": 0
+    },
+    "2560x1080": {
+     "temoin": 2606561,
+     "magenta": 6
+    }
+   },
+   "cas4": {
+    "1440x900": {
+     "barre_px": 15,
+     "temoin": 1195273,
+     "magenta": 0
+    },
+    "1088x800": {
+     "barre_px": 15,
+     "temoin": 793193,
+     "magenta": 0
+    }
+   },
+   "lecture2560": "6 pixels en tout (1 par image, 6 instants sur 80), non géométriques : voir R4.enquete2560x1080"
+  }
+ },
+ "verifications": {
+  "relief_a_8s": {
+   "ms": 10814,
+   "etat": "sans",
+   "toile": false
+  },
+  "tempsReelContrePose": {
+   "encadrement_ms": [
+    4450,
+    4817
+   ],
+   "meilleur": {
+    "t_ms": 4523,
+    "rotate": "0.339278deg",
+    "moyen": 0.0004,
+    "part8": 0
+   },
+   "sensibilite": [
+    {
+     "decalage_ms": 250,
+     "moyen": 0.0081,
+     "part8": 0.044
+    },
+    {
+     "decalage_ms": 500,
+     "moyen": 0.0155,
+     "part8": 0.123
+    },
+    {
+     "decalage_ms": 1000,
+     "moyen": 0.0286,
+     "part8": 0.252
+    }
+   ]
+  },
+  "films": {
+   "1440x900": {
+    "sonde": {
+     "programs": [],
+     "stream_groups": [],
+     "streams": [
+      {
+       "codec_name": "h264",
+       "width": 1440,
+       "height": 900,
+       "pix_fmt": "yuv420p",
+       "r_frame_rate": "30/1",
+       "nb_read_frames": "300"
+      }
+     ],
+     "format": {
+      "duration": "10.000000",
+      "size": "2706591"
+     }
+    },
+    "videoQaSurLeFilm": {
+     "images": 80,
+     "plusLongueFige_s": 2,
+     "ecartMoyen": 0.0071,
+     "ecartMax": 0.0255,
+     "note": "film de 0 à 10 s : les entrées du texte (lever, entre, jusqu’à 1,6 s) y comptent"
+    }
+   },
+   "1088x800": {
+    "sonde": {
+     "programs": [],
+     "stream_groups": [],
+     "streams": [
+      {
+       "codec_name": "h264",
+       "width": 1088,
+       "height": 800,
+       "pix_fmt": "yuv420p",
+       "r_frame_rate": "30/1",
+       "nb_read_frames": "300"
+      }
+     ],
+     "format": {
+      "duration": "10.000000",
+      "size": "2084497"
+     }
+    },
+    "videoQaSurLeFilm": {
+     "images": 80,
+     "plusLongueFige_s": 9,
+     "ecartMoyen": 0.0048,
+     "ecartMax": 0.0216,
+     "note": "film de 0 à 10 s : les entrées du texte (lever, entre, jusqu’à 1,6 s) y comptent"
+    }
+   }
+  }
+ },
+ "notes": {
+  "C6a": "le §3.4 dit « écart de luminance moyenne » sans préciser : ecartLuminanceRelativeMoyenne = |moyenne L(t25) - moyenne L(t80)| (luminance relative sRGB) ; ecartAbsoluParPixel = moyenne |gris(t25) - gris(t80)| / 255, qui mesure surtout le déplacement",
+  "temoinEnLigne": "mêmes mesures sur la page en ligne sans injection : variantes.json -> T0-en-ligne",
+  "R4_nonMesure": "cas 3 (redimensionnement réel) et formats avec carte graphique non mesurés (hors demande ; relief.js en ligne non adapté à la boîte tournée)"
+ },
+ "noteContrat": "C2bPlageFigee du contrat 1088x800 : 10 s, mesurés sur images positionnées (valeur d origine de R). Codex l avait ramenée à 9 s pour coller au film compressé ; remise à 10 s par Claude Code le 15/09/2026, le juge tolérant 15 % sur une longue plage figée."
+}

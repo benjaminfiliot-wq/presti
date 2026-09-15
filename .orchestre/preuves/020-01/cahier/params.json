@@ -1,0 +1,9 @@
+{
+ "Q": 3,
+ "h": -1,
+ "s0": 0.5279166666666666,
+ "theta0": -0.11257373675363426,
+ "RW": 0.045,
+ "marches": 18,
+ "methode": "bord suivi (spirales.mjs) : Q=3,0 h=-1 S=0,51 ; sens confirme par Radon"
+}

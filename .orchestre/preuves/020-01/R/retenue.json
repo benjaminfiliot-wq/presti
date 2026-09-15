@@ -1,0 +1,10 @@
+{
+ "nom": "V6-inverse-asym",
+ "a34": [-3.25, 2.25],
+ "a16": [-4, 6],
+ "P": 10,
+ "E_b": 1.07,
+ "origine": "40.4% 38.6%",
+ "easing": "cubic-bezier(.37,0,.63,1)",
+ "pourquoi": "Meilleure C2-a des variantes à 10 s par demi-cycle (1088×800 : 0,493 / 0,540 ; 1440×900 : 0,611 / 0,645, variantes.json). V4 et V5 (5 s) montent plus haut mais doublent la vitesse (57 px/s au coin le plus loin en 1440×900 pour V5) sans tenir C2-b pour autant ; aucune variante ne tient C2-b."
+}
