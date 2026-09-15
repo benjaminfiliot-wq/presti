@@ -17,6 +17,14 @@
      23 et 31 s) : l'escalier vit sans qu'on y touche, et la main reprend la main dès qu'elle bouge.
    La lumière ne passe jamais sous le titre (uVoile : le haut du h1, transmis par relief.js) : elle éclaircissait le fond du h1 et
    baissait son contraste (6,55 → 6,16 en moyenne, juge du 15/09).
+   La descente du moment signature (020-03, cahier 020 §7.5) : au défilement, la caméra avance vers le puits, δ = dmax × descente.
+   Le modèle (proto7) grossit un point à la distance r de l'œil en r' = r·D/(D − δ), D = (max(r, RW)/RW)^−γ ; le shader l'inverse
+   (exact sous RW, 4 pas de Newton au-delà), en highp : en demi-précision l'erreur dépasse 0,5 px. dmax ne vaut que sous WebGL 2 avec
+   la texture 2880 téléversée (sinon le grossissement dépasse le budget de 1,53 pixel de toile par pixel de texture). Pas de roulis :
+   la cage tourne déjà au repos. δ = 0 et roulis nul : le bloc est sauté, l'image au repos reste celle d'avant, au pixel près.
+   Sous le titre, la plongée pousse les marches claires du puits vers le h1 : le contraste p90 de son fond tombait à 2,78 en fin de
+   palier (1280×800, juge du 15/09, sous 3,0). Les clairs sous uVoile baissent donc de 0,9·δ au plus (10 % à δ = 0,116), sans calque
+   et en proportion de δ : rien au repos, rien sans WebGL 2 ni sans la 2880 (δ = 0).
    Tous les effets valent 0 pendant le fondu d'apparition (700 ms), puis montent en 1,8 s : le passage photo → relief est invisible.
    Rendu logiciel (SwiftShader, llvmpipe…) : refusé par le nom du renderer, failIfMajorPerformanceCaveat ne suffit pas dans un
    worker (le headless shell de Chromium y accepte SwiftShader). */
@@ -29,10 +37,17 @@ precision mediump float;
 varying vec2 vUv;
 uniform sampler2D uImage,uProf;
 uniform vec2 uEchelle,uDecal,uCentre,uOeil,uPousse;
-uniform float uAspect,uCreuse,uLumiere,uAngle,uMarge,uVoile;
+uniform float uAspect,uCreuse,uLumiere,uAngle,uMarge,uVoile,uDelta,uRoulis,uRW,uGamma;
 void main(){
   vec2 uv=vUv*uEchelle+uDecal;
   uv=uCentre+(uv-uCentre)*(1.-uMarge);
+  if(uDelta>0.||uRoulis!=0.){
+  vec2 dq=(uv-uOeil)*vec2(uAspect,1.);
+  float rp=length(dq), r=rp*(1.-uDelta);
+  if(uDelta>0.&&r>uRW){ for(int i=0;i<4;i++){ float w=pow(r/uRW,uGamma), den=1.-uDelta*w; r=max(uRW,r-(r/den-rp)/((1.+uDelta*(uGamma-1.)*w)/(den*den))); } }
+  float an=atan(dq.y,dq.x)-uRoulis;
+  uv=uOeil+vec2(cos(an),sin(an))*r/vec2(uAspect,1.);
+  }
   float p=texture2D(uProf,uv).r;
   uv=uOeil+(uv-uOeil)*(1.+uCreuse*(1.-p));
   uv+=uPousse*(p-.2);
@@ -45,6 +60,7 @@ void main(){
   float l=dot(c,vec3(.2126,.7152,.0722));
   float titre=1.-smoothstep(uVoile-.12,uVoile,vUv.y);
   c+=c*uLumiere*bande*anneau*titre*smoothstep(.28,.85,l)*(.55+.45*p);
+  c*=1.-uDelta*.9*smoothstep(uVoile+.02,uVoile+.1,vUv.y)*smoothstep(.3,.8,l);
   gl_FragColor=vec4(c,1.);
 }`
 
@@ -55,6 +71,14 @@ let voile = 0.5, geste = -1e9, derive = 0, calme = false, lumiereCss = false
 let deriveAppliquee = 0, lumiereAppliquee = 0
 let textureImage = null, textureUrl = '', economie = false, texturePlanifiee = false
 let textureEtat = { largeur: 0, mipmaps: false }
+// la descente (020-03) : réglage de da.json (relief.descente, transmis par relief.js), valeur courante, dernières valeurs dessinées ;
+// latences = temps entre l'envoi d'une descente par la page et son dessin (240 dernières, en ms) : une par valeur reçue, mesurée depuis
+// son propre envoi (attente), même quand plusieurs messages tombent dans la même image (au plus une par 16 ms) ; sans cela, la
+// série comptait moins de latences que de messages, et un relevé qui apparie les N derniers messages reprenait des valeurs anciennes
+let descente = 0, dmax = 0, roulisParDelta = 0, sens = -1, rw = 0.045, gamma = 0.6, reglageDescente = null, webgl2 = false
+let dernierDescente = -1, dernierDefile = -1, tMessage = 0, dernierDessinDescente = 0
+const latences = [], attente = []
+let derniereRecue
 const dureesImages = []
 const souris = { x: 0, y: 0 }, visee = { x: 0, y: 0 }
 const LOGICIEL = /swiftshader|llvmpipe|softpipe|software|basic render/i
@@ -91,7 +115,10 @@ function image() {
   // la dérive monte en 2,5 s environ quand la souris se tait depuis 2 s, et retombe en moins d'une seconde dès qu'elle bouge
   const sourisCalme = now - geste > 2000
   derive += ((sourisCalme ? 1 : 0) - derive) * (1 - Math.exp(-dt * (sourisCalme ? 0.8 : 3)))
-  const bouge = Math.abs(visee.x - souris.x) + Math.abs(visee.y - souris.y) > 0.002
+  // la descente ou le défilement ont changé : on dessine à l'image suivante, au plus une image par 16 ms (60 par seconde) ; au repos,
+  // les deux valeurs ne bougent pas et le rythme de 30 images par seconde reste celui d'avant
+  const descenteChange = descente !== dernierDescente
+  const bouge = Math.abs(visee.x - souris.x) + Math.abs(visee.y - souris.y) > 0.002 || ((descenteChange || defile !== dernierDefile) && now - dernierDessinDescente >= 16)
   // souris au repos : 30 images par seconde suffisent à une lumière qui fait un tour par minute et à une dérive de 2 px/s
   if (pret && !bouge && now - dessine < 30) { boucle = true; demander(image); return }
   dessine = now
@@ -108,10 +135,20 @@ function image() {
   gl.uniform1f(u.uLumiere, lumiereAppliquee)
   gl.uniform1f(u.uAngle, 0.9 + temps * 0.105)
   gl.uniform2f(u.uPousse, -vx * 14 * dpr / dw * intro, -vy * 9 * dpr / dh * intro)
+  // la plongée monte avec l'introduction, comme les autres effets : aucun saut quand la toile remplace la photo en cours de descente
+  gl.uniform1f(u.uDelta, dmax * descente * intro)
+  gl.uniform1f(u.uRoulis, sens * roulisParDelta * dmax * descente * intro * Math.PI / 180)
   const avantDessin = performance.now()
   gl.drawArrays(gl.TRIANGLES, 0, 3)
   dureesImages.push(performance.now() - avantDessin)
   if (dureesImages.length > 120) dureesImages.shift()
+  // la latence ne compte que les descentes envoyées par la page une fois le relief dessiné (pret) : la première image attend le
+  // chargement de la photo et du shader (560 à 800 ms mesurés), ce n'est pas un retard du dessin de la descente
+  if (attente.length) {
+    if (pret) { const t = performance.timeOrigin + performance.now(); for (const e of attente) latences.push(t - e); while (latences.length > 240) latences.shift() }
+    attente.length = 0
+  }
+  dernierDescente = descente; dernierDefile = defile; dernierDessinDescente = now
   images++
   if (!pret) {
     pret = true
@@ -146,6 +183,7 @@ function planifierTexture() {
           if (gl.getError() !== gl.NO_ERROR) throw new Error('mipmaps refusées')
           textureImage = suivante
           textureEtat = { largeur: photo.width, mipmaps: true }
+          majDmax()
           gl.deleteTexture(precedente)
           dessine = 0
           relancer()
@@ -165,12 +203,29 @@ function dureeP95() {
   return triees[Math.max(0, Math.ceil(triees.length * 0.95) - 1)]
 }
 
+// dmax (020-03) : la course de la caméra, interpolée entre dpr de toile 1 (dmax1) et 1,5 (dmax15). Non nulle seulement sous WebGL 2
+// une fois la 2880 téléversée avec ses mipmaps : la texture de départ, même agrandie à 2880 sur un grand écran dense, n'a pas le
+// détail qui tient le budget. 0 en WebGL 1, en économie de données (la 2880 n'est jamais demandée) et si la 2880 échoue.
+function majDmax() {
+  const r = reglageDescente
+  dmax = r && webgl2 && textureEtat.mipmaps && textureEtat.largeur >= 2880
+    ? r.dmax1 - (Math.min(1.5, Math.max(1, dpr)) - 1) * (r.dmax1 - r.dmax15) / 0.5
+    : 0
+}
+
 function init(m) {
   toile = m.toile; W = m.W; H = m.H; dpr = m.dpr; aspect = m.aspect; pos = m.pos; oeil = m.oeil; voile = m.voile ?? voile
   calme = !!m.calme; lumiereCss = !!m.lumiereCss
   textureUrl = m.texture || ''; economie = !!m.economie
+  reglageDescente = m.descente || null
+  if (reglageDescente) {
+    roulisParDelta = reglageDescente.roulisParDelta || 0; sens = reglageDescente.h === 1 ? 1 : -1
+    rw = reglageDescente.rw ?? rw; gamma = reglageDescente.gamma ?? gamma
+  }
+  descente = m.v || 0
   const o = { alpha: false, antialias: false, depth: false, stencil: false, premultipliedAlpha: false, failIfMajorPerformanceCaveat: true }
   try { gl = toile.getContext('webgl2', o) || toile.getContext('webgl', o) } catch (e) { gl = null }
+  webgl2 = typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext
   if (chaud) { const l = chaud.getExtension('WEBGL_lose_context'); if (l) l.loseContext(); chaud = null }
   // pas de contexte, ou un contexte logiciel : la photo reste telle quelle
   if (!gl) return postMessage({ type: 'echec', raison: 'contexte' })
@@ -208,7 +263,7 @@ function init(m) {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW)
     const aPos = gl.getAttribLocation(prog, 'aPos')
     gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0)
-    for (const n of ['uImage', 'uProf', 'uEchelle', 'uDecal', 'uCentre', 'uOeil', 'uPousse', 'uAspect', 'uCreuse', 'uLumiere', 'uAngle', 'uMarge', 'uVoile']) u[n] = gl.getUniformLocation(prog, n)
+    for (const n of ['uImage', 'uProf', 'uEchelle', 'uDecal', 'uCentre', 'uOeil', 'uPousse', 'uAspect', 'uCreuse', 'uLumiere', 'uAngle', 'uMarge', 'uVoile', 'uDelta', 'uRoulis', 'uRW', 'uGamma']) u[n] = gl.getUniformLocation(prog, n)
     const texture = (unite, source) => {
       const objet = gl.createTexture()
       gl.activeTexture(gl.TEXTURE0 + unite); gl.bindTexture(gl.TEXTURE_2D, objet)
@@ -223,6 +278,8 @@ function init(m) {
     textureEtat = { largeur: imageInitiale.largeur, mipmaps: false }
     gl.uniform1i(u.uImage, 0); gl.uniform1i(u.uProf, 1)
     gl.uniform2f(u.uOeil, oeil[0], oeil[1]); gl.uniform1f(u.uAspect, aspect)
+    // les constantes du modèle de caméra, réglées une fois (da.json → relief.descente)
+    gl.uniform1f(u.uRW, rw); gl.uniform1f(u.uGamma, gamma)
     cadrer()
     charge = true
     relancer()
@@ -246,15 +303,21 @@ onmessage = (e) => {
     postMessage({ type: 'sonde', ok })
   }
   else if (m.type === 'init') init(m)
-  else if (m.type === 'taille') { W = m.W; H = m.H; dpr = m.dpr; if (m.pos) pos = m.pos; if (m.voile !== undefined) voile = m.voile; cadrer(); dessine = 0; relancer() }
+  // le dpr de toile peut changer (fenêtre passée d'un écran à l'autre) : dmax le suit
+  else if (m.type === 'taille') { W = m.W; H = m.H; dpr = m.dpr; if (m.pos) pos = m.pos; if (m.voile !== undefined) voile = m.voile; majDmax(); cadrer(); dessine = 0; relancer() }
   else if (m.type === 'souris') {
     // un geste, pas un simple rappel de position (relief.js renvoie la dernière à chaque réactivation)
     if (Math.abs(m.x - visee.x) + Math.abs(m.y - visee.y) > 0.001) geste = performance.now()
     visee.x = m.x; visee.y = m.y; relancer()
   }
-  else if (m.type === 'defile') defile = m.v
-  else if (m.type === 'actif') { actif = m.v; relancer() }
+  // défilement et descente relancent la boucle si elle est à l'arrêt (cahier 020 §7.5) : la valeur reçue est dessinée sans attendre la souris
+  else if (m.type === 'defile') { defile = m.v; relancer() }
+  else if (m.type === 'descente') { if (m.v !== derniereRecue) attente.push(m.t); derniereRecue = m.v; descente = m.v; tMessage = m.t; relancer() }
+  // à l'arrêt (héros couvert, hors de l'écran, onglet caché), les descentes en attente ne seront jamais dessinées telles quelles : la page
+  // renvoie la valeur courante à la réactivation
+  else if (m.type === 'actif') { actif = m.v; if (!actif) attente.length = 0; relancer() }
   else if (m.type === 'pret-visible') planifierTexture()
-  // le nombre d'images dessinées : la preuve, pour un banc, que la boucle s'arrête bien hors de l'écran
-  else if (m.type === 'compte') postMessage({ type: 'compte', n: images, tours, calme, derive: deriveAppliquee, lumiere: lumiereAppliquee, texture: textureEtat, dureeP95: dureeP95() })
+  // le nombre d'images dessinées : la preuve, pour un banc, que la boucle s'arrête bien hors de l'écran ; et, pour la descente, la
+  // valeur reçue, la dernière dessinée, la course et les latences
+  else if (m.type === 'compte') postMessage({ type: 'compte', n: images, tours, calme, derive: deriveAppliquee, lumiere: lumiereAppliquee, texture: textureEtat, dureeP95: dureeP95(), webgl2, descente, derniereDescenteDessinee: dernierDescente, dmax, latences })
 }

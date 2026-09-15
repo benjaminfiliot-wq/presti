@@ -91,6 +91,16 @@ function demarrer(hero) {
       setTimeout(() => { if (!fini) fil.postMessage({ type: 'compte' }) }, 2600)
     } else if (m.type === 'echec' || m.type === 'perdu') fin()
   }
+  // la descente du moment signature (020-03, cahier 020 §7.4) : v = clamp(y / (palier × h)), 0 hors chorégraphie (téléphone,
+  // mouvement réduit, sans view(), sans réglage). L'horodatage part avec le message : le fil en tire la latence de son dessin.
+  const condChoregraphie = matchMedia('(min-width: 1024px) and (prefers-reduced-motion: no-preference)')
+  const signature = d.documentElement.classList.contains('da--signature') && !!(window.CSS && CSS.supports('animation-timeline: view()'))
+  let reglage = null
+  try { reglage = JSON.parse(hero.getAttribute('data-relief-descente') || 'null') } catch (e) { /* réglage illisible : pas de descente */ }
+  const defileV = () => Math.min(1, Math.max(0, scrollY / innerHeight))
+  const descente = () => (reglage && signature && condChoregraphie.matches ? Math.min(1, Math.max(0, scrollY / (reglage.palier * innerHeight))) : 0)
+  const envoyerDescente = () => fil.postMessage({ type: 'descente', v: descente(), t: performance.timeOrigin + performance.now() })
+
   const texture = hero.getAttribute('data-relief-texture')
   // Le navigateur peut choisir la variante 2880 comme currentSrc sur un écran dense. Le premier rendu du fil
   // repart volontairement de la source de repli de l'élément (1600) : la 2880 reste réservée au remplacement tardif.
@@ -103,6 +113,7 @@ function demarrer(hero) {
     aspect: img.naturalWidth / img.naturalHeight, largeurNaturelle: img.naturalWidth,
     calme: hero.hasAttribute('data-relief-calme'), lumiereCss: hero.hasAttribute('data-relief-lumiere-css'),
     economie: !!(navigator.connection && navigator.connection.saveData), ...taille(),
+    descente: reglage, v: descente(),
   }, [offscreen])
 
   // actif : héros à l'écran, pas recouvert par le plateau (héros collant, kit.css v26), onglet visible
@@ -113,7 +124,8 @@ function demarrer(hero) {
     if (a === etat) return
     etat = a
     fil.postMessage({ type: 'actif', v: a })
-    if (a) fil.postMessage({ type: 'souris', x: sx, y: sy })
+    // réactivé (onglet revenu, saut, héros de nouveau découvert) : le fil repart des valeurs courantes, pas de celles d'avant l'arrêt
+    if (a) { fil.postMessage({ type: 'souris', x: sx, y: sy }); fil.postMessage({ type: 'defile', v: defileV() }); envoyerDescente() }
   }
   new IntersectionObserver((es) => { enVue = es[es.length - 1].isIntersecting; majActif() }).observe(hero)
   d.addEventListener('visibilitychange', majActif)
@@ -122,9 +134,11 @@ function demarrer(hero) {
     tDef = 0
     if (plateau) couvert = plateau.getBoundingClientRect().top <= 0.5
     majActif()
-    if (etat) fil.postMessage({ type: 'defile', v: Math.min(1, Math.max(0, scrollY / innerHeight)) })
+    if (etat) { fil.postMessage({ type: 'defile', v: defileV() }); envoyerDescente() }
   }
   addEventListener('scroll', () => { if (!tDef) tDef = requestAnimationFrame(surDefilement) }, { passive: true })
+  // sous 1 024 px ou en mouvement réduit, le palier CSS disparaît : la plongée du shader retombe à 0 avec lui, et revient au retour
+  condChoregraphie.addEventListener('change', surDefilement)
   let tSou = 0
   addEventListener('pointermove', (e) => {
     sx = e.clientX / innerWidth * 2 - 1; sy = e.clientY / innerHeight * 2 - 1

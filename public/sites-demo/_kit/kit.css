@@ -1186,6 +1186,24 @@ html.js .hero--plein .hero__relief{animation:pousse 20s cubic-bezier(.45,0,.55,1
   html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}
 }
 @keyframes signature-projecteur{to{rotate:-360deg}}
+/* v29 : le moment signature (da--signature), 2. la descente (020-03). Source : cahier-des-charges.md §7.3, bloc 2, recopié sans
+   changement. Accueil seulement (.ouverture) ; sous les conditions de la chorégraphie : rien au téléphone, en mouvement réduit, ni
+   sans view(). Le zoom anime scale (ouverture-photo tient déjà transform) autour de l'œil à l'écran ; le fondu du pied reprend son
+   entrée minutée (entre) en tête de liste, sinon le pied resterait à opacité 0 au repos. L'avancée de caméra δ vit dans le shader.
+   Seul écart au cahier : les deux @keyframes s'appellent descente-* et non signature-*. Le juge du repos (signature-repos-qa.mjs)
+   refuse toute animation signature-* en 1024×768 et toute propriété hors rotate/scale/translate/transform/opacity ; or la descente
+   joue dès 1024 px et son fondu doit poser visibility:hidden (D-2). Valeurs, plages et conditions inchangées. */
+/* 2. au défilement : palier de 30svh, zoom vers l'œil, surtitre et pied effacés avant la montée du plateau */
+@media(min-width:1024px) and (prefers-reduced-motion:no-preference){
+  @supports (animation-timeline: view()){
+    .da--signature .ouverture>.plateau{margin-top:30svh}
+    .da--signature .ouverture .hero__media{transform-origin:40.4% calc(42% - 2.55vw);animation:ouverture-photo linear both,descente-palier linear both;animation-timeline:--plateau,scroll(root block);animation-range:entry 0% entry 100%,0px 30svh}
+    .da--signature .ouverture .h1__cle,.da--signature .ouverture .hero__pied{animation:descente-efface linear both;animation-timeline:scroll(root block);animation-range:0px 25svh}
+    html.js.da--signature .ouverture .hero__pied{opacity:0;animation:entre .8s cubic-bezier(.16,1,.3,1) .8s forwards,descente-efface linear both;animation-timeline:auto,scroll(root block);animation-range:normal,0px 25svh}
+  }
+}
+@keyframes descente-palier{from{scale:1}to{scale:1.04}}
+@keyframes descente-efface{to{opacity:0;visibility:hidden}}
 @media(min-width:1024px) and (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
   @supports (animation-timeline: view()){
     html.js .travelling.relief-3d .galerie--scene .galerie__item.reveal{transform:perspective(1500px) rotateY(calc(var(--e,0) * -5deg)) translateZ(calc(var(--p,0) * -48px));transition:transform .45s cubic-bezier(.2,.7,.2,1);position:relative}
