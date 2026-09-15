@@ -1,0 +1,36 @@
+{
+  "candidat": "L2",
+  "nom": "lumiere-rasante",
+  "variante": "V4",
+  "description": "Bande de lumiere douce glissant le long des marches",
+  "params": {
+    "D": 5,
+    "Hb": 38,
+    "theta": 4,
+    "course": 24,
+    "a": 0.85,
+    "o": 0.5,
+    "mode": "overlay",
+    "sens": "descend"
+  },
+  "1088x800": {
+    "C2a": [
+      0.342,
+      0.402
+    ],
+    "C2bPlageFigee": 3.25,
+    "C2bEcartMoyen": 0.0052,
+    "C2cClignote": false,
+    "R12Min": 3.31
+  },
+  "1440x900": {
+    "C2a": [
+      0.334,
+      0.382
+    ],
+    "C2bPlageFigee": 5.75,
+    "C2bEcartMoyen": 0.005,
+    "C2cClignote": false,
+    "R12Min": 3.36
+  }
+}

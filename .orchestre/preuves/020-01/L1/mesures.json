@@ -1,0 +1,112 @@
+{
+ "variante": "v5-ombre-portee-9s",
+ "params": {
+  "P": 9,
+  "sens": -1,
+  "taille": 170,
+  "conique": "conic-gradient(from 0deg,rgba(255,214,150,0.4) 0deg,rgba(255,214,150,0.2) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.475) 65deg,rgba(10,7,4,0.95) 90deg,rgba(10,7,4,0.475) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.2) 155deg,rgba(255,214,150,0.4) 180deg,rgba(255,214,150,0.2) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.475) 245deg,rgba(10,7,4,0.95) 270deg,rgba(10,7,4,0.475) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.2) 335deg,rgba(255,214,150,0.4) 360deg)",
+  "masque": "transparent 5%,#000 17%,#000 72%,transparent 100%"
+ },
+ "bloc": "bloc.css",
+ "url": "https://prestiapp.fr/sites-demo/lestraque/index.html (en ligne, bloc injecté dans le navigateur de test)",
+ "navigateur": "chromium.launch() sans drapeau de carte graphique (cahier §8.0)",
+ "methodeTemps": "animations de document.timeline en pause, currentTime = t ms (t compté depuis le chargement) ; animations liées au défilement laissées à y = 0",
+ "1088x800": {
+  "C2a": [
+   0.581,
+   0.605
+  ],
+  "C2bPlageFigee": 0.875,
+  "C2bEcartMoyen": 0.0073,
+  "C2cClignote": false,
+  "R12Min": 3.303
+ },
+ "1280x800": {
+  "C2a": [
+   0.583,
+   0.627
+  ],
+  "C2bPlageFigee": 1.25,
+  "C2bEcartMoyen": 0.0074,
+  "C2cClignote": false,
+  "R12Min": 3.129
+ },
+ "1440x900": {
+  "C2a": [
+   0.585,
+   0.634
+  ],
+  "C2bPlageFigee": 1,
+  "C2bEcartMoyen": 0.0075,
+  "C2cClignote": false,
+  "R12Min": 3.325
+ },
+ "versionChromium": "153.0.8010.12",
+ "instants": [
+  "t06.jpg",
+  "t25.jpg",
+  "t50.jpg",
+  "t80.jpg"
+ ],
+ "planche": "planche.jpg",
+ "films": {
+  "film-1440x900.mp4": {
+   "format": "1440x900",
+   "de_ms": 2000,
+   "a_ms": 12000,
+   "images": 300,
+   "ecartParImage30ips": {
+    "moyen": 0.002,
+    "max": 0.0025,
+    "min": 0.0015
+   },
+   "ffprobe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+     {
+      "codec_name": "h264",
+      "width": 1440,
+      "height": 900,
+      "pix_fmt": "yuv420p",
+      "r_frame_rate": "30/1",
+      "nb_read_frames": "300"
+     }
+    ],
+    "format": {
+     "duration": "10.000000",
+     "size": "3600773"
+    }
+   }
+  },
+  "film-1088x800.mp4": {
+   "format": "1088x800",
+   "de_ms": 2000,
+   "a_ms": 12000,
+   "images": 300,
+   "ecartParImage30ips": {
+    "moyen": 0.002,
+    "max": 0.0024,
+    "min": 0.0015
+   },
+   "ffprobe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+     {
+      "codec_name": "h264",
+      "width": 1088,
+      "height": 800,
+      "pix_fmt": "yuv420p",
+      "r_frame_rate": "30/1",
+      "nb_read_frames": "300"
+     }
+    ],
+    "format": {
+     "duration": "10.000000",
+     "size": "2660603"
+    }
+   }
+  }
+ }
+}

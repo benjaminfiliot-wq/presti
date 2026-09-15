@@ -6,17 +6,18 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-15T10:40:33Z
+# Digest — 2026-09-15T11:10:10Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 37 tâche(s) PASS, 117235 ligne(s) · faites par Claude Code : 2 tâche(s) PASS, 279 ligne(s).
-**État** — file : 0 · en cours : 2 · faites : 39 · refusées : 1
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 39 tâche(s) PASS, 164523 ligne(s) · faites par Claude Code : 2 tâche(s) PASS, 279 ligne(s).
+**État** — file : 0 · en cours : 1 · faites : 41 · refusées : 1
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 020-11 | contenu | en-cours | ag-26-flash | — | depuis 2026-09-15T10:30:32Z · Moment signature, candidat L1 « projecteur tournant » — finir le prototype déjà réglé et livrer bloc.css, films, instants, planche, mesures au contrat et rapport, pour le choix de Benj |
-| 020-12 | contenu | en-cours | ag-27-flash | — | depuis 2026-09-15T10:30:29Z · Moment signature, candidat L2 « lumière rasante » — ses films existent déjà ; livrer bloc.css, instants nommés, planche, mesures au contrat et rapport, pour le choix de Benj |
+| 020-13 | contenu | en-cours | ag-28-flash | — | depuis 2026-09-15T10:47:26Z · Moment signature, candidat RL « la cage tourne et la lumière » — composer R et la meilleure lumière (L1 ou L2), la lumière décalée d'un quart de période, et livrer bloc.css, films, instants, planche, mesures au contrat et rapport, pour le choix de Benj |
+| 020-11 | contenu | fait | ag-26-flash | PASS | 2026-09-15T11:10:10Z · 1s · 10430 l. |
+| 020-12 | contenu | fait | ag-27-flash | PASS | 2026-09-15T10:50:01Z · 1s · 36858 l. |
 | 020-14 | feature | fait | codex-12 | PASS | 2026-09-15T10:40:33Z · 48s · 0 l. |
 | 020-10 | contenu | fait | codex-11 | PASS | 2026-09-15T10:34:33Z · 1s · 0 l. |
 | 019-03 | contenu | fait | codex-10 | PASS | 2026-09-15T07:48:53Z · 2s · 0 l. |

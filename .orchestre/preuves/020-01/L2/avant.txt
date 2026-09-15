@@ -1,0 +1,3 @@
+020-12 — état AVANT (juge lancé par Claude Code le 15/09/2026)
+  · L2 (film 1088×800, recalculé) : part > 8 0.342 / 0.402 · plage figée 3.25 s · écart moyen 0.0052 · pic 0.022
+✗ films des candidats : FAIL — L2 : bloc.css absent ; L2 : mesures.json absent ; L2 : rapport.md absent ; L2 : planche.jpg absent ; L2 : t06.jpg absent ; L2 : t25.jpg absent ; L2 : t50.jpg absent ; L2 : t80.jpg absent ; L2 : mesures.json ne suit pas le contrat (clé "1088x800" avec C2a [deux nombres], C2bPlageFigee, C2bEcartMoyen, C2cClignote, R12Min)

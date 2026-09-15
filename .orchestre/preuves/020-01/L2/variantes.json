@@ -1,0 +1,1350 @@
+{
+ "conditions": "Page en ligne https://prestiapp.fr/sites-demo/lestraque/index.html, chromium.launch() sans drapeau (sans carte graphique), 1088×800, classe da--signature ajoutée et bloc injecté dans le navigateur de test seulement ; toutes les animations de DocumentTimeline en pause, currentTime = t (ms) ; captures PNG ; réduction grise 160 px (cdc-c2-variantes.mjs).",
+ "variantes": [
+  {
+   "nom": "V6",
+   "date": "2026-09-15T09:52:30.838Z",
+   "params": {
+    "D": 5,
+    "Hb": 38,
+    "theta": 4,
+    "course": 24,
+    "a": 0.85,
+    "o": 0.5,
+    "mode": "overlay",
+    "sens": "descend",
+    "respire": 0.6
+   },
+   "css": "/* Candidat L2 — lumière rasante (cahier-des-charges.md §3.5). Paramètres : {\"D\":5,\"Hb\":38,\"theta\":4,\"course\":24,\"a\":0.85,\"o\":0.5,\"mode\":\"overlay\",\"sens\":\"descend\",\"respire\":0.6} */\n@media (min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{\n    content:\"\";position:absolute;z-index:1;pointer-events:none;\n    left:-20%;width:140%;height:38svh;\n    top:calc(100% - 23vw - 110px - 38svh - 3.488vw);\n    rotate:4deg;\n    background:linear-gradient(180deg,rgba(255,214,150,0) 0%,rgba(10,7,4,0.5) 22%,rgba(255,214,150,0.85) 50%,rgba(10,7,4,0.5) 78%,rgba(255,214,150,0) 100%);\n    mix-blend-mode:overlay;\n    animation:l2-glisse 5s cubic-bezier(.37,0,.63,1) infinite alternate,l2-respire 5s cubic-bezier(.37,0,.63,1) -2.5s infinite alternate;\n  }\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes l2-glisse{from{translate:0 calc(-1 * 24svh)}to{translate:0 0}}\n@keyframes l2-respire{from{opacity:1}to{opacity:0.6}}\n",
+   "etat_t5000": {
+    "relief": null,
+    "calque": {
+     "content": "\"\"",
+     "translate": "0px",
+     "rotate": "4deg",
+     "opacity": "0.8",
+     "zIndex": "1",
+     "top": "97.7969px",
+     "height": "304px",
+     "mode": "overlay"
+    },
+    "scaleImg": "1.00721",
+    "h1Haut": 463.9,
+    "animsCalque": [
+     {
+      "nom": "l2-glisse",
+      "proprietes": [
+       "translate"
+      ]
+     },
+     {
+      "nom": "l2-respire",
+      "proprietes": [
+       "opacity"
+      ]
+     }
+    ],
+    "animsPhoto": [
+     {
+      "nom": "pousse",
+      "proprietes": [
+       "scale"
+      ]
+     }
+    ]
+   },
+   "C2a": {
+    "paire_2500_5000": {
+     "moyen": 0.0352,
+     "part8": 0.302
+    },
+    "paire_5000_8000": {
+     "moyen": 0.0506,
+     "part8": 0.398
+    },
+    "cible": 0.56,
+    "tenu": false
+   },
+   "C6a": {
+    "zone": {
+     "left": 113,
+     "top": 107,
+     "width": 264,
+     "height": 267
+    },
+    "ecartMoyenPixel": 0.052,
+    "ecartDesMoyennesGris": 0.0043,
+    "luminanceRelativeMoyenne": {
+     "t25": 0.3525,
+     "t80": 0.3514,
+     "ecart": 0.0011
+    }
+   },
+   "C2b": {
+    "images": 81,
+    "pas_ms": 125,
+    "ecartMoyenParImage": 0.0036,
+    "plusLongFige_s": 8.875,
+    "finPlageFigee_image": 71,
+    "partPairesSous0006": 0.925,
+    "ecartMaxPaire": 0.0062,
+    "pairesAuDessus0085": 0,
+    "tenu": false
+   },
+   "C2c": {
+    "ecartMaxPaire": 0.0062,
+    "pairesAuDessus0085": 0,
+    "tenu": true
+   },
+   "diffsRelevé": [
+    0.0057,
+    0.0054,
+    0.0052,
+    0.0048,
+    0.0046,
+    0.0042,
+    0.0039,
+    0.0036,
+    0.0033,
+    0.003,
+    0.0027,
+    0.0025,
+    0.0022,
+    0.002,
+    0.0018,
+    0.0017,
+    0.0017,
+    0.0018,
+    0.0019,
+    0.0021,
+    0.0022,
+    0.0024,
+    0.0026,
+    0.0027,
+    0.0029,
+    0.0031,
+    0.0032,
+    0.0034,
+    0.0035,
+    0.0037,
+    0.0038,
+    0.0039,
+    0.004,
+    0.0041,
+    0.0042,
+    0.0043,
+    0.0044,
+    0.0044,
+    0.0044,
+    0.0044,
+    0.0043,
+    0.0042,
+    0.0041,
+    0.004,
+    0.0039,
+    0.0037,
+    0.0035,
+    0.0033,
+    0.0031,
+    0.0028,
+    0.0026,
+    0.0023,
+    0.002,
+    0.0017,
+    0.0014,
+    0.0013,
+    0.0012,
+    0.0014,
+    0.0017,
+    0.002,
+    0.0024,
+    0.0028,
+    0.0033,
+    0.0036,
+    0.004,
+    0.0044,
+    0.0048,
+    0.005,
+    0.0053,
+    0.0056,
+    0.0058,
+    0.006,
+    0.0061,
+    0.0062,
+    0.0062,
+    0.0062,
+    0.006,
+    0.0058,
+    0.0056,
+    0.0054
+   ],
+   "R12_rapide": {
+    "instants": 40,
+    "min": 3.31,
+    "max": 3.411,
+    "tenu": true
+   },
+   "temoinTitre": {
+    "instants": 10,
+    "pixelsModifiesSousTitreMax": 0,
+    "ecartMaxSousTitre": 0,
+    "partPixelsEclairesAuDessus_d8": [
+     0.349,
+     0.397,
+     0.444,
+     0.482,
+     0.503,
+     0.48,
+     0.438,
+     0.328,
+     0.296,
+     0.29
+    ],
+    "hautTitre": 463
+   }
+  },
+  {
+   "nom": "temoin-en-ligne",
+   "date": "2026-09-15T09:54:52.223Z",
+   "params": null,
+   "css": "",
+   "etat_t5000": {
+    "relief": "sans",
+    "calque": {
+     "content": "none",
+     "translate": "none",
+     "rotate": "none",
+     "opacity": "1",
+     "zIndex": "auto",
+     "top": "auto",
+     "height": "auto",
+     "mode": "normal"
+    },
+    "scaleImg": "1.00721",
+    "h1Haut": 463.9,
+    "animsCalque": [],
+    "animsPhoto": [
+     {
+      "nom": "pousse",
+      "proprietes": [
+       "scale"
+      ]
+     }
+    ]
+   },
+   "C2a": {
+    "paire_2500_5000": {
+     "moyen": 0.0111,
+     "part8": 0.076
+    },
+    "paire_5000_8000": {
+     "moyen": 0.0247,
+     "part8": 0.19
+    },
+    "cible": 0.56,
+    "tenu": false
+   },
+   "C6a": {
+    "zone": {
+     "left": 113,
+     "top": 107,
+     "width": 264,
+     "height": 267
+    },
+    "ecartMoyenPixel": 0.0418,
+    "ecartDesMoyennesGris": 0.0065,
+    "luminanceRelativeMoyenne": {
+     "t25": 0.3524,
+     "t80": 0.3598,
+     "ecart": 0.0074
+    }
+   },
+   "C2b": {
+    "images": 81,
+    "pas_ms": 125,
+    "ecartMoyenParImage": 0.0013,
+    "plusLongFige_s": 10,
+    "finPlageFigee_image": 80,
+    "partPairesSous0006": 1,
+    "ecartMaxPaire": 0.0017,
+    "pairesAuDessus0085": 0,
+    "tenu": false
+   },
+   "C2c": {
+    "ecartMaxPaire": 0.0017,
+    "pairesAuDessus0085": 0,
+    "tenu": true
+   },
+   "diffsRelevé": [
+    0.0015,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0017,
+    0.0017,
+    0.0016,
+    0.0016,
+    0.0017,
+    0.0016,
+    0.0016,
+    0.0017,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0015,
+    0.0015,
+    0.0015,
+    0.0015,
+    0.0015,
+    0.0015,
+    0.0014,
+    0.0015,
+    0.0014,
+    0.0014,
+    0.0014,
+    0.0014,
+    0.0013,
+    0.0014,
+    0.0013,
+    0.0013,
+    0.0013,
+    0.0013,
+    0.0012,
+    0.0012,
+    0.0012,
+    0.0012,
+    0.0011,
+    0.0011,
+    0.0011,
+    0.0011,
+    0.0011,
+    0.001,
+    0.001,
+    0.001,
+    0.001,
+    0.001,
+    0.001,
+    0.0009,
+    0.0009,
+    0.0009,
+    0.0009,
+    0.0009,
+    0.0008,
+    0.0008,
+    0.0008,
+    0.0008,
+    0.0007,
+    0.0007,
+    0.0007,
+    0.0007,
+    0.0007,
+    0.0006,
+    0.0006,
+    0.0006,
+    0.0006
+   ],
+   "R12_rapide": {
+    "instants": 40,
+    "min": 3.31,
+    "max": 3.411,
+    "tenu": true
+   }
+  },
+  {
+   "nom": "V1",
+   "date": "2026-09-15T09:56:47.328Z",
+   "params": {
+    "D": 5,
+    "Hb": 34,
+    "theta": 6,
+    "course": 30,
+    "a": 0.55,
+    "o": 0,
+    "mode": "soft-light",
+    "sens": "descend"
+   },
+   "css": "/* Candidat L2 — lumière rasante (cahier-des-charges.md §3.5). Paramètres : {\"D\":5,\"Hb\":34,\"theta\":6,\"course\":30,\"a\":0.55,\"o\":0,\"mode\":\"soft-light\",\"sens\":\"descend\"} */\n@media (min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{\n    content:\"\";position:absolute;z-index:1;pointer-events:none;\n    left:-20%;width:140%;height:34svh;\n    top:calc(100% - 23vw - 110px - 34svh - 5.226vw);\n    rotate:6deg;\n    background:linear-gradient(180deg,rgba(255,214,150,0) 0%,rgba(255,214,150,0.193) 25%,rgba(255,214,150,0.55) 50%,rgba(255,214,150,0.193) 75%,rgba(255,214,150,0) 100%);\n    mix-blend-mode:soft-light;\n    animation:l2-glisse 5s cubic-bezier(.37,0,.63,1) infinite alternate;\n  }\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes l2-glisse{from{translate:0 calc(-1 * 30svh)}to{translate:0 0}}\n",
+   "etat_t5000": {
+    "relief": "sans",
+    "calque": {
+     "content": "\"\"",
+     "translate": "0px",
+     "rotate": "6deg",
+     "opacity": "1",
+     "zIndex": "1",
+     "top": "110.891px",
+     "height": "272px",
+     "mode": "soft-light"
+    },
+    "scaleImg": "1.00721",
+    "h1Haut": 463.9,
+    "animsCalque": [
+     {
+      "nom": "l2-glisse",
+      "proprietes": [
+       "translate"
+      ]
+     }
+    ],
+    "animsPhoto": [
+     {
+      "nom": "pousse",
+      "proprietes": [
+       "scale"
+      ]
+     }
+    ]
+   },
+   "C2a": {
+    "paire_2500_5000": {
+     "moyen": 0.019,
+     "part8": 0.197
+    },
+    "paire_5000_8000": {
+     "moyen": 0.0293,
+     "part8": 0.278
+    },
+    "cible": 0.56,
+    "tenu": false
+   },
+   "C6a": {
+    "zone": {
+     "left": 113,
+     "top": 107,
+     "width": 264,
+     "height": 267
+    },
+    "ecartMoyenPixel": 0.0408,
+    "ecartDesMoyennesGris": 0.0007,
+    "luminanceRelativeMoyenne": {
+     "t25": 0.36,
+     "t80": 0.3629,
+     "ecart": 0.0029
+    }
+   },
+   "C2b": {
+    "images": 81,
+    "pas_ms": 125,
+    "ecartMoyenParImage": 0.0017,
+    "plusLongFige_s": 10,
+    "finPlageFigee_image": 80,
+    "partPairesSous0006": 1,
+    "ecartMaxPaire": 0.0023,
+    "pairesAuDessus0085": 0,
+    "tenu": false
+   },
+   "C2c": {
+    "ecartMaxPaire": 0.0023,
+    "pairesAuDessus0085": 0,
+    "tenu": true
+   },
+   "diffsRelevé": [
+    0.0021,
+    0.0021,
+    0.002,
+    0.002,
+    0.002,
+    0.0019,
+    0.0019,
+    0.0018,
+    0.0018,
+    0.0018,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0016,
+    0.0016,
+    0.0017,
+    0.0016,
+    0.0016,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0018,
+    0.0018,
+    0.0018,
+    0.0019,
+    0.0019,
+    0.002,
+    0.002,
+    0.0021,
+    0.0021,
+    0.0022,
+    0.0022,
+    0.0022,
+    0.0023,
+    0.0022,
+    0.0022,
+    0.0022,
+    0.0022,
+    0.0021,
+    0.0021,
+    0.002,
+    0.002,
+    0.0019,
+    0.0018,
+    0.0017,
+    0.0016,
+    0.0016,
+    0.0015,
+    0.0014,
+    0.0013,
+    0.0012,
+    0.0011,
+    0.0011,
+    0.001,
+    0.0011,
+    0.0011,
+    0.0011,
+    0.0012,
+    0.0012,
+    0.0013,
+    0.0014,
+    0.0014,
+    0.0015,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0016,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0016,
+    0.0016,
+    0.0015,
+    0.0015,
+    0.0014
+   ],
+   "R12_rapide": {
+    "instants": 40,
+    "min": 3.31,
+    "max": 3.411,
+    "tenu": true
+   },
+   "temoinTitre": {
+    "instants": 10,
+    "pixelsModifiesSousTitreMax": 0,
+    "ecartMaxSousTitre": 0,
+    "partPixelsEclairesAuDessus_d8": [
+     0.164,
+     0.197,
+     0.194,
+     0.198,
+     0.194,
+     0.197,
+     0.165,
+     0.102,
+     0.07,
+     0.102
+    ],
+    "hautTitre": 463
+   }
+  },
+  {
+   "nom": "V2",
+   "date": "2026-09-15T09:58:46.415Z",
+   "params": {
+    "D": 5,
+    "Hb": 50,
+    "theta": 6,
+    "course": 25,
+    "a": 0.75,
+    "o": 0.4,
+    "mode": "overlay",
+    "sens": "descend"
+   },
+   "css": "/* Candidat L2 — lumière rasante (cahier-des-charges.md §3.5). Paramètres : {\"D\":5,\"Hb\":50,\"theta\":6,\"course\":25,\"a\":0.75,\"o\":0.4,\"mode\":\"overlay\",\"sens\":\"descend\"} */\n@media (min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{\n    content:\"\";position:absolute;z-index:1;pointer-events:none;\n    left:-20%;width:140%;height:50svh;\n    top:calc(100% - 23vw - 110px - 50svh - 5.226vw);\n    rotate:6deg;\n    background:linear-gradient(180deg,rgba(255,214,150,0) 0%,rgba(10,7,4,0.4) 22%,rgba(255,214,150,0.75) 50%,rgba(10,7,4,0.4) 78%,rgba(255,214,150,0) 100%);\n    mix-blend-mode:overlay;\n    animation:l2-glisse 5s cubic-bezier(.37,0,.63,1) infinite alternate;\n  }\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes l2-glisse{from{translate:0 calc(-1 * 25svh)}to{translate:0 0}}\n",
+   "etat_t5000": {
+    "relief": "sans",
+    "calque": {
+     "content": "\"\"",
+     "translate": "0px",
+     "rotate": "6deg",
+     "opacity": "1",
+     "zIndex": "1",
+     "top": "-17.0938px",
+     "height": "400px",
+     "mode": "overlay"
+    },
+    "scaleImg": "1.00721",
+    "h1Haut": 463.9,
+    "animsCalque": [
+     {
+      "nom": "l2-glisse",
+      "proprietes": [
+       "translate"
+      ]
+     }
+    ],
+    "animsPhoto": [
+     {
+      "nom": "pousse",
+      "proprietes": [
+       "scale"
+      ]
+     }
+    ]
+   },
+   "C2a": {
+    "paire_2500_5000": {
+     "moyen": 0.0403,
+     "part8": 0.323
+    },
+    "paire_5000_8000": {
+     "moyen": 0.051,
+     "part8": 0.392
+    },
+    "cible": 0.56,
+    "tenu": false
+   },
+   "C6a": {
+    "zone": {
+     "left": 113,
+     "top": 107,
+     "width": 264,
+     "height": 267
+    },
+    "ecartMoyenPixel": 0.0491,
+    "ecartDesMoyennesGris": 0.0072,
+    "luminanceRelativeMoyenne": {
+     "t25": 0.3343,
+     "t80": 0.3439,
+     "ecart": 0.0096
+    }
+   },
+   "C2b": {
+    "images": 81,
+    "pas_ms": 125,
+    "ecartMoyenParImage": 0.0032,
+    "plusLongFige_s": 10,
+    "finPlageFigee_image": 80,
+    "partPairesSous0006": 1,
+    "ecartMaxPaire": 0.0048,
+    "pairesAuDessus0085": 0,
+    "tenu": false
+   },
+   "C2c": {
+    "ecartMaxPaire": 0.0048,
+    "pairesAuDessus0085": 0,
+    "tenu": true
+   },
+   "diffsRelevé": [
+    0.0038,
+    0.0037,
+    0.0035,
+    0.0033,
+    0.0031,
+    0.0029,
+    0.0028,
+    0.0026,
+    0.0025,
+    0.0023,
+    0.0022,
+    0.002,
+    0.0019,
+    0.0018,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0018,
+    0.0019,
+    0.002,
+    0.0021,
+    0.0023,
+    0.0024,
+    0.0026,
+    0.0028,
+    0.0029,
+    0.0031,
+    0.0033,
+    0.0035,
+    0.0036,
+    0.0038,
+    0.004,
+    0.0042,
+    0.0044,
+    0.0045,
+    0.0046,
+    0.0047,
+    0.0047,
+    0.0048,
+    0.0048,
+    0.0047,
+    0.0046,
+    0.0045,
+    0.0043,
+    0.0041,
+    0.0039,
+    0.0036,
+    0.0033,
+    0.0031,
+    0.0027,
+    0.0024,
+    0.002,
+    0.0017,
+    0.0014,
+    0.0011,
+    0.0011,
+    0.0013,
+    0.0016,
+    0.0019,
+    0.0022,
+    0.0026,
+    0.0029,
+    0.0032,
+    0.0034,
+    0.0036,
+    0.0038,
+    0.004,
+    0.0042,
+    0.0043,
+    0.0043,
+    0.0044,
+    0.0044,
+    0.0043,
+    0.0043,
+    0.0042,
+    0.004,
+    0.0038,
+    0.0036,
+    0.0034
+   ],
+   "R12_rapide": {
+    "instants": 40,
+    "min": 3.31,
+    "max": 3.411,
+    "tenu": true
+   },
+   "temoinTitre": {
+    "instants": 10,
+    "pixelsModifiesSousTitreMax": 0,
+    "ecartMaxSousTitre": 0,
+    "partPixelsEclairesAuDessus_d8": [
+     0.364,
+     0.461,
+     0.537,
+     0.556,
+     0.539,
+     0.465,
+     0.372,
+     0.274,
+     0.229,
+     0.278
+    ],
+    "hautTitre": 463
+   }
+  },
+  {
+   "nom": "V3",
+   "date": "2026-09-15T10:00:28.744Z",
+   "params": {
+    "D": 5,
+    "Hb": 60,
+    "theta": 6,
+    "course": 30,
+    "a": 0.85,
+    "o": 0.5,
+    "mode": "overlay",
+    "sens": "descend",
+    "respire": 0.55
+   },
+   "css": "/* Candidat L2 — lumière rasante (cahier-des-charges.md §3.5). Paramètres : {\"D\":5,\"Hb\":60,\"theta\":6,\"course\":30,\"a\":0.85,\"o\":0.5,\"mode\":\"overlay\",\"sens\":\"descend\",\"respire\":0.55} */\n@media (min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{\n    content:\"\";position:absolute;z-index:1;pointer-events:none;\n    left:-20%;width:140%;height:60svh;\n    top:calc(100% - 23vw - 110px - 60svh - 5.226vw);\n    rotate:6deg;\n    background:linear-gradient(180deg,rgba(255,214,150,0) 0%,rgba(10,7,4,0.5) 22%,rgba(255,214,150,0.85) 50%,rgba(10,7,4,0.5) 78%,rgba(255,214,150,0) 100%);\n    mix-blend-mode:overlay;\n    animation:l2-glisse 5s cubic-bezier(.37,0,.63,1) infinite alternate,l2-respire 5s cubic-bezier(.37,0,.63,1) -2.5s infinite alternate;\n  }\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes l2-glisse{from{translate:0 calc(-1 * 30svh)}to{translate:0 0}}\n@keyframes l2-respire{from{opacity:1}to{opacity:0.55}}\n",
+   "etat_t5000": {
+    "relief": "sans",
+    "calque": {
+     "content": "\"\"",
+     "translate": "0px",
+     "rotate": "6deg",
+     "opacity": "0.775",
+     "zIndex": "1",
+     "top": "-97.0938px",
+     "height": "480px",
+     "mode": "overlay"
+    },
+    "scaleImg": "1.00721",
+    "h1Haut": 463.9,
+    "animsCalque": [
+     {
+      "nom": "l2-glisse",
+      "proprietes": [
+       "translate"
+      ]
+     },
+     {
+      "nom": "l2-respire",
+      "proprietes": [
+       "opacity"
+      ]
+     }
+    ],
+    "animsPhoto": [
+     {
+      "nom": "pousse",
+      "proprietes": [
+       "scale"
+      ]
+     }
+    ]
+   },
+   "C2a": {
+    "paire_2500_5000": {
+     "moyen": 0.0332,
+     "part8": 0.3
+    },
+    "paire_5000_8000": {
+     "moyen": 0.0476,
+     "part8": 0.374
+    },
+    "cible": 0.56,
+    "tenu": false
+   },
+   "C6a": {
+    "zone": {
+     "left": 113,
+     "top": 107,
+     "width": 264,
+     "height": 267
+    },
+    "ecartMoyenPixel": 0.0432,
+    "ecartDesMoyennesGris": 0.0068,
+    "luminanceRelativeMoyenne": {
+     "t25": 0.3399,
+     "t80": 0.3483,
+     "ecart": 0.0083
+    }
+   },
+   "C2b": {
+    "images": 81,
+    "pas_ms": 125,
+    "ecartMoyenParImage": 0.0028,
+    "plusLongFige_s": 10,
+    "finPlageFigee_image": 80,
+    "partPairesSous0006": 1,
+    "ecartMaxPaire": 0.0047,
+    "pairesAuDessus0085": 0,
+    "tenu": false
+   },
+   "C2c": {
+    "ecartMaxPaire": 0.0047,
+    "pairesAuDessus0085": 0,
+    "tenu": true
+   },
+   "diffsRelevé": [
+    0.0038,
+    0.0036,
+    0.0033,
+    0.0031,
+    0.0029,
+    0.0027,
+    0.0025,
+    0.0024,
+    0.0023,
+    0.0021,
+    0.002,
+    0.0019,
+    0.0018,
+    0.0018,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0017,
+    0.0018,
+    0.0018,
+    0.0019,
+    0.0019,
+    0.002,
+    0.0021,
+    0.0022,
+    0.0023,
+    0.0023,
+    0.0025,
+    0.0025,
+    0.0027,
+    0.0027,
+    0.0029,
+    0.003,
+    0.003,
+    0.0031,
+    0.0031,
+    0.0032,
+    0.0033,
+    0.0033,
+    0.0033,
+    0.0034,
+    0.0033,
+    0.0033,
+    0.0032,
+    0.0031,
+    0.003,
+    0.0028,
+    0.0026,
+    0.0024,
+    0.0022,
+    0.002,
+    0.0017,
+    0.0014,
+    0.0013,
+    0.0013,
+    0.0013,
+    0.0016,
+    0.0019,
+    0.0023,
+    0.0026,
+    0.003,
+    0.0033,
+    0.0036,
+    0.0039,
+    0.0042,
+    0.0044,
+    0.0045,
+    0.0046,
+    0.0047,
+    0.0047,
+    0.0047,
+    0.0045,
+    0.0045,
+    0.0044,
+    0.004,
+    0.0039,
+    0.0037,
+    0.0034
+   ],
+   "R12_rapide": {
+    "instants": 40,
+    "min": 3.31,
+    "max": 3.411,
+    "tenu": true
+   },
+   "temoinTitre": {
+    "instants": 10,
+    "pixelsModifiesSousTitreMax": 0,
+    "ecartMaxSousTitre": 0,
+    "partPixelsEclairesAuDessus_d8": [
+     0.235,
+     0.396,
+     0.476,
+     0.547,
+     0.543,
+     0.487,
+     0.326,
+     0.204,
+     0.163,
+     0.167
+    ],
+    "hautTitre": 463
+   }
+  },
+  {
+   "nom": "V5",
+   "date": "2026-09-15T10:04:09.480Z",
+   "params": {
+    "D": 5,
+    "Hb": 38,
+    "theta": 4,
+    "course": 24,
+    "a": 1,
+    "o": 0.6,
+    "mode": "soft-light",
+    "sens": "descend"
+   },
+   "css": "/* Candidat L2 — lumière rasante (cahier-des-charges.md §3.5). Paramètres : {\"D\":5,\"Hb\":38,\"theta\":4,\"course\":24,\"a\":1,\"o\":0.6,\"mode\":\"soft-light\",\"sens\":\"descend\"} */\n@media (min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{\n    content:\"\";position:absolute;z-index:1;pointer-events:none;\n    left:-20%;width:140%;height:38svh;\n    top:calc(100% - 23vw - 110px - 38svh - 3.488vw);\n    rotate:4deg;\n    background:linear-gradient(180deg,rgba(255,214,150,0) 0%,rgba(10,7,4,0.6) 22%,rgba(255,214,150,1) 50%,rgba(10,7,4,0.6) 78%,rgba(255,214,150,0) 100%);\n    mix-blend-mode:soft-light;\n    animation:l2-glisse 5s cubic-bezier(.37,0,.63,1) infinite alternate;\n  }\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes l2-glisse{from{translate:0 calc(-1 * 24svh)}to{translate:0 0}}\n",
+   "etat_t5000": {
+    "relief": "sans",
+    "calque": {
+     "content": "\"\"",
+     "translate": "0px",
+     "rotate": "4deg",
+     "opacity": "1",
+     "zIndex": "1",
+     "top": "97.7969px",
+     "height": "304px",
+     "mode": "soft-light"
+    },
+    "scaleImg": "1.00721",
+    "h1Haut": 463.9,
+    "animsCalque": [
+     {
+      "nom": "l2-glisse",
+      "proprietes": [
+       "translate"
+      ]
+     }
+    ],
+    "animsPhoto": [
+     {
+      "nom": "pousse",
+      "proprietes": [
+       "scale"
+      ]
+     }
+    ]
+   },
+   "C2a": {
+    "paire_2500_5000": {
+     "moyen": 0.0378,
+     "part8": 0.318
+    },
+    "paire_5000_8000": {
+     "moyen": 0.0464,
+     "part8": 0.389
+    },
+    "cible": 0.56,
+    "tenu": false
+   },
+   "C6a": {
+    "zone": {
+     "left": 113,
+     "top": 107,
+     "width": 264,
+     "height": 267
+    },
+    "ecartMoyenPixel": 0.053,
+    "ecartDesMoyennesGris": 0.0034,
+    "luminanceRelativeMoyenne": {
+     "t25": 0.3494,
+     "t80": 0.3498,
+     "ecart": 0.0004
+    }
+   },
+   "C2b": {
+    "images": 81,
+    "pas_ms": 125,
+    "ecartMoyenParImage": 0.0035,
+    "plusLongFige_s": 10,
+    "finPlageFigee_image": 80,
+    "partPairesSous0006": 1,
+    "ecartMaxPaire": 0.0054,
+    "pairesAuDessus0085": 0,
+    "tenu": false
+   },
+   "C2c": {
+    "ecartMaxPaire": 0.0054,
+    "pairesAuDessus0085": 0,
+    "tenu": true
+   },
+   "diffsRelevé": [
+    0.0046,
+    0.0045,
+    0.0043,
+    0.004,
+    0.0038,
+    0.0036,
+    0.0034,
+    0.0032,
+    0.0029,
+    0.0027,
+    0.0025,
+    0.0023,
+    0.0021,
+    0.0019,
+    0.0018,
+    0.0016,
+    0.0017,
+    0.0017,
+    0.0019,
+    0.0021,
+    0.0023,
+    0.0025,
+    0.0027,
+    0.0029,
+    0.0031,
+    0.0034,
+    0.0035,
+    0.0038,
+    0.004,
+    0.0043,
+    0.0045,
+    0.0047,
+    0.0048,
+    0.005,
+    0.0051,
+    0.0053,
+    0.0054,
+    0.0054,
+    0.0054,
+    0.0053,
+    0.0053,
+    0.0051,
+    0.005,
+    0.0048,
+    0.0045,
+    0.0043,
+    0.004,
+    0.0037,
+    0.0034,
+    0.0031,
+    0.0028,
+    0.0024,
+    0.002,
+    0.0017,
+    0.0014,
+    0.0011,
+    0.0011,
+    0.0013,
+    0.0016,
+    0.0019,
+    0.0023,
+    0.0026,
+    0.0029,
+    0.0032,
+    0.0035,
+    0.0038,
+    0.004,
+    0.0043,
+    0.0044,
+    0.0046,
+    0.0048,
+    0.0048,
+    0.0049,
+    0.0049,
+    0.0049,
+    0.0049,
+    0.0048,
+    0.0046,
+    0.0045,
+    0.0043
+   ],
+   "R12_rapide": {
+    "instants": 40,
+    "min": 3.31,
+    "max": 3.411,
+    "tenu": true
+   },
+   "temoinTitre": {
+    "instants": 10,
+    "pixelsModifiesSousTitreMax": 0,
+    "ecartMaxSousTitre": 0,
+    "partPixelsEclairesAuDessus_d8": [
+     0.394,
+     0.439,
+     0.465,
+     0.474,
+     0.466,
+     0.443,
+     0.399,
+     0.305,
+     0.287,
+     0.307
+    ],
+    "hautTitre": 463
+   }
+  },
+  {
+   "nom": "V4",
+   "date": "2026-09-15T10:18:45.670Z",
+   "params": {
+    "D": 5,
+    "Hb": 38,
+    "theta": 4,
+    "course": 24,
+    "a": 0.85,
+    "o": 0.5,
+    "mode": "overlay",
+    "sens": "descend"
+   },
+   "css": "/* Candidat L2 — lumière rasante (cahier-des-charges.md §3.5). Paramètres : {\"D\":5,\"Hb\":38,\"theta\":4,\"course\":24,\"a\":0.85,\"o\":0.5,\"mode\":\"overlay\",\"sens\":\"descend\"} */\n@media (min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{\n    content:\"\";position:absolute;z-index:1;pointer-events:none;\n    left:-20%;width:140%;height:38svh;\n    top:calc(100% - 23vw - 110px - 38svh - 3.488vw);\n    rotate:4deg;\n    background:linear-gradient(180deg,rgba(255,214,150,0) 0%,rgba(10,7,4,0.5) 22%,rgba(255,214,150,0.85) 50%,rgba(10,7,4,0.5) 78%,rgba(255,214,150,0) 100%);\n    mix-blend-mode:overlay;\n    animation:l2-glisse 5s cubic-bezier(.37,0,.63,1) infinite alternate;\n  }\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes l2-glisse{from{translate:0 calc(-1 * 24svh)}to{translate:0 0}}\n",
+   "etat_t5000": {
+    "relief": "sans",
+    "calque": {
+     "content": "\"\"",
+     "translate": "0px",
+     "rotate": "4deg",
+     "opacity": "1",
+     "zIndex": "1",
+     "top": "97.7969px",
+     "height": "304px",
+     "mode": "overlay"
+    },
+    "scaleImg": "1.00721",
+    "h1Haut": 463.9,
+    "animsCalque": [
+     {
+      "nom": "l2-glisse",
+      "proprietes": [
+       "translate"
+      ]
+     }
+    ],
+    "animsPhoto": [
+     {
+      "nom": "pousse",
+      "proprietes": [
+       "scale"
+      ]
+     }
+    ]
+   },
+   "C2a": {
+    "paire_2500_5000": {
+     "moyen": 0.0471,
+     "part8": 0.342
+    },
+    "paire_5000_8000": {
+     "moyen": 0.053,
+     "part8": 0.407
+    },
+    "cible": 0.56,
+    "tenu": false
+   },
+   "C6a": {
+    "zone": {
+     "left": 113,
+     "top": 107,
+     "width": 264,
+     "height": 267
+    },
+    "ecartMoyenPixel": 0.0594,
+    "ecartDesMoyennesGris": 0.0069,
+    "luminanceRelativeMoyenne": {
+     "t25": 0.3551,
+     "t80": 0.3513,
+     "ecart": 0.0039
+    }
+   },
+   "C2b": {
+    "images": 81,
+    "pas_ms": 125,
+    "ecartMoyenParImage": 0.0043,
+    "plusLongFige_s": 4,
+    "finPlageFigee_image": 32,
+    "partPairesSous0006": 0.787,
+    "ecartMaxPaire": 0.0067,
+    "pairesAuDessus0085": 0,
+    "tenu": false
+   },
+   "C2c": {
+    "ecartMaxPaire": 0.0067,
+    "pairesAuDessus0085": 0,
+    "tenu": true
+   },
+   "diffsRelevé": [
+    0.0057,
+    0.0055,
+    0.0053,
+    0.005,
+    0.0047,
+    0.0044,
+    0.0041,
+    0.0038,
+    0.0035,
+    0.0032,
+    0.0029,
+    0.0026,
+    0.0023,
+    0.0021,
+    0.0018,
+    0.0017,
+    0.0017,
+    0.0018,
+    0.002,
+    0.0023,
+    0.0026,
+    0.0029,
+    0.0032,
+    0.0034,
+    0.0037,
+    0.0041,
+    0.0044,
+    0.0047,
+    0.005,
+    0.0052,
+    0.0055,
+    0.0058,
+    0.006,
+    0.0062,
+    0.0064,
+    0.0065,
+    0.0067,
+    0.0066,
+    0.0066,
+    0.0066,
+    0.0065,
+    0.0063,
+    0.0061,
+    0.0058,
+    0.0056,
+    0.0053,
+    0.0049,
+    0.0045,
+    0.0041,
+    0.0037,
+    0.0033,
+    0.0029,
+    0.0024,
+    0.0019,
+    0.0015,
+    0.0012,
+    0.0011,
+    0.0014,
+    0.0019,
+    0.0023,
+    0.0027,
+    0.0031,
+    0.0036,
+    0.0039,
+    0.0043,
+    0.0047,
+    0.005,
+    0.0053,
+    0.0055,
+    0.0057,
+    0.0059,
+    0.006,
+    0.0062,
+    0.0062,
+    0.0062,
+    0.0062,
+    0.006,
+    0.0059,
+    0.0057,
+    0.0054
+   ],
+   "R12_rapide": {
+    "instants": 40,
+    "min": 3.31,
+    "max": 3.411,
+    "tenu": true
+   },
+   "temoinTitre": {
+    "instants": 10,
+    "pixelsModifiesSousTitreMax": 0,
+    "ecartMaxSousTitre": 0,
+    "partPixelsEclairesAuDessus_d8": [
+     0.433,
+     0.478,
+     0.513,
+     0.517,
+     0.514,
+     0.481,
+     0.44,
+     0.339,
+     0.318,
+     0.342
+    ],
+    "hautTitre": 463
+   }
+  }
+ ]
+}

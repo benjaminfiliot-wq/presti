@@ -1,0 +1,8 @@
+@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){
+  /* v28 : le moment signature (da--signature), 1. au repos : L1, un projecteur tourne autour du puits (candidat L1, §3.5).
+     Accueil seulement (.ouverture>). Calque dédié ::before, au-dessus de la photo et sous le dégradé du titre (::after passe en z-index 2).
+     Seuls rotate du calque sont animés. Un tour continu (linear) n'a ni aller-retour ni arrêt. */
+  html.js.da--signature .ouverture>.hero--plein .hero__media::before{content:"";position:absolute;z-index:1;pointer-events:none;left:calc(40.4% - 85vw);top:calc(42% - 2.55vw - 85vw);width:170vw;height:170vw;background:conic-gradient(from 0deg,rgba(255,214,150,0.4) 0deg,rgba(255,214,150,0.2) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.475) 65deg,rgba(10,7,4,0.95) 90deg,rgba(10,7,4,0.475) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.2) 155deg,rgba(255,214,150,0.4) 180deg,rgba(255,214,150,0.2) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.475) 245deg,rgba(10,7,4,0.95) 270deg,rgba(10,7,4,0.475) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.2) 335deg,rgba(255,214,150,0.4) 360deg);-webkit-mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mix-blend-mode:soft-light;animation:signature-projecteur 9s linear infinite}
+  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}
+}
+@keyframes signature-projecteur{to{rotate:-360deg}}

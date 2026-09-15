@@ -1,0 +1,14 @@
+/* Candidat L2 — lumière rasante (cahier-des-charges.md §3.5). Paramètres : {"D":5,"Hb":38,"theta":4,"course":24,"a":0.85,"o":0.5,"mode":"overlay","sens":"descend"} */
+@media (min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){
+  html.js.da--signature .ouverture>.hero--plein .hero__media::before{
+    content:"";position:absolute;z-index:1;pointer-events:none;
+    left:-20%;width:140%;height:38svh;
+    top:calc(100% - 23vw - 110px - 38svh - 3.488vw);
+    rotate:4deg;
+    background:linear-gradient(180deg,rgba(255,214,150,0) 0%,rgba(10,7,4,0.5) 22%,rgba(255,214,150,0.85) 50%,rgba(10,7,4,0.5) 78%,rgba(255,214,150,0) 100%);
+    mix-blend-mode:overlay;
+    animation:l2-glisse 5s cubic-bezier(.37,0,.63,1) infinite alternate;
+  }
+  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}
+}
+@keyframes l2-glisse{from{translate:0 calc(-1 * 24svh)}to{translate:0 0}}

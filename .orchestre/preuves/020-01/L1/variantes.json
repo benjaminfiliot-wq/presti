@@ -1,0 +1,986 @@
+{
+ "methode": "reglage.mjs + commun.mjs ; page en ligne, chromium.launch() nu ; animations de la timeline du document figées image par image (currentTime = t ms depuis le chargement) ; C2-a PNG 2,5/5/8 s ; C2-b/C2-c relevé de 81 images JPEG 92 à 125 ms depuis 8 s ; R-12 au pas de 1 s sur ppcm(40 s, P) ; C6-a zone des marches à l’échelle",
+ "variantes": {
+  "temoin": {
+   "date": "2026-09-15T09:32:04.285Z",
+   "params": null,
+   "css": "",
+   "formats": {
+    "1088x800": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "none",
+       "blend": "normal",
+       "z": "auto",
+       "animation": "none",
+       "apresZ": "auto"
+      },
+      "animationsCalque": [],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0131,
+       "part8": 0.095
+      },
+      "paire_5000_8000": {
+       "moyen": 0.023,
+       "part8": 0.187
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartMoyenneGris_t25_t80": 0.0069,
+      "ecartMoyenPixel_t25_t80": 0.0435,
+      "grisMoyen_t25": 144.44,
+      "grisMoyen_t80": 146.19
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0016,
+      "plusLongFige_s": 10,
+      "plusLongFigeDebut_ms": 8000,
+      "pairesSous0006": 80,
+      "ecartMin": 0.001,
+      "ecartP10": 0.0011,
+      "ecartMax": 0.0019,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 40,
+      "pas_ms": 1000,
+      "de_ms": 2000,
+      "a_ms": 41000,
+      "p90min": 3.31,
+      "p90minA_ms": 40000,
+      "p90max": 3.411,
+      "sous3": 0
+     },
+     "duree_s": 29
+    },
+    "1440x900": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "none",
+       "blend": "normal",
+       "z": "auto",
+       "animation": "none",
+       "apresZ": "auto"
+      },
+      "animationsCalque": [],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0127,
+       "part8": 0.091
+      },
+      "paire_5000_8000": {
+       "moyen": 0.0222,
+       "part8": 0.182
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartMoyenneGris_t25_t80": 0.0066,
+      "ecartMoyenPixel_t25_t80": 0.0424,
+      "grisMoyen_t25": 148.63,
+      "grisMoyen_t80": 150.33
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0014,
+      "plusLongFige_s": 10,
+      "plusLongFigeDebut_ms": 8000,
+      "pairesSous0006": 80,
+      "ecartMin": 0.0007,
+      "ecartP10": 0.0008,
+      "ecartMax": 0.0018,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 40,
+      "pas_ms": 1000,
+      "de_ms": 2000,
+      "a_ms": 41000,
+      "p90min": 3.36,
+      "p90minA_ms": 18000,
+      "p90max": 3.406,
+      "sous3": 0
+     },
+     "duree_s": 43
+    }
+   }
+  },
+  "v1-rai-12s-fort": {
+   "date": "2026-09-15T09:33:37.805Z",
+   "params": {
+    "P": 12,
+    "sens": -1,
+    "taille": 106,
+    "conique": "conic-gradient(from 0deg,rgba(255,214,150,0) 0deg,rgba(255,214,150,0.95) 26deg,rgba(255,214,150,0) 58deg,rgba(10,7,4,0) 150deg,rgba(10,7,4,0.7) 205deg,rgba(10,7,4,0) 265deg,rgba(255,214,150,0) 360deg)",
+    "masque": "transparent 7%,#000 24%,#000 72%,transparent 100%"
+   },
+   "css": "/* v28 : le moment signature (da--signature), 1. au repos : L1, un projecteur tourne autour du puits (candidat L1, §3.5).\n   Accueil seulement (.ouverture>). Calque dédié ::before, au-dessus de la photo et sous le dégradé du titre (::after passe en z-index 2).\n   Seuls rotate du calque sont animés. Un tour continu (linear) n'a ni aller-retour ni arrêt. */\n@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{content:\"\";position:absolute;z-index:1;pointer-events:none;left:calc(40.4% - 53vw);top:calc(42% - 2.55vw - 53vw);width:106vw;height:106vw;background:conic-gradient(from 0deg,rgba(255,214,150,0) 0deg,rgba(255,214,150,0.95) 26deg,rgba(255,214,150,0) 58deg,rgba(10,7,4,0) 150deg,rgba(10,7,4,0.7) 205deg,rgba(10,7,4,0) 265deg,rgba(255,214,150,0) 360deg);-webkit-mask:radial-gradient(closest-side,transparent 7%,#000 24%,#000 72%,transparent 100%);mask:radial-gradient(closest-side,transparent 7%,#000 24%,#000 72%,transparent 100%);mix-blend-mode:soft-light;animation:signature-projecteur 12s linear infinite}\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes signature-projecteur{to{rotate:-360deg}}\n",
+   "formats": {
+    "1088x800": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0314,
+       "part8": 0.355
+      },
+      "paire_5000_8000": {
+       "moyen": 0.039,
+       "part8": 0.411
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartMoyenneGris_t25_t80": 0.054,
+      "ecartMoyenPixel_t25_t80": 0.0765,
+      "grisMoyen_t25": 151.43,
+      "grisMoyen_t80": 137.67
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0034,
+      "plusLongFige_s": 10,
+      "plusLongFigeDebut_ms": 8000,
+      "pairesSous0006": 80,
+      "ecartMin": 0.0023,
+      "ecartP10": 0.0027,
+      "ecartMax": 0.0044,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 120,
+      "pas_ms": 1000,
+      "de_ms": 2000,
+      "a_ms": 121000,
+      "p90min": 3.259,
+      "p90minA_ms": 81000,
+      "p90max": 3.571,
+      "sous3": 0
+     },
+     "duree_s": 77
+    },
+    "1440x900": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0319,
+       "part8": 0.372
+      },
+      "paire_5000_8000": {
+       "moyen": 0.0383,
+       "part8": 0.418
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartMoyenneGris_t25_t80": 0.0402,
+      "ecartMoyenPixel_t25_t80": 0.0651,
+      "grisMoyen_t25": 153.68,
+      "grisMoyen_t80": 143.42
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0034,
+      "plusLongFige_s": 10,
+      "plusLongFigeDebut_ms": 8000,
+      "pairesSous0006": 80,
+      "ecartMin": 0.0021,
+      "ecartP10": 0.0025,
+      "ecartMax": 0.0046,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 120,
+      "pas_ms": 1000,
+      "de_ms": 2000,
+      "a_ms": 121000,
+      "p90min": 3.205,
+      "p90minA_ms": 21000,
+      "p90max": 3.646,
+      "sous3": 0
+     },
+     "duree_s": 129
+    }
+   }
+  },
+  "v2-deux-faisceaux-12s": {
+   "date": "2026-09-15T09:37:47.008Z",
+   "params": {
+    "P": 12,
+    "sens": -1,
+    "taille": 140,
+    "conique": "conic-gradient(from 0deg,rgba(255,214,150,0.7) 0deg,rgba(255,214,150,0.35) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.25) 65deg,rgba(10,7,4,0.5) 90deg,rgba(10,7,4,0.25) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.35) 155deg,rgba(255,214,150,0.7) 180deg,rgba(255,214,150,0.35) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.25) 245deg,rgba(10,7,4,0.5) 270deg,rgba(10,7,4,0.25) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.35) 335deg,rgba(255,214,150,0.7) 360deg)",
+    "masque": "transparent 6%,#000 20%,#000 72%,transparent 100%"
+   },
+   "css": "/* v28 : le moment signature (da--signature), 1. au repos : L1, un projecteur tourne autour du puits (candidat L1, §3.5).\n   Accueil seulement (.ouverture>). Calque dédié ::before, au-dessus de la photo et sous le dégradé du titre (::after passe en z-index 2).\n   Seuls rotate du calque sont animés. Un tour continu (linear) n'a ni aller-retour ni arrêt. */\n@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{content:\"\";position:absolute;z-index:1;pointer-events:none;left:calc(40.4% - 70vw);top:calc(42% - 2.55vw - 70vw);width:140vw;height:140vw;background:conic-gradient(from 0deg,rgba(255,214,150,0.7) 0deg,rgba(255,214,150,0.35) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.25) 65deg,rgba(10,7,4,0.5) 90deg,rgba(10,7,4,0.25) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.35) 155deg,rgba(255,214,150,0.7) 180deg,rgba(255,214,150,0.35) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.25) 245deg,rgba(10,7,4,0.5) 270deg,rgba(10,7,4,0.25) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.35) 335deg,rgba(255,214,150,0.7) 360deg);-webkit-mask:radial-gradient(closest-side,transparent 6%,#000 20%,#000 72%,transparent 100%);mask:radial-gradient(closest-side,transparent 6%,#000 20%,#000 72%,transparent 100%);mix-blend-mode:soft-light;animation:signature-projecteur 12s linear infinite}\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes signature-projecteur{to{rotate:-360deg}}\n",
+   "formats": {
+    "1088x800": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0557,
+       "part8": 0.541
+      },
+      "paire_5000_8000": {
+       "moyen": 0.0628,
+       "part8": 0.575
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartMoyenneGris_t25_t80": 0.0043,
+      "ecartMoyenPixel_t25_t80": 0.0427,
+      "grisMoyen_t25": 154.52,
+      "grisMoyen_t80": 155.62
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0046,
+      "plusLongFige_s": 10,
+      "plusLongFigeDebut_ms": 8000,
+      "pairesSous0006": 80,
+      "ecartMin": 0.0042,
+      "ecartP10": 0.0043,
+      "ecartMax": 0.0049,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 120,
+      "pas_ms": 1000,
+      "de_ms": 2000,
+      "a_ms": 121000,
+      "p90min": 3.269,
+      "p90minA_ms": 121000,
+      "p90max": 3.474,
+      "sous3": 0
+     },
+     "duree_s": 126
+    },
+    "1440x900": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0579,
+       "part8": 0.565
+      },
+      "paire_5000_8000": {
+       "moyen": 0.0636,
+       "part8": 0.59
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartMoyenneGris_t25_t80": 0,
+      "ecartMoyenPixel_t25_t80": 0.0397,
+      "grisMoyen_t25": 159,
+      "grisMoyen_t80": 159
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0047,
+      "plusLongFige_s": 10,
+      "plusLongFigeDebut_ms": 8000,
+      "pairesSous0006": 80,
+      "ecartMin": 0.0042,
+      "ecartP10": 0.0043,
+      "ecartMax": 0.005,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 120,
+      "pas_ms": 1000,
+      "de_ms": 2000,
+      "a_ms": 121000,
+      "p90min": 3.219,
+      "p90minA_ms": 20000,
+      "p90max": 3.476,
+      "sous3": 0
+     },
+     "duree_s": 234
+    }
+   }
+  },
+  "v3-deux-faisceaux-10s-fort": {
+   "date": "2026-09-15T09:48:15.040Z",
+   "params": {
+    "P": 10,
+    "sens": -1,
+    "taille": 170,
+    "conique": "conic-gradient(from 0deg,rgba(255,214,150,0.85) 0deg,rgba(255,214,150,0.425) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.3) 65deg,rgba(10,7,4,0.6) 90deg,rgba(10,7,4,0.3) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.425) 155deg,rgba(255,214,150,0.85) 180deg,rgba(255,214,150,0.425) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.3) 245deg,rgba(10,7,4,0.6) 270deg,rgba(10,7,4,0.3) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.425) 335deg,rgba(255,214,150,0.85) 360deg)",
+    "masque": "transparent 5%,#000 17%,#000 72%,transparent 100%"
+   },
+   "css": "/* v28 : le moment signature (da--signature), 1. au repos : L1, un projecteur tourne autour du puits (candidat L1, §3.5).\n   Accueil seulement (.ouverture>). Calque dédié ::before, au-dessus de la photo et sous le dégradé du titre (::after passe en z-index 2).\n   Seuls rotate du calque sont animés. Un tour continu (linear) n'a ni aller-retour ni arrêt. */\n@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{content:\"\";position:absolute;z-index:1;pointer-events:none;left:calc(40.4% - 85vw);top:calc(42% - 2.55vw - 85vw);width:170vw;height:170vw;background:conic-gradient(from 0deg,rgba(255,214,150,0.85) 0deg,rgba(255,214,150,0.425) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.3) 65deg,rgba(10,7,4,0.6) 90deg,rgba(10,7,4,0.3) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.425) 155deg,rgba(255,214,150,0.85) 180deg,rgba(255,214,150,0.425) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.3) 245deg,rgba(10,7,4,0.6) 270deg,rgba(10,7,4,0.3) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.425) 335deg,rgba(255,214,150,0.85) 360deg);-webkit-mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mix-blend-mode:soft-light;animation:signature-projecteur 10s linear infinite}\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes signature-projecteur{to{rotate:-360deg}}\n",
+   "formats": {
+    "1088x800": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0719,
+       "part8": 0.592
+      },
+      "paire_5000_8000": {
+       "moyen": 0.0735,
+       "part8": 0.608
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartMoyenneGris_t25_t80": 0.0196,
+      "ecartMoyenPixel_t25_t80": 0.0442,
+      "grisMoyen_t25": 154,
+      "grisMoyen_t80": 149.01
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0067,
+      "plusLongFige_s": 0,
+      "plusLongFigeDebut_ms": null,
+      "pairesSous0006": 0,
+      "ecartMin": 0.0062,
+      "ecartP10": 0.0063,
+      "ecartMax": 0.007,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 40,
+      "pas_ms": 1000,
+      "de_ms": 2000,
+      "a_ms": 41000,
+      "p90min": 3.247,
+      "p90minA_ms": 41000,
+      "p90max": 3.485,
+      "sous3": 0
+     },
+     "duree_s": 72
+    },
+    "1440x900": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.075,
+       "part8": 0.603
+      },
+      "paire_5000_8000": {
+       "moyen": 0.0751,
+       "part8": 0.618
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartMoyenneGris_t25_t80": 0.0182,
+      "ecartMoyenPixel_t25_t80": 0.0419,
+      "grisMoyen_t25": 159.38,
+      "grisMoyen_t80": 154.74
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0068,
+      "plusLongFige_s": 0,
+      "plusLongFigeDebut_ms": null,
+      "pairesSous0006": 0,
+      "ecartMin": 0.0062,
+      "ecartP10": 0.0063,
+      "ecartMax": 0.0072,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 40,
+      "pas_ms": 1000,
+      "de_ms": 2000,
+      "a_ms": 41000,
+      "p90min": 3.025,
+      "p90minA_ms": 22000,
+      "p90max": 3.479,
+      "sous3": 0
+     },
+     "duree_s": 91
+    }
+   }
+  },
+  "v4-deux-faisceaux-8s": {
+   "date": "2026-09-15T09:51:16.303Z",
+   "params": {
+    "P": 8,
+    "sens": -1,
+    "taille": 170,
+    "conique": "conic-gradient(from 0deg,rgba(255,214,150,0.7) 0deg,rgba(255,214,150,0.35) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.25) 65deg,rgba(10,7,4,0.5) 90deg,rgba(10,7,4,0.25) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.35) 155deg,rgba(255,214,150,0.7) 180deg,rgba(255,214,150,0.35) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.25) 245deg,rgba(10,7,4,0.5) 270deg,rgba(10,7,4,0.25) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.35) 335deg,rgba(255,214,150,0.7) 360deg)",
+    "masque": "transparent 5%,#000 17%,#000 72%,transparent 100%"
+   },
+   "css": "/* v28 : le moment signature (da--signature), 1. au repos : L1, un projecteur tourne autour du puits (candidat L1, §3.5).\n   Accueil seulement (.ouverture>). Calque dédié ::before, au-dessus de la photo et sous le dégradé du titre (::after passe en z-index 2).\n   Seuls rotate du calque sont animés. Un tour continu (linear) n'a ni aller-retour ni arrêt. */\n@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{content:\"\";position:absolute;z-index:1;pointer-events:none;left:calc(40.4% - 85vw);top:calc(42% - 2.55vw - 85vw);width:170vw;height:170vw;background:conic-gradient(from 0deg,rgba(255,214,150,0.7) 0deg,rgba(255,214,150,0.35) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.25) 65deg,rgba(10,7,4,0.5) 90deg,rgba(10,7,4,0.25) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.35) 155deg,rgba(255,214,150,0.7) 180deg,rgba(255,214,150,0.35) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.25) 245deg,rgba(10,7,4,0.5) 270deg,rgba(10,7,4,0.25) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.35) 335deg,rgba(255,214,150,0.7) 360deg);-webkit-mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mix-blend-mode:soft-light;animation:signature-projecteur 8s linear infinite}\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes signature-projecteur{to{rotate:-360deg}}\n",
+   "formats": {
+    "1088x800": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0546,
+       "part8": 0.569
+      },
+      "paire_5000_8000": {
+       "moyen": 0.0496,
+       "part8": 0.513
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartMoyenneGris_t25_t80": 0.0272,
+      "ecartMoyenPixel_t25_t80": 0.068,
+      "grisMoyen_t25": 145.31,
+      "grisMoyen_t80": 138.38
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0069,
+      "plusLongFige_s": 0,
+      "plusLongFigeDebut_ms": null,
+      "pairesSous0006": 0,
+      "ecartMin": 0.0064,
+      "ecartP10": 0.0065,
+      "ecartMax": 0.0072,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 40,
+      "pas_ms": 1000,
+      "de_ms": 2000,
+      "a_ms": 41000,
+      "p90min": 3.255,
+      "p90minA_ms": 37000,
+      "p90max": 3.466,
+      "sous3": 0
+     },
+     "duree_s": 61
+    },
+    "1440x900": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0541,
+       "part8": 0.584
+      },
+      "paire_5000_8000": {
+       "moyen": 0.05,
+       "part8": 0.532
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartMoyenneGris_t25_t80": 0.0365,
+      "ecartMoyenPixel_t25_t80": 0.0654,
+      "grisMoyen_t25": 150.85,
+      "grisMoyen_t80": 141.54
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.007,
+      "plusLongFige_s": 0,
+      "plusLongFigeDebut_ms": null,
+      "pairesSous0006": 0,
+      "ecartMin": 0.0064,
+      "ecartP10": 0.0066,
+      "ecartMax": 0.0074,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 40,
+      "pas_ms": 1000,
+      "de_ms": 2000,
+      "a_ms": 41000,
+      "p90min": 3.201,
+      "p90minA_ms": 18000,
+      "p90max": 3.461,
+      "sous3": 0
+     },
+     "duree_s": 106
+    }
+   }
+  },
+  "v5-ombre-portee-9s": {
+   "date": "2026-09-15T10:11:02.075Z",
+   "params": {
+    "P": 9,
+    "sens": -1,
+    "taille": 170,
+    "conique": "conic-gradient(from 0deg,rgba(255,214,150,0.4) 0deg,rgba(255,214,150,0.2) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.475) 65deg,rgba(10,7,4,0.95) 90deg,rgba(10,7,4,0.475) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.2) 155deg,rgba(255,214,150,0.4) 180deg,rgba(255,214,150,0.2) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.475) 245deg,rgba(10,7,4,0.95) 270deg,rgba(10,7,4,0.475) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.2) 335deg,rgba(255,214,150,0.4) 360deg)",
+    "masque": "transparent 5%,#000 17%,#000 72%,transparent 100%"
+   },
+   "css": "/* v28 : le moment signature (da--signature), 1. au repos : L1, un projecteur tourne autour du puits (candidat L1, §3.5).\n   Accueil seulement (.ouverture>). Calque dédié ::before, au-dessus de la photo et sous le dégradé du titre (::after passe en z-index 2).\n   Seuls rotate du calque sont animés. Un tour continu (linear) n'a ni aller-retour ni arrêt. */\n@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){\n  html.js.da--signature .ouverture>.hero--plein .hero__media::before{content:\"\";position:absolute;z-index:1;pointer-events:none;left:calc(40.4% - 85vw);top:calc(42% - 2.55vw - 85vw);width:170vw;height:170vw;background:conic-gradient(from 0deg,rgba(255,214,150,0.4) 0deg,rgba(255,214,150,0.2) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.475) 65deg,rgba(10,7,4,0.95) 90deg,rgba(10,7,4,0.475) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.2) 155deg,rgba(255,214,150,0.4) 180deg,rgba(255,214,150,0.2) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.475) 245deg,rgba(10,7,4,0.95) 270deg,rgba(10,7,4,0.475) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.2) 335deg,rgba(255,214,150,0.4) 360deg);-webkit-mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mix-blend-mode:soft-light;animation:signature-projecteur 9s linear infinite}\n  html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}\n}\n@keyframes signature-projecteur{to{rotate:-360deg}}\n",
+   "formats": {
+    "1088x800": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0647,
+       "part8": 0.581
+      },
+      "paire_5000_8000": {
+       "moyen": 0.0688,
+       "part8": 0.605
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 113,
+       "top": 107,
+       "width": 264,
+       "height": 267
+      },
+      "ecartMoyenneGris_t25_t80": 0.0579,
+      "ecartMoyenPixel_t25_t80": 0.0744,
+      "grisMoyen_t25": 145.94,
+      "grisMoyen_t80": 131.19
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0073,
+      "plusLongFige_s": 0.875,
+      "plusLongFigeDebut_ms": 10500,
+      "pairesSous0006": 14,
+      "ecartMin": 0.0055,
+      "ecartP10": 0.0058,
+      "ecartMax": 0.0085,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 160,
+      "pas_ms": 250,
+      "de_ms": 2000,
+      "a_ms": 41750,
+      "p90min": 3.303,
+      "p90minA_ms": 41000,
+      "p90max": 3.607,
+      "sous3": 0
+     },
+     "duree_s": 118
+    },
+    "1280x800": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0651,
+       "part8": 0.583
+      },
+      "paire_5000_8000": {
+       "moyen": 0.0688,
+       "part8": 0.627
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 133,
+       "top": 107,
+       "width": 311,
+       "height": 267
+      },
+      "ecartMoyenneGris_t25_t80": 0.0564,
+      "ecartMoyenPixel_t25_t80": 0.07,
+      "grisMoyen_t25": 151.47,
+      "grisMoyen_t80": 137.08
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0074,
+      "plusLongFige_s": 1.25,
+      "plusLongFigeDebut_ms": 14875,
+      "pairesSous0006": 18,
+      "ecartMin": 0.0052,
+      "ecartP10": 0.0054,
+      "ecartMax": 0.0088,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 160,
+      "pas_ms": 250,
+      "de_ms": 2000,
+      "a_ms": 41750,
+      "p90min": 3.129,
+      "p90minA_ms": 20000,
+      "p90max": 3.583,
+      "sous3": 0
+     },
+     "duree_s": 140
+    },
+    "1440x900": {
+     "etat": {
+      "reliefEtat": "sans",
+      "toile": false,
+      "calque": {
+       "content": "\"\"",
+       "blend": "soft-light",
+       "z": "1",
+       "animation": "signature-projecteur",
+       "apresZ": "2"
+      },
+      "animationsCalque": [
+       {
+        "nom": "signature-projecteur",
+        "proprietes": [
+         "rotate"
+        ]
+       }
+      ],
+      "ratio34_25": true,
+      "largeur1024": true,
+      "barre": 0
+     },
+     "reliefEtatFin": "sans",
+     "C2a": {
+      "paire_2500_5000": {
+       "moyen": 0.0656,
+       "part8": 0.585
+      },
+      "paire_5000_8000": {
+       "moyen": 0.0696,
+       "part8": 0.634
+      }
+     },
+     "C6a": {
+      "zone": {
+       "left": 150,
+       "top": 120,
+       "width": 350,
+       "height": 300
+      },
+      "ecartMoyenneGris_t25_t80": 0.0564,
+      "ecartMoyenPixel_t25_t80": 0.0699,
+      "grisMoyen_t25": 151.53,
+      "grisMoyen_t80": 137.15
+     },
+     "C2bc": {
+      "images": 81,
+      "pas_ms": 125,
+      "debut_ms": 8000,
+      "ecartMoyenParImage": 0.0075,
+      "plusLongFige_s": 1,
+      "plusLongFigeDebut_ms": 15000,
+      "pairesSous0006": 15,
+      "ecartMin": 0.0054,
+      "ecartP10": 0.0056,
+      "ecartMax": 0.009,
+      "pairesAuDessus0085": 0
+     },
+     "R12": {
+      "instants": 160,
+      "pas_ms": 250,
+      "de_ms": 2000,
+      "a_ms": 41750,
+      "p90min": 3.325,
+      "p90minA_ms": 20250,
+      "p90max": 3.694,
+      "sous3": 0
+     },
+     "duree_s": 140
+    }
+   }
+  }
+ }
+}

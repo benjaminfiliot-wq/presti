@@ -149,3 +149,7 @@
 {"id":"020-10","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T10:34:33Z","duree_s":1,"agent":"codex-11","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"020-14","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T10:39:44Z","duree_s":48,"agent":"codex-12","executant":"codex","lignes":0,"dossier":"en-cours"}
 {"id":"020-14","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T10:40:33Z","duree_s":48,"agent":"codex-12","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"020-12","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T10:46:18Z","duree_s":1,"agent":"ag-27-flash","executant":"antigravity","lignes":36858,"dossier":"en-cours"}
+{"id":"020-12","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T10:50:01Z","duree_s":1,"agent":"ag-27-flash","executant":"antigravity","lignes":36858,"dossier":"fait"}
+{"id":"020-11","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T11:09:04Z","duree_s":1,"agent":"ag-26-flash","executant":"antigravity","lignes":10430,"dossier":"en-cours"}
+{"id":"020-11","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T11:10:10Z","duree_s":1,"agent":"ag-26-flash","executant":"antigravity","lignes":10430,"dossier":"fait"}
