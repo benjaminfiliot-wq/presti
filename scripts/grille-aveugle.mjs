@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // scripts/grille-aveugle.mjs — Générateur de planches anonymes pour comparaison à l'aveugle
-// Usage : node scripts/grille-aveugle.mjs --demo=<dossier> --refs=<dossier> --ids=<id1,id2,…> --graine=<entier> --sortie=<dossier>
+// Usage : node scripts/grille-aveugle.mjs --demo=<dossier> --refs=<dossier> --ids=<id1,id2,…> --graine=<entier> --sortie=<dossier> --cle=<fichier>
 
 import fs from 'node:fs'
 import path from 'node:path'
@@ -13,7 +13,8 @@ const { values } = parseArgs({
     refs: { type: 'string' },
     ids: { type: 'string' },
     graine: { type: 'string' },
-    sortie: { type: 'string' }
+    sortie: { type: 'string' },
+    cle: { type: 'string' }
   },
   strict: false
 })
@@ -23,9 +24,10 @@ const dossierRefs = values.refs
 const listeIds = values.ids ? values.ids.split(',').map((s) => s.trim()).filter(Boolean) : []
 const graineStr = values.graine
 const dossierSortie = values.sortie
+const cheminCle = values.cle
 
-if (!dossierDemo || !dossierRefs || listeIds.length === 0 || graineStr === undefined || !dossierSortie) {
-  console.error('Usage : node scripts/grille-aveugle.mjs --demo=<dossier> --refs=<dossier> --ids=<id1,id2,…> --graine=<entier> --sortie=<dossier>')
+if (!dossierDemo || !dossierRefs || listeIds.length === 0 || graineStr === undefined || !dossierSortie || !cheminCle) {
+  console.error('Usage : node scripts/grille-aveugle.mjs --demo=<dossier> --refs=<dossier> --ids=<id1,id2,…> --graine=<entier> --sortie=<dossier> --cle=<fichier>')
   process.exit(1)
 }
 
@@ -62,7 +64,7 @@ const sujetsMelanges = melanger(sujetsInitiaux, prng)
 
 const LETTRES = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 if (sujetsMelanges.length > LETTRES.length) {
-  console.error('Erreur : trop de sujets pour l\'alphabet (maximum 26)')
+  console.error("Erreur : trop de sujets pour l'alphabet (maximum 26)")
   process.exit(1)
 }
 
@@ -71,13 +73,15 @@ for (let i = 0; i < sujetsMelanges.length; i++) {
   sujetsParLettre[LETTRES[i]] = sujetsMelanges[i]
 }
 
+// Images de la démo : bureau-t25.png (le héros installé), puis trois images prises au défilement parmi bureau-d30.png, bureau-d60.png, bureau-d100.png
+const nomsImagesDemo = ['bureau-t25.png', 'bureau-d30.png', 'bureau-d60.png', 'bureau-d100.png']
+
 // Vérification de l'existence des images avant tout traitement
 const imagesParSujet = {}
 for (const [lettre, sujet] of Object.entries(sujetsParLettre)) {
   let chemins = []
   if (sujet === 'demo') {
-    const noms = ['bureau-t06.png', 'bureau-t25.png', 'bureau-t50.png', 'bureau-t80.png']
-    chemins = noms.map((nom) => path.resolve(dossierDemo, nom))
+    chemins = nomsImagesDemo.map((nom) => path.resolve(dossierDemo, nom))
   } else {
     const noms = ['t0.png', 't1.png', 't2.png', 't3.png']
     chemins = noms.map((suffix) => path.resolve(dossierRefs, `${sujet}-${suffix}`))
@@ -95,39 +99,64 @@ for (const [lettre, sujet] of Object.entries(sujetsParLettre)) {
 // Création du dossier de sortie
 fs.mkdirSync(dossierSortie, { recursive: true })
 
-// Génération des planches
+// Nettoyage préalable dans dossierSortie au cas où il y aurait de vieux fichiers JSON
+if (fs.existsSync(dossierSortie)) {
+  for (const f of fs.readdirSync(dossierSortie)) {
+    if (f.endsWith('.json')) {
+      try { fs.unlinkSync(path.join(dossierSortie, f)) } catch {}
+    }
+  }
+}
+
+// Paramètres de traitement d'image pour uniformité géométrique et de rendu
 const HAUTEUR_IMAGE = 450
+const RATIO = 1.36
+const LARGEUR_IMAGE = Math.round(HAUTEUR_IMAGE * RATIO)
+const LARGEUR_APERCU = 640
+const HAUTEUR_APERCU = Math.round(LARGEUR_APERCU / RATIO)
+const QUALITE_JPEG_INTERMEDIAIRE = 75
+const RAYON_COIN = 12
 const MARGE = 16
 const ESPACEMENT = 12
 
-for (const [lettre, chemins] of Object.entries(imagesParSujet)) {
-  const redimensionnees = await Promise.all(
-    chemins.map(async (chemin) => {
-      const { data, info } = await sharp(chemin)
-        .resize({ height: HAUTEUR_IMAGE, fit: 'inside' })
-        .toBuffer({ resolveWithObject: true })
-      return { buffer: data, width: info.width, height: info.height }
-    })
-  )
+const svgMasque = Buffer.from(
+  `<svg width="${LARGEUR_IMAGE}" height="${HAUTEUR_IMAGE}"><rect x="0" y="0" width="${LARGEUR_IMAGE}" height="${HAUTEUR_IMAGE}" rx="${RAYON_COIN}" fill="#fff"/></svg>`
+)
 
-  const largeurImages = redimensionnees.reduce((acc, img) => acc + img.width, 0)
-  const largeurContenu = largeurImages + ESPACEMENT * (redimensionnees.length - 1)
-  const largeurTotale = Math.max(1600, largeurContenu + MARGE * 2)
-  const hauteurTotale = Math.max(400, HAUTEUR_IMAGE + MARGE * 2)
+async function traiterImage(chemin) {
+  // 1. Recadrage au même rapport (environ 1.36, cover centré) et réduction à la largeur des aperçus (640 px)
+  // + ré-encodage JPEG de qualité moyenne
+  const etapeApercu = await sharp(chemin)
+    .resize(LARGEUR_APERCU, HAUTEUR_APERCU, { fit: 'cover', position: 'center' })
+    .jpeg({ quality: QUALITE_JPEG_INTERMEDIAIRE })
+    .toBuffer()
+
+  // 2. Agrandissement à la hauteur de planche (avec largeur correspondante) et masque à coins arrondis
+  const imageFinale = await sharp(etapeApercu)
+    .resize(LARGEUR_IMAGE, HAUTEUR_IMAGE, { fit: 'fill' })
+    .composite([{ input: svgMasque, blend: 'dest-in' }])
+    .png()
+    .toBuffer()
+
+  return imageFinale
+}
+
+const largeurTotale = MARGE * 2 + LARGEUR_IMAGE * 4 + ESPACEMENT * 3
+const hauteurTotale = MARGE * 2 + HAUTEUR_IMAGE
+
+for (const [lettre, chemins] of Object.entries(imagesParSujet)) {
+  const imagesTraitees = await Promise.all(chemins.map(traiterImage))
 
   const composition = []
   let x = MARGE
-  if (largeurContenu + MARGE * 2 < largeurTotale) {
-    x = Math.round((largeurTotale - largeurContenu) / 2)
-  }
 
-  for (const img of redimensionnees) {
+  for (const buf of imagesTraitees) {
     composition.push({
-      input: img.buffer,
+      input: buf,
       left: x,
-      top: Math.round((hauteurTotale - img.height) / 2)
+      top: MARGE
     })
-    x += img.width + ESPACEMENT
+    x += LARGEUR_IMAGE + ESPACEMENT
   }
 
   // Macaron avec la seule lettre majuscule en grand dans le coin supérieur gauche
@@ -165,19 +194,21 @@ for (const [lettre, chemins] of Object.entries(imagesParSujet)) {
     .toFile(sortieFichier)
 }
 
-// cle.json
+// Écriture de la clé hors du dossier de sortie (--cle=<fichier>)
 const cle = {
   graine,
-  sujets: sujetsParLettre
+  sujets: sujetsParLettre,
+  imagesDemo: nomsImagesDemo
 }
-fs.writeFileSync(path.join(dossierSortie, 'cle.json'), JSON.stringify(cle, null, 2), 'utf8')
+fs.mkdirSync(path.dirname(path.resolve(cheminCle)), { recursive: true })
+fs.writeFileSync(path.resolve(cheminCle), JSON.stringify(cle, null, 2), 'utf8')
 
-// consignes.md
+// consignes.md — sans fuite, sans mots interdits (pas de "clé", pas de "démo", etc.)
 const contenuConsignes = `# Consignes d'évaluation — Notation à l'aveugle
 
 Ce protocole a pour objectif d'évaluer de manière objective et anonyme plusieurs réalisations web.
 Chaque sujet est identifié uniquement par une lettre majuscule (A, B, C...).
-Pour chaque sujet, une planche visuelle rassemble quatre images-clés chronologiques illustrant l'affichage et l'animation de la page (de l'écran d'accueil jusqu'au défilement).
+Pour chaque sujet, une planche visuelle rassemble quatre captures chronologiques illustrant l'affichage et l'animation de la page (de l'écran d'accueil jusqu'au défilement).
 
 ## Consignes de notation
 

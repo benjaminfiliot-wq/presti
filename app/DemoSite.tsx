@@ -33,12 +33,12 @@ export default function DemoSite() {
 
   return (
     <div className="ds reveal">
-      <div className="lp-head2 c"><span className="lp-kick">Et le site qui va avec</span><h2>Un site qui donne envie d&apos;appeler.</h2><p>Un artisan fictif, un vrai site : titre qui entre, lumière sur la matière, réalisations qui se dévoilent — et le téléphone qui tient la route en 4G.</p></div>
+      <div className="lp-head2 c"><span className="lp-kick">Et le site qui va avec</span><h2>Un site qui donne envie d&apos;appeler.</h2><p>Un artisan fictif, un vrai site : l&apos;escalier ouvre la visite, puis l&apos;atelier, les pièces livrées et le devis se découvrent au fil de la page.</p></div>
       <a className="ds-cadre" href={DEMO} target="_blank" rel="noopener" aria-label="Ouvrir le site de démonstration Atelier Lestraque dans un nouvel onglet">
         {reduit
-          ? <img src="/promo/demo-site/lestraque-affiche.webp" alt="Le site de démonstration Atelier Lestraque : un rabot sur une planche, le titre « Menuisier à Rennes »" width={1280} height={720} loading="lazy" />
+          ? <img src="/promo/demo-site/lestraque-affiche.webp" alt="Le site de démonstration Atelier Lestraque : un escalier en bois en plein cadre sous le titre « Fait pour rester »" width={1280} height={720} loading="lazy" />
           : <video ref={ref} src="/promo/demo-site/lestraque.mp4" poster="/promo/demo-site/lestraque-affiche.webp" muted loop playsInline preload="none" width={1280} height={720}
-              aria-label="Capture animée du site de démonstration Atelier Lestraque : l'accueil, les réalisations, l'atelier, les questions, sur ordinateur et sur téléphone" />}
+              aria-label="Capture animée du site de démonstration Atelier Lestraque : l'escalier en bois sous le titre « Fait pour rester », puis l'atelier, les réalisations et le devis" />}
       </a>
       <p className="ds-credits">Photos de la démo : Wikimedia Commons, sous licences libres — <a href="/sites-demo/lestraque/mentions-legales/index.html#credits" target="_blank" rel="noopener">auteurs et licences</a></p>
       <p className="ds-lien"><a href={DEMO} target="_blank" rel="noopener">Voir le site de démonstration</a></p>

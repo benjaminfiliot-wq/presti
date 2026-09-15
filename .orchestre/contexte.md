@@ -1,4 +1,4 @@
-# Carte du code — presti (2026-09-14T12:12:18Z)
+# Carte du code — presti (2026-09-15T02:12:57Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -33,12 +33,13 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/site` : [slug]/[...reste], [slug]/infos-legales, [slug], commander
 - `/tarifs` : ·
 
-## API (92) — `app/api/**/route.ts`, préfixe `/api`
+## API (94) — `app/api/**/route.ts`, préfixe `/api`
 - `/account` : delete [GET POST DELETE], inscription [POST], slug [GET POST]
+- `/audience` : · [POST]
 - `/auth` : code [POST GET], code/verifier [POST], mdp-fuite [POST], reset-confirm [POST], reset-request [POST]
 - `/canaux` : relever [GET POST], · [GET POST DELETE]
 - `/contact` : · [POST]
-- `/controle` : a-faire [GET], alertes/[id]/acquitter [POST], apports/[id]/statut [POST], apports [GET POST PATCH], barre [GET], cerveaux [GET], chiffres [GET], clients/[id]/action [POST], clients/[id] [GET], clients [GET], compta [GET POST], courriers/[fil]/action [POST], courriers/[fil] [GET], courriers/relever [POST], courriers [GET], crons/[nom]/relancer [POST], etat [GET], fil [GET], journal [GET], recherche [GET], reconfirmer [POST], reglages [GET POST], releve [GET POST], securite/bans [GET POST DELETE], sites/[id] [POST], sites [GET], support/demander [POST], support/lire [GET], support [GET POST]
+- `/controle` : a-faire [GET], alertes/[id]/acquitter [POST], apports/[id]/statut [POST], apports [GET POST PATCH], audience [GET], barre [GET], cerveaux [GET], chiffres [GET], clients/[id]/action [POST], clients/[id] [GET], clients [GET], compta [GET POST], courriers/[fil]/action [POST], courriers/[fil] [GET], courriers/relever [POST], courriers [GET], crons/[nom]/relancer [POST], etat [GET], fil [GET], journal [GET], recherche [GET], reconfirmer [POST], reglages [GET POST], releve [GET POST], securite/bans [GET POST DELETE], sites/[id] [POST], sites [GET], support/demander [POST], support/lire [GET], support [GET POST]
 - `/conversation` : devis [POST], regles [POST], · [GET POST], stream [POST]
 - `/cron` : alertes [GET], purge-comptes [GET], relances [GET]
 - `/devis` : [id]/envoyer [POST], [id]/pdf [GET], [id] [POST DELETE], auto [POST], generer [POST], · [POST]
@@ -62,14 +63,14 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/tarifs` : · [GET POST DELETE]
 - `/tools` : reponse [POST]
 
-## Drapeaux — `lib/flags.ts` (24) : une fonctionnalité non finie n'apparaît pas
-codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformePilotage=true · plateformeRegles=true · siteSlides3d=true · aideVisites=true · aideCentre=true · landingVideo=true · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · siteCommande=true · siteCommandeVente=false · landingDemoSite=true
+## Drapeaux — `lib/flags.ts` (23) : une fonctionnalité non finie n'apparaît pas
+codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformeRegles=true · aideVisites=true · aideCentre=true · landingVideo=true · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · siteCommande=true · siteCommandeVente=false · landingDemoSite=true · audience=true
 
 ## Formules — `lib/plans.ts`
 - plans : gratuit (Essai, 0 €/mois, BASE) · essentiel (Essentiel, 29 €/mois, BASE) · studio (Studio, 59 €/mois, STUDIO) · signature (Signature, 99 €/mois, SIGNATURE) · business (Business, 0 €/mois, SIGNATURE)
 - grille complète (16 lignes) : Page de conversation à votre marque · Assistant IA · Comptes clients (lien magique, historique) · Personnalisation · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA, sur vos prix · Factures + facture électronique · Relances automatiques · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Crédits chaque mois · Export de vos données · Support prioritaire
 
-## Bibliothèque — `lib/**/*.ts` (98 fichiers, exports nommés)
+## Bibliothèque — `lib/**/*.ts` (100 fichiers, exports nommés)
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
 - `lib/ai.ts` (23) : genParams, Artisan, Lead, LeadInsights, analyzeLead, qualifyLead, blocProspect, generateLeadReply, …
 - `lib/ai/antiFabrication.ts` (12) : ProfilCapacites, CapaciteDetectee, normaliser, texteProfil, MOTIFS_CAPACITE, RE_NEGATION, phrases, detecterCapacitesNonDeclarees, …
@@ -82,6 +83,8 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 - `lib/alerteService.ts` (4) : MotifPanne, motifDe, estPanneDeCompte, signalerPanneIA
 - `lib/alertes.ts` (11) : Motif, Alerte, coutIADuMois, estimationDepuisLesCredits, CRONS_ATTENDUS, enregistrerErreur, enregistrerPassage, alertePaiement, …
 - `lib/apports.ts` (7) : COOKIE_APPORT, JOURS_APPORT, CODE, valeurCookie, enteteCookieApport, lireApport, preuveDepuisCookie
+- `lib/audience.ts` (23) : PAGES_MESUREES, CHEMINS_DISCRETS, HOTES_MESURES, MOIS_AUDIENCE, CLE_NE_PAS_COMPTER, CAMPAGNES, cheminMesurable, hoteMesure, …
+- `lib/audienceServeur.ts` (7) : jourParis, minuitParis, reseauIp, empreinteDuJour, PLAFOND_JOUR_AUDIENCE, cleJourAudience, clePlafond
 - `lib/authArtisan.ts` (9) : Session, EchecAuth, ERREUR_MFA, ERREUR_SUSPENDU, ERREUR_CODE, authArtisan, revoquerSessions, estEchec, …
 - `lib/canaux.ts` (5) : devineFournisseur, ENTREPRISE_MAIL, boiteEntrepriseResolue, canalEntreprise, testerImap
 - `lib/clientAuth.ts` (7) : COOKIE_SESSION, ClientSession, creerLienMagique, consommerLien, sessionCourante, revoquerSession, cookieOptions
@@ -169,10 +172,10 @@ codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true �
 - `lib/vercelDomains.ts` (6) : DnsRecord, DomainStatus, normalizeDomain, addDomain, getStatus, removeDomain
 - `lib/zip.ts` (2) : crc32, ZipFlux
 
-## Migrations — `supabase/migrations` (89)
-- dernières : 0085_purger_compte_test_devis.sql, 0086_canaux_apport.sql, 0087_canal_instagram.sql, 0088_site_commande.sql, 0089_sites_bucket.sql
+## Migrations — `supabase/migrations` (92)
+- dernières : 0088_site_commande.sql, 0089_sites_bucket.sql, 0090_audience.sql, 0091_audience_correctifs.sql, 0092_audience_flux_nu.sql
 
-## Scripts — `scripts/` (200 .mjs, dont 77 suites e2e)
+## Scripts — `scripts/` (214 .mjs, dont 78 suites e2e)
 
-## Orchestre — file : 0 · en cours : 0 · faites : 24 · refusées : 1
+## Orchestre — file : 0 · en cours : 0 · faites : 34 · refusées : 1
 

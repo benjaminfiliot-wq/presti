@@ -1,0 +1,17 @@
+{
+  "graine": 7,
+  "sujets": {
+    "A": "agency-services",
+    "B": "luxury-real-estate",
+    "C": "stellar-launch",
+    "D": "art-landing",
+    "E": "cinematic-landing-page",
+    "F": "demo"
+  },
+  "imagesDemo": [
+    "bureau-t25.png",
+    "bureau-d30.png",
+    "bureau-d60.png",
+    "bureau-d100.png"
+  ]
+}
