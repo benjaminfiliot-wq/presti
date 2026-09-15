@@ -846,6 +846,24 @@ html.js .galerie--scene .galerie__item.reveal{animation:none}
 .hero__relief{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .7s ease;transform-origin:42% 37%;pointer-events:none}
 .hero__relief--pret{opacity:1}
 html.js .hero--plein .hero__relief{animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate}
+@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){
+html.js.da--signature .ouverture>.hero--plein .hero__media>picture{position:absolute;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}
+html.js.da--signature .ouverture>.hero--plein .hero__media img{object-position:50% 50%}
+html.js.da--signature .ouverture>.hero--plein .hero__relief{inset:auto;left:0;top:calc((100% - 75vw) * .42);width:100%;height:75vw}
+html.js.da--signature .ouverture>.hero--plein .hero__media img,
+html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:2.25;transform-origin:40.4% 38.6%;transform:scale(1.07);animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-2 10s cubic-bezier(.37,0,.63,1) infinite alternate}
+}
+@media(min-width:1024px) and (min-aspect-ratio:16/10) and (prefers-reduced-motion:no-preference){
+html.js.da--signature .ouverture>.hero--plein .hero__media img,
+html.js.da--signature .ouverture>.hero--plein .hero__relief{--signature-a:4;animation:pousse 20s cubic-bezier(.45,0,.55,1) infinite alternate,signature-tourne-4 10s cubic-bezier(.37,0,.63,1) infinite alternate}
+}
+@keyframes signature-tourne-2{from{rotate:2.25deg}to{rotate:-2.25deg}}
+@keyframes signature-tourne-4{from{rotate:4deg}to{rotate:-4deg}}
+@media(min-width:1024px) and (min-aspect-ratio:34/25) and (prefers-reduced-motion:no-preference){
+html.js.da--signature .ouverture>.hero--plein .hero__media::before{content:"";position:absolute;z-index:1;pointer-events:none;left:calc(40.4% - 85vw);top:calc(42% - 2.55vw - 85vw);width:170vw;height:170vw;background:conic-gradient(from 0deg,rgba(255,214,150,0.4) 0deg,rgba(255,214,150,0.2) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.475) 65deg,rgba(10,7,4,0.95) 90deg,rgba(10,7,4,0.475) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.2) 155deg,rgba(255,214,150,0.4) 180deg,rgba(255,214,150,0.2) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.475) 245deg,rgba(10,7,4,0.95) 270deg,rgba(10,7,4,0.475) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.2) 335deg,rgba(255,214,150,0.4) 360deg);-webkit-mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mix-blend-mode:soft-light;animation:signature-projecteur 9s linear infinite}
+html.js.da--signature .ouverture>.hero--plein .hero__media::after{z-index:2}
+}
+@keyframes signature-projecteur{to{rotate:-360deg}}
 @media(min-width:1024px) and (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
 @supports (animation-timeline: view()){
 html.js .travelling.relief-3d .galerie--scene .galerie__item.reveal{transform:perspective(1500px) rotateY(calc(var(--e,0) * -5deg)) translateZ(calc(var(--p,0) * -48px));transition:transform .45s cubic-bezier(.2,.7,.2,1);position:relative}

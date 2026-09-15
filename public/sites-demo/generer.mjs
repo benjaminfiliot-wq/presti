@@ -382,7 +382,7 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
     const versContact = page.type === 'legal' ? `${rel}#contact` : '#contact'
     const navClaire = da.hero === 'plein' ? page.type === 'accueil' || page.type === 'commune' : page.type === 'accueil' && da.hero === 'aplat'
     return `<!doctype html>
-<html lang="fr" class="no-js${da.texture === 'grain' ? ' texture--grain' : da.texture === 'papier' ? ' texture--papier' : ''}${da.raccords ? ' da--raccords' : ''}${da.etapesMonumentales ? ' da--etapes' : ''}${da.communesMonumentales ? ' da--communes' : ''}${da.navRetenue ? ' da--nav-retenue' : ''}">
+<html lang="fr" class="no-js${da.texture === 'grain' ? ' texture--grain' : da.texture === 'papier' ? ' texture--papier' : ''}${da.raccords ? ' da--raccords' : ''}${da.etapesMonumentales ? ' da--etapes' : ''}${da.communesMonumentales ? ' da--communes' : ''}${da.navRetenue ? ' da--nav-retenue' : ''}${da.signature ? ' da--signature' : ''}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
