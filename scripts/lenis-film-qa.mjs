@@ -116,6 +116,37 @@ if (m && Array.isArray(m.programme) && m.programme.length) {
   else if (figeLenis > 0.25) echecs.push(`LN-5 : Lenis saccade dans son film (${Math.round(100 * figeLenis)} % d'images figées pendant un geste, 25 % au plus)`)
 }
 
+// LN-7 : c'est bien la démo qui est filmée. La 2e prise (15/09, 16 h 20) passait tous les autres critères avec une page SANS
+// styles (logo SVG géant, liens bruts) : la première image de chaque film est comparée à l'accueil capturé par le juge, en haut de
+// page, 1440×900 ; la cage qui tourne et le projecteur font varier l'image, d'où un seuil large (0,15) qui sépare pourtant net une
+// page stylée d'une page nue (écart ≈ 0,5).
+{
+  const DEMOS = path.join(R, 'public', 'sites-demo'), COPIE = path.join(R, '.orchestre', 'travail', `site-lenis-qa-${process.pid}`)
+  process.on('exit', () => fs.rmSync(COPIE, { recursive: true, force: true }))
+  const g = spawnSync(process.execPath, [path.join(DEMOS, 'generer.mjs'), 'lestraque', `--sortie=${COPIE}`], { cwd: R, encoding: 'utf8' })
+  if (g.status !== 0) echecs.push(`LN-7 : génération de l'accueil en échec (${(g.stdout + g.stderr).trim().split('\n').pop().slice(0, 160)})`)
+  else {
+    const { default: http } = await import('node:http')
+    const { chromium } = await import('playwright')
+    const { default: sharp } = await import('sharp')
+    const TYPES = { html: 'text/html; charset=utf-8', css: 'text/css', js: 'text/javascript', webp: 'image/webp', avif: 'image/avif', woff2: 'font/woff2', svg: 'image/svg+xml', json: 'application/json' }
+    const srv = http.createServer((q, r) => { let p = decodeURIComponent(new URL(q.url, 'http://x').pathname); if (p.endsWith('/')) p += 'index.html'; let f = path.join(COPIE, p); if (!fs.existsSync(f)) f = path.join(DEMOS, p); if (!fs.existsSync(f) || fs.statSync(f).isDirectory()) { r.writeHead(404); return r.end() } r.writeHead(200, { 'content-type': TYPES[path.extname(f).slice(1)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(r) })
+    await new Promise((ok) => srv.listen(0, '127.0.0.1', ok))
+    const nav = await chromium.launch()
+    try {
+      const page = await (await nav.newContext({ viewport: { width: 1440, height: 900 } })).newPage()
+      await page.goto(`http://127.0.0.1:${srv.address().port}/index.html`, { waitUntil: 'load' })
+      await page.waitForTimeout(2500)
+      const ref = await sharp(await page.screenshot()).resize(160, 100, { fit: 'fill' }).greyscale().raw().toBuffer()
+      for (const film of ['natif.mp4', 'lenis.mp4']) {
+        const e = ecart(image(film, 0), ref)
+        faits.push(`${film} : première image contre l'accueil capturé par le juge, écart ${e.toFixed(3)}`)
+        if (e >= 0.15) echecs.push(`LN-7 : la première image de ${film} ne ressemble pas à l'accueil de la démo (écart ${e.toFixed(3)}, moins de 0,15) : page sans styles, mauvaise page ou mauvais cadrage`)
+      }
+    } finally { await nav.close(); srv.close() }
+  }
+}
+
 // LN-4
 if (spawnSync('git', ['diff', '--quiet', 'HEAD', '--', 'package.json', 'package-lock.json'], { cwd: R }).status !== 0) echecs.push('LN-4 : package.json ou package-lock.json modifié')
 const intrus = spawnSync('git', ['ls-files', '--others', '--exclude-standard', '--', 'public', 'scripts'], { cwd: R, encoding: 'utf8' }).stdout.split('\n').filter((f) => /lenis/i.test(f) && f !== 'scripts/lenis-film-qa.mjs')

@@ -53,7 +53,7 @@ const copierSites = (dst) => {
 }
 const produits = (d) => {
   const l = []
-  const walk = (x) => { for (const e of fs.readdirSync(x, { withFileTypes: true })) { const f = path.join(x, e.name); if (e.isDirectory()) { if (!['images', 'fonts', 'relief', 'video'].includes(e.name)) walk(f) } else if (/^(index\.html|styles\.css|site\.js|sitemap\.xml|robots\.txt|favicon\.svg|relief(-fil)?\.js)$/.test(e.name)) l.push(path.relative(d, f)) } }
+  const walk = (x) => { for (const e of fs.readdirSync(x, { withFileTypes: true })) { const f = path.join(x, e.name); if (e.isDirectory()) { if (!['images', 'fonts', 'relief', 'video', 'eclate'].includes(e.name)) walk(f) } else if (/^(index\.html|styles\.css|bureau\.css|site\.js|sitemap\.xml|robots\.txt|favicon\.svg)$/.test(e.name)) l.push(path.relative(d, f)) } }
   walk(d)
   return l.sort()
 }
@@ -76,7 +76,9 @@ try {
     // ── SO-1 ──────────────────────────────────────────────────────────────────────────────────────────────────
     const AVANT = path.join(T, 'avant'), APRES = path.join(T, 'apres')
     copierSites(AVANT)
-    for (const f of ['generer.mjs', '_kit/da.json', '_kit/kit.css', '_kit/kit.js', '_kit/relief.js', '_kit/relief-fil.js']) {
+    // seul le générateur vient de la référence : le kit est celui du disque des deux côtés, pour que les tâches qui travaillent
+    // en parallèle sur le kit (021-02 sur relief.js, par exemple) ne fassent pas échouer le socle (faux échec du 15/09, 15 h 50)
+    for (const f of ['generer.mjs']) {
       const r = spawnSync('git', ['show', `${BASE}:public/sites-demo/${f}`], { cwd: R, maxBuffer: 1 << 28 })
       if (r.status) throw new Error(`git show ${BASE}:${f} impossible`)
       fs.writeFileSync(path.join(AVANT, f), r.stdout)
@@ -100,7 +102,9 @@ try {
       const desc = attribut(balise, 'data-relief-descente')
       let d = null; try { d = JSON.parse(deco(desc || '')) } catch {}
       if (!d || !memeJson(d, DESCENTE)) echecs.push(`SO-4 : data-relief-descente du dépôt ${desc === null ? 'absent' : `vaut ${deco(desc)}`}, attendu ${JSON.stringify(DESCENTE)}`)
-      if (attribut(balise, 'data-relief-texture') !== null) echecs.push('SO-4 : data-relief-texture posé par da.json du dépôt, alors que la clé texture revient à 021-02')
+      // la clé texture est posée par 021-02 : l'attribut suit da.json (présent avec la clé, absent sans elle)
+      const texDepot = DA_REPO.relief?.texture
+      if (texDepot ? attribut(balise, 'data-relief-texture') !== texDepot : attribut(balise, 'data-relief-texture') !== null) echecs.push(`SO-4 : data-relief-texture (${attribut(balise, 'data-relief-texture')}) ne suit pas da.json → relief.texture (${texDepot ?? 'absente'})`)
     }
 
     // ── SO-2 ──────────────────────────────────────────────────────────────────────────────────────────────────

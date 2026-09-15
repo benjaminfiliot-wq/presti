@@ -115,6 +115,23 @@ try {
       if (compte.lumiere !== 0) echecs.push(`calme : lumière du shader ${compte.lumiere} avec la lumière CSS (0 attendu)`)
     }
 
+    // Avec la texture 2880 (021-02), la toile se précise une fois vers 3 s après l'état prêt : ce n'est pas une dérive. Le calme se
+    // mesure donc après ce remplacement (le fil annonce texture.largeur 2880 dans « compte »), 12 s d'attente au plus.
+    if (await page.evaluate(() => document.querySelector('.hero--plein')?.hasAttribute('data-relief-texture'))) {
+      const largeur = await page.evaluate(async () => {
+        const fil = document.querySelector('.hero--plein').reliefFil
+        const demander = () => new Promise((ok) => {
+          const t = setTimeout(() => ok(null), 1500)
+          const surMessage = (e) => { if (e.data && e.data.type === 'compte') { clearTimeout(t); fil.removeEventListener('message', surMessage); ok(e.data.texture?.largeur ?? null) } }
+          fil.addEventListener('message', surMessage)
+          fil.postMessage({ type: 'compte' })
+        })
+        for (let i = 0; i < 12; i++) { const l = await demander(); if (l === 2880) return l; await new Promise((r) => setTimeout(r, 1000)) }
+        return null
+      })
+      faits.push(largeur === 2880 ? 'texture 2880 en place avant la mesure du calme' : 'texture 2880 non annoncée en 12 s : calme mesuré quand même')
+      await page.waitForTimeout(500)
+    }
     await page.evaluate(() => { for (const a of document.getAnimations()) if (a.timeline === document.timeline) a.pause() })
     const boite = await page.evaluate(() => { const r = document.querySelector('.hero__media').getBoundingClientRect(); return { x: Math.max(0, r.x), y: Math.max(0, r.y), width: Math.min(r.width, innerWidth), height: Math.min(r.height, innerHeight) } })
     const g1 = await sharp(await page.screenshot({ clip: boite })).resize(160).greyscale().raw().toBuffer()

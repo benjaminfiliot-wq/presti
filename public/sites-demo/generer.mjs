@@ -286,11 +286,13 @@ async function generer(metier, options = {}) {
   for (const nom of famillesActives) {
     if (!/^[a-z0-9-]+$/.test(nom)) throw new Error(`${metier} : nom de famille invalide : ${nom}`)
     const css = path.join(dossierFamilles, `${nom}.css`)
+    const cssBureau = path.join(dossierFamilles, `${nom}.bureau.css`)
     const js = path.join(dossierFamilles, `${nom}.js`)
     const module = path.join(dossierFamilles, `${nom}.mjs`)
     famillesChargees.push({
       nom,
       css: fs.existsSync(css) ? fs.readFileSync(css, 'utf8') : '',
+      cssBureau: fs.existsSync(cssBureau) ? fs.readFileSync(cssBureau, 'utf8') : '',
       js: fs.existsSync(js) ? fs.readFileSync(js, 'utf8') : '',
       crochets: fs.existsSync(module) ? (await import(pathToFileURL(module).href)).default || {} : {},
     })
@@ -364,6 +366,8 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
   // _kit/kit.css et ne partent pas en ligne. Le h1 est l'élément LCP du téléphone, peint après styles.css (Lighthouse, 14/09).
   const sansCommentaires = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/[ \t]*\n[ \t]*/g, '\n').replace(/\n{2,}/g, '\n').trim()
   const cssFamilles = famillesChargees.map((famille) => sansCommentaires(famille.css)).filter(Boolean)
+  const cssBureauFamilles = famillesChargees.map((famille) => sansCommentaires(famille.cssBureau)).filter(Boolean)
+  const bureauCss = cssBureauFamilles.length ? `${cssBureauFamilles.join('\n')}\n` : null
   const stylesCss = `/* ${site.nom} — direction artistique « ${da.label} » (cerveau site v2, ${AUJOURDHUI}) — source commentée : _kit/kit.css */\n${faces}\n${tokens}\n${sansCommentaires(KIT_CSS)}\n${cssFamilles.length ? `${cssFamilles.join('\n')}\n` : ''}`
   if (/ui-monospace|Consolas|SFMono/.test(stylesCss)) throw new Error(`${metier} : styles.css renvoie encore à une pile monospace du système`)
 
@@ -380,6 +384,15 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
     const crochet = famille.crochets[nom]
     return typeof crochet === 'function' ? crochet(...args, contexte(rel)) : ''
   }).filter((html) => html != null).join('')
+  const crochetsCredits = (entrees, rel) => {
+    let resultat = entrees
+    for (const famille of famillesChargees) {
+      const crochet = famille.crochets.credits
+      if (typeof crochet === 'function') resultat = crochet(resultat, contexte(rel))
+      if (!Array.isArray(resultat)) throw new Error(`${metier} : le crochet credits de « ${famille.nom} » doit renvoyer une liste`)
+    }
+    return resultat
+  }
 
   // ── La marque : un monogramme tiré de la police de titre (nav, pied de page, favicon) ─────────────────────────
   let marque = '<i></i>', favicon = null
@@ -438,7 +451,7 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
 <meta property="og:locale" content="fr_FR">
 ${favicon ? `<link rel="icon" href="${rel}favicon.svg" type="image/svg+xml">\n` : ''}${precharges.join('\n')}
 <link rel="stylesheet" href="${rel}styles.css">
-<script>document.documentElement.classList.replace('no-js','js')</script>
+${bureauCss ? `<link rel="stylesheet" href="${rel}bureau.css" media="(min-width: 1024px)">\n` : ''}<script>document.documentElement.classList.replace('no-js','js')</script>
 <script src="${rel}site.js" defer></script>
 ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script>` : ''}
 </head>
@@ -804,8 +817,14 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
   // Les mentions légales ne créditent que les photos qu'une page du site affiche (elles listaient encore neuf photos d'outils et
   // d'anciens ouvrages disparus du site, juge du 14/09) : `photosUtilisees` est fixé après le rendu des autres pages.
   let photosUtilisees = photos
-  const groupesCredits = () => [...new Set(photosUtilisees.map((p) => p.source))].map((src) => photosUtilisees.filter((p) => p.source === src))
-  const creditsListe = () => `<ul class="credits">${groupesCredits().map(entreeCredit).join('')}</ul>`
+  const groupesCredits = (entrees = photosUtilisees) => [...new Set(entrees.map((p) => p.source))].map((src) => entrees.filter((p) => p.source === src))
+  const entreeCreditNonPhoto = (p) => `<li><span>${esc(p.legende)}</span><span>— ${esc(p.auteur)}</span><span>(<a href="${esc(p.licenceUrl)}" rel="noopener" target="_blank">${esc(p.licence)}</a>)</span><a href="${esc(p.source)}" rel="noopener" target="_blank">source</a></li>`
+  const creditsListe = (rel) => {
+    const entrees = crochetsCredits([...photosUtilisees], rel)
+    const photosCredits = entrees.filter((p) => !p.type || p.type === 'photo')
+    const autresCredits = entrees.filter((p) => p.type && p.type !== 'photo')
+    return `<ul class="credits">${groupesCredits(photosCredits).map(entreeCredit).join('')}${autresCredits.map(entreeCreditNonPhoto).join('')}</ul>`
+  }
   const texteCredits = () => `Les photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence, les modifications apportées et la page d’origine. ${photosUtilisees.every(estModifiee) ? 'Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées pour certaines.' : 'Toutes ont été redimensionnées et converties pour le web ; celles dites « modifiée » ont aussi été étalonnées ou recadrées par Presti.'}`
   function legale(page) {
     const c = contenu.pages[page.chemin]
@@ -813,10 +832,10 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     let corps = `<section class="hero hero--page"><div class="conteneur"><div class="hero__contenu"><nav class="ariane" aria-label="Fil d’Ariane"><a href="${rel}">Accueil</a><span>/</span><span>${esc(c.h1)}</span></nav><h1>${mots(c.h1)}</h1>${c.chapeau ? `<p class="chapeau">${esc(c.chapeau)}</p>` : ''}</div></div></section><section class="section"><div class="conteneur"><div class="prose">`
     for (const s of c.sections) {
       const { intro, items } = decouper(s.blocs)
-      if (/cr[ée]dit/i.test(s.h2)) { corps += `<h2 id="credits">${esc(s.h2)}</h2><p>${texteCredits()}</p>${creditsListe()}`; continue }
+      if (/cr[ée]dit/i.test(s.h2)) { corps += `<h2 id="credits">${esc(s.h2)}</h2><p>${texteCredits()}</p>${creditsListe(rel)}`; continue }
       corps += `<h2>${esc(s.h2)}</h2>${intro.map((p) => `<p>${esc(p)}</p>`).join('')}${items.map((it) => `<h3>${esc(it.titre)}</h3>${it.textes.map((t) => `<p>${esc(t)}</p>`).join('')}`).join('')}`
     }
-    if (/mentions/.test(page.chemin) && !c.sections.some((s) => /cr[ée]dit/i.test(s.h2))) corps += `<h2 id="credits">Crédits photographiques</h2><p>${texteCredits()}</p>${creditsListe()}`
+    if (/mentions/.test(page.chemin) && !c.sections.some((s) => /cr[ée]dit/i.test(s.h2))) corps += `<h2 id="credits">Crédits photographiques</h2><p>${texteCredits()}</p>${creditsListe(rel)}`
     if (/mentions/.test(page.chemin) && site.demo && !JSON.stringify(c.sections).toLowerCase().includes('démonstration')) corps += `<p><strong>Site de démonstration :</strong> entreprise fictive, coordonnées fictives.</p>`
     corps += `</div></div></section>`
     return tete(page, rel, { titre: c.title, description: c.description }) + corps + pied(rel)
@@ -902,6 +921,8 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
   const fonts = path.join(dossier, 'fonts'); fs.rmSync(fonts, { recursive: true, force: true }); fs.mkdirSync(fonts)
   for (const { src, nom } of fichiersPolice) fs.copyFileSync(src, path.join(fonts, nom))
   fs.writeFileSync(path.join(dossier, 'styles.css'), stylesCss)
+  if (bureauCss) fs.writeFileSync(path.join(dossier, 'bureau.css'), bureauCss)
+  else fs.rmSync(path.join(dossier, 'bureau.css'), { force: true })
   const jsFamilles = famillesChargees.map((famille) => famille.js).filter(Boolean)
   fs.writeFileSync(path.join(dossier, 'site.js'), [KIT_JS, ...jsFamilles].join('\n;\n'))
   for (const f of [KIT_RELIEF, KIT_RELIEF_FIL]) { if (da.relief) fs.copyFileSync(f, path.join(dossier, path.basename(f))); else fs.rmSync(path.join(dossier, path.basename(f)), { force: true }) }
