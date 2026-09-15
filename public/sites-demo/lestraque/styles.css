@@ -894,3 +894,28 @@ html.js .travelling.relief-3d .galerie--scene .galerie__item.reveal{transform:pe
 @media(max-width:759px){.eclate__legende{order:-1;margin-bottom:.5rem}}
 .eclate__fiche,.eclate__releve,.eclate__cote-entaille,.eclate__numero,.eclate__phrase{display:none}
 .eclate__ligne{display:contents}
+@media (max-width:767px) and (min-height:560px) and (prefers-reduced-motion:no-preference){
+html.js.da--signature .ouverture>.hero--plein:not(.hero--commune) .hero__media img{transform-origin:50% 61%;translate:0 15.86%;scale:1.29;animation:signature-tourne-2 10s cubic-bezier(.37,0,.63,1) infinite alternate}
+html.js.da--signature .ouverture>.hero--plein:not(.hero--commune) .hero__media::before{content:"";position:absolute;z-index:1;pointer-events:none;left:calc(50% - 180vw);top:calc(76.86% - 180vw);width:360vw;height:360vw;background:conic-gradient(from 0deg,rgba(255,214,150,0.4) 0deg,rgba(255,214,150,0.2) 25deg,rgba(255,214,150,0) 45deg,rgba(10,7,4,0) 45deg,rgba(10,7,4,0.475) 65deg,rgba(10,7,4,0.95) 90deg,rgba(10,7,4,0.475) 115deg,rgba(10,7,4,0) 135deg,rgba(255,214,150,0) 135deg,rgba(255,214,150,0.2) 155deg,rgba(255,214,150,0.4) 180deg,rgba(255,214,150,0.2) 205deg,rgba(255,214,150,0) 225deg,rgba(10,7,4,0) 225deg,rgba(10,7,4,0.475) 245deg,rgba(10,7,4,0.95) 270deg,rgba(10,7,4,0.475) 295deg,rgba(10,7,4,0) 315deg,rgba(255,214,150,0) 315deg,rgba(255,214,150,0.2) 335deg,rgba(255,214,150,0.4) 360deg);-webkit-mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mask:radial-gradient(closest-side,transparent 5%,#000 17%,#000 72%,transparent 100%);mix-blend-mode:soft-light;animation:signature-projecteur 9s linear -2.5s infinite}
+html.js.da--signature .ouverture>.hero--plein:not(.hero--commune) .hero__media::after{z-index:2}
+@supports (animation-timeline: view()){
+html.js .plateau__citation blockquote p:has(.citation__mot){view-timeline:--telephone-citation block}
+html.js .plateau__citation .citation__mot{animation:telephone-mot linear both;animation-timeline:--telephone-citation;animation-range:cover calc(2% + var(--i,0) * 3%) cover calc(24% + var(--i,0) * 3%)}
+html.js .plateau__citation.reveal:has(.citation__mot){opacity:1;transform:none;transition:none}
+html.js .atelier{overflow:clip}
+html.js .atelier__phrase:has(.atelier__verbe){view-timeline:--telephone-verbes block}
+html.js .atelier__verbe{display:inline-block;animation:telephone-verbe linear both;animation-timeline:--telephone-verbes;animation-range:cover calc(20% + var(--i,0) * 6%) cover calc(34% + var(--i,0) * 6%)}
+html.js .atelier:has(.atelier__verbe) .atelier__media::after{background:linear-gradient(180deg,rgba(10,7,4,.66) 0%,rgba(10,7,4,.56) 33%,rgba(10,7,4,0) 54%),linear-gradient(0deg,rgba(10,7,4,.48) 0%,rgba(10,7,4,0) 18%)}
+html.js #etapes figure.eclate{content-visibility:auto;contain-intrinsic-size:auto 292.5px;view-timeline:--telephone-eclate block}
+html.js #etapes .eclate__rendu{container-type:size}
+html.js #etapes figure.eclate img.eclate__eclate{display:none}
+html.js #etapes figure.eclate img.eclate__assemble{display:block;left:0;top:0;width:100%;height:100%;animation:telephone-efface linear both;animation-timeline:--telephone-eclate;animation-range:cover 11% cover 12%}
+html.js #etapes figure.eclate img.eclate__calque{display:block;animation:telephone-apparait linear both,telephone-eclate linear both;animation-timeline:--telephone-eclate,--telephone-eclate;animation-range:cover 10% cover 11%,cover 12% cover 45%}
+html.js #etapes figure.eclate .eclate__pastille{animation:telephone-apparait linear both;animation-timeline:--telephone-eclate;animation-range:cover 45% cover 49%}
+}
+}
+@keyframes telephone-mot{from{opacity:.55}to{opacity:1}}
+@keyframes telephone-verbe{from{opacity:.55;translate:0 .12em}to{opacity:1;translate:0 0}}
+@keyframes telephone-apparait{from{opacity:0}to{opacity:1}}
+@keyframes telephone-efface{from{opacity:1}to{opacity:0}}
+@keyframes telephone-eclate{from{translate:0 0}to{translate:calc(var(--vx,0) * 1cqw) calc(var(--vy,0) * 1cqh)}}
