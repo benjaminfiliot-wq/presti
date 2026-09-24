@@ -1,0 +1,19 @@
+{
+  "_": "Jeu d’essai de la série 025 (fiche 025-01, écrit par Claude Code), modèle du fichier maquette.json de la fiche 025-02 : node public/sites-demo/generer.mjs --maquette=<ce fichier> --sortie=<dossier sous .orchestre/travail/>. L’entreprise est FICTIVE, son nom est unique : il ne doit apparaître dans aucun fichier suivi hors de scripts/fixtures/025/ (MQ-9) ; les juges le lisent ici, jamais en dur. La ville et les communes sont réelles. Ni téléphone, ni SIREN, ni photo du prospect. source_fait ne s’affiche jamais : c’est la trace de ce qu’on sait du prospect et d’où on le tient (ici une adresse en .invalid, RFC 2606) ; son repère permet aux juges de le chercher dans la sortie.",
+  "entreprise": "Atelier Témoin-Quatorze",
+  "metier": "menuisier",
+  "ville": "Vitré",
+  "communes": [
+    "Vitré",
+    "Châteaubourg",
+    "Argentré-du-Plessis",
+    "Étrelles"
+  ],
+  "modele": "menuisier",
+  "source_fait": {
+    "fait": "Escaliers à limon central en chêne montrés sur la page de l’atelier (repère TQ14-SF)",
+    "source": "https://atelier-temoin-quatorze.invalid/realisations",
+    "repere": "TQ14-SF",
+    "releve_le": "2026-09-24"
+  }
+}

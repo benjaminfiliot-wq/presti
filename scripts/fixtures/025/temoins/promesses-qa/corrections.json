@@ -1,0 +1,108 @@
+{
+ "_": "Témoin de scripts/promesses-qa.mjs --temoin (fiche 025-01, point 8), écrit par Claude Code. Le juge extrait app/ et lib/ du commit « base » (git archive, sous .orchestre/travail/promesses-qa/temoin/), remplace dans chaque « fichier » le texte « ancien » (présent une fois exactement) par « nouveau », puis juge PR-1 à PR-6 sur cet arbre. Ces corrections simulent l'état après 025-05 (/profil) et 025-06 (titre, landing, manifeste, FAQ, tableau de bord, démo, accroche Studio) et n'utilisent que les affirmations permises par 025-06 ; chaque fichier corrigé doit appartenir au périmètre de l'une de ces deux fiches. Ce n'est pas du code à reprendre tel quel : le profil n'y perd que ses trois phrases fautives, pas l'éditeur. JSON, et non .ts/.tsx : tsconfig.json inclut **/*.tsx, un fichier source ici entrerait dans npm run typecheck.",
+ "base": "1620723",
+ "corrections": [
+  {
+   "fiche": "025-06",
+   "fichier": "app/layout.tsx",
+   "ancien": "const TITLE = \"Presti — Répondez à chaque demande de devis en moins d'une minute\"",
+   "nouveau": "const TITLE = \"Presti — Une réponse prête en moins d'une minute à chaque devis\""
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/layout.tsx",
+   "ancien": "\"Presti répond à vos demandes de devis en moins d'une minute, dans votre ton, et relance automatiquement jusqu'à la réponse. Ne perdez plus jamais un chantier faute de temps.\"",
+   "nouveau": "\"Presti prépare la réponse à chaque demande de devis en moins d'une minute, dans votre ton, et relance automatiquement jusqu'à la réponse. Vous l'envoyez.\""
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/page.tsx",
+   "ancien": "\"Presti répond à chaque demande de devis en moins d'une minute, dans votre ton, génère vos devis et factures, et relance automatiquement jusqu'à la réponse.\"",
+   "nouveau": "\"Presti prépare la réponse à chaque demande de devis en moins d'une minute, génère vos devis et factures, et relance automatiquement jusqu'à la réponse.\""
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/page.tsx",
+   "ancien": "Presti répond à chaque demande de devis en moins d&apos;une minute — dans votre style —, chiffre le devis et relance tout seul jusqu&apos;à la signature.",
+   "nouveau": "Presti prépare la réponse à chaque demande de devis en moins d&apos;une minute, dans votre style, et vous l&apos;envoyez. Il chiffre le devis et relance automatiquement jusqu&apos;à la réponse."
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/page.tsx",
+   "ancien": "<em>Réponse en moins d&apos;une minute</em>",
+   "nouveau": "<em>Réponse prête en moins d&apos;une minute</em>"
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/page.tsx",
+   "ancien": "Presti, lui, répond en moins d&apos;une minute — jour et nuit.",
+   "nouveau": "Presti, lui, prépare la réponse en moins d&apos;une minute : vous n&apos;avez plus qu&apos;à l&apos;envoyer."
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/page.tsx",
+   "ancien": "La prochaine demande, c&apos;est Presti qui y répond — en moins d&apos;une minute.",
+   "nouveau": "À la prochaine demande, Presti prépare la réponse en moins d&apos;une minute."
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/faq/page.tsx",
+   "ancien": "Il répond à vos demandes de devis en moins d’une minute, dans votre ton, génère des devis et factures conformes, et relance automatiquement vos prospects jusqu’à leur réponse.",
+   "nouveau": "Il prépare la réponse à vos demandes de devis en moins d’une minute, dans votre ton, génère des devis et factures conformes, et relance automatiquement vos prospects jusqu’à leur réponse."
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/faq/page.tsx",
+   "ancien": "Chaque demande arrive dans votre espace, Presti y répond automatiquement, et vous génère un devis prêt à envoyer.",
+   "nouveau": "Chaque demande arrive dans votre espace, Presti en prépare la réponse et vous génère un devis prêt à envoyer."
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/dashboard/page.tsx",
+   "ancien": "Chaque demande arrive ici — et Presti répond en moins d’une minute.",
+   "nouveau": "Chaque demande arrive ici, avec une réponse prête en moins d’une minute."
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/manifest.ts",
+   "ancien": "description: 'Répondez à chaque demande de devis en moins d’une minute',",
+   "nouveau": "description: 'Chaque demande de devis, une réponse prête en moins d’une minute',"
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/manifest.ts",
+   "ancien": "label: 'Vos conversations : chaque demande de devis, répondue en moins d’une minute'",
+   "nouveau": "label: 'Vos conversations : chaque demande de devis, sa réponse prête en moins d’une minute'"
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "app/DemoSequence.tsx",
+   "ancien": "titre: 'L’assistant répond, dans la seconde'",
+   "nouveau": "titre: 'L’assistant prépare la réponse'"
+  },
+  {
+   "fiche": "025-06",
+   "fichier": "lib/plans.ts",
+   "ancien": "accroche: 'Présence en ligne soignée, et l’assistant qui répond seul.'",
+   "nouveau": "accroche: 'L’assistant qui répond seul, jour et nuit.'"
+  },
+  {
+   "fiche": "025-05",
+   "fichier": "app/profil/page.tsx",
+   "ancien": "Chaque contact arrive dans Presti et reçoit une réponse en moins d&apos;une minute.",
+   "nouveau": "Chaque contact arrive dans Presti, avec une réponse prête en moins d&apos;une minute."
+  },
+  {
+   "fiche": "025-05",
+   "fichier": "app/profil/page.tsx",
+   "ancien": "{locked ? <span className=\"st-lock\">Inclus dès {t.n === 2 ? 'Studio' : 'Signature'}</span> : null}",
+   "nouveau": "{null}"
+  },
+  {
+   "fiche": "025-05",
+   "fichier": "app/profil/page.tsx",
+   "ancien": "une photo finie de la même pièce. Inclus dans l’offre Signature.</span>",
+   "nouveau": "une photo finie de la même pièce.</span>"
+  }
+ ]
+}

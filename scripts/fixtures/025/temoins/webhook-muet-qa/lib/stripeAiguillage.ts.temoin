@@ -1,0 +1,22 @@
+// TÉMOIN de scripts/webhook-muet-qa.mjs (fiche 025-01, point 9) — ce n'est PAS le code de production de 025-07.
+//
+// `node scripts/webhook-muet-qa.mjs --temoin` copie app/, lib/, package.json, tsconfig.json (et middleware.ts, next-env.d.ts
+// s'ils existent) dans .orchestre/travail/webhook-muet-qa/temoin/, puis y pose ce fichier SANS le suffixe .temoin, en
+// lib/stripeAiguillage.ts : c'est l'état « après » simulé, qui doit passer WM-1 à WM-4. Le suffixe tient ce fichier hors de
+// `npm run typecheck` du dépôt (tsconfig.json inclut **/*.ts, scripts/ compris) : sans lui, l'import de la route témoin
+// casserait la vérification de types de tout le dépôt.
+import type Stripe from 'stripe'
+
+export type Voie = 'commande_site' | 'abonnement' | 'orphelin'
+
+type SessionAiguillee = Pick<Stripe.Checkout.Session, 'mode' | 'metadata' | 'client_reference_id'>
+
+/** Mêmes conditions que app/api/stripe/webhook/route.ts:35-44 à 1620723, dans le même ordre ; tout le reste est orphelin. */
+export function aiguiller(session: SessionAiguillee): Voie {
+  const meta = session.metadata ?? {}
+  if (session.mode === 'payment' && meta.type === 'commande_site') return 'commande_site'
+  const uid = meta.uid || session.client_reference_id || ''
+  const plan = meta.plan || ''
+  if (uid && plan) return 'abonnement'
+  return 'orphelin'
+}

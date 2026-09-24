@@ -1,0 +1,10 @@
+﻿date;canal;envoyeur;prospect;froid ou chaud;source du fait;variante;maquette (minutes);envoyé;réponse;oui;appel;vente;STOP
+2026-09-25;instagram;Benj;Menuiserie Fauvette-Témoin;froid;https://exemple.invalid/fait-1 (2026-09-20);A;22;oui;;;;;
+2026-09-25;facebook;Gabriel;"Couverture Bellerive-Essai; père et fils";froid;https://exemple.invalid/fait-2 (2026-09-21);B;;oui;"Bonjour,
+je regarde ça ce soir";;;;
+2026-09-26;e-mail;Benj;Élise Grandcœur-Essai;chaud;;A;18;oui;;;;;
+2026-09-26;instagram;Louis-Victor;Léo;froid;;B;;non;;;;;
+2026-09-27;instagram;Benj;;froid;;A;;non;;;;;
+2026-09-27;facebook;Gabriel;"Maçonnerie ""Le Témoin"" Nord";froid;;B;25;oui;;;;;
+2026-09-28;instagram;Benj;MENUISERIE FAUVETTE-TÉMOIN;froid;;A;;oui;;;;;
+

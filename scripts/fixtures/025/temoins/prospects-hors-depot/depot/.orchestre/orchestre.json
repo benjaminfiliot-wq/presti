@@ -1,0 +1,5 @@
+{
+  "projet": "temoin-prospects-hors-depot",
+  "_": "Faux dépôt du témoin de scripts/prospects-hors-depot.mjs : le vault est le dossier voisin.",
+  "vault": "../vault"
+}

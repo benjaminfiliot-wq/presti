@@ -1,0 +1,1668 @@
+[
+ {
+  "fichier": "images/heros-escalier-480.avif",
+  "base": "heros-escalier",
+  "largeur": 480,
+  "hauteur": 360,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg",
+  "largeur_source": 4608,
+  "hauteur_source": 3456,
+  "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage gardés, hautes lumières ramenées vers un crème ambré et désaturées) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 4,
+   "noir": 0.045,
+   "blanc": 0.66,
+   "gamma": 0.44,
+   "k": 11,
+   "pivot": 0.57,
+   "plancher": 0.01,
+   "saturation": 1.08,
+   "ampExp": 0.7,
+   "ampMax": 1.85,
+   "hautes": 0.72,
+   "vert": 0.8,
+   "teinte": 0.55,
+   "creme": [
+    250,
+    208,
+    156
+   ],
+   "depart": "original Commons (sha256 7bd8b7cb69fa442f…)"
+  },
+  "usage": "site uniquement — CC BY-SA : jamais dans un film (le partage à l'identique s'étendrait au film)"
+ },
+ {
+  "fichier": "images/heros-escalier-480.webp",
+  "base": "heros-escalier",
+  "largeur": 480,
+  "hauteur": 360,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg",
+  "largeur_source": 4608,
+  "hauteur_source": 3456,
+  "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage gardés, hautes lumières ramenées vers un crème ambré et désaturées) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 4,
+   "noir": 0.045,
+   "blanc": 0.66,
+   "gamma": 0.44,
+   "k": 11,
+   "pivot": 0.57,
+   "plancher": 0.01,
+   "saturation": 1.08,
+   "ampExp": 0.7,
+   "ampMax": 1.85,
+   "hautes": 0.72,
+   "vert": 0.8,
+   "teinte": 0.55,
+   "creme": [
+    250,
+    208,
+    156
+   ],
+   "depart": "original Commons (sha256 7bd8b7cb69fa442f…)"
+  },
+  "usage": "site uniquement — CC BY-SA : jamais dans un film (le partage à l'identique s'étendrait au film)"
+ },
+ {
+  "fichier": "images/heros-escalier-960.avif",
+  "base": "heros-escalier",
+  "largeur": 960,
+  "hauteur": 720,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg",
+  "largeur_source": 4608,
+  "hauteur_source": 3456,
+  "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage gardés, hautes lumières ramenées vers un crème ambré et désaturées) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 4,
+   "noir": 0.045,
+   "blanc": 0.66,
+   "gamma": 0.44,
+   "k": 11,
+   "pivot": 0.57,
+   "plancher": 0.01,
+   "saturation": 1.08,
+   "ampExp": 0.7,
+   "ampMax": 1.85,
+   "hautes": 0.72,
+   "vert": 0.8,
+   "teinte": 0.55,
+   "creme": [
+    250,
+    208,
+    156
+   ],
+   "depart": "original Commons (sha256 7bd8b7cb69fa442f…)"
+  },
+  "usage": "site uniquement — CC BY-SA : jamais dans un film (le partage à l'identique s'étendrait au film)"
+ },
+ {
+  "fichier": "images/heros-escalier-960.webp",
+  "base": "heros-escalier",
+  "largeur": 960,
+  "hauteur": 720,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg",
+  "largeur_source": 4608,
+  "hauteur_source": 3456,
+  "modifiee": "Oui — étalonnée depuis l’original (courbe de luminance, ombres et veinage gardés, hautes lumières ramenées vers un crème ambré et désaturées) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 4,
+   "noir": 0.045,
+   "blanc": 0.66,
+   "gamma": 0.44,
+   "k": 11,
+   "pivot": 0.57,
+   "plancher": 0.01,
+   "saturation": 1.08,
+   "ampExp": 0.7,
+   "ampMax": 1.85,
+   "hautes": 0.72,
+   "vert": 0.8,
+   "teinte": 0.55,
+   "creme": [
+    250,
+    208,
+    156
+   ],
+   "depart": "original Commons (sha256 7bd8b7cb69fa442f…)"
+  },
+  "usage": "site uniquement — CC BY-SA : jamais dans un film (le partage à l'identique s'étendrait au film)"
+ },
+ {
+  "fichier": "images/atelier-poncage-480.avif",
+  "base": "atelier-poncage",
+  "largeur": 2880,
+  "hauteur": 1923,
+  "legende": "Ponçage à la main d’une pièce chantournée",
+  "alt": "Ponçage à la main d’une pièce chantournée",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Close-up_of_a_carpenters_hand_sandpapering_the_wood.jpg",
+  "titre_commons": "File:Close-up of a carpenters hand sandpapering the wood.jpg",
+  "largeur_source": 5238,
+  "hauteur_source": 3497,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.1124,
+    0.96,
+    0.7252
+   ],
+   "saturation": 1,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/atelier-poncage-480.webp",
+  "base": "atelier-poncage",
+  "largeur": 2880,
+  "hauteur": 1923,
+  "legende": "Ponçage à la main d’une pièce chantournée",
+  "alt": "Ponçage à la main d’une pièce chantournée",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Close-up_of_a_carpenters_hand_sandpapering_the_wood.jpg",
+  "titre_commons": "File:Close-up of a carpenters hand sandpapering the wood.jpg",
+  "largeur_source": 5238,
+  "hauteur_source": 3497,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.1124,
+    0.96,
+    0.7252
+   ],
+   "saturation": 1,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/atelier-poncage-960.avif",
+  "base": "atelier-poncage",
+  "largeur": 2880,
+  "hauteur": 1923,
+  "legende": "Ponçage à la main d’une pièce chantournée",
+  "alt": "Ponçage à la main d’une pièce chantournée",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Close-up_of_a_carpenters_hand_sandpapering_the_wood.jpg",
+  "titre_commons": "File:Close-up of a carpenters hand sandpapering the wood.jpg",
+  "largeur_source": 5238,
+  "hauteur_source": 3497,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.1124,
+    0.96,
+    0.7252
+   ],
+   "saturation": 1,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/atelier-poncage-960.webp",
+  "base": "atelier-poncage",
+  "largeur": 2880,
+  "hauteur": 1923,
+  "legende": "Ponçage à la main d’une pièce chantournée",
+  "alt": "Ponçage à la main d’une pièce chantournée",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Close-up_of_a_carpenters_hand_sandpapering_the_wood.jpg",
+  "titre_commons": "File:Close-up of a carpenters hand sandpapering the wood.jpg",
+  "largeur_source": 5238,
+  "hauteur_source": 3497,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.1124,
+    0.96,
+    0.7252
+   ],
+   "saturation": 1,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/penderie-480.avif",
+  "base": "penderie",
+  "largeur": 1600,
+  "hauteur": 2000,
+  "legende": "Penderie en bois, tringle et quatre cintres",
+  "alt": "Intérieur d’une penderie en bois, tringle et quatre cintres en bois clair",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_wooden_wardrobe_closeup.jpg",
+  "titre_commons": "File:Empty wooden wardrobe closeup.jpg",
+  "largeur_source": 4016,
+  "hauteur_source": 6016,
+  "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "recadrage": [
+   0.355,
+   0.318,
+   0.62,
+   0.5173
+  ],
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1.0324,
+    1
+   ],
+   "saturation": 0.656,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/penderie-480.webp",
+  "base": "penderie",
+  "largeur": 1600,
+  "hauteur": 2000,
+  "legende": "Penderie en bois, tringle et quatre cintres",
+  "alt": "Intérieur d’une penderie en bois, tringle et quatre cintres en bois clair",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_wooden_wardrobe_closeup.jpg",
+  "titre_commons": "File:Empty wooden wardrobe closeup.jpg",
+  "largeur_source": 4016,
+  "hauteur_source": 6016,
+  "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "recadrage": [
+   0.355,
+   0.318,
+   0.62,
+   0.5173
+  ],
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1.0324,
+    1
+   ],
+   "saturation": 0.656,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/penderie-960.avif",
+  "base": "penderie",
+  "largeur": 1600,
+  "hauteur": 2000,
+  "legende": "Penderie en bois, tringle et quatre cintres",
+  "alt": "Intérieur d’une penderie en bois, tringle et quatre cintres en bois clair",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_wooden_wardrobe_closeup.jpg",
+  "titre_commons": "File:Empty wooden wardrobe closeup.jpg",
+  "largeur_source": 4016,
+  "hauteur_source": 6016,
+  "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "recadrage": [
+   0.355,
+   0.318,
+   0.62,
+   0.5173
+  ],
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1.0324,
+    1
+   ],
+   "saturation": 0.656,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/penderie-960.webp",
+  "base": "penderie",
+  "largeur": 1600,
+  "hauteur": 2000,
+  "legende": "Penderie en bois, tringle et quatre cintres",
+  "alt": "Intérieur d’une penderie en bois, tringle et quatre cintres en bois clair",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Empty_wooden_wardrobe_closeup.jpg",
+  "titre_commons": "File:Empty wooden wardrobe closeup.jpg",
+  "largeur_source": 4016,
+  "hauteur_source": 6016,
+  "modifiee": "Oui — recadrée, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "recadrage": [
+   0.355,
+   0.318,
+   0.62,
+   0.5173
+  ],
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1.0324,
+    1
+   ],
+   "saturation": 0.656,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/boiserie-480.avif",
+  "base": "boiserie",
+  "largeur": 2400,
+  "hauteur": 1568,
+  "legende": "Boiseries et placards intégrés en bois sombre",
+  "alt": "Boiseries et placards intégrés en bois sombre",
+  "auteur": "Crew",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Coffee_table_by_a_wooden_wall_(Unsplash).jpg",
+  "titre_commons": "File:Coffee table by a wooden wall (Unsplash).jpg",
+  "largeur_source": 4000,
+  "hauteur_source": 2613,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.0208,
+    0.9918,
+    0.6506
+   ],
+   "saturation": 1,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/boiserie-480.webp",
+  "base": "boiserie",
+  "largeur": 2400,
+  "hauteur": 1568,
+  "legende": "Boiseries et placards intégrés en bois sombre",
+  "alt": "Boiseries et placards intégrés en bois sombre",
+  "auteur": "Crew",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Coffee_table_by_a_wooden_wall_(Unsplash).jpg",
+  "titre_commons": "File:Coffee table by a wooden wall (Unsplash).jpg",
+  "largeur_source": 4000,
+  "hauteur_source": 2613,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.0208,
+    0.9918,
+    0.6506
+   ],
+   "saturation": 1,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/boiserie-960.avif",
+  "base": "boiserie",
+  "largeur": 2400,
+  "hauteur": 1568,
+  "legende": "Boiseries et placards intégrés en bois sombre",
+  "alt": "Boiseries et placards intégrés en bois sombre",
+  "auteur": "Crew",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Coffee_table_by_a_wooden_wall_(Unsplash).jpg",
+  "titre_commons": "File:Coffee table by a wooden wall (Unsplash).jpg",
+  "largeur_source": 4000,
+  "hauteur_source": 2613,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.0208,
+    0.9918,
+    0.6506
+   ],
+   "saturation": 1,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/boiserie-960.webp",
+  "base": "boiserie",
+  "largeur": 2400,
+  "hauteur": 1568,
+  "legende": "Boiseries et placards intégrés en bois sombre",
+  "alt": "Boiseries et placards intégrés en bois sombre",
+  "auteur": "Crew",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Coffee_table_by_a_wooden_wall_(Unsplash).jpg",
+  "titre_commons": "File:Coffee table by a wooden wall (Unsplash).jpg",
+  "largeur_source": 4000,
+  "hauteur_source": 2613,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.0208,
+    0.9918,
+    0.6506
+   ],
+   "saturation": 1,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/tournage-copeaux-480.avif",
+  "base": "tournage-copeaux",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tournage sur bois, copeaux en vol",
+  "alt": "Tournage sur bois, copeaux en vol",
+  "auteur": "Bertrand from Paris, France",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Woodturning_Indonesia.jpg",
+  "titre_commons": "File:Woodturning Indonesia.jpg",
+  "largeur_source": 4368,
+  "hauteur_source": 2912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9842
+   ],
+   "saturation": 1,
+   "gamma": 1.034,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/tournage-copeaux-480.webp",
+  "base": "tournage-copeaux",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tournage sur bois, copeaux en vol",
+  "alt": "Tournage sur bois, copeaux en vol",
+  "auteur": "Bertrand from Paris, France",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Woodturning_Indonesia.jpg",
+  "titre_commons": "File:Woodturning Indonesia.jpg",
+  "largeur_source": 4368,
+  "hauteur_source": 2912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9842
+   ],
+   "saturation": 1,
+   "gamma": 1.034,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/tournage-copeaux-960.avif",
+  "base": "tournage-copeaux",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tournage sur bois, copeaux en vol",
+  "alt": "Tournage sur bois, copeaux en vol",
+  "auteur": "Bertrand from Paris, France",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Woodturning_Indonesia.jpg",
+  "titre_commons": "File:Woodturning Indonesia.jpg",
+  "largeur_source": 4368,
+  "hauteur_source": 2912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9842
+   ],
+   "saturation": 1,
+   "gamma": 1.034,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/tournage-copeaux-960.webp",
+  "base": "tournage-copeaux",
+  "largeur": 1600,
+  "hauteur": 1067,
+  "legende": "Tournage sur bois, copeaux en vol",
+  "alt": "Tournage sur bois, copeaux en vol",
+  "auteur": "Bertrand from Paris, France",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Woodturning_Indonesia.jpg",
+  "titre_commons": "File:Woodturning Indonesia.jpg",
+  "largeur_source": 4368,
+  "hauteur_source": 2912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9842
+   ],
+   "saturation": 1,
+   "gamma": 1.034,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/mains-noyer-480.avif",
+  "base": "mains-noyer",
+  "largeur": 1600,
+  "hauteur": 1068,
+  "legende": "Mains posées sur une planche de noyer, sciure au sol",
+  "alt": "Mains posées sur une planche de noyer, sciure au sol",
+  "auteur": "Ian Schneider",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Woodworker_in_a_workshop_(Unsplash).jpg",
+  "titre_commons": "File:Woodworker in a workshop (Unsplash).jpg",
+  "largeur_source": 6016,
+  "hauteur_source": 4016,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.7867
+   ],
+   "saturation": 1,
+   "gamma": 1.067,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/mains-noyer-480.webp",
+  "base": "mains-noyer",
+  "largeur": 1600,
+  "hauteur": 1068,
+  "legende": "Mains posées sur une planche de noyer, sciure au sol",
+  "alt": "Mains posées sur une planche de noyer, sciure au sol",
+  "auteur": "Ian Schneider",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Woodworker_in_a_workshop_(Unsplash).jpg",
+  "titre_commons": "File:Woodworker in a workshop (Unsplash).jpg",
+  "largeur_source": 6016,
+  "hauteur_source": 4016,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.7867
+   ],
+   "saturation": 1,
+   "gamma": 1.067,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/mains-noyer-960.avif",
+  "base": "mains-noyer",
+  "largeur": 1600,
+  "hauteur": 1068,
+  "legende": "Mains posées sur une planche de noyer, sciure au sol",
+  "alt": "Mains posées sur une planche de noyer, sciure au sol",
+  "auteur": "Ian Schneider",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Woodworker_in_a_workshop_(Unsplash).jpg",
+  "titre_commons": "File:Woodworker in a workshop (Unsplash).jpg",
+  "largeur_source": 6016,
+  "hauteur_source": 4016,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.7867
+   ],
+   "saturation": 1,
+   "gamma": 1.067,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/mains-noyer-960.webp",
+  "base": "mains-noyer",
+  "largeur": 1600,
+  "hauteur": 1068,
+  "legende": "Mains posées sur une planche de noyer, sciure au sol",
+  "alt": "Mains posées sur une planche de noyer, sciure au sol",
+  "auteur": "Ian Schneider",
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:Woodworker_in_a_workshop_(Unsplash).jpg",
+  "titre_commons": "File:Woodworker in a workshop (Unsplash).jpg",
+  "largeur_source": 6016,
+  "hauteur_source": 4016,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.7867
+   ],
+   "saturation": 1,
+   "gamma": 1.067,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-cuisine-tasseaux-480.avif",
+  "base": "reserve-cuisine-tasseaux",
+  "largeur": 480,
+  "hauteur": 320,
+  "legende": "Cuisine en bois et cloison à tasseaux",
+  "alt": "Cuisine en bois et cloison à tasseaux",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9361
+   ],
+   "saturation": 1,
+   "gamma": 1.261,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-cuisine-tasseaux-480.webp",
+  "base": "reserve-cuisine-tasseaux",
+  "largeur": 480,
+  "hauteur": 320,
+  "legende": "Cuisine en bois et cloison à tasseaux",
+  "alt": "Cuisine en bois et cloison à tasseaux",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9361
+   ],
+   "saturation": 1,
+   "gamma": 1.261,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-cuisine-tasseaux-960.avif",
+  "base": "reserve-cuisine-tasseaux",
+  "largeur": 960,
+  "hauteur": 641,
+  "legende": "Cuisine en bois et cloison à tasseaux",
+  "alt": "Cuisine en bois et cloison à tasseaux",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9361
+   ],
+   "saturation": 1,
+   "gamma": 1.261,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-cuisine-tasseaux-960.webp",
+  "base": "reserve-cuisine-tasseaux",
+  "largeur": 960,
+  "hauteur": 641,
+  "legende": "Cuisine en bois et cloison à tasseaux",
+  "alt": "Cuisine en bois et cloison à tasseaux",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9361
+   ],
+   "saturation": 1,
+   "gamma": 1.261,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-cuisine-poutres-480.avif",
+  "base": "reserve-cuisine-poutres",
+  "largeur": 480,
+  "hauteur": 320,
+  "legende": "Cuisine sous poutres avec plan de travail en bois",
+  "alt": "Cuisine sous poutres avec plan de travail en bois",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:This_space_features_a_stylish_kitchen_with_a_wooden_countertop_and_shelves.jpg",
+  "titre_commons": "File:This space features a stylish kitchen with a wooden countertop and shelves.jpg",
+  "largeur_source": 6016,
+  "hauteur_source": 4016,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.0589,
+    0.9774,
+    0.8103
+   ],
+   "saturation": 1,
+   "gamma": 1.279,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-cuisine-poutres-480.webp",
+  "base": "reserve-cuisine-poutres",
+  "largeur": 480,
+  "hauteur": 320,
+  "legende": "Cuisine sous poutres avec plan de travail en bois",
+  "alt": "Cuisine sous poutres avec plan de travail en bois",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:This_space_features_a_stylish_kitchen_with_a_wooden_countertop_and_shelves.jpg",
+  "titre_commons": "File:This space features a stylish kitchen with a wooden countertop and shelves.jpg",
+  "largeur_source": 6016,
+  "hauteur_source": 4016,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.0589,
+    0.9774,
+    0.8103
+   ],
+   "saturation": 1,
+   "gamma": 1.279,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-cuisine-poutres-960.avif",
+  "base": "reserve-cuisine-poutres",
+  "largeur": 960,
+  "hauteur": 641,
+  "legende": "Cuisine sous poutres avec plan de travail en bois",
+  "alt": "Cuisine sous poutres avec plan de travail en bois",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:This_space_features_a_stylish_kitchen_with_a_wooden_countertop_and_shelves.jpg",
+  "titre_commons": "File:This space features a stylish kitchen with a wooden countertop and shelves.jpg",
+  "largeur_source": 6016,
+  "hauteur_source": 4016,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.0589,
+    0.9774,
+    0.8103
+   ],
+   "saturation": 1,
+   "gamma": 1.279,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-cuisine-poutres-960.webp",
+  "base": "reserve-cuisine-poutres",
+  "largeur": 960,
+  "hauteur": 641,
+  "legende": "Cuisine sous poutres avec plan de travail en bois",
+  "alt": "Cuisine sous poutres avec plan de travail en bois",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:This_space_features_a_stylish_kitchen_with_a_wooden_countertop_and_shelves.jpg",
+  "titre_commons": "File:This space features a stylish kitchen with a wooden countertop and shelves.jpg",
+  "largeur_source": 6016,
+  "hauteur_source": 4016,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.0589,
+    0.9774,
+    0.8103
+   ],
+   "saturation": 1,
+   "gamma": 1.279,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-bibliotheque-480.avif",
+  "base": "reserve-bibliotheque",
+  "largeur": 480,
+  "hauteur": 719,
+  "legende": "Bibliothèque en bois et niches ouvertes",
+  "alt": "Bibliothèque en bois et niches ouvertes",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_interior_design_featuring_wooden_shelves_and_decorative_elements.jpg",
+  "titre_commons": "File:Modern interior design featuring wooden shelves and decorative elements.jpg",
+  "largeur_source": 3820,
+  "hauteur_source": 5722,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1.04,
+    0.64
+   ],
+   "saturation": 0.688,
+   "gamma": 0.6,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-bibliotheque-480.webp",
+  "base": "reserve-bibliotheque",
+  "largeur": 480,
+  "hauteur": 719,
+  "legende": "Bibliothèque en bois et niches ouvertes",
+  "alt": "Bibliothèque en bois et niches ouvertes",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_interior_design_featuring_wooden_shelves_and_decorative_elements.jpg",
+  "titre_commons": "File:Modern interior design featuring wooden shelves and decorative elements.jpg",
+  "largeur_source": 3820,
+  "hauteur_source": 5722,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1.04,
+    0.64
+   ],
+   "saturation": 0.688,
+   "gamma": 0.6,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-bibliotheque-960.avif",
+  "base": "reserve-bibliotheque",
+  "largeur": 960,
+  "hauteur": 1438,
+  "legende": "Bibliothèque en bois et niches ouvertes",
+  "alt": "Bibliothèque en bois et niches ouvertes",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_interior_design_featuring_wooden_shelves_and_decorative_elements.jpg",
+  "titre_commons": "File:Modern interior design featuring wooden shelves and decorative elements.jpg",
+  "largeur_source": 3820,
+  "hauteur_source": 5722,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1.04,
+    0.64
+   ],
+   "saturation": 0.688,
+   "gamma": 0.6,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/reserve-bibliotheque-960.webp",
+  "base": "reserve-bibliotheque",
+  "largeur": 960,
+  "hauteur": 1438,
+  "legende": "Bibliothèque en bois et niches ouvertes",
+  "alt": "Bibliothèque en bois et niches ouvertes",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_interior_design_featuring_wooden_shelves_and_decorative_elements.jpg",
+  "titre_commons": "File:Modern interior design featuring wooden shelves and decorative elements.jpg",
+  "largeur_source": 3820,
+  "hauteur_source": 5722,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1.04,
+    0.64
+   ],
+   "saturation": 0.688,
+   "gamma": 0.6,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  }
+ },
+ {
+  "fichier": "images/tasseaux-cloison-480.avif",
+  "base": "tasseaux-cloison",
+  "largeur": 480,
+  "hauteur": 615,
+  "legende": "Cloison à tasseaux de bois",
+  "alt": "Cloison à tasseaux de bois",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis recadrée sur la cloison à tasseaux (sans la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9361
+   ],
+   "saturation": 1,
+   "gamma": 1.261,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  },
+  "recadrage": {
+   "depuis": "images/reserve-cuisine-tasseaux-2880.webp",
+   "left": 0,
+   "top": 250,
+   "width": 780,
+   "height": 1000
+  }
+ },
+ {
+  "fichier": "images/tasseaux-cloison-480.webp",
+  "base": "tasseaux-cloison",
+  "largeur": 480,
+  "hauteur": 615,
+  "legende": "Cloison à tasseaux de bois",
+  "alt": "Cloison à tasseaux de bois",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis recadrée sur la cloison à tasseaux (sans la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9361
+   ],
+   "saturation": 1,
+   "gamma": 1.261,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  },
+  "recadrage": {
+   "depuis": "images/reserve-cuisine-tasseaux-2880.webp",
+   "left": 0,
+   "top": 250,
+   "width": 780,
+   "height": 1000
+  }
+ },
+ {
+  "fichier": "images/tasseaux-cloison-780.avif",
+  "base": "tasseaux-cloison",
+  "largeur": 780,
+  "hauteur": 1000,
+  "legende": "Cloison à tasseaux de bois",
+  "alt": "Cloison à tasseaux de bois",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis recadrée sur la cloison à tasseaux (sans la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9361
+   ],
+   "saturation": 1,
+   "gamma": 1.261,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  },
+  "recadrage": {
+   "depuis": "images/reserve-cuisine-tasseaux-2880.webp",
+   "left": 0,
+   "top": 250,
+   "width": 780,
+   "height": 1000
+  }
+ },
+ {
+  "fichier": "images/tasseaux-cloison-780.webp",
+  "base": "tasseaux-cloison",
+  "largeur": 780,
+  "hauteur": 1000,
+  "legende": "Cloison à tasseaux de bois",
+  "alt": "Cloison à tasseaux de bois",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+  "titre_commons": "File:Modern luxury living room with kitchen interior.jpg",
+  "largeur_source": 7360,
+  "hauteur_source": 4912,
+  "modifiee": "Oui — étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis recadrée sur la cloison à tasseaux (sans la porte, la cuisine ni le meuble bas) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1,
+    1,
+    0.9361
+   ],
+   "saturation": 1,
+   "gamma": 1.261,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 6,
+   "cibleB": 18,
+   "fenetre": 2,
+   "cibleL": 38,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  },
+  "recadrage": {
+   "depuis": "images/reserve-cuisine-tasseaux-2880.webp",
+   "left": 0,
+   "top": 250,
+   "width": 780,
+   "height": 1000
+  }
+ },
+ {
+  "fichier": "images/heros-escalier-portrait-720.avif",
+  "base": "heros-escalier-portrait",
+  "largeur": 720,
+  "hauteur": 900,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg",
+  "largeur_source": 4608,
+  "hauteur_source": 3456,
+  "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, ombres et veinage gardés, hautes lumières ramenées vers un crème ambré et désaturées) par Presti pour ce site de démonstration",
+  "recadrage": [
+   0.21224,
+   0.00405,
+   0.38368,
+   0.63947
+  ],
+  "etalonnage": {
+   "version": 4,
+   "noir": 0.045,
+   "blanc": 0.66,
+   "gamma": 0.44,
+   "k": 11,
+   "pivot": 0.57,
+   "plancher": 0.01,
+   "saturation": 1.08,
+   "ampExp": 0.7,
+   "ampMax": 1.85,
+   "hautes": 0.72,
+   "vert": 0.8,
+   "teinte": 0.55,
+   "creme": [
+    250,
+    208,
+    156
+   ],
+   "depart": "original Commons (sha256 7bd8b7cb69fa442f…)"
+  },
+  "usage": "site uniquement — CC BY-SA : jamais dans un film (le partage à l'identique s'étendrait au film)"
+ },
+ {
+  "fichier": "images/heros-escalier-portrait-720.webp",
+  "base": "heros-escalier-portrait",
+  "largeur": 720,
+  "hauteur": 900,
+  "legende": "Escalier hélicoïdal en bois massif",
+  "alt": "Escalier hélicoïdal en bois massif",
+  "auteur": "Petar Milošević",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+  "titre_commons": "File:Wooden spiral stairs (Nebotičnik, Ljubljana).jpg",
+  "largeur_source": 4608,
+  "hauteur_source": 3456,
+  "modifiee": "Oui — recadrée en 4:5, étalonnée depuis l’original (courbe de luminance, ombres et veinage gardés, hautes lumières ramenées vers un crème ambré et désaturées) par Presti pour ce site de démonstration",
+  "recadrage": [
+   0.21224,
+   0.00405,
+   0.38368,
+   0.63947
+  ],
+  "etalonnage": {
+   "version": 4,
+   "noir": 0.045,
+   "blanc": 0.66,
+   "gamma": 0.44,
+   "k": 11,
+   "pivot": 0.57,
+   "plancher": 0.01,
+   "saturation": 1.08,
+   "ampExp": 0.7,
+   "ampMax": 1.85,
+   "hautes": 0.72,
+   "vert": 0.8,
+   "teinte": 0.55,
+   "creme": [
+    250,
+    208,
+    156
+   ],
+   "depart": "original Commons (sha256 7bd8b7cb69fa442f…)"
+  },
+  "usage": "site uniquement — CC BY-SA : jamais dans un film (le partage à l'identique s'étendrait au film)"
+ },
+ {
+  "fichier": "images/atelier-poncage-portrait-720.avif",
+  "base": "atelier-poncage-portrait",
+  "largeur": 720,
+  "hauteur": 1280,
+  "legende": "Ponçage à la main d’une pièce chantournée",
+  "alt": "Ponçage à la main d’une pièce chantournée",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Close-up_of_a_carpenters_hand_sandpapering_the_wood.jpg",
+  "titre_commons": "File:Close-up of a carpenters hand sandpapering the wood.jpg",
+  "largeur_source": 5238,
+  "hauteur_source": 3497,
+  "modifiee": "Oui — recadrée en 9:16, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.1124,
+    0.96,
+    0.7252
+   ],
+   "saturation": 1,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  },
+  "recadrage": [
+   0.31215,
+   0,
+   0.37569,
+   1
+  ]
+ },
+ {
+  "fichier": "images/atelier-poncage-portrait-720.webp",
+  "base": "atelier-poncage-portrait",
+  "largeur": 720,
+  "hauteur": 1280,
+  "legende": "Ponçage à la main d’une pièce chantournée",
+  "alt": "Ponçage à la main d’une pièce chantournée",
+  "auteur": "Shixart1985",
+  "licence": "CC BY 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Close-up_of_a_carpenters_hand_sandpapering_the_wood.jpg",
+  "titre_commons": "File:Close-up of a carpenters hand sandpapering the wood.jpg",
+  "largeur_source": 5238,
+  "hauteur_source": 3497,
+  "modifiee": "Oui — recadrée en 9:16, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) par Presti pour ce site de démonstration",
+  "etalonnage": {
+   "version": 2,
+   "gains": [
+    1.1124,
+    0.96,
+    0.7252
+   ],
+   "saturation": 1,
+   "gamma": 1,
+   "ton": {
+    "a": 0.92,
+    "b": 12
+   },
+   "grain": 0,
+   "cibleB": 19,
+   "fenetre": 3,
+   "cibleL": 34,
+   "fenetreL": 6,
+   "aMin": 4,
+   "aMax": 8
+  },
+  "recadrage": [
+   0.31215,
+   0,
+   0.37569,
+   1
+  ]
+ }
+]

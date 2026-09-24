@@ -1,0 +1,163 @@
+// Témoin « après » de scripts/formulaire-site-qa.mjs (fiche 025-01, point 5 ; état attendu de la fiche 025-03), écrit par
+// Claude Code le 24/09.
+//
+// CE N'EST PAS LE GÉNÉRATEUR DE PRESTI. C'est le plus petit générateur --source qui remplit FS-1 à FS-5 et FS-7 : il prouve
+// que le juge passe quand le travail est fait (et il échoue, lui, sur l'arbre de référence 1620723, où generer.mjs ne connaît
+// pas --source). Il n'est jamais lancé sur le dépôt. `node scripts/formulaire-site-qa.mjs --temoin` construit l'arbre
+// .orchestre/travail/formulaire-site-qa/temoin/ (lib/slugRedirect.ts copié du dépôt, puis ce dossier de fixtures superposé),
+// retire le suffixe .temoin (un .ts ici serait compilé par `npm run typecheck`, tsconfig inclut **/*.ts ; .orchestre/ ne l'est
+// pas), et lance <témoin>/public/sites-demo/generer.mjs --source=<commande> --sortie=<dossier sous .orchestre/travail/>.
+//
+// Ce qu'il écrit dans --sortie, à partir de <source>/commande.json, <source>/photos/ et photos/attributions.json :
+//   index.html  héros, plateau (citation signée ; trois chiffres, ou aucun si matiere.artisan.chiffres vaut null), galerie,
+//               contact avec un vrai formulaire (sans data-demo), un champ piège « website » hors écran (tabindex=-1), l'état
+//               « Demande reçue » et le repli (tel: et mailto: de site.json), cachés tant que rien n'est envoyé ;
+//   site.js     envoi JSON {slug, contact, nom_prospect, message, website} à /api/leads ; 2xx → « Demande reçue » ; autre statut
+//               ou erreur réseau → le repli ;
+//   site.json   slug, nom, téléphone, e-mail, communes, artisan, plateau (d'où le repli tire tel: et mailto:) ;
+//   images/     les fichiers de <source>/photos/, et eux seuls (FS-7) ; attributions.json et styles.css.
+import fs from 'node:fs'
+import path from 'node:path'
+
+const args = process.argv.slice(2)
+const valeur = (nom) => args.find((a) => a.startsWith(`--${nom}=`))?.slice(nom.length + 3)
+const source = valeur('source'), sortie = valeur('sortie')
+if (!source || !sortie) { console.error('usage (témoin) : generer.mjs --source=<dossier de commande> --sortie=<dossier>'); process.exit(2) }
+const SRC = path.resolve(source), OUT = path.resolve(sortie)
+const dedans = path.relative(SRC, OUT)
+if (dedans === '' || (!dedans.startsWith('..') && !path.isAbsolute(dedans))) { console.error('--sortie ne peut pas être dans --source'); process.exit(2) }
+
+const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+const telHref = (t) => `tel:${String(t).replace(/[^\d+]/g, '')}`
+const telAffiche = (t) => { const d = String(t).replace(/\D/g, ''); const n = d.startsWith('33') ? '0' + d.slice(2) : d; return n.replace(/(\d{2})(?=\d)/g, '$1 ') }
+
+try {
+  const cmd = JSON.parse(fs.readFileSync(path.join(SRC, 'commande.json'), 'utf8'))
+  const a = cmd.matiere?.artisan
+  // les bornes de generer.mjs:193-222 (contrat matiere.artisan de la fiche 025-01)
+  if (!a) throw new Error('matiere.artisan manque')
+  for (const k of ['prenom', 'nom', 'parcours', 'citation']) if (typeof a[k] !== 'string' || !a[k].trim()) throw new Error(`artisan.${k} manque`)
+  if (!Number.isInteger(a.installation) || a.installation < 1960 || a.installation > new Date().getFullYear()) throw new Error('artisan.installation hors bornes')
+  if (a.parcours.length > 140 || /[\r\n]/.test(a.parcours)) throw new Error('artisan.parcours : une ligne de 140 signes au plus')
+  if (a.citation.length < 20 || a.citation.length > 160) throw new Error('artisan.citation hors 20-160 signes')
+  if (!/(?<![\p{L}])(?:je|me|moi|mon|ma|mes)(?![\p{L}])|(?<![\p{L}])[jm]’(?=\p{L})/iu.test(a.citation)) throw new Error('artisan.citation pas à la première personne')
+  if (a.chiffres !== null && (!Array.isArray(a.chiffres) || a.chiffres.length !== 3)) throw new Error('artisan.chiffres : null ou trois')
+  for (const c of a.chiffres || []) if (!(Number(String(c.valeur).replace(',', '.').replace(/\s/g, '')) > 0) || !c.legende) throw new Error(`chiffre « ${c.valeur} » invalide`)
+  if (!/^[a-z0-9-]{1,80}$/.test(cmd.slug || '')) throw new Error('slug invalide')
+
+  const attributions = JSON.parse(fs.readFileSync(path.join(SRC, 'photos', 'attributions.json'), 'utf8'))
+  const fichiers = fs.readdirSync(path.join(SRC, 'photos')).filter((f) => f !== 'attributions.json')
+  const parBase = new Map()
+  for (const x of attributions) {
+    const nom = String(x.fichier).replace(/^images\//, '')
+    if (!fichiers.includes(nom)) continue
+    const m = /-(\d+)\.(avif|webp)$/.exec(nom)
+    if (!m) continue
+    const p = parBase.get(x.base) || { ...x, largeurs: new Set() }
+    p.largeurs.add(Number(m[1])); parBase.set(x.base, p)
+  }
+  const photos = cmd.matiere.photos.map((p) => parBase.get(p.base)).filter(Boolean)
+  if (photos.length < 3) throw new Error(`${photos.length} photo(s) utilisable(s), 3 au moins`)
+  const srcset = (p, ext) => [...p.largeurs].sort((x, y) => x - y).map((l) => `images/${p.base}-${l}.${ext} ${l}w`).join(', ')
+  const photo = (p, sizes = '(max-width: 700px) 100vw, 33vw') => `<picture><source type="image/avif" srcset="${srcset(p, 'avif')}" sizes="${sizes}"><img src="images/${p.base}-${[...p.largeurs].sort((x, y) => x - y).at(-1)}.webp" srcset="${srcset(p, 'webp')}" sizes="${sizes}" alt="${esc(p.alt || p.legende)}" width="${p.largeur}" height="${p.hauteur}" loading="lazy"></picture>`
+
+  const ville = cmd.communes[0]
+  const email = cmd.email
+  const site = { slug: cmd.slug, nom: cmd.nom, metier: cmd.metier, telephone: cmd.telephone, email, communes: cmd.communes, artisan: a, plateau: a.chiffres ? { chiffres: a.chiffres } : null }
+  const metier = cmd.metier.charAt(0).toUpperCase() + cmd.metier.slice(1)
+  const options = (l) => l.map((x) => `<option>${esc(x)}</option>`).join('')
+  const dv = cmd.devis || { projets: ['Autre projet'], delais: ['Dès que possible'] }
+  const auteurs = [...new Set(photos.map((p) => `${p.auteur} (${p.licence})`))]
+  const chiffres = a.chiffres ? `<dl class="chiffres">${a.chiffres.map((c) => `<div class="chiffre"><dt>${esc(c.legende)}</dt><dd><span class="chiffre__valeur">${esc(c.valeur)}</span>${c.unite ? ` <span class="chiffre__unite">${esc(c.unite)}</span>` : ''}</dd></div>`).join('')}</dl>` : ''
+
+  const html = `<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(metier)} à ${esc(ville)} — ${esc(cmd.nom)}</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="entete"><span class="marque">${esc(cmd.nom)}</span><a class="entete__devis" href="#contact">Demander un devis</a></header>
+<main>
+<section class="hero"><div class="hero__texte"><h1>${esc(metier)} à ${esc(ville)}</h1><p>${esc(a.parcours)}</p></div><div class="hero__photo">${photo(photos[0], '(max-width: 700px) 100vw, 50vw')}</div></section>
+<section class="plateau" aria-label="L’atelier en bref"><figure class="plateau__citation"><blockquote><p>${esc(a.citation)}</p></blockquote><figcaption><span class="plateau__signe">${esc(`${a.prenom} ${a.nom}`)} · à ${esc(ville)} depuis ${a.installation}</span></figcaption></figure>${chiffres}</section>
+<section class="galerie" aria-label="Réalisations">${photos.slice(1, 4).map((p) => `<figure>${photo(p)}<figcaption>${esc(p.legende)}</figcaption></figure>`).join('')}</section>
+<section class="contact" id="contact">
+<h2>Parlons de votre projet</h2>
+<form class="devis__form" method="post" action="#contact" data-slug="${esc(cmd.slug)}" aria-label="Demande de devis">
+<label>Votre projet <select name="projet" required><option value="">Choisir</option>${options(dv.projets)}</select></label>
+<label>Commune <select name="commune">${options([...cmd.communes, 'Autre commune'])}</select></label>
+<label>Quand <select name="delai">${options(dv.delais)}</select></label>
+<label class="large">La pièce, l’usage, le bois <textarea name="message" rows="3"></textarea></label>
+<label class="large">Téléphone ou e-mail <input name="contact" type="text" autocomplete="tel" required></label>
+<div class="devis__piege" aria-hidden="true"><label for="devis-website">Ne pas remplir ce champ</label><input id="devis-website" name="website" type="text" tabindex="-1" autocomplete="off" value=""></div>
+<button type="submit">Envoyer ma demande</button>
+</form>
+<div class="devis__merci" role="status" tabindex="-1" hidden><p class="devis__merci-titre">Demande reçue.</p><p>Je vous rappelle rapidement pour en parler.</p></div>
+<div class="devis__repli" role="alert" tabindex="-1" hidden><p>Votre demande n’est pas partie. Appelez-moi au <a href="${telHref(site.telephone)}">${telAffiche(site.telephone)}</a> ou écrivez-moi à <a href="mailto:${esc(email)}">${esc(email)}</a>.</p></div>
+<p class="contact__tel">Ou par téléphone : <a href="${telHref(site.telephone)}">${telAffiche(site.telephone)}</a></p>
+</section>
+</main>
+<footer class="pied"><p>${esc(cmd.nom)} · ${esc(cmd.matiere.adresse || ville)}</p><p class="credits">Photos : ${auteurs.map(esc).join(', ')}.</p></footer>
+<script src="site.js" defer></script>
+</body>
+</html>
+`
+  const js = `(function () {
+  var f = document.querySelector('form.devis__form')
+  if (!f) return
+  var merci = document.querySelector('.devis__merci'), repli = document.querySelector('.devis__repli')
+  var texte = function (s) { return s && s.value && s.selectedIndex >= 0 ? s.options[s.selectedIndex].text : '' }
+  var montrer = function (x) { merci.hidden = x !== merci; repli.hidden = x !== repli; if (x === merci) f.hidden = true; x.focus({ preventScroll: true }); x.scrollIntoView({ block: 'center' }) }
+  f.addEventListener('submit', function (e) {
+    e.preventDefault()
+    if (f.reportValidity && !f.reportValidity()) return
+    var el = f.elements
+    var besoin = el.message.value.trim()
+    var corps = {
+      slug: f.getAttribute('data-slug'),
+      contact: el.contact.value.trim(),
+      nom_prospect: null,
+      message: 'Projet : ' + (texte(el.projet) || 'à préciser') + ' · Commune : ' + (texte(el.commune) || 'à préciser') + ' · Quand : ' + (texte(el.delai) || 'à préciser') + (besoin ? '\\n' + besoin : ''),
+      website: el.website.value
+    }
+    var bouton = f.querySelector('[type=submit]')
+    bouton.disabled = true
+    fetch('/api/leads', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(corps) })
+      .then(function (r) { if (!r.ok) throw new Error('statut ' + r.status); montrer(merci) })
+      .catch(function () { montrer(repli) })
+      .then(function () { bouton.disabled = false })
+  })
+})()
+`
+  const css = `*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;font:17px/1.55 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#2A1E12;background:#F7F1E6}
+[hidden]{display:none!important}img{display:block;max-width:100%;height:auto}a{color:#A9743F}
+.entete{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid #E6DCCB}.marque{font-weight:700}
+.hero{display:grid;gap:1.5rem;padding:2rem 1.25rem}@media(min-width:760px){.hero{grid-template-columns:1fr 1fr;align-items:center;padding:3rem}}
+h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.05;margin:0 0 1rem}h2{font-size:clamp(1.6rem,4vw,2.6rem);margin:0 0 1.5rem}
+.plateau{background:#14110E;color:#F4EDE2;padding:3rem 1.25rem}.plateau blockquote{margin:0;font-size:clamp(1.4rem,3.2vw,2.2rem);line-height:1.25}.plateau figcaption{margin-top:1rem;color:#E9D6B8}
+.chiffres{display:grid;gap:1rem;margin:2rem 0 0}@media(min-width:760px){.chiffres{grid-template-columns:repeat(3,1fr)}}.chiffre dd{margin:0;font-size:2.4rem;color:#E9B97A}
+.galerie{display:grid;gap:1rem;padding:2rem 1.25rem}@media(min-width:760px){.galerie{grid-template-columns:repeat(3,1fr);padding:3rem}}.galerie figure{margin:0}.galerie figcaption{font-size:.9rem;color:#6A5A48}
+.contact{position:relative;background:#1d1814;color:#F4EDE2;padding:3rem 1.25rem}.contact a{color:#E9B97A}
+.devis__form{display:grid;gap:1rem;max-width:56rem}@media(min-width:760px){.devis__form{grid-template-columns:repeat(3,1fr)}.devis__form .large,.devis__form button{grid-column:1/-1}}
+.devis__form label{display:grid;gap:.35rem;font-size:.95rem}select,textarea,input{font:inherit;padding:.6rem .7rem;border:1px solid #6A5A48;border-radius:6px;background:#FFFBF4;color:#2A1E12}
+button{font:inherit;font-weight:700;padding:.9rem 1.4rem;border:0;border-radius:999px;background:#E9B97A;color:#14110E;cursor:pointer;justify-self:start}
+.devis__piege{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+.devis__merci,.devis__repli{max-width:40rem;padding:1.25rem 1.5rem;border-radius:10px;background:#2A221B;outline:none}.devis__merci-titre{font-size:2rem;margin:0 0 .5rem}.devis__repli{border:2px solid #E9B97A}
+.contact__tel{margin-top:2rem}.pied{padding:2rem 1.25rem;font-size:.9rem;color:#6A5A48}
+`
+  fs.rmSync(OUT, { recursive: true, force: true })
+  fs.mkdirSync(path.join(OUT, 'images'), { recursive: true })
+  for (const f of fichiers) fs.copyFileSync(path.join(SRC, 'photos', f), path.join(OUT, 'images', f))
+  fs.writeFileSync(path.join(OUT, 'attributions.json'), `${JSON.stringify(attributions.filter((x) => fichiers.includes(String(x.fichier).replace(/^images\//, ''))), null, 1)}\n`)
+  fs.writeFileSync(path.join(OUT, 'site.json'), `${JSON.stringify(site, null, 1)}\n`)
+  fs.writeFileSync(path.join(OUT, 'index.html'), html)
+  fs.writeFileSync(path.join(OUT, 'site.js'), js)
+  fs.writeFileSync(path.join(OUT, 'styles.css'), css)
+  console.log(`  ✓ témoin : ${cmd.slug} → ${OUT} (${fichiers.length} photos, ${a.chiffres ? 'trois chiffres' : 'sans chiffres'})`)
+} catch (e) {
+  console.log(`  ✗ témoin : ${e.message}`)
+  process.exitCode = 1
+}

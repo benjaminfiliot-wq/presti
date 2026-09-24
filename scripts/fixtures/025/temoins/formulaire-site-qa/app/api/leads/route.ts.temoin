@@ -1,0 +1,126 @@
+// Témoin « après » de FS-6 (scripts/formulaire-site-qa.mjs, fiche 025-01 point 5 ; état attendu de la fiche 025-03), écrit
+// par Claude Code le 24/09. CE N'EST PAS LA ROUTE DE PRESTI : c'est app/api/leads/route.ts de 1620723, raccourci après la
+// branche « pause » (l'IA, les crédits et les e-mails, que FS-6 ne lit pas, sont remplacés par un commentaire), avec le seul
+// changement que 025-03 doit faire : après l'échec de la recherche par slug, l'ANCIENNE adresse (0051, lib/slugRedirect.ts:6)
+// est essayée avant le 404 — un site statique généré avant un changement d'adresse envoie toujours l'ancien slug.
+// Suffixe .temoin : un .ts ici serait compilé par `npm run typecheck` (tsconfig inclut **/*.ts). Le juge le copie, sans le
+// suffixe, dans .orchestre/travail/formulaire-site-qa/temoin/app/api/leads/route.ts (non compilé : .orchestre/ est ignoré).
+import { NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { suspensionEnCours, MESSAGE_PUBLIC_INDISPONIBLE } from '@/lib/suspension'
+import { qualifyLead } from '@/lib/ai'
+import { getIp, isBanned, recordAbuse, ipPseudonyme } from '@/lib/security'
+import { consommerLimite } from '@/lib/limites'
+import { artisanParAncienSlug } from '@/lib/slugRedirect'
+
+const MAX = { slug: 80, contact: 200, nom: 120, message: 5000 }
+const MAX_LEADS_PAR_IP = 6
+const COLONNES = 'id, nom, metier, ton_style, email, is_founder, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan'
+const clip = (v: unknown, n: number): string | null => {
+  if (typeof v !== 'string') return null
+  const t = v.trim()
+  return t ? t.slice(0, n) : null
+}
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json().catch(() => null)
+    const slug = clip(body?.slug, MAX.slug)
+    const contact = clip(body?.contact, MAX.contact)
+    const nom_prospect = clip(body?.nom_prospect, MAX.nom)
+    const message = clip(body?.message, MAX.message)
+    const variant = body?.variant === 'A' || body?.variant === 'B' ? body.variant : null
+    const deferContact = body?.deferContact === true
+
+    if (!slug || (!contact && !deferContact) || (deferContact && !message)) {
+      return NextResponse.json({ error: 'Slug et contact requis' }, { status: 400 })
+    }
+    if (!/^[a-z0-9-]{1,80}$/.test(slug)) {
+      return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
+    }
+
+    const ip = getIp(req)
+
+    // Anti-hacker : IP bannie → on refuse tout, immédiatement.
+    if (await isBanned(ip)) {
+      return NextResponse.json({ error: 'Accès refusé.' }, { status: 403 })
+    }
+
+    // Honeypot anti-bot : champ caché qui doit rester vide. Rempli = bot → abus + drop silencieux.
+    if (typeof body?.website === 'string' && body.website.trim()) {
+      await recordAbuse(ip, 'honeypot /api/leads')
+      return NextResponse.json({ ok: true })
+    }
+
+    if (ip !== 'unknown' && !(await consommerLimite(`leads:ip:${ip}`, MAX_LEADS_PAR_IP, 10 * 60))) {
+      await recordAbuse(ip, 'flood /api/leads')
+      return NextResponse.json({ error: 'Trop de demandes. Réessayez dans quelques minutes.' }, { status: 429 })
+    }
+
+    // 1) Retrouver l'artisan à partir de son slug…
+    let { data: artisan, error: aErr } = await supabaseAdmin
+      .from('artisans')
+      .select(COLONNES)
+      .eq('slug', slug)
+      .maybeSingle()
+
+    if (aErr) {
+      console.error('[leads] lookup artisan:', aErr.message)
+      return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+    }
+    // … ou de son ANCIENNE adresse (0051) : le site statique d'un artisan qui a changé de slug l'envoie encore.
+    if (!artisan) {
+      const actuel = await artisanParAncienSlug(slug)
+      if (actuel) {
+        const r = await supabaseAdmin.from('artisans').select(COLONNES).eq('slug', actuel.slug).maybeSingle()
+        if (r.error) {
+          console.error('[leads] lookup artisan (ancienne adresse):', r.error.message)
+          return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+        }
+        artisan = r.data
+      }
+    }
+    if (!artisan) return NextResponse.json({ error: 'Artisan introuvable' }, { status: 404 })
+    if (await suspensionEnCours(artisan.id)) return NextResponse.json({ error: MESSAGE_PUBLIC_INDISPONIBLE }, { status: 410 })
+
+    const qualif = qualifyLead(message, artisan.metier)
+
+    // 2) Enregistrer le lead (chemin critique : on ne le perd jamais)
+    const { data: lead, error: lErr } = await supabaseAdmin
+      .from('leads')
+      .insert({
+        artisan_id: artisan.id,
+        nom_prospect,
+        contact,
+        message,
+        canal: 'formulaire',
+        statut: 'nouveau',
+        urgence: qualif.urgence,
+        type_chantier: qualif.type_chantier,
+        ab_variant: variant,
+        ip: ipPseudonyme(ip),
+      })
+      .select('id, token')
+      .single()
+
+    if (lErr) {
+      console.error('[leads] insert lead:', lErr.message)
+      return NextResponse.json({ error: 'Enregistrement impossible' }, { status: 500 })
+    }
+
+    // Mode PAUSE : le lead est TOUJOURS sauvé, mais aucune réponse IA ni email ne part.
+    if (artisan.leads_pause === true) {
+      if (message) {
+        await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
+      }
+      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, paused: true, reply: null })
+    }
+
+    // (témoin : la suite de la route réelle — photos, plafond par artisan, décision de réponse, crédits, IA, e-mails,
+    // relances — n'est pas lue par FS-6 et n'est pas reprise ici.)
+    return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: null })
+  } catch (e) {
+    console.error('[leads] erreur inattendue:', e)
+    return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+  }
+}

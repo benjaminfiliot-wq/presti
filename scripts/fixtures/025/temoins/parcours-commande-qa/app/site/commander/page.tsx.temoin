@@ -1,0 +1,87 @@
+'use client'
+// TÉMOIN de scripts/parcours-commande-qa.mjs (fiche 025-01), écrit par Claude Code — PAS la page de production.
+// Un /site/commander réduit à ce que PC-3 et PC-4 lisent (fiche 025-09) : la liste des étapes avec « Votre parcours », les
+// champs du contrat matiere.artisan, le choix « Je préfère ne pas donner de chiffres », des exemples marqués « Exemple : »,
+// et l'option a_prendre où l'artisan réserve lui-même son domaine. Le juge le pose à la place de
+// app/site/commander/page.tsx dans une copie de l'arbre de référence (.orchestre/travail/parcours-commande-qa/temoin/),
+// avec le lib/siteCommande.ts témoin, puis y lance npm run typecheck (PC-5). Extension .temoin : le tsc du dépôt ne le voit pas.
+import { useState } from 'react'
+import { ARTISAN_BORNES, erreursAvantPaiement, nettoyerBrouillon, type Artisan, type Brouillon, type Chiffre } from '@/lib/siteCommande'
+
+type Etape = 'domaine' | 'zone' | 'parcours' | 'matiere' | 'paiement'
+
+const ETAPES: { id: Etape; nom: string }[] = [
+  { id: 'domaine', nom: 'Le domaine' },
+  { id: 'zone', nom: 'Métier & Zone' },
+  { id: 'parcours', nom: 'Votre parcours' },
+  { id: 'matiere', nom: 'La matière' },
+  { id: 'paiement', nom: 'Le paiement' },
+]
+
+const CHIFFRE_VIDE: Chiffre = { valeur: '', unite: '', legende: '' }
+const TROIS_VIDES = (): Chiffre[] => [{ ...CHIFFRE_VIDE }, { ...CHIFFRE_VIDE }, { ...CHIFFRE_VIDE }]
+const ARTISAN_VIDE: Artisan = { prenom: '', nom: '', installation: null, parcours: '', citation: '', chiffres: TROIS_VIDES() }
+
+export default function CommanderSitePage() {
+  const [etape, setEtape] = useState<Etape>('domaine')
+  const [brouillon, setBrouillon] = useState<Brouillon>(() => nettoyerBrouillon({}))
+  const a: Artisan = brouillon.matiere.artisan ?? ARTISAN_VIDE
+  const maintenant = new Date().getFullYear()
+  const majArtisan = (champs: Partial<Artisan>) =>
+    setBrouillon((b) => ({ ...b, matiere: { ...b.matiere, artisan: { ...(b.matiere.artisan ?? ARTISAN_VIDE), ...champs } } }))
+  const majChiffre = (i: number, champs: Partial<Chiffre>) =>
+    majArtisan({ chiffres: (a.chiffres ?? TROIS_VIDES()).map((c, j) => (j === i ? { ...c, ...champs } : c)) })
+  const errs = erreursAvantPaiement(brouillon)
+
+  return (
+    <main>
+      <nav>
+        {ETAPES.map((e, i) => (
+          <button key={e.id} type="button" onClick={() => setEtape(e.id)}>{i + 1}. {e.nom}</button>
+        ))}
+      </nav>
+
+      {etape === 'domaine' && (
+        <div>
+          <h3>Nom de domaine</h3>
+          <label><input type="radio" checked={brouillon.domaine_mode === 'existant'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'existant' })} /> J’ai déjà un nom de domaine</label>
+          <label><input type="radio" checked={brouillon.domaine_mode === 'a_prendre'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'a_prendre' })} /> Je n’en ai pas : je le réserve à mon nom (environ 10 € par an), Presti m’envoie le guide</label>
+          <label><input type="radio" checked={brouillon.domaine_mode === 'aucun'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'aucun' })} /> Plus tard</label>
+        </div>
+      )}
+
+      {etape === 'parcours' && (
+        <div>
+          <h3>Votre parcours</h3>
+          <p>Votre site parle avec votre voix : nous n’inventons rien.</p>
+          <label>Prénom ({ARTISAN_BORNES.prenom} signes au plus)
+            <input value={a.prenom} maxLength={ARTISAN_BORNES.prenom} onChange={(e) => majArtisan({ prenom: e.target.value })} placeholder="Exemple : Aurèle" />
+          </label>
+          <label>Nom ({ARTISAN_BORNES.nom} signes au plus)
+            <input value={a.nom} maxLength={ARTISAN_BORNES.nom} onChange={(e) => majArtisan({ nom: e.target.value })} placeholder="Exemple : Quenouillère" />
+          </label>
+          <label>Année d’installation ({ARTISAN_BORNES.installationMin} à {maintenant})
+            <input type="number" min={ARTISAN_BORNES.installationMin} max={maintenant} value={a.installation ?? ''} onChange={(e) => majArtisan({ installation: e.target.value ? Number(e.target.value) : null })} placeholder="Exemple : 2009" />
+          </label>
+          <label>Votre parcours, en une ligne ({ARTISAN_BORNES.parcours} signes au plus)
+            <input value={a.parcours} maxLength={ARTISAN_BORNES.parcours} onChange={(e) => majArtisan({ parcours: e.target.value })} placeholder="Exemple : CAP de menuisier, dix ans en atelier avant d’ouvrir le mien" />
+          </label>
+          <label>Votre phrase, signée de votre nom ({ARTISAN_BORNES.citationMin} à {ARTISAN_BORNES.citation} signes, à la première personne)
+            <textarea value={a.citation} maxLength={ARTISAN_BORNES.citation} onChange={(e) => majArtisan({ citation: e.target.value })} placeholder="Exemple : Je dessine et je pose moi-même chaque escalier." />
+          </label>
+          <label><input type="checkbox" checked={a.chiffres === null} onChange={(e) => majArtisan({ chiffres: e.target.checked ? null : TROIS_VIDES() })} /> Je préfère ne pas donner de chiffres</label>
+          {a.chiffres !== null && a.chiffres.map((c, i) => (
+            <fieldset key={i}>
+              <legend>Chiffre {i + 1}</legend>
+              <input value={c.valeur} maxLength={ARTISAN_BORNES.valeur} onChange={(e) => majChiffre(i, { valeur: e.target.value })} placeholder="Exemple : 180" />
+              <input value={c.unite ?? ''} maxLength={ARTISAN_BORNES.unite} onChange={(e) => majChiffre(i, { unite: e.target.value })} placeholder="Exemple : m² (facultatif)" />
+              <input value={c.legende} maxLength={ARTISAN_BORNES.legende} onChange={(e) => majChiffre(i, { legende: e.target.value })} placeholder="Exemple : d’atelier, où chaque pièce est fabriquée" />
+            </fieldset>
+          ))}
+        </div>
+      )}
+
+      {errs.length > 0 && <ul>{errs.map((x) => <li key={x}>{x}</li>)}</ul>}
+    </main>
+  )
+}

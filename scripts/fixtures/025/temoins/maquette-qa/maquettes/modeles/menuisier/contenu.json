@@ -1,0 +1,21 @@
+{
+ "_": "Témoin de scripts/maquette-qa.mjs (fiche 025-01), écrit par Claude Code : le modèle minimal que lit le faux générateur du témoin (public/sites-demo/generer.mjs de ce dossier). Ce n’est PAS le format v2 attendu par la fiche 025-02 (pages[\"/\"].h1Ligne…) : il ne sert qu’à prouver que MQ-1 à MQ-8 peuvent passer. photos : la démo d’où le témoin copie ses photos (maquette-qa les copie du dépôt dans l’arbre témoin) et le héros.",
+ "titre": "{entreprise}, menuisier à {ville}",
+ "description": "Maquette privée de la page d’accueil de {entreprise}, menuisier à {ville}.",
+ "h1": "{entreprise}, menuisier à {ville}",
+ "chapeau": "Escaliers, placards et agencements en bois massif, dessinés et posés sur mesure.",
+ "prestations_titre": "Ce que je fabrique",
+ "prestations": [
+  { "titre": "Escaliers", "texte": "Des escaliers droits, tournants ou hélicoïdaux, dessinés pour la pièce qui les reçoit." },
+  { "titre": "Placards et dressings", "texte": "Des rangements pensés pour les recoins, les combles et les murs en biais." },
+  { "titre": "Agencements", "texte": "Bibliothèques, habillages et plans de travail en bois choisi avec vous." }
+ ],
+ "photos_titre": "Le bois travaillé",
+ "contact_titre": "Parler de votre projet",
+ "zone": "J’interviens à {ville} et dans les communes voisines : {communes}.",
+ "photos": {
+  "demo": "lestraque",
+  "heros": "heros-escalier-1600.webp",
+  "fichiers": ["heros-escalier-1600.webp", "mains-noyer-960.webp", "boiserie-960.webp"]
+ }
+}

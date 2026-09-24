@@ -1,0 +1,28 @@
+{
+  "_": "Jeu d'essai de scripts/prospects-hors-depot.mjs --temoin (fiche 025-01, point 11). Le juge copie ce dossier dans .orchestre/travail/prospects-hors-depot/p<pid>/temoin/ et le juge comme un poste, par le même code que le vrai : depot/ est un faux dépôt (lu comme un arbre extrait : tous ses fichiers comptent) dont .orchestre/orchestre.json pointe vers ../vault ; vault/Prospection/phase0/suivi.csv est un faux suivi aux colonnes du plan (UTF-8 avec BOM, CRLF, séparateur « ; », un nom entre guillemets avec « ; », un avec des guillemets doublés, une réponse sur deux lignes, un nom de 3 signes, une cellule vide, un doublon en capitales). depot/ ne contient que des quasi-homonymes : PH-1 et PH-2 doivent passer. Les témoins négatifs de PH-T partent de copies de ce dossier et y plantent les noms des lignes de « fuites ». Noms fictifs.",
+  "colonne": "prospect",
+  "separateur": ";",
+  "encodage": "utf-8 avec BOM",
+  "enregistrements": 7,
+  "lignes_des_noms": [
+    2,
+    3,
+    5,
+    8
+  ],
+  "signes_des_noms": [
+    26,
+    40,
+    21,
+    27
+  ],
+  "courts": 1,
+  "vides": 1,
+  "doublons": 1,
+  "fuites": {
+    "separateur": 3,
+    "accentue": 5,
+    "guillemets": 8,
+    "chemin": 2
+  }
+}

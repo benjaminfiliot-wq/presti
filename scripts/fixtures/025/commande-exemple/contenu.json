@@ -1,0 +1,1054 @@
+{
+  "metier": "menuisier",
+  "extrait_le": "2026-09-14",
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Menuisier à Rennes — Atelier Lestraque",
+      "description": "Atelier Lestraque, menuisier à Rennes : escaliers, dressings et bibliothèques en bois massif, fabriqués à l’atelier et posés chez vous. Devis après visite.",
+      "h1": "Menuisier à Rennes",
+      "chapeau": "Escaliers, dressings et bibliothèques en bois massif, que je dessine, fabrique et pose.",
+      "sections": [
+        {
+          "h2": "Ce que je fabrique",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "De la menuiserie intérieure seulement : je dessine chaque ouvrage, je le fabrique à l’atelier et je le pose moi-même."
+            },
+            {
+              "type": "h3",
+              "texte": "Escaliers sur mesure"
+            },
+            {
+              "type": "p",
+              "texte": "Droits, quart tournant ou hélicoïdaux, en chêne, frêne ou hêtre : marches de 40 mm, garde-corps assorti, cotes prises dans votre trémie."
+            },
+            {
+              "type": "h3",
+              "texte": "Dressings et placards"
+            },
+            {
+              "type": "p",
+              "texte": "Penderies sous combles, placards sous escalier, séparations de pièces : dessinés au centimètre pour la pièce où ils vont."
+            },
+            {
+              "type": "h3",
+              "texte": "Bibliothèques et meubles"
+            },
+            {
+              "type": "p",
+              "texte": "Ensembles muraux en chêne massif ou en contreplaqué de bouleau, avec un éclairage glissé sous les tablettes si vous le voulez."
+            },
+            {
+              "type": "h3",
+              "texte": "Parquets massifs"
+            },
+            {
+              "type": "p",
+              "texte": "Chêne à l’anglaise, à bâtons rompus ou en point de Hongrie, collé ou cloué, puis poncé et huilé ou vitrifié en phase aqueuse."
+            },
+            {
+              "type": "h3",
+              "texte": "Cuisines et plans de travail"
+            },
+            {
+              "type": "p",
+              "texte": "Façades et plans de travail en chêne ou en noyer de 40 mm, huilés, avec les chants autour de l’évier traités contre l’eau."
+            },
+            {
+              "type": "h3",
+              "texte": "Portes et verrières intérieures"
+            },
+            {
+              "type": "p",
+              "texte": "Portes à fleur de cloison, verrières en chêne, moulures refaites au profil d’origine dans une maison ancienne."
+            }
+          ],
+          "genre": "prestations"
+        },
+        {
+          "h2": "Dans l’atelier",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je trace, débite, assemble et ponce chaque pièce ici, à Rennes, avant de la poser chez vous."
+            }
+          ],
+          "genre": "atelier"
+        },
+        {
+          "h2": "Pièces livrées",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Quelques ouvrages sortis de l’atelier, du relevé à la pose."
+            }
+          ],
+          "genre": "galerie"
+        },
+        {
+          "h2": "Autour de Rennes",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "L’atelier est à Rennes. Je viens voir la pièce chez vous, dans ces quatre communes."
+            },
+            {
+              "type": "h3",
+              "texte": "Rennes"
+            },
+            {
+              "type": "p",
+              "texte": "Travaux de menuiserie sur mesure, agencement et pose d’escaliers à Rennes."
+            },
+            {
+              "type": "h3",
+              "texte": "Cesson-Sévigné"
+            },
+            {
+              "type": "p",
+              "texte": "Travaux de menuiserie sur mesure, agencement et pose d’escaliers à Cesson-Sévigné."
+            },
+            {
+              "type": "h3",
+              "texte": "Bruz"
+            },
+            {
+              "type": "p",
+              "texte": "Travaux de menuiserie sur mesure, agencement et pose d’escaliers à Bruz."
+            },
+            {
+              "type": "h3",
+              "texte": "Saint-Grégoire"
+            },
+            {
+              "type": "p",
+              "texte": "Travaux de menuiserie sur mesure, agencement et pose d’escaliers à Saint-Grégoire."
+            }
+          ],
+          "genre": "communes"
+        },
+        {
+          "h2": "En quatre temps",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Du premier appel à la pose, quatre rendez-vous, toujours avec moi."
+            },
+            {
+              "type": "h3",
+              "texte": "Prise de contact"
+            },
+            {
+              "type": "p",
+              "texte": "Vous décrivez la pièce, l’usage et le bois qui vous plaît, par téléphone ou avec le formulaire en bas de page."
+            },
+            {
+              "type": "h3",
+              "texte": "Visite technique"
+            },
+            {
+              "type": "p",
+              "texte": "Je relève les cotes chez vous et je vérifie les aplombs, l’humidité des murs et les accès."
+            },
+            {
+              "type": "h3",
+              "texte": "Plan et devis"
+            },
+            {
+              "type": "p",
+              "texte": "Vous recevez le plan coté, le choix des essences et des ferrures, et un devis ligne par ligne."
+            },
+            {
+              "type": "h3",
+              "texte": "Fabrication et pose"
+            },
+            {
+              "type": "p",
+              "texte": "Je fabrique les pièces à l’atelier, puis je les pose chez vous à la date fixée ensemble."
+            }
+          ],
+          "genre": "etapes"
+        },
+        {
+          "h2": "Vos questions",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Ce qu’on me demande le plus souvent avant un premier rendez-vous."
+            },
+            {
+              "type": "h3",
+              "texte": "Quelles essences de bois privilégier pour un agencement ?"
+            },
+            {
+              "type": "p",
+              "texte": "Pour des marches ou une pièce de passage, le chêne ou le frêne, qui sont durs. Pour un meuble léger ou l’intérieur d’un placard, un résineux ou un panneau latté suffit."
+            },
+            {
+              "type": "h3",
+              "texte": "Pourquoi une prise de cotes sur place est-elle indispensable ?"
+            },
+            {
+              "type": "p",
+              "texte": "Aucun mur n’est droit. La visite montre les faux aplombs, les plinthes et les gaines avant qu’une seule pièce soit fabriquée."
+            },
+            {
+              "type": "h3",
+              "texte": "Quel entretien pour des ouvrages en bois massif ?"
+            },
+            {
+              "type": "p",
+              "texte": "Une finition huilée ou un vernis hydrofuge protège le bois des taches. Ensuite, un chiffon sec et une cire naturelle de temps en temps."
+            },
+            {
+              "type": "h3",
+              "texte": "Comment se passe le devis ?"
+            },
+            {
+              "type": "p",
+              "texte": "Je viens voir la pièce et relever les cotes. Vous recevez ensuite le plan coté, le choix des essences et un devis détaillé ligne par ligne, que vous relisez à votre rythme."
+            }
+          ],
+          "genre": "faq"
+        },
+        {
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Décrivez la pièce et l’usage : je vous rappelle pour fixer une visite."
+            },
+            {
+              "type": "h3",
+              "texte": "Atelier & Siège"
+            },
+            {
+              "type": "p",
+              "texte": "1 rue de la Démonstration 35000 Rennes"
+            },
+            {
+              "type": "h3",
+              "texte": "Téléphone direct"
+            },
+            {
+              "type": "p",
+              "texte": "+33 2 61 91 38 47"
+            },
+            {
+              "type": "h3",
+              "texte": "Disponibilités"
+            },
+            {
+              "type": "p",
+              "texte": "Lundi–vendredi, 8 h–18 h"
+            },
+            {
+              "type": "p",
+              "texte": "Intervention sur rendez-vous"
+            }
+          ],
+          "genre": "contact"
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "HomeAndConstructionBusiness",
+          "name": "Atelier Lestraque",
+          "url": "https://lestraque.demo.invalid/",
+          "telephone": "+33 2 61 91 38 47",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "1 rue de la Démonstration",
+            "postalCode": "35000",
+            "addressLocality": "Rennes",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Rennes",
+            "Cesson-Sévigné",
+            "Bruz",
+            "Saint-Grégoire"
+          ],
+          "image": "https://lestraque.demo.invalid/images/hero-bois-960.webp"
+        }
+      ],
+      "h1Ligne": "Fait pour rester"
+    },
+    "/menuisier-rennes/": {
+      "type": "commune",
+      "cible": "Rennes",
+      "title": "Artisan menuisier à Rennes — Atelier Lestraque",
+      "description": "Menuisier à Rennes : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis après visite.",
+      "h1": "Menuisier à Rennes",
+      "kicker": "",
+      "chapeau": "Escaliers, dressings et bibliothèques fabriqués à l’atelier, à Rennes, et posés chez vous.",
+      "sections": [
+        {
+          "h2": "Menuiserie sur mesure à Rennes",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je viens relever les cotes à Rennes, je fabrique à l’atelier de Rennes, puis je reviens poser, pour une maison comme pour un local professionnel."
+            },
+            {
+              "type": "h3",
+              "texte": "Agencement sur mesure"
+            },
+            {
+              "type": "p",
+              "texte": "Dressings, meubles de salle de bains, placards sous escalier et bibliothèques, dessinés pour votre logement à Rennes."
+            },
+            {
+              "type": "h3",
+              "texte": "Escaliers et garde-corps"
+            },
+            {
+              "type": "p",
+              "texte": "Escaliers intérieurs dessinés pour la trémie du logement, en chêne, frêne ou hêtre, avec un garde-corps assorti."
+            },
+            {
+              "type": "h3",
+              "texte": "Parquets et habillages"
+            },
+            {
+              "type": "p",
+              "texte": "Pose et rénovation de parquets massifs ou contrecollés, plinthes et habillages muraux en bois."
+            }
+          ],
+          "genre": "prestations"
+        },
+        {
+          "h2": "Pièces livrées",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Quelques ouvrages sortis de l’atelier."
+            }
+          ],
+          "genre": "galerie"
+        },
+        {
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "L’atelier se déplace aussi dans les communes voisines."
+            },
+            {
+              "type": "h3",
+              "texte": "Cesson-Sévigné"
+            },
+            {
+              "type": "p",
+              "texte": "Mes ouvrages et prestations à Cesson-Sévigné."
+            },
+            {
+              "type": "h3",
+              "texte": "Saint-Grégoire"
+            },
+            {
+              "type": "p",
+              "texte": "Mes ouvrages et prestations à Saint-Grégoire."
+            },
+            {
+              "type": "p",
+              "texte": "← Revenir à la page d’accueil"
+            }
+          ],
+          "genre": "communes"
+        },
+        {
+          "h2": "Votre projet à Rennes",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Après la visite, je vous remets un plan coté et un devis détaillé, ligne par ligne."
+            },
+            {
+              "type": "h3",
+              "texte": "Zone d’intervention"
+            },
+            {
+              "type": "p",
+              "texte": "Rennes et communes limitrophes Déplacement sur place"
+            },
+            {
+              "type": "h3",
+              "texte": "Téléphone direct"
+            },
+            {
+              "type": "p",
+              "texte": "+33 2 61 91 38 47"
+            },
+            {
+              "type": "h3",
+              "texte": "Garantie décennale"
+            },
+            {
+              "type": "p",
+              "texte": "Assureur fictif Contrat n° DEMO-0001"
+            }
+          ],
+          "genre": "contact"
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "HomeAndConstructionBusiness",
+          "name": "Atelier Lestraque",
+          "url": "https://lestraque.demo.invalid/menuisier-rennes/",
+          "telephone": "+33 2 61 91 38 47",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "1 rue de la Démonstration",
+            "postalCode": "35000",
+            "addressLocality": "Rennes",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Rennes",
+            "Cesson-Sévigné",
+            "Bruz",
+            "Saint-Grégoire"
+          ],
+          "image": "https://lestraque.demo.invalid/images/hero-bois-960.webp"
+        }
+      ],
+      "h1Ligne": "Escaliers et agencement"
+    },
+    "/menuisier-cesson-sevigne/": {
+      "type": "commune",
+      "cible": "Cesson-Sévigné",
+      "title": "Artisan menuisier à Cesson-Sévigné — Atelier Lestraque",
+      "description": "Menuisier à Cesson-Sévigné : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis après visite.",
+      "h1": "Menuisier à Cesson-Sévigné",
+      "kicker": "",
+      "chapeau": "Escaliers, dressings et bibliothèques fabriqués à l’atelier de Rennes, posés chez vous à Cesson-Sévigné.",
+      "sections": [
+        {
+          "h2": "Menuiserie sur mesure à Cesson-Sévigné",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je viens relever les cotes à Cesson-Sévigné, je fabrique à l’atelier de Rennes, puis je reviens poser, pour une maison comme pour un local professionnel."
+            },
+            {
+              "type": "h3",
+              "texte": "Agencement sur mesure"
+            },
+            {
+              "type": "p",
+              "texte": "Dressings, meubles de salle de bains, placards sous escalier et bibliothèques, dessinés pour votre logement à Cesson-Sévigné."
+            },
+            {
+              "type": "h3",
+              "texte": "Escaliers et garde-corps"
+            },
+            {
+              "type": "p",
+              "texte": "Escaliers intérieurs dessinés pour la trémie du logement, en chêne, frêne ou hêtre, avec un garde-corps assorti."
+            },
+            {
+              "type": "h3",
+              "texte": "Parquets et habillages"
+            },
+            {
+              "type": "p",
+              "texte": "Pose et rénovation de parquets massifs ou contrecollés, plinthes et habillages muraux en bois."
+            }
+          ],
+          "genre": "prestations"
+        },
+        {
+          "h2": "Pièces livrées",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Quelques ouvrages sortis de l’atelier."
+            }
+          ],
+          "genre": "galerie"
+        },
+        {
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "L’atelier se déplace aussi dans les communes voisines."
+            },
+            {
+              "type": "h3",
+              "texte": "Rennes"
+            },
+            {
+              "type": "p",
+              "texte": "Mes ouvrages et prestations à Rennes."
+            },
+            {
+              "type": "h3",
+              "texte": "Saint-Grégoire"
+            },
+            {
+              "type": "p",
+              "texte": "Mes ouvrages et prestations à Saint-Grégoire."
+            },
+            {
+              "type": "p",
+              "texte": "← Revenir à la page d’accueil"
+            }
+          ],
+          "genre": "communes"
+        },
+        {
+          "h2": "Votre projet à Cesson-Sévigné",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Après la visite, je vous remets un plan coté et un devis détaillé, ligne par ligne."
+            },
+            {
+              "type": "h3",
+              "texte": "Zone d’intervention"
+            },
+            {
+              "type": "p",
+              "texte": "Cesson-Sévigné et communes limitrophes Déplacement sur place"
+            },
+            {
+              "type": "h3",
+              "texte": "Téléphone direct"
+            },
+            {
+              "type": "p",
+              "texte": "+33 2 61 91 38 47"
+            },
+            {
+              "type": "h3",
+              "texte": "Garantie décennale"
+            },
+            {
+              "type": "p",
+              "texte": "Assureur fictif Contrat n° DEMO-0001"
+            }
+          ],
+          "genre": "contact"
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "HomeAndConstructionBusiness",
+          "name": "Atelier Lestraque",
+          "url": "https://lestraque.demo.invalid/menuisier-cesson-sevigne/",
+          "telephone": "+33 2 61 91 38 47",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "1 rue de la Démonstration",
+            "postalCode": "35000",
+            "addressLocality": "Rennes",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Rennes",
+            "Cesson-Sévigné",
+            "Bruz",
+            "Saint-Grégoire"
+          ],
+          "image": "https://lestraque.demo.invalid/images/hero-bois-960.webp"
+        }
+      ],
+      "h1Ligne": "Cuisines en bois massif"
+    },
+    "/menuisier-bruz/": {
+      "type": "commune",
+      "cible": "Bruz",
+      "title": "Artisan menuisier à Bruz — Atelier Lestraque",
+      "description": "Menuisier à Bruz : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis après visite.",
+      "h1": "Menuisier à Bruz",
+      "kicker": "",
+      "chapeau": "Escaliers, dressings et bibliothèques fabriqués à l’atelier de Rennes, posés chez vous à Bruz.",
+      "sections": [
+        {
+          "h2": "Menuiserie sur mesure à Bruz",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je viens relever les cotes à Bruz, je fabrique à l’atelier de Rennes, puis je reviens poser, pour une maison comme pour un local professionnel."
+            },
+            {
+              "type": "h3",
+              "texte": "Agencement sur mesure"
+            },
+            {
+              "type": "p",
+              "texte": "Dressings, meubles de salle de bains, placards sous escalier et bibliothèques, dessinés pour votre logement à Bruz."
+            },
+            {
+              "type": "h3",
+              "texte": "Escaliers et garde-corps"
+            },
+            {
+              "type": "p",
+              "texte": "Escaliers intérieurs dessinés pour la trémie du logement, en chêne, frêne ou hêtre, avec un garde-corps assorti."
+            },
+            {
+              "type": "h3",
+              "texte": "Parquets et habillages"
+            },
+            {
+              "type": "p",
+              "texte": "Pose et rénovation de parquets massifs ou contrecollés, plinthes et habillages muraux en bois."
+            }
+          ],
+          "genre": "prestations"
+        },
+        {
+          "h2": "Pièces livrées",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Quelques ouvrages sortis de l’atelier."
+            }
+          ],
+          "genre": "galerie"
+        },
+        {
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "L’atelier se déplace aussi dans les communes voisines."
+            },
+            {
+              "type": "h3",
+              "texte": "Rennes"
+            },
+            {
+              "type": "p",
+              "texte": "Mes ouvrages et prestations à Rennes."
+            },
+            {
+              "type": "h3",
+              "texte": "Cesson-Sévigné"
+            },
+            {
+              "type": "p",
+              "texte": "Mes ouvrages et prestations à Cesson-Sévigné."
+            },
+            {
+              "type": "p",
+              "texte": "← Revenir à la page d’accueil"
+            }
+          ],
+          "genre": "communes"
+        },
+        {
+          "h2": "Votre projet à Bruz",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Après la visite, je vous remets un plan coté et un devis détaillé, ligne par ligne."
+            },
+            {
+              "type": "h3",
+              "texte": "Zone d’intervention"
+            },
+            {
+              "type": "p",
+              "texte": "Bruz et communes limitrophes Déplacement sur place"
+            },
+            {
+              "type": "h3",
+              "texte": "Téléphone direct"
+            },
+            {
+              "type": "p",
+              "texte": "+33 2 61 91 38 47"
+            },
+            {
+              "type": "h3",
+              "texte": "Garantie décennale"
+            },
+            {
+              "type": "p",
+              "texte": "Assureur fictif Contrat n° DEMO-0001"
+            }
+          ],
+          "genre": "contact"
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "HomeAndConstructionBusiness",
+          "name": "Atelier Lestraque",
+          "url": "https://lestraque.demo.invalid/menuisier-bruz/",
+          "telephone": "+33 2 61 91 38 47",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "1 rue de la Démonstration",
+            "postalCode": "35000",
+            "addressLocality": "Rennes",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Rennes",
+            "Cesson-Sévigné",
+            "Bruz",
+            "Saint-Grégoire"
+          ],
+          "image": "https://lestraque.demo.invalid/images/hero-bois-960.webp"
+        }
+      ],
+      "h1Ligne": "Dressings sur mesure"
+    },
+    "/menuisier-saint-gregoire/": {
+      "type": "commune",
+      "cible": "Saint-Grégoire",
+      "title": "Artisan menuisier à Saint-Grégoire — Atelier Lestraque",
+      "description": "Menuisier à Saint-Grégoire : escaliers, dressings et parquets en bois massif, fabriqués à mon atelier de Rennes et posés chez vous. Devis après visite.",
+      "h1": "Menuisier à Saint-Grégoire",
+      "kicker": "",
+      "chapeau": "Escaliers, dressings et bibliothèques fabriqués à l’atelier de Rennes, posés chez vous à Saint-Grégoire.",
+      "sections": [
+        {
+          "h2": "Menuiserie sur mesure à Saint-Grégoire",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je viens relever les cotes à Saint-Grégoire, je fabrique à l’atelier de Rennes, puis je reviens poser, pour une maison comme pour un local professionnel."
+            },
+            {
+              "type": "h3",
+              "texte": "Agencement sur mesure"
+            },
+            {
+              "type": "p",
+              "texte": "Dressings, meubles de salle de bains, placards sous escalier et bibliothèques, dessinés pour votre logement à Saint-Grégoire."
+            },
+            {
+              "type": "h3",
+              "texte": "Escaliers et garde-corps"
+            },
+            {
+              "type": "p",
+              "texte": "Escaliers intérieurs dessinés pour la trémie du logement, en chêne, frêne ou hêtre, avec un garde-corps assorti."
+            },
+            {
+              "type": "h3",
+              "texte": "Parquets et habillages"
+            },
+            {
+              "type": "p",
+              "texte": "Pose et rénovation de parquets massifs ou contrecollés, plinthes et habillages muraux en bois."
+            }
+          ],
+          "genre": "prestations"
+        },
+        {
+          "h2": "Pièces livrées",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Quelques ouvrages sortis de l’atelier."
+            }
+          ],
+          "genre": "galerie"
+        },
+        {
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "L’atelier se déplace aussi dans les communes voisines."
+            },
+            {
+              "type": "h3",
+              "texte": "Rennes"
+            },
+            {
+              "type": "p",
+              "texte": "Mes ouvrages et prestations à Rennes."
+            },
+            {
+              "type": "h3",
+              "texte": "Cesson-Sévigné"
+            },
+            {
+              "type": "p",
+              "texte": "Mes ouvrages et prestations à Cesson-Sévigné."
+            },
+            {
+              "type": "p",
+              "texte": "← Revenir à la page d’accueil"
+            }
+          ],
+          "genre": "communes"
+        },
+        {
+          "h2": "Votre projet à Saint-Grégoire",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Après la visite, je vous remets un plan coté et un devis détaillé, ligne par ligne."
+            },
+            {
+              "type": "h3",
+              "texte": "Zone d’intervention"
+            },
+            {
+              "type": "p",
+              "texte": "Saint-Grégoire et communes limitrophes Déplacement sur place"
+            },
+            {
+              "type": "h3",
+              "texte": "Téléphone direct"
+            },
+            {
+              "type": "p",
+              "texte": "+33 2 61 91 38 47"
+            },
+            {
+              "type": "h3",
+              "texte": "Garantie décennale"
+            },
+            {
+              "type": "p",
+              "texte": "Assureur fictif Contrat n° DEMO-0001"
+            }
+          ],
+          "genre": "contact"
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "HomeAndConstructionBusiness",
+          "name": "Atelier Lestraque",
+          "url": "https://lestraque.demo.invalid/menuisier-saint-gregoire/",
+          "telephone": "+33 2 61 91 38 47",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "1 rue de la Démonstration",
+            "postalCode": "35000",
+            "addressLocality": "Rennes",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Rennes",
+            "Cesson-Sévigné",
+            "Bruz",
+            "Saint-Grégoire"
+          ],
+          "image": "https://lestraque.demo.invalid/images/hero-bois-960.webp"
+        }
+      ],
+      "h1Ligne": "Boiseries et placards"
+    },
+    "/mentions-legales/": {
+      "type": "legal",
+      "title": "Mentions légales — Atelier Lestraque",
+      "description": "Mentions légales du site Atelier Lestraque, entreprise fictive de menuiserie pour démonstration technique. Coordonnées et garanties.",
+      "h1": "Mentions légales",
+      "kicker": "Mentions légales",
+      "chapeau": "Site de démonstration : entreprise fictive créée à des fins de présentation technique des capacités logicielles.",
+      "sections": [
+        {
+          "h2": "Identification de l’entreprise",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Site de démonstration : entreprise fictive créée à des fins de présentation technique des capacités logicielles."
+            },
+            {
+              "type": "p",
+              "texte": "Nom commercial : Atelier Lestraque"
+            },
+            {
+              "type": "p",
+              "texte": "Adresse du siège social : 1 rue de la Démonstration, 35000 Rennes, France"
+            },
+            {
+              "type": "p",
+              "texte": "Numéro SIREN : 000000000"
+            },
+            {
+              "type": "p",
+              "texte": "Téléphone de contact : +33 2 61 91 38 47"
+            },
+            {
+              "type": "p",
+              "texte": "Courrier électronique : contact@menuisier.demo.invalid"
+            },
+            {
+              "type": "p",
+              "texte": "Directeur de publication : Benjamin Filiot (Fondateur Presti)"
+            }
+          ]
+        },
+        {
+          "h2": "Assurance responsabilité décennale",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Conformément aux articles L. 241-1 et suivants du Code des assurances, l’entreprise est couverte par un contrat d’assurance décennale obligatoire :"
+            },
+            {
+              "type": "p",
+              "texte": "Compagnie d’assurance : Assureur fictif"
+            },
+            {
+              "type": "p",
+              "texte": "Numéro de police : DEMO-0001"
+            },
+            {
+              "type": "p",
+              "texte": "Couverture géographique : France métropolitaine"
+            }
+          ]
+        },
+        {
+          "h2": "Hébergement du site",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Le site est hébergé sur une infrastructure de distribution de fichiers statiques sécurisée :"
+            },
+            {
+              "type": "p",
+              "texte": "Plateforme Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis."
+            }
+          ]
+        },
+        {
+          "h2": "Propriété intellectuelle et crédits photographiques",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Les photographies illustrant ce site de démonstration sont issues de Wikimedia Commons et publiées sous licences libres vérifiables. Crédits des auteurs :"
+            },
+            {
+              "type": "li",
+              "texte": "Steve Ryan : Détail d’assemblage bois (Source : Wikimedia Commons, licence CC BY-SA 2.0)"
+            },
+            {
+              "type": "li",
+              "texte": "Petar Milošević : Escalier en colimaçon en bois (Source : Wikimedia Commons, licence CC BY-SA 4.0)"
+            },
+            {
+              "type": "li",
+              "texte": "Tim Sheerman-Chase : Escalier tournant en bois (Source : Wikimedia Commons, licence CC BY 2.0)"
+            },
+            {
+              "type": "li",
+              "texte": "MajestyWoodworks : Mobilier contemporain en noyer (Source : Wikimedia Commons, licence CC BY 4.0)"
+            },
+            {
+              "type": "li",
+              "texte": "Micheli Design : Bibliothèque sur mesure en chêne et acier (Source : Wikimedia Commons, licence CC0)"
+            },
+            {
+              "type": "li",
+              "texte": "Kotivalo : Aménagement de cuisine sous combles en bois (Source : Wikimedia Commons, licence CC BY-SA 3.0)"
+            },
+            {
+              "type": "li",
+              "texte": "Amada44 : Parquet chevron traditionnel en chêne (Source : Wikimedia Commons, licence CC BY 3.0)"
+            }
+          ]
+        }
+      ],
+      "jsonld": []
+    },
+    "/confidentialite/": {
+      "type": "legal",
+      "title": "Politique de confidentialité — Atelier Lestraque",
+      "description": "Politique de confidentialité d’Atelier Lestraque : ce que le formulaire de devis recueille, pourquoi et combien de temps. Aucun cookie, aucun traceur.",
+      "h1": "Politique de confidentialité",
+      "kicker": "Confidentialité",
+      "chapeau": "Ce que le formulaire de devis recueille, pourquoi, et combien de temps je le garde.",
+      "sections": [
+        {
+          "h2": "Protection de vos données personnelles",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page dit ce que le formulaire de devis recueille, à quoi cela sert et combien de temps je le garde."
+            }
+          ]
+        },
+        {
+          "h2": "Données collectées via le formulaire",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Le formulaire de devis, en bas de l’accueil et des pages communes, demande :"
+            },
+            {
+              "type": "li",
+              "texte": "le type de projet et la commune du chantier ;"
+            },
+            {
+              "type": "li",
+              "texte": "le délai souhaité ;"
+            },
+            {
+              "type": "li",
+              "texte": "votre message, si vous en écrivez un ;"
+            },
+            {
+              "type": "li",
+              "texte": "un numéro de téléphone ou une adresse e-mail, pour vous rappeler."
+            },
+            {
+              "type": "p",
+              "texte": "Sur ce site de démonstration, le formulaire n’envoie rien : aucune donnée ne quitte votre navigateur."
+            }
+          ]
+        },
+        {
+          "h2": "Finalité et durée de conservation",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Ces données servent seulement à vous rappeler et à établir un devis. Elles ne sont ni cédées, ni vendues, ni louées."
+            },
+            {
+              "type": "p",
+              "texte": "Une demande restée sans suite est effacée au bout de 12 mois. Les données d’une commande exécutée sont conservées pendant les délais légaux de prescription."
+            }
+          ]
+        },
+        {
+          "h2": "Aucun cookie, aucun traceur",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Ce site ne dépose aucun cookie et n’utilise aucun traceur publicitaire, aucun bouton de réseau social ni aucun outil de mesure d’audience."
+            }
+          ]
+        },
+        {
+          "h2": "Vos droits",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Conformément au Règlement général sur la protection des données (RGPD), vous pouvez consulter, corriger ou faire effacer vos données sur simple demande à contact@menuisier.demo.invalid."
+            }
+          ]
+        }
+      ],
+      "jsonld": []
+    }
+  },
+  "demo_v16": "lestraque — dérivé de menuisier/contenu.json le 2026-09-14"
+}

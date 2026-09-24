@@ -1,0 +1,84 @@
+{
+  "_": "Jeu d’essai de la série 025 (fiche 025-01, écrit par Claude Code) : une commande de site payée, telle que Claude Code la prépare après une vente, pour node public/sites-demo/generer.mjs --source=<ce dossier> --sortie=<dossier sous .orchestre/travail/> (fiche 025-03). Lu par formulaire-site-qa.mjs et parcours-commande-qa.mjs. L’entreprise est celle de la démo Atelier Lestraque, FICTIVE : téléphone de la plage 02 61 91 réservée à la fiction (Arcep, décision 2019-0954, art. 2.5.12), e-mail en .invalid (RFC 2606), SIREN, adresse et décennale fictifs. Ne jamais publier ce site. contenu.json est public/sites-demo/lestraque/contenu.json à 1620723, octet pour octet (format v2 à pages). photos/ : des photos de Lestraque (Wikimedia Commons, étalonnées par Presti), avec photos/attributions.json au format de Lestraque (champ fichier = chemin publié : photos/<nom> sort en images/<nom>). La variante sans chiffres est ../commande-sans-chiffres.json.",
+  "id": "00000000-0000-4000-8000-000000025001",
+  "etat": "payee",
+  "slug": "essai-025-lestraque",
+  "nom": "Atelier Lestraque",
+  "email": "atelier@lestraque.invalid",
+  "telephone": "+33 2 61 91 38 47",
+  "metier": "menuisier",
+  "metiers_secondaires": [],
+  "communes": [
+    "Rennes",
+    "Cesson-Sévigné",
+    "Bruz",
+    "Saint-Grégoire"
+  ],
+  "domaine_mode": "aucun",
+  "domaine": null,
+  "devis": {
+    "_": "Les choix du formulaire, facultatifs. Pas de phrase de rappel : l’artisan ne l’a pas donnée (fiche 025-03, point 2).",
+    "projets": [
+      "Escalier",
+      "Dressing ou placard",
+      "Cuisine",
+      "Bibliothèque",
+      "Autre ouvrage"
+    ],
+    "delais": [
+      "Dans les trois mois",
+      "Dans trois à six mois",
+      "Plus tard, je me renseigne"
+    ]
+  },
+  "matiere": {
+    "_photos": "Une entrée par photo déposée (url : l’original sur Wikimedia Commons ; base : ses fichiers dans photos/). heros-escalier-portrait et atelier-poncage-portrait sont les recadrages pour téléphone de heros-escalier et atelier-poncage (même original, même licence) ; tasseaux-cloison est un recadrage de l’original de reserve-cuisine-tasseaux.",
+    "photos": [
+      { "url": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg", "legende": "Escalier hélicoïdal en bois massif", "role": "chantier", "base": "heros-escalier" },
+      { "url": "https://commons.wikimedia.org/wiki/File:Close-up_of_a_carpenters_hand_sandpapering_the_wood.jpg", "legende": "Ponçage à la main d’une pièce chantournée", "role": "chantier", "base": "atelier-poncage" },
+      { "url": "https://commons.wikimedia.org/wiki/File:Empty_wooden_wardrobe_closeup.jpg", "legende": "Penderie en bois, tringle et quatre cintres", "role": "chantier", "base": "penderie" },
+      { "url": "https://commons.wikimedia.org/wiki/File:Coffee_table_by_a_wooden_wall_(Unsplash).jpg", "legende": "Boiseries et placards intégrés en bois sombre", "role": "chantier", "base": "boiserie" },
+      { "url": "https://commons.wikimedia.org/wiki/File:Woodturning_Indonesia.jpg", "legende": "Tournage sur bois, copeaux en vol", "role": "chantier", "base": "tournage-copeaux" },
+      { "url": "https://commons.wikimedia.org/wiki/File:Woodworker_in_a_workshop_(Unsplash).jpg", "legende": "Mains posées sur une planche de noyer, sciure au sol", "role": "chantier", "base": "mains-noyer" },
+      { "url": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg", "legende": "Cuisine en bois et cloison à tasseaux", "role": "chantier", "base": "reserve-cuisine-tasseaux" },
+      { "url": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg", "legende": "Cloison à tasseaux de bois", "role": "chantier", "base": "tasseaux-cloison" },
+      { "url": "https://commons.wikimedia.org/wiki/File:This_space_features_a_stylish_kitchen_with_a_wooden_countertop_and_shelves.jpg", "legende": "Cuisine sous poutres avec plan de travail en bois", "role": "chantier", "base": "reserve-cuisine-poutres" },
+      { "url": "https://commons.wikimedia.org/wiki/File:Modern_interior_design_featuring_wooden_shelves_and_decorative_elements.jpg", "legende": "Bibliothèque en bois et niches ouvertes", "role": "chantier", "base": "reserve-bibliotheque" }
+    ],
+    "logo_url": null,
+    "adresse": "Adresse fictive du jeu d’essai, 35000 Rennes",
+    "siren": "000000000",
+    "horaires": "Lundi–vendredi, 8 h–18 h, intervention sur rendez-vous",
+    "decennale": {
+      "assureur": "Assureur fictif",
+      "numero": "DEMO-0001"
+    },
+    "avis_google": {
+      "url": ""
+    },
+    "artisan": {
+      "prenom": "Camille",
+      "nom": "Lestraque",
+      "installation": 2011,
+      "parcours": "CAP puis brevet professionnel de menuisier, huit ans dans un atelier d’escaliers avant d’ouvrir le mien.",
+      "citation": "Du premier relevé à la dernière marche posée, je ne passe la main à personne.",
+      "chiffres": [
+        {
+          "valeur": "10",
+          "unite": "ans",
+          "legende": "de garantie décennale sur chaque ouvrage posé"
+        },
+        {
+          "valeur": "180",
+          "unite": "m²",
+          "legende": "d’atelier à Rennes, où chaque pièce est fabriquée"
+        },
+        {
+          "valeur": "8",
+          "unite": "semaines",
+          "legende": "délai type d’un escalier, du relevé à la pose"
+        }
+      ]
+    }
+  }
+}
