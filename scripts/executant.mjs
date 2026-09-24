@@ -30,9 +30,10 @@ const ORCH = path.join(RACINE, '.orchestre')
 const TRAVAIL = path.join(ORCH, 'travail', 'executant')
 const AGENTS = path.join(ORCH, 'agents.jsonl')
 const MOTEURS = {
-  // Modèle par défaut gpt-5.6-sol (« reliable agentic workhorse for everyday tasks ») : consigne de Benj du 14/09/2026 —
-  // « 5.6 au lieu de 6 est déjà très bien, à part si c'est des gros travaux » ; gros chantier : --model=gpt-6-astra.
-  codex: { paquet: null, modele: 'gpt-5.6-sol', cle: null, auth: /not logged in|please log ?in|codex login|401 Unauthorized|403 Forbidden/i },
+  // Modèle par défaut gpt-6-sol (« workhorse model for coding and everyday work ») : consigne de Benj du 24/09/2026 pour
+  // l'écosystème, « ce sera GPT-6 sol ou luna ». Tâches légères et répétitives (tri, relances, veille) : --model=gpt-6-luna
+  // (« fast and affordable ») ; très gros chantier : --model=gpt-6-astra. gpt-5.6-* est désormais marqué « older » par Codex.
+  codex: { paquet: null, modele: 'gpt-6-sol', cle: null, auth: /not logged in|please log ?in|codex login|401 Unauthorized|403 Forbidden/i },
   gemini: { paquet: '@google/gemini-cli', modele: 'gemini-2.5-pro', cle: 'GEMINI_API_KEY', auth: /auth method|GEMINI_API_KEY|login|unauthenticated|IneligibleTier|no longer supported|401|403/i },
   qwen: { paquet: '@qwen-code/qwen-code', modele: null, cle: null, auth: /auth|login|unauthenticated|401|403/i },
 }

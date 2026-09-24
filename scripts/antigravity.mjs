@@ -148,8 +148,32 @@ Ensuite, dans le dossier presti :
 5. Termine par une seule ligne : \`<id> : PASS|FAIL — <ligne du verdict>\`. Une seule tâche par conversation : ne prends pas la suivante.
 Règles : français ; zéro donnée réelle (comptes @presti-test.invalid, supprimés après) ; une fonctionnalité non finie n'apparaît pas ; aucun chiffre non sourcé ; aucun secret dans un fichier versionné ; tu ne modifies ni scripts/orchestre.mjs, ni scripts/antigravity.mjs, ni les vérificateurs, ni plans/cerveau-site.md.`
 
+// ── Instantané avant chaque lancement (décision D3 de Benj, 24/09/2026) ─────────────────────────────────────
+// Antigravity tourne avec un terminal hors bac à sable : c'est lui qui a lancé le « git restore » du 13/09 (trois jours de
+// travail perdus). Avant chaque lancement, tout l'arbre de travail — fichiers modifiés ET non suivis, sauf ce qu'ignore
+// .gitignore et les .exe — est figé dans un commit rangé sous refs/instantanes/, par un index temporaire : ni `main`, ni
+// l'index réel, ni l'arbre de travail ne bougent. Rien n'est poussé. Pour récupérer un fichier :
+//   git show refs/instantanes/<nom>:<chemin>     (liste : git for-each-ref refs/instantanes)
+// Sans instantané, pas de lancement.
+function instantane(nom) {
+  const index = path.join(os.tmpdir(), `presti-instantane-${process.pid}-${Date.now()}.index`)
+  const env = { ...process.env, GIT_INDEX_FILE: index }
+  const git = (a) => execFileSync('git', a, { cwd: RACINE, encoding: 'utf8', env, maxBuffer: 1 << 26 }).trim()
+  try {
+    git(['read-tree', 'HEAD'])
+    git(['add', '-A', '--', '.', ':(exclude)*.exe'])
+    const commit = git(['commit-tree', git(['write-tree']), '-p', 'HEAD', '-m', `instantané avant ${nom} (${maintenant()})`])
+    const ref = `refs/instantanes/${nom}-${maintenant().replace(/:/g, '')}`
+    git(['update-ref', ref, commit])
+    return { ref, commit }
+  } finally { fs.rmSync(index, { force: true }) }
+}
+
 // ── Commandes ────────────────────────────────────────────────────────────────────────────────────────────
 async function lancer(ctx, agent, tache, modele) {
+  let photo
+  try { photo = instantane(`ag-${agent}`) } catch (e) { console.error(`✗ instantané impossible, lancement refusé : ${String(e.message).slice(0, 300)}`); process.exit(1) }
+  console.log(`· instantané ${photo.ref} (${photo.commit.slice(0, 8)})`)
   // Un palier Gemini (agentapi), un alias (opus, sonnet) ou n'importe quel libellé du catalogue (« Gemini 3.8 Flash (High) ») — voir `catalogue`.
 // Le duo (plans/duo-antigravity.md) : l'agent prend sa tâche, la lit, et ATTEND les pas de Claude Code — un à la fois.
 const PROMPT_DUO = (agent, tache) => [
@@ -165,7 +189,7 @@ const PROMPT_DUO = (agent, tache) => [
     id = r?.response?.newConversation?.conversationId
     if (!id) { console.error(`✗ lancement refusé : ${JSON.stringify(r).slice(0, 300)}`); process.exit(1) }
   }
-  enregistrer({ agent, tache: tache || null, modele, conversationId: id, date: maintenant() })
+  enregistrer({ agent, tache: tache || null, modele, conversationId: id, date: maintenant(), instantane: photo.ref })
   console.log(`✓ ${agent}${tache ? ' → ' + tache : ''} lancé (${modele}) · conversation ${id}`)
   return id
 }
