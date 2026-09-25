@@ -72,8 +72,10 @@ export const FLAGS = {
   siteCommande: true,
   /** v15 §4 — la VENTE du site : le bloc « Le site, à la demande — 300 € une fois » et le bouton « Commander mon
    *  site » sur la landing et /abonnement. Ne se lève qu'après l'étape 7 verte et un site de démonstration
-   *  regardé par Benj (H5). Tant qu'il est baissé, la page n'est atteignable que par son adresse. */
-  siteCommandeVente: false,
+   *  regardé par Benj (H5). Tant qu'il est baissé, la page n'est atteignable que par son adresse.
+   *  LEVÉ le 25/09/2026 sur décision de Benj (campagne d'appels de Marans du 26/09) : 025 et sa suite en production,
+   *  générateur jugé sur 4 métiers (025-21, 025-23), paiement vérifié (025-22). Vercel passe en Pro au premier site vendu. */
+  siteCommandeVente: true,
   /** v16 §3.4 — le bloc « Et le site qui va avec » sous la séquence de la landing : la capture animée de LA démo
    *  (Atelier Lestraque) et le lien vers le site réel. Il MONTRE, il ne vend pas (pas de bouton de commande). Se lève
    *  quand la démo est validée sans Benj : site-qa + grille-qa + code-qa verts (scripts/demo-verifier.mjs) et la vidéo
