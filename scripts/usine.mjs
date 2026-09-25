@@ -18,7 +18,7 @@
 //   executer rend le code de la commande sortie d'elle-même (0, 1, 2…) ; 124 délai dépassé ; 125 verdict non rendu (rien lancé, ssh coupé, commande tuée, code perdu, preuve vide).
 //
 // Le paquet (PC → usine) est construit à partir de git, jamais en parcourant le disque : les fichiers suivis modifiés depuis
-// HEAD (git diff) et les non suivis NON ignorés (git ls-files --others --exclude-standard), filtrés (EXCLUS, preuves des
+// HEAD (git diff) et les non suivis NON ignorés (git status --porcelain -uall, voir nonSuivis), filtrés (EXCLUS, preuves des
 // autres tâches, .env*, fichiers de clé, > 5 Mo), puis figés par un index temporaire (la technique de l'instantané
 // d'antigravity.mjs : ni l'index réel ni l'arbre de travail ne bougent). Avant l'envoi, la liste est imprimée et contrôlée
 // par une seconde barrière indépendante : aucun .env*, aucun fichier de clé, aucun chemin ignoré (git check-ignore), aucune
@@ -37,7 +37,8 @@
 // `verifier: node scripts/usine.mjs executer -- node scripts/<juge>.mjs`, et le verdict reste celui de l'orchestre, qui lit
 // le code de sortie. Même paquet et mêmes barrières que `lancer` ; bac ~/bacs/<nom> recréé à chaque appel, verrou par bac,
 // délai ; rien ne revient sur le PC sans --rapatrier. Détail au-dessus de executerSurUsine ; doc : section « Faire tourner
-// un juge sur l'usine (executer) » du LISEZMOI.
+// un juge sur l'usine (executer) » du LISEZMOI. Lancé SUR l'usine (le vérificateur d'une fiche de `lancer`), executer fait
+// tourner la commande sur place, sans paquet ni ssh, avec le même délai et les mêmes codes : voir executerIci.
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -200,11 +201,28 @@ function raisonExclusion(chemin, id) {
   if (estFichierDeCle(path.posix.basename(chemin))) return 'fichier de clé'
   return null
 }
+// Les non suivis NON ignorés : la même liste que `git ls-files --others --exclude-standard` (mêmes chemins, même ordre ;
+// comparées sur l'arbre réel le 25/09/2026, 2 792 chemins), lue par `git status`, qui profite du cache du système de fichiers
+// de Git pour Windows (core.fscache) : PC saturé, ls-files seul prenait 23,7 s contre 2,6 s pour status. -uall : chaque fichier
+// d'un dossier non suivi (pas le dossier seul) ; --no-renames : pas d'entrée « R » ; --no-optional-locks : status ne réécrit
+// pas le vrai index (sinon il prend index.lock et peut faire échouer le git d'une autre session). En -z, une entrée « R » ou
+// « C » est suivie de son chemin d'origine : sauté, par prudence.
+function nonSuivis() {
+  const champs = git(['--no-optional-locks', 'status', '--porcelain=v1', '-uall', '-z', '--no-renames']).split('\0')
+  const out = []
+  for (let i = 0; i < champs.length; i++) {
+    const e = champs[i]
+    if (!e) continue
+    if (/[RC]/.test(e.slice(0, 2))) i++
+    if (e.startsWith('?? ')) out.push(e.slice(3))
+  }
+  return out
+}
 function construirePaquet(id) {
   const tete = git(['rev-parse', 'HEAD']).trim()
   const candidats = [
     ...nomStatut(git(['diff', 'HEAD', '--name-status', '--no-renames', '-z'])),
-    ...git(['ls-files', '--others', '--exclude-standard', '-z']).split('\0').filter(Boolean).map((chemin) => ({ statut: 'A', chemin })),
+    ...nonSuivis().map((chemin) => ({ statut: 'A', chemin })),
   ]
   const retenus = []
   const exclus = []
@@ -411,10 +429,16 @@ fi
 v=$(node -p "require('./node_modules/playwright/package.json').version")
 # Les juges de la série 025 lancent Chromium ET WebKit (formulaire-site-qa FS-3/FS-4 ; relecture à froid du 24/09, U1) : sans
 # WebKit ici, Codex l installait lui-même hors de ~/.cache (PLAYWRIGHT_BROWSERS_PATH=/tmp/presti-025-browsers, 939 Mo).
-# --with-deps pose aussi les bibliothèques système (apt, par sudo sans mot de passe : l utilisateur usine l a).
+# --with-deps pose aussi les bibliothèques système (apt, par sudo sans mot de passe).
 echo "· Playwright $v (version du dépôt) : Chromium et WebKit, avec leurs dépendances système"
-sudo -n true 2>/dev/null || { echo "✗ sudo sans mot de passe indisponible : playwright install --with-deps en a besoin (apt)"; exit 3; }
-npx --no-install playwright install --with-deps chromium webkit
+# Depuis le 25/09/2026, usine n a plus de sudo complet : une seule commande sans mot de passe, exacte, celle que Playwright
+# lance pour ses dépendances apt (/etc/sudoers.d/usine-restreint ; presti-ops/usine/LISEZMOI.md, « Sudo restreint »). sudo -n true
+# y est refusé : la garde vérifie donc que CETTE règle figure dans sudo -n -l. Lu dans une variable, pas par un grep -q en
+# bout de tube : sous pipefail, un grep qui ferme le tube tôt peut faire échouer la garde.
+regles=$(sudo -n -l 2>/dev/null || true)
+case "$regles" in *'NOPASSWD: /usr/bin/sh -c apt-get update&& apt-get install'*) ;; *) echo "✗ sudo -n -l ne donne pas la règle des dépendances apt de Playwright (/usr/bin/sh -c apt-get update&& apt-get install …) : voir presti-ops/usine/LISEZMOI.md, « Sudo restreint »"; exit 3;; esac
+echo "· sudo -n -l : la règle des dépendances apt de Playwright est là"
+npx --no-install playwright install --with-deps chromium webkit || { echo "✗ playwright install --with-deps a échoué : si sudo a refusé la commande apt, la liste de Playwright $v ne correspond plus à la règle (refaire la capture : LISEZMOI, « Sudo restreint »)"; exit 3; }
 node -e "const pw = require('playwright'); (async () => { for (const nom of ['chromium', 'webkit']) { const b = await pw[nom].launch(); const p = await b.newPage(); await p.setContent('<title>ok</title>'); console.log('· ' + nom + ' démarre : ' + (await p.title()) + ' (' + b.version() + ')'); await b.close() } })().catch((e) => { console.error('✗ un navigateur ne démarre pas : ' + e.message); process.exit(1) })"
 echo "✓ usine prête : node_modules $(du -sh node_modules | cut -f1), package-lock $(cut -c1-12 node_modules/.usine-lock)"
 `)
@@ -800,6 +824,8 @@ function codexExec(arbre, instruction, cfg, journal, dernier) {
   })
 }
 async function tourner(dossier) {
+  // Hérité par Codex et par le vérificateur : un `usine.mjs executer` lancé d'ici tourne sur place (voir surUsine).
+  process.env.PRESTI_SUR_USINE = '1'
   const cfg = JSON.parse(fs.readFileSync(path.join(dossier, 'config.json'), 'utf8'))
   const { id } = cfg
   const arbre = path.join(dossier, 'arbre')
@@ -1058,6 +1084,130 @@ printf 'restes %s\\n' "$(grep -lzx "USINE_EXECUTER_RUN="${q(run)} /proc/[0-9]*/e
   if (!m) return { erreur: `aucune fin écrite sur l'usine en 90 s${restes ? ` ; ${restes} processus de la commande y tournent encore` : ''}`, restes }
   return { final: Number(m[1]), cause: m[2], brut: Number(m[3]), restes }
 }
+// ── executer DÉJÀ sur l'usine : la commande tourne sur place, sans paquet ni ssh (correctif du 25/09/2026) ─────────────
+// Défaut : une fiche dont le `verifier` passe par executer ne pouvait jamais être verte SUR l'usine. Lancée par `lancer`, son
+// vérificateur (celui du tourneur, ou celui que Codex lance lui-même) appelait executer dans le worktree de la tâche, qui n'a
+// pas la clé ssh du PC : « Host key verification failed », 125 à chaque tour (025-19, 025-20 et 025-21 ont brûlé leurs 3 tours
+// chacune, puis recuperer --forcer). Déjà sur l'usine, executer lance donc la commande dans l'arbre courant (RACINE : le
+// worktree de la tâche, ou le bac d'un autre executer), avec le même lanceur perl sous le même `timeout -k 20 <délai>`, et rend
+// le même code : celui de la commande sortie d'elle-même ; 124 délai dépassé ; 125 tuée par un signal, sans marque de fin,
+// interrompue ou pas lancée. Ses sorties vont droit aux sorties de l'appelant ; ses restes (USINE_EXECUTER_RUN=<run>) sont
+// arrêtés à la fin. --rapatrier garde sa règle de preuve (rien d'écrit sous le chemin, ou un fichier de 0 octet : 125 si la
+// commande rendait 0) mais ne copie rien : la commande a écrit dans l'arbre même. --attendre, --forcer, --id et --liste n'ont
+// pas d'effet ici (ni bac, ni verrou, ni paquet).
+// L'usine se reconnaît, jamais sous Windows (le PC) : PRESTI_SUR_USINE=1 (posée par `tourner` pour Codex et le vérificateur,
+// et par executer pour sa commande), USINE_EXECUTER_RUN (la commande d'un bac), ou, à défaut, ~/presti préparé par `preparer`
+// (node_modules/.usine-lock) sur une machine qui n'a pas la clé de l'usine (~/.ssh/presti-usine).
+function surUsine() {
+  if (process.platform !== 'linux') return null
+  if (process.env.PRESTI_SUR_USINE === '1') return 'PRESTI_SUR_USINE=1'
+  if (process.env.USINE_EXECUTER_RUN) return 'USINE_EXECUTER_RUN, commande d’un bac'
+  if (!fs.existsSync(CLE) && fs.existsSync(path.join(os.homedir(), 'presti', 'node_modules', '.usine-lock'))) return `~/presti préparé, pas de ${CLE}`
+  return null
+}
+// Les processus qui portent USINE_EXECUTER_RUN=<run> (la commande et tout ce qu'elle a lancé, même détaché), lus dans /proc.
+function processusDuRun(run) {
+  const pids = []
+  let entrees = []
+  try { entrees = fs.readdirSync('/proc') } catch { return pids }
+  for (const d of entrees) {
+    if (!/^\d+$/.test(d) || Number(d) === process.pid) continue
+    try { if (fs.readFileSync(`/proc/${d}/environ`, 'latin1').split('\0').includes(`USINE_EXECUTER_RUN=${run}`)) pids.push(Number(d)) } catch { /* fini, ou pas à nous */ }
+  }
+  return pids
+}
+// --rapatrier sur place : les fichiers écrits par la commande (plus récents que `debut`) sous le chemin, avec les règles du
+// retour de l'usine (aucun lien symbolique, avant.txt et verifier.log des preuves écartés, 0 octet = preuve vide).
+function preuvesEcritesIci(chemin, debut) {
+  const racine = path.join(RACINE, ...chemin.split('/'))
+  let st
+  try { st = fs.lstatSync(racine) } catch { return { erreur: `${chemin} absent de l’arbre` } }
+  const t = fs.statSync(debut, { bigint: true }).mtimeNs
+  const ecrits = []
+  const vides = []
+  const ecartes = []
+  const voir = (abs, rel, s) => {
+    if (s.isSymbolicLink()) throw new Error(`lien symbolique sous ${chemin} (${rel}) : rien n’est pris`)
+    if (s.isDirectory()) { for (const n of fs.readdirSync(abs)) voir(path.join(abs, n), `${rel}/${n}`, fs.lstatSync(path.join(abs, n))); return }
+    if (!s.isFile() || fs.lstatSync(abs, { bigint: true }).mtimeNs <= t) return
+    if (/^\.orchestre\/preuves\/[^/]+\/(avant\.txt|verifier\.log)$/i.test(rel)) { ecartes.push(rel); return }
+    ;(s.size ? ecrits : vides).push({ rel, octets: s.size })
+  }
+  try { voir(racine, chemin, st) } catch (e) { return { erreur: String(e.message).split('\n')[0] } }
+  if (!ecrits.length && !vides.length) return { erreur: `aucun fichier écrit par la commande sous ${chemin}${ecartes.length ? ` (écartés : ${ecartes.join(', ')})` : ''}` }
+  return { ecrits, vides, ecartes }
+}
+async function executerIci(commandeArgv, { nom, delai, rapatrier }, raison, t0) {
+  const secondes = (ms) => `${(ms / 1000).toFixed(1).replace('.', ',')} s`
+  const run = crypto.randomBytes(8).toString('hex')
+  const secDelai = Math.max(1, Math.round(delai * 60))
+  const dossier = fs.mkdtempSync(path.join(os.tmpdir(), 'presti-executer-'))
+  const marque = path.join(dossier, 'marque')
+  const debut = path.join(dossier, 'debut')
+  console.error(`· usine executer : déjà sur l’usine (${raison}) : la commande tourne ici, dans ${RACINE}, sans paquet ni ssh ; délai ${secDelai} s : ${commandeArgv.join(' ')}`)
+  fs.writeFileSync(debut, '')
+  const tLance = Date.now()
+  // `timeout` se met dans son propre groupe de processus (sans --foreground) : -pid les vise tous. Entrée /dev/null.
+  const enfant = spawn('timeout', ['-k', '20', String(secDelai), 'perl', '-e', LANCEUR_PERL, marque, commandeArgv.map(q).join(' ')], { cwd: RACINE, stdio: ['ignore', 'inherit', 'inherit'], env: { ...process.env, USINE_EXECUTER_RUN: run, USINE_BAC: nom, PRESTI_SUR_USINE: '1' } })
+  const tuer = (s) => { try { process.kill(-enfant.pid, s) } catch { /* déjà fini */ } for (const p of processusDuRun(run)) { try { process.kill(p, s) } catch { /* déjà fini */ } } }
+  // L'appelant arrête executer (SIGTERM, Ctrl+C, terminal fermé) : la commande est arrêtée avec lui, verdict non rendu (125).
+  let interrompu = null
+  for (const s of ['SIGTERM', 'SIGINT', 'SIGHUP']) process.on(s, () => { if (interrompu) return; interrompu = s; tuer('SIGTERM'); setTimeout(() => tuer('SIGKILL'), 5000).unref() })
+  // Filet si `timeout` lui-même ne rendait pas la main : son délai, plus une minute.
+  let garde = false
+  const minuteur = setTimeout(() => { garde = true; tuer('SIGKILL') }, (secDelai + 60) * 1000)
+  const fin = await new Promise((resoudre) => {
+    let fait = false
+    const une = (r) => { if (!fait) { fait = true; clearTimeout(minuteur); resoudre(r) } }
+    enfant.on('close', (code, signal) => une({ code, signal }))
+    enfant.on('error', (e) => une({ code: null, signal: null, erreur: e.message }))
+  })
+  const duree = Math.round((Date.now() - tLance) / 1000)
+  const brut = fin.code ?? (fin.signal ? 128 + (os.constants.signals[fin.signal] || 0) : PANNE)
+  let m = ''
+  try { m = fs.readFileSync(marque, 'utf8').trim() } catch { /* pas de marque : la commande n'a pas fini d'elle-même */ }
+  // Les mêmes causes, dans le même ordre, que sur un bac (sans la veille : ici, c'est l'interruption d'executer qui en tient lieu).
+  let cause
+  let code
+  if (fin.erreur) { cause = 'non-lancee'; code = PANNE }
+  else if (interrompu) { cause = `interrompu-${interrompu}`; code = PANNE }
+  else if (garde) { cause = 'delai'; code = 124 }
+  else if (!m && (brut === 124 || brut === 137) && duree >= secDelai - 1) { cause = 'delai'; code = 124 }
+  else if (m === `code ${brut}`) { cause = 'seule'; code = brut }
+  else if (/^signal \d+$/.test(m)) { const n = Number(m.slice(7)); cause = `signal-${Object.keys(os.constants.signals).find((k) => os.constants.signals[k] === n)?.replace(/^SIG/, '') || n}`; code = PANNE }
+  else { cause = 'sans-marque'; code = PANNE }
+  console.error(`· usine executer : commande finie en ${duree} s, ici, code ${fin.erreur ? '—' : brut} (${cause})`)
+  const restes = processusDuRun(run)
+  if (restes.length) {
+    tuer('SIGTERM'); await new Promise((r) => setTimeout(r, 2000)); tuer('SIGKILL')
+    console.error(`· usine executer : ⚠ processus laissés par la commande, arrêtés : ${restes.join(' ')}`)
+  }
+  if (fin.erreur) console.error(`✗ usine executer : commande non lancée (timeout ou perl introuvable ? ${fin.erreur}) → ${PANNE}`)
+  else if (cause.startsWith('interrompu-')) console.error(`✗ usine executer : verdict non rendu : executer a reçu ${interrompu} pendant la commande, arrêtée ; son code (${brut}) ne compte pas → ${PANNE}`)
+  else if (cause === 'delai') console.error(`✗ usine executer : délai de ${secDelai} s dépassé, commande arrêtée (code 124)`)
+  else if (cause.startsWith('signal-')) console.error(`✗ usine executer : verdict non rendu : la commande a été tuée par le signal SIG${cause.slice(7)} (mémoire saturée ? arrêt venu d'ailleurs ?) → ${PANNE}`)
+  else if (cause !== 'seule') console.error(`✗ usine executer : verdict non rendu : la commande n'a pas fini d'elle-même (aucune marque de fin de son lanceur, code brut ${brut}) → ${PANNE}`)
+  else if (code > 128 && code < 160) console.error(`· usine executer : code ${code} = 128 + ${code - 128} : un sous-processus de la commande a peut-être été tué par un signal (la commande, elle, est sortie d'elle-même)`)
+  if (rapatrier && cause !== 'seule') console.error(`· usine executer : --rapatrier=${rapatrier} : rien n'est retenu (verdict non rendu)`)
+  else if (rapatrier) {
+    const r = preuvesEcritesIci(rapatrier, debut)
+    if (r.erreur) {
+      console.error(`✗ usine executer : --rapatrier=${rapatrier} : ${r.erreur}`)
+      if (code === 0) code = PANNE
+    } else {
+      const octets = r.ecrits.reduce((s, f) => s + f.octets, 0)
+      console.error(`· usine executer : --rapatrier=${rapatrier} : ${r.ecrits.length} fichier(s) écrit(s) sur place, ${octets} octets (rien à copier : ils sont déjà dans l’arbre)${r.ecartes.length ? ` ; écartés : ${r.ecartes.join(', ')}` : ''}`)
+      for (const f of r.ecrits.slice(0, 20)) console.error(`    ${f.rel}  ${f.octets} octets`)
+      if (r.ecrits.length > 20) console.error(`    … et ${r.ecrits.length - 20} autre(s)`)
+      if (r.vides.length) {
+        console.error(`✗ usine executer : --rapatrier=${rapatrier} : preuve vide : ${r.vides.length} fichier(s) de 0 octet : ${r.vides.slice(0, 10).map((f) => f.rel).join(', ')}${r.vides.length > 10 ? ' …' : ''} — une preuve vide ne passe pas pour une preuve`)
+        if (code === 0) code = PANNE
+      }
+    }
+  }
+  fs.rmSync(dossier, { recursive: true, force: true })
+  process.stderr.write(`· usine executer : code ${code} · sur place · commande ${secondes(Date.now() - tLance)} · total ${secondes(Date.now() - t0)}\n`, () => process.exit(code))
+}
 async function executerSurUsine() {
   const t0 = Date.now()
   const secondes = (ms) => `${(ms / 1000).toFixed(1).replace('.', ',')} s`
@@ -1082,6 +1232,9 @@ async function executerSurUsine() {
   if (idFiche && !ID_VALIDE.test(idFiche)) panne(`--id=${idFiche} : un identifiant de fiche NNN-slug (ex. 025-05)`)
   const rapatrier = o.rapatrier === undefined ? '' : cheminRapatriable(o.rapatrier)
   if (rapatrier === null) panne(`--rapatrier=${o.rapatrier} : seulement sous .orchestre/travail/<…> (hors usine/ et executant/) ou .orchestre/preuves/<id>/`)
+  // Déjà sur l'usine (worktree d'une tâche de `lancer`, bac d'un autre executer) : sur place, sans paquet ni ssh.
+  const ici = surUsine()
+  if (ici) return executerIci(commandeArgv, { nom, delai, rapatrier }, ici, t0)
 
   // 1. Le paquet de `lancer`, ses deux barrières, puis la barrière propre à executer (URL avec identifiants, noms sensibles en
   //    JSON/YAML/minuscules, archives).
@@ -1182,7 +1335,7 @@ principal() {
   # Au premier plan (un « & » ferait ignorer SIGINT à la commande) ; ni le verrou (9) ni l'entrée de ssh (4) ne lui sont transmis.
   # Le lanceur perl (fork, exec bash -c, waitpid) écrit dans $R/marque « code N » ou « signal N » quand la commande s'est
   # terminée — jamais s'il est arrêté lui-même (veille, délai) : pas de marque, pas de fin d'elle-même.
-  USINE_EXECUTER_RUN="$RUN" USINE_BAC="$NOM" timeout -k 20 "$DELAI" perl -e "$LANCEUR" "$R/marque" "$CMD" </dev/null >&3 3>&- 4<&- 9>&-
+  USINE_EXECUTER_RUN="$RUN" USINE_BAC="$NOM" PRESTI_SUR_USINE=1 timeout -k 20 "$DELAI" perl -e "$LANCEUR" "$R/marque" "$CMD" </dev/null >&3 3>&- 4<&- 9>&-
   code=$?
   duree=$(( $(date +%s) - debut ))
   kill "$veille" 2>/dev/null; wait "$veille" 2>/dev/null
