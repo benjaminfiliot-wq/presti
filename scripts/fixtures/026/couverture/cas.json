@@ -1,0 +1,17 @@
+[
+  { "nom": "sans-juge", "fichier": "026-008.md", "avant": "verifier: node scripts/c-qa.mjs", "apres": "verifier: npx tsc --noEmit", "attendu": "CV-2", "motif": "aucun juge" },
+  { "nom": "juge-apres", "fichier": "026-003.md", "avant": "verifier: node scripts/a-qa.mjs", "apres": "verifier: node scripts/c-qa.mjs", "attendu": "CV-2", "motif": "plus grande" },
+  { "nom": "mutations-juge-propre", "fichier": "026-010.md", "avant": "node scripts/juges-026-mutations-preuve.mjs --fiche=026-010 --script=scripts/juges-026-essai-mutations.mjs --rapport=.orchestre/preuves/026-010/mutations.json", "apres": "node scripts/juges-026-essai-mutations.mjs", "attendu": "CV-2", "aussi": ["CV-3", "CV-7"], "motif": "écrit par aucune fiche de juges" },
+  { "nom": "juge-dans-perimetre", "fichier": "026-004.md", "avant": "lib/b.ts]", "apres": "lib/b.ts, scripts/b-qa.mjs]", "attendu": "CV-3", "motif": "contient le juge scripts/b-qa.mjs" },
+  { "nom": "dep-en-avant", "fichier": "026-005.md", "avant": "- **Dépend de (PASS) :** 026-004.", "apres": "- **Dépend de (PASS) :** 026-004, 026-009.", "attendu": "CV-4", "aussi": ["CV-8"], "motif": "026-009, qui n'est pas plus petit" },
+  { "nom": "exemple-hors-section", "fichier": "026-003.md", "avant": "Rien d’autre à lire ici.", "apres": "- **Dépend de (PASS) :** 026-011.", "attendu": null },
+  { "nom": "chevauchement-libre", "fichier": "026-003.md", "avant": "app/a/**,", "apres": "app/a/**, app/b/x.tsx,", "attendu": "CV-5", "motif": "chevauche 026-003" },
+  { "nom": "chevauchement-025", "fichier": "026-004.md", "avant": "lib/b.ts]", "apres": "lib/b.ts, lib/ancien.ts]", "attendu": "CV-5", "motif": "025-02" },
+  { "nom": "juge-non-mute", "fichier": "026-011.md", "avant": "\n- `scripts/c-qa.mjs` : CQ-1", "apres": "", "attendu": "CV-6", "motif": "scripts/c-qa.mjs (c-qa)" },
+  { "nom": "juge-nom-court", "fichier": "026-011.md", "avant": "`scripts/c-qa.mjs`", "apres": "c-qa", "attendu": null },
+  { "nom": "migration-codex", "fichier": "026-004.md", "avant": "executant: claude-code", "apres": "executant: codex", "attendu": "CV-7", "motif": "touche supabase/**" },
+  { "nom": "vague-trop-pleine", "fichier": "INDEX.md", "avant": "| V06 | — | 026-008 · 026-009 | — | — |\n| V07 | — | 026-010 | — | — |", "apres": "| V06 | — | 026-008 · 026-009 · 026-010 | — | — |", "attendu": "CV-8", "motif": "au plus deux" },
+  { "nom": "usine-mal-rangee", "fichier": "026-006.md", "avant": " · **sur l'usine**", "apres": "", "attendu": "CV-8", "motif": "ne porte pas « sur l'usine »" },
+  { "nom": "id-trou", "fichier": "026-009.md", "avant": "id: 026-009", "apres": "id: 026-012", "attendu": "CV-1", "aussi": ["CV-8"], "motif": "trou dans les ids" },
+  { "nom": "libelle-colle", "fichier": "026-005.md", "avant": "- **Appliquées avant le dépôt :**", "apres": "- **Collées avant le dépôt :**", "attendu": "CV-4", "motif": "Collées" }
+]

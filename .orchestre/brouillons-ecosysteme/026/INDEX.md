@@ -714,3 +714,7 @@ Ces ids valent parce que ce bloc est le **premier ajouté après la voie gratuit
 | transverse-03 (mise en service du pont) | 026-196 |
 | transverse-04 (durcissement de l'usine) | 026-197 |
 | transverse-05 (mutations des juges du pont et du durcissement) | 026-198 |
+
+## Point ouvert relevé par 026-001 (26/09/2026)
+
+Le méta-juge des mutations (`scripts/juges-026-mutations-preuve.mjs`) travaille sur une copie du dépôt SANS `.env.local`. Les fiches de mutations dont les juges lisent `.env.local` ou créent un compte d'essai (026-130, 026-132, 026-192) échoueront donc à MP-3, quel que soit le travail de l'exécutant. À régler AVANT de déposer 026-130 : le méta-juge doit pointer vers le `.env.local` d'origine par une variable d'environnement (sans le copier), sur le PC seulement.
