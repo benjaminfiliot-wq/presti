@@ -1,0 +1,13 @@
+# Profil AppArmor du bac a sable de Codex sur l'usine (pose par Claude Code le 24/09/2026).
+# Ubuntu 24.04 interdit les espaces de noms non privilegies (kernel.apparmor_restrict_unprivileged_userns=1) ;
+# le bwrap embarque par Codex echouait alors ("bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted")
+# et Codex ne pouvait rien executer. Meme modele que les profils chrome / linux-sandbox d'Ubuntu :
+# le droit userns est donne a CE binaire seulement, la protection reste active pour tout le reste.
+abi <abi/4.0>,
+include <tunables/global>
+
+profile codex-bwrap /home/usine/.npm-global/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-*/vendor/*/codex-resources/bwrap flags=(unconfined) {
+  userns,
+
+  include if exists <local/codex-bwrap>
+}

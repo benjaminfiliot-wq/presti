@@ -1,0 +1,66 @@
+# Memory Index
+
+- [SaaS side project](saas-side-project.md) — SaaS avec un pote, INDÉPENDANT de l'OFM/YouTube ; cerveau Obsidian dans Documents/SaaS ; phase = trouver un problème rentable ; skills `saas-problem-finder` + `vault-organizer`
+- [Corrections incrémentales](benj-corrections-incrementales.md) — ne jamais tout raser/relancer sur une demande de correction : fixer l'existant, vitesse > refonte
+- [Presti — règle vitrine](presti-feature-showcase-rule.md) — une fonctionnalité livrée doit se voir dans la vitrine de la landing ; le support est DemoSequence (captures réelles), plus FeatureShowcase (supprimé)
+- [Presti — facturation & TVA](presti-facturation-tva.md) — franchise en base, art. 293 B : aucune TVA facturée ; les 3 choses à changer ENSEMBLE le jour de l'immatriculation
+- [Presti — état & roadmap](presti-state.md) — le SaaS déployé ; démo Lestraque vague 5 EN LIGNE le 15/09 (bureau + téléphone + vidéo de la landing) ; suite confiée à Codex/Antigravity via SaaS/Produit/Prompt-Codex-2026-09-15.md
+- [Livrable collé à la main](livrable-colle-a-la-main.md) — un fichier que Benj colle lui-même (SQL, variable Vercel) est un livrable : sans test, la panne se découvre chez lui
+- [Suites : ménage dans un finally](suites-menage-finally.md) — une suite qui crée un compte privilégié en prod doit le nettoyer quoi qu'il arrive ; une migration ne déduit jamais un privilège de la base
+- [Deux chiffres, un écran](deux-chiffres-un-ecran.md) — deux zones qui parlent de la même chose la calculent au même endroit et l'écrivent pareil ; un budget dépassé n'est pas une panne
+- [Presti — messagerie d’entreprise](presti-messagerie-entreprise.md) — la boîte relevée est le Gmail, PAS contact@prestiapp.fr (qui envoie sans recevoir) ; les 4 pièges levés, dont les espaces du mot de passe d’application Google
+- [Presti — archi IA](presti-ai-architecture.md) — lib/ai.ts : cadrage déterministe + thinking adaptatif Pro/Expert ; agent presti-ai-engineer + skill presti-ai-lab + harnais ai-eval
+- [Presti — vidéos guides](presti-guiding-videos.md) — 3 checklists barres de qualité (18 pts anti-hack, sécurité, 20 pts pré-lancement) ; frames dans scratchpad
+- [Presti — vision plateforme](presti-platform-vision.md) — plateforme de communication artisan (bio → client communique → IA répond multi-canal → devis/facture), très humaine — LIVRÉE le 2026-08-31
+- [Presti — coentreprise d'agents](presti-agents-coentreprise.md) — 12 agents (3 par pôle audit/animation/gestion/mails) + mémoire de domaine + journaux d'apprentissage, pilotés depuis /controle
+- [Presti — audit v4](presti-audit-v4.md) — audit indépendant du 2026-09-03 : 15 défauts (dont 3 de moi), corrigés ; 3 réglages Supabase attendent Benj
+- [Presti — plan directeur v2](presti-platform-v2-masterplan.md) — ⚠️ Benj juge l'existant « largement insuffisant » ; chantier multi-jours ultra-structuré : constructeur de site 3 niveaux + démo enrichie + connexion + devis/facture auto
+- [Presti — sprint v5 J-1](presti-sprint-v5.md) — sprint avant la démo du 2026-09-04 : tout en prod (migrations via SQL Editor), bugs trouvés à l'œil (message mutilé par une regex, acompte à 100 %, comptes de test bloqués par une facture) ; leçons de coordination
+- [Plugins skills réseaux sociaux](social-skills-plugins.md) — linkedin-skills (11) + facebook-skills (8) au niveau user depuis le 2026-09-08 ; mode brouillon par défaut, clés Publora/Apify partagées
+- [CLI claude & plugins (Windows)](claude-cli-plugins-windows.md) — le binaire hors PATH + les commandes pour installer/gérer plugins et marketplaces depuis le desktop
+- [Décomptes dans la doc](decomptes-dans-la-doc.md) — ne jamais figer un nombre de fichiers dans une doc : il est faux dès la session suivante ; écrire la commande qui le donne
+- [Facebook — pièges de la Page](facebook-page-pieges.md) — l'assistant de création ne garde pas les coordonnées ; la photo de profil masque le centre de la couverture ; vérifier le nom du compte avant de créer
+- [Vidéo sur les réseaux : impossible à automatiser](upload-video-reseaux-impossible.md) — Facebook bloque à 0 %, LinkedIn est en shadow DOM ; et vérifier une publication dans le DOM du composeur ne prouve rien
+- [Instagram — compte Presti](instagram-compte-presti.md) — @prestiapp (ex-compte de l'agence) ; lien de bio mobile-only, nom 2×/14 j, et le canal /a/instagram à coller
+- [Presti — sessions concurrentes](presti-sessions-concurrentes.md) — plusieurs sessions écrivent dans presti : relire juste avant de remplacer un bloc, typecheck + suite après
+- [Instagram — messages privés automatisés](instagram-dm-automatisation.md) — ça passe, mais le compte se fait freiner vers 6 messages ; la seule séquence fiable, et pourquoi focus() ne suffit pas
+- [Presti — qui tient quel réseau](presti-qui-tient-quel-reseau.md) — LinkedIn à LV, FB/Insta à Gabriel ; et les 4 affirmations fausses parties dans dix InMails le 09/09
+- [HyperFrames en local](hyperframes-en-local.md) — le MCP hébergé refuse les agents, mais le CLI rend gratuitement en local ; ce que `check` attrape, et les deux défauts qu'il laisse passer
+- [Photos de démo : licence CC BY-SA](demo-photos-licence.md) — le portfolio du compte de démo va sur le site, jamais dans une vidéo : le partage à l'identique s'étendrait au film
+- [Suite qui sème ses données](suite-qui-seme-ses-donnees.md) — une suite qui crée elle-même ses lignes ne prouve que la moitié aval : promesse verte, produit muet
+- [spawn Windows : shell:true casse ffmpeg](spawn-windows-shell-ffmpeg.md) — le `|` d’un filter_complex lu comme un tube par cmd.exe ; et TaskStop ne tue pas l’arbre
+- [Facebook — démarchage artisans](facebook-demarchage-artisans.md) — aucun DM ne part d’une Page (vérifié en voix Presti) ; depuis le profil perso 6 DM sur 9 jamais ouverts ; groupes par métier ; fenêtre Chrome cachée = clavier mort, script vivant
+- [replace $' et heredocs longs](replace-chaine-et-heredoc.md) — String.replace interprète $' dans le remplacement (fichier dupliqué) ; un heredoc long ne parse pas et efface le cp de sauvegarde placé avant
+- [Presti — orchestre × Antigravity](presti-orchestre-antigravity.md) — depuis le 2026-09-13 : Claude Code pense, Antigravity produit ; tâches YAML dans `.orchestre/`, verdicts dans `digest.md` ; **Antigravity se pilote d’ici** (`scripts/antigravity.mjs` via `language_server.exe agentapi`, politique EAGER obligatoire)
+- [Preuve vide = mensonge](preuve-vide-est-un-mensonge.md) — un vérificateur qui teste l’existence est satisfait par un fichier vide (quatre captures de 0 octet, 13/09) : tester la substance, refuser tout 0 octet, regarder une capture
+- [Cerveau site v2](cerveau-site-v2.md) — démos régénérées par un générateur déterministe + kit d’animation (14/09) ; provenance des photos prouvée ; pièges : scroll-behavior smooth, filter animé, picture sans hauteur
+- [Le juge capture lui-même](juge-capture-lui-meme.md) — une capture livrée par un agent n'est pas une preuve : trois fraudes en un jour ; le vérificateur lance le serveur, se connecte, capture, compare
+- [Publora — limites Starter](publora-limites.md) — 3 parutions programmées à la fois, 7 jours d'horizon ; le postage des dix se fait par la tâche planifiée « Presti publications » (publier-suite.mjs) toutes les six heures
+- [PostgREST — jointure ambiguë](postgrest-jointure-ambigue.md) — plusieurs clés vers la même table → nommer la clé (table!colonne) ; l'erreur PGRST201 est silencieuse : c'était la suspension « sans effet »
+- [Poussé ≠ déployé](pousse-n-est-pas-deploye.md) — 37 déploiements Vercel en ERROR de suite (13-14/09) sans que personne ne le voie ; après chaque push : node scripts/deploiement-etat.mjs
+- [Orchestre autonome](orchestre-autonome.md) — outil à part (Documents/orchestre, Git) : init/maj/budget/hooks ; modifier là-bas + preuve + maj, jamais presti/scripts/orchestre.mjs à la main
+- [Démo v16 et la grille](demo-v16-grille.md) — un geste écrit peut être invisible : images-clés + juge indépendant ; Next sert public/ sans barre finale (liens index.html) ; video-qa --profil=landing
+- [Claude Design Skillstack](claude-design-skillstack.md) — 5 bundles 3D/animation web installés le 14/09 (22 skills, ~2,8 k tokens/session), audités propres ; ne pas ajouter les plugins individuels ; pièges npm install (Barba) et décimation Blender
+- [Démo : la barre de Benj](demo-niveau-benj.md) — 8/8 à la médiane de la grille, et pourtant « loin encore du résultat » pour Benj (14/09) : viser le haut des références, sa réaction reste la mesure
+- [Un seul site de démo](demo-un-seul-site.md) — Benj (14/09) : un site au meilleur niveau (Lestraque), pas dix ; les neuf démos métier sont gelées, ne plus les régénérer ni les juger ; utiliser les agents des plugins
+- [Presti — audience de la vitrine](presti-audience-vitrine.md) — onglet Visiteurs du Poste EN PROD depuis le 14/09 (c188c26, 0090-0092) : sans cookie ni IP, flux = page + minute seulement, campagnes en liste fermée ; identifier des visiteurs passés : refusé et impossible
+- [Essai à sec d'une migration](essai-a-sec-migration.md) — DO + EXECUTE du jumeau nu + raise exception = testé sur la vraie base sans trace ; DIRECT_URL refusée depuis le 14/09
+- [Codex exécutant](codex-executant.md) — application OpenAI Codex (ChatGPT, pas d'API) branchée à l'orchestre le 14/09 : binaire dans AppData, pas de mode serveur MCP, bac à sable workspace-write forcé (config de l'app en danger-full-access), sans presti-secrets
+- [Vidéo Playwright : l'horloge ment](playwright-video-horloge.md) — recordVideo en avance de 0,05 à 0,8 s sur Date.now(), qui dérive : caler les coupes sur des flashs blancs retrouvés dans la vidéo ; video-qa n'affiche que la pire plage figée
+- [Juger un relais en continu](juge-relais-continu.md) — 019-01 PASS avec un trou de 1 500 px sans appel visible : échantillonner tout le défilement (150 px) et tester la visibilité réelle (elementFromPoint), pas IntersectionObserver
+- [Exécutants d'abord](benj-executants-d-abord.md) — 15/09 : Benj veut la production chez Codex/Antigravity (orchestre), pas en sous-agents internes ; paralléliser, montrer tôt au même lien ; page de choix « films + mesures + questions » validée
+- [MotionSites : le connecteur marche](motionsites-connecteur-marche.md) — mcp__26de8380 répond ; ne jamais relayer « à réautoriser » sans avoir appelé search_prompts soi-même (Benj l'a répété deux fois le 15/09)
+- [TikTok Studio : l'affichage ment](tiktok-studio-affichage-menteur.md) — la colonne confidentialité est périmée dans les deux sens ; relire après rechargement, prouver sans cookies
+- [Déposer sur Drive sans champ fichier](drive-televerser-sans-champ-fichier.md) — intercepter input.click() pour téléverser depuis le navigateur ; le connecteur et file_upload ne suffisent pas
+- [Args d'un workflow : jamais à la main](args-workflow-jamais-a-la-main.md) — 31 fichiers mal appariés sur 48 ; générer les args, exiger l'arrêt sur chemin absent, mettre une contrainte vérifiable dans le résultat
+- [TikTok — épingler un commentaire](tiktok-epingler-commentaire-mobile.md) — impossible sur le web (menu « Supprimer » seul, les deux interfaces) : geste du téléphone, appui long
+- [Le juge mesure le décor](juge-mesure-le-decor.md) — compter les pixels clairs juge le fond (barre d'outils Roblox) : une propriété géométrique se mesure géométriquement
+- [TikTok — dépôt automatique](tiktok-depot-automatique.md) — MARCHE (22/09) si l'onglet est visible : Chrome gèle la vidéo des onglets cachés ; file_upload ≤10 Mo, légende par frappe, Publier = accord de Benj
+- [TikTok — sons sous licence](tiktok-sons-sous-licence.md) — musique et bruitages pris dans Studio > Sons libres de droits par API ; kit, poser_musique, passe_sfx, qualite_clip
+- [Écosystème Presti (24/09)](ecosysteme-presti.md) — objectif final : automatisation totale ; pubs UGC 5 vidéos/490 € ; OpenClaw NON ; interface = CLAW3D avec dessins pixel art, DANS le Poste (choix de Benj du 25/09, remplace l'étude qui l'écartait)
+- [ECC installé](ecc-installation.md) — plugin Claude hooks « minimal » + plugin Codex ; --dry-run de setup installe quand même, et l'installeur coupe la mention de co-auteur
+- [Usine Oracle](usine-oracle.md) — presti-usine (88.96.53.3, ARM 2/12) EN LIGNE le 24/09 ; pièges : IP publique grisée, jamais ufw, AppArmor pour Codex ; un juge rouge sur le PC saturé n'est pas un verdict
+- [Prospection automatique (correction de Benj)](ecosysteme-prospection-automatique.md) — 24/09 soir : les agents trouvent ET contactent (pas Benj) ; interface = Mission Control des vidéos ; analyser les vidéos À L'IMAGE, pas l'audio seul
+- [Windsor.ai — Instagram](windsor-instagram.md) — relié le 24/09 (essai) : démographie agrégée + commentaires nominatifs, PAS la liste des abonnés ; actions publier/commenter (hors quota Publora)
+- [Revérifier décisions et vidéos](benj-reverifier-decisions-et-videos.md) — consigne du 25/09 : chaque conception finit par un agent de conformité qui relit ses décisions ET les vidéos de référence à l'image
+- [Migrations : je les applique moi-même](migrations-je-les-applique.md) — ne JAMAIS demander à Benj de coller du SQL : apply_migration par le connecteur, puis contrôle + test réel annulé + zéro trace
