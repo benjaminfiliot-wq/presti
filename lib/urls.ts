@@ -24,6 +24,13 @@ export const SLUGS_RESERVES = new Set([
   'static', 'assets', 'infos-legales', 'cgu', 'mentions-legales', 'confidentialite', 'faq', 'aide',
 ])
 
+/**
+ * Début de l'adresse que la purge donne à un compte anonymisé (lib/purgeComptes.ts). Personne ne peut le prendre : un
+ * tiers qui occuperait « supprime-<8 caractères> » ferait échouer l'anonymisation de ce compte. La base le refuse aussi à
+ * l'inscription (migration 0095).
+ */
+export const PREFIXE_ADRESSE_PURGEE = 'supprime-'
+
 export type ModeUrl = 'perso' | 'sousdomaine' | 'neutre' | 'presti'
 
 export function modeUrl(a: ArtisanAdresse): ModeUrl {
@@ -82,5 +89,6 @@ export function problemeSlug(slug: string): string | null {
   if (s.length > 40) return 'Trop long : 40 caractères maximum.'
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s)) return 'Uniquement des lettres minuscules, des chiffres et des tirets (pas au début ni à la fin).'
   if (SLUGS_RESERVES.has(s)) return 'Cette adresse est réservée.'
+  if (s.startsWith(PREFIXE_ADRESSE_PURGEE)) return 'Cette adresse est réservée.'
   return null
 }

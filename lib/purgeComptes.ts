@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { MEDIA_BUCKET } from '@/lib/media'
 import { notifierEntreprise } from '@/lib/email'
 import { stripe } from '@/lib/stripe'
+import { PREFIXE_ADRESSE_PURGEE } from '@/lib/urls'
 
 // Purge des comptes dont la suppression a été demandée il y a plus de 30 jours (§6, migration
 // 0052). Appelée par le cron quotidien des relances : le plan Vercel Hobby n'accepte que deux
@@ -26,7 +27,9 @@ import { stripe } from '@/lib/stripe'
 //    L'utilisateur auth est banni et son email remplacé : plus personne ne peut se connecter.
 
 export const JOURS_DE_GRACE = 30
-export const PREFIXE_ADRESSE_PURGEE = 'supprime-'
+// Le préfixe vit dans lib/urls.ts, où la validation des adresses le refuse (la base aussi, 0095) ; réexporté pour
+// ceux qui l'importent d'ici (app/api/leads).
+export { PREFIXE_ADRESSE_PURGEE }
 
 /** Adresse de remplacement d'un compte anonymisé — reconnaissable, jamais délivrable. */
 export const emailAnonyme = (id: string) => `supprime-${id.slice(0, 8)}@anonyme.invalid`
@@ -130,7 +133,16 @@ export async function purgerComptes(): Promise<{ purges: number; anonymises: num
       const { count } = await supabaseAdmin.from('factures').select('id', { count: 'exact', head: true }).eq('artisan_id', c.id).eq('verrouillee', true)
       const aFacture = (count ?? 0) > 0
       const echec = aFacture ? await anonymiser(c.id) : await effacer(c.id)
-      if (echec) { console.error('[purge-comptes]', c.id, echec); continue }
+      if (echec) {
+        console.error('[purge-comptes]', c.id, echec)
+        // Une suppression demandée qui échoue ne reste pas muette : l'entreprise doit la traiter (RGPD).
+        await notifierEntreprise(
+          `Purge en échec — ${c.nom || c.email || c.id}`,
+          `La suppression demandée il y a plus de ${JOURS_DE_GRACE} jours n'a pas abouti (${aFacture ? 'anonymisation' : 'effacement'}).\n\n` +
+          `Erreur : ${echec}\n\nÀ vérifier et à traiter à la main.\n\nArtisan : ${c.nom || '—'} · ${c.email || '—'} · ${c.id}`,
+        )
+        continue
+      }
       if (aFacture) anonymises++; else purges++
       await notifierEntreprise(
         `Compte ${aFacture ? 'anonymisé' : 'purgé'} — ${c.nom || c.email || c.id}`,

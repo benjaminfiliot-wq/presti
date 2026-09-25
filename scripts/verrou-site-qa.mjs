@@ -48,7 +48,12 @@
 //         « new.est_demo := old.est_demo; »), et c'est noté.
 //   VS-4  aucune autre migration n'a changé : chaque fichier de supabase/migrations/ suivi à 1620723 (REFERENCE_COMMIT) est
 //         présent et identique (dépôt : git diff --no-renames 1620723 ; arbre extrait ou témoin : blob par blob, fins de ligne
-//         CRLF ramenées à LF), et les seuls fichiers ajoutés sont les trois de 0093.
+//         CRLF ramenées à LF), et les seuls fichiers ajoutés sont les trois de 0093 — plus, tolérés et notés depuis le 24/09
+//         (fiche 025-13), les fichiers d'un numéro SUPÉRIEUR à 0093 (00NN_*.sql, _A_COLLER_sql_editor_00NN[_NU].sql, numéro lu
+//         dans le nom sur disque) ajoutés par des fiches postérieures ; un ajout de numéro ≤ 0093 reste refusé.
+//   (VS-1, 24/09, fiche 025-13 : une migration postérieure à 0093 peut redéfinir lock_artisan_privileges, à condition de garder
+//         toutes les lignes de 0093, son en-tête et les quatre lignes du site dans la branche then ; tout autre usage du nom
+//         — ou une redéfinition qui en perd — reste rouge.)
 //   --reel (VS-REEL, VS-MENAGE ; jamais lancé par un exécutant, lancé par Claude Code seulement, après le collage de 0093) :
 //         un compte d'essai (@presti-test.invalid) est créé par l'API d'administration avec site_active = false, site_tier = 1,
 //         site_contenu = {"verrou":"initial"}, site_origine = 'abonnement' ; avec SA PROPRE session (clé anon + mot de passe), il
@@ -304,10 +309,13 @@ function vs1(racine) {
   const migs = lireMigrations(racine)
   const prec = definitionPrecedente(migs)
   for (const e of prec.echecs) echecs.push(e)
-  // aucune migration postérieure à 0068 (hors 0093) ne nomme la fonction ; aucune postérieure à 0093 ne la redéfinit
+  // aucune migration entre 0068 et 0093 ne nomme la fonction ; une migration postérieure à 0093 (fiche 025-13 : 0095) ne peut
+  // que la REDÉFINIR en gardant 0093 entière — jugé plus bas, une fois 0093 lue (avant le 24/09 : toute postérieure était refusée)
+  const posterieures = []
   for (const m of migs) {
-    if (m.nom === MIGRATION) continue
-    if (m.num > 68 && NOMME.test(m.code)) echecs.push(`${m.nom} nomme lock_artisan_privileges (${m.num > 93 ? 'postérieure à 0093 : 0093 ne serait plus la définition en vigueur' : 'la dernière définition doit rester 0068'})`)
+    if (m.nom === MIGRATION || !NOMME.test(m.code)) continue
+    if (m.num > 93) posterieures.push(m)
+    else if (m.num > 68) echecs.push(`${m.nom} nomme lock_artisan_privileges (la dernière définition avant 0093 doit rester 0068)`)
   }
   const texte = lireTexte(chemins(racine).M)
   if (texte === null) { echecs.push(`supabase/migrations/${MIGRATION} absent`); return fin('', { precedente: prec }) }
@@ -347,6 +355,31 @@ function vs1(racine) {
     if (d93.corps !== null && prec.def.corps !== null && com(d93.corps) !== com(prec.def.corps)) faits.push(`commentaires du corps : ${com(d93.corps)} ligne(s) (${com(prec.def.corps)} dans ${prec.nom}) — libres, non jugés`)
     faits.push(`définition précédente : ${prec.nom}:${prec.debut}-${prec.fin} (${a.length} lignes de code) ; 0093 : ${b.length} lignes de code`)
   }
+  // les redéfinitions postérieures à 0093 : permises seulement si elles gardent toutes les lignes de 0093 (plus longue sous-suite
+  // commune), l'en-tête, et les quatre lignes du site dans la branche then du bloc current_user (profondeur 1)
+  let enVigueur = MIGRATION
+  for (const m of posterieures) {
+    const d = []
+    if (d93.corps === null) d.push('0093 illisible : redéfinition non comparable')
+    else {
+      for (const x of instructions(m.texte).filter((y) => NOMME.test(sansCommentairesPartout(y.code)))) {
+        if (!CREE_FONCTION.test(x.code)) { d.push(`« ${court(x.code, 50)} » (seul « create or replace function public.lock_artisan_privileges() » est permis)`); continue }
+        const dx = analyserDefinition(x)
+        if (dx.entete !== d93.entete) d.push('en-tête différent de 0093')
+        const { retires } = differenceLignes(d93.lignes, dx.lignes)
+        if (retires.length) d.push(`${retires.length} ligne(s) de 0093 retirée(s) ou modifiée(s) : ${retires.slice(0, 2).map((k) => `« ${court(d93.lignes[k], 50)} »`).join(', ')}`)
+        const p = piles(dx.lignes, new Set(dx.lignes.keys()))
+        for (const c of COLONNES) {
+          const j = dx.lignes.findIndex((l) => l.toLowerCase() === LIGNE(c))
+          const pl = j < 0 ? null : p.get(j) || []
+          if (j < 0) d.push(`« ${LIGNE(c)} » absente`)
+          else if (!(pl.length === 1 && SI_EXTERIEUR.test(pl[0].ligne) && pl[0].branche === 'then')) d.push(`« ${LIGNE(c)} » hors de la branche then (profondeur 1)`)
+        }
+      }
+    }
+    if (d.length) echecs.push(`${m.nom} (postérieure à 0093) touche lock_artisan_privileges sans garder 0093 entière : ${d.slice(0, 3).join(' ; ')}`)
+    else { faits.push(`${m.nom} redéfinit lock_artisan_privileges en gardant 0093 entière (ses lignes, les quatre colonnes du site dans la branche then) : c'est elle qui est en vigueur`); enVigueur = m.nom }
+  }
   // les quatre colonnes existent (ajoutées à public.artisans avant 0093, jamais retirées)
   const origines = []
   for (const c of COLONNES) {
@@ -358,7 +391,7 @@ function vs1(racine) {
     else if (retirees.length) echecs.push(`colonne artisans.${c} retirée par ${retirees.join(', ')}`)
     else origines.push(`${c} (${ajoutees[0].slice(0, 4)})`)
   }
-  return fin(`${MIGRATION} = ${prec.nom}:${prec.debut}-${prec.fin} à l'identique + les 4 lignes dans la branche then du bloc current_user, une seule instruction, en-tête identique ; dernière définition ; colonnes ${origines.join(', ')}`, { corpsConforme, precedente: prec })
+  return fin(`${MIGRATION} = ${prec.nom}:${prec.debut}-${prec.fin} à l'identique + les 4 lignes dans la branche then du bloc current_user, une seule instruction, en-tête identique ; ${enVigueur === MIGRATION ? 'dernière définition' : `redéfinie ensuite par ${enVigueur}, qui la garde entière`} ; colonnes ${origines.join(', ')}`, { corpsConforme, precedente: prec })
 }
 
 // ── VS-2 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -436,8 +469,10 @@ function jetons(s) {
       out.push({ t: 'lit', v }); i = j; continue
     }
     if (c === '"') { const f = s.indexOf('"', i + 1); if (f < 0) throw new Error('identifiant "…" non refermé'); out.push({ t: 'mot', v: s.slice(i + 1, f).toLowerCase() }); i = f + 1; continue }
-    if ('(),;'.includes(c)) { out.push({ t: c }); i++; continue }
-    const op = /^(?:!~\*|!~|~\*|~|<>|!=|>=|<=|::|\|\||[=<>+\-*/%.])/.exec(s.slice(i))
+    if ('(),;[]'.includes(c)) { out.push({ t: c }); i++; continue }
+    // 025-13 : « & » (tgtype & 3), « @> », « <@ » — la ligne du déclencheur sensible à BEFORE … FOR EACH ROW se lit, puis est notée
+    // non simulée (exists sur pg_trigger : verrou-maj-qa VM-3 la simule)
+    const op = /^(?:!~\*|!~|~\*|~|<>|!=|>=|<=|::|@>|<@|\|\||[=<>+\-*/%.&|])/.exec(s.slice(i))
     if (op) { out.push({ t: 'op', v: op[0] }); i += op[0].length; continue }
     const w = /^[A-Za-z_][\w$]*(?:\.[A-Za-z_][\w$]*)*/.exec(s.slice(i))
     if (w) { out.push({ t: 'mot', v: w[0].toLowerCase() }); i += w[0].length; continue }
@@ -713,12 +748,19 @@ function vs4(racine) {
     }
     for (const nom of noms) if (!arbre.has(prefixe + nom)) ajoutes.push(nom)
   }
-  const intrus = ajoutes.filter((f) => !AJOUTS_PERMIS.includes(f))
+  // Tolérés (025-13, 24/09) : les fichiers d'un numéro SUPÉRIEUR à 0093 — migration 00NN_*.sql ou jumeau _A_COLLER_sql_editor_00NN[_NU].sql,
+  // numéro lu dans le nom sur disque — ajoutés par des fiches postérieures (0094 de 025-12, 0095 de 025-13…) : ils ne sont pas
+  // de 025-04 et leurs juges les jugent (verrou-insertion-qa, verrou-maj-qa ; VS-1 rougit si l'un d'eux redéfinit
+  // lock_artisan_privileges sans garder 0093). Toujours refusés : toute modification d'une migration de 1620723, et tout ajout
+  // d'un numéro inférieur ou égal à 0093 hors des trois de 0093 (0093_autre.sql, 0092b…, un jumeau d'une ancienne migration).
+  const numero = (f) => { const m = /^(\d{4})_[^/]*\.sql$/.exec(f) || /^_A_COLLER_sql_editor_(\d{4})(?:_NU)?\.sql$/.exec(f); return m ? Number(m[1]) : null }
+  const posterieurs = ajoutes.filter((f) => !AJOUTS_PERMIS.includes(f) && numero(f) !== null && numero(f) > 93)
+  const intrus = ajoutes.filter((f) => !AJOUTS_PERMIS.includes(f) && !posterieurs.includes(f))
   if (changes.length) echecs.push(`${changes.length} migration(s) de ${base.slice(0, 7)} changée(s) : ${changes.slice(0, 4).join(', ')}${changes.length > 4 ? '…' : ''}`)
-  if (intrus.length) echecs.push(`${intrus.length} fichier(s) ajouté(s) hors des trois de 0093 : ${intrus.slice(0, 4).join(', ')}`)
+  if (intrus.length) echecs.push(`${intrus.length} fichier(s) ajouté(s) hors des trois de 0093 (et sans numéro supérieur à 0093) : ${intrus.slice(0, 4).join(', ')}`)
   const ceux = ajoutes.filter((f) => AJOUTS_PERMIS.includes(f))
-  faits.push(`comparé à ${base.slice(0, 7)} ${depot ? 'par git diff (arbre de travail)' : 'blob par blob'} ; ajoutés : ${ceux.length ? ceux.join(', ') : 'aucun'}`)
-  return fin(`${arbre.size} migrations de ${base.slice(0, 7)} présentes et identiques${ceux.length ? ` ; ${ceux.length} ajout(s) de 0093` : ''}, aucun autre ajout`)
+  faits.push(`comparé à ${base.slice(0, 7)} ${depot ? 'par git diff (arbre de travail)' : 'blob par blob'} ; ajoutés : ${ceux.length ? ceux.join(', ') : 'aucun'}${posterieurs.length ? ` ; tolérés, numéro > 0093 (fiches postérieures) : ${posterieurs.join(', ')}` : ''}`)
+  return fin(`${arbre.size} migrations de ${base.slice(0, 7)} présentes et identiques${ceux.length ? ` ; ${ceux.length} ajout(s) de 0093` : ''}, aucun autre ajout de 025-04${posterieurs.length ? ` (${posterieurs.length} fichier(s) de fiches postérieures, numéro > 0093, tolérés)` : ''}`)
 }
 
 // ── --reel ────────────────────────────────────────────────────────────────────────────────────────────────────────────────

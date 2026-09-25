@@ -1,0 +1,20 @@
+{
+  "juge": "verrou-insertion-qa",
+  "role": "État de référence de VI-5 : le commit, plus les fichiers qui en différaient quand Claude Code a écrit le juge (autres chantiers non committés). Empreinte = sha1 de blob Git du contenu, fins de ligne ramenées à LF ; null = fichier supprimé.",
+  "releve_le": "2026-09-24T16:21:55.433Z",
+  "commit": "fc6f3fd8d3c3aeebed7e10108fa588a45cb81b46",
+  "prefixes": [
+    "app/",
+    "lib/",
+    "supabase/migrations/",
+    "supabase/controles/"
+  ],
+  "differents": {
+    "app/api/stripe/webhook/route.ts": "48e6f3e22fd41242691e48af0e1f264ff5befe8c",
+    "lib/stripeAiguillage.ts": "84a0ea21f3c64328fac2a07cbd6dc5af1c9e6f48",
+    "supabase/controles/0093_site_fige.sql": "ce03b9101f2519361ee5cfd7b50775f8cc935026",
+    "supabase/migrations/0093_site_fige.sql": "d7547bdc751317068cb6767c7caaab7d2d1d627a",
+    "supabase/migrations/_A_COLLER_sql_editor_0093.sql": "d7547bdc751317068cb6767c7caaab7d2d1d627a",
+    "supabase/migrations/_A_COLLER_sql_editor_0093_NU.sql": "6afa02730d0f59213870f7e2a99fdb1463e2716b"
+  }
+}
