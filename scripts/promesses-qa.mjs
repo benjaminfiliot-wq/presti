@@ -58,9 +58,25 @@
 // écrit dans .git) dans .orchestre/travail/promesses-qa/temoin/, y applique les corrections de
 // scripts/fixtures/025/temoins/promesses-qa/corrections.json (chaque « ancien » doit s'y trouver une fois, et chaque fichier
 // corrigé doit être dans le périmètre de 025-05 ou de 025-06 : le témoin prouve que ces deux fiches suffisent à passer), marque
-// l'arbre du commit (temoin.json), puis juge PR-1 à PR-6 sur cet arbre. --temoin ne prend pas --racine.
+// l'arbre du commit (temoin.json), puis juge PR-1 à PR-8 sur cet arbre (025-15 y est simulée : scène du héros réécrite,
+// landingVideo baissé). --temoin ne prend pas --racine.
 //
-// Sortie : une ligne par critère (PASS/FAIL PR-n — …), code 0 seulement si les six sont verts ; le relevé complet des phrases en
+//   PR-7  (relecture à froid du 24/09, G2) la landing (app/page.tsx et les composants de app/ qu'il importe, trois niveaux ;
+//         commentaires exclus : ce que l'écran montre) ne dit ni « réponse en direct », ni « répondu en N s » (répond, réponse…
+//         en / sous / après N s, secondes, min), ni « dans la seconde », ni un engagement de date dans une réponse montrée (je,
+//         j’, nous, on + rappeler, passer, venir, intervenir, envoyer, répondre… + aujourd’hui, demain, ce soir, dans la journée,
+//         dans l’heure, sous N, un jour de la semaine, à N h…) ; et un composant de app/ qui montre une demande contenant un mot
+//         d'escalade par défaut (escalade_mots de <racine>/lib/plateformeConfig.ts : « fuite », « urgence »…) dit aussi que
+//         l'artisan est alerté (alerte, escalade, prévenu) : sur ces mots, Presti ne répond pas seul. Détecteur éprouvé sur des
+//         sondes (fautes vues, scènes justes laissées).
+//   PR-8  (G1) la vidéo de la landing : les composants que FLAGS.landingVideo met à l'écran (branche vraie d'une condition sur le
+//         drapeau, et app/DemoVideo.tsx) et les vidéos qu'ils citent (/demo/hero.mp4) ; affichée si landingVideo n'est pas
+//         littéralement false (lib/flags.ts, arbre syntaxique) ou si un de ces composants est rendu hors d'une condition vraie sur
+//         landingVideo. Affichée, chaque vidéo /x/y.mp4 doit avoir public/x/y.textes.json { video: "public/x/y.mp4", sha256 (du
+//         fichier actuel : une vidéo refilmée se relit), textes: [les textes incrustés] }, et chaque texte passe PR-1, PR-2, PR-4
+//         et PR-7. Sans ce fichier, la vidéo actuelle impose landingVideo = false. Détecteur éprouvé sur des sondes.
+//
+// Sortie : une ligne par critère (PASS/FAIL PR-n — …), code 0 seulement si les huit sont verts ; le relevé complet des phrases en
 // défaut est écrit dans .orchestre/travail/promesses-qa/releve.txt (releve-temoin.txt pour le témoin).
 //
 // API (pour constructeur-ferme-qa.mjs, CF-7) : pr1Fichier(racine, 'app/profil/page.tsx') → { ok, violations, phrases } ;
@@ -69,6 +85,7 @@
 // Usage : node scripts/promesses-qa.mjs [--racine=<dossier>] | node scripts/promesses-qa.mjs --temoin
 import fs from 'node:fs'
 import path from 'node:path'
+import crypto from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
 import {
@@ -77,7 +94,7 @@ import {
 } from './fixtures/025/commun.mjs'
 
 const JUGE = 'promesses-qa'
-const IDS = ['PR-1', 'PR-2', 'PR-3', 'PR-4', 'PR-5', 'PR-6']
+const IDS = ['PR-1', 'PR-2', 'PR-3', 'PR-4', 'PR-5', 'PR-6', 'PR-7', 'PR-8']
 const PARA = '\u2029' // coupure de phrase interne (bloc JSX, ligne vide, expression qui contient du JSX)
 const court = (s, n = 150) => { const t = String(s ?? '').replace(/\s+/g, ' ').trim(); return t.length > n ? `${t.slice(0, n - 1)}…` : t }
 const premiereLigne = (e) => String((e && e.message) || e).split('\n')[0].slice(0, 300)
@@ -86,6 +103,7 @@ const premiereLigne = (e) => String((e && e.message) || e).split('\n')[0].slice(
 export const SURVEILLES = [
   'app/layout.tsx', 'app/page.tsx', 'app/faq/page.tsx', 'app/dashboard/page.tsx', 'app/manifest.ts', 'app/DemoSequence.tsx',
   'lib/plans.ts', 'app/profil/page.tsx', 'lib/aide.ts', 'lib/platStats.ts', 'app/api/account/delete/route.ts',
+  'app/HeroApp.tsx', // 025-15 (relecture à froid du 24/09) : la scène est réécrite, pas vidée
 ]
 // Part minimale des phrases de prose gardées par rapport au commit de référence.
 const PART_MIN = { 'app/profil/page.tsx': 1 / 3 }
@@ -94,6 +112,7 @@ const PART_DEFAUT = 1 / 2
 export const PERIMETRES = new Set([
   'app/profil/page.tsx', 'app/api/site/generate/route.ts', 'lib/flags.ts', 'lib/aide.ts', // 025-05
   'app/layout.tsx', 'app/page.tsx', 'app/faq/page.tsx', 'app/dashboard/page.tsx', 'app/manifest.ts', 'app/DemoSequence.tsx', 'lib/plans.ts', // 025-06
+  'app/HeroApp.tsx', // 025-15 (lib/flags.ts, son autre fichier, est déjà dans 025-05)
 ])
 const CORRECTIONS = path.join(FIXTURES, 'temoins', JUGE, 'corrections.json')
 
@@ -624,6 +643,161 @@ export function comparerPlans(avant, apres, nomBase = 'HEAD') {
   return { ok: echecs.length === 0, echecs, resume: `identique à ${nomBase} hors l’accroche de studio, ${change ? `changée : « ${court(xa.valeur, 70)} » → « ${court(xb.valeur, 70)} »` : `inchangée (« ${court(xb.valeur, 70)} »)`}` }
 }
 
+// ── PR-7 : la landing ne montre pas une réponse que Presti ne fait pas (relecture à froid du 24/09, G2) ───────────────────
+/** Les fichiers de la landing : app/page.tsx et les composants de app/ (ou components/) qu'il importe, trois niveaux. */
+export function fichiersLanding(racine) {
+  const vus = new Set(), aFaire = [['app/page.tsx', 0]], out = []
+  while (aFaire.length) {
+    const [rel, prof] = aFaire.shift()
+    if (vus.has(rel)) continue
+    vus.add(rel)
+    const f = path.join(racine, rel)
+    if (!fs.existsSync(f)) continue
+    const source = fs.readFileSync(f, 'utf8')
+    out.push({ chemin: rel, source })
+    if (prof >= 3) continue
+    for (const m of source.matchAll(/(?:^|\n)\s*import\s+(?!type\s)[^'"]*?from\s+['"]([^'"]+)['"]/g)) {
+      const spec = m[1]
+      const base = spec.startsWith('@/') ? spec.slice(2) : spec.startsWith('.') ? path.posix.normalize(path.posix.join(path.posix.dirname(rel), spec)) : null
+      if (!base || !/^(?:app|components)\//.test(base)) continue // lib/ : les données partagées, jugées par PR-1 à PR-4
+      const cible = ['.tsx', '.ts', '/index.tsx', '/index.ts'].map((e) => base + e).find((c) => fs.existsSync(path.join(racine, c)))
+      if (cible) aFaire.push([cible, prof + 1])
+    }
+  }
+  return out
+}
+const RE_EN_DIRECT = new RegExp(`(?<!${L})r[ée]pon(?:se|ses|d|dre|du|due|dent)\\s+en\\s+direct(?!${L})`, 'iu')
+const RE_REPONDU_EN = new RegExp(`(?<!${L})r[ée]pon(?:du|due|dus|dues|d|dent|se|ses)\\s+(?:en|sous|après|au\\s+bout\\s+de)\\s+\\d+(?:[.,]\\d+)?\\s*(?:s|sec|secondes?|min|minutes?|mn)(?!${L})`, 'iu')
+const JOURS = 'lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche'
+const RE_ENGAGEMENT = new RegExp(`(?<!${L})(?:je|j’|nous|on)\\s*(?:vous\\s+|te\\s+|lui\\s+|leur\\s+|y\\s+)?(?:rappel${L}*|recontact${L}*|passe|passerai|passerons|passons|viens|viendr${L}*|venons|interviens|interviendr${L}*|intervenons|reviens|reviendr${L}*|revenons|enverr${L}*|envoie|envoyons|serai|serons|arrive|arriverai|arrivons|répond${L}*|occupe|occuperai)(?!${L})[^.!?]{0,80}?(?<!${L})(?:aujourd’hui|demain|après-demain|ce\\s+(?:soir|matin|midi|week-end)|cette\\s+(?:semaine|nuit|après-midi)|la\\s+semaine\\s+prochaine|dans\\s+la\\s+(?:journée|matinée|soirée|semaine)|dans\\s+l’heure|dans\\s+(?:les\\s+)?\\d+\\s*(?:h|heures?|jours?|min(?:utes?)?)|d’ici\\s+(?:ce\\s+soir|demain|\\d|la\\s+fin|${JOURS})|sous\\s+\\d+|avant\\s+(?:ce\\s+soir|demain|midi|la\\s+fin|${JOURS})|${JOURS}|à\\s+\\d{1,2}\\s*h)(?!${L})`, 'iu')
+const RE_ALERTE = new RegExp(`(?<!${L})(?:alert${L}*|escalad${L}*|prévenu${L}*|prévient|prévenir)(?!${L})`, 'iu')
+const REGLES_PR7 = [[RE_EN_DIRECT, '« réponse en direct »'], [RE_REPONDU_EN, '« répondu en N s »'], [RE_SECONDE, '« dans la seconde »'], [RE_ENGAGEMENT, 'engagement de date dans une réponse montrée']]
+const plier = (t) => normaliser(t).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+/** Les mots d'escalade par défaut, lus dans lib/plateformeConfig.ts (escalade_mots: [...]) → liste, vide si illisible. */
+export function motsEscalade(source) {
+  const m = /escalade_mots\s*:\s*\[([^\]]*)\]/.exec(String(source || ''))
+  return m ? [...m[1].matchAll(/['"`]([^'"`]+)['"`]/g)].map((x) => x[1]).filter(Boolean) : []
+}
+/** PR-7 (et les textes incrustés de PR-8) sur des phrases → [{ motif, extrait }] */
+function reglesPR7(texte) {
+  const out = []
+  for (const [re, nom] of REGLES_PR7) { const m = re.exec(texte); if (m) out.push({ motif: `${nom} : « ${court(m[0], 70)} »` }) }
+  return out
+}
+/**
+ * PR-7 sur les fichiers de la landing [{ chemin, source }] → [{ chemin, ligne, phrase, motif }] : commentaires exclus (ce
+ * que l'écran montre) ; une demande qui contient un mot d'escalade par défaut, dans un composant de app/, doit s'accompagner
+ * de l'alerte de l'artisan (alerte, escalade, prévenu…) : Presti n'y répond pas seul.
+ */
+export function examinerLanding(fichiers, { escalade = [] } = {}) {
+  const v = [], vus = new Set()
+  const noter = (x) => { const k = `${x.chemin}|${x.ligne}|${x.motif}`; if (!vus.has(k)) { vus.add(k); v.push(x) } }
+  const mots = escalade.map(plier).filter(Boolean)
+  for (const { chemin, source } of fichiers) {
+    let res
+    try { res = unitesDeTexte(chemin, source) } catch (e) { noter({ chemin, ligne: 0, phrase: '', motif: `analyse impossible (${premiereLigne(e)})` }); continue }
+    const phrases = []
+    for (const u of res.unites) { if (u.genre === 'commentaire') continue; for (const va of u.variantes) phrases.push(...phrasesDe(va)) }
+    for (const p of phrases) for (const r of reglesPR7(p.texte)) noter({ chemin, ligne: p.ligne, phrase: p.texte, motif: r.motif })
+    if (chemin.startsWith('app/') && mots.length) {
+      const avec = phrases.map((p) => ({ p, mot: mots.find((w) => new RegExp(`(?<![\\p{L}])${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}])`, 'u').test(plier(p.texte))) })).find((x) => x.mot)
+      if (avec && !phrases.some((p) => RE_ALERTE.test(p.texte))) noter({ chemin, ligne: avec.p.ligne, phrase: avec.p.texte, motif: `mot d’escalade « ${avec.mot} » montré sans l’alerte de l’artisan (lib/plateformeConfig.ts : Presti n’y répond pas seul, il alerte)` })
+    }
+  }
+  return v
+}
+
+// ── PR-8 : la vidéo de la landing et ses textes incrustés (G1) ────────────────────────────────────────────────────────────
+/** La valeur de FLAGS.landingVideo dans lib/flags.ts : true, false, ou null (absente ou non littérale). */
+export function valeurLandingVideo(source) {
+  if (!source) return null
+  const sf = sourceFichier('lib/flags.ts', source)
+  let v
+  const rec = (n) => { if (v === undefined && ts.isPropertyAssignment(n) && nomProp(n) === 'landingVideo') { const i = deballer(n.initializer); v = i.kind === ts.SyntaxKind.TrueKeyword ? true : i.kind === ts.SyntaxKind.FalseKeyword ? false : null } ts.forEachChild(n, rec) }
+  rec(sf)
+  return v === undefined ? null : v
+}
+const RE_DRAPEAU = /FLAGS\s*\.\s*landingVideo|FLAGS\s*\[\s*['"]landingVideo['"]\s*\]|actif\(\s*['"]landingVideo['"]\s*\)/
+/** Un nœud JSX est-il rendu seulement quand landingVideo est vrai (ternaire, &&, if, en remontant) ? */
+function gardeParLandingVideo(noeud, sf) {
+  for (let n = noeud, p = noeud.parent; p; n = p, p = p.parent) {
+    let cond = null, pol = 0
+    if (ts.isConditionalExpression(p)) { if (n === p.whenTrue) { cond = p.condition; pol = 1 } else if (n === p.whenFalse) { cond = p.condition; pol = -1 } }
+    else if (ts.isBinaryExpression(p) && n === p.right && p.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken) { cond = p.left; pol = 1 }
+    else if (ts.isIfStatement(p)) { if (n === p.thenStatement) { cond = p.expression; pol = 1 } else if (n === p.elseStatement) { cond = p.expression; pol = -1 } }
+    if (!cond) continue
+    const t = cond.getText(sf).replace(/\s+/g, ' ').trim()
+    if (!RE_DRAPEAU.test(t)) continue
+    const nie = /^!\s*\(?\s*(?:FLAGS|actif)/.test(t)
+    if ((pol === 1 && !nie) || (pol === -1 && nie)) return true
+  }
+  return false
+}
+/**
+ * PR-8 : { flags (source de lib/flags.ts), landing ([{ chemin, source }]), lire (rel → Buffer | null) } → { ok, echecs, faits }.
+ * La vidéo est affichée si landingVideo n'est pas littéralement false, ou si un composant qui la porte (fichier de la landing
+ * qui cite un .mp4/.webm) est rendu hors d'une condition vraie sur landingVideo. Affichée : chaque vidéo /x/y.mp4 a son
+ * public/x/y.textes.json { video, sha256, textes: [...] } (sha256 du fichier vidéo actuel), et chaque texte passe PR-1, PR-2,
+ * PR-4 et PR-7.
+ */
+export function examinerVideo({ flags, landing, lire }) {
+  const echecs = [], faits = []
+  const valeur = valeurLandingVideo(flags)
+  const nomDe = (c) => path.posix.basename(c).replace(/\.tsx?$/, '')
+  const arbres = landing.map((f) => ({ ...f, sf: sourceFichier(f.chemin, f.source) }))
+  // les composants de la vidéo de la landing : ceux que landingVideo met à l'écran (branche vraie d'une condition sur le
+  // drapeau), et app/DemoVideo.tsx (celui que lib/flags.ts et app/page.tsx nomment) s'il est dans la landing
+  const porteurs = new Set(landing.some((f) => f.chemin === 'app/DemoVideo.tsx') ? ['DemoVideo'] : [])
+  for (const f of arbres) {
+    const rec = (n) => { if ((ts.isJsxSelfClosingElement(n) || ts.isJsxOpeningElement(n)) && /^[A-Z]/.test(n.tagName.getText(f.sf)) && gardeParLandingVideo(ts.isJsxOpeningElement(n) ? n.parent : n, f.sf)) porteurs.add(n.tagName.getText(f.sf)); ts.forEachChild(n, rec) }
+    rec(f.sf)
+  }
+  const videos = new Map() // chemin public → fichiers qui la citent
+  for (const f of landing) if (porteurs.has(nomDe(f.chemin))) for (const m of f.source.matchAll(/['"`](\/[\w./-]+\.(?:mp4|webm|mov|m4v))['"`]/g)) videos.set(m[1], [...(videos.get(m[1]) || []), f.chemin])
+  // chaque rendu d'un de ces composants hors du fichier qui le définit : sous une condition vraie sur landingVideo ?
+  const horsGarde = []
+  for (const f of arbres) {
+    const rec = (n) => {
+      if ((ts.isJsxSelfClosingElement(n) || ts.isJsxOpeningElement(n)) && porteurs.has(n.tagName.getText(f.sf)) && nomDe(f.chemin) !== n.tagName.getText(f.sf)) {
+        if (!gardeParLandingVideo(ts.isJsxOpeningElement(n) ? n.parent : n, f.sf)) horsGarde.push(`${f.chemin}:${f.sf.getLineAndCharacterOfPosition(n.getStart(f.sf)).line + 1} <${n.tagName.getText(f.sf)}>`)
+      }
+      ts.forEachChild(n, rec)
+    }
+    rec(f.sf)
+  }
+  const porteursListe = [...porteurs]
+  const affichee = videos.size > 0 && (valeur !== false || horsGarde.length > 0)
+  if (!videos.size) { faits.push('aucune vidéo citée par la landing'); return { ok: true, echecs, faits } }
+  if (!affichee) { faits.push(`landingVideo = false et ${porteursListe.join(', ')} rendu(s) seulement sous landingVideo : vidéo(s) ${[...videos.keys()].join(', ')} non affichée(s)`); return { ok: true, echecs, faits } }
+  const pourquoi = valeur === true ? 'landingVideo = true' : valeur === null ? 'landingVideo absent ou non littéral' : `rendue hors de landingVideo (${horsGarde.join(', ')})`
+  for (const [v] of videos) {
+    const relVideo = `public${v}`
+    const relTextes = `public${v.replace(/\.[a-z0-9]+$/i, '')}.textes.json`
+    const buf = lire(relVideo)
+    const brut = lire(relTextes)
+    if (!brut) { echecs.push(`${pourquoi} : ${relTextes} absent — les textes incrustés de ${relVideo} ne sont pas relus ; baisser landingVideo ou lister ces textes`); continue }
+    let j
+    try { j = JSON.parse(brut.toString('utf8')) } catch (e) { echecs.push(`${relTextes} illisible : ${premiereLigne(e)}`); continue }
+    if (!j || !Array.isArray(j.textes) || !j.textes.length || j.textes.some((t) => typeof t !== 'string' || !t.trim())) { echecs.push(`${relTextes} : « textes » doit être une liste non vide de phrases`); continue }
+    if (j.video !== relVideo) echecs.push(`${relTextes} : video « ${j.video} », « ${relVideo} » attendu`)
+    const sha = buf ? crypto.createHash('sha256').update(buf).digest('hex') : null
+    if (!sha) echecs.push(`${relVideo} absent : rien à relire`)
+    else if (j.sha256 !== sha) echecs.push(`${relTextes} : sha256 « ${court(j.sha256, 16)} » ≠ ${sha.slice(0, 16)}… de ${relVideo} (vidéo refilmée sans relire ses textes)`)
+    for (const t of j.textes) {
+      const phrases = phrasesDe([{ t: normaliser(t), ligne: 0 }]).map((p) => p.texte)
+      for (const p of phrases.length ? phrases : [normaliser(t)]) {
+        if (RE_MINUTE.test(p) && !RE_PRETE.test(p)) echecs.push(`${relTextes} : PR-1 « ${court(p, 90)} »`)
+        if (RE_SECONDE.test(p)) echecs.push(`${relTextes} : PR-2 « ${court(p, 90)} »`)
+        const f4 = promesseSeule(p)
+        if (f4) echecs.push(`${relTextes} : PR-4 [${f4}] « ${court(p, 90)} »`)
+        for (const r of reglesPR7(p)) echecs.push(`${relTextes} : PR-7 ${r.motif}`)
+      }
+    }
+    if (!echecs.length) faits.push(`${pourquoi} : ${relTextes} (${j.textes.length} texte(s), sha256 de ${relVideo} à jour) passe PR-1, PR-2, PR-4 et PR-7`)
+  }
+  return { ok: !echecs.length, echecs, faits }
+}
+
 // ── Sondes : chaque détecteur doit voir les fautes et laisser les phrases justes ──────────────────────────────────────────
 const S = (chemin, source) => ({ chemin, source })
 export const SONDES_TEXTE = [
@@ -703,9 +877,48 @@ export const SONDES_PLANS = [
   { voit: true, nom: 'accroche de studio calculée', apres: PLANS_BASE.replace("'Présence en ligne soignée.'", () => 'String(1)') },
   { voit: true, nom: 'fichier vide', apres: '' },
 ]
+// PR-7 : des scènes de landing (fichiers app/…) ; mots d'escalade ceux de lib/plateformeConfig.ts par défaut
+const ESC = ['urgence', 'fuite', 'degat des eaux', 'inondation', 'gaz', 'assurance']
+export const SONDES_LANDING = [
+  { voit: true, nom: 'barre « réponse en direct »', f: S('app/H1.tsx', 'export const A = () => <div><span className="u">presti · réponse en direct</span></div>') },
+  { voit: true, nom: '« répondu en 41 s »', f: S('app/H2.tsx', 'export const A = () => <div className="b">Bonjour Marie.<span className="st">Presti · répondu en 41 s</span></div>') },
+  { voit: true, nom: '« répond en 30 secondes »', f: S('app/H3.tsx', "export const t = 'L’assistant répond en 30 secondes.'") },
+  { voit: true, nom: '« dans la seconde »', f: S('app/H4.tsx', 'export const A = () => <p>Réponse envoyée dans la seconde.</p>') },
+  { voit: true, nom: '« je vous rappelle dans la journée »', f: S('app/H5.tsx', 'export const A = () => <p>Bonjour Marie ! Je vous rappelle dans la journée pour convenir d&apos;un passage.</p>') },
+  { voit: true, nom: '« j’arrive demain »', f: S('app/H6.tsx', "export const t = 'Bien reçu, j’arrive demain matin.'") },
+  { voit: true, nom: '« nous passons sous 48 h »', f: S('app/H7.tsx', "export const t = 'Nous passons sous 48 h.'") },
+  { voit: true, nom: 'fuite sans alerte', f: S('app/H8.tsx', 'export const A = () => <div><p>Fuite sous mon évier, vous pouvez passer ?</p><p>Presti a préparé une réponse, à envoyer.</p></div>') },
+  { voit: false, nom: 'réponse préparée, sans date', f: S('app/H9.tsx', 'export const A = () => <div><span>presti · demande entrante</span><p>Bonjour, je voudrais changer mon chauffe-eau.</p><p>Presti a préparé une réponse, à valider avant l’envoi.</p></div>') },
+  { voit: false, nom: 'fuite avec alerte', f: S('app/H10.tsx', 'export const A = () => <div><p>Fuite sous mon évier, vous pouvez passer ?</p><p>Mot d’urgence repéré : vous êtes alerté tout de suite, Presti ne répond pas à votre place.</p></div>') },
+  { voit: false, nom: 'question du prospect datée', f: S('app/H11.tsx', 'export const A = () => <p>Vous pouvez passer cette semaine ?</p>') },
+  { voit: false, nom: 'commentaire', f: S('app/H12.tsx', '// l’ancienne scène disait « répondu en 41 s »\nexport const x = 1') },
+]
+// PR-8 : lib/flags.ts, app/page.tsx, app/DemoVideo.tsx et un public/ simulé
+const FLAGS_V = (v) => `export const FLAGS = {\n  /** §5 — vidéo hero */\n  landingVideo: ${v},\n  audience: true,\n} as const\n`
+const PAGE_V = "import DemoVideo from '@/app/DemoVideo'\nimport DemoSequence from '@/app/DemoSequence'\nimport { FLAGS } from '@/lib/flags'\nexport default function P() { return <main>{FLAGS.landingVideo ? <DemoVideo /> : <DemoSequence />}</main> }\n"
+const PAGE_NUE = "import DemoVideo from '@/app/DemoVideo'\nexport default function P() { return <main><DemoVideo /></main> }\n"
+const VIDEO_V = 'export default function DemoVideo() { return <video src="/demo/hero.mp4" muted /> }\n'
+const MP4 = Buffer.from('vidéo de sonde')
+const SHA = crypto.createHash('sha256').update(MP4).digest('hex')
+const TEXTES = (textes, sha = SHA) => Buffer.from(JSON.stringify({ video: 'public/demo/hero.mp4', sha256: sha, textes }))
+const LANDING_V = (page) => [S('app/page.tsx', page), S('app/DemoVideo.tsx', VIDEO_V), S('app/DemoSequence.tsx', 'export default function DemoSequence() { return <ol><li>Une demande arrive dans Presti.</li></ol> }\n')]
+const PUBLIC_V = (textes) => (rel) => (rel === 'public/demo/hero.mp4' ? MP4 : rel === 'public/demo/hero.textes.json' ? textes : null)
+export const SONDES_VIDEO = [
+  { voit: false, nom: 'drapeau baissé, vidéo sous le drapeau', f: { flags: FLAGS_V('false'), landing: LANDING_V(PAGE_V), lire: PUBLIC_V(null) } },
+  { voit: true, nom: 'drapeau levé, sans liste des textes', f: { flags: FLAGS_V('true'), landing: LANDING_V(PAGE_V), lire: PUBLIC_V(null) } },
+  { voit: true, nom: 'drapeau levé, texte « dans la seconde »', f: { flags: FLAGS_V('true'), landing: LANDING_V(PAGE_V), lire: PUBLIC_V(TEXTES(['L’assistant répond dans la seconde, dans votre ton.'])) } },
+  { voit: true, nom: 'drapeau levé, liste d’une autre vidéo (sha256)', f: { flags: FLAGS_V('true'), landing: LANDING_V(PAGE_V), lire: PUBLIC_V(TEXTES(['Chaque demande arrive dans Presti.'], '0'.repeat(64))) } },
+  { voit: false, nom: 'drapeau levé, textes justes et à jour', f: { flags: FLAGS_V('true'), landing: LANDING_V(PAGE_V), lire: PUBLIC_V(TEXTES(['Chaque demande arrive dans Presti.', 'La réponse est prête en moins d’une minute : Presti la prépare, vous l’envoyez.'])) } },
+  { voit: true, nom: 'drapeau calculé, sans liste', f: { flags: FLAGS_V("process.env.X === '1'"), landing: LANDING_V(PAGE_V), lire: PUBLIC_V(null) } },
+  { voit: true, nom: 'drapeau baissé mais vidéo rendue sans condition', f: { flags: FLAGS_V('false'), landing: LANDING_V(PAGE_NUE), lire: PUBLIC_V(null) } },
+]
 /** Éprouve les détecteurs sur les sondes. → Map(id → { ok, echecs, n }) */
 export function eprouver() {
   const out = new Map(IDS.map((id) => [id, { ok: true, echecs: [], n: 0 }]))
+  const r7 = out.get('PR-7')
+  for (const s of SONDES_LANDING) { r7.n++; let v; try { v = examinerLanding([s.f], { escalade: ESC }) } catch (e) { r7.ok = false; r7.echecs.push(`sonde « ${s.nom} » : ${premiereLigne(e)}`); continue } if ((v.length > 0) !== s.voit) { r7.ok = false; r7.echecs.push(`sonde « ${s.nom} » ${s.voit ? 'non vue' : `vue à tort (${court(v[0]?.motif, 70)})`}`) } }
+  const r8 = out.get('PR-8')
+  for (const s of SONDES_VIDEO) { r8.n++; let x; try { x = examinerVideo(s.f) } catch (e) { r8.ok = false; r8.echecs.push(`sonde « ${s.nom} » : ${premiereLigne(e)}`); continue } if (x.ok === s.voit) { r8.ok = false; r8.echecs.push(`sonde « ${s.nom} » ${s.voit ? 'non vue' : `vue à tort (${court(x.echecs[0], 90)})`}`) } }
   for (const s of SONDES_TEXTE) {
     const r = out.get(s.id)
     r.n++
@@ -812,6 +1025,25 @@ async function juger() {
     for (const e of m5.echecs) s.echoue('PR-5', e)
     for (const e of so5.echecs) s.echoue('PR-5', `détecteur : ${e}`)
     if (m5.ok && so5.ok) s.passe('PR-5', `${m5.faits.join(', ')} ; détecteur éprouvé sur ${so5.n} sondes`)
+
+    // PR-7 : la landing
+    const landing = fichiersLanding(racine)
+    const escalade = motsEscalade(lire('lib/plateformeConfig.ts'))
+    const v7 = examinerLanding(landing, { escalade })
+    const so7 = sondes.get('PR-7')
+    if (!landing.some((f) => f.chemin === 'app/page.tsx')) s.echoue('PR-7', 'app/page.tsx absent : pas de landing à lire')
+    if (!escalade.length) s.echoue('PR-7', 'lib/plateformeConfig.ts : escalade_mots par défaut illisibles')
+    for (const x of v7) s.echoue('PR-7', `${x.chemin}:${x.ligne} [${x.motif}] « ${court(x.phrase, 110)} »`)
+    for (const e of so7.echecs) s.echoue('PR-7', `détecteur : ${e}`)
+    for (const m of manques) s.echoue('PR-7', `substance : ${m}`)
+    if (!s.enEchec('PR-7')) s.passe('PR-7', `${landing.length} fichier(s) de la landing (${landing.map((f) => f.chemin).join(', ')}) : ni « réponse en direct », ni « répondu en N s », ni « dans la seconde », ni date promise ; mots d’escalade (${escalade.join(', ')}) jamais montrés sans l’alerte ; détecteur éprouvé sur ${so7.n} sondes (mutation : « répondu en 41 s », « je vous rappelle dans la journée », fuite sans alerte → vues)`)
+
+    // PR-8 : la vidéo de la landing
+    const r8 = examinerVideo({ flags: lire('lib/flags.ts'), landing, lire: (rel) => { const f = path.join(racine, rel); return fs.existsSync(f) ? fs.readFileSync(f) : null } })
+    const so8 = sondes.get('PR-8')
+    for (const e of r8.echecs) s.echoue('PR-8', e)
+    for (const e of so8.echecs) s.echoue('PR-8', `détecteur : ${e}`)
+    if (!s.enEchec('PR-8')) s.passe('PR-8', `${r8.faits.join(' ; ')} ; détecteur éprouvé sur ${so8.n} sondes (mutation : drapeau levé sans liste, texte « dans la seconde », sha256 périmé → vus)`)
 
     // PR-6
     const base = baseDe(racine)

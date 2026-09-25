@@ -10,7 +10,32 @@ import { notifierEntreprise } from '@/lib/email'
 import { alertePaiement, envoyerAlertes } from '@/lib/alertes'
 import { mentionFranchise } from '@/lib/facturation'
 import { encaisserCommandeSite } from '@/lib/siteCommandeServeur'
+import { aiguiller, champsAbonnement } from '@/lib/stripeAiguillage'
 import type Stripe from 'stripe'
+
+// Un paiement que Presti ne sait pas servir (fiche 025-07) : l'entreprise est prévenue avec de quoi le retrouver dans
+// le tableau de bord Stripe. Clé par événement : un rejeu du même événement dans les 24 h ne renvoie pas l'alerte
+// (verrou quotidien de lib/alertes.ts), deux paiements orphelins le même jour en envoient deux.
+function alerteOrphelin(idEvenement: string, s: Stripe.Checkout.Session) {
+  const montant = typeof s.amount_total === 'number' ? `${(s.amount_total / 100).toFixed(2)} ${(s.currency || '?').toUpperCase()}` : 'montant inconnu'
+  const clientId = typeof s.customer === 'string' ? s.customer : s.customer?.id ?? null
+  const client = [clientId, s.customer_details?.name, s.customer_details?.email].filter(Boolean).join(' · ') || '—'
+  return {
+    motif: 'paiement' as const,
+    a: 'entreprise' as const,
+    cle: `orphelin:${idEvenement}`,
+    sujet: `Paiement Stripe sans suite — ${montant}`,
+    corps: `Un paiement Stripe n'est ni une commande de site (mode payment + metadata.type = commande_site), ni un abonnement (uid + plan) : rien n'a été servi ni écrit.
+À traiter à la main depuis le tableau de bord Stripe (servir le client ou le rembourser).
+
+Montant : ${montant}
+Client : ${client}
+Session : ${s.id}
+Mode : ${s.mode ?? '—'} · statut du paiement : ${s.payment_status ?? '—'}
+Métadonnées : ${JSON.stringify(s.metadata ?? {}).slice(0, 300)}
+Événement : ${idEvenement}`,
+  }
+}
 
 // Webhook Stripe : active/désactive l'abonnement de l'artisan (plan + crédits).
 export async function POST(req: Request) {
@@ -32,16 +57,18 @@ export async function POST(req: Request) {
   try {
     if (event.type === 'checkout.session.completed') {
       const s = event.data.object as Stripe.Checkout.Session
-      const uid = (s.metadata?.uid as string) || (s.client_reference_id as string) || ''
-      const plan = (s.metadata?.plan as string) || ''
+      const { uid, plan } = champsAbonnement(s)
+      // La voie vient de lib/stripeAiguillage.ts (fonction pure, jugée par scripts/webhook-muet-qa.mjs) : commande de
+      // site, abonnement, ou orphelin. Un nouveau produit payant y reçoit sa voie AVANT d'être vendu.
+      const voie = aiguiller(s)
       // Paiement UNIQUE — le site à la demande (v15 §3.1). Une session en mode 'payment' n'a pas de plan :
       // sans cette branche, l'événement tombait dans le vide et l'artisan avait payé pour rien. On encaisse
       // (brouillon → payee) ; 'introuvable' remonte en erreur pour que Stripe rejoue et qu'un humain voie.
-      if (s.mode === 'payment' && s.metadata?.type === 'commande_site') {
+      if (voie === 'commande_site') {
         const r = await encaisserCommandeSite(s)
         if (r === 'introuvable') throw new Error(`paiement de site sans dossier : session ${s.id}`)
         console.log('[stripe webhook] commande de site', r, s.metadata?.commande_id)
-      } else if (uid && plan) {
+      } else if (voie === 'abonnement') {
         const conf = planConf(plan)
         const next = new Date(); next.setMonth(next.getMonth() + 1)
         const abo = typeof s.subscription === 'string' ? s.subscription : s.subscription?.id ?? null
@@ -75,6 +102,12 @@ export async function POST(req: Request) {
           `Paiement — ${a?.nom || uid} passe en ${conf.label}`,
           `Abonnement activé via Stripe.\n\nArtisan : ${a?.nom || '—'} (${a?.metier || '—'})\nEmail : ${a?.email || '—'}\nFormule : ${conf.label} — ${conf.prixMois} €/mois\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}`,
         )
+      } else {
+        // Orphelin (fiche 025-07) : encaissé par Stripe, servi par personne — lien de paiement créé à la main, pack
+        // sans branche. Avant, aucune trace. On alerte puis on répond 200 : une erreur ferait rejouer Stripe trois
+        // jours pour un paiement qu'aucun rejeu ne saura servir ; c'est un humain qui tranche.
+        console.warn('[stripe webhook] paiement orphelin', s.id, event.id)
+        await envoyerAlertes([alerteOrphelin(event.id, s)])
       }
     } else if (event.type === 'customer.subscription.updated') {
       // Un changement d'offre venu d'AILLEURS que d'une souscription : le portail de facturation en

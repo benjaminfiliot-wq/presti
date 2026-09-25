@@ -382,7 +382,7 @@ export const ARTICLES: Article[] = [
       'Réglez le paiement sur la page Stripe sécurisée.',
       'Vous êtes redirigé vers votre tableau de bord.',
     ],
-    pourVosClients: 'Aucun effet direct — cela détermine ce que vous pouvez faire pour eux (modèles, inventaire, niveau de site).',
+    pourVosClients: 'Aucun effet direct — cela détermine ce que vous pouvez faire pour eux (modèles, inventaire).', // témoin 025-16 (M6)
     credits: 'Aucun — cette page sert à obtenir des crédits, elle n’en consomme pas.',
     reglagesLies: ['/tarifs', '/plateforme'],
     disponibleAvec: 'essentiel',

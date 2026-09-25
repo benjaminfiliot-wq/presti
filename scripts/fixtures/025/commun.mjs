@@ -32,7 +32,7 @@
 //   commitDeReference · defautsTypecheck (tsconfig.json et script typecheck de 1620723, @ts-nocheck, @ts-ignore ajoutés) ·
 //   servir · lancerNavigateur, BUREAU, TELEPHONE, defilementHorizontal, verifierImage, capturer ·
 //   extraireTar, verifierArbre, extraireReference · PREMIERE_PERSONNE, premierePersonneDuGenerateur, erreursArtisan,
-//   lireMaquetteExemple, nomFictif, lireCommande, preparerCommande, verifierJeuxEssai.
+//   lireMaquetteExemple, nomFictif, lireCommande, preparerCommande, verifierJeuxEssai · motsDe, motsDesMetiers, motsEtrangers.
 //
 // Le nom de l'entreprise fictive de maquette-exemple.json n'est écrit nulle part ici : il est lu dans le jeu d'essai (MQ-9 le
 // cherche dans tous les fichiers suivis). Les juges font de même.
@@ -882,6 +882,63 @@ export function verifierJeuxEssai() {
   if (fichiers.length < 6) echecs.push(`photos/ : ${fichiers.length} fichier(s), 6 au moins (3 photos × avif + webp)`)
   faits.push(`commande : ${fichiers.length} fichiers photo (${basesPhotos.size} bases, ${(octets / 1e6).toFixed(2)} Mo), ${[...new Set([...decrits.values()].map((a) => a.auteur))].length} auteurs`)
   return { ok: echecs.length === 0, echecs, faits, resume: `maquette-exemple.json, commande-exemple/ (${fichiers.length} photos de Lestraque attribuées, contenu.json = Lestraque à ${REFERENCE_COMMIT}) et commande-sans-chiffres.json conformes` }
+}
+
+// ── Les mots propres à chaque métier (relectures à froid du 24/09 : MQ-10 de maquette-qa, FS-9 de formulaire-site-qa) ──────
+// Le dictionnaire n'est écrit nulle part ici : il est TIRÉ des modèles <racine>/maquettes/modeles/<m>/contenu.json. Un mot (4
+// lettres au moins, replié par replier, sans accents, minuscules, « s » ou « x » final ôté au-delà de 4 lettres) est PROPRE au
+// modèle m s'il revient au moins deux fois dans les textes de m (le nom du dossier et la clé metier comptent, les {marques}
+// non, ni photos) et n'apparaît dans les textes d'aucun autre modèle. Deux fois : un mot du métier (« menuiserie », « bois »,
+// « plomberie ») y revient ; un mot de phrase qui n'y est qu'une fois (« chaque », « détails », « trouve ») ne dit pas le
+// métier, et le prendre ferait crier sur un cadre neutre.
+/** Les mots d'un texte, comparables d'un modèle à l'autre. */
+export function motsDe(texte) {
+  const brut = replier(String(texte ?? '')).replace(/\{[\p{L}_]+\}/gu, ' ').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+  return (brut.match(/\p{L}{4,}/gu) || []).map((w) => (w.length > 4 ? w.replace(/[sx]$/, '') : w))
+}
+const textesDeModele = (o, cle = '') => {
+  if (typeof o === 'string') return [o]
+  if (Array.isArray(o)) return o.flatMap((x) => textesDeModele(x))
+  if (o && typeof o === 'object') return Object.entries(o).filter(([k]) => k !== 'photos' && k !== '_').flatMap(([k, v]) => textesDeModele(v, k))
+  return []
+}
+/**
+ * Les modèles de métier de <racine>/maquettes/modeles/ → { modeles: [m…], propres: Map(m → Map(mot → occurrences)),
+ * illisibles: [m…] }. Un modèle sans contenu.json lisible est compté illisible.
+ */
+export function motsDesMetiers(racine = R) {
+  const dir = path.join(racine, 'maquettes', 'modeles')
+  const noms = fs.existsSync(dir) ? fs.readdirSync(dir, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort() : []
+  const comptes = new Map(), illisibles = []
+  for (const m of noms) {
+    let j
+    try { j = lireJson(path.join(dir, m, 'contenu.json')) } catch { illisibles.push(m); continue }
+    const c = new Map()
+    for (const w of motsDe([m, typeof j.metier === 'string' ? j.metier : '', ...textesDeModele(j)].join(' \n '))) c.set(w, (c.get(w) || 0) + 1)
+    comptes.set(m, c)
+  }
+  const modeles = [...comptes.keys()]
+  const propres = new Map(modeles.map((m) => [m, new Map([...comptes.get(m)].filter(([w, n]) => n >= 2 && modeles.every((x) => x === m || !comptes.get(x).has(w))))]))
+  return { modeles, propres, illisibles }
+}
+/**
+ * Les mots d'un texte propres à un AUTRE métier que `metier` (dico = motsDesMetiers) ; `admis` : textes dont les mots sont
+ * permis (le jeu d'essai : entreprise, ville, communes…). → [{ mot, modele, extrait }] (un par mot).
+ */
+export function motsEtrangers(texte, metier, dico, admis = '') {
+  const permis = new Set(motsDe(admis))
+  const brut = replier(String(texte ?? ''))
+  const hits = [], vus = new Set()
+  for (const m of brut.matchAll(/\p{L}{4,}/gu)) {
+    const [w] = motsDe(m[0])
+    if (!w || permis.has(w) || vus.has(w)) continue
+    for (const [x, mots] of dico.propres) {
+      if (x === metier || !mots.has(w)) continue
+      vus.add(w)
+      hits.push({ mot: m[0], modele: x, extrait: court(brut.slice(Math.max(0, m.index - 40), m.index + m[0].length + 30), 90) })
+    }
+  }
+  return hits
 }
 
 // ── Auto-vérification ─────────────────────────────────────────────────────────────────────────────────────────────────────

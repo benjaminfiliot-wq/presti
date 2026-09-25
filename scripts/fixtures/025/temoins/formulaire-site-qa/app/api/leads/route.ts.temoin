@@ -57,11 +57,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Trop de demandes. Réessayez dans quelques minutes.' }, { status: 429 })
     }
 
-    // 1) Retrouver l'artisan à partir de son slug…
+    // 1) Retrouver l'artisan à partir de son slug… (jamais un compte purgé : lib/purgeComptes.ts lui donne l'adresse supprime-…,
+    // et sa page ne prend plus de demande — une demande acceptée là serait perdue ; témoin de FS-11, relecture du 24/09)
     let { data: artisan, error: aErr } = await supabaseAdmin
       .from('artisans')
       .select(COLONNES)
       .eq('slug', slug)
+      .not('slug', 'like', 'supprime-%')
       .maybeSingle()
 
     if (aErr) {
@@ -71,7 +73,8 @@ export async function POST(req: Request) {
     // … ou de son ANCIENNE adresse (0051) : le site statique d'un artisan qui a changé de slug l'envoie encore.
     if (!artisan) {
       const actuel = await artisanParAncienSlug(slug)
-      if (actuel) {
+      // l'ancienne adresse d'un compte purgé (le trigger de 0051 l'a gardée dans slugs_anciens) ne mène plus nulle part
+      if (actuel && !actuel.slug.startsWith('supprime-')) {
         const r = await supabaseAdmin.from('artisans').select(COLONNES).eq('slug', actuel.slug).maybeSingle()
         if (r.error) {
           console.error('[leads] lookup artisan (ancienne adresse):', r.error.message)

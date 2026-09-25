@@ -1,0 +1,117 @@
+{
+  "_": "Variante FICTIVE du jeu d’essai de la série 025 (relectures à froid du 24/09, écrite par Claude Code) : une commande de PLOMBIER, pour FS-9 de scripts/formulaire-site-qa.mjs (les libellés du formulaire d’un vrai site sont ceux de son métier, jamais ceux du menuisier). Le juge la pose à la place de commande.json dans une copie de commande-exemple/ (même contenu.json et mêmes photos : FS-9 ne juge que le formulaire de devis). Entreprise, personne, téléphone (plage 02 61 91 réservée à la fiction, Arcep, décision 2019-0954, art. 2.5.12), e-mail (.invalid, RFC 2606), SIREN, adresse et décennale fictifs. Ne jamais publier ce site.",
+  "id": "00000000-0000-4000-8000-000000025009",
+  "etat": "payee",
+  "slug": "essai-025-plombier",
+  "nom": "Plomberie Essai Rennaise",
+  "email": "contact@plomberie-essai.invalid",
+  "telephone": "+33 2 61 91 42 17",
+  "metier": "plombier",
+  "metiers_secondaires": [],
+  "communes": [
+    "Rennes",
+    "Cesson-Sévigné",
+    "Bruz",
+    "Saint-Grégoire"
+  ],
+  "domaine_mode": "aucun",
+  "domaine": null,
+  "devis": {
+    "_": "Les choix du formulaire, ceux d’un plombier. Pas de phrase de rappel.",
+    "projets": [
+      "Salle de bains",
+      "Chauffe-eau",
+      "Robinetterie",
+      "Dépannage",
+      "Autre intervention"
+    ],
+    "delais": [
+      "Dans les trois mois",
+      "Dans trois à six mois",
+      "Plus tard, je me renseigne"
+    ]
+  },
+  "matiere": {
+    "photos": [
+      {
+        "url": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg",
+        "legende": "Escalier hélicoïdal en bois massif",
+        "role": "chantier",
+        "base": "heros-escalier"
+      },
+      {
+        "url": "https://commons.wikimedia.org/wiki/File:Close-up_of_a_carpenters_hand_sandpapering_the_wood.jpg",
+        "legende": "Ponçage à la main d’une pièce chantournée",
+        "role": "chantier",
+        "base": "atelier-poncage"
+      },
+      {
+        "url": "https://commons.wikimedia.org/wiki/File:Empty_wooden_wardrobe_closeup.jpg",
+        "legende": "Penderie en bois, tringle et quatre cintres",
+        "role": "chantier",
+        "base": "penderie"
+      },
+      {
+        "url": "https://commons.wikimedia.org/wiki/File:Coffee_table_by_a_wooden_wall_(Unsplash).jpg",
+        "legende": "Boiseries et placards intégrés en bois sombre",
+        "role": "chantier",
+        "base": "boiserie"
+      },
+      {
+        "url": "https://commons.wikimedia.org/wiki/File:Woodturning_Indonesia.jpg",
+        "legende": "Tournage sur bois, copeaux en vol",
+        "role": "chantier",
+        "base": "tournage-copeaux"
+      },
+      {
+        "url": "https://commons.wikimedia.org/wiki/File:Woodworker_in_a_workshop_(Unsplash).jpg",
+        "legende": "Mains posées sur une planche de noyer, sciure au sol",
+        "role": "chantier",
+        "base": "mains-noyer"
+      },
+      {
+        "url": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+        "legende": "Cuisine en bois et cloison à tasseaux",
+        "role": "chantier",
+        "base": "reserve-cuisine-tasseaux"
+      },
+      {
+        "url": "https://commons.wikimedia.org/wiki/File:Modern_luxury_living_room_with_kitchen_interior.jpg",
+        "legende": "Cloison à tasseaux de bois",
+        "role": "chantier",
+        "base": "tasseaux-cloison"
+      },
+      {
+        "url": "https://commons.wikimedia.org/wiki/File:This_space_features_a_stylish_kitchen_with_a_wooden_countertop_and_shelves.jpg",
+        "legende": "Cuisine sous poutres avec plan de travail en bois",
+        "role": "chantier",
+        "base": "reserve-cuisine-poutres"
+      },
+      {
+        "url": "https://commons.wikimedia.org/wiki/File:Modern_interior_design_featuring_wooden_shelves_and_decorative_elements.jpg",
+        "legende": "Bibliothèque en bois et niches ouvertes",
+        "role": "chantier",
+        "base": "reserve-bibliotheque"
+      }
+    ],
+    "logo_url": null,
+    "adresse": "Adresse fictive du jeu d’essai, 35000 Rennes",
+    "siren": "000000000",
+    "horaires": "Lundi–vendredi, 8 h–18 h, intervention sur rendez-vous",
+    "decennale": {
+      "assureur": "Assureur fictif",
+      "numero": "DEMO-0001"
+    },
+    "avis_google": {
+      "url": ""
+    },
+    "artisan": {
+      "prenom": "Maël",
+      "nom": "Essai",
+      "installation": 2014,
+      "parcours": "CAP puis brevet professionnel de plombier, six ans chez un installateur avant de me lancer.",
+      "citation": "Je vérifie chaque raccord moi-même avant de remettre l’eau.",
+      "chiffres": null
+    }
+  }
+}

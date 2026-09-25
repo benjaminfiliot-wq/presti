@@ -26,6 +26,7 @@ import { stripe } from '@/lib/stripe'
 //    L'utilisateur auth est banni et son email remplacé : plus personne ne peut se connecter.
 
 export const JOURS_DE_GRACE = 30
+export const PREFIXE_ADRESSE_PURGEE = 'supprime-'
 
 /** Adresse de remplacement d'un compte anonymisé — reconnaissable, jamais délivrable. */
 export const emailAnonyme = (id: string) => `supprime-${id.slice(0, 8)}@anonyme.invalid`
@@ -100,7 +101,7 @@ async function anonymiser(id: string): Promise<string | null> {
     email: emailAnonyme(id), email_public: null, tel_public: null, bio: null, photo_url: null, logo_url: null,
     horaires: null, reseaux: {}, services: [], realisations: [], avant_apres: [], zone_intervention: null,
     site_contenu: null, site_layout: null, site_style: null, site_active: false, plateforme_active: false, leads_pause: true,
-    domaine: null, domaine_verifie: false, slug: `supprime-${id.slice(0, 8)}`, slugs_anciens: [],
+    domaine: null, domaine_verifie: false, slug: `${PREFIXE_ADRESSE_PURGEE}${id.slice(0, 8)}`, slugs_anciens: [],
     iban: null, bic: null, stripe_customer_id: null, stripe_subscription_id: null,
     assurance_nom: null, assurance_adresse: null, assurance_contrat: null, assurance_activites: null, assurance_zone: null,
     notifications: {}, plan: 'essentiel', credits: 0, suppression_demandee_le: null,

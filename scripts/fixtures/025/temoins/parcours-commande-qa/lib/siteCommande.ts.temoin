@@ -1,6 +1,8 @@
 // TÉMOIN de scripts/parcours-commande-qa.mjs (fiche 025-01), écrit par Claude Code — PAS du code de production.
 // C'est lib/siteCommande.ts de 1620723, plus le strict nécessaire pour simuler l'état « après » de la fiche 025-09 :
-// matiere.artisan gardé et borné par nettoyerBrouillon, exigé par erreursAvantPaiement. Le juge le pose à la place de
+// matiere.artisan gardé et borné par nettoyerBrouillon, exigé par erreursAvantPaiement ; et l'état « après » de 025-16
+// (relectures à froid du 24/09) : un seul texte du délai (DELAI_TEXTE, qui dit de quelle validation il part) et des textes
+// de l'artisan jamais coupés, refusés au-delà de leur borne (PC-8, PC-9). Le juge le pose à la place de
 // lib/siteCommande.ts dans une copie de l'arbre de référence (.orchestre/travail/parcours-commande-qa/temoin/), jamais
 // dans le dépôt. Extension .temoin : tsc (include **/*.ts du tsconfig) ne le voit pas dans le dépôt.
 //
@@ -17,6 +19,8 @@ import { normalizeDomain } from '@/lib/vercelDomains'
 export const PRIX_SITE_CENTS = 30000
 export const PRIX_SITE_TEXTE = '300 €'
 export const DELAI_ANNONCE = '48 h ouvrées'
+// témoin 025-16 (M3) : LE texte du délai, partout le même, qui dit à partir de quoi il court (CGU : la validation humaine)
+export const DELAI_TEXTE = `Livré sous ${DELAI_ANNONCE} après la validation humaine de votre site par Presti.`
 
 /** Le bloc de vente (v15 §2.1), rendu par la landing et /abonnement HORS grille d'abonnement, uniquement quand le
  *  drapeau `siteCommandeVente` est levé. Trois phrases, pas une promesse de classement, pas un délai autre que le
@@ -26,7 +30,7 @@ export const SITE_A_LA_DEMANDE = {
   phrases: [
     'Un site à votre nom, avec une page par commune que vous servez vraiment : c’est ça, le référencement local bien fait.',
     'Vos photos, votre métier, vos coordonnées — rien d’inventé — et votre page de conversation pour que la demande arrive chez vous.',
-    `${PRIX_SITE_TEXTE} une fois, sans abonnement, TVA non applicable (art. 293 B du CGI). Livré sous ${DELAI_ANNONCE} après validation.`,
+    `${PRIX_SITE_TEXTE} une fois, sans abonnement, TVA non applicable (art. 293 B du CGI). ${DELAI_TEXTE}`, // témoin 025-16
   ],
   bouton: 'Commander mon site',
   lien: '/site/commander',
@@ -129,6 +133,10 @@ export function sirenValide(brut: string): boolean {
 }
 
 // témoin 025-09 : l'artisan, nettoyé et borné ; chiffres absent ≠ « je préfère ne pas » (null explicite)
+// témoin 025-16 (M9) : un texte de l'artisan n'est jamais coupé. Il est gardé tel quel (balises ôtées, blancs repliés) jusqu'à
+// PLAFOND_GARDE signes, retiré au-delà ; erreursArtisan le refuse au-delà de sa borne, en disant la borne.
+const PLAFOND_GARDE = 2000
+const texteEntier = (v: unknown): string => { const t = String(v ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim(); return t.length > PLAFOND_GARDE ? '' : t }
 const objet = (v: unknown): Record<string, unknown> | null => (v && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : null)
 const annee = (v: unknown): number | null => {
   if (typeof v === 'number' && Number.isInteger(v)) return v
@@ -138,18 +146,17 @@ const annee = (v: unknown): number | null => {
 function nettoyerArtisan(v: unknown): Artisan | null {
   const a = objet(v)
   if (!a) return null
-  const B = ARTISAN_BORNES
   return {
-    prenom: texte(a.prenom, B.prenom),
-    nom: texte(a.nom, B.nom),
+    prenom: texteEntier(a.prenom),
+    nom: texteEntier(a.nom),
     installation: annee(a.installation),
-    parcours: texte(a.parcours, B.parcours),
-    citation: texte(a.citation, B.citation),
+    parcours: texteEntier(a.parcours),
+    citation: texteEntier(a.citation),
     chiffres: a.chiffres === null ? null : Array.isArray(a.chiffres)
       ? a.chiffres.slice(0, 3).map((x) => {
         const c: Record<string, unknown> = objet(x) ?? {}
-        const unite = texte(c.unite, B.unite)
-        return { valeur: texte(c.valeur, B.valeur), ...(unite ? { unite } : {}), legende: texte(c.legende, B.legende) }
+        const unite = texteEntier(c.unite)
+        return { valeur: texteEntier(c.valeur), ...(unite ? { unite } : {}), legende: texteEntier(c.legende) }
       })
       : [],
   }
@@ -159,16 +166,23 @@ function erreursArtisan(a: Artisan | null | undefined): string[] {
   const maintenant = new Date().getFullYear()
   if (!a) return ['Complétez l’étape « Votre parcours » : prénom, nom, année d’installation, parcours, phrase signée et chiffres.']
   const e: string[] = []
+  const B = ARTISAN_BORNES
+  const trop = (t: string, max: number, quoi: string) => { if (t.length > max) e.push(`${quoi} dépasse ${max} signes (${t.length}) : raccourcissez ce texte, rien n’est coupé à votre place.`) }
   if (!a.prenom) e.push('Votre prénom manque (étape « Votre parcours »).')
+  else trop(a.prenom, B.prenom, 'Votre prénom')
   if (!a.nom) e.push('Votre nom manque (étape « Votre parcours »).')
+  else trop(a.nom, B.nom, 'Votre nom')
   if (a.installation === null || a.installation < ARTISAN_BORNES.installationMin || a.installation > maintenant) e.push(`L’année d’installation doit être comprise entre ${ARTISAN_BORNES.installationMin} et ${maintenant}.`)
   if (!a.parcours) e.push('Votre parcours en une ligne manque.')
+  else trop(a.parcours, B.parcours, 'Votre parcours')
   if (!a.citation) e.push('La phrase signée manque.')
+  else if (a.citation.length > B.citation) trop(a.citation, B.citation, 'La phrase signée')
   else if (a.citation.length < ARTISAN_BORNES.citationMin) e.push(`La phrase signée fait moins de ${ARTISAN_BORNES.citationMin} signes.`)
   else if (!PREMIERE_PERSONNE.test(a.citation)) e.push('La phrase signée se dit à la première personne (je, mon, j’…).')
   if (a.chiffres !== null) {
     if (a.chiffres.length !== 3) e.push('Donnez trois chiffres, ou cochez « Je préfère ne pas donner de chiffres ».')
     else if (!a.chiffres.every((c) => nombrePositif(c.valeur) && c.legende)) e.push('Chaque chiffre a une valeur positive et une légende.')
+    if (Array.isArray(a.chiffres)) a.chiffres.forEach((c, i) => { trop(c.valeur, B.valeur, `Chiffre ${i + 1} : la valeur`); trop(c.unite ?? '', B.unite, `Chiffre ${i + 1} : l’unité`); trop(c.legende, B.legende, `Chiffre ${i + 1} : la légende`) })
   }
   return e
 }

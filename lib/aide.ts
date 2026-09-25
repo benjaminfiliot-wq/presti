@@ -244,26 +244,23 @@ export const ARTICLES: Article[] = [
     disponibleAvec: 'studio',
   },
 
-  // source: app/profil/page.tsx:61-620 (page de contact, apparence, prestations, réalisations, site 3 niveaux)
+  // source: app/profil/page.tsx (présentation, contacts, domaine et site à la demande)
   {
     id: 'profil',
     page: '/profil',
-    titre: 'Ma page : votre plateforme de contact et votre site',
+    titre: 'Ma page : votre plateforme de contact',
     aQuoiCaSert:
-      'Vous réglez ici votre présentation, l’apparence (thème et couleur, appliqués à votre espace de conversation ' +
-      'ET à votre site si vous en avez un), vos prestations et vos réalisations. L’IA peut rédiger les ' +
-      'textes de votre profil ; chaque mot reste ensuite modifiable par vous.',
+      'Vous présentez votre activité, vos prestations et vos coordonnées sur la page que vous partagez avec vos clients. ' +
+      'Vous pouvez aussi connecter votre nom de domaine.',
     commentOnSenSert: [
-      'Complétez votre présentation (bio, zone d’intervention, disponibilités) et vos prestations.',
-      'Choisissez un thème et une couleur d’accent.',
-      'Ajoutez vos réalisations en photo.',
-      'Cliquez « Enregistrer ».',
+      'Complétez votre présentation, votre zone d’intervention, vos disponibilités et vos prestations.',
+      'Ajoutez les coordonnées que vous souhaitez afficher, puis cliquez « Enregistrer ».',
+      'Partagez le lien de votre page avec vos clients.',
+      'Si vous avez un site existant, vous pouvez le supprimer depuis « Données & suppressions ».',
     ],
     pourVosClients:
-      'Votre page de contact et votre site sont ce que vos clients voient et utilisent pour vous écrire. Si vous la ' +
-      'désactivez, ils voient un message poli au lieu du formulaire.',
-    credits:
-      "Rédiger ou régénérer le site avec l'IA consomme 1 crédit (modèle Pro) — sauf la toute première génération, qui est offerte.",
+      'Votre page de contact leur permet de vous écrire. Si vous la désactivez, ils voient un message poli au lieu du formulaire.',
+    credits: 'Aucun — modifier votre profil ne consomme pas de crédit.',
     reglagesLies: ['/plateforme', '/parametres?onglet=legal', '/abonnement'],
     disponibleAvec: 'essentiel',
   },
@@ -383,7 +380,7 @@ export const ARTICLES: Article[] = [
       'Réglez le paiement sur la page Stripe sécurisée.',
       'Vous êtes redirigé vers votre tableau de bord.',
     ],
-    pourVosClients: 'Aucun effet direct — cela détermine ce que vous pouvez faire pour eux (modèles, inventaire, niveau de site).',
+    pourVosClients: 'Aucun effet direct — cela détermine ce que vous pouvez faire pour eux (modèles, inventaire).',
     credits: 'Aucun — cette page sert à obtenir des crédits, elle n’en consomme pas.',
     reglagesLies: ['/tarifs', '/plateforme'],
     disponibleAvec: 'essentiel',
@@ -762,15 +759,15 @@ export const INFOBULLES: InfoBulle[] = [
     cle: 'profil.logo',
     page: '/profil',
     label: 'Photo / logo',
-    explication: 'L’image affichée à côté de votre nom, sur votre page de contact et votre site.',
-    exemple: 'Vous mettez votre logo d’entreprise : il apparaît en haut de votre page de contact ET de votre site.',
+    explication: 'L’image affichée à côté de votre nom, sur votre page de contact.',
+    exemple: 'Vous mettez votre logo d’entreprise : il apparaît en haut de votre page de contact.',
   },
   // source: app/profil/page.tsx:318-319
   {
     cle: 'profil.bio',
     page: '/profil',
     label: 'Présentation (bio)',
-    explication: 'Le texte de présentation affiché sur votre page de contact et repris par l’IA pour rédiger votre site.',
+    explication: 'Le texte de présentation affiché sur votre page de contact.',
     exemple: '« Artisan plombier depuis 15 ans, devis clair et sans surprise » — visible directement par vos clients.',
   },
   // source: app/profil/page.tsx:321
@@ -789,14 +786,6 @@ export const INFOBULLES: InfoBulle[] = [
     explication: 'Vos horaires affichés aux clients, indépendants des horaires de réponse de l’assistant réglés dans Ma plateforme.',
     exemple: '« Lun–Ven 8h–18h · Urgences 7j/7 » — affiché sur votre page, à titre d’information pour le client.',
   },
-  // source: app/profil/page.tsx:340-348
-  {
-    cle: 'profil.accent',
-    page: '/profil',
-    label: 'Couleur d’accent',
-    explication: 'La couleur utilisée pour les boutons et éléments mis en avant, sur votre espace de conversation ET votre site.',
-    exemple: 'Vous choisissez un bleu : le bouton « Envoyer » de votre page de contact devient bleu, ainsi que les accents de votre site.',
-  },
   // source: app/profil/page.tsx:386
   {
     cle: 'profil.telephone',
@@ -812,62 +801,6 @@ export const INFOBULLES: InfoBulle[] = [
     label: 'Email (affiché)',
     explication: 'L’adresse visible par vos clients sur votre page. Laissez vide pour ne pas l’afficher.',
     exemple: 'Un client préfère écrire plutôt qu’appeler : il utilise l’adresse affichée ici.',
-  },
-  // source: app/profil/page.tsx:473-474
-  {
-    cle: 'profil.hero_accroche',
-    page: '/profil',
-    label: 'Signature (accroche sous votre nom)',
-    explication: 'La phrase courte affichée juste sous votre nom, en haut de votre site.',
-    exemple: '« Le bois travaillé avec exigence » — la première phrase que lit un visiteur de votre site.',
-  },
-  // source: app/profil/page.tsx:475-476
-  {
-    cle: 'profil.hero_lede',
-    page: '/profil',
-    label: 'Phrase d’introduction',
-    explication: 'Le texte qui développe votre accroche, juste en dessous, en haut de votre site.',
-    exemple: 'Une ou deux phrases qui expliquent ce que vous faites et pour qui, sous votre signature.',
-  },
-  // source: app/profil/page.tsx:477-484
-  {
-    cle: 'profil.mots_cles',
-    page: '/profil',
-    label: 'Mots-clés géants (jusqu’à 4, affichés en grand)',
-    explication: 'Des mots affichés en très grand sur votre site — réservé au niveau de site Signature.',
-    exemple: '« Précision », « Sur-mesure », « Bois massif », « Garantie » affichés en très grand format, entre vos sections.',
-  },
-  // source: app/profil/page.tsx:485-487
-  {
-    cle: 'profil.manifeste',
-    page: '/profil',
-    label: 'Manifeste (grande phrase pleine page)',
-    explication: 'Une phrase affichée seule, en pleine page, sur votre site — réservé au niveau de site Signature.',
-    exemple: '« Dessiné, taillé, assemblé : le bois prend vie ici. » occupe un écran entier au défilement.',
-  },
-  // source: app/profil/page.tsx:489-490
-  {
-    cle: 'profil.apropos',
-    page: '/profil',
-    label: 'À propos',
-    explication: 'Le texte de présentation plus long affiché dans la section « À propos » de votre site.',
-    exemple: 'Votre parcours, vos valeurs, ce qui vous distingue — un texte plus développé que la bio courte.',
-  },
-  // source: app/profil/page.tsx:504-507
-  {
-    cle: 'profil.contact_integre',
-    page: '/profil',
-    label: 'Formulaire de contact intégré au site / renvoyé vers la plateforme',
-    explication: 'Intégré : le client discute directement sur votre site. Renvoyé : un bouton mène à votre page de contact séparée.',
-    exemple: 'Intégré activé, un visiteur de votre site écrit sans jamais quitter la page ; sinon, il clique un bouton qui l’emmène sur votre page de contact.',
-  },
-  // source: app/profil/page.tsx:508-511
-  {
-    cle: 'profil.site_actif',
-    page: '/profil',
-    label: 'Mon site est publié / hors ligne',
-    explication: 'Publié : accessible à tous à son adresse. Hors ligne : visible de vous seul, en aperçu.',
-    exemple: 'Vous finissez vos réglages et repassez le site en « publié » pour que vos clients puissent le voir.',
   },
   // source: app/profil/page.tsx:549-559 (toutes les offres)
   {

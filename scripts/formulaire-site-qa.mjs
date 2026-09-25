@@ -2,11 +2,15 @@
 // Claude Code (fiche 025-01, point 5). Les verdicts sont à lui : un exécutant ne le modifie pas (CLAUDE.md:23).
 //
 // Usage :
-//   node scripts/formulaire-site-qa.mjs                     FS-1 à FS-7, T1 et T2 sur le dépôt
+//   node scripts/formulaire-site-qa.mjs                     FS-1 à FS-11, T1 et T2 sur le dépôt
 //   node scripts/formulaire-site-qa.mjs --racine=<dossier>  la même chose, tout lu et généré depuis <dossier> (l'arbre de
 //                                                           référence .orchestre/travail/025-01/reference/, par exemple)
-//   node scripts/formulaire-site-qa.mjs --temoin            T1 et T2 sur la racine ; FS-1 à FS-7 sur le témoin « après »
+//   node scripts/formulaire-site-qa.mjs --temoin            T1 et T2 sur la racine ; FS-1 à FS-11 sur le témoin « après »
 //   node scripts/formulaire-site-qa.mjs --reel              la production (Claude Code seulement, après déploiement ; seul)
+//   … --critere=FS-6,FS-11                                  ne juge que ces critères (les autres ne sont ni déclarés ni
+//                                                           imprimés, et le travail qu'ils demandent est sauté) : les fiches
+//                                                           025-14 (tout sauf FS-11) et 025-17 (FS-6, FS-11) sont jugées
+//                                                           chacune sur sa part ; le verdict entier reste celui sans --critere.
 // Sortie : une ligne « PASS <id> — … » ou « FAIL <id> — … » par critère, puis « formulaire-site-qa : PASS » ou
 // « formulaire-site-qa : FAIL — ids » ; code 0 seulement si tout est vert, 1 sinon, 2 si les options sont invalides.
 // Écrit seulement sous .orchestre/travail/formulaire-site-qa/ (site/, site-sans-chiffres/, commande-sans-chiffres/, captures/,
@@ -53,13 +57,36 @@
 //   FS-7 les médias du site généré (avif, webp, jpg, png, gif, mp4, webm…) sont tous, octet pour octet, des fichiers de
 //        <source>/photos/ ; au moins trois photos du dossier source (trois bases), dont une référencée par index.html ; aucune
 //        image référencée par une page ou une feuille de styles n'est absente de la sortie ni prise hors d'elle (http…).
+//   FS-8 (relecture à froid du 24/09, G4) le site de FS-1 (commande sans domaine) porte l'adresse de lib/urls.ts partout :
+//        BASE_PRESTI (lu dans <racine>/lib/urls.ts) + le chemin « site » du mode presti (/site/<slug>) préfixe chaque canonique,
+//        og:url, og:image, adresse JSON-LD (url, @id, image, logo, et toute adresse d'un domaine « presti » ou .invalid),
+//        <loc> de sitemap.xml et ligne Sitemap: de robots.txt ; aucune adresse d'un autre domaine « presti » (presti.fr) ni d'un
+//        domaine de démonstration (.invalid) dans les pages, le sitemap et robots.txt ; chacune des six sortes d'adresse existe.
+//        Mutation : la canonique de l'accueil passée sur presti.fr doit être vue.
+//   FS-9 (G3) les libellés du formulaire de devis sont ceux du métier de la commande : scripts/fixtures/025/commande-plombier.json
+//        (plombier FICTIF), posée dans une copie de commande-exemple/, génère en code 0 ; le texte de chaque formulaire de devis
+//        (libellés, légendes, placeholders, aria-label, title, value, boutons, notes ; les <option> viennent de la commande et
+//        sont ôtées) ne porte aucun mot PROPRE à un autre modèle de <racine>/maquettes/modeles/ (commun.mjs, motsDesMetiers :
+//        dictionnaire tiré des modèles, pas écrit ici). Mutation : un mot propre à un autre modèle glissé dans le formulaire.
+//   FS-10 (M1) une commande sans téléphone ni e-mail (celle du jeu d'essai, les deux clés ôtées : ce que /site/commander envoie)
+//        génère en code 0 ; dans ses pages et scripts, aucun lien tel: sans numéro (6 chiffres au moins), aucun mailto: sans
+//        adresse, ni « undefined » / « null » à la place d'une coordonnée ; l'accueil a un repli (role="alert", classe *echec* ou
+//        *repli*) qui dit quelque chose (trois mots au moins) et ne renvoie pas vers rien (« au . », « au  ou », « à . »).
+//        Mutation : le repli d'aujourd'hui, à liens vides, doit être vu.
+//   FS-11 (M7) un compte purgé ne reçoit plus de demande : <racine>/app/api/leads/route.ts, transpilée par TypeScript et lancée
+//        dans le juge contre un faux Supabase (fonction artisan_par_ancien_slug de 0051, doublures muettes pour l'IA, l'e-mail,
+//        la sécurité), répond 404 sans rien enregistrer pour l'ancienne adresse d'un compte purgé (slug supprime-…, ancien slug
+//        gardé par le trigger de 0051) et pour son adresse supprime-… ; et 200 avec une demande enregistrée pour l'ancienne et
+//        l'actuelle adresse d'un compte vivant, et pour un compte en pause (la pause garde les demandes). Sur un 404, le site
+//        montre le repli (FS-4). Sondes : une route minimale sans exclusion doit échouer, la même avec exclusion passer.
 //   T1, T2 scripts/fixtures/025/commun.mjs (Lestraque régénéré identique ; les neuf démos gelées intactes).
 //
 // --temoin (fiche 025-01 §1 : « non-régression ou jeu d'essai conforme ») : T1 et T2 sur la racine (le dépôt), qui doivent
 //   passer aujourd'hui ; FS-1 à FS-7 sur l'arbre témoin .orchestre/travail/formulaire-site-qa/temoin/, construit à chaque
-//   passage : lib/slugRedirect.ts copié du dépôt, puis scripts/fixtures/025/temoins/formulaire-site-qa/ superposé, suffixe
-//   .temoin retiré (public/sites-demo/generer.mjs : un générateur --source minimal ; app/api/leads/route.ts : la route de
-//   1620723 avec le repli par l'ancienne adresse). Les jeux d'essai restent ceux du dépôt (scripts/fixtures/025/).
+//   passage : lib/slugRedirect.ts, lib/urls.ts et maquettes/modeles/ copiés du dépôt, puis scripts/fixtures/025/temoins/
+//   formulaire-site-qa/ superposé, suffixe .temoin retiré (public/sites-demo/generer.mjs : un générateur --source minimal, adresse
+//   de lib/urls.ts, libellés neutres, repli adapté aux coordonnées données ; app/api/leads/route.ts : la route de 1620723 avec le
+//   repli par l'ancienne adresse, comptes purgés écartés). Les jeux d'essai restent ceux du dépôt (scripts/fixtures/025/).
 //
 // --reel (fiche 025-01 §5 ; jamais lancé par un exécutant, ni par ce juge sans cette option) : FS-R1 compte d'essai créé par
 //   l'API d'administration (@presti-test.invalid, leads_pause: true, est_demo: true) ; FS-R2 site généré avec son slug (copie
@@ -101,11 +128,11 @@ import {
   R, FIXTURES, TRAVAIL, COMMANDE_EXEMPLE, BUREAU, TELEPHONE,
   exigerSousTravail, listerFichiers, lireOuNull, fichierNonVide, shaBlob, lancer,
   instantaneDossier, comparerInstantanes, preparerTemoin, lireOptionsOuQuitter, creerSortie, t1, t2,
-  servir, lancerNavigateur, capturer, preparerCommande, lireCommande,
+  servir, lancerNavigateur, capturer, preparerCommande, lireCommande, lireJson,
 } from './fixtures/025/commun.mjs'
 
 export const JUGE = 'formulaire-site-qa'
-export const IDS = ['FS-1', 'FS-2', 'FS-3', 'FS-4', 'FS-5', 'FS-6', 'FS-7', 'T1', 'T2']
+export const IDS = ['FS-1', 'FS-2', 'FS-3', 'FS-4', 'FS-5', 'FS-6', 'FS-7', 'FS-8', 'FS-9', 'FS-10', 'FS-11', 'T1', 'T2']
 export const IDS_REEL = ['FS-R1', 'FS-R2', 'FS-R3', 'FS-R4', 'FS-R5', 'FS-R6', 'FS-R7']
 const ICI = path.join(TRAVAIL, JUGE)
 const PROD = 'https://prestiapp.fr/api/leads'
@@ -854,10 +881,383 @@ export async function jugerPlateau({ racine, siteComplet, commande }) {
   return { ok: !echecs.length, echecs, faits }
 }
 
+// ── FS-8 : l'adresse du site sans domaine (relecture à froid du 24/09, G4) ────────────────────────────────────────────────
+/** L'adresse publique d'un site sans domaine, lue dans <racine>/lib/urls.ts : BASE_PRESTI + le chemin « site » du mode presti. */
+export function adresseSansDomaine(racine, slug) {
+  const src = lireOuNull(path.join(racine, 'lib', 'urls.ts'))?.toString('utf8') || ''
+  const base = (/export\s+const\s+BASE_PRESTI\s*=\s*['"`](https?:\/\/[^'"`]+?)\/?['"`]/.exec(src) || [])[1]
+  const chemin = (/default:\s*return\s*\{\s*site:\s*`([^`$]*)\$\{s\}`/.exec(src) || [])[1] ?? '/site/'
+  return base ? { base: `${base.replace(/\/$/, '')}${chemin}${slug}`, hote: new URL(base).hostname, origine: 'lib/urls.ts (BASE_PRESTI)' } : null
+}
+/** Les fichiers d'un site que lisent les moteurs et les réseaux (pages, sitemap.xml, robots.txt) → Map(rel → texte). */
+export function fichiersPublics(site) {
+  const m = new Map()
+  for (const f of [...listerFichiers(site)].sort()) if (/\.(?:html?|xml|txt)$/i.test(f)) m.set(f, fs.readFileSync(path.join(site, f), 'utf8'))
+  return m
+}
+const HOTES_EXTERNES = /(?:^|\.)(?:schema\.org|wikimedia\.org|wikipedia\.org|creativecommons\.org|google\.[a-z.]+|googleapis\.com|gstatic\.com|w3\.org|sitemaps\.org)$/i
+/** FS-8 sur les fichiers d'un site → { echecs, faits } */
+export function defautsAdresse(fichiers, attendu, slug) {
+  const echecs = [], n = { canon: 0, ogurl: 0, ogimg: 0, ld: 0, loc: 0, robots: 0 }
+  const verifier = (ou, quoi, u) => { if (!String(u).startsWith(attendu.base)) echecs.push(`${ou} : ${quoi} « ${court(u, 90)} », ${attendu.base}… attendu (${attendu.origine})`) }
+  for (const [f, t] of fichiers) {
+    if (/\.html?$/i.test(f)) {
+      for (const m of t.matchAll(/<link\b[^>]*\brel\s*=\s*["']canonical["'][^>]*>/gi)) { const h = /\bhref\s*=\s*["']([^"']*)["']/i.exec(m[0]); n.canon++; verifier(f, 'canonique', h ? h[1] : '(sans href)') }
+      for (const m of t.matchAll(/<meta\b[^>]*\bproperty\s*=\s*["']og:(url|image)["'][^>]*>/gi)) { const c = /\bcontent\s*=\s*["']([^"']*)["']/i.exec(m[0]); n[m[1].toLowerCase() === 'url' ? 'ogurl' : 'ogimg']++; verifier(f, `og:${m[1]}`, c ? c[1] : '(sans content)') }
+      for (const m of t.matchAll(/<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+        let j
+        try { j = JSON.parse(m[1]) } catch { echecs.push(`${f} : JSON-LD illisible`); continue }
+        const urls = []
+        const tous = (o, k = '') => { if (typeof o === 'string') { if (/^https?:\/\//i.test(o)) urls.push([k, o]) } else if (o && typeof o === 'object') for (const [kk, v] of Object.entries(o)) tous(v, kk) }
+        tous(j)
+        for (const [k, u] of urls) {
+          let h = ''
+          try { h = new URL(u).hostname } catch { /* illisible */ }
+          if (['url', '@id', 'image', 'logo'].includes(k) || /presti/i.test(h) || h.endsWith('.invalid') || u.includes(`/${slug}`)) { n.ld++; if (!HOTES_EXTERNES.test(h)) verifier(f, `JSON-LD ${k}`, u) }
+        }
+      }
+    }
+    if (/sitemap[^/]*\.xml$/i.test(f)) for (const m of t.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)) { n.loc++; verifier(f, 'loc', m[1]) }
+    if (/(?:^|\/)robots\.txt$/i.test(f)) for (const m of t.matchAll(/^\s*sitemap\s*:\s*(\S+)/gim)) { n.robots++; verifier(f, 'Sitemap', m[1]) }
+    // toute adresse d'un domaine « presti » autre que celui de lib/urls.ts, ou d'un domaine de démonstration (.invalid)
+    for (const m of t.matchAll(/https?:\/\/[^\s"'<>)]+/gi)) {
+      let h = ''
+      try { h = new URL(m[0]).hostname } catch { continue }
+      if ((/presti/i.test(h) && h !== attendu.hote) || h.endsWith('.invalid')) echecs.push(`${f} : adresse « ${court(m[0], 80)} » (domaine ${h}, ${attendu.hote} attendu)`)
+    }
+  }
+  const manque = [['canonique', n.canon], ['og:url', n.ogurl], ['og:image', n.ogimg], ['JSON-LD', n.ld], ['sitemap.xml <loc>', n.loc], ['robots.txt Sitemap:', n.robots]].filter(([, x]) => !x).map(([k]) => k)
+  if (manque.length) echecs.push(`rien à juger pour : ${manque.join(', ')} (le site doit les porter)`)
+  return { echecs: [...new Set(echecs)], faits: [`${n.canon} canonique(s), ${n.ogurl} og:url, ${n.ogimg} og:image, ${n.ld} adresse(s) JSON-LD, ${n.loc} <loc>, ${n.robots} Sitemap: — toutes sous ${attendu.base}`] }
+}
+export function jugerAdresse({ racine, site, commande }) {
+  const attendu = adresseSansDomaine(racine, commande.slug)
+  if (commande.domaine) return { ok: false, echecs: ['jeu d’essai : la commande a un domaine, FS-8 juge le cas sans domaine'], faits: [] }
+  if (!attendu) return { ok: false, echecs: [`${rel(path.join(racine, 'lib', 'urls.ts'))} : BASE_PRESTI illisible`], faits: [] }
+  const fichiers = fichiersPublics(site)
+  const r = defautsAdresse(fichiers, attendu, commande.slug)
+  // mutation : la canonique de l'accueil renvoyée sur un autre domaine doit être vue
+  const mute = new Map(fichiers)
+  const idx = mute.get('index.html') || ''
+  const faux = attendu.base.replace(`://${attendu.hote}`, `://presti.fr`)
+  mute.set('index.html', idx.replace(/(<link\b[^>]*\brel\s*=\s*["']canonical["'][^>]*\bhref\s*=\s*["'])[^"']*/i, `$1${faux}/`))
+  const vue = defautsAdresse(mute, attendu, commande.slug).echecs.some((e) => e.includes(faux))
+  if (!vue && /rel\s*=\s*["']canonical/i.test(idx)) r.echecs.push(`détecteur aveugle : une canonique ${faux}/ n’est pas vue`)
+  if (!r.echecs.length) r.faits.push(`mutation : canonique de l’accueil sur ${faux}/ → vue`)
+  return { ok: !r.echecs.length, echecs: r.echecs, faits: [`sans domaine, adresse attendue ${attendu.base} (${attendu.origine})`, ...r.faits] }
+}
+
+// ── FS-9 : les libellés du formulaire sont ceux du métier (G3) ────────────────────────────────────────────────────────────
+export const COMMANDE_PLOMBIER = path.join(FIXTURES, 'commande-plombier.json')
+/** Le texte d'un formulaire de devis : libellés, légendes, placeholders, aria-label, title, boutons et notes (options exclues : elles viennent de la commande). */
+export function texteFormulaire(html) {
+  const f = /<form\b[^>]*>[\s\S]*?<\/form>/gi
+  const formes = [...String(html).matchAll(f)].map((m) => m[0]).filter((x) => /\bname\s*=\s*["']?contact\b/i.test(x) || /class\s*=\s*["'][^"']*devis/i.test(x.slice(0, 300)))
+  const morceaux = []
+  for (const x of formes) {
+    const sansOptions = x.replace(/<option\b[\s\S]*?<\/option>/gi, ' ')
+    morceaux.push(texteHtml(sansOptions))
+    for (const a of sansOptions.matchAll(/\b(?:placeholder|aria-label|title|value)\s*=\s*"([^"]*)"/gi)) morceaux.push(a[1])
+  }
+  return { n: formes.length, texte: morceaux.join('\n') }
+}
+export async function jugerLibellesMetier({ racine }) {
+  const { motsDesMetiers, motsEtrangers } = await import('./fixtures/025/commun.mjs')
+  const echecs = [], faits = []
+  const plombier = lireJson(COMMANDE_PLOMBIER)
+  const dico = motsDesMetiers(racine)
+  if (dico.modeles.length < 2) return { ok: false, echecs: [`${dico.modeles.length} modèle(s) de métier sous maquettes/modeles/ : pas de dictionnaire des métiers (deux modèles au moins)`], faits }
+  const src = exigerSousTravail(path.join(ICI, 'commande-plombier'))
+  fs.rmSync(src, { recursive: true, force: true })
+  fs.cpSync(COMMANDE_EXEMPLE, src, { recursive: true })
+  fs.writeFileSync(path.join(src, 'commande.json'), `${JSON.stringify(plombier, null, 2)}\n`)
+  const sortie = path.join(ICI, 'site-plombier')
+  const g = genererSource({ racine, source: src, sortie })
+  if (g.absent || g.code !== 0) return { ok: false, echecs: [`commande de plombier : ${g.absent ? g.derniereLigne : `code ${g.code} : « ${court(g.derniereLigne, 200)} »`}`], faits }
+  const admis = [plombier.nom, ...plombier.communes, ...(plombier.devis?.projets || []), ...(plombier.devis?.delais || [])].join(' ')
+  let formulaires = 0
+  let texteAccueil = ''
+  for (const p of pagesHtml(sortie)) {
+    const { n, texte } = texteFormulaire(fs.readFileSync(path.join(sortie, p), 'utf8'))
+    formulaires += n
+    if (p === 'index.html') texteAccueil = texte
+    for (const h of motsEtrangers(texte, plombier.metier, dico, admis)) echecs.push(`${p} : « ${h.mot} » (propre au modèle ${h.modele}) dans le formulaire d’un plombier : « ${h.extrait} »`)
+  }
+  if (!formulaires) echecs.push('aucun formulaire de devis dans le site du plombier')
+  // mutation : un libellé du menuisier (ou d'un autre métier) glissé dans le formulaire doit être vu
+  const autre = dico.modeles.find((x) => x !== plombier.metier && dico.propres.get(x).size)
+  const mot = autre ? [...dico.propres.get(autre)].sort((a, b) => b[1] - a[1])[0][0] : null
+  const vue = mot ? motsEtrangers(`${texteAccueil}\nLe projet, la pièce, le ${mot}`, plombier.metier, dico, admis).some((h) => h.modele === autre) : false
+  if (!vue) echecs.push(`détecteur aveugle : « ${mot} » (propre à ${autre}) glissé dans le formulaire n’est pas vu`)
+  if (!echecs.length) faits.push(`commande de plombier générée (${g.secondes.toFixed(1)} s) : ${formulaires} formulaire(s) sans mot propre à un autre métier (dictionnaire tiré de ${dico.modeles.length} modèles : ${[...dico.propres].map(([m, x]) => `${m} ${[...x.keys()].join('/') || '—'}`).join(', ')}) ; mutation : « ${mot} » glissé → vu`)
+  return { ok: !echecs.length, echecs, faits }
+}
+
+// ── FS-10 : le repli d'une commande sans téléphone ni e-mail (M1) ─────────────────────────────────────────────────────────
+/** Les défauts de liens et de repli d'un site → liste */
+export function defautsReplis(fichiers) {
+  const d = []
+  for (const [f, t] of fichiers) {
+    if (!/\.html?$/i.test(f) && !/\.js$/i.test(f)) continue
+    for (const m of t.matchAll(/href\s*=\s*["']\s*tel:([^"']*)["']/gi)) if (m[1].replace(/\D/g, '').length < 6) d.push(`${f} : lien « tel:${m[1]} » sans numéro`)
+    for (const m of t.matchAll(/href\s*=\s*["']\s*mailto:([^"']*)["']/gi)) if (!/^[^@\s?]+@[^@\s?]+\.[^@\s?]+/.test(decodeURIComponent(m[1]).trim())) d.push(`${f} : lien « mailto:${m[1]} » sans adresse`)
+    if (/(?:tel|mailto):(?:undefined|null)\b|>\s*(?:undefined|null)\s*</i.test(t)) d.push(`${f} : « undefined » ou « null » écrit à la place d’une coordonnée`)
+    if (!/\.html?$/i.test(f)) continue
+    for (const m of t.matchAll(/<(?:div|p|section|aside)\b[^>]*(?:role\s*=\s*["']alert["']|class\s*=\s*["'][^"']*(?:echec|repli)[^"']*["'])[^>]*>([\s\S]*?)<\/(?:div|p|section|aside)>/gi)) {
+      const x = texteHtml(m[1]).replace(/\s+/g, ' ').trim()
+      if ((x.match(/\p{L}{2,}/gu) || []).length < 3) d.push(`${f} : repli vide ou presque (« ${court(x, 60)} »)`)
+      const pendant = /(?<![\p{L}])(?:au|à|a|ou)\s*(?:[.,;:!]|$)|(?<![\p{L}])au\s+ou(?![\p{L}])/iu.exec(x)
+      if (pendant) d.push(`${f} : repli qui renvoie vers rien : « ${court(x, 110)} »`)
+    }
+  }
+  return [...new Set(d)]
+}
+export function jugerReplisSansCoordonnees({ racine }) {
+  const echecs = [], faits = []
+  const c = lireCommande()
+  const variante = structuredClone(c)
+  delete variante.telephone; delete variante.email
+  variante._ = `Copie de commande-exemple/commande.json par ${JUGE} (FS-10) : ni téléphone ni e-mail, comme une commande faite par /site/commander.`
+  const src = exigerSousTravail(path.join(ICI, 'commande-sans-coordonnees'))
+  fs.rmSync(src, { recursive: true, force: true })
+  fs.cpSync(COMMANDE_EXEMPLE, src, { recursive: true })
+  fs.writeFileSync(path.join(src, 'commande.json'), `${JSON.stringify(variante, null, 2)}\n`)
+  const sortie = path.join(ICI, 'site-sans-coordonnees')
+  const g = genererSource({ racine, source: src, sortie })
+  if (g.absent || g.code !== 0) return { ok: false, echecs: [`commande sans téléphone ni e-mail : ${g.absent ? g.derniereLigne : `code ${g.code} : « ${court(g.derniereLigne, 200)} »`}`], faits }
+  const fichiers = new Map([...listerFichiers(sortie)].filter((f) => /\.(?:html?|js)$/i.test(f)).map((f) => [f, fs.readFileSync(path.join(sortie, f), 'utf8')]))
+  const idx = fichiers.get('index.html') || ''
+  if (!/<form\b/i.test(idx)) echecs.push('index.html sans formulaire')
+  if (!/role\s*=\s*["']alert["']|class\s*=\s*["'][^"']*(?:echec|repli)/i.test(idx)) echecs.push('index.html : aucun repli (role="alert", classe *echec* ou *repli*) : l’échec d’envoi ne serait pas dit')
+  echecs.push(...defautsReplis(fichiers))
+  // mutation : le repli d'aujourd'hui (liens vides) doit être vu
+  const sonde = new Map([['sonde.html', '<div class="devis__echec" role="alert">L’envoi n’a pas abouti. Appelez-moi au <a href="tel:"></a> ou écrivez-moi à <a href="mailto:"></a>.</div>']])
+  const vus = defautsReplis(sonde)
+  if (vus.length < 2) echecs.push(`détecteur aveugle : le repli à liens vides n’est pas vu (${vus.length} défaut(s))`)
+  if (!echecs.length) faits.push(`commande sans téléphone ni e-mail générée (${g.secondes.toFixed(1)} s) : ${fichiers.size} fichier(s), aucun lien tel:/mailto: vide, repli présent et qui ne renvoie pas vers rien ; mutation : repli « Appelez-moi au  ou écrivez-moi à . » → vu`)
+  return { ok: !echecs.length, echecs, faits }
+}
+
+// ── FS-11 : un compte purgé ne reçoit plus de demande par son ancienne adresse (M7) ──────────────────────────────────────
+// La route réelle (<racine>/app/api/leads/route.ts), transpilée par TypeScript et lancée dans ce processus contre un FAUX
+// Supabase en mémoire : lib/slugRedirect.ts (et tout autre module de <racine>/lib/ qu'elle importerait) est chargé de la
+// racine ; supabaseAdmin est le faux ; les modules de sécurité, d'IA, d'e-mail, de crédits… sont remplacés par des doublures
+// muettes (rien ne part). La base simulée tient deux artisans : un compte PURGÉ (lib/purgeComptes.ts : slug supprime-<8>,
+// e-mail anonymisé, leads_pause, site et page éteints ; le trigger de 0051 a gardé l'ancien slug dans slugs_anciens) et un
+// compte VIVANT dont l'adresse a changé (0051). La fonction artisan_par_ancien_slug est celle de 0051 (slugs_anciens @> [slug]).
+const PURGE_ID = '00000000-0000-4000-8000-0000000251a1'
+const VIVANT_ID = '00000000-0000-4000-8000-0000000251b2'
+const PAUSE_ID = '00000000-0000-4000-8000-0000000251c3'
+function baseSimulee() {
+  return {
+    artisans: [
+      { id: PURGE_ID, slug: 'supprime-00000000', slugs_anciens: ['ancien-essai-025'], nom: 'Menuiserie Purgée (identité d’émetteur gardée)', metier: 'menuisier', email: 'supprime-00000000@supprime.invalid', email_public: null, tel_public: null, leads_pause: true, site_active: false, plateforme_active: false, suppression_demandee_le: null, plan: 'essentiel', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false },
+      { id: VIVANT_ID, slug: 'nouveau-essai-025', slugs_anciens: ['vieux-essai-025'], nom: 'Atelier Vivant', metier: 'menuisier', email: 'atelier@vivant.invalid', leads_pause: false, site_active: true, plateforme_active: true, suppression_demandee_le: null, plan: 'essentiel', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false },
+      { id: PAUSE_ID, slug: 'pause-essai-025', slugs_anciens: [], nom: 'Atelier En Pause', metier: 'plombier', email: 'atelier@pause.invalid', leads_pause: true, site_active: true, plateforme_active: true, suppression_demandee_le: null, plan: 'essentiel', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false },
+    ],
+    leads: [], messages: [],
+  }
+}
+export const SCENARIOS_PURGE = [
+  { nom: 'compte purgé, ancienne adresse', slug: 'ancien-essai-025', attendu: 404 },
+  { nom: 'compte purgé, adresse supprime-…', slug: 'supprime-00000000', attendu: 404 },
+  { nom: 'compte vivant, ancienne adresse (0051)', slug: 'vieux-essai-025', attendu: 200, artisan: VIVANT_ID },
+  { nom: 'compte vivant, adresse actuelle', slug: 'nouveau-essai-025', attendu: 200, artisan: VIVANT_ID },
+  { nom: 'compte en pause (vivant)', slug: 'pause-essai-025', attendu: 200, artisan: PAUSE_ID },
+]
+const likeRe = (motif, casse) => new RegExp(`^${String(motif).split('').map((c) => (c === '%' ? '.*' : c === '_' ? '.' : c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))).join('')}$`, casse ? 'i' : '')
+function fauxSupabase(base) {
+  const journal = []
+  const filtre = (op, col, val) => {
+    const v = (r) => r[col]
+    switch (op) {
+      case 'eq': return (r) => v(r) === val
+      case 'neq': return (r) => v(r) !== val
+      case 'gt': return (r) => v(r) > val
+      case 'gte': return (r) => v(r) >= val
+      case 'lt': return (r) => v(r) < val
+      case 'lte': return (r) => v(r) <= val
+      case 'like': return (r) => typeof v(r) === 'string' && likeRe(val, false).test(v(r))
+      case 'ilike': return (r) => typeof v(r) === 'string' && likeRe(val, true).test(v(r))
+      case 'is': return (r) => (v(r) ?? null) === (val === 'null' ? null : val)
+      case 'in': { const l = Array.isArray(val) ? val : String(val).replace(/^\(|\)$/g, '').split(',').map((x) => x.trim().replace(/^"|"$/g, '')); return (r) => l.includes(v(r)) }
+      case 'cs': case 'contains': { const l = Array.isArray(val) ? val : String(val).replace(/^\{|\}$/g, '').split(',').map((x) => x.trim()); return (r) => Array.isArray(v(r)) && l.every((x) => v(r).includes(x)) }
+      default: throw new Error(`faux Supabase : opérateur « ${op} » non simulé`)
+    }
+  }
+  const lireOr = (expr) => String(expr).split(',').map((p) => { const [c, op, ...reste] = p.split('.'); const neg = op === 'not'; const vraiOp = neg ? reste.shift() : op; const f = filtre(vraiOp, c, reste.join('.')); return neg ? (r) => !f(r) : f })
+  class Requete {
+    constructor(table) { this.table = table; this.filtres = []; this.op = 'select'; this.valeur = null; this.unique = null; this.lim = null }
+    select() { return this }
+    insert(v) { this.op = 'insert'; this.valeur = v; return this }
+    upsert(v) { this.op = 'insert'; this.valeur = v; return this }
+    update(v) { this.op = 'update'; this.valeur = v; return this }
+    delete() { this.op = 'delete'; return this }
+    eq(c, v) { this.filtres.push(filtre('eq', c, v)); return this }
+    neq(c, v) { this.filtres.push(filtre('neq', c, v)); return this }
+    gt(c, v) { this.filtres.push(filtre('gt', c, v)); return this }
+    gte(c, v) { this.filtres.push(filtre('gte', c, v)); return this }
+    lt(c, v) { this.filtres.push(filtre('lt', c, v)); return this }
+    lte(c, v) { this.filtres.push(filtre('lte', c, v)); return this }
+    like(c, v) { this.filtres.push(filtre('like', c, v)); return this }
+    ilike(c, v) { this.filtres.push(filtre('ilike', c, v)); return this }
+    is(c, v) { this.filtres.push(filtre('is', c, v)); return this }
+    in(c, v) { this.filtres.push(filtre('in', c, v)); return this }
+    contains(c, v) { this.filtres.push(filtre('cs', c, v)); return this }
+    not(c, op, v) { const f = filtre(op, c, v); this.filtres.push((r) => !f(r)); return this }
+    filter(c, op, v) { this.filtres.push(filtre(op, c, v)); return this }
+    match(o) { for (const [c, v] of Object.entries(o)) this.eq(c, v); return this }
+    or(expr) { const fs2 = lireOr(expr); this.filtres.push((r) => fs2.some((f) => f(r))); return this }
+    order() { return this }
+    range() { return this }
+    limit(n) { this.lim = n; return this }
+    maybeSingle() { this.unique = 'maybe'; return this }
+    single() { this.unique = 'single'; return this }
+    then(ok, ko) { return Promise.resolve().then(() => this.executer()).then(ok, ko) }
+    executer() {
+      const t = base[this.table] || (base[this.table] = [])
+      journal.push({ table: this.table, op: this.op, valeur: this.valeur })
+      let lignes
+      if (this.op === 'insert') {
+        lignes = (Array.isArray(this.valeur) ? this.valeur : [this.valeur]).map((v) => ({ id: crypto.randomUUID(), token: crypto.randomBytes(8).toString('hex'), ...v }))
+        t.push(...lignes)
+      } else {
+        lignes = t.filter((r) => this.filtres.every((f) => f(r)))
+        if (this.op === 'update') for (const r of lignes) Object.assign(r, this.valeur)
+        if (this.op === 'delete') base[this.table] = t.filter((r) => !lignes.includes(r))
+      }
+      if (this.lim !== null) lignes = lignes.slice(0, this.lim)
+      const copie = JSON.parse(JSON.stringify(lignes))
+      if (this.unique === 'single') return copie.length === 1 ? { data: copie[0], error: null } : { data: null, error: { message: `${copie.length} ligne(s), une attendue` } }
+      if (this.unique === 'maybe') return copie.length > 1 ? { data: null, error: { message: 'plusieurs lignes' } } : { data: copie[0] ?? null, error: null }
+      return { data: copie, error: null }
+    }
+  }
+  return {
+    journal,
+    from: (t) => new Requete(t),
+    rpc: async (nom, args = {}) => {
+      journal.push({ table: `rpc:${nom}`, op: 'rpc', valeur: args })
+      if (nom === 'artisan_par_ancien_slug') { const r = base.artisans.find((a) => (a.slugs_anciens || []).includes(args.p_slug)); return { data: r ? [{ slug: r.slug, domaine: r.domaine ?? null, domaine_verifie: r.domaine_verifie ?? null }] : [], error: null } }
+      return { data: null, error: { message: `faux Supabase : rpc « ${nom} » non simulée` } }
+    },
+    storage: { from: () => ({ upload: async () => ({ error: null }), getPublicUrl: () => ({ data: { publicUrl: 'https://stockage.invalid/x' } }) }) },
+    auth: { admin: {}, getUser: async () => ({ data: { user: null }, error: null }) },
+  }
+}
+const muet = () => new Proxy(function () {}, { get: (_, k) => (k === 'then' ? undefined : muet()), apply: () => Promise.resolve(undefined) })
+function doublures(sb, journal) {
+  const note = (quoi) => (...a) => { journal.push({ table: `doublure:${quoi}`, op: 'appel', valeur: a.length }); return Promise.resolve(undefined) }
+  return {
+    'next/server': { NextResponse: { json: (corps, init = {}) => ({ __reponse: true, status: init.status ?? 200, corps }) } },
+    '@/lib/supabaseAdmin': { supabaseAdmin: sb },
+    '@/lib/security': { getIp: () => '203.0.113.25', isBanned: async () => false, recordAbuse: note('recordAbuse'), ipPseudonyme: () => 'ip-essai' },
+    '@/lib/limites': { consommerLimite: async () => true },
+    '@/lib/suspension': { suspensionEnCours: async () => false, MESSAGE_PUBLIC_INDISPONIBLE: 'Ce lien de contact n’est plus actif pour le moment.' },
+    '@/lib/ai': { qualifyLead: () => ({ urgence: 'normale', type_chantier: null }), generateLeadReply: async () => ({ text: 'réponse d’essai' }) },
+    '@/lib/plateformeConfig': { getPlateformeConfig: async () => ({}), decisionReponse: () => ({ ok: false, raison: 'assistee' }) },
+    '@/lib/email': { sendEmail: note('sendEmail'), notifierEntreprise: note('notifierEntreprise') },
+    '@/lib/notifications': { notifierArtisan: note('notifierArtisan') },
+    '@/lib/credits': { consumeCredit: async () => ({ ok: false }), rendreCredit: note('rendreCredit') },
+    '@/lib/alerteService': { signalerPanneIA: note('signalerPanneIA') },
+    '@/lib/quotaMedia': { porteMonnaieConversation: async () => ({ accepte: () => false, octets: () => 0 }) },
+    '@/lib/stripe': { stripe: muet() },
+  }
+}
+/** Charge <racine>/app/api/leads/route.ts (ou `routeSource`) dans ce processus, contre le faux Supabase → { POST, journal, base, traces } */
+export async function chargerRoute({ racine, routeSource = null, base = baseSimulee() }) {
+  const ts = (await import('typescript')).default
+  const { createRequire } = await import('node:module')
+  const requireNode = createRequire(import.meta.url)
+  const sb = fauxSupabase(base)
+  const traces = []
+  const consoleMuette = { log: () => {}, info: () => {}, debug: () => {}, warn: (...a) => traces.push(`warn ${a.map(String).join(' ')}`), error: (...a) => traces.push(`error ${a.map(String).join(' ')}`) }
+  const stubs = doublures(sb, sb.journal)
+  const caches = new Map()
+  const resoudre = (spec, depuis) => {
+    const cands = []
+    if (spec.startsWith('@/')) cands.push(path.join(racine, spec.slice(2)))
+    else if (spec.startsWith('.')) cands.push(path.resolve(path.dirname(depuis), spec))
+    else return null
+    for (const c of cands) for (const e of ['', '.ts', '.tsx', '.js', '.mjs', '/index.ts']) if (fs.existsSync(c + e) && fs.statSync(c + e).isFile()) return c + e
+    return null
+  }
+  const charger = (fichier, source) => {
+    if (caches.has(fichier)) return caches.get(fichier).exports
+    const js = ts.transpileModule(source ?? fs.readFileSync(fichier, 'utf8'), { fileName: fichier, compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true, jsx: ts.JsxEmit.ReactJSX } }).outputText
+    const module = { exports: {} }
+    caches.set(fichier, module)
+    const req = (spec) => {
+      if (Object.prototype.hasOwnProperty.call(stubs, spec)) return stubs[spec]
+      if (spec.startsWith('node:') || requireNode('node:module').builtinModules.includes(spec)) return requireNode(spec)
+      const f = resoudre(spec, fichier)
+      if (f) return charger(f)
+      return muet() // paquet npm ou module absent : doublure muette
+    }
+    new Function('exports', 'require', 'module', '__filename', '__dirname', 'console', 'process', js)(module.exports, req, module, fichier, path.dirname(fichier), consoleMuette, { env: {} })
+    return module.exports
+  }
+  const routeFichier = path.join(racine, 'app', 'api', 'leads', 'route.ts')
+  if (routeSource === null && !fichierNonVide(routeFichier)) throw new Error('app/api/leads/route.ts absent ou vide')
+  const mod = charger(routeFichier, routeSource)
+  if (typeof mod.POST !== 'function') throw new Error('route.ts n’exporte pas POST')
+  return { POST: mod.POST, journal: sb.journal, base, traces }
+}
+/** Joue les scénarios de SCENARIOS_PURGE, une base neuve chacun → { echecs, faits } */
+export async function jouerPurge({ racine, routeSource = null }) {
+  const echecs = [], faits = []
+  for (const sc of SCENARIOS_PURGE) {
+    const r = await chargerRoute({ racine, routeSource })
+    const req = { json: async () => ({ slug: sc.slug, contact: NUMERO_ESSAI, nom_prospect: null, message: 'Projet : Escalier · Commune : Rennes · Quand : Dans les trois mois', website: '' }), headers: new Headers({ 'x-forwarded-for': '203.0.113.25' }) }
+    let rep
+    try { rep = await r.POST(req) } catch (e) { echecs.push(`${sc.nom} : POST lève ${premiereLigne(e)}`); continue }
+    const statut = rep?.status
+    const inseres = r.base.leads
+    const d = []
+    if (statut !== sc.attendu) d.push(`répond ${statut} (${court(JSON.stringify(rep?.corps), 80)}), ${sc.attendu} attendu`)
+    if (sc.attendu === 404 && inseres.length) d.push(`${inseres.length} demande(s) enregistrée(s) pour ${inseres.map((l) => l.artisan_id === PURGE_ID ? 'le compte purgé' : l.artisan_id).join(', ')} : perdue(s)`)
+    if (sc.attendu === 200 && !(inseres.length === 1 && inseres[0].artisan_id === sc.artisan)) d.push(`${inseres.length} demande(s) enregistrée(s) (${inseres.map((l) => l.artisan_id).join(', ') || 'aucune'}), une pour ${sc.artisan} attendue`)
+    if (d.length) echecs.push(`${sc.nom} (slug ${sc.slug}) : ${d.join(', ')}${r.traces.length ? ` [journal de la route : ${court(r.traces.join(' | '), 160)}]` : ''}`)
+    else faits.push(`${sc.nom} → ${statut}`)
+  }
+  return { echecs, faits }
+}
+// Sondes du détecteur : une route minimale qui retrouve l'ancienne adresse sans écarter les comptes purgés (doit échouer),
+// et la même qui les écarte (doit passer). Elles importent le vrai lib/slugRedirect de la racine.
+const ROUTE_SONDE = (garde) => `import { NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { artisanParAncienSlug } from '@/lib/slugRedirect'
+export async function POST(req: Request) {
+  const b = await req.json()
+  let { data: a } = await supabaseAdmin.from('artisans').select('id, slug, leads_pause').eq('slug', b.slug).maybeSingle()
+  if (!a) { const x = await artisanParAncienSlug(b.slug); if (x) a = (await supabaseAdmin.from('artisans').select('id, slug').eq('slug', x.slug).maybeSingle()).data }
+  ${garde}
+  if (!a) return NextResponse.json({ error: 'Artisan introuvable' }, { status: 404 })
+  await supabaseAdmin.from('leads').insert({ artisan_id: a.id, contact: b.contact })
+  return NextResponse.json({ ok: true })
+}
+`
+export async function jugerComptePurge({ racine }) {
+  const echecs = [], faits = []
+  let r
+  try { r = await jouerPurge({ racine }) } catch (e) { return { ok: false, echecs: [`route non chargée contre le faux Supabase : ${premiereLigne(e)}`], faits } }
+  echecs.push(...r.echecs)
+  let sondes = ''
+  try {
+    const mauvaise = await jouerPurge({ racine, routeSource: ROUTE_SONDE('') })
+    const bonne = await jouerPurge({ racine, routeSource: ROUTE_SONDE("if (a && String(a.slug).startsWith('supprime-')) a = null") })
+    if (!mauvaise.echecs.some((e) => e.startsWith(SCENARIOS_PURGE[0].nom))) echecs.push('détecteur aveugle : une route qui ne filtre pas les comptes purgés passe le scénario du compte purgé')
+    if (bonne.echecs.length) echecs.push(`détecteur trop strict : une route qui écarte les comptes purgés échoue (${court(bonne.echecs[0], 120)})`)
+    sondes = `mutation : route sans exclusion → ${mauvaise.echecs.length} scénario(s) rouge(s), vue ; route avec exclusion → verte`
+  } catch (e) { echecs.push(`sondes du détecteur : ${premiereLigne(e)}`) }
+  if (!echecs.length) faits.push(`${rel(path.join(racine, 'app', 'api', 'leads', 'route.ts'))} contre un faux Supabase (0051 simulée) : ${r.faits.join(', ')} ; ${sondes} ; sur un 404, le site montre le repli (FS-4)`)
+  return { ok: !echecs.length, echecs, faits }
+}
+
 // ── Témoin ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-/** .orchestre/travail/formulaire-site-qa/temoin/ : lib/slugRedirect.ts du dépôt + les fixtures du témoin, suffixe .temoin retiré. */
+/** .orchestre/travail/formulaire-site-qa/temoin/ : lib/slugRedirect.ts, lib/urls.ts et maquettes/modeles/ du dépôt + les fixtures du témoin, suffixe .temoin retiré. */
 export function construireTemoin() {
-  const d = preparerTemoin(JUGE, { copier: ['lib/slugRedirect.ts'] })
+  const d = preparerTemoin(JUGE, { copier: ['lib/slugRedirect.ts', 'lib/urls.ts', 'maquettes/modeles'] })
   let n = 0
   for (const f of listerFichiers(d)) if (f.endsWith('.temoin')) { fs.renameSync(path.join(d, f), path.join(d, f.slice(0, -'.temoin'.length))); n++ }
   if (n < 2) throw new Error(`témoin incomplet : ${n} fichier(s) .temoin dans ${rel(path.join(FIXTURES, 'temoins', JUGE))}`)
@@ -967,27 +1367,46 @@ async function reel(s) {
 
 // ── Le juge ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
 async function principal() {
-  const o = lireOptionsOuQuitter(process.argv.slice(2))
+  const o = lireOptionsOuQuitter(process.argv.slice(2), { connues: ['critere'] })
   if (o.positionnels.length) { console.error(`✗ argument(s) inattendu(s) : ${o.positionnels.join(' ')}`); process.exit(2) }
+  const ids = o.valeur('critere') === undefined ? IDS : o.liste('critere')
+  if (o.drapeau('critere') || !ids.length || ids.some((x) => !IDS.includes(x))) { console.error(`✗ --critere attend des critères de ${IDS.join(', ')} (ex. --critere=FS-6,FS-11)`); process.exit(2) }
+  if (o.reel && ids !== IDS) { console.error('✗ --critere ne se combine pas avec --reel'); process.exit(2) }
   if (o.reel) {
     const s = creerSortie(JUGE, IDS_REEL, { racine: o.racine })
     s.note(`production : ${PROD} — compte d'essai, ménage dans un finally`)
     await s.executer(reel)
     return
   }
-  const s = creerSortie(JUGE, IDS, { racine: o.racine, temoin: o.temoin })
-  await s.executer(async () => {
+  // --critere : la sortie ne déclare que les critères choisis ; les verdicts des autres vont dans une sortie « ombre » jamais
+  // imprimée (enEchec, evalue restent justes), et le travail qui ne sert qu'à eux est sauté.
+  const choisis = new Set(ids)
+  const veut = (...xs) => xs.some((x) => choisis.has(x))
+  const s0 = creerSortie(JUGE, ids, { racine: o.racine, temoin: o.temoin })
+  const ombre = creerSortie(JUGE, IDS, { racine: o.racine, temoin: o.temoin })
+  const vers = (id) => (choisis.has(id) ? s0 : ombre)
+  const s = {
+    ...s0,
+    passe: (id, d) => vers(id).passe(id, d),
+    echoue: (id, d) => vers(id).echoue(id, d),
+    verdict: (id, ok, a, b) => vers(id).verdict(id, ok, a, b),
+    resultat: (id, r) => vers(id).resultat(id, r),
+    evalue: (id) => vers(id).evalue(id),
+    enEchec: (id) => vers(id).enEchec(id),
+  }
+  if (ids !== IDS) s0.note(`--critere : seulement ${ids.join(', ')} (les autres critères ne sont pas jugés)`)
+  await s0.executer(async () => {
     let racineFS = o.racine
     if (o.temoin) {
       racineFS = construireTemoin()
       s.note(`témoin : FS-1 à FS-7 sur ${rel(racineFS)} (générateur --source et route.ts de scripts/fixtures/025/temoins/${JUGE}/, lib/slugRedirect.ts du dépôt) ; T1 et T2 sur ${rel(o.racine)}`)
     }
     const commande = lireCommande()
-    // FS-1
-    const g = jugerGeneration({ racine: racineFS, commande })
-    s.resultat('FS-1', g)
+    // FS-1 (et le site qu'il génère, lu par FS-2, FS-3, FS-4, FS-5, FS-7, FS-8)
+    const g = veut('FS-1', 'FS-2', 'FS-3', 'FS-4', 'FS-5', 'FS-7', 'FS-8') ? jugerGeneration({ racine: racineFS, commande }) : { site: null }
+    if (veut('FS-1')) s.resultat('FS-1', g)
     // FS-2, FS-3, FS-4
-    if (!g.site) for (const k of ['FS-2', 'FS-3', 'FS-4']) s.echoue(k, 'pas de site généré à juger (FS-1)')
+    if (!veut('FS-2', 'FS-3', 'FS-4')) { /* non demandés (--critere) */ } else if (!g.site) for (const k of ['FS-2', 'FS-3', 'FS-4']) s.echoue(k, 'pas de site généré à juger (FS-1)')
     else {
       const st = jugerFormulaireStatique(g.site)
       const nv = await jugerNavigateur({ site: g.site, commande })
@@ -997,20 +1416,28 @@ async function principal() {
       s.verdict('FS-4', nv.fs4.ok, `${nv.fs4.faits.length} issues sur ${SCENARIOS.length * MOTEURS.length} — ${nv.fs4.resume}`, nv.fs4.echecs.join(' ; '))
     }
     // FS-5
-    const p = await jugerPlateau({ racine: racineFS, siteComplet: g.site, commande })
-    s.verdict('FS-5', p.ok, p.faits.join(' ; '), p.echecs.join(' ; '))
+    if (veut('FS-5')) {
+      const p = await jugerPlateau({ racine: racineFS, siteComplet: g.site, commande })
+      s.verdict('FS-5', p.ok, p.faits.join(' ; '), p.echecs.join(' ; '))
+    }
     // FS-6
-    const route = path.join(racineFS, 'app', 'api', 'leads', 'route.ts')
-    const r6 = await analyserRoute(lireOuNull(route)?.toString('utf8'), { slugRedirect: lireOuNull(path.join(racineFS, 'lib', 'slugRedirect.ts'))?.toString('utf8') ?? '' })
-    s.verdict('FS-6', r6.ok, `${rel(route)} : ${r6.faits.join(', ')}`, `${rel(route)} : ${r6.echecs.join(' ; ')}`)
+    if (veut('FS-6')) {
+      const route = path.join(racineFS, 'app', 'api', 'leads', 'route.ts')
+      const r6 = await analyserRoute(lireOuNull(route)?.toString('utf8'), { slugRedirect: lireOuNull(path.join(racineFS, 'lib', 'slugRedirect.ts'))?.toString('utf8') ?? '' })
+      s.verdict('FS-6', r6.ok, `${rel(route)} : ${r6.faits.join(', ')}`, `${rel(route)} : ${r6.echecs.join(' ; ')}`)
+    }
     // FS-7
-    if (!g.site) s.echoue('FS-7', 'pas de site généré à juger (FS-1)')
+    if (!veut('FS-7')) { /* non demandé (--critere) */ } else if (!g.site) s.echoue('FS-7', 'pas de site généré à juger (FS-1)')
     else { const r7 = jugerPhotos({ site: g.site, source: COMMANDE_EXEMPLE }); s.verdict('FS-7', r7.ok, r7.faits.join(' ; '), r7.echecs.join(' ; ')) }
+    // FS-8 à FS-11 (relectures à froid du 24/09)
+    if (!veut('FS-8')) { /* non demandé (--critere) */ } else if (!g.site) s.echoue('FS-8', 'pas de site généré à juger (FS-1)')
+    else { const r8 = jugerAdresse({ racine: racineFS, site: g.site, commande }); s.verdict('FS-8', r8.ok, r8.faits.join(' ; '), r8.echecs.join(' ; ')) }
+    if (veut('FS-9')) { const r9 = await jugerLibellesMetier({ racine: racineFS }); s.verdict('FS-9', r9.ok, r9.faits.join(' ; '), r9.echecs.join(' ; ')) }
+    if (veut('FS-10')) { const r10 = jugerReplisSansCoordonnees({ racine: racineFS }); s.verdict('FS-10', r10.ok, r10.faits.join(' ; '), r10.echecs.join(' ; ')) }
+    if (veut('FS-11')) { const r11 = await jugerComptePurge({ racine: racineFS }); s.verdict('FS-11', r11.ok, r11.faits.join(' ; '), r11.echecs.join(' ; ')) }
     // T1, T2
-    const r1 = t1({ juge: JUGE, racine: o.racine })
-    s.resultat('T1', r1); for (const f of r1.faits) s.note(`T1 : ${f}`)
-    const r2 = t2({ racine: o.racine })
-    s.resultat('T2', r2); for (const f of r2.faits) s.note(`T2 : ${f}`)
+    if (veut('T1')) { const r1 = t1({ juge: JUGE, racine: o.racine }); s.resultat('T1', r1); for (const f of r1.faits) s.note(`T1 : ${f}`) }
+    if (veut('T2')) { const r2 = t2({ racine: o.racine }); s.resultat('T2', r2); for (const f of r2.faits) s.note(`T2 : ${f}`) }
   })
 }
 const pareil = (a, b) => (process.platform === 'win32' ? a.toLowerCase() === b.toLowerCase() : a === b)

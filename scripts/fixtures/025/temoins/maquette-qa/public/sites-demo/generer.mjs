@@ -3,8 +3,10 @@
 // .orchestre/travail/maquette-qa/temoin/ (preparerTemoin, scripts/fixtures/025/commun.mjs) avec le modèle
 // maquettes/modeles/menuisier/contenu.json et le faux scripts/maquette-capturer.mjs de ce dossier, plus, copiés du dépôt, les
 // site.json des démos, les attributions de la démo nommée par le modèle et ses photos. Il simule l'état « après » de la fiche
-// 025-02 pour prouver que MQ-1 à MQ-8 peuvent passer. Ce n'est pas une implémentation de référence : le vrai mode --maquette vit
-// dans le vrai generer.mjs, au format v2, avec le kit.
+// 025-02 pour prouver que MQ-1 à MQ-8 peuvent passer, et de la fiche 025-14 pour MQ-10 et MQ-11 : aucun libellé écrit en dur
+// pour un métier (tout ce qui nomme le métier vient du modèle), et le crédit de la photo du haut écrit dans le haut de la page,
+// en légende de la photo (la capture du haut le porte donc). Ce n'est pas une implémentation de référence : le vrai mode
+// --maquette vit dans le vrai generer.mjs, au format v2, avec le kit.
 //
 // node public/sites-demo/generer.mjs --maquette=<maquette.json> --sortie=<dossier>
 //   refuse (code 2, rien d'écrit) une sortie sous <racine>/public ou dans <racine> hors de <racine>/.orchestre/travail/ ;
@@ -54,6 +56,8 @@ for (const { a } of photos) {
   parAuteur.set(cle, true)
 }
 const credits = [...parAuteur.keys()].join(', ')
+// le crédit de la photo du haut, dans le haut : une légende posée sur la photo (MQ-11, fiche 025-14)
+const creditHeros = `${heros.a.auteur} (${heros.a.licence}${/^oui(?![\p{L}])/iu.test(String(heros.a.modifiee || '')) ? ', modifiée' : ''})`
 const img = ({ f, a }, classe, eager = false) => `<img class="${classe}" src="images/${f}" alt="${esc(a.alt || a.legende || '')}" width="${a.largeur}" height="${a.hauteur}"${eager ? '' : ' loading="lazy"'}>`
 
 const html = `<!doctype html>
@@ -69,10 +73,11 @@ const html = `<!doctype html>
 <body>
 <header class="hero">
 ${img(heros, 'hero__photo', true)}
+<p class="hero__credit">Photos d’illustration : ${esc(creditHeros)}</p>
 <div class="hero__texte"><p class="surtitre">Maquette de la page d’accueil</p><h1>${texte(modele.h1)}</h1><p>${texte(modele.chapeau)}</p></div>
 </header>
 <main>
-<section class="plateau" aria-label="L’atelier en bref">
+<section class="plateau" aria-label="L’entreprise en bref">
 <h2>Ce que vous direz de vous</h2>
 <div class="plateau__haut">
 <div class="zone"><p class="zone__titre">Votre phrase, signée</p><blockquote class="zone__vide">À compléter avec vous</blockquote></div>
@@ -98,6 +103,7 @@ const css = `*{box-sizing:border-box}html,body{margin:0}body{font:17px/1.55 Geor
 h1,h2,h3{font-family:system-ui,"Segoe UI",sans-serif;line-height:1.15;margin:0 0 .6em}
 .hero{position:relative;height:88vh;min-height:420px;overflow:hidden;background:#1b140e}
 .hero__photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.62)}
+.hero__credit{position:absolute;top:12px;right:12px;z-index:2;margin:0;max-width:calc(100% - 24px);padding:4px 10px;border-radius:4px;background:rgba(21,16,11,.82);color:#fff8ee;font:500 13px/1.35 system-ui,sans-serif}
 .hero__texte{position:absolute;left:0;right:0;bottom:0;padding:32px 20px 48px;color:#fff8ee;max-width:760px}
 .hero__texte h1{font-size:clamp(34px,6vw,64px)}.surtitre{text-transform:uppercase;letter-spacing:.12em;font:600 13px system-ui,sans-serif;margin:0 0 12px}
 section{padding:56px 20px;max-width:1100px;margin:0 auto}

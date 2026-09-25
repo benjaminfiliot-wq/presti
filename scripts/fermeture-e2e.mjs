@@ -216,6 +216,7 @@ if (FLAGS) {
   //   ['note', pourquoi]         → il ne ferme RIEN, et il est baissé : il documente une absence.
   //   ['mort', pourquoi]         → levé, plus personne ne le lit : à retirer de lib/flags.
   const CARTE = {
+    'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/site/generate/route.ts'],
     'codeEmail': ['route', '/api/auth/code', 'POST', 'app/api/auth/code/route.ts'],
     'pushWeb': ['route', '/api/push/abonner', 'POST', 'app/api/push/abonner/route.ts'],
     // `direction` ne se lit pas dans chaque route : la garde partagee le porte pour toutes.

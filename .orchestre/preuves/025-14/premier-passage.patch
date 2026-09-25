@@ -1,0 +1,195 @@
+diff --git a/maquettes/modeles/couvreur/contenu.json b/maquettes/modeles/couvreur/contenu.json
+index 55feff6..93de613 100644
+--- a/maquettes/modeles/couvreur/contenu.json
++++ b/maquettes/modeles/couvreur/contenu.json
+@@ -1,5 +1,11 @@
+ {
+   "metier": "couvreur",
++  "libelles": {
++    "sur": "Couverture",
++    "alt_heros": "Détail d’un travail de couverture",
++    "alt_atelier": "Tuiles et éléments de toiture",
++    "reperes": ["Repère des toitures", "Repère des ouvrages", "Repère de proximité"]
++  },
+   "pages": {
+     "/": {
+       "type": "accueil",
+diff --git a/maquettes/modeles/electricien/contenu.json b/maquettes/modeles/electricien/contenu.json
+index ec24036..c56373b 100644
+--- a/maquettes/modeles/electricien/contenu.json
++++ b/maquettes/modeles/electricien/contenu.json
+@@ -1,5 +1,11 @@
+ {
+   "metier": "electricien",
++  "libelles": {
++    "sur": "Électricité",
++    "alt_heros": "Détail d’une installation électrique",
++    "alt_atelier": "Tableau et circuits électriques",
++    "reperes": ["Repère des circuits", "Repère des installations", "Repère de proximité"]
++  },
+   "pages": {
+     "/": {
+       "type": "accueil",
+diff --git a/maquettes/modeles/menuisier/contenu.json b/maquettes/modeles/menuisier/contenu.json
+index 8dc6a78..ab793fc 100644
+--- a/maquettes/modeles/menuisier/contenu.json
++++ b/maquettes/modeles/menuisier/contenu.json
+@@ -1,5 +1,11 @@
+ {
+   "metier": "menuisier",
++  "libelles": {
++    "sur": "Menuiserie",
++    "alt_heros": "Détail d’un ouvrage de menuiserie",
++    "alt_atelier": "Réalisation en bois dans l’atelier",
++    "reperes": ["Repère de l’atelier", "Repère des ouvrages", "Repère de proximité"]
++  },
+   "pages": {
+     "/": {
+       "type": "accueil",
+diff --git a/maquettes/modeles/plombier/contenu.json b/maquettes/modeles/plombier/contenu.json
+index 382589a..9b091fd 100644
+--- a/maquettes/modeles/plombier/contenu.json
++++ b/maquettes/modeles/plombier/contenu.json
+@@ -1,5 +1,11 @@
+ {
+   "metier": "plombier",
++  "libelles": {
++    "sur": "Plomberie",
++    "alt_heros": "Détail d’une installation de plomberie",
++    "alt_atelier": "Équipement sanitaire et robinetterie",
++    "reperes": ["Repère des installations", "Repère des équipements", "Repère de proximité"]
++  },
+   "pages": {
+     "/": {
+       "type": "accueil",
+diff --git a/public/sites-demo/_kit/maquette.css b/public/sites-demo/_kit/maquette.css
+index 77f7076..eb7b763 100644
+--- a/public/sites-demo/_kit/maquette.css
++++ b/public/sites-demo/_kit/maquette.css
+@@ -13,8 +13,9 @@ h1,h2,h3{font-family:Georgia,serif;font-weight:normal}
+ h1{font-size:clamp(3.2rem,6vw,6.4rem);line-height:1.05;letter-spacing:-.055em;margin:1.2rem 0}
+ h1 span{display:block;color:#976647}
+ .intro{font-size:1.2rem;line-height:1.6;max-width:31rem}
+-.hero__image{min-height:430px;overflow:hidden}
+-.hero__image img{width:100%;height:100%;object-fit:cover;display:block}
++.hero__image{position:relative;min-height:430px;overflow:hidden;margin:0}
++.hero__image img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
++.hero__credit{position:absolute;z-index:1;right:1rem;bottom:1rem;max-width:calc(100% - 2rem);padding:.45rem .65rem;background:#20251f;color:#fff;font-size:11px;line-height:1.35;opacity:1}
+ .lien{align-self:flex-start;text-decoration:none;border-bottom:1px solid var(--accent);padding:.8rem 0;margin-top:1rem}
+ .section{padding:clamp(3rem,7vw,7rem) clamp(1.3rem,5vw,5rem)}
+ .section--claire{background:#f9f7f1}
+diff --git a/public/sites-demo/generer.mjs b/public/sites-demo/generer.mjs
+index 821837f..acb23b9 100644
+--- a/public/sites-demo/generer.mjs
++++ b/public/sites-demo/generer.mjs
+@@ -142,7 +142,7 @@ function gardeFousAccueil(html, ou, { site, tel, chapeau, source = false, source
+   if (chapeau.length > 90 || nbMots(chapeau) > 20) throw new Error(`${ou} : chapeau de ${chapeau.length} signes et ${nbMots(chapeau)} mots (90 et 20 au plus)`)
+   const texte = texteDe(corps)
+   for (const interdit of [site.siren, site.decennale?.numero, site.decennale?.assureur, 'fictif'].filter(Boolean)) if (texte.includes(interdit)) throw new Error(`${ou} : « ${interdit} » hors du pied de page (SIREN et assureur : pied de page et mentions légales seulement)`)
+-  const liensTel = (corps.match(/href="tel:/g) || []).length, affiches = texte.split(telAffiche(tel)).length - 1
++  const liensTel = (corps.match(/href="tel:/g) || []).length, affiches = tel ? texte.split(telAffiche(tel)).length - 1 : 0
+   if (liensTel > (source ? 3 : 2) || affiches > (source ? 3 : 2)) throw new Error(`${ou} : le téléphone revient ${Math.max(liensTel, affiches)} fois hors du pied de page`)
+   if (!/<section class="plateau\b/.test(corps)) throw new Error(`${ou} : le plateau « une phrase et trois chiffres » manque sous le héros`)
+   const apresHero = corps.slice(corps.indexOf(hero) + hero.length).trimStart()
+@@ -276,6 +276,9 @@ function liensIndex(html) {
+ }
+ 
+ function commandeVersSite(commande, contenu) {
++  const fichierUrls = fs.readFileSync(path.join(ICI, '..', '..', 'lib', 'urls.ts'), 'utf8')
++  const basePresti = /export\s+const\s+BASE_PRESTI\s*=\s*['"](https:\/\/[^'"]+)['"]/.exec(fichierUrls)?.[1]
++  if (!basePresti) throw new Error('BASE_PRESTI introuvable dans lib/urls.ts')
+   const artisan = commande.matiere?.artisan
+   const pages = Object.entries(contenu.pages || {}).map(([chemin, page]) => ({
+     chemin, type: page.type || (chemin === '/' ? 'accueil' : /mentions-legales|confidentialite/.test(chemin) ? 'legal' : 'commune'),
+@@ -287,7 +290,7 @@ function commandeVersSite(commande, contenu) {
+     siren: commande.matiere?.siren, decennale: commande.matiere?.decennale,
+     communes: commande.communes, metiers_secondaires: commande.metiers_secondaires || [],
+     demo: false, pages,
+-    url_base: commande.domaine ? `https://${commande.domaine}` : `https://presti.fr/site/${commande.slug}`,
++    url_base: commande.domaine ? `https://${commande.domaine}` : `${basePresti}/site/${commande.slug}`,
+     ...(contenu.demo_v16?.includes('lestraque') ? { da: 'lestraque' } : {}),
+     devis: commande.devis, artisan,
+     plateau: { chiffres: artisan?.chiffres ?? null },
+@@ -483,7 +486,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
+ <header class="nav${navClaire ? ' nav--claire' : ''}"><div class="conteneur nav__inner">
+ <a class="nav__marque" href="${rel || './'}">${marque}<span>${esc(site.nom)}</span></a>
+ <nav class="nav__liens" aria-label="Sections">${liens}</nav>
+-<div class="nav__droite"><a class="nav__tel" href="${telHref(tel)}">${telAffiche(tel)}</a>${site.devis ? `<a class="nav__devis" href="${versContact}">Devis</a>` : ''}<button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="panneau"><span></span><span></span></button></div>
++<div class="nav__droite">${tel ? `<a class="nav__tel" href="${telHref(tel)}">${telAffiche(tel)}</a>` : ''}${site.devis ? `<a class="nav__devis" href="${versContact}">Devis</a>` : ''}<button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="panneau"><span></span><span></span></button></div>
+ </div></header>
+ <div class="voile" aria-hidden="true"></div>
+ <div class="panneau" id="panneau">
+@@ -499,7 +502,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
+     return `</main>
+ <footer class="pied${nuit ? ' pied--nuit' : ''}"><div class="conteneur">
+ <div class="pied__grille">
+-<div><div class="nav__marque" style="margin-bottom:.75rem">${marque}<span>${esc(site.nom)}</span></div><p>${esc(da.label)} à ${esc(ville)} · <a href="${telHref(tel)}">${telAffiche(tel)}</a></p><p>SIREN ${esc(site.siren)} · Assurance décennale ${esc(site.decennale.assureur)} n° ${esc(site.decennale.numero)}</p></div>
++<div><div class="nav__marque" style="margin-bottom:.75rem">${marque}<span>${esc(site.nom)}</span></div><p>${esc(da.label)} à ${esc(ville)}${tel ? ` · <a href="${telHref(tel)}">${telAffiche(tel)}</a>` : ''}</p><p>SIREN ${esc(site.siren)} · Assurance décennale ${esc(site.decennale.assureur)} n° ${esc(site.decennale.numero)}</p></div>
+ <div><p class="pied__titre">Communes servies</p><ul>${communes.map((c) => { const p = pageDe(c); return `<li>${p ? `<a href="${rel}${p.chemin.slice(1)}">${esc(c)}</a>` : esc(c)}</li>` }).join('')}</ul></div>
+ <div><p class="pied__titre">Le site</p><ul><li><a href="${rel || './'}">Accueil</a></li>${pages.filter((p) => p.type === 'metier').map((p) => `<li><a href="${rel}${p.chemin.slice(1)}">${esc(p.cible)}</a></li>`).join('')}<li><a href="${rel}mentions-legales/">Mentions légales</a></li><li><a href="${rel}confidentialite/">Confidentialité</a></li></ul></div>
+ </div>
+@@ -607,15 +610,21 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
+     const dv = site.devis
+     if (!dv) return ''
+     const optionsDe = (l, choisi) => l.map((x) => `<option${x === choisi ? ' selected' : ''}>${esc(x)}</option>`).join('')
++    const messageDevis = options.source ? (dv.message || contenu.devis?.message || contenu.libelles?.devis?.message || 'Votre projet, en quelques mots') : 'La pièce, l’usage, le bois'
++    const repli = !options.source ? '' : tel && site.email
++      ? `L’envoi n’a pas abouti. Appelez-moi au <a style="display:inline-block" href="${esc(telHref(tel))}">${esc(telAffiche(tel))}</a> ou écrivez-moi à <a style="display:inline-block" href="mailto:${esc(site.email)}">${esc(site.email)}</a>.`
++      : tel ? `L’envoi n’a pas abouti. Appelez-moi au <a style="display:inline-block" href="${esc(telHref(tel))}">${esc(telAffiche(tel))}</a>.`
++      : site.email ? `L’envoi n’a pas abouti. Écrivez-moi à <a style="display:inline-block" href="mailto:${esc(site.email)}">${esc(site.email)}</a>.`
++      : 'L’envoi n’a pas abouti. Réessayez dans un instant.'
+     return `<div class="devis"><form class="devis__form"${site.demo ? ' data-demo' : ` data-slug="${esc(site.slug)}"`} method="post" action="#contact" aria-label="Demande de devis">`
+       + `<div class="devis__champ"><label for="devis-projet">Votre projet</label><select id="devis-projet" name="projet" required><option value="">Choisir</option>${optionsDe(dv.projets)}</select></div>`
+       + `<div class="devis__champ"><label for="devis-commune">Commune</label><select id="devis-commune" name="commune">${optionsDe([...communes, 'Autre commune'], cible)}</select></div>`
+       + `<div class="devis__champ"><label for="devis-delai">Quand</label><select id="devis-delai" name="delai">${optionsDe(dv.delais)}</select></div>`
+-      + `<div class="devis__champ devis__champ--large"><label for="devis-message">La pièce, l’usage, le bois</label><textarea id="devis-message" name="message" rows="3"></textarea></div>`
++      + `<div class="devis__champ devis__champ--large"><label for="devis-message">${esc(messageDevis)}</label><textarea id="devis-message" name="message" rows="3"></textarea></div>`
+       + `<div class="devis__champ devis__champ--large"><label for="devis-contact">Téléphone ou e-mail</label><input id="devis-contact" name="contact" type="text" autocomplete="tel" required></div>`
+       + (options.source ? '<div style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden" aria-hidden="true"><label for="devis-website">Ne pas remplir</label><input id="devis-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>' : '')
+       + `<div class="devis__envoi"><button class="bouton" type="submit">Envoyer ma demande <span class="bouton__cercle">${FLECHE}</span></button>${site.demo ? '<p class="devis__note">Démonstration : rien n’est envoyé.</p>' : ''}</div></form>`
+-      + (options.source ? `<div class="devis__echec" hidden tabindex="-1" role="alert">L’envoi n’a pas abouti. Appelez-moi au <a style="display:inline-block" href="${esc(telHref(site.telephone))}">${esc(telAffiche(site.telephone))}</a> ou écrivez-moi à <a style="display:inline-block" href="mailto:${esc(site.email)}">${esc(site.email)}</a>.</div>` : '')
++      + (options.source ? `<div class="devis__echec" hidden tabindex="-1" role="alert">${repli}</div>` : '')
+       + merciDevis(dv, cible)
+   }
+   // Après l'envoi : ce qui a été demandé (kit.js le recopie depuis le formulaire, sans rien stocker), puis la suite du chantier
+@@ -639,7 +648,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
+     // une info peut tenir sur deux lignes (v2) : « Lundi–vendredi, 8 h–18 h » puis « Intervention sur rendez-vous » — collées
+     // dans le même paragraphe, elles se lisaient d'une traite (juge du 14/09)
+     const infosHtml = `<div class="bande__infos">${infos.map((x) => `<div><strong>${esc(x.k)}</strong> ${x.href ? `<a href="${x.href}">${esc(x.v)}</a>` : `<span class="bande__ligne">${esc(x.v)}</span>`}${x.v2 ? ` <span class="bande__ligne">${esc(x.v2)}</span>` : ''}</div>`).join('')}</div>`
+-    const appel = form ? `<p class="bande__tel">Ou par téléphone : <a href="${telHref(tel)}">${telAffiche(tel)}</a></p>` : `<div class="hero__actions" style="margin-top:2rem"><a class="bouton" href="${telHref(tel)}">${telAffiche(tel)} <span class="bouton__cercle">${FLECHE}</span></a></div>`
++    const appel = !tel ? '' : form ? `<p class="bande__tel">Ou par téléphone : <a href="${telHref(tel)}">${telAffiche(tel)}</a></p>` : `<div class="hero__actions" style="margin-top:2rem"><a class="bouton" href="${telHref(tel)}">${telAffiche(tel)} <span class="bouton__cercle">${FLECHE}</span></a></div>`
+     // au téléphone, le contact est haut (≈ 2 écrans) : une photo en largeur y est affichée à ≈ 2 fois la largeur de l'écran
+     const media = fond ? `<div class="contact__media" aria-hidden="true">${fond.hero ? photoHeros(fond.a, fond.m, rel, { lazy: true }) : photo(fond.a, rel, { sizes: '(max-width: 899px) 200vw, 100vw', position: fond.position })}</div>` : ''
+     const classes = `contact${fond ? ' contact--photo' : ''}${fond?.matiere ? ' contact--matiere' : ''}${fond && intro.titre.length > 26 ? ' contact--long' : ''}`
+@@ -1002,6 +1011,9 @@ function genererMaquette(fichier, valeurSortie) {
+   const contenu = JSON.parse(fs.readFileSync(path.join(racine, 'maquettes', 'modeles', entree.modele, 'contenu.json'), 'utf8'))
+   const page = contenu.pages?.['/']
+   if (!page?.h1Ligne || !page?.sections?.length) throw new Error('modèle : accueil v2 incomplet')
++  const libelles = contenu.libelles || {}
++  for (const cle of ['sur', 'alt_heros', 'alt_atelier']) if (typeof libelles[cle] !== 'string' || !libelles[cle].trim()) throw new Error(`modèle ${entree.modele} : libelles.${cle} manque`)
++  if (!Array.isArray(libelles.reperes) || libelles.reperes.length !== 3 || libelles.reperes.some((titre) => typeof titre !== 'string' || !titre.trim())) throw new Error(`modèle ${entree.modele} : libelles.reperes exige trois titres`)
+   const remplir = (texte) => String(texte ?? '').replaceAll('{entreprise}', entree.entreprise).replaceAll('{ville}', entree.ville)
+   const e = (texte) => esc(remplir(texte))
+   const demo = contenu.photos?.demo
+@@ -1014,16 +1026,18 @@ function genererMaquette(fichier, valeurSortie) {
+     return { nom, attribution: a, source: path.join(ICI, demo, 'images', nom) }
+   })
+   const zone = (titre) => `<div class="zone"><small>${titre}</small><span class="vide">À compléter avec vous</span></div>`
+-  const chiffres = ['Repère de l’atelier', 'Repère des ouvrages', 'Repère de proximité'].map((titre) => `<div class="case"><small>${titre}</small><span class="vide">À compléter avec vous</span></div>`).join('')
++  const chiffres = libelles.reperes.map((titre) => `<div class="case"><small>${e(titre)}</small><span class="vide">À compléter avec vous</span></div>`).join('')
+   const credit = [...new Set(photos.map(({ attribution: a }) => `${a.auteur} (${a.licence})${/^oui\b/i.test(String(a.modifiee || '')) ? ' — photo modifiée' : ''}`))].join(' · ')
++  const photoHeros = photos[0].attribution
++  const creditHeros = `${photoHeros.auteur} · ${photoHeros.licence}${/^oui\b/i.test(String(photoHeros.modifiee || '')) ? ' · photo modifiée' : ''}`
+   const section = (genre) => page.sections.find((s) => s.genre === genre)
+   const prestations = section('prestations')
+   const contact = section('contact')
+   const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>${e(page.title)}</title><meta name="description" content="${e(page.description)}"><link rel="stylesheet" href="maquette.css"></head><body>
+ <header class="bandeau"><a class="marque" href="/">${e(entree.entreprise)}</a><a class="nav" href="#contact">Parlons de votre projet</a></header>
+-<main><section class="hero"><div class="hero__texte"><span class="sur">${e(entree.metier)} · ${e(entree.ville)}</span><h1>${e(page.h1)}<span>${e(page.h1Ligne)}</span></h1><p class="intro">${e(page.chapeau)}</p><a class="lien" href="#presentation">Découvrir la proposition ↓</a></div><div class="hero__image"><img src="images/${photos[0].nom}" alt="Illustration du travail du bois"></div></section>
++<main><section class="hero"><div class="hero__texte"><span class="sur">${e(entree.metier)} · ${e(entree.ville)}</span><h1>${e(page.h1)}<span>${e(page.h1Ligne)}</span></h1><p class="intro">${e(page.chapeau)}</p><a class="lien" href="#presentation">Découvrir la proposition ↓</a></div><figure class="hero__image"><img src="images/${photos[0].nom}" alt="${e(libelles.alt_heros)}"><figcaption class="hero__credit">Photo : ${esc(creditHeros)}</figcaption></figure></section>
+ <section class="section section--sombre" aria-label="Éléments à préciser"><h2>Une histoire à écrire ensemble</h2><p>Les repères de l’entreprise seront choisis et vérifiés avec vous.</p><div class="preuve">${chiffres}</div></section>
+-<section class="section section--claire atelier" id="presentation"><div><span class="sur">Menuiserie</span><h2>${e(prestations?.h2 || 'La matière et les formes')}</h2><p>${e(prestations?.blocs?.find((b) => b.type === 'p')?.texte)}</p><div class="zones">${zone('Votre parole')}${zone('Votre parcours')}</div></div><img src="images/${photos[1]?.nom || photos[0].nom}" alt="Illustration de menuiserie"></section>
++<section class="section section--claire atelier" id="presentation"><div><span class="sur">${e(libelles.sur)}</span><h2>${e(prestations?.h2 || 'Présentation du métier')}</h2><p>${e(prestations?.blocs?.find((b) => b.type === 'p')?.texte)}</p><div class="zones">${zone('Votre parole')}${zone('Votre parcours')}</div></div><img src="images/${photos[1]?.nom || photos[0].nom}" alt="${e(libelles.alt_atelier)}"></section>
+ <section class="section" id="contact"><h2>${e(contact?.h2 || 'Parlons de votre projet')}</h2><p>${e(contact?.blocs?.find((b) => b.type === 'p')?.texte)}</p><p>Les détails de cette page seront définis avec vous.</p></section></main>
+ <footer class="pied"><p>Maquette privée préparée par Presti pour ${e(entree.entreprise)}. Rien n’est publié.</p><p>Photos d’illustration : ${esc(credit)}</p></footer></body></html>\n`
+   // Tous les contrôles ci-dessus précèdent la première écriture.

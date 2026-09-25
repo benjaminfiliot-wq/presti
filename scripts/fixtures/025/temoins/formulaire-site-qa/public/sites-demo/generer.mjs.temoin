@@ -15,9 +15,16 @@
 //   site.js     envoi JSON {slug, contact, nom_prospect, message, website} à /api/leads ; 2xx → « Demande reçue » ; autre statut
 //               ou erreur réseau → le repli ;
 //   site.json   slug, nom, téléphone, e-mail, communes, artisan, plateau (d'où le repli tire tel: et mailto:) ;
-//   images/     les fichiers de <source>/photos/, et eux seuls (FS-7) ; attributions.json et styles.css.
+//   images/     les fichiers de <source>/photos/, et eux seuls (FS-7) ; attributions.json et styles.css ;
+//   sitemap.xml, robots.txt, et dans chaque page la canonique, og:url, og:image et le JSON-LD : tous sous l'adresse de
+//   lib/urls.ts (BASE_PRESTI + /site/<slug>) quand la commande n'a pas de domaine (FS-8, relecture du 24/09).
+// Relectures à froid du 24/09 : aucun libellé du formulaire n'est celui d'un métier (FS-9 : « Votre projet en quelques mots »
+// convient à tous) ; le repli ne cite que les coordonnées que la commande donne, et dit sinon de réessayer (FS-10).
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 
 const args = process.argv.slice(2)
 const valeur = (nom) => args.find((a) => a.startsWith(`--${nom}=`))?.slice(nom.length + 3)
@@ -62,8 +69,14 @@ try {
   const photo = (p, sizes = '(max-width: 700px) 100vw, 33vw') => `<picture><source type="image/avif" srcset="${srcset(p, 'avif')}" sizes="${sizes}"><img src="images/${p.base}-${[...p.largeurs].sort((x, y) => x - y).at(-1)}.webp" srcset="${srcset(p, 'webp')}" sizes="${sizes}" alt="${esc(p.alt || p.legende)}" width="${p.largeur}" height="${p.hauteur}" loading="lazy"></picture>`
 
   const ville = cmd.communes[0]
-  const email = cmd.email
-  const site = { slug: cmd.slug, nom: cmd.nom, metier: cmd.metier, telephone: cmd.telephone, email, communes: cmd.communes, artisan: a, plateau: a.chiffres ? { chiffres: a.chiffres } : null }
+  const email = typeof cmd.email === 'string' && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cmd.email.trim()) ? cmd.email.trim() : null
+  const telephone = typeof cmd.telephone === 'string' && cmd.telephone.replace(/\D/g, '').length >= 9 ? cmd.telephone : null
+  // l'adresse publique : le domaine de la commande, sinon celle de lib/urls.ts (BASE_PRESTI, mode presti : /site/<slug>)
+  const urls = fs.readFileSync(path.join(RACINE, 'lib', 'urls.ts'), 'utf8')
+  const basePresti = (/export\s+const\s+BASE_PRESTI\s*=\s*'([^']+)'/.exec(urls) || [])[1]
+  if (!cmd.domaine && !basePresti) throw new Error('lib/urls.ts : BASE_PRESTI illisible')
+  const URL_BASE = cmd.domaine ? `https://${cmd.domaine}` : `${basePresti.replace(/\/$/, '')}/site/${cmd.slug}`
+  const site = { slug: cmd.slug, nom: cmd.nom, metier: cmd.metier, ...(telephone ? { telephone } : {}), ...(email ? { email } : {}), communes: cmd.communes, artisan: a, plateau: a.chiffres ? { chiffres: a.chiffres } : null, url_base: URL_BASE }
   const metier = cmd.metier.charAt(0).toUpperCase() + cmd.metier.slice(1)
   const options = (l) => l.map((x) => `<option>${esc(x)}</option>`).join('')
   const dv = cmd.devis || { projets: ['Autre projet'], delais: ['Dès que possible'] }
@@ -76,13 +89,17 @@ try {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(metier)} à ${esc(ville)} — ${esc(cmd.nom)}</title>
+<link rel="canonical" href="${URL_BASE}/">
+<meta property="og:url" content="${URL_BASE}/">
+<meta property="og:image" content="${URL_BASE}/images/${photos[0].base}-${[...photos[0].largeurs].sort((x, y) => x - y).at(-1)}.webp">
+<script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', '@type': 'HomeAndConstructionBusiness', name: cmd.nom, url: `${URL_BASE}/`, image: `${URL_BASE}/images/${photos[0].base}-${[...photos[0].largeurs].sort((x, y) => x - y).at(-1)}.webp`, ...(telephone ? { telephone } : {}), areaServed: cmd.communes })}</script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="entete"><span class="marque">${esc(cmd.nom)}</span><a class="entete__devis" href="#contact">Demander un devis</a></header>
 <main>
 <section class="hero"><div class="hero__texte"><h1>${esc(metier)} à ${esc(ville)}</h1><p>${esc(a.parcours)}</p></div><div class="hero__photo">${photo(photos[0], '(max-width: 700px) 100vw, 50vw')}</div></section>
-<section class="plateau" aria-label="L’atelier en bref"><figure class="plateau__citation"><blockquote><p>${esc(a.citation)}</p></blockquote><figcaption><span class="plateau__signe">${esc(`${a.prenom} ${a.nom}`)} · à ${esc(ville)} depuis ${a.installation}</span></figcaption></figure>${chiffres}</section>
+<section class="plateau" aria-label="L’entreprise en bref"><figure class="plateau__citation"><blockquote><p>${esc(a.citation)}</p></blockquote><figcaption><span class="plateau__signe">${esc(`${a.prenom} ${a.nom}`)} · à ${esc(ville)} depuis ${a.installation}</span></figcaption></figure>${chiffres}</section>
 <section class="galerie" aria-label="Réalisations">${photos.slice(1, 4).map((p) => `<figure>${photo(p)}<figcaption>${esc(p.legende)}</figcaption></figure>`).join('')}</section>
 <section class="contact" id="contact">
 <h2>Parlons de votre projet</h2>
@@ -90,14 +107,14 @@ try {
 <label>Votre projet <select name="projet" required><option value="">Choisir</option>${options(dv.projets)}</select></label>
 <label>Commune <select name="commune">${options([...cmd.communes, 'Autre commune'])}</select></label>
 <label>Quand <select name="delai">${options(dv.delais)}</select></label>
-<label class="large">La pièce, l’usage, le bois <textarea name="message" rows="3"></textarea></label>
+<label class="large">Votre projet en quelques mots <textarea name="message" rows="3"></textarea></label>
 <label class="large">Téléphone ou e-mail <input name="contact" type="text" autocomplete="tel" required></label>
 <div class="devis__piege" aria-hidden="true"><label for="devis-website">Ne pas remplir ce champ</label><input id="devis-website" name="website" type="text" tabindex="-1" autocomplete="off" value=""></div>
 <button type="submit">Envoyer ma demande</button>
 </form>
 <div class="devis__merci" role="status" tabindex="-1" hidden><p class="devis__merci-titre">Demande reçue.</p><p>Je vous rappelle rapidement pour en parler.</p></div>
-<div class="devis__repli" role="alert" tabindex="-1" hidden><p>Votre demande n’est pas partie. Appelez-moi au <a href="${telHref(site.telephone)}">${telAffiche(site.telephone)}</a> ou écrivez-moi à <a href="mailto:${esc(email)}">${esc(email)}</a>.</p></div>
-<p class="contact__tel">Ou par téléphone : <a href="${telHref(site.telephone)}">${telAffiche(site.telephone)}</a></p>
+<div class="devis__repli" role="alert" tabindex="-1" hidden><p>Votre demande n’est pas partie. ${[telephone && `Appelez-moi au <a href="${telHref(telephone)}">${telAffiche(telephone)}</a>`, email && `écrivez-moi à <a href="mailto:${esc(email)}">${esc(email)}</a>`].filter(Boolean).join(' ou ').replace(/^é/, 'É') || 'Réessayez dans quelques minutes'}.</p></div>
+${telephone ? `<p class="contact__tel">Ou par téléphone : <a href="${telHref(telephone)}">${telAffiche(telephone)}</a></p>` : ''}
 </section>
 </main>
 <footer class="pied"><p>${esc(cmd.nom)} · ${esc(cmd.matiere.adresse || ville)}</p><p class="credits">Photos : ${auteurs.map(esc).join(', ')}.</p></footer>
@@ -156,6 +173,15 @@ button{font:inherit;font-weight:700;padding:.9rem 1.4rem;border:0;border-radius:
   fs.writeFileSync(path.join(OUT, 'index.html'), html)
   fs.writeFileSync(path.join(OUT, 'site.js'), js)
   fs.writeFileSync(path.join(OUT, 'styles.css'), css)
+  fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>${URL_BASE}/</loc></url>
+</urlset>
+`)
+  fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *
+Allow: /
+Sitemap: ${URL_BASE}/sitemap.xml
+`)
   console.log(`  ✓ témoin : ${cmd.slug} → ${OUT} (${fichiers.length} photos, ${a.chiffres ? 'trois chiffres' : 'sans chiffres'})`)
 } catch (e) {
   console.log(`  ✗ témoin : ${e.message}`)

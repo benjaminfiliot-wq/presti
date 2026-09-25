@@ -68,7 +68,8 @@ try {
 
   console.log('\n── C1. La landing ne charge plus 2,4 Mo d’images sur téléphone')
   T('les scènes de la démo sont en WebP', /\/demo\/scene-1\.webp/.test(landing) && !/scene-\d\.png/.test(landing))
-  T('deux scènes montées au plus, pas cinq', (landing.match(/\/demo\/scene-\d\.webp/g) || []).length <= 3, `${(landing.match(/\/demo\/scene-\d\.webp/g) || []).length} références`)
+  const montees = new Set(landing.match(/\/demo\/scene-\d\.webp/g) || []) // src et srcSet citent la même image
+  T('deux scènes montées au plus, pas cinq', montees.size <= 2, `${montees.size} scène(s) : ${[...montees].join(', ')}`)
   const poids = (await fetch(`${BASE}/demo/scene-5.webp`, { method: 'HEAD' })).headers.get('content-length')
   T('la scène la plus lourde pèse moins de 120 Ko', Number(poids) > 0 && Number(poids) < 120_000, `${poids} octets`)
   const css = fs.readFileSync('app/globals.css', 'utf8')
@@ -167,7 +168,10 @@ try {
   T('D-3.3 — un lien magique expiré est annoncé au client', /a expiré ou a déjà servi/.test(chat) && /role="alert"/.test(chat))
   T('D-4.6 — les onglets de /plateforme défilent au lieu de dézoomer', /\.pil-volets\{[^}]*overflow-x:auto/.test(css) && /\.pil-volets button\{flex:none/.test(css))
   const profilSrc = fs.readFileSync('app/profil/page.tsx', 'utf8')
-  T('D-2.6 — le libellé du site suit l’état enregistré, pas la case', /siteActiveEnregistre/.test(profilSrc) && /après Enregistrer/.test(profilSrc))
+  // 025-05 a retiré de /profil l'interrupteur « Mon site est publié » (et sa phrase « après Enregistrer ») : le site ne s'y
+  // édite plus. Ce qui reste lié au site (« Supprimer le site ») suit l'état ENREGISTRÉ (siteActiveEnregistre, posé depuis la
+  // base), jamais une case. Mis d'accord avec le nouveau /profil par Claude Code le 24/09 (relecture à froid T1, fiche 025-16).
+  T('D-2.6 — ce qui dépend du site suit l’état enregistré, plus de case « Mon site est »', /setSiteActiveEnregistre\(/.test(profilSrc) && /\{siteActiveEnregistre && <[^>]*>?[\s\S]{0,300}?Supprimer le site/.test(profilSrc) && !/Mon site est/.test(profilSrc))
 
   console.log('\n── F. Fiabilité : alertes attendues et tracées, emails bornés, relances honnêtes')
   const sources = ['app', 'lib'].flatMap((d) => fs.readdirSync(d, { recursive: true }).filter((f) => /\.(ts|tsx)$/.test(f)).map((f) => fs.readFileSync(`${d}/${f}`, 'utf8'))).join('\n')

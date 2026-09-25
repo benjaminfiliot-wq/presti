@@ -8,18 +8,19 @@ import { actif } from '@/lib/flags'
 import AppShell from '@/app/AppShell'
 import { uploadArtisanMedia, preparerPhoto } from '@/lib/media'
 import {
-  Brouillon, Commande,
-  PRIX_SITE_TEXTE, DELAI_ANNONCE,
+  ArtisanSite, Brouillon, Commande, ChiffreArtisan,
+  PRIX_SITE_TEXTE, DELAI_TEXTE,
   METIERS_SECONDAIRES_MAX, COMMUNES_MAX, PHOTOS_MIN, PHOTOS_MAX,
   LIBELLE_ETAT, sirenValide, erreursAvantPaiement
 } from '@/lib/siteCommande'
 
-type Etape = 'domaine' | 'zone' | 'matiere' | 'paiement'
+type Etape = 'domaine' | 'zone' | 'matiere' | 'parcours' | 'paiement'
 
 const ETAPES: { id: Etape; nom: string }[] = [
   { id: 'domaine', nom: 'Le domaine' },
   { id: 'zone', nom: 'Métier & Zone' },
   { id: 'matiere', nom: 'La matière' },
+  { id: 'parcours', nom: 'Votre parcours' },
   { id: 'paiement', nom: 'Le paiement' },
 ]
 
@@ -31,7 +32,7 @@ function CommanderSite() {
 
   const [ready, setReady] = useState(false)
   const [etape, setEtape] = useState<Etape>(() => {
-    if (p_etape && ['domaine', 'zone', 'matiere', 'paiement'].includes(p_etape)) {
+    if (p_etape && ['domaine', 'zone', 'matiere', 'parcours', 'paiement'].includes(p_etape)) {
       return p_etape as Etape
     }
     if (p_paiement === 'annule') return 'paiement'
@@ -39,7 +40,7 @@ function CommanderSite() {
   })
 
   useEffect(() => {
-    if (p_etape && ['domaine', 'zone', 'matiere', 'paiement'].includes(p_etape)) {
+    if (p_etape && ['domaine', 'zone', 'matiere', 'parcours', 'paiement'].includes(p_etape)) {
       setEtape(p_etape as Etape)
     } else if (p_paiement === 'annule') {
       setEtape('paiement')
@@ -51,7 +52,7 @@ function CommanderSite() {
     metier: '',
     metiers_secondaires: [],
     communes: [],
-    matiere: { photos: [], adresse: '', siren: '', horaires: '', decennale: { assureur: '', numero: '' }, avis_google: { url: '' }, logo_url: null }
+    matiere: { artisan: { prenom: '', nom: '', installation: null, parcours: '', citation: '', chiffres: [{ valeur: '', legende: '' }, { valeur: '', legende: '' }, { valeur: '', legende: '' }] }, photos: [], adresse: '', siren: '', horaires: '', decennale: { assureur: '', numero: '' }, avis_google: { url: '' }, logo_url: null }
   })
   const [erreursApi, setErreursApi] = useState<string[]>([])
   const [commandes, setCommandes] = useState<Commande[]>([])
@@ -59,6 +60,16 @@ function CommanderSite() {
 
   const [metierSec, setMetierSec] = useState('')
   const [commune, setCommune] = useState('')
+
+  const modifierArtisan = (champs: Partial<ArtisanSite>) => setBrouillon(b => ({
+    ...b, matiere: { ...b.matiere, artisan: { prenom: '', nom: '', installation: null, parcours: '', citation: '', chiffres: [], ...b.matiere.artisan, ...champs } }
+  }))
+  const modifierChiffre = (index: number, champs: Partial<ChiffreArtisan>) => setBrouillon(b => {
+    const actuel = b.matiere.artisan
+    const chiffres = Array.isArray(actuel?.chiffres) ? [...actuel.chiffres] : [{ valeur: '', legende: '' }, { valeur: '', legende: '' }, { valeur: '', legende: '' }]
+    chiffres[index] = { ...chiffres[index], ...champs }
+    return { ...b, matiere: { ...b.matiere, artisan: { prenom: '', nom: '', installation: null, parcours: '', citation: '', ...actuel, chiffres } } }
+  })
 
   useEffect(() => {
     if (!actif('siteCommande')) notFound()
@@ -165,7 +176,7 @@ function CommanderSite() {
       <AppShell active="site" title="Votre site" wide>
         <div className="tool-card">
           <h2>{cmd ? LIBELLE_ETAT[cmd.etat] : 'Dossier reçu'}</h2>
-          <p>Le site est commandé. Livré sous {DELAI_ANNONCE}.</p>
+          <p>{cmd?.etat === 'en_ligne' ? 'Votre site est en ligne.' : `Le site est commandé. ${DELAI_TEXTE}`}</p>
           {cmd?.paye_le && <p className="muted">Payé le {new Date(cmd.paye_le).toLocaleDateString('fr-FR')}</p>}
         </div>
       </AppShell>
@@ -173,6 +184,7 @@ function CommanderSite() {
   }
 
   const errs = erreursAvantPaiement(brouillon)
+  const artisan = brouillon.matiere.artisan
 
   return (
     <AppShell active="site" title="Commander mon site" wide>
@@ -197,7 +209,7 @@ function CommanderSite() {
               <p className="muted">Le domaine reste à votre nom, jamais au nôtre.</p>
 
               <label><input type="radio" checked={brouillon.domaine_mode === 'existant'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'existant' })} /> J’ai déjà un nom de domaine</label>
-              <label><input type="radio" checked={brouillon.domaine_mode === 'a_prendre'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'a_prendre' })} /> Je n’en ai pas, proposez-m’en un</label>
+              <label><input type="radio" checked={brouillon.domaine_mode === 'a_prendre'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'a_prendre' })} /> Je n’en ai pas : je le réserve moi-même, à mon nom</label>
               <label><input type="radio" checked={brouillon.domaine_mode === 'aucun'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'aucun' })} /> Plus tard</label>
 
               {brouillon.domaine_mode !== 'aucun' && (
@@ -205,7 +217,7 @@ function CommanderSite() {
                   <input
                     value={brouillon.domaine || ''}
                     onChange={(e) => setBrouillon({ ...brouillon, domaine: e.target.value })}
-                    placeholder={brouillon.domaine_mode === 'existant' ? 'Ex: martin-plomberie.fr' : 'Une idée ? (facultatif)'}
+                    placeholder={brouillon.domaine_mode === 'existant' ? 'Exemple : martin-plomberie.fr' : 'Exemple : martin-plomberie.fr (le nom que vous réserverez)'}
                   />
                   {brouillon.domaine_mode === 'existant' && erreursApi.find(e => e.includes('domaine')) && (
                     <p className="msg err" style={{ marginTop: '0.5rem' }}>Le nom de domaine indiqué n’est pas valide (ex. martin-plomberie.fr).</p>
@@ -387,6 +399,52 @@ function CommanderSite() {
 
               <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
                 <button type="button" className="btn btn--ghost" onClick={() => saveAndNext('zone')} disabled={busy}>Retour</button>
+                <button type="button" className="btn btn--primary" onClick={() => saveAndNext('parcours')} disabled={busy}>Continuer</button>
+              </div>
+            </div>
+          )}
+
+          {etape === 'parcours' && (
+            <div className="inv-form" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <h3>Votre parcours</h3>
+              <p className="muted">Votre site parle avec votre voix : nous n’inventons rien.</p>
+              <div>
+                <label htmlFor="artisan-prenom">Prénom (1 à 40 signes)</label>
+                <input id="artisan-prenom" name="prenom" value={artisan?.prenom || ''} onChange={e => modifierArtisan({ prenom: e.target.value })} placeholder="Exemple : Camille" />
+              </div>
+              <div>
+                <label htmlFor="artisan-nom">Nom (1 à 60 signes)</label>
+                <input id="artisan-nom" name="nom" value={artisan?.nom || ''} onChange={e => modifierArtisan({ nom: e.target.value })} placeholder="Exemple : Martin" />
+              </div>
+              <div>
+                <label htmlFor="artisan-installation">Année d’installation (1960 à {new Date().getFullYear()})</label>
+                <input id="artisan-installation" name="installation" type="number" min={1960} max={new Date().getFullYear()} value={artisan?.installation ?? ''} onChange={e => modifierArtisan({ installation: e.target.value === '' ? null : Number(e.target.value) })} placeholder="Exemple : 2011" />
+              </div>
+              <div>
+                <label htmlFor="artisan-parcours">Votre parcours (une ligne, 1 à 140 signes)</label>
+                <input id="artisan-parcours" name="parcours" value={artisan?.parcours || ''} onChange={e => modifierArtisan({ parcours: e.target.value })} placeholder="Exemple : J’ai appris le métier en atelier avant de créer mon entreprise." />
+              </div>
+              <div>
+                <label htmlFor="artisan-citation">Votre phrase signée, à la première personne (20 à 160 signes)</label>
+                <textarea id="artisan-citation" name="citation" minLength={20} rows={3} value={artisan?.citation || ''} onChange={e => modifierArtisan({ citation: e.target.value })} placeholder="Exemple : Je prends le temps de vérifier chaque détail avant de rendre un chantier." />
+              </div>
+              <label><input type="checkbox" checked={artisan?.chiffres === null} onChange={e => modifierArtisan({ chiffres: e.target.checked ? null : [{ valeur: '', legende: '' }, { valeur: '', legende: '' }, { valeur: '', legende: '' }] })} /> Je préfère ne pas donner de chiffres</label>
+              {artisan?.chiffres !== null && [0, 1, 2].map(index => (
+                <fieldset key={index} style={{ border: '1px solid var(--border)', borderRadius: 6 }}>
+                  <legend>Chiffre {index + 1}</legend>
+                  <label>Valeur (nombre positif, 12 signes au plus)
+                    <input name="valeur" value={artisan?.chiffres?.[index]?.valeur || ''} onChange={e => modifierChiffre(index, { valeur: e.target.value })} placeholder="Exemple : 12" />
+                  </label>
+                  <label>Unité (facultative, 12 signes au plus)
+                    <input name="unite" value={artisan?.chiffres?.[index]?.unite || ''} onChange={e => modifierChiffre(index, { unite: e.target.value })} placeholder="Exemple : ans" />
+                  </label>
+                  <label>Légende (1 à 60 signes)
+                    <input name="legende" value={artisan?.chiffres?.[index]?.legende || ''} onChange={e => modifierChiffre(index, { legende: e.target.value })} placeholder="Exemple : d’expérience sur les chantiers" />
+                  </label>
+                </fieldset>
+              ))}
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button type="button" className="btn btn--ghost" onClick={() => saveAndNext('matiere')} disabled={busy}>Retour</button>
                 <button type="button" className="btn btn--primary" onClick={() => saveAndNext('paiement')} disabled={busy}>Continuer</button>
               </div>
             </div>
@@ -404,6 +462,16 @@ function CommanderSite() {
                 <p><strong>Photos :</strong> {(brouillon.matiere.photos || []).length} ajoutée(s)</p>
                 <p><strong>SIREN :</strong> {brouillon.matiere.siren}</p>
                 <p><strong>Assurance :</strong> {brouillon.matiere.decennale?.assureur} {brouillon.matiere.decennale?.numero}</p>
+                <div>
+                  <h4>Votre parcours</h4>
+                  <p><strong>Prénom et nom :</strong> {artisan?.prenom} {artisan?.nom}</p>
+                  <p><strong>Année d’installation :</strong> {artisan?.installation ?? 'Non renseignée'}</p>
+                  <p><strong>Parcours :</strong> {artisan?.parcours}</p>
+                  <p><strong>Phrase signée :</strong> {artisan?.citation}</p>
+                  {artisan?.chiffres === null ? <p>Sans chiffres, à votre demande</p> : artisan?.chiffres?.map((chiffre, index) => (
+                    <p key={index}><strong>Chiffre {index + 1} :</strong> {chiffre.valeur} {chiffre.unite} — {chiffre.legende}</p>
+                  ))}
+                </div>
               </div>
 
               {errs.length > 0 && (
@@ -414,6 +482,7 @@ function CommanderSite() {
                       let cible: Etape = 'matiere'
                       if (err.includes('domaine')) cible = 'domaine'
                       if (err.includes('métier principal') || err.includes('commune')) cible = 'zone'
+                      if (err.includes('Votre parcours')) cible = 'parcours'
                       return (
                         <li key={idx}>
                           {err} <button type="button" className="btn btn--ghost" style={{ padding: '0 0.5rem', height: '1.5rem', minHeight: '1.5rem', fontSize: '0.8rem', display: 'inline-flex' }} onClick={() => setEtape(cible)}>Corriger</button>
@@ -426,11 +495,11 @@ function CommanderSite() {
 
               <div style={{ marginTop: '1rem' }}>
                 <p><strong>Prix : {PRIX_SITE_TEXTE} une fois, sans abonnement — TVA non applicable, art. 293 B du CGI.</strong></p>
-                <p>Livré sous {DELAI_ANNONCE} après validation.</p>
+                <p>{DELAI_TEXTE}</p>
               </div>
 
               <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <button type="button" className="btn btn--ghost" onClick={() => setEtape('matiere')} disabled={busy}>Retour</button>
+                <button type="button" className="btn btn--ghost" onClick={() => setEtape('parcours')} disabled={busy}>Retour</button>
                 <button type="button" className="btn btn--primary" onClick={payer} disabled={errs.length > 0 || busy}>Payer {PRIX_SITE_TEXTE}</button>
               </div>
             </div>

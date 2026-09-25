@@ -1,0 +1,39 @@
+{
+  "metier": "couvreur",
+  "libelles": {
+    "sur": "Couverture",
+    "alt_heros": "Détail d’un travail de couverture",
+    "alt_atelier": "Tuiles et éléments de toiture",
+    "reperes": ["Repère des toitures", "Repère des ouvrages", "Repère de proximité"]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Couverture à {ville} — {entreprise}",
+      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, couverture à {ville}.",
+      "h1": "Couverture à {ville}",
+      "h1Ligne": "Le toit prend forme",
+      "chapeau": "Une page pour présenter les travaux de couverture et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "La toiture et ses détails",
+          "blocs": [
+            { "type": "p", "texte": "Tuiles, faîtages et raccords peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "couvreur",
+    "fichiers": ["hero-960.webp", "tuiles-720.webp"]
+  }
+}

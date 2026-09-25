@@ -1,0 +1,39 @@
+{
+  "metier": "electricien",
+  "libelles": {
+    "sur": "Électricité",
+    "alt_heros": "Détail d’une installation électrique",
+    "alt_atelier": "Tableau et circuits électriques",
+    "reperes": ["Repère des circuits", "Repère des installations", "Repère de proximité"]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Électricité à {ville} — {entreprise}",
+      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, électricité à {ville}.",
+      "h1": "Électricité à {ville}",
+      "h1Ligne": "Chaque circuit a sa place",
+      "chapeau": "Une page pour présenter les installations électriques et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Du tableau aux usages",
+          "blocs": [
+            { "type": "p", "texte": "Circuits, commandes et éclairage peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "electricien",
+    "fichiers": ["hero-960.webp", "armoire-720.webp"]
+  }
+}

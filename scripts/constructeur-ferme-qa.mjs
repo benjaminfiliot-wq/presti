@@ -3,12 +3,14 @@
 // (node_modules/typescript, arbre syntaxique, jamais d'expressions régulières sur du JSX quand une structure est en jeu), et lance
 // npm run typecheck. Il n'écrit que dans .orchestre/travail/constructeur-ferme-qa/. Aucun secret lu, aucun réseau.
 //
-// Usage : node scripts/constructeur-ferme-qa.mjs [--racine=<dossier>] [--temoin]
+// Usage : node scripts/constructeur-ferme-qa.mjs [--racine=<dossier>] [--temoin] [--critere=CF-8[,…]]
 //   --racine=<dossier>  (défaut : la racine du dépôt) tout est lu dans ce dossier, et le typecheck y tourne.
-//   --temoin            construit l'arbre témoin (voir plus bas) et y juge CF-1 à CF-8 : code 0 attendu. Ne se combine pas avec
+//   --temoin            construit l'arbre témoin (voir plus bas) et y juge CF-1 à CF-10 : code 0 attendu. Ne se combine pas avec
 //                       --racine ; pas de --reel (rien à tester en production).
+//   --critere=CF-8[,…]  ne juge que ces critères (les autres ne sont ni déclarés ni imprimés) : l'essai de l'usine (fiche
+//                       000-usine-cf8) ne juge que CF-8, le typecheck, sur un worktree de l'usine.
 // Sortie : une ligne « PASS|FAIL CF-n — … » par critère, puis « constructeur-ferme-qa : PASS » ou « … : FAIL — ids » ; code 0
-// seulement si les huit critères sont verts (socle : scripts/fixtures/025/commun.mjs, creerSortie).
+// seulement si les dix critères (ou ceux de --critere) sont verts (socle : scripts/fixtures/025/commun.mjs, creerSortie).
 //
 // La base des diffs (CF-2, CF-3, CF-4, CF-8) : sur la racine d'un dépôt Git, HEAD (git diff, lecture seule, GIT_OPTIONAL_LOCKS=0),
 // et, si le fichier est identique à HEAD (travail déjà commité, ou pas commencé), le commit de référence 1620723 ; sur un arbre
@@ -88,12 +90,27 @@
 //         sur cette machine. NODE_PATH n'est pas lu par tsc ; une jonction node_modules dans l'arbre extrait le rendrait
 //         différent de son commit et exposerait le node_modules du dépôt à un rm récursif : écartés. Le juge cherche le premier
 //         node_modules/typescript en remontant depuis la racine et échoue en le disant s'il n'y en a pas.
+//   CF-9  (relecture à froid du 24/09, M5 ; fiche 025-16) app/profil/page.tsx ne montre le prix du site que si la vente est
+//         ouverte : chaque usage de SITE_A_LA_DEMANDE (titre, phrases, bouton, lien : le bloc entier), de PRIX_SITE_TEXTE ou de
+//         PRIX_SITE_CENTS, et tout texte qui écrit la valeur de PRIX_SITE_TEXTE (lue dans lib/siteCommande.ts de la racine), est
+//         sous actif('siteCommandeVente') (branche vraie, non niée ; à travers une constante JSX ou un petit composant, trois
+//         niveaux : conditionsDe) — comme la landing (app/page.tsx) et lib/siteCommande.ts:13-15. Mutation à chaque passage :
+//         SITE_A_LA_DEMANDE.titre ajouté hors garde doit être vu, le même sous la garde laissé.
+//   CF-10 (M6) app/parametres/page.tsx ne renvoie vers aucun bloc absent de /profil : chaque lien interne écrit en littéral
+//         (href: '…', href="…") mène à une page de app/ (app/**/page.tsx, groupes (x) ôtés, [param] joker) ; une ancre de
+//         /profil (#x) existe comme id="x" dans app/profil/page.tsx ; une entrée qui renvoie vers /profil ne parle ni
+//         d'apparence, de thème, de style, de réalisations, de publication, de contenu, ni de niveau (les blocs retirés par
+//         025-05). Mêmes liens et ancres vérifiés dans lib/aide.ts (chaînes « /x#y » comprises, comme reglagesLies), et aucune
+//         chaîne de lib/aide.ts ne parle du « niveau de site ». Mutation : une entrée « Apparence » vers /profil#sonde-absente
+//         (deux défauts) et « niveau de site » ajouté à l'aide doivent être vus.
 //
 // L'arbre témoin (--temoin) : .orchestre/travail/constructeur-ferme-qa/temoin/ = la référence 1620723 (extraireReference,
 // .orchestre/travail/025-01/reference/, réutilisée si intacte) réduite à ce que le typecheck et les diffs lisent (app, lib,
 // middleware.ts, tsconfig.json, package.json et les deux scripts), puis chaque fichier <chemin>.temoin de
 // scripts/fixtures/025/temoins/constructeur-ferme-qa/ copié sur <chemin> : les six fichiers de 025-05 tels que la fiche les
-// veut (flags, route, page, aide, fermeture-e2e, site-sorti). Suffixe .temoin : ni tsc (include **/*.ts du tsconfig), ni next
+// veut (flags, route, page, aide, fermeture-e2e, site-sorti), plus l'état « après » de 025-16 (relectures à froid du 24/09 :
+// bloc de vente de /profil sous actif('siteCommandeVente'), aide sans « niveau de site », et app/parametres/page.tsx sans les
+// entrées vers les blocs retirés). Suffixe .temoin : ni tsc (include **/*.ts du tsconfig), ni next
 // build, ni un lint ne les prennent pour du code du dépôt. La marque temoin.json (commit 1620723) donne la base des diffs. Chaque
 // fichier témoin doit remplacer un fichier existant de la référence et en différer.
 
@@ -109,10 +126,11 @@ import {
 } from './fixtures/025/commun.mjs'
 
 const JUGE = 'constructeur-ferme-qa'
-const IDS = ['CF-1', 'CF-2', 'CF-3', 'CF-4', 'CF-5', 'CF-6', 'CF-7', 'CF-8']
+const IDS = ['CF-1', 'CF-2', 'CF-3', 'CF-4', 'CF-5', 'CF-6', 'CF-7', 'CF-8', 'CF-9', 'CF-10']
 const F = {
   flags: 'lib/flags.ts', route: 'app/api/site/generate/route.ts', profil: 'app/profil/page.tsx', aide: 'lib/aide.ts',
   fermeture: 'scripts/fermeture-e2e.mjs', sorti: 'scripts/site-sorti-des-formules-verifier.mjs',
+  parametres: 'app/parametres/page.tsx', // CF-10 (relecture à froid du 24/09)
 }
 const TEMOIN_FIXTURES = path.join(FIXTURES, 'temoins', JUGE)
 const TEMOIN_DOSSIER = path.join(TRAVAIL, JUGE, 'temoin')
@@ -745,6 +763,117 @@ function cf8(racine) {
   return { ok: !echecs.length, echecs, resume: `npm run typecheck vert en ${duree} s : ${dansRacine.length} fichiers de la racine vérifiés, dont les quatre de 025-05 ; tsc et types de ${rel(nm)} ; aucun @ts-nocheck ni @ts-ignore ajouté ; tsconfig.json et script typecheck ceux de ${REFERENCE_COMMIT}` }
 }
 
+// ── CF-9 : le prix du site n'est montré que si la vente est ouverte (relecture à froid du 24/09, M5) ────────────────────────
+const NOMS_VENTE = ['SITE_A_LA_DEMANDE', 'PRIX_SITE_TEXTE', 'PRIX_SITE_CENTS']
+function prixDuSite(racine) {
+  const t = lireTexte(path.join(racine, 'lib', 'siteCommande.ts')) || ''
+  const m = /export\s+const\s+PRIX_SITE_TEXTE\s*=\s*(['"`])([^'"`]+)\1/.exec(t)
+  return m ? apostrophes(m[2]).replace(/\s+/g, ' ') : null
+}
+/** Les usages du bloc de vente et du prix dans une page, hors de actif('siteCommandeVente') → { echecs, vus } */
+function horsVente(sf, prix) {
+  const echecs = [], vus = []
+  const sousVente = (n) => gardePositive(conditionsDe(n), (x) => estActif(x, 'siteCommandeVente'))
+  parcourir(sf, (n) => {
+    if (ts.isIdentifier(n) && NOMS_VENTE.includes(n.text) && !ts.isImportSpecifier(n.parent) && !(ts.isPropertyAccessExpression(n.parent) && n.parent.name === n)) {
+      const quoi = ts.isPropertyAccessExpression(n.parent) && n.parent.expression === n ? `${n.text}.${n.parent.name.text}` : n.text
+      vus.push(quoi)
+      if (!sousVente(n)) echecs.push(`${quoi} (ligne ${ligneNoeud(sf, n)}) montré hors de actif('siteCommandeVente')`)
+    }
+    if (prix && (ts.isJsxText(n) || ts.isStringLiteralLike(n)) && apostrophes(n.text).replace(/\s+/g, ' ').includes(prix) && !sousVente(n)) echecs.push(`« ${court(n.text, 60)} » (ligne ${ligneNoeud(sf, n)}) écrit le prix du site (${prix}) hors de actif('siteCommandeVente')`)
+  })
+  return { echecs, vus }
+}
+function cf9(racine) {
+  const src = lireTexte(path.join(racine, F.profil))
+  if (!src || !src.trim()) return ko(`${F.profil} absent ou vide`)
+  const prix = prixDuSite(racine)
+  if (!prix) return ko('PRIX_SITE_TEXTE introuvable dans lib/siteCommande.ts : le prix du site ne peut pas être cherché')
+  const r = horsVente(analyser(src, F.profil), prix)
+  const echecs = [...r.echecs]
+  if (!r.vus.length) echecs.push(`${F.profil} ne montre plus SITE_A_LA_DEMANDE (CF-5 l'exige, sous actif('siteCommandeVente'))`)
+  // le détecteur : un titre ajouté hors garde doit être vu, le même sous la garde laissé
+  const hors = horsVente(analyser(`${src}\nexport function SondeCF9() { return <p>{SITE_A_LA_DEMANDE.titre}</p> }\n`, F.profil), prix)
+  const sous = horsVente(analyser(`${src}\nexport function SondeCF9() { return actif('siteCommandeVente') ? <p>{SITE_A_LA_DEMANDE.titre}</p> : null }\n`, F.profil), prix)
+  if (hors.echecs.length !== r.echecs.length + 1) echecs.push(`détecteur : SITE_A_LA_DEMANDE.titre ajouté hors de actif('siteCommandeVente') non vu (${hors.echecs.length - r.echecs.length} écart)`)
+  if (sous.echecs.length !== r.echecs.length) echecs.push('détecteur : SITE_A_LA_DEMANDE.titre ajouté SOUS actif(\'siteCommandeVente\') compté comme fautif')
+  if (echecs.length) return ko(...echecs)
+  return { ok: true, echecs: [], resume: `${r.vus.length} usage(s) du bloc de vente dans ${F.profil} (${[...new Set(r.vus)].join(', ')}), tous sous actif('siteCommandeVente'), et le prix ${prix} écrit nulle part ailleurs ; mutation : SITE_A_LA_DEMANDE.titre ajouté hors garde → vu, sous garde → laissé` }
+}
+
+// ── CF-10 : /parametres ne renvoie vers aucun bloc absent de /profil ; l'aide ne parle plus du niveau de site (M6) ───────────
+const RETIRES_PROFIL = [['apparence', /apparence/], ['thème', /\bthemes?\b/], ['style', /\bstyles?\b/], ['réalisations', /realisation/], ['publication', /publication/], ['contenu du site', /\bcontenu\b/], ['niveau', /\bniveaux?\b/]]
+const NIVEAU_DE_SITE = /\bniveaux?\s+(?:de|du)\s+(?:votre\s+|ton\s+)?site\b/
+function routesDe(racine) {
+  const out = []
+  for (const r of listerFichiers(path.join(racine, 'app'))) {
+    if (!/(^|\/)page\.(tsx|ts|jsx|js|mdx)$/.test(r)) continue
+    const segs = r.split('/').slice(0, -1).filter((s) => !/^\(.*\)$/.test(s) && !s.startsWith('@'))
+    const motif = segs.map((s) => (/^\[\[?\.\.\./.test(s) ? '.*' : /^\[.*\]$/.test(s) ? '[^/]+' : s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))).join('/')
+    out.push({ fichier: `app/${r}`, re: new RegExp(`^/${motif}/?$`) })
+  }
+  return out
+}
+function idsDe(sf) {
+  const ids = new Set()
+  parcourir(sf, (n) => {
+    if (!ts.isJsxAttribute(n) || n.name.getText() !== 'id' || !n.initializer) return
+    const i = n.initializer
+    const v = ts.isStringLiteral(i) ? i.text : ts.isJsxExpression(i) && i.expression && ts.isStringLiteralLike(i.expression) ? i.expression.text : null
+    if (v) ids.add(v)
+  })
+  return ids
+}
+/** Les liens internes écrits en littéral dans un fichier (href: '…', href="…", chaînes '/x#y') → [{ lien, ligne, entree (objet { label, detail } s'il y en a un) }] */
+function liensDe(sf) {
+  const out = []
+  const texteDe = (o, k) => { const p = o && o.properties.find((x) => ts.isPropertyAssignment(x) && nomPropriete(x) === k); const t = []; if (p) parcourir(p.initializer, (x) => { if (ts.isStringLiteralLike(x)) t.push(x.text) }); return t.join(' ') }
+  parcourir(sf, (n) => {
+    const init = ts.isPropertyAssignment(n) && nomPropriete(n) === 'href' ? n.initializer : ts.isJsxAttribute(n) && n.name.getText() === 'href' ? n.initializer : null
+    if (init) parcourir(init, (x) => {
+      if (!ts.isStringLiteralLike(x) || !x.text.startsWith('/') || x.text.startsWith('//')) return
+      const o = ts.isPropertyAssignment(n) && ts.isObjectLiteralExpression(n.parent) ? n.parent : null
+      out.push({ lien: x.text, ligne: ligneNoeud(sf, x), entree: o ? { label: texteDe(o, 'label'), detail: texteDe(o, 'detail') } : null })
+    })
+    if (ts.isStringLiteralLike(n) && /^\/[\w\-/]*#[\w-]+$/.test(n.text) && !(n.parent && (ts.isPropertyAssignment(n.parent) || ts.isJsxAttribute(n.parent)))) out.push({ lien: n.text, ligne: ligneNoeud(sf, n), entree: null })
+  })
+  return out
+}
+function defautsLiens(nom, sf, { routes, idsProfil }) {
+  const echecs = [], vus = []
+  for (const l of liensDe(sf)) {
+    const [chemin, ancre] = l.lien.split('#')
+    const p = chemin.split('?')[0] || '/'
+    const route = routes.find((r) => r.re.test(p))
+    vus.push(l.lien)
+    if (!route) { echecs.push(`${nom}:${l.ligne} : ${l.lien} ne mène à aucune page de app/`); continue }
+    if (ancre && p.replace(/\/$/, '') === '/profil' && !idsProfil.has(ancre)) echecs.push(`${nom}:${l.ligne} : ${l.lien} — aucun bloc id="${ancre}" dans ${F.profil}`)
+    if (p.replace(/\/$/, '') === '/profil' && l.entree) {
+      const mots = RETIRES_PROFIL.filter(([, re]) => re.test(sansAccents(`${l.entree.label} ${l.entree.detail}`))).map(([m]) => m)
+      if (mots.length) echecs.push(`${nom}:${l.ligne} : l'entrée « ${l.entree.label} » (« ${court(l.entree.detail, 50)} ») renvoie vers /profil pour ${mots.join(', ')}, blocs retirés de /profil (025-05)`)
+    }
+  }
+  return { echecs, vus }
+}
+function cf10(racine) {
+  const srcProfil = lireTexte(path.join(racine, F.profil)), srcParam = lireTexte(path.join(racine, F.parametres)), srcAide = lireTexte(path.join(racine, F.aide))
+  for (const [f, t] of [[F.profil, srcProfil], [F.parametres, srcParam], [F.aide, srcAide]]) if (!t || !t.trim()) return ko(`${f} absent ou vide`)
+  const ctx = { routes: routesDe(racine), idsProfil: idsDe(analyser(srcProfil, F.profil)) }
+  if (!ctx.routes.length) return ko('aucune page trouvée sous app/ : lecture des routes impossible')
+  const echecs = []
+  const p = defautsLiens(F.parametres, analyser(srcParam, F.parametres), ctx)
+  const a = defautsLiens(F.aide, analyser(srcAide, F.aide), ctx)
+  echecs.push(...p.echecs, ...a.echecs)
+  const niveau = (src) => { const sf = analyser(src, F.aide); const t = []; parcourir(sf, (n) => { if (ts.isStringLiteralLike(n) || ts.isTemplateHead(n) || ts.isTemplateMiddle(n) || ts.isTemplateTail(n)) { const m = NIVEAU_DE_SITE.exec(sansAccents(n.text)); if (m) t.push(`${F.aide}:${ligneNoeud(sf, n)} : « ${court(n.text, 90)} » parle encore du niveau de site`) } }); return t }
+  echecs.push(...niveau(srcAide))
+  // le détecteur : une entrée qui renvoie vers un bloc retiré, et le niveau de site dans l'aide, doivent être vus
+  const sp = defautsLiens(F.parametres, analyser(`${srcParam}\nexport const SONDE_CF10 = { id: 'sonde', label: 'Apparence', detail: 'Thème du site', href: '/profil#sonde-absente' }\n`, F.parametres), ctx)
+  if (sp.echecs.length < p.echecs.length + 2) echecs.push(`détecteur : l'entrée sonde « Apparence » vers /profil#sonde-absente non vue (${sp.echecs.length - p.echecs.length} défaut(s) sur 2)`)
+  if (niveau(`${srcAide}\nexport const SONDE_CF10 = 'modèles, inventaire, niveau de site'\n`).length !== niveau(srcAide).length + 1) echecs.push('détecteur : « niveau de site » ajouté à l\'aide non vu')
+  if (echecs.length) return ko(...echecs)
+  return { ok: true, echecs: [], resume: `${p.vus.length} lien(s) de ${F.parametres} et ${a.vus.length} de ${F.aide} vers des pages de app/ (${ctx.routes.length} pages), ancres de /profil présentes (${[...ctx.idsProfil].join(', ') || 'aucune'}), aucune entrée vers un bloc retiré ; ${F.aide} ne parle plus du niveau de site ; mutation : entrée « Apparence » vers /profil#sonde-absente → 2 défauts vus, « niveau de site » → vu` }
+}
+
 // ── L'arbre témoin ────────────────────────────────────────────────────────────────────────────────────────────────────────
 function construireTemoin() {
   const ref = extraireReference()
@@ -768,12 +897,17 @@ function construireTemoin() {
 
 // ── Principal ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 async function principal() {
-  const o = lireOptionsOuQuitter(process.argv.slice(2))
+  const o = lireOptionsOuQuitter(process.argv.slice(2), { connues: ['critere'] })
+  // --critere=CF-8[,…] : ne juge que ces critères (l'essai de l'usine, fiche 000-usine-cf8, ne juge que CF-8) ; les autres ne
+  // sont ni déclarés ni imprimés, et le verdict ne vaut que pour eux.
+  const ids = o.valeur('critere') === undefined ? IDS : o.liste('critere')
+  if (o.drapeau('critere') || !ids.length || ids.some((x) => !IDS.includes(x))) { console.error(`✗ --critere attend des critères de ${IDS.join(', ')} (ex. --critere=CF-8)`); process.exit(2) }
   if (o.reel) { console.error(`✗ ${JUGE} n'a pas de mode --reel : tout est statique`); process.exit(2) }
   if (o.temoin && !o.racineParDefaut) { console.error(`✗ --temoin construit son arbre sur la référence ${REFERENCE_COMMIT} : ne pas le combiner avec --racine`); process.exit(2) }
   if (o.positionnels.length) { console.error(`✗ argument(s) inattendu(s) : ${o.positionnels.join(' ')}`); process.exit(2) }
   const racine = o.temoin ? TEMOIN_DOSSIER : o.racine
-  const s = creerSortie(JUGE, IDS, { racine, temoin: o.temoin })
+  const s = creerSortie(JUGE, ids, { racine, temoin: o.temoin })
+  if (ids !== IDS) s.note(`--critere : seulement ${ids.join(', ')} (les autres critères ne sont pas jugés)`)
   await s.executer(async () => {
     if (o.temoin) {
       const t = construireTemoin()
@@ -781,14 +915,14 @@ async function principal() {
     }
     const b = baseDe(racine, F.fermeture, lireTexte(path.join(racine, F.fermeture)))
     s.note(`base des diffs : ${b.nom}${b.git ? ' (git diff, lecture seule)' : ` (blob de ${b.rev.slice(0, 7)})`}`)
-    const juges = { 'CF-1': cf1, 'CF-2': cf2, 'CF-3': cf3, 'CF-4': cf4, 'CF-5': cf5, 'CF-6': cf6, 'CF-7': cf7, 'CF-8': cf8 }
-    for (const id of IDS) {
+    const juges = { 'CF-1': cf1, 'CF-2': cf2, 'CF-3': cf3, 'CF-4': cf4, 'CF-5': cf5, 'CF-6': cf6, 'CF-7': cf7, 'CF-8': cf8, 'CF-9': cf9, 'CF-10': cf10 }
+    for (const id of ids) {
       try { s.resultat(id, await juges[id](racine)) } catch (e) { s.echoue(id, `exception : ${premiereLigne(e)}`) }
     }
   })
 }
 
-export { cf1, cf2, cf3, cf4, cf5, cf6, cf7, cf8, construireTemoin, baseDe }
+export { cf1, cf2, cf3, cf4, cf5, cf6, cf7, cf8, cf9, cf10, construireTemoin, baseDe }
 
 const pareil = (a, b) => (process.platform === 'win32' ? a.toLowerCase() === b.toLowerCase() : a === b)
 if (process.argv[1] && pareil(path.resolve(process.argv[1]), fileURLToPath(import.meta.url))) await principal()

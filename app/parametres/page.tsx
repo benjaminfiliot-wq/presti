@@ -17,7 +17,7 @@ import type { Artisan, Message } from './commun'
 // Paramètres (sprint J-1 §6) : une page, une navigation à gauche, l'URL qui suit (`?onglet=`).
 // Les anciens liens `?onglet=legal|securite|donnees` continuent de marcher.
 //
-// Plateforme, Site, Canaux, Apparence et Aide ne sont PAS des copies : ce sont des liens vers
+// Plateforme, Site, Canaux et Aide ne sont PAS des copies : ce sont des liens vers
 // les écrans qui existent déjà, avec une ligne qui dit ce qu'on y règle. On n'a pas déplacé
 // ces réglages pour le plaisir de déplacer.
 
@@ -36,9 +36,8 @@ const NAV: { groupe: string; entrees: Entree[] }[] = [
   ] },
   { groupe: 'Vos outils', entrees: [
     { id: 'plateforme', label: 'Plateforme', detail: 'Assistant, automatisations, reprise en main', href: '/plateforme', icone: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></>) },
-    { id: 'site', label: 'Site', detail: 'Contenu, réalisations, publication', href: '/profil', icone: ic(<><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></>) },
+    { id: 'site', label: 'Site', detail: 'Votre nom de domaine', href: '/profil', icone: ic(<><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></>) },
     { id: 'canaux', label: 'Canaux', detail: 'Votre boîte email branchée', href: '/messages/canaux', icone: ic(<><path d="M4 4h16v16H4z" /><path d="m4 7 8 6 8-6" /></>) },
-    { id: 'apparence', label: 'Apparence', detail: 'Thème, couleur, style du site', href: '/profil#apparence', icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18c1.2 0 1.7-.8 1.2-1.8-.6-1.2.2-2.2 1.5-2.2H16a5 5 0 0 0 5-5c0-4.9-4-9-9-9z" /><circle cx="8" cy="10" r="1" fill="currentColor" /><circle cx="12" cy="7" r="1" fill="currentColor" /><circle cx="16" cy="10" r="1" fill="currentColor" /></>) },
   ] },
   { groupe: 'Protection', entrees: [
     { id: 'securite', label: 'Sécurité', detail: actif('mfa') ? 'Mot de passe, sessions, double authentification' : 'Mot de passe, sessions ouvertes', icone: ic(<><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>) },

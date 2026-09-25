@@ -1,5 +1,5 @@
 {
- "_": "Témoin de scripts/promesses-qa.mjs --temoin (fiche 025-01, point 8), écrit par Claude Code. Le juge extrait app/ et lib/ du commit « base » (git archive, sous .orchestre/travail/promesses-qa/temoin/), remplace dans chaque « fichier » le texte « ancien » (présent une fois exactement) par « nouveau », puis juge PR-1 à PR-6 sur cet arbre. Ces corrections simulent l'état après 025-05 (/profil) et 025-06 (titre, landing, manifeste, FAQ, tableau de bord, démo, accroche Studio) et n'utilisent que les affirmations permises par 025-06 ; chaque fichier corrigé doit appartenir au périmètre de l'une de ces deux fiches. Ce n'est pas du code à reprendre tel quel : le profil n'y perd que ses trois phrases fautives, pas l'éditeur. JSON, et non .ts/.tsx : tsconfig.json inclut **/*.tsx, un fichier source ici entrerait dans npm run typecheck.",
+ "_": "Témoin de scripts/promesses-qa.mjs --temoin (fiche 025-01, point 8), écrit par Claude Code. Le juge extrait app/ et lib/ du commit « base » (git archive, sous .orchestre/travail/promesses-qa/temoin/), remplace dans chaque « fichier » le texte « ancien » (présent une fois exactement) par « nouveau », puis juge PR-1 à PR-6 sur cet arbre. Ces corrections simulent l'état après 025-05 (/profil), 025-06 (titre, landing, manifeste, FAQ, tableau de bord, démo, accroche Studio) et 025-15 (la scène du héros, app/HeroApp.tsx, et la vidéo de la landing baissée, lib/flags.ts : PR-7 et PR-8, relectures à froid du 24/09) et n'utilisent que les affirmations permises par 025-06 ; chaque fichier corrigé doit appartenir au périmètre de l'une de ces fiches. Ce n'est pas du code à reprendre tel quel : le profil n'y perd que ses trois phrases fautives, pas l'éditeur. JSON, et non .ts/.tsx : tsconfig.json inclut **/*.tsx, un fichier source ici entrerait dans npm run typecheck.",
  "base": "1620723",
  "corrections": [
   {
@@ -103,6 +103,24 @@
    "fichier": "app/profil/page.tsx",
    "ancien": "une photo finie de la même pièce. Inclus dans l’offre Signature.</span>",
    "nouveau": "une photo finie de la même pièce.</span>"
+  },
+  {
+   "fiche": "025-15",
+   "fichier": "app/HeroApp.tsx",
+   "ancien": "<span className=\"u\">presti · réponse en direct</span>",
+   "nouveau": "<span className=\"u\">presti · demande entrante</span>"
+  },
+  {
+   "fiche": "025-15",
+   "fichier": "app/HeroApp.tsx",
+   "ancien": "<div className=\"lp-bub out\" ref={outB}>Bonjour Marie, merci de votre message ! Je comprends l&apos;urgence. Je vous rappelle dans la journée pour convenir d&apos;un passage — en attendant, coupez l&apos;arrivée d&apos;eau sous l&apos;évier.<span className=\"st\">Presti · répondu en 41 s</span></div>",
+   "nouveau": "<div className=\"lp-bub out\" ref={outB}>Mot d&apos;urgence repéré (« fuite ») : vous êtes alerté tout de suite. Presti a préparé une réponse, que vous relisez avant l&apos;envoi.<span className=\"st\">Presti · réponse préparée</span></div>"
+  },
+  {
+   "fiche": "025-15",
+   "fichier": "lib/flags.ts",
+   "ancien": "  landingVideo: true,",
+   "nouveau": "  landingVideo: false,"
   }
  ]
 }

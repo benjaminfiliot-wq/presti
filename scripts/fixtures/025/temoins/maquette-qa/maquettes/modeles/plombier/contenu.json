@@ -1,0 +1,21 @@
+{
+ "_": "Témoin de scripts/maquette-qa.mjs (MQ-10, relecture à froid du 24/09), écrit par Claude Code : un second modèle minimal, au format du faux générateur du témoin (pas le format v2), pour que le dictionnaire des métiers ait deux modèles à comparer. Ses mots de métier (plombier, robinetterie, réseaux…) ne doivent jamais paraître dans la maquette du menuisier, ni ceux du menuisier (bois, escaliers…) dans la sienne.",
+ "titre": "{entreprise}, plombier à {ville}",
+ "description": "Maquette privée de la page d’accueil de {entreprise}, plombier à {ville}.",
+ "h1": "{entreprise}, plombier à {ville}",
+ "chapeau": "Salles de bains, robinetterie et réseaux d’eau, posés et raccordés avec soin.",
+ "prestations_titre": "Ce que j’installe",
+ "prestations": [
+  { "titre": "Salles de bains", "texte": "Des salles de bains pensées pour la pièce, de l’évacuation à la robinetterie." },
+  { "titre": "Robinetterie", "texte": "Mitigeurs, vasques et éviers raccordés à l’eau froide et chaude." },
+  { "titre": "Réseaux d’eau", "texte": "Alimentations et évacuations refaites, repérées et accessibles." }
+ ],
+ "photos_titre": "La plomberie en images",
+ "contact_titre": "Parler de votre projet",
+ "zone": "J’interviens à {ville} et dans les communes voisines : {communes}.",
+ "photos": {
+  "demo": "plombier",
+  "heros": "hero-960.webp",
+  "fichiers": ["hero-960.webp", "robinetterie-720.webp"]
+ }
+}

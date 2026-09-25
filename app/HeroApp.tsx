@@ -69,14 +69,14 @@ export default function HeroApp() {
 
   return (
     <div className="lp-win" ref={racine}>
-      <div className="lp-winbar"><span className="d" /><span className="d" /><span className="d" /><span className="u">presti · réponse en direct</span></div>
+      <div className="lp-winbar"><span className="d" /><span className="d" /><span className="d" /><span className="u">presti · votre poste</span></div>
       <div className="lp-wingrid">
         <div className="lp-pane">
           <div className="lp-lbl">Demande entrante</div>
           <div className="lp-chat">
-            <div className="lp-bub in" ref={inB}>Bonjour, fuite sous mon évier depuis ce matin, vous pouvez passer cette semaine ?<span className="st">Marie · 14:02</span></div>
+            <div className="lp-bub in" ref={inB}>Bonjour, je souhaite remplacer mon chauffe-eau. Pouvez-vous me préparer un devis ?<span className="st">Marie · 14:02</span></div>
             <div className="lp-typing" ref={typ}><i /><i /><i /></div>
-            <div className="lp-bub out" ref={outB}>Bonjour Marie, merci de votre message ! Je comprends l&apos;urgence. Je vous rappelle dans la journée pour convenir d&apos;un passage — en attendant, coupez l&apos;arrivée d&apos;eau sous l&apos;évier.<span className="st">Presti · répondu en 41 s</span></div>
+            <div className="lp-bub out" ref={outB}>Bonjour Marie, merci pour votre demande. Pour préparer votre devis, pouvez-vous préciser la capacité souhaitée et joindre une photo de l&apos;installation actuelle ?<span className="st">Presti · réponse préparée, à valider par l&apos;artisan</span></div>
           </div>
         </div>
         <div className="lp-pane hide-sm">

@@ -5,10 +5,10 @@
 //   --racine=<dossier> : tout est lu et lancé depuis ce dossier (défaut : la racine du dépôt) : lib/siteCommande.ts,
 //                        app/site/commander/page.tsx, scripts/ts-loader.mjs, public/sites-demo/generer.mjs, package.json,
 //                        tsconfig.json. Rien n'y est écrit (npm run typecheck y tourne avec --incremental false, hors dépôt).
-//   --temoin           : le juge construit l'état « après » de 025-09 et s'y juge entier (PC-1 à PC-5), voir « Témoin ».
+//   --temoin           : le juge construit l'état « après » de 025-09 et s'y juge entier (PC-1 à PC-9), voir « Témoin ».
 //   Pas de --reel : ce juge ne touche ni la base ni la production (refusé, code 2).
 // Sortie : une ligne PASS/FAIL par critère, puis « parcours-commande-qa : PASS » ou « … : FAIL — ids » ; code 0 seulement si
-// les cinq sont verts ; code 2 sur une option invalide.
+// les neuf sont verts ; code 2 sur une option invalide.
 //
 // Critères (fiche 025-01, point 10 ; contrat « matiere.artisan » de la même fiche) :
 //   PC-1 lib/siteCommande.ts, importé par scripts/ts-loader.mjs dans un processus à part (node --experimental-strip-types
@@ -52,6 +52,39 @@
 //        compte lib/siteCommande.ts et app/site/commander/page.tsx ; aucun @ts-nocheck dans ces deux fichiers, et pas plus de
 //        @ts-ignore / @ts-expect-error qu'à 1620723 ; tsconfig.json identique à 1620723 (commun.mjs defautsTypecheck).
 //
+// Relectures à froid du 24/09 (fiche 025-16 ; défauts M2, M3, M4, M9 du résultat du workflow serie-025-usine) :
+//   PC-6 (M4) le récapitulatif avant paiement montre l'étape « Votre parcours » : l'étape du paiement (entrée de ETAPES qui dit
+//        « paiement » ou « récapitulatif ») est rendue, et dans ce rendu (hors attributs : ce que l'écran montre, pas un
+//        onClick) un texte JSX dit « parcours », et des expressions lisent le nom ou le prénom, la phrase signée (citation) et
+//        les chiffres DE L'ARTISAN (chaîne qui passe par .artisan, ou variable posée depuis …artisan). Et le champ du nom de
+//        domaine (saisie qui nomme `domaine`) n'a que des placeholders « Exemple : … » (ni « Ex: », ni « Une idée ? »).
+//        Mutation à chaque passage : sur la page jugée (si elle passe), les éléments du récapitulatif qui montrent la phrase
+//        signée sont retirés du source, qui est relu : PC-6 doit rougir ; plus deux sondes (page avec et sans récapitulatif).
+//   PC-7 (M2) aucune promesse sans code dans app/site/commander/page.tsx ni lib/siteCommande.ts (textes JSX, chaînes et
+//        gabarits ; ni commentaires ni chemins d'import) : pas de « guide » ; aucun montant en euros hors la déclaration de
+//        PRIX_SITE_TEXTE (« environ 10 € par an » est le prix d'un tiers) ; aucune action de Presti envers l'artisan
+//        (« Presti m'envoie / vous enverra … ») : rien dans le code ne l'envoie. Mutation : un composant qui dit « Presti
+//        m’envoie le guide (environ 10 € par an) » ajouté à la page doit être vu (trois motifs).
+//   PC-8 (M3) un seul texte de délai : dans lib/siteCommande.ts, UNE constante exportée porte le délai en littéral (aujourd'hui
+//        DELAI_ANNONCE, dont PC-2 garde la valeur) et aucun autre littéral du fichier n'en écrit un ; aucun délai écrit en dur
+//        dans app/site/** ni app/api/site/** ; chaque phrase qui dit le délai (gabarits de lib/siteCommande.ts, gabarits et
+//        JSX de tout fichier de app/ et lib/ qui importe une constante du délai de lib/siteCommande, constantes remplacées par
+//        leur valeur) donne le MÊME texte, des deux mots avant le délai jusqu'à la fin de la phrase ; et ce texte dit à partir
+//        de quoi le délai court (après / à compter de / dès + paiement, commande, ou une validation qualifiée : « validation
+//        de … », « … par … » ; « après validation » seul est refusé : validation de quoi ?). Ailleurs dans app/ et lib/ (CGU,
+//        courriel interne), un « N h ouvrées » écrit en dur doit valoir la constante. Mutation : une seconde phrase
+//        « Livré sous {<constante>}. » ajoutée à la page doit être vue ; sondes : deux textes, « après validation » seul.
+//   PC-9 (M9) un texte trop long est refusé, jamais coupé : pour les cas prenom-41, nom-61, parcours-141, parcours-300,
+//        citation-161, citation-400, valeur-13, unite-13, legende-61 et enorme (ceux de PC-1), erreursAvantPaiement rend au
+//        moins une erreur, dont une qui dit la borne du champ (le nombre : 40, 60, 140, 160, 12, 60 ; pas exigé pour enorme),
+//        et nettoyerBrouillon ne garde jamais un début du texte : le champ est retiré (vide, absent, null) ou gardé tel quel
+//        (nettoyé : balises ôtées, blancs repliés). Détecteur éprouvé sur quatre sondes (coupé et payable, refusé sans la
+//        borne, refusé mais coupé, refusé et gardé : seul le dernier passe).
+//   Conséquence sur PC-1 (bornes) : un texte gardé AU-DELÀ de sa borne était toujours un défaut (le nettoyage coupait) ; il
+//        n'en est plus un s'il est la copie exacte de l'entrée nettoyée, s'il fait 2 000 signes au plus et si le cas est
+//        refusé (E non vide) : c'est la seule façon de refuser sans couper ni effacer ce que l'artisan a écrit. Tout le reste
+//        de PC-1 est inchangé, dont l'invariant « payable ⇒ générable » et le plafond de 2 000 signes pour ce qui est gardé.
+//
 // Témoin (--temoin) : scripts/fixtures/025/temoins/parcours-commande-qa/ contient l'état « après » minimal de 025-09 :
 //   lib/siteCommande.ts.temoin (lib/siteCommande.ts de 1620723 + matiere.artisan) et app/site/commander/page.tsx.temoin (une
 //   page réduite aux étapes, aux champs et aux libellés que PC-3 et PC-4 lisent). Extension .temoin : le tsconfig du dépôt
@@ -78,7 +111,7 @@ import {
 } from './fixtures/025/commun.mjs'
 
 const JUGE = 'parcours-commande-qa'
-const IDS = ['PC-1', 'PC-2', 'PC-3', 'PC-4', 'PC-5']
+const IDS = ['PC-1', 'PC-2', 'PC-3', 'PC-4', 'PC-5', 'PC-6', 'PC-7', 'PC-8', 'PC-9']
 const LIB = 'lib/siteCommande.ts'
 const PAGE = 'app/site/commander/page.tsx'
 const LOADER = 'scripts/ts-loader.mjs'
@@ -238,6 +271,8 @@ function construireCas({ annee, estPremiere }) {
   ajouter('nom-61', 'nom de 61 signes', avec({ nom: r(61, 'B') }), 'tolere')
   ajouter('parcours-141', 'parcours de 141 signes', avec({ parcours: r(141, 'P') }), 'tolere')
   ajouter('citation-161', 'citation de 161 signes', avec({ citation: `Je ${r(157, 'a')}.` }), 'tolere')
+  ajouter('parcours-300', 'parcours de 300 signes', avec({ parcours: r(300, 'Q') }), 'tolere') // PC-9 (M9)
+  ajouter('citation-400', 'citation de 400 signes', avec({ citation: `Je ${r(396, 'b')}.` }), 'tolere') // PC-9 (M9)
   ajouter('legende-61', 'légende de 61 signes', chiffre(0, { legende: r(61, 'l') }), 'tolere')
   ajouter('unite-13', 'unité de 13 signes', chiffre(0, { unite: r(13, 'u') }), 'tolere')
   ajouter('valeur-13', 'valeur de 13 signes', chiffre(0, { valeur: '1234567890123' }), 'tolere')
@@ -264,7 +299,7 @@ function controlerJeu(cas, estPremiere) {
   const d = []
   const par = new Map(cas.map((c) => [c.id, c]))
   const long = (id, k) => par.get(id).artisan[k].length
-  const attendus = [['bornes-hautes', 'prenom', 40], ['bornes-hautes', 'nom', 60], ['bornes-hautes', 'parcours', 140], ['bornes-hautes', 'citation', 160], ['bornes-basses', 'citation', 20], ['citation-19', 'citation', 19], ['prenom-41', 'prenom', 41], ['nom-61', 'nom', 61], ['parcours-141', 'parcours', 141], ['citation-161', 'citation', 161]]
+  const attendus = [['bornes-hautes', 'prenom', 40], ['bornes-hautes', 'nom', 60], ['bornes-hautes', 'parcours', 140], ['bornes-hautes', 'citation', 160], ['bornes-basses', 'citation', 20], ['citation-19', 'citation', 19], ['prenom-41', 'prenom', 41], ['nom-61', 'nom', 61], ['parcours-141', 'parcours', 141], ['citation-161', 'citation', 161], ['parcours-300', 'parcours', 300], ['citation-400', 'citation', 400]]
   for (const [id, k, n] of attendus) if (long(id, k) !== n) d.push(`${id}.${k} fait ${long(id, k)} signes, ${n} voulus`)
   for (const p of PIEGES) if (estPremiere(p) || !NAIVE.test(p)) d.push(`le piège « ${court(p, 40)} » n’en est pas un (générateur ${estPremiere(p)}, naïve ${NAIVE.test(p)})`)
   const acc = CITATIONS.filter(estPremiere).length, ref = CITATIONS.length - acc
@@ -288,13 +323,21 @@ function differenceGarde(N, a) {
   return null
 }
 const BALISE = /<\/?[a-z!][^>]*>/i
-/** N est-il borné ? (null/absent, ou objet aux clés du contrat, textes ≤ bornes, ≤ 3 chiffres, sans balise) → défauts */
-function defautsBorne(N) {
+// PC-9 (relecture à froid du 24/09, M9) : refuser sans couper. Un texte gardé au-delà de sa borne n'est admis que s'il est la
+// copie exacte de l'entrée nettoyée (balises ôtées, blancs repliés : le nettoyage de lib/siteCommande.ts, sans la coupe), s'il
+// fait PLAFOND_GARDE signes au plus, et si le cas est refusé (erreursAvantPaiement non vide).
+const PLAFOND_GARDE = 2000
+const nettoye = (v) => String(v ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
+const gardeTelQuel = (v, entree, refuse) => refuse && typeof v === 'string' && (typeof entree === 'string' || typeof entree === 'number') && v === nettoye(entree) && v.length <= PLAFOND_GARDE
+/** N est-il borné ? (null/absent, ou objet aux clés du contrat, textes ≤ bornes — ou gardés tels quels et refusés —, ≤ 3 chiffres,
+ *  sans balise) → défauts. `entree` : l'artisan donné au nettoyage ; `refuse` : erreursAvantPaiement non vide. */
+function defautsBorne(N, { entree, refuse = false } = {}) {
   if (N === undefined || N === null) return []
   if (typeof N !== 'object' || Array.isArray(N)) return [`artisan gardé en ${Array.isArray(N) ? 'liste' : typeof N}`]
   const d = []
+  const E = entree && typeof entree === 'object' && !Array.isArray(entree) ? entree : {}
   for (const k of Object.keys(N)) if (!CLES.includes(k)) d.push(`clé « ${k} » gardée`)
-  for (const [k, max] of Object.entries(MAX)) if (typeof N[k] === 'string' && N[k].length > max) d.push(`${k} de ${N[k].length} signes (${max} au plus)`)
+  for (const [k, max] of Object.entries(MAX)) if (typeof N[k] === 'string' && N[k].length > max && !gardeTelQuel(N[k], E[k], refuse)) d.push(`${k} de ${N[k].length} signes (${max} au plus)`)
   for (const k of ['prenom', 'nom', 'parcours', 'citation']) if (typeof N[k] === 'string' && BALISE.test(N[k])) d.push(`balise HTML gardée dans ${k}`)
   if (N.chiffres !== undefined && N.chiffres !== null) {
     if (!Array.isArray(N.chiffres)) d.push(`chiffres gardé en ${typeof N.chiffres}`)
@@ -304,9 +347,10 @@ function defautsBorne(N) {
         if (c === null || c === undefined) return
         if (typeof c !== 'object' || Array.isArray(c)) { d.push(`chiffres[${i}] gardé en ${typeof c}`); return }
         for (const k of Object.keys(c)) if (!(k in MAX_CHIFFRE)) d.push(`clé « chiffres[${i}].${k} » gardée`)
+        const ce = Array.isArray(E.chiffres) && E.chiffres[i] && typeof E.chiffres[i] === 'object' ? E.chiffres[i] : {}
         for (const [k, max] of Object.entries(MAX_CHIFFRE)) {
           const v = typeof c[k] === 'number' ? String(c[k]) : c[k]
-          if (typeof v === 'string' && v.length > max) d.push(`chiffres[${i}].${k} de ${v.length} signes (${max} au plus)`)
+          if (typeof v === 'string' && v.length > max && !gardeTelQuel(v, ce[k], refuse)) d.push(`chiffres[${i}].${k} de ${v.length} signes (${max} au plus)`)
           if (typeof v === 'string' && BALISE.test(v)) d.push(`balise HTML gardée dans chiffres[${i}].${k}`)
         }
       })
@@ -333,7 +377,7 @@ function jugerPC1(s, { sonde, cas, jeu, reGen, ligneGen, identique }) {
     if (!Array.isArray(r.E) || r.E.some((x) => typeof x !== 'string' || !x.trim())) { K.forme.push(`${c.id} : ${court(JSON.stringify(r.E), 60)}`); continue }
     erreursDe.set(c.id, r.E)
     const N = r.N && typeof r.N === 'object' && r.N.matiere && typeof r.N.matiere === 'object' ? r.N.matiere.artisan : undefined
-    for (const x of defautsBorne(N)) K.borne.push(`${c.id} : ${x}`)
+    for (const x of defautsBorne(N, { entree: c.artisan, refuse: r.E.length > 0 })) K.borne.push(`${c.id} : ${x}`)
     if (!r.E.length) {
       const v = erreursArtisan(N).filter((x) => !/pas à la première personne$/.test(x))
       if (N && typeof N === 'object' && typeof N.citation === 'string' && !(reGen || PREMIERE_PERSONNE).test(N.citation)) v.push(`citation « ${court(N.citation, 40)} » refusée par l’expression de generer.mjs`)
@@ -626,6 +670,366 @@ function jugerPC5(s, racine) {
   s.verdict('PC-5', !d.length, `${commande} : code 0 en ${duree} s (tsc --noEmit, ${projet.length} fichiers du projet dont ${LIB} et ${PAGE}, sans @ts-nocheck ni @ts-ignore ajouté)`, d.join(' ; '))
 }
 
+// ── Relectures à froid du 24/09 : PC-6 à PC-9 ─────────────────────────────────────────────────────────────────────────────
+const analyserSource = (src, nom = PAGE) => ts.createSourceFile(nom, src, ts.ScriptTarget.Latest, true, /\.tsx$/.test(nom) ? ts.ScriptKind.TSX : ts.ScriptKind.TS)
+const ligneDe = (sf, n) => sf.getLineAndCharacterOfPosition(n.getStart(sf)).line + 1
+/** Les textes montrés (JSX, chaînes, gabarits) sous un nœud, sans les imports ni ce que `exclure` écarte → [{ t, n }] */
+function textesAffiches(racineNoeud, exclure = () => false) {
+  const out = []
+  const rec = (x) => {
+    if (ts.isImportDeclaration(x) || ts.isExportDeclaration(x) || exclure(x)) return
+    if (ts.isJsxText(x) || estLitteral(x) || ts.isTemplateHead(x) || ts.isTemplateMiddle(x) || ts.isTemplateTail(x)) { const t = norm(x.text); if (t) out.push({ t, n: x }) }
+    ts.forEachChild(x, rec)
+  }
+  rec(racineNoeud)
+  return out
+}
+
+// PC-6 (M4) : le récapitulatif avant paiement montre « Votre parcours », et le champ du domaine a des exemples marqués « Exemple »
+const CHAMPS_RECAP = [['le nom ou le prénom', ['nom', 'prenom']], ['la phrase signée', ['citation']], ['les chiffres', ['chiffres']]]
+const MARQUE_AUTRE = /^(?:ex\b|ex\s*[.:]|e\.g\.|par ex)|une\s+id[ée]e/i
+function initialiseurs(sf) {
+  const m = new Map()
+  visiter(sf, (n) => { if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name) && n.initializer) m.set(n.name.text, n.initializer.getText(sf)) })
+  return m
+}
+/** Les champs de l'artisan lus par ce que rendent les nœuds (attributs exclus : un onClick n'est pas montré) → champ → [nœuds] */
+function lecturesArtisan(noeuds, sf) {
+  const init = initialiseurs(sf)
+  const lus = new Map()
+  const rec = (x) => {
+    if (ts.isJsxAttribute(x)) return
+    if (ts.isPropertyAccessExpression(x) && ['nom', 'prenom', 'citation', 'chiffres'].includes(x.name.text)) {
+      const noms = []
+      let y = x.expression
+      for (;;) {
+        y = nu(y)
+        if (ts.isPropertyAccessExpression(y)) { noms.push(y.name.text); y = y.expression } else if (ts.isElementAccessExpression(y)) y = y.expression
+        else break
+      }
+      const racineId = ts.isIdentifier(y) ? y.text : ''
+      if (noms.includes('artisan') || /artisan/i.test(racineId) || /\.artisan\b/.test(init.get(racineId) || '')) {
+        if (!lus.has(x.name.text)) lus.set(x.name.text, [])
+        lus.get(x.name.text).push(x)
+      }
+    }
+    ts.forEachChild(x, rec)
+  }
+  for (const n of noeuds) rec(n)
+  return lus
+}
+function etapePaiement(sf) {
+  let etapes = null
+  visiter(sf, (n) => { if (!etapes && ts.isVariableDeclaration(n) && ts.isIdentifier(n.name) && n.name.text === 'ETAPES' && n.initializer) etapes = nu(n.initializer) })
+  if (!etapes || !ts.isArrayLiteralExpression(etapes)) return { erreur: 'la liste ETAPES (tableau littéral) est introuvable dans la page' }
+  const entree = etapes.elements.find((el) => textesDe(el).some((t) => /paiement|récapitulatif/i.test(t)))
+  if (!entree) return { erreur: 'ETAPES n’a aucune étape « paiement » ou « récapitulatif »' }
+  const o = nu(entree)
+  const pid = o && ts.isObjectLiteralExpression(o) ? o.properties.find((p) => ts.isPropertyAssignment(p) && p.name.getText() === 'id' && estLitteral(nu(p.initializer))) : null
+  if (!pid) return { erreur: 'l’étape du paiement de ETAPES n’a pas d’id littéral' }
+  return { id: nu(pid.initializer).text }
+}
+/** PC-6 sur une page analysée → { ok, echecs, faits, lus, region } */
+function jugerRecap(sf) {
+  const echecs = [], faits = []
+  const ep = etapePaiement(sf)
+  let region = [], lus = new Map()
+  if (ep.erreur) echecs.push(ep.erreur)
+  else {
+    region = regionEtape(sf, ep.id)
+    if (!region.length) echecs.push(`l’étape du paiement (id « ${ep.id} ») n’est jamais rendue : aucun etape === '${ep.id}' && …, ternaire, if ou case`)
+    else {
+      const libelles = []
+      const rec = (x) => { if (ts.isJsxAttribute(x)) return; if (ts.isJsxText(x) && /parcours/i.test(x.text)) libelles.push(norm(x.text)); ts.forEachChild(x, rec) }
+      region.forEach(rec)
+      lus = lecturesArtisan(region, sf)
+      const manque = CHAMPS_RECAP.filter(([, cs]) => !cs.some((c) => lus.has(c))).map(([n]) => n)
+      if (!libelles.length) echecs.push(`le récapitulatif (étape « ${ep.id} ») ne dit « parcours » dans aucun texte affiché`)
+      if (manque.length) echecs.push(`le récapitulatif (étape « ${ep.id} ») ne montre pas ${manque.join(', ')} de l’artisan (champs de l’artisan rendus : ${[...lus.keys()].join(', ') || 'aucun'})`)
+      if (libelles.length && !manque.length) faits.push(`récapitulatif de l’étape « ${ep.id} » : « ${court(libelles[0], 40)} », et ${[...lus.keys()].join(', ')} de l’artisan rendus (hors attributs)`)
+    }
+  }
+  const champs = elementsJsx([sf]).filter((e) => tagDe(e) === 'input' && estSaisie(e) && nomme(e, 'domaine'))
+  if (!champs.length) echecs.push('champ du nom de domaine introuvable (input dont les attributs nomment domaine)')
+  const pls = champs.map((e) => placeholders(e, sf)).filter(Boolean)
+  const valeurs = [...new Set(pls.flatMap((p) => p.valeurs.map(norm)))]
+  if (champs.length && !valeurs.length) echecs.push('champ du nom de domaine sans placeholder « Exemple : … »')
+  if (pls.some((p) => p.nonResolu)) echecs.push('placeholder du champ du domaine illisible par le juge (écrivez-le en littéral ou en constante du fichier)')
+  const mauvais = valeurs.filter((v) => !/^Exemple\b/.test(v) || MARQUE_AUTRE.test(v))
+  if (mauvais.length) echecs.push(`placeholder(s) du champ du domaine hors « Exemple : … » : ${mauvais.map((v) => `« ${court(v, 40)} »`).join(', ')}`)
+  else if (valeurs.length) faits.push(`champ du domaine : ${valeurs.map((v) => `« ${court(v, 40)} »`).join(', ')}`)
+  return { ok: !echecs.length, echecs, faits, lus, region }
+}
+/** Mutation : les éléments du récapitulatif qui montrent la phrase signée, retirés du source → nouveau source, ou null */
+function sansCitationAuRecap(src, sf, lus) {
+  const coupes = []
+  for (const n of lus.get('citation') || []) {
+    let p = n.parent
+    while (p && !(ts.isJsxElement(p) && p.parent && (ts.isJsxElement(p.parent) || ts.isJsxFragment(p.parent)))) p = p.parent
+    if (p) coupes.push([p.getStart(sf), p.end])
+  }
+  if (!coupes.length) return null
+  coupes.sort((a, b) => a[0] - b[0])
+  const fusion = []
+  for (const c of coupes) { const d = fusion[fusion.length - 1]; if (d && c[0] <= d[1]) d[1] = Math.max(d[1], c[1]); else fusion.push([...c]) }
+  let out = src
+  for (const [a, b] of fusion.reverse()) out = out.slice(0, a) + out.slice(b)
+  return out
+}
+const SONDE_RECAP = (recap) => `const ETAPES = [{ id: 'parcours', nom: 'Votre parcours' }, { id: 'paiement', nom: 'Le paiement' }]
+export default function P({ etape, brouillon }: any) {
+  const artisan = brouillon.matiere.artisan
+  return <main>{etape === 'paiement' && (<div><h3>Récapitulatif</h3><p>Domaine : {brouillon.domaine}</p>${recap}
+    <input value={brouillon.domaine || ''} onChange={() => null} placeholder="Exemple : martin-plomberie.fr" /></div>)}</main>
+}`
+function jugerPC6(s, page) {
+  if (page.erreur) { s.echoue('PC-6', page.erreur); return }
+  const r = jugerRecap(page.sf)
+  for (const e of r.echecs) s.echoue('PC-6', e)
+  // le détecteur, éprouvé à chaque passage
+  const d = []
+  const bonne = jugerRecap(analyserSource(SONDE_RECAP('<p>Votre parcours : {artisan?.prenom} {artisan?.nom}</p><p>{artisan?.citation}</p><p>{artisan?.chiffres === null ? \'Sans chiffres\' : artisan?.chiffres?.map((c: any) => c.valeur).join(\', \')}</p>')))
+  const vide = jugerRecap(analyserSource(SONDE_RECAP('<p onClick={() => artisan.citation}>Métier : {brouillon.metier}</p>')))
+  if (!bonne.ok) d.push(`sonde avec récapitulatif jugée rouge (${court(bonne.echecs.join(' ; '), 120)})`)
+  if (vide.ok || !vide.echecs.some((e) => /phrase signée/.test(e))) d.push('sonde sans récapitulatif (citation lue seulement dans un onClick) jugée verte')
+  let mutation = ''
+  if (r.ok) {
+    const m = sansCitationAuRecap(page.src, page.sf, r.lus)
+    if (!m) d.push('mutation non jouée : aucune phrase signée à retirer du récapitulatif')
+    else {
+      const rm = jugerRecap(analyserSource(m))
+      if (rm.ok || !rm.echecs.some((e) => /phrase signée/.test(e))) d.push('mutation : la phrase signée retirée du récapitulatif, la page reste verte')
+      else mutation = ` ; mutation : la phrase signée retirée du récapitulatif (${(r.lus.get('citation') || []).length} lecture(s)) → vue`
+    }
+  }
+  for (const x of d) s.echoue('PC-6', `détecteur : ${x}`)
+  if (r.ok && !d.length) s.passe('PC-6', `${r.faits.join(' ; ')} ; sondes avec et sans récapitulatif jugées justes${mutation}`)
+}
+
+// PC-7 (M2) : aucune promesse sans code dans la page ni dans lib/siteCommande.ts
+const PROMESSES = [
+  ['« guide »', /(?<![\p{L}])guides?(?![\p{L}])/iu],
+  ['montant en euros (prix d’un tiers ou prix écrit en dur)', /\d[\d\s  .,]*\s*(?:€|euros?(?![\p{L}])|EUR(?![\p{L}]))/iu],
+  ['action de Presti envers l’artisan', /presti\s+(?:vous|m’|me|te|t’|leur|lui)\s*(?:envoie|enverra|envoi|adresse|adressera|transmet|transmettra|fournit|fournira|remet|remettra|offre|offrira)/iu],
+]
+function promessesSansCode(fichiers) {
+  const hits = []
+  for (const { rel: f, sf, exclure } of fichiers) for (const { t, n } of textesAffiches(sf, exclure)) for (const [motif, re] of PROMESSES) if (re.test(t)) hits.push({ f, ligne: ligneDe(sf, n), motif, t })
+  return hits
+}
+const exclurePrix = (x) => ts.isVariableDeclaration(x) && ts.isIdentifier(x.name) && x.name.text === 'PRIX_SITE_TEXTE'
+function jugerPC7(s, page, racine) {
+  if (page.erreur) { s.echoue('PC-7', page.erreur); return }
+  const lib = lireOuNull(path.join(racine, LIB))
+  if (!lib || !lib.length) { s.echoue('PC-7', `${LIB} absent ou vide`); return }
+  const sfLib = analyserSource(lib.toString('utf8'), LIB)
+  const fichiers = [{ rel: PAGE, sf: page.sf, exclure: () => false }, { rel: LIB, sf: sfLib, exclure: exclurePrix }]
+  const hits = promessesSansCode(fichiers)
+  for (const h of hits) s.echoue('PC-7', `${h.f}:${h.ligne} [${h.motif}] « ${court(h.t, 110)} »`)
+  const sonde = analyserSource(`${page.src}\nexport function SondePC7() { return <p>Presti m’envoie le guide (environ 10 € par an).</p> }\n`)
+  const vus = new Set(promessesSansCode([{ rel: PAGE, sf: sonde, exclure: () => false }]).filter((h) => h.t.includes('SondePC7') || /Presti m’envoie le guide/.test(h.t)).map((h) => h.motif))
+  const aveugles = PROMESSES.map(([m]) => m).filter((m) => !vus.has(m))
+  if (aveugles.length) s.echoue('PC-7', `détecteur aveugle : « Presti m’envoie le guide (environ 10 € par an) » ajouté à la page, ${aveugles.join(', ')} non vu(s)`)
+  const n = fichiers.reduce((a, f) => a + textesAffiches(f.sf, f.exclure).length, 0)
+  if (!hits.length && !aveugles.length) s.passe('PC-7', `${n} textes affichés de ${PAGE} et ${LIB} (déclaration de PRIX_SITE_TEXTE exceptée) : ni « guide », ni montant en euros, ni action promise de Presti ; mutation : « Presti m’envoie le guide (environ 10 € par an) » ajouté à la page → ${PROMESSES.length} motifs vus`)
+}
+
+// PC-8 (M3) : un seul texte de délai, qui dit à partir de quoi il court
+// une durée (« 48 h ouvrées », « sous 48 h », « délai de 3 jours »), pas une heure du jour (« 8h-18h » d'un placeholder d'horaires)
+const RE_DELAI = /(?<![\p{L}])(?:sous|en|dans|d’ici|délai\s+(?:annoncé\s+)?(?:de\s+)?|annoncé\s+de)\s+\d+\s*(?:h|heures?|jours?)(?![\p{L}])|(?<![\d\p{L}])\d+\s*(?:h|heures?|jours?)\s+ouvr\p{L}*/iu
+const RE_H_OUVREES = /(?<![\d\p{L}])(\d+)\s*(h|heures?)\s+ouvr\p{L}*/giu
+const IMPORTE_COMMANDE = /from\s+['"](?:@\/lib\/siteCommande|(?:\.\.?\/)+(?:lib\/)?siteCommande)['"]/
+const SITE_COMMANDE_DIRS = ['app/site/commander/', 'app/api/site/commander/']
+function constantesExportees(sf) {
+  const decl = new Map()
+  for (const st of sf.statements) if (ts.isVariableStatement(st) && st.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)) for (const d of st.declarationList.declarations) if (ts.isIdentifier(d.name) && d.initializer) decl.set(d.name.text, d)
+  const valeurs = new Map()
+  const evaluer = (e, prof = 0) => {
+    e = nu(e)
+    if (!e || prof > 8) return null
+    if (estLitteral(e)) return e.text
+    if (ts.isTemplateExpression(e)) { let t = e.head.text; for (const sp of e.templateSpans) t += (evaluer(sp.expression, prof + 1) ?? '…') + sp.literal.text; return t }
+    if (ts.isIdentifier(e) && decl.has(e.text)) { if (!valeurs.has(e.text)) valeurs.set(e.text, evaluer(decl.get(e.text).initializer, prof + 1)); return valeurs.get(e.text) }
+    return null
+  }
+  for (const [k, d] of decl) if (!valeurs.has(k)) valeurs.set(k, evaluer(d.initializer))
+  return { decl, valeurs, evaluer }
+}
+/** La phrase qui dit le délai → { unite (deux mots avant le délai → fin de phrase, en minuscules), suite, phrase } */
+function uniteDelai(texte, valeur) {
+  const t = norm(texte), v = norm(valeur)
+  const i = t.toLowerCase().indexOf(v.toLowerCase())
+  if (i < 0) return null
+  let debut = 0
+  for (const m of t.slice(0, i).matchAll(/[.!?…]\s+(?=[A-ZÀ-ÖØ-Þ«"(])/gu)) debut = m.index + m[0].length
+  const reste = t.slice(i + v.length)
+  const mf = /[.!?…](?=\s+[A-ZÀ-ÖØ-Þ«"(]|\s*$)/u.exec(reste)
+  const fin = mf ? i + v.length + mf.index : t.length
+  const avant = t.slice(debut, i).trim().split(/\s+/).filter(Boolean).slice(-2).join(' ')
+  const suite = t.slice(i + v.length, fin).trim().replace(/[.,;:!?…]+$/, '').toLowerCase()
+  return { unite: `${avant} ${v} ${suite}`.replace(/\s+/g, ' ').trim().toLowerCase().replace(/[.,;:!?…]+$/, ''), suite, phrase: t.slice(debut, fin + 1).trim() }
+}
+function defautDepart(suite) {
+  if (!/(?:après|à compter d|dès|à partir d)/i.test(suite)) return `« ${court(suite, 60) || '(rien après le délai)'} » : ne dit pas à partir de quoi le délai court`
+  const valid = /valid\p{L}*/iu.exec(suite)
+  if (valid) return /^\s+(?:[\p{L}’']+\s+){0,2}?(?:de|du|des|d’|par)\s*\p{L}/iu.test(suite.slice(valid.index + valid[0].length)) ? null : `« ${court(suite, 60)} » : validation de quoi, par qui ?`
+  return /paiement|commande|réception/i.test(suite) ? null : `« ${court(suite, 60)} » : le départ n’est ni un paiement, ni une commande, ni une validation nommée`
+}
+/** Le texte rendu d'un élément JSX, constantes de lib/siteCommande.ts remplacées par leur valeur ; le reste en « … ». */
+function rendreJsx(el, valeurs) {
+  let out = ''
+  const rec = (x) => {
+    if (ts.isJsxText(x)) { out += x.text; return }
+    if (ts.isJsxExpression(x)) {
+      const e = nu(x.expression)
+      if (!e) return
+      if (estLitteral(e)) out += e.text
+      else if (ts.isIdentifier(e) && typeof valeurs.get(e.text) === 'string') out += valeurs.get(e.text)
+      else out += ' … '
+      return
+    }
+    if (ts.isJsxElement(x)) { x.children.forEach(rec); return }
+    if (ts.isJsxFragment(x)) { x.children.forEach(rec); return }
+    if (ts.isJsxSelfClosingElement(x)) out += ' '
+  }
+  if (ts.isJsxElement(el) || ts.isJsxFragment(el)) el.children.forEach(rec)
+  return out
+}
+function rendreGabarit(g, valeurs) {
+  let t = g.head.text
+  for (const sp of g.templateSpans) { const e = nu(sp.expression); t += (ts.isIdentifier(e) && typeof valeurs.get(e.text) === 'string' ? valeurs.get(e.text) : estLitteral(e) ? e.text : '…') + sp.literal.text }
+  return t
+}
+/** PC-8 sur un ensemble de fichiers (rel → source) → { ok, echecs, faits } */
+function jugerDelai(fichiers) {
+  const echecs = [], faits = []
+  const srcLib = fichiers.get(LIB)
+  if (!srcLib) return { ok: false, echecs: [`${LIB} absent`], faits }
+  const sfLib = analyserSource(srcLib, LIB)
+  const { decl, valeurs } = constantesExportees(sfLib)
+  const bases = [...decl].filter(([, d]) => estLitteral(nu(d.initializer)) && RE_DELAI.test(nu(d.initializer).text))
+  if (bases.length !== 1) return { ok: false, echecs: [`${bases.length} constante(s) exportée(s) de ${LIB} écrivent un délai en littéral (${bases.map(([k]) => k).join(', ') || 'aucune'}) : une seule attendue`], faits }
+  const [baseNom, baseDecl] = bases[0]
+  const valeur = nu(baseDecl.initializer).text
+  const delais = new Set([...valeurs].filter(([, v]) => typeof v === 'string' && v.includes(valeur)).map(([k]) => k))
+  // aucun autre littéral du délai dans lib/siteCommande.ts, ni dans le parcours de commande
+  for (const { t, n } of textesAffiches(sfLib, (x) => x === baseDecl)) if (RE_DELAI.test(t)) echecs.push(`${LIB}:${ligneDe(sfLib, n)} : délai écrit en dur hors de ${baseNom} (« ${court(t, 80)} »)`)
+  const phrases = [] // { ou, unite, suite, phrase }
+  const noter = (ou, texte) => { const u = uniteDelai(texte, valeur); if (u) phrases.push({ ou, ...u }); else echecs.push(`${ou} : la phrase rendue ne contient pas la valeur du délai (« ${court(texte, 80)} »)`) }
+  visiter(sfLib, (x) => { if (ts.isTemplateExpression(x) && x.templateSpans.some((sp) => ts.isIdentifier(nu(sp.expression)) && delais.has(nu(sp.expression).text))) noter(`${LIB}:${ligneDe(sfLib, x)}`, rendreGabarit(x, valeurs)) })
+  let lus = 1
+  for (const [rel, src] of fichiers) {
+    if (rel === LIB || !/\.tsx?$/.test(rel)) continue
+    const dansCommande = SITE_COMMANDE_DIRS.some((d) => rel.startsWith(d))
+    const importe = IMPORTE_COMMANDE.test(src) && [...delais].some((k) => src.includes(k))
+    const heures = RE_H_OUVREES.test(src); RE_H_OUVREES.lastIndex = 0
+    if (!dansCommande && !importe && !heures) continue
+    lus++
+    const sf = analyserSource(src, rel)
+    if (dansCommande) for (const { t, n } of textesAffiches(sf)) if (RE_DELAI.test(t)) echecs.push(`${rel}:${ligneDe(sf, n)} : délai écrit en dur (« ${court(t, 80)} ») — il vient de ${baseNom}`)
+    if (!dansCommande && heures) for (const { t, n } of textesAffiches(sf)) for (const m of t.matchAll(RE_H_OUVREES)) {
+      if (!/^\s*\d+\s*(?:h|heures?)\s+ouvr/i.test(valeur) || m[1] !== valeur.match(/\d+/)[0]) echecs.push(`${rel}:${ligneDe(sf, n)} : « ${m[0]} » écrit en dur ne vaut pas ${baseNom} (« ${valeur} »)`)
+      else faits.push(`${rel}:${ligneDe(sf, n)} « ${m[0]} » = ${baseNom}`)
+    }
+    if (!importe) continue
+    visiter(sf, (x) => {
+      if (!ts.isIdentifier(x) || !delais.has(x.text) || ts.isImportSpecifier(x.parent) || (ts.isPropertyAccessExpression(x.parent) && x.parent.name === x)) return
+      const ou = `${rel}:${ligneDe(sf, x)}`
+      const p = x.parent
+      if (ts.isTemplateSpan(p) && p.expression === x) { noter(ou, rendreGabarit(p.parent, valeurs)); return }
+      if (ts.isJsxExpression(p) && p.parent && (ts.isJsxElement(p.parent) || ts.isJsxFragment(p.parent))) { noter(ou, rendreJsx(p.parent, valeurs)); return }
+      echecs.push(`${ou} : ${x.text} utilisé hors d'un texte que le juge sait lire (gabarit ou enfant JSX)`)
+    })
+  }
+  if (!phrases.length) echecs.push(`aucune phrase ne dit le délai (${baseNom})`)
+  const unites = [...new Set(phrases.map((p) => p.unite))]
+  if (unites.length > 1) echecs.push(`${unites.length} textes pour un même délai : ${unites.map((u) => `« ${u} » (${phrases.filter((p) => p.unite === u).map((p) => p.ou).join(', ')})`).join(' ; ')}`)
+  for (const u of unites) { const d = defautDepart(phrases.find((p) => p.unite === u).suite); if (d) echecs.push(`${phrases.filter((p) => p.unite === u).map((p) => p.ou).join(', ')} : ${d}`) }
+  if (!echecs.length) faits.unshift(`${baseNom} « ${valeur} » seule constante du délai (${[...delais].join(', ')} en dérivent) ; ${phrases.length} phrase(s) dans ${lus} fichier(s), un seul texte : « ${unites[0]} »`)
+  return { ok: !echecs.length, echecs, faits }
+}
+function fichiersDelai(racine, surcharge = new Map()) {
+  const m = new Map()
+  for (const d of ['app', 'lib']) for (const r of listerFichiers(path.join(racine, d))) {
+    if (!/\.tsx?$/.test(r) || /(^|\/)node_modules\//.test(r)) continue
+    const rel = `${d}/${r}`
+    m.set(rel, surcharge.has(rel) ? surcharge.get(rel) : fs.readFileSync(path.join(racine, rel), 'utf8'))
+  }
+  return m
+}
+function jugerPC8(s, racine, page) {
+  const r = jugerDelai(fichiersDelai(racine))
+  for (const e of r.echecs) s.echoue('PC-8', e)
+  // sondes du détecteur, et mutation de la page jugée
+  const lib = "export const DELAI_ANNONCE = '48 h ouvrées'\n"
+  const pageDe = (a, b) => `import { DELAI_ANNONCE } from '@/lib/siteCommande'\nexport default function P() { return <main><p>${a}</p><p>${b}</p></main> }\n`
+  const sonde = (a, b) => jugerDelai(new Map([[LIB, lib], [PAGE, pageDe(a, b)]]))
+  const d = []
+  const juste = 'Livré sous {DELAI_ANNONCE} après la validation humaine de votre site par Presti.'
+  if (!sonde(juste, `Le site est commandé. ${juste}`).ok) d.push('sonde « un seul texte, départ nommé » jugée rouge')
+  if (sonde('Livré sous {DELAI_ANNONCE}.', juste).ok) d.push('sonde « deux textes » jugée verte')
+  if (sonde('Livré sous {DELAI_ANNONCE} après validation.', 'Livré sous {DELAI_ANNONCE} après validation.').ok) d.push('sonde « après validation » seul jugée verte')
+  if (sonde('Livré sous 48 h ouvrées après la validation humaine de votre site par Presti.', juste).ok) d.push('sonde « délai écrit en dur » jugée verte')
+  let mutation = ''
+  if (r.ok && !page.erreur) {
+    const base = [...constantesExportees(analyserSource(fs.readFileSync(path.join(racine, LIB), 'utf8'), LIB)).decl].find(([, x]) => estLitteral(nu(x.initializer)) && RE_DELAI.test(nu(x.initializer).text))
+    const m = jugerDelai(fichiersDelai(racine, new Map([[PAGE, `${page.src}\nexport function SondePC8() { return <p>Livré sous {${base[0]}}.</p> }\n`]])))
+    if (m.ok) d.push(`mutation : « Livré sous {${base[0]}}. » ajouté à la page, PC-8 reste vert`)
+    else mutation = ` ; mutation : « Livré sous {${base[0]}}. » ajouté à la page → vu`
+  }
+  for (const x of d) s.echoue('PC-8', `détecteur : ${x}`)
+  if (r.ok && !d.length) s.passe('PC-8', `${r.faits.join(' ; ')} ; sondes (deux textes, « après validation » seul, délai en dur) vues${mutation}`)
+}
+
+// PC-9 (M9) : un texte trop long est refusé, jamais coupé
+const TROP_LONGS = [
+  ['prenom-41', 'prenom', 40], ['nom-61', 'nom', 60], ['parcours-141', 'parcours', 140], ['parcours-300', 'parcours', 140],
+  ['citation-161', 'citation', 160], ['citation-400', 'citation', 160],
+  ['valeur-13', 'chiffres.0.valeur', 12], ['unite-13', 'chiffres.0.unite', 12], ['legende-61', 'chiffres.0.legende', 60],
+  ['enorme', null, null],
+]
+const CHAMPS_ENORME = ['prenom', 'nom', 'parcours', 'citation', 'chiffres.0.legende', 'chiffres.1.legende', 'chiffres.2.legende']
+const champDe = (o, chemin) => chemin.split('.').reduce((x, k) => (x && typeof x === 'object' ? x[/^\d+$/.test(k) ? Number(k) : k] : undefined), o)
+/** PC-9 sur des résultats de sonde → défauts (pur : éprouvé sur des sondes) */
+function defautsTropLongs(cas, res, liste = TROP_LONGS) {
+  const par = new Map(cas.map((c) => [c.id, c]))
+  const d = []
+  for (const [id, champ, borne] of liste) {
+    const c = par.get(id), r = res.get(id)
+    if (!c || !r) { d.push(`${id} : sans résultat`); continue }
+    if (r.exceptionN || r.exceptionE || !Array.isArray(r.E)) { d.push(`${id} : exception ou résultat illisible`); continue }
+    const N = r.N && r.N.matiere ? r.N.matiere.artisan : undefined
+    const coupes = []
+    for (const k of champ ? [champ] : CHAMPS_ENORME) {
+      const entree = nettoye(champDe(c.artisan, k)), garde = champDe(N, k)
+      const g = typeof garde === 'number' ? String(garde) : garde
+      if (typeof g === 'string' && g && g !== entree && g.length < entree.length && entree.startsWith(g)) coupes.push(`${k} coupé à ${g.length} signes sur ${entree.length}`)
+    }
+    if (!r.E.length) d.push(`${id} : accepté (aucune erreur)${coupes.length ? `, ${coupes.join(', ')}` : ''}`)
+    else if (coupes.length) d.push(`${id} : refusé, mais ${coupes.join(', ')} dans le brouillon`)
+    if (r.E.length && borne && !r.E.some((e) => new RegExp(`(?<!\\d)${borne}(?!\\d)`).test(e))) d.push(`${id} : aucune erreur ne dit la borne (${borne}) : « ${court(r.E.join(' | '), 90)} »`)
+  }
+  return d
+}
+function jugerPC9(s, { sonde, cas }) {
+  if (!sonde.importe) { s.echoue('PC-9', `${LIB} non importé par ${LOADER} : ${sonde.erreur}`); return }
+  const res = new Map((sonde.cas || []).map((r) => [r.id, r]))
+  const d = defautsTropLongs(cas, res)
+  for (const x of d) s.echoue('PC-9', x)
+  // le détecteur, sur quatre sondes (un parcours de 141 signes)
+  const c = cas.find((x) => x.id === 'parcours-141')
+  const avec = (parcours, E) => new Map([['parcours-141', { id: 'parcours-141', E, N: { matiere: { artisan: { ...c.artisan, parcours } } } }]])
+  const un = [TROP_LONGS.find((x) => x[0] === 'parcours-141')]
+  const p141 = c.artisan.parcours, p140 = p141.slice(0, 140), dit = ['Votre parcours : 140 signes au plus.']
+  const essais = [['coupé et payable', avec(p140, []), true], ['refusé sans la borne', avec('', ['Votre parcours manque.']), true], ['refusé mais coupé', avec(p140, dit), true], ['refusé et gardé', avec(p141, dit), false]]
+  const faux = essais.filter(([, r, rouge]) => (defautsTropLongs(cas, r, un).length > 0) !== rouge).map(([n]) => n)
+  if (faux.length) s.echoue('PC-9', `détecteur : sonde(s) mal jugée(s) : ${faux.join(', ')}`)
+  if (!d.length && !faux.length) {
+    const garde = TROP_LONGS.filter(([id, k]) => k && typeof champDe(res.get(id)?.N?.matiere?.artisan, k) === 'string' && champDe(res.get(id).N.matiere.artisan, k).length > 0).length
+    s.passe('PC-9', `${TROP_LONGS.length} cas trop longs refusés, chacun avec la borne dans une erreur (enorme excepté), aucun texte coupé (${garde} gardé(s) tel(s) quel(s), ${TROP_LONGS.length - 1 - garde} retiré(s)) ; détecteur éprouvé sur 4 sondes (coupé et payable, refusé sans la borne, refusé mais coupé → vus ; refusé et gardé → vert)`)
+  }
+}
+
 // ── Témoin ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 function construireTemoin(o) {
   const base = o.racineParDefaut ? extraireReference().dest : o.racine
@@ -679,6 +1083,9 @@ await s.executer(async (s) => {
     jugerPC3(s, page)
     jugerPC4(s, page, sonde)
     if (!page.erreur) s.note(`phrase de 025-09 (non jugée ici) « Votre site parle avec votre voix : nous n’inventons rien. » : ${textesDe(page.sf).some((t) => t.includes('Votre site parle avec votre voix')) ? 'présente' : 'absente'}`)
+    for (const [id, f] of [['PC-6', () => jugerPC6(s, page)], ['PC-7', () => jugerPC7(s, page, racine)], ['PC-8', () => jugerPC8(s, racine, page)], ['PC-9', () => jugerPC9(s, { sonde, cas })]]) {
+      try { f() } catch (e) { s.echoue(id, `exception : ${String(e && e.stack || e).split('\n').slice(0, 2).join(' | ').slice(0, 300)}`) }
+    }
     jugerPC5(s, racine)
   } finally {
     fs.rmSync(W, { recursive: true, force: true })

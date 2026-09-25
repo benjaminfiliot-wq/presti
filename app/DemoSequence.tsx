@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useId, useRef, useState } from 'react'
+import { actif } from '@/lib/flags'
 
 // La démo de la landing (v5 §5) : pas un catalogue, UN scénario — « Une demande arrive »,
 // en cinq scènes enchaînées. Chaque scène est une CAPTURE DU VRAI PRODUIT (Playwright, sur le
@@ -21,13 +22,16 @@ type Scene = {
   focus?: string
 }
 
-const SCENES: Scene[] = [
+const TOUTES_SCENES: Scene[] = [
   { heure: '22 h 14', titre: 'Un client écrit sur votre page', texte: 'Sur son téléphone, depuis votre lien. Il décrit ce qu’il veut, avec ses mots.', appareil: 'telephone', image: '/demo/scene-1.webp', focus: '50% 100%' },
-  { heure: '22 h 14', titre: 'L’assistant répond, dans la seconde', texte: 'Dans votre ton. Il pose les deux questions qui manquent pour chiffrer — et il dit qu’il est un assistant.', appareil: 'telephone', image: '/demo/scene-2.webp', focus: '50% 100%' },
+  { heure: '22 h 14', titre: 'L’assistant répond seul (formule Studio)', texte: 'Avec Studio, l’assistant peut répondre seul, jour et nuit.', appareil: 'telephone', image: '/demo/scene-2.webp', focus: '50% 100%' },
   { heure: '7 h 50', titre: 'Vous ouvrez votre espace', texte: 'La demande est qualifiée. Un devis brouillon vous attend, chiffré sur vos prix, chaque ligne avec sa provenance.', appareil: 'ordinateur', image: '/demo/scene-3.webp', focus: '50% 0%' },
   { heure: '7 h 52', titre: 'Vous validez, le client accepte', texte: 'Le devis part dans la conversation. Il l’accepte sur son téléphone — acceptation horodatée, conservée avec l’échange.', appareil: 'telephone', image: '/demo/scene-4.webp', focus: '50% 100%' },
+  // Relecture du 25/09 : le constructeur est fermé et le site ne se vend pas encore (siteCommandeVente) ; montrer ce
+  // site comme « capture du produit réel » promettait ce qu'un nouvel inscrit ne peut pas obtenir. Il revient avec la vente.
   { heure: 'Votre site', titre: 'Tout ça, à votre marque', texte: 'Le site qui amène la demande porte votre nom, votre adresse, vos réalisations. Jamais le nôtre.', appareil: 'ordinateur', image: '/demo/scene-5.webp', focus: '50% 0%' },
 ]
+const SCENES = TOUTES_SCENES.filter((s) => s.image !== '/demo/scene-5.webp' || actif('siteCommandeVente'))
 
 const DUREE = 4800
 
@@ -73,7 +77,7 @@ export default function DemoSequence() {
     <div className={`dm${reduit ? ' dm-reduit' : ''}`} ref={conteneur}
       onMouseEnter={() => setPause(true)} onMouseLeave={() => setPause(false)} onFocus={() => setPause(true)} onBlur={() => setPause(false)}
       onKeyDown={(e) => { if (e.key === 'ArrowRight') aller(i + 1); if (e.key === 'ArrowLeft') aller(i - 1) }}
-      role="region" aria-roledescription="démonstration" aria-label="Une demande arrive : le parcours en cinq scènes">
+      role="region" aria-roledescription="démonstration" aria-label={`Une demande arrive : le parcours en ${SCENES.length} scènes`}>
 
       <div className="dm-scene">
         <div className={`dm-device dm-${s.appareil}`} aria-hidden="true">

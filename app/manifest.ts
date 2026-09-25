@@ -15,7 +15,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: '/',
     name: 'Presti',
     short_name: 'Presti',
-    description: 'Répondez à chaque demande de devis en moins d’une minute',
+    description: 'Réponse prête en moins d’une minute : Presti la prépare dans votre ton, vous l’envoyez.',
     start_url: '/dashboard?source=pwa',
     scope: '/',
     display: 'standalone',
@@ -34,7 +34,7 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: '/marque/presti-icone-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
     ],
     screenshots: [
-      { src: '/marque/captures/app-messages.png', sizes: '1080x2340', type: 'image/png', form_factor: 'narrow', label: 'Vos conversations : chaque demande de devis, répondue en moins d’une minute' },
+      { src: '/marque/captures/app-messages.png', sizes: '1080x2340', type: 'image/png', form_factor: 'narrow', label: 'Vos conversations : réponse prête en moins d’une minute, vous l’envoyez' },
       { src: '/marque/captures/app-devis.png', sizes: '1080x2340', type: 'image/png', form_factor: 'narrow', label: 'Vos devis et factures, prêts à envoyer' },
       { src: '/marque/captures/app-tableau.png', sizes: '1280x800', type: 'image/png', form_factor: 'wide', label: 'Le tableau de bord de votre activité' },
     ],

@@ -1,0 +1,33 @@
+// lib/stripeAiguillage.ts — où va un checkout.session.completed (fiche 025-07). Fonction pure : ni réseau, ni base, ni
+// horloge ; elle lit la session sans la modifier. La route du webhook (app/api/stripe/webhook/route.ts) la suit à la lettre.
+//
+// Les deux voies connues reprennent MOT POUR MOT les conditions de la route avant 025-07 (route.ts:35-44 à 1620723) :
+//   · commande_site : paiement unique (mode 'payment') ET metadata.type = 'commande_site' — prioritaire sur l'abonnement ;
+//   · abonnement    : un uid (metadata.uid, sinon client_reference_id) ET un plan (metadata.plan), quel que soit le mode.
+// Tout le reste est « orphelin » : encaissé par Stripe sans que Presti sache le servir (lien de paiement créé à la main,
+// futur pack sans branche). Avant 025-07, il tombait dans le vide ; la route alerte maintenant l'entreprise.
+//
+// Tout nouveau produit payant (pack pubs, Studio) porte un metadata.type et reçoit sa voie ICI, puis sa branche dans la
+// route, AVANT d'être vendu — sinon chacun de ses paiements lèvera une alerte d'orphelin.
+import type Stripe from 'stripe'
+
+export type Voie = 'commande_site' | 'abonnement' | 'orphelin'
+
+/** Ce que l'aiguillage lit d'une session, et rien d'autre. Une session réduite à {} est acceptée (→ orphelin). */
+export type SessionAiguillee = Partial<Pick<Stripe.Checkout.Session, 'mode' | 'metadata' | 'client_reference_id'>>
+
+/** L'artisan et le plan d'une session d'abonnement, lus comme la route les a toujours lus ; chaînes vides si absents. */
+export function champsAbonnement(s: SessionAiguillee): { uid: string; plan: string } {
+  return {
+    uid: (s.metadata?.uid as string) || (s.client_reference_id as string) || '',
+    plan: (s.metadata?.plan as string) || '',
+  }
+}
+
+/** La voie d'un checkout.session.completed : 'commande_site', 'abonnement' ou 'orphelin'. */
+export function aiguiller(s: SessionAiguillee): Voie {
+  if (s.mode === 'payment' && s.metadata?.type === 'commande_site') return 'commande_site'
+  const { uid, plan } = champsAbonnement(s)
+  if (uid && plan) return 'abonnement'
+  return 'orphelin'
+}

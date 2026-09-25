@@ -2,10 +2,12 @@
 
 Écrit par Claude Code. **Ce n'est pas du code de production** : ne pas le copier dans `app/` ni dans `lib/`.
 
-Ce dossier simule l'état « après » de la fiche 025-09. Il sert à prouver qu'un travail conforme passe les cinq critères PC-1 à PC-5.
+Ce dossier simule l'état « après » des fiches 025-09 et 025-16 (relectures à froid du 24/09). Il sert à prouver qu'un travail conforme passe les neuf critères PC-1 à PC-9.
 
 - `lib/siteCommande.ts.temoin` : `lib/siteCommande.ts` au commit 1620723, plus `matiere.artisan`. Le nettoyage le garde et le borne ; `erreursAvantPaiement` l'exige, avec l'expression « première personne » de `generer.mjs:200`. Aucun prix, délai, état ni transition ne change.
-- `app/site/commander/page.tsx.temoin` : une page réduite à ce que PC-3 et PC-4 lisent. On y trouve l'étape « Votre parcours » dans `ETAPES`, un champ par donnée du contrat, le choix « Je préfère ne pas donner de chiffres », des exemples « Exemple : … » et l'option `a_prendre` : « je le réserve à mon nom ».
+- `app/site/commander/page.tsx.temoin` : une page réduite à ce que PC-3, PC-4, PC-6, PC-7 et PC-8 lisent. On y trouve l'étape « Votre parcours » dans `ETAPES`, un champ par donnée du contrat, le choix « Je préfère ne pas donner de chiffres », des exemples « Exemple : … », l’option `a_prendre` : « je le réserve moi-même, à mon nom » (ni guide ni prix d'un tiers), un champ du domaine aux exemples « Exemple : … », et l'étape du paiement dont le récapitulatif montre « Votre parcours » (prénom, nom, phrase signée, chiffres) et dit le délai par `DELAI_TEXTE`.
+- `lib/siteCommande.ts.temoin`, pour 025-16 : `DELAI_TEXTE`, le seul texte du délai (« … après la validation humaine de votre site par Presti. »), repris par `SITE_A_LA_DEMANDE` ; les textes de l'artisan jamais coupés (gardés tels quels jusqu'à 2 000 signes, refusés au-delà de leur borne, avec la borne dans l'erreur).
+- `app/api/site/commander/route.ts.temoin` : la route de 1620723 dont la description Stripe dit le délai par `DELAI_TEXTE` (PC-8).
 
 ## Pourquoi l'extension `.temoin`
 

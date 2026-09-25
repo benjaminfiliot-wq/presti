@@ -5,6 +5,7 @@ import { resolveModel } from '@/lib/models'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
 import { signalerPanneIA } from '@/lib/alerteService'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
+import { actif } from '@/lib/flags'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -12,6 +13,7 @@ export const maxDuration = 60
 // Génère (à la demande) le contenu du site vitrine de l'artisan connecté, puis le stocke.
 // Authentifié + décompte d'un crédit (au tier "pro" pour la qualité — génération rare).
 export async function POST(req: Request) {
+  if (!actif('constructeurSite')) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })
   let aRendre: { uid: string; tier: Parameters<typeof rendreCredit>[1]; fondateur: boolean } | null = null
   try {
     // Contrôle central : refuse aussi les jetons antérieurs à une déconnexion globale (§11).

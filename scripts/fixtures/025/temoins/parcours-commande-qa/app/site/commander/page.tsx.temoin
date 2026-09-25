@@ -5,8 +5,11 @@
 // et l'option a_prendre où l'artisan réserve lui-même son domaine. Le juge le pose à la place de
 // app/site/commander/page.tsx dans une copie de l'arbre de référence (.orchestre/travail/parcours-commande-qa/temoin/),
 // avec le lib/siteCommande.ts témoin, puis y lance npm run typecheck (PC-5). Extension .temoin : le tsc du dépôt ne le voit pas.
+// État « après » de 025-16 aussi (relectures à froid du 24/09) : le récapitulatif avant paiement montre « Votre parcours »
+// (PC-6), le champ du domaine a un exemple marqué « Exemple : » (PC-6), l'option a_prendre ne promet ni guide ni prix d'un
+// tiers (PC-7), le délai est dit par DELAI_TEXTE, le seul texte du délai (PC-8).
 import { useState } from 'react'
-import { ARTISAN_BORNES, erreursAvantPaiement, nettoyerBrouillon, type Artisan, type Brouillon, type Chiffre } from '@/lib/siteCommande'
+import { ARTISAN_BORNES, DELAI_TEXTE, PRIX_SITE_TEXTE, erreursAvantPaiement, nettoyerBrouillon, type Artisan, type Brouillon, type Chiffre } from '@/lib/siteCommande'
 
 type Etape = 'domaine' | 'zone' | 'parcours' | 'matiere' | 'paiement'
 
@@ -45,8 +48,11 @@ export default function CommanderSitePage() {
         <div>
           <h3>Nom de domaine</h3>
           <label><input type="radio" checked={brouillon.domaine_mode === 'existant'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'existant' })} /> J’ai déjà un nom de domaine</label>
-          <label><input type="radio" checked={brouillon.domaine_mode === 'a_prendre'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'a_prendre' })} /> Je n’en ai pas : je le réserve à mon nom (environ 10 € par an), Presti m’envoie le guide</label>
+          <label><input type="radio" checked={brouillon.domaine_mode === 'a_prendre'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'a_prendre' })} /> Je n’en ai pas : je le réserve moi-même, à mon nom</label>
           <label><input type="radio" checked={brouillon.domaine_mode === 'aucun'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'aucun' })} /> Plus tard</label>
+          {brouillon.domaine_mode !== 'aucun' && (
+            <input value={brouillon.domaine ?? ''} onChange={(e) => setBrouillon({ ...brouillon, domaine: e.target.value })} placeholder={brouillon.domaine_mode === 'existant' ? 'Exemple : martin-plomberie.fr' : 'Exemple : martin-plomberie.fr (le nom que vous réserverez)'} />
+          )}
         </div>
       )}
 
@@ -78,6 +84,22 @@ export default function CommanderSitePage() {
               <input value={c.legende} maxLength={ARTISAN_BORNES.legende} onChange={(e) => majChiffre(i, { legende: e.target.value })} placeholder="Exemple : d’atelier, où chaque pièce est fabriquée" />
             </fieldset>
           ))}
+        </div>
+      )}
+
+      {etape === 'paiement' && (
+        <div>
+          <h3>Récapitulatif</h3>
+          <p>Domaine : {brouillon.domaine ?? 'plus tard'}</p>
+          <section>
+            <h4>Votre parcours</h4>
+            <p>{a.prenom} {a.nom}, installé en {a.installation ?? '—'}</p>
+            <p>{a.parcours}</p>
+            <blockquote>{a.citation}</blockquote>
+            <p>{a.chiffres === null ? 'Sans chiffres, à votre demande.' : a.chiffres.map((c) => `${c.valeur}${c.unite ? ` ${c.unite}` : ''} ${c.legende}`).join(' · ')}</p>
+          </section>
+          <p>{PRIX_SITE_TEXTE} une fois, sans abonnement. {DELAI_TEXTE}</p>
+          <button type="button" disabled={errs.length > 0}>Payer {PRIX_SITE_TEXTE}</button>
         </div>
       )}
 

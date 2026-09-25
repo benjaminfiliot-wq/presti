@@ -10,6 +10,8 @@ import { signalerPanneIA } from '@/lib/alerteService'
 import { getIp, isBanned, recordAbuse, ipPseudonyme } from '@/lib/security'
 import { consommerLimite } from '@/lib/limites'
 import { porteMonnaieConversation } from '@/lib/quotaMedia'
+import { artisanParAncienSlug } from '@/lib/slugRedirect'
+import { PREFIXE_ADRESSE_PURGEE } from '@/lib/purgeComptes'
 
 // Bornes anti-abus (une demande légitime tient largement dedans).
 const MAX = { slug: 80, contact: 200, nom: 120, message: 5000 }
@@ -71,15 +73,33 @@ export async function POST(req: Request) {
     }
 
     // 1) Retrouver l'artisan à partir de son slug
-    const { data: artisan, error: aErr } = await supabaseAdmin
+    let { data: artisan, error: aErr } = await supabaseAdmin
       .from('artisans')
-      .select('id, nom, metier, ton_style, email, is_founder, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan')
+      .select('id, slug, nom, metier, ton_style, email, is_founder, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan')
       .eq('slug', slug)
       .maybeSingle()
 
     if (aErr) {
       console.error('[leads] lookup artisan:', aErr.message)
       return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+    }
+    if (artisan?.slug?.startsWith(PREFIXE_ADRESSE_PURGEE)) artisan = null
+    if (!artisan) {
+      const ancienneAdresse = await artisanParAncienSlug(slug)
+      if (ancienneAdresse?.slug && !ancienneAdresse.slug.startsWith(PREFIXE_ADRESSE_PURGEE)) {
+        const resultat = await supabaseAdmin
+          .from('artisans')
+          .select('id, slug, nom, metier, ton_style, email, is_founder, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan')
+          .eq('slug', ancienneAdresse.slug)
+          .maybeSingle()
+        artisan = resultat.data
+        aErr = resultat.error
+        if (aErr) {
+          console.error('[leads] lookup artisan:', aErr.message)
+          return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+        }
+        if (artisan?.slug?.startsWith(PREFIXE_ADRESSE_PURGEE)) artisan = null
+      }
     }
     if (!artisan) return NextResponse.json({ error: 'Artisan introuvable' }, { status: 404 })
     // Compte suspendu par la direction (v15 §5) : le lien ne prend plus de demandes — refus neutre, sans trace.

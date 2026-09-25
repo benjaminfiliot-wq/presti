@@ -11,7 +11,7 @@ import { authArtisan, estEchec } from '@/lib/authArtisan'
 import { stripe } from '@/lib/stripe'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { mentionFranchise } from '@/lib/facturation'
-import { PRIX_SITE_CENTS, DELAI_ANNONCE, erreursAvantPaiement } from '@/lib/siteCommande'
+import { PRIX_SITE_CENTS, DELAI_TEXTE, erreursAvantPaiement } from '@/lib/siteCommande'
 import { brouillonDe, poserSessionStripe } from '@/lib/siteCommandeServeur'
 
 export const runtime = 'nodejs'
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
         : {
           price_data: {
             currency: 'eur',
-            product_data: { name: 'Presti — votre site, à la demande', description: `Site professionnel avec référencement local, livré sous ${DELAI_ANNONCE} après validation. Une fois, sans abonnement.` },
+            product_data: { name: 'Presti — votre site, à la demande', description: `Site professionnel avec référencement local. ${DELAI_TEXTE} Une fois, sans abonnement.` },
             unit_amount: PRIX_SITE_CENTS,
             ...(taxeAuto ? { tax_behavior: 'exclusive' as const } : {}),
           },

@@ -125,7 +125,7 @@ function gardeFous(html, ou, couverture = null) {
   }
 }
 // L'accueil : ce que les priorités 3, 4 et 5 promettent, vérifié sur le HTML rendu (et non sur les données d'entrée)
-function gardeFousAccueil(html, ou, { site, tel, chapeau, sourceDe = new Map() }) {
+function gardeFousAccueil(html, ou, { site, tel, chapeau, source = false, sourceDe = new Map() }) {
   const corps = html.slice(html.indexOf('<body'), html.indexOf('<footer'))
   // Aucune photo plus de deux fois sur l'accueil (l'escalier revenait quatre fois, la cuisine trois, juge du 14/09) : compté par
   // <picture> et par fichier Commons d'origine — le héros et son recadrage 4:5 pour téléphone sont une seule photo
@@ -142,8 +142,8 @@ function gardeFousAccueil(html, ou, { site, tel, chapeau, sourceDe = new Map() }
   if (chapeau.length > 90 || nbMots(chapeau) > 20) throw new Error(`${ou} : chapeau de ${chapeau.length} signes et ${nbMots(chapeau)} mots (90 et 20 au plus)`)
   const texte = texteDe(corps)
   for (const interdit of [site.siren, site.decennale?.numero, site.decennale?.assureur, 'fictif'].filter(Boolean)) if (texte.includes(interdit)) throw new Error(`${ou} : « ${interdit} » hors du pied de page (SIREN et assureur : pied de page et mentions légales seulement)`)
-  const liensTel = (corps.match(/href="tel:/g) || []).length, affiches = texte.split(telAffiche(tel)).length - 1
-  if (liensTel > 2 || affiches > 2) throw new Error(`${ou} : le téléphone revient ${Math.max(liensTel, affiches)} fois hors du pied de page (2 au plus)`)
+  const liensTel = (corps.match(/href="tel:/g) || []).length, affiches = tel ? texte.split(telAffiche(tel)).length - 1 : 0
+  if (liensTel > (source ? 3 : 2) || affiches > (source ? 3 : 2)) throw new Error(`${ou} : le téléphone revient ${Math.max(liensTel, affiches)} fois hors du pied de page`)
   if (!/<section class="plateau\b/.test(corps)) throw new Error(`${ou} : le plateau « une phrase et trois chiffres » manque sous le héros`)
   const apresHero = corps.slice(corps.indexOf(hero) + hero.length).trimStart()
   if (!apresHero.startsWith('<section class="plateau')) throw new Error(`${ou} : le plateau doit suivre immédiatement le héros`)
@@ -192,6 +192,7 @@ function gardeFousDevis(html, ou) {
 function verifierArtisan(a, ou) {
   if (!a) throw new Error(`${ou} : site.json → artisan manque (prénom, nom, installation, parcours, citation)`)
   for (const k of ['prenom', 'nom', 'parcours', 'citation']) if (!String(a[k] || '').trim()) throw new Error(`${ou} : artisan.${k} absent`)
+  if (a.prenom.length > 40 || a.nom.length > 60 || /[\r\n]/.test(a.parcours)) throw new Error(`${ou} : artisan hors contrat (nom ou parcours)`)
   const an = Number(a.installation), maintenant = new Date().getFullYear()
   if (!Number.isInteger(an) || an < 1960 || an > maintenant) throw new Error(`${ou} : artisan.installation « ${a.installation} » n’est pas une année plausible`)
   if (a.parcours.length > 140) throw new Error(`${ou} : artisan.parcours de ${a.parcours.length} signes (une ligne : 140 au plus)`)
@@ -213,8 +214,9 @@ function gardeFousVoix(html, ou, { accueil = false, artisan = null } = {}) {
   if (je === 0 || nous > 3 * je) throw new Error(`${ou} : ${nous} « nous / nos / notre » pour ${je} « je / mon / moi » — l’artisan parle à la première personne`)
 }
 // Le plateau vient de site.json : la citation signée de l'artisan et trois chiffres qu'il remplit — jamais des zéros
-function verifierPlateau(p, ou) {
+function verifierPlateau(p, ou, source = false) {
   if (!p) return
+  if (source && p.chiffres === null) return
   if (!Array.isArray(p.chiffres) || p.chiffres.length !== 3) throw new Error(`${ou} : plateau.chiffres doit en compter trois`)
   for (const c of p.chiffres) {
     const n = Number(String(c.valeur).replace(',', '.').replace(/\s/g, ''))
@@ -273,14 +275,38 @@ function liensIndex(html) {
   })
 }
 
+function commandeVersSite(commande, contenu) {
+  const fichierUrls = fs.readFileSync(path.join(ICI, '..', '..', 'lib', 'urls.ts'), 'utf8')
+  const basePresti = /export\s+const\s+BASE_PRESTI\s*=\s*['"](https:\/\/[^'"]+)['"]/.exec(fichierUrls)?.[1]
+  if (!basePresti) throw new Error('BASE_PRESTI introuvable dans lib/urls.ts')
+  const artisan = commande.matiere?.artisan
+  const pages = Object.entries(contenu.pages || {}).map(([chemin, page]) => ({
+    chemin, type: page.type || (chemin === '/' ? 'accueil' : /mentions-legales|confidentialite/.test(chemin) ? 'legal' : 'commune'),
+    ...(page.cible ? { cible: page.cible } : {}),
+  }))
+  return {
+    slug: commande.slug, metier: commande.metier, nom: commande.nom,
+    telephone: commande.telephone, email: commande.email,
+    siren: commande.matiere?.siren, decennale: commande.matiere?.decennale,
+    communes: commande.communes, metiers_secondaires: commande.metiers_secondaires || [],
+    demo: false, pages,
+    url_base: commande.domaine ? `https://${commande.domaine}` : `${basePresti}/site/${commande.slug}`,
+    ...(contenu.demo_v16?.includes('lestraque') ? { da: 'lestraque' } : {}),
+    devis: commande.devis, artisan,
+    plateau: { chiffres: artisan?.chiffres ?? null },
+  }
+}
+
 async function generer(metier, options = {}) {
-  const dossierSource = path.join(ICI, metier)
+  const dossierSource = options.source || path.join(ICI, metier)
   const dossier = options.sortie || dossierSource
-  const site = JSON.parse(fs.readFileSync(path.join(dossierSource, 'site.json'), 'utf8'))
+  const commande = options.source ? JSON.parse(fs.readFileSync(path.join(dossierSource, 'commande.json'), 'utf8')) : null
   const contenu = JSON.parse(fs.readFileSync(path.join(dossierSource, 'contenu.json'), 'utf8'))
+  const site = commande ? commandeVersSite(commande, contenu) : JSON.parse(fs.readFileSync(path.join(dossierSource, 'site.json'), 'utf8'))
   const remplacementDa = options.da ? JSON.parse(fs.readFileSync(options.da, 'utf8')) : null
   const da = { ...DA.generique, ...(DA[site.metier] || {}), ...(site.da && DA[site.da] ? DA[site.da] : {}), ...(remplacementDa || {}) }
-  const famillesActives = options.familles ?? (Array.isArray(da.familles) ? da.familles : [])
+  if (options.source) da.relief = null
+  const famillesActives = options.source ? [] : (options.familles ?? (Array.isArray(da.familles) ? da.familles : []))
   const dossierFamilles = path.join(ICI, '_kit', 'familles')
   const famillesChargees = []
   for (const nom of famillesActives) {
@@ -297,7 +323,7 @@ async function generer(metier, options = {}) {
       crochets: fs.existsSync(module) ? (await import(pathToFileURL(module).href)).default || {} : {},
     })
   }
-  let attributions = JSON.parse(fs.readFileSync(path.join(dossierSource, 'attributions.json'), 'utf8'))
+  let attributions = JSON.parse(fs.readFileSync(path.join(dossierSource, options.source ? 'photos' : '', 'attributions.json'), 'utf8'))
   for (const { nom } of famillesChargees) {
     const fichier = path.join(dossierSource, nom, 'attributions.json')
     if (fs.existsSync(fichier)) attributions = attributions.concat(JSON.parse(fs.readFileSync(fichier, 'utf8')))
@@ -306,7 +332,7 @@ async function generer(metier, options = {}) {
   const ville = site.communes[0]
   const tel = site.telephone
   verifierArtisan(site.artisan, metier)
-  verifierPlateau(site.plateau, metier)
+  verifierPlateau(site.plateau, metier, !!options.source)
   // une photo par base (attributions.json porte une ligne par fichier)
   const baseDe = (a) => a.base || String(a.fichier).replace(/^images\//, '').replace(/-(\d+)\.\w+$/, '')
   // `usage: "reserve"` : photos mises de côté (tâche 018-06), pas encore branchées. Elles ne sont ni affichées, ni créditées, ni
@@ -316,7 +342,8 @@ async function generer(metier, options = {}) {
   for (const p of photos) p.largeurs = [...new Set(attributionsPhotos.filter((x) => baseDe(x) === baseDe(p)).map((x) => Number((/-(\d+)\.(avif|webp)$/.exec(x.fichier) || [])[1])).filter(Boolean))]
     .sort((x, y) => x - y)
   if (!photos.length) throw new Error(`${metier} : aucune photo dans attributions.json`)
-  const photoDe = (base, role) => { const p = photos.find((x) => x.base === base); if (!p) throw new Error(`${metier} : photo « ${base} » (${role}) absente d'attributions.json`); for (const l of p.largeurs) for (const ext of ['avif', 'webp']) if (!fs.existsSync(path.join(dossierSource, 'images', `${base}-${l}.${ext}`))) throw new Error(`${metier} : images/${base}-${l}.${ext} manque sur le disque`); return p }
+  const dossierImages = path.join(dossierSource, options.source ? 'photos' : 'images')
+  const photoDe = (base, role) => { const p = photos.find((x) => x.base === base); if (!p) throw new Error(`${metier} : photo « ${base} » (${role}) absente d'attributions.json`); for (const l of p.largeurs) for (const ext of ['avif', 'webp']) if (!fs.existsSync(path.join(dossierImages, `${base}-${l}.${ext}`))) throw new Error(`${metier} : images/${base}-${l}.${ext} manque sur le disque`); return p }
   const heros = da.heros ? photoDe(da.heros, 'héros') : (photos.find((p) => p.base === 'hero') || photos[0])
   const herosMobile = da.herosMobile ? photoDe(da.herosMobile, 'héros mobile') : null
   const galerieAccueil = Array.isArray(da.galerie) ? da.galerie.map((b) => photoDe(b, 'galerie')) : null
@@ -452,14 +479,14 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
 ${favicon ? `<link rel="icon" href="${rel}favicon.svg" type="image/svg+xml">\n` : ''}${precharges.join('\n')}
 <link rel="stylesheet" href="${rel}styles.css">
 ${bureauCss ? `<link rel="stylesheet" href="${rel}bureau.css" media="(min-width: 1024px)">\n` : ''}<script>document.documentElement.classList.replace('no-js','js')</script>
-<script src="${rel}site.js" defer></script>
+<script src="${rel}site.js" defer></script>${options.source ? `\n<script src="${rel}formulaire.js" defer></script>` : ''}
 ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script>` : ''}
 </head>
 <body>
 <header class="nav${navClaire ? ' nav--claire' : ''}"><div class="conteneur nav__inner">
 <a class="nav__marque" href="${rel || './'}">${marque}<span>${esc(site.nom)}</span></a>
 <nav class="nav__liens" aria-label="Sections">${liens}</nav>
-<div class="nav__droite"><a class="nav__tel" href="${telHref(tel)}">${telAffiche(tel)}</a>${site.devis ? `<a class="nav__devis" href="${versContact}">Devis</a>` : ''}<button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="panneau"><span></span><span></span></button></div>
+<div class="nav__droite">${tel ? `<a class="nav__tel" href="${telHref(tel)}">${telAffiche(tel)}</a>` : ''}${site.devis ? `<a class="nav__devis" href="${versContact}">Devis</a>` : ''}<button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="panneau"><span></span><span></span></button></div>
 </div></header>
 <div class="voile" aria-hidden="true"></div>
 <div class="panneau" id="panneau">
@@ -475,7 +502,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     return `</main>
 <footer class="pied${nuit ? ' pied--nuit' : ''}"><div class="conteneur">
 <div class="pied__grille">
-<div><div class="nav__marque" style="margin-bottom:.75rem">${marque}<span>${esc(site.nom)}</span></div><p>${esc(da.label)} à ${esc(ville)} · <a href="${telHref(tel)}">${telAffiche(tel)}</a></p><p>SIREN ${esc(site.siren)} · Assurance décennale ${esc(site.decennale.assureur)} n° ${esc(site.decennale.numero)}</p></div>
+<div><div class="nav__marque" style="margin-bottom:.75rem">${marque}<span>${esc(site.nom)}</span></div><p>${esc(da.label)} à ${esc(ville)}${tel ? ` · <a href="${telHref(tel)}">${telAffiche(tel)}</a>` : ''}</p><p>SIREN ${esc(site.siren)} · Assurance décennale ${esc(site.decennale.assureur)} n° ${esc(site.decennale.numero)}</p></div>
 <div><p class="pied__titre">Communes servies</p><ul>${communes.map((c) => { const p = pageDe(c); return `<li>${p ? `<a href="${rel}${p.chemin.slice(1)}">${esc(c)}</a>` : esc(c)}</li>` }).join('')}</ul></div>
 <div><p class="pied__titre">Le site</p><ul><li><a href="${rel || './'}">Accueil</a></li>${pages.filter((p) => p.type === 'metier').map((p) => `<li><a href="${rel}${p.chemin.slice(1)}">${esc(p.cible)}</a></li>`).join('')}<li><a href="${rel}mentions-legales/">Mentions légales</a></li><li><a href="${rel}confidentialite/">Confidentialité</a></li></ul></div>
 </div>
@@ -582,14 +609,22 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
   const formDevis = (cible) => {
     const dv = site.devis
     if (!dv) return ''
-    const options = (l, choisi) => l.map((x) => `<option${x === choisi ? ' selected' : ''}>${esc(x)}</option>`).join('')
-    return `<div class="devis"><form class="devis__form"${site.demo ? ' data-demo' : ''} method="post" action="#contact" aria-label="Demande de devis">`
-      + `<div class="devis__champ"><label for="devis-projet">Votre projet</label><select id="devis-projet" name="projet" required><option value="">Choisir</option>${options(dv.projets)}</select></div>`
-      + `<div class="devis__champ"><label for="devis-commune">Commune</label><select id="devis-commune" name="commune">${options([...communes, 'Autre commune'], cible)}</select></div>`
-      + `<div class="devis__champ"><label for="devis-delai">Quand</label><select id="devis-delai" name="delai">${options(dv.delais)}</select></div>`
-      + `<div class="devis__champ devis__champ--large"><label for="devis-message">La pièce, l’usage, le bois</label><textarea id="devis-message" name="message" rows="3"></textarea></div>`
+    const optionsDe = (l, choisi) => l.map((x) => `<option${x === choisi ? ' selected' : ''}>${esc(x)}</option>`).join('')
+    const messageDevis = options.source ? (dv.message || contenu.devis?.message || contenu.libelles?.devis?.message || 'Votre projet, en quelques mots') : 'La pièce, l’usage, le bois'
+    const repli = !options.source ? '' : tel && site.email
+      ? `L’envoi n’a pas abouti. Appelez-moi au <a style="display:inline-block" href="${esc(telHref(tel))}">${esc(telAffiche(tel))}</a> ou écrivez-moi à <a style="display:inline-block" href="mailto:${esc(site.email)}">${esc(site.email)}</a>.`
+      : tel ? `L’envoi n’a pas abouti. Appelez-moi au <a style="display:inline-block" href="${esc(telHref(tel))}">${esc(telAffiche(tel))}</a>.`
+      : site.email ? `L’envoi n’a pas abouti. Écrivez-moi à <a style="display:inline-block" href="mailto:${esc(site.email)}">${esc(site.email)}</a>.`
+      : 'L’envoi n’a pas abouti. Réessayez dans un instant.'
+    return `<div class="devis"><form class="devis__form"${site.demo ? ' data-demo' : ` data-slug="${esc(site.slug)}"`} method="post" action="#contact" aria-label="Demande de devis">`
+      + `<div class="devis__champ"><label for="devis-projet">Votre projet</label><select id="devis-projet" name="projet" required><option value="">Choisir</option>${optionsDe(dv.projets)}</select></div>`
+      + `<div class="devis__champ"><label for="devis-commune">Commune</label><select id="devis-commune" name="commune">${optionsDe([...communes, 'Autre commune'], cible)}</select></div>`
+      + `<div class="devis__champ"><label for="devis-delai">Quand</label><select id="devis-delai" name="delai">${optionsDe(dv.delais)}</select></div>`
+      + `<div class="devis__champ devis__champ--large"><label for="devis-message">${esc(messageDevis)}</label><textarea id="devis-message" name="message" rows="3"></textarea></div>`
       + `<div class="devis__champ devis__champ--large"><label for="devis-contact">Téléphone ou e-mail</label><input id="devis-contact" name="contact" type="text" autocomplete="tel" required></div>`
+      + (options.source ? '<div style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden" aria-hidden="true"><label for="devis-website">Ne pas remplir</label><input id="devis-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>' : '')
       + `<div class="devis__envoi"><button class="bouton" type="submit">Envoyer ma demande <span class="bouton__cercle">${FLECHE}</span></button>${site.demo ? '<p class="devis__note">Démonstration : rien n’est envoyé.</p>' : ''}</div></form>`
+      + (options.source ? `<div class="devis__echec" hidden tabindex="-1" role="alert">${repli}</div>` : '')
       + merciDevis(dv, cible)
   }
   // Après l'envoi : ce qui a été demandé (kit.js le recopie depuis le formulaire, sans rien stocker), puis la suite du chantier
@@ -600,7 +635,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     const suiteHtml = suite.length ? `<p class="devis__suite-titre">La suite</p><ol class="devis__suite">${suite.map((it, i) => `<li><span aria-hidden="true">${String(i + 2).padStart(2, '0')}</span><div><strong>${esc(it.titre)}</strong>${it.textes[0] ? `<p>${esc(it.textes[0])}</p>` : ''}</div></li>`).join('')}</ol>` : ''
     // la mention de démonstration juste sous « Demande reçue. » : en bas de la confirmation, elle tombait sous la ligne de
     // flottaison au téléphone (juge du 14/09)
-    return `<div class="devis__merci" hidden tabindex="-1" role="status"><p class="devis__merci-titre">Demande reçue.</p>${site.demo ? '<p class="devis__note devis__note--merci">Démonstration : aucune donnée n’a été envoyée.</p>' : ''}<p class="devis__merci-rappel">${esc(dv.rappel)}</p>`
+    return `<div class="devis__merci" hidden tabindex="-1" role="status"><p class="devis__merci-titre">Demande reçue.</p>${site.demo ? '<p class="devis__note devis__note--merci">Démonstration : aucune donnée n’a été envoyée.</p>' : ''}${dv.rappel ? `<p class="devis__merci-rappel">${esc(dv.rappel)}</p>` : ''}`
       + `<dl class="devis__recap"><div><dt>Projet</dt><dd data-champ="projet">À préciser à la visite</dd></div><div><dt>Commune</dt><dd data-champ="commune">${esc(cible)}</dd></div><div><dt>Quand</dt><dd data-champ="delai">${esc(dv.delais[0])}</dd></div></dl>`
       + `${suiteHtml}<button class="devis__encore" type="button">Faire une autre demande</button></div></div>`
   }
@@ -613,7 +648,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     // une info peut tenir sur deux lignes (v2) : « Lundi–vendredi, 8 h–18 h » puis « Intervention sur rendez-vous » — collées
     // dans le même paragraphe, elles se lisaient d'une traite (juge du 14/09)
     const infosHtml = `<div class="bande__infos">${infos.map((x) => `<div><strong>${esc(x.k)}</strong> ${x.href ? `<a href="${x.href}">${esc(x.v)}</a>` : `<span class="bande__ligne">${esc(x.v)}</span>`}${x.v2 ? ` <span class="bande__ligne">${esc(x.v2)}</span>` : ''}</div>`).join('')}</div>`
-    const appel = form ? `<p class="bande__tel">Ou par téléphone : <a href="${telHref(tel)}">${telAffiche(tel)}</a></p>` : `<div class="hero__actions" style="margin-top:2rem"><a class="bouton" href="${telHref(tel)}">${telAffiche(tel)} <span class="bouton__cercle">${FLECHE}</span></a></div>`
+    const appel = !tel ? '' : form ? `<p class="bande__tel">Ou par téléphone : <a href="${telHref(tel)}">${telAffiche(tel)}</a></p>` : `<div class="hero__actions" style="margin-top:2rem"><a class="bouton" href="${telHref(tel)}">${telAffiche(tel)} <span class="bouton__cercle">${FLECHE}</span></a></div>`
     // au téléphone, le contact est haut (≈ 2 écrans) : une photo en largeur y est affichée à ≈ 2 fois la largeur de l'écran
     const media = fond ? `<div class="contact__media" aria-hidden="true">${fond.hero ? photoHeros(fond.a, fond.m, rel, { lazy: true }) : photo(fond.a, rel, { sizes: '(max-width: 899px) 200vw, 100vw', position: fond.position })}</div>` : ''
     const classes = `contact${fond ? ' contact--photo' : ''}${fond?.matiere ? ' contact--matiere' : ''}${fond && intro.titre.length > 26 ? ' contact--long' : ''}`
@@ -645,7 +680,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     // n'était qu'une phrase et trois chiffres, sans aucune image (juge du 14/09, priorité 10)
     const ph = da.plateauPhoto ? photoDe(da.plateauPhoto, 'photo du plateau') : null
     const photoPlateau = ph ? `<div class="plateau__photo reveal" style="--i:1">${photo(ph, '', { sizes: '(max-width: 767px) 100vw, 40vw' })}</div>` : ''
-    return `<section class="plateau" data-nav="sombre" aria-label="L’atelier en bref"><div class="plateau__inner"><div class="plateau__haut"><figure class="plateau__citation reveal"><blockquote><p>${crochetDernier('plateauCitation', esc(site.artisan.citation), [site.artisan.citation], '')}</p></blockquote><figcaption><span class="plateau__signe">${esc(`${site.artisan.prenom} ${site.artisan.nom}`)} · <span>${esc(signatureDe(site.artisan, ville).split(' · ')[1])}</span></span><span class="plateau__parcours">${esc(site.artisan.parcours)}</span></figcaption></figure>${photoPlateau}</div><dl class="chiffres">${p.chiffres.map((x, i) => `<div class="chiffre reveal" style="--i:${i + 1}"><dt>${esc(x.legende)}</dt><dd>${crochetDernier('plateauValeur', `<span class="chiffre__valeur">${esc(x.valeur)}</span>`, [x, i], '')}${x.unite ? `<span class="chiffre__unite">${esc(x.unite)}</span>` : ''}</dd></div>`).join('')}</dl></div></section>`
+    return `<section class="plateau" data-nav="sombre" aria-label="L’atelier en bref"><div class="plateau__inner"><div class="plateau__haut"><figure class="plateau__citation reveal"><blockquote><p>${crochetDernier('plateauCitation', esc(site.artisan.citation), [site.artisan.citation], '')}</p></blockquote><figcaption><span class="plateau__signe"${p.chiffres === null ? ' style="text-transform:none"' : ''}>${esc(`${site.artisan.prenom} ${site.artisan.nom}`)} · <span>${esc(signatureDe(site.artisan, ville).split(' · ')[1])}</span></span><span class="plateau__parcours">${esc(site.artisan.parcours)}</span></figcaption></figure>${p.chiffres === null ? '' : photoPlateau}</div>${p.chiffres === null ? '' : `<dl class="chiffres">${p.chiffres.map((x, i) => `<div class="chiffre reveal" style="--i:${i + 1}"><dt>${esc(x.legende)}</dt><dd>${crochetDernier('plateauValeur', `<span class="chiffre__valeur">${esc(x.valeur)}</span>`, [x, i], '')}${x.unite ? `<span class="chiffre__unite">${esc(x.unite)}</span>` : ''}</dd></div>`).join('')}</dl>`}</div></section>`
   }
 
   // ── L'accueil ────────────────────────────────────────────────────────────────────────────────────────────────
@@ -854,14 +889,14 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       const vues = new Set(rendues.flatMap((r) => [...r.html.matchAll(/images\/([a-z0-9-]+)-\d+\.(?:avif|webp)/g)].map((m) => m[1])))
       const orphelines = photos.filter((p) => !vues.has(p.base))
       // une photo d'attributions.json qu'aucune page n'affiche n'a rien à faire en ligne (ni dans les crédits, ni sur le disque)
-      if (orphelines.length) throw new Error(`${metier} : ${orphelines.length} photo(s) d’attributions.json qu’aucune page n’affiche (${orphelines.map((p) => p.base).join(', ')}) — les retirer d’attributions.json et d’images/`)
+      if (orphelines.length && !options.source) throw new Error(`${metier} : ${orphelines.length} photo(s) d’attributions.json qu’aucune page n’affiche (${orphelines.map((p) => p.base).join(', ')}) — les retirer d’attributions.json et d’images/`)
       photosUtilisees = photos.filter((p) => vues.has(p.base))
     }
     pageCourante = page
     const html = page.type === 'accueil' ? accueil(page) : page.type === 'legal' ? legale(page) : interieure(page, indexInterieure++)
     const ou = `${metier}${page.chemin}`
     gardeFous(html, ou, couverture)
-    if (page.type === 'accueil' && da.hero === 'plein') gardeFousAccueil(html, ou, { site, tel, chapeau: contenu.pages['/'].chapeau, sourceDe: new Map(photos.map((p) => [p.base, p.source])) })
+    if (page.type === 'accueil' && da.hero === 'plein') gardeFousAccueil(html, ou, { site, tel, chapeau: contenu.pages['/'].chapeau, source: !!options.source, sourceDe: new Map(photos.map((p) => [p.base, p.source])) })
     if (site.devis && page.type !== 'legal') gardeFousDevis(html, ou)
     gardeFousVoix(html, ou, { accueil: page.type === 'accueil', artisan: site.artisan })
     if (da.scenes && page.type !== 'legal') gardeFousScenes(html, ou)
@@ -914,7 +949,13 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     for (const f of [KIT_RELIEF, KIT_RELIEF_FIL]) if (!fs.existsSync(f)) throw new Error(`${metier} : _kit/${path.basename(f)} manque`)
   }
 
-  if (dossier !== dossierSource) {
+  if (options.source) {
+    fs.mkdirSync(dossier, { recursive: true })
+    fs.cpSync(path.join(dossierSource, 'photos'), path.join(dossier, 'images'), { recursive: true, filter: (src) => !src.endsWith('attributions.json') })
+    fs.writeFileSync(path.join(dossier, 'site.json'), JSON.stringify(site, null, 2))
+    fs.writeFileSync(path.join(dossier, 'contenu.json'), JSON.stringify(contenu, null, 2))
+    fs.writeFileSync(path.join(dossier, 'attributions.json'), JSON.stringify(attributions, null, 2))
+  } else if (dossier !== dossierSource) {
     fs.mkdirSync(path.dirname(dossier), { recursive: true })
     fs.cpSync(dossierSource, dossier, { recursive: true })
   }
@@ -925,6 +966,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
   else fs.rmSync(path.join(dossier, 'bureau.css'), { force: true })
   const jsFamilles = famillesChargees.map((famille) => famille.js).filter(Boolean)
   fs.writeFileSync(path.join(dossier, 'site.js'), [KIT_JS, ...jsFamilles].join('\n;\n'))
+  if (options.source) fs.copyFileSync(path.join(ICI, '_kit', 'formulaire.js'), path.join(dossier, 'formulaire.js'))
   for (const f of [KIT_RELIEF, KIT_RELIEF_FIL]) { if (da.relief) fs.copyFileSync(f, path.join(dossier, path.basename(f))); else fs.rmSync(path.join(dossier, path.basename(f)), { force: true }) }
   if (favicon) fs.writeFileSync(path.join(dossier, 'favicon.svg'), favicon)
   let n = 0
@@ -939,7 +981,90 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
   console.log(`  ✓ ${metier} : ${n} pages, ${photos.length} photos (${auteurs.length} auteurs), héros « ${da.hero} » (${heros.base}${herosMobile ? ` + ${herosMobile.base} sous 768 px` : ''}), police ${da.display}${da.texte !== da.display ? ' + ' + da.texte + (statiques ? ` ${statiques.join('/')}` : '') : ''}, styles.css ${(Buffer.byteLength(stylesCss) / 1024).toFixed(1)} Ko${favicon ? ', favicon.svg' : ''}`)
 }
 
+// Une maquette est un document privé autonome. Cette branche ne charge aucun fait de site.json.
+function sortieMaquettePermise(valeur) {
+  if (!valeur) return null
+  const racine = path.resolve(ICI, '..', '..')
+  const sortie = path.resolve(valeur)
+  const sous = (parent, enfant) => enfant === parent || enfant.startsWith(parent + path.sep)
+  const publicDir = path.join(racine, 'public')
+  const travail = path.join(racine, '.orchestre', 'travail')
+  if (sous(publicDir.toLowerCase(), sortie.toLowerCase())) return null
+  if (sous(racine.toLowerCase(), sortie.toLowerCase()) && !sous(travail.toLowerCase(), sortie.toLowerCase())) return null
+  // Les liens symboliques ne doivent pas ramener une sortie autorisée vers public/.
+  let parent = sortie
+  while (!fs.existsSync(parent)) parent = path.dirname(parent)
+  const reel = path.join(fs.realpathSync(parent), path.relative(parent, sortie))
+  if (sous(publicDir.toLowerCase(), reel.toLowerCase())) return null
+  if (sous(racine.toLowerCase(), reel.toLowerCase()) && !sous(travail.toLowerCase(), reel.toLowerCase())) return null
+  return sortie
+}
+
+function genererMaquette(fichier, valeurSortie) {
+  const sortie = sortieMaquettePermise(valeurSortie)
+  if (!sortie) { console.error('La maquette exige --sortie hors de public/ et sous .orchestre/travail/ si elle reste dans le dépôt.'); process.exit(2) }
+  const entree = JSON.parse(fs.readFileSync(path.resolve(fichier), 'utf8'))
+  for (const cle of ['entreprise', 'metier', 'ville', 'modele']) if (typeof entree[cle] !== 'string' || !entree[cle].trim()) throw new Error(`maquette.json : ${cle} absent`)
+  if (!Array.isArray(entree.communes) || entree.communes.some((c) => typeof c !== 'string')) throw new Error('maquette.json : communes invalides')
+  if (!/^[a-z0-9-]+$/.test(entree.modele)) throw new Error('maquette.json : modele invalide')
+  const racine = path.resolve(ICI, '..', '..')
+  const contenu = JSON.parse(fs.readFileSync(path.join(racine, 'maquettes', 'modeles', entree.modele, 'contenu.json'), 'utf8'))
+  const page = contenu.pages?.['/']
+  if (!page?.h1Ligne || !page?.sections?.length) throw new Error('modèle : accueil v2 incomplet')
+  const libelles = contenu.libelles || {}
+  for (const cle of ['sur', 'alt_heros', 'alt_atelier']) if (typeof libelles[cle] !== 'string' || !libelles[cle].trim()) throw new Error(`modèle ${entree.modele} : libelles.${cle} manque`)
+  if (!Array.isArray(libelles.reperes) || libelles.reperes.length !== 3 || libelles.reperes.some((titre) => typeof titre !== 'string' || !titre.trim())) throw new Error(`modèle ${entree.modele} : libelles.reperes exige trois titres`)
+  const remplir = (texte) => String(texte ?? '').replaceAll('{entreprise}', entree.entreprise).replaceAll('{ville}', entree.ville)
+  const e = (texte) => esc(remplir(texte))
+  const demo = contenu.photos?.demo
+  const fichiers = contenu.photos?.fichiers
+  if (!/^[a-z0-9-]+$/.test(demo || '') || !Array.isArray(fichiers) || !fichiers.length || fichiers.some((f) => !/^[a-z0-9.-]+\.(?:webp|avif|jpe?g|png)$/.test(f))) throw new Error('modèle : photos invalides')
+  const attributions = JSON.parse(fs.readFileSync(path.join(ICI, demo, 'attributions.json'), 'utf8'))
+  const photos = fichiers.map((nom) => {
+    const a = attributions.find((x) => x.fichier === `images/${nom}`)
+    if (!a?.auteur || !a?.licence) throw new Error(`photo sans attribution : ${nom}`)
+    return { nom, attribution: a, source: path.join(ICI, demo, 'images', nom) }
+  })
+  const zone = (titre) => `<div class="zone"><small>${titre}</small><span class="vide">À compléter avec vous</span></div>`
+  const chiffres = libelles.reperes.map((titre) => `<div class="case"><small>${e(titre)}</small><span class="vide">À compléter avec vous</span></div>`).join('')
+  const credit = [...new Set(photos.map(({ attribution: a }) => `${a.auteur} (${a.licence})${/^oui\b/i.test(String(a.modifiee || '')) ? ' — photo modifiée' : ''}`))].join(' · ')
+  const photoHeros = photos[0].attribution
+  const creditHeros = `${photoHeros.auteur} · ${photoHeros.licence}${/^oui\b/i.test(String(photoHeros.modifiee || '')) ? ' · photo modifiée' : ''}`
+  const section = (genre) => page.sections.find((s) => s.genre === genre)
+  const prestations = section('prestations')
+  const contact = section('contact')
+  const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>${e(page.title)}</title><meta name="description" content="${e(page.description)}"><link rel="stylesheet" href="maquette.css"></head><body>
+<header class="bandeau"><a class="marque" href="/">${e(entree.entreprise)}</a><a class="nav" href="#contact">Parlons de votre projet</a></header>
+<main><section class="hero"><div class="hero__texte"><span class="sur">${e(entree.metier)} · ${e(entree.ville)}</span><h1>${e(page.h1)}<span>${e(page.h1Ligne)}</span></h1><p class="intro">${e(page.chapeau)}</p><a class="lien" href="#presentation">Découvrir la proposition ↓</a></div><figure class="hero__image"><img src="images/${photos[0].nom}" alt="${e(libelles.alt_heros)}"><figcaption class="hero__credit">Photo : ${esc(creditHeros)}</figcaption></figure></section>
+<section class="section section--sombre" aria-label="Éléments à préciser"><h2>Une histoire à écrire ensemble</h2><p>Les repères de l’entreprise seront choisis et vérifiés avec vous.</p><div class="preuve">${chiffres}</div></section>
+<section class="section section--claire atelier" id="presentation"><div><span class="sur">${e(libelles.sur)}</span><h2>${e(prestations?.h2 || 'Présentation du métier')}</h2><p>${e(prestations?.blocs?.find((b) => b.type === 'p')?.texte)}</p><div class="zones">${zone('Votre parole')}${zone('Votre parcours')}</div></div><img src="images/${photos[1]?.nom || photos[0].nom}" alt="${e(libelles.alt_atelier)}"></section>
+<section class="section" id="contact"><h2>${e(contact?.h2 || 'Parlons de votre projet')}</h2><p>${e(contact?.blocs?.find((b) => b.type === 'p')?.texte)}</p><p>Les détails de cette page seront définis avec vous.</p></section></main>
+<footer class="pied"><p>Maquette privée préparée par Presti pour ${e(entree.entreprise)}. Rien n’est publié.</p><p>Photos d’illustration : ${esc(credit)}</p></footer></body></html>\n`
+  // Tous les contrôles ci-dessus précèdent la première écriture.
+  fs.mkdirSync(path.join(sortie, 'images'), { recursive: true })
+  fs.writeFileSync(path.join(sortie, 'index.html'), html)
+  fs.copyFileSync(path.join(ICI, '_kit', 'maquette.css'), path.join(sortie, 'maquette.css'))
+  fs.writeFileSync(path.join(sortie, 'attributions.json'), JSON.stringify(photos.map(({ nom, attribution }) => ({ ...attribution, fichier: `images/${nom}` })), null, 2))
+  for (const photo of photos) fs.copyFileSync(photo.source, path.join(sortie, 'images', photo.nom))
+  console.log(`Maquette privée : ${sortie}`)
+}
+
 const args = process.argv.slice(2)
+const valeurSource = args.find((a) => a.startsWith('--source='))?.slice('--source='.length)
+const valeurMaquette = args.find((a) => a.startsWith('--maquette='))?.slice('--maquette='.length)
+if (valeurMaquette !== undefined) {
+  try { genererMaquette(valeurMaquette, args.find((a) => a.startsWith('--sortie='))?.slice('--sortie='.length)) }
+  catch (erreur) { console.error(`Maquette : ${erreur.message}`); process.exitCode = 1 }
+} else {
+if (valeurSource !== undefined) {
+  const valeurSortie = args.find((a) => a.startsWith('--sortie='))?.slice('--sortie='.length)
+  if (!valeurSource || !valeurSortie) { console.error('--source et --sortie attendent chacun un dossier'); process.exit(2) }
+  const source = path.resolve(valeurSource), sortie = path.resolve(valeurSortie)
+  if (source === sortie || sortie.startsWith(source + path.sep)) { console.error('--sortie doit être hors du dossier source'); process.exit(2) }
+  try { await generer(path.basename(source), { source, sortie }) }
+  catch (e) { console.error(`  ✗ source : ${e.message}`); process.exitCode = 1 }
+  process.exit()
+}
 if (args.includes('--tous')) { console.error('--tous est retiré (14/09) : une seule démo vit, Lestraque ; les neuf autres sont gelées. Usage : node public/sites-demo/generer.mjs lestraque'); process.exit(2) }
 const valeurSortie = args.find((a) => a.startsWith('--sortie='))?.slice('--sortie='.length)
 const valeurFamilles = args.find((a) => a.startsWith('--familles='))?.slice('--familles='.length)
@@ -955,3 +1080,4 @@ const options = {
   da: valeurDa === undefined ? null : path.resolve(valeurDa),
 }
 for (const m of METIERS) { try { await generer(m, options) } catch (e) { console.log(`  ✗ ${m} : ${e.message}`); process.exitCode = 1 } }
+}

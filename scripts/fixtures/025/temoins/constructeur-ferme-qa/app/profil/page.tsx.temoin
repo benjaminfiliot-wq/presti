@@ -260,15 +260,16 @@ export default function ProfilPage() {
         {/* Site web : Presti le fait, sur commande — plus d'éditeur ici (fiche 025-05) */}
         <div className="tool-card">
           <h2>Votre site web</h2>
-          <div>
-            <p className="muted" style={{ margin: '0 0 .7rem', fontWeight: 600 }}>{SITE_A_LA_DEMANDE.titre}</p>
-            <p className="muted" style={{ margin: '0 0 1rem' }}>{SITE_A_LA_DEMANDE.phrases[0]}</p>
-            {actif('siteCommandeVente') && (
+          {/* témoin 025-16 (M5) : le bloc de vente, prix compris, seulement quand la vente est ouverte */}
+          {actif('siteCommandeVente') && (
+            <div>
+              <p className="muted" style={{ margin: '0 0 .7rem', fontWeight: 600 }}>{SITE_A_LA_DEMANDE.titre}</p>
+              <p className="muted" style={{ margin: '0 0 1rem' }}>{SITE_A_LA_DEMANDE.phrases[0]}</p>
               <a className="btn btn--primary" href={SITE_A_LA_DEMANDE.lien} style={{ display: 'inline-block', width: 'auto' }}>
                 {SITE_A_LA_DEMANDE.bouton}
               </a>
-            )}
-          </div>
+            </div>
+          )}
 
           {siteEnLigne && (
             <label className="prof-toggle" style={{ marginTop: '1rem' }}>

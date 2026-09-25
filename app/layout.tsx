@@ -42,9 +42,9 @@ const instrument = Instrument_Serif({ subsets: ['latin'], weight: ['400'], style
 const syne = Syne({ subsets: ['latin'], weight: ['500', '600', '700', '800'], variable: '--f-syne', display: 'swap', preload: false })
 const lora = Lora({ subsets: ['latin'], weight: ['400', '500', '600', '700'], style: ['normal', 'italic'], variable: '--f-lora', display: 'swap', preload: false })
 
-const TITLE = "Presti — Répondez à chaque demande de devis en moins d'une minute"
+const TITLE = "Presti — Une réponse prête en moins d'une minute"
 const DESC =
-  "Presti répond à vos demandes de devis en moins d'une minute, dans votre ton, et relance automatiquement jusqu'à la réponse. Ne perdez plus jamais un chantier faute de temps."
+  "Chaque demande arrive dans Presti. La réponse est prête en moins d'une minute : Presti la prépare dans votre ton, vous l'envoyez."
 
 // ICÔNES — elles n'apparaissent pas dans l'objet ci-dessous, et c'est la bonne façon de faire.
 // Next les découvre par convention de fichier : app/icon.svg (onglets modernes),

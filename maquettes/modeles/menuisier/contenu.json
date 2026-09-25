@@ -1,0 +1,39 @@
+{
+  "metier": "menuisier",
+  "libelles": {
+    "sur": "Menuiserie",
+    "alt_heros": "Détail d’un ouvrage de menuiserie",
+    "alt_atelier": "Réalisation en bois dans l’atelier",
+    "reperes": ["Repère de l’atelier", "Repère des ouvrages", "Repère de proximité"]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Menuiserie à {ville} — {entreprise}",
+      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, menuiserie à {ville}.",
+      "h1": "Menuiserie à {ville}",
+      "h1Ligne": "Le bois prend forme",
+      "chapeau": "Une page pour présenter les ouvrages en bois et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "La matière et les formes",
+          "blocs": [
+            { "type": "p", "texte": "Escaliers, rangements et aménagements intérieurs peuvent prendre place dans cette présentation. Les réalisations propres à {entreprise} seront précisées ensemble." }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise}." }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "menuisier",
+    "fichiers": ["hero-960.webp", "bibliotheque-720.webp"]
+  }
+}

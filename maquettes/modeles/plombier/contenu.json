@@ -1,0 +1,39 @@
+{
+  "metier": "plombier",
+  "libelles": {
+    "sur": "Plomberie",
+    "alt_heros": "Détail d’une installation de plomberie",
+    "alt_atelier": "Équipement sanitaire et robinetterie",
+    "reperes": ["Repère des installations", "Repère des équipements", "Repère de proximité"]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Plomberie à {ville} — {entreprise}",
+      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, plomberie à {ville}.",
+      "h1": "Plomberie à {ville}",
+      "h1Ligne": "L’eau trouve sa place",
+      "chapeau": "Une page pour présenter les installations de plomberie et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Des réseaux aux équipements",
+          "blocs": [
+            { "type": "p", "texte": "Alimentations, évacuations et équipements sanitaires peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "plombier",
+    "fichiers": ["hero-960.webp", "robinetterie-720.webp"]
+  }
+}

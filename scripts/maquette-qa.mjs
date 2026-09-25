@@ -9,7 +9,7 @@
 //   --racine=<d>   tout est lu et lancé depuis <d> : generer.mjs, maquettes/modeles/, scripts/maquette-capturer.mjs, lib/ai.ts, les
 //                  site.json et les photos des démos, public/ (MQ-2), et T1, T2, MQ-9. Défaut : la racine du dépôt.
 //   --temoin       non-régression et jeu d'essai conforme (voir « Le témoin » plus bas) : doit passer sur l'état actuel du dépôt.
-// Sortie : une ligne « PASS|FAIL <id> — … » par critère (MQ-1 à MQ-9, T1, T2), puis « maquette-qa : PASS » ou « maquette-qa : FAIL — ids ».
+// Sortie : une ligne « PASS|FAIL <id> — … » par critère (MQ-1 à MQ-11, T1, T2), puis « maquette-qa : PASS » ou « maquette-qa : FAIL — ids ».
 // Code 0 seulement si tout est vert ; 2 si le juge est mal appelé. Aucune ligne n'imprime le nom de l'entreprise fictive (MQ-9 le
 // cherche dans le dépôt) : il est remplacé par ‹entreprise›, son slug par ‹slug›, le repère du fait sourcé par ‹repère›.
 //
@@ -83,18 +83,39 @@
 //        dans aucun fichier suivi de <racine>, ni (dépôt Git) dans aucun fichier non suivi et non ignoré (il partirait au prochain
 //        commit), hors de scripts/fixtures/025/ (le jeu d'essai) et de .orchestre/ (fiches et preuves). Sur un arbre extrait (non
 //        Git) : tous ses fichiers (git grep --no-index).
+//   MQ-10 (relecture à froid du 24/09, G3) les libellés du métier : la maquette est générée pour CHAQUE modèle de
+//        <racine>/maquettes/modeles/ (jeu d'essai repris avec metier = modele = <m>, sortie .orchestre/travail/maquette-qa/mq10/<m>
+//        ou celle de MQ-1 pour un métier déjà jugé) ; le texte de chaque page (titre, description, corps entier, lignes de crédits
+//        ôtées), ses attributs alt, title, aria-label et placeholder et le texte des content: CSS ne portent aucun mot PROPRE à
+//        un autre modèle. Le dictionnaire est tiré des modèles eux-mêmes (commun.mjs, motsDesMetiers : un mot qui revient au moins
+//        deux fois dans les textes d'un modèle et n'apparaît dans aucun autre ; aujourd'hui « menuiserie », « bois »,
+//        « plomberie »…) ; les mots du jeu d'essai (entreprise, ville, communes) sont admis. Deux modèles au moins, chacun
+//        générable. Détecteur éprouvé à chaque passage : un mot propre à un autre modèle ajouté au texte du premier métier doit
+//        être vu (mutation).
+//   MQ-11 (M8) la capture destinée au prospect porte le crédit de chaque photo visible : pour chaque métier jugé, après MQ-8, le
+//        juge ouvre l'accueil à 1440×900 et à 390×844 ; chaque photo (img, ou image de fond) qui occupe au moins 2 % du haut
+//        visible doit avoir, DANS ce haut, son auteur et sa licence (et « modifiée » si ses attributions le disent) écrits dans
+//        un élément visible (boîte entièrement dans la fenêtre, visibility visible, opacité cumulée ≥ 0,9, police ≥ 10 px,
+//        elementFromPoint en son centre sur lui) ; puis la capture du capteur (capture-bureau.jpg, capture-telephone.jpg de
+//        MQ-8) est comparée à celle que le juge prend lui-même, en gris et à mi-échelle : écart moyen ≤ 12 sur toute l'image
+//        (c'est bien le haut de la page), et, dans la boîte de chaque crédit, écart ≤ la moitié de celui que produit le même
+//        haut crédit caché (mutation : le juge cache les crédits, recapture, et cet écart doit valoir 4 au moins ; il vérifie
+//        aussi que sa recherche ne les trouve plus). Un crédit incrusté par le capteur hors de la page n'est donc pas vu : le
+//        crédit vit dans la page (légende de la photo du haut), et la capture le montre.
 //   T1   Lestraque régénéré dans .orchestre/travail/maquette-qa/lestraque/ : index.html et site.js identiques, styles.css hors ligne 1
 //        (scripts/fixtures/025/commun.mjs, t1) ; T2 : les neuf démos gelées intactes (t2). Jugés après les générations : un mode
 //        maquette qui toucherait Lestraque ou une démo gelée en place est pris.
 //
 // Le témoin (--temoin) :
 //   - T1, T2 et MQ-9 sur la racine (le dépôt par défaut) : ils passent aujourd'hui et doivent le rester ;
-//   - MQ-1 à MQ-8 sur l'arbre témoin .orchestre/travail/maquette-qa/temoin/, fait par preparerTemoin (commun.mjs) : copie depuis la
-//     racine des site.json de chaque démo, de public/sites-demo/<démo>/attributions.json et des photos nommées dans le modèle du
-//     témoin, puis superposition de scripts/fixtures/025/temoins/maquette-qa/ : un faux public/sites-demo/generer.mjs qui ne sait
-//     faire que --maquette (refus sous public/ et dans l'arbre hors de .orchestre/travail/), un modèle maquettes/modeles/menuisier/
-//     contenu.json minimal et un faux scripts/maquette-capturer.mjs. Ce témoin simule l'état « après » des fiches 025-02 : il prouve
-//     que chaque critère peut passer. Ce n'est pas une implémentation de référence (son modèle n'est pas au format v2).
+//   - MQ-1 à MQ-8, MQ-10 et MQ-11 sur l'arbre témoin .orchestre/travail/maquette-qa/temoin/, fait par preparerTemoin (commun.mjs) :
+//     copie depuis la racine des site.json de chaque démo, puis, pour chaque modèle du témoin, de
+//     public/sites-demo/<démo>/attributions.json et des photos qu'il nomme, puis superposition de
+//     scripts/fixtures/025/temoins/maquette-qa/ : un faux public/sites-demo/generer.mjs qui ne sait faire que --maquette (refus sous
+//     public/ et dans l'arbre hors de .orchestre/travail/ ; libellés tirés du modèle, crédit de la photo du haut en légende), deux
+//     modèles minimaux maquettes/modeles/menuisier/ et plombier/ et un faux scripts/maquette-capturer.mjs. Ce témoin simule l'état
+//     « après » des fiches 025-02 et 025-14 : il prouve que chaque critère peut passer. Ce n'est pas une implémentation de
+//     référence (ses modèles ne sont pas au format v2).
 //   - métier : celui du jeu d'essai (menuisier) ; --metier est refusé avec --temoin.
 //
 // Choix du juge (la fiche ne tranche pas) :
@@ -110,17 +131,17 @@ import {
   R, FIXTURES, TRAVAIL, MAQUETTE_EXEMPLE,
   lireOptionsOuQuitter, creerSortie, t1, t2, servir, lancerNavigateur, BUREAU, TELEPHONE, capturer, verifierImage,
   defilementHorizontal, exigerSousTravail, dossierTravail, lancer, taille, fichierNonVide, lireJson, sha256, listerFichiers,
-  instantaneDossier, comparerInstantanes, preparerTemoin, estRacineGit, git, lireMaquetteExemple, replier,
+  instantaneDossier, comparerInstantanes, preparerTemoin, estRacineGit, git, lireMaquetteExemple, replier, motsDesMetiers, motsEtrangers,
 } from './fixtures/025/commun.mjs'
 
 const JUGE = 'maquette-qa'
-const IDS = ['MQ-1', 'MQ-2', 'MQ-3', 'MQ-4', 'MQ-5', 'MQ-6', 'MQ-7', 'MQ-8', 'MQ-9', 'T1', 'T2']
-const PAR_METIER = ['MQ-1', 'MQ-3', 'MQ-4', 'MQ-5', 'MQ-6', 'MQ-7', 'MQ-8']
+const IDS = ['MQ-1', 'MQ-2', 'MQ-3', 'MQ-4', 'MQ-5', 'MQ-6', 'MQ-7', 'MQ-8', 'MQ-9', 'MQ-10', 'MQ-11', 'T1', 'T2']
+const PAR_METIER = ['MQ-1', 'MQ-3', 'MQ-4', 'MQ-5', 'MQ-6', 'MQ-7', 'MQ-8', 'MQ-11']
 const MO = 1_000_000
 const MAX_CAPTURE = 1 * MO
 const MAX_DOSSIER = 3 * MO
 const ZONES_MIN = 5
-const RESERVES = new Set(['lestraque', 'temoin', 'jeux', 'captures', 'capturer-vide'])
+const RESERVES = new Set(['lestraque', 'temoin', 'jeux', 'captures', 'capturer-vide', 'mq10'])
 const EXCLUS_MQ9 = ['scripts/fixtures/025', '.orchestre']
 const IMAGE = /\.(?:avif|webp|jpe?g|png|gif)$/i
 const CAPTURES_MQ8 = ['capture-bureau.jpg', 'capture-telephone.jpg']
@@ -573,8 +594,8 @@ async function jugerMetier({ m, jeu, racine, ex, premier, nav, index, fab, clich
   } else if (PUBLIC_MQ2.length) for (const d of PUBLIC_MQ2) echoue('MQ-2', d)
 
   if (d1.length) {
-    for (const id of ['MQ-3', 'MQ-4', 'MQ-5', 'MQ-6', 'MQ-7', 'MQ-8']) echoue(id, `${pre}pas de maquette à juger (MQ-1)`)
-    return
+    for (const id of ['MQ-3', 'MQ-4', 'MQ-5', 'MQ-6', 'MQ-7', 'MQ-8', 'MQ-11']) echoue(id, `${pre}pas de maquette à juger (MQ-1)`)
+    return { sortie, ok: false }
   }
 
   // MQ-3 (statique)
@@ -784,6 +805,10 @@ async function jugerMetier({ m, jeu, racine, ex, premier, nav, index, fab, clich
     }
   }
 
+  // MQ-11 (après MQ-8 : les captures du capteur)
+  let r11
+  try { r11 = await mq11({ sortie, nav, m, attributionDe }) } catch (e) { r11 = { d: [`interrompu : ${premiereLigne(e)}`], faits: [] } }
+
   // MQ-6 (après MQ-8 : le dossier complet)
   const p6 = poids(sortie)
   const d6 = []
@@ -801,6 +826,201 @@ async function jugerMetier({ m, jeu, racine, ex, premier, nav, index, fab, clich
   rendre('MQ-6', d6, `${p6} octets (${mo(p6)}) avec les captures de MQ-8, 3 Mo au plus`)
   rendre('MQ-7', d7, faits7.join(' ; '))
   rendre('MQ-8', d8, faits8.join(' ; '))
+  rendre('MQ-11', r11.d, r11.faits.join(' ; '))
+  return { sortie, ok: true }
+}
+
+// ── MQ-11 : le crédit de chaque photo visible, dans le haut capturé ──────────────────────────────────────────────────────
+/** Dans la page : les photos qui occupent au moins 2 % du haut visible (img, image de fond) → [{ chemin, surface }] */
+const PHOTOS_DU_HAUT = () => {
+  const W = innerWidth, H = innerHeight, out = []
+  const inter = (r) => Math.max(0, Math.min(r.right, W) - Math.max(r.left, 0)) * Math.max(0, Math.min(r.bottom, H) - Math.max(r.top, 0))
+  const opac = (el) => { let o = 1; for (let e = el; e && e.nodeType === 1; e = e.parentElement) o *= parseFloat(getComputedStyle(e).opacity || '1'); return o }
+  for (const el of document.querySelectorAll('body *')) {
+    const cs = getComputedStyle(el)
+    const urls = []
+    if (el.tagName === 'IMG' && (el.currentSrc || el.src)) urls.push(el.currentSrc || el.src)
+    if (cs.backgroundImage && cs.backgroundImage !== 'none') for (const m of cs.backgroundImage.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/g)) urls.push(new URL(m[1], location.href).href)
+    if (!urls.length) continue
+    const s = inter(el.getBoundingClientRect())
+    if (s < 0.02 * W * H || cs.visibility !== 'visible' || opac(el) < 0.1) continue
+    for (const u of urls) { try { out.push({ chemin: decodeURIComponent(new URL(u).pathname), surface: Math.round(s) }) } catch { /* data: */ } }
+  }
+  return out
+}
+/** Dans la page : pour chaque texte cherché, l'élément le plus profond qui le porte, lisible dans le haut ? Marque les trouvés
+ *  (data-mq11-credit). → [{ cle, ok, raison, boite }] */
+const CREDITS_DU_HAUT = (besoins) => {
+  const norm = (t) => String(t || '').normalize('NFKC').replace(/[   ]/g, ' ').replace(/[’‘ʼ]/g, "'").replace(/\s+/g, ' ').toLowerCase()
+  const W = innerWidth, H = innerHeight
+  const res = []
+  for (const b of besoins) {
+    const cible = norm(b.texte)
+    const tous = [...document.body.querySelectorAll('*')].filter((el) => !['SCRIPT', 'STYLE', 'TEMPLATE', 'NOSCRIPT'].includes(el.tagName) && norm(el.innerText).includes(cible))
+    const feuilles = tous.filter((el) => ![...el.children].some((c) => norm(c.innerText).includes(cible)))
+    let trouve = null
+    for (const el of feuilles) {
+      const r = el.getBoundingClientRect()
+      const r0 = el.getClientRects()[0] || r
+      const dedans = r.width >= 1 && r.height >= 1 && r.left >= -1 && r.top >= -1 && r.right <= W + 1 && r.bottom <= H + 1
+      let op = 1
+      for (let e = el; e && e.nodeType === 1; e = e.parentElement) op *= parseFloat(getComputedStyle(e).opacity || '1')
+      const cs = getComputedStyle(el)
+      const police = parseFloat(cs.fontSize) || 0
+      const pe = el.style.getPropertyValue('pointer-events'), prio = el.style.getPropertyPriority('pointer-events')
+      el.style.setProperty('pointer-events', 'auto', 'important')
+      const hit = dedans ? document.elementFromPoint(r0.left + r0.width / 2, r0.top + r0.height / 2) : null
+      if (pe) el.style.setProperty('pointer-events', pe, prio); else el.style.removeProperty('pointer-events')
+      const dessus = !!hit && (hit === el || el.contains(hit))
+      const raisons = []
+      if (!dedans) raisons.push(`hors du haut capturé (boîte ${Math.round(r.top)}–${Math.round(r.bottom)} px, fenêtre ${H} px)`)
+      else if (!dessus) raisons.push(`recouvert par ${hit ? hit.tagName.toLowerCase() : 'rien'}`)
+      if (op < 0.9) raisons.push(`opacité ${op.toFixed(2)}`)
+      if (cs.visibility !== 'visible') raisons.push(`visibility ${cs.visibility}`)
+      if (police < 10) raisons.push(`police de ${police} px`)
+      const balise = el.tagName.toLowerCase() + (typeof el.className === 'string' && el.className.trim() ? `.${el.className.trim().split(/\s+/)[0]}` : '')
+      if (!raisons.length) { el.setAttribute('data-mq11-credit', '1'); trouve = { ok: true, balise, boite: { x: r.left, y: r.top, l: r.width, h: r.height } }; break }
+      if (!trouve) trouve = { ok: false, balise, raison: raisons.join(', ') }
+    }
+    res.push({ cle: b.cle, ...(trouve || { ok: false, raison: 'absent du texte de la page' }) })
+  }
+  return res
+}
+/** Écart moyen (0-255) entre deux images en gris de même taille, sur toute l'image ou dans une boîte { x, y, l, h } (pixels). */
+function ecartMoyen(a, b, largeur, hauteur, boite = null) {
+  const x0 = boite ? Math.max(0, Math.floor(boite.x)) : 0, y0 = boite ? Math.max(0, Math.floor(boite.y)) : 0
+  const x1 = boite ? Math.min(largeur, Math.ceil(boite.x + boite.l)) : largeur, y1 = boite ? Math.min(hauteur, Math.ceil(boite.y + boite.h)) : hauteur
+  let s = 0, n = 0
+  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { s += Math.abs(a[y * largeur + x] - b[y * largeur + x]); n++ }
+  return n ? s / n : 0
+}
+async function grisDemi(fichier, largeur, hauteur) {
+  const sharp = (await import('sharp')).default
+  const { data } = await sharp(fichier).resize(largeur, hauteur, { fit: 'fill' }).removeAlpha().greyscale().raw().toBuffer({ resolveWithObject: true })
+  return data
+}
+async function mq11({ sortie, nav, m, attributionDe }) {
+  const d = [], faits = []
+  const capteur = { bureau: path.join(sortie, 'capture-bureau.jpg'), telephone: path.join(sortie, 'capture-telephone.jpg') }
+  for (const [nom, f] of Object.entries(capteur)) if (!fichierNonVide(f)) d.push(`${nom} : ${path.basename(f)} absente ou vide (le capteur de MQ-8 n’a rien écrit)`)
+  if (d.length) return { d, faits }
+  const dossierCaptures = exigerSousTravail(path.join(TRAVAIL, JUGE, 'captures'))
+  fs.mkdirSync(dossierCaptures, { recursive: true })
+  const srv = await servir(sortie)
+  let prouve = false
+  try {
+    for (const [nom, opts] of [['bureau', BUREAU], ['telephone', TELEPHONE]]) {
+      const ctx = await nav.newContext({ ...opts, reducedMotion: 'no-preference' })
+      try {
+        await ctx.route('**/*', (route) => { let h = ''; try { h = new URL(route.request().url()).hostname } catch { /* data: */ } return h === '127.0.0.1' || /^(?:data|blob):/i.test(route.request().url()) ? route.continue() : route.abort() })
+        const page = await ctx.newPage()
+        await page.goto(`${srv.base}/`, { waitUntil: 'load', timeout: 60_000 })
+        await page.evaluate(() => (document.fonts ? document.fonts.ready.then(() => 1) : 1))
+        await page.evaluate(() => window.scrollTo(0, 0))
+        await page.waitForTimeout(1200)
+        const vues = await page.evaluate(PHOTOS_DU_HAUT)
+        const photos = new Map()
+        for (const v of vues) {
+          const rel = v.chemin.replace(/^\/+/, '')
+          if (!IMAGE.test(rel) || photos.has(rel)) continue
+          photos.set(rel, { surface: v.surface, a: attributionDe(rel) })
+        }
+        if (!photos.size) { d.push(`${nom} : aucune photo dans le haut de l’accueil (MQ-11 veut au moins la photo du haut, créditée)`); continue }
+        const besoins = []
+        for (const [rel, p] of photos) {
+          if (!p.a) { d.push(`${nom} : ${rel} visible dans le haut, sans attribution dans la sortie`); continue }
+          besoins.push({ cle: `${rel} → auteur « ${p.a.auteur} »`, texte: String(p.a.auteur || '').trim() }, { cle: `${rel} → licence « ${p.a.licence} »`, texte: String(p.a.licence || '').trim() })
+          if (/^oui\b/i.test(String(p.a.modifiee || '').trim())) besoins.push({ cle: `${rel} → « modifiée »`, texte: 'modifi' })
+        }
+        const credits = besoins.length ? await page.evaluate(CREDITS_DU_HAUT, besoins.filter((b) => b.texte)) : []
+        for (const c of credits.filter((x) => !x.ok)) d.push(`${nom} : ${c.cle} n’est pas lisible dans le haut capturé (${c.raison}${c.balise ? `, ${c.balise}` : ''})`)
+        const boites = credits.filter((x) => x.ok).map((x) => x.boite)
+        // la capture du juge, puis celle du capteur, comparées en gris à mi-échelle
+        const vp = page.viewportSize()
+        const L = Math.round(vp.width / 2), H = Math.round(vp.height / 2)
+        const moi = await capturer(page, path.join(dossierCaptures, `${m}-mq11-${nom}.jpg`), { maxOctets: MAX_CAPTURE })
+        if (!moi.ok) { d.push(`${nom} : capture du juge invalide (${moi.raisons.join(', ')})`); continue }
+        const A = await grisDemi(capteur[nom], L, H), B = await grisDemi(moi.fichier, L, H)
+        const global = ecartMoyen(A, B, L, H)
+        if (global > 12) d.push(`${nom} : la capture du capteur diffère du haut de l’accueil vu par le juge (écart moyen ${global.toFixed(1)}, 12 au plus) — pleine page, autre page ou crédit incrusté hors de la page ?`)
+        if (boites.length) {
+          // mutation : les crédits cachés, le juge recapture ; sa recherche ne doit plus les trouver, et l'écart dans leurs boîtes doit se voir
+          await page.evaluate(() => { for (const el of document.querySelectorAll('[data-mq11-credit]')) el.style.setProperty('visibility', 'hidden', 'important') })
+          const apres = await page.evaluate(CREDITS_DU_HAUT, besoins.filter((b) => b.texte))
+          if (apres.some((x) => x.ok)) d.push(`${nom} : détecteur aveugle — crédits cachés, la recherche les trouve encore (${apres.filter((x) => x.ok).map((x) => x.cle).join(', ')})`)
+          const sans = await capturer(page, path.join(dossierCaptures, `${m}-mq11-${nom}-sans-credit.jpg`), { maxOctets: MAX_CAPTURE })
+          const C = await grisDemi(sans.fichier, L, H)
+          for (const [i, b] of boites.entries()) {
+            const bb = { x: b.x / 2 - 1, y: b.y / 2 - 1, l: b.l / 2 + 2, h: b.h / 2 + 2 }
+            const ok = ecartMoyen(A, B, L, H, bb), mut = ecartMoyen(C, B, L, H, bb)
+            if (mut < 4) d.push(`${nom} : crédit ${i + 1} : le cacher ne change presque rien à l’image (écart ${mut.toFixed(1)}, 4 au moins) — texte illisible sur son fond ?`)
+            else if (ok > mut / 2) d.push(`${nom} : crédit ${i + 1} (${credits.filter((x) => x.ok)[i]?.cle}) absent ou différent sur la capture du capteur (écart ${ok.toFixed(1)} dans sa boîte, ${(mut / 2).toFixed(1)} au plus ; crédit caché : ${mut.toFixed(1)})`)
+            else faits.push(`${nom} crédit ${i + 1} : écart ${ok.toFixed(1)} (caché : ${mut.toFixed(1)})`)
+          }
+          prouve = prouve || !apres.some((x) => x.ok)
+        }
+        faits.unshift(`${nom} : ${photos.size} photo(s) dans le haut, ${credits.filter((x) => x.ok).length}/${credits.length} mention(s) de crédit lisibles dedans, capture du capteur à ${global.toFixed(1)} d’écart moyen de celle du juge`)
+      } finally { await ctx.close() }
+    }
+  } finally { await srv.fermer() }
+  if (!d.length && !prouve) d.push('mutation non jouée : aucun crédit trouvé à cacher')
+  if (!d.length) faits.push('mutation : crédits cachés → recherche vide et écart mesuré dans leurs boîtes → vue')
+  return { d, faits }
+}
+
+// ── MQ-10 : aucun libellé d'un autre métier ───────────────────────────────────────────────────────────────────────────────
+/** Le texte qu'une page donne à lire (titre, description, corps sans crédits, alt / title / aria-label / placeholder, content: CSS). */
+function texteLibelles(sortie) {
+  const pages = lirePages(sortie)
+  const morceaux = []
+  for (const p of pages) {
+    morceaux.push(p.titre, p.description, sansCredits(p.texte))
+    for (const b of p.corpsPropre.matchAll(/<[a-z][^>]*>/gi)) {
+      const a = attributs(b[0])
+      for (const k of ['alt', 'title', 'aria-label', 'placeholder']) if (a[k]) morceaux.push(a[k])
+    }
+  }
+  const feuilles = [...listerFichiers(sortie)].filter((f) => /\.css$/i.test(f)).map((f) => fs.readFileSync(path.join(sortie, f), 'utf8'))
+  for (const p of pages) for (const x of sansCommentairesHtml(p.html).matchAll(/<style\b[^>]*>([\s\S]*?)<\/style\s*>/gi)) feuilles.push(x[1])
+  for (const css of feuilles) morceaux.push(...textesDeContent(css, pages))
+  return { pages: pages.length, texte: morceaux.filter(Boolean).join('\n') }
+}
+function mq10({ racine, ex, generes }) {
+  const dico = motsDesMetiers(racine)
+  const d = [], faits = []
+  if (dico.illisibles.length) d.push(`modèle(s) illisible(s) (contenu.json) : ${dico.illisibles.join(', ')}`)
+  const avecMots = dico.modeles.filter((m) => dico.propres.get(m).size)
+  if (dico.modeles.length < 2) { d.push(`${dico.modeles.length} modèle(s) sous maquettes/modeles/ : il en faut deux au moins pour dire ce qui est propre à un métier`); return { d, faits } }
+  if (avecMots.length < 2) d.push(`dictionnaire dégénéré : ${avecMots.length} modèle(s) ont des mots propres (${[...dico.propres].map(([m, x]) => `${m} ${x.size}`).join(', ')})`)
+  const admis = [ex.entreprise, ex.ville, ...ex.communes].join(' ')
+  const dJeux = dossierTravail(JUGE, 'mq10', 'jeux')
+  let sonde = null
+  for (const m of dico.modeles) {
+    let sortie = generes.get(m)
+    if (!sortie) {
+      const jeu = path.join(dJeux, `${m}.json`)
+      fs.writeFileSync(jeu, `${JSON.stringify({ ...ex, _: `Copie de scripts/fixtures/025/maquette-exemple.json par ${JUGE} (MQ-10) pour le modèle ${m}.`, metier: m, modele: m }, null, 1)}\n`)
+      sortie = exigerSousTravail(path.join(TRAVAIL, JUGE, 'mq10', m))
+      fs.rmSync(sortie, { recursive: true, force: true })
+      const g = generer(racine, jeu, sortie)
+      if (g.code !== 0 || !fichierNonVide(path.join(sortie, 'index.html'))) { d.push(`${m} : la maquette ne se génère pas (${codeDe(g)}${messageDe(g) ? ` « ${court(messageDe(g), 90)} »` : ''})`); continue }
+    }
+    const { pages, texte } = texteLibelles(sortie)
+    const hits = motsEtrangers(texte, m, dico, admis)
+    for (const h of hits) d.push(`${m} : « ${h.mot} » (propre au modèle ${h.modele}) dans « ${h.extrait} »`)
+    faits.push(`${m} ${pages} page(s)${hits.length ? '' : ', rien d’un autre métier'}`)
+    if (!sonde) {
+      const autre = dico.modeles.find((x) => x !== m && dico.propres.get(x).size)
+      if (autre) {
+        const mot = [...dico.propres.get(autre)].sort((a, b) => b[1] - a[1])[0][0]
+        sonde = { m, autre, mot, vu: motsEtrangers(`${texte}\nIllustration : ${mot}`, m, dico, admis).some((h) => h.modele === autre) }
+      }
+    }
+  }
+  if (!sonde) d.push('mutation non jouée : aucun mot propre à un autre modèle pour éprouver le détecteur')
+  else if (!sonde.vu) d.push(`détecteur aveugle : « ${sonde.mot} » (propre à ${sonde.autre}) ajouté au texte de ${sonde.m} n’est pas vu`)
+  const resume = `${dico.modeles.length} modèles, dictionnaire tiré d’eux (${[...dico.propres].map(([m, x]) => `${m} : ${[...x.keys()].join(', ') || '—'}`).join(' ; ')}) ; ${faits.join(', ')}${sonde?.vu ? ` ; mutation : « ${sonde.mot} » ajouté à ${sonde.m} → vu` : ''}`
+  return { d, faits: [resume] }
 }
 
 // ── MQ-9 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -833,14 +1053,22 @@ function mq9(racine, ex) {
 
 // ── Le témoin ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 function construireTemoin(base) {
-  const modele = lireJson(path.join(TEMOIN_SOURCE, 'maquettes', 'modeles', 'menuisier', 'contenu.json'))
-  const demo = modele?.photos?.demo
-  const photos = modele?.photos?.fichiers
-  if (typeof demo !== 'string' || !/^[a-z0-9-]+$/.test(demo) || !Array.isArray(photos) || !photos.length || photos.some((f) => typeof f !== 'string' || !/^[a-z0-9.-]+$/.test(f))) throw new Error(`${relR(TEMOIN_SOURCE)}/maquettes/modeles/menuisier/contenu.json : photos { demo, fichiers[] } attendu`)
+  const dirModeles = path.join(TEMOIN_SOURCE, 'maquettes', 'modeles')
+  const modeles = fs.readdirSync(dirModeles, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort()
+  if (!modeles.includes('menuisier') || modeles.length < 2) throw new Error(`${relR(dirModeles)} : le modèle menuisier et un autre au moins attendus (MQ-10)`)
+  const copier = new Set()
+  for (const nom of modeles) {
+    const modele = lireJson(path.join(dirModeles, nom, 'contenu.json'))
+    const demo = modele?.photos?.demo
+    const photos = modele?.photos?.fichiers
+    if (typeof demo !== 'string' || !/^[a-z0-9-]+$/.test(demo) || !Array.isArray(photos) || !photos.length || photos.some((f) => typeof f !== 'string' || !/^[a-z0-9.-]+$/.test(f))) throw new Error(`${relR(dirModeles)}/${nom}/contenu.json : photos { demo, fichiers[] } attendu`)
+    copier.add(`public/sites-demo/${demo}/attributions.json`)
+    for (const f of photos) copier.add(`public/sites-demo/${demo}/images/${f}`)
+  }
   const dir = path.join(base, 'public', 'sites-demo')
   const siteJson = fs.readdirSync(dir, { withFileTypes: true }).filter((e) => e.isDirectory() && fs.existsSync(path.join(dir, e.name, 'site.json'))).map((e) => `public/sites-demo/${e.name}/site.json`)
-  const copier = [...siteJson, `public/sites-demo/${demo}/attributions.json`, ...photos.map((f) => `public/sites-demo/${demo}/images/${f}`)]
-  return { arbre: preparerTemoin(JUGE, { base, copier }), copies: copier.length, demos: siteJson.length }
+  const liste = [...siteJson, ...copier]
+  return { arbre: preparerTemoin(JUGE, { base, copier: liste }), copies: liste.length, demos: siteJson.length, modeles }
 }
 
 // ── Déroulé ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -860,7 +1088,7 @@ await s.executer(async () => {
   if (o.temoin) {
     const t = construireTemoin(racineNR)
     racine = t.arbre
-    note(`témoin : MQ-1 à MQ-8 jugés sur ${relR(racine)} (${t.copies} fichiers copiés depuis la racine, dont ${t.demos} site.json de démos, puis ${relR(TEMOIN_SOURCE)}/ superposé) ; T1, T2 et MQ-9 sur la racine`)
+    note(`témoin : MQ-1 à MQ-8, MQ-10 et MQ-11 jugés sur ${relR(racine)} (${t.copies} fichiers copiés depuis la racine, dont ${t.demos} site.json de démos, puis ${relR(TEMOIN_SOURCE)}/ superposé : modèles ${t.modeles.join(', ')}) ; T1, T2 et MQ-9 sur la racine`)
   }
 
   // les jeux d'essai par métier
@@ -881,17 +1109,25 @@ await s.executer(async () => {
   note(`findFabrications : ${fab.origine} ; CLICHES : ${cliches.origine} ; ${fuites.fuites.length} chaînes propres à ${fuites.demos} démo(s)`)
 
   const nav = await lancerNavigateur('chromium')
+  const generes = new Map() // MQ-10 reprend les maquettes déjà générées par MQ-1
   try {
     let premier = true
     for (const m of metiers) {
       try {
-        await jugerMetier({ m, jeu: jeux.get(m), racine, ex, premier, nav, index, fab, cliches, fuites })
+        const r = await jugerMetier({ m, jeu: jeux.get(m), racine, ex, premier, nav, index, fab, cliches, fuites })
+        if (r?.ok) generes.set(m, r.sortie)
       } catch (e) {
         for (const id of [...PAR_METIER, ...(premier ? ['MQ-2'] : [])]) echoue(id, `${m} : interrompu : ${premiereLigne(e)}`)
       }
       premier = false
     }
   } finally { await nav.close().catch(() => {}) }
+
+  // MQ-10, sur tous les modèles de la racine jugée
+  try {
+    const r10 = mq10({ racine, ex, generes })
+    if (r10.d.length) for (const x of r10.d) echoue('MQ-10', x); else passe('MQ-10', r10.faits.join(' ; '))
+  } catch (e) { echoue('MQ-10', `libellés des métiers : interrompu : ${premiereLigne(e)}`) }
 
   // non-régression, après les générations
   const r1 = t1({ juge: JUGE, racine: racineNR })

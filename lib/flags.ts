@@ -11,6 +11,8 @@
 // décision de code, versionnée, relue en revue — pas un réglage qu'on bascule à chaud.
 
 export const FLAGS = {
+  /** 24/09/2026 — ferme le constructeur de site et POST /api/site/generate. */
+  constructeurSite: false,
   /** v7 bloc 2 — code par email à la connexion (routes api/auth/code, verrou lib/authArtisan, appareils de
    *  confiance). À passer à `true` dès que la migration 0063 est collée : avec le drapeau levé et sans les
    *  tables, le verrou refuse TOUT (fail-closed, voulu) — d'où l'ordre : coller, puis lever. */
@@ -56,8 +58,8 @@ export const FLAGS = {
   aideVisites: true,
   /** §4 B4 — centre d'aide /aide. */
   aideCentre: true,
-  /** §5 — vidéo hero HyperFrames (sinon : séquence HTML). Décision Benj : après la démo. */
-  landingVideo: true,
+  /** 24/09/2026 — la vidéo hero porte une promesse retirée. Elle reviendra une fois refilmée, avec ses textes incrustés listés dans public/demo/hero.textes.json. Sinon : séquence HTML. */
+  landingVideo: false,
   /** §9 G2 — persona et apparence avancée de la plateforme. Livré (sprint J-1). */
   plateformePersona: true,
   /** Canaux WhatsApp — vendu dans la grille cible, pas construit. Reste caché tant que c'est vrai. */

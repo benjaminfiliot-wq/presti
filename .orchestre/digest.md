@@ -6,18 +6,55 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-15T13:21:29Z
+# Digest — 2026-09-25T10:09:21Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 45 tâche(s) PASS, 171410 ligne(s) · faites par Claude Code : 2 tâche(s) PASS, 279 ligne(s).
-**État** — file : 0 · en cours : 2 · faites : 47 · refusées : 1
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 70 tâche(s) PASS, 177310 ligne(s) · faites par Claude Code : 6 tâche(s) PASS, 3887 ligne(s).
+**État** — file : 0 · en cours : 3 · faites : 82 · refusées : 6
+
+## ⚠ 1 question(s) en attente
+- `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 021-10 | contenu | en-cours | ag-33-flash | — | depuis 2026-09-15T13:03:41Z · Démo Atelier Lestraque, vague 5 — trouver, télécharger, regarder et décrire 6 à 10 plans vidéo libres de droits de mains qui travaillent le bois, licence relevée sur la page de chaque plan, pour que Benj choisisse sur pièces s'il veut une vraie vidéo d'atelier au bureau |
-| 021-14 | contenu | en-cours | ag-32-flash | — | depuis 2026-09-15T12:58:40Z · Démo Atelier Lestraque, vague 5 — refaire le film comparatif natif / Lenis (2e prise de 021-09) pour qu'il montre la vraie sensation - molette réelle par crans, page à pleine cadence pendant le tournage, Lenis visiblement fluide - afin que Benj choisisse sur un film honnête |
-| 021-04 | contenu | fait | ag-29-flash | PASS | 2026-09-15T13:21:29Z · 2s · 246 l. |
+| 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
+| 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
+| 027-02 | feature | en-cours | usine-codex-22 | — | depuis 2026-09-25T10:09:15Z · Corriger scripts/publier-serie.mjs pour que le remplacement du visuel d'une parution déjà programmée respecte le quota Publora du mois de cette parution (rien n'est touché s'il est épuisé, une unité réservée et prioritaire sinon, et un refus 403 après la remise en brouillon dit en toutes lettres), prouvé par scripts/publora-quota-qa.mjs (Q8a, Q8b, Q8c) et scripts/publier-serie-qa.mjs |
+| 025-14 | feature | fait | codex | PASS | 2026-09-25T08:42:46Z · 324s · 0 l. |
+| 025-16 | feature | fait | codex | PASS | 2026-09-25T07:45:27Z · 167s · 0 l. |
+| 025-17 | feature | fait | usine-codex-19 | PASS | 2026-09-24T22:08:06Z · 49s · 325 l. |
+| 025-15 | contenu | fait | usine-codex-16 | PASS | 2026-09-24T21:41:45Z · 11s · 313 l. |
+| 000-usine-cf8 | test | fait | usine-codex-14 | PASS | 2026-09-24T21:14:59Z · 21s · 1 l. |
+| 025-13 | feature | fait | claude-code | PASS | 2026-09-24T20:39:30Z · 6s · 1492 l. |
+| 025-03 | feature | fait | usine-codex-11 | PASS | 2026-09-24T18:33:17Z · 59s · 476 l. |
+| 025-12 | feature | fait | claude-code | PASS | 2026-09-24T18:18:27Z · 4s · 1194 l. |
+| 025-11 | contenu | fait | usine-codex-12 | PASS | 2026-09-24T18:10:22Z · 51s · 347 l. |
+| 025-06 | contenu | fait | usine-codex-10 | PASS | 2026-09-24T17:57:36Z · 4s · 271 l. |
+| 025-02 | feature | fait | usine-codex-9 | PASS | 2026-09-24T17:57:23Z · 17s · 403 l. |
+| 025-09 | feature | fait | usine-codex-8 | PASS | 2026-09-24T17:45:51Z · 276s · 326 l. |
+| 025-05 | feature | fait | usine-codex-7 | PASS | 2026-09-24T17:35:54Z · 356s · 682 l. |
+| 000-usine-essai-3 | test | fait | codex | PASS | 2026-09-24T16:30:42Z · 0s · 0 l. |
+| 027-01 | feature | fait | codex | PASS | 2026-09-24T16:16:49Z · 37s · 0 l. |
+| 000-usine-essai-2 | test | fait | usine-codex-2 | PASS | 2026-09-24T15:59:45Z · 1s · 2 l. |
+| 000-usine-essai | test | fait | usine-codex-1 | PASS | 2026-09-24T15:55:22Z · 0s · 1 l. |
+| 025-07 | feature | fait | claude-code | PASS | 2026-09-24T15:48:48Z · 22s · 270 l. |
+| 025-04 | feature | fait | claude-code | PASS | 2026-09-24T15:43:35Z · 1s · 652 l. |
+| 023-04 | feature | fait | ag-46-flash | PASS | 2026-09-16T20:18:52Z · 7s · 1549 l. |
+| 021-16 | feature | refuse | ag-45-flash | FAIL | · EC : ✗ grande scène des étapes : FAIL — EC-8 : 0 tâche(s) longue(s) (0) et p95 des intervalles rAF 33.3 ms (≤ 20) aux deux essais ; référence sans eclate dans |
+| 023-01 | test | fait | antigravity | PASS | 2026-09-16T17:50:08Z · 292s · 0 l. |
+| 023-02 | feature | fait | antigravity | PASS | 2026-09-16T17:48:21Z · 246s · 0 l. |
+| 022-01 | contenu | fait | antigravity | PASS | 2026-09-16T17:25:37Z · 0s · 0 l. |
+| 022-05 | contenu | fait | codex-pr-02 | PASS | 2026-09-16T10:46:06Z · 3s · 0 l. |
+| 021-02 | feature | refuse | codex-18 | FAIL | · RX-7 : signature-relief-qa.mjs → ✗ relief de la signature : FAIL — geste au repos : ✗ signature au repos : FAIL — téléphone 390×844 : signature-projecteur, si |
+| 021-20 | feature | refuse | codex-relais | FAIL | · SS-5 : ✗ socle des familles : FAIL — SO-1 : sans famille, la sortie diffère de la référence (différents : aucun ; manquants : bureau.css ; en trop |
+| 021-23 | test | fait | antigravity | PASS | 2026-09-15T21:56:40Z · 0s · 0 l. |
+| 021-17 | feature | fait | codex-21 | PASS | 2026-09-15T21:16:46Z · 451s · 0 l. |
+| 021-04 | contenu | fait | claude-021-04 | PASS | 2026-09-15T16:59:18Z · 2s · 1028 l. |
+| 021-14 | contenu | refuse | ag-41-lite | FAIL | ✗ films natif et Lenis : FAIL — LN-7 : la première image de natif.mp4 ne ressemble pas à l'accueil de la démo (écart 1.000, moins de 0,15) : page sans styles, m |
+| 022-04 | feature | fait | codex | PASS | 2026-09-15T14:01:52Z · 29s · 0 l. |
+| 022-02 | contenu | fait | codex | PASS | 2026-09-15T13:44:04Z · 0s · 0 l. |
+| 021-10 | contenu | fait | ag-33-flash | PASS | 2026-09-15T13:30:17Z · 30s · 422 l. |
 | 021-01 | feature | fait | claude-code | PASS | 2026-09-15T13:21:27Z · 172s · 291 l. |
 | 021-09 | contenu | fait | ag-31-flash | PASS | 2026-09-15T12:54:04Z · 4s · 566 l. |
 | 020-15 | feature | fait | codex-14 | PASS | 2026-09-15T11:56:34Z · 123s · 0 l. |
@@ -65,3 +102,10 @@
 | 014-15 | contenu | fait | ag-1415 | PASS | 2026-09-13T16:22:08Z · 1s · 550 l. |
 | 001-test-echec | test | refuse | ag-2 | FAIL | ÉCHEC voulu : cette ligne doit apparaître telle quelle dans digest.md |
 | 000-test | test | fait | ag-1 | PASS | 2026-09-13T13:21:30Z · 0s · 1 l. |
+| 020-03 | feature | fait | codex | — | sans verdict |
+| 021-03 | feature | fait | codex | — | sans verdict |
+| 021-06 | feature | fait | codex | — | sans verdict |
+| 021-13 | feature | fait | codex | — | sans verdict |
+| 021-15 | contenu | refuse | antigravity | — | sans verdict |
+| 021-18 | contenu | fait | antigravity | — | sans verdict |
+| 021-22 | contenu | fait | antigravity | — | sans verdict |

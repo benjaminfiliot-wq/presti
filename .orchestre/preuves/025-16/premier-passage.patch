@@ -1,0 +1,277 @@
+diff --git a/app/api/site/commander/route.ts b/app/api/site/commander/route.ts
+index b1a7be4..0f08c11 100644
+--- a/app/api/site/commander/route.ts
++++ b/app/api/site/commander/route.ts
+@@ -11,7 +11,7 @@ import { authArtisan, estEchec } from '@/lib/authArtisan'
+ import { stripe } from '@/lib/stripe'
+ import { supabaseAdmin } from '@/lib/supabaseAdmin'
+ import { mentionFranchise } from '@/lib/facturation'
+-import { PRIX_SITE_CENTS, DELAI_ANNONCE, erreursAvantPaiement } from '@/lib/siteCommande'
++import { PRIX_SITE_CENTS, DELAI_TEXTE, erreursAvantPaiement } from '@/lib/siteCommande'
+ import { brouillonDe, poserSessionStripe } from '@/lib/siteCommandeServeur'
+ 
+ export const runtime = 'nodejs'
+@@ -42,7 +42,7 @@ export async function POST(req: Request) {
+         : {
+           price_data: {
+             currency: 'eur',
+-            product_data: { name: 'Presti — votre site, à la demande', description: `Site professionnel avec référencement local, livré sous ${DELAI_ANNONCE} après validation. Une fois, sans abonnement.` },
++            product_data: { name: 'Presti — votre site, à la demande', description: `Site professionnel avec référencement local. ${DELAI_TEXTE} Une fois, sans abonnement.` },
+             unit_amount: PRIX_SITE_CENTS,
+             ...(taxeAuto ? { tax_behavior: 'exclusive' as const } : {}),
+           },
+diff --git a/app/parametres/page.tsx b/app/parametres/page.tsx
+index 7f9008a..bfade08 100644
+--- a/app/parametres/page.tsx
++++ b/app/parametres/page.tsx
+@@ -17,7 +17,7 @@ import type { Artisan, Message } from './commun'
+ // Paramètres (sprint J-1 §6) : une page, une navigation à gauche, l'URL qui suit (`?onglet=`).
+ // Les anciens liens `?onglet=legal|securite|donnees` continuent de marcher.
+ //
+-// Plateforme, Site, Canaux, Apparence et Aide ne sont PAS des copies : ce sont des liens vers
++// Plateforme, Site, Canaux et Aide ne sont PAS des copies : ce sont des liens vers
+ // les écrans qui existent déjà, avec une ligne qui dit ce qu'on y règle. On n'a pas déplacé
+ // ces réglages pour le plaisir de déplacer.
+ 
+@@ -36,9 +36,8 @@ const NAV: { groupe: string; entrees: Entree[] }[] = [
+   ] },
+   { groupe: 'Vos outils', entrees: [
+     { id: 'plateforme', label: 'Plateforme', detail: 'Assistant, automatisations, reprise en main', href: '/plateforme', icone: ic(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M8 9h8M8 13h5" /></>) },
+-    { id: 'site', label: 'Site', detail: 'Contenu, réalisations, publication', href: '/profil', icone: ic(<><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></>) },
++    { id: 'site', label: 'Site', detail: 'Nom de domaine, site à la demande', href: '/profil', icone: ic(<><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M8 4v5" /></>) },
+     { id: 'canaux', label: 'Canaux', detail: 'Votre boîte email branchée', href: '/messages/canaux', icone: ic(<><path d="M4 4h16v16H4z" /><path d="m4 7 8 6 8-6" /></>) },
+-    { id: 'apparence', label: 'Apparence', detail: 'Thème, couleur, style du site', href: '/profil#apparence', icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M12 3a9 9 0 0 0 0 18c1.2 0 1.7-.8 1.2-1.8-.6-1.2.2-2.2 1.5-2.2H16a5 5 0 0 0 5-5c0-4.9-4-9-9-9z" /><circle cx="8" cy="10" r="1" fill="currentColor" /><circle cx="12" cy="7" r="1" fill="currentColor" /><circle cx="16" cy="10" r="1" fill="currentColor" /></>) },
+   ] },
+   { groupe: 'Protection', entrees: [
+     { id: 'securite', label: 'Sécurité', detail: actif('mfa') ? 'Mot de passe, sessions, double authentification' : 'Mot de passe, sessions ouvertes', icone: ic(<><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>) },
+diff --git a/app/profil/page.tsx b/app/profil/page.tsx
+index 21612ae..d73cfab 100644
+--- a/app/profil/page.tsx
++++ b/app/profil/page.tsx
+@@ -251,12 +251,14 @@ export default function ProfilPage() {
+         {/* Site web */}
+         <div className="tool-card">
+           <h2>Votre site web</h2>
+-          <p className="muted" style={{ margin: '0 0 .7rem', fontWeight: 600 }}>{SITE_A_LA_DEMANDE.titre}</p>
+-          <p className="muted" style={{ margin: '0 0 1rem' }}>{SITE_A_LA_DEMANDE.phrases[0]}</p>
+           {actif('siteCommandeVente') && (
+-            <a className="btn btn--primary" href={SITE_A_LA_DEMANDE.lien} style={{ display: 'inline-block', width: 'auto' }}>
+-              {SITE_A_LA_DEMANDE.bouton}
+-            </a>
++            <>
++              <p className="muted" style={{ margin: '0 0 .7rem', fontWeight: 600 }}>{SITE_A_LA_DEMANDE.titre}</p>
++              {SITE_A_LA_DEMANDE.phrases.map((phrase) => <p key={phrase} className="muted" style={{ margin: '0 0 1rem' }}>{phrase}</p>)}
++              <a className="btn btn--primary" href={SITE_A_LA_DEMANDE.lien} style={{ display: 'inline-block', width: 'auto' }}>
++                {SITE_A_LA_DEMANDE.bouton}
++              </a>
++            </>
+           )}
+ 
+           {/* Domaine personnalisé — dans TOUTES les formules, essai compris.
+diff --git a/app/site/commander/page.tsx b/app/site/commander/page.tsx
+index 22f9bd5..aab8f98 100644
+--- a/app/site/commander/page.tsx
++++ b/app/site/commander/page.tsx
+@@ -9,7 +9,7 @@ import AppShell from '@/app/AppShell'
+ import { uploadArtisanMedia, preparerPhoto } from '@/lib/media'
+ import {
+   ArtisanSite, Brouillon, Commande, ChiffreArtisan,
+-  PRIX_SITE_TEXTE, DELAI_ANNONCE,
++  PRIX_SITE_TEXTE, DELAI_TEXTE,
+   METIERS_SECONDAIRES_MAX, COMMUNES_MAX, PHOTOS_MIN, PHOTOS_MAX,
+   LIBELLE_ETAT, sirenValide, erreursAvantPaiement
+ } from '@/lib/siteCommande'
+@@ -176,7 +176,7 @@ function CommanderSite() {
+       <AppShell active="site" title="Votre site" wide>
+         <div className="tool-card">
+           <h2>{cmd ? LIBELLE_ETAT[cmd.etat] : 'Dossier reçu'}</h2>
+-          <p>Le site est commandé. Livré sous {DELAI_ANNONCE}.</p>
++          <p>Le site est commandé. {DELAI_TEXTE}</p>
+           {cmd?.paye_le && <p className="muted">Payé le {new Date(cmd.paye_le).toLocaleDateString('fr-FR')}</p>}
+         </div>
+       </AppShell>
+@@ -209,7 +209,7 @@ function CommanderSite() {
+               <p className="muted">Le domaine reste à votre nom, jamais au nôtre.</p>
+ 
+               <label><input type="radio" checked={brouillon.domaine_mode === 'existant'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'existant' })} /> J’ai déjà un nom de domaine</label>
+-              <label><input type="radio" checked={brouillon.domaine_mode === 'a_prendre'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'a_prendre' })} /> Je n’en ai pas : je le réserve à mon nom (environ 10 € par an), Presti m’envoie le guide</label>
++              <label><input type="radio" checked={brouillon.domaine_mode === 'a_prendre'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'a_prendre' })} /> Je n’en ai pas : je le réserve moi-même, à mon nom</label>
+               <label><input type="radio" checked={brouillon.domaine_mode === 'aucun'} onChange={() => setBrouillon({ ...brouillon, domaine_mode: 'aucun' })} /> Plus tard</label>
+ 
+               {brouillon.domaine_mode !== 'aucun' && (
+@@ -217,7 +217,7 @@ function CommanderSite() {
+                   <input
+                     value={brouillon.domaine || ''}
+                     onChange={(e) => setBrouillon({ ...brouillon, domaine: e.target.value })}
+-                    placeholder={brouillon.domaine_mode === 'existant' ? 'Ex: martin-plomberie.fr' : 'Une idée ? (facultatif)'}
++                    placeholder={brouillon.domaine_mode === 'existant' ? 'Exemple : martin-plomberie.fr' : 'Exemple : martin-plomberie.fr (le nom que vous réserverez)'}
+                   />
+                   {brouillon.domaine_mode === 'existant' && erreursApi.find(e => e.includes('domaine')) && (
+                     <p className="msg err" style={{ marginTop: '0.5rem' }}>Le nom de domaine indiqué n’est pas valide (ex. martin-plomberie.fr).</p>
+@@ -410,11 +410,11 @@ function CommanderSite() {
+               <p className="muted">Votre site parle avec votre voix : nous n’inventons rien.</p>
+               <div>
+                 <label htmlFor="artisan-prenom">Prénom (1 à 40 signes)</label>
+-                <input id="artisan-prenom" name="prenom" maxLength={40} value={artisan?.prenom || ''} onChange={e => modifierArtisan({ prenom: e.target.value })} placeholder="Exemple : Camille" />
++                <input id="artisan-prenom" name="prenom" value={artisan?.prenom || ''} onChange={e => modifierArtisan({ prenom: e.target.value })} placeholder="Exemple : Camille" />
+               </div>
+               <div>
+                 <label htmlFor="artisan-nom">Nom (1 à 60 signes)</label>
+-                <input id="artisan-nom" name="nom" maxLength={60} value={artisan?.nom || ''} onChange={e => modifierArtisan({ nom: e.target.value })} placeholder="Exemple : Martin" />
++                <input id="artisan-nom" name="nom" value={artisan?.nom || ''} onChange={e => modifierArtisan({ nom: e.target.value })} placeholder="Exemple : Martin" />
+               </div>
+               <div>
+                 <label htmlFor="artisan-installation">Année d’installation (1960 à {new Date().getFullYear()})</label>
+@@ -422,24 +422,24 @@ function CommanderSite() {
+               </div>
+               <div>
+                 <label htmlFor="artisan-parcours">Votre parcours (une ligne, 1 à 140 signes)</label>
+-                <input id="artisan-parcours" name="parcours" maxLength={140} value={artisan?.parcours || ''} onChange={e => modifierArtisan({ parcours: e.target.value })} placeholder="Exemple : J’ai appris le métier en atelier avant de créer mon entreprise." />
++                <input id="artisan-parcours" name="parcours" value={artisan?.parcours || ''} onChange={e => modifierArtisan({ parcours: e.target.value })} placeholder="Exemple : J’ai appris le métier en atelier avant de créer mon entreprise." />
+               </div>
+               <div>
+                 <label htmlFor="artisan-citation">Votre phrase signée, à la première personne (20 à 160 signes)</label>
+-                <textarea id="artisan-citation" name="citation" minLength={20} maxLength={160} rows={3} value={artisan?.citation || ''} onChange={e => modifierArtisan({ citation: e.target.value })} placeholder="Exemple : Je prends le temps de vérifier chaque détail avant de rendre un chantier." />
++                <textarea id="artisan-citation" name="citation" minLength={20} rows={3} value={artisan?.citation || ''} onChange={e => modifierArtisan({ citation: e.target.value })} placeholder="Exemple : Je prends le temps de vérifier chaque détail avant de rendre un chantier." />
+               </div>
+               <label><input type="checkbox" checked={artisan?.chiffres === null} onChange={e => modifierArtisan({ chiffres: e.target.checked ? null : [{ valeur: '', legende: '' }, { valeur: '', legende: '' }, { valeur: '', legende: '' }] })} /> Je préfère ne pas donner de chiffres</label>
+               {artisan?.chiffres !== null && [0, 1, 2].map(index => (
+                 <fieldset key={index} style={{ border: '1px solid var(--border)', borderRadius: 6 }}>
+                   <legend>Chiffre {index + 1}</legend>
+                   <label>Valeur (nombre positif, 12 signes au plus)
+-                    <input name="valeur" maxLength={12} value={artisan?.chiffres?.[index]?.valeur || ''} onChange={e => modifierChiffre(index, { valeur: e.target.value })} placeholder="Exemple : 12" />
++                    <input name="valeur" value={artisan?.chiffres?.[index]?.valeur || ''} onChange={e => modifierChiffre(index, { valeur: e.target.value })} placeholder="Exemple : 12" />
+                   </label>
+                   <label>Unité (facultative, 12 signes au plus)
+-                    <input name="unite" maxLength={12} value={artisan?.chiffres?.[index]?.unite || ''} onChange={e => modifierChiffre(index, { unite: e.target.value })} placeholder="Exemple : ans" />
++                    <input name="unite" value={artisan?.chiffres?.[index]?.unite || ''} onChange={e => modifierChiffre(index, { unite: e.target.value })} placeholder="Exemple : ans" />
+                   </label>
+                   <label>Légende (1 à 60 signes)
+-                    <input name="legende" maxLength={60} value={artisan?.chiffres?.[index]?.legende || ''} onChange={e => modifierChiffre(index, { legende: e.target.value })} placeholder="Exemple : d’expérience sur les chantiers" />
++                    <input name="legende" value={artisan?.chiffres?.[index]?.legende || ''} onChange={e => modifierChiffre(index, { legende: e.target.value })} placeholder="Exemple : d’expérience sur les chantiers" />
+                   </label>
+                 </fieldset>
+               ))}
+@@ -462,6 +462,16 @@ function CommanderSite() {
+                 <p><strong>Photos :</strong> {(brouillon.matiere.photos || []).length} ajoutée(s)</p>
+                 <p><strong>SIREN :</strong> {brouillon.matiere.siren}</p>
+                 <p><strong>Assurance :</strong> {brouillon.matiere.decennale?.assureur} {brouillon.matiere.decennale?.numero}</p>
++                <div>
++                  <h4>Votre parcours</h4>
++                  <p><strong>Prénom et nom :</strong> {artisan?.prenom} {artisan?.nom}</p>
++                  <p><strong>Année d’installation :</strong> {artisan?.installation ?? 'Non renseignée'}</p>
++                  <p><strong>Parcours :</strong> {artisan?.parcours}</p>
++                  <p><strong>Phrase signée :</strong> {artisan?.citation}</p>
++                  {artisan?.chiffres === null ? <p>Sans chiffres, à votre demande</p> : artisan?.chiffres?.map((chiffre, index) => (
++                    <p key={index}><strong>Chiffre {index + 1} :</strong> {chiffre.valeur} {chiffre.unite} — {chiffre.legende}</p>
++                  ))}
++                </div>
+               </div>
+ 
+               {errs.length > 0 && (
+@@ -485,7 +495,7 @@ function CommanderSite() {
+ 
+               <div style={{ marginTop: '1rem' }}>
+                 <p><strong>Prix : {PRIX_SITE_TEXTE} une fois, sans abonnement — TVA non applicable, art. 293 B du CGI.</strong></p>
+-                <p>Livré sous {DELAI_ANNONCE} après validation.</p>
++                <p>{DELAI_TEXTE}</p>
+               </div>
+ 
+               <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+diff --git a/lib/aide.ts b/lib/aide.ts
+index 2108f92..11073c7 100644
+--- a/lib/aide.ts
++++ b/lib/aide.ts
+@@ -380,7 +380,7 @@ export const ARTICLES: Article[] = [
+       'Réglez le paiement sur la page Stripe sécurisée.',
+       'Vous êtes redirigé vers votre tableau de bord.',
+     ],
+-    pourVosClients: 'Aucun effet direct — cela détermine ce que vous pouvez faire pour eux (modèles, inventaire, niveau de site).',
++    pourVosClients: 'Aucun effet direct — cela détermine ce que vous pouvez faire pour eux (modèles, inventaire).',
+     credits: 'Aucun — cette page sert à obtenir des crédits, elle n’en consomme pas.',
+     reglagesLies: ['/tarifs', '/plateforme'],
+     disponibleAvec: 'essentiel',
+diff --git a/lib/siteCommande.ts b/lib/siteCommande.ts
+index ea6226d..c71b0c3 100644
+--- a/lib/siteCommande.ts
++++ b/lib/siteCommande.ts
+@@ -9,6 +9,7 @@ import { normalizeDomain } from '@/lib/vercelDomains'
+ export const PRIX_SITE_CENTS = 30000
+ export const PRIX_SITE_TEXTE = '300 €'
+ export const DELAI_ANNONCE = '48 h ouvrées'
++export const DELAI_TEXTE = `Livré sous ${DELAI_ANNONCE} après la validation humaine de votre site par Presti.`
+ 
+ /** Le bloc de vente (v15 §2.1), rendu par la landing et /abonnement HORS grille d'abonnement, uniquement quand le
+  *  drapeau `siteCommandeVente` est levé. Trois phrases, pas une promesse de classement, pas un délai autre que le
+@@ -18,7 +19,7 @@ export const SITE_A_LA_DEMANDE = {
+   phrases: [
+     'Un site à votre nom, avec une page par commune que vous servez vraiment : c’est ça, le référencement local bien fait.',
+     'Vos photos, votre métier, vos coordonnées — rien d’inventé — et votre page de conversation pour que la demande arrive chez vous.',
+-    `${PRIX_SITE_TEXTE} une fois, sans abonnement, TVA non applicable (art. 293 B du CGI). Livré sous ${DELAI_ANNONCE} après validation.`,
++    `${PRIX_SITE_TEXTE} une fois, sans abonnement, TVA non applicable (art. 293 B du CGI). ${DELAI_TEXTE}`,
+   ],
+   bouton: 'Commander mon site',
+   lien: '/site/commander',
+@@ -96,6 +97,10 @@ export const COMMUNES_MAX = 40
+ export const METIERS_SECONDAIRES_MAX = 4
+ 
+ const texte = (v: unknown, max: number): string => String(v ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, max)
++const texteArtisan = (v: unknown): string => {
++  const nettoye = String(v ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
++  return nettoye.length <= 2000 ? nettoye : ''
++}
+ const liste = (v: unknown, max: number, taille: number): string[] => {
+   const src = Array.isArray(v) ? v : typeof v === 'string' ? v.split(/[,;\n]/) : []
+   return src.map((x) => texte(x, taille)).filter((t) => t.length >= 2).filter((t, i, a) => a.findIndex((u) => u.toLowerCase() === t.toLowerCase()) === i).slice(0, max)
+@@ -137,18 +142,18 @@ export function nettoyerBrouillon(brut: unknown): Brouillon {
+     communes: liste(b.communes, COMMUNES_MAX, 80),
+     matiere: {
+       artisan: artisan ? {
+-        prenom: texte(artisan.prenom, 40),
+-        nom: texte(artisan.nom, 60),
++        prenom: texteArtisan(artisan.prenom),
++        nom: texteArtisan(artisan.nom),
+         installation: typeof artisan.installation === 'number' && Number.isInteger(artisan.installation) ? artisan.installation : null,
+-        parcours: texte(artisan.parcours, 140),
+-        citation: texte(artisan.citation, 160),
++        parcours: texteArtisan(artisan.parcours),
++        citation: texteArtisan(artisan.citation),
+         ...(Object.prototype.hasOwnProperty.call(artisan, 'chiffres') ? {
+           chiffres: artisan.chiffres === null ? null : Array.isArray(artisan.chiffres) ? artisan.chiffres.slice(0, 3).map((brut) => {
+             const c = (brut && typeof brut === 'object' && !Array.isArray(brut) ? brut : {}) as Record<string, unknown>
+             return {
+-              valeur: texte(c.valeur, 12),
+-              ...(c.unite !== undefined && c.unite !== null && c.unite !== '' ? { unite: texte(c.unite, 12) } : {}),
+-              legende: texte(c.legende, 60),
++              valeur: texteArtisan(c.valeur),
++              ...(c.unite !== undefined && c.unite !== null && c.unite !== '' ? { unite: texteArtisan(c.unite) } : {}),
++              legende: texteArtisan(c.legende),
+             }
+           }) : [],
+         } : {}),
+@@ -167,6 +172,9 @@ export function nettoyerBrouillon(brut: unknown): Brouillon {
+ /** Ce qui manque pour payer — chaque phrase est affichable telle quelle sur l'écran 4. */
+ export function erreursAvantPaiement(b: Brouillon): string[] {
+   const e: string[] = []
++  const verifierBorne = (valeur: string | undefined, borne: number, nom: string) => {
++    if (valeur && valeur.length > borne) e.push(`Votre parcours : ${nom} dépasse ${borne} signes (${valeur.length}) : raccourcissez-le, rien n’est coupé à votre place.`)
++  }
+   if (b.domaine_mode === 'existant' && !b.domaine) e.push('Le nom de domaine indiqué n’est pas valide (ex. martin-plomberie.fr).')
+   if (!b.metier) e.push('Le métier principal manque.')
+   if (b.communes.length < 1) e.push('Indiquez au moins une commune réellement servie — c’est la matière du référencement local.')
+@@ -175,6 +183,15 @@ export function erreursAvantPaiement(b: Brouillon): string[] {
+   if (!a) {
+     e.push('Votre parcours : indiquez votre prénom, votre nom, votre année d’installation, votre parcours et une phrase signée.')
+   } else {
++    verifierBorne(a.prenom, 40, 'le prénom')
++    verifierBorne(a.nom, 60, 'le nom')
++    verifierBorne(a.parcours, 140, 'le parcours')
++    verifierBorne(a.citation, 160, 'la phrase signée')
++    a.chiffres?.forEach((c, index) => {
++      verifierBorne(c.valeur, 12, `la valeur du chiffre ${index + 1}`)
++      verifierBorne(c.unite, 12, `l’unité du chiffre ${index + 1}`)
++      verifierBorne(c.legende, 60, `la légende du chiffre ${index + 1}`)
++    })
+     if (!a.prenom || !a.nom) e.push('Votre parcours : le prénom et le nom manquent.')
+     if (!Number.isInteger(a.installation) || a.installation! < 1960 || a.installation! > new Date().getFullYear()) e.push('Votre parcours : indiquez une année d’installation valide.')
+     if (!a.parcours || a.parcours.length > 140 || /[\r\n]/.test(a.parcours)) e.push('Votre parcours : décrivez votre parcours en une ligne (140 signes au plus).')

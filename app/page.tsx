@@ -44,7 +44,7 @@ export default function Home() {
             operatingSystem: 'Web',
             url: 'https://prestiapp.fr',
             description:
-              "Presti répond à chaque demande de devis en moins d'une minute, dans votre ton, génère vos devis et factures, et relance automatiquement jusqu'à la réponse.",
+              "Chaque demande arrive dans Presti. La réponse est prête en moins d'une minute : Presti la prépare dans votre ton, vous l'envoyez.",
             offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR', description: 'Essai gratuit' },
             provider: { '@type': 'Organization', name: 'Presti', url: 'https://prestiapp.fr' },
           }),
@@ -79,7 +79,7 @@ export default function Home() {
           <div className="container">
             <span className="lp-eyebrow"><b />Assistant IA pour les artisans du bâtiment</span>
             <h1>Le premier qui répond <span className="g">décroche le chantier.</span></h1>
-            <p className="lp-lede">Presti répond à chaque demande de devis en moins d&apos;une minute — dans votre style —, chiffre le devis et relance tout seul jusqu&apos;à la signature. Vous restez sur le chantier, Presti tient le standard.</p>
+            <p className="lp-lede">Chaque demande arrive dans Presti. La réponse est prête en moins d&apos;une minute : Presti la prépare dans votre ton, vous l&apos;envoyez. Les relances sont automatiques jusqu&apos;à la réponse.</p>
             <div className="lp-cta">
               <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
               <a className="lp-btn lp-btn--g lp-btn--lg" href="#fonctionnalites">Voir ce que ça fait</a>
@@ -95,7 +95,7 @@ export default function Home() {
         <section className="lp-blk" style={{ paddingTop: '1rem' }}>
           <div className="container">
             <div className="lp-reassure reveal-kids">
-              <div className="lp-rc"><span className="i">{I.zap}</span><div><b>Rapide</b><em>Réponse en moins d&apos;une minute</em></div></div>
+              <div className="lp-rc"><span className="i">{I.zap}</span><div><b>Rapide</b><em>Réponse prête en moins d&apos;une minute : vous l&apos;envoyez</em></div></div>
               <div className="lp-rc"><span className="i">{I.badge}</span><div><b>Fiable</b><em>Devis conformes, dans votre ton</em></div></div>
               <div className="lp-rc"><span className="i">{I.shield}</span><div><b>Sécurisé</b><em>Vos données isolées, chiffrées</em></div></div>
               <div className="lp-rc"><span className="i">{I.wallet}</span><div><b>Sans carte</b><em>Essai offert, résiliable</em></div></div>
@@ -107,7 +107,7 @@ export default function Home() {
         <section className="lp-blk lp-proof reveal">
           <div className="container">
             <div className="lp-bignum count" data-to="7" data-suffix="×">7×</div>
-            <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Presti, lui, répond en moins d&apos;une minute — jour et nuit.</p>
+            <p>plus de chances d&apos;obtenir un vrai échange avec le client en répondant dans l&apos;heure plutôt qu&apos;en attendant. Presti prépare la réponse dans votre ton en moins d&apos;une minute ; vous l&apos;envoyez.</p>
             <div className="src">Source : Harvard Business Review — « The Short Life of Online Sales Leads » (étude sur 2 241 entreprises)</div>
           </div>
         </section>
@@ -115,7 +115,7 @@ export default function Home() {
         {/* FONCTIONNALITÉS — vitrine interactive (clique → la démo se joue) */}
         <section className="lp-blk" id="fonctionnalites">
           <div className="container">
-            <div className="lp-head2 c reveal"><span className="lp-kick">Une demande arrive</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir. Le lendemain matin, le devis est prêt, il l&apos;accepte. Cinq scènes, prises sur le vrai produit.</p></div>
+            <div className="lp-head2 c reveal"><span className="lp-kick">Une demande arrive</span><h2>Ce qui se passe, de 22 h 14 à 7 h 52.</h2><p>Un client écrit le soir. Le lendemain matin, le devis est prêt, il l&apos;accepte. Des scènes prises sur le vrai produit.</p></div>
             {FLAGS.landingVideo ? <DemoVideo /> : <DemoSequence />}
             {FLAGS.landingDemoSite ? <DemoSite /> : null}
           </div>
@@ -148,7 +148,7 @@ export default function Home() {
             <div className="lp-head2 c reveal"><span className="lp-kick">Abonnements</span><h2>Simple : vous payez à l&apos;usage, en crédits.</h2><p>Chaque formule vous donne des crédits chaque mois. Vous montez en formule quand votre activité grandit.</p></div>
 
             <div className="lp-howcredits reveal-kids">
-              <div className="lp-hc"><span className="ic">{I.zap}</span><b>1 crédit = 1 génération</b><span>Une réponse envoyée à un client, ou un devis chiffré par l&apos;IA.</span></div>
+              <div className="lp-hc"><span className="ic">{I.zap}</span><b>1 crédit = 1 génération</b><span>Une réponse préparée pour un client, ou un devis chiffré par l&apos;IA.</span></div>
               <div className="lp-hc"><span className="ic">{I.badge}</span><b>Modèle Expert = 3 crédits</b><span>L&apos;IA la plus puissante consomme plus — réservez-la aux gros chantiers.</span></div>
               <div className="lp-hc"><span className="ic">{I.repeat}</span><b>Rechargés chaque mois</b><span>Vos crédits se réinitialisent à chaque renouvellement. Non reportés au mois suivant.</span></div>
             </div>
@@ -189,7 +189,7 @@ export default function Home() {
         <section className="lp-blk lp-final reveal">
           <div className="container">
             <h2>Le prochain client qui vous cherche,<br />ne le laissez pas filer.</h2>
-            <p>Créez votre lien Presti en 2 minutes. La prochaine demande, c&apos;est Presti qui y répond — en moins d&apos;une minute.</p>
+            <p>Chaque demande arrive dans Presti. La réponse est prête en moins d&apos;une minute : Presti la prépare dans votre ton, vous l&apos;envoyez.</p>
             <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
           </div>
         </section>

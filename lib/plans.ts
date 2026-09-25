@@ -57,7 +57,7 @@ export const PLANS: Record<PlanId, Plan> = {
   // L'essai = l'Essentiel avec 3 crédits, pour juger sur ses vraies demandes avant de payer.
   gratuit: { label: 'Essai', accroche: 'Pour juger sur vos vraies demandes, sans carte.', creditsMois: 3, prixMois: 0, tiers: ['standard'], siteMax: 1, capacites: BASE },
   essentiel: { label: 'Essentiel', accroche: 'Pour ne plus louper une demande.', creditsMois: 80, prixMois: 29, tiers: ['standard'], siteMax: 1, capacites: BASE },
-  studio: { label: 'Studio', accroche: 'Présence en ligne soignée, et l’assistant qui répond seul.', creditsMois: 250, prixMois: 59, tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
+  studio: { label: 'Studio', accroche: 'L’assistant qui répond seul, jour et nuit.', creditsMois: 250, prixMois: 59, tiers: ['standard', 'pro'], siteMax: 2, capacites: STUDIO },
   signature: { label: 'Signature', accroche: 'L’atelier à plein régime, image d’agence.', creditsMois: 600, prixMois: 99, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },
   // Fondateurs : plan interne, illimité (jamais décompté).
   business: { label: 'Business', accroche: '', creditsMois: 100000, prixMois: 0, tiers: ['standard', 'pro', 'expert'], siteMax: 3, capacites: SIGNATURE },

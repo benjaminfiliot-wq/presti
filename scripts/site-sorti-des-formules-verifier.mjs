@@ -45,7 +45,7 @@ for (const f of fichiers) {
   T(`${path.relative(path.dirname(RACINE), f).split(path.sep).join('/')} : aucune promesse de site inclus`, trouvees.length === 0, trouvees.join(' | '))
 }
 const profil = lire(path.join(RACINE, 'app', 'profil', 'page.tsx'))
-T("app/profil : l'éditeur de site n'est offert qu'aux sites existants (site_active) — les autres voient le site à la demande", /site_active/.test(profil) && /SITE_A_LA_DEMANDE|siteCommandeVente|site\/commander/.test(profil) && !/Passez à \{siteMax === 1/.test(profil))
+T("app/profil : plus d'éditeur de site ; le site à la demande reste proposé", /SITE_A_LA_DEMANDE/.test(profil) && !/genererSite|site-tiers|StyleAvance|\/api\/site\/generate/.test(profil))
 const guide = lire(path.join(VAULT, 'Prospection', 'Guide-Presti-Demarchage.md'))
 T('le guide de démarchage dit « à la demande, 300 € une fois … pas compris dans l’abonnement »', dit(guide, 'à la demande, 300 € une fois') && dit(guide, "pas compris dans l'abonnement", 'pas compris dans l’abonnement'))
 const lancement = lire(path.join(RACINE, 'plans', 'publications-lancement.md'))
