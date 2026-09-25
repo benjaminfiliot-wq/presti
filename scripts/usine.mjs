@@ -7,12 +7,15 @@
 //
 // Usage :
 //   node scripts/usine.mjs etat                      → joignable ?, charge et mémoire, codex connecté ?, tâches sur l'usine
-//   node scripts/usine.mjs preparer [--forcer]       → une fois (idempotent) : git fetch + npm ci dans ~/presti, navigateurs Playwright
+//   node scripts/usine.mjs preparer [--forcer]       → une fois (idempotent) : git fetch + npm ci dans ~/presti, Chromium et WebKit (+ dépendances)
 //   node scripts/usine.mjs paquet <id>               → construit et contrôle le paquet sans rien prendre ni envoyer (essai à sec)
 //   node scripts/usine.mjs lancer <id> [--model=gpt-6-sol] [--boucle=3] [--effort=medium] [--minutes=40]
 //   node scripts/usine.mjs recuperer <id> [--attendre[=60]] [--forcer]   → rapatrie, applique, fiche en fait/, verdict du PC
 //   node scripts/usine.mjs nettoyer <id> [--forcer]  → retire le worktree et le dossier de la tâche sur l'usine
+//   node scripts/usine.mjs executer [--nom=verif] [--delai=30] [--attendre=30] [--id=<id>] [--rapatrier=<chemin>] [--forcer] [--liste] -- <commande…>
+//                                                    → la commande (un juge) tourne sur l'usine, bac ~/bacs/<nom>, sur l'état du PC
 // Codes : 0 ok (PASS) ; 1 FAIL ou refus ; 2 usage ; 3 usine pas prête ; 4 tâche encore en cours ; 5 usine injoignable.
+//   executer rend le code de la commande sortie d'elle-même (0, 1, 2…) ; 124 délai dépassé ; 125 verdict non rendu (rien lancé, ssh coupé, commande tuée, code perdu, preuve vide).
 //
 // Le paquet (PC → usine) est construit à partir de git, jamais en parcourant le disque : les fichiers suivis modifiés depuis
 // HEAD (git diff) et les non suivis NON ignorés (git ls-files --others --exclude-standard), filtrés (EXCLUS, preuves des
@@ -22,13 +25,19 @@
 // clé (MOTIFS) dans les lignes ajoutées ni dans le contenu entier des fichiers binaires → refus si un seul est trouvé.
 // .env.local et les fichiers ignorés ne sont jamais ouverts.
 // Sur l'usine (~/taches/<id>/) : worktree jetable `arbre` sur origin/main (= HEAD du PC, sinon « pousse d'abord »), paquet
-// appliqué, node_modules = lien vers ~/presti/node_modules, commit local « base » (commit-tree : jamais poussé, aucun
+// appliqué, node_modules = copie en liens physiques de ~/presti/node_modules (cp -al, pas un lien symbolique : voir
+// « lancer »), commit local « base » (commit-tree : jamais poussé, aucun
 // crochet), puis `node usine.mjs tourner` détaché de la session ssh (setsid) : journal codex.log, code de fin dans `code`.
 // Le retour (usine → PC) : diff binaire depuis « base » limité au `perimetre` de la fiche et à .orchestre/preuves/<id>/ ;
 // ce qui a bougé ailleurs est signalé et EXCLU. Journaux rapatriés dans .orchestre/travail/usine/<id>/ (ignoré par git).
 // Le PC ne garde que ce que SON verdict juge PASS : rouge, le patch est retiré (git apply -R) ; le verdict est enregistré
 // (verdict-pc.json) AVANT la marque `recupere` de l'usine, et un second `recuperer` le redit avec son code.
 // Doc : C:/Users/benja/Documents/presti-ops/usine/LISEZMOI.md, section « Exécuter une fiche sur l'usine ».
+// `executer` (25/09/2026) fait tourner un JUGE sur l'usine plutôt que sur le PC (8 Go, saturé) : dans une fiche,
+// `verifier: node scripts/usine.mjs executer -- node scripts/<juge>.mjs`, et le verdict reste celui de l'orchestre, qui lit
+// le code de sortie. Même paquet et mêmes barrières que `lancer` ; bac ~/bacs/<nom> recréé à chaque appel, verrou par bac,
+// délai ; rien ne revient sur le PC sans --rapatrier. Détail au-dessus de executerSurUsine ; doc : section « Faire tourner
+// un juge sur l'usine (executer) » du LISEZMOI.
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -74,7 +83,31 @@ const MOTIFS = [
   { nom: 'AIza (clé Google)', re: /\b(AIza[0-9A-Za-z_-]{35})/ },
   { nom: 're_ (clé Resend)', re: /\b(re_[0-9A-Za-z]{8,}_[0-9A-Za-z]{16,})/, cle: formeDeCle },
 ]
-for (const m of MOTIFS) m.tous = new RegExp(m.re.source, `${m.re.flags}g`) // toutes les occurrences d'une ligne, pas la première
+// Motifs SUPPLÉMENTAIRES de `executer` seul (attaque du 25/09/2026 : passaient une URL postgres avec utilisateur et mot de passe, un nom de clé
+// écrit en JSON, en YAML ou en minuscules). `lancer` et `paquet` gardent MOTIFS seuls. Une valeur qui est une référence de
+// code (process.env.X, ${…}, a.b.c) ou qui n'a pas la forme d'une clé est écartée — et affichée, jamais tue.
+const REFERENCE_DE_CODE = (v) => /^(?:process\.env|import\.meta|os\.environ|\$\{|\$[A-Za-z_]|\{\{|<)/.test(v) || /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)+$/.test(v)
+const MOTIFS_EXECUTER = [
+  // Identifiants dans une URL : le mot de passe est ce qui suit « : » avant « @ ». Les gabarits (<mdp>, ${mdp}, [MDP], *, …) ne comptent pas.
+  { nom: 'URL avec identifiants (schéma://utilisateur:mot de passe@hôte)', re: /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/([^\s\/:@"'`<>{}$[\]*…]+:[^\s\/@"'`<>{}$[\]*…]+)@[A-Za-z0-9[]/ },
+  // Un nom qui dit secret/jeton/mot de passe/clé, quelle que soit la casse, entre guillemets ou non, suivi de « : » (JSON, YAML)
+  // ou de « = », puis une valeur de 16 caractères ou plus (la forme NOM_EN_CAPITALES=valeur en début de ligne est dans MOTIFS).
+  { nom: 'nom sensible : valeur (JSON, YAML, minuscules)', re: /(?:^|[^A-Za-z0-9_])["']?[A-Za-z0-9_.-]*(?:secret|token|passw(?:or)?d|(?<![A-Za-z])pass(?![A-Za-z])|private[_-]?key|api[_-]?key|service[_-]?role|access[_-]?key|auth[_-]?key|signing[_-]?key|credential)[A-Za-z0-9_.-]*["']?\s*[:=]\s*["'`]?([^\s"'`,;#}\])(]{16,})/i, cle: (v) => formeDeCle(v) && !REFERENCE_DE_CODE(v) },
+]
+// Archives : refusées dans le paquet de `executer`, au nom (extension) et, pour les fichiers binaires, à la signature
+// (un .png qui est un zip). Une archive cache son contenu aux motifs ; les documents Office (.docx, .xlsx) sont des zip.
+const ARCHIVE_EXT = /\.(zip|gz|tgz|7z|rar|bz2|tbz2?|xz|txz|tar|zst|lz4|lzma)$/i
+const SIGNATURES_ARCHIVE = [
+  { nom: 'zip', t: (b) => b.length >= 4 && b[0] === 0x50 && b[1] === 0x4b && [0x0304, 0x0506, 0x0708].includes(b.readUInt16BE(2)) },
+  { nom: 'gzip', t: (b) => b.length >= 2 && b[0] === 0x1f && b[1] === 0x8b },
+  { nom: '7z', t: (b) => b.subarray(0, 6).equals(Buffer.from([0x37, 0x7a, 0xbc, 0xaf, 0x27, 0x1c])) },
+  { nom: 'rar', t: (b) => b.subarray(0, 4).toString('latin1') === 'Rar!' },
+  { nom: 'xz', t: (b) => b.subarray(0, 6).equals(Buffer.from([0xfd, 0x37, 0x7a, 0x58, 0x5a, 0x00])) },
+  { nom: 'bzip2', t: (b) => /^BZh[1-9]1AY&SY/.test(b.subarray(0, 10).toString('latin1')) },
+  { nom: 'zstd', t: (b) => b.length >= 4 && b.readUInt32LE(0) === 0xfd2fb528 },
+  { nom: 'tar', t: (b) => b.subarray(257, 262).toString('latin1') === 'ustar' },
+]
+for (const m of [...MOTIFS, ...MOTIFS_EXECUTER]) m.tous = new RegExp(m.re.source, `${m.re.flags}g`) // toutes les occurrences d'une ligne, pas la première
 // Fichiers de clé, reconnus au nom : écartés par le filtre (première barrière) ET refusés par controlerPaquet s'ils
 // passaient quand même (seconde). Avant le 24/09/2026, seule la seconde les arrêtait.
 const estFichierDeCle = (b) => /\.(pem|key|p12|pfx|jks|keystore|ppk)$|^id_(rsa|dsa|ecdsa|ed25519)$/i.test(b) && !/\.pub(\.pem)?$/i.test(b)
@@ -213,8 +246,8 @@ function construirePaquet(id) {
 }
 // Un contenu (une ligne ajoutée, un morceau de binaire) passé à tous les motifs. Pour chaque motif, une trouvaille au plus :
 // la première qui a la forme d'une clé, sinon la première écartée (affichée comme telle).
-function examiner(contenu, chemin, ligne, trouves) {
-  for (const m of MOTIFS) {
+function examiner(contenu, chemin, ligne, trouves, motifs = MOTIFS) {
+  for (const m of motifs) {
     let vu = null
     for (const x of contenu.matchAll(m.tous)) {
       const ecarte = !!m.cle && !m.cle(x[1])
@@ -228,7 +261,7 @@ function examiner(contenu, chemin, ligne, trouves) {
 // « diff --git » au premier « @@ » : c'est là seulement que « +++ b/… » donne le chemin. Dans un bloc, une ligne ajoutée
 // qui commence elle-même par « ++ » s'écrit « +++ … » ; la prendre pour un en-tête la laissait passer sans examen (et
 // faisait de son contenu le « chemin » affiché). Le patch d'un binaire reste dans l'en-tête : il est lu par secretsBinaires.
-function trouverSecrets(texte) {
+function trouverSecrets(texte, motifs = MOTIFS) {
   const trouves = []
   let chemin = '?'
   let ligne = 0
@@ -242,17 +275,17 @@ function trouverSecrets(texte) {
       continue
     }
     if (h) { ligne = Number(h[1]) - 1; continue }
-    if (l.startsWith('+')) { ligne++; examiner(l.slice(1), chemin, ligne, trouves) }
+    if (l.startsWith('+')) { ligne++; examiner(l.slice(1), chemin, ligne, trouves, motifs) }
     else if (l.startsWith(' ')) ligne++
   }
   return trouves
 }
 // Le contenu entier d'un fichier binaire, lu octet pour octet (latin1), coupé aux fins de ligne et aux octets NUL ; puis
 // une seconde fois sans les NUL, pour l'UTF-16 (une lettre, un NUL). Une trouvaille par motif et par fichier.
-function secretsBinaires(buf, chemin) {
+function secretsBinaires(buf, chemin, motifs = MOTIFS) {
   const brut = buf.toString('latin1')
   const trouves = []
-  for (const texte of [brut, brut.replace(/\0/g, '')]) for (const morceau of texte.split(/[\r\n\0]+/)) if (morceau) examiner(morceau, chemin, 'binaire', trouves)
+  for (const texte of [brut, brut.replace(/\0/g, '')]) for (const morceau of texte.split(/[\r\n\0]+/)) if (morceau) examiner(morceau, chemin, 'binaire', trouves, motifs)
   const parMotif = new Map()
   for (const t of trouves) { const d = parMotif.get(t.motif); if (!d || (d.ecarte && !t.ecarte)) parMotif.set(t.motif, t) }
   return [...parMotif.values()]
@@ -307,7 +340,7 @@ Particularité de ton environnement (Codex sur l'usine : serveur Linux d'Oracle,
 - Le dépôt presti est ici une copie jetable : le dossier courant, ${arbre}. Partout où ce prompt dit C:/Users/benja/Documents/presti, lis ce dossier-ci.
 - Le vault SaaS n'est pas sur cette machine : saute SaaS/CLAUDE.md et SaaS/Produit/Carte-du-code.md.
 - Aucun secret ici (ni .env.local, ni clé, ni base de production). Si la tâche en a besoin, écris .orchestre/en-cours/${id}.question.md (étape 4) puis arrête-toi : la question remonte au PC, personne ne te répondra dans cette session. Ne contourne jamais.
-- node_modules est partagé et déjà installé : ne lance ni npm install ni npm ci. Tu peux lancer node, npx, Playwright et \`node scripts/orchestre.mjs verifier ${id}\` autant que nécessaire.
+- node_modules est déjà installé (liens physiques vers celui de ~/presti, partagé par toutes les tâches) : ne lance ni npm install ni npm ci, et n'y modifie aucun fichier. Chromium et WebKit sont installés pour Playwright : ne change pas PLAYWRIGHT_BROWSERS_PATH. Tu peux lancer node, npx, Playwright et \`node scripts/orchestre.mjs verifier ${id}\` autant que nécessaire.
 - Ne déplace pas la tâche vers fait/ : l'usine lance le vérificateur hors bac à sable juste après toi et la déplace si c'est vert ; sinon sa sortie est ajoutée à la fin de ce fichier et tu es relancé pour corriger.
 - Tu ne commites rien et tu ne pousses rien. Tes fichiers reviennent au PC de Benj par un patch limité au \`perimetre\` de la tâche et à .orchestre/preuves/${id}/ : tout le reste est jeté.
 Termine par une seule ligne : \`${id} : PRÊT — <ce que tu as fait>\`.`
@@ -376,9 +409,13 @@ else
   echo "· npm ci fini en $(( $(date +%s) - debut )) s"
 fi
 v=$(node -p "require('./node_modules/playwright/package.json').version")
-echo "· Playwright $v (version du dépôt) : navigateurs"
-npx --no-install playwright install chromium
-node -e "const { chromium } = require('playwright'); chromium.launch().then(async (b) => { const p = await b.newPage(); await p.setContent('<title>ok</title>'); console.log('· Chromium démarre : ' + (await p.title()) + ' (' + b.version() + ')'); await b.close() }).catch((e) => { console.error('✗ Chromium ne démarre pas : ' + e.message); process.exit(1) })"
+# Les juges de la série 025 lancent Chromium ET WebKit (formulaire-site-qa FS-3/FS-4 ; relecture à froid du 24/09, U1) : sans
+# WebKit ici, Codex l installait lui-même hors de ~/.cache (PLAYWRIGHT_BROWSERS_PATH=/tmp/presti-025-browsers, 939 Mo).
+# --with-deps pose aussi les bibliothèques système (apt, par sudo sans mot de passe : l utilisateur usine l a).
+echo "· Playwright $v (version du dépôt) : Chromium et WebKit, avec leurs dépendances système"
+sudo -n true 2>/dev/null || { echo "✗ sudo sans mot de passe indisponible : playwright install --with-deps en a besoin (apt)"; exit 3; }
+npx --no-install playwright install --with-deps chromium webkit
+node -e "const pw = require('playwright'); (async () => { for (const nom of ['chromium', 'webkit']) { const b = await pw[nom].launch(); const p = await b.newPage(); await p.setContent('<title>ok</title>'); console.log('· ' + nom + ' démarre : ' + (await p.title()) + ' (' + b.version() + ')'); await b.close() } })().catch((e) => { console.error('✗ un navigateur ne démarre pas : ' + e.message); process.exit(1) })"
 echo "✓ usine prête : node_modules $(du -sh node_modules | cut -f1), package-lock $(cut -c1-12 node_modules/.usine-lock)"
 `)
   if (code === 255) { console.error(`✗ usine injoignable (${HOTE})`); process.exit(5) }
@@ -472,7 +509,11 @@ cd "$HOME/presti"
 git worktree add --detach --quiet "$T/arbre" "$SHA"
 cd "$T/arbre"
 [ -s "$T/paquet.patch" ] && git apply --whitespace=nowarn "$T/paquet.patch"
-ln -s "$HOME/presti/node_modules" node_modules
+# node_modules : une copie en liens physiques (cp -al : aucun octet de données copié, quelques secondes), pas un lien
+# symbolique. tsc résout un lien symbolique vers son chemin réel : avec « ln -s », lib.es5.d.ts était lu dans
+# ~/presti/node_modules et constructeur-ferme-qa CF-8, qui l exige sous <arbre>/node_modules, rendait un faux rouge
+# (relecture à froid du 24/09, U2). La copie garde le chemin <arbre>/node_modules ; retirer le worktree n ôte que les liens.
+cp -al "$HOME/presti/node_modules" node_modules
 git add -A
 arbre=$(git write-tree)
 base=$(GIT_AUTHOR_NAME=usine GIT_AUTHOR_EMAIL=usine@presti.invalid GIT_COMMITTER_NAME=usine GIT_COMMITTER_EMAIL=usine@presti.invalid git commit-tree "$arbre" -p HEAD -m "base $ID : paquet du PC (local, jamais poussé)")
@@ -828,8 +869,468 @@ async function tourner(dossier) {
   }
 }
 
+// ── executer : un juge sur l'usine, sur l'état du PC, son code de sortie rendu tel quel ───────────────────────────────
+// node scripts/usine.mjs executer [--nom=verif] [--delai=30] [--attendre=30] [--id=<id>] [--rapatrier=<chemin>] [--forcer] [--liste] -- <commande…>
+// Dans une fiche : `verifier: node scripts/usine.mjs executer -- node scripts/<juge>.mjs`. Le verdict reste celui de
+// l'orchestre, sur le PC (il lit ce code de sortie) ; le travail lourd (Chromium, tsc, build) tourne sur l'usine. Ce n'est
+// pas un exécutant : aucune fiche prise, ni Codex ni son bac à sable (c'est un juge écrit par Claude Code), aucun patch rendu.
+// 1. Le paquet de `lancer` (construirePaquet + controlerPaquet : même filtre, mêmes barrières), plus une barrière propre à
+//    executer (controlerPaquetExecuter : URL avec identifiants, noms sensibles en JSON/YAML/minuscules, archives) ; ce qui ne
+//    part pas est dit (direCeQuiNePartPas). --id=<id> y met les preuves de cette fiche, sinon aucune. Il part dans l'entrée
+//    standard de ssh, derrière le script ; l'usine vérifie à l'arrivée sa taille et son SHA-256.
+// 2. Sur l'usine, une seule session ssh : verrou flock du bac (un second appel sur le même bac attend --attendre minutes,
+//    puis refuse ; un autre --nom tourne en parallèle) → bac ~/bacs/<nom> recréé au HEAD du PC (worktree remove --force
+//    puis add : jamais de reset --hard) → paquet appliqué → node_modules en liens physiques (cp -al, la solution U2 de `lancer`).
+// 3. La commande, dans le bac : `bash -c` lancé par LANCEUR_PERL, entrée /dev/null, sous `timeout` (--delai → 124), variable
+//    USINE_EXECUTER_RUN posée pour retrouver ses restes (arrêtés à la fin, même détachés). Ses sorties standard et d'erreur
+//    arrivent en direct sur le PC ; l'outil ne parle que sur la sortie d'erreur. Si ssh se coupe (PC tué, ssh tué, connexion
+//    perdue, juge qui coupe sa propre session), la veille de l'usine voit la fin de son entrée standard, écrit sa marque, puis
+//    arrête la commande : le verdict n'est pas rendu (125), quel que soit le code de sortie de la commande arrêtée.
+// 4. Un repère (@@usine-executer <run> commande@@, avalé par le PC) sépare la mise en place de la commande : sans repère, c'est
+//    une panne de l'outil (125), jamais un code de la commande. À la fin, l'usine écrit ~/bacs/.runs/<jeton>.fin (« code
+//    rendu, cause, code brut ») puis l'envoie dans un repère de fin signé du jeton. Causes : seule (code de la commande),
+//    delai (124), veille / signal-<NOM> / sans-marque (125). Pas de repère de fin (ssh tué, connexion perdue) : le PC relit la
+//    fin sur l'usine (90 s au plus) ; introuvable : 125. Le code de sortie de ssh.exe n'est jamais pris pour celui du juge.
+// 5. Rien ne revient sur le PC, sauf avec --rapatrier=<chemin> : les fichiers ÉCRITS par la commande (plus récents que le
+//    montage du bac) sous .orchestre/travail/<…> (hors usine/ et executant/, états des outils) ou .orchestre/preuves/<id>/
+//    (hors avant.txt et verifier.log, qui sont ceux du PC) ; aucun lien symbolique, 200 Mo au plus. Demandé mais rien de
+//    rapporté, ou un fichier de 0 octet (jamais posé sur le PC) : 125 si la commande avait rendu 0 — une preuve absente ou
+//    vide ne passe pas pour une preuve. Verdict non rendu (125) : rien n'est rapatrié.
+const PANNE = 125
+// Le lanceur de la commande sur l'usine (perl : présent sur toute Ubuntu, 5 Mo, démarre en quelques ms). Il est le seul à
+// voir le vrai statut d'attente (waitpid) : « code N » (la commande est sortie d'elle-même) ou « signal N » (tuée) ; bash,
+// lui, rend 128+N dans les deux cas. La marque est écrite puis renommée ; s'il est arrêté lui-même, il n'écrit rien.
+const LANCEUR_PERL = [
+  'my ($marque, $cmd) = @ARGV;',
+  'my $pid = fork();',
+  'exit 126 unless defined $pid;',
+  'if ($pid == 0) { exec("bash", "-c", $cmd); exit 127 }',
+  'exit 126 unless waitpid($pid, 0) == $pid;',
+  'my $s = $?;',
+  'my $t = ($s & 127) ? "signal " . ($s & 127) : "code " . ($s >> 8);',
+  'if (open(my $f, ">", "$marque.tmp")) { print $f "$t\\n"; close($f); rename("$marque.tmp", $marque) }',
+  'exit(($s & 127) ? 128 + ($s & 127) : ($s >> 8));',
+].join(' ')
+const NOM_BAC = /^[a-z0-9][a-z0-9_-]{0,31}$/
+const ETATS_OUTILS = ['.orchestre/travail/usine/', '.orchestre/travail/executant/']
+// Un chemin du dépôt, en « / », sous .orchestre/travail/<…> ou .orchestre/preuves/<id>/ ; null sinon. Refusés aussi : « .. »,
+// absolu, lecteur, caractères interdits par Windows, élément qui finit par un point ou une espace (Windows les retire : usine./
+// deviendrait usine/), et les états des outils quelle que soit la casse (le disque du PC l'ignore).
+function cheminRapatriable(brut) {
+  const c = String(brut || '').replace(/\\/g, '/')
+  if (!c || c.startsWith('/') || /^[A-Za-z]:/.test(c) || c.split('/').includes('..')) return null
+  const n = path.posix.normalize(c).replace(/\/+$/, '')
+  if (n.split('/').some((s) => /[:*?"<>|\x00-\x1f]|[. ]$/.test(s))) return null
+  if (/^\.orchestre\/travail\/[^/]/.test(n)) return ETATS_OUTILS.some((e) => `${n}/`.toLowerCase().startsWith(e)) ? null : n
+  const m = n.match(/^\.orchestre\/preuves\/([^/]+)(?:\/|$)/)
+  return m && ID_VALIDE.test(m[1]) ? n : null
+}
+// Le retour de --rapatrier : ~/bacs/.runs/<run>/ copié par scp dans un dossier temporaire du PC, puis chaque fichier recontrôlé
+// (dans le chemin demandé, rapatriable, fichier ordinaire) avant d'être posé dans le dépôt. Le dossier de l'usine est retiré.
+function rapatrierDepuisUsine(run, chemin) {
+  const local = fs.mkdtempSync(path.join(os.tmpdir(), 'presti-usine-retour-'))
+  try {
+    scp(['-r', `${HOTE}:bacs/.runs/${run}`, '.'], local)
+    const base = path.join(local, run)
+    let etat = 'aucun état écrit par l\'usine'
+    try { etat = fs.readFileSync(path.join(base, 'rapatrier.etat'), 'utf8').trim() } catch { /* absent */ }
+    if (etat !== 'ok') return { erreur: etat }
+    const trouves = []
+    const parcourir = (dossier, rel) => {
+      for (const e of fs.readdirSync(dossier, { withFileTypes: true })) {
+        const r = rel ? `${rel}/${e.name}` : e.name
+        if (e.isDirectory()) parcourir(path.join(dossier, e.name), r)
+        else trouves.push({ source: path.join(dossier, e.name), rel: r, ordinaire: e.isFile() })
+      }
+    }
+    if (fs.existsSync(path.join(base, 'retour'))) parcourir(path.join(base, 'retour'), '')
+    const fichiers = [] // { rel, octets }
+    const ecartes = []
+    const vides = []
+    let octets = 0
+    for (const t of trouves) {
+      const dedans = t.rel === chemin || t.rel.startsWith(`${chemin}/`)
+      const duPC = /^\.orchestre\/preuves\/[^/]+\/(avant\.txt|verifier\.log)$/i.test(t.rel)
+      if (!t.ordinaire || !dedans || duPC || cheminRapatriable(t.rel) !== t.rel) { ecartes.push(t.rel); continue }
+      // Un fichier de 0 octet n'est PAS posé sur le PC (il y écraserait peut-être une vraie preuve) : il est rendu à part, et
+      // executer en fait un 125 « preuve vide » (attaque du 25/09/2026 : une capture.png vide rendait 0, « 1 Ko » au bilan).
+      const n = fs.statSync(t.source).size
+      if (!n) { vides.push(t.rel); continue }
+      const dest = path.join(RACINE, ...t.rel.split('/'))
+      fs.mkdirSync(path.dirname(dest), { recursive: true })
+      fs.copyFileSync(t.source, dest)
+      const posee = fs.statSync(dest).size
+      octets += posee
+      fichiers.push({ rel: t.rel, octets: posee })
+    }
+    if (!fichiers.length && !vides.length) return { erreur: `aucun fichier écrit par la commande sous ${chemin}${ecartes.length ? ` (écartés : ${ecartes.join(', ')})` : ''}` }
+    return { fichiers, ecartes, vides, octets }
+  } catch (e) {
+    return { erreur: String(e.message).split('\n')[0] }
+  } finally {
+    fs.rmSync(local, { recursive: true, force: true })
+    distant(`rm -rf -- "$HOME/bacs/.runs/"${q(run)}`, { timeout: 60_000 })
+  }
+}
+// Les sections du patch, dans l'ordre : chemin (lu dans « diff --git a/X b/X » quand il n'est pas entre guillemets), blob
+// d'arrivée (ligne « index » : identifiant complet, `--binary` implique `--full-index`) et binaire ou non.
+function sectionsDuPatch(patch) {
+  const sections = []
+  let s = null
+  for (const l of patch.toString('utf8').split('\n')) {
+    if (l.startsWith('diff --git ')) {
+      const reste = l.slice(11)
+      const n = (reste.length - 5) / 2
+      const x = Number.isInteger(n) && n > 0 && reste.startsWith('a/') ? reste.slice(2, 2 + n) : null
+      s = { chemin: x !== null && reste.slice(2 + n, 5 + n) === ' b/' && reste.slice(5 + n) === x ? x : null, nouveau: null, binaire: false, entete: true }
+      sections.push(s)
+      continue
+    }
+    if (!s?.entete) continue
+    const m = l.match(/^index ([0-9a-f]{40,64})\.\.([0-9a-f]{40,64})/)
+    if (m) s.nouveau = m[2]
+    else if (l === 'GIT binary patch') { s.binaire = true; s.entete = false }
+    else if (l.startsWith('@@') || l.startsWith('+++ ')) s.entete = false
+  }
+  return sections
+}
+// La barrière SUPPLÉMENTAIRE de `executer` (défaut 3 de l'attaque du 25/09/2026), appelée après controlerPaquet, jamais par
+// `lancer` ni `paquet` : (1) les lignes ajoutées passées à MOTIFS_EXECUTER ; (2) toute archive, au nom ; (3) le contenu entier
+// de chaque fichier binaire — le blob exact que le patch transporte (git cat-file) — passé aux mêmes motifs et aux signatures
+// d'archive. Au moindre doute (blob illisible), refus. Jamais de valeur affichée : chemin, ligne, motif.
+function controlerPaquetExecuter(p) {
+  const problemes = []
+  const trouves = trouverSecrets(p.patch.toString('utf8'), MOTIFS_EXECUTER)
+  for (const n of p.noms) if (n.statut !== 'D' && ARCHIVE_EXT.test(n.chemin)) problemes.push(`${n.chemin} : archive compressée (${n.chemin.match(ARCHIVE_EXT)[0]}) : son contenu échapperait aux motifs`)
+  let k = -1
+  for (const s of sectionsDuPatch(p.patch)) {
+    if (!s.binaire) continue
+    k++
+    const chemin = s.chemin || p.binaires[k] || '(binaire)'
+    if (s.nouveau && /^0+$/.test(s.nouveau)) continue // supprimé
+    let buf = null
+    try { if (s.nouveau) buf = git(['cat-file', 'blob', s.nouveau], { binaire: true }) } catch { /* ci-dessous */ }
+    if (!buf) { problemes.push(`${chemin} : contenu binaire introuvable dans le patch ou illisible : refusé par prudence`); continue }
+    const sig = SIGNATURES_ARCHIVE.find((x) => x.t(buf))
+    if (sig) problemes.push(`${chemin} : archive ${sig.nom}, reconnue à sa signature (quel que soit son nom)`)
+    trouves.push(...secretsBinaires(buf, chemin, MOTIFS_EXECUTER))
+  }
+  for (const t of trouves.filter((x) => !x.ecarte)) problemes.push(`${t.chemin}:${t.ligne} : motif ${t.motif}`)
+  return { problemes, ecartes: trouves.filter((x) => x.ecarte) }
+}
+// Ce qui ne part pas (défaut 4 de l'attaque du 25/09/2026 : les EXCLUS et les > 5 Mo manquaient en silence). Un fichier suivi
+// que le PC a modifié ou supprimé garde dans le bac sa version du commit ; un non suivi y est absent. À l'écran, en entier : les
+// suivis, les > 5 Mo, les .env*, les fichiers de clé, les liens symboliques ; les non suivis des dossiers exclus, par groupe
+// (3 exemples, puis le compte). La liste entière (chemin, raison, effet) va dans un fichier ignoré par git, et à l'écran avec --liste.
+function direCeQuiNePartPas(p, nom, tout) {
+  const effet = (e) => (e.statut === 'A' ? 'absent du bac' : e.statut === 'D' ? 'supprimé sur le PC, encore dans le bac' : 'le bac garde la version du commit')
+  const ligne = (e) => `${e.statut}  ${e.chemin}  (${e.raison}${e.octets ? `, ${ko(e.octets)}` : ''} ; ${effet(e)})`
+  const fichier = path.join(TRAVAIL, `executer-${nom}.ne-part-pas.txt`)
+  let ou
+  try { fs.mkdirSync(TRAVAIL, { recursive: true }); fs.writeFileSync(fichier, p.exclus.map((e) => `${ligne(e)}\n`).join('')); ou = relatif(fichier) } catch (e) { ou = `non écrite : ${String(e.message).split('\n')[0]}` }
+  if (!p.exclus.length) { console.error('  ne part pas : rien'); return }
+  console.error(`  ne part pas (${p.exclus.length}) — le bac n'a PAS la version du PC de ces fichiers (liste entière : ${ou}) :`)
+  const PRECIS = ['> 5 Mo', '.env*', 'fichier de clé', 'lien symbolique']
+  const groupes = new Map()
+  for (const e of p.exclus) {
+    if (tout || e.statut !== 'A' || PRECIS.includes(e.raison)) { console.error(`    ${ligne(e)}`); continue }
+    if (!groupes.has(e.raison)) groupes.set(e.raison, [])
+    groupes.get(e.raison).push(e)
+  }
+  for (const [raison, g] of groupes) {
+    for (const e of g.slice(0, 3)) console.error(`    ${ligne(e)}`)
+    if (g.length > 3) console.error(`    … et ${g.length - 3} autre(s) non suivi(s), « ${raison} » : absents du bac`)
+  }
+}
+// Relire sur l'usine la fin d'une commande dont la session ssh n'a pas rendu le repère de fin (ssh tué sur le PC, connexion
+// coupée) : la fin est écrite par l'usine quand tout est arrêté ; on l'attend 90 s au plus. Rend { final, cause, brut, restes }
+// ou { erreur }.
+function relireFin(run, jeton) {
+  const r = distant(`
+f="$HOME/bacs/.runs/"${q(jeton)}".fin"
+for i in $(seq 1 45); do if [ -s "$f" ]; then break; fi; sleep 2; done
+if [ -s "$f" ]; then printf 'fin %s\\n' "$(cat "$f")"; else echo 'fin absente'; fi
+printf 'restes %s\\n' "$(grep -lzx "USINE_EXECUTER_RUN="${q(run)} /proc/[0-9]*/environ 2>/dev/null | wc -l)"
+`, { timeout: 150_000 })
+  if (r.code !== 0) return { erreur: `usine injoignable pour relire la fin (${(r.erreurs.trim().split('\n').pop() || `ssh ${r.code}`).slice(0, 200)})` }
+  const restes = Number((r.sortie.match(/^restes (\d+)$/m) || [])[1] || 0)
+  const m = r.sortie.match(/^fin (\d+) (\S+) (\d+)$/m)
+  if (!m) return { erreur: `aucune fin écrite sur l'usine en 90 s${restes ? ` ; ${restes} processus de la commande y tournent encore` : ''}`, restes }
+  return { final: Number(m[1]), cause: m[2], brut: Number(m[3]), restes }
+}
+async function executerSurUsine() {
+  const t0 = Date.now()
+  const secondes = (ms) => `${(ms / 1000).toFixed(1).replace('.', ',')} s`
+  const panne = (msg) => { console.error(`✗ usine executer : ${msg}`); process.exit(PANNE) }
+  // Les options vont AVANT « -- » : ce qui suit appartient à la commande (un --nom=… du juge n'est pas lu ici).
+  const sep = args.indexOf('--')
+  const commandeArgv = sep < 0 ? [] : args.slice(sep + 1)
+  const o = {}
+  for (const a of sep < 0 ? args.slice(1) : args.slice(1, sep)) {
+    const m = a.match(/^--(nom|delai|attendre|id|rapatrier)=(.*)$/) || a.match(/^--(forcer|liste)$/)
+    if (!m) { console.error(`✗ usine executer : option inconnue « ${a} » (les options vont avant « -- »)\n\n${USAGE}`); process.exit(PANNE) }
+    o[m[1]] = m[2] ?? 'oui'
+  }
+  if (!commandeArgv.length) { console.error(`✗ usine executer : rien à exécuter — node scripts/usine.mjs executer [options] -- <commande et arguments>\n\n${USAGE}`); process.exit(PANNE) }
+  const nom = o.nom ?? 'verif'
+  if (!NOM_BAC.test(nom)) panne(`--nom=${nom} : minuscules, chiffres, « - » et « _ », 32 caractères au plus`)
+  const delai = o.delai === undefined ? 30 : Number(o.delai)
+  if (!(delai > 0 && delai <= 600)) panne(`--delai=${o.delai} : des minutes, plus de 0 et 600 au plus`)
+  const attendre = o.attendre === undefined ? 30 : Number(o.attendre)
+  if (!(attendre >= 0 && attendre <= 600)) panne(`--attendre=${o.attendre} : des minutes, de 0 (refus immédiat si le bac est pris) à 600`)
+  const idFiche = o.id ?? ''
+  if (idFiche && !ID_VALIDE.test(idFiche)) panne(`--id=${idFiche} : un identifiant de fiche NNN-slug (ex. 025-05)`)
+  const rapatrier = o.rapatrier === undefined ? '' : cheminRapatriable(o.rapatrier)
+  if (rapatrier === null) panne(`--rapatrier=${o.rapatrier} : seulement sous .orchestre/travail/<…> (hors usine/ et executant/) ou .orchestre/preuves/<id>/`)
+
+  // 1. Le paquet de `lancer`, ses deux barrières, puis la barrière propre à executer (URL avec identifiants, noms sensibles en
+  //    JSON/YAML/minuscules, archives).
+  let p = null
+  let problemes = []
+  let supplement = { problemes: [], ecartes: [] }
+  try { p = construirePaquet(idFiche); problemes = controlerPaquet(p); supplement = controlerPaquetExecuter(p) } catch (e) { panne(`construction du paquet : ${String(e.message).split('\n')[0]}`) }
+  problemes.push(...supplement.problemes)
+  const tPaquet = Date.now()
+  const { lignes } = listePaquet(p)
+  console.error(`· usine executer : paquet de ${p.noms.length} fichier(s), ${ko(p.patch.length)}, sur ${p.tete.slice(0, 8)} (HEAD du PC)${idFiche ? `, preuves de ${idFiche} comprises` : ''}, construit en ${secondes(tPaquet - t0)}`)
+  if (o.liste) for (const l of lignes) console.error(`    ${l}`)
+  direCeQuiNePartPas(p, nom, !!o.liste)
+  const ecartes = [...p.secrets.filter((s) => s.ecarte), ...supplement.ecartes]
+  for (const t of ecartes.slice(0, 15)) console.error(`  · écarté (valeur qui n'a pas la forme d'une clé, ou référence de code) : ${t.chemin}:${t.ligne}, motif ${t.motif}`)
+  if (ecartes.length > 15) console.error(`  · … et ${ecartes.length - 15} autre(s) écarté(s)`)
+  if (problemes.length) {
+    console.error(`✗ usine executer : contrôle du paquet, ${problemes.length} problème(s) — rien n'est envoyé`)
+    for (const x of problemes.slice(0, 30)) console.error(`    ${x}`)
+    if (problemes.length > 30) console.error(`    … et ${problemes.length - 30} autre(s)`)
+    process.exit(PANNE)
+  }
+  console.error(`  contrôle ✓ aucun .env*, aucun fichier de clé, aucun chemin ignoré par git, aucune archive, aucune clé ni URL avec identifiants dans les lignes ajoutées ni dans ${p.binaires.length} fichier(s) binaire(s) lus en entier (${MOTIFS.length} + ${MOTIFS_EXECUTER.length} motifs)`)
+  if (p.noms.some((n) => n.chemin === 'package.json' || n.chemin === 'package-lock.json') && !o.forcer) panne('le paquet modifie package.json / package-lock.json : le node_modules de l\'usine ne suivrait pas (committe et pousse, puis preparer ; ou --forcer)')
+
+  // 2 à 5. Une seule session ssh : script, puis le paquet (lu par head -c), puis l'entrée reste ouverte jusqu'à la fin.
+  const run = crypto.randomBytes(8).toString('hex')
+  // Le jeton nomme la fin (~/bacs/.runs/<jeton>.fin) et signe le repère de fin : ni exporté ni passé en argument, la commande
+  // ne le voit pas (USINE_EXECUTER_RUN, lui, est dans son environnement).
+  const jeton = crypto.randomBytes(12).toString('hex')
+  const repere = Buffer.from(`@@usine-executer ${run} commande@@\n`)
+  const repereFin = Buffer.from(`@@usine-executer ${jeton} fin `)
+  const script = `
+NOM=${q(nom)}; SHA=${q(p.tete)}; RUN=${q(run)}; JETON=${q(jeton)}; OCTETS=${p.patch.length}; EMPREINTE=${q(crypto.createHash('sha256').update(p.patch).digest('hex'))}
+DELAI=${Math.max(1, Math.round(delai * 60))}; ATTENTE=${Math.round(attendre * 60)}; FORCER=${q(o.forcer ? 'oui' : 'non')}
+CMD=${q(commandeArgv.map(q).join(' '))}; RAPATRIER=${q(rapatrier)}; REPERE=${q(repere.toString('utf8').trim())}; LANCEUR=${q(LANCEUR_PERL)}
+principal() {
+  # fd 3 : la vraie sortie standard, rendue à la commande seule ; fd 4 : l'entrée de ssh (sa fin = le PC est parti).
+  exec 3>&1 1>&2 4<&0
+  local B="$HOME/bacs/$NOM" V="$HOME/bacs/.verrous" R="$HOME/bacs/.runs/$RUN" F="$HOME/bacs/.runs/$JETON" t0 t1 qui
+  [[ "$NOM" =~ ^[a-z0-9][a-z0-9_-]{0,31}$ ]] || { echo "✗ usine executer : nom de bac refusé : $NOM"; return 2; }
+  [ -d "$HOME/presti/.git" ] || { echo "✗ usine executer : ~/presti absent sur l’usine (node scripts/usine.mjs preparer)"; return 3; }
+  mkdir -p "$V" "$R"
+  # Mise en place ratée (bac occupé, paquet refusé, git…) : le dossier du run ne reste pas 24 h (essai du 25/09 : un dossier
+  # vide laissé par chaque refus, et la copie du paquet après un échec). Commande lancée (« debut » posé) : la fin de principal décide.
+  trap "[ -e '$R/debut' ] || rm -rf -- '$R'" EXIT
+  find "$HOME/bacs/.runs" -mindepth 1 -maxdepth 1 -mmin +1440 -exec rm -rf -- {} + 2>/dev/null || true
+  exec 9>"$V/$NOM.lock"
+  if ! flock -n 9; then
+    qui=$(cat "$V/$NOM.qui" 2>/dev/null || echo '?')
+    if [ "$ATTENTE" -eq 0 ]; then echo "✗ usine executer : bac $NOM occupé ($qui) : refusé (--attendre=0) ; --nom=<autre> pour un bac à part"; return 3; fi
+    echo "· usine executer : bac $NOM occupé ($qui) : j’attends au plus $ATTENTE s"
+    flock -w "$ATTENTE" 9 || { echo "✗ usine executer : bac $NOM encore occupé après $ATTENTE s : rien n’est lancé ; --nom=<autre> pour un bac à part"; return 3; }
+    echo "· usine executer : bac $NOM libéré, je le prends"
+  fi
+  printf '%s · pid %s · %s\\n' "$(date -u +%FT%TZ)" "$$" "$CMD" > "$V/$NOM.qui"
+  t0=$(date +%s%N) # le montage se compte une fois le bac pris : l'attente du verrou est dite à part
+  head -c "$OCTETS" > "$R/paquet.patch"
+  [ "$(stat -c %s "$R/paquet.patch")" = "$OCTETS" ] || { echo "✗ usine executer : paquet tronqué en route ($(stat -c %s "$R/paquet.patch") octets reçus sur $OCTETS)"; return 3; }
+  [ "$(sha256sum "$R/paquet.patch" | cut -d' ' -f1)" = "$EMPREINTE" ] || { echo "✗ usine executer : le paquet reçu n’a pas l’empreinte du paquet envoyé"; return 3; }
+  cd "$HOME/presti"
+  git cat-file -e "$SHA^{commit}" 2>/dev/null || git fetch --quiet origin || true
+  git cat-file -e "$SHA^{commit}" 2>/dev/null || { echo "✗ usine executer : le HEAD du PC ($SHA) est inconnu de GitHub : pousse d’abord"; return 3; }
+  [ -f node_modules/.usine-lock ] || { echo "✗ usine executer : node_modules absent sur l’usine (node scripts/usine.mjs preparer)"; return 3; }
+  # Le bac est recréé à chaque appel, jamais « remis » par reset --hard : worktree remove --force (s'il est inscrit), puis add.
+  if git worktree list --porcelain | grep -qxF "worktree $B"; then git worktree remove --force "$B" 2>/dev/null || true; fi
+  if [ -e "$B" ]; then rm -rf -- "$B"; fi
+  git worktree add --force --detach --quiet "$B" "$SHA"
+  cd "$B"
+  if [ -s "$R/paquet.patch" ]; then git apply --whitespace=nowarn "$R/paquet.patch"; fi
+  rm -f "$R/paquet.patch"
+  cp -al "$HOME/presti/node_modules" node_modules
+  if [ "$(cat node_modules/.usine-lock)" != "$(sha256sum package-lock.json | cut -d' ' -f1)" ]; then
+    [ "$FORCER" = oui ] || { echo "✗ usine executer : le node_modules de l’usine date d’un autre package-lock.json (node scripts/usine.mjs preparer ; --forcer pour passer outre)"; return 3; }
+    echo "· usine executer : ⚠ node_modules d’un autre package-lock.json (--forcer)"
+  fi
+  t1=$(date +%s%N)
+  echo "· usine executer : bac $NOM monté en $(( (t1 - t0) / 1000000 )) ms : $(git rev-parse --short HEAD) + paquet, $(git status --porcelain --untracked-files=all | wc -l) écart(s) ; délai $DELAI s"
+  : > "$R/debut"
+  printf '%s\\n' "$REPERE"
+  set +e
+  # ssh coupé : le message du shell sur la commande tuée (« Terminated ») part dans un tube mort, et SIGPIPE tuait l'enveloppe
+  # avant son ménage (essai du 25/09 : ni code écrit, ni dossier du run retiré). Un gestionnaire, pas un « ignorer » : il n'est
+  # pas hérité à l'exec, la commande garde le SIGPIPE ordinaire.
+  trap ':' PIPE HUP
+  local code duree debut restes etatR taille veille marque cause final
+  # La veille : fin de l'entrée de ssh (PC parti, ssh tué, connexion coupée) → elle écrit D'ABORD sa marque ($F.veille), puis
+  # arrête tout ce qui porte USINE_EXECUTER_RUN=<run> (TERM, puis KILL). Sa marque suffit à refuser le code : une commande
+  # arrêtée qui sort 0 sur TERM n'a rendu aucun verdict (attaque r5 du 25/09/2026 : le PC relisait ce 0 et rendait 0).
+  ( while IFS= read -r -n 1 _; do :; done
+    date -u +%FT%TZ > "$F.veille"
+    for s in TERM KILL; do
+      for f in $(grep -lzx "USINE_EXECUTER_RUN=$RUN" /proc/[0-9]*/environ 2>/dev/null); do kill -$s "$(basename "$(dirname "$f")")" 2>/dev/null; done
+      sleep 5
+    done ) <&4 >/dev/null 2>&1 3>&- 4<&- 9>&- &
+  veille=$!
+  debut=$(date +%s)
+  # Au premier plan (un « & » ferait ignorer SIGINT à la commande) ; ni le verrou (9) ni l'entrée de ssh (4) ne lui sont transmis.
+  # Le lanceur perl (fork, exec bash -c, waitpid) écrit dans $R/marque « code N » ou « signal N » quand la commande s'est
+  # terminée — jamais s'il est arrêté lui-même (veille, délai) : pas de marque, pas de fin d'elle-même.
+  USINE_EXECUTER_RUN="$RUN" USINE_BAC="$NOM" timeout -k 20 "$DELAI" perl -e "$LANCEUR" "$R/marque" "$CMD" </dev/null >&3 3>&- 4<&- 9>&-
+  code=$?
+  duree=$(( $(date +%s) - debut ))
+  kill "$veille" 2>/dev/null; wait "$veille" 2>/dev/null
+  marque=$(cat "$R/marque" 2>/dev/null)
+  # La cause, dans cet ordre : la veille a parlé → 125 ; délai (timeout rend 124, ou 137 si la commande a résisté au TERM) → 124 ;
+  # le lanceur a vu la commande sortir d'elle-même avec ce code → ce code ; tuée par un signal → 125 ; rien de sûr → 125.
+  if [ -e "$F.veille" ]; then cause=veille; final=125
+  elif [ -z "$marque" ] && { [ "$code" -eq 124 ] || [ "$code" -eq 137 ]; } && [ "$duree" -ge $(( DELAI - 1 )) ]; then cause=delai; final=124
+  elif [ "$marque" = "code $code" ]; then cause=seule; final=$code
+  elif [[ "$marque" =~ ^signal\\ ([0-9]+)$ ]]; then cause="signal-$(kill -l "\${BASH_REMATCH[1]}" 2>/dev/null || echo "\${BASH_REMATCH[1]}")"; final=125
+  else cause=sans-marque; final=125; fi
+  echo "· usine executer : commande finie en $duree s sur l’usine, code $code ($cause)"
+  restes=$(grep -lzx "USINE_EXECUTER_RUN=$RUN" /proc/[0-9]*/environ 2>/dev/null | cut -d/ -f3 | tr '\\n' ' ')
+  if [ -n "$restes" ]; then
+    kill -TERM $restes 2>/dev/null; sleep 2; kill -KILL $restes 2>/dev/null
+    echo "· usine executer : ⚠ processus laissés par la commande, arrêtés : $restes"
+  fi
+  if [ -n "$RAPATRIER" ]; then
+    etatR=""
+    if [ ! -e "$B/$RAPATRIER" ] && [ ! -L "$B/$RAPATRIER" ]; then etatR="$RAPATRIER absent du bac"
+    else
+      case "$(readlink -f -- "$B/$RAPATRIER")/" in "$(readlink -f -- "$B")/"*) ;; *) etatR="$RAPATRIER sort du bac (lien symbolique)";; esac
+      if [ -z "$etatR" ] && [ -n "$(find "$B/$RAPATRIER" -type l -print -quit)" ]; then etatR="lien symbolique sous $RAPATRIER : rien n’est rapatrié"; fi
+      if [ -z "$etatR" ]; then
+        (cd "$B" && find "$RAPATRIER" -type f -newer "$R/debut" -print0) > "$R/liste"
+        taille=$(cd "$B" && xargs -0 -r stat -c %s < "$R/liste" | awk '{ s += $1 } END { print s + 0 }')
+        if [ "$taille" -gt 209715200 ]; then etatR="trop gros : $taille octets, 200 Mo au plus"
+        elif mkdir -p "$R/retour" && (cd "$B" && xargs -0 -r cp --parents -p -t "$R/retour" < "$R/liste"); then etatR=ok
+        else etatR="copie impossible dans $R/retour"; fi
+      fi
+    fi
+    printf '%s\\n' "$etatR" > "$R/rapatrier.etat"
+  fi
+  # La fin (code rendu, cause, code brut) : écrite en entier puis renommée, relue par le PC s'il n'a pas eu le repère de fin.
+  printf '%s %s %s\\n' "$final" "$cause" "$code" > "$F.fin.tmp" && mv -f "$F.fin.tmp" "$F.fin"
+  rm -f "$F.veille"
+  if [ -z "$RAPATRIER" ]; then rm -rf -- "$R"; fi
+  printf '@@usine-executer %s fin %s %s %s@@\\n' "$JETON" "$final" "$cause" "$code"
+  exec 9>&-
+  return "$final"
+}
+principal; exit $?
+`
+  console.error(`· usine executer : bac ${nom} sur ${HOTE}, délai ${delai} min : ${commandeArgv.join(' ')}`)
+  const fin = await new Promise((resoudre) => {
+    const enfant = spawn('ssh', [...SSH, HOTE, 'bash -s'], { stdio: ['pipe', 'inherit', 'pipe'], windowsHide: true })
+    const r = { code: null, lance: 0, coupe: false, issue: null }
+    let tampon = Buffer.alloc(0)
+    let minuteur = null
+    const veiller = (ms) => { clearTimeout(minuteur); minuteur = setTimeout(() => { r.coupe = true; enfant.kill() }, ms) }
+    veiller((attendre + 10) * 60_000) // mise en place et attente du bac
+    // Après le lancement : tout est relayé au fil de l'eau, sauf le repère de fin (avalé, il porte le code rendu et sa cause).
+    // On ne retient que la queue qui pourrait être le début de ce repère.
+    const debutDuRepereFin = (b) => { for (let k = Math.min(b.length, repereFin.length - 1); k > 0; k--) if (b.subarray(b.length - k).equals(repereFin.subarray(0, k))) return k; return 0 }
+    const apresLancement = () => {
+      for (;;) {
+        const i = tampon.indexOf(repereFin)
+        if (i < 0) { const k = debutDuRepereFin(tampon); if (tampon.length > k) process.stderr.write(tampon.subarray(0, tampon.length - k)); tampon = tampon.subarray(tampon.length - k); return }
+        if (i > 0) { process.stderr.write(tampon.subarray(0, i)); tampon = tampon.subarray(i) }
+        const j = tampon.indexOf(0x0a)
+        if (j < 0) return // la suite du repère arrive
+        const m = tampon.subarray(repereFin.length, j).toString('utf8').match(/^(\d+) (\S+) (\d+)@@$/)
+        if (m) r.issue = { final: Number(m[1]), cause: m[2], brut: Number(m[3]) }
+        tampon = tampon.subarray(j + 1)
+      }
+    }
+    enfant.stderr.on('data', (morceau) => {
+      tampon = Buffer.concat([tampon, morceau])
+      if (r.lance) { apresLancement(); return }
+      const i = tampon.indexOf(repere)
+      if (i >= 0) {
+        if (i > 0) process.stderr.write(tampon.subarray(0, i))
+        tampon = tampon.subarray(i + repere.length)
+        r.lance = Date.now()
+        veiller((delai * 60 + 180) * 1000) // la commande : son délai, plus de quoi laisser timeout finir son travail
+        apresLancement()
+        return
+      }
+      const nl = tampon.lastIndexOf(0x0a)
+      if (nl >= 0) { process.stderr.write(tampon.subarray(0, nl + 1)); tampon = tampon.subarray(nl + 1) }
+    })
+    enfant.stdin.on('error', () => { /* ssh fini avant d'avoir tout lu : son code dit pourquoi */ })
+    enfant.on('error', (e) => { clearTimeout(minuteur); console.error(`  ssh : ${e.message}`); resoudre({ ...r, code: 255 }) })
+    enfant.on('close', (code) => { clearTimeout(minuteur); if (tampon.length) process.stderr.write(tampon); resoudre({ ...r, code }) })
+    // Le script finit par « principal; exit $?\n » et le paquet suit AUSSITÔT : un octet de plus entre les deux serait lu par
+    // head -c comme le premier octet du paquet (empreinte fausse, vu à l'essai). L'entrée reste ouverte : sur l'usine, sa fin
+    // veut dire « le PC est parti » et arrête la commande.
+    enfant.stdin.write(Buffer.concat([Buffer.from(`${PREAMBULE}${script}`, 'utf8'), p.patch]))
+  })
+  const tFin = Date.now()
+  if (!fin.lance) {
+    if (fin.coupe) panne(`pas de réponse de l'usine en ${attendre + 10} min (attente du bac ou mise en place) : ssh coupé, rien n'a été lancé`)
+    if (fin.code === 255) panne(`usine injoignable (${HOTE}) ou session coupée avant le lancement : rien n'a été lancé. L'IP est éphémère : si l'instance a été recréée, PRESTI_USINE=usine@<nouvelle ip>`)
+    panne(`bac ${nom} non monté (code ${fin.code} sur l'usine) : rien n'a été lancé`)
+  }
+  // Le code rendu. Il ne vient QUE de l'usine, qui sait si la commande a fini d'elle-même : par le repère de fin (signé du
+  // jeton), sinon par la fin relue sur l'usine. Le code de sortie de ssh.exe ne compte plus : ssh tué sous Windows rend 1,
+  // comme un vrai FAIL (attaque du 25/09/2026, r6).
+  let code
+  let issue = fin.issue
+  if (fin.coupe) {
+    console.error(`✗ usine executer : l'usine n'a pas rendu la main ${delai} min + 3 min après le lancement : ssh coupé, la commande est arrêtée là-bas (code 124)`)
+    code = 124
+  } else {
+    if (!issue) {
+      console.error(`✗ usine executer : la session ssh s'est terminée sans le repère de fin (${fin.code === null ? 'ssh tué' : `ssh a rendu ${fin.code}`}) : je relis sur l'usine ce qu'est devenue la commande (90 s au plus)`)
+      issue = relireFin(run, jeton)
+      if (!issue.erreur) console.error(`· usine executer : fin relue sur l'usine : code ${issue.brut}, cause « ${issue.cause} »${issue.restes ? ` ; ⚠ ${issue.restes} processus de la commande y tournent encore` : ' ; plus rien de la commande ne tourne'}`)
+    }
+    const secDelai = Math.max(1, Math.round(delai * 60))
+    if (issue.erreur) { console.error(`✗ usine executer : verdict non rendu : connexion perdue pendant la commande, ${issue.erreur} : code inconnu → ${PANNE}`); code = PANNE }
+    else {
+      code = issue.final
+      if (issue.cause === 'delai') console.error(`✗ usine executer : délai de ${secDelai} s dépassé, commande arrêtée (code 124)`)
+      else if (issue.cause === 'veille') console.error(`✗ usine executer : verdict non rendu : la session ssh s'est coupée pendant la commande et la veille de l'usine l'a arrêtée ; son code (${issue.brut}) ne compte pas → ${PANNE}`)
+      else if (issue.cause.startsWith('signal-')) console.error(`✗ usine executer : verdict non rendu : la commande a été tuée par le signal SIG${issue.cause.slice(7)} (mémoire saturée ? arrêt venu d'ailleurs ?) → ${PANNE}`)
+      else if (issue.cause !== 'seule') console.error(`✗ usine executer : verdict non rendu : la commande n'a pas fini d'elle-même (aucune marque de fin de son lanceur, code brut ${issue.brut}) → ${PANNE}`)
+      else if (code > 128 && code < 160) console.error(`· usine executer : code ${code} = 128 + ${code - 128} : un sous-processus de la commande a peut-être été tué par un signal (la commande, elle, est sortie d'elle-même)`)
+    }
+  }
+  let tRapatrier = 0
+  if (rapatrier && code === PANNE && issue?.cause !== 'seule') {
+    // Verdict non rendu : rien n'est posé sur le PC ; le dossier du run est retiré de l'usine.
+    distant(`rm -rf -- "$HOME/bacs/.runs/"${q(run)}`, { timeout: 60_000 })
+    console.error(`· usine executer : --rapatrier=${rapatrier} : rien n'est rapatrié (verdict non rendu)`)
+  } else if (rapatrier) {
+    const t = Date.now()
+    const ret = rapatrierDepuisUsine(run, rapatrier)
+    tRapatrier = Date.now() - t
+    if (ret.erreur) {
+      console.error(`✗ usine executer : --rapatrier=${rapatrier} : ${ret.erreur}`)
+      if (code === 0) code = PANNE
+    } else {
+      console.error(`· usine executer : rapatrié ${ret.fichiers.length} fichier(s), ${ret.octets} octets${ret.octets >= 1024 ? ` (${ko(ret.octets)})` : ''}, sous ${rapatrier}${ret.ecartes.length ? ` ; écartés : ${ret.ecartes.join(', ')}` : ''}`)
+      for (const f of ret.fichiers.slice(0, 20)) console.error(`    ${f.rel}  ${f.octets} octets`)
+      if (ret.fichiers.length > 20) console.error(`    … et ${ret.fichiers.length - 20} autre(s)`)
+      if (ret.vides.length) {
+        console.error(`✗ usine executer : --rapatrier=${rapatrier} : preuve vide : ${ret.vides.length} fichier(s) de 0 octet, NON posé(s) sur le PC : ${ret.vides.slice(0, 10).join(', ')}${ret.vides.length > 10 ? ' …' : ''} — une preuve vide ne passe pas pour une preuve`)
+        if (code === 0) code = PANNE
+      }
+    }
+  }
+  const duree = `paquet ${secondes(tPaquet - t0)} · envoi et bac ${secondes(fin.lance - tPaquet)} · commande ${secondes(tFin - fin.lance)}${rapatrier ? ` · rapatriement ${secondes(tRapatrier)}` : ''} · total ${secondes(Date.now() - t0)}`
+  process.stderr.write(`· usine executer : code ${code} · ${duree}\n`, () => process.exit(code))
+}
+
 // ── entrée ────────────────────────────────────────────────────────────────────────────────────────────────
-const USAGE = fs.readFileSync(CE_FICHIER, 'utf8').split('\n').filter((l) => l.startsWith('//')).slice(7, 15).map((l) => l.replace(/^\/\/ ?/, '')).join('\n')
+const USAGE = fs.readFileSync(CE_FICHIER, 'utf8').split('\n').filter((l) => l.startsWith('//')).slice(7, 18).map((l) => l.replace(/^\/\/ ?/, '')).join('\n')
 const id = positionnels[0]
 const exigeId = ['paquet', 'lancer', 'recuperer', 'nettoyer']
 if (exigeId.includes(commande) && !(id && ID_VALIDE.test(id))) { console.error(`${commande} <id> : un identifiant de fiche NNN-slug (ex. 025-05)\n\n${USAGE}`); process.exit(2) }
@@ -841,5 +1342,6 @@ switch (commande) {
   case 'recuperer': await recuperer(id); break
   case 'nettoyer': nettoyer(id); break
   case 'tourner': await tourner(path.resolve(positionnels[0] || '.')); break
+  case 'executer': await executerSurUsine(); break
   default: console.log(USAGE); process.exit(commande ? 2 : 0)
 }
