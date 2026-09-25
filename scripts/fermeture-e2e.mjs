@@ -197,7 +197,9 @@ console.log('\n── 6. Drapeaux : un drapeau baissé est invisible en producti
 const { FLAGS } = await import('../lib/flags.ts').catch(() => ({ FLAGS: null }))
 if (FLAGS) {
   const landing = (await page('/')).html
-  T(`landingVideo=${FLAGS.landingVideo} ↔ vidéo ${/<video/.test(landing) ? 'présente' : 'absente'} sur la landing`, FLAGS.landingVideo === /<video/.test(landing))
+  // La vidéo que landingVideo commande est celle de la démo (app/DemoVideo.tsx, /demo/hero.mp4) ; le bloc DemoSite a la sienne.
+  const videoDemo = /<video[^>]*\/demo\/hero\.mp4/.test(landing)
+  T(`landingVideo=${FLAGS.landingVideo} ↔ vidéo de la démo ${videoDemo ? 'présente' : 'absente'} sur la landing`, FLAGS.landingVideo === videoDemo)
   const aide = await page('/aide')
   T(`aideCentre=${FLAGS.aideCentre} ↔ /aide ${aide.status}`, FLAGS.aideCentre === (aide.status === 200))
   T('inventaireOcr baissé → aucun « OCR » vendu sur la landing ni la FAQ', !FLAGS.inventaireOcr && !/\bOCR\b/.test(landing) && !/\bOCR\b/.test((await page('/faq')).html))
