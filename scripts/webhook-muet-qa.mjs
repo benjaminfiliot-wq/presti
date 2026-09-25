@@ -30,16 +30,39 @@
 //         lib/stripeAiguillage.ts compris, doit figurer parmi les fichiers vérifiés (un script typecheck qui ne vérifie rien,
 //         ou un projet vide, ne passe pas) ; ni @ts-nocheck, ni plus de @ts-ignore / @ts-expect-error qu'à 1620723 dans ces deux
 //         fichiers, et tsconfig.json et le script typecheck ceux de 1620723 (commun.mjs defautsTypecheck ; relecture du 24/09).
+//   WM-5  (fiche 025-22, défaut D04 de la relecture du 25/09) payé d'abord : une session n'est encaissée (commande de site) ou
+//         servie (abonnement) que si payment_status le dit, et les paiements différés sont écoutés. Ajouté le 25/09 par Claude
+//         Code (WM-3 existait déjà : la fiche disait « WM-3 », c'est WM-5).
+//         a) Aiguillage (même sonde que WM-1) : commande de site 'unpaid' (prélèvement en cours), 'no_payment_required' ou
+//            sans payment_status → ni 'commande_site' ni 'abonnement' ; abonnement 'unpaid' (par metadata.uid ou par
+//            client_reference_id) → ni l'un ni l'autre ; abonnement 'no_payment_required' (0 € : /api/subscribe/route.ts:67
+//            accepte les codes promo, un code à 100 % donne ce statut) → 'abonnement' ; payés → 'commande_site', 'abonnement'.
+//            Toujours une chaîne, tout de suite, la même au second appel, session gelée.
+//         b) Route (même sonde que WM-2 et WM-3, mêmes doublures) : checkout.session.completed 'unpaid' (commande de site ;
+//            abonnement) → 2xx, aiguiller appelé, aucun encaissement, aucune écriture dans artisans, aucune alerte
+//            d'orphelin (clé « orphelin:… » : un humain « servirait ou rembourserait » un paiement encore en cours) ;
+//            completed d'un abonnement 'no_payment_required' → servi (update de artisans : plan, stripe_subscription_id) ;
+//            checkout.session.async_payment_succeeded payé → le traitement de completed : commande encaissée une fois,
+//            commande introuvable → hors 2xx et quelqu'un prévenu, abonnement servi, session sans métadonnée → l'alerte
+//            d'orphelin de WM-2 (montant, devise, session, client) ; checkout.session.async_payment_failed (commande de site ;
+//            abonnement) → 2xx, aucun encaissement, aucune écriture dans artisans, et l'entreprise prévenue (envoyerAlertes
+//            à 'entreprise', ou notifierEntreprise) avec l'identifiant de la session.
+//         c) Sondes du détecteur, à chaque passage : la route et l'aiguillage témoins (scripts/fixtures/025/temoins/
+//            webhook-muet-qa/) sont posés dans une copie du projet (.orchestre/travail/webhook-muet-qa/sondes-wm5/) ; le
+//            témoin propre doit passer a) et b) ; chaque mutation — commande de site encaissée sans être payée, abonnement
+//            servi sans être payé, abonnement à 0 € refusé, async_payment_succeeded non écouté, async_payment_failed muet —
+//            doit être vue. Une sonde qui ne s'applique plus au témoin est un échec (« sonde cassée »).
 //
 // --temoin : l'état « après » simulé. Le juge copie app/, lib/, package.json, tsconfig.json (et middleware.ts, next-env.d.ts
 // s'ils existent) de la racine (le dépôt par défaut, ou --racine=) dans .orchestre/travail/webhook-muet-qa/temoin/, y pose les
 // deux fichiers de scripts/fixtures/025/temoins/webhook-muet-qa/ sans leur suffixe .temoin (lib/stripeAiguillage.ts et
-// app/api/stripe/webhook/route.ts conformes), puis juge WM-1 à WM-4 sur cette copie. Il doit passer sur l'état actuel du
-// dépôt. Le suffixe .temoin tient ces deux fichiers hors de `npm run typecheck` du dépôt (tsconfig.json inclut **/*.ts, donc
+// app/api/stripe/webhook/route.ts conformes : ceux de HEAD 83ce3dd plus le correctif de 025-22), puis juge WM-1 à WM-5 sur
+// cette copie. Il doit passer sur l'état actuel du dépôt. Le suffixe .temoin tient ces deux fichiers hors de `npm run typecheck` du dépôt (tsconfig.json inclut **/*.ts, donc
 // scripts/fixtures/ : la route témoin importe un module qui n'existe pas encore dans lib/).
 //
 // Sur l'arbre de référence (1620723, avant 025-07) : WM-1 échoue (lib/stripeAiguillage.ts absent), WM-2 aussi (la route
-// n'importe pas aiguiller, et un paiement orphelin ne déclenche aucune alerte) ; WM-3 et WM-4 passent.
+// n'importe pas aiguiller, et un paiement orphelin ne déclenche aucune alerte) ; WM-3 et WM-4 passent. Sur HEAD 83ce3dd
+// (avant 025-22) : WM-1 à WM-4 passent, WM-5 échoue (payment_status jamais lu, événements async non écoutés).
 //
 // Choix du juge (la fiche ne tranche pas) :
 //   - WM-1, cas au-delà des quatre de la fiche, tirés des conditions de route.ts:35-44 à 1620723, que 025-07 §2 interdit de
@@ -66,8 +89,9 @@
 //     RESEND, ANTHROPIC, OPENAI, VERCEL, SECRET, KEY, TOKEN, PASSWORD…), avec un faux STRIPE_WEBHOOK_SECRET, et fetch piégé :
 //     rien ne peut partir vers Stripe, Supabase ou Resend. Aucun --reel.
 //
-// Usage : node scripts/webhook-muet-qa.mjs [--racine=<dossier>] [--temoin]
-//   Sortie : une ligne PASS/FAIL par critère (WM-1 à WM-4), puis « webhook-muet-qa : PASS » ou « … : FAIL — ids » ; code 0
+// Usage : node scripts/webhook-muet-qa.mjs [--racine=<dossier>] [--temoin] [--critere=WM-1,WM-5]
+//   --critere : ne juge que ces critères (WM-4, le typecheck, est le seul lourd).
+//   Sortie : une ligne PASS/FAIL par critère (WM-1 à WM-5), puis « webhook-muet-qa : PASS » ou « … : FAIL — ids » ; code 0
 //   seulement si tout est vert, 2 si les options sont invalides. Sondes et résultats bruts : .orchestre/travail/webhook-muet-qa/.
 import fs from 'node:fs'
 import path from 'node:path'
@@ -80,7 +104,7 @@ import {
 } from './fixtures/025/commun.mjs'
 
 export const JUGE = 'webhook-muet-qa'
-export const IDS = ['WM-1', 'WM-2', 'WM-3', 'WM-4']
+export const IDS = ['WM-1', 'WM-2', 'WM-3', 'WM-4', 'WM-5']
 const ROUTE = 'app/api/stripe/webhook/route.ts'
 const AIGUILLAGE = 'lib/stripeAiguillage.ts'
 const INCHANGES = ['lib/stripe.ts', 'lib/abonnementSync.ts']
@@ -412,7 +436,7 @@ export function casAiguillage() {
     { nom: 'session réduite à {}', attendu: 'orphelin', session: {} },
   ]
 }
-const evenement = (session) => ({ id: `evt_juge_${hasard(20)}`, object: 'event', type: 'checkout.session.completed', livemode: false, created: Math.floor(Date.now() / 1000), data: { object: session } })
+const evenement = (session, type = 'checkout.session.completed') => ({ id: `evt_juge_${hasard(20)}`, object: 'event', type, livemode: false, created: Math.floor(Date.now() / 1000), data: { object: session } })
 /** Les scénarios de la sonde de route (WM-2 : orphelin, pack_pub, force ; WM-3 : introuvable, payee, abonnement). */
 /** Le montant (centimes) est-il écrit dans `t` : « 12345 », « 123.45 » ou « 123,45 », sans chiffre collé avant ni après ? */
 export function montantPresent(t, centimes) {
@@ -425,9 +449,9 @@ export function scenariosRoute() {
   // Une session et son événement. Montant de 100,01 € à 999,99 € (cinq chiffres : aucune année ni heure ne l'imite), dernier
   // chiffre non nul (123,45 s'écrit pareil en toFixed, String ou Intl), et absent de tous les identifiants tirés (session,
   // client, métadonnées, événement) : sa présence dans l'alerte ne peut venir que du montant.
-  const scenario = (x) => {
+  const scenario = (x, type) => {
     const s = { id: `cs_test_${hasard(24)}`, object: 'checkout.session', amount_total: 0, currency: 'eur', customer: `cus_${hasard(14)}`, customer_details: { email: `client-${hasard(6)}@exemple.invalid`, name: `Client ${hasard(6)}` }, client_reference_id: null, payment_status: 'paid', status: 'complete', subscription: null, ...x }
-    const ev = evenement(s)
+    const ev = evenement(s, type)
     const autres = [s.id, s.customer, s.customer_details.email, s.customer_details.name, JSON.stringify(s.metadata ?? null), String(s.subscription), ev.id, String(ev.created)]
     do s.amount_total = 10_001 + crypto.randomInt(89_999)
     while (s.amount_total % 10 === 0 || autres.some((a) => montantPresent(a, s.amount_total)))
@@ -442,6 +466,45 @@ export function scenariosRoute() {
     { nom: 'commande introuvable', critere: 'WM-3', encaisser: 'introuvable', evenement: scenario({ mode: 'payment', metadata: { uid, type: 'commande_site', commande_id: commande } }) },
     { nom: 'commande payée', critere: 'WM-3', encaisser: 'payee', evenement: scenario({ mode: 'payment', metadata: { uid, type: 'commande_site', commande_id: commande } }) },
     { nom: 'abonnement', critere: 'WM-3', artisan, evenement: scenario({ mode: 'subscription', metadata: { uid, plan: 'studio', credits: '80' }, subscription: abo }) },
+    // WM-5 (025-22, D04) : payé d'abord, paiements différés écoutés. `paiement` dit ce qui est attendu (defautsPaiement).
+    ...scenariosPaiement(scenario, { uid, commande, artisan }),
+  ]
+}
+const SUCCES_DIFFERE = 'checkout.session.async_payment_succeeded'
+const ECHEC_DIFFERE = 'checkout.session.async_payment_failed'
+/** Les scénarios de route de WM-5 : { nom, critere: 'WM-5', paiement: rien | abonnement | encaisse | introuvable | orphelin | echec, … } */
+function scenariosPaiement(scenario, { uid, commande, artisan }) {
+  const site = (ps, type) => scenario({ mode: 'payment', payment_status: ps, metadata: { uid, type: 'commande_site', commande_id: commande } }, type)
+  const abonnement = (ps, type) => scenario({ mode: 'subscription', payment_status: ps, metadata: { uid, plan: 'studio', credits: '80' }, subscription: `sub_${hasard(14)}` }, type)
+  return [
+    { nom: 'completed, commande de site en attente de paiement (unpaid)', critere: 'WM-5', paiement: 'rien', encaisser: 'payee', evenement: site('unpaid') },
+    { nom: 'completed, abonnement en attente de paiement (unpaid)', critere: 'WM-5', paiement: 'rien', artisan, evenement: abonnement('unpaid') },
+    { nom: 'completed, abonnement à 0 € (code promo à 100 %, no_payment_required)', critere: 'WM-5', paiement: 'abonnement', artisan, evenement: abonnement('no_payment_required') },
+    { nom: 'async_payment_succeeded, commande de site payée', critere: 'WM-5', paiement: 'encaisse', encaisser: 'payee', evenement: site('paid', SUCCES_DIFFERE) },
+    { nom: 'async_payment_succeeded, commande introuvable', critere: 'WM-5', paiement: 'introuvable', encaisser: 'introuvable', evenement: site('paid', SUCCES_DIFFERE) },
+    { nom: 'async_payment_succeeded, abonnement payé', critere: 'WM-5', paiement: 'abonnement', artisan, evenement: abonnement('paid', SUCCES_DIFFERE) },
+    { nom: 'async_payment_succeeded sans métadonnée', critere: 'WM-5', paiement: 'orphelin', evenement: scenario({ mode: 'payment', metadata: {} }, SUCCES_DIFFERE) },
+    { nom: 'async_payment_failed, commande de site', critere: 'WM-5', paiement: 'echec', encaisser: 'payee', evenement: site('unpaid', ECHEC_DIFFERE) },
+    { nom: 'async_payment_failed, abonnement', critere: 'WM-5', paiement: 'echec', artisan, evenement: abonnement('unpaid', ECHEC_DIFFERE) },
+  ]
+}
+/** Les sessions de WM-5 a) (aiguillage) : { nom, session, attendu } ou { nom, session, interdit[] }. */
+export function casPaiement() {
+  const uid = crypto.randomUUID(), commande = crypto.randomUUID()
+  const plan = () => PLANS_REELS[crypto.randomInt(PLANS_REELS.length)]
+  const base = (x) => ({ id: `cs_test_${hasard(24)}`, object: 'checkout.session', amount_total: 1000 + crypto.randomInt(98_000), currency: 'eur', customer: null, client_reference_id: null, status: 'complete', ...x })
+  const site = (ps) => base({ mode: 'payment', payment_status: ps, metadata: { uid, type: 'commande_site', commande_id: commande } })
+  const abo = (ps) => base({ mode: 'subscription', payment_status: ps, metadata: { uid, plan: plan(), credits: '80' }, subscription: `sub_${hasard(14)}` })
+  const PAS_SERVI = ['commande_site', 'abonnement']
+  return [
+    { nom: 'commande de site, prélèvement en cours (unpaid)', interdit: PAS_SERVI, session: site('unpaid') },
+    { nom: 'commande de site, no_payment_required', interdit: PAS_SERVI, session: site('no_payment_required') },
+    { nom: 'commande de site sans payment_status', interdit: PAS_SERVI, session: (() => { const s = site('paid'); delete s.payment_status; return s })() },
+    { nom: 'abonnement par metadata.uid, prélèvement en cours (unpaid)', interdit: PAS_SERVI, session: abo('unpaid') },
+    { nom: 'abonnement par client_reference_id, unpaid', interdit: PAS_SERVI, session: base({ mode: 'subscription', payment_status: 'unpaid', client_reference_id: uid, metadata: { plan: plan() } }) },
+    { nom: 'abonnement à 0 € (no_payment_required)', attendu: 'abonnement', session: abo('no_payment_required') },
+    { nom: 'commande de site payée', attendu: 'commande_site', session: site('paid') },
+    { nom: 'abonnement payé', attendu: 'abonnement', session: abo('paid') },
   ]
 }
 
@@ -547,13 +610,39 @@ function defautsNonRegression(sc, attendu) {
   }
   return d
 }
-/** Exécute la route sur les scénarios → { wm2: { ok, echecs, resume }, wm3: { ok, echecs, resume } } */
+/** Défauts d'un scénario de WM-5 (payé d'abord, paiements différés). */
+function defautsPaiement(x, sc) {
+  const ev = sc.evenement, s = ev.data.object
+  if (sc.paiement === 'orphelin') return defautsOrphelin(x, sc)
+  if (sc.paiement === 'abonnement') return defautsNonRegression(x, { ...sc, nom: 'abonnement' })
+  if (sc.paiement === 'encaisse') return defautsNonRegression(x, { ...sc, nom: 'commande payée' })
+  if (sc.paiement === 'introuvable') return defautsNonRegression(x, { ...sc, nom: 'commande introuvable' })
+  const d = []
+  const reponse = x.erreur ? `POST lève « ${x.erreur} »` : `réponse ${x.statut}`
+  const ok2xx = !x.erreur && typeof x.statut === 'number' && x.statut >= 200 && x.statut < 300
+  const alertes = x.alertes.flatMap((a) => (Array.isArray(a) ? a : [a])).filter(Boolean)
+  const ecritures = x.base.filter((o) => o.table === 'artisans' && o.action !== 'select')
+  if (x.encaisser.length) d.push(`encaisserCommandeSite appelé ${x.encaisser.length} fois : la commande passe à « payee » sans que l'argent soit là`)
+  if (ecritures.length) d.push(`${ecritures.length} écriture(s) dans artisans (${ecritures.map((o) => `${o.action} ${court(JSON.stringify(o.payload), 60)}`).join(', ')}) : l'abonnement est servi sans paiement`)
+  if (sc.paiement === 'rien') {
+    if (!ok2xx) d.push(`${reponse}, 2xx attendu (un paiement en cours n'est pas une erreur : Stripe rejouerait trois jours)`)
+    if (!x.aiguiller.length) d.push('aiguiller jamais appelé')
+    if (alertes.some((a) => typeof a.cle === 'string' && a.cle.startsWith('orphelin:'))) d.push('traité en orphelin (alerte « orphelin:… » : un humain servirait ou rembourserait un paiement encore en cours)')
+  } else if (sc.paiement === 'echec') {
+    if (!ok2xx) d.push(`${reponse}, 2xx attendu (un prélèvement refusé ne se rejoue pas)`)
+    const textes = [...alertes.filter((a) => a.a === 'entreprise').map(TEXTE), ...x.notifs.map((n) => `${n.sujet}\n${n.corps}`)]
+    if (!textes.length) d.push(`personne n'est prévenu du prélèvement refusé (ni envoyerAlertes à 'entreprise', ni notifierEntreprise)${alertes.length ? ` (alertes reçues : ${court(JSON.stringify(alertes.map((a) => ({ a: a.a, cle: a.cle }))), 100)})` : ''}`)
+    else if (!textes.some((t) => t.includes(s.id))) d.push(`l'entreprise est prévenue sans l'identifiant de la session (${s.id})`)
+  } else throw new Error(`scénario mal formé : paiement « ${sc.paiement} »`)
+  return d
+}
+/** Exécute la route sur les scénarios → { wm2, wm3, wm5 } : { ok, echecs, resume } chacun */
 export function jugerRoute(racine, dossier) {
-  const wm2 = { echecs: [] }, wm3 = { echecs: [] }
+  const wm2 = { echecs: [] }, wm3 = { echecs: [] }, wm5 = { echecs: [] }
   const f = path.join(racine, ROUTE)
   if (!fs.existsSync(f) || !fs.readFileSync(f, 'utf8').trim()) {
-    wm2.echecs.push(`${ROUTE} absent ou vide`); wm3.echecs.push(`${ROUTE} absent ou vide`)
-    return { wm2: { ok: false, ...wm2 }, wm3: { ok: false, ...wm3 } }
+    for (const w of [wm2, wm3, wm5]) w.echecs.push(`${ROUTE} absent ou vide`)
+    return { wm2: { ok: false, ...wm2 }, wm3: { ok: false, ...wm3 }, wm5: { ok: false, ...wm5 } }
   }
   const code = sansCommentaires(fs.readFileSync(f, 'utf8'))
   for (const x of lectureStatiqueRoute(code)) wm2.echecs.push(`lecture : ${x}`)
@@ -562,24 +651,90 @@ export function jugerRoute(racine, dossier) {
   const s = lancerSonde(racine, path.join(dossier, 'sonde-route.mjs'), SONDE_ROUTE, { route: f, scenarios: scenarios.map(({ nom, evenement: e, forcer, encaisser, artisan }) => ({ nom, evenement: e, forcer, encaisser, artisan })) }, { crochets: enregistrer })
   if (!s.ok || s.res.erreurImport) {
     const m = s.ok ? `import de la route en erreur : ${s.res.erreurImport}` : s.erreur
-    wm2.echecs.push(m); wm3.echecs.push(m)
-    return { wm2: { ok: false, ...wm2 }, wm3: { ok: false, ...wm3 } }
+    for (const w of [wm2, wm3, wm5]) w.echecs.push(m)
+    return { wm2: { ok: false, ...wm2 }, wm3: { ok: false, ...wm3 }, wm5: { ok: false, ...wm5 } }
   }
   const r = s.res
-  if (r.reseau.length) { const m = `la route a tenté ${r.reseau.length} appel(s) réseau hors doublures (${r.reseau.slice(0, 2).join(', ')})`; wm2.echecs.push(m); wm3.echecs.push(m) }
-  const faits2 = [], faits3 = []
+  if (r.reseau.length) { const m = `la route a tenté ${r.reseau.length} appel(s) réseau hors doublures (${r.reseau.slice(0, 2).join(', ')})`; for (const w of [wm2, wm3, wm5]) w.echecs.push(m) }
+  const faits = { 'WM-2': [], 'WM-3': [], 'WM-5': [] }
+  const cibles = { 'WM-2': wm2, 'WM-3': wm3, 'WM-5': wm5 }
+  const juger = { 'WM-2': defautsOrphelin, 'WM-3': defautsNonRegression, 'WM-5': defautsPaiement }
   scenarios.forEach((sc, i) => {
     const x = r.scenarios[i]
-    const cible = sc.critere === 'WM-2' ? wm2 : wm3
+    const cible = cibles[sc.critere]
     if (!x || x.nom !== sc.nom) { cible.echecs.push(`« ${sc.nom} » : aucun résultat`); return }
-    const d = sc.critere === 'WM-2' ? defautsOrphelin(x, sc) : defautsNonRegression(x, sc)
+    const d = juger[sc.critere](x, sc)
     for (const y of d) cible.echecs.push(`« ${sc.nom} » : ${y}`)
-    if (!d.length) (sc.critere === 'WM-2' ? faits2 : faits3).push(`${sc.nom} → ${x.statut}`)
+    if (!d.length) faits[sc.critere].push(`${sc.nom} → ${x.statut}`)
   })
   return {
-    wm2: { ok: wm2.echecs.length === 0, echecs: wm2.echecs, resume: `aiguiller importé et appelé ; route exécutée avec doublures : ${faits2.join(', ')}, une alerte { motif: 'paiement', a: 'entreprise', cle: …<id de l'événement>… } chacun, avec montant, devise, session et client, sans encaissement ni écriture dans artisans` },
-    wm3: { ok: wm3.echecs.length === 0, echecs: wm3.echecs, resume: `${faits3.join(', ')} (commande introuvable : erreur, entreprise prévenue ; abonnement : plan et abonnement écrits)` },
+    wm2: { ok: wm2.echecs.length === 0, echecs: wm2.echecs, resume: `aiguiller importé et appelé ; route exécutée avec doublures : ${faits['WM-2'].join(', ')}, une alerte { motif: 'paiement', a: 'entreprise', cle: …<id de l'événement>… } chacun, avec montant, devise, session et client, sans encaissement ni écriture dans artisans` },
+    wm3: { ok: wm3.echecs.length === 0, echecs: wm3.echecs, resume: `${faits['WM-3'].join(', ')} (commande introuvable : erreur, entreprise prévenue ; abonnement : plan et abonnement écrits)` },
+    wm5: { ok: wm5.echecs.length === 0, echecs: wm5.echecs, resume: `route : ${faits['WM-5'].join(', ')}` },
   }
+}
+/** WM-5 a) : l'aiguillage sur les sessions de casPaiement() (même sonde que WM-1). → { ok, echecs, resume } */
+export function jugerAiguillagePaiement(racine, dossier) {
+  const echecs = []
+  const f = path.join(racine, AIGUILLAGE)
+  if (!fichierNonVide(f)) return { ok: false, echecs: [`${AIGUILLAGE} absent ou vide`], resume: '' }
+  const cas = casPaiement()
+  const s = lancerSonde(racine, path.join(dossier, 'sonde-aiguillage-paiement.mjs'), SONDE_AIGUILLAGE, { module: f, cas: cas.map(({ nom, session }) => ({ nom, session })) })
+  if (!s.ok) return { ok: false, echecs: [s.erreur], resume: '' }
+  const r = s.res
+  if (r.erreurImport) return { ok: false, echecs: [`import de ${AIGUILLAGE} en erreur : ${r.erreurImport}`], resume: '' }
+  if (r.typeAiguiller !== 'function') return { ok: false, echecs: [`${AIGUILLAGE} n'exporte pas aiguiller`], resume: '' }
+  if (r.reseau.length) echecs.push(`impur : ${r.reseau.length} appel(s) fetch`)
+  const vus = []
+  cas.forEach((c, i) => {
+    const x = r.cas[i]
+    if (!x) { echecs.push(`« ${c.nom} » : aucune réponse`); return }
+    if (x.erreur) { echecs.push(`« ${c.nom} » : aiguiller lève « ${x.erreur} »`); return }
+    if (x.promesse) echecs.push(`« ${c.nom} » : aiguiller rend une promesse`)
+    if (typeof x.sortie !== 'string' || !x.sortie) { echecs.push(`« ${c.nom} » : ${x.type}, une chaîne attendue`); return }
+    if (x.seconde !== x.sortie) { echecs.push(`« ${c.nom} » : second appel « ${x.seconde} », le premier « ${x.sortie} »`); return }
+    if (c.attendu && x.sortie !== c.attendu) { echecs.push(`« ${c.nom} » : « ${x.sortie} », « ${c.attendu} » attendu`); return }
+    if (c.interdit && c.interdit.includes(x.sortie)) { echecs.push(`« ${c.nom} » : « ${x.sortie} » — servi sans être payé`); return }
+    vus.push(`${c.nom} → ${x.sortie}`)
+  })
+  return { ok: echecs.length === 0, echecs, resume: `aiguillage : ${vus.join(', ')}` }
+}
+
+// ── WM-5 c) : sondes du détecteur (le témoin, muté une fois par défaut, doit être vu) ─────────────────────────────────────
+export const MUTATIONS_PAIEMENT = [
+  { nom: 'commande de site encaissée sans être payée', fichier: AIGUILLAGE, de: "  if (voie === 'commande_site' && s.payment_status !== 'paid') return differe ? 'en_attente' : 'orphelin'\n", vers: '' },
+  { nom: 'abonnement servi sans être payé', fichier: AIGUILLAGE, de: "  if (voie === 'abonnement' && s.payment_status !== 'paid' && s.payment_status !== 'no_payment_required') return differe ? 'en_attente' : 'orphelin'\n", vers: '' },
+  { nom: 'abonnement à 0 € refusé', fichier: AIGUILLAGE, de: " && s.payment_status !== 'no_payment_required') return", vers: ') return' },
+  { nom: 'async_payment_succeeded non écouté', fichier: ROUTE, de: "event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded'", vers: "event.type === 'checkout.session.completed'" },
+  { nom: 'async_payment_failed muet', fichier: ROUTE, de: "      await envoyerAlertes([{\n        motif: 'paiement', a: 'entreprise', cle: `differe-refuse:${event.id}`,", vers: "      void ([{\n        motif: 'paiement', a: 'entreprise', cle: `differe-refuse:${event.id}`," },
+]
+/** WM-5 sur une racine : a) aiguillage + b) route. → { ok, echecs, resume } */
+export function jugerPaiement(racine, dossier) {
+  const a = jugerAiguillagePaiement(racine, dossier)
+  const b = jugerRoute(racine, dossier).wm5
+  return { ok: a.ok && b.ok, echecs: [...a.echecs, ...b.echecs], resume: `${a.resume} ; ${b.resume}` }
+}
+/** WM-5 c) : copie du projet de `base` + témoins, propre puis muté. → { echecs[], faits[] } */
+export function sondesPaiement(base = R) {
+  const echecs = [], faits = []
+  const lireTemoin = (rel) => { const f = path.join(TEMOIN_SOURCES, `${rel}.temoin`); return fichierNonVide(f) ? fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n') : null }
+  const propres = { [AIGUILLAGE]: lireTemoin(AIGUILLAGE), [ROUTE]: lireTemoin(ROUTE) }
+  if (!propres[AIGUILLAGE] || !propres[ROUTE]) return { echecs: [`sondes impossibles : témoin absent ou vide dans ${posix(path.relative(R, TEMOIN_SOURCES))}`], faits }
+  const copie = dossierTravail(JUGE, 'sondes-wm5', 'projet')
+  for (const rel of ['app', 'lib', 'package.json', 'tsconfig.json', 'middleware.ts', 'next-env.d.ts']) if (fs.existsSync(path.join(base, rel))) fs.cpSync(path.join(base, rel), path.join(copie, rel), { recursive: true })
+  const poser = (fichiers) => { for (const [rel, src] of Object.entries(fichiers)) fs.writeFileSync(path.join(copie, rel), src) }
+  const essai = (n) => jugerPaiement(copie, dossierTravail(JUGE, 'sondes-wm5', `sonde-${n}`))
+  poser(propres)
+  const propre = essai(0)
+  if (!propre.ok) echecs.push(`détecteur trop strict : le témoin échoue (${court(propre.echecs[0], 200)})`)
+  MUTATIONS_PAIEMENT.forEach((m, i) => {
+    if (!propres[m.fichier].includes(m.de)) { echecs.push(`sonde « ${m.nom} » cassée : le témoin ne contient plus « ${court(m.de, 60)} »`); return }
+    poser({ ...propres, [m.fichier]: propres[m.fichier].replace(m.de, () => m.vers) })
+    const r = essai(i + 1)
+    if (r.ok) echecs.push(`détecteur aveugle : la mutation « ${m.nom} » passe`)
+    else faits.push(`mutation « ${m.nom} » → vue`)
+  })
+  return { echecs, faits }
 }
 /** WM-3, fichiers : lib/stripe.ts et lib/abonnementSync.ts identiques à HEAD (ou au commit de l'arbre) et à 1620723. */
 export function jugerInchanges(racine) {
@@ -663,11 +818,15 @@ export function construireTemoin(base = R) {
 
 // ── Le juge ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
 async function principal() {
-  const o = lireOptionsOuQuitter(process.argv.slice(2))
+  const o = lireOptionsOuQuitter(process.argv.slice(2), { connues: ['critere'] })
   if (o.reel) { console.error('✗ webhook-muet-qa n\'a pas de --reel : tout se juge en local, avec des doublures'); process.exit(2) }
   if (o.positionnels.length) { console.error(`✗ argument(s) inattendu(s) : ${o.positionnels.join(' ')}`); process.exit(2) }
+  const ids = o.valeur('critere') === undefined ? IDS : o.liste('critere')
+  if (o.drapeau('critere') || !ids.length || ids.some((x) => !IDS.includes(x)) || new Set(ids).size !== ids.length) { console.error(`✗ --critere attend des critères de ${IDS.join(', ')} (ex. --critere=WM-1,WM-5)`); process.exit(2) }
+  const veut = (id) => ids.includes(id)
   const racineAffichee = o.temoin ? path.join(TRAVAIL, JUGE, 'temoin') : o.racine
-  const s = creerSortie(JUGE, IDS, { racine: racineAffichee, temoin: o.temoin })
+  const s = creerSortie(JUGE, ids, { racine: racineAffichee, temoin: o.temoin })
+  if (ids !== IDS) s.note(`--critere : seulement ${ids.join(', ')} (les autres critères ne sont pas jugés)`)
   await s.executer(async () => {
     let racine = o.racine
     if (o.temoin) {
@@ -676,13 +835,22 @@ async function principal() {
       s.note(`témoin : ${t.copies.join(', ')} copiés depuis ${o.racine} ; superposés depuis ${posix(path.relative(R, TEMOIN_SOURCES))} : ${t.superposes.join(', ')}`)
     }
     const dossier = dossierTravail(JUGE, `sonde-${empreinte(cleChemin(racine))}`)
-    s.resultat('WM-1', jugerAiguillage(racine, dossier))
-    const route = jugerRoute(racine, dossier)
-    s.resultat('WM-2', route.wm2)
-    const fichiers = jugerInchanges(racine)
-    if (route.wm3.ok && fichiers.ok) s.passe('WM-3', `${route.wm3.resume} ; ${fichiers.resume}`)
-    else for (const e of [...(route.wm3.ok ? [] : route.wm3.echecs), ...(fichiers.ok ? [] : fichiers.echecs)]) s.echoue('WM-3', e)
-    s.resultat('WM-4', jugerTypecheck(racine))
+    if (veut('WM-1')) s.resultat('WM-1', jugerAiguillage(racine, dossier))
+    const route = veut('WM-2') || veut('WM-3') || veut('WM-5') ? jugerRoute(racine, dossier) : null
+    if (veut('WM-2')) s.resultat('WM-2', route.wm2)
+    if (veut('WM-3')) {
+      const fichiers = jugerInchanges(racine)
+      if (route.wm3.ok && fichiers.ok) s.passe('WM-3', `${route.wm3.resume} ; ${fichiers.resume}`)
+      else for (const e of [...(route.wm3.ok ? [] : route.wm3.echecs), ...(fichiers.ok ? [] : fichiers.echecs)]) s.echoue('WM-3', e)
+    }
+    if (veut('WM-5')) {
+      const a = jugerAiguillagePaiement(racine, dossier)
+      const z = sondesPaiement(o.racine)
+      const echecs = [...a.echecs, ...route.wm5.echecs, ...z.echecs]
+      if (echecs.length) for (const e of echecs) s.echoue('WM-5', e)
+      else s.passe('WM-5', `${a.resume} ; ${route.wm5.resume} ; ${z.faits.join(' ; ')}`)
+    }
+    if (veut('WM-4')) s.resultat('WM-4', jugerTypecheck(racine))
   })
 }
 const pareil = (a, b) => (process.platform === 'win32' ? a.toLowerCase() === b.toLowerCase() : a === b)

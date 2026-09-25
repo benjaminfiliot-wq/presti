@@ -47,9 +47,9 @@ export default function SectionProfil({ a, patch, signaler }: SectionProps) {
 
       <div className="tool-card">
         <h2>Adresse publique</h2>
-        <p className="muted" style={{ margin: '0 0 .8rem' }}>Là où vos clients vous trouvent : votre site et votre plateforme de conversation.</p>
+        <p className="muted" style={{ margin: '0 0 .8rem' }}>Là où vos clients vous trouvent : votre plateforme de conversation{a.site_active === true ? ' et votre site' : ''}.</p>
         <div className="param-urls">
-          <div><span>Site</span><a href={urlSite(adresse)} target="_blank" rel="noreferrer">{site}</a></div>
+          {a.site_active === true ? <div><span>Site</span><a href={urlSite(adresse)} target="_blank" rel="noreferrer">{site}</a></div> : null}
           <div><span>Plateforme</span><a href={urlPlateforme(adresse)} target="_blank" rel="noreferrer">{afficher(urlPlateforme(adresse))}</a></div>
         </div>
         {slug ? <AdresseEditor slug={slug} prefixe={prefixe} jeton={jeton} onChange={(s) => patch({ slug: s })} /> : null}

@@ -12,19 +12,22 @@
    "fiche": "025-06",
    "fichier": "app/layout.tsx",
    "ancien": "\"Presti répond à vos demandes de devis en moins d'une minute, dans votre ton, et relance automatiquement jusqu'à la réponse. Ne perdez plus jamais un chantier faute de temps.\"",
-   "nouveau": "\"Presti prépare la réponse à chaque demande de devis en moins d'une minute, dans votre ton, et relance automatiquement jusqu'à la réponse. Vous l'envoyez.\""
+   "nouveau": "\"Presti prépare la réponse à chaque demande de devis en moins d'une minute, dans votre ton, et relance trois fois vos prospects. Vous l'envoyez.\"",
+   "revise": "025-20 (25/09, D16 : les relances s’arrêtent après trois)"
   },
   {
    "fiche": "025-06",
    "fichier": "app/page.tsx",
    "ancien": "\"Presti répond à chaque demande de devis en moins d'une minute, dans votre ton, génère vos devis et factures, et relance automatiquement jusqu'à la réponse.\"",
-   "nouveau": "\"Presti prépare la réponse à chaque demande de devis en moins d'une minute, génère vos devis et factures, et relance automatiquement jusqu'à la réponse.\""
+   "nouveau": "\"Presti prépare la réponse à chaque demande de devis en moins d'une minute, génère vos devis et factures, et relance trois fois vos prospects (J+2, J+5, J+10).\"",
+   "revise": "025-20 (25/09, D16 : les relances s’arrêtent après trois)"
   },
   {
    "fiche": "025-06",
    "fichier": "app/page.tsx",
    "ancien": "Presti répond à chaque demande de devis en moins d&apos;une minute — dans votre style —, chiffre le devis et relance tout seul jusqu&apos;à la signature.",
-   "nouveau": "Presti prépare la réponse à chaque demande de devis en moins d&apos;une minute, dans votre style, et vous l&apos;envoyez. Il chiffre le devis et relance automatiquement jusqu&apos;à la réponse."
+   "nouveau": "Presti prépare la réponse à chaque demande de devis en moins d&apos;une minute, dans votre style, et vous l&apos;envoyez. Il chiffre le devis et relance trois fois vos prospects (J+2, J+5, J+10).",
+   "revise": "025-20 (25/09, D16 : les relances s’arrêtent après trois)"
   },
   {
    "fiche": "025-06",
@@ -48,7 +51,8 @@
    "fiche": "025-06",
    "fichier": "app/faq/page.tsx",
    "ancien": "Il répond à vos demandes de devis en moins d’une minute, dans votre ton, génère des devis et factures conformes, et relance automatiquement vos prospects jusqu’à leur réponse.",
-   "nouveau": "Il prépare la réponse à vos demandes de devis en moins d’une minute, dans votre ton, génère des devis et factures conformes, et relance automatiquement vos prospects jusqu’à leur réponse."
+   "nouveau": "Il prépare la réponse à vos demandes de devis en moins d’une minute, dans votre ton, génère des devis et factures conformes, et relance trois fois vos prospects (J+2, J+5, J+10).",
+   "revise": "025-20 (25/09, D16 : les relances s’arrêtent après trois)"
   },
   {
    "fiche": "025-06",
@@ -121,6 +125,24 @@
    "fichier": "lib/flags.ts",
    "ancien": "  landingVideo: true,",
    "nouveau": "  landingVideo: false,"
+  },
+  {
+   "fiche": "025-20",
+   "fichier": "app/faq/page.tsx",
+   "ancien": "1 crédit = 1 réponse ou 1 devis généré par l’IA.",
+   "nouveau": "1 crédit = 1 réponse ou 1 devis généré par l’IA (3 crédits avec le modèle Expert)."
+  },
+  {
+   "fiche": "025-20",
+   "fichier": "lib/aide.ts",
+   "ancien": "'Choisissez le mode de réponse : Automatique, Assistée (vous validez) ou Manuelle.',",
+   "nouveau": "'Choisissez le mode de réponse : Automatique (offre Studio et au-delà), Assistée (vous validez) ou Manuelle.',"
+  },
+  {
+   "fiche": "025-20",
+   "fichier": "lib/aide.ts",
+   "ancien": "\"En mode Automatique, le client reçoit une réponse immédiate rédigée par l'assistant. En Assistée, rien ne part \" +",
+   "nouveau": "\"En mode Automatique (offre Studio et au-delà), le client reçoit une réponse immédiate rédigée par l'assistant. En Assistée, rien ne part \" +"
   }
  ]
 }

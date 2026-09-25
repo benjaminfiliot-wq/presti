@@ -11,10 +11,10 @@
 // route, AVANT d'être vendu — sinon chacun de ses paiements lèvera une alerte d'orphelin.
 import type Stripe from 'stripe'
 
-export type Voie = 'commande_site' | 'abonnement' | 'orphelin'
+export type Voie = 'commande_site' | 'abonnement' | 'en_attente' | 'orphelin'
 
 /** Ce que l'aiguillage lit d'une session, et rien d'autre. Une session réduite à {} est acceptée (→ orphelin). */
-export type SessionAiguillee = Partial<Pick<Stripe.Checkout.Session, 'mode' | 'metadata' | 'client_reference_id'>>
+export type SessionAiguillee = Partial<Pick<Stripe.Checkout.Session, 'mode' | 'metadata' | 'client_reference_id' | 'payment_status'>>
 
 /** L'artisan et le plan d'une session d'abonnement, lus comme la route les a toujours lus ; chaînes vides si absents. */
 export function champsAbonnement(s: SessionAiguillee): { uid: string; plan: string } {
@@ -24,10 +24,14 @@ export function champsAbonnement(s: SessionAiguillee): { uid: string; plan: stri
   }
 }
 
-/** La voie d'un checkout.session.completed : 'commande_site', 'abonnement' ou 'orphelin'. */
+/** La voie d'une session : un paiement en cours ne sert encore personne. */
 export function aiguiller(s: SessionAiguillee): Voie {
-  if (s.mode === 'payment' && s.metadata?.type === 'commande_site') return 'commande_site'
+  if (s.mode === 'payment' && s.metadata?.type === 'commande_site') {
+    return s.payment_status === 'paid' ? 'commande_site' : s.payment_status === 'unpaid' ? 'en_attente' : 'orphelin'
+  }
   const { uid, plan } = champsAbonnement(s)
-  if (uid && plan) return 'abonnement'
+  if (uid && plan) {
+    return s.payment_status === 'paid' || s.payment_status === 'no_payment_required' ? 'abonnement' : s.payment_status === 'unpaid' ? 'en_attente' : 'orphelin'
+  }
   return 'orphelin'
 }

@@ -1,0 +1,98 @@
+{
+  "_": "Jeu d’essai de la série 025 (revue avant mise en ligne du 25/09, D19 ; écrit par Claude Code) : une commande de menuisier FICTIVE avec son propre contenu.json, pour FS-12 de scripts/formulaire-site-qa.mjs (et FS-9 pour le plombier). Photos : celles de la démo gelée public/sites-demo/menuisier/ (bases de matiere.photos), copiées par le juge avec leurs attributions. Téléphone de la plage 02 61 91 réservée à la fiction (Arcep, décision 2019-0954), domaine en .example et e-mail en .invalid (RFC 2606), SIREN et décennale fictifs. Le domaine est là pour que FS-12 juge le métier sans dépendre de l’adresse d’un site sans domaine (D21, jugée à part sur commande-exemple). Ne jamais publier ce site.",
+  "id": "00000000-0000-4000-8000-000000025104",
+  "etat": "payee",
+  "slug": "essai-025-menuisier-tours",
+  "nom": "Menuiserie Carré Tourangelle",
+  "email": "contact@menuiserie-carre.invalid",
+  "telephone": "+33 2 61 91 51 04",
+  "metier": "menuisier",
+  "metiers_secondaires": [],
+  "communes": [
+    "Tours",
+    "Joué-lès-Tours"
+  ],
+  "domaine_mode": "existant",
+  "domaine": "menuiserie-carre.example",
+  "devis": {
+    "projets": [
+      "Escalier",
+      "Bibliothèque",
+      "Placard",
+      "Meuble sur mesure",
+      "Autre ouvrage"
+    ],
+    "delais": [
+      "Dans le mois",
+      "Dans les trois mois",
+      "Plus tard, je me renseigne"
+    ]
+  },
+  "matiere": {
+    "photos": [
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "escalier-colimacon",
+        "demo": "menuisier"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "escalier-tournant",
+        "demo": "menuisier"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "lit",
+        "demo": "menuisier"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "bibliotheque",
+        "demo": "menuisier"
+      }
+    ],
+    "logo_url": null,
+    "adresse": "6 rue de l’Essai, 37000 Tours",
+    "siren": "000000000",
+    "horaires": "Lundi–vendredi, 8 h–18 h",
+    "decennale": {
+      "assureur": "Assureur d’essai",
+      "numero": "ESSAI-025-104"
+    },
+    "avis_google": {
+      "url": ""
+    },
+    "artisan": {
+      "prenom": "Sophie",
+      "nom": "Carré",
+      "installation": 2014,
+      "parcours": "CAP de menuisier puis six ans chez un ébéniste de Tours avant d’ouvrir mon propre atelier.",
+      "citation": "Je dessine chaque pièce pour votre maison, et je la pose moi-même, jusqu’au dernier réglage.",
+      "chiffres": [
+        {
+          "valeur": "12",
+          "unite": "ans",
+          "legende": "de métier, dont dix à mon compte"
+        },
+        {
+          "valeur": "6",
+          "unite": "semaines",
+          "legende": "délai type d’un escalier sur mesure"
+        },
+        {
+          "valeur": "10",
+          "unite": "ans",
+          "legende": "de garantie décennale sur les ouvrages posés"
+        }
+      ]
+    }
+  }
+}

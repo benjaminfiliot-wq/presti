@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { api, dateFr, jeton, type SectionProps } from './commun'
 import { estNatif, partagerFichier } from '@/lib/natif'
+import { actif } from '@/lib/flags'
 
 // Données & confidentialité (sprint J-1 §6) : export ZIP, suppressions granulaires
 // (v4 §C3, routes /api/donnees) et suppression du compte avec 30 jours de grâce.
@@ -116,7 +117,7 @@ export default function SectionDonnees({ a, patch, signaler }: SectionProps) {
           Les <b>devis envoyés et factures émises</b> ne sont jamais supprimés séparément : la loi impose de les conserver.
         </p>
         <div className="dz-actions">
-          {ACTIONS.filter((x) => !(x.id === 'compte' && supprimeLe)).map((x) => (
+          {ACTIONS.filter((x) => !(x.id === 'compte' && supprimeLe) && !(x.id === 'site_reinitialiser' && !actif('constructeurSite'))).map((x) => (
             <button key={x.id} type="button" className={`btn btn--ghost${x.danger ? ' danger' : ''}${ouverte?.action.id === x.id ? ' on' : ''}`} disabled={!!busy && busy !== x.id} onClick={() => ouvrir(x)}>
               {busy === x.id ? '…' : x.titre}
               <small>{x.detail}</small>

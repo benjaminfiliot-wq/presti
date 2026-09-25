@@ -1,22 +1,54 @@
-// TÉMOIN de scripts/webhook-muet-qa.mjs (fiche 025-01, point 9) — ce n'est PAS le code de production de 025-07.
+// TÉMOIN de scripts/webhook-muet-qa.mjs — ce n'est PAS le code de production. Réécrit par Claude Code le 25/09 pour la
+// fiche 025-22 (défaut D04 de la relecture du 25/09) : lib/stripeAiguillage.ts de HEAD (83ce3dd, fiche 025-07), avec le seul
+// changement que 025-22 doit faire — une session n'est encaissée (commande de site) ou servie (abonnement) que PAYÉE.
+// `node scripts/webhook-muet-qa.mjs --temoin` copie app/, lib/, package.json, tsconfig.json (et middleware.ts, next-env.d.ts)
+// dans .orchestre/travail/webhook-muet-qa/temoin/ et y pose ce fichier sans le suffixe .temoin : il doit passer WM-1 à WM-5.
+// Le suffixe tient ce fichier hors de `npm run typecheck` du dépôt (tsconfig.json inclut **/*.ts, scripts/ compris).
 //
-// `node scripts/webhook-muet-qa.mjs --temoin` copie app/, lib/, package.json, tsconfig.json (et middleware.ts, next-env.d.ts
-// s'ils existent) dans .orchestre/travail/webhook-muet-qa/temoin/, puis y pose ce fichier SANS le suffixe .temoin, en
-// lib/stripeAiguillage.ts : c'est l'état « après » simulé, qui doit passer WM-1 à WM-4. Le suffixe tient ce fichier hors de
-// `npm run typecheck` du dépôt (tsconfig.json inclut **/*.ts, scripts/ compris) : sans lui, l'import de la route témoin
-// casserait la vérification de types de tout le dépôt.
+// lib/stripeAiguillage.ts — où va un checkout.session.completed (fiche 025-07). Fonction pure : ni réseau, ni base, ni
+// horloge ; elle lit la session sans la modifier. La route du webhook (app/api/stripe/webhook/route.ts) la suit à la lettre.
+//
+// Les deux voies connues reprennent MOT POUR MOT les conditions de la route avant 025-07 (route.ts:35-44 à 1620723) :
+//   · commande_site : paiement unique (mode 'payment') ET metadata.type = 'commande_site' — prioritaire sur l'abonnement ;
+//   · abonnement    : un uid (metadata.uid, sinon client_reference_id) ET un plan (metadata.plan), quel que soit le mode.
+// Tout le reste est « orphelin » : encaissé par Stripe sans que Presti sache le servir (lien de paiement créé à la main,
+// futur pack sans branche). Avant 025-07, il tombait dans le vide ; la route alerte maintenant l'entreprise.
+//
+// Payé d'abord (fiche 025-22, D04) : un prélèvement SEPA ou tout moyen différé arrive en checkout.session.completed avec
+// payment_status 'unpaid' ; l'argent n'est pas là. La voie est alors 'en_attente' : rien n'est servi, et
+// checkout.session.async_payment_succeeded refera l'aiguillage, payé. Un abonnement à 0 € (code promo à 100 %,
+// /api/subscribe accepte les codes) arrive en 'no_payment_required' : il est servi. Une commande de site n'est jamais gratuite.
+//
+// Tout nouveau produit payant (pack pubs, Studio) porte un metadata.type et reçoit sa voie ICI, puis sa branche dans la
+// route, AVANT d'être vendu — sinon chacun de ses paiements lèvera une alerte d'orphelin.
 import type Stripe from 'stripe'
 
-export type Voie = 'commande_site' | 'abonnement' | 'orphelin'
+export type Voie = 'commande_site' | 'abonnement' | 'en_attente' | 'orphelin'
 
-type SessionAiguillee = Pick<Stripe.Checkout.Session, 'mode' | 'metadata' | 'client_reference_id'>
+/** Ce que l'aiguillage lit d'une session, et rien d'autre. Une session réduite à {} est acceptée (→ orphelin). */
+export type SessionAiguillee = Partial<Pick<Stripe.Checkout.Session, 'mode' | 'metadata' | 'client_reference_id' | 'payment_status'>>
 
-/** Mêmes conditions que app/api/stripe/webhook/route.ts:35-44 à 1620723, dans le même ordre ; tout le reste est orphelin. */
-export function aiguiller(session: SessionAiguillee): Voie {
-  const meta = session.metadata ?? {}
-  if (session.mode === 'payment' && meta.type === 'commande_site') return 'commande_site'
-  const uid = meta.uid || session.client_reference_id || ''
-  const plan = meta.plan || ''
+/** L'artisan et le plan d'une session d'abonnement, lus comme la route les a toujours lus ; chaînes vides si absents. */
+export function champsAbonnement(s: SessionAiguillee): { uid: string; plan: string } {
+  return {
+    uid: (s.metadata?.uid as string) || (s.client_reference_id as string) || '',
+    plan: (s.metadata?.plan as string) || '',
+  }
+}
+
+/** La voie déclarée par la session (025-07), sans regarder si elle est payée. */
+function voieDeclaree(s: SessionAiguillee): Voie {
+  if (s.mode === 'payment' && s.metadata?.type === 'commande_site') return 'commande_site'
+  const { uid, plan } = champsAbonnement(s)
   if (uid && plan) return 'abonnement'
   return 'orphelin'
+}
+
+/** La voie d'une session : 'commande_site' ou 'abonnement' seulement si elle est payée ; 'en_attente' si le paiement est en cours. */
+export function aiguiller(s: SessionAiguillee): Voie {
+  const voie = voieDeclaree(s)
+  const differe = s.payment_status === 'unpaid'
+  if (voie === 'commande_site' && s.payment_status !== 'paid') return differe ? 'en_attente' : 'orphelin'
+  if (voie === 'abonnement' && s.payment_status !== 'paid' && s.payment_status !== 'no_payment_required') return differe ? 'en_attente' : 'orphelin'
+  return voie
 }

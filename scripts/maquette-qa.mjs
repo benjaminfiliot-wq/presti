@@ -102,6 +102,11 @@
 //        haut crédit caché (mutation : le juge cache les crédits, recapture, et cet écart doit valoir 4 au moins ; il vérifie
 //        aussi que sa recherche ne les trouve plus). Un crédit incrusté par le capteur hors de la page n'est donc pas vu : le
 //        crédit vit dans la page (légende de la photo du haut), et la capture le montre.
+//   MQ-12 (revue avant mise en ligne du 25/09, D28, fiche 025-21) le nom de l'entreprise est recopié tel quel : la maquette du
+//        modèle du jeu d'essai est générée deux fois dans .orchestre/travail/maquette-qa/mq12/, avec deux noms qui ne diffèrent que
+//        par des motifs de remplacement de String.replace (« $' », « $& », « $` », « $$ ») ; une fois le second nom (échappé
+//        HTML) remplacé par le premier, les deux index.html sont identiques octet pour octet, et le second nom y figure autant de
+//        fois que le premier. Mutation : une page où « {entreprise} » est remplacé par replaceAll avec une chaîne : vue.
 //   T1   Lestraque régénéré dans .orchestre/travail/maquette-qa/lestraque/ : index.html et site.js identiques, styles.css hors ligne 1
 //        (scripts/fixtures/025/commun.mjs, t1) ; T2 : les neuf démos gelées intactes (t2). Jugés après les générations : un mode
 //        maquette qui toucherait Lestraque ou une démo gelée en place est pris.
@@ -135,13 +140,13 @@ import {
 } from './fixtures/025/commun.mjs'
 
 const JUGE = 'maquette-qa'
-const IDS = ['MQ-1', 'MQ-2', 'MQ-3', 'MQ-4', 'MQ-5', 'MQ-6', 'MQ-7', 'MQ-8', 'MQ-9', 'MQ-10', 'MQ-11', 'T1', 'T2']
+const IDS = ['MQ-1', 'MQ-2', 'MQ-3', 'MQ-4', 'MQ-5', 'MQ-6', 'MQ-7', 'MQ-8', 'MQ-9', 'MQ-10', 'MQ-11', 'MQ-12', 'T1', 'T2']
 const PAR_METIER = ['MQ-1', 'MQ-3', 'MQ-4', 'MQ-5', 'MQ-6', 'MQ-7', 'MQ-8', 'MQ-11']
 const MO = 1_000_000
 const MAX_CAPTURE = 1 * MO
 const MAX_DOSSIER = 3 * MO
 const ZONES_MIN = 5
-const RESERVES = new Set(['lestraque', 'temoin', 'jeux', 'captures', 'capturer-vide', 'mq10'])
+const RESERVES = new Set(['lestraque', 'temoin', 'jeux', 'captures', 'capturer-vide', 'mq10', 'mq12'])
 const EXCLUS_MQ9 = ['scripts/fixtures/025', '.orchestre']
 const IMAGE = /\.(?:avif|webp|jpe?g|png|gif)$/i
 const CAPTURES_MQ8 = ['capture-bureau.jpg', 'capture-telephone.jpg']
@@ -1023,6 +1028,49 @@ function mq10({ racine, ex, generes }) {
   return { d, faits: [resume] }
 }
 
+// ── MQ-12 (D28) : le nom de l'entreprise recopié tel quel, jamais lu comme un motif de remplacement ────────────────────────
+const NOM_SIMPLE = 'Atelier Dollar Essai'
+const NOM_DOLLARS = 'Atelier$\'Dollar$&Essai$`$$'
+const escHtml = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+/** Les défauts de deux pages qui ne diffèrent que par le nom → liste */
+function defautsNom(htmlSimple, htmlDollars) {
+  const d = []
+  const a = escHtml(NOM_SIMPLE), b = escHtml(NOM_DOLLARS)
+  const nA = htmlSimple.split(a).length - 1, nB = htmlDollars.split(b).length - 1
+  if (!nA) d.push('le nom n’est pas dans la page')
+  if (nB !== nA) d.push(`le nom à « $ » figure ${nB} fois, le nom simple ${nA} fois`)
+  const ramene = htmlDollars.split(b).join(a)
+  if (ramene !== htmlSimple) {
+    let i = 0
+    while (i < ramene.length && ramene[i] === htmlSimple[i]) i++
+    d.push(`les pages diffèrent hors du nom, à partir de « ${court(htmlDollars.slice(Math.max(0, i - 40), i + 60).replace(/\s+/g, ' '), 110)} »`)
+  }
+  return d
+}
+function mq12({ racine, ex }) {
+  const d = [], faits = []
+  const dJeux = dossierTravail(JUGE, 'mq12', 'jeux')
+  const pages = {}
+  for (const [cle, nom] of [['simple', NOM_SIMPLE], ['dollars', NOM_DOLLARS]]) {
+    const jeu = path.join(dJeux, `${cle}.json`)
+    fs.writeFileSync(jeu, `${JSON.stringify({ ...ex, _: `Copie de scripts/fixtures/025/maquette-exemple.json par ${JUGE} (MQ-12), nom d’entreprise ${cle}.`, entreprise: nom }, null, 1)}\n`)
+    const sortie = exigerSousTravail(path.join(TRAVAIL, JUGE, 'mq12', cle))
+    fs.rmSync(sortie, { recursive: true, force: true })
+    const g = generer(racine, jeu, sortie)
+    if (g.code !== 0 || !fichierNonVide(path.join(sortie, 'index.html'))) { d.push(`maquette au nom ${cle} : ${codeDe(g)}${messageDe(g) ? ` « ${court(messageDe(g), 90)} »` : ''}`); continue }
+    pages[cle] = fs.readFileSync(path.join(sortie, 'index.html'), 'utf8')
+  }
+  if (pages.simple && pages.dollars) {
+    d.push(...defautsNom(pages.simple, pages.dollars))
+    // mutation : « {entreprise} » remplacé par replaceAll avec une chaîne (le générateur d'avant le correctif)
+    const gabarit = pages.simple.split(escHtml(NOM_SIMPLE)).join('{entreprise}')
+    const vu = defautsNom(pages.simple, gabarit.replaceAll('{entreprise}', escHtml(NOM_DOLLARS))).length > 0
+    if (!vu) d.push('détecteur aveugle : un nom passé à replaceAll comme chaîne n’est pas vu')
+    if (!d.length) faits.push(`nom « ${NOM_DOLLARS} » : index.html identique à celui du nom simple une fois le nom ramené (${pages.simple.split(escHtml(NOM_SIMPLE)).length - 1} occurrence(s), ${Buffer.byteLength(pages.simple)} o) ; mutation : replaceAll avec une chaîne → vue`)
+  }
+  return { d, faits }
+}
+
 // ── MQ-9 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 function mq9(racine, ex) {
   const mots = ex.entreprise.split(/\s+/).filter((w) => w.length >= 8).sort((a, b) => b.length - a.length)
@@ -1128,6 +1176,12 @@ await s.executer(async () => {
     const r10 = mq10({ racine, ex, generes })
     if (r10.d.length) for (const x of r10.d) echoue('MQ-10', x); else passe('MQ-10', r10.faits.join(' ; '))
   } catch (e) { echoue('MQ-10', `libellés des métiers : interrompu : ${premiereLigne(e)}`) }
+
+  // MQ-12, sur la racine jugée
+  try {
+    const r12 = mq12({ racine, ex })
+    if (r12.d.length) for (const x of r12.d) echoue('MQ-12', x); else passe('MQ-12', r12.faits.join(' ; '))
+  } catch (e) { echoue('MQ-12', `nom à « $ » : interrompu : ${premiereLigne(e)}`) }
 
   // non-régression, après les générations
   const r1 = t1({ juge: JUGE, racine: racineNR })

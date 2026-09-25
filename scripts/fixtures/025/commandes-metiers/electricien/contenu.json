@@ -1,0 +1,488 @@
+{
+  "metier": "electricien",
+  "extrait_le": "2026-09-25",
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Électricien à Nantes — Benoît Électricité Nantaise",
+      "description": "Benoît Électricité Nantaise, électricien à Nantes et Rezé : mise aux normes, tableau électrique, éclairage. Devis détaillé après visite.",
+      "h1": "Électricien à Nantes",
+      "h1Ligne": "Un courant sûr, repéré",
+      "chapeau": "Mise aux normes, tableaux et éclairage : je câble proprement et je repère tout.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Ce que je fais",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je travaille seul, sur rendez-vous, en logement comme en local professionnel."
+            },
+            {
+              "type": "h3",
+              "texte": "Mise aux normes"
+            },
+            {
+              "type": "p",
+              "texte": "Je contrôle l’installation, je remplace ce qui est dangereux et je vous remets un schéma à jour."
+            },
+            {
+              "type": "h3",
+              "texte": "Tableau électrique"
+            },
+            {
+              "type": "p",
+              "texte": "Je pose un tableau neuf, avec différentiels adaptés et chaque circuit étiqueté."
+            },
+            {
+              "type": "h3",
+              "texte": "Éclairage"
+            },
+            {
+              "type": "p",
+              "texte": "Je pose luminaires, variateurs et prises supplémentaires là où vous en avez besoin."
+            },
+            {
+              "type": "h3",
+              "texte": "Dépannage"
+            },
+            {
+              "type": "p",
+              "texte": "Je cherche la cause d’une coupure, je répare et je vous dis ce qui l’a provoquée."
+            }
+          ]
+        },
+        {
+          "genre": "galerie",
+          "h2": "Chantiers récents",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Quelques installations terminées, photographiées avant la remise des clés."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Autour de Nantes",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je suis installé à Nantes et je me déplace dans les communes voisines, sans frais de déplacement cachés."
+            },
+            {
+              "type": "h3",
+              "texte": "Nantes"
+            },
+            {
+              "type": "p",
+              "texte": "Je travaille régulièrement à Nantes : c’est là que je suis installé."
+            },
+            {
+              "type": "h3",
+              "texte": "Rezé"
+            },
+            {
+              "type": "p",
+              "texte": "Je travaille régulièrement à Rezé : à quelques minutes de chez moi."
+            }
+          ]
+        },
+        {
+          "genre": "etapes",
+          "h2": "En trois temps",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Du premier appel à la fin du chantier, vous savez toujours où nous en sommes."
+            },
+            {
+              "type": "h3",
+              "texte": "Votre appel"
+            },
+            {
+              "type": "p",
+              "texte": "Vous me décrivez la panne ou le projet, pièce par pièce, et je note ce qu’il faut vérifier."
+            },
+            {
+              "type": "h3",
+              "texte": "La visite"
+            },
+            {
+              "type": "p",
+              "texte": "Je teste l’installation sur place et je vous remets un devis détaillé, poste par poste."
+            },
+            {
+              "type": "h3",
+              "texte": "Le chantier"
+            },
+            {
+              "type": "p",
+              "texte": "Je coupe le courant le moins longtemps possible et je remets tout en service devant vous."
+            }
+          ]
+        },
+        {
+          "genre": "faq",
+          "h2": "Vos questions",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Ce qu’on me demande le plus souvent avant un premier rendez-vous."
+            },
+            {
+              "type": "h3",
+              "texte": "Faut-il couper le courant longtemps ?"
+            },
+            {
+              "type": "p",
+              "texte": "Quelques heures seulement pour un tableau : je prépare tout avant la coupure."
+            },
+            {
+              "type": "h3",
+              "texte": "Remettez-vous une attestation ?"
+            },
+            {
+              "type": "p",
+              "texte": "Oui, je vous remets le schéma et l’attestation utile pour le Consuel quand elle est demandée."
+            },
+            {
+              "type": "h3",
+              "texte": "Intervenez-vous en urgence ?"
+            },
+            {
+              "type": "p",
+              "texte": "Pour une coupure totale, je passe dans la journée quand mon planning le permet."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Décrivez-moi votre besoin : je vous rappelle pour convenir d’un passage."
+            },
+            {
+              "type": "h3",
+              "texte": "Adresse"
+            },
+            {
+              "type": "p",
+              "texte": "2 rue de l’Essai, 44000 Nantes"
+            },
+            {
+              "type": "h3",
+              "texte": "Horaires"
+            },
+            {
+              "type": "p",
+              "texte": "Lundi–vendredi, 8 h–18 h"
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "Electrician",
+          "name": "Benoît Électricité Nantaise",
+          "url": "https://exemple.invalid/",
+          "telephone": "+33 2 61 91 51 03",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "2 rue de l’Essai",
+            "postalCode": "44000",
+            "addressLocality": "Nantes",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Nantes",
+            "Rezé"
+          ]
+        }
+      ]
+    },
+    "/electricien-nantes/": {
+      "type": "commune",
+      "cible": "Nantes",
+      "title": "Artisan électricien à Nantes — Benoît Électricité Nantaise",
+      "description": "Électricien à Nantes : tableau électrique et éclairage, devis détaillé après une visite sur place.",
+      "h1": "Électricien à Nantes",
+      "h1Ligne": "Tableaux repérés",
+      "kicker": "Intervention à Nantes",
+      "chapeau": "Je viens à Nantes sur rendez-vous, avec un devis clair avant le moindre travail.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Interventions à Nantes",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "À Nantes, je passe voir le chantier avant de chiffrer quoi que ce soit."
+            },
+            {
+              "type": "h3",
+              "texte": "Mise aux normes"
+            },
+            {
+              "type": "p",
+              "texte": "Je contrôle l’installation, je remplace ce qui est dangereux et je vous remets un schéma à jour, à Nantes comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Tableau électrique"
+            },
+            {
+              "type": "p",
+              "texte": "Je pose un tableau neuf, avec différentiels adaptés et chaque circuit étiqueté, à Nantes comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Éclairage"
+            },
+            {
+              "type": "p",
+              "texte": "Je pose luminaires, variateurs et prises supplémentaires là où vous en avez besoin, à Nantes comme ailleurs."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je me déplace aussi à Rezé, à quelques minutes de Nantes."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Votre projet à Nantes",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Dites-moi ce qu’il faut faire à Nantes : je vous rappelle dans la journée ouvrée."
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "Electrician",
+          "name": "Benoît Électricité Nantaise",
+          "url": "https://exemple.invalid/electricien-nantes/",
+          "telephone": "+33 2 61 91 51 03",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "2 rue de l’Essai",
+            "postalCode": "44000",
+            "addressLocality": "Nantes",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Nantes",
+            "Rezé"
+          ]
+        }
+      ]
+    },
+    "/electricien-reze/": {
+      "type": "commune",
+      "cible": "Rezé",
+      "title": "Artisan électricien à Rezé — Benoît Électricité Nantaise",
+      "description": "Électricien à Rezé : tableau électrique et éclairage, devis détaillé après une visite sur place.",
+      "h1": "Électricien à Rezé",
+      "h1Ligne": "Installations remises à neuf",
+      "kicker": "Intervention à Rezé",
+      "chapeau": "Je viens à Rezé sur rendez-vous, avec un devis clair avant le moindre travail.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Interventions à Rezé",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "À Rezé, je passe voir le chantier avant de chiffrer quoi que ce soit."
+            },
+            {
+              "type": "h3",
+              "texte": "Mise aux normes"
+            },
+            {
+              "type": "p",
+              "texte": "Je contrôle l’installation, je remplace ce qui est dangereux et je vous remets un schéma à jour, à Rezé comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Tableau électrique"
+            },
+            {
+              "type": "p",
+              "texte": "Je pose un tableau neuf, avec différentiels adaptés et chaque circuit étiqueté, à Rezé comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Éclairage"
+            },
+            {
+              "type": "p",
+              "texte": "Je pose luminaires, variateurs et prises supplémentaires là où vous en avez besoin, à Rezé comme ailleurs."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je me déplace aussi à Nantes, à quelques minutes de Rezé."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Votre projet à Rezé",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Dites-moi ce qu’il faut faire à Rezé : je vous rappelle dans la journée ouvrée."
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "Electrician",
+          "name": "Benoît Électricité Nantaise",
+          "url": "https://exemple.invalid/electricien-reze/",
+          "telephone": "+33 2 61 91 51 03",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "2 rue de l’Essai",
+            "postalCode": "44000",
+            "addressLocality": "Nantes",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Nantes",
+            "Rezé"
+          ]
+        }
+      ]
+    },
+    "/mentions-legales/": {
+      "type": "legal",
+      "title": "Mentions légales — Benoît Électricité Nantaise",
+      "description": "Mentions légales du site de Benoît Électricité Nantaise, électricien à Nantes : éditeur, assurance et hébergement.",
+      "h1": "Mentions légales",
+      "sections": [
+        {
+          "h2": "Identification de l’entreprise",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Nom commercial : Benoît Électricité Nantaise"
+            },
+            {
+              "type": "p",
+              "texte": "Adresse du siège : 2 rue de l’Essai, 44000 Nantes"
+            },
+            {
+              "type": "p",
+              "texte": "SIREN : 000000000"
+            },
+            {
+              "type": "p",
+              "texte": "Directeur de la publication : Karim Benoît"
+            }
+          ]
+        },
+        {
+          "h2": "Assurance responsabilité décennale",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Compagnie d’assurance : Assureur d’essai"
+            },
+            {
+              "type": "p",
+              "texte": "Numéro de police : ESSAI-025-103"
+            },
+            {
+              "type": "p",
+              "texte": "Zone couverte : Nantes et Rezé"
+            }
+          ]
+        },
+        {
+          "h2": "Hébergement du site",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Le site est hébergé par Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis."
+            }
+          ]
+        },
+        {
+          "h2": "Propriété intellectuelle et crédits photographiques",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Les textes de ce site appartiennent à Benoît Électricité Nantaise. Les crédits des photographies sont détaillés ci-dessous."
+            }
+          ]
+        }
+      ],
+      "jsonld": []
+    },
+    "/confidentialite/": {
+      "type": "legal",
+      "title": "Confidentialité — Benoît Électricité Nantaise",
+      "description": "Ce que Benoît Électricité Nantaise fait des coordonnées laissées dans le formulaire de devis, et combien de temps elles sont gardées.",
+      "h1": "Politique de confidentialité",
+      "sections": [
+        {
+          "h2": "Données du formulaire",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Le formulaire de devis recueille le type de projet, la commune, le délai souhaité, votre message et un moyen de vous rappeler."
+            },
+            {
+              "type": "p",
+              "texte": "Ces données servent seulement à vous répondre ; Benoît Électricité Nantaise ne les vend ni ne les cède."
+            }
+          ]
+        },
+        {
+          "h2": "Durée de conservation",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Une demande restée sans suite est effacée au bout de trois ans."
+            }
+          ]
+        },
+        {
+          "h2": "Vos droits",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Vous pouvez demander l’accès, la rectification ou l’effacement de vos données en écrivant à contact@benoit-electricite.invalid."
+            }
+          ]
+        }
+      ],
+      "jsonld": []
+    }
+  }
+}

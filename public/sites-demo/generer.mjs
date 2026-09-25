@@ -21,6 +21,13 @@ const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').
 const telAffiche = (t) => { const d = String(t).replace(/\D/g, ''); const n = d.startsWith('33') ? '0' + d.slice(2) : d; return n.replace(/(\d{2})(?=\d)/g, '$1 ') }
 // le lien d'appel au format RFC 3966 (« tel:+33261913847 ») : des espaces dans l'URI ne sont pas valides (juge du 14/09)
 const telHref = (t) => `tel:${String(t).replace(/[^\d+]/g, '')}`
+function normaliserTelephone(t) {
+  if (t == null || String(t).trim() === '') return null
+  const chiffres = String(t ?? '').replace(/[\s.()\-]/g, '').replace(/^\+330/, '+33')
+  const national = /^0\d{9}$/.test(chiffres) ? chiffres : /^\+33\d{9}$/.test(chiffres) ? `0${chiffres.slice(3)}` : /^0033\d{9}$/.test(chiffres) ? `0${chiffres.slice(4)}` : null
+  if (!national) throw new Error(`numéro de téléphone invalide : ${t}`)
+  return `+33${national.slice(1)}`
+}
 // des espaces réels entre les mots : le texte reste lisible tel quel (juge, lecteur d'écran, copier-coller)
 const mots = (h1) => h1.split(/\s+/).map((m, i) => `<span class="mot" style="--i:${i}">${esc(m)}</span>`).join(' ')
 // Un titre de scène en mots masqués (priorité 9) : chaque mot monte sous son propre masque, lié à la position de défilement, sur
@@ -137,7 +144,7 @@ function gardeFousAccueil(html, ou, { site, tel, chapeau, source = false, source
   if (trop.length) throw new Error(`${ou} : ${trop.map(([s, n]) => `« ${decodeURIComponent(s.split('File:').pop())} » ${n} fois`).join(', ')} sur l’accueil (2 au plus)`)
   const hero = /<section class="hero\b[\s\S]*?<\/section>/.exec(corps)?.[0] || ''
   const h1 = texteDe(/<h1\b[\s\S]*?<\/h1>/.exec(html)?.[0] || '')
-  if (!/Menuisier/.test(h1) || !/Rennes/.test(h1)) throw new Error(`${ou} : le h1 doit garder « Menuisier » et « Rennes » (lu : « ${h1.trim()} »)`)
+  if (!source && (!/Menuisier/.test(h1) || !/Rennes/.test(h1))) throw new Error(`${ou} : le h1 doit garder « Menuisier » et « Rennes » (lu : « ${h1.trim()} »)`)
   if (/href="tel:/.test(hero)) throw new Error(`${ou} : un lien tel: est resté dans le héros`)
   if (chapeau.length > 90 || nbMots(chapeau) > 20) throw new Error(`${ou} : chapeau de ${chapeau.length} signes et ${nbMots(chapeau)} mots (90 et 20 au plus)`)
   const texte = texteDe(corps)
@@ -279,6 +286,7 @@ function commandeVersSite(commande, contenu) {
   const fichierUrls = fs.readFileSync(path.join(ICI, '..', '..', 'lib', 'urls.ts'), 'utf8')
   const basePresti = /export\s+const\s+BASE_PRESTI\s*=\s*['"](https:\/\/[^'"]+)['"]/.exec(fichierUrls)?.[1]
   if (!basePresti) throw new Error('BASE_PRESTI introuvable dans lib/urls.ts')
+  if (!commande.domaine && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(commande.id || '')) throw new Error('identifiant UUID de commande requis sans domaine')
   const artisan = commande.matiere?.artisan
   const pages = Object.entries(contenu.pages || {}).map(([chemin, page]) => ({
     chemin, type: page.type || (chemin === '/' ? 'accueil' : /mentions-legales|confidentialite/.test(chemin) ? 'legal' : 'commune'),
@@ -286,12 +294,11 @@ function commandeVersSite(commande, contenu) {
   }))
   return {
     slug: commande.slug, metier: commande.metier, nom: commande.nom,
-    telephone: commande.telephone, email: commande.email,
+    id: commande.id, telephone: normaliserTelephone(commande.telephone), email: commande.email,
     siren: commande.matiere?.siren, decennale: commande.matiere?.decennale,
     communes: commande.communes, metiers_secondaires: commande.metiers_secondaires || [],
     demo: false, pages,
-    url_base: commande.domaine ? `https://${commande.domaine}` : `${basePresti}/site/${commande.slug}`,
-    ...(contenu.demo_v16?.includes('lestraque') ? { da: 'lestraque' } : {}),
+    url_base: commande.domaine ? `https://${commande.domaine}` : `${basePresti}/site-genere/${commande.id}`,
     devis: commande.devis, artisan,
     plateau: { chiffres: artisan?.chiffres ?? null },
   }
@@ -442,7 +449,7 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
   function tete(page, rel, { titre, description, image, bandeau = null }) {
     const url = BASE + page.chemin
     const ld = (contenu.pages[page.chemin]?.jsonld?.[0] || contenu.pages['/']?.jsonld?.[0])
-    const ldPage = ld ? { ...ld, url, telephone: tel, image: BASE + '/images/' + heros.base + '-1600.webp' } : null
+    const ldPage = ld ? { ...ld, url, telephone: tel, image: BASE + '/images/' + heros.base + '-' + (options.source ? heros.largeurs.at(-1) : 1600) + '.webp' } : null
     const precharges = [
       ...(prechargeDisplay ? prechargeDisplay.map((w) => `${slug(da.display)}-${w}`) : [slug(da.display)]).map((n) => `<link rel="preload" href="${rel}fonts/${n}.woff2" as="font" type="font/woff2" crossorigin>`),
       ...(statiques ? statiques.map((w) => `<link rel="preload" href="${rel}fonts/${slug(da.texte)}-${w}.woff2" as="font" type="font/woff2" crossorigin>`) : []),
@@ -473,14 +480,14 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
 <meta property="og:type" content="website">
 <meta property="og:title" content="${esc(titre)}">
 <meta property="og:description" content="${esc(description)}">
-<meta property="og:image" content="${BASE}/images/${(image || heros).base}-1600.webp">
+<meta property="og:image" content="${BASE}/images/${(image || heros).base}-${options.source ? (image || heros).largeurs.at(-1) : 1600}.webp">
 <meta property="og:url" content="${url}">
 <meta property="og:locale" content="fr_FR">
 ${favicon ? `<link rel="icon" href="${rel}favicon.svg" type="image/svg+xml">\n` : ''}${precharges.join('\n')}
 <link rel="stylesheet" href="${rel}styles.css">
 ${bureauCss ? `<link rel="stylesheet" href="${rel}bureau.css" media="(min-width: 1024px)">\n` : ''}<script>document.documentElement.classList.replace('no-js','js')</script>
 <script src="${rel}site.js" defer></script>${options.source ? `\n<script src="${rel}formulaire.js" defer></script>` : ''}
-${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script>` : ''}
+${ldPage ? `<script type="application/ld+json">${options.source ? JSON.stringify(ldPage).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026') : JSON.stringify(ldPage)}</script>` : ''}
 </head>
 <body>
 <header class="nav${navClaire ? ' nav--claire' : ''}"><div class="conteneur nav__inner">
@@ -616,7 +623,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
       : tel ? `L’envoi n’a pas abouti. Appelez-moi au <a style="display:inline-block" href="${esc(telHref(tel))}">${esc(telAffiche(tel))}</a>.`
       : site.email ? `L’envoi n’a pas abouti. Écrivez-moi à <a style="display:inline-block" href="mailto:${esc(site.email)}">${esc(site.email)}</a>.`
       : 'L’envoi n’a pas abouti. Réessayez dans un instant.'
-    return `<div class="devis"><form class="devis__form"${site.demo ? ' data-demo' : ` data-slug="${esc(site.slug)}"`} method="post" action="#contact" aria-label="Demande de devis">`
+    return `<div class="devis"><form class="devis__form"${site.demo ? ' data-demo' : ` data-slug="${esc(site.slug)}"${options.source ? ` data-commande="${esc(site.id)}"` : ''}`} method="post" action="#contact" aria-label="Demande de devis">`
       + `<div class="devis__champ"><label for="devis-projet">Votre projet</label><select id="devis-projet" name="projet" required><option value="">Choisir</option>${optionsDe(dv.projets)}</select></div>`
       + `<div class="devis__champ"><label for="devis-commune">Commune</label><select id="devis-commune" name="commune">${optionsDe([...communes, 'Autre commune'], cible)}</select></div>`
       + `<div class="devis__champ"><label for="devis-delai">Quand</label><select id="devis-delai" name="delai">${optionsDe(dv.delais)}</select></div>`
@@ -679,8 +686,8 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     // da.plateauPhoto : des mains au travail à côté de « c’est la même main qui travaille » — au téléphone, l'écran sous le héros
     // n'était qu'une phrase et trois chiffres, sans aucune image (juge du 14/09, priorité 10)
     const ph = da.plateauPhoto ? photoDe(da.plateauPhoto, 'photo du plateau') : null
-    const photoPlateau = ph ? `<div class="plateau__photo reveal" style="--i:1">${photo(ph, '', { sizes: '(max-width: 767px) 100vw, 40vw' })}</div>` : ''
-    return `<section class="plateau" data-nav="sombre" aria-label="L’atelier en bref"><div class="plateau__inner"><div class="plateau__haut"><figure class="plateau__citation reveal"><blockquote><p>${crochetDernier('plateauCitation', esc(site.artisan.citation), [site.artisan.citation], '')}</p></blockquote><figcaption><span class="plateau__signe"${p.chiffres === null ? ' style="text-transform:none"' : ''}>${esc(`${site.artisan.prenom} ${site.artisan.nom}`)} · <span>${esc(signatureDe(site.artisan, ville).split(' · ')[1])}</span></span><span class="plateau__parcours">${esc(site.artisan.parcours)}</span></figcaption></figure>${p.chiffres === null ? '' : photoPlateau}</div>${p.chiffres === null ? '' : `<dl class="chiffres">${p.chiffres.map((x, i) => `<div class="chiffre reveal" style="--i:${i + 1}"><dt>${esc(x.legende)}</dt><dd>${crochetDernier('plateauValeur', `<span class="chiffre__valeur">${esc(x.valeur)}</span>`, [x, i], '')}${x.unite ? `<span class="chiffre__unite">${esc(x.unite)}</span>` : ''}</dd></div>`).join('')}</dl>`}</div></section>`
+    const photoPlateau = ph ? `<div class="plateau__photo reveal" style="--i:1">${photo(ph, options.source ? '/' : '', { sizes: '(max-width: 767px) 100vw, 40vw' })}</div>` : ''
+    return `<section class="plateau" data-nav="sombre" aria-label="${options.source ? 'L’entreprise en bref' : 'L’atelier en bref'}"><div class="plateau__inner"><div class="plateau__haut"><figure class="plateau__citation reveal"><blockquote><p>${crochetDernier('plateauCitation', esc(site.artisan.citation), [site.artisan.citation], '')}</p></blockquote><figcaption><span class="plateau__signe"${p.chiffres === null ? ' style="text-transform:none"' : ''}>${esc(`${site.artisan.prenom} ${site.artisan.nom}`)} · <span>${esc(signatureDe(site.artisan, ville).split(' · ')[1])}</span></span><span class="plateau__parcours">${esc(site.artisan.parcours)}</span></figcaption></figure>${p.chiffres === null ? '' : photoPlateau}</div>${p.chiffres === null ? '' : `<dl class="chiffres">${p.chiffres.map((x, i) => `<div class="chiffre reveal" style="--i:${i + 1}"><dt>${esc(x.legende)}</dt><dd>${crochetDernier('plateauValeur', `<span class="chiffre__valeur">${esc(x.valeur)}</span>`, [x, i], '')}${x.unite ? `<span class="chiffre__unite">${esc(x.unite)}</span>` : ''}</dd></div>`).join('')}</dl>`}</div></section>`
   }
 
   // ── L'accueil ────────────────────────────────────────────────────────────────────────────────────────────────
@@ -697,7 +704,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
 
   function accueil(page) {
     const c = contenu.pages['/']
-    const rel = ''
+    const rel = options.source ? '/' : ''
     let heroHtml
     if (da.hero === 'plein') {
       // Une idée monumentale DANS le h1, qui garde le mot-clé en petit (« Menuisier à Rennes ») : le SEO garde son h1, l'œil lit
@@ -768,7 +775,7 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
   // ── Une page intérieure (commune, métier secondaire) ────────────────────────────────────────────────────────
   function interieure(page, index) {
     const c = contenu.pages[page.chemin]
-    const rel = '../'.repeat(page.chemin.split('/').filter(Boolean).length)
+    const rel = options.source ? '/' : '../'.repeat(page.chemin.split('/').filter(Boolean).length)
     const kicker = c.kicker || (page.type === 'commune' ? `Intervention à ${page.cible}` : `${page.cible} · ${ville}`)
     // toutes les autres communes, en liste monumentale (le bloc « deux cases » de deux voisines faisait gabarit, juge du 14/09)
     const voisines = page.type === 'commune' ? communes.filter((x) => x !== page.cible) : communes.slice(0, 3)
@@ -860,10 +867,16 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     const autresCredits = entrees.filter((p) => p.type && p.type !== 'photo')
     return `<ul class="credits">${groupesCredits(photosCredits).map(entreeCredit).join('')}${autresCredits.map(entreeCreditNonPhoto).join('')}</ul>`
   }
-  const texteCredits = () => `Les photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence, les modifications apportées et la page d’origine. ${photosUtilisees.every(estModifiee) ? 'Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées pour certaines.' : 'Toutes ont été redimensionnées et converties pour le web ; celles dites « modifiée » ont aussi été étalonnées ou recadrées par Presti.'}`
+  const texteCredits = () => {
+    if (!options.source) return `Les photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence, les modifications apportées et la page d’origine. ${photosUtilisees.every(estModifiee) ? 'Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées pour certaines.' : 'Toutes ont été redimensionnées et converties pour le web ; celles dites « modifiée » ont aussi été étalonnées ou recadrées par Presti.'}`
+    const origines = []
+    if (photosUtilisees.some((p) => /commons\.wikimedia\.org/i.test(p.source))) origines.push('Des photographies proviennent de Wikimedia Commons, sous licence libre')
+    for (const auteur of new Set(photosUtilisees.filter((p) => p.licence === 'propriétaire').map((p) => p.auteur))) origines.push(`Des photographies appartiennent à ${esc(auteur)}`)
+    return `${origines.join('. ')}. Chaque auteur, licence et origine figure ci-dessous.${photosUtilisees.some(estModifiee) ? ' Les photos indiquées comme modifiées ont été modifiées par Presti.' : ''}`
+  }
   function legale(page) {
     const c = contenu.pages[page.chemin]
-    const rel = '../'
+    const rel = options.source ? '/' : '../'
     let corps = `<section class="hero hero--page"><div class="conteneur"><div class="hero__contenu"><nav class="ariane" aria-label="Fil d’Ariane"><a href="${rel}">Accueil</a><span>/</span><span>${esc(c.h1)}</span></nav><h1>${mots(c.h1)}</h1>${c.chapeau ? `<p class="chapeau">${esc(c.chapeau)}</p>` : ''}</div></div></section><section class="section"><div class="conteneur"><div class="prose">`
     for (const s of c.sections) {
       const { intro, items } = decouper(s.blocs)
@@ -908,9 +921,9 @@ ${ldPage ? `<script type="application/ld+json">${JSON.stringify(ldPage)}</script
     if (page.type === 'commune' && da.hero === 'plein') {
       const h1 = texteDe(/<h1\b[\s\S]*?<\/h1>/.exec(html)?.[0] || '').replace(/\s+/g, ' ').trim()
       const h1Accueil = texteDe(/<h1\b[\s\S]*?<\/h1>/.exec(rendues.find((r) => r.page.type === 'accueil')?.html || '')?.[0] || '').replace(/\s+/g, ' ').trim()
-      if (!/Menuisier/.test(h1) || !h1.includes(page.cible)) throw new Error(`${ou} : le h1 doit garder « Menuisier » et « ${page.cible} » (lu : « ${h1} »)`)
+      if (!options.source && (!/Menuisier/.test(h1) || !h1.includes(page.cible))) throw new Error(`${ou} : le h1 doit garder « Menuisier » et « ${page.cible} » (lu : « ${h1} »)`)
       if (h1 === h1Accueil) throw new Error(`${ou} : même h1 que l’accueil (« ${h1} »)`)
-      if (!/class="hero hero--plein hero--commune(?:"| )/.test(html)) throw new Error(`${ou} : la page commune n’ouvre pas sur un ouvrage en plein cadre`)
+      if (!options.source && !/class="hero hero--plein hero--commune(?:"| )/.test(html)) throw new Error(`${ou} : la page commune n’ouvre pas sur un ouvrage en plein cadre`)
     }
     // chaque photo modifiée affichée sur la page est dite « modifiée » dans sa ligne de crédits
     const credits = /<p class="galerie__credits">[\s\S]*?<\/p>/.exec(html)?.[0]
@@ -1014,7 +1027,7 @@ function genererMaquette(fichier, valeurSortie) {
   const libelles = contenu.libelles || {}
   for (const cle of ['sur', 'alt_heros', 'alt_atelier']) if (typeof libelles[cle] !== 'string' || !libelles[cle].trim()) throw new Error(`modèle ${entree.modele} : libelles.${cle} manque`)
   if (!Array.isArray(libelles.reperes) || libelles.reperes.length !== 3 || libelles.reperes.some((titre) => typeof titre !== 'string' || !titre.trim())) throw new Error(`modèle ${entree.modele} : libelles.reperes exige trois titres`)
-  const remplir = (texte) => String(texte ?? '').replaceAll('{entreprise}', entree.entreprise).replaceAll('{ville}', entree.ville)
+  const remplir = (texte) => String(texte ?? '').replaceAll('{entreprise}', () => entree.entreprise).replaceAll('{ville}', () => entree.ville)
   const e = (texte) => esc(remplir(texte))
   const demo = contenu.photos?.demo
   const fichiers = contenu.photos?.fichiers

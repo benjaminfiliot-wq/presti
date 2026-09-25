@@ -76,7 +76,22 @@
 //         fichier actuel : une vidéo refilmée se relit), textes: [les textes incrustés] }, et chaque texte passe PR-1, PR-2, PR-4
 //         et PR-7. Sans ce fichier, la vidéo actuelle impose landingVideo = false. Détecteur éprouvé sur des sondes.
 //
-// Sortie : une ligne par critère (PASS/FAIL PR-n — …), code 0 seulement si les huit sont verts ; le relevé complet des phrases en
+// PR-9 à PR-12 : revue avant mise en ligne du 25/09 (.orchestre/preuves/025-relectures/revue-avant-mise-en-ligne-2026-09-25.md),
+// fiche 025-20, écrits par Claude Code.
+//   PR-9  (D14) dans app/faq/page.tsx, chaque unité qui dit ce que vaut un crédit (« 1 crédit = … ») dit aussi ce que coûte le modèle
+//         Expert : « Expert » et « N crédits » (ou « en consomme N »), N = CREDIT_COST.expert de <racine>/lib/plans.ts — comme la
+//         landing. Et aucune phrase de app/page.tsx ni de la FAQ ne donne au modèle Expert un autre coût. Détecteur éprouvé.
+//   PR-10 (D16) aucune phrase de app/** ni de lib/** (commentaires exclus) ne dit que les relances vont « jusqu’à la réponse » (ou
+//         « jusqu’à leur réponse », « jusqu’à ce que … ») : elles s'arrêtent après CADENCE_RELANCES (<racine>/lib/relances.ts) ; et
+//         une phrase qui compte les relances (« trois relances ») dit ce nombre. Détecteur éprouvé.
+//   PR-11 (D15) l'article d'aide « plateforme » (<racine>/lib/aide.ts, chargé) ne propose le mode Automatique qu'avec l'offre qui
+//         le permet : chaque texte qui nomme ce mode (« automatique », pas « automatiquement ») nomme aussi la première offre où
+//         peut(plan, 'plateforme.ia.auto') est vrai (<racine>/lib/plans.ts, chargé : « Studio »). Détecteur éprouvé.
+//   PR-12 (D17) un texte de l'aide (ARTICLES de <racine>/lib/aide.ts) qui promet la suppression d'un site renvoie vers Paramètres →
+//         « Données & confidentialité », où app/parametres/SectionDonnees.tsx propose « Supprimer le site » sans condition (et ce
+//         bouton y est toujours) ; « Données & suppressions » (/profil) ne l'affiche que pour un site publié. Détecteur éprouvé.
+//
+// Sortie : une ligne par critère (PASS/FAIL PR-n — …), code 0 seulement si les douze sont verts ; le relevé complet des phrases en
 // défaut est écrit dans .orchestre/travail/promesses-qa/releve.txt (releve-temoin.txt pour le témoin).
 //
 // API (pour constructeur-ferme-qa.mjs, CF-7) : pr1Fichier(racine, 'app/profil/page.tsx') → { ok, violations, phrases } ;
@@ -94,7 +109,7 @@ import {
 } from './fixtures/025/commun.mjs'
 
 const JUGE = 'promesses-qa'
-const IDS = ['PR-1', 'PR-2', 'PR-3', 'PR-4', 'PR-5', 'PR-6', 'PR-7', 'PR-8']
+const IDS = ['PR-1', 'PR-2', 'PR-3', 'PR-4', 'PR-5', 'PR-6', 'PR-7', 'PR-8', 'PR-9', 'PR-10', 'PR-11', 'PR-12']
 const PARA = '\u2029' // coupure de phrase interne (bloc JSX, ligne vide, expression qui contient du JSX)
 const court = (s, n = 150) => { const t = String(s ?? '').replace(/\s+/g, ' ').trim(); return t.length > n ? `${t.slice(0, n - 1)}…` : t }
 const premiereLigne = (e) => String((e && e.message) || e).split('\n')[0].slice(0, 300)
@@ -970,6 +985,134 @@ export function construireTemoin() {
   return { dest, commit: sha, fichiers: x.fichiers, corrections: conf.corrections.length, touches: [...touches], defauts }
 }
 
+// ── PR-9 à PR-12 (revue avant mise en ligne du 25/09, fiche 025-20) ──────────────────────────────────────────────────────
+/** Transpile et charge un module de <racine>/lib (et ce qu'il importe par ./ ou @/) ; tout autre import est une doublure muette. */
+function chargerLib(racine, relatif) {
+  const caches = new Map()
+  const muet = () => new Proxy(function () {}, { get: (_, k) => (k === 'then' ? undefined : muet()), apply: () => muet() })
+  const charger = (f) => {
+    if (caches.has(f)) return caches.get(f).exports
+    const js = ts.transpileModule(fs.readFileSync(f, 'utf8'), { fileName: f, compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText
+    const module = { exports: {} }
+    caches.set(f, module)
+    const req = (spec) => {
+      const base = spec.startsWith('@/') ? path.join(racine, spec.slice(2)) : spec.startsWith('.') ? path.resolve(path.dirname(f), spec) : null
+      if (base) for (const e of ['', '.ts', '/index.ts']) if (fs.existsSync(base + e) && fs.statSync(base + e).isFile()) return charger(base + e)
+      return muet()
+    }
+    new Function('exports', 'require', 'module', '__filename', '__dirname', 'process', js)(module.exports, req, module, f, path.dirname(f), { env: {} })
+    return module.exports
+  }
+  const f = path.join(racine, relatif)
+  if (!fs.existsSync(f)) throw new Error(`${relatif} absent`)
+  return charger(f)
+}
+const textesDeValeur = (o) => (typeof o === 'string' ? [o] : Array.isArray(o) ? o.flatMap(textesDeValeur) : o && typeof o === 'object' ? Object.values(o).flatMap(textesDeValeur) : [])
+const texteUnite = (u) => normaliser(u.variantes.map((v) => v.map((x) => x.t).join('')).join(' ').split(PARA).join(' '))
+/** PR-9 : les défauts d'une unité de la FAQ pour un coût Expert `n` → liste (pur) */
+export function defautsCoutCredit(texte, n) {
+  const t = normaliser(texte)
+  if (!/(?<![\p{L}\d])1\s*crédit\s*=/iu.test(t)) return []
+  const ok = /expert/i.test(t) && new RegExp(`(?<!\\d)${n}\\s*crédits|en\\s+consomme\\s+${n}(?!\\d)|consomme\\s+${n}(?!\\d)`, 'iu').test(t)
+  return ok ? [] : [`« ${court(t, 110)} » : le coût du modèle Expert (${n} crédits) n’y est pas`]
+}
+/** PR-9 : une phrase qui donne au modèle Expert un autre coût que `n` → liste (pur) */
+export function defautsCoutExpert(phrase, n) {
+  const m = /expert\s*(?:=|:|consomme|en\s+consomme|coûte)\s*(\d+)\s*crédits?|(\d+)\s*crédits?\s+(?:avec|pour)\s+(?:le\s+)?(?:modèle\s+)?expert/iu.exec(normaliser(phrase))
+  if (!m) return []
+  const k = Number(m[1] ?? m[2])
+  return k === n ? [] : [`« ${court(phrase, 100)} » : Expert à ${k} crédit(s), ${n} dans lib/plans.ts`]
+}
+function jugerPR9(racine, corpus) {
+  const echecs = [], faits = []
+  const plans = corpus.fichiers.find((f) => f.chemin === 'lib/plans.ts')?.source || ''
+  const n = Number((/CREDIT_COST[^=]*=\s*\{[^}]*\bexpert\s*:\s*(\d+)/.exec(plans) || [])[1])
+  if (!n) return { echecs: ['lib/plans.ts : CREDIT_COST.expert illisible'], faits }
+  const faq = corpus.fichiers.find((f) => f.chemin === 'app/faq/page.tsx')
+  if (!faq) return { echecs: ['app/faq/page.tsx absent'], faits }
+  let unitesCredit = 0
+  for (const u of unitesDeTexte(faq.chemin, faq.source).unites) {
+    if (u.genre === 'commentaire') continue
+    const t = texteUnite(u)
+    if (/(?<![\p{L}\d])1\s*crédit\s*=/iu.test(t)) unitesCredit++
+    for (const d of defautsCoutCredit(t, n)) echecs.push(`app/faq/page.tsx:${u.ligne} ${d}`)
+  }
+  for (const f of corpus.fichiers.filter((x) => ['app/faq/page.tsx', 'app/page.tsx'].includes(x.chemin))) for (const u of unitesDeTexte(f.chemin, f.source).unites) {
+    if (u.genre === 'commentaire') continue
+    for (const v of u.variantes) for (const p of phrasesDe(v)) for (const d of defautsCoutExpert(p.texte, n)) echecs.push(`${f.chemin}:${p.ligne} ${d}`)
+  }
+  const sondes = [defautsCoutCredit('1 crédit = 1 réponse ou 1 devis généré par l’IA.', n).length === 1, !defautsCoutCredit(`1 crédit = 1 réponse ou 1 devis (${n} crédits avec le modèle Expert).`, n).length, defautsCoutExpert(`Expert = ${n + 1} crédits`, n).length === 1]
+  if (sondes.some((x) => !x)) echecs.push(`détecteur : sonde(s) mal jugée(s) (${sondes.map((x, i) => (x ? '' : i + 1)).filter(Boolean).join(', ')})`)
+  if (!unitesCredit) echecs.push('app/faq/page.tsx ne dit plus ce que vaut un crédit (« 1 crédit = … »)')
+  if (!echecs.length) faits.push(`${unitesCredit} unité(s) de la FAQ disent « 1 crédit = … » avec le coût Expert (${n} crédits, lib/plans.ts) ; aucun autre coût Expert ; détecteur éprouvé sur 3 sondes`)
+  return { echecs: [...new Set(echecs)], faits }
+}
+const NOMBRES_RELANCES = { deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6 }
+/** PR-10 : les défauts d'une phrase sur les relances pour `n` relances → liste (pur) */
+export function defautsRelances(phrase, n) {
+  const t = normaliser(phrase), d = []
+  if (/relanc/iu.test(t) && /jusqu’\s*(?:à|au)\s+(?:la\s+|leur\s+|sa\s+|votre\s+|une\s+)?(?:réponse|signature)|jusqu’\s*à\s+ce\s+qu/iu.test(t)) d.push(`« ${court(t, 110)} » : les relances s’arrêtent après ${n}, pas « jusqu’à la réponse »`)
+  const m = /(?<![\p{L}\d])(\d+|deux|trois|quatre|cinq|six)\s+relances?(?![\p{L}])/iu.exec(t)
+  if (m) { const k = /^\d+$/.test(m[1]) ? Number(m[1]) : NOMBRES_RELANCES[m[1].toLowerCase()]; if (k !== n) d.push(`« ${court(t, 100)} » : ${k} relances, ${n} dans lib/relances.ts`) }
+  return d
+}
+function jugerPR10(corpus) {
+  const echecs = [], faits = []
+  const src = corpus.fichiers.find((f) => f.chemin === 'lib/relances.ts')?.source || ''
+  const cad = /CADENCE_RELANCES\s*=\s*\[([^\]]*)\]/.exec(src)
+  const n = cad ? cad[1].split(',').filter((x) => x.trim()).length : 0
+  if (!n) return { echecs: ['lib/relances.ts : CADENCE_RELANCES illisible'], faits }
+  let vues = 0
+  for (const f of corpus.fichiers) for (const u of unitesDeTexte(f.chemin, f.source).unites) {
+    if (u.genre === 'commentaire') continue
+    for (const v of u.variantes) for (const p of phrasesDe(v)) { if (/relanc/i.test(p.texte)) vues++; for (const d of defautsRelances(p.texte, n)) echecs.push(`${f.chemin}:${p.ligne} ${d}`) }
+  }
+  const sondes = [defautsRelances('Les relances sont automatiques jusqu’à la réponse.', n).length === 1, defautsRelances('Presti relance automatiquement vos prospects jusqu’à leur réponse.', n).length === 1, !defautsRelances(`${n === 3 ? 'Trois' : n} relances automatiques, puis rien.`, n).length]
+  if (sondes.some((x) => !x)) echecs.push(`détecteur : sonde(s) mal jugée(s) (${sondes.map((x, i) => (x ? '' : i + 1)).filter(Boolean).join(', ')})`)
+  if (!echecs.length) faits.push(`${vues} phrase(s) sur les relances dans app/ et lib/ : aucune « jusqu’à la réponse », nombre de relances = ${n} (CADENCE_RELANCES) ; détecteur éprouvé sur 3 sondes`)
+  return { echecs: [...new Set(echecs)], faits }
+}
+/** PR-11 : les défauts de textes d'aide pour l'offre `offre` → liste (pur) */
+export function defautsModeAuto(textes, offre) {
+  return textes.filter((t) => /(?<!\p{L})automatique(?!\p{L})/iu.test(t) && !new RegExp(`(?<!\\p{L})${offre}(?!\\p{L})`, 'u').test(t)).map((t) => `« ${court(t, 110)} » propose le mode Automatique sans dire qu’il faut l’offre ${offre}`)
+}
+function jugerPR11(racine) {
+  let aide, plans
+  try { aide = chargerLib(racine, 'lib/aide.ts'); plans = chargerLib(racine, 'lib/plans.ts') } catch (e) { return { echecs: [`lib/aide.ts ou lib/plans.ts non chargé : ${premiereLigne(e)}`], faits: [] } }
+  const cles = Object.keys(plans.PLANS || {})
+  const k = cles.find((p) => { try { return plans.peut(p, 'plateforme.ia.auto') === true } catch { return false } })
+  const offre = k ? (plans.PLANS[k].label || k) : null
+  if (!offre) return { echecs: ['lib/plans.ts : aucune offre ne permet plateforme.ia.auto'], faits: [] }
+  const art = (aide.ARTICLES || []).find((a) => a.id === 'plateforme')
+  if (!art) return { echecs: ['article d’aide « plateforme » absent'], faits: [] }
+  const textes = textesDeValeur(art)
+  const echecs = defautsModeAuto(textes, offre)
+  const sondes = [defautsModeAuto(['Choisissez le mode de réponse : Automatique, Assistée ou Manuelle.'], offre).length === 1, !defautsModeAuto([`Automatique (${offre} et au-delà), Assistée ou Manuelle.`], offre).length, !defautsModeAuto(['Chaque devis généré automatiquement consomme un crédit.'], offre).length]
+  if (sondes.some((x) => !x)) echecs.push('détecteur : sonde(s) mal jugée(s)')
+  return { echecs, faits: echecs.length ? [] : [`article « plateforme » : ${textes.filter((t) => /(?<!\p{L})automatique(?!\p{L})/iu.test(t)).length} texte(s) qui nomment le mode Automatique, chacun avec l’offre ${offre} (première offre où plateforme.ia.auto est permis, lib/plans.ts) ; détecteur éprouvé sur 3 sondes`] }
+}
+const RE_SUPPRIME_SITE = /supprim\p{L}*\s+(?:le|votre|un|du)\s+site|site[^.]{0,60}?supprim/iu
+/** PR-12 : les défauts de textes d'aide → liste (pur) */
+export function defautsSuppressionSite(textes, sectionDonnees) {
+  const d = []
+  const promesses = textes.filter((t) => RE_SUPPRIME_SITE.test(t))
+  for (const t of promesses) if (!/Données\s*&(?:amp;)?\s*confidentialité/u.test(t)) d.push(`« ${court(t, 110)} » : la suppression du site est promise ailleurs que dans Paramètres → Données & confidentialité`)
+  if (promesses.length && !/id:\s*'site_supprimer'/.test(sectionDonnees || '')) d.push('app/parametres/SectionDonnees.tsx ne propose plus « site_supprimer »')
+  return d
+}
+function jugerPR12(racine) {
+  let aide
+  try { aide = chargerLib(racine, 'lib/aide.ts') } catch (e) { return { echecs: [`lib/aide.ts non chargé : ${premiereLigne(e)}`], faits: [] } }
+  const textes = (aide.ARTICLES || []).flatMap(textesDeValeur)
+  const f = path.join(racine, 'app', 'parametres', 'SectionDonnees.tsx')
+  const sd = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : ''
+  const echecs = defautsSuppressionSite(textes, sd)
+  const sondes = [defautsSuppressionSite(['Si vous avez un site existant, vous pouvez le supprimer depuis « Données & suppressions ».'], "{ id: 'site_supprimer' }").length === 1, !defautsSuppressionSite(['Pour supprimer votre site : Paramètres → Données & confidentialité.'], "{ id: 'site_supprimer' }").length, defautsSuppressionSite(['Pour supprimer votre site : Paramètres → Données & confidentialité.'], '').length === 1]
+  if (sondes.some((x) => !x)) echecs.push('détecteur : sonde(s) mal jugée(s)')
+  const n = textes.filter((t) => RE_SUPPRIME_SITE.test(t)).length
+  return { echecs, faits: echecs.length ? [] : [`${textes.length} texte(s) des articles d’aide : ${n} promesse(s) de suppression du site, ${n ? 'chacune vers Paramètres → Données & confidentialité (site_supprimer proposé)' : 'aucune'} ; détecteur éprouvé sur 3 sondes`] }
+}
+
 // ── API pour constructeur-ferme-qa (CF-7) ─────────────────────────────────────────────────────────────────────────────────
 /** PR-1 sur un fichier de `racine` (défaut app/profil/page.tsx) → { ok, violations, phrases, erreurs } ; fichier absent ou vide : ok false. */
 export function pr1Fichier(racine = R, chemin = 'app/profil/page.tsx') {
@@ -982,12 +1125,20 @@ export function pr1Fichier(racine = R, chemin = 'app/profil/page.tsx') {
 
 // ── Le juge ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
 async function juger() {
-  const o = lireOptionsOuQuitter(process.argv.slice(2), { connues: [] })
+  const o = lireOptionsOuQuitter(process.argv.slice(2), { connues: ['critere'] })
   if (o.reel) { console.error('✗ promesses-qa n’a pas de mode --reel (le juge ne lit que des fichiers)'); process.exit(2) }
   if (o.positionnels.length) { console.error(`✗ argument inattendu : ${o.positionnels.join(' ')}`); process.exit(2) }
   if (o.temoin && !o.racineParDefaut) { console.error('✗ --temoin construit son propre arbre (commit de référence + corrections.json) : pas de --racine'); process.exit(2) }
-  const s = creerSortie(JUGE, IDS, { racine: o.racine, temoin: o.temoin })
-  await s.executer(async (s) => {
+  // --critere=PR-1,…,PR-8 (25/09) : seuls ces critères sont déclarés et imprimés (une fiche juge sa part : 025-19 garde PR-1 à
+  // PR-8 pendant que PR-9 à PR-12 attendent 025-20) ; les verdicts des autres vont dans une sortie « ombre » jamais imprimée.
+  const ids = o.valeur('critere') === undefined ? IDS : o.liste('critere')
+  if (o.drapeau('critere') || !ids.length || ids.some((x) => !IDS.includes(x))) { console.error(`✗ --critere attend des critères de ${IDS.join(', ')}`); process.exit(2) }
+  const s0 = creerSortie(JUGE, ids, { racine: o.racine, temoin: o.temoin })
+  const ombre = creerSortie(JUGE, IDS, { racine: o.racine, temoin: o.temoin })
+  const vers = (id) => (ids.includes(id) ? s0 : ombre)
+  const s = { ...s0, passe: (id, d) => vers(id).passe(id, d), echoue: (id, d) => vers(id).echoue(id, d), verdict: (id, ok, a, b) => vers(id).verdict(id, ok, a, b), resultat: (id, r) => vers(id).resultat(id, r), evalue: (id) => vers(id).evalue(id), enEchec: (id) => vers(id).enEchec(id), note: (t) => s0.note(t) }
+  if (ids !== IDS) s0.note(`--critere : seulement ${ids.join(', ')}`)
+  await s0.executer(async () => {
     let racine = o.racine
     if (o.temoin) {
       const t = construireTemoin()
@@ -1053,6 +1204,14 @@ async function juger() {
     for (const e of r6.echecs) s.echoue('PR-6', e)
     for (const e of so6.echecs) s.echoue('PR-6', `détecteur : ${e}`)
     if (r6.ok && so6.ok) s.passe('PR-6', `${r6.resume} ; détecteur éprouvé sur ${so6.n} sondes`)
+
+    // PR-9 à PR-12 (revue avant mise en ligne du 25/09, fiche 025-20)
+    for (const [id, f] of [['PR-9', () => jugerPR9(racine, corpus)], ['PR-10', () => jugerPR10(corpus)], ['PR-11', () => jugerPR11(racine)], ['PR-12', () => jugerPR12(racine)]]) {
+      let r
+      try { r = f() } catch (e) { r = { echecs: [`exception : ${premiereLigne(e)}`], faits: [] } }
+      for (const e of r.echecs) s.echoue(id, e)
+      if (!r.echecs.length) s.passe(id, r.faits.join(' ; '))
+    }
   })
 }
 

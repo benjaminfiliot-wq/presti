@@ -2,7 +2,7 @@
 // Claude Code (fiche 025-01, point 5). Les verdicts sont à lui : un exécutant ne le modifie pas (CLAUDE.md:23).
 //
 // Usage :
-//   node scripts/formulaire-site-qa.mjs                     FS-1 à FS-11, T1 et T2 sur le dépôt
+//   node scripts/formulaire-site-qa.mjs                     FS-1 à FS-12, T1 et T2 sur le dépôt
 //   node scripts/formulaire-site-qa.mjs --racine=<dossier>  la même chose, tout lu et généré depuis <dossier> (l'arbre de
 //                                                           référence .orchestre/travail/025-01/reference/, par exemple)
 //   node scripts/formulaire-site-qa.mjs --temoin            T1 et T2 sur la racine ; FS-1 à FS-11 sur le témoin « après »
@@ -58,7 +58,8 @@
 //        <source>/photos/ ; au moins trois photos du dossier source (trois bases), dont une référencée par index.html ; aucune
 //        image référencée par une page ou une feuille de styles n'est absente de la sortie ni prise hors d'elle (http…).
 //   FS-8 (relecture à froid du 24/09, G4) le site de FS-1 (commande sans domaine) porte l'adresse de lib/urls.ts partout :
-//        BASE_PRESTI (lu dans <racine>/lib/urls.ts) + le chemin « site » du mode presti (/site/<slug>) préfixe chaque canonique,
+//        BASE_PRESTI (lu dans <racine>/lib/urls.ts) préfixe chaque canonique (depuis le 25/09, D21, le domaine seulement : le
+//        chemin — /site-genere/<id>, pas /site/<slug> — est jugé par GV-5 de scripts/generateur-vente-qa.mjs),
 //        og:url, og:image, adresse JSON-LD (url, @id, image, logo, et toute adresse d'un domaine « presti » ou .invalid),
 //        <loc> de sitemap.xml et ligne Sitemap: de robots.txt ; aucune adresse d'un autre domaine « presti » (presti.fr) ni d'un
 //        domaine de démonstration (.invalid) dans les pages, le sitemap et robots.txt ; chacune des six sortes d'adresse existe.
@@ -79,6 +80,20 @@
 //        gardé par le trigger de 0051) et pour son adresse supprime-… ; et 200 avec une demande enregistrée pour l'ancienne et
 //        l'actuelle adresse d'un compte vivant, et pour un compte en pause (la pause garde les demandes). Sur un 404, le site
 //        montre le repli (FS-4). Sondes : une route minimale sans exclusion doit échouer, la même avec exclusion passer.
+//   FS-12 (fiche 025-22, défaut D01 de la relecture du 25/09, ajouté le 25/09) une demande qui porte l'identifiant de sa commande
+//        de site (champ `commande`) va à l'artisan de sites_commandes.artisan_id, jamais à celui qui porte le slug : même
+//        chargement que FS-11 (la route transpilée contre un faux Supabase), mais le faux Supabase PROJETTE les colonnes
+//        demandées (une colonne non lue dans le select vaut absente, comme en production) et tient une table sites_commandes.
+//        Onze envois : commande en ligne d'un artisan vivant (avec son slug, sans slug, avec le slug d'un autre compte) →
+//        200 et une demande pour cet artisan ; D01 — commande d'un compte purgé (slug supprime-…) dont l'adresse a été reprise
+//        par un inconnu → 404 ; commande d'un compte effacé (artisan_id nul) → 404 ; d'un compte en suppression
+//        (suppression_demandee_le posée) → 404 ; commande pas en ligne (validee) → 404 ; commande inconnue → 404 (pas de
+//        repli par le slug) ; commande illisible → 400 ou 404 ; commande en ligne d'un compte en pause vivant → 200 paused ;
+//        sans commande, l'adresse d'aujourd'hui → 200. Sur un refus, aucune demande enregistrée, pour personne ; jamais une
+//        demande chez l'inconnu qui a repris l'adresse. Sondes, à chaque passage : une route minimale correcte doit passer ;
+//        ses mutations — état non contrôlé, comptes purgés ou en suppression non écartés, repli par le slug quand la
+//        commande ne mène à personne, commande ignorée (la route d'aujourd'hui), suppression_demandee_le non lue dans le
+//        select — doivent être vues.
 //   T1, T2 scripts/fixtures/025/commun.mjs (Lestraque régénéré identique ; les neuf démos gelées intactes).
 //
 // --temoin (fiche 025-01 §1 : « non-régression ou jeu d'essai conforme ») : T1 et T2 sur la racine (le dépôt), qui doivent
@@ -86,7 +101,8 @@
 //   passage : lib/slugRedirect.ts, lib/urls.ts et maquettes/modeles/ copiés du dépôt, puis scripts/fixtures/025/temoins/
 //   formulaire-site-qa/ superposé, suffixe .temoin retiré (public/sites-demo/generer.mjs : un générateur --source minimal, adresse
 //   de lib/urls.ts, libellés neutres, repli adapté aux coordonnées données ; app/api/leads/route.ts : la route de 1620723 avec le
-//   repli par l'ancienne adresse, comptes purgés écartés). Les jeux d'essai restent ceux du dépôt (scripts/fixtures/025/).
+//   repli par l'ancienne adresse, comptes purgés écartés, et, depuis le 25/09, le routage par la commande de FS-12). Les jeux
+//   d'essai restent ceux du dépôt (scripts/fixtures/025/).
 //
 // --reel (fiche 025-01 §5 ; jamais lancé par un exécutant, ni par ce juge sans cette option) : FS-R1 compte d'essai créé par
 //   l'API d'administration (@presti-test.invalid, leads_pause: true, est_demo: true) ; FS-R2 site généré avec son slug (copie
@@ -132,13 +148,15 @@ import {
 } from './fixtures/025/commun.mjs'
 
 export const JUGE = 'formulaire-site-qa'
-export const IDS = ['FS-1', 'FS-2', 'FS-3', 'FS-4', 'FS-5', 'FS-6', 'FS-7', 'FS-8', 'FS-9', 'FS-10', 'FS-11', 'T1', 'T2']
+export const IDS = ['FS-1', 'FS-2', 'FS-3', 'FS-4', 'FS-5', 'FS-6', 'FS-7', 'FS-8', 'FS-9', 'FS-10', 'FS-11', 'FS-12', 'T1', 'T2']
 export const IDS_REEL = ['FS-R1', 'FS-R2', 'FS-R3', 'FS-R4', 'FS-R5', 'FS-R6', 'FS-R7']
 const ICI = path.join(TRAVAIL, JUGE)
 const PROD = 'https://prestiapp.fr/api/leads'
 const EXT_MEDIA = /\.(?:avif|webp|jpe?g|png|gif|bmp|tiff?|heic|heif|jxl|mp4|webm|mov|m4v|ogv)$/i
 const CLES_CORPS = ['slug', 'contact', 'nom_prospect', 'message', 'website']
-const CLES_LUES_PAR_LA_ROUTE = ['photos', 'variant', 'deferContact'] // app/api/leads/route.ts:34-39
+// `commande` (25/09, D01 de la revue avant mise en ligne) : l'identifiant de commande du formulaire d'un site commandé
+// (data-commande, fiche 025-21), lu par la route depuis la fiche 025-22 (FS-12)
+const CLES_LUES_PAR_LA_ROUTE = ['photos', 'variant', 'deferContact', 'commande'] // app/api/leads/route.ts:34-39
 const NUMERO_ESSAI = '02 61 91 00 25' // plage réservée à la fiction (Arcep, décision 2019-0954, art. 2.5.12)
 
 const court = (s, n = 160) => { const t = String(s ?? '').replace(/\s+/g, ' ').trim(); return t.length > n ? `${t.slice(0, n - 1)}…` : t }
@@ -883,11 +901,13 @@ export async function jugerPlateau({ racine, siteComplet, commande }) {
 
 // ── FS-8 : l'adresse du site sans domaine (relecture à froid du 24/09, G4) ────────────────────────────────────────────────
 /** L'adresse publique d'un site sans domaine, lue dans <racine>/lib/urls.ts : BASE_PRESTI + le chemin « site » du mode presti. */
-export function adresseSansDomaine(racine, slug) {
+// 25/09 (revue avant mise en ligne, D21) : FS-8 ne juge plus que le DOMAINE (celui de BASE_PRESTI). Le chemin /site/<slug> qu'il
+// exigeait est le site historique, pas le site généré, servi sous /site-genere/<id> : GV-5 de scripts/generateur-vente-qa.mjs
+// juge, par le service simulé, que chaque adresse mène à sa page. `slug` reste accepté (appelants).
+export function adresseSansDomaine(racine, _slug) {
   const src = lireOuNull(path.join(racine, 'lib', 'urls.ts'))?.toString('utf8') || ''
   const base = (/export\s+const\s+BASE_PRESTI\s*=\s*['"`](https?:\/\/[^'"`]+?)\/?['"`]/.exec(src) || [])[1]
-  const chemin = (/default:\s*return\s*\{\s*site:\s*`([^`$]*)\$\{s\}`/.exec(src) || [])[1] ?? '/site/'
-  return base ? { base: `${base.replace(/\/$/, '')}${chemin}${slug}`, hote: new URL(base).hostname, origine: 'lib/urls.ts (BASE_PRESTI)' } : null
+  return base ? { base: base.replace(/\/$/, ''), hote: new URL(base).hostname, origine: 'lib/urls.ts (BASE_PRESTI)' } : null
 }
 /** Les fichiers d'un site que lisent les moteurs et les réseaux (pages, sitemap.xml, robots.txt) → Map(rel → texte). */
 export function fichiersPublics(site) {
@@ -1066,7 +1086,40 @@ export const SCENARIOS_PURGE = [
   { nom: 'compte en pause (vivant)', slug: 'pause-essai-025', attendu: 200, artisan: PAUSE_ID },
 ]
 const likeRe = (motif, casse) => new RegExp(`^${String(motif).split('').map((c) => (c === '%' ? '.*' : c === '_' ? '.' : c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))).join('')}$`, casse ? 'i' : '')
-function fauxSupabase(base) {
+/** Liste de colonnes PostgREST découpée au premier niveau (les parenthèses des ressources jointes sont gardées). */
+function decouperColonnes(liste) {
+  const out = []
+  let prof = 0, cur = ''
+  for (const c of String(liste)) {
+    if (c === '(') prof++
+    if (c === ')') prof--
+    if (c === ',' && prof === 0) { out.push(cur.trim()); cur = '' } else cur += c
+  }
+  if (cur.trim()) out.push(cur.trim())
+  return out
+}
+/** FS-12 : une ligne réduite aux colonnes demandées, comme PostgREST ; « alias:table!indice(colonnes) » suit la clé étrangère. */
+function projeterLigne(base, table, ligne, colonnes) {
+  if (colonnes === undefined || colonnes === null || String(colonnes).trim() === '*') return { ...ligne }
+  const out = {}
+  for (const item of decouperColonnes(colonnes)) {
+    if (item === '*') { Object.assign(out, ligne); continue }
+    const emb = /^(?:([\w$]+)\s*:\s*)?([\w$]+)(?:\s*!\s*([\w$]+))?\s*\(([\s\S]*)\)$/.exec(item)
+    if (emb) {
+      const [, alias, cible, indice, sous] = emb
+      const lignesCible = base[cible] || []
+      const fk = Object.keys(ligne).filter((k) => k.endsWith('_id') && (indice && indice !== 'inner' && indice !== 'left' ? indice.includes(k) : k === `${cible.replace(/s$/, '')}_id`)).sort((a, b) => b.length - a.length)[0]
+      if (fk) { const r = lignesCible.find((x) => x.id === ligne[fk]); out[alias || cible] = r ? projeterLigne(base, cible, r, sous) : null }
+      else out[alias || cible] = lignesCible.filter((x) => x[`${table.replace(/s$/, '')}_id`] === ligne.id).map((x) => projeterLigne(base, cible, x, sous))
+      continue
+    }
+    const col = /^(?:([\w$]+)\s*:\s*)?([\w$]+)(?:::[\w$]+)?$/.exec(item)
+    if (col) { out[col[1] || col[2]] = ligne[col[2]] === undefined ? null : ligne[col[2]]; continue }
+    return { ...ligne } // expression non simulée : la ligne entière
+  }
+  return out
+}
+function fauxSupabase(base, { projeter = false } = {}) {
   const journal = []
   const filtre = (op, col, val) => {
     const v = (r) => r[col]
@@ -1087,8 +1140,8 @@ function fauxSupabase(base) {
   }
   const lireOr = (expr) => String(expr).split(',').map((p) => { const [c, op, ...reste] = p.split('.'); const neg = op === 'not'; const vraiOp = neg ? reste.shift() : op; const f = filtre(vraiOp, c, reste.join('.')); return neg ? (r) => !f(r) : f })
   class Requete {
-    constructor(table) { this.table = table; this.filtres = []; this.op = 'select'; this.valeur = null; this.unique = null; this.lim = null }
-    select() { return this }
+    constructor(table) { this.table = table; this.filtres = []; this.op = 'select'; this.valeur = null; this.unique = null; this.lim = null; this.colonnes = null }
+    select(c) { this.colonnes = c ?? '*'; return this }
     insert(v) { this.op = 'insert'; this.valeur = v; return this }
     upsert(v) { this.op = 'insert'; this.valeur = v; return this }
     update(v) { this.op = 'update'; this.valeur = v; return this }
@@ -1127,6 +1180,8 @@ function fauxSupabase(base) {
         if (this.op === 'delete') base[this.table] = t.filter((r) => !lignes.includes(r))
       }
       if (this.lim !== null) lignes = lignes.slice(0, this.lim)
+      // FS-12 : comme PostgREST, seulement les colonnes demandées (une écriture sans .select() ne rend rien).
+      if (projeter) lignes = this.op !== 'select' && this.colonnes === null ? [] : lignes.map((l) => projeterLigne(base, this.table, l, this.colonnes))
       const copie = JSON.parse(JSON.stringify(lignes))
       if (this.unique === 'single') return copie.length === 1 ? { data: copie[0], error: null } : { data: null, error: { message: `${copie.length} ligne(s), une attendue` } }
       if (this.unique === 'maybe') return copie.length > 1 ? { data: null, error: { message: 'plusieurs lignes' } } : { data: copie[0] ?? null, error: null }
@@ -1165,11 +1220,11 @@ function doublures(sb, journal) {
   }
 }
 /** Charge <racine>/app/api/leads/route.ts (ou `routeSource`) dans ce processus, contre le faux Supabase → { POST, journal, base, traces } */
-export async function chargerRoute({ racine, routeSource = null, base = baseSimulee() }) {
+export async function chargerRoute({ racine, routeSource = null, base = baseSimulee(), projeter = false }) {
   const ts = (await import('typescript')).default
   const { createRequire } = await import('node:module')
   const requireNode = createRequire(import.meta.url)
-  const sb = fauxSupabase(base)
+  const sb = fauxSupabase(base, { projeter })
   const traces = []
   const consoleMuette = { log: () => {}, info: () => {}, debug: () => {}, warn: (...a) => traces.push(`warn ${a.map(String).join(' ')}`), error: (...a) => traces.push(`error ${a.map(String).join(' ')}`) }
   const stubs = doublures(sb, sb.journal)
@@ -1251,6 +1306,129 @@ export async function jugerComptePurge({ racine }) {
     sondes = `mutation : route sans exclusion → ${mauvaise.echecs.length} scénario(s) rouge(s), vue ; route avec exclusion → verte`
   } catch (e) { echecs.push(`sondes du détecteur : ${premiereLigne(e)}`) }
   if (!echecs.length) faits.push(`${rel(path.join(racine, 'app', 'api', 'leads', 'route.ts'))} contre un faux Supabase (0051 simulée) : ${r.faits.join(', ')} ; ${sondes} ; sur un 404, le site montre le repli (FS-4)`)
+  return { ok: !echecs.length, echecs, faits }
+}
+
+// ── FS-12 : la demande d'un site commandé va à l'artisan de sa commande, jamais à celui qui porte le slug (D01) ──────────────
+// Le scénario de D01 : l'artisan A (slug martin-plomberie-025) a un site commandé en ligne ; son compte est purgé (slug
+// supprime-…, ancien slug gardé par 0051) ; un inconnu reprend le slug. Par le slug, chaque prospect du site de A irait chez
+// l'inconnu. Par la commande (sites_commandes.artisan_id), la demande est refusée (404) et le site montre son repli (FS-4).
+const CMD = {
+  ok: '00000000-0000-4000-8000-00000025c001', purge: '00000000-0000-4000-8000-00000025c002', efface: '00000000-0000-4000-8000-00000025c003',
+  suppression: '00000000-0000-4000-8000-00000025c004', validee: '00000000-0000-4000-8000-00000025c005', pause: '00000000-0000-4000-8000-00000025c006',
+  inconnue: '00000000-0000-4000-8000-00000025c0ff',
+}
+const A_COMMANDE = '00000000-0000-4000-8000-0000000252a1'
+const A_PURGE = '00000000-0000-4000-8000-0000000252b2'
+const A_REPRISE = '00000000-0000-4000-8000-0000000252c3'
+const A_SUPPRESSION = '00000000-0000-4000-8000-0000000252d4'
+const A_PAUSE = '00000000-0000-4000-8000-0000000252e5'
+const NOMS_ARTISANS = { [A_COMMANDE]: 'l’artisan de la commande', [A_PURGE]: 'le compte purgé', [A_REPRISE]: 'l’inconnu qui a repris l’adresse', [A_SUPPRESSION]: 'le compte en suppression', [A_PAUSE]: 'le compte en pause' }
+function baseCommandes() {
+  const art = (x) => ({ slugs_anciens: [], metier: 'plombier', email_public: null, tel_public: null, leads_pause: false, site_active: false, plateforme_active: true, suppression_demandee_le: null, plan: 'essentiel', is_founder: false, ton_style: null, services: [], zone_intervention: null, bio: null, tva_regime: null, assurance_nom: null, domaine: null, domaine_verifie: false, credits: 0, ...x })
+  const cmd = (x) => ({ email: 'commande@exemple.invalid', domaine_mode: 'existant', metier: 'plombier', communes: ['Rennes'], prix_cents: 30000, ...x })
+  return {
+    artisans: [
+      art({ id: A_COMMANDE, slug: 'atelier-commande-025', nom: 'Atelier de la Commande', email: 'atelier@commande.invalid' }),
+      art({ id: A_PURGE, slug: 'supprime-00000000', slugs_anciens: ['martin-plomberie-025'], nom: 'Plomberie Purgée', email: 'supprime-00000000@supprime.invalid', leads_pause: true, plateforme_active: false }),
+      art({ id: A_REPRISE, slug: 'martin-plomberie-025', nom: 'Inconnu qui a repris l’adresse', email: 'inconnu@reprise.invalid' }),
+      art({ id: A_SUPPRESSION, slug: 'atelier-suppression-025', nom: 'Atelier en suppression', email: 'atelier@suppression.invalid', suppression_demandee_le: '2026-09-10T08:00:00.000Z' }),
+      art({ id: A_PAUSE, slug: 'atelier-pause-025', nom: 'Atelier en pause', email: 'atelier@pause.invalid', leads_pause: true }),
+    ],
+    sites_commandes: [
+      cmd({ id: CMD.ok, artisan_id: A_COMMANDE, etat: 'en_ligne', domaine: 'atelier-commande.invalid' }),
+      cmd({ id: CMD.purge, artisan_id: A_PURGE, etat: 'en_ligne', domaine: 'martin-plomberie.invalid' }),
+      cmd({ id: CMD.efface, artisan_id: null, etat: 'en_ligne', domaine: 'efface.invalid' }),
+      cmd({ id: CMD.suppression, artisan_id: A_SUPPRESSION, etat: 'en_ligne', domaine: 'suppression.invalid' }),
+      cmd({ id: CMD.validee, artisan_id: A_COMMANDE, etat: 'validee', domaine: 'atelier-commande-bis.invalid' }),
+      cmd({ id: CMD.pause, artisan_id: A_PAUSE, etat: 'en_ligne', domaine: 'pause.invalid' }),
+    ],
+    leads: [], messages: [], relances: [],
+  }
+}
+export const SCENARIOS_COMMANDE = [
+  { nom: 'commande en ligne, artisan vivant, son slug', corps: { commande: CMD.ok, slug: 'atelier-commande-025' }, attendu: [200], artisan: A_COMMANDE },
+  { nom: 'commande en ligne, sans slug', corps: { commande: CMD.ok }, attendu: [200], artisan: A_COMMANDE },
+  { nom: 'commande en ligne, slug d’un autre compte (la commande décide)', corps: { commande: CMD.ok, slug: 'martin-plomberie-025' }, attendu: [200], artisan: A_COMMANDE },
+  { nom: 'D01 : commande d’un compte purgé, adresse reprise par un inconnu', corps: { commande: CMD.purge, slug: 'martin-plomberie-025' }, attendu: [404] },
+  { nom: 'commande d’un compte effacé (artisan_id nul), adresse reprise', corps: { commande: CMD.efface, slug: 'martin-plomberie-025' }, attendu: [404] },
+  { nom: 'commande d’un compte en suppression', corps: { commande: CMD.suppression, slug: 'atelier-suppression-025' }, attendu: [404] },
+  { nom: 'commande pas en ligne (validee)', corps: { commande: CMD.validee, slug: 'atelier-commande-025' }, attendu: [404] },
+  { nom: 'commande inconnue (pas de repli par le slug)', corps: { commande: CMD.inconnue, slug: 'atelier-commande-025' }, attendu: [404] },
+  { nom: 'commande illisible', corps: { commande: 'pas-une-commande', slug: 'atelier-commande-025' }, attendu: [400, 404] },
+  { nom: 'commande en ligne, compte en pause (vivant)', corps: { commande: CMD.pause }, attendu: [200], artisan: A_PAUSE, paused: true },
+  { nom: 'sans commande : l’adresse, comme aujourd’hui', corps: { slug: 'atelier-commande-025' }, attendu: [200], artisan: A_COMMANDE },
+]
+/** Joue SCENARIOS_COMMANDE, une base neuve chacun, colonnes projetées → { echecs, faits } */
+export async function jouerCommandes({ racine, routeSource = null }) {
+  const echecs = [], faits = []
+  for (const sc of SCENARIOS_COMMANDE) {
+    const r = await chargerRoute({ racine, routeSource, base: baseCommandes(), projeter: true })
+    const corps = { contact: NUMERO_ESSAI, nom_prospect: null, message: 'Projet : Chauffe-eau · Commune : Rennes · Quand : Dans le mois', website: '', ...sc.corps }
+    const req = { json: async () => JSON.parse(JSON.stringify(corps)), headers: new Headers({ 'x-forwarded-for': '203.0.113.25' }) }
+    let rep
+    try { rep = await r.POST(req) } catch (e) { echecs.push(`${sc.nom} : POST lève ${premiereLigne(e)}`); continue }
+    const statut = rep?.status
+    const inseres = r.base.leads
+    const qui = inseres.map((l) => NOMS_ARTISANS[l.artisan_id] || l.artisan_id).join(', ') || 'aucune'
+    const d = []
+    if (!sc.attendu.includes(statut)) d.push(`répond ${statut} (${court(JSON.stringify(rep?.corps), 80)}), ${sc.attendu.join(' ou ')} attendu`)
+    if (inseres.some((l) => l.artisan_id === A_REPRISE)) d.push('une demande enregistrée chez l’inconnu qui a repris l’adresse : ses prospects partent chez un tiers')
+    if (sc.attendu[0] !== 200 && inseres.length) d.push(`${inseres.length} demande(s) enregistrée(s) (${qui}) alors que la demande est refusée`)
+    if (sc.attendu[0] === 200 && !(inseres.length === 1 && inseres[0].artisan_id === sc.artisan)) d.push(`demandes enregistrées : ${qui} ; une pour ${NOMS_ARTISANS[sc.artisan]} attendue`)
+    if (sc.paused && rep?.corps?.paused !== true) d.push('réponse sans paused: true')
+    if (d.length) echecs.push(`${sc.nom} : ${d.join(', ')}${r.traces.length ? ` [journal de la route : ${court(r.traces.join(' | '), 160)}]` : ''}`)
+    else faits.push(`${sc.nom} → ${statut}`)
+  }
+  return { echecs, faits }
+}
+// Sondes du détecteur de FS-12 : une route minimale correcte (doit passer) et ses mutations (chacune doit être vue).
+const ROUTE_SONDE_COMMANDE = `import { NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+export async function POST(req: Request) {
+  const b = await req.json()
+  let a: any = null
+  if (b.commande !== undefined) {
+    if (typeof b.commande !== 'string' || !UUID.test(b.commande)) return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
+    const { data: c } = await supabaseAdmin.from('sites_commandes').select('artisan_id, etat').eq('id', b.commande).maybeSingle()
+    if (c && c.artisan_id && c.etat === 'en_ligne') {
+      a = (await supabaseAdmin.from('artisans').select('id, slug, leads_pause, suppression_demandee_le').eq('id', c.artisan_id).maybeSingle()).data
+      if (a && (String(a.slug).startsWith('supprime-') || a.suppression_demandee_le)) a = null
+    }
+    // REPLI
+  } else {
+    a = (await supabaseAdmin.from('artisans').select('id, slug, leads_pause').eq('slug', b.slug).maybeSingle()).data
+  }
+  if (!a) return NextResponse.json({ error: 'Artisan introuvable' }, { status: 404 })
+  await supabaseAdmin.from('leads').insert({ artisan_id: a.id, contact: b.contact })
+  return NextResponse.json({ ok: true, ...(a.leads_pause ? { paused: true } : {}) })
+}
+`
+export const MUTATIONS_COMMANDE = [
+  { nom: 'état de la commande non contrôlé', de: "c.etat === 'en_ligne'", vers: 'true' },
+  { nom: 'comptes purgés ou en suppression non écartés', de: "      if (a && (String(a.slug).startsWith('supprime-') || a.suppression_demandee_le)) a = null\n", vers: '' },
+  { nom: 'repli par le slug quand la commande ne mène à personne', de: '    // REPLI', vers: "    if (!a) a = (await supabaseAdmin.from('artisans').select('id, slug, leads_pause').eq('slug', b.slug).maybeSingle()).data" },
+  { nom: 'commande ignorée (la route d’aujourd’hui)', de: 'if (b.commande !== undefined) {', vers: 'if (false) {' },
+  { nom: 'suppression_demandee_le non lue dans le select', de: "select('id, slug, leads_pause, suppression_demandee_le')", vers: "select('id, slug, leads_pause')" },
+]
+export async function jugerRoutageCommande({ racine }) {
+  const echecs = [], faits = []
+  let r
+  try { r = await jouerCommandes({ racine }) } catch (e) { return { ok: false, echecs: [`route non chargée contre le faux Supabase : ${premiereLigne(e)}`], faits } }
+  echecs.push(...r.echecs)
+  const vues = []
+  try {
+    const bonne = await jouerCommandes({ racine, routeSource: ROUTE_SONDE_COMMANDE })
+    if (bonne.echecs.length) echecs.push(`détecteur trop strict : une route minimale correcte échoue (${court(bonne.echecs[0], 160)})`)
+    for (const m of MUTATIONS_COMMANDE) {
+      if (!ROUTE_SONDE_COMMANDE.includes(m.de)) { echecs.push(`sonde « ${m.nom} » cassée`); continue }
+      const mute = await jouerCommandes({ racine, routeSource: ROUTE_SONDE_COMMANDE.replace(m.de, () => m.vers) })
+      if (!mute.echecs.length) echecs.push(`détecteur aveugle : la mutation « ${m.nom} » passe`)
+      else vues.push(`${m.nom} → vue`)
+    }
+  } catch (e) { echecs.push(`sondes du détecteur : ${premiereLigne(e)}`) }
+  if (!echecs.length) faits.push(`${rel(path.join(racine, 'app', 'api', 'leads', 'route.ts'))} contre un faux Supabase (colonnes projetées, sites_commandes) : ${r.faits.join(', ')} ; sondes : route minimale correcte verte, ${vues.join(', ')} ; sur un 404, le site montre le repli (FS-4)`)
   return { ok: !echecs.length, echecs, faits }
 }
 
@@ -1399,7 +1577,7 @@ async function principal() {
     let racineFS = o.racine
     if (o.temoin) {
       racineFS = construireTemoin()
-      s.note(`témoin : FS-1 à FS-7 sur ${rel(racineFS)} (générateur --source et route.ts de scripts/fixtures/025/temoins/${JUGE}/, lib/slugRedirect.ts du dépôt) ; T1 et T2 sur ${rel(o.racine)}`)
+      s.note(`témoin : FS-1 à FS-12 sur ${rel(racineFS)} (générateur --source et route.ts de scripts/fixtures/025/temoins/${JUGE}/, lib/slugRedirect.ts du dépôt) ; T1 et T2 sur ${rel(o.racine)}`)
     }
     const commande = lireCommande()
     // FS-1 (et le site qu'il génère, lu par FS-2, FS-3, FS-4, FS-5, FS-7, FS-8)
@@ -1435,6 +1613,7 @@ async function principal() {
     if (veut('FS-9')) { const r9 = await jugerLibellesMetier({ racine: racineFS }); s.verdict('FS-9', r9.ok, r9.faits.join(' ; '), r9.echecs.join(' ; ')) }
     if (veut('FS-10')) { const r10 = jugerReplisSansCoordonnees({ racine: racineFS }); s.verdict('FS-10', r10.ok, r10.faits.join(' ; '), r10.echecs.join(' ; ')) }
     if (veut('FS-11')) { const r11 = await jugerComptePurge({ racine: racineFS }); s.verdict('FS-11', r11.ok, r11.faits.join(' ; '), r11.echecs.join(' ; ')) }
+    if (veut('FS-12')) { const r12 = await jugerRoutageCommande({ racine: racineFS }); s.verdict('FS-12', r12.ok, r12.faits.join(' ; '), r12.echecs.join(' ; ')) }
     // T1, T2
     if (veut('T1')) { const r1 = t1({ juge: JUGE, racine: o.racine }); s.resultat('T1', r1); for (const f of r1.faits) s.note(`T1 : ${f}`) }
     if (veut('T2')) { const r2 = t2({ racine: o.racine }); s.resultat('T2', r2); for (const f of r2.faits) s.note(`T2 : ${f}`) }

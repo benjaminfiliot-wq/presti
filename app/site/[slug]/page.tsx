@@ -121,15 +121,17 @@ export default async function SitePage({ params }: { params: Promise<{ slug: str
     if (actuel) permanentRedirect(chemins(modeDepuisHote(host, actuel), actuel.slug).site)
   }
 
-  if (a?.domaine && a.domaine_verifie) {
-    if (host && host !== a.domaine && host !== `www.${a.domaine}`) redirect(`https://${a.domaine}/`)
-  }
-
   // Vrai 404 (audit v4 : « /site/<inexistant> » répondait 200, page fantôme indexable).
-  // Un site existant mais non publié garde un message poli, non indexé.
   if (!a) notFound()
   if (a.site_active !== true) {
-    return <main className="site"><div className="site-mid"><div className="site-404"><b>Site non publié</b><span>Ce site n&apos;est pas encore en ligne.</span></div></div></main>
+    const { data: commande } = await supabaseAdmin.from('sites_commandes').select('id, domaine')
+      .eq('artisan_id', a.id).eq('etat', 'en_ligne').limit(1).maybeSingle()
+    if (commande) redirect(commande.domaine ? `https://${commande.domaine}/` : `/site-genere/${commande.id}/`)
+    redirect(ch.plateforme)
+  }
+
+  if (a.domaine && a.domaine_verifie) {
+    if (host && host !== a.domaine && host !== `www.${a.domaine}`) redirect(`https://${a.domaine}/`)
   }
 
   // Niveau rendu borné par la formule (si l'artisan a rétrogradé, le site suit son plan).

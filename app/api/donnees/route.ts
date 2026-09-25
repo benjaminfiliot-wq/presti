@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { MEDIA_BUCKET } from '@/lib/media'
 import { authArtisan as verifierSession, estEchec } from '@/lib/authArtisan'
+import { actif } from '@/lib/flags'
 
 // Données & suppressions granulaires (v4 §C3). Principe : CHAQUE brique se réinitialise ou
 // se supprime indépendamment, sans jamais toucher au compte Presti.
@@ -45,6 +46,7 @@ export async function GET(req: Request) {
   const action = new URL(req.url).searchParams.get('action') as Action | null
   const leadId = new URL(req.url).searchParams.get('lead_id') || ''
   if (!action || !ACTIONS.includes(action)) return NextResponse.json({ error: 'Action inconnue' }, { status: 400 })
+  if (action === 'site_reinitialiser' && !actif('constructeurSite')) return NextResponse.json({ error: 'Action indisponible' }, { status: 404 })
 
   const { data: art } = await supabaseAdmin.from('artisans')
     .select('site_contenu, site_layout, realisations, avant_apres, site_active, plateforme_active').eq('id', uid).maybeSingle()
@@ -102,6 +104,7 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => null)
     const action = body?.action as Action
     if (!action || !ACTIONS.includes(action)) return NextResponse.json({ error: 'Action inconnue' }, { status: 400 })
+    if (action === 'site_reinitialiser' && !actif('constructeurSite')) return NextResponse.json({ error: 'Action indisponible' }, { status: 404 })
     if (action !== 'site_reinitialiser' && String(body?.confirm || '').trim().toUpperCase() !== 'SUPPRIMER') {
       return NextResponse.json({ error: 'Confirmation manquante.' }, { status: 400 })
     }

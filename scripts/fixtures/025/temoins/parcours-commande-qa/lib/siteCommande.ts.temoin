@@ -136,7 +136,8 @@ export function sirenValide(brut: string): boolean {
 // témoin 025-16 (M9) : un texte de l'artisan n'est jamais coupé. Il est gardé tel quel (balises ôtées, blancs repliés) jusqu'à
 // PLAFOND_GARDE signes, retiré au-delà ; erreursArtisan le refuse au-delà de sa borne, en disant la borne.
 const PLAFOND_GARDE = 2000
-const texteEntier = (v: unknown): string => { const t = String(v ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim(); return t.length > PLAFOND_GARDE ? '' : t }
+// témoin 025-20 (D33) : l'apostrophe droite entre deux lettres devient ’ (celle que generer.mjs exige) : « J'interviens » compte
+const texteEntier = (v: unknown): string => { const t = String(v ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().replace(/(\p{L})'(?=\p{L})/gu, '$1’'); return t.length > PLAFOND_GARDE ? '' : t }
 const objet = (v: unknown): Record<string, unknown> | null => (v && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : null)
 const annee = (v: unknown): number | null => {
   if (typeof v === 'number' && Number.isInteger(v)) return v
@@ -184,7 +185,8 @@ function erreursArtisan(a: Artisan | null | undefined): string[] {
     else if (!a.chiffres.every((c) => nombrePositif(c.valeur) && c.legende)) e.push('Chaque chiffre a une valeur positive et une légende.')
     if (Array.isArray(a.chiffres)) a.chiffres.forEach((c, i) => { trop(c.valeur, B.valeur, `Chiffre ${i + 1} : la valeur`); trop(c.unite ?? '', B.unite, `Chiffre ${i + 1} : l’unité`); trop(c.legende, B.legende, `Chiffre ${i + 1} : la légende`) })
   }
-  return e
+  // témoin 025-20 (D32) : chaque erreur de l'artisan dit « Votre parcours » : « Corriger » y mène (app/site/commander/page.tsx)
+  return e.map((x) => (x.includes('Votre parcours') ? x : `Votre parcours : ${x}`))
 }
 
 /** Nettoie ce qui vient des écrans : on ne garde que ce qu'on connaît, borné, sans HTML. Jamais de rejet

@@ -1,0 +1,475 @@
+// TÉMOIN de scripts/domaine-sans-site-qa.mjs (Claude Code, 25/09, fiche 025-19) : copie corrigée de app/site/[slug]/page.tsx (état du 25/09).
+// Jamais servie par le dépôt ; le juge la pose dans .orchestre/travail/domaine-sans-site-qa/temoin/ (suffixe .temoin retiré).
+import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
+import { headers } from 'next/headers'
+import { notFound, permanentRedirect, redirect } from 'next/navigation'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import type { SiteContenu } from '@/lib/ai'
+import { Fragment } from 'react'
+import Image from 'next/image'
+import SiteMotion from './SiteMotion'
+import SiteLightbox from './SiteLightbox'
+import SiteAvantApres from './SiteAvantApres'
+import SiteSlides from './SiteSlides'
+import { siteMaxForPlan } from '@/lib/plans'
+import { chemins, modeDepuisHote, urlSite } from '@/lib/urls'
+import { artisanParAncienSlug } from '@/lib/slugRedirect'
+import { resolveLayout, slidesOpts, type SectionId } from '@/lib/siteLayout'
+import { resolveStyle, styleToCss, styleToData } from '@/lib/siteStyle'
+import { lisibleSur } from '@/lib/contrast'
+import { fondDuTheme } from '@/lib/themeFonds'
+import { computeResponseDelay } from '@/lib/platStats'
+
+/**
+ * Sérialise un bloc de données structurées pour l'injecter dans `<script type="application/ld+json">`.
+ * Le contenu d'un tel bloc est lu en TEXTE BRUT jusqu'au premier « fin de balise script » : un nom
+ * d'artisan contenant cette séquence refermerait la balise et livrerait tout le reste du document
+ * au parseur HTML (page cassée, et porte ouverte à l'injection). Les trois caractères qui portent
+ * un sens en HTML repartent donc en échappements JSON — le JSON reste strictement équivalent.
+ */
+function jsonLd(donnees: unknown): string {
+  return JSON.stringify(donnees).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026')
+}
+
+type Service = { nom?: string; description?: string }
+type Realisation = { image?: string; titre?: string; specialite?: string; blur?: string }
+type Reseaux = { instagram?: string; facebook?: string; tiktok?: string; linkedin?: string; whatsapp?: string; site?: string; google?: string }
+type Artisan = {
+  id: string; nom: string | null; metier: string | null; slug: string | null; ville: string | null
+  bio: string | null; services: Service[] | null; zone_intervention: string | null
+  logo_url: string | null; photo_url: string | null; horaires: string | null
+  accent: string | null; realisations: Realisation[] | null; reseaux: Reseaux | null
+  tel_public: string | null; email_public: string | null
+  site_active: boolean | null; site_tier: number | null; plateforme_active: boolean | null
+  site_contenu: SiteContenu | null; site_contact_integre: boolean | null; plan: string | null; theme: string | null; site_seo: boolean | null; site_layout: unknown; site_style: unknown
+  domaine: string | null; domaine_verifie: boolean | null
+  avant_apres: { avant?: string; apres?: string; titre?: string }[] | null
+}
+
+async function getArtisan(slug: string): Promise<Artisan | null> {
+  const { data } = await supabaseAdmin
+    .from('artisans')
+    .select('id, nom, metier, slug, ville, bio, services, zone_intervention, logo_url, photo_url, horaires, accent, realisations, reseaux, tel_public, email_public, site_active, site_tier, plateforme_active, site_contenu, site_contact_integre, plan, theme, site_seo, site_layout, site_style, domaine, domaine_verifie, avant_apres')
+    .eq('slug', slug)
+    .maybeSingle()
+  return (data as Artisan) ?? null
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const a = await getArtisan(slug)
+  // Page inexistante : on écrase TOUT ce que le layout racine fournit (titre, auteur, OG, carte
+  // Twitter « Presti — … »), sinon la 404 d'une surface artisan porte la marque Presti.
+  if (!a) return { title: { absolute: 'Page introuvable' }, description: 'Cette page n’existe pas.', applicationName: 'Page introuvable', authors: [], keywords: [], robots: { index: false, follow: false }, alternates: { canonical: undefined }, openGraph: { title: 'Page introuvable', description: 'Cette page n’existe pas.', siteName: ' ' }, twitter: { card: 'summary', title: 'Page introuvable', description: 'Cette page n’existe pas.' } }
+  const t = `${a.nom}${a.metier ? ` — ${a.metier}` : ''}`
+  const d = a.site_contenu?.meta_description || a.bio || `${a.nom}${a.metier ? `, ${a.metier}` : ''}${a.zone_intervention ? ` à ${a.zone_intervention}` : ''}.`
+  // Un site PUBLIÉ (site_active) est indexable, sauf si l'artisan a coupé le SEO (site_seo=false).
+  const indexable = a.site_active === true && a.site_seo !== false
+  // Canonique = domaine perso (offre Signature) une fois vérifié/servi, sinon l'URL Presti.
+  // Consolide le SEO sur la marque de l'artisan et évite le duplicate content.
+  // L'adresse publique ne contient jamais « presti » dès qu'un domaine neutre ou perso existe (lib/urls).
+  const canonical = urlSite(a)
+  return {
+    // Titre + OG ABSOLUS : aucune mention « Presti » (site 100 % white-label, marque de l'artisan seule).
+    title: { absolute: t },
+    description: d,
+    // On écrase les meta du layout racine (application-name/author = "Presti") par la marque de l'artisan.
+    applicationName: a.nom || undefined,
+    authors: a.nom ? [{ name: a.nom }] : undefined,
+    // Sans cette ligne, les mots-clés marketing de Presti sont servis sur le site de
+    // l'artisan : identité de l'éditeur qui fuit, et mots-clés hors sujet pour lui.
+    keywords: Array.isArray(a.site_contenu?.mots_cles) && a.site_contenu.mots_cles.length
+      ? (a.site_contenu.mots_cles as string[]).slice(0, 12)
+      : [a.metier, a.zone_intervention || a.ville, 'devis'].filter(Boolean) as string[],
+    alternates: { canonical },
+    robots: indexable
+      ? { index: true, follow: true, googleBot: { index: true, follow: true } }
+      : { index: false, follow: false },
+    openGraph: { title: t, description: d, type: 'website', url: canonical, ...(a.nom ? { siteName: a.nom } : {}) },
+    twitter: { card: 'summary_large_image', title: t, description: d },
+  }
+}
+
+const initials = (n: string | null) => (n || 'A').trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? '').join('') || 'A'
+
+const IC = {
+  arrow: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>,
+  pin: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" /><circle cx="12" cy="10" r="3" /></svg>,
+  clock: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>,
+  phone: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" /></svg>,
+  mail: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></svg>,
+  globe: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z" /></svg>,
+  insta: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5.5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none" /></svg>,
+  fb: <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>,
+}
+
+export default async function SitePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const a = await getArtisan(slug)
+
+  // Domaine perso vérifié : on renvoie les visiteurs de l'URL Presti vers la marque de l'artisan
+  // (le middleware sert déjà le site sur le domaine → pas de boucle). Redirection non permanente
+  // par prudence (un domaine peut redevenir injoignable ; le SEO est consolidé par la canonique).
+  const host = (await headers()).get('host')?.toLowerCase().replace(/:\d+$/, '') || ''
+  // Les liens internes (contact, mentions) suivent l'adresse sur laquelle la page est servie :
+  // sur le domaine de l'artisan, c'est /demande — jamais /p/<slug>, sinon « presti » réapparaît au premier clic.
+  const ch = chemins(modeDepuisHote(host, { slug, domaine: a?.domaine ?? null, domaine_verifie: a?.domaine_verifie ?? null }), slug)
+
+  // Ancienne adresse → nouvelle, définitivement (308) : les cartes de visite imprimées avec
+  // l'ancien lien continuent de mener au bon endroit.
+  if (!a) {
+    const actuel = await artisanParAncienSlug(slug)
+    if (actuel) permanentRedirect(chemins(modeDepuisHote(host, actuel), actuel.slug).site)
+  }
+
+  if (a?.domaine && a.domaine_verifie) {
+    if (host && host !== a.domaine && host !== `www.${a.domaine}`) redirect(`https://${a.domaine}/`)
+  }
+
+  // Vrai 404 (audit v4 : « /site/<inexistant> » répondait 200, page fantôme indexable).
+  // Un site existant mais non publié garde un message poli, non indexé.
+  if (!a) notFound()
+  // TÉMOIN 025-19 (D11) : sans site publié, le site commandé s'il est en ligne, sinon la page de contact — plus « Site non publié »
+  if (a.site_active !== true) {
+    const { data: cmd } = await supabaseAdmin.from('sites_commandes').select('id, domaine').eq('artisan_id', a.id).eq('etat', 'en_ligne').limit(1).maybeSingle()
+    if (cmd) redirect(cmd.domaine ? `https://${cmd.domaine}/` : `/site-genere/${cmd.id}/`)
+    redirect(ch.plateforme)
+  }
+
+  // Niveau rendu borné par la formule (si l'artisan a rétrogradé, le site suit son plan).
+  const tier = Math.min([1, 2, 3].includes(Number(a.site_tier)) ? Number(a.site_tier) : 3, siteMaxForPlan(a.plan))
+  const c = a.site_contenu || null // contenu rédigé par l'IA (sur-mesure), sinon données brutes
+  const accent = /^#[0-9a-fA-F]{6}$/.test(a.accent || '') ? (a.accent as string) : '#D97757'
+  const theme = ['atelier', 'nuit', 'epure', 'chantier', 'bleu', 'vitrine'].includes(a.theme || '') ? (a.theme as string) : 'atelier'
+  const services = (Array.isArray(a.services) ? a.services : []).filter((s) => s && (s.nom || s.description))
+  const realisations = (Array.isArray(a.realisations) ? a.realisations : []).filter((r) => r && r.image)
+  const zone = a.zone_intervention || a.ville
+  const brand = a.logo_url || a.photo_url
+  const heroShot = realisations[0]?.image || a.photo_url
+  const r = a.reseaux || {}
+  const telDigits = (a.tel_public || '').replace(/[^0-9+]/g, '')
+  const waDigits = (r.whatsapp || '').replace(/[^0-9+]/g, '')
+  const channels: { href: string; label: string; icon: ReactNode }[] = [
+    ...(telDigits ? [{ href: `tel:${telDigits}`, label: a.tel_public as string, icon: IC.phone }] : []),
+    ...(a.email_public ? [{ href: `mailto:${a.email_public}`, label: a.email_public, icon: IC.mail }] : []),
+    ...(waDigits ? [{ href: `https://wa.me/${waDigits.replace(/^\+/, '')}`, label: 'WhatsApp', icon: IC.phone }] : []),
+    ...(r.instagram ? [{ href: r.instagram, label: 'Instagram', icon: IC.insta }] : []),
+    ...(r.facebook ? [{ href: r.facebook, label: 'Facebook', icon: IC.fb }] : []),
+    ...(r.google ? [{ href: r.google, label: 'Google', icon: IC.globe }] : []),
+    ...(r.site ? [{ href: r.site, label: 'Site', icon: IC.globe }] : []),
+  ]
+  const ext = (h: string) => /^https?:/i.test(h)
+  const plateformeActive = a.plateforme_active !== false && !!a.slug
+  // Le site RENVOIE vers la plateforme (espace de contact) — il ne l'embarque jamais.
+  const contactHref = plateformeActive ? ch.plateforme : (telDigits ? `tel:${telDigits}` : '#contact')
+
+  // JSON-LD LocalBusiness — SEO local. Anti-fabrication : uniquement des champs RÉELS
+  // fournis par l'artisan (aucun horaire structuré depuis du texte libre, aucun priceRange inventé).
+  const ldImage = heroShot || a.photo_url || realisations[0]?.image
+  const ldSameAs = [r.instagram, r.facebook, r.tiktok, r.linkedin, r.google, r.site].filter(Boolean)
+  const ld = {
+    '@context': 'https://schema.org', '@type': 'LocalBusiness',
+    name: a.nom, url: urlSite(a),
+    ...(a.metier ? { description: a.site_contenu?.meta_description || a.bio || `${a.metier}${zone ? ` à ${zone}` : ''}.` } : {}),
+    ...(zone ? { areaServed: zone } : {}),
+    ...(a.tel_public ? { telephone: a.tel_public } : {}),
+    ...(a.email_public ? { email: a.email_public } : {}),
+    ...(ldImage && !/^data:/.test(ldImage) ? { image: ldImage } : {}),
+    ...(ldSameAs.length ? { sameAs: ldSameAs } : {}),
+  }
+
+  const showReal = realisations.length > 0 && tier >= 2
+  const apropos = c?.apropos || a.bio
+  const showAbout = !!apropos
+  const showChannels = channels.length > 0
+  // Mots-clés GÉANTS (inspiration sites cinématiques « FIND ») : d'abord ceux choisis par
+  // l'IA (mots qui claquent, ancrés dans le geste), sinon repli sur prestations/spécialités.
+  const uniq = (arr: string[]) => Array.from(new Set(arr.map((s) => s.trim()).filter(Boolean)))
+  const aiWords = uniq(Array.isArray(c?.mots_cles) ? (c!.mots_cles as string[]) : [])
+  const bigWords = (aiWords.length >= 2 ? aiWords : uniq([
+    ...services.map((s) => s.nom || ''),
+    ...realisations.map((rz) => rz.specialite || ''),
+  ])).slice(0, 4)
+  const manifesteTxt = c?.manifeste || c?.hero_accroche || (a.metier ? `${a.metier}, avec exigence.` : 'Un travail fait pour durer.')
+
+  // Paires avant/après (Signature) — n'apparaît que si l'artisan en a fourni de complètes.
+  const aaPairs = (Array.isArray(a.avant_apres) ? a.avant_apres : [])
+    .filter((p): p is { avant: string; apres: string; titre?: string } => !!p && !!p.avant && !!p.apres)
+  const showAvantApres = tier >= 3 && aaPairs.length > 0
+
+  // Composition pilotée par les données : ordre + activation des sections (défaut = dérivé du niveau).
+  const layout = resolveLayout(a.site_layout, tier as 1 | 2 | 3)
+  // Réglages fins (v4 §7/E1). Rien de réglé ⇒ objets vides ⇒ rendu strictement identique à avant.
+  // Réassurance : uniquement des faits déclarés par l'artisan, ou tenus par le produit.
+  // Aucune ligne inventée — mieux vaut une bande plus courte (ou absente) qu'une phrase fausse.
+  const trustItems: { titre: string; detail: string }[] = []
+  if (zone) trustItems.push({ titre: 'Sur votre secteur', detail: zone })
+  if (a.horaires) trustItems.push({ titre: 'Disponibilités', detail: a.horaires })
+  // Le délai de réponse est MESURÉ, jamais promis. En corrigeant les mentions inventées
+  // de cette bande, j'y avais moi-même remis une promesse en dur (« une réponse en
+  // quelques minutes ») que rien ne soutenait — une promesse de délai non tenue est une
+  // pratique commerciale trompeuse, et c'est l'ARTISAN qui la porte. On réutilise donc
+  // la mesure réelle sur 30 jours, qui se tait quand il y a trop peu de données.
+  const delaiReel = plateformeActive ? await computeResponseDelay(a.id) : null
+  if (delaiReel) trustItems.push({ titre: 'Réponse rapide', detail: delaiReel })
+  if (services.length >= 3) trustItems.push({ titre: `${services.length} prestations`, detail: 'Décrivez votre projet, on vous dit ce qui est possible' })
+  else if (telDigits) trustItems.push({ titre: 'Joignable directement', detail: a.tel_public as string })
+
+  const style = resolveStyle(a.site_style)
+  const styleVars = styleToCss(style)
+  const styleData = styleToData(style)
+  // Accent LISIBLE pour les petits textes (§14) : l'accent brut d'un artisan passe rarement
+  // 4,5:1 en 12 px. On l'assombrit juste ce qu'il faut, sa couleur reste la sienne ailleurs.
+  const accentBrut = style.accent2 || accent
+  const accentLisible = lisibleSur(accentBrut, style.fond || fondDuTheme(theme))
+  // Les panneaux sombres du site (hero plein-cadre, manifeste, mots géants) ont leur propre
+  // fond : un accent assombri pour le crème y devient illisible. Il faut la variante inverse.
+  const accentLisibleSombre = lisibleSur(accentBrut, '#171310')
+  // « Avant/après » n'est pas géré par le composeur : on l'injecte après la galerie si présent.
+  if (showAvantApres && !layout.sections.some((s) => s.id === 'avantapres')) {
+    const gi = layout.sections.findIndex((s) => s.id === 'gallery')
+    const at = gi >= 0 ? gi + 1 : Math.max(0, layout.sections.length - 1)
+    layout.sections.splice(at, 0, { id: 'avantapres', on: true })
+  }
+  // Chaque section rend son JSX existant (conditions de contenu conservées → rendu identique).
+  const sectionNodes: Partial<Record<SectionId, ReactNode>> = {
+      hero: (
+      // Sans photo exploitable, on ne laisse pas un grand vide et on ne va pas chercher une
+      // image de banque : le hero bascule en composition TYPOGRAPHIQUE (v4 §7/E3, repli digne).
+      <section className={`site-hero${tier === 3 && heroShot ? ' site-dark' : ''}`} id="top" {...(heroShot ? {} : { 'data-hero': 'typo' })}>
+        {tier === 3 && heroShot ? (
+          <div className="site-hero-media" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={heroShot} alt="" className="site-hero-img" />
+            <span className="site-hero-veil" />
+          </div>
+        ) : null}
+        <div className="site-hero-in">
+          <span className="site-eyebrow site-reveal">{a.metier || 'Artisan'}{zone ? <> · {zone}</> : null}</span>
+          <h1 className="site-reveal">{a.nom}</h1>
+          {c?.hero_accroche ? <p className="site-tagline site-reveal">{c.hero_accroche}</p> : null}
+          <p className="site-lede site-reveal">{c?.hero_lede || a.bio || `Un travail soigné, un devis clair, des délais tenus. Décrivez votre projet — on s'occupe du reste.`}</p>
+          <div className="site-hero-cta site-reveal">
+            <a className="site-btn p" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis {IC.arrow}</a>
+            {showReal ? <a className="site-btn g" href="#realisations">Voir mes réalisations</a> : null}
+          </div>
+          {/* Sans photo, l'espace est rempli par du VRAI contenu — les prestations réellement
+              saisies par l'artisan — jamais par de la décoration ni une image inventée. */}
+          {!heroShot && services.length > 0 ? (
+            <ul className="site-hero-strip site-reveal">
+              {services.slice(0, 4).map((s, i) => <li key={i}>{s.nom}</li>)}
+            </ul>
+          ) : null}
+          {(telDigits || zone) ? (
+            <div className="site-hero-meta site-reveal">
+              {telDigits ? <a href={`tel:${telDigits}`}>{IC.phone}{a.tel_public}</a> : null}
+              {zone ? <span>{IC.pin}{zone}</span> : null}
+              {a.horaires ? <span>{IC.clock}{a.horaires}</span> : null}
+            </div>
+          ) : null}
+        </div>
+      </section>
+      ),
+      // Bande de réassurance — ANTI-FABRICATION (§0) : chaque ligne doit être vraie et
+      // vérifiable. Les anciennes mentions « Travail assuré » et « Devis gratuit » étaient
+      // des affirmations sur l'entreprise de l'artisan que personne n'avait déclarées
+      // (« assuré » sous-entend une assurance décennale — on ne l'invente pas).
+      // Ne restent que des faits saisis par l'artisan, ou garantis par le produit lui-même.
+      trust: tier >= 2 && trustItems.length >= 2 ? (
+        <section className="site-strip site-reveal">
+          {trustItems.map((t, i) => <div key={i}><b>{t.titre}</b><span>{t.detail}</span></div>)}
+        </section>
+      ) : null,
+      words: tier === 3 && bigWords.length >= 2 ? (
+        <section className="site-manifest site-dark" id="savoir-faire">
+          <span className="site-kick site-reveal">Le savoir-faire</span>
+          <div className="site-words">
+            {bigWords.map((w, i) => (
+              <a className="site-word site-reveal" href={showReal ? '#realisations' : '#contact'} key={i}>
+                <span className="site-word-n">{String(i + 1).padStart(2, '0')}</span>
+                <span className="site-word-t">{w}</span>
+                <svg className="site-word-a" viewBox="0 0 24 24" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </a>
+            ))}
+          </div>
+        </section>
+      ) : null,
+      features: tier === 3 && services.length >= 2 && realisations.length >= 2 ? (
+        <section className="site-features">
+          {services.slice(0, Math.min(3, realisations.length)).map((s, i) => (
+            <div className={`site-feature${i % 2 ? ' alt' : ''}`} key={i}>
+              <div className="site-feature-media site-reveal">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={realisations[i].image} alt={s.nom || ''} loading="lazy" />
+              </div>
+              <div className="site-feature-txt site-reveal">
+                <span className="site-feature-n">0{i + 1}</span>
+                <h3>{s.nom}</h3>
+                {s.description ? <p>{s.description}</p> : null}
+              </div>
+            </div>
+          ))}
+        </section>
+      ) : null,
+      manifesto: tier === 3 && (realisations[1]?.image || heroShot) ? (
+        <section className="site-manifesto">
+          <div className="site-manifesto-media" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={realisations[1]?.image || heroShot || ''} alt="" className="site-manifesto-img" />
+            <span className="site-manifesto-veil" />
+          </div>
+          <p className="site-manifesto-t site-reveal">{manifesteTxt}</p>
+        </section>
+      ) : null,
+      // Slides 3D (Signature, v5 §10 H2) : une réalisation par écran, épinglée au scroll. Ne rend
+      // rien tant que l'artisan n'a pas choisi ses photos — un site existant ne change pas.
+      slides: (() => {
+        if (tier < 3) return null
+        const o = slidesOpts(layout.sections.find((sec) => sec.id === 'slides')?.opts)
+        if (!o) return null
+        const parImage = new Map(realisations.map((rz) => [rz.image as string, rz]))
+        const panneaux = o.images.map((im) => parImage.get(im)).filter((rz): rz is Realisation => !!rz)
+          .map((rz) => ({ image: rz.image as string, titre: rz.titre, specialite: rz.specialite, fait: o.faits?.[rz.image as string], blur: rz.blur }))
+        return panneaux.length >= 2 ? <section className="site-slides-section" id="slides"><SiteSlides panneaux={panneaux} style={o.style} /></section> : null
+      })(),
+      gallery: showReal ? (
+        <section className="site-block" id="realisations">
+          <div className="site-head site-reveal"><span className="site-kick">Réalisations</span><h2>Le travail parle de lui-même</h2>{c?.realisations_intro ? <p className="site-sub">{c.realisations_intro}</p> : null}</div>
+          <div className={`site-gallery${tier === 3 ? ' cine' : ''}`}>
+            {realisations.map((rz, i) => (
+              <figure className={`site-shot site-reveal${tier === 3 && i % 5 === 0 ? ' wide' : ''}`} key={i}>
+                <Image src={rz.image!} alt={rz.titre || 'Réalisation'} fill sizes="(max-width: 680px) 100vw, (max-width: 1180px) 50vw, 33vw" style={{ objectFit: 'cover' }} unoptimized={/^data:/.test(rz.image!)} {...(rz.blur ? { placeholder: 'blur' as const, blurDataURL: rz.blur } : {})} />
+                {(rz.titre || rz.specialite) ? (
+                  <figcaption>{rz.specialite ? <span className="site-shot-tag">{rz.specialite}</span> : null}{rz.titre ? <b>{rz.titre}</b> : null}</figcaption>
+                ) : null}
+              </figure>
+            ))}
+          </div>
+        </section>
+      ) : null,
+      avantapres: showAvantApres ? (
+        <section className="site-block site-dark site-aa-section" id="avant-apres">
+          <div className="site-head site-reveal"><span className="site-kick">Avant / après</span><h2>Le geste qui change tout</h2><p className="site-sub">Glissez pour révéler la transformation.</p></div>
+          <SiteAvantApres pairs={aaPairs} />
+        </section>
+      ) : null,
+      services: services.length > 0 ? (
+        <section className="site-block" id="services">
+          <div className="site-head site-reveal"><span className="site-kick">Prestations</span><h2>Ce que je réalise</h2>{c?.prestations_intro ? <p className="site-sub">{c.prestations_intro}</p> : null}</div>
+          <div className="site-services">
+            {services.map((s, i) => (
+              <div className="site-serv site-reveal" key={i}>
+                <span className="site-serv-n">{String(i + 1).padStart(2, '0')}</span>
+                <div><b>{s.nom || 'Prestation'}</b>{s.description ? <p>{s.description}</p> : null}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null,
+      about: showAbout ? (
+        <section className="site-block site-about site-dark" id="apropos">
+          <div className="site-about-in site-reveal">
+            <span className="site-kick">À propos</span>
+            <p>{apropos}</p>
+            {(zone || a.horaires) ? (
+              <div className="site-about-meta">
+                {zone ? <span>{IC.pin}{zone}</span> : null}
+                {a.horaires ? <span>{IC.clock}{a.horaires}</span> : null}
+              </div>
+            ) : null}
+          </div>
+        </section>
+      ) : null,
+      // PROCESS (v2) — « comment ça se passe », étapes numérotées
+      process: (c?.process && c.process.length) ? (
+        <section className="site-block" id="process">
+          <div className="site-head site-reveal"><span className="site-kick">Comment ça se passe</span><h2>Du premier échange à la fin du chantier</h2></div>
+          <div className="site-steps">
+            {c.process.map((e, i) => (
+              <div className="site-step site-reveal" key={i}><span className="site-step-n">{String(i + 1).padStart(2, '0')}</span><div><b>{e.titre}</b>{e.texte ? <p>{e.texte}</p> : null}</div></div>
+            ))}
+          </div>
+        </section>
+      ) : null,
+      // FAQ (v2) — accordéon + schema.org FAQPage (SEO)
+      faq: (c?.faq && c.faq.length) ? (
+        <section className="site-block site-faq" id="faq">
+          <div className="site-head site-reveal"><span className="site-kick">Questions fréquentes</span><h2>Vous vous demandez peut-être…</h2></div>
+          <div className="site-faq-list">
+            {c.faq.map((e, i) => (
+              <details className="site-faq-item site-reveal" key={i}><summary>{e.q}</summary><p>{e.r}</p></details>
+            ))}
+          </div>
+        </section>
+      ) : null,
+      // ZONE (v2) — phrase de zone d'intervention (SEO local)
+      zone: (c?.zone_texte || zone) ? (
+        <section className="site-block site-zone site-reveal" id="zone">
+          <span className="site-kick">Zone d&apos;intervention</span>
+          <p>{c?.zone_texte || `J'interviens à ${zone}.`}</p>
+        </section>
+      ) : null,
+      // CONTACT — panneau de clôture. Le site NE contient PAS la plateforme : il présente tout,
+      // puis renvoie vers l'espace de contact (la plateforme).
+      contact: (
+        <section className="site-cta-block site-dark site-reveal" id="contact">
+        <h2>{c?.cta_titre || 'Parlons de votre projet'}</h2>
+        <p>{c?.cta_texte || 'Décrivez votre besoin — réponse rapide, échange direct, devis clair.'}</p>
+        <a className="site-btn p lg" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>
+          {plateformeActive ? 'Démarrer une demande' : 'Me contacter'} {IC.arrow}
+        </a>
+        {plateformeActive ? <p className="site-cta-note">Vous arrivez sur mon espace de contact — je vous réponds en direct.</p> : null}
+        {showChannels ? (
+          <div className="site-channels">
+            {channels.map((c, i) => (
+              <a className="site-chan" key={i} href={c.href} {...(ext(c.href) ? { target: '_blank', rel: 'noopener' } : {})}><span>{c.icon}</span>{c.label}</a>
+            ))}
+          </div>
+        ) : null}
+      </section>
+      ),
+  }
+
+  return (
+    <main className={`site tier-${tier}`} style={{ ['--pc' as string]: accent, ['--pc-ink' as string]: accentLisible, ['--pc-ink-d' as string]: accentLisibleSombre, ...styleVars }} data-tier={tier} data-theme={theme} {...styleData}>
+      {/* Tout ce qui suit vient de l'artisan (nom, services, FAQ) : c'est du contenu non fiable
+          posé dans un bloc que le navigateur lit en texte brut jusqu'au premier `</script>`.
+          On échappe donc `<`, `>` et `&` — `<` seul suffisait à empêcher la fermeture de balise,
+          mais `&` ferme aussi la porte des références de caractères dans un contexte HTML. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
+      {c?.faq && c.faq.length ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: c.faq.map((e) => ({ '@type': 'Question', name: e.q, acceptedAnswer: { '@type': 'Answer', text: e.r } })) }) }} />
+      ) : null}
+      <SiteMotion />
+      {showReal ? <SiteLightbox /> : null}
+
+      {/* NAV — toujours présente, hors composition */}
+      <header className="site-nav">
+        <a className="site-brand" href="#top">
+          <span className="site-mark">{brand
+            // eslint-disable-next-line @next/next/no-img-element
+            ? <img src={brand} alt="" /> : <b>{initials(a.nom)}</b>}</span>
+          <span>{a.nom}</span>
+        </a>
+        <nav className="site-links">
+          {showReal ? <a href="#realisations">Réalisations</a> : null}
+          {services.length > 0 ? <a href="#services">Prestations</a> : null}
+          {showAbout ? <a href="#apropos">À propos</a> : null}
+          <a className="site-nav-cta" href={contactHref} {...(ext(contactHref) ? { target: '_blank', rel: 'noopener' } : {})}>Demander un devis</a>
+        </nav>
+      </header>
+
+      {/* SECTIONS — dans l'ordre de la composition (site_layout), gating par formule côté serveur */}
+      {layout.sections.map((s) => { const n = sectionNodes[s.id]; return n ? <Fragment key={s.id}>{n}</Fragment> : null })}
+
+      <footer className="site-foot">
+        <span className="site-foot-b">{a.nom}</span>
+        <span>{a.metier}{zone ? ` · ${zone}` : ''}</span>
+        {/* Obligation LCEN : un site professionnel doit porter ses mentions légales.
+            Elles manquaient totalement — trouvé par l'audit du 2026-09-03. */}
+        <a className="site-foot-legal" href={ch.infos}>Informations légales</a>
+      </footer>
+    </main>
+  )
+}

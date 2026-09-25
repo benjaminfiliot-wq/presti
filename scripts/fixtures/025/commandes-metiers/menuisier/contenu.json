@@ -1,0 +1,488 @@
+{
+  "metier": "menuisier",
+  "extrait_le": "2026-09-25",
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Menuisier à Tours — Menuiserie Carré Tourangelle",
+      "description": "Menuiserie Carré Tourangelle, menuisier à Tours et Joué-lès-Tours : escaliers sur mesure, bibliothèques, placards et dressings. Devis détaillé après visite.",
+      "h1": "Menuisier à Tours",
+      "h1Ligne": "Du bois fait pour durer",
+      "chapeau": "Escaliers, bibliothèques et placards : je dessine, je fabrique et je pose.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Ce que je fabrique",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je travaille le bois massif, du relevé de cotes à la pose chez vous."
+            },
+            {
+              "type": "h3",
+              "texte": "Escaliers sur mesure"
+            },
+            {
+              "type": "p",
+              "texte": "Droits, tournants ou en colimaçon, en chêne ou en hêtre, dessinés pour votre trémie."
+            },
+            {
+              "type": "h3",
+              "texte": "Bibliothèques"
+            },
+            {
+              "type": "p",
+              "texte": "Je conçois des rangements qui épousent vos murs, avec des tablettes qui ne plient pas."
+            },
+            {
+              "type": "h3",
+              "texte": "Placards et dressings"
+            },
+            {
+              "type": "p",
+              "texte": "Je fabrique des façades sur mesure et j’aménage l’intérieur selon ce que vous rangez."
+            },
+            {
+              "type": "h3",
+              "texte": "Meubles"
+            },
+            {
+              "type": "p",
+              "texte": "Lits, tables et buffets en bois massif, assemblés à l’ancienne et finis à l’huile."
+            }
+          ]
+        },
+        {
+          "genre": "galerie",
+          "h2": "Pièces livrées",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Quelques ouvrages posés ces derniers mois, photographiés chez leurs propriétaires."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Autour de Tours",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je suis installée à Tours et je me déplace dans les communes voisines, sans frais de déplacement cachés."
+            },
+            {
+              "type": "h3",
+              "texte": "Tours"
+            },
+            {
+              "type": "p",
+              "texte": "Je travaille régulièrement à Tours : c’est là que je suis installée."
+            },
+            {
+              "type": "h3",
+              "texte": "Joué-lès-Tours"
+            },
+            {
+              "type": "p",
+              "texte": "Je travaille régulièrement à Joué-lès-Tours : à quelques minutes de chez moi."
+            }
+          ]
+        },
+        {
+          "genre": "etapes",
+          "h2": "En trois temps",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Du premier appel à la fin du chantier, vous savez toujours où nous en sommes."
+            },
+            {
+              "type": "h3",
+              "texte": "Votre appel"
+            },
+            {
+              "type": "p",
+              "texte": "Vous me décrivez la pièce et l’usage ; je vous demande deux ou trois photos de l’endroit."
+            },
+            {
+              "type": "h3",
+              "texte": "Le relevé"
+            },
+            {
+              "type": "p",
+              "texte": "Je viens prendre les cotes, je vous montre des essences et je vous remets un plan chiffré."
+            },
+            {
+              "type": "h3",
+              "texte": "La pose"
+            },
+            {
+              "type": "p",
+              "texte": "Je fabrique en atelier puis je pose en une ou deux journées, en protégeant vos sols."
+            }
+          ]
+        },
+        {
+          "genre": "faq",
+          "h2": "Vos questions",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Ce qu’on me demande le plus souvent avant un premier rendez-vous."
+            },
+            {
+              "type": "h3",
+              "texte": "Quelles essences proposez-vous ?"
+            },
+            {
+              "type": "p",
+              "texte": "Le chêne pour ce qui s’use, le hêtre ou le frêne pour les meubles, selon votre budget."
+            },
+            {
+              "type": "h3",
+              "texte": "Combien de temps pour un escalier ?"
+            },
+            {
+              "type": "p",
+              "texte": "Comptez six semaines entre le relevé et la pose, fabrication comprise."
+            },
+            {
+              "type": "h3",
+              "texte": "Fournissez-vous un plan ?"
+            },
+            {
+              "type": "p",
+              "texte": "Oui, un plan coté accompagne chaque devis, pour voir l’ouvrage avant de décider."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Décrivez-moi votre besoin : je vous rappelle pour convenir d’un passage."
+            },
+            {
+              "type": "h3",
+              "texte": "Adresse"
+            },
+            {
+              "type": "p",
+              "texte": "6 rue de l’Essai, 37000 Tours"
+            },
+            {
+              "type": "h3",
+              "texte": "Horaires"
+            },
+            {
+              "type": "p",
+              "texte": "Lundi–vendredi, 8 h–18 h"
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "HomeAndConstructionBusiness",
+          "name": "Menuiserie Carré Tourangelle",
+          "url": "https://exemple.invalid/",
+          "telephone": "+33 2 61 91 51 04",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "6 rue de l’Essai",
+            "postalCode": "37000",
+            "addressLocality": "Tours",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Tours",
+            "Joué-lès-Tours"
+          ]
+        }
+      ]
+    },
+    "/menuisier-tours/": {
+      "type": "commune",
+      "cible": "Tours",
+      "title": "Artisan menuisier à Tours — Menuiserie Carré Tourangelle",
+      "description": "Menuisier à Tours : bibliothèques et placards et dressings, devis détaillé après une visite sur place.",
+      "h1": "Menuisier à Tours",
+      "h1Ligne": "Escaliers en chêne",
+      "kicker": "Intervention à Tours",
+      "chapeau": "Je viens à Tours sur rendez-vous, avec un devis clair avant le moindre travail.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Interventions à Tours",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "À Tours, je passe voir le chantier avant de chiffrer quoi que ce soit."
+            },
+            {
+              "type": "h3",
+              "texte": "Escaliers sur mesure"
+            },
+            {
+              "type": "p",
+              "texte": "Droits, tournants ou en colimaçon, en chêne ou en hêtre, dessinés pour votre trémie, à Tours comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Bibliothèques"
+            },
+            {
+              "type": "p",
+              "texte": "Je conçois des rangements qui épousent vos murs, avec des tablettes qui ne plient pas, à Tours comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Placards et dressings"
+            },
+            {
+              "type": "p",
+              "texte": "Je fabrique des façades sur mesure et j’aménage l’intérieur selon ce que vous rangez, à Tours comme ailleurs."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je me déplace aussi à Joué-lès-Tours, à quelques minutes de Tours."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Votre projet à Tours",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Dites-moi ce qu’il faut faire à Tours : je vous rappelle dans la journée ouvrée."
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "HomeAndConstructionBusiness",
+          "name": "Menuiserie Carré Tourangelle",
+          "url": "https://exemple.invalid/menuisier-tours/",
+          "telephone": "+33 2 61 91 51 04",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "6 rue de l’Essai",
+            "postalCode": "37000",
+            "addressLocality": "Tours",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Tours",
+            "Joué-lès-Tours"
+          ]
+        }
+      ]
+    },
+    "/menuisier-joue-les-tours/": {
+      "type": "commune",
+      "cible": "Joué-lès-Tours",
+      "title": "Artisan menuisier à Joué-lès-Tours — Menuiserie Carré Tourangelle",
+      "description": "Menuisier à Joué-lès-Tours : bibliothèques et placards et dressings, devis détaillé après une visite sur place.",
+      "h1": "Menuisier à Joué-lès-Tours",
+      "h1Ligne": "Rangements sur mesure",
+      "kicker": "Intervention à Joué-lès-Tours",
+      "chapeau": "Je viens à Joué-lès-Tours sur rendez-vous, avec un devis clair avant le moindre travail.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Interventions à Joué-lès-Tours",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "À Joué-lès-Tours, je passe voir le chantier avant de chiffrer quoi que ce soit."
+            },
+            {
+              "type": "h3",
+              "texte": "Escaliers sur mesure"
+            },
+            {
+              "type": "p",
+              "texte": "Droits, tournants ou en colimaçon, en chêne ou en hêtre, dessinés pour votre trémie, à Joué-lès-Tours comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Bibliothèques"
+            },
+            {
+              "type": "p",
+              "texte": "Je conçois des rangements qui épousent vos murs, avec des tablettes qui ne plient pas, à Joué-lès-Tours comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Placards et dressings"
+            },
+            {
+              "type": "p",
+              "texte": "Je fabrique des façades sur mesure et j’aménage l’intérieur selon ce que vous rangez, à Joué-lès-Tours comme ailleurs."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je me déplace aussi à Tours, à quelques minutes de Joué-lès-Tours."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Votre projet à Joué-lès-Tours",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Dites-moi ce qu’il faut faire à Joué-lès-Tours : je vous rappelle dans la journée ouvrée."
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "HomeAndConstructionBusiness",
+          "name": "Menuiserie Carré Tourangelle",
+          "url": "https://exemple.invalid/menuisier-joue-les-tours/",
+          "telephone": "+33 2 61 91 51 04",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "6 rue de l’Essai",
+            "postalCode": "37000",
+            "addressLocality": "Tours",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Tours",
+            "Joué-lès-Tours"
+          ]
+        }
+      ]
+    },
+    "/mentions-legales/": {
+      "type": "legal",
+      "title": "Mentions légales — Menuiserie Carré Tourangelle",
+      "description": "Mentions légales du site de Menuiserie Carré Tourangelle, menuisier à Tours : éditeur, assurance et hébergement.",
+      "h1": "Mentions légales",
+      "sections": [
+        {
+          "h2": "Identification de l’entreprise",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Nom commercial : Menuiserie Carré Tourangelle"
+            },
+            {
+              "type": "p",
+              "texte": "Adresse du siège : 6 rue de l’Essai, 37000 Tours"
+            },
+            {
+              "type": "p",
+              "texte": "SIREN : 000000000"
+            },
+            {
+              "type": "p",
+              "texte": "Directeur de la publication : Sophie Carré"
+            }
+          ]
+        },
+        {
+          "h2": "Assurance responsabilité décennale",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Compagnie d’assurance : Assureur d’essai"
+            },
+            {
+              "type": "p",
+              "texte": "Numéro de police : ESSAI-025-104"
+            },
+            {
+              "type": "p",
+              "texte": "Zone couverte : Tours et Joué-lès-Tours"
+            }
+          ]
+        },
+        {
+          "h2": "Hébergement du site",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Le site est hébergé par Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis."
+            }
+          ]
+        },
+        {
+          "h2": "Propriété intellectuelle et crédits photographiques",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Les textes de ce site appartiennent à Menuiserie Carré Tourangelle. Les crédits des photographies sont détaillés ci-dessous."
+            }
+          ]
+        }
+      ],
+      "jsonld": []
+    },
+    "/confidentialite/": {
+      "type": "legal",
+      "title": "Confidentialité — Menuiserie Carré Tourangelle",
+      "description": "Ce que Menuiserie Carré Tourangelle fait des coordonnées laissées dans le formulaire de devis, et combien de temps elles sont gardées.",
+      "h1": "Politique de confidentialité",
+      "sections": [
+        {
+          "h2": "Données du formulaire",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Le formulaire de devis recueille le type de projet, la commune, le délai souhaité, votre message et un moyen de vous rappeler."
+            },
+            {
+              "type": "p",
+              "texte": "Ces données servent seulement à vous répondre ; Menuiserie Carré Tourangelle ne les vend ni ne les cède."
+            }
+          ]
+        },
+        {
+          "h2": "Durée de conservation",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Une demande restée sans suite est effacée au bout de trois ans."
+            }
+          ]
+        },
+        {
+          "h2": "Vos droits",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Vous pouvez demander l’accès, la rectification ou l’effacement de vos données en écrivant à contact@menuiserie-carre.invalid."
+            }
+          ]
+        }
+      ],
+      "jsonld": []
+    }
+  }
+}

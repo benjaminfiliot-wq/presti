@@ -1,0 +1,488 @@
+{
+  "metier": "plombier",
+  "extrait_le": "2026-09-25",
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Plombier à Lyon — Garnier Plomberie",
+      "description": "Garnier Plomberie, plombier à Lyon et Villeurbanne : salles de bains, chauffe-eau, recherche de fuite. Devis détaillé après visite.",
+      "h1": "Plombier à Lyon",
+      "h1Ligne": "Des réseaux qui tiennent",
+      "chapeau": "Salles de bains, chauffe-eau et fuites : je viens, je répare, je rends propre.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Ce que je fais",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je travaille seul, sur rendez-vous, du diagnostic à la remise en eau."
+            },
+            {
+              "type": "h3",
+              "texte": "Salles de bains"
+            },
+            {
+              "type": "p",
+              "texte": "Je dépose l’ancienne installation, je refais les arrivées et les évacuations, puis je pose douche, vasque et robinetterie."
+            },
+            {
+              "type": "h3",
+              "texte": "Chauffe-eau"
+            },
+            {
+              "type": "p",
+              "texte": "Je remplace un ballon fatigué par un modèle dimensionné pour votre foyer, raccordé et contrôlé devant vous."
+            },
+            {
+              "type": "h3",
+              "texte": "Recherche de fuite"
+            },
+            {
+              "type": "p",
+              "texte": "Je localise la fuite sans casser au hasard, je répare la canalisation et je vous explique ce qui a lâché."
+            },
+            {
+              "type": "h3",
+              "texte": "Robinetterie"
+            },
+            {
+              "type": "p",
+              "texte": "Mitigeurs, colonnes de douche et siphons : je change la pièce, je règle le débit et je vérifie l’étanchéité."
+            }
+          ]
+        },
+        {
+          "genre": "galerie",
+          "h2": "Chantiers récents",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Quelques interventions terminées ces derniers mois, photographiées à la fin du chantier."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Autour de Lyon",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je suis installé à Lyon et je me déplace dans les communes voisines, sans frais de déplacement cachés."
+            },
+            {
+              "type": "h3",
+              "texte": "Lyon"
+            },
+            {
+              "type": "p",
+              "texte": "Je travaille régulièrement à Lyon : c’est là que je suis installé."
+            },
+            {
+              "type": "h3",
+              "texte": "Villeurbanne"
+            },
+            {
+              "type": "p",
+              "texte": "Je travaille régulièrement à Villeurbanne : à quelques minutes de chez moi."
+            }
+          ]
+        },
+        {
+          "genre": "etapes",
+          "h2": "En trois temps",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Du premier appel à la fin du chantier, vous savez toujours où nous en sommes."
+            },
+            {
+              "type": "h3",
+              "texte": "Votre appel"
+            },
+            {
+              "type": "p",
+              "texte": "Vous décrivez la panne ou le projet ; je vous pose trois questions précises pour venir avec les bonnes pièces."
+            },
+            {
+              "type": "h3",
+              "texte": "Le passage"
+            },
+            {
+              "type": "p",
+              "texte": "Je viens voir sur place, je mesure et je vous remets un devis détaillé, poste par poste."
+            },
+            {
+              "type": "h3",
+              "texte": "Les travaux"
+            },
+            {
+              "type": "p",
+              "texte": "J’interviens à la date convenue, je protège le sol et je teste chaque raccord avant de partir."
+            }
+          ]
+        },
+        {
+          "genre": "faq",
+          "h2": "Vos questions",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Ce qu’on me demande le plus souvent avant un premier rendez-vous."
+            },
+            {
+              "type": "h3",
+              "texte": "Intervenez-vous le samedi ?"
+            },
+            {
+              "type": "p",
+              "texte": "Oui, le samedi matin pour les urgences d’eau : une fuite ne choisit pas son jour."
+            },
+            {
+              "type": "h3",
+              "texte": "Le devis est-il détaillé ?"
+            },
+            {
+              "type": "p",
+              "texte": "Chaque poste est chiffré à part : fournitures, main-d’œuvre et déplacement, sans ligne floue."
+            },
+            {
+              "type": "h3",
+              "texte": "Quelle garantie sur mes travaux ?"
+            },
+            {
+              "type": "p",
+              "texte": "Ma garantie décennale couvre les ouvrages posés, et je reviens corriger un défaut sans discuter."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Décrivez-moi votre besoin : je vous rappelle pour convenir d’un passage."
+            },
+            {
+              "type": "h3",
+              "texte": "Adresse"
+            },
+            {
+              "type": "p",
+              "texte": "8 rue de l’Essai, 69003 Lyon"
+            },
+            {
+              "type": "h3",
+              "texte": "Horaires"
+            },
+            {
+              "type": "p",
+              "texte": "Lundi–vendredi, 8 h–18 h"
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "Plumber",
+          "name": "Garnier Plomberie",
+          "url": "https://exemple.invalid/",
+          "telephone": "+33 2 61 91 51 01",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "8 rue de l’Essai",
+            "postalCode": "69003",
+            "addressLocality": "Lyon",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Lyon",
+            "Villeurbanne"
+          ]
+        }
+      ]
+    },
+    "/plombier-lyon/": {
+      "type": "commune",
+      "cible": "Lyon",
+      "title": "Artisan plombier à Lyon — Garnier Plomberie",
+      "description": "Plombier à Lyon : chauffe-eau et recherche de fuite, devis détaillé après une visite sur place.",
+      "h1": "Plombier à Lyon",
+      "h1Ligne": "Réseaux refaits",
+      "kicker": "Intervention à Lyon",
+      "chapeau": "Je viens à Lyon sur rendez-vous, avec un devis clair avant le moindre travail.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Interventions à Lyon",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "À Lyon, je passe voir le chantier avant de chiffrer quoi que ce soit."
+            },
+            {
+              "type": "h3",
+              "texte": "Salles de bains"
+            },
+            {
+              "type": "p",
+              "texte": "Je dépose l’ancienne installation, je refais les arrivées et les évacuations, puis je pose douche, vasque et robinetterie, à Lyon comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Chauffe-eau"
+            },
+            {
+              "type": "p",
+              "texte": "Je remplace un ballon fatigué par un modèle dimensionné pour votre foyer, raccordé et contrôlé devant vous, à Lyon comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Recherche de fuite"
+            },
+            {
+              "type": "p",
+              "texte": "Je localise la fuite sans casser au hasard, je répare la canalisation et je vous explique ce qui a lâché, à Lyon comme ailleurs."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je me déplace aussi à Villeurbanne, à quelques minutes de Lyon."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Votre projet à Lyon",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Dites-moi ce qu’il faut faire à Lyon : je vous rappelle dans la journée ouvrée."
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "Plumber",
+          "name": "Garnier Plomberie",
+          "url": "https://exemple.invalid/plombier-lyon/",
+          "telephone": "+33 2 61 91 51 01",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "8 rue de l’Essai",
+            "postalCode": "69003",
+            "addressLocality": "Lyon",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Lyon",
+            "Villeurbanne"
+          ]
+        }
+      ]
+    },
+    "/plombier-villeurbanne/": {
+      "type": "commune",
+      "cible": "Villeurbanne",
+      "title": "Artisan plombier à Villeurbanne — Garnier Plomberie",
+      "description": "Plombier à Villeurbanne : chauffe-eau et recherche de fuite, devis détaillé après une visite sur place.",
+      "h1": "Plombier à Villeurbanne",
+      "h1Ligne": "Eau chaude retrouvée",
+      "kicker": "Intervention à Villeurbanne",
+      "chapeau": "Je viens à Villeurbanne sur rendez-vous, avec un devis clair avant le moindre travail.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Interventions à Villeurbanne",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "À Villeurbanne, je passe voir le chantier avant de chiffrer quoi que ce soit."
+            },
+            {
+              "type": "h3",
+              "texte": "Salles de bains"
+            },
+            {
+              "type": "p",
+              "texte": "Je dépose l’ancienne installation, je refais les arrivées et les évacuations, puis je pose douche, vasque et robinetterie, à Villeurbanne comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Chauffe-eau"
+            },
+            {
+              "type": "p",
+              "texte": "Je remplace un ballon fatigué par un modèle dimensionné pour votre foyer, raccordé et contrôlé devant vous, à Villeurbanne comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Recherche de fuite"
+            },
+            {
+              "type": "p",
+              "texte": "Je localise la fuite sans casser au hasard, je répare la canalisation et je vous explique ce qui a lâché, à Villeurbanne comme ailleurs."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je me déplace aussi à Lyon, à quelques minutes de Villeurbanne."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Votre projet à Villeurbanne",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Dites-moi ce qu’il faut faire à Villeurbanne : je vous rappelle dans la journée ouvrée."
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "Plumber",
+          "name": "Garnier Plomberie",
+          "url": "https://exemple.invalid/plombier-villeurbanne/",
+          "telephone": "+33 2 61 91 51 01",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "8 rue de l’Essai",
+            "postalCode": "69003",
+            "addressLocality": "Lyon",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Lyon",
+            "Villeurbanne"
+          ]
+        }
+      ]
+    },
+    "/mentions-legales/": {
+      "type": "legal",
+      "title": "Mentions légales — Garnier Plomberie",
+      "description": "Mentions légales du site de Garnier Plomberie, plombier à Lyon : éditeur, assurance et hébergement.",
+      "h1": "Mentions légales",
+      "sections": [
+        {
+          "h2": "Identification de l’entreprise",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Nom commercial : Garnier Plomberie"
+            },
+            {
+              "type": "p",
+              "texte": "Adresse du siège : 8 rue de l’Essai, 69003 Lyon"
+            },
+            {
+              "type": "p",
+              "texte": "SIREN : 000000000"
+            },
+            {
+              "type": "p",
+              "texte": "Directeur de la publication : Julien Garnier"
+            }
+          ]
+        },
+        {
+          "h2": "Assurance responsabilité décennale",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Compagnie d’assurance : Assureur d’essai"
+            },
+            {
+              "type": "p",
+              "texte": "Numéro de police : ESSAI-025-101"
+            },
+            {
+              "type": "p",
+              "texte": "Zone couverte : Lyon et Villeurbanne"
+            }
+          ]
+        },
+        {
+          "h2": "Hébergement du site",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Le site est hébergé par Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis."
+            }
+          ]
+        },
+        {
+          "h2": "Propriété intellectuelle et crédits photographiques",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Les textes de ce site appartiennent à Garnier Plomberie. Les crédits des photographies sont détaillés ci-dessous."
+            }
+          ]
+        }
+      ],
+      "jsonld": []
+    },
+    "/confidentialite/": {
+      "type": "legal",
+      "title": "Confidentialité — Garnier Plomberie",
+      "description": "Ce que Garnier Plomberie fait des coordonnées laissées dans le formulaire de devis, et combien de temps elles sont gardées.",
+      "h1": "Politique de confidentialité",
+      "sections": [
+        {
+          "h2": "Données du formulaire",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Le formulaire de devis recueille le type de projet, la commune, le délai souhaité, votre message et un moyen de vous rappeler."
+            },
+            {
+              "type": "p",
+              "texte": "Ces données servent seulement à vous répondre ; Garnier Plomberie ne les vend ni ne les cède."
+            }
+          ]
+        },
+        {
+          "h2": "Durée de conservation",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Une demande restée sans suite est effacée au bout de trois ans."
+            }
+          ]
+        },
+        {
+          "h2": "Vos droits",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Vous pouvez demander l’accès, la rectification ou l’effacement de vos données en écrivant à contact@garnier-plomberie.invalid."
+            }
+          ]
+        }
+      ],
+      "jsonld": []
+    }
+  }
+}

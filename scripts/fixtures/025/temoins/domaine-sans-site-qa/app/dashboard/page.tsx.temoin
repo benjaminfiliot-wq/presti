@@ -1,0 +1,191 @@
+// TÉMOIN de scripts/domaine-sans-site-qa.mjs (Claude Code, 25/09, fiche 025-19) : copie corrigée de app/dashboard/page.tsx (état du 25/09).
+// Jamais servie par le dépôt ; le juge la pose dans .orchestre/travail/domaine-sans-site-qa/temoin/ (suffixe .temoin retiré).
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabaseClient'
+import AppShell from '@/app/AppShell'
+import { urlPlateforme } from '@/lib/urls'
+import Info from '@/app/Info'
+
+type Artisan = { id: string; nom: string | null; metier: string | null; slug: string | null; domaine?: string | null; domaine_verifie?: boolean | null }
+type Lead = { id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null; created_at: string }
+type Message = { lead_id: string; sens: string | null; type: string | null; contenu: string | null }
+
+const STATUTS: { value: string; label: string; pill: string }[] = [
+  { value: 'nouveau', label: 'Nouveau', pill: 'warn' },
+  { value: 'repondu', label: 'Répondu', pill: 'info' },
+  { value: 'gagne', label: 'Gagné 🎉', pill: 'ok' },
+  { value: 'perdu', label: 'Perdu', pill: 'muted' },
+]
+const statutMeta = (v: string | null) => STATUTS.find((s) => s.value === v) ?? { value: v ?? '', label: v ?? '—', pill: 'muted' }
+
+function formatDate(iso: string) {
+  try { return new Date(iso).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) } catch { return iso }
+}
+const initials = (n: string | null) => (n ? n.trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase()).join('') : '?')
+
+// Compteur animé (0 → valeur) au montage — donne vie aux KPI. Respecte reduced-motion.
+function CountUp({ value }: { value: number }) {
+  const [n, setN] = useState(0)
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || value <= 0) { setN(value > 0 ? value : 0); return }
+    let raf = 0; const dur = 650; const t0 = performance.now()
+    const tick = (t: number) => { const p = Math.min(1, (t - t0) / dur); setN(Math.round(value * (1 - Math.pow(1 - p, 3)))); if (p < 1) raf = requestAnimationFrame(tick) }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [value])
+  return <>{n}</>
+}
+
+export default function Dashboard() {
+  const router = useRouter()
+  const [artisan, setArtisan] = useState<Artisan | null>(null)
+  const [ready, setReady] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [leads, setLeads] = useState<Lead[]>([])
+  const [replies, setReplies] = useState<Record<string, string>>({})
+  const [open, setOpen] = useState<string | null>(null)
+
+  async function loadLeads(artisanId: string) {
+    const { data: ls } = await supabase.from('leads').select('id, nom_prospect, contact, message, statut, created_at').eq('artisan_id', artisanId).order('created_at', { ascending: false })
+    setLeads((ls as Lead[]) ?? [])
+    // `.is('etat', null)` : une proposition en attente porte `etat: 'proposition'`, une proposition
+    // refusée `etat: 'rejete'` — ni l'une ni l'autre n'est jamais partie chez le client. Sans ce
+    // filtre, l'écran annonçait « Réponse envoyée automatiquement » pour un message que l'artisan
+    // avait lui-même rejeté : il croyait son prospect servi et ne rappelait pas.
+    // `.order` : sans lui, « la première trouvée » n'était pas la dernière envoyée.
+    const { data: ms } = await supabase.from('messages').select('lead_id, sens, type, contenu, sent_at')
+      .eq('sens', 'out').eq('type', 'reponse_auto').is('etat', null)
+      .order('sent_at', { ascending: false })
+    const map: Record<string, string> = {}
+    for (const m of (ms as Message[]) ?? []) if (m.lead_id && m.contenu && !map[m.lead_id]) map[m.lead_id] = m.contenu
+    setReplies(map)
+  }
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) { router.replace('/login'); return }
+      const { data: prof } = await supabase.from('artisans').select('id, nom, metier, slug, domaine, domaine_verifie').eq('id', data.session.user.id).maybeSingle()
+      if (!prof) { router.replace('/onboarding'); return }
+      setArtisan(prof as Artisan)
+      await loadLeads((prof as Artisan).id)
+      setReady(true)
+    })
+  }, [router])
+
+  async function changeStatut(leadId: string, statut: string) {
+    setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, statut } : l)))
+    await supabase.from('leads').update({ statut, updated_at: new Date().toISOString() }).eq('id', leadId)
+  }
+
+  function copyLink() {
+    if (!artisan?.slug) return
+    navigator.clipboard?.writeText(urlPlateforme(artisan))
+    setCopied(true); setTimeout(() => setCopied(false), 2000)
+  }
+
+  const prenom = artisan?.nom ? artisan.nom.split(/\s+/)[0] : ''
+  const link = artisan ? urlPlateforme(artisan) : ''
+  const nouveaux = leads.filter((l) => l.statut === 'nouveau').length
+  const gagnes = leads.filter((l) => l.statut === 'gagne').length
+  const repondus = Object.keys(replies).length
+
+  return (
+    <AppShell active="dashboard" title={ready && prenom ? `Bonjour ${prenom}` : 'Tableau de bord'} crumb={artisan?.metier || 'Votre espace'}>
+      {!ready ? (
+        <p className="muted">Chargement…</p>
+      ) : (
+        <>
+          <section className="psh-kpis">
+            <div className="psh-kpi">
+              <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>Demandes reçues</div>
+              <div className="val tnum"><CountUp value={leads.length} /></div>
+              <div className="sub">au total</div>
+            </div>
+            <div className="psh-kpi">
+              <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9" /><path d="M12 8v4l2 2" /></svg>À traiter</div>
+              <div className="val tnum"><CountUp value={nouveaux} /></div>
+              <div className="sub">{nouveaux > 0 ? <span className="pill warn"><span className="pdot" />à répondre</span> : 'tout est à jour'}</div>
+            </div>
+            <div className="psh-kpi">
+              <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="m5 12 4 4L19 6" /></svg>Chantiers gagnés</div>
+              <div className="val tnum"><CountUp value={gagnes} /></div>
+              <div className="sub">signés via Presti</div>
+            </div>
+            <div className="psh-kpi">
+              <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M13 2 3 14h7l-1 8 10-12h-7z" /></svg>Réponses IA</div>
+              <div className="val tnum"><CountUp value={repondus} /></div>
+              <div className="sub">envoyées à vos clients</div>
+            </div>
+          </section>
+
+          <div className="tool-card">
+            <h2>Votre lien de contact</h2>
+            <p className="muted" style={{ margin: '0 0 .6rem' }}>À coller sur Le Bon Coin, Google, Facebook, votre signature mail. Chaque demande arrive dans Presti. La réponse est prête en moins d’une minute : Presti la prépare dans votre ton, vous l’envoyez.</p>
+            <div className="linkbox">
+              <span className="linkbox-url">{link}</span>
+              <button type="button" className="linkbox-btn" onClick={copyLink}>{copied ? '✓ Copié' : 'Copier'}</button>
+            </div>
+          </div>
+
+          <div className="psh-panel">
+            <header>
+              <h2>Vos demandes</h2>
+              {nouveaux > 0 && <span className="tag"><span className="pill warn"><span className="pdot" />{nouveaux} nouvelle{nouveaux > 1 ? 's' : ''}</span></span>}
+            </header>
+
+            {leads.length === 0 && (
+              <div className="psh-empty">Aucune demande pour l’instant. Dès qu’un client remplira votre lien, elle apparaîtra ici.</div>
+            )}
+
+            {leads.map((l) => {
+              const meta = statutMeta(l.statut)
+              const isOpen = open === l.id
+              const isMail = typeof l.contact === 'string' && l.contact.includes('@')
+              return (
+                <div key={l.id} className="psh-item" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                    <span className="psh-iava">{initials(l.nom_prospect)}</span>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+                        <b>{l.nom_prospect || 'Client'}</b>
+                        <span className="time" style={{ marginLeft: 'auto', fontSize: '.72rem', color: 'var(--faint)', fontFamily: 'var(--font-mono)' }}>{formatDate(l.created_at)}</span>
+                      </div>
+                      <div style={{ fontSize: '.86rem' }}>
+                        {isMail
+                          ? <a href={`mailto:${l.contact}`} style={{ color: 'var(--accent-ink)' }}>{l.contact}</a>
+                          : <a href={`tel:${l.contact}`} style={{ color: 'var(--accent-ink)' }}>{l.contact}</a>}
+                      </div>
+                    </div>
+                    <span className={`pill ${meta.pill}`}><span className="pdot" />{meta.label}</span>
+                  </div>
+
+                  <button type="button" onClick={() => setOpen(isOpen ? null : l.id)} style={{ background: 'transparent', color: 'var(--muted)', border: 'none', padding: 0, fontSize: '.83rem', cursor: 'pointer', width: 'auto', margin: 0, textAlign: 'left', fontWeight: 600 }}>
+                    {isOpen ? '▾ Masquer le détail' : '▸ Voir le détail'}
+                  </button>
+
+                  {isOpen && (
+                    <div style={{ borderTop: '1px solid var(--line)', paddingTop: '.7rem' }}>
+                      <p style={{ margin: '0 0 .3rem', fontSize: '.78rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Sa demande</p>
+                      <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap' }}>{l.message || <span className="muted">(aucun message)</span>}</p>
+                      <p style={{ margin: '0 0 .3rem', fontSize: '.78rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Réponse envoyée</p>
+                      {replies[l.id]
+                        ? <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap', background: 'var(--accent-tint)', border: '1px solid var(--accent-tint-2)', borderRadius: 10, padding: '.7rem' }}>{replies[l.id]}</p>
+                        : <p className="muted" style={{ margin: '0 0 .9rem' }}>Pas encore de réponse envoyée pour cette demande.</p>}
+                      <label style={{ fontSize: '.8rem' }}>Statut <Info cle="dashboard.statut" /></label>
+                      <select value={l.statut ?? 'nouveau'} onChange={(e) => changeStatut(l.id, e.target.value)} style={{ maxWidth: '16rem' }}>
+                        {STATUTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                      </select>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+    </AppShell>
+  )
+}

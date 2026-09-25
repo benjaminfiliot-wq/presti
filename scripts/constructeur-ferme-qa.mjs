@@ -33,6 +33,9 @@
 //   CF-3  scripts/fermeture-e2e.mjs : se parse (node --check) ; contre la base, exactement une ligne ajoutée et aucune retirée ; elle
 //         vaut, espaces de tête ôtés, 'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/site/generate/route.ts']
 //         (virgule finale admise, 025-05 point 6 l'écrit) ; elle est dans l'objet CARTE, qui n'a qu'une clé constructeurSite.
+//         Admis en plus (25/09, revue avant mise en ligne, D30, commit 9dca36e) : le test landingVideo remplacé à l'identique par
+//         les trois lignes qui ne regardent que la vidéo de la démo (D30_RETRAIT, D30_AJOUTS) ; entière, elle est ôtée du diff
+//         et de git diff --numstat (4 ajouts, 1 retrait) ; partielle ou retouchée, elle compte comme toute autre ligne.
 //   CF-4  scripts/site-sorti-des-formules-verifier.mjs : se parse ; contre la base, seule l'assertion de la ligne 48 (T("app/profil
 //         …", /site_active/ …), cherchée par son texte) est retirée, remplacée au même endroit par un bloc de 1 à 10 lignes qui
 //         est un appel T(…). Essai du bloc (processus à part, .orchestre/travail/constructeur-ferme-qa/cf4/) : le prélude de la
@@ -103,6 +106,12 @@
 //         025-05). Mêmes liens et ancres vérifiés dans lib/aide.ts (chaînes « /x#y » comprises, comme reglagesLies), et aucune
 //         chaîne de lib/aide.ts ne parle du « niveau de site ». Mutation : une entrée « Apparence » vers /profil#sonde-absente
 //         (deux défauts) et « niveau de site » ajouté à l'aide doivent être vus.
+//   CF-11 (revue avant mise en ligne du 25/09, D34, fiche 025-20) tant que actif('constructeurSite') est faux (lib/flags.ts de la
+//         racine, chargé), plus rien ne propose ni n'exécute « Réinitialiser le site » (aucune route ne peut réécrire les textes
+//         effacés) : app/parametres/SectionDonnees.tsx rendue par React côté serveur (react-dom/server du dépôt, site publié) ne
+//         montre ni « Réinitialiser le site » ni REINITIALISER, et montre toujours « Supprimer le site » ; app/api/donnees/route.ts
+//         transpilée et appelée (session et base simulées) refuse site_reinitialiser en GET et en POST (4xx, et aucune écriture
+//         dans artisans), et répond toujours 200 au récapitulatif de site_supprimer. Mutation : la page d'aujourd'hui est vue.
 //
 // L'arbre témoin (--temoin) : .orchestre/travail/constructeur-ferme-qa/temoin/ = la référence 1620723 (extraireReference,
 // .orchestre/travail/025-01/reference/, réutilisée si intacte) réduite à ce que le typecheck et les diffs lisent (app, lib,
@@ -118,6 +127,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import * as requireModule from 'node:module'
 import ts from 'typescript'
 import {
   R, FIXTURES, TRAVAIL, REFERENCE_COMMIT, sous, exigerSousTravail, dossierTravail, lireOuNull, fichierNonVide, sha256, lancer,
@@ -126,16 +136,24 @@ import {
 } from './fixtures/025/commun.mjs'
 
 const JUGE = 'constructeur-ferme-qa'
-const IDS = ['CF-1', 'CF-2', 'CF-3', 'CF-4', 'CF-5', 'CF-6', 'CF-7', 'CF-8', 'CF-9', 'CF-10']
+const IDS = ['CF-1', 'CF-2', 'CF-3', 'CF-4', 'CF-5', 'CF-6', 'CF-7', 'CF-8', 'CF-9', 'CF-10', 'CF-11']
 const F = {
   flags: 'lib/flags.ts', route: 'app/api/site/generate/route.ts', profil: 'app/profil/page.tsx', aide: 'lib/aide.ts',
   fermeture: 'scripts/fermeture-e2e.mjs', sorti: 'scripts/site-sorti-des-formules-verifier.mjs',
   parametres: 'app/parametres/page.tsx', // CF-10 (relecture à froid du 24/09)
+  donnees: 'app/parametres/SectionDonnees.tsx', routeDonnees: 'app/api/donnees/route.ts', // CF-11 (revue du 25/09, D34)
 }
 const TEMOIN_FIXTURES = path.join(FIXTURES, 'temoins', JUGE)
 const TEMOIN_DOSSIER = path.join(TRAVAIL, JUGE, 'temoin')
 const TEMOIN_COPIER = ['app', 'lib', 'middleware.ts', 'tsconfig.json', 'package.json', F.fermeture, F.sorti]
 const LIGNE_CARTE = "'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/site/generate/route.ts']"
+// CF-3 : la correction D30 de la revue avant mise en ligne (25/09, commit 9dca36e), lignes exactes, espaces de tête ôtés.
+const D30_RETRAIT = ["T(`landingVideo=${FLAGS.landingVideo} ↔ vidéo ${/<video/.test(landing) ? 'présente' : 'absente'} sur la landing`, FLAGS.landingVideo === /<video/.test(landing))"]
+const D30_AJOUTS = [
+  '// La vidéo que landingVideo commande est celle de la démo (app/DemoVideo.tsx, /demo/hero.mp4) ; le bloc DemoSite a la sienne.',
+  'const videoDemo = /<video[^>]*\\/demo\\/hero\\.mp4/.test(landing)',
+  "T(`landingVideo=${FLAGS.landingVideo} ↔ vidéo de la démo ${videoDemo ? 'présente' : 'absente'} sur la landing`, FLAGS.landingVideo === videoDemo)",
+]
 const NOM_ASSERTION = "app/profil : plus d'éditeur de site ; le site à la demande reste proposé"
 
 // ── Petits outils ─────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -469,9 +487,14 @@ function cf3(racine) {
   const base = baseDe(racine, F.fermeture, src)
   if (base.texte === null) return ko(`${F.fermeture} absent de la base ${base.nom}`)
   const b = lignesDe(src)
-  const d = diffLignes(lignesDe(base.texte), b)
+  const brut = diffLignes(lignesDe(base.texte), b)
+  // La correction D30 (commit 9dca36e, revue avant mise en ligne du 25/09) est admise, et elle seule : le test landingVideo
+  // remplacé, à l'identique, par les trois lignes qui ne regardent que la vidéo de la démo. Retirée du diff si elle y est
+  // entière ; partielle ou retouchée, elle reste dans le diff et le fait échouer.
+  const d30 = D30_RETRAIT.every((l) => brut.retraits.some((x) => x.texte.trim() === l)) && D30_AJOUTS.every((l) => brut.ajouts.some((x) => x.texte.trim() === l))
+  const d = d30 ? { retraits: brut.retraits.filter((x) => !D30_RETRAIT.includes(x.texte.trim())), ajouts: brut.ajouts.filter((x) => !D30_AJOUTS.includes(x.texte.trim())) } : brut
   const bonne = (t) => [LIGNE_CARTE, `${LIGNE_CARTE},`].includes(t.trim())
-  if (d.retraits.length || d.ajouts.length !== 1) echecs.push(`diff contre ${base.nom} : ${d.ajouts.length} ligne(s) ajoutée(s), ${d.retraits.length} retirée(s) — exactement une ligne ajoutée attendue${d.ajouts.length + d.retraits.length ? ` (${resumeDiff(d)})` : ''}`)
+  if (d.retraits.length || d.ajouts.length !== 1) echecs.push(`diff contre ${base.nom}${d30 ? ' (correction D30 ôtée)' : ''} : ${d.ajouts.length} ligne(s) ajoutée(s), ${d.retraits.length} retirée(s) — exactement une ligne ajoutée attendue${d.ajouts.length + d.retraits.length ? ` (${resumeDiff(d)})` : ''}`)
   const ajout = d.ajouts.find((x) => bonne(x.texte))
   if (!ajout) echecs.push(`la ligne ${LIGNE_CARTE}, n'est pas ajoutée à l'identique`)
   const carte = blocCarte(b)
@@ -484,10 +507,11 @@ function cf3(racine) {
   let git = ''
   if (base.git) {
     const ns = numstat(racine, base.rev, F.fermeture)
-    if (ns.erreur || ns.ajouts !== 1 || ns.retraits !== 0) echecs.push(`git diff --numstat ${base.rev} : ${ns.erreur || `${ns.ajouts} ajout(s), ${ns.retraits} retrait(s)`} ; 1 et 0 attendus`)
-    else git = ` ; git diff --numstat ${base.rev} : 1 ajout, 0 retrait`
+    const [aj, re] = d30 ? [1 + D30_AJOUTS.length, D30_RETRAIT.length] : [1, 0]
+    if (ns.erreur || ns.ajouts !== aj || ns.retraits !== re) echecs.push(`git diff --numstat ${base.rev} : ${ns.erreur || `${ns.ajouts} ajout(s), ${ns.retraits} retrait(s)`} ; ${aj} et ${re} attendus${d30 ? ' (correction D30 comprise)' : ''}`)
+    else git = ` ; git diff --numstat ${base.rev} : ${aj} ajout(s), ${re} retrait(s)${d30 ? ' (correction D30 comprise)' : ''}`
   }
-  return { ok: !echecs.length, echecs, resume: `diff contre ${base.nom} : une ligne ajoutée (${ajout ? ajout.i + 1 : '?'}), dans CARTE, à l'identique ; node --check vert${git}` }
+  return { ok: !echecs.length, echecs, resume: `diff contre ${base.nom} : une ligne ajoutée (${ajout ? ajout.i + 1 : '?'}), dans CARTE, à l'identique${d30 ? ', plus la correction D30 (9dca36e) à l’identique' : ''} ; node --check vert${git}` }
 }
 
 // ── CF-4 : l'assertion de site-sorti ──────────────────────────────────────────────────────────────────────────────────────
@@ -874,6 +898,72 @@ function cf10(racine) {
   return { ok: true, echecs: [], resume: `${p.vus.length} lien(s) de ${F.parametres} et ${a.vus.length} de ${F.aide} vers des pages de app/ (${ctx.routes.length} pages), ancres de /profil présentes (${[...ctx.idsProfil].join(', ') || 'aucune'}), aucune entrée vers un bloc retiré ; ${F.aide} ne parle plus du niveau de site ; mutation : entrée « Apparence » vers /profil#sonde-absente → 2 défauts vus, « niveau de site » → vu` }
 }
 
+// ── CF-11 : plus de « Réinitialiser le site » tant que le constructeur est fermé (revue du 25/09, D34) ────────────────────
+/** Transpile et charge <fichier> de <racine> ; stubs par spécificateur ; jsx 'react' = le vrai React du dépôt ; @/lib et ./ lus sous <racine>. */
+function chargerCf11(racine, fichier, stubs = {}) {
+  const { createRequire } = requireModule
+  const requireDepot = createRequire(import.meta.url)
+  const caches = new Map()
+  const muet = () => new Proxy(function () {}, { get: (_, k) => (k === 'then' ? undefined : muet()), apply: () => muet() })
+  const charger = (f) => {
+    if (caches.has(f)) return caches.get(f).exports
+    const js = ts.transpileModule(fs.readFileSync(f, 'utf8'), { fileName: f, compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true, jsx: ts.JsxEmit.ReactJSX } }).outputText
+    const module = { exports: {} }
+    caches.set(f, module)
+    const req = (spec) => {
+      if (Object.prototype.hasOwnProperty.call(stubs, spec)) return stubs[spec]
+      if (spec === 'react' || spec === 'react/jsx-runtime' || spec === 'react-dom/server') return requireDepot(spec)
+      const base = spec.startsWith('@/') ? path.join(racine, spec.slice(2)) : spec.startsWith('.') ? path.resolve(path.dirname(f), spec) : null
+      if (base) for (const e of ['', '.ts', '.tsx', '/index.ts']) if (fs.existsSync(base + e) && fs.statSync(base + e).isFile()) return charger(base + e)
+      return muet()
+    }
+    new Function('exports', 'require', 'module', '__filename', '__dirname', 'process', js)(module.exports, req, module, f, path.dirname(f), { env: {} })
+    return module.exports
+  }
+  return charger(path.join(racine, fichier))
+}
+export const defautsReinit = (html) => (/R[ée]initialiser le site|REINITIALISER/.test(html) ? ['« Réinitialiser le site » est proposé'] : [])
+async function cf11(racine) {
+  let flags
+  try { flags = chargerCf11(racine, F.flags) } catch (e) { return ko(`${F.flags} non chargé : ${premiereLigne(e)}`) }
+  if (typeof flags.actif !== 'function') return ko(`${F.flags} n'exporte pas actif`)
+  if (flags.actif('constructeurSite') !== false) return { ok: true, echecs: [], resume: 'constructeurSite ouvert : la réinitialisation reste permise (rien à juger)' }
+  const echecs = []
+  // la section Paramètres → Données & confidentialité, rendue
+  const React = requireModule.createRequire(import.meta.url)('react'), { renderToStaticMarkup } = requireModule.createRequire(import.meta.url)('react-dom/server')
+  let html = ''
+  try {
+    const mod = chargerCf11(racine, F.donnees, { '@/lib/supabaseClient': { supabase: {} }, '@/lib/natif': { estNatif: () => false, partagerFichier: async () => 'aucun' } })
+    const a = { id: '00000000-0000-4000-8000-0000000020c1', nom: 'Essai', email: null, slug: 'essai-cf11', domaine: null, domaine_verifie: false, logo_url: null, plan: 'essentiel', is_founder: false, credits: 0, credits_reset_le: null, stripe_customer_id: null, stripe_subscription_id: null, notifications: null, suppression_demandee_le: null, site_active: true, plateforme_active: true }
+    html = renderToStaticMarkup(React.createElement(mod.default, { a, patch: () => {}, signaler: () => {} }))
+  } catch (e) { echecs.push(`${F.donnees} non rendue : ${premiereLigne(e)}`) }
+  if (html) {
+    for (const d of defautsReinit(html)) echecs.push(`${F.donnees} (site publié) : ${d}`)
+    if (!/Supprimer le site/.test(html)) echecs.push(`${F.donnees} ne propose plus « Supprimer le site »`)
+  }
+  // la route
+  const ecritures = []
+  const base = { artisans: [{ id: '00000000-0000-4000-8000-0000000020c1', site_contenu: { apropos: 'Texte rédigé' }, site_layout: null, realisations: [], avant_apres: [], site_active: true, plateforme_active: true, theme: 'nuit' }] }
+  class Req { constructor(t) { this.t = t; this.f = []; this.op = 'select'; this.v = null; this.u = null } select() { return this } update(v) { this.op = 'update'; this.v = v; return this } delete() { this.op = 'delete'; return this } eq(c, v) { this.f.push((r) => r[c] === v); return this } in() { return this } maybeSingle() { this.u = 1; return this } then(ok, ko2) { return Promise.resolve().then(() => { const l = (base[this.t] || []).filter((r) => this.f.every((g) => g(r))); if (this.op !== 'select') ecritures.push(`${this.op} ${this.t} ${JSON.stringify(this.v)}`); if (this.op === 'update') for (const r of l) Object.assign(r, this.v); return this.u ? { data: l[0] ?? null, error: null } : { data: l, error: null, count: l.length } }).then(ok, ko2) } }
+  const sb = { from: (t) => new Req(t), storage: { from: () => ({ list: async () => ({ data: [] }), remove: async () => ({}) }) } }
+  class Rep { constructor(c, i = {}) { this.status = i.status ?? 200; this.corps = c } static json(c, i = {}) { return new Rep(c, i) } }
+  try {
+    const route = chargerCf11(racine, F.routeDonnees, { 'next/server': { NextResponse: Rep }, '@/lib/supabaseAdmin': { supabaseAdmin: sb }, '@/lib/authArtisan': { authArtisan: async () => ({ uid: base.artisans[0].id }), estEchec: () => false }, '@/lib/media': { MEDIA_BUCKET: 'artisan-media' } })
+    const get = async (action) => route.GET({ url: `https://prestiapp.fr/api/donnees?action=${action}`, headers: { get: () => 'Bearer essai' } })
+    const g1 = await get('site_reinitialiser')
+    if (!(g1?.status >= 400)) echecs.push(`GET ?action=site_reinitialiser → ${g1?.status} : le récapitulatif est encore proposé`)
+    const p1 = await route.POST({ url: 'https://prestiapp.fr/api/donnees', headers: { get: () => 'Bearer essai' }, json: async () => ({ action: 'site_reinitialiser', confirm: 'SUPPRIMER' }) })
+    if (!(p1?.status >= 400)) echecs.push(`POST site_reinitialiser → ${p1?.status} ${court(JSON.stringify(p1?.corps), 60)}`)
+    const efface = ecritures.filter((e) => /site_contenu/.test(e))
+    if (efface.length) echecs.push(`site_reinitialiser écrit encore dans artisans (${court(efface[0], 80)})`)
+    const g2 = await get('site_supprimer')
+    if (g2?.status !== 200) echecs.push(`GET ?action=site_supprimer → ${g2?.status} : le récapitulatif de la suppression du site a disparu`)
+  } catch (e) { echecs.push(`${F.routeDonnees} non appelée : ${premiereLigne(e)}`) }
+  if (!defautsReinit('<button>Réinitialiser le site</button>').length) echecs.push('détecteur aveugle')
+  if (echecs.length) return ko(...echecs)
+  return { ok: true, echecs: [], resume: `constructeurSite fermé : ${F.donnees} (site publié) sans « Réinitialiser le site », avec « Supprimer le site » ; ${F.routeDonnees} refuse site_reinitialiser en GET et POST sans rien écrire, récapitulatif de site_supprimer toujours servi ; mutation : « Réinitialiser le site » → vu` }
+}
+
 // ── L'arbre témoin ────────────────────────────────────────────────────────────────────────────────────────────────────────
 function construireTemoin() {
   const ref = extraireReference()
@@ -915,14 +1005,14 @@ async function principal() {
     }
     const b = baseDe(racine, F.fermeture, lireTexte(path.join(racine, F.fermeture)))
     s.note(`base des diffs : ${b.nom}${b.git ? ' (git diff, lecture seule)' : ` (blob de ${b.rev.slice(0, 7)})`}`)
-    const juges = { 'CF-1': cf1, 'CF-2': cf2, 'CF-3': cf3, 'CF-4': cf4, 'CF-5': cf5, 'CF-6': cf6, 'CF-7': cf7, 'CF-8': cf8, 'CF-9': cf9, 'CF-10': cf10 }
+    const juges = { 'CF-1': cf1, 'CF-2': cf2, 'CF-3': cf3, 'CF-4': cf4, 'CF-5': cf5, 'CF-6': cf6, 'CF-7': cf7, 'CF-8': cf8, 'CF-9': cf9, 'CF-10': cf10, 'CF-11': cf11 }
     for (const id of ids) {
       try { s.resultat(id, await juges[id](racine)) } catch (e) { s.echoue(id, `exception : ${premiereLigne(e)}`) }
     }
   })
 }
 
-export { cf1, cf2, cf3, cf4, cf5, cf6, cf7, cf8, cf9, cf10, construireTemoin, baseDe }
+export { cf1, cf2, cf3, cf4, cf5, cf6, cf7, cf8, cf9, cf10, cf11, construireTemoin, baseDe }
 
 const pareil = (a, b) => (process.platform === 'win32' ? a.toLowerCase() === b.toLowerCase() : a === b)
 if (process.argv[1] && pareil(path.resolve(process.argv[1]), fileURLToPath(import.meta.url))) await principal()

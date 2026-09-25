@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    if (event.type === 'checkout.session.completed') {
+    if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
       const s = event.data.object as Stripe.Checkout.Session
       const { uid, plan } = champsAbonnement(s)
       // La voie vient de lib/stripeAiguillage.ts (fonction pure, jugée par scripts/webhook-muet-qa.mjs) : commande de
@@ -102,6 +102,8 @@ export async function POST(req: Request) {
           `Paiement — ${a?.nom || uid} passe en ${conf.label}`,
           `Abonnement activé via Stripe.\n\nArtisan : ${a?.nom || '—'} (${a?.metier || '—'})\nEmail : ${a?.email || '—'}\nFormule : ${conf.label} — ${conf.prixMois} €/mois\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}`,
         )
+      } else if (voie === 'en_attente') {
+        console.log('[stripe webhook] paiement en attente', s.id)
       } else {
         // Orphelin (fiche 025-07) : encaissé par Stripe, servi par personne — lien de paiement créé à la main, pack
         // sans branche. Avant, aucune trace. On alerte puis on répond 200 : une erreur ferait rejouer Stripe trois
@@ -109,6 +111,15 @@ export async function POST(req: Request) {
         console.warn('[stripe webhook] paiement orphelin', s.id, event.id)
         await envoyerAlertes([alerteOrphelin(event.id, s)])
       }
+    } else if (event.type === 'checkout.session.async_payment_failed') {
+      const s = event.data.object as Stripe.Checkout.Session
+      await envoyerAlertes([{
+        motif: 'paiement',
+        a: 'entreprise',
+        cle: `paiement-echoue:${event.id}`,
+        sujet: 'Paiement différé Stripe échoué',
+        corps: `Le paiement différé de la session ${s.id} a échoué. Aucun site ni abonnement n'a été servi. Événement : ${event.id}`,
+      }])
     } else if (event.type === 'customer.subscription.updated') {
       // Un changement d'offre venu d'AILLEURS que d'une souscription : le portail de facturation en
       // autorise un, et rien ne l'appliquait en base (revue du 07/09). L'artisan payait un montant et

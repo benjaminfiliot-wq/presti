@@ -71,8 +71,7 @@ export const ARTICLES: Article[] = [
     page: '/dashboard',
     titre: 'Votre tableau de bord : demandes reçues et lien de contact',
     aQuoiCaSert:
-      'Cet écran résume votre activité : demandes reçues, celles à traiter, chantiers gagnés et réponses envoyées ' +
-      "automatiquement par l'assistant. Il affiche aussi votre lien de contact à partager.",
+      "Cet écran résume votre activité : demandes reçues, celles à traiter, chantiers gagnés et réponses de l'assistant envoyées à vos clients. Il affiche aussi votre lien de contact à partager.",
     commentOnSenSert: [
       'Copiez votre lien de contact et partagez-le (Le Bon Coin, Google, Facebook, signature mail…).',
       'Repérez les demandes marquées « à répondre ».',
@@ -80,7 +79,7 @@ export const ARTICLES: Article[] = [
       'Changez le statut (Nouveau, Répondu, Gagné, Perdu) au fil du suivi.',
     ],
     pourVosClients:
-      'Chaque client qui utilise votre lien crée ici une demande ; toute réponse automatique qui lui a été envoyée est visible dans le détail.',
+      'Chaque client qui utilise votre lien crée ici une demande ; toute réponse qui lui a été envoyée est visible dans le détail.',
     credits: 'Aucun — cet écran ne fait que consulter et changer un statut.',
     reglagesLies: ['/plateforme', '/profil'],
     disponibleAvec: 'essentiel',
@@ -96,14 +95,14 @@ export const ARTICLES: Article[] = [
       'modèle, ton, horaires, devis et facture automatiques, mots qui déclenchent une alerte. Tout ce que vous réglez ici ' +
       'est appliqué côté serveur — ce que vous voyez est ce qui se passe réellement.',
     commentOnSenSert: [
-      'Choisissez le mode de réponse : Automatique, Assistée (vous validez) ou Manuelle.',
+      'Choisissez le mode de réponse : Automatique (offre Studio et au-delà), Assistée (vous validez) ou Manuelle.',
       'Choisissez le modèle et le ton utilisés par l’assistant.',
       "Réglez les horaires : 24h/24 ou seulement sur une plage horaire.",
       "Réglez le devis et la facture automatiques, ainsi que les mots qui coupent l'assistant et vous alertent.",
       'Cliquez « Enregistrer ».',
     ],
     pourVosClients:
-      "En mode Automatique, le client reçoit une réponse immédiate rédigée par l'assistant. En Assistée, rien ne part " +
+      "En mode Automatique (offre Studio et au-delà), le client reçoit une réponse immédiate rédigée par l'assistant. En Assistée, rien ne part " +
       'sans votre validation. En Manuelle, vous répondez toujours vous-même.',
     credits: `Chaque réponse ou devis généré automatiquement consomme un crédit : ${creditsGeneration()}.`,
     reglagesLies: ['/messages', '/profil', '/abonnement'],
@@ -256,7 +255,7 @@ export const ARTICLES: Article[] = [
       'Complétez votre présentation, votre zone d’intervention, vos disponibilités et vos prestations.',
       'Ajoutez les coordonnées que vous souhaitez afficher, puis cliquez « Enregistrer ».',
       'Partagez le lien de votre page avec vos clients.',
-      'Si vous avez un site existant, vous pouvez le supprimer depuis « Données & suppressions ».',
+      'Pour supprimer un site existant : Paramètres → « Données & confidentialité ».',
     ],
     pourVosClients:
       'Votre page de contact leur permet de vous écrire. Si vous la désactivez, ils voient un message poli au lieu du formulaire.',
@@ -808,7 +807,7 @@ export const INFOBULLES: InfoBulle[] = [
     page: '/profil',
     label: 'Votre nom de domaine',
     explication:
-      'Votre propre adresse (ex : mon-entreprise.fr) branchée sur votre site, à la place de l’adresse prestiapp.fr — inclus dans toutes les offres.',
+      'Votre propre adresse (ex : mon-entreprise.fr) sert votre site s’il est publié, sinon votre page de contact — inclus dans toutes les offres.',
     exemple: 'Vous connectez mon-entreprise.fr, ajoutez les enregistrements DNS indiqués chez votre hébergeur, puis cliquez « Vérifier ».',
   },
 

@@ -79,7 +79,7 @@ export default function Home() {
           <div className="container">
             <span className="lp-eyebrow"><b />Assistant IA pour les artisans du bâtiment</span>
             <h1>Le premier qui répond <span className="g">décroche le chantier.</span></h1>
-            <p className="lp-lede">Chaque demande arrive dans Presti. La réponse est prête en moins d&apos;une minute : Presti la prépare dans votre ton, vous l&apos;envoyez. Les relances sont automatiques jusqu&apos;à la réponse.</p>
+            <p className="lp-lede">Chaque demande arrive dans Presti. La réponse est prête en moins d&apos;une minute : Presti la prépare dans votre ton, vous l&apos;envoyez. Trois relances automatiques suivent (J+2, J+5, J+10).</p>
             <div className="lp-cta">
               <a className="lp-btn lp-btn--p lp-btn--lg" href="/signup">Essayer gratuitement</a>
               <a className="lp-btn lp-btn--g lp-btn--lg" href="#fonctionnalites">Voir ce que ça fait</a>

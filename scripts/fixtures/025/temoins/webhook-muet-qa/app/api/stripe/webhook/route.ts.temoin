@@ -1,5 +1,8 @@
-// TÉMOIN de scripts/webhook-muet-qa.mjs (fiche 025-01, point 9) — ce n'est PAS le code de production de 025-07.
-// La route de 1620723, plus l'appel à aiguiller() et la branche « orphelin » : c'est l'état « après » simulé. Le juge, avec
+// TÉMOIN de scripts/webhook-muet-qa.mjs — ce n'est PAS le code de production. Réécrit par Claude Code le 25/09 pour la
+// fiche 025-22 (défaut D04 de la relecture du 25/09) : app/api/stripe/webhook/route.ts de HEAD (83ce3dd), avec le seul
+// changement que 025-22 doit faire — checkout.session.async_payment_succeeded reçoit le même traitement que
+// checkout.session.completed (l'aiguillage ne sert que ce qui est payé, voir lib/stripeAiguillage.ts.temoin), la voie
+// 'en_attente' ne sert rien, et checkout.session.async_payment_failed alerte l'entreprise sans rien encaisser. Le juge, avec
 // --temoin, la pose sans le suffixe .temoin en app/api/stripe/webhook/route.ts d'une copie du projet sous
 // .orchestre/travail/webhook-muet-qa/temoin/ (voir lib/stripeAiguillage.ts.temoin, à côté, pour le pourquoi du suffixe).
 export const runtime = 'nodejs'
@@ -14,8 +17,32 @@ import { notifierEntreprise } from '@/lib/email'
 import { alertePaiement, envoyerAlertes } from '@/lib/alertes'
 import { mentionFranchise } from '@/lib/facturation'
 import { encaisserCommandeSite } from '@/lib/siteCommandeServeur'
-import { aiguiller } from '@/lib/stripeAiguillage'
+import { aiguiller, champsAbonnement } from '@/lib/stripeAiguillage'
 import type Stripe from 'stripe'
+
+// Un paiement que Presti ne sait pas servir (fiche 025-07) : l'entreprise est prévenue avec de quoi le retrouver dans
+// le tableau de bord Stripe. Clé par événement : un rejeu du même événement dans les 24 h ne renvoie pas l'alerte
+// (verrou quotidien de lib/alertes.ts), deux paiements orphelins le même jour en envoient deux.
+function alerteOrphelin(idEvenement: string, s: Stripe.Checkout.Session) {
+  const montant = typeof s.amount_total === 'number' ? `${(s.amount_total / 100).toFixed(2)} ${(s.currency || '?').toUpperCase()}` : 'montant inconnu'
+  const clientId = typeof s.customer === 'string' ? s.customer : s.customer?.id ?? null
+  const client = [clientId, s.customer_details?.name, s.customer_details?.email].filter(Boolean).join(' · ') || '—'
+  return {
+    motif: 'paiement' as const,
+    a: 'entreprise' as const,
+    cle: `orphelin:${idEvenement}`,
+    sujet: `Paiement Stripe sans suite — ${montant}`,
+    corps: `Un paiement Stripe n'est ni une commande de site (mode payment + metadata.type = commande_site), ni un abonnement (uid + plan) : rien n'a été servi ni écrit.
+À traiter à la main depuis le tableau de bord Stripe (servir le client ou le rembourser).
+
+Montant : ${montant}
+Client : ${client}
+Session : ${s.id}
+Mode : ${s.mode ?? '—'} · statut du paiement : ${s.payment_status ?? '—'}
+Métadonnées : ${JSON.stringify(s.metadata ?? {}).slice(0, 300)}
+Événement : ${idEvenement}`,
+  }
+}
 
 // Webhook Stripe : active/désactive l'abonnement de l'artisan (plan + crédits).
 export async function POST(req: Request) {
@@ -35,10 +62,13 @@ export async function POST(req: Request) {
   }
 
   try {
-    if (event.type === 'checkout.session.completed') {
+    // Paiement différé (prélèvement SEPA…, fiche 025-22) : completed arrive avant l'argent (payment_status 'unpaid'),
+    // async_payment_succeeded quand il est là. Même traitement pour les deux : l'aiguillage ne sert que ce qui est payé.
+    if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
       const s = event.data.object as Stripe.Checkout.Session
-      const uid = (s.metadata?.uid as string) || (s.client_reference_id as string) || ''
-      const plan = (s.metadata?.plan as string) || ''
+      const { uid, plan } = champsAbonnement(s)
+      // La voie vient de lib/stripeAiguillage.ts (fonction pure, jugée par scripts/webhook-muet-qa.mjs) : commande de
+      // site, abonnement, en attente, ou orphelin. Un nouveau produit payant y reçoit sa voie AVANT d'être vendu.
       const voie = aiguiller(s)
       // Paiement UNIQUE — le site à la demande (v15 §3.1). Une session en mode 'payment' n'a pas de plan :
       // sans cette branche, l'événement tombait dans le vide et l'artisan avait payé pour rien. On encaisse
@@ -81,18 +111,27 @@ export async function POST(req: Request) {
           `Paiement — ${a?.nom || uid} passe en ${conf.label}`,
           `Abonnement activé via Stripe.\n\nArtisan : ${a?.nom || '—'} (${a?.metier || '—'})\nEmail : ${a?.email || '—'}\nFormule : ${conf.label} — ${conf.prixMois} €/mois\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}`,
         )
+      } else if (voie === 'en_attente') {
+        // L'argent n'est pas encore là : rien n'est servi. async_payment_succeeded servira, async_payment_failed alertera.
+        console.log('[stripe webhook] paiement en attente, rien de servi', s.id, s.payment_status)
       } else {
-        // Orphelin : encaissé, mais ni commande de site ni abonnement. On prévient et on répond 200 (un 500 ferait rejouer
-        // Stripe trois jours) ; la clé par événement évite les doublons (verrou quotidien de lib/alertes.ts).
-        const montant = typeof s.amount_total === 'number' ? `${(s.amount_total / 100).toFixed(2)} ${(s.currency || 'eur').toUpperCase()}` : '—'
-        const client = (typeof s.customer === 'string' ? s.customer : s.customer?.id) || s.customer_details?.email || '—'
-        await envoyerAlertes([{
-          motif: 'paiement', a: 'entreprise', cle: `orphelin:${event.id}`,
-          sujet: `Paiement sans destination — ${montant}`,
-          corps: `Un paiement Stripe n'est ni une commande de site ni un abonnement : rien n'a été activé.\n\nSession : ${s.id}\nClient : ${client}\nMontant : ${montant}\nmetadata.type : ${s.metadata?.type || '—'}\nÉvénement : ${event.id}`,
-        }])
-        console.warn('[stripe webhook] paiement orphelin', s.id)
+        // Orphelin (fiche 025-07) : encaissé par Stripe, servi par personne — lien de paiement créé à la main, pack
+        // sans branche. Avant, aucune trace. On alerte puis on répond 200 : une erreur ferait rejouer Stripe trois
+        // jours pour un paiement qu'aucun rejeu ne saura servir ; c'est un humain qui tranche.
+        console.warn('[stripe webhook] paiement orphelin', s.id, event.id)
+        await envoyerAlertes([alerteOrphelin(event.id, s)])
       }
+    } else if (event.type === 'checkout.session.async_payment_failed') {
+      // Le prélèvement a échoué : rien n'a été encaissé ni servi (completed était 'unpaid'). L'entreprise est prévenue ; on
+      // répond 200 — un rejeu n'y changerait rien.
+      const s = event.data.object as Stripe.Checkout.Session
+      const montant = typeof s.amount_total === 'number' ? `${(s.amount_total / 100).toFixed(2)} ${(s.currency || '?').toUpperCase()}` : 'montant inconnu'
+      console.warn('[stripe webhook] paiement différé refusé', s.id, event.id)
+      await envoyerAlertes([{
+        motif: 'paiement', a: 'entreprise', cle: `differe-refuse:${event.id}`,
+        sujet: `Paiement différé refusé — ${montant}`,
+        corps: `Un paiement différé (prélèvement) a échoué : rien n'a été encaissé ni servi.\n\nSession : ${s.id}\nMétadonnées : ${JSON.stringify(s.metadata ?? {}).slice(0, 300)}\nÉvénement : ${event.id}`,
+      }])
     } else if (event.type === 'customer.subscription.updated') {
       // Un changement d'offre venu d'AILLEURS que d'une souscription : le portail de facturation en
       // autorise un, et rien ne l'appliquait en base (revue du 07/09). L'artisan payait un montant et

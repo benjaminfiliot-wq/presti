@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-25T10:09:21Z
+# Digest — 2026-09-25T14:44:47Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 70 tâche(s) PASS, 177310 ligne(s) · faites par Claude Code : 6 tâche(s) PASS, 3887 ligne(s).
-**État** — file : 0 · en cours : 3 · faites : 82 · refusées : 6
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 76 tâche(s) PASS, 180141 ligne(s) · faites par Claude Code : 6 tâche(s) PASS, 3887 ligne(s).
+**État** — file : 0 · en cours : 2 · faites : 88 · refusées : 6
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -20,7 +20,12 @@
 |---|---|---|---|---|---|
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 027-02 | feature | en-cours | usine-codex-22 | — | depuis 2026-09-25T10:09:15Z · Corriger scripts/publier-serie.mjs pour que le remplacement du visuel d'une parution déjà programmée respecte le quota Publora du mois de cette parution (rien n'est touché s'il est épuisé, une unité réservée et prioritaire sinon, et un refus 403 après la remise en brouillon dit en toutes lettres), prouvé par scripts/publora-quota-qa.mjs (Q8a, Q8b, Q8c) et scripts/publier-serie-qa.mjs |
+| 025-20 | feature | fait | usine-codex-28 | PASS | 2026-09-25T14:44:47Z · 58s · 281 l. |
+| 025-19 | feature | fait | usine-codex-27 | PASS | 2026-09-25T14:37:46Z · 38s · 320 l. |
+| 025-21 | feature | fait | usine-codex-25 | PASS | 2026-09-25T14:28:45Z · 89s · 279 l. |
+| 025-22 | feature | fait | usine-codex-26 | PASS | 2026-09-25T14:20:46Z · 72s · 375 l. |
+| 025-18 | feature | fait | usine-codex-24 | PASS | 2026-09-25T14:14:26Z · 36s · 282 l. |
+| 027-02 | feature | fait | usine-codex-23 | PASS | 2026-09-25T10:53:31Z · 491s · 1294 l. |
 | 025-14 | feature | fait | codex | PASS | 2026-09-25T08:42:46Z · 324s · 0 l. |
 | 025-16 | feature | fait | codex | PASS | 2026-09-25T07:45:27Z · 167s · 0 l. |
 | 025-17 | feature | fait | usine-codex-19 | PASS | 2026-09-24T22:08:06Z · 49s · 325 l. |

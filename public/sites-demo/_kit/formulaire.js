@@ -24,6 +24,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             slug: formulaire.dataset.slug,
+            commande: formulaire.dataset.commande,
             contact: String(champs.get('contact') || '').trim(),
             nom_prospect: null,
             message: message,

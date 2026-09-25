@@ -103,7 +103,18 @@ export default function CommanderSitePage() {
         </div>
       )}
 
-      {errs.length > 0 && <ul>{errs.map((x) => <li key={x}>{x}</li>)}</ul>}
+      {/* témoin 025-20 (D32) : « Corriger » mène à l'étape du champ fautif (routage lu et exécuté par PC-11) */}
+      {errs.length > 0 && (
+        <ul>
+          {errs.map((err) => {
+            let cible: Etape = 'matiere'
+            if (err.includes('domaine')) cible = 'domaine'
+            if (err.includes('métier principal') || err.includes('commune')) cible = 'zone'
+            if (err.includes('Votre parcours')) cible = 'parcours'
+            return <li key={err}>{err} <button type="button" onClick={() => setEtape(cible)}>Corriger</button></li>
+          })}
+        </ul>
+      )}
     </main>
   )
 }

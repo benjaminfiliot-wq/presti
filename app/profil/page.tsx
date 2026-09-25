@@ -10,6 +10,7 @@ import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
 import { peut } from '@/lib/plans'
 import { afficher, urlPlateforme } from '@/lib/urls'
 import { actif } from '@/lib/flags'
+import { libelleDomaineActif, type SurfaceDomaine } from '@/lib/surfaceDomaine'
 
 type Service = { nom: string; description: string }
 type Reseaux = { instagram?: string; facebook?: string; tiktok?: string; linkedin?: string; whatsapp?: string; site?: string; google?: string }
@@ -45,6 +46,7 @@ export default function ProfilPage() {
   const [domaine, setDomaine] = useState('')
   const [domSaved, setDomSaved] = useState<string | null>(null)
   const [domStatus, setDomStatus] = useState<{ verified: boolean; served: boolean; records: { type: string; name: string; value: string }[] } | null>(null)
+  const [domSurface, setDomSurface] = useState<SurfaceDomaine | null>(null)
   const [domBusy, setDomBusy] = useState(false)
   const [domMsg, setDomMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
   const [active, setActive] = useState(true)
@@ -81,7 +83,7 @@ export default function ProfilPage() {
       const t = await authToken()
       const res = await fetch('/api/domain', { headers: { Authorization: `Bearer ${t}` } })
       const d = await res.json().catch(() => ({}))
-      if (res.ok) { setDomSaved(d.domaine ?? null); setDomStatus(d.status ?? null); if (d.domaine) setDomaine(d.domaine) }
+      if (res.ok) { setDomSaved(d.domaine ?? null); setDomStatus(d.status ?? null); setDomSurface(d.surface ?? null); if (d.domaine) setDomaine(d.domaine) }
     } catch { /* silencieux */ } finally { setDomBusy(false) }
   }
   async function connecterDomaine() {
@@ -94,6 +96,7 @@ export default function ProfilPage() {
       const d = await res.json().catch(() => ({}))
       if (!res.ok) { setDomMsg({ type: 'err', text: d.error ?? 'Connexion impossible.' }); return }
       setDomSaved(d.domaine); setDomStatus(d.status); setDomaine(d.domaine)
+      await refreshDomaine()
       setDomMsg({ type: 'ok', text: d.status?.served ? 'Domaine connecté et actif ✅' : 'Domaine enregistré. Ajoutez les enregistrements DNS ci-dessous, puis cliquez « Vérifier ».' })
     } catch { setDomMsg({ type: 'err', text: 'Connexion interrompue.' }) } finally { setDomBusy(false) }
   }
@@ -103,7 +106,7 @@ export default function ProfilPage() {
     try {
       const t = await authToken()
       await fetch('/api/domain', { method: 'DELETE', headers: { Authorization: `Bearer ${t}` } })
-      setDomSaved(null); setDomStatus(null); setDomaine('')
+      setDomSaved(null); setDomStatus(null); setDomSurface(null); setDomaine('')
       setDomMsg({ type: 'ok', text: 'Domaine retiré.' })
     } catch { /* silencieux */ } finally { setDomBusy(false) }
   }
@@ -288,7 +291,7 @@ export default function ProfilPage() {
               {domSaved && domStatus ? (
                 <div className="site-domain-status">
                   <span className={`dom-badge ${domStatus.served ? 'ok' : 'wait'}`}>
-                    <span className="pdot" />{domStatus.served ? 'Actif — votre site est servi sur ce domaine' : 'En attente de la configuration DNS'}
+                    <span className="pdot" />{domStatus.served ? (domSurface ? libelleDomaineActif(domSurface) : 'Actif') : 'En attente de la configuration DNS'}
                   </span>
                   {!domStatus.served ? (
                     <>

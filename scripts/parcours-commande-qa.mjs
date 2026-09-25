@@ -8,7 +8,7 @@
 //   --temoin           : le juge construit l'état « après » de 025-09 et s'y juge entier (PC-1 à PC-9), voir « Témoin ».
 //   Pas de --reel : ce juge ne touche ni la base ni la production (refusé, code 2).
 // Sortie : une ligne PASS/FAIL par critère, puis « parcours-commande-qa : PASS » ou « … : FAIL — ids » ; code 0 seulement si
-// les neuf sont verts ; code 2 sur une option invalide.
+// les douze sont verts ; code 2 sur une option invalide.
 //
 // Critères (fiche 025-01, point 10 ; contrat « matiere.artisan » de la même fiche) :
 //   PC-1 lib/siteCommande.ts, importé par scripts/ts-loader.mjs dans un processus à part (node --experimental-strip-types
@@ -111,7 +111,24 @@ import {
 } from './fixtures/025/commun.mjs'
 
 const JUGE = 'parcours-commande-qa'
-const IDS = ['PC-1', 'PC-2', 'PC-3', 'PC-4', 'PC-5', 'PC-6', 'PC-7', 'PC-8', 'PC-9']
+// PC-10 à PC-12 : revue avant mise en ligne du 25/09 (.orchestre/preuves/025-relectures/revue-avant-mise-en-ligne-2026-09-25.md),
+// fiche 025-20, écrits par Claude Code.
+//   PC-10 (D18) <racine>/app/api/site/commander/route.ts, transpilée et appelée (POST) sans dossier en cours (session, Stripe et
+//         base simulés) : le refus compte les écrans à remplir comme la page les montre — si sa phrase en dit un nombre (chiffres
+//         ou lettres) avant « écrans » ou « étapes », c'est le rang de l'étape « paiement » dans ETAPES de <racine>/<PAGE> (4
+//         aujourd'hui). Mutation : « les trois premiers écrans » avec quatre écrans : vu.
+//   PC-11 (D32) « Corriger » mène à l'étape du champ fautif : le routage de la page (let cible = '…' puis les if (err.includes(…))
+//         cible = '…' qui le suivent, lus dans l'arbre syntaxique de <PAGE> et exécutés) appliqué aux erreurs réelles de
+//         erreursAvantPaiement (sonde) : chaque dépassement de borne de l'artisan (prénom 41, nom 61, parcours 141, citation 161,
+//         valeur, unité, légende d'un chiffre) et la phrase signée impersonnelle mènent à « parcours » ; un SIREN faux à
+//         « matiere », une liste de communes vide à « zone », un domaine illisible à « domaine ». Mutation : le routage sans sa
+//         ligne « Votre parcours » : vu.
+//   PC-12 (D33) « J'… » et « m'… » tapés avec l'apostrophe droite comptent comme la première personne : nettoyerBrouillon puis
+//         erreursAvantPaiement (sonde) acceptent « J'interviens toujours avec soin et propreté. » et « On m'appelle pour les
+//         chantiers soignés du quartier. », gardent la phrase avec l'apostrophe typographique (’, celle que generer.mjs exige :
+//         sans apostrophe droite entre deux lettres) et l'expression « première personne » du générateur de la racine l'accepte ;
+//         « Le travail est toujours fait avec soin et propreté. » reste refusée.
+const IDS = ['PC-1', 'PC-2', 'PC-3', 'PC-4', 'PC-5', 'PC-6', 'PC-7', 'PC-8', 'PC-9', 'PC-10', 'PC-11', 'PC-12']
 const LIB = 'lib/siteCommande.ts'
 const PAGE = 'app/site/commander/page.tsx'
 const LOADER = 'scripts/ts-loader.mjs'
@@ -1048,6 +1065,162 @@ function construireTemoin(o) {
   return { dest, base, poses }
 }
 
+// ── PC-10 : le refus sans dossier compte les écrans comme la page (D18) ────────────────────────────────────────────────────
+const NOMBRES = { un: 1, une: 1, deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6, sept: 7, huit: 8 }
+/** Le rang de l'étape « paiement » dans ETAPES de la page (le nombre d'écrans à remplir avant de payer). */
+function ecransAvantPaiement(sf) {
+  let rang = null
+  const visite = (n) => {
+    if (rang !== null) return
+    if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name) && n.name.text === 'ETAPES' && n.initializer && ts.isArrayLiteralExpression(n.initializer)) {
+      const ids = n.initializer.elements.map((e) => (ts.isObjectLiteralExpression(e) ? e.properties.find((p) => ts.isPropertyAssignment(p) && p.name.getText(sf) === 'id') : null)).map((p) => (p && ts.isStringLiteralLike(p.initializer) ? p.initializer.text : null))
+      const i = ids.indexOf('paiement')
+      rang = i >= 0 ? i : -1
+      return
+    }
+    ts.forEachChild(n, visite)
+  }
+  visite(sf)
+  return rang
+}
+/** Les défauts d'un message de refus « aucun dossier » pour `n` écrans → liste (pur : éprouvé par la mutation) */
+export function defautsCompteEcrans(message, n) {
+  const d = []
+  const m = /(?<![\p{L}\d])(\d+|un|une|deux|trois|quatre|cinq|six|sept|huit)\s+(?:premi[eè]re?s?\s+)?(?:écrans?|étapes?)/iu.exec(String(message))
+  if (m) { const k = /^\d+$/.test(m[1]) ? Number(m[1]) : NOMBRES[m[1].toLowerCase()]; if (k !== n) d.push(`« ${court(message, 90)} » : ${k} écran(s), la page en montre ${n} avant le paiement`) }
+  else if (!/écran|étape/i.test(String(message))) d.push(`« ${court(message, 90)} » ne dit pas quels écrans remplir`)
+  return d
+}
+async function chargerRouteCommander(racine) {
+  const fichier = path.join(racine, 'app', 'api', 'site', 'commander', 'route.ts')
+  if (!fs.existsSync(fichier)) throw new Error('app/api/site/commander/route.ts absent')
+  const caches = new Map()
+  class Rep { constructor(corps, init = {}) { this.status = init.status ?? 200; this.corps = corps } static json(corps, init = {}) { return new Rep(corps, init) } }
+  const faux = () => new Proxy(function () {}, { get: (_, k) => (k === 'then' ? undefined : faux()), apply: () => faux() })
+  const stubs = {
+    'next/server': { NextResponse: Rep },
+    '@/lib/flags': { actif: () => true, FLAGS: {} },
+    '@/lib/authArtisan': { authArtisan: async () => ({ uid: '00000000-0000-4000-8000-0000000020a1' }), estEchec: () => false },
+    '@/lib/stripe': { stripe: faux() },
+    '@/lib/supabaseAdmin': { supabaseAdmin: faux() },
+    '@/lib/facturation': { mentionFranchise: () => '' },
+    '@/lib/siteCommandeServeur': { brouillonDe: async () => null, poserSessionStripe: async () => {} },
+    '@/lib/vercelDomains': { normalizeDomain: (d) => String(d || '').trim().toLowerCase() || null },
+  }
+  const charger = (f) => {
+    if (caches.has(f)) return caches.get(f).exports
+    const js = ts.transpileModule(fs.readFileSync(f, 'utf8'), { fileName: f, compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText
+    const module = { exports: {} }
+    caches.set(f, module)
+    const req = (spec) => {
+      if (Object.prototype.hasOwnProperty.call(stubs, spec)) return stubs[spec]
+      const base = spec.startsWith('@/') ? path.join(racine, spec.slice(2)) : spec.startsWith('.') ? path.resolve(path.dirname(f), spec) : null
+      if (base) for (const e of ['', '.ts', '.tsx', '/index.ts']) if (fs.existsSync(base + e) && fs.statSync(base + e).isFile()) return charger(base + e)
+      return faux()
+    }
+    new Function('exports', 'require', 'module', '__filename', '__dirname', 'process', js)(module.exports, req, module, f, path.dirname(f), { env: {} })
+    return module.exports
+  }
+  return charger(fichier)
+}
+async function jugerPC10(s, racine, page) {
+  if (page.erreur) { s.echoue('PC-10', page.erreur); return }
+  const n = ecransAvantPaiement(page.sf)
+  if (n === null || n < 1) { s.echoue('PC-10', `${PAGE} : ETAPES sans étape « paiement » lisible`); return }
+  let rep
+  try { const route = await chargerRouteCommander(racine); rep = await route.POST({ headers: { get: () => null }, json: async () => ({}) }) } catch (e) { s.echoue('PC-10', `route non appelée : ${String(e && e.message || e).split('\n')[0].slice(0, 200)}`); return }
+  const message = rep?.corps?.error
+  const d = []
+  if (rep?.status !== 400 || typeof message !== 'string') d.push(`sans dossier, la route répond ${rep?.status} ${court(JSON.stringify(rep?.corps), 80)} (400 et une phrase attendus)`)
+  else d.push(...defautsCompteEcrans(message, n))
+  const vu = defautsCompteEcrans('Aucun dossier en cours : remplissez d’abord les trois premiers écrans.', 4).length > 0
+  if (!vu) d.push('détecteur aveugle : « trois premiers écrans » pour quatre écrans passe')
+  s.verdict('PC-10', !d.length, `sans dossier : « ${court(message, 100)} » ; ${n} écrans avant le paiement dans ETAPES ; mutation : « trois premiers écrans » → vu`, d.join(' ; '))
+}
+
+// ── PC-11 : « Corriger » mène à l'étape du champ fautif (D32) ; PC-12 : l'apostrophe droite (D33) ─────────────────────────
+/** Le routage de « Corriger » tiré de la page : (err) => étape, ou { erreur } */
+export function routageCorriger(sf) {
+  let decl = null
+  const visite = (n) => { if (decl) return; if (ts.isVariableStatement(n) && n.declarationList.declarations.some((d) => ts.isIdentifier(d.name) && d.name.text === 'cible' && d.initializer && ts.isStringLiteralLike(d.initializer))) { decl = n; return } ts.forEachChild(n, visite) }
+  visite(sf)
+  if (!decl || !ts.isBlock(decl.parent)) return { erreur: 'routage de « Corriger » introuvable (let cible = \'…\' suivi de if (err.includes(…)) cible = \'…\')' }
+  const st = decl.parent.statements, i = st.indexOf(decl)
+  const suite = []
+  for (const x of st.slice(i + 1)) { if (ts.isIfStatement(x) && /\bcible\s*=/.test(x.thenStatement.getText(sf))) suite.push(x); else break }
+  if (!suite.length) return { erreur: 'routage de « Corriger » sans condition' }
+  const code = [decl, ...suite].map((x) => x.getText(sf)).join('\n')
+  const js = ts.transpileModule(code, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText
+  const variable = decl.declarationList.declarations.find((d) => d.name.text === 'cible').name.text
+  try { return { route: new Function('err', `${js}\nreturn ${variable}`), code, lignes: suite.length } } catch (e) { return { erreur: `routage illisible : ${e.message}` } }
+}
+const CAS_PC11 = [
+  ['prenom-41', 'parcours'], ['nom-61', 'parcours'], ['parcours-141', 'parcours'], ['citation-161', 'parcours'],
+  ['valeur-13', 'parcours'], ['unite-13', 'parcours'], ['legende-61', 'parcours'],
+]
+function casSupplementaires() {
+  const commande = lireCommande()
+  const base = structuredClone(commande)
+  delete base._; if (base.matiere) delete base.matiere._photos
+  const A = structuredClone(commande.matiere.artisan)
+  const avecArtisan = (champs) => { const e = structuredClone(base); e.matiere.artisan = { ...structuredClone(A), ...champs }; return e }
+  const e = (f) => { const x = structuredClone(base); f(x); return x }
+  return [
+    { id: 'pc11-impersonnelle', entree: avecArtisan({ citation: 'Le travail est toujours fait avec soin et propreté.' }), etape: 'parcours' },
+    { id: 'pc11-siren', entree: e((x) => { x.matiere.siren = '123456789' }), etape: 'matiere' },
+    { id: 'pc11-sans-commune', entree: e((x) => { x.communes = [] }), etape: 'zone' },
+    { id: 'pc11-domaine', entree: e((x) => { x.domaine_mode = 'existant'; x.domaine = 'pas un domaine' }), etape: 'domaine' },
+    { id: 'pc12-j', entree: avecArtisan({ citation: 'J\'interviens toujours avec soin et propreté.' }), premiere: true },
+    { id: 'pc12-m', entree: avecArtisan({ citation: 'On m\'appelle pour les chantiers soignés du quartier.' }), premiere: true },
+    { id: 'pc12-impersonnelle', entree: avecArtisan({ citation: 'Le travail est toujours fait avec soin et propreté.' }), premiere: false },
+  ]
+}
+function jugerPC11(s, { page, sonde, supp }) {
+  if (page.erreur) { s.echoue('PC-11', page.erreur); return }
+  const r = routageCorriger(page.sf)
+  if (r.erreur) { s.echoue('PC-11', `${PAGE} : ${r.erreur}`); return }
+  if (!sonde.importe || !supp.importe) { s.echoue('PC-11', `${LIB} non importé : ${sonde.erreur || supp.erreur}`); return }
+  const res = new Map([...sonde.cas, ...supp.cas].map((x) => [x.id, x]))
+  const attendus = [...CAS_PC11, ...casSupplementaires().filter((c) => c.etape).map((c) => [c.id, c.etape])]
+  const d = [], vus = []
+  const juger = (route) => {
+    const out = []
+    for (const [id, etape] of attendus) {
+      const E = res.get(id)?.E
+      if (!Array.isArray(E) || !E.length) { out.push(`${id} : aucune erreur à router (${res.get(id)?.exceptionN || res.get(id)?.exceptionE || 'E vide'})`); continue }
+      for (const err of E) { let c; try { c = route(err) } catch (e) { c = `exception ${e.message}` } if (c !== etape) out.push(`${id} : « ${court(err, 70)} » → « ${c} », « ${etape} » attendue`) }
+    }
+    return out
+  }
+  d.push(...juger(r.route))
+  // mutation : le routage sans sa dernière condition (celle qui mène à « Votre parcours »)
+  const sans = r.code.split('\n').filter((l) => !/Votre parcours/.test(l)).join('\n')
+  let vu = false
+  try { const js = ts.transpileModule(sans, { compilerOptions: { target: ts.ScriptTarget.ES2022 } }).outputText; vu = juger(new Function('err', `${js}\nreturn cible`)).length > 0 } catch { vu = false }
+  if (!vu) d.push('détecteur aveugle : le routage privé de sa ligne « Votre parcours » passe')
+  for (const [id, etape] of attendus) if (!d.some((x) => x.startsWith(`${id} :`))) vus.push(`${id}→${etape}`)
+  s.verdict('PC-11', !d.length, `routage de ${PAGE} (${r.lignes} condition(s)) exécuté sur ${attendus.length} cas : ${vus.join(', ')} ; mutation : sans la ligne « Votre parcours » → vue`, d.join(' ; '))
+}
+function jugerPC12(s, { supp, reGen }) {
+  if (!supp.importe) { s.echoue('PC-12', `${LIB} non importé : ${supp.erreur}`); return }
+  const res = new Map(supp.cas.map((x) => [x.id, x]))
+  const re = reGen ? new RegExp(reGen.source, reGen.flags.replace(/[gy]/g, '')) : PREMIERE_PERSONNE
+  const d = [], faits = []
+  for (const c of casSupplementaires().filter((x) => x.premiere !== undefined)) {
+    const r = res.get(c.id)
+    if (!r || r.exceptionN || r.exceptionE || !Array.isArray(r.E)) { d.push(`${c.id} : ${r?.exceptionN || r?.exceptionE || 'sans résultat'}`); continue }
+    const cit = r.N?.matiere?.artisan?.citation
+    if (c.premiere) {
+      if (r.E.length) d.push(`« ${c.entree.matiere.artisan.citation} » refusée : ${court(r.E.join(' | '), 110)}`)
+      if (typeof cit !== 'string' || /\p{L}'\p{L}/u.test(cit)) d.push(`« ${c.entree.matiere.artisan.citation} » gardée avec l’apostrophe droite (« ${cit} ») : generer.mjs la refuserait`)
+      else if (!re.test(cit)) d.push(`« ${cit} » : l’expression « première personne » du générateur la refuse`)
+      else faits.push(`« ${c.entree.matiere.artisan.citation} » → « ${cit} » acceptée`)
+    } else if (!r.E.length) d.push(`« ${c.entree.matiere.artisan.citation} » (impersonnelle) acceptée`)
+    else faits.push('la phrase impersonnelle reste refusée')
+  }
+  s.verdict('PC-12', !d.length, `${faits.join(' ; ')} ; générateur : ${reGen ? 'expression de generer.mjs' : 'expression de commun.mjs'}`, d.join(' ; '))
+}
+
 // ── Principal ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 const o = lireOptionsOuQuitter(process.argv.slice(2), { connues: [] })
 if (o.reel) { console.error('✗ --reel : ce juge ne teste ni la base ni la production (fiche 025-01, point 10)'); process.exit(2) }
@@ -1084,6 +1257,12 @@ await s.executer(async (s) => {
     jugerPC4(s, page, sonde)
     if (!page.erreur) s.note(`phrase de 025-09 (non jugée ici) « Votre site parle avec votre voix : nous n’inventons rien. » : ${textesDe(page.sf).some((t) => t.includes('Votre site parle avec votre voix')) ? 'présente' : 'absente'}`)
     for (const [id, f] of [['PC-6', () => jugerPC6(s, page)], ['PC-7', () => jugerPC7(s, page, racine)], ['PC-8', () => jugerPC8(s, racine, page)], ['PC-9', () => jugerPC9(s, { sonde, cas })]]) {
+      try { f() } catch (e) { s.echoue(id, `exception : ${String(e && e.stack || e).split('\n').slice(0, 2).join(' | ').slice(0, 300)}`) }
+    }
+    // PC-10 à PC-12 (revue avant mise en ligne du 25/09, fiche 025-20)
+    try { await jugerPC10(s, racine, page) } catch (e) { s.echoue('PC-10', `exception : ${String(e && e.stack || e).split('\n').slice(0, 2).join(' | ').slice(0, 300)}`) }
+    const supp = sonder({ cwd: racine, module: path.join(racine, LIB), loader: path.join(racine, LOADER), cas: casSupplementaires().map(({ id, entree }) => ({ id, entree })), dossier: W, nom: 'supplementaires' })
+    for (const [id, f] of [['PC-11', () => jugerPC11(s, { page, sonde, supp })], ['PC-12', () => jugerPC12(s, { supp, reGen })]]) {
       try { f() } catch (e) { s.echoue(id, `exception : ${String(e && e.stack || e).split('\n').slice(0, 2).join(' | ').slice(0, 300)}`) }
     }
     jugerPC5(s, racine)

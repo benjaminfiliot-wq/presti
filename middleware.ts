@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { surfaceDuDomaine } from '@/lib/surfaceDomaine'
 
 // Les surfaces de l'artisan (site, plateforme) sont servies sur DES ADRESSES SANS « PRESTI »
 // (v5, demande de Benj). Trois hôtes possibles, résolus ici vers les routes internes :
@@ -25,17 +26,17 @@ function isPrestiHost(host: string): boolean {
 
 // Résout le slug d'un domaine perso (offre Signature) via Supabase REST. Ne s'exécute que pour
 // un hôte custom (trafic rare) → coût négligeable sur le chemin chaud.
-async function slugForDomain(host: string): Promise<string | null> {
+async function slugForDomain(host: string): Promise<{ slug: string; site_active: boolean | null } | null> {
   const base = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!base || !key) return null
   try {
-    const r = await fetch(`${base}/rest/v1/artisans?domaine=eq.${encodeURIComponent(host)}&domaine_verifie=is.true&select=slug&limit=1`, {
+    const r = await fetch(`${base}/rest/v1/artisans?domaine=eq.${encodeURIComponent(host)}&domaine_verifie=is.true&select=slug,site_active&limit=1`, {
       headers: { apikey: key, Authorization: `Bearer ${key}` }, cache: 'no-store',
     })
     if (!r.ok) return null
     const rows = await r.json()
-    return Array.isArray(rows) && rows[0]?.slug ? rows[0].slug : null
+    return Array.isArray(rows) && rows[0]?.slug ? rows[0] : null
   } catch { return null }
 }
 
@@ -125,10 +126,13 @@ export async function middleware(req: NextRequest) {
     url.pathname = `/site-genere/${commande}${chemin}`
     return NextResponse.rewrite(url)
   }
-  const slug = await slugForDomain(bare) || (bare.startsWith('www.') ? await slugForDomain(bare.slice(4)) : null)
-  if (slug) {
+  const artisan = await slugForDomain(bare) || (bare.startsWith('www.') ? await slugForDomain(bare.slice(4)) : null)
+  if (artisan) {
     const url = req.nextUrl.clone()
-    url.pathname = cibleInterne(slug, chemin) ?? `/site/${slug}${chemin}`
+    const cible = chemin === '/' && surfaceDuDomaine({ siteActif: artisan.site_active, commandeEnLigne: false }) === 'contact'
+      ? `/p/${artisan.slug}`
+      : cibleInterne(artisan.slug, chemin)
+    url.pathname = cible ?? `/site/${artisan.slug}${chemin}`
     return NextResponse.rewrite(url)
   }
 

@@ -36,7 +36,8 @@ if (!/^[a-z0-9-]+$/.test(m.modele)) arreter(`maquette.json : modèle « ${m.mode
 const dossierModele = path.join(RACINE, 'maquettes', 'modeles', m.modele)
 const modele = JSON.parse(fs.readFileSync(path.join(dossierModele, 'contenu.json'), 'utf8'))
 const communes = (Array.isArray(m.communes) ? m.communes : [m.ville]).join(', ')
-const remplir = (t) => String(t).replace(/\{entreprise\}/g, m.entreprise).replace(/\{ville\}/g, m.ville).replace(/\{communes\}/g, communes)
+// MQ-12 (25/09, D28) : des fonctions de remplacement — une chaîne serait lue comme un motif ($', $&, $`, $$)
+const remplir = (t) => String(t).replace(/\{entreprise\}/g, () => m.entreprise).replace(/\{ville\}/g, () => m.ville).replace(/\{communes\}/g, () => communes)
 const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 const texte = (t) => esc(remplir(t))
 

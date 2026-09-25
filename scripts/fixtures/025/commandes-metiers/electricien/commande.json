@@ -1,0 +1,105 @@
+{
+  "_": "Jeu d’essai de la série 025 (revue avant mise en ligne du 25/09, D19 ; écrit par Claude Code) : une commande de électricien FICTIVE avec son propre contenu.json, pour FS-12 de scripts/formulaire-site-qa.mjs (et FS-9 pour le plombier). Photos : celles de la démo gelée public/sites-demo/electricien/ (bases de matiere.photos), copiées par le juge avec leurs attributions. Téléphone de la plage 02 61 91 réservée à la fiction (Arcep, décision 2019-0954), domaine en .example et e-mail en .invalid (RFC 2606), SIREN et décennale fictifs. Le domaine est là pour que FS-12 juge le métier sans dépendre de l’adresse d’un site sans domaine (D21, jugée à part sur commande-exemple). Ne jamais publier ce site.",
+  "id": "00000000-0000-4000-8000-000000025103",
+  "etat": "payee",
+  "slug": "essai-025-electricien-nantes",
+  "nom": "Benoît Électricité Nantaise",
+  "email": "contact@benoit-electricite.invalid",
+  "telephone": "+33 2 61 91 51 03",
+  "metier": "electricien",
+  "metiers_secondaires": [],
+  "communes": [
+    "Nantes",
+    "Rezé"
+  ],
+  "domaine_mode": "existant",
+  "domaine": "benoit-electricite.example",
+  "devis": {
+    "projets": [
+      "Mise aux normes",
+      "Tableau électrique",
+      "Éclairage",
+      "Dépannage",
+      "Autre intervention"
+    ],
+    "delais": [
+      "Dans le mois",
+      "Dans les trois mois",
+      "Plus tard, je me renseigne"
+    ]
+  },
+  "matiere": {
+    "photos": [
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "hero",
+        "demo": "electricien"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "cable",
+        "demo": "electricien"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "armoire",
+        "demo": "electricien"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "interrupteur",
+        "demo": "electricien"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "luminaires",
+        "demo": "electricien"
+      }
+    ],
+    "logo_url": null,
+    "adresse": "2 rue de l’Essai, 44000 Nantes",
+    "siren": "000000000",
+    "horaires": "Lundi–vendredi, 8 h–18 h",
+    "decennale": {
+      "assureur": "Assureur d’essai",
+      "numero": "ESSAI-025-103"
+    },
+    "avis_google": {
+      "url": ""
+    },
+    "artisan": {
+      "prenom": "Karim",
+      "nom": "Benoît",
+      "installation": 2015,
+      "parcours": "Brevet professionnel d’électricien, huit ans chez un installateur nantais avant de créer mon entreprise.",
+      "citation": "Je laisse toujours un tableau repéré et propre, pour que vous sachiez ce que coupe chaque disjoncteur.",
+      "chiffres": [
+        {
+          "valeur": "11",
+          "unite": "ans",
+          "legende": "de métier, dont huit en entreprise"
+        },
+        {
+          "valeur": "24",
+          "unite": "h",
+          "legende": "pour rappeler après une panne"
+        },
+        {
+          "valeur": "10",
+          "unite": "ans",
+          "legende": "de garantie décennale sur l’installation"
+        }
+      ]
+    }
+  }
+}

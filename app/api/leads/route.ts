@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { suspensionEnCours, MESSAGE_PUBLIC_INDISPONIBLE } from '@/lib/suspension'
-import { generateLeadReply, qualifyLead } from '@/lib/ai'
-import { getPlateformeConfig, decisionReponse } from '@/lib/plateformeConfig'
+import { generateConversationReply, generateLeadReply, qualifyLead } from '@/lib/ai'
+import { getPlateformeConfig, decisionReponse, personaDe } from '@/lib/plateformeConfig'
+import { resolveModel } from '@/lib/models'
 import { sendEmail } from '@/lib/email'
 import { notifierArtisan } from '@/lib/notifications'
 import { consumeCredit, rendreCredit } from '@/lib/credits'
@@ -12,6 +13,11 @@ import { consommerLimite } from '@/lib/limites'
 import { porteMonnaieConversation } from '@/lib/quotaMedia'
 import { artisanParAncienSlug } from '@/lib/slugRedirect'
 import { PREFIXE_ADRESSE_PURGEE } from '@/lib/purgeComptes'
+
+// 025-18 : la route rédige la proposition de réponse (IA) avant de répondre au prospect. Sans ce plafond, la limite par
+// défaut de Vercel pouvait couper la fonction en pleine rédaction : crédit non rendu, artisan non prévenu, prospect qui
+// renvoie sa demande (relecture à froid du 25/09, R3). Même valeur que les autres routes IA (conversation, messages).
+export const maxDuration = 60
 
 // Bornes anti-abus (une demande légitime tient largement dedans).
 const MAX = { slug: 80, contact: 200, nom: 120, message: 5000 }
@@ -29,6 +35,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => null)
     const slug = clip(body?.slug, MAX.slug)
+    const commande = body?.commande
+    const commandeDonnee = commande !== undefined && commande !== null && commande !== ''
     const contact = clip(body?.contact, MAX.contact)
     const nom_prospect = clip(body?.nom_prospect, MAX.nom)
     const message = clip(body?.message, MAX.message)
@@ -43,10 +51,13 @@ export async function POST(req: Request) {
     // Validation stricte des entrées (slug attendu : minuscules/chiffres/tirets).
     // En mode différé (variante B), le contact arrive APRÈS la 1re réponse → il n'est pas requis ici,
     // mais le message l'est (sinon rien à traiter).
-    if (!slug || (!contact && !deferContact) || (deferContact && !message)) {
+    if ((!slug && !commandeDonnee) || (!contact && !deferContact) || (deferContact && !message)) {
       return NextResponse.json({ error: 'Slug et contact requis' }, { status: 400 })
     }
-    if (!/^[a-z0-9-]{1,80}$/.test(slug)) {
+    if (commandeDonnee && (typeof commande !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(commande))) {
+      return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
+    }
+    if (!commandeDonnee && !/^[a-z0-9-]{1,80}$/.test(slug!)) {
       return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
     }
 
@@ -72,33 +83,48 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Trop de demandes. Réessayez dans quelques minutes.' }, { status: 429 })
     }
 
-    // 1) Retrouver l'artisan à partir de son slug
-    let { data: artisan, error: aErr } = await supabaseAdmin
-      .from('artisans')
-      .select('id, slug, nom, metier, ton_style, email, is_founder, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan')
-      .eq('slug', slug)
-      .maybeSingle()
+    // 1) Une commande désigne son propriétaire par id, indépendamment du slug public.
+    let artisanId: string | null = null
+    if (commandeDonnee) {
+      const { data: site, error: siteErr } = await supabaseAdmin
+        .from('sites_commandes').select('artisan_id, etat').eq('id', commande).maybeSingle()
+      if (siteErr) {
+        console.error('[leads] lookup commande:', siteErr.message)
+        return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+      }
+      if (!site || site.etat !== 'en_ligne' || !site.artisan_id) {
+        return NextResponse.json({ error: 'Artisan introuvable' }, { status: 404 })
+      }
+      artisanId = site.artisan_id
+    }
+    const colonnesArtisan = 'id, slug, suppression_demandee_le, nom, metier, ton_style, email, is_founder, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan'
+    let { data: artisan, error: aErr } = commandeDonnee
+      ? await supabaseAdmin.from('artisans').select(colonnesArtisan).eq('id', artisanId).maybeSingle()
+      : await supabaseAdmin.from('artisans').select(colonnesArtisan).eq('slug', slug).maybeSingle()
 
     if (aErr) {
       console.error('[leads] lookup artisan:', aErr.message)
       return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
     }
     if (artisan?.slug?.startsWith(PREFIXE_ADRESSE_PURGEE)) artisan = null
+    if (commandeDonnee && artisan?.suppression_demandee_le) artisan = null
     if (!artisan) {
-      const ancienneAdresse = await artisanParAncienSlug(slug)
-      if (ancienneAdresse?.slug && !ancienneAdresse.slug.startsWith(PREFIXE_ADRESSE_PURGEE)) {
-        const resultat = await supabaseAdmin
-          .from('artisans')
-          .select('id, slug, nom, metier, ton_style, email, is_founder, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan')
-          .eq('slug', ancienneAdresse.slug)
-          .maybeSingle()
-        artisan = resultat.data
-        aErr = resultat.error
-        if (aErr) {
-          console.error('[leads] lookup artisan:', aErr.message)
-          return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+      if (!commandeDonnee) {
+        const ancienneAdresse = await artisanParAncienSlug(slug!)
+        if (ancienneAdresse?.slug && !ancienneAdresse.slug.startsWith(PREFIXE_ADRESSE_PURGEE)) {
+          const resultat = await supabaseAdmin
+            .from('artisans')
+            .select(colonnesArtisan)
+            .eq('slug', ancienneAdresse.slug)
+            .maybeSingle()
+          artisan = resultat.data
+          aErr = resultat.error
+          if (aErr) {
+            console.error('[leads] lookup artisan:', aErr.message)
+            return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+          }
+          if (artisan?.slug?.startsWith(PREFIXE_ADRESSE_PURGEE)) artisan = null
         }
-        if (artisan?.slug?.startsWith(PREFIXE_ADRESSE_PURGEE)) artisan = null
       }
     }
     if (!artisan) return NextResponse.json({ error: 'Artisan introuvable' }, { status: 404 })
@@ -208,6 +234,57 @@ export async function POST(req: Request) {
     // automatique (manuelle, assistée, verrou d'offre, pause…) : on trace, on notifie, on dit pourquoi.
     const cfgPlateforme = await getPlateformeConfig(artisan.id)
     const decision = decisionReponse(artisan, { prise_en_main: false }, cfgPlateforme, { nbReponsesIA: 0, message: message || '' })
+    if (!decision.ok && decision.comportement === 'preparer') {
+      if (message) {
+        await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })
+      }
+
+      const { model, tier } = resolveModel(cfgPlateforme.modele || 'standard', artisan.plan)
+      const credit = message ? await consumeCredit(artisan.id, tier, !!artisan.is_founder) : { ok: false }
+      let proposee = false
+      if (credit.ok && message) {
+        try {
+          const proposition = await generateConversationReply(
+            { nom: artisan.nom, metier: artisan.metier, ton_style: artisan.ton_style, services: artisan.services, zone: artisan.zone_intervention, bio: artisan.bio, tva_regime: artisan.tva_regime, assurance_nom: artisan.assurance_nom },
+            { nom_prospect, contact, message },
+            [{ sens: 'in', contenu: message }], model, undefined, { persona: personaDe(cfgPlateforme) },
+          )
+          if (proposition?.trim()) {
+            const { error: eProp } = await supabaseAdmin.from('messages').insert({
+              lead_id: lead.id, sens: 'out', type: 'reponse_auto', contenu: proposition.trim(), etat: 'proposition', modele: tier,
+            })
+            proposee = !eProp
+            if (eProp) console.error('[leads] insertion proposition:', eProp.message)
+          }
+        } catch (e) {
+          console.error('[leads] proposition:', e)
+          await signalerPanneIA('proposition de réponse (/api/leads)', e)
+        }
+        if (!proposee) await rendreCredit(artisan.id, tier, !!artisan.is_founder)
+      }
+
+      if (artisan.email && !deferContact) {
+        await notifierArtisan(artisan.id, 'nouvelle_demande', artisan.email, {
+          leadId: lead.id,
+          subject: proposee ? `Réponse proposée — à valider — ${nom_prospect || contact}` : `Nouveau contact — ${nom_prospect || contact}`,
+          text: proposee
+            ? `Réponse proposée — à valider dans votre espace (Messages).\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}`
+            : `Nouveau contact via votre page Presti — à vous de répondre.\n\nNom : ${nom_prospect || 'non précisé'}\nContact : ${contact}\nBesoin : ${message || 'non précisé'}${photoCount ? `\nPhotos jointes : ${photoCount}` : ''}\n\nRépondez-lui depuis votre espace (Messages).`,
+          replyTo: typeof contact === 'string' && contact.includes('@') ? contact : undefined,
+        }).catch(() => {})
+      }
+      if (!deferContact && typeof contact === 'string' && contact.includes('@')) {
+        const prenom = (nom_prospect || '').trim().split(/\s+/)[0]
+        await sendEmail({
+          to: contact,
+          fromName: artisan.nom || undefined,
+          subject: `Bien reçu — ${artisan.nom || 'votre demande'}`,
+          text: `Bonjour${prenom ? ' ' + prenom : ''},\n\nMerci pour votre demande. ${artisan.nom || 'Nous'} l'a bien reçue et revient vers vous très vite.\n\n${message ? `Votre besoin : ${message}\n\n` : ''}À très bientôt.`,
+          replyTo: artisan.email ?? undefined,
+        }).catch(() => {})
+      }
+      return NextResponse.json({ ok: true, leadId: lead.id, token: lead.token, reply: null, raison: decision.raison })
+    }
     if (!decision.ok) {
       if (message) {
         await supabaseAdmin.from('messages').insert({ lead_id: lead.id, sens: 'in', type: 'manuel', contenu: message })

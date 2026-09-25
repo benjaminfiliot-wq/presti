@@ -261,3 +261,9 @@
 {"id":"025-14","verdict":"FAIL","ligne":"FAIL FS-3 — téléphone 390×844, 500 : interrompu (locator.click: Timeout 10000ms exceeded.)","code":1,"date":"2026-09-25T07:24:55Z","duree_s":570,"agent":"usine-codex-21","executant":"codex","lignes":978,"dossier":"fait"}
 {"id":"025-16","verdict":"PASS","ligne":"","code":0,"date":"2026-09-25T07:45:27Z","duree_s":167,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"025-14","verdict":"PASS","ligne":"","code":0,"date":"2026-09-25T08:42:46Z","duree_s":324,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"027-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-25T10:53:31Z","duree_s":491,"agent":"usine-codex-23","executant":"codex","lignes":1294,"dossier":"fait"}
+{"id":"025-18","verdict":"PASS","ligne":"","code":0,"date":"2026-09-25T14:14:26Z","duree_s":36,"agent":"usine-codex-24","executant":"codex","lignes":282,"dossier":"fait"}
+{"id":"025-22","verdict":"PASS","ligne":"","code":0,"date":"2026-09-25T14:20:46Z","duree_s":72,"agent":"usine-codex-26","executant":"codex","lignes":375,"dossier":"fait"}
+{"id":"025-21","verdict":"PASS","ligne":"","code":0,"date":"2026-09-25T14:28:45Z","duree_s":89,"agent":"usine-codex-25","executant":"codex","lignes":279,"dossier":"fait"}
+{"id":"025-19","verdict":"PASS","ligne":"","code":0,"date":"2026-09-25T14:37:46Z","duree_s":38,"agent":"usine-codex-27","executant":"codex","lignes":320,"dossier":"fait"}
+{"id":"025-20","verdict":"PASS","ligne":"","code":0,"date":"2026-09-25T14:44:47Z","duree_s":58,"agent":"usine-codex-28","executant":"codex","lignes":281,"dossier":"fait"}

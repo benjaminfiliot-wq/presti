@@ -1,0 +1,488 @@
+{
+  "metier": "couvreur",
+  "extrait_le": "2026-09-25",
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Couvreur à Strasbourg — Morel Couverture",
+      "description": "Morel Couverture, couvreur à Strasbourg et Schiltigheim : réfection complète, faîtage et arêtiers, fuites. Devis détaillé après visite.",
+      "h1": "Couvreur à Strasbourg",
+      "h1Ligne": "Un toit bien fermé",
+      "chapeau": "Tuiles, faîtage et gouttières : je répare ce qui fuit et je refais ce qui a vieilli.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Ce que je fais",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je travaille avec une petite équipe, toujours sur un toit sécurisé."
+            },
+            {
+              "type": "h3",
+              "texte": "Réfection complète"
+            },
+            {
+              "type": "p",
+              "texte": "Je dépose les tuiles usées, je contrôle les liteaux et je recouvre avec un écran neuf avant la pose."
+            },
+            {
+              "type": "h3",
+              "texte": "Faîtage et arêtiers"
+            },
+            {
+              "type": "p",
+              "texte": "Je refais les faîtières scellées ou ventilées, là où l’eau entre le plus souvent."
+            },
+            {
+              "type": "h3",
+              "texte": "Fuites"
+            },
+            {
+              "type": "p",
+              "texte": "Je cherche l’entrée d’eau depuis les combles puis sur le toit, et je la ferme durablement."
+            },
+            {
+              "type": "h3",
+              "texte": "Gouttières"
+            },
+            {
+              "type": "p",
+              "texte": "Je pose et je répare les descentes en zinc pour que l’eau parte loin des murs."
+            }
+          ]
+        },
+        {
+          "genre": "galerie",
+          "h2": "Chantiers récents",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Des toits terminés cette année, photographiés depuis l’échafaudage."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Autour de Strasbourg",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je suis installée à Strasbourg et je me déplace dans les communes voisines, sans frais de déplacement cachés."
+            },
+            {
+              "type": "h3",
+              "texte": "Strasbourg"
+            },
+            {
+              "type": "p",
+              "texte": "Je travaille régulièrement à Strasbourg : c’est là que je suis installée."
+            },
+            {
+              "type": "h3",
+              "texte": "Schiltigheim"
+            },
+            {
+              "type": "p",
+              "texte": "Je travaille régulièrement à Schiltigheim : à quelques minutes de chez moi."
+            }
+          ]
+        },
+        {
+          "genre": "etapes",
+          "h2": "En trois temps",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Du premier appel à la fin du chantier, vous savez toujours où nous en sommes."
+            },
+            {
+              "type": "h3",
+              "texte": "Votre appel"
+            },
+            {
+              "type": "p",
+              "texte": "Vous me dites ce que vous voyez : une tache au plafond, une tuile tombée, une gouttière qui déborde."
+            },
+            {
+              "type": "h3",
+              "texte": "La visite"
+            },
+            {
+              "type": "p",
+              "texte": "Je monte sur le toit, je prends des photos et je vous les montre avec le devis détaillé."
+            },
+            {
+              "type": "h3",
+              "texte": "Le chantier"
+            },
+            {
+              "type": "p",
+              "texte": "Je pose l’échafaudage, je travaille par temps sec et je nettoie la cour avant de partir."
+            }
+          ]
+        },
+        {
+          "genre": "faq",
+          "h2": "Vos questions",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Ce qu’on me demande le plus souvent avant un premier rendez-vous."
+            },
+            {
+              "type": "h3",
+              "texte": "Travaillez-vous par temps de pluie ?"
+            },
+            {
+              "type": "p",
+              "texte": "Non : je bâche en urgence, puis j’attends un temps sec pour poser proprement."
+            },
+            {
+              "type": "h3",
+              "texte": "Faut-il une autorisation ?"
+            },
+            {
+              "type": "p",
+              "texte": "Pour une réfection à l’identique, rarement ; je vous dis quoi déposer en mairie sinon."
+            },
+            {
+              "type": "h3",
+              "texte": "Que couvre la garantie ?"
+            },
+            {
+              "type": "p",
+              "texte": "Ma garantie décennale couvre la couverture posée, et je reviens après un gros coup de vent."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Décrivez-moi votre besoin : je vous rappelle pour convenir d’un passage."
+            },
+            {
+              "type": "h3",
+              "texte": "Adresse"
+            },
+            {
+              "type": "p",
+              "texte": "4 rue de l’Essai, 67000 Strasbourg"
+            },
+            {
+              "type": "h3",
+              "texte": "Horaires"
+            },
+            {
+              "type": "p",
+              "texte": "Lundi–vendredi, 8 h–18 h"
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RoofingContractor",
+          "name": "Morel Couverture",
+          "url": "https://exemple.invalid/",
+          "telephone": "+33 2 61 91 51 02",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "4 rue de l’Essai",
+            "postalCode": "67000",
+            "addressLocality": "Strasbourg",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Strasbourg",
+            "Schiltigheim"
+          ]
+        }
+      ]
+    },
+    "/couvreur-strasbourg/": {
+      "type": "commune",
+      "cible": "Strasbourg",
+      "title": "Artisan couvreur à Strasbourg — Morel Couverture",
+      "description": "Couvreur à Strasbourg : faîtage et arêtiers et fuites, devis détaillé après une visite sur place.",
+      "h1": "Couvreur à Strasbourg",
+      "h1Ligne": "Tuiles et faîtage",
+      "kicker": "Intervention à Strasbourg",
+      "chapeau": "Je viens à Strasbourg sur rendez-vous, avec un devis clair avant le moindre travail.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Interventions à Strasbourg",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "À Strasbourg, je passe voir le chantier avant de chiffrer quoi que ce soit."
+            },
+            {
+              "type": "h3",
+              "texte": "Réfection complète"
+            },
+            {
+              "type": "p",
+              "texte": "Je dépose les tuiles usées, je contrôle les liteaux et je recouvre avec un écran neuf avant la pose, à Strasbourg comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Faîtage et arêtiers"
+            },
+            {
+              "type": "p",
+              "texte": "Je refais les faîtières scellées ou ventilées, là où l’eau entre le plus souvent, à Strasbourg comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Fuites"
+            },
+            {
+              "type": "p",
+              "texte": "Je cherche l’entrée d’eau depuis les combles puis sur le toit, et je la ferme durablement, à Strasbourg comme ailleurs."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je me déplace aussi à Schiltigheim, à quelques minutes de Strasbourg."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Votre projet à Strasbourg",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Dites-moi ce qu’il faut faire à Strasbourg : je vous rappelle dans la journée ouvrée."
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RoofingContractor",
+          "name": "Morel Couverture",
+          "url": "https://exemple.invalid/couvreur-strasbourg/",
+          "telephone": "+33 2 61 91 51 02",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "4 rue de l’Essai",
+            "postalCode": "67000",
+            "addressLocality": "Strasbourg",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Strasbourg",
+            "Schiltigheim"
+          ]
+        }
+      ]
+    },
+    "/couvreur-schiltigheim/": {
+      "type": "commune",
+      "cible": "Schiltigheim",
+      "title": "Artisan couvreur à Schiltigheim — Morel Couverture",
+      "description": "Couvreur à Schiltigheim : faîtage et arêtiers et fuites, devis détaillé après une visite sur place.",
+      "h1": "Couvreur à Schiltigheim",
+      "h1Ligne": "Toits refaits à neuf",
+      "kicker": "Intervention à Schiltigheim",
+      "chapeau": "Je viens à Schiltigheim sur rendez-vous, avec un devis clair avant le moindre travail.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Interventions à Schiltigheim",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "À Schiltigheim, je passe voir le chantier avant de chiffrer quoi que ce soit."
+            },
+            {
+              "type": "h3",
+              "texte": "Réfection complète"
+            },
+            {
+              "type": "p",
+              "texte": "Je dépose les tuiles usées, je contrôle les liteaux et je recouvre avec un écran neuf avant la pose, à Schiltigheim comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Faîtage et arêtiers"
+            },
+            {
+              "type": "p",
+              "texte": "Je refais les faîtières scellées ou ventilées, là où l’eau entre le plus souvent, à Schiltigheim comme ailleurs."
+            },
+            {
+              "type": "h3",
+              "texte": "Fuites"
+            },
+            {
+              "type": "p",
+              "texte": "Je cherche l’entrée d’eau depuis les combles puis sur le toit, et je la ferme durablement, à Schiltigheim comme ailleurs."
+            }
+          ]
+        },
+        {
+          "genre": "communes",
+          "h2": "Aussi sur ma route",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Je me déplace aussi à Strasbourg, à quelques minutes de Schiltigheim."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Votre projet à Schiltigheim",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Dites-moi ce qu’il faut faire à Schiltigheim : je vous rappelle dans la journée ouvrée."
+            }
+          ]
+        }
+      ],
+      "jsonld": [
+        {
+          "@context": "https://schema.org",
+          "@type": "RoofingContractor",
+          "name": "Morel Couverture",
+          "url": "https://exemple.invalid/couvreur-schiltigheim/",
+          "telephone": "+33 2 61 91 51 02",
+          "openingHours": "Mo-Fr 08:00-18:00",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "4 rue de l’Essai",
+            "postalCode": "67000",
+            "addressLocality": "Strasbourg",
+            "addressCountry": "FR"
+          },
+          "areaServed": [
+            "Strasbourg",
+            "Schiltigheim"
+          ]
+        }
+      ]
+    },
+    "/mentions-legales/": {
+      "type": "legal",
+      "title": "Mentions légales — Morel Couverture",
+      "description": "Mentions légales du site de Morel Couverture, couvreur à Strasbourg : éditeur, assurance et hébergement.",
+      "h1": "Mentions légales",
+      "sections": [
+        {
+          "h2": "Identification de l’entreprise",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Nom commercial : Morel Couverture"
+            },
+            {
+              "type": "p",
+              "texte": "Adresse du siège : 4 rue de l’Essai, 67000 Strasbourg"
+            },
+            {
+              "type": "p",
+              "texte": "SIREN : 000000000"
+            },
+            {
+              "type": "p",
+              "texte": "Directeur de la publication : Élise Morel"
+            }
+          ]
+        },
+        {
+          "h2": "Assurance responsabilité décennale",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Compagnie d’assurance : Assureur d’essai"
+            },
+            {
+              "type": "p",
+              "texte": "Numéro de police : ESSAI-025-102"
+            },
+            {
+              "type": "p",
+              "texte": "Zone couverte : Strasbourg et Schiltigheim"
+            }
+          ]
+        },
+        {
+          "h2": "Hébergement du site",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Le site est hébergé par Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis."
+            }
+          ]
+        },
+        {
+          "h2": "Propriété intellectuelle et crédits photographiques",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Les textes de ce site appartiennent à Morel Couverture. Les crédits des photographies sont détaillés ci-dessous."
+            }
+          ]
+        }
+      ],
+      "jsonld": []
+    },
+    "/confidentialite/": {
+      "type": "legal",
+      "title": "Confidentialité — Morel Couverture",
+      "description": "Ce que Morel Couverture fait des coordonnées laissées dans le formulaire de devis, et combien de temps elles sont gardées.",
+      "h1": "Politique de confidentialité",
+      "sections": [
+        {
+          "h2": "Données du formulaire",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Le formulaire de devis recueille le type de projet, la commune, le délai souhaité, votre message et un moyen de vous rappeler."
+            },
+            {
+              "type": "p",
+              "texte": "Ces données servent seulement à vous répondre ; Morel Couverture ne les vend ni ne les cède."
+            }
+          ]
+        },
+        {
+          "h2": "Durée de conservation",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Une demande restée sans suite est effacée au bout de trois ans."
+            }
+          ]
+        },
+        {
+          "h2": "Vos droits",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Vous pouvez demander l’accès, la rectification ou l’effacement de vos données en écrivant à contact@morel-couverture.invalid."
+            }
+          ]
+        }
+      ],
+      "jsonld": []
+    }
+  }
+}

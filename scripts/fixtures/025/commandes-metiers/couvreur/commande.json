@@ -1,0 +1,105 @@
+{
+  "_": "Jeu d’essai de la série 025 (revue avant mise en ligne du 25/09, D19 ; écrit par Claude Code) : une commande de couvreur FICTIVE avec son propre contenu.json, pour FS-12 de scripts/formulaire-site-qa.mjs (et FS-9 pour le plombier). Photos : celles de la démo gelée public/sites-demo/couvreur/ (bases de matiere.photos), copiées par le juge avec leurs attributions. Téléphone de la plage 02 61 91 réservée à la fiction (Arcep, décision 2019-0954), domaine en .example et e-mail en .invalid (RFC 2606), SIREN et décennale fictifs. Le domaine est là pour que FS-12 juge le métier sans dépendre de l’adresse d’un site sans domaine (D21, jugée à part sur commande-exemple). Ne jamais publier ce site.",
+  "id": "00000000-0000-4000-8000-000000025102",
+  "etat": "payee",
+  "slug": "essai-025-couvreur-strasbourg",
+  "nom": "Morel Couverture",
+  "email": "contact@morel-couverture.invalid",
+  "telephone": "+33 2 61 91 51 02",
+  "metier": "couvreur",
+  "metiers_secondaires": [],
+  "communes": [
+    "Strasbourg",
+    "Schiltigheim"
+  ],
+  "domaine_mode": "existant",
+  "domaine": "morel-couverture.example",
+  "devis": {
+    "projets": [
+      "Réfection de toiture",
+      "Fuite en toiture",
+      "Gouttières",
+      "Démoussage",
+      "Autre intervention"
+    ],
+    "delais": [
+      "Dans le mois",
+      "Dans les trois mois",
+      "Plus tard, je me renseigne"
+    ]
+  },
+  "matiere": {
+    "photos": [
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "hero",
+        "demo": "couvreur"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "tuiles",
+        "demo": "couvreur"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "faitage",
+        "demo": "couvreur"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "ancienne",
+        "demo": "couvreur"
+      },
+      {
+        "url": "",
+        "legende": "",
+        "role": "chantier",
+        "base": "charpente",
+        "demo": "couvreur"
+      }
+    ],
+    "logo_url": null,
+    "adresse": "4 rue de l’Essai, 67000 Strasbourg",
+    "siren": "000000000",
+    "horaires": "Lundi–vendredi, 8 h–18 h",
+    "decennale": {
+      "assureur": "Assureur d’essai",
+      "numero": "ESSAI-025-102"
+    },
+    "avis_google": {
+      "url": ""
+    },
+    "artisan": {
+      "prenom": "Élise",
+      "nom": "Morel",
+      "installation": 2009,
+      "parcours": "Compagnonne formée sur les chantiers d’Alsace, installée à Strasbourg depuis quinze ans.",
+      "citation": "Je monte moi-même sur chaque toit que je chiffre, et je ne signe rien sans l’avoir vu de près.",
+      "chiffres": [
+        {
+          "valeur": "15",
+          "unite": "ans",
+          "legende": "à mon compte autour de Strasbourg"
+        },
+        {
+          "valeur": "3",
+          "unite": "compagnons",
+          "legende": "dans mon équipe, formés avec moi"
+        },
+        {
+          "valeur": "10",
+          "unite": "ans",
+          "legende": "de garantie décennale sur la couverture"
+        }
+      ]
+    }
+  }
+}

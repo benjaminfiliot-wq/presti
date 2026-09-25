@@ -199,7 +199,7 @@ function jugerContrat(dossier, contrat) {
     AUTEURS = [...new Set(liste.filter((a) => a.usage !== 'reserve').map((a) => a.auteur).filter(Boolean))]
   }
   const sitemap = existe(dossier, 'sitemap.xml') ? fs.readFileSync(path.join(dossier, 'sitemap.xml'), 'utf8') : ''
-  const locs = [...sitemap.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((m) => chemin(m[1])).filter(Boolean)
+  const locs = [...sitemap.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((m) => { const prefixe = chemin(contrat?.url_base || 'http://x')?.replace(/\/$/, '') || ''; const p = chemin(m[1]); return prefixe && p?.startsWith(prefixe + '/') ? p.slice(prefixe.length) : p }).filter(Boolean)
   const nonListees = htmls.filter((h) => !locs.includes(h) && !pages.some((p) => p.chemin === h && p.type === 'legal'))
   ok('sitemap.xml liste toutes les pages (légales à part)', sitemap.length > 0 && nonListees.length === 0, nonListees.slice(0, 4).join(', ') || `${locs.length} <loc>`, 'chaque page publique dans un <loc>')
   return { t, pages: pages.length ? pages : htmls.map((h) => ({ chemin: h, type: 'accueil' })), type }
@@ -216,7 +216,7 @@ function jugerPage(html, page, contrat, typeAttendu, titres, descriptions) {
   ok(`meta description unique et de ${BARRE.DESCRIPTION_MIN} à ${BARRE.DESCRIPTION_MAX} signes`, desc.length >= BARRE.DESCRIPTION_MIN && desc.length <= BARRE.DESCRIPTION_MAX && !descriptions.has(desc), `${desc.length} signes${descriptions.has(desc) ? ' · DOUBLON' : ''}`, `unique, ${BARRE.DESCRIPTION_MIN}–${BARRE.DESCRIPTION_MAX}`)
   descriptions.add(desc)
   const canon = lien(html, 'canonical')
-  ok('canonical = la page elle-même', !!canon && chemin(canon) === page.chemin, canon ?? '(absent)', page.chemin)
+  ok('canonical = la page elle-même', !!canon && (() => { const prefixe = chemin(contrat?.url_base || 'http://x')?.replace(/\/$/, '') || ''; const p = chemin(canon); return (prefixe && p?.startsWith(prefixe + '/') ? p.slice(prefixe.length) : p) === page.chemin })(), canon ?? '(absent)', page.chemin)
   ok('Open Graph : og:title, og:description, og:image', !!meta(html, 'og:title') && !!meta(html, 'og:description') && !!meta(html, 'og:image'), ['og:title', 'og:description', 'og:image'].filter((k) => !meta(html, k)).join(', ') || 'complet', 'les trois')
   const h1 = (html.match(/<h1\b/gi) || []).length
   ok('un seul <h1>', h1 === 1, h1, 1)

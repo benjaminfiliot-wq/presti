@@ -98,7 +98,7 @@ export const METIERS_SECONDAIRES_MAX = 4
 
 const texte = (v: unknown, max: number): string => String(v ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, max)
 const texteArtisan = (v: unknown): string => {
-  const nettoye = String(v ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
+  const nettoye = String(v ?? '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().replace(/(?<=\p{L})'(?=\p{L})/gu, '’')
   return nettoye.length <= 2000 ? nettoye : ''
 }
 const liste = (v: unknown, max: number, taille: number): string[] => {
@@ -173,7 +173,7 @@ export function nettoyerBrouillon(brut: unknown): Brouillon {
 export function erreursAvantPaiement(b: Brouillon): string[] {
   const e: string[] = []
   const verifierBorne = (valeur: string | undefined, borne: number, nom: string) => {
-    if (valeur && valeur.length > borne) e.push(`${nom.charAt(0).toUpperCase()}${nom.slice(1)} dépasse ${borne} signes (${valeur.length}) : raccourcissez ce texte, rien n’est coupé à votre place.`)
+    if (valeur && valeur.length > borne) e.push(`Votre parcours : ${nom} dépasse ${borne} signes (${valeur.length}) : raccourcissez ce texte, rien n’est coupé à votre place.`)
   }
   if (b.domaine_mode === 'existant' && !b.domaine) e.push('Le nom de domaine indiqué n’est pas valide (ex. martin-plomberie.fr).')
   if (!b.metier) e.push('Le métier principal manque.')
@@ -195,7 +195,7 @@ export function erreursAvantPaiement(b: Brouillon): string[] {
     if (!a.prenom || !a.nom) e.push('Votre parcours : le prénom et le nom manquent.')
     if (!Number.isInteger(a.installation) || a.installation! < 1960 || a.installation! > new Date().getFullYear()) e.push('Votre parcours : indiquez une année d’installation valide.')
     if (!a.parcours || /[\r\n]/.test(a.parcours)) e.push('Votre parcours : décrivez votre parcours en une ligne (140 signes au plus).')
-    if (!a.citation || a.citation.length < 20 || !/(?<![\p{L}])(?:je|me|moi|mon|ma|mes)(?![\p{L}])|(?<![\p{L}])[jm]’(?=\p{L})/iu.test(a.citation)) e.push('Votre parcours : la phrase signée doit compter 20 à 160 signes et être à la première personne.')
+    if (!a.citation || a.citation.length < 20 || !/(?<![\p{L}])(?:je|me|moi|mon|ma|mes)(?![\p{L}])|(?<![\p{L}])[jm]['’](?=\p{L})/iu.test(a.citation)) e.push('Votre parcours : la phrase signée doit compter 20 à 160 signes et être à la première personne.')
     if (a.chiffres === undefined || (a.chiffres !== null && (!Array.isArray(a.chiffres) || a.chiffres.length !== 3 || a.chiffres.some((c) => {
       const nombre = Number(String(c.valeur).replace(',', '.').replace(/\s/g, ''))
       return !c.valeur || c.valeur.length > 12 || !Number.isFinite(nombre) || nombre <= 0 || (c.unite?.length ?? 0) > 12 || !c.legende || c.legende.length > 60

@@ -51,7 +51,7 @@ export default function Dashboard() {
     setLeads((ls as Lead[]) ?? [])
     // `.is('etat', null)` : une proposition en attente porte `etat: 'proposition'`, une proposition
     // refusée `etat: 'rejete'` — ni l'une ni l'autre n'est jamais partie chez le client. Sans ce
-    // filtre, l'écran annonçait « Réponse envoyée automatiquement » pour un message que l'artisan
+    // filtre, l'écran annonçait « Réponse envoyée » pour un message que l'artisan
     // avait lui-même rejeté : il croyait son prospect servi et ne rappelait pas.
     // `.order` : sans lui, « la première trouvée » n'était pas la dernière envoyée.
     const { data: ms } = await supabase.from('messages').select('lead_id, sens, type, contenu, sent_at')
@@ -115,7 +115,7 @@ export default function Dashboard() {
             <div className="psh-kpi">
               <div className="lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M13 2 3 14h7l-1 8 10-12h-7z" /></svg>Réponses IA</div>
               <div className="val tnum"><CountUp value={repondus} /></div>
-              <div className="sub">envoyées automatiquement</div>
+              <div className="sub">envoyées à vos clients</div>
             </div>
           </section>
 
@@ -168,10 +168,10 @@ export default function Dashboard() {
                     <div style={{ borderTop: '1px solid var(--line)', paddingTop: '.7rem' }}>
                       <p style={{ margin: '0 0 .3rem', fontSize: '.78rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Sa demande</p>
                       <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap' }}>{l.message || <span className="muted">(aucun message)</span>}</p>
-                      <p style={{ margin: '0 0 .3rem', fontSize: '.78rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Réponse envoyée automatiquement</p>
+                      <p style={{ margin: '0 0 .3rem', fontSize: '.78rem', fontWeight: 700, color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>Réponse envoyée</p>
                       {replies[l.id]
                         ? <p style={{ margin: '0 0 .9rem', whiteSpace: 'pre-wrap', background: 'var(--accent-tint)', border: '1px solid var(--accent-tint-2)', borderRadius: 10, padding: '.7rem' }}>{replies[l.id]}</p>
-                        : <p className="muted" style={{ margin: '0 0 .9rem' }}>Pas encore de réponse automatique pour cette demande.</p>}
+                        : <p className="muted" style={{ margin: '0 0 .9rem' }}>Pas encore de réponse envoyée pour cette demande.</p>}
                       <label style={{ fontSize: '.8rem' }}>Statut <Info cle="dashboard.statut" /></label>
                       <select value={l.statut ?? 'nouveau'} onChange={(e) => changeStatut(l.id, e.target.value)} style={{ maxWidth: '16rem' }}>
                         {STATUTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}

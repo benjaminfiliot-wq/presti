@@ -5,6 +5,9 @@
 // est essayée avant le 404 — un site statique généré avant un changement d'adresse envoie toujours l'ancien slug.
 // Suffixe .temoin : un .ts ici serait compilé par `npm run typecheck` (tsconfig inclut **/*.ts). Le juge le copie, sans le
 // suffixe, dans .orchestre/travail/formulaire-site-qa/temoin/app/api/leads/route.ts (non compilé : .orchestre/ est ignoré).
+// Ajout du 25/09 (FS-12, fiche 025-22, défaut D01) : un champ `commande` (l'identifiant de la commande de site) fait retrouver
+// l'artisan par sites_commandes.artisan_id ; refus 404 si la commande n'est pas en ligne, si l'artisan est nul, purgé
+// (supprime-…) ou en suppression ; jamais de repli par le slug quand la commande est donnée. Sans ce champ : le slug, comme avant.
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { suspensionEnCours, MESSAGE_PUBLIC_INDISPONIBLE } from '@/lib/suspension'
@@ -16,6 +19,7 @@ import { artisanParAncienSlug } from '@/lib/slugRedirect'
 const MAX = { slug: 80, contact: 200, nom: 120, message: 5000 }
 const MAX_LEADS_PAR_IP = 6
 const COLONNES = 'id, nom, metier, ton_style, email, is_founder, leads_pause, services, zone_intervention, bio, tva_regime, assurance_nom, plan'
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const clip = (v: unknown, n: number): string | null => {
   if (typeof v !== 'string') return null
   const t = v.trim()
@@ -31,11 +35,14 @@ export async function POST(req: Request) {
     const message = clip(body?.message, MAX.message)
     const variant = body?.variant === 'A' || body?.variant === 'B' ? body.variant : null
     const deferContact = body?.deferContact === true
+    // La commande de site (FS-12) : donnée, elle décide seule ; illisible, la demande est refusée (jamais le slug à sa place).
+    const commandeDonnee = body?.commande !== undefined && body?.commande !== null && body?.commande !== ''
+    const commande = commandeDonnee && typeof body.commande === 'string' ? body.commande.trim() : null
 
-    if (!slug || (!contact && !deferContact) || (deferContact && !message)) {
+    if ((!slug && !commandeDonnee) || (!contact && !deferContact) || (deferContact && !message)) {
       return NextResponse.json({ error: 'Slug et contact requis' }, { status: 400 })
     }
-    if (!/^[a-z0-9-]{1,80}$/.test(slug)) {
+    if (commandeDonnee ? !commande || !UUID.test(commande) : !/^[a-z0-9-]{1,80}$/.test(slug ?? '')) {
       return NextResponse.json({ error: 'Lien invalide' }, { status: 400 })
     }
 
@@ -57,9 +64,30 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Trop de demandes. Réessayez dans quelques minutes.' }, { status: 429 })
     }
 
+    // 0) Un site commandé envoie l'identifiant de sa commande (FS-12) : l'artisan est celui de la commande, jamais celui qui
+    // porte aujourd'hui le slug (un compte purgé libère son slug, un inconnu peut le reprendre — D01). Refus si la commande
+    // n'est pas en ligne, si son artisan a été effacé (artisan_id nul), purgé (supprime-…) ou en suppression.
+    let artisanDeLaCommande: Record<string, unknown> | null = null
+    if (commandeDonnee) {
+      const { data: c, error: cErr } = await supabaseAdmin.from('sites_commandes').select('artisan_id, etat').eq('id', commande).maybeSingle()
+      if (cErr) {
+        console.error('[leads] lookup commande:', cErr.message)
+        return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+      }
+      if (c && c.etat === 'en_ligne' && c.artisan_id) {
+        const r = await supabaseAdmin.from('artisans').select(`${COLONNES}, slug, suppression_demandee_le`).eq('id', c.artisan_id).maybeSingle()
+        if (r.error) {
+          console.error('[leads] lookup artisan (commande):', r.error.message)
+          return NextResponse.json({ error: 'Service momentanément indisponible' }, { status: 500 })
+        }
+        if (r.data && !String(r.data.slug ?? '').startsWith('supprime-') && !r.data.suppression_demandee_le) artisanDeLaCommande = r.data
+      }
+      if (!artisanDeLaCommande) return NextResponse.json({ error: 'Artisan introuvable' }, { status: 404 })
+    }
+
     // 1) Retrouver l'artisan à partir de son slug… (jamais un compte purgé : lib/purgeComptes.ts lui donne l'adresse supprime-…,
     // et sa page ne prend plus de demande — une demande acceptée là serait perdue ; témoin de FS-11, relecture du 24/09)
-    let { data: artisan, error: aErr } = await supabaseAdmin
+    let { data: artisan, error: aErr } = artisanDeLaCommande ? { data: artisanDeLaCommande, error: null } : await supabaseAdmin
       .from('artisans')
       .select(COLONNES)
       .eq('slug', slug)

@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   if (!stripe) return NextResponse.json({ error: 'Paiement indisponible pour le moment.' }, { status: 503 })
   try {
     const brouillon = await brouillonDe(auth.uid)
-    if (!brouillon) return NextResponse.json({ error: 'Aucun dossier en cours : remplissez d’abord les trois premiers écrans.' }, { status: 400 })
+    if (!brouillon) return NextResponse.json({ error: 'Aucun dossier en cours : remplissez d’abord les quatre premiers écrans.' }, { status: 400 })
     const erreurs = erreursAvantPaiement(brouillon)
     if (erreurs.length) return NextResponse.json({ error: 'Le dossier est incomplet.', erreurs }, { status: 400 })
 

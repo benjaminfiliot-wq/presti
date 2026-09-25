@@ -1,0 +1,15 @@
+// TÉMOIN de scripts/domaine-sans-site-qa.mjs (Claude Code, 25/09, fiche 025-19) : copie corrigée de lib/surfaceDomaine.ts (nouveau) (état du 25/09).
+// Jamais servie par le dépôt ; le juge la pose dans .orchestre/travail/domaine-sans-site-qa/temoin/ (suffixe .temoin retiré).
+
+// Ce que la racine d'un domaine d'artisan sert : UN endroit le décide, le middleware, /api/domain et /profil le lisent.
+export type SurfaceDomaine = 'site' | 'site_genere' | 'contact'
+
+/** La commande en ligne passe d'abord (le middleware sert le site généré avant tout), puis le site publié, sinon la page de contact. */
+export function surfaceDuDomaine(p: { siteActif: boolean | null | undefined; commandeEnLigne: boolean }): SurfaceDomaine {
+  if (p.commandeEnLigne) return 'site_genere'
+  return p.siteActif === true ? 'site' : 'contact'
+}
+
+export function libelleDomaineActif(surface: SurfaceDomaine): string {
+  return surface === 'contact' ? 'Actif — votre page de contact est servie sur ce domaine' : 'Actif — votre site est servi sur ce domaine'
+}
