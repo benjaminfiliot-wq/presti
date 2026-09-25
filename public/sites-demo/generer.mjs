@@ -30,6 +30,14 @@ function normaliserTelephone(t) {
 }
 // des espaces réels entre les mots : le texte reste lisible tel quel (juge, lecteur d'écran, copier-coller)
 const mots = (h1) => h1.split(/\s+/).map((m, i) => `<span class="mot" style="--i:${i}">${esc(m)}</span>`).join(' ')
+// La ligne display garde la taille du kit tant qu'elle tient dans le cadre ; les titres longs s'ajustent à leur texte.
+const plafondsTitre = (ligne) => {
+  const texte = String(ligne ?? '').trim()
+  const motLePlusLong = Math.max(1, ...texte.split(/\s+/).map((mot) => [...mot].length))
+  const longueur = [...texte].length
+  return `--h1-plafond-tel:calc(88vw / ${(0.62 * motLePlusLong).toFixed(2)});--h1-plafond-bureau:calc(88vw / ${(0.62 * Math.max(motLePlusLong, Math.ceil(longueur * 0.6))).toFixed(2)})`
+}
+const CSS_SOURCE = '.hero--plein h1[style]{font-size:min(var(--h1-ligne),var(--h1-plafond-tel,100vw))}\n@media(min-width:768px){.hero--plein h1[style]{font-size:min(var(--h1-ligne),var(--h1-plafond-bureau,100vw))}.hero--plein h1[style] .h1__ligne{white-space:normal;text-wrap:balance}}\n'
 // Un titre de scène en mots masqués (priorité 9) : chaque mot monte sous son propre masque, lié à la position de défilement, sur
 // bureau seulement (kit.css v26). Ailleurs, les deux spans restent en ligne : aucun effet sur le texte ni sur sa mise en page.
 const masque = (t) => t.split(/\s+/).map((m, i) => `<span class="ml"><span class="ml__in" style="--i:${i}">${esc(m)}</span></span>`).join(' ')
@@ -402,7 +410,7 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
   const cssFamilles = famillesChargees.map((famille) => sansCommentaires(famille.css)).filter(Boolean)
   const cssBureauFamilles = famillesChargees.map((famille) => sansCommentaires(famille.cssBureau)).filter(Boolean)
   const bureauCss = cssBureauFamilles.length ? `${cssBureauFamilles.join('\n')}\n` : null
-  const stylesCss = `/* ${site.nom} — direction artistique « ${da.label} » (cerveau site v2, ${AUJOURDHUI}) — source commentée : _kit/kit.css */\n${faces}\n${tokens}\n${sansCommentaires(KIT_CSS)}\n${cssFamilles.length ? `${cssFamilles.join('\n')}\n` : ''}`
+  const stylesCss = `/* ${site.nom} — direction artistique « ${da.label} » (cerveau site v2, ${AUJOURDHUI}) — source commentée : _kit/kit.css */\n${faces}\n${tokens}\n${sansCommentaires(KIT_CSS)}\n${cssFamilles.length ? `${cssFamilles.join('\n')}\n` : ''}${options.source ? CSS_SOURCE : ''}`
   if (/ui-monospace|Consolas|SFMono/.test(stylesCss)) throw new Error(`${metier} : styles.css renvoie encore à une pile monospace du système`)
 
   let pageCourante = null
@@ -466,7 +474,7 @@ ${da.display === da.texte ? '' : `body{font-feature-settings:"kern"}`}`
     // le formulaire de la page quand elle en a un (accueil, communes), celui de l'accueil sinon (pages légales)
     const liens = [['prestations', 'Prestations'], ['realisations', 'Réalisations'], ['communes', 'Communes'], ['questions', 'Questions']].map(([id, t]) => `<a href="${rel}#${id}">${t}</a>`).join('')
     const versContact = page.type === 'legal' ? `${rel}#contact` : '#contact'
-    const navClaire = da.hero === 'plein' ? page.type === 'accueil' || page.type === 'commune' : page.type === 'accueil' && da.hero === 'aplat'
+    const navClaire = da.hero === 'plein' ? page.type === 'accueil' || (page.type === 'commune' && !!bandeau) : page.type === 'accueil' && da.hero === 'aplat'
     return `<!doctype html>
 <html lang="fr" class="no-js${da.texture === 'grain' ? ' texture--grain' : da.texture === 'papier' ? ' texture--papier' : ''}${da.raccords ? ' da--raccords' : ''}${da.etapesMonumentales ? ' da--etapes' : ''}${da.communesMonumentales ? ' da--communes' : ''}${da.navRetenue ? ' da--nav-retenue' : ''}${da.signature ? ' da--signature' : ''}">
 <head>
@@ -712,7 +720,7 @@ ${ldPage ? `<script type="application/ld+json">${options.source ? JSON.stringify
       if (!c.h1Ligne) throw new Error(`${metier}/ : contenu.json → pages["/"].h1Ligne manque (la ligne display du h1)`)
       // da.relief : le relief WebGL du héros (bureau seulement, chargé par kit.js après load) — la page ne porte que trois attributs
       const relief = attributsRelief(rel)
-      heroHtml = `<section class="hero hero--plein" data-nav="sombre"${relief}><div class="hero__media">${photoHeros(heros, herosMobile, rel)}${crochetConcatene('herosMedia', [], rel)}</div><div class="hero__contenu"><h1><span class="h1__cle"><span>${esc(c.h1)}</span></span> <span class="h1__ligne"><span class="h1__ligne-in">${mots(c.h1Ligne)}</span></span></h1><div class="hero__pied"><p class="chapeau">${esc(c.chapeau)}</p><div class="hero__actions"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
+      heroHtml = `<section class="hero hero--plein" data-nav="sombre"${relief}><div class="hero__media">${photoHeros(heros, herosMobile, rel)}${crochetConcatene('herosMedia', [], rel)}</div><div class="hero__contenu"><h1${options.source ? ` style="${plafondsTitre(c.h1Ligne)}"` : ''}><span class="h1__cle"><span>${esc(c.h1)}</span></span> <span class="h1__ligne"><span class="h1__ligne-in">${mots(c.h1Ligne)}</span></span></h1><div class="hero__pied"><p class="chapeau">${esc(c.chapeau)}</p><div class="hero__actions"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
     } else {
       const heroTexte = `<span class="mono entre" style="--d:.3s">${esc(c.kicker || `${da.label} · ${ville}`)}</span><h1>${mots(c.h1)}</h1><p class="chapeau entre" style="--d:1.1s">${esc(c.chapeau)}</p><div class="hero__actions entre" style="--d:1.3s"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div>`
       if (da.hero === 'aplat') heroHtml = `<section class="hero hero--aplat"><div class="conteneur hero__grille"><div class="hero__contenu">${heroTexte}</div><div class="hero__media entre" style="--d:.9s">${photo(heros, rel, { eager: true, sizes: '(max-width: 960px) calc(100vw - 2.5rem), 50vw' })}</div></div></section>`
@@ -787,7 +795,7 @@ ${ldPage ? `<script type="application/ld+json">${options.source ? JSON.stringify
     // 4 photos (ou 2), jamais 3 avec une orpheline dans la grille ; sans le bandeau de la page
     const mesPhotos = (() => { const l = galerie.filter((p) => p !== bandeau); const n = l.length >= 4 ? 4 : l.length >= 2 ? 2 : l.length; return Array.from({ length: n }, (_, k) => l[(index + k) % l.length]) })()
     let corps = bandeau
-      ? `<section class="hero hero--plein hero--commune${enPortrait(bandeau) ? ' hero--portrait' : ''}" data-nav="sombre"><div class="hero__media">${photo(bandeau, rel, { eager: 'sans-priorite', sizes: '100vw' })}</div><div class="hero__contenu"><nav class="ariane" aria-label="Fil d’Ariane"><a href="${rel}">Accueil</a><span>/</span><span>${esc(page.cible)}</span></nav><h1><span class="h1__cle"><span>${esc(c.h1)}</span></span> <span class="h1__ligne"><span class="h1__ligne-in">${mots(c.h1Ligne)}</span></span></h1><div class="hero__pied">${c.chapeau ? `<p class="chapeau">${esc(c.chapeau)}</p>` : ''}<div class="hero__actions"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
+      ? `<section class="hero hero--plein hero--commune${enPortrait(bandeau) ? ' hero--portrait' : ''}" data-nav="sombre"><div class="hero__media">${photo(bandeau, rel, { eager: 'sans-priorite', sizes: '100vw' })}</div><div class="hero__contenu"><nav class="ariane" aria-label="Fil d’Ariane"><a href="${rel}">Accueil</a><span>/</span><span>${esc(page.cible)}</span></nav><h1${options.source ? ` style="${plafondsTitre(c.h1Ligne)}"` : ''}><span class="h1__cle"><span>${esc(c.h1)}</span></span> <span class="h1__ligne"><span class="h1__ligne-in">${mots(c.h1Ligne)}</span></span></h1><div class="hero__pied">${c.chapeau ? `<p class="chapeau">${esc(c.chapeau)}</p>` : ''}<div class="hero__actions"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
       : `<section class="hero hero--page"><div class="conteneur"><div class="hero__contenu"><nav class="ariane entre" style="--d:.2s" aria-label="Fil d’Ariane"><a href="${rel}">Accueil</a><span>/</span><span>${esc(page.cible)}</span></nav><span class="mono entre" style="--d:.3s">${esc(kicker)}</span><h1>${mots(c.h1)}</h1>${c.chapeau ? `<p class="chapeau entre" style="--d:1s">${esc(c.chapeau)}</p>` : ''}<div class="hero__actions entre" style="--d:1.2s"><a class="bouton" href="#contact">Demander un devis <span class="bouton__cercle">${FLECHE}</span></a></div></div></div></section>`
     const creditsBandeau = bandeau ? [bandeau] : []
     // Les scènes sur une page commune : bandeau d'ouvrage (photo) · prestations (papier) · trois ouvrages sur noir · communes
@@ -872,6 +880,8 @@ ${ldPage ? `<script type="application/ld+json">${options.source ? JSON.stringify
     const origines = []
     if (photosUtilisees.some((p) => /commons\.wikimedia\.org/i.test(p.source))) origines.push('Des photographies proviennent de Wikimedia Commons, sous licence libre')
     for (const auteur of new Set(photosUtilisees.filter((p) => p.licence === 'propriétaire').map((p) => p.auteur))) origines.push(`Des photographies appartiennent à ${esc(auteur)}`)
+    const autres = photosUtilisees.filter((p) => !/commons\.wikimedia\.org/i.test(p.source) && p.licence !== 'propriétaire')
+    if (autres.length) origines.push(origines.length ? 'D’autres photographies sont publiées par leurs auteurs sous les licences indiquées' : 'Les photographies sont publiées par leurs auteurs sous les licences indiquées')
     return `${origines.join('. ')}. Chaque auteur, licence et origine figure ci-dessous.${photosUtilisees.some(estModifiee) ? ' Les photos indiquées comme modifiées ont été modifiées par Presti.' : ''}`
   }
   function legale(page) {
