@@ -6,23 +6,24 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-26T09:37:35Z
+# Digest — 2026-09-26T09:41:23Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 83 tâche(s) PASS, 182383 ligne(s) · faites par Claude Code : 13 tâche(s) PASS, 49369 ligne(s).
-**État** — file : 0 · en cours : 5 · faites : 102 · refusées : 6
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 85 tâche(s) PASS, 183201 ligne(s) · faites par Claude Code : 13 tâche(s) PASS, 49369 ligne(s).
+**État** — file : 1 · en cours : 3 · faites : 104 · refusées : 6
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
+| 026-023 | test | en-cours | claude-code | — | depuis 2026-09-26T09:32:54Z · Écrire les juges du lot B (achat-public-qa, lien-connexion-qa, complement-dossier-qa, achat-ecrans-qa) et leurs jeux d'essai, et les inscrire au lot B de juges-026-lt-preuve.mjs, qui passe seulement si chacun échoue sur la référence avec son premier critère et passe en --temoin |
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 026-014 | feature | en-cours | usine-codex-35 | — | depuis 2026-09-26T09:36:24Z · Créer les modules purs lib/pilotage/decisions.ts (5 cartes au plus triées par euros puis échéance, 2 à 7 options, libellé du défaut prudent, portée de reconfirmation exigée), lib/pilotage/appels.ts (cartes À appeler avec lien tel: normalisé) et lib/pilotage/liens.ts (liens du Pilotage qui ne portent qu'un identifiant) |
-| 026-017 | feature | en-cours | usine-codex-36 | — | depuis 2026-09-26T09:37:34Z · Créer les modules purs lib/pilotage/agents.ts (état de chaque agent : actif, muet, en panne depuis plus de 2 h, en pause, disjoncteur, avec son coût du mois) et lib/pilotage/code.ts (résumé de l'orchestre et des PR, périmé au-delà de 2 h), et scripts/pilotage-code-publier.mjs qui publie depuis le poste un état de l'orchestre de 20 Ko au plus, sans jamais afficher un secret |
-| 026-023 | test | en-cours | claude-code | — | depuis 2026-09-26T09:32:54Z · Écrire les juges du lot B (achat-public-qa, lien-connexion-qa, complement-dossier-qa, achat-ecrans-qa) et leurs jeux d'essai, et les inscrire au lot B de juges-026-lt-preuve.mjs, qui passe seulement si chacun échoue sur la référence avec son premier critère et passe en --temoin |
+| 000-marketing-026 | contenu | file | claude-code | — | Transformer les 16 fiches marketing C01–C16 de SaaS/Produit/Ecosysteme-Marketing-Reel-2026-09-25.md (§3 « La carte vers Presti » et §4 bis « Presti sur les réseaux, en automatique ») en brouillons de la série 026 (026-204 et suivants, ids continus), au format exact des fiches existantes, juges d'abord, avec Laya/Jev branché là où il sert ; écart relevé par la relecture de conformité du 26/09. |
+| 026-017 | feature | fait | usine-codex-36 | PASS | 2026-09-26T09:40:39Z · 17s · 411 l. |
+| 026-014 | feature | fait | usine-codex-35 | PASS | 2026-09-26T09:39:36Z · 14s · 407 l. |
 | 026-020 | feature | fait | usine-codex-33 | PASS | 2026-09-26T09:35:58Z · 30s · 500 l. |
 | 026-005 | feature | fait | usine-codex-34 | PASS | 2026-09-26T09:35:16Z · 32s · 425 l. |
 | 026-003 | feature | fait | ag-26003 | PASS | 2026-09-26T09:33:15Z · 20s · 282 l. |
@@ -117,6 +118,5 @@
 | 014-09 | boucle-qa | fait | claude-code | PASS | 2026-09-13T23:44:23Z · 53s · 17032 l. |
 | 014-07 | boucle-qa | fait | ag-07-g38 | PASS | 2026-09-13T23:37:23Z · 156s · 3038 l. |
 | 014-06 | boucle-qa | fait | ag-06-g38 | PASS | 2026-09-13T23:36:21Z · 129s · 2221 l. |
-| 014-14 | feature | fait | claude-code | PASS | 2026-09-13T18:41:34Z · 64s · 0 l. |
 
-… 13 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 14 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

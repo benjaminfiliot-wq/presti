@@ -286,3 +286,6 @@
 {"id":"026-003","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:33:15Z","duree_s":20,"agent":"ag-26003","executant":"codex","lignes":282,"dossier":"fait"}
 {"id":"026-005","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:35:16Z","duree_s":32,"agent":"usine-codex-34","executant":"codex","lignes":425,"dossier":"fait"}
 {"id":"026-020","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:35:58Z","duree_s":30,"agent":"usine-codex-33","executant":"codex","lignes":500,"dossier":"fait"}
+{"id":"026-014","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:39:36Z","duree_s":14,"agent":"usine-codex-35","executant":"codex","lignes":407,"dossier":"fait"}
+{"id":"026-023","verdict":"FAIL","ligne":"juges-026-lt-preuve --lot=B : FAIL — JL-1, JL-2, JL-3, JL-4","code":1,"date":"2026-09-26T09:39:48Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":204,"dossier":"en-cours"}
+{"id":"026-017","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:40:39Z","duree_s":17,"agent":"usine-codex-36","executant":"codex","lignes":411,"dossier":"fait"}
