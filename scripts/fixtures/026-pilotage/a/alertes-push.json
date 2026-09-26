@@ -1,0 +1,147 @@
+{
+  "_lisez_moi": "Une alerte de chaque motif (les six poussés aux fondateurs, puis les autres), adressées à l’entreprise ou à un artisan, chacune chargée des pièges dans le sujet et le corps : un nom, un téléphone, une adresse, un montant, et une référence de 12 chiffres.",
+  "pieges": {
+    "nom": "Jean Témoin",
+    "telephone": "06 12 34 56 78",
+    "email": "jean.temoin@exemple.invalid",
+    "montant": "1 234,56 €"
+  },
+  "pousses": [
+    "paiement",
+    "appel",
+    "panne_agent",
+    "argent_bloque",
+    "coupe_circuit",
+    "digest"
+  ],
+  "non_pousses": [
+    "solde_ia",
+    "credits_artisan",
+    "erreurs",
+    "cron_muet",
+    "domaine_mail",
+    "securite",
+    "agent_muet",
+    "motif_inconnu_temoin"
+  ],
+  "alertes": [
+    {
+      "motif": "paiement",
+      "a": "entreprise",
+      "cle": "temoin-paiement",
+      "sujet": "paiement — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "appel",
+      "a": "entreprise",
+      "cle": "temoin-appel",
+      "sujet": "appel — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "panne_agent",
+      "a": "entreprise",
+      "cle": "temoin-panne",
+      "sujet": "panne_agent — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "argent_bloque",
+      "a": "entreprise",
+      "cle": "temoin-argent",
+      "sujet": "argent_bloque — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "coupe_circuit",
+      "a": "entreprise",
+      "cle": "temoin-coupe",
+      "sujet": "coupe_circuit — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "digest",
+      "a": "entreprise",
+      "cle": "temoin-digest",
+      "sujet": "digest — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "solde_ia",
+      "a": "entreprise",
+      "cle": "temoin-solde",
+      "sujet": "solde_ia — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "credits_artisan",
+      "a": "entreprise",
+      "cle": "temoin-credits",
+      "sujet": "credits_artisan — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "credits_artisan",
+      "a": {
+        "email": "jean.temoin@exemple.invalid",
+        "artisanId": "90000001-0000-4000-8000-000000000001"
+      },
+      "cle": "temoin-credits-artisan",
+      "sujet": "credits_artisan — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "erreurs",
+      "a": "entreprise",
+      "cle": "temoin-erreurs",
+      "sujet": "erreurs — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "cron_muet",
+      "a": "entreprise",
+      "cle": "temoin-cron",
+      "sujet": "cron_muet — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "domaine_mail",
+      "a": "entreprise",
+      "cle": "temoin-domaine",
+      "sujet": "domaine_mail — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "securite",
+      "a": "entreprise",
+      "cle": "temoin-securite",
+      "sujet": "securite — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "agent_muet",
+      "a": "entreprise",
+      "cle": "temoin-muet",
+      "sujet": "agent_muet — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "paiement",
+      "a": {
+        "email": "jean.temoin@exemple.invalid",
+        "artisanId": "90000001-0000-4000-8000-000000000001"
+      },
+      "cle": "temoin-paiement-artisan",
+      "sujet": "paiement — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "motif_inconnu_temoin",
+      "a": "entreprise",
+      "cle": "temoin-inconnu",
+      "sujet": "motif_inconnu_temoin — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+ "reponses": {
+  "/": {
+   "redirection": "/etape-1",
+   "statut": 301
+  },
+  "/etape-1": {
+   "redirection": "/etape-2",
+   "statut": 301
+  },
+  "/etape-2": {
+   "redirection": "/etape-3",
+   "statut": 301
+  },
+  "/etape-3": {
+   "redirection": "/etape-4",
+   "statut": 301
+  }
+ }
+}

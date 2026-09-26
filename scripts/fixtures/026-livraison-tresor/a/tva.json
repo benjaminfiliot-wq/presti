@@ -1,0 +1,217 @@
+{
+ "_lisez": "Jeu d’essai de TR-2 (026-055, situerTva) : 12 cas. L’attendu est calculé par la formule de app/api/controle/compta/route.ts:72-74 et :89-91 au commit de référence, recopiée ci-dessous telle quelle ; tresorerie-qa la compare au commit de référence et la réévalue avant de juger.",
+ "reference": "4041ec9b41432576037dbc0b45e0647bd60a0347",
+ "fichier": "app/api/controle/compta/route.ts",
+ "lignes_72_74": [
+  "  const seuil = Number(reg.tva_seuil_franchise_cents) || 0",
+  "  const seuilMajore = Number(reg.tva_seuil_majore_cents) || 0",
+  "  const alerteA = Number(reg.tva_alerte_pourcent) || 80"
+ ],
+ "lignes_89_91": [
+  "      pourcent: caCents !== null && seuil > 0 ? Math.round((caCents / seuil) * 1000) / 10 : null,",
+  "      alerte: caCents !== null && seuil > 0 && caCents >= seuil * (alerteA / 100),",
+  "      depasse: caCents !== null && seuil > 0 && caCents >= seuil,"
+ ],
+ "cas": [
+  {
+   "nom": "seuil nul",
+   "caCents": 1000000,
+   "reglages": {
+    "tva_seuil_franchise_cents": 0,
+    "tva_seuil_majore_cents": 4125000,
+    "tva_alerte_pourcent": 80
+   },
+   "attendu": {
+    "seuil": 0,
+    "seuilMajore": 4125000,
+    "alerteA": 80,
+    "pourcent": null,
+    "alerte": false,
+    "depasse": false
+   }
+  },
+  {
+   "nom": "chiffre d’affaires inconnu",
+   "caCents": null,
+   "reglages": {
+    "tva_seuil_franchise_cents": 3750000,
+    "tva_seuil_majore_cents": 4125000,
+    "tva_alerte_pourcent": 80
+   },
+   "attendu": {
+    "seuil": 3750000,
+    "seuilMajore": 4125000,
+    "alerteA": 80,
+    "pourcent": null,
+    "alerte": false,
+    "depasse": false
+   }
+  },
+  {
+   "nom": "pile au seuil",
+   "caCents": 3750000,
+   "reglages": {
+    "tva_seuil_franchise_cents": 3750000,
+    "tva_seuil_majore_cents": 4125000,
+    "tva_alerte_pourcent": 80
+   },
+   "attendu": {
+    "seuil": 3750000,
+    "seuilMajore": 4125000,
+    "alerteA": 80,
+    "pourcent": 100,
+    "alerte": true,
+    "depasse": true
+   }
+  },
+  {
+   "nom": "pile à 80 %",
+   "caCents": 3000000,
+   "reglages": {
+    "tva_seuil_franchise_cents": 3750000,
+    "tva_seuil_majore_cents": 4125000,
+    "tva_alerte_pourcent": 80
+   },
+   "attendu": {
+    "seuil": 3750000,
+    "seuilMajore": 4125000,
+    "alerteA": 80,
+    "pourcent": 80,
+    "alerte": true,
+    "depasse": false
+   }
+  },
+  {
+   "nom": "un centime sous 80 % (le pourcentage arrondi dit 80, l’alerte ne part pas)",
+   "caCents": 2999999,
+   "reglages": {
+    "tva_seuil_franchise_cents": 3750000,
+    "tva_seuil_majore_cents": 4125000,
+    "tva_alerte_pourcent": 80
+   },
+   "attendu": {
+    "seuil": 3750000,
+    "seuilMajore": 4125000,
+    "alerteA": 80,
+    "pourcent": 80,
+    "alerte": false,
+    "depasse": false
+   }
+  },
+  {
+   "nom": "chiffre d’affaires nul",
+   "caCents": 0,
+   "reglages": {
+    "tva_seuil_franchise_cents": 3750000,
+    "tva_seuil_majore_cents": 4125000,
+    "tva_alerte_pourcent": 80
+   },
+   "attendu": {
+    "seuil": 3750000,
+    "seuilMajore": 4125000,
+    "alerteA": 80,
+    "pourcent": 0,
+    "alerte": false,
+    "depasse": false
+   }
+  },
+  {
+   "nom": "au-delà du seuil majoré",
+   "caCents": 4200000,
+   "reglages": {
+    "tva_seuil_franchise_cents": 3750000,
+    "tva_seuil_majore_cents": 4125000,
+    "tva_alerte_pourcent": 80
+   },
+   "attendu": {
+    "seuil": 3750000,
+    "seuilMajore": 4125000,
+    "alerteA": 80,
+    "pourcent": 112,
+    "alerte": true,
+    "depasse": true
+   }
+  },
+  {
+   "nom": "réglages en texte, alerte à 90 %",
+   "caCents": 3400000,
+   "reglages": {
+    "tva_seuil_franchise_cents": "3750000",
+    "tva_seuil_majore_cents": "4125000",
+    "tva_alerte_pourcent": "90"
+   },
+   "attendu": {
+    "seuil": 3750000,
+    "seuilMajore": 4125000,
+    "alerteA": 90,
+    "pourcent": 90.7,
+    "alerte": true,
+    "depasse": false
+   }
+  },
+  {
+   "nom": "alerte réglée à 0 : 80 par défaut",
+   "caCents": 3000000,
+   "reglages": {
+    "tva_seuil_franchise_cents": 3750000,
+    "tva_seuil_majore_cents": 4125000,
+    "tva_alerte_pourcent": 0
+   },
+   "attendu": {
+    "seuil": 3750000,
+    "seuilMajore": 4125000,
+    "alerteA": 80,
+    "pourcent": 80,
+    "alerte": true,
+    "depasse": false
+   }
+  },
+  {
+   "nom": "aucun réglage en base",
+   "caCents": 3000000,
+   "reglages": {},
+   "attendu": {
+    "seuil": 0,
+    "seuilMajore": 0,
+    "alerteA": 80,
+    "pourcent": null,
+    "alerte": false,
+    "depasse": false
+   }
+  },
+  {
+   "nom": "réglage illisible",
+   "caCents": 3000000,
+   "reglages": {
+    "tva_seuil_franchise_cents": "abc",
+    "tva_seuil_majore_cents": "abc",
+    "tva_alerte_pourcent": "abc"
+   },
+   "attendu": {
+    "seuil": 0,
+    "seuilMajore": 0,
+    "alerteA": 80,
+    "pourcent": null,
+    "alerte": false,
+    "depasse": false
+   }
+  },
+  {
+   "nom": "arrondi au dixième",
+   "caCents": 1234567,
+   "reglages": {
+    "tva_seuil_franchise_cents": 3750000,
+    "tva_seuil_majore_cents": 4125000,
+    "tva_alerte_pourcent": 80
+   },
+   "attendu": {
+    "seuil": 3750000,
+    "seuilMajore": 4125000,
+    "alerteA": 80,
+    "pourcent": 32.9,
+    "alerte": false,
+    "depasse": false
+   }
+  }
+ ]
+}

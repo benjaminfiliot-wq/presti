@@ -1,0 +1,7 @@
+{"id":"099-temoin-x","verdict":"PASS","ligne":"","code":0,"date":"2026-10-13T08:00:00Z","duree_s":12,"agent":"codex-temoin","executant":"codex","lignes":10,"dossier":"fait"}
+{"id":"099-temoin-y","verdict":"FAIL","ligne":"❌ XX-1 essai Témoin","code":1,"date":"2026-10-13T09:00:00Z","duree_s":12,"agent":"codex-temoin","executant":"codex","lignes":10,"dossier":"refuse"}
+{"id":"099-temoin-f","verdict":"PASS","ligne":"","code":0,"date":"2026-10-14T05:00:00Z","duree_s":12,"agent":"codex-temoin","executant":"codex","lignes":10,"dossier":"fait"}
+{"id":"099-temoin-g","verdict":"FAIL","ligne":"❌ XX-3 la ligne en échec du Témoin est longue, la ligne en échec du Témoin est longue, la ligne en échec du Témoin est longue, la ligne en échec du Témoin est longue, la ligne en échec du Témoin est longue, la ligne en échec du Témoin est longue, fin","code":1,"date":"2026-10-14T06:00:00Z","duree_s":12,"agent":"codex-temoin","executant":"codex","lignes":10,"dossier":"refuse"}
+{"id":"099-temoin-g","verdict":"PASS","ligne":"","code":0,"date":"2026-10-14T07:00:00Z","duree_s":12,"agent":"codex-temoin","executant":"codex","lignes":10,"dossier":"fait"}
+{"id":"099-temoin-h","verdict":"PASS","ligne":"","code":0,"date":"2026-10-14T08:00:00Z","duree_s":12,"agent":"antigravity-temoin","executant":"antigravity","lignes":10,"dossier":"fait"}
+{"id":"099-temoin-i","verdict":"REFUSÉE","ligne":"en-tête : champ obligatoire absent ou vide : verifier","code":1,"date":"2026-10-14T09:00:00Z","duree_s":12,"agent":"codex-temoin","executant":"codex","lignes":10,"dossier":"refuse"}

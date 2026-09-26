@@ -1,0 +1,24 @@
+{
+ "_lisez": "Enregistrements DNS factices au format DnsRecord (lib/vercelDomains.ts:10), servis par la doublure de getStatus (livraison-tour-qa, TL-3 et TL-4).",
+ "domaines": {
+  "plomberie-temoin.fr": [
+   {
+    "type": "A",
+    "name": "@",
+    "value": "76.76.21.21"
+   },
+   {
+    "type": "TXT",
+    "name": "_vercel",
+    "value": "vc-domain-verify=plomberie-temoin.fr,temoin026018"
+   }
+  ],
+  "www.menuiserie-temoin.fr": [
+   {
+    "type": "CNAME",
+    "name": "www",
+    "value": "cname.vercel-dns.com"
+   }
+  ]
+ }
+}

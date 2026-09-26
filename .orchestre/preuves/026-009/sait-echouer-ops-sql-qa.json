@@ -1,0 +1,294 @@
+{
+  "mutations": [
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "revoke all on all tables in schema ops from public, anon, authenticated, service_role;",
+      "apres": "revoke all on all tables in schema ops from public, anon, authenticated, service_role;\ncreate policy tout_voir on ops.taches for select using (true);",
+      "critere": "OS-1",
+      "extrait": "FAIL OS-1 — « create policy » interdit dans 0096 ; instruction hors de la liste permise : « create policy tout_voir on ops.taches for select using(true) »",
+      "duree_s": 10.6
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "create table if not exists ops.couts (",
+      "apres": "create table ops.couts (",
+      "critere": "OS-2",
+      "extrait": "FAIL OS-2 — create table ops.couts sans « if not exists »",
+      "duree_s": 10.3
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "profondeur int not null default 0 check (profondeur between 0 and 3)",
+      "apres": "profondeur int not null default 0 check (profondeur between 0 and 4)",
+      "critere": "OS-3",
+      "extrait": "FAIL OS-3 — ops.taches : contrainte du contrat introuvable — profondeur between 0 and 3",
+      "duree_s": 9.8
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "'formulaire_site','email_sollicite','reponse_privee','messagerie','telephone','essai_e2e')),\n  envoyeur text not null default 'systeme'",
+      "apres": "'formulaire_site','email','reponse_privee','messagerie','telephone','essai_e2e')),\n  envoyeur text not null default 'systeme'",
+      "critere": "OS-3",
+      "extrait": "FAIL OS-3 — ops.envois : contrainte du contrat introuvable — canal in ('instagram','facebook','linkedin','formulaire_site','email_sollicite','reponse_privee','messagerie'…",
+      "duree_s": 9.4
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "tentatives int not null default 0 check (tentatives between 0 and 3)",
+      "apres": "tentatives int not null default 0 check (tentatives between 0 and 30)",
+      "critere": "OS-3",
+      "extrait": "FAIL OS-3 — ops.taches : contrainte du contrat introuvable — tentatives between 0 and 3",
+      "duree_s": 9.3
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "jsonb_typeof(verdicts) = 'object' and pg_column_size(verdicts) <= 4096",
+      "apres": "jsonb_typeof(verdicts) = 'object' and pg_column_size(verdicts) <= 40960",
+      "critere": "OS-3",
+      "extrait": "FAIL OS-3 — ops.envois : contrainte du contrat introuvable — jsonb_typeof(verdicts) = 'object' and pg_column_size(verdicts) <= 4096",
+      "duree_s": 9.6
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "alter table ops.couts enable row level security;\n",
+      "apres": "",
+      "critere": "OS-4",
+      "extrait": "FAIL OS-4 — enable row level security absent pour : couts",
+      "duree_s": 9.4
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "avant": "('email_sollicite', '*', 50, 0)",
+      "apres": "('email_sollicite', '*', 60, 0)",
+      "critere": "OS-5",
+      "extrait": "FAIL OS-5 — quota (email_sollicite, *, 50, 0) : 0 graine(s), une attendue ; quota hors contrat : (email_sollicite, *, 60, 0)",
+      "duree_s": 9.4
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/_A_COLLER_sql_editor_0096_NU.sql",
+      "avant": "plafond_nouveaux_jour int not null default 0 check (plafond_nouveaux_jour between 0 and 300),",
+      "apres": "plafond_nouveaux_jour int not null default 0,",
+      "critere": "OS-6",
+      "extrait": "FAIL OS-6 — supabase/migrations/_A_COLLER_sql_editor_0096_NU.sql ne sort pas de sql-nu.mjs : diverge à la ligne 157 (attendu « plafond_nouveaux_jour int not null default 0 check (plafond_nouveaux_jour betwe… », trouvé « plafond_nouveaux_jour int not null defau",
+      "duree_s": 9.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/controles/0096_ops_socle.sql",
+      "avant": "case when (select count(*) from pg_policies where schemaname = 'ops') = 0 then 'oui' else 'NON' end",
+      "apres": "'oui'",
+      "critere": "OS-7",
+      "extrait": "FAIL OS-7 — supabase/controles/0096_ops_socle.sql ne couvre pas : aucune politique pour ops (attendu : pg_policies)",
+      "duree_s": 9.7
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon",
+      "fichier": ".orchestre/preuves/026-010/essai-a-sec.txt",
+      "avant": "APRES rien_ne_reste=true",
+      "apres": "APRES rien_ne_reste=false",
+      "critere": "OS-8",
+      "extrait": "FAIL OS-8 — .orchestre/preuves/026-010/essai-a-sec.txt : APRES rien_ne_reste=false : l'essai a laissé une trace",
+      "duree_s": 9.9
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0096 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0095_verrous_maj_slug.sql",
+      "avant": "-- 0095 · Les verrous de public.artisans",
+      "apres": "-- 0095 · Les verrous (retouchés) de public.artisans",
+      "critere": "OS-9",
+      "extrait": "FAIL OS-9 — 1 fichier(s) existant(s) changé(s) (copie comparée aux blobs de HEAD) : M supabase/migrations/0095_verrous_maj_slug.sql",
+      "duree_s": 9.6
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0097 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "comment on function public.ops_agent_par_jeton(text)",
+      "apres": "create table if not exists public.ops_intrus (id int);\ncomment on function public.ops_agent_par_jeton(text)",
+      "critere": "OI-1",
+      "extrait": "FAIL OI-1 — instruction hors liste (create or replace function public.ops_*, revoke, grant execute … to service_role, comment on function) : « create table if not exists public.ops_intrus(id int) » ; le fichier crée ou modifie autre chose que des fonctions",
+      "duree_s": 10.7
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0097 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "create or replace function public.ops_agent_par_jeton(p_hash text)",
+      "apres": "create or replace function public.ops_agent_par_jeton(p_jeton text)",
+      "critere": "OI-2",
+      "extrait": "FAIL OI-2 — public.ops_agent_par_jeton : paramètres (p_jeton text), contrat (p_hash text)",
+      "duree_s": 9.4
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0097 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "grant execute on function public.ops_battement(text) to service_role;",
+      "apres": "grant execute on function public.ops_battement(text) to service_role, anon;",
+      "critere": "OI-3",
+      "extrait": "FAIL OI-3 — grant à anon sur ops_battement",
+      "duree_s": 9.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0097 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "returns boolean\nlanguage plpgsql stable security definer set search_path = ops, public, pg_temp as $$",
+      "apres": "returns boolean\nlanguage plpgsql stable security definer set search_path = pg_temp, ops, public as $$",
+      "critere": "OI-3",
+      "extrait": "FAIL OI-3 — public.ops_interrupteur : search_path pg_temp, ops, public, attendu « ops, public, pg_temp » (pg_temp en dernier)",
+      "duree_s": 9.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0097 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "where e.id > coalesce(p_apres, 0) and e.agent <> p_agent",
+      "apres": "where e.id > coalesce(p_apres, 0)",
+      "critere": "OI-4",
+      "extrait": "FAIL OI-4 — ops_evenements_lire : ne filtre pas agent <> p_agent ou ne borne pas sa limite à 200",
+      "duree_s": 9.4
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0097 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "avant": "values ('systeme', 'jeton_pose', p_nom, 'jeton posé pour ' || p_nom);",
+      "apres": "values ('systeme', 'jeton_pose', p_nom, 'jeton posé : ' || p_hash);",
+      "critere": "OI-4",
+      "extrait": "FAIL OI-4 — ops_agent_poser_jeton : p_hash (ou une variable qui en dérive) alimente l'événement : le hash ne doit jamais entrer dans resume ni objet",
+      "duree_s": 9.3
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0097 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/controles/0097_ops_identite.sql",
+      "avant": "  ('ops_battement', 'public.ops_battement(text)'),\n",
+      "apres": "",
+      "critere": "OI-5",
+      "extrait": "FAIL OI-5 — ce qui suit la marque dans supabase/migrations/_A_COLLER_sql_editor_0097_NU.sql n'est pas exactement supabase/controles/0097_ops_identite.sql ; supabase/migrations/_A_COLLER_sql_editor_0097_NU.sql ne sort pas de sql-nu.mjs : diverge à la ligne 170 ",
+      "duree_s": 9.6
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0097 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon",
+      "fichier": ".orchestre/preuves/026-011/essai-a-sec.txt",
+      "avant": ",\\\"lire_rend_les_autres\\\":true,",
+      "apres": ",\\\"lire_rend_les_autres\\\":false,",
+      "critere": "OI-6",
+      "extrait": "FAIL OI-6 — .orchestre/preuves/026-011/essai-a-sec.txt : clé(s) qui ne valent pas true : lire_rend_les_autres=false",
+      "duree_s": 9.3
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0097 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0092_audience_flux_nu.sql",
+      "avant": "-- 0092 · Mesure d'audience",
+      "apres": "-- 0092 · Mesure (retouchée) d'audience",
+      "critere": "OI-7",
+      "extrait": "FAIL OI-7 — 1 fichier(s) existant(s) changé(s) (copie comparée aux blobs de HEAD) : M supabase/migrations/0092_audience_flux_nu.sql",
+      "duree_s": 9.3
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0098 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "avant": "create or replace function public.ops_stockage_octets()",
+      "apres": "alter table ops.taches add column if not exists intrus text;\ncreate or replace function public.ops_stockage_octets()",
+      "critere": "OT-1",
+      "extrait": "FAIL OT-1 — instruction hors liste (create or replace function public.ops_*, revoke, grant execute … to service_role, comment on function) : « alter table ops.taches add column if not exists intrus text » ; le fichier crée ou modifie autre chose que des foncti",
+      "duree_s": 10.2
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0098 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "avant": "returns text\nlanguage plpgsql security definer set search_path = ops, public, pg_temp as $$\ndeclare t ops.taches; s text;",
+      "apres": "returns boolean\nlanguage plpgsql security definer set search_path = ops, public, pg_temp as $$\ndeclare t ops.taches; s text;",
+      "critere": "OT-2",
+      "extrait": "FAIL OT-2 — public.ops_tache_rendre rend « boolean », contrat « text »",
+      "duree_s": 10.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0098 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "avant": "returns jsonb\nlanguage sql stable security definer set search_path",
+      "apres": "returns jsonb\nlanguage sql stable set search_path",
+      "critere": "OT-3",
+      "extrait": "FAIL OT-3 — public.ops_etat n'est pas security definer",
+      "duree_s": 9.7
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0098 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "avant": "order by x.cree_le limit 1 for update skip locked;",
+      "apres": "order by x.cree_le limit 1 for update;",
+      "critere": "OT-4",
+      "extrait": "FAIL OT-4 — ops_tache_prendre : sans « for update skip locked », « limit 1 » ou l'intervalle de « 30 minutes »",
+      "duree_s": 10.2
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0098 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "avant": "and t.cree_le >= (date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris')",
+      "apres": "and t.cree_le >= date_trunc('day', now())",
+      "critere": "OT-4",
+      "extrait": "FAIL OT-4 — ops_tache_creer : le jour du quota ne se calcule pas « at time zone 'Europe/Paris' »",
+      "duree_s": 9.9
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0098 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/migrations/_A_COLLER_sql_editor_0098.sql",
+      "avant": "order by x.cree_le limit 1 for update skip locked;",
+      "apres": "order by x.cree_le limit 2 for update skip locked;",
+      "critere": "OT-5",
+      "extrait": "FAIL OT-5 — sql-nu.mjs --verifier supabase/migrations/0098_ops_taches.sql supabase/migrations/_A_COLLER_sql_editor_0098.sql en code 1 : ❌ C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon\\supabase\\migrations\\_A_COLLER_sql_editor_0098.sql d",
+      "duree_s": 9.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0098 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon",
+      "fichier": ".orchestre/preuves/026-013/essai-a-sec.txt",
+      "avant": "APRES rien_ne_reste=true",
+      "apres": "APRES rien_ne_reste=faux",
+      "critere": "OT-6",
+      "extrait": "FAIL OT-6 — .orchestre/preuves/026-013/essai-a-sec.txt : APRES rien_ne_reste=faux : l'essai a laissé une trace",
+      "duree_s": 9.5
+    },
+    {
+      "juge": "scripts/ops-sql-qa.mjs",
+      "commande": "node scripts/ops-sql-qa.mjs --migration=0098 --racine=C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-009-echantillon --sans-essai",
+      "fichier": "supabase/controles/0094_insertion_figee.sql",
+      "avant": "-- Contrôle après collage de 0094",
+      "apres": "-- Contrôle (retouché) après collage de 0094",
+      "critere": "OT-7",
+      "extrait": "FAIL OT-7 — 1 fichier(s) existant(s) changé(s) (copie comparée aux blobs de HEAD) : M supabase/controles/0094_insertion_figee.sql",
+      "duree_s": 9.6
+    }
+  ]
+}

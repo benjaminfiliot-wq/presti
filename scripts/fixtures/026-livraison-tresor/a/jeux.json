@@ -1,0 +1,601 @@
+{
+ "_lisez": "Jeux d’essai chiffrés du lot A (026-018). marge et ventes : TR-4 (026-055) ; stripe : TR-3 et TA-3 ; heures : TL-6 (026-024) ; veille : TA-4 (026-059) ; tuile : TA-3 et TA-6.",
+ "marge": {
+  "_contrat": "margeDuMois({ encaisse, achatsMoisCents, coutIaEur }) → { recettesNettes, depenses, marge, estimation }. Montants en EUROS arrondis au centime, calculés en centimes entiers (aucune soustraction de flottants hors centimes) : recettesNettes = encaisse.net ; depenses = achats du mois + coût IA ; marge = recettesNettes − depenses ; estimation vraie dès que le coût IA est absent (compté 0). coutIaEur « absent » = clé non fournie.",
+  "cas": [
+   {
+    "nom": "cas nominal",
+    "encaisse": {
+     "net": 250,
+     "brut": 260,
+     "frais": 10,
+     "paiements": 2
+    },
+    "achatsMoisCents": 4990,
+    "coutIaEur": 12.34,
+    "attendu": {
+     "recettesNettes": 250,
+     "depenses": 62.24,
+     "marge": 187.76,
+     "estimation": false
+    }
+   },
+   {
+    "nom": "0,30 − 0,10 : piège des flottants",
+    "encaisse": {
+     "net": 0.3,
+     "brut": 0.3,
+     "frais": 0,
+     "paiements": 1
+    },
+    "achatsMoisCents": 10,
+    "coutIaEur": 0,
+    "attendu": {
+     "recettesNettes": 0.3,
+     "depenses": 0.1,
+     "marge": 0.2,
+     "estimation": false
+    }
+   },
+   {
+    "nom": "coût IA absent (null) : compté 0, estimation",
+    "encaisse": {
+     "net": 100,
+     "brut": 100,
+     "frais": 0,
+     "paiements": 1
+    },
+    "achatsMoisCents": 0,
+    "coutIaEur": null,
+    "attendu": {
+     "recettesNettes": 100,
+     "depenses": 0,
+     "marge": 100,
+     "estimation": true
+    }
+   },
+   {
+    "nom": "coût IA non fourni : compté 0, estimation",
+    "encaisse": {
+     "net": 100,
+     "brut": 100,
+     "frais": 0,
+     "paiements": 1
+    },
+    "achatsMoisCents": 0,
+    "coutIaEur": "absent",
+    "attendu": {
+     "recettesNettes": 100,
+     "depenses": 0,
+     "marge": 100,
+     "estimation": true
+    }
+   },
+   {
+    "nom": "marge négative",
+    "encaisse": {
+     "net": 0,
+     "brut": 0,
+     "frais": 0,
+     "paiements": 0
+    },
+    "achatsMoisCents": 30000,
+    "coutIaEur": 1.1,
+    "attendu": {
+     "recettesNettes": 0,
+     "depenses": 301.1,
+     "marge": -301.1,
+     "estimation": false
+    }
+   },
+   {
+    "nom": "centimes partout",
+    "encaisse": {
+     "net": 1234.56,
+     "brut": 1270,
+     "frais": 35.44,
+     "paiements": 5
+    },
+    "achatsMoisCents": 12345,
+    "coutIaEur": 0.07,
+    "attendu": {
+     "recettesNettes": 1234.56,
+     "depenses": 123.52,
+     "marge": 1111.04,
+     "estimation": false
+    }
+   },
+   {
+    "nom": "19,99 − 9,99 : piège des flottants",
+    "encaisse": {
+     "net": 19.99,
+     "brut": 20.5,
+     "frais": 0.51,
+     "paiements": 1
+    },
+    "achatsMoisCents": 999,
+    "coutIaEur": 0,
+    "attendu": {
+     "recettesNettes": 19.99,
+     "depenses": 9.99,
+     "marge": 10,
+     "estimation": false
+    }
+   },
+   {
+    "nom": "coût IA au millième : arrondi au centime",
+    "encaisse": {
+     "net": 50,
+     "brut": 50,
+     "frais": 0,
+     "paiements": 1
+    },
+    "achatsMoisCents": 0,
+    "coutIaEur": 3.333,
+    "attendu": {
+     "recettesNettes": 50,
+     "depenses": 3.33,
+     "marge": 46.67,
+     "estimation": false
+    }
+   }
+  ]
+ },
+ "ventes": {
+  "_contrat": "ventesSites(lignes) → { payee, generee, validee, en_ligne, retiree, encaisseCents } : nombre de commandes par état et somme de prix_cents des commandes payées ou plus loin (retiree comprise). Brouillons et états inconnus ignorés. Acceptés aussi : les comptes sous « parEtat », le total sous « totalCents ».",
+  "cas": [
+   {
+    "nom": "aucune commande",
+    "lignes": [],
+    "attendu": {
+     "payee": 0,
+     "generee": 0,
+     "validee": 0,
+     "en_ligne": 0,
+     "retiree": 0,
+     "encaisseCents": 0
+    }
+   },
+   {
+    "nom": "un brouillon est ignoré",
+    "lignes": [
+     {
+      "etat": "brouillon",
+      "prix_cents": 30000
+     }
+    ],
+    "attendu": {
+     "payee": 0,
+     "generee": 0,
+     "validee": 0,
+     "en_ligne": 0,
+     "retiree": 0,
+     "encaisseCents": 0
+    }
+   },
+   {
+    "nom": "une commande payée",
+    "lignes": [
+     {
+      "etat": "payee",
+      "prix_cents": 30000
+     }
+    ],
+    "attendu": {
+     "payee": 1,
+     "generee": 0,
+     "validee": 0,
+     "en_ligne": 0,
+     "retiree": 0,
+     "encaisseCents": 30000
+    }
+   },
+   {
+    "nom": "un de chaque état payé",
+    "lignes": [
+     {
+      "etat": "payee",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "generee",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "validee",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "en_ligne",
+      "prix_cents": 30000
+     }
+    ],
+    "attendu": {
+     "payee": 1,
+     "generee": 1,
+     "validee": 1,
+     "en_ligne": 1,
+     "retiree": 0,
+     "encaisseCents": 120000
+    }
+   },
+   {
+    "nom": "une retirée est comptée",
+    "lignes": [
+     {
+      "etat": "retiree",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "en_ligne",
+      "prix_cents": 30000
+     }
+    ],
+    "attendu": {
+     "payee": 0,
+     "generee": 0,
+     "validee": 0,
+     "en_ligne": 1,
+     "retiree": 1,
+     "encaisseCents": 60000
+    }
+   },
+   {
+    "nom": "deux prix différents, un brouillon",
+    "lignes": [
+     {
+      "etat": "payee",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "payee",
+      "prix_cents": 25000
+     },
+     {
+      "etat": "brouillon",
+      "prix_cents": 30000
+     }
+    ],
+    "attendu": {
+     "payee": 2,
+     "generee": 0,
+     "validee": 0,
+     "en_ligne": 0,
+     "retiree": 0,
+     "encaisseCents": 55000
+    }
+   },
+   {
+    "nom": "un état inconnu est ignoré",
+    "lignes": [
+     {
+      "etat": "inconnu",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "validee",
+      "prix_cents": 29999
+     }
+    ],
+    "attendu": {
+     "payee": 0,
+     "generee": 0,
+     "validee": 1,
+     "en_ligne": 0,
+     "retiree": 0,
+     "encaisseCents": 29999
+    }
+   },
+   {
+    "nom": "mélange",
+    "lignes": [
+     {
+      "etat": "en_ligne",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "en_ligne",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "en_ligne",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "retiree",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "brouillon",
+      "prix_cents": 30000
+     },
+     {
+      "etat": "brouillon",
+      "prix_cents": 30000
+     }
+    ],
+    "attendu": {
+     "payee": 0,
+     "generee": 0,
+     "validee": 0,
+     "en_ligne": 3,
+     "retiree": 1,
+     "encaisseCents": 120000
+    }
+   }
+  ]
+ },
+ "stripe": {
+  "_lisez": "Le jeu fixe que rend la doublure de Stripe (balanceTransactions.list, invoices.list, subscriptions.list). Horloge figée des juges : 2026-10-14T09:30:00Z.",
+  "maintenant": "2026-10-14T09:30:00.000Z",
+  "transactions": [
+   {
+    "id": "txn_temoin_1",
+    "type": "charge",
+    "currency": "eur",
+    "amount": 30000,
+    "fee": 475,
+    "net": 29525,
+    "created": 1760000000
+   },
+   {
+    "id": "txn_temoin_2",
+    "type": "payment",
+    "currency": "eur",
+    "amount": 9900,
+    "fee": 164,
+    "net": 9736,
+    "created": 1760100000
+   },
+   {
+    "id": "txn_temoin_3",
+    "type": "refund",
+    "currency": "eur",
+    "amount": -2000,
+    "fee": 0,
+    "net": -2000,
+    "created": 1760200000
+   },
+   {
+    "id": "txn_temoin_4",
+    "type": "charge",
+    "currency": "usd",
+    "amount": 5000,
+    "fee": 175,
+    "net": 4825,
+    "created": 1760300000
+   },
+   {
+    "id": "txn_temoin_5",
+    "type": "stripe_fee",
+    "currency": "eur",
+    "amount": -150,
+    "fee": 0,
+    "net": -150,
+    "created": 1760400000
+   }
+  ],
+  "factures": [
+   {
+    "id": "in_temoin_1",
+    "status": "paid",
+    "amount_paid": 30000,
+    "created": 1760000000
+   },
+   {
+    "id": "in_temoin_2",
+    "status": "paid",
+    "amount_paid": 9900,
+    "created": 1760100000
+   },
+   {
+    "id": "in_temoin_3",
+    "status": "paid",
+    "amount_paid": 1234567,
+    "created": 1760200000
+   }
+  ],
+  "abonnements": [
+   {
+    "id": "sub_temoin_1",
+    "status": "active",
+    "metadata": {
+     "plan": "pro"
+    },
+    "pause_collection": null,
+    "items": {
+     "data": [
+      {
+       "quantity": 1,
+       "price": {
+        "unit_amount": 9900,
+        "recurring": {
+         "interval": "month"
+        }
+       }
+      }
+     ]
+    }
+   },
+   {
+    "id": "sub_temoin_2",
+    "status": "active",
+    "metadata": {
+     "plan": "expert"
+    },
+    "pause_collection": null,
+    "items": {
+     "data": [
+      {
+       "quantity": 1,
+       "price": {
+        "unit_amount": 190800,
+        "recurring": {
+         "interval": "year"
+        }
+       }
+      }
+     ]
+    }
+   }
+  ]
+ },
+ "achats": [
+  {
+   "id": "7a018000-0000-4000-8000-000000000090",
+   "fournisseur": "Hébergeur Témoin",
+   "libelle": "hébergement",
+   "categorie": "hebergement",
+   "date_facture": "2026-10-02",
+   "ht_cents": 1990,
+   "tva_cents": 0,
+   "ttc_cents": 1990,
+   "payee": true
+  },
+  {
+   "id": "7a018000-0000-4000-8000-000000000091",
+   "fournisseur": "Domaine Témoin",
+   "libelle": "domaine",
+   "categorie": "domaine",
+   "date_facture": "2026-10-13",
+   "ht_cents": 1200,
+   "tva_cents": 0,
+   "ttc_cents": 1200,
+   "payee": true
+  },
+  {
+   "id": "7a018000-0000-4000-8000-000000000092",
+   "fournisseur": "Mois dernier",
+   "libelle": "hors du mois",
+   "categorie": "autre",
+   "date_facture": "2026-09-30",
+   "ht_cents": 5000,
+   "tva_cents": 0,
+   "ttc_cents": 5000,
+   "payee": true
+  },
+  {
+   "id": "7a018000-0000-4000-8000-000000000093",
+   "fournisseur": "Année dernière",
+   "libelle": "hors de l’année",
+   "categorie": "autre",
+   "date_facture": "2025-10-10",
+   "ht_cents": 7000,
+   "tva_cents": 0,
+   "ttc_cents": 7000,
+   "payee": true
+  }
+ ],
+ "reglages": [
+  {
+   "cle": "tva_seuil_franchise_cents",
+   "valeur": 3750000
+  },
+  {
+   "cle": "tva_seuil_majore_cents",
+   "valeur": 4125000
+  },
+  {
+   "cle": "tva_alerte_pourcent",
+   "valeur": 80
+  }
+ ],
+ "heures": {
+  "_contrat": "heuresOuvreesEntre(a: Date, b: Date) → heures du lundi au vendredi, heure de Paris.",
+  "cas": [
+   {
+    "nom": "du vendredi 12 h au lundi 12 h",
+    "a": "2026-10-09T10:00:00.000Z",
+    "b": "2026-10-12T10:00:00.000Z",
+    "attendu": 24
+   },
+   {
+    "nom": "du lundi 0 h au mercredi 0 h",
+    "a": "2026-10-11T22:00:00.000Z",
+    "b": "2026-10-13T22:00:00.000Z",
+    "attendu": 48
+   },
+   {
+    "nom": "du vendredi 23/10 12 h au lundi 26/10 12 h, passage à l’heure d’hiver le dimanche 25/10",
+    "a": "2026-10-23T10:00:00.000Z",
+    "b": "2026-10-26T11:00:00.000Z",
+    "attendu": 24
+   }
+  ]
+ },
+ "veille": {
+  "_contrat": "alertesTresorerie(tva, maintenant) → Alerte[] ; tva a la forme rendue par situerTva.",
+  "cas": [
+   {
+    "nom": "lundi 0 h 30 à Paris (dimanche en UTC), 80 %",
+    "maintenant": "2026-10-11T22:30:00.000Z",
+    "tva": {
+     "seuil": 3750000,
+     "seuilMajore": 4125000,
+     "alerteA": 80,
+     "pourcent": 80,
+     "alerte": true,
+     "depasse": false
+    },
+    "attendu": "alerte"
+   },
+   {
+    "nom": "lundi 12 h à Paris, seuil dépassé",
+    "maintenant": "2026-10-12T10:00:00.000Z",
+    "tva": {
+     "seuil": 3750000,
+     "seuilMajore": 4125000,
+     "alerteA": 80,
+     "pourcent": 101.3,
+     "alerte": true,
+     "depasse": true
+    },
+    "attendu": "depasse"
+   },
+   {
+    "nom": "mardi 0 h 30 à Paris (lundi en UTC), 90 %",
+    "maintenant": "2026-10-12T22:30:00.000Z",
+    "tva": {
+     "seuil": 3750000,
+     "seuilMajore": 4125000,
+     "alerteA": 80,
+     "pourcent": 90,
+     "alerte": true,
+     "depasse": false
+    },
+    "attendu": null
+   },
+   {
+    "nom": "lundi 12 h à Paris, 79 %",
+    "maintenant": "2026-10-12T10:00:00.000Z",
+    "tva": {
+     "seuil": 3750000,
+     "seuilMajore": 4125000,
+     "alerteA": 80,
+     "pourcent": 79,
+     "alerte": false,
+     "depasse": false
+    },
+    "attendu": null
+   },
+   {
+    "nom": "lundi 12 h à Paris, chiffre inconnu",
+    "maintenant": "2026-10-12T10:00:00.000Z",
+    "tva": {
+     "seuil": 3750000,
+     "seuilMajore": 4125000,
+     "alerteA": 80,
+     "pourcent": null,
+     "alerte": false,
+     "depasse": false
+    },
+    "attendu": null
+   }
+  ],
+  "changements": [
+   "prix",
+   "mentions légales",
+   "STRIPE_TAXE_AUTO"
+  ]
+ }
+}

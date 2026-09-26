@@ -1,0 +1,3 @@
+86ce0f3be9c202d9e0bb11448642c033c5449e57
+# Commit de référence du domaine acquisition : HEAD au lancement de la fiche 026-016 (sha du verrou de .orchestre/en-cours/026-016.lock, 25/09/2026 22:37).
+# Extrait par git archive dans .orchestre/travail/026-acquisition/reference/ (rien n'est écrit dans .git). Aucun module de lib/agents/acquisition/ n'y existe : chaque juge du lot 1 y échoue sur son premier critère.

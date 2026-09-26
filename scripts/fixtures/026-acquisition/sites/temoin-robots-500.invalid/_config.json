@@ -1,0 +1,8 @@
+{
+ "reponses": {
+  "/robots.txt": {
+   "statut": 500,
+   "corps": "Erreur interne (Témoin)"
+  }
+ }
+}

@@ -1,0 +1,808 @@
+{
+  "_lisez_moi": "40 lignes de pilotage_envois_du_jour() (026-079 réécrite), au contrat, sans texte ni destinataire. Instant figé : maintenant (12 h à Paris). pieges : champs qu’une ligne ne porte jamais (texte, destinataire, entreprise, profil, identifiant) ; le juge (LE-3) les ajoute lui-même, au moment de l’appel, aux lignes nommées, pour éprouver la liste blanche. cas : les lignes à rôle.",
+  "maintenant": "2026-10-14T10:00:00.000Z",
+  "envois": [
+    {
+      "id": "e0000014-0000-4000-8000-000000000014",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Peintre",
+      "commune": "Bordeaux",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T08:25:00.000Z",
+      "envoye_le": "2026-10-14T08:30:00.000Z"
+    },
+    {
+      "id": "e000001e-0000-4000-8000-00000000001e",
+      "canal": "reponse_privee",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Peintre",
+      "commune": "Bordeaux",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T06:10:00.000Z",
+      "envoye_le": "2026-10-14T06:12:00.000Z"
+    },
+    {
+      "id": "e000000c-0000-4000-8000-00000000000c",
+      "canal": "formulaire_site",
+      "technologie": "contact_form_7",
+      "type": "premier_contact",
+      "statut": "prepare",
+      "envoyeur": "facteur",
+      "metier": "Électricien",
+      "commune": "Rennes",
+      "variante": "B",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": null
+      },
+      "prepare_le": "2026-10-14T09:55:00.000Z",
+      "envoye_le": null
+    },
+    {
+      "id": "e0000008-0000-4000-8000-000000000008",
+      "canal": "formulaire_site",
+      "technologie": "wpforms",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Couvreur",
+      "commune": "Nantes",
+      "variante": "B",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T08:30:00.000Z",
+      "envoye_le": "2026-10-14T08:40:00.000Z"
+    },
+    {
+      "id": "e0000002-0000-4000-8000-000000000002",
+      "canal": "formulaire_site",
+      "technologie": "wpforms",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Électricien",
+      "commune": "Rennes",
+      "variante": "B",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T05:30:00.000Z",
+      "envoye_le": "2026-10-14T05:40:00.000Z"
+    },
+    {
+      "id": "e0000013-0000-4000-8000-000000000013",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Menuisier",
+      "commune": "Lille",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T07:55:00.000Z",
+      "envoye_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+      "id": "e0000027-0000-4000-8000-000000000027",
+      "canal": "reponse_privee",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "prepare",
+      "envoyeur": "repondeur",
+      "metier": "Menuisier",
+      "commune": "Lille",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T09:44:00.000Z",
+      "envoye_le": null
+    },
+    {
+      "id": "e0000010-0000-4000-8000-000000000010",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Plombier",
+      "commune": "Lyon",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T06:25:00.000Z",
+      "envoye_le": "2026-10-14T06:30:00.000Z"
+    },
+    {
+      "id": "e0000018-0000-4000-8000-000000000018",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "lien_maquette",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Menuisier",
+      "commune": "Lille",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T07:05:00.000Z",
+      "envoye_le": "2026-10-14T07:10:00.000Z"
+    },
+    {
+      "id": "e000001c-0000-4000-8000-00000000001c",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "relance",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Couvreur",
+      "commune": "Nantes",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T08:35:00.000Z",
+      "envoye_le": "2026-10-14T08:40:00.000Z"
+    },
+    {
+      "id": "e0000004-0000-4000-8000-000000000004",
+      "canal": "formulaire_site",
+      "technologie": "wpforms",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Menuisier",
+      "commune": "Lille",
+      "variante": "B",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T06:30:00.000Z",
+      "envoye_le": "2026-10-14T06:40:00.000Z"
+    },
+    {
+      "id": "e0000023-0000-4000-8000-000000000023",
+      "canal": "messagerie",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Peintre",
+      "commune": "Bordeaux",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T08:15:00.000Z",
+      "envoye_le": "2026-10-14T08:16:00.000Z"
+    },
+    {
+      "id": "e0000025-0000-4000-8000-000000000025",
+      "canal": "reponse_privee",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "prepare",
+      "envoyeur": "repondeur",
+      "metier": "Électricien",
+      "commune": "Rennes",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T09:30:00.000Z",
+      "envoye_le": null
+    },
+    {
+      "id": "e0000019-0000-4000-8000-000000000019",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "lien_maquette",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Peintre",
+      "commune": "Bordeaux",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T07:25:00.000Z",
+      "envoye_le": "2026-10-14T07:30:00.000Z"
+    },
+    {
+      "id": "e0000028-0000-4000-8000-000000000028",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Peintre",
+      "commune": "Bordeaux",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T09:57:00.000Z",
+      "envoye_le": "2026-10-14T09:58:00.000Z"
+    },
+    {
+      "id": "e0000020-0000-4000-8000-000000000020",
+      "canal": "reponse_privee",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Électricien",
+      "commune": "Rennes",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T07:30:00.000Z",
+      "envoye_le": "2026-10-14T07:32:00.000Z"
+    },
+    {
+      "id": "e0000006-0000-4000-8000-000000000006",
+      "canal": "formulaire_site",
+      "technologie": "wpforms",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Plombier",
+      "commune": "Lyon",
+      "variante": "B",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T07:30:00.000Z",
+      "envoye_le": "2026-10-14T07:40:00.000Z"
+    },
+    {
+      "id": "e000001b-0000-4000-8000-00000000001b",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "relance",
+      "statut": "refuse",
+      "envoyeur": "facteur",
+      "metier": "Électricien",
+      "commune": "Rennes",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "refus"
+      },
+      "prepare_le": "2026-10-14T08:30:00.000Z",
+      "envoye_le": null
+    },
+    {
+      "id": "e0000007-0000-4000-8000-000000000007",
+      "canal": "formulaire_site",
+      "technologie": "contact_form_7",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Électricien",
+      "commune": "Rennes",
+      "variante": "A",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T08:00:00.000Z",
+      "envoye_le": "2026-10-14T08:10:00.000Z"
+    },
+    {
+      "id": "e0000022-0000-4000-8000-000000000022",
+      "canal": "messagerie",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Menuisier",
+      "commune": "Lille",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T07:30:00.000Z",
+      "envoye_le": "2026-10-14T07:31:00.000Z"
+    },
+    {
+      "id": "e000000e-0000-4000-8000-00000000000e",
+      "canal": "formulaire_site",
+      "technologie": "wpforms",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Menuisier",
+      "commune": "Lille",
+      "variante": "B",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": null
+      },
+      "prepare_le": "2026-10-13T21:00:00.000Z",
+      "envoye_le": "2026-10-13T21:30:00.000Z"
+    },
+    {
+      "id": "e0000003-0000-4000-8000-000000000003",
+      "canal": "formulaire_site",
+      "technologie": "contact_form_7",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Couvreur",
+      "commune": "Nantes",
+      "variante": "A",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T06:00:00.000Z",
+      "envoye_le": "2026-10-14T06:10:00.000Z"
+    },
+    {
+      "id": "e0000009-0000-4000-8000-000000000009",
+      "canal": "formulaire_site",
+      "technologie": "contact_form_7",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Menuisier",
+      "commune": "Lille",
+      "variante": "A",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T09:00:00.000Z",
+      "envoye_le": "2026-10-14T09:10:00.000Z"
+    },
+    {
+      "id": "e0000011-0000-4000-8000-000000000011",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Électricien",
+      "commune": "Rennes",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T06:55:00.000Z",
+      "envoye_le": "2026-10-14T07:00:00.000Z"
+    },
+    {
+      "id": "e0000005-0000-4000-8000-000000000005",
+      "canal": "formulaire_site",
+      "technologie": "contact_form_7",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Peintre",
+      "commune": "Bordeaux",
+      "variante": "A",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T07:00:00.000Z",
+      "envoye_le": "2026-10-14T07:10:00.000Z"
+    },
+    {
+      "id": "e0000015-0000-4000-8000-000000000015",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Plombier",
+      "commune": "Lyon",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T08:55:00.000Z",
+      "envoye_le": "2026-10-14T09:00:00.000Z"
+    },
+    {
+      "id": "e000001d-0000-4000-8000-00000000001d",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "relance",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Menuisier",
+      "commune": "Lille",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T08:45:00.000Z",
+      "envoye_le": "2026-10-14T08:50:00.000Z"
+    },
+    {
+      "id": "e0000016-0000-4000-8000-000000000016",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Électricien",
+      "commune": "Rennes",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": null
+      },
+      "prepare_le": "2026-10-14T09:15:00.000Z",
+      "envoye_le": "2026-10-14T09:20:00.000Z"
+    },
+    {
+      "id": "e0000017-0000-4000-8000-000000000017",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Couvreur",
+      "commune": "Nantes",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-13T22:25:00.000Z",
+      "envoye_le": "2026-10-13T22:30:00.000Z"
+    },
+    {
+      "id": "e000000b-0000-4000-8000-00000000000b",
+      "canal": "formulaire_site",
+      "technologie": "wpforms",
+      "type": "premier_contact",
+      "statut": "refuse",
+      "envoyeur": "facteur",
+      "metier": "Plombier",
+      "commune": "Lyon",
+      "variante": "A",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "refus",
+        "second": null
+      },
+      "prepare_le": "2026-10-14T09:45:00.000Z",
+      "envoye_le": null
+    },
+    {
+      "id": "e0000012-0000-4000-8000-000000000012",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Couvreur",
+      "commune": "Nantes",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T07:25:00.000Z",
+      "envoye_le": "2026-10-14T07:30:00.000Z"
+    },
+    {
+      "id": "e0000001-0000-4000-8000-000000000001",
+      "canal": "formulaire_site",
+      "technologie": "contact_form_7",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Plombier",
+      "commune": "Lyon",
+      "variante": "A",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T05:00:00.000Z",
+      "envoye_le": "2026-10-14T05:10:00.000Z"
+    },
+    {
+      "id": "e000000a-0000-4000-8000-00000000000a",
+      "canal": "formulaire_site",
+      "technologie": "wpforms",
+      "type": "premier_contact",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Peintre",
+      "commune": "Bordeaux",
+      "variante": "B",
+      "froid": true,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T09:30:00.000Z",
+      "envoye_le": "2026-10-14T09:40:00.000Z"
+    },
+    {
+      "id": "e0000024-0000-4000-8000-000000000024",
+      "canal": "messagerie",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Plombier",
+      "commune": "Lyon",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T09:00:00.000Z",
+      "envoye_le": "2026-10-14T09:01:00.000Z"
+    },
+    {
+      "id": "e000001f-0000-4000-8000-00000000001f",
+      "canal": "reponse_privee",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Plombier",
+      "commune": "Lyon",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T06:50:00.000Z",
+      "envoye_le": "2026-10-14T06:52:00.000Z"
+    },
+    {
+      "id": "e000000d-0000-4000-8000-00000000000d",
+      "canal": "formulaire_site",
+      "technologie": "contact_form_7",
+      "type": "premier_contact",
+      "statut": "refuse",
+      "envoyeur": "facteur",
+      "metier": "Couvreur",
+      "commune": "Nantes",
+      "variante": "A",
+      "froid": true,
+      "verdicts": {
+        "j1": "refus",
+        "j3": null,
+        "second": null
+      },
+      "prepare_le": "2026-10-14T08:00:00.000Z",
+      "envoye_le": null
+    },
+    {
+      "id": "e0000021-0000-4000-8000-000000000021",
+      "canal": "reponse_privee",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Couvreur",
+      "commune": "Nantes",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T08:10:00.000Z",
+      "envoye_le": "2026-10-14T08:12:00.000Z"
+    },
+    {
+      "id": "e000000f-0000-4000-8000-00000000000f",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "envoye",
+      "envoyeur": "repondeur",
+      "metier": "Peintre",
+      "commune": "Bordeaux",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T05:55:00.000Z",
+      "envoye_le": "2026-10-14T06:00:00.000Z"
+    },
+    {
+      "id": "e000001a-0000-4000-8000-00000000001a",
+      "canal": "email_sollicite",
+      "technologie": null,
+      "type": "lien_maquette",
+      "statut": "envoye",
+      "envoyeur": "facteur",
+      "metier": "Plombier",
+      "commune": "Lyon",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T07:45:00.000Z",
+      "envoye_le": "2026-10-14T07:50:00.000Z"
+    },
+    {
+      "id": "e0000026-0000-4000-8000-000000000026",
+      "canal": "messagerie",
+      "technologie": null,
+      "type": "reponse",
+      "statut": "prepare",
+      "envoyeur": "repondeur",
+      "metier": "Couvreur",
+      "commune": "Nantes",
+      "variante": null,
+      "froid": false,
+      "verdicts": {
+        "j1": "pass",
+        "j3": "pass",
+        "second": "pass"
+      },
+      "prepare_le": "2026-10-14T09:37:00.000Z",
+      "envoye_le": null
+    }
+  ],
+  "pieges": {
+    "e0000001-0000-4000-8000-000000000001": {
+      "texte": "Bonjour Jean Témoin, voici la maquette de votre futur site : https://exemple.invalid/maquette/temoin",
+      "destinataire": "jean.temoin@exemple.invalid",
+      "entreprise": "Témoin SARL",
+      "profil": "https://exemple.invalid/profil/temoin-sarl",
+      "identifiant": "temoin-sarl-612345678"
+    },
+    "e000000f-0000-4000-8000-00000000000f": {
+      "texte": "Bonjour Jean Témoin, voici la maquette de votre futur site : https://exemple.invalid/maquette/temoin",
+      "destinataire": "jean.temoin@exemple.invalid",
+      "entreprise": "Témoin SARL",
+      "profil": "https://exemple.invalid/profil/temoin-sarl",
+      "identifiant": "temoin-sarl-612345678"
+    },
+    "e0000018-0000-4000-8000-000000000018": {
+      "texte": "Bonjour Jean Témoin, voici la maquette de votre futur site : https://exemple.invalid/maquette/temoin",
+      "destinataire": "jean.temoin@exemple.invalid",
+      "entreprise": "Témoin SARL",
+      "profil": "https://exemple.invalid/profil/temoin-sarl",
+      "identifiant": "temoin-sarl-612345678"
+    }
+  },
+  "cas": {
+    "complet": "e0000001-0000-4000-8000-000000000001",
+    "refus_j3": "e000000b-0000-4000-8000-00000000000b",
+    "prepare_sans_second": "e000000c-0000-4000-8000-00000000000c",
+    "refus_j1": "e000000d-0000-4000-8000-00000000000d",
+    "hier": "e000000e-0000-4000-8000-00000000000e",
+    "reponse_repondeur": "e000000f-0000-4000-8000-00000000000f",
+    "sans_verdict": "e0000016-0000-4000-8000-000000000016",
+    "minuit_paris": "e0000017-0000-4000-8000-000000000017",
+    "lien_maquette_email": "e0000018-0000-4000-8000-000000000018",
+    "refus_second": "e000001b-0000-4000-8000-00000000001b"
+  },
+  "attendu": {
+    "du_jour": 39,
+    "rejets": 3,
+    "anomalies": [
+      "e0000016-0000-4000-8000-000000000016"
+    ]
+  }
+}

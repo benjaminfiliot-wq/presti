@@ -1,0 +1,40 @@
+{
+  "_lisez_moi": "Lignes de pilotage_appels (0108, 026-079) : { id, source, prospect, telephone, contexte, creneau, recu_le }. rdv : réservation du 30/10 à 13 h 30 UTC (14 h 30 à Paris, heure d’hiver). reponse : réponse « appel » dont le contexte dépasse 140 signes et cite une adresse après le 140e. inconnue : source hors contrat, à écarter. Le champ email est un piège.",
+  "maintenant": "2026-10-14T10:00:00.000Z",
+  "lignes": [
+    {
+      "id": "a0000001-0000-4000-8000-000000000001",
+      "source": "rdv",
+      "prospect": "Témoin Plomberie",
+      "telephone": "06 12 34 56 78",
+      "contexte": "Plombier · Lyon",
+      "creneau": "2026-10-30T13:30:00.000Z",
+      "recu_le": "2026-10-13T16:00:00.000Z",
+      "email": "plomberie.temoin@exemple.invalid"
+    },
+    {
+      "id": "a0000002-0000-4000-8000-000000000002",
+      "source": "reponse",
+      "prospect": "Témoin Couverture",
+      "telephone": "07 98 76 54 32",
+      "contexte": "Bonjour, c’est Témoin Couverture : rappelez-moi demain matin pour parler du site, je suis sur un chantier toute la journée et je ne lis pas mes messages avant le soir, écrivez-moi à couverture.temoin@exemple.invalid si besoin.",
+      "creneau": null,
+      "recu_le": "2026-10-14T07:00:00.000Z",
+      "email": "couverture.temoin@exemple.invalid"
+    },
+    {
+      "id": "a0000003-0000-4000-8000-000000000003",
+      "source": "inconnue",
+      "prospect": "Témoin Inconnu",
+      "telephone": "06 00 00 00 01",
+      "contexte": "Source hors contrat",
+      "creneau": null,
+      "recu_le": "2026-10-14T09:00:00.000Z"
+    }
+  ],
+  "roles": {
+    "rdv": "a0000001-0000-4000-8000-000000000001",
+    "reponse": "a0000002-0000-4000-8000-000000000002",
+    "inconnue": "a0000003-0000-4000-8000-000000000003"
+  }
+}

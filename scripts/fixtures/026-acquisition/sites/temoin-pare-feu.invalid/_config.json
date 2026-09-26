@@ -1,0 +1,13 @@
+{
+ "reponses": {
+  "/contact": {
+   "statut": 403,
+   "entetes": {
+    "cf-mitigated": "challenge",
+    "server": "cloudflare",
+    "cf-ray": "8c0temoin-CDG"
+   },
+   "corps": "<!doctype html><html><head><title>Just a moment...</title></head><body><h1>Vérification Témoin de votre navigateur</h1><script>window._cf_chl_opt={cType:\"managed\"}</script></body></html>"
+  }
+ }
+}

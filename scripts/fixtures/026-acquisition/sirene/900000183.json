@@ -1,0 +1,55 @@
+{
+ "_cas": "S18 — BOUTIQUE TÉMOIN DISCRÈTE",
+ "results": [
+  {
+   "siren": "900000183",
+   "nom_complet": "BOUTIQUE TÉMOIN DISCRÈTE",
+   "nom_raison_sociale": "BOUTIQUE TÉMOIN DISCRÈTE",
+   "sigle": null,
+   "nombre_etablissements": 1,
+   "nombre_etablissements_ouverts": 1,
+   "siege": {
+    "activite_principale": "47.11F",
+    "adresse": "12 RUE DU TÉMOIN 44000 NANTES",
+    "code_postal": "44000",
+    "commune": "44109",
+    "date_creation": "2012-03-01",
+    "departement": null,
+    "est_siege": true,
+    "etat_administratif": "A",
+    "libelle_commune": "NANTES",
+    "siret": "90000018300013",
+    "tranche_effectif_salarie": "11"
+   },
+   "activite_principale": "47.11F",
+   "categorie_entreprise": "PME",
+   "date_creation": "2012-03-01",
+   "date_mise_a_jour": "2026-09-01T00:00:00",
+   "dirigeants": [
+    {
+     "nom": "MARTIN TÉMOIN",
+     "prenoms": "PAUL",
+     "annee_de_naissance": "1971",
+     "date_de_naissance": "1971-04",
+     "qualite": "Gérant",
+     "nationalite": "Française",
+     "type_dirigeant": "personne physique"
+    }
+   ],
+   "etat_administratif": "A",
+   "nature_juridique": "5499",
+   "section_activite_principale": "F",
+   "tranche_effectif_salarie": "11",
+   "statut_diffusion": "P",
+   "complements": {
+    "est_entrepreneur_individuel": false,
+    "est_ess": false,
+    "est_rge": true
+   }
+  }
+ ],
+ "total_results": 1,
+ "page": 1,
+ "per_page": 1,
+ "total_pages": 1
+}

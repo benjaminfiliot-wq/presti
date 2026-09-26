@@ -1,0 +1,9 @@
+{
+ "_cas": "RG-7 : réponse 500 → injoignable",
+ "_reponse": {
+  "statut": 500,
+  "corps": {
+   "error": "Internal Server Error (Témoin)"
+  }
+ }
+}

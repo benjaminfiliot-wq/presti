@@ -1,0 +1,3096 @@
+{
+  "titre": "Contrat machine du bus des agents (schéma ops) — un seul contrat, lu par ops-sql-qa.mjs (026-009) et par les juges TypeScript (026-038, 026-045)",
+  "ecrit_par": "026-009",
+  "source": "recopié des sections « Contrat » de 026-010 (0096), 026-011 (0097), 026-013 (0098), 026-034 (0099), 026-036 (0100) et 026-086 (0101) ; voie gratuite du 25/09 (OS-8 de 026-010)",
+  "schema": "ops",
+  "roles_fermes": [
+    "public",
+    "anon",
+    "authenticated",
+    "service_role"
+  ],
+  "regles_fonctions": {
+    "texte": "Toutes les fonctions sont `public.<nom>` et `security definer`, avec `set search_path = ops, public, pg_temp`, `revoke all … from public, anon, authenticated` et `grant execute … to service_role`. Une erreur métier se lève par `raise exception using message = 'ops:<code>', errcode = 'P0001'`.",
+    "security_definer": true,
+    "search_path": "ops, public, pg_temp",
+    "revoke": [
+      "public",
+      "anon",
+      "authenticated"
+    ],
+    "grant": "service_role",
+    "errcode": "P0001"
+  },
+  "migrations": {
+    "0096": {
+      "fiche": "026-010",
+      "fichier": "supabase/migrations/0096_ops_socle.sql",
+      "jumeau": "supabase/migrations/_A_COLLER_sql_editor_0096.sql",
+      "nu": "supabase/migrations/_A_COLLER_sql_editor_0096_NU.sql",
+      "controle": "supabase/controles/0096_ops_socle.sql",
+      "essai_a_sec": ".orchestre/preuves/026-010/essai-a-sec.txt",
+      "scenario": "scripts/fixtures/026-horloge-bus/essais/0096.sql",
+      "apres": "select to_regclass('ops.taches') is null as rien_ne_reste",
+      "cles_essai": {
+        "cahier": "OS-8 de 026-010",
+        "cles": [
+          "tables_11",
+          "rls_11",
+          "politiques_0",
+          "graines_agents",
+          "graines_quotas",
+          "graines_interrupteurs",
+          "temoin_tache_acceptee",
+          "refus_profondeur_4",
+          "refus_tentatives_4",
+          "refus_cle_en_double",
+          "refus_seconde_tache_ouverte_meme_objet",
+          "tache_fermee_meme_objet_acceptee",
+          "refus_faite_sans_preuve",
+          "refus_bail_sans_echeance",
+          "temoin_evenement_accepte",
+          "refus_update_evenements",
+          "refus_delete_evenements",
+          "purge_permise_sous_ops_purge",
+          "temoin_decision_acceptee",
+          "refus_decision_une_option",
+          "temoin_prospect_accepte",
+          "refus_cle_dedup_mal_formee",
+          "temoin_maquette_acceptee",
+          "refus_maquette_22_jours",
+          "envoi_formulaire_facteur_usine_accepte",
+          "envoi_email_sollicite_gmail_accepte",
+          "envoi_reponse_privee_sans_prospect_accepte",
+          "envoi_essai_approuve_hors_facteur_accepte",
+          "refus_envoi_statut_approuvee",
+          "refus_envoi_approuve_hors_facteur",
+          "refus_envoi_formulaire_sans_prospect",
+          "refus_envoi_canal_email",
+          "refus_verdicts_non_objet",
+          "temoin_quota_accepte",
+          "refus_quota_301",
+          "refus_nouveaux_au_dessus_du_jour",
+          "refus_interrupteur_inconnu",
+          "temoin_opposition_temporaire_acceptee",
+          "refus_opposition_en_double",
+          "refus_opposition_hors_minuscules",
+          "refus_opposition_expire_avant_creation",
+          "anon_refuse_select_taches",
+          "authenticated_refuse_select_taches",
+          "service_role_refuse_select_taches"
+        ]
+      }
+    },
+    "0097": {
+      "fiche": "026-011",
+      "fichier": "supabase/migrations/0097_ops_identite.sql",
+      "jumeau": "supabase/migrations/_A_COLLER_sql_editor_0097.sql",
+      "nu": "supabase/migrations/_A_COLLER_sql_editor_0097_NU.sql",
+      "controle": "supabase/controles/0097_ops_identite.sql",
+      "essai_a_sec": ".orchestre/preuves/026-011/essai-a-sec.txt",
+      "scenario": "scripts/fixtures/026-horloge-bus/essais/0097.sql",
+      "apres": "select to_regprocedure('public.ops_battement(text)') is null as rien_ne_reste",
+      "cles_essai": {
+        "cahier": "OI-6 de 026-011",
+        "cles": [
+          "un_evenement_enregistrer",
+          "jeton_hors_format_refuse",
+          "un_evenement_poser_jeton",
+          "par_jeton_rend_agent",
+          "jeton_absent_du_journal",
+          "jeton_pose_le_pose",
+          "par_jeton_inconnu_zero_ligne",
+          "un_evenement_pause",
+          "pause_puis_par_jeton_en_pause",
+          "reprise_efface_disjoncteur",
+          "resume_201_refuse",
+          "un_evenement_evenement_ajouter",
+          "lire_ecarte_ses_evenements",
+          "lire_rend_les_autres",
+          "lire_respecte_apres",
+          "lire_limite_bornee_200",
+          "purger_30_efface_le_vieux",
+          "purger_30_garde_le_jour",
+          "purger_10_refuse",
+          "interrupteur_lu",
+          "interrupteur_inconnu_refuse",
+          "interrupteur_non_fondateur_refuse",
+          "interrupteur_fondateur_accepte",
+          "un_evenement_interrupteur_poser",
+          "retirer_essai_efface_agent_et_evenements",
+          "un_evenement_retirer",
+          "retirer_ordinaire_garde_la_fiche",
+          "par_jeton_ignore_le_retire",
+          "retirer_a0_refuse",
+          "retirer_systeme_refuse",
+          "un_evenement_echeance",
+          "echeance_posee",
+          "echeance_nulle_acceptee",
+          "battement_sans_evenement",
+          "anon_refuse_par_jeton",
+          "anon_refuse_interrupteur_poser",
+          "authenticated_refuse_par_jeton",
+          "authenticated_refuse_interrupteur_poser"
+        ]
+      }
+    },
+    "0098": {
+      "fiche": "026-013",
+      "fichier": "supabase/migrations/0098_ops_taches.sql",
+      "jumeau": "supabase/migrations/_A_COLLER_sql_editor_0098.sql",
+      "nu": "supabase/migrations/_A_COLLER_sql_editor_0098_NU.sql",
+      "controle": "supabase/controles/0098_ops_taches.sql",
+      "essai_a_sec": ".orchestre/preuves/026-013/essai-a-sec.txt",
+      "scenario": "scripts/fixtures/026-horloge-bus/essais/0098.sql",
+      "apres": "select to_regprocedure('public.ops_tache_prendre(text)') is null as rien_ne_reste",
+      "cles_essai": {
+        "cahier": "OT-6 de 026-013",
+        "cles": [
+          "installation_agents",
+          "a_meme_cle_meme_id",
+          "a_un_seul_evenement",
+          "a_tache_non_sortante_profondeur_0",
+          "b_trois_generations_passent",
+          "b_quatrieme_generation_refusee",
+          "b_cinq_enfants_passent",
+          "b_sixieme_enfant_refuse",
+          "b_origine_absente_refusee",
+          "c_deux_creations_passent",
+          "c_troisieme_refusee_quota",
+          "c_cle_connue_passe_malgre_quota",
+          "d_type_hors_liste_refuse",
+          "e_sans_capacite_ne_prend_rien",
+          "e_prise_bail_30_min",
+          "p_un_evenement_prendre",
+          "f_autre_agent_bail_perdu",
+          "f_faite_sans_preuve_refusee",
+          "f_faite_avec_preuve_https",
+          "p_un_evenement_rendre",
+          "g_meme_erreur_deux_fois_a_decider",
+          "g_trois_erreurs_a_decider_a_la_troisieme",
+          "h_trois_echecs_pause_disjoncteur_decision",
+          "i_bail_expire_remis_en_file",
+          "i_un_evenement_par_bail_expire",
+          "i_a_decider_a_trois",
+          "j_types_sortants",
+          "j_envoi_sortante",
+          "j_pause_generale_ignore_envoi_prend_livraison",
+          "k_une_option_refusee",
+          "k_aucune_recommandee_refusee",
+          "k_defaut_hors_options_refuse",
+          "k_echeance_trop_proche_refusee",
+          "k_decision_creee",
+          "p_un_evenement_decision_creer",
+          "k_meme_cle_meme_decision_sans_evenement",
+          "k_non_fondateur_refuse",
+          "k_choix_hors_options_refuse",
+          "k_fondateur_tranche",
+          "p_un_evenement_decision_trancher",
+          "k_trancher_deux_fois_refuse",
+          "k_echeance_passee_defaut_applique",
+          "l_cout_rend_le_total_du_jour",
+          "p_un_evenement_cout_ajouter",
+          "l_cout_au_dela_pause_decision_argent",
+          "m_etat_six_cles",
+          "m_etat_sans_prospects",
+          "m_etat_sans_adresse_email",
+          "t_etat_capacites_par_agent",
+          "n_stockage_octets_positif",
+          "q_cle_inconnue_absente_sans_evenement",
+          "q_sans_capacite_refuse",
+          "q_preuve_ftp_refusee",
+          "q_file_close_faite_un_evenement",
+          "q_cloture_rejouee_sans_evenement",
+          "q_bail_d_un_autre_close",
+          "q_a_decider_refusee",
+          "r_tranchees_rend_la_decision_de_a",
+          "r_tranchees_sans_evenement",
+          "r_echue_apparait_avec_le_defaut",
+          "r_depuis_apres_zero_ligne",
+          "r_agent_inconnu_refuse",
+          "s_cout_agent_inconnu",
+          "o_anon_refuse_tache_creer",
+          "o_anon_refuse_etat",
+          "o_anon_refuse_decision_trancher",
+          "o_authenticated_refuse_tache_creer",
+          "o_authenticated_refuse_etat",
+          "o_authenticated_refuse_decision_trancher"
+        ]
+      }
+    },
+    "0099": {
+      "fiche": "026-034",
+      "juge_ecrit_par": "026-032"
+    },
+    "0100": {
+      "fiche": "026-036",
+      "juge_ecrit_par": "026-032"
+    },
+    "0101": {
+      "fiche": "026-086",
+      "juge_ecrit_par": "026-032"
+    }
+  },
+  "canaux": [
+    "instagram",
+    "facebook",
+    "linkedin",
+    "formulaire_site",
+    "email_sollicite",
+    "reponse_privee",
+    "messagerie",
+    "telephone",
+    "essai_e2e"
+  ],
+  "envoyeurs": {
+    "formulaire_site": "facteur_usine",
+    "email_sollicite": "gmail",
+    "reponse_privee": "repondeur",
+    "messagerie": "repondeur",
+    "instagram": "repondeur",
+    "facebook": "repondeur"
+  },
+  "interdits": {
+    "texte": "La valeur `email` n'existe plus (canal) ; `sequenceur_id` devient `id_externe` ; aucune colonne `approuve_par uuid` ni défaut `'benj'` ; aucune boîte `boite_NN`.",
+    "colonnes": [
+      "envois.approuve_par",
+      "envois.sequenceur_id"
+    ],
+    "valeurs_canal": [
+      "email"
+    ],
+    "textes": [
+      "'benj'",
+      "boite_"
+    ]
+  },
+  "identite_sans_defaut": [
+    "cle_dedup",
+    "prospect_id",
+    "canal",
+    "empreinte_texte",
+    "cle_type",
+    "cle_valeur",
+    "plafond_jour"
+  ],
+  "tables": {
+    "agents": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.agents`** :",
+      "colonnes": [
+        {
+          "nom": "nom",
+          "type": "text",
+          "pk": true,
+          "texte": "`nom text primary key check (nom ~ '^[a-z0-9_]{2,40}$')` ;"
+        },
+        {
+          "nom": "libelle",
+          "type": "text",
+          "not_null": true,
+          "texte": "`libelle text not null` (1 à 80 signes) ;"
+        },
+        {
+          "nom": "capacites",
+          "type": "text[]",
+          "not_null": true,
+          "defaut": "'{}'",
+          "texte": "`capacites text[] not null default '{}'` ;"
+        },
+        {
+          "nom": "types_crees",
+          "type": "text[]",
+          "not_null": true,
+          "defaut": "'{}'",
+          "texte": "`types_crees text[] not null default '{}'` ;"
+        },
+        {
+          "nom": "tables_ecrites",
+          "type": "text[]",
+          "not_null": true,
+          "defaut": "'{}'",
+          "texte": "`tables_ecrites text[] not null default '{}' check (tables_ecrites <@ array['taches','evenements','decisions','prospects','envois','opposition','maquettes','couts'])` ;"
+        },
+        {
+          "nom": "jeton_hash",
+          "type": "text",
+          "unique": true,
+          "texte": "`jeton_hash text unique check (jeton_hash is null or jeton_hash ~ '^[0-9a-f]{64}$')` ;"
+        },
+        {
+          "nom": "jeton_pose_le",
+          "type": "timestamptz",
+          "texte": "`jeton_pose_le timestamptz` ;"
+        },
+        {
+          "nom": "debit_minute",
+          "type": "int",
+          "not_null": true,
+          "defaut": "30",
+          "texte": "`debit_minute int not null default 30` (1 à 600) ;"
+        },
+        {
+          "nom": "quota_creations_jour",
+          "type": "int",
+          "not_null": true,
+          "defaut": "50",
+          "texte": "`quota_creations_jour int not null default 50` (0 à 1000) ;"
+        },
+        {
+          "nom": "plafond_euros_jour",
+          "type": "numeric(8,2)",
+          "not_null": true,
+          "defaut": "1",
+          "texte": "`plafond_euros_jour numeric(8,2) not null default 1` (≥ 0) ;"
+        },
+        {
+          "nom": "periode_minutes",
+          "type": "int",
+          "not_null": true,
+          "defaut": "60",
+          "texte": "`periode_minutes int not null default 60` (1 à 10080) ;"
+        },
+        {
+          "nom": "battement_le",
+          "type": "timestamptz",
+          "texte": "`battement_le timestamptz` ;"
+        },
+        {
+          "nom": "en_pause",
+          "type": "boolean",
+          "not_null": true,
+          "defaut": "false",
+          "texte": "`en_pause boolean not null default false` ;"
+        },
+        {
+          "nom": "pause_motif",
+          "type": "text",
+          "texte": "`pause_motif text` (≤ 200) ;"
+        },
+        {
+          "nom": "disjoncteur_ouvert_le",
+          "type": "timestamptz",
+          "texte": "`disjoncteur_ouvert_le timestamptz` ;"
+        },
+        {
+          "nom": "jeton_externe_expire_le",
+          "type": "timestamptz",
+          "texte": "`jeton_externe_expire_le timestamptz` : l'échéance d'un jeton tiers, par exemple Meta pour A7, jamais le jeton lui-même ;"
+        },
+        {
+          "nom": "retire_le",
+          "type": "timestamptz",
+          "texte": "`retire_le timestamptz` ;"
+        },
+        {
+          "nom": "cree_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`cree_le timestamptz not null default now()`."
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "agents.nom",
+          "texte": "nom ~ '^[a-z0-9_]{2,40}$'",
+          "regles": [
+            {
+              "contient": "nom ~ '^[a-z0-9_]{2,40}$'"
+            }
+          ]
+        },
+        {
+          "id": "agents.libelle",
+          "texte": "libelle de 1 à 80 signes",
+          "regles": [
+            {
+              "longueur": [
+                "libelle",
+                1,
+                80
+              ]
+            }
+          ]
+        },
+        {
+          "id": "agents.tables_ecrites",
+          "texte": "tables_ecrites <@ array['taches','evenements','decisions','prospects','envois','opposition','maquettes','couts']",
+          "regles": [
+            {
+              "liste": [
+                "tables_ecrites",
+                [
+                  "taches",
+                  "evenements",
+                  "decisions",
+                  "prospects",
+                  "envois",
+                  "opposition",
+                  "maquettes",
+                  "couts"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "agents.jeton_hash",
+          "texte": "jeton_hash is null or jeton_hash ~ '^[0-9a-f]{64}$'",
+          "regles": [
+            {
+              "contient": "jeton_hash ~ '^[0-9a-f]{64}$'"
+            }
+          ]
+        },
+        {
+          "id": "agents.debit_minute",
+          "texte": "debit_minute de 1 à 600",
+          "regles": [
+            {
+              "entre": [
+                "debit_minute",
+                1,
+                600
+              ]
+            }
+          ]
+        },
+        {
+          "id": "agents.quota_creations_jour",
+          "texte": "quota_creations_jour de 0 à 1000",
+          "regles": [
+            {
+              "entre": [
+                "quota_creations_jour",
+                0,
+                1000
+              ]
+            }
+          ]
+        },
+        {
+          "id": "agents.plafond_euros_jour",
+          "texte": "plafond_euros_jour ≥ 0",
+          "regles": [
+            {
+              "contient": "plafond_euros_jour >= 0"
+            }
+          ]
+        },
+        {
+          "id": "agents.periode_minutes",
+          "texte": "periode_minutes de 1 à 10080",
+          "regles": [
+            {
+              "entre": [
+                "periode_minutes",
+                1,
+                10080
+              ]
+            }
+          ]
+        },
+        {
+          "id": "agents.pause_motif",
+          "texte": "pause_motif ≤ 200",
+          "regles": [
+            {
+              "longueur": [
+                "pause_motif",
+                null,
+                200
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "taches": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.taches`** :",
+      "colonnes": [
+        {
+          "nom": "id",
+          "type": "uuid",
+          "pk": true,
+          "defaut": "gen_random_uuid()",
+          "texte": "`id uuid primary key default gen_random_uuid()` ;"
+        },
+        {
+          "nom": "type",
+          "type": "text",
+          "not_null": true,
+          "texte": "`type text not null check (type ~ '^[a-z_]{2,40}$')` ;"
+        },
+        {
+          "nom": "cle_idempotence",
+          "type": "text",
+          "not_null": true,
+          "unique": true,
+          "texte": "`cle_idempotence text not null unique` (3 à 200) ;"
+        },
+        {
+          "nom": "objet",
+          "type": "text",
+          "texte": "`objet text` (≤ 200) ;"
+        },
+        {
+          "nom": "capacite",
+          "type": "text",
+          "not_null": true,
+          "texte": "`capacite text not null check (capacite ~ '^[a-z_]{2,40}$')` ;"
+        },
+        {
+          "nom": "sortante",
+          "type": "boolean",
+          "not_null": true,
+          "defaut": "false",
+          "texte": "`sortante boolean not null default false` ;"
+        },
+        {
+          "nom": "statut",
+          "type": "text",
+          "not_null": true,
+          "defaut": "'file'",
+          "texte": "`statut text not null default 'file' check (statut in ('file','bail','faite','echec','a_decider','annulee'))` ;"
+        },
+        {
+          "nom": "agent",
+          "type": "text",
+          "ref": "ops.agents(nom) on delete set null",
+          "texte": "`agent text references ops.agents(nom) on delete set null` ;"
+        },
+        {
+          "nom": "bail_jusqua",
+          "type": "timestamptz",
+          "texte": "`bail_jusqua timestamptz` ;"
+        },
+        {
+          "nom": "tentatives",
+          "type": "int",
+          "not_null": true,
+          "defaut": "0",
+          "texte": "`tentatives int not null default 0 check (tentatives between 0 and 3)` ;"
+        },
+        {
+          "nom": "derniere_erreur",
+          "type": "text",
+          "texte": "`derniere_erreur text` (≤ 500) ;"
+        },
+        {
+          "nom": "origine_id",
+          "type": "uuid",
+          "ref": "ops.taches(id) on delete set null",
+          "texte": "`origine_id uuid references ops.taches(id) on delete set null` ;"
+        },
+        {
+          "nom": "profondeur",
+          "type": "int",
+          "not_null": true,
+          "defaut": "0",
+          "texte": "`profondeur int not null default 0 check (profondeur between 0 and 3)` ;"
+        },
+        {
+          "nom": "charge",
+          "type": "jsonb",
+          "not_null": true,
+          "defaut": "'{}'",
+          "texte": "`charge jsonb not null default '{}' check (pg_column_size(charge) <= 8192)` ;"
+        },
+        {
+          "nom": "preuve_url",
+          "type": "text",
+          "texte": "`preuve_url text` (≤ 500) ;"
+        },
+        {
+          "nom": "cree_par",
+          "type": "text",
+          "not_null": true,
+          "ref": "ops.agents(nom) on delete cascade",
+          "texte": "`cree_par text not null references ops.agents(nom) on delete cascade` ;"
+        },
+        {
+          "nom": "cree_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`cree_le`, `maj_le timestamptz not null default now()` ;"
+        },
+        {
+          "nom": "maj_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`cree_le`, `maj_le timestamptz not null default now()` ;"
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "taches.type",
+          "texte": "type ~ '^[a-z_]{2,40}$'",
+          "regles": [
+            {
+              "contient": "type ~ '^[a-z_]{2,40}$'"
+            }
+          ]
+        },
+        {
+          "id": "taches.cle_idempotence",
+          "texte": "cle_idempotence de 3 à 200 signes",
+          "regles": [
+            {
+              "longueur": [
+                "cle_idempotence",
+                3,
+                200
+              ]
+            }
+          ]
+        },
+        {
+          "id": "taches.objet",
+          "texte": "objet ≤ 200",
+          "regles": [
+            {
+              "longueur": [
+                "objet",
+                null,
+                200
+              ]
+            }
+          ]
+        },
+        {
+          "id": "taches.capacite",
+          "texte": "capacite ~ '^[a-z_]{2,40}$'",
+          "regles": [
+            {
+              "contient": "capacite ~ '^[a-z_]{2,40}$'"
+            }
+          ]
+        },
+        {
+          "id": "taches.statut",
+          "texte": "statut in ('file','bail','faite','echec','a_decider','annulee')",
+          "regles": [
+            {
+              "liste": [
+                "statut",
+                [
+                  "file",
+                  "bail",
+                  "faite",
+                  "echec",
+                  "a_decider",
+                  "annulee"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "taches.tentatives",
+          "texte": "tentatives between 0 and 3",
+          "regles": [
+            {
+              "entre": [
+                "tentatives",
+                0,
+                3
+              ]
+            }
+          ]
+        },
+        {
+          "id": "taches.derniere_erreur",
+          "texte": "derniere_erreur ≤ 500",
+          "regles": [
+            {
+              "longueur": [
+                "derniere_erreur",
+                null,
+                500
+              ]
+            }
+          ]
+        },
+        {
+          "id": "taches.profondeur",
+          "texte": "profondeur between 0 and 3",
+          "regles": [
+            {
+              "entre": [
+                "profondeur",
+                0,
+                3
+              ]
+            }
+          ]
+        },
+        {
+          "id": "taches.charge",
+          "texte": "pg_column_size(charge) <= 8192",
+          "regles": [
+            {
+              "taille_json": [
+                "charge",
+                8192
+              ]
+            }
+          ]
+        },
+        {
+          "id": "taches.preuve_url",
+          "texte": "preuve_url ≤ 500",
+          "regles": [
+            {
+              "longueur": [
+                "preuve_url",
+                null,
+                500
+              ]
+            }
+          ]
+        },
+        {
+          "id": "taches.bail",
+          "texte": "(statut = 'bail' and agent is not null and bail_jusqua is not null) or (statut <> 'bail' and bail_jusqua is null)",
+          "regles": [
+            {
+              "contient": "statut = 'bail' and agent is not null and bail_jusqua is not null"
+            },
+            {
+              "contient": "statut <> 'bail' and bail_jusqua is null"
+            }
+          ]
+        },
+        {
+          "id": "taches.preuve",
+          "texte": "statut <> 'faite' or char_length(coalesce(preuve_url, '')) > 0",
+          "regles": [
+            {
+              "un_de": [
+                "statut <> 'faite' or char_length(coalesce(preuve_url, '')) > 0",
+                "statut <> 'faite' or length(coalesce(preuve_url, '')) > 0"
+              ]
+            }
+          ]
+        }
+      ],
+      "index": [
+        {
+          "id": "taches.une_ouverte_par_objet",
+          "texte": "create unique index … on ops.taches (objet) where objet is not null and statut in ('file','bail','a_decider')",
+          "unique": true,
+          "colonnes": "objet",
+          "where_contient": "objet is not null",
+          "where_liste": [
+            "statut",
+            [
+              "file",
+              "bail",
+              "a_decider"
+            ]
+          ]
+        },
+        {
+          "id": "taches.file",
+          "texte": "un index (statut, capacite, cree_le)",
+          "unique": false,
+          "colonnes": "statut, capacite, cree_le"
+        }
+      ]
+    },
+    "evenements": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.evenements`**, en ajout seul :",
+      "colonnes": [
+        {
+          "nom": "id",
+          "type": "bigint",
+          "pk": true,
+          "identite": true,
+          "texte": "`id bigint generated always as identity primary key` ;"
+        },
+        {
+          "nom": "le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`le timestamptz not null default now()` ;"
+        },
+        {
+          "nom": "agent",
+          "type": "text",
+          "not_null": true,
+          "ref": "ops.agents(nom) on delete cascade",
+          "texte": "`agent text not null references ops.agents(nom) on delete cascade` ;"
+        },
+        {
+          "nom": "type",
+          "type": "text",
+          "not_null": true,
+          "texte": "`type text not null check (type ~ '^[a-z_]{2,40}$')` ;"
+        },
+        {
+          "nom": "objet",
+          "type": "text",
+          "texte": "`objet text` (≤ 200) ;"
+        },
+        {
+          "nom": "resume",
+          "type": "text",
+          "not_null": true,
+          "texte": "`resume text not null check (char_length(resume) between 1 and 200)` ;"
+        },
+        {
+          "nom": "tache_id",
+          "type": "uuid",
+          "ref": "ops.taches(id) on delete set null",
+          "texte": "`tache_id uuid references ops.taches(id) on delete set null` ;"
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "evenements.type",
+          "texte": "type ~ '^[a-z_]{2,40}$'",
+          "regles": [
+            {
+              "contient": "type ~ '^[a-z_]{2,40}$'"
+            }
+          ]
+        },
+        {
+          "id": "evenements.objet",
+          "texte": "objet ≤ 200",
+          "regles": [
+            {
+              "longueur": [
+                "objet",
+                null,
+                200
+              ]
+            }
+          ]
+        },
+        {
+          "id": "evenements.resume",
+          "texte": "char_length(resume) between 1 and 200",
+          "regles": [
+            {
+              "longueur": [
+                "resume",
+                1,
+                200
+              ]
+            }
+          ]
+        }
+      ],
+      "index": [
+        {
+          "id": "evenements.le",
+          "texte": "des index (le) et (agent, id)",
+          "unique": false,
+          "colonnes": "le"
+        },
+        {
+          "id": "evenements.agent_id",
+          "texte": "des index (le) et (agent, id)",
+          "unique": false,
+          "colonnes": "agent, id"
+        }
+      ],
+      "declencheur": {
+        "fonction": "ops.evenements_ajout_seul",
+        "moment": "before update or delete",
+        "texte": "un déclencheur `before update or delete` (fonction `ops.evenements_ajout_seul()`) lève une exception, sauf si `current_setting('ops.purge', true) = 'oui'`",
+        "corps_contient": [
+          "current_setting('ops.purge', true)",
+          "'oui'",
+          "raise exception"
+        ]
+      }
+    },
+    "decisions": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.decisions`** :",
+      "colonnes": [
+        {
+          "nom": "id",
+          "type": "uuid",
+          "pk": true,
+          "texte": "`id uuid pk` ;"
+        },
+        {
+          "nom": "cle_idempotence",
+          "type": "text",
+          "unique": true,
+          "texte": "`cle_idempotence text unique` ;"
+        },
+        {
+          "nom": "question",
+          "type": "text",
+          "not_null": true,
+          "texte": "`question text not null` (5 à 300) ;"
+        },
+        {
+          "nom": "contexte",
+          "type": "text",
+          "texte": "`contexte text` (≤ 2000) ;"
+        },
+        {
+          "nom": "options",
+          "type": "jsonb",
+          "not_null": true,
+          "texte": "`options jsonb not null check (jsonb_typeof(options) = 'array' and jsonb_array_length(options) between 2 and 7)` : 2 ou 3 pour une décision d'agent du bus (bornées par `ops_decision_creer`, 0098), jusqu'à 7 pour une carte de l'acquisition (`acq_decision_creer`, 0106) ;"
+        },
+        {
+          "nom": "option_defaut",
+          "type": "text",
+          "not_null": true,
+          "texte": "`option_defaut text not null` ;"
+        },
+        {
+          "nom": "montant_cents",
+          "type": "int",
+          "texte": "`montant_cents int` (≥ 0) ;"
+        },
+        {
+          "nom": "portee",
+          "type": "text",
+          "not_null": true,
+          "defaut": "'aucune'",
+          "texte": "`portee text not null default 'aucune' check (portee in ('aucune','argent','artisan','securite'))` ;"
+        },
+        {
+          "nom": "echeance",
+          "type": "timestamptz",
+          "not_null": true,
+          "texte": "`echeance timestamptz not null` ;"
+        },
+        {
+          "nom": "statut",
+          "type": "text",
+          "not_null": true,
+          "defaut": "'ouverte'",
+          "texte": "`statut text not null default 'ouverte' check (statut in ('ouverte','tranchee','defaut_applique','annulee'))` ;"
+        },
+        {
+          "nom": "choix",
+          "type": "text",
+          "texte": "`choix text` ;"
+        },
+        {
+          "nom": "auteur",
+          "type": "uuid",
+          "ref": "public.artisans(id) on delete set null",
+          "texte": "`auteur uuid references public.artisans(id) on delete set null` ;"
+        },
+        {
+          "nom": "creee_par",
+          "type": "text",
+          "not_null": true,
+          "ref": "ops.agents(nom) on delete cascade",
+          "texte": "`creee_par text not null references ops.agents(nom) on delete cascade` ;"
+        },
+        {
+          "nom": "tache_id",
+          "type": "uuid",
+          "ref": "ops.taches(id) on delete set null",
+          "texte": "`tache_id uuid references ops.taches(id) on delete set null` ;"
+        },
+        {
+          "nom": "cree_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`cree_le`, `tranchee_le` ;"
+        },
+        {
+          "nom": "tranchee_le",
+          "type": "timestamptz",
+          "texte": "`cree_le`, `tranchee_le` ;"
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "decisions.question",
+          "texte": "question de 5 à 300 signes",
+          "regles": [
+            {
+              "longueur": [
+                "question",
+                5,
+                300
+              ]
+            }
+          ]
+        },
+        {
+          "id": "decisions.contexte",
+          "texte": "contexte ≤ 2000",
+          "regles": [
+            {
+              "longueur": [
+                "contexte",
+                null,
+                2000
+              ]
+            }
+          ]
+        },
+        {
+          "id": "decisions.options",
+          "texte": "jsonb_typeof(options) = 'array' and jsonb_array_length(options) between 2 and 7",
+          "regles": [
+            {
+              "contient": "jsonb_typeof(options) = 'array'"
+            },
+            {
+              "entre": [
+                "jsonb_array_length(options)",
+                2,
+                7
+              ]
+            }
+          ]
+        },
+        {
+          "id": "decisions.montant_cents",
+          "texte": "montant_cents ≥ 0",
+          "regles": [
+            {
+              "contient": "montant_cents >= 0"
+            }
+          ]
+        },
+        {
+          "id": "decisions.portee",
+          "texte": "portee in ('aucune','argent','artisan','securite')",
+          "regles": [
+            {
+              "liste": [
+                "portee",
+                [
+                  "aucune",
+                  "argent",
+                  "artisan",
+                  "securite"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "decisions.statut",
+          "texte": "statut in ('ouverte','tranchee','defaut_applique','annulee')",
+          "regles": [
+            {
+              "liste": [
+                "statut",
+                [
+                  "ouverte",
+                  "tranchee",
+                  "defaut_applique",
+                  "annulee"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "decisions.choix",
+          "texte": "(statut in ('tranchee','defaut_applique')) = (choix is not null)",
+          "regles": [
+            {
+              "un_de": [
+                "(statut in ('tranchee', 'defaut_applique')) = (choix is not null)",
+                "(statut in ('defaut_applique', 'tranchee')) = (choix is not null)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "prospects": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.prospects`** :",
+      "colonnes": [
+        {
+          "nom": "id",
+          "type": "uuid",
+          "pk": true,
+          "texte": "`id uuid pk` ;"
+        },
+        {
+          "nom": "cle_dedup",
+          "type": "text",
+          "not_null": true,
+          "unique": true,
+          "texte": "`cle_dedup text not null unique check (cle_dedup ~ '^(siren|domaine|page_meta|instagram):.{2,160}$')` : SIREN, sinon domaine, sinon Page Meta, sinon Instagram (plan §3.2) ;"
+        },
+        {
+          "nom": "siren",
+          "type": "text",
+          "texte": "`siren text check (siren ~ '^[0-9]{9}$')` ;"
+        },
+        {
+          "nom": "domaine",
+          "type": "text",
+          "texte": "`domaine`, `page_meta`, `instagram`, `metier` (des `text`) ;"
+        },
+        {
+          "nom": "page_meta",
+          "type": "text",
+          "texte": "`domaine`, `page_meta`, `instagram`, `metier` (des `text`) ;"
+        },
+        {
+          "nom": "instagram",
+          "type": "text",
+          "texte": "`domaine`, `page_meta`, `instagram`, `metier` (des `text`) ;"
+        },
+        {
+          "nom": "metier",
+          "type": "text",
+          "texte": "`domaine`, `page_meta`, `instagram`, `metier` (des `text`) ;"
+        },
+        {
+          "nom": "faits",
+          "type": "jsonb",
+          "not_null": true,
+          "defaut": "'[]'",
+          "texte": "`faits jsonb not null default '[]'` (un tableau) ;"
+        },
+        {
+          "nom": "source",
+          "type": "text",
+          "not_null": true,
+          "defaut": "'inconnue'",
+          "texte": "`source text not null default 'inconnue'` (≤ 200) ;"
+        },
+        {
+          "nom": "froid",
+          "type": "boolean",
+          "not_null": true,
+          "defaut": "true",
+          "texte": "`froid boolean not null default true` : le bilan des 100 premiers contacts ne compte que les contacts froids (plan §1.2) ;"
+        },
+        {
+          "nom": "dernier_contact",
+          "type": "timestamptz",
+          "texte": "`dernier_contact timestamptz` ;"
+        },
+        {
+          "nom": "cree_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`cree_le`, `maj_le` ;"
+        },
+        {
+          "nom": "maj_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`cree_le`, `maj_le` ;"
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "prospects.cle_dedup",
+          "texte": "cle_dedup ~ '^(siren|domaine|page_meta|instagram):.{2,160}$'",
+          "regles": [
+            {
+              "contient": "cle_dedup ~ '^(siren|domaine|page_meta|instagram):.{2,160}$'"
+            }
+          ]
+        },
+        {
+          "id": "prospects.siren",
+          "texte": "siren ~ '^[0-9]{9}$'",
+          "regles": [
+            {
+              "contient": "siren ~ '^[0-9]{9}$'"
+            }
+          ]
+        },
+        {
+          "id": "prospects.source",
+          "texte": "source ≤ 200",
+          "regles": [
+            {
+              "longueur": [
+                "source",
+                null,
+                200
+              ]
+            }
+          ]
+        }
+      ],
+      "prospection": true,
+      "index": [
+        {
+          "id": "prospects.siren",
+          "texte": "des index simples, **non uniques**, sur `siren`, `domaine`, `page_meta` et `instagram`",
+          "unique": false,
+          "colonnes": "siren"
+        },
+        {
+          "id": "prospects.domaine",
+          "texte": "des index simples, **non uniques**, sur `siren`, `domaine`, `page_meta` et `instagram`",
+          "unique": false,
+          "colonnes": "domaine"
+        },
+        {
+          "id": "prospects.page_meta",
+          "texte": "des index simples, **non uniques**, sur `siren`, `domaine`, `page_meta` et `instagram`",
+          "unique": false,
+          "colonnes": "page_meta"
+        },
+        {
+          "id": "prospects.instagram",
+          "texte": "des index simples, **non uniques**, sur `siren`, `domaine`, `page_meta` et `instagram`",
+          "unique": false,
+          "colonnes": "instagram"
+        }
+      ],
+      "jamais_unique": [
+        "siren",
+        "domaine",
+        "page_meta",
+        "instagram"
+      ]
+    },
+    "envois": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.envois`** (depuis la rectification du 24/09, **aucun message ne part à la main** : la Plume ou le Répondeur préparent, le Facteur juge et envoie) :",
+      "colonnes": [
+        {
+          "nom": "id",
+          "type": "uuid",
+          "pk": true,
+          "texte": "`id uuid pk` ;"
+        },
+        {
+          "nom": "prospect_id",
+          "type": "uuid",
+          "ref": "ops.prospects(id) on delete cascade",
+          "texte": "`prospect_id uuid references ops.prospects(id) on delete cascade`, avec `check (prospect_id is not null or canal in ('reponse_privee','messagerie'))` : la réponse privée à un commentaire « SITE », ou la première réponse à un message reçu, part **avant** que la personne soit un prospect (elle n'a encore donné ni métier ni site) ; elle est alors rattachée à sa conversation (`conversation_id`, ajoutée par 0106, 026-061). Tout autre envoi a un prospect ;"
+        },
+        {
+          "nom": "canal",
+          "type": "text",
+          "not_null": true,
+          "texte": "`canal text not null check (canal in ('instagram','facebook','linkedin','formulaire_site','email_sollicite','reponse_privee','messagerie','telephone','essai_e2e'))`. `formulaire_site` est le premier contact, soumis par le formulaire de contact du site de l'entreprise (un par entreprise, à vie : 0099) ; `email_sollicite` un message envoyé du Gmail de prospection à quelqu'un qui a écrit (preuve de demande exigée : 0099) ; `reponse_privee` est la réponse privée officielle de Meta à un commentaire ; `messagerie` une réponse dans une conversation Instagram ou Facebook que la personne a ouverte. La valeur `email` n'existe plus : aucun e-mail à froid ;"
+        },
+        {
+          "nom": "envoyeur",
+          "type": "text",
+          "not_null": true,
+          "defaut": "'systeme'",
+          "texte": "`envoyeur text not null default 'systeme' check (envoyeur ~ '^[a-z0-9_]{2,40}$')` : `facteur_usine` pour `formulaire_site` (le porteur de l'usine), `gmail` pour `email_sollicite` (le Gmail de prospection), `repondeur` pour Meta ; jamais une adresse de `prestiapp.fr` ;"
+        },
+        {
+          "nom": "type",
+          "type": "text",
+          "not_null": true,
+          "defaut": "'premier_contact'",
+          "texte": "`type text not null default 'premier_contact' check (type in ('premier_contact','relance','lien_maquette','reponse','confirmation_stop','reponse_rgpd'))` ;"
+        },
+        {
+          "nom": "destinataire",
+          "type": "text",
+          "texte": "`destinataire text` (≤ 200) ;"
+        },
+        {
+          "nom": "empreinte_texte",
+          "type": "text",
+          "not_null": true,
+          "texte": "`empreinte_texte text not null check (empreinte_texte ~ '^[0-9a-f]{64}$')` ;"
+        },
+        {
+          "nom": "statut",
+          "type": "text",
+          "not_null": true,
+          "defaut": "'prepare'",
+          "texte": "`statut text not null default 'prepare' check (statut in ('prepare','approuve','envoye','saute','perime','annule'))`. `prepare` : rédigé et accepté par J3 ; `approuve` : les trois verdicts sont à `ok`, le Facteur peut le faire partir ; `envoye` : soumis par le porteur de l'usine (formulaire, preuve de soumission à l'appui), accepté par le serveur SMTP de Gmail ou par l'API de Meta ; `perime` : préparé depuis plus de 20 h sans partir (série acquisition) ;"
+        },
+        {
+          "nom": "verdicts",
+          "type": "jsonb",
+          "not_null": true,
+          "defaut": "'{}'",
+          "texte": "`verdicts jsonb not null default '{}' check (jsonb_typeof(verdicts) = 'object' and pg_column_size(verdicts) <= 4096)` : `j1`, `j3`, `j2`, `j2_version`, `raisons` (rectification §3.11 : « pour chaque envoi, on garde le texte exact, son empreinte, les trois verdicts et les en-têtes ») ;"
+        },
+        {
+          "nom": "prepare_par",
+          "type": "text",
+          "not_null": true,
+          "defaut": "'systeme'",
+          "ref": "ops.agents(nom) on delete cascade",
+          "texte": "`prepare_par text not null default 'systeme' references ops.agents(nom) on delete cascade` ;"
+        },
+        {
+          "nom": "prepare_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`prepare_le timestamptz not null default now()` ;"
+        },
+        {
+          "nom": "approuve_par_agent",
+          "type": "text",
+          "ref": "ops.agents(nom) on delete set null",
+          "texte": "`approuve_par_agent text references ops.agents(nom) on delete set null` : remplace l'ancien `approuve_par uuid` (plus aucune approbation humaine message par message) ;"
+        },
+        {
+          "nom": "id_externe",
+          "type": "text",
+          "texte": "`id_externe text` (≤ 200) : l'identifiant rendu par Meta, ou le Message-ID du courriel envoyé par le Gmail ; nul pour un formulaire (sa preuve de soumission est ajoutée par 0106, 026-061) ;"
+        },
+        {
+          "nom": "entetes",
+          "type": "jsonb",
+          "texte": "`entetes jsonb` (≤ 4096 octets) : les en-têtes gardés en preuve (`Message-ID`, `In-Reply-To`, `References` d'un courriel) ;"
+        },
+        {
+          "nom": "approuve_le",
+          "type": "timestamptz",
+          "texte": "`approuve_le`, `envoye_le timestamptz`."
+        },
+        {
+          "nom": "envoye_le",
+          "type": "timestamptz",
+          "texte": "`approuve_le`, `envoye_le timestamptz`."
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "envois.prospect",
+          "texte": "prospect_id is not null or canal in ('reponse_privee','messagerie')",
+          "regles": [
+            {
+              "un_de": [
+                "prospect_id is not null or canal in ('reponse_privee', 'messagerie')",
+                "prospect_id is not null or canal in ('messagerie', 'reponse_privee')"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "envois.canal",
+          "texte": "canal in ('instagram','facebook','linkedin','formulaire_site','email_sollicite','reponse_privee','messagerie','telephone','essai_e2e')",
+          "regles": [
+            {
+              "liste": [
+                "canal",
+                [
+                  "instagram",
+                  "facebook",
+                  "linkedin",
+                  "formulaire_site",
+                  "email_sollicite",
+                  "reponse_privee",
+                  "messagerie",
+                  "telephone",
+                  "essai_e2e"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "envois.envoyeur",
+          "texte": "envoyeur ~ '^[a-z0-9_]{2,40}$'",
+          "regles": [
+            {
+              "contient": "envoyeur ~ '^[a-z0-9_]{2,40}$'"
+            }
+          ]
+        },
+        {
+          "id": "envois.type",
+          "texte": "type in ('premier_contact','relance','lien_maquette','reponse','confirmation_stop','reponse_rgpd')",
+          "regles": [
+            {
+              "liste": [
+                "type",
+                [
+                  "premier_contact",
+                  "relance",
+                  "lien_maquette",
+                  "reponse",
+                  "confirmation_stop",
+                  "reponse_rgpd"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "envois.destinataire",
+          "texte": "destinataire ≤ 200",
+          "regles": [
+            {
+              "longueur": [
+                "destinataire",
+                null,
+                200
+              ]
+            }
+          ]
+        },
+        {
+          "id": "envois.empreinte_texte",
+          "texte": "empreinte_texte ~ '^[0-9a-f]{64}$'",
+          "regles": [
+            {
+              "contient": "empreinte_texte ~ '^[0-9a-f]{64}$'"
+            }
+          ]
+        },
+        {
+          "id": "envois.statut",
+          "texte": "statut in ('prepare','approuve','envoye','saute','perime','annule')",
+          "regles": [
+            {
+              "liste": [
+                "statut",
+                [
+                  "prepare",
+                  "approuve",
+                  "envoye",
+                  "saute",
+                  "perime",
+                  "annule"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "envois.verdicts",
+          "texte": "jsonb_typeof(verdicts) = 'object' and pg_column_size(verdicts) <= 4096",
+          "regles": [
+            {
+              "contient": "jsonb_typeof(verdicts) = 'object'"
+            },
+            {
+              "taille_json": [
+                "verdicts",
+                4096
+              ]
+            }
+          ]
+        },
+        {
+          "id": "envois.facteur",
+          "texte": "(statut not in ('approuve','envoye')) or approuve_par_agent = 'facteur' or canal = 'essai_e2e'",
+          "regles": [
+            {
+              "un_de": [
+                "statut not in ('approuve', 'envoye')) or approuve_par_agent = 'facteur' or canal = 'essai_e2e'",
+                "statut not in ('envoye', 'approuve')) or approuve_par_agent = 'facteur' or canal = 'essai_e2e'"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "envois.id_externe",
+          "texte": "id_externe ≤ 200",
+          "regles": [
+            {
+              "longueur": [
+                "id_externe",
+                null,
+                200
+              ]
+            }
+          ]
+        },
+        {
+          "id": "envois.entetes",
+          "texte": "entetes ≤ 4096 octets",
+          "regles": [
+            {
+              "taille_json": [
+                "entetes",
+                4096
+              ]
+            }
+          ]
+        }
+      ],
+      "prospection": true
+    },
+    "opposition": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.opposition`** :",
+      "colonnes": [
+        {
+          "nom": "id",
+          "type": "uuid",
+          "pk": true,
+          "texte": "`id uuid pk` ;"
+        },
+        {
+          "nom": "cle_type",
+          "type": "text",
+          "not_null": true,
+          "texte": "`cle_type text not null check (cle_type in ('siren','domaine','email','instagram','page_meta','meta_id','facebook','linkedin','telephone'))` : `meta_id` est l'identifiant propre à l'application d'une personne sur Instagram ou Messenger, stable quand le pseudo change ;"
+        },
+        {
+          "nom": "cle_valeur",
+          "type": "text",
+          "not_null": true,
+          "texte": "`cle_valeur text not null check (cle_valeur = lower(btrim(cle_valeur)) and char_length(cle_valeur) between 2 and 200)` ;"
+        },
+        {
+          "nom": "motif",
+          "type": "text",
+          "texte": "`motif` (≤ 200), `source` (≤ 80), `cree_le` ;"
+        },
+        {
+          "nom": "source",
+          "type": "text",
+          "texte": "`motif` (≤ 200), `source` (≤ 80), `cree_le` ;"
+        },
+        {
+          "nom": "cree_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`motif` (≤ 200), `source` (≤ 80), `cree_le` ;"
+        },
+        {
+          "nom": "expire_le",
+          "type": "timestamptz",
+          "texte": "`expire_le timestamptz` : `null` pour une opposition définitive (STOP, refus, hostile) ; une date pour une opposition temporaire (« pas maintenant » : 90 jours, ou la date que la personne a donnée). Une opposition expirée ne bloque plus rien ; elle ne s'efface pas. Une opposition définitive posée sur une clé qui avait une opposition temporaire la remplace (`expire_le` remis à `null`), jamais l'inverse ;"
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "opposition.cle_type",
+          "texte": "cle_type in ('siren','domaine','email','instagram','page_meta','meta_id','facebook','linkedin','telephone')",
+          "regles": [
+            {
+              "liste": [
+                "cle_type",
+                [
+                  "siren",
+                  "domaine",
+                  "email",
+                  "instagram",
+                  "page_meta",
+                  "meta_id",
+                  "facebook",
+                  "linkedin",
+                  "telephone"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "opposition.cle_valeur",
+          "texte": "cle_valeur = lower(btrim(cle_valeur)) and char_length(cle_valeur) between 2 and 200",
+          "regles": [
+            {
+              "contient": "cle_valeur = lower(btrim(cle_valeur))"
+            },
+            {
+              "longueur": [
+                "cle_valeur",
+                2,
+                200
+              ]
+            }
+          ]
+        },
+        {
+          "id": "opposition.motif",
+          "texte": "motif ≤ 200",
+          "regles": [
+            {
+              "longueur": [
+                "motif",
+                null,
+                200
+              ]
+            }
+          ]
+        },
+        {
+          "id": "opposition.source",
+          "texte": "source ≤ 80",
+          "regles": [
+            {
+              "longueur": [
+                "source",
+                null,
+                80
+              ]
+            }
+          ]
+        },
+        {
+          "id": "opposition.expire_le",
+          "texte": "expire_le is null or expire_le > cree_le",
+          "regles": [
+            {
+              "contient": "expire_le is null or expire_le > cree_le"
+            }
+          ]
+        },
+        {
+          "id": "opposition.unique",
+          "texte": "unique (cle_type, cle_valeur)",
+          "regles": [
+            {
+              "contient": "unique (cle_type, cle_valeur)"
+            }
+          ]
+        }
+      ],
+      "prospection": true
+    },
+    "maquettes": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.maquettes`** :",
+      "colonnes": [
+        {
+          "nom": "id",
+          "type": "uuid",
+          "pk": true,
+          "texte": "`id uuid pk` ;"
+        },
+        {
+          "nom": "prospect_id",
+          "type": "uuid",
+          "not_null": true,
+          "ref": "ops.prospects(id) on delete cascade",
+          "texte": "`prospect_id uuid not null references ops.prospects(id) on delete cascade` ;"
+        },
+        {
+          "nom": "objet",
+          "type": "text",
+          "texte": "`objet text` (≤ 300) : le chemin dans le stockage ;"
+        },
+        {
+          "nom": "jeton_hache",
+          "type": "text",
+          "unique": true,
+          "texte": "`jeton_hache text unique check (jeton_hache ~ '^[0-9a-f]{64}$')` : `apercu_jeton`, lui, n'expire jamais et se compare en clair (`app/site-genere/[commande]/[[...chemin]]/route.ts:23-33`) ;"
+        },
+        {
+          "nom": "cree_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`cree_le timestamptz not null default now()` ;"
+        },
+        {
+          "nom": "expire_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now() + interval '21 days'",
+          "texte": "`expire_le timestamptz not null default now() + interval '21 days'` ;"
+        },
+        {
+          "nom": "purgee_le",
+          "type": "timestamptz",
+          "texte": "`purgee_le timestamptz` ;"
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "maquettes.objet",
+          "texte": "objet ≤ 300",
+          "regles": [
+            {
+              "longueur": [
+                "objet",
+                null,
+                300
+              ]
+            }
+          ]
+        },
+        {
+          "id": "maquettes.jeton_hache",
+          "texte": "jeton_hache ~ '^[0-9a-f]{64}$'",
+          "regles": [
+            {
+              "contient": "jeton_hache ~ '^[0-9a-f]{64}$'"
+            }
+          ]
+        },
+        {
+          "id": "maquettes.21_jours",
+          "texte": "expire_le <= cree_le + interval '21 days'",
+          "regles": [
+            {
+              "contient": "expire_le <= cree_le + interval '21 days'"
+            }
+          ]
+        }
+      ],
+      "prospection": true
+    },
+    "quotas_canaux": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.quotas_canaux`** :",
+      "colonnes": [
+        {
+          "nom": "canal",
+          "type": "text",
+          "not_null": true,
+          "texte": "`canal` (même liste que `envois`) ;"
+        },
+        {
+          "nom": "envoyeur",
+          "type": "text",
+          "not_null": true,
+          "defaut": "'*'",
+          "texte": "`envoyeur text not null default '*' check (envoyeur ~ '^([a-z0-9_]{2,40}|\\*)$')` : `'*'` est le plafond du canal, tous envoyeurs confondus ; la voie gratuite n'a que des lignes `'*'` (plus de boîte d'envoi) ;"
+        },
+        {
+          "nom": "plafond_jour",
+          "type": "int",
+          "not_null": true,
+          "texte": "`plafond_jour int not null check (plafond_jour between 0 and 300)` : les messages à froid du jour (premiers contacts et relances) ; sur `reponse_privee` et `messagerie`, tous les messages du jour ;"
+        },
+        {
+          "nom": "plafond_nouveaux_jour",
+          "type": "int",
+          "not_null": true,
+          "defaut": "0",
+          "texte": "`plafond_nouveaux_jour int not null default 0 check (plafond_nouveaux_jour between 0 and 300)` : les seuls premiers contacts du jour ;"
+        },
+        {
+          "nom": "maj_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`maj_le` ;"
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "quotas_canaux.canal",
+          "texte": "canal (même liste que `envois`)",
+          "regles": [
+            {
+              "liste": [
+                "canal",
+                [
+                  "instagram",
+                  "facebook",
+                  "linkedin",
+                  "formulaire_site",
+                  "email_sollicite",
+                  "reponse_privee",
+                  "messagerie",
+                  "telephone",
+                  "essai_e2e"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "quotas_canaux.envoyeur",
+          "texte": "envoyeur ~ '^([a-z0-9_]{2,40}|\\*)$'",
+          "regles": [
+            {
+              "contient": "envoyeur ~ '^([a-z0-9_]{2,40}|\\*)$'"
+            }
+          ]
+        },
+        {
+          "id": "quotas_canaux.plafond_jour",
+          "texte": "plafond_jour between 0 and 300",
+          "regles": [
+            {
+              "entre": [
+                "plafond_jour",
+                0,
+                300
+              ]
+            }
+          ]
+        },
+        {
+          "id": "quotas_canaux.plafond_nouveaux_jour",
+          "texte": "plafond_nouveaux_jour between 0 and 300",
+          "regles": [
+            {
+              "entre": [
+                "plafond_nouveaux_jour",
+                0,
+                300
+              ]
+            }
+          ]
+        },
+        {
+          "id": "quotas_canaux.nouveaux_sous_jour",
+          "texte": "plafond_nouveaux_jour <= plafond_jour",
+          "regles": [
+            {
+              "contient": "plafond_nouveaux_jour <= plafond_jour"
+            }
+          ]
+        },
+        {
+          "id": "quotas_canaux.cle",
+          "texte": "primary key (canal, envoyeur)",
+          "regles": [
+            {
+              "contient": "primary key (canal, envoyeur)"
+            }
+          ]
+        }
+      ],
+      "prospection": true
+    },
+    "couts": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.couts`** :",
+      "colonnes": [
+        {
+          "nom": "id",
+          "type": "bigint",
+          "pk": true,
+          "identite": true,
+          "texte": "`id bigint generated always as identity pk` ;"
+        },
+        {
+          "nom": "le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`le timestamptz not null default now()` ;"
+        },
+        {
+          "nom": "agent",
+          "type": "text",
+          "not_null": true,
+          "ref": "ops.agents(nom) on delete cascade",
+          "texte": "`agent text not null references ops.agents(nom) on delete cascade` ;"
+        },
+        {
+          "nom": "fournisseur",
+          "type": "text",
+          "not_null": true,
+          "texte": "`fournisseur text not null` (≤ 40) ;"
+        },
+        {
+          "nom": "montant_eur",
+          "type": "numeric(10,4)",
+          "not_null": true,
+          "texte": "`montant_eur numeric(10,4) not null check (montant_eur >= 0)` ;"
+        },
+        {
+          "nom": "detail",
+          "type": "jsonb",
+          "not_null": true,
+          "defaut": "'{}'",
+          "texte": "`detail jsonb not null default '{}'` (≤ 2048 octets) ;"
+        },
+        {
+          "nom": "tache_id",
+          "type": "uuid",
+          "ref": "ops.taches(id) on delete set null",
+          "texte": "`tache_id uuid references ops.taches(id) on delete set null`."
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "couts.fournisseur",
+          "texte": "fournisseur ≤ 40",
+          "regles": [
+            {
+              "longueur": [
+                "fournisseur",
+                null,
+                40
+              ]
+            }
+          ]
+        },
+        {
+          "id": "couts.montant_eur",
+          "texte": "montant_eur >= 0",
+          "regles": [
+            {
+              "contient": "montant_eur >= 0"
+            }
+          ]
+        },
+        {
+          "id": "couts.detail",
+          "texte": "detail ≤ 2048 octets",
+          "regles": [
+            {
+              "taille_json": [
+                "detail",
+                2048
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "interrupteurs": {
+      "fiche": "026-010",
+      "migration": "0096",
+      "contrat": "- **`ops.interrupteurs`** :",
+      "colonnes": [
+        {
+          "nom": "nom",
+          "type": "text",
+          "pk": true,
+          "texte": "`nom text primary key check (nom in ('pause_generale','envoi_froid'))` : `envoi_froid` fermé, la base refuse tout premier contact et toute relance (0099, 026-034). Benj l'ouvre une fois, depuis la station (carte de 026-117, route de 026-074, fonction `acq_envoi_froid_ouvrir` de 0111 réservée au fondateur, 026-063), au plus tôt le 12/10/2026, après la mesure à sec (026-165), l'épreuve de bout en bout PC éteint (026-163) et la notice vérifiée en ligne (026-162) ;"
+        },
+        {
+          "nom": "actif",
+          "type": "boolean",
+          "not_null": true,
+          "defaut": "false",
+          "texte": "`actif boolean not null default false` ;"
+        },
+        {
+          "nom": "motif",
+          "type": "text",
+          "texte": "`motif` (≤ 200) ;"
+        },
+        {
+          "nom": "change_le",
+          "type": "timestamptz",
+          "texte": "`change_le timestamptz` ;"
+        },
+        {
+          "nom": "change_par",
+          "type": "uuid",
+          "ref": "public.artisans(id) on delete set null",
+          "texte": "`change_par uuid references public.artisans(id) on delete set null`."
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "interrupteurs.nom",
+          "texte": "nom in ('pause_generale','envoi_froid')",
+          "regles": [
+            {
+              "liste": [
+                "nom",
+                [
+                  "pause_generale",
+                  "envoi_froid"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "interrupteurs.motif",
+          "texte": "motif ≤ 200",
+          "regles": [
+            {
+              "longueur": [
+                "motif",
+                null,
+                200
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "argent_messages": {
+      "fiche": "026-036",
+      "migration": "0100",
+      "contrat": "**La table** `ops.argent_messages`, fermée comme en 0096 (RLS sans politique, aucun droit) :",
+      "colonnes": [
+        {
+          "nom": "cle",
+          "type": "text",
+          "pk": true,
+          "texte": "`cle text primary key` (3 à 200) ;"
+        },
+        {
+          "nom": "type",
+          "type": "text",
+          "not_null": true,
+          "texte": "`type text not null check (type in ('commande_payee','essai_e2e'))` ;"
+        },
+        {
+          "nom": "msg_id",
+          "type": "bigint",
+          "texte": "`msg_id bigint` ;"
+        },
+        {
+          "nom": "charge",
+          "type": "jsonb",
+          "not_null": true,
+          "defaut": "'{}'",
+          "texte": "`charge jsonb not null default '{}'` (≤ 4096 octets) ;"
+        },
+        {
+          "nom": "envoye_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`envoye_le timestamptz not null default now()` ;"
+        },
+        {
+          "nom": "lectures",
+          "type": "int",
+          "not_null": true,
+          "defaut": "0",
+          "texte": "`lectures int not null default 0` ;"
+        },
+        {
+          "nom": "fait_le",
+          "type": "timestamptz",
+          "texte": "`fait_le timestamptz` ;"
+        },
+        {
+          "nom": "resultat",
+          "type": "jsonb",
+          "texte": "`resultat jsonb` ;"
+        },
+        {
+          "nom": "abandonne_le",
+          "type": "timestamptz",
+          "texte": "`abandonne_le timestamptz`."
+        }
+      ],
+      "contraintes": [
+        {
+          "id": "argent_messages.cle",
+          "texte": "cle de 3 à 200 signes",
+          "regles": [
+            {
+              "longueur": [
+                "cle",
+                3,
+                200
+              ]
+            }
+          ]
+        },
+        {
+          "id": "argent_messages.type",
+          "texte": "type in ('commande_payee','essai_e2e')",
+          "regles": [
+            {
+              "liste": [
+                "type",
+                [
+                  "commande_payee",
+                  "essai_e2e"
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "id": "argent_messages.charge",
+          "texte": "charge ≤ 4096 octets",
+          "regles": [
+            {
+              "taille_json": [
+                "charge",
+                4096
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "graines": {
+    "contrat": [
+      "- **Graines**, toutes en `on conflict do nothing`, et rien d'autre :",
+      "- `ops.agents` : `('systeme', 'Plomberie SQL', periode_minutes 10080)` et `('a0', 'Veilleur', tables_ecrites '{evenements,decisions}', periode_minutes 5)` ;",
+      "- `ops.quotas_canaux`, en `(canal, envoyeur, plafond_jour, plafond_nouveaux_jour)` : `(instagram, *, 0, 0)`, `(facebook, *, 0, 0)`, `(linkedin, *, 0, 0)`, `(formulaire_site, *, 0, 0)`, `(email_sollicite, *, 50, 0)`, `(reponse_privee, *, 50, 0)`, `(messagerie, *, 100, 0)`, `(essai_e2e, *, 4, 4)`.",
+      "- `ops.interrupteurs` : `('pause_generale', false)`, `('envoi_froid', false)`."
+    ],
+    "agents": [
+      {
+        "nom": "systeme",
+        "libelle": "Plomberie SQL",
+        "periode_minutes": 10080,
+        "tables_ecrites": []
+      },
+      {
+        "nom": "a0",
+        "libelle": "Veilleur",
+        "periode_minutes": 5,
+        "tables_ecrites": [
+          "evenements",
+          "decisions"
+        ]
+      }
+    ],
+    "quotas_canaux": [
+      {
+        "canal": "instagram",
+        "envoyeur": "*",
+        "plafond_jour": 0,
+        "plafond_nouveaux_jour": 0
+      },
+      {
+        "canal": "facebook",
+        "envoyeur": "*",
+        "plafond_jour": 0,
+        "plafond_nouveaux_jour": 0
+      },
+      {
+        "canal": "linkedin",
+        "envoyeur": "*",
+        "plafond_jour": 0,
+        "plafond_nouveaux_jour": 0
+      },
+      {
+        "canal": "formulaire_site",
+        "envoyeur": "*",
+        "plafond_jour": 0,
+        "plafond_nouveaux_jour": 0
+      },
+      {
+        "canal": "email_sollicite",
+        "envoyeur": "*",
+        "plafond_jour": 50,
+        "plafond_nouveaux_jour": 0
+      },
+      {
+        "canal": "reponse_privee",
+        "envoyeur": "*",
+        "plafond_jour": 50,
+        "plafond_nouveaux_jour": 0
+      },
+      {
+        "canal": "messagerie",
+        "envoyeur": "*",
+        "plafond_jour": 100,
+        "plafond_nouveaux_jour": 0
+      },
+      {
+        "canal": "essai_e2e",
+        "envoyeur": "*",
+        "plafond_jour": 4,
+        "plafond_nouveaux_jour": 4
+      }
+    ],
+    "interrupteurs": [
+      {
+        "nom": "pause_generale",
+        "actif": false
+      },
+      {
+        "nom": "envoi_froid",
+        "actif": false
+      }
+    ]
+  },
+  "fonctions": {
+    "ops_agent_enregistrer": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_nom",
+          "text"
+        ],
+        [
+          "p_libelle",
+          "text"
+        ],
+        [
+          "p_capacites",
+          "text[]"
+        ],
+        [
+          "p_types_crees",
+          "text[]"
+        ],
+        [
+          "p_tables",
+          "text[]"
+        ],
+        [
+          "p_periode_minutes",
+          "integer"
+        ],
+        [
+          "p_debit_minute",
+          "integer"
+        ],
+        [
+          "p_quota_creations_jour",
+          "integer"
+        ],
+        [
+          "p_plafond_euros_jour",
+          "numeric"
+        ]
+      ],
+      "rend": "void",
+      "effet": "Insère ou met à jour la fiche d'un agent. Ne touche jamais `jeton_hash`, `battement_le`, `en_pause` ni `disjoncteur_ouvert_le`. Événement `agent_enregistre`",
+      "contrat": "| `ops_agent_enregistrer(p_nom text, p_libelle text, p_capacites text[], p_types_crees text[], p_tables text[], p_periode_minutes integer, p_debit_minute integer, p_quota_creations_jour integer, p_plafond_euros_jour numeric)` | `void` | Insère ou met à jour la fiche d'un agent. Ne touche jamais `jeton_hash`, `battement_le`, `en_pause` ni `disjoncteur_ouvert_le`. Événement `agent_enregistre` |",
+      "ecriture": true,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_agent_poser_jeton": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_nom",
+          "text"
+        ],
+        [
+          "p_hash",
+          "text"
+        ]
+      ],
+      "rend": "void",
+      "effet": "Hash hors format → `ops:jeton_format`. Agent absent ou retiré → `ops:agent_inconnu`. Hash déjà porté par un autre → `ops:jeton_deja_pris`. Pose `jeton_pose_le`. Événement `jeton_pose`, dont le résumé ne contient jamais le hash",
+      "contrat": "| `ops_agent_poser_jeton(p_nom text, p_hash text)` | `void` | Hash hors format → `ops:jeton_format`. Agent absent ou retiré → `ops:agent_inconnu`. Hash déjà porté par un autre → `ops:jeton_deja_pris`. Pose `jeton_pose_le`. Événement `jeton_pose`, dont le résumé ne contient jamais le hash |",
+      "ecriture": true,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_agent_par_jeton": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_hash",
+          "text"
+        ]
+      ],
+      "rend": "table(nom text, capacites text[], types_crees text[], tables_ecrites text[], debit_minute integer, en_pause boolean, disjoncteur_ouvert boolean)",
+      "effet": "Agents non retirés seulement. Lecture, sans événement",
+      "contrat": "| `ops_agent_par_jeton(p_hash text)` | `table(nom text, capacites text[], types_crees text[], tables_ecrites text[], debit_minute integer, en_pause boolean, disjoncteur_ouvert boolean)` | Agents non retirés seulement. Lecture, sans événement |",
+      "ecriture": false,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_agent_retirer": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_nom",
+          "text"
+        ]
+      ],
+      "rend": "void",
+      "effet": "Refuse `systeme` et `a0`. Pour un nom `essai_e2e_…` : effacement complet de l'agent et de tout ce qui cascade, sous `set_config('ops.purge', 'oui', true)`. Sinon : `jeton_hash` à null, `en_pause`, `retire_le`, et un événement",
+      "contrat": "| `ops_agent_retirer(p_nom text)` | `void` | Refuse `systeme` et `a0`. Pour un nom `essai_e2e_…` : effacement complet de l'agent et de tout ce qui cascade, sous `set_config('ops.purge', 'oui', true)`. Sinon : `jeton_hash` à null, `en_pause`, `retire_le`, et un événement |",
+      "ecriture": true,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_agent_pause": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_nom",
+          "text"
+        ],
+        [
+          "p_pause",
+          "boolean"
+        ],
+        [
+          "p_motif",
+          "text"
+        ]
+      ],
+      "rend": "void",
+      "effet": "Pose `en_pause` et `pause_motif`. La reprise (`false`) efface aussi `disjoncteur_ouvert_le`. Événement",
+      "contrat": "| `ops_agent_pause(p_nom text, p_pause boolean, p_motif text)` | `void` | Pose `en_pause` et `pause_motif`. La reprise (`false`) efface aussi `disjoncteur_ouvert_le`. Événement |",
+      "ecriture": true,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_agent_echeance": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_nom",
+          "text"
+        ],
+        [
+          "p_expire_le",
+          "timestamptz"
+        ]
+      ],
+      "rend": "void",
+      "effet": "Pose `jeton_externe_expire_le` (le jeton Meta de A7 dure 60 jours). `p_expire_le` nul est accepté et vide la colonne : jeton sans expiration (`meta-echeance.mjs --jamais`, ou `expires_at: 0` lu par la vigie dans `debug_token`, 026-077). Événement",
+      "contrat": "| `ops_agent_echeance(p_nom text, p_expire_le timestamptz)` | `void` | Pose `jeton_externe_expire_le` (le jeton Meta de A7 dure 60 jours). `p_expire_le` nul est accepté et vide la colonne : jeton sans expiration (`meta-echeance.mjs --jamais`, ou `expires_at: 0` lu par la vigie dans `debug_token`, 026-077). Événement |",
+      "ecriture": true,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_battement": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_nom",
+          "text"
+        ]
+      ],
+      "rend": "timestamptz",
+      "effet": "`battement_le = now()`, pour un agent existant et non retiré. Sans événement, pour ne pas inonder le journal",
+      "contrat": "| `ops_battement(p_nom text)` | `timestamptz` | `battement_le = now()`, pour un agent existant et non retiré. Sans événement, pour ne pas inonder le journal |",
+      "ecriture": false,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_evenement_ajouter": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_agent",
+          "text"
+        ],
+        [
+          "p_type",
+          "text"
+        ],
+        [
+          "p_objet",
+          "text"
+        ],
+        [
+          "p_resume",
+          "text"
+        ],
+        [
+          "p_tache",
+          "uuid"
+        ]
+      ],
+      "rend": "bigint",
+      "effet": "Résumé de 1 à 200 signes, sinon `ops:resume`",
+      "contrat": "| `ops_evenement_ajouter(p_agent text, p_type text, p_objet text, p_resume text, p_tache uuid)` | `bigint` | Résumé de 1 à 200 signes, sinon `ops:resume` |",
+      "ecriture": false,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_evenements_lire": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_agent",
+          "text"
+        ],
+        [
+          "p_apres",
+          "bigint"
+        ],
+        [
+          "p_limite",
+          "integer"
+        ]
+      ],
+      "rend": "table(id bigint, le timestamptz, agent text, type text, objet text, resume text, tache_id uuid)",
+      "effet": "`id > p_apres`, **sans les événements de `p_agent` lui-même** (plan §3.4 : un agent ne réagit jamais à ses propres événements), par `id`, limite bornée à 1-200",
+      "contrat": "| `ops_evenements_lire(p_agent text, p_apres bigint, p_limite integer)` | `table(id bigint, le timestamptz, agent text, type text, objet text, resume text, tache_id uuid)` | `id > p_apres`, **sans les événements de `p_agent` lui-même** (plan §3.4 : un agent ne réagit jamais à ses propres événements), par `id`, limite bornée à 1-200 |",
+      "ecriture": false,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_evenements_purger": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_jours",
+          "integer"
+        ]
+      ],
+      "rend": "integer",
+      "effet": "`p_jours` d'au moins 30, sinon `ops:purge`. Efface les plus anciens sous `ops.purge = 'oui'`",
+      "contrat": "| `ops_evenements_purger(p_jours integer)` | `integer` | `p_jours` d'au moins 30, sinon `ops:purge`. Efface les plus anciens sous `ops.purge = 'oui'` |",
+      "ecriture": false,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_interrupteur": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_nom",
+          "text"
+        ]
+      ],
+      "rend": "boolean",
+      "effet": "Nom inconnu → `ops:interrupteur`",
+      "contrat": "| `ops_interrupteur(p_nom text)` | `boolean` | Nom inconnu → `ops:interrupteur` |",
+      "ecriture": false,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_interrupteur_poser": {
+      "fiche": "026-011",
+      "migration": "0097",
+      "schema": "public",
+      "params": [
+        [
+          "p_nom",
+          "text"
+        ],
+        [
+          "p_actif",
+          "boolean"
+        ],
+        [
+          "p_motif",
+          "text"
+        ],
+        [
+          "p_auteur",
+          "uuid"
+        ]
+      ],
+      "rend": "void",
+      "effet": "`p_auteur` doit être un artisan `is_founder = true`, sinon `ops:auteur`. Motif de 3 à 200 signes. Événement de l'agent `systeme`, type `interrupteur`",
+      "contrat": "| `ops_interrupteur_poser(p_nom text, p_actif boolean, p_motif text, p_auteur uuid)` | `void` | `p_auteur` doit être un artisan `is_founder = true`, sinon `ops:auteur`. Motif de 3 à 200 signes. Événement de l'agent `systeme`, type `interrupteur` |",
+      "ecriture": true,
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_decision_creer": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [
+        [
+          "p_agent",
+          "text"
+        ],
+        [
+          "p_question",
+          "text"
+        ],
+        [
+          "p_contexte",
+          "text"
+        ],
+        [
+          "p_options",
+          "jsonb"
+        ],
+        [
+          "p_defaut",
+          "text"
+        ],
+        [
+          "p_montant_cents",
+          "integer"
+        ],
+        [
+          "p_portee",
+          "text"
+        ],
+        [
+          "p_echeance",
+          "timestamptz"
+        ],
+        [
+          "p_cle",
+          "text"
+        ],
+        [
+          "p_tache",
+          "uuid"
+        ]
+      ],
+      "rend": "table(id uuid, creee boolean)",
+      "effet": "Les options sont 2 ou 3 objets `{cle ^[a-z_]{2,30}$, libelle 1-80, recommandee boolean}`, avec une seule recommandée, sinon `ops:options`. `p_defaut` doit être l'une des clés, sinon `ops:defaut`. L'échéance tombe entre `now() + 1 h` et `now() + 30 jours`, sinon `ops:echeance`. Une clé déjà connue rend la décision existante avec `creee = false`, sans événement",
+      "contrat": "| `ops_decision_creer(p_agent text, p_question text, p_contexte text, p_options jsonb, p_defaut text, p_montant_cents integer, p_portee text, p_echeance timestamptz, p_cle text, p_tache uuid)` | `table(id uuid, creee boolean)` | Les options sont 2 ou 3 objets `{cle ^[a-z_]{2,30}$, libelle 1-80, recommandee boolean}`, avec une seule recommandée, sinon `ops:options`. `p_defaut` doit être l'une des clés, sinon `ops:defaut`. L'échéance tombe entre `now() + 1 h` et `now() + 30 jours`, sinon `ops:echeance`. Une clé déjà connue rend la décision existante avec `creee = false`, sans événement |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_decision_trancher": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [
+        [
+          "p_id",
+          "uuid"
+        ],
+        [
+          "p_choix",
+          "text"
+        ],
+        [
+          "p_auteur",
+          "uuid"
+        ]
+      ],
+      "rend": "void",
+      "effet": "Auteur `is_founder`, sinon `ops:auteur`. Décision encore ouverte, sinon `ops:deja_tranchee`. Choix parmi les clés, sinon `ops:choix`. Événement de `systeme`",
+      "contrat": "| `ops_decision_trancher(p_id uuid, p_choix text, p_auteur uuid)` | `void` | Auteur `is_founder`, sinon `ops:auteur`. Décision encore ouverte, sinon `ops:deja_tranchee`. Choix parmi les clés, sinon `ops:choix`. Événement de `systeme` |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_decisions_tranchees": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [
+        [
+          "p_agent",
+          "text"
+        ],
+        [
+          "p_depuis",
+          "timestamptz"
+        ]
+      ],
+      "rend": "table(id uuid, cle_idempotence text, choix text, tranchee_le timestamptz)",
+      "effet": "Lecture seule, sans événement. Les décisions **créées par `p_agent`** (`creee_par`), au statut `tranchee` ou `defaut_applique`, dont `tranchee_le` est postérieur à `p_depuis` (borné à 30 jours en arrière), triées par `tranchee_le`, 50 au plus. Agent inconnu → `ops:agent_inconnu`. Ni la question ni le contexte : l'agent sait ce qu'il a demandé par sa clé. `ops_decision_trancher` et `ops_decisions_echues` posent `tranchee_le = now()`",
+      "contrat": "| `ops_decisions_tranchees(p_agent text, p_depuis timestamptz)` | `table(id uuid, cle_idempotence text, choix text, tranchee_le timestamptz)` | Lecture seule, sans événement. Les décisions **créées par `p_agent`** (`creee_par`), au statut `tranchee` ou `defaut_applique`, dont `tranchee_le` est postérieur à `p_depuis` (borné à 30 jours en arrière), triées par `tranchee_le`, 50 au plus. Agent inconnu → `ops:agent_inconnu`. Ni la question ni le contexte : l'agent sait ce qu'il a demandé par sa clé. `ops_decision_trancher` et `ops_decisions_echues` posent `tranchee_le = now()` |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_decisions_echues": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [],
+      "rend": "integer",
+      "effet": "Les décisions ouvertes dont l'échéance est passée passent à `defaut_applique`, avec `choix = option_defaut`. Un événement par décision",
+      "contrat": "| `ops_decisions_echues()` | `integer` | Les décisions ouvertes dont l'échéance est passée passent à `defaut_applique`, avec `choix = option_defaut`. Un événement par décision |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_type_sortant": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [
+        [
+          "p_type",
+          "text"
+        ]
+      ],
+      "rend": "boolean",
+      "effet": "Vrai pour `envoi`, `publication` et `mise_en_ligne`",
+      "contrat": "| `ops_type_sortant(p_type text)` | `boolean` (immutable) | Vrai pour `envoi`, `publication` et `mise_en_ligne` |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_tache_creer": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [
+        [
+          "p_agent",
+          "text"
+        ],
+        [
+          "p_type",
+          "text"
+        ],
+        [
+          "p_cle",
+          "text"
+        ],
+        [
+          "p_capacite",
+          "text"
+        ],
+        [
+          "p_charge",
+          "jsonb"
+        ],
+        [
+          "p_origine",
+          "uuid"
+        ],
+        [
+          "p_objet",
+          "text"
+        ]
+      ],
+      "rend": "table(id uuid, creee boolean)",
+      "effet": "Contrôles, dans cet ordre :<br>1. agent existant, non retiré, non en pause, sinon `ops:agent_inconnu` ou `ops:agent_en_pause` ;<br>2. `p_type` dans `types_crees` (sauf pour `systeme`), sinon `ops:type` ;<br>3. **clé déjà connue : la tâche existante est rendue avec `creee = false`**, avant tout quota ;<br>4. origine absente → `ops:origine` ; profondeur du parent + 1 au-delà de 3 → `ops:profondeur` ; 5 enfants déjà → `ops:sous_taches` ;<br>5. créations de l'agent depuis minuit, heure de Paris, déjà au quota → `ops:quota`.<br>Puis insertion avec `sortante = ops_type_sortant(p_type)`, et un événement",
+      "contrat": "| `ops_tache_creer(p_agent text, p_type text, p_cle text, p_capacite text, p_charge jsonb, p_origine uuid, p_objet text)` | `table(id uuid, creee boolean)` | Contrôles, dans cet ordre :<br>1. agent existant, non retiré, non en pause, sinon `ops:agent_inconnu` ou `ops:agent_en_pause` ;<br>2. `p_type` dans `types_crees` (sauf pour `systeme`), sinon `ops:type` ;<br>3. **clé déjà connue : la tâche existante est rendue avec `creee = false`**, avant tout quota ;<br>4. origine absente → `ops:origine` ; profondeur du parent + 1 au-delà de 3 → `ops:profondeur` ; 5 enfants déjà → `ops:sous_taches` ;<br>5. créations de l'agent depuis minuit, heure de Paris, déjà au quota → `ops:quota`.<br>Puis insertion avec `sortante = ops_type_sortant(p_type)`, et un événement |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_tache_prendre": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [
+        [
+          "p_agent",
+          "text"
+        ]
+      ],
+      "rend": "table(id uuid, type text, cle_idempotence text, objet text, capacite text, charge jsonb, tentatives integer, bail_jusqua timestamptz, origine_id uuid, profondeur integer)",
+      "effet": "Agent non en pause et sans disjoncteur ouvert. Prend la plus ancienne tâche en `file` dont la capacité est dans `capacites`, en excluant les tâches `sortante` si `pause_generale` est active. `for update skip locked limit 1`. Passe en `bail`, avec l'agent et `bail_jusqua = now() + interval '30 minutes'`. Événement. Rend 0 ou 1 ligne",
+      "contrat": "| `ops_tache_prendre(p_agent text)` | `table(id uuid, type text, cle_idempotence text, objet text, capacite text, charge jsonb, tentatives integer, bail_jusqua timestamptz, origine_id uuid, profondeur integer)` | Agent non en pause et sans disjoncteur ouvert. Prend la plus ancienne tâche en `file` dont la capacité est dans `capacites`, en excluant les tâches `sortante` si `pause_generale` est active. `for update skip locked limit 1`. Passe en `bail`, avec l'agent et `bail_jusqua = now() + interval '30 minutes'`. Événement. Rend 0 ou 1 ligne |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_tache_rendre": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [
+        [
+          "p_agent",
+          "text"
+        ],
+        [
+          "p_id",
+          "uuid"
+        ],
+        [
+          "p_resultat",
+          "text"
+        ],
+        [
+          "p_preuve_url",
+          "text"
+        ],
+        [
+          "p_erreur",
+          "text"
+        ]
+      ],
+      "rend": "text",
+      "effet": "Il faut `statut = 'bail'`, `agent = p_agent` et `bail_jusqua > now()`, sinon `ops:bail_perdu`.<br>**`faite`** : exige une `p_preuve_url` non vide qui commence par `https://`, `supabase://` ou `git:`, sinon `ops:preuve`.<br>**`echec`** : `tentatives + 1`. Si l'erreur est identique à `derniere_erreur`, ou si `tentatives` atteint 3 : `a_decider`, avec une décision (options `relancer` et `annuler`, défaut `annuler`). Sinon, retour en `file` et agent effacé. `derniere_erreur = left(p_erreur, 500)`.<br>Ensuite, si l'agent compte 3 événements `tache_echec` dans l'heure : `ops_agent_pause`, `disjoncteur_ouvert_le = now()`, et une décision (options `reprendre` et `laisser_en_pause`, défaut `laisser_en_pause`)",
+      "contrat": "| `ops_tache_rendre(p_agent text, p_id uuid, p_resultat text, p_preuve_url text, p_erreur text)` | `text` (le nouveau statut) | Il faut `statut = 'bail'`, `agent = p_agent` et `bail_jusqua > now()`, sinon `ops:bail_perdu`.<br>**`faite`** : exige une `p_preuve_url` non vide qui commence par `https://`, `supabase://` ou `git:`, sinon `ops:preuve`.<br>**`echec`** : `tentatives + 1`. Si l'erreur est identique à `derniere_erreur`, ou si `tentatives` atteint 3 : `a_decider`, avec une décision (options `relancer` et `annuler`, défaut `annuler`). Sinon, retour en `file` et agent effacé. `derniere_erreur = left(p_erreur, 500)`.<br>Ensuite, si l'agent compte 3 événements `tache_echec` dans l'heure : `ops_agent_pause`, `disjoncteur_ouvert_le = now()`, et une décision (options `reprendre` et `laisser_en_pause`, défaut `laisser_en_pause`) |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_tache_clore": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [
+        [
+          "p_agent",
+          "text"
+        ],
+        [
+          "p_cle",
+          "text"
+        ],
+        [
+          "p_preuve_url",
+          "text"
+        ]
+      ],
+      "rend": "text",
+      "effet": "Agent existant et non retiré, sinon `ops:agent_inconnu`. Aucune tâche de clé `p_cle` → rend `absente`, sans erreur ni événement (une commande payée avant le bus n'a pas de tâche). La capacité de la tâche doit figurer dans `capacites` de l'agent, sinon `ops:capacite`. `p_preuve_url` suit la règle de `faite` de `ops_tache_rendre`, sinon `ops:preuve`. Tâche déjà `faite` → rend `faite`, sans rien écrire (le tic peut rejouer). Tâche en `file` ou en `bail` (quel que soit l'agent du bail) → `faite`, `preuve_url` posée, agent et `bail_jusqua` effacés, un événement `tache_close`. Tâche `echec`, `a_decider` ou `annulee` → `ops:statut`. Verrou `for update` sur la ligne",
+      "contrat": "| `ops_tache_clore(p_agent text, p_cle text, p_preuve_url text)` | `text` (le statut après l'appel) | Agent existant et non retiré, sinon `ops:agent_inconnu`. Aucune tâche de clé `p_cle` → rend `absente`, sans erreur ni événement (une commande payée avant le bus n'a pas de tâche). La capacité de la tâche doit figurer dans `capacites` de l'agent, sinon `ops:capacite`. `p_preuve_url` suit la règle de `faite` de `ops_tache_rendre`, sinon `ops:preuve`. Tâche déjà `faite` → rend `faite`, sans rien écrire (le tic peut rejouer). Tâche en `file` ou en `bail` (quel que soit l'agent du bail) → `faite`, `preuve_url` posée, agent et `bail_jusqua` effacés, un événement `tache_close`. Tâche `echec`, `a_decider` ou `annulee` → `ops:statut`. Verrou `for update` sur la ligne |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_baux_expirer": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [],
+      "rend": "integer",
+      "effet": "Chaque tâche en `bail` avec `bail_jusqua < now()` : `tentatives + 1`, agent et `bail_jusqua` effacés, retour en `file`, ou `a_decider` avec sa décision à 3. Un événement `bail_expire` par tâche. Appelée chaque minute par pg_cron (fiche 16) et par le tic",
+      "contrat": "| `ops_baux_expirer()` | `integer` | Chaque tâche en `bail` avec `bail_jusqua < now()` : `tentatives + 1`, agent et `bail_jusqua` effacés, retour en `file`, ou `a_decider` avec sa décision à 3. Un événement `bail_expire` par tâche. Appelée chaque minute par pg_cron (fiche 16) et par le tic |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_cout_ajouter": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [
+        [
+          "p_agent",
+          "text"
+        ],
+        [
+          "p_fournisseur",
+          "text"
+        ],
+        [
+          "p_montant_eur",
+          "numeric"
+        ],
+        [
+          "p_detail",
+          "jsonb"
+        ],
+        [
+          "p_tache",
+          "uuid"
+        ]
+      ],
+      "rend": "numeric",
+      "effet": "Agent absent de `ops.agents` → `ops:agent_inconnu` (jamais une erreur de clé étrangère : les agents opérationnels sont semés par 0105, 026-060). Au-delà de `plafond_euros_jour` : `ops_agent_pause` et une décision de portée `argent` (défaut : laisser en pause)",
+      "contrat": "| `ops_cout_ajouter(p_agent text, p_fournisseur text, p_montant_eur numeric, p_detail jsonb, p_tache uuid)` | `numeric` (total du jour de l'agent) | Agent absent de `ops.agents` → `ops:agent_inconnu` (jamais une erreur de clé étrangère : les agents opérationnels sont semés par 0105, 026-060). Au-delà de `plafond_euros_jour` : `ops_agent_pause` et une décision de portée `argent` (défaut : laisser en pause) |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_etat": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [],
+      "rend": "jsonb",
+      "effet": "Les clés `taches` (compte par statut, et échecs sur 24 h), `agents` (nom, `capacites`, `battement_le`, `periode_minutes`, `en_pause`, disjoncteur, `jeton_externe_expire_le`), `decisions_ouvertes` (5 au plus, triées par montant décroissant puis par échéance, avec id, question, échéance et option par défaut), `interrupteurs`, `couts_mois` et `notifications_jour` (événements de type `notification` depuis minuit, heure de Paris : c'est le compteur du plafond de 3 notifications du veilleur). **Aucune donnée de prospect**",
+      "contrat": "| `ops_etat()` | `jsonb` | Les clés `taches` (compte par statut, et échecs sur 24 h), `agents` (nom, `capacites`, `battement_le`, `periode_minutes`, `en_pause`, disjoncteur, `jeton_externe_expire_le`), `decisions_ouvertes` (5 au plus, triées par montant décroissant puis par échéance, avec id, question, échéance et option par défaut), `interrupteurs`, `couts_mois` et `notifications_jour` (événements de type `notification` depuis minuit, heure de Paris : c'est le compteur du plafond de 3 notifications du veilleur). **Aucune donnée de prospect** |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_stockage_octets": {
+      "fiche": "026-013",
+      "migration": "0098",
+      "schema": "public",
+      "params": [],
+      "rend": "bigint",
+      "effet": "`coalesce(sum((metadata->>'size')::bigint), 0)` sur `storage.objects` [à vérifier : le champ `metadata.size` de Supabase Storage]. Le stockage fait 1 Go et il est partagé (`scripts/site-deposer.mjs:9-10`, `:25`)",
+      "contrat": "| `ops_stockage_octets()` | `bigint` | `coalesce(sum((metadata->>'size')::bigint), 0)` sur `storage.objects` [à vérifier : le champ `metadata.size` de Supabase Storage]. Le stockage fait 1 Go et il est partagé (`scripts/site-deposer.mjs:9-10`, `:25`) |",
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_argent_envoyer": {
+      "fiche": "026-036",
+      "migration": "0100",
+      "schema": "public",
+      "params": [
+        [
+          "p_type",
+          "text"
+        ],
+        [
+          "p_cle",
+          "text"
+        ],
+        [
+          "p_charge",
+          "jsonb"
+        ],
+        [
+          "p_delai_s",
+          "integer"
+        ]
+      ],
+      "rend": "bigint",
+      "effet": "Type hors liste → `ops:type_argent`. `insert … on conflict (cle) do nothing` : si la clé est déjà connue, rend `null` et n'envoie rien. Sinon `pgmq.send('argent', {type, cle, charge}, p_delai_s)`, puis `msg_id` est noté",
+      "contrat": "| `ops_argent_envoyer(p_type text, p_cle text, p_charge jsonb, p_delai_s integer)` | `bigint` ou `null` | Type hors liste → `ops:type_argent`. `insert … on conflict (cle) do nothing` : si la clé est déjà connue, rend `null` et n'envoie rien. Sinon `pgmq.send('argent', {type, cle, charge}, p_delai_s)`, puis `msg_id` est noté |",
+      "search_path": "ops, pgmq, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_argent_lire": {
+      "fiche": "026-036",
+      "migration": "0100",
+      "schema": "public",
+      "params": [
+        [
+          "p_vt_s",
+          "integer"
+        ],
+        [
+          "p_n",
+          "integer"
+        ]
+      ],
+      "rend": "table(msg_id bigint, lectures integer, type text, cle text, charge jsonb, mis_le timestamptz)",
+      "effet": "`p_vt_s` hors 5-3600 → `ops:vt` ; `p_n` borné à 1-10. `pgmq.read('argent', p_vt_s, p_n)`. Pour chaque message :<br>- déjà `fait` : `pgmq.delete`, non rendu ;<br>- `read_ct > 3` : `pgmq.archive`, `abandonne_le`, un événement `argent_abandonne` de `systeme`, non rendu ;<br>- sinon `lectures = read_ct`, rendu",
+      "contrat": "| `ops_argent_lire(p_vt_s integer, p_n integer)` | `table(msg_id bigint, lectures integer, type text, cle text, charge jsonb, mis_le timestamptz)` | `p_vt_s` hors 5-3600 → `ops:vt` ; `p_n` borné à 1-10. `pgmq.read('argent', p_vt_s, p_n)`. Pour chaque message :<br>- déjà `fait` : `pgmq.delete`, non rendu ;<br>- `read_ct > 3` : `pgmq.archive`, `abandonne_le`, un événement `argent_abandonne` de `systeme`, non rendu ;<br>- sinon `lectures = read_ct`, rendu |",
+      "search_path": "ops, pgmq, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_argent_fait": {
+      "fiche": "026-036",
+      "migration": "0100",
+      "schema": "public",
+      "params": [
+        [
+          "p_msg_id",
+          "bigint"
+        ],
+        [
+          "p_cle",
+          "text"
+        ],
+        [
+          "p_resultat",
+          "jsonb"
+        ]
+      ],
+      "rend": "boolean",
+      "effet": "Première marque : `fait_le` et `resultat` posés, `pgmq.delete`, rend `true`. Déjà marqué : `pgmq.delete` si le message existe encore, rend `false`",
+      "contrat": "| `ops_argent_fait(p_msg_id bigint, p_cle text, p_resultat jsonb)` | `boolean` | Première marque : `fait_le` et `resultat` posés, `pgmq.delete`, rend `true`. Déjà marqué : `pgmq.delete` si le message existe encore, rend `false` |",
+      "search_path": "ops, pgmq, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_argent_etat": {
+      "fiche": "026-036",
+      "migration": "0100",
+      "schema": "public",
+      "params": [],
+      "rend": "jsonb",
+      "effet": "`en_file`, `plus_vieux_s` (`pgmq.metrics`), `abandonnes_24h`, `faits_24h`, `non_faits_plus_de_15_min`",
+      "contrat": "| `ops_argent_etat()` | `jsonb` | `en_file`, `plus_vieux_s` (`pgmq.metrics`), `abandonnes_24h`, `faits_24h`, `non_faits_plus_de_15_min` |",
+      "search_path": "ops, pgmq, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_argent_essai_effacer": {
+      "fiche": "026-036",
+      "migration": "0100",
+      "schema": "public",
+      "params": [],
+      "rend": "integer",
+      "effet": "Pour les suites seulement : efface les lignes dont la clé commence par `essai_e2e:` et leurs messages en file",
+      "contrat": "| `ops_argent_essai_effacer()` | `integer` | Pour les suites seulement : efface les lignes dont la clé commence par `essai_e2e:` et leurs messages en file |",
+      "search_path": "ops, pgmq, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops.garde_envois": {
+      "fiche": "026-034",
+      "migration": "0099",
+      "schema": "ops",
+      "params": [],
+      "rend": "trigger",
+      "declencheur": "before insert or update of statut on ops.envois for each row",
+      "contrat": "**1. `ops.garde_envois()`**, déclencheur `before insert or update of statut on ops.envois for each row`.",
+      "droits": "aucun"
+    },
+    "ops.annuler_sur_opposition": {
+      "fiche": "026-034",
+      "migration": "0099",
+      "schema": "ops",
+      "params": [],
+      "rend": "trigger",
+      "declencheur": "after insert or update of expire_le on ops.opposition for each row",
+      "contrat": "**2. `ops.annuler_sur_opposition()`**, déclencheur `after insert or update of expire_le on ops.opposition for each row`, pour une opposition active. Les envois `prepare` ou `approuve` dont le prospect ou le destinataire correspond passent en `annule`, sauf une `confirmation_stop`. Un événement, sans donnée personnelle. **Il ne change pas l'étape du prospect** : cette colonne appartient à la série acquisition (`acq_opposer`).",
+      "droits": "aucun"
+    },
+    "ops_garde_etat": {
+      "fiche": "026-034",
+      "migration": "0099",
+      "schema": "public",
+      "params": [],
+      "rend": "jsonb",
+      "contrat": "**3. `public.ops_garde_etat()`**, qui rend `jsonb`. `security definer`, `service_role` seul. Les clés :",
+      "cles": [
+        "declencheurs",
+        "interrupteurs",
+        "plafonds",
+        "du_jour"
+      ],
+      "search_path": "ops, public, pg_temp",
+      "droits": "service_role"
+    },
+    "ops_horloge_minute": {
+      "fiche": "026-086",
+      "migration": "0101",
+      "schema": "public",
+      "params": [],
+      "rend": "bigint",
+      "contrat": "- **`public.ops_horloge_minute()`** rend `bigint` : l'identifiant de la requête pg_net, ou `null`. `security definer`, `set search_path = ops, public, pg_temp`. Exécutable par **personne** d'autre que son propriétaire : `revoke` de `public`, `anon`, `authenticated` et `service_role`. Son corps, dans cet ordre :",
+      "search_path": "ops, public, pg_temp",
+      "droits": "aucun"
+    },
+    "ops_horloge_etat": {
+      "fiche": "026-086",
+      "migration": "0101",
+      "schema": "public",
+      "params": [
+        [
+          "p_minutes",
+          "integer"
+        ]
+      ],
+      "rend": "jsonb",
+      "contrat": "- **`public.ops_horloge_etat(p_minutes integer)`** rend `jsonb`. `service_role` seul. Les clés :",
+      "cles": [
+        "job_actif",
+        "planning",
+        "secret_present",
+        "executions",
+        "trous",
+        "reponses",
+        "derniere_execution"
+      ],
+      "droits": "service_role"
+    }
+  },
+  "erreurs": {
+    "ops:jeton_format": [
+      "026-011"
+    ],
+    "ops:agent_inconnu": [
+      "026-011",
+      "026-013"
+    ],
+    "ops:jeton_deja_pris": [
+      "026-011"
+    ],
+    "ops:resume": [
+      "026-011"
+    ],
+    "ops:purge": [
+      "026-011"
+    ],
+    "ops:interrupteur": [
+      "026-011"
+    ],
+    "ops:auteur": [
+      "026-011",
+      "026-013"
+    ],
+    "ops:options": [
+      "026-013"
+    ],
+    "ops:defaut": [
+      "026-013"
+    ],
+    "ops:echeance": [
+      "026-013"
+    ],
+    "ops:deja_tranchee": [
+      "026-013"
+    ],
+    "ops:choix": [
+      "026-013"
+    ],
+    "ops:agent_en_pause": [
+      "026-013"
+    ],
+    "ops:type": [
+      "026-013"
+    ],
+    "ops:origine": [
+      "026-013"
+    ],
+    "ops:profondeur": [
+      "026-013"
+    ],
+    "ops:sous_taches": [
+      "026-013"
+    ],
+    "ops:quota": [
+      "026-013",
+      "026-034"
+    ],
+    "ops:bail_perdu": [
+      "026-013"
+    ],
+    "ops:preuve": [
+      "026-013"
+    ],
+    "ops:capacite": [
+      "026-013"
+    ],
+    "ops:statut": [
+      "026-013"
+    ],
+    "ops:pause_generale": [
+      "026-034"
+    ],
+    "ops:opposition": [
+      "026-034"
+    ],
+    "ops:confirmation_stop": [
+      "026-034"
+    ],
+    "ops:rgpd_hors_demande": [
+      "026-034"
+    ],
+    "ops:envoi_froid_ferme": [
+      "026-034"
+    ],
+    "ops:relance_formulaire": [
+      "026-034"
+    ],
+    "ops:formulaire_deja": [
+      "026-034"
+    ],
+    "ops:froid_email_interdit": [
+      "026-034"
+    ],
+    "ops:preuve_demande_absente": [
+      "026-034"
+    ],
+    "ops:90_jours": [
+      "026-034"
+    ],
+    "ops:relance_sollicitee": [
+      "026-034"
+    ],
+    "ops:relance_sans_contact": [
+      "026-034"
+    ],
+    "ops:3_messages": [
+      "026-034"
+    ],
+    "ops:72_heures": [
+      "026-034"
+    ],
+    "ops:quota_reponses": [
+      "026-034"
+    ],
+    "ops:quota_absent": [
+      "026-034"
+    ],
+    "ops:quota_nouveaux": [
+      "026-034"
+    ],
+    "ops:verdicts": [
+      "026-034"
+    ],
+    "ops:type_argent": [
+      "026-036"
+    ],
+    "ops:vt": [
+      "026-036"
+    ]
+  }
+}

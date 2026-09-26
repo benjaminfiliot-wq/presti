@@ -1,0 +1,79 @@
+{
+  "_lisez_moi": "Un relevé du poste (SnapshotCode, 026-017) valide, pour resumeCode et validerSnapshot. publie_le_frais : 10 min avant maintenant ; publie_le_vieux : 3 h avant. verrou_vieux : la tâche en cours depuis 75 min.",
+  "maintenant": "2026-10-14T10:00:00.000Z",
+  "publie_le_frais": "2026-10-14T09:50:00.000Z",
+  "publie_le_vieux": "2026-10-14T07:00:00.000Z",
+  "verrou_vieux": "099-temoin-c",
+  "releve": {
+    "version": 1,
+    "genere_le": "2026-10-14T09:50:00.000Z",
+    "file": [
+      "099-temoin-a",
+      "099-temoin-b"
+    ],
+    "en_cours": [
+      {
+        "id": "099-temoin-c",
+        "agent": "codex-temoin",
+        "depuis": "2026-10-14T08:45:00.000Z"
+      },
+      {
+        "id": "099-temoin-d",
+        "agent": "antigravity-temoin",
+        "depuis": "2026-10-14T09:30:00.000Z"
+      }
+    ],
+    "fait": 3,
+    "refusees": 1,
+    "derniers": [
+      {
+        "id": "099-temoin-f",
+        "verdict": "PASS",
+        "date": "2026-10-14T05:00:00.000Z",
+        "executant": "codex",
+        "ligne": ""
+      },
+      {
+        "id": "099-temoin-g",
+        "verdict": "FAIL",
+        "date": "2026-10-14T06:00:00.000Z",
+        "executant": "codex",
+        "ligne": "❌ XX-2 essai Témoin"
+      },
+      {
+        "id": "099-temoin-g",
+        "verdict": "PASS",
+        "date": "2026-10-14T07:00:00.000Z",
+        "executant": "codex",
+        "ligne": ""
+      },
+      {
+        "id": "099-temoin-h",
+        "verdict": "PASS",
+        "date": "2026-10-14T08:00:00.000Z",
+        "executant": "antigravity",
+        "ligne": ""
+      },
+      {
+        "id": "099-temoin-i",
+        "verdict": "REFUSÉE",
+        "date": "2026-10-14T09:00:00.000Z",
+        "executant": "codex",
+        "ligne": "en-tête : champ obligatoire absent ou vide : verifier"
+      }
+    ],
+    "prs": [
+      {
+        "numero": 12,
+        "titre": "Témoin : essai de relevé",
+        "depuis": "2026-10-12T10:00:00.000Z",
+        "brouillon": false
+      }
+    ],
+    "attention": [
+      "🔴 099-temoin-e disjonctée après 3 échecs : `node scripts/orchestre.mjs rejouer 099-temoin-e`",
+      "🟠 verrou de 099-temoin-c pris depuis 75 min : `node scripts/orchestre.mjs liberer 099-temoin-c`",
+      "🟡 question en attente sur 099-temoin-d : `node scripts/orchestre.mjs repondre 099-temoin-d 1`"
+    ]
+  }
+}

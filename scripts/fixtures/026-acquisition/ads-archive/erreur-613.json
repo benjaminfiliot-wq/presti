@@ -1,0 +1,14 @@
+{
+ "_cas": "JF-11 : débit → non_verifiable, bilan meta: limite",
+ "_reponse": {
+  "statut": 400,
+  "corps": {
+   "error": {
+    "message": "Calls to this api have exceeded the rate limit (Témoin).",
+    "type": "OAuthException",
+    "code": 613,
+    "fbtrace_id": "ATemoin613"
+   }
+  }
+ }
+}

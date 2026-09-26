@@ -1,0 +1,55 @@
+{
+ "_cas": "S8 — COUVERTURE TÉMOIN CAPTCHA",
+ "results": [
+  {
+   "siren": "900000084",
+   "nom_complet": "COUVERTURE TÉMOIN CAPTCHA",
+   "nom_raison_sociale": "COUVERTURE TÉMOIN CAPTCHA",
+   "sigle": null,
+   "nombre_etablissements": 1,
+   "nombre_etablissements_ouverts": 1,
+   "siege": {
+    "activite_principale": "43.91B",
+    "adresse": "12 RUE DU TÉMOIN 16000 ANGOULEME",
+    "code_postal": "16000",
+    "commune": "16015",
+    "date_creation": "2012-03-01",
+    "departement": null,
+    "est_siege": true,
+    "etat_administratif": "A",
+    "libelle_commune": "ANGOULEME",
+    "siret": "90000008400013",
+    "tranche_effectif_salarie": "02"
+   },
+   "activite_principale": "43.91B",
+   "categorie_entreprise": "PME",
+   "date_creation": "2012-03-01",
+   "date_mise_a_jour": "2026-09-01T00:00:00",
+   "dirigeants": [
+    {
+     "nom": "MARTIN TÉMOIN",
+     "prenoms": "PAUL",
+     "annee_de_naissance": "1971",
+     "date_de_naissance": "1971-04",
+     "qualite": "Gérant",
+     "nationalite": "Française",
+     "type_dirigeant": "personne physique"
+    }
+   ],
+   "etat_administratif": "A",
+   "nature_juridique": "5499",
+   "section_activite_principale": "F",
+   "tranche_effectif_salarie": "02",
+   "statut_diffusion": "O",
+   "complements": {
+    "est_entrepreneur_individuel": false,
+    "est_ess": false,
+    "est_rge": true
+   }
+  }
+ ],
+ "total_results": 1,
+ "page": 1,
+ "per_page": 1,
+ "total_pages": 1
+}

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact – Artisan Témoin reCAPTCHA v3</title>
+<script src="https://www.recaptcha.invalid/recaptcha/api.js?render=6LcTEMOINv3"></script>
+</head>
+<body>
+<header><nav><a href="/">Accueil</a> <a href="/realisations">Nos réalisations</a> <a href="/contact">Contact</a> <a href="/mentions-legales">Mentions légales</a> <a href="/cgu">Conditions générales d'utilisation</a></nav></header>
+<main>
+<h1>Contactez Artisan Témoin reCAPTCHA v3</h1>
+<form action="/contact/envoyer" method="post" class="formulaire-contact">
+<p><label for="nom">Votre nom</label> <input type="text" id="nom" name="nom" maxlength="80" required></p>
+<p><label for="email">Votre e-mail</label> <input type="email" id="email" name="email" maxlength="120" required></p>
+<p><label for="message">Votre message</label> <textarea id="message" name="message" rows="8" required></textarea></p>
+<input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+<script>grecaptcha.ready(function () { grecaptcha.execute('6LcTEMOINv3', { action: 'contact' }).then(function (j) { document.getElementById('g-recaptcha-response').value = j }) })</script>
+<p><button type="submit">Envoyer</button></p>
+</form>
+</main>
+<footer>
+<p>© 2026 Témoin</p>
+</footer>
+</body>
+</html>

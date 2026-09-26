@@ -1,0 +1,52 @@
+{
+ "_": "p95 (rang le plus proche) attendus de chaque jeu sur ses propres lignes (fenêtre de 7 jours finissant à fin, exclue) ; verdict : incomplet sous 1 440 mesures, sinon danger si le plus grand p95 < 22, approche s'il est < 30, ok au-delà (SV-4, SV-5). Écrit par Claude Code avec generer.mjs, recalculé par le juge.",
+ "fin": "2026-09-20T22:00:00.000Z",
+ "ok": {
+  "n": 10080,
+  "cpu": 41,
+  "mem": 18.5,
+  "res": 2.4,
+  "verdict": "ok",
+  "moyennes_pour_memoire": {
+   "cpu": 22.9,
+   "mem": 12.8,
+   "res": 1.8
+  }
+ },
+ "approche": {
+  "n": 10080,
+  "cpu": 29.6,
+  "mem": 24.3,
+  "res": 22.5,
+  "verdict": "approche",
+  "moyennes_pour_memoire": {
+   "cpu": 17,
+   "mem": 15.8,
+   "res": 12.2
+  }
+ },
+ "danger": {
+  "n": 10080,
+  "cpu": 21.4,
+  "mem": 19.8,
+  "res": 3.1,
+  "verdict": "danger",
+  "moyennes_pour_memoire": {
+   "cpu": 12.8,
+   "mem": 13.5,
+   "res": 2.2
+  }
+ },
+ "incomplet": {
+  "n": 1200,
+  "cpu": 35.2,
+  "mem": 20.1,
+  "res": 1.8,
+  "verdict": "incomplet",
+  "moyennes_pour_memoire": {
+   "cpu": 20.1,
+   "mem": 13.6,
+   "res": 1.5
+  }
+ }
+}

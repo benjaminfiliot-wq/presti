@@ -1,0 +1,489 @@
+[
+ {
+  "nom": "C1 conforme (ademe_rge, SIREN d'abord, Contact Form 7)",
+  "candidat": {
+   "cle_dedup": "siren:900000019",
+   "source": "ademe_rge",
+   "cible": "artisan",
+   "siren": "900000019",
+   "domaine": "temoin-conforme.invalid",
+   "entreprise": "PLOMBERIE TÉMOIN CONFORME",
+   "code_postal": "79000",
+   "commune": "NIORT",
+   "faits": [],
+   "canaux": [],
+   "froid": true
+  },
+  "apres_a8": {
+   "etape": "recense",
+   "siren": "900000019",
+   "metier": "plombier",
+   "cible": "artisan",
+   "froid": true,
+   "canal": {
+    "canal": "formulaire_site",
+    "valeur": "https://temoin-conforme.invalid/contact"
+   },
+   "technologie": "contact_form_7"
+  },
+  "recense": {
+   "siren": "900000019",
+   "naf": "43.22A",
+   "metier": "plombier",
+   "commune": "NIORT",
+   "departement": "79",
+   "code_postal": "79000",
+   "faits": [
+    {
+     "id": "8032b1f9cfff2633",
+     "type": "site_titre",
+     "extrait": "Plomberie Témoin Conforme – Plombier chauffagiste à Niort",
+     "url": "https://temoin-conforme.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "d3bfeb71176d7508",
+     "type": "site_h1",
+     "extrait": "Votre plombier chauffagiste à Niort depuis 1998",
+     "url": "https://temoin-conforme.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "0aee784bd9e14564",
+     "type": "site_intertitre",
+     "extrait": "Dépannage de fuites en moins de deux heures",
+     "url": "https://temoin-conforme.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "2d393a21a9244468",
+     "type": "site_intertitre",
+     "extrait": "Pose de chaudières à condensation",
+     "url": "https://temoin-conforme.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "4221d47d874cae31",
+     "type": "site_intertitre",
+     "extrait": "Rénovation complète de salles de bains",
+     "url": "https://temoin-conforme.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    }
+   ],
+   "canaux": [
+    {
+     "canal": "formulaire_site",
+     "valeur": "https://temoin-conforme.invalid/contact",
+     "url_source": "https://temoin-conforme.invalid/contact"
+    },
+    {
+     "canal": "instagram",
+     "valeur": "temoin.plomberie",
+     "url_source": "https://temoin-conforme.invalid/"
+    },
+    {
+     "canal": "facebook",
+     "valeur": "TemoinPlomberie",
+     "url_source": "https://temoin-conforme.invalid/"
+    }
+   ],
+   "formulaire": {
+    "url_page": "https://temoin-conforme.invalid/contact",
+    "url_action": "https://temoin-conforme.invalid/contact/envoyer",
+    "methode": "post",
+    "champs": [
+     {
+      "nom": "your-name",
+      "type": "text",
+      "requis": true,
+      "max": 80
+     },
+     {
+      "nom": "your-email",
+      "type": "email",
+      "requis": true,
+      "max": 120
+     },
+     {
+      "nom": "your-tel",
+      "type": "tel",
+      "requis": false,
+      "max": 20
+     },
+     {
+      "nom": "your-message",
+      "type": "textarea",
+      "requis": true
+     }
+    ],
+    "motifs": [],
+    "technologie": "contact_form_7",
+    "telephone_requis": false,
+    "longueur_max_message": null
+   },
+   "technologie": "contact_form_7"
+  },
+  "apres_j1": {
+   "etape": "verifie"
+  }
+ },
+ {
+  "nom": "C2 diffusion partielle (ademe_rge : SIRENE d'abord, aucune lecture du site)",
+  "candidat": {
+   "cle_dedup": "siren:900000027",
+   "source": "ademe_rge",
+   "cible": "artisan",
+   "siren": "900000027",
+   "domaine": "temoin-diffusion.invalid",
+   "entreprise": "PLOMBERIE TÉMOIN DIFFUSION",
+   "code_postal": "79000",
+   "faits": [],
+   "canaux": [],
+   "froid": true
+  },
+  "apres_a8": {
+   "etape": "rejete",
+   "raison": "diffusion_partielle",
+   "sans_requete_vers": "temoin-diffusion.invalid"
+  },
+  "apres_j1": {
+   "etape": "rejete"
+  }
+ },
+ {
+  "nom": "C3 robots.txt fermé à PrestiRecenseur",
+  "candidat": {
+   "cle_dedup": "siren:900000035",
+   "source": "ademe_rge",
+   "cible": "artisan",
+   "siren": "900000035",
+   "domaine": "temoin-robots-ferme.invalid",
+   "entreprise": "MENUISERIE TÉMOIN FERMÉE",
+   "code_postal": "86000",
+   "faits": [],
+   "canaux": [],
+   "froid": true
+  },
+  "apres_a8": {
+   "etape": "rejete",
+   "raison": "formulaire_robots_txt"
+  },
+  "apres_j1": {
+   "etape": "rejete"
+  }
+ },
+ {
+  "nom": "C4 sans domaine ni page",
+  "candidat": {
+   "cle_dedup": "siren:900000043",
+   "source": "manuel",
+   "cible": "artisan",
+   "siren": "900000043",
+   "entreprise": "PEINTURE TÉMOIN SANS CANAL",
+   "code_postal": "17000",
+   "faits": [],
+   "canaux": [],
+   "froid": true
+  },
+  "apres_a8": {
+   "etape": "sans_canal"
+  },
+  "apres_j1": {
+   "etape": "sans_canal"
+  }
+ },
+ {
+  "nom": "C5 en opposition (posée après l'enregistrement, avant le recenseur)",
+  "candidat": {
+   "cle_dedup": "domaine:temoin-oppose.invalid",
+   "source": "meta",
+   "cible": "artisan",
+   "domaine": "temoin-oppose.invalid",
+   "page_meta": "100000000000005",
+   "entreprise": "Plaquiste Témoin Opposé",
+   "faits": [],
+   "canaux": [],
+   "froid": true
+  },
+  "opposition": {
+   "domaine": "temoin-oppose.invalid",
+   "motif": "stop"
+  },
+  "apres_a8": {
+   "etape": "oppose",
+   "sans_requete_vers": "temoin-oppose.invalid"
+  },
+  "apres_j1": {
+   "etape": "oppose"
+  }
+ },
+ {
+  "nom": "C6 proche (la page s'appelle « Témoin Filiot »), formulaire nu",
+  "candidat": {
+   "cle_dedup": "domaine:temoin-poitevine.invalid",
+   "source": "manuel",
+   "cible": "artisan",
+   "domaine": "temoin-poitevine.invalid",
+   "entreprise": "Électricité Témoin Poitevine",
+   "code_postal": "86000",
+   "faits": [],
+   "canaux": [],
+   "froid": true
+  },
+  "apres_a8": {
+   "etape": "recense",
+   "siren": "900000068",
+   "metier": "electricien",
+   "cible": "artisan",
+   "froid": false,
+   "canal": {
+    "canal": "formulaire_site",
+    "valeur": "https://temoin-poitevine.invalid/contact"
+   },
+   "technologie": "html"
+  },
+  "recense": {
+   "siren": "900000068",
+   "naf": "43.21A",
+   "metier": "electricien",
+   "commune": "POITIERS",
+   "departement": "86",
+   "code_postal": "86000",
+   "froid": false,
+   "faits": [
+    {
+     "id": "aee7f85846ca9abf",
+     "type": "site_titre",
+     "extrait": "Témoin Filiot",
+     "url": "https://temoin-poitevine.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "5a4feab293ce96d7",
+     "type": "site_h1",
+     "extrait": "Électricité générale et dépannage à Poitiers",
+     "url": "https://temoin-poitevine.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "2865c498e7913e01",
+     "type": "site_intertitre",
+     "extrait": "Mise aux normes de tableaux électriques",
+     "url": "https://temoin-poitevine.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "d0aab0e03486b381",
+     "type": "site_intertitre",
+     "extrait": "Installation de bornes de recharge",
+     "url": "https://temoin-poitevine.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "5d1d3831fa67cd1b",
+     "type": "site_intertitre",
+     "extrait": "Dépannage électrique sous vingt-quatre heures",
+     "url": "https://temoin-poitevine.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    }
+   ],
+   "canaux": [
+    {
+     "canal": "formulaire_site",
+     "valeur": "https://temoin-poitevine.invalid/contact",
+     "url_source": "https://temoin-poitevine.invalid/contact"
+    },
+    {
+     "canal": "instagram",
+     "valeur": "temoin.poitevine",
+     "url_source": "https://temoin-poitevine.invalid/"
+    }
+   ],
+   "formulaire": {
+    "url_page": "https://temoin-poitevine.invalid/contact",
+    "url_action": "https://temoin-poitevine.invalid/contact/envoyer",
+    "methode": "post",
+    "champs": [
+     {
+      "nom": "nom",
+      "type": "text",
+      "requis": true,
+      "max": 80
+     },
+     {
+      "nom": "email",
+      "type": "email",
+      "requis": true,
+      "max": 120
+     },
+     {
+      "nom": "message",
+      "type": "textarea",
+      "requis": true
+     }
+    ],
+    "motifs": [],
+    "technologie": "html",
+    "telephone_requis": false,
+    "longueur_max_message": null
+   },
+   "technologie": "html"
+  },
+  "apres_j1": {
+   "etape": "verifie"
+  }
+ },
+ {
+  "nom": "C7 marque du Studio (NAF 47.11F, tranche 11), fait pub_meta apporté par la vigie",
+  "candidat": {
+   "cle_dedup": "page_meta:100000000000007",
+   "source": "meta",
+   "cible": "marque",
+   "domaine": "temoin-marque.invalid",
+   "page_meta": "100000000000007",
+   "entreprise": "Boutique Témoin Marque",
+   "produit": "bougie parfumée",
+   "faits": [
+    {
+     "id": "a1974280dfe5ab35",
+     "type": "pub_meta",
+     "extrait": "Nos bougies Témoin coulées à la main à Nantes",
+     "url": "https://www.facebook.com/ads/library/?id=120000000000001",
+     "lu_le": "2026-10-14T08:00:00.000Z",
+     "annonce_id": "120000000000001",
+     "page_id": "100000000000007"
+    }
+   ],
+   "canaux": [],
+   "froid": true
+  },
+  "apres_a8": {
+   "etape": "recense",
+   "siren": "900000076",
+   "cible": "marque",
+   "canal": {
+    "canal": "formulaire_site",
+    "valeur": "https://temoin-marque.invalid/contact"
+   },
+   "technologie": "html",
+   "faits_conserves": [
+    "a1974280dfe5ab35"
+   ]
+  },
+  "recense": {
+   "siren": "900000076",
+   "naf": "47.11F",
+   "metier": null,
+   "commune": "NANTES",
+   "departement": "44",
+   "code_postal": "44000",
+   "faits": [
+    {
+     "id": "a1974280dfe5ab35",
+     "type": "pub_meta",
+     "extrait": "Nos bougies Témoin coulées à la main à Nantes",
+     "url": "https://www.facebook.com/ads/library/?id=120000000000001",
+     "lu_le": "2026-10-14T08:00:00.000Z",
+     "annonce_id": "120000000000001",
+     "page_id": "100000000000007"
+    },
+    {
+     "id": "60598568a213d18c",
+     "type": "site_titre",
+     "extrait": "Boutique Témoin Marque – Bougies coulées à la main",
+     "url": "https://temoin-marque.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "9aa3263f28a812f5",
+     "type": "site_h1",
+     "extrait": "Bougies parfumées coulées à la main à Nantes",
+     "url": "https://temoin-marque.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "9b80cf32c008e8f9",
+     "type": "site_intertitre",
+     "extrait": "Des cires végétales choisies une à une",
+     "url": "https://temoin-marque.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "1c0a42ce3ed8f3ea",
+     "type": "site_intertitre",
+     "extrait": "Livraison offerte dès trois bougies",
+     "url": "https://temoin-marque.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    },
+    {
+     "id": "c617a41052af6b8f",
+     "type": "site_intertitre",
+     "extrait": "Un atelier ouvert le samedi matin",
+     "url": "https://temoin-marque.invalid/",
+     "lu_le": "2026-10-14T08:00:00.000Z"
+    }
+   ],
+   "canaux": [
+    {
+     "canal": "formulaire_site",
+     "valeur": "https://temoin-marque.invalid/contact",
+     "url_source": "https://temoin-marque.invalid/contact"
+    }
+   ],
+   "formulaire": {
+    "url_page": "https://temoin-marque.invalid/contact",
+    "url_action": "https://temoin-marque.invalid/contact/envoyer",
+    "methode": "post",
+    "champs": [
+     {
+      "nom": "nom",
+      "type": "text",
+      "requis": true,
+      "max": 80
+     },
+     {
+      "nom": "email",
+      "type": "email",
+      "requis": true,
+      "max": 120
+     },
+     {
+      "nom": "message",
+      "type": "textarea",
+      "requis": true
+     }
+    ],
+    "motifs": [],
+    "technologie": "html",
+    "telephone_requis": false,
+    "longueur_max_message": null
+   },
+   "technologie": "html"
+  },
+  "apres_j1": {
+   "etape": "verifie"
+  }
+ },
+ {
+  "nom": "C8 formulaire à reCAPTCHA v2 (ademe_rge)",
+  "candidat": {
+   "cle_dedup": "siren:900000084",
+   "source": "ademe_rge",
+   "cible": "artisan",
+   "siren": "900000084",
+   "domaine": "temoin-recaptcha-v2.invalid",
+   "entreprise": "COUVERTURE TÉMOIN CAPTCHA",
+   "code_postal": "16000",
+   "faits": [],
+   "canaux": [],
+   "froid": true
+  },
+  "apres_a8": {
+   "etape": "rejete",
+   "raison": "formulaire_captcha"
+  },
+  "apres_j1": {
+   "etape": "rejete"
+  }
+ }
+]

@@ -1,0 +1,418 @@
+{
+  "_lisez_moi": "Jeu d’essai de pilotage-logique-qa --partie=decider (026-012, critères DC de 026-014). Instant figé : maintenant. valides : 8 décisions au contrat de pilotage_decisions, mélangées ; ordre_attendu : leur ordre après trierDecisions (montant décroissant, nul compté 0, puis échéance croissante, nulle en dernier, puis cree_le) ; epinglee : la 7e de cet ordre. fautives : 6 décisions, chacune avec la faute qu’elle porte (fautes).",
+  "maintenant": "2026-10-14T10:00:00.000Z",
+  "valides": [
+    {
+      "id": "d0000006-0000-4000-8000-000000000006",
+      "question": "Changer l’heure du digest (Témoin) ?",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "envoyer_devis",
+          "libelle": "Envoyer le devis",
+          "recommandee": false
+        },
+        {
+          "cle": "rien",
+          "libelle": "Ne rien envoyer",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "rien",
+      "montant_cents": null,
+      "portee": "aucune",
+      "echeance": "2026-10-14T13:00:00.000Z",
+      "cree_le": "2026-10-14T09:00:00.000Z",
+      "creee_par": "chef"
+    },
+    {
+      "id": "d0000003-0000-4000-8000-000000000003",
+      "question": "Relancer le paiement de Témoin Couverture ?",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "envoyer_devis",
+          "libelle": "Envoyer le devis",
+          "recommandee": false
+        },
+        {
+          "cle": "rien",
+          "libelle": "Ne rien envoyer",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "rien",
+      "montant_cents": 12000,
+      "portee": "aucune",
+      "echeance": null,
+      "cree_le": "2026-10-14T02:00:00.000Z",
+      "creee_par": "chef"
+    },
+    {
+      "id": "d0000008-0000-4000-8000-000000000008",
+      "question": "Garder l’agent Témoin en pause ?",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "envoyer_devis",
+          "libelle": "Envoyer le devis",
+          "recommandee": false
+        },
+        {
+          "cle": "rien",
+          "libelle": "Ne rien envoyer",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "rien",
+      "montant_cents": 0,
+      "portee": "aucune",
+      "echeance": null,
+      "cree_le": "2026-10-14T06:00:00.000Z",
+      "creee_par": "chef"
+    },
+    {
+      "id": "d0000001-0000-4000-8000-000000000001",
+      "question": "Rembourser la commande de Témoin Plomberie ?",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "envoyer_devis",
+          "libelle": "Envoyer le devis",
+          "recommandee": false
+        },
+        {
+          "cle": "rien",
+          "libelle": "Ne rien envoyer",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "rien",
+      "montant_cents": 50000,
+      "portee": "argent",
+      "echeance": "2026-10-14T12:00:00.000Z",
+      "cree_le": "2026-10-14T05:00:00.000Z",
+      "creee_par": "tresorier"
+    },
+    {
+      "id": "d0000005-0000-4000-8000-000000000005",
+      "question": "Essayer la variante B du message (Témoin) ?",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "payer",
+          "libelle": "Payer maintenant",
+          "recommandee": false
+        },
+        {
+          "cle": "attendre",
+          "libelle": "Attendre une semaine",
+          "recommandee": true
+        },
+        {
+          "cle": "refuser",
+          "libelle": "Refuser",
+          "recommandee": false
+        }
+      ],
+      "option_defaut": "attendre",
+      "montant_cents": 0,
+      "portee": "aucune",
+      "echeance": "2026-10-14T11:00:00.000Z",
+      "cree_le": "2026-10-14T08:00:00.000Z",
+      "creee_par": "chef"
+    },
+    {
+      "id": "d0000007-0000-4000-8000-000000000007",
+      "question": "Réponse de Témoin Menuiserie à lire : comment la classer ?",
+      "contexte": "« Combien pour un site ? » (Témoin)",
+      "options": [
+        {
+          "cle": "prix",
+          "libelle": "Prix",
+          "recommandee": false
+        },
+        {
+          "cle": "appel",
+          "libelle": "Appel",
+          "recommandee": false
+        },
+        {
+          "cle": "interesse",
+          "libelle": "Intéressé",
+          "recommandee": false
+        },
+        {
+          "cle": "pas_interesse",
+          "libelle": "Pas intéressé",
+          "recommandee": false
+        },
+        {
+          "cle": "stop",
+          "libelle": "STOP",
+          "recommandee": false
+        },
+        {
+          "cle": "autre",
+          "libelle": "Autre",
+          "recommandee": false
+        },
+        {
+          "cle": "ignorer",
+          "libelle": "Ignorer",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "ignorer",
+      "montant_cents": 0,
+      "portee": "aucune",
+      "echeance": null,
+      "cree_le": "2026-10-14T04:00:00.000Z",
+      "creee_par": "standardiste"
+    },
+    {
+      "id": "d0000002-0000-4000-8000-000000000002",
+      "question": "Couper l’accès de l’agent Témoin ?",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "payer",
+          "libelle": "Payer maintenant",
+          "recommandee": false
+        },
+        {
+          "cle": "attendre",
+          "libelle": "Attendre une semaine",
+          "recommandee": true
+        },
+        {
+          "cle": "refuser",
+          "libelle": "Refuser",
+          "recommandee": false
+        }
+      ],
+      "option_defaut": "attendre",
+      "montant_cents": 50000,
+      "portee": "securite",
+      "echeance": "2026-10-14T15:00:00.000Z",
+      "cree_le": "2026-10-14T03:00:00.000Z",
+      "creee_par": "veilleur"
+    },
+    {
+      "id": "d0000004-0000-4000-8000-000000000004",
+      "question": "Publier la page de Témoin Électricité ?",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "envoyer_devis",
+          "libelle": "Envoyer le devis",
+          "recommandee": false
+        },
+        {
+          "cle": "rien",
+          "libelle": "Ne rien envoyer",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "rien",
+      "montant_cents": null,
+      "portee": "aucune",
+      "echeance": "2026-10-14T11:00:00.000Z",
+      "cree_le": "2026-10-14T07:00:00.000Z",
+      "creee_par": "chef"
+    }
+  ],
+  "ordre_attendu": [
+    "d0000001-0000-4000-8000-000000000001",
+    "d0000002-0000-4000-8000-000000000002",
+    "d0000003-0000-4000-8000-000000000003",
+    "d0000004-0000-4000-8000-000000000004",
+    "d0000005-0000-4000-8000-000000000005",
+    "d0000006-0000-4000-8000-000000000006",
+    "d0000007-0000-4000-8000-000000000007",
+    "d0000008-0000-4000-8000-000000000008"
+  ],
+  "epinglee": "d0000007-0000-4000-8000-000000000007",
+  "roles": {
+    "argent": "d0000001-0000-4000-8000-000000000001",
+    "securite": "d0000002-0000-4000-8000-000000000002",
+    "sans_enjeu": "d0000005-0000-4000-8000-000000000005",
+    "lire_standard": "d0000007-0000-4000-8000-000000000007",
+    "deux_options": "d0000001-0000-4000-8000-000000000001",
+    "trois_options": "d0000002-0000-4000-8000-000000000002",
+    "sept_options": "d0000007-0000-4000-8000-000000000007"
+  },
+  "fautives": [
+    {
+      "id": "d0000065-0000-4000-8000-000000000065",
+      "question": "Décision fautive (Témoin)",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "seule",
+          "libelle": "Seule option",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "seule",
+      "montant_cents": 999999,
+      "portee": "aucune",
+      "echeance": "2026-10-14T10:30:00.000Z",
+      "cree_le": "2026-10-14T01:00:00.000Z",
+      "creee_par": "chef"
+    },
+    {
+      "id": "d0000066-0000-4000-8000-000000000066",
+      "question": "Décision fautive (Témoin)",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "prix",
+          "libelle": "Prix",
+          "recommandee": true
+        },
+        {
+          "cle": "appel",
+          "libelle": "Appel",
+          "recommandee": false
+        },
+        {
+          "cle": "interesse",
+          "libelle": "Intéressé",
+          "recommandee": false
+        },
+        {
+          "cle": "pas_interesse",
+          "libelle": "Pas intéressé",
+          "recommandee": false
+        },
+        {
+          "cle": "stop",
+          "libelle": "STOP",
+          "recommandee": false
+        },
+        {
+          "cle": "autre",
+          "libelle": "Autre",
+          "recommandee": false
+        },
+        {
+          "cle": "ignorer",
+          "libelle": "Ignorer",
+          "recommandee": false
+        },
+        {
+          "cle": "huitieme",
+          "libelle": "Huitième option",
+          "recommandee": false
+        }
+      ],
+      "option_defaut": "prix",
+      "montant_cents": 999999,
+      "portee": "aucune",
+      "echeance": "2026-10-14T10:30:00.000Z",
+      "cree_le": "2026-10-14T01:00:00.000Z",
+      "creee_par": "chef"
+    },
+    {
+      "id": "d0000067-0000-4000-8000-000000000067",
+      "question": "Décision fautive (Témoin)",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "rien",
+          "libelle": "Ne rien faire",
+          "recommandee": false
+        },
+        {
+          "cle": "rien",
+          "libelle": "Ne rien envoyer",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "rien",
+      "montant_cents": 999999,
+      "portee": "aucune",
+      "echeance": "2026-10-14T10:30:00.000Z",
+      "cree_le": "2026-10-14T01:00:00.000Z",
+      "creee_par": "chef"
+    },
+    {
+      "id": "d0000068-0000-4000-8000-000000000068",
+      "question": "Décision fautive (Témoin)",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "envoyer_devis",
+          "libelle": "Envoyer le devis",
+          "recommandee": false
+        },
+        {
+          "cle": "rien",
+          "libelle": "Ne rien envoyer",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "inconnue",
+      "montant_cents": 999999,
+      "portee": "aucune",
+      "echeance": "2026-10-14T10:30:00.000Z",
+      "cree_le": "2026-10-14T01:00:00.000Z",
+      "creee_par": "chef"
+    },
+    {
+      "id": "d0000069-0000-4000-8000-000000000069",
+      "question": "Décision fautive (Témoin)",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "envoyer_devis",
+          "libelle": "",
+          "recommandee": false
+        },
+        {
+          "cle": "rien",
+          "libelle": "Ne rien envoyer",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "rien",
+      "montant_cents": 999999,
+      "portee": "aucune",
+      "echeance": "2026-10-14T10:30:00.000Z",
+      "cree_le": "2026-10-14T01:00:00.000Z",
+      "creee_par": "chef"
+    },
+    {
+      "id": "d000006a-0000-4000-8000-00000000006a",
+      "question": "Décision fautive (Témoin)",
+      "contexte": "Contexte d’essai (Témoin).",
+      "options": [
+        {
+          "cle": "envoyer_devis",
+          "libelle": "ÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉÉ",
+          "recommandee": false
+        },
+        {
+          "cle": "rien",
+          "libelle": "Ne rien envoyer",
+          "recommandee": true
+        }
+      ],
+      "option_defaut": "rien",
+      "montant_cents": 999999,
+      "portee": "aucune",
+      "echeance": "2026-10-14T10:30:00.000Z",
+      "cree_le": "2026-10-14T01:00:00.000Z",
+      "creee_par": "chef"
+    }
+  ],
+  "fautes": {
+    "d0000065-0000-4000-8000-000000000065": "une seule option",
+    "d0000066-0000-4000-8000-000000000066": "huit options",
+    "d0000067-0000-4000-8000-000000000067": "clés en double",
+    "d0000068-0000-4000-8000-000000000068": "défaut hors des clés",
+    "d0000069-0000-4000-8000-000000000069": "libellé vide",
+    "d000006a-0000-4000-8000-00000000006a": "libellé de 81 signes"
+  }
+}

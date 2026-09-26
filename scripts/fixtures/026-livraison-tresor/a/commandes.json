@@ -1,0 +1,2613 @@
+{
+ "_lisez": "Lignes sites_commandes factices (colonnes de 0088 et de 0103, 026-021), adresses @presti-test.invalid, noms « Témoin ». Lues par livraison-tour-qa (TL-2 à TL-7), tresorerie-qa et tuile-argent-qa (ventes des sites).",
+ "etats": {
+  "payee": {
+   "id": "7a018000-0000-4000-8000-000000000001",
+   "artisan_id": null,
+   "email": "commande.1@presti-test.invalid",
+   "etat": "payee",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne1",
+     "nom": "Temoinette1",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-1-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-1-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-1-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-1"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_1",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": null,
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": null,
+   "en_ligne_le": null,
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 1",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  "generee": {
+   "id": "7a018000-0000-4000-8000-000000000002",
+   "artisan_id": null,
+   "email": "commande.2@presti-test.invalid",
+   "etat": "generee",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne2",
+     "nom": "Temoinette2",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-2-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-2-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-2-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-2"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_2",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": "2026-10-06T08:00:00.000Z",
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": null,
+   "en_ligne_le": null,
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 2",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  "validee": {
+   "id": "7a018000-0000-4000-8000-000000000003",
+   "artisan_id": null,
+   "email": "commande.3@presti-test.invalid",
+   "etat": "validee",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne3",
+     "nom": "Temoinette3",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-3-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-3-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-3-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-3"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_3",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": "2026-10-06T08:00:00.000Z",
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": "2026-10-07T08:00:00.000Z",
+   "en_ligne_le": null,
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 3",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  "en_ligne": {
+   "id": "7a018000-0000-4000-8000-000000000004",
+   "artisan_id": null,
+   "email": "commande.4@presti-test.invalid",
+   "etat": "en_ligne",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne4",
+     "nom": "Temoinette4",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-4-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-4-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-4-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-4"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_4",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": "2026-10-06T08:00:00.000Z",
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": "2026-10-07T08:00:00.000Z",
+   "en_ligne_le": "2026-10-08T08:00:00.000Z",
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 4",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  }
+ },
+ "courriels_dus": [
+  {
+   "nom": "brouillon",
+   "commande": {
+    "id": "7a018000-0000-4000-8000-000000000010",
+    "artisan_id": null,
+    "email": "commande.10@presti-test.invalid",
+    "etat": "brouillon",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne10",
+      "nom": "Temoinette10",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-10-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-10-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-10-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-10"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": null,
+    "stripe_payment_intent_id": null,
+    "paye_le": null,
+    "genere_le": null,
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 10",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   "attendu": []
+  },
+  {
+   "nom": "payée jamais prévenue",
+   "commande": {
+    "id": "7a018000-0000-4000-8000-000000000011",
+    "artisan_id": null,
+    "email": "commande.11@presti-test.invalid",
+    "etat": "payee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne11",
+      "nom": "Temoinette11",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-11-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-11-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-11-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-11"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_11",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": null,
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 11",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   "attendu": [
+    "payee"
+   ]
+  },
+  {
+   "nom": "payée déjà prévenue",
+   "commande": {
+    "id": "7a018000-0000-4000-8000-000000000012",
+    "artisan_id": null,
+    "email": "commande.12@presti-test.invalid",
+    "etat": "payee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne12",
+      "nom": "Temoinette12",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-12-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-12-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-12-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-12"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_12",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": null,
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 12",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {
+     "payee": "2026-10-05T09:00:00.000Z"
+    },
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   "attendu": []
+  },
+  {
+   "nom": "générée jamais prévenue",
+   "commande": {
+    "id": "7a018000-0000-4000-8000-000000000013",
+    "artisan_id": null,
+    "email": "commande.13@presti-test.invalid",
+    "etat": "generee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne13",
+      "nom": "Temoinette13",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-13-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-13-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-13-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-13"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_13",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-06T08:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 13",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   "attendu": [
+    "payee",
+    "generee"
+   ]
+  },
+  {
+   "nom": "validée, « payée » déjà parti",
+   "commande": {
+    "id": "7a018000-0000-4000-8000-000000000014",
+    "artisan_id": null,
+    "email": "commande.14@presti-test.invalid",
+    "etat": "validee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne14",
+      "nom": "Temoinette14",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-14-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-14-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-14-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-14"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_14",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-06T08:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": "2026-10-07T08:00:00.000Z",
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 14",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {
+     "payee": "2026-10-05T09:00:00.000Z"
+    },
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   "attendu": [
+    "generee"
+   ]
+  },
+  {
+   "nom": "en ligne jamais prévenue",
+   "commande": {
+    "id": "7a018000-0000-4000-8000-000000000015",
+    "artisan_id": null,
+    "email": "commande.15@presti-test.invalid",
+    "etat": "en_ligne",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne15",
+      "nom": "Temoinette15",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-15-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-15-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-15-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-15"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_15",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-06T08:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": "2026-10-07T08:00:00.000Z",
+    "en_ligne_le": "2026-10-08T08:00:00.000Z",
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 15",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   "attendu": [
+    "payee",
+    "en_ligne"
+   ]
+  },
+  {
+   "nom": "en ligne, tout est parti",
+   "commande": {
+    "id": "7a018000-0000-4000-8000-000000000016",
+    "artisan_id": null,
+    "email": "commande.16@presti-test.invalid",
+    "etat": "en_ligne",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne16",
+      "nom": "Temoinette16",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-16-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-16-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-16-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-16"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_16",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-06T08:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": "2026-10-07T08:00:00.000Z",
+    "en_ligne_le": "2026-10-08T08:00:00.000Z",
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 16",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {
+     "payee": "2026-10-05T09:00:00.000Z",
+     "generee": "2026-10-05T09:00:00.000Z",
+     "en_ligne": "2026-10-05T09:00:00.000Z"
+    },
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   "attendu": []
+  },
+  {
+   "nom": "retirée",
+   "commande": {
+    "id": "7a018000-0000-4000-8000-000000000017",
+    "artisan_id": null,
+    "email": "commande.17@presti-test.invalid",
+    "etat": "retiree",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne17",
+      "nom": "Temoinette17",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-17-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-17-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-17-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-17"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_17",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-06T08:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": "2026-10-07T08:00:00.000Z",
+    "en_ligne_le": "2026-10-08T08:00:00.000Z",
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 17",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": "2026-10-09T08:00:00.000Z",
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   "attendu": []
+  }
+ ],
+ "gabarits": {
+  "payee": {
+   "id": "7a018000-0000-4000-8000-000000000020",
+   "artisan_id": null,
+   "email": "commande.20@presti-test.invalid",
+   "etat": "payee",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne20",
+     "nom": "Temoinette20",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-20-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-20-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-20-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-20"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_20",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": null,
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": null,
+   "en_ligne_le": null,
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 20",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  "generee": {
+   "id": "7a018000-0000-4000-8000-000000000021",
+   "artisan_id": null,
+   "email": "commande.21@presti-test.invalid",
+   "etat": "generee",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne21",
+     "nom": "Temoinette21",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-21-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-21-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-21-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-21"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_21",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": "2026-10-06T08:00:00.000Z",
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": null,
+   "en_ligne_le": null,
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 21",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  "en_ligne_existant": {
+   "id": "7a018000-0000-4000-8000-000000000022",
+   "artisan_id": null,
+   "email": "commande.22@presti-test.invalid",
+   "etat": "en_ligne",
+   "domaine_mode": "existant",
+   "domaine": "plomberie-temoin.fr",
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne22",
+     "nom": "Temoinette22",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-22-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-22-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-22-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-22"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_22",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": "2026-10-06T08:00:00.000Z",
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": "2026-10-07T08:00:00.000Z",
+   "en_ligne_le": "2026-10-08T08:00:00.000Z",
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 22",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  "en_ligne_a_prendre": {
+   "id": "7a018000-0000-4000-8000-000000000023",
+   "artisan_id": null,
+   "email": "commande.23@presti-test.invalid",
+   "etat": "en_ligne",
+   "domaine_mode": "a_prendre",
+   "domaine": "menuiserie-temoin.fr",
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne23",
+     "nom": "Temoinette23",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-23-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-23-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-23-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-23"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_23",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": "2026-10-06T08:00:00.000Z",
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": "2026-10-07T08:00:00.000Z",
+   "en_ligne_le": "2026-10-08T08:00:00.000Z",
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 23",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  "en_ligne_aucun": {
+   "id": "7a018000-0000-4000-8000-000000000024",
+   "artisan_id": null,
+   "email": "commande.24@presti-test.invalid",
+   "etat": "en_ligne",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne24",
+     "nom": "Temoinette24",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-24-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-24-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-24-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-24"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_24",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": "2026-10-06T08:00:00.000Z",
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": "2026-10-07T08:00:00.000Z",
+   "en_ligne_le": "2026-10-08T08:00:00.000Z",
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 24",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  }
+ },
+ "idempotence": {
+  "id": "7a018000-0000-4000-8000-000000000030",
+  "artisan_id": null,
+  "email": "commande.30@presti-test.invalid",
+  "etat": "en_ligne",
+  "domaine_mode": "existant",
+  "domaine": "plomberie-temoin.fr",
+  "metier": "Plombier",
+  "metiers_secondaires": [],
+  "communes": [
+   "Villeurbanne",
+   "Lyon 3e"
+  ],
+  "matiere": {
+   "artisan": {
+    "prenom": "Jeanne30",
+    "nom": "Temoinette30",
+    "installation": 2012,
+    "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+    "citation": "Je réponds moi-même à chaque demande de dépannage.",
+    "chiffres": null
+   },
+   "photos": [
+    {
+     "url": "https://exemple.invalid/chantier-30-1.webp",
+     "role": "chantier"
+    },
+    {
+     "url": "https://exemple.invalid/chantier-30-2.webp",
+     "role": "chantier"
+    },
+    {
+     "url": "https://exemple.invalid/chantier-30-3.webp",
+     "role": "chantier"
+    }
+   ],
+   "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+   "siren": "732829320",
+   "horaires": "Du lundi au vendredi, 8 h à 18 h",
+   "decennale": {
+    "assureur": "Assureur Témoin",
+    "numero": "DEC-TEMOIN-30"
+   }
+  },
+  "prix_cents": 30000,
+  "devise": "eur",
+  "stripe_session_id": "cs_test_temoin_30",
+  "stripe_payment_intent_id": null,
+  "paye_le": "2026-10-05T08:00:00.000Z",
+  "genere_le": "2026-10-06T08:00:00.000Z",
+  "apercu_jeton": null,
+  "scores": null,
+  "verifications": null,
+  "consigne": null,
+  "regenerations": 0,
+  "valide_le": "2026-10-07T08:00:00.000Z",
+  "en_ligne_le": "2026-10-08T08:00:00.000Z",
+  "cree_le": "2026-10-01T08:00:00.000Z",
+  "modifie_le": "2026-10-08T08:00:00.000Z",
+  "entreprise": "Plomberie Témoin 30",
+  "achat_public": false,
+  "cgu_acceptees_le": null,
+  "lien_envoye_le": null,
+  "lien_envois": 0,
+  "rattachee_le": null,
+  "courriels": {},
+  "search_console_le": null,
+  "compte_supprime_le": null,
+  "retiree_le": null,
+  "dossier_jeton_hash": null,
+  "dossier_expire_le": null,
+  "dossier_envoye_le": null,
+  "fichiers_purges_le": null,
+  "generation_demandee_le": null,
+  "generation_tentatives": 0,
+  "generation_duree_s": null
+ },
+ "retards": {
+  "maintenant": "2026-10-14T10:00:00.000Z",
+  "lignes": [
+   {
+    "id": "7a018000-0000-4000-8000-000000000040",
+    "artisan_id": null,
+    "email": "commande.40@presti-test.invalid",
+    "etat": "payee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne40",
+      "nom": "Temoinette40",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-40-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-40-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-40-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-40"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_40",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-12T08:00:00.000Z",
+    "genere_le": null,
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 40",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   {
+    "id": "7a018000-0000-4000-8000-000000000041",
+    "artisan_id": null,
+    "email": "commande.41@presti-test.invalid",
+    "etat": "payee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne41",
+      "nom": "Temoinette41",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-41-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-41-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-41-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-41"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_41",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-14T06:00:00.000Z",
+    "genere_le": null,
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 41",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   {
+    "id": "7a018000-0000-4000-8000-000000000042",
+    "artisan_id": null,
+    "email": "commande.42@presti-test.invalid",
+    "etat": "payee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne42",
+      "nom": "Temoinette42",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-42"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_42",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": null,
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 42",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   {
+    "id": "7a018000-0000-4000-8000-000000000043",
+    "artisan_id": null,
+    "email": "commande.43@presti-test.invalid",
+    "etat": "generee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne43",
+      "nom": "Temoinette43",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-43-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-43-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-43-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-43"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_43",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-12T06:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 43",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   {
+    "id": "7a018000-0000-4000-8000-000000000044",
+    "artisan_id": null,
+    "email": "commande.44@presti-test.invalid",
+    "etat": "generee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne44",
+      "nom": "Temoinette44",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-44-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-44-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-44-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-44"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_44",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-13T12:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 44",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   {
+    "id": "7a018000-0000-4000-8000-000000000045",
+    "artisan_id": null,
+    "email": "commande.45@presti-test.invalid",
+    "etat": "validee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne45",
+      "nom": "Temoinette45",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-45-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-45-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-45-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-45"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_45",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-06T08:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": "2026-10-09T08:00:00.000Z",
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 45",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   {
+    "id": "7a018000-0000-4000-8000-000000000046",
+    "artisan_id": null,
+    "email": "commande.46@presti-test.invalid",
+    "etat": "validee",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne46",
+      "nom": "Temoinette46",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-46-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-46-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-46-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-46"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_46",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-06T08:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": "2026-10-12T12:00:00.000Z",
+    "en_ligne_le": null,
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 46",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   {
+    "id": "7a018000-0000-4000-8000-000000000047",
+    "artisan_id": null,
+    "email": "commande.47@presti-test.invalid",
+    "etat": "en_ligne",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne47",
+      "nom": "Temoinette47",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-47-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-47-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-47-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-47"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_47",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-06T08:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": "2026-10-07T08:00:00.000Z",
+    "en_ligne_le": "2026-10-08T08:00:00.000Z",
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 47",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   {
+    "id": "7a018000-0000-4000-8000-000000000048",
+    "artisan_id": null,
+    "email": "commande.48@presti-test.invalid",
+    "etat": "brouillon",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne48",
+      "nom": "Temoinette48",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-48-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-48-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-48-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-48"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": null,
+    "stripe_payment_intent_id": null,
+    "paye_le": null,
+    "genere_le": null,
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "cree_le": "2026-09-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 48",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   },
+   {
+    "id": "7a018000-0000-4000-8000-000000000049",
+    "artisan_id": null,
+    "email": "commande.49@presti-test.invalid",
+    "etat": "retiree",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": [
+     "Villeurbanne",
+     "Lyon 3e"
+    ],
+    "matiere": {
+     "artisan": {
+      "prenom": "Jeanne49",
+      "nom": "Temoinette49",
+      "installation": 2012,
+      "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+      "citation": "Je réponds moi-même à chaque demande de dépannage.",
+      "chiffres": null
+     },
+     "photos": [
+      {
+       "url": "https://exemple.invalid/chantier-49-1.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-49-2.webp",
+       "role": "chantier"
+      },
+      {
+       "url": "https://exemple.invalid/chantier-49-3.webp",
+       "role": "chantier"
+      }
+     ],
+     "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+     "siren": "732829320",
+     "horaires": "Du lundi au vendredi, 8 h à 18 h",
+     "decennale": {
+      "assureur": "Assureur Témoin",
+      "numero": "DEC-TEMOIN-49"
+     }
+    },
+    "prix_cents": 30000,
+    "devise": "eur",
+    "stripe_session_id": "cs_test_temoin_49",
+    "stripe_payment_intent_id": null,
+    "paye_le": "2026-10-05T08:00:00.000Z",
+    "genere_le": "2026-10-06T08:00:00.000Z",
+    "apercu_jeton": null,
+    "scores": null,
+    "verifications": null,
+    "consigne": null,
+    "regenerations": 0,
+    "valide_le": "2026-10-07T08:00:00.000Z",
+    "en_ligne_le": "2026-10-08T08:00:00.000Z",
+    "cree_le": "2026-10-01T08:00:00.000Z",
+    "modifie_le": "2026-10-08T08:00:00.000Z",
+    "entreprise": "Plomberie Témoin 49",
+    "achat_public": false,
+    "cgu_acceptees_le": null,
+    "lien_envoye_le": null,
+    "lien_envois": 0,
+    "rattachee_le": null,
+    "courriels": {},
+    "search_console_le": null,
+    "compte_supprime_le": null,
+    "retiree_le": "2026-10-09T08:00:00.000Z",
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null,
+    "generation_demandee_le": null,
+    "generation_tentatives": 0,
+    "generation_duree_s": null
+   }
+  ],
+  "attendus": [
+   "retard:7a018000-0000-4000-8000-000000000040:payee",
+   "retard:7a018000-0000-4000-8000-000000000043:generee",
+   "retard:7a018000-0000-4000-8000-000000000045:validee"
+  ],
+  "complets": [
+   "7a018000-0000-4000-8000-000000000040",
+   "7a018000-0000-4000-8000-000000000041",
+   "7a018000-0000-4000-8000-000000000043",
+   "7a018000-0000-4000-8000-000000000044",
+   "7a018000-0000-4000-8000-000000000045",
+   "7a018000-0000-4000-8000-000000000046",
+   "7a018000-0000-4000-8000-000000000047",
+   "7a018000-0000-4000-8000-000000000048",
+   "7a018000-0000-4000-8000-000000000049"
+  ],
+  "incomplets": [
+   "7a018000-0000-4000-8000-000000000042"
+  ]
+ },
+ "ventes_tuile": [
+  {
+   "id": "7a018000-0000-4000-8000-000000000050",
+   "artisan_id": null,
+   "email": "commande.50@presti-test.invalid",
+   "etat": "payee",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne50",
+     "nom": "Temoinette50",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-50-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-50-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-50-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-50"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_50",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": null,
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": null,
+   "en_ligne_le": null,
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 50",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  {
+   "id": "7a018000-0000-4000-8000-000000000051",
+   "artisan_id": null,
+   "email": "commande.51@presti-test.invalid",
+   "etat": "generee",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne51",
+     "nom": "Temoinette51",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-51-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-51-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-51-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-51"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_51",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": "2026-10-06T08:00:00.000Z",
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": null,
+   "en_ligne_le": null,
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 51",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  {
+   "id": "7a018000-0000-4000-8000-000000000052",
+   "artisan_id": null,
+   "email": "commande.52@presti-test.invalid",
+   "etat": "en_ligne",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne52",
+     "nom": "Temoinette52",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-52-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-52-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-52-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-52"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_52",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": "2026-10-06T08:00:00.000Z",
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": "2026-10-07T08:00:00.000Z",
+   "en_ligne_le": "2026-10-08T08:00:00.000Z",
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 52",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  {
+   "id": "7a018000-0000-4000-8000-000000000053",
+   "artisan_id": null,
+   "email": "commande.53@presti-test.invalid",
+   "etat": "retiree",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne53",
+     "nom": "Temoinette53",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-53-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-53-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-53-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-53"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": "cs_test_temoin_53",
+   "stripe_payment_intent_id": null,
+   "paye_le": "2026-10-05T08:00:00.000Z",
+   "genere_le": "2026-10-06T08:00:00.000Z",
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": "2026-10-07T08:00:00.000Z",
+   "en_ligne_le": "2026-10-08T08:00:00.000Z",
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 53",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": "2026-10-09T08:00:00.000Z",
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  },
+  {
+   "id": "7a018000-0000-4000-8000-000000000054",
+   "artisan_id": null,
+   "email": "commande.54@presti-test.invalid",
+   "etat": "brouillon",
+   "domaine_mode": "aucun",
+   "domaine": null,
+   "metier": "Plombier",
+   "metiers_secondaires": [],
+   "communes": [
+    "Villeurbanne",
+    "Lyon 3e"
+   ],
+   "matiere": {
+    "artisan": {
+     "prenom": "Jeanne54",
+     "nom": "Temoinette54",
+     "installation": 2012,
+     "parcours": "Compagnonne du devoir, plombière à Villeurbanne depuis 2012.",
+     "citation": "Je réponds moi-même à chaque demande de dépannage.",
+     "chiffres": null
+    },
+    "photos": [
+     {
+      "url": "https://exemple.invalid/chantier-54-1.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-54-2.webp",
+      "role": "chantier"
+     },
+     {
+      "url": "https://exemple.invalid/chantier-54-3.webp",
+      "role": "chantier"
+     }
+    ],
+    "adresse": "12 rue du Témoin, 69100 Villeurbanne",
+    "siren": "732829320",
+    "horaires": "Du lundi au vendredi, 8 h à 18 h",
+    "decennale": {
+     "assureur": "Assureur Témoin",
+     "numero": "DEC-TEMOIN-54"
+    }
+   },
+   "prix_cents": 30000,
+   "devise": "eur",
+   "stripe_session_id": null,
+   "stripe_payment_intent_id": null,
+   "paye_le": null,
+   "genere_le": null,
+   "apercu_jeton": null,
+   "scores": null,
+   "verifications": null,
+   "consigne": null,
+   "regenerations": 0,
+   "valide_le": null,
+   "en_ligne_le": null,
+   "cree_le": "2026-10-01T08:00:00.000Z",
+   "modifie_le": "2026-10-08T08:00:00.000Z",
+   "entreprise": "Plomberie Témoin 54",
+   "achat_public": false,
+   "cgu_acceptees_le": null,
+   "lien_envoye_le": null,
+   "lien_envois": 0,
+   "rattachee_le": null,
+   "courriels": {},
+   "search_console_le": null,
+   "compte_supprime_le": null,
+   "retiree_le": null,
+   "dossier_jeton_hash": null,
+   "dossier_expire_le": null,
+   "dossier_envoye_le": null,
+   "fichiers_purges_le": null,
+   "generation_demandee_le": null,
+   "generation_tentatives": 0,
+   "generation_duree_s": null
+  }
+ ]
+}

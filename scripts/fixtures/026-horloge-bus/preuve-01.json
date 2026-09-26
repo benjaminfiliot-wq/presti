@@ -1,0 +1,12 @@
+{
+  "lot": "01",
+  "fiche": "026-009",
+  "reference": "86ce0f3be9c202d9e0bb11448642c033c5449e57",
+  "reference_pourquoi": "HEAD relevé au début de 026-009 (verrou .orchestre/en-cours/026-009.lock du 2026-09-25T20:40:01Z) : ni supabase/migrations/0096_*, ni lib/agents/garde.ts. Les lots 02 à 04 relisent ce même sha.",
+  "absents_de_la_reference": ["supabase/migrations/0096_", "supabase/migrations/0097_", "supabase/migrations/0098_", "lib/agents/garde.ts"],
+  "juges": [
+    { "commande": "node scripts/ops-sql-qa.mjs --migration=0096", "echec_attendu": "OS-1", "fiche_jugee": "026-010", "reel": true },
+    { "commande": "node scripts/ops-sql-qa.mjs --migration=0097", "echec_attendu": "OI-1", "fiche_jugee": "026-011", "reel": true },
+    { "commande": "node scripts/ops-sql-qa.mjs --migration=0098", "echec_attendu": "OT-1", "fiche_jugee": "026-013", "reel": true }
+  ]
+}

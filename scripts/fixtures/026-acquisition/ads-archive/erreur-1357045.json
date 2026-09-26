@@ -1,0 +1,14 @@
+{
+ "_cas": "JF-11 : identité non confirmée → non_verifiable, bilan meta: en_attente_identite",
+ "_reponse": {
+  "statut": 400,
+  "corps": {
+   "error": {
+    "message": "Identity confirmation required to access the Ad Library API (Témoin).",
+    "type": "OAuthException",
+    "code": 1357045,
+    "fbtrace_id": "ATemoin1357045"
+   }
+  }
+ }
+}

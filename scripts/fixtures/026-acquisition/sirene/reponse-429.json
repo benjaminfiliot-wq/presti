@@ -1,0 +1,12 @@
+{
+ "_cas": "RS-5 : au-delà de 7 requêtes par seconde",
+ "_reponse": {
+  "statut": 429,
+  "entetes": {
+   "retry-after": "1"
+  },
+  "corps": {
+   "erreur": "Trop de requêtes (Témoin)"
+  }
+ }
+}

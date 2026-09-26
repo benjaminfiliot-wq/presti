@@ -1,0 +1,60 @@
+{
+ "_": "Réponses enregistrées du faux freellmapi (026-048, SV-IA-1 à SV-IA-4), servies par le juge sur 127.0.0.1 à la route `route` (GET), un relevé par tour d'essai. Contrat du juge tant que la route réelle de ~/freellmapi n'est pas vérifiée (026-053 : « à vérifier ») : { served_provider, providers: [{ provider, model, used?, limit, unit, status: active | exhausted | error, resets_at }], recent?: [...] }. `used` absent → l'utilisé est le nombre de lignes du jour de Paris de <compteurs-ia>/compteurs-<AAAA-MM-JJ>.jsonl dont fournisseur_reel et modele sont ceux du fournisseur. État : active → actif, exhausted → épuisé, error → erreur ; « remis à » = heure de Paris HH:MM de resets_at. {{PIEGE}} est remplacé à chaque passage par un marqueur tiré au hasard.",
+ "route": "/api/usage",
+ "horloge": "2026-09-15T08:00:00.000Z",
+ "releves": {
+  "r1": {
+   "served_provider": "google",
+   "providers": [
+    { "provider": "google", "model": "gemini-3.5-flash", "used": 14, "limit": 20, "unit": "req/j", "status": "active", "resets_at": "2026-09-16T07:00:00Z" },
+    { "provider": "mistral", "model": "codestral", "limit": 500, "unit": "req/j", "status": "active", "resets_at": "2026-09-15T22:00:00Z" },
+    { "provider": "cerebras", "model": "llama-4-scout", "used": 1000, "limit": 1000, "unit": "req/j", "status": "exhausted", "resets_at": "2026-09-15T13:30:00Z" },
+    { "provider": "openrouter", "model": "deepseek-r1-free", "used": 0, "limit": 50, "unit": "req/j", "status": "error", "resets_at": "2026-09-15T22:00:00Z" }
+   ],
+   "recent": [{ "provider": "google", "model": "gemini-3.5-flash", "prompt": "Résume la page d'accueil du site vitrine. {{PIEGE}}" }]
+  },
+  "r3": {
+   "served_provider": "mistral",
+   "providers": [
+    { "provider": "google", "model": "gemini-3.5-flash", "used": 20, "limit": 20, "unit": "req/j", "status": "exhausted", "resets_at": "2026-09-16T07:00:00Z" },
+    { "provider": "mistral", "model": "codestral", "limit": 500, "unit": "req/j", "status": "active", "resets_at": "2026-09-15T22:00:00Z" },
+    { "provider": "cerebras", "model": "llama-4-scout", "used": 1000, "limit": 1000, "unit": "req/j", "status": "exhausted", "resets_at": "2026-09-15T13:30:00Z" },
+    { "provider": "openrouter", "model": "deepseek-r1-free", "used": 0, "limit": 50, "unit": "req/j", "status": "error", "resets_at": "2026-09-15T22:00:00Z" }
+   ],
+   "recent": [{ "provider": "mistral", "model": "codestral", "prompt": "Classe ce message entrant. {{PIEGE}}" }]
+  },
+  "piege": {
+   "served_provider": "cloudflare",
+   "providers": [
+    { "provider": "cloudflare", "model": "@cf/meta/llama-3.1-8b-instruct", "used": 3, "limit": 10000, "unit": "neurones/j", "status": "active", "resets_at": "2026-09-15T22:00:00Z", "account": "prospect.dupont@exemple.fr" },
+    { "provider": "mistral", "model": "ft-123456789012-codestral", "used": 7, "limit": 500, "unit": "req/j", "status": "error", "resets_at": "2026-09-15T22:00:00Z", "last_error": "quota refusé pour benj@exemple.fr au 0612345678 : {{PIEGE}}" }
+   ],
+   "recent": [{ "provider": "cloudflare", "model": "@cf/meta/llama-3.1-8b-instruct", "prompt": "Rappeler M. Dupont au 0612345678901 ou dupont.artisan@exemple.fr — {{PIEGE}}" }]
+  }
+ },
+ "compteurs": {
+  "_": "Lignes { le, agent, moteur, modele, fournisseur_reel } que le juge écrit dans <compteurs-ia>/compteurs-<jour de Paris>.jsonl (026-041, IA_COMPTEURS) : `jour` pour le jour de l'horloge, `veille` pour la veille (à ignorer), `ajout_r4` ajoutées avant le quatrième tour.",
+  "jour": [{ "fournisseur_reel": "mistral", "modele": "codestral", "n": 37 }, { "fournisseur_reel": "google", "modele": "gemini-3.5-flash", "n": 5 }],
+  "veille": [{ "fournisseur_reel": "mistral", "modele": "codestral", "n": 100 }],
+  "ajout_r4": [{ "fournisseur_reel": "mistral", "modele": "codestral", "n": 50 }]
+ },
+ "quota_codex": { "le": "2026-09-15T07:55:00Z", "cinq_heures": 42, "semaine": 56 },
+ "attendus": {
+  "r1": [
+   { "type": "ia_quota", "objet": "ia:google", "resume": "google · gemini-3.5-flash · 14/20 req/j · actif · remis à 09:00" },
+   { "type": "ia_quota", "objet": "ia:mistral", "resume": "mistral · codestral · 37/500 req/j · actif · remis à 00:00" },
+   { "type": "ia_quota", "objet": "ia:cerebras", "resume": "cerebras · llama-4-scout · 1000/1000 req/j · épuisé · remis à 15:30" },
+   { "type": "ia_quota", "objet": "ia:openrouter", "resume": "openrouter · deepseek-r1-free · 0/50 req/j · erreur · remis à 00:00" },
+   { "type": "ia_quota", "objet": "ia:codex", "resume": "5 h : 42 % · semaine : 56 %" }
+  ],
+  "r2": [],
+  "r3": [
+   { "type": "ia_bascule", "objet": "ia:mistral", "resume": "google → mistral · quota" },
+   { "type": "ia_quota", "objet": "ia:google", "resume": "google · gemini-3.5-flash · 20/20 req/j · épuisé · remis à 09:00" }
+  ],
+  "r4": [
+   { "type": "ia_quota", "objet": "ia:mistral", "resume": "mistral · codestral · 87/500 req/j · actif · remis à 00:00" }
+  ],
+  "sans_quota_codex": { "type": "ia_quota", "objet": "ia:codex", "resume": "non mesuré" }
+ }
+}

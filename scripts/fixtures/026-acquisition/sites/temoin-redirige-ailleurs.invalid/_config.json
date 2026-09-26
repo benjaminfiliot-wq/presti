@@ -1,0 +1,8 @@
+{
+ "reponses": {
+  "/": {
+   "redirection": "https://autre-domaine-temoin.invalid/",
+   "statut": 301
+  }
+ }
+}

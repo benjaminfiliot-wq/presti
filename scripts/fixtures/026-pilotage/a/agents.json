@@ -1,0 +1,86 @@
+{
+  "_lisez_moi": "Lignes de pilotage_agents() (026-076), instant figé : maintenant. Période 5 min pour tous : muet au-delà de 10 min, en panne au-delà de 2 h 10 (seuils du veilleur A0, 026-047).",
+  "maintenant": "2026-10-14T10:00:00.000Z",
+  "agents": [
+    {
+      "nom": "veilleur",
+      "libelle": "Veilleur (Témoin)",
+      "en_pause": false,
+      "pause_motif": null,
+      "battement_le": "2026-10-14T09:51:00.000Z",
+      "periode_minutes": 5,
+      "disjoncteur_ouvert_le": null,
+      "cout_mois_eur": 3.2
+    },
+    {
+      "nom": "standardiste",
+      "libelle": "Standardiste (Témoin)",
+      "en_pause": false,
+      "pause_motif": null,
+      "battement_le": "2026-10-14T09:49:00.000Z",
+      "periode_minutes": 5,
+      "disjoncteur_ouvert_le": null,
+      "cout_mois_eur": null
+    },
+    {
+      "nom": "facteur",
+      "libelle": "Facteur (Témoin)",
+      "en_pause": false,
+      "pause_motif": null,
+      "battement_le": "2026-10-14T07:49:00.000Z",
+      "periode_minutes": 5,
+      "disjoncteur_ouvert_le": null,
+      "cout_mois_eur": 12.5
+    },
+    {
+      "nom": "repondeur",
+      "libelle": "Répondeur (Témoin)",
+      "en_pause": false,
+      "pause_motif": null,
+      "battement_le": null,
+      "periode_minutes": 5,
+      "disjoncteur_ouvert_le": null,
+      "cout_mois_eur": 0
+    },
+    {
+      "nom": "redacteur",
+      "libelle": "Rédacteur (Témoin)",
+      "en_pause": true,
+      "pause_motif": "Pause posée par Témoin",
+      "battement_le": "2026-10-14T09:58:00.000Z",
+      "periode_minutes": 5,
+      "disjoncteur_ouvert_le": null,
+      "cout_mois_eur": 1.05
+    },
+    {
+      "nom": "chef",
+      "libelle": "Chef (Témoin)",
+      "en_pause": true,
+      "pause_motif": "Disjoncteur",
+      "battement_le": "2026-10-14T09:59:00.000Z",
+      "periode_minutes": 5,
+      "disjoncteur_ouvert_le": "2026-10-14T09:30:00.000Z",
+      "cout_mois_eur": 40
+    }
+  ],
+  "attendu": {
+    "etats": {
+      "veilleur": "actif",
+      "standardiste": "muet",
+      "facteur": "panne",
+      "repondeur": "jamais",
+      "redacteur": "pause",
+      "chef": "disjoncteur"
+    },
+    "ordre": [
+      "facteur",
+      "chef",
+      "standardiste",
+      "redacteur",
+      "repondeur",
+      "veilleur"
+    ],
+    "cout_3_2": "veilleur",
+    "cout_nul": "standardiste"
+  }
+}

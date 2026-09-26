@@ -1,0 +1,14 @@
+{
+ "_cas": "JF-11 : jeton invalide ou expiré → non_verifiable, bilan meta: jeton_invalide",
+ "_reponse": {
+  "statut": 400,
+  "corps": {
+   "error": {
+    "message": "Error validating access token: Session has expired (Témoin).",
+    "type": "OAuthException",
+    "code": 190,
+    "fbtrace_id": "ATemoin190"
+   }
+  }
+ }
+}

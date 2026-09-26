@@ -1,0 +1,14 @@
+{
+ "lot": "A",
+ "fiche": "026-018",
+ "reference": "4041ec9b41432576037dbc0b45e0647bd60a0347",
+ "reference_pourquoi": "HEAD de main noté par la fiche 026-018 le 24/09 (4041ec9, « Sécurité : Next.js 15.5.23 → 15.5.26 ») ; le verrou de la fiche, pris le 26/09, porte 5012625 : aucun des deux ne contient les modules jugés. La fiche nomme 4041ec9 : c'est lui qui fait foi (même choix que 026-012). Les lots B à D relisent ce même sha.",
+ "absents_de_la_reference": ["supabase/migrations/0103_livraison_commandes.sql", "lib/direction/tresorerie.ts", "lib/siteLivraison.ts", "app/api/controle/tresorerie/route.ts"],
+ "chemins_reference": ["app", "lib", "scripts", "supabase", "package.json", "tsconfig.json", "next.config.mjs", "next.config.ts", "middleware.ts", "proxy.ts"],
+ "juges": [
+  { "commande": "node scripts/livraison-schema-qa.mjs --numero=0103", "echec_attendu": "SC-1", "cite": "supabase/migrations/0103_livraison_commandes.sql", "fiche_jugee": "026-021" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/tresorerie-qa.mjs", "echec_attendu": "TR-1", "cite": "lib/direction/tresorerie.ts", "fiche_jugee": "026-055" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/livraison-tour-qa.mjs", "echec_attendu": "TL-1", "cite": "lib/siteLivraison.ts", "fiche_jugee": "026-024" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/tuile-argent-qa.mjs", "echec_attendu": "TA-1", "cite": "app/api/controle/tresorerie/route.ts", "fiche_jugee": "026-059" }
+ ]
+}

@@ -1,0 +1,72 @@
+{
+  "_lisez_moi": "Les commandes de site telles que la route les prépare pour appelsDepuisCommandes (026-014) : { id, etat, paye_le, metier, communes, nom, tel, manques }. Le champ email est un piège : il ne doit sortir sur aucune carte.",
+  "maintenant": "2026-10-14T10:00:00.000Z",
+  "commandes": [
+    {
+      "id": "c0000001-0000-4000-8000-000000000001",
+      "etat": "payee",
+      "paye_le": "2026-10-14T08:00:00.000Z",
+      "metier": "Plombier",
+      "communes": [
+        "Rennes"
+      ],
+      "nom": "Témoin Plomberie",
+      "tel": "06 12 34 56 78",
+      "manques": [],
+      "email": "contact.temoin@exemple.invalid"
+    },
+    {
+      "id": "c0000002-0000-4000-8000-000000000002",
+      "etat": "brouillon",
+      "paye_le": null,
+      "metier": "Couvreur",
+      "communes": [
+        "Nantes"
+      ],
+      "nom": "Témoin Couverture",
+      "tel": "06 22 33 44 55",
+      "manques": [
+        "Le métier principal manque."
+      ],
+      "email": "couverture.temoin@exemple.invalid"
+    },
+    {
+      "id": "c0000003-0000-4000-8000-000000000003",
+      "etat": "payee",
+      "paye_le": "2026-10-14T08:00:00.000Z",
+      "metier": "Plombier",
+      "communes": [
+        "Rennes",
+        "Cesson-Sévigné"
+      ],
+      "nom": "Témoin Chauffage",
+      "tel": "02 99 12 34 56",
+      "manques": [
+        "Indiquez au moins une commune réellement servie — c’est la matière du référencement local, écrite par Témoin.",
+        "Le métier principal manque."
+      ],
+      "email": "chauffage.temoin@exemple.invalid"
+    },
+    {
+      "id": "c0000004-0000-4000-8000-000000000004",
+      "etat": "generee",
+      "paye_le": "2026-10-13T08:00:00.000Z",
+      "metier": "Électricien",
+      "communes": [
+        "Lyon"
+      ],
+      "nom": "Témoin Électricité",
+      "tel": null,
+      "manques": [
+        "Le nom de domaine indiqué n’est pas valide (ex. martin-plomberie.fr)."
+      ],
+      "email": "elec.temoin@exemple.invalid"
+    }
+  ],
+  "roles": {
+    "complete": "c0000001-0000-4000-8000-000000000001",
+    "brouillon": "c0000002-0000-4000-8000-000000000002",
+    "incomplete": "c0000003-0000-4000-8000-000000000003",
+    "sans_telephone": "c0000004-0000-4000-8000-000000000004"
+  }
+}

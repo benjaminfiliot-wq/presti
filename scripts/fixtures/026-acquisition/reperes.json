@@ -1,0 +1,171 @@
+{
+ "_lisez_moi": "Repères des jeux d'essai de 026-016, écrits par le générateur avec les fichiers : SIREN à la clé de Luhn, SIRET, hôtes, textes exacts. Les juges les lisent au lieu de les recopier.",
+ "siren": {
+  "S1": "900000019",
+  "S2": "900000027",
+  "S3": "900000035",
+  "S4": "900000043",
+  "S5": "900000050",
+  "S6": "900000068",
+  "S7": "900000076",
+  "S8": "900000084",
+  "S9": "900000092",
+  "S11": "900000118",
+  "S12": "900000126",
+  "S13": "900000134",
+  "S14": "900000142",
+  "S15": "900000159",
+  "S16": "900000167",
+  "S17": "900000175",
+  "S18": "900000183",
+  "S19": "900000191",
+  "S20": "900000209",
+  "S21": "900000217",
+  "S22": "900000225",
+  "S24": "900000241",
+  "S25": "900000258",
+  "SX": "900000266",
+  "SY": "900000274"
+ },
+ "siren_faux": "900000267",
+ "siret": {
+  "S1": "90000001900019",
+  "S6": "90000006800016",
+  "S7": "90000007600019",
+  "S22": "90000022500012",
+  "S24": "90000024100019",
+  "SX_a": "90000026600115",
+  "SX_b": "90000026600297",
+  "SY": "90000027400010"
+ },
+ "conforme": {
+  "hote": "temoin-conforme.invalid",
+  "titre": "Plomberie Témoin Conforme – Plombier chauffagiste à Niort",
+  "h1": "Votre plombier chauffagiste à Niort depuis 1998",
+  "h2s": [
+   "Dépannage de fuites en moins de deux heures",
+   "Pose de chaudières à condensation",
+   "Rénovation complète de salles de bains",
+   "Un quatrième intertitre qui ne compte pas"
+  ],
+  "formulaire": {
+   "url_page": "https://temoin-conforme.invalid/contact",
+   "url_action": "https://temoin-conforme.invalid/contact/envoyer",
+   "methode": "post",
+   "champs": [
+    {
+     "nom": "your-name",
+     "type": "text",
+     "requis": true,
+     "max": 80
+    },
+    {
+     "nom": "your-email",
+     "type": "email",
+     "requis": true,
+     "max": 120
+    },
+    {
+     "nom": "your-tel",
+     "type": "tel",
+     "requis": false,
+     "max": 20
+    },
+    {
+     "nom": "your-message",
+     "type": "textarea",
+     "requis": true
+    }
+   ],
+   "motifs": [],
+   "technologie": "contact_form_7",
+   "telephone_requis": false,
+   "longueur_max_message": null
+  },
+  "instagram": "temoin.plomberie",
+  "facebook": "TemoinPlomberie"
+ },
+ "form_html": {
+  "url_page": "https://hote-a-remplacer.invalid/contact",
+  "url_action": "https://hote-a-remplacer.invalid/contact/envoyer",
+  "methode": "post",
+  "champs": [
+   {
+    "nom": "nom",
+    "type": "text",
+    "requis": true,
+    "max": 80
+   },
+   {
+    "nom": "email",
+    "type": "email",
+    "requis": true,
+    "max": 120
+   },
+   {
+    "nom": "message",
+    "type": "textarea",
+    "requis": true
+   }
+  ],
+  "motifs": [],
+  "technologie": "html",
+  "telephone_requis": false,
+  "longueur_max_message": null
+ },
+ "h1_long": "Menuiserie Témoin bois massif et aluminium sur mesure, bois massif et aluminium sur mesure, bois massif et aluminium sur mesure, bois massif et aluminium sur mesure, bois massif et aluminium sur mesur",
+ "faits_j1": {
+  "exact": "Plomberie et chauffage à Niort depuis 1998",
+  "apostrophe": "L'atelier du Témoin à Niort",
+  "script": "Chaudière posée en un jour Témoin"
+ },
+ "pub": {
+  "page": "100000000000007",
+  "annonce": "120000000000001",
+  "texte": "Nos bougies Témoin coulées à la main à Nantes",
+  "page_bis": "100000000000008",
+  "annonce_bis": "120000000000002",
+  "texte_bis": "Savons Témoin saponifiés à froid en Vendée",
+  "fait": {
+   "id": "a1974280dfe5ab35",
+   "type": "pub_meta",
+   "extrait": "Nos bougies Témoin coulées à la main à Nantes",
+   "url": "https://www.facebook.com/ads/library/?id=120000000000001",
+   "lu_le": "2026-10-14T08:00:00.000Z",
+   "annonce_id": "120000000000001",
+   "page_id": "100000000000007"
+  },
+  "fait_bis": {
+   "id": "76c05340a4426849",
+   "type": "pub_meta",
+   "extrait": "Savons Témoin saponifiés à froid en Vendée",
+   "url": "https://www.facebook.com/ads/library/?id=120000000000002",
+   "lu_le": "2026-10-14T08:00:00.000Z",
+   "annonce_id": "120000000000002",
+   "page_id": "100000000000008"
+  }
+ },
+ "marque_bis": {
+  "hote": "temoin-marque-bis.invalid",
+  "titre": "Savonnerie Témoin – Savons saponifiés à froid",
+  "h1": "Savons artisanaux saponifiés à froid",
+  "h2s": [
+   "Des huiles biologiques",
+   "Un atelier en Vendée"
+  ]
+ },
+ "captcha_apparu": {
+  "hote": "temoin-captcha-apparu.invalid",
+  "titre": "Menuiserie Témoin au captcha apparu",
+  "h1": "Menuiserie et agencement à Niort"
+ },
+ "robots_action_apparu": {
+  "hote": "temoin-robots-action-apparu.invalid",
+  "titre": "Menuiserie Témoin au robots.txt changé",
+  "h1": "Menuiserie et escaliers à Niort"
+ },
+ "ademe": {
+  "apres": "10,temoin-curseur-10",
+  "base": "https://data.ademe.fr/data-fair/api/v1/datasets/liste-des-entreprises-rge-2/lines"
+ }
+}

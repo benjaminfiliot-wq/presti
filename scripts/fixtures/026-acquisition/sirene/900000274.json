@@ -1,0 +1,45 @@
+{
+ "_cas": "SY — JEAN-PIERRE TÉMOIN",
+ "results": [
+  {
+   "siren": "900000274",
+   "nom_complet": "JEAN-PIERRE TÉMOIN",
+   "nom_raison_sociale": null,
+   "sigle": null,
+   "nombre_etablissements": 1,
+   "nombre_etablissements_ouverts": 1,
+   "siege": {
+    "activite_principale": "43.22A",
+    "adresse": "12 RUE DU TÉMOIN 79000 NIORT",
+    "code_postal": "79000",
+    "commune": "79191",
+    "date_creation": "2012-03-01",
+    "departement": null,
+    "est_siege": true,
+    "etat_administratif": "A",
+    "libelle_commune": "NIORT",
+    "siret": "90000027400010",
+    "tranche_effectif_salarie": "NN"
+   },
+   "activite_principale": "43.22A",
+   "categorie_entreprise": "PME",
+   "date_creation": "2012-03-01",
+   "date_mise_a_jour": "2026-09-01T00:00:00",
+   "dirigeants": [],
+   "etat_administratif": "A",
+   "nature_juridique": "1000",
+   "section_activite_principale": "F",
+   "tranche_effectif_salarie": "NN",
+   "statut_diffusion": "O",
+   "complements": {
+    "est_entrepreneur_individuel": true,
+    "est_ess": false,
+    "est_rge": true
+   }
+  }
+ ],
+ "total_results": 1,
+ "page": 1,
+ "per_page": 1,
+ "total_pages": 1
+}

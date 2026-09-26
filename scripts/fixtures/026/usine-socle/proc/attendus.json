@@ -1,0 +1,10 @@
+{
+ "_": "Valeurs attendues des instantanés de /proc (026-048, SV-1 à SV-3). Intervalle : les deux lectures sont à 60 s d'horloge (--maintenant). Réseau : toutes les interfaces sauf lo (enp0s6 et docker0), en bits par seconde, sur USINE_DEBIT_BPS.",
+ "cpu": 37.5,
+ "mem": 25,
+ "res": 1.2,
+ "intervalle_s": 60,
+ "debit_bps_defaut": 2000000000,
+ "debit_bps_essai": 1000000000,
+ "res_debit_essai": 2.4
+}

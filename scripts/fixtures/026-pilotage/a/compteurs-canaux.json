@@ -1,0 +1,53 @@
+{
+  "_lisez_moi": "Lignes de pilotage_compteurs_du_jour() (026-079), palier P1 (10 formulaires par jour) : formulaire_site plein (10/10), reponse_privee au plafond null.",
+  "canaux": [
+    {
+      "canal": "formulaire_site",
+      "palier": "P1",
+      "plafond": 10,
+      "utilises": 10,
+      "plaintes_7j": 0,
+      "avis_abus": 0,
+      "stop_100": 1,
+      "echecs_affilee": 0,
+      "reponses_positives": 0
+    },
+    {
+      "canal": "email_sollicite",
+      "palier": "P1",
+      "plafond": 50,
+      "utilises": 14,
+      "plaintes_7j": 0,
+      "avis_abus": 0,
+      "stop_100": 0,
+      "echecs_affilee": 0,
+      "reponses_positives": 2
+    },
+    {
+      "canal": "reponse_privee",
+      "palier": "P1",
+      "plafond": null,
+      "utilises": 4,
+      "plaintes_7j": null,
+      "avis_abus": null,
+      "stop_100": null,
+      "echecs_affilee": null,
+      "reponses_positives": null
+    },
+    {
+      "canal": "messagerie",
+      "palier": "P1",
+      "plafond": 20,
+      "utilises": 3,
+      "plaintes_7j": 0,
+      "avis_abus": 0,
+      "stop_100": 0,
+      "echecs_affilee": 0,
+      "reponses_positives": 1
+    }
+  ],
+  "roles": {
+    "plein": "formulaire_site",
+    "plafond_null": "reponse_privee"
+  }
+}

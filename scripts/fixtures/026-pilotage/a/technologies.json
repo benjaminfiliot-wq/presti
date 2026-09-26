@@ -1,0 +1,27 @@
+{
+  "_lisez_moi": "Lignes de pilotage_compteurs_technologies() (026-079) : Contact Form 7 en pause après 3 échecs de soumission d’affilée, WPForms saine.",
+  "technologies": [
+    {
+      "technologie": "contact_form_7",
+      "envois_jour": 5,
+      "echecs_affilee": 3,
+      "etat": "pause",
+      "pause_motif": "3 échecs de soumission d’affilée (Témoin)",
+      "envois_300": 120,
+      "reponses_300": 4
+    },
+    {
+      "technologie": "wpforms",
+      "envois_jour": 5,
+      "echecs_affilee": 0,
+      "etat": "active",
+      "pause_motif": null,
+      "envois_300": 80,
+      "reponses_300": 2
+    }
+  ],
+  "roles": {
+    "pause": "contact_form_7",
+    "active": "wpforms"
+  }
+}

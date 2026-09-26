@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-25T22:41:52Z
+# Digest — 2026-09-26T08:38:11Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 78 tâche(s) PASS, 180372 ligne(s) · faites par Claude Code : 7 tâche(s) PASS, 6144 ligne(s).
-**État** — file : 0 · en cours : 5 · faites : 91 · refusées : 6
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 78 tâche(s) PASS, 180372 ligne(s) · faites par Claude Code : 13 tâche(s) PASS, 49369 ligne(s).
+**État** — file : 0 · en cours : 2 · faites : 97 · refusées : 6
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -20,9 +20,12 @@
 |---|---|---|---|---|---|
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 026-009 | test | en-cours | claude-code | — | depuis 2026-09-25T20:40:01Z · Écrire le juge SQL du bus scripts/ops-sql-qa.mjs (migrations 0096 à 0098 : lecture statique, essai à sec généré par le juge, --reel), son aide scripts/lib/sql-essai.mjs, le contrat machine du bus et scripts/juges-026-horloge-bus-preuve.mjs, qui sort en code 0 seulement si chaque juge du lot échoue sur l'arbre de référence avec le critère attendu et passe en --temoin |
-| 026-012 | test | en-cours | claude-code | — | depuis 2026-09-25T20:45:26Z · Écrire les juges hors ligne pilotage-logique-qa (--partie=decider\|envois\|agents) et pilotage-push-qa avec leurs jeux d'essai, et scripts/juges-026-pilotage-preuve.mjs --lot=<x> (générique, la fiche de chaque lot lue dans son lot.mjs), qui sort en code 0 seulement si chaque juge du lot échoue sur l'arbre de référence avec son premier critère et passe son témoin |
-| 026-016 | test | en-cours | claude-code | — | depuis 2026-09-25T20:37:29Z · Écrire lib/agents/acquisition/contrat.ts (agents qui trouvent, écrivent, envoient et répondent : Facteur, porteur du formulaire, Répondeur, paliers du formulaire, preuves de demande et de soumission, trois verdicts, classes de réponse), les jeux d'essai communs de scripts/fixtures/026-acquisition/ dont un magasin en mémoire qui applique les règles de la base, scripts/recenseur-qa.mjs, scripts/faits-qa.mjs et scripts/juges-026-acquisition-preuve.mjs, qui sort en code 0 seulement si chaque juge du lot 1 échoue sur l'arbre de référence avec son premier critère attendu et passe son autocontrôle |
+| 026-048 | test | fait | claude-code | PASS | 2026-09-26T08:38:11Z · 4s · 4321 l. |
+| 026-018 | test | fait | claude-code | PASS | 2026-09-26T06:16:11Z · 38s · 7611 l. |
+| 026-016 | test | fait | claude-code | PASS | 2026-09-26T05:03:27Z · 5s · 12254 l. |
+| 026-012 | test | fait | claude-code | PASS | 2026-09-26T03:19:55Z · 5s · 10049 l. |
+| 026-009 | test | fait | claude-code | PASS | 2026-09-26T01:56:41Z · 33s · 6788 l. |
+| 026-002 | test | fait | claude-code | PASS | 2026-09-26T00:09:53Z · 333s · 2202 l. |
 | 026-001 | test | fait | claude-code | PASS | 2026-09-25T22:41:52Z · 116s · 2257 l. |
 | 025-23 | feature | fait | usine-codex-30 | PASS | 2026-09-25T18:14:20Z · 304s · 230 l. |
 | 000-usine-executer-local | test | fait | usine-codex-29 | PASS | 2026-09-25T17:20:48Z · 11s · 1 l. |
@@ -115,8 +118,5 @@
 | 000-test | test | fait | ag-1 | PASS | 2026-09-13T13:21:30Z · 0s · 1 l. |
 | 020-03 | feature | fait | codex | — | sans verdict |
 | 021-03 | feature | fait | codex | — | sans verdict |
-| 021-06 | feature | fait | codex | — | sans verdict |
-| 021-13 | feature | fait | codex | — | sans verdict |
-| 021-15 | contenu | refuse | antigravity | — | sans verdict |
 
-… 2 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 5 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

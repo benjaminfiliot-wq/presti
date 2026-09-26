@@ -1,0 +1,27 @@
+// Témoin de lib/typeImage.ts — fiche 026-002, autotest de scripts/media-octets-qa.mjs.
+// Ce n'est pas le livrable de 026-003 : c'est la preuve que le juge sait passer au vert sur un code juste, puis au rouge
+// sur chaque défaut planté. Extension .ts.txt : le fichier n'entre pas dans le `tsc` du dépôt.
+export type TypeDetecte =
+  | { ok: true; type: 'image/jpeg' | 'image/png' | 'image/webp'; ext: 'jpg' | 'png' | 'webp' }
+  | { ok: false; raison: 'heic' | 'avif' | 'svg' | 'inconnu' }
+
+const PNG = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]
+const MARQUES_HEIC = new Set(['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'mif1', 'msf1'])
+const ascii = (o: Uint8Array, debut: number, fin: number) => String.fromCharCode(...o.subarray(debut, fin))
+
+export function detecterTypeImage(octets: Uint8Array): TypeDetecte {
+  const n = octets.length
+  if (n >= 3 && octets[0] === 0xff && octets[1] === 0xd8 && octets[2] === 0xff) return { ok: true, type: 'image/jpeg', ext: 'jpg' }
+  if (n >= 8 && PNG.every((b, i) => octets[i] === b)) return { ok: true, type: 'image/png', ext: 'png' }
+  if (n >= 12 && ascii(octets, 0, 4) === 'RIFF' && ascii(octets, 8, 12) === 'WEBP') return { ok: true, type: 'image/webp', ext: 'webp' }
+  if (n >= 12 && ascii(octets, 4, 8) === 'ftyp') {
+    const marque = ascii(octets, 8, 12)
+    if (marque === 'avif' || marque === 'avis') return { ok: false, raison: 'avif' }
+    if (MARQUES_HEIC.has(marque)) return { ok: false, raison: 'heic' }
+  }
+  let i = n >= 3 && octets[0] === 0xef && octets[1] === 0xbb && octets[2] === 0xbf ? 3 : 0
+  while (i < n && (octets[i] === 0x20 || octets[i] === 0x09 || octets[i] === 0x0a || octets[i] === 0x0d)) i++
+  const debut = ascii(octets, i, Math.min(n, i + 14)).toLowerCase()
+  if (debut.startsWith('<svg') || debut.startsWith('<?xml') || debut.startsWith('<!doctype html')) return { ok: false, raison: 'svg' }
+  return { ok: false, raison: 'inconnu' }
+}

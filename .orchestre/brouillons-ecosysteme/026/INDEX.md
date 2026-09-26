@@ -718,3 +718,9 @@ Ces ids valent parce que ce bloc est le **premier ajouté après la voie gratuit
 ## Point ouvert relevé par 026-001 (26/09/2026)
 
 Le méta-juge des mutations (`scripts/juges-026-mutations-preuve.mjs`) travaille sur une copie du dépôt SANS `.env.local`. Les fiches de mutations dont les juges lisent `.env.local` ou créent un compte d'essai (026-130, 026-132, 026-192) échoueront donc à MP-3, quel que soit le travail de l'exécutant. À régler AVANT de déposer 026-130 : le méta-juge doit pointer vers le `.env.local` d'origine par une variable d'environnement (sans le copier), sur le PC seulement.
+
+## Points ouverts relevés par la contre-vérification des juges (26/09/2026)
+
+- **026-009** (important) : le mode `--sans-essai` de `scripts/ops-sql-qa.mjs` n'est jugé par aucun critère (JP-1 à JP-6), et `ligneEnEchec()` accepte le jeton du critère n'importe où dans la sortie. À corriger AVANT de déposer 026-091 (mutations des juges horloge-bus), qui s'en sert.
+- **026-012** (mineur) : aucun critère ne vérifie que les juges du Pilotage ne lisent eux-mêmes ni `.env.local` ni `presti-secrets`, ni que chaque juge écrit sous son propre `.orchestre/travail/<juge>/`.
+- **026-048** : verifier rejoué PASS par la session principale ; la contre-vérification indépendante n'a pas rendu (coupure du workflow).

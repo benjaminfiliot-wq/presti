@@ -1,0 +1,353 @@
+// scripts/juges-026-pilotage-preuve.mjs — la preuve générique des juges du domaine Pilotage (fiche 026-012), écrite par
+// Claude Code. Elle ne connaît aucun lot : elle lit scripts/fixtures/026-pilotage/<x>/lot.mjs (contrat dans a/lot.mjs), si
+// bien que les lots b (026-066), c (026-104), s (026-067) et les suivants s'ajoutent sans toucher ce script.
+//
+//   node scripts/juges-026-pilotage-preuve.mjs --lot=<x> [--lot-fichier=<chemin d'un lot.mjs>]
+//
+// Elle produit elle-même toutes ses preuves (aucun journal déposé par quelqu'un d'autre n'est lu) :
+//   JA-1  la référence (commit du lot, ancêtre de HEAD, sans les modules jugés) est extraite par `git archive` sous
+//         .orchestre/travail/juges-026-pilotage/reference/ (rien n'est écrit dans .git) ; chaque juge, lancé avec
+//         --racine=<référence>, sort en code ≠ 0 (1 ou 2 : un verdict, pas un plantage) et son PREMIER critère est en échec
+//         avec l'identifiant attendu ; l'extrait réel
+//         de cette ligne est recopié dans echecs-attendus.md, relu, et retrouvé dans la sortie qui vient d'être produite ;
+//   JA-2  chaque juge, lancé avec --temoin sur l'état actuel, sort en code 0 ;
+//   JA-3  l'auto-contrôle des jeux d'essai du lot (contrôle « JA-3 » déclaré par lot.mjs) est vert ;
+//   JA-4  chaque lancement (juges, contrôles, sous-lancements) tourne sous un piège réseau chargé dans chaque processus enfant
+//         (NODE_OPTIONS=--import ; le NODE_OPTIONS d'un contrôle s'y ajoute, sans le remplacer) : fetch et
+//         net.Socket#connect hors 127.0.0.1 sont refusés et consignés ; le piège prouve d'abord qu'il attrape un fetch et un
+//         https.get vers l'extérieur, et laisse passer 127.0.0.1 ; plus les contrôles « JA-4 » déclarés par le lot (lot a :
+//         aucun juge ne lit .env.local ni presti-secrets, lu dans le source et vérifié sous un piège des lectures) ;
+//   JA-5  `git status --porcelain` (fichiers non suivis compris, taille et date de chaque fichier listé) est le même avant et
+//         après, hors .orchestre/travail/ et .orchestre/preuves/ ;
+//   JA-6  un lot.mjs sans `fiche`, ou avec une `fiche` hors de ^026-[\w-]+$, est refusé (la preuve se relance elle-même sur
+//         deux copies fautives et une copie intacte, sous .orchestre/travail/) ; la section du lot est écrite dans le dossier
+//         de preuves de SA fiche ; plus les contrôles « JA-6 » déclarés par le lot (lot a : --partie=lot refusée en code 2).
+//
+// Sortie : une ligne par critère (« ✅ JA-3 … » ou « ❌ JA-3 … »), puis « juges-026-pilotage-preuve --lot=<x> : PASS|FAIL ».
+// Code 0 seulement si tout est vert ; 1 sinon ; 2 si l'appel est invalide. N'écrit que sous .orchestre/travail/ et dans
+// .orchestre/preuves/<fiche>/echecs-attendus.md ; ne lit ni .env.local ni presti-secrets.
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import {
+  R, TRAVAIL, court, premiereLigne, lancer, git, lireOptions, lsTree, extraireReference, exigerSousTravail, lireOuNull, sous,
+} from './fixtures/026-pilotage/a/commun.mjs'
+
+const JUGE = 'juges-026-pilotage-preuve'
+const CE_SCRIPT = fileURLToPath(import.meta.url)
+const SOUS = process.env.JUGES_026_PILOTAGE_SOUS === '1'
+const o = lireOptions(process.argv.slice(2), { connues: ['lot', 'lot-fichier'] })
+const refuser = (m) => { console.log(`${JUGE} : appel refusé — ${m}`); process.exit(2) }
+const LOT = o.valeurs.lot
+if (!LOT || !/^[a-z0-9][\w-]*$/.test(LOT)) refuser(`--lot=<x> attendu (lettres minuscules, chiffres, tirets), reçu : ${LOT ?? 'rien'}`)
+if (o.inconnues.length || o.positionnels.length || o.valeurs.racine || o.temoin) refuser(`option(s) inconnue(s) : ${[...o.inconnues, ...o.positionnels].join(' ') || '--racine / --temoin (options des juges, pas de la preuve)'}`)
+const DOSSIER_LOT = path.join(R, 'scripts', 'fixtures', '026-pilotage', LOT)
+const FICHIER_LOT = o.valeurs['lot-fichier'] ? path.resolve(R, o.valeurs['lot-fichier']) : path.join(DOSSIER_LOT, 'lot.mjs')
+const TRAV = path.join(TRAVAIL, 'juges-026-pilotage')
+const NOM = `${JUGE} --lot=${LOT}`
+const IDS = SOUS ? ['JA-6'] : ['JA-1', 'JA-2', 'JA-3', 'JA-4', 'JA-5', 'JA-6']
+const posix = (p) => p.split(path.sep).join('/')
+const rel = (p) => posix(path.relative(R, p)) || '.'
+const RE_FICHE = /^026-[\w-]+$/
+const RE_CRITERE = /^[A-Z0-9]{1,5}-[A-Z0-9-]+$/
+const ABSENTS_DEFAUT = ['lib/pilotage/', 'app/controle/Pilotage.tsx', 'app/controle/station/']
+
+// Les verdicts sont rassemblés, puis écrits dans l'ordre JA-1 … JA-6 (certains ne se décident qu'à la fin).
+const verdicts = new Map()
+const noter = (id, echecs, detail) => {
+  const v = verdicts.get(id) ?? { echecs: [], details: [] }
+  v.echecs.push(...echecs); if (detail) v.details.push(detail)
+  verdicts.set(id, v)
+}
+const ligne = (t) => String(t ?? '').replace(/\s*\r?\n\s*/g, ' · ').trim()
+function finir() {
+  console.log(`${NOM} — lot ${rel(FICHIER_LOT)}${SOUS ? ' — sous-lancement (lecture du lot seulement)' : ''}`)
+  const rouges = []
+  for (const id of IDS) {
+    const v = verdicts.get(id)
+    if (!v) { rouges.push(id); console.log(`❌ ${id} non évalué`); continue }
+    if (v.echecs.length) { rouges.push(id); console.log(`❌ ${id} ${ligne(v.echecs.slice(0, 8).join(' ; ') + (v.echecs.length > 8 ? ` ; … (${v.echecs.length} défauts)` : ''))}`) }
+    else console.log(`✅ ${id} ${ligne(v.details.join(' ; ')) || 'conforme'}`)
+  }
+  console.log(rouges.length ? `${NOM} : FAIL — ${rouges.join(', ')}` : `${NOM} : PASS`)
+  process.exit(rouges.length ? 1 : 0)
+}
+
+// ── JA-5 : l'état du dépôt, avant ────────────────────────────────────────────────────────────────────────────────────────
+const HORS_JA5 = ['.orchestre/travail/', '.orchestre/preuves/']
+function etatDepot() {
+  const r = git(['status', '--porcelain=v1', '-z', '--untracked-files=all'])
+  if (r.code !== 0) throw new Error(`git status : ${court(r.stderr || r.erreur)}`)
+  const m = new Map()
+  const e = r.stdout.split('\0')
+  for (let i = 0; i < e.length; i++) {
+    if (!e[i]) continue
+    const statut = e[i].slice(0, 2), chemin = e[i].slice(3)
+    if (/[RC]/.test(statut)) i++ // le chemin d'origine d'un renommage suit
+    if (HORS_JA5.some((h) => chemin.startsWith(h))) continue
+    let empreinte = 'absent'
+    try { const st = fs.statSync(path.join(R, chemin)); empreinte = st.isDirectory() ? 'dossier' : `${st.size}:${st.mtimeMs}` } catch { /* supprimé */ }
+    m.set(chemin, `${statut}|${empreinte}`)
+  }
+  return m
+}
+let avant = null
+if (!SOUS) { try { avant = etatDepot() } catch (e) { noter('JA-5', [`état initial illisible : ${premiereLigne(e)}`]) } }
+
+// ── Le lot ───────────────────────────────────────────────────────────────────────────────────────────────────────────────
+let L
+try {
+  if (!fs.existsSync(FICHIER_LOT)) throw new Error(`${rel(FICHIER_LOT)} absent`)
+  const m = await import(`${pathToFileURL(FICHIER_LOT).href}?lu=${Date.now()}`)
+  L = m.default && typeof m.default === 'object' && !('fiche' in m) ? m.default : m
+} catch (e) {
+  noter('JA-6', [`${rel(FICHIER_LOT)} illisible : ${premiereLigne(e)}`])
+  finir()
+}
+{
+  const e = []
+  if (typeof L.fiche !== 'string' || !L.fiche) e.push(`${rel(FICHIER_LOT)} sans \`fiche\` : la preuve ne saurait pas dans quel dossier de preuves écrire la section du lot`)
+  else if (!RE_FICHE.test(L.fiche)) e.push(`\`fiche\` « ${L.fiche} » mal formée (^026-[\\w-]+$ attendu)`)
+  if (typeof L.reference !== 'string' || !/^[0-9a-f]{7,40}$/i.test(L.reference)) e.push(`\`reference\` ${JSON.stringify(L.reference)} : un sha de commit attendu`)
+  if (!Array.isArray(L.juges) || !L.juges.length) e.push('`juges` vide ou absent')
+  for (const [i, j] of (Array.isArray(L.juges) ? L.juges : []).entries()) {
+    if (typeof j?.commande !== 'string' || !/^scripts\/[\w./-]+\.mjs$/.test(j.commande) || j.commande.includes('..') || !fs.existsSync(path.join(R, j.commande))) e.push(`juge ${i + 1} : commande ${JSON.stringify(j?.commande)} (un scripts/….mjs du dépôt attendu)`)
+    if (!Array.isArray(j?.arguments) || j.arguments.some((a) => typeof a !== 'string' || /^--(?:racine|temoin)\b/.test(a))) e.push(`juge ${i + 1} : arguments ${JSON.stringify(j?.arguments)} (chaînes, sans --racine ni --temoin)`)
+    if (!(typeof j?.loader === 'boolean' || (typeof j?.loader === 'string' && /^\.\/scripts\/[\w./-]+\.mjs$/.test(j.loader)))) e.push(`juge ${i + 1} : loader ${JSON.stringify(j?.loader)} (booléen ou ./scripts/….mjs)`)
+    if (typeof j?.attendu !== 'string' || !RE_CRITERE.test(j.attendu)) e.push(`juge ${i + 1} : attendu ${JSON.stringify(j?.attendu)} (un identifiant de critère)`)
+  }
+  for (const c of L.controles ?? []) if (!/^JA-\d+$/.test(c?.id ?? '') || typeof c?.module !== 'string' || !/^\.\/[\w./-]+\.mjs$/.test(c.module) || c.module.includes('..') || typeof c?.fonction !== 'string') e.push(`contrôle ${JSON.stringify(c)} mal formé ({ id: 'JA-n', module: './….mjs', fonction })`)
+  if (L.controles !== undefined && !Array.isArray(L.controles)) e.push('`controles` n’est pas une liste')
+  if (e.length) { noter('JA-6', e); if (!SOUS) for (const id of IDS) if (id !== 'JA-6') noter(id, ['non jugé : lot.mjs refusé (JA-6)']); finir() }
+  noter('JA-6', [], `${rel(FICHIER_LOT)} lisible : fiche ${L.fiche}, référence ${L.reference.slice(0, 7)}, ${L.juges.length} juge(s), ${(L.controles ?? []).length} contrôle(s) propre(s) au lot`)
+  if (SOUS) finir()
+}
+const labelJuge = (j) => `${path.basename(j.commande, '.mjs')}${j.arguments.length ? ` ${j.arguments.join(' ')}` : ''}`
+
+// ── Le piège réseau (JA-4) ───────────────────────────────────────────────────────────────────────────────────────────────
+const PIEGE = String.raw`// Piège réseau de juges-026-pilotage-preuve (JA-4), écrit par la preuve : chargé dans chaque processus par NODE_OPTIONS.
+import fs from 'node:fs'
+import net from 'node:net'
+const J = process.env.PIEGE_RESEAU_JOURNAL
+const noter = (quoi) => { try { if (J) fs.appendFileSync(J, process.pid + ' ' + quoi + '\n') } catch { /* journal indisponible */ } }
+const local = (h) => { const x = String(h ?? '').replace(/^\[|\]$/g, '').toLowerCase(); return x === '127.0.0.1' || x === 'localhost' || x === '::1' || x === '::ffff:127.0.0.1' }
+const origine = globalThis.fetch
+if (typeof origine === 'function') {
+  globalThis.fetch = function (entree, init) {
+    let hote = '?'
+    try { hote = new URL(typeof entree === 'string' || entree instanceof URL ? String(entree) : entree.url).hostname } catch { /* adresse illisible */ }
+    if (!local(hote)) { noter('fetch ' + String(entree && entree.url ? entree.url : entree).slice(0, 200)); return Promise.reject(new Error('réseau interdit hors 127.0.0.1 (piège de juges-026-pilotage-preuve) : ' + hote)) }
+    return origine.call(this, entree, init)
+  }
+}
+const connecter = net.Socket.prototype.connect
+net.Socket.prototype.connect = function (...args) {
+  const a = Array.isArray(args[0]) ? args[0][0] : args[0]
+  let hote = null
+  if (a && typeof a === 'object') { if (a.path) return connecter.apply(this, args); hote = a.host ?? 'localhost' }
+  else if (typeof a === 'number' || /^\d+$/.test(String(a))) hote = typeof args[1] === 'string' ? args[1] : 'localhost'
+  else return connecter.apply(this, args)
+  if (!local(hote)) {
+    noter('connect ' + hote)
+    const e = new Error('réseau interdit hors 127.0.0.1 (piège de juges-026-pilotage-preuve) : ' + hote)
+    process.nextTick(() => this.destroy(e))
+    return this
+  }
+  return connecter.apply(this, args)
+}
+`
+fs.mkdirSync(TRAV, { recursive: true })
+const FICHIER_PIEGE = exigerSousTravail(path.join(TRAV, 'piege-reseau.mjs'))
+fs.writeFileSync(FICHIER_PIEGE, PIEGE)
+const DOSSIER_RESEAU = exigerSousTravail(path.join(TRAV, `reseau-${LOT}`))
+const DOSSIER_SORTIES = exigerSousTravail(path.join(TRAV, `sorties-${LOT}`))
+for (const d of [DOSSIER_RESEAU, DOSSIER_SORTIES]) { fs.mkdirSync(d, { recursive: true }); for (const f of fs.readdirSync(d)) fs.unlinkSync(path.join(d, f)) }
+const journaux = []
+function envPiege(nom) {
+  const journal = path.join(DOSSIER_RESEAU, `${nom}.log`)
+  journaux.push({ nom, journal })
+  const env = { ...process.env }
+  delete env.JUGES_026_PILOTAGE_SOUS
+  env.NODE_OPTIONS = [process.env.NODE_OPTIONS, `--import=${pathToFileURL(FICHIER_PIEGE).href}`].filter(Boolean).join(' ')
+  env.PIEGE_RESEAU_JOURNAL = journal
+  return env
+}
+const lu = (f) => (lireOuNull(f) ?? '').trim()
+/** Lance node depuis la racine du dépôt, sous le piège ; garde la sortie sous .orchestre/travail/. */
+function lancerNode(args, { nom, env: extra = {}, timeout = 600_000 } = {}) {
+  const base = envPiege(nom)
+  // Un NODE_OPTIONS fourni par un contrôle du lot (un piège de plus) s'ajoute au piège réseau, sans jamais le remplacer.
+  const env = { ...base, ...extra, NODE_OPTIONS: [base.NODE_OPTIONS, extra.NODE_OPTIONS].filter(Boolean).join(' ') }
+  const r = lancer(process.execPath, args, { cwd: R, env, timeout })
+  fs.writeFileSync(path.join(DOSSIER_SORTIES, `${nom}.log`), `$ node ${args.join(' ')}\n${r.stdout}\n--- stderr ---\n${r.stderr}\n--- code ${r.code}${r.erreur ? ` (${r.erreur})` : ''} · ${r.duree.toFixed(1)} s\n`)
+  return r
+}
+{
+  const e = []
+  const r = lancerNode(['-e', "fetch('https://exemple.invalid/piege').catch(() => {}); require('node:https').get('https://exemple.invalid/piege-bis').on('error', () => {}); fetch('http://127.0.0.1:9/').catch(() => {}); setTimeout(() => {}, 300)"], { nom: 'piege-temoin' })
+  const j = lu(journaux.at(-1).journal)
+  if (!/fetch https:\/\/exemple\.invalid\/piege/.test(j)) e.push(`le piège n'a pas consigné un fetch vers l'extérieur (code ${r.code}, journal « ${court(j, 80)} »)`)
+  if (!/connect exemple\.invalid/.test(j)) e.push('le piège n’a pas consigné un https.get vers l’extérieur')
+  if (/127\.0\.0\.1/.test(j)) e.push('le piège a refusé 127.0.0.1')
+  journaux.pop() // le journal du témoin du piège n'est pas une fuite
+  noter('JA-4', e, 'piège réseau prouvé : un fetch et un https.get vers exemple.invalid consignés et refusés, 127.0.0.1 laissé passer')
+}
+
+// ── La référence ─────────────────────────────────────────────────────────────────────────────────────────────────────────
+let REF = null
+{
+  const e = []
+  try {
+    const c = git(['rev-parse', '--verify', `${L.reference}^{commit}`])
+    if (c.code !== 0) throw new Error(`référence ${L.reference} introuvable : ${court(c.stderr)}`)
+    const commit = c.stdout.trim()
+    if (git(['merge-base', '--is-ancestor', commit, 'HEAD']).code !== 0) e.push(`la référence ${commit.slice(0, 7)} n'est pas un ancêtre de HEAD`)
+    const absents = Array.isArray(L.absents) && L.absents.length ? L.absents : ABSENTS_DEFAUT
+    const arbre = lsTree(commit)
+    for (const a of absents) { const x = [...arbre.keys()].find((k) => (a.endsWith('/') ? k.startsWith(a) : k === a)); if (x) e.push(`la référence contient ${x}`) }
+    if (!e.length) {
+      const x = extraireReference(commit, path.join(TRAV, 'reference'))
+      REF = { ...x, absents }
+    }
+  } catch (err) { e.push(premiereLigne(err)) }
+  if (e.length) noter('JA-1', e)
+}
+
+// ── Les juges : sur la référence (JA-1), puis en témoin (JA-2) ──────────────────────────────────────────────────────────
+const RE_LIGNE_CRITERE = /^(✅|❌) ([A-Z0-9]{1,5}-[A-Z0-9-]+)\b/
+const lignesDe = (sortie) => sortie.split(/\r?\n/).map((l) => l.trim())
+const resultats = []
+for (const [i, j] of L.juges.entries()) {
+  const base = [...(j.loader === true ? ['--import', './scripts/ts-loader.mjs'] : typeof j.loader === 'string' ? ['--import', j.loader] : []), j.commande, ...j.arguments]
+  const nom = `${i + 1}-${path.basename(j.commande, '.mjs')}${j.arguments.map((a) => a.replace(/^--/, '').replace(/[^\w-]+/g, '-')).map((a) => `-${a}`).join('')}`
+  const res = { juge: j, label: labelJuge(j), ref: null, temoin: null, extrait: null }
+  if (REF) {
+    const r = lancerNode([...base, `--racine=${REF.dest}`], { nom: `${nom}.reference` })
+    const premiere = lignesDe(r.sortie).find((l) => RE_LIGNE_CRITERE.test(l)) ?? null
+    res.ref = { code: r.code, sortie: r.sortie, premiere, erreur: r.erreur, duree: r.duree }
+    const e = []
+    // ≠ 0, et un verdict (1, ou 2 si un préalable manque) : un plantage (127, 134, 0xC0000409, signal…) n'est pas un échec jugé.
+    if (r.code !== 1 && r.code !== 2) e.push(`${res.label} sur la référence : code ${r.code}${r.erreur ? ` (${r.erreur})` : ''}, un code de verdict ≠ 0 (1 ou 2) attendu, pas ${r.code === 0 ? 'un succès' : 'un plantage'}`)
+    if (!premiere) e.push(`${res.label} sur la référence : aucune ligne de critère (plantage sans identifiant ?) — ${court(r.sortie.trim().split(/\r?\n/).pop(), 120)}`)
+    else if (!premiere.startsWith(`❌ ${j.attendu} `) && premiere !== `❌ ${j.attendu}`) e.push(`${res.label} sur la référence : premier critère « ${court(premiere, 120)} », « ❌ ${j.attendu} … » attendu`)
+    else res.extrait = premiere.length > 300 ? premiere.slice(0, 300) : premiere
+    noter('JA-1', e)
+  }
+  const t = lancerNode([...base, '--temoin'], { nom: `${nom}.temoin` })
+  const verts = lignesDe(t.sortie).filter((l) => l.startsWith('✅ ')).map((l) => RE_LIGNE_CRITERE.exec(l)?.[2]).filter(Boolean)
+  const rouges = lignesDe(t.sortie).filter((l) => l.startsWith('❌ '))
+  res.temoin = { code: t.code, verts, rouges, derniere: t.sortie.trim().split(/\r?\n/).pop() }
+  noter('JA-2', t.code === 0 && verts.length && !rouges.length ? [] : [`${res.label} --temoin : code ${t.code}${t.erreur ? ` (${t.erreur})` : ''}${rouges.length ? `, ${court(rouges[0], 140)}` : ''}${!verts.length ? ', aucun critère vert' : ''}`],
+    `${res.label} --temoin : code 0 (${verts.join(', ')})`)
+  resultats.push(res)
+}
+
+// ── Les contrôles propres au lot (JA-3, JA-6…) ──────────────────────────────────────────────────────────────────────────
+const idsControles = new Set()
+for (const c of L.controles ?? []) {
+  idsControles.add(c.id)
+  const f = path.resolve(DOSSIER_LOT, c.module)
+  if (!sous(DOSSIER_LOT, f)) { noter(c.id, [`contrôle ${c.module} hors du dossier du lot`]); continue }
+  try {
+    const m = await import(pathToFileURL(f).href)
+    if (typeof m[c.fonction] !== 'function') throw new Error(`${c.module} n'exporte pas ${c.fonction}`)
+    let n = 0
+    const r = await m[c.fonction]({ lancerNode: (args, opts = {}) => lancerNode(args, { ...opts, nom: `controle-${c.id}-${opts.nom ?? ++n}` }), racine: R, lot: LOT, reference: REF ? REF.dest : null })
+    noter(c.id, Array.isArray(r?.echecs) ? r.echecs : ['le contrôle ne rend pas { echecs, detail }'], r?.detail ? `${c.fonction} : ${r.detail}` : '')
+  } catch (err) { noter(c.id, [`contrôle ${c.fonction} de ${c.module} interrompu : ${premiereLigne(err)}`]) }
+}
+if (!idsControles.has('JA-3')) noter('JA-3', [`${rel(FICHIER_LOT)} ne déclare aucun auto-contrôle de ses jeux d'essai (contrôle « JA-3 »)`])
+
+// ── JA-6 : la preuve refuse un lot.mjs sans fiche ou à la fiche mal formée ──────────────────────────────────────────────
+{
+  const e = []
+  const src = fs.readFileSync(FICHIER_LOT, 'utf8')
+  const RE_EXPORT = /^export\s+const\s+fiche\s*=\s*(['"`])[^'"`\n]*\1\s*;?[ \t]*\r?\n/m, RE_CLE = /^([ \t]*)fiche\s*:\s*(['"`])[^'"`\n]*\2\s*,?[ \t]*\r?\n/m
+  const re = RE_EXPORT.test(src) ? RE_EXPORT : RE_CLE.test(src) ? RE_CLE : null
+  if (!re || src.match(new RegExp(re.source, `${re.flags}g`)).length !== 1) e.push(`${rel(FICHIER_LOT)} : la ligne \`fiche\` introuvable ou en double, copie fautive impossible à fabriquer`)
+  else {
+    const d = exigerSousTravail(path.join(TRAV, `ja6-${LOT}`))
+    fs.mkdirSync(d, { recursive: true })
+    const copies = [
+      ['sans-fiche', src.replace(re, ''), false],
+      ['fiche-mal-formee', src.replace(re, re === RE_EXPORT ? "export const fiche = '26-012'\n" : "$1fiche: '26-012',\n"), false],
+      ['intacte', src, true],
+    ]
+    for (const [nom, texte, bonne] of copies) {
+      const f = path.join(d, `${nom}.mjs`)
+      fs.writeFileSync(f, texte)
+      const r = lancerNode([CE_SCRIPT, `--lot=${LOT}`, `--lot-fichier=${f}`], { nom: `ja6-${nom}`, env: { JUGES_026_PILOTAGE_SOUS: '1' }, timeout: 60_000 })
+      const l6 = lignesDe(r.sortie).find((l) => /^(✅|❌) JA-6\b/.test(l)) ?? ''
+      if (bonne && !(r.code === 0 && l6.startsWith('✅'))) e.push(`copie intacte du lot : code ${r.code}, « ${court(l6 || r.sortie, 120)} » (la copie doit passer : sinon le refus des copies fautives ne prouverait rien)`)
+      if (!bonne && !(r.code !== 0 && r.code !== null && l6.startsWith('❌'))) e.push(`copie ${nom} : code ${r.code}, « ${court(l6 || r.sortie, 120)} » — refus avec ❌ JA-6 attendu`)
+    }
+    noter('JA-6', e, `copies sous ${rel(d)} : sans fiche → ❌ JA-6, fiche « 26-012 » → ❌ JA-6, copie intacte → ✅ JA-6`)
+  }
+  if (e.length) noter('JA-6', e)
+}
+
+// ── echecs-attendus.md, relu (JA-1, JA-6) ────────────────────────────────────────────────────────────────────────────────
+{
+  const dossier = path.join(R, '.orchestre', 'preuves', L.fiche)
+  const fichier = path.join(dossier, 'echecs-attendus.md')
+  const echapper = (t) => String(t).replace(/\|/g, '\\|')
+  const debut = `<!-- lot:${LOT}:debut -->`, fin = `<!-- lot:${LOT}:fin -->`
+  const lignes = [
+    debut,
+    `## Lot ${LOT} — fiche ${L.fiche} — référence \`${REF ? REF.commit.slice(0, 7) : L.reference.slice(0, 7)}\``,
+    '',
+    `Écrit par \`node scripts/juges-026-pilotage-preuve.mjs --lot=${LOT}\` le ${new Date().toISOString().replace(/\.\d+Z$/, 'Z')}. Chaque juge est lancé par la preuve elle-même : sur l'arbre de référence extrait par \`git archive\` (\`${REF ? rel(REF.dest) : '—'}\`), avec \`--racine\`, puis avec \`--temoin\` sur l'état actuel. L'extrait est la première ligne de critère de la sortie, recopiée telle quelle (seul \`|\` est échappé en \`\\|\`), puis relue ici et retrouvée dans la sortie par la preuve.`,
+    '',
+    '| Juge et partie | Critère attendu en échec sur la référence | Code | Extrait réel de sa sortie | Témoin sur l’état actuel |',
+    '|---|---|---|---|---|',
+    ...resultats.map((x) => `| ${echapper(x.label)} | ${x.juge.attendu} | ${x.ref ? x.ref.code : '—'} | ${x.extrait ? echapper(x.extrait) : `(aucun : ${echapper(court(x.ref?.premiere ?? 'juge non lancé', 100))})`} | ${x.temoin.code === 0 ? `PASS, code 0 (${x.temoin.verts.join(', ')})` : `FAIL, code ${x.temoin.code}`} |`),
+    fin,
+  ]
+  const e = [], e6 = []
+  try {
+    if (!sous(path.join(R, '.orchestre', 'preuves'), fichier) || path.basename(dossier) !== L.fiche) throw new Error(`section à écrire hors du dossier de preuves de ${L.fiche}`)
+    fs.mkdirSync(dossier, { recursive: true })
+    const existant = lireOuNull(fichier)
+    const i = existant ? existant.indexOf(debut) : -1, k = existant ? existant.indexOf(fin) : -1
+    const tete = `# Échecs attendus des juges du Pilotage sur leur arbre de référence\n\nUne section par lot ; chacune est réécrite par la preuve à chaque passage.\n\n`
+    const texte = existant && i >= 0 && k > i
+      ? `${existant.slice(0, i)}${lignes.join('\n')}${existant.slice(k + fin.length)}`
+      : `${existant ? `${existant.replace(/\s*$/, '')}\n\n` : tete}${lignes.join('\n')}\n`
+    fs.writeFileSync(fichier, texte)
+    // Relecture : chaque extrait recopié doit se retrouver dans la sortie que la preuve vient de produire.
+    const relu = fs.readFileSync(fichier, 'utf8')
+    const section = relu.slice(relu.indexOf(debut), relu.indexOf(fin))
+    const rangs = section.split(/\r?\n/).filter((l) => l.startsWith('| ') && !l.startsWith('| Juge') && !l.startsWith('|---'))
+    if (!section.startsWith(debut)) e6.push(`la section « lot ${LOT} » est introuvable dans ${rel(fichier)} après écriture`)
+    const cellules = (l) => l.slice(2, -2).split(/(?<!\\) \| /).map((c) => c.replace(/\\\|/g, '|'))
+    for (const x of resultats) {
+      if (!x.extrait) continue
+      const rang = rangs.find((l) => cellules(l)[0] === x.label)
+      const extrait = rang ? cellules(rang)[3] : null
+      if (!extrait) e.push(`${x.label} : aucune ligne dans ${rel(fichier)}`)
+      else if (!x.ref.sortie.includes(extrait)) e.push(`${x.label} : l'extrait recopié « ${court(extrait, 80)} » ne se retrouve pas dans la sortie produite`)
+      else if (!extrait.startsWith(`❌ ${x.juge.attendu}`)) e.push(`${x.label} : l'extrait recopié ne porte pas ${x.juge.attendu}`)
+    }
+    if (rangs.length !== resultats.length) e.push(`${rangs.length} ligne(s) dans la section du lot, ${resultats.length} attendue(s)`)
+  } catch (err) { e6.push(`${rel(fichier)} : ${premiereLigne(err)}`) }
+  const ok = resultats.filter((x) => x.extrait)
+  noter('JA-1', e, REF ? `référence ${REF.commit.slice(0, 7)} ${REF.reutilise ? 'réutilisée (identique blob pour blob)' : 'extraite par git archive'} sous ${rel(REF.dest)} (${REF.fichiers} fichiers), ancêtre de HEAD, sans ${REF.absents.join(', ')} ; ${ok.map((x) => `${x.label} → code ${x.ref.code}, « ${court(x.extrait, 70)} »`).join(' ; ')} ; extraits recopiés dans ${rel(fichier)}, relus et retrouvés dans les sorties` : '')
+  if (e6.length && !e.length) e.push('echecs-attendus.md non écrit ou illisible : les extraits ne sont pas relus (JA-6)')
+  noter('JA-6', e6, `section « lot ${LOT} » écrite dans ${rel(fichier)} (dossier de preuves de ${L.fiche})`)
+}
+
+// ── JA-4 : aucun journal du piège ne s'est rempli ; JA-5 : rien n'a bougé ──────────────────────────────────────────────
+{
+  const fuites = journaux.map((x) => ({ ...x, texte: lu(x.journal) })).filter((x) => x.texte)
+  noter('JA-4', fuites.map((x) => `${x.nom} : ${court(x.texte.split('\n')[0], 120)}`), `${journaux.length} lancements sous le piège (juges sur la référence et en témoin, contrôles du lot, copies de JA-6) : aucun accès au réseau hors 127.0.0.1`)
+}
+if (avant) {
+  try {
+    const apres = etatDepot()
+    const d = []
+    for (const [k, v] of avant) if (!apres.has(k)) d.push(`${k} revenu propre ou disparu`); else if (apres.get(k) !== v) d.push(`${k} modifié (${v.split('|')[0].trim() || 'suivi'})`)
+    for (const k of apres.keys()) if (!avant.has(k)) d.push(`${k} apparu dans git status`)
+    noter('JA-5', d, `git status --porcelain identique avant et après (${avant.size} entrée(s) hors ${HORS_JA5.join(' et ')}, taille et date de chacune comprises)`)
+  } catch (e) { noter('JA-5', [`état final illisible : ${premiereLigne(e)}`]) }
+}
+finir()
