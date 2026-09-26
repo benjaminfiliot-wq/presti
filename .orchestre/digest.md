@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-26T15:34:17Z
+# Digest — 2026-09-26T15:42:04Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 89 tâche(s) PASS, 184115 ligne(s) · faites par Claude Code : 14 tâche(s) PASS, 52615 ligne(s).
-**État** — file : 1 · en cours : 2 · faites : 109 · refusées : 6
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 91 tâche(s) PASS, 184450 ligne(s) · faites par Claude Code : 14 tâche(s) PASS, 52615 ligne(s).
+**État** — file : 1 · en cours : 2 · faites : 111 · refusées : 6
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -21,6 +21,8 @@
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-038 | test | file | antigravity | — | Écrire les juges des droits du bus scripts/agents-garde-qa.mjs, scripts/agents-routes-qa.mjs et scripts/pause-qa.mjs, qui exécutent le vrai code contre un faux PostgREST et des doublures, et le lot 03 de la preuve, qui passe seulement si chaque juge échoue sur la référence avec le critère attendu et passe en --temoin |
+| 026-168 | test | fait | ag-168g | PASS | 2026-09-26T15:42:04Z · 11s · 335 l. |
+| 026-102 | test | fait | antigravity | PASS | 2026-09-26T15:39:12Z · 0s · 0 l. |
 | 026-026 | test | fait | ag-026g | PASS | 2026-09-26T15:31:15Z · 32s · 329 l. |
 | 026-029 | test | fait | antigravity | PASS | 2026-09-26T15:23:26Z · 19s · 0 l. |
 | 000-marketing-026 | contenu | fait | usine-codex-38 | PASS | 2026-09-26T15:00:53Z · 2s · 238 l. |
@@ -116,7 +118,5 @@
 | 014-10 | boucle-qa | fait | ag-10-g38 | PASS | 2026-09-14T04:41:54Z · 174s · 4839 l. |
 | 014-05 | boucle-qa | fait | ag-05-g38 | PASS | 2026-09-14T04:41:05Z · 90s · 2578 l. |
 | 014-08 | boucle-qa | fait | ag-08-g38 | PASS | 2026-09-14T04:40:18Z · 131s · 3842 l. |
-| 014-13 | test | fait | ag-13-gemini37flas | PASS | 2026-09-14T04:39:56Z · 22s · 293 l. |
-| 014-03 | boucle-qa | fait | ag-03-g38 | PASS | 2026-09-14T04:34:21Z · 79s · 15466 l. |
 
-… 18 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 20 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

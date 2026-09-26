@@ -305,3 +305,7 @@
 {"id":"026-026","verdict":"FAIL","ligne":"✅ JL-1 référence 4041ec9 réutilisée (identique blob pour blob) sous .orchestre/travail/026-lt-preuve/reference (750 fichiers), ancêtre de HEAD, sans app/api/con","code":1,"date":"2026-09-26T15:29:28Z","duree_s":40,"agent":"ag-026g","executant":"antigravity","lignes":326,"dossier":"en-cours"}
 {"id":"026-026","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T15:30:26Z","duree_s":32,"agent":"ag-026g","executant":"antigravity","lignes":329,"dossier":"en-cours"}
 {"id":"026-026","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T15:31:15Z","duree_s":32,"agent":"ag-026g","executant":"antigravity","lignes":329,"dossier":"fait"}
+{"id":"026-102","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T15:39:07Z","duree_s":0,"agent":"ag-102g","executant":"antigravity","lignes":866,"dossier":"en-cours"}
+{"id":"026-102","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T15:39:12Z","duree_s":0,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
+{"id":"026-168","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T15:41:42Z","duree_s":11,"agent":"ag-168g","executant":"antigravity","lignes":335,"dossier":"en-cours"}
+{"id":"026-168","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T15:42:04Z","duree_s":11,"agent":"ag-168g","executant":"antigravity","lignes":335,"dossier":"fait"}
