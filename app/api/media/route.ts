@@ -6,6 +6,7 @@ import { consommerLimite } from '@/lib/limites'
 import {
   TAILLE_MAX_FICHIER, formaterOctets, messagePlafondImages, octetsImages, plafondImages, verifierQuotaImages,
 } from '@/lib/quotaMedia'
+import { detecterTypeImage } from '@/lib/typeImage'
 
 // Téléversement des images de l'artisan — le SEUL chemin d'écriture dans `artisan-media`
 // (audit final, auditeur F, majeur 4.3).
@@ -79,6 +80,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: `Image trop lourde (${formaterOctets(TAILLE_MAX_FICHIER)} maximum).` }, { status: 413 })
   }
 
+  const detecte = detecterTypeImage(corps)
+  if (!detecte.ok) {
+    if (detecte.raison === 'heic' || detecte.raison === 'avif') {
+      return NextResponse.json({ error: 'Photo au format HEIC/AVIF non acceptée : réessayez en JPG (réglage Appareil photo → Formats → « Le plus compatible » sur iPhone).' }, { status: 415 })
+    }
+    return NextResponse.json({ error: 'Ce fichier n\'est pas une image PNG, JPG ou WebP.' }, { status: 415 })
+  }
+
   // Borne de rafale avant la mesure : elle borne le COÛT (une mesure de stockage par envoi),
   // pas le plafond — c'est la contre-mesure de course, plus bas, qui tient le plafond.
   if (!(await consommerLimite(`media:envoi:${s.uid}`, MAX_ENVOIS, FENETRE_ENVOIS))) {
@@ -93,9 +102,9 @@ export async function POST(req: Request) {
   }
 
   const rand = Math.random().toString(36).slice(2, 9)
-  const chemin = `${s.uid}/${Date.now()}-${rand}.${ext}`
+  const chemin = `${s.uid}/${Date.now()}-${rand}.${detecte.ext}`
   const { error } = await supabaseAdmin.storage.from(MEDIA_BUCKET).upload(chemin, corps, {
-    contentType: type,
+    contentType: detecte.type,
     cacheControl: '31536000', // le nom porte l'horodatage : le fichier est immuable
     upsert: false,
   })
