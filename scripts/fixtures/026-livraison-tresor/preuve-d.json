@@ -1,0 +1,14 @@
+{
+ "lot": "D",
+ "fiche": "026-026",
+ "reference": "4041ec9b41432576037dbc0b45e0647bd60a0347",
+ "reference_pourquoi": "Même sha que le lot A (preuve-a.json) : la référence du domaine est fixée par 026-018.",
+ "absents_de_la_reference": ["app/api/controle/dossier/route.ts", "app/api/controle/retrait/route.ts", "app/poste/page.tsx", "app/api/agents/tic/route.ts"],
+ "chemins_reference": ["app", "lib", "scripts", "supabase", "package.json", "tsconfig.json", "next.config.mjs", "next.config.ts", "middleware.ts", "proxy.ts"],
+ "juges": [
+  { "commande": "node scripts/dossier-zip-qa.mjs", "echec_attendu": "DZ-1", "cite": "app/api/controle/dossier/route.ts", "fiche_jugee": "026-028" },
+  { "commande": "node scripts/retrait-site-qa.mjs", "echec_attendu": "RT-1", "cite": "app/api/controle/retrait/route.ts", "fiche_jugee": "026-031" },
+  { "commande": "node scripts/poste-sites-qa.mjs", "echec_attendu": "PS-1", "cite": "app/poste/page.tsx", "fiche_jugee": "026-078" },
+  { "commande": "node scripts/bus-livraison-qa.mjs", "echec_attendu": "BL-1", "cite": "app/api/agents/tic/route.ts", "fiche_jugee": "026-141" }
+ ]
+}
