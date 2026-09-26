@@ -227,6 +227,22 @@
 | 026-201 | La Search Console sans geste : `lib/sites/searchConsole.ts` (compte de service, fichier de vérification, plan soumis) dans le tour de livraison | codex | `(ts-loader) scripts/search-console-qa.mjs` (026-199) | 026-078, 026-141, 026-199 ; après 026-141 (même fichier) ; appliquées : 0103 | oui | Une fois : créer le compte de service Google et déposer sa clé dans `presti-secrets/google-search-console.json` (Claude Code pose `GSC_COMPTE_SERVICE`) ; accord sur le diff |
 | 026-202 | Mise en service de la fabrication des pubs sur l'usine (par `gardien`), `docs/studio/prealables.md`, épreuve PC éteint d'un pack et d'un échantillon d'essai | claude-code | `(ts-loader) scripts/usine-pubs-qa.mjs --reel` (026-199) | 026-143, 026-148, 026-197, 026-199, 026-200 ; déployées : 026-200 | oui (usine) | « Oui » aux outils de rendu (HyperFrames, modèle de voix) et au minuteur ; confirmer l'activité de l'EI ; éteindre le poste 2 h |
 | 026-203 | Mutations des juges de la fabrication des pubs sur l'usine et de la Search Console | codex (usine) | `scripts/juges-026-mutations-preuve.mjs --script=scripts/juges-026-pubs-usine-mutations.mjs` (026-001) | 026-001, 026-199, 026-200, 026-201 | non | — |
+| 026-204 | C01 : juges du contenu et preuve du domaine réseaux | claude-code | `node scripts/juges-026-reseaux-preuve.mjs --preuve-echecs` (026-204, sauf méta-juge de C16) | 026-001, 026-116 | non | Accord par publication ; autres gestes dans la fiche |
+| 026-205 | C02 : mémoire marketing et cinq lignes éditoriales | claude-code | `node scripts/contenu-qa.mjs --partie=connaissance` (026-204, sauf méta-juge de C16) | 026-204, 026-119, 026-073, 026-083 | non | Accord par publication ; autres gestes dans la fiche |
+| 026-206 | C03 : schéma des lignes, publications, mesures et idées | claude-code | `node scripts/contenu-qa.mjs --partie=sql` (026-204, sauf méta-juge de C16) | 026-204, 026-205, 026-013 | non | Accord par publication ; autres gestes dans la fiche |
+| 026-207 | C04 : garde des lignes et pont avec le Crieur | codex | `node scripts/contenu-qa.mjs --partie=lignes` (026-204, sauf méta-juge de C16) | 026-204, 026-205, 026-206, 026-116 | oui (usine) | Accord par publication ; autres gestes dans la fiche |
+| 026-208 | C05 : cinq gabarits vidéo et un carrousel HyperFrames | antigravity | `node scripts/contenu-qa.mjs --partie=gabarits` (026-204, sauf méta-juge de C16) | 026-204, 026-205 | non | Accord par publication ; autres gestes dans la fiche |
+| 026-209 | C06 : fabrique de vidéos sur l’usine | codex | `node scripts/contenu-qa.mjs --partie=fabrication` (026-204, sauf méta-juge de C16) | 026-204, 026-207, 026-208 | oui (usine) | Accord par publication ; autres gestes dans la fiche |
+| 026-210 | C07 : publication TikTok avec accord par vidéo | claude-code | `node scripts/contenu-qa.mjs --partie=tiktok` (026-204, sauf méta-juge de C16) | 026-204, 026-206, 026-209 | non | Accord par publication ; autres gestes dans la fiche |
+| 026-211 | C08 : conversion de @vibecode.clips en TikTok Presti | claude-code | `node scripts/contenu-qa.mjs --partie=profil-tiktok` (026-204, sauf méta-juge de C16) | 026-204, 026-205 | non | Accord par publication ; autres gestes dans la fiche |
+| 026-212 | C09 : publication des Reels Instagram et vidéos Facebook par Graph | codex | `node scripts/contenu-qa.mjs --partie=meta` (026-204, sauf méta-juge de C16) | 026-204, 026-206, 026-207, 026-209, 026-044, 026-090 | oui (usine) | Accord par publication ; autres gestes dans la fiche |
+| 026-213 | C10 : mesure par publication et attribution prudente | codex | `node scripts/contenu-qa.mjs --partie=mesure` (026-204, sauf méta-juge de C16) | 026-204, 026-206, 026-212, 026-145 | oui (usine) | Accord par publication ; autres gestes dans la fiche |
+| 026-214 | C11 : boucle d’apprentissage et score de republication | codex | `node scripts/contenu-qa.mjs --partie=boucle` (026-204, sauf méta-juge de C16) | 026-204, 026-213, 026-047, 026-103 | oui (usine) | Accord par publication ; autres gestes dans la fiche |
+| 026-215 | C12 : veille des tendances et laboratoire des accroches | codex | `node scripts/contenu-qa.mjs --partie=veille` (026-204, sauf méta-juge de C16) | 026-204, 026-205, 026-072 | oui (usine) | Accord par publication ; autres gestes dans la fiche |
+| 026-216 | C13 : panneaux de suivi du contenu | antigravity | `node scripts/contenu-ecran-qa.mjs` (026-204, sauf méta-juge de C16) | 026-204, 026-206, 026-213, 026-215, 026-164, 026-189 | non | Accord par publication ; autres gestes dans la fiche |
+| 026-217 | C14 : geste d’accord de Benj sur chaque publication | claude-code | `node scripts/contenu-qa.mjs --partie=geste` (026-204, sauf méta-juge de C16) | 026-204, 026-206, 026-013, 026-117 | non | Accord par publication ; autres gestes dans la fiche |
+| 026-218 | C15 : relevé des jetons par agent et par IA | codex | `node scripts/contenu-qa.mjs --partie=couts` (026-204, sauf méta-juge de C16) | 026-204, 026-013, 026-043, 026-053, 026-120, 026-216 | oui (usine) | Accord par publication ; autres gestes dans la fiche |
+| 026-219 | C16 : mutations des juges du domaine réseaux | codex | `node scripts/juges-026-mutations-preuve.mjs --script=scripts/juges-026-reseaux-mutations.mjs` (026-204, sauf méta-juge de C16) | 026-204, 026-205, 026-206, 026-207, 026-208, 026-209, 026-210, 026-211, 026-212, 026-213, 026-214, 026-215, 026-216, 026-217, 026-218 | non | Accord par publication ; autres gestes dans la fiche |
 
 ## Les vagues
 
@@ -355,6 +371,22 @@ Chaque PASS est poussé par Claude Code (build d'avant push sur l'usine : `node 
 | V119 | — | 026-201 | 026-200 | 0102 appliquée (026-114) ; pour 026-201, la clé du compte de service n'est pas un préalable (sans elle, `sans_compte`, et le bouton reste le repli) |
 | V120 | 026-202 | — | — | 026-200 poussée et déployée (Vercel, et `usine-agents.mjs maj`) ; « oui » de Benj aux outils de rendu et au minuteur ; le poste éteint 2 h pour l'épreuve |
 | V121 | — | — | 026-203 | 026-200 et 026-201 PASS |
+| V122 | 026-204 | — | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V123 | 026-205 | — | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V124 | 026-206 | — | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V125 | — | — | 026-207 | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V126 | — | 026-208 | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V127 | — | — | 026-209 | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V128 | 026-210 | — | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V129 | 026-211 | — | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V130 | — | — | 026-212 | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V131 | — | — | 026-213 | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V132 | — | — | 026-214 | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V133 | — | — | 026-215 | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V134 | — | 026-216 | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V135 | 026-217 | — | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V136 | — | — | 026-218 | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V137 | — | 026-219 | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
 
 ## Les migrations : numéros définitifs et ordre d'application
 
@@ -605,6 +637,14 @@ Revue adversariale faite en lecture seule le 24/09 : chaque défaut est corrigé
 - **Mineurs (C).** **C1** : le crochet git-garde refuse aussi `git checkout` sans `--` sur un chemin, `checkout -f`, `git rm -r` ou `-f`, le git lancé depuis `node -e`, `python -c`, `Invoke-Expression`, `iex`, `Start-Process` et `& git` (026-002, 026-091, mutations en 026-103).
 - **Fiches ajoutées et renumérotées.** 026-124 (juges du pont et de la demande entrante), 026-125 (pont de l'orchestre), 026-126 (demande entrante) ; l'ancienne 026-124 devient 026-127, pour rester la dernière (026-041 renvoie à ce nouveau numéro). Elles viennent en fin de série parce que les ids suivent l'ordre d'exécution et que les juges précèdent ce qu'ils jugent : 026-126 peut partir dès que ses dépendances sont PASS, mais son drapeau ne se lève qu'avec la landing v2.
 - **Sérialisations ajoutées** : `lib/siteLivraison.ts` (026-025 → 026-031 → 026-052 → 026-087 → 026-094) ; `lib/flags.ts` et `scripts/fermeture-e2e.mjs` (… → 026-123 → 026-126).
+
+## Ce que l'assemblage marketing du 26/09 a changé
+
+Les 16 propositions C01–C16 de `reprise-cloud/docs/Ecosysteme-Marketing-Reel-2026-09-25.md` §3.7 et §4 bis deviennent 026-204 à 026-219, sans trou et sans renuméroter l'existant. 026-204 écrit d'abord le juge du domaine `reseaux` et ses fixtures ; 026-205 à 026-218 livrent la mémoire, le schéma, les lignes, les gabarits, la fabrique, TikTok, Meta, la mesure, la boucle, la veille, les panneaux, l'accord et les coûts ; 026-219 mute les juges et passe par le méta-juge de 026-001. Chaque fiche de production dépend de 026-204. Les vagues 122 à 137 sont un ordre de priorité : une fiche part dès ses dépendances PASS et les fichiers communs restent sérialisés.
+
+Laya/Jev est branché en décision locale, `--provider laya` explicite : `jev noul` reçoit le texte exact des chiffres et promesses avec la source avant publication ; seuil 0,5, sinon blocage et retour à Benj. `jev score` classe les contenus à republier avec leur provenance et des mesures suffisantes ; ce score n'écrit ni ne publie. `jev decide` peut classer, jamais rédiger. Le moteur indisponible bloque l'étape qui l'exige ; pas de fournisseur hébergé ni de modèle Ollama `:cloud` pour les données de prospect.
+
+R24 reste ouverte et l'accord individuel de Benj est requis pour chaque publication, même lorsqu'une ligne est approuvée. @vibecode.clips devient le compte TikTok Presti selon C08 ; les gestes sur le compte attendent l'accord explicite de Benj. Publora Starter reste au Crieur ; TikTok, Instagram et Facebook suivent des voies gratuites, sans publicité payante. R6 reste le préalable aux gestes Meta. La lecture scriptée de TikTok Studio ou Creative Center et le téléchargement de vidéos YouTube d'autrui restent exclus. Les ventes par réseau sont sourcées ; une vente par ligne déduite d'une fenêtre temporelle est présentée comme estimation.
 
 ## Correspondance des ids
 

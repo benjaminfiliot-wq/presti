@@ -294,3 +294,4 @@
 {"id":"000-marketing-026","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T13:57:10Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":237,"dossier":"fait"}
 {"id":"026-023","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T14:19:44Z","duree_s":63,"agent":"claude-code","executant":"claude-code","lignes":2559,"dossier":"en-cours"}
 {"id":"026-023","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T14:45:59Z","duree_s":63,"agent":"claude-code","executant":"claude-code","lignes":3246,"dossier":"fait"}
+{"id":"000-marketing-026","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T15:00:53Z","duree_s":2,"agent":"usine-codex-38","executant":"codex","lignes":238,"dossier":"fait"}
