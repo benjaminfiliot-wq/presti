@@ -1,0 +1,13 @@
+{
+ "lot": "C",
+ "fiche": "026-029",
+ "reference": "4041ec9b41432576037dbc0b45e0647bd60a0347",
+ "absents_de_la_reference": ["scripts/commande-exporter.mjs", "scripts/commande-rediger.mjs", "scripts/livrer-site.mjs", ".github/workflows/generer-site.yml"],
+ "chemins_reference": ["app", "lib", "scripts", "supabase", "package.json", "tsconfig.json", "next.config.mjs", "next.config.ts", "middleware.ts", "proxy.ts", ".github"],
+ "juges": [
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/commande-exporter-qa.mjs", "echec_attendu": "EX-1", "cite": "scripts/commande-exporter.mjs", "fiche_jugee": "026-033" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/redacteur-v2-qa.mjs", "echec_attendu": "RV-1", "cite": "lib/siteRedacteur.ts", "fiche_jugee": "026-093" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/livrer-site-qa.mjs", "echec_attendu": "CH-1", "cite": "scripts/livrer-site.mjs", "fiche_jugee": "026-100" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/generation-actions-qa.mjs", "echec_attendu": "GA-1", "cite": ".github/workflows/generer-site.yml", "fiche_jugee": "026-106" }
+ ]
+}
