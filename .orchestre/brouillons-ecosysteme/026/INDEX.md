@@ -723,4 +723,4 @@ Le méta-juge des mutations (`scripts/juges-026-mutations-preuve.mjs`) travaille
 
 - **026-009** (important) : le mode `--sans-essai` de `scripts/ops-sql-qa.mjs` n'est jugé par aucun critère (JP-1 à JP-6), et `ligneEnEchec()` accepte le jeton du critère n'importe où dans la sortie. À corriger AVANT de déposer 026-091 (mutations des juges horloge-bus), qui s'en sert.
 - **026-012** (mineur) : aucun critère ne vérifie que les juges du Pilotage ne lisent eux-mêmes ni `.env.local` ni `presti-secrets`, ni que chaque juge écrit sous son propre `.orchestre/travail/<juge>/`.
-- **026-048** : verifier rejoué PASS par la session principale ; la contre-vérification indépendante n'a pas rendu (coupure du workflow).
+- **026-048** : verifier rejoué PASS par la session principale ; contre-vérification indépendante OK (deux mineurs : AT-1 non sabotable sans casser Git du poste ; ~37 critères CF/SO/SV/RS vérifiés présents mais exercés seulement sur l'usine réelle).
