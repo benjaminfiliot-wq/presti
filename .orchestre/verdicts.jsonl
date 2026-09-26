@@ -290,3 +290,7 @@
 {"id":"026-023","verdict":"FAIL","ligne":"juges-026-lt-preuve --lot=B : FAIL — JL-1, JL-2, JL-3, JL-4","code":1,"date":"2026-09-26T09:39:48Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":204,"dossier":"en-cours"}
 {"id":"026-017","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:40:39Z","duree_s":17,"agent":"usine-codex-36","executant":"codex","lignes":411,"dossier":"fait"}
 {"id":"026-022","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:46:00Z","duree_s":10,"agent":"usine-codex-37","executant":"codex","lignes":347,"dossier":"fait"}
+{"id":"000-marketing-026","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T13:56:57Z","duree_s":2,"agent":"claude-code","executant":"claude-code","lignes":237,"dossier":"en-cours"}
+{"id":"000-marketing-026","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T13:57:10Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":237,"dossier":"fait"}
+{"id":"026-023","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T14:19:44Z","duree_s":63,"agent":"claude-code","executant":"claude-code","lignes":2559,"dossier":"en-cours"}
+{"id":"026-023","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T14:45:59Z","duree_s":63,"agent":"claude-code","executant":"claude-code","lignes":3246,"dossier":"fait"}

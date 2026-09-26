@@ -1,0 +1,14 @@
+{
+ "lot": "B",
+ "fiche": "026-023",
+ "reference": "4041ec9b41432576037dbc0b45e0647bd60a0347",
+ "reference_pourquoi": "Même sha que le lot A (preuve-a.json) : la référence du domaine est fixée par 026-018.",
+ "absents_de_la_reference": ["app/api/site/commander/public/route.ts", "app/api/site/commander/public/renvoyer/route.ts", "lib/siteAchatPublic.ts", "app/api/auth/lien/route.ts", "app/connexion/lien/page.tsx", "app/api/site/commander/complement/route.ts", "app/site/acheter/page.tsx", "app/site/commander/merci/page.tsx", "lib/suiteSure.ts"],
+ "chemins_reference": ["app", "lib", "scripts", "supabase", "package.json", "tsconfig.json", "next.config.mjs", "next.config.ts", "middleware.ts", "proxy.ts"],
+ "juges": [
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/achat-public-qa.mjs", "echec_attendu": "AP-1", "cite": "lib/siteAchatPublic.ts", "fiche_jugee": "026-025" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/lien-connexion-qa.mjs", "echec_attendu": "LC-1", "cite": "app/api/auth/lien/route.ts", "fiche_jugee": "026-027" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/complement-dossier-qa.mjs", "echec_attendu": "CD-1", "cite": "app/api/site/commander/complement/route.ts", "fiche_jugee": "026-030" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/achat-ecrans-qa.mjs", "echec_attendu": "EA-1", "cite": "app/site/acheter/page.tsx", "fiche_jugee": "026-035" }
+ ]
+}

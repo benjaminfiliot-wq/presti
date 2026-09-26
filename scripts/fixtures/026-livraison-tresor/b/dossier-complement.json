@@ -1,0 +1,45 @@
+{
+ "_lisez": "Jeu du juge complement-dossier-qa (CD-2, CD-4, CD-5, lot B). `prestations.cas` : ce que nettoyerBrouillon doit garder (attendu = la liste après nettoyage ; `au_plus` = un plafond de longueur quand l'entrée est tronquée ou écartée au choix). `complement_valide` : un corps de complément acceptable. `corps_interdits` : les champs qu'un PUT ne doit jamais écrire. `dossier_complet` : le jeu d'essai 025 qui passe erreursAvantPaiement (commande-exemple/commande.json, relu par le juge).",
+ "prestations": {
+  "cas": [
+   { "nom": "deux prestations propres", "entree": ["Dépannage plomberie", "Installation sanitaire"], "attendu": ["Dépannage plomberie", "Installation sanitaire"] },
+   { "nom": "13 prestations : la 13e est écartée", "entree": ["P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11", "P12", "P13"], "attendu": ["P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11", "P12"] },
+   { "nom": "HTML : balises écartées", "entree": ["<b>Dépannage</b>", "<script>alert(1)</script>Chauffage"], "sans_html": true, "au_plus_par_element": 80 },
+   { "nom": "doublon insensible à la casse", "entree": ["Dépannage", "dépannage", "DÉPANNAGE", "Chauffage"], "attendu": ["Dépannage", "Chauffage"] },
+   { "nom": "un seul signe : écarté", "entree": ["Dépannage", "x", " "], "attendu": ["Dépannage"] },
+   { "nom": "81 signes : tronquée ou écartée", "entree": ["Dépannage de chaudières à gaz et à condensation sur tout le bassin lyonnais, jour et nuit"], "au_plus_par_element": 80, "au_plus": 1 },
+   { "nom": "pas une liste", "entree": "Dépannage", "au_plus": 1 },
+   { "nom": "vide", "entree": [], "attendu": [] }
+  ]
+ },
+ "complement_valide": {
+  "domaine_mode": "aucun",
+  "domaine": null,
+  "metier": "Plombier",
+  "metiers_secondaires": ["Chauffagiste"],
+  "communes": ["Lyon", "Villeurbanne"],
+  "matiere": { "prestations": ["Dépannage plomberie", "Installation sanitaire"], "adresse": "12 rue fictive, 69003 Lyon", "horaires": "Lundi–vendredi, 8 h–18 h" }
+ },
+ "champs_permis": ["domaine_mode", "domaine", "metier", "metiers_secondaires", "communes", "matiere", "modifie_le"],
+ "corps_interdits": {
+  "etat": "en_ligne",
+  "prix_cents": 1,
+  "stripe_session_id": "cs_pirate_026b",
+  "paye_le": "2020-01-01T00:00:00Z",
+  "artisan_id": "90000000-0000-4000-8000-000000000999",
+  "email": "pirate@presti-test.invalid",
+  "achat_public": false,
+  "genere_le": "2020-01-01T00:00:00Z"
+ },
+ "dossier_complet": "scripts/fixtures/025/commande-exemple/commande.json",
+ "jeux_025": [
+  "scripts/fixtures/025/commande-exemple/commande.json",
+  "scripts/fixtures/025/commande-sans-chiffres.json",
+  "scripts/fixtures/025/commande-plombier.json",
+  "scripts/fixtures/025/commandes-metiers/couvreur/commande.json",
+  "scripts/fixtures/025/commandes-metiers/electricien/commande.json",
+  "scripts/fixtures/025/commandes-metiers/menuisier/commande.json",
+  "scripts/fixtures/025/commandes-metiers/plombier/commande.json"
+ ],
+ "message_profil": "Terminez d’abord votre inscription"
+}

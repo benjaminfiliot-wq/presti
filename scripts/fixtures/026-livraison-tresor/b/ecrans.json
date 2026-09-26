@@ -1,0 +1,41 @@
+{
+ "_lisez": "Ce que le juge achat-ecrans-qa (EA-2 à EA-6, lot B) sert lui-même au navigateur : la session factice posée dans le stockage local (aucun serveur d'authentification n'est joint : l'adresse Supabase de la copie pointe sur un port fermé), la réponse de GET /api/site/commander/complement en mode « compléter », et le 409 « profil ». Identifiants fictifs.",
+ "session": {
+  "cle_stockage": "sb-127-auth-token",
+  "access_token": "jeton.acces.ecran-026b",
+  "refresh_token": "jeton.rafraichissement.ecran-026b",
+  "user": { "id": "90000000-0000-4000-8000-0000000b0002", "email": "acheteur-026@presti-test.invalid", "aud": "authenticated", "role": "authenticated", "app_metadata": { "provider": "email" }, "user_metadata": {} }
+ },
+ "complement_get": {
+  "commandes": [
+   {
+    "id": "cmd-ecran-026b",
+    "artisan_id": "90000000-0000-4000-8000-0000000b0002",
+    "email": "acheteur-026@presti-test.invalid",
+    "etat": "payee",
+    "achat_public": true,
+    "prix_cents": 30000,
+    "stripe_session_id": "cs_sim_ecran_026b",
+    "paye_le": "2026-09-25T12:00:00Z",
+    "genere_le": null,
+    "valide_le": null,
+    "en_ligne_le": null,
+    "consigne": null,
+    "cree_le": "2026-09-25T11:50:00Z",
+    "modifie_le": "2026-09-25T12:00:00Z",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "metier": "Plombier",
+    "metiers_secondaires": [],
+    "communes": ["Lyon"],
+    "matiere": { "photos": [], "adresse": "", "siren": "", "horaires": "", "decennale": { "assureur": "", "numero": "" }, "avis_google": { "url": "" }, "logo_url": null, "artisan": null, "prestations": [] },
+    "erreurs": ["Ajoutez au moins 3 photos de chantiers : elles sont la matière principale du site, jamais un visuel de remplacement.", "Indiquez au moins une prestation que vous réalisez vraiment."],
+    "complet": false
+   }
+  ]
+ },
+ "brouillon_get": { "brouillon": null, "erreurs": [], "commandes": [] },
+ "profil_409": { "error": "Terminez d’abord votre inscription", "code": "profil_manquant" },
+ "textes_interdits": "premi[eè]re page|classement|garanti|douze mois|12 mois",
+ "viewports": [ { "largeur": 390, "hauteur": 844 }, { "largeur": 1440, "hauteur": 900 } ]
+}

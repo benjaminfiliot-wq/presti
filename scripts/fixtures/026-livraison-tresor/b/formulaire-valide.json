@@ -1,0 +1,9 @@
+{
+ "_lisez": "Corps de formulaire public valide pour POST /api/site/commander/public (AP-4, lot B). L'adresse porte des majuscules : la route doit l'écrire en minuscules (attendu.email).",
+ "email": "Acheteur-026@Presti-Test.invalid",
+ "entreprise": "Atelier Martin",
+ "metier": "Plombier",
+ "commune": "Lyon",
+ "cgu": true,
+ "attendu": { "email": "acheteur-026@presti-test.invalid", "artisan_id": null, "achat_public": true, "etat": "brouillon" }
+}

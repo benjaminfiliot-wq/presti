@@ -1,0 +1,32 @@
+{
+ "_lisez": "Événement Stripe checkout.session.completed d'un achat public (AP-5, lot B). Pas de uid, metadata.achat = 'public'.",
+ "id": "evt_sim_achat_public_026b",
+ "object": "event",
+ "api_version": "2025-08-27.basil",
+ "created": 1727350800,
+ "livemode": false,
+ "pending_webhooks": 1,
+ "request": { "id": null, "idempotency_key": null },
+ "type": "checkout.session.completed",
+ "data": {
+  "object": {
+   "id": "cs_sim_achat_public_026b",
+   "object": "checkout.session",
+   "mode": "payment",
+   "status": "complete",
+   "payment_status": "paid",
+   "livemode": false,
+   "amount_total": 30000,
+   "currency": "eur",
+   "customer": null,
+   "customer_details": { "email": "acheteur-026@presti-test.invalid" },
+   "client_reference_id": null,
+   "metadata": {
+    "type": "commande_site",
+    "commande_id": "cmd-achat-public-026b",
+    "achat": "public"
+   },
+   "payment_intent": "pi_sim_achat_public_026b"
+  }
+ }
+}

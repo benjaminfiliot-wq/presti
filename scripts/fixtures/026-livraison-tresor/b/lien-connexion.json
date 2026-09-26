@@ -1,0 +1,11 @@
+{
+ "_lisez": "Jeu du juge lien-connexion-qa (LC-3, lot B). Le jeton haché valide est celui que la doublure de generateLink rend (auth-admin.json) ; les autres sont mal formés. `plafond` : le nombre d'appels permis par adresse en 10 minutes (le 21e rend 429).",
+ "th_valide": "6f2c9b1e4d8a7c3f0e5b2a9d4c7f1e8b3a6d9c2f5e8b1a4d7c0f3e6b9a2d5c8f",
+ "th_non_hex": "zz2c9b1e4d8a7c3f0e5b2a9d4c7f1e8b3a6d9c2f5e8b1a4d7c0f3e6b9a2d5c8g",
+ "th_trop_court": "abcdef0123456789abc",
+ "th_trop_long": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef00",
+ "ip": "4.4.4.4",
+ "ip_bannie": "9.9.9.9",
+ "plafond": 20,
+ "message_refus": "Lien expiré ou déjà utilisé"
+}

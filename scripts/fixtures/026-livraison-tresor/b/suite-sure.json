@@ -1,0 +1,23 @@
+{
+ "_lisez": "Les 10 cas de suiteSure (EA-5, lot B) : `brut` → `attendu`. Gardé seulement s'il commence par /site/commander, sans //, sans \\, sans : et sans retour à la ligne ; sinon /outils.",
+ "cas": [
+  { "nom": "commande à compléter", "brut": "/site/commander?commande=x", "attendu": "/site/commander?commande=x" },
+  { "nom": "la page nue", "brut": "/site/commander", "attendu": "/site/commander" },
+  { "nom": "deux paramètres", "brut": "/site/commander?commande=cmd-1&etape=zone", "attendu": "/site/commander?commande=cmd-1&etape=zone" },
+  { "nom": "adresse relative de protocole", "brut": "//evil.fr", "attendu": "/outils" },
+  { "nom": "adresse absolue", "brut": "https://evil.fr", "attendu": "/outils" },
+  { "nom": "retour à la ligne", "brut": "/site/commander\n", "attendu": "/outils" },
+  { "nom": "remontée de chemin", "brut": "/outils/../x", "attendu": "/outils" },
+  { "nom": "barre oblique inverse", "brut": "/\\evil", "attendu": "/outils" },
+  { "nom": "javascript:", "brut": "javascript:alert(1)", "attendu": "/outils" },
+  { "nom": "vide", "brut": "", "attendu": "/outils" }
+ ],
+ "nuls": [ { "nom": "null", "brut": null, "attendu": "/outils" }, { "nom": "absent", "brut": null, "attendu": "/outils" } ],
+ "_complements": "Le préfixe est bon : seul le caractère interdit décide (un contrôle retiré se voit).",
+ "complements": [
+  { "nom": "barre oblique inverse après le préfixe", "brut": "/site/commander\\evil", "attendu": "/outils" },
+  { "nom": "deux barres après le préfixe", "brut": "/site/commander//evil.fr", "attendu": "/outils" },
+  { "nom": "deux-points après le préfixe", "brut": "/site/commander?suite=https://evil.fr", "attendu": "/outils" },
+  { "nom": "retour à la ligne après le préfixe", "brut": "/site/commander?x=1\r\n", "attendu": "/outils" }
+ ]
+}

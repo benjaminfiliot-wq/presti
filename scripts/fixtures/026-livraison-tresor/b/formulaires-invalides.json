@@ -1,0 +1,41 @@
+{
+ "_lisez": "Six corps de formulaire public invalides pour POST /api/site/commander/public (AP-4, lot B). `statut` est la réponse attendue : 400 pour un corps refusé, 200 neutre pour le piège `website` rempli (un robot ne doit rien apprendre). Aucun n'écrit en base.",
+ "cas": [
+  {
+   "nom": "e-mail faux",
+   "corps": { "email": "pas-une-adresse", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": true },
+   "motif": "e-mail invalide",
+   "statut": 400
+  },
+  {
+   "nom": "CGU non cochées",
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": false },
+   "motif": "CGU refusées",
+   "statut": 400
+  },
+  {
+   "nom": "piège website rempli",
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": true, "website": "https://spam.example" },
+   "motif": "piège rempli (robot)",
+   "statut": 200
+  },
+  {
+   "nom": "champ trop long",
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "metier": "Plombier", "commune": "Lyon", "cgu": true },
+   "motif": "entreprise > 80 signes",
+   "statut": 400
+  },
+  {
+   "nom": "HTML dans l'entreprise",
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "<script>alert(1)</script>", "metier": "Plombier", "commune": "Lyon", "cgu": true },
+   "motif": "HTML dans l'entreprise",
+   "statut": 400
+  },
+  {
+   "nom": "commune vide",
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "", "cgu": true },
+   "motif": "commune vide",
+   "statut": 400
+  }
+ ]
+}

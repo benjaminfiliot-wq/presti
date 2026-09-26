@@ -1,0 +1,18 @@
+{
+ "_lisez": "Les réponses de la doublure du lot B (b/doublures.mjs) : supabaseAdmin.auth.admin (createUser, generateLink), clientPublic().auth.verifyOtp et authArtisan. Identifiants et jetons fictifs ; les adresses sont en .invalid (RFC 2606), que lib/email.ts n'envoie jamais.",
+ "acheteur": { "uid": "90000000-0000-4000-8000-0000000b0001", "email": "acheteur-026@presti-test.invalid" },
+ "artisan": { "uid": "90000000-0000-4000-8000-0000000b0002", "email": "acheteur-026@presti-test.invalid" },
+ "fondateur": { "uid": "90000000-0000-4000-8000-0000000b00f0", "email": "fondateur-026@presti-test.invalid" },
+ "autre": { "uid": "90000000-0000-4000-8000-000000000999" },
+ "generateLink": {
+  "hashed_token": "6f2c9b1e4d8a7c3f0e5b2a9d4c7f1e8b3a6d9c2f5e8b1a4d7c0f3e6b9a2d5c8f",
+  "action_link": "https://doublure.supabase.invalid/auth/v1/verify?token=pkce_doublure_026b&type=magiclink&redirect_to=https://prestiapp.fr",
+  "email_otp": "000000"
+ },
+ "deja_inscrit": { "code": "email_exists", "message": "A user with this email address has already been registered", "status": 422 },
+ "session": {
+  "sid": "5d1c0e2a-026b-4b0b-8b0b-000000000b01",
+  "access_token": "jeton.acces.doublure-026b",
+  "refresh_token": "jeton.rafraichissement.doublure-026b"
+ }
+}
