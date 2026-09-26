@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d
-  modified: 2026-09-25T18:18:11.605Z
+  modified: 2026-09-26T09:26:47.766Z
 ---
 
 Le 24/09/2026, Claude Code a créé l'usine des agents sur le compte Oracle de Benj. Benj a créé le compte et s'est connecté lui-même.
@@ -44,5 +44,23 @@ Le 24/09/2026, Claude Code a créé l'usine des agents sur le compte Oracle de B
   - `presti-ops/usine/menage-bacs.sh` pour le ménage ;
   - le groupe docker de `usine` donne encore accès à root (à retirer).
 - **Ne jamais cliquer « Upgrade »** dans la bannière Free Trial.
+- **Always Free = 2 OCPU / 12 Go depuis le 15/06/2026** (c'était 4/24). Source : InfoQ, et `LISEZMOI.md` ligne 50.
+  - Sur un compte Free Tier, une instance au-dessus de la limite est ARRÊTÉE jusqu'à ce qu'on la redimensionne. Elle n'est pas supprimée d'après InfoQ, mais notre LISEZMOI parle de suppression à partir du 18/08.
+  - **Erreur du 26/09 :** j'ai conseillé à Benj de passer à 4/24 « gratuit », de mémoire, sans relire le LISEZMOI. Il l'a fait vers 00:50.
+  - Ne JAMAIS reconseiller 4/24. Relire les limites dans la doc avant tout conseil de dimensionnement.
+  - À faire : Benj vérifie le statut d'essai dans la console. Hors essai, retour à 2/12.
+- **Ollama (26/09)** : v0.34.4, dans ~/ollama, sur 127.0.0.1:11434, sans root.
+  - Modèles : qwen3:4b-instruct-2507 par défaut (environ 9 à 11 jetons/s à 4 OCPU) et qwen3:8b pour les cas difficiles (environ 6 jetons/s, avec `think:false`).
+  - Pas de cron dans l'image : il est relancé à chaque connexion ssh, donc aussi par la veille du PC toutes les 15 min.
+  - Doc : `presti-ops/usine/ollama-LISEZMOI.md`.
+  - **Ollama Cloud ouvert le 26/09**, relié au compte de Benj.
+    - Gratuits : gpt-oss:120b/20b-cloud, gemma4:cloud, nemotron-3-super:cloud. Kimi, DeepSeek, GLM et MiniMax sont payants.
+    - Codex tourne dessus (fournisseur `ol`), en 2ᵉ choix après ChatGPT.
+    - Aucune donnée de prospect vers un modèle `:cloud`.
+  - **Piège :** `gardien.sh` est une boucle longue qui garde l'environnement de son lancement, par exemple l'ancien `OLLAMA_NO_CLOUD=1`. Après une modification de `demarrer.sh`, arrêter le gardien ET le serveur par leur PID, puis relancer.
+  - **Piège :** ne jamais remplacer par scp un script bash en cours d'exécution, car bash lit le fichier au fil de l'eau. Arrêter le lanceur et ses enfants (`pgrep -P <pid>`), puis relancer.
+- **Laya/Jev** : un modèle local de DÉCISION (choice, score, noul), pas de rédaction. Benj l'a rappelé plusieurs fois : ne pas l'oublier.
+  - Rôles : qualifier les prospects, vérifier les chiffres avant publication, router, et donner un 3ᵉ avis dans les contrôles.
+  - Écrit dans le registre des IA et dans la fiche 026-041.
 
 Voir [[ecosysteme-presti]], [[codex-executant]].

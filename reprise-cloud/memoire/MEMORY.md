@@ -64,3 +64,6 @@
 - [Windsor.ai — Instagram](windsor-instagram.md) — relié le 24/09 (essai) : démographie agrégée + commentaires nominatifs, PAS la liste des abonnés ; actions publier/commenter (hors quota Publora)
 - [Revérifier décisions et vidéos](benj-reverifier-decisions-et-videos.md) — consigne du 25/09 : chaque conception finit par un agent de conformité qui relit ses décisions ET les vidéos de référence à l'image
 - [Migrations : je les applique moi-même](migrations-je-les-applique.md) — ne JAMAIS demander à Benj de coller du SQL : apply_migration par le connecteur, puis contrôle + test réel annulé + zéro trace
+- [Reprise cloud](reprise-cloud.md) — presti/reprise-cloud/ (26/09) pour une session claude.ai/code ; maj.sh ; le cloud partage la limite, n'atteint ni l'usine ni les secrets
+- [Tuer par PID seulement](tuer-par-pid-seulement.md) — 26/09 : un taskkill par nom a fermé tous les Chrome/Node du PC ; pkill -f tue sa propre session ssh
+- [Codex CLI 401 → secours gratuit](codex-cli-401-secours-gratuit.md) — nuit du 26/09 : codex exec rend 401 (PC + usine), l'app marche ; secours Codex sur freellmapi (wire_api=responses)

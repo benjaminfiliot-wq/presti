@@ -304,3 +304,31 @@ Un workflow qui lance plus de 3 agents Opus doit le justifier dans son en-tête.
 - **Usine (lecture seule, 19 h 20-19 h 27) :** `docker compose ps` (`freellmapi-freellmapi-1` en service depuis 22 h, sain), `/api/ping`, `freeapi.db` (noms de tables, fournisseurs, compteurs, catalogue), dernier `rollout-*.jsonl` de Codex (`rate_limits`, `total_token_usage`), `free -m`, `df -h`.
 - **Pages officielles :** https://ai.google.dev/gemini-api/docs/pricing ; https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/.
 - **Connecteurs lus gratuitement :** `get_usage`, `whoami` (Figma), `search_prompts` (MotionSites), `projects_list` (Perplexity).
+
+## 6. Ajouts de la nuit du 26/09/2026
+
+- **Ollama, l'IA locale de l'usine** : installé le 26/09 (v0.34.4, archive officielle, sha256 vérifié), sans root, sur `127.0.0.1:11434` seulement. C'est un réservoir **illimité et privé**.
+  - Modèles : `qwen3:4b-instruct-2507` par défaut (environ 9 à 11 jetons/s) et `qwen3:8b` pour le difficile (environ 6 jetons/s). Tous deux sous licence Apache 2.0, usage commercial permis.
+  - Usages : le relais quand freellmapi sature, les travaux de masse courts, et plus tard les données de prospects (après le « oui » de Benj).
+  - Doc : `presti-ops/usine/ollama-LISEZMOI.md`. Intégré au contrat des moteurs : fiche 026-041, section « Ajout du 26/09 ».
+- **Codex sur les modèles gratuits** : la ligne de commande Codex peut tourner sur freellmapi, avec `wire_api="responses"`, quand la connexion ChatGPT ne marche plus.
+  - Modèles qui tiennent une boucle d'outils, vérifié le 26/09 : `gpt-oss-120b` et `gemini-3.5-flash`.
+  - Échecs : `gemini-3.7-flash` s'arrête après deux appels ; Kimi, GLM, DeepSeek et Qwen 3.5 rendent 503, faute de clé de fournisseur dans freellmapi.
+  - Les lanceurs de l'usine font tourner les modèles à chaque tour pour étaler les quotas.
+- **Capacité** : l'usine est passée à 4 OCPU / 24 Go le 26/09. Attention, l'offre Always Free est limitée à 2/12 depuis le 15/06/2026 : Benj vérifie le statut d'essai et revient à 2/12 si nécessaire.
+- **Ollama Cloud (26/09, matin)** : relié au compte ollama.com de Benj (`ollama signin`, geste fait). Modèles **gratuits** vérifiés un par un :
+  - `gpt-oss:120b-cloud`, `gpt-oss:20b-cloud`, `gemma4:cloud` et `nemotron-3-super:cloud` ;
+  - Kimi (K2.6, K2.7-code, K3), DeepSeek V4, GLM 5.3, MiniMax M3 : **payants**, rien n'est acheté.
+  - Il n'y a ni Fable ni GPT-5.x chez Ollama. Les « Fable » de la recherche sont des envois d'utilisateurs : de petits Qwen de 8 à 9 milliards de paramètres, « sans censure », à ne jamais employer.
+  - Codex tourne sur `gpt-oss:120b-cloud` (fournisseur `ol`, `wire_api="responses"`, boucle d'outils vérifiée). C'est le premier secours après ChatGPT, avant freellmapi.
+  - Aucune donnée de prospect vers un modèle `:cloud`.
+- **Laya (+ Jev)** : ce n'est pas un modèle qui rédige. C'est un modèle local de **décision**, en une seule passe :
+  - `choice` : choisir une option ;
+  - `score` : une note sur une échelle ;
+  - `noul` : la probabilité calibrée qu'une affirmation soit vraie.
+  Il tourne sur l'usine (ONNX, ~1,7 Go), sans quota, et rien ne sort. Ses emplois dans l'écosystème :
+  - **qualifier les prospects** (`score`). Comme il est local, les données de prospects sont permises, après le « oui » de Benj ;
+  - **vérifier chaque chiffre et chaque promesse** avant une publication ou un envoi (`noul`, seuil 0,5) ;
+  - **router** un travail vers le bon moteur (`choice`) ;
+  - **troisième avis** dans les contrôles : conformité, inventaires vidéo.
+  - Doc : `presti-ops/usine/laya-LISEZMOI.md`.

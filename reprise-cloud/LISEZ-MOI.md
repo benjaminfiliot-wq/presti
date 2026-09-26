@@ -118,3 +118,35 @@ Ce dossier permet à une session Claude Code **dans le cloud** (claude.ai/code) 
 - Elle ne donne pas de quota en plus.
 - Elle sert à travailler sans le PC.
 - Préparer ce dossier n'a presque rien coûté : ce sont des copies de fichiers.
+
+## Point du 26/09/2026, 11 h 40 (à lire AVANT le tableau plus haut, qui date de minuit)
+
+**Série 026 : 11 fiches faites sur 203.** L'état exact se donne par `ls .orchestre/fait | grep 026` ; ne pas se fier au chiffre recopié ici.
+- Juges : 026-001, 002, 009, 012, 016, 018 et 048.
+- Production par Codex sur l'usine : 026-015 et 026-019.
+- En cours à 11 h 40 :
+  - usine : 026-020 et 026-005 ;
+  - Antigravity : 026-003 (Gemini Pro) et 026-023 (juges, Claude Opus sur le quota de Google).
+
+**Points ouverts** : voir la fin de `.orchestre/brouillons-ecosysteme/026/INDEX.md` (026-001, 026-009, 026-012).
+
+**Moteurs d'IA**
+- **Codex** : ChatGPT (gpt-6-sol) en premier. Sur un 401, Ollama Cloud prend le relais (`gpt-oss:120b-cloud`, gratuit), puis freellmapi.
+- **Ollama** : v0.34.4 sur l'usine. Modèles locaux qwen3 4B et 8B, plus 4 modèles Cloud gratuits : gpt-oss 120B et 20B, gemma4, nemotron-3-super.
+- **Laya/Jev** : un modèle de décision local (qualifier, vérifier les chiffres, router). Il ne rédige pas.
+- **Antigravity** : il prend les fiches du PC et les fiches de juges (Opus).
+- Le détail est dans `docs/Ecosysteme-IA-Registre-2026-09-25.md`, section 6.
+
+**Limite Claude**
+- Hebdomadaire, tous modèles : 94 % à 11 h. Elle repart à zéro le 27/09 à 8 h (heure de Paris). « Crédit supplémentaire » est désactivé sur le compte.
+- Une session cloud consomme la MÊME limite. À 100 %, elle s'arrête aussi, sauf si Benj active le crédit supplémentaire dans ses réglages claude.ai, et alors elle puise dans ses 250 €.
+- **En cas de coupure**, le travail continue sans Claude :
+  - Codex et Ollama sur l'usine (lanceurs `~/veille/lancer-codex-*.sh`, fiches `node scripts/usine.mjs lancer/recuperer`) ;
+  - Antigravity sur le PC.
+
+**Chantiers de l'usine**, avec leurs juges écrits d'avance :
+- `~/veille/lancer-codex-yt.sh` : les 14 vidéos YouTube de dropshipping, juge `juges/juge-yt.mjs` ;
+- `~/veille/lancer-codex-conformite.sh` : la conformité des vidéos TikTok/Instagram face aux décisions, juge `juges/juge-conformite.mjs`.
+- Journaux : `~/veille/journal-codex-*.log`.
+
+**Oracle** : l'usine est passée à 4 OCPU / 24 Go le 26/09, alors que l'offre Always Free est à 2/12 depuis le 15/06/2026. Benj dit que ça tient. Si l'instance s'arrête, la remettre à 2/12.

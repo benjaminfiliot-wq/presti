@@ -90,6 +90,18 @@ usine ALL=(root) NOPASSWD: /usr/bin/sh -c apt-get update&& apt-get install -y --
 2. **`usine` est dans le groupe `docker`** (ajouté pour freellmapi, après cloud-init). Le groupe `docker` vaut root : `docker run -v /:/hote …` écrit partout. **Le sudo restreint ne ferme donc pas tout le chemin vers root.** Pour le fermer : Docker sans root (rootless) pour `usine`, ou freellmapi sous un compte à part. Non fait : c'est le chantier de freellmapi, pas celui-ci.
 3. **Les mises en service prévues sous `usine` avec sudo** (fiches 026-050 `socle.sh`, 026-058, 026-148 : compte `agents`, `/etc/sudoers.d/presti-agents`, `/srv/presti-agents`, `systemctl start …`) : leur garde « `sudo -n true` sous `usine` » échouera. Leurs gestes root passent par le compte `ubuntu` (même clé), pas par la console d'Oracle. Leurs futures règles (`usine ALL=(agents) NOPASSWD: /usr/local/bin/presti-coffre`…) restent compatibles : un fichier de plus dans `/etc/sudoers.d/`.
 
+## Ollama (IA locale)
+
+Installé le 26/09/2026, sous `usine`, sans root : Ollama v0.34.4 dans `~/ollama` (sha256 de l'archive vérifié). L'IA répond sur **`http://127.0.0.1:11434`**, et sur `/v1` en compatible OpenAI, **depuis l'usine seulement**.
+
+- **Modèles :** `qwen3:4b-instruct-2507-q4_K_M` par défaut, 9 à 10 jetons/s quand l'usine travaille (11,7 quand elle est calme) ; `qwen3:8b-q4_K_M` pour les cas difficiles, 5 à 5,5 jetons/s (6,35 au calme), avec `think: false`. Mesuré à 4 OCPU ; l'écart d'une passe à l'autre dépasse parfois 30 %.
+- **Relance :** un gardien (`~/ollama/gardien.sh`) relance le serveur en 6 s au plus s'il tombe. `~/.bashrc` (en tête, avant le `return` des shells non interactifs) et `~/.profile` appellent `~/ollama/demarrer.sh --silencieux`, qui relance serveur et gardien à **toute** arrivée par ssh : `ssh usine@… 'commande'`, `bash -s`, scp, `usine.mjs`. **Après un redémarrage de l'usine, Ollama ne tourne pas avant la première arrivée par ssh.** Un vrai démarrage automatique attend que Benj choisisse une option (cron par `ubuntu`, tâche planifiée du PC ou lingering) : voir `ollama-LISEZMOI.md`, « Persistance ». Pour l'arrêter durablement : `touch ~/ollama/ARRET`.
+- **Disque :** la marge au-dessus du plancher de 8 Gio n'est que d'environ 1,7 Gio (`df -h ~`). Un modèle ne se télécharge que par `~/ollama/tirer.sh`, qui refuse tout ce qui crèverait un plafond.
+- **Données de prospects :** Ollama sera la seule IA autorisée à les traiter, et **seulement une fois que Benj l'aura validé**. Ce n'est pas encore le cas.
+- **Instance :** elle est passée à **4 OCPU / 24 Go** le 26/09. Cela contredit la limite Always Free de 2/12 citée plus haut (« Limites à connaître ») : Benj doit la vérifier dans la console Oracle.
+
+Tout le reste (mesures, appel depuis un agent, persistance, règles) est dans **[`ollama-LISEZMOI.md`](ollama-LISEZMOI.md)**. Les scripts sont copiés à côté : `ollama-demarrer.sh`, `ollama-gardien.sh`, `ollama-tirer.sh` et `ollama-bashrc-crochet.txt`. La commande qui compare leurs sha256 avec l'usine est dans `ollama-LISEZMOI.md`, juste après l'arborescence. Aucune empreinte n'est recopiée ici.
+
 ## Exécuter une fiche sur l'usine
 
 Le pont est `scripts/usine.mjs`, dans le dépôt presti, lancé depuis le PC. Codex traite une fiche de `.orchestre/file/` sur l'usine au lieu du PC (8 Go, saturé). Il reçoit le même contrat de tâche que les autres exécutants : le prompt vient de `scripts/antigravity.mjs`, la boucle de `scripts/executant.mjs`. **Le PC reste le seul à committer, et c'est lui qui rend le verdict officiel.**
