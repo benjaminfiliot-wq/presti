@@ -7,7 +7,7 @@ interdit: [scripts/**, app/**, lib/**, supabase/**, .orchestre/brouillons-ecosys
 verifier: node scripts/juges-026-marketing-assemblage.mjs
 budget: { fichiers: 22, minutes: 90 }
 preuve: sortie de verifier dans .orchestre/preuves/000-marketing-026/verifier.log
-executant: antigravity
+executant: codex
 ---
 
 # 000-marketing-026 — les fiches marketing C01–C16 entrent dans la série 026
@@ -16,7 +16,7 @@ executant: antigravity
 La relecture de conformité du 26/09 (`presti-ops/veille/conformite/rapport.md`, « Corrections non prises ») a relevé un manque. Les fiches C01 à C16 sont détaillées dans le document marketing, mais aucune fiche numérotée de la 026 ne les exécute : personne ne les produira.
 
 ## Ce qu'il faut faire
-1. **Lire.** Commence par `SaaS/Produit/Ecosysteme-Marketing-Reel-2026-09-25.md` en entier. Puis lis `.orchestre/brouillons-ecosysteme/026/INDEX.md` : ses règles, ses colonnes et sa section « Règles ». Termine par 3 fiches existantes, une de juges (claude-code), une de production (codex) et une de mutations, pour copier leur format EXACT.
+1. **Lire.** Commence par `reprise-cloud/docs/Ecosysteme-Marketing-Reel-2026-09-25.md` (copie dans le dépôt de SaaS/Produit/Ecosysteme-Marketing-Reel-2026-09-25.md) en entier. Puis lis `.orchestre/brouillons-ecosysteme/026/INDEX.md` : ses règles, ses colonnes et sa section « Règles ». Termine par 3 fiches existantes, une de juges (claude-code), une de production (codex) et une de mutations, pour copier leur format EXACT.
 2. **Écrire les brouillons.** Numérote-les `026-204.md` et suivants, sans trou. Il faut :
    - d'ABORD les fiches de juges (executant: claude-code), qui écrivent les juges des fiches marketing ;
    - puis les fiches de production (codex, ou codex sur l'usine) ;
@@ -25,7 +25,7 @@ La relecture de conformité du 26/09 (`presti-ops/veille/conformite/rapport.md`,
 3. **Laya/Jev**, consigne répétée de Benj. Laya est un modèle local de DÉCISION : `jev noul` (probabilité calibrée qu'une affirmation soit vraie), `jev score`, `jev decide`. Il ne rédige pas. Branche-le au minimum :
    - au contrôle des chiffres et des promesses AVANT toute publication (seuil 0,5, sinon bloqué et renvoyé à Benj) ;
    - au score des contenus à republier.
-   Voir `presti-ops/usine/laya-LISEZMOI.md` et la section « Ajout du 26/09 » de 026-041.
+   Voir `reprise-cloud/usine/laya-LISEZMOI.md` et la section « Ajout du 26/09 » de 026-041.
 4. **Règles fixes, déjà tranchées.** Ne les redemande pas.
    - Tout est gratuit : Publora Starter, TikTok, Instagram et Facebook sans pub payante.
    - Chaque publication passe par l'accord de Benj (R24 reste ouvert : accord par publication par défaut).
