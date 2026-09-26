@@ -3,10 +3,9 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
 import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
 import { journaliser, refusJournal } from '@/lib/direction/journal'
-import { sourcer } from '@/lib/direction/fraicheur'
 import { encaisseDuMois } from '@/lib/direction/stripe'
-import { stripe } from '@/lib/stripe'
 import { actif } from '@/lib/flags'
+import { caDeLAnnee, situerTva } from '@/lib/direction/tresorerie'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -36,19 +35,7 @@ async function reglages(): Promise<Record<string, number | string>> {
   return o
 }
 
-/** Le chiffre d'affaires encaissé depuis le 1er janvier — l'assiette du seuil de franchise. */
-const caDeLAnnee = () => sourcer('compta:ca-annee', 'stripe', async () => {
-  if (!stripe) throw new Error('Stripe n’est pas configuré.')
-  const debut = Math.floor(Date.UTC(new Date().getUTCFullYear(), 0, 1) / 1000)
-  let total = 0, curseur: string | undefined
-  for (let page = 0; page < 12; page++) {
-    const l = await stripe.invoices.list({ status: 'paid', limit: 100, created: { gte: debut }, ...(curseur ? { starting_after: curseur } : {}) }, { timeout: 20_000, maxNetworkRetries: 0 })
-    for (const f of l.data) total += f.amount_paid ?? 0
-    if (!l.has_more || !l.data.length) break
-    curseur = l.data[l.data.length - 1].id
-  }
-  return total
-}, 300_000)
+
 
 export async function GET(req: Request) {
   // Drapeau baissé = cet espace n'existe pas : 404 avant tout, y compris avant l'identité.
@@ -69,10 +56,8 @@ export async function GET(req: Request) {
       .eq('statut', 'a_venir').order('echeance').limit(50),
   ])
 
-  const seuil = Number(reg.tva_seuil_franchise_cents) || 0
-  const seuilMajore = Number(reg.tva_seuil_majore_cents) || 0
-  const alerteA = Number(reg.tva_alerte_pourcent) || 80
   const caCents = ca.valeur ?? null
+  const { seuil, seuilMajore, alerteA, pourcent, alerte, depasse } = situerTva(caCents, reg)
 
   const depensesAnnee = (achats ?? []).reduce((n, a) => n + (a.ttc_cents ?? 0), 0)
   const impayes = (achats ?? []).filter((a) => !a.payee)
@@ -85,10 +70,9 @@ export async function GET(req: Request) {
       regime: 'franchise en base (art. 293 B du CGI)',
       seuil, seuilMajore, alerteA,
       ca: caCents,
-      // On ne calcule un pourcentage que si on connaît le chiffre : sinon on n'affiche rien.
-      pourcent: caCents !== null && seuil > 0 ? Math.round((caCents / seuil) * 1000) / 10 : null,
-      alerte: caCents !== null && seuil > 0 && caCents >= seuil * (alerteA / 100),
-      depasse: caCents !== null && seuil > 0 && caCents >= seuil,
+      pourcent,
+      alerte,
+      depasse,
       source: ca.source, a: ca.a, erreur: ca.erreur,
     },
     // ── Les achats ────────────────────────────────────────────────────────────────────────────────

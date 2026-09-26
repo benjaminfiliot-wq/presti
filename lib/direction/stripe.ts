@@ -58,10 +58,10 @@ export const mrr = (): Promise<Sourcee<Mrr>> => sourcer('stripe:mrr', 'stripe', 
 }, TTL)
 
 export type Encaisse = { brut: number; frais: number; net: number; paiements: number; rembourse: number }
-/** Encaissé depuis le 1er du mois (transactions de solde : montant, frais Stripe, net) + remboursements. */
-export const encaisseDuMois = (): Promise<Sourcee<Encaisse>> => sourcer('stripe:encaisse', 'stripe', async () => {
+/** Encaissé depuis la date donnée (transactions de solde : montant, frais Stripe, net) + remboursements. */
+export const encaisseDepuis = (debutSecondes: number, cle: string): Promise<Sourcee<Encaisse>> => sourcer(cle, 'stripe', async () => {
   const r: Encaisse = { brut: 0, frais: 0, net: 0, paiements: 0, rembourse: 0 }
-  const l = await client().balanceTransactions.list({ created: { gte: debutDuMois() }, limit: 100 }, OPTIONS)
+  const l = await client().balanceTransactions.list({ created: { gte: debutSecondes }, limit: 100 }, OPTIONS)
   for (const t of l.data) {
     if (t.currency !== 'eur') continue
     if (t.type === 'charge' || t.type === 'payment') { r.brut += t.amount; r.frais += t.fee; r.net += t.net; r.paiements++ }
@@ -69,6 +69,10 @@ export const encaisseDuMois = (): Promise<Sourcee<Encaisse>> => sourcer('stripe:
   }
   return { brut: eur(r.brut), frais: eur(r.frais), net: eur(r.net), paiements: r.paiements, rembourse: eur(r.rembourse), partiel: l.has_more }
 }, TTL)
+
+export const encaisseDuMois = () => encaisseDepuis(debutDuMois(), 'stripe:encaisse')
+export const encaisseDuJour = () => encaisseDepuis(minuit(), 'stripe:encaisse:jour')
+export const encaisseSur7Jours = () => encaisseDepuis(Math.floor(Date.now() / 1000) - 7 * 86400, 'stripe:encaisse:7j')
 
 /** Abonnements ACTIVÉS depuis minuit UTC : un checkout abandonné (incomplete) n'est pas une conversion. */
 export const conversionsDuJour = (): Promise<Sourcee<number>> => sourcer('stripe:conversions', 'stripe', async () => {
