@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-26T08:38:11Z
+# Digest — 2026-09-26T09:26:48Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 78 tâche(s) PASS, 180372 ligne(s) · faites par Claude Code : 13 tâche(s) PASS, 49369 ligne(s).
-**État** — file : 0 · en cours : 2 · faites : 97 · refusées : 6
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 79 tâche(s) PASS, 180743 ligne(s) · faites par Claude Code : 13 tâche(s) PASS, 49369 ligne(s).
+**État** — file : 5 · en cours : 3 · faites : 98 · refusées : 6
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -20,6 +20,13 @@
 |---|---|---|---|---|---|
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
+| 026-019 | feature | en-cours | usine-codex-32 | — | depuis 2026-09-26T09:21:03Z · Créer sirene.ts et rge.ts dans lib/agents/acquisition/ : sirene.ts (ficheParSiren, chercherEntreprise, retenir) interroge l'API Recherche d'entreprises par un récupérateur injecté, ne retient qu'une unité active en diffusion O (pour un artisan : NAF du bâtiment et 0 à 9 salariés ; pour une marque : tout NAF hors NAF_EXCLUS_MARQUE) et ne rend jamais les dirigeants ni le nom d'un entrepreneur individuel ; rge.ts (importerRge) lit la liste publique des entreprises RGE de l'ADEME page par page et rend des candidats par domaine et par SIREN, sans adresse, téléphone ni nom de personne |
+| 026-003 | feature | file | codex | — | Faire décider le type d'une image envoyée à /api/media par ses premiers octets (JPEG, PNG, WebP acceptés ; HEIC, AVIF, SVG et le reste refusés en 415) grâce à une fonction pure lib/typeImage.ts, et écrire le fichier avec le type et l'extension détectés |
+| 026-005 | feature | file | codex | — | Écrire scripts/instantane-quotidien.mjs, qui fige l'arbre de travail dans un commit hors de main par un index temporaire, exclut .exe, secrets, données de prospects et fichiers de plus de 90 Mo, pousse ce seul commit sur une branche instantane-AAAA-MM-JJ du dépôt de sauvegarde sans jamais forcer, et journalise chaque passage |
+| 026-014 | feature | file | codex | — | Créer les modules purs lib/pilotage/decisions.ts (5 cartes au plus triées par euros puis échéance, 2 à 7 options, libellé du défaut prudent, portée de reconfirmation exigée), lib/pilotage/appels.ts (cartes À appeler avec lien tel: normalisé) et lib/pilotage/liens.ts (liens du Pilotage qui ne portent qu'un identifiant) |
+| 026-017 | feature | file | codex | — | Créer les modules purs lib/pilotage/agents.ts (état de chaque agent : actif, muet, en panne depuis plus de 2 h, en pause, disjoncteur, avec son coût du mois) et lib/pilotage/code.ts (résumé de l'orchestre et des PR, périmé au-delà de 2 h), et scripts/pilotage-code-publier.mjs qui publie depuis le poste un état de l'orchestre de 20 Ko au plus, sans jamais afficher un secret |
+| 026-020 | feature | file | codex | — | Créer lib/agents/acquisition/lecteurSite.ts : lecture polie d'un site d'artisan (robots.txt selon la RFC 9309, 1 requête par seconde et par hôte, 4 pages et 1 Mo par page au plus, ni autre domaine ni adresse privée) qui rend un JSON validé de faits cités mot pour mot, d'un audit factuel (HTTPS, affichage mobile, année du copyright), du SIREN des mentions, du formulaire de contact avec sa technologie et son verdict (éligible, ou abandon définitif au moindre captcha, pot de miel, refus du démarchage, clause contre les robots ou robots.txt qui interdit l'URL d'action), et des comptes Instagram et Facebook qu'il publie ; aucune adresse e-mail n'est jamais relevée |
+| 026-015 | feature | fait | usine-codex-31 | PASS | 2026-09-26T09:26:47Z · 37s · 371 l. |
 | 026-048 | test | fait | claude-code | PASS | 2026-09-26T08:38:11Z · 4s · 4321 l. |
 | 026-018 | test | fait | claude-code | PASS | 2026-09-26T06:16:11Z · 38s · 7611 l. |
 | 026-016 | test | fait | claude-code | PASS | 2026-09-26T05:03:27Z · 5s · 12254 l. |
@@ -111,12 +118,5 @@
 | 014-06 | boucle-qa | fait | ag-06-g38 | PASS | 2026-09-13T23:36:21Z · 129s · 2221 l. |
 | 014-14 | feature | fait | claude-code | PASS | 2026-09-13T18:41:34Z · 64s · 0 l. |
 | 014-01 | feature | fait | antigravity | PASS | 2026-09-13T17:11:39Z · 20s · 0 l. |
-| 014-16 | feature | fait | claude-code | PASS | 2026-09-13T16:58:40Z · 30s · 140 l. |
-| 014-12 | contenu | fait | antigravity | PASS | 2026-09-13T16:23:08Z · 10s · 0 l. |
-| 014-15 | contenu | fait | ag-1415 | PASS | 2026-09-13T16:22:08Z · 1s · 550 l. |
-| 001-test-echec | test | refuse | ag-2 | FAIL | ÉCHEC voulu : cette ligne doit apparaître telle quelle dans digest.md |
-| 000-test | test | fait | ag-1 | PASS | 2026-09-13T13:21:30Z · 0s · 1 l. |
-| 020-03 | feature | fait | codex | — | sans verdict |
-| 021-03 | feature | fait | codex | — | sans verdict |
 
-… 5 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 12 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
