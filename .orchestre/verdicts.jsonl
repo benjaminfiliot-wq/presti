@@ -283,3 +283,5 @@
 {"id":"026-048","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T08:38:11Z","duree_s":4,"agent":"claude-code","executant":"claude-code","lignes":4321,"dossier":"fait"}
 {"id":"026-015","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:26:47Z","duree_s":37,"agent":"usine-codex-31","executant":"codex","lignes":371,"dossier":"fait"}
 {"id":"026-019","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:29:22Z","duree_s":54,"agent":"usine-codex-32","executant":"codex","lignes":433,"dossier":"fait"}
+{"id":"026-003","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:33:15Z","duree_s":20,"agent":"ag-26003","executant":"codex","lignes":282,"dossier":"fait"}
+{"id":"026-005","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T09:35:16Z","duree_s":32,"agent":"usine-codex-34","executant":"codex","lignes":425,"dossier":"fait"}

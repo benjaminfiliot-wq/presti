@@ -88,3 +88,25 @@ node scripts/restaurer.mjs --restaurer sauvegardes/…​.presti --artisan <uuid
   sauvegarder à part.
 - GitHub héberge donc, chiffrées, des données personnelles de clients d'artisans : il figure à ce
   titre dans la liste des sous-traitants de la politique de confidentialité.
+
+## Le code et l'arbre de travail
+
+`node scripts/instantane-quotidien.mjs --pousser` fige le code suivi et les fichiers non suivis
+sans toucher à la branche courante, à l'index réel ou aux fichiers. L'arbre comprend ce que
+`.gitignore` n'écarte pas. Sans `--pousser`, l'instantané reste local. Le dépôt privé de
+sauvegarde reçoit uniquement ce commit sur une branche `instantane-AAAA-MM-JJ` ; un second
+passage le même jour crée une branche suffixée par l'heure de Paris. L'envoi a lieu uniquement
+quand cette commande est lancée sur le PC : PC éteint, rien ne part.
+
+Le script exclut les `.exe`, les fichiers de plus de 90 Mo, les fichiers `.env`, les clés et
+jetons détectés, ainsi que les fichiers contenant une donnée de prospect répertoriée dans le
+vault. Ces exclusions évitent de transférer des exécutables, des fichiers refusés par GitHub,
+des secrets et des données personnelles. Plus de 20 exclusions interrompent l'envoi. Chaque
+passage est consigné dans `.orchestre/travail/sauvegardes.jsonl`.
+
+Pour récupérer un fichier d'une branche sauvegardée :
+
+```bash
+git fetch https://github.com/benjaminfiliot-wq/presti-sauvegarde.git instantane-AAAA-MM-JJ
+git show FETCH_HEAD:<chemin>
+```
