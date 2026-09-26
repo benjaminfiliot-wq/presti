@@ -38,3 +38,18 @@ La relecture de conformité du 26/09 (`presti-ops/veille/conformite/rapport.md`,
 ## Ne pas faire
 - Ne modifie AUCUNE fiche existante 026-001 à 026-203. N'écris aucun code (scripts, app, lib, supabase) : ce sont des brouillons.
 - N'invente aucune décision de Benj. Une question vraiment ouverte va dans la section « Décisions R à trancher » de l'INDEX, avec ta recommandation.
+
+## Ce que le juge exige (durci le 26/09 à 16 h, après un premier rendu refusé)
+Le premier rendu comptait 16 fiches d'environ 1,3 Ko, avec la consigne « se conformer aux spécifications », un périmètre contredit par l'interdit (`lib/contenu/lignes.ts` alors que `lib/**` est interdit) et aucune étape. Il a été mis de côté dans `.orchestre/travail/marketing-squelettes-2026-09-26/`.
+
+Chaque nouvelle fiche doit maintenant :
+- **faire au moins 4 000 caractères.** Prends pour modèle 026-140 à 026-145, et copie leur niveau de détail, pas seulement leur en-tête ;
+- **dans « Ce qu'il faut faire », donner au moins 5 étapes numérotées et concrètes** : fichiers, fonctions, données, cas limites, et le rôle exact de Laya (`jev noul` sur quel texte, avec quel seuil) ;
+- **dans « C'est fini quand », poser au moins 3 critères vérifiables** par le verifier ;
+- **avoir un `perimetre` et un `interdit` disjoints** ;
+- **citer sa source précise** : `Ecosysteme-Marketing-Reel-2026-09-25.md` et le § ou la ligne de la fiche C correspondante ;
+- **pour une fiche d'exécutant** (codex ou antigravity) :
+  - dépendre d'au moins une nouvelle fiche de juges ;
+  - avoir un verifier qui lance un script écrit par une de ces fiches de juges, ou qui existe déjà.
+
+**Lance `node scripts/juges-026-marketing-assemblage.mjs` toi-même et corrige jusqu'au PASS AVANT de passer la tâche en fait/.**

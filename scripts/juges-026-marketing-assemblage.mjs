@@ -27,6 +27,31 @@ for (const f of nouvelles) {
   if (!/verifier:\s*\S/.test(texte[f])) manques.push(`${id} : pas de verifier`)
   if (/verifier:.*\bexit \$r\b/.test(texte[f])) manques.push(`${id} : verifier en « exit $r » (interdit, utiliser juges-en-serie)`)
 }
+// SUBSTANCE (ajouté le 26/09 après un premier rendu de 16 coquilles de 1,3 Ko qui passait la forme) : une fiche doit être
+// exécutable par un exécutant sans contexte — étapes concrètes, critères de fin, périmètre cohérent, source citée.
+const globRe = (g) => new RegExp('^' + g.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*\*/g, '\u0000').replace(/\*/g, '[^/]*').replace(/\u0000/g, '.*') + '$')
+const liste = (t, cle) => { const m = t.match(new RegExp(`^${cle}:\\s*\\[(.*)\\]`, 'm')); return m ? m[1].split(',').map((s) => s.trim().replace(/^["']|["']$/g, '')).filter(Boolean) : [] }
+const section = (t, titre) => (t.split(new RegExp(`^## ${titre}.*$`, 'm'))[1] || '').split(/^## /m)[0]
+const idsJuges = new Set(nouvelles.filter((f) => /^executant:\s*claude-code/m.test(texte[f])).map((f) => f.replace('.md', '')))
+const perimJuges = nouvelles.filter((f) => idsJuges.has(f.replace('.md', ''))).flatMap((f) => liste(texte[f], 'perimetre'))
+for (const f of nouvelles) {
+  const id = f.replace('.md', ''); const t = texte[f]
+  if (t.length < 4000) manques.push(`${id} : ${t.length} caractères (< 4000) — une fiche exécutable détaille le travail (voir 026-140 à 026-145)`)
+  if (/Se conformer strictement aux sp[ée]cifications/i.test(t)) manques.push(`${id} : consigne générique « se conformer aux spécifications » au lieu d'étapes`)
+  const etapes = (section(t, "Ce qu'il faut faire").match(/^\s*\d+[.)]\s+\S/gm) || []).length
+  if (etapes < 5) manques.push(`${id} : ${etapes} étape(s) numérotée(s) dans « Ce qu'il faut faire » (≥ 5 concrètes)`)
+  const fin = (section(t, "C'est fini quand").match(/^\s*(?:[-*]|\d+[.)])\s+\S/gm) || []).length
+  if (fin < 3) manques.push(`${id} : ${fin} critère(s) dans « C'est fini quand » (≥ 3 vérifiables)`)
+  const perim = liste(t, 'perimetre'); const interdit = liste(t, 'interdit')
+  for (const p of perim) for (const g of interdit) if (globRe(g).test(p.replace(/\/\*\*$/, '/x'))) manques.push(`${id} : « ${p} » est à la fois dans perimetre et interdit (${g})`)
+  if (!/Ecosysteme-Marketing-Reel-2026-09-25\.md[^\n]*(§|:\d+|section)/.test(t)) manques.push(`${id} : ne cite pas sa source précise (Ecosysteme-Marketing-Reel-2026-09-25.md, § ou ligne)`)
+  if (!idsJuges.has(id)) {
+    const script = ((t.match(/^verifier:.*?(scripts\/[\w./-]+\.mjs)/m) || [])[1]) || ''
+    if (script && !existsSync(script) && !perimJuges.includes(script)) manques.push(`${id} : son verifier lance ${script}, qu'aucune fiche de juges (claude-code) nouvelle n'écrit`)
+    const deps = ((t.match(/Dépend de[^\n]*/) || [''])[0].match(/026-\d{3}/g) || [])
+    if (!deps.some((d) => idsJuges.has(d))) manques.push(`${id} : ne dépend d'aucune des nouvelles fiches de juges (les juges d'abord)`)
+  }
+}
 const laya = nouvelles.filter((f) => /Laya|jev (noul|score|decide)/i.test(texte[f]))
 if (nouvelles.length && !laya.length) manques.push('aucune fiche marketing ne branche Laya/Jev (contrôle des chiffres avant publication, score) : consigne de Benj')
 const juges = nouvelles.filter((f) => /^executant:\s*claude-code/m.test(texte[f]))
