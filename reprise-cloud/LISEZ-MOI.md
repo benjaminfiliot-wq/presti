@@ -121,7 +121,7 @@ Ce dossier permet à une session Claude Code **dans le cloud** (claude.ai/code) 
 
 ## Point du 26/09/2026, 11 h 40 (à lire AVANT le tableau plus haut, qui date de minuit)
 
-**Série 026 : 11 fiches faites sur 203.** L'état exact se donne par `ls .orchestre/fait | grep 026` ; ne pas se fier au chiffre recopié ici.
+**Série 026 : 9 fiches faites sur 203.** L'état exact se donne par `ls .orchestre/fait | grep 026` ; ne pas se fier au chiffre recopié ici.
 - Juges : 026-001, 002, 009, 012, 016, 018 et 048.
 - Production par Codex sur l'usine : 026-015 et 026-019.
 - En cours à 11 h 40 :
