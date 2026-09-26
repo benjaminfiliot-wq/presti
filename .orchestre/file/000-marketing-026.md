@@ -7,7 +7,7 @@ interdit: [scripts/**, app/**, lib/**, supabase/**, .orchestre/brouillons-ecosys
 verifier: node scripts/juges-026-marketing-assemblage.mjs
 budget: { fichiers: 22, minutes: 90 }
 preuve: sortie de verifier dans .orchestre/preuves/000-marketing-026/verifier.log
-executant: claude-code
+executant: antigravity
 ---
 
 # 000-marketing-026 — les fiches marketing C01–C16 entrent dans la série 026
