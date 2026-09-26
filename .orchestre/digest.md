@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-26T15:47:57Z
+# Digest — 2026-09-26T15:59:22Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 92 tâche(s) PASS, 184762 ligne(s) · faites par Claude Code : 14 tâche(s) PASS, 52615 ligne(s).
-**État** — file : 2 · en cours : 3 · faites : 111 · refusées : 6
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 94 tâche(s) PASS, 185702 ligne(s) · faites par Claude Code : 14 tâche(s) PASS, 52615 ligne(s).
+**État** — file : 2 · en cours : 2 · faites : 113 · refusées : 6
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -20,9 +20,10 @@
 |---|---|---|---|---|---|
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 026-065 | feature | en-cours | ag-065g | — | depuis 2026-09-26T15:44:59Z · Créer lib/agents/acquisition/jugeFaits.ts : executerJugeFaits relit lui-même chaque source d'un prospect recense (page, SIRENE, annonce Meta si un jeton est passé), n'admet un fait que retrouvé mot pour mot, un compte que retrouvé sur sa page, un formulaire de contact que retrouvé et toujours éligible, jamais une adresse relevée, et fait passer le prospect à verifie ou rejete ; et verifierAvantEnvoi, obligatoire avant chaque premier contact, relit le fait cité et la page du formulaire (même action, même technologie, aucune protection apparue, robots.txt) et rend le verdict j1 |
 | 026-102 | test | file | claude-code | — | Écrire le contrat du chef d'opérations « Matt », qui tourne 24 h/24 sur l'usine Oracle (consignes docs/agents/chef.md, chef-routine.md et chef-reunion.md ; schémas docs/agents/chef-plan.schema.json, avec compte rendu et consignes lues, et chef-reunion.schema.json, au contrat de la réunion d'équipage) et son juge scripts/chef-qa.mjs avec un faux bus local, --preuve-echecs sortant en code 0 seulement si les groupes appliquer, etat, cycle, consignes, fil et usine échouent aujourd'hui sur CH-A1, CH-E1, CH-C1, CH-N1, CH-F1 et CH-U1 et si le faux bus passe son autotest |
 | 026-038 | test | file | antigravity | — | Écrire les juges des droits du bus scripts/agents-garde-qa.mjs, scripts/agents-routes-qa.mjs et scripts/pause-qa.mjs, qui exécutent le vrai code contre un faux PostgREST et des doublures, et le lot 03 de la preuve, qui passe seulement si chaque juge échoue sur la référence avec le critère attendu et passe en --temoin |
+| 026-066 | test | fait | ag-066g | PASS | 2026-09-26T15:59:22Z · 7s · 413 l. |
+| 026-065 | feature | fait | ag-065g | PASS | 2026-09-26T15:57:21Z · 8s · 527 l. |
 | 026-055 | feature | fait | ag-055g | PASS | 2026-09-26T15:47:57Z · 12s · 312 l. |
 | 026-168 | test | fait | ag-168g | PASS | 2026-09-26T15:42:04Z · 11s · 335 l. |
 | 026-026 | test | fait | ag-026g | PASS | 2026-09-26T15:31:15Z · 32s · 329 l. |
@@ -117,6 +118,5 @@
 | 014-04 | boucle-qa | fait | ag-04-g38b | PASS | 2026-09-14T05:45:11Z · 61s · 2913 l. |
 | 014-19 | test | fait | ag-19-g37 | PASS | 2026-09-14T05:40:18Z · 521s · 24 l. |
 | 014-18 | feature | fait | ag-18-g38 | PASS | 2026-09-14T04:51:14Z · 40s · 108 l. |
-| 014-10 | boucle-qa | fait | ag-10-g38 | PASS | 2026-09-14T04:41:54Z · 174s · 4839 l. |
 
-… 22 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 23 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
