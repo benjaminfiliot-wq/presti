@@ -1,0 +1,22 @@
+// TÉMOIN (026-038) — l'implémentation de référence de lib/agents/jetons.ts (fiche 026-040), sur laquelle agents-garde-qa --temoin
+// doit être VERT. Ce n'est pas le code livré : 026-040 écrit le sien. Pur : ni réseau, ni base.
+import crypto from 'node:crypto'
+
+export const FORMAT_JETON = /^pa_([a-z0-9_]{2,40})_([A-Za-z0-9_-]{43})$/
+const NOM = /^[a-z0-9_]{2,40}$/
+
+/** Un jeton neuf : pa_<nom>_<32 octets au hasard, en base64url>. */
+export function genererJeton(nom: string): string {
+  if (!NOM.test(nom)) throw new Error('nom d’agent hors format')
+  return `pa_${nom}_${crypto.randomBytes(32).toString('base64url')}`
+}
+/** Le sha256 hexadécimal du jeton entier : la seule chose que la base garde. */
+export function empreinteJeton(jeton: string): string {
+  return crypto.createHash('sha256').update(jeton).digest('hex')
+}
+/** Le nom porté par le jeton, ou null s'il n'est pas au format. */
+export function nomDuJeton(jeton: unknown): string | null {
+  if (typeof jeton !== 'string') return null
+  const m = FORMAT_JETON.exec(jeton)
+  return m ? m[1] : null
+}

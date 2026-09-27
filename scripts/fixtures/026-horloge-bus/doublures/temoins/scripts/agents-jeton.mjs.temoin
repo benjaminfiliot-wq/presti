@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+// TÉMOIN (026-038) — l'implémentation de référence de scripts/agents-jeton.mjs (fiche 026-040), sur laquelle agents-garde-qa
+// --temoin doit être VERT. Ce n'est pas le code livré : 026-040 écrit le sien.
+// node scripts/agents-jeton.mjs <nom> [--rotation] [--sortie=tube]
+import fs from 'node:fs'
+import crypto from 'node:crypto'
+import { createClient } from '@supabase/supabase-js'
+
+for (const l of fs.existsSync('.env.local') ? fs.readFileSync('.env.local', 'utf8').split(/\r?\n/) : []) { const m = l.match(/^\s*([A-Z0-9_]+)=(.*)$/); if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '') }
+const args = process.argv.slice(2)
+const noms = args.filter((a) => !a.startsWith('--'))
+const inconnues = args.filter((a) => a.startsWith('--') && a !== '--rotation' && a !== '--sortie=tube')
+const tube = args.includes('--sortie=tube')
+if (noms.length !== 1 || !/^[a-z0-9_]{2,40}$/.test(noms[0]) || inconnues.length) { console.error('Usage : node scripts/agents-jeton.mjs <nom> [--rotation] [--sortie=tube]'); process.exit(2) }
+if (tube && process.stdout.isTTY) { console.error('✗ --sortie=tube : la sortie standard est un terminal, rien n’est créé'); process.exit(2) }
+const nom = noms[0]
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL, cle = process.env.SUPABASE_SERVICE_ROLE_KEY
+if (!url || !cle) { console.error('✗ .env.local : l’adresse ou la clé de service manque'); process.exit(2) }
+const jeton = `pa_${nom}_${crypto.randomBytes(32).toString('base64url')}`
+const empreinte = crypto.createHash('sha256').update(jeton).digest('hex')
+const sb = createClient(url, cle, { auth: { persistSession: false, autoRefreshToken: false } })
+const { error } = await sb.rpc('ops_agent_poser_jeton', { p_nom: nom, p_hash: empreinte })
+if (error) {
+  if (/ops:agent_inconnu/.test(String(error.message))) { console.error(`✗ agent inconnu : ${nom} (le script n’enregistre jamais un agent)`); process.exit(1) }
+  console.error(`✗ jeton non posé (${String(error.code || 'erreur')})`)
+  process.exit(1)
+}
+if (tube) process.stdout.write(`${jeton}\n`)
+else console.log(`Jeton de ${nom} : ${jeton}\nÀ poser dans le coffre de l’agent ; il ne sera plus jamais affiché.`)

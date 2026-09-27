@@ -1,0 +1,39 @@
+// TÉMOIN (026-038) — l'implémentation de référence de app/api/agents/taches/route.ts (fiche 026-042), sur laquelle
+// agents-routes-qa --temoin doit être VERT. Ce n'est pas le code livré : 026-042 écrit le sien.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { authAgent, exigerTable, exigerType, reponseRefusAgent } from '@/lib/agents/garde'
+import { ops_tache_creer } from '@/lib/agents/bus'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const MAX = 16 * 1024
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const texte = (v: unknown, max: number) => typeof v === 'string' && v.trim().length > 0 && v.length <= max
+const refus = (r: unknown): r is { status: number; code: string; error: string } => !!r && typeof r === 'object' && 'error' in r
+const erreur = (error: string, status: number, code?: string) => NextResponse.json(code ? { error, code } : { error }, { status })
+
+// POST /api/agents/taches — { type, cle, capacite, charge?, origine?, objet? } → 201 { id, creee: true } ou 200 { id, creee: false }
+export async function POST(req: Request) {
+  if (!actif('busAgents')) return erreur('Introuvable.', 404)
+  const agent = await authAgent(req)
+  if (refus(agent)) return reponseRefusAgent(agent)
+  const brut = await req.text()
+  if (Buffer.byteLength(brut) > MAX) return erreur('Corps trop grand (16 Ko au plus).', 413)
+  let b: Record<string, unknown>
+  try { b = JSON.parse(brut) } catch { return erreur('JSON invalide.', 400) }
+  if (!b || typeof b !== 'object' || Array.isArray(b)) return erreur('Un objet JSON attendu.', 400)
+  if (!texte(b.type, 60) || !texte(b.cle, 200) || !texte(b.capacite, 60)) return erreur('type, cle et capacite : des textes non vides.', 400)
+  if (b.charge !== undefined && b.charge !== null && (typeof b.charge !== 'object' || Array.isArray(b.charge))) return erreur('charge : un objet.', 400)
+  if (b.origine !== undefined && b.origine !== null && !(typeof b.origine === 'string' && UUID.test(b.origine))) return erreur('origine : un uuid.', 400)
+  if (b.objet !== undefined && b.objet !== null && !texte(b.objet, 200)) return erreur('objet : un texte.', 400)
+  const t = await exigerTable(agent, 'taches')
+  if (t) return reponseRefusAgent(t)
+  const ty = await exigerType(agent, b.type as string)
+  if (ty) return reponseRefusAgent(ty)
+  const r = await ops_tache_creer({ p_agent: agent.nom, p_type: b.type as string, p_cle: b.cle as string, p_capacite: b.capacite as string, p_charge: b.charge ?? null, p_origine: (b.origine as string) ?? null, p_objet: (b.objet as string) ?? null })
+  if (!r.ok) return erreur('Refusé par le bus.', r.status, r.code)
+  const ligne = (Array.isArray(r.data) ? r.data[0] : r.data) as { id?: string; creee?: boolean } | null
+  return NextResponse.json({ id: ligne?.id ?? null, creee: ligne?.creee === true }, { status: ligne?.creee === true ? 201 : 200 })
+}

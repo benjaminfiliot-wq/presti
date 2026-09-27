@@ -1,0 +1,63 @@
+// TÉMOIN (026-038) — l'implémentation de référence de app/api/agents/decisions/route.ts (fiche 026-042), sur laquelle
+// agents-routes-qa --temoin doit être VERT. Ce n'est pas le code livré : 026-042 écrit le sien. Un agent crée une décision,
+// il ne la tranche jamais : aucune fonction qui tranche n'est appelée ici.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { authAgent, exigerTable, reponseRefusAgent } from '@/lib/agents/garde'
+import { ops_decision_creer, ops_decisions_tranchees } from '@/lib/agents/bus'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const MAX = 16 * 1024
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const JOUR = 86_400_000
+const refus = (r: unknown): r is { status: number; code: string; error: string } => !!r && typeof r === 'object' && 'error' in r
+const erreur = (error: string, status: number, code?: string) => NextResponse.json(code ? { error, code } : { error }, { status })
+const texte = (v: unknown, max: number) => typeof v === 'string' && v.trim().length > 0 && v.length <= max
+const dateIso = (v: unknown) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/.test(v) && Number.isFinite(Date.parse(v))
+
+// POST /api/agents/decisions — une question à trancher par Benj ; 201 { id, creee: true } ou 200 { id, creee: false }.
+export async function POST(req: Request) {
+  if (!actif('busAgents')) return erreur('Introuvable.', 404)
+  const agent = await authAgent(req)
+  if (refus(agent)) return reponseRefusAgent(agent)
+  const brut = await req.text()
+  if (Buffer.byteLength(brut) > MAX) return erreur('Corps trop grand (16 Ko au plus).', 413)
+  let b: Record<string, unknown>
+  try { b = JSON.parse(brut) } catch { return erreur('JSON invalide.', 400) }
+  if (!b || typeof b !== 'object' || Array.isArray(b)) return erreur('Un objet JSON attendu.', 400)
+  const options = b.options
+  const optionOk = (o: unknown) => !!o && typeof o === 'object' && /^[a-z_]{2,30}$/.test(String((o as { cle?: unknown }).cle)) && texte((o as { libelle?: unknown }).libelle, 80) && typeof (o as { recommandee?: unknown }).recommandee === 'boolean'
+  if (!texte(b.question, 500) || !Array.isArray(options) || options.length < 2 || options.length > 3 || !options.every(optionOk)) return erreur('question et 2 ou 3 options { cle, libelle, recommandee } attendues.', 400)
+  if (typeof b.defaut !== 'string' || !options.some((o) => (o as { cle: string }).cle === b.defaut)) return erreur('defaut : l’une des clés des options.', 400)
+  if (!texte(b.portee, 60) || !dateIso(b.echeance) || !texte(b.cle, 200)) return erreur('portee, echeance (date ISO) et cle attendues.', 400)
+  if (b.contexte !== undefined && b.contexte !== null && !texte(b.contexte, 2000)) return erreur('contexte : un texte.', 400)
+  if (b.montant_cents !== undefined && b.montant_cents !== null && !Number.isInteger(b.montant_cents)) return erreur('montant_cents : un entier.', 400)
+  if (b.tache !== undefined && b.tache !== null && !(typeof b.tache === 'string' && UUID.test(b.tache))) return erreur('tache : un uuid.', 400)
+  const t = await exigerTable(agent, 'decisions')
+  if (t) return reponseRefusAgent(t)
+  const r = await ops_decision_creer({
+    p_agent: agent.nom, p_question: b.question as string, p_contexte: (b.contexte as string) ?? null, p_options: options, p_defaut: b.defaut,
+    p_montant_cents: (b.montant_cents as number) ?? null, p_portee: b.portee as string, p_echeance: b.echeance as string, p_cle: b.cle as string, p_tache: (b.tache as string) ?? null,
+  })
+  if (!r.ok) return erreur('Refusé par le bus.', r.status, r.code)
+  const ligne = (Array.isArray(r.data) ? r.data[0] : r.data) as { id?: string; creee?: boolean } | null
+  return NextResponse.json({ id: ligne?.id ?? null, creee: ligne?.creee === true }, { status: ligne?.creee === true ? 201 : 200 })
+}
+
+// GET /api/agents/decisions?tranchees=1&depuis=<ISO> — les décisions de CET agent tranchées depuis une date de moins de 30 jours.
+export async function GET(req: Request) {
+  if (!actif('busAgents')) return erreur('Introuvable.', 404)
+  const agent = await authAgent(req)
+  if (refus(agent)) return reponseRefusAgent(agent)
+  const q = new URL(req.url).searchParams
+  if (q.get('tranchees') !== '1') return erreur('tranchees=1 attendu.', 400)
+  const depuis = q.get('depuis')
+  if (!dateIso(depuis)) return erreur('depuis : une date ISO.', 400)
+  const t = Date.parse(depuis as string)
+  if (t > Date.now() + 60_000 || Date.now() - t > 30 * JOUR) return erreur('depuis : une date de moins de 30 jours.', 400)
+  const r = await ops_decisions_tranchees({ p_agent: agent.nom, p_depuis: depuis as string })
+  if (!r.ok) return erreur('Refusé par le bus.', r.status, r.code)
+  return NextResponse.json(r.data ?? [])
+}

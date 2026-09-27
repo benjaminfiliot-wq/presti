@@ -1,0 +1,63 @@
+// TÉMOIN (026-038) — l'implémentation de référence de lib/agents/bus.ts (fiche 026-040), sur laquelle agents-garde-qa --temoin
+// doit être VERT. Ce n'est pas le code livré : 026-040 écrit le sien. Suffixe .temoin : hors de `npm run typecheck` du dépôt.
+//
+// Une fonction par fonction SQL des contrats 0097 et 0098, du MÊME nom, qui reçoit un objet aux clés `p_…` du contrat et
+// envoie exactement ces clés (null pour un paramètre absent : aucune fonction du contrat n'a de défaut). Chacune rend
+// { ok: true, data } ou { ok: false, code, status } ; le texte brut de Postgres ne sort jamais d'ici (console.error seulement).
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+
+export type ResultatBus<T = any> = { ok: true; data: T } | { ok: false; code: string; status: number }
+
+export const STATUT_ERREUR: Record<string, number> = {
+  options: 400, defaut: 400, echeance: 400, choix: 400, resume: 400, preuve: 400, jeton_format: 400, purge: 400, type_argent: 400, vt: 400,
+  type: 403, auteur: 403, opposition: 403, capacite: 403,
+  agent_inconnu: 404, origine: 404, interrupteur: 404,
+  profondeur: 409, sous_taches: 409, bail_perdu: 409, deja_tranchee: 409, jeton_deja_pris: 409, statut: 409,
+  '90_jours': 409, '72_heures': 409, '3_messages': 409, relance_sans_contact: 409,
+  agent_en_pause: 423, pause_generale: 423, quota_absent: 423,
+  quota: 429,
+}
+
+async function appeler(fonction: string, noms: string[], p: Record<string, unknown>): Promise<ResultatBus> {
+  const args: Record<string, unknown> = {}
+  for (const n of noms) args[n] = p[n] === undefined ? null : p[n]
+  let r: { data: unknown; error: { message?: string; code?: string } | null; status: number }
+  try {
+    r = (await supabaseAdmin.rpc(fonction, args)) as typeof r
+  } catch (e) {
+    console.error(`[bus] ${fonction} : base injoignable :`, e instanceof Error ? e.message : e)
+    return { ok: false, code: 'base_injoignable', status: 503 }
+  }
+  if (!r.error) return { ok: true, data: r.data }
+  const m = /^ops:([a-z0-9_]+)$/.exec(String(r.error.message ?? '').trim())
+  if (m) return { ok: false, code: m[1], status: STATUT_ERREUR[m[1]] ?? 500 }
+  console.error(`[bus] ${fonction} :`, r.error.message)
+  if (r.status === 0) return { ok: false, code: 'base_injoignable', status: 503 }
+  return { ok: false, code: 'erreur', status: 500 }
+}
+
+export const ops_agent_enregistrer = (p: { p_nom: string | null; p_libelle: string | null; p_capacites: string[] | null; p_types_crees: string[] | null; p_tables: string[] | null; p_periode_minutes: number | null; p_debit_minute: number | null; p_quota_creations_jour: number | null; p_plafond_euros_jour: number | null }) => appeler('ops_agent_enregistrer', ['p_nom','p_libelle','p_capacites','p_types_crees','p_tables','p_periode_minutes','p_debit_minute','p_quota_creations_jour','p_plafond_euros_jour'], p)
+export const ops_agent_poser_jeton = (p: { p_nom: string | null; p_hash: string | null }) => appeler('ops_agent_poser_jeton', ['p_nom','p_hash'], p)
+export const ops_agent_par_jeton = (p: { p_hash: string | null }) => appeler('ops_agent_par_jeton', ['p_hash'], p)
+export const ops_agent_retirer = (p: { p_nom: string | null }) => appeler('ops_agent_retirer', ['p_nom'], p)
+export const ops_agent_pause = (p: { p_nom: string | null; p_pause: boolean | null; p_motif: string | null }) => appeler('ops_agent_pause', ['p_nom','p_pause','p_motif'], p)
+export const ops_agent_echeance = (p: { p_nom: string | null; p_expire_le: string | null }) => appeler('ops_agent_echeance', ['p_nom','p_expire_le'], p)
+export const ops_battement = (p: { p_nom: string | null }) => appeler('ops_battement', ['p_nom'], p)
+export const ops_evenement_ajouter = (p: { p_agent: string | null; p_type: string | null; p_objet: string | null; p_resume: string | null; p_tache: string | null }) => appeler('ops_evenement_ajouter', ['p_agent','p_type','p_objet','p_resume','p_tache'], p)
+export const ops_evenements_lire = (p: { p_agent: string | null; p_apres: number | null; p_limite: number | null }) => appeler('ops_evenements_lire', ['p_agent','p_apres','p_limite'], p)
+export const ops_evenements_purger = (p: { p_jours: number | null }) => appeler('ops_evenements_purger', ['p_jours'], p)
+export const ops_interrupteur = (p: { p_nom: string | null }) => appeler('ops_interrupteur', ['p_nom'], p)
+export const ops_interrupteur_poser = (p: { p_nom: string | null; p_actif: boolean | null; p_motif: string | null; p_auteur: string | null }) => appeler('ops_interrupteur_poser', ['p_nom','p_actif','p_motif','p_auteur'], p)
+export const ops_decision_creer = (p: { p_agent: string | null; p_question: string | null; p_contexte: string | null; p_options: unknown | null; p_defaut: string | null; p_montant_cents: number | null; p_portee: string | null; p_echeance: string | null; p_cle: string | null; p_tache: string | null }) => appeler('ops_decision_creer', ['p_agent','p_question','p_contexte','p_options','p_defaut','p_montant_cents','p_portee','p_echeance','p_cle','p_tache'], p)
+export const ops_decision_trancher = (p: { p_id: string | null; p_choix: string | null; p_auteur: string | null }) => appeler('ops_decision_trancher', ['p_id','p_choix','p_auteur'], p)
+export const ops_decisions_tranchees = (p: { p_agent: string | null; p_depuis: string | null }) => appeler('ops_decisions_tranchees', ['p_agent','p_depuis'], p)
+export const ops_decisions_echues = () => appeler('ops_decisions_echues', [], {})
+export const ops_type_sortant = (p: { p_type: string | null }) => appeler('ops_type_sortant', ['p_type'], p)
+export const ops_tache_creer = (p: { p_agent: string | null; p_type: string | null; p_cle: string | null; p_capacite: string | null; p_charge: unknown | null; p_origine: string | null; p_objet: string | null }) => appeler('ops_tache_creer', ['p_agent','p_type','p_cle','p_capacite','p_charge','p_origine','p_objet'], p)
+export const ops_tache_prendre = (p: { p_agent: string | null }) => appeler('ops_tache_prendre', ['p_agent'], p)
+export const ops_tache_rendre = (p: { p_agent: string | null; p_id: string | null; p_resultat: string | null; p_preuve_url: string | null; p_erreur: string | null }) => appeler('ops_tache_rendre', ['p_agent','p_id','p_resultat','p_preuve_url','p_erreur'], p)
+export const ops_tache_clore = (p: { p_agent: string | null; p_cle: string | null; p_preuve_url: string | null }) => appeler('ops_tache_clore', ['p_agent','p_cle','p_preuve_url'], p)
+export const ops_baux_expirer = () => appeler('ops_baux_expirer', [], {})
+export const ops_cout_ajouter = (p: { p_agent: string | null; p_fournisseur: string | null; p_montant_eur: number | null; p_detail: unknown | null; p_tache: string | null }) => appeler('ops_cout_ajouter', ['p_agent','p_fournisseur','p_montant_eur','p_detail','p_tache'], p)
+export const ops_etat = () => appeler('ops_etat', [], {})
+export const ops_stockage_octets = () => appeler('ops_stockage_octets', [], {})

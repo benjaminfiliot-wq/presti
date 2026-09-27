@@ -1,0 +1,48 @@
+// TÉMOIN (026-038) — l'implémentation de référence de app/api/agents/evenements/route.ts (fiche 026-042), sur laquelle
+// agents-routes-qa --temoin doit être VERT. Ce n'est pas le code livré : 026-042 écrit le sien.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { authAgent, exigerTable, reponseRefusAgent } from '@/lib/agents/garde'
+import { ops_evenement_ajouter, ops_evenements_lire } from '@/lib/agents/bus'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const MAX = 16 * 1024
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const refus = (r: unknown): r is { status: number; code: string; error: string } => !!r && typeof r === 'object' && 'error' in r
+const erreur = (error: string, status: number, code?: string) => NextResponse.json(code ? { error, code } : { error }, { status })
+
+// POST /api/agents/evenements — { type, objet?, resume, tache? } ; le nom de l'agent vient du jeton, jamais du corps.
+export async function POST(req: Request) {
+  if (!actif('busAgents')) return erreur('Introuvable.', 404)
+  const agent = await authAgent(req)
+  if (refus(agent)) return reponseRefusAgent(agent)
+  const brut = await req.text()
+  if (Buffer.byteLength(brut) > MAX) return erreur('Corps trop grand (16 Ko au plus).', 413)
+  let b: Record<string, unknown>
+  try { b = JSON.parse(brut) } catch { return erreur('JSON invalide.', 400) }
+  if (!b || typeof b !== 'object' || Array.isArray(b)) return erreur('Un objet JSON attendu.', 400)
+  if (typeof b.type !== 'string' || !/^[a-z0-9_]{2,60}$/.test(b.type)) return erreur('type : un mot de 2 à 60 signes.', 400)
+  if (typeof b.resume !== 'string' || !b.resume.trim() || b.resume.length > 200) return erreur('resume : de 1 à 200 signes.', 400)
+  if (b.objet !== undefined && b.objet !== null && (typeof b.objet !== 'string' || b.objet.length > 200)) return erreur('objet : un texte de 200 signes au plus.', 400)
+  if (b.tache !== undefined && b.tache !== null && !(typeof b.tache === 'string' && UUID.test(b.tache))) return erreur('tache : un uuid.', 400)
+  const t = await exigerTable(agent, 'evenements')
+  if (t) return reponseRefusAgent(t)
+  const r = await ops_evenement_ajouter({ p_agent: agent.nom, p_type: b.type, p_objet: (b.objet as string) ?? null, p_resume: b.resume, p_tache: (b.tache as string) ?? null })
+  if (!r.ok) return erreur('Refusé par le bus.', r.status, r.code)
+  return NextResponse.json({ id: r.data }, { status: 201 })
+}
+
+// GET /api/agents/evenements?apres=<id>&limite=<n> — les événements des autres agents, après un id.
+export async function GET(req: Request) {
+  if (!actif('busAgents')) return erreur('Introuvable.', 404)
+  const agent = await authAgent(req)
+  if (refus(agent)) return reponseRefusAgent(agent)
+  const q = new URL(req.url).searchParams
+  const apres = q.get('apres') ?? '0', limite = q.get('limite') ?? '50'
+  if (!/^\d{1,18}$/.test(apres) || !/^\d{1,3}$/.test(limite) || Number(limite) < 1 || Number(limite) > 200) return erreur('apres : un id ; limite : de 1 à 200.', 400)
+  const r = await ops_evenements_lire({ p_agent: agent.nom, p_apres: Number(apres), p_limite: Number(limite) })
+  if (!r.ok) return erreur('Refusé par le bus.', r.status, r.code)
+  return NextResponse.json({ evenements: r.data ?? [] })
+}

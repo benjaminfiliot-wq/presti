@@ -1,0 +1,19 @@
+// TÉMOIN (026-038) — l'implémentation de référence de lib/agents/pause.ts (fiche 026-044), sur laquelle pause-qa --temoin doit
+// être VERT. Ce n'est pas le code livré : 026-044 écrit le sien.
+import { ops_interrupteur } from '@/lib/agents/bus'
+
+export type EtatPause = { active: boolean; source: 'variable' | 'base' | 'panne'; motif?: string }
+
+/** L'arrêt d'urgence : la variable Vercel d'abord, sans base ; sinon la base ; et quand on ne sait pas, rien ne sort. */
+export async function pauseGenerale(): Promise<EtatPause> {
+  if (process.env.PAUSE_GENERALE === '1') return { active: true, source: 'variable', motif: 'variable PAUSE_GENERALE' }
+  try {
+    const r = await ops_interrupteur({ p_nom: 'pause_generale' })
+    if (!r.ok) return { active: true, source: 'panne' }
+    if (r.data === true) return { active: true, source: 'base' }
+    if (r.data === false) return { active: false, source: 'base' }
+    return { active: true, source: 'panne' }
+  } catch {
+    return { active: true, source: 'panne' }
+  }
+}

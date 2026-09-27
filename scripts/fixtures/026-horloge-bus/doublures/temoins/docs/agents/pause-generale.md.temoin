@@ -1,0 +1,40 @@
+# La pause générale des agents
+
+La pause arrête dans la minute le Facteur, le Répondeur, les réponses Meta et le porteur du formulaire de l'usine (sa route `travail` ne rend plus rien).
+
+Seul Benj décide de la pause. Elle se commande de quatre façons, de la plus sûre à la plus lente. Les commandes déjà payées continuent.
+
+## Les quatre voies
+
+1. **La station** : l'interrupteur AUTO de la station Mission Control, téléphone compris, après le mot de passe (reconfirmation `securite`). D'ici là, un appel à la route `POST /api/controle/pause` avec `{ actif, motif }`.
+2. **Le pont Telegram** de l'usine, PC éteint : `/pause <motif>`. Il pose la pause et ne la lève jamais. Tant que le pont n'est pas en service (026-196), cette voie n'existe pas encore.
+3. **La ligne SQL de secours** : Claude Code l'exécute par `execute_sql` (connecteur Supabase), sur l'ordre de Benj, donné dans la conversation ou par Remote Control de Claude Code. Benj n'écrit ni n'exécute aucun SQL.
+
+   ```sql
+   update ops.interrupteurs set actif = true, motif = 'urgence execute_sql', change_le = now() where nom = 'pause_generale';
+   insert into ops.evenements (agent, type, objet, resume) values ('systeme', 'interrupteur', 'pause_generale', 'pause posée par Claude Code (execute_sql) sur l''ordre de Benj');
+   ```
+
+   La reprise : la même ligne avec `false`, seulement sur l'ordre de Benj.
+4. **La variable Vercel** `PAUSE_GENERALE=1`, puis un redéploiement : une variable modifiée ne s'applique qu'au déploiement suivant (5 minutes environ).
+
+## Ce que la pause coupe
+
+- la prise des tâches sortantes (`envoi`, `publication`, `mise_en_ligne`) ;
+- toute nouvelle carte `prepare` ou `approuve` : la base la refuse ;
+- les routes des agents d'acquisition (Plume, standardiste, recensement, vigie, purge), qui répondent « pause » avant tout travail ;
+- le Facteur : plus aucun jugement ni envoi ; rien ne part du Gmail de prospection ni par l'API de Meta ;
+- le porteur du formulaire sur l'usine : sa route `travail` rend `[]`, et il relit la pause avant chaque soumission ; aucun formulaire n'est soumis ;
+- le Répondeur : aucune réponse ne part, sur aucun canal ;
+- les réponses privées à un commentaire et la messagerie Instagram et Facebook ;
+- le Crieur : aucune nouvelle publication. Celles qu'il a déjà programmées dans Publora (26 h d'avance au plus) partent quand même : pour les arrêter, les retirer dans Publora.
+
+## Ce que la pause laisse passer
+
+- l'enregistrement d'un envoi déjà parti : le passage à `envoye` n'est jamais refusé, un événement `envoi_hors_regle` le signale ;
+- la réception : les réponses et les messages reçus sont rangés et classés par le Standard (rien ne sort) ;
+- l'opposition d'un STOP, enregistrée par la base (ce n'est pas un envoi) ;
+- les commandes payées et leur livraison (tic, livreur de l'usine, GitHub Actions) ;
+- la fabrication sur l'usine Oracle (maquettes, sites payés), qui ne contacte personne ;
+- le chef d'opérations, qui ne peut rien envoyer ;
+- le veilleur, le digest et la surveillance de l'usine.

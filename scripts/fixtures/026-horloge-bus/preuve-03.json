@@ -1,0 +1,30 @@
+{
+  "lot": "03",
+  "fiche": "026-038",
+  "reference": "86ce0f3be9c202d9e0bb11448642c033c5449e57",
+  "reference_pourquoi": "La référence de preuve-01.json (HEAD relevé au début de 026-009) : ni lib/agents/, ni app/api/agents/, ni app/api/controle/pause/, ni docs/agents/pause-generale.md. lib/flags.ts, lib/direction/journal.ts, lib/limites.ts et scripts/fermeture-e2e.mjs y sont ceux de HEAD.",
+  "absents_de_la_reference": ["lib/agents/", "app/api/agents/", "app/api/controle/pause/", "docs/agents/pause-generale.md"],
+  "archive": ["lib", "app", "scripts", "docs"],
+  "juges": [
+    { "commande": "node scripts/agents-garde-qa.mjs", "echec_attendu": "AG-1", "fiche_jugee": "026-040" },
+    { "commande": "node scripts/agents-routes-qa.mjs", "echec_attendu": "AR-1", "fiche_jugee": "026-042" },
+    { "commande": "node scripts/pause-qa.mjs", "echec_attendu": "PA-1", "fiche_jugee": "026-044" }
+  ],
+  "criteres": {
+    "JP-1": [
+      { "type": "echec-sur-reference" }
+    ],
+    "JP-2": [
+      { "type": "temoin" }
+    ],
+    "JP-3": [
+      { "type": "faux-postgrest", "module": "scripts/lib/faux-postgrest.mjs", "fonction": "ops_tache_creer", "renommer": { "p_agent": "agent" } }
+    ],
+    "JP-4": [
+      { "type": "reseau-piege", "permis": ["127.0.0.1", "localhost", "::1"] }
+    ],
+    "JP-5": [
+      { "type": "immobile" }
+    ]
+  }
+}

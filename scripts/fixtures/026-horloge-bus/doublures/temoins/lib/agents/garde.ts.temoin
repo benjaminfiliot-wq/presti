@@ -1,0 +1,74 @@
+// TÉMOIN (026-038) — l'implémentation de référence de lib/agents/garde.ts (fiche 026-040), sur laquelle agents-garde-qa --temoin
+// et agents-routes-qa --temoin doivent être VERTS. Ce n'est pas le code livré : 026-040 écrit le sien.
+import { NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { reseauIp } from '@/lib/audienceServeur'
+import { getIp } from '@/lib/security'
+import { FORMAT_JETON, empreinteJeton, nomDuJeton } from '@/lib/agents/jetons'
+import { ops_agent_par_jeton, ops_evenement_ajouter } from '@/lib/agents/bus'
+
+export type AgentAuth = { nom: string; capacites: string[]; typesCrees: string[]; tablesEcrites: string[]; debitMinute: number; route: string }
+export type RefusAgent = { status: number; code: string; error: string }
+
+const JETON: RefusAgent = { status: 401, code: 'jeton', error: 'Jeton d’agent refusé.' }
+const INJOIGNABLE: RefusAgent = { status: 503, code: 'base_injoignable', error: 'Service momentanément indisponible.' }
+
+export const estRefusAgent = (r: AgentAuth | RefusAgent | null): r is RefusAgent => !!r && 'error' in r
+
+/** consommer_limite (0049), appelée directement : un échec rend null, et l'appelant REFUSE (à l'inverse de lib/limites). */
+async function consommer(cle: string, max: number, fenetreS: number): Promise<boolean | null> {
+  try {
+    const { data, error } = await supabaseAdmin.rpc('consommer_limite', { p_cle: cle, p_max: max, p_fenetre_s: fenetreS })
+    if (error) { console.error('[agents] consommer_limite :', error.message); return null }
+    return data === true
+  } catch (e) {
+    console.error('[agents] consommer_limite injoignable :', e instanceof Error ? e.message : e)
+    return null
+  }
+}
+
+/** Un refus d'un agent connu est journalisé ; si le journal échoue, le refus tient quand même. */
+async function refuser(agent: AgentAuth, r: RefusAgent, motif: string): Promise<RefusAgent> {
+  let journal = false
+  try {
+    const ev = await ops_evenement_ajouter({ p_agent: agent.nom, p_type: 'refus', p_objet: agent.route.slice(0, 120), p_resume: `refus ${r.status} : ${motif}`.slice(0, 200), p_tache: null })
+    journal = ev.ok
+  } catch { /* le refus tient */ }
+  if (!journal) console.error('[agents] refus non journalisé :', agent.nom, r.code)
+  return r
+}
+
+export async function authAgent(req: Request): Promise<AgentAuth | RefusAgent> {
+  const m = /^Bearer ([^\s]+)$/.exec(req.headers.get('authorization') ?? '')
+  const jeton = m ? m[1] : ''
+  if (!FORMAT_JETON.test(jeton)) {
+    const ok = await consommer(`agents:ip:${reseauIp(getIp(req))}`, 30, 600)
+    if (ok === null) return INJOIGNABLE
+    if (!ok) return { status: 429, code: 'essais', error: 'Trop d’essais : réessayez plus tard.' }
+    return JETON
+  }
+  const r = await ops_agent_par_jeton({ p_hash: empreinteJeton(jeton) })
+  if (!r.ok) return INJOIGNABLE
+  const ligne = (Array.isArray(r.data) ? r.data[0] : r.data) as Record<string, unknown> | null | undefined
+  if (!ligne || typeof ligne.nom !== 'string' || ligne.nom !== nomDuJeton(jeton)) return JETON
+  if (ligne.en_pause === true || ligne.disjoncteur_ouvert === true) return { status: 423, code: 'agent_en_pause', error: 'Cet agent est en pause.' }
+  const liste = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [])
+  const agent: AgentAuth = {
+    nom: ligne.nom, capacites: liste(ligne.capacites), typesCrees: liste(ligne.types_crees), tablesEcrites: liste(ligne.tables_ecrites),
+    debitMinute: Number(ligne.debit_minute) || 0, route: new URL(req.url).pathname,
+  }
+  const debit = await consommer(`agent:${agent.nom}:minute`, agent.debitMinute, 60)
+  if (debit === null) return INJOIGNABLE
+  if (!debit) return refuser(agent, { status: 429, code: 'quota', error: 'Débit de l’agent dépassé.' }, 'débit par minute dépassé')
+  return agent
+}
+
+export async function exigerType(agent: AgentAuth, type: string): Promise<RefusAgent | null> {
+  if (agent.typesCrees.includes(type)) return null
+  return refuser(agent, { status: 403, code: 'type', error: 'Type de tâche hors du périmètre de l’agent.' }, 'type de tâche hors de ses types')
+}
+export async function exigerTable(agent: AgentAuth, table: string): Promise<RefusAgent | null> {
+  if (agent.tablesEcrites.includes(table)) return null
+  return refuser(agent, { status: 403, code: 'table', error: 'Table hors du périmètre de l’agent.' }, 'table hors de ses tables')
+}
+export const reponseRefusAgent = (r: RefusAgent) => NextResponse.json({ error: r.error, code: r.code }, { status: r.status })

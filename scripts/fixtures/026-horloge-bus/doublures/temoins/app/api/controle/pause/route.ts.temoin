@@ -1,0 +1,41 @@
+// TÉMOIN (026-038) — l'implémentation de référence de app/api/controle/pause/route.ts (fiche 026-044), sur laquelle pause-qa
+// --temoin doit être VERT. Ce n'est pas le code livré : 026-044 écrit le sien.
+import { NextResponse } from 'next/server'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
+import { journaliser, refusJournal } from '@/lib/direction/journal'
+import { pauseGenerale } from '@/lib/agents/pause'
+import { ops_interrupteur_poser } from '@/lib/agents/bus'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+// GET /api/controle/pause — l'état de l'arrêt d'urgence, pour un fondateur du domaine securite.
+export async function GET(req: Request) {
+  const f = await estFondateur(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const p = exigerDomaine(f, 'securite', 'voir')
+  if (domaineRefuse(p)) return reponseRefus(p)
+  return NextResponse.json(await pauseGenerale())
+}
+
+// POST { actif, motif } — poser ou lever la pause : fondateur, domaine securite en écriture, reconfirmation, motif, journal,
+// puis seulement l'écriture.
+export async function POST(req: Request) {
+  const f = await estFondateur(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const p = exigerDomaine(f, 'securite', 'ecrire')
+  if (domaineRefuse(p)) return reponseRefus(p)
+  const refus = await exigerReconfirmation(req, f.uid, 'securite')
+  if (refus) return refus
+  const b = (await req.json().catch(() => null)) as { actif?: unknown; motif?: unknown } | null
+  if (typeof b?.actif !== 'boolean') return NextResponse.json({ error: '« actif » : vrai ou faux.' }, { status: 400 })
+  const motif = typeof b.motif === 'string' ? b.motif.trim() : ''
+  if (motif.length < 3 || motif.length > 200) return NextResponse.json({ error: 'Un motif de 3 à 200 signes.' }, { status: 400 })
+  const avant = await pauseGenerale()
+  const journal = await journaliser({ acteur: f, action: 'pause_generale', cible_type: 'interrupteur', cible_id: 'pause_generale', avant: { active: avant.active, source: avant.source }, apres: { active: b.actif, motif }, reconfirme: true }, req)
+  if (!journal) return refusJournal()
+  const r = await ops_interrupteur_poser({ p_nom: 'pause_generale', p_actif: b.actif, p_motif: motif, p_auteur: f.uid })
+  if (!r.ok) return NextResponse.json({ error: 'L’interrupteur n’a pas pu être posé : rien n’a changé.', code: r.code }, { status: r.status })
+  return NextResponse.json({ ok: true, pause: await pauseGenerale() })
+}
