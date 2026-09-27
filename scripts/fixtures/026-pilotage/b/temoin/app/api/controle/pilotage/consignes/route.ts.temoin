@@ -1,0 +1,39 @@
+// app/api/controle/pilotage/consignes/route.ts — IMPLÉMENTATION DE RÉFÉRENCE du lot b (fiche 026-066) de la route de 026-074
+// qui transmet une consigne à l'équipage (ou à un agent, décision Claw3D du 25/09) : le témoin de pilotage-gestes-qa.
+// Le texte n'entre jamais dans le journal ni dans les traces : seule sa longueur y va.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { journaliser, refusJournal } from '@/lib/direction/journal'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { EQUIPAGE } from '@/lib/pilotage/equipage'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const NOMS = Object.keys(EQUIPAGE)
+const CONTROLE = /[\u0000-\u001f\u007f]/
+
+export async function POST(req: Request) {
+  if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const f = await estDirection(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const domaine = exigerDomaine(f, 'sante', 'ecrire')
+  if (domaineRefuse(domaine)) return reponseRefus(domaine)
+  const corps = (await req.json().catch(() => null)) as { texte?: unknown; agent?: unknown } | null
+  const texte = typeof corps?.texte === 'string' ? corps.texte.trim() : ''
+  if (texte.length < 3 || texte.length > 200 || CONTROLE.test(texte)) return NextResponse.json({ error: 'La consigne fait de 3 à 200 signes.' }, { status: 400 })
+  const agent = corps?.agent === undefined || corps?.agent === null ? null : corps.agent
+  if (agent !== null && (typeof agent !== 'string' || !NOMS.includes(agent))) return NextResponse.json({ error: 'Agent inconnu.', agents: NOMS }, { status: 400 })
+  const journal = await journaliser({ acteur: f, action: 'consigne_transmise', cible_type: 'consigne', apres: { longueur: texte.length, agent } }, req)
+  if (!journal) return refusJournal()
+  const r = await supabaseAdmin.rpc('station_consigne_transmettre', { p_texte: texte, p_auteur: f.uid, p_agent: agent })
+  if (r.error) {
+    const m = r.error.message
+    if (m.includes('ops:texte')) return NextResponse.json({ error: 'La consigne fait de 3 à 200 signes.' }, { status: 400 })
+    if (m.includes('ops:auteur')) return NextResponse.json({ error: 'Réservé aux fondateurs.' }, { status: 403 })
+    if (m.includes('ops:quota')) return NextResponse.json({ error: '20 consignes par jour au plus.' }, { status: 429 })
+    return NextResponse.json({ error: "Rien n'a été transmis." }, { status: 503 })
+  }
+  return NextResponse.json({ message: "Consigne transmise à l'équipage.", id: r.data })
+}

@@ -1,0 +1,376 @@
+---------------------------- _A_COLLER_sql_editor_0112_NU.sql — coller ce fichier EN ENTIER. Cette ligne est un commentaire : elle peut être abîmée sans conséquence.
+create table if not exists ops.reunions (
+  id          uuid primary key default gen_random_uuid(),
+  jour        date not null,
+  ouverte_le  timestamptz not null default now(),
+  close_le    timestamptz,
+  statut      text not null default 'ouverte' check (statut in ('ouverte', 'close', 'abandonnee')),
+  motif       text check (motif is null or char_length(motif) <= 200),
+  chiffres    jsonb check (chiffres is null or pg_column_size(chiffres) <= 8192),
+  lignes      text[],
+  objectif    jsonb,
+  idees       text[] not null default '{}',
+  par         text not null default 'chef' references ops.agents(nom) on delete cascade,
+  check ((statut = 'ouverte') = (close_le is null)),
+  check (statut <> 'close' or lignes is not null)
+);
+create unique index if not exists reunions_une_par_jour on ops.reunions (jour) where statut in ('ouverte', 'close');
+create table if not exists ops.experiences (
+  id             uuid primary key default gen_random_uuid(),
+  nom            text not null check (char_length(nom) between 3 and 80),
+  budget_eur     numeric(8,2) not null default 0 check (budget_eur = 0),
+  debut_le       timestamptz not null default now(),
+  fin_prevue_le  timestamptz not null,
+  gains_eur      numeric(10,2) not null default 0 check (gains_eur >= 0),
+  depense_eur    numeric(10,2) not null default 0 check (depense_eur >= 0),
+  statut         text not null default 'en_cours' check (statut in ('en_cours', 'arretee', 'arretee_auto', 'gagnante')),
+  motif          text check (motif is null or char_length(motif) <= 200),
+  lancee_par     uuid references public.artisans(id) on delete set null,
+  arretee_le     timestamptz,
+  check (fin_prevue_le = debut_le + interval '30 days')
+);
+create unique index if not exists experiences_une_en_cours on ops.experiences ((true)) where statut = 'en_cours';
+alter table ops.reunions enable row level security;
+alter table ops.experiences enable row level security;
+revoke all on table ops.reunions, ops.experiences from public, anon, authenticated, service_role;
+insert into ops.agents (nom, libelle, capacites, types_crees, tables_ecrites, periode_minutes, plafond_euros_jour)
+values ('pont_telegram', 'Pont Telegram', '{notifier,pause,consigne}', '{}', '{evenements}', 60, 0)
+on conflict (nom) do nothing;
+create or replace function public.station_consigne_transmettre(p_texte text, p_auteur uuid, p_agent text default null)
+returns bigint
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+declare
+  v_texte text := btrim(p_texte);
+  v_id bigint;
+begin
+  if not coalesce((select a.is_founder from public.artisans a where a.id = p_auteur), false) then raise exception 'ops:auteur'; end if;
+  if v_texte is null or char_length(v_texte) not between 3 and 200 or v_texte ~ '[[:cntrl:]]' then raise exception 'ops:texte'; end if;
+  if p_agent is not null and not exists (select 1 from ops.agents g where g.nom = p_agent) then raise exception 'ops:agent_inconnu'; end if;
+  if (select count(*) from ops.evenements e where e.type = 'consigne'
+        and (e.le at time zone 'Europe/Paris')::date = (now() at time zone 'Europe/Paris')::date) >= 20 then
+    raise exception 'ops:quota';
+  end if;
+  insert into ops.evenements (agent, type, objet, resume)
+  values ('systeme', 'consigne', case when p_agent is null then 'fondateur' else 'agent:' || p_agent end, v_texte)
+  returning id into v_id;
+  return v_id;
+end
+$$;
+revoke all on function public.station_consigne_transmettre(text, uuid, text) from public, anon, authenticated;
+grant execute on function public.station_consigne_transmettre(text, uuid, text) to service_role;
+create or replace function public.station_reunion_ouvrir(p_agent text)
+returns uuid
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+declare
+  v_id uuid;
+begin
+  if p_agent is distinct from 'chef' then raise exception 'ops:agent'; end if;
+  if coalesce((select g.en_pause from ops.agents g where g.nom = 'chef'), true)
+     or coalesce((select i.actif from ops.interrupteurs i where i.nom = 'pause_generale'), false) then
+    raise exception 'ops:pause';
+  end if;
+  with echues as (
+    update ops.reunions r set statut = 'abandonnee', close_le = now(), motif = 'delai'
+     where r.statut = 'ouverte' and r.ouverte_le < now() - interval '30 minutes'
+    returning r.id)
+  insert into ops.evenements (agent, type, objet, resume) select 'chef', 'reunion_abandonnee', e.id::text, 'Réunion abandonnée : délai' from echues e;
+  if exists (select 1 from ops.reunions r where r.statut = 'ouverte') then raise exception 'ops:deja_ouverte'; end if;
+  if exists (select 1 from ops.reunions r where r.statut = 'close' and r.jour = (now() at time zone 'Europe/Paris')::date) then raise exception 'ops:deja_tenue'; end if;
+  insert into ops.reunions (jour, chiffres) values ((now() at time zone 'Europe/Paris')::date, public.station_reunion_chiffres()) returning id into v_id;
+  insert into ops.evenements (agent, type, objet, resume) values ('chef', 'reunion_ouverte', v_id::text, 'Réunion ouverte');
+  return v_id;
+end
+$$;
+revoke all on function public.station_reunion_ouvrir(text) from public, anon, authenticated;
+grant execute on function public.station_reunion_ouvrir(text) to service_role;
+create or replace function public.station_reunion_clore(p_id uuid, p_agent text, p_lignes text[], p_objectif jsonb, p_idees text[])
+returns boolean
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+declare
+  l text;
+  v_idee text;
+begin
+  if p_agent is distinct from 'chef' then raise exception 'ops:agent'; end if;
+  if not exists (select 1 from ops.reunions r where r.id = p_id and r.statut = 'ouverte') then raise exception 'ops:reunion'; end if;
+  if p_lignes is null or cardinality(p_lignes) not between 1 and 5 then raise exception 'ops:lignes'; end if;
+  foreach l in array p_lignes loop
+    l := btrim(l);
+    if l is null or char_length(l) not between 1 and 140 or l ~ '[[:cntrl:]]' or strpos(l, '@') > 0 or l ~ '[0-9]{9}' or l ~* 'http' then
+      raise exception 'ops:lignes';
+    end if;
+  end loop;
+  if p_objectif is not null and (
+       jsonb_typeof(p_objectif) <> 'object'
+       or exists (select 1 from jsonb_object_keys(p_objectif) k where k not in ('libelle', 'mesure', 'cible'))
+       or char_length(coalesce(p_objectif->>'libelle', '')) not between 5 and 80
+       or (p_objectif->>'mesure' is not null and p_objectif->>'mesure' not in ('encaisse_eur', 'oui', 'contacts_froids', 'sites_en_ligne'))
+       or (p_objectif->'cible' is not null and jsonb_typeof(p_objectif->'cible') <> 'null'
+           and (jsonb_typeof(p_objectif->'cible') <> 'number' or (p_objectif->>'cible')::numeric < 0
+                or (p_objectif->>'cible')::numeric <> trunc((p_objectif->>'cible')::numeric)))) then
+    raise exception 'ops:objectif';
+  end if;
+  if p_idees is not null and cardinality(p_idees) > 3 then raise exception 'ops:idees'; end if;
+  foreach v_idee in array coalesce(p_idees, '{}') loop
+    if v_idee !~ '^chef:\d{4}-\d{2}-\d{2}:idee-[a-z0-9-]{3,75}$'
+       or not exists (select 1 from ops.decisions d where d.cle_idempotence = v_idee and d.creee_par = 'chef') then
+      raise exception 'ops:idees';
+    end if;
+  end loop;
+  update ops.reunions r
+     set statut = 'close', close_le = now(), lignes = (select array_agg(btrim(x)) from unnest(p_lignes) x),
+         objectif = p_objectif, idees = coalesce(p_idees, '{}')
+   where r.id = p_id;
+  foreach l in array p_lignes loop
+    insert into ops.evenements (agent, type, objet, resume) values ('chef', 'reunion_compte_rendu', p_id::text, btrim(l));
+  end loop;
+  insert into ops.evenements (agent, type, objet, resume)
+  values ('chef', 'reunion_close', p_id::text, 'Réunion close : ' || cardinality(coalesce(p_idees, '{}')) || ' idée(s)');
+  return true;
+end
+$$;
+revoke all on function public.station_reunion_clore(uuid, text, text[], jsonb, text[]) from public, anon, authenticated;
+grant execute on function public.station_reunion_clore(uuid, text, text[], jsonb, text[]) to service_role;
+create or replace function public.station_reunion_abandonner(p_id uuid, p_agent text, p_motif text)
+returns boolean
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+begin
+  if p_agent is distinct from 'chef' then raise exception 'ops:agent'; end if;
+  if char_length(btrim(coalesce(p_motif, ''))) not between 3 and 200 then raise exception 'ops:motif'; end if;
+  update ops.reunions r set statut = 'abandonnee', close_le = now(), motif = btrim(p_motif) where r.id = p_id and r.statut = 'ouverte';
+  if not found then return false; end if;
+  insert into ops.evenements (agent, type, objet, resume) values ('chef', 'reunion_abandonnee', p_id::text, 'Réunion abandonnée');
+  return true;
+end
+$$;
+revoke all on function public.station_reunion_abandonner(uuid, text, text) from public, anon, authenticated;
+grant execute on function public.station_reunion_abandonner(uuid, text, text) to service_role;
+create or replace function public.station_reunions_echues_abandonner()
+returns integer
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+declare
+  v_n integer;
+begin
+  with echues as (
+    update ops.reunions r set statut = 'abandonnee', close_le = now(), motif = 'delai'
+     where r.statut = 'ouverte' and r.ouverte_le < now() - interval '30 minutes'
+    returning r.id),
+  ev as (
+    insert into ops.evenements (agent, type, objet, resume)
+    select 'systeme', 'reunion_abandonnee', e.id::text, 'Réunion abandonnée : délai' from echues e
+    returning 1)
+  select count(*)::integer into v_n from ev;
+  return v_n;
+end
+$$;
+revoke all on function public.station_reunions_echues_abandonner() from public, anon, authenticated;
+grant execute on function public.station_reunions_echues_abandonner() to service_role;
+create or replace function public.station_experience_lancer(p_nom text, p_budget_eur numeric, p_auteur uuid)
+returns uuid
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+declare
+  v_id uuid;
+begin
+  if not coalesce((select a.is_founder from public.artisans a where a.id = p_auteur), false) then raise exception 'ops:auteur'; end if;
+  if not exists (select 1 from public.sites_commandes c where c.statut <> 'brouillon') then raise exception 'ops:aucune_vente'; end if;
+  if exists (select 1 from ops.experiences x where x.statut = 'en_cours') then raise exception 'ops:deja_en_cours'; end if;
+  if coalesce(p_budget_eur, 0) <> 0 then raise exception 'ops:budget'; end if;
+  if char_length(btrim(coalesce(p_nom, ''))) not between 3 and 80 then raise exception 'ops:nom'; end if;
+  insert into ops.experiences (nom, budget_eur, debut_le, fin_prevue_le, lancee_par)
+  values (btrim(p_nom), 0, now(), now() + interval '30 days', p_auteur) returning id into v_id;
+  insert into ops.evenements (agent, type, objet, resume) values ('systeme', 'experience_lancee', v_id::text, 'Expérience lancée');
+  return v_id;
+end
+$$;
+revoke all on function public.station_experience_lancer(text, numeric, uuid) from public, anon, authenticated;
+grant execute on function public.station_experience_lancer(text, numeric, uuid) to service_role;
+create or replace function public.station_experience_arreter(p_id uuid, p_auteur uuid, p_motif text)
+returns boolean
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+begin
+  if not coalesce((select a.is_founder from public.artisans a where a.id = p_auteur), false) then raise exception 'ops:auteur'; end if;
+  update ops.experiences x set statut = 'arretee', arretee_le = now(), motif = left(btrim(coalesce(p_motif, '')), 200)
+   where x.id = p_id and x.statut = 'en_cours';
+  if not found then return false; end if;
+  insert into ops.evenements (agent, type, objet, resume) values ('systeme', 'experience_arretee', p_id::text, 'Expérience arrêtée');
+  return true;
+end
+$$;
+revoke all on function public.station_experience_arreter(uuid, uuid, text) from public, anon, authenticated;
+grant execute on function public.station_experience_arreter(uuid, uuid, text) to service_role;
+create or replace function public.station_experiences_echues_arreter()
+returns integer
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+declare
+  v_n integer;
+begin
+  with echues as (
+    update ops.experiences x set statut = case when x.gains_eur = 0 then 'arretee_auto' else 'gagnante' end, arretee_le = now()
+     where x.statut = 'en_cours' and x.fin_prevue_le < now()
+    returning x.id, x.statut),
+  ev as (
+    insert into ops.evenements (agent, type, objet, resume)
+    select 'systeme', 'experience_arretee', e.id::text, 'Expérience arrêtée : ' || e.statut from echues e
+    returning 1)
+  select count(*)::integer into v_n from ev;
+  return v_n;
+end
+$$;
+revoke all on function public.station_experiences_echues_arreter() from public, anon, authenticated;
+grant execute on function public.station_experiences_echues_arreter() to service_role;
+create or replace function public.station_pause_par_agent(p_agent text, p_motif text)
+returns boolean
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+declare
+  v_motif text := btrim(p_motif);
+begin
+  if not exists (select 1 from ops.agents g where g.nom = p_agent and g.retire_le is null and 'pause' = any (g.capacites)) then
+    raise exception 'ops:agent';
+  end if;
+  if v_motif is null or char_length(v_motif) not between 3 and 200 or v_motif ~ '[[:cntrl:]]' then raise exception 'ops:motif'; end if;
+  if coalesce((select i.actif from ops.interrupteurs i where i.nom = 'pause_generale'), false) then return false; end if;
+  update ops.interrupteurs set actif = true, motif = 'agent ' || p_agent || ' : ' || v_motif, change_le = now() where nom = 'pause_generale';
+  insert into ops.evenements (agent, type, objet, resume) values (p_agent, 'interrupteur', 'pause_generale', 'Pause générale posée par ' || p_agent);
+  return true;
+end
+$$;
+revoke all on function public.station_pause_par_agent(text, text) from public, anon, authenticated;
+grant execute on function public.station_pause_par_agent(text, text) to service_role;
+create or replace function public.station_consigne_par_agent(p_agent text, p_texte text, p_agent_cible text default 'chef')
+returns bigint
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+declare
+  v_texte text := btrim(p_texte);
+  v_id bigint;
+begin
+  if not exists (select 1 from ops.agents g where g.nom = p_agent and g.retire_le is null and 'consigne' = any (g.capacites)) then
+    raise exception 'ops:agent';
+  end if;
+  if v_texte is null or char_length(v_texte) not between 3 and 200 or v_texte ~ '[[:cntrl:]]' then raise exception 'ops:texte'; end if;
+  if not exists (select 1 from ops.agents g where g.nom = p_agent_cible) then raise exception 'ops:agent_inconnu'; end if;
+  if (select count(*) from ops.evenements e where e.type = 'consigne'
+        and (e.le at time zone 'Europe/Paris')::date = (now() at time zone 'Europe/Paris')::date) >= 20 then
+    raise exception 'ops:quota';
+  end if;
+  insert into ops.evenements (agent, type, objet, resume) values (p_agent, 'consigne', 'agent:' || p_agent_cible, v_texte) returning id into v_id;
+  return v_id;
+end
+$$;
+revoke all on function public.station_consigne_par_agent(text, text, text) from public, anon, authenticated;
+grant execute on function public.station_consigne_par_agent(text, text, text) to service_role;
+create or replace function public.station_reunion_chiffres()
+returns jsonb
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  with m as (select date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris' as le)
+  select jsonb_build_object(
+    'agents', coalesce((select jsonb_agg(jsonb_build_object(
+        'nom', a.nom, 'en_pause', a.en_pause, 'disjoncteur', a.disjoncteur_ouvert_le is not null,
+        'battement_le', a.battement_le, 'periode_minutes', a.periode_minutes,
+        'taches_jour', jsonb_build_object(
+          'faites', (select count(*) from ops.taches t where t.agent = a.nom and t.statut = 'faite' and t.maj_le >= m.le),
+          'echec', (select count(*) from ops.taches t where t.agent = a.nom and t.statut = 'echec' and t.maj_le >= m.le),
+          'file', (select count(*) from ops.taches t where t.cree_par = a.nom and t.statut = 'file'),
+          'a_decider', (select count(*) from ops.taches t where t.agent = a.nom and t.statut = 'a_decider')),
+        'evenements_jour', (select count(*) from ops.evenements e where e.agent = a.nom and e.le >= m.le),
+        'cout_jour_eur', (select coalesce(sum(c.montant_eur), 0) from ops.couts c where c.agent = a.nom and c.le >= m.le)) order by a.nom)
+      from ops.agents a where a.retire_le is null), '[]'::jsonb),
+    'bus', jsonb_build_object(
+      'decisions_ouvertes', jsonb_build_object(
+        'argent', (select count(*) from ops.decisions d where d.statut = 'ouverte' and d.portee = 'argent'),
+        'artisan', (select count(*) from ops.decisions d where d.statut = 'ouverte' and d.portee = 'artisan'),
+        'securite', (select count(*) from ops.decisions d where d.statut = 'ouverte' and d.portee = 'securite'),
+        'aucune', (select count(*) from ops.decisions d where d.statut = 'ouverte' and d.portee = 'aucune')),
+      'taches_bloquees', (select count(*) from ops.taches t where t.statut in ('echec', 'a_decider'))),
+    'acquisition', coalesce((select jsonb_agg(jsonb_build_object('etape', t.etape, 'nombre', t.nombre)) from public.pilotage_tapis(m.le) t), '[]'::jsonb),
+    'argent', jsonb_build_object('commandes_payees_jour', (select count(*) from public.sites_commandes c where c.statut = 'payee' and c.paye_le >= m.le)))
+  from m
+$$;
+revoke all on function public.station_reunion_chiffres() from public, anon, authenticated;
+grant execute on function public.station_reunion_chiffres() to service_role;
+create or replace function public.station_reunion_lire(p_limite integer)
+returns table(id uuid, jour date, ouverte_le timestamptz, close_le timestamptz, statut text, motif text, lignes text[], objectif jsonb, idees text[])
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select r.id, r.jour, r.ouverte_le, r.close_le, r.statut, r.motif, r.lignes, r.objectif, r.idees
+    from ops.reunions r
+   order by r.ouverte_le desc
+   limit greatest(1, least(coalesce(p_limite, 3), 10))
+$$;
+revoke all on function public.station_reunion_lire(integer) from public, anon, authenticated;
+grant execute on function public.station_reunion_lire(integer) to service_role;
+create or replace function public.station_objectif_actif()
+returns table(libelle text, mesure text, cible integer, fixe_le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select r.objectif->>'libelle', r.objectif->>'mesure', (r.objectif->>'cible')::integer, r.close_le
+    from ops.reunions r
+   where r.statut = 'close' and r.objectif is not null
+   order by r.close_le desc
+   limit 1
+$$;
+revoke all on function public.station_objectif_actif() from public, anon, authenticated;
+grant execute on function public.station_objectif_actif() to service_role;
+create or replace function public.station_experience_etat()
+returns table(aucune_vente boolean, id uuid, nom text, budget_eur numeric, debut_le timestamptz, fin_prevue_le timestamptz, jour integer, gains_eur numeric, depense_eur numeric, statut text)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select not exists (select 1 from public.sites_commandes c where c.statut <> 'brouillon'),
+         x.id, x.nom, x.budget_eur, x.debut_le, x.fin_prevue_le,
+         case when x.id is null then null else least((now()::date - x.debut_le::date) + 1, 30) end,
+         x.gains_eur, x.depense_eur, x.statut
+    from (select 1) u
+    left join lateral (select * from ops.experiences e order by e.debut_le desc limit 1) x on true
+$$;
+revoke all on function public.station_experience_etat() from public, anon, authenticated;
+grant execute on function public.station_experience_etat() to service_role;
+select cron.unschedule(j.jobid) from cron.job j where j.jobname in ('station-reunions-echues', 'station-experiences-echues');
+select cron.schedule('station-reunions-echues', '*/5 * * * *', 'select public.station_reunions_echues_abandonner()');
+select cron.schedule('station-experiences-echues', '17 3 * * *', 'select public.station_experiences_echues_arreter()');
+comment on table ops.reunions is 'Réunion quotidienne du Chef : une tenue par jour de Paris.';
+comment on table ops.experiences is 'Expériences à budget nul, une à la fois, arrêtées seules à J30.';
+
+-- CONTROLE APRES COLLAGE (ne modifie rien) : ce qui suit ne fait que LIRE.
+select 'les quatorze fonctions de la station existent (attendu : oui)' as quoi,
+       case when (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                   where n.nspname = 'public' and p.proname in ('station_consigne_transmettre', 'station_reunion_ouvrir', 'station_reunion_clore',
+                     'station_reunion_abandonner', 'station_reunions_echues_abandonner', 'station_experience_lancer', 'station_experience_arreter',
+                     'station_experiences_echues_arreter', 'station_pause_par_agent', 'station_consigne_par_agent', 'station_reunion_chiffres',
+                     'station_reunion_lire', 'station_objectif_actif', 'station_experience_etat')) = 14
+            then 'oui' else 'NON (anormal)' end as resultat
+union all
+select 'security definer (prosecdef) et search_path (proconfig) (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like 'station\_%' and (not p.prosecdef or p.proconfig is null))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'anon et authenticated sans exécution, service_role avec (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like 'station\_%'
+                                and (has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('authenticated', p.oid, 'execute')
+                                     or not has_function_privilege('service_role', p.oid, 'execute')))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'ops.reunions et ops.experiences sous RLS (relrowsecurity), sans politique (pg_policies) (attendu : oui)',
+       case when (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
+                   where n.nspname = 'ops' and c.relname in ('reunions', 'experiences') and c.relrowsecurity) = 2
+             and not exists (select 1 from pg_policies where schemaname = 'ops' and tablename in ('reunions', 'experiences'))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'graine pont_telegram {notifier,pause,consigne}, plafond 0 (attendu : oui)',
+       case when exists (select 1 from ops.agents a where a.nom = 'pont_telegram' and a.capacites @> array['notifier', 'pause', 'consigne']
+                           and cardinality(a.capacites) = 3 and a.plafond_euros_jour = 0)
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'les deux passages sont dans cron.job (attendu : oui)',
+       case when (select count(*) from cron.job where jobname in ('station-reunions-echues', 'station-experiences-echues')) = 2
+            then 'oui' else 'NON (anormal)' end;

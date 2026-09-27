@@ -1,0 +1,4 @@
+COMPTE RENDU FACTICE du témoin du lot b (fiche 026-066) pour --migration=reglages : AUCUN essai n'a tourné.
+Il reprend la forme de ce que execute_sql rend (le message de l'exception) pour prouver que pilotage-sql-qa sait le lire.
+ERROR:  P0001: ESSAI_A_SEC 5812659e1eefe01afa1c3984140ef82afc2c7b58cfaba54a76fbd50f41033c8b {"preparation":true,"lecture_par_defaut":true,"ecriture_v1_v2":true,"version_perimee":true,"cle_inconnue":true,"trop_gros":true,"non_fondateur":true,"historique_cinquante":true,"radar_sans_nom":true,"departements_agreges":true,"salles_fermees":true,"refus_anon_authenticated":true}
+APRES rien_ne_reste=true

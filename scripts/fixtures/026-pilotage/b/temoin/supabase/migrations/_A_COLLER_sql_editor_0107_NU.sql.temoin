@@ -1,0 +1,226 @@
+---------------------------- _A_COLLER_sql_editor_0107_NU.sql — coller ce fichier EN ENTIER. Cette ligne est un commentaire : elle peut être abîmée sans conséquence.
+create table if not exists ops.code_etat (
+  id         smallint primary key default 1 check (id = 1),
+  etat       jsonb not null,
+  publie_le  timestamptz not null default now()
+);
+alter table ops.code_etat enable row level security;
+revoke all on table ops.code_etat from public, anon, authenticated, service_role;
+create or replace function public.pilotage_decisions(p_limite integer)
+returns table(id uuid, question text, contexte text, options jsonb, option_defaut text, montant_cents integer, portee text, echeance timestamptz, cree_le timestamptz, creee_par text)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select d.id, d.question, d.contexte, d.options, d.option_defaut, d.montant_cents, d.portee, d.echeance, d.cree_le, d.creee_par
+    from ops.decisions d
+   where d.statut = 'ouverte'
+   order by coalesce(d.montant_cents, 0) desc, d.echeance nulls last, d.cree_le
+   limit greatest(1, least(coalesce(p_limite, 20), 100))
+$$;
+revoke all on function public.pilotage_decisions(integer) from public, anon, authenticated;
+grant execute on function public.pilotage_decisions(integer) to service_role;
+create or replace function public.pilotage_decision(p_id uuid)
+returns table(id uuid, question text, contexte text, options jsonb, option_defaut text, montant_cents integer, portee text, echeance timestamptz, cree_le timestamptz, creee_par text)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select d.id, d.question, d.contexte, d.options, d.option_defaut, d.montant_cents, d.portee, d.echeance, d.cree_le, d.creee_par
+    from ops.decisions d
+   where d.id = p_id and d.statut = 'ouverte'
+$$;
+revoke all on function public.pilotage_decision(uuid) from public, anon, authenticated;
+grant execute on function public.pilotage_decision(uuid) to service_role;
+create or replace function public.pilotage_decisions_par_cles(p_cles text[])
+returns table(cle text, question text, statut text, choix text, tranchee_le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select d.cle_idempotence, d.question, d.statut, d.choix, d.tranchee_le
+    from ops.decisions d
+   where d.cle_idempotence = any (p_cles[1:20])
+$$;
+revoke all on function public.pilotage_decisions_par_cles(text[]) from public, anon, authenticated;
+grant execute on function public.pilotage_decisions_par_cles(text[]) to service_role;
+create or replace function public.pilotage_agents()
+returns table(nom text, libelle text, capacites text[], en_pause boolean, pause_motif text, battement_le timestamptz, periode_minutes integer, prochain_le timestamptz, disjoncteur_ouvert_le timestamptz, dernier_type text, dernier_resume text, dernier_le timestamptz, cout_mois_eur numeric, modele text, fournisseur text, modele_le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  with mois as (select date_trunc('month', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris' as debut)
+  select a.nom, a.libelle, a.capacites, a.en_pause, a.pause_motif, a.battement_le, a.periode_minutes,
+         a.battement_le + make_interval(mins => a.periode_minutes),
+         a.disjoncteur_ouvert_le, e.type, e.resume, e.le,
+         coalesce((select sum(c.montant_eur) from ops.couts c, mois where c.agent = a.nom and c.le >= mois.debut), 0),
+         m.modele, m.fournisseur, m.le
+    from ops.agents a
+    left join lateral (select ev.type, ev.resume, ev.le from ops.evenements ev
+                        where ev.agent = a.nom and ev.type <> 'battement' order by ev.id desc limit 1) e on true
+    left join lateral (
+      select x.modele, x.fournisseur, x.le from (
+        select c.detail->>'modele' as modele, c.fournisseur, c.le, c.id as rang from ops.couts c
+         where c.agent = a.nom and c.le > now() - interval '7 days'
+        union all
+        select ev.objet, null, ev.le, -ev.id from ops.evenements ev
+         where a.nom = 'chef' and ev.agent = 'chef' and ev.type = 'cycle_termine'
+      ) x order by (x.fournisseur is null), x.le desc, x.rang desc limit 1) m on true
+   where a.retire_le is null
+   order by a.nom
+$$;
+revoke all on function public.pilotage_agents() from public, anon, authenticated;
+grant execute on function public.pilotage_agents() to service_role;
+create or replace function public.pilotage_couts_agents(p_depuis timestamptz)
+returns table(agent text, montant_eur numeric, appels integer)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select c.agent, sum(c.montant_eur), count(*)::integer
+    from ops.couts c
+   where c.le >= greatest(p_depuis, now() - interval '400 days')
+   group by c.agent
+   order by 2 desc
+$$;
+revoke all on function public.pilotage_couts_agents(timestamptz) from public, anon, authenticated;
+grant execute on function public.pilotage_couts_agents(timestamptz) to service_role;
+create or replace function public.pilotage_couts_taches(p_depuis timestamptz, p_limite integer)
+returns table(tache_id uuid, type text, agent text, montant_eur numeric, le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select t.id, t.type, coalesce(t.agent, t.cree_par), sum(c.montant_eur), max(c.le)
+    from ops.couts c
+    join ops.taches t on t.id = c.tache_id
+   where c.le >= greatest(p_depuis, now() - interval '400 days')
+   group by t.id, t.type, t.agent, t.cree_par
+   order by 4 desc
+   limit greatest(1, least(coalesce(p_limite, 10), 50))
+$$;
+revoke all on function public.pilotage_couts_taches(timestamptz, integer) from public, anon, authenticated;
+grant execute on function public.pilotage_couts_taches(timestamptz, integer) to service_role;
+create or replace function public.pilotage_couts_modeles(p_debut timestamptz)
+returns table(fournisseur text, modele text, appels integer, eur numeric)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select c.fournisseur, c.detail->>'modele', count(*)::integer, sum(c.montant_eur)
+    from ops.couts c
+   where c.le >= greatest(p_debut, now() - interval '400 days')
+   group by c.fournisseur, c.detail->>'modele'
+   order by 1, 2
+$$;
+revoke all on function public.pilotage_couts_modeles(timestamptz) from public, anon, authenticated;
+grant execute on function public.pilotage_couts_modeles(timestamptz) to service_role;
+create or replace function public.pilotage_chef()
+returns table(modele text, cycles_jour integer, dernier_cycle_le timestamptz, prochain_le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select (select ev.objet from ops.evenements ev where ev.agent = 'chef' and ev.type = 'cycle_termine' order by ev.id desc limit 1),
+         (select count(*)::integer from ops.evenements ev where ev.agent = 'chef' and ev.type = 'cycle_termine'
+             and ev.le >= date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris'),
+         (select max(ev.le) from ops.evenements ev where ev.agent = 'chef' and ev.type = 'cycle_termine'),
+         (select a.battement_le + make_interval(mins => a.periode_minutes) from ops.agents a where a.nom = 'chef')
+$$;
+revoke all on function public.pilotage_chef() from public, anon, authenticated;
+grant execute on function public.pilotage_chef() to service_role;
+create or replace function public.pilotage_evenements(p_apres bigint, p_limite integer, p_agent text, p_types text[])
+returns table(id bigint, le timestamptz, agent text, type text, objet text, resume text)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select x.id, x.le, x.agent, x.type, x.objet, x.resume from (
+    select e.id, e.le, e.agent, e.type, e.objet, e.resume
+      from ops.evenements e
+     where e.type <> 'battement'
+       and (p_apres is null or e.id > p_apres)
+       and (p_agent is null or e.agent = p_agent)
+       and (p_types is null or e.type = any (p_types))
+     order by case when p_apres is null then -e.id else e.id end
+     limit greatest(1, least(coalesce(p_limite, 50), 200))
+  ) x
+  order by x.id
+$$;
+revoke all on function public.pilotage_evenements(bigint, integer, text, text[]) from public, anon, authenticated;
+grant execute on function public.pilotage_evenements(bigint, integer, text, text[]) to service_role;
+create or replace function public.pilotage_attention_sources()
+returns table(cle text, nombre integer, plus_ancien timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select 'taches_bloquees'::text, count(*)::integer, min(t.maj_le) from ops.taches t where t.statut in ('echec', 'a_decider')
+  union all
+  select 'disjoncteur', count(*)::integer, min(a.disjoncteur_ouvert_le) from ops.agents a
+   where a.retire_le is null and a.disjoncteur_ouvert_le is not null
+  union all
+  select 'decision_argent', count(*)::integer, min(d.cree_le) from ops.decisions d
+   where d.statut = 'ouverte' and d.portee in ('argent', 'artisan')
+  union all
+  select 'escalade_chef', count(*)::integer, min(d.cree_le) from ops.decisions d
+   where d.statut = 'ouverte' and d.creee_par = 'chef' and coalesce(d.cle_idempotence, '') !~ '^chef:\d{4}-\d{2}-\d{2}:idee-'
+  union all
+  select 'idee_chef', count(*)::integer, min(d.cree_le) from ops.decisions d
+   where d.statut = 'ouverte' and coalesce(d.cle_idempotence, '') ~ '^chef:\d{4}-\d{2}-\d{2}:idee-'
+  union all
+  select 'pause_generale', case when coalesce((select i.actif from ops.interrupteurs i where i.nom = 'pause_generale'), false) then 1 else 0 end,
+         (select i.change_le from ops.interrupteurs i where i.nom = 'pause_generale')
+$$;
+revoke all on function public.pilotage_attention_sources() from public, anon, authenticated;
+grant execute on function public.pilotage_attention_sources() to service_role;
+create or replace function public.pilotage_taches_agent(p_nom text, p_limite integer)
+returns table(id uuid, type text, statut text, objet text, derniere_erreur text, preuve_presente boolean, maj_le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select t.id, t.type, t.statut, t.objet, t.derniere_erreur, t.preuve_url is not null, t.maj_le
+    from ops.taches t
+   where t.agent = p_nom or t.cree_par = p_nom
+   order by t.maj_le desc
+   limit greatest(1, least(coalesce(p_limite, 10), 30))
+$$;
+revoke all on function public.pilotage_taches_agent(text, integer) from public, anon, authenticated;
+grant execute on function public.pilotage_taches_agent(text, integer) to service_role;
+create or replace function public.pilotage_code_publier(p_etat jsonb)
+returns text
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+begin
+  if p_etat is null or jsonb_typeof(p_etat) <> 'object' then return 'forme'; end if;
+  if octet_length(p_etat::text) > 20000 then return 'trop_gros'; end if;
+  insert into ops.code_etat (id, etat, publie_le) values (1, p_etat, now())
+  on conflict (id) do update set etat = excluded.etat, publie_le = excluded.publie_le;
+  return 'ok';
+end
+$$;
+revoke all on function public.pilotage_code_publier(jsonb) from public, anon, authenticated;
+grant execute on function public.pilotage_code_publier(jsonb) to service_role;
+create or replace function public.pilotage_code_lire()
+returns table(etat jsonb, publie_le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select c.etat, c.publie_le from ops.code_etat c where c.id = 1
+$$;
+revoke all on function public.pilotage_code_lire() from public, anon, authenticated;
+grant execute on function public.pilotage_code_lire() to service_role;
+comment on table ops.code_etat is 'Etat de l''orchestre publié par le PC (une ligne), lu par la station.';
+comment on function public.pilotage_decisions(integer) is 'Décisions ouvertes, dans l''ordre d''ops_etat().';
+
+-- CONTROLE APRES COLLAGE (ne modifie rien) : ce qui suit ne fait que LIRE.
+select 'les treize fonctions du Pilotage existent (attendu : oui)' as quoi,
+       case when (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                   where n.nspname = 'public' and p.proname in ('pilotage_decisions', 'pilotage_decision', 'pilotage_decisions_par_cles',
+                     'pilotage_agents', 'pilotage_couts_agents', 'pilotage_couts_taches', 'pilotage_couts_modeles', 'pilotage_chef',
+                     'pilotage_evenements', 'pilotage_attention_sources', 'pilotage_taches_agent', 'pilotage_code_publier', 'pilotage_code_lire')) = 13
+            then 'oui' else 'NON (anormal)' end as resultat
+union all
+select 'toutes security definer (prosecdef), search_path posé dans proconfig (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like 'pilotage\_%'
+                                and (not p.prosecdef or p.proconfig is null
+                                     or not exists (select 1 from unnest(p.proconfig) c where c like 'search_path=%pg_temp')))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'anon et authenticated sans droit d''exécution (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like 'pilotage\_%'
+                                and (has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('authenticated', p.oid, 'execute')))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'service_role peut exécuter chacune (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like 'pilotage\_%'
+                                and not has_function_privilege('service_role', p.oid, 'execute'))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'ops.code_etat sous RLS (relrowsecurity), sans politique dans pg_policies (attendu : oui)',
+       case when coalesce((select c.relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace
+                             where n.nspname = 'ops' and c.relname = 'code_etat'), false)
+             and not exists (select 1 from pg_policies where schemaname = 'ops' and tablename = 'code_etat')
+            then 'oui' else 'NON (anormal)' end;

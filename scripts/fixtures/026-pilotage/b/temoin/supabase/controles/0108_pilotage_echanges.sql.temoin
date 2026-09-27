@@ -1,0 +1,24 @@
+select 'les treize fonctions des échanges existent (attendu : oui)' as quoi,
+       case when (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                   where n.nspname = 'public' and p.proname in ('pilotage_envois_du_jour', 'pilotage_compteurs_du_jour',
+                     'pilotage_compteurs_technologies', 'pilotage_entonnoir', 'pilotage_bilan_date', 'pilotage_bilan', 'pilotage_appels',
+                     'pilotage_etat_envoi', 'pilotage_reponses_du_jour', 'pilotage_tapis', 'pilotage_recettes_agents', 'pilotage_atelier',
+                     'pilotage_reponses_recentes')) = 13
+            then 'oui' else 'NON (anormal)' end as resultat
+union all
+select 'security definer (prosecdef) et search_path posé (proconfig) (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like 'pilotage\_%'
+                                and (not p.prosecdef or p.proconfig is null))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'anon et authenticated sans exécution, service_role avec (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like 'pilotage\_%'
+                                and (has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('authenticated', p.oid, 'execute')
+                                     or not has_function_privilege('service_role', p.oid, 'execute')))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'les anciennes fonctions ont disparu (attendu : oui)',
+       case when not exists (select 1 from pg_proc p where p.proname in ('pilotage_lot_du_jour', 'pilotage_compteurs_' || 'boites'))
+            then 'oui' else 'NON (anormal)' end;

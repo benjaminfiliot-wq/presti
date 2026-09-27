@@ -1,0 +1,63 @@
+// lib/pilotage/blocs.ts — IMPLÉMENTATION DE RÉFÉRENCE du lot b (fiche 026-066) de la lecture des six blocs de 026-068 :
+// le témoin sur lequel pilotage-route-qa doit rendre 0. Ce n'est pas le module livré (026-068 l'écrit).
+//
+// Chaque bloc lit le bus par les seules fonctions pilotage_* (0107, 0108) et le met en forme par la logique de lib/pilotage :
+// aucun tri, aucun calcul, aucun seuil ici. Le bloc `envois` est en lecture seule, sans texte ni destinataire.
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { sourcer } from '@/lib/direction/fraicheur'
+import { cartesDecisions, type Decision } from './decisions'
+import { appelsDepuisReponses, appelsDepuisCommandes, fusionnerAppels } from './appels'
+import { envoisDesAgents } from './envois'
+import { entonnoir } from './entonnoir'
+import { lignesAgents, pauseGenerale } from './agents'
+import { validerSnapshot, resumeCode } from './code'
+import { erreursAvantPaiement, nettoyerBrouillon } from '@/lib/siteCommande'
+
+export const BLOCS = ['decider', 'appeler', 'envois', 'entonnoir', 'agents', 'code'] as const
+export type Bloc = (typeof BLOCS)[number]
+export const estBloc = (x: string): x is Bloc => (BLOCS as readonly string[]).includes(x)
+
+const CACHE_MS = 30_000
+type Rpc = PromiseLike<{ data: unknown; error: { message: string } | null }>
+async function lignes<T>(appel: Rpc): Promise<T[]> {
+  const { data, error } = await appel
+  if (error) throw new Error(error.message)
+  return (Array.isArray(data) ? data : []) as T[]
+}
+
+export async function lireBloc(bloc: Bloc, { decision }: { decision?: string } = {}) {
+  const maintenant = new Date()
+  switch (bloc) {
+    case 'decider':
+      return { bloc, ...(await sourcer(`pilotage:decider:${decision ?? ''}`, 'supabase', async () =>
+        cartesDecisions(await lignes<Decision>(supabaseAdmin.rpc('pilotage_decisions', { p_limite: 20 })), decision, maintenant), CACHE_MS)) }
+    case 'appeler':
+      return { bloc, ...(await sourcer('pilotage:appeler', 'supabase', async () => {
+        const appels = await lignes<Record<string, unknown>>(supabaseAdmin.rpc('pilotage_appels', { p_limite: 20 }))
+        const reponses = appelsDepuisReponses(appels.filter((a) => a.source === 'reponse') as never[], maintenant)
+        const rendezVous = appelsDepuisCommandes(appels.filter((a) => a.source === 'rdv') as never[], maintenant)
+        const brouillons = appels.map((a) => nettoyerBrouillon(a.contexte)).filter((b) => erreursAvantPaiement(b).length)
+        return { appels: fusionnerAppels(rendezVous, reponses), partiel: brouillons.length ? 'Des demandes sont incomplètes.' : null }
+      }, CACHE_MS)) }
+    case 'envois':
+      return { bloc, ...(await sourcer('pilotage:envois', 'supabase', async () => envoisDesAgents(
+        await lignes(supabaseAdmin.rpc('pilotage_envois_du_jour')),
+        await lignes(supabaseAdmin.rpc('pilotage_compteurs_du_jour')),
+        await lignes(supabaseAdmin.rpc('pilotage_compteurs_technologies')),
+        maintenant), CACHE_MS)) }
+    case 'entonnoir':
+      return { bloc, ...(await sourcer('pilotage:entonnoir', 'supabase', async () =>
+        entonnoir(await lignes(supabaseAdmin.rpc('pilotage_entonnoir', { p_depuis: new Date(maintenant.getTime() - 31 * 86_400_000).toISOString() })), maintenant), CACHE_MS)) }
+    case 'agents':
+      return { bloc, ...(await sourcer('pilotage:agents', 'supabase', async () => {
+        const agents = await lignes(supabaseAdmin.rpc('pilotage_agents'))
+        const attention = await lignes<{ cle: string; nombre: number }>(supabaseAdmin.rpc('pilotage_attention_sources'))
+        return { agents: lignesAgents(agents as never[], maintenant), pauseGenerale: pauseGenerale(attention) }
+      }, CACHE_MS)) }
+    case 'code':
+      return { bloc, ...(await sourcer('pilotage:code', 'supabase', async () => {
+        const [ligne] = await lignes<{ etat: unknown; publie_le: string | null }>(supabaseAdmin.rpc('pilotage_code_lire'))
+        return resumeCode(validerSnapshot(ligne?.etat ?? null), ligne?.publie_le ?? null, maintenant)
+      }, CACHE_MS)) }
+  }
+}

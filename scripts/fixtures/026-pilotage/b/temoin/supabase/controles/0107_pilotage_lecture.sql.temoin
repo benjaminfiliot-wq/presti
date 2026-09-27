@@ -1,0 +1,31 @@
+select 'les treize fonctions du Pilotage existent (attendu : oui)' as quoi,
+       case when (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                   where n.nspname = 'public' and p.proname in ('pilotage_decisions', 'pilotage_decision', 'pilotage_decisions_par_cles',
+                     'pilotage_agents', 'pilotage_couts_agents', 'pilotage_couts_taches', 'pilotage_couts_modeles', 'pilotage_chef',
+                     'pilotage_evenements', 'pilotage_attention_sources', 'pilotage_taches_agent', 'pilotage_code_publier', 'pilotage_code_lire')) = 13
+            then 'oui' else 'NON (anormal)' end as resultat
+union all
+select 'toutes security definer (prosecdef), search_path posé dans proconfig (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like 'pilotage\_%'
+                                and (not p.prosecdef or p.proconfig is null
+                                     or not exists (select 1 from unnest(p.proconfig) c where c like 'search_path=%pg_temp')))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'anon et authenticated sans droit d''exécution (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like 'pilotage\_%'
+                                and (has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('authenticated', p.oid, 'execute')))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'service_role peut exécuter chacune (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname like 'pilotage\_%'
+                                and not has_function_privilege('service_role', p.oid, 'execute'))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'ops.code_etat sous RLS (relrowsecurity), sans politique dans pg_policies (attendu : oui)',
+       case when coalesce((select c.relrowsecurity from pg_class c join pg_namespace n on n.oid = c.relnamespace
+                             where n.nspname = 'ops' and c.relname = 'code_etat'), false)
+             and not exists (select 1 from pg_policies where schemaname = 'ops' and tablename = 'code_etat')
+            then 'oui' else 'NON (anormal)' end;

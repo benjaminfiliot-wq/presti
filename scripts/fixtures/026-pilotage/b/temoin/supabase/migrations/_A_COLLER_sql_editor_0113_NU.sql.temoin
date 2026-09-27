@@ -1,0 +1,128 @@
+---------------------------- _A_COLLER_sql_editor_0113_NU.sql — coller ce fichier EN ENTIER. Cette ligne est un commentaire : elle peut être abîmée sans conséquence.
+create table if not exists ops.station_reglages (
+  cle          smallint primary key default 1 check (cle = 1),
+  version      integer not null default 0 check (version >= 0),
+  reglages     jsonb not null default '{}'::jsonb,
+  modifie_par  uuid references public.artisans(id) on delete set null,
+  modifie_le   timestamptz not null default now()
+);
+create table if not exists ops.station_reglages_historique (
+  version   integer primary key,
+  reglages  jsonb not null,
+  auteur    uuid,
+  le        timestamptz not null default now()
+);
+alter table ops.station_reglages enable row level security;
+alter table ops.station_reglages_historique enable row level security;
+revoke all on table ops.station_reglages, ops.station_reglages_historique from public, anon, authenticated, service_role;
+create or replace function public.station_reglages_lire()
+returns table(version integer, reglages jsonb, modifie_par uuid, modifie_le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select coalesce(s.version, 0), coalesce(s.reglages, '{}'::jsonb), s.modifie_par, s.modifie_le
+    from (select 1) u
+    left join ops.station_reglages s on s.cle = 1
+$$;
+revoke all on function public.station_reglages_lire() from public, anon, authenticated;
+grant execute on function public.station_reglages_lire() to service_role;
+create or replace function public.station_reglages_ecrire(p_reglages jsonb, p_auteur uuid, p_version integer)
+returns integer
+language plpgsql security definer set search_path = ops, public, pg_temp
+as $$
+declare
+  v_courante integer;
+  v_nouvelle integer;
+begin
+  v_courante := coalesce((select s.version from ops.station_reglages s where s.cle = 1), 0);
+  if p_version is distinct from v_courante then raise exception 'ops:version_perimee'; end if;
+  if p_reglages is null or jsonb_typeof(p_reglages) <> 'object' then raise exception 'ops:forme'; end if;
+  if exists (select 1 from jsonb_object_keys(p_reglages) k
+              where k not in ('theme', 'mise_en_page', 'nuit', 'equipage', 'salles', 'couleurs', 'affichage')) then
+    raise exception 'ops:cle_inconnue';
+  end if;
+  if octet_length(p_reglages::text) > 65536 then raise exception 'ops:trop_gros'; end if;
+  if not coalesce((select a.is_founder from public.artisans a where a.id = p_auteur), false) then raise exception 'ops:auteur'; end if;
+  v_nouvelle := v_courante + 1;
+  insert into ops.station_reglages (cle, version, reglages, modifie_par, modifie_le) values (1, v_nouvelle, p_reglages, p_auteur, now())
+  on conflict (cle) do update set version = excluded.version, reglages = excluded.reglages, modifie_par = excluded.modifie_par, modifie_le = excluded.modifie_le;
+  insert into ops.station_reglages_historique (version, reglages, auteur, le) values (v_nouvelle, p_reglages, p_auteur, now());
+  delete from ops.station_reglages_historique h
+   where h.version not in (select x.version from ops.station_reglages_historique x order by x.version desc limit 50);
+  return v_nouvelle;
+end
+$$;
+revoke all on function public.station_reglages_ecrire(jsonb, uuid, integer) from public, anon, authenticated;
+grant execute on function public.station_reglages_ecrire(jsonb, uuid, integer) to service_role;
+create or replace function public.pilotage_radar()
+returns jsonb
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select jsonb_build_object(
+    'annonceurs', coalesce((select jsonb_agg(jsonb_build_object('categorie', x.categorie, 'comptes', x.comptes) order by x.categorie) from (
+        select coalesce(p.metier, 'inconnue') as categorie, count(*)::integer as comptes
+          from ops.prospects p
+         where p.source = 'meta' and p.cree_le >= date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris'
+         group by 1) x), '[]'::jsonb),
+    'requetes_meta', coalesce((select jsonb_agg(jsonb_build_object('heure', h.heure, 'requetes', h.n) order by h.heure) from (
+        select date_trunc('hour', e.le) as heure, count(*)::integer as n
+          from ops.evenements e
+         where e.type = 'meta_requete' and e.le >= now() - interval '12 hours'
+         group by 1) h), '[]'::jsonb))
+$$;
+revoke all on function public.pilotage_radar() from public, anon, authenticated;
+grant execute on function public.pilotage_radar() to service_role;
+create or replace function public.pilotage_prospects_departements()
+returns table(departement text, trouves integer, contactes integer, oui integer)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select coalesce(p.faits->>'departement', 'inconnu'), count(*)::integer,
+         (count(*) filter (where p.dernier_contact is not null))::integer,
+         (count(*) filter (where exists (select 1 from ops.reponses r where r.prospect_id = p.id and r.classe = 'interesse')))::integer
+    from ops.prospects p
+   group by 1
+   order by 1
+$$;
+revoke all on function public.pilotage_prospects_departements() from public, anon, authenticated;
+grant execute on function public.pilotage_prospects_departements() to service_role;
+create or replace function public.pilotage_activite_salles(p_depuis timestamptz)
+returns table(salle text, minutes integer)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select s.salle, coalesce(a.minutes, 0)::integer
+    from unnest(array['commandement', 'reunion', 'radar', 'redaction', 'envois', 'standard', 'atelier', 'usine', 'recettes', 'tresorerie',
+                      'crieur', 'studio', 'experience', 'machines', 'chantier', 'audience', 'securite', 'presti', 'observatoire', 'repos']) as s(salle)
+    left join (
+      select substring(e.objet from '^salle:([a-z_]+)$') as salle, count(distinct date_trunc('minute', e.le))::integer as minutes
+        from ops.evenements e
+       where e.le >= greatest(p_depuis, date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris')
+       group by 1) a on a.salle = s.salle
+   order by s.salle
+$$;
+revoke all on function public.pilotage_activite_salles(timestamptz) from public, anon, authenticated;
+grant execute on function public.pilotage_activite_salles(timestamptz) to service_role;
+comment on table ops.station_reglages is 'Les réglages de la station : une seule ligne, écrite par station_reglages_ecrire.';
+
+-- CONTROLE APRES COLLAGE (ne modifie rien) : ce qui suit ne fait que LIRE.
+select 'les cinq fonctions des réglages existent (attendu : oui)' as quoi,
+       case when (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                   where n.nspname = 'public' and p.proname in ('station_reglages_lire', 'station_reglages_ecrire', 'pilotage_radar',
+                     'pilotage_prospects_departements', 'pilotage_activite_salles')) = 5
+            then 'oui' else 'NON (anormal)' end as resultat
+union all
+select 'security definer (prosecdef), search_path (proconfig), service_role seul (anon et authenticated refusés) (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname in ('station_reglages_lire', 'station_reglages_ecrire', 'pilotage_radar',
+                                'pilotage_prospects_departements', 'pilotage_activite_salles')
+                                and (not p.prosecdef or p.proconfig is null
+                                     or has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('authenticated', p.oid, 'execute')
+                                     or not has_function_privilege('service_role', p.oid, 'execute')))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'ops.station_reglages et ops.station_reglages_historique sous RLS (relrowsecurity), sans politique (pg_policies) (attendu : oui)',
+       case when (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
+                   where n.nspname = 'ops' and c.relname in ('station_reglages', 'station_reglages_historique') and c.relrowsecurity) = 2
+             and not exists (select 1 from pg_policies where schemaname = 'ops' and tablename like 'station\_reglages%')
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'une seule ligne de réglages au plus (attendu : oui)',
+       case when (select count(*) from ops.station_reglages) <= 1 then 'oui' else 'NON (anormal)' end;

@@ -1,0 +1,24 @@
+// lib/pilotage/equipage.ts — IMPLÉMENTATION DE RÉFÉRENCE du lot b (fiche 026-066) de la seule partie de 026-070 que les routes
+// du Pilotage importent : la liste fermée des noms de l'équipage. Ce n'est pas le module livré (026-070 l'écrit, avec SALLES,
+// equipage(), positions()…). `ecommerce` n'est jamais une salle d'un agent ; un nom de salle (radar) n'est pas un agent.
+export const EQUIPAGE = {
+  chef: { libelle: 'Chef', role: 'Tient la réunion et tranche ce qui peut l’être', salle: 'commandement', avatar: 'chef' },
+  vigie_meta: { libelle: 'Radar', role: 'Repère les annonceurs', salle: 'radar', avatar: 'vigie_meta' },
+  recenseur: { libelle: 'Recenseur', role: 'Trouve les artisans', salle: 'radar', avatar: 'recenseur' },
+  juge_faits: { libelle: 'Juge des faits', role: 'Vérifie ce qui est écrit', salle: 'redaction', avatar: 'juge_faits' },
+  redacteur: { libelle: 'Plume', role: 'Écrit les messages', salle: 'redaction', avatar: 'redacteur' },
+  garde: { libelle: 'Garde', role: 'Relit avant l’envoi', salle: 'redaction', avatar: 'garde' },
+  facteur: { libelle: 'Facteur', role: 'Porte les formulaires', salle: 'envois', avatar: 'facteur' },
+  standardiste: { libelle: 'Standard', role: 'Classe les réponses', salle: 'standard', avatar: 'standardiste' },
+  repondeur: { libelle: 'Répondeur', role: 'Répond aux questions', salle: 'standard', avatar: 'repondeur' },
+  atelier_maquettes: { libelle: 'Atelier', role: 'Fait les maquettes', salle: 'atelier', avatar: 'atelier_maquettes' },
+  redacteur_site: { libelle: 'Rédacteur des sites', role: 'Écrit les sites', salle: 'usine', avatar: 'redacteur_site' },
+  livreur: { libelle: 'Livreur', role: 'Met les sites en ligne', salle: 'usine', avatar: 'livreur' },
+  tresorier: { libelle: 'Trésorier', role: 'Suit l’argent', salle: 'tresorerie', avatar: 'tresorier' },
+  crieur: { libelle: 'Crieur', role: 'Publie', salle: 'crieur', avatar: 'crieur' },
+  a0: { libelle: 'Veilleur', role: 'Surveille les machines', salle: 'machines', avatar: 'a0' },
+  systeme: { libelle: 'Système', role: 'Plomberie SQL', salle: 'machines', avatar: 'systeme' },
+  pont: { libelle: 'Pont', role: 'Relie le code', salle: 'chantier', avatar: 'pont' },
+  experience: { libelle: 'Expérience', role: 'Mène l’expérience du mois', salle: 'experience', avatar: 'experience' },
+} as const
+export type NomEquipage = keyof typeof EQUIPAGE

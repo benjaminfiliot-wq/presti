@@ -1,0 +1,85 @@
+// app/api/controle/pilotage/gestes/route.ts — IMPLÉMENTATION DE RÉFÉRENCE du lot b (fiche 026-066) de la route de 026-074
+// (voie gratuite) : les cinq gestes du fondateur sur l'envoi, sous reconfirmation securite. Le témoin de pilotage-gestes-qa.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
+import { journaliser, refusJournal } from '@/lib/direction/journal'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const GESTES = ['ouvrir_envoi_froid', 'reprendre_technologie', 'rouvrir_canal', 'lever_modele', 'palier_plafond'] as const
+type Geste = (typeof GESTES)[number]
+const ACTIONS = { ouvrir_envoi_froid: 'envoi_froid_ouvert', reprendre_technologie: 'technologie_reprise', rouvrir_canal: 'canal_rouvert', lever_modele: 'modele_leve', palier_plafond: 'palier_plafond' } as const
+const CANAUX = ['formulaire_site', 'email_sollicite', 'reponse_privee', 'messagerie']
+const PALIERS = ['P0', 'P1', 'P2', 'P3', 'P4']
+const REFUS_OUVERTURE: Record<string, string> = {
+  'ops:trop_tot': 'Pas avant le lundi 12/10/2026 : envoi_froid reste fermé.',
+  'ops:mesure_absente': "La mesure à sec n'a pas réussi (026-165) : envoi_froid reste fermé.",
+  'ops:epreuve_absente': "L'épreuve de bout en bout n'a pas encore réussi (026-163) : envoi_froid reste fermé.",
+  'ops:notice_absente': "La notice en ligne n'est pas vérifiée depuis 7 jours (026-162) : envoi_froid reste fermé.",
+}
+type Params = { technologie?: string; canal?: string; modele?: string; palier?: string; par_jour?: number }
+
+export async function POST(req: Request) {
+  if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const f = await estDirection(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const domaine = exigerDomaine(f, 'securite', 'ecrire')
+  if (domaineRefuse(domaine)) return reponseRefus(domaine)
+  const corps = ((await req.json().catch(() => null)) ?? {}) as Params & { geste?: unknown }
+  const geste = corps.geste as Geste
+  if (!GESTES.includes(geste)) return NextResponse.json({ error: `Geste inconnu. Gestes : ${GESTES.join(', ')}.` }, { status: 400 })
+  const p = parametres(geste, corps)
+  if (typeof p === 'string') return NextResponse.json({ error: p }, { status: 400 })
+  if (geste === 'ouvrir_envoi_froid' && !actif('siteAchatPublic')) {
+    return NextResponse.json({ error: "L'achat public est fermé : le lien de paiement mènerait à une page fermée." }, { status: 409 })
+  }
+  const refus = await exigerReconfirmation(req, f.uid, 'securite')
+  if (refus) return refus
+  const journal = await journaliser({ acteur: f, action: ACTIONS[geste], cible_type: 'envoi', apres: { geste, ...p }, reconfirme: true }, req)
+  if (!journal) return refusJournal()
+  const r = await appeler(geste, p, f.uid)
+  if (r.error) {
+    const m = r.error.message
+    const code = Object.keys(REFUS_OUVERTURE).find((k) => m.includes(k))
+    if (code) return NextResponse.json({ error: REFUS_OUVERTURE[code] }, { status: 409 })
+    if (m.includes('ops:borne')) return NextResponse.json({ error: 'Valeur hors bornes.' }, { status: 400 })
+    if (m.includes('ops:auteur')) return NextResponse.json({ error: 'Réservé aux fondateurs.' }, { status: 403 })
+    return NextResponse.json({ error: "Rien n'a été fait." }, { status: 503 })
+  }
+  return NextResponse.json({ message: message(geste, p) })
+}
+
+function parametres(geste: Geste, c: Params): Params | string {
+  switch (geste) {
+    case 'ouvrir_envoi_froid': return {}
+    case 'reprendre_technologie': return typeof c.technologie === 'string' && /^[a-z0-9_]{2,40}$/.test(c.technologie) ? { technologie: c.technologie } : 'Technologie invalide.'
+    case 'rouvrir_canal': return typeof c.canal === 'string' && CANAUX.includes(c.canal) ? { canal: c.canal } : `Canal inconnu : ${CANAUX.join(', ')}.`
+    case 'lever_modele': return typeof c.modele === 'string' && /^[a-z0-9_]{2,60}$/.test(c.modele) ? { modele: c.modele } : 'Modèle invalide.'
+    case 'palier_plafond': return typeof c.palier === 'string' && PALIERS.includes(c.palier) && Number.isInteger(c.par_jour) && (c.par_jour as number) >= 0 && (c.par_jour as number) <= 300
+      ? { palier: c.palier, par_jour: c.par_jour } : 'Palier P0 à P4 et plafond de 0 à 300 par jour.'
+  }
+}
+
+function appeler(geste: Geste, p: Params, auteur: string) {
+  switch (geste) {
+    case 'ouvrir_envoi_froid': return supabaseAdmin.rpc('acq_envoi_froid_ouvrir', { p_auteur: auteur })
+    case 'reprendre_technologie': return supabaseAdmin.rpc('acq_technologie_reprendre', { p_technologie: p.technologie, p_auteur: auteur })
+    case 'rouvrir_canal': return supabaseAdmin.rpc('acq_canal_rouvrir', { p_canal: p.canal, p_auteur: auteur })
+    case 'lever_modele': return supabaseAdmin.rpc('acq_modele_lever', { p_modele: p.modele, p_auteur: auteur })
+    case 'palier_plafond': return supabaseAdmin.rpc('acq_palier_plafond', { p_palier: p.palier, p_par_jour: p.par_jour, p_auteur: auteur })
+  }
+}
+
+function message(geste: Geste, p: Params): string {
+  switch (geste) {
+    case 'ouvrir_envoi_froid': return 'Envoi à froid ouvert.'
+    case 'reprendre_technologie': return `Technologie ${p.technologie} reprise.`
+    case 'rouvrir_canal': return `Canal ${p.canal} rouvert.`
+    case 'lever_modele': return `Modèle ${p.modele} levé.`
+    case 'palier_plafond': return `Plafond du palier ${p.palier} : ${p.par_jour} par jour.`
+  }
+}

@@ -1,0 +1,215 @@
+-- ============================================================================================
+-- 0108 · Les échanges du Pilotage : envois des agents, compteurs, entonnoir, appels, tapis, recettes (fiche 026-079)
+--        IMPLÉMENTATION DE RÉFÉRENCE du lot b (fiche 026-066) : le témoin de `pilotage-sql-qa --migration=echanges`.
+--
+-- Ce fichier n'est PAS la migration livrée : 026-079 l'écrit. Il s'applique APRÈS 0111 (acquisition : acq_etat_envoi,
+-- acq_plafond_du_jour, acq_envois_du_jour, ops.acq_commande_du_prospect, ops.technologies, ops.rendez_vous, ops.etat_envoi).
+-- Aucune fonction n'écrit ; seule pilotage_reponses_recentes rend du texte de prospect.
+-- ============================================================================================
+
+create or replace function public.pilotage_envois_du_jour()
+returns table(id uuid, canal text, technologie text, type text, statut text, envoyeur text, metier text, commune text, variante text, froid boolean, verdicts jsonb, prepare_le timestamptz, envoye_le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select e.id, e.canal, e.technologie, e.type, e.statut, e.envoyeur, p.metier, p.faits->>'commune', e.entetes->>'variante', p.froid,
+         jsonb_build_object('j1', e.verdicts->>'j1', 'j3', e.verdicts->>'j3', 'second', e.verdicts->>'second'),
+         e.prepare_le, e.envoye_le
+    from ops.envois e
+    join ops.prospects p on p.id = e.prospect_id
+   where coalesce(e.envoye_le, e.prepare_le) >= date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris'
+   order by coalesce(e.envoye_le, e.prepare_le) desc
+   limit 300
+$$;
+revoke all on function public.pilotage_envois_du_jour() from public, anon, authenticated;
+grant execute on function public.pilotage_envois_du_jour() to service_role;
+
+create or replace function public.pilotage_compteurs_du_jour()
+returns table(canal text, palier text, plafond integer, utilises integer, plaintes_7j integer, avis_abus integer, stop_100 integer, echecs_affilee integer, reponses_positives integer)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select q.canal, (select s.palier from public.acq_etat_envoi() s), public.acq_plafond_du_jour(q.canal), public.acq_envois_du_jour(q.canal),
+         g.plaintes_7j, g.avis_abus, g.stop_100, g.echecs_affilee, g.reponses_positives
+    from (select distinct c.canal from ops.quotas_canaux c
+           where c.canal in ('formulaire_site', 'email_sollicite', 'reponse_privee', 'messagerie', 'instagram', 'facebook')) q
+    left join ops.signaux g on g.canal = q.canal
+   order by q.canal
+$$;
+revoke all on function public.pilotage_compteurs_du_jour() from public, anon, authenticated;
+grant execute on function public.pilotage_compteurs_du_jour() to service_role;
+
+create or replace function public.pilotage_compteurs_technologies()
+returns table(technologie text, envois_jour integer, echecs_affilee integer, etat text, pause_motif text, envois_300 integer, reponses_300 integer)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select t.technologie, t.envois_jour, t.echecs_affilee, t.etat, t.pause_motif, t.envois_300, t.reponses_300
+    from ops.technologies t
+   order by t.technologie
+$$;
+revoke all on function public.pilotage_compteurs_technologies() from public, anon, authenticated;
+grant execute on function public.pilotage_compteurs_technologies() to service_role;
+
+create or replace function public.pilotage_entonnoir(p_depuis timestamptz)
+returns table(id uuid, canal text, variante text, froid boolean, envoye_le timestamptz, repondu boolean, oui boolean, appel boolean, vente boolean)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select e.id, e.canal, e.entetes->>'variante', p.froid, e.envoye_le,
+         exists (select 1 from ops.reponses r where r.envoi_id = e.id and not r.auto),
+         exists (select 1 from ops.reponses r where r.prospect_id = p.id and r.classe = 'interesse') or p.etape in ('oui', 'maquette', 'paye', 'en_ligne'),
+         exists (select 1 from ops.reponses r where r.prospect_id = p.id and r.classe = 'appel'),
+         ops.acq_commande_du_prospect(p.id) is not null
+    from ops.envois e
+    join ops.prospects p on p.id = e.prospect_id
+   where e.type = 'premier_contact' and e.statut = 'envoye'
+     and e.envoye_le >= greatest(p_depuis, now() - interval '31 days')
+   order by e.envoye_le desc
+$$;
+revoke all on function public.pilotage_entonnoir(timestamptz) from public, anon, authenticated;
+grant execute on function public.pilotage_entonnoir(timestamptz) to service_role;
+
+create or replace function public.pilotage_bilan_date()
+returns table(bilan_le date, verdict text, prolonge_jusqua date)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select s.bilan_le, s.bilan_verdict, s.p2_prolonge_jusqua from ops.etat_envoi s
+  union all
+  select null::date, null::text, null::date where not exists (select 1 from ops.etat_envoi)
+  limit 1
+$$;
+revoke all on function public.pilotage_bilan_date() from public, anon, authenticated;
+grant execute on function public.pilotage_bilan_date() to service_role;
+
+create or replace function public.pilotage_bilan(p_n integer)
+returns table(id uuid, envoye_le timestamptz, oui boolean, vente boolean)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select e.id, e.envoye_le,
+         exists (select 1 from ops.reponses r where r.prospect_id = p.id and r.classe = 'interesse'),
+         ops.acq_commande_du_prospect(p.id) is not null
+    from ops.envois e
+    join ops.prospects p on p.id = e.prospect_id
+   where p.froid and e.type = 'premier_contact' and e.statut = 'envoye'
+   order by e.envoye_le
+   limit greatest(1, least(coalesce(p_n, 100), 200))
+$$;
+revoke all on function public.pilotage_bilan(integer) from public, anon, authenticated;
+grant execute on function public.pilotage_bilan(integer) to service_role;
+
+create or replace function public.pilotage_appels(p_limite integer)
+returns table(id uuid, source text, prospect text, telephone text, contexte text, creneau timestamptz, recu_le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select x.id, x.source, x.prospect, x.telephone, x.contexte, x.creneau, x.recu_le from (
+    select v.id, 'rdv'::text as source, v.prospect_id::text as prospect, v.telephone,
+           concat_ws(' · ', p.metier, p.faits->>'commune') as contexte, v.creneau, v.reserve_le as recu_le
+      from ops.rendez_vous v
+      join ops.prospects p on p.id = v.prospect_id
+     where v.statut = 'reserve' and v.appel_rendu_le is null
+    union all
+    select r.id, 'reponse', r.prospect_id::text, substring(r.texte from '(?:\+33|0)[1-9](?:[ .-]?[0-9]{2}){4}'),
+           left(r.texte, 140), null::timestamptz, r.recu_le
+      from ops.reponses r
+     where r.classe = 'appel' and r.appel_rendu_le is null
+  ) x
+  order by coalesce(x.creneau, x.recu_le)
+  limit greatest(1, least(coalesce(p_limite, 10), 20))
+$$;
+revoke all on function public.pilotage_appels(integer) from public, anon, authenticated;
+grant execute on function public.pilotage_appels(integer) to service_role;
+
+create or replace function public.pilotage_etat_envoi()
+returns table(palier text, envoi_froid boolean, epreuve_passee boolean, epreuve_le timestamptz, mesure_a_sec boolean, notice_verifiee_le timestamptz, technologies_pause text[], modeles_suspendus text[])
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select s.palier, s.envoi_froid, s.epreuve_passee, s.epreuve_le,
+         exists (select 1 from ops.evenements ev where ev.type = 'mesure_a_sec' and ev.resume like 'PASS%'),
+         s.notice_verifiee_le, s.technologies_pause, s.modeles_suspendus
+    from public.acq_etat_envoi() s
+$$;
+revoke all on function public.pilotage_etat_envoi() from public, anon, authenticated;
+grant execute on function public.pilotage_etat_envoi() to service_role;
+
+create or replace function public.pilotage_reponses_du_jour()
+returns table(classe text, nombre integer)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select coalesce(r.classe, 'a_lire'), count(*)::integer
+    from ops.reponses r
+   where r.recu_le >= date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris'
+   group by 1
+   order by 1
+$$;
+revoke all on function public.pilotage_reponses_du_jour() from public, anon, authenticated;
+grant execute on function public.pilotage_reponses_du_jour() to service_role;
+
+create or replace function public.pilotage_tapis(p_depuis timestamptz)
+returns table(etape text, nombre integer)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  with minuit as (select date_trunc('day', now() at time zone 'Europe/Paris') at time zone 'Europe/Paris' as le)
+  select t.etape, t.nombre from (values
+    (1, 'trouve', (select count(*)::integer from ops.prospects p where p.cree_le >= p_depuis)),
+    (2, 'verifie', (select count(distinct e.prospect_id)::integer from ops.envois e where e.verdicts->>'j1' = 'pass' and e.prepare_le >= p_depuis)),
+    (3, 'maquette', (select count(*)::integer from ops.maquettes m where m.cree_le >= p_depuis)),
+    (4, 'contacte', (select count(*)::integer from ops.envois e where e.type = 'premier_contact' and e.statut = 'envoye' and e.envoye_le >= p_depuis)),
+    (5, 'repondu', (select count(*)::integer from ops.reponses r where not r.auto and r.recu_le >= p_depuis)),
+    (6, 'oui', (select count(*)::integer from ops.reponses r where r.classe = 'interesse' and r.recu_le >= p_depuis)),
+    (7, 'paye', (select count(*)::integer from ops.prospects p join public.sites_commandes c on c.id = ops.acq_commande_du_prospect(p.id)
+                  where c.statut in ('payee', 'en_ligne') and c.paye_le >= p_depuis)),
+    (8, 'en_ligne', (select count(*)::integer from ops.prospects p join public.sites_commandes c on c.id = ops.acq_commande_du_prospect(p.id)
+                  where c.en_ligne_le >= p_depuis)),
+    (9, 'rejet', (select count(*)::integer from ops.envois e, minuit
+                  where coalesce(e.envoye_le, e.prepare_le) >= minuit.le and 'refus' in (e.verdicts->>'j1', e.verdicts->>'j3', e.verdicts->>'second'))),
+    (10, 'juges', (select count(*)::integer from ops.envois e, minuit
+                  where coalesce(e.envoye_le, e.prepare_le) >= minuit.le and e.verdicts ? 'j1'))
+  ) as t(rang, etape, nombre)
+  order by t.rang
+$$;
+revoke all on function public.pilotage_tapis(timestamptz) from public, anon, authenticated;
+grant execute on function public.pilotage_tapis(timestamptz) to service_role;
+
+create or replace function public.pilotage_recettes_agents(p_depuis timestamptz)
+returns table(jour date, source text, commandes integer, montant_cents bigint, en_ligne integer)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select (c.paye_le at time zone 'Europe/Paris')::date,
+         case when exists (select 1 from ops.prospects p where p.froid and ops.acq_commande_du_prospect(p.id) = c.id) then 'agents' else 'hors_agents' end,
+         count(*)::integer, sum(c.prix_cents)::bigint, (count(*) filter (where c.en_ligne_le is not null))::integer
+    from public.sites_commandes c
+   where c.paye_le is not null and c.paye_le >= greatest(p_depuis, now() - interval '400 days')
+   group by 1, 2
+   order by 1, 2
+$$;
+revoke all on function public.pilotage_recettes_agents(timestamptz) from public, anon, authenticated;
+grant execute on function public.pilotage_recettes_agents(timestamptz) to service_role;
+
+create or replace function public.pilotage_atelier(p_depuis timestamptz)
+returns table(id uuid, metier text, commune text, statut text, video boolean, verdict text, le timestamptz)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select m.id, p.metier, p.faits->>'commune',
+         case when m.purgee_le is not null then 'purgee' when m.expire_le < now() then 'expiree' else 'prete' end,
+         false, null::text, m.cree_le
+    from ops.maquettes m
+    left join ops.prospects p on p.id = m.prospect_id
+   where m.cree_le >= p_depuis
+   order by m.cree_le desc
+   limit 30
+$$;
+revoke all on function public.pilotage_atelier(timestamptz) from public, anon, authenticated;
+grant execute on function public.pilotage_atelier(timestamptz) to service_role;
+
+create or replace function public.pilotage_reponses_recentes(p_limite integer)
+returns table(id uuid, recu_le timestamptz, classe text, texte_recu text, reponse_envoyee text)
+language sql stable security definer set search_path = ops, public, pg_temp
+as $$
+  select r.id, r.recu_le, r.classe, r.texte,
+         (select e.texte from ops.envois e where e.type = 'reponse' and e.prospect_id = r.prospect_id and e.envoye_le >= r.recu_le
+           order by e.envoye_le limit 1)
+    from ops.reponses r
+   order by r.recu_le desc
+   limit greatest(1, least(coalesce(p_limite, 5), 10))
+$$;
+revoke all on function public.pilotage_reponses_recentes(integer) from public, anon, authenticated;
+grant execute on function public.pilotage_reponses_recentes(integer) to service_role;
+
+comment on function public.pilotage_reponses_recentes(integer) is 'Seule fonction de 0108 qui rend du texte de prospect (fiche du Répondeur).';

@@ -1,0 +1,23 @@
+select 'les cinq fonctions des réglages existent (attendu : oui)' as quoi,
+       case when (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                   where n.nspname = 'public' and p.proname in ('station_reglages_lire', 'station_reglages_ecrire', 'pilotage_radar',
+                     'pilotage_prospects_departements', 'pilotage_activite_salles')) = 5
+            then 'oui' else 'NON (anormal)' end as resultat
+union all
+select 'security definer (prosecdef), search_path (proconfig), service_role seul (anon et authenticated refusés) (attendu : oui)',
+       case when not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                              where n.nspname = 'public' and p.proname in ('station_reglages_lire', 'station_reglages_ecrire', 'pilotage_radar',
+                                'pilotage_prospects_departements', 'pilotage_activite_salles')
+                                and (not p.prosecdef or p.proconfig is null
+                                     or has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('authenticated', p.oid, 'execute')
+                                     or not has_function_privilege('service_role', p.oid, 'execute')))
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'ops.station_reglages et ops.station_reglages_historique sous RLS (relrowsecurity), sans politique (pg_policies) (attendu : oui)',
+       case when (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace
+                   where n.nspname = 'ops' and c.relname in ('station_reglages', 'station_reglages_historique') and c.relrowsecurity) = 2
+             and not exists (select 1 from pg_policies where schemaname = 'ops' and tablename like 'station\_reglages%')
+            then 'oui' else 'NON (anormal)' end
+union all
+select 'une seule ligne de réglages au plus (attendu : oui)',
+       case when (select count(*) from ops.station_reglages) <= 1 then 'oui' else 'NON (anormal)' end;
