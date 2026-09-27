@@ -1,0 +1,35 @@
+// TÉMOIN (026-052) — une mise en œuvre de référence de app/api/agents/usine/depot/route.ts (fiche 026-056), écrite par
+// Claude Code pour prouver que scripts/usine-routes-qa.mjs sait réussir. Ce n'est pas le livrable : 026-056 écrit le sien.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { authAgent, exigerTable, reponseRefusAgent } from '@/lib/agents/garde'
+import { depot, type FichierDepot } from '@/lib/agents/usineDepot'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const MAX = 16 * 1024
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const refus = (r: unknown): r is { status: number; code: string; error: string } => !!r && typeof r === 'object' && 'error' in r
+const erreur = (error: string, status: number) => NextResponse.json({ error }, { status })
+const fichierValide = (f: unknown): f is FichierDepot => !!f && typeof f === 'object' && !Array.isArray(f)
+  && typeof (f as FichierDepot).nom === 'string' && typeof (f as FichierDepot).octets === 'number'
+  && typeof (f as FichierDepot).type === 'string' && typeof (f as FichierDepot).sha256 === 'string'
+
+// POST /api/agents/usine/depot — { tache, fichiers: [{ nom, octets, type, sha256 }] } → { depots: [{ nom, url, jeton }] }
+export async function POST(req: Request) {
+  if (!actif('busAgents')) return erreur('Introuvable.', 404)
+  const agent = await authAgent(req)
+  if (refus(agent)) return reponseRefusAgent(agent)
+  const t = await exigerTable(agent, 'taches')
+  if (t) return reponseRefusAgent(t)
+  const brut = await req.text()
+  if (Buffer.byteLength(brut) > MAX) return erreur('Corps trop grand (16 Ko au plus).', 413)
+  let b: Record<string, unknown>
+  try { b = JSON.parse(brut) } catch { return erreur('JSON invalide.', 400) }
+  if (!b || typeof b !== 'object' || Array.isArray(b) || typeof b.tache !== 'string' || !UUID.test(b.tache)) return erreur('tache : un uuid.', 400)
+  if (!Array.isArray(b.fichiers) || !b.fichiers.every(fichierValide)) return erreur('fichiers : [{ nom, octets, type, sha256 }].', 400)
+  const r = await depot(agent, b.tache, b.fichiers)
+  if ('error' in r) return erreur(r.error, r.status)
+  return NextResponse.json(r)
+}

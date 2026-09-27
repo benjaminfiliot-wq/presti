@@ -1,0 +1,48 @@
+# La production sur l'usine (témoin)
+
+> TÉMOIN (026-052) : un texte de référence écrit par Claude Code pour éprouver le critère UN-3 de usine-production-qa.mjs.
+> Ce n'est pas le livrable de 026-057, qui écrit le sien.
+
+## Ce qui tourne sur l'usine
+
+Deux minuteurs sous le compte `agents` : `presti-atelier.timer` (toutes les 15 min, jeton `PRESTI_JETON_ATELIER` du coffre)
+et `presti-livreur.timer` (toutes les 10 min, jeton `PRESTI_JETON_LIVREUR_USINE` du coffre). Chaque service est borné à 4 Go.
+
+## L'atelier des maquettes
+
+Réécrit par 026-097 : `scripts/agents/atelier-maquettes.mjs --une-passe`, ses routes `app/api/usine/atelier/*`, l'agent
+`atelier_maquettes` et le jeton `PRESTI_JETON_ATELIER`. `PRESTI_URL` est posé dans l'unité, pas dans le coffre.
+
+## Les tâches du livreur
+
+Type `livrer_site`, clé `livrer_site:<commande>`, charge `{ commande, essai? }` et rien d'autre ; bail de 30 min.
+
+## L'entrée
+
+Le serveur dépose `commande.json` et les photos de l'artisan sous `usine/<tache>/entree/` quand la tâche naît.
+
+## La sortie et le manifeste
+
+`site/**` et `rapport-qa.json`, listés dans `manifeste.json` ; 300 fichiers, 5 Mo par fichier, 40 Mo au total.
+
+## Ce que le serveur fait ensuite
+
+Le consommateur relit et décode ce que l'usine a déposé, copie le site dans `sites/<commande>/`, passe la commande à
+`generee` et efface `usine/<tache>/`. Une tâche dont la charge porte `essai: true` n'est jamais consommée.
+
+## GitHub Actions en repli
+
+Actions ne part que si la tâche n'a pas été prise dans l'heure, ou si `livreur_usine` est muet ; jamais les deux.
+
+## Reprise par le poste
+
+Seulement quand l'usine est injoignable (carte rouge du veilleur) :
+
+- le livreur : `node scripts/usine/tourneur.mjs --capacite=livraison --une-passe --base=https://prestiapp.fr`, avec
+  `PRESTI_JETON_LIVREUR_USINE` (et `CODEX_LANCEUR`, sinon `--sans-ia`) dans l'environnement, ou GitHub Actions ;
+- l'atelier : `node --import ./scripts/ts-loader.mjs scripts/agents/atelier-maquettes.mjs --une-passe`, avec
+  `PRESTI_JETON_ATELIER` et `PRESTI_URL`.
+
+## Ce qui ne va jamais sur l'usine
+
+La clé de service Supabase, une clé Stripe, la clé Anthropic du produit, `.env.local`.

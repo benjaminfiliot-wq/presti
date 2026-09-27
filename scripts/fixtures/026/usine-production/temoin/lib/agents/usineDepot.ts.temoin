@@ -1,0 +1,94 @@
+// TÉMOIN (026-052) — une mise en œuvre de référence de lib/agents/usineDepot.ts (fiche 026-056), écrite par Claude Code pour
+// prouver que scripts/usine-routes-qa.mjs sait réussir, et, sabotée, échouer. Ce n'est pas le livrable : 026-056 écrit le sien.
+// Suffixe .temoin : hors de `npm run typecheck` du dépôt.
+//
+// Tout l'accès au stockage de l'usine vit ici, jamais dans les routes. On ne signe d'URL que pour la tâche que l'agent tient
+// sous bail (ops_tache_detenue), dans le bucket privé `usine`, dans les limites de la capacité de la tâche.
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import LIMITES from './usineLimites.json' with { type: 'json' }
+
+type Limites = { entrees_max: number; fichiers_max: number; octets_fichier_max: number; octets_total_max: number; types: string[] }
+export type Refus = { status: number; error: string }
+type Tache = { id: string; type: string; cle_idempotence: string; capacite: string; charge: unknown; bail_jusqua: string }
+
+const BUCKET = 'usine'
+const LECTURE_S = 900
+const STOCKAGE_TOTAL = 1_073_741_824
+const SEUIL = 0.6
+const NOM = /^[a-z0-9][a-z0-9._/-]{0,119}$/
+const SHA = /^[0-9a-f]{64}$/
+const INTROUVABLE: Refus = { status: 404, error: 'tache_introuvable' }
+const INDISPONIBLE: Refus = { status: 502, error: 'stockage_indisponible' }
+
+const limitesDe = (capacite: string): Limites | null =>
+  Object.prototype.hasOwnProperty.call(LIMITES, capacite) ? (LIMITES as Record<string, Limites>)[capacite] : null
+
+export async function tacheDetenue(agentNom: string, tacheId: string): Promise<Tache | null | 'erreur'> {
+  const { data, error } = await supabaseAdmin.rpc('ops_tache_detenue', { p_agent: agentNom, p_id: tacheId })
+  if (error) return 'erreur'
+  const ligne = Array.isArray(data) ? data[0] : data
+  return ligne && typeof ligne === 'object' && (ligne as Tache).id === tacheId ? (ligne as Tache) : null
+}
+
+export async function entree(agent: { nom: string }, tacheId: string): Promise<Refus | { tache: string; entrees: { nom: string; url: string; octets: number }[] }> {
+  const t = await tacheDetenue(agent.nom, tacheId)
+  if (t === 'erreur') return INDISPONIBLE
+  if (!t) return INTROUVABLE
+  const L = limitesDe(t.capacite)
+  if (!L) return { status: 403, error: 'capacite' }
+  const prefixe = `${tacheId}/entree`
+  const { data, error } = await supabaseAdmin.storage.from(BUCKET).list(prefixe, { limit: L.entrees_max + 1 })
+  if (error || !Array.isArray(data)) return INDISPONIBLE
+  const objets = data.filter((o) => o && o.id)
+  if (objets.length > L.entrees_max) return { status: 409, error: 'trop_d_entrees' }
+  const entrees = []
+  for (const o of objets) {
+    const s = await supabaseAdmin.storage.from(BUCKET).createSignedUrl(`${prefixe}/${o.name}`, LECTURE_S)
+    if (s.error || !s.data) return INDISPONIBLE
+    entrees.push({ nom: o.name, url: s.data.signedUrl, octets: Number((o.metadata as { size?: number } | null)?.size) || 0 })
+  }
+  return { tache: tacheId, entrees }
+}
+
+export type FichierDepot = { nom: string; octets: number; type: string; sha256: string }
+
+function valider(fichiers: FichierDepot[], L: Limites): Refus | null {
+  if (!fichiers.length) return { status: 400, error: 'aucun_fichier' }
+  if (fichiers.length > L.fichiers_max) return { status: 413, error: 'trop_de_fichiers' }
+  const vus = new Set<string>()
+  let total = 0
+  for (const f of fichiers) {
+    if (!Number.isInteger(f.octets) || f.octets <= 0) return { status: 400, error: 'octets' }
+    if (f.octets > L.octets_fichier_max) return { status: 413, error: 'fichier_trop_gros' }
+    total += f.octets
+    if (!L.types.includes(f.type)) return { status: 400, error: 'type' }
+    // eslint-disable-next-line no-control-regex
+    if (!NOM.test(f.nom) || f.nom.includes('..') || f.nom.includes('//') || f.nom.includes('\\') || /[\u0000-\u001f\u007f]/.test(f.nom)) return { status: 400, error: 'nom' }
+    if (vus.has(f.nom)) return { status: 400, error: 'nom_en_double' }
+    vus.add(f.nom)
+    if (!SHA.test(f.sha256)) return { status: 400, error: 'sha256' }
+  }
+  if (total > L.octets_total_max) return { status: 413, error: 'total_trop_gros' }
+  return null
+}
+
+export async function depot(agent: { nom: string }, tacheId: string, fichiers: FichierDepot[]): Promise<Refus | { depots: { nom: string; url: string; jeton: string }[] }> {
+  const t = await tacheDetenue(agent.nom, tacheId)
+  if (t === 'erreur') return INDISPONIBLE
+  if (!t) return INTROUVABLE
+  const L = limitesDe(t.capacite)
+  if (!L) return { status: 403, error: 'capacite' }
+  const refus = valider(fichiers, L)
+  if (refus) return refus
+  // Quand on ne sait pas, rien ne s'écrit.
+  const o = await supabaseAdmin.rpc('ops_stockage_octets')
+  if (o.error || typeof o.data !== 'number' && typeof o.data !== 'string') return { status: 503, error: 'mesure_indisponible' }
+  if (Number(o.data) > SEUIL * STOCKAGE_TOTAL) return { status: 507, error: 'stockage' }
+  const depots = []
+  for (const f of fichiers) {
+    const s = await supabaseAdmin.storage.from(BUCKET).createSignedUploadUrl(`${tacheId}/sortie/${f.nom}`)
+    if (s.error || !s.data) return INDISPONIBLE
+    depots.push({ nom: f.nom, url: s.data.signedUrl, jeton: s.data.token })
+  }
+  return { depots }
+}

@@ -1,0 +1,33 @@
+-- ============================================================================================
+-- TÉMOIN (026-052) — une mise en œuvre de référence de la migration de l'usine, écrite par Claude Code pour prouver
+-- que scripts/usine-sql-qa.mjs sait réussir (et, sabotée, échouer). Ce n'est PAS le livrable de 026-054, qui écrit
+-- la sienne. Suffixe .temoin : jamais lue par Supabase ni par migrations-jumelles-e2e.mjs.
+--
+-- 0110 · Le socle de l'usine Oracle dans la base : un bucket privé, la tâche détenue, deux agents.
+-- L'usine n'a jamais la clé de service : elle dépose par des URL signées que rend une route de Vercel,
+-- et cette route doit savoir qu'un agent tient vraiment une tâche sous bail avant de signer.
+-- ============================================================================================
+
+-- Le bucket privé « usine » : ce que l'usine dépose n'est jamais servi tel quel ; le serveur le relit.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('usine', 'usine', false, 8388608, array['text/html', 'text/css', 'text/javascript', 'application/javascript',
+  'application/json', 'image/webp', 'image/avif', 'image/jpeg', 'image/png', 'image/svg+xml', 'font/woff2', 'text/plain',
+  'application/xml', 'text/xml']::text[])
+on conflict (id) do update set public = false, file_size_limit = 8388608, allowed_mime_types = excluded.allowed_mime_types;
+
+-- La tâche détenue : zéro ligne si l'agent ne la tient pas sous un bail vivant.
+create or replace function public.ops_tache_detenue(p_agent text, p_id uuid)
+returns table (id uuid, type text, cle_idempotence text, capacite text, charge jsonb, bail_jusqua timestamptz)
+language sql stable security definer set search_path = pg_catalog, ops as $$
+  select t.id, t.type, t.cle_idempotence, t.capacite, t.charge, t.bail_jusqua
+    from ops.taches t
+   where t.id = p_id and t.agent = p_agent and t.statut = 'bail' and t.bail_jusqua > now()
+$$;
+revoke all on function public.ops_tache_detenue(text, uuid) from public, anon, authenticated;
+grant execute on function public.ops_tache_detenue(text, uuid) to service_role;
+
+-- Les deux agents de l'usine (0097 : insère ou met à jour, sans toucher au jeton, au battement ni à la pause).
+select public.ops_agent_enregistrer('usine', 'Surveillance de l''usine', array['surveillance']::text[], array[]::text[],
+  array['evenements', 'decisions']::text[], 30, 30, 2, 0);
+select public.ops_agent_enregistrer('livreur_usine', 'Livreur de sites (usine)', array['livraison']::text[], array[]::text[],
+  array['taches', 'evenements']::text[], 60, 30, 0, 0);

@@ -1,0 +1,5 @@
+TÉMOIN (026-052) — compte rendu d'essai à sec FABRIQUÉ pour le témoin de usine-sql-qa (aucun essai n'a tourné : c'est la
+forme que 026-054 recopiera depuis execute_sql). Il est lié au jumeau nu du témoin par son empreinte.
+ERROR:  P0001: ESSAI_A_SEC b0d8f89bfa7d931bbd218bad25d4d53efc41b3f68d27448296d90da63c6dd2b4 {"installation":true,"detenue_pour_lui":true,"pas_pour_livreur_usine":true,"pas_pour_id_invente":true,"pas_pour_tache_en_file":true,"pas_pour_bail_expire":true,"securite_definer_stable_search_path":true,"droits_service_role_seul":true,"anon_refuse":true,"authenticated_refuse":true,"bucket_prive_et_limite":true,"aucune_politique_usine":true,"graine_usine":true,"graine_livreur_usine":true}
+CONTEXT:  PL/pgSQL function inline_code_block line 3 at RAISE
+APRES rien_ne_reste=true

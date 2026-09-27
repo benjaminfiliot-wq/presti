@@ -1,0 +1,12 @@
+# TÉMOIN (026-052) — minuteur de référence (fiche 026-057), pas le livrable.
+[Unit]
+Description=Presti — l'atelier des maquettes, toutes les 15 min
+
+[Timer]
+OnCalendar=*:0/15
+RandomizedDelaySec=60
+Persistent=false
+Unit=presti-atelier.service
+
+[Install]
+WantedBy=timers.target

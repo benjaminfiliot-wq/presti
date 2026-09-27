@@ -1,0 +1,259 @@
+#!/usr/bin/env node
+// TÉMOIN (026-052) — une mise en œuvre de référence de scripts/usine/tourneur.mjs (fiche 026-057), écrite par Claude Code pour
+// prouver que scripts/usine-production-qa.mjs sait réussir, et, sabotée, échouer. Ce n'est pas le livrable : 026-057 écrit le sien.
+//
+// node scripts/usine/tourneur.mjs --capacite=<nom> [--une-passe] [--base=<url>] [--travail=<dossier>] [--max=<n>]
+//                                 [--delai-s=<n>] [--meminfo=<fichier>]
+// Un passage : battement, ressources, puis jusqu'à --max tâches : prendre, entrée, fabricant (sans shell, environnement fait
+// de zéro, arbre tué au délai), contrôle de la sortie, dépôt par les URL signées (tout ou rien), rendre. Le jeton de l'agent
+// ne se lit que dans la variable que nomme la table ; il n'est jamais imprimé, journalisé ni passé au fabricant.
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import crypto from 'node:crypto'
+import { spawn, spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
+import { CAPACITES, SCHEMAS } from './capacites.mjs'
+import { MOTIFS_SECRETS } from '../instantane-quotidien.mjs'
+
+const ICI = path.dirname(fileURLToPath(import.meta.url))
+const RACINE = path.resolve(ICI, '..', '..')
+const LIMITES = JSON.parse(fs.readFileSync(path.join(RACINE, 'lib', 'agents', 'usineLimites.json'), 'utf8'))
+const WIN = process.platform === 'win32'
+const GO = 1024 ** 3
+const MEMOIRE_MIN = 1.5 * GO, DISQUE_MIN = 2 * GO
+const VERROU_MAX_MS = 60 * 60_000, PASSAGE_MAX_MS = 50 * 60_000
+const NOM = /^[a-z0-9][a-z0-9._/-]{0,119}$/
+const EXT = {
+  '.html': ['text/html'], '.htm': ['text/html'], '.css': ['text/css'], '.js': ['text/javascript', 'application/javascript'], '.mjs': ['text/javascript', 'application/javascript'],
+  '.json': ['application/json'], '.webmanifest': ['application/json'], '.webp': ['image/webp'], '.avif': ['image/avif'], '.jpg': ['image/jpeg'], '.jpeg': ['image/jpeg'],
+  '.png': ['image/png'], '.svg': ['image/svg+xml'], '.woff2': ['font/woff2'], '.txt': ['text/plain'], '.xml': ['application/xml', 'text/xml'],
+}
+const JETON_AGENT = /\bpa_[a-z0-9_]{2,40}_[A-Za-z0-9_-]{43}(?![A-Za-z0-9_-])/
+const sha256 = (b) => crypto.createHash('sha256').update(b).digest('hex')
+const sortir = (code, message) => { if (message) console.error(`tourneur : ${message}`); process.exit(code) }
+
+// ── arguments ──
+const A = {}
+for (const a of process.argv.slice(2)) {
+  const m = /^--([a-z-]+)(?:=(.*))?$/.exec(a)
+  if (!m || !['capacite', 'une-passe', 'base', 'travail', 'max', 'delai-s', 'meminfo'].includes(m[1])) sortir(2, `argument inconnu : ${a}`)
+  A[m[1]] = m[2] ?? true
+}
+const capacite = A.capacite
+if (typeof capacite !== 'string' || !Object.hasOwn(CAPACITES, capacite) || !Object.hasOwn(LIMITES, capacite)) sortir(2, 'capacité inconnue de la table ou de usineLimites.json')
+const CAP = CAPACITES[capacite], LIM = LIMITES[capacite]
+const base = typeof A.base === 'string' ? A.base.replace(/\/+$/, '') : 'https://prestiapp.fr'
+let urlBase
+try { urlBase = new URL(base) } catch { sortir(2, '--base illisible') }
+if (urlBase.protocol === 'http:' ? !['127.0.0.1', 'localhost'].includes(urlBase.hostname) : urlBase.protocol !== 'https:') sortir(2, '--base : https, ou http vers 127.0.0.1 ou localhost seulement')
+const travail = path.resolve(typeof A.travail === 'string' ? A.travail : path.join(process.env.HOME || os.homedir(), 'travail', 'usine'))
+const max = A.max === undefined ? 2 : Number(A.max)
+if (!Number.isInteger(max) || max < 1) sortir(2, '--max : un entier positif')
+const delaiMs = A['delai-s'] !== undefined ? Number(A['delai-s']) * 1000 : CAP.minutes * 60_000
+if (!(delaiMs > 0)) sortir(2, '--delai-s : un nombre positif')
+const jeton = process.env[CAP.jeton]
+if (!jeton) sortir(2, `${CAP.jeton} absent de l'environnement`)
+
+// ── verrou ──
+fs.mkdirSync(travail, { recursive: true })
+const fVerrou = path.join(travail, `tourneur-${capacite}.verrou`)
+const fJournal = path.join(travail, `tourneur-${capacite}.jsonl`)
+function prendreVerrou() {
+  const contenu = JSON.stringify({ pid: process.pid, le: new Date().toISOString() })
+  try { fs.writeFileSync(fVerrou, contenu, { flag: 'wx' }); return true } catch (e) { if (e.code !== 'EEXIST') throw e }
+  let age = NaN
+  try { age = Date.now() - Date.parse(JSON.parse(fs.readFileSync(fVerrou, 'utf8')).le) } catch { /* illisible : repris */ }
+  if (age < VERROU_MAX_MS) return false
+  console.log('verrou de plus de 60 min repris')
+  fs.writeFileSync(fVerrou, contenu)
+  return true
+}
+if (!prendreVerrou()) { console.log('déjà en cours'); process.exit(0) }
+const journal = (ligne) => fs.appendFileSync(fJournal, `${JSON.stringify(ligne)}\n`)
+
+// ── le bus ──
+class ErreurBus extends Error { constructor(code, message) { super(message); this.code = code } }
+async function bus(route, corps) {
+  let r
+  try {
+    r = await fetch(`${base}${route}`, { method: 'POST', headers: { authorization: `Bearer ${jeton}`, 'content-type': 'application/json' }, body: corps === undefined ? undefined : JSON.stringify(corps), signal: AbortSignal.timeout(60_000) })
+  } catch { throw new ErreurBus(1, `bus injoignable (${route.replace(/[0-9a-f-]{36}/, '<tache>')})`) }
+  let json = null
+  try { json = await r.json() } catch { /* pas de corps */ }
+  if (r.status === 429) throw new ErreurBus(3, 'bus : 429, passage arrêté')
+  if (r.status === 401) throw new ErreurBus(1, 'bus : 401')
+  if (r.status >= 500 && r.status !== 507) throw new ErreurBus(1, `bus : ${r.status}`)
+  return { status: r.status, json }
+}
+
+// ── ressources ──
+function memoireDispo() {
+  const f = typeof A.meminfo === 'string' ? A.meminfo : (process.platform === 'linux' ? '/proc/meminfo' : null)
+  if (!f) return os.freemem()
+  const m = /^MemAvailable:\s+(\d+)\s+kB/m.exec(fs.readFileSync(f, 'utf8'))
+  return m ? Number(m[1]) * 1024 : 0
+}
+function disqueLibre() { const s = fs.statfsSync(travail); return s.bavail * s.bsize }
+function purger() {
+  for (const e of fs.readdirSync(travail, { withFileTypes: true })) {
+    if (!e.isDirectory() || !/^[0-9a-f-]{36}$/.test(e.name)) continue
+    const d = path.join(travail, e.name)
+    if (Date.now() - fs.statSync(d).mtimeMs > 24 * 3600_000) fs.rmSync(d, { recursive: true, force: true })
+  }
+}
+
+// ── le fabricant ──
+function tuerArbre(pid) {
+  if (!pid) return
+  if (WIN) spawnSync('taskkill', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true })
+  else { try { process.kill(-pid, 'SIGKILL') } catch { try { process.kill(pid, 'SIGKILL') } catch { /* mort */ } } }
+}
+function lancerFabricant(argv, { log }) {
+  const env = {}
+  for (const k of ['PATH', 'HOME', 'LANG', 'TZ', 'PLAYWRIGHT_BROWSERS_PATH', ...(CAP.env || [])]) if (process.env[k] !== undefined) env[k] = process.env[k]
+  return new Promise((ok) => {
+    const lignes = []
+    const garder = (d) => { for (const l of String(d).split(/\r?\n/)) if (l) { lignes.push(l); if (lignes.length > 50) lignes.shift() } }
+    let enfant, expire = false
+    try { enfant = spawn(argv[0], argv.slice(1), { cwd: RACINE, env, shell: false, detached: !WIN, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] }) } catch { return ok({ code: 127, expire: false }) }
+    const minuterie = setTimeout(() => { expire = true; tuerArbre(enfant.pid) }, delaiMs)
+    enfant.stdout.on('data', garder); enfant.stderr.on('data', garder)
+    enfant.on('error', () => { clearTimeout(minuterie); ok({ code: 127, expire }) })
+    enfant.on('exit', (code, signal) => {
+      clearTimeout(minuterie)
+      try { fs.writeFileSync(log, `${lignes.join('\n')}\n`) } catch { /* dossier parti */ }
+      ok({ code: code ?? (signal ? 137 : 1), expire })
+    })
+  })
+}
+
+// ── contrôle de la sortie ──
+function utf8(b) { try { new TextDecoder('utf-8', { fatal: true }).decode(b); return true } catch { return false } }
+function magiqueJuste(b, type) {
+  const a = (i, j) => b.toString('latin1', i, j)
+  switch (type) {
+    case 'image/jpeg': return b.length > 4 && b[0] === 0xff && b[1] === 0xd8 && b[b.length - 2] === 0xff && b[b.length - 1] === 0xd9
+    case 'image/png': return b.length > 8 && b.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+    case 'image/webp': return b.length > 12 && a(0, 4) === 'RIFF' && a(8, 12) === 'WEBP'
+    case 'image/avif': return b.length > 16 && a(4, 8) === 'ftyp' && /avi[fs]/.test(a(8, Math.min(b.length, b.readUInt32BE(0))))
+    case 'font/woff2': return b.length > 4 && a(0, 4) === 'wOF2'
+    case 'application/json': if (!utf8(b)) return false; try { JSON.parse(b.toString('utf8')); return true } catch { return false }
+    default: return utf8(b)
+  }
+}
+function controler(sortieDir) {
+  let man
+  try { man = JSON.parse(fs.readFileSync(path.join(sortieDir, 'manifeste.json'), 'utf8')) } catch { return { erreur: 'sortie:manifeste' } }
+  if (!man || !Array.isArray(man.fichiers)) return { erreur: 'sortie:manifeste' }
+  if (man.fichiers.length > LIM.fichiers_max || !man.fichiers.length) return { erreur: 'sortie:taille' }
+  const vus = new Set(), liste = []
+  let total = 0
+  for (const f of man.fichiers) {
+    if (!f || typeof f.nom !== 'string' || typeof f.type !== 'string') return { erreur: 'sortie:manifeste' }
+    if (!NOM.test(f.nom) || f.nom.includes('..') || f.nom.includes('//') || vus.has(f.nom) || !(f.nom.startsWith('site/') || f.nom === 'rapport-qa.json')) return { erreur: 'sortie:nom' }
+    vus.add(f.nom)
+    const chemin = path.join(sortieDir, ...f.nom.split('/'))
+    let st
+    try { st = fs.lstatSync(chemin) } catch { return { erreur: 'sortie:manifeste' } }
+    if (st.isSymbolicLink() || !st.isFile()) return { erreur: 'sortie:lien' }
+    if (!LIM.types.includes(f.type) || !(EXT[path.extname(f.nom).toLowerCase()] || []).includes(f.type)) return { erreur: 'sortie:type' }
+    if (!st.size || st.size > LIM.octets_fichier_max) return { erreur: 'sortie:taille' }
+    total += st.size
+    if (total > LIM.octets_total_max) return { erreur: 'sortie:taille' }
+    liste.push({ nom: f.nom, type: f.type, chemin })
+  }
+  for (const x of liste) {
+    const b = fs.readFileSync(x.chemin)
+    if (!magiqueJuste(b, x.type)) return { erreur: 'sortie:type' }
+    const t = b.toString('latin1')
+    if (MOTIFS_SECRETS.some(({ re }) => re.test(t)) || JETON_AGENT.test(t) || t.includes(jeton)) return { erreur: 'sortie:secret' }
+    x.octets = b.length; x.sha256 = sha256(b)
+  }
+  return { liste }
+}
+async function deposer(url, chemin, type) {
+  const corps = fs.readFileSync(chemin)
+  for (let essai = 1; essai <= 3; essai++) {
+    try {
+      const r = await fetch(url, { method: 'PUT', headers: { 'content-type': type }, body: corps, signal: AbortSignal.timeout(120_000) })
+      if (r.ok) return true
+      if (r.status < 500) return false
+    } catch { /* réseau : un autre essai */ }
+  }
+  return false
+}
+
+// ── une tâche ──
+async function traiter(t) {
+  const debut = Date.now()
+  const id = String(t?.id ?? '')
+  let octets = 0
+  const dossier = path.join(travail, id)
+  const finir = async (resultat, erreur) => {
+    await bus(`/api/agents/taches/${id}/rendre`, resultat === 'faite' ? { resultat, preuve_url: `supabase://usine/${id}/sortie/` } : { resultat, erreur })
+    journal({ le: new Date().toISOString(), tache: id, code: resultat === 'faite' ? 0 : 1, etape: resultat === 'faite' ? 'faite' : erreur, octets, duree_s: Math.round((Date.now() - debut) / 100) / 10 })
+    if (resultat === 'faite') fs.rmSync(dossier, { recursive: true, force: true })
+    console.log(`${id} ${resultat}${erreur ? ` ${erreur}` : ''}`)
+  }
+  if (!/^[0-9a-f-]{36}$/i.test(id) || t.type !== CAP.type) return finir('echec', 'capacite')
+  if (SCHEMAS[capacite](t.charge)) return finir('echec', 'charge')
+  fs.rmSync(dossier, { recursive: true, force: true })
+  const entreeDir = path.join(dossier, 'entree'), sortieDir = path.join(dossier, 'sortie')
+  fs.mkdirSync(entreeDir, { recursive: true }); fs.mkdirSync(sortieDir, { recursive: true })
+  const e = await bus('/api/agents/usine/entree', { tache: id })
+  const entrees = e.status === 200 && Array.isArray(e.json?.entrees) ? e.json.entrees : null
+  if (!entrees || entrees.length > LIM.entrees_max) return finir('echec', 'entree')
+  for (const x of entrees) {
+    if (typeof x?.nom !== 'string' || !NOM.test(x.nom) || x.nom.includes('..') || typeof x.url !== 'string') return finir('echec', 'entree')
+    let b
+    try { const r = await fetch(x.url, { signal: AbortSignal.timeout(120_000) }); if (!r.ok) return finir('echec', 'entree'); b = Buffer.from(await r.arrayBuffer()) } catch { return finir('echec', 'entree') }
+    octets += b.length
+    if (octets > LIM.octets_total_max) return finir('echec', 'entree')
+    const f = path.join(entreeDir, ...x.nom.split('/'))
+    fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, b)
+  }
+  fs.writeFileSync(path.join(entreeDir, 'charge.json'), JSON.stringify(t.charge))
+  const argv = CAP.commande.map((x) => (x === '{node}' ? process.execPath : x.replaceAll('{entree}', () => entreeDir).replaceAll('{sortie}', () => sortieDir)))
+  const f = await lancerFabricant(argv, { log: path.join(dossier, 'fabrication.log') })
+  if (f.expire) return finir('echec', 'fabrication:delai')
+  if (f.code !== 0) return finir('echec', `fabrication:code ${f.code}`)
+  const c = controler(sortieDir)
+  if (c.erreur) return finir('echec', c.erreur)
+  const d = await bus('/api/agents/usine/depot', { tache: id, fichiers: c.liste.map((x) => ({ nom: x.nom, octets: x.octets, type: x.type, sha256: x.sha256 })) })
+  if (d.status === 507) return finir('echec', 'depot:stockage')
+  const depots = d.status === 200 && Array.isArray(d.json?.depots) ? d.json.depots : null
+  if (!depots) return finir('echec', 'depot')
+  for (const x of c.liste) {
+    const u = depots.find((y) => y && y.nom === x.nom)
+    if (!u || typeof u.url !== 'string' || !(await deposer(u.url, x.chemin, x.type))) return finir('echec', 'depot')
+    octets += x.octets
+  }
+  return finir('faite')
+}
+
+// ── un passage ──
+const debutPassage = Date.now()
+let nTaches = 0
+try {
+  await bus('/api/agents/battement')
+  purger()
+  const mem = memoireDispo(), disque = disqueLibre()
+  if (mem < MEMOIRE_MIN || disque < DISQUE_MIN) console.log(`ressources : mémoire ${Math.round(mem / 2 ** 20)} Mo, disque ${Math.round(disque / 2 ** 20)} Mo — aucune prise`)
+  else {
+    while (nTaches < max && Date.now() - debutPassage < PASSAGE_MAX_MS) {
+      const p = await bus('/api/agents/taches/prendre')
+      if (p.status === 423 && p.json?.code === 'agent_en_pause') { console.log('en_pause'); break }
+      if (p.status !== 200) throw new ErreurBus(1, `prendre : ${p.status}`)
+      if (!p.json?.tache) break
+      nTaches++
+      await traiter(p.json.tache)
+    }
+  }
+  process.exitCode = 0
+} catch (e) {
+  if (e instanceof ErreurBus) { console.error(`tourneur : ${e.message}`); process.exitCode = e.code } else { console.error(`tourneur : erreur ${e?.name || 'inconnue'}${e?.code ? ` ${e.code}` : ''}`); process.exitCode = 1 }
+} finally {
+  journal({ le: new Date().toISOString(), capacite, taches: nTaches, duree_s: Math.round((Date.now() - debutPassage) / 100) / 10 })
+  try { if (JSON.parse(fs.readFileSync(fVerrou, 'utf8')).pid === process.pid) fs.rmSync(fVerrou, { force: true }) } catch { /* déjà parti */ }
+}

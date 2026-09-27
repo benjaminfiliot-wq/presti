@@ -1,0 +1,14 @@
+{
+  "_": "Les tâches d'essai du juge du tourneur (usine-production-qa.mjs, 026-052), écrites par Claude Code. Le juge tire à chaque passage les id et les commandes (uuid) ; il garde ici la forme des tâches et leurs entrées. commande.json est celui du jeu d'essai de la série 025 (entreprise FICTIVE : téléphone de la plage réservée à la fiction, e-mail en .invalid) : celui du lot C de la livraison (026-livraison-tresor/c/commande-payee.json) est vide, et UT-11 a besoin de vraies valeurs à chercher dans les journaux. Les deux photos d'essai sont des photos de ce même jeu (WebP et AVIF entiers).",
+  "entrees": [
+    { "nom": "commande.json", "source": "scripts/fixtures/025/commande-exemple/commande.json", "type": "application/json" },
+    { "nom": "photo-1.webp", "source": "scripts/fixtures/025/commande-exemple/photos/atelier-poncage-480.webp", "type": "image/webp" },
+    { "nom": "photo-2.avif", "source": "scripts/fixtures/025/commande-exemple/photos/atelier-poncage-480.avif", "type": "image/avif" }
+  ],
+  "valeurs_a_ne_jamais_journaliser": ["nom", "email", "telephone", "artisan.adresse"],
+  "valide": { "type": "livrer_site", "capacite": "livraison", "objet": null, "tentatives": 0, "origine_id": null, "profondeur": 0, "charge": { "commande": "{commande}" } },
+  "essai": { "type": "livrer_site", "capacite": "livraison", "objet": null, "tentatives": 0, "origine_id": null, "profondeur": 0, "charge": { "commande": "{commande}", "essai": true } },
+  "telephone_en_trop": { "type": "livrer_site", "capacite": "livraison", "objet": null, "tentatives": 0, "origine_id": null, "profondeur": 0, "charge": { "commande": "{commande}", "telephone": "+33 2 61 91 38 47" } },
+  "capacite_inconnue": { "type": "fabriquer_pub", "capacite": "pubs", "objet": null, "tentatives": 0, "origine_id": null, "profondeur": 0, "charge": { "commande": "{commande}" } },
+  "pour_max": { "nombre": 8, "max": 5 }
+}

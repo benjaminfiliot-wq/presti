@@ -1,0 +1,12 @@
+# TÉMOIN (026-052) — minuteur de référence (fiche 026-057), pas le livrable.
+[Unit]
+Description=Presti — le livreur de sites, toutes les 10 min
+
+[Timer]
+OnCalendar=*:0/10
+RandomizedDelaySec=60
+Persistent=false
+Unit=presti-livreur.service
+
+[Install]
+WantedBy=timers.target
