@@ -27,7 +27,9 @@ function* fichiers(dossier) {
   if (!fs.existsSync(dossier)) return
   for (const e of fs.readdirSync(dossier, { withFileTypes: true })) {
     const p = path.join(dossier, e.name)
-    if (e.isDirectory()) { if (e.name === 'node_modules' || e.name === '.next') continue; yield* fichiers(p) }
+    // .claude/worktrees/ : copies de travail des agents Claude (27/09). Ce ne sont pas des fichiers du dépôt, et elles
+    // contiennent les faux secrets de test déjà acceptés ici : les scanner bloquait tous les commits pendant qu'un agent travaillait.
+    if (e.isDirectory()) { if (e.name === 'node_modules' || e.name === '.next' || (e.name === 'worktrees' && path.basename(dossier) === '.claude')) continue; yield* fichiers(p) }
     else if (EXT.has(path.extname(e.name))) yield p
   }
 }
