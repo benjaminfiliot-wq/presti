@@ -319,3 +319,9 @@
 {"id":"000-revue-026","verdict":"FAIL","ligne":"juges-026-revue-corrections : FAIL — 1 manque(s)","code":1,"date":"2026-09-27T06:18:11Z","duree_s":2,"agent":"usine-codex-39","executant":"codex","lignes":269,"dossier":"fait"}
 {"id":"000-revue-026","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T06:19:46Z","duree_s":2,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"000-retractation","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T07:08:47Z","duree_s":0,"agent":"usine-codex-41","executant":"codex","lignes":258,"dossier":"fait"}
+{"id":"026-038","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T08:55:52Z","duree_s":64,"agent":"claude-code","executant":"claude-code","lignes":3072,"dossier":"en-cours"}
+{"id":"026-038","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T08:57:04Z","duree_s":67,"agent":"claude-code","executant":"claude-code","lignes":3072,"dossier":"fait"}
+{"id":"026-010","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:19:30Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":1170,"dossier":"en-cours"}
+{"id":"026-010","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:19:48Z","duree_s":2,"agent":"claude-code","executant":"claude-code","lignes":1170,"dossier":"fait"}
+{"id":"026-021","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:37:04Z","duree_s":20,"agent":"claude-code","executant":"claude-code","lignes":705,"dossier":"en-cours"}
+{"id":"026-021","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:37:25Z","duree_s":14,"agent":"claude-code","executant":"claude-code","lignes":705,"dossier":"fait"}
