@@ -1,0 +1,15 @@
+[
+ {
+  "crit": "AT-horloge-simulee",
+  "nom": "AT-horloge-paris-non-lue",
+  "ok": true,
+  "ligne": "FAIL AT-horloge-simulee — sabotage « fuseau » accepté",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/juges-026-horloge-bus-preuve.mjs` : « if (r.paris !== k.paris) d.push » → « if (false) d.push »",
+  "rouges": [
+   "AT-horloge-simulee"
+  ],
+  "commande": "--autotest"
+ }
+]

@@ -1,0 +1,95 @@
+[
+ {
+  "crit": "AT-faux-postgrest",
+  "nom": "AT-faux-postgrest-400-non-verifie",
+  "ok": true,
+  "ligne": "FAIL AT-faux-postgrest — sabotage « laxiste » accepté",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/fixtures/026-horloge-bus/bancs/faux-postgrest.mjs` : « if (b.status !== 400) defauts.push » → « if (false) defauts.push »",
+  "rouges": [
+   "AT-faux-postgrest"
+  ],
+  "commande": "--autotest"
+ },
+ {
+  "crit": "AT-reseau-piege",
+  "nom": "AT-reseau-piege-net-non-piege",
+  "ok": true,
+  "ligne": "FAIL AT-reseau-piege — permis-bavard : 2 tentative(s) notée(s), 3 attendue(s) (2 refus) ; interdits-bavard : 2 tentative(s) notée(s), 3 attendue(s) (2 refus)",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/fixtures/026-horloge-bus/bancs/piege-reseau.mjs` : « for (const [nom, mod] of [['net', net], ['tls', tls]]) { » → « for (const [nom, mod] of []) { »",
+  "rouges": [
+   "AT-reseau-piege"
+  ],
+  "commande": "--autotest"
+ },
+ {
+  "crit": "AT-horloge-simulee",
+  "nom": "AT-horloge-paris-non-lue",
+  "ok": false,
+  "ligne": "",
+  "code": 0,
+  "restaure": true,
+  "quoi": "`scripts/juges-026-horloge-bus-preuve.mjs` : « if (r.paris !== k.paris) d.push » → « if (false) d.push »",
+  "rouges": [],
+  "commande": "--autotest"
+ },
+ {
+  "crit": "AT-motifs",
+  "nom": "AT-motifs-absents-non-lus",
+  "ok": true,
+  "ligne": "FAIL AT-motifs — fautif accepté (« {\"boite_03\":1,\"vercel_pro\":1} »)",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/juges-026-horloge-bus-preuve.mjs` : « for (const a of absents) {\n    const re = new RegExp(a, 'i') » → « for (const a of []) {\n    const re = new RegExp(a, 'i') »",
+  "rouges": [
+   "AT-motifs"
+  ],
+  "commande": "--autotest"
+ },
+ {
+  "crit": "AT-plancher",
+  "nom": "AT-plancher-lot03-affaibli",
+  "ok": true,
+  "ligne": "FAIL AT-plancher — faux-postgrest sur une autre fonction : accepté ; faux-postgrest sans renommer p_agent : accepté",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/juges-026-horloge-bus-preuve.mjs` : « (c) => c.fonction === 'ops_tache_creer' && c.renommer.p_agent === 'agent' » → « (c) => true »",
+  "rouges": [
+   "AT-plancher"
+  ],
+  "commande": "--autotest"
+ },
+ {
+  "crit": "AM-lecture",
+  "nom": "AM-lecture-par-sous-chaine",
+  "ok": true,
+  "ligne": "FAIL AM-lecture — critère rapporté deux fois : acceptée ; ligne sans tiret : acceptée",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/juges-026-mutations-preuve.mjs` : «   const siennes = L.map((l) => ({ l, m: /^(PASS|FAIL|SAUTE) (\\S+)(?: — |$)/.exec(l) })).filter((x) => x.m && x.m[2] === critere) » → «   const siennes = L.map((l) => ({ l, m: /^(FAIL) (\\S+)/.exec(l) })).filter((x) => x.m && x.l.includes(critere)).slice(0, 1).map((x) => ({ l: `FAIL ${critere} — ${x.l}`, m: ['', 'FAIL', critere] })) »",
+  "rouges": [
+   "AM-lecture",
+   "AM-honnete",
+   "AM-critere-omis",
+   "AM-mutation-fausse",
+   "AM-depot-laisse-modifie"
+  ],
+  "commande": "--autotest"
+ },
+ {
+  "crit": "AM-lecture",
+  "nom": "AM-bilan-non-lu",
+  "ok": true,
+  "ligne": "FAIL AM-lecture — bilan qui ne le nomme pas : acceptée",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/juges-026-mutations-preuve.mjs` : «   else if (!(b[3] || '').split(/,\\s*/).map((x) => x.trim()).includes(critere)) defauts.push » → «   else if (false) defauts.push »",
+  "rouges": [
+   "AM-lecture"
+  ],
+  "commande": "--autotest"
+ }
+]

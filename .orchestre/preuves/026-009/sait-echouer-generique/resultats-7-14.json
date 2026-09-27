@@ -1,0 +1,93 @@
+[
+ {
+  "crit": "JP-3",
+  "nom": "JP-3-mot-interdit",
+  "ok": true,
+  "ligne": "FAIL JP-3 — contrôle bloc-essai : son autotest ne tient pas (il ne sait plus distinguer le vrai du faux) — défaut planté non vu (commit hors chaîne) : analyserEssai l'accepte, la preuve le refuse ; ops-sql-qa_migration-0096 : défaut planté non vu (commit hors chaîne) : analyserEssai l'accepte, la preuve le refuse",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/lib/sql-essai.mjs` : « ['commit', /\\bcommit\\b/] » → « ['commit', /\\bcommitx\\b/] »",
+  "rouges": [
+   "JP-3"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-3",
+  "nom": "JP-3-marque-recopiee",
+  "ok": true,
+  "ligne": "FAIL JP-3 — scripts/lib/sql-essai.mjs : MARQUE_CONTROLE n'est pas importé tel quel de '../sql-nu.mjs' ; redéfini : « const MARQUE_CONTROLE » ; le texte de MARQUE_CONTROLE est recopié",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/lib/sql-essai.mjs` : « import { sansCommentaires, MARQUE_CONTROLE } from '../sql-nu.mjs' » → « import { sansCommentaires } from '../sql-nu.mjs'\nconst MARQUE_CONTROLE = '-- CONTROLE APRES COLLAGE (ne modifie rien) : ce qui suit ne fait que LIRE.' »",
+  "rouges": [
+   "JP-3"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-3",
+  "nom": "JP-3-plancher-cas-0098-ote",
+  "ok": true,
+  "ligne": "FAIL JP-3 — plancher : contrôle « bloc-essai » déclaré sans ce que le cahier de 026-009 exige : un cas --generer-essai jugé pour 0096, 0097 et 0098",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/fixtures/026-horloge-bus/preuve-01.json` : « ,\n          { \"commande\": \"node scripts/ops-sql-qa.mjs --migration=0098 --avec=0096,0097\", \"jumeaux\": [\"0096\", \"0097\", \"0098\"] } » → «  »",
+  "rouges": [
+   "JP-3"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-4",
+  "nom": "JP-4",
+  "ok": true,
+  "ligne": "FAIL JP-4 — vide refusé pour une autre raison : aucune ligne « ESSAI_A_SEC <empreinte sha256> {…} » : le message de l'essai n'est pas recopié ; ligne « APRES rien_ne_reste=true » absente : rien ne prouve que l'essai n'a rien laissé",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/lib/sql-essai.mjs` : « if (!brut.length) return » → « if (brut.length < 0) return »",
+  "rouges": [
+   "JP-4"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-5",
+  "nom": "JP-5",
+  "ok": true,
+  "ligne": "FAIL JP-5 — ops_horloge_etat : paramètres au contrat (p_fenetre integer) ≠ fiche 026-086 (p_minutes integer)",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/fixtures/026-horloge-bus/contrat-ops.json` : « \"p_minutes\" » → « \"p_fenetre\" »",
+  "rouges": [
+   "JP-5"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-6",
+  "nom": "JP-6-intrus",
+  "ok": true,
+  "ligne": "FAIL JP-6 — 1 changement(s) hors .orchestre/travail/ et .orchestre/preuves/ : git status +« ?? scripts/fixtures/026-horloge-bus/intrus.txt »",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/fixtures/026-horloge-bus/intrus.txt` posé pendant la preuve, retiré après",
+  "rouges": [
+   "JP-6"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-6",
+  "nom": "JP-6-plancher-controle-ote",
+  "ok": true,
+  "ligne": "FAIL JP-6 — plancher : preuve-01.json ne déclare pas le contrôle « immobile » que le cahier de 026-009 exige pour JP-6",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/fixtures/026-horloge-bus/preuve-01.json` : « \"JP-6\": [\n      { \"type\": \"immobile\" }\n    ] » → « \"JP-6\": [\n      { \"type\": \"temoin\" }\n    ] »",
+  "rouges": [
+   "JP-6"
+  ],
+  "commande": "--lot=01"
+ }
+]

@@ -1,0 +1,95 @@
+[
+ {
+  "crit": "JP-1",
+  "nom": "JP-1-sabotage-26-09",
+  "ok": true,
+  "ligne": "FAIL JP-1 — node scripts/ops-sql-qa.mjs --migration=0096 : OS-1 rapporté PASS : « PASS OS-1 — sabotage : migration déclarée présente à tort » ; le bilan « … : FAIL — OS-2, OS-3, OS-4, OS-5, OS-6, OS-7, OS-8 » ne nomme pas OS-1 ; node scripts/ops-sql-qa.mjs --migration=0097 : OI-1 rapporté PASS : « PASS OI-1 — sabotage : migration déclarée présente à tort » ; le bilan « … : FAIL — OI-2, OI-3, OI-4, OI-5, OI-6 » ne nomme pas OI-1 ; node scripts/ops-sql-qa.mjs --migration=0098 : OT-1 rapporté PASS : « PASS OT-1 — sabotage : migration déclarée présente à tort » ; le bilan « … : FAIL — OT-2, OT-3, OT-4, OT-5, OT-6 » ne nomme pas OT-1",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/ops-sql-qa.mjs` : « s.echoue(ids.fichier, texteM === null ? `migration absente : ${M.fichier} (racine ${aff(racine)})` : `migration vide (0 octet) : ${M.fichier}`) » → « s.passe(ids.fichier, 'sabotage : migration déclarée présente à tort') »",
+  "rouges": [
+   "JP-1"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-1",
+  "nom": "JP-1-lecture-par-sous-chaine",
+  "ok": true,
+  "ligne": "FAIL JP-1 — contrôle echec-sur-reference : son autotest ne tient pas (il ne sait plus distinguer le vrai du faux) — critère rapporté deux fois, PASS et FAIL : acceptée",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/juges-026-horloge-bus-preuve.mjs` : «   const lignes = String(stdout).split(/\\r?\\n/).map((l) => ({ l, m: RE_LIGNE_CRITERE.exec(l) })).filter((x) => x.m && x.m[2] === critere) » → «   const lignes = String(stdout).split(/\\r?\\n/).map((l) => ({ l, m: /^(FAIL) (\\S+)/.exec(l) })).filter((x) => x.m && x.l.includes(critere)).slice(0, 1) »",
+  "rouges": [
+   "JP-1"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-1",
+  "nom": "JP-1-plancher-echec-attendu",
+  "ok": true,
+  "ligne": "FAIL JP-1 — plancher : critères attendus en échec OS-9, OI-1, OT-1 ; le cahier de 026-009 dit OS-1, OI-1, OT-1 ; node scripts/ops-sql-qa.mjs --migration=0096 : OS-9 rapporté PASS : « PASS OS-9 — copie comparée aux blobs de HEAD : aucun fichier existant de supabase/migrati… » ; le bilan « … : FAIL — OS-1, OS-2, OS-3, OS-4, OS-5, OS-6, OS-7, OS-8 » ne nomme pas OS-9",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/fixtures/026-horloge-bus/preuve-01.json` : « \"echec_attendu\": \"OS-1\" » → « \"echec_attendu\": \"OS-9\" »",
+  "rouges": [
+   "JP-1"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-1",
+  "nom": "JP-1-plancher-controle-ote",
+  "ok": true,
+  "ligne": "FAIL JP-1 — plancher : preuve-01.json ne déclare pas le contrôle « echec-sur-reference » que le cahier de 026-009 exige pour JP-1",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/fixtures/026-horloge-bus/preuve-01.json` : « \"JP-1\": [\n      { \"type\": \"echec-sur-reference\" }\n    ] » → « \"JP-1\": [\n      { \"type\": \"temoin\" }\n    ] »",
+  "rouges": [
+   "JP-1"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-2",
+  "nom": "JP-2-temoin",
+  "ok": true,
+  "ligne": "FAIL JP-2 — node scripts/ops-sql-qa.mjs --migration=0096 --temoin : code 1, bilan FAIL — OS-8 (FAIL OS-8 — scripts/fixtures/026-horloge-bus/essais/0096.sql a perdu 1 clé(s) du contrat : graines_agents)",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/fixtures/026-horloge-bus/essais/0096.sql` : «     r := r || jsonb_build_object('graines_agents', v_ok); » → «     null; »",
+  "rouges": [
+   "JP-2",
+   "JP-5"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-2",
+  "nom": "JP-2-reel-affiche-la-cle",
+  "ok": true,
+  "ligne": "FAIL JP-2 — node scripts/ops-sql-qa.mjs --migration=0096 --reel (réseau coupé, clés-canaris) : clé affichée : SUPABASE_SERVICE_ROLE_KEY (canari retrouvé dans la sortie) ; node scripts/ops-sql-qa.mjs --migration=0097 --reel (réseau coupé, clés-canaris) : clé affichée : SUPABASE_SERVICE_ROLE_KEY (canari retrouvé dans la sortie) ; node scripts/ops-sql-qa.mjs --migration=0098 --reel (réseau coupé, clés-canaris) : clé affichée : SUPABASE_SERVICE_ROLE_KEY (canari retrouvé dans la sortie)",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/ops-sql-qa.mjs` : « if (!lireSi(ch(M.fichier))) prealable(`${M.fichier} absent du dépôt`) » → « if (!lireSi(ch(M.fichier))) prealable(`${M.fichier} absent du dépôt (clé ${cles.service})`) »",
+  "rouges": [
+   "JP-2"
+  ],
+  "commande": "--lot=01"
+ },
+ {
+  "crit": "JP-2",
+  "nom": "JP-2-plancher-reel-ote",
+  "ok": true,
+  "ligne": "FAIL JP-2 — plancher : preuve-01.json ne déclare pas le contrôle « reel-sans-secret » que le cahier de 026-009 exige pour JP-2",
+  "code": 1,
+  "restaure": true,
+  "quoi": "`scripts/fixtures/026-horloge-bus/preuve-01.json` : « { \"type\": \"temoin\" },\n      { \"type\": \"reel-sans-secret\" } » → « { \"type\": \"temoin\" } »",
+  "rouges": [
+   "JP-1",
+   "JP-2"
+  ],
+  "commande": "--lot=01"
+ }
+]
