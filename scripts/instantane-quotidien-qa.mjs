@@ -14,9 +14,13 @@
 // avec GIT_ALLOW_PROTOCOL=file (aucun envoi réseau possible) et un plafond GIT_CEILING_DIRECTORIES (git ne remonte pas
 // jusqu'à presti).
 //
+// Puis quatre bacs neufs de plus (même fabrique, avec en plus un fichier indexé non commité), un passage --pousser chacun,
+// PENDANT lequel un écrivain concurrent tenu par le juge écrit dans le dépôt (IQ-13, IQ-14).
+//
 // Sortie : « bac à sable : … », « dépôt nu : … », puis une ligne par critère, « PASS IQ-n — … » ou « FAIL IQ-n — … », dans
-// l'ordre IQ-1 … IQ-12, puis le bilan « instantane-quotidien-qa : PASS|FAIL — … ». Code 0 seulement si tout est vert ;
-// 1 sinon ; 2 si l'appel est invalide. Un script absent fait échouer IQ-1 ; IQ-2 à IQ-11 sont alors « non jugés » (en échec).
+// l'ordre IQ-1 … IQ-14, puis le bilan « instantane-quotidien-qa : PASS|FAIL — … ». Code 0 seulement si tout est vert ;
+// 1 sinon ; 2 si l'appel est invalide. Un script absent fait échouer IQ-1 ; les autres critères du script (tous sauf
+// IQ-12) sont alors « non jugés » (en échec).
 //
 //   IQ-1   scripts/instantane-quotidien.mjs existe et le premier passage sort en code 4 (poussé, avec des exclusions).
 //   IQ-2   (objets git) le dépôt nu porte refs/heads/instantane-<AAAA-MM-JJ> à la date de Paris ; son commit a pour seul
@@ -45,6 +49,25 @@
 //          github ×2), jamais leur valeur, et un tableau vide sur des textes propres (dont un JWT « anon »).
 //   IQ-12  docs/sauvegardes.md a une section « Le code et l'arbre de travail » avec `git fetch <dépôt> instantane-…` et
 //          `git show <commit>:<chemin>`.
+//   IQ-13  (réparation du 27/09 : le moteur commitait pendant l'envoi réel, le script rendait le code 1 alors que l'envoi
+//          avait abouti) PENDANT le passage, un écrivain concurrent écrit des fichiers, indexe (.git/index réel), commite
+//          sur la branche courante et crée des non suivis, en boucle jusqu'à la sortie du script. Le script doit finir
+//          en code 4 (ok: true, une ligne de journal), avoir poussé un commit dont le seul parent est un HEAD du passage
+//          (celui du départ ou un commit de l'écrivain), et laisser vide son dossier temporaire (TEMP/TMP pointés dans le
+//          bac : l'index temporaire est retiré). Le juge prouve que le script n'a rien touché : il mesure .git/index et
+//          les références juste après chaque opération de l'écrivain et juste avant la suivante (un écart entre les deux
+//          est une écriture étrangère), puis exige l'état exact que l'écrivain seul produit : l'index entrée par entrée,
+//          l'historique de la branche fait de ses seuls commits (avec leurs seuls fichiers), les fichiers de l'arbre, et
+//          aucune autre référence que des refs/instantanes/quotidien-* ajoutées. Au moins 3 opérations et 1 commit de
+//          l'écrivain pendant le passage, sinon le scénario n'est pas prouvé.
+//   IQ-14  trois sabotages du script, sous le même écrivain concurrent, injectés par une précharge (node --import) qui
+//          enrobe execFileSync et spawnSync du script : « index » rejoue le git add du script sans GIT_INDEX_FILE (le
+//          script écrit lui-même dans .git/index) ; « branche » ajoute un update-ref refs/heads/main vers l'instantané
+//          (le script déplace une branche) ; « etiquette » ajoute un git tag vers HEAD (le script crée une référence
+//          hors de refs/instantanes/ dont git ne tient AUCUN reflog, et qui ne pointe pas sur l'instantané : ni la
+//          signature des reflogs ni --points-at ne la voient). Pour chacun : le sabotage s'est déclenché, le juge voit
+//          l'écriture (index, resp. références) malgré l'écrivain, et le script sort en code 1, ok: false, « ALERTE
+//          BENJ : » en dernière ligne. Un script sans invariant passe IQ-13 et échoue ici.
 //
 // --reel (IQ-R1 … IQ-R5, fiche 026-007, sans bac à sable) : le dépôt privé benjaminfiliot-wq/presti-sauvegarde porte la
 // branche du jour, c'est le commit de la dernière ligne ok: true du journal et son parent était le HEAD local ; l'API GitHub
@@ -67,7 +90,8 @@ process.stdout.on('error', () => {}); process.stderr.on('error', () => {})
 const BAC = 'instantane-qa'
 const ICI = path.dirname(fileURLToPath(import.meta.url))
 const DEPOT = path.resolve(ICI, '..')
-const CRITERES = ['IQ-1', 'IQ-2', 'IQ-3', 'IQ-4', 'IQ-5', 'IQ-6', 'IQ-7', 'IQ-8', 'IQ-9', 'IQ-10', 'IQ-11', 'IQ-12']
+const CRITERES = ['IQ-1', 'IQ-2', 'IQ-3', 'IQ-4', 'IQ-5', 'IQ-6', 'IQ-7', 'IQ-8', 'IQ-9', 'IQ-10', 'IQ-11', 'IQ-12', 'IQ-13', 'IQ-14']
+const DU_SCRIPT = CRITERES.filter((id) => id !== 'IQ-12')
 const GROS = 91 * 1024 * 1024
 const DEPOT_SAUVEGARDE = 'https://github.com/benjaminfiliot-wq/presti-sauvegarde.git'
 const TACHE = 'Presti instantane quotidien'
@@ -93,6 +117,11 @@ const court = (s, n = 160) => { const t = String(s ?? '').replace(/\s+/g, ' ').t
 const versSlash = (p) => String(p).split(path.sep).join('/')
 const sha = (b) => crypto.createHash('sha256').update(b).digest('hex')
 const dormir = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
+const pause = (ms) => new Promise((r) => setTimeout(r, ms))
+const derniereLigne = (s) => String(s ?? '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean).at(-1) || ''
+const lireJson = (l) => { try { return JSON.parse(l) } catch { return null } }
+/** L'identifiant git (SHA-1) d'un blob, calculé ici sans git. */
+const blob = (texte) => { const b = Buffer.from(texte, 'utf8'); return crypto.createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${b.length}\0`), b])).digest('hex') }
 const ALNUM = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 const alea = (n, jeu = ALNUM) => Array.from(crypto.randomBytes(n), (b) => jeu[b % jeu.length]).join('')
 const b64u = (o) => Buffer.from(JSON.stringify(o)).toString('base64url')
@@ -115,6 +144,7 @@ function lancer(cmd, args, options = {}) {
   return new Promise((resoudre) => {
     const debut = Date.now()
     const enfant = spawn(cmd, args, { windowsHide: true, cwd: options.cwd, env: { ...process.env, FORCE_COLOR: '0', ...(options.env || {}) } })
+    if (options.surEnfant) options.surEnfant(enfant)
     let sortie = '', expire = false
     enfant.stdout.setEncoding('utf8'); enfant.stderr.setEncoding('utf8')
     enfant.stdout.on('data', (d) => { sortie += d })
@@ -164,7 +194,7 @@ function fauxSecrets() {
 }
 
 // ── le bac à sable ───────────────────────────────────────────────────────────────────────────────────────────────────
-function fabriquerBac(S) {
+function fabriquerBac(S, { indexe = false, gros = true } = {}) {
   const W = path.join(S, 'travail'), N = path.join(S, 'nu.git'), V = path.join(S, 'vault'), C = path.join(S, 'crochets-vides')
   for (const d of [W, V, C]) fs.mkdirSync(d, { recursive: true })
   const ecrire = (rel, contenu) => { const p = path.join(W, rel); fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, contenu) }
@@ -189,10 +219,15 @@ function fabriquerBac(S) {
   ecrire('.env.local', `STRIPE_SECRET_KEY=${'sk_' + 'live_' + alea(32)}\n`)
   ecrire('config/cles.txt', `# à ne jamais pousser\nSTRIPE_SECRET_KEY=${secret}\n`)
   ecrire('prospects/liste.md', `Relancer ${prospect} jeudi, après le devis.\n`)
-  fs.mkdirSync(path.join(W, 'gros'), { recursive: true })
-  const fd = fs.openSync(path.join(W, 'gros', 'archive.bin'), 'w'); fs.ftruncateSync(fd, GROS); fs.closeSync(fd)
+  // Le fichier de 91 Mo (IQ-6) ; les bacs de IQ-13 et IQ-14 s'en passent (ils ont assez d'exclusions pour le code 4).
+  if (gros) {
+    fs.mkdirSync(path.join(W, 'gros'), { recursive: true })
+    const fd = fs.openSync(path.join(W, 'gros', 'archive.bin'), 'w'); fs.ftruncateSync(fd, GROS); fs.closeSync(fd)
+  }
   fs.mkdirSync(path.join(V, 'Prospection'), { recursive: true })
   fs.writeFileSync(path.join(V, 'Prospection', 'deja-contactes-email.txt'), `contact@exemple-autre.fr\n${prospect}\n`)
+  // IQ-13, IQ-14 : un travail indexé mais pas commité, qu'un script qui réécrirait l'index réel ferait bouger.
+  if (indexe) { ecrire('lib/indexe.ts', 'export const indexe = true\n'); gitOk(W, ['add', '--', 'lib/indexe.ts']) }
   gitOk(S, ['init', '-q', '--bare', N])
   // L'index se stabilise (horodatages « racy ») avant la première empreinte : un git status qui le réécrirait ensuite
   // serait une modification réelle, pas un artefact de l'essai.
@@ -248,10 +283,10 @@ async function juger(o) {
     const texteScript = lireOuNull(script)
     if (texteScript === null) {
       noter('IQ-1', false, `scripts/instantane-quotidien.mjs absent de ${versSlash(o.racine)}`)
-      for (const id of CRITERES.slice(1, 11)) noter(id, false, 'non jugé : le script est absent (IQ-1)')
+      for (const id of DU_SCRIPT.slice(1)) noter(id, false, 'non jugé : le script est absent (IQ-1)')
     } else await jugerScript(o, S, B, script, texteScript, noter)
   } catch (e) {
-    for (const id of CRITERES.slice(0, 11)) if (!res[id]) noter(id, false, `non jugé : le bac à sable a échoué — ${court(e.message, 160)}`)
+    for (const id of DU_SCRIPT) if (!res[id]) noter(id, false, `non jugé : le bac à sable a échoué — ${court(e.message, 160)}`)
   } finally {
     try { supprimerSous(S, racineBac) } catch (e) { dire(`bac à sable non supprimé : ${court(e.message, 120)}`) }
   }
@@ -438,6 +473,9 @@ async function jugerScript(o, S, B, script, texteScript, noter) {
 
   // IQ-11
   noter('IQ-11', ...(await juger11(o, S, script)))
+
+  // IQ-13, IQ-14
+  await jugerConcurrence(S, script, noter)
 }
 
 async function juger11(o, S, script) {
@@ -485,6 +523,265 @@ async function juger11(o, S, script) {
   return [true, `l'import n'exécute rien ; chercherSecrets et MOTIFS_SECRETS exportés ; ${secrets.length} faux secrets nommés sans leur valeur, ${propres.length} textes propres (dont un JWT anon) sans signalement`]
 }
 
+// ── IQ-13, IQ-14 : un écrivain concurrent pendant le passage, puis deux sabotages du script ──────────────────────────
+// La précharge des sabotages, écrite dans le bac et passée par node --import. Elle enrobe execFileSync et spawnSync du
+// processus du script : le sabotage part de SON processus, avec ses arguments et son environnement (trace, identité…),
+// sans dépendre de son texte. Elle écrit dans IQ_SABOTAGE_TEMOIN ce qu'elle a fait : un sabotage qui ne se déclenche
+// pas fait échouer IQ-14, jamais de vert par absence.
+const SABOTEUR = String.raw`import fs from 'node:fs'
+import { createRequire, syncBuiltinESMExports } from 'node:module'
+const cp = createRequire(import.meta.url)('node:child_process')
+const genre = process.env.IQ_SABOTAGE, temoin = process.env.IQ_SABOTAGE_TEMOIN
+const attendre = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
+let fait = false
+function sousCommande(args) {
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '-C' || args[i] === '-c') { i++; continue }
+    if (!String(args[i]).startsWith('-')) return i
+  }
+  return -1
+}
+function insister(orig, fichier, args, options) {
+  for (let essai = 0; essai < 80; essai++) {
+    try { orig(fichier, args, { ...options, stdio: ['ignore', 'pipe', 'pipe'] }); return 'fait' }
+    catch (e) { if (!/\.lock/.test(String(e.stderr || e.message))) return 'échec'; attendre(100) }
+  }
+  return 'verrou'
+}
+function envelopper(orig) {
+  return function (fichier, args, options, ...reste) {
+    const resultat = orig.call(this, fichier, args, options, ...reste)
+    if (!fait && /(^|[\\/])git(\.exe)?$/i.test(String(fichier)) && Array.isArray(args)) {
+      const i = sousCommande(args)
+      const env = { ...((options && options.env) || process.env) }
+      if (genre === 'index' && args[i] === 'add' && env.GIT_INDEX_FILE) {
+        fait = true
+        delete env.GIT_INDEX_FILE
+        fs.appendFileSync(temoin, 'index ' + insister(cp.execFileSync.orig, fichier, args, { ...options, env }) + '\n')
+      } else if (genre === 'branche' && args[i] === 'update-ref' && /^[0-9a-f]{40}$/.test(String(args[i + 2]))) {
+        fait = true
+        const autre = [...args.slice(0, i), 'update-ref', 'refs/heads/main', args[i + 2]]
+        fs.appendFileSync(temoin, 'branche ' + insister(cp.execFileSync.orig, fichier, autre, { ...options, env }) + '\n')
+      } else if (genre === 'etiquette' && args[i] === 'update-ref' && /^[0-9a-f]{40}$/.test(String(args[i + 2]))) {
+        // Une étiquette légère vers HEAD : pas de reflog (git n'en tient pas pour refs/tags/), pas l'instantané.
+        fait = true
+        const autre = [...args.slice(0, i), 'tag', 'iq-sabotage', 'HEAD']
+        fs.appendFileSync(temoin, 'etiquette ' + insister(cp.execFileSync.orig, fichier, autre, { ...options, env }) + '\n')
+      }
+    }
+    return resultat
+  }
+}
+const vrai = cp.execFileSync
+cp.execFileSync = envelopper(vrai); cp.execFileSync.orig = vrai
+cp.spawnSync = envelopper(cp.spawnSync)
+syncBuiltinESMExports()
+`
+
+/**
+ * L'écrivain concurrent : ce que fait le moteur 24 h/24, en accéléré, dans le dépôt de travail du bac. À chaque étape il
+ * écrit un fichier et l'indexe (écriture de .git/index), écrit un non suivi, et une étape sur deux commite ses fichiers
+ * indexés sur la branche courante (git commit -- <ses chemins> : le travail indexé d'avant n'y entre pas). Il mesure
+ * .git/index et les références juste après chacune de ses opérations et juste avant la suivante : tout écart entre les
+ * deux vient d'un autre processus, c'est-à-dire du script. Un verrou .lock trouvé pris est aussi une écriture étrangère.
+ */
+function ecrivainConcurrent(W, branche, vivant) {
+  const e = { operations: 0, commits: [], ecrits: {}, indexes: [], etrangers: [], pendant: { operations: 0, commits: 0 }, erreur: null }
+  const env = { ...process.env, GIT_TERMINAL_PROMPT: '0', GIT_OPTIONAL_LOCKS: '0' }
+  const cfg = ['-c', 'gc.auto=0', '-c', 'maintenance.auto=false', '-c', 'core.quotepath=false']
+  const lireIndex = () => {
+    for (let k = 0; ; k++) { try { return sha(fs.readFileSync(path.join(W, '.git', 'index'))) } catch (x) { if (k >= 40) throw x; dormir(25) } }
+  }
+  // Les références lues dans les fichiers (packed-refs, puis les références isolées qui priment) : aucun processus git,
+  // donc une mesure de quelques millisecondes entre deux opérations. refs/instantanes/ est le seul domaine du script.
+  const G = path.join(W, '.git')
+  const lireRefs = () => {
+    const out = {}
+    for (const l of (lireOuNull(path.join(G, 'packed-refs')) || '').split(/\r?\n/)) {
+      const m = /^([0-9a-f]{40,64}) (refs\/\S+)$/.exec(l)
+      if (m) out[m[2]] = m[1]
+    }
+    const rec = (d, rel) => {
+      let entrees = []
+      try { entrees = fs.readdirSync(d, { withFileTypes: true }) } catch { return }
+      for (const x of entrees) {
+        const r = `${rel}/${x.name}`
+        if (x.isDirectory()) rec(path.join(d, x.name), r)
+        else if (!x.name.endsWith('.lock')) { const v = (lireOuNull(path.join(d, x.name)) || '').trim(); if (/^[0-9a-f]{40,64}$/.test(v)) out[r] = v }
+      }
+    }
+    rec(path.join(G, 'refs'), 'refs')
+    return Object.fromEntries(Object.entries(out).filter(([r]) => !r.startsWith('refs/instantanes/')))
+  }
+  const mesure = () => ({ index: lireIndex(), head: (lireOuNull(path.join(G, 'HEAD')) || '').trim(), refs: lireRefs() })
+  let dernier = mesure()
+  const etranger = (genre, detail) => { if (!e.etrangers.some((x) => x[0] === genre && x[1] === detail)) e.etrangers.push([genre, detail]) }
+  const comparer = (m, quand) => {
+    if (m.index !== dernier.index) etranger('index', `.git/index réécrit ${quand}`)
+    if (m.head !== dernier.head) etranger('refs', `HEAD changé ${quand}`)
+    for (const r of new Set([...Object.keys(m.refs), ...Object.keys(dernier.refs)])) {
+      if (m.refs[r] !== dernier.refs[r]) etranger('refs', `${r} ${r in dernier.refs ? (r in m.refs ? 'déplacée' : 'supprimée') : 'créée'} ${quand}`)
+    }
+  }
+  const op = (args) => {
+    for (let essai = 0; essai < 100; essai++) {
+      comparer(mesure(), 'entre deux opérations de l’écrivain')
+      const r = spawnSync('git', ['-C', W, ...cfg, ...args], { encoding: 'utf8', windowsHide: true, env })
+      if (r.status === 0) { dernier = mesure(); e.operations++; if (vivant()) e.pendant.operations++; return }
+      const m = `${r.stderr || ''}${r.stdout || ''}`
+      // Un verrou pris, ou une référence qui n'est plus où git l'a lue (« cannot lock ref … is at … but expected … ») :
+      // un autre processus écrit au même moment. C'est une écriture étrangère ; l'écrivain réessaie, comme le moteur.
+      if (/\.lock\b|cannot lock ref|but expected/.test(m)) { etranger(/index\.lock/.test(m) ? 'index' : 'refs', `verrou ou référence pris par un autre processus pendant git ${args[0]}`); dormir(100); continue }
+      throw new Error(`écrivain concurrent : git ${args[0]} en échec — ${court(m, 140)}`)
+    }
+    throw new Error(`écrivain concurrent : git ${args[0]}, verrou jamais libéré`)
+  }
+  let i = 0, attente = []
+  const etape = () => {
+    i++
+    fs.mkdirSync(path.join(W, 'concurrent'), { recursive: true })
+    const rel = `concurrent/c-${i}.txt`, libre = `concurrent/libre-${i}.txt`
+    e.ecrits[rel] = `écriture concurrente n° ${i}\n`; fs.writeFileSync(path.join(W, rel), e.ecrits[rel])
+    e.ecrits[libre] = `non suivi n° ${i}\n`; fs.writeFileSync(path.join(W, libre), e.ecrits[libre])
+    op(['add', '--', rel]); e.indexes.push(rel); attente.push(rel)
+    if (i % 2 === 0) {
+      op(['commit', '-q', '--no-verify', '-m', `écriture concurrente ${i}`, '--', ...attente])
+      e.commits.push({ sha: dernier.refs[branche], fichiers: attente })
+      if (vivant()) e.pendant.commits++
+      attente = []
+    }
+  }
+  e.tourner = async (fini) => { while (!fini()) { etape(); await pause(20) } }
+  e.conclure = () => comparer(mesure(), 'après la dernière opération de l’écrivain')
+  return e
+}
+
+/** Ce qui, dans le dépôt de travail, n'est pas l'œuvre de l'écrivain seul : [genre, détail], genre = index | refs | fichiers. */
+function bilanConcurrence(W, avant, e) {
+  const f = [...e.etrangers]
+  const apres = refs(W)
+  const attendu = e.commits.at(-1)?.sha || avant.head
+  if (git(W, ['symbolic-ref', 'HEAD']) !== avant.branche) f.push(['refs', `HEAD ne désigne plus ${avant.branche}`])
+  for (const r of new Set([...Object.keys(avant.refs), ...Object.keys(apres)])) {
+    if (avant.refs[r] === apres[r]) continue
+    if (!(r in avant.refs) && /^refs\/instantanes\/quotidien-/.test(r)) continue
+    if (r === avant.branche && apres[r] === attendu) continue
+    f.push(['refs', `${r} ${r in avant.refs ? (r in apres ? 'déplacée' : 'supprimée') : 'créée'} (attendu : ${r === avant.branche ? `${attendu.slice(0, 10)}, dernier commit de l'écrivain` : 'inchangée'})`])
+  }
+  const histoire = (git(W, ['rev-list', '--reverse', `${avant.head}..${avant.branche}`]) || '').split('\n').filter(Boolean)
+  if (histoire.join(',') !== e.commits.map((c) => c.sha).join(',')) f.push(['refs', `${avant.branche} : ${histoire.length} commit(s) depuis le départ, pas exactement les ${e.commits.length} de l'écrivain`])
+  else {
+    for (const c of e.commits) {
+      const noms = (git(W, ['diff-tree', '--no-commit-id', '--name-only', '-r', c.sha]) || '').split('\n').filter(Boolean).sort()
+      if (noms.join(',') !== [...c.fichiers].sort().join(',')) f.push(['refs', `le commit ${c.sha.slice(0, 10)} de l'écrivain porte d'autres fichiers que les siens`])
+    }
+  }
+  const index = new Set((git(W, ['ls-files', '-s']) || '').split('\n').filter(Boolean))
+  const indexAttendu = new Set([...avant.stage, ...e.indexes.map((rel) => `100644 ${blob(e.ecrits[rel])} 0\t${rel}`)])
+  const enTrop = [...index].filter((l) => !indexAttendu.has(l)), manquent = [...indexAttendu].filter((l) => !index.has(l))
+  if (enTrop.length || manquent.length) f.push(['index', `l'index réel n'est pas celui que l'écrivain seul laisse : ${enTrop.length} entrée(s) en trop, ${manquent.length} manquante(s) (ex. ${court((enTrop[0] || manquent[0]).split('\t')[1], 40)})`])
+  const fichiers = fichiersArbre(W)
+  const attenduF = (n) => (n.startsWith('concurrent/') ? (n in e.ecrits ? sha(Buffer.from(e.ecrits[n], 'utf8')) : undefined) : avant.fichiers[n])
+  const touches = [...new Set([...Object.keys(avant.fichiers), ...Object.keys(fichiers)])].filter((n) => fichiers[n] !== attenduF(n))
+  if (touches.length) f.push(['fichiers', `fichier(s) de l'arbre changé(s) hors écrivain : ${touches.slice(0, 3).join(', ')}`])
+  return f
+}
+
+/** Un bac neuf, un passage --pousser du script (saboté ou non) pendant que l'écrivain concurrent travaille. */
+async function passageConcurrent(S, script, nom, sabotage) {
+  const R = path.join(S, nom)
+  fs.mkdirSync(R, { recursive: true })
+  const B = fabriquerBac(R, { indexe: true, gros: false })
+  const { W, N, V } = B
+  const tmp = path.join(R, 'tmp')
+  fs.mkdirSync(tmp, { recursive: true })
+  const temoin = path.join(R, 'sabotage.txt')
+  const env = {
+    GIT_ALLOW_PROTOCOL: 'file', GIT_TERMINAL_PROMPT: '0', GCM_INTERACTIVE: 'never', GIT_CEILING_DIRECTORIES: path.dirname(S),
+    PRESTI_SAUVEGARDE_DEPOT: path.join(R, 'interdit.git'), TEMP: tmp, TMP: tmp, TMPDIR: tmp,
+  }
+  const args = [script, `--racine=${W}`, `--vault=${V}`, `--depot=${N}`, '--pousser']
+  if (sabotage) {
+    const saboteur = path.join(S, 'saboteur.mjs')
+    fs.writeFileSync(saboteur, SABOTEUR)
+    Object.assign(env, { IQ_SABOTAGE: sabotage, IQ_SABOTAGE_TEMOIN: temoin })
+    args.unshift(`--import=${pathToFileURL(saboteur).href}`)
+  }
+  const avant = {
+    head: git(W, ['rev-parse', 'HEAD']), branche: git(W, ['symbolic-ref', 'HEAD']), refs: refs(W),
+    stage: (git(W, ['ls-files', '-s']) || '').split('\n').filter(Boolean), fichiers: fichiersArbre(W),
+  }
+  const lignesAvant = lignesJournal(W).length
+  let enfant = null, fini = false
+  const vivant = () => { if (!enfant || fini) return false; try { process.kill(enfant.pid, 0); return true } catch { return false } }
+  const E = ecrivainConcurrent(W, avant.branche, vivant)
+  const course = lancer(process.execPath, args, { cwd: R, env, delaiMs: 180_000, surEnfant: (x) => { enfant = x } })
+  course.then(() => { fini = true })
+  try { await E.tourner(() => fini) } catch (x) { E.erreur = x }
+  const p = await course
+  if (!E.erreur) { try { E.conclure() } catch (x) { E.erreur = x } }
+  return {
+    p, B, avant, E,
+    anomalies: E.erreur ? [] : bilanConcurrence(W, avant, E),
+    nouvelles: lignesJournal(W).slice(lignesAvant),
+    nu: refs(N),
+    temoin: lireOuNull(temoin) || '',
+    restes: fs.readdirSync(tmp),
+  }
+}
+
+async function jugerConcurrence(S, script, noter) {
+  const resumeP = (p) => `code ${p.code}${p.expire ? ' (délai dépassé)' : ''}`
+  const prouve = (E) => E.pendant.operations >= 3 && E.pendant.commits >= 1
+  const ecrivain = (E) => `${E.pendant.operations} opération(s) dont ${E.pendant.commits} commit(s) de l'écrivain pendant que le script tournait`
+
+  // IQ-13 — le moteur écrit pendant le passage : le script doit réussir, et n'avoir rien touché.
+  try {
+    const r = await passageConcurrent(S, script, 'concurrence', null)
+    const f = []
+    const L = lireJson(r.nouvelles.at(-1) || '')
+    let C = null, par = []
+    if (r.E.erreur) f.push(court(r.E.erreur.message, 160))
+    if (r.p.code !== 4) f.push(`passage sous écriture concurrente en ${resumeP(r.p)} au lieu de 4 (« ${court(derniereLigne(r.p.sortie), 90)} »)`)
+    if (r.nouvelles.length !== 1) f.push(`le journal a gagné ${r.nouvelles.length} ligne(s) au lieu d'une`)
+    if (L && L.ok !== true) f.push(`ligne du journal : ok: ${JSON.stringify(L.ok)} au lieu de true`)
+    C = L?.branche ? r.nu[`refs/heads/${L.branche}`] || null : null
+    if (!C || C !== L?.commit) f.push(`le dépôt nu ne porte pas ${L?.branche || 'de branche du journal'} sur le commit du journal`)
+    else {
+      par = parents(r.B.N, C)
+      const permis = [r.avant.head, ...r.E.commits.map((c) => c.sha)]
+      if (par.length !== 1 || !permis.includes(par[0])) f.push(`parent(s) du commit poussé : ${par.map((x) => x.slice(0, 10)).join(', ') || 'aucun'}, pas un HEAD du passage`)
+    }
+    if (!prouve(r.E)) f.push(`scénario non prouvé : ${ecrivain(r.E)} (3 et 1 au moins)`)
+    if (r.anomalies.length) f.push(`le juge voit des écritures qui ne sont pas celles de l'écrivain : ${r.anomalies.slice(0, 3).map((a) => a[1]).join(' ; ')}`)
+    if (r.restes.length) f.push(`dossier temporaire du script non vide après le passage : ${r.restes.slice(0, 3).join(', ')}`)
+    noter('IQ-13', !f.length, f.length ? f.join(' · ') : `${ecrivain(r.E)} (${r.p.duree.toFixed(1)} s) ; code 4, ${L.branche} → ${C.slice(0, 10)}, parent ${par[0].slice(0, 10)} = un HEAD du passage ; index, historique, fichiers et références = l'œuvre de l'écrivain seul ; dossier temporaire vide`)
+  } catch (e) { noter('IQ-13', false, `non jugé : ${court(e.message, 160)}`) }
+
+  // IQ-14 — le script saboté écrit lui-même dans .git/index, ou déplace une branche : le juge le voit malgré l'écrivain,
+  // et le script le dit (code 1, ALERTE BENJ).
+  try {
+    const f = [], vus = []
+    for (const [genre, attendu] of [['index', 'index'], ['branche', 'refs'], ['etiquette', 'refs']]) {
+      const r = await passageConcurrent(S, script, `sabotage-${genre}`, genre)
+      const L = lireJson(r.nouvelles.at(-1) || '')
+      const derniere = derniereLigne(r.p.sortie)
+      const g = []
+      if (r.E.erreur) g.push(court(r.E.erreur.message, 120))
+      if (!r.temoin.split(/\r?\n/).includes(`${genre} fait`)) g.push(`sabotage non déclenché (${court(r.temoin, 40) || 'témoin vide'} : le script n'appelle-t-il plus git par execFileSync ou spawnSync ?)`)
+      if (!prouve(r.E)) g.push(`écrivain absent : ${ecrivain(r.E)}`)
+      const vu = r.anomalies.filter((a) => a[0] === attendu)
+      if (!vu.length) g.push(`le juge ne voit pas l'écriture du script (${attendu})`)
+      if (r.p.code !== 1) g.push(`script saboté en ${resumeP(r.p)} au lieu de 1`)
+      if (!derniere.startsWith('ALERTE BENJ :')) g.push(`dernière ligne « ${court(derniere, 60)} » au lieu de « ALERTE BENJ : … »`)
+      if (r.nouvelles.length !== 1 || !L || L.ok !== false) g.push(`journal : ${r.nouvelles.length} ligne(s), ok: ${JSON.stringify(L?.ok)} au lieu d'une ligne ok: false`)
+      if (g.length) f.push(`sabotage ${genre} : ${g.join(', ')}`)
+      else vus.push(`sabotage ${genre} → vu par le juge (${court(vu[0][1], 70)}) et refusé par le script (code 1, « ${court(derniere, 90)} »)`)
+    }
+    noter('IQ-14', !f.length, f.length ? f.join(' · ') : vus.join(' ; '))
+  } catch (e) { noter('IQ-14', false, `non jugé : ${court(e.message, 160)}`) }
+}
+
 function juger12(o) {
   const t = lireOuNull(path.join(o.racine, 'docs', 'sauvegardes.md'))
   if (t === null) return [false, 'docs/sauvegardes.md absent']
@@ -513,10 +810,15 @@ function ecrireRapport(racine, texte, nom = 'dernier.log') {
 const FIXTURES = path.join(DEPOT, 'scripts', 'fixtures', '026', 'securite', 'instantane')
 const T_SCRIPT = 'scripts/instantane-quotidien.mjs'
 const CAS_AUTOTEST = [
-  { nom: 'code-0-malgre-exclusions', fichier: T_SCRIPT, avant: 'code = ligne.exclus.length ? 4 : 0', apres: 'code = 0', attendu: 'IQ-1' },
+  { nom: 'code-0-malgre-exclusions', fichier: T_SCRIPT, avant: 'code = ligne.exclus.length ? 4 : 0', apres: 'code = 0', attendu: 'IQ-1', aussi: ['IQ-13'] },
   { nom: 'exe-dans-arbre', fichier: T_SCRIPT, avant: "g(['add', '-A', '--', '.', ':(exclude)*.exe'], envI)", apres: "g(['add', '-A', '--', '.'], envI)", attendu: 'IQ-2' },
-  { nom: 'sans-parent', fichier: T_SCRIPT, avant: "g(['commit-tree', arbre, '-p', 'HEAD', '-m',", apres: "g(['commit-tree', arbre, '-m',", attendu: 'IQ-2' },
-  { nom: 'index-reel', fichier: T_SCRIPT, avant: 'const envI = { GIT_INDEX_FILE: index }', apres: 'const envI = {}', attendu: 'IQ-3', aussi: ['IQ-1', 'IQ-7', 'IQ-8', 'IQ-9', 'IQ-10'] },
+  { nom: 'sans-parent', fichier: T_SCRIPT, avant: "g(['commit-tree', arbre, '-p', 'HEAD', '-m',", apres: "g(['commit-tree', arbre, '-m',", attendu: 'IQ-2', aussi: ['IQ-13'] },
+  { nom: 'index-reel', fichier: T_SCRIPT, avant: 'const envI = { GIT_INDEX_FILE: index }', apres: 'const envI = {}', attendu: 'IQ-3', aussi: ['IQ-1', 'IQ-7', 'IQ-8', 'IQ-9', 'IQ-10', 'IQ-13', 'IQ-14'] },
+  // Réparation du 27/09 : l'ancien invariant (le dépôt immobile) remis en place → IQ-13 ; plus d'invariant du tout → IQ-14.
+  { nom: 'invariant-strict', fichier: T_SCRIPT, avant: 'if (bouge.length) console.log(', apres: "if (bouge.length) { ligne.ok = false; code = 1; raison = 'invariant rompu : le dépôt a bougé' }\n  if (bouge.length) console.log(", attendu: 'IQ-13' },
+  { nom: 'sans-invariant', fichier: T_SCRIPT, avant: 'if (violations.length) { ligne.ok = false; code = 1;', apres: 'if (false) { ligne.ok = false; code = 1;', attendu: 'IQ-14' },
+  // La liste des commandes relue dans la trace retirée : le sabotage « etiquette » (git tag, sans reflog) passe → IQ-14.
+  { nom: 'sans-liste-des-commandes', fichier: T_SCRIPT, avant: 'if (horsListe.length) violations.push(', apres: 'if (false) violations.push(', attendu: 'IQ-14' },
   { nom: 'secrets-non-cherches', fichier: T_SCRIPT, avant: 'const noms = chercherSecrets(texte)', apres: 'const noms = []', attendu: 'IQ-4' },
   { nom: 'valeur-au-journal', fichier: T_SCRIPT, avant: "if (noms.length) { ligne.exclus.push({ chemin: c, motif: noms[0] }); continue }", apres: "if (noms.length) { ligne.exclus.push({ chemin: c, motif: noms[0], extrait: texte.slice(0, 120) }); continue }", attendu: 'IQ-4' },
   { nom: 'prospects-ignores', fichier: T_SCRIPT, avant: "if (vault.entrees.some((e) => bas.includes(e)))", apres: 'if (false)', attendu: 'IQ-5' },
@@ -538,18 +840,22 @@ async function autotest() {
   fs.mkdirSync(path.join(T, 'scripts'), { recursive: true })
   fs.mkdirSync(path.join(T, 'docs'), { recursive: true })
   fs.copyFileSync(path.join(FIXTURES, 'instantane-quotidien.temoin.mjs'), path.join(T, T_SCRIPT))
-  fs.writeFileSync(path.join(T, 'docs', 'sauvegardes.md'), (lireOuNull(path.join(DEPOT, 'docs', 'sauvegardes.md')) || '# Sauvegardes\n') + fs.readFileSync(path.join(FIXTURES, 'sauvegardes.section.temoin.md'), 'utf8'))
+  // La vraie doc sert de contexte, SANS sa propre section « Le code et l'arbre de travail » (écrite par 026-005) : sinon
+  // IQ-12 la trouve avant celle du témoin, et le défaut planté doc-sans-git-show ne peut plus rougir.
+  const docReelle = (lireOuNull(path.join(DEPOT, 'docs', 'sauvegardes.md')) || '# Sauvegardes\n').replace(/^##\s+Le code et l['’]arbre de travail[\s\S]*?(?=^##\s|(?![\s\S]))/m, '')
+  fs.writeFileSync(path.join(T, 'docs', 'sauvegardes.md'), docReelle + fs.readFileSync(path.join(FIXTURES, 'sauvegardes.section.temoin.md'), 'utf8'))
   const lignes = []
   const dire = (l) => { console.log(l); lignes.push(l) }
   let ok = true
   try {
     dire(`témoin : ${versSlash(path.relative(DEPOT, T))} — scripts/instantane-quotidien.mjs et la section de docs/sauvegardes.md pris dans scripts/fixtures/026/securite/instantane/`)
     const moi = fileURLToPath(import.meta.url)
-    const juge = () => lancer(process.execPath, [moi, `--racine=${T}`], { cwd: T, delaiMs: 10 * 60_000 })
+    // 25 min par juge : avec IQ-13 et IQ-14 (trois bacs de plus), un juge dure 2 à 4 min au calme, près de 10 sous charge.
+    const juge = () => lancer(process.execPath, [moi, `--racine=${T}`], { cwd: T, delaiMs: 25 * 60_000 })
     const t0 = await juge()
     const r0 = rougesDe(t0.sortie)
     const vert = t0.code === 0 && !r0.length && CRITERES.every((c) => new RegExp(`^PASS ${c}\\b`, 'm').test(t0.sortie))
-    dire(`${vert ? 'PASS' : 'FAIL'} AT-temoin — témoin en code ${t0.code}${r0.length ? `, rouges : ${r0.join(', ')}` : ', IQ-1 à IQ-12 verts'} (${t0.duree.toFixed(0)} s)`)
+    dire(`${vert ? 'PASS' : 'FAIL'} AT-temoin — témoin en code ${t0.code}${r0.length ? `, rouges : ${r0.join(', ')}` : `, ${CRITERES[0]} à ${CRITERES.at(-1)} verts`} (${t0.duree.toFixed(0)} s)`)
     if (!vert) { ok = false; for (const l of t0.sortie.split(/\r?\n/).filter((x) => /^FAIL /.test(x))) dire(`    ${court(l, 240)}`) }
     for (const c of CAS_AUTOTEST) {
       const f = path.join(T, c.fichier)

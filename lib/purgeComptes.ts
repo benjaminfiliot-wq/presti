@@ -4,6 +4,7 @@ import { MEDIA_BUCKET } from '@/lib/media'
 import { notifierEntreprise } from '@/lib/email'
 import { stripe } from '@/lib/stripe'
 import { PREFIXE_ADRESSE_PURGEE } from '@/lib/urls'
+import { commandesEnLigneDe, marquerSuppression } from '@/lib/siteRetrait'
 
 // Purge des comptes dont la suppression a été demandée il y a plus de 30 jours (§6, migration
 // 0052). Appelée par le cron quotidien des relances : le plan Vercel Hobby n'accepte que deux
@@ -132,6 +133,9 @@ export async function purgerComptes(): Promise<{ purges: number; anonymises: num
       await annulerAbonnement(c.stripe_subscription_id, c.id)
       const { count } = await supabaseAdmin.from('factures').select('id', { count: 'exact', head: true }).eq('artisan_id', c.id).eq('verrouillee', true)
       const aFacture = (count ?? 0) > 0
+      let idsSites: string[] = []
+      try { idsSites = await commandesEnLigneDe(c.id) }
+      catch (e) { console.error('[purge-comptes] lecture des sites', c.id, e) }
       const echec = aFacture ? await anonymiser(c.id) : await effacer(c.id)
       if (echec) {
         console.error('[purge-comptes]', c.id, echec)
@@ -143,6 +147,8 @@ export async function purgerComptes(): Promise<{ purges: number; anonymises: num
         )
         continue
       }
+      try { await marquerSuppression(idsSites) }
+      catch (e) { console.error('[purge-comptes] avis de suppression des sites', c.id, e) }
       if (aFacture) anonymises++; else purges++
       await notifierEntreprise(
         `Compte ${aFacture ? 'anonymisé' : 'purgé'} — ${c.nom || c.email || c.id}`,

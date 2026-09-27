@@ -1,0 +1,22 @@
+═══ suppression ═══
+À : m1@presti-test.invalid
+Sujet : Votre site après la suppression de votre compte
+
+Bonjour,
+
+Votre compte Presti a été supprimé. Votre site commandé reste en ligne douze mois, jusqu’au 14 octobre 2027. À l’issue de ce délai, ou avant sur simple demande en répondant à ce message, vous recevrez le dossier complet de votre site. Passé ce délai, le site sera retiré.
+
+L’équipe Presti
+
+═══ retrait ═══
+À : couvreur.temoin@presti-test.invalid
+Sujet : Dossier de votre site et retrait
+
+Bonjour,
+
+Votre site arrive au terme des douze mois suivant la suppression de votre compte. Voici le lien pour télécharger le dossier complet de votre site :
+https://prestiapp.fr/api/site-dossier/d0260000-0000-4000-8000-00000000fa01?j=jeton-rt-1-fa01
+
+Ce lien expire le 12 janvier 2027. Votre site est retiré.
+
+L’équipe Presti

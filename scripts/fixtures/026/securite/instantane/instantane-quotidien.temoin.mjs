@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // Témoin de scripts/instantane-quotidien.mjs — fiche 026-002, autotest de scripts/instantane-quotidien-qa.mjs.
+// Réparation du 27/09 (IQ-13, IQ-14) : l'invariant ne compare plus le dépôt avant et après, il lit ce que CE script a écrit.
 // Ce n'est pas le livrable de 026-005 : c'est la preuve que le juge sait passer au vert sur un script juste, puis au rouge
 // sur chaque défaut planté. Par prudence, --racine ET --depot sont obligatoires ici : lancé par erreur, il ne pousse rien.
 //
@@ -70,7 +71,14 @@ function principal(argv) {
   const o = lireOptions(argv)
   if (!o) { console.log('usage : --racine=<dépôt> --depot=<chemin> [--vault=<dossier>] [--pousser | --sans-pousser]'); return 2 }
   const R = o.racine
-  const env0 = { ...process.env, GIT_OPTIONAL_LOCKS: '0' }
+  // Trace et signature : tout processus git lancé d'ici note ses écritures d'index et son argv (trace2) et signe de ce
+  // jeton le reflog de toute référence qu'il déplace. L'invariant lit l'une et l'autre en fin de passage (IQ-13, IQ-14).
+  const jeton = crypto.randomBytes(6).toString('hex')
+  const fichierTrace = path.join(os.tmpdir(), `instantane-quotidien-${process.pid}-${jeton}.trace2.json`)
+  const signature = `instantane-quotidien.${jeton}@presti.invalid`
+  const env0 = { ...process.env, GIT_OPTIONAL_LOCKS: '0', GIT_TRACE2_EVENT: fichierTrace, GIT_TRACE2_EVENT_NESTING: '100', GIT_COMMITTER_NAME: 'instantane-quotidien', GIT_COMMITTER_EMAIL: signature }
+  delete env0.GIT_TRACE2_PARENT_SID // les git lancés d'ici sont les seuls de premier niveau dans la trace
+  delete process.env.GIT_TRACE2_PARENT_SID
   const g = (args, env = {}) => execFileSync('git', ['-C', R, '-c', 'core.quotepath=false', ...args], { encoding: 'utf8', env: { ...env0, ...env }, maxBuffer: 1 << 28, stdio: ['ignore', 'pipe', 'pipe'] }).trim()
   const cheminIndex = path.resolve(R, g(['rev-parse', '--git-path', 'index']))
   const empreinte = () => ({
@@ -130,8 +138,34 @@ function principal(argv) {
   } finally {
     fs.rmSync(index, { force: true })
   }
+  // Le dépôt peut bouger pendant le passage : d'autres processus y écrivent. Ce n'est pas une panne, seulement une note.
   const apres = empreinte()
-  for (const k of ['head', 'statut', 'index']) if (avant[k] !== apres[k]) { ligne.ok = false; code = 1; raison = `invariant rompu : ${k} a changé` }
+  const bouge = ['head', 'statut', 'index'].filter((k) => avant[k] !== apres[k])
+  if (bouge.length) console.log(`note : le dépôt a bougé pendant le passage (${bouge.join(', ')}), d'autres processus y écrivent`)
+  // L'invariant porte sur ce que CE script a écrit : les index nommés dans sa trace, les reflogs signés de son jeton.
+  const violations = []
+  const norme = (p) => path.resolve(R, p).toLowerCase()
+  const ecrits = [], departs = []
+  for (const l of (fs.existsSync(fichierTrace) ? fs.readFileSync(fichierTrace, 'utf8') : '').split(/\r?\n/)) {
+    let e = null
+    try { e = JSON.parse(l) } catch { if (l.includes('do_write_index') || l.includes('"event":"start"')) violations.push('trace illisible') }
+    if (e && e.label === 'do_write_index') ecrits.push(norme(String(e.msg).replace(/\.lock$/, '')))
+    if (e && e.event === 'start' && !String(e.sid).includes('/')) departs.push((e.argv || []).map(String))
+  }
+  // La liste des commandes, relue dans la trace : chaque processus de premier niveau (sid sans « / ») est un appel de CE
+  // script, par g() ou non. Un git tag, ou un update-ref hors de refs/instantanes/, ne laisse aucun reflog signé.
+  const permises = new Set(['rev-parse', 'status', 'read-tree', 'diff', 'ls-files', 'add', 'rm', 'write-tree', 'commit-tree', 'update-ref', 'ls-tree', 'ls-remote', 'push'])
+  const horsListe = departs.map((a) => { let i = 1; while (i < a.length && a[i].startsWith('-')) i += a[i] === '-C' || a[i] === '-c' ? 2 : 1; return a.slice(i) })
+    .filter((a) => !permises.has(a[0]) || (a[0] === 'update-ref' && !String(a[1]).startsWith('refs/instantanes/')))
+  if (horsListe.length) violations.push('le script a lancé une commande git hors de sa liste')
+  if (ligne.commit && !ecrits.includes(norme(index))) violations.push('trace muette')
+  if (ecrits.some((p) => p !== norme(index))) violations.push('le script a écrit un autre index que le sien')
+  const signes = []
+  const parcourir = (d) => { if (fs.existsSync(d)) for (const x of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, x.name); if (x.isDirectory()) parcourir(p); else if (fs.readFileSync(p, 'utf8').includes(signature)) signes.push(path.relative(path.join(R, '.git'), p).split(path.sep).join('/')) } }
+  parcourir(path.join(R, '.git', 'logs'))
+  if (signes.some((f) => !f.startsWith('logs/refs/instantanes/'))) violations.push('le script a déplacé une référence hors de refs/instantanes/')
+  fs.rmSync(fichierTrace, { force: true })
+  if (violations.length) { ligne.ok = false; code = 1; raison = `invariant rompu : ${violations.join(', ')}` }
   const journal = path.join(R, '.orchestre', 'travail', 'sauvegardes.jsonl')
   fs.mkdirSync(path.dirname(journal), { recursive: true })
   fs.appendFileSync(journal, JSON.stringify(ligne) + '\n')

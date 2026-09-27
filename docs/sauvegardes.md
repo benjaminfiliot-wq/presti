@@ -104,6 +104,14 @@ vault. Ces exclusions évitent de transférer des exécutables, des fichiers ref
 des secrets et des données personnelles. Plus de 20 exclusions interrompent l'envoi. Chaque
 passage est consigné dans `.orchestre/travail/sauvegardes.jsonl`.
 
+D'autres sessions peuvent commiter, indexer ou créer des fichiers pendant le passage. Cela ne le
+fait pas échouer. Le script vérifie seulement ce que lui-même a écrit : la trace de ses commandes
+git (tout index écrit doit être son index temporaire, et chaque commande qu'il lance doit être
+dans sa liste fermée) et les reflogs signés de son jeton (aucune référence déplacée hors de
+`refs/instantanes/`). Une alerte « ALERTE BENJ : … (invariant : …) »
+veut dire que le script lui-même a écrit hors de ce domaine. La vérification a lieu avant
+l'envoi (rien ne part) et une dernière fois après.
+
 Pour récupérer un fichier d'une branche sauvegardée :
 
 ```bash

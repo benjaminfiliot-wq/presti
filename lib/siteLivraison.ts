@@ -4,6 +4,8 @@ import { getStatus, type DnsRecord } from '@/lib/vercelDomains'
 import { DELAI_TEXTE, PRIX_SITE_TEXTE, erreursAvantPaiement, type Commande } from '@/lib/siteCommande'
 import { envoyerAlertes, enregistrerPassage, type Alerte } from '@/lib/alertes'
 import { purgerBrouillonsPublics } from '@/lib/siteAchatPublic'
+import { retraitsDus, retirer } from '@/lib/siteRetrait'
+import { purgerFichiersExpires } from '@/lib/siteDossier'
 
 type CleCourriel = 'payee' | 'generee' | 'en_ligne'
 type CommandeLivraison = Omit<Commande, 'etat'> & { etat: Commande['etat'] | 'retiree'; courriels?: Partial<Record<CleCourriel, string>>; retiree_le?: string | null }
@@ -145,6 +147,19 @@ export async function tourLivraison(deps: Dependances = {}): Promise<{ courriels
   // Achat public (026-025) : les brouillons sans compte jamais payés s'effacent après 7 jours (minimisation des données).
   try { await purgerBrouillonsPublics({ base: d.base, maintenant: d.maintenant }) }
   catch (e) { bilan.erreurs++; console.error('[livraison] purge des brouillons publics', e) }
+  try {
+    if (!(await d.enPause())) {
+      try {
+        const commandes = await retraitsDus({ base: d.base, maintenant: d.maintenant })
+        for (const commande of commandes.slice(0, 10)) {
+          try { await retirer(commande) }
+          catch (e) { bilan.erreurs++; console.error('[livraison] retrait', commande.id, e) }
+        }
+      } catch (e) { bilan.erreurs++; console.error('[livraison] retraits dus', e) }
+      try { await purgerFichiersExpires({ base: d.base, maintenant: d.maintenant }) }
+      catch (e) { bilan.erreurs++; console.error('[livraison] fichiers expirés', e) }
+    }
+  } catch (e) { bilan.erreurs++; console.error('[livraison] pause du retrait', e) }
   await enregistrerPassage('livraison', bilan, bilan.erreurs === 0)
   return bilan
 }
