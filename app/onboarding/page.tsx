@@ -2,7 +2,8 @@
 import '@/app/globals.css'
 
 import { useEffect, useState, type FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { suiteSure } from '@/lib/suiteSure'
 import { supabase } from '@/lib/supabaseClient'
 import { slugBase, randomSuffix } from '@/lib/slug'
 import Marque from '@/app/Marque'
@@ -17,6 +18,7 @@ const METIERS = [
 
 export default function Onboarding() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [userId, setUserId] = useState<string | null>(null)
   const [email, setEmail] = useState<string | null>(null)
   const [nom, setNom] = useState('')
@@ -76,7 +78,7 @@ export default function Onboarding() {
       const jeton = data.session?.access_token
       if (jeton) void fetch('/api/account/inscription', { method: 'POST', headers: { Authorization: `Bearer ${jeton}` } }).catch(() => {})
     } catch { /* jamais bloquant */ }
-    router.push('/outils')
+    router.push(suiteSure(searchParams.get('suite')))
   }
 
   return (

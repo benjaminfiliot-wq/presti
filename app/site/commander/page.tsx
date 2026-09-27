@@ -14,21 +14,30 @@ import {
   LIBELLE_ETAT, sirenValide, erreursAvantPaiement
 } from '@/lib/siteCommande'
 
-type Etape = 'domaine' | 'zone' | 'matiere' | 'parcours' | 'paiement'
+type Etape = 'domaine' | 'zone' | 'matiere' | 'parcours' | 'prestations' | 'paiement'
 
 const ETAPES: { id: Etape; nom: string }[] = [
   { id: 'domaine', nom: 'Le domaine' },
   { id: 'zone', nom: 'Métier & Zone' },
   { id: 'matiere', nom: 'La matière' },
   { id: 'parcours', nom: 'Votre parcours' },
+  { id: 'prestations', nom: 'Vos prestations' },
   { id: 'paiement', nom: 'Le paiement' },
 ]
+
+const PRESTATIONS_PAR_METIER: Record<string, string[]> = {
+  menuisier: ['Pose de fenêtres', 'Portes et volets', 'Agencement intérieur', 'Terrasse en bois'],
+  plombier: ['Recherche de fuite', 'Installation sanitaire', 'Dépannage plomberie', 'Chauffage'],
+  électricien: ['Mise aux normes', 'Tableau électrique', 'Éclairage', 'Dépannage électrique'],
+  couvreur: ['Réfection de toiture', 'Réparation de fuite', 'Zinguerie', 'Entretien de toiture'],
+}
 
 function CommanderSite() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const p_paiement = searchParams?.get('paiement')
   const p_etape = searchParams?.get('etape')
+  const p_commande = searchParams?.get('commande')
 
   const [ready, setReady] = useState(false)
   const [etape, setEtape] = useState<Etape>(() => {
@@ -56,6 +65,8 @@ function CommanderSite() {
   })
   const [erreursApi, setErreursApi] = useState<string[]>([])
   const [commandes, setCommandes] = useState<Commande[]>([])
+  const [commandeACompleter, setCommandeACompleter] = useState<string | null>(null)
+  const [prestationLibre, setPrestationLibre] = useState('')
   const [busy, setBusy] = useState(false)
   const [renonciationRetractation, setRenonciationRetractation] = useState(false)
 
@@ -81,6 +92,24 @@ function CommanderSite() {
   const charger = useCallback(async () => {
     const t = await jeton()
     if (!t) return
+    const complement = await fetch('/api/site/commander/complement', { headers: { Authorization: `Bearer ${t}` } })
+    if (complement.status === 409) {
+      router.replace(`/onboarding?suite=${encodeURIComponent(`/site/commander?commande=${p_commande || ''}`)}`)
+      return
+    }
+    if (complement.ok) {
+      const donnees = await complement.json().catch(() => ({}))
+      const disponibles = Array.isArray(donnees.commandes) ? donnees.commandes as (Commande & { erreurs?: string[] })[] : []
+      const choisie = disponibles.find(c => c.id === p_commande) || disponibles[0]
+      if (choisie) {
+        setCommandeACompleter(choisie.id)
+        setBrouillon(prev => ({ ...prev, ...choisie, matiere: { ...prev.matiere, ...(choisie.matiere || {}) } }))
+        setErreursApi(choisie.erreurs || [])
+        setEtape('domaine')
+        setReady(true)
+        return
+      }
+    }
     const r = await fetch('/api/site/commander/brouillon', { headers: { Authorization: `Bearer ${t}` } })
     if (r.status === 404) return notFound()
     if (r.status === 401) { router.replace('/login'); return }
@@ -97,7 +126,7 @@ function CommanderSite() {
     setReady(true)
 
     if (p_paiement === 'annule') setEtape('paiement')
-  }, [router, p_paiement])
+  }, [router, p_paiement, p_commande])
 
   useEffect(() => {
     charger()
@@ -108,12 +137,25 @@ function CommanderSite() {
   const saveAndNext = async (suivante: Etape) => {
     setBusy(true)
     const t = await jeton()
-    const r = await fetch('/api/site/commander/brouillon', {
+    const r = await fetch(commandeACompleter ? '/api/site/commander/complement' : '/api/site/commander/brouillon', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
-      body: JSON.stringify(brouillon),
+      body: JSON.stringify(commandeACompleter ? { ...brouillon, commande: commandeACompleter } : brouillon),
     })
     const d = await r.json().catch(() => ({}))
+    if (r.status === 409 && /profil|inscription/i.test(d.error || '')) {
+      router.push(`/onboarding?suite=${encodeURIComponent(`/site/commander?commande=${commandeACompleter || ''}`)}`)
+      setBusy(false)
+      return
+    }
+    if (!r.ok) {
+      alert(d.error || 'Impossible d’enregistrer le dossier.')
+      setBusy(false)
+      return
+    }
+    if (d.commande) {
+      setBrouillon(prev => ({ ...prev, ...d.commande, matiere: { ...prev.matiere, ...(d.commande.matiere || {}) } }))
+    }
     if (d.brouillon) {
       setBrouillon((prev) => ({
         ...prev,
@@ -173,7 +215,7 @@ function CommanderSite() {
 
   if (!ready) return <AppShell active="site" title="Site"><div className="tool-card"><p className="muted">Chargement…</p></div></AppShell>
 
-  if (activeCmd || p_paiement === 'ok') {
+  if (!commandeACompleter && (activeCmd || p_paiement === 'ok')) {
     const cmd = activeCmd || commandes[0]
     return (
       <AppShell active="site" title="Votre site" wide>
@@ -190,11 +232,11 @@ function CommanderSite() {
   const artisan = brouillon.matiere.artisan
 
   return (
-    <AppShell active="site" title="Commander mon site" wide>
+    <AppShell active="site" title={commandeACompleter ? 'Compléter mon dossier' : 'Commander mon site'} wide>
       <div className="prof-grid">
         <div className="tool-card">
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-            {ETAPES.map((e, i) => (
+            {ETAPES.filter(e => !commandeACompleter || e.id !== 'paiement').map((e, i) => (
               <button
                 key={e.id}
                 type="button"
@@ -448,12 +490,40 @@ function CommanderSite() {
               ))}
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <button type="button" className="btn btn--ghost" onClick={() => saveAndNext('matiere')} disabled={busy}>Retour</button>
-                <button type="button" className="btn btn--primary" onClick={() => saveAndNext('paiement')} disabled={busy}>Continuer</button>
+                <button type="button" className="btn btn--primary" onClick={() => saveAndNext('prestations')} disabled={busy}>Continuer</button>
               </div>
             </div>
           )}
 
-          {etape === 'paiement' && (
+          {etape === 'prestations' && (
+            <div className="inv-form" style={{ display: 'grid', gap: '1rem' }}>
+              <h3>Vos prestations</h3>
+              <p>Choisissez uniquement les prestations que vous réalisez vraiment.</p>
+              {(Object.entries(PRESTATIONS_PAR_METIER).find(([metier]) => brouillon.metier.toLowerCase().includes(metier))?.[1] || []).map(nom => (
+                <label key={nom}><input type="checkbox" checked={(brouillon.matiere.prestations || []).includes(nom)} onChange={e => setBrouillon(prev => {
+                  const liste = prev.matiere.prestations || []
+                  const prestations = e.target.checked ? [...liste, nom].slice(0, 12) : liste.filter(p => p !== nom)
+                  return { ...prev, matiere: { ...prev.matiere, prestations } }
+                })} /> {nom}</label>
+              ))}
+              <label>Autre prestation que vous réalisez
+                <input value={prestationLibre} maxLength={80} onChange={e => setPrestationLibre(e.target.value)} />
+              </label>
+              <button type="button" className="btn btn--ghost" disabled={!prestationLibre.trim() || (brouillon.matiere.prestations || []).length >= 12} onClick={() => {
+                const nom = prestationLibre.trim()
+                if (nom && !(brouillon.matiere.prestations || []).includes(nom)) setBrouillon(prev => ({ ...prev, matiere: { ...prev.matiere, prestations: [...(prev.matiere.prestations || []), nom].slice(0, 12) } }))
+                setPrestationLibre('')
+              }}>Ajouter la prestation</button>
+              {(brouillon.matiere.prestations || []).map(nom => <div key={nom}>{nom} <button type="button" className="btn btn--ghost" onClick={() => setBrouillon(prev => ({ ...prev, matiere: { ...prev.matiere, prestations: (prev.matiere.prestations || []).filter(p => p !== nom) } }))}>Retirer</button></div>)}
+              {commandeACompleter && erreursApi.length > 0 && <div className="msg err"><p>Il manque encore :</p><ul>{erreursApi.map(erreur => <li key={erreur}>{erreur}</li>)}</ul></div>}
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button type="button" className="btn btn--ghost" onClick={() => setEtape('parcours')}>Retour</button>
+                <button type="button" className="btn btn--primary" disabled={busy} onClick={() => saveAndNext(commandeACompleter ? 'prestations' : 'paiement')}>{commandeACompleter ? 'Enregistrer mon dossier' : 'Continuer'}</button>
+              </div>
+            </div>
+          )}
+
+          {etape === 'paiement' && !commandeACompleter && (
             <div className="inv-form" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <h3>Récapitulatif & Paiement</h3>
 

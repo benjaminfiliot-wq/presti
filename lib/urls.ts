@@ -21,7 +21,7 @@ export const SOUS_DOMAINES: boolean = process.env.NEXT_PUBLIC_DOMAINE_NEUTRE_SOU
 export const SLUGS_RESERVES = new Set([
   'www', 'qg', 'api', 'admin', 'app', 'mail', 'smtp', 'imap', 'ftp', 'ns1', 'ns2',
   'demande', 'site', 'p', 'login', 'signup', 'onboarding', 'contact', 'presti', 'prestiapp',
-  'static', 'assets', 'infos-legales', 'cgu', 'mentions-legales', 'confidentialite', 'faq', 'aide',
+  'static', 'assets', 'infos-legales', 'cgu', 'mentions-legales', 'confidentialite', 'faq', 'aide', 'acheter', 'commander',
 ])
 
 /**
