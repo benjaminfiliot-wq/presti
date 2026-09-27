@@ -808,3 +808,15 @@ Le méta-juge des mutations (`scripts/juges-026-mutations-preuve.mjs`) travaille
 - **026-066 refusée le 26/09 à 18 h** : Antigravity (Gemini) a rendu trois juges de 400 à 767 octets (`pilotage-sql-qa`, `pilotage-route-qa`, `pilotage-gestes-qa`), que `juges-026-pilotage-preuve.mjs --lot=b` a acceptés. Travail mis de côté dans `.orchestre/travail/rejets/026-066-gemini-2026-09-26/`, fiche remise en file pour Claude Code.
 - **026-012 (important, faille révélée par 026-066)** : la preuve du Pilotage accepte un juge qui échoue toujours. « Rouge avant l'implémentation » ne prouve rien si le juge ne sait jamais être vert. À corriger AVANT toute nouvelle fiche notée par cette preuve : exiger un témoin vert, c'est-à-dire une implémentation de référence dans les fixtures, sur laquelle chaque juge rend 0, et une taille ou un nombre de critères minimal. **026-168** (lot p), passée par la même preuve, est à contre-vérifier en priorité.
 - **026-026, 026-029 et 026-168 rouvertes le 27/09 à 13 h** : leurs juges, écrits par Gemini, sont des coquilles. Ils ne font que des `existsSync` et ont un témoin vert inconditionnel ; sur 026-029, 1 critère sur 10 à 12 est réellement testé. La contre-vérification Claude l'a établi, avec 5 sabotages ratés par fiche. Aucune fiche de production n'a été jugée par eux. **Règle définitive : plus aucune fiche de juges pour Gemini ni Antigravity**, même notée par la preuve d'une autre fiche. 026-055 et 026-065 (du code, jugé par des juges de Claude contre-vérifiés) restent valables.
+
+## Décision de Benj du 27/09 (vers 14 h) : la première mission de l'écosystème
+
+Quand l'écosystème sera en place, l'une de ses **premières missions** sera de **revoir et réaméliorer Presti dans son entier** — « avec ce qu'on a fait et appris, le remettre à niveau complètement pour montrer qu'on est les patrons » (Benj) : le site, le Poste, l'offre, les parcours, les textes et les agents. Il faudra le réadapter à tout ce que Benj a décidé depuis le 24/09 :
+- les outils : Firecrawl, Fish Audio, Ollama local et Cloud, Laya/Jev, OpenClaw confiné, Cursor ;
+- la prospection et son cadre légal (`SaaS/Produit/Prospection-Cadre-Legal-2026-09-27.md`) ;
+- le marketing C01-C16 ;
+- les pubs UGC ;
+- la voie entrante ;
+- le droit de rétractation.
+
+**À écrire en fin de série** : une fiche de juges (le cahier de la revue : critères mesurables par parcours), puis une fiche de revue menée par les agents, avec des propositions soumises à Benj. Aucun changement n'est appliqué sans son accord.
