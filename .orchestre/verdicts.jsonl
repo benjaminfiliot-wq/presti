@@ -328,3 +328,15 @@
 {"id":"000-modeles-metiers","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:39:58Z","duree_s":0,"agent":"ag-modeles","executant":"antigravity","lignes":487,"dossier":"en-cours"}
 {"id":"000-modeles-metiers","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:40:03Z","duree_s":0,"agent":"ag-modeles","executant":"antigravity","lignes":487,"dossier":"fait"}
 {"id":"026-024","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:45:09Z","duree_s":27,"agent":"usine-codex-42","executant":"codex","lignes":476,"dossier":"fait"}
+{"id":"026-011","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T12:05:25Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":1377,"dossier":"en-cours"}
+{"id":"026-011","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T12:06:48Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":1382,"dossier":"fait"}
+{"id":"026-102","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T12:20:06Z","duree_s":272,"agent":"claude-code","executant":"claude-code","lignes":10311,"dossier":"en-cours"}
+{"id":"026-029","verdict":"FAIL","ligne":"✅ JL-1 référence 4041ec9 réutilisée (identique blob pour blob) sous .orchestre/travail/026-lt-preuve/reference (755 fichiers), ancêtre de HEAD, sans scripts/com","code":1,"date":"2026-09-27T12:20:14Z","duree_s":26,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-029","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T12:22:57Z","duree_s":26,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-102","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T12:24:53Z","duree_s":272,"agent":"claude-code","executant":"claude-code","lignes":10311,"dossier":"fait"}
+{"id":"026-025","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T13:44:43Z","duree_s":94,"agent":"claude-code","executant":"claude-code","lignes":696,"dossier":"en-cours"}
+{"id":"026-025","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T13:45:50Z","duree_s":40,"agent":"claude-code","executant":"claude-code","lignes":696,"dossier":"fait"}
+{"id":"026-066","verdict":"FAIL","ligne":"✅ JA-1 référence 4041ec9 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (2421 fichiers), ancêtre de HEAD, sans app/a","code":1,"date":"2026-09-27T13:52:21Z","duree_s":661,"agent":"claude-code","executant":"claude-code","lignes":6785,"dossier":"en-cours"}
+{"id":"026-066","verdict":"FAIL","ligne":"✅ JA-1 référence 4041ec9 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (2421 fichiers), ancêtre de HEAD, sans app/a","code":1,"date":"2026-09-27T13:57:27Z","duree_s":203,"agent":"claude-code","executant":"claude-code","lignes":6790,"dossier":"en-cours"}
+{"id":"026-066","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T14:02:18Z","duree_s":238,"agent":"claude-code","executant":"claude-code","lignes":6790,"dossier":"en-cours"}
+{"id":"026-066","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T14:06:09Z","duree_s":179,"agent":"claude-code","executant":"claude-code","lignes":6790,"dossier":"fait"}
