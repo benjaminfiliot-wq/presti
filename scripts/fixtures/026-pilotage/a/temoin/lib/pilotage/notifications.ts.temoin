@@ -1,0 +1,28 @@
+// lib/pilotage/notifications.ts — TÉMOIN de 026-012 (lot a) : l'implémentation de référence du module de 026-051, écrite
+// par Claude Code pour prouver que pilotage-push-qa sait rendre 0. Ce n'est PAS le module livré : l'exécutant de 026-051
+// écrit le sien ; celui-ci ne sert qu'à juges-026-pilotage-preuve (JA-7, et ses sabotages pour JA-8).
+//
+// La charge d'un push aux fondateurs ne dépend QUE du motif : aucun nom, aucun montant, aucun téléphone de l'alerte n'y
+// entre. Le détail est dans le Pilotage, où mène l'adresse.
+import { lienPilotage, type Bloc } from './liens'
+import type { ChargePush } from '@/lib/push'
+
+/** Les six motifs qui partent en push aux fondateurs ; tous les autres restent des e-mails. */
+export const MOTIFS_POUSSES = ['paiement', 'appel', 'panne_agent', 'argent_bloque', 'coupe_circuit', 'digest'] as const
+export type MotifPousse = typeof MOTIFS_POUSSES[number]
+
+const CHARGES: Record<MotifPousse, { titre: string; ligne: string; bloc: Bloc | null }> = {
+  paiement: { titre: 'Un paiement à regarder', ligne: 'Un paiement demande votre œil : le détail est dans le Pilotage.', bloc: 'argent' },
+  appel: { titre: 'Un appel à passer', ligne: 'Quelqu’un attend votre appel : le détail est dans le Pilotage.', bloc: 'appeler' },
+  panne_agent: { titre: 'Un agent est en panne', ligne: 'Un agent ne donne plus signe de vie depuis plus de deux heures.', bloc: 'agents' },
+  argent_bloque: { titre: 'De l’argent bloqué', ligne: 'Un montant attend un geste de votre part dans le Pilotage.', bloc: 'argent' },
+  coupe_circuit: { titre: 'Un coupe-circuit a sauté', ligne: 'Une décision vous attend avant que les agents ne reprennent.', bloc: 'decider' },
+  digest: { titre: 'Le point du Pilotage', ligne: 'Le résumé est prêt.', bloc: null },
+}
+
+/** La charge d'un push aux fondateurs pour ce motif, ou null s'il ne se pousse pas. Ne reçoit que le motif. */
+export function chargeFondateur(motif: string): ChargePush | null {
+  if (!(MOTIFS_POUSSES as readonly string[]).includes(motif)) return null
+  const c = CHARGES[motif as MotifPousse]
+  return { titre: c.titre, ligne: c.ligne, url: c.bloc ? lienPilotage({ bloc: c.bloc }) : lienPilotage(), tag: `pilotage-${motif}` }
+}

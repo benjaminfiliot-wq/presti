@@ -1,0 +1,5 @@
+{
+  "plafond": 12,
+  "canaux": ["formulaire_site", "messagerie"],
+  "phrase": "Aucun envoi à froid avant l'ouverture par Benj."
+}

@@ -4,7 +4,10 @@
 //   node --import ./scripts/ts-loader.mjs scripts/pilotage-push-qa.mjs [--racine=<dossier>] [--temoin]
 //
 //   --racine=<d>  importe <d>/lib/pilotage/notifications.ts, <d>/lib/push.ts et <d>/lib/alertes.ts par URL de fichier et lit
-//                 les sources sous <d> (défaut : le dépôt). « HEAD » (PF-6, PF-7) est le HEAD du dépôt git qui contient <d>.
+//                 les sources sous <d> (défaut : le dépôt). « HEAD » (PF-6, PF-7) est le HEAD du dépôt git qui contient <d>,
+//                 ou le commit JUGE_BASE_GIT s'il est posé : la preuve de 026-012 y met sa référence quand elle juge son témoin
+//                 (l'implémentation de référence posée sur la référence, pas sur HEAD : 026-024 a changé lib/alertes.ts le 27/09
+//                 et le témoin, figé, perdait PF-7 sans que rien de jugé ait bougé).
 //   --temoin      seulement l'auto-contrôle d'alertes-push.json, la preuve du harnais (doublures sur le code actuel) et les
 //                 critères de non-régression (définition de 025-01 : la preuve qu'un juge échoue sur une vraie faute vient des
 //                 fiches de mutations, 026-130)
@@ -315,8 +318,9 @@ function declaration(src, nom) {
   return { debut, fin, texte: L.slice(debut, fin + 1).map((l) => l.trim()).filter(Boolean).join('\n') }
 }
 /** HEAD:<chemin> du dépôt git qui contient la racine jugée (null si illisible). */
+const BASE_GIT = /^[0-9a-f]{7,40}$/.test(process.env.JUGE_BASE_GIT ?? '') ? process.env.JUGE_BASE_GIT : 'HEAD'
 function sourceHead(chemin) {
-  const r = git(['show', `HEAD:${chemin}`], { cwd: RAC })
+  const r = git(['show', `${BASE_GIT}:${chemin}`], { cwd: RAC })
   return r.code === 0 ? r.stdout : null
 }
 /** Différence ligne à ligne (plus longue sous-suite commune) entre deux listes de lignes nettes. → { retirees, ajoutees } */
