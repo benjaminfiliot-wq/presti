@@ -1,40 +1,52 @@
 {
- "_lisez": "Six corps de formulaire public invalides pour POST /api/site/commander/public (AP-4, lot B). `statut` est la réponse attendue : 400 pour un corps refusé, 200 neutre pour le piège `website` rempli (un robot ne doit rien apprendre). Aucun n'écrit en base.",
+ "_lisez": "Corps de formulaire public invalides pour POST /api/site/commander/public (AP-4, lot B). `statut` est la réponse attendue : 400 pour un corps refusé, 200 neutre pour le piège `website` rempli (un robot ne doit rien apprendre). Aucun n'écrit en base. Reprise du 27/09 (000-retractation) : chaque cas porte renonciationRetractation: true, pour qu'il ne soit refusé QUE pour son motif, et deux cas de plus refusent la case L221-28 non cochée ou absente.",
  "cas": [
   {
    "nom": "e-mail faux",
-   "corps": { "email": "pas-une-adresse", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": true },
+   "corps": { "email": "pas-une-adresse", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": true, "renonciationRetractation": true },
    "motif": "e-mail invalide",
    "statut": 400
   },
   {
    "nom": "CGU non cochées",
-   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": false },
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": false, "renonciationRetractation": true },
    "motif": "CGU refusées",
    "statut": 400
   },
   {
    "nom": "piège website rempli",
-   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": true, "website": "https://spam.example" },
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": true, "renonciationRetractation": true, "website": "https://spam.example" },
    "motif": "piège rempli (robot)",
    "statut": 200
   },
   {
    "nom": "champ trop long",
-   "corps": { "email": "x@presti-test.invalid", "entreprise": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "metier": "Plombier", "commune": "Lyon", "cgu": true },
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "metier": "Plombier", "commune": "Lyon", "cgu": true, "renonciationRetractation": true },
    "motif": "entreprise > 80 signes",
    "statut": 400
   },
   {
    "nom": "HTML dans l'entreprise",
-   "corps": { "email": "x@presti-test.invalid", "entreprise": "<script>alert(1)</script>", "metier": "Plombier", "commune": "Lyon", "cgu": true },
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "<script>alert(1)</script>", "metier": "Plombier", "commune": "Lyon", "cgu": true, "renonciationRetractation": true },
    "motif": "HTML dans l'entreprise",
    "statut": 400
   },
   {
    "nom": "commune vide",
-   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "", "cgu": true },
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "", "cgu": true, "renonciationRetractation": true },
    "motif": "commune vide",
+   "statut": 400
+  },
+  {
+   "nom": "rétractation non cochée",
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": true, "renonciationRetractation": false },
+   "motif": "renoncement L221-28 refusé",
+   "statut": 400
+  },
+  {
+   "nom": "rétractation absente",
+   "corps": { "email": "x@presti-test.invalid", "entreprise": "Atelier Martin", "metier": "Plombier", "commune": "Lyon", "cgu": true },
+   "motif": "renoncement L221-28 absent (jamais présumé)",
    "statut": 400
   }
  ]

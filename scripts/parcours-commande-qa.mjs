@@ -117,6 +117,11 @@ const JUGE = 'parcours-commande-qa'
 //         base simulés) : le refus compte les écrans à remplir comme la page les montre — si sa phrase en dit un nombre (chiffres
 //         ou lettres) avant « écrans » ou « étapes », c'est le rang de l'étape « paiement » dans ETAPES de <racine>/<PAGE> (4
 //         aujourd'hui). Mutation : « les trois premiers écrans » avec quatre écrans : vu.
+//         Mise à jour du 27/09 (000-retractation) : la route refuse d'abord, en 400, toute commande sans l'accord de renonciation
+//         L221-28 (case obligatoire côté serveur, décision de Benj) ; le juge envoie donc { renonciationRetractation: true } pour
+//         atteindre le refus « aucun dossier » qu'il juge. Rien n'est relâché : si la route répond encore par le refus de la
+//         rétractation (ou par autre chose qu'un 400 qui compte les écrans), PC-10 rougit (« ne dit pas quels écrans remplir »).
+//         L'exigence de l'accord elle-même est jugée par le juge de 000-retractation, pas ici.
 //   PC-11 (D32) « Corriger » mène à l'étape du champ fautif : le routage de la page (let cible = '…' puis les if (err.includes(…))
 //         cible = '…' qui le suivent, lus dans l'arbre syntaxique de <PAGE> et exécutés) appliqué aux erreurs réelles de
 //         erreursAvantPaiement (sonde) : chaque dépassement de borne de l'artisan (prénom 41, nom 61, parcours 141, citation 161,
@@ -1128,7 +1133,8 @@ async function jugerPC10(s, racine, page) {
   const n = ecransAvantPaiement(page.sf)
   if (n === null || n < 1) { s.echoue('PC-10', `${PAGE} : ETAPES sans étape « paiement » lisible`); return }
   let rep
-  try { const route = await chargerRouteCommander(racine); rep = await route.POST({ headers: { get: () => null }, json: async () => ({}) }) } catch (e) { s.echoue('PC-10', `route non appelée : ${String(e && e.message || e).split('\n')[0].slice(0, 200)}`); return }
+  // l'accord L221-28 est donné (000-retractation, 27/09) : sans lui, la route refuse avant de chercher le dossier
+  try { const route = await chargerRouteCommander(racine); rep = await route.POST({ headers: { get: () => null }, json: async () => ({ renonciationRetractation: true }) }) } catch (e) { s.echoue('PC-10', `route non appelée : ${String(e && e.message || e).split('\n')[0].slice(0, 200)}`); return }
   const message = rep?.corps?.error
   const d = []
   if (rep?.status !== 400 || typeof message !== 'string') d.push(`sans dossier, la route répond ${rep?.status} ${court(JSON.stringify(rep?.corps), 80)} (400 et une phrase attendus)`)

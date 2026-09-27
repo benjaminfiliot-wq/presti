@@ -29,7 +29,8 @@
 //         authArtisan ; exécutée : drapeau baissé → 404 sans lecture ; adresse bannie → 403 ; piège → 200 sans écriture ni
 //         plafond consommé ; corps valide → 200 { url }, une ligne artisan_id null, achat_public true, brouillon, adresse en
 //         minuscules, cgu_acceptees_le posé, prix_cents = PRIX_SITE_CENTS, stripe_session_id = la session du Checkout ; les
-//         corps invalides → 400 sans écriture ; 6e envoi d'une même adresse dans l'heure → 429.
+//         corps invalides → 400 sans écriture ; 6e envoi d'une même adresse dans l'heure → 429. Depuis la reprise du 27/09, le
+//         corps valide et les six cas portent renonciationRetractation: true, et deux cas de plus (case false, case absente) → 400.
 //   AP-5  le webhook, événement signé du jeu d'essai : 1er passage → 200, encaissée, un createUser sans password et un
 //         generateLink magiclink, un e-mail, lien_envoye_le posé ; 2e passage → 200 sans nouvel appel ; envoi refusé → 500,
 //         lien_envoye_le vide, puis le passage suivant envoie ; envoyerCourrielsDus qui lève → 200 quand même ; commande
@@ -48,9 +49,23 @@
 //         HEAD ; scripts/webhook-muet-qa.mjs reste vert (relancé seulement quand la racine est le dépôt : il ne juge que lui).
 //   AP-11 npm run typecheck (tsc --noEmit) vert sur la racine.
 //   AP-12 (--reel) drapeau baissé : les deux routes publiques rendent 404 ; drapeau levé : POST public d'une adresse
-//         @presti-test.invalid → une session cs_…, expirée ensuite ; webhook simulé signé → commande payee, utilisateur
+//         @presti-test.invalid (case L221-28 cochée depuis la reprise du 27/09) → une session cs_…, expirée ensuite ; webhook simulé signé → commande payee, utilisateur
 //         créé, lien_envoye_le posé ; rejeu → rien de neuf ; ménage (utilisateur, commande) dans un finally.
+//   AP-13 (reprise du 27/09 de 026-023, décision 000-retractation : « mêmes garanties avec ou sans compte ») la case de
+//         renoncement L221-28 n'est jamais présumée, côté serveur : route publique, case absente, false, 'true' (chaîne) ou 1
+//         → 400, rien d'écrit, aucun Checkout ; route avec compte (authArtisan doublé, dossier COMPLET en base :
+//         b/brouillon-complet.json), case absente, false ou 'true' → 400, aucun Checkout. Cochée (exactement true) : 200, et le
+//         Checkout créé porte retractation_accord = l'horodatage du serveur (horloge figée) dans metadata ET dans
+//         payment_intent_data.metadata, sur les deux routes.
+//   AP-14 (même reprise ; franchise en base, art. 293 B, TVA non applicable) automatic_tax n'est jamais forcé : seul
+//         STRIPE_TAXE_AUTO=1 l'allume (AP-3). Sans lui (absent, '0', '', 'true'), avec ou sans STRIPE_PRIX_SITE, les deux
+//         variantes de parametresCheckoutSite n'ont ni automatic_tax (sauf enabled: false), ni tax_behavior, et portent le pied
+//         mentionFranchise('auto') ; de même pour les Checkouts réellement créés par la route publique et la route avec compte.
 //   AP-PV un fichier de 0 octet dans .orchestre/preuves/026-025/ est un échec (règle commune, tous les modes).
+//
+// Reprise du 27/09 (026-023, notée dans .orchestre/brouillons-ecosysteme/026/reprises-2026-09-27.md) : jeu d'essai b/ complété
+// pour la case L221-28 (formulaire-valide.json, formulaires-invalides.json, brouillon-complet.json, corps d'AP-12), AP-13 et
+// AP-14 ajoutés ; chaque critère ajouté est prouvé rouge par des sabotages : .orchestre/preuves/026-023/reprise-2026-09-27/.
 //
 // Sortie : une ligne par critère, puis « achat-public-qa : PASS|FAIL ». Code 0 seulement si tout est vert ; 1 sinon ; 2 si
 // l'appel est invalide ou un préalable absent. Écriture seulement sous .orchestre/travail/achat-public-qa/.
@@ -83,11 +98,13 @@ const LIB_FLAGS = 'lib/flags.ts'
 const LIB_LIVRAISON = 'lib/siteLivraison.ts'
 const FERMETURE = 'scripts/fermeture-e2e.mjs'
 const INCHANGES = ['lib/stripe.ts', 'lib/abonnementSync.ts', 'lib/stripeAiguillage.ts', 'lib/siteCommande.ts']
-const DOUBLES = { ...DOUBLES_B, 'lib/siteLivraison': 'siteLivraison' }
+// lib/authArtisan doublé : AP-13 exécute aussi la route avec compte (une session d'artisan simulée, jamais vérifiée en vrai).
+const DOUBLES = { ...DOUBLES_B, 'lib/siteLivraison': 'siteLivraison', 'lib/authArtisan': 'authArtisan' }
 // Le secret de webhook du juge, assemblé à l'exécution (jamais écrit en clair) : la doublure signe et la route vérifie.
 const SECRET_WEBHOOK = ['whsec', 'juge026b' + 'a'.repeat(24)].join('_')
 const URL_PUB = 'https://prestiapp.fr/api/site/commander/public'
 const URL_RENVOYER = 'https://prestiapp.fr/api/site/commander/public/renvoyer'
+const URL_COMPTE = 'https://prestiapp.fr/api/site/commander'
 const URL_WEBHOOK = 'https://prestiapp.fr/api/stripe/webhook'
 const ORIGINE = 'https://prestiapp.fr'
 
@@ -98,11 +115,12 @@ if (o.enfant === 'complet') {
   const E = D.etat
   const suivi = { reseau, inconnues: E.inconnues }
   const res = { criteres: {} }
-  const C = jeuB('commandes.json'), V = jeuB('formulaire-valide.json'), I = jeuB('formulaires-invalides.json'), EV = jeuB('evenement-achat-public.json'), AA = jeuB('auth-admin.json')
+  const C = jeuB('commandes.json'), V = jeuB('formulaire-valide.json'), I = jeuB('formulaires-invalides.json'), EV = jeuB('evenement-achat-public.json'), AA = jeuB('auth-admin.json'), BC = jeuB('brouillon-complet.json')
   const { default: Stripe } = await import('stripe')
   const signer = (payload) => new Stripe(['sk', 'test', 'juge026b' + '0'.repeat(20)].join('_')).webhooks.generateTestHeaderString({ payload, secret: process.env.STRIPE_WEBHOOK_SECRET })
   const site = await importer(RAC, LIB_SITE), fact = await importer(RAC, LIB_FACT), srv = await importer(RAC, LIB_SRV), achat = await importer(RAC, LIB_ACHAT)
   const routePub = await importer(RAC, ROUTE_PUB), routeRenv = await importer(RAC, ROUTE_RENVOYER), webhook = await importer(RAC, WEBHOOK)
+  const routeCompte = await importer(RAC, ROUTE_AVEC_COMPTE)
   const drapeaux = { siteAchatPublic: true, siteCommande: true }
   const reinit = (conf = {}) => D.reinitialiser({ drapeaux, ...conf })
   const lignes = (t = 'sites_commandes') => E.tables[t] ?? []
@@ -201,7 +219,7 @@ if (o.enfant === 'complet') {
         if (E.b.checkouts[0]?.params?.metadata?.achat !== 'public') e.push('corps valide : le Checkout ne porte pas metadata.achat = public')
       }
     }
-    // Les six corps invalides : 400 (ou 200 neutre pour le piège), sans écriture.
+    // Les corps invalides du jeu (dont la case L221-28 false ou absente) : 400 (ou 200 neutre pour le piège), sans écriture.
     for (const c of I.cas) {
       reinit()
       const r = await routePub.m.POST(poster(URL_PUB, c.corps, '2.3.4.5'))
@@ -363,6 +381,103 @@ if (o.enfant === 'complet') {
     return { echecs: e, detail: `purgerBrouillonsPublics sur 6 lignes (horloge au 2026-09-26) : seule ${C.brouillon_public_vieux.id} (brouillon, achat_public, sans compte, du 2026-09-10) est effacée` }
   }, suivi)
 
+  // ── Reprise du 27/09 (026-023) ────────────────────────────────────────────────────────────────────────────────────────
+  // Le dossier complet de l'artisan jugé, en base, pour la route avec compte : un 400 n'y peut venir que de la case.
+  const tablesCompte = () => ({ tables: { sites_commandes: [structuredClone(BC.brouillon)], artisans: [structuredClone(BC.artisan)] } })
+  const CASE_FORGEE = '2020-01-01T00:00:00.000Z' // un horodatage envoyé par le client : il ne doit jamais partir chez Stripe
+
+  await jugerDans(res, 'AP-13', async () => {
+    const e = []
+    if (typeof routePub.m?.POST !== 'function') return { echecs: [`${ROUTE_PUB} n'exporte pas POST (${routePub.erreur ?? 'export absent'})`] }
+    if (typeof routeCompte.m?.POST !== 'function') return { echecs: [`${ROUTE_AVEC_COMPTE} n'exporte pas POST (${routeCompte.erreur ?? 'export absent'})`] }
+    delete process.env.STRIPE_TAXE_AUTO; delete process.env.STRIPE_PRIX_SITE
+    // L'horloge est figée : l'horodatage du serveur est celui-ci, et aucun autre (ni celui du client, ni un texte libre).
+    const HORODATAGE = new Date().toISOString()
+    const accordDans = (nom, co) => {
+      const a = co?.params?.metadata?.retractation_accord, b = co?.params?.payment_intent_data?.metadata?.retractation_accord
+      if (a !== HORODATAGE) e.push(`${nom} : metadata.retractation_accord = ${JSON.stringify(a)}, l'horodatage du serveur ${HORODATAGE} attendu`)
+      if (b !== HORODATAGE) e.push(`${nom} : payment_intent_data.metadata.retractation_accord = ${JSON.stringify(b)}, ${HORODATAGE} attendu (même preuve des deux côtés)`)
+    }
+    // Sans compte : la case absente, fausse ou « presque vraie » → 400, rien d'écrit, aucun Checkout.
+    const sansCase = { ...VALIDE }; delete sansCase.renonciationRetractation
+    const refusesPub = [['absente', sansCase], ['false', { ...VALIDE, renonciationRetractation: false }], ["'true' (chaîne)", { ...VALIDE, renonciationRetractation: 'true' }], ['1', { ...VALIDE, renonciationRetractation: 1 }]]
+    for (const [nom, corps] of refusesPub) {
+      reinit()
+      const r = await routePub.m.POST(poster(URL_PUB, corps, '3.4.5.6'))
+      if (r.status !== 400) e.push(`sans compte, case ${nom} → ${r.status}, 400 attendu`)
+      if (E.ecritures.length) e.push(`sans compte, case ${nom} : ${E.ecritures.length} écriture(s), 0 attendue`)
+      if (E.b.checkouts.length) e.push(`sans compte, case ${nom} : ${E.b.checkouts.length} Checkout(s) créé(s), 0 attendu`)
+    }
+    // Sans compte, cochée : 200, et le Checkout porte l'horodatage du serveur (pas celui que le client envoie).
+    reinit()
+    {
+      const r = await routePub.m.POST(poster(URL_PUB, { ...VALIDE, retractation_accord: CASE_FORGEE }, '3.4.5.7'))
+      if (r.status !== 200) e.push(`sans compte, case cochée → ${r.status} (${court(JSON.stringify(await corpsJson(r)), 80)}), 200 attendu`)
+      if (E.b.checkouts.length !== 1) e.push(`sans compte, case cochée : ${E.b.checkouts.length} Checkout(s), 1 attendu`)
+      else accordDans('sans compte', E.b.checkouts[0])
+    }
+    // Avec compte, dossier complet en base : la case absente, fausse ou « presque vraie » → 400, aucun Checkout.
+    for (const [nom, corps] of [['absente', {}], ['false', { renonciationRetractation: false }], ["'true' (chaîne)", { renonciationRetractation: 'true' }]]) {
+      reinit(tablesCompte())
+      const r = await routeCompte.m.POST(poster(URL_COMPTE, corps))
+      if (r.status !== 400) e.push(`avec compte, case ${nom} → ${r.status}, 400 attendu`)
+      if (E.b.checkouts.length) e.push(`avec compte, case ${nom} : ${E.b.checkouts.length} Checkout(s) créé(s), 0 attendu`)
+      if (E.ecritures.length) e.push(`avec compte, case ${nom} : ${E.ecritures.length} écriture(s), 0 attendue`)
+    }
+    // Avec compte, cochée : 200 (le témoin que le dossier en base suffit), et le Checkout porte l'horodatage du serveur.
+    reinit(tablesCompte())
+    {
+      const r = await routeCompte.m.POST(poster(URL_COMPTE, { renonciationRetractation: true, retractation_accord: CASE_FORGEE }))
+      if (r.status !== 200) e.push(`avec compte, case cochée, dossier complet → ${r.status} (${court(JSON.stringify(await corpsJson(r)), 80)}), 200 attendu`)
+      if (E.b.checkouts.length !== 1) e.push(`avec compte, case cochée : ${E.b.checkouts.length} Checkout(s), 1 attendu`)
+      else accordDans('avec compte', E.b.checkouts[0])
+    }
+    return { echecs: e, detail: `case L221-28 jamais présumée : sans compte, case absente, false, 'true' ou 1 → 400, rien d'écrit, aucun Checkout ; avec compte (dossier complet en base), absente, false ou 'true' → 400, aucun Checkout ; cochée → 200 sur les deux routes, retractation_accord = ${HORODATAGE} (horloge du serveur, pas celle du client) dans metadata et payment_intent_data.metadata` }
+  }, suivi)
+
+  await jugerDans(res, 'AP-14', async () => {
+    const e = []
+    if (typeof srv.m?.parametresCheckoutSite !== 'function') return { echecs: ['parametresCheckoutSite absente (AP-1)'] }
+    if (typeof fact.m?.mentionFranchise !== 'function') return { echecs: [`${LIB_FACT} inimportable (${fact.erreur ?? 'export absent'})`] }
+    const pied = fact.m.mentionFranchise('auto')
+    // Franchise en base : ni taxe calculée par Stripe, ni prix « hors taxe », et la mention sur la facture.
+    const defauts = (p) => {
+      const d = []
+      if (p?.automatic_tax != null && p.automatic_tax.enabled !== false) d.push(`automatic_tax = ${JSON.stringify(p.automatic_tax)} (forcé)`)
+      for (const [i, li] of (p?.line_items ?? []).entries()) if (li?.price_data?.tax_behavior !== undefined) d.push(`line_items[${i}].price_data.tax_behavior = ${JSON.stringify(li.price_data.tax_behavior)}`)
+      if (p?.invoice_creation?.invoice_data?.footer !== pied) d.push(`pied de facture ${court(JSON.stringify(p?.invoice_creation?.invoice_data?.footer), 50)}, mentionFranchise('auto') attendu`)
+      return d
+    }
+    let essais = 0
+    try {
+      for (const taxe of [undefined, '0', '', 'true']) {
+        for (const prix of [undefined, 'price_essai_026b']) {
+          if (taxe === undefined) delete process.env.STRIPE_TAXE_AUTO; else process.env.STRIPE_TAXE_AUTO = taxe
+          if (prix === undefined) delete process.env.STRIPE_PRIX_SITE; else process.env.STRIPE_PRIX_SITE = prix
+          for (const pub of [false, true]) {
+            essais++
+            const d = defauts(await srv.m.parametresCheckoutSite({ ...entree, public: pub }))
+            if (d.length) e.push(`STRIPE_TAXE_AUTO ${taxe === undefined ? 'absent' : `= ${JSON.stringify(taxe)}`}${prix ? `, STRIPE_PRIX_SITE = ${prix}` : ''}, ${pub ? 'public' : 'avec compte'} : ${d.join(' ; ')}`)
+          }
+        }
+      }
+    } finally { delete process.env.STRIPE_TAXE_AUTO; delete process.env.STRIPE_PRIX_SITE }
+    // Les Checkouts réellement créés par les deux routes (STRIPE_TAXE_AUTO absent).
+    reinit()
+    {
+      const r = await routePub.m.POST(poster(URL_PUB, VALIDE, '4.5.6.7'))
+      if (r.status !== 200 || E.b.checkouts.length !== 1) e.push(`route publique, corps valide → ${r.status} et ${E.b.checkouts.length} Checkout(s), 200 et 1 attendus`)
+      else { const d = defauts(E.b.checkouts[0].params); if (d.length) e.push(`Checkout créé par la route publique : ${d.join(' ; ')}`) }
+    }
+    reinit(tablesCompte())
+    {
+      const r = await routeCompte.m.POST(poster(URL_COMPTE, { renonciationRetractation: true }))
+      if (r.status !== 200 || E.b.checkouts.length !== 1) e.push(`route avec compte, dossier complet → ${r.status} et ${E.b.checkouts.length} Checkout(s), 200 et 1 attendus`)
+      else { const d = defauts(E.b.checkouts[0].params); if (d.length) e.push(`Checkout créé par la route avec compte : ${d.join(' ; ')}`) }
+    }
+    return { echecs: e, detail: `franchise en base (art. 293 B) : sans STRIPE_TAXE_AUTO=1 (absent, '0', '', 'true' ; avec et sans STRIPE_PRIX_SITE), ${essais} appels de parametresCheckoutSite (avec compte et public) sans automatic_tax ni tax_behavior, pied mentionFranchise('auto') ; de même pour les Checkouts créés par la route publique et la route avec compte` }
+  }, suivi)
+
   resultatEnfant(JUGE, res)
 } else {
   // ═══ Le juge ══════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -373,7 +488,7 @@ if (o.enfant === 'complet') {
 
   const rel = (p) => path.relative(R, p).split(path.sep).join('/') || '.'
   const mode = o.temoin ? 'témoin' : o.reel ? 'réel' : 'complet'
-  const COMPLET = ['AP-1', 'AP-2', 'AP-3', 'AP-4', 'AP-5', 'AP-6', 'AP-7', 'AP-8', 'AP-9', 'AP-10', 'AP-11']
+  const COMPLET = ['AP-1', 'AP-2', 'AP-3', 'AP-4', 'AP-5', 'AP-6', 'AP-7', 'AP-8', 'AP-9', 'AP-10', 'AP-11', 'AP-13', 'AP-14']
   const IDS = o.temoin ? ['AP-10', 'AP-PV'] : [...COMPLET, ...(o.reel ? ['AP-12'] : []), 'AP-PV']
   const s = creerSortie(JUGE, IDS, `${JUGE} — fiche ${FICHE}, racine ${rel(RAC)}, mode ${mode}`, { nr: ['AP-10'] })
   const src = (f) => sansCommentaires(lireRacine(RAC, f) ?? '')
@@ -416,7 +531,7 @@ if (o.enfant === 'complet') {
       else if (!/\btry\s*\{[^{}]*\bpurgerBrouillonsPublics\s*\(/.test(liv)) eSrc['AP-8'].push(`${LIB_LIVRAISON} n'appelle pas purgerBrouillonsPublics( dans son propre try`)
     }
     const enfant = lancerEnfant({ juge: JUGE, script: CE_SCRIPT, racine: RAC, mode: 'complet', timeout: 240_000, env: { STRIPE_WEBHOOK_SECRET: SECRET_WEBHOOK } })
-    for (const id of ['AP-2', 'AP-3', 'AP-4', 'AP-5', 'AP-6', 'AP-7', 'AP-8']) {
+    for (const id of ['AP-2', 'AP-3', 'AP-4', 'AP-5', 'AP-6', 'AP-7', 'AP-8', 'AP-13', 'AP-14']) {
       const c = enfant.res?.criteres?.[id]
       const e = [...(eSrc[id] ?? []), ...(c?.echecs ?? [])]
       if (!c) e.push(`l'enfant n'a rien rendu pour ${id} (code ${enfant.code}${enfant.erreur ? `, ${enfant.erreur}` : ''}) — ${court(enfant.sortie?.trim().split(/\r?\n/).filter((l) => !l.startsWith('@@')).slice(-2).join(' | ') ?? '', 200)}`)
@@ -490,7 +605,7 @@ if (o.enfant === 'complet') {
         const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } })
         const marque = marqueEssai()
         const email = `${marque}@presti-test.invalid`
-        const r = await fetch(`${BASE}/api/site/commander/public`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, entreprise: `Essai ${marque}`, metier: 'Plombier', commune: 'Marans', cgu: true }) })
+        const r = await fetch(`${BASE}/api/site/commander/public`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, entreprise: `Essai ${marque}`, metier: 'Plombier', commune: 'Marans', cgu: true, renonciationRetractation: true }) })
         const corps = await r.json().catch(() => ({}))
         if (r.status !== 200 || typeof corps.url !== 'string') throw new Error(`POST public → ${r.status} ${court(JSON.stringify(corps), 100)}`)
         const cs = /cs_(?:test|live)_[A-Za-z0-9]+/.exec(corps.url)?.[0]

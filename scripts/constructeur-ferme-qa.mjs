@@ -12,7 +12,7 @@
 // Sortie : une ligne « PASS|FAIL CF-n — … » par critère, puis « constructeur-ferme-qa : PASS » ou « … : FAIL — ids » ; code 0
 // seulement si les dix critères (ou ceux de --critere) sont verts (socle : scripts/fixtures/025/commun.mjs, creerSortie).
 //
-// La base des diffs (CF-2, CF-3, CF-4, CF-8) : sur la racine d'un dépôt Git, HEAD (git diff, lecture seule, GIT_OPTIONAL_LOCKS=0),
+// La base des diffs (CF-2, CF-4, CF-8 ; CF-3 depuis le 27/09 : toujours 1620723, voir CF-3) : sur la racine d'un dépôt Git, HEAD (git diff, lecture seule, GIT_OPTIONAL_LOCKS=0),
 // et, si le fichier est identique à HEAD (travail déjà commité, ou pas commencé), le commit de référence 1620723 ; sur un arbre
 // extrait (référence, témoin), le commit de sa marque <racine>.json (commitDeReference), sinon 1620723. Les fins de ligne sont
 // normalisées (\r\n → \n : core.autocrlf vaut true sur cette machine). Sur un dépôt, git diff --numstat recoupe le diff ligne à
@@ -36,6 +36,16 @@
 //         Admis en plus (25/09, revue avant mise en ligne, D30, commit 9dca36e) : le test landingVideo remplacé à l'identique par
 //         les trois lignes qui ne regardent que la vidéo de la démo (D30_RETRAIT, D30_AJOUTS) ; entière, elle est ôtée du diff
 //         et de git diff --numstat (4 ajouts, 1 retrait) ; partielle ou retouchée, elle compte comme toute autre ligne.
+//         Admis en plus (27/09, reprise de 026-023 : AP-9 de 026-025 impose la ligne siteAchatPublic, que CF-3 refusait) : les
+//         lignes de CARTE que les fiches 026 déclarent, LISTE FERMÉE (CARTE_026, plus bas : un drapeau qui n'y est pas compte
+//         comme toute autre ligne ajoutée). Chacune est lue comme un tableau de chaînes entre apostrophes droites, rien d'autre
+//         (aucun code ne passe) ; « exacte » : le tableau que la fiche écrit ; « debut » (ligne que plusieurs fiches complètent) :
+//         ce début, puis seulement des fichiers de route app/…/route.ts(x) sous les dossiers déclarés, sans doublon, présents
+//         dans la racine et qui lisent eux-mêmes actif('<drapeau>') (la règle de fermeture-e2e.mjs) ; toujours : dans CARTE, une
+//         seule fois, et le drapeau existe dans FLAGS (lib/flags.ts de la racine). Conforme, elle est ôtée du diff et comptée
+//         dans git diff --numstat ; non conforme, elle est nommée et CF-3 échoue.
+//         Base de CF-3 (même reprise) : sur la racine d'un dépôt, toujours 1620723, jamais HEAD : la ligne constructeurSite est
+//         commitée depuis 71fcca8, et contre HEAD une fiche 026 qui ajoute sa ligne la faisait disparaître du diff.
 //   CF-4  scripts/site-sorti-des-formules-verifier.mjs : se parse ; contre la base, seule l'assertion de la ligne 48 (T("app/profil
 //         …", /site_active/ …), cherchée par son texte) est retirée, remplacée au même endroit par un bloc de 1 à 10 lignes qui
 //         est un appel T(…). Essai du bloc (processus à part, .orchestre/travail/constructeur-ferme-qa/cf4/) : le prélude de la
@@ -153,6 +163,19 @@ const D30_AJOUTS = [
   '// La vidéo que landingVideo commande est celle de la démo (app/DemoVideo.tsx, /demo/hero.mp4) ; le bloc DemoSite a la sienne.',
   'const videoDemo = /<video[^>]*\\/demo\\/hero\\.mp4/.test(landing)',
   "T(`landingVideo=${FLAGS.landingVideo} ↔ vidéo de la démo ${videoDemo ? 'présente' : 'absente'} sur la landing`, FLAGS.landingVideo === videoDemo)",
+]
+// CF-3 : les lignes de CARTE déclarées par les fiches 026 (reprise de 026-023 du 27/09) — liste FERMÉE, source : le texte de
+// chaque fiche dans .orchestre/brouillons-ecosysteme/026/. « exacte » : le tableau écrit par la fiche ; « debut » : la ligne
+// que plusieurs fiches complètent de leurs fichiers de route, sous « dossiers » (et « requis » doit y être).
+const CARTE_026 = [
+  { drapeau: 'siteAchatPublic', fiches: '026-025', exacte: ['route', '/api/site/commander/public', 'POST', 'app/api/site/commander/public/route.ts', 'app/api/site/commander/public/renvoyer/route.ts'] },
+  { drapeau: 'pilotage', fiches: '026-068, complétée par 026-074, 026-092, 026-177', debut: ['route', '/api/controle/pilotage', 'GET', 'app/api/controle/pilotage/route.ts'], dossiers: ['app/api/controle/pilotage/', 'app/api/controle/station/', 'app/api/agents/reunion/'] },
+  { drapeau: 'busAgents', fiches: '026-042, complétée par 026-049, 026-195', debut: ['route', '/api/agents/etat', 'GET'], dossiers: ['app/api/agents/'], requis: ['app/api/agents/etat/route.ts'] },
+  { drapeau: 'essaiFormulaire', fiches: '026-143', exacte: ['route', '/essai-formulaire/envoi', 'POST', 'app/essai-formulaire/envoi/route.ts', 'app/essai-formulaire/page.tsx'] },
+  { drapeau: 'prospectsEntrant', fiches: '026-145', exacte: ['route', '/api/prospects/entrant', 'POST', 'app/api/prospects/entrant/route.ts'] },
+  { drapeau: 'ecommerce', fiches: '026-176', exacte: ['note', 'branche réservée : rien n’est construit, attend les trois vidéos sources de Benj'] },
+  { drapeau: 'stationCarte', fiches: '026-179', exacte: ['lu'] },
+  { drapeau: 'aimantSite', fiches: '026-122', exacte: ['lu'] },
 ]
 const NOM_ASSERTION = "app/profil : plus d'éditeur de site ; le site à la demande reste proposé"
 
@@ -478,13 +501,62 @@ function blocCarte(lignes) {
   }
   return null
 }
+/**
+ * Une ligne de CARTE lue strictement : 'cle': ['chaîne', …] (virgule finale admise), des chaînes entre apostrophes droites sans
+ * barre oblique inverse ni retour à la ligne, et rien d'autre (ni gabarit, ni variable, ni appel). → { cle, valeurs } ou null.
+ */
+export function lireLigneCarte(texte) {
+  const CH = "'[^'\\\\\\n]*'"
+  const m = new RegExp(`^'([A-Za-z_]\\w*)'\\s*:\\s*\\[\\s*(${CH}(?:\\s*,\\s*${CH})*)\\s*\\]\\s*,?$`).exec(String(texte).trim())
+  if (!m) return null
+  return { cle: m[1], valeurs: [...m[2].matchAll(/'([^'\\\n]*)'/g)].map((x) => x[1]) }
+}
+/** Les noms de l'objet FLAGS de lib/flags.ts (arbre syntaxique) ; null si l'objet est introuvable. */
+function drapeauxDeFlags(src) {
+  if (!src) return null
+  let objet = null
+  parcourir(analyser(src, F.flags), (n) => { if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name) && n.name.text === 'FLAGS' && n.initializer) { const i = sansParentheses(n.initializer); if (ts.isObjectLiteralExpression(i)) objet = i } })
+  return objet ? new Set(objet.properties.map(nomPropriete).filter(Boolean)) : null
+}
+/** Les défauts d'une ligne de CARTE déclarée par une fiche 026 (règle de CARTE_026) ; [] = conforme. */
+export function defautsLigne026(regle, valeurs, racine) {
+  const d = []
+  if (regle.exacte) {
+    if (JSON.stringify(valeurs) !== JSON.stringify(regle.exacte)) d.push(`[${valeurs.map((v) => `'${court(v, 40)}'`).join(', ')}] ≠ [${regle.exacte.map((v) => `'${court(v, 40)}'`).join(', ')}], la ligne écrite par la fiche`)
+    return d
+  }
+  const debut = valeurs.slice(0, regle.debut.length), fichiers = valeurs.slice(regle.debut.length)
+  if (JSON.stringify(debut) !== JSON.stringify(regle.debut)) d.push(`début [${debut.map((v) => `'${court(v, 40)}'`).join(', ')}], [${regle.debut.map((v) => `'${v}'`).join(', ')}] attendu`)
+  const tous = [...regle.debut.filter((v) => /\/route\.tsx?$/.test(v)), ...fichiers]
+  if (!tous.length) d.push('aucun fichier de route')
+  for (const r of regle.requis ?? []) if (!tous.includes(r)) d.push(`${r} manque`)
+  const vus = new Set()
+  for (const fi of fichiers) {
+    if (vus.has(fi)) { d.push(`${fi} en double`); continue }
+    vus.add(fi)
+    if (!/^app\/(?:[\w.()[\]-]+\/)+route\.tsx?$/.test(fi) || fi.split('/').includes('..')) { d.push(`« ${court(fi, 60)} » n'est pas un fichier de route app/…/route.ts`); continue }
+    if (!regle.dossiers.some((x) => fi.startsWith(x))) { d.push(`${fi} hors de ${regle.dossiers.join(', ')}`); continue }
+  }
+  for (const fi of tous) {
+    if (!/^app\/(?:[\w.()[\]-]+\/)+route\.tsx?$/.test(fi) || fi.split('/').includes('..')) continue
+    const s = lireTexte(path.join(racine, fi))
+    if (s === null) d.push(`${fi} introuvable dans la racine`)
+    else if (!new RegExp(`actif\\(['"\`]${regle.drapeau}['"\`]\\)`).test(s)) d.push(`${fi} ne lit pas lui-même actif('${regle.drapeau}')`)
+  }
+  return d
+}
+/** La base de CF-3 : 1620723 sur la racine d'un dépôt (jamais HEAD, voir l'en-tête), la marque sur un arbre extrait. */
+function baseCf3(racine) {
+  if (estRacineGit(racine)) { const b = blobGit(racine, REFERENCE_COMMIT, F.fermeture); return { texte: b ? b.toString('utf8') : null, nom: REFERENCE_COMMIT, rev: REFERENCE_COMMIT, git: true } }
+  return baseDe(racine, F.fermeture, null)
+}
 function cf3(racine) {
   const f = path.join(racine, F.fermeture), src = lireTexte(f)
   if (!src || !src.trim()) return ko(`${F.fermeture} absent ou vide`)
   const echecs = []
   const syntaxe = nodeCheck(f)
   if (syntaxe) echecs.push(syntaxe)
-  const base = baseDe(racine, F.fermeture, src)
+  const base = baseCf3(racine)
   if (base.texte === null) return ko(`${F.fermeture} absent de la base ${base.nom}`)
   const b = lignesDe(src)
   const brut = diffLignes(lignesDe(base.texte), b)
@@ -492,14 +564,31 @@ function cf3(racine) {
   // remplacé, à l'identique, par les trois lignes qui ne regardent que la vidéo de la démo. Retirée du diff si elle y est
   // entière ; partielle ou retouchée, elle reste dans le diff et le fait échouer.
   const d30 = D30_RETRAIT.every((l) => brut.retraits.some((x) => x.texte.trim() === l)) && D30_AJOUTS.every((l) => brut.ajouts.some((x) => x.texte.trim() === l))
-  const d = d30 ? { retraits: brut.retraits.filter((x) => !D30_RETRAIT.includes(x.texte.trim())), ajouts: brut.ajouts.filter((x) => !D30_AJOUTS.includes(x.texte.trim())) } : brut
-  const bonne = (t) => [LIGNE_CARTE, `${LIGNE_CARTE},`].includes(t.trim())
-  if (d.retraits.length || d.ajouts.length !== 1) echecs.push(`diff contre ${base.nom}${d30 ? ' (correction D30 ôtée)' : ''} : ${d.ajouts.length} ligne(s) ajoutée(s), ${d.retraits.length} retirée(s) — exactement une ligne ajoutée attendue${d.ajouts.length + d.retraits.length ? ` (${resumeDiff(d)})` : ''}`)
-  const ajout = d.ajouts.find((x) => bonne(x.texte))
-  if (!ajout) echecs.push(`la ligne ${LIGNE_CARTE}, n'est pas ajoutée à l'identique`)
+  const sansD30 = d30 ? { retraits: brut.retraits.filter((x) => !D30_RETRAIT.includes(x.texte.trim())), ajouts: brut.ajouts.filter((x) => !D30_AJOUTS.includes(x.texte.trim())) } : brut
   const carte = blocCarte(b)
   if (!carte) echecs.push('objet CARTE introuvable')
-  else {
+  // Les lignes des fiches 026 (CARTE_026, liste fermée) : conformes, elles sont ôtées du diff ; sinon elles y restent, nommées.
+  const drapeaux = drapeauxDeFlags(lireTexte(path.join(racine, F.flags)))
+  const acceptees = []
+  for (const x of sansD30.ajouts) {
+    const lue = lireLigneCarte(x.texte)
+    const regle = lue && CARTE_026.find((r) => r.drapeau === lue.cle)
+    if (!regle) continue
+    const defauts = defautsLigne026(regle, lue.valeurs, racine)
+    if (!carte || !(x.i > carte.debut && x.i < carte.fin)) defauts.push(`hors de CARTE${carte ? ` (lignes ${carte.debut + 1}-${carte.fin + 1})` : ''}`)
+    if (!drapeaux) defauts.push(`${F.flags} : objet FLAGS introuvable`)
+    else if (!drapeaux.has(regle.drapeau)) defauts.push(`${regle.drapeau} n'est pas dans FLAGS de ${F.flags}`)
+    if (carte) { const n = b.slice(carte.debut, carte.fin + 1).filter((l) => new RegExp(`^\\s*['"\`]?${regle.drapeau}['"\`]?\\s*:`).test(l)).length; if (n !== 1) defauts.push(`${n} clé(s) ${regle.drapeau} dans CARTE, une attendue`) }
+    if (defauts.length) echecs.push(`ligne ${x.i + 1} « ${regle.drapeau} » (fiche ${regle.fiches}, liste fermée des fiches 026) refusée : ${defauts.slice(0, 4).join(' ; ')}${defauts.length > 4 ? ` ; … (${defauts.length} défauts)` : ''}`)
+    else acceptees.push(x)
+  }
+  const d = { retraits: sansD30.retraits, ajouts: sansD30.ajouts.filter((x) => !acceptees.includes(x)) }
+  const bonne = (t) => [LIGNE_CARTE, `${LIGNE_CARTE},`].includes(t.trim())
+  const otees = [d30 ? 'correction D30' : '', acceptees.length ? `${acceptees.length} ligne(s) des fiches 026` : ''].filter(Boolean).join(' et ')
+  if (d.retraits.length || d.ajouts.length !== 1) echecs.push(`diff contre ${base.nom}${otees ? ` (${otees} ôtée(s))` : ''} : ${d.ajouts.length} ligne(s) ajoutée(s), ${d.retraits.length} retirée(s) — exactement une ligne ajoutée attendue${d.ajouts.length + d.retraits.length ? ` (${resumeDiff(d)})` : ''}`)
+  const ajout = d.ajouts.find((x) => bonne(x.texte))
+  if (!ajout) echecs.push(`la ligne ${LIGNE_CARTE}, n'est pas ajoutée à l'identique`)
+  if (carte) {
     if (ajout && !(ajout.i > carte.debut && ajout.i < carte.fin)) echecs.push(`la ligne ajoutée (${ajout.i + 1}) est hors de CARTE (lignes ${carte.debut + 1}-${carte.fin + 1})`)
     const cles = b.slice(carte.debut, carte.fin + 1).filter((l) => /['"`]?constructeurSite['"`]?\s*:/.test(l)).length
     if (cles !== 1) echecs.push(`${cles} clé(s) constructeurSite dans CARTE, une attendue`)
@@ -507,11 +596,12 @@ function cf3(racine) {
   let git = ''
   if (base.git) {
     const ns = numstat(racine, base.rev, F.fermeture)
-    const [aj, re] = d30 ? [1 + D30_AJOUTS.length, D30_RETRAIT.length] : [1, 0]
-    if (ns.erreur || ns.ajouts !== aj || ns.retraits !== re) echecs.push(`git diff --numstat ${base.rev} : ${ns.erreur || `${ns.ajouts} ajout(s), ${ns.retraits} retrait(s)`} ; ${aj} et ${re} attendus${d30 ? ' (correction D30 comprise)' : ''}`)
-    else git = ` ; git diff --numstat ${base.rev} : ${aj} ajout(s), ${re} retrait(s)${d30 ? ' (correction D30 comprise)' : ''}`
+    const [aj, re] = [1 + (d30 ? D30_AJOUTS.length : 0) + acceptees.length, d30 ? D30_RETRAIT.length : 0]
+    if (ns.erreur || ns.ajouts !== aj || ns.retraits !== re) echecs.push(`git diff --numstat ${base.rev} : ${ns.erreur || `${ns.ajouts} ajout(s), ${ns.retraits} retrait(s)`} ; ${aj} et ${re} attendus${otees ? ` (${otees} comprise(s))` : ''}`)
+    else git = ` ; git diff --numstat ${base.rev.slice(0, 7)} : ${aj} ajout(s), ${re} retrait(s)${otees ? ` (${otees} comprise(s))` : ''}`
   }
-  return { ok: !echecs.length, echecs, resume: `diff contre ${base.nom} : une ligne ajoutée (${ajout ? ajout.i + 1 : '?'}), dans CARTE, à l'identique${d30 ? ', plus la correction D30 (9dca36e) à l’identique' : ''} ; node --check vert${git}` }
+  const lignes026 = acceptees.map((x) => `${lireLigneCarte(x.texte).cle} (ligne ${x.i + 1})`).join(', ')
+  return { ok: !echecs.length, echecs, resume: `diff contre ${base.nom.slice(0, 7)} : une ligne ajoutée (${ajout ? ajout.i + 1 : '?'}), dans CARTE, à l'identique${d30 ? ', plus la correction D30 (9dca36e) à l’identique' : ''}${acceptees.length ? `, plus les lignes des fiches 026 conformes à la liste fermée : ${lignes026}` : ''} ; node --check vert${git}` }
 }
 
 // ── CF-4 : l'assertion de site-sorti ──────────────────────────────────────────────────────────────────────────────────────

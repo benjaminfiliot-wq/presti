@@ -53,6 +53,11 @@
 // phrases de prose par rapport au commit de référence (le profil : plus des deux tiers, 025-05 y retire l'éditeur). Chaque
 // détecteur est de plus éprouvé à chaque lancement sur des sondes écrites ici (phrases fautives qu'il doit voir, phrases justes
 // qu'il doit laisser) : un détecteur aveugle fait échouer son critère.
+// Mise à jour du 27/09 (000-geo-presti) : les questions et réponses de la FAQ ont quitté app/faq/page.tsx pour lib/faq.ts, source
+// partagée par /faq et par le FAQPage (JSON-LD) de l'accueil. La prose d'un fichier surveillé compte donc aussi celle de ses
+// sources de texte (SOURCES_DE_TEXTE : app/faq/page.tsx → lib/faq.ts), phrases distinctes sur l'ensemble, mais SEULEMENT si le
+// fichier importe la source (import de valeur) ET s'en sert hors de l'import (sourcesUtilisees) : un module orphelin ne montre
+// rien, une page vidée qui ne le lit plus reste un défaut, comme avant. La référence reste la page seule à 1620723.
 //
 // --temoin : l'arbre témoin de l'état « après ». Le juge extrait app/ et lib/ du commit de référence (git archive, rien n'est
 // écrit dans .git) dans .orchestre/travail/promesses-qa/temoin/, y applique les corrections de
@@ -81,6 +86,10 @@
 //   PR-9  (D14) dans app/faq/page.tsx, chaque unité qui dit ce que vaut un crédit (« 1 crédit = … ») dit aussi ce que coûte le modèle
 //         Expert : « Expert » et « N crédits » (ou « en consomme N »), N = CREDIT_COST.expert de <racine>/lib/plans.ts — comme la
 //         landing. Et aucune phrase de app/page.tsx ni de la FAQ ne donne au modèle Expert un autre coût. Détecteur éprouvé.
+//         Mise à jour du 27/09 (000-geo-presti) : la FAQ, c'est app/faq/page.tsx et les sources de texte qu'elle importe et lit
+//         (lib/faq.ts) ; « la FAQ dit encore ce que vaut un crédit » ne compte que ces fichiers-là. La règle « 1 crédit = … dit
+//         aussi le coût Expert » et l'interdit d'un autre coût Expert portent sur la page, app/page.tsx ET lib/faq.ts même si la
+//         page cessait de l'importer (l'accueil le lit aussi, dans son FAQPage).
 //   PR-10 (D16) aucune phrase de app/** ni de lib/** (commentaires exclus) ne dit que les relances vont « jusqu’à la réponse » (ou
 //         « jusqu’à leur réponse », « jusqu’à ce que … ») : elles s'arrêtent après CADENCE_RELANCES (<racine>/lib/relances.ts) ; et
 //         une phrase qui compte les relances (« trois relances ») dit ce nombre. Détecteur éprouvé.
@@ -120,6 +129,37 @@ export const SURVEILLES = [
   'lib/plans.ts', 'app/profil/page.tsx', 'lib/aide.ts', 'lib/platStats.ts', 'app/api/account/delete/route.ts',
   'app/HeroApp.tsx', // 025-15 (relecture à froid du 24/09) : la scène est réécrite, pas vidée
 ]
+// Les sources de texte d'un fichier surveillé (000-geo-presti, 27/09) : le texte de la FAQ vit dans lib/faq.ts, lu par /faq et par le
+// FAQPage de l'accueil. Comptées avec le fichier seulement s'il les importe et s'en sert (sourcesUtilisees).
+export const SOURCES_DE_TEXTE = { 'app/faq/page.tsx': ['lib/faq.ts'] }
+/** Les sources de SOURCES_DE_TEXTE[chemin] que `source` importe (import de valeur) ET utilise hors de l'import → [chemins] */
+export function sourcesUtilisees(chemin, source) {
+  const attendues = SOURCES_DE_TEXTE[chemin] || []
+  if (!attendues.length || !source) return []
+  const sf = ts.createSourceFile(chemin, source, ts.ScriptTarget.Latest, true, /\.tsx$/.test(chemin) ? ts.ScriptKind.TSX : ts.ScriptKind.TS)
+  const out = []
+  for (const st of sf.statements) {
+    if (!ts.isImportDeclaration(st) || !ts.isStringLiteral(st.moduleSpecifier) || !st.importClause || st.importClause.isTypeOnly) continue
+    const spec = st.moduleSpecifier.text
+    const base = spec.startsWith('@/') ? spec.slice(2) : spec.startsWith('.') ? path.posix.normalize(path.posix.join(path.posix.dirname(chemin), spec)) : null
+    const cible = base && attendues.find((a) => [a, a.replace(/\.tsx?$/, ''), a.replace(/\/index\.tsx?$/, '')].includes(base))
+    if (!cible) continue
+    const ic = st.importClause, noms = new Set()
+    if (ic.name) noms.add(ic.name.text)
+    if (ic.namedBindings && ts.isNamespaceImport(ic.namedBindings)) noms.add(ic.namedBindings.name.text)
+    else if (ic.namedBindings) for (const el of ic.namedBindings.elements) if (!el.isTypeOnly) noms.add(el.name.text)
+    let lue = false
+    const visite = (n) => {
+      if (lue || ts.isImportDeclaration(n)) return
+      // un nom lu comme valeur : ni la propriété de `x.nom`, ni une clé d'objet, ni une position de type
+      if (ts.isIdentifier(n) && noms.has(n.text) && !(ts.isPropertyAccessExpression(n.parent) && n.parent.name === n) && !(ts.isPropertyAssignment(n.parent) && n.parent.name === n) && !ts.isTypeQueryNode(n.parent)) { lue = true; return }
+      ts.forEachChild(n, visite)
+    }
+    visite(sf)
+    if (lue && !out.includes(cible)) out.push(cible)
+  }
+  return out
+}
 // Part minimale des phrases de prose gardées par rapport au commit de référence.
 const PART_MIN = { 'app/profil/page.tsx': 1 / 3 }
 const PART_DEFAUT = 1 / 2
@@ -428,7 +468,8 @@ function exceptionPR4(chemin, ligneSource, sourceFichier) {
 
 /**
  * Examine des fichiers [{ chemin (posix, relatif à la racine), source }] → { violations: { 'PR-1': [...], … 'PR-4': [...] },
- * erreurs: [chemin : erreur de syntaxe], unites, phrases, prose: Map(chemin → nombre de phrases de prose) }.
+ * erreurs: [chemin : erreur de syntaxe], unites, phrases, prose: Map(chemin → nombre de phrases de prose),
+ * proseTextes: Map(chemin → Set des phrases de prose distinctes) }.
  * Une violation : { id, chemin, ligne, phrase, motif }.
  */
 export function examinerTexte(fichiers) {
@@ -441,7 +482,7 @@ export function examinerTexte(fichiers) {
     violations[id].push({ id, chemin, ligne, phrase, motif })
   }
   const erreurs = []
-  const prose = new Map()
+  const prose = new Map(), proseTextes = new Map()
   let nUnites = 0, nPhrases = 0
   for (const { chemin, source } of fichiers) {
     let res
@@ -493,8 +534,9 @@ export function examinerTexte(fichiers) {
       if (b && /signature/i.test(l.slice(b.index + b[0].length))) noter('PR-3', chemin, i + 1, court(l.trim()), 'Inclus dans l’offre … Signature (ligne source)')
     })
     prose.set(chemin, nProse)
+    proseTextes.set(chemin, proseVue)
   }
-  return { violations, erreurs, unites: nUnites, phrases: nPhrases, prose }
+  return { violations, erreurs, unites: nUnites, phrases: nPhrases, prose, proseTextes }
 }
 
 // ── Lecture de la racine ──────────────────────────────────────────────────────────────────────────────────────────────────
@@ -525,12 +567,27 @@ function substance(corpus, ex) {
     const f = parChemin.get(c)
     if (!f) { defauts.push(`${c} absent`); continue }
     if (!f.source.trim()) { defauts.push(`${c} vide`); continue }
-    const n = ex.prose.get(c) || 0, nr = ref.prose.get(c) || 0
+    // la prose du fichier et celle des sources de texte qu'il importe et lit (lib/faq.ts pour la FAQ), phrases distinctes
+    const sources = sourcesUtilisees(c, f.source).filter((x) => parChemin.has(x))
+    const n = sources.length ? new Set([c, ...sources].flatMap((x) => [...(ex.proseTextes.get(x) || [])])).size : (ex.prose.get(c) || 0)
+    const nr = ref.prose.get(c) || 0
+    const nom = sources.length ? `${c} (avec ${sources.join(', ')}, qu’il importe et lit)` : c
     const part = PART_MIN[c] ?? PART_DEFAUT
     if (!nr) defauts.push(`${c} : aucune phrase de prose à ${REFERENCE_COMMIT} (référence illisible)`)
-    else if (n < Math.ceil(nr * part)) defauts.push(`${c} : ${n} phrase(s) de prose, ${Math.ceil(nr * part)} au moins (${Math.round(part * 100)} % des ${nr} de ${REFERENCE_COMMIT})`)
+    else if (n < Math.ceil(nr * part)) defauts.push(`${nom} : ${n} phrase(s) de prose, ${Math.ceil(nr * part)} au moins (${Math.round(part * 100)} % des ${nr} de ${REFERENCE_COMMIT})`)
   }
   for (const e of ex.erreurs) defauts.push(`syntaxe : ${e}`)
+  // sondes de sourcesUtilisees : importée et lue → comptée ; importée sans être lue, import de type, clé homonyme, absente → non
+  const P = 'app/faq/page.tsx', rendu = 'export default function P() { return <main>{FAQ.map((f) => <p key={f.question}>{f.reponse}</p>)}</main> }\n'
+  const sondes = [
+    [`import { FAQ } from '@/lib/faq'\n${rendu}`, ['lib/faq.ts']],
+    [`import { FAQ as Q } from '../../lib/faq'\nexport default function P() { return <main>{Q.length}</main> }\n`, ['lib/faq.ts']],
+    [`import { FAQ } from '@/lib/faq'\nexport default function P() { return <main>Rien</main> }\n`, []],
+    [`import type { FAQ } from '@/lib/faq'\n${rendu}`, []],
+    [`import { FAQ } from '@/lib/faq'\nconst o = { FAQ: 1 }\nexport default function P() { return <main>{o.FAQ}</main> }\n`, []],
+    [`const FAQ = [{ question: 'Q ?', reponse: 'R.' }]\n${rendu}`, []],
+  ]
+  sondes.forEach(([src, attendu], i) => { const r = sourcesUtilisees(P, src); if (JSON.stringify(r) !== JSON.stringify(attendu)) defauts.push(`détecteur : sonde ${i + 1} de sourcesUtilisees mal jugée (${JSON.stringify(r)} au lieu de ${JSON.stringify(attendu)})`) })
   return defauts
 }
 
@@ -1028,23 +1085,28 @@ function jugerPR9(racine, corpus) {
   const plans = corpus.fichiers.find((f) => f.chemin === 'lib/plans.ts')?.source || ''
   const n = Number((/CREDIT_COST[^=]*=\s*\{[^}]*\bexpert\s*:\s*(\d+)/.exec(plans) || [])[1])
   if (!n) return { echecs: ['lib/plans.ts : CREDIT_COST.expert illisible'], faits }
-  const faq = corpus.fichiers.find((f) => f.chemin === 'app/faq/page.tsx')
-  if (!faq) return { echecs: ['app/faq/page.tsx absent'], faits }
+  const PAGE_FAQ = 'app/faq/page.tsx'
+  const page = corpus.fichiers.find((f) => f.chemin === PAGE_FAQ)
+  if (!page) return { echecs: [`${PAGE_FAQ} absent`], faits }
+  // La FAQ montrée par /faq : la page et les sources de texte qu'elle importe et lit (lib/faq.ts depuis 000-geo-presti, 27/09).
+  const montree = new Set([PAGE_FAQ, ...sourcesUtilisees(PAGE_FAQ, page.source)])
+  // Les textes de la FAQ où qu'ils soient : la page et toutes ses sources déclarées, même non importées (l'accueil lit lib/faq.ts).
+  const textesFaq = corpus.fichiers.filter((f) => f.chemin === PAGE_FAQ || (SOURCES_DE_TEXTE[PAGE_FAQ] || []).includes(f.chemin))
   let unitesCredit = 0
-  for (const u of unitesDeTexte(faq.chemin, faq.source).unites) {
+  for (const f of textesFaq) for (const u of unitesDeTexte(f.chemin, f.source).unites) {
     if (u.genre === 'commentaire') continue
     const t = texteUnite(u)
-    if (/(?<![\p{L}\d])1\s*crédit\s*=/iu.test(t)) unitesCredit++
-    for (const d of defautsCoutCredit(t, n)) echecs.push(`app/faq/page.tsx:${u.ligne} ${d}`)
+    if (/(?<![\p{L}\d])1\s*crédit\s*=/iu.test(t) && montree.has(f.chemin)) unitesCredit++
+    for (const d of defautsCoutCredit(t, n)) echecs.push(`${f.chemin}:${u.ligne} ${d}`)
   }
-  for (const f of corpus.fichiers.filter((x) => ['app/faq/page.tsx', 'app/page.tsx'].includes(x.chemin))) for (const u of unitesDeTexte(f.chemin, f.source).unites) {
+  for (const f of corpus.fichiers.filter((x) => x.chemin === 'app/page.tsx' || textesFaq.includes(x))) for (const u of unitesDeTexte(f.chemin, f.source).unites) {
     if (u.genre === 'commentaire') continue
     for (const v of u.variantes) for (const p of phrasesDe(v)) for (const d of defautsCoutExpert(p.texte, n)) echecs.push(`${f.chemin}:${p.ligne} ${d}`)
   }
   const sondes = [defautsCoutCredit('1 crédit = 1 réponse ou 1 devis généré par l’IA.', n).length === 1, !defautsCoutCredit(`1 crédit = 1 réponse ou 1 devis (${n} crédits avec le modèle Expert).`, n).length, defautsCoutExpert(`Expert = ${n + 1} crédits`, n).length === 1]
   if (sondes.some((x) => !x)) echecs.push(`détecteur : sonde(s) mal jugée(s) (${sondes.map((x, i) => (x ? '' : i + 1)).filter(Boolean).join(', ')})`)
-  if (!unitesCredit) echecs.push('app/faq/page.tsx ne dit plus ce que vaut un crédit (« 1 crédit = … »)')
-  if (!echecs.length) faits.push(`${unitesCredit} unité(s) de la FAQ disent « 1 crédit = … » avec le coût Expert (${n} crédits, lib/plans.ts) ; aucun autre coût Expert ; détecteur éprouvé sur 3 sondes`)
+  if (!unitesCredit) echecs.push(`la FAQ (${[...montree].join(' + ')}) ne dit plus ce que vaut un crédit (« 1 crédit = … »)`)
+  if (!echecs.length) faits.push(`${unitesCredit} unité(s) de la FAQ (${[...montree].join(' + ')}) disent « 1 crédit = … » avec le coût Expert (${n} crédits, lib/plans.ts) ; aucun autre coût Expert (${textesFaq.map((f) => f.chemin).join(', ')}, app/page.tsx) ; détecteur éprouvé sur 3 sondes`)
   return { echecs: [...new Set(echecs)], faits }
 }
 const NOMBRES_RELANCES = { deux: 2, trois: 3, quatre: 4, cinq: 5, six: 6 }
