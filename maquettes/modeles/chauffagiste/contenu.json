@@ -1,0 +1,39 @@
+{
+  "metier": "chauffagiste",
+  "libelles": {
+    "sur": "Chauffage",
+    "alt_heros": "Détail d’une installation de chauffage",
+    "alt_atelier": "Réseaux et équipements thermiques",
+    "reperes": ["Repère des installations", "Repère des équipements", "Repère de proximité"]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Chauffage à {ville} — {entreprise}",
+      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, chauffage à {ville}.",
+      "h1": "Chauffage à {ville}",
+      "h1Ligne": "Le confort thermique s'installe",
+      "chapeau": "Une page pour présenter les installations de chauffage et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "L'énergie et la chaleur",
+          "blocs": [
+            { "type": "p", "texte": "Pompes à chaleur, chaudières et réseaux thermiques peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "chauffagiste",
+    "fichiers": ["images/hero-960.webp", "images/pac-720.webp"]
+  }
+}

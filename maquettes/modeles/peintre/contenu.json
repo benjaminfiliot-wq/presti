@@ -1,0 +1,39 @@
+{
+  "metier": "peintre",
+  "libelles": {
+    "sur": "Peinture",
+    "alt_heros": "Détail d’un travail de peinture",
+    "alt_atelier": "Nuanciers et préparation",
+    "reperes": ["Repère des finitions", "Repère des chantiers", "Repère de proximité"]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Peinture à {ville} — {entreprise}",
+      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, peinture à {ville}.",
+      "h1": "Peinture à {ville}",
+      "h1Ligne": "Les couleurs prennent vie",
+      "chapeau": "Une page pour présenter les travaux de peinture et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Les teintes et les finitions",
+          "blocs": [
+            { "type": "p", "texte": "Revêtements muraux, enduits et ravalements peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "peintre",
+    "fichiers": ["images/hero-960.webp", "images/enduit-720.webp"]
+  }
+}

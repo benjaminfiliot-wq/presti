@@ -1,0 +1,39 @@
+{
+  "metier": "carreleur",
+  "libelles": {
+    "sur": "Carrelage",
+    "alt_heros": "Détail d’une pose de carrelage",
+    "alt_atelier": "Carreaux et joints",
+    "reperes": ["Repère des finitions", "Repère des ouvrages", "Repère de proximité"]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Carrelage à {ville} — {entreprise}",
+      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, carrelage à {ville}.",
+      "h1": "Carrelage à {ville}",
+      "h1Ligne": "Les surfaces prennent forme",
+      "chapeau": "Une page pour présenter les poses de carrelage et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "La faïence et la céramique",
+          "blocs": [
+            { "type": "p", "texte": "Salles de bains, sols intérieurs et terrasses peuvent prendre place dans cette présentation. Les réalisations propres à {entreprise} seront précisées ensemble." }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "carreleur",
+    "fichiers": ["images/hero-960.webp", "images/faience-720.webp"]
+  }
+}

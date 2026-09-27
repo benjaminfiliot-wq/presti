@@ -1,0 +1,39 @@
+{
+  "metier": "macon",
+  "libelles": {
+    "sur": "Maçonnerie",
+    "alt_heros": "Détail d’un ouvrage de maçonnerie",
+    "alt_atelier": "Matériaux et fondations",
+    "reperes": ["Repère des fondations", "Repère des ouvrages", "Repère de proximité"]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Maçonnerie à {ville} — {entreprise}",
+      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, maçonnerie à {ville}.",
+      "h1": "Maçonnerie à {ville}",
+      "h1Ligne": "Les murs prennent forme",
+      "chapeau": "Une page pour présenter les travaux de maçonnerie et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "La pierre et le béton",
+          "blocs": [
+            { "type": "p", "texte": "Gros œuvre, extensions et aménagements extérieurs peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "macon",
+    "fichiers": ["images/hero-960.webp", "images/parement-720.webp"]
+  }
+}

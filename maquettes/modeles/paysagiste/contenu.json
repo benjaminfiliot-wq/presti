@@ -1,0 +1,40 @@
+{
+  "metier": "paysagiste",
+  "libelles": {
+    "sur": "Paysagisme",
+    "alt_heros": "Détail d’un aménagement extérieur",
+    "alt_atelier": "Végétaux et minéraux",
+    "reperes": ["Repère des jardins", "Repère des aménagements", "Repère de proximité"],
+    "illustration": "Photos d'illustration, à remplacer par celles de vos chantiers"
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Paysagiste à {ville} — {entreprise}",
+      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, paysagiste à {ville}.",
+      "h1": "Paysagiste à {ville}",
+      "h1Ligne": "Le jardin prend forme",
+      "chapeau": "Une page pour présenter les aménagements extérieurs et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "La nature et les espaces",
+          "blocs": [
+            { "type": "p", "texte": "Plantations, haies et engazonnement peuvent prendre place dans cette présentation. Les réalisations propres à {entreprise} seront précisées ensemble." }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "menuisier",
+    "fichiers": ["images/hero-960.webp", "images/bibliotheque-720.webp"]
+  }
+}

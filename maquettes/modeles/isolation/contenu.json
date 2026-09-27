@@ -1,0 +1,40 @@
+{
+  "metier": "isolation",
+  "libelles": {
+    "sur": "Isolation",
+    "alt_heros": "Détail d’un travail d'isolation",
+    "alt_atelier": "Matériaux isolants",
+    "reperes": ["Repère des combles", "Repère des ouvrages", "Repère de proximité"],
+    "illustration": "Photos d'illustration, à remplacer par celles de vos chantiers"
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Isolation à {ville} — {entreprise}",
+      "description": "Découvrez une proposition de page d’accueil pour {entreprise}, isolation à {ville}.",
+      "h1": "Isolation à {ville}",
+      "h1Ligne": "La chaleur reste",
+      "chapeau": "Une page pour présenter les travaux d'isolation et ouvrir la conversation autour de votre projet.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "La performance thermique",
+          "blocs": [
+            { "type": "p", "texte": "Isolation des combles, murs et rampants peuvent prendre place dans cette présentation. Les interventions propres à {entreprise} seront précisées ensemble." }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            { "type": "p", "texte": "Cette page est une proposition visuelle destinée à {entreprise} à {ville}." }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "couvreur",
+    "fichiers": ["images/hero-960.webp", "images/tuiles-720.webp"]
+  }
+}
