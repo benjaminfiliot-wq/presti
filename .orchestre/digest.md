@@ -6,26 +6,33 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-27T18:13:15Z
+# Digest — 2026-09-27T19:12:21Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 97 tâche(s) PASS, 187028 ligne(s) · faites par Claude Code : 25 tâche(s) PASS, 83091 ligne(s).
-**État** — file : 1 · en cours : 5 · faites : 127 · refusées : 7
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 97 tâche(s) PASS, 187028 ligne(s) · faites par Claude Code : 27 tâche(s) PASS, 84586 ligne(s).
+**État** — file : 1 · en cours : 9 · faites : 129 · refusées : 7
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 026-013 | feature | en-cours | claude-code | — | depuis 2026-09-27T16:54:31Z · Écrire la migration 0098 qui pose les 13 fonctions SECURITY DEFINER des tâches (idempotence, profondeur 3, 5 sous-tâches, quota du jour, bail de 30 min, 3 tentatives, clôture par clé), des disjoncteurs, des décisions tranchées par un fondateur seulement et relues par leur auteur, des coûts plafonnés et de l'état du bus, avec jumeaux, contrôle et compte rendu d'un essai à sec généré par le juge |
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-007 | feature | en-cours | claude-code | — | depuis 2026-09-27T17:30:49Z · Mettre en service la sauvegarde quotidienne : premier envoi réel vers benjaminfiliot-wq/presti-sauvegarde, puis tâche planifiée Windows « Presti instantane quotidien » (chaque jour à 13 h et à l'ouverture de session, rattrapée au réveil), après l'accord écrit de Benj |
+| 026-027 | feature | en-cours | claude-code | — | depuis 2026-09-27T19:03:46Z · Ouvrir une session vérifiée à partir du lien envoyé après un achat public (POST /api/auth/lien, qui échange le hashed_token par verifyOtp et marque la session comme prouvée par e-mail, sans jamais contourner la 2FA) et rattacher la commande payée au compte dont l'adresse correspond, fondateurs exclus |
 | 026-037 | test | en-cours | claude-code | — | depuis 2026-09-27T17:40:33Z · Écrire scripts/ops-acquisition-qa.mjs (--migration=socle\|echanges\|planification, --reel), scripts/routes-acquisition-qa.mjs (--lot=recensement\|echanges) et scripts/confidentialite-prospection-qa.mjs, et les inscrire au lot 4 de juges-026-acquisition-preuve.mjs, chacun échouant sur la référence avec son premier critère |
+| 026-053 | feature | en-cours | usine-codex-51 | — | depuis 2026-09-27T19:12:09Z · Écrire scripts/usine/surveillance.mjs, le service qui mesure chaque minute le processeur, la mémoire et le réseau de l'usine Oracle, garde 8 jours de mesures, calcule les 95e centiles sur 7 jours contre la règle d'Oracle (reprise sous 20 %), bat au bus toutes les 15 min, publie un point chaque matin et ouvre une décision par semaine quand le seuil approche, relève toutes les 15 min les quotas du jour des IA gratuites (freellmapi par fournisseur, Codex) pour la Salle des machines, sans jamais créer de charge factice, et son unité scripts/usine/systemd/presti-surveillance.service, jusqu'au vert du groupe surveillance de scripts/usine-socle-qa.mjs |
+| 026-104 | test | en-cours | claude-code | — | depuis 2026-09-27T19:05:19Z · Écrire le juge d'écran de la station pilotage-ecran-qa (--partie=station\|vues\|salles\|salles-suite\|fil\|gestes\|experience : captures prises par le juge à 1440×900 et 390×844 sur la copie au drapeau levé, vues servies par un jeu d'essai tiré au hasard, événement injecté, immobilité mesurée sans événement), le script de recette pilotage-recette.mjs (--avant, --reel, --constat) et le lot c de la preuve, chacun échouant sur la référence avec son premier critère |
+| 026-121 | test | en-cours | claude-code | — | depuis 2026-09-27T19:02:38Z · Écrire les consignes de la revue hebdomadaire A11 (docs/agents/revue-hebdo.md, docs/revues/GABARIT.md) et du chantier A12 (docs/agents/chantier.md), et leurs juges scripts/revue-qa.mjs et scripts/chantier-qa.mjs, avec une preuve qui sort en code 0 seulement si chacun échoue aujourd'hui sur RV-1 et CT-1 et si les critères de consigne passent |
+| 026-220 | test | en-cours | claude-code | — | depuis 2026-09-27T18:57:41Z · Juges des nouveaux outils et du jalon entrant selon la relecture de complétude du 27/09 |
 | 026-168 | test | file | ag-168g | — | Écrire le juge de la planche station-planche-qa (--partie=planche : il lance lui-même, sur l'usine, l'atelier ~/claw3d-pixel sur 127.0.0.1 avec une liste blanche fermée, capture lui-même la planche des 20 salles et de la salle réservée dans la vraie mise en page à 1440×900, 1280×800 et 390×844, et juge grille entière, palette, licences du lot A, absence de donnée et poids) et le lot p de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
-| 026-028 | feature | fait | codex | PASS | 2026-09-27T18:13:14Z · 8s · 0 l. |
+| 026-013 | feature | fait | claude-code | PASS | 2026-09-27T19:12:21Z · 11s · 2324 l. |
+| 026-050 | feature | fait | claude-code | PASS | 2026-09-27T19:03:27Z · 128s · 1479 l. |
 | 026-067 | test | refuse | claude-code | FAIL | ✅ JA-1 référence 4041ec9 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (2421 fichiers), ancêtre de HEAD, sans lib/p |
+| 026-045 | test | fait | claude-code | PASS | 2026-09-27T18:25:07Z · 342s · 0 l. |
+| 026-028 | feature | fait | codex | PASS | 2026-09-27T18:13:14Z · 8s · 0 l. |
 | 026-105 | feature | fait | usine-codex-50 | PASS | 2026-09-27T16:37:50Z · 19s · 573 l. |
 | 026-032 | test | fait | claude-code | PASS | 2026-09-27T16:25:16Z · 66s · 4042 l. |
 | 026-026 | test | fait | claude-code | PASS | 2026-09-27T15:57:16Z · 146s · 0 l. |
@@ -111,12 +118,5 @@
 | 020-11 | contenu | fait | ag-26-flash | PASS | 2026-09-15T11:10:10Z · 1s · 10430 l. |
 | 020-12 | contenu | fait | ag-27-flash | PASS | 2026-09-15T10:50:01Z · 1s · 36858 l. |
 | 020-14 | feature | fait | codex-12 | PASS | 2026-09-15T10:40:33Z · 48s · 0 l. |
-| 020-10 | contenu | fait | codex-11 | PASS | 2026-09-15T10:34:33Z · 1s · 0 l. |
-| 019-03 | contenu | fait | codex-10 | PASS | 2026-09-15T07:48:53Z · 2s · 0 l. |
-| 019-02 | feature | fait | codex-9 | PASS | 2026-09-15T07:29:47Z · 40s · 0 l. |
-| 019-01 | feature | fait | codex-8 | PASS | 2026-09-15T07:12:46Z · 22s · 0 l. |
-| 018-10 | contenu | fait | codex-6 | PASS | 2026-09-15T02:12:56Z · 16s · 0 l. |
-| 018-09 | feature | fait | ag-25-flash | PASS | 2026-09-15T02:12:55Z · 10s · 14826 l. |
-| 018-08 | contenu | fait | ag-24-flash | PASS | 2026-09-14T20:25:41Z · 8s · 2720 l. |
 
-… 40 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 46 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
