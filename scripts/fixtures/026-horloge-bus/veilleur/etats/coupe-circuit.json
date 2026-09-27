@@ -1,0 +1,20 @@
+{
+  "_": "VA-5 : le coupe-circuit (plan §5.1). Les agents sont reconnus par leur capacité, jamais par une liste de noms : a0, systeme et toute capacité livraison, support ou surveillance ne sont jamais mis en pause. « attendu.pauses » : exactement les agents passés à ops_agent_pause.",
+  "agents_seuls": true,
+  "agents": [
+    { "nom": "a0", "capacites": ["veille"], "periode_minutes": 5, "battement_le": "-1min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+    { "nom": "systeme", "capacites": ["systeme"], "periode_minutes": 1440, "battement_le": "-30min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+    { "nom": "livreur", "capacites": ["livraison"], "periode_minutes": 30, "battement_le": "-5min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+    { "nom": "livreur_usine", "capacites": ["livraison"], "periode_minutes": 30, "battement_le": "-5min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+    { "nom": "usine", "capacites": ["surveillance"], "periode_minutes": 30, "battement_le": "-5min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+    { "nom": "standardiste", "capacites": ["support"], "periode_minutes": 15, "battement_le": "-5min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+    { "nom": "recenseur", "capacites": ["recensement"], "periode_minutes": 360, "battement_le": "-1h", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+    { "nom": "chef", "capacites": ["plan"], "periode_minutes": 60, "battement_le": "-10min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null }
+  ],
+  "cas": [
+    { "nom": "151 € sans recette", "couts_mois": 151, "encaisse": { "brut": 0 }, "attendu": { "lignes": { "coupe_circuit": "rouge" }, "pauses": ["chef", "recenseur"], "decision_coupe": true, "urgents": ["coupe_circuit"] } },
+    { "nom": "149 € sans recette", "couts_mois": 149, "encaisse": { "brut": 0 }, "attendu": { "lignes": {}, "pauses": [], "decision_coupe": false, "urgents": [] } },
+    { "nom": "151 € avec 300 € encaissés", "couts_mois": 151, "encaisse": { "brut": 300 }, "attendu": { "lignes": { "vercel_pro": "jaune" }, "pauses": [], "decision_coupe": false, "urgents": [] } },
+    { "nom": "151 € et la recette inconnue", "couts_mois": 151, "encaisse": { "valeur": null }, "attendu": { "lignes": null, "pauses": [], "decision_coupe": false, "urgents": [], "une_ligne": true } }
+  ]
+}

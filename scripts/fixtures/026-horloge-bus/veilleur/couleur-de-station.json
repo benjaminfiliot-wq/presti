@@ -1,0 +1,11 @@
+{
+  "_": "Copie de COULEUR_DE de la station (026-070, point 3, voie gratuite du 25/09), gardée par le juge du veilleur (VA-15) : COULEURS de lib/agents/veilleur.ts doit lui être égal, motif pour motif. Un motif inconnu de la station est jaune.",
+  "inconnu": "jaune",
+  "COULEUR_DE": {
+    "pause_generale": "rouge", "panne_agent": "rouge", "argent_bloque": "rouge", "coupe_circuit": "rouge", "jeton_meta_expire": "rouge", "usine_injoignable": "rouge", "envoi_sans_verdicts": "rouge", "canal_arrete": "rouge", "gmail_bloque": "rouge", "notice_perimee": "rouge", "jauge_pleine": "rouge",
+    "appel": "orange", "site_a_valider": "orange", "paiement_non_rattache": "orange", "decision_argent": "orange",
+    "taches_bloquees": "jaune", "disjoncteur": "jaune", "quota_haut": "jaune", "jeton_externe": "jaune", "agent_muet": "jaune", "stockage": "jaune", "orchestre": "jaune", "technologie_en_pause": "jaune", "modele_suspendu": "jaune", "changer_message": "jaune", "bilan": "jaune", "vercel_pro": "jaune",
+    "escalade_chef": "bleu", "idee_chef": "bleu"
+  },
+  "motifs_du_veilleur": ["agent_muet", "panne_agent", "disjoncteur", "jeton_externe", "stockage", "argent_bloque", "coupe_circuit", "usine_injoignable", "jeton_meta_expire", "canal_arrete", "gmail_bloque", "technologie_en_pause", "modele_suspendu", "notice_perimee", "bilan", "vercel_pro", "meta_erreur", "changer_message", "quota_haut", "jauge_pleine", "non_mesure"]
+}

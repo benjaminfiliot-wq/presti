@@ -1,0 +1,7 @@
+{
+  "_": "Jeux d'essai de prospects du juge du veilleur (VA-4, VA-13, VA-16) : des entreprises FICTIVES (adresses en .invalid, RFC 2606 ; téléphones de la plage 02 61 91 réservée à la fiction). Le juge les plante dans les décisions et dans des champs de l'état de l'envoi qu'aucune carte n'a à citer : aucune de ces valeurs ne doit sortir du veilleur (clés d'alerte, résumés d'événements, corps du digest, titres et gestes des cartes).",
+  "nom": ["Menuiserie Témoin-Quarante-Cinq", "Plâtrerie Fictive du Val-Essai", "Charpentes Imaginaires Onze"],
+  "email": ["contact@menuiserie-temoin-45.invalid", "devis@platrerie-fictive-essai.invalid", "atelier@charpentes-imaginaires-11.invalid"],
+  "site": ["menuiserie-temoin-45.invalid", "platrerie-fictive-essai.invalid", "charpentes-imaginaires-11.invalid"],
+  "telephone": ["02 61 91 45 01", "02 61 91 45 02", "02 61 91 45 03"]
+}

@@ -1,0 +1,134 @@
+// TÉMOIN (026-045) — l'implémentation de référence de lib/agents/fileArgent.ts (fiche 026-046), sur laquelle
+// file-argent-qa --temoin doit être VERT. Ce n'est pas le code livré : 026-046 écrit le sien. Suffixe .temoin : hors de
+// `npm run typecheck` du dépôt. Elle s'appuie sur le témoin de lib/agents/bus.ts du lot 03 (fonctions aux clés p_…).
+//
+// La file durable `argent` (0100, fiche 026-036) : chaque commande de site payée fait naître sa tâche livrer_site une fois et
+// une seule ; l'entrée du livreur de l'usine est déposée AU MIEUX : une panne du stockage n'empêche jamais le « fait ».
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { ops_tache_creer, ops_evenement_ajouter } from '@/lib/agents/bus'
+import { envoyerAlertes } from '@/lib/alertes'
+
+type Charge = Record<string, unknown>
+type Resultat = Record<string, unknown>
+export type Gestionnaire = (charge: Charge) => Promise<Resultat>
+type Message = { msg_id: number; lectures: number; type: string; cle: string; charge: Charge | null; mis_le?: string }
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const ETATS_LIVRABLES = ['payee', 'generee', 'validee', 'en_ligne']
+/** Les colonnes d'artisans que l'exporteur (026-033, --depuis) lit : rien de plus n'entre dans l'entrée de l'usine. */
+const COLONNES_ARTISAN = 'id, email, nom, metier, slug, tel, tel_public, services, plan'
+
+/** L'entrée du livreur de l'usine, au mieux : toute erreur écrit entree_usine_absente et rend { depose: false }. */
+export async function deposerEntreeUsine({ tache, commande_id, essai }: { tache: string; commande_id: string; essai: boolean }): Promise<{ depose: boolean; deja?: boolean }> {
+  try {
+    const usine = supabaseAdmin.storage.from('usine')
+    const base = `${tache}/entree`
+    const deja = await usine.exists(`${base}/commande.json`)
+    if (deja.data === true) return { depose: false, deja: true }
+    const { data: commande, error: e1 } = await supabaseAdmin.from('sites_commandes').select('*').eq('id', commande_id).single()
+    if (e1 || !commande) throw new Error('commande illisible')
+    const { data: artisan, error: e2 } = await supabaseAdmin.from('artisans').select(COLONNES_ARTISAN).eq('id', commande.artisan_id).single()
+    if (e2 || !artisan) throw new Error('artisan illisible')
+    // les photos que l'exporteur lit : celles du bucket public artisan-media du projet, sous le dossier de l'artisan
+    const projet = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'http://localhost').host
+    const matiere = (commande.matiere ?? {}) as { photos?: { url?: string }[]; logo_url?: string | null }
+    const urls = [...(matiere.photos ?? []).map((p) => p?.url), matiere.logo_url].filter((u): u is string => typeof u === 'string' && u.length > 0)
+    for (const brut of urls) {
+      let u: URL
+      try { u = new URL(brut) } catch { continue }
+      const m = /^\/storage\/v1\/object\/public\/artisan-media\/([^/]+)\/([^/]+)$/.exec(u.pathname)
+      if (u.host !== projet || !m || m[1] !== commande.artisan_id) continue
+      const fichier = decodeURIComponent(m[2])
+      const c = await supabaseAdmin.storage.from('artisan-media').copy(`${m[1]}/${fichier}`, `${base}/photos/${fichier}`, { destinationBucket: 'usine' })
+      if (c.error) throw new Error('photo non copiée')
+    }
+    const entree = { commande, artisan, ...(essai ? { essai: true } : {}) }
+    const e3 = await usine.upload(`${base}/commande.json`, JSON.stringify(entree), { contentType: 'application/json', upsert: false })
+    if (e3.error) throw new Error('entrée non déposée')
+    const e4 = await usine.upload(`commandes/${commande_id}.json`, JSON.stringify({ tache }), { contentType: 'application/json', upsert: true })
+    if (e4.error) throw new Error('index non déposé')
+    return { depose: true }
+  } catch {
+    await ops_evenement_ajouter({ p_agent: 'systeme', p_type: 'entree_usine_absente', p_objet: `commande:${commande_id}`, p_resume: 'entrée de l’usine non déposée (stockage indisponible) : la livraison passe par Actions ou le poste', p_tache: UUID.test(tache) ? tache : null })
+    return { depose: false }
+  }
+}
+
+async function commandePayee(charge: Charge): Promise<Resultat> {
+  const id = typeof charge?.commande_id === 'string' ? charge.commande_id : ''
+  if (!UUID.test(id)) return { ignore: 'commande_id absent' }
+  const { data, error } = await supabaseAdmin.from('sites_commandes').select('id, etat').eq('id', id).maybeSingle()
+  if (error) throw new Error('lecture de la commande impossible')
+  if (!data) return { ignore: 'introuvable' }
+  if (data.etat === 'brouillon') return { ignore: 'brouillon' }
+  if (!ETATS_LIVRABLES.includes(data.etat)) return { ignore: `etat ${data.etat}` }
+  const r = await ops_tache_creer({ p_agent: 'systeme', p_type: 'livrer_site', p_cle: `livrer_site:${id}`, p_capacite: 'livraison', p_charge: { commande_id: id }, p_origine: null, p_objet: `commande:${id}` })
+  if (!r.ok) throw new Error(`ops_tache_creer : ${r.code}`)
+  const ligne = (Array.isArray(r.data) ? r.data[0] : r.data) as { id?: string; creee?: boolean } | null
+  const tache = typeof ligne?.id === 'string' ? ligne.id : null
+  let usine: { depose: boolean; deja?: boolean } | null = null
+  if (data.etat === 'payee' && tache) usine = await deposerEntreeUsine({ tache, commande_id: id, essai: charge.essai === true })
+  return { tache, creee: ligne?.creee === true, usine: usine ? (usine.deja ? 'deja' : usine.depose ? 'depose' : 'absente') : null }
+}
+
+async function essaiE2e(): Promise<Resultat> {
+  const r = await ops_evenement_ajouter({ p_agent: 'systeme', p_type: 'essai_e2e', p_objet: null, p_resume: 'essai de la file de l’argent', p_tache: null })
+  if (!r.ok) throw new Error(`ops_evenement_ajouter : ${r.code}`)
+  return { ok: true }
+}
+
+/** Le registre FERMÉ des gestionnaires : les deux types que la base permet (0100). */
+export const HANDLERS: Record<'commande_payee' | 'essai_e2e', Gestionnaire> = { commande_payee: commandePayee, essai_e2e: essaiE2e }
+
+function avecDelai<T>(p: Promise<T>, ms: number): Promise<T> {
+  let t: ReturnType<typeof setTimeout> | undefined
+  const delai = new Promise<never>((_, ko) => { t = setTimeout(() => ko(new Error('délai du gestionnaire dépassé')), Math.max(1, ms)) })
+  return Promise.race([p, delai]).finally(() => clearTimeout(t))
+}
+
+/** Traite la file sous un budget de temps : un message n'est « fait » qu'après le succès de son gestionnaire. */
+export async function traiterFileArgent({ budgetMs = 12000, lot = 5, vtS = 120, handlers = HANDLERS as Record<string, Gestionnaire> } = {}) {
+  const debut = Date.now()
+  const vt = Math.min(3600, Math.max(5, Math.round(vtS)))
+  const r = { lus: 0, faits: 0, echecs: 0, inconnus: 0, dureeMs: 0 }
+  lecture: while (Date.now() - debut < budgetMs) {
+    const { data, error } = await supabaseAdmin.rpc('ops_argent_lire', { p_vt_s: vt, p_n: lot })
+    if (error) throw new Error('ops_argent_lire refusée')
+    const messages = (Array.isArray(data) ? data : []) as Message[]
+    if (!messages.length) break
+    for (const m of messages) {
+      const reste = budgetMs - (Date.now() - debut)
+      if (reste <= 0) break lecture
+      r.lus++
+      const h = Object.prototype.hasOwnProperty.call(handlers, m.type) ? handlers[m.type] : null
+      if (!h) {
+        r.inconnus++
+        await envoyerAlertes([{ motif: 'paiement', a: 'entreprise', cle: `argent:type_inconnu:${m.cle}`, sujet: 'File de l’argent : un message de type inconnu', corps: `Un message de type « ${String(m.type).slice(0, 40)} » attend dans la file de l’argent sans gestionnaire. La base l’archivera à sa quatrième lecture.` }])
+        continue
+      }
+      try {
+        const resultat = await avecDelai(h(m.charge ?? {}), reste)
+        const f = await supabaseAdmin.rpc('ops_argent_fait', { p_msg_id: m.msg_id, p_cle: m.cle, p_resultat: resultat ?? {} })
+        if (f.error) r.echecs++
+        else r.faits++
+      } catch {
+        r.echecs++
+      }
+    }
+  }
+  r.dureeMs = Date.now() - debut
+  return r
+}
+
+/** Les commandes payées depuis 30 jours au plus (100 au plus) remises dans la file, une fois par commande. */
+export async function balayerCommandesPayees() {
+  const depuis = new Date(Date.now() - 30 * 86_400_000).toISOString()
+  const { data, error } = await supabaseAdmin.from('sites_commandes').select('id, paye_le').eq('etat', 'payee').gte('paye_le', depuis).order('paye_le', { ascending: true }).limit(100)
+  if (error) throw new Error('lecture des commandes payées impossible')
+  let envoyees = 0
+  for (const c of data ?? []) {
+    const e = await supabaseAdmin.rpc('ops_argent_envoyer', { p_type: 'commande_payee', p_cle: `commande_payee:${c.id}`, p_charge: { commande_id: c.id }, p_delai_s: 0 })
+    if (!e.error && e.data !== null) envoyees++
+  }
+  return { vues: (data ?? []).length, envoyees }
+}

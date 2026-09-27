@@ -1,0 +1,25 @@
+{
+  "_": "VA-15 (et le corps du digest de VA-4) : un état qui produit 9 lignes, 3 rouges (panne_agent, argent_bloque, notice_perimee) et 6 jaunes (agent_muet, disjoncteur, jeton_externe, stockage, technologie_en_pause, modele_suspendu). Attendu : 7 lignes, les 3 rouges d'abord, puis 4 jaunes. Les décisions portent des valeurs de prospects (prospects.json, « $prospect.<clé>.<n> ») : aucune ne doit sortir du veilleur.",
+  "maintenant": "2026-10-20T05:30:00Z",
+  "agents": [
+    { "nom": "redacteur", "battement_le": "-2p+130min" },
+    { "nom": "facteur", "battement_le": "-3p" },
+    { "nom": "vigie", "capacites": ["veille_meta"], "periode_minutes": 1440, "battement_le": "-2h", "en_pause": false, "disjoncteur_ouvert": true, "jeton_externe_expire_le": "+5j" }
+  ],
+  "argent": { "abandonnes_24h": 1 },
+  "stockage_octets": { "$hasard": [740000000, 780000000] },
+  "envoi": {
+    "notice_verifiee_le": "-9j",
+    "technologies": [{ "technologie": "contact_form_7", "etat": "pause", "pause_motif": "3 échecs de soumission d’affilée", "echecs_affilee": 3, "envois_300": 40, "reponses_300": 1, "dernier_prospect": "$prospect.site.0" }],
+    "modeles_suspendus": [{ "modele_id": "premier_contact_v2", "motif": "4 STOP sur 100 envois", "dernier_prospect": "$prospect.nom.1" }]
+  },
+  "decisions_ouvertes": [
+    { "id": "$uuid", "question": "Relancer $prospect.nom.0 ?", "contexte": "Écrire à $prospect.email.0 ou appeler le $prospect.telephone.0", "echeance": "+1j", "defaut": "non", "portee": "argent", "montant_cents": 2000 },
+    { "id": "$uuid", "question": "Proposer une maquette à $prospect.nom.1 ?", "contexte": "Site actuel : $prospect.site.1", "echeance": "+2j", "defaut": "oui", "portee": "envoi", "montant_cents": null },
+    { "id": "$uuid", "question": "Publier le billet de la semaine ?", "contexte": "Rédigé par le crieur.", "echeance": "+1j", "defaut": "oui", "portee": "publication", "montant_cents": null },
+    { "id": "$uuid", "question": "Ouvrir le palier P2 ?", "contexte": "Cinq jours au vert.", "echeance": "+3j", "defaut": "non", "portee": "envoi", "montant_cents": null },
+    { "id": "$uuid", "question": "Répondre à $prospect.nom.2 ?", "contexte": "Message reçu de $prospect.email.2", "echeance": "+1j", "defaut": "oui", "portee": "reponse", "montant_cents": null },
+    { "id": "$uuid", "question": "Archiver les maquettes de septembre ?", "contexte": "Rien à perdre.", "echeance": "+5j", "defaut": "oui", "portee": "rangement", "montant_cents": null }
+  ],
+  "attendu": { "rouges": ["argent_bloque", "notice_perimee", "panne_agent"], "jaunes": ["agent_muet", "disjoncteur", "jeton_externe", "modele_suspendu", "stockage", "technologie_en_pause"] }
+}

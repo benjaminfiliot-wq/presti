@@ -1,0 +1,18 @@
+{
+  "_": "VA-11 : l'usine Oracle (agent usine, capacité surveillance, période 30 min) et les agents qui y tournent (atelier_maquettes, livreur_usine, chef). « passages » : les décalages (ms) des passages du veilleur après le premier ; « attendu.urgents_total » : combien de fois chaque urgent part sur tous les passages. « nomme » : les noms que la ligne doit citer.",
+  "usine": { "nom": "usine", "capacites": ["surveillance"], "periode_minutes": 30, "battement_le": "-10min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+  "atelier": [
+    { "nom": "atelier_maquettes", "capacites": ["maquette"], "periode_minutes": 60, "battement_le": "-10min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+    { "nom": "livreur_usine", "capacites": ["livraison"], "periode_minutes": 30, "battement_le": "-10min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+    { "nom": "chef", "capacites": ["plan"], "periode_minutes": 60, "battement_le": "-10min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null }
+  ],
+  "cas": [
+    { "nom": "usine battue il y a 59 min", "agents": [{ "nom": "usine", "battement_le": "-59min" }], "attendu": { "lignes": {}, "urgents": [] } },
+    { "nom": "usine battue il y a 61 min, puis toujours muette 3 h plus tard", "agents": [{ "nom": "usine", "battement_le": "-61min" }, { "nom": "redacteur", "en_pause": true }, { "nom": "facteur", "en_pause": true }, { "nom": "atelier_maquettes", "en_pause": true }, { "nom": "livreur_usine", "en_pause": true }, { "nom": "chef", "en_pause": true }], "passages": [0, 10800000], "attendu": { "lignes": { "usine_injoignable": "rouge" }, "urgents_total": { "usine_injoignable": 1 } } },
+    { "nom": "usine muette pendant la pause générale", "pause": true, "agents": [{ "nom": "usine", "battement_le": "-61min" }], "attendu": { "lignes": { "usine_injoignable": "rouge" }, "urgents": ["usine_injoignable"] } },
+    { "nom": "usine muette et les trois agents de l'usine muets", "agents": [{ "nom": "usine", "battement_le": "-3h" }, { "nom": "atelier_maquettes", "battement_le": "-5h" }, { "nom": "livreur_usine", "battement_le": "-5h" }, { "nom": "chef", "battement_le": "-5h" }], "attendu": { "lignes": { "usine_injoignable": "rouge" }, "urgents": ["usine_injoignable"], "nomme": ["atelier_maquettes", "livreur_usine", "chef"] } },
+    { "nom": "usine à l'heure, atelier_maquettes muet", "agents": [{ "nom": "atelier_maquettes", "battement_le": "-3p" }], "attendu": { "lignes": { "agent_muet": "jaune" }, "urgents": [], "nomme": ["atelier_maquettes"] } },
+    { "nom": "usine absente de ops_etat().agents", "sans_usine": true, "agents": [{ "nom": "atelier_maquettes", "battement_le": "-20min" }], "attendu": { "lignes": {}, "urgents": [] } },
+    { "nom": "usine absente, atelier_maquettes muet : sa propre ligne", "sans_usine": true, "agents": [{ "nom": "atelier_maquettes", "battement_le": "-3p" }], "attendu": { "lignes": { "agent_muet": "jaune" }, "urgents": [], "nomme": ["atelier_maquettes"] } }
+  ]
+}

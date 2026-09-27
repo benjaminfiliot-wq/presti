@@ -1,0 +1,35 @@
+{
+  "lot": "04",
+  "fiche": "026-045",
+  "reference": "86ce0f3be9c202d9e0bb11448642c033c5449e57",
+  "reference_pourquoi": "La référence de preuve-01.json (HEAD relevé au début de 026-009) : ni lib/agents/ (donc ni fileArgent.ts ni veilleur.ts), ni app/api/agents/ (donc ni la route du tic), ni scripts/fixtures/026-horloge-bus/contrat-ops.json (donc ops_horloge_etat hors du contrat de l'arbre). lib/alertes.ts, app/api/controle/a-faire/route.ts et scripts/fermeture-e2e.mjs y sont ceux d'avant 026-047 et 026-049.",
+  "absents_de_la_reference": ["lib/agents/", "app/api/agents/", "scripts/fixtures/026-horloge-bus/contrat-ops.json"],
+  "archive": ["lib", "app", "scripts"],
+  "juges": [
+    { "commande": "node scripts/file-argent-qa.mjs", "echec_attendu": "AF-1", "fiche_jugee": "026-046" },
+    { "commande": "node scripts/veilleur-qa.mjs", "echec_attendu": "VA-1", "fiche_jugee": "026-047" },
+    { "commande": "node scripts/tic-qa.mjs", "echec_attendu": "TC-1", "fiche_jugee": "026-049" },
+    { "commande": "node scripts/horloge-qa.mjs", "echec_attendu": "E24-0", "fiche_jugee": "026-138" }
+  ],
+  "criteres": {
+    "JP-1": [
+      { "type": "echec-sur-reference" }
+    ],
+    "JP-2": [
+      { "type": "temoin" }
+    ],
+    "JP-3": [
+      { "type": "horloge-simulee", "module": "scripts/lib/horloge-simulee.mjs", "cas": [{ "figer": "2026-10-24T05:30:00Z", "paris": "07:30" }, { "figer": "2026-10-25T06:30:00Z", "paris": "07:30" }, { "figer": "2026-10-20T16:30:00Z", "paris": "18:30" }], "avancer_ms": 300000 }
+    ],
+    "JP-4": [
+      { "type": "reseau-piege", "permis": ["127.0.0.1", "localhost", "::1"] }
+    ],
+    "JP-5": [
+      { "type": "immobile" }
+    ],
+    "JP-6": [
+      { "type": "motifs", "chemins": ["scripts/fixtures/026-horloge-bus/veilleur"], "absents": ["boite", "sequenceur", "liste_noire", "arret_email"] },
+      { "type": "motifs", "chemins": ["scripts/veilleur-qa.mjs"], "presents": [{ "motif": "VA-19", "min": 3 }, { "motif": "decisions_vercel", "min": 2 }, { "motif": "presti-secrets/meta-bibliotheque-pubs\\.txt", "min": 2 }, { "motif": "arret_froid", "min": 1 }, { "motif": "choisir un autre segment ou une autre offre", "min": 1 }] }
+    ]
+  }
+}

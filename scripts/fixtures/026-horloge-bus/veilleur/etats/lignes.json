@@ -1,0 +1,24 @@
+{
+  "_": "VA-2 : les lignes d'attention des agents, des jetons, du stockage et de l'argent. Chaque cas part de base.json ; « agents » fusionne par nom (ou ajoute) ; « attendu.lignes » est l'ensemble EXACT des motifs rendus (avec leur couleur), « attendu.urgents » ceux qui partent tout de suite (e-mail).",
+  "cas": [
+    { "nom": "agent muet à 3 périodes", "agents": [{ "nom": "redacteur", "battement_le": "-3p" }], "attendu": { "lignes": { "agent_muet": "jaune" }, "urgents": [] } },
+    { "nom": "agent à 2 périodes + 2 h 10", "agents": [{ "nom": "redacteur", "battement_le": "-2p+130min" }], "attendu": { "lignes": { "panne_agent": "rouge" }, "urgents": ["panne_agent"] } },
+    { "nom": "a0, systeme, un agent jamais vu et un agent en pause", "agents": [
+      { "nom": "a0", "battement_le": "-10p" },
+      { "nom": "systeme", "battement_le": "-5j" },
+      { "nom": "standardiste", "capacites": ["accueil"], "periode_minutes": 15, "battement_le": null, "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+      { "nom": "crieur", "capacites": ["publication"], "periode_minutes": 60, "battement_le": "-10p", "en_pause": true, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null }
+    ], "attendu": { "lignes": {}, "urgents": [] } },
+    { "nom": "pause générale active, agent à 3 périodes", "pause": true, "agents": [{ "nom": "redacteur", "battement_le": "-3p" }, { "nom": "facteur", "battement_le": "-2p+130min" }], "attendu": { "lignes": {}, "urgents": [] } },
+    { "nom": "recenseur de période 360 battu à 19 h 05 UTC, lu à 6 h 00 UTC le lendemain", "maintenant": "2026-10-21T06:00:00Z", "agents": [{ "nom": "recenseur", "capacites": ["recensement"], "periode_minutes": 360, "battement_le": "2026-10-20T19:05:00Z", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null }], "attendu": { "lignes": {}, "urgents": [] } },
+    { "nom": "disjoncteur ouvert", "agents": [{ "nom": "facteur", "disjoncteur_ouvert": true }], "attendu": { "lignes": { "disjoncteur": "jaune" }, "urgents": [] } },
+    { "nom": "jeton externe à J-6", "agents": [{ "nom": "vigie", "capacites": ["veille_meta"], "periode_minutes": 1440, "battement_le": "-2h", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": "+6j" }], "attendu": { "lignes": { "jeton_externe": "jaune" }, "urgents": [] } },
+    { "nom": "jeton externe à J-8", "agents": [{ "nom": "vigie", "capacites": ["veille_meta"], "periode_minutes": 1440, "battement_le": "-2h", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": "+8j" }], "attendu": { "lignes": {}, "urgents": [] } },
+    { "nom": "jeton expiré depuis 1 jour", "agents": [{ "nom": "vigie", "capacites": ["veille_meta"], "periode_minutes": 1440, "battement_le": "-2h", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": "-1j" }], "attendu": { "lignes": { "jeton_meta_expire": "rouge" }, "urgents": [] } },
+    { "nom": "stockage à 700 Mo", "stockage_octets": { "$hasard": [734003200, 760000000] }, "attendu": { "lignes": { "stockage": "jaune" }, "urgents": [] } },
+    { "nom": "stockage à 500 Mo", "stockage_octets": { "$hasard": [500000000, 524288000] }, "attendu": { "lignes": {}, "urgents": [] } },
+    { "nom": "argent abandonné", "argent": { "abandonnes_24h": 1 }, "attendu": { "lignes": { "argent_bloque": "rouge" }, "urgents": ["argent_bloque"] } },
+    { "nom": "commande payée sans tâche depuis 20 min", "argent": { "en_file": 1, "plus_vieux_s": 1200, "non_faits_plus_de_15_min": 1 }, "attendu": { "lignes": { "argent_bloque": "rouge" }, "urgents": ["argent_bloque"] } },
+    { "nom": "ops_argent_etat en erreur", "argent": "erreur", "attendu": { "lignes": { "non_mesure": "jaune" }, "urgents": [] } }
+  ]
+}

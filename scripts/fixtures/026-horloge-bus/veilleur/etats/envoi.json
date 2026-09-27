@@ -1,0 +1,23 @@
+{
+ "_": "VA-13, VA-14 et VA-19 : les états de l'envoi que la base tient (acq_disjoncteurs_etat(), 0111 réécrite par la voie gratuite, 026-063) ; chaque « envoi » objet se fusionne sur envoi_calme de base.json. Aucune adresse, aucun nom de prospect : seuls des noms de canaux, de technologies et de modèles. « geste » : un texte que le geste de la ligne doit contenir ; « nombre » : ce que la ligne doit compter.",
+ "cas": [
+  {"critere":"VA-13","nom":"acq_disjoncteurs_etat absente","envoi":"absente","attendu":{"lignes":{},"urgents":[]}},
+  {"critere":"VA-13","nom":"acq_disjoncteurs_etat en erreur","envoi":"erreur","attendu":{"lignes":{"non_mesure":"jaune"},"urgents":[]}},
+  {"critere":"VA-13","nom":"état calme","envoi":{},"attendu":{"lignes":{},"urgents":[]}},
+  {"critere":"VA-13","nom":"deux technologies en pause","envoi":{"technologies":[{"technologie":"contact_form_7","etat":"pause","pause_motif":"3 échecs de soumission d’affilée","echecs_affilee":3,"envois_300":40,"reponses_300":1},{"technologie":"wpforms","etat":"pause","pause_motif":"3 échecs de soumission d’affilée","echecs_affilee":3,"envois_300":22,"reponses_300":0},{"technologie":"gravity_forms","etat":"active","pause_motif":null,"echecs_affilee":0,"envois_300":5,"reponses_300":0}]},"attendu":{"lignes":{"technologie_en_pause":"jaune"},"urgents":[],"nombre":{"technologie_en_pause":2}}},
+  {"critere":"VA-13","nom":"formulaire arrêté 48 h (un avis d'abus)","envoi":{"formulaire_coupe_jusqua":"+40h","formulaire_coupe_motif":"1 avis d’abus : arrêt de 48 h"},"passages":[0,3600000],"attendu":{"lignes":{"canal_arrete":"rouge"},"urgents_total":{"canal_arrete":1},"cle_urgent":"canal_arrete:formulaire_site:"}},
+  {"critere":"VA-13","nom":"formulaire arrêté jusqu'à la décision de Benj","envoi":{"formulaire_coupe_jusqua":"infinity","formulaire_coupe_motif":"2 plaintes en 7 jours : arrêt jusqu’à ta décision"},"attendu":{"lignes":{"canal_arrete":"rouge"},"urgents":["canal_arrete"]}},
+  {"critere":"VA-13","nom":"Gmail de prospection coupé","envoi":{"gmail_coupe_jusqua":"+20h"},"attendu":{"lignes":{"gmail_bloque":"rouge"},"urgents":["gmail_bloque"],"cle_urgent":"gmail_bloque:gmail:"}},
+  {"critere":"VA-13","nom":"notice vérifiée il y a 8 jours","envoi":{"notice_verifiee_le":"-8j"},"attendu":{"lignes":{"notice_perimee":"rouge"},"urgents":[]}},
+  {"critere":"VA-13","nom":"notice vérifiée il y a 6 jours","envoi":{"notice_verifiee_le":"-6j"},"attendu":{"lignes":{},"urgents":[]}},
+  {"critere":"VA-13","nom":"deux modèles suspendus","envoi":{"modeles_suspendus":[{"modele_id":"premier_contact_v2","motif":"4 STOP sur 100 envois"},{"modele_id":"relance_v1","motif":"4 STOP sur 100 envois"}]},"attendu":{"lignes":{"modele_suspendu":"jaune"},"urgents":[],"nombre":{"modele_suspendu":2}}},
+  {"critere":"VA-13","nom":"300 envois sans réponse","envoi":{"alerte_message":[{"technologie":"contact_form_7","envois_300":300,"reponses_300":0}]},"attendu":{"lignes":{"changer_message":"jaune"},"urgents":[]}},
+  {"critere":"VA-14","nom":"Meta coupé pour 3 h encore","envoi":{"meta_coupe_jusqua":"+3h"},"attendu":{"lignes":{"meta_erreur":"jaune"},"urgents":[]}},
+  {"critere":"VA-14","nom":"Meta coupé, coupure passée","envoi":{"meta_coupe_jusqua":"-1h"},"attendu":{"lignes":{},"urgents":[]}},
+  {"critere":"VA-19","nom":"jour du bilan, arrêt du froid","envoi":{"bilan":{"le":"$jour","verdict":"arret_froid"}},"attendu":{"lignes":{"bilan":"jaune"},"urgents":[],"geste":{"bilan":"choisir un autre segment ou une autre offre"}}},
+  {"critere":"VA-19","nom":"la veille du bilan","envoi":{"bilan":{"le":"$demain","verdict":null}},"attendu":{"lignes":{},"urgents":[]}},
+  {"critere":"VA-19","nom":"encaissé du mois à 0","envoi":{},"encaisse":{"brut":0},"attendu":{"lignes":{},"urgents":[],"decisions_vercel":0}},
+  {"critere":"VA-19","nom":"premier encaissement, deux passages","envoi":{},"encaisse":{"brut":{"$hasard":[300,900]}},"passages":[0,300000],"attendu":{"lignes":{"vercel_pro":"jaune"},"urgents":[],"decisions_vercel":1}},
+  {"critere":"VA-19","nom":"jeton Meta expiré","envoi":{},"agents":[{"nom":"vigie","capacites":["veille_meta"],"periode_minutes":1440,"battement_le":"-2h","en_pause":false,"disjoncteur_ouvert":false,"jeton_externe_expire_le":"-2j"}],"attendu":{"lignes":{"jeton_meta_expire":"rouge"},"urgents":[],"geste":{"jeton_meta_expire":"presti-secrets/meta-bibliotheque-pubs.txt"}}}
+ ]
+}

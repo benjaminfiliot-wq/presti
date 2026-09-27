@@ -1,0 +1,40 @@
+{
+  "_": "État de base du veilleur (026-045) : ce que rendent ops_etat() (0098, avec capacites pour chaque agent), ops_stockage_octets(), ops_argent_etat() (0100), acq_disjoncteurs_etat() et acq_jauges() (0111, 026-063) un jour calme. Aucune ligne d'attention attendue. Dates relatives à l'instant simulé du cas : « -20min », « +6j », « -3p » (trois périodes de l'agent), « -2p+130min ». { \"$hasard\": [min, max] } : un entier tiré à chaque passage. « absente » : la fonction n'existe pas encore (PGRST202) ; « erreur » : elle répond 500. Aucun nom réel.",
+  "maintenant": "2026-10-20T10:00:00Z",
+  "ops_etat": {
+    "taches": { "file": { "$hasard": [0, 4] }, "bail": 0, "faite": { "$hasard": [1, 9] }, "echecs_24h": 0 },
+    "agents": [
+      { "nom": "a0", "capacites": ["veille"], "periode_minutes": 5, "battement_le": "-1min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+      { "nom": "systeme", "capacites": ["systeme"], "periode_minutes": 1440, "battement_le": "-30min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+      { "nom": "redacteur", "capacites": ["redaction"], "periode_minutes": 60, "battement_le": "-20min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null },
+      { "nom": "facteur", "capacites": ["envoi"], "periode_minutes": 15, "battement_le": "-5min", "en_pause": false, "disjoncteur_ouvert": false, "jeton_externe_expire_le": null }
+    ],
+    "decisions_ouvertes": [],
+    "interrupteurs": { "pause_generale": false, "envoi_froid": false },
+    "couts_mois": { "$hasard": [0, 20] },
+    "notifications_jour": 0
+  },
+  "stockage_octets": { "$hasard": [100000000, 400000000] },
+  "argent": { "en_file": 0, "plus_vieux_s": 0, "abandonnes_24h": 0, "faits_24h": { "$hasard": [0, 5] }, "non_faits_plus_de_15_min": 0 },
+  "envoi": "absente",
+  "jauges": "absente",
+  "encaisse": { "brut": 0 },
+  "pause": false,
+  "envoi_calme": {
+    "palier": "P1",
+    "formulaire_coupe_jusqua": null,
+    "formulaire_coupe_motif": null,
+    "gmail_coupe_jusqua": null,
+    "meta_coupe_jusqua": null,
+    "notice_verifiee_le": "-2j",
+    "bilan": { "le": null, "verdict": null },
+    "technologies": [
+      { "technologie": "contact_form_7", "etat": "active", "pause_motif": null, "echecs_affilee": 0, "envois_300": { "$hasard": [10, 120] }, "reponses_300": { "$hasard": [0, 4] } },
+      { "technologie": "wpforms", "etat": "active", "pause_motif": null, "echecs_affilee": 1, "envois_300": { "$hasard": [10, 120] }, "reponses_300": { "$hasard": [0, 4] } }
+    ],
+    "modeles_suspendus": [],
+    "alerte_message": [],
+    "formulaires_jour": { "$hasard": [0, 10] },
+    "email_sollicite_jour": { "$hasard": [0, 3] }
+  }
+}

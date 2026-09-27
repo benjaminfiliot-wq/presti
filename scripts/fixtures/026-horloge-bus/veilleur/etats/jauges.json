@@ -1,0 +1,10 @@
+{
+  "_": "VA-18 et VA-17 : les jauges des fournisseurs. acq_jauges() rend les compteurs (0111) ; l'état vient de calculerJauges (026-064), que le juge double : il impose un état qui CONTREDIT la part utilisée (attention à 10 %, ok à 99 %), pour qu'un veilleur qui recalculerait un seuil se voie. « calculer » : les états rendus par la doublure, ou « absente » (module non encore écrit).",
+  "acq_jauges": { "periode": "2026-10", "jauges": [{ "fournisseur": "formulaire_jour", "utilise": 1, "plafond": 10 }, { "fournisseur": "reponse_privee", "utilise": 99, "plafond": 100 }] },
+  "cas": [
+    { "nom": "une jauge en attention, une autre à 99 % mais ok", "jauges": "presente", "calculer": [{ "id": "formulaire_jour", "libelle": "formulaires du jour", "utilise": 1, "plafond": 10, "part": 0.1, "etat": "attention" }, { "id": "reponse_privee", "libelle": "réponses privées", "utilise": 99, "plafond": 100, "part": 0.99, "etat": "ok" }], "attendu": { "lignes": { "quota_haut": "jaune" }, "urgents": [], "nomme": ["formulaires du jour"], "ne_nomme_pas": ["réponses privées"] } },
+    { "nom": "une jauge pleine", "jauges": "presente", "calculer": [{ "id": "formulaire_jour", "libelle": "formulaires du jour", "utilise": 10, "plafond": 10, "part": 1, "etat": "pleine" }], "attendu": { "lignes": { "jauge_pleine": "rouge" }, "urgents": [] } },
+    { "nom": "acq_jauges absente", "jauges": "absente", "calculer": [{ "id": "formulaire_jour", "libelle": "formulaires du jour", "utilise": 10, "plafond": 10, "part": 1, "etat": "pleine" }], "attendu": { "lignes": {}, "urgents": [] } },
+    { "nom": "calculerJauges et carteAttention absentes (VA-17)", "jauges": "presente", "calculer": "absente", "envoi": { "modeles_suspendus": [{ "modele_id": "premier_contact_v2", "motif": "4 STOP sur 100 envois" }], "formulaire_coupe_jusqua": "+30h", "formulaire_coupe_motif": "1 avis d’abus : arrêt de 48 h" }, "attendu": { "lignes": { "canal_arrete": "rouge", "modele_suspendu": "jaune" }, "urgents": ["canal_arrete"] } }
+  ]
+}

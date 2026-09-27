@@ -1,0 +1,84 @@
+// TÉMOIN (026-045) — l'implémentation de référence de app/api/agents/tic/route.ts (fiche 026-049), sur laquelle tic-qa --temoin
+// doit être VERT. Ce n'est pas le code livré : 026-049 écrit le sien. Suffixe .temoin : hors de `npm run typecheck` du dépôt.
+//
+// Le tic : pg_cron l'appelle chaque minute (0101, 026-086). Sous un budget de 25 s : les baux expirés, le balayage des
+// commandes payées, la file de l'argent, puis, une fois par créneau de 5 minutes, le veilleur A0. Chaque étape est isolée ;
+// le passage est toujours noté en dernier ; la réponse ne porte que des nombres, des statuts et des raisons courtes.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { ops_baux_expirer } from '@/lib/agents/bus'
+import { balayerCommandesPayees, traiterFileArgent } from '@/lib/agents/fileArgent'
+import { veilleur } from '@/lib/agents/veilleur'
+import { pauseGenerale } from '@/lib/agents/pause'
+import { enregistrerPassage } from '@/lib/alertes'
+import { consommerLimite } from '@/lib/limites'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+export const maxDuration = 60
+
+const BUDGET_MS = 25_000
+/** Ce qu'il faut encore au veilleur pour tenir dans le budget : en dessous, il attend le prochain créneau. */
+const RESERVE_VEILLEUR_MS = 8_000
+type Statut = 'ok' | 'echec' | 'saute'
+type Etape = { statut: Statut; dureeMs?: number; raison?: string } & Record<string, number | string | undefined>
+
+/** Les seuls nombres d'un rendu : aucun texte, aucun identifiant ne sort de la route. */
+function nombres(r: unknown): Record<string, number> {
+  const out: Record<string, number> = {}
+  if (!r || typeof r !== 'object') return out
+  for (const [k, v] of Object.entries(r as Record<string, unknown>)) {
+    if (typeof v === 'number' && Number.isFinite(v)) out[k] = v
+    else if (Array.isArray(v)) out[k] = v.length
+  }
+  return out
+}
+/** Le créneau de 5 minutes, en UTC : AAAAMMJJHHmm, minutes arrondies à 5 vers le bas. */
+function creneau(d: Date): string {
+  const x = new Date(d.getTime())
+  x.setUTCMinutes(x.getUTCMinutes() - (x.getUTCMinutes() % 5), 0, 0)
+  return x.toISOString().replace(/[-:T]/g, '').slice(0, 12)
+}
+
+export async function GET(req: Request) {
+  if (!actif('busAgents')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const secret = process.env.CRON_SECRET
+  const auth = req.headers.get('authorization')
+  if (!secret || auth !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+
+  const debut = Date.now()
+  const reste = () => BUDGET_MS - (Date.now() - debut)
+  const etapes: Record<string, Etape> = {}
+  let reussi = true
+  const etape = async (nom: string, f: () => Promise<unknown>) => {
+    if (reste() <= 0) { etapes[nom] = { statut: 'saute', raison: 'budget epuise' }; return }
+    const t = Date.now()
+    try {
+      const r = await f()
+      etapes[nom] = { statut: 'ok', dureeMs: Date.now() - t, ...nombres(r) }
+    } catch {
+      reussi = false
+      etapes[nom] = { statut: 'echec', dureeMs: Date.now() - t }
+    }
+  }
+
+  await etape('baux', async () => { const r = await ops_baux_expirer(); if (!r.ok) throw new Error('bus'); return { expires: typeof r.data === 'number' ? r.data : 0 } })
+  await etape('balayage', () => balayerCommandesPayees())
+  await etape('argent', () => traiterFileArgent({ budgetMs: Math.min(12_000, reste()) }))
+
+  const maintenant = new Date()
+  if (maintenant.getUTCMinutes() % 5 !== 0) etapes.veilleur = { statut: 'saute', raison: 'hors creneau' }
+  else if (reste() < RESERVE_VEILLEUR_MS) etapes.veilleur = { statut: 'saute', raison: 'budget insuffisant' }
+  else {
+    let libre = false
+    try { libre = await consommerLimite(`a0:creneau:${creneau(maintenant)}`, 1, 300) } catch { libre = false }
+    if (!libre) etapes.veilleur = { statut: 'saute', raison: 'creneau deja pris' }
+    else await etape('veilleur', () => veilleur({ maintenant }))
+  }
+
+  let pause = false
+  try { pause = (await pauseGenerale()).active === true } catch { pause = false }
+  const dureeMs = Date.now() - debut
+  await enregistrerPassage('tic', { etapes, dureeMs, pause }, reussi)
+  return reussi ? NextResponse.json({ ok: true, etapes, dureeMs }) : NextResponse.json({ ok: false, etapes }, { status: 500 })
+}

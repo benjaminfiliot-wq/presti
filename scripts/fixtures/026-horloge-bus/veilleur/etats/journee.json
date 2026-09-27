@@ -1,0 +1,39 @@
+{
+  "_": "VA-3 et VA-4 : une journée de Paris simulée. « journee » : de minuit à 23 h 55 (heure de Paris), un passage toutes les 5 minutes, avec 6 alertes non urgentes stables (disjoncteur, jeton à J-6, stockage, technologie en pause, modèle suspendu, 300 sans réponse) et un urgent (argent abandonné). Au plus 3 envois non urgents dans la journée, digests compris ; l'urgent une fois. « creneaux » : les passages de VA-4 (07 h 30, 07 h 35, 12 h 00, 18 h 30 à Paris, heure d'été) et les instants où creneauDigest est jugée seule.",
+  "journee": {
+    "debut": "2026-10-20T22:00:00Z",
+    "passages": 288,
+    "pas_ms": 300000,
+    "agents": [{ "nom": "vigie", "capacites": ["veille_meta"], "periode_minutes": 1440, "battement_le": "-2h", "en_pause": false, "disjoncteur_ouvert": true, "jeton_externe_expire_le": "+6j" }, { "nom": "redacteur", "en_pause": true }, { "nom": "facteur", "en_pause": true }],
+    "argent": { "abandonnes_24h": 1 },
+    "stockage_octets": { "$hasard": [740000000, 780000000] },
+    "envoi": {
+      "technologies": [{ "technologie": "wpforms", "etat": "pause", "pause_motif": "3 échecs de soumission d’affilée", "echecs_affilee": 3, "envois_300": 12, "reponses_300": 0 }],
+      "modeles_suspendus": [{ "modele_id": "relance_v1", "motif": "4 STOP sur 100 envois" }],
+      "alerte_message": [{ "technologie": "contact_form_7", "envois_300": 300, "reponses_300": 0 }]
+    },
+    "non_urgents": ["disjoncteur", "jeton_externe", "stockage", "technologie_en_pause", "modele_suspendu", "changer_message"],
+    "urgents": ["argent_bloque"]
+  },
+  "creneaux": {
+    "passages": [
+      { "a": "2026-10-20T05:30:00Z", "paris": "07:30", "digest": "matin" },
+      { "a": "2026-10-20T05:35:00Z", "paris": "07:35", "digest": null },
+      { "a": "2026-10-20T10:00:00Z", "paris": "12:00", "digest": null },
+      { "a": "2026-10-20T16:30:00Z", "paris": "18:30", "digest": "soir" }
+    ],
+    "creneau_digest": [
+      { "a": "2026-10-25T06:30:00Z", "attendu": "matin", "pourquoi": "25/10/2026, passage à l'heure d'hiver : 07 h 30 à Paris" },
+      { "a": "2026-10-24T05:30:00Z", "attendu": "matin", "pourquoi": "24/10/2026, heure d'été : 07 h 30 à Paris" },
+      { "a": "2026-10-25T05:30:00Z", "attendu": null, "pourquoi": "25/10/2026 : 06 h 30 à Paris (heure d'hiver), pas encore le matin" },
+      { "a": "2026-10-20T05:29:00Z", "attendu": null, "pourquoi": "07 h 29 à Paris" },
+      { "a": "2026-10-20T06:59:00Z", "attendu": "matin", "pourquoi": "08 h 59 à Paris" },
+      { "a": "2026-10-20T07:00:00Z", "attendu": null, "pourquoi": "09 h 00 à Paris" },
+      { "a": "2026-10-20T16:29:00Z", "attendu": null, "pourquoi": "18 h 29 à Paris" },
+      { "a": "2026-10-20T17:59:00Z", "attendu": "soir", "pourquoi": "19 h 59 à Paris" },
+      { "a": "2026-10-20T18:00:00Z", "attendu": null, "pourquoi": "20 h 00 à Paris" },
+      { "a": "2026-12-15T17:30:00Z", "attendu": "soir", "pourquoi": "15/12/2026, heure d'hiver : 18 h 30 à Paris" }
+    ],
+    "sections": ["Argent", "À décider", "Attention", "Agents", "Usine", "Délivrabilité", "File de l’argent", "Stockage", "Pause générale", "Coûts du mois"]
+  }
+}
