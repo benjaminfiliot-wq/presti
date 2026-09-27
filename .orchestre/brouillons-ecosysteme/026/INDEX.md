@@ -243,6 +243,15 @@
 | 026-217 | C14 : geste d’accord de Benj sur chaque publication | claude-code | `node scripts/contenu-qa.mjs --partie=geste` (026-204, sauf méta-juge de C16) | 026-204, 026-206, 026-013, 026-117 | non | Accord par publication ; autres gestes dans la fiche |
 | 026-218 | C15 : relevé des jetons par agent et par IA | codex | `node scripts/contenu-qa.mjs --partie=couts` (026-204, sauf méta-juge de C16) | 026-204, 026-013, 026-043, 026-053, 026-120, 026-216 | oui (usine) | Accord par publication ; autres gestes dans la fiche |
 | 026-219 | C16 : mutations des juges du domaine réseaux | codex | `node scripts/juges-026-mutations-preuve.mjs --script=scripts/juges-026-reseaux-mutations.mjs` (026-204, sauf méta-juge de C16) | 026-204, 026-205, 026-206, 026-207, 026-208, 026-209, 026-210, 026-211, 026-212, 026-213, 026-214, 026-215, 026-216, 026-217, 026-218 | non | Accord par publication ; autres gestes dans la fiche |
+| 026-220 | Juges des nouveaux outils et de la voie entrante | claude-code | `node scripts/juges-026-completude-qa.mjs --preuve-echecs` | 026-001, 026-020, 026-065 | non | Témoins verts et fautes rouges avant production |
+| 026-221 | OpenClaw confiné sur l’usine | codex | `node scripts/juges-026-completude-qa.mjs --partie=openclaw` | 026-220, 026-053, 026-194 | oui (usine) | Aucun abonnement ni jeton Claude |
+| 026-222 | Cursor comme exécutant borné | codex | `node scripts/juges-026-completude-qa.mjs --partie=cursor` | 026-220, 026-107, 026-115 | non | Coût nul et reprise prouvés |
+| 026-223 | Adaptateur Firecrawl borné | codex | `node scripts/juges-026-completude-qa.mjs --partie=firecrawl` | 026-220, 026-020 | oui (usine) | Robots, quota et repli 026-020 |
+| 026-224 | Fish Audio sous garde de licence | codex | `node scripts/juges-026-completude-qa.mjs --partie=fish` | 026-220, 026-158 | oui (usine) | Interne avant forfait commercial |
+| 026-225 | Recette mesurée de la voie entrante du 27/09 | codex | `node scripts/juges-026-completude-qa.mjs --partie=entrant` | 026-220, 026-065, 026-145, 026-096 | oui (usine) | Accord individuel, froid fermé |
+| 026-226 | Passe mensuelle des douleurs | codex | `node scripts/juges-026-completude-qa.mjs --partie=douleurs` | 026-220, 026-103, 026-121 | oui (usine) | Rapport sourcé et idempotent |
+| 026-227 | Lancement d’une expérience après la première vente | codex | `node scripts/juges-026-completude-qa.mjs --partie=experience` | 026-220, 026-226, 026-103 | oui (usine) | Encaissement confirmé avant départ |
+| 026-228 | Mutations du juge de complétude | codex | `node scripts/juges-026-mutations-preuve.mjs --fiche=026-228 --script=scripts/juges-026-completude-mutations.mjs --rapport=.orchestre/preuves/026-228/mutations.json` | 026-220 à 026-227 | non | Témoin vert, fautes rouges |
 
 ## Les vagues
 
@@ -387,6 +396,15 @@ Chaque PASS est poussé par Claude Code (build d'avant push sur l'usine : `node 
 | V135 | 026-217 | — | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
 | V136 | — | — | 026-218 | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
 | V137 | — | 026-219 | — | Dépendances de la fiche PASS ; accord individuel avant toute publication réelle |
+| V138 | 026-220 | — | — | Dépendances PASS ; juge 026-220 avant production ; aucun effet externe sans garde |
+| V139 | — | — | 026-221 | Dépendances PASS ; juge 026-220 avant production ; aucun effet externe sans garde |
+| V140 | — | 026-222 | — | Dépendances PASS ; juge 026-220 avant production ; aucun effet externe sans garde |
+| V141 | — | — | 026-223 | Dépendances PASS ; juge 026-220 avant production ; aucun effet externe sans garde |
+| V142 | — | — | 026-224 | Dépendances PASS ; juge 026-220 avant production ; aucun effet externe sans garde |
+| V143 | — | — | 026-225 | Dépendances PASS ; juge 026-220 avant production ; aucun effet externe sans garde |
+| V144 | — | — | 026-226 | Dépendances PASS ; juge 026-220 avant production ; aucun effet externe sans garde |
+| V145 | — | — | 026-227 | Dépendances PASS ; juge 026-220 avant production ; aucun effet externe sans garde |
+| V146 | — | 026-228 | — | Dépendances PASS ; mutation sur copies isolées |
 
 ## Les migrations : numéros définitifs et ordre d'application
 
@@ -645,6 +663,27 @@ Les 16 propositions C01–C16 de `reprise-cloud/docs/Ecosysteme-Marketing-Reel-2
 Laya/Jev est branché en décision locale, `--provider laya` explicite : `jev noul` reçoit le texte exact des chiffres et promesses avec la source avant publication ; seuil 0,5, sinon blocage et retour à Benj. `jev score` classe les contenus à republier avec leur provenance et des mesures suffisantes ; ce score n'écrit ni ne publie. `jev decide` peut classer, jamais rédiger. Le moteur indisponible bloque l'étape qui l'exige ; pas de fournisseur hébergé ni de modèle Ollama `:cloud` pour les données de prospect.
 
 R24 reste ouverte et l'accord individuel de Benj est requis pour chaque publication, même lorsqu'une ligne est approuvée. @vibecode.clips devient le compte TikTok Presti selon C08 ; les gestes sur le compte attendent l'accord explicite de Benj. Publora Starter reste au Crieur ; TikTok, Instagram et Facebook suivent des voies gratuites, sans publicité payante. R6 reste le préalable aux gestes Meta. La lecture scriptée de TikTok Studio ou Creative Center et le téléchargement de vidéos YouTube d'autrui restent exclus. Les ventes par réseau sont sourcées ; une vente par ligne déduite d'une fenêtre temporelle est présentée comme estimation.
+
+## Ce que la relecture de complétude du 27/09 a changé
+
+Source : `reprise-cloud/docs/revue-fiches-2026-09-26.md`, confrontée au registre `reprise-cloud/memoire/ecosysteme-presti.md` et au §6 de `reprise-cloud/docs/Ecosysteme-IA-Registre-2026-09-25.md`. Les 48 brouillons non faits cités ou nécessaires au raccordement des sept outils portent une section « Correction du 27/09 » ; les 6 fiches déjà faites sont consignées dans `reprises-2026-09-27.md` pour reprise par Claude Code. Leur ancien verdict n'est pas étendu par cet INDEX.
+
+- **OpenClaw :** la décision du 26/09 remplace le refus général du 25/09. 026-220 juge confinement, sorties réseau et modèles gratuits ; 026-228 les mute après production ; 026-221 installe sur l'usine sans abonnement Claude ni jeton Claude. Le pont Telegram reste un transport distinct et ne possède pas de porte d'envoi concurrente.
+- **Cursor :** 026-222 n'active l'exécutant qu'après contrôle des accès, du coût nul et d'une reprise ; 026-107/115/139 sont corrigées. Un coût inconnu ferme la voie.
+- **Firecrawl :** 026-223 fournit lecture et recherche bornées, robots, provenance, réserve de 1 000 crédits et repli 026-020. 026-020/022 sont à reprendre ; 026-165/215 portent la correction datée. Aucune clé Firecrawl n'est requise pour la voie gratuite.
+- **Fish Audio :** 026-224 distingue accès technique, licence et quota. 026-158/200/209 gardent `ff_siwis` pour la production tant qu'aucun forfait commercial n'est décidé ; Fish reste aux essais internes.
+- **Ollama :** 026-041/043 réconcilient LL-1, ses fixtures et le contrat ; 026-053/070/218 relèvent les modèles et compteurs. Ollama local peut recevoir les données admissibles ; Ollama Cloud gratuit ne reçoit jamais les données d'un prospect.
+- **Laya/Jev :** 026-041/043/070/085/165 reçoivent son rôle local de classement ou troisième avis, avec confiance ; il ne rédige ni n'autorise seul un envoi. `--provider laya` évite une bascule hébergée implicite.
+- **Perplexity :** 026-041/072/215 le réservent à une recherche ponctuelle publique après constat du plan et du coût, jamais à une boucle automatique ou à des données personnelles.
+- **Voie entrante du 27/09 :** 026-225 mesure demande, préparation, accord de Benj sur l'envoi exact, envoi, réponse, second accord et arrêt. L'essai peut conclure « bloqué » avec preuves ; il ne déclare pas prête la longue chaîne non finie. La prospection froide reste fermée jusqu'au 12/10.
+- **Boucles du Chef :** 026-226 ajoute la passe mensuelle des douleurs ; 026-227 attend un encaissement confirmé de la première vente pour lancer une expérience bornée.
+
+### Décisions R à trancher
+
+1. **Nom de « One 3G ».** Benj a cité une IA chinoise open source le 26/09 sans nom exact. Recommandation : demander son nom et sa licence avant toute fiche ou téléchargement ; ne pas deviner Wan ou Qwen.
+2. **Accès Cursor.** Le mode automatisable et son coût réellement nul restent à constater. Recommandation : garder 026-222 inactive tant que l'essai de reprise et le tarif ne sont pas prouvés.
+3. **Fish Audio commercial.** Aucun forfait n'est décidé. Recommandation : conserver la voix locale pour les médias publiés et demander une décision d'achat seulement si l'option Fish apporte une valeur mesurée.
+4. **Firecrawl.** Le plafond de 1 000 crédits vient de la revue ; le solde disponible doit être relevé avant un usage réel. Recommandation : garder l'adaptateur facultatif et le repli 026-020.
 
 ## Correspondance des ids
 

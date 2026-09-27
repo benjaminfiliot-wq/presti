@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-27T06:14:53Z
+# Digest — 2026-09-27T06:19:46Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 95 tâche(s) PASS, 185976 ligne(s) · faites par Claude Code : 14 tâche(s) PASS, 52615 ligne(s).
-**État** — file : 3 · en cours : 3 · faites : 113 · refusées : 6
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 96 tâche(s) PASS, 185976 ligne(s) · faites par Claude Code : 14 tâche(s) PASS, 52615 ligne(s).
+**État** — file : 3 · en cours : 2 · faites : 114 · refusées : 6
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -19,17 +19,17 @@
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 000-revue-026 | contenu | en-cours | usine-codex-39 | — | depuis 2026-09-27T06:07:27Z · Appliquer aux brouillons de la série 026 la relecture de complétude du 26/09 (reprise-cloud/docs/revue-fiches-2026-09-26.md) — corrections datées sur les fiches non faites, liste des reprises pour les fiches déjà faites, et 7 nouvelles fiches 026-220+ pour les décisions de Benj sans fiche (OpenClaw, Cursor, Firecrawl, Fish Audio, jalon du 27/09, douleurs mensuelles, expérience) |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-066 | test | file | ag-066g | — | Écrire les juges pilotage-sql-qa (--migration=lecture\|echanges\|station\|reglages), pilotage-route-qa et pilotage-gestes-qa, leur aide commune (copie de l'arbre avec le drapeau pilotage levé, serveur sur la copie, compte fondateur d'essai purgé dans un finally) et le lot b de la preuve, chacun échouant sur la référence avec son premier critère |
 | 026-102 | test | file | claude-code | — | Écrire le contrat du chef d'opérations « Matt », qui tourne 24 h/24 sur l'usine Oracle (consignes docs/agents/chef.md, chef-routine.md et chef-reunion.md ; schémas docs/agents/chef-plan.schema.json, avec compte rendu et consignes lues, et chef-reunion.schema.json, au contrat de la réunion d'équipage) et son juge scripts/chef-qa.mjs avec un faux bus local, --preuve-echecs sortant en code 0 seulement si les groupes appliquer, etat, cycle, consignes, fil et usine échouent aujourd'hui sur CH-A1, CH-E1, CH-C1, CH-N1, CH-F1 et CH-U1 et si le faux bus passe son autotest |
-| 026-038 | test | file | antigravity | — | Écrire les juges des droits du bus scripts/agents-garde-qa.mjs, scripts/agents-routes-qa.mjs et scripts/pause-qa.mjs, qui exécutent le vrai code contre un faux PostgREST et des doublures, et le lot 03 de la preuve, qui passe seulement si chaque juge échoue sur la référence avec le critère attendu et passe en --temoin |
+| 026-038 | test | file | claude-code | — | Écrire les juges des droits du bus scripts/agents-garde-qa.mjs, scripts/agents-routes-qa.mjs et scripts/pause-qa.mjs, qui exécutent le vrai code contre un faux PostgREST et des doublures, et le lot 03 de la preuve, qui passe seulement si chaque juge échoue sur la référence avec le critère attendu et passe en --temoin |
+| 000-revue-026 | contenu | fait | codex | PASS | 2026-09-27T06:19:46Z · 2s · 0 l. |
 | 000-geo-presti | feature | fait | usine-codex-40 | PASS | 2026-09-27T06:14:53Z · 0s · 274 l. |
 | 026-065 | feature | fait | ag-065g | PASS | 2026-09-26T15:57:21Z · 8s · 527 l. |
 | 026-055 | feature | fait | ag-055g | PASS | 2026-09-26T15:47:57Z · 12s · 312 l. |
 | 026-168 | test | fait | ag-168g | PASS | 2026-09-26T15:42:04Z · 11s · 335 l. |
 | 026-026 | test | fait | ag-026g | PASS | 2026-09-26T15:31:15Z · 32s · 329 l. |
-| 026-029 | test | fait | antigravity | PASS | 2026-09-26T15:23:26Z · 19s · 0 l. |
+| 026-029 | test | fait | claude-code | PASS | 2026-09-26T15:23:26Z · 19s · 0 l. |
 | 000-marketing-026 | contenu | fait | usine-codex-38 | PASS | 2026-09-26T15:00:53Z · 2s · 238 l. |
 | 026-023 | test | fait | claude-code | PASS | 2026-09-26T14:45:59Z · 63s · 3246 l. |
 | 026-022 | feature | fait | usine-codex-37 | PASS | 2026-09-26T09:46:00Z · 10s · 347 l. |
