@@ -6,11 +6,11 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-27T17:40:33Z
+# Digest — 2026-09-27T17:52:07Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 97 tâche(s) PASS, 187493 ligne(s) · faites par Claude Code : 24 tâche(s) PASS, 80783 ligne(s).
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 97 tâche(s) PASS, 187493 ligne(s) · faites par Claude Code : 25 tâche(s) PASS, 83091 ligne(s).
 **État** — file : 1 · en cours : 5 · faites : 126 · refusées : 8
 
 ## ⚠ 1 question(s) en attente
@@ -18,10 +18,10 @@
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
+| 026-013 | feature | en-cours | claude-code | — | depuis 2026-09-27T16:54:31Z · Écrire la migration 0098 qui pose les 13 fonctions SECURITY DEFINER des tâches (idempotence, profondeur 3, 5 sous-tâches, quota du jour, bail de 30 min, 3 tentatives, clôture par clé), des disjoncteurs, des décisions tranchées par un fondateur seulement et relues par leur auteur, des coûts plafonnés et de l'état du bus, avec jumeaux, contrôle et compte rendu d'un essai à sec généré par le juge |
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-007 | feature | en-cours | claude-code | — | depuis 2026-09-27T17:30:49Z · Mettre en service la sauvegarde quotidienne : premier envoi réel vers benjaminfiliot-wq/presti-sauvegarde, puis tâche planifiée Windows « Presti instantane quotidien » (chaque jour à 13 h et à l'ouverture de session, rattrapée au réveil), après l'accord écrit de Benj |
-| 026-013 | feature | en-cours | claude-code | — | depuis 2026-09-27T16:54:31Z · Écrire la migration 0098 qui pose les 13 fonctions SECURITY DEFINER des tâches (idempotence, profondeur 3, 5 sous-tâches, quota du jour, bail de 30 min, 3 tentatives, clôture par clé), des disjoncteurs, des décisions tranchées par un fondateur seulement et relues par leur auteur, des coûts plafonnés et de l'état du bus, avec jumeaux, contrôle et compte rendu d'un essai à sec généré par le juge |
 | 026-037 | test | en-cours | claude-code | — | depuis 2026-09-27T17:40:33Z · Écrire scripts/ops-acquisition-qa.mjs (--migration=socle\|echanges\|planification, --reel), scripts/routes-acquisition-qa.mjs (--lot=recensement\|echanges) et scripts/confidentialite-prospection-qa.mjs, et les inscrire au lot 4 de juges-026-acquisition-preuve.mjs, chacun échouant sur la référence avec son premier critère |
 | 026-168 | test | file | ag-168g | — | Écrire le juge de la planche station-planche-qa (--partie=planche : il lance lui-même, sur l'usine, l'atelier ~/claw3d-pixel sur 127.0.0.1 avec une liste blanche fermée, capture lui-même la planche des 20 salles et de la salle réservée dans la vraie mise en page à 1440×900, 1280×800 et 390×844, et juge grille entière, palette, licences du lot A, absence de donnée et poids) et le lot p de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
 | 026-067 | test | refuse | claude-code | FAIL | ✅ JA-1 référence 4041ec9 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (2421 fichiers), ancêtre de HEAD, sans lib/p |

@@ -1,0 +1,68 @@
+{
+  "lot": "02",
+  "fiche": "026-032",
+  "reference": "86ce0f3be9c202d9e0bb11448642c033c5449e57",
+  "reference_pourquoi": "La référence de preuve-01.json (HEAD relevé au début de 026-009) : ni supabase/migrations/0099_* à 0101_*, ni leurs contrôles, ni docs/agents/horloge.md. Les migrations 0096 et 0097 n'y sont pas non plus : la non-régression y est rouge, comme au lot 01, sans rien dire du critère attendu.",
+  "absents_de_la_reference": ["supabase/migrations/0099_", "supabase/migrations/0100_", "supabase/migrations/0101_", "supabase/controles/0099_", "supabase/controles/0100_", "supabase/controles/0101_", "docs/agents/horloge.md"],
+  "archive": ["supabase", "docs"],
+  "juges": [
+    { "commande": "node scripts/prospection-sql-qa.mjs", "echec_attendu": "PG-1", "fiche_jugee": "026-034", "reel": true },
+    { "commande": "node scripts/argent-sql-qa.mjs", "echec_attendu": "FA-1", "fiche_jugee": "026-036", "reel": true },
+    { "commande": "node scripts/horloge-sql-qa.mjs", "echec_attendu": "HS-1", "fiche_jugee": "026-086", "reel": true }
+  ],
+  "criteres": {
+    "JP-1": [
+      { "type": "echec-sur-reference" },
+      { "type": "motifs", "chemins": ["scripts/fixtures/026-horloge-bus/essais/0099.sql"], "absents": ["boite_", "'email'"] },
+      {
+        "type": "motifs",
+        "chemins": ["scripts/prospection-sql-qa.mjs"],
+        "presents": [
+          { "motif": "const CODES_VOIE_GRATUITE = \\[(?:'[a-z0-9_]+', ){18}'[a-z0-9_]+'\\]", "min": 1, "max": 1 },
+          { "motif": "'pause_generale'", "min": 1 }, { "motif": "'opposition'", "min": 1 }, { "motif": "'confirmation_stop'", "min": 1 },
+          { "motif": "'rgpd_hors_demande'", "min": 1 }, { "motif": "'envoi_froid_ferme'", "min": 1 }, { "motif": "'90_jours'", "min": 1 },
+          { "motif": "'relance_sans_contact'", "min": 1 }, { "motif": "'3_messages'", "min": 1 }, { "motif": "'72_heures'", "min": 1 },
+          { "motif": "'quota_absent'", "min": 1 }, { "motif": "'quota'", "min": 1 }, { "motif": "'quota_nouveaux'", "min": 1 },
+          { "motif": "'quota_reponses'", "min": 1 }, { "motif": "'verdicts'", "min": 1 }, { "motif": "'formulaire_deja'", "min": 1 },
+          { "motif": "'relance_formulaire'", "min": 1 }, { "motif": "'froid_email_interdit'", "min": 1 }, { "motif": "'preuve_demande_absente'", "min": 1 },
+          { "motif": "'relance_sollicitee'", "min": 1 }
+        ]
+      },
+      {
+        "type": "motifs",
+        "chemins": ["scripts/prospection-sql-qa.mjs", "scripts/argent-sql-qa.mjs", "scripts/horloge-sql-qa.mjs"],
+        "absents": ["presti-secrets", "console\\.(log|error)\\([^)]*process\\.env"],
+        "presents": [{ "motif": "lireEnvLocal\\(R\\)", "min": 3, "max": 3 }, { "motif": "dossierTravail\\(NOM\\)", "min": 6 }]
+      }
+    ],
+    "JP-2": [
+      { "type": "temoin" },
+      { "type": "reel-sans-secret" }
+    ],
+    "JP-3": [
+      {
+        "type": "bloc-essai",
+        "cas": [
+          { "commande": "node scripts/prospection-sql-qa.mjs --avec=0096,0097,0098", "jumeaux": ["0096", "0097", "0098", "0099"] },
+          { "commande": "node scripts/argent-sql-qa.mjs --avec=0096,0097,0098,0099", "jumeaux": ["0096", "0097", "0098", "0099", "0100"] },
+          { "commande": "node scripts/horloge-sql-qa.mjs --avec=0096,0097,0098,0099,0100", "jumeaux": ["0096", "0097", "0098", "0099", "0100", "0101"], "seulement_dans_exists": ["decrypted_secret"] }
+        ]
+      }
+    ],
+    "JP-4": [
+      { "type": "compte-rendu", "scenario": "scripts/fixtures/026-horloge-bus/essais/0099.sql" },
+      { "type": "compte-rendu", "scenario": "scripts/fixtures/026-horloge-bus/essais/0100.sql" },
+      { "type": "compte-rendu", "scenario": "scripts/fixtures/026-horloge-bus/essais/0101.sql" },
+      {
+        "type": "reutilise",
+        "fichiers": ["scripts/prospection-sql-qa.mjs", "scripts/argent-sql-qa.mjs", "scripts/horloge-sql-qa.mjs"],
+        "module": "./lib/sql-essai.mjs",
+        "noms": ["lireCompteRendu", "blocEssai", "analyserEssai", "empreinte", "jumeauNuCoupe", "clesScenario", "nonRegression", "creerRapport"],
+        "appeles": ["lireCompteRendu", "blocEssai", "analyserEssai", "empreinte", "jumeauNuCoupe", "clesScenario", "nonRegression", "creerRapport"]
+      }
+    ],
+    "JP-5": [
+      { "type": "immobile" }
+    ]
+  }
+}
