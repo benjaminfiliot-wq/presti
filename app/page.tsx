@@ -11,6 +11,7 @@ import { FLAGS, actif } from '@/lib/flags'
 import Comparatif from '@/app/Comparatif'
 import { OFFRES, pointsForts } from '@/lib/plans'
 import { SITE_A_LA_DEMANDE } from '@/lib/siteCommande'
+import { FAQ } from '@/lib/faq'
 
 // Google Search Console : la balise de vérification n'est posée QUE sur la landing — jamais sur
 // /site ni /p, qui vivent sur le domaine de l'artisan (marque blanche).
@@ -33,6 +34,20 @@ const I = {
 export default function Home() {
   return (
     <div className="lp">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: FAQ.slice(0, 8).map((f) => ({
+              '@type': 'Question',
+              name: f.question,
+              acceptedAnswer: { '@type': 'Answer', text: f.reponse },
+            })),
+          }).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026'),
+        }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

@@ -315,3 +315,4 @@
 {"id":"026-065","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T15:57:21Z","duree_s":8,"agent":"ag-065g","executant":"antigravity","lignes":527,"dossier":"fait"}
 {"id":"026-066","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T15:59:01Z","duree_s":6,"agent":"ag-066g","executant":"antigravity","lignes":413,"dossier":"en-cours"}
 {"id":"026-066","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T15:59:22Z","duree_s":7,"agent":"ag-066g","executant":"antigravity","lignes":413,"dossier":"fait"}
+{"id":"000-geo-presti","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T06:14:53Z","duree_s":0,"agent":"usine-codex-40","executant":"codex","lignes":274,"dossier":"fait"}

@@ -1,0 +1,19 @@
+# Presti
+
+> Presti aide les artisans du bâtiment à traiter leurs demandes clients : une réponse est prête en moins d’une minute. Presti propose aussi un site à 300 €, TVA non applicable.
+
+## Découvrir Presti
+
+- [Accueil](https://prestiapp.fr/) : présentation de l’assistant IA, des réponses aux demandes, des devis, des factures et des abonnements.
+- [Questions fréquentes](https://prestiapp.fr/faq) : fonctionnement de Presti, sécurité des données, essai, tarifs et validation des devis.
+- [Tarifs](https://prestiapp.fr/tarifs) : formules d’abonnement et crédits.
+
+## Contacter et utiliser le service
+
+- [Contact](https://prestiapp.fr/contact) : adresser une question à l’équipe Presti.
+- [Commander un site](https://prestiapp.fr/site/commander) : demander un site à 300 € une fois, sans abonnement, TVA non applicable.
+
+## Conditions et confidentialité
+
+- [Conditions générales d’utilisation](https://prestiapp.fr/cgu) : conditions applicables au service.
+- [Confidentialité](https://prestiapp.fr/confidentialite) : traitement des données personnelles.
