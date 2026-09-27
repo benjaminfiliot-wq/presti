@@ -23,6 +23,9 @@
 // le faux bus et les appels consignés par le faux ssh, jamais ce qu'un script dit avoir fait ; il lit les unités systemd par
 // un analyseur INI et les scripts bash instruction par instruction (commentaires ôtés, here-documents rattachés) ; il lance
 // presti-coffre.sh, presti-journal.sh et avec-coffre.mjs pour de vrai, sur des dossiers d'essai, jamais sur un vrai coffre ;
+// il JOUE socle.sh et les scripts distants de maj, installer et arreter sur un banc de simulation (fixtures/…/banc-sim.sh :
+// chemins absolus remis sous un bac, commandes système doublées et consignées) et juge ce qu'ils ont fait, pas seulement
+// ce qu'ils contiennent (réparation du 27/09, après la revue Codex : .orchestre/preuves/026-048/reparation-2026-09-27.md) ;
 // il refuse tout journal, coffre d'essai ou echecs-attendus.md de 0 octet.
 //
 // Doublures sous Windows : un `spawn` sans shell ne lance ni un .mjs ni un .cmd. Le juge compile donc (csc du .NET
@@ -379,6 +382,32 @@ function lancerBash(fichier, args, { env = {}, entree, delaiMs = 30_000 } = {}) 
   return lancer(trouverBash(), [copieBash(fichier), ...args], { cwd: TRAVAIL, env: envDe({ LANG: 'C.UTF-8', ...env }, chemins), entree, delaiMs })
 }
 
+// ── le banc de simulation (réparation du 27/09) : un script distant JOUÉ, pas seulement lu ────────────────────────────
+// La revue Codex du 27/09 a laissé verts SO-2 (useradd sous une condition inversée), SO-4 (chown sans -R), SO-5 (garde de
+// maj inversée) et SO-6 (installer qui saute les unités) : la lecture du texte trouvait les bonnes commandes, pas ce
+// qu'elles font. Le banc joue le script (socle.sh, ou ce que usine-agents.mjs envoie à ssh) sous bash : ses chemins absolus
+// (/etc, /srv, /home, /usr, /var, /opt) sont remis sous <bac>/racine, et les commandes système sont les doublures de
+// fixtures/…/banc-sim.sh, qui consignent chaque appel et ne touchent rien hors du bac.
+const BANC_SIM = path.join(FIX, 'banc-sim.sh')
+let nSim = 0
+/** Rend { code, sortie, erreur, appels: [{ sous, cmd, args }] (chemins remis en clair), contenu(rel) : noms d'un dossier du bac }. */
+async function simuler(script, { nom, env = {}, preparer } = {}) {
+  const d = dossierNeuf('sim', `${String(++nSim).padStart(2, '0')}-${nom}`)
+  const racine = path.join(d, 'racine')
+  const sous = (relatif) => path.join(racine, ...relatif.split('/'))
+  for (const x of ['tmp', 'home-usine']) fs.mkdirSync(sous(x), { recursive: true })
+  if (preparer) preparer(sous)
+  const Rs = versSlash(racine)
+  const remappe = lf(script).replace(/(^|[\s"'=(:;|&<>`])\/(etc|srv|home|usr|var|opt)(?=\/)/g, (m, avant, dossier) => `${avant}${Rs}/${dossier}`)
+  const f = path.join(d, 'script.sh')
+  fs.writeFileSync(f, `${lf(lire(BANC_SIM))}\n${remappe}\n`)
+  const journal = path.join(d, 'journal')
+  fs.writeFileSync(journal, '')
+  const r = await lancer(trouverBash(), [versSlash(f)], { cwd: d, env: envDe({ LANG: 'C.UTF-8', SIM_JOURNAL: versSlash(journal), SIM_RACINE: Rs, HOME: `${Rs}/home-usine`, TMPDIR: `${Rs}/tmp`, ...env }), delaiMs: 30_000 })
+  const appels = lf(lire(journal)).split('\n').filter(Boolean).map((l) => { const [qui, cmd, ...args] = l.split('\x1f').map((x) => x.split(Rs).join('')); return { sous: qui, cmd, args } })
+  return { ...r, appels, contenu: (relatif) => (existe(sous(relatif)) ? fs.readdirSync(sous(relatif)).sort() : []) }
+}
+
 /** Analyse d'un script bash : instructions (commentaires ôtés, lignes suivies jointes, séparées par ; && || & et fin de
  *  ligne hors guillemets et hors $( )), here-documents rattachés à l'instruction qui les ouvre, pile des if/for/while
  *  qui l'entourent, et variables affectées au plus haut niveau (pour déplier $X, ${X}, ${X:-défaut}, ~ et $(dirname …)). */
@@ -661,6 +690,9 @@ function instancierCoffre(gabarit, cible) {
   const texte = brut.replace(/\{\{VALEUR_(\d+)\}\}/g, (m, n) => (valeurs[n] ||= lettres(32)))
   fs.mkdirSync(path.dirname(cible), { recursive: true })
   fs.writeFileSync(cible, texte)
+  // En 600, comme le vrai coffre : sous Linux, writeFileSync pose 644 (umask 022) et avec-coffre.mjs refuse, à raison, tout
+  // autre mode (code 4) ; CF-8 rougissait sur l'usine pour cette seule raison (27/09). Sans effet sur NTFS.
+  try { fs.chmodSync(cible, 0o600) } catch { /* NTFS */ }
   if (fs.statSync(cible).size === 0) throw new Error(`coffre d'essai de 0 octet : ${cible}`)
   return { valeurs: Object.values(valeurs), texte }
 }
@@ -965,14 +997,18 @@ async function groupeCoffre(R) {
     if (rM.code !== 0 || !existe(sM)) D.push(`coffre avec une ligne mal formée : code ${rM.code} (0 attendu pour un nom présent sur une bonne ligne)`)
     else if (JSON.parse(lire(sM)).empreintes.PRESTI_JETON_ATELIER !== sha256(vM[1])) D.push('coffre avec une ligne mal formée : PRESTI_JETON_ATELIER n\'a pas la valeur de sa ligne')
     if (!WIN) {
-      ecrireCoffreAvec()
-      fs.chmodSync(coffreAvec, 0o644)
-      const s4 = path.join(T, 'cf8-644.json'); nettoyer(s4)
-      const r4 = await lancerAvec(['PRESTI_JETON_CHEF', '--', process.execPath, ESPION, `--sortie=${s4}`])
-      if (r4.code !== 4 || existe(s4)) D.push(`coffre en 644 : code ${r4.code}${existe(s4) ? ', enfant lancé' : ''} (4 attendu, sans lancer)`)
+      // 600 exactement : lisible par le groupe (640) ou par les autres (644, 604), le coffre est refusé. Un contrôle qui ne
+      // regarderait que les autres (revue Codex du 27/09) passait 644 et laissait passer 640.
+      for (const mode of [0o644, 0o640, 0o604]) {
+        ecrireCoffreAvec()
+        fs.chmodSync(coffreAvec, mode)
+        const s4 = path.join(T, `cf8-${mode.toString(8)}.json`); nettoyer(s4)
+        const r4 = await lancerAvec(['PRESTI_JETON_CHEF', '--', process.execPath, ESPION, `--sortie=${s4}`])
+        if (r4.code !== 4 || existe(s4)) D.push(`coffre en ${mode.toString(8)} : code ${r4.code}${existe(s4) ? ', enfant lancé' : ''} (4 attendu, sans lancer)`)
+      }
       fs.chmodSync(coffreAvec, 0o600)
     } else R.note('CF-8 : sur le poste (NTFS), le contrôle du mode 600 est sauté ; il se juge sur un système POSIX')
-    return 'nom absent → 3, hors liste → 2, sans « -- » → 2, un nom commenté est absent (3), une ligne mal formée n\'empêche pas de lire les autres ; jamais d\'enfant lancé sur un refus'
+    return `nom absent → 3, hors liste → 2, sans « -- » → 2, un nom commenté est absent (3), une ligne mal formée n'empêche pas de lire les autres ; ${WIN ? '' : 'coffre en 644, 640 ou 604 → 4 ; '}jamais d'enfant lancé sur un refus`
   })
 
   await juger(R, 'CF-9', async (D) => {
@@ -1261,6 +1297,14 @@ async function groupeSocle(R) {
   })
 
   const S = contenuSocle !== null ? analyserBash(contenuSocle) : null
+  // socle.sh joué sur le banc, connecté sous ubuntu (le compte qui a sudo), compte agents absent (premier passage) ou déjà
+  // présent (rejeu) ; /srv/presti-agents absent dans les deux cas. Joué une fois par état, relu par SO-2 et SO-4.
+  const simsSocle = new Map()
+  const simSocle = async (etat) => {
+    if (!simsSocle.has(etat)) simsSocle.set(etat, await simuler(contenuSocle, { nom: `socle-agents-${etat}`, env: { SIM_AGENTS: etat, SIM_MOI: 'ubuntu' } }))
+    return simsSocle.get(etat)
+  }
+  const etatsSocle = { absent: 'compte agents absent', present: 'compte agents déjà présent' }
   await juger(R, 'SO-2', async (D) => {
     if (!S) { D.push(absent(FICHIERS.socleSh)); return }
     const I = S.instrs
@@ -1285,7 +1329,17 @@ async function groupeSocle(R) {
       if (!mode700(x.mode)) D.push(`${p} : mode ${x.mode || 'jamais posé'} (700 attendu)`)
       if (x.proprio !== 'agents') D.push(`${p} : propriétaire ${x.proprio || 'jamais posé'} (agents attendu)`)
     }
-    return 'set -euo pipefail ; agents créé s\'il manque (--create-home, /usr/sbin/nologin), dans aucun groupe sudo, adm ni admin ; /home/agents, .config/presti et travail en 700, propriété d\'agents'
+    // Et joué : compte absent → exactement un useradd agents et le script va au bout ; compte présent → aucun useradd. Une
+    // condition inversée (useradd quand le compte existe) passe la lecture ci-dessus, pas ceci.
+    for (const etat of Object.keys(etatsSocle)) {
+      const s = await simSocle(etat)
+      const ua = s.appels.filter((a) => /^(useradd|adduser)$/.test(a.cmd) && a.args.includes('agents'))
+      if (s.code !== 0) D.push(`socle.sh joué sur le banc, ${etatsSocle[etat]} : code ${s.code} (0 attendu) — ${court(s.erreur, 160)}`)
+      if (etat === 'absent' && ua.length !== 1) D.push(`socle.sh joué sur le banc, compte agents absent : ${ua.length} useradd agents exécuté(s) (1 attendu : le compte doit être créé)`)
+      if (etat === 'absent' && ua.length === 1 && !ua[0].args.some((w) => w === '--create-home' || w === '-m')) D.push('socle.sh joué sur le banc : useradd agents exécuté sans --create-home')
+      if (etat === 'present' && ua.length) D.push(`socle.sh joué sur le banc, compte agents déjà présent : ${ua.length} useradd agents exécuté(s) (aucun attendu : le script doit être rejouable)`)
+    }
+    return 'set -euo pipefail ; agents créé s\'il manque (--create-home, /usr/sbin/nologin), dans aucun groupe sudo, adm ni admin ; /home/agents, .config/presti et travail en 700, propriété d\'agents ; joué sur le banc : un useradd agents si le compte manque, aucun s\'il existe, code 0 les deux fois'
   })
 
   await juger(R, 'SO-3', async (D) => {
@@ -1337,7 +1391,17 @@ async function groupeSocle(R) {
     const d = droitsPoses(I)
     const srv = d.get('/srv/presti-agents') || {}
     if (srv.proprio !== 'usine') D.push(`/srv/presti-agents : propriétaire ${srv.proprio || 'jamais posé'} (usine, groupe agents, attendu)`)
-    if (!I.some((i) => i.commande === 'chown' && i.mots.includes('/srv/presti-agents') && i.mots.some((w) => /^usine[:.]agents$/.test(w)))) D.push('aucun « chown -R usine:agents /srv/presti-agents »')
+    // Récursif : sans -R (revue Codex du 27/09), seul le dossier racine prend le groupe agents, pas le code qu'il contient.
+    const usineAgents = (w) => /^usine[:.]agents$/.test(w)
+    const recursif = (w) => /^-[A-Za-z]*R[A-Za-z]*$/.test(w) || w === '--recursive'
+    const chownR = (cmd, mots) => (cmd === 'chown' && mots.map(sansSlashFinal).includes('/srv/presti-agents') && mots.some(usineAgents) && mots.some(recursif))
+      || (cmd === 'find' && sansSlashFinal(mots[0] || '') === '/srv/presti-agents' && mots.includes('chown') && mots.some(usineAgents) && !mots.includes('-maxdepth'))
+    if (!I.some((i) => chownR(i.commande, i.mots.slice(1)))) D.push('aucun « chown -R usine:agents /srv/presti-agents » (récursif : sans -R, le contenu de l\'arbre n\'a pas le groupe agents)')
+    // Et joué sur le banc, aux deux passages (premier et rejeu) : le chown récursif est exécuté, pas seulement écrit.
+    for (const etat of Object.keys(etatsSocle)) {
+      const s = await simSocle(etat)
+      if (s.code === 0 && !s.appels.some((a) => chownR(a.cmd, a.args))) D.push(`socle.sh joué sur le banc, ${etatsSocle[etat]} : aucun chown récursif usine:agents de /srv/presti-agents exécuté`)
+    }
     const modesSrv = I.filter((i) => (i.commande === 'chmod' && i.mots.some((w) => w.startsWith('/srv/presti-agents'))) || (i.commande === 'find' && i.mots.includes('/srv/presti-agents') && i.mots.includes('chmod')))
     const retireEcriture = modesSrv.some((i) => {
       const m = i.commande === 'find' ? i.mots[i.mots.indexOf('chmod') + 1] : i.mots.slice(1).find((w) => !w.startsWith('-'))
@@ -1360,7 +1424,7 @@ async function groupeSocle(R) {
       if (/\bbubblewrap\b/.test(t)) D.push(`ligne ${i.ligne} : bubblewrap (Codex prendrait /usr/bin/bwrap, hors du profil AppArmor)`)
       if (/sshd_config|\/etc\/ssh\/|systemctl\s+(restart|reload)\s+sshd?\b/.test(t)) D.push(`ligne ${i.ligne} : la configuration de sshd`)
     }
-    return 'presti-coffre et presti-journal installés depuis /srv/presti-agents/scripts/usine/*.sh en root:root 755 ; /srv/presti-agents = worktree détaché de ~/presti sur origin/main, usine:agents, sans écriture pour le groupe ni les autres ; travail et quotas.json liés vers /home/agents/travail ; ni ufw, ni iptables, ni bubblewrap, ni sshd'
+    return 'presti-coffre et presti-journal installés depuis /srv/presti-agents/scripts/usine/*.sh en root:root 755 ; /srv/presti-agents = worktree détaché de ~/presti sur origin/main, usine:agents (chown -R, exécuté sur le banc aux deux passages), sans écriture pour le groupe ni les autres ; travail et quotas.json liés vers /home/agents/travail ; ni ufw, ni iptables, ni bubblewrap, ni sshd'
   })
 
   await juger(R, 'SO-5', async (D) => {
@@ -1393,7 +1457,22 @@ async function groupeSocle(R) {
     if (f.code !== 0 || f.appels.length !== 1) D.push(`maj --forcer : code ${f.code}, ${f.appels.length} appel(s) ssh`)
     else if (lf(f.appels[0].stdinTexte) === lf(m.appels[0].stdinTexte)) D.push('maj --forcer envoie le même script que maj : --forcer ne lève pas le refus')
     if (!I.some((i) => !i.affecte && /\bgit -C \/srv\/presti-agents (rev-parse|log -1|describe)\b/.test(i.plat))) D.push('maj : le commit déployé n\'est pas imprimé')
-    return 'maj : git fetch, arbre avancé sur origin/main, HUSKY=0 npm ci --ignore-scripts seulement si package-lock.json change, Playwright dans /srv/playwright lisible par agents, droits réappliqués, refus si un service presti-* est actif (sauf --forcer), commit déployé imprimé'
+    // Et joué sur le banc (/srv/presti-agents/.git et /srv/playwright posés) : la garde se juge à ses effets. Une garde
+    // inversée (revue Codex du 27/09 : refus quand AUCUN service ne tourne) contient les mêmes mots.
+    const arbreMaj = (p) => { fs.mkdirSync(p('srv/presti-agents/.git'), { recursive: true }); fs.mkdirSync(p('srv/playwright'), { recursive: true }); fs.writeFileSync(p('srv/presti-agents/package-lock.json'), '{}\n') }
+    const avance = (s) => s.appels.some((a) => a.cmd === 'git' && a.args.map(sansSlashFinal).includes('/srv/presti-agents') && a.args.some((w) => /^(checkout|reset|switch)$/.test(w)) && a.args.includes('origin/main'))
+    const actifs = 'presti-atelier.service presti-surveillance.service'
+    const sA = await simuler(m.appels[0].stdinTexte, { nom: 'maj-services-actifs', env: { SIM_ACTIFS: actifs }, preparer: arbreMaj })
+    if (sA.code !== 1) D.push(`maj joué sur le banc, deux services presti-* en marche : code ${sA.code} (1 attendu : refus)`)
+    if (avance(sA)) D.push('maj joué sur le banc, deux services presti-* en marche : l\'arbre est avancé quand même')
+    const sR = await simuler(m.appels[0].stdinTexte, { nom: 'maj-au-repos', env: { SIM_ACTIFS: '' }, preparer: arbreMaj })
+    if (sR.code !== 0) D.push(`maj joué sur le banc, aucun service presti-* en marche : code ${sR.code} (0 attendu) — ${court(sR.erreur, 160)}`)
+    else if (!avance(sR)) D.push('maj joué sur le banc, aucun service presti-* en marche : l\'arbre /srv/presti-agents n\'est pas avancé sur origin/main')
+    if (f.code === 0 && f.appels.length === 1) {
+      const sF = await simuler(f.appels[0].stdinTexte, { nom: 'maj-forcer', env: { SIM_ACTIFS: actifs }, preparer: arbreMaj })
+      if (sF.code !== 0 || !avance(sF)) D.push(`maj --forcer joué sur le banc, services en marche : code ${sF.code}${sF.code === 0 ? ', arbre non avancé' : ''} (0 et l'arbre avancé sur origin/main attendus)`)
+    }
+    return 'maj : git fetch, arbre avancé sur origin/main, HUSKY=0 npm ci --ignore-scripts seulement si package-lock.json change, Playwright dans /srv/playwright lisible par agents, droits réappliqués, refus si un service presti-* est actif (sauf --forcer), commit déployé imprimé ; joué sur le banc : services en marche → code 1 sans toucher l\'arbre, au repos → 0 et arbre avancé, --forcer → 0 et arbre avancé'
   })
 
   const UNITES = JSON.parse(lire(path.join(FIX, 'unites', 'noms.json')))
@@ -1408,6 +1487,18 @@ async function groupeSocle(R) {
       return [...new Set(pris)]
     }
     const autres = (g) => Object.entries(UNITES.groupes).filter(([k]) => k !== g).flatMap(([, v]) => v.unites)
+    // Le banc : dans l'arbre déployé, les unités de TOUS les groupes (et deux leurres hors groupe) ; dans /etc/systemd/system,
+    // rien avant installer, tout avant arreter. Revue Codex du 27/09 : un installer qui saute les unités présentes au lieu de
+    // les activer, ou un verify sur /dev/null, passaient la lecture du texte.
+    const toutesUnites = [...new Set([...Object.values(UNITES.groupes).flatMap((v) => v.unites), 'presti-telegram.service', 'presti-veille.timer'])]
+    const poserUnites = (dansEtc) => (p) => {
+      for (const d of ['srv/presti-agents/scripts/usine/systemd', 'etc/systemd/system']) fs.mkdirSync(p(d), { recursive: true })
+      for (const u of toutesUnites) {
+        fs.writeFileSync(path.join(p('srv/presti-agents/scripts/usine/systemd'), u), `[Unit]\nDescription=essai du juge ${u}\n`)
+        if (dansEtc) fs.writeFileSync(path.join(p('etc/systemd/system'), u), `[Unit]\nDescription=essai du juge ${u}\n`)
+      }
+    }
+    const unitesDe = (appels, verbe) => appels.filter((a) => a.cmd === 'systemctl' && a.args.includes(verbe) && a.args.includes('--now')).flatMap((a) => a.args.filter((w) => !w.startsWith('-') && w !== verbe).map((w) => path.posix.basename(w)))
     for (const [g, def] of Object.entries(UNITES.groupes)) {
       const inst = await lancerAg(['installer', g])
       if (inst.code !== 0 || inst.appels.length !== 1) { D.push(`installer ${g} : code ${inst.code}, ${inst.appels.length} appel(s) ssh (0 et 1 attendus)`); continue }
@@ -1432,12 +1523,41 @@ async function groupeSocle(R) {
       const actives = motifsDe(I, (i) => /\bsystemctl enable\b/.test(i.plat) && i.mots.includes('--now'))
       for (const u of def.a_activer) if (!actives.some((m) => globRe(m).test(u))) D.push(`installer ${g} : ${u} n'est pas activée (systemctl enable --now)`)
       for (const u of autres(g)) if (actives.some((m) => globRe(m).test(u))) D.push(`installer ${g} : active aussi ${u}, d'un autre groupe`)
+      // Et joué sur le banc : ce qui arrive dans /etc/systemd/system, ce que verify contrôle, ce qui est activé.
+      const si = await simuler(inst.appels[0].stdinTexte, { nom: `installer-${g}`, preparer: poserUnites(false) })
+      if (si.code !== 0) D.push(`installer ${g} joué sur le banc : code ${si.code} (0 attendu) — ${court(si.erreur, 160)}`)
+      else {
+        const copiees = si.contenu('etc/systemd/system')
+        const attendues = [...def.unites].sort()
+        if (JSON.stringify(copiees) !== JSON.stringify(attendues)) D.push(`installer ${g} joué sur le banc : /etc/systemd/system reçoit ${JSON.stringify(copiees)} (exactement ${JSON.stringify(attendues)} attendu)`)
+        const verifs = si.appels.map((a, k) => ({ ...a, k })).filter((a) => a.cmd === 'systemd-analyze' && a.args[0] === 'verify')
+        const verifies = verifs.flatMap((a) => a.args.slice(1).filter((w) => !w.startsWith('-')))
+        const iReload = si.appels.findIndex((a) => a.cmd === 'systemctl' && a.args.includes('daemon-reload'))
+        if (!verifs.length) D.push(`installer ${g} joué sur le banc : systemd-analyze verify jamais exécuté`)
+        else {
+          const intrus = verifies.filter((w) => !def.unites.includes(path.posix.basename(w)) || !/^\/(etc\/systemd\/system|srv\/presti-agents\/scripts\/usine\/systemd)\/[^/]+$/.test(w))
+          const oubliees = def.unites.filter((u) => !verifies.some((w) => path.posix.basename(w) === u))
+          if (intrus.length) D.push(`installer ${g} joué sur le banc : systemd-analyze verify porte sur ${intrus.join(', ')} (les unités du groupe, et elles seules, attendues)`)
+          if (oubliees.length) D.push(`installer ${g} joué sur le banc : systemd-analyze verify ne contrôle pas ${oubliees.join(', ')}`)
+          if (iReload < 0 || verifs.some((a) => a.k > iReload)) D.push(`installer ${g} joué sur le banc : systemd-analyze verify ${iReload < 0 ? 'sans daemon-reload' : 'après daemon-reload'}`)
+        }
+        const activees = unitesDe(si.appels, 'enable')
+        for (const u of def.a_activer) if (!activees.some((m) => globRe(m).test(u))) D.push(`installer ${g} joué sur le banc : ${u} copiée mais jamais activée (systemctl enable --now)`)
+        for (const u of autres(g)) if (activees.some((m) => globRe(m).test(u))) D.push(`installer ${g} joué sur le banc : active aussi ${u}, d'un autre groupe`)
+      }
       const arr = await lancerAg(['arreter', g])
       if (arr.code !== 0 || arr.appels.length !== 1) { D.push(`arreter ${g} : code ${arr.code}, ${arr.appels.length} appel(s) ssh`); continue }
       const J = analyserBash(arr.appels[0].stdinTexte).instrs
       const coupees = motifsDe(J, (i) => /\bsystemctl disable\b/.test(i.plat) && i.mots.includes('--now'))
       for (const u of def.a_activer) if (!coupees.some((m) => globRe(m).test(u))) D.push(`arreter ${g} : ${u} n'est pas désactivée (systemctl disable --now)`)
       for (const u of autres(g)) if (coupees.some((m) => globRe(m).test(u))) D.push(`arreter ${g} : désactive aussi ${u}, d'un autre groupe`)
+      const sa = await simuler(arr.appels[0].stdinTexte, { nom: `arreter-${g}`, preparer: poserUnites(true) })
+      if (sa.code !== 0) D.push(`arreter ${g} joué sur le banc : code ${sa.code} (0 attendu) — ${court(sa.erreur, 160)}`)
+      else {
+        const coupeesJ = unitesDe(sa.appels, 'disable')
+        for (const u of def.a_activer) if (!coupeesJ.some((m) => globRe(m).test(u))) D.push(`arreter ${g} joué sur le banc : ${u} installée mais jamais désactivée (systemctl disable --now)`)
+        for (const u of autres(g)) if (coupeesJ.some((m) => globRe(m).test(u))) D.push(`arreter ${g} joué sur le banc : désactive aussi ${u}, d'un autre groupe`)
+      }
     }
     // La FERMETURE de la liste, pas seulement des exemples fixes : un septième groupe accepté doit tomber. Chaque nom qui
     // pourrait être une clé cachée est essayé par installer ET arreter, code 2 et aucun appel ssh exigés : les mots des
@@ -1482,7 +1602,7 @@ async function groupeSocle(R) {
     }))
     acceptes.sort()
     if (acceptes.length) D.unshift(`la liste des groupes n'est pas fermée : ${acceptes.length} essai(s) hors des ${permis.size} groupes (${[...permis].join(', ')}) sans code 2 ou avec un appel ssh — ${acceptes.slice(0, 6).join(' ; ')}${acceptes.length > 6 ? ' ; …' : ''}`)
-    return `installer et arreter pour ${Object.keys(UNITES.groupes).join(', ')} : seules les unités presti-<groupe>* copiées depuis /srv/presti-agents/scripts/usine/systemd/ (install -m 644), systemd-analyze verify avant daemon-reload, enable --now puis disable --now des minuteurs du groupe (et de presti-surveillance.service) ; aucun scp ; liste fermée : ${liste.length} autres noms (mots et clés du source, presti-<x> de scripts/usine/**, variantes, clés du prototype, liste fixe, hasard) → code 2 et aucun appel ssh, par installer et par arreter`
+    return `installer et arreter pour ${Object.keys(UNITES.groupes).join(', ')} : seules les unités presti-<groupe>* copiées depuis /srv/presti-agents/scripts/usine/systemd/ (install -m 644), systemd-analyze verify avant daemon-reload, enable --now puis disable --now des minuteurs du groupe (et de presti-surveillance.service) ; joué sur le banc : exactement les unités du groupe copiées, toutes passées à verify avant daemon-reload, ses minuteurs activés puis désactivés ; aucun scp ; liste fermée : ${liste.length} autres noms (mots et clés du source, presti-<x> de scripts/usine/**, variantes, clés du prototype, liste fixe, hasard) → code 2 et aucun appel ssh, par installer et par arreter`
   })
 
   await juger(R, 'SO-7', async (D) => {
@@ -1551,7 +1671,25 @@ async function groupeSocle(R) {
       const r = await jr(args)
       if (r.code !== 2) D.push(`presti-journal ${args.join(' ') || '(aucun argument)'} : code ${r.code} (2 attendu)`)
     }
-    return 'presti-journal lit les n dernières lignes (50 par défaut, 500 au plus) des journaux fixés, et pour config-codex les seules lignes model, sandbox_mode et network_access ; tout autre argument → code 2 ; ni agents.env ni auth.json nommés ni imprimés'
+    // Un journal qui est un second nom du coffre : agents poserait travail/chef/cycles.jsonl en lien PHYSIQUE vers
+    // ~/.config/presti/agents.env, et usine le lirait par presti-journal (revue Codex du 27/09 : le refus des liens physiques
+    // retiré restait vert). Puis un lien symbolique vers ~/.codex/auth.json. Refus exigé, rien d'imprimé.
+    const hl = path.join(T, 'so8-liens')
+    nettoyer(hl)
+    const ecrL = (relatif, texte) => { const f = path.join(hl, ...relatif.split('/')); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, texte); return f }
+    const secretLie = lettres(40), secretAuthLie = lettres(40)
+    const coffreLie = ecrL('.config/presti/agents.env', `PRESTI_JETON_CHEF=${secretLie}\n`)
+    const authLie = ecrL('.codex/auth.json', `{"jeton":"${secretAuthLie}"}\n`)
+    for (const d of ['chef', 'atelier', 'usine', 'surveillance']) fs.mkdirSync(path.join(hl, 'travail', d), { recursive: true })
+    const liens = []
+    fs.linkSync(coffreLie, path.join(hl, 'travail', 'chef', 'cycles.jsonl'))
+    liens.push(['chef', 'lien physique vers le coffre'])
+    try { fs.symlinkSync(authLie, path.join(hl, 'travail', 'atelier', 'atelier.log')); liens.push(['atelier', 'lien symbolique vers ~/.codex/auth.json']) } catch (e) { R.note(`SO-8 : lien symbolique impossible sur ce poste (${e.code}) : seul le lien physique est essayé`) }
+    for (const [journal, quoi] of liens) {
+      const r = await lancerBash(fJournal, [journal], { env: { HOME: versSlash(hl) } })
+      if (r.code === 0 || r.sortie.trim() || fuite(`${r.sortie}${r.erreur}`, secretLie) || fuite(`${r.sortie}${r.erreur}`, secretAuthLie)) D.push(`presti-journal ${journal} sur un journal qui est un ${quoi} : code ${r.code}, ${lignesDe(r.sortie).length} ligne(s) imprimée(s) (refus attendu, rien d'imprimé)`)
+    }
+    return `presti-journal lit les n dernières lignes (50 par défaut, 500 au plus) des journaux fixés, et pour config-codex les seules lignes model, sandbox_mode et network_access ; tout autre argument → code 2 ; ni agents.env ni auth.json nommés ni imprimés ; un journal ${liens.map(([, q]) => q).join(' ou ')} → refus, rien d'imprimé`
   })
 
   await juger(R, 'SO-9', async (D) => {
@@ -2060,7 +2198,10 @@ async function groupeSurveillance(R) {
       const toursVite = mesuresDe(j2).length
       if (toursVite < 5) D.push(`--service --accelerer : ${toursVite} mesure(s) en 10 s (un tour par seconde attendu, 5 au moins)`)
       if (!c) D.push('--service --accelerer : consommation illisible (le service s\'est arrêté ?)')
-      else if (c.us >= 500_000) D.push(`--service --accelerer : ${(c.us / 1e6).toFixed(2)} s de processeur en 10 s (moins de 0,5 s attendu : aucune charge factice)`)
+      // Le plafond vise une charge factice (boucle occupée, calcul inutile : de l'ordre de 10 s de processeur en 10 s).
+      // 0,5 s sous Linux, où le service tourne ; 1,5 s sur le poste Windows, où Node coûte plus (démarrage, lectures de
+      // fichiers) : le 27/09, la même surveillance y prenait 0,73 à 0,94 s, contre 0,27 s sur l'usine.
+      else if (c.us >= (WIN ? 1_500_000 : 500_000)) D.push(`--service --accelerer : ${(c.us / 1e6).toFixed(2)} s de processeur en 10 s (moins de ${WIN ? '1,5 s sur le poste Windows' : '0,5 s'} attendu : aucune charge factice)`)
       return `ni Buffer.alloc, ni gros tableau, ni crypto, ni child_process ; minuteur de 55 s ou plus ; 5 s de service lent : ${toursLents} mesure ; 10 s de service accéléré : ${toursVite} mesures pour ${c ? (c.us / 1e6).toFixed(2) : '?'} s de processeur`
     })
     await juger(R, 'SV-13', async (D) => {

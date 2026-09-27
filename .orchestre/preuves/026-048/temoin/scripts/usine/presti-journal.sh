@@ -25,4 +25,6 @@ case "$quoi" in
   *) usage ;;
 esac
 [ -n "$f" ] && [ -f "$f" ] || exit 0
+# Un journal lien symbolique, ou second nom (lien physique) d'un autre fichier : refus, rien n'est lu (SO-8, 27/09).
+if [ -L "$f" ] || [ "$(stat -c '%h' -- "$f")" != 1 ]; then echo "presti-journal : $quoi n'est pas un fichier ordinaire" >&2; exit 3; fi
 tail -n "$n" "$f"
