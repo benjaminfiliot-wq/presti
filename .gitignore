@@ -92,3 +92,6 @@ publications/
 .orchestre/preuves/021-*/**/*.mp4
 .orchestre/preuves/021-*/**/*.avif
 .orchestre/preuves/021-*/**/*.jpg
+
+# Copies de travail des agents Claude (workflows isolés, 27/09) : jamais dans le dépôt ni dans les paquets de l’usine
+.claude/worktrees/
