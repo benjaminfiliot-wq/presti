@@ -10,6 +10,8 @@ import { notifierEntreprise } from '@/lib/email'
 import { alertePaiement, envoyerAlertes } from '@/lib/alertes'
 import { mentionFranchise } from '@/lib/facturation'
 import { encaisserCommandeSite } from '@/lib/siteCommandeServeur'
+import { ouvrirCompteAcheteur } from '@/lib/siteAchatPublic'
+import { envoyerCourrielsDus } from '@/lib/siteLivraison'
 import { aiguiller, champsAbonnement } from '@/lib/stripeAiguillage'
 import type Stripe from 'stripe'
 
@@ -68,6 +70,15 @@ export async function POST(req: Request) {
         const r = await encaisserCommandeSite(s)
         if (r === 'introuvable') throw new Error(`paiement de site sans dossier : session ${s.id}`)
         console.log('[stripe webhook] commande de site', r, s.metadata?.commande_id)
+        // L'achat sans compte (fiche 026-025) : le compte naît APRÈS le paiement, et son lien part une fois. Relu après
+        // l'encaissement, qu'il soit neuf ou rejoué : un lien qui n'est pas parti (Resend en panne) repart au rejeu suivant.
+        // Une erreur remonte (500) et Stripe rejoue ; l'encaissement, lui, est idempotent.
+        const commandeId = String(s.metadata?.commande_id || '')
+        const { data: apres, error: eRelue } = await supabaseAdmin.from('sites_commandes').select('achat_public, artisan_id, lien_envoye_le').eq('id', commandeId).maybeSingle()
+        if (eRelue) throw new Error(`relecture de la commande ${commandeId} impossible : ${eRelue.message}`)
+        if (apres?.achat_public === true && !apres.artisan_id && !apres.lien_envoye_le) await ouvrirCompteAcheteur(commandeId)
+        // Les courriels de livraison dus (« commande payée ») : jamais bloquants, la tournée quotidienne les rattrape.
+        await envoyerCourrielsDus(commandeId).catch((e) => console.error('[stripe webhook] courriels de livraison', commandeId, e))
       } else if (voie === 'abonnement') {
         const conf = planConf(plan)
         const next = new Date(); next.setMonth(next.getMonth() + 1)

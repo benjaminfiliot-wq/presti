@@ -1,15 +1,16 @@
 // lib/siteCommandeServeur.ts — le site à la demande, côté serveur SEULEMENT (service_role).
 //
-// Trois responsabilités, et pas une de plus : lire et écrire le dossier d'un artisan (les écrans), poser
-// l'identifiant de session Stripe avant le paiement, et ENCAISSER au webhook — c'est-à-dire passer le
-// brouillon à 'payee'. Le webhook ne crée jamais de ligne : s'il ne trouve pas de brouillon à passer,
-// c'est qu'il l'a déjà fait (rejeu Stripe) ou qu'il y a une anomalie, et les deux se distinguent.
+// Quatre responsabilités, et pas une de plus : lire et écrire le dossier d'un artisan (les écrans), bâtir LE
+// Checkout du site (un seul constructeur, avec ou sans compte), poser l'identifiant de session Stripe avant le
+// paiement, et ENCAISSER au webhook — c'est-à-dire passer le brouillon à 'payee'. Le webhook ne crée jamais de
+// ligne : s'il ne trouve pas de brouillon à passer, c'est qu'il l'a déjà fait (rejeu Stripe) ou qu'il y a une
+// anomalie, et les deux se distinguent.
 import type Stripe from 'stripe'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { stripe } from '@/lib/stripe'
 import { mentionFranchise } from '@/lib/facturation'
 import { notifierEntreprise } from '@/lib/email'
-import { PRIX_SITE_CENTS, type Brouillon, type Commande } from '@/lib/siteCommande'
+import { PRIX_SITE_CENTS, DELAI_TEXTE, type Brouillon, type Commande } from '@/lib/siteCommande'
 
 const COLONNES = 'id, artisan_id, email, etat, domaine_mode, domaine, metier, metiers_secondaires, communes, matiere, prix_cents, stripe_session_id, paye_le, genere_le, valide_le, en_ligne_le, consigne, cree_le, modifie_le'
 
@@ -46,13 +47,88 @@ export async function poserSessionStripe(id: string, uid: string, sessionId: str
   if (error) throw new Error(`rattachement de la session Stripe impossible : ${error.message}`)
 }
 
+/** La même chose pour un achat SANS compte (fiche 026-025) : aucune session d'artisan à comparer, donc la ligne doit
+ *  être une commande publique, sans compte, encore en brouillon — jamais celle d'un artisan. */
+export async function poserSessionStripePublique(id: string, sessionId: string): Promise<void> {
+  const { error } = await supabaseAdmin.from('sites_commandes').update({ stripe_session_id: sessionId, modifie_le: new Date().toISOString() }).eq('id', id).is('artisan_id', null).eq('achat_public', true).eq('etat', 'brouillon')
+  if (error) throw new Error(`rattachement de la session Stripe impossible : ${error.message}`)
+}
+
+export type EntreeCheckoutSite = {
+  commandeId: string
+  /** L'adresse de l'acheteur : le client Stripe d'un artisan la remplace ; sans compte, c'est elle qui est facturée. */
+  email: string | null
+  /** Le client Stripe de l'artisan (abonnement passé) ; ignoré pour un achat sans compte. */
+  clientStripe: string | null
+  /** L'artisan connecté ; null pour un achat sans compte. */
+  uid: string | null
+  origin: string
+  public: boolean
+  /** La preuve du renoncement exprès au délai de rétractation (L221-28 1°, 000-retractation) : l'horodatage que la route
+   *  pose APRÈS avoir refusé tout corps sans accord. Il part dans les deux jeux de métadonnées, avec ou sans compte. */
+  metadata: { retractation_accord: string }
+}
+
+/**
+ * Le seul constructeur du Checkout du site à la demande (fiche 026-025) : la route avec compte et la route publique
+ * l'appellent, aucune ne bâtit son paiement elle-même. Stripe Checkout en mode 'payment' (un paiement, pas un abonnement),
+ * 300 € nets — franchise en base, art. 293 B : l'interrupteur STRIPE_TAXE_AUTO gouverne ici comme dans /api/subscribe,
+ * sinon le site dirait une chose et la facture une autre. Le prix vient de STRIPE_PRIX_SITE (le produit créé par Benj
+ * dans Stripe, H1) quand la variable existe ; sinon d'un prix en ligne, ce qui suffit en mode test.
+ * Les deux variantes ne diffèrent que par le client (customer ou customer_email), l'artisan (uid, client_reference_id),
+ * la marque de l'achat public (metadata.achat) et les adresses de retour.
+ */
+export function parametresCheckoutSite(p: EntreeCheckoutSite): Stripe.Checkout.SessionCreateParams {
+  const taxeAuto = process.env.STRIPE_TAXE_AUTO === '1'
+  const prixStripe = process.env.STRIPE_PRIX_SITE
+  const accord = typeof p.metadata?.retractation_accord === 'string' ? p.metadata.retractation_accord : null
+  const metadata: Record<string, string> = {
+    ...(p.public ? { achat: 'public' } : { uid: p.uid ?? '' }),
+    type: 'commande_site',
+    commande_id: p.commandeId,
+    ...(accord ? { retractation_accord: accord } : {}),
+  }
+  // Sans compte : jamais de client Stripe réutilisé (on ne sait pas à qui il appartient), la facture part à l'adresse saisie.
+  const client = p.public
+    ? (p.email ? { customer_email: p.email } : {})
+    : p.clientStripe ? { customer: p.clientStripe } : p.email ? { customer_email: p.email } : {}
+  return {
+    mode: 'payment',
+    line_items: [prixStripe
+      ? { price: prixStripe, quantity: 1 }
+      : {
+        price_data: {
+          currency: 'eur',
+          product_data: { name: 'Presti — votre site, à la demande', description: `Site professionnel avec référencement local. ${DELAI_TEXTE} Une fois, sans abonnement.` },
+          unit_amount: PRIX_SITE_CENTS,
+          ...(taxeAuto ? { tax_behavior: 'exclusive' as const } : {}),
+        },
+        quantity: 1,
+      }],
+    // La facture Stripe est la facture de Presti à l'artisan (art. 242 nonies A, ann. II CGI) : identité
+    // complète du client professionnel, et une vraie facture même pour un paiement unique.
+    billing_address_collection: 'required' as const,
+    tax_id_collection: { enabled: true },
+    invoice_creation: { enabled: true, invoice_data: { description: 'Site à la demande — Presti', ...(taxeAuto ? {} : { footer: mentionFranchise('auto') }) } },
+    // customer_update n'existe qu'avec customer (Stripe le refuse sans client).
+    ...(!p.public && p.clientStripe ? { customer_update: { address: 'auto' as const, name: 'auto' as const } } : {}),
+    ...(taxeAuto ? { automatic_tax: { enabled: true } } : {}),
+    ...client,
+    ...(!p.public && p.uid ? { client_reference_id: p.uid } : {}),
+    metadata,
+    payment_intent_data: { metadata: { ...metadata } },
+    success_url: p.public ? `${p.origin}/site/commander/merci?commande=${p.commandeId}` : `${p.origin}/site/commander?paiement=ok&commande=${p.commandeId}`,
+    cancel_url: p.public ? `${p.origin}/site/acheter?annule=1` : `${p.origin}/site/commander?paiement=annule`,
+  }
+}
+
 export type Encaissement = 'encaissee' | 'deja_encaissee' | 'introuvable'
 
 /** Au webhook (checkout.session.completed, mode 'payment', metadata.type = 'commande_site'). */
 export async function encaisserCommandeSite(s: Stripe.Checkout.Session): Promise<Encaissement> {
   const commandeId = String(s.metadata?.commande_id || '')
   const uid = String(s.metadata?.uid || s.client_reference_id || '')
-  const { data: avant, error: eLecture } = await supabaseAdmin.from('sites_commandes').select('id, artisan_id, etat, prix_cents, email, stripe_session_id').eq('id', commandeId).maybeSingle()
+  const { data: avant, error: eLecture } = await supabaseAdmin.from('sites_commandes').select('id, artisan_id, etat, prix_cents, email, stripe_session_id, achat_public, entreprise').eq('id', commandeId).maybeSingle()
   if (eLecture) throw new Error(`lecture de la commande ${commandeId} impossible : ${eLecture.message}`)
   if (!avant) {
     // Un paiement sans dossier : ça ne doit pas exister. On prévient et on laisse Stripe rejouer (500
@@ -88,10 +164,12 @@ export async function encaisserCommandeSite(s: Stripe.Checkout.Session): Promise
   if (clientId && stripe && process.env.STRIPE_TAXE_AUTO !== '1') {
     await stripe.customers.update(clientId, { invoice_settings: { footer: mentionFranchise('auto') } }).catch((e) => console.error('[site commande] pied de facture', e))
   }
-  const { data: a } = await supabaseAdmin.from('artisans').select('nom, email, metier').eq('id', avant.artisan_id ?? uid).maybeSingle()
+  // Un achat sans compte (fiche 026-025) n'a pas d'artisan : on n'en cherche aucun (l'uid vide ne doit rien lire).
+  const idArtisan = avant.artisan_id ?? (avant.achat_public ? null : uid || null)
+  const { data: a } = idArtisan ? await supabaseAdmin.from('artisans').select('nom, email, metier').eq('id', idArtisan).maybeSingle() : { data: null }
   await notifierEntreprise(
-    `Commande de site — ${a?.nom || avant.email}`,
-    `Un site à la demande vient d'être payé.\n\nArtisan : ${a?.nom || '—'} (${a?.metier || '—'})\nEmail : ${a?.email || avant.email}\nCommande : ${commandeId}\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}\n\nÉtat : payee — la génération peut démarrer (délai annoncé : 48 h ouvrées).`,
+    `Commande de site — ${a?.nom || avant.entreprise || avant.email}`,
+    `Un site à la demande vient d'être payé.\n\n${avant.achat_public && !avant.artisan_id ? `Achat sans compte : ${avant.entreprise || '—'} — le compte se crée maintenant, le lien de connexion part à l'acheteur.\n` : `Artisan : ${a?.nom || '—'} (${a?.metier || '—'})\n`}Email : ${a?.email || maj.email}\nCommande : ${commandeId}\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}\n\nÉtat : payee — la génération peut démarrer (délai annoncé : 48 h ouvrées).`,
   )
   console.log('[site commande] encaissée', commandeId)
   return 'encaissee'

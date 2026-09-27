@@ -237,6 +237,7 @@ if (FLAGS) {
     'siteCommande': ['route', '/api/site/commander/brouillon', 'GET', 'app/api/site/commander/brouillon/route.ts', 'app/api/site/commander/route.ts', 'app/site/commander/page.tsx'],
     // Baissé et lu (landing, /abonnement, profil, menu) : la preuve qu'il ne vend rien est le test du bouton, plus haut.
     'siteCommandeVente': ['lu'],
+    'siteAchatPublic': ['route', '/api/site/commander/public', 'POST', 'app/api/site/commander/public/route.ts', 'app/api/site/commander/public/renvoyer/route.ts'],
     // Baissé tant que 0074 n'est pas collée : la route doit alors répondre 404, comme partout.
     'supportArtisan': ['route', '/api/controle/support/demander', 'POST', 'app/api/controle/support/demander/route.ts'],
     // La garde du Poste passe AVANT le drapeau (401 à un inconnu, levé ou non) : la sonde est donc la route publique,

@@ -1,18 +1,16 @@
 // /api/site/commander — l'écran 4 : la page de paiement Stripe pour le site à la demande (prompt v15 §3.1).
 //
-// Stripe Checkout en mode 'payment' (un paiement, pas un abonnement), 300 € nets — franchise en base,
-// art. 293 B : l'interrupteur STRIPE_TAXE_AUTO gouverne ici comme dans /api/subscribe, sinon le site
-// dirait une chose et la facture une autre. Le prix vient de STRIPE_PRIX_SITE (le produit créé par Benj
-// dans Stripe, H1) quand la variable existe ; sinon d'un prix en ligne, ce qui suffit en mode test.
+// Le Checkout (mode 'payment', 300 € nets, franchise en base, STRIPE_TAXE_AUTO, STRIPE_PRIX_SITE, facture) est bâti par
+// parametresCheckoutSite (lib/siteCommandeServeur.ts), le MÊME constructeur que l'achat sans compte
+// (/api/site/commander/public, fiche 026-025) : les deux paiements ne peuvent plus diverger.
 // Rien n'est écrit en base ici hormis l'identifiant de session : c'est le webhook qui encaisse.
 import { NextResponse } from 'next/server'
 import { actif } from '@/lib/flags'
 import { authArtisan, estEchec } from '@/lib/authArtisan'
 import { stripe } from '@/lib/stripe'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { mentionFranchise } from '@/lib/facturation'
-import { PRIX_SITE_CENTS, DELAI_TEXTE, erreursAvantPaiement } from '@/lib/siteCommande'
-import { brouillonDe, poserSessionStripe } from '@/lib/siteCommandeServeur'
+import { erreursAvantPaiement } from '@/lib/siteCommande'
+import { brouillonDe, parametresCheckoutSite, poserSessionStripe } from '@/lib/siteCommandeServeur'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -36,37 +34,17 @@ export async function POST(req: Request) {
     // Un fondateur n'est jamais facturé (lib/credits.ts) : lui vendre un site serait un débit pour rien.
     if (artisan?.is_founder) return NextResponse.json({ error: 'Compte fondateur : le site se commande depuis un compte de test, pas depuis le vôtre.' }, { status: 403 })
     const origin = req.headers.get('origin') || 'https://prestiapp.fr'
-    const taxeAuto = process.env.STRIPE_TAXE_AUTO === '1'
-    const prixStripe = process.env.STRIPE_PRIX_SITE
-    const retractationAccord = new Date().toISOString()
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      line_items: [prixStripe
-        ? { price: prixStripe, quantity: 1 }
-        : {
-          price_data: {
-            currency: 'eur',
-            product_data: { name: 'Presti — votre site, à la demande', description: `Site professionnel avec référencement local. ${DELAI_TEXTE} Une fois, sans abonnement.` },
-            unit_amount: PRIX_SITE_CENTS,
-            ...(taxeAuto ? { tax_behavior: 'exclusive' as const } : {}),
-          },
-          quantity: 1,
-        }],
-      // La facture Stripe est la facture de Presti à l'artisan (art. 242 nonies A, ann. II CGI) : identité
-      // complète du client professionnel, et une vraie facture même pour un paiement unique.
-      billing_address_collection: 'required' as const,
-      tax_id_collection: { enabled: true },
-      invoice_creation: { enabled: true, invoice_data: { description: 'Site à la demande — Presti', ...(taxeAuto ? {} : { footer: mentionFranchise('auto') }) } },
-      ...(artisan?.stripe_customer_id ? { customer_update: { address: 'auto' as const, name: 'auto' as const } } : {}),
-      ...(taxeAuto ? { automatic_tax: { enabled: true } } : {}),
-      ...(artisan?.stripe_customer_id ? { customer: artisan.stripe_customer_id } : artisan?.email ? { customer_email: artisan.email } : {}),
-      client_reference_id: auth.uid,
-      metadata: { uid: auth.uid, type: 'commande_site', commande_id: brouillon.id, retractation_accord: retractationAccord },
-      payment_intent_data: { metadata: { uid: auth.uid, type: 'commande_site', commande_id: brouillon.id, retractation_accord: retractationAccord } },
-      success_url: `${origin}/site/commander?paiement=ok&commande=${brouillon.id}`,
-      cancel_url: `${origin}/site/commander?paiement=annule`,
-    })
+    const session = await stripe.checkout.sessions.create(parametresCheckoutSite({
+      commandeId: brouillon.id,
+      email: artisan?.email ?? null,
+      clientStripe: artisan?.stripe_customer_id ?? null,
+      uid: auth.uid,
+      origin,
+      public: false,
+      // L'accord L221-28 vient d'être vérifié plus haut (400 sans lui) : son horodatage part dans les deux métadonnées.
+      metadata: { retractation_accord: new Date().toISOString() },
+    }))
     await poserSessionStripe(brouillon.id, auth.uid, session.id)
     return NextResponse.json({ url: session.url, commande: brouillon.id })
   } catch (e) {

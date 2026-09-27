@@ -76,6 +76,12 @@ export const FLAGS = {
    *  LEVÉ le 25/09/2026 sur décision de Benj (campagne d'appels de Marans du 26/09) : 025 et sa suite en production,
    *  générateur jugé sur 4 métiers (025-21, 025-23), paiement vérifié (025-22). Vercel passe en Pro au premier site vendu. */
   siteCommandeVente: true,
+  /** 026-025 — l'achat du site SANS compte : POST /api/site/commander/public (Checkout du même constructeur que l'achat
+   *  avec compte, case CGU et case de renoncement L221-28 obligatoires) et /api/site/commander/public/renvoyer ; le compte
+   *  naît après le paiement, au webhook, et son lien part par Resend. Baissé : les deux routes répondent 404. Se lève sur
+   *  décision de Benj (comme siteCommandeVente) : après le texte des cases relu, les PASS de 026-027, 026-030 et 026-035, de
+   *  025-09, et achat-public-qa --reel vert. Levé sans les colonnes de 0103, l'insertion échoue (503, fail-closed). */
+  siteAchatPublic: false,
   /** v16 §3.4 — le bloc « Et le site qui va avec » sous la séquence de la landing : la capture animée de LA démo
    *  (Atelier Lestraque) et le lien vers le site réel. Il MONTRE, il ne vend pas (pas de bouton de commande). Se lève
    *  quand la démo est validée sans Benj : site-qa + grille-qa + code-qa verts (scripts/demo-verifier.mjs) et la vidéo

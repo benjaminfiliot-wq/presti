@@ -1,8 +1,9 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sendEmail } from '@/lib/email'
 import { getStatus, type DnsRecord } from '@/lib/vercelDomains'
-import { DELAI_ANNONCE, PRIX_SITE_TEXTE, erreursAvantPaiement, type Commande } from '@/lib/siteCommande'
+import { DELAI_TEXTE, PRIX_SITE_TEXTE, erreursAvantPaiement, type Commande } from '@/lib/siteCommande'
 import { envoyerAlertes, enregistrerPassage, type Alerte } from '@/lib/alertes'
+import { purgerBrouillonsPublics } from '@/lib/siteAchatPublic'
 
 type CleCourriel = 'payee' | 'generee' | 'en_ligne'
 type CommandeLivraison = Omit<Commande, 'etat'> & { etat: Commande['etat'] | 'retiree'; courriels?: Partial<Record<CleCourriel, string>>; retiree_le?: string | null }
@@ -36,7 +37,7 @@ export function courrielsDus(commande: CommandeLivraison): CleCourriel[] {
 export function courrielPayee(_commande: CommandeLivraison) {
   return {
     subject: 'Votre commande de site est payée',
-    text: `Bonjour,\n\nNous avons reçu votre paiement de ${PRIX_SITE_TEXTE} pour votre site. TVA non applicable, art. 293 B du CGI.\n\nNous préparons votre site à partir de votre dossier. Le délai annoncé est de ${DELAI_ANNONCE} après validation par Presti.\n\nNous vous écrirons dès que l’aperçu sera prêt.\n\nL’équipe Presti`,
+    text: `Bonjour,\n\nNous avons reçu votre paiement de ${PRIX_SITE_TEXTE} pour votre site. TVA non applicable, art. 293 B du CGI.\n\nNous préparons votre site à partir de votre dossier. ${DELAI_TEXTE}\n\nNous vous écrirons dès que l’aperçu sera prêt.\n\nL’équipe Presti`,
   }
 }
 
@@ -141,6 +142,9 @@ export async function tourLivraison(deps: Dependances = {}): Promise<{ courriels
   try {
     if (!(await d.enPause())) bilan.retards = (await commandesEnRetard(deps)).length
   } catch (e) { bilan.erreurs++; console.error('[livraison] retards', e) }
+  // Achat public (026-025) : les brouillons sans compte jamais payés s'effacent après 7 jours (minimisation des données).
+  try { await purgerBrouillonsPublics({ base: d.base, maintenant: d.maintenant }) }
+  catch (e) { bilan.erreurs++; console.error('[livraison] purge des brouillons publics', e) }
   await enregistrerPassage('livraison', bilan, bilan.erreurs === 0)
   return bilan
 }
