@@ -11,6 +11,8 @@
 // décision de code, versionnée, relue en revue — pas un réglage qu'on bascule à chaud.
 
 export const FLAGS = {
+  /** Bus des agents : ferme /api/agents/* ; à lever sur décision de Benj après 0096 à 0098 appliquées et PASS de 026-042. */
+  busAgents: false,
   /** 24/09/2026 — ferme le constructeur de site et POST /api/site/generate. */
   constructeurSite: false,
   /** v7 bloc 2 — code par email à la connexion (routes api/auth/code, verrou lib/authArtisan, appareils de
