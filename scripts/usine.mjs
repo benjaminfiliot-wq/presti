@@ -317,7 +317,9 @@ function controlerPaquet(p) {
     if (/^\.env/i.test(b)) problemes.push(`${c} : fichier d'environnement (.env*)`)
     if (estFichierDeCle(b)) problemes.push(`${c} : fichier de clé`)
   }
-  const ignores = spawnSync('git', ['check-ignore', '--stdin', '-z'], { cwd: RACINE, input: chemins.join('\0') + '\0', encoding: 'utf8', windowsHide: true })
+  // Arbre propre (paquet vide) : rien à contrôler. Sans cette garde, check-ignore reçoit une entrée vide, refuse
+  // (« empty string is not a valid pathspec ») et executer rendait 125 depuis un dépôt entièrement commité (27/09).
+  const ignores = chemins.length ? spawnSync('git', ['check-ignore', '--stdin', '-z'], { cwd: RACINE, input: chemins.join('\0') + '\0', encoding: 'utf8', windowsHide: true }) : { status: 1, stdout: '', stderr: '' }
   if (ignores.status > 1) problemes.push(`git check-ignore a échoué : ${String(ignores.stderr).trim().slice(0, 200)}`)
   for (const c of String(ignores.stdout || '').split('\0').filter(Boolean)) problemes.push(`${c} : chemin ignoré par git`)
   for (const t of p.secrets.filter((s) => !s.ecarte)) problemes.push(`${t.chemin}:${t.ligne} : motif ${t.motif}`)
@@ -387,7 +389,7 @@ for d in "$HOME"/taches/*/; do
   else e="arrêté sans code"; fi
   [ -f "$d/recupere" ] && e="$e, récupéré $(cut -d' ' -f1 "$d/recupere") PC"
   info=""
-  [ -f "$d/etat.json" ] && info=$(jq -r '"tour \\(.tour) · verdict \\(.verdict // "—") · depuis \\(.debut)"' "$d/etat.json")
+  [ -f "$d/etat.json" ] && info=$(jq -r '"tour \\(.tour) · verdict \\(.verdict // "—") · \\(.fournisseur // "chatgpt") · depuis \\(.debut)"' "$d/etat.json")
   printf 'tâche     %-20s %-26s %s\\n' "$id" "$e" "$info"
 done
 [ "$n" -gt 0 ] || echo "tâches    aucune sur l usine"
@@ -720,6 +722,7 @@ T="$HOME/taches/"${q(id)}; ID=${q(id)}; R="$T/retour"
 mkdir -p "$R"; cd "$T/arbre"
 ${garder.length ? `GIT_LITERAL_PATHSPECS=1 git diff --cached --binary --no-renames "$(cat "$T/base.sha")" -- ${chemins} > "$R/resultat.patch"` : ': > "$R/resultat.patch"'}
 for f in codex.log tourner.out etat.json dernier-message.md config.json paquet.patch; do [ -f "$T/$f" ] && cp "$T/$f" "$R/$f"; done
+for f in "$T"/conseil-*.md; do if [ -f "$f" ]; then cp "$f" "$R/"; fi; done
 [ -f ".orchestre/preuves/$ID/verifier.log" ] && cp ".orchestre/preuves/$ID/verifier.log" "$R/verifier-usine.log"
 [ -f ".orchestre/travail/usine/$ID.prompt.md" ] && cp ".orchestre/travail/usine/$ID.prompt.md" "$R/prompt-final.md"
 q=".orchestre/en-cours/$ID.question.md"; [ -f "$q" ] && cp "$q" "$R/question.md"
@@ -797,30 +800,145 @@ function nettoyer(id) {
 // ici, hors bac à sable ; vert → la fiche passe en fait/ et le vérificateur est relancé (ce verdict-là est celui de
 // l'usine) ; rouge → sa sortie est ajoutée au prompt et Codex relancé, `tours` fois au plus. Fichiers d'état dans le
 // dossier de la tâche : pid, etat.json, codex.log (journal), dernier-message.md, et `code` à la toute fin
-// (0 PASS · 1 FAIL · 3 quota épuisé · 4 fiche non prise · 5 erreur · 6 codex déconnecté · 7 question posée · 8 arrêté).
+// (0 PASS · 1 FAIL · 3 quota épuisé sur TOUS les fournisseurs, ou fiche de prospects : pas de relais · 4 fiche non prise ·
+// 5 erreur · 6 codex déconnecté · 7 question posée · 8 arrêté).
+// Relais de fournisseur (27/09/2026) : quota ChatGPT épuisé → le tour est rejoué sur Ollama Cloud, puis sur freellmapi
+// (FOURNISSEURS, fournisseurEpuise, basculer dans tourner) ; jamais pour une fiche qui touche des données de prospects
+// (motifProspects). Entraide : après un tour rouge, une autre IA relit le verdict (~/veille/conseil.mjs, demanderConseil)
+// et son conseil part dans l'instruction du tour suivant. Banc d'essai : scripts/usine-relais-qa.mjs.
 let codexEnCours = null // le processus Codex du tour en cours : il vit dans son propre groupe (detached), qu'on tue en entier
-function codexExec(arbre, instruction, cfg, journal, dernier) {
-  const binaire = [path.join(os.homedir(), '.local', 'bin', 'codex')].find((b) => fs.existsSync(b)) || 'codex'
-  const argv = ['exec', '-C', arbre, '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=true', '--color', 'never', '-o', dernier, '-m', cfg.modele, '-c', `model_reasoning_effort=${cfg.effort}`, instruction]
+let conseilEnCours = null // le conseiller (conseil.mjs) en cours, dans son propre groupe lui aussi
+// Le groupe entier sous Linux ; sous Windows (banc d'essai sur le PC), process.kill(-pid) lève : le processus seul.
+const tuerGroupe = (enfant) => { try { process.kill(-enfant.pid, 'SIGKILL') } catch { try { enfant.kill('SIGKILL') } catch { /* déjà mort */ } } }
+// Un .mjs/.js (doublure du banc d'essai) se lance par node : spawn sans shell ne l'exécuterait pas sous Windows.
+const commandePour = (binaire) => (/\.[cm]?js$/i.test(binaire) ? [process.execPath, [binaire]] : [binaire, []])
+
+// ── les fournisseurs de Codex, dans l'ordre du relais ──────────────────────────────────────────────────────────
+// Ceux de presti-ops/veille/lancer-codex-tache.sh (lignes 9-12 et 30), sous la même forme : -c model_providers.<x>={…}
+// -c model_provider=<x>, bascule chatgpt → ol → fl. Le fournisseur ne revient jamais en arrière dans une tâche.
+// RÈGLE DE BENJ (non négociable) : une donnée de prospect ne part JAMAIS vers une IA gratuite ni un modèle :cloud. Ollama
+// Cloud (:cloud) et freellmapi (gratuit) ne servent donc JAMAIS une fiche qui touche des prospects (voir motifProspects).
+const FOURNISSEURS = [
+  { nom: 'chatgpt', libelle: 'abonnement ChatGPT' },
+  { nom: 'ol', libelle: 'Ollama Cloud', modele: () => 'gpt-oss:120b-cloud', config: 'model_providers.ol={name="ollama",base_url="http://127.0.0.1:11434/v1",wire_api="responses"}' },
+  // devstral-2 pour une fiche de code, mistral-large-3 sinon ; la clé (env_key FL_KEY) est lue dans ~/.config/presti/freellmapi.key
+  // au lancement, passée à Codex par son environnement seulement, jamais écrite dans un journal.
+  { nom: 'fl', libelle: 'freellmapi', modele: (code) => (code ? 'devstral-2' : 'mistral-large-3'), config: 'model_providers.fl={name="freellmapi",base_url="http://127.0.0.1:3001/v1",env_key="FL_KEY",wire_api="responses"}', cle: true },
+]
+const lireCleFL = () => { try { return fs.readFileSync(path.join(os.homedir(), '.config', 'presti', 'freellmapi.key'), 'utf8').trim() || null } catch { return null } }
+// Épuisé ? Pour les trois fournisseurs, les mêmes exigences (contre-vérification du 27/09) :
+// 1. Codex sorti en erreur (un vrai quota rend 1 : codex.log de 026-105), et pas tué par le délai du tourneur ;
+// 2. seulement la FIN de sa sortie propre (finDeCodex) : les lignes d'erreur qu'il écrit LUI-MÊME tout en bas, d'affilée
+//    (« ERROR: » en colonne 0, ou « ■ » ; 026-105 : les deux lignes « ERROR: … hit your usage limit … » juste avant la fin).
+//    Jamais dernier-message.md ni le dernier message que Codex réimprime à la fin de sa sortie (rédigés par le modèle), jamais
+//    une ligne plus haut : Codex recopie EN COLONNE 0 la sortie des commandes qu'il lance (cat d'un ancien codex.log, psql
+//    « ERROR:  … », 026-223 et 026-146), et le texte d'une fiche qui cite un quota a déjà fait un faux « QUOTA » (000-revue-026).
+// ChatGPT : « hit your usage limit » (sur ChatGPT, un 401 reste « codex déconnecté », code 6). Ollama Cloud et freellmapi :
+// « not included in your free usage | usage limit | 429 » (lancer-codex-tache.sh, ligne 30), ou fournisseur indisponible
+// (401/402/403, connexion refusée). Un faux positif sur freellmapi finirait la tâche en QUOTA (code 3).
+const LIGNE_ERREUR_CODEX = /^(?:ERROR:|■)/
+const GRATUIT_A_BOUT = /not included in your free usage|usage limit|\b429\b|too many requests|exceeded retry limit/i
+const GRATUIT_INDISPONIBLE = /\b40[123]\b|unauthorized|payment required|forbidden|connection refused|error sending request/i
+// Les dernières lignes de Codex qui sont SES lignes d'erreur : on remonte depuis le bas de sa sortie propre (stdout + stderr,
+// sans dernier-message.md), après avoir retiré le dernier message s'il le réimprime à la fin, et on s'arrête à la première
+// ligne non vide qui n'est pas une ligne d'erreur de Codex.
+function finDeCodex(propre, message) {
+  let t = String(propre || '').replace(/\r/g, '').trimEnd()
+  const m = String(message || '').replace(/\r/g, '').trim()
+  if (m && t.endsWith(m)) t = t.slice(0, -m.length).trimEnd()
+  const lignes = t.split('\n')
+  let k = lignes.length
+  while (k > 0 && (!lignes[k - 1].trim() || LIGNE_ERREUR_CODEX.test(lignes[k - 1]))) k--
+  return lignes.slice(k).filter((l) => l.trim())
+}
+// r : ce que rend codexExec ({ code, propre, message, tue }).
+function fournisseurEpuise(fr, r) {
+  if (r.code === 0 || r.tue) return null
+  const fin = finDeCodex(r.propre, r.message)
+  if (fr.nom === 'chatgpt') {
+    const limite = fin.map((l) => l.match(/hit your usage limit[^\n]*?(try again at [^\n]+)?$/i)).find(Boolean)
+    return limite ? `quota de l'abonnement ChatGPT épuisé${limite[1] ? ' — ' + limite[1].trim() : ''}` : null
+  }
+  for (const l of fin) {
+    if (GRATUIT_A_BOUT.test(l)) return `${fr.libelle} à bout : ${l.trim().slice(0, 160)}`
+    if (GRATUIT_INDISPONIBLE.test(l)) return `${fr.libelle} indisponible : ${l.trim().slice(0, 160)}`
+  }
+  return null
+}
+// Données de prospects : la fiche (en-tête, périmètre, texte) en parle → pas de relais vers une IA gratuite ou :cloud, et
+// l'entraide passe en --prive (Qwen3 LOCAL, rien ne sort de l'usine). Prudente exprès : un faux positif coûte un relais,
+// un faux négatif enverrait un SIREN ou un téléphone chez un fournisseur gratuit. « téléphone » seul ne compte pas (la vue
+// téléphone d'un site) : il faut un numéro, ou le téléphone de personnes.
+// E-mail d'une personne : toute adresse, sauf celles qui ne désignent personne — domaines de Presti (prestiapp.fr ;
+// presti-test.invalid, comptes de test), domaines réservés (RFC 2606 : example.com/net/org, *.invalid, *.test, *.example,
+// *.localhost), boîtes techniques (noreply, git…), images « @2x.png ». usine@88.96.53.3 (IP) et codex@0.156.1 (version) ne
+// sont pas des adresses : le domaine doit finir par des lettres.
+const ADRESSE_EMAIL = /[\p{L}\p{N}._%+-]+@(?:[\p{L}\p{N}-]+\.)+\p{L}{2,}/gu
+const adresseSansPersonne = (a) => {
+  const i = a.lastIndexOf('@')
+  const boite = a.slice(0, i).replace(/^[._%+-]+/, '')
+  const domaine = a.slice(i + 1).toLowerCase()
+  return /(?:^|\.)(?:prestiapp\.fr|example\.(?:com|net|org)|invalid|test|example|localhost)$/.test(domaine) ||
+    /^(?:no-?reply|ne-?pas-?repondre|git|mailer-daemon|postmaster)$/i.test(boite) || /^\d+x\.(?:png|jpe?g|webp|gif|svg|avif)$/.test(domaine)
+}
+const adressesDePersonnes = (texte) => [...String(texte).matchAll(ADRESSE_EMAIL)].map((m) => m[0]).filter((a) => !adresseSansPersonne(a))
+const MOTIFS_PROSPECTS = [
+  { nom: 'en-tête donnees: prospects', re: /^donn[ée]es\s*:[^\n]*prospect/im },
+  { nom: 'prospect / prospection', re: /prospect/i },
+  { nom: 'SIREN / SIRET / Sirene', re: /\bsir[eè]n(?:e|s)?\b|\bsirets?\b/i },
+  { nom: 'démarchage (liste de démarchage)', re: /d[ée]marchage/i },
+  { nom: 'téléphone de personnes', re: /num[ée]ros?\s+(?:de\s+)?t[ée]l[ée]phone|t[ée]l[ée]phones?\s+(?:des|du|de\s+la|de\s+l['’]|d['’]|personnels?|portables?)\s*(?:la\s+|l['’]\s*|un\s+|une\s+)?(?:personnes?|g[ée]rants?|artisans?|clients?|contacts?|dirigeants?|prospects?|particuliers?|patrons?|entreprises?|soci[ée]t[ée]s?)/i },
+  { nom: 'numéro de téléphone', re: /(?:\+33[\s.]?|\b0)[1-9](?:[\s.-]?\d{2}){4}\b/ },
+  { nom: 'numéro de téléphone international (+33 / 0033)', re: /(?:\+|00)33[\s.]?(?:\(0\)[\s.]?)?[1-9](?:[\s.-]?\d{2}){4}/ },
+  { nom: 'e-mail d’une personne', re: { test: (t) => adressesDePersonnes(t).length > 0 } },
+]
+const motifProspects = (texte) => MOTIFS_PROSPECTS.find((m) => m.re.test(texte))?.nom || null
+// Une fiche de code (le périmètre vise du code) : freellmapi la donne à devstral-2, sinon à mistral-large-3.
+const CODE = /\.(?:[cm]?[jt]sx?|sql|sh|py|css|scss|html?|json)$|^(?:scripts|app|lib|components|supabase|src|pages|hooks|tests?|e2e|middleware)\//i
+// Le conseiller : 90 s au plus, sortie coupée à 4 000 signes. PRESTI_CONSEIL_DELAI_MS ne sert qu'au banc d'essai (--rapide) :
+// il peut raccourcir la borne, jamais l'allonger.
+const DELAI_CONSEIL_MS = Math.min(90_000, Number(process.env.PRESTI_CONSEIL_DELAI_MS) || 90_000)
+const MAX_CONSEIL = 4000
+const TITRE_CONSEIL = "## Conseil d'une autre IA (à vérifier, pas à suivre aveuglément)"
+function lireFin(fichier, n) {
+  try {
+    const fd = fs.openSync(fichier, 'r')
+    try { const t = fs.fstatSync(fd).size; const l = Math.min(n, t); const b = Buffer.alloc(l); fs.readSync(fd, b, 0, l, t - l); return b.toString('utf8') } finally { fs.closeSync(fd) }
+  } catch { return '' }
+}
+function codexExec(arbre, instruction, cfg, journal, dernier, fr = FOURNISSEURS[0], ficheCode = true) {
+  // PRESTI_CODEX_BIN : la doublure du banc d'essai (scripts/fixtures/usine-relais/faux-codex.mjs) ; absente sur l'usine.
+  const binaire = process.env.PRESTI_CODEX_BIN || [path.join(os.homedir(), '.local', 'bin', 'codex')].find((b) => fs.existsSync(b)) || 'codex'
+  const modele = fr.nom === 'chatgpt' ? cfg.modele : fr.modele(ficheCode)
+  const choix = fr.nom === 'chatgpt' ? ['-m', cfg.modele, '-c', `model_reasoning_effort=${cfg.effort}`] : ['-c', fr.config, '-c', `model_provider=${fr.nom}`, '-m', modele]
+  const argv = ['exec', '-C', arbre, '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=true', '--color', 'never', '-o', dernier, ...choix, instruction]
+  const env = { ...process.env }
+  if (fr.cle) { const k = lireCleFL(); if (k) env.FL_KEY = k }
+  const [cmd, avant] = commandePour(binaire)
   return new Promise((resoudre) => {
     const debut = Date.now()
+    // sortie : tout (sa sortie propre + dernier-message.md) ; propre : ce que le processus Codex a écrit, seul ; message :
+    // dernier-message.md (rédigé par le modèle) ; tue : arrêté par le délai du tourneur. Voir fournisseurEpuise.
     let sortie = ''
+    let propre = ''
+    let message = ''
+    let tue = false
     const flux = fs.createWriteStream(journal, { flags: 'a' })
-    flux.write(`\n=== ${maintenant()} codex ${cfg.modele} (effort ${cfg.effort}) : ${instruction}\n`)
-    const enfant = spawn(binaire, argv, { cwd: arbre, detached: true, stdio: ['ignore', 'pipe', 'pipe'] })
+    flux.write(`\n=== ${maintenant()} codex ${fr.nom === 'chatgpt' ? `${cfg.modele} (effort ${cfg.effort})` : `${modele} par ${fr.libelle} (fournisseur ${fr.nom})`} : ${instruction}\n`)
+    const enfant = spawn(cmd, [...avant, ...argv], { cwd: arbre, env, detached: true, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true })
     codexEnCours = enfant
-    const lire = (b) => { const s = b.toString(); sortie += s; flux.write(s) }
+    const lire = (b) => { const s = b.toString(); sortie += s; propre += s; flux.write(s) }
     enfant.stdout.on('data', lire); enfant.stderr.on('data', lire)
-    const minuteur = setTimeout(() => { flux.write(`\n[délai de ${cfg.minutes} min dépassé : arrêt]\n`); try { process.kill(-enfant.pid, 'SIGKILL') } catch { /* déjà mort */ } }, cfg.minutes * 60_000)
+    const minuteur = setTimeout(() => { tue = true; flux.write(`\n[délai de ${cfg.minutes} min dépassé : arrêt]\n`); tuerGroupe(enfant) }, cfg.minutes * 60_000)
     const fin = (code) => {
       clearTimeout(minuteur)
       codexEnCours = null
-      if (fs.existsSync(dernier)) { const d = fs.readFileSync(dernier, 'utf8'); sortie += '\n' + d; flux.write(`\n--- dernier message de Codex ---\n${d}\n`) }
+      if (fs.existsSync(dernier)) { const d = fs.readFileSync(dernier, 'utf8'); message = d; sortie += '\n' + d; flux.write(`\n--- dernier message de Codex ---\n${d}\n`) }
       flux.write(`=== codex fini, code ${code}, ${Math.round((Date.now() - debut) / 1000)} s\n`)
-      flux.end(() => resoudre({ code, sortie }))
+      flux.end(() => resoudre({ code, sortie, propre, message, tue }))
     }
     enfant.on('close', (code) => fin(code ?? 1))
-    enfant.on('error', (e) => { sortie += String(e.message); fin(127) })
+    enfant.on('error', (e) => { sortie += String(e.message); propre += String(e.message); fin(127) })
   })
 }
 async function tourner(dossier) {
@@ -833,7 +951,9 @@ async function tourner(dossier) {
   const dernier = path.join(dossier, 'dernier-message.md')
   const relPrompt = `.orchestre/travail/usine/${id}.prompt.md`
   const fPrompt = path.join(arbre, relPrompt)
-  const etatT = { id, agent: cfg.agent, pid: process.pid, debut: maintenant(), tour: 0, codes: [], verdict: null, ligne: null, fin: null }
+  // fournisseur : celui qui sert Codex (chatgpt, ol, fl), réécrit à chaque bascule ; prospects : pourquoi la fiche touche des
+  // données de prospects (null sinon) ; conseils : les tours rouges pour lesquels une autre IA a rendu un conseil.
+  const etatT = { id, agent: cfg.agent, pid: process.pid, debut: maintenant(), tour: 0, codes: [], verdict: null, ligne: null, fin: null, fournisseur: 'chatgpt', modeleServi: cfg.modele, bascules: [], prospects: null, conseils: [] }
   const poser = (maj = {}) => { Object.assign(etatT, maj); fs.writeFileSync(path.join(dossier, 'etat.json'), JSON.stringify(etatT, null, 2)) }
   const finir = (code, verdict, ligne) => {
     poser({ verdict, ligne, fin: maintenant() })
@@ -847,26 +967,120 @@ async function tourner(dossier) {
   process.on('uncaughtException', panne)
   process.on('unhandledRejection', panne)
   // `nettoyer --forcer` envoie SIGTERM au tourneur : il emporte Codex (son groupe entier) avant d'écrire son code de fin.
-  process.on('SIGTERM', () => { if (codexEnCours) { try { process.kill(-codexEnCours.pid, 'SIGKILL') } catch { /* déjà mort */ } } finir(8, 'ARRÊTÉ', 'arrêté par nettoyer --forcer') })
+  process.on('SIGTERM', () => { if (codexEnCours) tuerGroupe(codexEnCours); if (conseilEnCours) tuerGroupe(conseilEnCours); finir(8, 'ARRÊTÉ', 'arrêté par nettoyer --forcer') })
   const fiche = (d) => path.join(arbre, '.orchestre', d, `${id}.md`)
+  const noter = (l) => { try { fs.appendFileSync(journal, `\n${l}\n`) } catch { /* rien */ } }
+  const ficheActuelle = () => ['en-cours', 'file', 'fait', 'refuse'].map(fiche).find((f) => fs.existsSync(f)) || null
+  // Données de prospects : lu AVANT le premier tour, puis relu à chaque usage ; une fois vu, c'est acquis (collant) : Codex ne
+  // l'efface pas en réécrivant sa copie de la fiche. Fiche introuvable ou illisible : prudence, comme une fiche de prospects.
+  const toucheProspects = () => {
+    if (!etatT.prospects) {
+      let raison = null
+      const copies = ['file', 'en-cours', 'fait', 'refuse'].map(fiche).filter((f) => fs.existsSync(f))
+      if (!copies.length) raison = 'fiche introuvable dans l’arbre (prudence)'
+      for (const f of copies) { try { raison = motifProspects(fs.readFileSync(f, 'utf8')) } catch { raison = 'fiche illisible (prudence)' } if (raison) break }
+      if (raison) poser({ prospects: raison })
+    }
+    return etatT.prospects
+  }
+  toucheProspects()
+  const copieFiche = ficheActuelle()
+  let ficheCode = true // fiche illisible : devstral-2, le modèle de code
+  try { if (copieFiche) ficheCode = lireFiche(copieFiche).perimetre.some((p) => CODE.test(p)) } catch { /* reste true */ }
+  // Le relais : le fournisseur servi ne revient jamais en arrière ; freellmapi sans sa clé est sauté (dit dans codex.log).
+  let iFournisseur = 0
+  const basculer = (tour, raison) => {
+    const de = FOURNISSEURS[iFournisseur]
+    let j = iFournisseur + 1
+    while (j < FOURNISSEURS.length && FOURNISSEURS[j].cle && !lireCleFL()) { noter(`· ${FOURNISSEURS[j].libelle} sauté : clé absente (~/.config/presti/freellmapi.key)`); j++ }
+    if (j >= FOURNISSEURS.length) return null
+    iFournisseur = j
+    const vers = FOURNISSEURS[j]
+    const modele = vers.modele(ficheCode)
+    etatT.bascules.push({ le: maintenant(), tour, de: de.nom, vers: vers.nom, modele, raison })
+    poser({ fournisseur: vers.nom, modeleServi: modele })
+    noter(`=== ${maintenant()} bascule de fournisseur, tour ${tour} : ${de.nom} → ${vers.nom} (${vers.libelle}, ${modele}) — ${raison} ; le tour est rejoué`)
+    return vers
+  }
+  // L'entraide : après un tour rouge, une autre IA relit le verdict, la fin de codex.log et la fiche (node ~/veille/conseil.mjs ;
+  // PRESTI_CONSEIL_BIN : la doublure du banc d'essai). --prive si la fiche touche des prospects : Qwen3 LOCAL, et la clé
+  // freellmapi n'est pas passée. 90 s au plus, 4 000 signes au plus ; tout échec (absent, plante, délai, rien à dire) est
+  // silencieux : une ligne dans codex.log, et le tour continue sans conseil.
+  const demanderConseil = async (tour, v) => {
+    try {
+      const bin = process.env.PRESTI_CONSEIL_BIN || path.join(os.homedir(), 'veille', 'conseil.mjs')
+      if (!fs.existsSync(bin)) { noter(`· conseil du tour ${tour} : ${bin} absent, pas d'entraide`); return null }
+      const prive = !!toucheProspects()
+      const fVerdict = path.join(dossier, `verdict-${tour}.txt`)
+      const fJournal = path.join(dossier, `journal-${tour}.txt`)
+      // Codex servi par freellmapi a FL_KEY dans son environnement : s'il l'a affichée (env, une trace), elle serait dans
+      // codex.log. Elle ne part pas chez le conseiller.
+      const cle = lireCleFL()
+      const masquer = (t) => (cle ? t.split(cle).join('[clé freellmapi retirée]') : t)
+      fs.writeFileSync(fVerdict, masquer(String(v.sortie || v.ligne || '').slice(-20000)))
+      fs.writeFileSync(fJournal, masquer(lireFin(journal, 16000)))
+      const argv = [`--verdict=${fVerdict}`, `--journal=${fJournal}`, `--consigne=${ficheActuelle() || fPrompt}`, ...(prive ? ['--prive'] : [])]
+      const env = { ...process.env }
+      delete env.FL_KEY
+      if (!prive) { const k = lireCleFL(); if (k) env.FL_KEY = k }
+      const [cmd, avant] = commandePour(bin)
+      const res = await new Promise((resoudre) => {
+        const morceaux = []
+        let octets = 0
+        let erreurs = ''
+        let fini = false
+        let depasse = false
+        let t1 = null
+        let t2 = null
+        const clore = (code, raison) => { if (fini) return; fini = true; clearTimeout(t1); clearTimeout(t2); conseilEnCours = null; resoudre({ code, sortie: Buffer.concat(morceaux).toString('utf8'), raison, erreurs }) }
+        const enfant = spawn(cmd, [...avant, ...argv], { cwd: dossier, env, detached: true, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true })
+        conseilEnCours = enfant
+        enfant.stdout.on('data', (b) => { if (octets < 256 * 1024) { morceaux.push(b); octets += b.length } })
+        enfant.stderr.on('data', (b) => { if (erreurs.length < 4000) erreurs += b.toString() })
+        t1 = setTimeout(() => { depasse = true; tuerGroupe(enfant); t2 = setTimeout(() => clore(null, `délai de ${Math.round(DELAI_CONSEIL_MS / 1000)} s dépassé`), 5000) }, DELAI_CONSEIL_MS)
+        enfant.on('error', (e) => clore(null, e.message))
+        enfant.on('close', (code) => clore(code, depasse ? `délai de ${Math.round(DELAI_CONSEIL_MS / 1000)} s dépassé` : null))
+      })
+      const texte = [...String(res.sortie).trim()].slice(0, MAX_CONSEIL).join('').trim()
+      const raison = res.raison || (res.code !== 0 ? `code ${res.code}${res.erreurs.trim() ? ' : ' + res.erreurs.trim().split('\n').pop().slice(0, 160) : ''}` : !texte ? 'réponse vide' : /^CONSEIL : aucune IA relectrice/.test(texte) ? 'aucune IA relectrice disponible' : null)
+      if (raison) { noter(`· conseil du tour ${tour} : aucun (${raison}), le tour continue`); return null }
+      fs.writeFileSync(path.join(dossier, `conseil-${tour}.md`), `# Conseil d'une autre IA — tour ${tour} (${prive ? 'privé : modèle local' : 'public : freellmapi'}), ${maintenant()}\n\n${texte}\n`)
+      etatT.conseils.push({ tour, signes: [...texte].length, prive }); poser()
+      noter(`=== conseil d'une autre IA, tour ${tour} (${prive ? 'privé, modèle local' : 'public, freellmapi'}) : ${[...texte].length} signes → conseil-${tour}.md${tour < cfg.tours ? ', ajouté à l’instruction du tour suivant' : ''}`)
+      return texte
+    } catch (e) { noter(`· conseil du tour ${tour} : échec (${String(e?.message || e).slice(0, 160)}), le tour continue`); return null }
+  }
   const verifier = () => {
     const r = spawnSync(process.execPath, [path.join(arbre, 'scripts', 'orchestre.mjs'), 'verifier', id], { cwd: arbre, encoding: 'utf8', timeout: 45 * 60_000 })
     const sortie = `${r.stdout || ''}${r.stderr || ''}`
     const ligne = (sortie.match(new RegExp(`${id}\\s*:\\s*(PASS|FAIL)[^\\n]*`)) || [])[0] || sortie.trim().split('\n').pop() || ''
     return { pass: r.status === 0 && new RegExp(`${id}\\s*:\\s*PASS`).test(sortie), sortie, ligne: ligne.slice(0, 200) }
   }
+  let conseilSuite = null // le conseil d'une autre IA après le tour rouge précédent, ajouté à l'instruction de ce tour-ci
   for (let tour = 1; tour <= cfg.tours; tour++) {
     poser({ tour })
-    const instruction = tour === 1
+    let instruction = tour === 1
       ? `Lis le fichier ${relPrompt} du depot et fais exactement ce qu il dit, du debut a la fin.`
       : `Relis le fichier ${relPrompt} du depot : sa derniere section contient le retour du verificateur lance hors bac a sable. Corrige ce qui echoue, dans le perimetre de la tache ${id}, puis termine par la ligne ${id} : PRÊT.`
-    const r = await codexExec(arbre, instruction, cfg, journal, dernier)
-    etatT.codes.push(r.code); poser()
-    if (r.code !== 0 && /not logged in|please log ?in|codex login|401 Unauthorized|403 Forbidden/i.test(r.sortie)) finir(6, 'AUTH', 'codex n est pas connecté (codex login --device-auth, code validé par Benj)')
-    // Seulement une LIGNE D'ERREUR de Codex (« ERROR: … hit your usage limit … ») : le 27/09, une fiche qui parlait de quotas
-    // (« usage limit », « try again at ») a fait croire à un quota épuisé et arrêté la tâche au premier tour.
-    const limite = r.sortie.match(/^\s*(?:ERROR:?|error:|■)[^\n]*hit your usage limit[^\n]*?(try again at [^\n]+)?$/im)
-    if (limite) finir(3, 'QUOTA', `quota de l'abonnement ChatGPT épuisé${limite[1] ? ' — ' + limite[1].trim() : ''}`)
+    if (conseilSuite) instruction += `\n\n${TITRE_CONSEIL}\n\n${conseilSuite}`
+    conseilSuite = null
+    // Le tour, rejoué sur le fournisseur suivant tant que le servi rend sa ligne de quota : au plus une fois par fournisseur.
+    let r
+    for (let rejeu = false; ; rejeu = true) {
+      const fr = FOURNISSEURS[iFournisseur]
+      // Un fournisseur gratuit ou :cloud ne sert JAMAIS une fiche de prospects, même si elle n'en parlait pas au départ.
+      if (fr.nom !== 'chatgpt' && toucheProspects()) finir(3, 'QUOTA', `relais arrêté : la fiche touche des données de prospects (${etatT.prospects}) — jamais d'IA gratuite ni de modèle :cloud`)
+      const reprise = !rejeu ? '' : `\n\nReprise sur un autre modele (${fr.libelle}) : le precedent s est arrete sur un quota pendant ce tour ; ce qu il a deja ecrit est dans le depot, continue a partir de la.${fs.existsSync(fiche('en-cours')) ? ` La tache ${id} est deja prise (.orchestre/en-cours/${id}.md) : ne relance pas prochaine, lis-la et fais le travail.` : ''}`
+      r = await codexExec(arbre, instruction + reprise, cfg, journal, dernier, fr, ficheCode)
+      etatT.codes.push(r.code); poser()
+      if (fr.nom === 'chatgpt' && r.code !== 0 && /not logged in|please log ?in|codex login|401 Unauthorized|403 Forbidden/i.test(r.sortie)) finir(6, 'AUTH', 'codex n est pas connecté (codex login --device-auth, code validé par Benj)')
+      // Seulement les lignes d'erreur de Codex tout en bas de sa sortie, Codex sorti en erreur (fournisseurEpuise) : le 27/09,
+      // une fiche qui parlait de quotas (« usage limit », « try again at ») a fait croire à un quota épuisé.
+      const epuise = fournisseurEpuise(fr, r)
+      if (!epuise) break
+      if (toucheProspects()) finir(3, 'QUOTA', `${epuise} ; pas de relais : la fiche touche des données de prospects (${etatT.prospects}) — jamais d'IA gratuite ni de modèle :cloud`)
+      if (!basculer(tour, epuise)) finir(3, 'QUOTA', `tous les fournisseurs épuisés (${FOURNISSEURS.map((f) => f.libelle).join(' → ')}) — ${epuise}`)
+    }
     const qf = path.join(arbre, '.orchestre', 'en-cours', `${id}.question.md`)
     if (fs.existsSync(qf) && !fs.existsSync(qf.replace(/\.question\.md$/, '.reponse.md'))) finir(7, 'QUESTION', `Codex a posé une question (.orchestre/en-cours/${id}.question.md)`)
     // Un tour précédent vert en fait/ puis rouge au final a envoyé la fiche en refuse/ : dans cette copie jetable, on la remet en en-cours/.
@@ -887,9 +1101,14 @@ async function tourner(dossier) {
         fs.renameSync(fiche('en-cours'), fiche('fait'))
         const final = verifier()
         fs.appendFileSync(journal, `\n=== vérificateur final (fait/) ===\n${final.sortie}\n`)
-        finir(final.pass ? 0 : 1, final.pass ? 'PASS' : 'FAIL', final.ligne)
+        if (final.pass) finir(0, 'PASS', final.ligne)
+        // Rouge au final : pas de tour suivant, mais le conseil reste dans conseil-<tour>.md (rapatrié par recuperer).
+        await demanderConseil(tour, final)
+        finir(1, 'FAIL', final.ligne)
       }
     }
+    // Ici, le tour est rouge (tout vert est déjà sorti par finir(0)) : l'entraide, jamais après un PASS ni une QUESTION.
+    if (v && !v.pass) conseilSuite = await demanderConseil(tour, v)
     // Chaque branche ci-dessus lance le vérificateur ou sort : `v` ne devrait jamais manquer ici. S'il manquait, un
     // `v.ligne` lèverait une exception, prise par `panne` : code 5 ERREUR au lieu de 1 FAIL. D'où le repli.
     if (tour === cfg.tours) finir(1, 'FAIL', `${v?.ligne || 'vérificateur non lancé'} (après ${tour} tour(s))`)
