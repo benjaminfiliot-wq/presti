@@ -1,0 +1,85 @@
+{
+ "_": "Jeu d’essai du lot C (fiche 026-029, Claude Code) : un modèle de métier COMPLET au format v2, avec les marques {entreprise} et {ville}, sans chiffre, sans label, sans superlatif, sans affirmation de capacité (ni déplacement, ni délai, ni atelier) et CINQ prestations (h3 de la section « prestations ») : Escaliers, Dressings et placards, Cuisines, Bibliothèques, Parquets. Le juge redacteur-v2-qa le passe à redigerContenuV2 (RV-3 à RV-7) : le jeu d’essai déclare « Escaliers » et « Bibliotheques » (sans accent, pour la comparaison sans accents) ; les trois autres, titres et descriptions, ne doivent paraître nulle part. La maquette de preuve (.orchestre/preuves/026-029/outils/maquette.mjs) le pose aussi comme maquettes/modeles/menuisier/contenu.json : le modèle de 025-02 est une maquette de prospection (une page, deux sections), pas un site.",
+ "metier": "menuisier",
+ "pages": {
+  "/": {
+   "type": "accueil",
+   "title": "Menuisier à {ville} — {entreprise}",
+   "description": "{entreprise}, menuisier à {ville} : des ouvrages en bois dessinés, fabriqués puis posés pour la pièce qui les reçoit.",
+   "h1": "Menuisier à {ville}",
+   "h1Ligne": "Le bois à sa place",
+   "chapeau": "Des ouvrages en bois dessinés pour la pièce qui les reçoit, puis fabriqués et posés.",
+   "sections": [
+    {
+     "genre": "prestations",
+     "h2": "Ce que je fabrique",
+     "blocs": [
+      { "type": "p", "texte": "Chaque ouvrage part d’un relevé pris dans la pièce, d’un plan coté et d’un choix de bois discuté ensemble." },
+      { "type": "h3", "texte": "Escaliers" },
+      { "type": "p", "texte": "Droits ou quart tournant, en chêne, frêne ou hêtre, avec un garde-corps dessiné pour la trémie de la maison." },
+      { "type": "h3", "texte": "Dressings et placards" },
+      { "type": "p", "texte": "Penderies sous combles et placards sous escalier, tracés au centimètre pour la pièce où ils vont." },
+      { "type": "h3", "texte": "Cuisines" },
+      { "type": "p", "texte": "Façades et plans de travail en bois massif, huilés, avec les chants autour de l’évier protégés de l’eau." },
+      { "type": "h3", "texte": "Bibliothèques" },
+      { "type": "p", "texte": "Ensembles muraux en chêne massif ou en contreplaqué de bouleau, calés contre des murs rarement droits." },
+      { "type": "h3", "texte": "Parquets" },
+      { "type": "p", "texte": "Chêne à l’anglaise ou à bâtons rompus, poncé puis huilé, ou vitrifié en phase aqueuse." }
+     ]
+    },
+    {
+     "genre": "galerie",
+     "h2": "Ouvrages déjà posés",
+     "blocs": [ { "type": "p", "texte": "Quelques pièces photographiées après la pose, chez des clients de {entreprise}." } ]
+    },
+    {
+     "genre": "communes",
+     "h2": "Autour de {ville}",
+     "blocs": [ { "type": "p", "texte": "Les communes où {entreprise} prend des chantiers, avec une page pour chacune." } ]
+    },
+    {
+     "genre": "etapes",
+     "h2": "En quatre temps",
+     "blocs": [
+      { "type": "p", "texte": "Du premier appel à la pose, le même interlocuteur du début à la fin." },
+      { "type": "h3", "texte": "Prise de contact" },
+      { "type": "p", "texte": "Vous décrivez la pièce, l’usage et le bois qui vous plaît, par téléphone ou par écrit." },
+      { "type": "h3", "texte": "Relevé des cotes" },
+      { "type": "p", "texte": "Les mesures sont prises dans la pièce : aplombs, plinthes, gaines et passages sont notés avant tout dessin." },
+      { "type": "h3", "texte": "Plan et devis" },
+      { "type": "p", "texte": "Vous recevez un plan coté, le choix des essences et des ferrures, et un devis ligne par ligne." },
+      { "type": "h3", "texte": "Fabrication et pose" },
+      { "type": "p", "texte": "Les pièces sont assemblées, puis posées à la date convenue ensemble ; la pièce est rendue propre." }
+     ]
+    },
+    {
+     "genre": "faq",
+     "h2": "Vos questions",
+     "blocs": [
+      { "type": "p", "texte": "Ce qui revient le plus souvent avant un premier rendez-vous." },
+      { "type": "h3", "texte": "Quel bois choisir pour un ouvrage intérieur ?" },
+      { "type": "p", "texte": "Pour une pièce de passage, le chêne ou le frêne, qui sont durs. Pour l’intérieur d’un meuble, un panneau latté suffit." },
+      { "type": "h3", "texte": "Pourquoi relever les cotes sur place ?" },
+      { "type": "p", "texte": "Aucun mur n’est droit : le relevé montre les faux aplombs et les gaines avant la moindre découpe." },
+      { "type": "h3", "texte": "Comment entretenir le bois massif ?" },
+      { "type": "p", "texte": "Une finition huilée protège des taches ; ensuite, un chiffon sec et une cire naturelle de temps en temps." }
+     ]
+    },
+    {
+     "genre": "contact",
+     "h2": "Parlons de votre projet",
+     "blocs": [ { "type": "p", "texte": "Décrivez la pièce et l’usage : un rappel suit pour convenir d’un rendez-vous." } ]
+    }
+   ]
+  },
+  "commune": {
+   "type": "commune",
+   "title": "Artisan menuisier à {ville} — {entreprise}",
+   "description": "{entreprise}, menuisier pour les maisons de {ville} : ouvrages en bois dessinés pour la pièce, puis fabriqués et posés.",
+   "h1": "Menuisier à {ville}",
+   "h1Ligne": "Sur mesure, ici",
+   "chapeau": "À {ville}, des ouvrages en bois dessinés pour votre pièce, puis fabriqués et posés.",
+   "introduction": "Pour une maison ou un appartement de {ville}, le travail commence par un relevé dans la pièce, puis un plan coté que vous validez avant toute découpe."
+  }
+ }
+}

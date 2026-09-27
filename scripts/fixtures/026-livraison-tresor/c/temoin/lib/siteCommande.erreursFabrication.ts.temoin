@@ -1,0 +1,10 @@
+
+// ── TÉMOIN de la fiche 026-030 (lot C, 026-029, Claude Code), ajouté à la fin de lib/siteCommande.ts dans la maquette
+// seulement : la fonction pure que l'exporteur (026-033) et la génération distante (026-106) appellent. Jamais livré.
+/** Ce qui manque pour FABRIQUER le site : ce qui manque pour payer, plus les prestations déclarées. */
+export function erreursFabrication(b: Brouillon): string[] {
+  const e = erreursAvantPaiement(b)
+  const prestations = (b.matiere as Matiere & { prestations?: unknown }).prestations
+  if (!Array.isArray(prestations) || !prestations.length) e.push('Indiquez au moins une prestation que vous réalisez vraiment.')
+  return e
+}

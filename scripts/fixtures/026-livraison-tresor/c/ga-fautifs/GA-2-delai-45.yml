@@ -1,0 +1,52 @@
+# Variante FAUTIVE du flux témoin (026-029, autocontrôle de generation-actions-qa) : timeout-minutes: 45
+name: Générer un site payé
+
+on:
+  repository_dispatch:
+    types: [generer-site]
+  workflow_dispatch:
+    inputs:
+      commande:
+        description: Identifiant de la commande (UUID)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: generer-site
+  cancel-in-progress: false
+
+jobs:
+  generer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Identifiant de commande (UUID seulement)
+        id: commande
+        env:
+          DEPUIS_EVENEMENT: ${{ github.event.client_payload.commande }}
+          DEPUIS_ENTREE: ${{ inputs.commande }}
+        run: |
+          COMMANDE="${DEPUIS_EVENEMENT:-$DEPUIS_ENTREE}"
+          if [[ ! "$COMMANDE" =~ ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$ ]]; then
+            echo "identifiant de commande refusé (UUID attendu)"
+            exit 1
+          fi
+          echo "commande=$COMMANDE" >> "$GITHUB_OUTPUT"
+      - name: Variables de la livraison (liste blanche)
+        env:
+          LIVRAISON_ENV: ${{ secrets.LIVRAISON_ENV }}
+        run: printf '%s\n' "$LIVRAISON_ENV" | grep -E '^(NEXT_PUBLIC_SUPABASE_URL|SUPABASE_SERVICE_ROLE_KEY)=' > .env.local
+      - name: Générer, juger et déposer
+        env:
+          COMMANDE: ${{ steps.commande.outputs.commande }}
+        run: node --import ./scripts/ts-loader.mjs scripts/livrer-site.mjs "$COMMANDE" --ci

@@ -1,0 +1,232 @@
+[
+ {
+  "fichier": "images/escalier-480.webp",
+  "base": "escalier",
+  "largeur": 480,
+  "hauteur": 360,
+  "largeurs": [
+   480,
+   960,
+   1600
+  ],
+  "legende": "Escalier quart tournant en chêne clair",
+  "alt": "Escalier quart tournant en chêne clair",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/escalier.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/escalier-480.avif",
+  "base": "escalier",
+  "largeur": 480,
+  "hauteur": 360,
+  "largeurs": [
+   480,
+   960,
+   1600
+  ],
+  "legende": "Escalier quart tournant en chêne clair",
+  "alt": "Escalier quart tournant en chêne clair",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/escalier.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/escalier-960.webp",
+  "base": "escalier",
+  "largeur": 960,
+  "hauteur": 720,
+  "largeurs": [
+   480,
+   960,
+   1600
+  ],
+  "legende": "Escalier quart tournant en chêne clair",
+  "alt": "Escalier quart tournant en chêne clair",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/escalier.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/escalier-960.avif",
+  "base": "escalier",
+  "largeur": 960,
+  "hauteur": 720,
+  "largeurs": [
+   480,
+   960,
+   1600
+  ],
+  "legende": "Escalier quart tournant en chêne clair",
+  "alt": "Escalier quart tournant en chêne clair",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/escalier.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/escalier-1600.webp",
+  "base": "escalier",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "largeurs": [
+   480,
+   960,
+   1600
+  ],
+  "legende": "Escalier quart tournant en chêne clair",
+  "alt": "Escalier quart tournant en chêne clair",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/escalier.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/escalier-1600.avif",
+  "base": "escalier",
+  "largeur": 1600,
+  "hauteur": 1200,
+  "largeurs": [
+   480,
+   960,
+   1600
+  ],
+  "legende": "Escalier quart tournant en chêne clair",
+  "alt": "Escalier quart tournant en chêne clair",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/escalier.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/bibliotheque-480.webp",
+  "base": "bibliotheque",
+  "largeur": 480,
+  "hauteur": 314,
+  "largeurs": [
+   480,
+   960
+  ],
+  "legende": "Bibliothèque en frêne sous une pente de toit",
+  "alt": "Bibliothèque en frêne sous une pente de toit",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/bibliotheque.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/bibliotheque-480.avif",
+  "base": "bibliotheque",
+  "largeur": 480,
+  "hauteur": 314,
+  "largeurs": [
+   480,
+   960
+  ],
+  "legende": "Bibliothèque en frêne sous une pente de toit",
+  "alt": "Bibliothèque en frêne sous une pente de toit",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/bibliotheque.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/bibliotheque-960.webp",
+  "base": "bibliotheque",
+  "largeur": 960,
+  "hauteur": 627,
+  "largeurs": [
+   480,
+   960
+  ],
+  "legende": "Bibliothèque en frêne sous une pente de toit",
+  "alt": "Bibliothèque en frêne sous une pente de toit",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/bibliotheque.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/bibliotheque-960.avif",
+  "base": "bibliotheque",
+  "largeur": 960,
+  "hauteur": 627,
+  "largeurs": [
+   480,
+   960
+  ],
+  "legende": "Bibliothèque en frêne sous une pente de toit",
+  "alt": "Bibliothèque en frêne sous une pente de toit",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/bibliotheque.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/etabli-480.webp",
+  "base": "etabli",
+  "largeur": 480,
+  "hauteur": 321,
+  "largeurs": [
+   480,
+   960
+  ],
+  "legende": "Assemblage d’un limon sur l’établi",
+  "alt": "Assemblage d’un limon sur l’établi",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/etabli.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/etabli-480.avif",
+  "base": "etabli",
+  "largeur": 480,
+  "hauteur": 321,
+  "largeurs": [
+   480,
+   960
+  ],
+  "legende": "Assemblage d’un limon sur l’établi",
+  "alt": "Assemblage d’un limon sur l’établi",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/etabli.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/etabli-960.webp",
+  "base": "etabli",
+  "largeur": 960,
+  "hauteur": 641,
+  "largeurs": [
+   480,
+   960
+  ],
+  "legende": "Assemblage d’un limon sur l’établi",
+  "alt": "Assemblage d’un limon sur l’établi",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/etabli.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ },
+ {
+  "fichier": "images/etabli-960.avif",
+  "base": "etabli",
+  "largeur": 960,
+  "hauteur": 641,
+  "largeurs": [
+   480,
+   960
+  ],
+  "legende": "Assemblage d’un limon sur l’établi",
+  "alt": "Assemblage d’un limon sur l’établi",
+  "auteur": "Menuiserie Témoin-Vingt-Six",
+  "licence": "propriétaire",
+  "source": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/etabli.jpg",
+  "modifiee": "Oui — recadrée et compressée par Presti"
+ }
+]

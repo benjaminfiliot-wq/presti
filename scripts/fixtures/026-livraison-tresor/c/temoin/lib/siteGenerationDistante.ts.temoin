@@ -1,0 +1,120 @@
+// TÉMOIN du lot C (fiche 026-029, Claude Code) — une implémentation de référence de lib/siteGenerationDistante.ts (fiche
+// 026-106), écrite pour prouver que scripts/generation-actions-qa.mjs sait être VERT sur un module réel. Jamais livrée : la
+// maquette de .orchestre/preuves/026-029/outils/ la pose sous .orchestre/travail/ (l'extension .ts.temoin la tient hors de
+// tsc et de Next dans le vrai dépôt), puis la casse critère par critère.
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { consommerLimite } from '@/lib/limites'
+import { envoyerAlertes, type Alerte } from '@/lib/alertes'
+import { erreursFabrication, type Brouillon } from '@/lib/siteCommande'
+
+type Base = typeof supabaseAdmin
+/** Ce que la génération distante lit de l'usine (revue du 25/09, GA-10). */
+export type EtatUsine = {
+  /** usine/commandes/<id>.json : l'entrée déposée pour la commande, ou null s'il n'y en a pas. */
+  index: (commandeId: string) => Promise<{ tache: string } | null>
+  /** usine/<tache>/sortie/manifeste.json existe-t-il ? */
+  manifeste: (tache: string) => Promise<boolean>
+  /** l'agent livreur_usine de ops_etat().agents, ou null s'il en est absent. */
+  livreur: () => Promise<{ dernier_battement: string | null; periode_minutes: number } | null>
+}
+export type DepsGeneration = {
+  fetch?: typeof fetch
+  base?: Base
+  limite?: (cle: string, max: number, fenetreSec: number) => Promise<boolean>
+  alerter?: (alertes: Alerte[]) => Promise<number>
+  env?: Record<string, string | undefined>
+  maintenant?: () => Date
+  usine?: EtatUsine
+}
+export type CommandeGeneration = Brouillon & {
+  id: string
+  etat: string
+  paye_le?: string | null
+  generation_tentatives?: number | null
+  generation_demandee_le?: string | null
+}
+
+const BAIL_MS = 45 * 60_000
+const HEURE_MS = 60 * 60_000
+
+function usineParDefaut(base: Base): EtatUsine {
+  return {
+    index: async (id) => {
+      const { data, error } = await base.storage.from('usine').download(`commandes/${id}.json`)
+      if (error || !data) return null
+      return JSON.parse(await data.text()) as { tache: string }
+    },
+    manifeste: async (tache) => {
+      const { data } = await base.storage.from('usine').list(`${tache}/sortie`, { search: 'manifeste.json' })
+      return (data ?? []).some((f) => f.name === 'manifeste.json')
+    },
+    livreur: async () => {
+      const { data, error } = await base.rpc('ops_etat')
+      if (error) throw new Error(error.message)
+      const agents = ((data as { agents?: { nom: string; dernier_battement: string | null; periode_minutes: number }[] } | null)?.agents ?? [])
+      return agents.find((a) => a.nom === 'livreur_usine') ?? null
+    },
+  }
+}
+
+/**
+ * Demande à GitHub Actions de générer le site d'une commande payée, si l'usine ne l'a pas en main. Ne lève jamais : rend
+ * { demande, raison }. Le jeton n'est jamais journalisé.
+ */
+export async function demanderGeneration(commande: CommandeGeneration, deps: DepsGeneration = {}): Promise<{ demande: boolean; raison: string }> {
+  const env = deps.env ?? process.env
+  const maintenant = (deps.maintenant ?? (() => new Date()))()
+  const base = deps.base ?? supabaseAdmin
+  const alerter = deps.alerter ?? envoyerAlertes
+  const alerte = async (cause: string, corps: string) => {
+    try { await alerter([{ motif: 'paiement', sujet: `Génération distante de ${commande.id} : ${cause}`, corps, a: 'entreprise', cle: `generation:${commande.id}:${cause}` }]) } catch { /* l'alerte ne bloque rien */ }
+  }
+  if (commande.etat !== 'payee' || erreursFabrication(commande).length) return { demande: false, raison: 'commande pas prête' }
+  const tentatives = commande.generation_tentatives ?? 0
+  if (tentatives >= 3) return { demande: false, raison: 'trois tentatives' }
+  if (commande.generation_demandee_le && maintenant.getTime() - Date.parse(commande.generation_demandee_le) < BAIL_MS) return { demande: false, raison: 'bail en cours' }
+  const jeton = env.GITHUB_DISPATCH_TOKEN
+  if (!jeton) return { demande: false, raison: 'sans jeton' }
+
+  // L'usine livre d'abord : Actions n'est que son repli (revue du 25/09).
+  try {
+    const usine = deps.usine ?? usineParDefaut(base)
+    const index = await usine.index(commande.id)
+    let prendre = !index
+    if (!prendre && index && commande.paye_le && maintenant.getTime() - Date.parse(commande.paye_le) > HEURE_MS && !(await usine.manifeste(index.tache))) prendre = true
+    if (!prendre) {
+      const l = await usine.livreur()
+      if (!l || !l.dernier_battement || maintenant.getTime() - Date.parse(l.dernier_battement) > 2 * l.periode_minutes * 60_000) prendre = true
+    }
+    if (!prendre) return { demande: false, raison: 'l’usine a la commande en main' }
+  } catch (e) {
+    await alerte('usine-illisible', `L’état de l’usine est illisible (${e instanceof Error ? e.message : 'erreur'}) : aucune génération demandée.`)
+    return { demande: false, raison: 'usine illisible' }
+  }
+
+  const max = Number(env.GENERATIONS_MOIS_MAX) || 10
+  if (!(await (deps.limite ?? consommerLimite)(`actions:generer:${maintenant.toISOString().slice(0, 7)}`, max, 32 * 86400))) {
+    await alerte('plafond', `Plafond mensuel de ${max} générations dans GitHub Actions atteint.`)
+    return { demande: false, raison: 'plafond' }
+  }
+  let statut = 0
+  try {
+    const r = await (deps.fetch ?? fetch)(`https://api.github.com/repos/${env.GITHUB_DEPOT_LIVRAISON}/dispatches`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${jeton}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event_type: 'generer-site', client_payload: { commande: commande.id } }),
+      signal: AbortSignal.timeout(10_000),
+    })
+    statut = r.status
+  } catch {
+    statut = 0
+  }
+  if (statut !== 204) {
+    await alerte(`http-${statut}`, `GitHub a répondu ${statut || 'rien'} à la demande de génération.`)
+    return { demande: false, raison: `réponse ${statut}` }
+  }
+  await base.from('sites_commandes')
+    .update({ generation_demandee_le: maintenant.toISOString(), generation_tentatives: tentatives + 1 })
+    .eq('id', commande.id).eq('etat', 'payee').eq('generation_tentatives', tentatives)
+  return { demande: true, raison: 'demandée' }
+}

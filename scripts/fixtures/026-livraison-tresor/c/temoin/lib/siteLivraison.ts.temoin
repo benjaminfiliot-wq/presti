@@ -1,0 +1,39 @@
+// TÉMOIN de la fiche 026-024 (lot C, 026-029, Claude Code) : un lib/siteLivraison.ts minimal, tel que 026-024 le laisserait,
+// commité comme « base » dans la maquette de .orchestre/preuves/026-029/outils/ (jamais livré). La fiche 026-106 y ajoute
+// la demande de génération distante ; generation-actions-qa (GA-6) juge ce diff-là.
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { demanderGeneration } from '@/lib/siteGenerationDistante'
+
+type Base = typeof supabaseAdmin
+export type DepsTour = { base?: Base; maintenant?: () => Date }
+
+/** La pause générale des agents (la passe « pause ») : rien ne part pendant une pause. */
+export async function enPause(base: Base = supabaseAdmin): Promise<boolean> {
+  try {
+    const { data } = await base.from('ops_pause').select('active').limit(1).maybeSingle()
+    return !!(data as { active?: boolean } | null)?.active
+  } catch {
+    return false
+  }
+}
+
+/** Le tour de livraison : les commandes à suivre, leurs e-mails dus et leurs retards (026-024). */
+export async function tourLivraison(deps: DepsTour = {}) {
+  const base = deps.base ?? supabaseAdmin
+  const rapport = { suivies: 0, erreurs: [] as string[] }
+  try {
+    const { data } = await base.from('sites_commandes').select('id, etat').in('etat', ['payee', 'generee', 'en_ligne']).limit(50)
+    rapport.suivies = (data ?? []).length
+  } catch (e) {
+    rapport.erreurs.push(e instanceof Error ? e.message : String(e))
+  }
+  try {
+    if (process.env.GITHUB_DISPATCH_TOKEN && !(await enPause(base))) {
+      const { data: pretes } = await base.from('sites_commandes').select('*').eq('etat', 'payee').is('genere_le', null).limit(5)
+      for (const commande of pretes ?? []) await demanderGeneration(commande, { base })
+    }
+  } catch (e) {
+    rapport.erreurs.push(e instanceof Error ? e.message : String(e))
+  }
+  return rapport
+}

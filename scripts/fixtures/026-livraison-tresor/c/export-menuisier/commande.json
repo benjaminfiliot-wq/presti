@@ -1,0 +1,90 @@
+{
+ "id": "00000000-0000-4000-8000-000000260291",
+ "etat": "payee",
+ "slug": "menuiserie-temoin-vingt-six",
+ "nom": "Menuiserie Témoin-Vingt-Six",
+ "email": "contact@menuiserie-temoin-vingt-six.invalid",
+ "telephone": "02 61 91 26 01",
+ "metier": "menuisier",
+ "metiers_secondaires": [],
+ "communes": [
+  "Vitré",
+  "Châteaugiron",
+  "Janzé"
+ ],
+ "domaine_mode": "aucun",
+ "domaine": null,
+ "devis": {
+  "projets": [
+   "Escaliers",
+   "Bibliotheques",
+   "Autre projet"
+  ],
+  "delais": [
+   "Dans les trois mois",
+   "Dans trois à six mois",
+   "Plus tard, je me renseigne"
+  ]
+ },
+ "matiere": {
+  "photos": [
+   {
+    "url": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/escalier.jpg",
+    "legende": "Escalier quart tournant en chêne clair",
+    "role": "chantier",
+    "base": "escalier"
+   },
+   {
+    "url": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/bibliotheque.jpg",
+    "legende": "Bibliothèque en frêne sous une pente de toit",
+    "role": "apres",
+    "base": "bibliotheque"
+   },
+   {
+    "url": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/etabli.jpg",
+    "legende": "Assemblage d’un limon sur l’établi",
+    "role": "chantier",
+    "base": "etabli"
+   }
+  ],
+  "logo_url": null,
+  "adresse": "4 rue du Jeu d’Essai, 35500 Vitré",
+  "siren": "000260299",
+  "horaires": "Du lundi au vendredi, de 8 h à 18 h, sur rendez-vous",
+  "decennale": {
+   "assureur": "Mutuelle des Essais Vingt-Six",
+   "numero": "ESSAI-026-029-D"
+  },
+  "avis_google": {
+   "url": ""
+  },
+  "artisan": {
+   "prenom": "Maël",
+   "nom": "Quéré",
+   "installation": 2014,
+   "parcours": "CAP de menuisier fabricant, puis sept années chez un agenceur de Fougères avant d’ouvrir mon propre établi.",
+   "citation": "Je dessine chaque escalier pour la maison qui va le recevoir, jamais sur catalogue.",
+   "chiffres": [
+    {
+     "valeur": "260",
+     "unite": "m²",
+     "legende": "de surface couverte pour débiter et assembler"
+    },
+    {
+     "valeur": "37",
+     "unite": "escaliers",
+     "legende": "posés depuis l’ouverture, tous dessinés ici"
+    },
+    {
+     "valeur": "9",
+     "unite": "semaines",
+     "legende": "entre le premier relevé et la pose, en moyenne"
+    }
+   ]
+  },
+  "prestations": [
+   "Escaliers",
+   "Bibliotheques"
+  ]
+ }
+}

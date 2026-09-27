@@ -1,1 +1,69 @@
-{}
+{
+ "_": "Jeu d’essai du lot C (fiche 026-029, écrit par Claude Code) : une commande de site PAYÉE telle que la base la rendrait — la ligne sites_commandes (« commande ») et la ligne artisans (« artisan ») — pour scripts/commande-exporter.mjs --depuis=<ce fichier> et scripts/livrer-site.mjs --depuis=… L’entreprise est FICTIVE : téléphone de la plage 02 61 91 réservée à la fiction (Arcep, décision 2019-0954, art. 2.5.12), adresse électronique en .invalid (RFC 2606), SIREN en 000 (jamais attribué, clé de Luhn juste), assureur et adresse fictifs. Les photos sont servies par le juge sur 127.0.0.1 (--hote-photos) à partir de c/photos-source/ : escalier.jpg porte une position GPS en EXIF, faux.jpg est un texte. La 5e photo est dans le dossier d’un AUTRE artisan, la 6e sur un autre hôte : l’exporteur les refuse sans jamais les demander. Le projet Supabase « projet-temoin-026 » n’existe pas : le juge le pose dans NEXT_PUBLIC_SUPABASE_URL et ne le joint jamais.",
+ "commande": {
+  "id": "00000000-0000-4000-8000-000000260291",
+  "artisan_id": "00000000-0000-4000-8000-000000260292",
+  "email": "contact@menuiserie-temoin-vingt-six.invalid",
+  "etat": "payee",
+  "domaine_mode": "aucun",
+  "domaine": null,
+  "metier": "menuisier",
+  "metiers_secondaires": [],
+  "communes": ["Vitré", "Châteaugiron", "Janzé"],
+  "matiere": {
+   "artisan": {
+    "prenom": "Maël",
+    "nom": "Quéré",
+    "installation": 2014,
+    "parcours": "CAP de menuisier fabricant, puis sept années chez un agenceur de Fougères avant d’ouvrir mon propre établi.",
+    "citation": "Je dessine chaque escalier pour la maison qui va le recevoir, jamais sur catalogue.",
+    "chiffres": [
+     { "valeur": "260", "unite": "m²", "legende": "de surface couverte pour débiter et assembler" },
+     { "valeur": "37", "unite": "escaliers", "legende": "posés depuis l’ouverture, tous dessinés ici" },
+     { "valeur": "9", "unite": "semaines", "legende": "entre le premier relevé et la pose, en moyenne" }
+    ]
+   },
+   "prestations": ["Escaliers", "Bibliotheques"],
+   "photos": [
+    { "url": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/escalier.jpg", "legende": "Escalier quart tournant en chêne clair", "role": "chantier" },
+    { "url": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/bibliotheque.jpg", "legende": "Bibliothèque en frêne sous une pente de toit", "role": "apres" },
+    { "url": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/etabli.jpg", "legende": "Assemblage d’un limon sur l’établi", "role": "chantier" },
+    { "url": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260292/faux.jpg", "legende": "Fichier qui n’est pas une image", "role": "chantier" },
+    { "url": "https://projet-temoin-026.supabase.co/storage/v1/object/public/artisan-media/00000000-0000-4000-8000-000000260299/voisin.jpg", "legende": "Photo rangée dans le dossier d’un autre compte", "role": "chantier" },
+    { "url": "https://images.autre-hote.invalid/artisan-media/00000000-0000-4000-8000-000000260292/ailleurs.jpg", "legende": "Photo servie par un autre hôte", "role": "chantier" }
+   ],
+   "logo_url": null,
+   "adresse": "4 rue du Jeu d’Essai, 35500 Vitré",
+   "siren": "000260299",
+   "horaires": "Du lundi au vendredi, de 8 h à 18 h, sur rendez-vous",
+   "decennale": { "assureur": "Mutuelle des Essais Vingt-Six", "numero": "ESSAI-026-029-D" },
+   "avis_google": { "url": "" }
+  },
+  "prix_cents": 30000,
+  "devise": "eur",
+  "stripe_session_id": "cs_test_essai_026_029",
+  "stripe_payment_intent_id": null,
+  "paye_le": "2026-09-26T08:00:00Z",
+  "genere_le": null,
+  "apercu_jeton": null,
+  "scores": null,
+  "verifications": null,
+  "consigne": null,
+  "regenerations": 0,
+  "valide_le": null,
+  "en_ligne_le": null,
+  "cree_le": "2026-09-26T07:40:00Z",
+  "modifie_le": "2026-09-26T08:00:00Z"
+ },
+ "artisan": {
+  "id": "00000000-0000-4000-8000-000000260292",
+  "email": "contact@menuiserie-temoin-vingt-six.invalid",
+  "nom": "Menuiserie Témoin-Vingt-Six",
+  "metier": "menuisier",
+  "slug": "menuiserie-temoin-vingt-six",
+  "tel": "02 61 91 26 02",
+  "tel_public": "02 61 91 26 01",
+  "services": [],
+  "plan": "gratuit"
+ }
+}

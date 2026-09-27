@@ -1,0 +1,672 @@
+{
+ "debut": "2026-09-27T12:38:32.164Z",
+ "fin": "2026-09-27T12:49:57.181Z",
+ "maquette": ".orchestre/travail/026-029-maquette",
+ "temoins": [
+  {
+   "p": "EX",
+   "juge": "commande-exporter-qa",
+   "complet": {
+    "code": 0,
+    "verts": 10,
+    "rouges": [],
+    "duree": 9.052
+   },
+   "temoin": {
+    "code": 0,
+    "rouges": [],
+    "lignes": [
+     "✅ EX-4 (NR) règle de scripts/site-qa.mjs importée : les 44 entrées de la fixture 025 et une attribution « propriétaire » juste acceptées ; 4 fausses refusées (auteur bidon, source sans chemin, licence non permise, légende mal encodée)",
+     "✅ EX-PV aucune preuve encore dans .orchestre/preuves/026-033 (rien de vide)"
+    ]
+   }
+  },
+  {
+   "p": "RV",
+   "juge": "redacteur-v2-qa",
+   "complet": {
+    "code": 1,
+    "verts": 10,
+    "rouges": [
+     "❌ RV-10 tsc --noEmit en code 2 en 33 s : 2 erreur(s) — app/api/stripe/webhook/route.ts(14,10): error TS2305: Module '\"@/lib/siteLivraison\"' has no exported member 'envoyerCourrielsDus'. | app/api/stripe/webhook/route.ts(81,54): error TS7006: Parameter 'e' implicitly has an 'any' type."
+    ],
+    "duree": 39.793
+   },
+   "temoin": {
+    "code": 0,
+    "rouges": [],
+    "lignes": [
+     "✅ RV-3 (NR) findFabrications et detecterCapacitesNonDeclarees de ./lib attrapent 15 ans RGE dans la réponse fautive et laissent passer les 4 réponses propres",
+     "✅ RV-PV aucune preuve encore dans .orchestre/preuves/026-093 (rien de vide)"
+    ]
+   }
+  },
+  {
+   "p": "CH",
+   "juge": "livrer-site-qa",
+   "complet": {
+    "code": 0,
+    "verts": 12,
+    "rouges": [],
+    "duree": 115.413
+   },
+   "temoin": {
+    "code": 0,
+    "rouges": [],
+    "lignes": [
+     "✅ CH-3 (NR) les neuf démos gelées de ./public/sites-demo/ identiques à HEAD (613 fichiers)",
+     "✅ CH-PV aucune preuve encore dans .orchestre/preuves/026-100 (rien de vide)"
+    ]
+   }
+  },
+  {
+   "p": "GA",
+   "juge": "generation-actions-qa",
+   "complet": {
+    "code": 1,
+    "verts": 9,
+    "rouges": [
+     "❌ GA-8 tsc --noEmit en code 2 en 40 s : 2 erreur(s) — app/api/stripe/webhook/route.ts(14,10): error TS2305: Module '\"@/lib/siteLivraison\"' has no exported member 'envoyerCourrielsDus'. | app/api/stripe/webhook/route.ts(81,54): error TS7006: Parameter 'e' implicitly has an 'any' type."
+    ],
+    "duree": 41.365
+   },
+   "temoin": {
+    "code": 0,
+    "rouges": [],
+    "lignes": [
+     "✅ GA-7 (NR) audit, sauvegarde, qualite, security, android identiques à HEAD (lus dans .)",
+     "✅ GA-PV aucune preuve encore dans .orchestre/preuves/026-106 (rien de vide)"
+    ]
+   }
+  }
+ ],
+ "mutations": [
+  {
+   "p": "EX",
+   "critere": "EX-1",
+   "mode": "complet",
+   "fichier": "scripts/commande-exporter.mjs",
+   "quoi": "l'exporteur sort en 1 d'entrée",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ EX-1 code 1, commande.json absent —",
+   "erreur": null
+  },
+  {
+   "p": "EX",
+   "critere": "EX-2",
+   "mode": "complet",
+   "fichier": "scripts/commande-exporter.mjs",
+   "quoi": "le téléphone privé au lieu du public",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ EX-2 telephone : \"02 61 91 26 02\" ≠ \"02 61 91 26 01\"",
+   "erreur": null
+  },
+  {
+   "p": "EX",
+   "critere": "EX-3",
+   "mode": "complet",
+   "fichier": "scripts/commande-exporter.mjs",
+   "quoi": "les métadonnées (GPS) gardées",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ EX-3 photos/bibliotheque-480.avif garde un bloc EXIF (186 octets) ; photos/bibliotheque-480.webp garde un bloc EXIF (186 octets) ; photos/bibliotheque-960.avif garde un bloc EXIF (186 octets) ; photos/bibliotheque-960.webp garde un bloc EXIF (186 octets) ; photos/escalier-1600.avif garde un bloc EXIF (364 octets, GPS compris) ; photos/escalier-1600.webp garde un bloc EXIF (364 octets, GPS compris) ; … (14 défauts)",
+   "erreur": null
+  },
+  {
+   "p": "EX",
+   "critere": "EX-4",
+   "mode": "complet",
+   "fichier": "scripts/commande-exporter.mjs",
+   "quoi": "une licence non permise",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ EX-4 attributions[0] (images/escalier-480.webp) refusée par attributionCredible de scripts/site-qa.mjs ; attributions[0] (images/escalier-480.webp) : licence \"Tous droits réservés\", « propriétaire » attendue ; attributions[1] (images/escalier-480.avif) refusée par attributionCredible de scripts/site-qa.mjs ; attributions[1] (images/escalier-480.avif) : licence \"Tous droits réservés\", « propriétaire » attendue ; attributions[2] (images/escalier-960.webp) refusée par attributionCredible de scripts/site-qa.mjs ; attributions[2] (images/escalier-960.webp) : licence \"Tous droits réservés\", « propriétaire » attendue ; … (28 défauts)",
+   "erreur": null
+  },
+  {
+   "p": "EX",
+   "critere": "EX-5",
+   "mode": "complet",
+   "fichier": "scripts/commande-exporter.mjs",
+   "quoi": "les deux refus de destination retirés",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ EX-5 --sortie sous public/ : code 0, 2 attendu ; --sortie sous public/ : public/sites-demo/essai-026-029-ex5 a été créé (16 fichier(s)) ; --sortie dans le dépôt hors de .orchestre/travail/ : code 0, 2 attendu ; --sortie dans le dépôt hors de .orchestre/travail/ : scripts/essai-026-029-ex5 a été créé (16 fichier(s))",
+   "erreur": null
+  },
+  {
+   "p": "EX",
+   "critere": "EX-6",
+   "mode": "complet",
+   "fichier": "scripts/commande-exporter.mjs",
+   "quoi": "un dossier incomplet exporté quand même",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ EX-6 sans prestation : code 0, 3 attendu ; sans prestation : l'erreur « Indiquez au moins une prestation que vous réalisez vraiment. » n'est pas listée ; sans prestation : 16 fichier(s) écrit(s) dans la sortie (commande.json ; photos/attributions.json ; … (16)) ; sans matiere.artisan : code 0, 3 attendu ; sans matiere.artisan : l'erreur « Votre parcours : indiquez votre prénom, votre nom, votre an… » n'est pas listée ; sans matiere.artisan : 16 fichier(s) écrit(s) dans la sortie (commande.json ; photos/attributions.json ; … (16))",
+   "erreur": null
+  },
+  {
+   "p": "EX",
+   "critere": "EX-7",
+   "mode": "complet",
+   "fichier": "scripts/commande-exporter.mjs",
+   "quoi": "le dossier d'un autre artisan accepté",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ EX-7 voisin.jpg n'est pas listée comme refusée ; le serveur du juge a reçu 1 requête(s) pour une photo refusée : GET /00000000-0000-4000-8000-000000260292/00000000-0000-4000-8000-000000260299/voisin.jpg",
+   "erreur": null
+  },
+  {
+   "p": "EX",
+   "critere": "EX-8",
+   "mode": "complet",
+   "fichier": "scripts/commande-exporter.mjs",
+   "quoi": "le nom de l'entreprise écrit dans la sortie",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ EX-8 jeu d'essai : le nom (« Menuiserie Témoin-Vingt-Six ») dans la sortie ; jeu d'essai : le nom (« Témoin-Vingt-Six ») dans la sortie",
+   "erreur": null
+  },
+  {
+   "p": "EX",
+   "critere": "EX-9",
+   "mode": "complet",
+   "fichier": "scripts/commande-exporter.mjs",
+   "quoi": "attributions.json mal nommé : le générateur ne le trouve pas",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ EX-9 generer.mjs --source : code 1 — ✗ source : ENOENT: no such file or directory, open 'C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\026-029-maquette\\.orchestre\\travail\\commande-exporter-qa\\ex9-source\\photos\\attributions.json'",
+   "erreur": null
+  },
+  {
+   "p": "EX",
+   "critere": "EX-4",
+   "mode": "temoin",
+   "fichier": "scripts/site-qa.mjs",
+   "quoi": "site-qa affaibli : toute attribution passe (part NR)",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ EX-4 (NR) la règle accepte une attribution fausse (auteur bidon) ; la règle accepte une attribution fausse (source sans chemin) ; la règle accepte une attribution fausse (licence non permise) ; la règle accepte une attribution fausse (légende mal encodée)",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-1",
+   "mode": "complet",
+   "fichier": "scripts/commande-rediger.mjs",
+   "quoi": "le script sans argument sort en 0",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-1 scripts/commande-rediger.mjs sans argument : code 0, 2 attendu",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-2",
+   "mode": "complet",
+   "fichier": "lib/siteRedacteur.ts",
+   "quoi": "la marque {ville} laissée dans le h1",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-2 marque(s) restante(s) : {ville} ; h1 d'accueil « Menuisier à {ville} Le bois à sa place » : le métier (menuisier) et la première commune (Vitré) attendus",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-3",
+   "mode": "complet",
+   "fichier": "lib/siteRedacteur.ts",
+   "quoi": "une invention dans le chapeau d'accueil",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-3 script (--sans-ia, modèle de la racine) : findFabrications → 15 ans, RGE ; fonction sans appel (modèle à cinq prestations) : findFabrications → 15 ans, RGE ; fonction, doublure propre : findFabrications → 15 ans, RGE",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-4",
+   "mode": "complet",
+   "fichier": "lib/siteRedacteur.ts",
+   "quoi": "le parcours de l'artisan recopié",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-4 script : le parcours (« CAP de menuisier fabricant, puis sept années chez… ») ; fonction (sans) : le parcours (« CAP de menuisier fabricant, puis sept années chez… ») ; fonction (fautif) : le parcours (« CAP de menuisier fabricant, puis sept années chez… ») ; fonction (propre) : le parcours (« CAP de menuisier fabricant, puis sept années chez… ») ; fonction (panne) : le parcours (« CAP de menuisier fabricant, puis sept années chez… »)",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-5",
+   "mode": "complet",
+   "fichier": "lib/siteRedacteur.ts",
+   "quoi": "toutes les prestations du modèle gardées",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-5 fonction (sans) : « Dressings et placards » (non déclarée) apparaît ; fonction (sans) : la description de « Dressings et placards » (non déclarée) apparaît ; fonction (sans) : « Cuisines » (non déclarée) apparaît ; fonction (sans) : la description de « Cuisines » (non déclarée) apparaît ; fonction (sans) : « Parquets » (non déclarée) apparaît ; fonction (sans) : la description de « Parquets » (non déclarée) apparaît ; … (12 défauts)",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-6",
+   "mode": "complet",
+   "fichier": "lib/siteRedacteur.ts",
+   "quoi": "aucun second appel après un rejet",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-6 fautive : 3 appel(s), 6 attendus (2 par commune) ; fautive : 0 requête(s) nomment « 15 ans » et « RGE », 3 attendues (le second appel de chaque commune)",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-7",
+   "mode": "complet",
+   "fichier": "lib/siteRedacteur.ts",
+   "quoi": "l'e-mail envoyé au modèle",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-7 requête 1 : l'e-mail est envoyé ; requête 2 : l'e-mail est envoyé ; requête 3 : l'e-mail est envoyé ; requête 4 : l'e-mail est envoyé ; requête 5 : l'e-mail est envoyé ; requête 6 : l'e-mail est envoyé ; … (9 défauts)",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-8",
+   "mode": "complet",
+   "fichier": "lib/siteRedacteur.ts",
+   "quoi": "process.env lu",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-8 lit process.env dans son source ; exécuté, il lit process.env : TRACE_REDACTEUR",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-9",
+   "mode": "complet",
+   "fichier": "lib/siteRedacteur.ts",
+   "quoi": "plus de JSON-LD : site-qa rouge",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-9 site-qa --statique : code 1, Page / (accueil) › JSON-LD @type = HomeAndConstructionBusiness ((aucun JSON-LD)) ; Page / (accueil) › JSON-LD : adresse postale complète (absente) ; Page / (accueil) › JSON-LD : téléphone, horaires, zone servie, url (telephone, openingHours, areaServed, url) ; … (16)",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-10",
+   "mode": "complet",
+   "fichier": "lib/siteRedacteur.ts",
+   "quoi": "une erreur de type",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-10 tsc --noEmit en code 2 en 24 s : 3 erreur(s) — app/api/stripe/webhook/route.ts(14,10): error TS2305: Module '\"@/lib/siteLivraison\"' has no exported member 'envoyerCourrielsDus'. | app/api/stripe/webhook/route.ts(81,54): error TS7006: Parameter 'e' implicitly has an 'any' type. | lib/siteRedacteur.ts(13,14): error TS2322: Type 'string' is not assignable to type 'number'.",
+   "erreur": null
+  },
+  {
+   "p": "RV",
+   "critere": "RV-3",
+   "mode": "temoin",
+   "fichier": "lib/ai.ts",
+   "quoi": "findFabrications désarmé (part NR)",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ RV-3 (NR) les contrôles de la racine ne voient plus « 15 ans » dans la réponse fautive (vu : rien) ; les contrôles de la racine ne voient plus « RGE » dans la réponse fautive (vu : rien)",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-1",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "sans argument, code 0",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-1 sans argument : code 0, 2 attendu",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-2",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "--sans-depot ignoré",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-2 code 1, 0 attendu — ✗ livraison 00000000-0000-4000-8000-000000260291 : depot (code 1) en 5.9 s — export 0, redaction 0, generation 0, site-qa 0, depot 1 | ✗ dépôt : code 1 ; site-deposer.mjs lancé malgré --sans-depot",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-3",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "le site copié sous public/",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-3 public/sites-demo/livraison-essai/attributions.json du banc ajouté par livrer-site ; public/sites-demo/livraison-essai/confidentialite/index.html du banc ajouté par livrer-site ; public/sites-demo/livraison-essai/contenu.json du banc ajouté par livrer-site ; public/sites-demo/livraison-essai/fonts/OFL.txt du banc ajouté par livrer-site ; public/sites-demo/livraison-essai/fonts/fraunces.woff2 du banc ajouté par livrer-site ; public/sites-demo/livraison-essai/formulaire.js du banc ajouté par livrer-site ; … (30 défauts)",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-4",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "le verrou écrasé",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-4 deux exécutions ensemble : codes 0 et 0, 0 et 5 attendus ; verrou de 61 min repris sans le dire (« repris » absent de la sortie)",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-5",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "le plafond de régénérations ignoré",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-5 le rédacteur a été appelé 2 fois, 1 attendue (aucune nouvelle rédaction au plafond)",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-6",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "le code 3 de l'exporteur perdu",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-6 code 1, 3 attendu — ✗ livraison 00000000-0000-4000-8000-000000260291 : incomplet (code 1) en 0.7 s — export 3 | ✗ export : code 3",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-7",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "le nom de l'entreprise dans le journal",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-7 journal.jsonl : le nom (« Menuiserie Témoin-Vingt-Six ») ; journal.jsonl : le nom (« Témoin-Vingt-Six »)",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-8",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "la chaîne continue après une rédaction en échec",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-8 rédacteur en échec : le journal montre [\"export\",\"redaction\",\"generation\"], l'export puis la rédaction seulement attendus",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-10",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "shell: true",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-10 shell: true dans le source",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-11",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "rapport-qa.json absent du manifeste",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-11 1 fichier(s) de la sortie absents du manifeste : rapport-qa.json",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-12",
+   "mode": "complet",
+   "fichier": "scripts/livrer-site.mjs",
+   "quoi": "l'état n'est plus relu avant le dépôt",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-12 --ci sur une commande passée à « generee » pendant la génération : code 1, 6 attendu — ✗ livraison 00000000-0000-4000-8000-000000260291 : depot (code 1) en 6.8 s — export 0, redaction 0, generation 0, site-qa 0, depot 1 | ✗ dépôt : code 1 ; le piège de site-deposer.mjs a été appelé",
+   "erreur": null
+  },
+  {
+   "p": "CH",
+   "critere": "CH-3",
+   "mode": "temoin",
+   "fichier": "public/sites-demo/plombier/index.html",
+   "quoi": "une démo gelée modifiée (part NR)",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ CH-3 (NR) public/sites-demo/plombier/index.html modifié",
+   "erreur": null
+  },
+  {
+   "p": "GA",
+   "critere": "GA-1",
+   "mode": "complet",
+   "fichier": ".github/workflows/generer-site.yml",
+   "quoi": "un déclencheur push",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ GA-1 déclencheurs [\"push\",\"repository_dispatch\",\"workflow_dispatch\"], exactement repository_dispatch et workflow_dispatch attendus",
+   "erreur": null
+  },
+  {
+   "p": "GA",
+   "critere": "GA-2",
+   "mode": "complet",
+   "fichier": ".github/workflows/generer-site.yml",
+   "quoi": "timeout-minutes: 45",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ GA-2 timeout-minutes = 45, un nombre ≤ 20 attendu",
+   "erreur": null
+  },
+  {
+   "p": "GA",
+   "critere": "GA-3",
+   "mode": "complet",
+   "fichier": ".github/workflows/generer-site.yml",
+   "quoi": "le secret affiché par echo",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ GA-3 étape 6 : echo de LIVRAISON_ENV vers le journal",
+   "erreur": null
+  },
+  {
+   "p": "GA",
+   "critere": "GA-4",
+   "mode": "complet",
+   "fichier": ".github/workflows/generer-site.yml",
+   "quoi": "la comparaison UUID retirée",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ GA-4 aucune comparaison à une expression UUID",
+   "erreur": null
+  },
+  {
+   "p": "GA",
+   "critere": "GA-5",
+   "mode": "complet",
+   "fichier": "lib/siteGenerationDistante.ts",
+   "quoi": "le plafond de trois tentatives ignoré",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ GA-5 trois tentatives : 1 fetch, 0 attendu(s) ; trois tentatives : 1 écriture(s) en base (update sites_commandes), 0 attendue(s)",
+   "erreur": null
+  },
+  {
+   "p": "GA",
+   "critere": "GA-6",
+   "mode": "complet",
+   "fichier": "lib/siteLivraison.ts",
+   "quoi": "la pause ignorée",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ GA-6 l'appel n'est pas sous un if qui exige !enPause()",
+   "erreur": null
+  },
+  {
+   "p": "GA",
+   "critere": "GA-10",
+   "mode": "complet",
+   "fichier": "lib/siteGenerationDistante.ts",
+   "quoi": "l'usine ignorée : deux livreurs",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ GA-10 usine : index, payée il y a 20 min, livreur battu il y a 5 min : 1 fetch, 0 attendu(s) ; usine : payée il y a 70 min avec une sortie : 1 fetch, 0 attendu(s)",
+   "erreur": null
+  },
+  {
+   "p": "GA",
+   "critere": "GA-7",
+   "mode": "complet",
+   "fichier": ".github/workflows/audit.yml",
+   "quoi": "audit.yml modifié",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ GA-7 (NR) .github/workflows/audit.yml modifié (interdit à 026-106)",
+   "erreur": null
+  },
+  {
+   "p": "GA",
+   "critere": "GA-8",
+   "mode": "complet",
+   "fichier": "lib/siteGenerationDistante.ts",
+   "quoi": "une erreur de type",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ GA-8 tsc --noEmit en code 2 en 7 s : 4 erreur(s) — app/api/stripe/webhook/route.ts(14,10): error TS2305: Module '\"@/lib/siteLivraison\"' has no exported member 'envoyerCourrielsDus'. | app/api/stripe/webhook/route.ts(81,54): error TS7006: Parameter 'e' implicitly has an 'any' type. | lib/siteGenerationDistante.ts(37,7): error TS2322: Type 'number' is not assignable to type 'string'.",
+   "erreur": null
+  },
+  {
+   "p": "GA",
+   "critere": "GA-7",
+   "mode": "temoin",
+   "fichier": ".github/workflows/audit.yml",
+   "quoi": "audit.yml modifié (part NR)",
+   "code": 1,
+   "pris": true,
+   "restaure": true,
+   "ligne": "❌ GA-7 (NR) .github/workflows/audit.yml modifié (interdit à 026-106)",
+   "erreur": null
+  }
+ ],
+ "apres": [
+  {
+   "p": "EX",
+   "code": 0,
+   "lignes": [
+    "✅ EX-1 scripts/commande-exporter.mjs --depuis=c/commande-payee.json --hote-photos=127.0.0.1 → code 0 en 5.3 s, 16 fichier(s) sous .orchestre/travail/commande-exporter-qa/export",
+    "✅ EX-2 clés de la fixture 025 (+ matiere.prestations) exactement ; id, état, slug, nom, e-mail, téléphone public, métier, communes, domaine, matière à l'identique ; 3 photos valides dans l'ordre ; devis = les 2 prestations déclarées + « Autre »",
+    "✅ EX-3 faux.jpg refusé et listé ; 3 photos valides, 14 variantes relues par sharp aux largeurs dues (escalier 1700 px → 480/960/1600, les autres → 480/960) ; 14 fichier(s) produit(s) sans EXIF (escalier.jpg portait un GPS)",
+    "✅ EX-4 14 entrées pour 3 bases et 14 fichiers, toutes « propriétaire », source = l'URL d'origine, auteur = l'artisan, acceptées par attributionCredible de scripts/site-qa.mjs",
+    "✅ EX-5 --sortie sous public/ → code 2, rien d'écrit ; --sortie dans scripts/ → code 2, rien d'écrit ; git status --porcelain public/ inchangé",
+    "✅ EX-6 sans prestation → code 3, 1 erreur(s) de erreursFabrication listée(s) ; sans matiere.artisan → code 3, 1 erreur(s) listée(s) ; aucune erreur de l'autre cas ; sorties vides",
+    "✅ EX-7 voisin.jpg (autre artisan) et ailleurs.jpg (autre hôte) refusées et listées ; 4 requête(s) reçues, toutes sous 00000000-0000-4000-8000-000000260292/, aucune pour elles ; 0 appel réseau hors 127.0.0.1",
+    "✅ EX-9 generer.mjs --source=<export + contenu.json de la fixture 025> → code 0 en 0.2 s, 31 fichier(s)",
+    "✅ EX-8 5 lancement(s) relus (sorties standard et d'erreur) : ni adresse, ni téléphone, ni SIREN, ni nom du jeu d'essai",
+    "✅ EX-PV aucune preuve encore dans .orchestre/preuves/026-033 (rien de vide)"
+   ]
+  },
+  {
+   "p": "RV",
+   "code": 1,
+   "lignes": [
+    "✅ RV-1 lib/siteRedacteur.ts exporte redigerContenuV2 (importé dans l'enfant sans clé) ; scripts/commande-rediger.mjs sans argument → code 2",
+    "✅ RV-2 scripts/commande-rediger.mjs --sans-ia → code 0 ; 3 pages de commune (Vitré, Châteaugiron, Janzé), aucune marque, h1 « Menuisier à Vitré », mentions légales avec SIREN, adresse et assureur, sans « fictif » ni « démonstration »",
+    "✅ RV-3 findFabrications et detecterCapacitesNonDeclarees de la racine rendent [] sur tout le texte visible (script, fonction sans appel, fonction avec la doublure propre) ; ni avis, ni témoignage, ni étoile, ni citation",
+    "✅ RV-4 ni la phrase signée, ni le parcours, ni les 3 chiffres dans contenu.json (script et quatre appels de la fonction)",
+    "✅ RV-5 « Escaliers » et « Bibliothèques » gardées, « Dressings et placards », « Cuisines » et « Parquets » (titres et descriptions) absentes ; sans prestation : rapport.bloquant et code 3",
+    "✅ RV-6 fautive : 6 appels, 3 seconds appels nommant les refus, final sans « 15 ans » ni « RGE », 6 rejets et 3 dégradations ; propre : 3 appels, 3 chapeaux distincts rendus par la doublure ; en panne : ia « indisponible », 3 pages complètes",
+    "✅ RV-7 9 requêtes relues : les faits entre <donnees> et </donnees>, ni e-mail, ni téléphone, ni SIREN",
+    "✅ RV-8 ni @anthropic-ai/sdk, ni @/lib/ai hors findFabrications, ni fs dans lib/siteRedacteur.ts ; exécuté (5 appels), 0 écriture de fichier, 0 lecture de process.env, 0 appel réseau",
+    "✅ RV-9 generer.mjs --source → code 0 (30 fichiers) ; site-qa.mjs --statique, relancé par le juge : vert",
+    "❌ RV-10 tsc --noEmit en code 2 en 27 s : 2 erreur(s) — app/api/stripe/webhook/route.ts(14,10): error TS2305: Module '\"@/lib/siteLivraison\"' has no exported member 'envoyerCourrielsDus'. | app/api/stripe/webhook/route.ts(81,54): error TS7006: Parameter 'e' implicitly has an 'any' type.",
+    "✅ RV-PV aucune preuve encore dans .orchestre/preuves/026-093 (rien de vide)"
+   ]
+  },
+  {
+   "p": "CH",
+   "code": 0,
+   "lignes": [
+    "✅ CH-1 scripts/livrer-site.mjs présent ; sans argument → code 2 ; --sortie sous public/ sans --usine → code 2, rien d'écrit",
+    "✅ CH-2 --depuis --hote-photos --sans-ia --sans-depot → code 0 en 7.0 s ; site/index.html et site.json présents ; site-qa.mjs --statique relancé par le juge : vert ; aucun dépôt",
+    "✅ CH-4 deux exécutions ensemble → codes 0 et 5 ; un verrou de 61 min → repris, code 0, et la sortie le dit",
+    "✅ CH-5 regenerations: 2 et un site rouge sur le texte → code 4 ; rédacteur appelé 1 fois",
+    "✅ CH-6 dossier sans prestation → code 3 venu de l'exporteur, le journal s'arrête à l'export, aucun site généré",
+    "✅ CH-12 --ci, commande passée à « generee » pendant la génération → code 6, site-deposer.mjs jamais lancé",
+    "✅ CH-7 7 ligne(s) de journal, une par exécution (CH-2 : +1, CH-6 : +1), toutes avec commande, duree_s, etapes et issue ; ni nom, ni adresse, ni téléphone, ni SIREN dans le journal ni dans 2 sortie(s) --ci",
+    "✅ CH-8 ordre lu dans le source : commande-exporter → commande-rediger → generer → site-qa → site-deposer ; rédacteur en code 1 → livrer-site en code 1, ni génération, ni site-qa, ni dépôt (journal : export, redaction)",
+    "✅ CH-10 ni shell: true, ni powershell, .cmd, cmd.exe, « C:\\ », ../SaaS ; aucun chemin assemblé à la main ; 2 lancement(s), tous par process.execPath",
+    "✅ CH-11 --usine → code 0 ; site/, rapport-qa.json et manifeste.json (31 entrées, toutes présentes, typées, couvrant la sortie) ; site-qa --statique vert ; 0 appel réseau, ni .env.local ni SUPABASE_* lus, aucun dépôt ; entrée sans commande.json → 3, sortie dans le dépôt → 2, sans manifeste",
+    "✅ CH-3 git status --porcelain public/ identique avant et après ; Lestraque et les neuf démos gelées inchangées (759 fichiers) ; rien de nouveau sous public/ du banc après 13 lancement(s)",
+    "✅ CH-PV aucune preuve encore dans .orchestre/preuves/026-100 (rien de vide)"
+   ]
+  },
+  {
+   "p": "GA",
+   "code": 1,
+   "lignes": [
+    "✅ GA-1 déclencheurs exactement repository_dispatch (types [generer-site]) et workflow_dispatch (entrée commande) ; autocontrôle : témoin vert, 3 variante(s) fautive(s) vue(s)",
+    "✅ GA-2 un job « generer » ubuntu-latest, timeout-minutes 20 ; concurrency \"generer-site\" sans annulation ; permissions contents: read seulement ; autocontrôle : témoin vert, 3 variante(s) fautive(s) vue(s)",
+    "✅ GA-3 aucun upload-artifact, aucun schedule, aucune clé Anthropic ; LIVRAISON_ENV seul, par env:, filtré par la liste blanche vers .env.local ; rien d'un secret affiché (1 variable(s) issues d'un secret suivies) ; autocontrôle : témoin vert, 4 variante(s) fautive(s) vue(s)",
+    "✅ GA-4 l'identifiant, lu par env: (client_payload.commande ou l'entrée), comparé à une expression UUID à l'étape 5, avant livrer-site.mjs … --ci à l'étape 7 ; autocontrôle : témoin vert, 3 variante(s) fautive(s) vue(s)",
+    "✅ GA-5 5 conditions manquantes → aucun fetch ; plafond → aucun fetch, une alerte ; succès → un fetch exact (URL, POST, Bearer, Accept, corps, signal), plafond actions:generer:2026-09 / 10 / 32 j, une mise à jour conditionnelle ; 422 → une alerte « paiement », aucune écriture ; bail de 46 min et plafond de 7 respectés ; jeton jamais écrit",
+    "✅ GA-10 usine en main → aucun fetch ; payée depuis 70 min sans sortie, livreur muet ou absent, pas d'index → un fetch ; sortie présente → aucun ; doublure qui lève → aucun fetch et une alerte",
+    "✅ GA-6 diff de lib/siteLivraison.ts contre 88fb2af : un bloc dans tourLivraison, aucune ligne retirée, seul demanderGeneration importé en plus ; un appel dans un try (catch sans throw), sous if (GITHUB_DISPATCH_TOKEN && !enPause())",
+    "✅ GA-7 (NR) audit, sauvegarde, qualite, security, android identiques à HEAD (lus dans .)",
+    "❌ GA-8 tsc --noEmit en code 2 en 5 s : 2 erreur(s) — app/api/stripe/webhook/route.ts(14,10): error TS2305: Module '\"@/lib/siteLivraison\"' has no exported member 'envoyerCourrielsDus'. | app/api/stripe/webhook/route.ts(81,54): error TS7006: Parameter 'e' implicitly has an 'any' type.",
+    "✅ GA-PV aucune preuve encore dans .orchestre/preuves/026-106 (rien de vide)"
+   ]
+  }
+ ],
+ "ok": false,
+ "manquants": []
+}
