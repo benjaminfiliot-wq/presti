@@ -1,0 +1,32 @@
+// TÉMOIN du lot D (fiche 026-026) : une implémentation de 026-141 (point 1) écrite par Claude Code pour prouver que
+// scripts/bus-livraison-qa.mjs sait être vert sur un vrai code, et rouge sur chaque sabotage. Jamais livrée.
+//
+// lib/siteLivraisonBus.ts — la livraison parle au bus par trois appels exacts du contrat (0097, 0098).
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+
+type Reponse = { data: unknown; error: unknown }
+export type Rpc = (nom: string, params: Record<string, unknown>) => PromiseLike<Reponse>
+const rpcParDefaut: Rpc = (nom, params) => supabaseAdmin.rpc(nom, params) as unknown as PromiseLike<Reponse>
+
+/** La pause générale. Vrai en cas d'erreur (prudence : on ne retire rien, on ne génère rien quand on ne sait pas). */
+export async function busEnPause(rpc: Rpc = rpcParDefaut): Promise<boolean> {
+  try {
+    const { data, error } = await rpc('ops_interrupteur', { p_nom: 'pause_generale' })
+    if (error) return true
+    return data !== false
+  } catch { return true }
+}
+
+/** Clôt la tâche livrer_site:<commande> du bus ; ne lève jamais. */
+export async function cloreTacheLivraison(commandeId: string, etat: string, rpc: Rpc = rpcParDefaut): Promise<'faite' | 'absente' | 'erreur'> {
+  try {
+    const { data, error } = await rpc('ops_tache_clore', { p_agent: 'livreur', p_cle: `livrer_site:${commandeId}`, p_preuve_url: `supabase://sites_commandes/${commandeId}#${etat}` })
+    if (error) return 'erreur'
+    return data === 'faite' || data === 'absente' ? data : 'erreur'
+  } catch { return 'erreur' }
+}
+
+/** Le livreur est vivant ; ne lève jamais. */
+export async function battementLivreur(rpc: Rpc = rpcParDefaut): Promise<void> {
+  try { await rpc('ops_battement', { p_nom: 'livreur' }) } catch { /* un battement manqué se voit chez le veilleur */ }
+}

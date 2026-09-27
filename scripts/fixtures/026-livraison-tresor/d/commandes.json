@@ -1,0 +1,492 @@
+{
+ "_": "Jeu d'essai des juges du lot D (fiche 026-026), écrit par Claude Code le 27/09 : des lignes sites_commandes en JSON, adresses en @presti-test.invalid, domaines fictifs. Horloge figée par injection (maintenant), jamais par attente. Les fichiers du faux stockage sont sous stockage/<id>/.",
+ "maintenant": "2026-10-14T10:00:00.000Z",
+ "dossier": {
+  "_": "DZ-2 à DZ-4 : C1 a un site déposé (stockage/d0260000-…d001/, cinq fichiers sur trois niveaux) et un domaine ; C3 n'a pas de domaine ; C2 n'a que son index (jamais dans l'archive de C1) ; INCONNUE n'est pas en base.",
+  "commandes": [
+   {
+    "id": "d0260000-0000-4000-8000-00000000d001",
+    "etat": "en_ligne",
+    "email": "menuiserie.temoin@presti-test.invalid",
+    "domaine_mode": "existant",
+    "domaine": "menuiserie-temoin.fr",
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000d002",
+    "etat": "en_ligne",
+    "email": "autre.temoin@presti-test.invalid",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000d003",
+    "etat": "retiree",
+    "email": "sans.domaine@presti-test.invalid",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "dossier_jeton_hash": null,
+    "dossier_expire_le": null,
+    "dossier_envoye_le": null,
+    "fichiers_purges_le": null
+   }
+  ],
+  "inconnue": "d0260000-0000-4000-8000-00000000d0ff"
+ },
+ "purge": {
+  "_": "DZ-5 : cinq commandes ; seule P1 (retiree, dossier expiré, fichiers non purgés) doit perdre ses fichiers, recevoir fichiers_purges_le et l'adresse retire-<8 premiers signes>@anonyme.invalid.",
+  "commandes": [
+   {
+    "id": "d0260000-0000-4000-8000-00000000e001",
+    "etat": "retiree",
+    "email": "p1.temoin@presti-test.invalid",
+    "domaine": null,
+    "dossier_expire_le": "2026-10-01T00:00:00.000Z",
+    "fichiers_purges_le": null,
+    "retiree_le": "2026-07-03T00:00:00.000Z"
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000e002",
+    "etat": "retiree",
+    "email": "retire-d0260000@anonyme.invalid",
+    "domaine": null,
+    "dossier_expire_le": "2026-09-01T00:00:00.000Z",
+    "fichiers_purges_le": "2026-09-02T00:00:00.000Z",
+    "retiree_le": "2026-06-03T00:00:00.000Z"
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000e003",
+    "etat": "retiree",
+    "email": "p3.temoin@presti-test.invalid",
+    "domaine": null,
+    "dossier_expire_le": "2026-12-01T00:00:00.000Z",
+    "fichiers_purges_le": null,
+    "retiree_le": "2026-09-02T00:00:00.000Z"
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000e004",
+    "etat": "en_ligne",
+    "email": "p4.temoin@presti-test.invalid",
+    "domaine": null,
+    "dossier_expire_le": "2026-10-01T00:00:00.000Z",
+    "fichiers_purges_le": null,
+    "retiree_le": null
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000e005",
+    "etat": "retiree",
+    "email": "p5.temoin@presti-test.invalid",
+    "domaine": null,
+    "dossier_expire_le": null,
+    "fichiers_purges_le": null,
+    "retiree_le": "2026-08-01T00:00:00.000Z"
+   }
+  ],
+  "fichiers": [
+   "index.html",
+   "services/index.html",
+   "images/photo-1.webp"
+  ]
+ },
+ "retrait": {
+  "_": "RT-2 à RT-5. dates : [compte_supprime_le, date du retrait attendue (jour civil)] ; dus : avec maintenant = 2026-10-14T10:00Z, seule R365 (supprimée il y a 365 jours, soit 12 mois) est due, pas R364 ; a_retirer : RA a un domaine, RB non ; suppression : marquerSuppression ne date que M1 (en ligne, sans date) ; artisan : commandesEnLigneDe rend A1 et A2.",
+  "dates": [
+   [
+    "2025-09-24T12:00:00.000Z",
+    "2026-09-24"
+   ],
+   [
+    "2028-02-29T12:00:00.000Z",
+    "2029-02-28"
+   ],
+   [
+    "2026-01-31T12:00:00.000Z",
+    "2027-01-31"
+   ]
+  ],
+  "dus": [
+   {
+    "id": "d0260000-0000-4000-8000-00000000f365",
+    "etat": "en_ligne",
+    "email": "r365@presti-test.invalid",
+    "domaine": null,
+    "compte_supprime_le": "2025-10-14T10:00:00.000Z"
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000f364",
+    "etat": "en_ligne",
+    "email": "r364@presti-test.invalid",
+    "domaine": null,
+    "compte_supprime_le": "2025-10-15T10:00:00.000Z"
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000f000",
+    "etat": "en_ligne",
+    "email": "rnull@presti-test.invalid",
+    "domaine": null,
+    "compte_supprime_le": null
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000f001",
+    "etat": "retiree",
+    "email": "rret@presti-test.invalid",
+    "domaine": null,
+    "compte_supprime_le": "2024-01-01T10:00:00.000Z"
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000f002",
+    "etat": "payee",
+    "email": "rpay@presti-test.invalid",
+    "domaine": null,
+    "compte_supprime_le": "2024-01-01T10:00:00.000Z"
+   }
+  ],
+  "a_retirer": [
+   {
+    "id": "d0260000-0000-4000-8000-00000000fa01",
+    "etat": "en_ligne",
+    "email": "couvreur.temoin@presti-test.invalid",
+    "domaine_mode": "existant",
+    "domaine": "couvreur-temoin.fr",
+    "compte_supprime_le": "2025-10-01T10:00:00.000Z",
+    "retiree_le": null,
+    "dossier_envoye_le": null
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000fa02",
+    "etat": "en_ligne",
+    "email": "sans.domaine.rt@presti-test.invalid",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "compte_supprime_le": "2025-10-01T10:00:00.000Z",
+    "retiree_le": null,
+    "dossier_envoye_le": null
+   }
+  ],
+  "suppression": [
+   {
+    "id": "d0260000-0000-4000-8000-00000000fb01",
+    "etat": "en_ligne",
+    "email": "m1@presti-test.invalid",
+    "compte_supprime_le": null
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000fb02",
+    "etat": "en_ligne",
+    "email": "m2@presti-test.invalid",
+    "compte_supprime_le": "2026-05-01T08:00:00.000Z"
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000fb03",
+    "etat": "payee",
+    "email": "m3@presti-test.invalid",
+    "compte_supprime_le": null
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000fb04",
+    "etat": "generee",
+    "email": "m4@presti-test.invalid",
+    "compte_supprime_le": null
+   }
+  ],
+  "artisan": "d0260000-0000-4000-8000-0000000000a1",
+  "artisan_commandes": [
+   {
+    "id": "d0260000-0000-4000-8000-00000000fc01",
+    "artisan_id": "d0260000-0000-4000-8000-0000000000a1",
+    "etat": "en_ligne",
+    "email": "a1@presti-test.invalid"
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000fc02",
+    "artisan_id": "d0260000-0000-4000-8000-0000000000a1",
+    "etat": "en_ligne",
+    "email": "a2@presti-test.invalid"
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000fc03",
+    "artisan_id": "d0260000-0000-4000-8000-0000000000a1",
+    "etat": "payee",
+    "email": "a3@presti-test.invalid"
+   },
+   {
+    "id": "d0260000-0000-4000-8000-00000000fc04",
+    "artisan_id": "d0260000-0000-4000-8000-0000000000a2",
+    "etat": "en_ligne",
+    "email": "a4@presti-test.invalid"
+   }
+  ],
+  "retraits_du_tour": 12
+ },
+ "poste": {
+  "_": "PS-1, PS-3, PS-4, PS-6 : une commande par état ; G a un site déposé et un domaine (DNS fictifs dans dns), G2 n'a pas de site déposé ; B (brouillon) sert à éprouver que la route reconnaît les six actions. Le champ matiere « complete » est remplacé par le juge par la matière de scripts/fixtures/025/commande-exemple/commande.json plus deux prestations ; « incomplete », par la même sans photo.",
+  "artisan": {
+   "id": "d0260000-0000-4000-8000-0000000000b1",
+   "nom": "Plomberie Témoin Bruz",
+   "site_origine": "historique"
+  },
+  "dns": {
+   "plomberie-temoin.fr": [
+    {
+     "type": "A",
+     "name": "@",
+     "value": "76.76.21.21"
+    },
+    {
+     "type": "CNAME",
+     "name": "www",
+     "value": "cname.vercel-dns.com"
+    }
+   ]
+  },
+  "commandes": [
+   {
+    "cle": "G",
+    "id": "d0260000-0000-4000-8000-00000000a001",
+    "artisan_id": "d0260000-0000-4000-8000-0000000000b1",
+    "etat": "generee",
+    "email": "g.poste@presti-test.invalid",
+    "domaine_mode": "existant",
+    "domaine": "plomberie-temoin.fr",
+    "matiere": "complete",
+    "site": true
+   },
+   {
+    "cle": "G2",
+    "id": "d0260000-0000-4000-8000-00000000a002",
+    "artisan_id": null,
+    "etat": "generee",
+    "email": "g2.poste@presti-test.invalid",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "matiere": "complete",
+    "site": false
+   },
+   {
+    "cle": "V",
+    "id": "d0260000-0000-4000-8000-00000000a003",
+    "artisan_id": null,
+    "etat": "validee",
+    "email": "v.poste@presti-test.invalid",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "matiere": "complete",
+    "site": true
+   },
+   {
+    "cle": "P",
+    "id": "d0260000-0000-4000-8000-00000000a004",
+    "artisan_id": null,
+    "etat": "payee",
+    "email": "p.poste@presti-test.invalid",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "matiere": "incomplete",
+    "site": true
+   },
+   {
+    "cle": "E",
+    "id": "d0260000-0000-4000-8000-00000000a005",
+    "artisan_id": null,
+    "etat": "en_ligne",
+    "email": "e.poste@presti-test.invalid",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "matiere": "complete",
+    "site": true,
+    "search_console_le": null
+   },
+   {
+    "cle": "R",
+    "id": "d0260000-0000-4000-8000-00000000a006",
+    "artisan_id": null,
+    "etat": "retiree",
+    "email": "r.poste@presti-test.invalid",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "matiere": "complete",
+    "site": false
+   },
+   {
+    "cle": "B",
+    "id": "d0260000-0000-4000-8000-00000000a007",
+    "artisan_id": null,
+    "etat": "brouillon",
+    "email": "b.poste@presti-test.invalid",
+    "domaine_mode": "aucun",
+    "domaine": null,
+    "matiere": "incomplete",
+    "site": false
+   }
+  ],
+  "a_faire": {
+   "_": "PS-5, horloge figée au mercredi 14/10/2026 10:00 UTC. Heures ouvrées (heuresOuvreesEntre) : mardi 06:00 UTC → 28 h, vendredi 08:00 UTC → 74 h, mercredi 06:00 UTC → 4 h. Attendus : F1 « Appeler l'artisan : dossier incomplet » (attention), F2 « Générer le site » (attention, le détail porte la commande livrer-site), F3 « Relire et mettre en ligne » (attention), F4 « Mettre en ligne » (critique : validée depuis 74 h ouvrées), F5 « Soumettre le plan du site à la Search Console » (attention) ; F6 (plan déjà soumis) et F7 (payée depuis 4 h) : aucune ligne. Chaque commande a son artisan, au nom distinct : le juge retrouve la ligne de chacune par ce nom (le détail le porte) ou par son id.",
+   "artisans": [
+    {
+     "id": "d0260000-0000-4000-8000-0000000000c1",
+     "nom": "Couverture Témoin Rennes"
+    },
+    {
+     "id": "d0260000-0000-4000-8000-0000000000c2",
+     "nom": "Menuiserie Témoin Vitré"
+    },
+    {
+     "id": "d0260000-0000-4000-8000-0000000000c3",
+     "nom": "Plomberie Témoin Bruz"
+    },
+    {
+     "id": "d0260000-0000-4000-8000-0000000000c4",
+     "nom": "Carrelage Témoin Cesson"
+    },
+    {
+     "id": "d0260000-0000-4000-8000-0000000000c5",
+     "nom": "Peinture Témoin Fougères"
+    },
+    {
+     "id": "d0260000-0000-4000-8000-0000000000c6",
+     "nom": "Maçonnerie Témoin Redon"
+    },
+    {
+     "id": "d0260000-0000-4000-8000-0000000000c7",
+     "nom": "Électricité Témoin Dinan"
+    }
+   ],
+   "commandes": [
+    {
+     "cle": "F1",
+     "id": "d0260000-0000-4000-8000-00000000af01",
+     "artisan_id": "d0260000-0000-4000-8000-0000000000c1",
+     "etat": "payee",
+     "email": "f1@presti-test.invalid",
+     "domaine_mode": "aucun",
+     "domaine": null,
+     "matiere": "incomplete",
+     "paye_le": "2026-10-13T06:00:00.000Z",
+     "genere_le": null,
+     "valide_le": null,
+     "en_ligne_le": null,
+     "search_console_le": null,
+     "attendu": [
+      "Appeler l'artisan : dossier incomplet",
+      "attention"
+     ]
+    },
+    {
+     "cle": "F2",
+     "id": "d0260000-0000-4000-8000-00000000af02",
+     "artisan_id": "d0260000-0000-4000-8000-0000000000c2",
+     "etat": "payee",
+     "email": "f2@presti-test.invalid",
+     "domaine_mode": "aucun",
+     "domaine": null,
+     "matiere": "complete",
+     "paye_le": "2026-10-13T06:00:00.000Z",
+     "genere_le": null,
+     "valide_le": null,
+     "en_ligne_le": null,
+     "search_console_le": null,
+     "attendu": [
+      "Générer le site",
+      "attention"
+     ]
+    },
+    {
+     "cle": "F3",
+     "id": "d0260000-0000-4000-8000-00000000af03",
+     "artisan_id": "d0260000-0000-4000-8000-0000000000c3",
+     "etat": "generee",
+     "email": "f3@presti-test.invalid",
+     "domaine_mode": "aucun",
+     "domaine": null,
+     "matiere": "complete",
+     "paye_le": "2026-10-12T06:00:00.000Z",
+     "genere_le": "2026-10-14T06:00:00.000Z",
+     "valide_le": null,
+     "en_ligne_le": null,
+     "search_console_le": null,
+     "attendu": [
+      "Relire et mettre en ligne",
+      "attention"
+     ]
+    },
+    {
+     "cle": "F4",
+     "id": "d0260000-0000-4000-8000-00000000af04",
+     "artisan_id": "d0260000-0000-4000-8000-0000000000c4",
+     "etat": "validee",
+     "email": "f4@presti-test.invalid",
+     "domaine_mode": "aucun",
+     "domaine": null,
+     "matiere": "complete",
+     "paye_le": "2026-10-05T06:00:00.000Z",
+     "genere_le": "2026-10-08T06:00:00.000Z",
+     "valide_le": "2026-10-09T08:00:00.000Z",
+     "en_ligne_le": null,
+     "search_console_le": null,
+     "attendu": [
+      "Mettre en ligne",
+      "critique"
+     ]
+    },
+    {
+     "cle": "F5",
+     "id": "d0260000-0000-4000-8000-00000000af05",
+     "artisan_id": "d0260000-0000-4000-8000-0000000000c5",
+     "etat": "en_ligne",
+     "email": "f5@presti-test.invalid",
+     "domaine_mode": "aucun",
+     "domaine": null,
+     "matiere": "complete",
+     "paye_le": "2026-10-09T06:00:00.000Z",
+     "genere_le": "2026-10-12T06:00:00.000Z",
+     "valide_le": "2026-10-13T06:00:00.000Z",
+     "en_ligne_le": "2026-10-13T06:00:00.000Z",
+     "search_console_le": null,
+     "attendu": [
+      "Soumettre le plan du site à la Search Console",
+      "attention"
+     ]
+    },
+    {
+     "cle": "F6",
+     "id": "d0260000-0000-4000-8000-00000000af06",
+     "artisan_id": "d0260000-0000-4000-8000-0000000000c6",
+     "etat": "en_ligne",
+     "email": "f6@presti-test.invalid",
+     "domaine_mode": "aucun",
+     "domaine": null,
+     "matiere": "complete",
+     "paye_le": "2026-10-09T06:00:00.000Z",
+     "genere_le": "2026-10-12T06:00:00.000Z",
+     "valide_le": "2026-10-13T06:00:00.000Z",
+     "en_ligne_le": "2026-10-13T06:00:00.000Z",
+     "search_console_le": "2026-10-13T09:00:00.000Z",
+     "attendu": null
+    },
+    {
+     "cle": "F7",
+     "id": "d0260000-0000-4000-8000-00000000af07",
+     "artisan_id": "d0260000-0000-4000-8000-0000000000c7",
+     "etat": "payee",
+     "email": "f7@presti-test.invalid",
+     "domaine_mode": "aucun",
+     "domaine": null,
+     "matiere": "complete",
+     "paye_le": "2026-10-14T06:00:00.000Z",
+     "genere_le": null,
+     "valide_le": null,
+     "en_ligne_le": null,
+     "search_console_le": null,
+     "attendu": null
+    }
+   ]
+  }
+ }
+}

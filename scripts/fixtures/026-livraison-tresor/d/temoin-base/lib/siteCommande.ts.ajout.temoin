@@ -1,0 +1,9 @@
+
+// ── TÉMOIN du lot D (fiche 026-026) : le préalable de 026-078 que livre 026-030, posé dans la maquette seulement ─────────
+/** Ce qui manque encore pour fabriquer le site : les erreurs d'avant paiement, plus au moins une prestation. */
+export function erreursFabrication(b: Brouillon): string[] {
+  const e = erreursAvantPaiement(b)
+  const prestations = (b.matiere as { prestations?: unknown } | undefined)?.prestations
+  if (!Array.isArray(prestations) || prestations.length === 0) e.push('Indiquez au moins une prestation : c’est la matière des pages du site.')
+  return e
+}

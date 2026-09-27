@@ -1,0 +1,9 @@
+{
+ "_": "Entrée d’une tâche livrer_site du jeu d’essai du lot D (026-026) : l’export de la commande (format --depuis), plus « commande » (son id) et, pour une tâche d’essai, « essai: true ». Données FICTIVES (téléphone de la plage 02 61 91, adresse en .invalid) : aucune ne doit sortir dans un événement, un journal ou une réponse.",
+ "commande": "(remplacée par le juge)",
+ "id": "(remplacée par le juge)",
+ "nom": "Plomberie Témoin Lestrade",
+ "email": "plomberie.temoin@lestrade.invalid",
+ "telephone": "+33 2 61 91 44 18",
+ "adresse": "7 rue du Témoin, 35170 Bruz"
+}

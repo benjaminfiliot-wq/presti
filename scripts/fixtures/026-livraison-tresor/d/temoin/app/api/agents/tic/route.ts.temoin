@@ -1,0 +1,41 @@
+// TÉMOIN du lot D (fiche 026-026) : un tic « d'avant 026-141 », au plus près du cahier de 026-049, posé dans le commit de
+// base de la maquette seulement (026-049 n'est pas encore livrée : ses modules lib/agents/* n'existent pas, leurs étapes
+// passent ici par supabaseAdmin.rpc). Jamais livré.
+// GET /api/agents/tic — l'horloge du bus : chaque minute, par pg_cron + pg_net.
+import { NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { enregistrerPassage } from '@/lib/alertes'
+import { consommerLimite } from '@/lib/limites'
+import { tourLivraison } from '@/lib/siteLivraison'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+export const maxDuration = 60
+
+type Etape = { statut: 'ok' | 'echec' | 'saute'; raison?: string }
+
+export async function GET(req: Request) {
+  const secret = process.env.CRON_SECRET
+  if (!secret || req.headers.get('authorization') !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  const debut = Date.now()
+  const etapes: Record<string, Etape> = {}
+  const etape = async (nom: string, f: () => Promise<unknown>) => {
+    if (Date.now() - debut > 25_000) { etapes[nom] = { statut: 'saute', raison: 'budget' }; return }
+    try { await f(); etapes[nom] = { statut: 'ok' } } catch { etapes[nom] = { statut: 'echec' } }
+  }
+  await etape('baux', async () => { const { error } = await supabaseAdmin.rpc('ops_baux_expirer'); if (error) throw new Error('baux') })
+  const maintenant = new Date()
+  const minute = maintenant.getUTCMinutes()
+  if (minute % 5 === 0) {
+    const creneau = `${maintenant.toISOString().slice(0, 13).replace(/\D/g, '')}${String(minute - (minute % 5)).padStart(2, '0')}`
+    if (await consommerLimite(`a0:creneau:${creneau}`, 1, 300)) await etape('veilleur', async () => { /* veilleur A0 : 026-047 */ })
+    else etapes.veilleur = { statut: 'saute', raison: 'creneau' }
+  } else etapes.veilleur = { statut: 'saute', raison: 'minute' }
+  if (minute % 15 === 0) {
+    try { await tourLivraison() } catch { etapes.livraison = { statut: 'echec' } }
+  }
+  const reussi = !Object.values(etapes).some((x) => x.statut === 'echec')
+  const dureeMs = Date.now() - debut
+  await enregistrerPassage('tic', { etapes, dureeMs }, reussi)
+  return NextResponse.json(reussi ? { ok: true, etapes, dureeMs } : { ok: false, etapes }, { status: reussi ? 200 : 500 })
+}

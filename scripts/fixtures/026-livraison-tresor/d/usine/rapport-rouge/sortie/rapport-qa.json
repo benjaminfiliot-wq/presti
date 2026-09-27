@@ -1,0 +1,10 @@
+{
+ "commande": "(remplacée par le juge)",
+ "verdict": "FAIL",
+ "criteres": [
+  {
+   "id": "SQ-1",
+   "passe": false
+  }
+ ]
+}

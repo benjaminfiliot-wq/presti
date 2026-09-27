@@ -1,0 +1,127 @@
+// TÉMOIN du lot D (fiche 026-026) : une implémentation de 026-028 écrite par Claude Code pour prouver que
+// scripts/dossier-zip-qa.mjs sait être vert sur un vrai code, et rouge sur chaque sabotage. Jamais livrée : la preuve
+// « sait échouer » la pose dans une maquette sous .orchestre/travail/, en retirant le suffixe .temoin.
+//
+// lib/siteDossier.ts — le dossier du site, rendu à l'artisan (article 3 bis des CGU).
+import crypto from 'node:crypto'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { ZipFlux } from '@/lib/zip'
+import { consommerLimite } from '@/lib/limites'
+import { getIp, ipPseudonyme } from '@/lib/security'
+import { BUCKET_SITES } from '@/lib/sitesGeneres'
+
+type Base = typeof supabaseAdmin
+type Stockage = typeof supabaseAdmin.storage
+export type DependancesDossier = { base?: Base; stockage?: Stockage; maintenant?: () => Date }
+
+const deps = (d: DependancesDossier = {}) => ({
+  base: d.base ?? supabaseAdmin,
+  stockage: d.stockage ?? supabaseAdmin.storage,
+  maintenant: d.maintenant ?? (() => new Date()),
+})
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const empreinte = (jeton: string) => crypto.createHash('sha256').update(jeton).digest('hex')
+
+export async function creerJetonDossier(commandeId: string, jours = 90, d: DependancesDossier = {}): Promise<string> {
+  const x = deps(d)
+  const jeton = crypto.randomBytes(32).toString('base64url')
+  const expire = new Date(x.maintenant().getTime() + jours * 86_400_000).toISOString()
+  const { data, error } = await x.base.from('sites_commandes').update({ dossier_jeton_hash: empreinte(jeton), dossier_expire_le: expire }).eq('id', commandeId).select('id')
+  if (error) throw new Error(`Jeton de dossier impossible : ${error.message}`)
+  if (!data?.length) throw new Error('Commande introuvable pour le jeton de dossier.')
+  return jeton
+}
+
+export async function verifierJetonDossier(commandeId: string, jeton: string, d: DependancesDossier = {}): Promise<boolean> {
+  const x = deps(d)
+  if (!UUID.test(commandeId) || typeof jeton !== 'string' || !jeton) return false
+  const { data, error } = await x.base.from('sites_commandes').select('id, dossier_jeton_hash, dossier_expire_le').eq('id', commandeId).maybeSingle()
+  if (error || !data?.dossier_jeton_hash || !data.dossier_expire_le) return false
+  const a = Buffer.from(empreinte(jeton), 'hex'), b = Buffer.from(String(data.dossier_jeton_hash), 'hex')
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return false
+  return new Date(data.dossier_expire_le).getTime() > x.maintenant().getTime()
+}
+
+/** Les chemins relatifs de tous les fichiers du site déposé (le stockage ne descend pas seul dans les sous-dossiers). */
+export async function listerSite(commandeId: string, d: DependancesDossier = {}): Promise<string[]> {
+  const x = deps(d)
+  const seau = x.stockage.from(BUCKET_SITES)
+  const out: string[] = []
+  const parcourir = async (dossier: string) => {
+    for (let debut = 0; ; debut += 100) {
+      const { data, error } = await seau.list(dossier, { limit: 100, offset: debut })
+      if (error) throw new Error(`Lecture du site impossible : ${error.message}`)
+      for (const e of data ?? []) {
+        const chemin = `${dossier}/${e.name}`
+        if (e.id === null) await parcourir(chemin)
+        else out.push(chemin.slice(commandeId.length + 1))
+      }
+      if ((data ?? []).length < 100) break
+    }
+  }
+  await parcourir(commandeId)
+  return out.sort()
+}
+
+export const LISEZ_MOI = [
+  'Le dossier complet de votre site',
+  '',
+  'Ce dossier contient toutes les pages, les images et le plan de votre site (sitemap.xml).',
+  '',
+  'Le site est statique : il s’héberge tel quel chez n’importe quel hébergeur de pages statiques, sans base de données.',
+  '',
+  'Le formulaire de contact écrivait à Presti. Désormais, quand l’envoi échoue, il affiche votre téléphone et votre adresse.',
+  '',
+  'Votre nom de domaine : refaites-le pointer chez votre nouvel hébergeur (les enregistrements DNS sont chez votre registrar).',
+  '',
+].join('\n')
+
+export async function archiveDuSite(commandeId: string, d: DependancesDossier = {}): Promise<ZipFlux> {
+  const x = deps(d)
+  const chemins = await listerSite(commandeId, d)
+  const seau = x.stockage.from(BUCKET_SITES)
+  const zip = new ZipFlux()
+  try {
+    for (const chemin of chemins) {
+      const { data, error } = await seau.download(`${commandeId}/${chemin}`)
+      if (error || !data) throw new Error(`Fichier illisible : ${chemin}`)
+      zip.ajouter(chemin, new Uint8Array(await data.arrayBuffer()))
+    }
+    zip.ajouter('LISEZ-MOI.txt', LISEZ_MOI)
+    zip.terminer()
+  } catch (e) { zip.echouer(e) }
+  return zip
+}
+
+export async function purgerFichiersExpires(d: DependancesDossier = {}): Promise<{ purges: number }> {
+  const x = deps(d)
+  const maintenant = x.maintenant().toISOString()
+  const { data, error } = await x.base.from('sites_commandes').select('id, email').eq('etat', 'retiree').lt('dossier_expire_le', maintenant).is('fichiers_purges_le', null).limit(50)
+  if (error) throw new Error(`Lecture des dossiers expirés impossible : ${error.message}`)
+  let purges = 0
+  for (const c of data ?? []) {
+    const chemins = await listerSite(c.id, d)
+    if (chemins.length) {
+      const { error: eR } = await x.stockage.from(BUCKET_SITES).remove(chemins.map((p) => `${c.id}/${p}`))
+      if (eR) continue
+    }
+    await x.base.from('sites_commandes').update({ fichiers_purges_le: maintenant, email: `retire-${c.id.slice(0, 8)}@anonyme.invalid` }).eq('id', c.id).is('fichiers_purges_le', null)
+    purges++
+  }
+  return { purges }
+}
+
+const introuvable = () => new Response('Dossier introuvable.', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'X-Robots-Tag': 'noindex' } })
+
+export async function servirDossier(req: Request, id: string, d: DependancesDossier = {}): Promise<Response> {
+  const x = deps(d)
+  if (!UUID.test(id)) return introuvable()
+  if (!(await consommerLimite(`dossier:${ipPseudonyme(getIp(req)) ?? 'inconnue'}`, 10, 3600))) return new Response('Trop de demandes.', { status: 429, headers: { 'X-Robots-Tag': 'noindex' } })
+  const jeton = new URL(req.url).searchParams.get('j') ?? ''
+  if (!(await verifierJetonDossier(id, jeton, d))) return introuvable()
+  const { data: c } = await x.base.from('sites_commandes').select('id, domaine').eq('id', id).maybeSingle()
+  if (!c) return introuvable()
+  const zip = await archiveDuSite(id, d)
+  const nom = `site-${c.domaine || id.slice(0, 8)}.zip`
+  return new Response(zip.flux, { status: 200, headers: { 'Content-Type': 'application/zip', 'Content-Disposition': `attachment; filename="${nom}"`, 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex, nofollow' } })
+}

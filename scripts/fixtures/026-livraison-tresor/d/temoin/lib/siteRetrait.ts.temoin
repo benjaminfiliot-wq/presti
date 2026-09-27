@@ -1,0 +1,111 @@
+// TÉMOIN du lot D (fiche 026-026) : une implémentation de 026-031 écrite par Claude Code pour prouver que
+// scripts/retrait-site-qa.mjs sait être vert sur un vrai code, et rouge sur chaque sabotage. Jamais livrée.
+//
+// lib/siteRetrait.ts — le site douze mois après la suppression du compte (article 3 bis des CGU, décision D15).
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { sendEmail, notifierEntreprise } from '@/lib/email'
+import { removeDomain } from '@/lib/vercelDomains'
+import { creerJetonDossier } from '@/lib/siteDossier'
+
+export const ETAT_RETIRE = 'retiree'
+export const LIBELLE_RETIRE = 'Retiré — dossier envoyé'
+const JOURS_DOSSIER = 90
+
+type Base = typeof supabaseAdmin
+export type DependancesRetrait = {
+  base?: Base
+  envoyer?: typeof sendEmail
+  detacherDomaine?: (domaine: string) => Promise<boolean>
+  creerJeton?: (commandeId: string, jours?: number) => Promise<string>
+  notifier?: typeof notifierEntreprise
+  maintenant?: () => Date
+}
+type CommandeRetrait = { id: string; email: string; etat: string; domaine?: string | null; compte_supprime_le?: string | null }
+
+const deps = (d: DependancesRetrait = {}) => ({
+  base: d.base ?? supabaseAdmin,
+  envoyer: d.envoyer ?? sendEmail,
+  detacherDomaine: d.detacherDomaine ?? removeDomain,
+  creerJeton: d.creerJeton ?? ((id: string, jours?: number) => creerJetonDossier(id, jours)),
+  notifier: d.notifier ?? notifierEntreprise,
+  maintenant: d.maintenant ?? (() => new Date()),
+})
+
+const jourFr = (d: Date) => new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', day: 'numeric', month: 'long', year: 'numeric' }).format(d)
+
+/** + 12 mois calendaires ; le 29 février donne le 28 février. */
+export function dateRetrait(compteSupprimeLe: string | Date): Date {
+  const x = new Date(compteSupprimeLe)
+  const cible = new Date(Date.UTC(x.getUTCFullYear() + 1, x.getUTCMonth(), 1, x.getUTCHours(), x.getUTCMinutes(), x.getUTCSeconds(), x.getUTCMilliseconds()))
+  const dernier = new Date(Date.UTC(cible.getUTCFullYear(), cible.getUTCMonth() + 1, 0)).getUTCDate()
+  cible.setUTCDate(Math.min(x.getUTCDate(), dernier))
+  return cible
+}
+
+export async function commandesEnLigneDe(artisanId: string, d: DependancesRetrait = {}): Promise<string[]> {
+  const { data, error } = await deps(d).base.from('sites_commandes').select('id').eq('artisan_id', artisanId).eq('etat', 'en_ligne')
+  if (error) throw new Error(`Lecture des sites en ligne impossible : ${error.message}`)
+  return (data ?? []).map((c: { id: string }) => c.id)
+}
+
+export function courrielSuppression(retrait: Date) {
+  return {
+    subject: 'Votre site reste en ligne douze mois',
+    text: `Bonjour,\n\nVotre compte Presti est supprimé. Comme le prévoit l’article 3 bis des conditions générales, le site commandé reste en ligne douze mois à compter de la suppression, sans frais, jusqu’au ${jourFr(retrait)}.\n\nÀ l’issue de ce délai, ou avant sur simple demande (répondez simplement à ce message), vous recevez le dossier complet de votre site (pages, images, plan du site) pour l’héberger où vous le souhaitez. Passé ce délai, le site est retiré.\n\nL’équipe Presti`,
+  }
+}
+
+export function courrielRetrait(commandeId: string, jeton: string, expire: Date) {
+  return {
+    subject: 'Le dossier complet de votre site',
+    text: `Bonjour,\n\nLe délai de douze mois prévu par l’article 3 bis des conditions générales est écoulé : votre site est retiré de Presti.\n\nVoici le dossier complet de votre site (pages, images, plan du site), à télécharger ici :\nhttps://prestiapp.fr/api/site-dossier/${commandeId}?j=${encodeURIComponent(jeton)}\n\nCe lien est valable jusqu’au ${jourFr(expire)}.\n\nL’équipe Presti`,
+  }
+}
+
+export async function marquerSuppression(ids: string[], d: DependancesRetrait = {}): Promise<number> {
+  const x = deps(d)
+  if (!ids.length) return 0
+  const maintenant = x.maintenant()
+  const { data, error } = await x.base.from('sites_commandes').update({ compte_supprime_le: maintenant.toISOString() }).in('id', ids).eq('etat', 'en_ligne').is('compte_supprime_le', null).select('id, email')
+  if (error) throw new Error(`Marquage de la suppression impossible : ${error.message}`)
+  let envoyes = 0
+  for (const c of (data ?? []) as { id: string; email: string }[]) {
+    try { const r = await x.envoyer({ to: c.email, ...courrielSuppression(dateRetrait(maintenant)), critique: true }); if (r.ok) envoyes++ }
+    catch (e) { console.error('[retrait] courriel de suppression non envoyé', c.id, e instanceof Error ? e.message : e) }
+  }
+  return envoyes
+}
+
+export async function retraitsDus(d: DependancesRetrait = {}): Promise<CommandeRetrait[]> {
+  const x = deps(d)
+  const { data, error } = await x.base.from('sites_commandes').select('id, email, etat, domaine, compte_supprime_le').eq('etat', 'en_ligne').not('compte_supprime_le', 'is', null).limit(200)
+  if (error) throw new Error(`Lecture des retraits impossible : ${error.message}`)
+  const t = x.maintenant().getTime()
+  return ((data ?? []) as CommandeRetrait[]).filter((c) => c.compte_supprime_le && dateRetrait(c.compte_supprime_le).getTime() <= t)
+}
+
+export async function retirer(commande: CommandeRetrait, d: DependancesRetrait = {}): Promise<'retiree' | 'deja' | 'envoi_echoue'> {
+  const x = deps(d)
+  const { data: actuelle } = await x.base.from('sites_commandes').select('id, etat, email, domaine').eq('id', commande.id).maybeSingle()
+  if (!actuelle || actuelle.etat !== 'en_ligne') return 'deja'
+  // 1. le jeton ; 2. l'e-mail (s'il échoue : rien d'autre ne change, le tour de demain réessaie).
+  const jeton = await x.creerJeton(commande.id, JOURS_DOSSIER)
+  const maintenant = x.maintenant()
+  const expire = new Date(maintenant.getTime() + JOURS_DOSSIER * 86_400_000)
+  try {
+    const r = await x.envoyer({ to: actuelle.email, ...courrielRetrait(commande.id, jeton, expire), critique: true })
+    if (!r.ok) return 'envoi_echoue'
+  } catch { return 'envoi_echoue' }
+  // 3. la mise à jour, conditionnée à l'état en ligne.
+  const { data: passe } = await x.base.from('sites_commandes').update({ etat: ETAT_RETIRE, retiree_le: maintenant.toISOString(), dossier_envoye_le: maintenant.toISOString() }).eq('id', commande.id).eq('etat', 'en_ligne').select('id')
+  if (!passe?.length) return 'deja'
+  // 4. le domaine : un échec donne une alerte, pas un retour en arrière.
+  if (actuelle.domaine) {
+    let ok = false
+    try { ok = (await x.detacherDomaine(actuelle.domaine)) === true } catch { ok = false }
+    if (!ok) await x.notifier('Retrait d’un site : domaine non détaché', `Le domaine ${actuelle.domaine} de la commande ${commande.id} n’a pas pu être détaché du projet. À faire à la main.`)
+  }
+  // 5. l'entreprise est prévenue (sans l'adresse de l'artisan dans le sujet).
+  await x.notifier('Site retiré (article 3 bis)', `Commande ${commande.id} : site retiré douze mois après la suppression du compte ; dossier envoyé à l’artisan.`)
+  return 'retiree'
+}

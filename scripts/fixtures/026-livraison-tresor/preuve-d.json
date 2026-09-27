@@ -2,13 +2,13 @@
  "lot": "D",
  "fiche": "026-026",
  "reference": "4041ec9b41432576037dbc0b45e0647bd60a0347",
- "reference_pourquoi": "Même sha que le lot A (preuve-a.json) : la référence du domaine est fixée par 026-018.",
- "absents_de_la_reference": ["app/api/controle/dossier/route.ts", "app/api/controle/retrait/route.ts", "app/poste/page.tsx", "app/api/agents/tic/route.ts"],
+ "reference_pourquoi": "Même sha que le lot A (preuve-a.json) : la référence du domaine est fixée par 026-018. Réécrit le 27/09 par Claude Code (fiche rouverte) : la version du 26/09 citait app/api/controle/dossier/route.ts, app/api/controle/retrait/route.ts et app/poste/page.tsx, qui ne sont les fichiers d'aucune fiche jugée, et ses commandes n'étaient pas les lignes exactes des verifier de 026-028, 026-031, 026-078 et 026-141.",
+ "absents_de_la_reference": ["lib/siteDossier.ts", "app/api/site-dossier/[commande]/route.ts", "lib/siteRetrait.ts", "lib/siteLivraisonBus.ts", "lib/siteLivraisonUsine.ts", "app/api/agents/tic/route.ts"],
  "chemins_reference": ["app", "lib", "scripts", "supabase", "package.json", "tsconfig.json", "next.config.mjs", "next.config.ts", "middleware.ts", "proxy.ts"],
  "juges": [
-  { "commande": "node scripts/dossier-zip-qa.mjs", "echec_attendu": "DZ-1", "cite": "app/api/controle/dossier/route.ts", "fiche_jugee": "026-028" },
-  { "commande": "node scripts/retrait-site-qa.mjs", "echec_attendu": "RT-1", "cite": "app/api/controle/retrait/route.ts", "fiche_jugee": "026-031" },
-  { "commande": "node scripts/poste-sites-qa.mjs", "echec_attendu": "PS-1", "cite": "app/poste/page.tsx", "fiche_jugee": "026-078" },
-  { "commande": "node scripts/bus-livraison-qa.mjs", "echec_attendu": "BL-1", "cite": "app/api/agents/tic/route.ts", "fiche_jugee": "026-141" }
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/dossier-zip-qa.mjs", "echec_attendu": "DZ-1", "cite": "lib/siteDossier.ts", "fiche_jugee": "026-028" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/retrait-site-qa.mjs", "echec_attendu": "RT-1", "cite": "lib/siteRetrait.ts", "fiche_jugee": "026-031" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/poste-sites-qa.mjs", "echec_attendu": "PS-1", "cite": "valider_et_mettre_en_ligne", "fiche_jugee": "026-078" },
+  { "commande": "node --import ./scripts/ts-loader.mjs scripts/bus-livraison-qa.mjs", "echec_attendu": "BL-1", "cite": "app/api/agents/tic/route.ts", "fiche_jugee": "026-141" }
  ]
 }

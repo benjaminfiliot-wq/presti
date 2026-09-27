@@ -1,0 +1,713 @@
+{
+ "produit_le": "2026-09-27T15:34:10.709Z",
+ "maquette": {
+  "dossier": ".orchestre/travail/026-026-maquette",
+  "base": "c6007ab27b73ab2f9be3762d331ee3aeccb3c1b5",
+  "temoins": [
+   "app/api/agents/tic/route.ts",
+   "app/api/controle/a-faire/route.ts",
+   "app/api/controle/sites/route.ts",
+   "app/api/controle/sites/[id]/route.ts",
+   "app/api/site-dossier/[commande]/route.ts",
+   "app/controle/Sites.tsx",
+   "lib/direction/journal.ts",
+   "lib/purgeComptes.ts",
+   "lib/siteDossier.ts",
+   "lib/siteLivraison.ts",
+   "lib/siteLivraisonBus.ts",
+   "lib/siteLivraisonUsine.ts",
+   "lib/siteRetrait.ts"
+  ]
+ },
+ "temoins": {
+  "DZ": {
+   "maquette": {
+    "code": 0,
+    "duree": 23,
+    "verts": 8,
+    "rouges": []
+   },
+   "temoin": {
+    "code": 0,
+    "duree": 1,
+    "rouges": []
+   },
+   "arbre": {
+    "code": 1,
+    "duree": 0,
+    "premiere": "❌ DZ-1 lib/siteDossier.ts absent : le module de la fiche 026-028 n'existe pas (encore)"
+   }
+  },
+  "RT": {
+   "maquette": {
+    "code": 0,
+    "duree": 61,
+    "verts": 9,
+    "rouges": []
+   },
+   "temoin": {
+    "code": 0,
+    "duree": 40,
+    "rouges": []
+   },
+   "arbre": {
+    "code": 1,
+    "duree": 34,
+    "premiere": "❌ RT-1 lib/siteRetrait.ts absent : le module de la fiche 026-031 n'existe pas (encore)"
+   }
+  },
+  "PS": {
+   "maquette": {
+    "code": 0,
+    "duree": 11,
+    "verts": 9,
+    "rouges": []
+   },
+   "temoin": {
+    "code": 0,
+    "duree": 1,
+    "rouges": []
+   },
+   "arbre": {
+    "code": 1,
+    "duree": 25,
+    "premiere": "❌ PS-1 app/api/controle/sites/[id]/route.ts n'accepte pas valider_et_mettre_en_ligne, search_console, envoyer_dossier : valider_et_mettre_en_ligne → 400 (« Action inconnue : valider, regenerer ou mettre_en_ligne. ») ; s…"
+   }
+  },
+  "BL": {
+   "maquette": {
+    "code": 0,
+    "duree": 20,
+    "verts": 9,
+    "rouges": []
+   },
+   "temoin": {
+    "code": 0,
+    "duree": 0,
+    "rouges": []
+   },
+   "arbre": {
+    "code": 2,
+    "duree": 0,
+    "premiere": "❌ BL-1 préalable absent : app/api/agents/tic/route.ts (fiche 026-049, le tic du bus) — app/api/agents/tic/route.ts et le contrat du bus doivent exister avant 026-141"
+   }
+  }
+ },
+ "mutations": [
+  {
+   "juge": "DZ",
+   "critere": "DZ-1",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/site-dossier/[commande]/route.ts",
+   "quoi": "la route lit params sans l’attendre (promesse de Next 16)",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ DZ-1 GET de la route (params en promesse, bon jeton) : 404 text/plain; charset=utf-8, 200 application/zip attendu",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 6
+  },
+  {
+   "juge": "DZ",
+   "critere": "DZ-2",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteDossier.ts",
+   "quoi": "le jeton en clair écrit dans dossier_jeton_hash",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ DZ-2 le jeton en clair est écrit dans dossier_jeton_hash ; dossier_jeton_hash = DcsRSPEGcyjD0BsXYSyQvEQJOkKD6vzK_m0KqmvUuSc, SHA-256 hexadécimal du jeton attendu ; le jeton en clair apparaît dans une écriture de la base ; verifierJetonDossier, bon jeton, 1 j après : false, true attendu ; verifierJetonDossier, bon je…",
+   "autres_rouges": [
+    "DZ-1 G",
+    "DZ-4 b"
+   ],
+   "restaure": true,
+   "duree": 8
+  },
+  {
+   "juge": "DZ",
+   "critere": "DZ-2",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteDossier.ts",
+   "quoi": "comparaison par === au lieu de timingSafeEqual",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ DZ-2 lib/siteDossier.ts n'appelle pas timingSafeEqual (lu dans le source, commentaires exclus)",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 8
+  },
+  {
+   "juge": "DZ",
+   "critere": "DZ-3",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteDossier.ts",
+   "quoi": "listerSite ne descend pas dans les sous-dossiers",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ DZ-3 listerSite : [\"index.html\",\"sitemap.xml\"] ; les 5 fichiers [\"images/a-480.webp\",\"index.html\",\"menuisier-rennes/images/b-960.webp\",\"menuisier-rennes/index.html\",\"sitemap.xml\"] attendus (dossiers imbriqués compris) ; entrées de l'archive [\"index.html\",\"sitemap.xml\",\"LISEZ-MOI.txt\"], exactement [\"LISEZ-MOI.txt\",\"i…",
+   "autres_rouges": [
+    "DZ-5 e"
+   ],
+   "restaure": true,
+   "duree": 7
+  },
+  {
+   "juge": "DZ",
+   "critere": "DZ-3",
+   "mode": "temoin",
+   "fichier": ".orchestre/travail/026-026-temoin/lib/zip.ts",
+   "quoi": "(NR) ZipFlux écrit un CRC faux",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ DZ-3 (NR) images/a-480.webp : CRC 9ff077e0 écrit, 9ff077e1 calculé ; index.html : CRC 8db21fc9 écrit, 8db21fc8 calculé ; menuisier-rennes/images/b-960.webp : CRC 78484fed écrit, 78484fec calculé ; menuisier-rennes/index.html : CRC 496fa2d2 écrit, 496fa2d3 calculé ; sitemap.xml : CRC 48d12c91 écrit, 48d12c90 calculé …",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 1
+  },
+  {
+   "juge": "DZ",
+   "critere": "DZ-4",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteDossier.ts",
+   "quoi": "un mauvais jeton dit pourquoi (404 différente)",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ DZ-4 identifiant non UUID : corps « Dossier introuvable. », différent de celui de « mauvais jeton » (« Jeton refusé. ») : la même 404 octet pour octet attendue",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 8
+  },
+  {
+   "juge": "DZ",
+   "critere": "DZ-4",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteDossier.ts",
+   "quoi": "plafond de 11 par heure au lieu de 10",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ DZ-4 11 appels dans l'heure d'une même adresse → 404, 404, 404, 404, 404, 404, 404, 404, 404, 404, 404 ; 10 sans 429 puis 429 attendus",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 8
+  },
+  {
+   "juge": "DZ",
+   "critere": "DZ-5",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteDossier.ts",
+   "quoi": "la purge ne filtre plus l’état retiree",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ DZ-5 e004 (en_ligne, expire 2026-10-01T00:00:00.000Z, purgée non) modifiée : {\"id\":\"d0260000-0000-4000-8000-00000000e004\",\"etat\":\"en_ligne\",\"email\":\"retire-d0260000@a… ; e004 : 3 fichier(s) effacé(s) à tort",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 8
+  },
+  {
+   "juge": "DZ",
+   "critere": "DZ-6",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteDossier.ts",
+   "quoi": "LISEZ-MOI promet un classement garanti",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ DZ-6 LISEZ-MOI.txt promet : « classement »",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 7
+  },
+  {
+   "juge": "DZ",
+   "critere": "DZ-7",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteDossier.ts",
+   "quoi": "une erreur de type",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ DZ-7 tsc --noEmit en code 2 en 10 s : 1 erreur(s) — lib/siteDossier.ts(25,14): error TS2322: Type 'string' is not assignable to type 'number'.",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 11
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-1",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteRetrait.ts",
+   "quoi": "ETAT_RETIRE mal écrit",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-1 ETAT_RETIRE = \"retire\", 'retiree' attendu",
+   "autres_rouges": [
+    "RT-3 s"
+   ],
+   "restaure": true,
+   "duree": 50
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-2",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteRetrait.ts",
+   "quoi": "le 29/02 déborde au 1er mars",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-2 dateRetrait(2028-02-29) = 2029-03-01T12:00:00.000Z, le 2029-02-28 attendu",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 38
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-3",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteRetrait.ts",
+   "quoi": "un envoi refusé n’arrête pas le retrait",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-3 envoi refusé : une mise à jour a eu lieu ; envoi refusé : la commande est passée à retiree ; envoi refusé : detacherDomaine appelé",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 60
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-3",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteRetrait.ts",
+   "quoi": "la mise à jour n’est plus conditionnée à en_ligne",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-3 la mise à jour n'est pas conditionnée à etat = en_ligne (filtres [[\"eq\",\"id\",\"d0260000-0000-4000-8000-00000000fa01\"]])",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 46
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-4",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/purgeComptes.ts",
+   "quoi": "commandesEnLigneDe hors d’un try (une erreur arrête la purge)",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-4 commandesEnLigneDe qui lève : la purge ne va pas au bout (purges = 0, ligne artisan restée) ; l'erreur doit être journalisée sans arrêter la purge",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 69
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-4",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteRetrait.ts",
+   "quoi": "marquerSuppression réécrit une date existante",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-4 marquerSuppression a réécrit une date existante (2026-05-01T08:00:00.000Z → 2026-10-14T10:00:00.000Z)",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 40
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-5",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteRetrait.ts",
+   "quoi": "l’e-mail « suppression » perd « sur simple demande »",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-5 l’e-mail « suppression » ne dit pas « sur simple demande »",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 41
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-6",
+   "mode": "temoin",
+   "fichier": ".orchestre/travail/026-026-temoin/lib/siteCommande.ts",
+   "quoi": "(NR) retiree ajouté à ETATS de lib/siteCommande.ts",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-6 (NR) lib/siteCommande.ts : ETATS changé depuis la référence 4041ec9 (« ['brouillon', 'payee', 'generee', 'validee', 'en_ligne', 'retiree'] » au lieu de « ['brouillon', 'payee', 'generee', 'validee', 'en_ligne'] »)",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 31
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-6",
+   "mode": "temoin",
+   "fichier": ".orchestre/travail/026-026-temoin/app/site-genere/[commande]/[[...chemin]]/route.ts",
+   "quoi": "(NR) la route site-genere sert autre chose que en_ligne",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-6 (NR) app/site-genere/[commande]/[[...chemin]]/route.ts : la condition c.etat === 'en_ligne' a disparu",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 33
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-7",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraison.ts",
+   "quoi": "plus de plafond de 10 retraits par passage",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-7 hors pause, 12 retraits dus : retirer ×12, 10 au plus par passage attendus",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 38
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-7",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraison.ts",
+   "quoi": "retraits et purge sans garde sur la pause",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-7 en pause : retraitsDus ×1, retirer ×10, purgerFichiersExpires ×1 ; rien attendu",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 38
+  },
+  {
+   "juge": "RT",
+   "critere": "RT-8",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteRetrait.ts",
+   "quoi": "une erreur de type",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ RT-8 tsc --noEmit en code 2 en 7 s : 1 erreur(s) — lib/siteRetrait.ts(87,14): error TS2322: Type 'string' is not assignable to type 'number'.",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 39
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-1",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/controle/sites/[id]/route.ts",
+   "quoi": "la route ne reconnaît plus envoyer_dossier",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-1 app/api/controle/sites/[id]/route.ts n'accepte pas envoyer_dossier : envoyer_dossier → 400 (« Action inconnue : valider, regenerer, mettre_en_ligne, vali… »)",
+   "autres_rouges": [
+    "PS-4 e"
+   ],
+   "restaure": true,
+   "duree": 9
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-2",
+   "mode": "temoin",
+   "fichier": ".orchestre/travail/026-026-temoin/app/api/controle/sites/[id]/route.ts",
+   "quoi": "(NR) la garde de la route [id] affaiblie",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-2 (NR) instruction 3 de POST : « const perimetre = exigerDomaine(f, 'clients', 'voir') », « const perimetre = exigerDomaine(f, 'clients', 'ecrire') » attendue (référence 4041ec9)",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-2",
+   "mode": "temoin",
+   "fichier": ".orchestre/travail/026-026-temoin/app/api/controle/sites/[id]/route.ts",
+   "quoi": "(NR) la branche regenerer changée",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-2 (NR) branche d'origine changée : « if (action === 'regenerer' && consigne.length < 10) return NextResponse.json({ error: 'Un… » introuvable dans le POST courant",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-3",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/controle/sites/[id]/route.ts",
+   "quoi": "mise en ligne non conditionnée à generee",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-3 succès : la mise à jour n'est pas conditionnée à etat = generee (filtres [[\"eq\",\"id\",\"d0260000-0000-4000-8000-00000000a001\"]]) ; commande passée à validee entre le journal et l'écriture : elle est devenue en_ligne (mise à jour non conditionnée) ; commande changée entre-temps : 200, un refus (409) attendu",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 9
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-3",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/controle/sites/[id]/route.ts",
+   "quoi": "journal indisponible : le geste passe quand même",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-3 commande changée entre-temps : 200, un refus (409) attendu ; journal indisponible → 200, 503 attendu ; journal indisponible : une écriture a eu lieu",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 9
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-4",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/controle/sites/[id]/route.ts",
+   "quoi": "envoyer_dossier sans reconfirmation",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-4 envoyer_dossier sans reconfirmation → 200 null, 403 « reconfirmation_requise » attendu ; envoyer_dossier sans reconfirmation : un jeton ou un e-mail est parti",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 9
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-4",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/controle/sites/[id]/route.ts",
+   "quoi": "le second « Plan soumis » réécrit la date",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-4 deux appels depuis en_ligne : la date passe de 2026-10-14T10:00:00.000Z à 2026-10-14T11:30:00.000Z, une seule date attendue",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 9
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-5",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/controle/a-faire/route.ts",
+   "quoi": "seuil critique à 80 h au lieu de 48",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-5 F4 « Mettre en ligne » : gravité attention, critique attendue",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 9
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-5",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/controle/a-faire/route.ts",
+   "quoi": "une adresse dans le détail d’une ligne",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-5 « Mettre en ligne » : le détail contient une adresse ou un téléphone (« Carrelage Témoin Cesson · d026@presti-test.invalid ») ; « Appeler l’artisan : dossier incomplet » : le détail contient une adresse ou un téléphone (« Couverture Témoin Rennes · d026@presti-test.invalid ») ; « Relire et mettre en ligne » : l…",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 10
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-6",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/controle/sites/route.ts",
+   "quoi": "la matière brute rendue",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-6 la réponse porte une clé matiere ; la réponse porte une clé siren ; la réponse porte une clé adresse ; la réponse contient « 000000000 », une donnée de la matière brute ; la réponse contient « Adresse fictive du jeu d’essa… », une donnée de la matière brute",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 9
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-7",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/controle/Sites.tsx",
+   "quoi": "« Envoyer le dossier » aussi sur une commande générée",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-7 Envoyer le dossier (envoyer_dossier) posté depuis [\"en_ligne\",\"en_ligne+plan\",\"generee\",\"retiree\"], seulement [\"en_ligne\",\"en_ligne+plan\",\"retiree\"] attendu ; « Envoyer le dossier » affiché pour [\"en_ligne\",\"en_ligne+plan\",\"generee\",\"retiree\"], [\"en_ligne\",\"en_ligne+plan\",\"retiree\"] attendu",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 10
+  },
+  {
+   "juge": "PS",
+   "critere": "PS-8",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/controle/sites/route.ts",
+   "quoi": "une erreur de type",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ PS-8 tsc --noEmit en code 2 en 7 s : 1 erreur(s) — app/api/controle/sites/route.ts(14,14): error TS2322: Type 'string' is not assignable to type 'number'.",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 10
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-1",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraisonBus.ts",
+   "quoi": "la clé livraison:<id> au lieu de livrer_site:<id>",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-1 ops_tache_clore : paramètres {\"p_agent\":\"livreur\",\"p_cle\":\"livraison:d0260000-0000-4000-8000-00000000b001\",\"p_preuve_url\":\"supabase://sites_commandes/d0260000-0000-4000-8000-00000000b001#generee\"}, {\"p_agent\":\"livreur\",\"p_cle\":\"livrer_site:d0260000-0000-4000-8000-00000000b001\",\"p_preuve_url\":\"supabase://sites_c…",
+   "autres_rouges": [
+    "BL-3 h"
+   ],
+   "restaure": true,
+   "duree": 8
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-1",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraisonBus.ts",
+   "quoi": "un nom de paramètre hors contrat",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-1 ops_battement refusée par le faux PostgREST (parametres) : paramètres {\"nom\":\"livreur\"}",
+   "autres_rouges": [
+    "BL-3 t"
+   ],
+   "restaure": true,
+   "duree": 8
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-2",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraisonBus.ts",
+   "quoi": "une réponse null lue « pas en pause »",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-2 busEnPause, réponse null : false, true attendu",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 10
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-3",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraison.ts",
+   "quoi": "le livreur bat même quand le tour a échoué",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-3 tour dont une étape a échoué : ops_battement appelée 1 fois, jamais attendu",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 9
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-3",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraison.ts",
+   "quoi": "tourLivraison ne lit plus la pause du bus",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-3 tourLivraison ne lit pas la pause par busEnPause (aucun ops_interrupteur) quand deps.enPause est absent ; en pause : retirer ×1, demanderGeneration ×0 ; aucun attendu",
+   "autres_rouges": [
+    "BL-8 e"
+   ],
+   "restaure": true,
+   "duree": 10
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-4",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/agents/tic/route.ts",
+   "quoi": "le tic appelle la livraison toutes les 5 minutes",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-4 l’appel à tourLivraison n’est sous aucune condition de minute multiple de 15 (« % 15 »)",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 9
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-4",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/app/api/agents/tic/route.ts",
+   "quoi": "l’appel sort de son try/catch",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-4 l’appel à tourLivraison n’est pas dans un try/catch",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 8
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-5",
+   "mode": "temoin",
+   "fichier": ".orchestre/travail/026-026-temoin/app/api/cron/relances/route.ts",
+   "quoi": "(NR) le filet quotidien retiré du cron des relances",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-5 (NR) app/api/cron/relances/route.ts : GET n'appelle plus tourLivraison() (le filet quotidien si pg_cron s'arrête)",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-6",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraisonBus.ts",
+   "quoi": "une erreur de type",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-6 tsc --noEmit en code 2 en 8 s : 1 erreur(s) — lib/siteLivraisonBus.ts(12,14): error TS2322: Type 'string' is not assignable to type 'number'.",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 10
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-8",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraisonUsine.ts",
+   "quoi": "les octets magiques ne sont plus lus (un PDF passe pour un JPEG)",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-8 fautive-pdf : 6 fichier(s) copié(s) dans sites ; fautive-pdf : 1 écriture(s) en base ; fautive-pdf : des fichiers effacés (le dossier doit rester pour le diagnostic) ; fautive-pdf : 0 événement(s) sortie_usine_refusee accepté(s) par le faux PostgREST, un attendu (appels : aucun)",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 8
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-8",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraisonUsine.ts",
+   "quoi": "une tâche d’essai est consommée",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-8 sortie d’essai : 6 fichier(s) copié(s) dans sites ; sortie d’essai : 1 écriture(s) en base ; sortie d’essai : des fichiers effacés",
+   "autres_rouges": [],
+   "restaure": true,
+   "duree": 9
+  },
+  {
+   "juge": "BL",
+   "critere": "BL-9",
+   "mode": "complet",
+   "fichier": ".orchestre/travail/026-026-maquette/lib/siteLivraisonUsine.ts",
+   "quoi": "la mise à jour ne porte plus etat = payee",
+   "pris": true,
+   "code": 1,
+   "ligne": "❌ BL-9 course (Actions livre la commande pendant la copie) : la commande est réécrite (genere_le 2026-10-14T10:00:00.000Z) : la mise à jour doit porter etat = payee ; course : la mise à jour ne touche aucune ligne, et pourtant usine/<tache>/ est effacé (« on s’arrête, rien d’autre » attendu) ; lib/siteLivraisonUsine.t…",
+   "autres_rouges": [
+    "BL-8 s"
+   ],
+   "restaure": true,
+   "duree": 8
+  }
+ ]
+}

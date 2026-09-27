@@ -1,0 +1,36 @@
+{
+ "fichiers": [
+  {
+   "nom": "site/index.html",
+   "type": "text/html"
+  },
+  {
+   "nom": "site/site.json",
+   "type": "application/json"
+  },
+  {
+   "nom": "site/plombier-bruz/index.html",
+   "type": "text/html"
+  },
+  {
+   "nom": "site/images/a-480.webp",
+   "type": "image/webp"
+  },
+  {
+   "nom": "site/photos/chantier.jpg",
+   "type": "image/jpeg"
+  },
+  {
+   "nom": "site/sitemap.xml",
+   "type": "application/xml"
+  },
+  {
+   "nom": "site/Photo Chantier.jpg",
+   "type": "image/jpeg"
+  },
+  {
+   "nom": "rapport-qa.json",
+   "type": "application/json"
+  }
+ ]
+}
