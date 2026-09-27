@@ -1,0 +1,58 @@
+═══ payee ═══
+Sujet : Votre commande de site est payée
+
+Bonjour,
+
+Nous avons reçu votre paiement de 300 € pour votre site. TVA non applicable, art. 293 B du CGI.
+
+Nous préparons votre site à partir de votre dossier. Le délai annoncé est de 48 h ouvrées après validation par Presti.
+
+Nous vous écrirons dès que l’aperçu sera prêt.
+
+L’équipe Presti
+
+═══ generee ═══
+Sujet : Votre site est prêt pour notre relecture
+
+Bonjour,
+
+Votre site a été généré. Notre équipe vérifie le contenu et les informations de votre dossier avant la mise en ligne, après validation par Presti.
+
+Nous vous écrirons dès qu’il sera en ligne.
+
+L’équipe Presti
+
+═══ en_ligne_existant ═══
+Sujet : Votre site est en ligne
+
+Bonjour,
+
+Votre site est en ligne, après validation par Presti.
+
+Pour relier plomberie-temoin.fr à votre site, posez ces enregistrements chez votre registrar :
+- A — nom : @ — valeur : 76.76.21.21
+- TXT — nom : _vercel — valeur : vc-domain-verify=plomberie-temoin.fr,temoin026018
+
+L’équipe Presti
+
+═══ en_ligne_a_prendre ═══
+Sujet : Votre site est en ligne
+
+Bonjour,
+
+Votre site est en ligne, après validation par Presti.
+
+Si vous souhaitez un domaine, réservez-le à votre nom chez le registrar de votre choix (environ 10 € par an), puis répondez-nous avec le nom exact. Presti ne l’achète pas pour vous.
+
+L’équipe Presti
+
+═══ en_ligne_aucun ═══
+Sujet : Votre site est en ligne
+
+Bonjour,
+
+Votre site est en ligne, après validation par Presti.
+
+Votre adresse est https://prestiapp.fr/site-genere/7a018000-0000-4000-8000-000000000024/
+
+L’équipe Presti

@@ -325,3 +325,6 @@
 {"id":"026-010","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:19:48Z","duree_s":2,"agent":"claude-code","executant":"claude-code","lignes":1170,"dossier":"fait"}
 {"id":"026-021","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:37:04Z","duree_s":20,"agent":"claude-code","executant":"claude-code","lignes":705,"dossier":"en-cours"}
 {"id":"026-021","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:37:25Z","duree_s":14,"agent":"claude-code","executant":"claude-code","lignes":705,"dossier":"fait"}
+{"id":"000-modeles-metiers","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:39:58Z","duree_s":0,"agent":"ag-modeles","executant":"antigravity","lignes":487,"dossier":"en-cours"}
+{"id":"000-modeles-metiers","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:40:03Z","duree_s":0,"agent":"ag-modeles","executant":"antigravity","lignes":487,"dossier":"fait"}
+{"id":"026-024","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T11:45:09Z","duree_s":27,"agent":"usine-codex-42","executant":"codex","lignes":476,"dossier":"fait"}

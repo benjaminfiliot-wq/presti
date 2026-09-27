@@ -185,6 +185,7 @@ async function verifierErreurs(): Promise<Alerte[]> {
 // ── 4. Les crons muets ───────────────────────────────────────────────────────
 export const CRONS_ATTENDUS: { nom: string; maxHeures: number }[] = [
   { nom: 'relances', maxHeures: 26 }, { nom: 'canaux-relever', maxHeures: 26 }, { nom: 'alertes', maxHeures: 26 }, { nom: 'purges-rgpd', maxHeures: 26 },
+  { nom: 'livraison', maxHeures: 26 },
 ]
 /**
  * Trace serveur d'une erreur ou d'une alerte perdue, dans `app_errors` (0016) — le second canal

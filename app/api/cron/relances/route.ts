@@ -9,6 +9,7 @@ import { generateRelanceReply, relanceTemplate } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { relever } from '@/lib/direction/courriers'
 import { actif } from '@/lib/flags'
+import { tourLivraison } from '@/lib/siteLivraison'
 
 // Endpoint appelé automatiquement chaque jour (Vercel Cron → voir vercel.json).
 // Envoie les relances arrivées à échéance pour les leads encore en attente.
@@ -150,6 +151,7 @@ export async function GET(req: Request) {
   let alertes: { envoyees: number; ignorees: number } | { erreur: string } = { envoyees: 0, ignorees: 0 }
   try { const r = await ronde(); alertes = { envoyees: r.envoyees.length, ignorees: r.ignorees.length }; await enregistrerPassage('alertes', alertes) }
   catch (e) { alertes = { erreur: e instanceof Error ? e.message : String(e) }; await enregistrerPassage('alertes', alertes, false) }
+  try { await tourLivraison() } catch (e) { console.error('[cron/relances] livraison', e) }
   // La relève de la boîte fait partie de ce passage : son résultat doit s'y lire, et son échec doit
   // le faire échouer. Sans ça, elle a échoué chaque jour sous un « reussi: true » (constaté le 07/09,
   // zéro courrier en base depuis la mise en service, sans que rien ne le signale).
