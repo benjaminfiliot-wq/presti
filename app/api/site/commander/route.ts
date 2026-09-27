@@ -21,6 +21,10 @@ export async function POST(req: Request) {
   if (!actif('siteCommande')) return new NextResponse(null, { status: 404 })
   const auth = await authArtisan(req)
   if (estEchec(auth)) return NextResponse.json({ error: auth.error, code: auth.code }, { status: auth.status })
+  const corps = await req.json().catch(() => null)
+  if (corps?.renonciationRetractation !== true) {
+    return NextResponse.json({ error: 'Vous devez accepter le début de la réalisation et reconnaître la perte du droit de rétractation une fois le site entièrement livré.' }, { status: 400 })
+  }
   if (!stripe) return NextResponse.json({ error: 'Paiement indisponible pour le moment.' }, { status: 503 })
   try {
     const brouillon = await brouillonDe(auth.uid)
@@ -34,6 +38,7 @@ export async function POST(req: Request) {
     const origin = req.headers.get('origin') || 'https://prestiapp.fr'
     const taxeAuto = process.env.STRIPE_TAXE_AUTO === '1'
     const prixStripe = process.env.STRIPE_PRIX_SITE
+    const retractationAccord = new Date().toISOString()
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -57,8 +62,8 @@ export async function POST(req: Request) {
       ...(taxeAuto ? { automatic_tax: { enabled: true } } : {}),
       ...(artisan?.stripe_customer_id ? { customer: artisan.stripe_customer_id } : artisan?.email ? { customer_email: artisan.email } : {}),
       client_reference_id: auth.uid,
-      metadata: { uid: auth.uid, type: 'commande_site', commande_id: brouillon.id },
-      payment_intent_data: { metadata: { uid: auth.uid, type: 'commande_site', commande_id: brouillon.id } },
+      metadata: { uid: auth.uid, type: 'commande_site', commande_id: brouillon.id, retractation_accord: retractationAccord },
+      payment_intent_data: { metadata: { uid: auth.uid, type: 'commande_site', commande_id: brouillon.id, retractation_accord: retractationAccord } },
       success_url: `${origin}/site/commander?paiement=ok&commande=${brouillon.id}`,
       cancel_url: `${origin}/site/commander?paiement=annule`,
     })

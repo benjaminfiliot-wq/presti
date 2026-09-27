@@ -318,3 +318,4 @@
 {"id":"000-geo-presti","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T06:14:53Z","duree_s":0,"agent":"usine-codex-40","executant":"codex","lignes":274,"dossier":"fait"}
 {"id":"000-revue-026","verdict":"FAIL","ligne":"juges-026-revue-corrections : FAIL — 1 manque(s)","code":1,"date":"2026-09-27T06:18:11Z","duree_s":2,"agent":"usine-codex-39","executant":"codex","lignes":269,"dossier":"fait"}
 {"id":"000-revue-026","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T06:19:46Z","duree_s":2,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"000-retractation","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T07:08:47Z","duree_s":0,"agent":"usine-codex-41","executant":"codex","lignes":258,"dossier":"fait"}

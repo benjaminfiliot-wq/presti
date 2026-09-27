@@ -57,6 +57,7 @@ function CommanderSite() {
   const [erreursApi, setErreursApi] = useState<string[]>([])
   const [commandes, setCommandes] = useState<Commande[]>([])
   const [busy, setBusy] = useState(false)
+  const [renonciationRetractation, setRenonciationRetractation] = useState(false)
 
   const [metierSec, setMetierSec] = useState('')
   const [commune, setCommune] = useState('')
@@ -126,11 +127,13 @@ function CommanderSite() {
   }
 
   const payer = async () => {
+    if (!renonciationRetractation) return
     setBusy(true)
     const t = await jeton()
     const r = await fetch('/api/site/commander', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${t}` },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${t}` },
+      body: JSON.stringify({ renonciationRetractation: renonciationRetractation }),
     })
     const d = await r.json().catch(() => ({}))
     if (r.ok && d.url) {
@@ -498,9 +501,17 @@ function CommanderSite() {
                 <p>{DELAI_TEXTE}</p>
               </div>
 
+              <div>
+                <p>Les entreprises de 5 salariés ou moins peuvent bénéficier d’un droit de rétractation de 14 jours selon les conditions prévues par la loi. <a href="/cgu#retractation">Voir les conditions de rétractation</a>.</p>
+                <label>
+                  <input type="checkbox" checked={renonciationRetractation} onChange={e => setRenonciationRetractation(e.target.checked)} />{' '}
+                  Je demande que Presti commence la réalisation de mon site avant la fin du délai de rétractation de 14 jours, et je reconnais perdre mon droit de rétractation une fois le site entièrement livré (article L221-28 du Code de la consommation).
+                </label>
+              </div>
+
               <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
                 <button type="button" className="btn btn--ghost" onClick={() => setEtape('parcours')} disabled={busy}>Retour</button>
-                <button type="button" className="btn btn--primary" onClick={payer} disabled={errs.length > 0 || busy}>Payer {PRIX_SITE_TEXTE}</button>
+                <button type="button" className="btn btn--primary" onClick={payer} disabled={errs.length > 0 || busy || !renonciationRetractation}>Payer {PRIX_SITE_TEXTE}</button>
               </div>
             </div>
           )}

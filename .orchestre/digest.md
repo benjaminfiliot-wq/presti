@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-27T06:19:46Z
+# Digest — 2026-09-27T07:08:47Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 96 tâche(s) PASS, 185976 ligne(s) · faites par Claude Code : 14 tâche(s) PASS, 52615 ligne(s).
-**État** — file : 3 · en cours : 2 · faites : 114 · refusées : 6
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 97 tâche(s) PASS, 186234 ligne(s) · faites par Claude Code : 14 tâche(s) PASS, 52615 ligne(s).
+**État** — file : 3 · en cours : 2 · faites : 115 · refusées : 6
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -23,6 +23,7 @@
 | 026-066 | test | file | ag-066g | — | Écrire les juges pilotage-sql-qa (--migration=lecture\|echanges\|station\|reglages), pilotage-route-qa et pilotage-gestes-qa, leur aide commune (copie de l'arbre avec le drapeau pilotage levé, serveur sur la copie, compte fondateur d'essai purgé dans un finally) et le lot b de la preuve, chacun échouant sur la référence avec son premier critère |
 | 026-102 | test | file | claude-code | — | Écrire le contrat du chef d'opérations « Matt », qui tourne 24 h/24 sur l'usine Oracle (consignes docs/agents/chef.md, chef-routine.md et chef-reunion.md ; schémas docs/agents/chef-plan.schema.json, avec compte rendu et consignes lues, et chef-reunion.schema.json, au contrat de la réunion d'équipage) et son juge scripts/chef-qa.mjs avec un faux bus local, --preuve-echecs sortant en code 0 seulement si les groupes appliquer, etat, cycle, consignes, fil et usine échouent aujourd'hui sur CH-A1, CH-E1, CH-C1, CH-N1, CH-F1 et CH-U1 et si le faux bus passe son autotest |
 | 026-038 | test | file | claude-code | — | Écrire les juges des droits du bus scripts/agents-garde-qa.mjs, scripts/agents-routes-qa.mjs et scripts/pause-qa.mjs, qui exécutent le vrai code contre un faux PostgREST et des doublures, et le lot 03 de la preuve, qui passe seulement si chaque juge échoue sur la référence avec le critère attendu et passe en --temoin |
+| 000-retractation | feature | fait | usine-codex-41 | PASS | 2026-09-27T07:08:47Z · 0s · 258 l. |
 | 000-revue-026 | contenu | fait | codex | PASS | 2026-09-27T06:19:46Z · 2s · 0 l. |
 | 000-geo-presti | feature | fait | usine-codex-40 | PASS | 2026-09-27T06:14:53Z · 0s · 274 l. |
 | 026-065 | feature | fait | ag-065g | PASS | 2026-09-26T15:57:21Z · 8s · 527 l. |
@@ -117,6 +118,5 @@
 | 014-11 | test | fait | ag-11-g37 | PASS | 2026-09-14T09:35:02Z · 29s · 98 l. |
 | 014-17 | test | fait | ag-17-g38 | PASS | 2026-09-14T09:34:14Z · 80s · 446 l. |
 | 014-20 | contenu | fait | ag-20-g38 | PASS | 2026-09-14T07:53:22Z · 3s · 1198 l. |
-| 014-04 | boucle-qa | fait | ag-04-g38b | PASS | 2026-09-14T05:45:11Z · 61s · 2913 l. |
 
-… 25 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 26 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

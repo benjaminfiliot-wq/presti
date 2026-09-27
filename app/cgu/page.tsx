@@ -60,6 +60,21 @@ export default function CGU() {
         <li><strong>Si le compte Presti est supprimé</strong>, le site commandé reste en ligne <strong>douze mois</strong> à compter de la suppression, sans frais ; à l’issue de ce délai, ou avant sur simple demande, l’artisan reçoit le dossier complet de son site (pages, images, plan du site) pour l’héberger où il le souhaite. Passé ce délai, le site est retiré.</li>
       </ul>
 
+      <h2 id="retractation">3 ter. Droit de rétractation (site à la demande)</h2>
+      <p>Conformément à l’article L221-3 du Code de la consommation, une entreprise de cinq salariés ou moins bénéficie des règles de rétractation lorsque le contrat est conclu hors établissement et que la création d’un site ne relève pas du champ de son activité principale. Le délai de rétractation est de <strong>14 jours</strong> à compter de la conclusion du contrat.</p>
+      <p>Pour permettre la réalisation du site avant la fin de ce délai, la commande recueille votre demande expresse de commencer la prestation sans attendre et votre reconnaissance de la perte du droit de rétractation <strong>une fois le site entièrement livré</strong> (article L221-28 du Code de la consommation). Si vous vous rétractez après le début de la réalisation, mais avant son achèvement, vous devez régler un montant proportionnel au travail déjà effectué jusqu’à votre demande (article L221-25).</p>
+      <p>Pour exercer ce droit, envoyez votre décision par email à l’adresse indiquée sur la <a href="/contact">page de contact</a>. Vous pouvez utiliser le modèle ci-dessous, sans y être obligé.</p>
+      <h3>Modèle de formulaire de rétractation (annexe à l’article R221-1)</h3>
+      <div className="legal-note">
+        <p>À l’attention de Presti (coordonnées postales et électroniques indiquées dans les <a href="/mentions-legales">mentions légales</a>) :</p>
+        <p>Je/Nous vous notifie/notifions par la présente ma/notre rétractation du contrat portant sur la prestation de services ci-dessous : création de mon/notre site à la demande.</p>
+        <p>Commandé le : …</p>
+        <p>Nom : …</p>
+        <p>Adresse : …</p>
+        <p>Date : …</p>
+        <p>Signature (uniquement pour un envoi sur papier) : …</p>
+      </div>
+
       <h2 id="support">4. Support et assistance</h2>
       <p>Le support se fait <strong>par écrit et en français</strong>, par <a href="/contact">le formulaire de contact</a> ou à l’adresse email des <a href="/mentions-legales">mentions légales</a> : les deux arrivent au même endroit.</p>
       <ul>
