@@ -1,0 +1,313 @@
+M .orchestre/agents.jsonl
+ M .orchestre/contexte.md
+ M .orchestre/digest.md
+ D .orchestre/file/026-024.md
+ D .orchestre/file/026-026.md
+ D .orchestre/file/026-029.md
+ D .orchestre/file/026-066.md
+ D .orchestre/file/026-102.md
+ M .orchestre/preuves/026-001/couverture.md
+ M .orchestre/preuves/026-001/meta-juge-autotest.md
+ M .orchestre/preuves/026-009/echecs-attendus.md
+ M .orchestre/preuves/026-026/avant.txt
+ M .orchestre/preuves/026-026/echecs-attendus.md
+ M .orchestre/preuves/026-029/avant.txt
+ M .orchestre/preuves/026-029/echecs-attendus.md
+M  .orchestre/verdicts.jsonl
+ M plans/journal-publications.md
+ M scripts/bus-livraison-qa.mjs
+ M scripts/commande-exporter-qa.mjs
+ M scripts/dossier-zip-qa.mjs
+ M scripts/familles-socle-suite-qa.mjs
+ D scripts/fixtures/026-livraison-tresor/c/appel-1.mjs
+ D scripts/fixtures/026-livraison-tresor/c/appel-2.mjs
+ M scripts/fixtures/026-livraison-tresor/c/commande-payee.json
+ D scripts/fixtures/026-livraison-tresor/c/export-menuisier/export.json
+ D scripts/fixtures/026-livraison-tresor/c/generer-site.yml
+ D scripts/fixtures/026-livraison-tresor/c/photos-source/.jpg
+ D scripts/fixtures/026-livraison-tresor/c/photos-source/1.jpg
+ D scripts/fixtures/026-livraison-tresor/c/photos-source/2.jpg
+ D scripts/fixtures/026-livraison-tresor/c/photos-source/3.jpg
+ D scripts/fixtures/026-livraison-tresor/d/index.html
+ D scripts/fixtures/026-livraison-tresor/d/menuisier-rennes/images/a-480.webp
+ D scripts/fixtures/026-livraison-tresor/d/menuisier-rennes/index.html
+ D scripts/fixtures/026-livraison-tresor/d/sitemap.xml
+ M scripts/fixtures/026-livraison-tresor/preuve-d.json
+ M scripts/generation-actions-qa.mjs
+ M scripts/livrer-site-qa.mjs
+ M scripts/poste-sites-qa.mjs
+ M scripts/redacteur-v2-qa.mjs
+ M scripts/retrait-site-qa.mjs
+ M scripts/signature-repos-qa.mjs
+?? .claude/skills/captions-overlay/
+?? .claude/skills/changelog-video/
+?? .claude/skills/cut-the-curve/
+?? .claude/skills/embedded-captions/
+?? .claude/skills/faceless-explainer/
+?? .claude/skills/figma/
+?? .claude/skills/general-video/
+?? .claude/skills/hyperframes-animation/
+?? .claude/skills/hyperframes-audio/
+?? .claude/skills/hyperframes-cli/
+?? .claude/skills/hyperframes-core/
+?? .claude/skills/hyperframes-creative/
+?? .claude/skills/hyperframes-keyframes/
+?? .claude/skills/hyperframes-registry/
+?? .claude/skills/hyperframes/
+?? .claude/skills/media-use/
+?? .claude/skills/motion-doctrine/
+?? .claude/skills/motion-graphics/
+?? .claude/skills/music-to-video/
+?? .claude/skills/oversized-cursor/
+?? .claude/skills/pr-to-video/
+?? .claude/skills/product-launch-video/
+?? .claude/skills/remotion-to-hyperframes/
+?? .claude/skills/seam-craft/
+?? .claude/skills/slideshow/
+?? .claude/skills/talking-head-recut/
+?? .codex/
+?? .github/workflows/generer-site.yml
+?? .orchestre/en-cours/
+?? .orchestre/fait/000-usine-essai-2.md
+?? .orchestre/fait/000-usine-essai-3.md
+?? .orchestre/fait/000-usine-essai.md
+?? .orchestre/fait/020-03.md
+?? .orchestre/fait/021-03.md
+?? .orchestre/fait/021-04.md
+?? .orchestre/fait/021-06.md
+?? .orchestre/fait/021-10.md
+?? .orchestre/fait/021-13.md
+?? .orchestre/fait/021-17.md
+?? .orchestre/fait/021-18.md
+?? .orchestre/fait/021-22.md
+?? .orchestre/fait/021-23.md
+?? .orchestre/fait/022-01.md
+?? .orchestre/fait/022-02.md
+?? .orchestre/fait/022-04.md
+?? .orchestre/fait/022-05.md
+?? .orchestre/fait/023-01.md
+?? .orchestre/fait/023-02.md
+?? .orchestre/fait/023-04.md
+?? .orchestre/fait/026-025.md
+?? .orchestre/fait/026-026.md
+?? .orchestre/fait/026-029.md
+?? .orchestre/fait/026-032.md
+?? .orchestre/fait/026-045.md
+?? .orchestre/fait/026-066.md
+?? .orchestre/fait/026-067.md
+?? .orchestre/fait/026-102.md
+?? .orchestre/preuves/000-usine-essai-2/
+?? .orchestre/preuves/000-usine-essai-3/
+?? .orchestre/preuves/000-usine-essai/
+?? .orchestre/preuves/018-01/landing-bureau-bloc.png
+?? .orchestre/preuves/018-01/landing-bureau-haut.png
+?? .orchestre/preuves/018-01/landing-mobile-bloc.png
+?? .orchestre/preuves/018-01/landing-mobile-haut.png
+?? .orchestre/preuves/018-03/avant.txt
+?? .orchestre/preuves/018-03/essai-42-bis/
+?? .orchestre/preuves/018-03/essai-7/
+?? .orchestre/preuves/018-09/essai-42-bis/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-42-bis/planche-F.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-42/planche-F.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-A.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-B.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-C.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-D.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-E.jpg
+?? .orchestre/preuves/018-09/essai-7/planche-F.jpg
+?? .orchestre/preuves/020-01/L2/travail/
+?? .orchestre/preuves/020-01/descente/
+?? .orchestre/preuves/020-03/
+?? .orchestre/preuves/020-11/
+?? .orchestre/preuves/020-12/
+?? .orchestre/preuves/020-13/
+?? .orchestre/preuves/021-00/cahier-vague-5.md
+?? .orchestre/preuves/021-00/existant.md
+?? .orchestre/preuves/021-00/recit/
+?? .orchestre/preuves/021-00/ref-recit.md
+?? .orchestre/preuves/021-00/ref-survol-objet.md
+?? .orchestre/preuves/021-00/ref-video-mesures.json
+?? .orchestre/preuves/021-00/ref-video.md
+?? .orchestre/preuves/021-00/survol-objet/
+?? .orchestre/preuves/021-01/
+?? .orchestre/preuves/021-02/
+?? .orchestre/preuves/021-03/
+?? .orchestre/preuves/021-04/
+?? .orchestre/preuves/021-04b/
+?? .orchestre/preuves/021-05/contestation/
+?? .orchestre/preuves/021-05/diagnostic-juge-copie.diff
+?? .orchestre/preuves/021-05/juge/
+?? .orchestre/preuves/021-06/
+?? .orchestre/preuves/021-10/
+?? .orchestre/preuves/021-13/
+?? .orchestre/preuves/021-14/
+?? .orchestre/preuves/021-15/
+?? .orchestre/preuves/021-16/
+?? .orchestre/preuves/021-17/
+?? .orchestre/preuves/021-18/
+?? .orchestre/preuves/021-20/
+?? .orchestre/preuves/021-22/
+?? .orchestre/preuves/021-23/
+?? .orchestre/preuves/022-01/
+?? .orchestre/preuves/022-02/
+?? .orchestre/preuves/022-04/
+?? .orchestre/preuves/022-05/
+?? .orchestre/preuves/023-01/
+?? .orchestre/preuves/023-02/
+?? .orchestre/preuves/023-03/
+?? .orchestre/preuves/023-04/
+?? .orchestre/preuves/024-01/
+?? .orchestre/preuves/024-02/
+?? .orchestre/preuves/025-10/
+?? .orchestre/preuves/026-009/controles-autotest.md
+?? .orchestre/preuves/026-009/sait-echouer-generique.md
+?? .orchestre/preuves/026-009/sait-echouer-generique/
+?? .orchestre/preuves/026-013/
+?? .orchestre/preuves/026-023/reprise-2026-09-27/
+?? .orchestre/preuves/026-026/outils/
+?? .orchestre/preuves/026-026/sait-echouer-juges.json
+?? .orchestre/preuves/026-026/sait-echouer-juges.md
+?? .orchestre/preuves/026-028/
+?? .orchestre/preuves/026-029/outils/
+?? .orchestre/preuves/026-029/sait-echouer-juges.json
+?? .orchestre/preuves/026-029/sait-echouer-juges.md
+?? .orchestre/preuves/026-032/
+?? .orchestre/preuves/026-045/
+?? .orchestre/preuves/026-048/
+?? .orchestre/preuves/026-066/
+?? .orchestre/preuves/026-067/
+?? .orchestre/preuves/026-102/
+?? .orchestre/preuves/026-169/
+?? .orchestre/refuse/021-02.md
+?? .orchestre/refuse/021-14.md
+?? .orchestre/refuse/021-15.md
+?? .orchestre/refuse/021-16.md
+?? .orchestre/refuse/021-20.md
+?? .orchestre/refuse/026-028.md
+?? ChromeSetup.exe
+?? app/api/site/commander/public/route.ts
+?? build-demo.mjs
+?? build-menuisier-1.mjs
+?? build-menuisier-2.mjs
+?? build-menuisier.mjs
+?? build-plombier.mjs
+?? docs/agents/
+?? echecs-attendus.md
+?? fix.js
+?? fix_home.py
+?? fix_html.py
+?? fix_newlines.py
+?? full_qa_output.txt
+?? generate-site.mjs
+?? generate_026.js
+?? generate_026.mjs
+?? lib/siteRedacteur.ts
+?? plans/publications-serie-2.md
+?? promo-src/
+?? public/promo/facebook-couverture-1640x856.png
+?? public/promo/facebook-couverture-GUIDE.png
+?? public/promo/presti-carre-miniature.jpg
+?? public/promo/presti-carre.mp4
+?? public/promo/presti-paysage-miniature.jpg
+?? public/promo/presti-paysage.mp4
+?? public/promo/presti-vertical-miniature.jpg
+?? public/promo/presti-vertical.mp4
+?? public/promo/voix/
+?? public/sites-demo/kit/
+?? qa-output.txt
+?? qa_out_sync.txt
+?? qa_out_temp.txt
+?? qa_output.txt
+?? qa_output2.txt
+?? qa_output2_utf8.txt
+?? qa_output3.txt
+?? qa_output_utf8.txt
+?? report.json
+?? scratch-fetch.mjs
+?? scratch-generator.mjs
+?? scratch-screenshot.mjs
+?? screenshot.mjs
+?? scripts/argent-sql-qa.mjs
+?? scripts/chef-qa.mjs
+?? scripts/cibles-instagram-qa.mjs
+?? scripts/commande-exporter.mjs
+?? scripts/commande-rediger.mjs
+?? scripts/emails-artisans-qa.mjs
+?? scripts/file-argent-qa.mjs
+?? scripts/fixtures/026-horloge-bus/bancs/
+?? scripts/fixtures/026-horloge-bus/essais/0099.sql
+?? scripts/fixtures/026-horloge-bus/essais/0100.sql
+?? scripts/fixtures/026-horloge-bus/essais/0101.sql
+?? scripts/fixtures/026-horloge-bus/preuve-02.json
+?? scripts/fixtures/026-horloge-bus/preuve-04.json
+?? scripts/fixtures/026-horloge-bus/temoins/
+?? scripts/fixtures/026-horloge-bus/veilleur/
+?? scripts/fixtures/026-livraison-tresor/b/brouillon-complet.json
+?? scripts/fixtures/026-livraison-tresor/c/appel-fautif.mjs
+?? scripts/fixtures/026-livraison-tresor/c/appel-panne.mjs
+?? scripts/fixtures/026-livraison-tresor/c/appel-propre.mjs
+?? scripts/fixtures/026-livraison-tresor/c/commun-c.mjs
+?? scripts/fixtures/026-livraison-tresor/c/export-menuisier/commande.json
+?? scripts/fixtures/026-livraison-tresor/c/export-menuisier/photos/
+?? scripts/fixtures/026-livraison-tresor/c/ga-fautifs/
+?? scripts/fixtures/026-livraison-tresor/c/modele-menuisier.json
+?? scripts/fixtures/026-livraison-tresor/c/photos-source/ailleurs.jpg
+?? scripts/fixtures/026-livraison-tresor/c/photos-source/bibliotheque.jpg
+?? scripts/fixtures/026-livraison-tresor/c/photos-source/escalier.jpg
+?? scripts/fixtures/026-livraison-tresor/c/photos-source/etabli.jpg
+?? scripts/fixtures/026-livraison-tresor/c/photos-source/faux.jpg
+?? scripts/fixtures/026-livraison-tresor/c/photos-source/voisin.jpg
+?? scripts/fixtures/026-livraison-tresor/c/temoin/
+?? scripts/fixtures/026-livraison-tresor/d/commandes.json
+?? scripts/fixtures/026-livraison-tresor/d/commun-d.mjs
+?? scripts/fixtures/026-livraison-tresor/d/doublures.mjs
+?? scripts/fixtures/026-livraison-tresor/d/mini-dom.mjs
+?? scripts/fixtures/026-livraison-tresor/d/stockage/
+?? scripts/fixtures/026-livraison-tresor/d/temoin-base/
+?? scripts/fixtures/026-livraison-tresor/d/temoin/
+?? scripts/fixtures/026-livraison-tresor/d/usine/
+?? scripts/fixtures/026-pilotage/b/
+?? scripts/fixtures/026-pilotage/s/
+?? scripts/fixtures/026/chef/
+?? scripts/fixtures/usine-essai-2/
+?? scripts/fixtures/usine-essai-3/
+?? scripts/fixtures/usine-essai/
+?? scripts/horloge-qa.mjs
+?? scripts/horloge-sql-qa.mjs
+?? scripts/juges-023-mutations.mjs
+?? scripts/kit-figma.mjs
+?? scripts/lib/horloge-simulee.mjs
+?? scripts/lib/mobile-banc.mjs
+?? scripts/lib/mobile-bureau.mjs
+?? scripts/lib/mobile-effets.mjs
+?? scripts/lib/mobile-films.mjs
+?? scripts/lib/mobile-page.mjs
+?? scripts/lib/mobile-parcours.mjs
+?? scripts/lib/mobile-perf.mjs
+?? scripts/livrer-site.mjs
+?? scripts/mobile-qa.mjs
+?? scripts/photos-contraste.mjs
+?? scripts/pilotage-gestes-qa.mjs
+?? scripts/pilotage-route-qa.mjs
+?? scripts/pilotage-sql-qa.mjs
+?? scripts/prospection-sql-qa.mjs
+?? scripts/publications-serie2-qa.mjs
+?? scripts/station-logique-qa.mjs
+?? scripts/station-reunion-qa.mjs
+?? scripts/station-route-qa.mjs
+?? scripts/tic-qa.mjs
+?? scripts/veilleur-qa.mjs
+?? scripts/visuels-serie2-qa.mjs
+?? scripts/visuels-serie2.mjs
+?? shot_cerveaux.mjs
+?? test.jpg
+?? videos/
