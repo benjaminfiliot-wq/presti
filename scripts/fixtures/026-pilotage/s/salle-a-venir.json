@@ -1,0 +1,17 @@
+{
+ "note": "Réponse d’une salle sans lecteur jusqu’à 026-178 (026-092) : valeur nulle, source a_venir, « arrive avec sa fiche ».",
+ "conforme": true,
+ "opts": {
+  "vue": "salle",
+  "salle": "radar"
+ },
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "a": "2026-10-23T10:00:00.000Z",
+  "source": "a_venir",
+  "cache": false,
+  "valeur": null,
+  "manque": "arrive avec sa fiche"
+ }
+}

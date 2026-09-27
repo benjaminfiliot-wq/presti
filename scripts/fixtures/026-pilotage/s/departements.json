@@ -1,0 +1,29 @@
+{
+ "note": "Lignes de pilotage_prospects_departements() (0113) : par département, trouvés, contactés, oui. Piège : une colonne nominative ajoutée (nom_entreprise, nom_affiche) que le lecteur ne doit jamais rendre.",
+ "pieges": [
+  "Plomberie Témoin",
+  "Jean Témoin"
+ ],
+ "departements": [
+  {
+   "departement": "69",
+   "trouves": 40,
+   "contactes": 12,
+   "oui": 1,
+   "nom_entreprise": "Plomberie Témoin"
+  },
+  {
+   "departement": "74",
+   "trouves": 22,
+   "contactes": 8,
+   "oui": 1,
+   "nom_affiche": "Jean Témoin"
+  },
+  {
+   "departement": "38",
+   "trouves": 15,
+   "contactes": 4,
+   "oui": 0
+  }
+ ]
+}

@@ -1,0 +1,24 @@
+{
+ "note": "Sortie de station_reunion_chiffres() : les chiffres de chaque agent, que des nombres.",
+ "chiffres": {
+  "formulaires_hier": 12,
+  "reponses_hier": 2,
+  "oui_hier": 1,
+  "maquettes_hier": 3,
+  "sites_en_ligne": 1,
+  "encaisse_mois_eur": 149,
+  "taches_bloquees": 0,
+  "agents": {
+   "facteur": {
+    "taches": 12,
+    "echecs": 0
+   },
+   "standardiste": {
+    "releves": 24
+   },
+   "repondeur": {
+    "reponses": 2
+   }
+  }
+ }
+}

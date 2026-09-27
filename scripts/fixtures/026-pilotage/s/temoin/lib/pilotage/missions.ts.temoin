@@ -1,0 +1,85 @@
+// TÉMOIN du lot s (026-067) : implémentation de référence de lib/pilotage/missions.ts (026-070), écrite par Claude Code
+// pour prouver que station-logique-qa sait rendre 0. Ce n'est pas le module livré. Pur : l'XP ne suit que l'argent encaissé.
+export const NIVEAUX = [0, 300, 1000, 3000, 10000] as const
+export const SUCCES = [
+  { cle: 'premier_oui', libelle: 'Premier oui' },
+  { cle: 'premiere_vente', libelle: 'Première vente' },
+  { cle: 'premier_site_en_ligne', libelle: 'Premier site en ligne' },
+  { cle: 'bilan_passe', libelle: 'Bilan passé' },
+] as const
+export const PALIERS_SALLE = { usine: [1, 10, 50] } as const
+
+type Mesures = { encaisse_eur?: number | null; oui?: number | null; contacts_froids?: number | null; sites_en_ligne?: number | null }
+type Bilan = { bilan_le?: string | null; verdict?: string | null } | null | undefined
+const nombre = (x: unknown) => (typeof x === 'number' && Number.isFinite(x) ? x : 0)
+const FORMAT = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 })
+
+export const MISSIONS = [
+  { cle: 'encaisse_eur', cible: 300, succes: 'premiere_vente' },
+  { cle: 'oui', cible: 10, succes: 'premier_oui' },
+  { cle: 'contacts_froids', cible: 100, succes: 'bilan_passe' },
+  { cle: 'sites_en_ligne', cible: 1, succes: 'premier_site_en_ligne' },
+] as const
+
+export function libelleMission(cle: string, bilan: Bilan): string {
+  if (cle === 'encaisse_eur') return '300 € encaissés'
+  if (cle === 'oui') return '10 oui'
+  if (cle === 'sites_en_ligne') return '1er site en ligne'
+  const le = bilan?.bilan_le
+  return le && /^\d{4}-\d{2}-\d{2}/.test(le) ? `100 contacts froids (bilan du ${le.slice(8, 10)}/${le.slice(5, 7)})` : '100 contacts froids (bilan non daté, formulaire fermé)'
+}
+
+export function niveau(encaisse: number | null | undefined) {
+  const xp = Math.max(0, Math.floor(nombre(encaisse)))
+  const lv = NIVEAUX.filter((n) => n <= xp).length
+  const courant = NIVEAUX[lv - 1] ?? 0
+  const prochainSeuil = NIVEAUX[lv] ?? null
+  const part = prochainSeuil === null ? 1 : (xp - courant) / (prochainSeuil - courant)
+  return { lv, prochainSeuil, part, xp, texte: prochainSeuil === null ? `${FORMAT.format(xp)} XP` : `${FORMAT.format(xp)} / ${FORMAT.format(prochainSeuil)} XP` }
+}
+
+function debloques(m: Mesures, bilan: Bilan): Set<string> {
+  const d = new Set<string>()
+  if (nombre(m.oui) >= 1) d.add('premier_oui')
+  if (nombre(m.encaisse_eur) > 0) d.add('premiere_vente')
+  if (nombre(m.sites_en_ligne) >= 1) d.add('premier_site_en_ligne')
+  if (bilan?.verdict === 'P3') d.add('bilan_passe')
+  return d
+}
+
+export function palierSalle(cle: string, entree: { palier?: string | null; sites_en_ligne?: number | null; niveau?: number | null } | null | undefined): { lv: number; texte: string } | null {
+  const e = entree ?? {}
+  let lv = 0
+  if (cle === 'envois') { const m = /^P(\d+)$/.exec(String(e.palier ?? '')); lv = m ? Number(m[1]) : 0 }
+  else if (cle === 'usine') lv = PALIERS_SALLE.usine.filter((s) => nombre(e.sites_en_ligne) >= s).length
+  else if (cle === 'commandement') lv = Math.max(0, Math.floor(nombre(e.niveau)))
+  return lv >= 1 ? { lv, texte: `LV.${lv}` } : null
+}
+
+export function commandement(entree: {
+  mesures?: Mesures | null; objectif?: { libelle: string; mesure: string | null; cible: number | null } | null
+  compteRendu?: readonly string[] | null; bilan?: Bilan; succesDates?: Readonly<Record<string, string | null>> | null
+} | null | undefined) {
+  const e = entree ?? {}
+  const m = e.mesures ?? {}
+  const faits = debloques(m, e.bilan)
+  const dates = e.succesDates ?? {}
+  const libelleSucces = (cle: string) => SUCCES.find((x) => x.cle === cle)?.libelle ?? cle
+  const missions = MISSIONS.map((x) => {
+    const valeur = Math.max(0, Math.floor(nombre((m as Record<string, unknown>)[x.cle])))
+    return { cle: x.cle, libelle: libelleMission(x.cle, e.bilan), valeur, cible: x.cible, texte: `${valeur}/${x.cible}`, atteinte: valeur >= x.cible, debloque: `→ succès ${libelleSucces(x.succes)}` }
+  })
+  const obj = e.objectif
+  const valeurObj = obj?.mesure ? nombre((m as Record<string, unknown>)[obj.mesure]) : null
+  const tousSucces = SUCCES.map((x) => ({ cle: x.cle, libelle: x.libelle, debloque: faits.has(x.cle), le: faits.has(x.cle) ? (dates[x.cle] ?? null) : null }))
+  const derniers = tousSucces.filter((x) => x.debloque)
+  const dernier = derniers[derniers.length - 1] ?? null
+  return {
+    objectif: obj ? { libelle: obj.libelle, par: 'PAR LE CHEF' as const, progression: valeurObj !== null && obj.cible ? Math.min(1, valeurObj / obj.cible) : null } : null,
+    missions,
+    niveau: niveau(m.encaisse_eur),
+    succes: dernier ? { cle: dernier.cle, libelle: dernier.libelle, le: dernier.le } : null,
+    tousSucces,
+    compteRendu: (e.compteRendu ?? []).slice(0, 3),
+  }
+}

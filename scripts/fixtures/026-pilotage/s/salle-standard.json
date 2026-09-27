@@ -1,0 +1,55 @@
+{
+ "note": "Réponse conforme au contrat des vues (026-092, s/contrat-vues.mjs), produite par l’implémentation de référence du lot s sur la base d’essai, horloge figée au 23/10/2026 10:00 UTC.",
+ "conforme": true,
+ "opts": {
+  "vue": "salle",
+  "salle": "standard"
+ },
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "parClasse": [
+    {
+     "classe": "oui",
+     "nombre": 1
+    },
+    {
+     "classe": "appel",
+     "nombre": 1
+    },
+    {
+     "classe": "non",
+     "nombre": 2
+    }
+   ],
+   "reponses": [
+    {
+     "id": "90000000-0000-4000-8000-000000000901",
+     "recu_le": "2026-10-23T09:00:00.000Z",
+     "classe": "appel",
+     "texte_recu": "Rappelez-moi au 06 12 34 56 78, merci (Témoin)",
+     "reponse_envoyee": "Bien reçu, nous vous rappelons."
+    },
+    {
+     "id": "90000000-0000-4000-8000-000000000902",
+     "recu_le": "2026-10-23T08:00:00.000Z",
+     "classe": "oui",
+     "texte_recu": "Oui, écrivez-moi à jean.temoin@exemple.invalid",
+     "reponse_envoyee": null
+    }
+   ],
+   "active_auj": {
+    "valeur": {
+     "minutes": 75
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

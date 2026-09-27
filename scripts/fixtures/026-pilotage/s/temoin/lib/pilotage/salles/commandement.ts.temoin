@@ -1,0 +1,11 @@
+// TÉMOIN du lot s (026-067) : le lecteur de la salle Commandement (026-178). Sous `sante` ; le niveau et les missions en
+// euros sous `comptabilite` (sous-partie `argent`, par la même fonction que direct.commandement).
+import type { Contexte } from '../station'
+import { bulles } from '../fil'
+
+export const DOMAINE = 'sante'
+export async function lire(c: Contexte) {
+  const cm = (await c.commandement('salle.commandement')) as Record<string, unknown>
+  const consignes = bulles(await c.rpc('pilotage_evenements', { p_apres: null, p_limite: 20, p_agent: null, p_types: ['consigne', 'consigne_lue'] }))
+  return { ...cm, consignes: consignes.map((b) => ({ id: b.id, le: b.le, texte: b.texte, cible: b.cible ?? null })) }
+}

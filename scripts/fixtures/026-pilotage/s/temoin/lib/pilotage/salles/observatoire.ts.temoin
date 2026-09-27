@@ -1,0 +1,12 @@
+// TÉMOIN du lot s (026-067) : le lecteur de l'Observatoire (026-178) : pilotage_prospects_departements() (0113), agrégé par
+// département, trois colonnes de compte seulement : jamais un nom, une entreprise ni une adresse. Sous `sante`.
+import type { Contexte } from '../station'
+
+export const DOMAINE = 'sante'
+export async function lireDepartements(c: Contexte) {
+  const l = await c.rpc('pilotage_prospects_departements')
+  return (Array.isArray(l) ? l : []).map((x) => ({ departement: String(x.departement ?? 'inconnu'), trouves: Number(x.trouves ?? 0), contactes: Number(x.contactes ?? 0), oui: Number(x.oui ?? 0) }))
+}
+export async function lire(c: Contexte) {
+  return { departements: await lireDepartements(c) }
+}

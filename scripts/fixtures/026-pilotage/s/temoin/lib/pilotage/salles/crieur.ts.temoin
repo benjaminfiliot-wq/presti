@@ -1,0 +1,16 @@
+// TÉMOIN du lot s (026-067) : le lecteur de la Tour du Crieur (026-178) : la mémoire du Crieur (crieur_posts, 0104),
+// colonnes d'état seulement (jamais le texte d'une publication). Sous `sante`.
+import type { Contexte } from '../station'
+
+export const DOMAINE = 'sante'
+export async function lire(c: Contexte) {
+  const r = await c.deps.db.from('crieur_posts').select('id, canal, statut, programmee_pour, cree_le').gte('cree_le', new Date(c.maintenant.getTime() - 30 * 86_400_000).toISOString())
+  if (r.error) throw new Error(`crieur_posts : ${r.error.message}`)
+  const posts = Array.isArray(r.data) ? r.data : []
+  let programmees = 0, publiees = 0, brouillons = 0
+  for (const p of posts) {
+    if (p.statut === 'brouillon_publora') brouillons++
+    else if (p.statut === 'programmee' || p.statut === 'externe') { if (p.programmee_pour && Date.parse(p.programmee_pour) <= c.maintenant.getTime()) publiees++; else programmees++ }
+  }
+  return { publie_mois: publiees, programmees, brouillons, derniere: posts[0] ? { canal: posts[0].canal, statut: posts[0].statut, le: posts[0].programmee_pour ?? posts[0].cree_le } : null }
+}

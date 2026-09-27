@@ -1,0 +1,363 @@
+{
+ "note": "Réponse conforme au contrat des vues (026-092, s/contrat-vues.mjs), produite par l’implémentation de référence du lot s sur la base d’essai, horloge figée au 23/10/2026 10:00 UTC.",
+ "conforme": true,
+ "opts": {
+  "vue": "fil"
+ },
+ "reponse": {
+  "vue": "fil",
+  "role": "direction",
+  "valeur": {
+   "bulles": [
+    {
+     "id": 42,
+     "le": "2026-10-23T08:06:00.000Z",
+     "agent": "repondeur",
+     "pastille": "RÉPONDEUR",
+     "type": "reponse_oui",
+     "texte": "Oui reçu : électricien (Lyon)"
+    },
+    {
+     "id": 43,
+     "le": "2026-10-23T08:09:00.000Z",
+     "agent": "tresorier",
+     "pastille": "TRÉSORIER",
+     "type": "commande_payee",
+     "texte": "Commande payée : site de menuisier (Grenoble)"
+    },
+    {
+     "id": 44,
+     "le": "2026-10-23T08:12:00.000Z",
+     "agent": "tresorier",
+     "pastille": "TRÉSORIER",
+     "type": "pack_paye",
+     "texte": "Pack payé : plombier (Lyon)"
+    },
+    {
+     "id": 45,
+     "le": "2026-10-23T08:15:00.000Z",
+     "agent": "repondeur",
+     "pastille": "RÉPONDEUR",
+     "type": "reponse_oui",
+     "texte": "Oui reçu : maçon (Chambéry)"
+    },
+    {
+     "id": 46,
+     "le": "2026-10-23T08:18:00.000Z",
+     "agent": "tresorier",
+     "pastille": "TRÉSORIER",
+     "type": "commande_payee",
+     "texte": "Commande payée : site d’électricien (Lyon)"
+    },
+    {
+     "id": 47,
+     "le": "2026-10-23T08:21:00.000Z",
+     "agent": "tresorier",
+     "pastille": "TRÉSORIER",
+     "type": "commande_payee",
+     "texte": "Commande payée : site de maçon (Chambéry)"
+    },
+    {
+     "id": 48,
+     "le": "2026-10-23T08:24:00.000Z",
+     "agent": "repondeur",
+     "pastille": "RÉPONDEUR",
+     "type": "reponse_oui",
+     "texte": "Oui reçu : couvreur (Annecy)"
+    },
+    {
+     "id": 49,
+     "le": "2026-10-23T08:27:00.000Z",
+     "agent": "tresorier",
+     "pastille": "TRÉSORIER",
+     "type": "pack_paye",
+     "texte": "Pack payé : menuisier (Grenoble)"
+    },
+    {
+     "id": 50,
+     "le": "2026-10-23T08:30:00.000Z",
+     "agent": "tresorier",
+     "pastille": "TRÉSORIER",
+     "type": "commande_payee",
+     "texte": "Commande payée : site de carreleur (Lyon)"
+    },
+    {
+     "id": 51,
+     "le": "2026-10-23T08:33:00.000Z",
+     "agent": "experience",
+     "pastille": "EXPÉRIENCE",
+     "type": "passage",
+     "texte": "Expérience : jour 6"
+    },
+    {
+     "id": 52,
+     "le": "2026-10-23T08:36:00.000Z",
+     "agent": "juge_faits",
+     "pastille": "JUGE",
+     "type": "tache_prise",
+     "texte": "Faits d’un chauffagiste vérifiés"
+    },
+    {
+     "id": 53,
+     "le": "2026-10-23T08:39:00.000Z",
+     "agent": "redacteur",
+     "pastille": "PLUME",
+     "type": "tache_prise",
+     "texte": "Variante A réécrite"
+    },
+    {
+     "id": 54,
+     "le": "2026-10-23T08:42:00.000Z",
+     "agent": "chef",
+     "pastille": "CHEF",
+     "type": "passage",
+     "texte": "Cycle du Chef : 3 tâches créées"
+    },
+    {
+     "id": 60,
+     "le": "2026-10-23T09:00:00.000Z",
+     "agent": "chef",
+     "pastille": "CHEF",
+     "type": "tache_prise",
+     "texte": "Plan du cycle écrit"
+    },
+    {
+     "id": 61,
+     "le": "2026-10-23T09:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "usine_mesure",
+     "texte": "p95 7 j · processeur 35 % · mémoire 61 % · réseau 2 %"
+    },
+    {
+     "id": 62,
+     "le": "2026-10-23T09:10:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_quota",
+     "texte": "Gemini : 40 % du quota du jour"
+    },
+    {
+     "id": 63,
+     "le": "2026-10-23T09:40:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_quota",
+     "texte": "Gemini : 55 % du quota du jour"
+    },
+    {
+     "id": 64,
+     "le": "2026-10-23T09:20:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_quota",
+     "texte": "Codex : 20 % de la fenêtre de 5 h"
+    },
+    {
+     "id": 65,
+     "le": "2026-10-23T09:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 1 : gemini → cerebras"
+    },
+    {
+     "id": 66,
+     "le": "2026-10-23T09:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 2 : gemini → cerebras"
+    },
+    {
+     "id": 67,
+     "le": "2026-10-23T08:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 3 : gemini → cerebras"
+    },
+    {
+     "id": 68,
+     "le": "2026-10-23T08:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 4 : gemini → cerebras"
+    },
+    {
+     "id": 69,
+     "le": "2026-10-23T07:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 5 : gemini → cerebras"
+    },
+    {
+     "id": 70,
+     "le": "2026-10-23T07:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 6 : gemini → cerebras"
+    },
+    {
+     "id": 71,
+     "le": "2026-10-23T06:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 7 : gemini → cerebras"
+    },
+    {
+     "id": 72,
+     "le": "2026-10-23T06:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 8 : gemini → cerebras"
+    },
+    {
+     "id": 73,
+     "le": "2026-10-23T05:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 9 : gemini → cerebras"
+    },
+    {
+     "id": 74,
+     "le": "2026-10-23T05:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 10 : gemini → cerebras"
+    },
+    {
+     "id": 75,
+     "le": "2026-10-23T04:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 11 : gemini → cerebras"
+    },
+    {
+     "id": 76,
+     "le": "2026-10-23T04:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 12 : gemini → cerebras"
+    },
+    {
+     "id": 77,
+     "le": "2026-10-23T03:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 13 : gemini → cerebras"
+    },
+    {
+     "id": 78,
+     "le": "2026-10-23T03:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 14 : gemini → cerebras"
+    },
+    {
+     "id": 79,
+     "le": "2026-10-23T02:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 15 : gemini → cerebras"
+    },
+    {
+     "id": 80,
+     "le": "2026-10-23T02:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 16 : gemini → cerebras"
+    },
+    {
+     "id": 81,
+     "le": "2026-10-23T01:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 17 : gemini → cerebras"
+    },
+    {
+     "id": 82,
+     "le": "2026-10-23T01:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 18 : gemini → cerebras"
+    },
+    {
+     "id": 83,
+     "le": "2026-10-23T00:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 19 : gemini → cerebras"
+    },
+    {
+     "id": 84,
+     "le": "2026-10-23T00:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 20 : gemini → cerebras"
+    },
+    {
+     "id": 85,
+     "le": "2026-10-22T23:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 21 : gemini → cerebras"
+    },
+    {
+     "id": 86,
+     "le": "2026-10-22T23:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 22 : gemini → cerebras"
+    },
+    {
+     "id": 87,
+     "le": "2026-10-22T22:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 23 : gemini → cerebras"
+    },
+    {
+     "id": 88,
+     "le": "2026-10-22T22:00:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 24 : gemini → cerebras"
+    },
+    {
+     "id": 89,
+     "le": "2026-10-22T21:30:00.000Z",
+     "agent": "usine",
+     "pastille": "USINE",
+     "type": "ia_bascule",
+     "texte": "Bascule 25 : gemini → cerebras"
+    }
+   ],
+   "dernier_id": 89
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

@@ -1,0 +1,504 @@
+{
+ "maintenant": "2026-10-23T10:00:00.000Z",
+ "note": "Témoin : 60 événements de ops.evenements ; résumés piégés (e-mail, numéro en quatre formats, lien, www, M. et Madame Témoin), un agent absent, un événement qui porte salle: ecommerce.",
+ "pieges": [
+  "jean.temoin@exemple.invalid",
+  "06 12 34 56 78",
+  "06.12.34.56.78",
+  "+33 6 12 34 56 78",
+  "0612345678",
+  "https://exemple.invalid/rapport",
+  "www.exemple.invalid",
+  "M. Jean Témoin",
+  "Jean Témoin",
+  "Madame Témoin"
+ ],
+ "evenements": [
+  {
+   "id": 1,
+   "le": "2026-10-23T06:03:00.000Z",
+   "agent": "chef",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 2,
+   "le": "2026-10-23T06:06:00.000Z",
+   "agent": "recenseur",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Recherche des plombiers de Lyon"
+  },
+  {
+   "id": 3,
+   "le": "2026-10-23T06:09:00.000Z",
+   "agent": "facteur",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 4,
+   "le": "2026-10-23T06:12:00.000Z",
+   "agent": "facteur",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Formulaire préparé pour un plombier, Lyon"
+  },
+  {
+   "id": 5,
+   "le": "2026-10-23T06:15:00.000Z",
+   "agent": "juge_faits",
+   "type": "passage",
+   "objet": null,
+   "resume": "Faits vérifiés : 3 artisans"
+  },
+  {
+   "id": 6,
+   "le": "2026-10-23T06:18:00.000Z",
+   "agent": "redacteur",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Variante B écrite — contact : jean.temoin@exemple.invalid"
+  },
+  {
+   "id": 7,
+   "le": "2026-10-23T06:21:00.000Z",
+   "agent": "garde",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 8,
+   "le": "2026-10-23T06:24:00.000Z",
+   "agent": "standardiste",
+   "type": "passage",
+   "objet": null,
+   "resume": "Réponse reçue du 06 12 34 56 78"
+  },
+  {
+   "id": 9,
+   "le": "2026-10-23T06:27:00.000Z",
+   "agent": "repondeur",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Réponse préparée pour M. Jean Témoin"
+  },
+  {
+   "id": 10,
+   "le": "2026-10-23T06:30:00.000Z",
+   "agent": "a0",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 11,
+   "le": "2026-10-23T06:33:00.000Z",
+   "agent": "chef",
+   "type": "reunion_ouverte",
+   "objet": "reunion:temoin-1",
+   "resume": "Réunion ouverte"
+  },
+  {
+   "id": 12,
+   "le": "2026-10-23T06:36:00.000Z",
+   "agent": "chef",
+   "type": "reunion_compte_rendu",
+   "objet": "reunion:temoin-1",
+   "resume": "Ligne 1 : 12 formulaires soumis hier",
+   "ligne": 1
+  },
+  {
+   "id": 13,
+   "le": "2026-10-23T06:39:00.000Z",
+   "agent": "chef",
+   "type": "reunion_compte_rendu",
+   "objet": "reunion:temoin-1",
+   "resume": "Ligne 2 : 2 réponses, dont 1 oui",
+   "ligne": 2
+  },
+  {
+   "id": 14,
+   "le": "2026-10-23T06:42:00.000Z",
+   "agent": "chef",
+   "type": "reunion_compte_rendu",
+   "objet": "reunion:temoin-1",
+   "resume": "Ligne 3 : rapport sur https://exemple.invalid/rapport",
+   "ligne": 3
+  },
+  {
+   "id": 15,
+   "le": "2026-10-23T06:45:00.000Z",
+   "agent": "chef",
+   "type": "reunion_compte_rendu",
+   "objet": "reunion:temoin-1",
+   "resume": "Ligne 4 : la maquette du plombier est prête",
+   "ligne": 4
+  },
+  {
+   "id": 16,
+   "le": "2026-10-23T06:48:00.000Z",
+   "agent": "chef",
+   "type": "reunion_compte_rendu",
+   "objet": "reunion:temoin-1",
+   "resume": "Ligne 5 : objectif du jour, 10 formulaires",
+   "ligne": 5
+  },
+  {
+   "id": 17,
+   "le": "2026-10-23T06:51:00.000Z",
+   "agent": "chef",
+   "type": "reunion_close",
+   "objet": "reunion:temoin-1",
+   "resume": "Réunion close : 2 idée(s)"
+  },
+  {
+   "id": 18,
+   "le": "2026-10-23T06:54:00.000Z",
+   "agent": "systeme",
+   "type": "consigne",
+   "objet": "agent:facteur",
+   "resume": "Ralentis les formulaires à Lyon cette semaine"
+  },
+  {
+   "id": 19,
+   "le": "2026-10-23T06:57:00.000Z",
+   "agent": "chef",
+   "type": "consigne_lue",
+   "objet": "18",
+   "resume": "Consigne lue"
+  },
+  {
+   "id": 20,
+   "le": "2026-10-23T07:00:00.000Z",
+   "agent": "facteur",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Formulaire soumis, Villeurbanne"
+  },
+  {
+   "id": 21,
+   "le": "2026-10-23T07:03:00.000Z",
+   "agent": "livreur",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Mise en ligne du site du plombier"
+  },
+  {
+   "id": 22,
+   "le": "2026-10-23T07:06:00.000Z",
+   "agent": "garde",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Relecture J3 pendant la pause"
+  },
+  {
+   "id": 23,
+   "le": "2026-10-23T07:09:00.000Z",
+   "agent": "systeme",
+   "type": "consigne",
+   "objet": "fondateur",
+   "resume": "Priorité aux couvreurs cette semaine"
+  },
+  {
+   "id": 24,
+   "le": "2026-10-23T07:12:00.000Z",
+   "agent": "standardiste",
+   "type": "passage",
+   "objet": null,
+   "resume": "Réponse : 06.12.34.56.78"
+  },
+  {
+   "id": 25,
+   "le": "2026-10-23T07:15:00.000Z",
+   "agent": "repondeur",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Réponse préparée pour Madame Témoin"
+  },
+  {
+   "id": 26,
+   "le": "2026-10-23T07:18:00.000Z",
+   "agent": "atelier_maquettes",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Maquette plombier, Lyon"
+  },
+  {
+   "id": 27,
+   "le": "2026-10-23T07:21:00.000Z",
+   "agent": "tresorier",
+   "type": "passage",
+   "objet": null,
+   "resume": "Relevé des coûts du jour"
+  },
+  {
+   "id": 28,
+   "le": "2026-10-23T07:24:00.000Z",
+   "agent": "recenseur",
+   "type": "passage",
+   "objet": null,
+   "resume": "Site www.exemple.invalid lu"
+  },
+  {
+   "id": 29,
+   "le": "2026-10-23T07:27:00.000Z",
+   "agent": "vigie_meta",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Annonceurs repérés : 4"
+  },
+  {
+   "id": 30,
+   "le": "2026-10-23T07:30:00.000Z",
+   "agent": "tresorier",
+   "type": "commande_payee",
+   "objet": null,
+   "resume": "Commande payée : site de plombier (Lyon)"
+  },
+  {
+   "id": 31,
+   "le": "2026-10-23T07:33:00.000Z",
+   "agent": "tresorier",
+   "type": "pack_paye",
+   "objet": null,
+   "resume": "Pack payé : couvreur (Annecy)"
+  },
+  {
+   "id": 32,
+   "le": "2026-10-23T07:36:00.000Z",
+   "agent": "repondeur",
+   "type": "reponse_oui",
+   "objet": null,
+   "resume": "Oui reçu : menuisier (Grenoble)"
+  },
+  {
+   "id": 33,
+   "le": "2026-10-23T07:39:00.000Z",
+   "agent": "facteur",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 34,
+   "le": "2026-10-23T07:42:00.000Z",
+   "agent": "fantome_temoin",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Événement d’un agent absent des lignes"
+  },
+  {
+   "id": 35,
+   "le": "2026-10-23T07:45:00.000Z",
+   "agent": "facteur",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Formulaire préparé, Annecy",
+   "salle": "ecommerce"
+  },
+  {
+   "id": 36,
+   "le": "2026-10-23T07:48:00.000Z",
+   "agent": "a0",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 37,
+   "le": "2026-10-23T07:51:00.000Z",
+   "agent": "standardiste",
+   "type": "passage",
+   "objet": null,
+   "resume": "Numéro reçu : +33 6 12 34 56 78"
+  },
+  {
+   "id": 38,
+   "le": "2026-10-23T07:54:00.000Z",
+   "agent": "repondeur",
+   "type": "passage",
+   "objet": null,
+   "resume": "Appel demandé au 0612345678"
+  },
+  {
+   "id": 39,
+   "le": "2026-10-23T07:57:00.000Z",
+   "agent": "chef",
+   "type": "reunion_ouverte",
+   "objet": "reunion:temoin-2",
+   "resume": "Réunion ouverte"
+  },
+  {
+   "id": 40,
+   "le": "2026-10-23T08:00:00.000Z",
+   "agent": "chef",
+   "type": "reunion_abandonnee",
+   "objet": "reunion:temoin-2",
+   "resume": "Réunion abandonnée : délai"
+  },
+  {
+   "id": 41,
+   "le": "2026-10-23T08:03:00.000Z",
+   "agent": "tresorier",
+   "type": "commande_payee",
+   "objet": null,
+   "resume": "Commande payée : site de couvreur (Annecy)"
+  },
+  {
+   "id": 42,
+   "le": "2026-10-23T08:06:00.000Z",
+   "agent": "repondeur",
+   "type": "reponse_oui",
+   "objet": null,
+   "resume": "Oui reçu : électricien (Lyon)"
+  },
+  {
+   "id": 43,
+   "le": "2026-10-23T08:09:00.000Z",
+   "agent": "tresorier",
+   "type": "commande_payee",
+   "objet": null,
+   "resume": "Commande payée : site de menuisier (Grenoble)"
+  },
+  {
+   "id": 44,
+   "le": "2026-10-23T08:12:00.000Z",
+   "agent": "tresorier",
+   "type": "pack_paye",
+   "objet": null,
+   "resume": "Pack payé : plombier (Lyon)"
+  },
+  {
+   "id": 45,
+   "le": "2026-10-23T08:15:00.000Z",
+   "agent": "repondeur",
+   "type": "reponse_oui",
+   "objet": null,
+   "resume": "Oui reçu : maçon (Chambéry)"
+  },
+  {
+   "id": 46,
+   "le": "2026-10-23T08:18:00.000Z",
+   "agent": "tresorier",
+   "type": "commande_payee",
+   "objet": null,
+   "resume": "Commande payée : site d’électricien (Lyon)"
+  },
+  {
+   "id": 47,
+   "le": "2026-10-23T08:21:00.000Z",
+   "agent": "tresorier",
+   "type": "commande_payee",
+   "objet": null,
+   "resume": "Commande payée : site de maçon (Chambéry)"
+  },
+  {
+   "id": 48,
+   "le": "2026-10-23T08:24:00.000Z",
+   "agent": "repondeur",
+   "type": "reponse_oui",
+   "objet": null,
+   "resume": "Oui reçu : couvreur (Annecy)"
+  },
+  {
+   "id": 49,
+   "le": "2026-10-23T08:27:00.000Z",
+   "agent": "tresorier",
+   "type": "pack_paye",
+   "objet": null,
+   "resume": "Pack payé : menuisier (Grenoble)"
+  },
+  {
+   "id": 50,
+   "le": "2026-10-23T08:30:00.000Z",
+   "agent": "tresorier",
+   "type": "commande_payee",
+   "objet": null,
+   "resume": "Commande payée : site de carreleur (Lyon)"
+  },
+  {
+   "id": 51,
+   "le": "2026-10-23T08:33:00.000Z",
+   "agent": "experience",
+   "type": "passage",
+   "objet": null,
+   "resume": "Expérience : jour 6"
+  },
+  {
+   "id": 52,
+   "le": "2026-10-23T08:36:00.000Z",
+   "agent": "juge_faits",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Faits d’un chauffagiste vérifiés"
+  },
+  {
+   "id": 53,
+   "le": "2026-10-23T08:39:00.000Z",
+   "agent": "redacteur",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Variante A réécrite"
+  },
+  {
+   "id": 54,
+   "le": "2026-10-23T08:42:00.000Z",
+   "agent": "chef",
+   "type": "passage",
+   "objet": null,
+   "resume": "Cycle du Chef : 3 tâches créées"
+  },
+  {
+   "id": 55,
+   "le": "2026-10-23T08:45:00.000Z",
+   "agent": "recenseur",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 56,
+   "le": "2026-10-23T08:48:00.000Z",
+   "agent": "vigie_meta",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 57,
+   "le": "2026-10-23T08:51:00.000Z",
+   "agent": "agent_temoin_inconnu",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 58,
+   "le": "2026-10-23T08:54:00.000Z",
+   "agent": "tresorier",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 59,
+   "le": "2026-10-23T08:57:00.000Z",
+   "agent": "atelier_maquettes",
+   "type": "battement",
+   "objet": null,
+   "resume": "Battement"
+  },
+  {
+   "id": 60,
+   "le": "2026-10-23T09:00:00.000Z",
+   "agent": "chef",
+   "type": "tache_prise",
+   "objet": null,
+   "resume": "Plan du cycle écrit"
+  }
+ ]
+}

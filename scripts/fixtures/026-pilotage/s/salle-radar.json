@@ -1,0 +1,63 @@
+{
+ "note": "Réponse conforme au contrat des vues (026-092, s/contrat-vues.mjs), produite par l’implémentation de référence du lot s sur la base d’essai, horloge figée au 23/10/2026 10:00 UTC.",
+ "conforme": true,
+ "opts": {
+  "vue": "salle",
+  "salle": "radar"
+ },
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "annonceurs": [
+    {
+     "categorie": "plombier",
+     "commune": "Lyon",
+     "pubs": 3,
+     "score": 0.7,
+     "froid": true
+    },
+    {
+     "categorie": "couvreur",
+     "commune": "Annecy",
+     "pubs": 1,
+     "score": 0.4,
+     "froid": false
+    }
+   ],
+   "requetes": 18,
+   "egaliseur": [
+    0,
+    1,
+    2,
+    4,
+    3,
+    1,
+    0,
+    0,
+    2,
+    5,
+    3,
+    1
+   ],
+   "crons": [
+    {
+     "nom": "relances",
+     "dernier_le": "2026-10-23T08:00:00.000Z",
+     "ok": true
+    }
+   ],
+   "active_auj": {
+    "valeur": {
+     "minutes": 95
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

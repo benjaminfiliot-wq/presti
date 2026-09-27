@@ -1,0 +1,13 @@
+// TÉMOIN du lot s (026-067) : une implémentation de référence minimale de lib/agents/pause.ts (026-044), posée pour que
+// lib/pilotage/station.ts s'importe sur l'arbre de référence. Ce n'est pas le module livré. La base n'est chargée qu'à l'appel.
+export async function pauseGenerale(): Promise<{ active: boolean; source: 'variable' | 'base' | 'panne'; motif?: string }> {
+  if (process.env.PAUSE_GENERALE === '1') return { active: true, source: 'variable', motif: 'PAUSE_GENERALE=1' }
+  try {
+    const { supabaseAdmin } = await import('@/lib/supabaseAdmin')
+    const { data, error } = await supabaseAdmin.rpc('ops_pause_lire')
+    if (error) return { active: true, source: 'panne', motif: 'pause illisible : prudence' }
+    return { active: data === true, source: 'base' }
+  } catch {
+    return { active: true, source: 'panne', motif: 'pause illisible : prudence' }
+  }
+}

@@ -1,0 +1,140 @@
+{
+ "note": "Réponse conforme au contrat des vues (026-092, s/contrat-vues.mjs), produite par l’implémentation de référence du lot s sur la base d’essai, horloge figée au 23/10/2026 10:00 UTC.",
+ "conforme": true,
+ "opts": {
+  "vue": "salle",
+  "salle": "commandement"
+ },
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "objectif": {
+    "libelle": "Dix formulaires par jour",
+    "par": "PAR LE CHEF",
+    "progression": 0.2
+   },
+   "missions": [
+    {
+     "cle": "oui",
+     "libelle": "10 oui",
+     "valeur": 2,
+     "cible": 10,
+     "texte": "2/10",
+     "atteinte": false,
+     "debloque": "→ succès Premier oui"
+    },
+    {
+     "cle": "contacts_froids",
+     "libelle": "100 contacts froids (bilan du 02/11)",
+     "valeur": 20,
+     "cible": 100,
+     "texte": "20/100",
+     "atteinte": false,
+     "debloque": "→ succès Bilan passé"
+    },
+    {
+     "cle": "sites_en_ligne",
+     "libelle": "1er site en ligne",
+     "valeur": 1,
+     "cible": 1,
+     "texte": "1/1",
+     "atteinte": true,
+     "debloque": "→ succès Premier site en ligne"
+    }
+   ],
+   "succes": {
+    "cle": "bilan_passe",
+    "libelle": "Bilan passé",
+    "le": null
+   },
+   "tousSucces": [
+    {
+     "cle": "premier_oui",
+     "libelle": "Premier oui",
+     "debloque": true,
+     "le": null
+    },
+    {
+     "cle": "premiere_vente",
+     "libelle": "Première vente",
+     "debloque": true,
+     "le": null
+    },
+    {
+     "cle": "premier_site_en_ligne",
+     "libelle": "Premier site en ligne",
+     "debloque": true,
+     "le": null
+    },
+    {
+     "cle": "bilan_passe",
+     "libelle": "Bilan passé",
+     "debloque": true,
+     "le": null
+    }
+   ],
+   "compteRendu": [
+    "12 formulaires soumis hier",
+    "2 réponses, dont 1 oui",
+    "La maquette du plombier est prête"
+   ],
+   "argent": {
+    "valeur": {
+     "niveau": {
+      "lv": 2,
+      "prochainSeuil": 1000,
+      "part": 0.4228571428571429,
+      "xp": 596,
+      "texte": "596 / 1 000 XP"
+     },
+     "missions": [
+      {
+       "cle": "encaisse_eur",
+       "libelle": "300 € encaissés",
+       "valeur": 596,
+       "cible": 300,
+       "texte": "596/300",
+       "atteinte": true,
+       "debloque": "→ succès Première vente"
+      }
+     ]
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "consignes": [
+    {
+     "id": 18,
+     "le": "2026-10-23T06:54:00.000Z",
+     "texte": "Ralentis les formulaires à Lyon cette semaine",
+     "cible": "facteur"
+    },
+    {
+     "id": 19,
+     "le": "2026-10-23T06:57:00.000Z",
+     "texte": "Consigne lue",
+     "cible": null
+    },
+    {
+     "id": 23,
+     "le": "2026-10-23T07:09:00.000Z",
+     "texte": "Priorité aux couvreurs cette semaine",
+     "cible": null
+    }
+   ],
+   "active_auj": {
+    "valeur": {
+     "minutes": 42
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

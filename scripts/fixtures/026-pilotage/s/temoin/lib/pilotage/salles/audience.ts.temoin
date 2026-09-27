@@ -1,0 +1,9 @@
+// TÉMOIN du lot s (026-067) : le lecteur de l'Audience (026-178) : audience(periode) de lib/controle/lectures (026-174),
+// la même lecture que le Poste, sans cookie ni IP, jamais une liste d'abonnés. Sous `audience`.
+import type { Contexte } from '../station'
+
+export const DOMAINE = 'audience'
+export async function lire(c: Contexte) {
+  const a = (await c.deps.lectures.audience('jour')) as Record<string, unknown> | null
+  return { pages: a?.pages ?? [], minutes: a?.minutes ?? [], campagnes: a?.campagnes ?? [] }
+}

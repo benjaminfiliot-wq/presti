@@ -1,0 +1,15 @@
+// TÉMOIN du lot s (026-067) : la répartition par nature de la Trésorerie (026-178) : une table fermée NATURE_DE
+// (fournisseur de ops.couts → texte, image, vidéo ou voix) sur pilotage_couts_modeles(<1er du mois>). Sous `comptabilite`.
+import type { Contexte } from '../station'
+
+export type Nature = 'texte' | 'image' | 'video' | 'voix'
+export const NATURE_DE: Readonly<Record<string, Nature>> = Object.freeze({
+  'openai-codex': 'texte', freellmapi: 'texte', ollama: 'texte', 'ollama-cloud': 'texte', laya: 'texte',
+  flux: 'image', hyperframes: 'video', kokoro: 'voix', 'fish-audio': 'voix',
+})
+export async function parNature(c: Contexte, depuis: string) {
+  const l = await c.rpc('pilotage_couts_modeles', { p_depuis: depuis })
+  const out: Record<Nature, number> = { texte: 0, image: 0, video: 0, voix: 0 }
+  for (const x of Array.isArray(l) ? l : []) { const n = NATURE_DE[x.fournisseur]; if (n) out[n] += Number(x.eur ?? 0) }
+  return out
+}

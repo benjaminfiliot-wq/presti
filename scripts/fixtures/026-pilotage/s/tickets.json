@@ -1,0 +1,14 @@
+{
+ "note": "Sortie piégée de ticketsOuverts() (026-174) : le nombre, plus un contenu qui ne doit jamais sortir de la salle Presti.",
+ "pieges": [
+  "Mon mot de passe Témoin ne marche plus",
+  "ticket-temoin@exemple.invalid"
+ ],
+ "ticketsOuverts": {
+  "nombre": 3,
+  "dernier": {
+   "sujet": "Mon mot de passe Témoin ne marche plus",
+   "email": "ticket-temoin@exemple.invalid"
+  }
+ }
+}

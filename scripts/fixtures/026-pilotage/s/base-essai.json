@@ -1,0 +1,1415 @@
+{
+ "maintenant": "2026-10-23T10:00:00.000Z",
+ "note": "La base d’essai de station-route-qa (026-067) : ce que rendent les fonctions pilotage_* et station_* et les tables publiques, à l’instant figé. Aucun nom réel : les pièges portent « Témoin ».",
+ "rpc": {
+  "pilotage_chef": {
+   "prochain_le": "2026-10-23T11:38:00.000Z",
+   "modele": "gpt-6-sol",
+   "cycles_jour": 7
+  },
+  "station_reunion_lire": [
+   {
+    "id": "90000000-0000-4000-8000-000000000501",
+    "jour": "2026-10-23",
+    "statut": "close",
+    "lignes": [
+     "12 formulaires soumis hier",
+     "2 réponses, dont 1 oui",
+     "La maquette du plombier est prête",
+     "Aucune panne",
+     "Objectif : 10 formulaires"
+    ],
+    "objectif": {
+     "libelle": "Dix formulaires par jour",
+     "mesure": "contacts_froids",
+     "cible": 100
+    },
+    "idees": [
+     "chef:2026-10-23:idee-relance-couvreurs",
+     "chef:2026-10-23:idee-variante-courte"
+    ],
+    "ouverte_le": "2026-10-22T18:00:00.000Z"
+   }
+  ],
+  "pilotage_compteurs_du_jour": [
+   {
+    "canal": "formulaire_site",
+    "palier": "P2",
+    "plafond": 20,
+    "utilises": 12,
+    "plaintes_7j": 0,
+    "avis_abus": 0,
+    "stop_100": 0,
+    "echecs_affilee": 0,
+    "reponses_positives": 1
+   },
+   {
+    "canal": "email_sollicite",
+    "palier": null,
+    "plafond": null,
+    "utilises": 1,
+    "plaintes_7j": 0,
+    "avis_abus": 0,
+    "stop_100": 0,
+    "echecs_affilee": 0,
+    "reponses_positives": 0
+   }
+  ],
+  "pilotage_compteurs_technologies": [
+   {
+    "technologie": "contact_form_7",
+    "envois_jour": 8,
+    "echecs_affilee": 0,
+    "etat": "active",
+    "pause_motif": null
+   },
+   {
+    "technologie": "wpforms",
+    "envois_jour": 4,
+    "echecs_affilee": 3,
+    "etat": "pause",
+    "pause_motif": "3 échecs de soumission d’affilée"
+   }
+  ],
+  "pilotage_etat_envoi": {
+   "palier": "P2",
+   "envoi_froid": true,
+   "epreuve_passee": true,
+   "epreuve_le": "2026-10-18T10:00:00.000Z",
+   "mesure_a_sec": true,
+   "notice_verifiee_le": "2026-10-21T10:00:00.000Z",
+   "technologies_pause": [
+    "wpforms"
+   ],
+   "modeles_suspendus": [
+    "variante-z"
+   ]
+  },
+  "station_experience_etat": {
+   "ventes": 1,
+   "statut": "en_cours",
+   "jour": 6,
+   "gains_eur": 0,
+   "budget_eur": 0,
+   "titre": "Expérience du Témoin"
+  },
+  "pilotage_attention_sources": {
+   "escalade_chef": {
+    "nombre": 3,
+    "depuis": "2026-10-23T05:00:00.000Z"
+   },
+   "idee_chef": {
+    "nombre": 2,
+    "depuis": "2026-10-23T04:00:00.000Z"
+   },
+   "decision_argent": {
+    "nombre": 1,
+    "depuis": "2026-10-23T06:00:00.000Z"
+   }
+  },
+  "pilotage_appels": [
+   {
+    "id": "90000000-0000-4000-8000-000000000601",
+    "source": "rdv",
+    "metier": "plombier",
+    "commune": "Lyon",
+    "le": "2026-10-23T12:00:00.000Z"
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000602",
+    "source": "reponse",
+    "metier": "couvreur",
+    "commune": "Annecy",
+    "le": "2026-10-23T09:00:00.000Z"
+   }
+  ],
+  "pilotage_envois_du_jour": [
+   {
+    "id": "90000000-0000-4000-8000-000000000301",
+    "canal": "formulaire_site",
+    "technologie": "contact_form_7",
+    "type": "premier_contact",
+    "statut": "envoye",
+    "metier": "plombier",
+    "commune": "Lyon",
+    "variante": "A",
+    "froid": true,
+    "verdicts": {
+     "j1": "pass",
+     "j3": "pass",
+     "second": "pass"
+    },
+    "prepare_le": "2026-10-23T07:00:00.000Z",
+    "envoye_le": "2026-10-23T08:00:00.000Z"
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000302",
+    "canal": "formulaire_site",
+    "technologie": "wpforms",
+    "type": "premier_contact",
+    "statut": "envoye",
+    "metier": "couvreur",
+    "commune": "Annecy",
+    "variante": "B",
+    "froid": true,
+    "verdicts": {
+     "j1": "pass",
+     "j3": null,
+     "second": "pass"
+    },
+    "prepare_le": "2026-10-23T07:00:00.000Z",
+    "envoye_le": "2026-10-23T09:00:00.000Z"
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000303",
+    "canal": "email_sollicite",
+    "technologie": null,
+    "type": "lien_maquette",
+    "statut": "prepare",
+    "metier": "menuisier",
+    "commune": "Grenoble",
+    "variante": null,
+    "froid": false,
+    "verdicts": {
+     "j1": "pass",
+     "j3": "refus",
+     "second": null
+    },
+    "prepare_le": "2026-10-23T09:00:00.000Z",
+    "envoye_le": null
+   }
+  ],
+  "pilotage_code_lire": {
+   "etat": {
+    "version": 1,
+    "genere_le": "2026-10-23T09:40:00.000Z",
+    "file": [
+     "026-070",
+     "026-092"
+    ],
+    "en_cours": [
+     {
+      "id": "026-067",
+      "agent": "claude-code",
+      "depuis": "2026-10-23T09:30:00.000Z"
+     }
+    ],
+    "fait": 120,
+    "refusees": 3,
+    "derniers": [
+     {
+      "id": "026-066",
+      "verdict": "PASS",
+      "date": "2026-10-23T09:00:00.000Z",
+      "executant": "claude-code",
+      "ligne": ""
+     }
+    ],
+    "prs": null,
+    "prs_raison": "gh absent",
+    "attention": [
+     "026-032 : question en attente `node scripts/orchestre.mjs repondre 026-032 1`"
+    ]
+   },
+   "publie_le": "2026-10-23T09:40:00.000Z"
+  },
+  "station_objectif_actif": {
+   "libelle": "Dix formulaires par jour",
+   "mesure": "contacts_froids",
+   "cible": 100
+  },
+  "pilotage_bilan_date": {
+   "bilan_le": "2026-11-02"
+  },
+  "pilotage_bilan": [
+   {
+    "id": "90000000-0000-4000-8000-000000000400",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-22T22:00:00.000Z",
+    "repondu": true,
+    "oui": true,
+    "appel": true,
+    "vente": true
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000401",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-22T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000402",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-21T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000403",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-21T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000404",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-20T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000405",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": false,
+    "envoye_le": "2026-10-20T10:00:00.000Z",
+    "repondu": true,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000406",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-19T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000407",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-19T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000408",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-18T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000409",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-18T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000410",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-17T22:00:00.000Z",
+    "repondu": true,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000411",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": false,
+    "envoye_le": "2026-10-17T10:00:00.000Z",
+    "repondu": false,
+    "oui": true,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000412",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-16T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000413",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-16T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000414",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-15T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000415",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-15T10:00:00.000Z",
+    "repondu": true,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000416",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-14T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000417",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": false,
+    "envoye_le": "2026-10-14T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000418",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-13T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000419",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-13T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000420",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-12T22:00:00.000Z",
+    "repondu": true,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000421",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-12T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000422",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-11T22:00:00.000Z",
+    "repondu": false,
+    "oui": true,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000423",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": false,
+    "envoye_le": "2026-10-11T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   }
+  ],
+  "pilotage_entonnoir": [
+   {
+    "id": "90000000-0000-4000-8000-000000000400",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-22T22:00:00.000Z",
+    "repondu": true,
+    "oui": true,
+    "appel": true,
+    "vente": true
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000401",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-22T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000402",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-21T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000403",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-21T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000404",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-20T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000405",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": false,
+    "envoye_le": "2026-10-20T10:00:00.000Z",
+    "repondu": true,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000406",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-19T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000407",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-19T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000408",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-18T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000409",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-18T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000410",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-17T22:00:00.000Z",
+    "repondu": true,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000411",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": false,
+    "envoye_le": "2026-10-17T10:00:00.000Z",
+    "repondu": false,
+    "oui": true,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000412",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-16T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000413",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-16T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000414",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-15T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000415",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-15T10:00:00.000Z",
+    "repondu": true,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000416",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-14T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000417",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": false,
+    "envoye_le": "2026-10-14T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000418",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-13T22:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000419",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-13T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000420",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-12T22:00:00.000Z",
+    "repondu": true,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000421",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": true,
+    "envoye_le": "2026-10-12T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000422",
+    "canal": "formulaire_site",
+    "variante": "B",
+    "froid": true,
+    "envoye_le": "2026-10-11T22:00:00.000Z",
+    "repondu": false,
+    "oui": true,
+    "appel": false,
+    "vente": null
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000423",
+    "canal": "formulaire_site",
+    "variante": "A",
+    "froid": false,
+    "envoye_le": "2026-10-11T10:00:00.000Z",
+    "repondu": false,
+    "oui": false,
+    "appel": false,
+    "vente": null
+   }
+  ],
+  "pilotage_tapis": [
+   {
+    "etape": "trouve",
+    "jour": 40
+   },
+   {
+    "etape": "verifie",
+    "jour": 31
+   },
+   {
+    "etape": "maquette",
+    "jour": 12
+   },
+   {
+    "etape": "contacte",
+    "jour": 11
+   },
+   {
+    "etape": "repondu",
+    "jour": 2
+   },
+   {
+    "etape": "oui",
+    "jour": 1
+   },
+   {
+    "etape": "paye",
+    "jour": 1
+   },
+   {
+    "etape": "rejet",
+    "jour": 3,
+    "taux_pass": 0.8
+   }
+  ],
+  "pilotage_couts_agents": [
+   {
+    "agent": "facteur",
+    "libelle": "Facteur",
+    "eur": 0,
+    "appels": 12
+   },
+   {
+    "agent": "chef",
+    "libelle": "Chef",
+    "eur": 0,
+    "appels": 30
+   }
+  ],
+  "pilotage_couts_taches": [
+   {
+    "tache": "90000000-0000-4000-8000-000000000701",
+    "type": "formulaire",
+    "agent": "facteur",
+    "eur": 0,
+    "le": "2026-10-23T09:00:00.000Z"
+   },
+   {
+    "tache": "90000000-0000-4000-8000-000000000702",
+    "type": "cycle",
+    "agent": "chef",
+    "eur": 0,
+    "le": "2026-10-23T08:00:00.000Z"
+   }
+  ],
+  "pilotage_couts_modeles": [
+   {
+    "fournisseur": "openai-codex",
+    "modele": "gpt-6-luna",
+    "appels": 40,
+    "eur": 0
+   },
+   {
+    "fournisseur": "freellmapi",
+    "modele": "llama-4-scout",
+    "appels": 12,
+    "eur": 0
+   },
+   {
+    "fournisseur": "fish-audio",
+    "modele": "voix-fr",
+    "appels": 2,
+    "eur": 1.5
+   }
+  ],
+  "pilotage_atelier": [
+   {
+    "id": "90000000-0000-4000-8000-000000000801",
+    "metier": "plombier",
+    "commune": "Lyon",
+    "statut": "active",
+    "video": null,
+    "verdict": "pass",
+    "le": "2026-10-23T09:00:00.000Z",
+    "apercu_chemin": "maquettes/plombier-lyon.png"
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000802",
+    "metier": "couvreur",
+    "commune": "Annecy",
+    "statut": "revision",
+    "video": null,
+    "verdict": "refus",
+    "le": "2026-10-23T08:00:00.000Z",
+    "apercu_chemin": null
+   }
+  ],
+  "pilotage_reponses_du_jour": [
+   {
+    "classe": "oui",
+    "nombre": 1
+   },
+   {
+    "classe": "appel",
+    "nombre": 1
+   },
+   {
+    "classe": "non",
+    "nombre": 2
+   }
+  ],
+  "pilotage_reponses_recentes": [
+   {
+    "id": "90000000-0000-4000-8000-000000000901",
+    "recu_le": "2026-10-23T09:00:00.000Z",
+    "classe": "appel",
+    "texte_recu": "Rappelez-moi au 06 12 34 56 78, merci (Témoin)",
+    "reponse_envoyee": "Bien reçu, nous vous rappelons."
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000000902",
+    "recu_le": "2026-10-23T08:00:00.000Z",
+    "classe": "oui",
+    "texte_recu": "Oui, écrivez-moi à jean.temoin@exemple.invalid",
+    "reponse_envoyee": null
+   }
+  ],
+  "pilotage_taches_agent": [
+   {
+    "numero": 41,
+    "type": "formulaire",
+    "statut": "faite",
+    "resultat": "Soumis",
+    "le": "2026-10-23T09:00:00.000Z"
+   },
+   {
+    "numero": 42,
+    "type": "formulaire",
+    "statut": "rejetee",
+    "resultat": "Refus J3",
+    "le": "2026-10-23T09:30:00.000Z"
+   }
+  ],
+  "pilotage_radar": {
+   "annonceurs": [
+    {
+     "categorie": "plombier",
+     "commune": "Lyon",
+     "pubs": 3,
+     "score": 0.7,
+     "froid": true
+    },
+    {
+     "categorie": "couvreur",
+     "commune": "Annecy",
+     "pubs": 1,
+     "score": 0.4,
+     "froid": false
+    }
+   ],
+   "requetes": 18,
+   "egaliseur": [
+    0,
+    1,
+    2,
+    4,
+    3,
+    1,
+    0,
+    0,
+    2,
+    5,
+    3,
+    1
+   ]
+  }
+ },
+ "evenements_usine": [
+  {
+   "id": 61,
+   "le": "2026-10-23T09:30:00.000Z",
+   "agent": "usine",
+   "type": "usine_mesure",
+   "objet": "usine",
+   "resume": "p95 7 j · processeur 35 % · mémoire 61 % · réseau 2 %"
+  },
+  {
+   "id": 62,
+   "le": "2026-10-23T09:10:00.000Z",
+   "agent": "usine",
+   "type": "ia_quota",
+   "objet": "ia:gemini",
+   "resume": "Gemini : 40 % du quota du jour"
+  },
+  {
+   "id": 63,
+   "le": "2026-10-23T09:40:00.000Z",
+   "agent": "usine",
+   "type": "ia_quota",
+   "objet": "ia:gemini",
+   "resume": "Gemini : 55 % du quota du jour"
+  },
+  {
+   "id": 64,
+   "le": "2026-10-23T09:20:00.000Z",
+   "agent": "usine",
+   "type": "ia_quota",
+   "objet": "ia:codex",
+   "resume": "Codex : 20 % de la fenêtre de 5 h"
+  },
+  {
+   "id": 65,
+   "le": "2026-10-23T09:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 1 : gemini → cerebras"
+  },
+  {
+   "id": 66,
+   "le": "2026-10-23T09:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 2 : gemini → cerebras"
+  },
+  {
+   "id": 67,
+   "le": "2026-10-23T08:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 3 : gemini → cerebras"
+  },
+  {
+   "id": 68,
+   "le": "2026-10-23T08:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 4 : gemini → cerebras"
+  },
+  {
+   "id": 69,
+   "le": "2026-10-23T07:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 5 : gemini → cerebras"
+  },
+  {
+   "id": 70,
+   "le": "2026-10-23T07:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 6 : gemini → cerebras"
+  },
+  {
+   "id": 71,
+   "le": "2026-10-23T06:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 7 : gemini → cerebras"
+  },
+  {
+   "id": 72,
+   "le": "2026-10-23T06:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 8 : gemini → cerebras"
+  },
+  {
+   "id": 73,
+   "le": "2026-10-23T05:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 9 : gemini → cerebras"
+  },
+  {
+   "id": 74,
+   "le": "2026-10-23T05:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 10 : gemini → cerebras"
+  },
+  {
+   "id": 75,
+   "le": "2026-10-23T04:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 11 : gemini → cerebras"
+  },
+  {
+   "id": 76,
+   "le": "2026-10-23T04:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 12 : gemini → cerebras"
+  },
+  {
+   "id": 77,
+   "le": "2026-10-23T03:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 13 : gemini → cerebras"
+  },
+  {
+   "id": 78,
+   "le": "2026-10-23T03:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 14 : gemini → cerebras"
+  },
+  {
+   "id": 79,
+   "le": "2026-10-23T02:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 15 : gemini → cerebras"
+  },
+  {
+   "id": 80,
+   "le": "2026-10-23T02:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 16 : gemini → cerebras"
+  },
+  {
+   "id": 81,
+   "le": "2026-10-23T01:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 17 : gemini → cerebras"
+  },
+  {
+   "id": 82,
+   "le": "2026-10-23T01:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 18 : gemini → cerebras"
+  },
+  {
+   "id": 83,
+   "le": "2026-10-23T00:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 19 : gemini → cerebras"
+  },
+  {
+   "id": 84,
+   "le": "2026-10-23T00:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 20 : gemini → cerebras"
+  },
+  {
+   "id": 85,
+   "le": "2026-10-22T23:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 21 : gemini → cerebras"
+  },
+  {
+   "id": 86,
+   "le": "2026-10-22T23:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 22 : gemini → cerebras"
+  },
+  {
+   "id": 87,
+   "le": "2026-10-22T22:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 23 : gemini → cerebras"
+  },
+  {
+   "id": 88,
+   "le": "2026-10-22T22:00:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 24 : gemini → cerebras"
+  },
+  {
+   "id": 89,
+   "le": "2026-10-22T21:30:00.000Z",
+   "agent": "usine",
+   "type": "ia_bascule",
+   "objet": "ia:bascule",
+   "resume": "Bascule 25 : gemini → cerebras"
+  }
+ ],
+ "tables": {
+  "sites_commandes": [
+   {
+    "id": "90000000-0000-4000-8000-000000001001",
+    "etat": "en_ligne",
+    "metier": "plombier",
+    "commune": "Lyon",
+    "cree_le": "2026-10-03T10:00:00.000Z",
+    "prix_cents": 14900,
+    "apercu_chemin": "sites/plombier-lyon/index.png",
+    "email": "client.temoin@exemple.invalid",
+    "tel": "06 12 34 56 78",
+    "nom": "Plomberie Témoin"
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000001002",
+    "etat": "generee",
+    "metier": "couvreur",
+    "commune": "Annecy",
+    "cree_le": "2026-10-21T10:00:00.000Z",
+    "prix_cents": 14900,
+    "apercu_chemin": "sites/couvreur-annecy/index.png",
+    "email": "autre.temoin@exemple.invalid",
+    "tel": "07 12 34 56 78",
+    "nom": "Toitures Témoin"
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000001003",
+    "etat": "payee",
+    "metier": "menuisier",
+    "commune": "Grenoble",
+    "cree_le": "2026-10-22T10:00:00.000Z",
+    "prix_cents": 14900,
+    "apercu_chemin": null,
+    "email": "menuisier.temoin@exemple.invalid",
+    "tel": null,
+    "nom": "Menuiserie Témoin"
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000001004",
+    "etat": "brouillon",
+    "metier": "maçon",
+    "commune": "Chambéry",
+    "cree_le": "2026-10-23T07:00:00.000Z",
+    "prix_cents": 14900,
+    "apercu_chemin": null,
+    "email": "macon.temoin@exemple.invalid",
+    "tel": null,
+    "nom": "Maçonnerie Témoin"
+   }
+  ],
+  "achats": [
+   {
+    "fournisseur": "Vercel",
+    "libelle": "Hobby (0 €)",
+    "categorie": "hebergement",
+    "ttc_cents": 0,
+    "date_facture": "2026-10-01"
+   },
+   {
+    "fournisseur": "Publora",
+    "libelle": "Starter",
+    "categorie": "logiciel",
+    "ttc_cents": 1900,
+    "date_facture": "2026-10-15"
+   },
+   {
+    "fournisseur": "Domaine",
+    "libelle": "prestiapp.fr",
+    "categorie": "domaine",
+    "ttc_cents": 1200,
+    "date_facture": "2026-09-30"
+   },
+   {
+    "fournisseur": "Anthropic",
+    "libelle": "Claude Max",
+    "categorie": "logiciel",
+    "ttc_cents": 9000,
+    "date_facture": "2026-11-01"
+   }
+  ],
+  "passages_cron": [
+   {
+    "nom": "relances",
+    "reussi": true,
+    "dernier_passage": "2026-10-23T08:00:00.000Z",
+    "detail": {
+     "envoyees": 3
+    }
+   },
+   {
+    "nom": "alertes",
+    "reussi": false,
+    "dernier_passage": "2026-10-23T07:00:00.000Z",
+    "detail": {
+     "erreur": "essai"
+    }
+   },
+   {
+    "nom": "livraison",
+    "reussi": true,
+    "dernier_passage": "2026-10-23T09:00:00.000Z",
+    "detail": {}
+   }
+  ],
+  "app_errors": [
+   {
+    "id": 1,
+    "contexte": "station",
+    "message": "Erreur d’essai",
+    "created_at": "2026-10-23T09:00:00.000Z"
+   },
+   {
+    "id": 2,
+    "contexte": "station",
+    "message": "Erreur d’essai",
+    "created_at": "2026-10-22T23:00:00.000Z"
+   },
+   {
+    "id": 3,
+    "contexte": "station",
+    "message": "Erreur d’essai",
+    "created_at": "2026-10-22T13:00:00.000Z"
+   },
+   {
+    "id": 4,
+    "contexte": "station",
+    "message": "Erreur d’essai",
+    "created_at": "2026-10-22T03:00:00.000Z"
+   }
+  ],
+  "crieur_posts": [
+   {
+    "id": "90000000-0000-4000-8000-000000001101",
+    "canal": "linkedin",
+    "statut": "programmee",
+    "programmee_pour": "2026-10-21T10:00:00.000Z",
+    "cree_le": "2026-10-18T10:00:00.000Z",
+    "texte": "Texte de publication du Témoin"
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000001102",
+    "canal": "facebook",
+    "statut": "programmee",
+    "programmee_pour": "2026-10-25T10:00:00.000Z",
+    "cree_le": "2026-10-22T10:00:00.000Z",
+    "texte": "Texte de publication du Témoin"
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000001103",
+    "canal": "instagram",
+    "statut": "brouillon_publora",
+    "programmee_pour": null,
+    "cree_le": "2026-10-22T10:00:00.000Z",
+    "texte": "Brouillon du Témoin"
+   }
+  ],
+  "packs_pubs": [
+   {
+    "id": "90000000-0000-4000-8000-000000001201",
+    "etat": "payee",
+    "type": "locale",
+    "prix_cents": 14900,
+    "paye_le": "2026-10-20T10:00:00.000Z",
+    "livre_le": null,
+    "email": "pack.temoin@exemple.invalid"
+   },
+   {
+    "id": "90000000-0000-4000-8000-000000001202",
+    "etat": "livree",
+    "type": "studio",
+    "prix_cents": 49000,
+    "paye_le": "2026-10-14T10:00:00.000Z",
+    "livre_le": "2026-10-21T10:00:00.000Z",
+    "email": "studio.temoin@exemple.invalid"
+   }
+  ]
+ },
+ "lectures": {
+  "santeService": {
+   "etat": "en ligne",
+   "raison": null
+  },
+  "cronsDuService": [
+   {
+    "nom": "relances",
+    "dernier_le": "2026-10-23T08:00:00.000Z",
+    "ok": true
+   }
+  ],
+  "audience": {
+   "pages": [
+    {
+     "page": "/",
+     "vues": 40
+    }
+   ],
+   "minutes": [
+    {
+     "minute": "2026-10-23T09:55:00.000Z",
+     "vues": 2
+    }
+   ],
+   "campagnes": [
+    {
+     "cle": "insta-octobre",
+     "vues": 12
+    }
+   ],
+   "abonnes": [
+    "abonne.temoin@exemple.invalid"
+   ]
+  },
+  "bans": [
+   {
+    "ip": "192.0.2.10",
+    "depuis": "2026-10-22T10:00:00.000Z"
+   },
+   {
+    "ip": "192.0.2.11",
+    "depuis": "2026-10-21T10:00:00.000Z"
+   }
+  ],
+  "clients": {
+   "actifs": 12,
+   "essais": 3
+  },
+  "cerveaux": [
+   {
+    "cle": "devis",
+    "score": 0.92
+   },
+   {
+    "cle": "relances",
+    "score": 0.88
+   }
+  ]
+ }
+}

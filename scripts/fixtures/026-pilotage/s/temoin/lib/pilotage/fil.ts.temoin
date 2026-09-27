@@ -1,0 +1,95 @@
+// TÉMOIN du lot s (026-067) : implémentation de référence de lib/pilotage/fil.ts (026-070), écrite par Claude Code pour
+// prouver que station-logique-qa sait rendre 0. Ce n'est pas le module livré. Pur : aucun import hors de lib/pilotage/.
+export type Evenement = { id: number; le: string; agent: string; type: string; objet?: string | null; resume?: string | null }
+export type Bulle = {
+  id: number; le: string; agent: string; pastille: string; type: string; texte: string
+  lignes?: string[]; cible?: string | null; cibleLibelle?: string | null
+}
+
+const RE_EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g
+const RE_URL = /\b(?:https?:\/\/|www\.)[^\s]+/gi
+const RE_DOMAINE = /\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:fr|com|net|org|io|eu|invalid|app|dev|info|biz)\b(?:\/[^\s]*)?/gi
+const RE_TEL = /(?:\+|\b)\d(?:[\s.-]?\d){8,}\b/g
+const RE_CIVILITE = /\b(?:M\.|Mme|Mlle|Monsieur|Madame|Mademoiselle)\s+[A-ZÀ-ÖØ-Þ][\p{L}'’-]*(?:\s+[A-ZÀ-ÖØ-Þ][\p{L}'’-]*)*/gu
+export const LONGUEUR_MAX = 200
+
+/** Remplace adresses, numéros, liens et « civilité + nom » ; idempotent ; 200 signes au plus. */
+export function masquer(texte: string | null | undefined): string {
+  let t = String(texte ?? '')
+  t = t.replace(RE_EMAIL, '[adresse]')
+  t = t.replace(RE_URL, '[lien]')
+  t = t.replace(RE_DOMAINE, '[lien]')
+  t = t.replace(RE_TEL, '[numéro]')
+  t = t.replace(RE_CIVILITE, '[nom]')
+  return t.slice(0, LONGUEUR_MAX)
+}
+
+export const PASTILLES: Readonly<Record<string, string>> = Object.freeze({
+  chef: 'CHEF', vigie_meta: 'RADAR', recenseur: 'RECENSEUR', juge_faits: 'JUGE', redacteur: 'PLUME', garde: 'GARDE',
+  facteur: 'FACTEUR', standardiste: 'STANDARD', repondeur: 'RÉPONDEUR', atelier_maquettes: 'ATELIER',
+  redacteur_site: 'RÉDACTEUR', livreur: 'LIVREUR', tresorier: 'TRÉSORIER', crieur: 'CRIEUR', a0: 'VEILLEUR',
+  systeme: 'SYSTÈME', pont: 'PONT', experience: 'EXPÉRIENCE',
+})
+export const pastilleDe = (nom: string): string => PASTILLES[nom] ?? String(nom).toUpperCase()
+
+const cibleDe = (objet: string | null | undefined): string | null => {
+  const m = /^agent:([a-z0-9_]{1,40})$/.exec(String(objet ?? ''))
+  return m ? m[1] : null
+}
+
+function enBulle(e: Evenement): Bulle {
+  const b: Bulle = { id: e.id, le: e.le, agent: e.agent, pastille: e.type === 'consigne' ? 'BENJ' : pastilleDe(e.agent), type: e.type, texte: masquer(e.resume) }
+  if (e.type === 'consigne') {
+    const cible = cibleDe(e.objet)
+    b.cible = cible
+    b.cibleLibelle = cible === null ? null : pastilleDe(cible)
+  }
+  return b
+}
+
+/** Les bulles du fil : par id croissant, sans doublon, sans battement ; les comptes rendus d'une réunion en une bulle. */
+export function bulles(evenements: readonly Evenement[] | null | undefined, opts: { agent?: string } = {}): Bulle[] {
+  const vus = new Set<number>()
+  const liste = [...(evenements ?? [])].filter((e) => e && e.type !== 'battement' && !vus.has(e.id) && vus.add(e.id))
+    .sort((a, b) => a.id - b.id)
+    .filter((e) => !opts.agent || e.agent === opts.agent)
+  const out: Bulle[] = []
+  let objetPrec: string | null = null
+  for (const e of liste) {
+    const prec = out[out.length - 1]
+    if (e.type === 'reunion_compte_rendu' && prec && prec.type === 'reunion_compte_rendu' && prec.agent === e.agent && objetPrec === (e.objet ?? null)) {
+      prec.lignes = [...(prec.lignes ?? []), masquer(e.resume)]
+      continue
+    }
+    const b = enBulle(e)
+    if (e.type === 'reunion_compte_rendu') b.lignes = [b.texte]
+    objetPrec = e.objet ?? null
+    out.push(b)
+  }
+  return out
+}
+
+/** Par agent, le texte masqué de son dernier événement montrable (hors battement). */
+export function derniereBulle(evenements: readonly Evenement[] | null | undefined): Record<string, string> {
+  const dernier = new Map<string, Evenement>()
+  for (const e of evenements ?? []) {
+    if (!e || e.type === 'battement') continue
+    const d = dernier.get(e.agent)
+    if (!d || e.id > d.id) dernier.set(e.agent, e)
+  }
+  const out: Record<string, string> = {}
+  for (const [agent, e] of dernier) out[agent] = masquer(e.resume)
+  return out
+}
+
+export const TYPES_BANDEAU = ['commande_payee', 'pack_paye', 'reponse_oui'] as const
+
+/** Les 10 derniers événements d'argent et de « oui », masqués, le plus récent d'abord. */
+export function bandeau(evenements: readonly Evenement[] | null | undefined): { id: number; le: string; type: string; texte: string }[] {
+  const vus = new Set<number>()
+  return [...(evenements ?? [])]
+    .filter((e) => e && (TYPES_BANDEAU as readonly string[]).includes(e.type) && !vus.has(e.id) && vus.add(e.id))
+    .sort((a, b) => b.id - a.id)
+    .slice(0, 10)
+    .map((e) => ({ id: e.id, le: e.le, type: e.type, texte: masquer(e.resume) }))
+}

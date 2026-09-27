@@ -1,0 +1,32 @@
+{
+ "note": "Réponse conforme au contrat des vues (026-092, s/contrat-vues.mjs), produite par l’implémentation de référence du lot s sur la base d’essai, horloge figée au 23/10/2026 10:00 UTC.",
+ "conforme": true,
+ "opts": {
+  "vue": "salle",
+  "salle": "securite"
+ },
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "bans": 2,
+   "disjoncteurs": [],
+   "pause": {
+    "active": false,
+    "source": "base"
+   },
+   "erreurs": 3,
+   "active_auj": {
+    "valeur": {
+     "minutes": 0
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

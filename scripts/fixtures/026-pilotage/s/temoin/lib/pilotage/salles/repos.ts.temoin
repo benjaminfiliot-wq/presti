@@ -1,0 +1,12 @@
+// TÉMOIN du lot s (026-067) : le lecteur de la Salle de repos (026-178) : les agents en pause, depuis quand, par
+// pilotage_agents(). Sous `sante`. Sans personne : la phrase de §3.2, jamais une fenêtre « bientôt ».
+import type { Contexte } from '../station'
+
+export const DOMAINE = 'sante'
+export async function lire(c: Contexte) {
+  const agents = (await c.agents()).filter((a) => a.en_pause)
+  return {
+    agents: agents.map((a) => ({ nom: a.nom, depuis: a.pause_depuis ?? null, motif: a.pause_motif ?? null })),
+    vide: agents.length ? null : 'Personne en pause : l’équipage travaille.',
+  }
+}

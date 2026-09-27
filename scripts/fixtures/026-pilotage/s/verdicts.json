@@ -1,0 +1,37 @@
+{
+ "note": "Verdicts synthétiques de trier (026-092, SV-16) : domaine → permis. Aucun vrai compte ne fait refuser une sous-partie (un fondateur a tous les domaines ; le partenaire est arrêté à l’entrée).",
+ "verdicts": {
+  "fondateur": {
+   "sante": true,
+   "comptabilite": true,
+   "clients": true,
+   "securite": true,
+   "audience": true,
+   "support": true
+  },
+  "sante_sans_comptabilite": {
+   "sante": true,
+   "comptabilite": false,
+   "clients": false,
+   "securite": false,
+   "audience": false,
+   "support": false
+  },
+  "sante_et_clients_sans_comptabilite": {
+   "sante": true,
+   "comptabilite": false,
+   "clients": true,
+   "securite": false,
+   "audience": false,
+   "support": false
+  },
+  "lecture_seule": {
+   "sante": true,
+   "comptabilite": false,
+   "clients": true,
+   "securite": false,
+   "audience": false,
+   "support": true
+  }
+ }
+}

@@ -1,0 +1,14 @@
+// TÉMOIN du lot s (026-067) : le lecteur du Studio pubs (026-178) : packs_pubs (0102), colonnes explicites sans adresse ;
+// les montants sous `comptabilite` (sous-partie `montants`). Sous `sante`.
+import type { Contexte } from '../station'
+
+export const DOMAINE = 'sante'
+export async function lire(c: Contexte) {
+  const r = await c.deps.db.from('packs_pubs').select('id, etat, type, prix_cents, paye_le, livre_le').neq('etat', 'brouillon').limit(20)
+  if (r.error) throw new Error(`packs_pubs : ${r.error.message}`)
+  const packs = Array.isArray(r.data) ? r.data : []
+  return {
+    packs: packs.map((p) => ({ id: p.id, etape: p.etat, type: p.type ?? 'locale', paye_le: p.paye_le ?? null, livre_le: p.livre_le ?? null })),
+    montants: await c.env('salle.studio.montants', async () => packs.map((p) => ({ id: p.id, prix_eur: (p.prix_cents ?? 0) / 100 }))),
+  }
+}

@@ -1,0 +1,215 @@
+{
+ "note": "Lignes de pilotage_recettes_agents(<30 jours>) : par jour, commandes et euros venus des agents et hors agents.",
+ "jours": [
+  {
+   "jour": "2026-09-24",
+   "agents_commandes": 1,
+   "agents_eur": 149,
+   "hors_agents_commandes": 1,
+   "hors_agents_eur": 49
+  },
+  {
+   "jour": "2026-09-25",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-09-26",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-09-27",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-09-28",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-09-29",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-09-30",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-01",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-02",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-03",
+   "agents_commandes": 1,
+   "agents_eur": 149,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-04",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-05",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-06",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-07",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 1,
+   "hors_agents_eur": 49
+  },
+  {
+   "jour": "2026-10-08",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-09",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-10",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-11",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-12",
+   "agents_commandes": 1,
+   "agents_eur": 149,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-13",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-14",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-15",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-16",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-17",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-18",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-19",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-20",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 1,
+   "hors_agents_eur": 49
+  },
+  {
+   "jour": "2026-10-21",
+   "agents_commandes": 1,
+   "agents_eur": 149,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-22",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  },
+  {
+   "jour": "2026-10-23",
+   "agents_commandes": 0,
+   "agents_eur": 0,
+   "hors_agents_commandes": 0,
+   "hors_agents_eur": 0
+  }
+ ]
+}

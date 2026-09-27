@@ -1,0 +1,45 @@
+{
+ "note": "Lignes de pilotage_activite_salles(<minuit à Paris>) (0113) : le temps actif du jour par salle, en minutes ; jamais ecommerce.",
+ "activite": [
+  {
+   "salle": "commandement",
+   "minutes": 42
+  },
+  {
+   "salle": "radar",
+   "minutes": 95
+  },
+  {
+   "salle": "redaction",
+   "minutes": 130
+  },
+  {
+   "salle": "envois",
+   "minutes": 60
+  },
+  {
+   "salle": "standard",
+   "minutes": 75
+  },
+  {
+   "salle": "atelier",
+   "minutes": 20
+  },
+  {
+   "salle": "usine",
+   "minutes": 15
+  },
+  {
+   "salle": "machines",
+   "minutes": 480
+  },
+  {
+   "salle": "repos",
+   "minutes": 30
+  },
+  {
+   "salle": "reunion",
+   "minutes": 25
+  }
+ ]
+}

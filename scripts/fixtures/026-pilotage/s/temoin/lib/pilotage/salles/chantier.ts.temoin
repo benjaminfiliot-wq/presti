@@ -1,0 +1,11 @@
+// TÉMOIN du lot s (026-067) : le lecteur du Chantier du code (026-178) : pilotage_code_lire() (026-076), validé par
+// validerSnapshot et résumé par resumeCode (026-017). Sous `sante`.
+import type { Contexte } from '../station'
+import { validerSnapshot, resumeCode } from '../code'
+
+export const DOMAINE = 'sante'
+export async function lire(c: Contexte) {
+  const l = await c.rpc('pilotage_code_lire')
+  const x = Array.isArray(l) ? l[0] ?? null : l
+  return resumeCode(validerSnapshot(x?.etat ?? null), x?.publie_le ?? null, c.maintenant)
+}

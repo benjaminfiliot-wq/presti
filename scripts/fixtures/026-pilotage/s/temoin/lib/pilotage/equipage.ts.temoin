@@ -1,0 +1,166 @@
+// TÉMOIN du lot s (026-067) : implémentation de référence de lib/pilotage/equipage.ts (026-070), écrite par Claude Code pour
+// prouver que station-logique-qa sait rendre 0. Ce n'est pas le module livré. Pur : le temps est passé en argument.
+import { etatAgent, type Agent, type EtatAgent } from './agents'
+import { masquer, type Evenement } from './fil'
+import { compteARebours } from './barre'
+import { MOTEUR_DE } from '@/lib/agents/moteurs'
+
+export type Genre = 'travail' | 'argent' | 'decision' | 'veille' | 'repos'
+export const SALLES: readonly { cle: string; plaque: string; genre: Genre }[] = [
+  { cle: 'commandement', plaque: 'Commandement', genre: 'decision' },
+  { cle: 'reunion', plaque: 'Salle de réunion', genre: 'decision' },
+  { cle: 'radar', plaque: 'Radar', genre: 'veille' },
+  { cle: 'redaction', plaque: 'Rédaction', genre: 'travail' },
+  { cle: 'envois', plaque: 'Salle des envois', genre: 'travail' },
+  { cle: 'standard', plaque: 'Standard', genre: 'travail' },
+  { cle: 'atelier', plaque: 'Atelier des maquettes', genre: 'travail' },
+  { cle: 'usine', plaque: 'Usine à sites', genre: 'travail' },
+  { cle: 'recettes', plaque: 'Recettes', genre: 'argent' },
+  { cle: 'tresorerie', plaque: 'Trésorerie', genre: 'argent' },
+  { cle: 'crieur', plaque: 'Tour du Crieur', genre: 'travail' },
+  { cle: 'studio', plaque: 'Studio pubs', genre: 'travail' },
+  { cle: 'experience', plaque: 'Salle Expérience', genre: 'travail' },
+  { cle: 'machines', plaque: 'Salle des machines', genre: 'veille' },
+  { cle: 'chantier', plaque: 'Chantier du code', genre: 'travail' },
+  { cle: 'audience', plaque: 'Audience', genre: 'veille' },
+  { cle: 'securite', plaque: 'Sécurité', genre: 'veille' },
+  { cle: 'presti', plaque: 'Presti', genre: 'argent' },
+  { cle: 'observatoire', plaque: 'Observatoire', genre: 'veille' },
+  { cle: 'repos', plaque: 'Salle de repos', genre: 'repos' },
+]
+export const SALLE_RESERVEE = { cle: 'ecommerce', plaque: 'E-commerce', genre: 'reservee' } as const
+export const CLES_SALLE: readonly string[] = [...SALLES.map((s) => s.cle), SALLE_RESERVEE.cle]
+
+type Titulaire = { libelle: string; role: string; salle: string; avatar: string }
+const t = (nom: string, libelle: string, role: string, salle: string): [string, Titulaire] => [nom, { libelle, role, salle, avatar: nom }]
+export const EQUIPAGE: Readonly<Record<string, Titulaire>> = Object.fromEntries([
+  t('chef', 'Chef', 'Commande l’équipage', 'commandement'),
+  t('vigie_meta', 'Radar', 'Repère les annonceurs', 'radar'),
+  t('recenseur', 'Recenseur', 'Trouve les artisans', 'radar'),
+  t('juge_faits', 'Juge des faits', 'Vérifie les faits', 'redaction'),
+  t('redacteur', 'Plume', 'Écrit les messages', 'redaction'),
+  t('garde', 'Garde', 'Juge les messages (J3)', 'redaction'),
+  t('facteur', 'Facteur', 'Soumet les formulaires', 'envois'),
+  t('standardiste', 'Standard', 'Relève les réponses', 'standard'),
+  t('repondeur', 'Répondeur', 'Répond aux réponses', 'standard'),
+  t('atelier_maquettes', 'Atelier', 'Fabrique les maquettes', 'atelier'),
+  t('redacteur_site', 'Rédacteur des sites', 'Écrit les sites', 'usine'),
+  t('livreur', 'Livreur', 'Met les sites en ligne', 'usine'),
+  t('tresorier', 'Trésorier', 'Tient les comptes', 'tresorerie'),
+  t('crieur', 'Crieur', 'Publie sur les réseaux', 'crieur'),
+  t('a0', 'Veilleur', 'Veille sur tout', 'machines'),
+  t('systeme', 'Système', 'Les crons', 'machines'),
+  t('pont', 'Pont', 'Relaie Telegram', 'chantier'),
+  t('experience', 'Expérience', 'Tient l’expérience', 'experience'),
+])
+export const salleDe = (nom: string): string => EQUIPAGE[nom]?.salle ?? 'machines'
+
+export type Point = 'cyan' | 'jaune' | 'rouge' | 'gris'
+export function point(etat: EtatAgent | string): Point {
+  if (etat === 'actif') return 'cyan'
+  if (etat === 'panne' || etat === 'disjoncteur') return 'rouge'
+  if (etat === 'pause') return 'gris'
+  return 'jaune'
+}
+
+export function cadence(agent: { nom: string; periode_minutes?: number | null; prochain_le?: string | null }, maintenant: Date): string {
+  if (agent.nom === 'chef' && agent.prochain_le) return `cycle dans ${compteARebours(agent.prochain_le, maintenant)}`
+  const p = Number(agent.periode_minutes ?? 0)
+  if (!Number.isFinite(p) || p <= 0 || p >= 10_080) return 'sur demande'
+  return p < 60 ? `toutes les ${p} min` : p % 60 === 0 ? `toutes les ${p / 60} h` : `toutes les ${p} min`
+}
+
+export type Position = { salle: string; motif: 'porte' | 'tache' | 'reunion' | 'pause' | 'panne' }
+type AgentEtat = { nom: string; etat: EtatAgent | string }
+const REUNION = ['reunion_ouverte', 'reunion_close', 'reunion_abandonnee']
+
+export type EtatPositions = { positions: Record<string, Position>; agents: AgentEtat[]; reunion: boolean; agi: string[]; vus: number[] }
+
+function poser(agents: readonly AgentEtat[], reunion: boolean, agi: ReadonlySet<string>): Record<string, Position> {
+  const out: Record<string, Position> = {}
+  for (const a of agents) {
+    const salle = salleDe(a.nom)
+    if (a.etat === 'pause') out[a.nom] = { salle: 'repos', motif: 'pause' }
+    else if (a.etat === 'panne' || a.etat === 'disjoncteur') out[a.nom] = { salle, motif: 'panne' }
+    else if (reunion) out[a.nom] = { salle: 'reunion', motif: 'reunion' }
+    else if (agi.has(a.nom)) out[a.nom] = { salle, motif: 'tache' }
+    else out[a.nom] = { salle, motif: 'porte' }
+  }
+  return out
+}
+
+/** Où est chaque agent, par ces seules règles : pause → Repos ; panne → sa salle ; réunion ouverte → réunion ; sinon tâche ou porte. */
+export function positions(agents: readonly AgentEtat[] | null | undefined, evenements: readonly Evenement[] | null | undefined): Record<string, Position> {
+  let s = etatInitial(agents ?? [])
+  for (const e of [...(evenements ?? [])].sort((a, b) => a.id - b.id)) s = appliquerEvenement(s, e)
+  return s.positions
+}
+
+export function etatInitial(agents: readonly AgentEtat[] | null | undefined): EtatPositions {
+  const liste = (agents ?? []).map((a) => ({ nom: a.nom, etat: a.etat }))
+  return { positions: poser(liste, false, new Set()), agents: liste, reunion: false, agi: [], vus: [] }
+}
+
+/** Un événement à la fois : rejouer le même ne change rien ; un battement ne déplace personne ; un agent absent est ignoré. */
+export function appliquerEvenement(etat: EtatPositions, e: Evenement): EtatPositions {
+  if (!e || etat.vus.includes(e.id)) return etat
+  const vus = [...etat.vus, e.id]
+  let reunion = etat.reunion
+  const agi = new Set(etat.agi)
+  if (REUNION.includes(e.type)) reunion = e.type === 'reunion_ouverte'
+  else if (e.type === 'battement' || !etat.agents.some((a) => a.nom === e.agent)) return { ...etat, vus }
+  else agi.add(e.agent)
+  return { positions: poser(etat.agents, reunion, agi), agents: etat.agents, reunion, agi: [...agi], vus }
+}
+
+export type LigneAgent = Agent & { prochain_le?: string | null; modele?: string | null; fournisseur?: string | null; fournisseur_reel?: string | null; modele_le?: string | null }
+const SEPT_JOURS = 7 * 86_400_000
+const NOM_FOURNISSEUR: Record<string, string> = { 'openai-codex': 'Codex' }
+
+/** Le modèle d'un agent : vu dans les 7 jours, sinon prévu par MOTEUR_DE, sinon « sans IA ». Jamais inventé. */
+export function modeleAffiche(ligne: Partial<LigneAgent> & { nom: string }, maintenant: Date): { texte: string; source: 'vu' | 'prevu' | 'aucun' } {
+  const le = ligne.modele_le ? Date.parse(ligne.modele_le) : Number.NaN
+  if (ligne.modele && Number.isFinite(le) && maintenant.getTime() - le <= SEPT_JOURS) {
+    if (ligne.fournisseur === 'freellmapi') return { texte: `${ligne.modele} · ${ligne.fournisseur_reel ?? 'freellmapi'} · gratuit`, source: 'vu' }
+    return { texte: `${ligne.modele} · ${NOM_FOURNISSEUR[ligne.fournisseur ?? ''] ?? ligne.fournisseur ?? '?'}`, source: 'vu' }
+  }
+  const prevu = MOTEUR_DE[ligne.nom]
+  if (prevu) return { texte: `${prevu.modele} (pas encore appelé)`, source: 'prevu' }
+  return { texte: 'sans IA', source: 'aucun' }
+}
+
+const ORDRE_SALLE = new Map(SALLES.map((s, i) => [s.cle, i]))
+
+/** Une carte par agent reçu, dans l'ordre des salles puis du nom. Aucun agent inventé. */
+export function equipage(lignes: readonly LigneAgent[] | null | undefined, evenements: readonly Evenement[] | null | undefined, maintenant: Date) {
+  const rows = (lignes ?? []).filter((l) => l && typeof l.nom === 'string')
+  const etats = rows.map((l) => ({ ligne: l, e: etatAgent(l, maintenant) }))
+  const pos = positions(etats.map((x) => ({ nom: x.ligne.nom, etat: x.e.etat })), evenements)
+  const dernier = new Map<string, Evenement>()
+  for (const ev of evenements ?? []) {
+    if (!ev || ev.type === 'battement') continue
+    const d = dernier.get(ev.agent)
+    if (!d || ev.id > d.id) dernier.set(ev.agent, ev)
+  }
+  return etats.map(({ ligne, e }) => {
+    const titulaire = EQUIPAGE[ligne.nom]
+    const salle = salleDe(ligne.nom)
+    const ev = dernier.get(ligne.nom)
+    return {
+      nom: ligne.nom,
+      libelle: titulaire?.libelle ?? ligne.nom,
+      role: titulaire?.role ?? 'Agent inconnu',
+      etat: e.etat,
+      point: point(e.etat),
+      activite: ev ? masquer(ev.resume) : 'En attente de tâche',
+      activite_le: ev?.le ?? null,
+      cadence: cadence(ligne, maintenant),
+      prochain_le: ligne.prochain_le ?? null,
+      cout_mois_eur: ligne.cout_mois_eur ?? null,
+      salle,
+      avatar: titulaire?.avatar ?? 'defaut',
+      position: pos[ligne.nom] ?? { salle, motif: 'porte' as const },
+      modele: modeleAffiche(ligne, maintenant),
+    }
+  }).sort((a, b) => (ORDRE_SALLE.get(a.salle) ?? 99) - (ORDRE_SALLE.get(b.salle) ?? 99) || a.nom.localeCompare(b.nom, 'fr'))
+}

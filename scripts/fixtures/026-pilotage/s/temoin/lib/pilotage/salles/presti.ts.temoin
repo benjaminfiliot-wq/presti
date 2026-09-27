@@ -1,0 +1,16 @@
+// TÉMOIN du lot s (026-067) : le lecteur de la salle Presti (026-178) : clients() et cerveaux() de lib/controle/lectures
+// (026-174) sous `clients`, le MRR (lib/direction/stripe.ts) sous `comptabilite`, et le NOMBRE de tickets de support ouverts
+// (ticketsOuverts, jamais un contenu) sous `support` en lecture.
+import type { Contexte } from '../station'
+
+export const DOMAINE = 'clients'
+export async function lire(c: Contexte) {
+  const clients = (await c.deps.lectures.clients()) as Record<string, unknown> | null
+  const cerveaux = await c.deps.lectures.cerveaux()
+  return {
+    artisans_actifs: Number(clients?.actifs ?? 0),
+    cerveaux: Array.isArray(cerveaux) ? cerveaux.map((x) => ({ cle: x?.cle ?? null, score: x?.score ?? null })) : [],
+    mrr: await c.env('salle.presti.mrr', () => c.deps.mrr()),
+    tickets: await c.env('salle.presti.tickets', async () => ({ nombre: Number((await c.deps.lectures.ticketsOuverts())?.nombre ?? 0) })),
+  }
+}

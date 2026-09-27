@@ -1,0 +1,47 @@
+// TÉMOIN du lot s (026-067) : les lecteurs des vues de salle restantes (026-178), écrits par Claude Code pour prouver que
+// station-route-qa --partie=salles2 sait rendre 0. Ce n'est pas le module livré. Un lecteur par salle, chacun sous son domaine
+// (DOMAINE_DE de lib/pilotage/station.ts) ; aucune requête recopiée : les lectures du Poste viennent de lib/controle/lectures
+// (026-174), passées par la route dans `c.deps.lectures`.
+import type { Contexte } from '../station'
+import * as commandement from './commandement'
+import * as radar from './radar'
+import * as crieur from './crieur'
+import * as studio from './studio'
+import * as chantier from './chantier'
+import * as audience from './audience'
+import * as securite from './securite'
+import * as presti from './presti'
+import * as observatoire from './observatoire'
+import * as repos from './repos'
+import * as natures from './natures'
+
+export const LECTEURS: Readonly<Record<string, (c: Contexte) => Promise<unknown>>> = {
+  commandement: commandement.lire, radar: radar.lire, crieur: crieur.lire, studio: studio.lire, chantier: chantier.lire,
+  audience: audience.lire, securite: securite.lire, presti: presti.lire, observatoire: observatoire.lire, repos: repos.lire,
+}
+export { radar, observatoire, natures }
+
+const lignes = (x: unknown): any[] => (Array.isArray(x) ? x : [])
+
+/** La ligne contenu de la carte : la mémoire du Crieur (0104) ; une étape sans source reste absente. */
+export async function etapesContenu(c: Contexte) {
+  const r = await c.deps.db.from('crieur_posts').select('id, statut, programmee_pour').gte('cree_le', new Date(c.maintenant.getTime() - 30 * 86_400_000).toISOString())
+  if (r.error) throw new Error(`crieur_posts : ${r.error.message}`)
+  let programmee = 0, publiee = 0
+  for (const p of lignes(r.data)) if (p.statut === 'programmee' || p.statut === 'externe') { if (p.programmee_pour && Date.parse(p.programmee_pour) <= c.maintenant.getTime()) publiee++; else programmee++ }
+  return [{ etape: 'programmee', jour: programmee }, { etape: 'publiee', jour: publiee }]
+}
+const ETAPE_PACK: Record<string, string> = { payee: 'paye', fabriquee: 'fabrique', livree: 'livre' }
+/** La ligne packs de la carte : `packs_pubs` (0102), compté par état ; « dossier » n'a pas de source. */
+export async function etapesPacks(c: Contexte) {
+  const r = await c.deps.db.from('packs_pubs').select('id, etat').neq('etat', 'brouillon')
+  if (r.error) throw new Error(`packs_pubs : ${r.error.message}`)
+  const n: Record<string, number> = {}
+  for (const p of lignes(r.data)) if (ETAPE_PACK[p.etat]) n[ETAPE_PACK[p.etat]] = (n[ETAPE_PACK[p.etat]] ?? 0) + 1
+  return Object.entries(n).map(([etape, jour]) => ({ etape, jour }))
+}
+/** ACTIVE AUJ. d'une salle : pilotage_activite_salles(<minuit à Paris>) (0113). */
+export async function activiteDuJour(c: Contexte, salle: string) {
+  const l = lignes(await c.rpc('pilotage_activite_salles', { p_depuis: c.depuisMinuit })).find((x) => x.salle === salle)
+  return { minutes: l ? Number(l.minutes ?? 0) : 0 }
+}

@@ -1,0 +1,77 @@
+// TÉMOIN du lot s (026-067) : implémentation de référence de lib/pilotage/attention.ts (026-070), écrite par Claude Code
+// pour prouver que station-logique-qa sait rendre 0. Ce n'est pas le module livré. Pur : une seule file, 7 cartes au plus.
+export const ORDRE = ['rouge', 'orange', 'jaune', 'bleu'] as const
+export type Couleur = typeof ORDRE[number]
+export const MAX_CARTES = 7
+export const VIDE = 'Rien pour toi. L’équipage tourne.'
+
+const R: Couleur = 'rouge', O: Couleur = 'orange', J: Couleur = 'jaune', B: Couleur = 'bleu'
+export const COULEUR_DE: Readonly<Record<string, Couleur>> = Object.freeze({
+  pause_generale: R, panne_agent: R, argent_bloque: R, coupe_circuit: R, jeton_meta_expire: R, usine_injoignable: R,
+  envoi_sans_verdicts: R, canal_arrete: R, gmail_bloque: R, notice_perimee: R, jauge_pleine: R,
+  appel: O, site_a_valider: O, paiement_non_rattache: O, decision_argent: O,
+  taches_bloquees: J, disjoncteur: J, quota_haut: J, jeton_externe: J, agent_muet: J, stockage: J, orchestre: J,
+  technologie_en_pause: J, modele_suspendu: J, changer_message: J, bilan: J, vercel_pro: J,
+  escalade_chef: B, idee_chef: B,
+})
+export const couleurDe = (motif: string): Couleur => COULEUR_DE[motif] ?? 'jaune'
+
+export type SourceAttention = { nombre: number; depuis?: string | null; agent?: string | null; rdv?: number | null }
+export type Geste = { type: 'decisions'; cible: 'argent' | 'escalade' | 'idee' } | { type: 'appels' } | { type: 'ouvrir'; cible: string }
+
+const s = (n: number, mot: string, pluriel = `${mot}s`) => `${n} ${n > 1 ? pluriel : mot}`
+const LIBELLES: Record<string, string> = {
+  argent_bloque: 'paiement bloqué', coupe_circuit: 'coupe-circuit déclenché', jeton_meta_expire: 'jeton Meta expiré',
+  usine_injoignable: 'usine injoignable', canal_arrete: 'canal arrêté', gmail_bloque: 'boîte Gmail de prospection bloquée',
+  notice_perimee: 'notice en ligne à revérifier', jauge_pleine: 'jauge pleine', paiement_non_rattache: 'paiement à rattacher',
+  taches_bloquees: 'tâche bloquée', disjoncteur: 'disjoncteur ouvert', quota_haut: 'quota haut', jeton_externe: 'jeton externe à renouveler',
+  agent_muet: 'agent muet', stockage: 'stockage presque plein', orchestre: 'point de l’orchestre', technologie_en_pause: 'technologie de formulaire en pause',
+  modele_suspendu: 'modèle suspendu', changer_message: 'message à changer', bilan: 'bilan à lire', vercel_pro: 'passage à Vercel Pro',
+}
+
+/** Le titre d'une carte : la seule fonction qui l'écrit (la carte d'agent de l'équipage reprend le même). */
+export function titreCarte(cle: string, src: SourceAttention): string {
+  const n = Math.max(0, Math.floor(Number(src?.nombre) || 0))
+  switch (cle) {
+    case 'escalade_chef': return `${s(n, 'escalade')} du Chef → ta décision`
+    case 'idee_chef': return `${s(n, 'idée')} de la réunion → approuver ou tuer`
+    case 'decision_argent': return `${s(n, 'décision')} d’argent → ta décision`
+    case 'appel': { const rdv = Math.max(0, Math.floor(Number(src?.rdv) || 0)); return `${s(n, 'appel')} à rendre${rdv ? `, dont ${s(rdv, 'rendez-vous réservé', 'rendez-vous réservés')}` : ''}` }
+    case 'site_a_valider': return `${s(n, 'site')} à valider → Mettre en ligne`
+    case 'pause_generale': return 'Pause générale active → reprendre depuis le Poste'
+    case 'panne_agent': return src?.agent ? `${src.agent} en panne` : `${s(n, 'agent')} en panne`
+    case 'envoi_sans_verdicts': return `${s(n, 'envoi')} sans ses trois verdicts`
+    default: return LIBELLES[cle] ? `${n} × ${LIBELLES[cle]}` : `${s(n, 'alerte')} « ${cle} »`
+  }
+}
+
+const SALLE_DU_MOTIF: Record<string, string> = {
+  envoi_sans_verdicts: 'envois', canal_arrete: 'envois', notice_perimee: 'envois', technologie_en_pause: 'envois', changer_message: 'envois', bilan: 'envois',
+  gmail_bloque: 'standard', modele_suspendu: 'redaction', orchestre: 'chantier', taches_bloquees: 'chantier',
+  vercel_pro: 'tresorerie', argent_bloque: 'tresorerie', jeton_meta_expire: 'radar',
+}
+export function gesteDe(cle: string, src: SourceAttention): Geste {
+  if (cle === 'escalade_chef') return { type: 'decisions', cible: 'escalade' }
+  if (cle === 'idee_chef') return { type: 'decisions', cible: 'idee' }
+  if (cle === 'decision_argent') return { type: 'decisions', cible: 'argent' }
+  if (cle === 'appel') return { type: 'appels' }
+  if (cle === 'site_a_valider') return { type: 'ouvrir', cible: '/controle?onglet=sites' }
+  if (cle === 'pause_generale' || cle === 'paiement_non_rattache') return { type: 'ouvrir', cible: '/controle?onglet=aujourdhui' }
+  if (src?.agent && /^[a-z0-9_]{2,40}$/.test(src.agent)) return { type: 'ouvrir', cible: `/controle/station?agent=${src.agent}` }
+  return { type: 'ouvrir', cible: `/controle/station?salle=${SALLE_DU_MOTIF[cle] ?? 'machines'}` }
+}
+
+const valide = (x: unknown): x is SourceAttention => !!x && typeof x === 'object' && Number.isFinite((x as SourceAttention).nombre) && (x as SourceAttention).nombre > 0
+
+/** La file Attention : rouge, orange, jaune, bleu ; puis nombre décroissant ; puis ancienneté. */
+export function cartesAttention(sources: Readonly<Record<string, SourceAttention | null | undefined>> | null | undefined, _maintenant?: Date) {
+  const toutes = Object.entries(sources ?? {}).filter((e): e is [string, SourceAttention] => valide(e[1])).map(([cle, src]) => ({
+    cle, couleur: couleurDe(cle), nombre: Math.floor(src.nombre), titre: titreCarte(cle, src), geste: gesteDe(cle, src),
+    agent: typeof src.agent === 'string' && src.agent ? src.agent : null, depuis: src.depuis ?? null,
+  }))
+  // La pause générale bloque tout : sa carte rouge ouvre la file.
+  toutes.sort((a, b) => Number(b.cle === 'pause_generale') - Number(a.cle === 'pause_generale') || ORDRE.indexOf(a.couleur) - ORDRE.indexOf(b.couleur) || b.nombre - a.nombre ||
+    (a.depuis ? Date.parse(a.depuis) : Number.MAX_SAFE_INTEGER) - (b.depuis ? Date.parse(b.depuis) : Number.MAX_SAFE_INTEGER))
+  const cartes = toutes.slice(0, MAX_CARTES).map((c) => ({ cle: c.cle, couleur: c.couleur, nombre: c.nombre, titre: c.titre, geste: c.geste, agent: c.agent }))
+  return { cartes, total: toutes.length, vide: toutes.length ? null : VIDE }
+}

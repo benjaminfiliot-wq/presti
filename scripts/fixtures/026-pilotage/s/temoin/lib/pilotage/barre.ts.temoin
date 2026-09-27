@@ -1,0 +1,126 @@
+// TÉMOIN du lot s (026-067) : implémentation de référence de lib/pilotage/barre.ts (026-070), écrite par Claude Code pour
+// prouver que station-logique-qa sait rendre 0. Ce n'est pas le module livré. Pur : le temps est passé en argument.
+import { etatExperience } from './experience'
+
+export const HEURE_REUNION = { heure: 18, minute: 0, fuseau: 'Europe/Paris', source: 'rectification du 24/09, §4.6 (supposé)' } as const
+export const HEURES_NUIT = { debut: 20, fin: 7, source: 'Ecosysteme-Interface-Poste §3.1 A (supposé, à confirmer par Benj)' } as const
+const FERME = '— · formulaire fermé (12/10 au plus tôt)'
+const MIN = 60_000
+
+const PARTIES = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' })
+function paris(d: Date) {
+  const p: Record<string, string> = {}
+  for (const x of PARTIES.formatToParts(d)) p[x.type] = x.value
+  return { a: Number(p.year), m: Number(p.month), j: Number(p.day), h: Number(p.hour), min: Number(p.minute), s: Number(p.second) }
+}
+const deux = (n: number) => String(n).padStart(2, '0')
+const jourDe = (d: Date) => { const p = paris(d); return `${p.a}-${deux(p.m)}-${deux(p.j)}` }
+/** L'instant UTC d'une heure de Paris un jour donné (« AAAA-MM-JJ »), changement d'heure compris. */
+function instantParis(jour: string, h: number, m: number): Date {
+  const [a, mo, j] = jour.split('-').map(Number)
+  const voulu = Date.UTC(a, mo - 1, j, h, m)
+  let t = voulu
+  for (let i = 0; i < 3; i++) {
+    const p = paris(new Date(t))
+    const vu = Date.UTC(p.a, p.m - 1, p.j, p.h, p.min)
+    t += voulu - vu
+  }
+  return new Date(t)
+}
+const lendemain = (jour: string) => { const [a, m, j] = jour.split('-').map(Number); const d = new Date(Date.UTC(a, m - 1, j + 1)); return d.toISOString().slice(0, 10) }
+
+export function compteARebours(cible: Date | string | null | undefined, maintenant: Date): string {
+  if (cible === null || cible === undefined) return '—'
+  const t = new Date(cible).getTime()
+  if (!Number.isFinite(t)) return '—'
+  const ecart = t - maintenant.getTime()
+  if (Math.abs(ecart) < MIN) return 'maintenant'
+  const minutes = Math.floor(Math.abs(ecart) / MIN)
+  const texte = minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)} h ${deux(minutes % 60)}`
+  return ecart < 0 ? `en retard de ${texte}` : texte
+}
+
+export function heureParis(maintenant: Date): string {
+  const p = paris(maintenant)
+  return `${deux(p.h)}:${deux(p.min)}`
+}
+
+export function prochaineReunion(maintenant: Date, derniere: { jour: string; statut: string } | null | undefined): Date {
+  const aujourdhui = jourDe(maintenant)
+  const tenue = !!derniere && derniere.jour === aujourdhui && (derniere.statut === 'close' || derniere.statut === 'abandonnee')
+  return instantParis(tenue ? lendemain(aujourdhui) : aujourdhui, HEURE_REUNION.heure, HEURE_REUNION.minute)
+}
+
+export function quota(part: number | null | undefined): { texte: string; ton: 'alerte' | 'normal' | 'muet' } {
+  if (typeof part !== 'number' || !Number.isFinite(part)) return { texte: 'non mesuré', ton: 'muet' }
+  return { texte: `${Math.round(part * 100)} %`, ton: part > 0.75 ? 'alerte' : 'normal' }
+}
+
+type LigneCanal = { canal: string; palier?: string | null; plafond: number | null; utilises: number }
+export function envoisBarre(parCanal: readonly LigneCanal[] | null | undefined, palier: string | null | undefined): string {
+  const f = (parCanal ?? []).find((c) => c && c.canal === 'formulaire_site')
+  if (!f || !palier || !f.plafond) return FERME
+  return `${f.utilises}/${f.plafond} · ${palier}`
+}
+
+export function agentsActifs(cartes: readonly { point: string }[] | null | undefined) {
+  const liste = cartes ?? []
+  const actifs = liste.filter((c) => c && c.point === 'cyan').length
+  return { actifs, total: liste.length, texte: `AGENTS ${actifs}/${liste.length} ACTIFS` }
+}
+
+export function jour(lancement: string | null | undefined, maintenant: Date): string {
+  if (!lancement || !/^\d{4}-\d{2}-\d{2}/.test(lancement)) return '—'
+  const [a, m, j] = lancement.slice(0, 10).split('-').map(Number)
+  const [a2, m2, j2] = jourDe(maintenant).split('-').map(Number)
+  const n = Math.round((Date.UTC(a2, m2 - 1, j2) - Date.UTC(a, m - 1, j)) / 86_400_000) + 1
+  return Number.isFinite(n) && n >= 1 ? `JOUR ${n}` : '—'
+}
+
+export function nuit(maintenant: Date): boolean {
+  const h = paris(maintenant).h
+  return h >= HEURES_NUIT.debut || h < HEURES_NUIT.fin
+}
+
+type Compteur = { cle: string; libelle: string; texte: string; ton: 'alerte' | 'normal' | 'muet'; source: string }
+export type EntreeBarre = {
+  cartes?: readonly { point: string }[] | null
+  chef?: { prochain_le: string | null; modele: string | null } | null
+  cycles?: number | null
+  reunion?: { jour: string; statut: string } | null
+  quotas?: { claude5h: number | null; claudeSemaine: number | null; codex5h: number | null } | null
+  compteurs?: readonly LigneCanal[] | null
+  palier?: string | null
+  experience?: { statut: string | null; jour?: number | null; gains_eur?: number | null; ventes?: number | null } | null
+  pause?: { active: boolean } | null
+  attention?: { total: number } | null
+  lancement?: string | null
+}
+
+export function barre(entree: EntreeBarre | null | undefined, maintenant: Date) {
+  const e = entree ?? {}
+  const c = (cle: string, libelle: string, texte: string | null, source: string, ton: Compteur['ton'] = 'normal'): Compteur =>
+    texte === null ? { cle, libelle, texte: '—', ton: 'muet', source } : { cle, libelle, texte, ton, source }
+  const q5 = quota(e.quotas?.claude5h), qs = quota(e.quotas?.claudeSemaine), qc = quota(e.quotas?.codex5h)
+  const tonClaude = q5.ton === 'alerte' || qs.ton === 'alerte' ? 'alerte' : q5.ton === 'muet' && qs.ton === 'muet' ? 'muet' : 'normal'
+  const compteurs: Compteur[] = [
+    c('agents', 'AGENTS ACTIFS', e.cartes ? agentsActifs(e.cartes).texte : null, 'pilotage_agents'),
+    c('chef', 'CHEF DANS', e.chef ? compteARebours(e.chef.prochain_le, maintenant) : null, 'pilotage_chef'),
+    c('modele_chef', 'MODÈLE DU CHEF', e.chef?.modele ?? null, 'pilotage_chef'),
+    c('cycles', 'CYCLES AUJOURD’HUI', typeof e.cycles === 'number' && Number.isFinite(e.cycles) ? String(e.cycles) : null, 'pilotage_chef'),
+    c('reunion', 'RÉUNION DANS', compteARebours(prochaineReunion(maintenant, e.reunion ?? null), maintenant), 'station_reunion_lire'),
+    { cle: 'quota_claude', libelle: 'QUOTA CLAUDE 5 H · SEMAINE', texte: q5.ton === 'muet' && qs.ton === 'muet' ? 'non mesuré' : `${q5.texte} · ${qs.texte}`, ton: tonClaude, source: 'jauges' },
+    { cle: 'quota_codex', libelle: 'QUOTA CODEX 5 H', texte: qc.texte, ton: qc.ton, source: 'jauges' },
+    c('envois', 'ENVOIS DU JOUR', e.compteurs ? envoisBarre(e.compteurs, e.palier ?? null) : null, 'pilotage_compteurs_du_jour'),
+  ]
+  if (e.experience?.statut === 'en_cours') compteurs.push(c('experience', 'EXPÉRIENCE', etatExperience(e.experience, maintenant).barre, 'station_experience_etat'))
+  const actif = e.pause ? !e.pause.active : true
+  return {
+    compteurs,
+    auto: { actif, texte: actif ? 'AUTO' : 'PAUSE GÉNÉRALE' },
+    cloche: typeof e.attention?.total === 'number' ? e.attention.total : null,
+    heure: heureParis(maintenant),
+    jour: jour(e.lancement ?? null, maintenant),
+    nuit: nuit(maintenant),
+  }
+}

@@ -1,0 +1,19 @@
+// TÉMOIN du lot s (026-067) : le lecteur de la Sécurité (026-178) : bans() de lib/controle/lectures (026-174), disjoncteurs
+// ouverts (pilotage_agents), pause générale (pauseGenerale, 026-044), erreurs des 24 h (app_errors, compte seul). Sous `securite`.
+import type { Contexte } from '../station'
+import { pauseGenerale } from '@/lib/agents/pause'
+
+export const DOMAINE = 'securite'
+export async function lire(c: Contexte) {
+  const bans = await c.deps.lectures.bans()
+  const agents = await c.agents()
+  const pause = await pauseGenerale()
+  const e = await c.deps.db.from('app_errors').select('id', { count: 'exact', head: true }).gte('created_at', new Date(c.maintenant.getTime() - 24 * 3_600_000).toISOString())
+  if (e.error) throw new Error(`app_errors : ${e.error.message}`)
+  return {
+    bans: Array.isArray(bans) ? bans.length : Number((bans as { nombre?: number } | null)?.nombre ?? 0),
+    disjoncteurs: agents.filter((a) => a.disjoncteur_ouvert_le).map((a) => ({ nom: a.nom, depuis: a.disjoncteur_ouvert_le })),
+    pause: { active: pause.active, source: pause.source },
+    erreurs: e.count ?? 0,
+  }
+}

@@ -1,0 +1,261 @@
+{
+ "note": "Réponse conforme au contrat des vues (026-092, s/contrat-vues.mjs), produite par l’implémentation de référence du lot s sur la base d’essai, horloge figée au 23/10/2026 10:00 UTC.",
+ "conforme": true,
+ "opts": {
+  "vue": "salle",
+  "salle": "machines"
+ },
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "agents": [
+    {
+     "nom": "chef",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 60,
+     "prochain_le": "2026-10-23T11:38:00.000Z"
+    },
+    {
+     "nom": "recenseur",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "vigie_meta",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 360,
+     "prochain_le": null
+    },
+    {
+     "nom": "garde",
+     "etat": "pause",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "juge_faits",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "redacteur",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "facteur",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "repondeur",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 5,
+     "prochain_le": null
+    },
+    {
+     "nom": "standardiste",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "atelier_maquettes",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 30,
+     "prochain_le": null
+    },
+    {
+     "nom": "livreur",
+     "etat": "panne",
+     "battement_le": "2026-10-23T00:00:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "tresorier",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 1440,
+     "prochain_le": null
+    },
+    {
+     "nom": "experience",
+     "etat": "actif",
+     "battement_le": "2026-10-22T10:00:00.000Z",
+     "periode_minutes": 10080,
+     "prochain_le": null
+    },
+    {
+     "nom": "a0",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "agent_temoin_inconnu",
+     "etat": "jamais",
+     "battement_le": null,
+     "periode_minutes": 15,
+     "prochain_le": null
+    }
+   ],
+   "crons": [
+    {
+     "nom": "relances",
+     "dernier_le": "2026-10-23T08:00:00.000Z",
+     "ok": true
+    },
+    {
+     "nom": "alertes",
+     "dernier_le": "2026-10-23T07:00:00.000Z",
+     "ok": false
+    },
+    {
+     "nom": "livraison",
+     "dernier_le": "2026-10-23T09:00:00.000Z",
+     "ok": true
+    }
+   ],
+   "usine": {
+    "valeur": {
+     "mesure": "p95 7 j · processeur 35 % · mémoire 61 % · réseau 2 %",
+     "le": "2026-10-23T09:30:00.000Z"
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "ia": {
+    "valeur": {
+     "fournisseurs": [
+      {
+       "objet": "ia:codex",
+       "resume": "Codex : 20 % de la fenêtre de 5 h",
+       "le": "2026-10-23T09:20:00.000Z"
+      },
+      {
+       "objet": "ia:gemini",
+       "resume": "Gemini : 55 % du quota du jour",
+       "le": "2026-10-23T09:40:00.000Z"
+      }
+     ],
+     "bascules": [
+      {
+       "resume": "Bascule 25 : gemini → cerebras",
+       "le": "2026-10-22T21:30:00.000Z"
+      },
+      {
+       "resume": "Bascule 24 : gemini → cerebras",
+       "le": "2026-10-22T22:00:00.000Z"
+      },
+      {
+       "resume": "Bascule 23 : gemini → cerebras",
+       "le": "2026-10-22T22:30:00.000Z"
+      },
+      {
+       "resume": "Bascule 22 : gemini → cerebras",
+       "le": "2026-10-22T23:00:00.000Z"
+      },
+      {
+       "resume": "Bascule 21 : gemini → cerebras",
+       "le": "2026-10-22T23:30:00.000Z"
+      },
+      {
+       "resume": "Bascule 20 : gemini → cerebras",
+       "le": "2026-10-23T00:00:00.000Z"
+      },
+      {
+       "resume": "Bascule 19 : gemini → cerebras",
+       "le": "2026-10-23T00:30:00.000Z"
+      },
+      {
+       "resume": "Bascule 18 : gemini → cerebras",
+       "le": "2026-10-23T01:00:00.000Z"
+      },
+      {
+       "resume": "Bascule 17 : gemini → cerebras",
+       "le": "2026-10-23T01:30:00.000Z"
+      },
+      {
+       "resume": "Bascule 16 : gemini → cerebras",
+       "le": "2026-10-23T02:00:00.000Z"
+      },
+      {
+       "resume": "Bascule 15 : gemini → cerebras",
+       "le": "2026-10-23T02:30:00.000Z"
+      },
+      {
+       "resume": "Bascule 14 : gemini → cerebras",
+       "le": "2026-10-23T03:00:00.000Z"
+      },
+      {
+       "resume": "Bascule 13 : gemini → cerebras",
+       "le": "2026-10-23T03:30:00.000Z"
+      },
+      {
+       "resume": "Bascule 12 : gemini → cerebras",
+       "le": "2026-10-23T04:00:00.000Z"
+      },
+      {
+       "resume": "Bascule 11 : gemini → cerebras",
+       "le": "2026-10-23T04:30:00.000Z"
+      },
+      {
+       "resume": "Bascule 10 : gemini → cerebras",
+       "le": "2026-10-23T05:00:00.000Z"
+      },
+      {
+       "resume": "Bascule 9 : gemini → cerebras",
+       "le": "2026-10-23T05:30:00.000Z"
+      },
+      {
+       "resume": "Bascule 8 : gemini → cerebras",
+       "le": "2026-10-23T06:00:00.000Z"
+      },
+      {
+       "resume": "Bascule 7 : gemini → cerebras",
+       "le": "2026-10-23T06:30:00.000Z"
+      },
+      {
+       "resume": "Bascule 6 : gemini → cerebras",
+       "le": "2026-10-23T07:00:00.000Z"
+      }
+     ],
+     "cout_jour_eur": 1.5,
+     "le": "2026-10-23T08:00:00.000Z"
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "active_auj": {
+    "valeur": {
+     "minutes": 480
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

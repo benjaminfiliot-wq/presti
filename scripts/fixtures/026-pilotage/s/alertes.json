@@ -1,0 +1,266 @@
+{
+ "note": "Lignes de la table alertes (motif, gravite, cree_le, acquittee_le ; sujet et corps piégés, jamais lus par la station) : un motif de chaque sorte du veilleur (026-047) et les motifs à venir.",
+ "alertes": [
+  {
+   "id": "90000000-0000-4000-8000-000000000100",
+   "motif": "pause_generale",
+   "gravite": "critique",
+   "cree_le": "2026-10-23T09:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte pause_generale pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000101",
+   "motif": "panne_agent",
+   "gravite": "normale",
+   "cree_le": "2026-10-23T08:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte panne_agent pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000102",
+   "motif": "argent_bloque",
+   "gravite": "normale",
+   "cree_le": "2026-10-23T07:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte argent_bloque pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000103",
+   "motif": "coupe_circuit",
+   "gravite": "critique",
+   "cree_le": "2026-10-23T06:00:00.000Z",
+   "acquittee_le": "2026-10-23T09:00:00.000Z",
+   "sujet": "Alerte coupe_circuit pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000104",
+   "motif": "usine_injoignable",
+   "gravite": "normale",
+   "cree_le": "2026-10-23T05:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte usine_injoignable pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000105",
+   "motif": "envoi_sans_verdicts",
+   "gravite": "normale",
+   "cree_le": "2026-10-23T04:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte envoi_sans_verdicts pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000106",
+   "motif": "canal_arrete",
+   "gravite": "critique",
+   "cree_le": "2026-10-23T03:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte canal_arrete pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000107",
+   "motif": "gmail_bloque",
+   "gravite": "normale",
+   "cree_le": "2026-10-23T02:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte gmail_bloque pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000108",
+   "motif": "notice_perimee",
+   "gravite": "normale",
+   "cree_le": "2026-10-23T01:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte notice_perimee pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000109",
+   "motif": "jauge_pleine",
+   "gravite": "critique",
+   "cree_le": "2026-10-23T00:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte jauge_pleine pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000110",
+   "motif": "paiement_non_rattache",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T23:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte paiement_non_rattache pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000111",
+   "motif": "taches_bloquees",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T22:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte taches_bloquees pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000112",
+   "motif": "disjoncteur",
+   "gravite": "critique",
+   "cree_le": "2026-10-22T21:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte disjoncteur pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000113",
+   "motif": "quota_haut",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T20:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte quota_haut pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000114",
+   "motif": "jeton_externe",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T19:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte jeton_externe pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000115",
+   "motif": "agent_muet",
+   "gravite": "critique",
+   "cree_le": "2026-10-22T18:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte agent_muet pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000116",
+   "motif": "stockage",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T17:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte stockage pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000117",
+   "motif": "orchestre",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T16:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte orchestre pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000118",
+   "motif": "technologie_en_pause",
+   "gravite": "critique",
+   "cree_le": "2026-10-22T15:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte technologie_en_pause pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000119",
+   "motif": "modele_suspendu",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T14:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte modele_suspendu pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000120",
+   "motif": "changer_message",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T13:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte changer_message pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000121",
+   "motif": "bilan",
+   "gravite": "critique",
+   "cree_le": "2026-10-22T12:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte bilan pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000122",
+   "motif": "vercel_pro",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T11:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte vercel_pro pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000123",
+   "motif": "erreurs",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T10:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte erreurs pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000124",
+   "motif": "crons_muets",
+   "gravite": "critique",
+   "cree_le": "2026-10-22T09:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte crons_muets pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000125",
+   "motif": "boite_deconnectee",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T08:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte boite_deconnectee pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000126",
+   "motif": "liste_noire",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T07:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte liste_noire pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000127",
+   "motif": "usine_injoignable",
+   "gravite": "critique",
+   "cree_le": "2026-10-22T06:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte usine_injoignable pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000128",
+   "motif": "jeton_meta_expire",
+   "gravite": "normale",
+   "cree_le": "2026-10-22T05:00:00.000Z",
+   "acquittee_le": null,
+   "sujet": "Alerte jeton_meta_expire pour Jean Témoin",
+   "corps": "Écrire à jean.temoin@exemple.invalid ou au 06 12 34 56 78"
+  }
+ ]
+}

@@ -1,0 +1,34 @@
+# La réunion d'équipage (témoin du lot s, 026-067)
+
+Notice de référence écrite pour prouver que `station-reunion-qa` (RU-10) sait rendre 0 ; la notice livrée est celle de 026-103.
+
+## Ce qu'elle fait
+
+`scripts/chef/reunion.mjs` tient la réunion quotidienne du Chef : il ouvre la réunion, rassemble les chiffres de chaque agent
+sans modèle, fait écrire au Chef un compte rendu de 1 à 5 lignes, un objectif et 3 idées au plus, les valide, poste les
+idées (cartes bleues « approuver ou tuer »), puis clôt la réunion. Au moindre écart, il l'abandonne.
+
+## Quand, où
+
+Chaque jour à 18 h, heure de Paris (décision provisoire). Sur l'usine Oracle, à côté du Chef, dès que le coffre à clés
+existe ; avant, à la main sur le PC.
+
+## La lancer à la main, ou à sec
+
+    PRESTI_JETON_CHEF=… node scripts/chef/reunion.mjs
+    PRESTI_JETON_CHEF=… node scripts/chef/reunion.mjs --sec
+
+`--sec` n'ouvre rien et ne poste rien : il lit les chiffres, fait écrire le Chef, valide, et imprime ce qu'il aurait posté.
+
+## Codes de sortie
+
+- `0` : réunion close, ou rien à faire (déjà tenue, pause générale) ;
+- `1` : réunion abandonnée ;
+- `2` : usage ;
+- `3` : préalable manquant (jeton, consigne, schéma) ;
+- `5` : base injoignable.
+
+## Ce qu'elle ne fait jamais
+
+La réunion ne fait jamais rien d'autre que la réunion et ses idées : elle n'envoie rien, ne dépense rien, n'approuve rien,
+et n'écrit rien d'autre.

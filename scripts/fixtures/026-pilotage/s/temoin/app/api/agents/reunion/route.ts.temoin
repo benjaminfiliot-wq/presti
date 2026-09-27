@@ -1,0 +1,55 @@
+// TÉMOIN du lot s (026-067) : implémentation de référence de POST /api/agents/reunion (026-092), écrite par Claude Code
+// pour prouver que station-route-qa --partie=reunion sait rendre 0. Ce n'est pas la route livrée. L'agent vient de
+// l'authentification, jamais du corps.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { authAgent } from '@/lib/agents/garde'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const texte = (x: unknown, max: number) => typeof x === 'string' && x.trim().length > 0 && x.length <= max
+const objet = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x)
+const seules = (x: Record<string, unknown>, cles: string[]) => Object.keys(x).every((k) => cles.includes(k))
+const refus = (error: string, status: number, code?: string) => NextResponse.json({ error, ...(code ? { code } : {}) }, { status })
+
+function traduire(message: string) {
+  if (message.includes('ops:agent')) return refus('Réservé au Chef.', 403, 'agent')
+  if (message.includes('ops:pause')) return refus('Pause générale : pas de réunion.', 409, 'pause')
+  if (message.includes('ops:deja_ouverte')) return refus('Une réunion est déjà ouverte.', 409, 'deja_ouverte')
+  if (message.includes('ops:deja_tenue')) return refus('La réunion du jour est déjà tenue.', 409, 'deja_tenue')
+  if (message.includes('ops:reunion')) return refus('Réunion introuvable.', 404, 'reunion')
+  if (message.includes('ops:lignes') || message.includes('ops:objectif') || message.includes('ops:idees')) return refus('Compte rendu refusé.', 400, message.match(/ops:(lignes|objectif|idees)/)?.[1])
+  return refus('Base indisponible.', 503)
+}
+
+export async function POST(req: Request) {
+  if (!actif('busAgents') || !actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const a = await authAgent(req)
+  if ('error' in a) return NextResponse.json({ error: a.error, code: a.code }, { status: a.status })
+  if (a.nom !== 'chef') return refus('Réservé au Chef.', 403)
+  let corps: unknown
+  try { corps = await req.json() } catch { return refus('Corps illisible.', 400) }
+  if (!objet(corps)) return refus('Corps illisible.', 400)
+  if (corps.action === 'ouvrir' && seules(corps, ['action'])) {
+    const r = await supabaseAdmin.rpc('station_reunion_ouvrir', { p_agent: a.nom })
+    return r.error ? traduire(r.error.message) : NextResponse.json({ id: r.data })
+  }
+  if (corps.action === 'clore' && seules(corps, ['action', 'id', 'lignes', 'objectif', 'idees'])) {
+    const { id, lignes, objectif, idees } = corps
+    const lignesOk = Array.isArray(lignes) && lignes.length >= 1 && lignes.length <= 5 && lignes.every((l) => texte(l, 140))
+    const objectifOk = objectif === null || (objet(objectif) && texte(objectif.libelle, 80))
+    const ideesOk = Array.isArray(idees) && idees.length <= 3 && idees.every((i) => texte(i, 120))
+    if (typeof id !== 'string' || !UUID.test(id) || !lignesOk || !objectifOk || !ideesOk) return refus('Compte rendu refusé : 1 à 5 lignes de 140 signes, 3 idées au plus.', 400)
+    const r = await supabaseAdmin.rpc('station_reunion_clore', { p_agent: a.nom, p_id: id, p_lignes: lignes, p_objectif: objectif, p_idees: idees })
+    return r.error ? traduire(r.error.message) : NextResponse.json({ ok: true })
+  }
+  if (corps.action === 'abandonner' && seules(corps, ['action', 'id', 'motif'])) {
+    if (typeof corps.id !== 'string' || !UUID.test(corps.id) || !texte(corps.motif, 40)) return refus('Abandon refusé.', 400)
+    const r = await supabaseAdmin.rpc('station_reunion_abandonner', { p_agent: a.nom, p_id: corps.id, p_motif: corps.motif })
+    return r.error ? traduire(r.error.message) : NextResponse.json({ ok: true })
+  }
+  return refus('Action inconnue : ouvrir, clore ou abandonner.', 400)
+}

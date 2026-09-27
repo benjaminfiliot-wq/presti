@@ -1,0 +1,46 @@
+{
+ "maintenant": "2026-10-23T10:00:00.000Z",
+ "note": "Sources de cartesAttention (026-070) : { motif: { nombre, depuis?, agent?, rdv? } | null }. 9 sources non nulles : total 9, 7 cartes.",
+ "sources": {
+  "pause_generale": null,
+  "panne_agent": {
+   "nombre": 1,
+   "depuis": "2026-10-23T00:00:00.000Z",
+   "agent": "livreur"
+  },
+  "appel": {
+   "nombre": 2,
+   "rdv": 1,
+   "depuis": "2026-10-23T08:00:00.000Z"
+  },
+  "escalade_chef": {
+   "nombre": 3,
+   "depuis": "2026-10-23T05:00:00.000Z"
+  },
+  "idee_chef": {
+   "nombre": 2,
+   "depuis": "2026-10-23T04:00:00.000Z"
+  },
+  "site_a_valider": {
+   "nombre": 1,
+   "depuis": "2026-10-23T07:00:00.000Z"
+  },
+  "technologie_en_pause": {
+   "nombre": 1,
+   "depuis": "2026-10-22T10:00:00.000Z"
+  },
+  "canal_arrete": null,
+  "decision_argent": {
+   "nombre": 1,
+   "depuis": "2026-10-23T06:00:00.000Z"
+  },
+  "quota_haut": {
+   "nombre": 1,
+   "depuis": "2026-10-23T09:00:00.000Z"
+  },
+  "motif_inconnu_temoin": {
+   "nombre": 1,
+   "depuis": "2026-10-23T09:00:00.000Z"
+  }
+ }
+}

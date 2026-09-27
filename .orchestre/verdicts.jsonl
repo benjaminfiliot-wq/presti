@@ -355,3 +355,20 @@
 {"id":"026-050","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:00:59Z","duree_s":139,"agent":"claude-code","executant":"claude-code","lignes":1479,"dossier":"en-cours"}
 {"id":"026-050","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:03:27Z","duree_s":128,"agent":"claude-code","executant":"claude-code","lignes":1479,"dossier":"fait"}
 {"id":"026-013","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:12:21Z","duree_s":11,"agent":"claude-code","executant":"claude-code","lignes":2324,"dossier":"fait"}
+{"id":"026-053","verdict":"FAIL","ligne":"FAIL SV-12 — --service --accelerer : 0 mesure(s) en 10 s (un tour par seconde attendu, 5 au moins)","code":1,"date":"2026-09-27T19:25:54Z","duree_s":190,"agent":"usine-codex-51","executant":"codex","lignes":542,"dossier":"fait"}
+{"id":"026-027","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:28:02Z","duree_s":81,"agent":"claude-code","executant":"claude-code","lignes":465,"dossier":"en-cours"}
+{"id":"026-027","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:29:12Z","duree_s":49,"agent":"claude-code","executant":"claude-code","lignes":465,"dossier":"fait"}
+{"id":"026-037","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:31:02Z","duree_s":659,"agent":"claude-code","executant":"claude-code","lignes":5632,"dossier":"en-cours"}
+{"id":"026-220","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:44:23Z","duree_s":228,"agent":"claude-code","executant":"claude-code","lignes":3246,"dossier":"en-cours"}
+{"id":"026-220","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:50:02Z","duree_s":232,"agent":"claude-code","executant":"claude-code","lignes":3246,"dossier":"en-cours"}
+{"id":"026-037","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:50:11Z","duree_s":777,"agent":"claude-code","executant":"claude-code","lignes":5646,"dossier":"fait"}
+{"id":"026-220","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:52:14Z","duree_s":112,"agent":"claude-code","executant":"claude-code","lignes":3246,"dossier":"fait"}
+{"id":"026-121","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:54:08Z","duree_s":107,"agent":"claude-code","executant":"claude-code","lignes":2507,"dossier":"en-cours"}
+{"id":"026-121","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T19:57:16Z","duree_s":155,"agent":"claude-code","executant":"claude-code","lignes":2507,"dossier":"fait"}
+{"id":"026-039","verdict":"FAIL","ligne":"✅ CP-6 npm run typecheck vert (162 s)","code":1,"date":"2026-09-27T20:05:05Z","duree_s":603,"agent":"usine-codex-52","executant":"antigravity","lignes":371,"dossier":"fait"}
+{"id":"026-146","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T20:23:49Z","duree_s":53,"agent":"usine-codex-53","executant":"codex","lignes":539,"dossier":"fait"}
+{"id":"026-223","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T20:26:16Z","duree_s":2,"agent":"usine-codex-54","executant":"codex","lignes":451,"dossier":"fait"}
+{"id":"026-052","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T20:41:33Z","duree_s":770,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-040","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T20:45:45Z","duree_s":91,"agent":"claude-code","executant":"claude-code","lignes":639,"dossier":"en-cours"}
+{"id":"026-040","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T20:47:49Z","duree_s":100,"agent":"claude-code","executant":"claude-code","lignes":639,"dossier":"fait"}
+{"id":"026-067","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T21:08:41Z","duree_s":650,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}

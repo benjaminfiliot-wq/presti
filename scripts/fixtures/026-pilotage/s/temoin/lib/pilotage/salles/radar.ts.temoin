@@ -1,0 +1,18 @@
+// TÉMOIN du lot s (026-067) : le lecteur du Radar (026-178), par pilotage_radar() (0113) : annonceurs repérés du jour,
+// requêtes, égaliseur de 12 h. Aucun nom de personne : la fonction n'en rend aucun, et rien n'est lu d'autre. Sous `sante`.
+import type { Contexte } from '../station'
+
+export const DOMAINE = 'sante'
+const lignes = (x: unknown): any[] => (Array.isArray(x) ? x : x ? [x] : [])
+export async function lireRadar(c: Contexte) {
+  const r = lignes(await c.rpc('pilotage_radar'))[0] ?? {}
+  return {
+    annonceurs: lignes(r.annonceurs).map((a) => ({ categorie: a.categorie ?? null, commune: a.commune ?? null, pubs: a.pubs ?? 0, score: a.score ?? null, froid: a.froid ?? null })),
+    requetes: r.requetes ?? 0,
+    egaliseur: lignes(r.egaliseur).map((x) => Number(x ?? 0)),
+  }
+}
+export async function lire(c: Contexte) {
+  const r = await lireRadar(c)
+  return { ...r, crons: lignes(c.deps.lectures.cronsDuService ? await c.deps.lectures.cronsDuService() : []) }
+}

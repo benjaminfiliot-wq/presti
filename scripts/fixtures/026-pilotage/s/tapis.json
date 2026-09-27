@@ -1,0 +1,136 @@
+{
+ "note": "Lignes de pilotage_tapis() : { etape, jour } ; rejet porte taux_pass. « avant » n’a pas l’étape en_ligne (absente) ; « apres » gagne 1 en contacte seulement ; « baisse » est le relevé d’après minuit.",
+ "avant": [
+  {
+   "etape": "trouve",
+   "jour": 40
+  },
+  {
+   "etape": "verifie",
+   "jour": 31
+  },
+  {
+   "etape": "maquette",
+   "jour": 12
+  },
+  {
+   "etape": "contacte",
+   "jour": 10
+  },
+  {
+   "etape": "repondu",
+   "jour": 2
+  },
+  {
+   "etape": "oui",
+   "jour": 1
+  },
+  {
+   "etape": "paye",
+   "jour": 0
+  },
+  {
+   "etape": "rejet",
+   "jour": 3,
+   "taux_pass": 0.8
+  }
+ ],
+ "apres": [
+  {
+   "etape": "trouve",
+   "jour": 40
+  },
+  {
+   "etape": "verifie",
+   "jour": 31
+  },
+  {
+   "etape": "maquette",
+   "jour": 12
+  },
+  {
+   "etape": "contacte",
+   "jour": 11
+  },
+  {
+   "etape": "repondu",
+   "jour": 2
+  },
+  {
+   "etape": "oui",
+   "jour": 1
+  },
+  {
+   "etape": "paye",
+   "jour": 0
+  },
+  {
+   "etape": "rejet",
+   "jour": 3,
+   "taux_pass": 0.8
+  }
+ ],
+ "baisse": [
+  {
+   "etape": "trouve",
+   "jour": 2
+  },
+  {
+   "etape": "verifie",
+   "jour": 1
+  },
+  {
+   "etape": "maquette",
+   "jour": 0
+  },
+  {
+   "etape": "contacte",
+   "jour": 0
+  },
+  {
+   "etape": "repondu",
+   "jour": 0
+  },
+  {
+   "etape": "oui",
+   "jour": 0
+  },
+  {
+   "etape": "paye",
+   "jour": 0
+  },
+  {
+   "etape": "rejet",
+   "jour": 0,
+   "taux_pass": null
+  }
+ ],
+ "contenu_avant": [
+  {
+   "etape": "idee",
+   "jour": 3
+  },
+  {
+   "etape": "texte",
+   "jour": 2
+  },
+  {
+   "etape": "publiee",
+   "jour": 1
+  }
+ ],
+ "contenu_apres": [
+  {
+   "etape": "idee",
+   "jour": 3
+  },
+  {
+   "etape": "texte",
+   "jour": 2
+  },
+  {
+   "etape": "publiee",
+   "jour": 2
+  }
+ ]
+}

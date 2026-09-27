@@ -1,0 +1,163 @@
+{
+ "note": "Réponse conforme au contrat des vues (026-092, s/contrat-vues.mjs), produite par l’implémentation de référence du lot s sur la base d’essai, horloge figée au 23/10/2026 10:00 UTC. Sans mesure de l’usine ni des IA gratuites : usine et ia nulles avec leur manque.",
+ "conforme": true,
+ "opts": {
+  "vue": "salle",
+  "salle": "machines"
+ },
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "agents": [
+    {
+     "nom": "chef",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 60,
+     "prochain_le": "2026-10-23T11:38:00.000Z"
+    },
+    {
+     "nom": "recenseur",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "vigie_meta",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 360,
+     "prochain_le": null
+    },
+    {
+     "nom": "garde",
+     "etat": "pause",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "juge_faits",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "redacteur",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "facteur",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "repondeur",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 5,
+     "prochain_le": null
+    },
+    {
+     "nom": "standardiste",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "atelier_maquettes",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 30,
+     "prochain_le": null
+    },
+    {
+     "nom": "livreur",
+     "etat": "panne",
+     "battement_le": "2026-10-23T00:00:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "tresorier",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 1440,
+     "prochain_le": null
+    },
+    {
+     "nom": "experience",
+     "etat": "actif",
+     "battement_le": "2026-10-22T10:00:00.000Z",
+     "periode_minutes": 10080,
+     "prochain_le": null
+    },
+    {
+     "nom": "a0",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "periode_minutes": 15,
+     "prochain_le": null
+    },
+    {
+     "nom": "agent_temoin_inconnu",
+     "etat": "jamais",
+     "battement_le": null,
+     "periode_minutes": 15,
+     "prochain_le": null
+    }
+   ],
+   "crons": [
+    {
+     "nom": "relances",
+     "dernier_le": "2026-10-23T08:00:00.000Z",
+     "ok": true
+    },
+    {
+     "nom": "alertes",
+     "dernier_le": "2026-10-23T07:00:00.000Z",
+     "ok": false
+    },
+    {
+     "nom": "livraison",
+     "dernier_le": "2026-10-23T09:00:00.000Z",
+     "ok": true
+    }
+   ],
+   "usine": {
+    "valeur": null,
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false,
+    "manque": "aucune mesure de l’usine"
+   },
+   "ia": {
+    "valeur": null,
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false,
+    "manque": "mesure des IA gratuites absente"
+   },
+   "active_auj": {
+    "valeur": {
+     "minutes": 480
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

@@ -1,0 +1,57 @@
+// TÉMOIN du lot s (026-067) : implémentation de référence de lib/pilotage/tapis.ts (026-070), écrite par Claude Code pour
+// prouver que station-logique-qa sait rendre 0. Ce n'est pas le module livré. Pur : un carré n'avance que sur un vrai gain.
+type Etape = { cle: string; libelle: string }
+export const ETAPES: readonly Etape[] = [
+  { cle: 'trouve', libelle: 'TROUVÉ' }, { cle: 'verifie', libelle: 'VÉRIFIÉ' }, { cle: 'maquette', libelle: 'MAQUETTE' },
+  { cle: 'contacte', libelle: 'CONTACTÉ' }, { cle: 'repondu', libelle: 'RÉPONDU' }, { cle: 'oui', libelle: 'OUI' },
+  { cle: 'paye', libelle: 'PAYÉ' }, { cle: 'en_ligne', libelle: 'EN LIGNE' },
+]
+export const LIGNES: Readonly<Record<'contenu' | 'sites' | 'packs', readonly Etape[]>> = {
+  contenu: [
+    { cle: 'idee', libelle: 'IDÉE' }, { cle: 'texte', libelle: 'TEXTE' }, { cle: 'visuel', libelle: 'VISUEL' },
+    { cle: 'juge', libelle: 'JUGÉ' }, { cle: 'programmee', libelle: 'PROGRAMMÉE' }, { cle: 'publiee', libelle: 'PUBLIÉE' },
+  ],
+  sites: [{ cle: 'payee', libelle: 'PAYÉE' }, { cle: 'generee', libelle: 'GÉNÉRÉE' }, { cle: 'validee', libelle: 'VALIDÉE' }, { cle: 'en_ligne', libelle: 'EN LIGNE' }],
+  packs: [{ cle: 'paye', libelle: 'PAYÉ' }, { cle: 'dossier', libelle: 'DOSSIER' }, { cle: 'fabrique', libelle: 'FABRIQUÉ' }, { cle: 'livre', libelle: 'LIVRÉ' }],
+}
+
+export type LigneTapis = { etape: string; jour: number | null; taux_pass?: number | null }
+export type EtapeTapis = { cle: string; libelle: string; jour: number; source: 'mesure' | 'absente' }
+export type Releve = { etapes: EtapeTapis[]; rejet?: { nombre: number; tauxPass: number | null } }
+
+function remplir(etapes: readonly Etape[], lignes: readonly LigneTapis[] | null | undefined): EtapeTapis[] {
+  return etapes.map((e) => {
+    const l = (lignes ?? []).find((x) => x && x.etape === e.cle)
+    const n = l && Number.isFinite(l.jour) ? Number(l.jour) : null
+    return n === null ? { cle: e.cle, libelle: e.libelle, jour: 0, source: 'absente' as const } : { cle: e.cle, libelle: e.libelle, jour: n, source: 'mesure' as const }
+  })
+}
+
+export function tapis(lignes: readonly LigneTapis[] | null | undefined): Releve & { rejet: { nombre: number; tauxPass: number | null } } {
+  const r = (lignes ?? []).find((x) => x && x.etape === 'rejet')
+  return {
+    etapes: remplir(ETAPES, lignes),
+    rejet: { nombre: r && Number.isFinite(r.jour) ? Number(r.jour) : 0, tauxPass: r && Number.isFinite(r.taux_pass) ? Number(r.taux_pass) : null },
+  }
+}
+
+export function lignes(entree: { contenu?: readonly LigneTapis[] | null; sites?: readonly LigneTapis[] | null; packs?: readonly LigneTapis[] | null } | null | undefined) {
+  return {
+    contenu: { etapes: remplir(LIGNES.contenu, entree?.contenu) },
+    sites: { etapes: remplir(LIGNES.sites, entree?.sites) },
+    packs: { etapes: remplir(LIGNES.packs, entree?.packs) },
+  }
+}
+
+/** Autant de carrés que l'étape a gagné entre deux relevés ; rien au premier ; une baisse (minuit) remet à zéro. */
+export function mouvements(avant: Releve | null | undefined, apres: Releve | null | undefined): { etape: string; carres: number }[] | { remiseAZero: true } {
+  if (!avant || !apres) return []
+  const out: { etape: string; carres: number }[] = []
+  for (const e of apres.etapes ?? []) {
+    const a = (avant.etapes ?? []).find((x) => x.cle === e.cle)
+    const d = e.jour - (a?.jour ?? 0)
+    if (d < 0) return { remiseAZero: true }
+    if (d > 0) out.push({ etape: e.cle, carres: d })
+  }
+  return out
+}

@@ -1,0 +1,38 @@
+{
+ "note": "Lignes de station_experience_etat() (026-088) : aucune (avant la première vente), en cours J6, arrêtée seule à J30 sans gain.",
+ "cas": [
+  {
+   "nom": "aucune",
+   "ligne": {
+    "ventes": 0,
+    "statut": null,
+    "jour": null,
+    "gains_eur": null,
+    "budget_eur": 0,
+    "titre": null
+   }
+  },
+  {
+   "nom": "en_cours_j6",
+   "ligne": {
+    "ventes": 1,
+    "statut": "en_cours",
+    "jour": 6,
+    "gains_eur": 0,
+    "budget_eur": 0,
+    "titre": "Expérience du Témoin"
+   }
+  },
+  {
+   "nom": "arretee_j30",
+   "ligne": {
+    "ventes": 1,
+    "statut": "arretee_auto",
+    "jour": 30,
+    "gains_eur": 0,
+    "budget_eur": 0,
+    "titre": "Expérience du Témoin"
+   }
+  }
+ ]
+}

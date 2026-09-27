@@ -1,0 +1,18 @@
+// TÉMOIN du lot s (026-067) : une implémentation de référence de lib/agents/moteurs.ts (026-043), au contrat de 026-041,
+// posée par la preuve sur l'arbre de référence pour que equipage.ts (026-070) trouve MOTEUR_DE. Ce n'est pas le module livré.
+export const MODELE_AGENTS = 'gpt-6-luna'
+export const MODELE_REJUGE = 'gpt-6-sol'
+
+type Moteur = { moteur: 'codex' | 'freellmapi'; modele: string; personnelles: boolean; leger?: string; affichage?: boolean }
+
+const gele = (m: Moteur): Readonly<Moteur> => Object.freeze(m)
+
+export const MOTEUR_DE: Readonly<Record<string, Readonly<Moteur>>> = Object.freeze({
+  standardiste: gele({ moteur: 'codex', modele: MODELE_AGENTS, personnelles: true }),
+  facteur: gele({ moteur: 'codex', modele: MODELE_AGENTS, personnelles: true }),
+  redacteur_site: gele({ moteur: 'codex', modele: MODELE_REJUGE, personnelles: true }),
+  chef: gele({ moteur: 'codex', modele: MODELE_REJUGE, leger: MODELE_AGENTS, personnelles: false, affichage: true }),
+  veille_pubs: gele({ moteur: 'codex', modele: MODELE_AGENTS, personnelles: true }),
+  douleurs: gele({ moteur: 'freellmapi', modele: 'auto', personnelles: false }),
+  studio: gele({ moteur: 'codex', modele: MODELE_REJUGE, personnelles: false }),
+})

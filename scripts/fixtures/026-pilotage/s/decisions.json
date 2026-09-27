@@ -1,0 +1,49 @@
+{
+ "note": "Décisions de ops.decisions : idées de la réunion (clés chef:<date>:idee-…), un arbitrage, une décision d’argent.",
+ "decisions": [
+  {
+   "id": "90000000-0000-4000-8000-000000000201",
+   "cle_idempotence": "chef:2026-10-23:idee-relance-couvreurs",
+   "question": "Relancer les couvreurs d’Annecy ?",
+   "statut": "ouverte",
+   "tranchee_le": null,
+   "choix": null,
+   "portee": "aucune",
+   "montant_cents": 0,
+   "creee_par": "chef"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000202",
+   "cle_idempotence": "chef:2026-10-23:idee-variante-courte",
+   "question": "Essayer une variante plus courte ?",
+   "statut": "tranchee",
+   "tranchee_le": "2026-10-23T09:00:00.000Z",
+   "choix": "reporter",
+   "portee": "aucune",
+   "montant_cents": 0,
+   "creee_par": "chef"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000203",
+   "cle_idempotence": "chef:2026-10-23:escalade-palier",
+   "question": "Passer au palier P3 ?",
+   "statut": "ouverte",
+   "tranchee_le": null,
+   "choix": null,
+   "portee": "aucune",
+   "montant_cents": null,
+   "creee_par": "chef"
+  },
+  {
+   "id": "90000000-0000-4000-8000-000000000204",
+   "cle_idempotence": "tresorier:2026-10-23:vercel-pro",
+   "question": "Passer à Vercel Pro (20 $ par mois) ?",
+   "statut": "ouverte",
+   "tranchee_le": null,
+   "choix": null,
+   "portee": "argent",
+   "montant_cents": 2000,
+   "creee_par": "tresorier"
+  }
+ ]
+}

@@ -1,0 +1,76 @@
+{
+ "note": "Réponse conforme au contrat des vues (026-092, s/contrat-vues.mjs), produite par l’implémentation de référence du lot s sur la base d’essai, horloge figée au 23/10/2026 10:00 UTC. La seule fiche d’agent qui porte du texte de prospect.",
+ "conforme": true,
+ "opts": {
+  "vue": "agent",
+  "nom": "repondeur"
+ },
+ "reponse": {
+  "vue": "agent",
+  "role": "direction",
+  "valeur": {
+   "nom": "repondeur",
+   "libelle": "Répondeur",
+   "role": "Répond aux réponses",
+   "etat": "actif",
+   "point": "cyan",
+   "cadence": "toutes les 5 min",
+   "position": {
+    "salle": "standard",
+    "motif": "tache"
+   },
+   "battement_le": "2026-10-23T09:55:00.000Z",
+   "prochain_le": null,
+   "modele": {
+    "texte": "sans IA",
+    "source": "aucun"
+   },
+   "fournisseur": null,
+   "modele_le": null,
+   "taches": [
+    {
+     "numero": 41,
+     "type": "formulaire",
+     "statut": "FAIT",
+     "resultat": "Soumis",
+     "le": "2026-10-23T09:00:00.000Z"
+    },
+    {
+     "numero": 42,
+     "type": "formulaire",
+     "statut": "REJETÉ",
+     "resultat": "Refus J3",
+     "le": "2026-10-23T09:30:00.000Z"
+    }
+   ],
+   "argent": {
+    "valeur": {
+     "cout_mois_eur": 0,
+     "coutParTache": []
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "reponses": [
+    {
+     "id": "90000000-0000-4000-8000-000000000901",
+     "recu_le": "2026-10-23T09:00:00.000Z",
+     "classe": "appel",
+     "texte_recu": "Rappelez-moi au 06 12 34 56 78, merci (Témoin)",
+     "reponse_envoyee": "Bien reçu, nous vous rappelons."
+    },
+    {
+     "id": "90000000-0000-4000-8000-000000000902",
+     "recu_le": "2026-10-23T08:00:00.000Z",
+     "classe": "oui",
+     "texte_recu": "Oui, écrivez-moi à jean.temoin@exemple.invalid",
+     "reponse_envoyee": null
+    }
+   ]
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

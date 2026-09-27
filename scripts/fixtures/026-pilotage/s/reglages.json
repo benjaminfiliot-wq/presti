@@ -1,0 +1,28 @@
+{
+ "note": "Réponse conforme de GET /api/controle/station/reglages (§5.5) : { version, reglages, modifie_par, modifie_le }, clés de la liste fermée de §5.3.",
+ "conforme": true,
+ "reponse": {
+  "version": 3,
+  "reglages": {
+   "theme": "station",
+   "mise_en_page": "colonnes",
+   "nuit": {
+    "active": true,
+    "debut": 20,
+    "fin": 7
+   },
+   "equipage": {
+    "facteur": {
+     "nom": "Facteur Témoin"
+    }
+   },
+   "salles": {},
+   "couleurs": {},
+   "affichage": {
+    "titre": "PRESTI · MISSION CONTROL"
+   }
+  },
+  "modifie_par": "90000000-0000-4000-8000-00000000f001",
+  "modifie_le": "2026-10-22T18:00:00.000Z"
+ }
+}
