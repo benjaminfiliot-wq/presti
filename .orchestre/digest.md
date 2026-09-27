@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-27T14:06:09Z
+# Digest — 2026-09-27T16:37:51Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 96 tâche(s) PASS, 186784 ligne(s) · faites par Claude Code : 22 tâche(s) PASS, 76741 ligne(s).
-**État** — file : 2 · en cours : 3 · faites : 123 · refusées : 6
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 97 tâche(s) PASS, 187493 ligne(s) · faites par Claude Code : 24 tâche(s) PASS, 80783 ligne(s).
+**État** — file : 1 · en cours : 2 · faites : 126 · refusées : 7
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -20,9 +20,11 @@
 |---|---|---|---|---|---|
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 026-105 | feature | en-cours | usine-codex-43 | — | depuis 2026-09-27T13:08:32Z · Écrire scripts/chef/etat.mjs (lit GET /api/agents/etat avec le jeton du chef et l'écrit en données balisées) et scripts/chef/appliquer.mjs (valide un plan du chef contre docs/agents/chef-plan.schema.json, le refuse en bloc au moindre écart, sinon le poste au bus), jusqu'au vert des groupes appliquer et etat de scripts/chef-qa.mjs |
 | 026-168 | test | file | ag-168g | — | Écrire le juge de la planche station-planche-qa (--partie=planche : il lance lui-même, sur l'usine, l'atelier ~/claw3d-pixel sur 127.0.0.1 avec une liste blanche fermée, capture lui-même la planche des 20 salles et de la salle réservée dans la vraie mise en page à 1440×900, 1280×800 et 390×844, et juge grille entière, palette, licences du lot A, absence de donnée et poids) et le lot p de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
-| 026-026 | test | file | ag-026g | — | Écrire les juges du lot D (dossier-zip-qa, retrait-site-qa, poste-sites-qa, bus-livraison-qa) et leurs jeux d'essai, et les inscrire au lot D de juges-026-lt-preuve.mjs, qui passe seulement si chacun échoue sur la référence avec son premier critère et passe en --temoin |
+| 026-105 | feature | fait | usine-codex-50 | PASS | 2026-09-27T16:37:50Z · 19s · 573 l. |
+| 026-028 | feature | refuse | usine-codex-48 | PASS | 2026-09-27T16:30:19Z · 67s · 465 l. |
+| 026-032 | test | fait | claude-code | PASS | 2026-09-27T16:25:16Z · 66s · 4042 l. |
+| 026-026 | test | fait | claude-code | PASS | 2026-09-27T15:57:16Z · 146s · 0 l. |
 | 026-066 | test | fait | claude-code | PASS | 2026-09-27T14:06:09Z · 179s · 6790 l. |
 | 026-025 | feature | fait | claude-code | PASS | 2026-09-27T13:45:50Z · 40s · 696 l. |
 | 026-102 | test | fait | claude-code | PASS | 2026-09-27T12:24:53Z · 272s · 10311 l. |
@@ -116,7 +118,5 @@
 | 018-05 | feature | fait | ag-22-flash | PASS | 2026-09-14T20:01:01Z · 85s · 6210 l. |
 | 018-06 | contenu | fait | codex-4 | PASS | 2026-09-14T20:00:45Z · 10s · 0 l. |
 | 018-04 | contenu | fait | codex-3 | PASS | 2026-09-14T19:42:39Z · 2s · 0 l. |
-| 018-03 | feature | fait | ag-21-flash | PASS | 2026-09-14T19:36:11Z · 9s · 18721 l. |
-| 018-02 | feature | fait | codex-2 | PASS | 2026-09-14T19:34:53Z · 64s · 0 l. |
 
-… 34 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 36 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
