@@ -59,6 +59,7 @@ export type ArtisanSite = {
 }
 export type Matiere = {
   artisan?: ArtisanSite | null
+  prestations?: string[]
   photos?: Photo[]
   logo_url?: string | null
   adresse?: string
@@ -141,6 +142,7 @@ export function nettoyerBrouillon(brut: unknown): Brouillon {
     metiers_secondaires: liste(b.metiers_secondaires, METIERS_SECONDAIRES_MAX, 60),
     communes: liste(b.communes, COMMUNES_MAX, 80),
     matiere: {
+      prestations: liste(m.prestations, 12, 80),
       artisan: artisan ? {
         prenom: texteArtisan(artisan.prenom),
         nom: texteArtisan(artisan.nom),
@@ -207,4 +209,11 @@ export function erreursAvantPaiement(b: Brouillon): string[] {
   if (!m.horaires) e.push('Les horaires manquent.')
   if (!m.decennale?.assureur || !m.decennale?.numero) e.push('L’assurance décennale (assureur et numéro) est obligatoire sur un site d’artisan.')
   return e
+}
+
+/** Le paiement peut précéder le dossier ; la fabrication attend aussi les prestations réellement déclarées. */
+export function erreursFabrication(b: Brouillon): string[] {
+  const erreurs = erreursAvantPaiement(b)
+  if (!b.matiere.prestations?.length) erreurs.push('Indiquez au moins une prestation que vous réalisez vraiment')
+  return erreurs
 }

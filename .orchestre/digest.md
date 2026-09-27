@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-27T22:39:01Z
+# Digest — 2026-09-27T22:48:22Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 99 tâche(s) PASS, 187683 ligne(s) · faites par Claude Code : 35 tâche(s) PASS, 99258 ligne(s).
-**État** — file : 0 · en cours : 7 · faites : 140 · refusées : 7
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 100 tâche(s) PASS, 188067 ligne(s) · faites par Claude Code : 35 tâche(s) PASS, 99258 ligne(s).
+**État** — file : 0 · en cours : 7 · faites : 141 · refusées : 7
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -21,10 +21,11 @@
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-007 | feature | en-cours | claude-code | — | depuis 2026-09-27T17:30:49Z · Mettre en service la sauvegarde quotidienne : premier envoi réel vers benjaminfiliot-wq/presti-sauvegarde, puis tâche planifiée Windows « Presti instantane quotidien » (chaque jour à 13 h et à l'ouverture de session, rattrapée au réveil), après l'accord écrit de Benj |
-| 026-030 | feature | en-cours | usine-codex-55 | — | depuis 2026-09-27T22:37:35Z · Permettre de compléter le dossier d'une commande déjà payée et pas encore générée (GET/PUT /api/site/commander/complement, qui rattache d'abord la commande par l'adresse de la session), et ajouter au dossier la liste des prestations, exigée avant la fabrication par erreursFabrication sans toucher aux règles du paiement |
 | 026-031 | feature | en-cours | usine-codex-56 | — | depuis 2026-09-27T22:39:00Z · Tenir l'article 3 bis des CGU : dater la suppression du compte sur ses sites en ligne quand la purge réussit et prévenir l'artisan, puis douze mois plus tard envoyer le lien du dossier, passer la commande à retiree, détacher le domaine et purger les fichiers à l'expiration, le tout dans tourLivraison |
 | 026-034 | feature | en-cours | claude-code | — | depuis 2026-09-27T19:40:57Z · Écrire la migration 0099 dont les déclencheurs refusent dans la base toute entrée d'un envoi en prepare ou approuve pendant la pause générale, vers une clé en opposition active, en premier contact tant que l'interrupteur envoi_froid est fermé, à moins de 90 jours, au-delà de 3 messages ou à moins de 72 h, au-delà des plafonds du jour du canal (envois et nouveaux contacts comptés à part), en second formulaire à une même entreprise (un par entreprise, à vie), en e-mail sans preuve de demande ou en premier contact par e-mail, en relance hors des règles de la voie gratuite, ou approuvé sans les trois verdicts par un autre que le Facteur, annulent les envois en attente d'un nouvel opposant, et exposent ops_garde_etat(), avec jumeaux, contrôle et compte rendu d'essai à sec |
+| 026-042 | feature | en-cours | usine-codex-57 | — | depuis 2026-09-27T22:40:43Z · Créer les 7 fichiers de routes /api/agents/* du bus (créer, prendre et rendre une tâche, écrire et lire des événements, créer une décision et relire ses décisions tranchées, battement, état) derrière le drapeau busAgents baissé, chacune gardée par authAgent, limitée aux types et tables de l'agent et branchée sur une seule fonction de lib/agents/bus.ts, sans aucune route qui tranche, approuve ou change un interrupteur |
 | 026-104 | test | en-cours | claude-code | — | depuis 2026-09-27T19:05:19Z · Écrire le juge d'écran de la station pilotage-ecran-qa (--partie=station\|vues\|salles\|salles-suite\|fil\|gestes\|experience : captures prises par le juge à 1440×900 et 390×844 sur la copie au drapeau levé, vues servies par un jeu d'essai tiré au hasard, événement injecté, immobilité mesurée sans événement), le script de recette pilotage-recette.mjs (--avant, --reel, --constat) et le lot c de la preuve, chacun échouant sur la référence avec son premier critère |
+| 026-030 | feature | fait | usine-codex-55 | PASS | 2026-09-27T22:48:21Z · 142s · 384 l. |
 | 026-053 | feature | fait | codex | PASS | 2026-09-27T22:08:11Z · 111s · 0 l. |
 | 026-168 | test | fait | claude-code | PASS | 2026-09-27T21:43:00Z · 378s · 2169 l. |
 | 026-067 | test | fait | claude-code | PASS | 2026-09-27T21:08:41Z · 650s · 0 l. |
@@ -117,6 +118,5 @@
 | 021-14 | contenu | refuse | ag-41-lite | FAIL | ✗ films natif et Lenis : FAIL — LN-7 : la première image de natif.mp4 ne ressemble pas à l'accueil de la démo (écart 1.000, moins de 0,15) : page sans styles, m |
 | 022-04 | feature | fait | codex | PASS | 2026-09-15T14:01:52Z · 29s · 0 l. |
 | 022-02 | contenu | fait | codex | PASS | 2026-09-15T13:44:04Z · 0s · 0 l. |
-| 021-10 | contenu | fait | ag-33-flash | PASS | 2026-09-15T13:30:17Z · 30s · 422 l. |
 
-… 54 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 55 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

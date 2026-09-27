@@ -10,7 +10,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { stripe } from '@/lib/stripe'
 import { mentionFranchise } from '@/lib/facturation'
 import { notifierEntreprise } from '@/lib/email'
-import { PRIX_SITE_CENTS, DELAI_TEXTE, type Brouillon, type Commande } from '@/lib/siteCommande'
+import { PRIX_SITE_CENTS, DELAI_TEXTE, nettoyerBrouillon, erreursFabrication, type Brouillon, type Commande } from '@/lib/siteCommande'
 
 const COLONNES = 'id, artisan_id, email, etat, domaine_mode, domaine, metier, metiers_secondaires, communes, matiere, prix_cents, stripe_session_id, paye_le, genere_le, valide_le, en_ligne_le, consigne, cree_le, modifie_le'
 
@@ -26,6 +26,39 @@ export async function commandesDe(uid: string): Promise<Commande[]> {
   const { data, error } = await supabaseAdmin.from('sites_commandes').select(COLONNES).eq('artisan_id', uid).order('cree_le', { ascending: false }).limit(20)
   if (error) throw new Error(`lecture des commandes impossible : ${error.message}`)
   return (data as Commande[]) ?? []
+}
+
+/** Commandes payées dont le dossier peut encore être complété. */
+export async function commandesACompleter(uid: string, deps: { base?: typeof supabaseAdmin } = {}): Promise<Commande[]> {
+  const base = deps.base ?? supabaseAdmin
+  const { data, error } = await base.from('sites_commandes').select(COLONNES)
+    .eq('artisan_id', uid).eq('etat', 'payee').is('genere_le', null)
+    .order('cree_le', { ascending: false })
+  if (error) throw new Error(`lecture des commandes à compléter impossible : ${error.message}`)
+  return (data as Commande[]) ?? []
+}
+
+/** Écriture conditionnelle : seuls les champs du dossier changent, tant que la génération n'a pas commencé. */
+export async function completerDossier(
+  uid: string, commandeId: string, brut: unknown,
+  deps: { base?: typeof supabaseAdmin; maintenant?: () => Date } = {},
+): Promise<{ commande: Commande; erreurs: string[] } | null> {
+  const base = deps.base ?? supabaseAdmin
+  const dossier = nettoyerBrouillon(brut)
+  const { data, error } = await base.from('sites_commandes').update({
+    domaine_mode: dossier.domaine_mode,
+    domaine: dossier.domaine,
+    metier: dossier.metier,
+    metiers_secondaires: dossier.metiers_secondaires,
+    communes: dossier.communes,
+    matiere: dossier.matiere,
+    modifie_le: (deps.maintenant?.() ?? new Date()).toISOString(),
+  }).eq('id', commandeId).eq('artisan_id', uid).eq('etat', 'payee').is('genere_le', null)
+    .select(COLONNES).maybeSingle()
+  if (error) throw new Error(`complément du dossier impossible : ${error.message}`)
+  if (!data) return null
+  const commande = data as Commande
+  return { commande, erreurs: erreursFabrication(commande) }
 }
 
 /** Écrit le brouillon nettoyé (lib/siteCommande.ts). Un brouillon existant est mis à jour, sinon créé. */
