@@ -4,9 +4,46 @@
   "reference": "86ce0f3be9c202d9e0bb11448642c033c5449e57",
   "reference_pourquoi": "HEAD relevé au début de 026-009 (verrou .orchestre/en-cours/026-009.lock du 2026-09-25T20:40:01Z) : ni supabase/migrations/0096_*, ni lib/agents/garde.ts. Les lots 02 à 04 relisent ce même sha.",
   "absents_de_la_reference": ["supabase/migrations/0096_", "supabase/migrations/0097_", "supabase/migrations/0098_", "lib/agents/garde.ts"],
+  "archive": ["supabase"],
   "juges": [
     { "commande": "node scripts/ops-sql-qa.mjs --migration=0096", "echec_attendu": "OS-1", "fiche_jugee": "026-010", "reel": true },
     { "commande": "node scripts/ops-sql-qa.mjs --migration=0097", "echec_attendu": "OI-1", "fiche_jugee": "026-011", "reel": true },
     { "commande": "node scripts/ops-sql-qa.mjs --migration=0098", "echec_attendu": "OT-1", "fiche_jugee": "026-013", "reel": true }
-  ]
+  ],
+  "criteres": {
+    "JP-1": [
+      { "type": "echec-sur-reference" }
+    ],
+    "JP-2": [
+      { "type": "temoin" },
+      { "type": "reel-sans-secret" }
+    ],
+    "JP-3": [
+      {
+        "type": "bloc-essai",
+        "cas": [
+          { "commande": "node scripts/ops-sql-qa.mjs --migration=0096", "jumeaux": ["0096"] },
+          { "commande": "node scripts/ops-sql-qa.mjs --migration=0097 --avec=0096", "jumeaux": ["0096", "0097"] },
+          { "commande": "node scripts/ops-sql-qa.mjs --migration=0098 --avec=0096,0097", "jumeaux": ["0096", "0097", "0098"] }
+        ]
+      },
+      {
+        "type": "reutilise",
+        "fichiers": ["scripts/lib/sql-essai.mjs"],
+        "module": "../sql-nu.mjs",
+        "noms": ["sansCommentaires", "MARQUE_CONTROLE"],
+        "appeles": ["sansCommentaires"],
+        "identite": true
+      }
+    ],
+    "JP-4": [
+      { "type": "compte-rendu", "scenario": "scripts/fixtures/026-horloge-bus/essais/0096.sql" }
+    ],
+    "JP-5": [
+      { "type": "contrat-fiches", "contrat": "scripts/fixtures/026-horloge-bus/contrat-ops.json", "migrations": ["0096", "0097", "0098"] }
+    ],
+    "JP-6": [
+      { "type": "immobile" }
+    ]
+  }
 }

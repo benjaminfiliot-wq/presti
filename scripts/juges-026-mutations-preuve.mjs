@@ -16,7 +16,9 @@
 //         a au moins une entrée, et chacun de ses critères (ou l'un de ses interchangeables, séparés par `|`) est le
 //         `critere` d'au moins une entrée de ce juge.
 //   MP-3  au moins trois contre-mutations tirées au hasard (graine affichée, --graine pour rejouer), refaites sur une copie
-//         du méta-juge : copie intacte en code 0, copie mutée en code ≠ 0 avec `critere` dans une ligne en échec. Un
+//         du méta-juge : copie intacte en code 0, copie mutée en code ≠ 0 avec LA ligne « FAIL <critere> — … » (en début
+//         de ligne, une seule pour cet id) et le bilan « <juge> : FAIL — ids » qui nomme `critere`. La ligne d'un autre
+//         critère qui le cite (« FAIL OS-2 — non jugé (OS-1) ») ne compte pas (contre-vérification de 026-009, 26/09). Un
 //         plantage, un délai ou un autre critère comptent comme une mutation non prise.
 //   MP-4  invariant : empreintes des fichiers (suivis et non ignorés) et `git status --porcelain` des deux dépôts
 //         identiques avant et après, hors .orchestre/travail/, .orchestre/preuves/, l'état de l'orchestre (digest,
@@ -29,8 +31,9 @@
 //   node scripts/juges-026-mutations-preuve.mjs --fiche=<id> --script=<scripts/juges-026-…-mutations.mjs>
 //        --rapport=.orchestre/preuves/<id>/mutations.json [--graine=<n>]
 //   node scripts/juges-026-mutations-preuve.mjs --autotest
-//        le mini-dépôt de scripts/fixtures/026/mutations-preuve/, copié sous .orchestre/travail/juges-026-mutations-preuve/
-//        autotest/<cas>/ : le script honnête → code 0 ; sans rapport → MP-1 ; critère omis → MP-2 ; mutation que le juge
+//        d'abord la lecture des sorties (AM-lecture : critère PASS à tort cité par un autre, voisin, note indentée, doublon,
+//        bilan muet ou vert refusés ; la conforme acceptée) ; puis le mini-dépôt de scripts/fixtures/026/mutations-preuve/,
+//        copié sous .orchestre/travail/juges-026-mutations-preuve/autotest/<cas>/ : le script honnête → code 0 ; sans rapport → MP-1 ; critère omis → MP-2 ; mutation que le juge
 //        n'attrape pas → MP-3 (graine fixée pour la tirer) ; dépôt laissé modifié → MP-4. Écrit
 //        .orchestre/preuves/026-001/meta-juge-autotest.md.
 //   (--racine=<dossier> et --orchestre=<dossier> remplacent les deux dépôts : l'autotest s'en sert pour ses copies.)
@@ -354,11 +357,39 @@ function tirer(entrees, graine, resteS) {
   return [...idx.filter(tient), ...idx.filter((i) => !tient(i))].slice(0, NB_CONTRE).map((i) => entrees[i])
 }
 const RE_ECHEC = /FAIL|ÉCHEC|ECHEC|[ée]chec|✗|✘|not ok|\bKO\b|ERREUR/i
-/** La première ligne en échec qui porte `critere` comme mot entier (CV-2 ne trouve pas CV-21). */
+/**
+ * { ligne, defauts[] } : LA ligne de rapport du critère, « FAIL <critere> — … » en début de ligne (forme de creerRapport,
+ * une seule pour cet id), et le bilan « <juge> : FAIL — ids » qui le nomme. Une ligne d'un AUTRE critère qui le cite
+ * (« FAIL OS-2 — non jugé : la migration manque (OS-1) ») ne compte pas, ni un voisin (CV-21 pour CV-2), ni une note
+ * indentée : contre-vérification de 026-009 (26/09), où OS-1 déclaré PASS à tort passait par la ligne d'OS-2.
+ */
 function ligneEnEchec(sortie, critere) {
-  const re = new RegExp(`(?<![A-Za-z0-9])${echapperRe(critere)}(?![A-Za-z0-9])`)
-  return String(sortie).split(/\r?\n/).find((l) => re.test(l) && RE_ECHEC.test(l) && !/^\s*(PASS|OK|✓)\b/.test(l)) || null
+  const L = String(sortie).split(/\r?\n/)
+  const siennes = L.map((l) => ({ l, m: /^(PASS|FAIL|SAUTE) (\S+)(?: — |$)/.exec(l) })).filter((x) => x.m && x.m[2] === critere)
+  const defauts = []
+  let ligne = null
+  if (!siennes.length) defauts.push(`aucune ligne « FAIL ${critere} — … »`)
+  else if (siennes.length > 1) defauts.push(`${critere} rapporté ${siennes.length} fois (${siennes.map((x) => x.m[1]).join(', ')})`)
+  else if (siennes[0].m[1] !== 'FAIL' || !siennes[0].l.startsWith(`FAIL ${critere} — `)) defauts.push(`${critere} rapporté ${siennes[0].m[1]} : « ${court(siennes[0].l, 80)} »`)
+  else ligne = siennes[0].l
+  const b = L.map((l) => /^(\S+) : (PASS|FAIL)(?: — (.*))?$/.exec(l)).filter(Boolean).at(-1)
+  if (!b) defauts.push('aucun bilan « … : FAIL — ids »')
+  else if (b[2] !== 'FAIL') defauts.push(`bilan ${b[2]}`)
+  else if (!(b[3] || '').split(/,\s*/).map((x) => x.trim()).includes(critere)) defauts.push(`le bilan « … : FAIL — ${court(b[3] || '', 50)} » ne nomme pas ${critere}`)
+  return { ligne: defauts.length ? null : ligne, defauts }
 }
+// Autotest de cette lecture (lancé par --autotest, AM-lecture) : le premier cas est le sabotage de la contre-vérification.
+const AUTOTEST_LECTURE = [
+  ['critère PASS à tort, cité entre parenthèses par un autre critère en échec', 'OS-1', false, ['PASS OS-1 — sabotage : migration déclarée présente à tort', 'FAIL OS-2 — non jugé : la migration manque (OS-1)', 'ops-sql-qa : FAIL — OS-2']],
+  ['voisin OS-10 en échec, OS-1 vert', 'OS-1', false, ['PASS OS-1 — conforme', 'FAIL OS-10 — x', 'ops-sql-qa : FAIL — OS-10']],
+  ['note indentée en échec', 'OS-1', false, ['  ✗ FAIL OS-1 — une note n’est pas un rapport', 'FAIL OS-2 — x', 'ops-sql-qa : FAIL — OS-2']],
+  ['critère rapporté deux fois', 'OS-1', false, ['PASS OS-1 — conforme', 'FAIL OS-1 — absente', 'ops-sql-qa : FAIL — OS-1']],
+  ['ligne sans tiret', 'OS-1', false, ['FAIL OS-1', 'ops-sql-qa : FAIL — OS-1']],
+  ['bilan qui ne le nomme pas', 'OS-1', false, ['FAIL OS-1 — absente', 'ops-sql-qa : FAIL — OS-2']],
+  ['bilan vert', 'OS-1', false, ['FAIL OS-1 — absente', 'ops-sql-qa : PASS']],
+  ['sans bilan', 'OS-1', false, ['FAIL OS-1 — absente']],
+  ['conforme', 'OS-1', true, ['PASS OS-10 — x', 'FAIL OS-1 — migration absente', 'FAIL OS-2 — non jugé (OS-1)', 'ops-sql-qa : FAIL — OS-1, OS-2']],
+]
 const plantage = (sortie) => /^\s+at .+:\d+:\d+\)?\s*$/m.test(sortie) && /\b\w*Error\b/.test(sortie)
 
 async function contreMuter(e, k, ctx) {
@@ -392,15 +423,16 @@ async function contreMuter(e, k, ctx) {
     if (n !== 1) { res.raison = `« avant » présent ${n} fois dans ${e.fichier} (une seule attendue)`; return res }
     const i = texte.indexOf(e.avant)
     fs.writeFileSync(cible, texte.slice(0, i) + e.apres + texte.slice(i + e.avant.length))
-    // 3. La copie mutée : code ≠ 0 exigé, avec `critere` dans une ligne en échec.
+    // 3. La copie mutée : code ≠ 0 exigé, avec la ligne « FAIL <critere> — » et le bilan qui le nomme.
     const mute = await executer({ commande, cwd, delaiMs })
     res.codeMute = mute.code
     res.sortieMute = mute.sortie
     ecrire(path.join(ctx.journaux, `contre-${k}-mute.log`), `$ ${commande}\n# ${e.fichier} : « ${e.avant} » → « ${e.apres} »\n# code ${mute.code} · ${mute.duree.toFixed(1)} s\n\n${mute.sortie}`)
-    const ligne = ligneEnEchec(mute.sortie, e.critere)
+    const lu = ligneEnEchec(mute.sortie, e.critere)
+    const ligne = lu.ligne
     if (mute.expire) res.raison = `délai dépassé sur la copie mutée (${Math.round(delaiMs / 1000)} s)`
     else if (mute.code === 0) res.raison = 'copie mutée en code 0 : la mutation n’est pas attrapée'
-    else if (!ligne) res.raison = `${plantage(mute.sortie) ? 'plantage' : `code ${mute.code}`} sans ligne en échec qui porte ${e.critere} (en échec : ${court(mute.sortie.split(/\r?\n/).filter((l) => RE_ECHEC.test(l))[0] || '—', 100)})`
+    else if (!ligne) res.raison = `${plantage(mute.sortie) ? 'plantage' : `code ${mute.code}`}, ${e.critere} non attrapé : ${lu.defauts.join(' ; ')} (en échec : ${court(mute.sortie.split(/\r?\n/).filter((l) => RE_ECHEC.test(l))[0] || '—', 100)})`
     else { res.ok = true; res.extraitReel = ligne.trim() }
     return res
   } catch (err) {
@@ -557,6 +589,12 @@ async function autotest() {
   const lignes = [], resultats = []
   const depot = path.join(FIXTURES, 'depot'), fiche = path.join(FIXTURES, 'fiche-026-900.md')
   if (!existe(depot) || !existe(fiche)) return { ok: false, lignes: [`FAIL AM-0 — mini-dépôt introuvable : ${versSlash(path.relative(PRESTI, FIXTURES))}/{depot/,fiche-026-900.md}`], resultats }
+  {
+    const rates = AUTOTEST_LECTURE.filter(([, c, ok, l]) => (ligneEnEchec(`${l.join('\n')}\n`, c).ligne !== null) !== ok).map(([quoi, , ok]) => `${quoi} : ${ok ? 'refusée' : 'acceptée'}`)
+    const ok = !rates.length
+    lignes.push(`${ok ? 'PASS' : 'FAIL'} AM-lecture — ${ok ? `${AUTOTEST_LECTURE.length - 1} sorties plantées refusées (dont le critère PASS à tort cité par un autre), la conforme acceptée : une ligne « FAIL <critère> — » et le bilan qui le nomme sont exigés` : rates.join(' ; ')}`)
+    resultats.push({ nom: 'lecture', script: '(lecture des sorties, sans script)', attendu: null, ok, code: null, rouges: [], ligne: ok ? 'FAIL OS-1 — migration absente' : rates.join(' ; ') })
+  }
   for (const k of CAS_AUTOTEST) {
     const copie = path.join(base, k.nom)
     const restes = supprimerCopie(copie, base)
