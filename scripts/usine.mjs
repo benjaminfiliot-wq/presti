@@ -863,7 +863,9 @@ async function tourner(dossier) {
     const r = await codexExec(arbre, instruction, cfg, journal, dernier)
     etatT.codes.push(r.code); poser()
     if (r.code !== 0 && /not logged in|please log ?in|codex login|401 Unauthorized|403 Forbidden/i.test(r.sortie)) finir(6, 'AUTH', 'codex n est pas connecté (codex login --device-auth, code validé par Benj)')
-    const limite = r.sortie.match(/hit your usage limit[^\n]*?(try again at [^\n]+)?$/im)
+    // Seulement une LIGNE D'ERREUR de Codex (« ERROR: … hit your usage limit … ») : le 27/09, une fiche qui parlait de quotas
+    // (« usage limit », « try again at ») a fait croire à un quota épuisé et arrêté la tâche au premier tour.
+    const limite = r.sortie.match(/^\s*(?:ERROR:?|error:|■)[^\n]*hit your usage limit[^\n]*?(try again at [^\n]+)?$/im)
     if (limite) finir(3, 'QUOTA', `quota de l'abonnement ChatGPT épuisé${limite[1] ? ' — ' + limite[1].trim() : ''}`)
     const qf = path.join(arbre, '.orchestre', 'en-cours', `${id}.question.md`)
     if (fs.existsSync(qf) && !fs.existsSync(qf.replace(/\.question\.md$/, '.reponse.md'))) finir(7, 'QUESTION', `Codex a posé une question (.orchestre/en-cours/${id}.question.md)`)
