@@ -1,16 +1,16 @@
 # Couverture de la série 026
 
-> Écrit par `node scripts/juges-026-preuve.mjs --couverture --autotest` le 2026-09-25T22:42:50.721Z. Rien ici n'est recopié à la main : tout est lu dans les fiches.
+> Écrit par `node scripts/juges-026-preuve.mjs --couverture` le 2026-09-27T06:19:46.617Z. Rien ici n'est recopié à la main : tout est lu dans les fiches.
 
-**Fiches 026 lues : 203** — fiches de juges : 42 · fiches de fabrication : 145 · fiches de mutations : 16. Fiches 025 lues : 22.
+**Fiches 026 lues : 228** — fiches de juges : 44 · fiches de fabrication : 166 · fiches de mutations : 18. Fiches 025 lues : 22.
 Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-ecosysteme/026/ (025 : …/brouillons-ecosysteme/) · vagues : .orchestre/brouillons-ecosysteme/026/INDEX.md.
 
 **Verdict de la couverture : PASS**
 
 ## Les critères
 
-    PASS CV-1 — 203 fiche(s) de 026-001 à 026-203, sans trou ni doublon, chacune avec sa section « Place dans la série »
-    PASS CV-2 — chaque juge des 145 fiche(s) de fabrication et des 16 de mutations écrit avant par une seule des 42 fiche(s) de juges
+    PASS CV-1 — 228 fiche(s) de 026-001 à 026-228, sans trou ni doublon, chacune avec sa section « Place dans la série »
+    PASS CV-2 — chaque juge des 166 fiche(s) de fabrication et des 18 de mutations écrit avant par une seule des 44 fiche(s) de juges
     PASS CV-3 — aucun juge ni jeu d’essai dans le périmètre d’une fiche de fabrication ou de mutations
     PASS CV-4 — ids cités dans « Place dans la série » tous plus petits, 22 fiche(s) 025 lue(s)
     PASS CV-5 — chaque chevauchement de périmètres ordonné par « Dépend de » ou « Sérialisée après »
@@ -240,26 +240,29 @@ Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-eco
 | 026-201 | fabrication | `scripts/search-console-qa.mjs` | 026-199 | 026-203 |
 | 026-202 | fabrication | `scripts/usine-pubs-qa.mjs` | 026-199 | 026-203 |
 | 026-203 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-204 | juges | `scripts/juges-026-reseaux-preuve.mjs` | 026-204 | — |
+| 026-205 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-206 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-207 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-208 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-209 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-210 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-211 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-212 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-213 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-214 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-215 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-216 | fabrication | `scripts/contenu-ecran-qa.mjs` | 026-204 | 026-219 |
+| 026-217 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-218 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
+| 026-219 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-220 | juges | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
+| 026-221 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
+| 026-222 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
+| 026-223 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
+| 026-224 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
+| 026-225 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
+| 026-226 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
+| 026-227 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
+| 026-228 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
 
-## Autotest : une ligne par défaut planté, avec le critère qui l’a attrapé
-
-| cas | attendu | code | critère(s) en échec | verdict | ligne en échec |
-|---|---|---|---|---|---|
-| propre | aucun | 0 | — | PASS | jeu propre vert |
-| sans-juge | CV-2 | 1 | CV-2 | PASS | FAIL CV-2 — 1 défaut(s) : 026-008 : aucun juge : le verifier ne lance aucun script par node (« npx tsc --noEmit ») |
-| juge-apres | CV-2 | 1 | CV-2 | PASS | FAIL CV-2 — 1 défaut(s) : 026-003 : juge scripts/c-qa.mjs écrit par 026-007, fiche de juges plus grande que la fiche jugée |
-| mutations-juge-propre | CV-2 | 1 | CV-2, CV-3, CV-7 | PASS | FAIL CV-2 — 1 défaut(s) : 026-010 : juge scripts/juges-026-essai-mutations.mjs écrit par aucune fiche de juges (fiche de fabrication) |
-| juge-dans-perimetre | CV-3 | 1 | CV-3 | PASS | FAIL CV-3 — 1 défaut(s) : 026-004 : son périmètre (scripts/b-qa.mjs) contient le juge scripts/b-qa.mjs |
-| dep-en-avant | CV-4 | 1 | CV-4, CV-8 | PASS | FAIL CV-4 — 1 défaut(s) : 026-005 : « depend » cite 026-009, qui n'est pas plus petit |
-| exemple-hors-section | aucun | 0 | — | PASS | aucune ligne en échec |
-| chevauchement-libre | CV-5 | 1 | CV-5 | PASS | FAIL CV-5 — 1 défaut(s) : 026-006 : chevauche 026-003 (app/b/x.tsx ↔ app/b/**) sans en dépendre ni être sérialisée après elle |
-| chevauchement-025 | CV-5 | 1 | CV-5 | PASS | FAIL CV-5 — 1 défaut(s) : 026-004 : chevauche la fiche 025-02 (lib/ancien.ts ↔ lib/ancien.ts) sans en dépendre |
-| juge-non-mute | CV-6 | 1 | CV-6 | PASS | FAIL CV-6 — 1 défaut(s) : 026-007 : scripts/c-qa.mjs (c-qa) n'est nommé dans le corps d'aucune fiche de mutations |
-| juge-nom-court | aucun | 0 | — | PASS | aucune ligne en échec |
-| migration-codex | CV-7 | 1 | CV-7 | PASS | FAIL CV-7 — 1 défaut(s) : 026-004 : exécutant codex : son périmètre (supabase/migrations/0096_essai.sql) touche supabase/** |
-| vague-trop-pleine | CV-8 | 1 | CV-8 | PASS | FAIL CV-8 — 1 défaut(s) : V06 : 3 fiches d'exécutant sur le PC (au plus deux) : 026-008, 026-009, 026-010 |
-| usine-mal-rangee | CV-8 | 1 | CV-8 | PASS | FAIL CV-8 — 1 défaut(s) : 026-006 : colonne Usine de V04, mais sa ligne Id ne porte pas « sur l'usine » |
-| id-trou | CV-1 | 1 | CV-1, CV-8 | PASS | ✗ CV-1 026-009 : trou dans les ids : aucun en-tête ne porte « id: 026-009 » |
-| libelle-colle | CV-4 | 1 | CV-4 | PASS | FAIL CV-4 — 1 défaut(s) : 026-005 : libellé périmé « **Collées … » dans la section Place (il faisait croire à un geste de Benj) : - **Collées avant le dépôt :** 0096 (026-004). |
-
-PASS AT-cahier — au moins un cas par critère (CV-1, CV-2, CV-3, CV-4, CV-5, CV-6, CV-7, CV-8), 15 cas

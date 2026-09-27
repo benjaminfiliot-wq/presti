@@ -1,0 +1,312 @@
+{
+ "produit_le": "2026-09-27T13:34:14.403Z",
+ "maquette": ".orchestre/travail/026-023-reprise/arbre",
+ "copie_de": [
+  "app",
+  "lib",
+  "middleware.ts",
+  "tsconfig.json",
+  "package.json",
+  "scripts/fermeture-e2e.mjs"
+ ],
+ "temoins": {
+  "AP": {
+   "juge": "achat-public-qa",
+   "code": 0,
+   "duree": 22,
+   "rouges": [],
+   "ligne": "✅ AP-13 case L221-28 jamais présumée : sans compte, case absente, false, 'true' ou 1 → 400, rien d'écrit, aucun Checkout ; avec compte (dossier complet en base), absente, false ou 'true' → 400, aucun Checkout ; cochée → 200 sur les deux routes, retractation_accord = 2026-09-26T10:00:00.000Z (horloge du serveur, pas celle du client) dans metadata et payment_intent_data.metadata",
+   "derniere": "achat-public-qa : PASS",
+   "ligne14": "✅ AP-14 franchise en base (art. 293 B) : sans STRIPE_TAXE_AUTO=1 (absent, '0', '', 'true' ; avec et sans STRIPE_PRIX_SITE), 16 appels de parametresCheckoutSite (avec compte et public) sans automatic_tax ni tax_behavior, pied mentionFranchise('auto') ; de même pour les Checkouts créés par la route publique et la route avec compte"
+  },
+  "CF": {
+   "juge": "constructeur-ferme-qa --critere=CF-3",
+   "code": 0,
+   "duree": 0,
+   "rouges": [],
+   "ligne": "PASS CF-3 — diff contre 1620723 : une ligne ajoutée (221), dans CARTE, à l'identique, plus la correction D30 (9dca36e) à l’identique, plus les lignes des fiches 026 conformes à la liste fermée : siteAchatPublic (ligne 240) ; node --check vert",
+   "derniere": "constructeur-ferme-qa : PASS"
+  }
+ },
+ "entrees": [
+  {
+   "juge": "achat-public-qa",
+   "critere": "AP-13",
+   "attendu": "rouge",
+   "nom": "route publique : le contrôle serveur de la case retiré",
+   "fichiers": [
+    "app/api/site/commander/public/route.ts"
+   ],
+   "code": 1,
+   "rouges": [
+    "AP-4",
+    "AP-13"
+   ],
+   "ligne": "❌ AP-13 sans compte, case absente → 200, 400 attendu ; sans compte, case absente : 2 écriture(s), 0 attendue ; sans compte, case absente : 1 Checkout(s) créé(s), 0 attendu ; sans compte, case false → 200, 400 attendu ; sans compte, case false : 2 écriture(s), 0 attendue ; sans compte, case false : 1 Checkout(s) créé(s), 0 attendu ; … (12 défauts)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 4
+  },
+  {
+   "juge": "achat-public-qa",
+   "critere": "AP-13",
+   "attendu": "rouge",
+   "nom": "route publique : la case présumée (toute valeur « vraie » passe)",
+   "fichiers": [
+    "app/api/site/commander/public/route.ts"
+   ],
+   "code": 1,
+   "rouges": [
+    "AP-13"
+   ],
+   "ligne": "❌ AP-13 sans compte, case 'true' (chaîne) → 200, 400 attendu ; sans compte, case 'true' (chaîne) : 2 écriture(s), 0 attendue ; sans compte, case 'true' (chaîne) : 1 Checkout(s) créé(s), 0 attendu ; sans compte, case 1 → 200, 400 attendu ; sans compte, case 1 : 2 écriture(s), 0 attendue ; sans compte, case 1 : 1 Checkout(s) créé(s), 0 attendu",
+   "tenu": true,
+   "restaure": true,
+   "duree": 4
+  },
+  {
+   "juge": "achat-public-qa",
+   "critere": "AP-13",
+   "attendu": "rouge",
+   "nom": "route avec compte : le contrôle serveur de la case retiré",
+   "fichiers": [
+    "app/api/site/commander/route.ts"
+   ],
+   "code": 1,
+   "rouges": [
+    "AP-13"
+   ],
+   "ligne": "❌ AP-13 avec compte, case absente → 200, 400 attendu ; avec compte, case absente : 1 Checkout(s) créé(s), 0 attendu ; avec compte, case absente : 1 écriture(s), 0 attendue ; avec compte, case false → 200, 400 attendu ; avec compte, case false : 1 Checkout(s) créé(s), 0 attendu ; avec compte, case false : 1 écriture(s), 0 attendue ; … (9 défauts)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 5
+  },
+  {
+   "juge": "achat-public-qa",
+   "critere": "AP-13",
+   "attendu": "rouge",
+   "nom": "constructeur : l'horodatage de l'accord ne part plus chez Stripe",
+   "fichiers": [
+    "lib/siteCommandeServeur.ts"
+   ],
+   "code": 1,
+   "rouges": [
+    "AP-13"
+   ],
+   "ligne": "❌ AP-13 sans compte : metadata.retractation_accord = undefined, l'horodatage du serveur 2026-09-26T10:00:00.000Z attendu ; sans compte : payment_intent_data.metadata.retractation_accord = undefined, 2026-09-26T10:00:00.000Z attendu (même preuve des deux côtés) ; avec compte : metadata.retractation_accord = undefined, l'horodatage du serveur 2026-09-26T10:00:00.000Z attendu ; avec compte : payment_intent_data.metadata.retractation_accord = undefined, 2026-09-26T10:00:00.000Z attendu (même preuve des deux côtés)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 5
+  },
+  {
+   "juge": "achat-public-qa",
+   "critere": "AP-14",
+   "attendu": "rouge",
+   "nom": "constructeur : automatic_tax forcé",
+   "fichiers": [
+    "lib/siteCommandeServeur.ts"
+   ],
+   "code": 1,
+   "rouges": [
+    "AP-14"
+   ],
+   "ligne": "❌ AP-14 STRIPE_TAXE_AUTO absent, avec compte : automatic_tax = {\"enabled\":true} (forcé) ; STRIPE_TAXE_AUTO absent, public : automatic_tax = {\"enabled\":true} (forcé) ; STRIPE_TAXE_AUTO absent, STRIPE_PRIX_SITE = price_essai_026b, avec compte : automatic_tax = {\"enabled\":true} (forcé) ; STRIPE_TAXE_AUTO absent, STRIPE_PRIX_SITE = price_essai_026b, public : automatic_tax = {\"enabled\":true} (forcé) ; STRIPE_TAXE_AUTO = \"0\", avec compte : automatic_tax = {\"enabled\":true} (forcé) ; STRIPE_TAXE_AUTO = \"0\", public : automatic_tax = {\"enabled\":true} (forcé) ; … (18 défauts)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 5
+  },
+  {
+   "juge": "achat-public-qa",
+   "critere": "AP-14",
+   "attendu": "rouge",
+   "nom": "constructeur : l'interrupteur s'allume sur toute valeur de STRIPE_TAXE_AUTO",
+   "fichiers": [
+    "lib/siteCommandeServeur.ts"
+   ],
+   "code": 1,
+   "rouges": [
+    "AP-14"
+   ],
+   "ligne": "❌ AP-14 STRIPE_TAXE_AUTO = \"0\", avec compte : automatic_tax = {\"enabled\":true} (forcé) ; line_items[0].price_data.tax_behavior = \"exclusive\" ; pied de facture , mentionFranchise('auto') attendu ; STRIPE_TAXE_AUTO = \"0\", public : automatic_tax = {\"enabled\":true} (forcé) ; line_items[0].price_data.tax_behavior = \"exclusive\" ; pied de facture , mentionFranchise('auto') attendu ; STRIPE_TAXE_AUTO = \"0\", STRIPE_PRIX_SITE = price_essai_026b, avec compte : automatic_tax = {\"enabled\":true} (forcé) ; pied de facture , mentionFranchise('auto') attendu ; STRIPE_TAXE_AUTO = \"0\", STRIPE_PRIX_SITE = price_essai_026b, public : automatic_tax = {\"enabled\":true} (forcé) ; pied de facture , mentionFranchise('auto') attendu ; STRIPE_TAXE_AUTO = \"true\", avec compte : automatic_tax = {\"enabled\":true} (forcé) ; line_items[0].price_data.tax_behavior = \"exclusive\" ; pied de facture , mentionFranchise('auto') attendu ; STRIPE_TAXE_AUTO = \"true\", public : automatic_tax = {\"enabled\":true} (forcé) ; line_items[0].price_data.tax_behavior = \"exclusive\" ; pied de facture , mentionFranchise('auto') attendu ; … (8 défauts)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 5
+  },
+  {
+   "juge": "achat-public-qa",
+   "critere": "AP-14",
+   "attendu": "rouge",
+   "nom": "constructeur : automatic_tax forcé pour l'achat sans compte seulement",
+   "fichiers": [
+    "lib/siteCommandeServeur.ts"
+   ],
+   "code": 1,
+   "rouges": [
+    "AP-2",
+    "AP-14"
+   ],
+   "ligne": "❌ AP-14 STRIPE_TAXE_AUTO absent, public : automatic_tax = {\"enabled\":true} (forcé) ; STRIPE_TAXE_AUTO absent, STRIPE_PRIX_SITE = price_essai_026b, public : automatic_tax = {\"enabled\":true} (forcé) ; STRIPE_TAXE_AUTO = \"0\", public : automatic_tax = {\"enabled\":true} (forcé) ; STRIPE_TAXE_AUTO = \"0\", STRIPE_PRIX_SITE = price_essai_026b, public : automatic_tax = {\"enabled\":true} (forcé) ; STRIPE_TAXE_AUTO = \"\", public : automatic_tax = {\"enabled\":true} (forcé) ; STRIPE_TAXE_AUTO = \"\", STRIPE_PRIX_SITE = price_essai_026b, public : automatic_tax = {\"enabled\":true} (forcé) ; … (9 défauts)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 5
+  },
+  {
+   "juge": "constructeur-ferme-qa --critere=CF-3",
+   "critere": "CF-3",
+   "attendu": "rouge",
+   "nom": "un drapeau hors de la liste fermée ajouté à CARTE",
+   "fichiers": [
+    "scripts/fermeture-e2e.mjs"
+   ],
+   "code": 1,
+   "rouges": [
+    "CF-3"
+   ],
+   "ligne": "FAIL CF-3 — diff contre 1620723 (correction D30 et 1 ligne(s) des fiches 026 ôtée(s)) : 2 ligne(s) ajoutée(s), 0 retirée(s) — exactement une ligne ajoutée attendue (+221 « 'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/… » ; +241 « 'drapeauInconnu': ['lu'], »)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "constructeur-ferme-qa --critere=CF-3",
+   "critere": "CF-3",
+   "attendu": "rouge",
+   "nom": "la ligne siteAchatPublic retouchée (un fichier de route en moins)",
+   "fichiers": [
+    "scripts/fermeture-e2e.mjs"
+   ],
+   "code": 1,
+   "rouges": [
+    "CF-3"
+   ],
+   "ligne": "FAIL CF-3 — ligne 240 « siteAchatPublic » (fiche 026-025, liste fermée des fiches 026) refusée : ['route', '/api/site/commander/public', 'POST', 'app/api/site/commander/public/route.ts'] ≠ ['route', '/api/site/commander/public', 'POST', 'app/api/site/commander/public/route.ts', 'app/api/site/commander/public/renvoyer/…'], la ligne écrite par la fiche ; diff contre 1620723 (correction D30 ôtée(s)) : 2 ligne(s) ajoutée(s), 0 retirée(s) — exactement une ligne ajoutée attendue (+221 « 'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/… » ; +240 « 'siteAchatPublic': ['route', '/api/site/commander/public', 'POST', 'a… »)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "constructeur-ferme-qa --critere=CF-3",
+   "critere": "CF-3",
+   "attendu": "rouge",
+   "nom": "la ligne siteAchatPublic en double dans CARTE",
+   "fichiers": [
+    "scripts/fermeture-e2e.mjs"
+   ],
+   "code": 1,
+   "rouges": [
+    "CF-3"
+   ],
+   "ligne": "FAIL CF-3 — ligne 240 « siteAchatPublic » (fiche 026-025, liste fermée des fiches 026) refusée : 2 clé(s) siteAchatPublic dans CARTE, une attendue ; ligne 241 « siteAchatPublic » (fiche 026-025, liste fermée des fiches 026) refusée : 2 clé(s) siteAchatPublic dans CARTE, une attendue ; diff contre 1620723 (correction D30 ôtée(s)) : 3 ligne(s) ajoutée(s), 0 retirée(s) — exactement une ligne ajoutée attendue (+221 « 'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/… » ; +240 « 'siteAchatPublic': ['route', '/api/site/commander/public', 'POST', 'a… »)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "constructeur-ferme-qa --critere=CF-3",
+   "critere": "CF-3",
+   "attendu": "rouge",
+   "nom": "la ligne siteAchatPublic sortie de CARTE (dans un autre objet)",
+   "fichiers": [
+    "scripts/fermeture-e2e.mjs"
+   ],
+   "code": 1,
+   "rouges": [
+    "CF-3"
+   ],
+   "ligne": "FAIL CF-3 — ligne 221 « siteAchatPublic » (fiche 026-025, liste fermée des fiches 026) refusée : hors de CARTE (lignes 224-258) ; 0 clé(s) siteAchatPublic dans CARTE, une attendue ; diff contre 1620723 (correction D30 ôtée(s)) : 6 ligne(s) ajoutée(s), 0 retirée(s) — exactement une ligne ajoutée attendue (+220 « const AUTRE_CARTE = { » ; +221 « 'siteAchatPublic': ['route', '/api/site/commander/public', 'POST', 'a… »)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "constructeur-ferme-qa --critere=CF-3",
+   "critere": "CF-3",
+   "attendu": "rouge",
+   "nom": "du code glissé dans la ligne siteAchatPublic (étalement)",
+   "fichiers": [
+    "scripts/fermeture-e2e.mjs"
+   ],
+   "code": 1,
+   "rouges": [
+    "CF-3"
+   ],
+   "ligne": "FAIL CF-3 — diff contre 1620723 (correction D30 ôtée(s)) : 2 ligne(s) ajoutée(s), 0 retirée(s) — exactement une ligne ajoutée attendue (+221 « 'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/… » ; +240 « 'siteAchatPublic': ['route', '/api/site/commander/public', 'POST', 'a… »)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "constructeur-ferme-qa --critere=CF-3",
+   "critere": "CF-3",
+   "attendu": "rouge",
+   "nom": "siteAchatPublic retiré de FLAGS (lib/flags.ts), la ligne de CARTE gardée",
+   "fichiers": [
+    "lib/flags.ts"
+   ],
+   "code": 1,
+   "rouges": [
+    "CF-3"
+   ],
+   "ligne": "FAIL CF-3 — ligne 240 « siteAchatPublic » (fiche 026-025, liste fermée des fiches 026) refusée : siteAchatPublic n'est pas dans FLAGS de lib/flags.ts ; diff contre 1620723 (correction D30 ôtée(s)) : 2 ligne(s) ajoutée(s), 0 retirée(s) — exactement une ligne ajoutée attendue (+221 « 'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/… » ; +240 « 'siteAchatPublic': ['route', '/api/site/commander/public', 'POST', 'a… »)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "constructeur-ferme-qa --critere=CF-3",
+   "critere": "CF-3",
+   "attendu": "vert",
+   "nom": "témoin positif de la règle « debut » : ligne pilotage (026-068), route qui lit actif('pilotage'), drapeau dans FLAGS",
+   "fichiers": [
+    "lib/flags.ts",
+    "scripts/fermeture-e2e.mjs",
+    "app/api/controle/pilotage/route.ts (posé)"
+   ],
+   "code": 0,
+   "rouges": [],
+   "ligne": "PASS CF-3 — diff contre 1620723 : une ligne ajoutée (221), dans CARTE, à l'identique, plus la correction D30 (9dca36e) à l’identique, plus les lignes des fiches 026 conformes à la liste fermée : siteAchatPublic (ligne 240), pilotage (ligne 241) ; node --check vert",
+   "tenu": true,
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "constructeur-ferme-qa --critere=CF-3",
+   "critere": "CF-3",
+   "attendu": "rouge",
+   "nom": "ligne pilotage complétée d'une route qui ne lit pas actif('pilotage')",
+   "fichiers": [
+    "lib/flags.ts",
+    "scripts/fermeture-e2e.mjs",
+    "app/api/controle/pilotage/route.ts (posé)",
+    "app/api/controle/pilotage/fuite/route.ts (posé)"
+   ],
+   "code": 1,
+   "rouges": [
+    "CF-3"
+   ],
+   "ligne": "FAIL CF-3 — ligne 241 « pilotage » (fiche 026-068, complétée par 026-074, 026-092, 026-177, liste fermée des fiches 026) refusée : app/api/controle/pilotage/fuite/route.ts ne lit pas lui-même actif('pilotage') ; diff contre 1620723 (correction D30 et 1 ligne(s) des fiches 026 ôtée(s)) : 2 ligne(s) ajoutée(s), 0 retirée(s) — exactement une ligne ajoutée attendue (+221 « 'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/… » ; +241 « 'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/contr… »)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 0
+  },
+  {
+   "juge": "constructeur-ferme-qa --critere=CF-3",
+   "critere": "CF-3",
+   "attendu": "rouge",
+   "nom": "ligne pilotage complétée d'un fichier qui n'est pas une route (lib/flags.ts)",
+   "fichiers": [
+    "lib/flags.ts",
+    "scripts/fermeture-e2e.mjs",
+    "app/api/controle/pilotage/route.ts (posé)"
+   ],
+   "code": 1,
+   "rouges": [
+    "CF-3"
+   ],
+   "ligne": "FAIL CF-3 — ligne 241 « pilotage » (fiche 026-068, complétée par 026-074, 026-092, 026-177, liste fermée des fiches 026) refusée : « lib/flags.ts » n'est pas un fichier de route app/…/route.ts ; diff contre 1620723 (correction D30 et 1 ligne(s) des fiches 026 ôtée(s)) : 2 ligne(s) ajoutée(s), 0 retirée(s) — exactement une ligne ajoutée attendue (+221 « 'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/… » ; +241 « 'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/contr… »)",
+   "tenu": true,
+   "restaure": true,
+   "duree": 0
+  }
+ ]
+}

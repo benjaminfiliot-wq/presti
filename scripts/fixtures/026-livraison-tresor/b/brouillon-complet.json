@@ -1,0 +1,44 @@
+{
+ "_lisez": "Reprise du 27/09 de 026-023 (AP-13, lot B) : le brouillon COMPLET de l'artisan jugé (auth-admin.json artisan.uid), celui que POST /api/site/commander (achat avec compte) accepte de payer — erreursAvantPaiement de lib/siteCommande.ts n'y trouve rien. Il sert à prouver que la case de renoncement L221-28 est exigée par le serveur AVANT toute lecture, et que son horodatage part dans les deux métadonnées du Checkout. Entreprise, personne, SIREN (000000000 : clé de Luhn nulle), adresse et décennale fictifs ; adresses en .invalid (RFC 2606) ; photos jamais téléchargées.",
+ "artisan": { "id": "90000000-0000-4000-8000-0000000b0002", "email": "acheteur-026@presti-test.invalid", "nom": "Atelier Martin", "metier": "Plombier", "is_founder": false, "stripe_customer_id": null },
+ "brouillon": {
+  "id": "cmd-brouillon-complet-026b",
+  "artisan_id": "90000000-0000-4000-8000-0000000b0002",
+  "email": "acheteur-026@presti-test.invalid",
+  "etat": "brouillon",
+  "achat_public": false,
+  "prix_cents": 30000,
+  "stripe_session_id": null,
+  "paye_le": null,
+  "genere_le": null,
+  "valide_le": null,
+  "en_ligne_le": null,
+  "consigne": null,
+  "cree_le": "2026-09-25T09:00:00Z",
+  "modifie_le": "2026-09-25T09:30:00Z",
+  "domaine_mode": "aucun",
+  "domaine": null,
+  "metier": "Plombier",
+  "metiers_secondaires": [],
+  "communes": ["Lyon"],
+  "matiere": {
+   "photos": [
+    { "url": "https://photos.presti-test.invalid/chantier-1.jpg", "legende": "Salle de bains refaite" },
+    { "url": "https://photos.presti-test.invalid/chantier-2.jpg", "legende": "Chauffe-eau remplacé" },
+    { "url": "https://photos.presti-test.invalid/chantier-3.jpg", "legende": "Robinetterie de cuisine" }
+   ],
+   "adresse": "Adresse fictive du jeu d'essai, 69000 Lyon",
+   "siren": "000000000",
+   "horaires": "Lundi-vendredi, 8 h-18 h, sur rendez-vous",
+   "decennale": { "assureur": "Assureur fictif", "numero": "ESSAI-026B" },
+   "artisan": {
+    "prenom": "Maël",
+    "nom": "Essai",
+    "installation": 2014,
+    "parcours": "CAP puis brevet professionnel de plombier, six ans chez un installateur.",
+    "citation": "Je vérifie chaque raccord moi-même avant de remettre l'eau.",
+    "chiffres": null
+   }
+  }
+ }
+}

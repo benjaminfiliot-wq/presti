@@ -1,0 +1,17 @@
+# TÉMOIN du juge usine-socle-qa (026-048) : ce n'est PAS le livrable de 026-053.
+[Unit]
+Description=Presti — surveillance de l'usine
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_USINE -- /usr/bin/node scripts/usine/surveillance.mjs --service --base=https://prestiapp.fr
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
