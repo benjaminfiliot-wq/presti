@@ -1,0 +1,7 @@
+# Entrées de l'archive d'essai de d0260000-0000-4000-8000-00000000d001 (faux stockage d/stockage/, lue par dossier-zip-qa)
+images/a-480.webp	3016 octets	crc 9ff077e1	crc juste	identique au stockage
+index.html	317 octets	crc 8db21fc8	crc juste	identique au stockage
+menuisier-rennes/images/b-960.webp	5216 octets	crc 78484fec	crc juste	identique au stockage
+menuisier-rennes/index.html	291 octets	crc 496fa2d3	crc juste	identique au stockage
+sitemap.xml	228 octets	crc 48d12c90	crc juste	identique au stockage
+LISEZ-MOI.txt	311 octets	crc 7385c267	crc juste	identique au stockage
