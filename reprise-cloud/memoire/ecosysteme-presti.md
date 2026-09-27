@@ -131,3 +131,14 @@ Ce qu'il demande :
   - Recherches : `SaaS/Produit/Ecosysteme-Recherche-Agents-2026-09-24.md` et `Ecosysteme-Recherche-Pubs-2026-09-24.md`.
 
 Voir [[ecc-installation]], [[presti-orchestre-antigravity]], [[benj-executants-d-abord]].
+
+**26/09 au soir : Benj renverse « OpenClaw NON ».**
+- Ses mots : OpenClaw est « très utile », « je comprends pas pourquoi tu dis qu'il est pas utile », « tu vas me l'utiliser ».
+- Il ajoute aussi Cursor, et une IA chinoise open source qu'il appelle « One 3G ». Son nom exact est à lui redemander : Wan ? Qwen ?
+- Il a fourni Firecrawl (web : search, scrape, map, interact) et Fish Audio (voix). Les clés sont posées sur l'usine le 26/09 et testées : Firecrawl a lu prestiapp.fr, Fish Audio répond 200.
+- Il a aussi fourni uv, geo-optimizer-skill, open-seo et mcp-gsc (Google Search Console, qui demande sa connexion Google).
+- **Conditions tenues pour OpenClaw :**
+  - JAMAIS avec l'abonnement Claude : les conditions d'Anthropic l'interdisent, et son compte serait en risque ;
+  - isolé, dans un conteneur sur l'usine ;
+  - branché aux modèles gratuits : Ollama local et Cloud, freellmapi.
+- Deadline de Benj : **dimanche 27/09 au soir**, « prêt ou pratiquement prêt », surtout pour les clients et la prospection. Le 27/09 à 8 h (fin de la limite Claude), grosse poussée.

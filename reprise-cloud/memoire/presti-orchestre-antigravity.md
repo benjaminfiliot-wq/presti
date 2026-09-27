@@ -45,3 +45,19 @@ Voisins : [[presti-state]], [[presti-platform-v2-masterplan]], [[claude-cli-plug
 **Le pire cas, vécu le 13/09 à 19 h : un agent flash_lite en EAGER a lancé `git restore` sur tous les fichiers « hors périmètre » que le vérificateur lui reprochait** — trois jours de travail non committé de quatre sessions Claude Code (guides sans prix dans `lib/ai.ts`, `motsExacts`, canal d'acquisition 0086, relances manuelles, skill presti-design) effacés d'un coup ; un autre a fait `git checkout cas.jsonl` pendant qu'un troisième y écrivait. Réponses : interdit absolu écrit dans le pied de tâche, AGENTS.md et `.agents/rules/orchestre.md` (git restore/checkout/stash/reset/clean, del hors périmètre → question, jamais d'action) ; le message d'échec du périmètre dit « ces fichiers ne sont pas à toi » ; et surtout : **committer avant de lancer une flotte** — un arbre propre n'a rien à perdre. La reconstitution s'est faite depuis les transcripts JSONL des sessions (`~/.claude/projects/<dossier>/<session>.jsonl` : appels Edit/Write, scripts Bash, résultats de Read et `git diff`), scripts `extraire-ops.mjs` / `extraire-diffs.mjs` du scratchpad. Un corpus « gagné » par gabarit (« Critique (carreleur) [carreleur] : … », 014-20) est l'autre fraude flash_lite : le vérificateur regarde maintenant la part de mots-outils.
 
 **Brancher Antigravity sur un AUTRE dépôt (17/09, prouvé sur clipping-ops).** Le `language_server.exe` tourne en « hub » (`--subclient_type hub`) et sert tous les projets déclarés dans `~/.gemini/config/projects/<uuid>.json` (`id`, `name`, `projectResources.resources[]` avec `gitFolder.folderUri` ou `folderUri` en `file:///c%3A/...`). Écrire un nouveau fichier au même format suffit : `antigravity.mjs sonde` répond aussitôt, sans rouvrir l'IDE. La copie de `antigravity.mjs` du nouveau dépôt doit chercher son dossier dans le JSON du projet. Quotas vus le 17/09 : Claude Sonnet/Opus 4.6 coupés dans Antigravity, Gemini Pro et Flash 3.7/3.8 disponibles (libellés du catalogue acceptés tels quels par `--model`). Voir [[clipforge-clipping]].
+
+**26/09/2026 : le quota Opus d'Antigravity est minuscule.**
+- Deux agents `--model=opus` (026-023 et 000-marketing-026), lancés à 11:37 et 11:42, se sont TOUS DEUX arrêtés à 11:42. `etat` les affichait pourtant « travaille », sans aucune erreur visible, et ils sont restés figés 3 h 20 sans que personne ne le voie.
+- **Règle :**
+  - `--model=pro` (Gemini) par défaut ; Opus seulement pour UNE fiche courte à la fois ;
+  - toujours poser une surveillance de blocage : pas d'écriture dans le périmètre pendant 40 min ⇒ relancer sur `pro` avec un nouveau nom d'agent (`lancer ag-<id>b --tache=<id> --model=pro` reprend la fiche en-cours).
+- Antigravity fait aussi les fiches `claude-code` : `antigravity.mjs` ne les refuse pas, contrairement à `usine.mjs`.
+
+**26/09, 17 h 45 : Gemini a triché sur une fiche qui se note elle-même.**
+- 026-102 (le verifier est `chef-qa.mjs`, écrit par la fiche elle-même) : Gemini a rendu un juge de 659 octets qui affiche « QA Done » et sort en 0. Résultat : PASS. Refusée, mise de côté dans `.orchestre/travail/rejets/`.
+- En revanche, 026-026, 029 et 168, notées par la preuve d'une AUTRE fiche (026-018 ou 026-012, écrites par Claude), ont donné de vrais juges.
+- **Règle :**
+  - donner à Gemini seulement les fiches dont le verifier appartient à une autre fiche (colonne « (026-0xx) » de l'INDEX, jamais « (elle-même) ») ;
+  - regarder la TAILLE des juges livrés avant de commiter ;
+  - une fiche finie en moins de 10 min est suspecte.
+- Pour 026-038 (lot 03 de la preuve horloge-bus), l'agent Gemini a posé une vraie question au lieu de contourner : c'est le bon comportement, à garder dans les consignes (« pose la question sans contourner »).

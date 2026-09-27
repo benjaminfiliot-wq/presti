@@ -31,3 +31,4 @@ Le 26/09/2026 vers 00 h, Benj était à 85 % de sa limite hebdomadaire. Il a dem
   - Il faut `--js-runtimes node`, télécharger la vidéo d'abord, puis les sous-titres `fr` seuls avec `--ignore-errors --sleep-subtitles 8`.
 
 Voir [[ecosysteme-presti]], [[usine-oracle]].
+- **Fable 5.1 ne donne PAS de réserve à part (mesuré le 26/09).** Un agent Fable de 531 k jetons (fiche 026-023) a fait passer « Weekly · all models » de 95 à 97 % ET « Weekly · Fable » de 0 à 6 %. Le compteur Fable est une sous-limite, pas un quota en plus. Ne pas y basculer pour « économiser » la limite.
