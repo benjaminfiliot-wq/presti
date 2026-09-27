@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-27T22:59:57Z
+# Digest — 2026-09-27T23:06:33Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 102 tâche(s) PASS, 189014 ligne(s) · faites par Claude Code : 36 tâche(s) PASS, 99664 ligne(s).
-**État** — file : 0 · en cours : 6 · faites : 144 · refusées : 7
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 103 tâche(s) PASS, 189460 ligne(s) · faites par Claude Code : 37 tâche(s) PASS, 116707 ligne(s).
+**État** — file : 0 · en cours : 5 · faites : 146 · refusées : 7
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -20,10 +20,11 @@
 |---|---|---|---|---|---|
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 026-033 | feature | en-cours | usine-codex-58 | — | depuis 2026-09-27T22:58:30Z · Écrire scripts/commande-exporter.mjs, qui transforme une commande payée au dossier complet en dossier source pour generer.mjs --source (commande.json au contrat de 025-03, photos de l'artisan seulement, vérifiées, sans métadonnées, en webp et avif, attributions crédibles) hors de public/, sans afficher aucune donnée personnelle |
 | 026-034 | feature | en-cours | claude-code | — | depuis 2026-09-27T19:40:57Z · Écrire la migration 0099 dont les déclencheurs refusent dans la base toute entrée d'un envoi en prepare ou approuve pendant la pause générale, vers une clé en opposition active, en premier contact tant que l'interrupteur envoi_froid est fermé, à moins de 90 jours, au-delà de 3 messages ou à moins de 72 h, au-delà des plafonds du jour du canal (envois et nouveaux contacts comptés à part), en second formulaire à une même entreprise (un par entreprise, à vie), en e-mail sans preuve de demande ou en premier contact par e-mail, en relance hors des règles de la voie gratuite, ou approuvé sans les trois verdicts par un autre que le Facteur, annulent les envois en attente d'un nouvel opposant, et exposent ops_garde_etat(), avec jumeaux, contrôle et compte rendu d'essai à sec |
 | 026-035 | feature | en-cours | usine-codex-59 | — | depuis 2026-09-27T22:59:56Z · Écrire les écrans de l'achat public derrière siteAchatPublic (page /site/acheter à quatre champs et case CGU, page /site/commander/merci avec renvoi du lien, mode « compléter mon dossier » de /site/commander avec l'étape Vos prestations, paramètre suite sûr de /onboarding) |
-| 026-104 | test | en-cours | claude-code | — | depuis 2026-09-27T19:05:19Z · Écrire le juge d'écran de la station pilotage-ecran-qa (--partie=station\|vues\|salles\|salles-suite\|fil\|gestes\|experience : captures prises par le juge à 1440×900 et 390×844 sur la copie au drapeau levé, vues servies par un jeu d'essai tiré au hasard, événement injecté, immobilité mesurée sans événement), le script de recette pilotage-recette.mjs (--avant, --reel, --constat) et le lot c de la preuve, chacun échouant sur la référence avec son premier critère |
+| 026-059 | feature | en-cours | usine-codex-60 | — | depuis 2026-09-27T23:01:02Z · Créer GET /api/controle/tresorerie et la tuile Argent (encaissé du jour, 7 jours et mois, abonnement mensuel récurrent, sites vendus, dépenses, marge, seuil de TVA) calculées uniquement par lib/direction/stripe.ts et lib/direction/tresorerie.ts, montrée en tête de Comptabilité, plus une veille hebdomadaire du seuil de TVA |
+| 026-033 | feature | fait | usine-codex-58 | PASS | 2026-09-27T23:06:33Z · 11s · 446 l. |
+| 026-104 | test | fait | claude-code | PASS | 2026-09-27T23:05:48Z · 548s · 17043 l. |
 | 026-042 | feature | fait | usine-codex-57 | PASS | 2026-09-27T22:55:45Z · 72s · 520 l. |
 | 026-031 | feature | fait | usine-codex-56 | PASS | 2026-09-27T22:53:06Z · 163s · 427 l. |
 | 026-007 | feature | fait | claude-code | PASS | 2026-09-27T22:50:20Z · 5s · 406 l. |
@@ -117,6 +118,5 @@
 | 021-23 | test | fait | antigravity | PASS | 2026-09-15T21:56:40Z · 0s · 0 l. |
 | 021-17 | feature | fait | codex-21 | PASS | 2026-09-15T21:16:46Z · 451s · 0 l. |
 | 021-04 | contenu | fait | claude-021-04 | PASS | 2026-09-15T16:59:18Z · 2s · 1028 l. |
-| 021-14 | contenu | refuse | ag-41-lite | FAIL | ✗ films natif et Lenis : FAIL — LN-7 : la première image de natif.mp4 ne ressemble pas à l'accueil de la démo (écart 1.000, moins de 0,15) : page sans styles, m |
 
-… 57 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 58 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
