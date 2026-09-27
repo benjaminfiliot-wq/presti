@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-27T21:44:04Z
+# Digest — 2026-09-27T22:08:12Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 98 tâche(s) PASS, 187683 ligne(s) · faites par Claude Code : 35 tâche(s) PASS, 99258 ligne(s).
-**État** — file : 0 · en cours : 5 · faites : 139 · refusées : 8
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 99 tâche(s) PASS, 187683 ligne(s) · faites par Claude Code : 35 tâche(s) PASS, 99258 ligne(s).
+**État** — file : 0 · en cours : 5 · faites : 140 · refusées : 7
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -23,6 +23,7 @@
 | 026-007 | feature | en-cours | claude-code | — | depuis 2026-09-27T17:30:49Z · Mettre en service la sauvegarde quotidienne : premier envoi réel vers benjaminfiliot-wq/presti-sauvegarde, puis tâche planifiée Windows « Presti instantane quotidien » (chaque jour à 13 h et à l'ouverture de session, rattrapée au réveil), après l'accord écrit de Benj |
 | 026-034 | feature | en-cours | claude-code | — | depuis 2026-09-27T19:40:57Z · Écrire la migration 0099 dont les déclencheurs refusent dans la base toute entrée d'un envoi en prepare ou approuve pendant la pause générale, vers une clé en opposition active, en premier contact tant que l'interrupteur envoi_froid est fermé, à moins de 90 jours, au-delà de 3 messages ou à moins de 72 h, au-delà des plafonds du jour du canal (envois et nouveaux contacts comptés à part), en second formulaire à une même entreprise (un par entreprise, à vie), en e-mail sans preuve de demande ou en premier contact par e-mail, en relance hors des règles de la voie gratuite, ou approuvé sans les trois verdicts par un autre que le Facteur, annulent les envois en attente d'un nouvel opposant, et exposent ops_garde_etat(), avec jumeaux, contrôle et compte rendu d'essai à sec |
 | 026-104 | test | en-cours | claude-code | — | depuis 2026-09-27T19:05:19Z · Écrire le juge d'écran de la station pilotage-ecran-qa (--partie=station\|vues\|salles\|salles-suite\|fil\|gestes\|experience : captures prises par le juge à 1440×900 et 390×844 sur la copie au drapeau levé, vues servies par un jeu d'essai tiré au hasard, événement injecté, immobilité mesurée sans événement), le script de recette pilotage-recette.mjs (--avant, --reel, --constat) et le lot c de la preuve, chacun échouant sur la référence avec son premier critère |
+| 026-053 | feature | fait | codex | PASS | 2026-09-27T22:08:11Z · 111s · 0 l. |
 | 026-168 | test | fait | claude-code | PASS | 2026-09-27T21:43:00Z · 378s · 2169 l. |
 | 026-067 | test | fait | claude-code | PASS | 2026-09-27T21:08:41Z · 650s · 0 l. |
 | 026-040 | feature | fait | claude-code | PASS | 2026-09-27T20:47:49Z · 100s · 639 l. |
@@ -34,7 +35,6 @@
 | 026-220 | test | fait | claude-code | PASS | 2026-09-27T19:52:14Z · 112s · 3246 l. |
 | 026-037 | test | fait | claude-code | PASS | 2026-09-27T19:50:11Z · 777s · 5646 l. |
 | 026-027 | feature | fait | claude-code | PASS | 2026-09-27T19:29:12Z · 49s · 465 l. |
-| 026-053 | feature | refuse | usine-codex-51 | FAIL | FAIL SV-12 — --service --accelerer : 0 mesure(s) en 10 s (un tour par seconde attendu, 5 au moins) |
 | 026-013 | feature | fait | claude-code | PASS | 2026-09-27T19:12:21Z · 11s · 2324 l. |
 | 026-050 | feature | fait | claude-code | PASS | 2026-09-27T19:03:27Z · 128s · 1479 l. |
 | 026-045 | test | fait | claude-code | PASS | 2026-09-27T18:25:07Z · 342s · 0 l. |
