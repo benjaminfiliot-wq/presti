@@ -1,0 +1,9 @@
+[Unit]
+Description=Presti — une demande au modèle (chef) est prête
+
+[Path]
+PathExistsGlob=/srv/presti-chef/echange/*/demande.pret
+Unit=presti-chef-modele.service
+
+[Install]
+WantedBy=paths.target

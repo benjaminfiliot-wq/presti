@@ -1,0 +1,174 @@
+// TÉMOIN de chef-qa (026-102) — une implémentation de référence, jugée verte par chef-qa, jamais déployée.
+// Le vrai scripts/chef/commun.mjs est écrit par 026-105. Chaque sabotage de --preuve-echecs part de cette copie.
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { chercherSecrets } from '../instantane-quotidien.mjs'
+
+export const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
+export const TRAVAIL = path.join(RACINE, '.orchestre', 'travail', 'chef')
+export const TYPES = ['code', 'contenu', 'recherche', 'tri', 'veille', 'verification', 'relecture', 'redaction_interne']
+export const PLAFONDS = { plein: { taches: 10, decisions: 5 }, leger: { taches: 3, decisions: 0 } }
+export const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/
+const CLE_RE = /^chef:\d{4}-\d{2}-\d{2}:[a-z0-9-]{3,80}$/
+const CLE_IDEE_RE = /^chef:\d{4}-\d{2}-\d{2}:idee-[a-z0-9-]{3,75}$/
+const CLE_OPTION_RE = /^[a-z_]{2,30}$/
+const HEURE = 3_600_000
+
+export class Arret extends Error { constructor(code, message) { super(message); this.code = code } }
+
+export const args = process.argv.slice(2)
+export function option(nom, defaut) {
+  const a = args.find((x) => x === `--${nom}` || x.startsWith(`--${nom}=`))
+  if (a === undefined) return defaut
+  return a.includes('=') ? a.slice(a.indexOf('=') + 1) : true
+}
+export const positionnels = () => args.filter((a) => !a.startsWith('--'))
+
+export function lireJeton() {
+  const j = process.env.PRESTI_JETON_CHEF
+  if (!j || !j.trim()) throw new Arret(2, 'PRESTI_JETON_CHEF absent')
+  return j.trim()
+}
+export function baseSure(base) {
+  let u
+  try { u = new URL(base || 'https://prestiapp.fr') } catch { throw new Arret(2, 'base illisible') }
+  if (u.protocol === 'https:') return u.origin
+  if (u.protocol === 'http:' && (u.hostname === '127.0.0.1' || u.hostname === 'localhost')) return u.origin
+  throw new Arret(2, 'base refusée : https://, ou http:// vers 127.0.0.1 ou localhost seulement')
+}
+
+export async function appeler(base, jeton, methode, chemin, corps) {
+  try {
+    const r = await fetch(base + chemin, {
+      method: methode,
+      headers: { authorization: `Bearer ${jeton}`, ...(corps === undefined ? {} : { 'content-type': 'application/json' }) },
+      body: corps === undefined ? undefined : JSON.stringify(corps),
+      signal: AbortSignal.timeout(20_000),
+    })
+    let json = null
+    try { json = await r.json() } catch { json = null }
+    return { statut: r.status, json }
+  } catch (e) {
+    return { statut: 0, json: null, erreur: e?.cause?.code || e?.name || 'reseau' }
+  }
+}
+
+export const horodatage = () => new Date().toISOString().replace(/[:.]/g, '-')
+export function lireJson(f, defaut = null) { try { return JSON.parse(fs.readFileSync(f, 'utf8')) } catch { return defaut } }
+export function ecrireJson(f, v) { fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, JSON.stringify(v, null, 2) + '\n') }
+export const idsDe = (v) => (Array.isArray(v) ? v : Array.isArray(v?.ids) ? v.ids : []).filter((x) => Number.isInteger(x))
+
+// Balises d'un bloc de données : toute ouverture ou fermeture venue des données est neutralisée.
+export const neutraliser = (s) => String(s).replace(/<(\/?)(donnees_|consignes_benj)/g, '&lt;$1$2')
+
+export function toutesLesChaines(v, out = []) {
+  if (typeof v === 'string') out.push(v)
+  else if (Array.isArray(v)) for (const x of v) toutesLesChaines(x, out)
+  else if (v && typeof v === 'object') for (const [k, x] of Object.entries(v)) { out.push(k); toutesLesChaines(x, out) }
+  return out
+}
+export function fautesDeTexte(v) {
+  const texte = toutesLesChaines(v).join('\n')
+  const f = chercherSecrets(texte).map((n) => `secret (${n})`)
+  if (EMAIL.test(texte)) f.push('adresse e-mail')
+  return f
+}
+
+const estObjet = (v) => v !== null && typeof v === 'object' && !Array.isArray(v)
+const signes = (s) => [...s].length
+function cles(o, permises, requises, ou, fautes) {
+  if (!estObjet(o)) { fautes.push(`${ou} : objet attendu`); return false }
+  for (const k of Object.keys(o)) if (!permises.includes(k)) fautes.push(`${ou} : clé inconnue « ${k} »`)
+  for (const k of requises) if (!(k in o)) fautes.push(`${ou} : « ${k} » manque`)
+  return true
+}
+const chaine = (v, min, max) => typeof v === 'string' && signes(v) >= min && signes(v) <= max
+
+// Le validateur du plan, écrit à la main (026-105) : la liste des écarts, sans aucune valeur.
+export function validerPlan(plan, cycle, maintenant = new Date()) {
+  const f = []
+  if (!cles(plan, ['cycle', 'brief', 'compte_rendu', 'consignes_lues', 'taches', 'decisions'], ['cycle', 'brief', 'compte_rendu', 'consignes_lues', 'taches', 'decisions'], 'plan', f)) return f
+  if (!['plein', 'leger'].includes(plan.cycle)) f.push('cycle : plein ou leger')
+  if (cycle && plan.cycle !== cycle) f.push(`cycle : le plan dit ${plan.cycle}, le cycle est ${cycle}`)
+  const plafond = PLAFONDS[cycle || plan.cycle] || PLAFONDS.leger
+  if (!Array.isArray(plan.brief) || plan.brief.length !== 3 || !plan.brief.every((b) => chaine(b, 0, 140))) f.push('brief : trois chaînes de 140 signes au plus')
+  if (!Array.isArray(plan.compte_rendu) || plan.compte_rendu.length !== 3) f.push('compte_rendu : exactement trois lignes')
+  else plan.compte_rendu.forEach((l, i) => { if (!chaine(l, 1, 60) || /[·\n\r@]|http/i.test(l)) f.push(`compte_rendu[${i}] : 1 à 60 signes, sans ·, @, lien ni retour à la ligne`) })
+  if (!Array.isArray(plan.consignes_lues) || plan.consignes_lues.length > 10) f.push('consignes_lues : 10 au plus')
+  else plan.consignes_lues.forEach((c, i) => {
+    if (!cles(c, ['id', 'suite', 'pourquoi'], ['id', 'suite', 'pourquoi'], `consignes_lues[${i}]`, f)) return
+    if (!Number.isInteger(c.id) || c.id < 1) f.push(`consignes_lues[${i}].id : entier ≥ 1`)
+    if (!['tache', 'decision', 'note', 'impossible'].includes(c.suite)) f.push(`consignes_lues[${i}].suite inconnue`)
+    if (!chaine(c.pourquoi, 1, 140)) f.push(`consignes_lues[${i}].pourquoi : 1 à 140 signes`)
+  })
+  const vues = new Set()
+  if (!Array.isArray(plan.taches)) f.push('taches : liste attendue')
+  else {
+    if (plan.taches.length > plafond.taches) f.push(`taches : ${plafond.taches} au plus en cycle ${cycle || plan.cycle}`)
+    plan.taches.forEach((t, i) => {
+      const ou = `taches[${i}]`
+      if (!cles(t, ['type', 'capacite', 'cle_idempotence', 'objet', 'charge', 'sortante'], ['type', 'capacite', 'cle_idempotence', 'charge', 'sortante'], ou, f)) return
+      if (!TYPES.includes(t.type)) f.push(`${ou}.type hors de la liste permise`)
+      if (!TYPES.includes(t.capacite)) f.push(`${ou}.capacite hors de la liste permise`)
+      if (typeof t.cle_idempotence !== 'string' || !CLE_RE.test(t.cle_idempotence)) f.push(`${ou}.cle_idempotence : chef:<date>:<mot-clé>`)
+      else if (vues.has(t.cle_idempotence)) f.push(`${ou}.cle_idempotence en double`); else vues.add(t.cle_idempotence)
+      if ('objet' in t && !chaine(t.objet, 1, 200)) f.push(`${ou}.objet : 200 signes au plus`)
+      if (cles(t.charge, ['titre', 'pourquoi'], ['titre', 'pourquoi'], `${ou}.charge`, f)) {
+        if (!chaine(t.charge.titre, 1, 120)) f.push(`${ou}.charge.titre : 120 signes au plus`)
+        if (!chaine(t.charge.pourquoi, 1, 300)) f.push(`${ou}.charge.pourquoi : 300 signes au plus`)
+      }
+      if (t.sortante !== false) f.push(`${ou}.sortante doit valoir false`)
+    })
+  }
+  if (!Array.isArray(plan.decisions)) f.push('decisions : liste attendue')
+  else {
+    if (plan.decisions.length > plafond.decisions) f.push(`decisions : ${plafond.decisions} au plus en cycle ${cycle || plan.cycle}`)
+    plan.decisions.forEach((d, i) => {
+      const ou = `decisions[${i}]`
+      const toutes = ['cle_idempotence', 'nature', 'question', 'contexte', 'options', 'option_defaut', 'montant_cents', 'portee', 'echeance']
+      if (!cles(d, toutes, toutes, ou, f)) return
+      if (!['arbitrage', 'idee'].includes(d.nature)) f.push(`${ou}.nature : arbitrage ou idee`)
+      if (typeof d.cle_idempotence !== 'string' || !CLE_RE.test(d.cle_idempotence)) f.push(`${ou}.cle_idempotence : chef:<date>:<mot-clé>`)
+      else if (vues.has(d.cle_idempotence)) f.push(`${ou}.cle_idempotence en double`); else vues.add(d.cle_idempotence)
+      if (!chaine(d.question, 5, 300)) f.push(`${ou}.question : 5 à 300 signes`)
+      if (!chaine(d.contexte, 0, 2000)) f.push(`${ou}.contexte : 2 000 signes au plus`)
+      const o = d.options
+      if (!Array.isArray(o) || o.length < 2 || o.length > 3) f.push(`${ou}.options : 2 ou 3`)
+      else {
+        o.forEach((op, j) => {
+          if (!cles(op, ['cle', 'libelle', 'recommandee', 'engage_cents'], ['cle', 'libelle', 'recommandee', 'engage_cents'], `${ou}.options[${j}]`, f)) return
+          if (typeof op.cle !== 'string' || !CLE_OPTION_RE.test(op.cle)) f.push(`${ou}.options[${j}].cle : ^[a-z_]{2,30}$`)
+          if (!chaine(op.libelle, 1, 80)) f.push(`${ou}.options[${j}].libelle : 80 signes au plus`)
+          if (typeof op.recommandee !== 'boolean') f.push(`${ou}.options[${j}].recommandee : booléen`)
+          if (!Number.isInteger(op.engage_cents) || op.engage_cents < 0) f.push(`${ou}.options[${j}].engage_cents : entier ≥ 0`)
+        })
+        if (new Set(o.map((x) => x?.cle)).size !== o.length) f.push(`${ou}.options : clés en double`)
+        if (o.filter((x) => x?.recommandee === true).length !== 1) f.push(`${ou}.options : exactement une recommandée`)
+        const defaut = o.find((x) => x?.cle === d.option_defaut)
+        if (!defaut) f.push(`${ou}.option_defaut : la clé d'une option`)
+        else if (defaut.engage_cents !== 0) f.push(`${ou}.option_defaut : l'option par défaut n'engage rien (engage_cents 0)`)
+      }
+      if (!Number.isInteger(d.montant_cents) || d.montant_cents < 0) f.push(`${ou}.montant_cents : entier ≥ 0`)
+      if (!['aucune', 'argent', 'artisan', 'securite'].includes(d.portee)) f.push(`${ou}.portee inconnue`)
+      const e = typeof d.echeance === 'string' ? Date.parse(d.echeance) : NaN
+      if (!Number.isFinite(e) || e < maintenant.getTime() + HEURE || e > maintenant.getTime() + 7 * 24 * HEURE) f.push(`${ou}.echeance : entre +1 h et +7 j`)
+      if (d.nature === 'idee') {
+        if (!CLE_IDEE_RE.test(String(d.cle_idempotence))) f.push(`${ou} : une idée a une clé chef:<date>:idee-<mot-clé>`)
+        const ks = Array.isArray(o) ? o.map((x) => x?.cle).sort().join(',') : ''
+        if (ks !== 'lancer,reporter') f.push(`${ou} : une idée a exactement les options lancer et reporter`)
+        if (Array.isArray(o) && o.some((x) => x?.engage_cents !== 0)) f.push(`${ou} : une idée n'engage rien`)
+        if (d.option_defaut !== 'reporter') f.push(`${ou} : le défaut d'une idée est reporter`)
+      } else if (String(d.cle_idempotence).includes(':idee-')) f.push(`${ou} : le préfixe idee- est réservé aux idées`)
+    })
+  }
+  f.push(...fautesDeTexte(plan))
+  return f
+}
+
+export function principal(fn) {
+  fn().then((code) => { process.exitCode = code ?? 0 }).catch((e) => {
+    console.error(`✗ ${e instanceof Arret ? e.message : (e?.message || e)}`)
+    process.exitCode = e instanceof Arret ? e.code : 1
+  })
+}

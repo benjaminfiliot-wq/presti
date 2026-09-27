@@ -1,0 +1,60 @@
+{
+  "lignes": [
+    "Ligne témoin trop longue : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "Deux sites livrés ; un troisième attend une photo du client.",
+    "Coût du jour : 0 €, tout a tourné sur l'usine."
+  ],
+  "objectif": {
+    "libelle": "Encaisser 500 € cette semaine",
+    "mesure": "encaisse_eur",
+    "cible": 500
+  },
+  "idees": [
+    {
+      "cle_idempotence": "chef:2026-09-27:idee-avis-clients-livres",
+      "question": "Demander un avis aux clients livrés depuis un mois ?",
+      "contexte": "Une idée de chantier : Claude Code l'écrit sur le poste si tu la lances.",
+      "options": [
+        {
+          "cle": "lancer",
+          "libelle": "Lancer ce chantier",
+          "recommandee": true,
+          "engage_cents": 0
+        },
+        {
+          "cle": "reporter",
+          "libelle": "Reporter à plus tard",
+          "recommandee": false,
+          "engage_cents": 0
+        }
+      ],
+      "option_defaut": "reporter",
+      "portee": "aucune",
+      "montant_cents": 0,
+      "echeance": "@+48h"
+    },
+    {
+      "cle_idempotence": "chef:2026-09-27:idee-page-comparatif",
+      "question": "Écrire une page qui compare nos trois offres ?",
+      "contexte": "Une idée de chantier : Claude Code l'écrit sur le poste si tu la lances.",
+      "options": [
+        {
+          "cle": "lancer",
+          "libelle": "Lancer ce chantier",
+          "recommandee": true,
+          "engage_cents": 0
+        },
+        {
+          "cle": "reporter",
+          "libelle": "Reporter à plus tard",
+          "recommandee": false,
+          "engage_cents": 0
+        }
+      ],
+      "option_defaut": "reporter",
+      "portee": "aucune",
+      "montant_cents": 0,
+      "echeance": "@+48h"
+    }
+  ]
+}
