@@ -2,27 +2,41 @@
 // par Claude Code pour prouver que pilotage-push-qa sait rendre 0. Ce n'est PAS le module livré : l'exécutant de 026-051
 // écrit le sien ; celui-ci ne sert qu'à juges-026-pilotage-preuve (JA-7, et ses sabotages pour JA-8).
 //
+// Régénéré le 28/09 (rejeu de 026-012 après le durcissement de pilotage-push-qa.mjs pour 026-051, cf.
+// .orchestre/preuves/026-012/rejoue-apres-durcissement-026-051-28-09.md) : le témoin du 27/09 ne portait que les six motifs
+// d'origine et PF-2 (durci le 28/09) exige désormais les NEUF motifs poussés — les six d'origine (paiement, appel,
+// panne_agent, argent_bloque, coupe_circuit, digest) plus les trois ajoutés par la réponse du 28/09 (usine_injoignable,
+// canal_arrete, gmail_bloque). Le texte, le bloc et le renotify de chaque motif sont ceux prescrits par PF-2 (PRESCRIT dans
+// pilotage-push-qa.mjs), recopiés de lib/pilotage/notifications.ts de HEAD.
+//
+// coupe_circuit et digest restent les deux DERNIERS éléments du tableau MOTIFS_POUSSES, dans cet ordre et sans virgule
+// finale ni retour à la ligne entre eux et le crochet fermant : le sabotage « motifs-sans-digest » de a/lot.mjs (qui tue
+// PF-2) cherche cette fin de déclaration mot pour mot et doit continuer à la trouver exactement une fois.
+//
 // La charge d'un push aux fondateurs ne dépend QUE du motif : aucun nom, aucun montant, aucun téléphone de l'alerte n'y
 // entre. Le détail est dans le Pilotage, où mène l'adresse.
-import { lienPilotage, type Bloc } from './liens'
+import { lienPilotage } from './liens'
 import type { ChargePush } from '@/lib/push'
 
-/** Les six motifs qui partent en push aux fondateurs ; tous les autres restent des e-mails. */
-export const MOTIFS_POUSSES = ['paiement', 'appel', 'panne_agent', 'argent_bloque', 'coupe_circuit', 'digest'] as const
-export type MotifPousse = typeof MOTIFS_POUSSES[number]
+/** Les neuf motifs qui partent en push aux fondateurs ; tous les autres restent des e-mails. */
+export const MOTIFS_POUSSES = ['paiement', 'appel', 'panne_agent', 'argent_bloque', 'usine_injoignable', 'canal_arrete', 'gmail_bloque', 'coupe_circuit', 'digest'] as const
+type MotifPousse = typeof MOTIFS_POUSSES[number]
 
-const CHARGES: Record<MotifPousse, { titre: string; ligne: string; bloc: Bloc | null }> = {
-  paiement: { titre: 'Un paiement à regarder', ligne: 'Un paiement demande votre œil : le détail est dans le Pilotage.', bloc: 'argent' },
-  appel: { titre: 'Un appel à passer', ligne: 'Quelqu’un attend votre appel : le détail est dans le Pilotage.', bloc: 'appeler' },
-  panne_agent: { titre: 'Un agent est en panne', ligne: 'Un agent ne donne plus signe de vie depuis plus de deux heures.', bloc: 'agents' },
-  argent_bloque: { titre: 'De l’argent bloqué', ligne: 'Un montant attend un geste de votre part dans le Pilotage.', bloc: 'argent' },
-  coupe_circuit: { titre: 'Un coupe-circuit a sauté', ligne: 'Une décision vous attend avant que les agents ne reprennent.', bloc: 'decider' },
-  digest: { titre: 'Le point du Pilotage', ligne: 'Le résumé est prêt.', bloc: null },
+const CHARGES: Record<MotifPousse, Omit<ChargePush, 'tag'>> = {
+  paiement: { titre: 'Paiement', ligne: 'Un paiement demande votre attention. Le détail est dans le Poste.', url: lienPilotage({ bloc: 'argent' }), renotify: true },
+  appel: { titre: 'Appel à rendre', ligne: 'Quelqu’un demande à être rappelé.', url: lienPilotage({ bloc: 'appeler' }), renotify: true },
+  panne_agent: { titre: 'Agent en panne', ligne: 'Un agent ne donne plus signe de vie depuis plus de 2 h.', url: lienPilotage({ bloc: 'agents' }), renotify: true },
+  argent_bloque: { titre: 'Argent bloqué', ligne: 'Une commande payée n’avance pas.', url: lienPilotage({ bloc: 'argent' }), renotify: true },
+  usine_injoignable: { titre: 'Usine injoignable', ligne: 'L’usine ne donne plus signe de vie. Le détail est dans le Poste.', url: lienPilotage({ bloc: 'agents' }), renotify: true },
+  canal_arrete: { titre: 'Canal arrêté', ligne: 'Un canal d’envoi est arrêté. Le détail est dans le Poste.', url: lienPilotage({ bloc: 'envois' }), renotify: true },
+  gmail_bloque: { titre: 'Gmail bloqué', ligne: 'La boîte de prospection est bloquée. Le détail est dans le Poste.', url: lienPilotage({ bloc: 'envois' }), renotify: true },
+  coupe_circuit: { titre: 'Agents en pause', ligne: 'Des coûts sans recette ce mois : une décision vous attend.', url: lienPilotage({ bloc: 'decider' }), renotify: false },
+  digest: { titre: 'Le point du Pilotage', ligne: 'Décisions, appels et argent du jour : tout est dans le Poste.', url: lienPilotage(), renotify: false },
 }
 
 /** La charge d'un push aux fondateurs pour ce motif, ou null s'il ne se pousse pas. Ne reçoit que le motif. */
 export function chargeFondateur(motif: string): ChargePush | null {
-  if (!(MOTIFS_POUSSES as readonly string[]).includes(motif)) return null
-  const c = CHARGES[motif as MotifPousse]
-  return { titre: c.titre, ligne: c.ligne, url: c.bloc ? lienPilotage({ bloc: c.bloc }) : lienPilotage(), tag: `pilotage-${motif}` }
+  if (!MOTIFS_POUSSES.some(m => m === motif)) return null
+  const connu = motif as MotifPousse
+  return { ...CHARGES[connu], tag: `pilotage-${connu}` }
 }
