@@ -1,0 +1,45 @@
+essai à sec de 0100_ops_file_argent.sql (026-036) — exécuté sur le projet Supabase gorcdvmueakcncsmrouo par
+mcp__692ffb0a-135d-434e-8d36-36d86f4b81c3__execute_sql, jamais par apply_migration.
+
+Commande de génération : node scripts/argent-sql-qa.mjs --generer-essai --avec=0096
+Empreinte du jumeau nu courant (supabase/migrations/_A_COLLER_sql_editor_0100_NU.sql, coupé à la marque de contrôle) :
+bd871ed5768fc2915e35fe8ca209c751190dda8058baf99148e1d440718f882b
+
+Le bloc généré (do $essai_026$ ... end $essai_026$;) a été passé à execute_sql tel quel, dans un do $wrap...$ qui le
+reconstitue par concaténation de segments dollar-quotés (aucune donnée n'est modifiée par ce wrapper, qui sert seulement à
+transmettre le texte). L'essai exécute d'abord le jumeau nu de 0096 (schéma ops), puis celui de 0100 (file pgmq +
+ops.argent_messages + les 5 fonctions), puis le scénario de scripts/fixtures/026-horloge-bus/essais/0100.sql, puis lève
+`raise exception 'ESSAI_A_SEC <empreinte> <json>'` pour tout annuler (aucun commit n'a eu lieu).
+
+── Premier essai (avant correction) ──────────────────────────────────────────────────────────────────────────────────────
+Un premier essai (empreinte 8b5653b5a2e7e3614ac4649cfeef171d174e123ac8f46602463242d5ed5317bc, avant la correction ci-
+dessous) a révélé un défaut réel dans 0100_ops_file_argent.sql : dans public.ops_argent_lire, la colonne `cle` de
+`ops.argent_messages` était référencée sans qualification dans deux `update ... where cle = v_cle`, alors que `cle` est
+aussi un paramètre de sortie de la fonction (returns table(..., cle text, ...)) — Postgres refusait avec
+« 42702 column reference "cle" is ambiguous ». Les groupes A, B et C du scénario s'arrêtaient net à ce point (leurs clés
+d'assertion suivantes manquaient du compte rendu). Corrigé en qualifiant les deux références :
+`where ops.argent_messages.cle = v_cle`. Le jumeau, son nu et le contrôle ont été régénérés, et l'essai rejoué ci-dessous.
+
+── Essai retenu (après correction) — compte rendu brut rendu par execute_sql ────────────────────────────────────────────
+ERROR:  P0001: ESSAI_A_SEC bd871ed5768fc2915e35fe8ca209c751190dda8058baf99148e1d440718f882b {"diag_etat": "{\"en_file\": 1, \"faits_24h\": 0, \"plus_vieux_s\": 0, \"abandonnes_24h\": 0, \"non_faits_plus_de_15_min\": 0}", "diag_type": "P0001 ops:type_argent", "diag_vt_2": "P0001 ops:vt", "diag_n_zero": 1, "msg_id_note": true, "diag_abandon": "0 puis 1", "diag_effacer": 1, "diag_en_file": 1, "diag_vt_3601": "P0001 ops:vt", "fait_le_pose": true, "vt_2s_refuse": true, "diag_anon_pgmq": "42501 permission denied for schema pgmq", "diag_quatrieme": 0, "etat_cinq_cles": true, "fait_rend_true": true, "vt_3601_refuse": true, "diag_lectures_1": 1, "diag_lectures_2": 2, "relu_lectures_2": true, "anon_refuse_pgmq": true, "abandonne_le_pose": true, "fait_plus_en_file": true, "diag_relu_aussitot": 0, "relu_aussitot_rien": true, "diag_anon_fonctions": "anon 5/5", "diag_trois_lectures": 3, "lire_30s_lectures_1": true, "anon_sans_usage_pgmq": true, "essai_effacer_efface": true, "n_zero_lit_un_message": true, "envoyer_rend_un_msg_id": true, "fait_second_rend_false": true, "second_envoi_rend_null": true, "trois_lectures_rendues": true, "diag_authenticated_pgmq": "42501 permission denied for schema pgmq", "un_seul_message_en_file": true, "lire_30s_rend_le_message": true, "type_inconnu_type_argent": true, "authenticated_refuse_pgmq": true, "quatrieme_lecture_archive": true, "set_vt_0_relu_meme_msg_id": true, "anon_refuse_cinq_fonctions": true, "evenement_argent_abandonne": true, "diag_authenticated_fonctions": "authenticated 5/5", "quatrieme_lecture_non_rendue": true, "authenticated_sans_usage_pgmq": true, "authenticated_refuse_cinq_fonctions": true}
+CONTEXT:  PL/pgSQL function inline_code_block line 570 at RAISE
+SQL statement "do $essai_026$ ... end $essai_026$;"
+PL/pgSQL function inline_code_block line 586 at EXECUTE
+
+Les 30 clés attendues (cahier FA-6, scripts/fixtures/026-horloge-bus/essais/0100.sql) sont toutes à true : envoyer_rend_un_msg_id,
+msg_id_note, second_envoi_rend_null, un_seul_message_en_file, lire_30s_rend_le_message, lire_30s_lectures_1,
+relu_aussitot_rien, set_vt_0_relu_meme_msg_id, relu_lectures_2, fait_rend_true, fait_le_pose, fait_second_rend_false,
+fait_plus_en_file, trois_lectures_rendues, quatrieme_lecture_non_rendue, quatrieme_lecture_archive, abandonne_le_pose,
+evenement_argent_abandonne, type_inconnu_type_argent, vt_2s_refuse, vt_3601_refuse, n_zero_lit_un_message,
+etat_cinq_cles, essai_effacer_efface, anon_refuse_cinq_fonctions, authenticated_refuse_cinq_fonctions,
+anon_refuse_pgmq, authenticated_refuse_pgmq, anon_sans_usage_pgmq, authenticated_sans_usage_pgmq.
+
+── Après l'exécution : zéro trace ────────────────────────────────────────────────────────────────────────────────────────
+Requête (execute_sql, hors transaction de l'essai, après son abandon) :
+  select to_regclass('ops.argent_messages') is null as rien_ne_reste
+Résultat : [{"rien_ne_reste":true}]
+
+APRES rien_ne_reste=true
+
+Contrôle supplémentaire : select extname, extversion from pg_extension where extname = 'pgmq' → aucune ligne (l'extension
+n'est pas restée installée : create extension a bien été annulé avec le reste de la transaction).
