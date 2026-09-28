@@ -1,6 +1,6 @@
 # Registre des traitements — l'entreprise Presti
 
-> Côté ARTISAN, le registre est dans `lib/legalArtisan.ts` : ce que Presti traite **pour le compte** de chaque artisan (ses prospects, ses devis, ses factures), où Presti est sous-traitant. Ce fichier-ci est le registre de **l'entreprise Presti responsable de traitement** : ses clients (les artisans), ses fondateurs, ses prospects, ses fournisseurs. Une ligne par traitement. Mis à jour le 7 septembre 2026 (ajout du Centre de direction).
+> Côté ARTISAN, le registre est dans `lib/legalArtisan.ts` : ce que Presti traite **pour le compte** de chaque artisan (ses prospects, ses devis, ses factures), où Presti est sous-traitant. Ce fichier-ci est le registre de **l'entreprise Presti responsable de traitement** : ses clients (les artisans), ses fondateurs, ses prospects, ses fournisseurs. Une ligne par traitement. Mis à jour le 28 septembre 2026 (ajout du § 11, la prospection des professionnels).
 
 ## 1. Les comptes des artisans (clients de Presti)
 
@@ -124,6 +124,28 @@ lit, et l'artisan la voit.
 | **Garanties** | Un ticket qu'il a ouvert est requis ; sans élément désigné par lui, aucun accès n'est demandable ; **pas d'email parti, pas de porte** ; trois demandes au maximum par ticket ; un refus vaut 24 h ; il peut poser un **verrou définitif** « ne plus jamais me demander » ; les traces sont immuables et partent avec son export |
 | **Destinataires** | Supabase, Resend (la notification). Aucun tiers |
 | **Où** | `supabase/migrations/0074_support.sql`, `0075_support_element.sql`, `app/api/controle/support/`, `app/api/securite/acces-support/`, `app/parametres/CarteSupport.tsx` |
+
+## 11. La prospection des professionnels (agents d'acquisition) *(voie gratuite, 28 septembre 2026)*
+
+Depuis la revue du 25 septembre 2026, Presti ne relève **aucune adresse e-mail** sur le site d'un
+professionnel : le premier message part par le **formulaire de contact** publié sur son propre
+site, un message par entreprise, à vie, jamais relancé. La seule adresse gardée est celle qu'une
+personne nous donne elle-même en nous écrivant.
+
+| | |
+|---|---|
+| **Finalité** | Proposer à des entreprises du bâtiment un site, et aux annonceurs de la bibliothèque publicitaire de Meta des vidéos publicitaires, en rapport avec leur métier, **par le formulaire de contact de leur site** ; répondre à celles qui écrivent (réponse au formulaire, formulaire « Recevoir la maquette », commentaire, message) |
+| **Base légale** | Intérêt légitime, prospection B2B en rapport avec la profession (CNIL, page du 10/06/2026 ; RGPD art. 6.1.f) |
+| **Personnes** | Entreprises du bâtiment (artisans), annonceurs de la bibliothèque publicitaire de Meta |
+| **Données** | Dénomination, SIREN, commune, métier, faits publics datés avec leur source (dont l'audit du site : HTTPS, affichage mobile, année du copyright), adresse de la page du formulaire de contact et sa technologie, comptes professionnels Instagram et Facebook, preuves de soumission (empreintes ; captures gardées sur l'usine), messages échangés, créneau et numéro donnés pour un rendez-vous. **Aucune adresse e-mail relevée** : la seule adresse gardée est celle qu'une personne nous donne en nous écrivant |
+| **Sources** | La liste publique des entreprises RGE de l'ADEME (Licence Ouverte), l'API Recherche d'entreprises (SIRENE), le site de l'entreprise, la bibliothèque publicitaire de Meta, et la personne elle-même (réponse, formulaire, commentaire, message) |
+| **Exclusions** | Diffusion partielle (c'est le droit, C. com. A123-96), dirigeants, toute adresse e-mail lue sur un site, les formulaires protégés contre les robots ou qui refusent le démarchage, aucun annuaire ni Google Maps |
+| **Information (art. 14)** | Dès le premier message : qui écrit, d'où vient la liste (ADEME ou Meta), l'adresse de la notice (GitHub Pages), comment s'opposer (« écrivez STOP »), et que le message est rédigé et envoyé par l'**assistant IA** de Presti |
+| **Durée** | **3 ans** à compter de la collecte ou du **dernier contact émanant du prospect** (nos relances ne comptent pas) ; l'opposition est gardée au-delà, réduite à ses clés |
+| **Destinataires** | Aucun |
+| **Sous-traitants** | Supabase, Vercel, Google (la boîte Gmail de prospection), Meta (messages Instagram et Facebook, bibliothèque publicitaire), OpenAI (Codex, sur l'abonnement ChatGPT de Presti : classement des réponses, second juge, rédaction des sites — aucune donnée de prospect vers une offre gratuite), Oracle (Oracle Cloud, le serveur de fabrication à Paris) et GitHub (génération des sites commandés, hébergement de la notice) |
+| **Droits** | Écrire STOP à l'adresse du message (ou répondre « STOP »), ou écrire au responsable ; opposition appliquée en moins de **10 minutes** sur tous les canaux ; réponse à une demande RGPD dans le mois (art. 12.3) |
+| **Où** | `supabase/migrations/0105_acquisition_socle.sql`, `0106_acquisition_echanges.sql`, `lib/agents/acquisition/`, `docs/agents/analyse-interet-legitime.md` |
 
 ---
 
