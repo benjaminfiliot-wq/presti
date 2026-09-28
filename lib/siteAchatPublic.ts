@@ -8,11 +8,13 @@
 //
 // Les dépendances sont injectables (base, envoi, horloge) : les juges et la tournée de livraison passent les leurs.
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { sendEmail } from '@/lib/email'
+import { notifierEntreprise, sendEmail } from '@/lib/email'
+import { consommerLimite } from '@/lib/limites'
 
 export type DependancesAchat = {
   base?: typeof supabaseAdmin
   envoyer?: typeof sendEmail
+  notifier?: typeof notifierEntreprise
   maintenant?: () => Date
 }
 
@@ -94,4 +96,68 @@ export async function purgerBrouillonsPublics(deps: DependancesAchat = {}): Prom
   const { data, error } = await base.from('sites_commandes').delete().eq('etat', 'brouillon').eq('achat_public', true).is('artisan_id', null).lt('cree_le', limite).select('id')
   if (error) throw new Error(`purge des brouillons publics impossible : ${error.message}`)
   return data?.length ?? 0
+}
+
+/** Les états d'une commande payée ou au-delà (ETATS de lib/siteCommande.ts) ; 'brouillon' et 'retiree' ne se rattachent pas. */
+const ETATS_RATTACHABLES = ['payee', 'generee', 'validee', 'en_ligne']
+
+/**
+ * Motif ILIKE qui contient au moins l'adresse, casse comprise : chaque caractère joker de LIKE ou de PostgREST
+ * (% _ * \) devient « un caractère quelconque ». Ce n'est qu'un préfiltre : l'égalité exacte est jugée ensuite, en clair.
+ */
+const motifLarge = (email: string) => email.replace(/[%_*\\]/g, '_')
+
+/**
+ * Rattache au compte `uid` les commandes publiques payées (ou au-delà), encore sans compte, passées avec la MÊME adresse
+ * que celle de sa session (sans tenir compte de la casse). Rend les identifiants des commandes rattachées.
+ *
+ * `emailSession` est l'adresse de la session vérifiée (authArtisan), JAMAIS une adresse venue du corps d'une requête :
+ * c'est la session qui prouve l'accès à la boîte, donc le droit sur la commande.
+ * - mise à jour CONDITIONNELLE (artisan_id is null) : deux appels simultanés ne rattachent qu'une fois ;
+ * - une commande déjà rattachée une fois (rattachee_le), ou dont le compte a été supprimé (compte_supprime_le), n'est
+ *   jamais reprise par un autre compte ;
+ * - pas encore de profil (ligne artisans absente) : rien, la commande attend la fin de l'inscription ;
+ * - compte fondateur : rien (règle de app/api/site/commander/route.ts), et l'entreprise est prévenue (au plus une fois
+ *   par jour et par compte) pour décider à la main.
+ */
+export async function rattacherCommandesParEmail(uid: string, emailSession: string | null | undefined, deps: DependancesAchat = {}): Promise<string[]> {
+  const base = deps.base ?? supabaseAdmin
+  const notifier = deps.notifier ?? notifierEntreprise
+  const maintenant = deps.maintenant ?? (() => new Date())
+  const email = String(emailSession ?? '').trim().toLowerCase()
+  if (!uid || !email || !email.includes('@')) return []
+
+  const { data: candidates, error } = await base.from('sites_commandes').select('id, email')
+    .eq('achat_public', true).is('artisan_id', null).is('rattachee_le', null).is('compte_supprime_le', null)
+    .in('etat', ETATS_RATTACHABLES).ilike('email', motifLarge(email))
+  if (error) throw new Error(`lecture des commandes à rattacher impossible : ${error.message}`)
+  const memeAdresse = (candidates ?? []).filter((c) => String(c.email ?? '').trim().toLowerCase() === email)
+  if (!memeAdresse.length) return []
+
+  const { data: artisan, error: eArtisan } = await base.from('artisans').select('id, is_founder').eq('id', uid).maybeSingle()
+  if (eArtisan) throw new Error(`lecture du compte ${uid} impossible : ${eArtisan.message}`)
+  if (!artisan) return []
+  if (artisan.is_founder) {
+    if (await consommerLimite(`rattachement:fondateur:${uid}`, 1, 86_400)) {
+      const ids = memeAdresse.map((c) => c.id).join(', ')
+      const r = await notifier(
+        'Commande publique à l’adresse d’un compte fondateur',
+        `Une commande de site payée sans compte porte l’adresse d’un compte fondateur (${uid}). Elle n’a PAS été rattachée : un fondateur ne commande pas de site depuis son propre compte (app/api/site/commander/route.ts).\n\nCommande(s) : ${ids}\n\nÀ rattacher ou à rembourser à la main si c’est voulu.`,
+      ).catch((e: unknown) => ({ ok: false, error: e instanceof Error ? e.message : String(e) }))
+      if (!r.ok) console.error('[siteAchatPublic] notification du rattachement refusé (fondateur) :', r.error ?? 'refusée')
+    }
+    return []
+  }
+
+  const le = maintenant().toISOString()
+  const rattachees: string[] = []
+  for (const c of memeAdresse) {
+    const { data: faites, error: eMaj } = await base.from('sites_commandes')
+      .update({ artisan_id: uid, rattachee_le: le, modifie_le: le })
+      .eq('id', c.id).eq('achat_public', true).is('artisan_id', null).is('rattachee_le', null)
+      .select('id')
+    if (eMaj) throw new Error(`rattachement de la commande ${c.id} impossible : ${eMaj.message}`)
+    for (const f of faites ?? []) rattachees.push(String(f.id))
+  }
+  return rattachees
 }

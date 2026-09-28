@@ -6,15 +6,16 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-27T23:09:09Z
+# Digest — 2026-09-28T05:37:13Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 104 tâche(s) PASS, 189926 ligne(s) · faites par Claude Code : 37 tâche(s) PASS, 116707 ligne(s).
-**État** — file : 0 · en cours : 4 · faites : 147 · refusées : 7
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 104 tâche(s) PASS, 189926 ligne(s) · faites par Claude Code : 36 tâche(s) PASS, 114538 ligne(s).
+**État** — file : 0 · en cours : 4 · faites : 146 · refusées : 8
 
-## ⚠ 1 question(s) en attente
+## ⚠ 2 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
+- `.orchestre/en-cours/026-059.question.md` → `node scripts/orchestre.mjs repondre 026-059 <n>`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
@@ -22,6 +23,7 @@
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-034 | feature | en-cours | claude-code | — | depuis 2026-09-27T19:40:57Z · Écrire la migration 0099 dont les déclencheurs refusent dans la base toute entrée d'un envoi en prepare ou approuve pendant la pause générale, vers une clé en opposition active, en premier contact tant que l'interrupteur envoi_froid est fermé, à moins de 90 jours, au-delà de 3 messages ou à moins de 72 h, au-delà des plafonds du jour du canal (envois et nouveaux contacts comptés à part), en second formulaire à une même entreprise (un par entreprise, à vie), en e-mail sans preuve de demande ou en premier contact par e-mail, en relance hors des règles de la voie gratuite, ou approuvé sans les trois verdicts par un autre que le Facteur, annulent les envois en attente d'un nouvel opposant, et exposent ops_garde_etat(), avec jumeaux, contrôle et compte rendu d'essai à sec |
 | 026-059 | feature | en-cours | usine-codex-60 | — | depuis 2026-09-27T23:01:02Z · Créer GET /api/controle/tresorerie et la tuile Argent (encaissé du jour, 7 jours et mois, abonnement mensuel récurrent, sites vendus, dépenses, marge, seuil de TVA) calculées uniquement par lib/direction/stripe.ts et lib/direction/tresorerie.ts, montrée en tête de Comptabilité, plus une veille hebdomadaire du seuil de TVA |
+| 026-168 | test | refuse | claude-code | FAIL | code 1 |
 | 026-035 | feature | fait | usine-codex-59 | PASS | 2026-09-27T23:09:08Z · 124s · 466 l. |
 | 026-033 | feature | fait | usine-codex-58 | PASS | 2026-09-27T23:06:33Z · 11s · 446 l. |
 | 026-104 | test | fait | claude-code | PASS | 2026-09-27T23:05:48Z · 548s · 17043 l. |
@@ -30,7 +32,6 @@
 | 026-007 | feature | fait | claude-code | PASS | 2026-09-27T22:50:20Z · 5s · 406 l. |
 | 026-030 | feature | fait | usine-codex-55 | PASS | 2026-09-27T22:48:21Z · 142s · 384 l. |
 | 026-053 | feature | fait | codex | PASS | 2026-09-27T22:08:11Z · 111s · 0 l. |
-| 026-168 | test | fait | claude-code | PASS | 2026-09-27T21:43:00Z · 378s · 2169 l. |
 | 026-067 | test | fait | claude-code | PASS | 2026-09-27T21:08:41Z · 650s · 0 l. |
 | 026-040 | feature | fait | claude-code | PASS | 2026-09-27T20:47:49Z · 100s · 639 l. |
 | 026-052 | test | fait | claude-code | PASS | 2026-09-27T20:41:33Z · 770s · 0 l. |
