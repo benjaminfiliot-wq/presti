@@ -1,0 +1,39 @@
+Essai à sec de la migration 0102_packs_pubs.sql (fiche 026-114), sur la vraie base de production
+Presti (projet Supabase gorcdvmueakcncsmrouo), par l'outil MCP execute_sql du connecteur Supabase.
+Un seul énoncé `do $essai_026$ … raise exception … end $essai_026$;`, généré par blocEssai de
+scripts/lib/sql-essai.mjs (jamais retapé à la main, voir generer-bloc.mjs dans le scratchpad de la
+session) : il exécute le jumeau nu (table packs_pubs, ses index, RLS, sa politique de lecture,
+le bucket packs-pubs), insère une ligne d'essai marquée essai_e2e (jamais une donnée réelle), vérifie
+que la contrainte d'état refuse etat = 'autre', vérifie la sécurité par ligne (une politique en
+lecture, aucune en écriture — via pg_policy.polcmd, pas pg_policies.cmd qui rend le mot entier),
+tente une lecture ET une écriture sous `set local role anon` puis `authenticated` (les deux refusées,
+42501), lit le bucket, efface la ligne d'essai, puis lève ESSAI_A_SEC <empreinte> <json>, ce qui
+annule tout (aucune connexion directe à la base, comme depuis le 14/09).
+
+Table AVANT l'essai (contrôle préalable) : to_regclass('public.packs_pubs') = null,
+count(storage.buckets où id='packs-pubs') = 0 — ni la table ni le bucket n'existaient.
+
+Confirmation donnée à Benj : un essai à sec a tourné sur la production Presti (projet
+gorcdvmueakcncsmrouo), en une seule transaction annulée par une exception volontaire — rien n'est
+resté écrit.
+
+Compte rendu recopié tel que l'outil l'a rendu :
+
+ERROR:  P0001: ESSAI_A_SEC 72bf995196bd75edee89a44301ce2abd23cf926fdb435b678e4a2ef9bd6e2d9d {"rls": true, "table": true, "diag_rls": {"lecture": 1, "ecriture": 0, "relrowsecurity": true}, "diag_anon": {"lecture": true, "ecriture": true}, "etat_check": true, "anon_refuse": true, "diag_bucket": {"public": false, "file_size_limit": 20971520}, "bucket_prive": true, "diag_authenticated": {"lecture": true, "ecriture": true}, "authenticated_refuse": true}
+CONTEXT:  PL/pgSQL function inline_code_block line 120 at RAISE
+
+Toutes les clés du scénario (hors diag_*) valent true : table (l'insertion a réussi), etat_check (un
+etat = 'autre' est refusé par la contrainte, check_violation), rls (relrowsecurity activée, une seule
+politique de lecture, aucune d'écriture), anon_refuse (lecture ET écriture refusées, 42501),
+authenticated_refuse (lecture ET écriture refusées, 42501), bucket_prive (bucket packs-pubs privé,
+file_size_limit = 20971520). Les diag_* le confirment en détail.
+
+Ensuite, requête séparée sur la même base (execute_sql, lecture seule) pour prouver qu'il ne reste
+aucune trace :
+
+  select to_regclass('public.packs_pubs') is null
+     and not exists (select 1 from storage.buckets where id = 'packs-pubs') as rien_ne_reste;
+
+Résultat : [{"rien_ne_reste":true}] — ni la table ni le bucket n'existent après le rollback de l'essai.
+
+APRES rien_ne_reste=true

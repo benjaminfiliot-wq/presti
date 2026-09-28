@@ -6,16 +6,16 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T15:31:02Z
+# Digest — 2026-09-28T15:35:09Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 118 tâche(s) PASS, 194191 ligne(s) · faites par Claude Code : 66 tâche(s) PASS, 116801 ligne(s).
-**État** — file : 9 · en cours : 5 · faites : 191 · refusées : 9
+**État** — file : 10 · en cours : 5 · faites : 191 · refusées : 9
 
 ## Attention (2)
 - 026-068 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-068 --forcer`
-- verrou expiré : 026-073 (usine-codex-83, silencieux depuis 77 min) — `node scripts/orchestre.mjs expirer`
+- verrou expiré : 026-073 (usine-codex-83, silencieux depuis 81 min) — `node scripts/orchestre.mjs expirer`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
@@ -33,6 +33,8 @@
 | 026-078 | feature | file | usine-codex-80 | — | Dans le Poste, montrer le résumé de la matière de chaque commande, mettre en ligne un site généré en un seul geste, noter la soumission du plan à la Search Console, envoyer le dossier sur demande, et faire remonter dans À faire chaque commande qui attend un geste humain |
 | 026-124 | test | file | claude-code | — | Ajouter à video-qa un profil pub-locale (vertical 15 s, voix ou silence) sans changer les profils reseaux et landing, écrire visages-qa (OpenCV YuNet, modèle épinglé par empreinte, étalonné sur les photos des démos) et socle-pubs-qa qui prouve les deux, pour que juges-026-pubs-contenu-preuve --lot=09 soit vert |
 | 026-135 | feature | file | usine-codex-73 | — | Écrire lib/packPubDossier.ts (nettoyerDossierPack, pure, qui n'accepte que les photos de l'artisan lui-même) et la route GET/PUT /api/pubs/commander/brouillon qui lit et enregistre le dossier du pack derrière le drapeau packPub |
+| 026-115 | feature | file | codex | — | Quand Codex annonce son quota épuisé, faire rendre la tâche à la file, noter l'échéance dans .orchestre/quotas.json, refuser codex-* dans prochaine et executant.mjs jusqu'à cette échéance et dire dans le bloc Attention quel autre exécutant lancer, jusqu'au vert du groupe quota de preuve-026 |
+| 026-114 | feature | fait | claude-code | PASS | 2026-09-28T15:35:08Z · 3s · 0 l. |
 | 026-109 | feature | fait | claude-code | PASS | 2026-09-28T15:31:01Z · 25s · 689 l. |
 | 026-165 | test | fait | claude-code | PASS | 2026-09-28T15:12:14Z · 135s · 1424 l. |
 | 026-248 | test | fait | claude-code | PASS | 2026-09-28T15:00:43Z · 321s · 0 l. |
@@ -43,7 +45,6 @@
 | 026-100 | feature | fait | claude-code | PASS | 2026-09-28T13:58:11Z · 272s · 510 l. |
 | 026-071 | test | fait | claude-code | PASS | 2026-09-28T13:56:08Z · 75s · 1271 l. |
 | 026-074 | feature | fait | codex | PASS | 2026-09-28T13:46:33Z · 953s · 0 l. |
-| 026-114 | feature | fait | claude-code | PASS | 2026-09-28T13:17:05Z · 6s · 0 l. |
 | 026-118 | feature | refuse | usine-codex-78 | FAIL | PASS PP-8 — POST : 404 (drapeau packPub), authArtisan, 403 fondateur, erreursAvantPaiementPack, parametresCheckoutPack, poserSessionStripePack, dans l'ordre ; a |
 | 026-051 | feature | fait | codex | PASS | 2026-09-28T12:47:26Z · 93s · 0 l. |
 | 026-070 | feature | fait | usine-codex-71 | PASS | 2026-09-28T12:46:24Z · 71s · 640 l. |
@@ -118,6 +119,5 @@
 | 000-retractation | feature | fait | usine-codex-41 | PASS | 2026-09-27T07:08:47Z · 0s · 258 l. |
 | 000-revue-026 | contenu | fait | codex | PASS | 2026-09-27T06:19:46Z · 2s · 0 l. |
 | 000-geo-presti | feature | fait | usine-codex-40 | PASS | 2026-09-27T06:14:53Z · 0s · 274 l. |
-| 026-065 | feature | fait | ag-065g | PASS | 2026-09-26T15:57:21Z · 8s · 527 l. |
 
-… 114 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 115 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
