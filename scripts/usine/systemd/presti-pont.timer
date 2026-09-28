@@ -1,0 +1,10 @@
+[Unit]
+Description=Passage du pont de l'orchestre toutes les 15 minutes
+
+[Timer]
+OnCalendar=*-*-* *:00/15:00 Europe/Paris
+Persistent=false
+Unit=presti-pont.service
+
+[Install]
+WantedBy=timers.target

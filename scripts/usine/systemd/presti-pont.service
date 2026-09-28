@@ -1,0 +1,9 @@
+[Unit]
+Description=Pont entre le bus Presti et les propositions de l'orchestre
+
+[Service]
+Type=oneshot
+User=agents
+WorkingDirectory=/srv/presti-agents
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_PONT -- /usr/bin/node scripts/pont-orchestre.mjs --mode=prendre --racine=/home/agents/travail/pont --base=https://prestiapp.fr
+TimeoutStartSec=5min

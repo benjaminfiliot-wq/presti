@@ -439,3 +439,4 @@
 {"id":"026-056","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:35:50Z","duree_s":419,"agent":"usine-codex-64","executant":"codex","lignes":431,"dossier":"fait"}
 {"id":"026-114","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:43:24Z","duree_s":10,"agent":"claude-code","executant":"claude-code","lignes":616,"dossier":"fait"}
 {"id":"026-100","verdict":"FAIL","ligne":"❌ CH-8 rédacteur en échec : le journal montre [\"export\"], l'export puis la rédaction seulement attendus","code":1,"date":"2026-09-28T10:43:43Z","duree_s":75,"agent":"usine-codex-65","executant":"codex","lignes":454,"dossier":"fait"}
+{"id":"026-160","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:55:31Z","duree_s":45,"agent":"usine-codex-67","executant":"codex","lignes":474,"dossier":"fait"}
