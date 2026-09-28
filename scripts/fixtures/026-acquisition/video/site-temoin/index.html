@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!--
+  scripts/fixtures/026-acquisition/video/site-temoin/index.html — jeu d'essai du juge maquette-video-qa (fiche 026-071).
+  Site statique d'essai : plus de 3 000 px de haut, sections de couleurs différentes, polices du système, textes
+  « Témoin » seulement. Elle porte UNE SEULE référence à un autre hôte (l'image de la section 4, sur un domaine
+  .invalid, jamais résolu) : c'est le cas que MV-5 doit voir bloqué par la future scripts/agents/maquette-video.mjs.
+  Aucune donnée personnelle, aucun vrai nom, aucun domaine réel.
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Site Témoin — maquette-video-qa</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; animation: none; transition: none; }
+  html, body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  section { height: 640px; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #fff; }
+  h1, h2 { font-weight: 600; font-size: 42px; text-align: center; }
+  p { font-size: 20px; margin-top: 12px; opacity: .9; }
+  #s1 { background: #1f2937; }
+  #s2 { background: #2563eb; }
+  #s3 { background: #059669; }
+  #s4 { background: #d97706; }
+  #s5 { background: #7c3aed; }
+</style>
+</head>
+<body>
+  <section id="s1"><h1>Témoin — section 1</h1><p>Page d'essai du juge de fabrication</p></section>
+  <section id="s2"><h1>Témoin — section 2</h1><p>Défilement de haut en bas</p></section>
+  <section id="s3"><h1>Témoin — section 3</h1><p>Cinq sections de couleurs différentes</p></section>
+  <!-- Référence volontaire à un autre hôte, jamais résolue : doit être bloquée par page.route (MV-5). -->
+  <section id="s4"><h1>Témoin — section 4</h1><img src="https://ressource-hote-externe.invalid/logo.png" alt="" width="1" height="1"><p>Témoin d'une ressource externe, à bloquer</p></section>
+  <section id="s5"><h1>Témoin — section 5</h1><p>Fin de la page d'essai</p></section>
+</body>
+</html>

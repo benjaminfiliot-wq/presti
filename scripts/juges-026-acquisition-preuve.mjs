@@ -80,6 +80,11 @@ const REGISTRE = [
   { lot: 5, juge: 'scripts/facteur-qa.mjs', arguments: ['--partie=gmail'], attendu: 'GM-1', loader: true },
   { lot: 5, juge: 'scripts/disjoncteurs-qa.mjs', arguments: [], attendu: 'DJ-1', loader: true },
   { lot: 5, juge: 'scripts/jauges-qa.mjs', arguments: [], attendu: 'JG-1', loader: true },
+  // Lot 7 (026-071) : la fabrication — la vidéo de maquette et la bibliothèque des douleurs. Chaque module jugé
+  // (scripts/agents/maquette-video.mjs, lib/agents/acquisition/douleurs.ts) est écrit par une fiche ultérieure
+  // (026-075, 026-073) : sur la référence, le premier critère échoue avec « module absent ».
+  { lot: 7, juge: 'scripts/maquette-video-qa.mjs', arguments: [], attendu: 'MV-1' },
+  { lot: 7, juge: 'scripts/douleurs-qa.mjs', arguments: [], attendu: 'DL-1', loader: true },
 ]
 // Les critères propres à un lot (les autres lots ont JP-2, JP-3 et JP-5 ; leurs fiches ajoutent les leurs ici).
 const CRITERES = { 1: ['JP-1', 'JP-2', 'JP-3', 'JP-4', 'JP-5', 'JP-6'], 4: ['JP-2', 'JP-3', 'JP-5', 'JP-7', 'JP-8', 'JP-9'] }
