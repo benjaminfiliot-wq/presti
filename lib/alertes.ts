@@ -20,6 +20,7 @@ import { planConf } from '@/lib/plans'
 // Chaque motif se simule pour prouver le tuyau de bout en bout : `?simuler=<motif>`.
 
 export type Motif = 'solde_ia' | 'credits_artisan' | 'paiement' | 'erreurs' | 'cron_muet' | 'domaine_mail' | 'securite' | 'digest'
+  | 'agent_muet' | 'panne_agent' | 'disjoncteur' | 'jeton_externe' | 'stockage' | 'argent_bloque' | 'coupe_circuit' | 'usine_injoignable' | 'jeton_meta_expire' | 'canal_arrete' | 'gmail_bloque' | 'technologie_en_pause' | 'modele_suspendu' | 'notice_perimee' | 'bilan' | 'vercel_pro' | 'meta_erreur' | 'changer_message' | 'quota_haut' | 'jauge_pleine' | 'non_mesure'
 
 export type Alerte = {
   motif: Motif
@@ -186,6 +187,14 @@ async function verifierErreurs(): Promise<Alerte[]> {
 export const CRONS_ATTENDUS: { nom: string; maxHeures: number }[] = [
   { nom: 'relances', maxHeures: 26 }, { nom: 'canaux-relever', maxHeures: 26 }, { nom: 'alertes', maxHeures: 26 }, { nom: 'purges-rgpd', maxHeures: 26 },
   { nom: 'livraison', maxHeures: 26 },
+  { nom: 'tic', maxHeures: 1 },
+  { nom: 'acq-recenseur', maxHeures: 14 },
+  { nom: 'acq-standardiste', maxHeures: 1 },
+  { nom: 'acq-redacteur', maxHeures: 18 },
+  { nom: 'crieur', maxHeures: 26 },
+  { nom: 'acq-facteur', maxHeures: 1 },
+  { nom: 'acq-repondeur', maxHeures: 1 },
+  { nom: 'acq-rge', maxHeures: 26 },
 ]
 /**
  * Trace serveur d'une erreur ou d'une alerte perdue, dans `app_errors` (0016) — le second canal
@@ -342,13 +351,18 @@ const sansEmail = (t: string) => t.replace(/[\w.+-]+@[\w-]+\.[\w.-]+/g, '[adress
 
 async function persisterAlerte(al: Alerte): Promise<void> {
   if (al.a !== 'entreprise') return
-  const gravite = /solde_ia|paiement|securite|cron_muet/.test(al.motif) ? 'critique' : al.motif === 'digest' ? 'info' : 'attention'
+  const gravite = /solde_ia|paiement|securite|cron_muet|panne_agent|argent_bloque|coupe_circuit|usine_injoignable|jeton_meta_expire|canal_arrete|gmail_bloque|notice_perimee|jauge_pleine/.test(al.motif) ? 'critique' : al.motif === 'digest' ? 'info' : 'attention'
   const artisan = (al.cle ?? '').match(UUID_EN_TETE)?.[1] ?? null
   const { error } = await supabaseAdmin.from('alertes').insert({
     motif: al.motif, cle: al.cle ?? null, gravite, artisan_id: artisan,
     sujet: al.sujet.slice(0, 200), corps: sansEmail(al.corps).slice(0, 4000), source: 'lib/alertes.ts',
   })
   if (error && !/duplicate|42P01|does not exist|schema cache/i.test(error.message)) console.error('[alertes] persistance :', error.message)
+}
+
+/** Garde une alerte adressée à l'entreprise pour « À faire », SANS l'envoyer (le veilleur, hors urgences). */
+export async function garderAlerte(al: Alerte): Promise<void> {
+  await persisterAlerte(al)
 }
 
 /** Exemples réalistes de chaque motif, pour prouver le tuyau sans attendre l'incident. */
@@ -363,10 +377,39 @@ function simulation(motif: Motif): Alerte[] {
     case 'domaine_mail': return [{ motif, a: 'entreprise', cle: 's', sujet: 'DMARC toujours absent', corps: '- DMARC absent (protection contre l’usurpation)\n\nContrôle : node scripts/mail-verifier.mjs' }]
     case 'securite': return [{ motif, a: 'entreprise', cle: 's', sujet: '1 révocation de sessions en 24 h', corps: 'Comptes ayant fermé toutes leurs sessions :\n- Artisan de simulation\n\nNormal après un changement de mot de passe.' }]
     case 'digest': return [{ motif, a: 'entreprise', cle: 's', sujet: 'Presti — point de la semaine', corps: 'Sept derniers jours (simulation) :\n- Inscriptions : 3\n- Demandes reçues : 11\n- Devis créés : 6\n- Factures émises : 2\n- Comptes à zéro crédit : 1\n- Coût IA du mois : 12,40 €' }]
+    case 'agent_muet': return [{ motif, a: 'entreprise', cle: 's', sujet: "redacteur est muet depuis 130 min", corps: "Période de 60 min. À faire : vérifier que redacteur tourne." }]
+    case 'panne_agent': return [{ motif, a: 'entreprise', cle: 's', sujet: "facteur ne bat plus depuis 3 h", corps: "Période de 15 min. À faire : lire ses journaux et le relancer depuis la station." }]
+    case 'disjoncteur': return [{ motif, a: 'entreprise', cle: 's', sujet: "Le disjoncteur de facteur est ouvert", corps: "Trois échecs de suite. À faire : lire la cause, puis le reprendre depuis la station." }]
+    case 'jeton_externe': return [{ motif, a: 'entreprise', cle: 's', sujet: "Le jeton Meta expire dans 6 jours", corps: "À faire : générer un nouveau jeton et le coller dans presti-secrets/meta-bibliotheque-pubs.txt ; Claude Code le pose." }]
+    case 'stockage': return [{ motif, a: 'entreprise', cle: 's', sujet: "La base occupe 700 Mo sur 1 024", corps: "À faire : purger les événements anciens." }]
+    case 'argent_bloque': return [{ motif, a: 'entreprise', cle: 's', sujet: "File de l’argent : 1 message abandonné", corps: "À faire : node scripts/file-argent-qa.mjs --reel." }]
+    case 'coupe_circuit': return [{ motif, a: 'entreprise', cle: 's', sujet: "Coupe-circuit : 151 € sans recette", corps: "Deux agents en pause. À faire : trancher la décision dans la station." }]
+    case 'usine_injoignable': return [{ motif, a: 'entreprise', cle: 's', sujet: "L’usine ne bat plus depuis 61 min", corps: "À faire : node scripts/usine.mjs etat depuis le poste." }]
+    case 'jeton_meta_expire': return [{ motif, a: 'entreprise', cle: 's', sujet: "Le jeton Meta a expiré", corps: "À faire : coller le nouveau jeton dans presti-secrets/meta-bibliotheque-pubs.txt ; Claude Code le pose." }]
+    case 'canal_arrete': return [{ motif, a: 'entreprise', cle: 's', sujet: "Formulaire arrêté : 1 avis d’abus", corps: "Arrêt de 48 h. À faire : lire la salle des envois." }]
+    case 'gmail_bloque': return [{ motif, a: 'entreprise', cle: 's', sujet: "Le Gmail de prospection refuse", corps: "À faire : vérifier le mot de passe d’application dans Vercel." }]
+    case 'technologie_en_pause': return [{ motif, a: 'entreprise', cle: 's', sujet: "2 technologies de formulaire en pause", corps: "À faire : les reprendre depuis la station quand la cause est comprise." }]
+    case 'modele_suspendu': return [{ motif, a: 'entreprise', cle: 's', sujet: "2 modèles de message suspendus", corps: "À faire : en écrire un nouveau et l’approuver." }]
+    case 'notice_perimee': return [{ motif, a: 'entreprise', cle: 's', sujet: "La notice n’a pas été revérifiée depuis 8 jours", corps: "Le formulaire est arrêté. À faire : Claude Code la republie." }]
+    case 'bilan': return [{ motif, a: 'entreprise', cle: 's', sujet: "Jour du bilan : arrêt du froid", corps: "À faire : choisir un autre segment ou une autre offre." }]
+    case 'vercel_pro': return [{ motif, a: 'entreprise', cle: 's', sujet: "Premier site vendu : passer Vercel en Pro", corps: "C’est la seule dépense décidée." }]
+    case 'meta_erreur': return [{ motif, a: 'entreprise', cle: 's', sujet: "Meta a refusé : réponses privées coupées 24 h", corps: "À faire : attendre la fin de la coupure." }]
+    case 'changer_message': return [{ motif, a: 'entreprise', cle: 's', sujet: "300 envois sans réponse", corps: "À faire : écrire un nouveau message et l’approuver." }]
+    case 'quota_haut': return [{ motif, a: 'entreprise', cle: 's', sujet: "8 sur 10 ce mois-ci chez formulaires du jour", corps: "À faire : surveiller la jauge." }]
+    case 'jauge_pleine': return [{ motif, a: 'entreprise', cle: 's', sujet: "Jauge pleine : 10 sur 10", corps: "À faire : attendre la remise à zéro." }]
+    case 'non_mesure': return [{ motif, a: 'entreprise', cle: 's', sujet: "La file de l’argent n’a pas pu être lue", corps: "À faire : relancer le passage." }]
   }
 }
 
-export const MOTIFS: Motif[] = ['solde_ia', 'credits_artisan', 'paiement', 'erreurs', 'cron_muet', 'domaine_mail', 'securite', 'digest']
+export const MOTIFS: Motif[] = ['solde_ia', 'credits_artisan', 'paiement', 'erreurs', 'cron_muet', 'domaine_mail', 'securite', 'digest',
+  'agent_muet', 'panne_agent', 'disjoncteur', 'jeton_externe', 'stockage', 'argent_bloque', 'coupe_circuit', 'usine_injoignable', 'jeton_meta_expire', 'canal_arrete', 'gmail_bloque', 'technologie_en_pause', 'modele_suspendu', 'notice_perimee', 'bilan', 'vercel_pro', 'meta_erreur', 'changer_message', 'quota_haut', 'jauge_pleine', 'non_mesure']
+
+/** Un passage « tic » de moins de 26 h : l'horloge de Supabase tourne, le digest du veilleur remplace celui du lundi. */
+async function passageTicRecent(): Promise<boolean> {
+  const { data, error } = await supabaseAdmin.from('passages_cron').select('nom, dernier_passage').eq('nom', 'tic')
+  if (error || !data?.length) return false
+  return data.some((p) => Date.now() - new Date(p.dernier_passage).getTime() < 26 * 3_600_000)
+}
 
 /**
  * La ronde. `aSec` : on rend ce qui partirait sans rien envoyer. `simuler` : on envoie l'exemple
@@ -377,7 +420,7 @@ export async function ronde(opts: { aSec?: boolean; simuler?: Motif } = {}): Pro
   if (opts.simuler) candidates = simulation(opts.simuler)
   else {
     const lundi = new Date().getUTCDay() === 1
-    const blocs = await Promise.allSettled([verifierSoldeIA(), verifierCreditsArtisans(lundi), verifierErreurs(), verifierCrons(), lundi ? verifierDomaineMail() : Promise.resolve([]), verifierSecurite(), lundi ? digest() : Promise.resolve([])])
+    const blocs = await Promise.allSettled([verifierSoldeIA(), verifierCreditsArtisans(lundi), verifierErreurs(), verifierCrons(), lundi ? verifierDomaineMail() : Promise.resolve([]), verifierSecurite(), lundi && !(await passageTicRecent()) ? digest() : Promise.resolve([])])
     for (const b of blocs) { if (b.status === 'fulfilled') candidates.push(...b.value); else console.error('[alertes] bloc :', b.reason) }
   }
   const envoyees: string[] = [], ignorees: string[] = []

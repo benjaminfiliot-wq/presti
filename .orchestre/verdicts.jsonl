@@ -433,3 +433,6 @@
 {"id":"026-169","verdict":"FAIL","ligne":"station-planche-qa --partie=planche : FAIL — PN-4, PN-5","code":1,"date":"2026-09-28T10:03:44Z","duree_s":58,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-169","verdict":"FAIL","ligne":"station-planche-qa --partie=planche : FAIL — PN-4","code":1,"date":"2026-09-28T10:08:28Z","duree_s":55,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-046","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:17:28Z","duree_s":148,"agent":"usine-codex-62","executant":"codex","lignes":436,"dossier":"fait"}
+{"id":"026-169","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:20:16Z","duree_s":66,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-131","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:24:13Z","duree_s":44,"agent":"claude-code","executant":"claude-code","lignes":311,"dossier":"fait"}
+{"id":"026-047","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:24:50Z","duree_s":254,"agent":"usine-codex-63","executant":"codex","lignes":572,"dossier":"fait"}

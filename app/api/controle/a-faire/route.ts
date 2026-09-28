@@ -22,7 +22,7 @@ export type Ligne = { id: string; type: 'paiement' | 'alerte' | 'cron'; libelleT
 
 const LIBELLES_TYPE = { paiement: 'Paiement', alerte: 'Alerte', cron: 'Tâche' } as const
 /** Le nom des tâches planifiées, en français — pas leur identifiant technique. */
-const NOMS_CRON: Record<string, string> = { relances: 'Relances de devis', 'canaux-relever': 'Relève des boîtes email', alertes: 'Ronde des alertes', 'purges-rgpd': 'Purges RGPD' }
+const NOMS_CRON: Record<string, string> = { relances: 'Relances de devis', 'canaux-relever': 'Relève des boîtes email', alertes: 'Ronde des alertes', 'purges-rgpd': 'Purges RGPD', tic: 'Horloge des agents' }
 
 const alertesOuvertes = () => sourcer('afaire:alertes', 'supabase', async () => {
   const { data, error } = await supabaseAdmin.from('alertes').select('id, motif, gravite, sujet, corps, cree_le').is('acquittee_le', null).order('cree_le', { ascending: false }).limit(30)
