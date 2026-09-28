@@ -70,5 +70,8 @@ if (error) {
 const texte = tube
   ? `${jeton}\n`
   : `Jeton de l’agent ${nom}${rotation ? ' (rotation : l’ancien ne vaut plus rien)' : ''} :\n${jeton}\nÀ poser dans le coffre de l’agent ; il ne sera plus jamais affiché.\n`
-process.stdout.on('error', () => process.exit(1))
-process.stdout.write(texte, (err) => process.exit(err ? 1 : 0))
+// 28/09 : plus de process.exit() ici. Sous Windows (Node 24), sortir pendant que le client de la base referme sa connexion
+// faisait échouer une assertion de libuv (async.c:94, code 3221226505) APRÈS la pose de l'empreinte : le jeton était perdu.
+// Le code de sortie est posé, et le processus se termine de lui-même quand tout est refermé.
+process.stdout.on('error', () => { process.exitCode = 1 })
+process.stdout.write(texte, (err) => { process.exitCode = err ? 1 : 0 })
