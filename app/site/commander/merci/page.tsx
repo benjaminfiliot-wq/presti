@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { notFound, useSearchParams } from 'next/navigation'
 import { actif } from '@/lib/flags'
 
-export default function MerciSite() {
+function MerciSiteContenu() {
   const searchParams = useSearchParams()
   const commande = searchParams.get('commande') || ''
   const [attente, setAttente] = useState(false)
@@ -33,4 +33,9 @@ export default function MerciSite() {
       {message && <p role="status">{message}</p>}
     </div>
   </main>
+}
+
+// useSearchParams() hors d’un <Suspense> fait échouer le build Next (prérendu) : tous les déploiements en ERROR depuis a876a4ce (28/09).
+export default function MerciSite() {
+  return <Suspense fallback={null}><MerciSiteContenu /></Suspense>
 }

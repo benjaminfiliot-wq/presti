@@ -1,7 +1,7 @@
 'use client'
 import '@/app/globals.css'
 
-import { useEffect, useState, type FormEvent } from 'react'
+import { Suspense, useEffect, useState, type FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { suiteSure } from '@/lib/suiteSure'
 import { supabase } from '@/lib/supabaseClient'
@@ -16,7 +16,7 @@ const METIERS = [
   'Ramoneur', 'Poêlier / Fumiste', 'Store & fermeture', 'Multiservices / Rénovation', 'Autre',
 ]
 
-export default function Onboarding() {
+function OnboardingContenu() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [userId, setUserId] = useState<string | null>(null)
@@ -120,4 +120,9 @@ export default function Onboarding() {
       </div>
     </main>
   )
+}
+
+// useSearchParams() hors d’un <Suspense> fait échouer le build Next (prérendu) : tous les déploiements en ERROR depuis a876a4ce (28/09).
+export default function Onboarding() {
+  return <Suspense fallback={null}><OnboardingContenu /></Suspense>
 }
