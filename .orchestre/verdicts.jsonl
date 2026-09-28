@@ -456,3 +456,5 @@
 {"id":"026-069","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:16:28Z","duree_s":49,"agent":"claude-code","executant":"claude-code","lignes":2418,"dossier":"en-cours"}
 {"id":"026-049","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:17:07Z","duree_s":151,"agent":"usine-codex-66","executant":"codex","lignes":420,"dossier":"fait"}
 {"id":"026-069","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:17:41Z","duree_s":43,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-039","verdict":"FAIL","ligne":"❌ CP-6 npm run typecheck en code 2 : .next/types/routes.d.ts(132,1): error TS1434: Unexpected keyword or identifier. | .next/types/routes.d.ts(132,11): error TS","code":1,"date":"2026-09-28T11:20:07Z","duree_s":413,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-069","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:20:32Z","duree_s":33,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
