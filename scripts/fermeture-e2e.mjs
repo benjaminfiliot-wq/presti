@@ -244,6 +244,7 @@ if (FLAGS) {
     // La garde du Poste passe AVANT le drapeau (401 à un inconnu, levé ou non) : la sonde est donc la route publique,
     // et les DEUX routes doivent lire le drapeau elles-mêmes.
     'audience': ['route', '/api/audience', 'POST', 'app/api/audience/route.ts', 'app/api/controle/audience/route.ts'],
+    'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/controle/pilotage/route.ts', 'app/api/controle/pilotage/decisions/[id]/route.ts', 'app/api/controle/pilotage/appels/[id]/route.ts', 'app/api/controle/pilotage/agents/[nom]/route.ts', 'app/api/controle/pilotage/consignes/route.ts', 'app/api/controle/pilotage/gestes/route.ts'],
     'inventaireOcr': ['note', 'rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)'],
     // Ces trois-là étaient mal classés tant que le détecteur ignorait les lectures par index
     // dynamique (`FLAGS[l.flag]` dans lib/plans.ts). Deux étaient dits « ne ferment rien » sur un

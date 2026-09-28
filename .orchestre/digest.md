@@ -6,16 +6,16 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T15:54:47Z
+# Digest — 2026-09-28T15:56:27Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 118 tâche(s) PASS, 194191 ligne(s) · faites par Claude Code : 68 tâche(s) PASS, 111141 ligne(s).
+**Mesure** — déléguées (antigravity, codex) : 119 tâche(s) PASS, 194191 ligne(s) · faites par Claude Code : 68 tâche(s) PASS, 111141 ligne(s).
 **État** — file : 11 · en cours : 3 · faites : 194 · refusées : 8
 
 ## Attention (2)
-- 026-068 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-068 --forcer`
-- verrou expiré : 026-073 (usine-codex-83, silencieux depuis 100 min) — `node scripts/orchestre.mjs expirer`
+- verrou expiré : 026-073 (usine-codex-83, silencieux depuis 102 min) — `node scripts/orchestre.mjs expirer`
+- verrou expiré : 026-235 (usine-codex-84, silencieux depuis 60 min) — `node scripts/orchestre.mjs expirer`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
@@ -33,6 +33,7 @@
 | 026-135 | feature | file | usine-codex-73 | — | Écrire lib/packPubDossier.ts (nettoyerDossierPack, pure, qui n'accepte que les photos de l'artisan lui-même) et la route GET/PUT /api/pubs/commander/brouillon qui lit et enregistre le dossier du pack derrière le drapeau packPub |
 | 026-063 | feature | file | claude-code | — | Écrire la migration 0111 des disjoncteurs de l'envoi, tenus par la base en compteurs absolus (paliers du formulaire de 5 à 40 par jour qui écrivent seuls la ligne de plafond du formulaire, technologies de formulaire, signaux de STOP, plainte, avis d'abus, échec de soumission, refus du Gmail et erreur Meta qui mettent en pause une technologie, un modèle, le formulaire, le Gmail ou Meta, montée de palier par règle et bilan des 100 premiers contacts froids, descente au premier voyant rouge, notice vérifiée, gestes du fondateur dont l'ouverture d'envoi_froid au plus tôt le 12/10, jauges, échantillon du soir), ses jumeaux, son contrôle, lib/agents/acquisition/disjoncteurs.ts et la partie MagasinEnvoi de magasinSupabase.ts, essayée à sec |
 | 026-115 | feature | file | codex | — | Quand Codex annonce son quota épuisé, faire rendre la tâche à la file, noter l'échéance dans .orchestre/quotas.json, refuser codex-* dans prochaine et executant.mjs jusqu'à cette échéance et dire dans le bloc Attention quel autre exécutant lancer, jusqu'au vert du groupe quota de preuve-026 |
+| 026-068 | feature | fait | codex | PASS | 2026-09-28T15:56:27Z · 232s · 0 l. |
 | 026-076 | feature | fait | claude-code | PASS | 2026-09-28T15:54:47Z · 8s · 0 l. |
 | 026-071 | test | fait | claude-code | PASS | 2026-09-28T15:51:08Z · 31s · 0 l. |
 | 026-061 | feature | fait | claude-code | PASS | 2026-09-28T15:50:08Z · 24s · 0 l. |
@@ -41,7 +42,6 @@
 | 026-114 | feature | fait | claude-code | PASS | 2026-09-28T15:35:08Z · 3s · 0 l. |
 | 026-109 | feature | fait | claude-code | PASS | 2026-09-28T15:31:01Z · 25s · 689 l. |
 | 026-165 | test | fait | claude-code | PASS | 2026-09-28T15:12:14Z · 135s · 1424 l. |
-| 026-068 | feature | fait | codex | DISJONCTÉE | ✅ RL-4 six blocs → 200 au contrat (bloc, source, a ; valeur à la forme, ou nulle avec erreur ou manque), jamais 500 \| ✅ RL-9 npm run typecheck vert \| ✅ RL-4 six blocs → 200 au contrat (bloc, source, a ; valeur à la forme, ou nulle avec erreur ou manque), jamais 500 |
 | 026-234 | test | fait | claude-code | PASS | 2026-09-28T14:56:08Z · 243s · 3632 l. |
 | 026-232 | test | fait | claude-code | PASS | 2026-09-28T14:32:10Z · 871s · 2758 l. |
 | 026-116 | test | fait | claude-code | PASS | 2026-09-28T14:25:19Z · 195s · 0 l. |

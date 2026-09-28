@@ -98,6 +98,8 @@ export const FLAGS = {
    *  route répond 404, l'onglet n'existe pas, /confidentialite ne décrit pas la mesure — mais la purge quotidienne
    *  continue d'effacer ce qui a été écrit (lib/purgesRgpd.ts, étape 8, hors drapeau). */
   audience: true,
+  /** 24/09 — Pilotage (Mission Control), premier onglet du Poste. Baissé : GET /api/controle/pilotage répond 404 et l'onglet n'existe pas. Levé par la fiche 026-140, après la recette et l'accord de Benj. */
+  pilotage: false,
 } as const
 
 export type Flag = keyof typeof FLAGS
