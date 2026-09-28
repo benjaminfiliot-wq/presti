@@ -69,7 +69,23 @@ function guidesSansMontant() {
   return n
 }
 
-let ko = guidesSansMontant()
+// Règle à part (28/09) : une page qui lit useSearchParams() sans <Suspense> passe le typecheck mais fait échouer le build
+// Next au prérendu. 026-035 l'a introduit à 01:09 ; sept déploiements Vercel en ERROR avant qu'on le voie (894f0c36).
+function pagesSansSuspense() {
+  let n = 0
+  const pages = (d) => [...fichiers(d)].filter((f) => /[\\/]page\.tsx$/.test(f))
+  for (const f of pages('app')) {
+    // sans commentaires : un commentaire qui cite <Suspense> ne doit pas faire croire que la page en a un
+    const t = fs.readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`])\/\/.*$/gm, '$1')
+    if (/\buseSearchParams\s*\(/.test(t) && !/<Suspense\b/.test(t)) {
+      n++
+      console.error(`  ❌ ${f} — useSearchParams() sans <Suspense> dans la page : le build Next échoue au prérendu (894f0c36)`)
+    }
+  }
+  return n
+}
+
+let ko = guidesSansMontant() + pagesSansSuspense()
 for (const r of REGLES) {
   for (const racine of r.ou) {
     for (const f of fichiers(racine)) {
