@@ -2,9 +2,9 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { sendEmail, notifierEntreprise } from '@/lib/email'
 import { removeDomain } from '@/lib/vercelDomains'
 import { creerJetonDossier } from '@/lib/siteDossier'
+import { ETAT_RETIRE, LIBELLE_RETIRE } from './sitesConstantes'
 
-export const ETAT_RETIRE = 'retiree'
-export const LIBELLE_RETIRE = 'Retiré — dossier envoyé'
+export { ETAT_RETIRE, LIBELLE_RETIRE }
 
 type Base = typeof supabaseAdmin
 type CommandeRetrait = { id: string; email: string; etat: string; domaine?: string | null; compte_supprime_le?: string | null }

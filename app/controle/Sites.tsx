@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { apiDirection, reconfirmationValide } from './client'
 import Reconfirmer from './Reconfirmer'
 import { LIBELLE_ETAT, type EtatCommande } from '@/lib/siteCommande'
-import { LIBELLE_RETIRE } from '@/lib/siteRetrait'
+import { LIBELLE_RETIRE } from '@/lib/sitesConstantes'
 
 type Commande = {
   id: string
