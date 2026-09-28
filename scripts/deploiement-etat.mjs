@@ -22,8 +22,9 @@ for (const d of deployments) {
     try {
       const ev = await api(`/v3/deployments/${d.uid}/events?limit=1000`)
       const lignes = (Array.isArray(ev) ? ev : []).map((e) => String(e.payload?.text || e.text || ''))
-      const err = lignes.find((t) => /⨯|Type error|Module not found|Error occurred prerendering|Failed to compile/.test(t))
-      if (err) console.log(`             ↳ ${err.trim().slice(0, 160)}`)
+      const i = lignes.findIndex((t) => /⨯|Type error|Module not found|Error occurred prerendering|Failed to compile/.test(t))
+      // 28/09 : « Failed to compile » seul ne dit rien ; le fichier et la cause sont dans les lignes qui suivent.
+      if (i >= 0) for (const t of lignes.slice(i, i + 7).map((x) => x.trim()).filter(Boolean)) console.log(`             ↳ ${t.slice(0, 180)}`)
     } catch { /* journal indisponible */ }
   }
 }
