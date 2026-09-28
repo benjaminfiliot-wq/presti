@@ -1,0 +1,40 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=fil&agent=crieur : les bulles du Crieur.",
+ "statut": 200,
+ "reponse": {
+  "vue": "fil",
+  "role": "direction",
+  "valeur": {
+   "bulles": [
+    {
+     "id": 60,
+     "le": "2026-10-23T05:00:00.000Z",
+     "agent": "crieur",
+     "pastille": "CRIEUR",
+     "type": "publication",
+     "texte": "Publication programmée : chantier du jour"
+    },
+    {
+     "id": 61,
+     "le": "2026-10-23T08:00:00.000Z",
+     "agent": "crieur",
+     "pastille": "CRIEUR",
+     "type": "commentaire",
+     "texte": "Commentaire « SITE » reçu : 2"
+    },
+    {
+     "id": 62,
+     "le": "2026-10-23T09:40:00.000Z",
+     "agent": "crieur",
+     "pastille": "CRIEUR",
+     "type": "publication",
+     "texte": "Brouillon : <img src=x onerror=alert(1)>"
+    }
+   ],
+   "dernier_id": 62
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

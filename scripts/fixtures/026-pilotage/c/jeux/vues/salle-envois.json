@@ -1,0 +1,127 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=envois",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "palier": "P2 · 20 formulaires par jour",
+   "parCanal": [
+    {
+     "canal": "formulaire_site",
+     "libelle": "Formulaires",
+     "utilises": 12,
+     "plafond": 20,
+     "texte": "12/20",
+     "sante": "ok",
+     "raisons": []
+    },
+    {
+     "canal": "email_sollicite",
+     "libelle": "E-mails sollicités",
+     "utilises": 3,
+     "plafond": 50,
+     "texte": "3/50",
+     "sante": "ok",
+     "raisons": []
+    },
+    {
+     "canal": "reponse_privee",
+     "libelle": "Réponses privées",
+     "utilises": 4,
+     "plafond": null,
+     "texte": "4",
+     "sante": "attention",
+     "raisons": [
+      "2 échecs d’affilée"
+     ]
+    },
+    {
+     "canal": "messagerie",
+     "libelle": "Messagerie",
+     "utilises": 0,
+     "plafond": null,
+     "texte": "0",
+     "sante": "arretee",
+     "raisons": [
+      "canal arrêté par le veilleur"
+     ]
+    }
+   ],
+   "parTechnologie": [
+    {
+     "technologie": "contact_form_7",
+     "envois": 7,
+     "echecs_affilee": 0,
+     "etat": "active",
+     "motif": null
+    },
+    {
+     "technologie": "wpforms",
+     "envois": 5,
+     "echecs_affilee": 3,
+     "etat": "pause",
+     "motif": "3 échecs de soumission d’affilée"
+    }
+   ],
+   "envois": [
+    {
+     "id": "e1",
+     "metier": "plombier",
+     "commune": "Lyon",
+     "canal": "formulaire_site",
+     "type": "premier_contact",
+     "verdicts": {
+      "j1": "pass",
+      "j3": "pass",
+      "second": "pass"
+     }
+    },
+    {
+     "id": "e2",
+     "metier": "couvreur",
+     "commune": "Annecy",
+     "canal": "email_sollicite",
+     "type": "lien_maquette",
+     "verdicts": {
+      "j1": "pass",
+      "j3": null,
+      "second": null
+     }
+    }
+   ],
+   "rejets": 2,
+   "anomalies": [
+    {
+     "id": "e3",
+     "texte": "parti sans ses trois verdicts"
+    }
+   ],
+   "vide": null,
+   "gestes": {
+    "envoi_froid": false,
+    "epreuve_passee": false,
+    "epreuve_le": null,
+    "mesure_a_sec": true,
+    "notice_verifiee_le": "2026-10-22T10:00:00.000Z",
+    "technologies_pause": [
+     "wpforms"
+    ],
+    "modeles_suspendus": [
+     "variante-z"
+    ]
+   },
+   "active_auj": {
+    "valeur": {
+     "minutes": 88
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

@@ -1,0 +1,46 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le bandeau de référence (026-111), écrit par Claude Code pour prouver que pilotage-ecran-qa
+// sait rendre 0. Ce n'est pas l'écran livré. Il ne défile pas en boucle : un élément nouveau entre une fois par la droite,
+// puis tout reste immobile. La pastille de droite reprend ENCAISSÉ · MOIS et SITES EN LIGNE (les mêmes objets).
+import { useRef } from 'react'
+import { euros, motifSans, useAdresse, valeurDe, type Rep, type Role } from './outils'
+
+export function Navigation({ role }: { role: Role }) {
+  const { poser } = useAdresse()
+  const entrees: [string, string, () => void][] = [
+    ['station', 'Station', () => poser({ vue: null, salle: null, agent: null })],
+    ['missions', 'Missions', () => poser({ vue: 'missions' })],
+    ['journal', 'Journal', () => { poser({ vue: null }); document.querySelector('[data-station-journal]')?.scrollIntoView({ block: 'nearest' }) }],
+    ['succes', 'Succès', () => poser({ vue: 'succes' })],
+    ...(role === 'direction' ? [['reglages', 'Réglages', () => poser({ vue: 'reglages' })] as [string, string, () => void]] : []),
+    ['aide', 'Aide', () => poser({ vue: 'aide' })],
+  ]
+  return <nav aria-label="Navigation de la station">{entrees.map(([cle, libelle, f]) => <button key={cle} type="button" data-nav={cle} onClick={f}>{libelle}</button>)}</nav>
+}
+
+export function Pastille({ tresorerie, barre }: { tresorerie: Rep<any>; barre: any }) {
+  const mois = tresorerie?.ok ? tresorerie.data?.encaisse?.mois : null
+  const net = valeurDe<any>(mois)?.net
+  const sites = valeurDe<any>(barre)?.sites_en_ligne
+  const nSites = valeurDe<number>(sites)
+  const gauche = tresorerie && !tresorerie.ok ? '—' : typeof net === 'number' ? euros(net) : '—'
+  const droite = typeof nSites === 'number' ? `${nSites} en ligne` : motifSans(sites) ?? '—'
+  return <span data-pastille-bandeau>{gauche} · {droite}</span>
+}
+
+export default function Bandeau({ role, bandeau, barre, tresorerie, panneDirect }: { role: Role; bandeau: any; barre: any; tresorerie: Rep<any>; panneDirect: string | null }) {
+  const initiaux = useRef<Set<number> | null>(null)
+  const b = valeurDe<{ elements: { id: number; texte: string }[] }>(bandeau)
+  if (b && initiaux.current === null) initiaux.current = new Set(b.elements.map((e) => e.id))
+  const panne = panneDirect ?? (bandeau ? motifSans(bandeau, 'Bandeau') : null)
+  return (
+    <footer data-zone="bandeau">
+      <Navigation role={role} />
+      <div className="mc-elements">
+        {panne ? <span className="mc-panne">{panne}</span> : null}
+        {b?.elements.map((e) => <span key={e.id} data-element-bandeau={e.id} className={initiaux.current?.has(e.id) ? undefined : 'mc-entre'}>{e.texte}</span>)}
+      </div>
+      <Pastille tresorerie={tresorerie} barre={barre} />
+    </footer>
+  )
+}

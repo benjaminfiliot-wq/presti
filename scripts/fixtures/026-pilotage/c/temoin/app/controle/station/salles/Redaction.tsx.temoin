@@ -1,0 +1,26 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la Rédaction de référence (026-120, revue du 25/09), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. En lecture seule.
+import Resume, { Contenu, useVue } from './Resume'
+import type { PropsSalle } from '../Panneaux'
+
+export default function Redaction({ role, equipage, visible, cle }: PropsSalle) {
+  const [vue] = useVue(['/api/controle/station?vue=salle&salle=redaction'], 30_000, visible)
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={vue} />
+      <Contenu rep={vue} source="Rédaction">{(v) => (
+        <div>
+          {Object.entries(v.variantes as Record<string, { contacts: number; oui: number }>).map(([k, x]) => <div key={k} data-variante={k} className="mc-mono">{k} · {x.contacts} contacts · {x.oui} oui</div>)}
+          {(v.envois as any[]).map((e) => (
+            <div key={e.id} data-envoi={e.id}>{e.canal} · {e.type}{' '}
+              {(['j1', 'j3', 'second'] as const).map((k) => <span key={k} data-verdict={k} data-valeur-verdict={e.verdicts?.[k] ?? 'attente'} className="mc-petit"> {k === 'second' ? '2e juge' : k.toUpperCase()} {e.verdicts?.[k] ?? '…'}</span>)}
+            </div>
+          ))}
+          <p data-rejets className="mc-mono">Rejets {v.rejets}</p>
+          <p data-modeles-suspendus>Modèles suspendus : {v.modeles_suspendus.length ? v.modeles_suspendus.join(', ') : 'aucun'}</p>
+        </div>
+      )}</Contenu>
+    </>
+  )
+}

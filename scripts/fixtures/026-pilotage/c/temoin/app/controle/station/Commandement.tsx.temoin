@@ -1,0 +1,47 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le Commandement de référence (026-111), écrit par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. L'objectif signé « PAR LE CHEF », les missions (texte
+// servi), le dernier succès, le niveau et sa barre, les trois lignes du dernier compte rendu.
+import { motifSans, valeurDe, type Role } from './outils'
+
+export function Niveau({ commandement }: { commandement: any }) {
+  const c = valeurDe<any>(commandement)
+  const argent = c?.argent
+  const n = valeurDe<any>(argent)?.niveau
+  const m = motifSans(argent)
+  if (m) return <div data-niveau className="mc-petit">{m}</div>
+  if (!n) return null
+  return (
+    <div data-niveau>
+      <b className="mc-mono">LV.{n.lv}</b> <span data-xp className="mc-mono mc-petit">{n.texte}</span>
+      <div className="mc-barre-prog" role="progressbar" aria-valuenow={n.xp} aria-valuemax={n.prochainSeuil ?? n.xp}><span style={{ width: `${Math.round((n.part ?? 0) * 100)}%` }} /></div>
+    </div>
+  )
+}
+
+export default function Commandement({ commandement, panneDirect }: { role: Role; commandement: any; panneDirect: string | null }) {
+  const panne = panneDirect ?? (commandement ? motifSans(commandement, 'Commandement') : null)
+  const c = valeurDe<any>(commandement)
+  return (
+    <section data-zone="commandement" aria-label="Commandement">
+      <h2 className="mc-titre-zone">Commandement</h2>
+      {!commandement && !panneDirect ? <p className="mc-petit" data-etat-zone="chargement">Chargement…</p> : null}
+      {panne ? <p className="mc-panne" data-etat-zone="panne">{panne}</p> : null}
+      {c ? (
+        <>
+          <Niveau commandement={commandement} />
+          {c.objectif ? (
+            <div data-objectif>
+              <div>{c.objectif.libelle}</div>
+              <div className="mc-maj">{c.objectif.par}</div>
+              {typeof c.objectif.progression === 'number' ? <div className="mc-barre-prog"><span style={{ width: `${Math.round(c.objectif.progression * 100)}%` }} /></div> : null}
+            </div>
+          ) : <p data-objectif className="mc-petit">Aucun objectif fixé par le Chef</p>}
+          {(c.missions ?? []).map((m: any) => <div key={m.cle} data-mission={m.cle}><span>{m.libelle}</span><span className="mc-mono">{m.texte}</span></div>)}
+          {c.succes ? <div data-dernier-succes className="mc-petit">Dernier succès : {c.succes.libelle}</div> : null}
+          <div data-compte-rendu>{(c.compteRendu ?? []).slice(0, 3).map((l: string, i: number) => <div key={i} className="mc-petit">{l}</div>)}</div>
+        </>
+      ) : null}
+    </section>
+  )
+}

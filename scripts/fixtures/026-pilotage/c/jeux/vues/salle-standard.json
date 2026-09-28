@@ -1,0 +1,66 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=standard",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "parClasse": [
+    {
+     "classe": "oui",
+     "nombre": 1
+    },
+    {
+     "classe": "appel",
+     "nombre": 1
+    },
+    {
+     "classe": "non",
+     "nombre": 2
+    },
+    {
+     "classe": "sensible",
+     "nombre": 1
+    },
+    {
+     "classe": "rgpd",
+     "nombre": 0
+    }
+   ],
+   "reponses": [
+    {
+     "id": "r1",
+     "recu_le": "2026-10-23T09:00:00.000Z",
+     "classe": "appel",
+     "texte_recu": "Rappelez-moi demain matin (Témoin Plomberie)",
+     "reponse_envoyee": "Bien reçu, nous vous rappelons."
+    },
+    {
+     "id": "r2",
+     "recu_le": "2026-10-23T08:00:00.000Z",
+     "classe": "oui",
+     "texte_recu": "Oui, montrez-moi la maquette <img src=x onerror=alert(1)>",
+     "reponse_envoyee": null
+    },
+    {
+     "id": "r3",
+     "recu_le": "2026-10-23T06:40:00.000Z",
+     "classe": "non",
+     "texte_recu": "Non merci (Témoin Couverture)",
+     "reponse_envoyee": null
+    }
+   ],
+   "active_auj": {
+    "valeur": {
+     "minutes": 75
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

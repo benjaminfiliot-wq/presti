@@ -1,0 +1,7 @@
+/* TÉMOIN du lot c (026-104) : les règles de la Salle Expérience de référence (026-125). Jetons var(--…) seulement. */
+.mc .mc-experience [data-experience-texte] { font-size: 15px; }
+.mc .mc-experience .mc-barre-prog > span { background: var(--mc-actif); }
+.mc .mc-experience [data-arret] { font-size: 13px; color: var(--mc-texte-doux); }
+@media (prefers-reduced-motion: reduce) {
+  .mc .mc-experience * { transition: none !important; animation: none !important; }
+}

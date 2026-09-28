@@ -1,0 +1,107 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=machines",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "agents": [
+    {
+     "nom": "chef",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:55:00.000Z",
+     "prochain_le": "2026-10-23T11:38:00.000Z"
+    },
+    {
+     "nom": "recenseur",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:54:00.000Z",
+     "prochain_le": null
+    },
+    {
+     "nom": "vigie_meta",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:53:00.000Z",
+     "prochain_le": null
+    },
+    {
+     "nom": "garde",
+     "etat": "pause",
+     "battement_le": "2026-10-23T09:52:00.000Z",
+     "prochain_le": null
+    },
+    {
+     "nom": "juge_faits",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:51:00.000Z",
+     "prochain_le": null
+    },
+    {
+     "nom": "redacteur",
+     "etat": "actif",
+     "battement_le": "2026-10-23T09:50:00.000Z",
+     "prochain_le": null
+    }
+   ],
+   "crons": [
+    {
+     "nom": "tic",
+     "dernier_le": "2026-10-23T09:56:00.000Z",
+     "ok": true
+    },
+    {
+     "nom": "relances",
+     "dernier_le": "2026-10-23T07:00:00.000Z",
+     "ok": false
+    }
+   ],
+   "usine": {
+    "valeur": {
+     "mesure": "CPU 12 % · mémoire 3,1 Go",
+     "le": "2026-10-23T09:40:00.000Z"
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "ia": {
+    "valeur": {
+     "fournisseurs": [
+      {
+       "objet": "codex",
+       "resume": "Codex · 42 appels · quota 5 h à 18 %",
+       "le": "2026-10-23T09:50:00.000Z"
+      },
+      {
+       "objet": "cerebras",
+       "resume": "Cerebras · 18 appels · gratuit",
+       "le": "2026-10-23T09:48:00.000Z"
+      }
+     ],
+     "bascules": [
+      {
+       "resume": "Cerebras → Ollama local (quota)",
+       "le": "2026-10-23T05:00:00.000Z"
+      }
+     ],
+     "cout_jour_eur": 0,
+     "le": "2026-10-23T09:50:00.000Z"
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "active_auj": {
+    "valeur": {
+     "minutes": 480
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

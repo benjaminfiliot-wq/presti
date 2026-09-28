@@ -1,0 +1,52 @@
+{
+ "_lisez_moi": "La sous-partie tapis de vue=direct lue par le Radar (026-164).",
+ "statut": 200,
+ "reponse": {
+  "valeur": {
+   "etapes": [
+    {
+     "cle": "trouve",
+     "libelle": "TROUVÉ",
+     "jour": 14,
+     "source": "acq_prospects"
+    },
+    {
+     "cle": "verifie",
+     "libelle": "VÉRIFIÉ",
+     "jour": 9,
+     "source": "acq_prospects"
+    },
+    {
+     "cle": "maquette",
+     "libelle": "MAQUETTE",
+     "jour": 4,
+     "source": "atelier_maquettes"
+    },
+    {
+     "cle": "contacte",
+     "libelle": "CONTACTÉ",
+     "jour": 12,
+     "source": "pilotage_envois_du_jour"
+    }
+   ],
+   "rejet": {
+    "nombre": 3,
+    "tauxPass": 0.86
+   },
+   "paye": {
+    "valeur": {
+     "cle": "paye",
+     "libelle": "PAYÉ",
+     "jour": 1,
+     "source": "stripe"
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

@@ -1,0 +1,33 @@
+// app/api/controle/pilotage/appels/[id]/route.ts — IMPLÉMENTATION DE RÉFÉRENCE du lot b (fiche 026-066) de la route de 026-074
+// qui marque un appel rendu (réservation ou réponse) : le témoin de pilotage-gestes-qa. Ce n'est pas la route livrée.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { journaliser, refusJournal } from '@/lib/direction/journal'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const INTROUVABLE = "Demande d'appel introuvable ou déjà rendue."
+
+export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const f = await estDirection(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const domaine = exigerDomaine(f, 'sante', 'ecrire')
+  if (domaineRefuse(domaine)) return reponseRefus(domaine)
+  const { id } = await ctx.params
+  if (!UUID.test(id)) return NextResponse.json({ error: INTROUVABLE }, { status: 404 })
+  const source = new URL(req.url).searchParams.get('source') ?? 'reponse'
+  if (source !== 'rdv' && source !== 'reponse') return NextResponse.json({ error: 'Source inconnue : rdv ou reponse.' }, { status: 400 })
+  const journal = await journaliser({ acteur: f, action: 'appel_rendu', cible_type: source === 'rdv' ? 'rendez_vous' : 'reponse', cible_id: id, apres: { action: 'appel_rendu', source } }, req)
+  if (!journal) return refusJournal()
+  const r = source === 'rdv'
+    ? await supabaseAdmin.rpc('acq_rdv_appel_rendu', { p_id: id })
+    : await supabaseAdmin.rpc('acq_reponse_appel_rendu', { p_reponse: id })
+  if (r.error) return NextResponse.json({ error: "Rien n'a été fait." }, { status: 503 })
+  if (r.data !== true) return NextResponse.json({ error: INTROUVABLE }, { status: 404 })
+  return NextResponse.json({ message: 'Appel marqué rendu.' })
+}

@@ -1,0 +1,68 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la disposition téléphone de référence (026-111), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Barre compacte de 88 px (deux lignes), feuille « Tous les
+// compteurs », onglets en bas (Attention ouvert par défaut, total en badge) ; Plus mène à Succès, Réglages, Aide et au Poste.
+import { useState, type ReactNode } from 'react'
+import Link from 'next/link'
+import { casesCompteurs, CaseC, Sante } from './Barre'
+import Attention from './Attention'
+import Commandement from './Commandement'
+import Equipage from './Equipage'
+import { useAdresse, valeurDe, type Rep, type Role } from './outils'
+import { InterrupteurAuto } from './Gestes'
+
+type Onglet = 'attention' | 'journal' | 'station' | 'missions' | 'plus'
+const LIBELLES: Record<Onglet, string> = { attention: 'Attention', journal: 'Journal', station: 'Station', missions: 'Missions', plus: 'Plus' }
+
+export default function Telephone(p: { role: Role; barre: any; equipage: any; attention: any; commandement: any; tresorerie: Rep<any>; panneDirect: string | null; carte: ReactNode; journal: ReactNode; ouvrirFeuille: (f: 'decisions' | 'appels') => void; direct: any; reglages: any }) {
+  const { poser } = useAdresse()
+  const [onglet, setOnglet] = useState<Onglet>('attention')
+  const [feuille, setFeuille] = useState(false)
+  const b = valeurDe<any>(p.barre)
+  const cases = casesCompteurs(p.barre, p.tresorerie)
+  const trois = ['encaisse_mois', 'envois', 'chef'].map((k) => cases.find((c) => c.cle === k)).filter(Boolean) as ReturnType<typeof casesCompteurs>
+  const total = valeurDe<any>(p.attention)?.total
+  return (
+    <>
+      <header data-barre-tel>
+        <div data-barre-tel-ligne="1">
+          <b data-titre-tel>MISSION CONTROL</b>
+          <Sante barre={p.barre} />
+          <span data-cloche className="mc-mono">🔔︎ {typeof b?.cloche === 'number' ? b.cloche : '—'}</span>
+          <InterrupteurAuto auto={b?.auto ?? null} role={p.role} />
+        </div>
+        <button type="button" data-barre-tel-ligne="2" aria-label="Tous les compteurs" onClick={() => setFeuille(true)}>
+          {trois.map((c) => <CaseC key={c.cle} c={c} />)}
+        </button>
+      </header>
+      <main className="mc-corps-tel">
+        {p.role === 'lecture' ? <p className="mc-petit" data-lecture-seule>lecture seule</p> : null}
+        {onglet === 'attention' ? <Attention role={p.role} attention={p.attention} panneDirect={p.panneDirect} ouvrirFeuille={p.ouvrirFeuille} /> : null}
+        {onglet === 'journal' ? p.journal : null}
+        {onglet === 'station' ? <>{p.carte}<Equipage role={p.role} equipage={p.equipage} attention={p.attention} panneDirect={p.panneDirect} replie={false} /></> : null}
+        {onglet === 'missions' ? <Commandement role={p.role} commandement={p.commandement} panneDirect={p.panneDirect} /> : null}
+        {onglet === 'plus' ? (
+          <nav data-plus-tel aria-label="Plus" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <button type="button" data-plus="succes" onClick={() => poser({ vue: 'succes' })}>Succès</button>
+            {p.role === 'direction' ? <button type="button" data-plus="reglages" onClick={() => poser({ vue: 'reglages' })}>Réglages</button> : null}
+            <button type="button" data-plus="aide" onClick={() => poser({ vue: 'aide' })}>Aide</button>
+            <Link href="/controle" data-plus="poste" style={{ display: 'flex', alignItems: 'center' }}>← Poste</Link>
+          </nav>
+        ) : null}
+      </main>
+      <nav className="mc-onglets-tel" role="tablist" aria-label="Onglets de la station">
+        {(Object.keys(LIBELLES) as Onglet[]).map((o) => (
+          <button key={o} type="button" role="tab" data-onglet-tel={o} aria-selected={onglet === o} onClick={() => setOnglet(o)}>
+            {LIBELLES[o]}{o === 'attention' && typeof total === 'number' ? <span className="mc-badge" data-badge-attention> {total}</span> : null}
+          </button>
+        ))}
+      </nav>
+      {feuille ? (
+        <section data-feuille="compteurs" role="dialog" aria-modal="true" aria-label="Tous les compteurs">
+          <div className="mc-entete-fenetre"><b>Tous les compteurs</b><button type="button" data-fermer onClick={() => setFeuille(false)}>Fermer</button></div>
+          <div className="mc-grille">{cases.map((c) => <CaseC key={c.cle} c={c} />)}</div>
+        </section>
+      ) : null}
+    </>
+  )
+}

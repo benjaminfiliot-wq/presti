@@ -1,0 +1,40 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la Salle des machines de référence (026-120 ; IA gratuites de la revue transverse du 25/09),
+// écrite par Claude Code pour prouver que pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Les jauges viennent
+// de la seule route des jauges (026-064), avec leur état servi : aucun calcul de part ni de seuil ici.
+import Resume, { Contenu, useVue } from './Resume'
+import { euros, motifSans, relTime, valeurDe } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+
+const TON: Record<string, string> = { ok: 'ok', attention: 'warn', pleine: 'crit' }
+
+export default function Machines({ role, equipage, visible, cle }: PropsSalle) {
+  const [vue, jauges] = useVue(['/api/controle/station?vue=salle&salle=machines', '/api/controle/jauges'], 30_000, visible)
+  const js = (jauges?.ok ? jauges.data?.jauges : null) as any[] | null
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={vue} />
+      <Contenu rep={vue} source="Salle des machines">{(v) => {
+        const ia = valeurDe<any>(v.ia)
+        return (
+          <div>
+            {(v.agents as any[]).map((a) => <div key={a.nom} data-machine-agent={a.nom}>{a.nom} · <span data-etat-machine={a.etat}>{a.etat}</span> · battement {relTime(a.battement_le)} · prochain {a.prochain_le ? relTime(a.prochain_le) : '—'}</div>)}
+            {(v.crons as any[]).map((c) => <div key={c.nom} data-cron={c.nom}>{c.nom} · {relTime(c.dernier_le)} · {c.ok ? 'ok' : 'en échec'}</div>)}
+            <div data-usine>{motifSans(v.usine) ?? `${valeurDe<any>(v.usine)?.mesure ?? '—'} · ${relTime(valeurDe<any>(v.usine)?.le)}`}</div>
+            <h3 className="mc-maj">IA gratuites</h3>
+            {ia ? (
+              <>
+                {(ia.fournisseurs as any[]).map((f) => <div key={f.objet} data-ia-fournisseur={f.objet}>{f.resume}</div>)}
+                {(ia.bascules as any[]).slice(0, 20).map((b, i) => <div key={i} data-ia-bascule className="mc-petit">{b.resume} · {relTime(b.le)}</div>)}
+                <div data-ia-cout className="mc-mono">{euros(ia.cout_jour_eur)}</div>
+              </>
+            ) : <p data-ia-manque>{motifSans(v.ia)}</p>}
+            <h3 className="mc-maj">Jauges</h3>
+            {js ? js.map((j) => <div key={j.cle} data-jauge={j.cle} data-etat={j.etat}><span data-pastille-jauge={TON[j.etat] ?? 'ok'} className={j.etat === 'pleine' ? 'mc-panne' : 'mc-petit'}>{j.etat}</span> {j.libelle} · {j.utilise}/{j.plafond}</div>)
+              : <p className="mc-petit">{jauges && !jauges.ok ? `Jauges ne répond pas : ${jauges.data?.error ?? jauges.status}` : 'Chargement des jauges…'}</p>}
+          </div>
+        )
+      }}</Contenu>
+    </>
+  )
+}

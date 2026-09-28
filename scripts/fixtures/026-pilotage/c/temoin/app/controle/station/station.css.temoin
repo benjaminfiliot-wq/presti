@@ -1,0 +1,149 @@
+/* TÉMOIN du lot c (026-104) : implémentation de référence de la station, écrite par Claude Code pour prouver que
+   pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré (026-111 et suivantes l'écrivent). */
+.mc {
+  --mc-fond: #0A0C11;
+  --mc-neon-1: #6C8CFF;
+  --mc-neon-2: #8A6BFF;
+  --mc-actif: #3EE0F0;
+  --mc-ok: #38CD8C;
+  --mc-warn: #E4B45A;
+  --mc-crit: #F0776A;
+  --mc-argent: #E8C35A;
+  --mc-survol: #1A2030;
+  --mc-texte: #E6E9F2;
+  --mc-texte-doux: #9AA3B8;
+  --mc-panneau: rgba(14, 17, 26, .86);
+  --mc-bord: rgba(108, 140, 255, .35);
+  position: fixed; inset: 0; overflow: hidden;
+  background: var(--mc-fond); color: var(--mc-texte);
+  font-family: var(--font-body); font-size: 14px; line-height: 1.35;
+}
+.mc * { box-sizing: border-box; }
+.mc button, .mc a { font: inherit; color: inherit; }
+.mc button { background: transparent; border: 1px solid var(--mc-bord); border-radius: 6px; padding: 4px 10px; cursor: pointer; min-height: 28px; }
+.mc button:disabled { opacity: .45; cursor: not-allowed; }
+.mc a { color: var(--mc-actif); text-decoration: none; }
+.mc .mc-mono { font-family: var(--font-mono); }
+.mc .mc-petit { font-size: 12px; color: var(--mc-texte-doux); }
+.mc .mc-maj { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--mc-texte-doux); }
+.mc .mc-panne { color: var(--mc-crit); font-size: 13px; }
+.mc .mc-titre-zone { font-family: var(--font-display); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mc-neon-1); margin: 0 0 6px; }
+
+/* La barre, deux lignes de 36 et 44 px */
+.mc [data-zone="barre"] { position: absolute; top: 0; left: 0; right: 0; height: 80px; z-index: 30; background: rgba(10, 12, 17, .96); border-bottom: 1px solid var(--mc-bord); }
+.mc [data-barre-ligne="1"] { height: 36px; display: flex; align-items: center; gap: 14px; padding: 0 12px; white-space: nowrap; overflow: hidden; }
+.mc [data-barre-ligne="2"] { height: 44px; display: flex; flex-wrap: wrap; align-content: center; column-gap: 14px; row-gap: 2px; padding: 0 12px; overflow: hidden; }
+.mc [data-compteur] { display: inline-flex; gap: 5px; align-items: baseline; font-size: 12px; line-height: 18px; white-space: nowrap; }
+.mc [data-compteur] [data-libelle] { font-size: 12px; letter-spacing: .04em; color: var(--mc-texte-doux); }
+.mc [data-compteur] [data-valeur] { font-family: var(--font-mono); font-size: 12px; color: var(--mc-actif); }
+.mc [data-compteur][data-ton="alerte"] [data-valeur] { color: var(--mc-crit); }
+.mc [data-compteur][data-ton="muet"] [data-valeur] { color: var(--mc-texte-doux); }
+.mc [data-titre] { font-family: var(--font-display); font-size: 13px; letter-spacing: .08em; color: var(--mc-texte); }
+.mc [data-version] { font-family: var(--font-mono); font-size: 12px; color: var(--mc-texte-doux); margin-left: 6px; }
+.mc [data-sante] { font-size: 12px; font-family: var(--font-mono); padding: 2px 8px; border-radius: 999px; border: 1px solid var(--mc-bord); }
+.mc [data-sante="en ligne"] { color: var(--mc-ok); }
+.mc [data-sante="dégradée"] { color: var(--mc-warn); }
+.mc [data-sante="hors ligne"] { color: var(--mc-crit); }
+.mc .mc-droite { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.mc [data-auto] { font-family: var(--font-mono); font-size: 12px; border-radius: 999px; padding: 2px 10px; }
+.mc [data-auto][data-actif="oui"] { background: var(--mc-ok); color: var(--mc-fond); border-color: var(--mc-ok); }
+.mc [data-auto][data-actif="non"] { background: transparent; color: var(--mc-texte-doux); }
+.mc [data-cloche] { font-family: var(--font-mono); font-size: 12px; }
+
+/* Les colonnes, par-dessus la carte en plein cadre */
+.mc [data-station-carte] { position: absolute; top: 80px; bottom: 44px; left: 0; right: 0; z-index: 1; padding: 16px 356px 16px 316px; overflow: auto; background: radial-gradient(ellipse at center, var(--mc-survol), var(--mc-fond) 70%); }
+.mc .mc-col { position: absolute; top: 80px; bottom: 44px; z-index: 10; background: var(--mc-panneau); overflow-y: auto; overflow-x: hidden; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+.mc .mc-col-gauche { left: 0; width: 300px; border-right: 1px solid var(--mc-bord); }
+.mc .mc-col-droite { right: 0; width: 340px; border-left: 1px solid var(--mc-bord); }
+.mc .mc-col-gauche[data-repliee="oui"] { width: 44px; padding: 6px 4px; }
+.mc .mc-col-droite[data-repliee="oui"] { width: 44px; padding: 6px 4px; }
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .mc .mc-col-gauche { width: 280px; }
+  .mc .mc-col-droite { width: 320px; }
+  .mc [data-station-carte] { padding: 16px 336px 16px 296px; }
+}
+.mc .mc-rail { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.mc .mc-rail [data-rail-agent] { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--mc-bord); display: grid; place-items: center; font-size: 12px; }
+.mc [data-zone] { min-width: 0; }
+.mc [data-zone="equipage"], .mc [data-zone="attention"], .mc [data-zone="commandement"] { width: 100%; }
+
+/* Les cartes d'agent */
+.mc [data-commandant] { border: 1px solid var(--mc-neon-2); border-radius: 8px; padding: 8px; }
+.mc [data-agent] { border: 1px solid var(--mc-bord); border-radius: 8px; padding: 8px; margin-bottom: 6px; cursor: pointer; }
+.mc [data-agent]:hover { background: var(--mc-survol); }
+.mc [data-point] { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+.mc [data-point="cyan"] { background: var(--mc-actif); }
+.mc [data-point="jaune"] { background: var(--mc-warn); }
+.mc [data-point="rouge"] { background: var(--mc-crit); }
+.mc [data-point="gris"] { background: var(--mc-texte-doux); }
+.mc [data-alerte] { color: var(--mc-crit); font-size: 12px; }
+.mc [data-modele] { font-family: var(--font-mono); font-size: 12px; color: var(--mc-texte-doux); }
+.mc .mc-ligne-agent { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; color: var(--mc-texte-doux); }
+.mc .mc-gestes-agent { display: flex; gap: 6px; margin-top: 6px; }
+
+/* Attention */
+.mc [data-carte-attention] { display: flex; gap: 8px; align-items: center; border-radius: 8px; padding: 8px; border-left: 4px solid var(--mc-texte-doux); background: var(--mc-survol); margin-bottom: 6px; width: 100%; text-align: left; }
+.mc [data-carte-attention][data-couleur="rouge"] { border-left-color: var(--mc-crit); }
+.mc [data-carte-attention][data-couleur="orange"] { border-left-color: var(--accent); }
+.mc [data-carte-attention][data-couleur="jaune"] { border-left-color: var(--mc-warn); }
+.mc [data-carte-attention][data-couleur="bleu"] { border-left-color: var(--mc-neon-1); }
+.mc [data-carte-attention] .mc-nombre { font-family: var(--font-mono); font-size: 16px; }
+
+/* Commandement */
+.mc .mc-barre-prog { height: 6px; border-radius: 3px; background: var(--mc-survol); overflow: hidden; }
+.mc .mc-barre-prog > span { display: block; height: 100%; background: var(--mc-actif); }
+.mc [data-mission] { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+
+/* Le bandeau, 44 px, immobile sauf l'entrée d'un élément nouveau */
+.mc [data-zone="bandeau"] { position: absolute; left: 0; right: 0; bottom: 0; height: 44px; z-index: 30; display: flex; align-items: center; gap: 14px; padding: 0 12px; background: rgba(10, 12, 17, .96); border-top: 1px solid var(--mc-bord); overflow: hidden; }
+.mc [data-zone="bandeau"] nav { display: flex; gap: 4px; }
+.mc [data-zone="bandeau"] nav button { min-height: 32px; font-size: 12px; }
+.mc .mc-elements { flex: 1; display: flex; gap: 18px; overflow: hidden; white-space: nowrap; font-family: var(--font-mono); font-size: 12px; }
+.mc [data-pastille-bandeau] { font-family: var(--font-mono); font-size: 12px; color: var(--mc-argent); white-space: nowrap; }
+.mc .mc-entre { animation: mc-entree .6s ease-out 1; }
+@keyframes mc-entree { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* La carte (cadre d'attente) et sa liste des salles */
+.mc [data-liste-salles] { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-top: 12px; }
+.mc [data-liste-salles] button { min-height: 44px; text-align: left; }
+.mc [data-toast-erreurs] { position: absolute; left: 316px; bottom: 56px; z-index: 12; background: var(--mc-panneau); border: 1px solid var(--mc-crit); border-radius: 8px; padding: 6px 10px; font-size: 12px; display: flex; gap: 8px; align-items: center; }
+.mc [data-direct-pause] { position: absolute; left: 50%; top: 96px; transform: translateX(-50%); z-index: 40; background: var(--mc-panneau); border: 1px solid var(--mc-warn); border-radius: 8px; padding: 10px 16px; }
+
+/* Les panneaux et feuilles par-dessus la carte, jamais sur la barre */
+.mc .mc-fenetre { position: absolute; top: 96px; bottom: 60px; left: 50%; transform: translateX(-50%); width: min(760px, calc(100% - 700px)); min-width: 420px; z-index: 20; background: var(--mc-panneau); border: 1px solid var(--mc-neon-1); border-radius: 10px; padding: 14px; overflow: auto; }
+.mc .mc-entete-fenetre { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+
+/* Mise en page flottante (thème Vaisseau) */
+.mc[data-mise-en-page="flottante"] .mc-col-droite { display: none; }
+.mc[data-mise-en-page="flottante"] .mc-col-droite[data-ouvert="oui"] { display: flex; z-index: 16; }
+.mc[data-mise-en-page="flottante"] .mc-col-gauche [data-zone="attention"] { display: none; }
+.mc .mc-attention-flottante { position: absolute; top: 90px; right: 12px; width: 300px; z-index: 15; display: flex; flex-direction: column; gap: 6px; }
+
+/* Le téléphone */
+.mc.mc-tel { position: fixed; inset: 0; display: flex; flex-direction: column; background: var(--mc-fond); }
+.mc.mc-tel [data-barre-tel] { height: 88px; flex: none; padding: 0 12px; border-bottom: 0; box-shadow: 0 1px 0 var(--mc-bord); display: flex; flex-direction: column; }
+.mc.mc-tel [data-barre-tel-ligne] { display: flex; align-items: center; gap: 10px; height: 44px; min-height: 44px; overflow: hidden; }
+/* Ligne 2 : trois colonnes égales, le libellé au-dessus de la valeur ; rien n'y est rogné à 390 px (contre-vérification). */
+.mc.mc-tel [data-barre-tel-ligne="2"] { width: 100%; border: 0; border-radius: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 8px; align-items: center; text-align: left; }
+.mc.mc-tel [data-barre-tel-ligne="2"] [data-compteur] { display: flex; flex-direction: column; gap: 0; min-width: 0; line-height: 16px; }
+.mc.mc-tel [data-barre-tel-ligne="2"] [data-compteur] [data-libelle] { letter-spacing: 0; }
+.mc.mc-tel .mc-corps-tel { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 12px 80px; }
+.mc.mc-tel .mc-onglets-tel { position: fixed; left: 0; right: 0; bottom: 0; height: calc(64px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); display: grid; grid-template-columns: repeat(5, 1fr); background: rgba(10, 12, 17, .98); border-top: 1px solid var(--mc-bord); z-index: 30; }
+.mc.mc-tel .mc-onglets-tel button { border: 0; border-radius: 0; min-height: 64px; font-size: 12px; }
+.mc.mc-tel .mc-onglets-tel button[aria-selected="true"] { color: var(--mc-actif); }
+.mc.mc-tel [data-feuille] { position: fixed; inset: 0; z-index: 50; background: var(--mc-fond); overflow-y: auto; padding: 14px; }
+.mc.mc-tel [data-feuille="compteurs"] .mc-grille { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.mc.mc-tel [data-feuille="compteurs"] [data-compteur] { display: flex; flex-direction: column; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+/* Une fenêtre au téléphone est une feuille plein écran OPAQUE : rien de la station ne se lit à travers. */
+.mc.mc-tel .mc-fenetre { position: fixed; inset: 0; transform: none; width: auto; min-width: 0; border-radius: 0; z-index: 50; top: 0; bottom: 0; left: 0; background: var(--mc-fond); }
+.mc.mc-tel [data-station-carte] { position: static; padding: 0; background: none; }
+.mc.mc-tel [data-liste-salles] { grid-template-columns: 1fr 1fr; }
+@media (max-width: 1023px) {
+  .mc button, .mc a { min-height: 44px; }
+  .mc .mc-badge { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mc .mc-entre { animation: none; }
+  .mc *, .mc-tel * { transition: none !important; animation: none !important; }
+}

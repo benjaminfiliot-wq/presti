@@ -1,0 +1,60 @@
+'use client'
+// TÉMOIN du lot c (026-104) : l'équipage de référence (026-111 ; gestes de 026-117), écrit par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Une carte par agent servi, dans l'ordre servi ; le modèle,
+// l'activité et la salle sont les textes servis ; la ligne ⚠ reprend le titre de SA carte Attention (champ `agent`).
+import { euros, motifSans, relTime, useAdresse, valeurDe, type Role } from './outils'
+import { plaqueDe } from '@/lib/pilotage/equipage'
+import { ConsigneAgent, PauseAgent } from './Gestes'
+
+type Agent = { nom: string; libelle: string; role?: string; etat: string; point: string; activite: string; activite_le?: string | null; cadence?: string; position?: { salle: string; motif: string }; modele?: { texte: string } }
+
+export function CarteAgent({ a, alerte, cout, role }: { a: Agent; alerte: string | null; cout: string; role: Role }) {
+  const { poser } = useAdresse()
+  return (
+    <div data-agent={a.nom} role="button" tabIndex={0} aria-label={`Fiche de ${a.libelle}`}
+      onClick={() => poser({ agent: a.nom, salle: null })} onKeyDown={(e) => { if (e.key === 'Enter') poser({ agent: a.nom, salle: null }) }}>
+      <div><span data-point={a.point} aria-hidden="true" /><b>{a.libelle}</b> <span className="mc-petit">{a.role ?? ''}</span></div>
+      {alerte ? <div data-alerte>⚠ {alerte}</div> : null}
+      <div data-activite>{a.activite}</div>
+      <div className="mc-ligne-agent">
+        <span data-anciennete>{relTime(a.activite_le ?? null)}</span>
+        <span data-salle-agent>📍 {plaqueDe(a.position?.salle ?? '')}</span>
+        <span data-cadence>{a.cadence ?? ''}</span>
+        <span data-cout className="mc-mono">{cout}</span>
+      </div>
+      <div data-modele>{a.modele?.texte ?? '—'}</div>
+      {role === 'direction' ? <div className="mc-gestes-agent"><PauseAgent nom={a.nom} etat={a.etat} /><ConsigneAgent nom={a.nom} libelle={a.libelle} /></div> : null}
+    </div>
+  )
+}
+
+export default function Equipage({ role, equipage, attention, panneDirect, replie, prenom }: { role: Role; equipage: any; attention: any; panneDirect: string | null; replie: boolean; prenom?: string | null }) {
+  const eq = valeurDe<any>(equipage)
+  const panne = panneDirect ?? (equipage ? motifSans(equipage, 'pilotage_agents') : null)
+  const agents: Agent[] = eq?.agents ?? []
+  const couts = valeurDe<{ nom: string; cout_mois_eur: number | null }[]>(eq?.couts)
+  const motifCouts = motifSans(eq?.couts)
+  const cartes = (valeurDe<any>(attention)?.cartes ?? []) as { agent: string | null; titre: string }[]
+  if (replie) {
+    return (
+      <section data-zone="equipage" data-rail className="mc-rail" aria-label="Équipage">
+        {agents.map((a) => <span key={a.nom} data-rail-agent={a.nom} title={a.libelle}><span data-point={a.point} aria-hidden="true" /></span>)}
+      </section>
+    )
+  }
+  return (
+    <section data-zone="equipage" aria-label="Équipage">
+      <h2 className="mc-titre-zone">Équipage</h2>
+      <div data-commandant><b>{prenom ?? 'Commandant'}</b><div className="mc-petit">Commandant · fondateur</div><div className="mc-petit">à la console</div></div>
+      {!equipage && !panneDirect ? <p className="mc-petit" data-etat-zone="chargement">Chargement de l’équipage…</p> : null}
+      {panne ? <p className="mc-panne" data-etat-zone="panne">{panne}</p> : null}
+      {eq && !agents.length ? <p className="mc-petit" data-etat-zone="vide">Aucun agent enregistré.</p> : null}
+      {!panne ? agents.map((a) => {
+        const carte = cartes.find((c) => c.agent === a.nom)
+        const c = couts?.find((x) => x.nom === a.nom)
+        const cout = motifCouts ? motifCouts : c && typeof c.cout_mois_eur === 'number' ? `${euros(c.cout_mois_eur)} ce mois` : '—'
+        return <CarteAgent key={a.nom} a={a} alerte={carte ? carte.titre : null} cout={cout} role={role} />
+      }) : null}
+    </section>
+  )
+}

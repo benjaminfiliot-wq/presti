@@ -1,0 +1,56 @@
+// app/api/controle/pilotage/decisions/[id]/route.ts — IMPLÉMENTATION DE RÉFÉRENCE du lot b (fiche 026-066) de la route de
+// 026-074 qui tranche une décision : le témoin sur lequel pilotage-gestes-qa doit rendre 0. Ce n'est pas la route livrée.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { estDirection, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
+import { journaliser, refusJournal } from '@/lib/direction/journal'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { choixValide, porteeExigee, type Decision } from '@/lib/pilotage/decisions'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const INTROUVABLE = 'Décision introuvable ou déjà tranchée.'
+const RIEN = "Rien n'a été fait."
+
+export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const f = await estDirection(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const domaine = exigerDomaine(f, 'sante', 'ecrire')
+  if (domaineRefuse(domaine)) return reponseRefus(domaine)
+  const { id } = await ctx.params
+  if (!UUID.test(id)) return NextResponse.json({ error: INTROUVABLE }, { status: 404 })
+  const lu = await supabaseAdmin.rpc('pilotage_decision', { p_id: id })
+  if (lu.error) return NextResponse.json({ error: RIEN }, { status: 503 })
+  const d = (Array.isArray(lu.data) ? lu.data[0] : null) as (Decision & { cle_idempotence?: string | null }) | null
+  if (!d) return NextResponse.json({ error: INTROUVABLE }, { status: 404 })
+  const corps = (await req.json().catch(() => null)) as { choix?: unknown } | null
+  const choix = typeof corps?.choix === 'string' ? corps.choix : ''
+  if (!choixValide(d, choix)) return NextResponse.json({ error: 'Choix inconnu pour cette décision.' }, { status: 400 })
+  const portee = porteeExigee(d)
+  if (portee) {
+    const refus = await exigerReconfirmation(req, f.uid, portee)
+    if (refus) return refus
+  }
+  const journal = await journaliser({ acteur: f, action: 'decision_tranchee', cible_type: 'decision', cible_id: id, apres: { choix, portee, montant_cents: d.montant_cents }, reconfirme: !!portee }, req)
+  if (!journal) return refusJournal()
+  const t = await supabaseAdmin.rpc('ops_decision_trancher', { p_id: id, p_choix: choix, p_auteur: f.uid })
+  let statut = 200
+  let message = `Décision prise : ${d.options.find((o) => o.cle === choix)?.libelle ?? choix}`
+  if (t.error) {
+    const m = t.error.message
+    if (m.includes('ops:deja_tranchee')) { statut = 409; message = 'Décision déjà tranchée.' }
+    else if (m.includes('ops:choix')) return NextResponse.json({ error: 'Choix inconnu pour cette décision.' }, { status: 400 })
+    else if (m.includes('ops:auteur')) return NextResponse.json({ error: 'Réservé aux fondateurs.' }, { status: 403 })
+    else return NextResponse.json({ error: RIEN }, { status: 503 })
+  }
+  // Une carte de réponse du Standard : la réponse est rendue aux agents, même au second appui (déjà tranchée).
+  if ((d.cle_idempotence ?? '').startsWith('acq:reponse:')) {
+    const rendue = await supabaseAdmin.rpc('acq_reponse_reclasser', { p_decision: id, p_par: 'benj' })
+    if (rendue.error) message = "Décision prise ; la réponse n'a pas pu être rendue aux agents : rappuie."
+  }
+  return NextResponse.json(statut === 200 ? { message } : { error: message }, { status: statut })
+}

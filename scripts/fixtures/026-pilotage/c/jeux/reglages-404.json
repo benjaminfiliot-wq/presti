@@ -1,0 +1,7 @@
+{
+ "_lisez_moi": "GET /api/controle/station/reglages : route absente ou drapeau baissé → les défauts, sans panne affichée.",
+ "statut": 404,
+ "reponse": {
+  "error": "Not Found"
+ }
+}

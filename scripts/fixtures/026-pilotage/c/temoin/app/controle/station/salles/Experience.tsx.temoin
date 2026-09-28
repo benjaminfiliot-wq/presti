@@ -1,0 +1,30 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la Salle Expérience de référence (026-125, décision R13), écrite par Claude Code pour
+// prouver que pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Elle se lit : aucun bouton de lancement,
+// d'arrêt ni de relance ; le titre et le texte servis, tels quels ; la panne se voit.
+import Resume, { Contenu, useVue } from './Resume'
+import { dateParis, euros } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+import './experience.css'
+
+export default function Experience({ role, equipage, visible, cle }: PropsSalle) {
+  const [vue] = useVue(['/api/controle/station?vue=salle&salle=experience'], 30_000, visible)
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={vue} />
+      <Contenu rep={vue} source="Salle Expérience">{(v) => (
+        <div className="mc-experience">
+          <p data-experience-texte>{v.texte}</p>
+          {v.statut === 'en_cours' ? (
+            <>
+              <div className="mc-barre-prog" role="progressbar" aria-valuenow={v.jour} aria-valuemax={v.sur} aria-label={v.barre ?? ''}><span style={{ width: `${Math.round((v.jour * 100) / v.sur)}%` }} /></div>
+              <p className="mc-mono">Budget {euros(v.budget)} · gains {euros(v.gains)}</p>
+              <p data-arret>s’arrête seule le {dateParis(v.arret_le)} si elle n’a rien rapporté</p>
+            </>
+          ) : null}
+          {v.statut === 'gagnante' ? <p data-gains className="mc-mono">Gains {euros(v.gains)}</p> : null}
+        </div>
+      )}</Contenu>
+    </>
+  )
+}

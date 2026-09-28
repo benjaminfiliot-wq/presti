@@ -1,0 +1,41 @@
+{
+ "_lisez_moi": "vue=salle&salle=envois : aucun envoi froid, la phrase vide servie (026-015).",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "palier": "P2 · 20 formulaires par jour",
+   "parCanal": [],
+   "parTechnologie": [],
+   "envois": [],
+   "rejets": 0,
+   "anomalies": [],
+   "vide": "Le canal formulaire est fermé jusqu’au 12/10 : aucun envoi à froid.",
+   "gestes": {
+    "envoi_froid": false,
+    "epreuve_passee": false,
+    "epreuve_le": null,
+    "mesure_a_sec": true,
+    "notice_verifiee_le": "2026-10-22T10:00:00.000Z",
+    "technologies_pause": [
+     "wpforms"
+    ],
+    "modeles_suspendus": [
+     "variante-z"
+    ]
+   },
+   "active_auj": {
+    "valeur": {
+     "minutes": 88
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

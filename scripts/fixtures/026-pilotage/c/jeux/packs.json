@@ -1,0 +1,32 @@
+{
+ "_lisez_moi": "GET /api/controle/packs (026-137) : deux packs (le panneau n’en montre ni aperçu ni film).",
+ "statut": 200,
+ "reponse": {
+  "packs": [
+   {
+    "id": "p1",
+    "etat": "fabriquee",
+    "metier": "plombier",
+    "commune": "Lyon",
+    "fabrique_le": "2026-10-23T05:00:00.000Z",
+    "livre_le": null,
+    "refaits": 0,
+    "apercus": {
+     "video": "/storage/v1/object/sign/packs-pubs/p1/video-1.mp4?token=essai",
+     "visuel": "/storage/v1/object/sign/packs-pubs/p1/visuel-1.jpg?token=essai"
+    }
+   },
+   {
+    "id": "p2",
+    "etat": "livree",
+    "metier": "couvreur",
+    "commune": "Annecy",
+    "fabrique_le": "2026-10-21T10:00:00.000Z",
+    "livre_le": "2026-10-22T04:00:00.000Z",
+    "refaits": 1,
+    "apercus": null
+   }
+  ],
+  "a": "2026-10-23T10:00:00.000Z"
+ }
+}

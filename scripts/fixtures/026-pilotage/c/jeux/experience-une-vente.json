@@ -1,0 +1,21 @@
+{
+ "_lisez_moi": "vue=salle&salle=experience : une vente, aucune expérience.",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "barre": null,
+   "texte": "Une vente est faite : Benj peut choisir la première expérience.",
+   "sur": 30,
+   "jour": null,
+   "gains": null,
+   "budget": 0,
+   "statut": "possible",
+   "arret_le": null
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

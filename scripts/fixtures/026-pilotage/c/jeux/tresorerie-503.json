@@ -1,0 +1,7 @@
+{
+ "_lisez_moi": "GET /api/controle/tresorerie en panne.",
+ "statut": 503,
+ "reponse": {
+  "error": "Trésorerie indisponible : Stripe injoignable."
+ }
+}

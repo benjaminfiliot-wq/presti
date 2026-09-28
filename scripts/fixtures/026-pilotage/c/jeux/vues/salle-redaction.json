@@ -1,0 +1,59 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=redaction",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "variantes": {
+    "A": {
+     "contacts": 41,
+     "oui": 2
+    },
+    "B": {
+     "contacts": 12,
+     "oui": 1
+    }
+   },
+   "envois": [
+    {
+     "id": "e1",
+     "canal": "formulaire_site",
+     "type": "premier_contact",
+     "variante": "B",
+     "verdicts": {
+      "j1": "pass",
+      "j3": "pass",
+      "second": "pass"
+     }
+    },
+    {
+     "id": "e2",
+     "canal": "email_sollicite",
+     "type": "lien_maquette",
+     "variante": null,
+     "verdicts": {
+      "j1": "pass",
+      "j3": "refus",
+      "second": null
+     }
+    }
+   ],
+   "rejets": 1,
+   "modeles_suspendus": [
+    "variante-z"
+   ],
+   "active_auj": {
+    "valeur": {
+     "minutes": 130
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

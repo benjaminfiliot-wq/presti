@@ -1,0 +1,41 @@
+{
+ "_lisez_moi": "GET /api/controle/jauges (026-064) : quatre jauges, dont une en attention et une pleine.",
+ "statut": 200,
+ "reponse": {
+  "jauges": [
+   {
+    "cle": "formulaire_jour",
+    "libelle": "Formulaires du jour",
+    "utilise": 12,
+    "plafond": 20,
+    "part": 0.6,
+    "etat": "ok"
+   },
+   {
+    "cle": "formulaire_technologie:wpforms",
+    "libelle": "wpforms",
+    "utilise": 5,
+    "plafond": 6,
+    "part": 0.83,
+    "etat": "attention"
+   },
+   {
+    "cle": "email_sollicite_jour",
+    "libelle": "E-mails sollicités",
+    "utilise": 50,
+    "plafond": 50,
+    "part": 1,
+    "etat": "pleine"
+   },
+   {
+    "cle": "meta_ads_archive",
+    "libelle": "Bibliothèque publicitaire",
+    "utilise": 40,
+    "plafond": 150,
+    "part": 0.27,
+    "etat": "ok"
+   }
+  ],
+  "a": "2026-10-23T10:00:00.000Z"
+ }
+}

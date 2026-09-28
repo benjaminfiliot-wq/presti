@@ -1,0 +1,99 @@
+{
+ "_lisez_moi": "bloc=decider&decision=<id> : la troisième décision épinglée (lien profond, EG-8).",
+ "statut": 200,
+ "reponse": {
+  "bloc": "decider",
+  "valeur": {
+   "cartes": [
+    {
+     "id": "d0000000-0000-4000-8000-000000000003",
+     "question": "Changer l’heure du digest ?",
+     "contexte": "Contexte d’essai (Témoin).",
+     "montant": null,
+     "options": [
+      {
+       "cle": "matin",
+       "libelle": "7 h",
+       "recommandee": false
+      },
+      {
+       "cle": "midi",
+       "libelle": "12 h",
+       "recommandee": true
+      }
+     ],
+     "defaut": {
+      "cle": "matin",
+      "libelle": "7 h"
+     },
+     "libelleDefaut": "Pas d’échéance : rien ne se fait sans vous",
+     "portee": null,
+     "echeance": null,
+     "epinglee": true
+    },
+    {
+     "id": "d0000000-0000-4000-8000-000000000001",
+     "question": "Relancer les couvreurs d’Annecy ?",
+     "contexte": "Contexte d’essai (Témoin).",
+     "montant": null,
+     "options": [
+      {
+       "cle": "oui",
+       "libelle": "Relancer",
+       "recommandee": true
+      },
+      {
+       "cle": "non",
+       "libelle": "Ne pas relancer",
+       "recommandee": false
+      }
+     ],
+     "defaut": {
+      "cle": "non",
+      "libelle": "Ne pas relancer"
+     },
+     "libelleDefaut": "Par défaut dans 3 h : Ne pas relancer",
+     "portee": null,
+     "echeance": "2026-10-23T13:00:00.000Z",
+     "epinglee": false
+    },
+    {
+     "id": "d0000000-0000-4000-8000-000000000002",
+     "question": "Payer le domaine du site de Témoin Plomberie ?",
+     "contexte": "Contexte d’essai (Témoin).",
+     "montant": "12,00 €",
+     "options": [
+      {
+       "cle": "payer",
+       "libelle": "Payer 12 €",
+       "recommandee": true
+      },
+      {
+       "cle": "attendre",
+       "libelle": "Attendre",
+       "recommandee": false
+      },
+      {
+       "cle": "refuser",
+       "libelle": "Refuser",
+       "recommandee": false
+      }
+     ],
+     "defaut": {
+      "cle": "attendre",
+      "libelle": "Attendre"
+     },
+     "libelleDefaut": "Par défaut dans 10 h : Attendre",
+     "portee": "argent",
+     "echeance": "2026-10-23T20:00:00.000Z",
+     "epinglee": false
+    }
+   ],
+   "autres": 2,
+   "invalides": 0
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

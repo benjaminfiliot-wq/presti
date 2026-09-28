@@ -1,0 +1,92 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=tresorerie",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "parAgent": [
+    {
+     "nom": "redacteur",
+     "cout_mois_eur": 1.18,
+     "appels": 42
+    },
+    {
+     "nom": "atelier_maquettes",
+     "cout_mois_eur": 2.05,
+     "appels": 17
+    },
+    {
+     "nom": "garde",
+     "cout_mois_eur": 0.42,
+     "appels": 31
+    }
+   ],
+   "parTache": [
+    {
+     "id": "a3f1",
+     "agent": "redacteur",
+     "libelle": "Plume",
+     "eur": 0.42
+    },
+    {
+     "id": "b7c2",
+     "agent": "atelier_maquettes",
+     "libelle": "Atelier",
+     "eur": 0.31
+    }
+   ],
+   "modeles": [
+    {
+     "fournisseur": "Codex",
+     "modele": "gpt-6-luna",
+     "appels": 42,
+     "eur": 0
+    },
+    {
+     "fournisseur": "Cerebras",
+     "modele": "llama-4-scout",
+     "appels": 18,
+     "eur": 0
+    }
+   ],
+   "total_modeles_eur": 0,
+   "abonnements": [
+    {
+     "fournisseur": "Vercel",
+     "libelle": "Hobby",
+     "ttc_eur": 0,
+     "date_facture": "2026-10-01"
+    },
+    {
+     "fournisseur": "OVH",
+     "libelle": "Domaine prestiapp.fr",
+     "ttc_eur": 8.39,
+     "date_facture": "2026-10-03"
+    }
+   ],
+   "parNature": {
+    "valeur": {
+     "texte": 1.6,
+     "image": 2.05,
+     "video": 0,
+     "voix": 0
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "active_auj": {
+    "valeur": {
+     "minutes": 15
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

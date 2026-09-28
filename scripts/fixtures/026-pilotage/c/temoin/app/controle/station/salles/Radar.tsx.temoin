@@ -1,0 +1,37 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le Radar de référence (026-164), écrit par Claude Code pour prouver que pilotage-ecran-qa
+// sait rendre 0. Ce n'est pas l'écran livré. Le tapis de vue=direct et l'entonnoir (bloc de 026-068), toutes les 5 min ;
+// chaque nombre servi, et aucun autre.
+import Resume, { useVue } from './Resume'
+import { motifSans, panneReponse, valeurDe } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+
+function Tranche({ t, titre }: { t: any; titre: string }) {
+  if (!t) return null
+  return <div data-tranche={titre} className="mc-mono">{titre} · contacts froids {t.contacts} · réponses {t.reponses} · oui {t.oui}</div>
+}
+
+export default function Radar({ role, equipage, visible, cle }: PropsSalle) {
+  const [direct, entonnoir] = useVue(['/api/controle/station?vue=direct', '/api/controle/pilotage?bloc=entonnoir'], 300_000, visible)
+  const tapis = direct?.ok ? direct.data?.valeur?.tapis : null
+  const etapes = (valeurDe<any>(tapis)?.etapes ?? []) as { cle: string; libelle: string; jour: number }[]
+  const e = entonnoir?.ok ? valeurDe<any>(entonnoir.data) : null
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={direct} tapis={tapis} auto="5 min" />
+      {panneReponse(direct, 'Radar') ? <p className="mc-panne">{panneReponse(direct, 'Radar')}</p> : null}
+      {tapis && motifSans(tapis) ? <p className="mc-panne">{motifSans(tapis)}</p> : null}
+      {etapes.length ? <div className="mc-tuiles">{etapes.map((x) => <div key={x.cle} data-tapis={x.cle}>{x.libelle} <span className="mc-mono">{x.jour}</span></div>)}</div> : null}
+      {panneReponse(entonnoir, 'Entonnoir') ? <p className="mc-panne">{panneReponse(entonnoir, 'Entonnoir')}</p> : null}
+      {entonnoir?.ok && motifSans(entonnoir.data) ? <p data-entonnoir-manque>{motifSans(entonnoir.data)}</p> : null}
+      {e ? (
+        <div data-entonnoir>
+          <Tranche t={e.j7} titre="7 jours" />
+          <Tranche t={e.j30} titre="30 jours" />
+          <div data-chauds className="mc-mono">chauds (entrants) : {e.j7?.chauds ?? '—'}</div>
+        </div>
+      ) : null}
+      {direct?.ok && !etapes.length && e && !e.j30?.contacts ? <p>Aucun prospect pour l’instant.</p> : null}
+    </>
+  )
+}

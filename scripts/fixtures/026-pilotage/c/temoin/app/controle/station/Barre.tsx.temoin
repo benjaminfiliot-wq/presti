@@ -1,0 +1,115 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la barre de référence de la station (026-111, gestes de 026-117), écrite par Claude Code pour
+// prouver que pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Deux lignes (36 puis 44 px) ; les compteurs dans
+// l'ordre du §3.1 B : les trois d'argent de la trésorerie, COMMANDES · MOIS et SITES EN LIGNE, puis ceux servis.
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { euros, heureParis, motifSans, panneReponse, stockage, useAdresse, valeurDe, type Rep, type Role } from './outils'
+import { plaqueDe } from '@/lib/pilotage/equipage'
+import { InterrupteurAuto } from './Gestes'
+
+type Compteur = { cle: string; libelle: string; texte: string; ton: 'alerte' | 'normal' | 'muet'; source?: string }
+export type CaseCompteur = Compteur & { panne?: boolean }
+
+/** Les cases de la barre, dans l'ordre (bureau, téléphone et feuille « Tous les compteurs » les lisent ici). */
+export function casesCompteurs(barre: any, tresorerie: Rep<any>): CaseCompteur[] {
+  const panneT = panneReponse(tresorerie, 'Trésorerie')
+  const t = tresorerie?.ok ? tresorerie.data : null
+  const argent = (cle: string, libelle: string, e: any, lire: (v: any) => number | null): CaseCompteur => {
+    if (panneT) return { cle, libelle, texte: `— · ${panneT}`, ton: 'alerte', panne: true, source: 'tresorerie' }
+    if (!t) return { cle, libelle, texte: '…', ton: 'muet', source: 'tresorerie' }
+    const m = motifSans(e, 'Trésorerie')
+    return m ? { cle, libelle, texte: `— · ${m}`, ton: 'muet', source: e?.source ?? 'tresorerie' } : { cle, libelle, texte: euros(lire(valeurDe(e))), ton: 'normal', source: e?.source ?? 'tresorerie' }
+  }
+  const b = valeurDe<any>(barre)
+  const sousPartie = (cle: string, libelle: string, e: any, rendu: (v: any) => string): CaseCompteur => {
+    const m = motifSans(e)
+    return m ? { cle, libelle, texte: m.startsWith('—') ? m : `— · ${m}`, ton: 'muet', source: e?.source } : { cle, libelle, texte: rendu(valeurDe(e)), ton: 'normal', source: e?.source }
+  }
+  const cases: CaseCompteur[] = [
+    argent('encaisse_mois', 'ENCAISSÉ · MOIS', t?.encaisse?.mois, (v) => v?.net ?? null),
+    argent('depense_mois', 'DÉPENSÉ · MOIS', t?.depenses_mois, (v) => (typeof v === 'number' ? v : null)),
+    argent('marge_mois', 'MARGE · MOIS', t?.marge, (v) => (typeof v === 'number' ? v : null)),
+  ]
+  if (b) {
+    cases.push(sousPartie('commandes_mois', 'COMMANDES · MOIS', b.commandes_mois, (v) => String(v)))
+    cases.push(sousPartie('sites_en_ligne', 'SITES EN LIGNE', b.sites_en_ligne, (v) => String(v)))
+    for (const c of (b.compteurs ?? []) as Compteur[]) cases.push({ ...c })
+  }
+  return cases
+}
+
+export function CaseC({ c }: { c: CaseCompteur }) {
+  return (
+    <span data-compteur={c.cle} data-ton={c.ton} title={c.source ? `source : ${c.source}` : undefined}>
+      <span data-libelle>{c.libelle}</span>
+      <span data-valeur>{c.ton === 'muet' ? c.texte.replace(/\d/g, '') || '—' : c.texte}</span>
+    </span>
+  )
+}
+
+export function useHeure() {
+  const [h, setH] = useState(() => heureParis())
+  useEffect(() => { const t = window.setInterval(() => setH(heureParis()), 60_000); return () => window.clearInterval(t) }, [])
+  return h
+}
+
+const SANTE: Record<string, string> = { 'en ligne': 'STATION EN LIGNE', 'dégradée': 'DÉGRADÉE', 'hors ligne': 'HORS LIGNE' }
+export function Sante({ barre }: { barre: any }) {
+  const s = valeurDe<any>(barre)?.sante
+  const v = valeurDe<any>(s)
+  return <span data-sante={v?.etat ?? 'manque'} title={v?.raison ?? motifSans(s) ?? undefined}>{v ? SANTE[v.etat] ?? '—' : '—'}</span>
+}
+
+function EtatNotifications({ role }: { role: Role }) {
+  const { poser } = useAdresse()
+  const [etat, setEtat] = useState('—')
+  useEffect(() => { try { setEtat(typeof Notification === 'undefined' ? 'non prises en charge' : Notification.permission === 'granted' ? 'actives' : 'désactivées') } catch { setEtat('non prises en charge') } }, [])
+  if (role === 'lecture') return null
+  return <button type="button" data-notifications aria-label={`Notifications : ${etat}`} title={`Notifications sur cet appareil : ${etat}`} onClick={() => poser({ vue: 'reglages' })}>Notif. : {etat}</button>
+}
+
+export function ToastErreurs({ barre }: { barre: any }) {
+  const n = valeurDe<number>(valeurDe<any>(barre)?.erreurs)
+  const [masque, setMasque] = useState<string | null>(() => stockage.lire('mc.toast.erreurs'))
+  if (typeof n !== 'number' || n <= 0 || masque === String(n)) return null
+  return (
+    <div data-toast-erreurs role="status">
+      <span>{n} erreurs · 24 h</span>
+      <button type="button" data-fermer-toast aria-label="Masquer" onClick={() => { stockage.ecrire('mc.toast.erreurs', String(n)); setMasque(String(n)) }}>×</button>
+    </div>
+  )
+}
+
+export default function Barre({ role, barre, tresorerie, reglages, panneDirect, flottante, basculerCommandement }: { role: Role; barre: any; tresorerie: Rep<any>; reglages: { titre: string }; panneDirect: string | null; flottante: boolean; basculerCommandement: () => void }) {
+  const { params, poser } = useAdresse()
+  const heure = useHeure()
+  const b = valeurDe<any>(barre)
+  const version = valeurDe<string>(b?.version)
+  const salle = params.get('salle'), agent = params.get('agent')
+  const ariane = salle ? `Station › ${plaqueDe(salle)}` : agent ? `Station › ${agent}` : 'Station'
+  const cases = casesCompteurs(barre, tresorerie)
+  return (
+    <header data-zone="barre">
+      <div data-barre-ligne="1">
+        <Link href="/controle" data-retour-poste>← Poste</Link>
+        <span data-titre>{reglages.titre}<span data-version>{version ?? '—'}</span></span>
+        <Sante barre={barre} />
+        {role === 'lecture' ? <span data-lecture-seule className="mc-petit">lecture seule</span> : null}
+        <span data-ariane className="mc-petit">{ariane}</span>
+        <span className="mc-droite">
+          <span data-jour className="mc-mono">{b?.jour ?? '—'} · <span data-heure>{heure}</span></span>
+          <span data-nuit={b?.nuit ? 'lune' : 'soleil'} aria-label={b?.nuit ? 'nuit' : 'jour'}>{b?.nuit ? '☾' : '☀'}</span>
+          <button type="button" data-drapeau-missions aria-label="Missions" onClick={() => (flottante ? basculerCommandement() : poser({ vue: 'missions' }))}>⚑</button>
+          <EtatNotifications role={role} />
+          <span data-cloche aria-label="Cloche">🔔︎ {typeof b?.cloche === 'number' ? b.cloche : '—'}</span>
+          <InterrupteurAuto auto={b?.auto ?? null} role={role} />
+        </span>
+      </div>
+      <div data-barre-ligne="2">
+        {panneDirect && !b ? <span className="mc-panne">{panneDirect}</span> : null}
+        {cases.map((c) => <CaseC key={c.cle} c={c} />)}
+      </div>
+    </header>
+  )
+}

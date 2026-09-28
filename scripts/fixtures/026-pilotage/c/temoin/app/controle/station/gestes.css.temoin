@@ -1,0 +1,22 @@
+/* TÉMOIN du lot c (026-104) : les règles des gestes de référence (026-117). Jetons var(--…) seulement. */
+.mc .mc-feuille { position: absolute; top: 96px; bottom: 60px; left: 50%; transform: translateX(-50%); width: min(620px, calc(100% - 700px)); min-width: 420px; z-index: 35; overflow: auto; background: var(--mc-panneau); border: 1px solid var(--mc-neon-2); border-radius: 10px; padding: 14px; }
+.mc .mc-carte-decision { border: 1px solid var(--mc-bord); border-radius: 8px; padding: 10px; margin-bottom: 8px; }
+.mc .mc-carte-decision[data-epinglee] { outline: 2px solid var(--mc-neon-1); }
+.mc .mc-choix { display: flex; flex-wrap: wrap; gap: 6px; }
+.mc [data-consigne-agent] { min-width: 44px; min-height: 44px; }
+.mc .mc-choix [data-recommandee] { background: var(--mc-actif); color: var(--mc-fond); border-color: var(--mc-actif); }
+.mc .mc-motif, .mc [data-champ-consigne], .mc [data-confirmation] { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.mc .mc-motif input, .mc [data-champ-consigne] input, .mc [data-gestes-envoi] input, .mc [data-gestes-envoi] select { font-size: 16px; background: var(--mc-survol); color: var(--mc-texte); border: 1px solid var(--mc-bord); border-radius: 6px; padding: 4px 8px; }
+.mc .mc-gestes-envoi { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--mc-bord); margin-top: 10px; padding-top: 10px; }
+.mc .dir-voile { position: fixed; inset: 0; z-index: 60; background: var(--mc-panneau); display: grid; place-items: center; }
+.mc [data-reconfirmer] { background: var(--mc-fond); border: 1px solid var(--mc-neon-1); border-radius: 10px; padding: 16px; width: min(420px, calc(100vw - 32px)); }
+.mc [data-reconfirmer] input { font-size: 16px; width: 100%; min-height: 44px; background: var(--mc-survol); color: var(--mc-texte); border: 1px solid var(--mc-bord); border-radius: 6px; padding: 6px 8px; }
+.mc [data-reconfirmer] p, .mc [data-reconfirmer] label { font-size: 13px; }
+.mc [data-reconfirmer] .dir-modale-actions { display: flex; gap: 8px; margin-top: 10px; }
+.mc.mc-tel .mc-feuille { position: fixed; inset: 0; transform: none; width: auto; min-width: 0; border-radius: 0; z-index: 55; top: 0; bottom: 0; left: 0; }
+@media (max-width: 1023px) {
+  .mc [data-reconfirmer] button { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc .mc-feuille, .mc .mc-feuille *, .mc .dir-voile * { transition: none !important; animation: none !important; }
+}

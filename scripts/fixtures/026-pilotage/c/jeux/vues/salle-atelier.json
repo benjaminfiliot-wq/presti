@@ -1,0 +1,46 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=atelier",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "maquettes": [
+    {
+     "id": "m1",
+     "statut": "jugee",
+     "le": "2026-10-23T09:20:00.000Z",
+     "apercu": "/storage/v1/object/sign/maquettes/m1/index.html?token=essai-m1",
+     "metier": "électricien",
+     "commune": "Annecy",
+     "video": true,
+     "verdict": "PASS"
+    },
+    {
+     "id": "m2",
+     "statut": "revision",
+     "le": "2026-10-23T08:30:00.000Z",
+     "apercu": null,
+     "metier": "plombier",
+     "commune": "Lyon",
+     "video": false,
+     "verdict": "FAIL",
+     "revision": "Photo floue en tête"
+    }
+   ],
+   "rejet": 2,
+   "tauxPass": 0.86,
+   "active_auj": {
+    "valeur": {
+     "minutes": 120
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

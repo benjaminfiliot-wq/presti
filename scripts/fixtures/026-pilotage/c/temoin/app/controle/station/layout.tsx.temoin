@@ -1,0 +1,18 @@
+// TÉMOIN du lot c (026-104) : layout de référence de la station (026-111), écrit par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Serveur : drapeau baissé → 404.
+import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
+import { notFound } from 'next/navigation'
+import { Pixelify_Sans } from 'next/font/google'
+import { actif } from '@/lib/flags'
+import './station.css'
+
+// La police pixel (OFL), servie par next/font depuis notre origine : aucun nouvel hôte, CSP inchangée.
+const pixel = Pixelify_Sans({ subsets: ['latin'], weight: ['400', '600'], variable: '--mc-police-pixel', display: 'swap' })
+
+export const metadata: Metadata = { title: 'Station', robots: { index: false, follow: false } }
+
+export default function StationLayout({ children }: { children: ReactNode }) {
+  if (!actif('pilotage')) notFound()
+  return <div className={pixel.variable}>{children}</div>
+}

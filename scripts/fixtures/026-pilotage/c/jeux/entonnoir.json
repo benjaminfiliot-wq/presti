@@ -1,0 +1,53 @@
+{
+ "_lisez_moi": "GET /api/controle/pilotage?bloc=entonnoir (026-068) : 7 et 30 jours, les chauds à part.",
+ "statut": 200,
+ "reponse": {
+  "bloc": "entonnoir",
+  "valeur": {
+   "j7": {
+    "contacts": 41,
+    "reponses": 3,
+    "oui": 2,
+    "appels": 1,
+    "ventes": 0,
+    "chauds": 1,
+    "parVariante": {
+     "A": {
+      "contacts": 30,
+      "oui": 1
+     },
+     "B": {
+      "contacts": 11,
+      "oui": 1
+     }
+    },
+    "parCanal": {
+     "formulaire_site": {
+      "contacts": 38,
+      "oui": 2
+     }
+    }
+   },
+   "j30": {
+    "contacts": 97,
+    "reponses": 6,
+    "oui": 3,
+    "appels": 2,
+    "ventes": 1,
+    "chauds": 4,
+    "parVariante": {},
+    "parCanal": {}
+   },
+   "hypotheses": {
+    "reponse": {
+     "min": 0.01,
+     "max": 0.05,
+     "source": "rectification du 24/09, §3.6 (supposé)"
+    }
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

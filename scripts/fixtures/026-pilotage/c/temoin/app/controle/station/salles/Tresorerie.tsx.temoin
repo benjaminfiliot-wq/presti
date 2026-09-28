@@ -1,0 +1,40 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la salle Trésorerie de référence (026-120), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Aucune pastille de crédit ; la marge et la TVA sont celles
+// de la trésorerie servie ; un manque servi s'affiche tel quel, jamais « 0 € ».
+import Resume, { Contenu, useOnglets, useVue } from './Resume'
+import { euros, motifSans, valeurDe } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+
+export default function Tresorerie({ role, equipage, tresorerie, visible, cle }: PropsSalle) {
+  const [vue] = useVue(['/api/controle/station?vue=salle&salle=tresorerie'], 30_000, visible)
+  const v0 = vue?.ok ? vue.data?.valeur : null
+  const { actif, barre } = useOnglets([['ensemble', 'Vue d’ensemble'], ['depenses', `Dépenses (${v0?.parAgent?.length ?? 0})`]], 'ensemble')
+  const t = tresorerie?.ok ? tresorerie.data : null
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={vue} />
+      {barre}
+      <Contenu rep={vue} source="Trésorerie">{(v) => actif === 'ensemble' ? (
+        <div>
+          <div data-marge className="mc-mono">MARGE · MOIS {t ? (motifSans(t.marge) ?? euros(valeurDe<number>(t.marge))) : '—'}</div>
+          <div data-tva className="mc-mono">TVA {t ? (motifSans(t.tva) ?? valeurDe<any>(t.tva)?.texte ?? '—') : '—'}</div>
+          <h3 className="mc-maj">Coûts par modèle</h3>
+          {(v.modeles as any[]).map((m, i) => <div key={i} data-modele-cout>{m.modele} · {m.fournisseur} · {m.appels} appels · <span className="mc-mono">{euros(m.eur)}</span></div>)}
+          <div data-total-modeles className="mc-mono">Total des modèles {euros(v.total_modeles_eur)}</div>
+          <h3 className="mc-maj">Abonnements à part</h3>
+          {(v.abonnements as any[]).map((a, i) => <div key={i} data-abonnement>{a.fournisseur} · {a.libelle} · <span className="mc-mono">{euros(a.ttc_eur)}</span></div>)}
+        </div>
+      ) : (
+        <div>
+          {!v.parAgent.length ? <p>Aucune dépense d’agent ce mois-ci.</p> : (v.parAgent as any[]).map((a) => <div key={a.nom} data-depense-agent={a.nom}>{a.nom} · {a.appels} appels · <span className="mc-mono">{euros(a.cout_mois_eur)}</span></div>)}
+          <h3 className="mc-maj">Par nature</h3>
+          {motifSans(v.parNature) ? <p data-nature-manque>{motifSans(v.parNature)}</p>
+            : Object.entries(valeurDe<Record<string, number>>(v.parNature) ?? {}).map(([k, x]) => <div key={k} data-nature={k}>{k} · <span className="mc-mono">{euros(x)}</span></div>)}
+          <h3 className="mc-maj">Les tâches les plus chères</h3>
+          {(v.parTache as any[]).slice(0, 20).map((x, i) => <div key={i} data-tache-chere>#{x.id} · {x.agent} · {x.libelle} · <span className="mc-mono">{euros(x.eur)}</span></div>)}
+        </div>
+      )}</Contenu>
+    </>
+  )
+}

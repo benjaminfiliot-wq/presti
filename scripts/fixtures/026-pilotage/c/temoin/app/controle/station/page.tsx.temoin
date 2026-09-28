@@ -1,0 +1,39 @@
+'use client'
+// TÉMOIN du lot c (026-104) : page de référence de la station (026-111), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. La session et le rôle comme app/controle/page.tsx.
+import { Suspense, useCallback, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { supabase } from '@/lib/supabaseClient'
+import { apiDirection } from '../client'
+import Station from './Station'
+import { UUID, type Role } from './outils'
+
+function PageStation() {
+  const router = useRouter()
+  const params = useSearchParams()
+  const [role, setRole] = useState<Role | null>(null)
+  const [prenom, setPrenom] = useState<string | null>(null)
+  const [refus, setRefus] = useState<string | null>(null)
+  const brute = params.get('decision')
+  const decision = brute && UUID.test(brute) ? brute : undefined
+  const retour = () => `/login?retour=${encodeURIComponent(window.location.pathname + window.location.search)}`
+  const verifier = useCallback(async () => {
+    const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }))
+    if (!data.session) { router.replace(retour()); return }
+    const meta = (data.session.user?.user_metadata ?? {}) as { prenom?: string }
+    setPrenom(meta.prenom ?? null)
+    const r = await apiDirection<{ role?: Role }>('/api/controle/journal?limite=1')
+    if (r.status === 403 || r.status === 404) { router.replace('/dashboard'); return }
+    if (r.status === 401) { router.replace(retour()); return }
+    if (!r.ok) { setRefus(r.data.error ?? 'La station ne répond pas pour l’instant.'); return }
+    setRole(r.data.role === 'lecture' ? 'lecture' : 'direction')
+  }, [router])
+  useEffect(() => { void verifier() }, [verifier])
+  if (refus) return <div className="mc" data-station data-refus><p className="mc-panne" style={{ padding: 24 }}>{refus}</p><button type="button" onClick={() => void verifier()}>Réessayer</button></div>
+  if (!role) return <div className="mc" data-station data-chargement><p style={{ padding: 24 }}>Vérification de l’accès…</p></div>
+  return <Station role={role} decision={decision} prenom={prenom} />
+}
+
+export default function Page() {
+  return <Suspense fallback={null}><PageStation /></Suspense>
+}

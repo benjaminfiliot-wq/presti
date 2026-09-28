@@ -1,0 +1,20 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le cadre de l'habillage (026-111 ; 026-187 le remplit), écrit par Claude Code pour prouver
+// que pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Il ne rend rien : il pose les couleurs réglées sur le
+// seul nœud .mc (jamais sur :root ni body) ; le panneau ?vue=reglages arrive avec 026-187.
+import { useEffect } from 'react'
+import type { Role } from './outils'
+
+const JETONS: Record<string, string> = { fond: '--mc-fond', neon_1: '--mc-neon-1', neon_2: '--mc-neon-2', actif: '--mc-actif', ok: '--mc-ok', warn: '--mc-warn', crit: '--mc-crit', argent: '--mc-argent' }
+const COULEUR = /^#[0-9a-f]{6}$/i
+
+export default function Habillage({ reglages }: { reglages: { couleurs: Record<string, string> }; role: Role; relire: () => void }) {
+  useEffect(() => {
+    const mc = document.querySelector<HTMLElement>('.mc[data-station]')
+    if (!mc) return
+    const poses: string[] = []
+    for (const [k, v] of Object.entries(reglages.couleurs ?? {})) if (JETONS[k] && COULEUR.test(v)) { mc.style.setProperty(JETONS[k], v); poses.push(JETONS[k]) }
+    return () => { for (const j of poses) mc.style.removeProperty(j) }
+  }, [reglages])
+  return null
+}

@@ -1,0 +1,48 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=usine",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "commandes": [
+    {
+     "id": "c0000001-0000-4000-8000-000000000001",
+     "etape": "payee",
+     "depuis": "2026-10-23T08:00:00.000Z",
+     "apercu": null,
+     "metier": "menuisier",
+     "commune": "Nantes"
+    },
+    {
+     "id": "c0000002-0000-4000-8000-000000000002",
+     "etape": "generee",
+     "depuis": "2026-10-22T08:00:00.000Z",
+     "apercu": "/storage/v1/object/sign/sites-apercus/c2/index.html?token=essai-c2",
+     "metier": "plombier",
+     "commune": "Lyon"
+    },
+    {
+     "id": "c0000003-0000-4000-8000-000000000003",
+     "etape": "en_ligne",
+     "depuis": "2026-10-18T10:00:00.000Z",
+     "apercu": "/storage/v1/object/sign/sites-apercus/c3/index.html?token=essai-c3",
+     "metier": "couvreur",
+     "commune": "Annecy"
+    }
+   ],
+   "aValider": 1,
+   "active_auj": {
+    "valeur": {
+     "minutes": 55
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

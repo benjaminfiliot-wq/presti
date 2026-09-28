@@ -1,0 +1,31 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la vue Missions de référence (026-113), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Le niveau, l'XP, l'objectif signé et chaque mission servie,
+// dans l'ordre servi, avec sa barre, son texte et ce qu'elle débloque.
+import { motifSans, valeurDe } from '../outils'
+
+type Mission = { cle: string; libelle: string; valeur: number; cible: number; texte: string; debloque?: string | null }
+
+export default function Missions({ direct }: { direct: any }) {
+  const cmd = direct?.commandement
+  const c = valeurDe<any>(cmd)
+  if (!c) return <p className="mc-panne">{motifSans(cmd, 'Commandement') ?? 'Chargement…'}</p>
+  const argent = valeurDe<any>(c.argent)
+  const missions: Mission[] = [...(c.missions ?? []), ...(argent?.missions ?? [])]
+  return (
+    <div className="mc-missions">
+      <div data-niveau className="mc-mono">{argent?.niveau ? `LV.${argent.niveau.lv}` : motifSans(c.argent) ?? '—'}</div>
+      <div data-xp className="mc-mono">{argent?.niveau?.texte ?? '—'}</div>
+      {c.objectif ? (
+        <div data-objectif><div>{c.objectif.libelle}</div><div className="mc-maj">{c.objectif.par}</div></div>
+      ) : <p data-objectif>Aucun objectif fixé par le Chef</p>}
+      {missions.map((m) => (
+        <div key={m.cle} data-mission={m.cle} className="mc-mission">
+          <div className="mc-mission-tete"><span data-libelle-mission>{m.libelle}</span><span data-texte-mission className="mc-mono">{m.texte}</span></div>
+          <div className="mc-barre-prog" role="progressbar" aria-valuenow={m.valeur} aria-valuemax={m.cible} aria-label={m.libelle}><span style={{ width: `${m.cible > 0 ? Math.min(100, Math.round((m.valeur * 100) / m.cible)) : 0}%` }} /></div>
+          {m.debloque ? <div data-debloque className="mc-petit">{m.debloque}</div> : null}
+        </div>
+      ))}
+    </div>
+  )
+}

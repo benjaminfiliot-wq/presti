@@ -1,0 +1,20 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le cadre d'attente de la carte (026-111, décision Claw3D du 25/09), écrit par Claude Code pour
+// prouver que pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Aucun morceau de Phaser : la liste des salles
+// (une par clé de SALLES, avec sa plaque) ouvre chaque salle par l'adresse ; la réservée E-commerce est désactivée.
+import { SALLES, SALLE_RESERVEE } from '@/lib/pilotage/equipage'
+import { useAdresse } from './outils'
+
+// Propriétés figées : equipage, tapis, bulles, reglages et carte (la sous-partie direct.carte, telle quelle).
+export default function Carte(_: { equipage: unknown; tapis: unknown; bulles: unknown; reglages: unknown; carte: unknown }) {
+  const { poser } = useAdresse()
+  return (
+    <div data-station-carte data-images="0">
+      <p>La carte de la station arrive avec sa fiche.</p>
+      <div data-liste-salles>
+        {SALLES.map((s) => <button key={s.cle} type="button" data-salle={s.cle} onClick={() => poser({ salle: s.cle, agent: null })}>{s.plaque}</button>)}
+        <button type="button" data-salle={SALLE_RESERVEE.cle} disabled>{SALLE_RESERVEE.plaque} · réservée</button>
+      </div>
+    </div>
+  )
+}

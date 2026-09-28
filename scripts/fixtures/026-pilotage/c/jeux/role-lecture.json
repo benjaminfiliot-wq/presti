@@ -1,0 +1,8 @@
+{
+ "_lisez_moi": "GET /api/controle/journal?limite=1 d’un fondateur au rôle lecture (direction_roles.role = lecture).",
+ "statut": 200,
+ "reponse": {
+  "lignes": [],
+  "role": "lecture"
+ }
+}

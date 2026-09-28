@@ -1,0 +1,90 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=agent&nom=facteur",
+ "statut": 200,
+ "reponse": {
+  "vue": "agent",
+  "role": "direction",
+  "valeur": {
+   "nom": "facteur",
+   "libelle": "Facteur",
+   "role": "Soumet les formulaires",
+   "etat": "actif",
+   "point": "cyan",
+   "cadence": "toutes les 15 min",
+   "position": {
+    "salle": "envois",
+    "motif": "tache"
+   },
+   "battement_le": "2026-10-23T09:55:00.000Z",
+   "prochain_le": null,
+   "modele": {
+    "texte": "MODÈLE gpt-6-luna · Codex",
+    "source": "vu"
+   },
+   "modele_le": "2026-10-21T10:00:00.000Z",
+   "taches": [
+    {
+     "numero": 41,
+     "type": "formulaire",
+     "statut": "FAIT",
+     "resultat": "Soumis",
+     "le": "2026-10-23T09:00:00.000Z"
+    },
+    {
+     "numero": 42,
+     "type": "formulaire",
+     "statut": "REJETÉ",
+     "resultat": "Refus J3",
+     "le": "2026-10-23T09:15:00.000Z"
+    },
+    {
+     "numero": 43,
+     "type": "maquette",
+     "statut": "BLOQUÉ",
+     "resultat": "Photo manquante",
+     "le": "2026-10-23T09:30:00.000Z"
+    },
+    {
+     "numero": 44,
+     "type": "maquette",
+     "statut": "EN COURS",
+     "resultat": null,
+     "le": "2026-10-23T09:55:00.000Z"
+    }
+   ],
+   "argent": {
+    "valeur": {
+     "cout_mois_eur": 0.37,
+     "coutParTache": [
+      {
+       "numero": 41,
+       "eur": 0.02
+      },
+      {
+       "numero": 42,
+       "eur": 0.01
+      }
+     ]
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "technologies": [
+    {
+     "technologie": "contact_form_7",
+     "envois": 7,
+     "etat": "active"
+    },
+    {
+     "technologie": "wpforms",
+     "envois": 5,
+     "etat": "pause"
+    }
+   ]
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

@@ -1,0 +1,67 @@
+{
+ "_lisez_moi": "bloc=decider : une décision « lire » du Standard à sept options (EG-14).",
+ "statut": 200,
+ "reponse": {
+  "bloc": "decider",
+  "valeur": {
+   "cartes": [
+    {
+     "id": "d0000000-0000-4000-8000-000000000007",
+     "question": "Que répondre à Témoin Plomberie ?",
+     "contexte": "Contexte d’essai (Témoin).",
+     "montant": null,
+     "options": [
+      {
+       "cle": "o1",
+       "libelle": "Rappeler",
+       "recommandee": false
+      },
+      {
+       "cle": "o2",
+       "libelle": "Envoyer la maquette",
+       "recommandee": false
+      },
+      {
+       "cle": "o3",
+       "libelle": "Proposer un créneau",
+       "recommandee": true
+      },
+      {
+       "cle": "o4",
+       "libelle": "Classer oui",
+       "recommandee": false
+      },
+      {
+       "cle": "o5",
+       "libelle": "Classer non",
+       "recommandee": false
+      },
+      {
+       "cle": "o6",
+       "libelle": "Classer sensible",
+       "recommandee": false
+      },
+      {
+       "cle": "o7",
+       "libelle": "Ignorer",
+       "recommandee": false
+      }
+     ],
+     "defaut": {
+      "cle": "o7",
+      "libelle": "Ignorer"
+     },
+     "libelleDefaut": "Par défaut dans 4 h : Ignorer",
+     "portee": null,
+     "echeance": "2026-10-23T14:00:00.000Z",
+     "epinglee": false
+    }
+   ],
+   "autres": 0,
+   "invalides": 0
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

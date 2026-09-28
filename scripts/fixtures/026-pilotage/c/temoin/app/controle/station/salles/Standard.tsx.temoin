@@ -1,0 +1,27 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le Standard de référence (026-120, revue du 25/09), écrit par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. En lecture seule ; texte servi affiché tel quel.
+import Resume, { Contenu, useVue } from './Resume'
+import { heureParis } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+
+export default function Standard({ role, equipage, visible, cle }: PropsSalle) {
+  const [vue] = useVue(['/api/controle/station?vue=salle&salle=standard'], 30_000, visible)
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={vue} />
+      <Contenu rep={vue} source="Standard">{(v) => (
+        <div>
+          <div className="mc-classes">{(v.parClasse as any[]).map((c) => <span key={c.classe} data-classe={c.classe} data-alerte-classe={c.classe === 'sensible' || c.classe === 'rgpd' ? 'oui' : undefined} className={c.classe === 'sensible' || c.classe === 'rgpd' ? 'mc-panne' : 'mc-petit'}>{c.classe} {c.nombre}</span>)}</div>
+          {!v.reponses.length ? <p>Aucune réponse aujourd’hui.</p> : (v.reponses as any[]).map((r) => (
+            <div key={r.id} data-reponse={r.id}>
+              <span className="mc-mono mc-petit">{heureParis(r.recu_le)} · {r.classe}</span>
+              <div data-texte-recu>{r.texte_recu}</div>
+              {r.reponse_envoyee ? <div data-reponse-envoyee className="mc-petit">↳ {r.reponse_envoyee}</div> : null}
+            </div>
+          ))}
+        </div>
+      )}</Contenu>
+    </>
+  )
+}

@@ -1,0 +1,28 @@
+// TÉMOIN du lot c (026-104) : la seule table SALLES de lib/pilotage/equipage.ts (026-070) dont l'écran de la station a
+// besoin, écrite par Claude Code pour que pilotage-ecran-qa rende 0 sur le témoin. Ce n'est pas le module livré (026-070
+// l'écrit en entier, avec l'équipage, les positions et les points) : l'écran importe SALLES, il ne la recopie jamais.
+export type Genre = 'travail' | 'argent' | 'decision' | 'veille' | 'repos'
+export const SALLES: readonly { cle: string; plaque: string; genre: Genre }[] = [
+  { cle: 'commandement', plaque: 'Commandement', genre: 'decision' },
+  { cle: 'reunion', plaque: 'Salle de réunion', genre: 'decision' },
+  { cle: 'radar', plaque: 'Radar', genre: 'veille' },
+  { cle: 'redaction', plaque: 'Rédaction', genre: 'travail' },
+  { cle: 'envois', plaque: 'Salle des envois', genre: 'travail' },
+  { cle: 'standard', plaque: 'Standard', genre: 'travail' },
+  { cle: 'atelier', plaque: 'Atelier des maquettes', genre: 'travail' },
+  { cle: 'usine', plaque: 'Usine à sites', genre: 'travail' },
+  { cle: 'recettes', plaque: 'Recettes', genre: 'argent' },
+  { cle: 'tresorerie', plaque: 'Trésorerie', genre: 'argent' },
+  { cle: 'crieur', plaque: 'Tour du Crieur', genre: 'travail' },
+  { cle: 'studio', plaque: 'Studio pubs', genre: 'travail' },
+  { cle: 'experience', plaque: 'Salle Expérience', genre: 'travail' },
+  { cle: 'machines', plaque: 'Salle des machines', genre: 'veille' },
+  { cle: 'chantier', plaque: 'Chantier du code', genre: 'travail' },
+  { cle: 'audience', plaque: 'Audience', genre: 'veille' },
+  { cle: 'securite', plaque: 'Sécurité', genre: 'veille' },
+  { cle: 'presti', plaque: 'Presti', genre: 'argent' },
+  { cle: 'observatoire', plaque: 'Observatoire', genre: 'veille' },
+  { cle: 'repos', plaque: 'Salle de repos', genre: 'repos' },
+]
+export const SALLE_RESERVEE = { cle: 'ecommerce', plaque: 'E-commerce', genre: 'reservee' } as const
+export const plaqueDe = (cle: string): string => SALLES.find((s) => s.cle === cle)?.plaque ?? (cle === SALLE_RESERVEE.cle ? SALLE_RESERVEE.plaque : cle)

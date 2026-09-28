@@ -1,0 +1,168 @@
+'use client'
+// TÉMOIN du lot c (026-104) : l'orchestration de référence de la station (026-111), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré.
+//   vue=direct toutes les 30 s, la trésorerie toutes les 30 s, vue=fil toutes les 5 s (sans apres, puis apres=<plus grand
+//   id>), les réglages une fois au chargement ; page visible seulement ; direct en pause après 15 min sans geste ; une
+//   bulle nouvelle relit vue=direct aussitôt, au plus une fois par 5 s (jamais à la première lecture du fil) ; <Carte />
+//   seulement après la première réponse 200 de vue=direct.
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { apiDirection } from '../client'
+import { useAdresse, useVisible, stockage, type Rep, type Role, valeurDe } from './outils'
+import Barre, { ToastErreurs } from './Barre'
+import Equipage from './Equipage'
+import Attention from './Attention'
+import Commandement from './Commandement'
+import Bandeau from './Bandeau'
+import Telephone from './Telephone'
+import Carte from './Carte'
+import Journal from './Journal'
+import Panneaux from './Panneaux'
+import Vues from './Vues'
+import Habillage from './Habillage'
+import { FeuillesGestes } from './Gestes'
+
+export type Bulle = { id: number; le: string; agent: string; pastille: string; type: string; texte: string; lignes?: string[]; cible?: string | null; cibleLibelle?: string | null }
+export type Direct = Record<'barre' | 'equipage' | 'attention' | 'commandement' | 'tapis' | 'bandeau' | 'carte', any>
+export type Reglages = { mise_en_page: 'colonnes' | 'flottante'; titre: string; couleurs: Record<string, string>; brut: Record<string, unknown> }
+const DEFAUTS: Reglages = { mise_en_page: 'colonnes', titre: 'PRESTI · MISSION CONTROL', couleurs: {}, brut: {} }
+const PAUSE_MS = 15 * 60_000
+const GARDER = 200
+
+export default function Station({ role, decision, prenom }: { role: Role; decision?: string; prenom?: string | null }) {
+  const router = useRouter()
+  const { params } = useAdresse()
+  const visible = useVisible()
+  const [direct, setDirect] = useState<Rep<{ valeur: Direct }>>(null)
+  const [directVu, setDirectVu] = useState(false)
+  const [tresorerie, setTresorerie] = useState<Rep<any>>(null)
+  const [bulles, setBulles] = useState<Bulle[]>([])
+  const [reglages, setReglages] = useState<Reglages>(DEFAUTS)
+  const [enPause, setEnPause] = useState(false)
+  const [telephone, setTelephone] = useState(() => typeof window !== 'undefined' && window.innerWidth < 1024)
+  const [feuille, setFeuille] = useState<'decisions' | 'appels' | null>(decision ? 'decisions' : null)
+  const maxId = useRef<number | null>(null)
+  const dernierDirect = useRef(0)
+  const relecture = useRef<number | undefined>(undefined)
+  const geste = useRef(Date.now())
+
+  useEffect(() => {
+    const f = () => setTelephone(window.innerWidth < 1024)
+    window.addEventListener('resize', f)
+    return () => window.removeEventListener('resize', f)
+  }, [])
+
+  const lireDirect = useCallback(async () => {
+    dernierDirect.current = Date.now()
+    const r = await apiDirection<{ valeur: Direct }>('/api/controle/station?vue=direct')
+    if (r.status === 401) { router.replace(`/login?retour=${encodeURIComponent(window.location.pathname + window.location.search)}`); return }
+    if (r.status === 403 || r.status === 404) { router.replace('/dashboard'); return }
+    setDirect(r)
+    if (r.ok) setDirectVu(true)
+  }, [router])
+  const lireTresorerie = useCallback(async () => { setTresorerie(await apiDirection('/api/controle/tresorerie')) }, [])
+  const lireFil = useCallback(async () => {
+    const premiere = maxId.current === null
+    const r = await apiDirection<{ valeur: { bulles: Bulle[] } | null }>(`/api/controle/station?vue=fil${premiere ? '' : `&apres=${maxId.current}`}`)
+    const neuves = r.ok ? (r.data.valeur?.bulles ?? []) : []
+    if (!neuves.length) { if (premiere && r.ok) maxId.current = 0; return }
+    const avant = maxId.current ?? 0
+    const plusGrand = Math.max(avant, ...neuves.map((b) => b.id))
+    setBulles((b) => {
+      const vus = new Set(b.map((x) => x.id))
+      return [...b, ...neuves.filter((x) => !vus.has(x.id))].sort((x, y) => x.id - y.id).slice(-GARDER)
+    })
+    maxId.current = plusGrand
+    // Une bulle nouvelle : relire le direct aussitôt, au plus une fois par 5 s (jamais à la première lecture du fil).
+    if (!premiere && plusGrand > avant) {
+      const attente = Math.max(0, dernierDirect.current + 5000 - Date.now())
+      if (relecture.current === undefined) relecture.current = window.setTimeout(() => { relecture.current = undefined; void lireDirect() }, attente)
+    }
+  }, [lireDirect])
+  const lireReglages = useCallback(async () => {
+    const r = await apiDirection<{ reglages?: Record<string, any> }>('/api/controle/station/reglages')
+    const g = r.ok ? r.data.reglages ?? {} : {}
+    setReglages({
+      mise_en_page: g.mise_en_page === 'flottante' ? 'flottante' : 'colonnes',
+      titre: typeof g.affichage?.titre === 'string' && g.affichage.titre ? g.affichage.titre : DEFAUTS.titre,
+      couleurs: g.couleurs && typeof g.couleurs === 'object' ? g.couleurs : {},
+      brut: g,
+    })
+  }, [])
+
+  // Les réglages : une fois au chargement (puis après chaque enregistrement, par Habillage).
+  useEffect(() => { void lireReglages() }, [lireReglages])
+
+  // Les gestes relancent le direct mis en pause ; 15 min sans geste le mettent en pause.
+  useEffect(() => {
+    const f = () => { geste.current = Date.now(); setEnPause(false) }
+    for (const e of ['pointerdown', 'keydown', 'touchstart']) window.addEventListener(e, f, { passive: true })
+    const t = window.setInterval(() => { if (Date.now() - geste.current >= PAUSE_MS) setEnPause(true) }, 60_000)
+    return () => { for (const e of ['pointerdown', 'keydown', 'touchstart']) window.removeEventListener(e, f); window.clearInterval(t) }
+  }, [])
+
+  const actif = visible && !enPause
+  useEffect(() => {
+    if (!actif) return
+    void lireDirect(); void lireTresorerie(); void lireFil()
+    const d = window.setInterval(() => void lireDirect(), 30_000)
+    const t = window.setInterval(() => void lireTresorerie(), 30_000)
+    const f = window.setInterval(() => void lireFil(), 5_000)
+    return () => { window.clearInterval(d); window.clearInterval(t); window.clearInterval(f); if (relecture.current !== undefined) { window.clearTimeout(relecture.current); relecture.current = undefined } }
+  }, [actif, lireDirect, lireTresorerie, lireFil])
+
+  const v = direct?.ok ? direct.data.valeur : null
+  const panneDirect = direct && !direct.ok ? `Station ne répond pas : ${direct.data?.error ?? `code ${direct.status}`}` : null
+  const sous = (k: keyof Direct) => (v ? v[k] : null)
+  const barre = sous('barre'), equipage = sous('equipage'), attention = sous('attention')
+  const agentsActifs = (valeurDe<any>(barre)?.compteurs ?? []).find((c: any) => c.cle === 'agents') ?? null
+  const communs = { role, direct: v, panneDirect, tresorerie, reglages }
+  const ouvrirFeuille = (f: 'decisions' | 'appels') => setFeuille(f)
+  const [colG, setColG] = useState(() => stockage.lire('mc.colonne.gauche') === 'repliee')
+  const [colD, setColD] = useState(() => stockage.lire('mc.colonne.droite') === 'repliee')
+  const [commandementOuvert, setCommandementOuvert] = useState(false)
+  const replier = (c: 'gauche' | 'droite') => {
+    if (c === 'gauche') { setColG((x) => { stockage.ecrire('mc.colonne.gauche', x ? null : 'repliee'); return !x }) }
+    else { setColD((x) => { stockage.ecrire('mc.colonne.droite', x ? null : 'repliee'); return !x }) }
+  }
+  const flottante = reglages.mise_en_page === 'flottante'
+  const carte = directVu ? <Carte equipage={equipage} tapis={sous('tapis')} bulles={bulles} reglages={reglages} carte={sous('carte')} /> : null
+  const journal = <Journal bulles={bulles} role={role} equipage={equipage} agentsActifs={agentsActifs} reglages={reglages} />
+  const panneaux = <Panneaux role={role} equipage={equipage} tresorerie={tresorerie} barre={barre} />
+  const vues = <Vues vue={params.get('vue')} role={role} direct={v} tresorerie={tresorerie} reglages={reglages} />
+  const habillage = <Habillage reglages={reglages} role={role} relire={lireReglages} />
+  const pause = enPause ? <button type="button" data-direct-pause onClick={() => { geste.current = Date.now(); setEnPause(false) }}>Direct en pause : touche pour reprendre</button> : null
+  const feuilles = <FeuillesGestes feuille={feuille} fermer={() => setFeuille(null)} role={role} decision={decision} />
+
+  if (telephone) {
+    return (
+      <div className="mc mc-tel" data-station data-role={role} data-mise-en-page={reglages.mise_en_page}>
+        <Telephone {...communs} barre={barre} equipage={equipage} attention={attention} commandement={sous('commandement')} carte={carte} journal={journal} ouvrirFeuille={ouvrirFeuille} />
+        {panneaux}{vues}{habillage}{feuilles}{pause}
+      </div>
+    )
+  }
+  return (
+    <div className="mc" data-station data-role={role} data-mise-en-page={reglages.mise_en_page}>
+      <Barre {...communs} barre={barre} flottante={flottante} basculerCommandement={() => setCommandementOuvert((x) => !x)} />
+      {carte ?? <div data-carte-attente-direct className="mc-petit" style={{ position: 'absolute', top: 96, left: 320 }}>{panneDirect ?? 'Chargement de la station…'}</div>}
+      <aside className="mc-col mc-col-gauche" data-colonne="gauche" data-repliee={colG ? 'oui' : 'non'}>
+        <button type="button" data-replier="gauche" aria-label={colG ? 'Déplier la colonne' : 'Replier la colonne'} onClick={() => replier('gauche')}>{colG ? '►' : '◄'}</button>
+        <Equipage {...communs} equipage={equipage} attention={attention} replie={colG} prenom={prenom} />
+        {!colG && !flottante ? <Attention {...communs} attention={attention} ouvrirFeuille={ouvrirFeuille} /> : null}
+      </aside>
+      {flottante ? <div className="mc-attention-flottante"><Attention {...communs} attention={attention} ouvrirFeuille={ouvrirFeuille} /></div> : null}
+      <aside className="mc-col mc-col-droite" data-colonne="droite" data-repliee={colD ? 'oui' : 'non'} data-ouvert={commandementOuvert ? 'oui' : 'non'}>
+        {flottante
+          ? <button type="button" data-fermer-commandement aria-label="Fermer le Commandement" onClick={() => setCommandementOuvert(false)}>×</button>
+          : <button type="button" data-replier="droite" aria-label={colD ? 'Déplier la colonne' : 'Replier la colonne'} onClick={() => replier('droite')}>{colD ? '◄' : '►'}</button>}
+        {!colD || flottante ? <Commandement {...communs} commandement={sous('commandement')} /> : null}
+        {!flottante && !colD ? journal : null}
+      </aside>
+      {flottante ? journal : null}
+      <ToastErreurs barre={barre} />
+      <Bandeau {...communs} bandeau={sous('bandeau')} barre={barre} />
+      {panneaux}{vues}{habillage}{feuilles}{pause}
+    </div>
+  )
+}

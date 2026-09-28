@@ -1,0 +1,238 @@
+{
+ "_lisez_moi": "Le fil d’avant (reponse), puis l’événement injecté au temps t (apres : tache_prise de atelier_maquettes, « Maquette plombier, Lyon ») ; la sous-partie equipage de vue=direct servie après t porte cette activité.",
+ "statut": 200,
+ "reponse": {
+  "vue": "fil",
+  "role": "direction",
+  "valeur": {
+   "bulles": [
+    {
+     "id": 40,
+     "le": "2026-10-23T06:40:00.000Z",
+     "agent": "recenseur",
+     "pastille": "RECENSEUR",
+     "type": "tache_faite",
+     "texte": "Recensé : 6 artisans (Lyon)"
+    },
+    {
+     "id": 41,
+     "le": "2026-10-23T06:50:00.000Z",
+     "agent": "redacteur",
+     "pastille": "PLUME",
+     "type": "tache_faite",
+     "texte": "Message écrit : variante B"
+    },
+    {
+     "id": 42,
+     "le": "2026-10-23T07:10:00.000Z",
+     "agent": "repondeur",
+     "pastille": "RÉPONDEUR",
+     "type": "reponse_oui",
+     "texte": "Oui reçu : électricien (Lyon)"
+    },
+    {
+     "id": 43,
+     "le": "2026-10-23T07:30:00.000Z",
+     "agent": "tresorier",
+     "pastille": "TRÉSORIER",
+     "type": "commande_payee",
+     "texte": "Commande payée : site de menuisier (Nantes)"
+    },
+    {
+     "id": 44,
+     "le": "2026-10-23T07:50:00.000Z",
+     "agent": "chef",
+     "pastille": "CHEF",
+     "type": "reunion_compte_rendu",
+     "texte": "Compte rendu de la réunion",
+     "lignes": [
+      "12 formulaires soumis hier",
+      "2 réponses, dont 1 oui",
+      "La maquette du plombier est prête",
+      "Objectif : dix formulaires par jour",
+      "Idée : relancer les couvreurs"
+     ]
+    },
+    {
+     "id": 45,
+     "le": "2026-10-23T08:10:00.000Z",
+     "agent": "benj",
+     "pastille": "BENJ",
+     "type": "consigne",
+     "texte": "Priorité aux plombiers de Lyon",
+     "cible": "facteur",
+     "cibleLibelle": "FACTEUR"
+    },
+    {
+     "id": 46,
+     "le": "2026-10-23T08:30:00.000Z",
+     "agent": "facteur",
+     "pastille": "FACTEUR",
+     "type": "tache_faite",
+     "texte": "Formulaire soumis : plombier (Lyon)"
+    },
+    {
+     "id": 47,
+     "le": "2026-10-23T08:50:00.000Z",
+     "agent": "atelier_maquettes",
+     "pastille": "ATELIER",
+     "type": "tache_prise",
+     "texte": "Maquette : <img src=x onerror=alert(1)>"
+    },
+    {
+     "id": 48,
+     "le": "2026-10-23T09:10:00.000Z",
+     "agent": "crieur",
+     "pastille": "CRIEUR",
+     "type": "publication",
+     "texte": "Publication programmée : chantier du jour"
+    },
+    {
+     "id": 49,
+     "le": "2026-10-23T09:30:00.000Z",
+     "agent": "benj",
+     "pastille": "BENJ",
+     "type": "consigne",
+     "texte": "Pas d’envoi le dimanche",
+     "cible": null,
+     "cibleLibelle": null
+    },
+    {
+     "id": 50,
+     "le": "2026-10-23T09:50:00.000Z",
+     "agent": "a0",
+     "pastille": "VEILLEUR",
+     "type": "tache_faite",
+     "texte": "Tout va bien"
+    }
+   ],
+   "dernier_id": 50
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ },
+ "apres": {
+  "vue": "fil",
+  "role": "direction",
+  "valeur": {
+   "bulles": [
+    {
+     "id": 40,
+     "le": "2026-10-23T06:40:00.000Z",
+     "agent": "recenseur",
+     "pastille": "RECENSEUR",
+     "type": "tache_faite",
+     "texte": "Recensé : 6 artisans (Lyon)"
+    },
+    {
+     "id": 41,
+     "le": "2026-10-23T06:50:00.000Z",
+     "agent": "redacteur",
+     "pastille": "PLUME",
+     "type": "tache_faite",
+     "texte": "Message écrit : variante B"
+    },
+    {
+     "id": 42,
+     "le": "2026-10-23T07:10:00.000Z",
+     "agent": "repondeur",
+     "pastille": "RÉPONDEUR",
+     "type": "reponse_oui",
+     "texte": "Oui reçu : électricien (Lyon)"
+    },
+    {
+     "id": 43,
+     "le": "2026-10-23T07:30:00.000Z",
+     "agent": "tresorier",
+     "pastille": "TRÉSORIER",
+     "type": "commande_payee",
+     "texte": "Commande payée : site de menuisier (Nantes)"
+    },
+    {
+     "id": 44,
+     "le": "2026-10-23T07:50:00.000Z",
+     "agent": "chef",
+     "pastille": "CHEF",
+     "type": "reunion_compte_rendu",
+     "texte": "Compte rendu de la réunion",
+     "lignes": [
+      "12 formulaires soumis hier",
+      "2 réponses, dont 1 oui",
+      "La maquette du plombier est prête",
+      "Objectif : dix formulaires par jour",
+      "Idée : relancer les couvreurs"
+     ]
+    },
+    {
+     "id": 45,
+     "le": "2026-10-23T08:10:00.000Z",
+     "agent": "benj",
+     "pastille": "BENJ",
+     "type": "consigne",
+     "texte": "Priorité aux plombiers de Lyon",
+     "cible": "facteur",
+     "cibleLibelle": "FACTEUR"
+    },
+    {
+     "id": 46,
+     "le": "2026-10-23T08:30:00.000Z",
+     "agent": "facteur",
+     "pastille": "FACTEUR",
+     "type": "tache_faite",
+     "texte": "Formulaire soumis : plombier (Lyon)"
+    },
+    {
+     "id": 47,
+     "le": "2026-10-23T08:50:00.000Z",
+     "agent": "atelier_maquettes",
+     "pastille": "ATELIER",
+     "type": "tache_prise",
+     "texte": "Maquette : <img src=x onerror=alert(1)>"
+    },
+    {
+     "id": 48,
+     "le": "2026-10-23T09:10:00.000Z",
+     "agent": "crieur",
+     "pastille": "CRIEUR",
+     "type": "publication",
+     "texte": "Publication programmée : chantier du jour"
+    },
+    {
+     "id": 49,
+     "le": "2026-10-23T09:30:00.000Z",
+     "agent": "benj",
+     "pastille": "BENJ",
+     "type": "consigne",
+     "texte": "Pas d’envoi le dimanche",
+     "cible": null,
+     "cibleLibelle": null
+    },
+    {
+     "id": 50,
+     "le": "2026-10-23T09:50:00.000Z",
+     "agent": "a0",
+     "pastille": "VEILLEUR",
+     "type": "tache_faite",
+     "texte": "Tout va bien"
+    },
+    {
+     "id": 51,
+     "le": "2026-10-23T10:00:00.000Z",
+     "agent": "atelier_maquettes",
+     "pastille": "ATELIER",
+     "type": "tache_prise",
+     "texte": "Maquette plombier, Lyon"
+    }
+   ],
+   "dernier_id": 51
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ },
+ "activite": {
+  "agent": "atelier_maquettes",
+  "texte": "Maquette plombier, Lyon"
+ }
+}

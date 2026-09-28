@@ -1,0 +1,30 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le Chantier du code de référence (026-164), écrit par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Le dernier relevé du poste (bloc code de 026-068) et son
+// âge, toutes les minutes ; un relevé périmé dit sa phrase servie, en évidence.
+import Resume, { useVue } from './Resume'
+import { panneReponse, relTime, valeurDe } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+
+export default function Chantier({ role, equipage, visible, cle }: PropsSalle) {
+  const [code] = useVue(['/api/controle/pilotage?bloc=code'], 60_000, visible)
+  const c = code?.ok ? valeurDe<any>(code.data) : null
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={code} auto="1 min" />
+      {panneReponse(code, 'Chantier') ? <p className="mc-panne">{panneReponse(code, 'Chantier')}</p> : null}
+      {c ? (
+        <div>
+          {c.perime || c.message ? <p data-perime className="mc-panne">{c.message}</p> : null}
+          <p data-releve className="mc-petit">relevé {relTime(c.publie_le)}</p>
+          <div data-file>File : {(c.file as string[]).join(', ') || '—'}</div>
+          <div data-en-cours>En cours : {(c.enCours as any[]).map((x) => `${x.id} (${x.agent})`).join(', ') || '—'}</div>
+          <div data-verrous>Verrous vieux : {(c.verrousVieux as string[]).join(', ') || '—'}</div>
+          {(c.derniers as any[]).map((d) => <div key={d.id} data-dernier={d.id}>{d.id} · {d.verdict}</div>)}
+          <div data-prs>{c.prs?.texte ?? '—'}</div>
+          {(c.attention as string[]).map((l, i) => <div key={i} data-attention-code className="mc-petit">{l}</div>)}
+        </div>
+      ) : null}
+    </>
+  )
+}

@@ -1,0 +1,7 @@
+{
+ "_lisez_moi": "GET /api/controle/packs : drapeau packPub baissé.",
+ "statut": 404,
+ "reponse": {
+  "error": "Not Found"
+ }
+}

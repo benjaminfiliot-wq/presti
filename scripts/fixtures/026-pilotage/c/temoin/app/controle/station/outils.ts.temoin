@@ -1,0 +1,73 @@
+'use client'
+// TÉMOIN du lot c (026-104) : les outils partagés de l'implémentation de référence de la station, écrite par Claude Code
+// pour prouver que pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. L'écran n'ordonne, ne filtre et ne calcule
+// rien : il met en forme ce qui est servi (montants par euros(), âges par relTime(), heures de Paris).
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { euros, relTime } from '@/lib/direction/fraicheur'
+
+export { euros, relTime }
+export type Env<T = unknown> = { valeur: T | null; source?: string; a?: string; erreur?: string; manque?: string; nonMesure?: boolean; raison?: string } | null | undefined
+export type Rep<T = unknown> = { ok: boolean; status: number; data: T & { error?: string; code?: string; portee?: string } } | null
+
+const HEURE = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hour12: false })
+const JOUR = new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', day: '2-digit', month: '2-digit' })
+export const heureParis = (d: Date | string | number = Date.now()) => HEURE.format(new Date(d))
+export const dateParis = (iso: string | null | undefined) => (iso && Number.isFinite(Date.parse(iso)) ? JOUR.format(new Date(iso)) : '—')
+
+export const estHors = (e: Env) => !!e && e.valeur === null && e.nonMesure === true
+export const valeurDe = <T,>(e: Env<T>): T | null => (e && e.valeur !== undefined ? (e.valeur as T | null) : null)
+/** La panne d'une enveloppe, dite : « <source> ne répond pas : <erreur> » ; le manque tel quel ; « — · hors périmètre ». */
+export function motifSans(e: Env, source = 'la source'): string | null {
+  if (!e) return null
+  if (estHors(e)) return '— · hors périmètre'
+  if (e.valeur !== null) return null
+  if (e.erreur) return `${e.source ?? source} ne répond pas : ${e.erreur}`
+  if (e.manque) return e.manque
+  return `${e.source ?? source} ne répond pas`
+}
+export const panneReponse = (r: Rep, source: string) => (r && !r.ok ? `${source} ne répond pas : ${r.data?.error ?? `code ${r.status}`}` : null)
+
+/** Poser ou retirer des paramètres de l'adresse, sans quitter la page. */
+export function useAdresse() {
+  const router = useRouter()
+  const params = useSearchParams()
+  const poser = useCallback((changes: Record<string, string | null>) => {
+    const p = new URLSearchParams(window.location.search)
+    for (const [k, v] of Object.entries(changes)) { if (v === null) p.delete(k); else p.set(k, v) }
+    const q = p.toString()
+    router.replace(`${window.location.pathname}${q ? `?${q}` : ''}`, { scroll: false })
+  }, [router])
+  return { params, poser }
+}
+
+export function useVisible() {
+  const [visible, setVisible] = useState(() => typeof document === 'undefined' || document.visibilityState === 'visible')
+  useEffect(() => {
+    const f = () => setVisible(document.visibilityState === 'visible')
+    document.addEventListener('visibilitychange', f)
+    return () => document.removeEventListener('visibilitychange', f)
+  }, [])
+  return visible
+}
+
+/** Appelle f tout de suite puis toutes les `ms`, seulement tant que `actif` (page visible, panneau ouvert…). */
+export function useLecture(f: () => void, ms: number, actif: boolean) {
+  const ref = useRef(f)
+  ref.current = f
+  useEffect(() => {
+    if (!actif) return
+    ref.current()
+    const t = window.setInterval(() => ref.current(), ms)
+    return () => window.clearInterval(t)
+  }, [ms, actif])
+}
+
+/** Le stockage de ce navigateur, sous try/catch : un stockage qui lève ne casse rien. */
+export const stockage = {
+  lire(cle: string): string | null { try { return window.localStorage.getItem(cle) } catch { return null } },
+  ecrire(cle: string, v: string | null) { try { if (v === null) window.localStorage.removeItem(cle); else window.localStorage.setItem(cle, v) } catch { /* stockage fermé */ } },
+}
+
+export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+export type Role = 'direction' | 'lecture'

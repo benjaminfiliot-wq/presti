@@ -1,0 +1,190 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=recettes",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "jours": [
+    {
+     "jour": "2026-09-24",
+     "agents_eur": 0,
+     "hors_agents_eur": 29
+    },
+    {
+     "jour": "2026-09-25",
+     "agents_eur": 0,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-09-26",
+     "agents_eur": 300,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-09-27",
+     "agents_eur": 0,
+     "hors_agents_eur": 58
+    },
+    {
+     "jour": "2026-09-28",
+     "agents_eur": 0,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-09-29",
+     "agents_eur": 90,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-09-30",
+     "agents_eur": 0,
+     "hors_agents_eur": 29
+    },
+    {
+     "jour": "2026-10-01",
+     "agents_eur": 0,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-02",
+     "agents_eur": 300,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-03",
+     "agents_eur": 0,
+     "hors_agents_eur": 58
+    },
+    {
+     "jour": "2026-10-04",
+     "agents_eur": 0,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-05",
+     "agents_eur": 90,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-06",
+     "agents_eur": 0,
+     "hors_agents_eur": 29
+    },
+    {
+     "jour": "2026-10-07",
+     "agents_eur": 0,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-08",
+     "agents_eur": 300,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-09",
+     "agents_eur": 0,
+     "hors_agents_eur": 58
+    },
+    {
+     "jour": "2026-10-10",
+     "agents_eur": 0,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-11",
+     "agents_eur": 90,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-12",
+     "agents_eur": 0,
+     "hors_agents_eur": 29
+    },
+    {
+     "jour": "2026-10-13",
+     "agents_eur": 0,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-14",
+     "agents_eur": 300,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-15",
+     "agents_eur": 0,
+     "hors_agents_eur": 58
+    },
+    {
+     "jour": "2026-10-16",
+     "agents_eur": 0,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-17",
+     "agents_eur": 90,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-18",
+     "agents_eur": 0,
+     "hors_agents_eur": 29
+    },
+    {
+     "jour": "2026-10-19",
+     "agents_eur": 0,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-20",
+     "agents_eur": 300,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-21",
+     "agents_eur": 0,
+     "hors_agents_eur": 58
+    },
+    {
+     "jour": "2026-10-22",
+     "agents_eur": 0,
+     "hors_agents_eur": 0
+    },
+    {
+     "jour": "2026-10-23",
+     "agents_eur": 90,
+     "hors_agents_eur": 0
+    }
+   ],
+   "sites": {
+    "agents": {
+     "commandes": 2,
+     "montant_eur": 600
+    },
+    "hors_agents": {
+     "commandes": 1,
+     "montant_eur": 300
+    }
+   },
+   "packs": {
+    "valeur": null,
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false,
+    "manque": "Les packs ne se vendent pas encore."
+   },
+   "active_auj": {
+    "valeur": {
+     "minutes": 42
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

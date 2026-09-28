@@ -1,0 +1,37 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la file Attention de référence (026-111 ; gestes de 026-117), écrite par Claude Code pour
+// prouver que pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Les cartes servies, dans l'ordre servi, avec
+// leur couleur ; « ouvrir » est un lien vers sa cible ; décisions et appels ouvrent leur feuille ; aucun geste d'envoi.
+import Link from 'next/link'
+import { motifSans, valeurDe, type Role } from './outils'
+
+type CarteA = { cle: string; couleur: string; nombre: number; titre: string; geste: { type: string; cible?: string }; agent: string | null }
+
+export function ListeAttention({ attention, role, ouvrirFeuille }: { attention: any; role: Role; ouvrirFeuille: (f: 'decisions' | 'appels') => void }) {
+  const at = valeurDe<{ cartes: CarteA[]; total: number; vide: string | null }>(attention)
+  if (!at) return null
+  if (!at.cartes.length) return <p data-vide-attention>{at.vide ?? ''}</p>
+  const autres = at.total - at.cartes.length
+  return (
+    <>
+      {at.cartes.map((c) => {
+        const corps = <><span className="mc-nombre">{c.nombre}</span><span>{c.titre}</span></>
+        if (c.geste.type === 'ouvrir' && c.geste.cible) return <Link key={c.cle} href={c.geste.cible} data-carte-attention={c.cle} data-couleur={c.couleur}>{corps}</Link>
+        if ((c.geste.type === 'decisions' || c.geste.type === 'appels') && role === 'direction') return <button key={c.cle} type="button" data-carte-attention={c.cle} data-couleur={c.couleur} onClick={() => ouvrirFeuille(c.geste.type as 'decisions' | 'appels')}>{corps}</button>
+        return <div key={c.cle} data-carte-attention={c.cle} data-couleur={c.couleur}>{corps}</div>
+      })}
+      {autres > 0 ? <p data-autres className="mc-petit">{autres} autres</p> : null}
+    </>
+  )
+}
+
+export default function Attention({ role, attention, panneDirect, ouvrirFeuille }: { role: Role; attention: any; panneDirect: string | null; ouvrirFeuille: (f: 'decisions' | 'appels') => void }) {
+  const panne = panneDirect ?? (attention ? motifSans(attention, 'Attention') : null)
+  return (
+    <section data-zone="attention" aria-label="Attention">
+      <h2 className="mc-titre-zone">Attention</h2>
+      {!attention && !panneDirect ? <p className="mc-petit" data-etat-zone="chargement">Chargement…</p> : null}
+      {panne ? <p className="mc-panne" data-etat-zone="panne">{panne}</p> : <ListeAttention attention={attention} role={role} ouvrirFeuille={ouvrirFeuille} />}
+    </section>
+  )
+}

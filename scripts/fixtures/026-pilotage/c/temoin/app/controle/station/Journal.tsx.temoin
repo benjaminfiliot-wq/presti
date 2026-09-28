@@ -1,0 +1,93 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le Journal de bord de référence (026-123), écrit par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Une bulle par bulle servie (le flux unique de Station.tsx),
+// dans l'ordre servi ; le filtre par agent lit vue=fil&agent= une fois ; jamais une bulle que le fil n'a pas servie.
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { apiDirection } from '../client'
+import { heureParis, stockage, valeurDe, type Role } from './outils'
+import Transmettre from './journal/Transmettre'
+import './journal/journal.css'
+
+type Bulle = { id: number; le: string; agent: string; pastille: string; type: string; texte: string; lignes?: string[]; cible?: string | null; cibleLibelle?: string | null }
+
+function BulleFil({ b, agents }: { b: Bulle; agents: { nom: string; libelle: string; role?: string }[] }) {
+  const a = agents.find((x) => x.nom === b.agent)
+  const info = a ? `${a.libelle} · ${a.role ?? ''}` : b.pastille
+  return (
+    <li data-bulle-fil={b.id} data-type={b.type}>
+      <span data-heure className="mc-mono">{heureParis(b.le)}</span>{' '}
+      <span data-pastille tabIndex={0} aria-label={info}>{b.pastille}<span data-info-agent role="tooltip">{info}</span></span>
+      {b.type === 'consigne' && b.cibleLibelle ? <span data-cible> ▸ {b.cibleLibelle} :</span> : null}{' '}
+      <span data-texte className="mc-mono">{b.texte}</span>
+      {b.lignes?.length ? <ol data-lignes-reunion>{b.lignes.map((l, i) => <li key={i} data-ligne-reunion>{l}</li>)}</ol> : null}
+    </li>
+  )
+}
+
+export default function Journal({ bulles, role, equipage, agentsActifs, reglages }: { bulles: Bulle[]; role: Role; equipage: any; agentsActifs: { texte: string } | null; reglages: { mise_en_page: string } }) {
+  const agents = (valeurDe<any>(equipage)?.agents ?? []) as { nom: string; libelle: string; role?: string }[]
+  const [filtre, setFiltre] = useState<string>('')
+  const [filtrees, setFiltrees] = useState<Bulle[] | null>(null)
+  const [panne, setPanne] = useState<string | null>(null)
+  const [replie, setReplie] = useState(() => stockage.lire('mc.journal.replie') === 'oui')
+  const [nouvelles, setNouvelles] = useState(0)
+  const liste = useRef<HTMLOListElement | null>(null)
+  const enBas = useRef(true)
+  const vues = useRef(0)
+  const montrees = filtre ? (filtrees ?? []) : bulles
+
+  useEffect(() => {
+    if (!filtre) { setFiltrees(null); setPanne(null); return }
+    let vivant = true
+    void apiDirection<{ valeur: { bulles: Bulle[] } | null }>(`/api/controle/station?vue=fil&agent=${encodeURIComponent(filtre)}`).then((r) => {
+      if (!vivant) return
+      if (r.ok) { setFiltrees(r.data.valeur?.bulles ?? []); setPanne(null) } else setPanne(`Le journal ne répond pas : ${r.data.error ?? `code ${r.status}`}`)
+    })
+    return () => { vivant = false }
+  }, [filtre])
+
+  useLayoutEffect(() => {
+    const el = liste.current
+    const n = montrees.length
+    if (el && n > vues.current) {
+      if (enBas.current) el.scrollTop = el.scrollHeight
+      else { const plus = n - vues.current; setNouvelles((x) => x + plus) }
+    }
+    vues.current = n
+  }, [montrees.length])
+  const surDefilement = () => {
+    const el = liste.current
+    if (!el) return
+    enBas.current = el.scrollHeight - el.scrollTop - el.clientHeight < 8
+    if (enBas.current) setNouvelles(0)
+  }
+  const flottant = reglages.mise_en_page === 'flottante'
+  const basculer = () => setReplie((x) => { stockage.ecrire('mc.journal.replie', x ? null : 'oui'); return !x })
+  return (
+    <section data-station-journal data-flottant={flottant ? 'oui' : 'non'} data-replie={replie ? 'oui' : 'non'} aria-label="Journal de bord">
+      <div className="mc-entete-journal">
+        <h2 className="mc-titre-zone">Journal de bord</h2>
+        <span data-en-ligne className="mc-mono mc-petit">{agentsActifs?.texte ?? '—'}</span>
+        {flottant ? <button type="button" data-replier-journal aria-label={replie ? 'Déplier le journal' : 'Replier le journal'} onClick={basculer}>{replie ? '▲' : '▼'}</button> : null}
+      </div>
+      {!replie ? (
+        <>
+          <label className="mc-petit">Agent{' '}
+            <select data-filtre-agent value={filtre} onChange={(e) => setFiltre(e.target.value)}>
+              <option value="">Tous</option>
+              {agents.map((a) => <option key={a.nom} value={a.nom}>{a.libelle}</option>)}
+            </select>
+          </label>
+          {panne ? <p className="mc-panne">{panne}</p> : null}
+          {montrees.length ? (
+            <ol data-fil-liste ref={liste} onScroll={surDefilement}>
+              {montrees.map((b) => <BulleFil key={b.id} b={b} agents={agents} />)}
+            </ol>
+          ) : <p data-fil-vide className="mc-petit">Rien au journal pour l’instant.</p>}
+          {nouvelles > 0 ? <button type="button" data-nouvelles onClick={() => { const el = liste.current; if (el) el.scrollTop = el.scrollHeight; enBas.current = true; setNouvelles(0) }}>{nouvelles} nouvelle{nouvelles > 1 ? 's' : ''} ↓</button> : null}
+        </>
+      ) : null}
+      {role === 'direction' ? <Transmettre /> : <p className="mc-petit" data-lecture-seule>lecture seule</p>}
+    </section>
+  )
+}

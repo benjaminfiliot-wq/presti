@@ -1,0 +1,11 @@
+/* TÉMOIN du lot c (026-104) : les règles des vues de référence (026-113). Jetons var(--…) seulement, aucune couleur écrite. */
+.mc .mc-vue { position: absolute; top: 96px; bottom: 60px; left: 50%; transform: translateX(-50%); width: min(760px, calc(100% - 700px)); min-width: 420px; z-index: 25; overflow: auto; background: var(--mc-panneau); border: 1px solid var(--mc-neon-2); border-radius: 10px; padding: 14px; }
+.mc .mc-mission { margin: 8px 0; }
+.mc .mc-mission-tete { display: flex; justify-content: space-between; gap: 8px; }
+.mc .mc-succes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.mc [data-succes][data-etat="a-venir"] { opacity: .45; }
+.mc .mc-aide [data-genre], .mc .mc-aide [data-raccourci], .mc .mc-aide [data-origine] { font-size: 13px; }
+.mc.mc-tel .mc-vue { position: fixed; inset: 0; transform: none; width: auto; min-width: 0; border-radius: 0; z-index: 52; top: 0; bottom: 0; left: 0; background: var(--mc-fond); }
+@media (prefers-reduced-motion: reduce) {
+  .mc .mc-vue, .mc .mc-vue * { transition: none !important; animation: none !important; }
+}

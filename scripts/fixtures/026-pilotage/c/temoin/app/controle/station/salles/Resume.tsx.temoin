@@ -1,0 +1,95 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le résumé de salle commun et la lecture des panneaux (026-120, décision Claw3D du 25/09),
+// écrits par Claude Code pour prouver que pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré.
+// useVue : chaque source lue à l'ouverture, puis toutes les `ms`, seulement panneau ouvert et page visible.
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
+import { apiDirection } from '../../client'
+import { motifSans, panneReponse, stockage, useAdresse, useLecture, valeurDe, type Rep, type Role } from '../outils'
+
+export function useVue<T = any>(chemins: string[], ms: number, visible: boolean): Rep<T>[] {
+  const [reps, setReps] = useState<Rep<T>[]>(() => chemins.map(() => null))
+  const cle = chemins.join('|')
+  const lire = useCallback(() => {
+    chemins.forEach((c, i) => void apiDirection<T>(c).then((r) => setReps((x) => { const y = [...x]; y[i] = r as Rep<T>; return y })))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cle])
+  useLecture(lire, ms, visible)
+  return reps
+}
+
+/** « synchro il y a n s · auto 30 s » : l'âge de `a` servi, recalculé à la seconde, seulement ouvert et page visible. */
+export function Synchro({ a, auto, visible }: { a: string | null | undefined; auto: string; visible: boolean }) {
+  const [maintenant, setMaintenant] = useState(() => Date.now())
+  useEffect(() => {
+    if (!visible || !a) return
+    setMaintenant(Date.now())
+    const t = window.setInterval(() => setMaintenant(Date.now()), 1000)
+    return () => window.clearInterval(t)
+  }, [visible, a])
+  if (!a) return <p data-synchro className="mc-petit">synchro — · auto {auto}</p>
+  const n = Math.max(0, Math.round((maintenant - Date.parse(a)) / 1000))
+  return <p data-synchro className="mc-petit">synchro il y a {n} s · auto {auto}</p>
+}
+
+/** Le panneau d'une vue de salle : sa panne se voit, jamais une salle vide rassurante. */
+export function Contenu({ rep, source, children }: { rep: Rep<any>; source: string; children: (v: any) => ReactNode }) {
+  if (!rep) return <p className="mc-petit">Chargement…</p>
+  const p = panneReponse(rep, source)
+  if (p) return <p className="mc-panne" data-panne-salle>{p}</p>
+  if (rep.data?.valeur === null) return <p className="mc-panne" data-panne-salle>{rep.data?.erreur ? `${source} ne répond pas : ${rep.data.erreur}` : rep.data?.manque ?? `${source} ne répond pas`}</p>
+  return <>{children(rep.data?.valeur ?? rep.data)}</>
+}
+
+const ETAPE_DE: Record<string, string> = { radar: 'trouve', redaction: 'verifie', atelier: 'maquette', envois: 'contacte', recettes: 'paye', usine: 'paye' }
+
+export default function Resume({ cle, equipage, role, visible, vue, tapis, auto = '30 s' }: { cle: string; equipage: any; role: Role; visible: boolean; vue: any; tapis?: any; auto?: string }) {
+  const { poser } = useAdresse()
+  const [replie, setReplie] = useState(() => stockage.lire('mc.resume.replie') === 'oui')
+  useEffect(() => {
+    const f = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT')) return
+      if (e.key === 'i' || e.key === 'I') setReplie((x) => { stockage.ecrire('mc.resume.replie', x ? null : 'oui'); return !x })
+    }
+    window.addEventListener('keydown', f)
+    return () => window.removeEventListener('keydown', f)
+  }, [])
+  const agents = ((valeurDe<any>(equipage)?.agents ?? []) as { nom: string; libelle: string; salle: string }[]).filter((a) => a.salle === cle)
+  const v = vue?.ok ? vue.data?.valeur : null
+  const active = v?.active_auj
+  const minutes = valeurDe<{ minutes: number }>(active)
+  const etapes = (valeurDe<any>(tapis)?.etapes ?? []) as { cle: string; jour: number }[]
+  const etape = etapes.find((e) => e.cle === ETAPE_DE[cle])
+  const crons = (v?.crons ?? []) as { nom: string }[]
+  return (
+    <section data-resume-salle={cle} data-replie={replie ? 'oui' : 'non'}>
+      <Synchro a={vue?.data?.a ?? null} auto={auto} visible={visible} />
+      {!replie ? (
+        <dl className="mc-resume">
+          <div data-resume="recettes"><dt>RECETTES</dt><dd>{motifSans(v?.recettes_mois) ?? (valeurDe<number>(v?.recettes_mois) ?? '—')}</dd></div>
+          <div data-resume="agents"><dt>AGENTS</dt><dd>{agents.length ? agents.map((a) => a.libelle).join(', ') : '—'}</dd></div>
+          <div data-resume="automatismes"><dt>AUTOMATISMES</dt><dd>{crons.length ? crons.map((c) => c.nom).join(', ') : '—'}</dd></div>
+          <div data-resume="produits"><dt>PRODUITS DU JOUR</dt><dd>{etape ? etape.jour : '—'}</dd></div>
+          <div data-resume="taches"><dt>TÂCHES</dt><dd>—</dd></div>
+          <div data-resume="active"><dt>ACTIVE AUJ.</dt><dd>{minutes ? `${minutes.minutes} min` : '—'}</dd></div>
+        </dl>
+      ) : null}
+      <div className="mc-gestes-resume">
+        {agents[0] ? <button type="button" data-gerer onClick={() => poser({ agent: agents[0].nom, salle: null })}>GÉRER</button> : null}
+        <button type="button" data-info onClick={() => poser({ vue: 'aide' })}>INFO</button>
+        {role === 'lecture' ? <span className="mc-petit">lecture seule</span> : null}
+      </div>
+    </section>
+  )
+}
+
+/** Des onglets `[data-onglet]`, le premier ouvert par défaut. */
+export function useOnglets(cles: [string, string][], defaut: string) {
+  const [actif, setActif] = useState(defaut)
+  const barre = (
+    <div className="mc-onglets" role="tablist">
+      {cles.map(([cle, libelle]) => <button key={cle} type="button" role="tab" data-onglet={cle} aria-selected={actif === cle} onClick={() => setActif(cle)}>{libelle}</button>)}
+    </div>
+  )
+  return { actif, barre }
+}

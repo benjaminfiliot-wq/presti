@@ -1,0 +1,20 @@
+/* TÉMOIN du lot c (026-104) : les règles du journal de référence (026-123). Jetons var(--mc-…) seulement. */
+.mc [data-station-journal] { display: flex; flex-direction: column; gap: 6px; min-height: 0; flex: 1; }
+.mc [data-station-journal] .mc-entete-journal { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mc [data-fil-liste] { list-style: none; margin: 0; padding: 0; overflow-y: auto; max-height: 360px; display: flex; flex-direction: column; gap: 6px; }
+.mc [data-bulle-fil] { border-left: 2px solid var(--mc-neon-2); padding: 4px 8px; font-size: 12px; }
+.mc [data-bulle-fil][data-type="consigne"] { border-left-color: var(--accent); }
+.mc [data-bulle-fil] [data-pastille] { position: relative; font-weight: 600; color: var(--mc-actif); margin-right: 6px; }
+.mc [data-bulle-fil] [data-info-agent] { display: none; position: absolute; left: 0; top: 100%; z-index: 5; background: var(--mc-panneau); border: 1px solid var(--mc-bord); padding: 4px 8px; white-space: nowrap; color: var(--mc-texte); }
+.mc [data-bulle-fil] [data-pastille]:hover [data-info-agent], .mc [data-bulle-fil] [data-pastille]:focus [data-info-agent] { display: block; }
+.mc [data-bulle-fil] [data-heure] { color: var(--mc-texte-doux); margin-right: 6px; }
+.mc [data-lignes-reunion] { margin: 4px 0 0 16px; padding: 0; }
+.mc [data-transmettre] { display: flex; gap: 6px; flex-wrap: wrap; }
+.mc [data-champ-transmettre] { flex: 1; min-width: 0; font-size: 16px; background: var(--mc-survol); color: var(--mc-texte); border: 1px solid var(--mc-bord); border-radius: 6px; padding: 6px 8px; min-height: 44px; }
+.mc [data-station-journal][data-flottant="oui"] { position: absolute; left: 316px; bottom: 56px; width: 380px; max-height: 50vh; z-index: 14; background: var(--mc-panneau); border: 1px solid var(--mc-bord); border-radius: 10px; padding: 8px; }
+.mc [data-station-journal][data-replie="oui"] { flex: none; }
+.mc.mc-tel [data-station-journal] { padding-bottom: 8px; }
+.mc.mc-tel [data-fil-liste] { max-height: none; }
+@media (prefers-reduced-motion: reduce) {
+  .mc [data-station-journal] * { transition: none !important; animation: none !important; }
+}

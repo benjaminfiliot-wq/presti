@@ -1,0 +1,21 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la vue Succès de référence (026-113), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Tous les succès servis : débloqués avec leur date, à venir
+// grisés, jamais cachés.
+import { dateParis, motifSans, valeurDe } from '../outils'
+
+export default function Succes({ direct }: { direct: any }) {
+  const cmd = direct?.commandement
+  const c = valeurDe<any>(cmd)
+  if (!c) return <p className="mc-panne">{motifSans(cmd, 'Commandement') ?? 'Chargement…'}</p>
+  return (
+    <ul className="mc-succes">
+      {(c.tousSucces as { cle: string; libelle: string; debloque: boolean; le: string | null }[]).map((s) => (
+        <li key={s.cle} data-succes={s.cle} data-etat={s.debloque ? 'debloque' : 'a-venir'}>
+          <span>{s.libelle}</span>{' '}
+          {s.debloque ? <span data-date-succes className="mc-mono">le {dateParis(s.le)}</span> : <span className="mc-petit">à venir</span>}
+        </li>
+      ))}
+    </ul>
+  )
+}

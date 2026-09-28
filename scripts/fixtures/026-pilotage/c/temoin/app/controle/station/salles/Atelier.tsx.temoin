@@ -1,0 +1,29 @@
+'use client'
+// TÉMOIN du lot c (026-104) : l'Atelier des maquettes de référence (026-120), écrit par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré.
+import Resume, { Contenu, useOnglets, useVue } from './Resume'
+import type { PropsSalle } from '../Panneaux'
+
+export default function Atelier({ role, equipage, visible, cle }: PropsSalle) {
+  const [vue] = useVue(['/api/controle/station?vue=salle&salle=atelier'], 30_000, visible)
+  const { barre } = useOnglets([['actives', 'ACTIVES'], ['juge', 'EN ATTENTE DE JUGE'], ['revisions', 'RÉVISIONS']], 'actives')
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={vue} />
+      {barre}
+      <Contenu rep={vue} source="Atelier">{(v) => (
+        <div>
+          <div data-rejet className="mc-mono">REJET {v.rejet}</div>
+          <div data-taux-pass className="mc-mono">PASS {typeof v.tauxPass === 'number' ? `${Math.round(v.tauxPass * 100)} %` : '—'}</div>
+          {(v.maquettes as any[]).map((m) => (
+            <div key={m.id} data-maquette={m.id}>
+              {m.metier ?? ''} · {m.commune ?? ''} · {m.statut} · vidéo {m.video ? 'oui' : 'non'} · {m.verdict ?? '—'}
+              {m.revision ? <div data-revision>RÉVISION DEMANDÉE · {m.revision}</div> : null}
+              {m.apercu ? <a href={m.apercu} target="_blank" rel="noreferrer" data-apercu>Aperçu</a> : null}
+            </div>
+          ))}
+        </div>
+      )}</Contenu>
+    </>
+  )
+}

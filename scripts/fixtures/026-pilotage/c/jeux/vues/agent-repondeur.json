@@ -1,0 +1,94 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=agent&nom=repondeur",
+ "statut": 200,
+ "reponse": {
+  "vue": "agent",
+  "role": "direction",
+  "valeur": {
+   "nom": "repondeur",
+   "libelle": "Répondeur",
+   "role": "Répond aux réponses",
+   "etat": "actif",
+   "point": "cyan",
+   "cadence": "toutes les 5 min",
+   "position": {
+    "salle": "standard",
+    "motif": "tache"
+   },
+   "battement_le": "2026-10-23T09:55:00.000Z",
+   "prochain_le": null,
+   "modele": {
+    "texte": "MODÈLE gpt-6-luna · Codex",
+    "source": "vu"
+   },
+   "modele_le": "2026-10-21T10:00:00.000Z",
+   "taches": [
+    {
+     "numero": 41,
+     "type": "formulaire",
+     "statut": "FAIT",
+     "resultat": "Soumis",
+     "le": "2026-10-23T09:00:00.000Z"
+    },
+    {
+     "numero": 42,
+     "type": "formulaire",
+     "statut": "REJETÉ",
+     "resultat": "Refus J3",
+     "le": "2026-10-23T09:15:00.000Z"
+    },
+    {
+     "numero": 43,
+     "type": "maquette",
+     "statut": "BLOQUÉ",
+     "resultat": "Photo manquante",
+     "le": "2026-10-23T09:30:00.000Z"
+    },
+    {
+     "numero": 44,
+     "type": "maquette",
+     "statut": "EN COURS",
+     "resultat": null,
+     "le": "2026-10-23T09:55:00.000Z"
+    }
+   ],
+   "argent": {
+    "valeur": {
+     "cout_mois_eur": 0.12,
+     "coutParTache": [
+      {
+       "numero": 41,
+       "eur": 0.02
+      },
+      {
+       "numero": 42,
+       "eur": 0.01
+      }
+     ]
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "reponses": [
+    {
+     "id": "r1",
+     "recu_le": "2026-10-23T09:00:00.000Z",
+     "classe": "appel",
+     "texte_recu": "Rappelez-moi demain matin (Témoin Plomberie)",
+     "reponse_envoyee": "Bien reçu, nous vous rappelons."
+    },
+    {
+     "id": "r2",
+     "recu_le": "2026-10-23T08:00:00.000Z",
+     "classe": "oui",
+     "texte_recu": "Oui, montrez-moi la maquette",
+     "reponse_envoyee": "Voici le lien de votre maquette."
+    }
+   ]
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

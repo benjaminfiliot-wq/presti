@@ -1,0 +1,21 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=experience",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "barre": null,
+   "texte": "Aucune expérience avant la première vente (décision R13).",
+   "sur": 30,
+   "jour": null,
+   "gains": null,
+   "budget": 0,
+   "statut": "fermee",
+   "arret_le": null
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

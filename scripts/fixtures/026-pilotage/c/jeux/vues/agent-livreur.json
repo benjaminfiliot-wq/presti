@@ -1,0 +1,78 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=agent&nom=livreur",
+ "statut": 200,
+ "reponse": {
+  "vue": "agent",
+  "role": "direction",
+  "valeur": {
+   "nom": "livreur",
+   "libelle": "Livreur",
+   "role": "Met les sites en ligne",
+   "etat": "panne",
+   "point": "rouge",
+   "cadence": "toutes les 15 min",
+   "position": {
+    "salle": "usine",
+    "motif": "panne"
+   },
+   "battement_le": "2026-10-23T09:55:00.000Z",
+   "prochain_le": null,
+   "modele": {
+    "texte": "sans IA",
+    "source": "aucun"
+   },
+   "modele_le": "2026-10-21T10:00:00.000Z",
+   "taches": [
+    {
+     "numero": 12,
+     "type": "mise_en_ligne",
+     "statut": "FAIT",
+     "resultat": "couvreur (Annecy) en ligne",
+     "le": "2026-10-22T10:00:00.000Z"
+    },
+    {
+     "numero": 13,
+     "type": "mise_en_ligne",
+     "statut": "BLOQUÉ",
+     "resultat": "usine injoignable",
+     "le": "2026-10-23T00:00:00.000Z"
+    },
+    {
+     "numero": 14,
+     "type": "generation",
+     "statut": "ANNULÉ",
+     "resultat": "commande remboursée",
+     "le": "2026-10-22T04:00:00.000Z"
+    },
+    {
+     "numero": 15,
+     "type": "generation",
+     "statut": "REJETÉ",
+     "resultat": "juge du site : FAIL",
+     "le": "2026-10-23T05:00:00.000Z"
+    }
+   ],
+   "argent": {
+    "valeur": {
+     "cout_mois_eur": 0,
+     "coutParTache": [
+      {
+       "numero": 41,
+       "eur": 0.02
+      },
+      {
+       "numero": 42,
+       "eur": 0.01
+      }
+     ]
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

@@ -1,0 +1,21 @@
+{
+ "_lisez_moi": "vue=salle&salle=experience : gagnante.",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "barre": null,
+   "texte": "Gagnante : 180 € rapportés. La suite est à Benj.",
+   "sur": 30,
+   "jour": 30,
+   "gains": 180,
+   "budget": 0,
+   "statut": "gagnante",
+   "arret_le": "2026-10-23T09:00:00.000Z"
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

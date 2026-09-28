@@ -1,0 +1,50 @@
+{
+ "_lisez_moi": "vue=salle&salle=reunion : la réunion se tient.",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": {
+   "prochaine_le": "2026-10-24T16:00:00.000Z",
+   "enCours": true,
+   "derniere": {
+    "jour": "2026-10-22",
+    "statut": "close",
+    "lignes": [
+     "12 formulaires soumis hier",
+     "2 réponses, dont 1 oui",
+     "La maquette du plombier est prête",
+     "Objectif : dix formulaires par jour",
+     "Idée : relancer les couvreurs"
+    ]
+   },
+   "idees": [
+    {
+     "cle": "i1",
+     "question": "Relancer les couvreurs ?",
+     "statut": "à trancher dans Attention"
+    },
+    {
+     "cle": "i2",
+     "question": "Tester la variante C ?",
+     "statut": "lancée"
+    }
+   ],
+   "objectif": {
+    "libelle": "Dix formulaires par jour",
+    "par": "PAR LE CHEF"
+   },
+   "active_auj": {
+    "valeur": {
+     "minutes": 0
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

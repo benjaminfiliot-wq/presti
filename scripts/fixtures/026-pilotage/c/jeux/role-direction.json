@@ -1,0 +1,8 @@
+{
+ "_lisez_moi": "GET /api/controle/journal?limite=1 du fondateur d’essai.",
+ "statut": 200,
+ "reponse": {
+  "lignes": [],
+  "role": "direction"
+ }
+}

@@ -1,0 +1,34 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le cadre des vues rempli (026-113 : Missions, Succès, Aide), écrit par Claude Code pour
+// prouver que pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Aucune lecture propre : il affiche ce qui est
+// servi ; « Fermer » et Échap retirent ?vue= ; toute autre valeur → rien.
+import { useEffect, useRef } from 'react'
+import { useAdresse, type Rep, type Role } from './outils'
+import Missions from './vues/Missions'
+import Succes from './vues/Succes'
+import Aide from './vues/Aide'
+import './vues/vues.css'
+
+const TITRES: Record<string, string> = { missions: 'Missions', succes: 'Succès', aide: 'Aide' }
+
+export default function Vues({ vue, role, direct, tresorerie }: { vue: string | null; role: Role; direct: any; tresorerie: Rep<any>; reglages: unknown }) {
+  const { poser } = useAdresse()
+  const boite = useRef<HTMLDivElement | null>(null)
+  const ouverte = vue === 'missions' || vue === 'succes' || vue === 'aide'
+  useEffect(() => {
+    if (!ouverte) return
+    const avant = document.activeElement as HTMLElement | null
+    boite.current?.focus()
+    const f = (e: KeyboardEvent) => { if (e.key === 'Escape') poser({ vue: null }) }
+    window.addEventListener('keydown', f)
+    return () => { window.removeEventListener('keydown', f); try { avant?.focus?.() } catch { /* disparu */ } }
+  }, [ouverte, poser])
+  if (!ouverte) return null
+  return (
+    <div data-vue={vue} role="dialog" aria-modal="true" aria-label={TITRES[vue]} tabIndex={-1} ref={boite} className="mc-vue">
+      <div className="mc-entete-fenetre"><h2 className="mc-titre-zone">{TITRES[vue]}</h2><button type="button" data-fermer onClick={() => poser({ vue: null })}>Fermer</button></div>
+      {role === 'lecture' ? <p className="mc-petit">lecture seule</p> : null}
+      {vue === 'missions' ? <Missions direct={direct} /> : vue === 'succes' ? <Succes direct={direct} /> : <Aide direct={direct} tresorerie={tresorerie} />}
+    </div>
+  )
+}

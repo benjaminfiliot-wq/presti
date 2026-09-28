@@ -1,0 +1,13 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=ecommerce : la salle réservée.",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": null,
+  "source": "reservee",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false,
+  "manque": "Branche e-commerce réservée : rien n’est construit."
+ }
+}

@@ -1,0 +1,30 @@
+// app/api/controle/pilotage/route.ts — IMPLÉMENTATION DE RÉFÉRENCE du lot b (fiche 026-066) de la route de lecture de
+// 026-068 : le témoin sur lequel pilotage-route-qa doit rendre 0. Ce n'est pas la route livrée (026-068 l'écrit).
+//
+// GET /api/controle/pilotage?bloc=decider|appeler|envois|entonnoir|agents|code[&decision=<uuid>] : 404 tant que le drapeau
+// pilotage est baissé, garde fondateur, chaque bloc sourcé et lu par lib/pilotage/blocs.ts.
+import { NextResponse } from 'next/server'
+import { actif } from '@/lib/flags'
+import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
+import { BLOCS, estBloc, lireBloc } from '@/lib/pilotage/blocs'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+export async function GET(req: Request) {
+  if (!actif('pilotage')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })
+  const f = await estFondateur(req)
+  if (estRefus(f)) return reponseRefus(f)
+  const domaine = exigerDomaine(f, 'sante', 'lire')
+  if (domaineRefuse(domaine)) return reponseRefus(domaine)
+  const url = new URL(req.url)
+  const bloc = url.searchParams.get('bloc') ?? ''
+  if (bloc === 'argent') return NextResponse.json({ error: 'Le bloc argent se lit par /api/controle/tresorerie.' }, { status: 400 })
+  if (!estBloc(bloc)) return NextResponse.json({ error: `Bloc inconnu. Blocs : ${BLOCS.join(', ')}.` }, { status: 400 })
+  const brute = url.searchParams.get('decision')
+  const decision = brute && UUID.test(brute) ? brute : undefined
+  const reponse = await lireBloc(bloc, { decision })
+  return NextResponse.json({ ...reponse, role: f.role }, { headers: { 'cache-control': 'no-store' } })
+}

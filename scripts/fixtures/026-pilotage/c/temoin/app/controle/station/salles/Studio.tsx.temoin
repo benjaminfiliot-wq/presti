@@ -1,0 +1,21 @@
+'use client'
+// TÉMOIN du lot c (026-104) : le Studio pubs de référence (026-164), écrit par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Une ligne par pack, sans aperçu ni film (ils restent dans
+// l'onglet Packs, auquel le panneau renvoie) ; la route en 404 est une phrase, jamais une erreur.
+import Link from 'next/link'
+import Resume, { useVue } from './Resume'
+import { dateParis, panneReponse } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+
+export default function Studio({ role, equipage, visible, cle }: PropsSalle) {
+  const [packs] = useVue(['/api/controle/packs'], 60_000, visible)
+  const liste = (packs?.ok ? packs.data?.packs : null) as any[] | null
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={packs} auto="1 min" />
+      {packs?.status === 404 ? <p data-packs-fermes>Les packs pubs ne sont pas encore ouverts.</p> : panneReponse(packs, 'Packs') ? <p className="mc-panne">{panneReponse(packs, 'Packs')}</p> : null}
+      {liste?.map((p) => <div key={p.id} data-pack={p.id}>{p.metier} · {p.commune} · {p.etat} · <span className="mc-petit">{dateParis(p.livre_le ?? p.fabrique_le)}</span></div>)}
+      <Link href="/controle?onglet=packs" data-lien-packs>Ouvrir l’onglet Packs</Link>
+    </>
+  )
+}

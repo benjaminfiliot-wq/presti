@@ -1,0 +1,32 @@
+'use client'
+// TÉMOIN du lot c (026-104) : « ▶ Transmettre à l'équipage » de référence (026-123), écrit par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Un POST { texte } rogné vers la route de 026-074, sans
+// reconfirmation ; sur 200 le champ se vide et aucune bulle n'est ajoutée (elle viendra du fil) ; un refus garde le texte.
+import { useState } from 'react'
+import { apiDirection } from '../../client'
+
+export const INVITE = '▶ Transmettre à l’équipage…'
+
+export default function Transmettre() {
+  const [texte, setTexte] = useState('')
+  const [message, setMessage] = useState<string | null>(null)
+  const [envoi, setEnvoi] = useState(false)
+  const net = texte.trim()
+  const valide = net.length >= 3 && net.length <= 200
+  async function transmettre(e: React.FormEvent) {
+    e.preventDefault()
+    if (!valide || envoi) return
+    setEnvoi(true); setMessage(null)
+    const r = await apiDirection<{ ok?: boolean }>('/api/controle/pilotage/consignes', { method: 'POST', body: JSON.stringify({ texte: net }) })
+    setEnvoi(false)
+    if (r.ok) { setTexte(''); setMessage('Consigne transmise à l’équipage.') }
+    else setMessage(r.data.error ?? `Refusé (code ${r.status}).`)
+  }
+  return (
+    <form data-transmettre onSubmit={transmettre}>
+      <input data-champ-transmettre aria-label="Consigne à l’équipage" placeholder={INVITE} maxLength={200} value={texte} onChange={(e) => setTexte(e.target.value.slice(0, 200))} />
+      <button type="submit" data-bouton-transmettre disabled={!valide || envoi}>Transmettre</button>
+      {message ? <p data-message-transmettre className="mc-petit" role="status">{message}</p> : null}
+    </form>
+  )
+}

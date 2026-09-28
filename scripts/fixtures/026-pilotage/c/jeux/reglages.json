@@ -1,0 +1,24 @@
+{
+ "_lisez_moi": "GET /api/controle/station/reglages (026-177) : mise en page colonnes.",
+ "statut": 200,
+ "reponse": {
+  "version": 3,
+  "reglages": {
+   "theme": "station",
+   "mise_en_page": "colonnes",
+   "nuit": {
+    "active": true,
+    "debut": 20,
+    "fin": 7
+   },
+   "equipage": {},
+   "salles": {},
+   "couleurs": {},
+   "affichage": {
+    "titre": "PRESTI · MISSION CONTROL"
+   }
+  },
+  "modifie_par": null,
+  "modifie_le": "2026-10-22T18:00:00.000Z"
+ }
+}

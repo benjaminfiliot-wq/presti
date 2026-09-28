@@ -1,0 +1,24 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la Salle de réunion de référence (026-120), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré.
+import Resume, { Contenu, useVue } from './Resume'
+import { dateParis, heureParis } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+
+export default function Reunion({ role, equipage, visible, cle }: PropsSalle) {
+  const [vue] = useVue(['/api/controle/station?vue=salle&salle=reunion'], 30_000, visible)
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={vue} />
+      <Contenu rep={vue} source="Réunion">{(v) => (
+        <div>
+          {v.enCours ? <p data-reunion-en-cours>Réunion en cours</p> : null}
+          <p data-prochaine className="mc-petit">Prochaine réunion le {dateParis(v.prochaine_le)} à {heureParis(v.prochaine_le)}</p>
+          {v.objectif ? <div data-objectif-reunion>{v.objectif.libelle} <span className="mc-maj">{v.objectif.par}</span></div> : null}
+          {v.derniere ? <ol data-compte-rendu-reunion>{(v.derniere.lignes as string[]).map((l, i) => <li key={i} data-ligne-reunion>{l}</li>)}</ol> : <p>Aucune réunion tenue pour l’instant.</p>}
+          {(v.idees as any[]).map((x) => <div key={x.cle} data-idee={x.cle}>{x.question} · <span className="mc-petit">{x.statut}</span></div>)}
+        </div>
+      )}</Contenu>
+    </>
+  )
+}

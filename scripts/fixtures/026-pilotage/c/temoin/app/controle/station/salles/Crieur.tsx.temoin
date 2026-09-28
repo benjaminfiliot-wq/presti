@@ -1,0 +1,22 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la Tour du Crieur de référence (026-164), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Les bulles du Crieur et les réponses privées du jour,
+// toutes les 5 min ; aucun bouton de publication.
+import Resume, { useVue } from './Resume'
+import { heureParis, panneReponse } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+
+export default function Crieur({ role, equipage, visible, cle }: PropsSalle) {
+  const [fil, envois] = useVue(['/api/controle/station?vue=fil&agent=crieur', '/api/controle/station?vue=salle&salle=envois'], 300_000, visible)
+  const bulles = (fil?.ok ? fil.data?.valeur?.bulles : null) as any[] | null
+  const privees = envois?.ok ? ((envois.data?.valeur?.parCanal ?? []) as any[]).find((c) => c.canal === 'reponse_privee') : null
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={fil} auto="5 min" />
+      {panneReponse(fil, 'Crieur') ? <p className="mc-panne">{panneReponse(fil, 'Crieur')}</p> : null}
+      {bulles && !bulles.length ? <p>Rien de publié pour l’instant.</p> : null}
+      {bulles?.map((b) => <div key={b.id} data-bulle-crieur={b.id}><span className="mc-mono mc-petit">{heureParis(b.le)}</span> <span data-texte>{b.texte}</span></div>)}
+      <p data-reponses-privees className="mc-mono">Réponses privées du jour : {privees ? privees.texte : panneReponse(envois, 'Salle des envois') ?? '—'}</p>
+    </>
+  )
+}

@@ -1,0 +1,38 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la salle Recettes de référence (026-120), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Le seul endroit de la station qui montre le brut et les frais.
+import Resume, { Contenu, useOnglets, useVue } from './Resume'
+import { euros, motifSans, valeurDe } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+
+export default function Recettes({ role, equipage, tresorerie, visible, cle }: PropsSalle) {
+  const [vue] = useVue(['/api/controle/station?vue=salle&salle=recettes'], 30_000, visible)
+  const { actif, barre } = useOnglets([['tout', 'Tout'], ['sites', 'Sites'], ['abonnements', 'Abonnements'], ['packs', 'Packs'], ['hors_agents', 'Hors agents']], 'tout')
+  const t = tresorerie?.ok ? tresorerie.data : null
+  const mois = valeurDe<any>(t?.encaisse?.mois)
+  const mrr = valeurDe<any>(t?.mrr)
+  const voir = (o: string) => actif === 'tout' || actif === o
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={vue} />
+      {barre}
+      <Contenu rep={vue} source="Recettes">{(v) => (
+        <div className="mc-tuiles">
+          {voir('sites') ? <div data-recettes="agents"><b>Venu des agents (froid)</b><div>{v.sites.agents.commandes} commandes · <span className="mc-mono">{euros(v.sites.agents.montant_eur)}</span></div></div> : null}
+          {voir('hors_agents') || voir('sites') ? <div data-recettes="hors_agents"><b>Hors agents (base existante)</b><div>{v.sites.hors_agents.commandes} commandes · <span className="mc-mono">{euros(v.sites.hors_agents.montant_eur)}</span></div></div> : null}
+          {voir('abonnements') ? <div data-recettes="abonnements"><b>Abonnements</b><div data-mrr className="mc-mono">MRR {mrr ? euros(mrr.mrr) : motifSans(t?.mrr) ?? '—'}</div><div data-paiements className="mc-mono">PAIEMENTS {mois ? mois.paiements : '—'}</div></div> : null}
+          {voir('packs') ? <div data-packs><b>Packs</b><div>{motifSans(v.packs) ?? String(valeurDe(v.packs) ?? '—')}</div></div> : null}
+          {actif === 'tout' ? <div data-canaux><b>CANAUX · Stripe</b><div className="mc-mono">brut <span data-brut>{mois ? euros(mois.brut) : '—'}</span> · frais <span data-frais>{mois ? euros(mois.frais) : '—'}</span> · net <span data-net>{mois ? euros(mois.net) : '—'}</span></div></div> : null}
+          <div data-histogramme className="mc-histogramme">
+            {(v.jours as { jour: string; agents_eur: number; hors_agents_eur: number }[]).map((j) => (
+              <span key={j.jour} data-jour={j.jour} tabIndex={0} title={`${j.jour} · agents ${euros(j.agents_eur)} · hors agents ${euros(j.hors_agents_eur)}`}>
+                <i className="mc-agents" style={{ height: `${j.agents_eur ? 30 : 2}px` }} />
+                <i className="mc-hors" style={{ height: `${j.hors_agents_eur ? 16 : 2}px` }} />
+              </span>
+            ))}
+          </div>
+        </div>
+      )}</Contenu>
+    </>
+  )
+}

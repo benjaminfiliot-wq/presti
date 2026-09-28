@@ -1,0 +1,84 @@
+'use client'
+// TÉMOIN du lot c (026-104) : les panneaux de référence (026-120, 026-164, 026-125), écrits par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. ?salle=<clé> ouvre le panneau de la salle (ou la liste de
+// ses agents), ?agent=<nom> sa fiche ; « Fermer » et Échap retirent le paramètre ; chaque panneau lit sa vue à l'ouverture,
+// puis à son rythme, seulement ouvert et page visible.
+import { useEffect, useRef, type ComponentType, type ReactNode } from 'react'
+import { SALLES, SALLE_RESERVEE, plaqueDe } from '@/lib/pilotage/equipage'
+import { useAdresse, useVisible, valeurDe, type Rep, type Role } from './outils'
+import Recettes from './salles/Recettes'
+import Tresorerie from './salles/Tresorerie'
+import Usine from './salles/Usine'
+import Atelier from './salles/Atelier'
+import Reunion from './salles/Reunion'
+import Envois from './salles/Envois'
+import Standard from './salles/Standard'
+import Redaction from './salles/Redaction'
+import Machines from './salles/Machines'
+import Experience from './salles/Experience'
+import Radar from './salles/Radar'
+import Crieur from './salles/Crieur'
+import Studio from './salles/Studio'
+import Chantier from './salles/Chantier'
+import FicheAgent from './salles/FicheAgent'
+import './salles/salles.css'
+
+export type PropsSalle = { role: Role; equipage: any; tresorerie: Rep<any>; barre: any; visible: boolean; cle: string }
+const PANNEAUX: Record<string, ComponentType<PropsSalle>> = {
+  recettes: Recettes, tresorerie: Tresorerie, usine: Usine, atelier: Atelier, reunion: Reunion, envois: Envois, standard: Standard,
+  redaction: Redaction, machines: Machines, experience: Experience, radar: Radar, crieur: Crieur, studio: Studio, chantier: Chantier,
+}
+const JETON_GENRE: Record<string, string> = { travail: '--mc-neon-1', argent: '--mc-argent', decision: '--mc-neon-2', veille: '--mc-actif', repos: '--mc-texte-doux', reservee: '--mc-texte-doux' }
+export const jetonSalle = (cle: string) => JETON_GENRE[SALLES.find((s) => s.cle === cle)?.genre ?? 'reservee']
+
+function Fenetre({ attributs, titre, fermer, children, couleur }: { attributs: Record<string, string>; titre: string; fermer: () => void; children: ReactNode; couleur?: string }) {
+  const boite = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const avant = document.activeElement as HTMLElement | null
+    boite.current?.focus()
+    const f = (e: KeyboardEvent) => { if (e.key === 'Escape') fermer() }
+    window.addEventListener('keydown', f)
+    return () => { window.removeEventListener('keydown', f); try { avant?.focus?.() } catch { /* disparu */ } }
+  }, [fermer])
+  return (
+    <div className="mc-fenetre" role="dialog" aria-modal="true" aria-label={titre} tabIndex={-1} ref={boite} {...attributs}
+      data-couleur-salle={couleur} style={couleur ? { borderColor: `var(${couleur})` } : undefined}>
+      <div className="mc-entete-fenetre"><h2 className="mc-titre-zone">{titre}</h2><button type="button" data-fermer onClick={fermer}>Fermer</button></div>
+      {children}
+    </div>
+  )
+}
+
+export default function Panneaux({ role, equipage, tresorerie, barre }: { role: Role; equipage: any; tresorerie: Rep<any>; barre: any }) {
+  const { params, poser } = useAdresse()
+  const visible = useVisible()
+  const salle = params.get('salle'), agent = params.get('agent')
+  if (agent) {
+    return (
+      <Fenetre attributs={{ 'data-fiche-agent': agent }} titre={`Fiche · ${agent}`} fermer={() => poser({ agent: null })}>
+        <FicheAgent nom={agent} role={role} visible={visible} />
+      </Fenetre>
+    )
+  }
+  if (!salle) return null
+  const connue = SALLES.some((s) => s.cle === salle) || salle === SALLE_RESERVEE.cle
+  if (!connue) return null
+  const fermer = () => poser({ salle: null })
+  const Composant = PANNEAUX[salle]
+  if (Composant) {
+    return (
+      <Fenetre attributs={{ 'data-salle-panneau': salle }} titre={plaqueDe(salle)} fermer={fermer} couleur={jetonSalle(salle)}>
+        <Composant role={role} equipage={equipage} tresorerie={tresorerie} barre={barre} visible={visible} cle={salle} />
+      </Fenetre>
+    )
+  }
+  const agents = ((valeurDe<any>(equipage)?.agents ?? []) as { nom: string; libelle: string; salle: string }[]).filter((a) => a.salle === salle)
+  return (
+    <Fenetre attributs={{ 'data-salle-agents': salle }} titre={plaqueDe(salle)} fermer={fermer} couleur={jetonSalle(salle)}>
+      <p className="mc-maj">{plaqueDe(salle)}</p>
+      {agents.length ? agents.map((a) => <button key={a.nom} type="button" data-agent-salle={a.nom} onClick={() => poser({ agent: a.nom, salle: null })}>{a.libelle}</button>)
+        : <p>Aucun agent dans cette salle pour l’instant.</p>}
+      <p className="mc-petit">Le panneau détaillé de cette salle viendra avec sa fiche.</p>
+    </Fenetre>
+  )
+}

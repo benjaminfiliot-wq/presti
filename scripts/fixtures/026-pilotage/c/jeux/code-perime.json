@@ -1,0 +1,48 @@
+{
+ "_lisez_moi": "bloc=code périmé : la phrase servie en évidence.",
+ "statut": 200,
+ "reponse": {
+  "bloc": "code",
+  "valeur": {
+   "file": [
+    "026-111",
+    "026-113"
+   ],
+   "enCours": [
+    {
+     "id": "026-120",
+     "agent": "antigravity",
+     "depuis": "2026-10-23T07:30:00.000Z"
+    }
+   ],
+   "verrousVieux": [
+    "026-120"
+   ],
+   "derniers": [
+    {
+     "id": "026-104",
+     "verdict": "PASS",
+     "le": "2026-10-23T09:30:00.000Z"
+    },
+    {
+     "id": "026-067",
+     "verdict": "FAIL",
+     "le": "2026-10-23T08:30:00.000Z"
+    }
+   ],
+   "prs": {
+    "ouvertes": 1,
+    "texte": "1 PR ouverte"
+   },
+   "attention": [
+    "026-120 tient son verrou depuis 2 h"
+   ],
+   "perime": true,
+   "message": "Le poste ne publie plus depuis 3 h : PC éteint ?",
+   "publie_le": "2026-10-23T07:00:00.000Z"
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

@@ -1,0 +1,33 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la vue Aide de référence (026-113), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. La légende, les raccourcis, et pour chaque compteur servi
+// « d'où vient ce chiffre » : la source SERVIE, lue dans la réponse, jamais recopiée dans le code.
+import { valeurDe, type Rep } from '../outils'
+
+const POINTS = [['cyan', 'actif'], ['jaune', 'en retard'], ['rouge', 'en panne'], ['gris', 'en pause ou muet']]
+const COULEURS = [['rouge', 'à traiter tout de suite'], ['orange', 'appels et décisions'], ['jaune', 'à surveiller'], ['bleu', 'pour information']]
+const GENRES = [['travail', 'Travail'], ['argent', 'Argent'], ['decision', 'Décision'], ['veille', 'Veille'], ['repos', 'Repos'], ['reservee', 'Réservée (E-commerce : rien n’est construit)']]
+const RACCOURCIS = [['I', 'replier le résumé de salle'], ['Échap', 'fermer'], ['+', 'rapprocher la carte'], ['−', 'éloigner la carte'], ['⊞', 'vue d’ensemble'], ['flèches', 'se déplacer']]
+
+export default function Aide({ direct, tresorerie }: { direct: any; tresorerie: Rep<any> }) {
+  const b = valeurDe<any>(direct?.barre)
+  const t = tresorerie?.ok ? tresorerie.data : null
+  const argent: [string, string, string | undefined][] = [
+    ['encaisse_mois', 'ENCAISSÉ · MOIS', t?.encaisse?.mois?.source], ['depense_mois', 'DÉPENSÉ · MOIS', t?.depenses_mois?.source], ['marge_mois', 'MARGE · MOIS', t?.marge?.source],
+  ]
+  return (
+    <div className="mc-aide">
+      <h3 className="mc-maj">Points</h3>
+      {POINTS.map(([k, l]) => <div key={k} data-legende-point={k}><span data-point={k} aria-hidden="true" />{l}</div>)}
+      <h3 className="mc-maj">Cartes</h3>
+      {COULEURS.map(([k, l]) => <div key={k} data-legende-couleur={k}>{k} · {l}</div>)}
+      <h3 className="mc-maj">Salles</h3>
+      {GENRES.map(([k, l]) => <div key={k} data-genre={k}>{l}</div>)}
+      <h3 className="mc-maj">Raccourcis</h3>
+      {RACCOURCIS.map(([k, l]) => <div key={k} data-raccourci={k}><kbd>{k}</kbd> {l}</div>)}
+      <h3 className="mc-maj">D’où vient ce chiffre</h3>
+      {argent.map(([k, l, s]) => <div key={k} data-origine={k}>{l} · {s ?? 'trésorerie'}</div>)}
+      {(b?.compteurs ?? []).map((c: { cle: string; libelle: string; source: string }) => <div key={c.cle} data-origine={c.cle}>{c.libelle} · {c.source}</div>)}
+    </div>
+  )
+}

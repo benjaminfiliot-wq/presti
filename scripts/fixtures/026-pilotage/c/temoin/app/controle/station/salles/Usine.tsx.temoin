@@ -1,0 +1,46 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la salle Usine à sites de référence (026-120), écrite par Claude Code pour prouver que
+// pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. COMMANDES · MOIS est le même objet que dans la barre ;
+// un aperçu n'existe qu'avec le lien signé servi ; le geste « Mettre en ligne » vit dans l'onglet Sites.
+import Link from 'next/link'
+import Resume, { Contenu, useOnglets, useVue } from './Resume'
+import { motifSans, relTime, valeurDe } from '../outils'
+import type { PropsSalle } from '../Panneaux'
+
+const ETAPES = [['payee', 'payée'], ['generee', 'générée'], ['validee', 'validée'], ['en_ligne', 'en ligne']]
+
+export default function Usine({ role, equipage, barre, visible, cle }: PropsSalle) {
+  const [vue, livreur] = useVue(['/api/controle/station?vue=salle&salle=usine', '/api/controle/station?vue=agent&nom=livreur'], 30_000, visible)
+  const { actif, barre: onglets } = useOnglets([['livreur', 'LIVREUR'], ['a_valider', 'À VALIDER'], ['livrees', 'LIVRÉES'], ['atelier', 'ATELIER']], 'livreur')
+  const b = valeurDe<any>(barre)
+  const commandes = b?.commandes_mois
+  const taches = (livreur?.ok ? livreur.data?.valeur?.taches : null) as any[] | null
+  return (
+    <>
+      <Resume cle={cle} equipage={equipage} role={role} visible={visible} vue={vue} />
+      <Contenu rep={vue} source="Usine">{(v) => (
+        <div>
+          <div className="mc-tuiles">
+            <div data-tuile="commandes_mois"><b>COMMANDES · MOIS</b><div data-valeur-tuile className="mc-mono">{motifSans(commandes) ?? String(valeurDe(commandes) ?? '—')}</div></div>
+            <div data-tuile="a_valider"><b>À VALIDER</b><div className="mc-mono">{v.aValider} à relire</div></div>
+            <div data-tuile="en_generation"><b>EN GÉNÉRATION</b><div className="mc-mono">{(v.commandes as any[]).filter((c) => c.etape === 'generee').length}</div></div>
+            <div data-tuile="en_ligne"><b>EN LIGNE</b><div className="mc-mono">{motifSans(b?.sites_en_ligne) ?? String(valeurDe(b?.sites_en_ligne) ?? '—')}</div></div>
+          </div>
+          {v.aValider > 0 ? <Link href="/controle?onglet=sites" data-a-valider>{v.aValider} site(s) à valider → Mettre en ligne</Link> : null}
+          {onglets}
+          {!v.commandes.length ? <p>Aucune commande. Quand un artisan paie son site, elle apparaît ici pour le Livreur.</p> : null}
+          {actif !== 'atelier' ? (v.commandes as any[]).map((c) => (
+            <div key={c.id} data-commande={c.id} data-etape={c.etape}>
+              <div>{c.metier ?? ''} · {c.commune ?? ''} · <span className="mc-petit">{relTime(c.depuis)}</span></div>
+              <div className="mc-etapes">{ETAPES.map(([k, l]) => <span key={k} data-etape-atteinte={k === c.etape ? 'oui' : undefined} className={k === c.etape ? 'mc-atteinte' : 'mc-petit'}>{l}</span>)}</div>
+              {c.apercu ? <a href={c.apercu} target="_blank" rel="noreferrer" data-apercu>Aperçu</a> : null}
+            </div>
+          )) : null}
+          <h3 className="mc-maj">Tâches récentes du Livreur</h3>
+          {taches ? taches.map((x) => <div key={x.numero} data-tache-livreur={x.numero}>#{x.numero} · {x.type} · <span data-pastille-tache={x.statut}>{x.statut}</span>{x.resultat ? <span className="mc-petit"> ↳ {x.resultat}</span> : null}</div>)
+            : <p className="mc-petit">{livreur && !livreur.ok ? `Livreur ne répond pas : ${livreur.data?.error ?? livreur.status}` : 'Chargement…'}</p>}
+        </div>
+      )}</Contenu>
+    </>
+  )
+}

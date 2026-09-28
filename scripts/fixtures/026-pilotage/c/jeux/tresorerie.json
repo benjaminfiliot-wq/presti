@@ -1,0 +1,102 @@
+{
+ "_lisez_moi": "GET /api/controle/tresorerie (026-059) : { encaisse: { jour, sept_jours, mois }, mrr, ventes_sites, depenses_mois, cout_ia, marge, tva, a }, chaque valeur sourcée ; encaisse.mois = encaisseDuMois entier.",
+ "statut": 200,
+ "reponse": {
+  "encaisse": {
+   "jour": {
+    "valeur": {
+     "brut": 0,
+     "frais": 0,
+     "net": 0,
+     "paiements": 3,
+     "rembourse": 0
+    },
+    "source": "stripe",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "sept_jours": {
+    "valeur": {
+     "brut": 309,
+     "frais": 9,
+     "net": 300,
+     "paiements": 3,
+     "rembourse": 0
+    },
+    "source": "stripe",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "mois": {
+    "valeur": {
+     "brut": 1271.6,
+     "frais": 37.04,
+     "net": 1234.56,
+     "paiements": 3,
+     "rembourse": 0
+    },
+    "source": "stripe",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "mrr": {
+   "valeur": {
+    "mrr": 87,
+    "abonnements": 3
+   },
+   "source": "stripe",
+   "a": "2026-10-23T10:00:00.000Z",
+   "cache": false
+  },
+  "ventes_sites": {
+   "valeur": {
+    "agents": {
+     "commandes": 2,
+     "montant_eur": 600
+    },
+    "hors_agents": {
+     "commandes": 1,
+     "montant_eur": 300
+    }
+   },
+   "source": "supabase",
+   "a": "2026-10-23T10:00:00.000Z",
+   "cache": false
+  },
+  "depenses_mois": {
+   "valeur": 345.67,
+   "source": "supabase",
+   "a": "2026-10-23T10:00:00.000Z",
+   "cache": false
+  },
+  "cout_ia": {
+   "valeur": {
+    "euros": 0,
+    "estimation": false
+   },
+   "source": "anthropic",
+   "a": "2026-10-23T10:00:00.000Z",
+   "cache": false
+  },
+  "marge": {
+   "valeur": 888.89,
+   "source": "supabase",
+   "a": "2026-10-23T10:00:00.000Z",
+   "cache": false
+  },
+  "tva": {
+   "valeur": {
+    "ca": 4321,
+    "seuil": 37500,
+    "alerte": false,
+    "depasse": false,
+    "texte": "12 % du seuil de franchise"
+   },
+   "source": "supabase",
+   "a": "2026-10-23T10:00:00.000Z",
+   "cache": false
+  },
+  "a": "2026-10-23T10:00:00.000Z"
+ }
+}

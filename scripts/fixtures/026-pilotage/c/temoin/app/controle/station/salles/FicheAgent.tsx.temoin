@@ -1,0 +1,36 @@
+'use client'
+// TÉMOIN du lot c (026-104) : la fiche d'agent de référence (026-120, écran 3 du §4.4), écrite par Claude Code pour prouver
+// que pilotage-ecran-qa sait rendre 0. Ce n'est pas l'écran livré. Lue par vue=agent pendant qu'elle est ouverte.
+import { Contenu, Synchro, useVue } from './Resume'
+import { dateParis, euros, motifSans, relTime, valeurDe, type Role } from '../outils'
+import { PauseAgent } from '../Gestes'
+
+export default function FicheAgent({ nom, role, visible }: { nom: string; role: Role; visible: boolean }) {
+  const [vue] = useVue([`/api/controle/station?vue=agent&nom=${encodeURIComponent(nom)}`], 30_000, visible)
+  return (
+    <>
+      <Synchro a={vue?.data?.a ?? null} auto="30 s" visible={visible} />
+      <Contenu rep={vue} source="Fiche d’agent">{(v) => {
+        const argent = valeurDe<any>(v.argent)
+        return (
+          <div>
+            <div><span data-point={v.point} aria-hidden="true" /><b>{v.libelle}</b> · <span className="mc-petit">{v.role ?? ''}</span> · <span data-etat-agent>{v.etat}</span></div>
+            <div className="mc-petit">{v.cadence} · battement {relTime(v.battement_le)} · prochain {v.prochain_le ? relTime(v.prochain_le) : '—'}</div>
+            <div data-modele>{v.modele?.texte ?? '—'}</div>
+            <div data-modele-le className="mc-petit">modèle depuis le {dateParis(v.modele_le)}</div>
+            <div data-cout-agent className="mc-mono">{motifSans(v.argent) ?? `Coût du mois ${euros(argent?.cout_mois_eur ?? null)}`}</div>
+            <h3 className="mc-maj">Tâches récentes</h3>
+            {(v.taches as any[]).map((t) => {
+              const c = (argent?.coutParTache ?? []).find((x: any) => x.numero === t.numero)
+              return <div key={t.numero} data-tache={t.numero}>#{t.numero} · {t.type} · <span data-pastille-tache={t.statut}>{t.statut}</span>{c ? <span className="mc-mono"> · {euros(c.eur)}</span> : null}{t.resultat ? <div className="mc-petit">↳ {t.resultat}</div> : null}</div>
+            })}
+            {nom === 'chef' && v.consignes ? <><h3 className="mc-maj">Consignes reçues</h3>{(v.consignes as any[]).map((c) => <div key={c.id} data-consigne={c.id}>{c.texte}{c.lue ? <span className="mc-petit"> · reçue</span> : null}</div>)}</> : null}
+            {(nom === 'facteur' || nom === 'facteur_usine') && v.technologies ? <><h3 className="mc-maj">Technologies de formulaire</h3>{(v.technologies as any[]).map((t) => <div key={t.technologie} data-technologie={t.technologie}>{t.technologie} · {t.envois} envois · {t.etat}</div>)}</> : null}
+            {nom === 'repondeur' && v.reponses ? <><h3 className="mc-maj">Dernières réponses</h3>{(v.reponses as any[]).map((r) => <div key={r.id} data-reponse={r.id}><div data-texte-recu>{r.texte_recu}</div>{r.reponse_envoyee ? <div data-reponse-envoyee className="mc-petit">↳ {r.reponse_envoyee}</div> : null}</div>)}</> : null}
+            {role === 'direction' ? <PauseAgent nom={nom} etat={v.etat} /> : null}
+          </div>
+        )
+      }}</Contenu>
+    </>
+  )
+}

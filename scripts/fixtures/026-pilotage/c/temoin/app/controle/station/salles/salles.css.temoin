@@ -1,0 +1,26 @@
+/* TÉMOIN du lot c (026-104) : les règles des panneaux de référence (026-120, 026-164). Jetons var(--…) seulement. */
+.mc .mc-fenetre[data-couleur-salle] { border-width: 2px; border-style: solid; }
+.mc [data-resume-salle] { border: 1px solid var(--mc-bord); border-radius: 8px; padding: 8px; margin-bottom: 10px; }
+.mc .mc-resume { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 6px 0; }
+.mc .mc-resume dt { font-size: 12px; color: var(--mc-texte-doux); letter-spacing: .05em; }
+.mc .mc-resume dd { margin: 0; font-family: var(--font-mono); font-size: 13px; }
+.mc .mc-gestes-resume { display: flex; gap: 8px; align-items: center; }
+.mc .mc-onglets { display: flex; gap: 4px; flex-wrap: wrap; margin: 8px 0; }
+.mc .mc-onglets [aria-selected="true"] { border-color: var(--mc-actif); color: var(--mc-actif); }
+.mc .mc-tuiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin: 8px 0; }
+.mc .mc-tuiles > div { border: 1px solid var(--mc-bord); border-radius: 8px; padding: 8px; }
+.mc .mc-histogramme { display: flex; align-items: flex-end; gap: 2px; height: 48px; grid-column: 1 / -1; }
+.mc .mc-histogramme [data-jour] { display: flex; flex-direction: column-reverse; width: 8px; }
+.mc .mc-histogramme .mc-agents { display: block; background: var(--mc-actif); }
+.mc .mc-histogramme .mc-hors { display: block; background: var(--mc-neon-2); }
+.mc .mc-etapes { display: flex; gap: 8px; font-size: 12px; }
+.mc .mc-atteinte { color: var(--mc-actif); font-weight: 600; }
+.mc .mc-classes { display: flex; gap: 8px; flex-wrap: wrap; }
+.mc [data-anomalie] { color: var(--mc-crit); }
+.mc [data-perime] { border: 1px solid var(--mc-crit); border-radius: 6px; padding: 6px 8px; }
+@media (max-width: 1023px) {
+  .mc .mc-resume { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc .mc-fenetre, .mc .mc-fenetre * { transition: none !important; animation: none !important; }
+}

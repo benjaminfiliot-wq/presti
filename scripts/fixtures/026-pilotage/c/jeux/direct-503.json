@@ -1,0 +1,558 @@
+{
+ "_lisez_moi": "vue=direct dont la sous-partie equipage est en panne ; les autres zones sont servies.",
+ "statut": 200,
+ "reponse": {
+  "vue": "direct",
+  "role": "direction",
+  "valeur": {
+   "barre": {
+    "valeur": {
+     "compteurs": [
+      {
+       "cle": "agents",
+       "libelle": "AGENTS ACTIFS",
+       "texte": "AGENTS 12/15 ACTIFS",
+       "ton": "normal",
+       "source": "pilotage_agents"
+      },
+      {
+       "cle": "chef",
+       "libelle": "CHEF DANS",
+       "texte": "1 h 38",
+       "ton": "normal",
+       "source": "pilotage_chef"
+      },
+      {
+       "cle": "cycles",
+       "libelle": "CYCLES AUJOURD’HUI",
+       "texte": "7",
+       "ton": "normal",
+       "source": "pilotage_chef"
+      },
+      {
+       "cle": "reunion",
+       "libelle": "RÉUNION DANS",
+       "texte": "30 h 00",
+       "ton": "normal",
+       "source": "station_reunion_lire"
+      },
+      {
+       "cle": "quota_claude",
+       "libelle": "QUOTA CLAUDE",
+       "texte": "non mesuré",
+       "ton": "muet",
+       "source": "jauges"
+      },
+      {
+       "cle": "quota_codex",
+       "libelle": "QUOTA CODEX 5 H",
+       "texte": "non mesuré",
+       "ton": "muet",
+       "source": "jauges"
+      },
+      {
+       "cle": "envois",
+       "libelle": "ENVOIS DU JOUR",
+       "texte": "12/20 · P2",
+       "ton": "normal",
+       "source": "pilotage_compteurs_du_jour"
+      },
+      {
+       "cle": "bilan",
+       "libelle": "BILAN",
+       "texte": "20/100 · bilan du 02/11",
+       "ton": "alerte",
+       "source": "pilotage_entonnoir"
+      }
+     ],
+     "auto": {
+      "actif": true,
+      "texte": "AUTO"
+     },
+     "cloche": 10,
+     "heure": "12:00",
+     "jour": "JOUR 3",
+     "nuit": false,
+     "version": {
+      "valeur": "a1b2c3d",
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "sante": {
+      "valeur": {
+       "etat": "en ligne",
+       "raison": null
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "erreurs": {
+      "valeur": 3,
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "commandes_mois": {
+      "valeur": 4,
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "sites_en_ligne": {
+      "valeur": 2,
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     }
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "equipage": {
+    "valeur": null,
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false,
+    "erreur": "pilotage_agents injoignable (délai dépassé)"
+   },
+   "attention": {
+    "valeur": {
+     "cartes": [
+      {
+       "cle": "decisions",
+       "couleur": "rouge",
+       "nombre": 3,
+       "titre": "3 décisions à trancher",
+       "geste": {
+        "type": "decisions"
+       },
+       "agent": null
+      },
+      {
+       "cle": "appels",
+       "couleur": "orange",
+       "nombre": 2,
+       "titre": "2 appels à rendre",
+       "geste": {
+        "type": "appels"
+       },
+       "agent": null
+      },
+      {
+       "cle": "usine_injoignable",
+       "couleur": "rouge",
+       "nombre": 1,
+       "titre": "1 × usine injoignable",
+       "geste": {
+        "type": "ouvrir",
+        "cible": "/controle/station?salle=machines"
+       },
+       "agent": "livreur"
+      },
+      {
+       "cle": "jauge_pleine",
+       "couleur": "jaune",
+       "nombre": 1,
+       "titre": "1 × jauge à 80 %",
+       "geste": {
+        "type": "ouvrir",
+        "cible": "/controle/station?salle=envois"
+       },
+       "agent": null
+      },
+      {
+       "cle": "orchestre",
+       "couleur": "bleu",
+       "nombre": 2,
+       "titre": "2 × tâche de l’orchestre en échec",
+       "geste": {
+        "type": "ouvrir",
+        "cible": "/controle/station?salle=chantier"
+       },
+       "agent": null
+      },
+      {
+       "cle": "crieur_muet",
+       "couleur": "jaune",
+       "nombre": 1,
+       "titre": "1 × Crieur muet depuis 6 h",
+       "geste": {
+        "type": "ouvrir",
+        "cible": "/controle/station?salle=crieur"
+       },
+       "agent": "crieur"
+      }
+     ],
+     "total": 10,
+     "vide": null
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "commandement": {
+    "valeur": {
+     "objectif": {
+      "libelle": "Dix formulaires par jour",
+      "par": "PAR LE CHEF",
+      "progression": 0.4
+     },
+     "missions": [
+      {
+       "cle": "oui",
+       "libelle": "10 oui",
+       "valeur": 2,
+       "cible": 10,
+       "texte": "2/10",
+       "atteinte": false,
+       "debloque": "→ succès Premier oui"
+      },
+      {
+       "cle": "contacts_froids",
+       "libelle": "100 contacts froids (bilan du 02/11)",
+       "valeur": 41,
+       "cible": 100,
+       "texte": "41/100",
+       "atteinte": false,
+       "debloque": "→ succès Bilan passé"
+      },
+      {
+       "cle": "sites_en_ligne",
+       "libelle": "1er site en ligne",
+       "valeur": 0,
+       "cible": 1,
+       "texte": "0/1",
+       "atteinte": false,
+       "debloque": "→ succès Premier site en ligne"
+      }
+     ],
+     "succes": {
+      "cle": "premier_oui",
+      "libelle": "Premier oui",
+      "le": "2026-10-20T10:00:00.000Z"
+     },
+     "tousSucces": [
+      {
+       "cle": "premier_oui",
+       "libelle": "Premier oui",
+       "debloque": true,
+       "le": "2026-10-20T10:00:00.000Z"
+      },
+      {
+       "cle": "premiere_vente",
+       "libelle": "Première vente",
+       "debloque": false,
+       "le": null
+      },
+      {
+       "cle": "premier_site_en_ligne",
+       "libelle": "Premier site en ligne",
+       "debloque": false,
+       "le": null
+      },
+      {
+       "cle": "bilan_passe",
+       "libelle": "Bilan passé",
+       "debloque": false,
+       "le": null
+      }
+     ],
+     "compteRendu": [
+      "12 formulaires soumis hier",
+      "2 réponses, dont 1 oui",
+      "La maquette du plombier est prête"
+     ],
+     "argent": {
+      "valeur": {
+       "niveau": {
+        "lv": 2,
+        "xp": 312,
+        "texte": "312 / 1 000 XP",
+        "prochainSeuil": 1000,
+        "part": 0.312
+       },
+       "missions": [
+        {
+         "cle": "encaisse_eur",
+         "libelle": "300 € encaissés",
+         "valeur": 312,
+         "cible": 300,
+         "texte": "312/300",
+         "atteinte": true,
+         "debloque": "→ succès Première vente"
+        }
+       ]
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     }
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "tapis": {
+    "valeur": {
+     "etapes": [
+      {
+       "cle": "trouve",
+       "libelle": "TROUVÉ",
+       "jour": 14,
+       "source": "acq_prospects"
+      },
+      {
+       "cle": "verifie",
+       "libelle": "VÉRIFIÉ",
+       "jour": 9,
+       "source": "acq_prospects"
+      },
+      {
+       "cle": "maquette",
+       "libelle": "MAQUETTE",
+       "jour": 4,
+       "source": "atelier_maquettes"
+      },
+      {
+       "cle": "contacte",
+       "libelle": "CONTACTÉ",
+       "jour": 12,
+       "source": "pilotage_envois_du_jour"
+      }
+     ],
+     "rejet": {
+      "nombre": 3,
+      "tauxPass": 0.86
+     },
+     "paye": {
+      "valeur": {
+       "cle": "paye",
+       "libelle": "PAYÉ",
+       "jour": 1,
+       "source": "stripe"
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     }
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "bandeau": {
+    "valeur": {
+     "elements": [
+      {
+       "id": 101,
+       "le": "2026-10-23T07:00:00.000Z",
+       "type": "commande_payee",
+       "texte": "Site · menuisier, Nantes · 300 €"
+      },
+      {
+       "id": 102,
+       "le": "2026-10-23T08:25:00.000Z",
+       "type": "reponse_oui",
+       "texte": "Oui · plombier, Lyon"
+      },
+      {
+       "id": 103,
+       "le": "2026-10-23T09:20:00.000Z",
+       "type": "pack_paye",
+       "texte": "Pack · couvreur, Annecy · 90 €"
+      }
+     ]
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "carte": {
+    "valeur": {
+     "lignes": {
+      "valeur": {
+       "contenu": {
+        "valeur": {
+         "etapes": [
+          {
+           "cle": "trouve",
+           "libelle": "TROUVÉ",
+           "jour": 14,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "verifie",
+           "libelle": "VÉRIFIÉ",
+           "jour": 9,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "maquette",
+           "libelle": "MAQUETTE",
+           "jour": 4,
+           "source": "atelier_maquettes"
+          },
+          {
+           "cle": "contacte",
+           "libelle": "CONTACTÉ",
+           "jour": 12,
+           "source": "pilotage_envois_du_jour"
+          }
+         ]
+        },
+        "source": "supabase",
+        "a": "2026-10-23T10:00:00.000Z",
+        "cache": false
+       },
+       "sites": {
+        "valeur": {
+         "etapes": [
+          {
+           "cle": "trouve",
+           "libelle": "TROUVÉ",
+           "jour": 15,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "verifie",
+           "libelle": "VÉRIFIÉ",
+           "jour": 10,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "maquette",
+           "libelle": "MAQUETTE",
+           "jour": 5,
+           "source": "atelier_maquettes"
+          },
+          {
+           "cle": "contacte",
+           "libelle": "CONTACTÉ",
+           "jour": 13,
+           "source": "pilotage_envois_du_jour"
+          }
+         ]
+        },
+        "source": "supabase",
+        "a": "2026-10-23T10:00:00.000Z",
+        "cache": false
+       },
+       "packs": {
+        "valeur": {
+         "etapes": [
+          {
+           "cle": "trouve",
+           "libelle": "TROUVÉ",
+           "jour": 16,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "verifie",
+           "libelle": "VÉRIFIÉ",
+           "jour": 11,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "maquette",
+           "libelle": "MAQUETTE",
+           "jour": 6,
+           "source": "atelier_maquettes"
+          },
+          {
+           "cle": "contacte",
+           "libelle": "CONTACTÉ",
+           "jour": 14,
+           "source": "pilotage_envois_du_jour"
+          }
+         ]
+        },
+        "source": "supabase",
+        "a": "2026-10-23T10:00:00.000Z",
+        "cache": false
+       }
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "experience": {
+      "valeur": {
+       "barre": "J6/30 · 0 €",
+       "texte": "Expérience en cours : J6/30.",
+       "sur": 30,
+       "statut": "en_cours"
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "paliers": {
+      "valeur": {
+       "usine": {
+        "lv": 1,
+        "texte": "Usine LV.1"
+       },
+       "atelier": null
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "nuit": {
+      "valeur": false,
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "egaliseur": {
+      "valeur": [
+       0,
+       1,
+       2,
+       4,
+       3,
+       1,
+       0,
+       0,
+       2,
+       5,
+       3,
+       1
+      ],
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "departements": {
+      "valeur": [
+       {
+        "departement": "69",
+        "trouves": 14,
+        "contactes": 6,
+        "oui": 1
+       },
+       {
+        "departement": "74",
+        "trouves": 5,
+        "contactes": 2,
+        "oui": 0
+       }
+      ],
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     }
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}

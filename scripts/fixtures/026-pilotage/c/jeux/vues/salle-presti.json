@@ -1,0 +1,13 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=salle&salle=presti : salle sans lecteur avant 026-178 (source a_venir).",
+ "statut": 200,
+ "reponse": {
+  "vue": "salle",
+  "role": "direction",
+  "valeur": null,
+  "source": "a_venir",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false,
+  "manque": "arrive avec sa fiche"
+ }
+}

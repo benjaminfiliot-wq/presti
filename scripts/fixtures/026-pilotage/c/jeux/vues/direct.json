@@ -1,0 +1,943 @@
+{
+ "_lisez_moi": "GET /api/controle/station?vue=direct : les six sous-parties et la carte, 15 agents (un « sans IA », un en pause, un en panne), 6 cartes Attention (dont une orchestre et deux nommant un agent), trois missions, un succès débloqué.",
+ "statut": 200,
+ "reponse": {
+  "vue": "direct",
+  "role": "direction",
+  "valeur": {
+   "barre": {
+    "valeur": {
+     "compteurs": [
+      {
+       "cle": "agents",
+       "libelle": "AGENTS ACTIFS",
+       "texte": "AGENTS 12/15 ACTIFS",
+       "ton": "normal",
+       "source": "pilotage_agents"
+      },
+      {
+       "cle": "chef",
+       "libelle": "CHEF DANS",
+       "texte": "1 h 38",
+       "ton": "normal",
+       "source": "pilotage_chef"
+      },
+      {
+       "cle": "cycles",
+       "libelle": "CYCLES AUJOURD’HUI",
+       "texte": "7",
+       "ton": "normal",
+       "source": "pilotage_chef"
+      },
+      {
+       "cle": "reunion",
+       "libelle": "RÉUNION DANS",
+       "texte": "30 h 00",
+       "ton": "normal",
+       "source": "station_reunion_lire"
+      },
+      {
+       "cle": "quota_claude",
+       "libelle": "QUOTA CLAUDE",
+       "texte": "non mesuré",
+       "ton": "muet",
+       "source": "jauges"
+      },
+      {
+       "cle": "quota_codex",
+       "libelle": "QUOTA CODEX 5 H",
+       "texte": "non mesuré",
+       "ton": "muet",
+       "source": "jauges"
+      },
+      {
+       "cle": "envois",
+       "libelle": "ENVOIS DU JOUR",
+       "texte": "12/20 · P2",
+       "ton": "normal",
+       "source": "pilotage_compteurs_du_jour"
+      },
+      {
+       "cle": "bilan",
+       "libelle": "BILAN",
+       "texte": "20/100 · bilan du 02/11",
+       "ton": "alerte",
+       "source": "pilotage_entonnoir"
+      }
+     ],
+     "auto": {
+      "actif": true,
+      "texte": "AUTO"
+     },
+     "cloche": 10,
+     "heure": "12:00",
+     "jour": "JOUR 3",
+     "nuit": false,
+     "version": {
+      "valeur": "a1b2c3d",
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "sante": {
+      "valeur": {
+       "etat": "en ligne",
+       "raison": null
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "erreurs": {
+      "valeur": 3,
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "commandes_mois": {
+      "valeur": 4,
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "sites_en_ligne": {
+      "valeur": 2,
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     }
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "equipage": {
+    "valeur": {
+     "agents": [
+      {
+       "nom": "chef",
+       "libelle": "Chef",
+       "role": "Commande l’équipage",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Plan du cycle écrit",
+       "activite_le": "2026-10-23T09:00:00.000Z",
+       "cadence": "cycle dans 1 h 38",
+       "prochain_le": null,
+       "salle": "commandement",
+       "avatar": "chef",
+       "position": {
+        "salle": "commandement",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "MODÈLE gpt-6-sol · Codex",
+        "source": "vu"
+       }
+      },
+      {
+       "nom": "recenseur",
+       "libelle": "Recenseur",
+       "role": "Trouve les artisans",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Site lu : <img src=x onerror=alert(1)>",
+       "activite_le": "2026-10-23T07:24:00.000Z",
+       "cadence": "toutes les 15 min",
+       "prochain_le": null,
+       "salle": "radar",
+       "avatar": "recenseur",
+       "position": {
+        "salle": "radar",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "MODÈLE llama-4-scout · Cerebras · gratuit",
+        "source": "vu"
+       }
+      },
+      {
+       "nom": "vigie_meta",
+       "libelle": "Radar",
+       "role": "Repère les annonceurs",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Annonceurs repérés : 4",
+       "activite_le": "2026-10-23T07:27:00.000Z",
+       "cadence": "toutes les 6 h",
+       "prochain_le": null,
+       "salle": "radar",
+       "avatar": "vigie_meta",
+       "position": {
+        "salle": "radar",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "sans IA",
+        "source": "aucun"
+       }
+      },
+      {
+       "nom": "garde",
+       "libelle": "Garde",
+       "role": "Juge les messages (J3)",
+       "etat": "pause",
+       "point": "gris",
+       "activite": "En pause (motif : essai)",
+       "activite_le": "2026-10-23T05:00:00.000Z",
+       "cadence": "toutes les 15 min",
+       "prochain_le": null,
+       "salle": "redaction",
+       "avatar": "garde",
+       "position": {
+        "salle": "repos",
+        "motif": "pause"
+       },
+       "modele": {
+        "texte": "MODÈLE gpt-6-luna · Codex",
+        "source": "vu"
+       }
+      },
+      {
+       "nom": "juge_faits",
+       "libelle": "Juge des faits",
+       "role": "Vérifie les faits",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Faits vérifiés : 3",
+       "activite_le": "2026-10-23T09:40:00.000Z",
+       "cadence": "toutes les 15 min",
+       "prochain_le": null,
+       "salle": "redaction",
+       "avatar": "juge_faits",
+       "position": {
+        "salle": "redaction",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "MODÈLE qwen-3 · Ollama local · gratuit",
+        "source": "vu"
+       }
+      },
+      {
+       "nom": "redacteur",
+       "libelle": "Plume",
+       "role": "Écrit les messages",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Message écrit : variante B",
+       "activite_le": "2026-10-23T09:35:00.000Z",
+       "cadence": "toutes les 15 min",
+       "prochain_le": null,
+       "salle": "redaction",
+       "avatar": "redacteur",
+       "position": {
+        "salle": "redaction",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "MODÈLE gpt-6-luna · Codex",
+        "source": "vu"
+       }
+      },
+      {
+       "nom": "facteur",
+       "libelle": "Facteur",
+       "role": "Soumet les formulaires",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Formulaire soumis : plombier",
+       "activite_le": "2026-10-23T09:48:00.000Z",
+       "cadence": "toutes les 15 min",
+       "prochain_le": null,
+       "salle": "envois",
+       "avatar": "facteur",
+       "position": {
+        "salle": "envois",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "MODÈLE gpt-6-luna · Codex",
+        "source": "vu"
+       }
+      },
+      {
+       "nom": "facteur_usine",
+       "libelle": "Facteur (usine)",
+       "role": "Remplit les formulaires sur l’usine",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Formulaire rempli : couvreur",
+       "activite_le": "2026-10-23T09:46:00.000Z",
+       "cadence": "toutes les 15 min",
+       "prochain_le": null,
+       "salle": "envois",
+       "avatar": "facteur_usine",
+       "position": {
+        "salle": "envois",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "sans IA",
+        "source": "aucun"
+       }
+      },
+      {
+       "nom": "repondeur",
+       "libelle": "Répondeur",
+       "role": "Répond aux réponses",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Réponse classée : oui",
+       "activite_le": "2026-10-23T09:30:00.000Z",
+       "cadence": "toutes les 5 min",
+       "prochain_le": null,
+       "salle": "standard",
+       "avatar": "repondeur",
+       "position": {
+        "salle": "standard",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "MODÈLE gpt-6-luna · Codex",
+        "source": "vu"
+       }
+      },
+      {
+       "nom": "standardiste",
+       "libelle": "Standard",
+       "role": "Relève les réponses",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Boîte relevée",
+       "activite_le": "2026-10-23T09:52:00.000Z",
+       "cadence": "toutes les 15 min",
+       "prochain_le": null,
+       "salle": "standard",
+       "avatar": "standardiste",
+       "position": {
+        "salle": "standard",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "sans IA",
+        "source": "aucun"
+       }
+      },
+      {
+       "nom": "atelier_maquettes",
+       "libelle": "Atelier",
+       "role": "Fabrique les maquettes",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Maquette électricien, Annecy",
+       "activite_le": "2026-10-23T09:18:00.000Z",
+       "cadence": "toutes les 30 min",
+       "prochain_le": null,
+       "salle": "atelier",
+       "avatar": "atelier_maquettes",
+       "position": {
+        "salle": "atelier",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "MODÈLE gpt-6-luna · Codex",
+        "source": "vu"
+       }
+      },
+      {
+       "nom": "livreur",
+       "libelle": "Livreur",
+       "role": "Met les sites en ligne",
+       "etat": "panne",
+       "point": "rouge",
+       "activite": "Panne : usine injoignable",
+       "activite_le": "2026-10-23T00:00:00.000Z",
+       "cadence": "toutes les 15 min",
+       "prochain_le": null,
+       "salle": "usine",
+       "avatar": "livreur",
+       "position": {
+        "salle": "usine",
+        "motif": "panne"
+       },
+       "modele": {
+        "texte": "sans IA",
+        "source": "aucun"
+       }
+      },
+      {
+       "nom": "tresorier",
+       "libelle": "Trésorier",
+       "role": "Tient les comptes",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Comptes du jour tenus",
+       "activite_le": "2026-10-23T08:30:00.000Z",
+       "cadence": "une fois par jour",
+       "prochain_le": null,
+       "salle": "tresorerie",
+       "avatar": "tresorier",
+       "position": {
+        "salle": "tresorerie",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "sans IA",
+        "source": "aucun"
+       }
+      },
+      {
+       "nom": "crieur",
+       "libelle": "Crieur",
+       "role": "Publie sur les réseaux",
+       "etat": "actif",
+       "point": "jaune",
+       "activite": "Publication programmée",
+       "activite_le": "2026-10-23T03:20:00.000Z",
+       "cadence": "toutes les 5 min",
+       "prochain_le": null,
+       "salle": "crieur",
+       "avatar": "crieur",
+       "position": {
+        "salle": "crieur",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "MODÈLE llama-4-scout · Cerebras · gratuit",
+        "source": "vu"
+       }
+      },
+      {
+       "nom": "a0",
+       "libelle": "Veilleur",
+       "role": "Veille sur tout",
+       "etat": "actif",
+       "point": "cyan",
+       "activite": "Tout va bien",
+       "activite_le": "2026-10-23T09:55:00.000Z",
+       "cadence": "toutes les 15 min",
+       "prochain_le": null,
+       "salle": "machines",
+       "avatar": "a0",
+       "position": {
+        "salle": "machines",
+        "motif": "tache"
+       },
+       "modele": {
+        "texte": "sans IA",
+        "source": "aucun"
+       }
+      }
+     ],
+     "reunionEnCours": false,
+     "couts": {
+      "valeur": [
+       {
+        "nom": "chef",
+        "cout_mois_eur": 0
+       },
+       {
+        "nom": "recenseur",
+        "cout_mois_eur": 0
+       },
+       {
+        "nom": "vigie_meta",
+        "cout_mois_eur": 0
+       },
+       {
+        "nom": "garde",
+        "cout_mois_eur": 0.42
+       },
+       {
+        "nom": "juge_faits",
+        "cout_mois_eur": 0
+       },
+       {
+        "nom": "redacteur",
+        "cout_mois_eur": 1.18
+       },
+       {
+        "nom": "facteur",
+        "cout_mois_eur": 0.37
+       },
+       {
+        "nom": "facteur_usine",
+        "cout_mois_eur": 0
+       },
+       {
+        "nom": "repondeur",
+        "cout_mois_eur": 0.12
+       },
+       {
+        "nom": "standardiste",
+        "cout_mois_eur": 0
+       },
+       {
+        "nom": "atelier_maquettes",
+        "cout_mois_eur": 2.05
+       },
+       {
+        "nom": "livreur",
+        "cout_mois_eur": 0
+       },
+       {
+        "nom": "tresorier",
+        "cout_mois_eur": 0
+       },
+       {
+        "nom": "crieur",
+        "cout_mois_eur": 0
+       },
+       {
+        "nom": "a0",
+        "cout_mois_eur": 0
+       }
+      ],
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     }
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "attention": {
+    "valeur": {
+     "cartes": [
+      {
+       "cle": "decisions",
+       "couleur": "rouge",
+       "nombre": 3,
+       "titre": "3 décisions à trancher",
+       "geste": {
+        "type": "decisions"
+       },
+       "agent": null
+      },
+      {
+       "cle": "appels",
+       "couleur": "orange",
+       "nombre": 2,
+       "titre": "2 appels à rendre",
+       "geste": {
+        "type": "appels"
+       },
+       "agent": null
+      },
+      {
+       "cle": "usine_injoignable",
+       "couleur": "rouge",
+       "nombre": 1,
+       "titre": "1 × usine injoignable",
+       "geste": {
+        "type": "ouvrir",
+        "cible": "/controle/station?salle=machines"
+       },
+       "agent": "livreur"
+      },
+      {
+       "cle": "jauge_pleine",
+       "couleur": "jaune",
+       "nombre": 1,
+       "titre": "1 × jauge à 80 %",
+       "geste": {
+        "type": "ouvrir",
+        "cible": "/controle/station?salle=envois"
+       },
+       "agent": null
+      },
+      {
+       "cle": "orchestre",
+       "couleur": "bleu",
+       "nombre": 2,
+       "titre": "2 × tâche de l’orchestre en échec",
+       "geste": {
+        "type": "ouvrir",
+        "cible": "/controle/station?salle=chantier"
+       },
+       "agent": null
+      },
+      {
+       "cle": "crieur_muet",
+       "couleur": "jaune",
+       "nombre": 1,
+       "titre": "1 × Crieur muet depuis 6 h",
+       "geste": {
+        "type": "ouvrir",
+        "cible": "/controle/station?salle=crieur"
+       },
+       "agent": "crieur"
+      }
+     ],
+     "total": 10,
+     "vide": null
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "commandement": {
+    "valeur": {
+     "objectif": {
+      "libelle": "Dix formulaires par jour",
+      "par": "PAR LE CHEF",
+      "progression": 0.4
+     },
+     "missions": [
+      {
+       "cle": "oui",
+       "libelle": "10 oui",
+       "valeur": 2,
+       "cible": 10,
+       "texte": "2/10",
+       "atteinte": false,
+       "debloque": "→ succès Premier oui"
+      },
+      {
+       "cle": "contacts_froids",
+       "libelle": "100 contacts froids (bilan du 02/11)",
+       "valeur": 41,
+       "cible": 100,
+       "texte": "41/100",
+       "atteinte": false,
+       "debloque": "→ succès Bilan passé"
+      },
+      {
+       "cle": "sites_en_ligne",
+       "libelle": "1er site en ligne",
+       "valeur": 0,
+       "cible": 1,
+       "texte": "0/1",
+       "atteinte": false,
+       "debloque": "→ succès Premier site en ligne"
+      }
+     ],
+     "succes": {
+      "cle": "premier_oui",
+      "libelle": "Premier oui",
+      "le": "2026-10-20T10:00:00.000Z"
+     },
+     "tousSucces": [
+      {
+       "cle": "premier_oui",
+       "libelle": "Premier oui",
+       "debloque": true,
+       "le": "2026-10-20T10:00:00.000Z"
+      },
+      {
+       "cle": "premiere_vente",
+       "libelle": "Première vente",
+       "debloque": false,
+       "le": null
+      },
+      {
+       "cle": "premier_site_en_ligne",
+       "libelle": "Premier site en ligne",
+       "debloque": false,
+       "le": null
+      },
+      {
+       "cle": "bilan_passe",
+       "libelle": "Bilan passé",
+       "debloque": false,
+       "le": null
+      }
+     ],
+     "compteRendu": [
+      "12 formulaires soumis hier",
+      "2 réponses, dont 1 oui",
+      "La maquette du plombier est prête"
+     ],
+     "argent": {
+      "valeur": {
+       "niveau": {
+        "lv": 2,
+        "xp": 312,
+        "texte": "312 / 1 000 XP",
+        "prochainSeuil": 1000,
+        "part": 0.312
+       },
+       "missions": [
+        {
+         "cle": "encaisse_eur",
+         "libelle": "300 € encaissés",
+         "valeur": 312,
+         "cible": 300,
+         "texte": "312/300",
+         "atteinte": true,
+         "debloque": "→ succès Première vente"
+        }
+       ]
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     }
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "tapis": {
+    "valeur": {
+     "etapes": [
+      {
+       "cle": "trouve",
+       "libelle": "TROUVÉ",
+       "jour": 14,
+       "source": "acq_prospects"
+      },
+      {
+       "cle": "verifie",
+       "libelle": "VÉRIFIÉ",
+       "jour": 9,
+       "source": "acq_prospects"
+      },
+      {
+       "cle": "maquette",
+       "libelle": "MAQUETTE",
+       "jour": 4,
+       "source": "atelier_maquettes"
+      },
+      {
+       "cle": "contacte",
+       "libelle": "CONTACTÉ",
+       "jour": 12,
+       "source": "pilotage_envois_du_jour"
+      }
+     ],
+     "rejet": {
+      "nombre": 3,
+      "tauxPass": 0.86
+     },
+     "paye": {
+      "valeur": {
+       "cle": "paye",
+       "libelle": "PAYÉ",
+       "jour": 1,
+       "source": "stripe"
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     }
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "bandeau": {
+    "valeur": {
+     "elements": [
+      {
+       "id": 101,
+       "le": "2026-10-23T07:00:00.000Z",
+       "type": "commande_payee",
+       "texte": "Site · menuisier, Nantes · 300 €"
+      },
+      {
+       "id": 102,
+       "le": "2026-10-23T08:25:00.000Z",
+       "type": "reponse_oui",
+       "texte": "Oui · plombier, Lyon"
+      },
+      {
+       "id": 103,
+       "le": "2026-10-23T09:20:00.000Z",
+       "type": "pack_paye",
+       "texte": "Pack · couvreur, Annecy · 90 €"
+      }
+     ]
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   },
+   "carte": {
+    "valeur": {
+     "lignes": {
+      "valeur": {
+       "contenu": {
+        "valeur": {
+         "etapes": [
+          {
+           "cle": "trouve",
+           "libelle": "TROUVÉ",
+           "jour": 14,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "verifie",
+           "libelle": "VÉRIFIÉ",
+           "jour": 9,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "maquette",
+           "libelle": "MAQUETTE",
+           "jour": 4,
+           "source": "atelier_maquettes"
+          },
+          {
+           "cle": "contacte",
+           "libelle": "CONTACTÉ",
+           "jour": 12,
+           "source": "pilotage_envois_du_jour"
+          }
+         ]
+        },
+        "source": "supabase",
+        "a": "2026-10-23T10:00:00.000Z",
+        "cache": false
+       },
+       "sites": {
+        "valeur": {
+         "etapes": [
+          {
+           "cle": "trouve",
+           "libelle": "TROUVÉ",
+           "jour": 15,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "verifie",
+           "libelle": "VÉRIFIÉ",
+           "jour": 10,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "maquette",
+           "libelle": "MAQUETTE",
+           "jour": 5,
+           "source": "atelier_maquettes"
+          },
+          {
+           "cle": "contacte",
+           "libelle": "CONTACTÉ",
+           "jour": 13,
+           "source": "pilotage_envois_du_jour"
+          }
+         ]
+        },
+        "source": "supabase",
+        "a": "2026-10-23T10:00:00.000Z",
+        "cache": false
+       },
+       "packs": {
+        "valeur": {
+         "etapes": [
+          {
+           "cle": "trouve",
+           "libelle": "TROUVÉ",
+           "jour": 16,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "verifie",
+           "libelle": "VÉRIFIÉ",
+           "jour": 11,
+           "source": "acq_prospects"
+          },
+          {
+           "cle": "maquette",
+           "libelle": "MAQUETTE",
+           "jour": 6,
+           "source": "atelier_maquettes"
+          },
+          {
+           "cle": "contacte",
+           "libelle": "CONTACTÉ",
+           "jour": 14,
+           "source": "pilotage_envois_du_jour"
+          }
+         ]
+        },
+        "source": "supabase",
+        "a": "2026-10-23T10:00:00.000Z",
+        "cache": false
+       }
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "experience": {
+      "valeur": {
+       "barre": "J6/30 · 0 €",
+       "texte": "Expérience en cours : J6/30.",
+       "sur": 30,
+       "statut": "en_cours"
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "paliers": {
+      "valeur": {
+       "usine": {
+        "lv": 1,
+        "texte": "Usine LV.1"
+       },
+       "atelier": null
+      },
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "nuit": {
+      "valeur": false,
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "egaliseur": {
+      "valeur": [
+       0,
+       1,
+       2,
+       4,
+       3,
+       1,
+       0,
+       0,
+       2,
+       5,
+       3,
+       1
+      ],
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     },
+     "departements": {
+      "valeur": [
+       {
+        "departement": "69",
+        "trouves": 14,
+        "contactes": 6,
+        "oui": 1
+       },
+       {
+        "departement": "74",
+        "trouves": 5,
+        "contactes": 2,
+        "oui": 0
+       }
+      ],
+      "source": "supabase",
+      "a": "2026-10-23T10:00:00.000Z",
+      "cache": false
+     }
+    },
+    "source": "supabase",
+    "a": "2026-10-23T10:00:00.000Z",
+    "cache": false
+   }
+  },
+  "source": "supabase",
+  "a": "2026-10-23T10:00:00.000Z",
+  "cache": false
+ }
+}
