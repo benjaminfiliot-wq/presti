@@ -1,0 +1,4 @@
+{
+  "_note": "dossier cassé exprès pour 026-157 (deposer.mjs) : pack_id présent, matiere et site absents — un juge local (pub-locale-qa.mjs) doit le refuser AVANT tout accès réseau.",
+  "pack_id": "pack-casse-0001"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "pack-ligne-2",
+  "artisan_id": "artisan-ligne-2",
+  "commande_site_id": "commande-ligne-2",
+  "email": "artisan-ligne-2@exemple.invalid",
+  "prix_cents": 14900,
+  "type": "pack_pub",
+  "site_slug": "plombier-dupont-lyon",
+  "site_domaine": null,
+  "refaits": 0,
+  "lien_expire_le": null,
+  "fichiers_effaces_le": null,
+  "etat": "payee",
+  "matiere": {
+    "photos": [],
+    "faits": {
+      "metier": "electricien",
+      "ville": "Villeurbanne"
+    },
+    "voix": "synthese",
+    "texte_voix": "Electricien a Villeurbanne, disponible pour vos installations et depannages urgents."
+  }
+}

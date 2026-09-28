@@ -1,0 +1,23 @@
+{
+  "id": "pack-ligne-3",
+  "artisan_id": "artisan-ligne-3",
+  "commande_site_id": "commande-ligne-3",
+  "email": "artisan-ligne-3@exemple.invalid",
+  "prix_cents": 14900,
+  "type": "pack_pub",
+  "site_slug": "plombier-dupont-lyon",
+  "site_domaine": null,
+  "refaits": 0,
+  "lien_expire_le": null,
+  "fichiers_effaces_le": null,
+  "etat": "fabriquee",
+  "matiere": {
+    "photos": [],
+    "faits": {
+      "metier": "macon",
+      "ville": "Caluire"
+    },
+    "voix": "aucune",
+    "texte_voix": ""
+  }
+}

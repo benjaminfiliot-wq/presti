@@ -1,0 +1,10 @@
+{
+  "pack_id": "pack-temoin-0001",
+  "site": "plombier-dupont-lyon",
+  "matiere": {
+    "faits": {
+      "metier": "plombier",
+      "ville": "Lyon"
+    }
+  }
+}

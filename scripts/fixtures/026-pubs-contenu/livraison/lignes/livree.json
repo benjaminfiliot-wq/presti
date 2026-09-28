@@ -1,0 +1,23 @@
+{
+  "id": "pack-ligne-4",
+  "artisan_id": "artisan-ligne-4",
+  "commande_site_id": "commande-ligne-4",
+  "email": "artisan-ligne-4@exemple.invalid",
+  "prix_cents": 14900,
+  "type": "pack_pub",
+  "site_slug": "plombier-dupont-lyon",
+  "site_domaine": null,
+  "refaits": 0,
+  "lien_expire_le": "2026-10-20T00:00:00.000Z",
+  "fichiers_effaces_le": null,
+  "etat": "livree",
+  "matiere": {
+    "photos": [],
+    "faits": {
+      "metier": "couvreur",
+      "ville": "Bron"
+    },
+    "voix": "aucune",
+    "texte_voix": ""
+  }
+}

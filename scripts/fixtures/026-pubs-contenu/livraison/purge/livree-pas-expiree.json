@@ -1,0 +1,8 @@
+{
+  "id": "pack-purge-3",
+  "artisan_id": "artisan-purge-3",
+  "etat": "livree",
+  "refaits": 0,
+  "lien_expire_le": "2026-10-05T00:00:00.000Z",
+  "fichiers_effaces_le": null
+}

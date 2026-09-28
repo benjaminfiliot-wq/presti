@@ -1,0 +1,13 @@
+{
+  "_source": "fiche 026-110, point 3 : même référence que 026-108/preuve-01.json (HEAD relevé au début de la fiche, 4041ec9, 24/09 au soir) — elle précède aussi les fiches du dossier et de la livraison.",
+  "reference": "4041ec9b41432576037dbc0b45e0647bd60a0347",
+  "absents_de_la_reference": ["lib/packPubDossier.ts", "lib/packPubLivraison.ts", "lib/packPubPurge.ts", "scripts/pack-pub", "app/pubs"],
+  "juges": [
+    { "commande": "node scripts/pack-pub-dossier-qa.mjs --partie=api", "echec_attendu": "PD-1", "fiche_jugee": "026-135" },
+    { "commande": "node scripts/pack-pub-dossier-qa.mjs --partie=page", "echec_attendu": "PD-5", "fiche_jugee": "026-144" },
+    { "commande": "node scripts/pack-pub-livraison-qa.mjs --partie=depot", "echec_attendu": "LV-1", "fiche_jugee": "026-157" },
+    { "commande": "node scripts/pack-pub-livraison-qa.mjs --partie=route", "echec_attendu": "LV-3", "fiche_jugee": "026-137" },
+    { "commande": "node scripts/pack-pub-livraison-qa.mjs --partie=poste", "echec_attendu": "LV-7", "fiche_jugee": "026-147" },
+    { "commande": "node scripts/pack-pub-livraison-qa.mjs --partie=purge", "echec_attendu": "LV-12", "fiche_jugee": "026-149" }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "pack-ligne-1",
+  "artisan_id": "artisan-ligne-1",
+  "commande_site_id": "commande-ligne-1",
+  "email": "artisan-ligne-1@exemple.invalid",
+  "prix_cents": 14900,
+  "type": "pack_pub",
+  "site_slug": "plombier-dupont-lyon",
+  "site_domaine": null,
+  "refaits": 0,
+  "lien_expire_le": null,
+  "fichiers_effaces_le": null,
+  "etat": "payee",
+  "matiere": {
+    "photos": [],
+    "faits": {
+      "metier": "plombier",
+      "ville": "Lyon"
+    },
+    "voix": "aucune",
+    "texte_voix": ""
+  }
+}

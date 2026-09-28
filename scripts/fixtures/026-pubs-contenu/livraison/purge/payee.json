@@ -1,0 +1,8 @@
+{
+  "id": "pack-purge-5",
+  "artisan_id": "artisan-purge-5",
+  "etat": "payee",
+  "refaits": 0,
+  "lien_expire_le": null,
+  "fichiers_effaces_le": null
+}
