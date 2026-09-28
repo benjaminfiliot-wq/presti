@@ -2778,6 +2778,10 @@ async function principal() {
   }
   const rouges = R.rouges
   console.log(`${NOM} ${titre} : ${rouges.length ? `FAIL — ${rouges.join(', ')}` : 'PASS'}`)
-  process.exit(rouges.length ? 1 : 0)
+  // 28/09 : process.exit() ici faisait échouer une assertion de libuv sous Windows (Node 24, async.c:94, code 3221226505)
+  // APRÈS le verdict, quand une requête vers la base se refermait encore : l'orchestre lisait un plantage. Le code est posé,
+  // le processus finit de lui-même ; un filet (non retenu) coupe au bout de 30 s si une poignée restait ouverte.
+  process.exitCode = rouges.length ? 1 : 0
+  setTimeout(() => process.exit(process.exitCode), 30_000).unref()
 }
 principal().catch((e) => { console.error(`FAIL ${NOM} — exception : ${e && e.stack ? e.stack : e}`); process.exit(1) })
