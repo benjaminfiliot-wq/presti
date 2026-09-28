@@ -103,15 +103,16 @@ if (o.enfant === 'complet') {
   await jugerDans(res, 'BL-1', async () => {
     const e = []
     if (!bus.m) return { echecs: [`${BUS} ne s'importe pas : ${bus.erreur}`] }
-    for (const n of ['busEnPause', 'cloreTacheLivraison', 'battementLivreur']) if (typeof B[n] !== 'function') e.push(`${BUS} n'exporte pas la fonction ${n}`)
+    // Décision du chef d'entreprise (27/09, en tête de 026-141) : « BL-1 lit aussi battementTresorier et le nom
+    // exact tresorier » — quatrième fonction mince, rpc('ops_battement', { p_nom: 'tresorier' }), sans jamais lever.
+    for (const n of ['busEnPause', 'cloreTacheLivraison', 'battementLivreur', 'battementTresorier']) if (typeof B[n] !== 'function') e.push(`${BUS} n'exporte pas la fonction ${n}`)
     if (e.length) return { echecs: e }
     const ID = 'd0260000-0000-4000-8000-00000000b001'
     vider(); reponses.ops_interrupteur = false; reponses.ops_tache_clore = 'faite'
-    await B.busEnPause(); await B.cloreTacheLivraison(ID, 'generee'); await B.battementLivreur()
+    await B.busEnPause(); await B.cloreTacheLivraison(ID, 'generee'); await B.battementLivreur(); await B.battementTresorier()
     const attendus = [
       ['ops_interrupteur', { p_nom: 'pause_generale' }],
       ['ops_tache_clore', { p_agent: 'livreur', p_cle: `livrer_site:${ID}`, p_preuve_url: `supabase://sites_commandes/${ID}#generee` }],
-      ['ops_battement', { p_nom: 'livreur' }],
     ]
     for (const [f, p] of attendus) {
       const a = appels(f)
@@ -119,10 +120,19 @@ if (o.enfant === 'complet') {
       if (a[0].faute) e.push(`${f} refusée par le faux PostgREST (${a[0].faute}) : paramètres ${JSON.stringify(a[0].params)}`)
       else if (JSON.stringify(a[0].params) !== JSON.stringify(p) && JSON.stringify(Object.fromEntries(Object.entries(a[0].params).sort())) !== JSON.stringify(Object.fromEntries(Object.entries(p).sort()))) e.push(`${f} : paramètres ${JSON.stringify(a[0].params)}, ${JSON.stringify(p)} attendus`)
     }
+    const battements = appels('ops_battement')
+    for (const nom of ['livreur', 'tresorier']) {
+      const b = battements.filter((x) => x.params?.p_nom === nom)
+      if (b.length !== 1) { e.push(`ops_battement(${nom}) appelée ${b.length} fois, une attendue`); continue }
+      if (b[0].faute) e.push(`ops_battement(${nom}) refusée par le faux PostgREST (${b[0].faute})`)
+    }
+    // battementTresorier ne lève jamais, même si le rpc échoue (la décision : « sans jamais lever »).
+    vider(); reponses.ops_battement = () => faux.erreurPg('ops:panne', 'XX000')
+    try { await B.battementTresorier() } catch (err) { e.push(`battementTresorier lève sur un rpc en échec (${premiereLigne(err)}) : ne doit jamais lever`) }
     for (const a of faux.appels) if (!FONCTIONS.includes(a.fonction)) e.push(`appel à ${a.fonction}, hors des trois fonctions du tableau`)
     const src = lireRacine(RAC, BUS) ?? ''
     if (/<ops_/.test(src)) e.push(`${BUS} contient encore un emplacement « <ops_ »`)
-    return { echecs: e, detail: `${BUS} exporte busEnPause, cloreTacheLivraison et battementLivreur ; chacune appelle par supabaseAdmin.rpc le nom exact du contrat (${FONCTIONS.join(', ')}), avec des paramètres que le faux PostgREST valide contre ${CONTRAT_REL} : { p_nom: 'pause_generale' }, { p_agent: 'livreur', p_cle: 'livrer_site:<id>', p_preuve_url: 'supabase://sites_commandes/<id>#generee' }, { p_nom: 'livreur' } ; aucun « <ops_ » dans le source` }
+    return { echecs: e, detail: `${BUS} exporte busEnPause, cloreTacheLivraison, battementLivreur et battementTresorier ; chacune appelle par supabaseAdmin.rpc le nom exact du contrat (${FONCTIONS.join(', ')}), avec des paramètres que le faux PostgREST valide contre ${CONTRAT_REL} : { p_nom: 'pause_generale' }, { p_agent: 'livreur', p_cle: 'livrer_site:<id>', p_preuve_url: 'supabase://sites_commandes/<id>#generee' }, { p_nom: 'livreur' }, { p_nom: 'tresorier' } ; battementTresorier ne lève jamais ; aucun « <ops_ » dans le source` }
   }, suivi)
 
   await jugerDans(res, 'BL-2', async () => {
@@ -182,13 +192,24 @@ if (o.enfant === 'complet') {
     }
     if (b.clore.some((x) => String(x.params?.p_cle ?? '').includes(PAYEE.id))) e.push('hors pause : une commande payee déclenche ops_tache_clore')
     if (b.bilan && b.bilan.erreurs !== 0) e.push(`hors pause, réponse « absente » : bilan.erreurs = ${b.bilan.erreurs}, 0 attendu (absente n'est pas un échec)`)
-    if (b.battement.length !== 1 || b.battement[0].params?.p_nom !== 'livreur' || b.battement[0].faute) e.push(`tour qui aboutit : ops_battement ${JSON.stringify(b.battement.map((x) => x.params))}, une fois { p_nom: 'livreur' } attendu`)
-    // un tour dont une étape échoue
+    // Décision du chef d'entreprise (27/09, en tête de 026-141) : battementTresorier() est un battement INDÉPENDANT
+    // (rpc('ops_battement', { p_nom: 'tresorier' })), posé en fin de tour si veilleTresorerie() a rendu sans lever —
+    // « indépendamment, le livreur bat comme avant ». Un tour qui aboutit bat donc DEUX fois (livreur et tresorier,
+    // chacun une fois) ; défaut du 28/09 (fiche 026-141) : BL-3 exigeait encore un unique battement { p_nom: 'livreur' }.
+    const battementsDe = (nom) => b.battement.filter((x) => x.params?.p_nom === nom)
+    const bLivreur = battementsDe('livreur'), bTresorier = battementsDe('tresorier')
+    if (b.battement.length !== 2) e.push(`tour qui aboutit : ops_battement ${JSON.stringify(b.battement.map((x) => x.params))}, deux appels attendus (livreur et tresorier, chacun indépendamment)`)
+    if (bLivreur.length !== 1 || bLivreur[0]?.faute) e.push(`tour qui aboutit : ops_battement(livreur) ${JSON.stringify(bLivreur)}, une fois attendu`)
+    if (bTresorier.length !== 1 || bTresorier[0]?.faute) e.push(`tour qui aboutit : ops_battement(tresorier) ${JSON.stringify(bTresorier)}, une fois attendu (décision du 27/09 : veilleTresorerie() a rendu sans lever)`)
+    // un tour dont une étape échoue (panne sur sites_commandes, pas sur la veille de trésorerie qui lui est indépendante)
     const c = await lancerTour({ pause: false, pannes: ['sites_commandes'] })
     if (c.leve) e.push(`tour en échec : tourLivraison lève (${c.leve})`)
     if (c.bilan && !(c.bilan.erreurs > 0)) e.push(`tour dont la base est en panne : bilan.erreurs = ${c.bilan?.erreurs}, > 0 attendu`)
-    if (c.battement.length) e.push(`tour dont une étape a échoué : ops_battement appelée ${c.battement.length} fois, jamais attendu`)
-    return { echecs: e, detail: `tourLivraison lit la pause par busEnPause ; en pause, ni retirer ni demanderGeneration, mais l'e-mail de la payée part ; hors pause, la generee déclenche exactement un ops_tache_clore { p_agent: 'livreur', p_cle: 'livrer_site:<id>', p_preuve_url: 'supabase://sites_commandes/<id>#generee' }, la payée rien ; « absente » ne compte pas en échec ; un tour qui aboutit bat une fois ({ p_nom: 'livreur' }), un tour en échec ne bat pas` }
+    const cLivreur = c.battement.filter((x) => x.params?.p_nom === 'livreur')
+    const cTresorier = c.battement.filter((x) => x.params?.p_nom === 'tresorier')
+    if (cLivreur.length) e.push(`tour dont une étape a échoué : ops_battement(livreur) appelée ${cLivreur.length} fois, jamais attendu`)
+    if (cTresorier.length !== 1 || cTresorier[0]?.faute) e.push(`tour dont une étape a échoué : ops_battement(tresorier) ${JSON.stringify(cTresorier)}, une fois quand même attendu (veilleTresorerie() indépendante de la panne sites_commandes, décision du 27/09)`)
+    return { echecs: e, detail: `tourLivraison lit la pause par busEnPause ; en pause, ni retirer ni demanderGeneration, mais l'e-mail de la payée part ; hors pause, la generee déclenche exactement un ops_tache_clore { p_agent: 'livreur', p_cle: 'livrer_site:<id>', p_preuve_url: 'supabase://sites_commandes/<id>#generee' }, la payée rien ; « absente » ne compte pas en échec ; un tour qui aboutit bat deux fois, indépendamment ({ p_nom: 'livreur' } et { p_nom: 'tresorier' }, décision du 27/09) ; un tour en échec ne bat jamais livreur, mais bat quand même tresorier (sa veille est indépendante de la panne)` }
   }, suivi)
   res.pauseUsine = pauseUsine
   await faux.arreter()
