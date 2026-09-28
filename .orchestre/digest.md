@@ -6,11 +6,11 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T05:37:13Z
+# Digest — 2026-09-28T05:38:11Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 104 tâche(s) PASS, 189926 ligne(s) · faites par Claude Code : 36 tâche(s) PASS, 114538 ligne(s).
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 104 tâche(s) PASS, 189926 ligne(s) · faites par Claude Code : 36 tâche(s) PASS, 108320 ligne(s).
 **État** — file : 0 · en cours : 4 · faites : 146 · refusées : 8
 
 ## ⚠ 2 question(s) en attente
@@ -23,6 +23,9 @@
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-034 | feature | en-cours | claude-code | — | depuis 2026-09-27T19:40:57Z · Écrire la migration 0099 dont les déclencheurs refusent dans la base toute entrée d'un envoi en prepare ou approuve pendant la pause générale, vers une clé en opposition active, en premier contact tant que l'interrupteur envoi_froid est fermé, à moins de 90 jours, au-delà de 3 messages ou à moins de 72 h, au-delà des plafonds du jour du canal (envois et nouveaux contacts comptés à part), en second formulaire à une même entreprise (un par entreprise, à vie), en e-mail sans preuve de demande ou en premier contact par e-mail, en relance hors des règles de la voie gratuite, ou approuvé sans les trois verdicts par un autre que le Facteur, annulent les envois en attente d'un nouvel opposant, et exposent ops_garde_etat(), avec jumeaux, contrôle et compte rendu d'essai à sec |
 | 026-059 | feature | en-cours | usine-codex-60 | — | depuis 2026-09-27T23:01:02Z · Créer GET /api/controle/tresorerie et la tuile Argent (encaissé du jour, 7 jours et mois, abonnement mensuel récurrent, sites vendus, dépenses, marge, seuil de TVA) calculées uniquement par lib/direction/stripe.ts et lib/direction/tresorerie.ts, montrée en tête de Comptabilité, plus une veille hebdomadaire du seuil de TVA |
+| 026-220 | test | fait | claude-code | PASS | 2026-09-28T05:38:10Z · 151s · 0 l. |
+| 026-121 | test | fait | claude-code | PASS | 2026-09-28T05:37:53Z · 152s · 0 l. |
+| 026-027 | feature | fait | claude-code | PASS | 2026-09-28T05:37:41Z · 138s · 0 l. |
 | 026-168 | test | refuse | claude-code | FAIL | code 1 |
 | 026-035 | feature | fait | usine-codex-59 | PASS | 2026-09-27T23:09:08Z · 124s · 466 l. |
 | 026-033 | feature | fait | usine-codex-58 | PASS | 2026-09-27T23:06:33Z · 11s · 446 l. |
@@ -38,10 +41,7 @@
 | 026-223 | feature | fait | usine-codex-54 | PASS | 2026-09-27T20:26:16Z · 2s · 451 l. |
 | 026-146 | feature | fait | usine-codex-53 | PASS | 2026-09-27T20:23:49Z · 53s · 539 l. |
 | 026-039 | contenu | refuse | usine-codex-52 | FAIL | ✅ CP-6 npm run typecheck vert (162 s) |
-| 026-121 | test | fait | claude-code | PASS | 2026-09-27T19:57:16Z · 155s · 2507 l. |
-| 026-220 | test | fait | claude-code | PASS | 2026-09-27T19:52:14Z · 112s · 3246 l. |
 | 026-037 | test | fait | claude-code | PASS | 2026-09-27T19:50:11Z · 777s · 5646 l. |
-| 026-027 | feature | fait | claude-code | PASS | 2026-09-27T19:29:12Z · 49s · 465 l. |
 | 026-013 | feature | fait | claude-code | PASS | 2026-09-27T19:12:21Z · 11s · 2324 l. |
 | 026-050 | feature | fait | claude-code | PASS | 2026-09-27T19:03:27Z · 128s · 1479 l. |
 | 026-045 | test | fait | claude-code | PASS | 2026-09-27T18:25:07Z · 342s · 0 l. |

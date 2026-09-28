@@ -1,0 +1,26 @@
+{
+  "semaine": "2026-39",
+  "du": "2026-09-21",
+  "au": "2026-09-27",
+  "executants": {
+    "antigravity": { "pass": 1, "fail": 0, "taches_reussies": 1, "minutes_mediane_par_reussite": 30, "quotas": 0, "expirees": 0, "disjonctees": 0 },
+    "codex": { "pass": 1, "fail": 0, "taches_reussies": 0, "minutes_mediane_par_reussite": null, "quotas": 0, "expirees": 0, "disjonctees": 0 },
+    "qwen": { "pass": 0, "fail": 1, "taches_reussies": 0, "minutes_mediane_par_reussite": null, "quotas": 0, "expirees": 0, "disjonctees": 0 }
+  },
+  "lignes_illisibles": 0,
+  "fraicheur": { "verdicts": "2026-09-22T07:45:00Z", "etat": "2026-09-21T05:00:00Z" },
+  "argent": {
+    "encaisse_eur": 1250,
+    "couts_eur": 37.5,
+    "marge_eur": 1212.5,
+    "source": "ops_etat : commandes de site payées et ops.couts, mois en cours"
+  },
+  "entonnoir": {
+    "contactes": 60,
+    "reponses": 9,
+    "oui": 4,
+    "maquettes": 3,
+    "ventes": 1,
+    "source": "ops_etat : ops.envois et acq_ventes_froides, semaine en cours"
+  }
+}

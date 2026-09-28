@@ -1,0 +1,67 @@
+# La revue du lundi (A11) — consigne
+
+Chaque lundi, une revue de la semaine écoulée : l'entonnoir, l'argent et les coûts, les exécutants, les échecs, et
+trois décisions classées par euros en jeu. Elle arrive à Benj sous la forme d'une PR `docs/revues/AAAA-SS.md` ; il la
+lit, la commente, la fusionne ou non. **La routine ne fusionne jamais.**
+
+## Qui, où, quand
+
+- **Claude Code, sur le poste de Benj**, le lundi (dans une session à lui, lancée à la main ou par une tâche planifiée
+  du poste). Ce travail est **distinct du cycle du chef** : ni le cycle plein, ni le cycle léger, ni les minuteurs de
+  l'usine ne lancent la revue (026-148). Sur l'usine, le modèle n'a ni réseau ni droit d'écriture sur le dépôt.
+- **Aucun connecteur** : ni Supabase, ni Gmail, ni Vercel, ni navigateur. Les seuls accès au réseau sont ceux de
+  `revue-donnees.mjs` (vers `--base`, et seulement là) et de `git` et `gh` (la branche et la PR).
+- Le jeton est `PRESTI_JETON_CHEF`, la copie de reprise du poste (variable d'utilisateur Windows) : jamais affiché,
+  jamais passé en argument, jamais écrit. Sans lui, l'argent et l'entonnoir valent « non mesuré », et la revue le dit.
+- Le dépôt principal porte le travail d'autres sessions : la revue ne s'y écrit jamais. Elle vit dans un worktree à
+  part, sur sa propre branche.
+
+## La marche à suivre
+
+1. **La semaine** : la semaine ISO qui s'est terminée la veille, à l'heure de Paris (le lundi 21/09/2026, c'est
+   `2026-38`). Elle s'écrit `AAAA-SS`.
+2. **Le worktree** :
+
+   ```
+   git fetch origin main
+   git worktree add ../presti-revue-AAAA-SS -b revue/AAAA-SS origin/main
+   cd ../presti-revue-AAAA-SS
+   ```
+
+3. **Les chiffres**, calculés par un script et jamais par le modèle (leçon « Deux chiffres, un écran ») :
+
+   ```
+   node scripts/chef/revue-donnees.mjs --semaine=AAAA-SS --base=https://prestiapp.fr --verdicts=../presti/.orchestre/verdicts.jsonl --agents=../presti/.orchestre/agents.jsonl --sortie=revue.json
+   ```
+
+   Un code ≠ 0 arrête tout : pas de revue, et Benj reçoit la ligne en échec, telle quelle.
+4. **Le document** : `docs/revues/AAAA-SS.md`, sur le modèle de `docs/revues/GABARIT.md`, avec **seulement des nombres
+   présents dans `revue.json`**. Aucun total, aucune moyenne, aucun pourcentage calculé à la main ; une valeur absente
+   s'écrit « non mesuré », jamais 0, et un nombre s'écrit en entier (jamais « 12k »). Ne comptent pas comme des
+   nombres : les dates valides, les heures HH:MM, les semaines AAAA-SS, les numéros de section et de liste qui se
+   suivent, les identifiants (`026-146`, `RV-1`). Un chiffre dans du code en ligne, une fraction, une fourchette ou une
+   durée se vérifie comme le reste : le juge le cherche dans `revue.json`.
+   - Chaque section dit sa source (la `source` que porte chaque bloc de `revue.json`) et sa fraîcheur (`fraicheur`).
+   - **Trois décisions**, ni deux ni quatre, classées par euros en jeu, du plus gros montant au plus petit. Chacune a
+     un montant en € pris dans `revue.json`, une ou deux phrases de raison, et une ligne « Source : » qui nomme la clé
+     de `revue.json` d'où vient le montant.
+   - 120 lignes au plus.
+5. **Le juge** doit être vert :
+
+   ```
+   node scripts/revue-qa.mjs --document=docs/revues/AAAA-SS.md --donnees=revue.json
+   ```
+
+   S'il est rouge, corriger le document (jamais `revue.json`, jamais le juge) ; toujours rouge après trois corrections :
+   pas de PR, et Benj reçoit la ligne en échec.
+6. **La PR** : ajouter le seul fichier `docs/revues/AAAA-SS.md` (jamais `revue.json`), l'enregistrer sur la branche
+   `revue/AAAA-SS`, pousser la branche et ouvrir une PR vers `main` (`gh pr create --base main --head revue/AAAA-SS`).
+   **Jamais de fusion**, même si le texte paraît parfait : c'est Benj qui fusionne.
+7. **Le ménage** : supprimer `revue.json`, revenir au dépôt principal, puis `git worktree remove ../presti-revue-AAAA-SS`.
+
+## Ce que la routine ne fait jamais
+
+- inventer, arrondir ou recalculer un nombre ;
+- écrire dans le dépôt principal, fusionner une PR, pousser sur `main` ;
+- utiliser un connecteur, afficher ou recopier le jeton ;
+- lancer autre chose que `revue-donnees.mjs`, `revue-qa.mjs`, `git` et `gh`.

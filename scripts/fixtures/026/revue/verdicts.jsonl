@@ -1,0 +1,25 @@
+{"id":"099-01","verdict":"PASS","ligne":"","code":0,"date":"2026-09-13T20:00:00Z","duree_s":40,"agent":"usine-codex-6","executant":"codex","lignes":120,"dossier":"fait"}
+{"id":"099-02","verdict":"FAIL","ligne":"FAIL RD-1 — modèle absent","code":1,"date":"2026-09-13T22:30:00Z","duree_s":12,"agent":"usine-codex-7","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"099-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T08:00:00Z","duree_s":31,"agent":"usine-codex-8","executant":"codex","lignes":210,"dossier":"en-cours"}
+{"id":"099-02","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T08:10:00Z","duree_s":30,"agent":"usine-codex-8","executant":"codex","lignes":210,"dossier":"fait"}
+{"id":"099-10","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T08:45:00Z","duree_s":52,"agent":"ag-1","executant":"antigravity","lignes":330,"dossier":"en-cours"}
+{"id":"099-10","verdict":"PASS","ligne":"","code":0,"date":"2026-09-14T09:00:00Z","duree_s":55,"agent":"ag-1","executant":"antigravity","lignes":340,"dossier":"fait"}
+{"id":"099-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-15T10:00:00Z","duree_s":18,"agent":"usine-codex-9","executant":"codex","lignes":64,"dossier":"fait"}
+{"id":"099-11","verdict":"FAIL","ligne":"FAIL PX-3 — la page déborde","code":1,"date":"2026-09-15T09:00:00Z","duree_s":90,"agent":"ag-1","executant":"antigravity","lignes":80,"dossier":"fait"}
+{"id":"099-11","verdict":"REFUSÉE","ligne":"en-tête : champ obligatoire absent ou vide : verifier","code":null,"date":"2026-09-15T09:30:00Z","duree_s":0,"agent":"ag-1","executant":"antigravity","lignes":0,"dossier":"refuse"}
+{"id":"099-04","verdict":"QUOTA","ligne":"quota de Codex atteint","code":null,"date":"2026-09-16T12:00:00Z","duree_s":0,"agent":"usine-codex-10","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"099-20","verdict":"PASS","ligne":"","code":0,"date":"2026-09-16T10:00:00Z","duree_s":44,"agent":"claude-code","executant":"claude-code","lignes":400,"dossier":"en-cours"}
+{"id":"099-20","verdict":"PASS","ligne":"","code":0,"date":"2026-09-16T10:05:00Z","duree_s":44,"agent":"claude-code","executant":"claude-code","lignes":400,"dossier":"fait"}
+{"id":"099-04","verdict":"QUOTA","ligne":"quota de Codex atteint","code":null,"date":"2026-09-16T13:00:00Z","duree_s":0,"agent":"usine-codex-10","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"099-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-16T15:30:00Z","duree_s":27,"agent":"usine-codex-10","executant":"codex","lignes":150,"dossier":"fait"}
+{"id":"099-05","verdict":"EXPIRÉE","ligne":"bail expiré sans battement","code":null,"date":"2026-09-17T09:00:00Z","duree_s":0,"agent":"usine-codex-11","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"099-06","verdict":"DISJONCTÉE","ligne":"trois FAIL de suite","code":null,"date":"2026-09-17T11:00:00Z","duree_s":0,"agent":"usine-codex-12","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"099-21","verdict":"FAIL","ligne":"FAIL CH-A2 — onze tâches","code":1,"date":"2026-09-17T14:00:00Z","duree_s":61,"agent":"claude-code","executant":"claude-code","lignes":90,"dossier":"en-cours"}
+{"id":"099-21","verdict":"FAIL","ligne":"FAIL CH-A2 — onze tâches","code":1,"date":"2026-09-17T14:20:00Z","duree_s":63,"agent":"claude-code","executant":"claude-code","lignes":95,"dossier":"en-cours"}
+{"id":"099-03","verdict":"PASS","ligne":"","code":0,"date":"2026-09-18T10:00:00Z","duree_s":17,"agent":"usine-codex-13","executant":"codex","lignes":64,"dossier":"fait"}
+{"id":"099-30","verdict":"PASS","ligne":"","code":0,"date":"2026-09-18T16:00:00Z","duree_s":70,"agent":"gemini-cli","lignes":55,"dossier":"fait"}
+{"id":"099-31","verdict":"EXPIRÉE","ligne":"bail expiré sans battement","code":null,"date":"2026-09-19T08:00:00Z","duree_s":0,"agent":"gemini-cli","executant":"","lignes":0,"dossier":"en-cours"}
+{"id":"099-12","verdict":"PASS","ligne":"","code":0,"date":"2026-09-20T21:30:00Z","duree_s":48,"agent":"ag-2","executant":"antigravity","lignes":120,"dossier":"fait"}
+{"id":"099-13","verdict":"PASS","ligne":"","code":0,"date":"2026-09-20T22:30:00Z","duree_s":39,"agent":"ag-3","executant":"antigravity","lignes":75,"dossier":"fait"}
+{"id":"099-40","verdict":"FAIL","ligne":"FAIL QW-1 — sortie vide","code":1,"date":"2026-09-21T08:00:00Z","duree_s":14,"agent":"qwen","executant":"qwen","lignes":0,"dossier":"en-cours"}
+{"id":"099-41","verdict":"PASS","ligne":"","code":0,"date":"2026-09-22T07:45:00Z","duree_s":22,"agent":"usine-codex-14","executant":"codex","lignes":33,"dossier":"en-cours"}

@@ -1,0 +1,21 @@
+{
+  "genere_le": "2026-09-21T05:00:00Z",
+  "taches": { "file": 4, "bail": 1, "faite": 37, "echec": 2, "a_decider": 1, "annulee": 0, "echecs_24h": 2 },
+  "decisions_ouvertes": [],
+  "interrupteurs": { "pause_generale": false, "envoi_froid": false },
+  "argent": {
+    "encaisse_eur": 1250,
+    "couts_eur": 37.5,
+    "marge_eur": 1212.5,
+    "source": "ops_etat : commandes de site payées et ops.couts, mois en cours"
+  },
+  "entonnoir": {
+    "contactes": 60,
+    "reponses": 9,
+    "oui": 4,
+    "maquettes": 3,
+    "ventes": 1,
+    "source": "ops_etat : ops.envois et acq_ventes_froides, semaine en cours"
+  },
+  "notifications_jour": 1
+}

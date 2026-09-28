@@ -1,0 +1,10 @@
+{"agent":"usine-codex-7","tache":"099-02","modele":"codex:gpt-6-sol","date":"2026-09-13T21:10:00Z"}
+{"agent":"usine-codex-8","tache":"099-02","modele":"codex:gpt-6-sol","date":"2026-09-14T07:00:00Z"}
+{"agent":"ag-1","tache":"099-10","modele":"gemini-3-pro","date":"2026-09-14T08:30:00Z"}
+{"agent":"usine-codex-9","tache":"099-03","modele":"codex:gpt-6-sol","date":"2026-09-15T09:15:00Z"}
+{"agent":"usine-codex-10","tache":"099-04","modele":"codex:gpt-6-sol","date":"2026-09-16T11:00:00Z"}
+{"agent":"usine-codex-11","tache":"099-05","modele":"codex:gpt-6-sol","date":"2026-09-17T08:00:00Z"}
+{"agent":"pilote","modele":"aucun","date":"2026-09-17T10:00:00Z"}
+{"agent":"gem-1","tache":"099-30","modele":"gemini-cli","date":"2026-09-18T15:20:00Z"}
+{"agent":"ag-2","tache":"099-12","modele":"gemini-3-pro","date":"2026-09-20T19:30:00Z"}
+{"agent":"ag-3","tache":"099-13","modele":"gemini-3-pro","date":"2026-09-20T22:00:00Z"}
