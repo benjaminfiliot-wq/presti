@@ -1,0 +1,67 @@
+# 026-034, passe d'ATTAQUE du 28/09 (Claude Code) — complément à essai-a-sec.txt (27/09 23:41 UTC, 125 clés à true, inchangé).
+# Contexte : relecture Codex sur la passe précédente — PG-5 (contrôle textuel, pas de garantie contre un « true or » en dur),
+# PG-6 (le juge relit une empreinte déjà enregistrée, sans rejouer à chaud), PG-8 (base + droits anon/authenticated/service_role
+# jamais mis à l'épreuve, seule ops_garde_etat() l'était pour anon et authenticated). Cette passe répond aux trois : ré-exécution
+# à chaud (pas une relecture), et couverture des trois rôles d'API plus une attaque de search_path, absentes d'essai-a-sec.txt.
+# Aucune modification de fichier : migration, contrôle, scénario et juge sont ceux d'essai-a-sec.txt (empreinte 92eacd6e82b8…,
+# inchangée — confirmé par une régénération identique, 168 941 octets). Rien n'est appliqué ni commité. scripts/orchestre.mjs
+# non touché. Deux appels execute_sql (rôle postgres), chacun un jumeau posé dans sa propre transaction puis roulé en arrière
+# par une exception finale (ESSAI_A_SEC), projet gorcdvmueakcncsmrouo, 2026-09-28 ~05:55-06:05 UTC.
+
+## Appel 1 — rôles anon/authenticated/service_role (tables gardées + appel direct des fonctions de déclencheur) et 7 attaques
+## nommées rejouées à chaud (accord absent, accord rejoué, retouche d'un champ figé après approbation, envoi sous pause,
+## envoi après échéance de l'accord, réanimation d'une fiche « saute » de la veille datée par la base et bornée au plafond).
+## Message rendu par l'outil (roulé en arrière par l'exception, aucune ligne n'a survécu) :
+
+ATTAQUE_026034_OK {"diag_anon_appel": "42501", "diag_anon_envois": "42501", "diag_search_path": "42501 permission denied for database postgres" (*), "diag_anon_accords": "42501", "attaque_pause_refuse": true, "diag_service_role_appel": "42501", "anon_appel_direct_refuse": true, "diag_authenticated_appel": "42501", "diag_service_role_envois": "42501", "anon_insert_envois_refuse": true, "diag_authenticated_envois": "42501", "diag_service_role_accords": "42501", "anon_insert_accords_refuse": true, "diag_authenticated_accords": "42501", "service_role_lit_garde_etat": true, "attaque_accord_absent_refuse": true, "attaque_accord_rejoue_refuse": true, "attaque_accord_valide_approuve": true, "search_path_hostile_sans_effet": false (*), "attaque_retouche_entetes_refusee": true, "service_role_appel_direct_refuse": true, "authenticated_appel_direct_refuse": true, "service_role_insert_envois_refuse": true, "attaque_envoye_accord_tombe_refuse": true, "attaque_reanimation_plafond_refuse": true, "authenticated_insert_envois_refuse": true, "service_role_insert_accords_refuse": true, "authenticated_insert_accords_refuse": true, "attaque_reanimation_datee_par_la_base": true}
+
+(*) search_path_hostile_sans_effet a échoué dans cet appel pour une raison qui n'est PAS 0099 : le décor hostile (CREATE SCHEMA)
+    était posé APRÈS le passage en service_role, qui n'a pas le droit CREATE sur la base (42501 attendu et sain). Corrigé dans
+    l'appel 2 en posant le décor comme postgres avant le changement de rôle.
+
+→ 26 clés sur 27 à true. Les 23 attaques par rôle (insertion directe dans ops.envois, insertion directe dans
+  ops.accords_benj, appel direct de ops.garde_envois()) sont refusées identiquement pour anon, authenticated ET service_role
+  (42501, avant même que le déclencheur ne s'exécute : aucun des trois rôles n'a de droit table sur ops.* — confirmé aussi en
+  lecture seule par has_table_privilege avant la passe : « aucun » pour les trois sur ops.envois). Seul service_role lit
+  ops_garde_etat() (accordée), comme le prévoit 0099 (PG-3). Les 7 attaques nommées rejouées à chaud sont toutes refusées avec
+  le code attendu (ops:accord_absent, ops:accord_rejoue, ops:envoi_fige, ops:pause_generale, ops:accord_perime, ops:quota ou
+  ops:quota_nouveaux) ; la réanimation d'une fiche « saute » de la veille est bien datée du jour par la base (prepare_le), pas
+  du jour de sa première préparation.
+
+## Appel 2 — recommence UNIQUEMENT le search_path hostile, décor posé par postgres avant le passage en service_role, puis
+## deux appels sous ce search_path hostile : qualifié (public.ops_garde_etat()) et non qualifié (ops_garde_etat()). Message :
+
+ATTAQUE_026034_PATH_OK {"diag_etat": {"du_jour": [], "plafonds": [{"canal": "instagram"}, {"canal": "facebook"}, {"canal": "linkedin"}, {"canal": "formulaire_site"}, {"canal": "email_sollicite"}, {"canal": "reponse_privee"}, {"canal": "messagerie"}, {"canal": "essai_e2e"}], "declencheurs": [{"nom": "evenements_ajout_seul"}], "interrupteurs": {"envoi_froid": false, "pause_generale": false}}, "search_path_hostile_sans_effet": true, "appel_non_qualifie_trouve_le_leurre": false}
+
+→ Sous un search_path hostile (schéma leurre zzz_attaque_026034 placé EN PREMIER, portant sa propre fonction ops_garde_etat()
+  qui rend {"hijacked":true}), l'appel qualifié public.ops_garde_etat() rend les données réelles (declencheurs, interrupteurs,
+  plafonds présents, aucune clé « hijacked ») : le search_path figé sur la fonction (set search_path = ops, public, pg_temp,
+  posé à la définition) neutralise le détournement, comme documenté par Postgres pour une fonction security definer.
+  L'appel NON qualifié (juste ops_garde_etat(), sans « public. », le cas réaliste d'un code qui oublierait de qualifier) ne
+  trouve pas non plus le leurre (appel_non_qualifie_trouve_le_leurre = false) : aucune des deux formes d'appel n'est
+  détournable. plafonds et déclencheurs affichés ici sont réduits (jumeau minimal de cet appel, sans les autres colonnes du
+  contrat) : ils servent à distinguer le vrai du leurre, pas à rejuger PG-2/PG-4 (déjà PASS sur le jumeau complet).
+
+## Zéro trace, après les deux appels (execute_sql, lecture seule) :
+
+rien_ne_reste=true ; accords_absente=true (ops.accords_benj) ; decor_absent=true ; schema_decor_absent=true (zzz_attaque_026034
+et sa fonction) ; envois_traces=0 ; prospects_traces=0 ; agents_seed=0 (ops.agents ne porte encore aucun facteur/redacteur :
+0105 pas appliquée) ; derniere_migration=20260927190925 (identique à avant les deux appels, et à avant la passe du 27/09 au
+soir).
+
+## Verifier rejoué après cette passe (fichiers inchangés) :
+
+node scripts/prospection-sql-qa.mjs → prospection-sql-qa : PASS, code 0 (PG-1 à PG-13 comme dans verifier.log du 27/09 23:43
+UTC ; PG-8 SAUTE, --reel seulement après application, non faite ici).
+
+## Verdict de cette passe
+
+Chaque attaque tentée (23 tentatives d'accès direct par rôle, 7 attaques nommées, 1 détournement de search_path sous deux
+formes d'appel) a été refusée. Aucune n'a laissé de trace. Les trois lacunes signalées par la relecture Codex sur PG-8
+(« base + droits non inspectés ») sont désormais couvertes pour les trois rôles d'API, et le doute sur PG-6 (« relit
+l'empreinte, ne rejoue pas ») est levé par une ré-exécution à chaud, indépendante, datée de ce jour. Les critiques PG-5/PG-6
+portaient sur la RIGUEUR du contrôle statique (un « true or » en dur ne serait pas forcément détecté par la lecture textuelle
+du contrôle) : elles restent vraies en tant que limite méthodologique du juge (non corrigée ici, scripts/prospection-sql-qa.mjs
+n'a pas été modifié) mais n'indiquent aucun défaut réel de 0099 — confirmé par la lecture complète du corps des trois
+fonctions (ops.garde_envois, ops.garde_accords, ops.annuler_sur_opposition, public.ops_garde_etat) : toute référence à un objet
+propre au schéma est qualifiée (ops.*, public.*), et les quatre fonctions portent set search_path = ops, public, pg_temp.

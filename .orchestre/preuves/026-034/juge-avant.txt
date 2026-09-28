@@ -1,0 +1,10 @@
+prospection-sql-qa 0099 (026-034) — racine C:/Users/benja/Documents/presti
+FAIL PG-1 — migration absente : supabase/migrations/0099_ops_garde_envois.sql (racine C:/Users/benja/Documents/presti)
+FAIL PG-2 — non jugé : la migration manque (PG-1)
+FAIL PG-3 — non jugé : la migration manque (PG-1)
+FAIL PG-4 — non jugé : la migration manque (PG-1)
+FAIL PG-5 — non jugé : la migration manque (PG-1)
+FAIL PG-6 — non jugé : la migration manque (PG-1)
+PASS PG-7 — git diff HEAD : aucun fichier existant de supabase/migrations, supabase/controles changé (hors 0099_ops_garde_envois.sql, _A_COLLER_sql_editor_0099.sql, _A_COLLER_sql_editor_0099_NU.sql, 0099_ops_garde_envois.sql) ; migrations-jumelles-e2e.mjs vert (304 réussis, 0 échoués)
+SAUTE PG-8 — --reel seulement, après l'application par Claude Code
+prospection-sql-qa : FAIL — PG-1, PG-2, PG-3, PG-4, PG-5, PG-6

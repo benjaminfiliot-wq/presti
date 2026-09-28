@@ -391,3 +391,16 @@
 {"id":"026-037","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:41:16Z","duree_s":354,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"026-146","verdict":"FAIL","ligne":"FAIL CT-1 — conforme : code 1, attendu 0 (fiche conforme, juge rouge sur RD-1) — code 1 : ✗ juge déjà vert avant fabrication","code":1,"date":"2026-09-28T05:43:05Z","duree_s":30,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"026-223","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:43:08Z","duree_s":1,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-027","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:45:26Z","duree_s":45,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-146","verdict":"FAIL","ligne":"FAIL RV-4 — le juge a planté : Error: document-ok.md : « Source : `revue.json` › `executants.codex`. » introuvable ou en double     at rempl (file:///C:/Users/b","code":1,"date":"2026-09-28T05:48:12Z","duree_s":4,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-220","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:49:03Z","duree_s":52,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-146","verdict":"FAIL","ligne":"FAIL CT-5 — chantier.md ne dit pas « aucun connecteur »","code":1,"date":"2026-09-28T05:49:16Z","duree_s":12,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-223","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:49:31Z","duree_s":1,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-104","verdict":"FAIL","ligne":"✅ JA-1 référence 4041ec9 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (2421 fichiers), ancêtre de HEAD, sans app/c","code":1,"date":"2026-09-28T05:49:46Z","duree_s":866,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-146","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:50:01Z","duree_s":14,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-223","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:50:23Z","duree_s":1,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-104","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:58:54Z","duree_s":505,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-168","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T06:04:46Z","duree_s":642,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-104","verdict":"FAIL","ligne":"✅ JA-1 référence 4041ec9 extraite par git archive sous .orchestre/travail/juges-026-pilotage/reference (2421 fichiers), ancêtre de HEAD, sans app/controle/stati","code":1,"date":"2026-09-28T06:06:26Z","duree_s":430,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-104","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T06:15:53Z","duree_s":458,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-034","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T07:33:40Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":6384,"dossier":"fait"}
