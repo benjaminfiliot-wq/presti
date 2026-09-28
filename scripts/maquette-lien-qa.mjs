@@ -207,7 +207,11 @@ async function observer(mod, RAC2) {
     const { M, S, jeton } = await scene()
     const deps = { magasin: M, stockage: S }
     const malforme = await servir(deps, 'jeton-trop-court', undefined)
-    const inconnu = await servir(deps, 'B'.repeat(43), undefined)
+    // '0'.repeat(43) : jamais un jeton généré par ajouterMaquette (toujours une lettre A-Z répétée, jamais un
+    // chiffre) — 'B'.repeat(43) collisionnait avec le jeton de la maquette que scene() vient de créer ci-dessus
+    // (premier appel du fichier : n=1, 'B' = 65+1 en base ASCII), rendant ce jeton « connu », pas « inconnu »
+    // (défaut trouvé en jugeant réellement le patch de 026-082).
+    const inconnu = await servir(deps, '0'.repeat(43), undefined)
     const { M: M2, S: S2, jeton: j2 } = await scene({ expireDansJours: -1 })
     const expire = await servir({ magasin: M2, stockage: S2 }, j2, undefined)
     const { M: M3, S: S3, jeton: j3 } = await scene({ purgee: true })

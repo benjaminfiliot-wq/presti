@@ -5,7 +5,7 @@ Une section par lot ; chacune est réécrite par la preuve à chaque passage.
 <!-- lot:3:debut -->
 ## Lot 3 — fiche 026-080 — référence `86ce0f3`
 
-Écrit par `node scripts/juges-026-acquisition-preuve.mjs --lot=3` le 2026-09-28T18:49:34Z. Chaque juge est lancé par la preuve elle-même : sur l'arbre de référence extrait par `git archive` (`.orchestre/travail/026-acquisition/reference`), avec `--racine`, puis en `--auto-controle` sur l'état actuel. L'extrait est la première ligne de critère de sa sortie, recopiée telle quelle (seul `|` est échappé), relue ici et retrouvée dans la sortie par la preuve.
+Écrit par `node scripts/juges-026-acquisition-preuve.mjs --lot=3` le 2026-09-28T23:36:40Z. Chaque juge est lancé par la preuve elle-même : sur l'arbre de référence extrait par `git archive` (`.orchestre/travail/026-acquisition/reference`), avec `--racine`, puis en `--auto-controle` sur l'état actuel. L'extrait est la première ligne de critère de sa sortie, recopiée telle quelle (seul `|` est échappé), relue ici et retrouvée dans la sortie par la preuve.
 
 | Juge et partie | Commit de référence | Critère attendu en échec | Code | Extrait réel de sa sortie | Autocontrôle |
 |---|---|---|---|---|---|
