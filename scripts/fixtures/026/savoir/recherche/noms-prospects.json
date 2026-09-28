@@ -1,0 +1,9 @@
+{
+  "_note": "Jeu d'essai du juge savoir-recherche-qa (026-232) : entreprises INVENTÉES, aucune donnée réelle. Donné à chercher() comme deps.nomsProspects ; comparé à la question après normaliser (lib/savoir/index.ts).",
+  "noms": [
+    "Plomberie Sentinelle-Durandet",
+    "Couverture Essai-Morel",
+    "Menuiserie Factice Lambrecq",
+    "Toiture Essai-Vasseur"
+  ]
+}

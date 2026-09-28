@@ -1,0 +1,62 @@
+{
+  "_note": "Corpus d'essai de la partie cli du juge savoir-recherche-qa (026-232) : le juge l'écrit en <racine-travail>/{general,prospects}/courant/ (manifeste au format de 026-229), l'indexe par l'indexeur de la racine jugée (celui du témoin du socle pour le témoin), puis retire `retire_apres_index` et décale `decale_apres_index` de deux lignes. Tout est inventé.",
+  "exporte_le": "2026-09-28T08:00:00.000Z",
+  "documents": [
+    { "compartiment": "general", "racine": "saas", "chemin": "Produit/Prospection-Cadre-Legal-2026-09-27.md", "classe": "public",
+      "lignes": [
+        "# Cadre légal de la prospection (essai)",
+        "",
+        "La prospection B2B par courriel repose sur l'intérêt légitime de l'expéditeur, sous réserve d'un lien avec l'activité du destinataire.",
+        "Chaque message propose un moyen simple de s'opposer, et l'opposition est respectée sans délai.",
+        "",
+        "Une ligne longue pour éprouver la coupure des extraits : la base légale, l'information du destinataire, le droit d'opposition, la durée de conservation, la source des coordonnées, la mention de l'expéditeur, le lien de désinscription, la trace de l'opposition, la minimisation des données, la sécurité des envois, la relance mesurée, l'absence de relance après un refus, la tenue d'un registre, la revue régulière des listes, et la suppression des coordonnées d'une entreprise qui a demandé à ne plus être contactée forment ensemble le cadre que suit toute prospection par courriel en 2026, qu'elle vise un artisan, une petite entreprise ou un commerce de proximité, et qu'elle parte d'un site public ou d'un annuaire professionnel autorisé."
+      ] },
+    { "compartiment": "general", "racine": "presti", "chemin": "docs/relances-essai.md", "classe": "interne",
+      "lignes": [
+        "# Relances (essai interne)",
+        "",
+        "SENTINELLE-INTERNE-RECHERCHE",
+        "Relancer un devis dormant au troisième jour, avec un ton courtois et le rappel du montant.",
+        "La relance du devis dormant ne part jamais un dimanche.",
+        "Au septième jour, une seconde relance du devis dormant propose un appel."
+      ] },
+    { "compartiment": "general", "racine": "ops", "chemin": "veille/veille-essai.md", "classe": "public",
+      "lignes": [
+        "# Veille publique (essai)",
+        "",
+        "Les artisans qui relancent un devis dormant signent plus souvent : constat public d'une étude de branche.",
+        "Le site vitrine montre les réalisations et rassure le client avant la relance."
+      ] },
+    { "compartiment": "general", "racine": "presti", "chemin": "docs/fichier-retire-essai.md", "classe": "interne",
+      "lignes": [
+        "# Note zygomorphe (essai)",
+        "",
+        "La note zygomorphe parle d'un fichier retiré après l'indexation : aucun extrait ne doit le citer."
+      ] },
+    { "compartiment": "general", "racine": "presti", "chemin": "docs/fichier-modifie-essai.md", "classe": "interne",
+      "lignes": [
+        "# Note quadrilobe (essai)",
+        "",
+        "La note quadrilobe décrit la charpente d'une grange : la charpente quadrilobe tient sans poteau central."
+      ] },
+    { "compartiment": "prospects", "racine": "saas", "chemin": "Prospection/Lot-Essai-Recherche.md", "classe": "prospects",
+      "lignes": [
+        "SENTINELLE-PROSPECT-RECHERCHE",
+        "Lot inventé : Toiture Essai-Vasseur, relance du devis dormant au troisième jour.",
+        "Relancer le devis dormant de la toiture avant la fin du mois."
+      ] },
+    { "compartiment": "prospects", "racine": "ops", "chemin": "prospection/cibles-recherche.json", "classe": "prospects",
+      "lignes": [
+        "{ \"note\": \"SENTINELLE-PROSPECT-RECHERCHE\", \"cibles\": [ { \"entreprise\": \"Toiture Essai-Vasseur\", \"courriel\": \"vasseur.essai@presti-test.invalid\" } ] }"
+      ] }
+  ],
+  "retire_apres_index": "presti:docs/fichier-retire-essai.md",
+  "decale_apres_index": "presti:docs/fichier-modifie-essai.md",
+  "questions": {
+    "chef": "Comment relancer un devis dormant au troisième jour ?",
+    "cadre": "Quel cadre légal pour la prospection par courriel et le droit d'opposition ?",
+    "retire": "Que dit la note zygomorphe ?",
+    "modifie": "Que dit la note quadrilobe sur la charpente ?",
+    "nom_prospect_web": "Quels avis sur Toiture Essai-Vasseur pour une toiture ?"
+  }
+}

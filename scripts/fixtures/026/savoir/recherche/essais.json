@@ -1,0 +1,137 @@
+{
+  "_note": "Jeux d'essai du juge savoir-recherche-qa (026-232), écrits par Claude Code. Tout est inventé : aucune vraie clé, aucune vraie donnée de prospect. Les scores du faux savoir sont en multiples de SEUIL_SAVOIR (score_x) : la sonde les multiplie par le seuil exporté par le module jugé. `allonger` : le texte est complété jusqu'à ce nombre de signes par une phrase de remplissage.",
+  "horloge": "2026-09-28T10:00:00.000Z",
+  "sentinelles": {
+    "prospect": "SENTINELLE-PROSPECT-RECHERCHE",
+    "interne": "SENTINELLE-INTERNE-RECHERCHE",
+    "firecrawl": "FIRECRAWL-026-sentinelle",
+    "perplexity": "PERPLEXITY-026-sentinelle",
+    "jeton_chef": "JETON-CHEF-026-sentinelle",
+    "jeton_facteur": "JETON-FACTEUR-026-sentinelle",
+    "jeton_douleurs": "JETON-DOULEURS-026-sentinelle"
+  },
+  "marqueurs_jetes": [
+    "RESULTAT-SANS-SOURCE-RECHERCHE",
+    "RESULTAT-SOURCE-INCOMPLETE-RECHERCHE",
+    "RESULTAT-BORNES-INVALIDES-RECHERCHE",
+    "RESULTAT-CLASSE-INCONNUE-RECHERCHE"
+  ],
+  "moteurs": {
+    "_note": "Faux MOTEUR_DE au contrat de 026-041 (lib/agents/moteurs.ts), plus trois agents d'essai : un moteur gratuit qui se dirait « personnelles », un modèle :cloud, un modèle local.",
+    "standardiste": { "moteur": "codex", "modele": "gpt-6-luna", "personnelles": true },
+    "facteur": { "moteur": "codex", "modele": "gpt-6-luna", "personnelles": true },
+    "redacteur_site": { "moteur": "codex", "modele": "gpt-6-sol", "personnelles": true },
+    "chef": { "moteur": "codex", "modele": "gpt-6-sol", "personnelles": false },
+    "veille_pubs": { "moteur": "codex", "modele": "gpt-6-luna", "personnelles": true },
+    "douleurs": { "moteur": "freellmapi", "modele": "auto", "personnelles": false },
+    "studio": { "moteur": "codex", "modele": "gpt-6-sol", "personnelles": false },
+    "essai_gratuit_perso": { "moteur": "freellmapi", "modele": "auto", "personnelles": true },
+    "essai_cloud": { "moteur": "ollama_cloud", "modele": "gpt-oss:120b-cloud", "personnelles": true },
+    "essai_local": { "moteur": "ollama_local", "modele": "qwen3:8b-q4_K_M", "personnelles": true }
+  },
+  "classes_attendues": {
+    "chef": ["public", "interne"],
+    "studio": ["public", "interne"],
+    "facteur": ["public", "interne", "prospects"],
+    "redacteur_site": ["public", "interne", "prospects"],
+    "douleurs": ["public"],
+    "inconnu_essai": ["public"],
+    "essai_gratuit_perso": ["public"],
+    "essai_cloud": ["public"],
+    "essai_local": ["public", "interne", "prospects"]
+  },
+  "questions": {
+    "fort": "Comment relancer un devis dormant sans froisser le client ?",
+    "faible": "Quelles obligations légales pour démarcher un artisan par courriel en 2026 ?",
+    "trop_court": "ab",
+    "adresse": "Faut-il écrire à contact@toiture-essai.invalid pour le devis ?",
+    "numero": "Rappeler le 06 12 34 56 78 demain matin pour le devis ?",
+    "numero_international": "Joindre le +33 6 12 34 56 78 au sujet du chantier ?",
+    "siren": "Chiffre d'affaires du SIREN 732 829 320 en 2025 ?",
+    "nom_prospect": "Avis clients sur la plomberie sentinelle durandet à Niort ?",
+    "nom_prospect_casse": "Horaires de COUVERTURE ESSAI MOREL le samedi ?",
+    "chiffres_non_siren": "Un devis de 123 456 789 euros est-il plausible pour une toiture ?"
+  },
+  "refus_attendus": [
+    { "question": "adresse", "attendu": "adresse" },
+    { "question": "numero", "attendu": "numero" },
+    { "question": "numero_international", "attendu": "numero" },
+    { "question": "siren", "attendu": "siren" },
+    { "question": "nom_prospect", "attendu": "nom_prospect" },
+    { "question": "nom_prospect_casse", "attendu": "nom_prospect" },
+    { "question": "faible", "attendu": null },
+    { "question": "fort", "attendu": null },
+    { "question": "chiffres_non_siren", "attendu": null }
+  ],
+  "besoins": [
+    "Quelles relances pour un devis dormant ?",
+    "Comment présenter un acompte de chantier ?",
+    "Quel ton pour une facture en retard ?",
+    "Comment rédiger la page d'accueil ?",
+    "Quelles photos pour un site d'artisan ?"
+  ],
+  "besoin_seconde_reponse": "Question de la seconde réponse, qui doit être ignorée ?",
+  "savoir": {
+    "fort": [
+      { "texte": "Le cadre légal de la prospection B2B par courriel repose sur l'intérêt légitime ; chaque message propose un moyen simple de s'opposer.", "allonger": 1000, "score_x": 4.75,
+        "source": { "racine": "saas", "chemin": "Produit/Prospection-Cadre-Legal-2026-09-27.md", "debut": 1, "fin": 14, "classe": "public", "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Relance du devis dormant au troisième jour, ton courtois, rappel du montant et de la date. SENTINELLE-INTERNE-RECHERCHE", "score_x": 4.5,
+        "source": { "racine": "presti", "chemin": "docs/relances-essai.md", "debut": 3, "fin": 9, "classe": "interne", "sha256": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "RESULTAT-SANS-SOURCE-RECHERCHE : ce passage n'a pas de source et doit être jeté.", "score_x": 6 },
+      { "texte": "RESULTAT-SOURCE-INCOMPLETE-RECHERCHE : sa source n'a pas d'empreinte, il doit être jeté.", "score_x": 5.5,
+        "source": { "racine": "presti", "chemin": "docs/incomplet-essai.md", "debut": 1, "fin": 2, "classe": "interne", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "RESULTAT-BORNES-INVALIDES-RECHERCHE : ses lignes vont de 9 à 3, il doit être jeté.", "score_x": 5.2,
+        "source": { "racine": "presti", "chemin": "docs/bornes-essai.md", "debut": 9, "fin": 3, "classe": "public", "sha256": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "RESULTAT-CLASSE-INCONNUE-RECHERCHE : sa classe n'existe pas, il doit être jeté.", "score_x": 5.1,
+        "source": { "racine": "presti", "chemin": "docs/classe-essai.md", "debut": 1, "fin": 1, "classe": "secret", "sha256": "d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "SENTINELLE-PROSPECT-RECHERCHE : lot inventé, Toiture Essai-Vasseur relancée le 20/09 pour son devis dormant.", "score_x": 5,
+        "source": { "racine": "saas", "chemin": "Prospection/Lot-Essai-Recherche.md", "debut": 1, "fin": 4, "classe": "prospects", "sha256": "e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Note d'essai 1 : le devis part le jour même.", "score_x": 3.0, "source": { "racine": "presti", "chemin": "docs/notes-essai-1.md", "debut": 1, "fin": 3, "classe": "public", "sha256": "0101010101010101010101010101010101010101010101010101010101010101", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Note d'essai 2 : la facture suit la signature.", "score_x": 2.8, "source": { "racine": "presti", "chemin": "docs/notes-essai-2.md", "debut": 1, "fin": 3, "classe": "interne", "sha256": "0202020202020202020202020202020202020202020202020202020202020202", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Note d'essai 3 : le chantier commence après l'acompte.", "score_x": 2.6, "source": { "racine": "presti", "chemin": "docs/notes-essai-3.md", "debut": 1, "fin": 3, "classe": "public", "sha256": "0303030303030303030303030303030303030303030303030303030303030303", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Note d'essai 4 : le site vitrine montre les réalisations.", "score_x": 2.4, "source": { "racine": "presti", "chemin": "docs/notes-essai-4.md", "debut": 1, "fin": 3, "classe": "interne", "sha256": "0404040404040404040404040404040404040404040404040404040404040404", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Note d'essai 5 : le client pose sa question sur le site.", "score_x": 2.2, "source": { "racine": "presti", "chemin": "docs/notes-essai-5.md", "debut": 1, "fin": 3, "classe": "public", "sha256": "0505050505050505050505050505050505050505050505050505050505050505", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Note d'essai 6 : la relance part au troisième jour.", "score_x": 2.0, "source": { "racine": "presti", "chemin": "docs/notes-essai-6.md", "debut": 1, "fin": 3, "classe": "interne", "sha256": "0606060606060606060606060606060606060606060606060606060606060606", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Note d'essai 7 : un devis signé devient une facture.", "score_x": 1.8, "source": { "racine": "presti", "chemin": "docs/notes-essai-7.md", "debut": 1, "fin": 3, "classe": "public", "sha256": "0707070707070707070707070707070707070707070707070707070707070707", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Note d'essai 8 : l'acompte se règle en ligne.", "score_x": 1.6, "source": { "racine": "presti", "chemin": "docs/notes-essai-8.md", "debut": 1, "fin": 3, "classe": "interne", "sha256": "0808080808080808080808080808080808080808080808080808080808080808", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Note d'essai 9 : la page d'accueil présente l'artisan.", "score_x": 1.4, "source": { "racine": "presti", "chemin": "docs/notes-essai-9.md", "debut": 1, "fin": 3, "classe": "public", "sha256": "0909090909090909090909090909090909090909090909090909090909090909", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Note d'essai 10 : les photos montrent les chantiers finis.", "score_x": 1.2, "source": { "racine": "presti", "chemin": "docs/notes-essai-10.md", "debut": 1, "fin": 3, "classe": "interne", "sha256": "1010101010101010101010101010101010101010101010101010101010101010", "synchronise_le": "2026-09-28T08:00:00.000Z" } }
+    ],
+    "faible": [
+      { "texte": "Note publique faible : un mot sur la rédaction des pages.", "score_x": 0.25,
+        "source": { "racine": "saas", "chemin": "Produit/Note-Faible.md", "debut": 1, "fin": 2, "classe": "public", "sha256": "f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6", "synchronise_le": "2026-09-28T08:00:00.000Z" } }
+    ],
+    "deux_faibles": [
+      { "texte": "Note publique faible : un mot sur la rédaction des pages.", "score_x": 0.25,
+        "source": { "racine": "saas", "chemin": "Produit/Note-Faible.md", "debut": 1, "fin": 2, "classe": "public", "sha256": "f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6", "synchronise_le": "2026-09-28T08:00:00.000Z" } },
+      { "texte": "Seconde note publique faible : un mot sur les photos.", "score_x": 0.4,
+        "source": { "racine": "saas", "chemin": "Produit/Note-Faible-2.md", "debut": 3, "fin": 4, "classe": "public", "sha256": "f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7", "synchronise_le": "2026-09-28T08:00:00.000Z" } }
+    ],
+    "vide": []
+  },
+  "firecrawl": {
+    "urls": [
+      "https://guide-essai-1.fr/prospection-b2b",
+      "https://guide-essai-2.fr/courriel-professionnel",
+      "https://guide-essai-3.fr/interet-legitime",
+      "https://guide-essai-4.fr/opposition",
+      "https://guide-essai-5.fr/registre"
+    ],
+    "page": { "texte": "Page publique d'essai : le démarchage B2B par courriel est permis sous l'intérêt légitime.", "allonger": 700, "methode": "firecrawl", "robots": "autorise" }
+  },
+  "perplexity": {
+    "reponse": "Réponse publique d'essai : la prospection B2B par courriel suit l'intérêt légitime et le droit d'opposition.",
+    "allonger": 800,
+    "citations": ["https://source-essai-a.fr/article", "https://source-essai-b.fr/fiche"]
+  },
+  "reglages": {
+    "eteint": {},
+    "web": { "recherche_web": true },
+    "web_perplexity_ok": { "recherche_web": true, "perplexity": true, "plan": "plan d'essai", "cout": 0, "constate_le": "2026-09-25T09:00:00.000Z" },
+    "web_perplexity_eteint": { "recherche_web": true, "perplexity": false, "plan": "plan d'essai", "cout": 0, "constate_le": "2026-09-25T09:00:00.000Z" },
+    "web_perplexity_sans_plan": { "recherche_web": true, "perplexity": true, "plan": null, "cout": 0, "constate_le": "2026-09-25T09:00:00.000Z" },
+    "web_perplexity_cout_inconnu": { "recherche_web": true, "perplexity": true, "plan": "plan d'essai", "cout": null, "constate_le": "2026-09-25T09:00:00.000Z" },
+    "web_perplexity_cout_positif": { "recherche_web": true, "perplexity": true, "plan": "plan d'essai", "cout": 0.005, "constate_le": "2026-09-25T09:00:00.000Z" },
+    "web_perplexity_perime": { "recherche_web": true, "perplexity": true, "plan": "plan d'essai", "cout": 0, "constate_le": "2026-08-20T09:00:00.000Z" }
+  }
+}

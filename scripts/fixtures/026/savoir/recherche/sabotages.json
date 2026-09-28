@@ -1,0 +1,245 @@
+[
+  {
+    "id": "S1",
+    "critere": "SVR-1",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "RECHERCHE_WEB_DE n'est plus gelé : un appelant pourrait y ajouter un agent de prospects.",
+    "avant": "export const RECHERCHE_WEB_DE: readonly string[] = geler(['chef', 'douleurs', 'redacteur_site', 'studio'])",
+    "apres": "export const RECHERCHE_WEB_DE: readonly string[] = ['chef', 'douleurs', 'redacteur_site', 'studio']"
+  },
+  {
+    "id": "S2",
+    "critere": "SVR-2",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "Le web part même quand le savoir suffit (le savoir n'est plus d'abord).",
+    "avant": "    else if (suffisant) fermer('savoir_suffisant')\n",
+    "apres": "    else if (suffisant && false) fermer('savoir_suffisant')\n"
+  },
+  {
+    "id": "S3",
+    "critere": "SVR-3",
+    "fichier": "scripts/savoir/chercher.mjs",
+    "parties": [
+      "cli"
+    ],
+    "but": "La ligne de commande ne relit plus les lignes citées : un passage d'un fichier décalé après l'indexation est rendu avec une source fausse.",
+    "avant": "      if (r.fin > lignes.length || !lignes.slice(r.debut - 1, r.fin).join('\\n').includes(r.texte)) continue\n",
+    "apres": ""
+  },
+  {
+    "id": "S4",
+    "critere": "SVR-4",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "Les lectures Firecrawl ne décomptent plus la réserve de crédits.",
+    "avant": "            deps.credits.restant -= P.creditsParLecture\n",
+    "apres": ""
+  },
+  {
+    "id": "S5",
+    "critere": "SVR-5",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "Perplexity s'ouvre sur un coût inconnu ou « faible » au lieu d'un coût nul constaté.",
+    "avant": "  if (p.cout_par_requete_eur !== 0) return 'perplexity_cout'\n",
+    "apres": "  if (typeof p.cout_par_requete_eur === 'number' && p.cout_par_requete_eur > 0.01) return 'perplexity_cout'\n"
+  },
+  {
+    "id": "S6",
+    "critere": "SVR-6",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "Un numéro de téléphone dans la question n'est plus refusé : il part au web.",
+    "avant": "  if (RE_NUMERO.test(q)) return 'numero'\n",
+    "apres": ""
+  },
+  {
+    "id": "S7",
+    "critere": "SVR-7",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "Le filtre des classes au retour du savoir est retiré : la cloison dépend du savoir.",
+    "avant": "      if (!source || !classes.includes(source.classe)) continue // filtre au retour : la cloison ne dépend pas du savoir\n",
+    "apres": "      if (!source) continue\n"
+  },
+  {
+    "id": "S8",
+    "critere": "SVR-8",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "Le résumé de l'événement porte un extrait (et perd le refus).",
+    "avant": "  if (retour.refus) resume += ` · refus ${retour.refus}`\n",
+    "apres": "  resume += ` · ${retour.resultats[0]?.extrait.slice(0, 60) ?? ''}`\n"
+  },
+  {
+    "id": "S9",
+    "critere": "SVR-9",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "Tous les besoins du modèle sont cherchés, au-delà de deux.",
+    "avant": "    const besoins = besoinsDe(premiere).slice(0, PLAFONDS_RECHERCHE.besoinsParReponse)\n",
+    "apres": "    const besoins = besoinsDe(premiere)\n"
+  },
+  {
+    "id": "S10",
+    "critere": "SVR-7",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil",
+      "cli"
+    ],
+    "but": "28/09 (relecture de 026-229) : classesPour laisse passer la classe interne vers un moteur gratuit (freellmapi, ollama_cloud) — douleurs reçoit de l'interne.",
+    "avant": "  if (!MOTEURS_INTERNE.has(moteur) || /(:|-)cloud$/.test(moteur)) return ['public']\n",
+    "apres": "  if (/(:|-)cloud$/.test(moteur)) return ['public']\n"
+  },
+  {
+    "id": "S11",
+    "critere": "SVR-6",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "28/09 : la requête Firecrawl est augmentée des extraits du savoir — autre chose que du public part au web.",
+    "avant": "        try { trouves = await deps.firecrawl.chercher(question) } catch { trouves = null }\n",
+    "apres": "        try { trouves = await deps.firecrawl.chercher(`${question} ${retour.resultats.map((r) => r.extrait).join(' ')}`.trim()) } catch { trouves = null }\n"
+  },
+  {
+    "id": "S12",
+    "critere": "SVR-9",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "avecRecherche ne demande plus le web pour un agent de RECHERCHE_WEB_DE.",
+    "avant": "    const web = RECHERCHE_WEB_DE.includes(agent)\n",
+    "apres": "    const web = false\n"
+  },
+  {
+    "id": "S13",
+    "critere": "SVR-10",
+    "fichier": "scripts/savoir/chercher.mjs",
+    "parties": [
+      "cli"
+    ],
+    "but": "L'en-tête Authorization ne porte plus le jeton de l'agent.",
+    "avant": "headers: { authorization: `Bearer ${jeton}`, 'content-type': 'application/json' }",
+    "apres": "headers: { authorization: `Bearer ${jeton.slice(0, 6)}`, 'content-type': 'application/json' }"
+  },
+  {
+    "id": "S14",
+    "critere": "SVR-10",
+    "fichier": "scripts/savoir/chercher.mjs",
+    "parties": [
+      "cli"
+    ],
+    "but": "--base en http:// hors boucle locale est admis (le jeton partirait en clair).",
+    "avant": "  if (u.protocol === 'http:' && ['127.0.0.1', 'localhost', '[::1]'].includes(u.hostname)) return u.origin\n",
+    "apres": "  if (u.protocol === 'http:') return u.origin\n"
+  },
+  {
+    "id": "S15",
+    "critere": "SVR-11",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "Le message d'erreur du transport Firecrawl (qui nomme la clé) remonte dans le retour.",
+    "avant": "        try { trouves = await deps.firecrawl.chercher(question) } catch { trouves = null }\n",
+    "apres": "        try { trouves = await deps.firecrawl.chercher(question) } catch (e) { retour.refus = String((e as Error)?.message ?? e); trouves = null }\n"
+  },
+  {
+    "id": "S16",
+    "critere": "SVR-11",
+    "fichier": "scripts/savoir/chercher.mjs",
+    "parties": [
+      "cli"
+    ],
+    "but": "La ligne de commande écrit la clé Firecrawl dans le fichier des compteurs du jour.",
+    "avant": "    ecrireAtomique(pCompteurs, `${JSON.stringify(compteurs)}\\n`)\n",
+    "apres": "    ecrireAtomique(pCompteurs, `${JSON.stringify({ ...compteurs, trace: process.env.FIRECRAWL_API_KEY ?? null })}\\n`)\n"
+  },
+  {
+    "id": "S17",
+    "critere": "SVR-12",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "Le module appelle l'API Firecrawl lui-même (fetch, second client).",
+    "avant": "    lire: (url) => lireAvecFirecrawl({ operation: 'lire', url }, depsLecture),\n",
+    "apres": "    lire: async (url) => { await fetch('https://api.firecrawl.dev/v1/scrape'); return lireAvecFirecrawl({ operation: 'lire', url }, depsLecture) },\n"
+  },
+  {
+    "id": "S18",
+    "critere": "SVR-12",
+    "fichier": "scripts/savoir/chercher.mjs",
+    "parties": [
+      "outil"
+    ],
+    "but": "La ligne de commande nomme un hôte hors de la liste permise.",
+    "avant": "  const o = { web: false, base: 'https://prestiapp.fr', racine:",
+    "apres": "  const o = { web: false, base: 'https://collecte.exemple-tiers.io', racine:"
+  },
+  {
+    "id": "S19",
+    "critere": "SVR-3",
+    "fichier": "scripts/savoir/chercher.mjs",
+    "parties": [
+      "cli"
+    ],
+    "but": "L'empreinte citée n'est plus celle du fichier relu.",
+    "avant": "sha256: empreinte(brut), synchronise_le: c.synchronise_le }",
+    "apres": "sha256: empreinte(r.texte), synchronise_le: c.synchronise_le }"
+  },
+  {
+    "id": "S20",
+    "critere": "SVR-4",
+    "fichier": "lib/savoir/recherche.ts",
+    "parties": [
+      "outil"
+    ],
+    "but": "Un agent hors RECHERCHE_WEB_DE (le facteur) cherche sur le web.",
+    "avant": "    else if (!RECHERCHE_WEB_DE.includes(agent)) fermer('agent')\n",
+    "apres": ""
+  },
+  {
+    "id": "S21",
+    "critere": "SVR-10",
+    "fichier": "scripts/savoir/chercher.mjs",
+    "parties": [
+      "cli"
+    ],
+    "but": "Durci le 28/09 (contre-vérification 026-232, majeur latent, sabotage B4) : les compteurs du jour déjà écrits sont ignorés, chaque appel repart de zéro — les plafonds de Benj (Perplexity 5/jour, web 10/agent/jour, savoir 200) ne tiendraient plus d'un processus à l'autre.",
+    "avant": "  const compteurs = lireJSONSi(pCompteurs) || {}\n",
+    "apres": "  const compteurs = {}\n"
+  },
+  {
+    "id": "S22",
+    "critere": "SVR-10",
+    "fichier": "scripts/savoir/chercher.mjs",
+    "parties": [
+      "cli"
+    ],
+    "but": "Durci le 28/09 (contre-vérification 026-232, majeur latent, sabotage B5) : la réserve credits-firecrawl.json n'est plus jamais écrite — la réserve de Benj (« Firecrawl sous la réserve ») ne baisserait jamais en production.",
+    "avant": "    if (o.web) ecrireAtomique(pCredits, `${JSON.stringify({ reserve_credits: reglages.firecrawl?.reserve_credits ?? null, consommes: consommes + (initial - credits.restant), maj_le: le })}\\n`)\n",
+    "apres": "    if (false) ecrireAtomique(pCredits, `${JSON.stringify({ reserve_credits: reglages.firecrawl?.reserve_credits ?? null, consommes: consommes + (initial - credits.restant), maj_le: le })}\\n`)\n"
+  }
+]
