@@ -11,7 +11,7 @@ et le juge la tranche. **La routine ne fusionne jamais.**
 - Le chantier **n'est pas le travail du cycle du chef** : ni le cycle plein, ni le cycle léger, ni les minuteurs de
   l'usine ne le lancent, et aucun script de `scripts/chef/` autre que `chantier.mjs` ne l'appelle (026-148). Sur
   l'usine, le modèle n'a pas de réseau, un juge ne vient jamais de Codex, et la clé du dépôt y est en lecture seule.
-- **Un connecteur** : ni Supabase, ni Gmail, ni Vercel, ni navigateur. Les seuls accès au réseau sont ceux de
+- **Aucun connecteur** : ni Supabase, ni Gmail, ni Vercel, ni navigateur. Les seuls accès au réseau sont ceux de
   `chantier.mjs` (vers `--base`) et de `git` et `gh` (la branche et la PR).
 - Le jeton est `PRESTI_JETON_CHEF`, la copie de reprise du poste (variable d'utilisateur Windows) : jamais affiché,
   jamais passé en argument, jamais écrit.
