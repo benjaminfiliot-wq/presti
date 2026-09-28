@@ -63,7 +63,9 @@ const EXCLUS = ['public/promo/', 'promo-src/', '.claude/', '.orchestre/travail/'
 // Une vraie clé est aléatoire : chiffres ET lettres. Le 24/09/2026, le juge scripts/publier-serie-qa.mjs donnait dans ses
 // jeux d'essai la valeur factice « cle-supabase-du-fichier » (lettres seules) à la clé de service : un motif littéral
 // bloquait tout lancement. Quand un motif a un test `cle`, la valeur qui n'en a pas la forme est ÉCARTÉE — et affichée, jamais tue.
-const formeDeCle = (v) => /[0-9]/.test(v) && /[A-Za-z]/.test(v)
+// 28/09 : une valeur qui contient « sentinelle » est une sentinelle de test documentée (026-041 : `…-026-sentinelle`),
+// jamais une clé émise par un fournisseur ; la fiche et ses preuves bloquaient tout paquet vers l'usine depuis 09:23.
+const formeDeCle = (v) => /[0-9]/.test(v) && /[A-Za-z]/.test(v) && !/sentinelle/i.test(v)
 // Attaque du 24/09/2026 (paquet à sec ; fixtures et journaux dans .orchestre/travail/usine/attaques-2026-09-24/) : passaient la seconde barrière un JWT
 // court coupé par des points, un NOM_SECRET=valeur collé d'un .env, une clé sb_secret_ seule, une ligne ajoutée qui
 // commençait par « ++ » (lue comme un en-tête « +++ ») et un jeton dans un fichier binaire. D'où les motifs ajoutés
