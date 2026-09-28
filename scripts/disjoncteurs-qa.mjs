@@ -71,7 +71,7 @@ function trouverMigration(racine) {
   const fichiers = fs.readdirSync(dossier).filter((f) => /^\d{4}_acquisition_envoi\.sql$/.test(f))
   return { dossier, fichiers }
 }
-const jumeauDe = (base) => base.replace(/\.sql$/, '').replace(/^(\d{4})_/, '_A_COLLER_sql_editor_$1.sql').replace(/^_A_COLLER_sql_editor_/, '_A_COLLER_sql_editor_')
+const jumeauDe = (base) => `_A_COLLER_sql_editor_${base.slice(0, 4)}.sql`
 const nuDe = (num) => `_A_COLLER_sql_editor_${num}_NU.sql`
 
 // ── Un magasin factice minimal pour DJ-7 (peutEnvoyer/estAuVert reçoivent un EtatEnvoi, pas un magasin : rien à doubler ici,
@@ -263,7 +263,9 @@ async function jugementNormal(s) {
       const e = []
       const attendus = (K.PALIERS ?? []).map((p) => [p.id, p.par_jour, p.jours_au_vert])
       const c = compacter(texteM)
-      for (const [id, parJour] of attendus) if (!new RegExp(`'${id}'[^)]*${parJour}`).test(c) && !c.includes(`'${id}',`)) e.push(`palier ${id} : graine non retrouvée avec par_jour=${parJour}`)
+      // compacter() met le SQL en minuscules ; les id des paliers (P0…P4) viennent du contrat tels quels (majuscules) —
+      // comparer sans les mettre en minuscules ne pouvait jamais matcher (défaut du 28/09, fiche 026-063).
+      for (const [id, parJour] of attendus) { const idMin = id.toLowerCase(); if (!new RegExp(`'${idMin}'[^)]*${parJour}`).test(c) && !c.includes(`'${idMin}',`)) e.push(`palier ${id} : graine non retrouvée avec par_jour=${parJour}`) }
       const seuils = [['4', 'stop'], ['2', 'plainte'], ['1', 'avis_abus'], ['3', 'echec_soumission'], ['300', 'sans_reponse']]
       for (const [n] of seuils) if (!c.includes(n)) e.push(`seuil ${n} non retrouvé dans le SQL`)
       if (!c.includes('300')) e.push('par_jour borné à 300 non retrouvé')
