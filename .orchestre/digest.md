@@ -6,32 +6,33 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T16:41:29Z
+# Digest — 2026-09-28T17:05:49Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 119 tâche(s) PASS, 193041 ligne(s) · faites par Claude Code : 68 tâche(s) PASS, 105085 ligne(s).
-**État** — file : 9 · en cours : 5 · faites : 194 · refusées : 8
+**Mesure** — déléguées (antigravity, codex) : 120 tâche(s) PASS, 193485 ligne(s) · faites par Claude Code : 68 tâche(s) PASS, 92831 ligne(s).
+**État** — file : 5 · en cours : 8 · faites : 195 · refusées : 8
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/026-063.question.md` → `node scripts/orchestre.mjs repondre 026-063 <n>`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
+| 026-106 | feature | en-cours | usine-codex-91 | — | depuis 2026-09-28T16:59:16Z · Avant le premier envoi à froid, faire générer et déposer un site payé hors du poste, dans GitHub Actions, PC éteint (workflow generer-site.yml déclenché par repository_dispatch, 20 min au plus, une exécution à la fois, sans artefact ni clé du produit), demandé depuis Vercel par demanderGeneration sous un plafond mensuel d'exécutions et trois tentatives par commande |
+| 026-078 | feature | en-cours | usine-codex-90 | — | depuis 2026-09-28T16:58:48Z · Dans le Poste, montrer le résumé de la matière de chaque commande, mettre en ligne un site généré en un seul geste, noter la soumission du plan à la Search Console, envoyer le dossier sur demande, et faire remonter dans À faire chaque commande qui attend un geste humain |
 | 026-086 | feature | en-cours | usine-codex-87 | — | depuis 2026-09-28T15:02:36Z · Écrire la migration 0101 qui active pg_cron et pg_net et planifie chaque minute public.ops_horloge_minute() (baux expirés, décisions échues, puis GET https://prestiapp.fr/api/agents/tic avec le jeton CRON_SECRET lu dans Supabase Vault et un timeout_milliseconds explicite), plus un ménage quotidien et ops_horloge_etat() qui ne rend jamais le secret, avec jumeaux, contrôle et compte rendu d'essai à sec |
 | 026-124 | test | en-cours | claude-code | — | depuis 2026-09-28T16:12:58Z · Ajouter à video-qa un profil pub-locale (vertical 15 s, voix ou silence) sans changer les profils reseaux et landing, écrire visages-qa (OpenCV YuNet, modèle épinglé par empreinte, étalonné sur les photos des démos) et socle-pubs-qa qui prouve les deux, pour que juges-026-pubs-contenu-preuve --lot=09 soit vert |
+| 026-135 | feature | en-cours | usine-codex-92 | — | depuis 2026-09-28T16:59:35Z · Écrire lib/packPubDossier.ts (nettoyerDossierPack, pure, qui n'accepte que les photos de l'artisan lui-même) et la route GET/PUT /api/pubs/commander/brouillon qui lit et enregistre le dossier du pack derrière le drapeau packPub |
 | 026-063 | feature | en-cours | usine-codex-88 | — | depuis 2026-09-28T15:57:41Z · Écrire la migration 0111 des disjoncteurs de l'envoi, tenus par la base en compteurs absolus (paliers du formulaire de 5 à 40 par jour qui écrivent seuls la ligne de plafond du formulaire, technologies de formulaire, signaux de STOP, plainte, avis d'abus, échec de soumission, refus du Gmail et erreur Meta qui mettent en pause une technologie, un modèle, le formulaire, le Gmail ou Meta, montée de palier par règle et bilan des 100 premiers contacts froids, descente au premier voyant rouge, notice vérifiée, gestes du fondateur dont l'ouverture d'envoi_froid au plus tôt le 12/10, jauges, échantillon du soir), ses jumeaux, son contrôle, lib/agents/acquisition/disjoncteurs.ts et la partie MagasinEnvoi de magasinSupabase.ts, essayée à sec |
 | 026-073 | contenu | en-cours | usine-codex-83 | — | depuis 2026-09-28T14:14:18Z · Constituer la bibliothèque des douleurs lib/agents/acquisition/douleurs.ts (au moins 40 entrées sur au moins 8 métiers du bâtiment, chacune tirée de ce que des artisans écrivent eux-mêmes en public, avec la citation exacte, sa page source et sa date, les mots-clés, une question « qui appuie là où ça fait mal » et une accroche d'objet, sans aucune donnée personnelle, toutes à approuve false jusqu'à l'approbation unique de Benj) et sa méthode docs/agents/douleurs-methode.md, pour que chaque citation se retrouve mot pour mot sur sa page quand le juge la relit |
 | 026-235 | feature | en-cours | usine-codex-84 | — | depuis 2026-09-28T14:56:22Z · Écrire scripts/savoir/lecons.mjs (candidats depuis les verdicts en échec, les décisions tranchées par Benj, les décisions tranchées du bus et les corrections des fiches, datées, sourcées, caviardées et idempotentes ; lister ; valider et rejeter par Claude Code ou la revue du lundi seulement, jamais sur l'usine ; verifier-source), jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=candidats,validation |
-| 026-106 | feature | file | usine-codex-82 | — | Avant le premier envoi à froid, faire générer et déposer un site payé hors du poste, dans GitHub Actions, PC éteint (workflow generer-site.yml déclenché par repository_dispatch, 20 min au plus, une exécution à la fois, sans artefact ni clé du produit), demandé depuis Vercel par demanderGeneration sous un plafond mensuel d'exécutions et trois tentatives par commande |
-| 026-075 | feature | file | usine-codex-81 | — | Écrire scripts/agents/maquette-video.mjs, qui fabrique sur l'usine, à partir du dossier d'une maquette générée, une vidéo verticale de 15 à 20 s qui fait défiler la page d'accueil de haut en bas (capture pleine page par Chromium, panoramique par ffmpeg), en H.264, sans son, de 3 Mo au plus, lisible en continu sur un téléphone, déterministe, sans aucune ressource d'un autre hôte |
 | 026-204 | test | file | claude-code | — | C01 — juges du contenu et preuve du domaine réseaux, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
 | 023-03 | test | file | codex-22 | — | Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | file | usine-codex-13 | — | Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-006 | feature | file | claude-code | — | Passer presti à Next.js 16 (dernière 16.x), React et React DOM 19.2 et leurs types, avec le script build en next build --webpack pour @serwist/next et sans script next lint, typecheck, build et budget de poids verts, jusqu'au vert de next16-qa --groupe=dependances |
-| 026-078 | feature | file | usine-codex-80 | — | Dans le Poste, montrer le résumé de la matière de chaque commande, mettre en ligne un site généré en un seul geste, noter la soumission du plan à la Search Console, envoyer le dossier sur demande, et faire remonter dans À faire chaque commande qui attend un geste humain |
-| 026-135 | feature | file | usine-codex-73 | — | Écrire lib/packPubDossier.ts (nettoyerDossierPack, pure, qui n'accepte que les photos de l'artisan lui-même) et la route GET/PUT /api/pubs/commander/brouillon qui lit et enregistre le dossier du pack derrière le drapeau packPub |
 | 026-115 | feature | file | codex | — | Quand Codex annonce son quota épuisé, faire rendre la tâche à la file, noter l'échéance dans .orchestre/quotas.json, refuser codex-* dans prochaine et executant.mjs jusqu'à cette échéance et dire dans le bloc Attention quel autre exécutant lancer, jusqu'au vert du groupe quota de preuve-026 |
+| 026-075 | feature | fait | usine-codex-89 | PASS | 2026-09-28T17:05:48Z · 59s · 444 l. |
+| 026-016 | test | fait | claude-code | PASS | 2026-09-28T17:03:06Z · 50s · 0 l. |
 | 026-100 | feature | fait | codex | PASS | 2026-09-28T16:41:28Z · 169s · 0 l. |
 | 026-131 | contenu | fait | claude-code | PASS | 2026-09-28T16:29:35Z · 19s · 0 l. |
 | 026-165 | test | fait | claude-code | PASS | 2026-09-28T16:28:55Z · 124s · 0 l. |
@@ -117,6 +118,5 @@
 | 026-010 | feature | fait | claude-code | PASS | 2026-09-27T11:19:48Z · 2s · 1170 l. |
 | 026-038 | test | fait | claude-code | PASS | 2026-09-27T08:57:04Z · 67s · 3072 l. |
 | 000-retractation | feature | fait | usine-codex-41 | PASS | 2026-09-27T07:08:47Z · 0s · 258 l. |
-| 000-revue-026 | contenu | fait | codex | PASS | 2026-09-27T06:19:46Z · 2s · 0 l. |
 
 … 116 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
