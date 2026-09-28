@@ -6,18 +6,17 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T23:09:57Z
+# Digest — 2026-09-28T23:14:07Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 126 tâche(s) PASS, 196662 ligne(s) · faites par Claude Code : 74 tâche(s) PASS, 71950 ligne(s).
 **État** — file : 7 · en cours : 11 · faites : 206 · refusées : 11
 
-## ⚠ 5 question(s) en attente
+## ⚠ 4 question(s) en attente
 - `.orchestre/en-cours/026-063.question.md` → `node scripts/orchestre.mjs repondre 026-063 <n>`
 - `.orchestre/en-cours/026-082.question.md` → `node scripts/orchestre.mjs repondre 026-082 <n>`
 - `.orchestre/en-cours/026-091.question.md` → `node scripts/orchestre.mjs repondre 026-091 <n>`
-- `.orchestre/en-cours/026-155.question.md` → `node scripts/orchestre.mjs repondre 026-155 <n>`
 - `.orchestre/en-cours/026-157.question.md` → `node scripts/orchestre.mjs repondre 026-157 <n>`
 
 | id | type | où | exécutant | verdict | détail |
@@ -30,7 +29,7 @@
 | 026-082 | feature | en-cours | usine-codex-102 | — | depuis 2026-09-28T22:44:16Z · Créer lib/agents/acquisition/maquettesLien.ts (jeton de 43 signes, empreinte SHA-256, expiration à 21 jours, servirMaquette et executerPurge purs), la route app/maquette/[jeton]/[[...fichier]]/route.ts qui sert une page privée noindex, sans traçage ni écriture, avec la capture et la vidéo de 15 à 20 s (lecture par plages pour les téléphones), 404 identique pour un lien inconnu, mal formé ou expiré, et la route app/api/cron/maquettes-purge |
 | 026-091 | test | en-cours | usine-codex-100 | — | depuis 2026-09-28T18:15:20Z · Écrire scripts/juges-026-horloge-bus-mutations.mjs, qui prouve sur des copies que chacun des dix juges du domaine horloge et bus échoue sur une vraie faute avec le critère nommé et passe sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-154 | contenu | en-cours | usine-codex-106 | — | depuis 2026-09-28T23:09:57Z · Écrire scripts/pack-pub/textes.mjs qui produit, sans modèle d'IA et à partir des seuls faits du pack, sortie/textes.md (trois variantes d'annonce aux longueurs Meta) et sortie/fiche-10-min.md (lancer la pub pas à pas, catégorie Logement selon docs/pubs/meta-logement.json), et refuse d'écrire la fiche tant que la catégorie n'est pas vérifiée |
-| 026-155 | feature | en-cours | usine-codex-104 | — | depuis 2026-09-28T22:44:40Z · Écrire scripts/studio/garde.mjs, qui refuse d'ouvrir un échantillon du Studio tant que les préalables datés de 026-128 (licences de la chaîne gratuite avec le droit commercial, fiche ARPP, activité de l'EI ; ni juriste ni compte Instagram) et le dossier de la marque (accord écrit tiré de sa réponse, page produit datée de moins de 30 jours, absence de refus) manquent, ainsi que docs/studio/modeles-messages.md (qui renvoie aux modèles de lib/agents/acquisition/modeles.ts sans les recopier) et docs/studio/seance.md (la séance de Claude Code ouverte par une décision studio_echantillon, jusqu'au dépôt de l'échantillon et à l'envoi par le Répondeur) |
+| 026-155 | feature | en-cours | usine-codex-107 | — | depuis 2026-09-28T23:14:06Z · Écrire scripts/studio/garde.mjs, qui refuse d'ouvrir un échantillon du Studio tant que les préalables datés de 026-128 (licences de la chaîne gratuite avec le droit commercial, fiche ARPP, activité de l'EI ; ni juriste ni compte Instagram) et le dossier de la marque (accord écrit tiré de sa réponse, page produit datée de moins de 30 jours, absence de refus) manquent, ainsi que docs/studio/modeles-messages.md (qui renvoie aux modèles de lib/agents/acquisition/modeles.ts sans les recopier) et docs/studio/seance.md (la séance de Claude Code ouverte par une décision studio_echantillon, jusqu'au dépôt de l'échantillon et à l'envoi par le Répondeur) |
 | 026-157 | feature | en-cours | usine-codex-105 | — | depuis 2026-09-28T22:44:53Z · Écrire scripts/pack-pub/exporter.mjs (une ligne packs_pubs payée devient un dossier pack.json local, sans courriel, et signale la voix à produire) et scripts/pack-pub/deposer.mjs (juge local vert d'abord, puis dépôt de sortie/ dans le bucket privé packs-pubs avec une marge de 400 Mo et passage payee → fabriquee) |
 | 026-235 | feature | en-cours | usine-codex-84 | — | depuis 2026-09-28T14:56:22Z · Écrire scripts/savoir/lecons.mjs (candidats depuis les verdicts en échec, les décisions tranchées par Benj, les décisions tranchées du bus et les corrections des fiches, datées, sourcées, caviardées et idempotentes ; lister ; valider et rejeter par Claude Code ou la revue du lundi seulement, jamais sur l'usine ; verifier-source), jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=candidats,validation |
 | 026-006 | feature | file | claude-code | — | Passer presti à Next.js 16 (dernière 16.x), React et React DOM 19.2 et leurs types, avec le script build en next build --webpack pour @serwist/next et sans script next lint, typecheck, build et budget de poids verts, jusqu'au vert de next16-qa --groupe=dependances |
@@ -40,9 +39,9 @@
 | 026-171 | test | file | claude-code | — | Écrire les juges des modules purs, des thèmes, des réglages, de l'extraction du Poste et de la branche réservée (station-themes-qa --partie=modules et --theme=station\|vaisseau, station-reglages-qa, poste-extraction-qa, ecommerce-reservee-qa) avec leurs jeux d'essai et le lot t de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
 | 026-172 | test | file | claude-code | — | Écrire le juge d'écran de la station Claw3D station-ecran-qa (--partie=verite\|camera\|acteurs\|calque\|themes\|reglages\|salles2 [--lot=a\|b]\|webkit, sur la copie aux drapeaux pilotage et stationCarte levés, avec la session simulée de 026-170, captures prises par le juge), le script de recette de la carte station-recette.mjs (--avant, --reel, --constat) et le lot e de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
 | 026-253 | feature | file | claude-code | — | Adapter scripts/budget-perf.mjs à la sortie de build de Next 16 --webpack (le fichier .next/app-build-manifest.json qu'il lisait a disparu), en gardant la même mesure honnête du poids réellement transféré pour /site/[slug] et /p/[slug], jusqu'au vert de next16-qa --groupe=dependances (N16-1 à N16-7) |
+| 026-128 | test | fait | claude-code | PASS | 2026-09-28T23:12:26Z · 59s · 0 l. |
 | 026-126 | test | fait | claude-code | PASS | 2026-09-28T23:08:20Z · 354s · 0 l. |
 | 026-153 | feature | fait | ag-026-153 | PASS | 2026-09-28T22:05:43Z · 65s · 770 l. |
-| 026-128 | test | fait | claude-code | PASS | 2026-09-28T20:45:15Z · 120s · 0 l. |
 | 026-081 | test | fait | claude-code | PASS | 2026-09-28T19:32:31Z · 11s · 0 l. |
 | 026-141 | feature | refuse | usine-codex-101 | FAIL | ✅ BL-2 busEnPause : faux seulement sur une réponse explicite false ; vrai sur true, null, une erreur PostgREST (400), une erreur serveur (500) et un rpc qui lèv |
 | 026-080 | test | fait | claude-code | PASS | 2026-09-28T18:49:34Z · 3s · 0 l. |

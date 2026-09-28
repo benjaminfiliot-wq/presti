@@ -429,7 +429,13 @@ function lireMetaLogement(racine) {
 }
 
 async function verifierComplet(s, sortieDir, packDir, pack, contrat, { estTemoin }) {
-  const fichiers = contrat.fichiersSortie
+  // PL-1 doit s'accorder avec PL-10 (ligne suivante ci-dessous) sur le même fait : `fiche-10-min.md` n'existe QUE si
+  // le statut Logement est résolu (oui/non — PL-T5, verifierTextes) — jamais tant qu'il est a_verifier (026-154).
+  // Un pack réel en dossier (jamais --temoin, forcé à « oui ») ne peut pas franchir la fabrication tant que Benj n'a
+  // pas tranché : exiger `fiche-10-min.md` malgré ça rendait PL-1 impossible à satisfaire par un pack pourtant
+  // complet (défaut trouvé en jugeant réellement le témoin de livraison, 026-110/026-157).
+  const metaFichiers = estTemoin ? { statut: 'oui' } : lireMetaLogement(R)
+  const fichiers = metaFichiers.statut === 'a_verifier' ? contrat.fichiersSortie.filter((f) => f !== 'fiche-10-min.md') : contrat.fichiersSortie
   const chemins = fichiers.map((f) => path.join(sortieDir, f))
   const manquants = fichiers.filter((f, i) => !existeNonVide(chemins[i]))
   let poidsTotal = 0
@@ -633,15 +639,16 @@ async function verifierComplet(s, sortieDir, packDir, pack, contrat, { estTemoin
   }
   s.verdict('PL-9', !echecs9.length, '3 visuels 1080×1080 conformes', echecs9.join(' ; '))
 
-  // PL-10 : textes.md / fiche-10-min.md
-  const meta10 = estTemoin ? { statut: 'oui' } : lireMetaLogement(R)
-  const echecsTextes = verifierTextes(sortieDir, pack, contrat, meta10.statut)
+  // PL-10 : textes.md / fiche-10-min.md (même lecture qu'au calcul de `fichiers` en tête de fonction)
+  const echecsTextes = verifierTextes(sortieDir, pack, contrat, metaFichiers.statut)
   const total10 = Object.values(echecsTextes).flat()
   s.verdict('PL-10', !total10.length, 'textes.md et fiche-10-min.md conformes (PL-T2 à PL-T7)', total10.join(' ; '))
 
-  // PL-11 : ni courriel ni téléphone, sauf le téléphone si cta = appel
+  // PL-11 : ni courriel ni téléphone, sauf le téléphone si cta = appel — fiche-10-min.md est absente à bon droit
+  // tant que le statut Logement est a_verifier (même fait qu'à PL-1 et PL-10, ci-dessus).
   const echecs11 = []
-  const corps11 = `${fs.readFileSync(path.join(sortieDir, 'textes.md'), 'utf8')}\n${fs.readFileSync(path.join(sortieDir, 'fiche-10-min.md'), 'utf8')}`
+  const ficheLue11 = existeNonVide(path.join(sortieDir, 'fiche-10-min.md')) ? fs.readFileSync(path.join(sortieDir, 'fiche-10-min.md'), 'utf8') : ''
+  const corps11 = `${fs.readFileSync(path.join(sortieDir, 'textes.md'), 'utf8')}\n${ficheLue11}`
   const emails11 = [...corps11.matchAll(/[\w.+-]+@[\w-]+\.[\w.-]+/gi)]
   if (emails11.length) echecs11.push(`courriel trouvé : ${emails11[0][0]}`)
   const tels11 = [...corps11.matchAll(/0\d(?:[\s.-]?\d{2}){4}/g)]
