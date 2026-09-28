@@ -9,7 +9,9 @@
 //   node scripts/usine.mjs etat                      → joignable ?, charge et mémoire, codex connecté ?, tâches sur l'usine
 //   node scripts/usine.mjs preparer [--forcer]       → une fois (idempotent) : git fetch + npm ci dans ~/presti, Chromium et WebKit (+ dépendances)
 //   node scripts/usine.mjs paquet <id>               → construit et contrôle le paquet sans rien prendre ni envoyer (essai à sec)
-//   node scripts/usine.mjs lancer <id> [--model=gpt-6-sol] [--boucle=3] [--effort=medium] [--minutes=40]
+//   node scripts/usine.mjs lancer <id> [--model=gpt-6-sol] [--boucle=3] [--effort=medium] [--minutes=40] [--fournisseur=ol|fl] [--croise] [--a-sec]
+//        --fournisseur : voie libre, le relais commence à Ollama Cloud (ol) ou freellmapi (fl) ; refus net pour une fiche de prospects
+//        --croise : rédaction croisée d'une fiche claude-code (migration, ou juge de fiches antigravity) ; --a-sec : l'admission seule
 //   node scripts/usine.mjs recuperer <id> [--attendre[=60]] [--forcer]   → rapatrie, applique, fiche en fait/, verdict du PC
 //   node scripts/usine.mjs nettoyer <id> [--forcer]  → retire le worktree et le dossier de la tâche sur l'usine
 //   node scripts/usine.mjs executer [--nom=verif] [--delai=30] [--attendre=30] [--id=<id>] [--rapatrier=<chemin>] [--forcer] [--liste] -- <commande…>
@@ -39,6 +41,13 @@
 // délai ; rien ne revient sur le PC sans --rapatrier. Détail au-dessus de executerSurUsine ; doc : section « Faire tourner
 // un juge sur l'usine (executer) » du LISEZMOI. Lancé SUR l'usine (le vérificateur d'une fiche de `lancer`), executer fait
 // tourner la commande sur place, sans paquet ni ssh, avec le même délai et les mêmes codes : voir executerIci.
+// Juges croisés (décision de Benj du 28/09/2026 : aucune IA ne juge son propre travail ; répartition dans usine-repartition.mjs) :
+// `lancer --croise` prend une fiche claude-code dans deux cas seulement — une migration, ou un juge dont toutes les fiches jugées
+// sont produites par antigravity — sous le nom « claude-code » que l'orchestre exige, verrou au nom du rédacteur ; la consigne dit
+// que Claude Code relira, attaquera par sabotages et commitera. `recuperer` d'une rédaction croisée applique le patch (PASS ou
+// FAIL de l'usine), laisse la fiche en en-cours/ et ne la juge pas sur le PC (une migration n'y touche aucune base) : verdict
+// « À RELIRE ». `lancer --fournisseur=ol|fl` (voie libre du moteur, Codex plein) fait commencer le relais à ce fournisseur, et
+// refuse net une fiche de prospects (motifProspects) : la règle de Benj est tenue avant tout envoi, puis encore dans tourner.
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -58,7 +67,7 @@ const SSH = ['-i', CLE, '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=20', '-o', 
 const MODELE = 'gpt-6-sol' // consigne de Benj du 24/09/2026 ; tâches légères : --model=gpt-6-luna
 const MAX_OCTETS = 5 * 1024 * 1024
 // Lourds ou sans rapport avec une fiche : jamais envoyés (en plus : preuves des autres tâches, fichiers > 5 Mo, .env*).
-const EXCLUS = ['public/promo/', 'promo-src/', '.claude/', '.orchestre/travail/', '.orchestre/brouillons-ecosysteme/']
+const EXCLUS = ['public/promo/', 'promo-src/', '.claude/', '.orchestre/travail/', '.orchestre/brouillons-ecosysteme/', '.orchestre/a-relire/', '.orchestre/a-decider/']
 // Les clés qu'on refuse de voir partir, cherchées dans les lignes AJOUTÉES du paquet (jamais affichées : chemin, ligne, motif).
 // Une vraie clé est aléatoire : chiffres ET lettres. Le 24/09/2026, le juge scripts/publier-serie-qa.mjs donnait dans ses
 // jeux d'essai la valeur factice « cle-supabase-du-fichier » (lettres seules) à la clé de service : un motif littéral
@@ -373,6 +382,16 @@ Particularité de ton environnement (Codex sur l'usine : serveur Linux d'Oracle,
 - Tu ne commites rien et tu ne pousses rien. Tes fichiers reviennent au PC de Benj par un patch limité au \`perimetre\` de la tâche et à .orchestre/preuves/${id}/ : tout le reste est jeté.
 Termine par une seule ligne : \`${id} : PRÊT — <ce que tu as fait>\`.`
 
+// La consigne d'une rédaction croisée (lancer --croise) : la phrase de la décision (CONSIGNE_CROISEE, usine-repartition.mjs),
+// puis ce qui change pour Codex. Placée avant SUPPLEMENT_USINE, dont la dernière ligne (« Termine par… ») reste la dernière.
+const SUPPLEMENT_CROISE = (id, type, consigne) => `
+
+${consigne}.
+- La tâche ${id} est une fiche claude-code, déjà prise pour toi dans ta copie (.orchestre/en-cours/${id}.md) : l'orchestre la refuserait à ton nom. Ne lance pas \`prochaine\` (il répondrait « rien à faire ») : lis la fiche et fais le travail, dans son périmètre.
+${type === 'migration'
+    ? '- Migration : tu écris la migration, son contrôle et ce que la fiche demande d\'autre ; tu ne l\'appliques jamais, nulle part (aucune base n\'est joignable d\'ici). Le juge statique de la fiche doit passer ; ce qui exige la base, Claude Code le fera.'
+    : '- Juge : tu écris le juge que la fiche demande, avec ses propres preuves d\'échec ; Claude Code l\'attaquera par sabotages avant de le commiter.'}`
+
 // ── etat ──────────────────────────────────────────────────────────────────────────────────────────────────
 function etat() {
   const r = distant(`
@@ -464,9 +483,36 @@ async function lancer(id) {
   const valide = spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'orchestre.mjs'), 'valider', relatif(fiche)], { cwd: RACINE, encoding: 'utf8', windowsHide: true })
   if (valide.status !== 0) { console.error(`✗ fiche invalide :\n${valide.stdout}${valide.stderr}`); process.exit(1) }
   const f = lireFiche(fiche)
-  if (f.executant === 'claude-code') { console.error(`✗ ${id} est réservée à claude-code : elle ne part pas sur l'usine`); process.exit(1) }
+  // L'admission (28/09, juges croisés et voie libre) : tout se décide ici, sans réseau et avant toute prise ; --a-sec s'arrête après.
+  const fournisseur = option('fournisseur')
+  const croise = !!option('croise')
+  if (fournisseur && !FOURNISSEURS.some((x) => x.nom === fournisseur && x.nom !== 'chatgpt')) { console.error(`✗ --fournisseur=${fournisseur} : ol (Ollama Cloud) ou fl (freellmapi)`); process.exit(2) }
+  if (fournisseur && croise) { console.error('✗ --croise et --fournisseur ensemble : une rédaction croisée part sur l\'abonnement ChatGPT seulement'); process.exit(2) }
+  if (fournisseur) {
+    // RÈGLE DE BENJ : une donnée de prospect ne part JAMAIS vers une IA gratuite ni un modèle :cloud. Refus net, rien n'est pris.
+    const prospects = motifProspects(fs.readFileSync(fiche, 'utf8'))
+    if (prospects) { console.error(`✗ ${id} touche des données de prospects (${prospects}) : --fournisseur=${fournisseur} refusé — jamais d'IA gratuite ni de modèle :cloud ; elle attend Codex sur l'abonnement`); process.exit(1) }
+  }
+  let croisement = null
+  let consigneCroisee = ''
+  if (f.executant === 'claude-code') {
+    if (!croise) { console.error(`✗ ${id} est réservée à claude-code : elle ne part pas sur l'usine (rédaction croisée d'une migration ou d'un juge de fiches antigravity : --croise)`); process.exit(1) }
+    const R = await import('./usine-repartition.mjs')
+    const fIndex = option('index') ? path.resolve(option('index')) : R.cheminIndex(RACINE, id)
+    let texteIndex = ''
+    try { texteIndex = fs.readFileSync(fIndex, 'utf8') } catch { /* absent : refusé ci-dessous */ }
+    const a = R.admettreCroise(id, texteIndex)
+    if (!a.ok) { console.error(`✗ ${id} : --croise refusé : ${a.raison}`); process.exit(1) }
+    croisement = a.type
+    consigneCroisee = SUPPLEMENT_CROISE(id, croisement, R.CONSIGNE_CROISEE)
+  } else if (croise) { console.error(`✗ ${id} : --croise est réservé aux fiches claude-code (exécutant ${f.executant})`); process.exit(1) }
   const horsDepot = f.perimetre.filter((p) => p.startsWith('../') || p.startsWith('SaaS/'))
   if (horsDepot.length) { console.error(`✗ périmètre hors du dépôt (${horsDepot.join(', ')}) : le vault SaaS n'est pas sur l'usine`); process.exit(1) }
+  if (option('a-sec')) {
+    console.log(`✓ ${id} admise${croisement ? ` en rédaction croisée (${croisement}) par Codex sur l'usine` : ''}${fournisseur ? ` sur la voie libre (le relais commence à ${FOURNISSEURS.find((x) => x.nom === fournisseur).libelle})` : ''} — à sec : rien n'est pris ni envoyé`)
+    if (consigneCroisee) console.log(`  consigne ajoutée :${consigneCroisee.replace(/\n/g, '\n  ')}`)
+    process.exit(0)
+  }
   const tete = git(['rev-parse', 'HEAD']).trim()
   let origine = ''
   try { origine = git(['rev-parse', 'origin/main']).trim() } catch { /* pas de origin/main */ }
@@ -495,7 +541,7 @@ o=$(git rev-parse origin/main)
 [ "$o" = "$SHA" ] || { echo "✗ origin/main vu de l usine ($o) ≠ HEAD du PC ($SHA) : pousse d abord (ou tire, si le PC est en retard)"; exit 4; }
 [ -f node_modules/.usine-lock ] || { echo "✗ node_modules absent sur l usine : node scripts/usine.mjs preparer"; exit 3; }
 [ "$(cat node_modules/.usine-lock)" = "$(git show "$SHA:package-lock.json" | sha256sum | cut -d' ' -f1)" ] || { echo "✗ node_modules de l usine date d un autre package-lock.json : node scripts/usine.mjs preparer"; exit 3; }
-case "$(codex login status 2>&1 || true)" in "Logged in"*) ;; *) echo "✗ codex n est pas connecté sur l usine (codex login --device-auth, code validé par Benj)"; exit 3;; esac
+${fournisseur ? '# voie libre : Codex parle à Ollama Cloud ou à freellmapi, la connexion ChatGPT ne sert pas' : 'case "$(codex login status 2>&1 || true)" in "Logged in"*) ;; *) echo "✗ codex n est pas connecté sur l usine (codex login --device-auth, code validé par Benj)"; exit 3;; esac'}
 echo "HOME=$HOME"
 `, { timeout: 180_000 })
   if (injoignable(pret)) process.exit(5)
@@ -517,10 +563,18 @@ echo "HOME=$HOME"
   const numeros = fs.existsSync(AGENTS) ? fs.readFileSync(AGENTS, 'utf8').split(/\r?\n/).map((l) => { try { return JSON.parse(l).agent } catch { return null } }).map((a) => Number((String(a).match(/^usine-codex-(\d+)$/) || [])[1] || 0)) : []
   const agent = `usine-codex-${Math.max(0, ...numeros) + 1}`
   const conversation = `usine-${id}-${horodatage()}`
-  fs.appendFileSync(AGENTS, JSON.stringify({ agent, tache: id, modele: `codex:${modele}`, conversationId: conversation, date: maintenant(), usine: HOTE }) + '\n')
-  const prise = spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'orchestre.mjs'), 'prochaine', `--agent=${agent}`, `--tache=${id}`], { cwd: RACINE, encoding: 'utf8', windowsHide: true })
-  if (prise.status !== 0) { console.error(`✗ prise refusée sur le PC :\n${(prise.stdout + prise.stderr).trim()}`); process.exit(1) }
-  console.log(`· ${id} prise sur le PC par ${agent} (en-cours/)`)
+  const libelleModele = fournisseur ? `codex:${fournisseur}:${FOURNISSEURS.find((x) => x.nom === fournisseur).modele(f.perimetre.some((x) => CODE.test(x)))}` : `codex:${modele}`
+  fs.appendFileSync(AGENTS, JSON.stringify({ agent, tache: id, modele: libelleModele, conversationId: conversation, date: maintenant(), usine: HOTE, ...(croisement ? { croise: croisement } : {}), ...(fournisseur ? { voie: 'libre' } : {}) }) + '\n')
+  if (croisement) {
+    // Une fiche claude-code : l'orchestre ne la donne qu'à l'agent « claude-code » ; le verrou nomme ensuite le vrai rédacteur.
+    const { prendreCroisee } = await import('./usine-repartition.mjs')
+    const pc = prendreCroisee(RACINE, id, agent)
+    if (!pc.ok) { console.error(`✗ prise refusée sur le PC :\n${pc.sortie.trim()}`); process.exit(1) }
+  } else {
+    const prise = spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'orchestre.mjs'), 'prochaine', `--agent=${agent}`, `--tache=${id}`], { cwd: RACINE, encoding: 'utf8', windowsHide: true })
+    if (prise.status !== 0) { console.error(`✗ prise refusée sur le PC :\n${(prise.stdout + prise.stderr).trim()}`); process.exit(1) }
+  }
+  console.log(`· ${id} prise sur le PC par ${agent} (en-cours/)${croisement ? ` — rédaction croisée (${croisement}), prise sous le nom claude-code, verrou au nom de ${agent}` : ''}`)
 
   try {
     // 4. Les fichiers envoyés : le paquet, sa liste, le prompt, la configuration du tourneur et ce script (le tourneur).
@@ -528,8 +582,8 @@ echo "HOME=$HOME"
     const { PROMPT } = await import('./antigravity.mjs')
     fs.writeFileSync(path.join(ici, 'paquet.patch'), p.patch)
     fs.writeFileSync(path.join(ici, 'paquet.liste.txt'), `# paquet ${id} — ${maintenant()} — base ${tete}\n# statut chemin (taille) ; exclus : ${p.exclus.length}\n${lignes.join('\n')}\n`)
-    fs.writeFileSync(path.join(ici, 'prompt.md'), `# Tâche ${id} — agent ${agent} — ${maintenant()} (usine)\n\n${PROMPT(agent, id)}${SUPPLEMENT_USINE(id, arbre)}\n`)
-    fs.writeFileSync(path.join(ici, 'config.json'), JSON.stringify({ id, agent, modele, effort, tours, minutes, base: tete, lance: maintenant() }, null, 2))
+    fs.writeFileSync(path.join(ici, 'prompt.md'), `# Tâche ${id} — agent ${agent} — ${maintenant()} (usine)\n\n${PROMPT(agent, id)}${consigneCroisee}${SUPPLEMENT_USINE(id, arbre)}\n`)
+    fs.writeFileSync(path.join(ici, 'config.json'), JSON.stringify({ id, agent, modele, effort, tours, minutes, base: tete, lance: maintenant(), fournisseur: fournisseur || null, croise: croisement }, null, 2))
     fs.copyFileSync(CE_FICHIER, path.join(ici, 'usine.mjs'))
     const mk = distant(`mkdir -p "$HOME/taches/"${q(id)}`)
     if (mk.code !== 0) throw new Error(`mkdir sur l'usine : ${mk.erreurs.trim()}`)
@@ -548,6 +602,9 @@ cd "$T/arbre"
 # ~/presti/node_modules et constructeur-ferme-qa CF-8, qui l exige sous <arbre>/node_modules, rendait un faux rouge
 # (relecture à froid du 24/09, U2). La copie garde le chemin <arbre>/node_modules ; retirer le worktree n ôte que les liens.
 cp -al "$HOME/presti/node_modules" node_modules
+${croisement ? `# Rédaction croisée : la fiche claude-code est prise dans la copie sous le nom que l'orchestre exige, AVANT « base » (la prise
+# n'est pas dans le retour) ; Codex la trouve en en-cours/ et ne lance pas prochaine (sa consigne le dit).
+node scripts/orchestre.mjs prochaine --agent=claude-code --tache="$ID" > "$T/prise.out" 2>&1 || { echo "✗ prise de la fiche dans la copie refusée :"; tail -5 "$T/prise.out"; exit 1; }` : ''}
 git add -A
 arbre=$(git write-tree)
 base=$(GIT_AUTHOR_NAME=usine GIT_AUTHOR_EMAIL=usine@presti.invalid GIT_COMMITTER_NAME=usine GIT_COMMITTER_EMAIL=usine@presti.invalid git commit-tree "$arbre" -p HEAD -m "base $ID : paquet du PC (local, jamais poussé)")
@@ -571,7 +628,7 @@ echo "· tourneur détaché, pid $(cat "$T/pid")"
     spawnSync(process.execPath, [path.join(RACINE, 'scripts', 'orchestre.mjs'), 'liberer', id], { cwd: RACINE, stdio: 'inherit', windowsHide: true })
     process.exit(1)
   }
-  console.log(`✓ ${agent} → ${id} lancé sur l'usine (codex ${modele}, effort ${effort}, ${tours} tour(s) au plus, ${minutes} min par tour) en ${Math.round((Date.now() - debut) / 1000)} s`)
+  console.log(`✓ ${agent} → ${id} lancé sur l'usine (${fournisseur ? `voie libre : ${libelleModele.slice(6)}, relais depuis ${fournisseur}` : `codex ${modele}, effort ${effort}`}${croisement ? `, rédaction croisée ${croisement}` : ''}, ${tours} tour(s) au plus, ${minutes} min par tour) en ${Math.round((Date.now() - debut) / 1000)} s`)
   console.log(`  suivi : node scripts/usine.mjs etat · résultat : node scripts/usine.mjs recuperer ${id} [--attendre]`)
 }
 
@@ -608,6 +665,11 @@ tail -n 3 "$T/codex.log" 2>/dev/null | cut -c1-160 | sed 's/^/JOURNAL /' || true
 // Le verdict du PC déjà rendu : redit tel quel. Code 0 seulement si PASS et fiche toujours en fait/.
 function redire(id, ici, j) {
   const ou = ouEstLaFiche(id)
+  if (j.croise) {
+    console.log(`✍ ${id} déjà récupérée : rédaction croisée (${j.croise}) par ${j.redacteur || '?'}, appliquée sur le PC le ${j.date}, À RELIRE par Claude (verdict de l'usine ${j.verdictUsine}${j.ligneUsine ? ' — ' + j.ligneUsine : ''}) · fiche en ${ou || '?'}/`)
+    console.log(`  journaux : ${relatif(ici)}/ · puis : node scripts/usine.mjs nettoyer ${id}`)
+    process.exit(0)
+  }
   const ok = j.verdict === 'PASS' && ou === 'fait'
   console.log(`${ok ? '✓' : '✗'} ${id} déjà récupérée : ${j.verdict} sur le PC (${j.date})${j.ligne ? ' — ' + j.ligne : ''}${j.retire ? ' · patch retiré du PC' : ''} · fiche en ${ou || '?'}/`)
   if (j.verdict === 'PASS' && ou !== 'fait') console.log(`  ⚠ la fiche n'est plus en fait/ : ce PASS ne vaut plus (voir .orchestre/verdicts.jsonl)`)
@@ -643,6 +705,19 @@ function juger(id, ici, marque) {
   }
   conclure(id, ici, marque, { verdict: pass ? 'PASS' : 'FAIL', code: v.status, ligne })
 }
+// Une rédaction croisée (config.json : croise) : jamais jugée ni commitée ici. Le patch reste appliqué, la fiche reste en
+// en-cours/ ; verdict-pc.json porte « À RELIRE », le rédacteur et le verdict de l'usine (son vérificateur, hors bac à sable).
+// Pas de `verifier` sur le PC : pour une migration, le juge pourrait toucher la base ; Claude le lance lui-même en relisant.
+function conclureCroise(id, ici, marque, cfg, etatUsine) {
+  const ou = ouEstLaFiche(id)
+  const j = { verdict: 'À RELIRE', croise: cfg.croise, redacteur: cfg.agent, verdictUsine: marque.verdictUsine, ligneUsine: etatUsine?.ligne || null, date: maintenant(), patch: marque.patch, fichiers: marque.fichiers, fiche: ou }
+  fs.writeFileSync(path.join(ici, 'verdict-pc.json'), JSON.stringify(j, null, 2))
+  const m = distant(`printf '%s %s\\n' 'A-RELIRE' ${q(j.date)} > "$HOME/taches/"${q(id)}"/recupere"`)
+  if (m.code !== 0) console.log(`  ⚠ marque « recupere » non posée sur l'usine (${(m.erreurs || m.sortie).trim().split('\n').pop() || `code ${m.code}`}) : nettoyer demandera --forcer`)
+  if (ou !== 'en-cours') console.log(`  ⚠ ${id} est en ${ou || '?'}/ sur le PC, pas en en-cours/ : à regarder`)
+  console.log(`✍ ${id} : rédaction croisée (${cfg.croise}) par ${cfg.agent} appliquée sur le PC (${marque.fichiers} fichier(s)), fiche laissée en ${ou || '?'}/, jamais commitée par l'outil — À RELIRE par Claude (verdict de l'usine ${marque.verdictUsine}${j.ligneUsine ? ' — ' + j.ligneUsine : ''}) · puis : node scripts/usine.mjs nettoyer ${id}`)
+  process.exit(0)
+}
 // Rouge : le patch est retiré du PC. Puis verdict-pc.json, puis la marque sur l'usine — dans cet ordre.
 function conclure(id, ici, marque, v) {
   const patch = path.join(ici, 'resultat.patch')
@@ -669,7 +744,13 @@ async function recuperer(id) {
   // 0. Reprise : le verdict du PC est déjà enregistré, ou le patch déjà appliqué sans verdict.
   const juge = lireJson(path.join(ici, 'verdict-pc.json'))
   if (juge) redire(id, ici, juge)
+  // Rédaction croisée ? config.json du lancement le dit ; une fiche claude-code sans cette marque est traitée pareil (jamais jugée
+  // ni passée en fait/ par l'outil).
+  const cfgLocal = lireJson(path.join(ici, 'config.json')) || {}
+  const ficheClaude = ['en-cours', 'fait', 'refuse'].map((d) => path.join(ORCH, d, `${id}.md`)).find((x) => fs.existsSync(x))
+  if (!cfgLocal.croise && ficheClaude && lireFiche(ficheClaude).executant === 'claude-code') cfgLocal.croise = 'claude-code'
   const applique = lireJson(path.join(ici, 'applique.json'))
+  if (applique && cfgLocal.croise) conclureCroise(id, ici, applique, cfgLocal, null)
   if (applique) { console.log(`· ${id} : patch appliqué sur le PC le ${applique.date}, sans verdict du PC enregistré : je rejuge`); juger(id, ici, applique) }
   let e = lireEtatDistant(id)
   if (e.brut === 'ABSENT') { console.error(`✗ aucune tâche ${id} sur l'usine`); process.exit(1) }
@@ -754,7 +835,8 @@ ls -la "$R" | tail -n +2 | awk '{print $5, $9}'
     console.log(`  Répondre dans la fiche, puis : node scripts/orchestre.mjs liberer ${id} · node scripts/usine.mjs nettoyer ${id} --forcer · node scripts/usine.mjs lancer ${id}`)
     process.exit(1)
   }
-  if (verdictUsine !== 'PASS' && !option('forcer')) {
+  // Une rédaction croisée rouge sur l'usine est appliquée quand même : Claude relit tout, le rouge compris.
+  if (verdictUsine !== 'PASS' && !option('forcer') && !(cfgLocal.croise && verdictUsine === 'FAIL')) {
     console.log(`✗ l'usine n'a pas rendu PASS (${verdictUsine}) : rien n'est appliqué sur le PC, ${id} reste en en-cours/. Le patch est dans ${relatif(patch)}.`)
     console.log(`  Voir codex.log ; --forcer applique quand même et laisse le PC juger ; sinon : orchestre liberer ${id}, usine nettoyer ${id} --forcer, relancer.`)
     process.exit(1)
@@ -772,7 +854,9 @@ ls -la "$R" | tail -n +2 | awk '{print $5, $9}'
   const marque = { date: maintenant(), patch: taillePatch > 0 ? empreinte(patch) : null, fichiers: garder.length, verdictUsine, force: verdictUsine !== 'PASS' }
   fs.writeFileSync(path.join(ici, 'applique.json'), JSON.stringify(marque, null, 2))
 
-  // 4. La fiche passe d'en-cours à fait comme l'orchestre l'attend, puis le verdict officiel : `verifier` SUR LE PC.
+  // 4. Rédaction croisée : elle s'arrête là, à relire par Claude (fiche en en-cours/, jamais jugée ni commitée par l'outil).
+  if (cfgLocal.croise) conclureCroise(id, ici, marque, cfgLocal, e.etat)
+  // Sinon, la fiche passe d'en-cours à fait comme l'orchestre l'attend, puis le verdict officiel : `verifier` SUR LE PC.
   juger(id, ici, marque)
 }
 
@@ -1009,6 +1093,17 @@ async function tourner(dossier) {
     poser({ fournisseur: vers.nom, modeleServi: modele })
     noter(`=== ${maintenant()} bascule de fournisseur, tour ${tour} : ${de.nom} → ${vers.nom} (${vers.libelle}, ${modele}) — ${raison} ; le tour est rejoué`)
     return vers
+  }
+  // Voie libre (lancer --fournisseur, 28/09 : Codex plein) : le relais COMMENCE à ce fournisseur, puis suit l'ordre habituel.
+  // Jamais pour une fiche de prospects (lancer l'a refusée sur le PC ; redit ici, sur la copie de l'usine).
+  if (cfg.fournisseur) {
+    const i = FOURNISSEURS.findIndex((x) => x.nom === cfg.fournisseur)
+    if (i < 1) finir(5, 'ERREUR', `fournisseur de départ inconnu : ${cfg.fournisseur}`)
+    if (toucheProspects()) finir(3, 'QUOTA', `voie libre refusée : la fiche touche des données de prospects (${etatT.prospects}) — jamais d'IA gratuite ni de modèle :cloud`)
+    if (FOURNISSEURS[i].cle && !lireCleFL()) finir(3, 'QUOTA', `voie libre sur ${FOURNISSEURS[i].libelle} impossible : clé absente (~/.config/presti/freellmapi.key)`)
+    iFournisseur = i
+    poser({ fournisseur: FOURNISSEURS[i].nom, modeleServi: FOURNISSEURS[i].modele(ficheCode) })
+    noter(`=== ${maintenant()} voie libre : le relais commence à ${FOURNISSEURS[i].libelle} (${FOURNISSEURS[i].modele(ficheCode)}), sans l'abonnement ChatGPT`)
   }
   // L'entraide : après un tour rouge, une autre IA relit le verdict, la fin de codex.log et la fiche (node ~/veille/conseil.mjs ;
   // PRESTI_CONSEIL_BIN : la doublure du banc d'essai). --prive si la fiche touche des prospects : Qwen3 LOCAL, et la clé
@@ -1712,7 +1807,7 @@ principal; exit $?
 }
 
 // ── entrée ────────────────────────────────────────────────────────────────────────────────────────────────
-const USAGE = fs.readFileSync(CE_FICHIER, 'utf8').split('\n').filter((l) => l.startsWith('//')).slice(7, 18).map((l) => l.replace(/^\/\/ ?/, '')).join('\n')
+const USAGE = fs.readFileSync(CE_FICHIER, 'utf8').split('\n').filter((l) => l.startsWith('//')).slice(7, 20).map((l) => l.replace(/^\/\/ ?/, '')).join('\n')
 const id = positionnels[0]
 const exigeId = ['paquet', 'lancer', 'recuperer', 'nettoyer']
 if (exigeId.includes(commande) && !(id && ID_VALIDE.test(id))) { console.error(`${commande} <id> : un identifiant de fiche NNN-slug (ex. 025-05)\n\n${USAGE}`); process.exit(2) }
