@@ -1,0 +1,14 @@
+{
+ "_cas": "VM-8 : identite non confirmee -> en_attente_identite, arret",
+ "_reponse": {
+  "statut": 400,
+  "corps": {
+   "error": {
+    "message": "Identity confirmation required to access the Ad Library API (Temoin).",
+    "type": "OAuthException",
+    "code": 1357045,
+    "fbtrace_id": "ATemoinVM1357045"
+   }
+  }
+ }
+}

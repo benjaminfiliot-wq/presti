@@ -1,0 +1,122 @@
+{
+  "_lisez_moi": "Jeu d'essai de la vigie Meta (fiche 026-069). Aucun domaine hors .invalid ; le jeton d'essai JETON-TEMOIN-7f3a n'apparaît que sous ce dossier (JP-5). Consommé par scripts/vigie-meta-qa.mjs seul.",
+  "jetons": {
+    "valide": "JETON-TEMOIN-7f3a",
+    "invalide": "JETON-INVALIDE-TEMOIN-vm8",
+    "limite": "JETON-LIMITE-TEMOIN-vm8",
+    "identite": "JETON-IDENTITE-TEMOIN-vm8"
+  },
+  "artisan": {
+    "A": {
+      "page_id": "300000000000001",
+      "page_name": "Plomberie Témoin A",
+      "domaine_attendu": "plomberie-temoin.invalid",
+      "legendes": ["WWW.PLOMBERIE-TEMOIN.INVALID", "WWW.PLOMBERIE-TEMOIN.INVALID", "www.plomberie-temoin.invalid"],
+      "pubs": [
+        { "id": "400000000000001", "titre": "Plomberie Témoin, dépannage rapide", "corps": "Plombier à Nantes, intervention rapide et devis gratuit ce mois-ci pour toute fuite.", "debut": "2026-08-30" },
+        { "id": "400000000000002", "titre": "Fuite d'eau Témoin en urgence", "corps": "Nos équipes interviennent sous deux heures à Nantes et dans les environs proches.", "debut": "2026-09-20" },
+        { "id": "400000000000003", "titre": "Chauffe-eau Témoin remplacement", "corps": "Devis gratuit pour votre chauffe-eau, pose possible en vingt-quatre heures ouvrées.", "debut": "2026-10-05" }
+      ]
+    },
+    "B": {
+      "page_id": "300000000000002",
+      "page_name": "Chauffage Témoin B",
+      "domaine_attendu": "chauffage-b-temoin.invalid",
+      "legendes": ["chauffage-b-temoin.invalid", "chauffage-b-temoin.invalid", "chauffage-b-temoin.invalid"],
+      "pubs": [
+        { "id": "400000000000011", "titre": "Chaudière Témoin entretien", "corps": "Entretien annuel de votre chaudière, intervention rapide dans le secteur.", "debut": "2026-09-20" },
+        { "id": "400000000000012", "titre": "Chaudière Témoin dépannage", "corps": "Panne de chauffage ce week-end, nos techniciens Témoin se déplacent vite.", "debut": "2026-09-25" },
+        { "id": "400000000000013", "titre": "Pompe à chaleur Témoin pose", "corps": "Installation de pompe à chaleur, devis gratuit sous quarante-huit heures.", "debut": "2026-10-01" }
+      ]
+    },
+    "C": {
+      "page_id": "300000000000003",
+      "page_name": "Atelier Témoin C",
+      "domaine_attendu": "atelier-c-temoin.invalid",
+      "legendes": ["atelier-c-temoin.invalid", "atelier-c-temoin.invalid"],
+      "pubs": [
+        { "id": "400000000000021", "titre": "Menuiserie Témoin sur mesure", "corps": "Fabrication de menuiserie sur mesure, showroom ouvert le samedi matin.", "debut": "2026-09-10" },
+        { "id": "400000000000022", "titre": "Menuiserie Témoin pose fenêtres", "corps": "Pose de fenêtres double vitrage, devis gratuit sous une semaine environ.", "debut": "2026-09-15" }
+      ]
+    },
+    "D": {
+      "page_id": "300000000000004",
+      "page_name": "Couverture Témoin D",
+      "domaine_attendu": null,
+      "legendes": ["facebook.com", "facebook.com", "facebook.com"],
+      "pubs": [
+        { "id": "400000000000031", "titre": "Couverture Témoin toiture", "corps": "Réfection de toiture, diagnostic gratuit avant tout démarrage de chantier.", "debut": "2026-09-04" },
+        { "id": "400000000000032", "titre": "Zinguerie Témoin gouttières", "corps": "Nettoyage et réparation de gouttières avant l'automne, intervention rapide.", "debut": "2026-09-25" },
+        { "id": "400000000000033", "titre": "Couverture Témoin urgence", "corps": "Fuite de toiture après l'orage, notre équipe intervient sous vingt-quatre heures.", "debut": "2026-10-02" }
+      ]
+    },
+    "E": {
+      "page_id": "300000000000005",
+      "page_name": "Serrurerie Témoin E",
+      "domaine_attendu": null,
+      "legendes": ["pagesjaunes.fr", "pagesjaunes.fr", "pagesjaunes.fr"],
+      "pubs": [
+        { "id": "400000000000041", "titre": "Serrurerie Témoin ouverture porte", "corps": "Ouverture de porte claquée, déplacement rapide jour et nuit toute la semaine.", "debut": "2026-09-01" },
+        { "id": "400000000000042", "titre": "Serrurerie Témoin blindage", "corps": "Blindage de porte d'entrée, devis gratuit à domicile sous une semaine.", "debut": "2026-09-20" },
+        { "id": "400000000000043", "titre": "Serrurerie Témoin dépannage", "corps": "Clé cassée dans la serrure, intervention Témoin sous trente minutes environ.", "debut": "2026-10-01" }
+      ]
+    },
+    "F": {
+      "page_id": "300000000000006",
+      "page_name": "Carrelage Témoin F",
+      "domaine_attendu": null,
+      "legendes": [],
+      "pubs": [
+        { "id": "400000000000051", "titre": "Carrelage Témoin pose sol", "corps": "Pose de carrelage au sol et au mur, chantier propre et soigné garanti par équipe.", "debut": "2026-08-25" },
+        { "id": "400000000000052", "titre": "Carrelage Témoin salle de bain", "corps": "Rénovation complète de salle de bain, devis gratuit sous une semaine environ.", "debut": "2026-09-15" },
+        { "id": "400000000000053", "titre": "Carrelage Témoin terrasse", "corps": "Pose de carrelage extérieur pour terrasse, résistant au gel toute l'année.", "debut": "2026-10-05" }
+      ]
+    }
+  },
+  "marque": {
+    "G": {
+      "page_id": "300000000000101",
+      "page_name": "Boutique Témoin G",
+      "domaine_attendu": "boutique-temoin.invalid",
+      "legendes": ["BOUTIQUE-TEMOIN.INVALID", "BOUTIQUE-TEMOIN.INVALID", "boutique-temoin.invalid"],
+      "produit_attendu": "Gourde isotherme Témoin",
+      "pubs": [
+        { "id": "400000000000101", "titre": "Gourde isotherme Témoin", "corps": "Notre gourde isotherme Témoin garde vos boissons fraîches toute la journée.", "debut": "2026-08-20" },
+        { "id": "400000000000102", "titre": "Gourde isotherme Témoin, coloris", "corps": "Nouveaux coloris disponibles pour la gourde isotherme Témoin, en édition limitée.", "debut": "2026-09-20" },
+        { "id": "400000000000103", "titre": "Gourde isotherme Témoin, promo", "corps": "Livraison offerte cette semaine sur la gourde isotherme Témoin, dans la boutique.", "debut": "2026-10-05" }
+      ]
+    },
+    "H": {
+      "page_id": "300000000000102",
+      "page_name": "Marque Témoin H",
+      "domaine_attendu": null,
+      "legendes": [],
+      "produit_attendu": null,
+      "pubs": [
+        { "id": "400000000000111", "titre": "Bijoux fantaisie Témoin", "corps": "Notre collection de bijoux fantaisie Témoin arrive en boutique éphémère bientôt.", "debut": "2026-08-22" },
+        { "id": "400000000000112", "titre": "Bijoux fantaisie Témoin, collier", "corps": "Le collier fantaisie Témoin est de retour cette saison en série limitée.", "debut": "2026-09-18" },
+        { "id": "400000000000113", "titre": "Bijoux fantaisie Témoin, promo", "corps": "Remise de lancement sur la collection de bijoux fantaisie Témoin ce mois-ci.", "debut": "2026-10-03" }
+      ]
+    },
+    "I": {
+      "page_id": "300000000000103",
+      "page_name": "Épicerie Témoin I",
+      "domaine_attendu": "epicerie-i-temoin.invalid",
+      "legendes": ["epicerie-i-temoin.invalid", "epicerie-i-temoin.invalid", "epicerie-i-temoin.invalid"],
+      "produit_attendu": "Café en grains Témoin",
+      "naf_exclu": "86.90A",
+      "siren": "812345699",
+      "pubs": [
+        { "id": "400000000000121", "titre": "Café en grains Témoin", "corps": "Notre café en grains Témoin torréfié artisanalement arrive en boutique ce mois.", "debut": "2026-08-18" },
+        { "id": "400000000000122", "titre": "Café en grains Témoin, origine", "corps": "Nouvelle origine pour le café en grains Témoin, disponible en édition limitée.", "debut": "2026-09-19" },
+        { "id": "400000000000123", "titre": "Café en grains Témoin, coffret", "corps": "Coffret découverte du café en grains Témoin, livraison offerte cette semaine.", "debut": "2026-10-04" }
+      ]
+    }
+  },
+  "pagination": {
+    "page_id": "300000000000201",
+    "page_name": "Atelier Témoin Pagination",
+    "domaine_attendu": "atelier-pagination-temoin.invalid",
+    "legende": "atelier-pagination-temoin.invalid"
+  }
+}

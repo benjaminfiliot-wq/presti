@@ -1,0 +1,12 @@
+{
+  "_lisez_moi": "Repères du corpus de messages (fiche 026-069) : aucune boîte d'envoi, aucun domaine hors .invalid ou github.io (notice d'essai, JP-6).",
+  "adresse_prospection": "prospection.temoin@exemple.invalid",
+  "notice_url": "https://presti-temoin.github.io/notice/",
+  "faits": {
+    "site_h1_f1": { "id": "f1a2b3c4d5e6f708", "type": "site_h1", "extrait": "Menuiserie Témoin, artisan à Nantes", "url": "https://menuiserie-temoin.invalid/", "verifie": "ok" },
+    "site_titre_f2": { "id": "f2b3c4d5e6f70819", "type": "site_titre", "extrait": "Plomberie Témoin – accueil", "url": "https://plomberie-temoin.invalid/", "verifie": "ok" },
+    "site_copyright_f3": { "id": "f3c4d5e6f7081920", "type": "site_copyright", "extrait": "© 2016 Électricité Témoin", "url": "https://electricite-temoin.invalid/", "verifie": "ok" },
+    "pub_meta_f4": { "id": "f4d5e6f708192031", "type": "pub_meta", "extrait": "Gourde isotherme Témoin en édition limitée", "url": "https://www.facebook.com/ads/library/?id=420000000000001", "verifie": "ok" },
+    "non_verifiable_f5": { "id": "f5e6f70819203142", "type": "site_h1", "extrait": "Fait jamais confirmé par le juge", "url": "https://carrelage-temoin.invalid/", "verifie": "non_verifiable" }
+  }
+}

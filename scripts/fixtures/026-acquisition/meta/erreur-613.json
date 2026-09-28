@@ -1,0 +1,14 @@
+{
+ "_cas": "VM-8 : debit -> limite, arret sans nouvelle tentative",
+ "_reponse": {
+  "statut": 400,
+  "corps": {
+   "error": {
+    "message": "Calls to this api have exceeded the rate limit (Temoin).",
+    "type": "OAuthException",
+    "code": 613,
+    "fbtrace_id": "ATemoinVM613"
+   }
+  }
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "_cas": "VM-8 : jeton invalide -> jeton_invalide, arret",
+ "_reponse": {
+  "statut": 400,
+  "corps": {
+   "error": {
+    "message": "Error validating access token: Session has expired (Temoin).",
+    "type": "OAuthException",
+    "code": 190,
+    "fbtrace_id": "ATemoinVM190"
+   }
+  }
+ }
+}
