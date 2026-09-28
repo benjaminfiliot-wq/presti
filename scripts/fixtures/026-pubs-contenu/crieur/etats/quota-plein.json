@@ -1,0 +1,9 @@
+{
+  "_source": "13 publiés + 2 externes = 15 : le plafond mensuel de Publora (formule Starter) est atteint, composerLot doit rendre une liste vide.",
+  "publies_mois": 13,
+  "externes_mois": 2,
+  "a_venir": 1,
+  "canaux_semaine": [],
+  "drapeaux": { "aimantSite": true },
+  "faits_publies_relatifs": {}
+}

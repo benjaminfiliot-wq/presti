@@ -1,0 +1,11 @@
+{
+  "_source": "fiche 026-116, « Ce qu'il faut faire », point 4 : référence = HEAD relevé au début de la fiche (22b38647, 28/09). CR-1/CR-5/CR-10 échouent sur la référence car lib/crieur/faits.ts, app/api/cron/crieur/route.ts et supabase/migrations/*_crieur.sql (026-119, 026-122, 026-134) n'existent pas encore ; CR-14 échoue car lib/crieur/juge.ts, déposé par CETTE fiche, n'existe pas non plus sur la référence.",
+  "reference": "22b3864739a4375f6e4330cdaa3af39f9913eef5",
+  "absents_de_la_reference": ["lib/crieur/juge.ts"],
+  "juges": [
+    { "commande": "node scripts/crieur-qa.mjs --partie=composer", "echec_attendu": "CR-1", "fiche_jugee": "026-119" },
+    { "commande": "node scripts/crieur-qa.mjs --partie=route", "echec_attendu": "CR-5", "fiche_jugee": "026-122" },
+    { "commande": "node scripts/crieur-qa.mjs --partie=horloge", "echec_attendu": "CR-10", "fiche_jugee": "026-134" },
+    { "commande": "node scripts/crieur-qa.mjs --partie=juge", "echec_attendu": "CR-14", "fiche_jugee": "026-116" }
+  ]
+}

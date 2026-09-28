@@ -1,0 +1,9 @@
+{
+  "_source": "3 brouillons dont le créneau proposé est à venir : le plafond Publora de 3 parutions actives à la fois est atteint, composerLot doit rendre une liste vide même si le quota mensuel est loin d'être plein.",
+  "publies_mois": 4,
+  "externes_mois": 0,
+  "a_venir": 3,
+  "canaux_semaine": [],
+  "drapeaux": { "aimantSite": true },
+  "faits_publies_relatifs": {}
+}

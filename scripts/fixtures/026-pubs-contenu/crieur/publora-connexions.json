@@ -1,0 +1,8 @@
+{
+  "_source": "réponse d'essai de GET https://api.publora.com/api/v1/platform-connections (scripts/pipeline.mjs:24-33), identifiants fictifs.",
+  "connections": [
+    { "platformId": "linkedin-essai", "displayName": "Benjamin (essai)", "tokenStatus": "valid" },
+    { "platformId": "facebook-essai", "displayName": "Presti (essai)", "tokenStatus": "valid" },
+    { "platformId": "instagram-essai", "displayName": "prestiapp (essai)", "tokenStatus": "valid" }
+  ]
+}

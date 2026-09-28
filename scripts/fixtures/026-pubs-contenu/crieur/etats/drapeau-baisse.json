@@ -1,0 +1,9 @@
+{
+  "_source": "un fait dont le drapeau est baissé : composerLot ne doit jamais le proposer. scripts/crieur-qa.mjs choisit à l'exécution le premier fait RÉEL de lib/crieur/faits.ts qui porte un `drapeau` et baisse CE drapeau-là dans `drapeaux` — les fixtures ne peuvent pas connaître à l'avance le nom du drapeau que 026-119 choisira.",
+  "publies_mois": 1,
+  "externes_mois": 0,
+  "a_venir": 0,
+  "canaux_semaine": [],
+  "drapeaux": { "aimantSite": true },
+  "faits_publies_relatifs": {}
+}

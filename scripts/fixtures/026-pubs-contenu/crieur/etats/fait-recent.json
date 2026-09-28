@@ -1,0 +1,9 @@
+{
+  "_source": "un fait a été publié il y a 5 jours : composerLot ne doit jamais le reproposer avant 30 jours. `faits_publies_relatifs` n'est qu'un gabarit — scripts/crieur-qa.mjs choisit le premier id RÉEL de lib/crieur/faits.ts (FAITS[0].id, une fois importé) et l'y substitue, jour relatif conservé (-5) : les fixtures ne peuvent pas connaître les id que 026-119 choisira.",
+  "publies_mois": 2,
+  "externes_mois": 0,
+  "a_venir": 0,
+  "canaux_semaine": [],
+  "drapeaux": { "aimantSite": true },
+  "faits_publies_relatifs": { "<premier fait réel, substitué à l'exécution>": -5 }
+}

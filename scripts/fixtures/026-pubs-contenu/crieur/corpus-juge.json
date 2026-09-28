@@ -1,0 +1,34 @@
+{
+  "_source": "fiche 026-116, cahier CR-14 : corpus étiqueté pour lib/crieur/juge.ts (jugerPublication). Les fautives couvrent les 9 raisons de refus ; « instagram-aimant-leve » (conforme) et « instagram-aimant-baisse » (fautive) jugent la même publication sous les deux valeurs de drapeaux.aimantSite.",
+  "faits": {
+    "minute": { "texte": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez." },
+    "studio": { "texte": "Presti Studio et Presti Signature créent le site de l'artisan en un après-midi." },
+    "offre300": { "texte": "Le site de l'artisan, prêt en 48 heures, à 300 euros une fois.", "drapeau": "siteCommandeVente" }
+  },
+  "phrasesGabarit": [
+    "Découvrez comment ça marche.",
+    "On vous explique tout sur prestiapp.fr."
+  ],
+  "drapeauxBase": { "aimantSite": true, "siteCommandeVente": true },
+  "conformes": [
+    { "nom": "linkedin-simple", "canal": "linkedin", "fait_ids": ["minute"], "texte": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez." },
+    { "nom": "facebook-aimant", "canal": "facebook", "fait_ids": ["studio"], "media": null, "texte": "Presti Studio et Presti Signature créent le site de l'artisan en un après-midi. Commente SITE, je te prépare gratuitement la maquette de ton site." },
+    { "nom": "instagram-aimant-leve", "canal": "instagram", "fait_ids": ["minute"], "media": "https://prestiapp.fr/api/crieur/visuel/minute.png", "texte": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez. Commente SITE, je te prépare gratuitement la maquette de ton site." }
+  ],
+  "fautives": [
+    { "nom": "phrase-inconnue", "canal": "linkedin", "fait_ids": ["minute"], "texte": "Une phrase jamais vue nulle part.", "raison": "phrase_inconnue" },
+    { "nom": "aimant-absent-instagram", "canal": "instagram", "fait_ids": ["minute"], "media": "https://prestiapp.fr/api/crieur/visuel/minute.png", "texte": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez.", "raison": "aimant_absent" },
+    { "nom": "aimant-en-trop-linkedin", "canal": "linkedin", "fait_ids": ["minute"], "texte": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez. Commente SITE, je te prépare gratuitement la maquette de ton site.", "raison": "aimant_en_trop" },
+    { "nom": "instagram-aimant-baisse", "canal": "instagram", "fait_ids": ["minute"], "media": "https://prestiapp.fr/api/crieur/visuel/minute.png", "texte": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez. Commente SITE, je te prépare gratuitement la maquette de ton site.", "raison": "aimant_en_trop", "drapeaux": { "aimantSite": false } },
+    { "nom": "media-absent-instagram", "canal": "instagram", "fait_ids": ["minute"], "texte": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez. Commente SITE, je te prépare gratuitement la maquette de ton site.", "raison": "media_invalide" },
+    { "nom": "media-hors-gabarit", "canal": "instagram", "fait_ids": ["minute"], "media": "https://prestiapp.fr/photo.png", "texte": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez. Commente SITE, je te prépare gratuitement la maquette de ton site.", "raison": "media_invalide" },
+    { "nom": "media-sur-linkedin", "canal": "linkedin", "fait_ids": ["minute"], "media": "https://prestiapp.fr/api/crieur/visuel/minute.png", "texte": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez.", "raison": "media_invalide" },
+    { "nom": "formule-minute-sans-preparee", "canal": "linkedin", "fait_ids": [], "texte": "On répond en moins d'une minute, toujours.", "raison": "formule_interdite" },
+    { "nom": "formule-repond-sans-studio", "canal": "linkedin", "fait_ids": [], "texte": "Presti répond à votre place, tout de suite.", "raison": "formule_interdite" },
+    { "nom": "drapeau-baisse", "canal": "linkedin", "fait_ids": ["offre300"], "texte": "Le site de l'artisan, prêt en 48 heures, à 300 euros une fois.", "raison": "drapeau_baisse", "drapeaux": { "siteCommandeVente": false } },
+    { "nom": "adresse-etrangere", "canal": "linkedin", "fait_ids": [], "texte": "Plus d'infos sur https://exemple-externe.test/offre.", "raison": "adresse_etrangere" },
+    { "nom": "trop-long-facebook", "canal": "facebook", "fait_ids": ["minute"], "texteBase": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez.", "repeter": 8, "raison": "trop_long" },
+    { "nom": "donnee-personnelle-email", "canal": "linkedin", "fait_ids": [], "texte": "Écrivez-nous à contact@exemple.test pour en savoir plus.", "raison": "donnee_personnelle" },
+    { "nom": "donnee-personnelle-telephone", "canal": "linkedin", "fait_ids": [], "texte": "Appelez-nous au 06 12 34 56 78 dès aujourd'hui.", "raison": "donnee_personnelle" }
+  ]
+}
