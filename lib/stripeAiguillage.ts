@@ -11,7 +11,7 @@
 // route, AVANT d'être vendu — sinon chacun de ses paiements lèvera une alerte d'orphelin.
 import type Stripe from 'stripe'
 
-export type Voie = 'commande_site' | 'abonnement' | 'en_attente' | 'orphelin'
+export type Voie = 'commande_site' | 'pack_pub' | 'abonnement' | 'en_attente' | 'orphelin'
 
 /** Ce que l'aiguillage lit d'une session, et rien d'autre. Une session réduite à {} est acceptée (→ orphelin). */
 export type SessionAiguillee = Partial<Pick<Stripe.Checkout.Session, 'mode' | 'metadata' | 'client_reference_id' | 'payment_status'>>
@@ -28,6 +28,11 @@ export function champsAbonnement(s: SessionAiguillee): { uid: string; plan: stri
 export function aiguiller(s: SessionAiguillee): Voie {
   if (s.mode === 'payment' && s.metadata?.type === 'commande_site') {
     return s.payment_status === 'paid' ? 'commande_site' : s.payment_status === 'unpaid' ? 'en_attente' : 'orphelin'
+  }
+  // Pack pubs locales (fiche 026-112) : comme commande_site, mais avec pack_id EN PLUS du type — un paiement forgé
+  // à la main (type = pack_pub sans pack_id) ne doit pas se faire passer pour un vrai pack (026-108 point 5).
+  if (s.mode === 'payment' && s.metadata?.type === 'pack_pub' && s.metadata?.pack_id) {
+    return s.payment_status === 'paid' ? 'pack_pub' : s.payment_status === 'unpaid' ? 'en_attente' : 'orphelin'
   }
   const { uid, plan } = champsAbonnement(s)
   if (uid && plan) {

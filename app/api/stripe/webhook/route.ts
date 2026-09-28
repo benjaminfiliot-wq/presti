@@ -10,6 +10,7 @@ import { notifierEntreprise } from '@/lib/email'
 import { alertePaiement, envoyerAlertes } from '@/lib/alertes'
 import { mentionFranchise } from '@/lib/facturation'
 import { encaisserCommandeSite } from '@/lib/siteCommandeServeur'
+import { encaisserPackPub } from '@/lib/packPubServeur'
 import { ouvrirCompteAcheteur } from '@/lib/siteAchatPublic'
 import { envoyerCourrielsDus } from '@/lib/siteLivraison'
 import { aiguiller, champsAbonnement } from '@/lib/stripeAiguillage'
@@ -113,6 +114,12 @@ export async function POST(req: Request) {
           `Paiement — ${a?.nom || uid} passe en ${conf.label}`,
           `Abonnement activé via Stripe.\n\nArtisan : ${a?.nom || '—'} (${a?.metier || '—'})\nEmail : ${a?.email || '—'}\nFormule : ${conf.label} — ${conf.prixMois} €/mois\nMontant encaissé : ${typeof s.amount_total === 'number' ? (s.amount_total / 100).toFixed(2) + ' ' + (s.currency || 'eur').toUpperCase() : '—'}`,
         )
+      } else if (voie === 'pack_pub') {
+        // Paiement UNIQUE — le pack pubs locales (fiche 026-112). Même logique que commande_site : 'introuvable'
+        // remonte en erreur pour que Stripe rejoue et qu'un humain voie ; encaisserPackPub ne crée jamais de ligne.
+        const r = await encaisserPackPub(s)
+        if (r === 'introuvable') throw new Error(`paiement de pack pubs sans dossier : session ${s.id}`)
+        console.log('[stripe webhook] pack pubs', r, s.metadata?.pack_id)
       } else if (voie === 'en_attente') {
         console.log('[stripe webhook] paiement en attente', s.id)
       } else {
