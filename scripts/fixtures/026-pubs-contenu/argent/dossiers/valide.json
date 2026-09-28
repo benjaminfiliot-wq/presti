@@ -1,0 +1,19 @@
+{
+  "champ": null,
+  "entree": {
+    "photos": [
+      { "url": "https://exemple.invalid/1.jpg", "role": "avant", "personnes": false, "accord_personnes": false },
+      { "url": "https://exemple.invalid/2.jpg", "role": "apres", "personnes": false, "accord_personnes": false },
+      { "url": "https://exemple.invalid/3.jpg", "role": "chantier", "personnes": false, "accord_personnes": false },
+      { "url": "https://exemple.invalid/4.jpg", "role": "detail", "personnes": false, "accord_personnes": false },
+      { "url": "https://exemple.invalid/5.jpg", "role": "avant", "paire": "facade", "personnes": false, "accord_personnes": false },
+      { "url": "https://exemple.invalid/6.jpg", "role": "apres", "paire": "facade", "personnes": true, "accord_personnes": true }
+    ],
+    "logo_url": null,
+    "faits": { "metier": "Plombier chauffagiste", "ville": "Lyon", "communes": ["Villeurbanne", "Caluire"], "duree_travaux": "deux jours", "materiaux": "cuivre et PER", "decennale": true, "cta": "devis" },
+    "accroche": "artisan_de_confiance",
+    "voix": "aucune",
+    "texte_voix": null,
+    "consentement_droits": true
+  }
+}

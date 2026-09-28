@@ -1,0 +1,8 @@
+{
+  "id": "cs_test_pubscontenu_pack",
+  "object": "checkout.session",
+  "mode": "payment",
+  "payment_status": "paid",
+  "client_reference_id": null,
+  "metadata": { "uid": "uid-pack-33333333", "type": "pack_pub", "pack_id": "pack-33333333" }
+}

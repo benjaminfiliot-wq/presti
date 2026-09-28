@@ -1,0 +1,77 @@
+{
+  "_source": "fiche 026-108, section « Contrat du pack » — seule source pour pack-pub-base-qa.mjs, pack-pub-paiement-qa.mjs et cgu-pack-pub-qa.mjs. Toute fiche qui change le contrat change ce fichier ET son juge, dans le même geste.",
+  "pack_locale": {
+    "fiche_migration": "026-114",
+    "fiche_noyau": "026-112",
+    "fiche_route": "026-118",
+    "prix_cents": 14900,
+    "prix_texte": "149 €",
+    "etats": ["brouillon", "payee", "fabriquee", "livree"],
+    "transitions": {
+      "brouillon": ["payee"],
+      "payee": ["fabriquee"],
+      "fabriquee": ["livree", "payee"],
+      "livree": ["payee"]
+    },
+    "accroches": [
+      "artisan_de_confiance",
+      "avant_apres",
+      "proximite_locale",
+      "reactivite",
+      "garantie_decennale",
+      "avis_clients",
+      "savoir_faire",
+      "intervention_rapide"
+    ],
+    "metadata_stripe": { "type": "pack_pub", "cles": ["uid", "type", "pack_id"] }
+  },
+  "pack_studio": {
+    "fiche": "026-166",
+    "videos": 5,
+    "prix_cents": 49000,
+    "prix_texte": "490 €",
+    "metadata_stripe": { "type": "pack_studio", "cles": ["type", "pack_id", "marque_cle"] }
+  },
+  "matiere": {
+    "photos": { "min": 6, "max": 12, "roles": ["avant", "apres", "chantier", "detail", "equipe"] },
+    "faits": { "metier_max": 40, "ville_max": 60, "communes_max": 5, "duree_travaux_max": 40, "materiaux_max": 60, "cta": ["devis", "appel", "message"] },
+    "voix": ["aucune", "synthese"],
+    "texte_voix": { "min": 20, "max": 220 }
+  },
+  "table": {
+    "nom": "packs_pubs",
+    "suffixe_fichier": "_packs_pubs.sql",
+    "bucket": { "nom": "packs-pubs", "public": false, "file_size_limit_max": 20971520 },
+    "colonnes": [
+      "id", "artisan_id", "commande_site_id", "email", "etat", "matiere", "prix_cents", "type", "marque_cle",
+      "stripe_session_id", "stripe_payment_intent_id", "paye_le", "fabrique_le", "livre_le", "lien_expire_le",
+      "fichiers_effaces_le", "verifications", "consigne", "refaits", "cree_le", "modifie_le"
+    ]
+  },
+  "cgu": {
+    "fiche": "026-131",
+    "id": "pubs",
+    "titre_h2": "3 ter. Le pack pubs locales",
+    "apres_id": "site",
+    "avant_id": "support",
+    "phrases_exigees": [
+      "au prix indiqué au moment de la commande",
+      "TVA non applicable, art. 293 B",
+      "une seule fois",
+      "photos fournies par l'artisan",
+      "garantit en détenir les droits",
+      "personnes visibles",
+      "accord",
+      "aucune personne générée",
+      "Voix générée par IA",
+      "annonceur",
+      "règles publicitaires de Meta",
+      "aucun résultat n'est garanti",
+      "jours ouvrés",
+      "30 jours",
+      "une retouche"
+    ],
+    "phrases_garanti_permises": ["aucun résultat n'est garanti", "garantit en détenir les droits"],
+    "mots_interdits": ["résultats assurés", "n°1", "meilleur"]
+  }
+}

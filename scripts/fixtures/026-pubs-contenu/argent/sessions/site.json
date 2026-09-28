@@ -1,0 +1,8 @@
+{
+  "id": "cs_test_pubscontenu_site",
+  "object": "checkout.session",
+  "mode": "payment",
+  "payment_status": "paid",
+  "client_reference_id": null,
+  "metadata": { "uid": "uid-site-11111111", "type": "commande_site", "commande_id": "cmd-11111111" }
+}

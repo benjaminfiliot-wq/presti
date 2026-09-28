@@ -1,0 +1,8 @@
+{
+  "id": "cs_test_pubscontenu_sansmeta",
+  "object": "checkout.session",
+  "mode": "payment",
+  "payment_status": "paid",
+  "client_reference_id": null,
+  "metadata": {}
+}

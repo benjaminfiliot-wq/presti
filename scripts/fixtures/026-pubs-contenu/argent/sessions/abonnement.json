@@ -1,0 +1,8 @@
+{
+  "id": "cs_test_pubscontenu_abo",
+  "object": "checkout.session",
+  "mode": "subscription",
+  "payment_status": "paid",
+  "client_reference_id": null,
+  "metadata": { "uid": "uid-abo-22222222", "plan": "essentiel" }
+}

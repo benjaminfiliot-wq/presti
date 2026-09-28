@@ -1,0 +1,8 @@
+{
+  "id": "cs_test_pubscontenu_pack_abo",
+  "object": "checkout.session",
+  "mode": "subscription",
+  "payment_status": "paid",
+  "client_reference_id": null,
+  "metadata": { "uid": "uid-packabo-44444444", "type": "pack_pub", "pack_id": "pack-44444444" }
+}

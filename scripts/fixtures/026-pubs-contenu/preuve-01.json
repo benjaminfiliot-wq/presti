@@ -1,0 +1,11 @@
+{
+  "_source": "fiche 026-108, point 6 : référence = HEAD relevé au début de la fiche (4041ec9, 24/09 au soir).",
+  "reference": "4041ec9b41432576037dbc0b45e0647bd60a0347",
+  "absents_de_la_reference": ["lib/packPub.ts", "supabase/migrations/*_packs_pubs.sql"],
+  "juges": [
+    { "commande": "node scripts/pack-pub-base-qa.mjs", "echec_attendu": "PB-1", "fiche_jugee": "026-114" },
+    { "commande": "node scripts/pack-pub-paiement-qa.mjs --partie=noyau", "echec_attendu": "PP-1", "fiche_jugee": "026-112" },
+    { "commande": "node scripts/pack-pub-paiement-qa.mjs --partie=route", "echec_attendu": "PP-8", "fiche_jugee": "026-118" },
+    { "commande": "node scripts/cgu-pack-pub-qa.mjs", "echec_attendu": "CG-1", "fiche_jugee": "026-131" }
+  ]
+}

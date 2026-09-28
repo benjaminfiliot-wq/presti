@@ -4,7 +4,8 @@
 //   WM-1  lib/stripeAiguillage.ts exporte aiguiller(session) → 'commande_site' | 'abonnement' | 'orphelin'. Importé par
 //         scripts/ts-loader.mjs (processus à part, cwd = racine) et appelé sur 17 sessions aux identifiants tirés au hasard à
 //         chaque passage : paiement avec metadata.type = commande_site → commande_site ; uid ou client_reference_id avec plan →
-//         abonnement ; aucune métadonnée (vide, null, absente) → orphelin ; metadata.type = pack_pub sans branche → orphelin ;
+//         abonnement ; aucune métadonnée (vide, null, absente) → orphelin ; metadata.type = 'inconnu' → orphelin (amendé le
+//         28/09, fiche 026-108 point 5 : la branche pack_pub de la fiche 026-112 rendrait sinon ce cas 'pack_pub' à tort) ;
 //         plus les cas limites des conditions de route.ts:35-44 à 1620723 (voir les choix). Chaque réponse : la chaîne exacte,
 //         rendue tout de suite (pas une promesse), la même au second appel, sur une session gelée (Object.freeze en profondeur :
 //         l'aiguillage ne la modifie pas). Pure : aucun fetch pendant l'import et les appels (fetch remplacé par un piège), et
@@ -427,7 +428,7 @@ export function casAiguillage() {
     { nom: 'aucune métadonnée (objet vide)', attendu: 'orphelin', session: base({ mode: 'payment', metadata: {} }) },
     { nom: 'metadata null', attendu: 'orphelin', session: base({ mode: 'payment', metadata: null }) },
     { nom: 'metadata absente', attendu: 'orphelin', session: (() => { const s = base({ mode: 'payment' }); delete s.metadata; return s })() },
-    { nom: 'metadata.type = pack_pub (aucune branche)', attendu: 'orphelin', session: base({ mode: 'payment', metadata: { type: 'pack_pub' } }) },
+    { nom: "metadata.type = 'inconnu' (aucune branche connue)", attendu: 'orphelin', session: base({ mode: 'payment', metadata: { type: 'inconnu' } }) },
     { nom: 'metadata.type = pack_pub avec uid, sans plan', attendu: 'orphelin', session: base({ mode: 'payment', metadata: { type: 'pack_pub', uid } }) },
     { nom: 'commande_site en mode subscription (route.ts:40 exige payment)', attendu: 'orphelin', session: base({ mode: 'subscription', metadata: { type: 'commande_site', commande_id: commande } }) },
     { nom: 'uid sans plan', attendu: 'orphelin', session: base({ mode: 'subscription', metadata: { uid } }) },
