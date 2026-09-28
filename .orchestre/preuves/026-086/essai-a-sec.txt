@@ -1,0 +1,42 @@
+# 026-086 — essai à sec de 0101 sur la vraie base (projet gorcdvmueakcncsmrouo, PostgreSQL 17), le 2026-09-28
+# après correction du blocage ACL (relance-2026-09-28.md) : les deux `create extension if not exists` nues sont
+# remplacées par un bloc gardé (`do $$ begin if not exists (select 1 from pg_extension where extname = …) then
+# create extension …; end if; end $$;`), qui n'exécute jamais `create extension` quand l'extension est déjà là —
+# donc ne relance jamais le script de réinstallation interne de pg_cron qui échouait en 2BP01.
+#
+# Bloc : node scripts/horloge-sql-qa.mjs --generer-essai (15 711 octets), empreinte
+# 82296b586a6fb2be677a40b960e19aababcefce64a14342187763cd97582fe09, exécuté tel quel, en un seul énoncé,
+# par le connecteur Supabase execute_sql.
+#
+# Avant (lecture seule) : pg_extension → pg_cron 1.6.4, pg_net 0.20.4, toutes deux déjà installées ; le secret
+# cron_secret est présent dans vault.decrypted_secrets (posé par Benj).
+#
+# L'essai A ATTEINT son scénario (HS-8) cette fois : plus d'erreur 2BP01, plus aucune erreur avant le scénario.
+# Message d'erreur rendu par l'outil (notre propre marqueur ESSAI_A_SEC, pas une vraie erreur Postgres), recopié
+# tel quel :
+
+{"error":{"name":"HttpException","message":"Failed to run sql query: ERROR:  P0001: ESSAI_A_SEC 82296b586a6fb2be677a40b960e19aababcefce64a14342187763cd97582fe09 {\"diag_etat\": \"{\\\"trous\\\": [], \\\"planning\\\": \\\"* * * * *\\\", \\\"reponses\\\": {}, \\\"job_actif\\\": true, \\\"executions\\\": {\\\"echouees\\\": 0, \\\"reussies\\\": 0}, \\\"secret_present\\\": true, \\\"derniere_execut\", \"diag_minute\": \"1\", \"diag_secret\": \"cron_secret présent\", \"diag_timeout\": 30000, \"diag_une_fois\": \"1 puis 1\", \"diag_anon_etat\": \"anon 42501 permission denied for function ops_horloge_etat\", \"etat_sept_cles\": true, \"anon_refuse_etat\": true, \"diag_anon_minute\": \"anon 42501 permission denied for function ops_horloge_minute\", \"tache_tic_active\": true, \"anon_refuse_minute\": true, \"requete_url_exacte\": true, \"requete_methode_get\": true, \"tic_commande_minute\": true, \"requete_timeout_30000\": true, \"sans_secret_rend_null\": true, \"tache_menage_planifiee\": true, \"diag_authenticated_etat\": \"authenticated 42501 permission denied for function ops_horloge_etat\", \"tache_tic_chaque_minute\": true, \"diag_service_role_minute\": \"service_role 42501 permission denied for function ops_horloge_minute\", \"sans_secret_un_evenement\": true, \"secret_present_prealable\": true, \"authenticated_refuse_etat\": true, \"diag_authenticated_minute\": \"authenticated 42501 permission denied for function ops_horloge_minute\", \"diag_sans_secret_requetes\": \"0 puis 0\", \"sans_secret_aucune_requete\": true, \"service_role_refuse_minute\": true, \"authenticated_refuse_minute\": true, \"diag_sans_secret_evenements\": \"0 puis 1\", \"etat_secret_present_booleen\": true, \"minute_met_en_file_une_requete\": true, \"requete_authorization_presente\": true, \"sans_secret_une_fois_par_heure\": true, \"simulation_sans_secret_nom_trouve\": true}\nCONTEXT:  PL/pgSQL function inline_code_block line 255 at RAISE\n"}}
+
+# Les 21 clés du cahier HS-8 valent toutes true (tache_tic_chaque_minute, tache_tic_active, tic_commande_minute,
+# tache_menage_planifiee, etat_sept_cles, etat_secret_present_booleen, secret_present_prealable,
+# minute_met_en_file_une_requete, requete_url_exacte, requete_timeout_30000, requete_authorization_presente,
+# requete_methode_get, simulation_sans_secret_nom_trouve, sans_secret_rend_null, sans_secret_aucune_requete,
+# sans_secret_un_evenement, sans_secret_une_fois_par_heure, anon_refuse_minute, anon_refuse_etat,
+# authenticated_refuse_minute, authenticated_refuse_etat, service_role_refuse_minute). secret_present_prealable
+# = true : le secret cron_secret est bien posé, donc le groupe C (requête pg_net réelle en file, jamais
+# envoyée : l'essai part avec l'exception finale) a réellement pu s'exécuter, pas seulement se rabattre sur les
+# valeurs par défaut de l'absence de secret.
+#
+# Après (execute_sql, lecture seule) :
+#   select (select count(*) from cron.job where jobname in ('presti-agents-tic','presti-cron-menage')) as jobs,
+#          to_regprocedure('public.ops_horloge_minute()') as f1, to_regprocedure('public.ops_horloge_etat(integer)') as f2,
+#          (select count(*) from pg_extension where extname in ('pg_cron','pg_net')) as ext,
+#          not exists (select 1 from cron.job where jobname = 'presti-agents-tic') as rien_ne_reste;
+#   → {"jobs":0,"f1":null,"f2":null,"ext":2,"rien_ne_reste":true}
+# Zéro trace : aucune tâche cron.job, aucune fonction créée, pg_cron et pg_net toujours installées et
+# inchangées (le bloc gardé ne les a pas touchées puisqu'elles étaient déjà là). L'échec final (notre RAISE
+# EXCEPTION) a annulé tout le bloc `do $essai_026$ … end $essai_026$;` d'un coup, comme prévu.
+APRES rien_ne_reste=true
+
+# Verdict de cet essai : le blocage ACL est levé, HS-8 est atteignable. Reste à contre-vérifier (quatre attaques
+# en essai à sec) avant l'application par apply_migration.
