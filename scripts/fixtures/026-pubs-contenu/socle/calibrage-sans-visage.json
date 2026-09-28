@@ -1,0 +1,277 @@
+{
+ "_source": "fiche 026-124, point 4 : les 68 photos public/sites-demo/*/images/*-720.webp au 28/09, sha256 pour detecter une derive depuis la reference.",
+ "photos": [
+  {
+   "fichier": "public/sites-demo/carreleur/images/ceramique-720.webp",
+   "sha256": "9e103a999bc3ab1fd4bb4bf54f09e783d4a6b1474b320accf2987b30d3fefcbc"
+  },
+  {
+   "fichier": "public/sites-demo/carreleur/images/dallage-720.webp",
+   "sha256": "a89e05497ff5815c178713a885489aba46270f60192b1db80d1f5158058feed3"
+  },
+  {
+   "fichier": "public/sites-demo/carreleur/images/douche-720.webp",
+   "sha256": "4ca1b02e6a08252d805479d4032bae840196b3aa10e786adf0e49e58575396ff"
+  },
+  {
+   "fichier": "public/sites-demo/carreleur/images/faience-720.webp",
+   "sha256": "4ec41e1fc90cbefaec7b13cf157bea13fe7779593f6a7e3ec3009783381e9eac"
+  },
+  {
+   "fichier": "public/sites-demo/carreleur/images/hero-720.webp",
+   "sha256": "501bcc60bfb7a51c7a8a9f6695b1574b96c3bbd4c261eb4a0b7a1d2b1d896473"
+  },
+  {
+   "fichier": "public/sites-demo/chauffagiste/images/cuivre-720.webp",
+   "sha256": "902c01c5cca3ad7ab514225be0099896d02ce74ac5b0d25a5cd83b22c765094d"
+  },
+  {
+   "fichier": "public/sites-demo/chauffagiste/images/hero-720.webp",
+   "sha256": "26a46a873cd1cb6536fadd7612d3ace0284ddb6ae181bcd97a525febaa9b7307"
+  },
+  {
+   "fichier": "public/sites-demo/chauffagiste/images/pac-720.webp",
+   "sha256": "bb9e8cd845caf499bf6f826183f7ddee88d911dea7856b14bac94defac7ef0e6"
+  },
+  {
+   "fichier": "public/sites-demo/chauffagiste/images/per-720.webp",
+   "sha256": "fbf80ad9b9e6c1043eb0aa99d1d9f8fe414fcac8c14c0202ab4fd03bbd83c65a"
+  },
+  {
+   "fichier": "public/sites-demo/chauffagiste/images/plancher-720.webp",
+   "sha256": "1e4b5e5590f9112843595fccaa2b73efbee6b9b041b6e4c34ad0e21cb8a82896"
+  },
+  {
+   "fichier": "public/sites-demo/chauffagiste/images/radiateur-720.webp",
+   "sha256": "772798b3ed86e564b897d752413643dcf9de11cf9dc8b8a18199662073034222"
+  },
+  {
+   "fichier": "public/sites-demo/chauffagiste/images/thermostat-720.webp",
+   "sha256": "7f75b18068c2e05961992d9aff634b178bcc500886988e3ba2fe252de423ff48"
+  },
+  {
+   "fichier": "public/sites-demo/couvreur/images/ancienne-720.webp",
+   "sha256": "fff89f9b5d37160d67fa044a70c4b5375524e63f48a67bbd80b854c69a98aa8c"
+  },
+  {
+   "fichier": "public/sites-demo/couvreur/images/ardoise-720.webp",
+   "sha256": "48371d276f0734e2cb959ebac7b3c1fabdebe99641fb5d83f51f0a80fb635d33"
+  },
+  {
+   "fichier": "public/sites-demo/couvreur/images/charpente-720.webp",
+   "sha256": "2f170ec206e08e9f2ad22b2a6738c1834f55f97b5193e54ada296b49f9ba6bd0"
+  },
+  {
+   "fichier": "public/sites-demo/couvreur/images/faitage-720.webp",
+   "sha256": "26839755fd38d40be07d8e933bbfc6607fbd133329a7ce792830a52238dbd0b4"
+  },
+  {
+   "fichier": "public/sites-demo/couvreur/images/hero-720.webp",
+   "sha256": "2f170ec206e08e9f2ad22b2a6738c1834f55f97b5193e54ada296b49f9ba6bd0"
+  },
+  {
+   "fichier": "public/sites-demo/couvreur/images/nettoyage-720.webp",
+   "sha256": "d94001fa9cc20d3ee57b2d0b198fbe5506b0fdc8805176919ba882b1fdae5665"
+  },
+  {
+   "fichier": "public/sites-demo/couvreur/images/tuiles-720.webp",
+   "sha256": "5b6d23a172c8874684e18c30c62973cf54dd0376294d5e05f5d0508fca7b7fa7"
+  },
+  {
+   "fichier": "public/sites-demo/electricien/images/armoire-720.webp",
+   "sha256": "b648b85738e55e408e31820f3d21024af7ec4d3878c4be34dc6fe636c4a07475"
+  },
+  {
+   "fichier": "public/sites-demo/electricien/images/cable-720.webp",
+   "sha256": "40769f85ef0084378f43d53bb262d98e93043e41325c390e5166e9ec5e5d3271"
+  },
+  {
+   "fichier": "public/sites-demo/electricien/images/hero-720.webp",
+   "sha256": "19ed7cfb9af052063e90d48c457bf2a09cf1c9772a4e0a78d2da8a02cd329072"
+  },
+  {
+   "fichier": "public/sites-demo/electricien/images/interrupteur-720.webp",
+   "sha256": "1c6d04e78353854b528b156ed3d24815dc1a4920c84b9eaec40bd19f51942b90"
+  },
+  {
+   "fichier": "public/sites-demo/electricien/images/luminaires-720.webp",
+   "sha256": "3982cd60b97821f4d13bba7608a63c7da1aa73dbdcd4e76029b48bb515328ca2"
+  },
+  {
+   "fichier": "public/sites-demo/electricien/images/reseau-720.webp",
+   "sha256": "da21788618e6a1e3118541ad4c1f37c2b069fd6b5111464c4ea8a004f521a54b"
+  },
+  {
+   "fichier": "public/sites-demo/electricien/images/variateur-720.webp",
+   "sha256": "bea740518deb360fe9acb11afbf47d49b75e27632e6125157c5233d3e81086eb"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/atelier-poncage-720.webp",
+   "sha256": "90d4b3eb20eb4cd04003753a981cd45d716700163768f330f965ba75cf076e40"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/atelier-poncage-portrait-720.webp",
+   "sha256": "f69f4d74a6f594416e9b298f97d8327e6d7339826efd9f9fb66699ab0966ffdb"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/boiserie-720.webp",
+   "sha256": "4e18686a1afa065add02e3d9e26f257be93acca8f0b660e0cc58251d4c7313a6"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/heros-escalier-720.webp",
+   "sha256": "73ee315762d1412319cbc46ac689eb807e4b16c7d67ff095740047fcd7c52301"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/heros-escalier-portrait-720.webp",
+   "sha256": "9e2cf0c70a78deba5b6b3b5112d1171d6b1cd9a7a13e0cb67073ddf329c92bed"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/mains-noyer-720.webp",
+   "sha256": "56602738b42d640e3bc49fae11d617cef315f4737ec6901359a6c1001e76206e"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/penderie-720.webp",
+   "sha256": "776f4fd1b440017014fd73d05a6549ee429bc7886e29c1f03f35aba8264b9ac9"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/reserve-bibliotheque-720.webp",
+   "sha256": "509a4023c171a09590f6a47996c1ad0bbf5797104c46f463247d778ffdf20826"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/reserve-cuisine-poutres-720.webp",
+   "sha256": "fb01a3e93ea1ce4caee0be6d26655071153ee5bd2b557ff3a9e3bac7d0cca918"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/reserve-cuisine-tasseaux-720.webp",
+   "sha256": "ea89738961537c1f6bfa2106d6fe21223a1466558af13f10dd4567d824edf6aa"
+  },
+  {
+   "fichier": "public/sites-demo/lestraque/images/tournage-copeaux-720.webp",
+   "sha256": "cbf8ebf60deff3ac1c8e60b9def6e95270b9c747cc87130ca90f9bdaf5f9ed48"
+  },
+  {
+   "fichier": "public/sites-demo/macon/images/coulage-720.webp",
+   "sha256": "8099f1ae7942f3d25eacbeabf04fb9582429ea958daee1e0f797801c8e738fb2"
+  },
+  {
+   "fichier": "public/sites-demo/macon/images/fondations-720.webp",
+   "sha256": "84d33b266d5a70d2755cf48b5aaf56f09e76657e5333e27d7d2d2c7083e8e888"
+  },
+  {
+   "fichier": "public/sites-demo/macon/images/hero-720.webp",
+   "sha256": "53e1560fb839949455b165c17da6f20484735210476c2db0801ac59dc33e2ab6"
+  },
+  {
+   "fichier": "public/sites-demo/macon/images/parement-720.webp",
+   "sha256": "934d914dc400f6a665275608f0ae12d4e94269abe6cc88d98a5ef3378bf49bf3"
+  },
+  {
+   "fichier": "public/sites-demo/macon/images/soutenement-720.webp",
+   "sha256": "cfefa0db0e28b72d71d260caac3ece99c7644ea59bae25fb018efe25068eafc0"
+  },
+  {
+   "fichier": "public/sites-demo/menuisier/images/bibliotheque-720.webp",
+   "sha256": "25dd7229c6ff71aec920bea26749f50f6af21ba2d35bd667ab1d28d192ad5268"
+  },
+  {
+   "fichier": "public/sites-demo/menuisier/images/escalier-colimacon-720.webp",
+   "sha256": "d20a74d1c6740236f1820cfb63090ef365a9de300fe509ad0ea3d224b4e022aa"
+  },
+  {
+   "fichier": "public/sites-demo/menuisier/images/escalier-tournant-720.webp",
+   "sha256": "890742004994bc358c23b53a23b5e935477f309ff46ecaf559fd86acf62c5ad6"
+  },
+  {
+   "fichier": "public/sites-demo/menuisier/images/hero-720.webp",
+   "sha256": "4b0a64fca374adc5375dfdddde0a3b1d5877d27db06dc1c1b81222741e5b46dd"
+  },
+  {
+   "fichier": "public/sites-demo/menuisier/images/lit-720.webp",
+   "sha256": "3067623487d6f14bbf6161295be61d7d78318e73ca724bc883e43645a027926c"
+  },
+  {
+   "fichier": "public/sites-demo/peintre/images/enduit-720.webp",
+   "sha256": "9d7fcc577571de1143e7a549783f64a995d7b19af0977692a70b2b419674730d"
+  },
+  {
+   "fichier": "public/sites-demo/peintre/images/hero-720.webp",
+   "sha256": "9c8bbe37a408f30e3233b6f4eb3c84709cbf7d98aae6bbd7f1e6b17b5726b589"
+  },
+  {
+   "fichier": "public/sites-demo/peintre/images/preparation-720.webp",
+   "sha256": "9c2c4cdf720bcef540a1bd4f61beac003d2bd650178afe731508ad4ea5d1f817"
+  },
+  {
+   "fichier": "public/sites-demo/peintre/images/rechampi-720.webp",
+   "sha256": "b58d1b2a816f690303387b902613d0860af519132f429598b6440db4f6173202"
+  },
+  {
+   "fichier": "public/sites-demo/peintre/images/rouleau-720.webp",
+   "sha256": "563ad5e4aecca77d62df5df151cf81c3fe0bb8c1de05b25a37c237b0050aad5b"
+  },
+  {
+   "fichier": "public/sites-demo/peintre/images/salon-720.webp",
+   "sha256": "af0eb928ae271838531bfb7652a93ca0d38f9d603fffb70f33ccb423f1d2bd7c"
+  },
+  {
+   "fichier": "public/sites-demo/peintre/images/salon-spacieux-720.webp",
+   "sha256": "bd35d234b2fc984bf010e5d65eca9bbbaa74eb9a1d1bb7c4e672d87b96951c34"
+  },
+  {
+   "fichier": "public/sites-demo/plombier/images/canalisations-720.webp",
+   "sha256": "ca5f85aa736acf6553bcb799923df6c197af925127c91499cc8265f289d06681"
+  },
+  {
+   "fichier": "public/sites-demo/plombier/images/colonne-720.webp",
+   "sha256": "2676b28dd351e60488269c3e6701359ad0b5245f494fac8b0735be36bf3bb29b"
+  },
+  {
+   "fichier": "public/sites-demo/plombier/images/douches-720.webp",
+   "sha256": "ba7939244a331def54fc2eaec2575c4a779657c88fdedfe83c896be9caa6d3ec"
+  },
+  {
+   "fichier": "public/sites-demo/plombier/images/hero-720.webp",
+   "sha256": "4b81f23b50cea61f78fe7e2a622d4cbdb2659248c90b05a87da5b14fc2353ecf"
+  },
+  {
+   "fichier": "public/sites-demo/plombier/images/lavabo-720.webp",
+   "sha256": "9fa6fb8107c3529e90cb6f8249a82e3caa0cb44072c356284681790a45db76dd"
+  },
+  {
+   "fichier": "public/sites-demo/plombier/images/reseau-720.webp",
+   "sha256": "e7173d9d3fa2e10646674657493361ff0c8c5fd2aa2f12d0cd2bd9ff1d62b29c"
+  },
+  {
+   "fichier": "public/sites-demo/plombier/images/robinetterie-720.webp",
+   "sha256": "d7ddc4de158b84f48d73893f380a9396308e759dca00a52f86a2f79a465722db"
+  },
+  {
+   "fichier": "public/sites-demo/serrurier/images/coffre-720.webp",
+   "sha256": "a589c37a22a43c145219658091c43c69609128bffa5f0cf39f7267115286fb03"
+  },
+  {
+   "fichier": "public/sites-demo/serrurier/images/ferronnerie-720.webp",
+   "sha256": "5a376ad84ed682b1a8a47098eeca99b56d6182cca258ba7b6afaaf31fe47352b"
+  },
+  {
+   "fichier": "public/sites-demo/serrurier/images/gache-720.webp",
+   "sha256": "fef72749d68677f3bffe9a24a80c38f21600c0b57818fbc1f8da193149146cff"
+  },
+  {
+   "fichier": "public/sites-demo/serrurier/images/hero-720.webp",
+   "sha256": "7eb998acd5bc53ce7c43ad1f502e591d5713c21c22df49d7e7c69bdc36c60604"
+  },
+  {
+   "fichier": "public/sites-demo/serrurier/images/heurtoirs-720.webp",
+   "sha256": "04744b78315c643c3c449447b6f6ddca9ad3cf9c6f27550f4a5f55c28934ba4f"
+  },
+  {
+   "fichier": "public/sites-demo/serrurier/images/ornement-720.webp",
+   "sha256": "0887e56e43bd145ec214535eb8054ff3e22f153f02c07892c7cabe52abc0e34d"
+  },
+  {
+   "fichier": "public/sites-demo/serrurier/images/verrou-720.webp",
+   "sha256": "fcd79c97dd56809266a1c4c130f6bc67b9633efcfc084a380bbe150a0c781e28"
+  }
+ ]
+}

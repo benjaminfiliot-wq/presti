@@ -39,6 +39,19 @@ const BARRE = {
   DUREE: [12, 60],      // secondes
 }
 
+// Profil « pub-locale » (fiche 026-124) — films verticaux de 15 s pour le pack pubs, photos réelles, voix de synthèse
+// ou silence. Seuils étalonnés le 28/09 par Claude Code sur le socle scripts/fixtures/026-pubs-contenu/socle/
+// (mesures et valeurs retenues : .orchestre/preuves/026-124/etalonnage-pub-locale.json) : le film conforme du socle
+// passe, un diaporama figé de 2 s par photo (sans zoom) échoue sur « L'image vit (pub locale) » et « Aucun plan figé
+// (pub locale) ».
+const PUB_LOCALE = {
+  DUREE: [14, 16],
+  POIDS_MAX: 8_000_000,     // octets
+  MOUVEMENT_MIN: 0.006,     // un zoom lent bouge moins par image qu'un plan « reseaux » filmé caméra à l'épaule
+  COUPES_PAR_10S: 3,        // proposé par la fiche ; ~1 coupe toutes les 3,3 s
+  LUFS_MIN: -17, LUFS_MAX: -11, // voix normalisée vers −14 (mémoire loudnorm-apres-un-carton-muet)
+}
+
 /** La piste audio, si elle existe : loudness intégrée (LUFS) mesurée par ebur128. */
 function sonderAudioFilm(fichier) {
   const p = spawnSync('ffprobe', ['-v', 'error', '-select_streams', 'a', '-show_entries', 'stream=codec_name', '-of', 'csv=p=0', fichier], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
@@ -174,36 +187,47 @@ function juge(a) {
   const t = []
   const ok = (nom, passe, mesure, attendu) => t.push({ nom, passe, mesure, attendu })
   const landing = PROFIL === 'landing'
+  const pubLocale = PROFIL === 'pub-locale'
+  const suf = pubLocale ? ' (pub locale)' : ''
 
-  if (landing) ok('Format 16:9 (landing)', LANDING.LARGEURS.includes(a.meta.largeur) && Math.abs(a.meta.largeur / a.meta.hauteur - 16 / 9) < 0.01,
+  if (pubLocale) ok(`Format 1080×1920${suf}`, a.meta.largeur === 1080 && a.meta.hauteur === 1920,
+    `${a.meta.largeur}×${a.meta.hauteur}`, '1080×1920')
+  else if (landing) ok('Format 16:9 (landing)', LANDING.LARGEURS.includes(a.meta.largeur) && Math.abs(a.meta.largeur / a.meta.hauteur - 16 / 9) < 0.01,
     `${a.meta.largeur}×${a.meta.hauteur}`, '1280×720 ou 1920×1080')
   else ok('Format reconnu', a.nomFormat !== null,
     `${a.meta.largeur}×${a.meta.hauteur}${a.nomFormat ? ` (${a.nomFormat})` : ''}`,
     '1080×1920, 1080×1350 ou 1920×1080')
-  ok('Durée', a.meta.duree >= BARRE.DUREE[0] && a.meta.duree <= BARRE.DUREE[1],
-    `${a.meta.duree.toFixed(1)} s`, `${BARRE.DUREE[0]}–${BARRE.DUREE[1]} s`)
-  ok('Images par seconde', a.meta.fps >= BARRE.FPS_MIN,
+  ok(`Durée${suf}`, a.meta.duree >= (pubLocale ? PUB_LOCALE.DUREE[0] : BARRE.DUREE[0]) && a.meta.duree <= (pubLocale ? PUB_LOCALE.DUREE[1] : BARRE.DUREE[1]),
+    `${a.meta.duree.toFixed(1)} s`, `${pubLocale ? PUB_LOCALE.DUREE[0] : BARRE.DUREE[0]}–${pubLocale ? PUB_LOCALE.DUREE[1] : BARRE.DUREE[1]} s`)
+  ok(`Images par seconde${suf}`, a.meta.fps >= BARRE.FPS_MIN,
     a.meta.fps.toFixed(1), `≥ ${BARRE.FPS_MIN}`)
-  if (landing) ok('Poids (landing)', a.meta.poids <= LANDING.POIDS_MAX,
+  if (pubLocale) ok(`Poids${suf}`, a.meta.poids <= PUB_LOCALE.POIDS_MAX,
+    `${(a.meta.poids / 1e6).toFixed(2)} Mo`, `≤ ${(PUB_LOCALE.POIDS_MAX / 1e6).toFixed(1)} Mo`)
+  else if (landing) ok('Poids (landing)', a.meta.poids <= LANDING.POIDS_MAX,
     `${(a.meta.poids / 1e6).toFixed(2)} Mo`, `≤ ${(LANDING.POIDS_MAX / 1e6).toFixed(1)} Mo`)
   else ok('Débit', a.meta.debit >= BARRE.DEBIT_MIN,
     `${a.meta.debit} kbps`, `≥ ${BARRE.DEBIT_MIN} kbps`)
+  if (pubLocale) ok(`Débit${suf}`, a.meta.debit >= BARRE.DEBIT_MIN,
+    `${a.meta.debit} kbps`, `≥ ${BARRE.DEBIT_MIN} kbps`)
 
-  ok('Aucun plan figé', a.figeSecondes <= BARRE.PLAN_FIGE_MAX,
+  ok(`Aucun plan figé${suf}`, a.figeSecondes <= BARRE.PLAN_FIGE_MAX,
     `${a.figeSecondes.toFixed(2)} s à ${a.figeHorodatage.toFixed(1)} s`,
     `≤ ${BARRE.PLAN_FIGE_MAX} s`)
-  ok('L’image vit', a.mouvement >= BARRE.MOUVEMENT_MIN,
-    a.mouvement.toFixed(4), `≥ ${BARRE.MOUVEMENT_MIN}`)
-  ok('Rythme des coupes', a.coupesPar10s >= BARRE.COUPES_PAR_10S,
+  ok(`L’image vit${suf}`, a.mouvement >= (pubLocale ? PUB_LOCALE.MOUVEMENT_MIN : BARRE.MOUVEMENT_MIN),
+    a.mouvement.toFixed(4), `≥ ${pubLocale ? PUB_LOCALE.MOUVEMENT_MIN : BARRE.MOUVEMENT_MIN}`)
+  ok(`Rythme des coupes${suf}`, a.coupesPar10s >= (pubLocale ? PUB_LOCALE.COUPES_PAR_10S : BARRE.COUPES_PAR_10S),
     `${a.coupesPar10s.toFixed(1)} / 10 s (${a.coupes} au total)`,
-    `≥ ${BARRE.COUPES_PAR_10S} / 10 s`)
+    `≥ ${pubLocale ? PUB_LOCALE.COUPES_PAR_10S : BARRE.COUPES_PAR_10S} / 10 s`)
 
-  ok('Le cadre est rempli', a.partOccup >= BARRE.OCCUP_PART,
+  ok(`Le cadre est rempli${suf}`, a.partOccup >= BARRE.OCCUP_PART,
     `${(a.partOccup * 100).toFixed(0)} % des images (médiane ${(a.occupMediane * 100).toFixed(0)} % de largeur)`,
     `≥ ${BARRE.OCCUP_PART * 100} % des images à ≥ ${BARRE.OCCUP_MIN * 100} % de largeur`)
-  ok('Dernière image non blanche', a.finLumiere <= BARRE.FIN_LUMIERE_MAX,
+  ok(`Dernière image non blanche${suf}`, a.finLumiere <= BARRE.FIN_LUMIERE_MAX,
     a.finLumiere.toFixed(0), `≤ ${BARRE.FIN_LUMIERE_MAX}`)
-  if (landing) ok('Muette (landing)', !a.audio, a.audio ? 'piste audio présente' : 'aucune piste', 'aucune piste : la lecture automatique l’exige')
+  if (pubLocale) ok(`Son${suf}`, !a.audio || (a.audio.lufs >= PUB_LOCALE.LUFS_MIN && a.audio.lufs <= PUB_LOCALE.LUFS_MAX),
+    a.audio ? (Number.isFinite(a.audio.lufs) ? `${a.audio.lufs.toFixed(1)} LUFS` : 'niveau illisible') : 'aucune piste',
+    `aucune piste, ou ${PUB_LOCALE.LUFS_MIN} à ${PUB_LOCALE.LUFS_MAX} LUFS`)
+  else if (landing) ok('Muette (landing)', !a.audio, a.audio ? 'piste audio présente' : 'aucune piste', 'aucune piste : la lecture automatique l’exige')
   else ok('Une piste audio, au niveau d’un fond', !!a.audio && a.audio.lufs >= BARRE.LUFS_MIN && a.audio.lufs <= BARRE.LUFS_MAX,
     a.audio ? (Number.isFinite(a.audio.lufs) ? `${a.audio.lufs.toFixed(1)} LUFS` : 'niveau illisible') : 'AUCUNE PISTE',
     `piste présente, ${BARRE.LUFS_MIN} à ${BARRE.LUFS_MAX} LUFS`)

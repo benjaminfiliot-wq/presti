@@ -1,0 +1,16 @@
+{
+  "_source": "fiche 026-124, point 6 : référence de scripts/fixtures/026-pubs-contenu/preuve-01.json (HEAD relevé au début de la série, 4041ec9, 24/09 au soir — antérieur à la fiche 026-124 elle-même, donc à video-qa.mjs --profil=pub-locale, scripts/visages-qa.mjs, scripts/visages.py, scripts/modeles/ et scripts/fixtures/026-pubs-contenu/socle/).",
+  "reference": "4041ec9b41432576037dbc0b45e0647bd60a0347",
+  "absents_de_la_reference": [
+    "scripts/visages-qa.mjs",
+    "scripts/visages.py",
+    "scripts/socle-pubs-qa.mjs",
+    "scripts/modeles",
+    "scripts/fixtures/026-pubs-contenu/socle",
+    "scripts/fixtures/026-pubs-contenu/preuve-09.json"
+  ],
+  "juges": [
+    { "commande": "node scripts/socle-pubs-qa.mjs", "echec_attendu": "SP-1", "fiche_jugee": "026-124" },
+    { "commande": "node scripts/socle-pubs-qa.mjs", "echec_attendu": "SP-4", "fiche_jugee": "026-124" }
+  ]
+}

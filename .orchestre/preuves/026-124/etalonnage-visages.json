@@ -1,0 +1,299 @@
+{
+  "_source": "scripts/socle-pubs-qa.mjs — SP-5 (68 photos du calibrage) et SP-6 (témoins positifs), fiche 026-124. Score et boîte (x, y, l, h en pixels) de chaque détection au seuil 0,9.",
+  "genere_le": "2026-09-28T17:38:01Z",
+  "seuil": 0.9,
+  "photos_calibrage": [
+    {
+      "fichier": "public/sites-demo/carreleur/images/ceramique-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/carreleur/images/dallage-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/carreleur/images/douche-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/carreleur/images/faience-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/carreleur/images/hero-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/chauffagiste/images/cuivre-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/chauffagiste/images/hero-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/chauffagiste/images/pac-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/chauffagiste/images/per-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/chauffagiste/images/plancher-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/chauffagiste/images/radiateur-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/chauffagiste/images/thermostat-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/couvreur/images/ancienne-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/couvreur/images/ardoise-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/couvreur/images/charpente-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/couvreur/images/faitage-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/couvreur/images/hero-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/couvreur/images/nettoyage-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/couvreur/images/tuiles-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/electricien/images/armoire-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/electricien/images/cable-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/electricien/images/hero-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/electricien/images/interrupteur-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/electricien/images/luminaires-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/electricien/images/reseau-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/electricien/images/variateur-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/atelier-poncage-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/atelier-poncage-portrait-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/boiserie-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/heros-escalier-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/heros-escalier-portrait-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/mains-noyer-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/penderie-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/reserve-bibliotheque-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/reserve-cuisine-poutres-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/reserve-cuisine-tasseaux-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/lestraque/images/tournage-copeaux-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/macon/images/coulage-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/macon/images/fondations-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/macon/images/hero-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/macon/images/parement-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/macon/images/soutenement-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/menuisier/images/bibliotheque-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/menuisier/images/escalier-colimacon-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/menuisier/images/escalier-tournant-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/menuisier/images/hero-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/menuisier/images/lit-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/peintre/images/enduit-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/peintre/images/hero-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/peintre/images/preparation-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/peintre/images/rechampi-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/peintre/images/rouleau-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/peintre/images/salon-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/peintre/images/salon-spacieux-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/plombier/images/canalisations-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/plombier/images/colonne-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/plombier/images/douches-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/plombier/images/hero-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/plombier/images/lavabo-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/plombier/images/reseau-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/plombier/images/robinetterie-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/serrurier/images/coffre-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/serrurier/images/ferronnerie-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/serrurier/images/gache-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/serrurier/images/hero-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/serrurier/images/heurtoirs-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/serrurier/images/ornement-720.webp",
+      "visages": []
+    },
+    {
+      "fichier": "public/sites-demo/serrurier/images/verrou-720.webp",
+      "visages": []
+    }
+  ],
+  "temoins_positifs": {
+    "portrait_seul": {
+      "fichier": "scripts/fixtures/026-pubs-contenu/socle/visage-domaine-public.jpg",
+      "score": 0.9387257695198059,
+      "visages": [
+        {
+          "x": 463.1882019042969,
+          "y": 352.8893737792969,
+          "l": 247.5637664794922,
+          "h": 310.78997802734375,
+          "score": 0.9387257695198059
+        }
+      ]
+    },
+    "portrait_incruste_30pct": {
+      "fichier": ".orchestre/travail/socle-pubs-qa/portrait-incruste-30pct.jpg",
+      "fond": "public/sites-demo/carreleur/images/dallage-720.webp",
+      "score": 0.9171871542930603
+    }
+  }
+}
