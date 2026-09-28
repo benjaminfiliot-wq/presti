@@ -567,3 +567,6 @@
 {"id":"026-081","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T19:28:30Z","duree_s":23,"agent":"claude-code","executant":"claude-code","lignes":1882,"dossier":"en-cours"}
 {"id":"026-081","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T19:29:00Z","duree_s":13,"agent":"claude-code","executant":"claude-code","lignes":1882,"dossier":"fait"}
 {"id":"026-081","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T19:32:31Z","duree_s":11,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-170","verdict":"FAIL","ligne":"✅ JA-1 référence ba1016c extraite par git archive sous .orchestre/travail/juges-026-pilotage/reference (5148 fichiers), ancêtre de HEAD, sans app/controle/stati","code":1,"date":"2026-09-28T20:00:25Z","duree_s":412,"agent":"claude-code","executant":"claude-code","lignes":3222,"dossier":"en-cours"}
+{"id":"026-128","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T20:22:11Z","duree_s":183,"agent":"claude-code","executant":"claude-code","lignes":1837,"dossier":"en-cours"}
+{"id":"026-128","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T20:25:50Z","duree_s":137,"agent":"claude-code","executant":"claude-code","lignes":1837,"dossier":"fait"}
