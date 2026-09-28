@@ -404,3 +404,4 @@
 {"id":"026-104","verdict":"FAIL","ligne":"✅ JA-1 référence 4041ec9 extraite par git archive sous .orchestre/travail/juges-026-pilotage/reference (2421 fichiers), ancêtre de HEAD, sans app/controle/stati","code":1,"date":"2026-09-28T06:06:26Z","duree_s":430,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-104","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T06:15:53Z","duree_s":458,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-034","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T07:33:40Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":6384,"dossier":"fait"}
+{"id":"026-059","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T07:37:59Z","duree_s":41,"agent":"usine-codex-60","executant":"codex","lignes":421,"dossier":"fait"}

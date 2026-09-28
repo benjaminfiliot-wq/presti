@@ -6,6 +6,7 @@ import { envoyerAlertes, enregistrerPassage, type Alerte } from '@/lib/alertes'
 import { purgerBrouillonsPublics } from '@/lib/siteAchatPublic'
 import { retraitsDus, retirer } from '@/lib/siteRetrait'
 import { purgerFichiersExpires } from '@/lib/siteDossier'
+import { veilleTresorerie } from '@/lib/direction/veilleTresorerie'
 
 type CleCourriel = 'payee' | 'generee' | 'en_ligne'
 type CommandeLivraison = Omit<Commande, 'etat'> & { etat: Commande['etat'] | 'retiree'; courriels?: Partial<Record<CleCourriel, string>>; retiree_le?: string | null }
@@ -160,6 +161,8 @@ export async function tourLivraison(deps: Dependances = {}): Promise<{ courriels
       catch (e) { bilan.erreurs++; console.error('[livraison] fichiers expirés', e) }
     }
   } catch (e) { bilan.erreurs++; console.error('[livraison] pause du retrait', e) }
+  try { await veilleTresorerie() }
+  catch (e) { bilan.erreurs++; console.error('[livraison] veille trésorerie', e) }
   await enregistrerPassage('livraison', bilan, bilan.erreurs === 0)
   return bilan
 }

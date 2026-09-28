@@ -6,6 +6,7 @@ import Fraicheur from './Fraicheur'
 import Reconfirmer from './Reconfirmer'
 import { relTime } from '@/lib/direction/fraicheur'
 import { enEuros } from '@/lib/controle/releve'
+import TuileArgent from './TuileArgent'
 
 // Poste de contrôle → Comptabilité (prompt v11 §3, J5).
 //
@@ -109,6 +110,7 @@ export default function Comptabilite({ role, signaler }: { role: 'direction' | '
 
   return (
     <>
+      <TuileArgent />
       {erreur ? <div className="tool-card"><p className="notif-erreur" role="alert">{erreur}</p><button type="button" className="btn btn--primary" onClick={() => void charger()}>Réessayer</button></div> : null}
 
       {/* ── Le seuil de TVA : ce qui change la vie de l'entreprise le jour où il tombe ── */}

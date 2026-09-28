@@ -1,0 +1,2 @@
+1. Corriger le juge TA-5 en amont : son analyseur arrête `tourLivraison` à l’accolade du type de retour (`Promise<{ … }>`), puis relancer la vérification. C’est mon choix recommandé ; le juge est hors périmètre ici.
+2. Autoriser une modification de la signature de `tourLivraison` pour remplacer le type de retour objet par un alias. Cela exige aussi d’adapter le contrat de diff de TA-5, qui refuse toute ligne existante modifiée.
