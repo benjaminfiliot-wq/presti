@@ -1,0 +1,8 @@
+{
+  "_comment": "État témoin de ops.technologies (0111) : une active, une en pause après 3 échecs d'affilée (fiche 026-062).",
+  "technologies": [
+    { "technologie": "contact_form_7", "etat": "active", "pause_jusqua": null, "pause_motif": null, "echecs_affilee": 0, "envois_300": 120, "reponses_300": 9 },
+    { "technologie": "wpforms", "etat": "pause", "pause_jusqua": "2026-10-21T00:00:00.000Z", "pause_motif": "3 échecs de soumission d'affilée", "echecs_affilee": 3, "envois_300": 40, "reponses_300": 1 },
+    { "technologie": "gravity_forms", "etat": "active", "pause_jusqua": null, "pause_motif": null, "echecs_affilee": 2, "envois_300": 305, "reponses_300": 0 }
+  ]
+}

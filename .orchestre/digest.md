@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T11:27:02Z
+# Digest — 2026-09-28T11:30:29Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 111 tâche(s) PASS, 192392 ligne(s) · faites par Claude Code : 58 tâche(s) PASS, 104369 ligne(s).
-**État** — file : 4 · en cours : 11 · faites : 176 · refusées : 8
+**État** — file : 4 · en cours : 11 · faites : 175 · refusées : 9
 
 ## ⚠ 4 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -36,8 +36,8 @@
 | 026-051 | feature | file | codex | — | Étendre le Web Push aux fondateurs : lib/pilotage/notifications.ts (charge neutre par motif, liste fermée, lien qui ne porte qu'un identifiant), envoyerPushFondateurs dans lib/push.ts (tous les appareils des fondateurs, par le même envoi que les artisans), et un appel dans envoyer() de lib/alertes.ts pour chaque alerte d'entreprise urgente ou de digest, après son verrou quotidien |
 | 026-072 | feature | file | codex | — | Créer lib/agents/acquisition/vigieMeta.ts : executerVigie n'interroge que graph.facebook.com/v26.0/ads_archive (France, pubs actives, par métier pour la cible artisan, par terme de TERMES_MARQUES pour la cible marque du Studio pubs) dans un budget d'appels injecté, retient les pages qui ont au moins 3 pubs actives dont une lancée il y a plus de 30 jours (et, pour une marque, un domaine dans ses légendes), écrit annonceurs et candidats, reçoit le jeton par ses dépendances sans jamais le garder, et rend l'état en_attente_jeton sans erreur quand il n'y a pas de jeton |
 | 026-109 | feature | file | codex | — | Donner à l'orchestre des baux qui expirent (2 × maxMinutes sans battement), les commandes battement, expirer et promouvoir, un disjoncteur par tâche (3 tentatives échouées ou 2 échecs identiques → DISJONCTÉE), la quarantaine des décisions écrites par un exécutant et un bloc « Attention » en tête du digest, dans la source puis par maj, jusqu'au vert du groupe baux de preuve-026 |
+| 026-110 | test | refuse | claude-code | FAIL | PASS pack-pub-dossier-qa --partie=api — référence : code 1, FAIL PD-1 — lib/packPubDossier.ts ne s'importe pas : Error [ERR_MODULE_NOT_FOUND]: Cannot find modul |
 | 026-058 | feature | fait | claude-code | PASS | 2026-09-28T11:26:57Z · 5s · 0 l. |
-| 026-110 | test | fait | claude-code | FAIL | PASS pack-pub-dossier-qa --partie=api — référence : code 1, FAIL PD-1 — lib/packPubDossier.ts ne s'importe pas : Error [ERR_MODULE_NOT_FOUND]: Cannot find modul |
 | 026-069 | test | fait | claude-code | PASS | 2026-09-28T11:20:32Z · 33s · 0 l. |
 | 026-039 | contenu | refuse | antigravity | FAIL | ❌ CP-6 npm run typecheck en code 2 : .next/types/routes.d.ts(132,1): error TS1434: Unexpected keyword or identifier. \| .next/types/routes.d.ts(132,11): error TS |
 | 026-049 | feature | fait | usine-codex-66 | PASS | 2026-09-28T11:17:07Z · 151s · 420 l. |

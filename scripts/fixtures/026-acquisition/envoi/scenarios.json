@@ -1,0 +1,97 @@
+{
+  "_comment": "Séquences de signaux pour les disjoncteurs (fiche 026-062, DJ-6/DJ-7) : chaque scénario porte le ou les signaux, l'état « avant », et l'action ATTENDUE (ce que --auto-controle vérifie : que le scénario porte bien l'action attendue, avant même de le rejouer contre le SQL ou disjoncteurs.ts).",
+  "avis_abus": {
+    "signaux": [{ "type": "avis_abus", "envoyeur": "oracle" }],
+    "action_attendue": "formulaire_coupe_48h",
+    "duree_heures": 48
+  },
+  "plaintes_7j": {
+    "signaux": [
+      { "type": "plainte", "le": "2026-10-14T09:00:00.000Z" },
+      { "type": "plainte", "le": "2026-10-16T09:00:00.000Z" }
+    ],
+    "fenetre_jours": 7,
+    "action_attendue": "formulaire_coupe_infini"
+  },
+  "stop_100": {
+    "modele_id": "modele-temoin-v1",
+    "envois_du_modele": 100,
+    "stops": 4,
+    "action_attendue": "modele_suspendu"
+  },
+  "echecs_soumission_affilee": {
+    "technologie": "wpforms",
+    "signaux": [
+      { "type": "echec_soumission", "technologie": "wpforms" },
+      { "type": "echec_soumission", "technologie": "wpforms" },
+      { "type": "echec_soumission", "technologie": "wpforms" }
+    ],
+    "action_attendue": "technologie_en_pause"
+  },
+  "echec_remis_a_zero": {
+    "technologie": "contact_form_7",
+    "signaux": [
+      { "type": "echec_soumission", "technologie": "contact_form_7" },
+      { "type": "reponse_positive", "technologie": "contact_form_7" },
+      { "type": "echec_soumission", "technologie": "contact_form_7" }
+    ],
+    "action_attendue": "technologie_toujours_active"
+  },
+  "sans_reponse_300": {
+    "technologie": "gravity_forms",
+    "envois_300": 300,
+    "reponses_300": 0,
+    "action_attendue": "alerte_changer_message"
+  },
+  "gmail_refus_auth": {
+    "signaux": [{ "type": "gmail_refus", "code": 535 }],
+    "action_attendue": "gmail_coupe_24h_et_formulaire_coupe_24h"
+  },
+  "gmail_refus_quota": {
+    "signaux": [{ "type": "gmail_refus", "code": "550_5.4.5" }],
+    "action_attendue": "gmail_coupe_24h_et_formulaire_coupe_24h"
+  },
+  "meta_erreur_politique": {
+    "signaux": [{ "type": "erreur_meta_politique" }],
+    "action_attendue": "meta_coupe_24h"
+  },
+  "meta_erreur_debit": {
+    "signaux": [{ "type": "erreur_meta_debit" }],
+    "action_attendue": "meta_coupe_24h"
+  },
+  "ads_archive": {
+    "sans_lecture": { "attendu_permis": false },
+    "permis": { "resume": "PERMIS le 2026-10-10 (Claude Code, lecture manuelle)", "attendu_permis": true },
+    "refuse_plus_recent": {
+      "evenements": [
+        { "resume": "PERMIS le 2026-10-05", "le": "2026-10-05T00:00:00.000Z" },
+        { "resume": "REFUSE le 2026-10-12", "le": "2026-10-12T00:00:00.000Z" }
+      ],
+      "attendu_permis": false
+    }
+  },
+  "palier_vert": {
+    "palier": "P0",
+    "jours_ouvres_au_vert": 5,
+    "plaintes_7j": 0,
+    "avis_abus": 0,
+    "stop_sur_100": 2,
+    "echecs_affilee_max": 0,
+    "au_vert": true
+  },
+  "palier_rouge": {
+    "palier": "P1",
+    "jours_ouvres_au_vert": 5,
+    "plaintes_7j": 1,
+    "avis_abus": 0,
+    "stop_sur_100": 2,
+    "echecs_affilee_max": 0,
+    "au_vert": false
+  },
+  "bilans": {
+    "une_vente": { "contacts_froids": 100, "ventes_froides": 1, "oui": 0, "verdict_attendu": "P3" },
+    "quatre_oui": { "contacts_froids": 100, "ventes_froides": 0, "oui": 4, "verdict_attendu": "P3" },
+    "deux_oui": { "contacts_froids": 100, "ventes_froides": 0, "oui": 2, "verdict_attendu": "nouveau_message" },
+    "zero_oui": { "contacts_froids": 100, "ventes_froides": 0, "oui": 0, "verdict_attendu": "arret_froid" }
+  }
+}

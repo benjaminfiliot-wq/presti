@@ -1,0 +1,10 @@
+{
+  "_comment": "Compteurs d'essai de chaque canal et fournisseur (fiche 026-062, JG-3) : 0 %, 74 %, 75 %, 100 %, plafond 0, technologie en pause, palier P1 formulaire à 10/10.",
+  "vide": { "palier": "P0", "envoi_froid": true, "technologies": [], "compteurs": { "formulaire_jour": 0, "email_sollicite_jour": 0, "reponse_privee_jour": 0, "messagerie_jour": 0, "instagram_api": 0, "meta_ads_archive": 0, "publora": 0 } },
+  "soixante_quatorze_pour_cent": { "palier": "P4", "envoi_froid": true, "technologies": [], "compteurs": { "formulaire_jour": 29, "email_sollicite_jour": 0, "reponse_privee_jour": 0, "messagerie_jour": 0, "instagram_api": 0, "meta_ads_archive": 0, "publora": 0 } },
+  "soixante_quinze_pour_cent": { "palier": "P4", "envoi_froid": true, "technologies": [], "compteurs": { "formulaire_jour": 30, "email_sollicite_jour": 0, "reponse_privee_jour": 0, "messagerie_jour": 0, "instagram_api": 0, "meta_ads_archive": 0, "publora": 0 } },
+  "cent_pour_cent": { "palier": "P4", "envoi_froid": true, "technologies": [], "compteurs": { "formulaire_jour": 40, "email_sollicite_jour": 50, "reponse_privee_jour": 50, "messagerie_jour": 100, "instagram_api": 200, "meta_ads_archive": 150, "publora": 15 } },
+  "palier_p1_dix_sur_dix": { "palier": "P1", "envoi_froid": true, "technologies": [], "compteurs": { "formulaire_jour": 10, "email_sollicite_jour": 0, "reponse_privee_jour": 0, "messagerie_jour": 0, "instagram_api": 0, "meta_ads_archive": 0, "publora": 0 } },
+  "p0_envoi_froid_ferme": { "palier": "P0", "envoi_froid": false, "technologies": [], "compteurs": { "formulaire_jour": 0, "email_sollicite_jour": 0, "reponse_privee_jour": 0, "messagerie_jour": 0, "instagram_api": 0, "meta_ads_archive": 0, "publora": 0 } },
+  "technologie_en_pause": { "palier": "P2", "envoi_froid": true, "technologies": [{ "technologie": "wpforms", "etat": "pause", "echecs_affilee": 3 }, { "technologie": "contact_form_7", "etat": "active", "echecs_affilee": 2 }], "compteurs": { "formulaire_jour": 5, "email_sollicite_jour": 0, "reponse_privee_jour": 0, "messagerie_jour": 0, "instagram_api": 0, "meta_ads_archive": 0, "publora": 0 } }
+}
