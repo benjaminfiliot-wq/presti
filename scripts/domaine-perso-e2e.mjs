@@ -57,12 +57,16 @@ let ok = 0, ko = 0
 const T = (n, c, d = '') => { if (c) { ok++; console.log(`  ✅ ${n}`) } else { ko++; console.log(`  ❌ ${n}${d ? ` — ${d}` : ''}`) } }
 const NOTE = (t) => console.log(`  ⏭  ${t}`)
 
-const { middleware } = await import('../middleware.ts')
+// Next 16 (fiche 026-004) : le fichier s'appelle `proxy.ts` (export `proxy`) une fois migré, `middleware.ts`
+// (export `middleware`) avant. On importe celui des deux qui existe, sans favoriser l'un ou l'autre.
+const proxyExiste = fs.existsSync(new URL('../proxy.ts', import.meta.url))
+const mod = await import(proxyExiste ? '../proxy.ts' : '../middleware.ts')
+const proxy = mod.proxy ?? mod.middleware
 const { NextRequest } = await import('next/server.js')
 
-/** Fait passer une requête dans le VRAI middleware et rend le chemin réécrit (ou null). */
+/** Fait passer une requête dans le VRAI proxy/middleware et rend le chemin réécrit (ou null). */
 async function passe(host, chemin) {
-  const r = await middleware(new NextRequest(new Request(`https://${host}${chemin}`, { headers: { host } })))
+  const r = await proxy(new NextRequest(new Request(`https://${host}${chemin}`, { headers: { host } })))
   const cible = r.headers.get('x-middleware-rewrite')
   return cible ? new URL(cible).pathname : null
 }

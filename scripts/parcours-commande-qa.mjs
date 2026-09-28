@@ -139,7 +139,9 @@ const PAGE = 'app/site/commander/page.tsx'
 const LOADER = 'scripts/ts-loader.mjs'
 const GENERATEUR = 'public/sites-demo/generer.mjs'
 const TEMOIN_FIXTURES = path.join(FIXTURES, 'temoins', JUGE)
-const COPIE_TEMOIN = ['app', 'lib', 'middleware.ts', 'tsconfig.json', 'package.json', LOADER, GENERATEUR]
+// Next 16 (fiche 026-004) : `middleware.ts` devient `proxy.ts` — on copie celui des deux qui existe sur R (jamais les deux).
+const FICHIER_PROXY = fs.existsSync(path.join(R, 'proxy.ts')) ? 'proxy.ts' : 'middleware.ts'
+const COPIE_TEMOIN = ['app', 'lib', FICHIER_PROXY, 'tsconfig.json', 'package.json', LOADER, GENERATEUR]
 const CLES = ['prenom', 'nom', 'installation', 'parcours', 'citation', 'chiffres']
 const MAX = { prenom: 40, nom: 60, parcours: 140, citation: 160 }
 const MAX_CHIFFRE = { valeur: 12, unite: 12, legende: 60 }

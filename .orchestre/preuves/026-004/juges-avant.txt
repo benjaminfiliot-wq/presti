@@ -1,0 +1,16 @@
+node scripts/argent-sql-qa.mjs
+node scripts/chantier-qa.mjs
+node scripts/cibles-instagram-qa.mjs
+node scripts/commande-exporter-qa.mjs
+node scripts/credits-landing-qa.mjs
+node scripts/domaine-sans-site-qa.mjs
+node scripts/geo-presti-qa.mjs
+node scripts/modeles-metiers-qa.mjs
+node scripts/prospection-sql-qa.mjs
+node scripts/retractation-qa.mjs
+node scripts/revue-qa.mjs
+node scripts/rushes-atelier-qa.mjs
+node scripts/vault-journal-qa.mjs
+node scripts/vault-journal-v18-qa.mjs
+node scripts/verrou-site-qa.mjs
+node scripts/visuels-serie2-qa.mjs

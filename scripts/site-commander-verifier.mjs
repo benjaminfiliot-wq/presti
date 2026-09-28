@@ -55,8 +55,9 @@ const chemins = (txt) => txt.split('\n').filter(Boolean).map((l) => l.slice(3).t
 // ce qui a changé depuis — le dépôt porte souvent d'autres chantiers non committés, qui ne sont pas de son fait.
 const avant = [path.join(RACINE, '.orchestre', 'en-cours', '014-01.avant.txt'), path.join(RACINE, '.orchestre', 'preuves', '014-01', 'avant.txt')].find((p) => fs.existsSync(p)) || ''
 const dejaSales = new Set(fs.existsSync(avant) ? chemins(fs.readFileSync(avant, 'utf8')) : [])
-// Seules les zones sensibles comptent (app/, lib/, supabase/, scripts/, middleware).
-const SENSIBLE = /^(app\/|lib\/|supabase\/|scripts\/|middleware\.ts$)/
+// Seules les zones sensibles comptent (app/, lib/, supabase/, scripts/, middleware/proxy).
+// Next 16 (fiche 026-004) : `middleware.ts` devient `proxy.ts` — les deux noms comptent.
+const SENSIBLE = /^(app\/|lib\/|supabase\/|scripts\/|(middleware|proxy)\.ts$)/
 const horsPerimetre = chemins(porcelain).filter((p) => SENSIBLE.test(p) && !dejaSales.has(p) && !PERIMETRE.some((re) => re.test(p)))
 T('rien de nouveau dans app/, lib/, supabase/, scripts/ hors app/site/commander/** et app/AppShell.tsx', horsPerimetre.length === 0, horsPerimetre.slice(0, 6).join(', '))
 

@@ -155,7 +155,9 @@ const F = {
 }
 const TEMOIN_FIXTURES = path.join(FIXTURES, 'temoins', JUGE)
 const TEMOIN_DOSSIER = path.join(TRAVAIL, JUGE, 'temoin')
-const TEMOIN_COPIER = ['app', 'lib', 'middleware.ts', 'tsconfig.json', 'package.json', F.fermeture, F.sorti]
+// Next 16 (fiche 026-004) : `middleware.ts` devient `proxy.ts` — on copie celui des deux qui existe sur R (jamais les deux).
+const FICHIER_PROXY = fs.existsSync(path.join(R, 'proxy.ts')) ? 'proxy.ts' : 'middleware.ts'
+const TEMOIN_COPIER = ['app', 'lib', FICHIER_PROXY, 'tsconfig.json', 'package.json', F.fermeture, F.sorti]
 const LIGNE_CARTE = "'constructeurSite': ['route', '/api/site/generate', 'POST', 'app/api/site/generate/route.ts']"
 // CF-3 : la correction D30 de la revue avant mise en ligne (25/09, commit 9dca36e), lignes exactes, espaces de tête ôtés.
 const D30_RETRAIT = ["T(`landingVideo=${FLAGS.landingVideo} ↔ vidéo ${/<video/.test(landing) ? 'présente' : 'absente'} sur la landing`, FLAGS.landingVideo === /<video/.test(landing))"]
