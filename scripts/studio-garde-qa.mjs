@@ -169,10 +169,13 @@ async function principal() {
     const ETAPES = ['studio_echantillon', 'garde.mjs', 'page produit', 'accord', 'allégation', 'produit', 'flux.1', 'ff_siwis', 'monter.mjs', 'pub-qa.mjs']
     let curseur = -1
     for (const etape of ETAPES) {
-      const i = texte.indexOf(etape.toLowerCase())
+      // Cherche à partir d'APRÈS l'étape précédente (jamais depuis le début) : « produit » (seul) est une sous-chaîne
+      // de « page produit » (étape antérieure de la liste) — indexOf sans position de départ retombait sur cette
+      // occurrence-là, plus tôt dans le texte, et signalait « produit » hors ordre même quand le document le répète
+      // bien plus loin, après « allégation » (défaut trouvé en jugeant réellement le patch de 026-155).
+      const i = texte.indexOf(etape.toLowerCase(), curseur + 1)
       if (i < 0) { echecs.push(`étape absente : ${etape}`); continue }
-      if (i < curseur) echecs.push(`étape hors ordre : ${etape}`)
-      curseur = Math.max(curseur, i)
+      curseur = i
     }
     for (const requis of ['jamais publié', 'aucun témoignage', 'aucun modèle vidéo', 'aucune personne', 'aucun outil payant']) if (!texte.includes(requis)) echecs.push(`interdit absent : « ${requis} »`)
     for (const banni of ['elevenlabs', 'estimate_only', 'quota gratuit']) if (texte.includes(banni)) echecs.push(`porte « ${banni} » (voie gratuite du 25/09)`)
@@ -183,15 +186,20 @@ async function principal() {
   // ── SG-5 : aucun nom de marque des jeux d'essai hors des jeux d'essai (critère réel, y compris --temoin) ───────
   {
     const prefixeFixtures = 'scripts/fixtures/026-pubs-contenu/studio/'
+    // 026-128 a choisi la même marque fictive pour SES TROIS juges du Studio (studio-garde-qa, pub-qa, studio-offre-qa :
+    // « les juges du Studio pubs », a537149a), un seul scénario cohérent de bout en bout ; leur usage — et la preuve
+    // d'étalonnage de pub-qa qui le documente — ne sont pas une fuite des jeux d'essai de CE juge. Sans ces exclusions,
+    // SG-5 échouait sur son propre dépôt (défaut trouvé en jugeant réellement le patch de 026-155).
+    const exclure = [prefixeFixtures, 'scripts/pub-qa.mjs', 'scripts/studio-offre-qa.mjs', '.orchestre/preuves/026-128/']
     let fuites = []
     try {
-      const parNom = gitGrepFichiers(R, St.MARQUE_NOM, { exclure: [prefixeFixtures] })
-      const parCle = gitGrepFichiers(R, St.MARQUE_CLE, { exclure: [prefixeFixtures] })
+      const parNom = gitGrepFichiers(R, St.MARQUE_NOM, { exclure })
+      const parCle = gitGrepFichiers(R, St.MARQUE_CLE, { exclure })
       fuites = [...new Set([...parNom, ...parCle])]
     } catch (e) { s.echoue('SG-5', `git grep : ${court(e.message, 160)}`) }
     if (!s.enEchec('SG-5')) {
       if (fuites.length) s.echoue('SG-5', `« ${St.MARQUE_NOM} » ou « ${St.MARQUE_CLE} » dans un fichier suivi hors des jeux d'essai : ${fuites.slice(0, 5).join(', ')}`)
-      else s.passe('SG-5', `« ${St.MARQUE_NOM} » et « ${St.MARQUE_CLE} » n'apparaissent que sous ${prefixeFixtures}`)
+      else s.passe('SG-5', `« ${St.MARQUE_NOM} » et « ${St.MARQUE_CLE} » n'apparaissent que sous ${prefixeFixtures} (et les autres juges du Studio, 026-128)`)
     }
   }
 
