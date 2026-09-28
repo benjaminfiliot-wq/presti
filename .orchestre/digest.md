@@ -6,20 +6,19 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T15:51:09Z
+# Digest — 2026-09-28T15:54:47Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 118 tâche(s) PASS, 194191 ligne(s) · faites par Claude Code : 67 tâche(s) PASS, 111141 ligne(s).
-**État** — file : 10 · en cours : 4 · faites : 192 · refusées : 9
+**Mesure** — déléguées (antigravity, codex) : 118 tâche(s) PASS, 194191 ligne(s) · faites par Claude Code : 68 tâche(s) PASS, 111141 ligne(s).
+**État** — file : 11 · en cours : 3 · faites : 194 · refusées : 8
 
 ## Attention (2)
 - 026-068 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-068 --forcer`
-- verrou expiré : 026-073 (usine-codex-83, silencieux depuis 97 min) — `node scripts/orchestre.mjs expirer`
+- verrou expiré : 026-073 (usine-codex-83, silencieux depuis 100 min) — `node scripts/orchestre.mjs expirer`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 026-076 | feature | en-cours | usine-codex-86 | — | depuis 2026-09-28T15:02:02Z · Écrire la migration *_pilotage_lecture.sql (treize fonctions public.pilotage_* SECURITY DEFINER réservées à service_role : décisions ouvertes, une décision, décisions par clé, agents avec leur dernier événement, leur prochain passage, leur coût du mois et leur modèle, coûts par agent, par tâche et par modèle (0 € attendu), état du Chef, fil d'événements, sources de la file Attention, tâches d'un agent, publication et lecture de l'état de l'orchestre dans la table fermée ops.code_etat), ses jumeaux de repli (`_A_COLLER_*`), son contrôle et le compte rendu d'un essai à sec généré par le juge |
 | 026-086 | feature | en-cours | usine-codex-87 | — | depuis 2026-09-28T15:02:36Z · Écrire la migration 0101 qui active pg_cron et pg_net et planifie chaque minute public.ops_horloge_minute() (baux expirés, décisions échues, puis GET https://prestiapp.fr/api/agents/tic avec le jeton CRON_SECRET lu dans Supabase Vault et un timeout_milliseconds explicite), plus un ménage quotidien et ops_horloge_etat() qui ne rend jamais le secret, avec jumeaux, contrôle et compte rendu d'essai à sec |
 | 026-073 | contenu | en-cours | usine-codex-83 | — | depuis 2026-09-28T14:14:18Z · Constituer la bibliothèque des douleurs lib/agents/acquisition/douleurs.ts (au moins 40 entrées sur au moins 8 métiers du bâtiment, chacune tirée de ce que des artisans écrivent eux-mêmes en public, avec la citation exacte, sa page source et sa date, les mots-clés, une question « qui appuie là où ça fait mal » et une accroche d'objet, sans aucune donnée personnelle, toutes à approuve false jusqu'à l'approbation unique de Benj) et sa méthode docs/agents/douleurs-methode.md, pour que chaque citation se retrouve mot pour mot sur sa page quand le juge la relit |
 | 026-235 | feature | en-cours | usine-codex-84 | — | depuis 2026-09-28T14:56:22Z · Écrire scripts/savoir/lecons.mjs (candidats depuis les verdicts en échec, les décisions tranchées par Benj, les décisions tranchées du bus et les corrections des fiches, datées, sourcées, caviardées et idempotentes ; lister ; valider et rejeter par Claude Code ou la revue du lundi seulement, jamais sur l'usine ; verifier-source), jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=candidats,validation |
@@ -32,7 +31,9 @@
 | 026-078 | feature | file | usine-codex-80 | — | Dans le Poste, montrer le résumé de la matière de chaque commande, mettre en ligne un site généré en un seul geste, noter la soumission du plan à la Search Console, envoyer le dossier sur demande, et faire remonter dans À faire chaque commande qui attend un geste humain |
 | 026-124 | test | file | claude-code | — | Ajouter à video-qa un profil pub-locale (vertical 15 s, voix ou silence) sans changer les profils reseaux et landing, écrire visages-qa (OpenCV YuNet, modèle épinglé par empreinte, étalonné sur les photos des démos) et socle-pubs-qa qui prouve les deux, pour que juges-026-pubs-contenu-preuve --lot=09 soit vert |
 | 026-135 | feature | file | usine-codex-73 | — | Écrire lib/packPubDossier.ts (nettoyerDossierPack, pure, qui n'accepte que les photos de l'artisan lui-même) et la route GET/PUT /api/pubs/commander/brouillon qui lit et enregistre le dossier du pack derrière le drapeau packPub |
+| 026-063 | feature | file | claude-code | — | Écrire la migration 0111 des disjoncteurs de l'envoi, tenus par la base en compteurs absolus (paliers du formulaire de 5 à 40 par jour qui écrivent seuls la ligne de plafond du formulaire, technologies de formulaire, signaux de STOP, plainte, avis d'abus, échec de soumission, refus du Gmail et erreur Meta qui mettent en pause une technologie, un modèle, le formulaire, le Gmail ou Meta, montée de palier par règle et bilan des 100 premiers contacts froids, descente au premier voyant rouge, notice vérifiée, gestes du fondateur dont l'ouverture d'envoi_froid au plus tôt le 12/10, jauges, échantillon du soir), ses jumeaux, son contrôle, lib/agents/acquisition/disjoncteurs.ts et la partie MagasinEnvoi de magasinSupabase.ts, essayée à sec |
 | 026-115 | feature | file | codex | — | Quand Codex annonce son quota épuisé, faire rendre la tâche à la file, noter l'échéance dans .orchestre/quotas.json, refuser codex-* dans prochaine et executant.mjs jusqu'à cette échéance et dire dans le bloc Attention quel autre exécutant lancer, jusqu'au vert du groupe quota de preuve-026 |
+| 026-076 | feature | fait | claude-code | PASS | 2026-09-28T15:54:47Z · 8s · 0 l. |
 | 026-071 | test | fait | claude-code | PASS | 2026-09-28T15:51:08Z · 31s · 0 l. |
 | 026-061 | feature | fait | claude-code | PASS | 2026-09-28T15:50:08Z · 24s · 0 l. |
 | 026-248 | test | fait | claude-code | PASS | 2026-09-28T15:45:41Z · 289s · 0 l. |
@@ -40,7 +41,7 @@
 | 026-114 | feature | fait | claude-code | PASS | 2026-09-28T15:35:08Z · 3s · 0 l. |
 | 026-109 | feature | fait | claude-code | PASS | 2026-09-28T15:31:01Z · 25s · 689 l. |
 | 026-165 | test | fait | claude-code | PASS | 2026-09-28T15:12:14Z · 135s · 1424 l. |
-| 026-068 | feature | refuse | codex | DISJONCTÉE | ✅ RL-4 six blocs → 200 au contrat (bloc, source, a ; valeur à la forme, ou nulle avec erreur ou manque), jamais 500 \| ✅ RL-9 npm run typecheck vert \| ✅ RL-4 six blocs → 200 au contrat (bloc, source, a ; valeur à la forme, ou nulle avec erreur ou manque), jamais 500 |
+| 026-068 | feature | fait | codex | DISJONCTÉE | ✅ RL-4 six blocs → 200 au contrat (bloc, source, a ; valeur à la forme, ou nulle avec erreur ou manque), jamais 500 \| ✅ RL-9 npm run typecheck vert \| ✅ RL-4 six blocs → 200 au contrat (bloc, source, a ; valeur à la forme, ou nulle avec erreur ou manque), jamais 500 |
 | 026-234 | test | fait | claude-code | PASS | 2026-09-28T14:56:08Z · 243s · 3632 l. |
 | 026-232 | test | fait | claude-code | PASS | 2026-09-28T14:32:10Z · 871s · 2758 l. |
 | 026-116 | test | fait | claude-code | PASS | 2026-09-28T14:25:19Z · 195s · 0 l. |
@@ -118,6 +119,5 @@
 | 026-038 | test | fait | claude-code | PASS | 2026-09-27T08:57:04Z · 67s · 3072 l. |
 | 000-retractation | feature | fait | usine-codex-41 | PASS | 2026-09-27T07:08:47Z · 0s · 258 l. |
 | 000-revue-026 | contenu | fait | codex | PASS | 2026-09-27T06:19:46Z · 2s · 0 l. |
-| 000-geo-presti | feature | fait | usine-codex-40 | PASS | 2026-09-27T06:14:53Z · 0s · 274 l. |
 
-… 115 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 116 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

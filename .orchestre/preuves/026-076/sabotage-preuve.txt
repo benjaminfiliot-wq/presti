@@ -1,0 +1,26 @@
+Preuve que la correction du scénario (scripts/fixtures/026-pilotage/b/scenarios-sql.mjs) n'affaiblit rien : le même
+bloc d'essai (migration 0107 réelle + scénario corrigé), mais avec DEUX fonctions sabotées juste après la création
+des treize fonctions réelles (execute $sabotage_026$ ... $sabotage_026$, dans la même transaction annulée) :
+
+  - public.pilotage_agents() : le filtre « and e.type <> 'battement' » retiré du dern lateral join (dernier_type
+    peut alors redevenir 'battement').
+  - public.pilotage_code_lire() : renvoie toujours 0 ligne (« where false »).
+
+Lancé par Claude Code via le MCP Supabase execute_sql (projet gorcdvmueakcncsmrouo), annulé par la même RAISE
+EXCEPTION finale — rien n'est resté (vérifié après coup, comme pour l'essai propre).
+
+Message complet recopié tel que rendu par l'outil :
+
+ERROR:  P0001: ESSAI_A_SEC 8790dac1dda81fb5c0129934971e3a682a965435acdabe50d85aa288b8e94f6b {"code_forme": true, "chef_cycles": true, "preparation": true, "code_ok_relu": false, "couts_taches": true, "agents_modele": true, "couts_modeles": true, "code_trop_gros": true, "decisions_ordre": true, "agents_cout_mois": true, "attention_sources": true, "decision_tranchee": true, "decisions_limite_3": true, "evenements_filtres": true, "agents_modele_vieux": true, "agents_retire_absent": true, "diag_decisions_ordre": "{e5e1035b-68c4-4921-b67e-337451c35fe3,92e7b8c7-f830-4eb2-b598-9325062ea2b4,ade243f6-48ad-4e91-81d7-8f2bd91df499,5783464f-26c5-40ac-aa3f-e746c245f755,743be5e9-dd56-472b-ad67-d7d25ab2fda1,e6256635-2768-466c-a977-9a25fb0bd0f5,a6565da0-2b93-4058-9cef-b6e67d20558e}", "diag_attention_sources": "{\"idee_chef\": 0, \"disjoncteur\": 0, \"escalade_chef\": 0, \"pause_generale\": 0, \"decision_argent\": 0, \"taches_bloquees\": 0} -> {\"idee_chef\": 1, \"disjoncteur\": 1, \"escalade_chef\": 0, \"pause_generale\": 0, \"decision_argent\": 3, \"taches_bloquees\": 1}", "agents_dernier_evenement": false, "evenements_cinq_derniers": true, "refus_anon_authenticated": true, "diag_agents_dernier_evenement": "{\"pl1\": {\"type\": \"battement\", \"resume\": \"battement\"}, \"pl2\": {\"type\": \"battement\", \"resume\": \"battement\"}}", "diag_refus_anon_authenticated": "26/26"}
+CONTEXT:  PL/pgSQL function inline_code_block line 646 at RAISE
+
+APRES rien_ne_reste=true, agents_essai_restants=0
+(vérifié séparément après l'essai, sur la production, une fois la transaction annulée)
+
+Bilan : exactement les deux clés sabotées rougissent (code_ok_relu=false, agents_dernier_evenement=false), les 17
+autres restent à true — dont agents_cout_mois, agents_modele, agents_modele_vieux, agents_retire_absent, qui
+appellent aussi pilotage_agents() mais sur d'autres colonnes : le sabotage du dern lateral ne les affecte pas, la
+preuve est bien localisée sur les deux critères touchés par la correction. Le diagnostic confirme le mécanisme :
+dernier_type='battement' pour pl1 ET pl2 (le filtre anti-battement retiré laisse remonter le tout dernier événement,
+qui est toujours le battement posé juste avant la capture). La correction du 28/09 ne masque donc aucune régression
+réelle de la migration : elle teste toujours la substance.

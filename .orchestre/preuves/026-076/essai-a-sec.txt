@@ -1,0 +1,19 @@
+Essai à sec de supabase/migrations/0107_pilotage_lecture.sql (fiche 026-076), lancé par Claude Code via le MCP Supabase execute_sql
+(projet gorcdvmueakcncsmrouo), bloc généré par : node scripts/pilotage-sql-qa.mjs --migration=lecture --generer-essai
+(aucun --avec : 0096, 0097, 0098, 0099 sont déjà appliquées en production).
+
+Rejoué après correction de scripts/fixtures/026-pilotage/b/scenarios-sql.mjs (décision de Benj du 28/09, option 1 de
+.orchestre/preuves/026-076/question.md, réponse dans .orchestre/preuves/026-076/reponse.md) : assertion
+agents_dernier_evenement déplacée avant la boucle des sept ops_decision_creer, et code_ok_relu scindé en deux
+instructions PL/pgSQL séparées (publier, puis lire). Détail de la correction et preuve qu'elle n'affaiblit rien
+(sabotage de la migration → SQ-9 rougit toujours) : .orchestre/preuves/026-076/essai-a-sec.md.
+
+Message complet recopié tel que rendu par l'outil (do $essai_026$ ... raise exception 'ESSAI_A_SEC …' ... — tout est annulé) :
+
+ERROR:  P0001: ESSAI_A_SEC 8790dac1dda81fb5c0129934971e3a682a965435acdabe50d85aa288b8e94f6b {"code_forme": true, "chef_cycles": true, "preparation": true, "code_ok_relu": true, "couts_taches": true, "agents_modele": true, "couts_modeles": true, "code_trop_gros": true, "decisions_ordre": true, "agents_cout_mois": true, "attention_sources": true, "decision_tranchee": true, "decisions_limite_3": true, "evenements_filtres": true, "agents_modele_vieux": true, "agents_retire_absent": true, "diag_decisions_ordre": "{9c06fce5-7865-457b-a4f1-b21b905c085e,8d2ced48-9484-46ee-b9b2-371224576a61,04aa0bd2-becc-4f26-91d5-fd3796939f51,58db32d0-4470-4344-8183-176ee58f664b,e5542fb0-0b63-46aa-b08a-7cfa59054483,6cfdf57a-c5c4-48de-8e50-9aff635e1be8,6bf2ea11-3fef-43df-ae07-fa294f5f37f9}", "diag_attention_sources": "{\"idee_chef\": 0, \"disjoncteur\": 0, \"escalade_chef\": 0, \"pause_generale\": 0, \"decision_argent\": 0, \"taches_bloquees\": 0} -> {\"idee_chef\": 1, \"disjoncteur\": 1, \"escalade_chef\": 0, \"pause_generale\": 0, \"decision_argent\": 3, \"taches_bloquees\": 1}", "agents_dernier_evenement": true, "evenements_cinq_derniers": true, "refus_anon_authenticated": true, "diag_agents_dernier_evenement": "{\"pl1\": {\"type\": \"essai_fait\", \"resume\": \"Essai fait par un\"}, \"pl2\": {\"type\": \"agent_enregistre\", \"resume\": \"fiche créée : Essai pilotage deux\"}}", "diag_refus_anon_authenticated": "26/26"}
+CONTEXT:  PL/pgSQL function inline_code_block line 609 at RAISE
+
+APRES rien_ne_reste=true
+(requête : select to_regprocedure('public.pilotage_decisions(integer)') is null as rien_ne_reste — exécutée séparément après l'essai, sur la production, une fois la transaction de l'essai annulée)
+
+Bilan : 19 clés sur 19 à true. SQ-9 PASS.
