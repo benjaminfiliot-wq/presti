@@ -21,7 +21,10 @@
 
     -- ── A. envoi_froid fermé : le plafond du formulaire est à 0 ─────────────────────────────────────────────────────────
     v_avant := public.acq_etat_envoi();
-    r := r || jsonb_build_object('envoi_froid_ferme_palier_zero', coalesce((v_avant -> 'envoi_froid')::boolean, true) = false, 'diag_etat0', left(v_avant::text, 200));
+    -- diag_* : une valeur SCALAIRE (jamais un fragment de JSON tronqué) — un `left(x::text, 200)` peut couper au
+    -- milieu d'un objet imbriqué et laisser une accolade sans sa paire, ce qu'un compte rendu recopié à la main
+    -- (essai-a-sec.txt) peine à retranscrire fidèlement (défaut du 28/09, fiche 026-063).
+    r := r || jsonb_build_object('envoi_froid_ferme_palier_zero', coalesce((v_avant -> 'envoi_froid')::boolean, true) = false, 'diag_etat0', 'envoi_froid=' || coalesce(v_avant ->> 'envoi_froid', '?') || ' palier=' || coalesce(v_avant ->> 'palier', '?'));
 
     -- ── B. Ouverture par le fondateur, un jour avant le 12/10 : refusée (ops:trop_tot) ──────────────────────────────────
     create or replace function ops.maintenant() returns timestamptz language sql stable as $$ select '2026-10-11 22:59:00+02'::timestamptz $$;
@@ -32,8 +35,15 @@
       r := r || jsonb_build_object('trop_tot_refuse', sqlerrm ilike '%trop_tot%', 'diag_trop_tot', sqlerrm);
     end;
 
-    -- ── C. Le 12/10 à 9 h, ouvert : P0 à 5 (envois et nouveaux) ─────────────────────────────────────────────────────────
+    -- ── C. Le 12/10 à 9 h : les trois autres préalables de acq_envoi_froid_ouvrir sont posés DANS la transaction (comme
+    --      l'horloge et, plus bas, ads_archive), pour ne pas dépendre d'un événement réel qui pourrait ne pas exister
+    --      encore (mesure à sec 026-165, épreuve bout en bout 026-163) ou être périmé (notice) au moment de l'essai —
+    --      puis ouvert : P0 à 5 (envois et nouveaux). Défaut du 28/09 (fiche 026-063) : sans ces trois lignes, l'essai
+    --      dépendait de l'état réel du système (ops:epreuve_absente puis ops:notice_absente), pas de la migration.
     create or replace function ops.maintenant() returns timestamptz language sql stable as $$ select '2026-10-12 09:00:00+02'::timestamptz $$;
+    insert into ops.evenements (agent, type, resume) values ('systeme', 'mesure_a_sec', 'PASS (essai à sec)');
+    insert into ops.evenements (agent, type, resume) values ('systeme', 'epreuve_bout_en_bout', 'PASS (essai à sec)');
+    perform public.acq_notice_verifiee(ops.maintenant());
     begin
       perform public.acq_envoi_froid_ouvrir(v_auteur);
       r := r || jsonb_build_object('ouverture_08h_ok', true);
@@ -42,8 +52,8 @@
     end;
     v_apres := public.acq_etat_envoi();
     r := r || jsonb_build_object('p0_formulaire_a_cinq', exists (
-      select 1 from public.ops_quotas_canaux where canal = 'formulaire_site' and cle = '*' and par_jour = 5 and nouveaux_max = 5
-    ), 'diag_p0', left(v_apres::text, 200));
+      select 1 from ops.quotas_canaux where canal = 'formulaire_site' and envoyeur = '*' and plafond_jour = 5 and plafond_nouveaux_jour = 5
+    ), 'diag_p0', 'envoi_froid=' || coalesce(v_apres ->> 'envoi_froid', '?') || ' palier=' || coalesce(v_apres ->> 'palier', '?'));
 
     -- ── D. Trois échecs de soumission d'affilée sur une technologie → pause, palier redescendu ─────────────────────────
     v_sig := public.acq_signal(jsonb_build_object('type', 'echec_soumission', 'technologie', 'essai_026_wpforms'));
