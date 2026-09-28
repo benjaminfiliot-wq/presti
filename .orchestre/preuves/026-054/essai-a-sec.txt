@@ -1,0 +1,25 @@
+Essai à sec de la migration 0110_usine_socle.sql (026-054), sur la vraie base de production Presti (projet Supabase
+gorcdvmueakcncsmrouo), par l'outil MCP execute_sql du connecteur Supabase. Un seul énoncé `do $essai_026$ … raise
+exception … end $essai_026$;`, généré par `node scripts/usine-sql-qa.mjs --generer-essai` : il exécute le jumeau nu
+(bucket usine, ops_tache_detenue, les deux graines), puis le scénario scripts/fixtures/026/usine-production/essai-0110.sql,
+puis lève ESSAI_A_SEC, ce qui annule tout (aucune connexion directe à la base, comme depuis le 14/09).
+
+Compte rendu recopié tel que l'outil l'a rendu :
+
+ERROR:  P0001: ESSAI_A_SEC 36cba5f60a69ab7033b04d0c8bba18ab06e9baa3fddda349cb2cb0efac5ae026 {"diag_anon": "anon 42501 permission denied for function ops_tache_detenue", "anon_refuse": true, "graine_usine": true, "installation": true, "detenue_pour_lui": true, "diag_authenticated": "authenticated 42501 permission denied for function ops_tache_detenue", "pas_pour_id_invente": true, "authenticated_refuse": true, "graine_livreur_usine": true, "pas_pour_bail_expire": true, "aucune_politique_usine": true, "bucket_prive_et_limite": true, "pas_pour_livreur_usine": true, "pas_pour_tache_en_file": true, "droits_service_role_seul": true, "securite_definer_stable_search_path": true}
+CONTEXT:  PL/pgSQL function inline_code_block line 142 at RAISE
+
+Toutes les clés du scénario (hors diag_*) valent true : installation, detenue_pour_lui, pas_pour_livreur_usine,
+pas_pour_id_invente, pas_pour_tache_en_file, pas_pour_bail_expire, securite_definer_stable_search_path,
+droits_service_role_seul, anon_refuse, authenticated_refuse, bucket_prive_et_limite, aucune_politique_usine,
+graine_usine, graine_livreur_usine. anon et authenticated sont refusés sur ops_tache_detenue avec le code 42501
+(permission denied), comme attendu — la fonction n'est exécutable que par service_role.
+
+Ensuite, requête séparée sur la même base (execute_sql, lecture seule) pour prouver qu'il ne reste aucune trace :
+
+  select to_regprocedure('public.ops_tache_detenue(text,uuid)') is null
+     and not exists (select 1 from storage.buckets where id = 'usine') as rien_ne_reste;
+
+Résultat : [{"rien_ne_reste":true}] — ni la fonction ni le bucket n'existent après le rollback de l'essai.
+
+APRES rien_ne_reste=true

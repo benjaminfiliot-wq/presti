@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T09:15:21Z
+# Digest — 2026-09-28T09:48:22Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 105 tâche(s) PASS, 189357 ligne(s) · faites par Claude Code : 48 tâche(s) PASS, 101354 ligne(s).
-**État** — file : 2 · en cours : 9 · faites : 157 · refusées : 7
+**Mesure** — déléguées (antigravity, codex, gemini-cli, qwen) : 105 tâche(s) PASS, 189357 ligne(s) · faites par Claude Code : 49 tâche(s) PASS, 102022 ligne(s).
+**État** — file : 2 · en cours : 8 · faites : 158 · refusées : 7
 
 ## ⚠ 3 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -26,12 +26,12 @@
 | 026-036 | feature | en-cours | ? | — | depuis ? · Écrire la migration 0100 qui crée la file durable argent de Supabase Queues (pgmq) et ses fonctions SECURITY DEFINER réservées à service_role (envoi une seule fois par clé, lecture sous délai d'invisibilité borné, abandon après 3 lectures avec événement, effet marqué une seule fois), avec jumeaux, contrôle et compte rendu d'un essai à sec généré par le juge |
 | 023-03 | test | en-cours | codex-22 | — | depuis 2026-09-16T19:22:27Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | usine-codex-13 | — | depuis 2026-09-24T18:37:22Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
-| 026-054 | feature | en-cours | claude-code | — | depuis 2026-09-28T07:46:12Z · Écrire la migration de l'usine 0110_usine_socle.sql qui crée le bucket privé usine à ses limites, la fonction ops_tache_detenue réservée à service_role et les graines des agents usine et livreur_usine, ses deux jumeaux de repli (`_A_COLLER_*`) et son contrôle en lecture seule, puis l'éprouver à sec sur la vraie base avant que Claude Code l'applique par le connecteur Supabase |
 | 026-058 | feature | en-cours | claude-code | — | depuis 2026-09-28T07:46:30Z · Mettre en service le socle des agents sur l'usine Oracle — compte agents, coffre à clés plafonnées en 600, assistants presti-coffre et presti-journal avec leur sudoers, code du commit déployé en lecture seule dans /srv/presti-agents — puis la surveillance (jeton de l'agent usine créé et posé dans le coffre par Claude Code après le oui de Benj, sans être affiché, presti-surveillance.service actif), après les « oui » de Benj, jusqu'au vert de scripts/usine-socle-qa.mjs --reel --groupe=socle,surveillance |
 | 026-169 | feature | en-cours | claude-code | — | depuis 2026-09-28T08:47:07Z · Redessiner la station dans l'atelier Claw3D de l'usine (~/claw3d-pixel, liste blanche fermée) avec les seuls packs CC0 du lot A, sans aucun téléchargement : les 20 salles et la salle réservée E-commerce (porte fermée), la nébuleuse, 4 personnages et 1 portrait, dans la vraie mise en page, sans aucune donnée, la grille et le facteur entier fixés à 1440, 1280 et 390 px, le Vaisseau en 3 modules ; laisser l'atelier à un commit local cité, et écrire docs/station/planche.md, grille.json et licence-planche.json, jusqu'au vert de station-planche-qa --partie=planche |
 | 026-100 | feature | file | codex | — | Écrire scripts/livrer-site.mjs, qui enchaîne pour une commande payée l'export, la rédaction, generer.mjs --source, puis site-deposer.mjs (qui lance site-qa), sous un verrou, avec deux régénérations au plus, un journal sans donnée personnelle, un mode --ci qui tourne sans le poste sous Linux (GitHub Actions, qui ne dépose que sur une commande encore payée) et un mode --usine --entree= --sortie=, sans base ni stockage, pour le livreur de l'usine Oracle (sortie et manifeste au contrat de docs/agents/usine-production.md) |
 | 026-107 | feature | file | codex | — | Déplacer executant.mjs et antigravity.mjs dans le dépôt orchestre (bin/), sans chemin propre à presti, les faire recopier par maj, retirer gemini-cli et qwen des exécutants, puis lancer maj dans presti, jusqu'au vert du groupe source de ../orchestre/test/preuve-026.mjs |
-| 026-039 | contenu | refuse | antigravity | FAIL | ❌ CP-6 npm run typecheck en code 2 : lib/siteRedacteur.ts(21,7): error TS2322: Type 'string' is not assignable to type 'number'. |
+| 026-054 | feature | fait | claude-code | PASS | 2026-09-28T09:48:21Z · 6s · 668 l. |
+| 026-039 | contenu | refuse | antigravity | FAIL | Error: Cannot find module 'C:\Users\benja\AppData\Local\Temp\vi-026-039-26523\scripts\confidentialite-prospection-qa.mjs' |
 | 026-108 | test | fait | claude-code | PASS | 2026-09-28T09:02:58Z · 482s · 0 l. |
 | 026-142 | test | fait | claude-code | PASS | 2026-09-28T09:00:40Z · 4s · 0 l. |
 | 026-037 | test | fait | claude-code | PASS | 2026-09-28T09:00:23Z · 431s · 0 l. |
