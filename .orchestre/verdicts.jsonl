@@ -430,3 +430,4 @@
 {"id":"026-054","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T09:48:21Z","duree_s":6,"agent":"claude-code","executant":"claude-code","lignes":668,"dossier":"fait"}
 {"id":"026-036","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T09:52:10Z","duree_s":8,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"026-060","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T09:58:27Z","duree_s":23,"agent":"claude-code","executant":"claude-code","lignes":3091,"dossier":"fait"}
+{"id":"026-169","verdict":"FAIL","ligne":"station-planche-qa --partie=planche : FAIL — PN-4, PN-5","code":1,"date":"2026-09-28T10:03:44Z","duree_s":58,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
