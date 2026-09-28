@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T13:58:08Z
+# Digest — 2026-09-28T13:59:50Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 118 tâche(s) PASS, 194191 ligne(s) · faites par Claude Code : 62 tâche(s) PASS, 108298 ligne(s).
-**État** — file : 2 · en cours : 13 · faites : 188 · refusées : 10
+**État** — file : 2 · en cours : 13 · faites : 187 · refusées : 11
 
 ## ⚠ 3 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
@@ -35,11 +35,12 @@
 | 026-234 | test | en-cours | claude-code | — | depuis 2026-09-28T12:38:19Z · Écrire le contrat de l'auto-apprentissage (une leçon candidate par verdict en échec, décision tranchée ou correction, datée et sourcée ; validée seulement par Claude Code ou par la revue du lundi et rangée dans docs/savoir/lecons/ ; choisie par agent et injectée dans sa consigne par la porte unique et par l'entrée du chef), sa consigne docs/agents/lecons.md, l'étape « Leçons » de docs/agents/revue-hebdo.md, et le juge scripts/savoir-lecons-qa.mjs (critères SVL, parties candidats, validation, selection, branchement, --document) avec jeux d'essai, témoin et sabotages, et prouver qu'il échoue aujourd'hui sur SVL-1 et passe sur le témoin |
 | 026-073 | contenu | file | codex | — | Constituer la bibliothèque des douleurs lib/agents/acquisition/douleurs.ts (au moins 40 entrées sur au moins 8 métiers du bâtiment, chacune tirée de ce que des artisans écrivent eux-mêmes en public, avec la citation exacte, sa page source et sa date, les mots-clés, une question « qui appuie là où ça fait mal » et une accroche d'objet, sans aucune donnée personnelle, toutes à approuve false jusqu'à l'approbation unique de Benj) et sa méthode docs/agents/douleurs-methode.md, pour que chaque citation se retrouve mot pour mot sur sa page quand le juge la relit |
 | 026-106 | feature | file | codex | — | Avant le premier envoi à froid, faire générer et déposer un site payé hors du poste, dans GitHub Actions, PC éteint (workflow generer-site.yml déclenché par repository_dispatch, 20 min au plus, une exécution à la fois, sans artefact ni clé du produit), demandé depuis Vercel par demanderGeneration sous un plafond mensuel d'exécutions et trois tentatives par commande |
+| 026-232 | test | refuse | claude-code | FAIL | FAIL SVR-1 — lib/savoir/recherche.ts absent de la racine jugée — le module n'existe pas encore (026-233) |
+| 026-100 | feature | fait | claude-code | PASS | 2026-09-28T13:58:11Z · 272s · 510 l. |
+| 026-100 | feature | refuse | claude-code | PASS | 2026-09-28T13:58:11Z · 272s · 510 l. |
 | 026-068 | feature | refuse | codex | FAIL | ✅ RL-4 six blocs → 200 au contrat (bloc, source, a ; valeur à la forme, ou nulle avec erreur ou manque), jamais 500 |
 | 026-071 | test | fait | claude-code | PASS | 2026-09-28T13:56:08Z · 75s · 1271 l. |
 | 026-074 | feature | fait | codex | PASS | 2026-09-28T13:46:33Z · 953s · 0 l. |
-| 026-100 | feature | fait | claude-code | PASS | 2026-09-28T13:44:21Z · 327s · 510 l. |
-| 026-100 | feature | refuse | claude-code | PASS | 2026-09-28T13:44:21Z · 327s · 510 l. |
 | 026-114 | feature | fait | claude-code | PASS | 2026-09-28T13:17:05Z · 6s · 0 l. |
 | 026-118 | feature | refuse | usine-codex-78 | FAIL | PASS PP-8 — POST : 404 (drapeau packPub), authArtisan, 403 fondateur, erreursAvantPaiementPack, parametresCheckoutPack, poserSessionStripePack, dans l'ordre ; a |
 | 026-051 | feature | fait | codex | PASS | 2026-09-28T12:47:26Z · 93s · 0 l. |
@@ -119,6 +120,5 @@
 | 000-geo-presti | feature | fait | usine-codex-40 | PASS | 2026-09-27T06:14:53Z · 0s · 274 l. |
 | 026-065 | feature | fait | ag-065g | PASS | 2026-09-26T15:57:21Z · 8s · 527 l. |
 | 026-055 | feature | fait | ag-055g | PASS | 2026-09-26T15:47:57Z · 12s · 312 l. |
-| 000-marketing-026 | contenu | fait | usine-codex-38 | PASS | 2026-09-26T15:00:53Z · 2s · 238 l. |
 
 … 113 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

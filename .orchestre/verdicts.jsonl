@@ -492,3 +492,4 @@
 {"id":"026-071","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T13:56:08Z","duree_s":75,"agent":"claude-code","executant":"claude-code","lignes":1271,"dossier":"fait"}
 {"id":"026-068","verdict":"FAIL","ligne":"✅ RL-4 six blocs → 200 au contrat (bloc, source, a ; valeur à la forme, ou nulle avec erreur ou manque), jamais 500","code":1,"date":"2026-09-28T13:58:06Z","duree_s":511,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"026-100","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T13:58:11Z","duree_s":272,"agent":"claude-code","executant":"codex","lignes":510,"dossier":"fait"}
+{"id":"026-232","verdict":"FAIL","ligne":"FAIL SVR-1 — lib/savoir/recherche.ts absent de la racine jugée — le module n'existe pas encore (026-233)","code":1,"date":"2026-09-28T13:59:49Z","duree_s":889,"agent":"claude-code","executant":"claude-code","lignes":2729,"dossier":"fait"}
