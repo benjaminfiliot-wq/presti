@@ -51,9 +51,16 @@
   "cgu": {
     "fiche": "026-131",
     "id": "pubs",
-    "titre_h2": "3 ter. Le pack pubs locales",
+    "titre_h2": "3 quater. Le pack pubs locales",
     "apres_id": "site",
     "avant_id": "support",
+    "retractation_phrases_exigees": [
+      "rétractation",
+      "L221-3",
+      "L221-28",
+      "14 jours",
+      "contenu personnalisé"
+    ],
     "phrases_exigees": [
       "au prix indiqué au moment de la commande",
       "TVA non applicable, art. 293 B",

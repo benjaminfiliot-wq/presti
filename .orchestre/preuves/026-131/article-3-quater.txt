@@ -1,0 +1,21 @@
+3 quater. Le pack pubs locales
+
+- Le pack pubs locales comprend trois vidéos verticales de 15 secondes, trois visuels carrés, les textes d'annonce et une fiche « lancer la pub en 10 minutes », au prix indiqué au moment de la commande (TVA non applicable, art. 293 B du CGI), payé une seule fois via Stripe. Aucune fabrication ne commence avant le paiement.
+- Les photos fournies par l'artisan restent les siennes ; il garantit en détenir les droits, et les personnes visibles ont donné leur accord. Presti n'ajoute aucune personne générée et ne modifie pas ce que montrent les photos : seuls le recadrage, la lumière et le mouvement sont retouchés.
+- Si l'artisan choisit une voix, il s'agit d'une voix de synthèse, signalée « Voix générée par IA » à l'écran pendant toute la vidéo.
+- L'artisan est l'annonceur : il diffuse les créations depuis son compte, dans le respect des règles publicitaires de Meta. Presti ne gère pas les campagnes et ne dépense rien pour son compte. Aucun résultat n'est garanti : ni nombre de contacts, ni chantiers.
+- Le pack est livré sous 5 jours ouvrés après le paiement et un dossier complet. La livraison se fait par un lien de téléchargement valable 30 jours ; les fichiers sont ensuite effacés de nos serveurs.
+- Une retouche est comprise si l'artisan la demande dans les 30 jours suivant la livraison.
+- Les textes affichés dans les créations ne reprennent que des faits donnés par l'artisan.
+
+Conformément à l'article L221-3 du Code de la consommation, une entreprise de cinq salariés ou moins bénéficie des règles de rétractation lorsque le contrat est conclu hors établissement et que la commande du pack pubs locales ne relève pas du champ de son activité principale. Le délai de rétractation est de 14 jours à compter de la conclusion du contrat.
+
+Le pack est réalisé à partir de vos propres photos et selon vos spécifications : c'est un contenu personnalisé au sens de l'article L221-28 du Code de la consommation. Pour permettre la fabrication avant la fin de ce délai, la commande recueille votre demande expresse de commencer la prestation sans attendre et votre reconnaissance de la perte du droit de rétractation dès le début de la fabrication.
+
+Pour exercer ce droit avant le début de la fabrication, envoyez votre décision par email à l'adresse indiquée sur la page de contact.
+
+---
+Note pour Benj (pas dans le texte des CGU) :
+- Correction du 28/09, sur ta décision « corrige puis publie » : l'article s'appelait « 3 ter », comme l'article de rétractation du site à la demande (id="retractation") déjà présent — collision relevée par l'agent producteur, jamais tranchée avant aujourd'hui. Renuméroté « 3 quater » partout (page des CGU, commentaire de lib/packPub.ts, juge scripts/cgu-pack-pub-qa.mjs et son contrat scripts/fixtures/026-pubs-contenu/contrat-pack.json).
+- Rétractation ajoutée : même mécanique que l'article 3 ter du site (L221-3 pour l'applicabilité et le délai de 14 jours, demande expresse de commencer avant la fin du délai, perte du droit via L221-28), avec un motif adapté au pack — contenu personnalisé à partir de tes photos, au lieu de « site entièrement livré ». Rien d'autre du texte n'a changé.
+- Juge : critère CG-6 ajouté, rougit si la rétractation manque ou si deux articles des CGU partagent le même numéro. Prouvé par sabotage (retiré, puis dupliqué le numéro « 3 quater ») : CG-6 seul rougit à chaque fois, page restaurée à l'identique (sha256 3c0b9eb…) entre les deux essais — voir .orchestre/preuves/026-131/sabotage-cg6/.

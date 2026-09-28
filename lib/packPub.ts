@@ -14,7 +14,7 @@ export const PRIX_PACK_PUB_TEXTE = '149 €'
 
 export const ETATS_PACK = ['brouillon', 'payee', 'fabriquee', 'livree'] as const
 export type EtatPack = (typeof ETATS_PACK)[number]
-/** livree → payee : la retouche unique promise par les CGU 3 ter (route du Poste : refaits = 0, avant lien_expire_le). */
+/** livree → payee : la retouche unique promise par les CGU 3 quater (route du Poste : refaits = 0, avant lien_expire_le). */
 export const TRANSITIONS_PACK: Record<EtatPack, EtatPack[]> = {
   brouillon: ['payee'],
   payee: ['fabriquee'],

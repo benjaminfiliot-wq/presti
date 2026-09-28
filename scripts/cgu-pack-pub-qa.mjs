@@ -1,15 +1,22 @@
 #!/usr/bin/env node
-// scripts/cgu-pack-pub-qa.mjs — le juge du bloc « 3 ter. Le pack pubs locales » des CGU (fiche 026-131), écrit par Claude
-// Code AVANT le bloc qu'il juge (fiche 026-108, « Ce qu'il faut faire », point 4). Contrat : scripts/fixtures/026-pubs-
-// contenu/contrat-pack.json → cgu (seule source des phrases exigées).
+// scripts/cgu-pack-pub-qa.mjs — le juge du bloc « 3 quater. Le pack pubs locales » des CGU (fiche 026-131), écrit par
+// Claude Code AVANT le bloc qu'il juge (fiche 026-108, « Ce qu'il faut faire », point 4). Contrat : scripts/fixtures/026-
+// pubs-contenu/contrat-pack.json → cgu (seule source des phrases exigées).
+//
+// 28/09 (correction demandée par Benj) : le bloc s'appelait « 3 ter », comme l'article de rétractation du site à la
+// demande (id="retractation") déjà présent — collision de numéro relevée par l'agent producteur, jamais corrigée. Il est
+// renuméroté « 3 quater » et un paragraphe de rétractation lui est ajouté, sur le modèle exact de l'article 3 ter
+// (mêmes renvois L221-3 et L221-28), adapté au contenu personnalisé à partir des photos de l'artisan. CG-6 ajouté pour
+// que cette régression précise (numéro dupliqué, ou rétractation absente) ne puisse plus repasser inaperçue.
 //
 // Lecture statique de app/cgu/page.tsx : le titre exact, sa place (après le bloc « 3 bis » id="site", avant « 4. Support »
 // id="support" ; le bloc « 3 ter. Droit de rétractation » id="retractation" peut se trouver entre les deux, inchangé),
 // le bloc 3 bis identique à HEAD (non-régression), les phrases exigées du contrat dans le bloc du pack (balises ôtées,
-// apostrophes repliées), et « garanti » nulle part hors des deux phrases qui l'emploient légitimement. npm run typecheck.
+// apostrophes repliées), « garanti » nulle part hors des deux phrases qui l'emploient légitimement, la rétractation du
+// pack (mentions exigées) et l'unicité du numéro de chaque article des CGU. npm run typecheck.
 //
 // Critères : CG-1 titre et place · CG-2 bloc 3 bis inchangé (non-régression) · CG-3 phrases exigées · CG-4 aucune promesse
-// interdite · CG-5 npm run typecheck vert.
+// interdite · CG-5 npm run typecheck vert · CG-6 rétractation du pack présente et aucun numéro d'article dupliqué.
 //
 // Usage :
 //   node scripts/cgu-pack-pub-qa.mjs [--racine=<dossier>]
@@ -25,7 +32,7 @@ const NOM = 'cgu-pack-pub-qa'
 const FICHE = '026-131'
 const PAGE = 'app/cgu/page.tsx'
 const CG = CONTRAT.cgu
-const IDS = ['CG-1', 'CG-2', 'CG-3', 'CG-4', 'CG-5']
+const IDS = ['CG-1', 'CG-2', 'CG-3', 'CG-4', 'CG-5', 'CG-6']
 
 const o = lireOptionsOuQuitter(process.argv.slice(2), { connues: [] })
 const refuser = (m) => { console.error(`✗ ${NOM} : ${m}`); process.exit(2) }
@@ -81,6 +88,35 @@ function jugerBloc(s, texte) {
   else s.passe('CG-4', `aucun mot interdit (${CG.mots_interdits.join(', ')}) ; « garanti » seulement dans les ${CG.phrases_garanti_permises.length} phrases permises`)
 }
 
+/** CG-6 — le paragraphe de rétractation du pack (mentions exigées du contrat), et l'unicité du numéro de chaque
+ * article des CGU (le 28/09, « 3 ter » servait deux fois : la rétractation du site ET le pack, avant correction). */
+function jugerRetractationEtNumeros(s, texte) {
+  const pubs = blocDe(texte, CG.id)
+  if (!pubs) { s.echoue('CG-6', `bloc id="${CG.id}" introuvable : non jugé (CG-1)`); return }
+  const plat = sansBalises(pubs.corps).toLowerCase()
+  const attendues = CG.retractation_phrases_exigees || []
+  const manquantes = attendues.filter((p) => !plat.includes(replierApostrophes(p).toLowerCase()))
+  const echecs = manquantes.length ? [`rétractation du pack incomplète, mention(s) absente(s) : ${manquantes.map((p) => `« ${p} »`).join(' ; ')}`] : []
+
+  const reH2 = /<h2[^>]*>([\s\S]*?)<\/h2>/g
+  const reNumero = /^\s*(\d+(?:\s+(?:bis|ter|quater|quinquies|sexies|septies))?)\s*\./
+  const parNumero = new Map()
+  let mH2
+  while ((mH2 = reH2.exec(texte))) {
+    const titre = sansBalises(mH2[1])
+    const mN = reNumero.exec(titre)
+    if (!mN) continue
+    const numero = mN[1].replace(/\s+/g, ' ').trim().toLowerCase()
+    if (!parNumero.has(numero)) parNumero.set(numero, [])
+    parNumero.get(numero).push(titre)
+  }
+  const doublons = [...parNumero.entries()].filter(([, titres]) => titres.length > 1)
+  if (doublons.length) echecs.push(`numéro d'article dupliqué : ${doublons.map(([n, titres]) => `« ${n} » utilisé par ${titres.length} articles (${titres.join(' / ')})`).join(' ; ')}`)
+
+  if (echecs.length) for (const e of echecs) s.echoue('CG-6', e)
+  else s.passe('CG-6', `rétractation du pack présente (${attendues.length} mention(s)) ; ${parNumero.size} numéro(s) d'article dans les CGU, tous uniques`)
+}
+
 function jugerNonRegression(s) {
   const iciTexte = lireSi(path.join(racine, PAGE))
   const head = git(['show', `HEAD:${PAGE}`])
@@ -112,7 +148,7 @@ if (o.temoin) {
 }
 const texte = lireSi(path.join(racine, PAGE))
 if (texte === null) { for (const id of IDS) if (id !== 'CG-2') s.echoue(id, `${PAGE} absent ou vide (racine ${aff(racine)})`) }
-else jugerBloc(s, texte)
+else { jugerBloc(s, texte); jugerRetractationEtNumeros(s, texte) }
 jugerNonRegression(s)
 jugerTypecheck(s)
 process.exit(s.fin())

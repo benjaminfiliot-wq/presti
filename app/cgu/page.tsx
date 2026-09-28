@@ -75,6 +75,20 @@ export default function CGU() {
         <p>Signature (uniquement pour un envoi sur papier) : …</p>
       </div>
 
+      <h2 id="pubs">3 quater. Le pack pubs locales</h2>
+      <ul>
+        <li>Le pack pubs locales comprend trois vidéos verticales de 15 secondes, trois visuels carrés, les textes d’annonce et une fiche « lancer la pub en 10 minutes », au prix indiqué au moment de la commande (TVA non applicable, art. 293 B du CGI), payé une seule fois via <strong>Stripe</strong>. Aucune fabrication ne commence avant le paiement.</li>
+        <li>Les photos fournies par l’artisan restent les siennes ; il garantit en détenir les droits, et les personnes visibles ont donné leur accord. Presti n’ajoute aucune personne générée et ne modifie pas ce que montrent les photos : seuls le recadrage, la lumière et le mouvement sont retouchés.</li>
+        <li>Si l’artisan choisit une voix, il s’agit d’une voix de synthèse, signalée « Voix générée par IA » à l’écran pendant toute la vidéo.</li>
+        <li>L’artisan est l’annonceur : il diffuse les créations depuis son compte, dans le respect des règles publicitaires de Meta. Presti ne gère pas les campagnes et ne dépense rien pour son compte. Aucun résultat n’est garanti : ni nombre de contacts, ni chantiers.</li>
+        <li>Le pack est livré sous <strong>5 jours ouvrés</strong> après le paiement et un dossier complet. La livraison se fait par un lien de téléchargement valable 30 jours ; les fichiers sont ensuite effacés de nos serveurs.</li>
+        <li>Une retouche est comprise si l’artisan la demande dans les 30 jours suivant la livraison.</li>
+        <li>Les textes affichés dans les créations ne reprennent que des faits donnés par l’artisan.</li>
+      </ul>
+      <p>Conformément à l’article L221-3 du Code de la consommation, une entreprise de cinq salariés ou moins bénéficie des règles de rétractation lorsque le contrat est conclu hors établissement et que la commande du pack pubs locales ne relève pas du champ de son activité principale. Le délai de rétractation est de <strong>14 jours</strong> à compter de la conclusion du contrat.</p>
+      <p>Le pack est réalisé à partir de vos propres photos et selon vos spécifications : c’est un contenu personnalisé au sens de l’article L221-28 du Code de la consommation. Pour permettre la fabrication avant la fin de ce délai, la commande recueille votre demande expresse de commencer la prestation sans attendre et votre reconnaissance de la perte du droit de rétractation dès le début de la fabrication.</p>
+      <p>Pour exercer ce droit avant le début de la fabrication, envoyez votre décision par email à l’adresse indiquée sur la <a href="/contact">page de contact</a>.</p>
+
       <h2 id="support">4. Support et assistance</h2>
       <p>Le support se fait <strong>par écrit et en français</strong>, par <a href="/contact">le formulaire de contact</a> ou à l’adresse email des <a href="/mentions-legales">mentions légales</a> : les deux arrivent au même endroit.</p>
       <ul>
