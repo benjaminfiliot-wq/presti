@@ -6,11 +6,11 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T16:13:00Z
+# Digest — 2026-09-28T16:27:28Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 119 tâche(s) PASS, 194191 ligne(s) · faites par Claude Code : 68 tâche(s) PASS, 106820 ligne(s).
+**Mesure** — déléguées (antigravity, codex) : 119 tâche(s) PASS, 193551 ligne(s) · faites par Claude Code : 68 tâche(s) PASS, 106820 ligne(s).
 **État** — file : 9 · en cours : 5 · faites : 194 · refusées : 8
 
 ## ⚠ 1 question(s) en attente
@@ -32,6 +32,7 @@
 | 026-078 | feature | file | usine-codex-80 | — | Dans le Poste, montrer le résumé de la matière de chaque commande, mettre en ligne un site généré en un seul geste, noter la soumission du plan à la Search Console, envoyer le dossier sur demande, et faire remonter dans À faire chaque commande qui attend un geste humain |
 | 026-135 | feature | file | usine-codex-73 | — | Écrire lib/packPubDossier.ts (nettoyerDossierPack, pure, qui n'accepte que les photos de l'artisan lui-même) et la route GET/PUT /api/pubs/commander/brouillon qui lit et enregistre le dossier du pack derrière le drapeau packPub |
 | 026-115 | feature | file | codex | — | Quand Codex annonce son quota épuisé, faire rendre la tâche à la file, noter l'échéance dans .orchestre/quotas.json, refuser codex-* dans prochaine et executant.mjs jusqu'à cette échéance et dire dans le bloc Attention quel autre exécutant lancer, jusqu'au vert du groupe quota de preuve-026 |
+| 026-070 | feature | fait | codex | PASS | 2026-09-28T16:27:28Z · 16s · 0 l. |
 | 026-051 | feature | fait | codex | PASS | 2026-09-28T16:12:04Z · 37s · 0 l. |
 | 026-043 | feature | fait | claude-code | PASS | 2026-09-28T16:06:08Z · 187s · 0 l. |
 | 026-109 | feature | fait | claude-code | PASS | 2026-09-28T15:57:56Z · 54s · 0 l. |
@@ -49,7 +50,6 @@
 | 026-100 | feature | fait | claude-code | PASS | 2026-09-28T13:58:11Z · 272s · 510 l. |
 | 026-074 | feature | fait | codex | PASS | 2026-09-28T13:46:33Z · 953s · 0 l. |
 | 026-118 | feature | refuse | usine-codex-78 | FAIL | PASS PP-8 — POST : 404 (drapeau packPub), authArtisan, 403 fondateur, erreursAvantPaiementPack, parametresCheckoutPack, poserSessionStripePack, dans l'ordre ; a |
-| 026-070 | feature | fait | usine-codex-71 | PASS | 2026-09-28T12:46:24Z · 71s · 640 l. |
 | 026-072 | feature | fait | codex | PASS | 2026-09-28T12:43:47Z · 258s · 0 l. |
 | 026-119 | feature | fait | codex | FAIL | Error: Cannot find module 'C:\Users\benja\AppData\Local\Temp\vi-026-119-66468\scripts\crieur-qa.mjs' |
 | 026-230 | feature | refuse | usine-codex-77 | FAIL | FAIL SVS-1 — interrupteurs.semantique est actif sans depuis/accord |
