@@ -1,0 +1,23 @@
+{
+  "_source": "fiche 026-128 — appartient au juge scripts/pub-qa.mjs (contrôle SG et PQ). scripts/studio/monter.mjs (026-158) le lit pour habiller un échantillon, il ne le modifie jamais : les positions, textes et tailles d'ici font foi.",
+  "format": { "largeur": 1080, "hauteur": 1920, "duree_s": 15, "fps": 30 },
+  "zone_mention": {
+    "_note": "en haut de la zone sûre (sous la découpe d'un téléphone). Visible du début (0 s) à la fin, sans interruption.",
+    "x": 60, "y": 90, "largeur": 960, "hauteur": 100,
+    "police": "Arial", "taille": 40, "couleur": "#ffffff", "fond": "#000000cc", "interligne": 1.15,
+    "texte_video_ia": "Vidéo générée par IA",
+    "texte_video_voix_ia": "Vidéo et voix générées par IA",
+    "suffixe_presentateur": " · présentateur virtuel"
+  },
+  "zone_filigrane": {
+    "_note": "bas de la zone sûre. Visible du début à la fin, sans interruption. {marque} est remplacé par le nom de la marque.",
+    "x": 60, "y": 1730, "largeur": 960, "hauteur": 100,
+    "police": "Arial", "taille": 27, "couleur": "#ffffffcc", "fond": "#000000a0", "interligne": 1.1,
+    "gabarit": "Échantillon, non diffusé — sans lien commercial avec {marque}"
+  },
+  "plan_produit": {
+    "_note": "la vraie photo produit.jpg de la marque, jamais un plan généré : cadrages, zooms et déplacements de cette seule image.",
+    "part_largeur_min": 0.40,
+    "duree_min_s": 1.5
+  }
+}

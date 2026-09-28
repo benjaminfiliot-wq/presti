@@ -1,0 +1,17 @@
+{
+  "_source": "fiche 026-128, point 6 : référence de scripts/fixtures/026-pubs-contenu/preuve-01.json (HEAD relevé au début de la série, 4041ec9, 24/09 au soir — antérieur à cette fiche, donc à studio-garde-qa.mjs, pub-qa.mjs, studio-offre-qa.mjs et gabarits-pubs/studio/).",
+  "reference": "4041ec9b41432576037dbc0b45e0647bd60a0347",
+  "absents_de_la_reference": [
+    "scripts/studio-garde-qa.mjs",
+    "scripts/pub-qa.mjs",
+    "scripts/studio-offre-qa.mjs",
+    "gabarits-pubs/studio",
+    "scripts/fixtures/026-pubs-contenu/studio",
+    "scripts/fixtures/026-pubs-contenu/preuve-17.json"
+  ],
+  "juges": [
+    { "commande": "node scripts/studio-garde-qa.mjs", "echec_attendu": "SG-1", "fiche_jugee": "026-155" },
+    { "commande": "node scripts/pub-qa.mjs --monter-temoin", "echec_attendu": "PQ-1", "fiche_jugee": "026-158" },
+    { "commande": "node scripts/studio-offre-qa.mjs", "echec_attendu": "SO-1", "fiche_jugee": "026-166" }
+  ]
+}

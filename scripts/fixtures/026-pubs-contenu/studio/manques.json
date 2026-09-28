@@ -1,0 +1,17 @@
+{
+  "_source": "fiche 026-128, « Ce qu'il faut faire », point 1 : un vault par manque, à appliquer sur vault-ok/ pour SG-1 (scripts/studio-garde-qa.mjs, écrite par 026-155 dans scripts/studio/garde.mjs). Chaque entrée : la mutation à appliquer à une copie de vault-ok/ (jamais en place), et le nom de la ligne ou du fichier que la garde doit citer dans son refus.",
+  "vault_de_base": "vault-ok",
+  "note_page_produit": "vault-ok/marques/maison-solane/ ne porte pas de page-produit-AAAA-MM-JJ.html committée : sa fraîcheur (moins de 30 jours) se périmerait entre deux sessions (mémoire decomptes-dans-la-doc appliquée à une date). scripts/studio-garde-qa.mjs régénère ce fichier à la date du jour (St.fabriquerPageProduit, scripts/fixtures/026-pubs-contenu/studio/commun.mjs) avant chaque passage réel (hors --temoin) ; le scénario page_produit_perimee ci-dessous le date exprès à plus de 30 jours.",
+  "manques": [
+    { "id": "chaine_gratuite_absente", "mutation": "retirer la ligne « Chaîne gratuite lue le … » de prealables.md", "ligne_attendue": "Chaîne gratuite lue le" },
+    { "id": "droit_commercial_non", "mutation": "remplacer « droit commercial : oui » par « droit commercial : non » dans prealables.md", "ligne_attendue": "droit commercial : non" },
+    { "id": "elevenlabs_seul", "mutation": "remplacer la ligne « Chaîne gratuite lue le … » par une ancienne ligne « Conditions ElevenLabs lues le … » (ne vaut plus rien depuis la contre-revue du 25/09 au soir)", "ligne_attendue": "Conditions ElevenLabs" },
+    { "id": "arpp_absente", "mutation": "retirer la ligne « Fiche ARPP lue le … » de prealables.md", "ligne_attendue": "Fiche ARPP lue le" },
+    { "id": "activite_absente", "mutation": "retirer la ligne « Activité déclarée le … » de prealables.md", "ligne_attendue": "Activité déclarée le" },
+    { "id": "accord_photos_vide", "mutation": "vider marques/maison-solane/accord-photos.md", "ligne_attendue": "accord-photos.md" },
+    { "id": "accord_photos_sans_message_id", "mutation": "retirer la ligne « Message-ID : … » de accord-photos.md", "ligne_attendue": "Message-ID" },
+    { "id": "page_produit_perimee", "mutation": "écrire page-produit-AAAA-MM-JJ.html avec une date de plus de 30 jours (St.fabriquerPageProduit(dest, dateAncienne))", "ligne_attendue": "page-produit" },
+    { "id": "marque_au_registre_refus", "mutation": "ajouter une ligne « maison-solane,<date>,<motif> » à registre-refus.csv", "ligne_attendue": "registre-refus" },
+    { "id": "echantillon_refuse", "mutation": "créer marques/maison-solane/echantillon-1/statut.txt contenant « refuse »", "ligne_attendue": "refuse" }
+  ]
+}
