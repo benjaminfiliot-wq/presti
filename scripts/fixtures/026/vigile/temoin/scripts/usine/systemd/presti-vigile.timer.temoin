@@ -1,0 +1,10 @@
+[Unit]
+Description=Presti, Vigile : relevé de 6 h 50, avant le digest de 7 h 30 (026-249)
+
+[Timer]
+OnCalendar=*-*-* 06:50:00 Europe/Paris
+Persistent=true
+Unit=presti-vigile.service
+
+[Install]
+WantedBy=timers.target

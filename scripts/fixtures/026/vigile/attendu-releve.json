@@ -1,0 +1,908 @@
+{
+  "_": "Relevés attendus de construireReleve, CALCULÉS À LA MAIN par Claude Code (026-248) sur entrees/releve.json ; « chaine » est le relevé que scripts/vigile/releve.mjs doit écrire au passage nominal du juge (faux bus en http sur 127.0.0.1 : le TLS n'y répond pas, l'élément TLS est « inconnu »). « <texte> » : une chaîne de 1 à 160 signes, sans @, adresse, lien ni forme de secret (le texte d'une alerte est libre, sa clé ne l'est pas).",
+  "vide": {
+    "version": 1,
+    "le": "2026-10-01T04:50:00.000Z",
+    "jour": "2026-10-01",
+    "niveau": "inconnu",
+    "contexte": {
+      "pause_generale": null
+    },
+    "erreurs": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#erreurs",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "dependances": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "npm audit",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "conseiller": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#conseiller",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "echeances": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "registre",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "bannissements": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#bannissements",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "alertes": [],
+    "pauses": [],
+    "pauses_ecartees": {
+      "cible_interdite": 0,
+      "deja_en_pause": 0,
+      "max_par_passage": 0,
+      "agent_inconnu": 0
+    }
+  },
+  "bus_injoignable": {
+    "version": 1,
+    "le": "2026-10-01T04:50:00.000Z",
+    "jour": "2026-10-01",
+    "niveau": "inconnu",
+    "contexte": {
+      "pause_generale": null
+    },
+    "erreurs": {
+      "etat": "non_mesure",
+      "raison": "bus_injoignable",
+      "source": "api/agents/vigile#erreurs",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "dependances": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "npm audit",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "conseiller": {
+      "etat": "non_mesure",
+      "raison": "bus_injoignable",
+      "source": "api/agents/vigile#conseiller",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "echeances": {
+      "etat": "non_mesure",
+      "raison": "bus_injoignable",
+      "source": "registre",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "bannissements": {
+      "etat": "non_mesure",
+      "raison": "bus_injoignable",
+      "source": "api/agents/vigile#bannissements",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "alertes": [],
+    "pauses": [],
+    "pauses_ecartees": {
+      "cible_interdite": 0,
+      "deja_en_pause": 0,
+      "max_par_passage": 0,
+      "agent_inconnu": 0
+    }
+  },
+  "nominal": {
+    "version": 1,
+    "le": "2026-10-01T04:50:00.000Z",
+    "jour": "2026-10-01",
+    "niveau": "rouge",
+    "contexte": {
+      "pause_generale": false
+    },
+    "erreurs": {
+      "etat": "mesure",
+      "source": "api/agents/vigile#erreurs",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "orange",
+      "applicatives_24h": 13,
+      "au_moins": false,
+      "par_contexte": [
+        {
+          "contexte": "api/contact",
+          "n": 5
+        },
+        {
+          "contexte": "autre",
+          "n": 4
+        },
+        {
+          "contexte": "api/leads",
+          "n": 3
+        },
+        {
+          "contexte": "cron:relances",
+          "n": 1
+        }
+      ],
+      "crons_en_echec": [
+        "alertes"
+      ],
+      "taches_echec_24h": 2,
+      "unites_usine_en_echec": [
+        "presti-facteur.service"
+      ],
+      "non_couvert": [
+        "journaux Vercel"
+      ]
+    },
+    "dependances": {
+      "etat": "mesure",
+      "source": "npm audit",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "orange",
+      "vulnerabilites": {
+        "critical": 0,
+        "high": 1,
+        "moderate": 1,
+        "low": 0,
+        "info": 0
+      },
+      "avis": [
+        {
+          "paquet": "next",
+          "gravite": "high",
+          "ghsa": "GHSA-fr5h-rqp8-mj6g",
+          "correctif": true
+        }
+      ],
+      "fins_support": [
+        {
+          "paquet": "next",
+          "version": "15.5.26",
+          "majeure": 15,
+          "fin_support": "2026-10-21",
+          "jours_restants": 20,
+          "source": "https://endoflife.date/nextjs",
+          "niveau": "orange"
+        },
+        {
+          "paquet": "react",
+          "version": "19.1.0",
+          "majeure": 19,
+          "fin_support": null,
+          "jours_restants": null,
+          "source": null,
+          "niveau": "inconnu"
+        }
+      ]
+    },
+    "conseiller": {
+      "etat": "mesure",
+      "source": "api/agents/vigile#conseiller",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "orange",
+      "lints": [
+        {
+          "lint": "function_search_path_mutable",
+          "niveau": "WARN",
+          "categorie": "SECURITY",
+          "nombre": 3
+        },
+        {
+          "lint": "unindexed_foreign_keys",
+          "niveau": "INFO",
+          "categorie": "PERFORMANCE",
+          "nombre": 7
+        }
+      ]
+    },
+    "echeances": {
+      "etat": "mesure",
+      "source": "registre",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "rouge",
+      "elements": [
+        {
+          "nom": "jeton_externe:veille_pubs",
+          "ou": "ops.agents",
+          "expire_le": "2026-11-30T10:00:00.000Z",
+          "jours_restants": 60,
+          "origine": "bus",
+          "niveau": "vert"
+        },
+        {
+          "nom": "ESSAI_J7",
+          "ou": "coffre d'essai",
+          "expire_le": "2026-10-08T04:50:00.000Z",
+          "jours_restants": 7,
+          "origine": "registre",
+          "niveau": "rouge"
+        },
+        {
+          "nom": "ESSAI_J14",
+          "ou": "coffre d'essai",
+          "expire_le": "2026-10-15T04:50:00.000Z",
+          "jours_restants": 14,
+          "origine": "registre",
+          "niveau": "orange"
+        },
+        {
+          "nom": "ESSAI_ECHU",
+          "ou": "coffre d'essai",
+          "expire_le": "2026-09-30T04:50:00.000Z",
+          "jours_restants": -1,
+          "origine": "registre",
+          "niveau": "rouge"
+        },
+        {
+          "nom": "ESSAI_LOIN",
+          "ou": "coffre d'essai",
+          "expire_le": "2027-01-01T00:00:00.000Z",
+          "jours_restants": 91,
+          "origine": "registre",
+          "niveau": "vert"
+        },
+        {
+          "nom": "tls:prestiapp.fr",
+          "ou": "prestiapp.fr",
+          "expire_le": "2026-12-20T12:00:00.000Z",
+          "jours_restants": 80,
+          "origine": "tls",
+          "niveau": "vert"
+        }
+      ],
+      "inconnues": [
+        "ESSAI_INCONNU"
+      ],
+      "coffre": {
+        "attendus": [
+          "PRESTI_JETON_FACTEUR",
+          "PRESTI_JETON_STANDARDISTE",
+          "PRESTI_JETON_USINE"
+        ],
+        "manquants": []
+      },
+      "registre_verifie_le": "2026-09-28"
+    },
+    "bannissements": {
+      "etat": "mesure",
+      "source": "api/agents/vigile#bannissements",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "vert",
+      "poses_24h": 5,
+      "auto_24h": 4,
+      "manuels_24h": 1,
+      "actifs": 5,
+      "permanents": 1,
+      "abus_24h": 29,
+      "au_moins": false,
+      "par_raison": [
+        {
+          "raison": "autre",
+          "n": 1
+        },
+        {
+          "raison": "flood /api/contact",
+          "n": 1
+        },
+        {
+          "raison": "honeypot /api/leads",
+          "n": 1
+        },
+        {
+          "raison": "manuel",
+          "n": 1
+        },
+        {
+          "raison": "mdp-fuite",
+          "n": 1
+        }
+      ]
+    },
+    "alertes": [
+      {
+        "section": "echeances",
+        "cle": "ESSAI_J7",
+        "texte": "<texte>"
+      },
+      {
+        "section": "echeances",
+        "cle": "ESSAI_ECHU",
+        "texte": "<texte>"
+      }
+    ],
+    "pauses": [],
+    "pauses_ecartees": {
+      "cible_interdite": 0,
+      "deja_en_pause": 0,
+      "max_par_passage": 0,
+      "agent_inconnu": 0
+    }
+  },
+  "chaine": {
+    "@": "nominal",
+    "echeances": {
+      "etat": "mesure",
+      "source": "registre",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "rouge",
+      "elements": [
+        {
+          "nom": "jeton_externe:veille_pubs",
+          "ou": "ops.agents",
+          "expire_le": "2026-11-30T10:00:00.000Z",
+          "jours_restants": 60,
+          "origine": "bus",
+          "niveau": "vert"
+        },
+        {
+          "nom": "ESSAI_J7",
+          "ou": "coffre d'essai",
+          "expire_le": "2026-10-08T04:50:00.000Z",
+          "jours_restants": 7,
+          "origine": "registre",
+          "niveau": "rouge"
+        },
+        {
+          "nom": "ESSAI_J14",
+          "ou": "coffre d'essai",
+          "expire_le": "2026-10-15T04:50:00.000Z",
+          "jours_restants": 14,
+          "origine": "registre",
+          "niveau": "orange"
+        },
+        {
+          "nom": "ESSAI_ECHU",
+          "ou": "coffre d'essai",
+          "expire_le": "2026-09-30T04:50:00.000Z",
+          "jours_restants": -1,
+          "origine": "registre",
+          "niveau": "rouge"
+        },
+        {
+          "nom": "ESSAI_LOIN",
+          "ou": "coffre d'essai",
+          "expire_le": "2027-01-01T00:00:00.000Z",
+          "jours_restants": 91,
+          "origine": "registre",
+          "niveau": "vert"
+        },
+        {
+          "nom": "tls:127.0.0.1",
+          "ou": "127.0.0.1",
+          "expire_le": null,
+          "jours_restants": null,
+          "origine": "tls",
+          "niveau": "inconnu"
+        }
+      ],
+      "inconnues": [
+        "ESSAI_INCONNU"
+      ],
+      "coffre": {
+        "attendus": [
+          "PRESTI_JETON_FACTEUR",
+          "PRESTI_JETON_STANDARDISTE",
+          "PRESTI_JETON_USINE"
+        ],
+        "manquants": []
+      },
+      "registre_verifie_le": "2026-09-28"
+    }
+  },
+  "critique": {
+    "version": 1,
+    "le": "2026-10-21T04:50:00.000Z",
+    "jour": "2026-10-21",
+    "niveau": "rouge",
+    "contexte": {
+      "pause_generale": null
+    },
+    "erreurs": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#erreurs",
+      "lu_le": "2026-10-21T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "dependances": {
+      "etat": "mesure",
+      "source": "npm audit",
+      "lu_le": "2026-10-21T04:50:00.000Z",
+      "niveau": "rouge",
+      "vulnerabilites": {
+        "critical": 1,
+        "high": 1,
+        "moderate": 0,
+        "low": 1,
+        "info": 0
+      },
+      "avis": [
+        {
+          "paquet": "sharp",
+          "gravite": "critical",
+          "ghsa": "GHSA-2q8v-xjcw-hc4g",
+          "correctif": false
+        },
+        {
+          "paquet": "next",
+          "gravite": "high",
+          "ghsa": "GHSA-fr5h-rqp8-mj6g",
+          "correctif": true
+        }
+      ],
+      "fins_support": [
+        {
+          "paquet": "next",
+          "version": "15.5.26",
+          "majeure": 15,
+          "fin_support": "2026-10-21",
+          "jours_restants": 0,
+          "source": "https://endoflife.date/nextjs",
+          "niveau": "rouge"
+        },
+        {
+          "paquet": "react",
+          "version": "19.1.0",
+          "majeure": 19,
+          "fin_support": null,
+          "jours_restants": null,
+          "source": null,
+          "niveau": "inconnu"
+        }
+      ]
+    },
+    "conseiller": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#conseiller",
+      "lu_le": "2026-10-21T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "echeances": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "registre",
+      "lu_le": "2026-10-21T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "bannissements": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#bannissements",
+      "lu_le": "2026-10-21T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "alertes": [
+      {
+        "section": "dependances",
+        "cle": "ghsa-2q8v-xjcw-hc4g",
+        "texte": "<texte>"
+      },
+      {
+        "section": "dependances",
+        "cle": "fin_support:next",
+        "texte": "<texte>"
+      }
+    ],
+    "pauses": [],
+    "pauses_ecartees": {
+      "cible_interdite": 0,
+      "deja_en_pause": 0,
+      "max_par_passage": 0,
+      "agent_inconnu": 0
+    }
+  },
+  "next_28_09": {
+    "version": 1,
+    "le": "2026-09-28T08:00:00.000Z",
+    "jour": "2026-09-28",
+    "niveau": "orange",
+    "contexte": {
+      "pause_generale": null
+    },
+    "erreurs": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#erreurs",
+      "lu_le": "2026-09-28T08:00:00.000Z",
+      "niveau": "inconnu"
+    },
+    "dependances": {
+      "etat": "mesure",
+      "source": "npm audit",
+      "lu_le": "2026-09-28T08:00:00.000Z",
+      "niveau": "orange",
+      "vulnerabilites": {
+        "critical": 0,
+        "high": 0,
+        "moderate": 0,
+        "low": 0,
+        "info": 0
+      },
+      "avis": [],
+      "fins_support": [
+        {
+          "paquet": "next",
+          "version": "15.5.26",
+          "majeure": 15,
+          "fin_support": "2026-10-21",
+          "jours_restants": 23,
+          "source": "https://endoflife.date/nextjs",
+          "niveau": "orange"
+        },
+        {
+          "paquet": "react",
+          "version": "19.1.0",
+          "majeure": 19,
+          "fin_support": null,
+          "jours_restants": null,
+          "source": null,
+          "niveau": "inconnu"
+        }
+      ]
+    },
+    "conseiller": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#conseiller",
+      "lu_le": "2026-09-28T08:00:00.000Z",
+      "niveau": "inconnu"
+    },
+    "echeances": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "registre",
+      "lu_le": "2026-09-28T08:00:00.000Z",
+      "niveau": "inconnu"
+    },
+    "bannissements": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#bannissements",
+      "lu_le": "2026-09-28T08:00:00.000Z",
+      "niveau": "inconnu"
+    },
+    "alertes": [],
+    "pauses": [],
+    "pauses_ecartees": {
+      "cible_interdite": 0,
+      "deja_en_pause": 0,
+      "max_par_passage": 0,
+      "agent_inconnu": 0
+    }
+  },
+  "echeances_j14": {
+    "version": 1,
+    "le": "2026-10-01T04:50:00.000Z",
+    "jour": "2026-10-01",
+    "niveau": "orange",
+    "contexte": {
+      "pause_generale": false
+    },
+    "erreurs": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#erreurs",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "dependances": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "npm audit",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "conseiller": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#conseiller",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "echeances": {
+      "etat": "mesure",
+      "source": "registre",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "orange",
+      "elements": [
+        {
+          "nom": "jeton_externe:veille_pubs",
+          "ou": "ops.agents",
+          "expire_le": "2026-11-30T10:00:00.000Z",
+          "jours_restants": 60,
+          "origine": "bus",
+          "niveau": "vert"
+        },
+        {
+          "nom": "ESSAI_J14",
+          "ou": "coffre d'essai",
+          "expire_le": "2026-10-15T04:50:00.000Z",
+          "jours_restants": 14,
+          "origine": "registre",
+          "niveau": "orange"
+        }
+      ],
+      "inconnues": [
+        "ESSAI_INCONNU"
+      ],
+      "coffre": null,
+      "registre_verifie_le": "2026-09-28"
+    },
+    "bannissements": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#bannissements",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "alertes": [],
+    "pauses": [],
+    "pauses_ecartees": {
+      "cible_interdite": 0,
+      "deja_en_pause": 0,
+      "max_par_passage": 0,
+      "agent_inconnu": 0
+    }
+  },
+  "coffre_manquant": {
+    "version": 1,
+    "le": "2026-10-01T04:50:00.000Z",
+    "jour": "2026-10-01",
+    "niveau": "rouge",
+    "contexte": {
+      "pause_generale": false
+    },
+    "erreurs": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#erreurs",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "dependances": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "npm audit",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "conseiller": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#conseiller",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "echeances": {
+      "etat": "mesure",
+      "source": "registre",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "rouge",
+      "elements": [
+        {
+          "nom": "jeton_externe:veille_pubs",
+          "ou": "ops.agents",
+          "expire_le": "2026-11-30T10:00:00.000Z",
+          "jours_restants": 60,
+          "origine": "bus",
+          "niveau": "vert"
+        },
+        {
+          "nom": "ESSAI_LOIN",
+          "ou": "coffre d'essai",
+          "expire_le": "2027-01-01T00:00:00.000Z",
+          "jours_restants": 91,
+          "origine": "registre",
+          "niveau": "vert"
+        }
+      ],
+      "inconnues": [],
+      "coffre": {
+        "attendus": [
+          "PRESTI_JETON_FACTEUR",
+          "PRESTI_JETON_STANDARDISTE",
+          "PRESTI_JETON_USINE"
+        ],
+        "manquants": [
+          "PRESTI_JETON_STANDARDISTE"
+        ]
+      },
+      "registre_verifie_le": "2026-09-28"
+    },
+    "bannissements": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "api/agents/vigile#bannissements",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "alertes": [
+      {
+        "section": "echeances",
+        "cle": "coffre:presti_jeton_standardiste",
+        "texte": "<texte>"
+      }
+    ],
+    "pauses": [],
+    "pauses_ecartees": {
+      "cible_interdite": 0,
+      "deja_en_pause": 0,
+      "max_par_passage": 0,
+      "agent_inconnu": 0
+    }
+  },
+  "saturee": {
+    "version": 1,
+    "le": "2026-10-01T04:50:00.000Z",
+    "jour": "2026-10-01",
+    "niveau": "rouge",
+    "contexte": {
+      "pause_generale": false
+    },
+    "erreurs": {
+      "etat": "mesure",
+      "source": "api/agents/vigile#erreurs",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "rouge",
+      "applicatives_24h": 200,
+      "au_moins": true,
+      "par_contexte": [
+        {
+          "contexte": "api/leads",
+          "n": 200
+        }
+      ],
+      "crons_en_echec": [
+        "alertes"
+      ],
+      "taches_echec_24h": 2,
+      "unites_usine_en_echec": null,
+      "non_couvert": [
+        "journaux Vercel"
+      ]
+    },
+    "dependances": {
+      "etat": "non_mesure",
+      "raison": "source_absente",
+      "source": "npm audit",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "inconnu"
+    },
+    "conseiller": {
+      "etat": "mesure",
+      "source": "api/agents/vigile#conseiller",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "orange",
+      "lints": [
+        {
+          "lint": "function_search_path_mutable",
+          "niveau": "WARN",
+          "categorie": "SECURITY",
+          "nombre": 3
+        },
+        {
+          "lint": "unindexed_foreign_keys",
+          "niveau": "INFO",
+          "categorie": "PERFORMANCE",
+          "nombre": 7
+        }
+      ]
+    },
+    "echeances": {
+      "etat": "mesure",
+      "source": "registre",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "rouge",
+      "elements": [
+        {
+          "nom": "jeton_externe:veille_pubs",
+          "ou": "ops.agents",
+          "expire_le": "2026-11-30T10:00:00.000Z",
+          "jours_restants": 60,
+          "origine": "bus",
+          "niveau": "vert"
+        },
+        {
+          "nom": "ESSAI_J7",
+          "ou": "coffre d'essai",
+          "expire_le": "2026-10-08T04:50:00.000Z",
+          "jours_restants": 7,
+          "origine": "registre",
+          "niveau": "rouge"
+        },
+        {
+          "nom": "ESSAI_J14",
+          "ou": "coffre d'essai",
+          "expire_le": "2026-10-15T04:50:00.000Z",
+          "jours_restants": 14,
+          "origine": "registre",
+          "niveau": "orange"
+        },
+        {
+          "nom": "ESSAI_ECHU",
+          "ou": "coffre d'essai",
+          "expire_le": "2026-09-30T04:50:00.000Z",
+          "jours_restants": -1,
+          "origine": "registre",
+          "niveau": "rouge"
+        },
+        {
+          "nom": "ESSAI_LOIN",
+          "ou": "coffre d'essai",
+          "expire_le": "2027-01-01T00:00:00.000Z",
+          "jours_restants": 91,
+          "origine": "registre",
+          "niveau": "vert"
+        }
+      ],
+      "inconnues": [
+        "ESSAI_INCONNU"
+      ],
+      "coffre": null,
+      "registre_verifie_le": "2026-09-28"
+    },
+    "bannissements": {
+      "etat": "mesure",
+      "source": "api/agents/vigile#bannissements",
+      "lu_le": "2026-10-01T04:50:00.000Z",
+      "niveau": "rouge",
+      "poses_24h": 200,
+      "auto_24h": 200,
+      "manuels_24h": 0,
+      "actifs": 200,
+      "permanents": 0,
+      "abus_24h": 360,
+      "au_moins": true,
+      "par_raison": [
+        {
+          "raison": "flood /api/leads",
+          "n": 200
+        }
+      ]
+    },
+    "alertes": [
+      {
+        "section": "erreurs",
+        "cle": "applicatives_24h",
+        "texte": "<texte>"
+      },
+      {
+        "section": "echeances",
+        "cle": "ESSAI_J7",
+        "texte": "<texte>"
+      },
+      {
+        "section": "echeances",
+        "cle": "ESSAI_ECHU",
+        "texte": "<texte>"
+      },
+      {
+        "section": "bannissements",
+        "cle": "auto_24h",
+        "texte": "<texte>"
+      }
+    ],
+    "pauses": [],
+    "pauses_ecartees": {
+      "cible_interdite": 0,
+      "deja_en_pause": 0,
+      "max_par_passage": 0,
+      "agent_inconnu": 0
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "note": "vigile.json d'essai du juge (026-248) : mêmes clés que docs/agents/vigile.json, registre fictif.",
+  "seuils": {
+    "erreurs_orange": { "valeur": 10, "provisoire": true },
+    "erreurs_rouge": { "valeur": 100, "provisoire": true },
+    "bans_orange": { "valeur": 5, "provisoire": true },
+    "bans_rouge": { "valeur": 20, "provisoire": true },
+    "echeance_orange_jours": { "valeur": 14, "provisoire": true },
+    "echeance_rouge_jours": { "valeur": 7, "provisoire": true },
+    "fin_support_orange_jours": { "valeur": 30, "provisoire": true },
+    "registre_perime_jours": { "valeur": 90, "provisoire": true }
+  },
+  "fins_support": [
+    { "paquet": "next", "majeure": 15, "fin_support": "2026-10-21", "source": "https://endoflife.date/nextjs", "lu_le": "2026-09-28" },
+    { "paquet": "react", "majeure": 19, "a_verifier": true },
+    { "paquet": "sharp", "majeure": 1, "fin_support": "2026-01-01", "source": "https://exemple.invalid/sharp", "lu_le": "2026-09-28" }
+  ],
+  "echeances": [
+    { "nom": "ESSAI_J7", "ou": "coffre d'essai", "expire_le": "2026-10-08T04:50:00Z", "source": "fixture du juge", "verifie_le": "2026-09-28" },
+    { "nom": "ESSAI_J14", "ou": "coffre d'essai", "expire_le": "2026-10-15T04:50:00Z", "source": "fixture du juge", "verifie_le": "2026-09-28" },
+    { "nom": "ESSAI_ECHU", "ou": "coffre d'essai", "expire_le": "2026-09-30T04:50:00Z", "source": "fixture du juge", "verifie_le": "2026-09-28" },
+    { "nom": "ESSAI_LOIN", "ou": "coffre d'essai", "expire_le": "2027-01-01T00:00:00Z", "source": "fixture du juge", "verifie_le": "2026-09-28" },
+    { "nom": "ESSAI_INCONNU", "ou": "coffre d'essai", "expire_le": null, "a_verifier": true, "verifie_le": "2026-09-28" },
+    { "nom": "ESSAI_SANS", "ou": "coffre d'essai", "expire_le": null, "sans_echeance": true, "source": "fixture du juge", "verifie_le": "2026-09-28" }
+  ],
+  "registre_verifie_le": "2026-09-28",
+  "resume_modele": { "actif": false, "accord": null },
+  "pause_securite": {
+    "seuils": {
+      "secret_expose": { "valeur": 1, "provisoire": true },
+      "echecs_1h": { "valeur": 20, "provisoire": true },
+      "cout_jour_eur": { "valeur": 1, "provisoire": true },
+      "envois_hors_regle_24h": { "valeur": 1, "provisoire": true }
+    },
+    "max_par_passage": 1,
+    "cibles_interdites": ["chef", "pont", "pont_telegram", "systeme", "a0", "usine", "vigile"],
+    "accord": null
+  }
+}

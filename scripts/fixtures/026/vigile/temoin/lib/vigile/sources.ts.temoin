@@ -1,0 +1,24 @@
+// lib/vigile/sources.ts — d'où le serveur du Vigile lit (contrat de 026-248, témoin du juge).
+//
+// « Deux chiffres, un écran » : les bans, les passages des crons et les erreurs des 24 h sont les MÊMES lectures que le
+// Poste et la salle Sécurité (026-174, 026-178) ; rien n'est recopié ici. Les deux seuls appels directs sont les
+// fonctions de la migration 0115, réservées à service_role ; leur absence (PGRST202) rend la section « non mesurée ».
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { bans, cronsDuService } from '@/lib/controle/lectures'
+import { erreurs24h } from '@/lib/pilotage/salles/securite'
+import type { SourcesVigile } from './serveur'
+
+/** Une erreur de PostgREST levée avec son seul code (le texte de Postgres ne sort pas). */
+function lever(code: unknown): never {
+  const e = new Error('lecture refusée') as Error & { code?: string }
+  e.code = String(code ?? '')
+  throw e
+}
+
+export const sourcesParDefaut: SourcesVigile = {
+  bans: () => bans(),
+  erreurs: () => erreurs24h(),
+  crons: () => cronsDuService(),
+  conseiller: async () => { const r = await supabaseAdmin.rpc('vigile_conseiller'); if (r.error) lever(r.error.code); return r.data },
+  agents: async () => { const r = await supabaseAdmin.rpc('vigile_agents'); if (r.error) lever(r.error.code); return r.data },
+}

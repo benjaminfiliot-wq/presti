@@ -1,0 +1,37 @@
+// lib/vigile/serveur.ts — les agrégats que GET /api/agents/vigile rend au Vigile (contrat de 026-248, témoin du juge).
+//
+// releveServeur(sources, maintenant) : cinq enveloppes indépendantes ; une source qui lève donne sa seule section
+// « non_mesure » (raison fermée), jamais un 500. Les réductions sont celles de lib/vigile/releve.ts : aucune adresse IP,
+// aucun « @ », aucun texte libre ne sort d'ici.
+import { reduireAgents, reduireBans, reduireCrons, reduireErreurs, reduireLints } from './releve'
+
+export type SourcesVigile = {
+  bans: () => Promise<unknown>
+  erreurs: () => Promise<unknown>
+  crons: () => Promise<unknown>
+  conseiller: () => Promise<unknown>
+  agents: () => Promise<unknown>
+}
+type Enveloppe = Record<string, unknown>
+
+/** La raison fermée d'une source en panne : fonction absente (PGRST202, 42883), refus (42501), sinon source absente. */
+function raisonDe(e: unknown): string {
+  const code = e && typeof e === 'object' && 'code' in e ? String((e as { code: unknown }).code) : ''
+  if (code === 'PGRST202' || code === '42883') return 'fonction_absente'
+  if (code === '42501') return 'refus'
+  return 'source_absente'
+}
+async function envelopper(lire: () => Promise<unknown>, reduire: (x: unknown) => Enveloppe): Promise<Enveloppe> {
+  try { return reduire(await lire()) } catch (e) { return { etat: 'non_mesure', raison: raisonDe(e) } }
+}
+
+export async function releveServeur(sources: SourcesVigile, maintenant: Date) {
+  const [bannissements, erreurs, crons, conseiller, agents] = await Promise.all([
+    envelopper(sources.bans, (x) => reduireBans(x, maintenant)),
+    envelopper(sources.erreurs, reduireErreurs),
+    envelopper(sources.crons, reduireCrons),
+    envelopper(sources.conseiller, reduireLints),
+    envelopper(sources.agents, reduireAgents),
+  ])
+  return { le: maintenant.toISOString(), bannissements, erreurs, crons, conseiller, agents }
+}

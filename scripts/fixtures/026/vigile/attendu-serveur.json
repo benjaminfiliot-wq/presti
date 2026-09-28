@@ -1,0 +1,152 @@
+{
+  "_": "Réponses attendues de releveServeur(sources, maintenant) et de GET /api/agents/vigile, CALCULÉES À LA MAIN par Claude Code (026-248), horloge figée au 2026-10-01T04:50:00.000Z (06 h 50 à Paris), sur entrees/sources.json. Une entrée { \"@\": \"<base>\", … } vaut la base, clés remplacées.",
+  "nominal": {
+    "le": "2026-10-01T04:50:00.000Z",
+    "bannissements": {
+      "etat": "mesure",
+      "poses_24h": 5,
+      "auto_24h": 4,
+      "manuels_24h": 1,
+      "actifs": 5,
+      "permanents": 1,
+      "abus_24h": 29,
+      "au_moins": false,
+      "par_raison": [
+        {
+          "raison": "autre",
+          "n": 1
+        },
+        {
+          "raison": "flood /api/contact",
+          "n": 1
+        },
+        {
+          "raison": "honeypot /api/leads",
+          "n": 1
+        },
+        {
+          "raison": "manuel",
+          "n": 1
+        },
+        {
+          "raison": "mdp-fuite",
+          "n": 1
+        }
+      ]
+    },
+    "erreurs": {
+      "etat": "mesure",
+      "applicatives_24h": 13,
+      "au_moins": false,
+      "par_contexte": [
+        {
+          "contexte": "api/contact",
+          "n": 5
+        },
+        {
+          "contexte": "autre",
+          "n": 4
+        },
+        {
+          "contexte": "api/leads",
+          "n": 3
+        },
+        {
+          "contexte": "cron:relances",
+          "n": 1
+        }
+      ]
+    },
+    "crons": {
+      "etat": "mesure",
+      "en_echec": [
+        "alertes"
+      ]
+    },
+    "conseiller": {
+      "etat": "mesure",
+      "lints": [
+        {
+          "lint": "function_search_path_mutable",
+          "niveau": "WARN",
+          "categorie": "SECURITY",
+          "nombre": 3
+        },
+        {
+          "lint": "unindexed_foreign_keys",
+          "niveau": "INFO",
+          "categorie": "PERFORMANCE",
+          "nombre": 7
+        }
+      ]
+    },
+    "agents": {
+      "etat": "mesure",
+      "mesures": [
+        {
+          "nom": "facteur",
+          "echecs_1h": 2,
+          "cout_jour_eur": 0,
+          "envois_hors_regle_24h": 0
+        },
+        {
+          "nom": "standardiste",
+          "echecs_1h": 0,
+          "cout_jour_eur": 0,
+          "envois_hors_regle_24h": 0
+        }
+      ]
+    }
+  },
+  "conseiller_absent": {
+    "@": "nominal",
+    "conseiller": {
+      "etat": "non_mesure",
+      "raison": "fonction_absente"
+    }
+  },
+  "bans_en_panne": {
+    "@": "nominal",
+    "bannissements": {
+      "etat": "non_mesure",
+      "raison": "source_absente"
+    }
+  },
+  "agents_absente": {
+    "@": "nominal",
+    "agents": {
+      "etat": "non_mesure",
+      "raison": "fonction_absente"
+    }
+  },
+  "saturee": {
+    "@": "nominal",
+    "bannissements": {
+      "etat": "mesure",
+      "poses_24h": 200,
+      "auto_24h": 200,
+      "manuels_24h": 0,
+      "actifs": 200,
+      "permanents": 0,
+      "abus_24h": 360,
+      "au_moins": true,
+      "par_raison": [
+        {
+          "raison": "flood /api/leads",
+          "n": 200
+        }
+      ]
+    },
+    "erreurs": {
+      "etat": "mesure",
+      "applicatives_24h": 200,
+      "au_moins": true,
+      "par_contexte": [
+        {
+          "contexte": "api/leads",
+          "n": 200
+        }
+      ]
+    }
+  }
+}

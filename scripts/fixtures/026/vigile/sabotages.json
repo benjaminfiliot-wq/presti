@@ -1,0 +1,742 @@
+{
+  "_": "Sabotages du témoin (026-248) : chacun altère UN fichier d'une copie du témoin (chercher → remplacer, une seule occurrence) et doit rougir le critère « id ». Rejoués par node scripts/vigile-qa.mjs --preuve-echecs. Correction du 28/09 : un sabotage « json » (au lieu de chercher/remplacer) pose chaque { chemin, valeur } dans le fichier JSON (chemins a.b[cle=valeur].c), ce qui survit à une remise en forme du vigile.json livré. Correction du 28/09, 2e passage (contre-verif-28-09.md, D1 à D3) : les sabotages 67 à 83 reproduisent les angles morts établis — six phrases contraires ajoutées à vigile.md, la règle mot pour mot gardée (S1 à S5 et Codex n°2) ; des dates futures dans vigile.json (registre_verifie_le en 2099 : Codex n°4, verifie_le, lu_le, accords) ; des sources de Next 15 qui ne datent pas la fin de support (Codex n°3 et deux autres) ; la péremption du registre livré (seuil à 900, date future acceptée par le relevé, péremption ignorée). Correction du 28/09, 3e relecture : le texte entier de vigile.md est fermé ; les sabotages 84 à 89 sont des phrases contraires qui n'emploient aucun mot des sujets (elles restaient vertes avec la seule fermeture par sujets).",
+  "sabotages": [
+    {
+      "id": "VG-1",
+      "nom": "section non mesurée rendue vert",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "lu_le: luLe, niveau: 'inconnu' as Niveau })",
+      "remplacer": "lu_le: luLe, niveau: 'vert' as Niveau })"
+    },
+    {
+      "id": "VG-1",
+      "nom": "Next 15 à 20 jours compté vert",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "j <= seuil(reglages, 'fin_support_orange_jours', 30) ? 'orange' : 'vert'",
+      "remplacer": "j <= 3 ? 'orange' : 'vert'"
+    },
+    {
+      "id": "VG-1",
+      "nom": "échéance à J-7 comptée orange",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "const niveauDe = (j: number): Niveau => (j <= rouge ? 'rouge'",
+      "remplacer": "const niveauDe = (j: number): Niveau => (j < rouge ? 'rouge'"
+    },
+    {
+      "id": "VG-2",
+      "nom": "une adresse IP laissée dans les bans",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "    poses_24h: poses.length,\n",
+      "remplacer": "    poses_24h: poses.length,\n    derniere_ip: poses[0]?.ip ?? null,\n"
+    },
+    {
+      "id": "VG-2",
+      "nom": "une raison libre recopiée",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "if (auto !== true) return 'manuel'",
+      "remplacer": "if (auto !== true) return String(raison ?? 'manuel').slice(0, 60)"
+    },
+    {
+      "id": "VG-2",
+      "nom": "le titre d'un avis recopié",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "avis.push({ paquet: nom, gravite: String(via.severity), ghsa: m[0],",
+      "remplacer": "avis.push({ paquet: nom, titre: String(via.title ?? ''), gravite: String(via.severity), ghsa: m[0],"
+    },
+    {
+      "id": "VG-3",
+      "nom": "la route ouverte à tout agent",
+      "fichier": "app/api/agents/vigile/route.ts",
+      "chercher": "  if (agent.nom !== 'vigile') return",
+      "remplacer": "  if (false) return"
+    },
+    {
+      "id": "VG-3",
+      "nom": "la route sans busAgents",
+      "fichier": "app/api/agents/vigile/route.ts",
+      "chercher": "  if (!actif('busAgents')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })\n",
+      "remplacer": ""
+    },
+    {
+      "id": "VG-3",
+      "nom": "les sources lues avant le refus",
+      "fichier": "app/api/agents/vigile/route.ts",
+      "chercher": "  const agent = await authAgent(req)\n",
+      "remplacer": "  const lu = await releveServeur(sourcesParDefaut, new Date())\n  const agent = await authAgent(req)\n  void lu\n"
+    },
+    {
+      "id": "VG-4",
+      "nom": "un .from('ip_bans') dans sources.ts",
+      "fichier": "lib/vigile/sources.ts",
+      "chercher": "export const sourcesParDefaut: SourcesVigile = {",
+      "remplacer": "export const lectureDirecte = () => supabaseAdmin.from('ip_bans').select('raison, auto')\nexport const sourcesParDefaut: SourcesVigile = {"
+    },
+    {
+      "id": "VG-4",
+      "nom": "un rpc hors des deux fonctions permises",
+      "fichier": "lib/vigile/sources.ts",
+      "chercher": "const r = await supabaseAdmin.rpc('vigile_agents')",
+      "remplacer": "await supabaseAdmin.rpc('ops_etat'); const r = await supabaseAdmin.rpc('vigile_agents')"
+    },
+    {
+      "id": "VG-5",
+      "nom": "deux vigile_releve le même jour",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "if (local.dernier_jour_poste !== jour) {",
+      "remplacer": "if (true) {"
+    },
+    {
+      "id": "VG-5",
+      "nom": "un POST vers /api/agents/taches",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "    await bus('POST', '/api/agents/battement')\n",
+      "remplacer": "    await bus('POST', '/api/agents/battement')\n    await bus('POST', '/api/agents/taches', { type: 'relecture', cle: `vigile-${jour}`, capacite: 'relecture' })\n"
+    },
+    {
+      "id": "VG-5",
+      "nom": "un 423 suivi d'autres requêtes",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "if (e.statut === 423) {",
+      "remplacer": "if (e.statut === 423) { await bus('GET', '/api/agents/vigile') } if (false) {"
+    },
+    {
+      "id": "VG-6",
+      "nom": "le jeton transmis à npm",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "const envReduit = (env) => Object.fromEntries(['PATH', 'HOME', 'LANG']",
+      "remplacer": "const envReduit = (env) => Object.fromEntries(['PATH', 'HOME', 'LANG', 'PRESTI_JETON_VIGILE']"
+    },
+    {
+      "id": "VG-6",
+      "nom": "npm lancé avec shell: true",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "{ cwd, env, shell: false, windowsHide: true,",
+      "remplacer": "{ cwd, env, shell: true, windowsHide: true,"
+    },
+    {
+      "id": "VG-6",
+      "nom": "une lecture de agents.env",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "async function lireCoffre(o, lancer, env) {\n",
+      "remplacer": "async function lireCoffre(o, lancer, env) {\n  try { fs.readFileSync(path.join(env.HOME || '', '.config', 'presti', 'agents.env'), 'utf8') } catch { /* absent */ }\n"
+    },
+    {
+      "id": "VG-6",
+      "nom": "npm jamais tué au délai",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "tue = true; try { enfant.kill('SIGKILL') } catch { /* déjà mort */ } finir(",
+      "remplacer": "tue = true; finir("
+    },
+    {
+      "id": "VG-7",
+      "nom": "un nombre inventé accepté",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "if (nombreOrphelin(texte, releve) !== null || nombreOrphelin(evenement, releve) !== null) return 'nombre'",
+      "remplacer": "if (false) return 'nombre'"
+    },
+    {
+      "id": "VG-7",
+      "nom": "le gabarit sans « non mesuré »",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": ": inconnu, non mesuré (${x.raison})",
+      "remplacer": ": inconnu (${x.raison})"
+    },
+    {
+      "id": "VG-7",
+      "nom": "le lecteur créé sans délai",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "const lecteur = creer('vigile', { delaiMs: o.delaiModeleMs })",
+      "remplacer": "const lecteur = creer('vigile', {})"
+    },
+    {
+      "id": "VG-8",
+      "nom": "un lecteur freellmapi appelé",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "(e.moteur === 'codex' ||",
+      "remplacer": "(e.moteur === 'codex' || e.moteur === 'freellmapi' ||"
+    },
+    {
+      "id": "VG-8",
+      "nom": "un modèle :cloud accepté",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "!e.modele.endsWith(':cloud') && ",
+      "remplacer": ""
+    },
+    {
+      "id": "VG-8",
+      "nom": "le réglage actif ignoré",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "  if (reglages?.resume_modele?.actif !== true) return null\n",
+      "remplacer": ""
+    },
+    {
+      "id": "VG-9",
+      "nom": "une unité avec EnvironmentFile=",
+      "fichier": "scripts/usine/systemd/presti-vigile.service",
+      "chercher": "TimeoutStartSec=10min",
+      "remplacer": "EnvironmentFile=/home/agents/.config/presti/agents.env\nTimeoutStartSec=10min"
+    },
+    {
+      "id": "VG-9",
+      "nom": "--maintenant dans ExecStart",
+      "fichier": "scripts/usine/systemd/presti-vigile.service",
+      "chercher": "--depot=/srv/presti-agents",
+      "remplacer": "--depot=/srv/presti-agents --maintenant=2026-10-01T04:50:00Z"
+    },
+    {
+      "id": "VG-12",
+      "nom": "une pause sous le seuil",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "if (strict ? v > s : v >= s)",
+      "remplacer": "if (strict ? v > s : v >= s - 1)"
+    },
+    {
+      "id": "VG-12",
+      "nom": "une pause sur un seul niveau rouge du relevé",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "  declenchements.sort((a, b) => a.rang - b.rang",
+      "remplacer": "  if (!declenchements.length && etat.ok && [erreurs, dependances, conseiller, echeances, bannissements].some((x) => x.niveau === 'rouge')) declenchements.push({ agent: 'facteur', seuil: 'qualite', mesure: 1, rang: 9 })\n  declenchements.sort((a, b) => a.rang - b.rang"
+    },
+    {
+      "id": "VG-12",
+      "nom": "deux agents pour un seul déclenchement",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "else if (pauses.length >= max) issue = 'max_par_passage'",
+      "remplacer": "else if (false) issue = 'max_par_passage'"
+    },
+    {
+      "id": "VG-12",
+      "nom": "chef mis en pause (retiré de la liste en dur)",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "Object.freeze(['chef', 'pont', 'pont_telegram'",
+      "remplacer": "Object.freeze(['pont', 'pont_telegram'"
+    },
+    {
+      "id": "VG-12",
+      "nom": "la liste en dur ignorée (le réglage seul)",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "const interdites = new Set<string>([...CIBLES_INTERDITES, ...liste(ps.cibles_interdites)",
+      "remplacer": "const interdites = new Set<string>([...liste(ps.cibles_interdites)"
+    },
+    {
+      "id": "VG-2",
+      "nom": "une adresse IPv6 compressée laissée dans les contextes",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "!RE_IPV4.test(s) && !s.includes('::') && !RE_IPV6.test(s)",
+      "remplacer": "!RE_IPV4.test(s) && !RE_IPV6.test(s)"
+    },
+    {
+      "id": "VG-13",
+      "nom": "une pause levée par { pause: false }",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "{ agent: p.agent, motif })",
+      "remplacer": "{ agent: p.agent, motif, pause: false })"
+    },
+    {
+      "id": "VG-13",
+      "nom": "la pause générale posée",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "    for (const p of releve.pauses) {\n",
+      "remplacer": "    if (releve.pauses.length) await bus('POST', '/api/controle/pause', { actif: true, motif: 'vigile' })\n    for (const p of releve.pauses) {\n"
+    },
+    {
+      "id": "VG-13",
+      "nom": "une pause posée par une autre route que la route partagée",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "await bus('POST', '/api/agents/pauses',",
+      "remplacer": "await bus('POST', '/api/agents/agent-pause',"
+    },
+    {
+      "id": "VG-14",
+      "nom": "une pause sans vigile_pause",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "      await bus('POST', '/api/agents/evenements', { type: 'vigile_pause',",
+      "remplacer": "      if (false) await bus('POST', '/api/agents/evenements', { type: 'vigile_pause',"
+    },
+    {
+      "id": "VG-14",
+      "nom": "un vigile_pause malgré le refus de la route",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": ": reste une alerte`); continue }",
+      "remplacer": ": reste une alerte`) }"
+    },
+    {
+      "id": "VG-14",
+      "nom": "une pause reposée le même jour",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "if (local.pauses_du_jour.includes(p.agent)) continue",
+      "remplacer": "if (false) continue"
+    },
+    {
+      "id": "VG-6",
+      "nom": "une requête https vers un autre hôte que --base (import dynamique, invisible au contrôle statique)",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "    await bus('POST', '/api/agents/battement')\n",
+      "remplacer": "    await bus('POST', '/api/agents/battement')\n    await new Promise((ok) => { import('node:ht' + 'tps').then((h) => { const q = h.request('https://127.0.0.2:9/'); q.on('error', () => ok()); q.on('response', () => ok()); q.setTimeout(1500, () => { q.destroy(); ok() }); q.end() }, () => ok()) })\n"
+    },
+    {
+      "id": "VG-6",
+      "nom": "node:https importé dans le script",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "import tls from 'node:tls'\n",
+      "remplacer": "import tls from 'node:tls'\nimport https from 'node:https'\nvoid https\n"
+    },
+    {
+      "id": "VG-6",
+      "nom": "une écriture dans le dossier temporaire du système, effacée aussitôt (hors de --travail, hors des instantanés)",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "  const releves = path.join(travail, 'releves')\n",
+      "remplacer": "  const releves = path.join(travail, 'releves')\n  { const f = path.join(os.tmpdir(), `vigile-qa-sabotage-${process.pid}.txt`); fs.writeFileSync(f, 'x'); fs.rmSync(f, { force: true }) }\n"
+    },
+    {
+      "id": "VG-6",
+      "nom": "une écriture à côté de --travail, dans un dossier que les instantanés ne couvrent pas",
+      "fichier": "scripts/vigile/releve.mjs",
+      "chercher": "  dossier(travail); dossier(releves)\n",
+      "remplacer": "  dossier(travail); dossier(releves)\n  fs.writeFileSync(path.join(path.dirname(path.resolve(travail)), 'hors-travail.txt'), 'x')\n"
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : secret_expose à 0 (une pause sans aucun secret)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "pause_securite.seuils.secret_expose.valeur",
+          "valeur": 0
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : erreurs_rouge à 100000",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "seuils.erreurs_rouge.valeur",
+          "valeur": 100000
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : echeance_rouge_jours négatif",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "seuils.echeance_rouge_jours.valeur",
+          "valeur": -3
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : Next 15 passé à a_verifier, sans date ni source",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "fins_support[paquet=next]",
+          "valeur": {
+            "paquet": "next",
+            "majeure": 15,
+            "a_verifier": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : echecs_1h à 1000, provisoire: false sans accord de Benj",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "pause_securite.seuils.echecs_1h",
+          "valeur": {
+            "valeur": 1000,
+            "provisoire": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : fin_support_orange_jours à 3",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "seuils.fin_support_orange_jours.valeur",
+          "valeur": 3
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md sans la remontée à Matt et à Benj",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "- Chaque pause remonte à Matt et à Benj : la route",
+      "remplacer": "- La route"
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md sans les bornes du résumé",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "texte de 12 lignes et 1 200 signes au plus, une ligne par section",
+      "remplacer": "texte court, une ligne par section"
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : commande de reprise sans --base",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "releve.mjs --base=https://prestiapp.fr --depot=.",
+      "remplacer": "releve.mjs --depot=."
+    },
+    {
+      "id": "VG-1",
+      "nom": "vigile.json livré : erreurs_rouge à 100000 (100 erreurs restent orange)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "seuils.erreurs_rouge.valeur",
+          "valeur": 100000
+        }
+      ]
+    },
+    {
+      "id": "VG-1",
+      "nom": "vigile.json livré : Next 15 passé à a_verifier (fin de support inconnue)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "fins_support[paquet=next]",
+          "valeur": {
+            "paquet": "next",
+            "majeure": 15,
+            "a_verifier": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "VG-1",
+      "nom": "vigile.json livré : echeance_rouge_jours négatif (J-7 n'est plus rouge)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "seuils.echeance_rouge_jours.valeur",
+          "valeur": -3
+        }
+      ]
+    },
+    {
+      "id": "VG-12",
+      "nom": "vigile.json livré : secret_expose à 0 (pause sans secret)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "pause_securite.seuils.secret_expose.valeur",
+          "valeur": 0
+        }
+      ]
+    },
+    {
+      "id": "VG-12",
+      "nom": "vigile.json livré : echecs_1h à 1000, provisoire: false (20 échecs sans pause)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "pause_securite.seuils.echecs_1h",
+          "valeur": {
+            "valeur": 1000,
+            "provisoire": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "VG-12",
+      "nom": "vigile.json livré : max_par_passage à 2 (deux pauses d'un coup)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "pause_securite.max_par_passage",
+          "valeur": 2
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : le niveau global peut rester vert avec une section non mesurée (revue Codex n°2)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "le niveau global n'est jamais vert tant qu'une section l'est",
+      "remplacer": "le niveau global peut rester vert tant qu'une section l'est"
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : une phrase contraire ajoutée, la règle gardée (vert malgré une section non mesurée)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "tant qu'une section l'est.",
+      "remplacer": "tant qu'une section l'est. Par exception, une section non mesurée peut laisser le niveau global vert."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md autorise la lecture de agents.env et des fichiers de clé (revue Codex n°5)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "Il ne lit ni `agents.env`, ni\n  `.env.local`, ni `presti-secrets`, ni aucun fichier de clé.",
+      "remplacer": "Il lit `agents.env` et les fichiers de clé pour vérifier les dates."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : une lecture de agents.env ajoutée, l'interdit gardé",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "ni aucun fichier de clé.",
+      "remplacer": "ni aucun fichier de clé. Au besoin, il lit `agents.env` pour vérifier une date."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : le Vigile peut lever une pause",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "Une pause par passage au plus.",
+      "remplacer": "Une pause par passage au plus. Il peut lever la pause d'un agent qu'il a posée."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : le Vigile pose la pause générale en cas de doute",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "Une pause par passage au plus.",
+      "remplacer": "Une pause par passage au plus. En cas de doute, il pose la pause générale."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : source de Next 15 remplacée par une page inventée (revue Codex n°3)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "fins_support[paquet=next].source",
+          "valeur": "https://exemple.invalid/next-support"
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : cron_secret situé dans Vercel au lieu du Vault de Supabase (revue Codex n°4)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "echeances[nom=cron_secret].ou",
+          "valeur": "Vercel (026-086)"
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : source de TELEGRAM_BOT_TOKEN remplacée par une page inventée",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "echeances[nom=TELEGRAM_BOT_TOKEN].source",
+          "valeur": "https://telegram-faq.invalid/bots (un jeton de bot n'expire pas)"
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : lire agents.env « sans jamais en afficher la valeur » (contre-vérif S1)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "ni aucun fichier de clé.",
+      "remplacer": "ni aucun fichier de clé. Au besoin, il lit `agents.env` pour vérifier une date, sans jamais en afficher la valeur."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : rester vert malgré une section non mesurée (contre-vérif S2)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "tant qu'une section l'est.",
+      "remplacer": "tant qu'une section l'est. Une section non mesurée ne compte pas si les autres sont au vert : le niveau reste vert."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : la pause générale « s'il ne peut pas » poser celle d'un agent (contre-vérif S3)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "Une pause par passage au plus.",
+      "remplacer": "Une pause par passage au plus. S'il ne peut pas poser la pause d'un agent, il pose la pause générale."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : lever la pause « dès que le seuil n'est plus franchi » (contre-vérif S4)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "Une pause par passage au plus.",
+      "remplacer": "Une pause par passage au plus. Il lève la pause qu'il a posée dès que le seuil n'est plus franchi."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : freellmapi « si Codex ne répond pas » (contre-vérif S5)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "le résumé est un gabarit.",
+      "remplacer": "le résumé est un gabarit. Si Codex ne répond pas, il passe par freellmapi."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : « il n'est pas interdit de poser la pause générale » (revue Codex n°2 du 2e passage)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "Une pause par passage au plus.",
+      "remplacer": "Une pause par passage au plus. Il n'est pas interdit de poser la pause générale si les alertes persistent."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : registre_verifie_le figé au 2099-01-01 (revue Codex n°4 du 2e passage, contre-vérif S6)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "registre_verifie_le",
+          "valeur": "2099-01-01"
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : verifie_le de META_PAGE_TOKEN au 2099-01-01 (contre-vérif S8)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "echeances[nom=META_PAGE_TOKEN].verifie_le",
+          "valeur": "2099-01-01"
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : lu_le de Next 15 au 2099-01-01",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "fins_support[paquet=next].lu_le",
+          "valeur": "2099-01-01"
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : erreurs_rouge « confirmé » par un accord daté du 2099-01-01",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "seuils.erreurs_rouge",
+          "valeur": {
+            "valeur": 100,
+            "provisoire": false,
+            "accord": "2099-01-01"
+          }
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : pause_securite.accord au 2099-01-01",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "pause_securite.accord",
+          "valeur": "2099-01-01"
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : source de Next 15 = la page d'installation de nextjs.org, sans date de fin (revue Codex n°3 du 2e passage, contre-vérif S7)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "fins_support[paquet=next].source",
+          "valeur": "https://nextjs.org/docs/app/getting-started/installation"
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : source de Next 15 = une page de vercel.com",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "fins_support[paquet=next].source",
+          "valeur": "https://vercel.com/docs/frameworks/nextjs"
+        }
+      ]
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.json : source de Next 15 = les versions du dépôt vercel/next.js",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "fins_support[paquet=next].source",
+          "valeur": "https://github.com/vercel/next.js/releases"
+        }
+      ]
+    },
+    {
+      "id": "VG-1",
+      "nom": "vigile.json livré : registre_perime_jours à 900 (un registre de 91 jours reste vert)",
+      "fichier": "docs/agents/vigile.json",
+      "json": [
+        {
+          "chemin": "seuils.registre_perime_jours.valeur",
+          "valeur": 900
+        }
+      ]
+    },
+    {
+      "id": "VG-1",
+      "nom": "relevé : un registre daté dans le futur compté frais (la péremption masquée pour toujours)",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "age === null || age < 0 || age >",
+      "remplacer": "age === null || age >"
+    },
+    {
+      "id": "VG-1",
+      "nom": "relevé : la péremption du registre ignorée dans le niveau des échéances",
+      "fichier": "lib/vigile/releve.ts",
+      "chercher": "niveaux.includes('orange') || perime ?",
+      "remplacer": "niveaux.includes('orange') ?"
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : « en cas de doute, il coupe tous les agents » (aucun mot des sujets : passait avant la fermeture du texte entier)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "Une pause par passage au plus.",
+      "remplacer": "Une pause par passage au plus. En cas de doute, il coupe tous les agents."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : « il peut débloquer un agent qu'il a bloqué » (passait avant la fermeture du texte entier)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "Une pause par passage au plus.",
+      "remplacer": "Une pause par passage au plus. Il peut débloquer un agent qu'il a bloqué."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : résumé par Claude Haiku (passait avant la fermeture du texte entier)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "le résumé est un gabarit.",
+      "remplacer": "le résumé est un gabarit. Il résume avec Claude Haiku quand le gabarit ne suffit pas."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : « il lit le token Meta » (passait avant la fermeture du texte entier)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "ni aucun fichier de clé.",
+      "remplacer": "ni aucun fichier de clé. Il lit le token Meta pour connaître sa date."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : « il publie le relevé complet sur Telegram » (passait avant la fermeture du texte entier)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "Rien d'autre.",
+      "remplacer": "Rien d'autre. Il publie le relevé complet sur Telegram."
+    },
+    {
+      "id": "VG-10",
+      "nom": "vigile.md : une option ajoutée à la commande de reprise (--tout-couper ; passait avant la fermeture du texte entier)",
+      "fichier": "docs/agents/vigile.md",
+      "chercher": "--travail=.orchestre/travail/vigile",
+      "remplacer": "--travail=.orchestre/travail/vigile --tout-couper"
+    }
+  ]
+}

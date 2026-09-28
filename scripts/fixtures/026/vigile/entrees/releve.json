@@ -1,0 +1,1421 @@
+{
+  "_": "Jeux d'entrées de construireReleve(entrees, reglages, maintenant). Références : « @etat.<k> » (entrees/etat.json), « @serveur.<k> » (attendu-serveur.json : la sortie de la route sert d'entrée au relevé), « @npm.<k> » (entrees/npm.json), « @verrou » (entrees/package-lock.json) ; un objet { \"@\": ref, … } vaut ref, clés remplacées. reglages : {} = entrees/vigile-essai.json ; « echeances » garde ces noms du registre ; « sans_cibles » retire ces noms de cibles_interdites. controle « egal » : attendu-releve.json[<cas>] ; « pauses » : pauses, pauses_ecartees et clés des alertes de pause ci-dessous. Correction du 28/09 : « reglages »: { \"livre\": true } prend le docs/agents/vigile.json LIVRÉ de la racine jugée (pas celui d'essai) ; controle « livre » : chaque chemin de attendu_partiel (a.b[cle=valeur].c) vaut exactement sa valeur, calculée à la main aux bornes des seuils du contrat (10/100 erreurs, 5/20 bans, J-14/J-7, 30 jours avant une fin de support, Next 15 au 2026-10-21). Correction du 28/09 (2) : une horloge « registre+Nj » / « registre-Nj » vaut le registre_verifie_le des réglages du jeu décalé de N jours à 08:00 UTC, et « echeances » s'applique aussi au vigile.json livré : les jeux livre_registre_* jouent la péremption du registre LIVRÉ sans ses éléments (90 jours → vert, 91 → orange, daté dans le futur → orange : une date qui n'est pas encore arrivée n'est pas une relecture).",
+  "vide": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "egal",
+    "entrees": {}
+  },
+  "bus_injoignable": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "egal",
+    "entrees": {
+      "etat": {
+        "non_mesure": "bus_injoignable"
+      },
+      "serveur": {
+        "non_mesure": "bus_injoignable"
+      }
+    }
+  },
+  "nominal": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "egal",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": "@serveur.nominal",
+      "npm": {
+        "audit": "@npm.ok"
+      },
+      "verrou": "@verrou",
+      "unites": {
+        "en_echec": [
+          "presti-facteur.service",
+          "Jean Témoin.service"
+        ],
+        "attendus": [
+          "PRESTI_JETON_USINE",
+          "PRESTI_JETON_FACTEUR",
+          "PRESTI_JETON_STANDARDISTE",
+          "PRESTI_JETON_FACTEUR",
+          "jean temoin"
+        ]
+      },
+      "coffre": {
+        "noms": [
+          "PRESTI_JETON_FACTEUR",
+          "PRESTI_JETON_STANDARDISTE",
+          "PRESTI_JETON_USINE",
+          "PRESTI_JETON_VIGILE",
+          "TELEGRAM_BOT_TOKEN"
+        ]
+      },
+      "tls": {
+        "hote": "prestiapp.fr",
+        "valid_to": "2026-12-20T12:00:00.000Z",
+        "authorized": true
+      },
+      "journaux": {
+        "facteur": 0,
+        "standardiste": 0
+      }
+    }
+  },
+  "critique": {
+    "maintenant": "2026-10-21T04:50:00Z",
+    "reglages": {},
+    "controle": "egal",
+    "entrees": {
+      "npm": {
+        "audit": "@npm.critique"
+      },
+      "verrou": "@verrou"
+    }
+  },
+  "next_28_09": {
+    "maintenant": "2026-09-28T08:00:00Z",
+    "reglages": {},
+    "controle": "egal",
+    "entrees": {
+      "npm": {
+        "audit": "@npm.propre"
+      },
+      "verrou": "@verrou"
+    }
+  },
+  "echeances_j14": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "echeances": [
+        "ESSAI_J14",
+        "ESSAI_INCONNU",
+        "ESSAI_SANS"
+      ]
+    },
+    "controle": "egal",
+    "entrees": {
+      "etat": "@etat.nominal"
+    }
+  },
+  "coffre_manquant": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "echeances": [
+        "ESSAI_LOIN"
+      ]
+    },
+    "controle": "egal",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "unites": {
+        "en_echec": [
+          "presti-facteur.service",
+          "Jean Témoin.service"
+        ],
+        "attendus": [
+          "PRESTI_JETON_USINE",
+          "PRESTI_JETON_FACTEUR",
+          "PRESTI_JETON_STANDARDISTE",
+          "PRESTI_JETON_FACTEUR",
+          "jean temoin"
+        ]
+      },
+      "coffre": {
+        "noms": [
+          "PRESTI_JETON_FACTEUR",
+          "PRESTI_JETON_USINE",
+          "PRESTI_JETON_VIGILE"
+        ]
+      }
+    }
+  },
+  "saturee": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "egal",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": "@serveur.saturee"
+    }
+  },
+  "pause_un_a_25": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": 25,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "standardiste",
+              "echecs_1h": 19,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      },
+      "journaux": {
+        "facteur": 0,
+        "standardiste": 0
+      }
+    },
+    "attendu": {
+      "pauses": [
+        {
+          "agent": "facteur",
+          "seuil": "boucle_erreurs",
+          "mesure": 25
+        }
+      ],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:facteur"
+      ]
+    }
+  },
+  "pause_sous_seuil": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": 19,
+              "cout_jour_eur": 1,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      },
+      "journaux": {
+        "facteur": 0
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": []
+    }
+  },
+  "pause_chef_pont": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "chef",
+              "echecs_1h": 40,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "pont",
+              "echecs_1h": 0,
+              "cout_jour_eur": 3,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 2,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:chef",
+        "pause:pont"
+      ]
+    }
+  },
+  "pause_cibles_omises": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "sans_cibles": [
+        "chef",
+        "pont"
+      ]
+    },
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "chef",
+              "echecs_1h": 40,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "pont",
+              "echecs_1h": 0,
+              "cout_jour_eur": 3,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 2,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:chef",
+        "pause:pont"
+      ]
+    }
+  },
+  "pause_deja": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "redacteur_site",
+              "echecs_1h": 30,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 1,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:redacteur_site"
+      ]
+    }
+  },
+  "pause_deux": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": 0,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 2
+            },
+            {
+              "nom": "standardiste",
+              "echecs_1h": 22,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      }
+    },
+    "attendu": {
+      "pauses": [
+        {
+          "agent": "standardiste",
+          "seuil": "boucle_erreurs",
+          "mesure": 22
+        }
+      ],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 1,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:standardiste",
+        "pause:facteur"
+      ]
+    }
+  },
+  "pause_inconnu": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "fantome",
+              "echecs_1h": 50,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 1
+      },
+      "alertes_pause": [
+        "pause:fantome"
+      ]
+    }
+  },
+  "pause_absente": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": "@serveur.agents_absente",
+      "journaux": {
+        "facteur": 0,
+        "standardiste": 0
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": []
+    }
+  },
+  "pause_non_mesure": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": null,
+              "cout_jour_eur": null,
+              "envois_hors_regle_24h": null
+            }
+          ]
+        }
+      },
+      "journaux": {
+        "non_mesure": "source_absente"
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": []
+    }
+  },
+  "pause_qualite": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": "@serveur.saturee",
+      "npm": {
+        "audit": "@npm.critique"
+      },
+      "verrou": "@verrou",
+      "journaux": {
+        "facteur": 0,
+        "standardiste": 0
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": []
+    }
+  },
+  "pause_generale": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.pause_generale",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": 25,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 1,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:facteur"
+      ]
+    }
+  },
+  "pause_secret": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {},
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": "@serveur.nominal",
+      "journaux": {
+        "facteur": 1,
+        "standardiste": 0
+      }
+    },
+    "attendu": {
+      "pauses": [
+        {
+          "agent": "facteur",
+          "seuil": "secret_expose",
+          "mesure": 1
+        }
+      ],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:facteur"
+      ]
+    }
+  },
+  "pause_toutes_cibles": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "sans_cibles": [
+        "a0",
+        "chef",
+        "pont",
+        "pont_telegram",
+        "systeme",
+        "usine",
+        "vigile"
+      ]
+    },
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "a0",
+              "echecs_1h": 30,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "chef",
+              "echecs_1h": 30,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "pont",
+              "echecs_1h": 30,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "pont_telegram",
+              "echecs_1h": 30,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "systeme",
+              "echecs_1h": 30,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "usine",
+              "echecs_1h": 30,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "vigile",
+              "echecs_1h": 30,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 7,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:a0",
+        "pause:chef",
+        "pause:pont",
+        "pause:pont_telegram",
+        "pause:systeme",
+        "pause:usine",
+        "pause:vigile"
+      ]
+    }
+  },
+  "livre_seuils_bas": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "livre",
+    "entrees": {
+      "etat": {
+        "taches": {
+          "echecs_24h": 0
+        },
+        "interrupteurs": {
+          "pause_generale": false
+        },
+        "agents": [
+          {
+            "nom": "veilleur",
+            "en_pause": false,
+            "jeton_externe_expire_le": "2026-10-15T04:50:00Z"
+          },
+          {
+            "nom": "facteur",
+            "en_pause": false,
+            "jeton_externe_expire_le": "2026-10-16T04:50:00Z"
+          }
+        ]
+      },
+      "serveur": {
+        "@": "serveur.nominal",
+        "erreurs": {
+          "etat": "mesure",
+          "applicatives_24h": 10,
+          "au_moins": false,
+          "par_contexte": []
+        },
+        "crons": {
+          "etat": "mesure",
+          "en_echec": []
+        },
+        "bannissements": {
+          "etat": "mesure",
+          "poses_24h": 5,
+          "auto_24h": 5,
+          "manuels_24h": 0,
+          "actifs": 5,
+          "permanents": 0,
+          "abus_24h": 60,
+          "au_moins": false,
+          "par_raison": [
+            {
+              "raison": "flood /api/leads",
+              "n": 5
+            }
+          ]
+        }
+      },
+      "npm": {
+        "audit": "@npm.propre"
+      },
+      "verrou": "@verrou"
+    },
+    "attendu_partiel": {
+      "erreurs.niveau": "orange",
+      "erreurs.applicatives_24h": 10,
+      "bannissements.niveau": "orange",
+      "bannissements.auto_24h": 5,
+      "echeances.elements[nom=jeton_externe:veilleur].jours_restants": 14,
+      "echeances.elements[nom=jeton_externe:veilleur].niveau": "orange",
+      "echeances.elements[nom=jeton_externe:facteur].jours_restants": 15,
+      "echeances.elements[nom=jeton_externe:facteur].niveau": "vert",
+      "dependances.fins_support[paquet=next].fin_support": "2026-10-21",
+      "dependances.fins_support[paquet=next].jours_restants": 20,
+      "dependances.fins_support[paquet=next].niveau": "orange"
+    }
+  },
+  "livre_seuils_hauts": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "livre",
+    "entrees": {
+      "etat": {
+        "taches": {
+          "echecs_24h": 0
+        },
+        "interrupteurs": {
+          "pause_generale": false
+        },
+        "agents": [
+          {
+            "nom": "veilleur",
+            "en_pause": false,
+            "jeton_externe_expire_le": "2026-10-08T04:50:00Z"
+          },
+          {
+            "nom": "facteur",
+            "en_pause": false,
+            "jeton_externe_expire_le": "2026-10-09T04:50:00Z"
+          }
+        ]
+      },
+      "serveur": {
+        "@": "serveur.nominal",
+        "erreurs": {
+          "etat": "mesure",
+          "applicatives_24h": 100,
+          "au_moins": false,
+          "par_contexte": []
+        },
+        "crons": {
+          "etat": "mesure",
+          "en_echec": []
+        },
+        "bannissements": {
+          "etat": "mesure",
+          "poses_24h": 20,
+          "auto_24h": 20,
+          "manuels_24h": 0,
+          "actifs": 20,
+          "permanents": 0,
+          "abus_24h": 240,
+          "au_moins": false,
+          "par_raison": [
+            {
+              "raison": "flood /api/leads",
+              "n": 20
+            }
+          ]
+        }
+      },
+      "npm": {
+        "audit": "@npm.propre"
+      },
+      "verrou": "@verrou"
+    },
+    "attendu_partiel": {
+      "erreurs.niveau": "rouge",
+      "bannissements.niveau": "rouge",
+      "echeances.elements[nom=jeton_externe:veilleur].jours_restants": 7,
+      "echeances.elements[nom=jeton_externe:veilleur].niveau": "rouge",
+      "echeances.elements[nom=jeton_externe:facteur].jours_restants": 8,
+      "echeances.elements[nom=jeton_externe:facteur].niveau": "orange",
+      "echeances.niveau": "rouge"
+    }
+  },
+  "livre_seuils_sous": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "livre",
+    "entrees": {
+      "etat": {
+        "taches": {
+          "echecs_24h": 0
+        },
+        "interrupteurs": {
+          "pause_generale": false
+        },
+        "agents": [
+          {
+            "nom": "veilleur",
+            "en_pause": false,
+            "jeton_externe_expire_le": "2026-10-16T04:50:00Z"
+          },
+          {
+            "nom": "facteur",
+            "en_pause": false,
+            "jeton_externe_expire_le": "2026-10-16T04:50:00Z"
+          }
+        ]
+      },
+      "serveur": {
+        "@": "serveur.nominal",
+        "erreurs": {
+          "etat": "mesure",
+          "applicatives_24h": 9,
+          "au_moins": false,
+          "par_contexte": []
+        },
+        "crons": {
+          "etat": "mesure",
+          "en_echec": []
+        },
+        "bannissements": {
+          "etat": "mesure",
+          "poses_24h": 4,
+          "auto_24h": 4,
+          "manuels_24h": 0,
+          "actifs": 4,
+          "permanents": 0,
+          "abus_24h": 48,
+          "au_moins": false,
+          "par_raison": [
+            {
+              "raison": "flood /api/leads",
+              "n": 4
+            }
+          ]
+        }
+      },
+      "npm": {
+        "audit": "@npm.propre"
+      },
+      "verrou": "@verrou"
+    },
+    "attendu_partiel": {
+      "erreurs.niveau": "vert",
+      "bannissements.niveau": "vert",
+      "echeances.elements[nom=jeton_externe:veilleur].niveau": "vert"
+    }
+  },
+  "livre_seuils_sous_rouge": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "livre",
+    "entrees": {
+      "etat": {
+        "taches": {
+          "echecs_24h": 0
+        },
+        "interrupteurs": {
+          "pause_generale": false
+        },
+        "agents": [
+          {
+            "nom": "veilleur",
+            "en_pause": false,
+            "jeton_externe_expire_le": "2026-10-09T04:50:00Z"
+          },
+          {
+            "nom": "facteur",
+            "en_pause": false,
+            "jeton_externe_expire_le": "2026-10-09T04:50:00Z"
+          }
+        ]
+      },
+      "serveur": {
+        "@": "serveur.nominal",
+        "erreurs": {
+          "etat": "mesure",
+          "applicatives_24h": 99,
+          "au_moins": false,
+          "par_contexte": []
+        },
+        "crons": {
+          "etat": "mesure",
+          "en_echec": []
+        },
+        "bannissements": {
+          "etat": "mesure",
+          "poses_24h": 19,
+          "auto_24h": 19,
+          "manuels_24h": 0,
+          "actifs": 19,
+          "permanents": 0,
+          "abus_24h": 228,
+          "au_moins": false,
+          "par_raison": [
+            {
+              "raison": "flood /api/leads",
+              "n": 19
+            }
+          ]
+        }
+      },
+      "npm": {
+        "audit": "@npm.propre"
+      },
+      "verrou": "@verrou"
+    },
+    "attendu_partiel": {
+      "erreurs.niveau": "orange",
+      "bannissements.niveau": "orange",
+      "echeances.elements[nom=jeton_externe:veilleur].jours_restants": 8,
+      "echeances.elements[nom=jeton_externe:veilleur].niveau": "orange"
+    }
+  },
+  "livre_next_31": {
+    "maintenant": "2026-09-20T08:00:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "livre",
+    "entrees": {
+      "npm": {
+        "audit": "@npm.propre"
+      },
+      "verrou": "@verrou"
+    },
+    "attendu_partiel": {
+      "dependances.fins_support[paquet=next].version": "15.5.26",
+      "dependances.fins_support[paquet=next].fin_support": "2026-10-21",
+      "dependances.fins_support[paquet=next].jours_restants": 31,
+      "dependances.fins_support[paquet=next].niveau": "vert"
+    }
+  },
+  "livre_next_30": {
+    "maintenant": "2026-09-21T08:00:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "livre",
+    "entrees": {
+      "npm": {
+        "audit": "@npm.propre"
+      },
+      "verrou": "@verrou"
+    },
+    "attendu_partiel": {
+      "dependances.fins_support[paquet=next].version": "15.5.26",
+      "dependances.fins_support[paquet=next].fin_support": "2026-10-21",
+      "dependances.fins_support[paquet=next].jours_restants": 30,
+      "dependances.fins_support[paquet=next].niveau": "orange"
+    }
+  },
+  "livre_next_0": {
+    "maintenant": "2026-10-21T08:00:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "livre",
+    "entrees": {
+      "npm": {
+        "audit": "@npm.propre"
+      },
+      "verrou": "@verrou"
+    },
+    "attendu_partiel": {
+      "dependances.fins_support[paquet=next].version": "15.5.26",
+      "dependances.fins_support[paquet=next].fin_support": "2026-10-21",
+      "dependances.fins_support[paquet=next].jours_restants": 0,
+      "dependances.fins_support[paquet=next].niveau": "rouge"
+    }
+  },
+  "livre_registre_90": {
+    "maintenant": "registre+90j",
+    "reglages": {
+      "livre": true,
+      "echeances": []
+    },
+    "controle": "livre",
+    "entrees": {
+      "etat": {
+        "taches": {
+          "echecs_24h": 0
+        },
+        "interrupteurs": {
+          "pause_generale": false
+        },
+        "agents": [
+          {
+            "nom": "veilleur",
+            "en_pause": false,
+            "jeton_externe_expire_le": null
+          }
+        ]
+      }
+    },
+    "attendu_partiel": {
+      "echeances.etat": "mesure",
+      "echeances.niveau": "vert",
+      "echeances.coffre": null
+    }
+  },
+  "livre_registre_91": {
+    "maintenant": "registre+91j",
+    "reglages": {
+      "livre": true,
+      "echeances": []
+    },
+    "controle": "livre",
+    "entrees": {
+      "etat": {
+        "taches": {
+          "echecs_24h": 0
+        },
+        "interrupteurs": {
+          "pause_generale": false
+        },
+        "agents": [
+          {
+            "nom": "veilleur",
+            "en_pause": false,
+            "jeton_externe_expire_le": null
+          }
+        ]
+      }
+    },
+    "attendu_partiel": {
+      "echeances.etat": "mesure",
+      "echeances.niveau": "orange",
+      "echeances.coffre": null
+    }
+  },
+  "livre_registre_futur": {
+    "maintenant": "registre-1j",
+    "reglages": {
+      "livre": true,
+      "echeances": []
+    },
+    "controle": "livre",
+    "entrees": {
+      "etat": {
+        "taches": {
+          "echecs_24h": 0
+        },
+        "interrupteurs": {
+          "pause_generale": false
+        },
+        "agents": [
+          {
+            "nom": "veilleur",
+            "en_pause": false,
+            "jeton_externe_expire_le": null
+          }
+        ]
+      }
+    },
+    "attendu_partiel": {
+      "echeances.etat": "mesure",
+      "echeances.niveau": "orange",
+      "echeances.coffre": null
+    }
+  },
+  "livre_pause_echecs_20": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": 20,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      },
+      "journaux": {
+        "facteur": 0
+      }
+    },
+    "attendu": {
+      "pauses": [
+        {
+          "agent": "facteur",
+          "seuil": "boucle_erreurs",
+          "mesure": 20
+        }
+      ],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:facteur"
+      ]
+    }
+  },
+  "livre_pause_sous": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": 19,
+              "cout_jour_eur": 1,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "standardiste",
+              "echecs_1h": 0,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      },
+      "journaux": {
+        "facteur": 0,
+        "standardiste": 0
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": []
+    }
+  },
+  "livre_pause_cout": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": 0,
+              "cout_jour_eur": 1.5,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      },
+      "journaux": {
+        "facteur": 0
+      }
+    },
+    "attendu": {
+      "pauses": [
+        {
+          "agent": "facteur",
+          "seuil": "depense_anormale",
+          "mesure": 1.5
+        }
+      ],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:facteur"
+      ]
+    }
+  },
+  "livre_pause_envoi": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": 0,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 1
+            }
+          ]
+        }
+      },
+      "journaux": {
+        "facteur": 0
+      }
+    },
+    "attendu": {
+      "pauses": [
+        {
+          "agent": "facteur",
+          "seuil": "envoi_hors_regle",
+          "mesure": 1
+        }
+      ],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:facteur"
+      ]
+    }
+  },
+  "livre_pause_secret": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": 0,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "standardiste",
+              "echecs_1h": 0,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      },
+      "journaux": {
+        "facteur": 1,
+        "standardiste": 0
+      }
+    },
+    "attendu": {
+      "pauses": [
+        {
+          "agent": "facteur",
+          "seuil": "secret_expose",
+          "mesure": 1
+        }
+      ],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:facteur"
+      ]
+    }
+  },
+  "livre_pause_deux": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "facteur",
+              "echecs_1h": 25,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "standardiste",
+              "echecs_1h": 0,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 2
+            }
+          ]
+        }
+      },
+      "journaux": {
+        "facteur": 0,
+        "standardiste": 0
+      }
+    },
+    "attendu": {
+      "pauses": [
+        {
+          "agent": "facteur",
+          "seuil": "boucle_erreurs",
+          "mesure": 25
+        }
+      ],
+      "pauses_ecartees": {
+        "cible_interdite": 0,
+        "deja_en_pause": 0,
+        "max_par_passage": 1,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:facteur",
+        "pause:standardiste"
+      ]
+    }
+  },
+  "livre_pause_chef_pont": {
+    "maintenant": "2026-10-01T04:50:00Z",
+    "reglages": {
+      "livre": true
+    },
+    "controle": "pauses",
+    "entrees": {
+      "etat": "@etat.nominal",
+      "serveur": {
+        "@": "serveur.nominal",
+        "agents": {
+          "etat": "mesure",
+          "mesures": [
+            {
+              "nom": "chef",
+              "echecs_1h": 40,
+              "cout_jour_eur": 0,
+              "envois_hors_regle_24h": 0
+            },
+            {
+              "nom": "pont",
+              "echecs_1h": 0,
+              "cout_jour_eur": 3,
+              "envois_hors_regle_24h": 0
+            }
+          ]
+        }
+      }
+    },
+    "attendu": {
+      "pauses": [],
+      "pauses_ecartees": {
+        "cible_interdite": 2,
+        "deja_en_pause": 0,
+        "max_par_passage": 0,
+        "agent_inconnu": 0
+      },
+      "alertes_pause": [
+        "pause:chef",
+        "pause:pont"
+      ]
+    }
+  }
+}
