@@ -389,9 +389,35 @@ async function partieTextes(s, { racine, temoin, dossier, contrat, metaLogementO
     for (const id of ['PL-T2', 'PL-T3', 'PL-T4', 'PL-T5', 'PL-T6', 'PL-T7']) s.verdict(id, !echecs[id].length, 'conforme', echecs[id].join(' ; '))
     return
   }
-  // racine réelle (référence, ou dépôt courant) : scripts/pack-pub/textes.mjs n'existe pas encore (026-154).
+  // racine réelle (référence, ou dépôt courant) : tant que 026-154 n'est pas faite, scripts/pack-pub/textes.mjs
+  // n'existe pas et ces critères échouent légitimement (comportement attendu par juges-026-pubs-contenu-preuve.mjs
+  // --lot=10 sur --racine=<référence>). Une fois le script écrit, on l'exécute pour de vrai (même principe que la
+  // correction du 28/09 sur --partie=gabarit) : pack témoin recopié dans un dossier neuf (jamais TEMOIN_DIR lui-même,
+  // dont sortie/ est le témoin écrit à la main par fabriquer-temoin.mjs, réutilisé par --temoin), le vrai script
+  // lancé dessus avec cwd=racine (son --meta-logement par défaut se résout alors sur le vrai docs/pubs/meta-logement.json
+  // de la racine jugée), puis vérifié par verifierTextes comme --dossier. Code 3 (catégorie non vérifiée) est une
+  // sortie légitime du script, pas un échec du juge.
   const script = path.join(racine, 'scripts', 'pack-pub', 'textes.mjs')
-  for (const id of ['PL-T1', 'PL-T2', 'PL-T3', 'PL-T4', 'PL-T5', 'PL-T6', 'PL-T7']) s.echoue(id, `non évalué : ${rel(script, racine)} introuvable`)
+  if (!fs.existsSync(script)) {
+    for (const id of ['PL-T1', 'PL-T2', 'PL-T3', 'PL-T4', 'PL-T5', 'PL-T6', 'PL-T7']) s.echoue(id, `non évalué : ${rel(script, racine)} introuvable`)
+    return
+  }
+  await assurerTemoin('base')
+  const dirReel = path.join(MON_TRAVAIL, 'textes-reel')
+  fs.rmSync(dirReel, { recursive: true, force: true })
+  fs.mkdirSync(dirReel, { recursive: true })
+  fs.copyFileSync(path.join(TEMOIN_DIR, 'pack.json'), path.join(dirReel, 'pack.json'))
+  const r = spawnSync(process.execPath, [script, dirReel], { cwd: racine, encoding: 'utf8', windowsHide: true })
+  if (r.status !== 0 && r.status !== 3) {
+    const detail = (r.stderr || r.stdout || `code ${r.status}`).trim().split('\n')[0]
+    for (const id of ['PL-T1', 'PL-T2', 'PL-T3', 'PL-T4', 'PL-T5', 'PL-T6', 'PL-T7']) s.echoue(id, `${rel(script, racine)} : ${detail}`)
+    return
+  }
+  const pack = chargerPack(path.join(dirReel, 'pack.json'))
+  const meta = lireMetaLogement(racine)
+  const echecs = verifierTextes(path.join(dirReel, 'sortie'), pack, contrat, meta.statut)
+  s.verdict('PL-T1', existeNonVide(path.join(dirReel, 'sortie', 'textes.md')), 'sortie/textes.md présent', 'sortie/textes.md absent ou vide')
+  for (const id of ['PL-T2', 'PL-T3', 'PL-T4', 'PL-T5', 'PL-T6', 'PL-T7']) s.verdict(id, !echecs[id].length, 'conforme', echecs[id].join(' ; '))
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
