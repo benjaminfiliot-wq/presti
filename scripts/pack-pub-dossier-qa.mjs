@@ -46,6 +46,9 @@ const racine = o.racine
 const ch = (rel) => path.join(racine, rel)
 const aff = (p) => String(p).split(path.sep).join('/')
 function lireSi(f) { try { const b = fs.readFileSync(f); return b.length ? lf(b.toString('utf8')) : '' } catch { return null } }
+/** Minuscules, sans accents : compare un nom de champ attendu (« equipe ») à « photos.0.role » ou à un message
+ * accentué (« photo d'équipe ») sans faux négatif sur l'accent. */
+const normaliser = (v) => String(v ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
 // ── Un extracteur de bloc { … } conscient des chaînes, gabarits et commentaires JS/TS (repris de pack-pub-paiement-qa.mjs) ──
 function extraireAccolades(texte, iOuverte) {
@@ -69,6 +72,29 @@ function extraireFonction(texte, nom) {
   const m = re.exec(texte)
   if (!m) return null
   return extraireAccolades(texte, m.index + m[0].length - 1)
+}
+/** Le corps de `[async ]function <nom>(…) { … }` (SANS `export`, une fonction locale au fichier), ou null. */
+function extraireFonctionLocale(texte, nom) {
+  const re = new RegExp(`(?<!export\\s)(?:^|\\n)\\s*(?:async\\s+)?function\\s+${nom}\\b[\\s\\S]*?\\{`)
+  const m = re.exec(texte)
+  if (!m) return null
+  return extraireAccolades(texte, m.index + m[0].length - 1)
+}
+/**
+ * `corps` élargi à toute fonction LOCALE (déclarée dans `texteFichier`, sans `export`) que `corps` appelle — un
+ * seul niveau d'indirection : une lecture faite dans une fonction que GET appelle compte comme une lecture de GET
+ * (défaut du 28/09, fiche 026-135 : `sites_commandes` lu dans `contexteSite(uid)`, appelée par GET, n'était pas vu).
+ */
+function corpsAvecFonctionsAppelees(corps, texteFichier) {
+  let out = corps
+  const noms = new Set([...texteFichier.matchAll(/(?:^|\n)\s*(?:async\s+)?function\s+([A-Za-z0-9_]+)\s*\(/g)].map((m) => m[1]))
+  for (const nom of noms) {
+    if (new RegExp(`\\b${nom}\\s*\\(`).test(corps)) {
+      const f = extraireFonctionLocale(texteFichier, nom)
+      if (f) out += `\n${f}`
+    }
+  }
+  return out
 }
 
 // ── PD-1 : la sonde (--partie=api) : un processus à part, cwd = racine, qui IMPORTE et APPELLE nettoyerDossierPack ──
@@ -130,12 +156,18 @@ function jugerPD1(s) {
     if (!rendu || typeof rendu !== 'object' || typeof rendu.ok !== 'boolean') { s.echoue('PD-1', `${f.nom} : rendu ${court(JSON.stringify(rendu), 100)} ({ ok, … } attendu)`); continue }
     if (f.champ !== null) {
       if (rendu.ok !== false) { s.echoue('PD-1', `${f.nom} accepté à tort (champ ${f.champ} attendu en refus)`); continue }
-      if (typeof rendu.erreur !== 'string' || !rendu.erreur.toLowerCase().includes(f.champ.toLowerCase())) s.echoue('PD-1', `${f.nom} : erreur « ${court(rendu.erreur, 100)} » ne nomme pas ${f.champ}`)
+      // Contrat de la fiche 026-135, « Ce qu'il faut faire » point 1 : { ok: false, erreurs: { champ, message }[] }
+      // (un tableau, jamais une seule chaîne « erreur ») — défaut du 28/09 : le juge attendait encore l'ancienne
+      // forme { erreur: string }, retenue au brouillon de 026-110 avant que le contrat ne se précise.
+      if (!Array.isArray(rendu.erreurs) || !rendu.erreurs.length) { s.echoue('PD-1', `${f.nom} : erreurs absentes ou vides ({ champ, message }[] attendu)`); continue }
+      const cible = normaliser(f.champ)
+      const trouve = rendu.erreurs.some((er) => er && (normaliser(er.champ).includes(cible) || normaliser(er.message).includes(cible)))
+      if (!trouve) s.echoue('PD-1', `${f.nom} : erreurs ${court(JSON.stringify(rendu.erreurs), 160)} ne nomment pas ${f.champ}`)
       continue
     }
-    if (rendu.ok !== true || !rendu.dossier || typeof rendu.dossier !== 'object') { s.echoue('PD-1', `${f.nom} refusé à tort : ${court(rendu.erreur, 140)}`); continue }
+    if (rendu.ok !== true || !rendu.dossier || typeof rendu.dossier !== 'object') { s.echoue('PD-1', `${f.nom} refusé à tort : ${court(JSON.stringify(rendu.erreurs), 140)}`); continue }
     const d = rendu.dossier
-    if (f.coercion === 'decennale_false') { if (d.decennale !== false) s.echoue('PD-1', `${f.nom} : decennale = ${JSON.stringify(d.decennale)}, false attendu (decennaleDeclaree=false)`) }
+    if (f.coercion === 'decennale_false') { const dec = (d.faits || {}).decennale; if (dec !== false) s.echoue('PD-1', `${f.nom} : faits.decennale = ${JSON.stringify(dec)}, false attendu (decennaleDeclaree=false)`) }
     else if (f.champInconnu) { if (f.champInconnu in d) s.echoue('PD-1', `${f.nom} : le champ inconnu ${f.champInconnu} n'a pas été retiré`) }
     else if (f.troncature) {
       const fa = d.faits || {}
@@ -163,10 +195,15 @@ function jugerPD2(s) {
   else {
     if (!RE_404.test(get)) s.echoue('PD-2', "la première instruction du GET n'est pas « if (!actif('packPub')) … »")
     if (!/authArtisan\(/.test(get)) s.echoue('PD-2', 'authArtisan( absent du GET')
-    const occ = [...get.matchAll(/artisan_id/g)].length
-    if (occ < 2) s.echoue('PD-2', `GET : « artisan_id » trouvé ${occ} fois, au moins 2 attendues (brouillon + photos de la dernière commande de site)`)
-    if (!/packs_pubs/.test(get)) s.echoue('PD-2', 'GET : packs_pubs absent (le brouillon)')
-    if (!/sites_commandes/.test(get)) s.echoue('PD-2', 'GET : sites_commandes absent (les photos de la dernière commande de site)')
+    // Le brouillon (packs_pubs) et les photos du site (sites_commandes) peuvent être lus directement dans GET, OU
+    // par une fonction que GET appelle (locale au fichier, ou importée comme brouillonPackDe — le lecteur dédié de
+    // packs_pubs, cité par le Contexte de la fiche) : compter « artisan_id » dans le seul texte de GET ratait la
+    // lecture faite ailleurs (défaut du 28/09, fiche 026-135).
+    const elargi = corpsAvecFonctionsAppelees(get, texte)
+    const occ = [...elargi.matchAll(/artisan_id/g)].length
+    if (occ < 1) s.echoue('PD-2', `GET : « artisan_id » introuvable (dans GET ou une fonction qu'il appelle) — photos de la dernière commande de site`)
+    if (!/brouillonPackDe\(/.test(get) && !/packs_pubs/.test(elargi)) s.echoue('PD-2', 'GET : ni brouillonPackDe( ni packs_pubs (le brouillon)')
+    if (!/sites_commandes/.test(elargi)) s.echoue('PD-2', "GET : sites_commandes introuvable (dans GET ou une fonction qu'il appelle) — les photos de la dernière commande de site")
   }
   if (!put) s.echoue('PD-2', 'export async function PUT introuvable')
   else {

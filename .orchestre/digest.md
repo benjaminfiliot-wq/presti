@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T18:00:00Z
+# Digest — 2026-09-28T18:00:49Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 124 tâche(s) PASS, 195369 ligne(s) · faites par Claude Code : 69 tâche(s) PASS, 71950 ligne(s).
-**État** — file : 5 · en cours : 5 · faites : 199 · refusées : 10
+**État** — file : 5 · en cours : 6 · faites : 199 · refusées : 10
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/026-135.question.md` → `node scripts/orchestre.mjs repondre 026-135 <n>`
@@ -22,6 +22,7 @@
 | 026-063 | feature | en-cours | usine-codex-95 | — | depuis 2026-09-28T17:49:14Z · Écrire la migration 0111 des disjoncteurs de l'envoi, tenus par la base en compteurs absolus (paliers du formulaire de 5 à 40 par jour qui écrivent seuls la ligne de plafond du formulaire, technologies de formulaire, signaux de STOP, plainte, avis d'abus, échec de soumission, refus du Gmail et erreur Meta qui mettent en pause une technologie, un modèle, le formulaire, le Gmail ou Meta, montée de palier par règle et bilan des 100 premiers contacts froids, descente au premier voyant rouge, notice vérifiée, gestes du fondateur dont l'ouverture d'envoi_froid au plus tôt le 12/10, jauges, échantillon du soir), ses jumeaux, son contrôle, lib/agents/acquisition/disjoncteurs.ts et la partie MagasinEnvoi de magasinSupabase.ts, essayée à sec |
 | 026-073 | contenu | en-cours | usine-codex-83 | — | depuis 2026-09-28T14:14:18Z · Constituer la bibliothèque des douleurs lib/agents/acquisition/douleurs.ts (au moins 40 entrées sur au moins 8 métiers du bâtiment, chacune tirée de ce que des artisans écrivent eux-mêmes en public, avec la citation exacte, sa page source et sa date, les mots-clés, une question « qui appuie là où ça fait mal » et une accroche d'objet, sans aucune donnée personnelle, toutes à approuve false jusqu'à l'approbation unique de Benj) et sa méthode docs/agents/douleurs-methode.md, pour que chaque citation se retrouve mot pour mot sur sa page quand le juge la relit |
 | 026-091 | test | en-cours | usine-codex-96 | — | depuis 2026-09-28T17:59:59Z · Écrire scripts/juges-026-horloge-bus-mutations.mjs, qui prouve sur des copies que chacun des dix juges du domaine horloge et bus échoue sur une vraie faute avec le critère nommé et passe sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
+| 026-141 | feature | en-cours | usine-codex-97 | — | depuis 2026-09-28T18:00:48Z · Brancher la livraison sur l'horloge du bus : la route tic de 026-horloge-bus appelle tourLivraison toutes les 15 min, l'interrupteur de pause du bus arrête retraits et générations distantes, tourLivraison consomme la sortie que le livreur de l'usine a déposée (relue, décodée, copiée dans le bucket sites, commande passée à generee, dossier usine effacé, jamais une tâche d'essai), la tâche livrer_site:<commande> du bus est close par ops_tache_clore quand la commande atteint generee, et le livreur bat à chaque tour |
 | 026-235 | feature | en-cours | usine-codex-84 | — | depuis 2026-09-28T14:56:22Z · Écrire scripts/savoir/lecons.mjs (candidats depuis les verdicts en échec, les décisions tranchées par Benj, les décisions tranchées du bus et les corrections des fiches, datées, sourcées, caviardées et idempotentes ; lister ; valider et rejeter par Claude Code ou la revue du lundi seulement, jamais sur l'usine ; verifier-source), jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=candidats,validation |
 | 026-204 | test | file | claude-code | — | C01 — juges du contenu et preuve du domaine réseaux, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
 | 023-03 | test | file | codex-22 | — | Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
@@ -117,6 +118,5 @@
 | 026-102 | test | fait | claude-code | PASS | 2026-09-27T12:24:53Z · 272s · 10311 l. |
 | 026-029 | test | fait | claude-code | PASS | 2026-09-27T12:22:57Z · 26s · 0 l. |
 | 026-011 | feature | fait | claude-code | PASS | 2026-09-27T12:06:48Z · 1s · 1382 l. |
-| 026-024 | feature | fait | usine-codex-42 | PASS | 2026-09-27T11:45:09Z · 27s · 476 l. |
 
-… 119 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 120 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.

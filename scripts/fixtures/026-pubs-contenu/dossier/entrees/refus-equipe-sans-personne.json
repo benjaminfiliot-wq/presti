@@ -34,9 +34,6 @@
         "role": "detail"
       }
     ],
-    "personnes_visibles": false,
-    "personnes_accord": false,
-    "droits_photos": true,
     "faits": {
       "metier": "plombier chauffagiste",
       "ville": "Lyon",
@@ -47,11 +44,13 @@
       ],
       "duree_travaux": "deux a cinq jours ouvres",
       "materiaux": "cuivre, PER et raccords laiton",
-      "cta": "devis"
+      "cta": "devis",
+      "decennale": true
     },
     "voix": "synthese",
     "texte_voix": "Artisan plombier a Lyon, disponible pour vos travaux d'urgence et vos renovations de salle de bain.",
-    "decennale": true
+    "consentement_droits": true,
+    "accroche": "artisan_de_confiance"
   },
   "champ": "equipe"
 }
