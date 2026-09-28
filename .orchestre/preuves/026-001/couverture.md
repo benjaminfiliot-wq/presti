@@ -1,6 +1,6 @@
 # Couverture de la série 026
 
-> Écrit par `node scripts/juges-026-preuve.mjs --couverture` le 2026-09-28T10:06:57.801Z. Rien ici n'est recopié à la main : tout est lu dans les fiches.
+> Écrit par `node scripts/juges-026-preuve.mjs --couverture` le 2026-09-28T11:22:14.901Z. Rien ici n'est recopié à la main : tout est lu dans les fiches.
 
 **Fiches 026 lues : 251** — fiches de juges : 52 · fiches de fabrication : 179 · fiches de mutations : 20. Fiches 025 lues : 22.
 Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-ecosysteme/026/ (025 : …/brouillons-ecosysteme/) · vagues : .orchestre/brouillons-ecosysteme/026/INDEX.md.

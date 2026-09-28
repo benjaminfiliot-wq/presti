@@ -29,7 +29,7 @@
 | 026-003 | /api/media : octets magiques, 415 sinon | codex | `scripts/media-octets-qa.mjs` (026-002) | 026-002 | oui | — |
 | 026-004 | Juge de la migration Next 16 | claude-code | `scripts/next16-qa.mjs --preuve-echecs` (elle-même) | 025-01, 025-05, 025-09, 025-10, 026-001 | non | — |
 | 026-005 | instantane-quotidien.mjs | codex | `scripts/instantane-quotidien-qa.mjs` (026-002) | 026-002 | non | — |
-| 026-006 | Next 16 : dépendances et build | codex | `scripts/next16-qa.mjs --groupe=dependances` (026-004) | 026-004 | oui | Accord sur le diff |
+| 026-006 | Next 16 : dépendances et build | claude-code | `scripts/next16-qa.mjs --groupe=dependances` (026-004) | 026-004 | oui | Accord sur le diff |
 | 026-007 | Mise en service de la sauvegarde quotidienne | claude-code | `scripts/instantane-quotidien-qa.mjs --reel` (026-002) | 026-005 | non | Son « oui » avant le premier push et la tâche Windows |
 | 026-008 | Next 16 : middleware → proxy, lignes de build | codex | `scripts/next16-qa.mjs` (026-004) | 025-19, 026-006 | oui | Accord sur le diff ; Build Command Vercel par défaut |
 | 026-009 | Juge SQL du bus (0096-0098), aides SQL, contrat ops | claude-code | `scripts/juges-026-horloge-bus-preuve.mjs --lot=01` (elle-même) | 026-001 | non | — |
