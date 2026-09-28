@@ -573,3 +573,4 @@
 {"id":"026-128","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T20:45:15Z","duree_s":120,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T20:56:17Z","duree_s":237,"agent":"claude-code","executant":"claude-code","lignes":3154,"dossier":"en-cours"}
 {"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T21:08:16Z","duree_s":197,"agent":"claude-code","executant":"claude-code","lignes":3158,"dossier":"en-cours"}
+{"id":"026-126","verdict":"FAIL","ligne":"PASS pub-locale-qa --partie=gabarit — référence : code 1, FAIL PL-G1 — non évalué : gabarits-pubs/locale/contrat.json introuvable (0 s) ; témoin : code 0 (82 s)","code":1,"date":"2026-09-28T21:13:13Z","duree_s":241,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
