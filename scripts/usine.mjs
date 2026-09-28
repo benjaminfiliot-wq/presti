@@ -65,7 +65,11 @@ const EXCLUS = ['public/promo/', 'promo-src/', '.claude/', '.orchestre/travail/'
 // bloquait tout lancement. Quand un motif a un test `cle`, la valeur qui n'en a pas la forme est ÉCARTÉE — et affichée, jamais tue.
 // 28/09 : une valeur qui contient « sentinelle » est une sentinelle de test documentée (026-041 : `…-026-sentinelle`),
 // jamais une clé émise par un fournisseur ; la fiche et ses preuves bloquaient tout paquet vers l'usine depuis 09:23.
-const formeDeCle = (v) => /[0-9]/.test(v) && /[A-Za-z]/.test(v) && !/sentinelle/i.test(v)
+// 28/09 : les marqueurs des faux (sentinelle, témoin, essai, factice) ne sont jamais dans une clé émise par un fournisseur ;
+// une expression régulière littérale (/\b…, /^…, /(…, /[…) non plus. Les juges et les preuves en portent partout.
+const FAUX_EVIDENT = /sentinelle|t[eé]moin|essai|factice/i
+const REGEX_LITTERALE = /^\/(?:\\[bBdswWnrt]|\^|\(|\[)/
+const formeDeCle = (v) => /[0-9]/.test(v) && /[A-Za-z]/.test(v) && !FAUX_EVIDENT.test(v) && !REGEX_LITTERALE.test(v)
 // Attaque du 24/09/2026 (paquet à sec ; fixtures et journaux dans .orchestre/travail/usine/attaques-2026-09-24/) : passaient la seconde barrière un JWT
 // court coupé par des points, un NOM_SECRET=valeur collé d'un .env, une clé sb_secret_ seule, une ligne ajoutée qui
 // commençait par « ++ » (lue comme un en-tête « +++ ») et un jeton dans un fichier binaire. D'où les motifs ajoutés
@@ -92,7 +96,9 @@ const MOTIFS = [
 const REFERENCE_DE_CODE = (v) => /^(?:process\.env|import\.meta|os\.environ|\$\{|\$[A-Za-z_]|\{\{|<)/.test(v) || /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)+$/.test(v)
 const MOTIFS_EXECUTER = [
   // Identifiants dans une URL : le mot de passe est ce qui suit « : » avant « @ ». Les gabarits (<mdp>, ${mdp}, [MDP], *, …) ne comptent pas.
-  { nom: 'URL avec identifiants (schéma://utilisateur:mot de passe@hôte)', re: /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/([^\s\/:@"'`<>{}$[\]*…]+:[^\s\/@"'`<>{}$[\]*…]+)@[A-Za-z0-9[]/ },
+  // 28/09 : un hôte réservé aux essais (RFC 2606 : *.invalid, *.test, *.example, *.localhost, example.com/net/org) ne désigne
+  // aucun service réel : ses identifiants sont des faux de juge (https://moi:mdp@exemple.invalid).
+  { nom: 'URL avec identifiants (schéma://utilisateur:mot de passe@hôte)', re: /\b[A-Za-z][A-Za-z0-9+.-]*:\/\/([^\s\/:@"'`<>{}$[\]*…]+:[^\s\/@"'`<>{}$[\]*…]+)@(?!(?:[A-Za-z0-9-]+\.)*(?:invalid|test|example|localhost|example\.(?:com|net|org))(?![A-Za-z0-9.-]))[A-Za-z0-9[]/ },
   // Un nom qui dit secret/jeton/mot de passe/clé, quelle que soit la casse, entre guillemets ou non, suivi de « : » (JSON, YAML)
   // ou de « = », puis une valeur de 16 caractères ou plus (la forme NOM_EN_CAPITALES=valeur en début de ligne est dans MOTIFS).
   { nom: 'nom sensible : valeur (JSON, YAML, minuscules)', re: /(?:^|[^A-Za-z0-9_])["']?[A-Za-z0-9_.-]*(?:secret|token|passw(?:or)?d|(?<![A-Za-z])pass(?![A-Za-z])|private[_-]?key|api[_-]?key|service[_-]?role|access[_-]?key|auth[_-]?key|signing[_-]?key|credential)[A-Za-z0-9_.-]*["']?\s*[:=]\s*["'`]?([^\s"'`,;#}\])(]{16,})/i, cle: (v) => formeDeCle(v) && !REFERENCE_DE_CODE(v) },
