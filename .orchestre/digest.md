@@ -6,15 +6,17 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T11:23:21Z
+# Digest — 2026-09-28T11:27:02Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 111 tâche(s) PASS, 192392 ligne(s) · faites par Claude Code : 57 tâche(s) PASS, 104369 ligne(s).
-**État** — file : 4 · en cours : 10 · faites : 175 · refusées : 9
+**Mesure** — déléguées (antigravity, codex) : 111 tâche(s) PASS, 192392 ligne(s) · faites par Claude Code : 58 tâche(s) PASS, 104369 ligne(s).
+**État** — file : 4 · en cours : 11 · faites : 176 · refusées : 8
 
-## ⚠ 2 question(s) en attente
+## ⚠ 4 question(s) en attente
 - `.orchestre/en-cours/025-10.question.md` → `node scripts/orchestre.mjs repondre 025-10 <n>`
+- `.orchestre/en-cours/026-068.question.md` → `node scripts/orchestre.mjs repondre 026-068 <n>`
+- `.orchestre/en-cours/026-119.question.md` → `node scripts/orchestre.mjs repondre 026-119 <n>`
 - `.orchestre/en-cours/026-124.question.md` → `node scripts/orchestre.mjs repondre 026-124 <n>`
 
 | id | type | où | exécutant | verdict | détail |
@@ -28,12 +30,13 @@
 | 026-070 | feature | en-cours | usine-codex-71 | — | depuis 2026-09-28T11:18:57Z · Créer les sept modules purs de la station dans lib/pilotage/ (barre.ts, equipage.ts, attention.ts, fil.ts, tapis.ts, missions.ts, experience.ts) qui calculent, sans réseau et à un instant donné, les compteurs de la barre, l'équipage et la position de chaque personnage à partir des seuls événements et états, la file Attention unique (7 cartes, rouge puis orange, jaune, bleu), les bulles du fil masquées, les mouvements des tapis, les missions et le niveau (sur l'argent encaissé seulement), et l'état de l'expérience isolée |
 | 026-119 | feature | en-cours | usine-codex-72 | — | depuis 2026-09-28T11:19:55Z · Écrire lib/crieur/faits.ts (au moins 12 faits sur Presti, chacun avec une preuve vérifiable dans le dépôt) et lib/crieur/composer.ts (composerLot, pur et déterministe, au plus 3 publications par semaine sur LinkedIn, Facebook et Instagram, une par canal et chaque canal à son jour, seulement celles des prochaines heures demandées, 15 par mois et 3 programmées à la fois, sans répéter un fait avant 30 jours, faits sous drapeau baissé exclus, « Commente SITE » en fin de post sur Instagram et Facebook seulement si le drapeau aimantSite est levé, chaque publication acceptée par jugerPublication) |
 | 026-124 | test | en-cours | claude-code | — | depuis 2026-09-28T10:18:12Z · Ajouter à video-qa un profil pub-locale (vertical 15 s, voix ou silence) sans changer les profils reseaux et landing, écrire visages-qa (OpenCV YuNet, modèle épinglé par empreinte, étalonné sur les photos des démos) et socle-pubs-qa qui prouve les deux, pour que juges-026-pubs-contenu-preuve --lot=09 soit vert |
+| 026-135 | feature | en-cours | usine-codex-73 | — | depuis 2026-09-28T11:26:50Z · Écrire lib/packPubDossier.ts (nettoyerDossierPack, pure, qui n'accepte que les photos de l'artisan lui-même) et la route GET/PUT /api/pubs/commander/brouillon qui lit et enregistre le dossier du pack derrière le drapeau packPub |
 | 026-248 | test | en-cours | claude-code | — | depuis 2026-09-28T10:15:00Z · Écrire le contrat du Vigile, titulaire de la salle Sécurité (relevé quotidien en lecture seule sur l'usine — erreurs des 24 h, avis npm audit et fins de support, avis du conseiller Supabase, jetons et clés à échéance, bannissements du limiteur — résumé pour Benj ; il ne change rien d'autre que la pause de sécurité d'un agent : il pose une pause de sécurité sur un agent (seuil de vigile.json), ne la lève jamais, ne pose jamais la pause générale, jamais sur Matt, Claude Code ni le pont ; il ne lit aucun secret en clair, n'appelle que Codex ou Ollama local), sa consigne docs/agents/vigile.md, ses réglages docs/agents/vigile.json et le juge scripts/vigile-qa.mjs (critères VG, parties releve, serveur, usine, resume, unites, pause, --reel) avec jeux d'essai, témoin et sabotages, et prouver qu'il échoue aujourd'hui sur VG-1 et passe sur le témoin |
 | 026-006 | feature | file | claude-code | — | Passer presti à Next.js 16 (dernière 16.x), React et React DOM 19.2 et leurs types, avec le script build en next build --webpack pour @serwist/next et sans script next lint, typecheck, build et budget de poids verts, jusqu'au vert de next16-qa --groupe=dependances |
 | 026-051 | feature | file | codex | — | Étendre le Web Push aux fondateurs : lib/pilotage/notifications.ts (charge neutre par motif, liste fermée, lien qui ne porte qu'un identifiant), envoyerPushFondateurs dans lib/push.ts (tous les appareils des fondateurs, par le même envoi que les artisans), et un appel dans envoyer() de lib/alertes.ts pour chaque alerte d'entreprise urgente ou de digest, après son verrou quotidien |
+| 026-072 | feature | file | codex | — | Créer lib/agents/acquisition/vigieMeta.ts : executerVigie n'interroge que graph.facebook.com/v26.0/ads_archive (France, pubs actives, par métier pour la cible artisan, par terme de TERMES_MARQUES pour la cible marque du Studio pubs) dans un budget d'appels injecté, retient les pages qui ont au moins 3 pubs actives dont une lancée il y a plus de 30 jours (et, pour une marque, un domaine dans ses légendes), écrit annonceurs et candidats, reçoit le jeton par ses dépendances sans jamais le garder, et rend l'état en_attente_jeton sans erreur quand il n'y a pas de jeton |
 | 026-109 | feature | file | codex | — | Donner à l'orchestre des baux qui expirent (2 × maxMinutes sans battement), les commandes battement, expirer et promouvoir, un disjoncteur par tâche (3 tentatives échouées ou 2 échecs identiques → DISJONCTÉE), la quarantaine des décisions écrites par un exécutant et un bloc « Attention » en tête du digest, dans la source puis par maj, jusqu'au vert du groupe baux de preuve-026 |
-| 026-135 | feature | file | codex | — | Écrire lib/packPubDossier.ts (nettoyerDossierPack, pure, qui n'accepte que les photos de l'artisan lui-même) et la route GET/PUT /api/pubs/commander/brouillon qui lit et enregistre le dossier du pack derrière le drapeau packPub |
-| 026-058 | feature | refuse | claude-code | FAIL | FAIL RS-5 — /srv/presti-agents au commit bb8b009de1 (origin/main : 04e3ee7d85) |
+| 026-058 | feature | fait | claude-code | PASS | 2026-09-28T11:26:57Z · 5s · 0 l. |
 | 026-110 | test | fait | claude-code | FAIL | PASS pack-pub-dossier-qa --partie=api — référence : code 1, FAIL PD-1 — lib/packPubDossier.ts ne s'importe pas : Error [ERR_MODULE_NOT_FOUND]: Cannot find modul |
 | 026-069 | test | fait | claude-code | PASS | 2026-09-28T11:20:32Z · 33s · 0 l. |
 | 026-039 | contenu | refuse | antigravity | FAIL | ❌ CP-6 npm run typecheck en code 2 : .next/types/routes.d.ts(132,1): error TS1434: Unexpected keyword or identifier. \| .next/types/routes.d.ts(132,11): error TS |
@@ -118,6 +121,5 @@
 | 026-018 | test | fait | claude-code | PASS | 2026-09-26T06:16:11Z · 38s · 7611 l. |
 | 026-016 | test | fait | claude-code | PASS | 2026-09-26T05:03:27Z · 5s · 12254 l. |
 | 026-012 | test | fait | claude-code | PASS | 2026-09-26T03:19:55Z · 5s · 10049 l. |
-| 026-009 | test | fait | claude-code | PASS | 2026-09-26T01:56:41Z · 33s · 6788 l. |
 
-… 98 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 99 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
