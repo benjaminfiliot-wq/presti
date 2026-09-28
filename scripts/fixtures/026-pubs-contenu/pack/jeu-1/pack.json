@@ -1,0 +1,24 @@
+{
+  "pack_id": "jeu-1",
+  "matiere": {
+    "metier": "Menuiserie",
+    "ville": "Rennes",
+    "communes": ["Rennes"],
+    "duree_travaux": "3 jours",
+    "materiaux": "chêne massif",
+    "cta": "devis",
+    "telephone": null,
+    "voix": "aucune",
+    "texte_voix": null,
+    "decennale": true,
+    "accroche": "artisan_de_confiance",
+    "photos": [
+      { "fichier": "public/sites-demo/macon/images/parement-720.webp", "role": "avant", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/carreleur/images/douche-720.webp", "role": "chantier", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/peintre/images/preparation-720.webp", "role": "chantier", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/menuisier/images/escalier-tournant-720.webp", "role": "detail", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/lestraque/images/atelier-poncage-720.webp", "role": "detail", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/peintre/images/enduit-720.webp", "role": "apres", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "pack_id": "jeu-2",
+  "matiere": {
+    "metier": "Electricité",
+    "ville": "Nantes",
+    "communes": ["Nantes"],
+    "duree_travaux": "2 jours",
+    "materiaux": "matériel aux normes",
+    "cta": "devis",
+    "telephone": null,
+    "voix": "synthese",
+    "texte_voix": "Electricien a Nantes. Intervention rapide et travail soigne. Appelez-nous maintenant.",
+    "decennale": true,
+    "accroche": "reactivite",
+    "photos": [
+      { "fichier": "public/sites-demo/electricien/images/variateur-720.webp", "role": "detail", "personnes": false, "accord_personnes": false, "licence": "CC0", "auteur": "Presti", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/chauffagiste/images/pac-720.webp", "role": "chantier", "personnes": false, "accord_personnes": false, "licence": "CC BY 4.0", "auteur": "Presti", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/chauffagiste/images/thermostat-720.webp", "role": "detail", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Presti", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/lestraque/images/boiserie-720.webp", "role": "avant", "personnes": false, "accord_personnes": false, "licence": "CC0", "auteur": "Presti", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/lestraque/images/mains-noyer-720.webp", "role": "detail", "personnes": false, "accord_personnes": false, "licence": "CC0", "auteur": "Presti", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/menuisier/images/bibliotheque-720.webp", "role": "apres", "personnes": false, "accord_personnes": false, "licence": "CC0", "auteur": "Presti", "source": "https://commons.wikimedia.org" }
+    ]
+  }
+}

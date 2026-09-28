@@ -1,0 +1,4 @@
+{
+  "_source": "fiche 026-126, § « Le contrat du dossier de pack », point 1 : les seuls fichiers qu'un projet gabarit peut référencer sans venir de l'artisan (polices locales, picto d'appel…), chacun avec son empreinte sha256. Ce fichier appartient au juge (026-126) : aucun exécutant ne le modifie. Vide tant qu'aucun gabarit n'a besoin d'un fichier local hors marque ou photo/voix de l'artisan — les seules ressources distantes admises restent gabarits-pubs/locale/contrat.json:remoteAutorise (GSAP épinglé, polices Google).",
+  "fichiers": []
+}

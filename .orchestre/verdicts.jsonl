@@ -574,3 +574,8 @@
 {"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T20:56:17Z","duree_s":237,"agent":"claude-code","executant":"claude-code","lignes":3154,"dossier":"en-cours"}
 {"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T21:08:16Z","duree_s":197,"agent":"claude-code","executant":"claude-code","lignes":3158,"dossier":"en-cours"}
 {"id":"026-126","verdict":"FAIL","ligne":"PASS pub-locale-qa --partie=gabarit — référence : code 1, FAIL PL-G1 — non évalué : gabarits-pubs/locale/contrat.json introuvable (0 s) ; témoin : code 0 (82 s)","code":1,"date":"2026-09-28T21:13:13Z","duree_s":241,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T21:17:55Z","duree_s":196,"agent":"claude-code","executant":"claude-code","lignes":4240,"dossier":"en-cours"}
+{"id":"026-126","verdict":"FAIL","ligne":"PASS pub-locale-qa --partie=gabarit — référence : code 1, FAIL PL-G1 — non évalué : gabarits-pubs/locale/contrat.json introuvable (0 s) ; témoin : code 0 (61 s)","code":1,"date":"2026-09-28T21:21:08Z","duree_s":184,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T21:24:30Z","duree_s":177,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-153","verdict":"FAIL","ligne":"FAIL PL-G1 — aucun pack pour instancier (témoin non fabriqué)","code":1,"date":"2026-09-28T21:24:59Z","duree_s":0,"agent":"ag-026-153","executant":"antigravity","lignes":701,"dossier":"en-cours"}
+{"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T21:40:27Z","duree_s":161,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}

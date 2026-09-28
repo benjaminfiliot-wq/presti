@@ -1,0 +1,55 @@
+{
+  "_source": "fiche 026-126, § « Le contrat du dossier de pack » et « Cahier du juge (pub-locale-qa) ». Seule source pour scripts/pub-locale-qa.mjs ET pour scripts/pack-pub/*.mjs (fiches 026-153, 026-154, 026-156) : toute fiche qui change ce contrat change ce fichier ET pub-locale-qa.mjs, dans le même geste. Ce fichier appartient au juge (026-126) : aucun exécutant ne le modifie (fiche 026-126, point 1).",
+  "structure": [
+    "pack.json",
+    "voix.mp3",
+    "photos/NN.jpg",
+    "manifeste-entrees.json",
+    "hf/video-1/",
+    "hf/video-2/",
+    "hf/video-3/",
+    "hf/visuel-1/",
+    "hf/visuel-2/",
+    "hf/visuel-3/",
+    "sortie/video-1.mp4",
+    "sortie/video-2.mp4",
+    "sortie/video-3.mp4",
+    "sortie/visuel-1.jpg",
+    "sortie/visuel-2.jpg",
+    "sortie/visuel-3.jpg",
+    "sortie/textes.md",
+    "sortie/fiche-10-min.md"
+  ],
+  "fichiersSortie": [
+    "video-1.mp4", "video-2.mp4", "video-3.mp4",
+    "visuel-1.jpg", "visuel-2.jpg", "visuel-3.jpg",
+    "textes.md", "fiche-10-min.md"
+  ],
+  "matiere": {
+    "photos": { "min": 6, "max": 12, "roles": ["avant", "apres", "chantier", "detail", "equipe"] },
+    "faits": { "metier_max": 40, "ville_max": 60, "communes_max": 5, "duree_travaux_max": 40, "materiaux_max": 60, "cta": ["devis", "appel", "message"] },
+    "voix": ["aucune", "synthese"],
+    "texte_voix": { "min": 20, "max": 220 },
+    "_source": "scripts/fixtures/026-pubs-contenu/contrat-pack.json (fiche 026-108) — recopié ici tel quel : c'est le même pack.matiere que la fabrication."
+  },
+  "gabarits": {
+    "avant-apres": { "type": "film", "largeur": 1080, "hauteur": 1920, "duree": 15 },
+    "chantier": { "type": "film", "largeur": 1080, "hauteur": 1920, "duree": 15 },
+    "artisan-ville": { "type": "film", "largeur": 1080, "hauteur": 1920, "duree": 15 },
+    "visuel": { "type": "image", "largeur": 1080, "hauteur": 1080, "duree": null }
+  },
+  "marques": ["{{photo:N}}", "{{logo}}", "{{metier}}", "{{ville}}", "{{accroche}}", "{{cta}}", "{{telephone}}", "{{duree_travaux}}", "{{materiaux}}", "{{sous_titres}}", "{{voix}}"],
+  "mentionIa": { "id": "mention-ia", "texte": "Voix générée par IA", "debutS": 0 },
+  "zoneSure": { "hautPct": 14, "basPct": 65 },
+  "remoteAutorise": ["cdn.jsdelivr.net/npm/gsap", "fonts.googleapis.com", "fonts.gstatic.com"],
+  "termesInterdits": ["RGE", "Qualibat", "MaPrimeRénov", "aide", "garanti", "certifié", "n°1", "meilleur", "moins cher"],
+  "termeGarantiPermis": "garantie décennale",
+  "nombresAdmisFiche10Min": ["10", "15", "30", "1080", "1920"],
+  "longueurs": { "texteMax": 125, "titreMax": 40, "descriptionMax": 30, "variantes": 3 },
+  "ecartSnapshotMax": 0.06,
+  "poidsSortieMaxMo": 30,
+  "poidsVisuelMaxMo": 1,
+  "werMax": 0.15,
+  "instantsControle": [1, 7, 13],
+  "instantsMentionIa": [0.2, 7.5, 14.8]
+}

@@ -1,0 +1,24 @@
+{
+  "pack_id": "jeu-visage",
+  "matiere": {
+    "metier": "Menuiserie",
+    "ville": "Rennes",
+    "communes": ["Rennes"],
+    "duree_travaux": "3 jours",
+    "materiaux": "chêne massif",
+    "cta": "devis",
+    "telephone": null,
+    "voix": "aucune",
+    "texte_voix": null,
+    "decennale": true,
+    "accroche": "artisan_de_confiance",
+    "photos": [
+      { "fichier": "scripts/fixtures/026-pubs-contenu/pack/jeu-visage/photo.jpg", "role": "chantier", "personnes": false, "accord_personnes": false, "note": "fixture négative (fiche 026-126, point 3) : le portrait du domaine public du socle y est incrusté (fabriquer-photo.mjs) alors que personnes vaut false — c'est le mensonge que fabriquer.mjs (fiche 026-156) doit refuser (PL-12) et que visages-qa.mjs détecte (PL-6)." },
+      { "fichier": "public/sites-demo/menuisier/images/escalier-tournant-720.webp", "role": "avant", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/menuisier/images/bibliotheque-720.webp", "role": "apres", "personnes": false, "accord_personnes": false, "licence": "CC0", "auteur": "Presti", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/lestraque/images/boiserie-720.webp", "role": "detail", "personnes": false, "accord_personnes": false, "licence": "CC0", "auteur": "Presti", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/lestraque/images/mains-noyer-720.webp", "role": "detail", "personnes": false, "accord_personnes": false, "licence": "CC0", "auteur": "Presti", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/lestraque/images/atelier-poncage-720.webp", "role": "chantier", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "reference": "a537149a81da462840e2dfa3696b429919383986",
+  "absents_de_la_reference": ["gabarits-pubs/locale", "scripts/pub-locale-qa.mjs", "docs/pubs/meta-logement.json"],
+  "juges": [
+    { "commande": "node scripts/pub-locale-qa.mjs --partie=gabarit", "echec_attendu": "PL-G1", "fiche_jugee": "026-153" },
+    { "commande": "node scripts/pub-locale-qa.mjs --partie=textes", "echec_attendu": "PL-T1", "fiche_jugee": "026-154" },
+    { "commande": "node scripts/pub-locale-qa.mjs --partie=complet", "echec_attendu": "PL-1", "fiche_jugee": "026-156" }
+  ]
+}

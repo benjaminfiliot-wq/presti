@@ -1,0 +1,24 @@
+{
+  "pack_id": "jeu-3",
+  "matiere": {
+    "metier": "Peinture",
+    "ville": "Angers",
+    "communes": ["Angers"],
+    "duree_travaux": "5 jours",
+    "materiaux": "peinture mate",
+    "cta": "appel",
+    "telephone": "01 23 45 67 89",
+    "voix": "aucune",
+    "texte_voix": null,
+    "decennale": false,
+    "accroche": "avant_apres",
+    "photos": [
+      { "fichier": "public/sites-demo/peintre/images/preparation-720.webp", "role": "avant", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/peintre/images/enduit-720.webp", "role": "apres", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/peintre/images/rouleau-720.webp", "role": "chantier", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/peintre/images/rechampi-720.webp", "role": "detail", "personnes": false, "accord_personnes": false, "licence": "CC0", "auteur": "Presti", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/peintre/images/hero-720.webp", "role": "chantier", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" },
+      { "fichier": "public/sites-demo/macon/images/parement-720.webp", "role": "detail", "personnes": false, "accord_personnes": false, "licence": "CC BY 2.0", "auteur": "Shixart1985", "source": "https://commons.wikimedia.org" }
+    ]
+  }
+}
