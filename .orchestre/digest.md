@@ -6,7 +6,7 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T12:05:38Z
+# Digest — 2026-09-28T12:07:17Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
@@ -35,8 +35,8 @@
 | 026-135 | feature | en-cours | usine-codex-73 | — | depuis 2026-09-28T11:26:50Z · Écrire lib/packPubDossier.ts (nettoyerDossierPack, pure, qui n'accepte que les photos de l'artisan lui-même) et la route GET/PUT /api/pubs/commander/brouillon qui lit et enregistre le dossier du pack derrière le drapeau packPub |
 | 026-006 | feature | file | claude-code | — | Passer presti à Next.js 16 (dernière 16.x), React et React DOM 19.2 et leurs types, avec le script build en next build --webpack pour @serwist/next et sans script next lint, typecheck, build et budget de poids verts, jusqu'au vert de next16-qa --groupe=dependances |
 | 026-109 | feature | file | codex | — | Donner à l'orchestre des baux qui expirent (2 × maxMinutes sans battement), les commandes battement, expirer et promouvoir, un disjoncteur par tâche (3 tentatives échouées ou 2 échecs identiques → DISJONCTÉE), la quarantaine des décisions écrites par un exécutant et un bloc « Attention » en tête du digest, dans la source puis par maj, jusqu'au vert du groupe baux de preuve-026 |
+| 026-229 | test | fait | claude-code | PASS | 2026-09-28T12:07:17Z · 224s · 4389 l. |
 | 026-077 | feature | fait | usine-codex-75 | PASS | 2026-09-28T12:05:37Z · 124s · 649 l. |
-| 026-229 | test | fait | claude-code | PASS | 2026-09-28T12:02:58Z · 250s · 4389 l. |
 | 026-248 | test | fait | claude-code | PASS | 2026-09-28T11:50:10Z · 392s · 5759 l. |
 | 026-072 | feature | fait | usine-codex-74 | PASS | 2026-09-28T11:45:34Z · 103s · 522 l. |
 | 026-039 | contenu | fait | antigravity | PASS | 2026-09-28T11:44:10Z · 322s · 0 l. |
