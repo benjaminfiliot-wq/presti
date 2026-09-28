@@ -25,6 +25,7 @@ import { spawnSync } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
 import sharp from 'sharp'
 import { R, TRAVAIL, lireOptionsOuQuitter, creerSortie } from './fixtures/025/commun.mjs'
+import { lf } from './lib/sql-essai.mjs'
 
 const NOM = 'pub-locale-qa'
 const MON_TRAVAIL = path.join(TRAVAIL, 'pub-locale-qa')
@@ -291,9 +292,12 @@ function verifierTextes(sortieDir, pack, contrat, statutMetaLogement) {
   const out = { 'PL-T2': [], 'PL-T3': [], 'PL-T4': [], 'PL-T5': [], 'PL-T6': [], 'PL-T7': [] }
   const fTextes = path.join(sortieDir, 'textes.md'), fFiche = path.join(sortieDir, 'fiche-10-min.md')
   if (!existeNonVide(fTextes)) { out['PL-T2'].push('textes.md absent ou vide'); return out }
-  const textes = fs.readFileSync(fTextes, 'utf8')
+  // lf() : normalise un CRLF (fichier de sortie relu après un checkout Windows — core.autocrlf, aucun .gitattributes
+  // dans ce dépôt) vers LF, sinon `## Variante \d+\n` ne matche jamais un « …\d+\r\n » et rend 0 variante trouvée
+  // quel que soit le contenu réel (défaut trouvé en jugeant réellement le témoin de livraison, 026-110/026-157).
+  const textes = lf(fs.readFileSync(fTextes, 'utf8'))
   const ficheExiste = existeNonVide(fFiche)
-  const fiche = ficheExiste ? fs.readFileSync(fFiche, 'utf8') : ''
+  const fiche = ficheExiste ? lf(fs.readFileSync(fFiche, 'utf8')) : ''
 
   // PL-T2 : 3 variantes, longueurs
   const variantes = [...textes.matchAll(/## Variante \d+\n([\s\S]*?)(?=\n## Variante \d+|\n*$)/g)].map((m) => m[1])
