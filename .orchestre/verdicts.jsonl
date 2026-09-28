@@ -536,3 +536,6 @@
 {"id":"026-075","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:05:48Z","duree_s":59,"agent":"usine-codex-89","executant":"codex","lignes":444,"dossier":"fait"}
 {"id":"026-232","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:08:20Z","duree_s":470,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"026-078","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:08:54Z","duree_s":84,"agent":"usine-codex-90","executant":"codex","lignes":489,"dossier":"fait"}
+{"id":"026-232","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:10:25Z","duree_s":499,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-106","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:12:32Z","duree_s":57,"agent":"usine-codex-91","executant":"codex","lignes":497,"dossier":"fait"}
+{"id":"026-012","verdict":"FAIL","ligne":"✅ JA-1 référence 4041ec9 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (2421 fichiers), ancêtre de HEAD, sans lib/p","code":1,"date":"2026-09-28T17:13:04Z","duree_s":652,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}

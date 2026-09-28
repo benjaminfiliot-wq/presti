@@ -7,6 +7,7 @@ import { purgerBrouillonsPublics } from '@/lib/siteAchatPublic'
 import { retraitsDus, retirer } from '@/lib/siteRetrait'
 import { purgerFichiersExpires } from '@/lib/siteDossier'
 import { veilleTresorerie } from '@/lib/direction/veilleTresorerie'
+import { demanderGeneration } from '@/lib/siteGenerationDistante'
 
 type CleCourriel = 'payee' | 'generee' | 'en_ligne'
 type CommandeLivraison = Omit<Commande, 'etat'> & { etat: Commande['etat'] | 'retiree'; courriels?: Partial<Record<CleCourriel, string>>; retiree_le?: string | null }
@@ -134,6 +135,17 @@ export async function commandesEnRetard(deps: Dependances = {}): Promise<Alerte[
 export async function tourLivraison(deps: Dependances = {}): Promise<{ courriels: number; retards: number; erreurs: number }> {
   const d = dependances(deps)
   const bilan = { courriels: 0, retards: 0, erreurs: 0 }
+  const enPause = d.enPause
+  if (process.env.GITHUB_DISPATCH_TOKEN && !(await enPause())) {
+    try {
+      const { data, error } = await d.base.from('sites_commandes').select('*').eq('etat', 'payee').order('paye_le', { ascending: true }).limit(5)
+      if (error) throw new Error('Lecture des commandes payées impossible')
+      for (const commande of (data ?? []) as CommandeLivraison[]) {
+        try { await demanderGeneration(commande as Commande, { base: d.base, maintenant: d.maintenant }) }
+        catch (e) { bilan.erreurs++; console.error('[livraison] génération distante', commande.id, e) }
+      }
+    } catch (e) { bilan.erreurs++; console.error('[livraison] demandes de génération', e) }
+  }
   try {
     const { data, error } = await d.base.from('sites_commandes').select('id').in('etat', ['payee', 'generee', 'validee', 'en_ligne']).order('paye_le', { ascending: true }).limit(50)
     if (error) throw new Error(`Lecture des commandes impossible : ${error.message}`)
