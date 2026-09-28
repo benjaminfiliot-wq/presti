@@ -1,0 +1,33 @@
+# Planche F0 — TÉMOIN du lot p (026-168), pas la planche livrée
+
+Ce fichier est l'**implémentation de référence minimale** du lot p de `juges-026-pilotage-preuve` (JA-7 de 026-012) : posé
+avec `grille.json`, `licence-planche.json` et l'atelier témoin sur l'arbre de référence, il prouve que
+`station-planche-qa --partie=planche` sait rendre 0 sur une planche conforme, et chacun des sabotages du lot prouve qu'il voit
+la faute. **Ce n'est pas la planche F0** (026-169) : elle se dessine dans l'atelier Claw3D `~/claw3d-pixel`, et c'est le oui
+de Benj qui la juge.
+
+- **Atelier** : `atelier-temoin/`, posé avec ce document dans la racine jugée et passé au juge par `--atelier=atelier-temoin`
+  (le juge le cherche d'abord dans la racine) : un serveur minimal (`node server/index.js --dev`, boucle locale) qui sert
+  `/office/planche`, son script et son atlas composite. Non versionné, il voyage avec les documents : le bloc ci-dessous le
+  cite donc par « racine » (le juge le fige à chaque passage, commit « f0-planche » à métadonnées fixes), ce que le juge
+  n'admet que pour un atelier non versionné posé dans la racine jugée ; `~/claw3d-pixel` se cite toujours par son sha. Les
+  sabotages du lot touchent aussi ses fichiers (une donnée peinte, un écran masqué, une feuille brute servie…).
+- **Packs retenus (lot A, CC0)** : Rotting Pixels (cadres, échelles, fioles, gemmes des salles), zwonky Spacers (les quatre
+  personnages et le portrait), et, pour le Vaisseau, Ansimuz Tech Lab, Kenney Tiny Factory redessiné dans la palette, Shade
+  Puny Characters repeints. Atlas de 256 × 256 fabriqué sur l'usine par `fabriquer-atlas.mjs`, chaque pixel ramené à la palette.
+- **Grille** : tuile de 16 px ; bureau 400 × 384 ; portrait 176 × 320. Salles de 48 × 80 au bureau (sept par pont, trois
+  ponts), de 48 × 36 au téléphone (trois par rangée).
+- **Facteur entier k** : 2 à 1440 px (canevas de 800 × 768 dans 800 × 776), 1 à 1280 px (400 × 384 dans 680 × 676), 6 au
+  téléphone (densité 3 : 1056 × 1920 pixels de l'appareil, 352 × 640 px).
+- **La réservée** « E-COMMERCE · RÉSERVÉE » : la 21e case, en bas à droite (344, 264), porte fermée, sans poste.
+- **Palette** : 28 couleurs (fond violet nuit, métal froid sur quatre tons, néons magenta et cyan, peaux, couleurs d'agents).
+- **Aucune donnée** : le décor ne lit pas `donnees.json` (demandé dans chaque vue, montré au seul calque HTML) ; les écrans
+  disent « — », visibles dans leur salle.
+
+```planche
+atelier: racine
+k.1440: 2
+k.1280: 1
+k.390: 6
+palette: #0b0418 #1b0b33 #2a1450 #3d1f6e #12131f #2b3040 #4a5266 #8a93a8 #ff3cc7 #ff9be8 #26e0f0 #b6f7ff #f2c7a0 #c98a5e #7a4a2e #ff6ad5 #2fc6e0 #f2d15c #3bd16f #4d7cff #ff4d6d #000000 #ffffff #5a2d0c #9b6b3a #1e5b3a #6b2140 #e8e0f0
+```

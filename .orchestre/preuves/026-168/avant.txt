@@ -1,10 +1,16 @@
 M .orchestre/agents.jsonl
  M .orchestre/contexte.md
+ M .orchestre/digest.md
  D .orchestre/file/026-168.md
- M .orchestre/preuves/026-001/couverture.md
- M .orchestre/preuves/026-012/echecs-attendus.md
+ M .orchestre/verdicts.jsonl
+ M docs/sauvegardes.md
+ M lib/siteAchatPublic.ts
  M plans/journal-publications.md
  M scripts/familles-socle-suite-qa.mjs
+ M scripts/fixtures/026/securite/instantane/instantane-quotidien.temoin.mjs
+ M scripts/instantane-quotidien-qa.mjs
+ M scripts/instantane-quotidien.mjs
+ M scripts/juges-026-acquisition-preuve.mjs
  M scripts/signature-repos-qa.mjs
 ?? .claude/skills/captions-overlay/
 ?? .claude/skills/changelog-video/
@@ -33,7 +39,6 @@ M .orchestre/agents.jsonl
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
 ?? .codex/
-?? .github/workflows/generer-site.yml
 ?? .orchestre/en-cours/
 ?? .orchestre/fait/000-usine-essai-2.md
 ?? .orchestre/fait/000-usine-essai-3.md
@@ -127,19 +132,35 @@ M .orchestre/agents.jsonl
 ?? .orchestre/preuves/024-01/
 ?? .orchestre/preuves/024-02/
 ?? .orchestre/preuves/025-10/
-?? .orchestre/preuves/026-038/
-?? .orchestre/preuves/026-048/
+?? .orchestre/preuves/026-005/reparation-2026-09-27.md
+?? .orchestre/preuves/026-007/
+?? .orchestre/preuves/026-027/
+?? .orchestre/preuves/026-037/
+?? .orchestre/preuves/026-053/
+?? .orchestre/preuves/026-067/
+?? .orchestre/preuves/026-104/
+?? .orchestre/preuves/026-121/
+?? .orchestre/preuves/026-169/
+?? .orchestre/preuves/026-220/
 ?? .orchestre/refuse/021-02.md
 ?? .orchestre/refuse/021-14.md
 ?? .orchestre/refuse/021-15.md
 ?? .orchestre/refuse/021-16.md
 ?? .orchestre/refuse/021-20.md
+?? .orchestre/refuse/026-053.md
+?? .orchestre/refuse/026-067.md
 ?? ChromeSetup.exe
+?? app/api/auth/lien/
+?? app/connexion/
 ?? build-demo.mjs
 ?? build-menuisier-1.mjs
 ?? build-menuisier-2.mjs
 ?? build-menuisier.mjs
 ?? build-plombier.mjs
+?? docs/agents/chantier.md
+?? docs/agents/revue-hebdo.md
+?? docs/revues/
+?? echecs-attendus.md
 ?? fix.js
 ?? fix_home.py
 ?? fix_html.py
@@ -148,7 +169,6 @@ M .orchestre/agents.jsonl
 ?? generate-site.mjs
 ?? generate_026.js
 ?? generate_026.mjs
-?? lib/siteRedacteur.ts
 ?? plans/publications-serie-2.md
 ?? promo-src/
 ?? public/promo/facebook-couverture-1640x856.png
@@ -175,9 +195,14 @@ M .orchestre/agents.jsonl
 ?? scratch-screenshot.mjs
 ?? screenshot.mjs
 ?? scripts/cibles-instagram-qa.mjs
-?? scripts/commande-exporter.mjs
-?? scripts/commande-rediger.mjs
+?? scripts/confidentialite-prospection-qa.mjs
 ?? scripts/emails-artisans-qa.mjs
+?? scripts/fixtures/026-acquisition/cli/
+?? scripts/fixtures/026-completude/
+?? scripts/fixtures/026-pilotage/c/
+?? scripts/fixtures/026-pilotage/s/
+?? scripts/fixtures/026/chantier/
+?? scripts/fixtures/026/revue/
 ?? scripts/fixtures/usine-essai-2/
 ?? scripts/fixtures/usine-essai-3/
 ?? scripts/fixtures/usine-essai/
@@ -190,10 +215,15 @@ M .orchestre/agents.jsonl
 ?? scripts/lib/mobile-page.mjs
 ?? scripts/lib/mobile-parcours.mjs
 ?? scripts/lib/mobile-perf.mjs
-?? scripts/livrer-site.mjs
 ?? scripts/mobile-qa.mjs
+?? scripts/ops-acquisition-qa.mjs
 ?? scripts/photos-contraste.mjs
 ?? scripts/publications-serie2-qa.mjs
+?? scripts/revue-qa.mjs
+?? scripts/routes-acquisition-qa.mjs
+?? scripts/station-logique-qa.mjs
+?? scripts/station-reunion-qa.mjs
+?? scripts/station-route-qa.mjs
 ?? scripts/visuels-serie2-qa.mjs
 ?? scripts/visuels-serie2.mjs
 ?? shot_cerveaux.mjs

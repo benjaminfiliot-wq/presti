@@ -1,1 +1,146 @@
-{ "b": 2 }
+{
+  "jeu": "b",
+  "horodatage": "2026-09-26T18:30:00Z",
+  "barre": {
+    "encaisse_mois_eur": 87,
+    "envois_du_jour": 4,
+    "chef_dans_min": 55,
+    "agents_actifs": 3,
+    "erreurs_24h": 9,
+    "auto": false
+  },
+  "agents": [
+    {
+      "nom": "redacteur",
+      "etat": "pause",
+      "salle": "repos",
+      "couleur": "#9bf6fe",
+      "bulle": "Carreleur · Brest"
+    },
+    {
+      "nom": "standardiste",
+      "etat": "panne",
+      "salle": "machines",
+      "couleur": "#ff4d6e",
+      "bulle": "Paysagiste · Tours"
+    },
+    {
+      "nom": "juge",
+      "etat": "travail",
+      "salle": "chantier",
+      "couleur": "#4d7cfe",
+      "bulle": "Chauffagiste · Pau"
+    },
+    {
+      "nom": "radariste",
+      "etat": "reunion",
+      "salle": "reunion",
+      "couleur": "#3bd16e",
+      "bulle": "Vitrier · Caen"
+    },
+    {
+      "nom": "tresorier",
+      "etat": "pause",
+      "salle": "tresorerie",
+      "couleur": "#f2d15d",
+      "bulle": "Plâtrier · Agen"
+    },
+    {
+      "nom": "studio",
+      "etat": "reunion",
+      "salle": "studio",
+      "couleur": "#2fc6e1",
+      "bulle": "Ébéniste · Albi"
+    },
+    {
+      "nom": "observateur",
+      "etat": "travail",
+      "salle": "observatoire",
+      "couleur": "#ff6ad6",
+      "bulle": "Charpentier · Laval"
+    }
+  ],
+  "salles": {
+    "radar": {
+      "egaliseur": [
+        13,
+        18,
+        23,
+        17,
+        22,
+        16,
+        21,
+        15,
+        20,
+        14,
+        19,
+        13
+      ],
+      "requetes_du_jour": 6
+    },
+    "recettes": {
+      "histogramme": [
+        40,
+        47,
+        54,
+        61,
+        45,
+        52,
+        59,
+        43,
+        50,
+        57,
+        41,
+        48,
+        55,
+        62,
+        46,
+        53,
+        60,
+        44,
+        51,
+        58,
+        42,
+        49,
+        56,
+        40,
+        47,
+        54,
+        61,
+        45,
+        52,
+        59
+      ],
+      "mrr_eur": 1450
+    },
+    "experience": {
+      "jour": 29,
+      "sur": 45,
+      "gains_eur": 312,
+      "texte": "FERMÉE · R13"
+    },
+    "envois": {
+      "palier": "P2",
+      "envoyes": 4
+    },
+    "observatoire": {
+      "departements": {
+        "69": 11,
+        "75": 8
+      }
+    },
+    "usine": {
+      "en_ligne": 51
+    }
+  },
+  "tapis": {
+    "TROUVE": 30,
+    "VERIFIE": 31,
+    "MAQUETTE": 32,
+    "CONTACTE": 33,
+    "REPONDU": 34,
+    "OUI": 35,
+    "PAYE": 36,
+    "EN_LIGNE": 37
+  }
+}

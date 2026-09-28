@@ -1,1 +1,146 @@
-{ "a": 1 }
+{
+  "jeu": "a",
+  "horodatage": "2026-09-25T10:00:00Z",
+  "barre": {
+    "encaisse_mois_eur": 1240,
+    "envois_du_jour": 37,
+    "chef_dans_min": 12,
+    "agents_actifs": 7,
+    "erreurs_24h": 2,
+    "auto": true
+  },
+  "agents": [
+    {
+      "nom": "chef",
+      "etat": "travail",
+      "salle": "commandement",
+      "couleur": "#ff6ad5",
+      "bulle": "Plombier · Lyon"
+    },
+    {
+      "nom": "veilleur",
+      "etat": "travail",
+      "salle": "radar",
+      "couleur": "#2fc6e0",
+      "bulle": "Électricien · Rennes"
+    },
+    {
+      "nom": "garde",
+      "etat": "reunion",
+      "salle": "redaction",
+      "couleur": "#f2d15c",
+      "bulle": "Menuisier · Lille"
+    },
+    {
+      "nom": "facteur",
+      "etat": "panne",
+      "salle": "envois",
+      "couleur": "#3bd16f",
+      "bulle": "Couvreur · Nantes"
+    },
+    {
+      "nom": "repondeur",
+      "etat": "travail",
+      "salle": "standard",
+      "couleur": "#4d7cff",
+      "bulle": "Peintre · Dijon"
+    },
+    {
+      "nom": "livreur",
+      "etat": "travail",
+      "salle": "usine",
+      "couleur": "#ff4d6d",
+      "bulle": "Maçon · Metz"
+    },
+    {
+      "nom": "crieur",
+      "etat": "pause",
+      "salle": "crieur",
+      "couleur": "#9bf6ff",
+      "bulle": "Serrurier · Nice"
+    }
+  ],
+  "salles": {
+    "radar": {
+      "egaliseur": [
+        1,
+        6,
+        11,
+        5,
+        10,
+        4,
+        9,
+        3,
+        8,
+        2,
+        7,
+        1
+      ],
+      "requetes_du_jour": 41
+    },
+    "recettes": {
+      "histogramme": [
+        0,
+        7,
+        14,
+        21,
+        5,
+        12,
+        19,
+        3,
+        10,
+        17,
+        1,
+        8,
+        15,
+        22,
+        6,
+        13,
+        20,
+        4,
+        11,
+        18,
+        2,
+        9,
+        16,
+        0,
+        7,
+        14,
+        21,
+        5,
+        12,
+        19
+      ],
+      "mrr_eur": 290
+    },
+    "experience": {
+      "jour": 6,
+      "sur": 30,
+      "gains_eur": 0,
+      "texte": "J6/30 · 0 €"
+    },
+    "envois": {
+      "palier": "P1",
+      "envoyes": 37
+    },
+    "observatoire": {
+      "departements": {
+        "69": 4,
+        "75": 2
+      }
+    },
+    "usine": {
+      "en_ligne": 3
+    }
+  },
+  "tapis": {
+    "TROUVE": 12,
+    "VERIFIE": 11,
+    "MAQUETTE": 10,
+    "CONTACTE": 9,
+    "REPONDU": 8,
+    "OUI": 7,
+    "PAYE": 6,
+    "EN_LIGNE": 5
+  }
+}

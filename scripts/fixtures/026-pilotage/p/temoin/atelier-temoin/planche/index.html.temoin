@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planche — atelier témoin du lot p</title>
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; background: #0b0418; font-family: monospace; }
+  [data-planche="nebuleuse"] { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; z-index: 0;
+    background:
+      radial-gradient(ellipse at 28% 38%, #3d1f6e 0%, rgba(61, 31, 110, 0) 55%),
+      radial-gradient(ellipse at 76% 68%, #6b2140 0%, rgba(107, 33, 64, 0) 48%),
+      radial-gradient(circle at 60% 18%, #2a1450 0%, #0b0418 72%); }
+  [data-planche="barre"], [data-planche="colonne-gauche"], [data-planche="colonne-droite"], [data-planche="bandeau"] {
+    position: fixed; z-index: 2; background: rgba(11, 4, 24, 0.72); box-sizing: border-box; }
+  [data-planche="carte"] { position: fixed; z-index: 1; }
+  [data-planche="decor"] { position: fixed; z-index: 1; image-rendering: pixelated; }
+  [data-planche="html"] { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; z-index: 3; pointer-events: none; }
+  [data-planche="portrait"] { position: fixed; z-index: 4; image-rendering: pixelated; }
+  [data-planche^="echelle"] { position: fixed; z-index: 1; display: none; }
+  [data-planche="echelle-pack"] { image-rendering: pixelated; }
+  [data-salle] { position: fixed; box-sizing: border-box; }
+  [data-plaque] { position: absolute; left: 0; right: 0; top: 1px; color: #ff9be8; font-size: 8px; line-height: 9px; text-align: center; white-space: nowrap; overflow: hidden; }
+  [data-ecran] { position: absolute; color: #b6f7ff; font-size: 9px; line-height: 10px; text-align: center; }
+  .mode-portrait [data-plaque], .mode-portrait [data-ecran] { display: none; }
+  [data-planche-donnees] { position: absolute; left: -10000px; top: 0; width: 1px; height: 1px; overflow: hidden; }
+</style>
+</head>
+<body>
+<div data-planche="nebuleuse"></div>
+<main data-planche="carte"></main>
+<canvas data-planche="decor"></canvas>
+<img data-planche="echelle-pack" alt="Art d'un pack du lot A à son échelle">
+<img data-planche="echelle-ref" alt="Référence trevsagents t049.2">
+<header data-planche="barre"></header>
+<aside data-planche="colonne-gauche"></aside>
+<aside data-planche="colonne-droite"></aside>
+<footer data-planche="bandeau"></footer>
+<div data-planche="html"></div>
+<canvas data-planche="portrait" width="16" height="16"></canvas>
+<script src="/planche/planche.js"></script>
+</body>
+</html>

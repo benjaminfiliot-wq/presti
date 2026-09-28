@@ -1,0 +1,9 @@
+{
+  "name": "atelier-temoin-planche",
+  "private": true,
+  "description": "Atelier TÉMOIN du lot p (026-168) : l'implémentation de référence minimale de la planche F0, pour prouver que station-planche-qa sait rendre 0. Ce n'est pas la planche livrée (026-169).",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node server/index.js --dev"
+  }
+}

@@ -1,0 +1,185 @@
+// Atelier TÉMOIN du lot p (026-168) : la planche minimale qui tient le contrat de station-planche-qa (en-tête du juge).
+// Ce n'est pas la planche livrée (026-169) : elle prouve seulement que le juge sait rendre 0. Tout le dessin vient de
+// l'atlas composite (lot A, ramené à la palette) et d'aplats dans la palette ; le décor ne lit AUCUNE donnée.
+'use strict'
+;(async () => {
+  // La palette (28 couleurs), la même que fabriquer-atlas.mjs et le planche.md du témoin.
+  const PALETTE = [
+    '#0b0418', '#1b0b33', '#2a1450', '#3d1f6e', '#12131f', '#2b3040', '#4a5266', '#8a93a8',
+    '#ff3cc7', '#ff9be8', '#26e0f0', '#b6f7ff', '#f2c7a0', '#c98a5e', '#7a4a2e', '#ff6ad5',
+    '#2fc6e0', '#f2d15c', '#3bd16f', '#4d7cff', '#ff4d6d', '#000000', '#ffffff', '#5a2d0c',
+    '#9b6b3a', '#1e5b3a', '#6b2140', '#e8e0f0',
+  ]
+  const VIOLET_PROFOND = PALETTE[1], VIOLET = PALETTE[2], VIOLET_CLAIR = PALETTE[3]
+  const METAL1 = PALETTE[4], METAL2 = PALETTE[5], METAL3 = PALETTE[6], METAL4 = PALETTE[7]
+  const MAGENTA = PALETTE[8], CYAN = PALETTE[10], ROUGE = PALETTE[20], BORDEAUX = PALETTE[26]
+  const SALLES = [
+    ['commandement', 'Commandement'], ['reunion', 'Salle de réunion'], ['radar', 'Radar'], ['redaction', 'Rédaction'],
+    ['envois', 'Salle des envois'], ['standard', 'Standard'], ['atelier', 'Atelier des maquettes'], ['usine', 'Usine à sites'],
+    ['recettes', 'Recettes'], ['tresorerie', 'Trésorerie'], ['crieur', 'Tour du Crieur'], ['studio', 'Studio pubs'],
+    ['experience', 'Salle Expérience'], ['machines', 'Salle des machines'], ['chantier', 'Chantier du code'],
+    ['audience', 'Audience'], ['securite', 'Sécurité'], ['presti', 'Presti'], ['observatoire', 'Observatoire'],
+    ['repos', 'Salle de repos'],
+  ]
+  const RESERVEE = { cle: 'ecommerce', plaque: 'E-COMMERCE · RÉSERVÉE' }
+  // Les grilles (pixels du dessin) et les emplacements : ceux du grille.json du témoin.
+  const BUREAU = { l: 400, h: 384 }, PORTRAIT = { l: 176, h: 320 }
+  const caseBureau = (i) => ({ x: 8 + (i % 7) * 56, y: 56 + Math.floor(i / 7) * 104, l: 48, h: 80 })
+  const casePortrait = (i) => ({ x: 8 + (i % 3) * 56, y: 24 + Math.floor(i / 3) * 42, l: 48, h: 36 })
+  // Sprites de l'atlas (x, y, l, h) : Rotting Pixels, zwonky, Tech Lab, Kenney, Puny (régions de fabriquer-atlas.mjs).
+  const OBJETS = [[32, 80, 16, 16], [48, 80, 16, 16], [64, 80, 16, 16], [0, 96, 16, 16], [16, 96, 16, 16], [32, 96, 16, 16], [48, 96, 16, 16], [64, 96, 16, 16], [0, 48, 16, 16], [48, 32, 16, 16], [32, 48, 16, 32], [48, 48, 16, 32], [64, 48, 16, 32]]
+  const zwonky = (col, rang) => [128 + col * 16, rang * 16, 16, 16]
+  // Les personnages de la planche : 2 en marche dans les coursives, 2 au poste (positions en pixels de grille, bureau).
+  const PERSONNAGES = [
+    { nom: 'chef', etat: 'poste', x: caseBureau(0).x + 16, y: caseBureau(0).y + 60, l: 16, h: 16, sprite: zwonky(4, 0) },
+    { nom: 'veilleur', etat: 'marche', x: 100, y: 140, l: 16, h: 16, sprite: zwonky(1, 3) },
+    { nom: 'facteur', etat: 'marche', x: 250, y: 244, l: 16, h: 16, sprite: zwonky(2, 5) },
+    { nom: 'repondeur', etat: 'poste', x: caseBureau(5).x + 16, y: caseBureau(5).y + 60, l: 16, h: 16, sprite: zwonky(4, 7) },
+  ]
+  const MODULES = [
+    { nom: 'Tech Lab', x: 12, y: 128, l: 120, h: 128 },
+    { nom: 'Tiny Factory (redessiné)', x: 140, y: 128, l: 120, h: 128 },
+    { nom: 'Équipage Puny (repeint)', x: 268, y: 128, l: 120, h: 128 },
+  ]
+
+  const q = (n) => document.querySelector(`[data-planche="${n}"]`)
+  const params = new URLSearchParams(location.search)
+  const vue = ['station', 'echelle', 'vaisseau'].includes(params.get('vue')) ? params.get('vue') : 'station'
+  const sansPersonnages = params.get('sans') === 'personnages'
+  const vw = window.innerWidth, vh = window.innerHeight, dpr = window.devicePixelRatio || 1
+  const tel = vw < 1024
+  const colonnes = tel ? null : vw >= 1440 ? [300, 340] : [280, 320]
+  const barreH = tel ? 88 : 80, bandeauH = tel ? 64 : 44
+  const poser = (el, x, y, l, h) => Object.assign(el.style, { left: `${x}px`, top: `${y}px`, width: `${l}px`, height: `${h}px` })
+
+  // La vraie mise en page : barre, colonnes, bandeau, vides.
+  poser(q('barre'), 0, 0, vw, barreH)
+  poser(q('bandeau'), 0, vh - bandeauH, vw, bandeauH)
+  if (colonnes) {
+    poser(q('colonne-gauche'), 0, barreH, colonnes[0], vh - barreH - bandeauH)
+    poser(q('colonne-droite'), vw - colonnes[1], barreH, colonnes[1], vh - barreH - bandeauH)
+  } else { q('colonne-gauche').style.display = 'none'; q('colonne-droite').style.display = 'none' }
+  const carte = colonnes ? { x: colonnes[0], y: barreH, l: vw - colonnes[0] - colonnes[1], h: vh - barreH - bandeauH } : { x: 16, y: barreH, l: vw - 32, h: vh - barreH - bandeauH }
+  poser(q('carte'), carte.x, carte.y, carte.l, carte.h)
+  const mode = tel ? 'portrait' : 'bureau'
+  document.documentElement.classList.add(`mode-${mode}`)
+  const grille = tel ? PORTRAIT : BUREAU
+  const k = Math.max(1, Math.floor(Math.min(carte.l * dpr / grille.l, carte.h * dpr / grille.h)))
+  const ox = (carte.x * dpr + Math.floor((carte.l * dpr - grille.l * k) / 2)) / dpr
+  const oy = (carte.y * dpr + Math.floor((carte.h * dpr - grille.h * k) / 2)) / dpr
+  const versEcran = (r) => ({ x: ox + r.x * k / dpr, y: oy + r.y * k / dpr, l: r.l * k / dpr, h: r.h * k / dpr })
+
+  // Les données : demandées comme le ferait la station, montrées dans le calque HTML seulement, jamais dans le décor.
+  const donnees = await (await fetch('/office/planche/donnees.json', { cache: 'no-store' })).json()
+  const atlas = new Image()
+  atlas.src = '/planche/atlas.png'
+  await atlas.decode()
+
+  const canevas = q('decor')
+  canevas.width = grille.l
+  canevas.height = grille.h
+  poser(canevas, ox, oy, grille.l * k / dpr, grille.h * k / dpr)
+  const g = canevas.getContext('2d')
+  g.imageSmoothingEnabled = false
+  const aplat = (c, x, y, l, h) => { g.fillStyle = c; g.fillRect(x, y, l, h) }
+  const sprite = (s, x, y) => g.drawImage(atlas, s[0], s[1], s[2], s[3], x, y, s[2], s[3])
+  const cadre = (c, x, y, l, h, e = 1) => { aplat(c, x, y, l, e); aplat(c, x, y + h - e, l, e); aplat(c, x, y, e, h); aplat(c, x + l - e, y, e, h) }
+  const html = q('html')
+
+  if (vue === 'station') {
+    const caseDe = tel ? casePortrait : caseBureau
+    // La coque, l'antenne, les coursives.
+    if (tel) { aplat(VIOLET_PROFOND, 2, 16, 172, 302); cadre(MAGENTA, 2, 16, 172, 302, 2) }
+    else {
+      aplat(VIOLET_PROFOND, 4, 40, 392, 340); cadre(MAGENTA, 4, 40, 392, 340, 2); cadre(VIOLET_CLAIR, 6, 42, 388, 336)
+      aplat(METAL4, 198, 14, 4, 26); aplat(ROUGE, 197, 10, 6, 4)
+      for (const y of [136, 240, 344]) { aplat(METAL1, 8, y, 384, 24); for (let x = 12; x < 380; x += 32) sprite([0, 48, 16, 16], x, y + 4) }
+    }
+    // Les 20 salles et la réservée.
+    for (let i = 0; i <= SALLES.length; i++) {
+      const c = caseDe(i), reservee = i === SALLES.length
+      aplat(METAL2, c.x, c.y, c.l, c.h)
+      aplat(reservee ? METAL1 : VIOLET, c.x + 2, c.y + 2, c.l - 4, c.h - 4)
+      aplat(BORDEAUX, c.x + 2, c.y + 2, c.l - 4, tel ? 6 : 10)
+      if (reservee) {
+        const hp = tel ? 22 : 48
+        aplat(METAL3, c.x + 16, c.y + c.h - 2 - hp, 16, hp)
+        for (let y = c.y + c.h - 2 - hp; y < c.y + c.h - 2; y += 4) aplat(METAL1, c.x + 16, y, 16, 1)
+        continue
+      }
+      if (tel) { sprite(OBJETS[i % 9], c.x + 4, c.y + c.h - 18); aplat(CYAN, c.x + 30, c.y + 10, 14, 10); aplat(METAL1, c.x + 31, c.y + 11, 12, 8); continue }
+      aplat(CYAN, c.x + 26, c.y + 18, 18, 12); aplat(METAL1, c.x + 27, c.y + 19, 16, 10)
+      const a = OBJETS[i % OBJETS.length], b = OBJETS[(i * 5 + 3) % OBJETS.length]
+      sprite(a, c.x + 4, c.y + c.h - 4 - a[3]); sprite(b, c.x + 26, c.y + c.h - 4 - b[3])
+      aplat(METAL3, c.x + 2, c.y + c.h - 4, c.l - 4, 2)
+    }
+    if (!sansPersonnages && !tel) for (const p of PERSONNAGES) sprite(p.sprite, p.x, p.y)
+    // Le calque HTML : une zone par salle, sa plaque, son écran « — ».
+    for (let i = 0; i <= SALLES.length; i++) {
+      const reservee = i === SALLES.length
+      const [cle, plaque] = reservee ? [RESERVEE.cle, RESERVEE.plaque] : SALLES[i]
+      const z = document.createElement('div')
+      z.setAttribute('data-salle', cle)
+      z.setAttribute('data-poste', reservee ? 'non' : 'oui')
+      if (reservee) z.setAttribute('data-porte', 'fermee')
+      poser(z, ...Object.values(versEcran(caseDe(i))))
+      const p = document.createElement('span')
+      p.setAttribute('data-plaque', '')
+      p.textContent = plaque.toLocaleUpperCase('fr-FR')
+      z.appendChild(p)
+      if (!reservee) {
+        const e = document.createElement('span')
+        e.setAttribute('data-ecran', cle)
+        e.textContent = '—'
+        const r = versEcran({ x: 26, y: 18, l: 18, h: 12 })
+        Object.assign(e.style, { left: `${r.x - ox}px`, top: `${r.y - oy}px`, width: `${r.l}px` })
+        z.appendChild(e)
+      }
+      html.appendChild(z)
+    }
+  } else if (vue === 'vaisseau') {
+    for (const m of MODULES) {
+      g.save(); g.beginPath(); g.rect(m.x, m.y, m.l, m.h); g.clip()
+      aplat(m === MODULES[0] ? METAL1 : METAL2, m.x, m.y, m.l, m.h)
+      if (m === MODULES[0]) for (let y = m.y + 4; y < m.y + m.h; y += 34) sprite([16, 144, 112, 32], m.x + 4, y)
+      else if (m === MODULES[1]) for (let ty = 0; ty < 8; ty++) for (let tx = 0; tx < 8; tx++) { const t = (tx + ty * 3) % 16; sprite([128 + (t % 8) * 16, 128 + Math.floor(t / 8) * 16, 16, 16], m.x + 4 + tx * 16, m.y + 4 + ty * 16) }
+      else { for (let x = m.x; x < m.x + m.l; x += 16) aplat(METAL3, x, m.y, 1, m.h); for (let y = m.y; y < m.y + m.h; y += 16) aplat(METAL3, m.x, y, m.l, 1); [[8, 12], [64, 20], [20, 70], [72, 84]].forEach(([x, y], i) => sprite([i * 32, 192, 32, 32], m.x + x, m.y + y)) }
+      g.restore()
+      cadre(MAGENTA, m.x, m.y, m.l, m.h)
+    }
+    aplat(CYAN, 132, 184, 8, 16); aplat(CYAN, 260, 184, 8, 16)
+  } else {
+    canevas.style.display = 'none'
+    const pack = q('echelle-pack'), ref = q('echelle-ref')
+    pack.src = '/planche/echelle-pack.png'
+    ref.src = '/planche/t049.2.jpg'
+    await Promise.all([pack.decode(), ref.decode()])
+    const kb = Math.max(1, Math.floor(Math.min(carte.l * dpr / BUREAU.l, carte.h * dpr / BUREAU.h)))
+    const lp = pack.naturalWidth * kb / dpr, hp = pack.naturalHeight * kb / dpr
+    const hr = carte.h - 32, lr = Math.round(hr * ref.naturalWidth / ref.naturalHeight)
+    Object.assign(pack.style, { display: 'block' }); poser(pack, carte.x + 16, carte.y + 16, lp, hp)
+    Object.assign(ref.style, { display: 'block' }); poser(ref, carte.x + 16 + lp + 32, carte.y + 16, lr, hr)
+  }
+
+  // Le portrait : un personnage du lot A, ×4, hors des colonnes.
+  const portrait = q('portrait')
+  const gp = portrait.getContext('2d')
+  gp.imageSmoothingEnabled = false
+  gp.fillStyle = VIOLET_PROFOND; gp.fillRect(0, 0, 16, 16)
+  gp.drawImage(atlas, 128, 16, 16, 16, 0, 0, 16, 16)
+  poser(portrait, carte.x + 8, carte.y + 8, tel ? 48 : 64, tel ? 48 : 64)
+  if (vue === 'echelle') portrait.style.display = 'none' // il cacherait l'art du pack
+
+  // Les données vont au calque HTML (lecteurs d'écran), jamais au décor.
+  const d = document.createElement('div')
+  d.setAttribute('data-planche-donnees', '')
+  d.textContent = JSON.stringify(donnees)
+  html.appendChild(d)
+
+  window.__planche = {
+    pret: true, vue, mode, k, grille, donnees: true, atlas: '/planche/atlas.png',
+    personnages: PERSONNAGES.map(({ nom, etat, x, y, l, h }) => ({ nom, etat, x, y, l, h })),
+    modules: vue === 'vaisseau' ? MODULES : [],
+    echelle: vue === 'echelle' ? { pack: '04-rottingpixels-scifi-tileset', fichier: 'fichiers/Sci-Fi Platformer Tileset [16x16][FREE] - RottingPixels/sci-fi-tileset.png' } : null,
+  }
+})()

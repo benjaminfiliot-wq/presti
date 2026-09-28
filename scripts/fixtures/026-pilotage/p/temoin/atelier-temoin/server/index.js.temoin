@@ -1,0 +1,37 @@
+// Atelier TÉMOIN du lot p (026-168) : un serveur minimal qui tient le contrat de station-planche-qa comme le ferait
+// l'atelier Claw3D (`node server/index.js --dev`, HOST et PORT). Il ne sert que la planche, son script, son atlas composite
+// et, pour la vue echelle, deux fichiers LUS sur l'usine : une feuille du lot A (servie telle quelle, c'est le but de la
+// vue) et la référence trevsagents t049.2 (jamais recopiée dans le dépôt). Aucune requête sortante, boucle locale seulement.
+'use strict'
+const http = require('node:http')
+const fs = require('node:fs')
+const os = require('node:os')
+const path = require('node:path')
+
+const HOTE = process.env.HOST || '127.0.0.1'
+if (!['127.0.0.1', '::1', 'localhost'].includes(HOTE)) {
+  console.error(`hôte ${HOTE} refusé : boucle locale seulement`)
+  process.exit(1)
+}
+const PORT = Number(process.env.PORT || 3300)
+const PLANCHE = path.join(__dirname, '..', 'planche')
+const FICHIERS = {
+  '/office/planche': [path.join(PLANCHE, 'index.html'), 'text/html; charset=utf-8'],
+  '/planche/planche.js': [path.join(PLANCHE, 'planche.js'), 'text/javascript; charset=utf-8'],
+  '/planche/atlas.png': [path.join(PLANCHE, 'atlas.png'), 'image/png'],
+  '/planche/echelle-pack.png': [path.join(os.homedir(), 'station-assets', '04-rottingpixels-scifi-tileset', 'fichiers', 'Sci-Fi Platformer Tileset [16x16][FREE] - RottingPixels', 'sci-fi-tileset.png'), 'image/png'],
+  '/planche/t049.2.jpg': [path.join(os.homedir(), 'veille', '2026-09-24', 'images', 'trevsagents', 't049.2.jpg'), 'image/jpeg'],
+}
+
+http.createServer((req, res) => {
+  const chemin = new URL(req.url, 'http://atelier.invalid').pathname
+  if (req.method !== 'GET') { res.writeHead(405); res.end(); return }
+  if (chemin === '/') { res.writeHead(302, { location: '/office/planche' }); res.end(); return }
+  const f = FICHIERS[chemin]
+  if (!f) { res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' }); res.end('introuvable'); return }
+  fs.readFile(f[0], (err, corps) => {
+    if (err) { res.writeHead(404); res.end(); return }
+    res.writeHead(200, { 'content-type': f[1], 'cache-control': 'no-store', 'content-security-policy': "default-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" })
+    res.end(corps)
+  })
+}).listen(PORT, HOTE, () => console.log(`atelier témoin de la planche sur http://${HOTE}:${PORT}/office/planche`))
