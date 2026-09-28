@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T20:45:15Z
+# Digest — 2026-09-28T21:08:16Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 125 tâche(s) PASS, 195892 ligne(s) · faites par Claude Code : 73 tâche(s) PASS, 71950 ligne(s).
-**État** — file : 9 · en cours : 5 · faites : 204 · refusées : 11
+**Mesure** — déléguées (antigravity, codex) : 125 tâche(s) PASS, 195892 ligne(s) · faites par Claude Code : 74 tâche(s) PASS, 75108 ligne(s).
+**État** — file : 9 · en cours : 6 · faites : 204 · refusées : 11
 
 ## ⚠ 2 question(s) en attente
 - `.orchestre/en-cours/026-063.question.md` → `node scripts/orchestre.mjs repondre 026-063 <n>`
@@ -19,6 +19,7 @@
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
+| 026-126 | test | en-cours | claude-code | — | depuis 2026-09-28T20:52:13Z · Écrire pub-locale-qa (--partie=gabarit\|textes\|complet, avec --racine= et --temoin), le contrat du gabarit, la liste blanche des fichiers Presti autorisés, l'état de vérification de la catégorie Logement, trois jeux de photos sous licence CC0 ou CC BY et un pack témoin conforme fabriqué par script, pour que juges-026-pubs-contenu-preuve --lot=10 soit vert |
 | 026-170 | test | en-cours | claude-code | — | depuis 2026-09-28T18:53:44Z · Écrire le juge propre à Claw3D station-claw3d-qa (dix parties : provenance, verite, repos, garde, csp, poids, pixel, contexte, grille, hygiene ; csp et poids sur un build de production de la copie), le format du thème (theme.schema.json), un thème d'essai neutre sans donnée, une session simulée sans compte ni clé pour faire tourner les juges de rendu sur l'usine, un témoin minimal par partie (jamais un moteur complet) et le lot k de la preuve, chaque partie échouant sur un moteur piégé et passant sur son témoin |
 | 026-063 | feature | en-cours | usine-codex-99 | — | depuis 2026-09-28T18:09:33Z · Écrire la migration 0111 des disjoncteurs de l'envoi, tenus par la base en compteurs absolus (paliers du formulaire de 5 à 40 par jour qui écrivent seuls la ligne de plafond du formulaire, technologies de formulaire, signaux de STOP, plainte, avis d'abus, échec de soumission, refus du Gmail et erreur Meta qui mettent en pause une technologie, un modèle, le formulaire, le Gmail ou Meta, montée de palier par règle et bilan des 100 premiers contacts froids, descente au premier voyant rouge, notice vérifiée, gestes du fondateur dont l'ouverture d'envoi_froid au plus tôt le 12/10, jauges, échantillon du soir), ses jumeaux, son contrôle, lib/agents/acquisition/disjoncteurs.ts et la partie MagasinEnvoi de magasinSupabase.ts, essayée à sec |
 | 026-073 | contenu | en-cours | usine-codex-83 | — | depuis 2026-09-28T14:14:18Z · Constituer la bibliothèque des douleurs lib/agents/acquisition/douleurs.ts (au moins 40 entrées sur au moins 8 métiers du bâtiment, chacune tirée de ce que des artisans écrivent eux-mêmes en public, avec la citation exacte, sa page source et sa date, les mots-clés, une question « qui appuie là où ça fait mal » et une accroche d'objet, sans aucune donnée personnelle, toutes à approuve false jusqu'à l'approbation unique de Benj) et sa méthode docs/agents/douleurs-methode.md, pour que chaque citation se retrouve mot pour mot sur sa page quand le juge la relit |
@@ -118,6 +119,5 @@
 | 026-040 | feature | fait | claude-code | PASS | 2026-09-27T20:47:49Z · 100s · 639 l. |
 | 026-052 | test | fait | claude-code | PASS | 2026-09-27T20:41:33Z · 770s · 0 l. |
 | 026-013 | feature | fait | claude-code | PASS | 2026-09-27T19:12:21Z · 11s · 2324 l. |
-| 026-050 | feature | fait | claude-code | PASS | 2026-09-27T19:03:27Z · 128s · 1479 l. |
 
-… 129 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 130 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
