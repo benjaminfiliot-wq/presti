@@ -542,3 +542,9 @@
 {"id":"026-009","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:13:27Z","duree_s":74,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-062","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:20:23Z","duree_s":54,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-137","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:22:44Z","duree_s":46,"agent":"usine-codex-93","executant":"codex","lignes":513,"dossier":"fait"}
+{"id":"026-070","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:26:49Z","duree_s":49,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-124","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:29:09Z","duree_s":394,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-124","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:30:50Z","duree_s":69,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-119","verdict":"FAIL","ligne":"FAIL CR-NR — app/api/cron/relances/route.ts modifié par rapport à HEAD","code":1,"date":"2026-09-28T17:32:39Z","duree_s":3,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-074","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:32:51Z","duree_s":269,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-149","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T17:33:29Z","duree_s":88,"agent":"usine-codex-94","executant":"codex","lignes":385,"dossier":"fait"}
