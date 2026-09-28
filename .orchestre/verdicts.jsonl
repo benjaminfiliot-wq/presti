@@ -470,3 +470,5 @@
 {"id":"026-039","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:44:10Z","duree_s":322,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-072","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:45:34Z","duree_s":103,"agent":"usine-codex-74","executant":"codex","lignes":522,"dossier":"fait"}
 {"id":"026-248","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:50:10Z","duree_s":392,"agent":"claude-code","executant":"claude-code","lignes":5759,"dossier":"fait"}
+{"id":"026-229","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T12:02:58Z","duree_s":250,"agent":"claude-code","executant":"claude-code","lignes":4389,"dossier":"en-cours"}
+{"id":"026-077","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T12:05:37Z","duree_s":124,"agent":"usine-codex-75","executant":"codex","lignes":649,"dossier":"fait"}
