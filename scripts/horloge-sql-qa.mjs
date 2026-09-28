@@ -243,6 +243,12 @@ function jugerNonRegression(s, id) {
 // ── HS-1 à HS-7 : la lecture de 0101 et de sa notice ─────────────────────────────────────────────────────────────────────
 const GENRES = [
   ['extension', /^create extension if not exists (pg_cron|pg_net)(?: with schema (?:pg_catalog|extensions|cron|net))?(?: cascade)?$/],
+  // Bloc gardé (026-086, relance du 28/09) : `create extension if not exists` tout court relance le
+  // script de réinstallation interne de pg_cron même quand l'extension est déjà là, qui échoue en
+  // 2BP01 (dependent privileges exist) sur cron.job. Ce bloc ne lance `create extension` (sans « if
+  // not exists », donc sans ce script) QUE si pg_extension ne porte pas encore la ligne : sur une
+  // base où l'extension existe déjà, `create extension` n'est jamais exécuté.
+  ['extension_gardee', /^do \$\$ begin if not exists \(select 1 from pg_extension where extname = '(pg_cron|pg_net)'\) then create extension \1; end if; end \$\$$/],
   ['fonction', /^create or replace function public\.ops_horloge_[a-z0-9_]+\(/],
   ['revoke', /^revoke (?:all|execute)(?: privileges)? on function public\.(ops_horloge_[a-z0-9_]+)\b/],
   ['grant', /^grant execute on function public\.(ops_horloge_[a-z0-9_]+)\b/],
@@ -255,8 +261,12 @@ function juger0101(s, texteM) {
   // HS-1 — fichier, liste permise, aucun secret
   if (!ins.length) s.echoue(IDS.fichier, `${M.fichier} ne porte aucune instruction`)
   for (const x of genres) if (!x.g) s.echoue(IDS.fichier, `instruction hors de la liste du point 1 : « ${court(x.n, 100)} »`)
-  const ext = new Set(genres.filter((x) => x.g === 'extension').map((x) => x.m[1]))
-  for (const e of ['pg_cron', 'pg_net']) if (!ext.has(e)) s.echoue(IDS.fichier, `create extension if not exists ${e} absent`)
+  const ext = new Set(genres.filter((x) => x.g === 'extension' || x.g === 'extension_gardee').map((x) => x.m[1]))
+  for (const e of ['pg_cron', 'pg_net']) if (!ext.has(e)) s.echoue(IDS.fichier, `${e} absente : ni « create extension if not exists » ni le bloc gardé par pg_extension`)
+  // Le bloc gardé est désormais la forme exigée (026-086) : la forme nue relance, sur ce projet, le
+  // script de réinstallation interne de pg_cron même sans rien à faire, et échoue en 2BP01.
+  const nue = genres.filter((x) => x.g === 'extension').map((x) => x.m[1])
+  if (nue.length) s.echoue(IDS.fichier, `create extension if not exists ${nue.join(', ')} : forme nue interdite depuis la relance du 28/09 — utiliser le bloc gardé par pg_extension`)
   for (const [nom, texte] of [[M.fichier, texteM], [M.jumeau, lireSi(ch(M.jumeau))], [M.nu, lireSi(ch(M.nu))], [M.controle, lireSi(ch(M.controle))]]) {
     if (!texte) continue
     const sec = secretsDe(texte)
