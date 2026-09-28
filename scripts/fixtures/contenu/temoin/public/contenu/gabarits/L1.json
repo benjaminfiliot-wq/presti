@@ -1,0 +1,10 @@
+{
+  "ligne": "L1",
+  "type": "hyperframes",
+  "format": "1080x1920",
+  "duree_s": 20,
+  "sous_titres_incrustes": true,
+  "coupes_par_10s": 5,
+  "audio": { "licence_commerciale": true, "credit": "Bibliothèque libre — piste essai 026-204", "lufs": -23 },
+  "mention": "exemple (maquette fictive)"
+}
