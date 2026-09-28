@@ -184,13 +184,12 @@ async function partieGabarit(s, { racine, temoin, contrat }) {
   fs.mkdirSync(dossierInst, { recursive: true })
 
   // Le pack utilisé pour instancier : le témoin (--temoin), ou un pack de secours si --racine porte un vrai gabarit
-  // sans témoin (hors périmètre de la preuve --lot=10, mais gardé cohérent).
+  // sans témoin (hors périmètre de la preuve --lot=10, mais gardé cohérent) — dans les deux cas TEMOIN_DIR, puisque
+  // l'appel à scriptInstancierReel() plus bas lui passe déjà TEMOIN_DIR comme <dossier-pack> quand !temoin.
   let pack = null
-  if (temoin) {
-    await assurerTemoin('base')
-    const packJson = path.join(TEMOIN_DIR, 'pack.json')
-    if (existeNonVide(packJson)) pack = chargerPack(packJson)
-  }
+  await assurerTemoin('base')
+  const packJson = path.join(TEMOIN_DIR, 'pack.json')
+  if (existeNonVide(packJson)) pack = chargerPack(packJson)
 
   const manquants = []
   for (const nom of NOMS_GABARITS) if (!fs.existsSync(path.join(dirGabarits, nom, 'index.html'))) manquants.push(nom)

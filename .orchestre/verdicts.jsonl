@@ -579,3 +579,4 @@
 {"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T21:24:30Z","duree_s":177,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"026-153","verdict":"FAIL","ligne":"FAIL PL-G1 — aucun pack pour instancier (témoin non fabriqué)","code":1,"date":"2026-09-28T21:24:59Z","duree_s":0,"agent":"ag-026-153","executant":"antigravity","lignes":701,"dossier":"en-cours"}
 {"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T21:40:27Z","duree_s":161,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T21:53:31Z","duree_s":345,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
