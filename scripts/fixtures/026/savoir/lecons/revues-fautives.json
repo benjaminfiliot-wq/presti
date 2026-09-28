@@ -1,0 +1,65 @@
+{
+  "_note": "Écrit par Claude Code (fiche 026-234). Les documents de revue fautifs, tirés de revue-conforme.md (les {{L:<source>}} remplacés par le juge par l'identifiant recalculé). Chacun doit faire échouer `savoir-lecons-qa --document` en nommant « ligne <n> » ; `production: true` : la faute porte sur la ligne de la leçon que la revue valide, et `lecons.mjs valider <id> --par=revue-2026-40` doit refuser (code 1).",
+  "fautifs": [
+    {
+      "nom": "lecon-inconnue",
+      "avant": "| {{L:.orchestre/decisions.md:7}} |",
+      "apres": "| L-2026-09-18-aaaaaaaaaaaa |",
+      "ligne": 9,
+      "production": false
+    },
+    {
+      "nom": "source-differente",
+      "avant": "| echec | .orchestre/verdicts.jsonl:3 | valider |",
+      "apres": "| echec | .orchestre/verdicts.jsonl:4 | valider |",
+      "ligne": 7,
+      "production": true
+    },
+    {
+      "nom": "verdict-hors-liste",
+      "avant": "| rejeter |",
+      "apres": "| accepter |",
+      "ligne": 8,
+      "production": false
+    },
+    {
+      "nom": "plus-de-vingt-lignes",
+      "avant": null,
+      "ajout": [
+        "| {{L:.orchestre/verdicts.jsonl:6}} | refus | .orchestre/verdicts.jsonl:6 | revoir | — | — |",
+        "| {{L:.orchestre/verdicts.jsonl:8}} | echec | .orchestre/verdicts.jsonl:8 | revoir | — | — |",
+        "| {{L:.orchestre/verdicts.jsonl:11}} | echec | .orchestre/verdicts.jsonl:11 | revoir | — | — |",
+        "| {{L:.orchestre/verdicts.jsonl:14}} | echec | .orchestre/verdicts.jsonl:14 | revoir | — | — |",
+        "| {{L:.orchestre/verdicts.jsonl:16}} | echec | .orchestre/verdicts.jsonl:16 | revoir | — | — |",
+        "| {{L:.orchestre/verdicts.jsonl:29}} | echec | .orchestre/verdicts.jsonl:29 | revoir | — | — |",
+        "| {{L:.orchestre/decisions.md:9}} | decision | .orchestre/decisions.md:9 | revoir | — | — |",
+        "| {{L:.orchestre/decisions.md:13}} | decision | .orchestre/decisions.md:13 | revoir | — | — |",
+        "| {{L:SaaS/Decisions/Journal-Decisions.md:5}} | decision | SaaS/Decisions/Journal-Decisions.md:5 | revoir | — | — |",
+        "| {{L:SaaS/Decisions/Journal-Decisions.md:9}} | decision | SaaS/Decisions/Journal-Decisions.md:9 | revoir | — | — |",
+        "| {{L:.orchestre/brouillons-ecosysteme/026/026-901.md:30}} | correction | .orchestre/brouillons-ecosysteme/026/026-901.md:30 | revoir | — | — |",
+        "| {{L:.orchestre/brouillons-ecosysteme/026/026-902.md:23}} | correction | .orchestre/brouillons-ecosysteme/026/026-902.md:23 | revoir | — | — |",
+        "| {{L:.orchestre/fait/026-903.md:17}} | correction | .orchestre/fait/026-903.md:17 | revoir | — | — |",
+        "| {{L:.orchestre/verdicts.jsonl:6}} | refus | .orchestre/verdicts.jsonl:6 | revoir | — | — |",
+        "| {{L:.orchestre/verdicts.jsonl:8}} | echec | .orchestre/verdicts.jsonl:8 | revoir | — | — |",
+        "| {{L:.orchestre/verdicts.jsonl:11}} | echec | .orchestre/verdicts.jsonl:11 | revoir | — | — |",
+        "| {{L:.orchestre/verdicts.jsonl:14}} | echec | .orchestre/verdicts.jsonl:14 | revoir | — | — |"
+      ],
+      "ligne": 27,
+      "production": false
+    },
+    {
+      "nom": "adresse",
+      "avant": "Un juge teste la substance d'une preuve, jamais sa seule existence.",
+      "apres": "Un juge teste la substance d'une preuve ; écrire à jean.essai@exemple.invalid pour le dire.",
+      "ligne": 10,
+      "production": false
+    },
+    {
+      "nom": "lien",
+      "avant": "Rejouer un juge rouge sur une machine calme avant de conclure.",
+      "apres": "Rejouer un juge rouge sur une machine calme avant de conclure, voir https://exemple.invalid/juges.",
+      "ligne": 7,
+      "production": true
+    }
+  ]
+}

@@ -54,14 +54,39 @@ lit, la commente, la fusionne ou non. **La routine ne fusionne jamais.**
 
    S'il est rouge, corriger le document (jamais `revue.json`, jamais le juge) ; toujours rouge après trois corrections :
    pas de PR, et Benj reçoit la ligne en échec.
-6. **La PR** : ajouter le seul fichier `docs/revues/AAAA-SS.md` (jamais `revue.json`), l'enregistrer sur la branche
+6. **Les leçons** (`docs/agents/lecons.md`) : relire les leçons candidates et trancher chacune.
+
+   ```
+   node scripts/savoir/lecons.mjs lister --statut=candidate --travail=../presti/.orchestre/travail/savoir/lecons
+   ```
+
+   Écrire `docs/revues/AAAA-SS-lecons.md` : un titre, puis le tableau `| Leçon | Type | Source | Verdict | Règle
+   proposée | Domaines |`, 20 lignes au plus, verdict `valider`, `rejeter` ou `revoir`, la source recopiée de la
+   candidate, ni coordonnée ni lien. Une règle est une phrase d'action dans les limites existantes, sans nom de
+   personne ; 1 à 4 domaines. Le juge doit être vert (mêmes trois corrections au plus) :
+
+   ```
+   node scripts/savoir-lecons-qa.mjs --document=docs/revues/AAAA-SS-lecons.md --travail=../presti/.orchestre/travail/savoir/lecons
+   ```
+
+   Puis, pour chaque ligne `valider`, dans le worktree (jamais dans le dépôt principal) :
+
+   ```
+   node scripts/savoir/lecons.mjs valider <id> --par=revue-AAAA-SS --regle="…" --domaines=… --travail=../presti/.orchestre/travail/savoir/lecons
+   ```
+
+   Une validation refusée (source pas encore sur main) : la ligne reste, la leçon attend la semaine suivante. Aucune
+   candidate : pas de document de leçons.
+7. **La PR** : ajouter `docs/revues/AAAA-SS.md` et, s'ils existent, `docs/revues/AAAA-SS-lecons.md` et les fichiers
+   `docs/savoir/lecons/<id>.md` que l'étape 6 a écrits (jamais `revue.json`), les enregistrer sur la branche
    `revue/AAAA-SS`, pousser la branche et ouvrir une PR vers `main` (`gh pr create --base main --head revue/AAAA-SS`).
    **Jamais de fusion**, même si le texte paraît parfait : c'est Benj qui fusionne.
-7. **Le ménage** : supprimer `revue.json`, revenir au dépôt principal, puis `git worktree remove ../presti-revue-AAAA-SS`.
+8. **Le ménage** : supprimer `revue.json`, revenir au dépôt principal, puis `git worktree remove ../presti-revue-AAAA-SS`.
 
 ## Ce que la routine ne fait jamais
 
 - inventer, arrondir ou recalculer un nombre ;
 - écrire dans le dépôt principal, fusionner une PR, pousser sur `main` ;
 - utiliser un connecteur, afficher ou recopier le jeton ;
-- lancer autre chose que `revue-donnees.mjs`, `revue-qa.mjs`, `git` et `gh`.
+- valider une leçon avec un autre `--par` que `revue-AAAA-SS`, ou sans sa ligne `valider` ;
+- lancer autre chose que `revue-donnees.mjs`, `revue-qa.mjs`, `lecons.mjs`, `savoir-lecons-qa.mjs`, `git` et `gh`.
