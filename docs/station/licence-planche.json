@@ -1,0 +1,53 @@
+{
+  "packs": [
+    {
+      "dossier": "04-rottingpixels-scifi-tileset",
+      "titre": "2D Sci-Fi Platformer Tileset [16x16]",
+      "auteur": "Rotting Pixels",
+      "adresse": "https://opengameart.org/content/2d-sci-fi-platformer-tileset-16x16",
+      "licence": "CC0",
+      "date": "2026-09-25",
+      "licence_json": "~/station-assets/04-rottingpixels-scifi-tileset/licence.json",
+      "fichiers": [
+        "fichiers/Sci-Fi Platformer Tileset [16x16][FREE] - RottingPixels/sci-fi-tileset.png"
+      ]
+    },
+    {
+      "dossier": "05-zwonky-spacers",
+      "titre": "Spacers",
+      "auteur": "zwonky",
+      "adresse": "https://opengameart.org/content/spacers",
+      "licence": "CC0",
+      "date": "2026-09-25",
+      "licence_json": "~/station-assets/05-zwonky-spacers/licence.json",
+      "fichiers": [
+        "fichiers/spacermale.png",
+        "fichiers/spacerfemale.png"
+      ]
+    },
+    {
+      "dossier": "07-ansimuz-tech-lab",
+      "titre": "Warped Top-Down Tech Lab (volumes 1 et 2)",
+      "auteur": "Luis Zuno (Ansimuz)",
+      "adresse": "https://opengameart.org/content/warped-top-down-tech-lab ; https://opengameart.org/content/warped-top-down-tech-lab-2",
+      "licence": "CC0 (les deux volumes)",
+      "date": "2026-09-25",
+      "licence_json": "~/station-assets/07-ansimuz-tech-lab/licence.json",
+      "fichiers": [
+        "fichiers/vol1/Top Down Lab files/Tileset.png"
+      ]
+    },
+    {
+      "dossier": "09-shade-puny-characters",
+      "titre": "Puny Characters",
+      "auteur": "Shade",
+      "adresse": "https://opengameart.org/content/puny-characters",
+      "licence": "CC0",
+      "date": "2026-09-25",
+      "licence_json": "~/station-assets/09-shade-puny-characters/licence.json",
+      "fichiers": [
+        "fichiers/Puny-Characters/Character-Base.png"
+      ]
+    }
+  ]
+}
