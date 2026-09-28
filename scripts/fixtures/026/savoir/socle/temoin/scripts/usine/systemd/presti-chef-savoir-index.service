@@ -1,0 +1,15 @@
+[Unit]
+Description=Presti — savoir : index plein texte (et vecteurs locaux de general, sous interrupteur)
+Documentation=file:///srv/presti-agents/scripts/savoir/indexer.mjs
+
+[Service]
+Type=oneshot
+User=agents
+Group=agents
+WorkingDirectory=/srv/presti-agents
+ExecStart=/usr/bin/node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/savoir/indexer.mjs --compartiment=tous
+IPAddressDeny=any
+IPAddressAllow=localhost
+NoNewPrivileges=yes
+PrivateTmp=yes
+UMask=0007

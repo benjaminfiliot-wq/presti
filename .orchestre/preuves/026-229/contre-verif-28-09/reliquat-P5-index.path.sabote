@@ -1,0 +1,9 @@
+[Unit]
+Description=Presti — savoir : a-indexer posé par la réception déclenche l'index
+
+[Path]
+PathExists=/home/agents/travail/savoir/a-indexer
+Unit=presti-chef-savoir-recevoir.service
+
+[Install]
+WantedBy=paths.target

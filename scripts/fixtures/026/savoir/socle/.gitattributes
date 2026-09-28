@@ -1,0 +1,3 @@
+# Jeux d'essai du juge savoir-socle-qa (026-229) : les octets comptent (empreintes sha256, textes caviardés attendus à
+# l'identique, sabotages par remplacement exact). Aucune conversion de fin de ligne, quel que soit core.autocrlf.
+* -text

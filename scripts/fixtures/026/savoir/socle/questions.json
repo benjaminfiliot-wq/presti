@@ -1,0 +1,76 @@
+{
+  "_note": "Contrat de lib/savoir/index.ts (026-229), jugé par SVS-9. Corpus : fichiers COMMITÉS des racines factices, lus bruts. chercherIndex(index, question, { classes?, limite? }) rend [{ chemin, classe, debut, fin, score, texte }] par score décroissant (BM25 k1 = 1,2, b = 0,75, idf = ln(1 + (N - df + 0,5) / (df + 0,5)) sur les passages de decouper) ; le premier rang doit être le chemin attendu.",
+  "normalisation": {
+    "regles": "minuscules ; œ → oe, æ → ae ; accents retirés (NFD, marques combinantes ôtées) ; découpe sur tout ce qui n'est pas [a-z0-9] ; jetons de moins de 2 signes retirés ; mots vides retirés ; pluriel : un jeton de plus de 3 signes finissant par « s » (mais pas « ss ») ou par « x » perd cette lettre.",
+    "mots_vides": ["le", "la", "les", "un", "une", "des", "de", "du", "et", "ou", "au", "aux", "en", "pour", "par", "sur", "dans", "avec", "sans", "ce", "ces", "cet", "cette", "qui", "que", "qu", "quoi", "quel", "quelle", "quels", "quelles", "est", "sont", "etre", "ete", "se", "sa", "son", "ses", "leur", "leurs", "il", "elle", "ils", "elles", "on", "nous", "vous", "je", "tu", "ne", "pas", "plus", "lui", "me", "te", "mon", "ma", "mes", "ton", "ta", "tes", "notre", "nos", "votre", "vos", "the", "of", "and", "to", "in", "is", "it"],
+    "cas": [
+      { "entree": "Les Électriciens de Lyon", "attendu": ["electricien", "lyon"] },
+      { "entree": "DEVIS & Factures", "attendu": ["devi", "facture"] },
+      { "entree": "l'artisan", "attendu": ["artisan"] },
+      { "entree": "Chauffe-eau à gaz", "attendu": ["chauffe", "eau", "gaz"] },
+      { "entree": "Prix des travaux", "attendu": ["pri", "travau"] },
+      { "entree": "Cœur de métier", "attendu": ["coeur", "metier"] },
+      { "entree": "   ", "attendu": [] },
+      { "entree": "Adresse IP 127.0.0.1", "attendu": ["adresse", "ip", "127"] },
+      { "entree": "Les classes ne changent pas", "attendu": ["classe", "changent"] },
+      { "entree": "Stress", "attendu": ["stress"] }
+    ]
+  },
+  "corpus": [
+    { "chemin": "saas:Produit/Prospection-Cadre-Legal-2026-09-27.md", "classe": "public" },
+    { "chemin": "saas:Produit/Tarifs-Presti.md", "classe": "interne" },
+    { "chemin": "saas:Decisions/Choix-Hebergement.md", "classe": "interne" },
+    { "chemin": "saas:Problemes/Relances-Devis.md", "classe": "interne" },
+    { "chemin": "saas:Prospection/Guide-Demarchage.md", "classe": "interne" },
+    { "chemin": "saas:Idees-Vrac/Idee-Essai.md", "classe": "interne" },
+    { "chemin": "saas:Récap-Projet.md", "classe": "interne" },
+    { "chemin": "presti:README.md", "classe": "interne" },
+    { "chemin": "presti:docs/architecture-essai.md", "classe": "interne" },
+    { "chemin": "presti:plans/feuille-de-route.md", "classe": "interne" },
+    { "chemin": "presti:.orchestre/digest.md", "classe": "interne" },
+    { "chemin": "presti:reprise-cloud/docs/reprise-essai.md", "classe": "interne" },
+    { "chemin": "memoire:presti-essai.md", "classe": "interne" },
+    { "chemin": "memoire:notes-essai.md", "classe": "interne" },
+    { "chemin": "ops:usine/LISEZMOI.md", "classe": "interne" },
+    { "chemin": "ops:veille/Veille-Essai.md", "classe": "interne" },
+    { "chemin": "ops:transcription/Video-Essai.txt", "classe": "interne" },
+    { "chemin": "saas:Prospection/Lot-Essai-2026-09-20.md", "classe": "prospects" },
+    { "chemin": "saas:Recherche/Annuaire-Essai.md", "classe": "prospects" },
+    { "chemin": "saas:Legal/Contrat-Associes-Essai.md", "classe": "prospects" },
+    { "chemin": "presti:plans/demarchage-linkedin-essai.md", "classe": "prospects" }
+  ],
+  "questions": [
+    { "question": "droit d'opposition RGPD pour la prospection", "attendu": "saas:Produit/Prospection-Cadre-Legal-2026-09-27.md" },
+    { "question": "prix des formules Pro et Expert", "attendu": "saas:Produit/Tarifs-Presti.md" },
+    { "question": "machine Oracle Cloud ARM Ampere", "attendu": "saas:Decisions/Choix-Hebergement.md" },
+    { "question": "relancer les devis non signés", "attendu": "saas:Problemes/Relances-Devis.md" },
+    { "question": "carnet d'entretien et rappel annuel des chaudières", "attendu": "saas:Idees-Vrac/Idee-Essai.md" },
+    { "question": "webhooks Stripe et déploiement Vercel", "attendu": "presti:docs/architecture-essai.md" },
+    { "question": "constructeur de site à trois niveaux", "attendu": "presti:plans/feuille-de-route.md" },
+    { "question": "derniers verdicts de l'orchestre", "attendu": "presti:.orchestre/digest.md" },
+    { "question": "tuer un processus par son PID", "attendu": "memoire:presti-essai.md" },
+    { "question": "unités systemd du groupe chef", "attendu": "ops:usine/LISEZMOI.md" },
+    { "question": "logiciels de devis concurrents Obat Tolteck", "attendu": "ops:veille/Veille-Essai.md" },
+    { "question": "pompe à chaleur air-eau", "attendu": "ops:transcription/Video-Essai.txt" }
+  ],
+  "filtres": [
+    { "question": "Plomberie Essai-Dupont Toiture Essai-Leroy", "classes": ["public", "interne"], "jamais": ["saas:Prospection/Lot-Essai-2026-09-20.md", "saas:Recherche/Annuaire-Essai.md"] },
+    { "question": "Plomberie Essai-Dupont Toiture Essai-Leroy", "classes": ["prospects"], "attendu_premier": "saas:Prospection/Lot-Essai-2026-09-20.md" },
+    { "question": "droit d'opposition RGPD", "classes": ["interne"], "jamais": ["saas:Produit/Prospection-Cadre-Legal-2026-09-27.md"] }
+  ],
+  "caviardage": [
+    { "entree": "Écrire à piege.savoir@presti-test.invalid ou au 06 12 34 56 78, SIREN 123456782.", "texte": "Écrire à [adresse] ou au [numéro], SIREN [siren].", "caviardages": 3 },
+    { "entree": "Lot 123456789 et facture du 2026-09-27", "texte": "Lot 123456789 et facture du 2026-09-27", "caviardages": 0 },
+    { "entree": "Appeler le +33 6 98 76 54 32 ou le 0698765432", "texte": "Appeler le [numéro] ou le [numéro]", "caviardages": 2 },
+    { "entree": "SIRET 987 654 324 00001", "texte": "SIRET [siren]", "caviardages": 1 }
+  ],
+  "fusion": {
+    "_note": "fusion par rang réciproque : score(id) = somme sur les listes de 1 / (k + rang), rang à partir de 1 ; tri par score décroissant, puis id croissant.",
+    "k": 60,
+    "listes": [
+      [{ "id": "a" }, { "id": "b" }, { "id": "c" }],
+      [{ "id": "b" }, { "id": "c" }, { "id": "d" }]
+    ],
+    "attendu": ["b", "c", "a", "d"]
+  }
+}

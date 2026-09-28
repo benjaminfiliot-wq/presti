@@ -1,0 +1,243 @@
+[
+  {
+    "id": "S01",
+    "critere": "SVS-1",
+    "seul": true,
+    "quoi": "28/09, relecture : moteurs.interne gagne freellmapi (un moteur gratuit tiers) — SVS-1 SEUL doit rougir, sur toutes les parties",
+    "fichier": "docs/savoir/sources.json",
+    "avant": "\"interne\": [\"codex\", \"ollama_local\", \"claude\"],",
+    "apres": "\"interne\": [\"codex\", \"ollama_local\", \"claude\", \"freellmapi\"],"
+  },
+  {
+    "id": "S02",
+    "critere": "SVS-1",
+    "quoi": "28/09, relecture : moteurs.interne reprend la valeur de moteurs.public (« tout, gratuit compris »)",
+    "fichier": "docs/savoir/sources.json",
+    "avant": "\"interne\": [\"codex\", \"ollama_local\", \"claude\"],",
+    "apres": "\"interne\": \"tout, gratuit compris\","
+  },
+  {
+    "id": "S03",
+    "critere": "SVS-2",
+    "quoi": "la liste n'est plus fermée : un fichier hors liste part en interne",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "if (!classe) { compteurs.hors_liste++; return }",
+    "apres": "if (!classe) classe = 'interne'"
+  },
+  {
+    "id": "S04",
+    "critere": "SVS-3",
+    "quoi": "les exclusions passent APRÈS l'ouverture : .env.local, id_ed25519, auth.json… sont lus",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "if (exclu(C, racine.nom, rel)) { compteurs.exclus++; return }",
+    "apres": "fs.readFileSync(path.join(racine.chemin, ...rel.split('/'))); if (exclu(C, racine.nom, rel)) { compteurs.exclus++; return }"
+  },
+  {
+    "id": "S05",
+    "critere": "SVS-3",
+    "quoi": "les motifs de secrets ne sont plus cherchés : le fichier au faux secret part dans l'export",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "const motifs = chercherSecrets(texte)",
+    "apres": "const motifs = []"
+  },
+  {
+    "id": "S06",
+    "critere": "SVS-3",
+    "quoi": "MEMORY.md garde ses lignes EXCL (mémoires personnelles ou hors Presti)",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "const gardees = lignes.filter((l) => !C.excl.test(l))",
+    "apres": "const gardees = lignes"
+  },
+  {
+    "id": "S07",
+    "critere": "SVS-4",
+    "quoi": "le SIREN n'est plus caviardé (Luhn toujours faux)",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "if (r.luhn && !luhn(m.replace(/\\D/g, ''))) return m",
+    "apres": "if (r.luhn) return m"
+  },
+  {
+    "id": "S08",
+    "critere": "SVS-4",
+    "quoi": "plus de reclassement : le fichier de 6 coordonnées reste dans general",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "if (c.n >= C.min) {",
+    "apres": "if (c.n >= C.min + 100) {"
+  },
+  {
+    "id": "S09",
+    "critere": "SVS-4",
+    "quoi": "le manifeste general nomme les fichiers prospects au lieu de les compter",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "{ prospects_compte: X.fichiers.prospects.length }",
+    "apres": "{ prospects_compte: X.fichiers.prospects.map((f) => f.entree.chemin) }"
+  },
+  {
+    "id": "S10",
+    "critere": "SVS-5",
+    "quoi": "le sha256 du manifeste est celui du fichier d'origine, pas du fichier exporté (caviardé)",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "sha256: crypto.createHash('sha256').update(octets).digest('hex')",
+    "apres": "sha256: crypto.createHash('sha256').update(brut).digest('hex')"
+  },
+  {
+    "id": "S11",
+    "critere": "SVS-5",
+    "quoi": "le plafond octets_total n'arrête plus rien",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "if (total > C.plafonds.octets_total) throw",
+    "apres": "if (total > C.plafonds.octets_total * 1e9) throw"
+  },
+  {
+    "id": "S12",
+    "critere": "SVS-6",
+    "quoi": "la sortie est recopiée au lieu d'être renommée depuis .part (pas atomique)",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "fs.renameSync(part, sortieAbs)",
+    "apres": "fs.cpSync(part, sortieAbs, { recursive: true })"
+  },
+  {
+    "id": "S13",
+    "critere": "SVS-6",
+    "quoi": "plus de garde sur --sortie : l'export écrit dans une racine ou dans le dépôt",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "  verifierSortie(C, sortieAbs)\n",
+    "apres": "  void sortieAbs\n"
+  },
+  {
+    "id": "S14",
+    "critere": "SVS-6",
+    "quoi": "--a-sec écrit quand même",
+    "fichier": "scripts/savoir/exporter.mjs",
+    "avant": "if (aSec) return { code: 0,",
+    "apres": "if (aSec && false) return { code: 0,"
+  },
+  {
+    "id": "S15",
+    "critere": "SVS-7",
+    "quoi": "l'interrupteur envoi est ignoré : éteint, l'export part quand même",
+    "fichier": "scripts/savoir/envoyer.mjs",
+    "avant": "if (R.interrupteurs?.envoi?.actif !== true) return",
+    "apres": "if (R.interrupteurs?.envoi?.actif === 'jamais') return"
+  },
+  {
+    "id": "S16",
+    "critere": "SVS-7",
+    "quoi": "la commande distante sort du gabarit (sudo)",
+    "fichier": "scripts/savoir/envoyer.mjs",
+    "avant": "`umask 007 && cat > ${DEPOT_DISTANT}",
+    "apres": "`sudo -n true && umask 007 && cat > ${DEPOT_DISTANT}"
+  },
+  {
+    "id": "S17",
+    "critere": "SVS-7",
+    "quoi": "un ssh en échec n'arrête rien : second appel, code 0, marqué envoyé",
+    "fichier": "scripts/savoir/envoyer.mjs",
+    "avant": "if (r.status !== 0) throw",
+    "apres": "if (r.status !== 0 && false) throw"
+  },
+  {
+    "id": "S18",
+    "critere": "SVS-7",
+    "quoi": "plus d'en-tête pax : les noms longs ou accentués arrivent tronqués",
+    "fichier": "scripts/savoir/envoyer.mjs",
+    "avant": "if (long) { const pax",
+    "apres": "if (false) { const pax"
+  },
+  {
+    "id": "S19",
+    "critere": "SVS-8",
+    "quoi": "le manifeste n'est plus vérifié (empreintes, classes, fichiers en trop)",
+    "fichier": "scripts/usine/savoir-recevoir.mjs",
+    "avant": "const v = valider(compartiment, entrees)",
+    "apres": "const v = { fichiers: entrees.size, manifesteSha: '' }"
+  },
+  {
+    "id": "S20",
+    "critere": "SVS-8",
+    "quoi": "le .pret est vu par stat (suit les liens) au lieu de lstat",
+    "fichier": "scripts/usine/savoir-recevoir.mjs",
+    "avant": "if (!fs.lstatSync(pPret).isFile())",
+    "apres": "if (!fs.statSync(pPret).isFile())"
+  },
+  {
+    "id": "S21",
+    "critere": "SVS-8",
+    "quoi": "l'ancien courant est jeté au lieu d'être gardé en precedent",
+    "fichier": "scripts/usine/savoir-recevoir.mjs",
+    "avant": "fs.rmSync(precedent, { recursive: true, force: true }); fs.renameSync(courant, precedent)",
+    "apres": "fs.rmSync(courant, { recursive: true, force: true })"
+  },
+  {
+    "id": "S22",
+    "critere": "SVS-9",
+    "quoi": "chercherIndex ignore le filtre classes (les prospects remontent dans une recherche interne)",
+    "fichier": "lib/savoir/index.ts",
+    "avant": "if (options.classes && !options.classes.includes(p.classe)) continue",
+    "apres": "if (options.classes && options.classes.length < 0) continue"
+  },
+  {
+    "id": "S23",
+    "critere": "SVS-9",
+    "quoi": "des passages de plus de 1 200 signes",
+    "fichier": "lib/savoir/index.ts",
+    "avant": "const MAX_PASSAGE = 1200",
+    "apres": "const MAX_PASSAGE = 4000"
+  },
+  {
+    "id": "S24",
+    "critere": "SVS-9",
+    "quoi": "l'index dépend de l'ordre des documents (pas de tri)",
+    "fichier": "lib/savoir/index.ts",
+    "avant": "const tries = [...documents].sort((a, b) => compare(a.chemin, b.chemin) || compare(a.texte, b.texte))",
+    "apres": "const tries = [...documents]"
+  },
+  {
+    "id": "S25",
+    "critere": "SVS-10",
+    "quoi": "les prospects partent aussi au modèle d'embeddings",
+    "fichier": "scripts/savoir/indexer.mjs",
+    "avant": "if (compartiment === 'general') {",
+    "apres": "if (compartiment === 'general' || compartiment === 'prospects') {"
+  },
+  {
+    "id": "S26",
+    "critere": "SVS-10",
+    "quoi": "l'hôte d'Ollama n'est plus contrôlé : un hôte distant est contacté",
+    "fichier": "scripts/savoir/indexer.mjs",
+    "avant": "if (u.protocol !== 'http:' || !['127.0.0.1', 'localhost'].includes(u.hostname)) return { etat: 'refusee' }",
+    "apres": "if (u.protocol !== 'http:') return { etat: 'refusee' }"
+  },
+  {
+    "id": "S27",
+    "critere": "SVS-10",
+    "quoi": "les vecteurs déjà calculés sont renvoyés à chaque passage",
+    "fichier": "scripts/savoir/indexer.mjs",
+    "avant": "const neufs = textes.filter((t) => !cache[empreinte(t)])",
+    "apres": "const neufs = textes"
+  },
+  {
+    "id": "S28",
+    "critere": "SVS-11",
+    "quoi": "l'unité de l'index perd IPAddressDeny=any (réseau ouvert)",
+    "fichier": "scripts/usine/systemd/presti-chef-savoir-index.service",
+    "avant": "IPAddressDeny=any\n",
+    "apres": ""
+  },
+  {
+    "id": "S29",
+    "critere": "SVS-11",
+    "quoi": "l'unité de réception charge le fichier de secrets des agents",
+    "fichier": "scripts/usine/systemd/presti-chef-savoir-recevoir.service",
+    "avant": "WorkingDirectory=/srv/presti-agents\n",
+    "apres": "WorkingDirectory=/srv/presti-agents\nEnvironmentFile=/home/agents/.config/presti/agents.env\n"
+  },
+  {
+    "id": "S30",
+    "critere": "SVS-11",
+    "quoi": "l'indexeur importe child_process",
+    "fichier": "scripts/savoir/indexer.mjs",
+    "avant": "import crypto from 'node:crypto'\n",
+    "apres": "import crypto from 'node:crypto'\nimport { execFileSync as _lancer } from 'node:child_process'\n"
+  }
+]

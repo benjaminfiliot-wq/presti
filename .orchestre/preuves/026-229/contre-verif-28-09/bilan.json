@@ -1,0 +1,121 @@
+[
+  {
+    "id": "P1",
+    "fichier": "docs/savoir/sources.json",
+    "attendu": "SVS-1 sur le dépôt → (d) NON, (a) NON (premier échec SVS-1)",
+    "quoi": "la liste fermée perd l’exclusion obligatoire **/.codex/** (connexions de Codex)",
+    "avant": "    \"**/.codex/**\",\n",
+    "apres": "",
+    "sha_avant": "e6ce954abe0a3aad617bd25606aabdaabcaf45de6e365cb2c95ec2e7de87f62f",
+    "occurrences": 1,
+    "sha_sabote": "982ebdb4ee6311e19aca0ca65c73314bdce4a1d8f3e1e11ccc8781488fc6119d",
+    "code": 1,
+    "secondes": 185,
+    "verdict": "--preuve-echecs : (a)=false (b)=false (c)=true (d)=false → FAIL",
+    "sha_restaure": "e6ce954abe0a3aad617bd25606aabdaabcaf45de6e365cb2c95ec2e7de87f62f",
+    "restaure_ok": true,
+    "bilan_rapport": "(a) NON · (b) NON · (c) ok · (d) NON · 182 s",
+    "verdicts": [
+      "Verdict (a) : NON CONFORME — premier échec réel : SVS-1",
+      "Verdict (b) : NON CONFORME",
+      "Verdict (c) : CONFORME"
+    ],
+    "echecs_temoin": [
+      "Copies du contrat du témoin différentes de celles du dépôt : sources.json."
+    ],
+    "svs1_depot": "FAIL SVS-1 — exclusions : motifs obligatoires manquants — **/.codex/**",
+    "premier_echec_a": "SVS-1",
+    "sab_non": []
+  },
+  {
+    "id": "P2",
+    "fichier": "docs/savoir/reglages.json",
+    "attendu": "SVS-1 sur le dépôt → (d) NON, (a) NON",
+    "quoi": "l’interrupteur semantique allumé sans depuis ni accord de Benj",
+    "avant": "\"semantique\": { \"actif\": false, \"depuis\": null, \"accord\": null },",
+    "apres": "\"semantique\": { \"actif\": true, \"depuis\": null, \"accord\": null },",
+    "sha_avant": "85e6af1daed8c792954cdf9f70cc2b00adb4a62ac9ecd29da656f6bc49257327",
+    "occurrences": 1,
+    "sha_sabote": "3a88a738ad29cb1f375db93dcb17845cd1a1714e297d8e1f45a7db809a67faf1",
+    "code": 1,
+    "secondes": 279,
+    "verdict": "--preuve-echecs : (a)=false (b)=false (c)=false (d)=false → FAIL",
+    "sha_restaure": "85e6af1daed8c792954cdf9f70cc2b00adb4a62ac9ecd29da656f6bc49257327",
+    "restaure_ok": true,
+    "bilan_rapport": "(a) NON · (b) NON · (c) NON · (d) NON · 278 s",
+    "verdicts": [
+      "Verdict (a) : NON CONFORME — premier échec réel : SVS-1",
+      "Verdict (b) : NON CONFORME",
+      "Verdict (c) : NON CONFORME"
+    ],
+    "echecs_temoin": [
+      "FAIL SVS-10 — sémantique éteinte : etat general.semantique \"refusee\" (attendu \"eteinte\")",
+      "Copies du contrat du témoin différentes de celles du dépôt : reglages.json."
+    ],
+    "svs1_depot": "FAIL SVS-1 — interrupteurs.semantique est actif sans depuis/accord",
+    "premier_echec_a": "SVS-1",
+    "sab_non": [
+      "S01 (docs/savoir/sources.json) → attendu SVS-1 SEUL en échec : NON — moteurs.interne : [\"codex\",\"ollama_local\",\"claude\",\"freellmapi\"] (attendu exactement [\"codex\",\"ollama_local\",\"claude\"]) (aussi : SVS-10)"
+    ]
+  },
+  {
+    "id": "P3",
+    "fichier": "scripts/fixtures/026/savoir/socle/temoin/scripts/usine/savoir-recevoir.mjs",
+    "attendu": "SVS-8 sur le témoin → (b) NON",
+    "quoi": "la réception ne contrôle plus la classe : un fichier de classe prospects entre dans general (cloison percée)",
+    "avant": "if (!CLASSES[compartiment].has(f.classe)) refus(",
+    "apres": "if (false && !CLASSES[compartiment].has(f.classe)) refus(",
+    "sha_avant": "f0608f7de743b4f76e0c2e9d187e67f0d0dcc313bfc521c61fd184d2eaac5c60",
+    "occurrences": 1,
+    "sha_sabote": "0e4d0905b80b67157c1eb4f5c7a887f5ecbf1c5eba8ce857e88d2d280b474909",
+    "code": 1,
+    "secondes": 1029,
+    "verdict": "--preuve-echecs : (a)=true (b)=false (c)=false (d)=true → FAIL",
+    "sha_restaure": "f0608f7de743b4f76e0c2e9d187e67f0d0dcc313bfc521c61fd184d2eaac5c60",
+    "restaure_ok": true,
+    "bilan_rapport": "(a) ok · (b) NON · (c) NON · (d) ok · 1022 s",
+    "verdicts": [
+      "Verdict (a) : CONFORME — premier échec réel : SVS-2",
+      "Verdict (b) : NON CONFORME",
+      "Verdict (c) : NON CONFORME"
+    ],
+    "echecs_temoin": [
+      "FAIL SVS-8 — classe prospects dans general : code 0 (attendu 1) — "
+    ],
+    "svs1_depot": "PASS SVS-1 — ok",
+    "premier_echec_a": "SVS-2",
+    "sab_non": [
+      "S01 (docs/savoir/sources.json) → attendu SVS-1 SEUL en échec : NON — moteurs.interne : [\"codex\",\"ollama_local\",\"claude\",\"freellmapi\"] (attendu exactement [\"codex\",\"ollama_local\",\"claude\"]) (aussi : SVS-8)"
+    ]
+  },
+  {
+    "id": "P4",
+    "fichier": "scripts/fixtures/026/savoir/socle/temoin/scripts/savoir/indexer.mjs",
+    "attendu": "SVS-10 sur le témoin → (b) NON",
+    "quoi": "l’indexeur accepte un modèle d’embeddings :cloud (texte general vers un modèle distant)",
+    "avant": "if (typeof modele !== 'string' || !modele || /cloud/i.test(modele)) return { etat: 'refusee' }",
+    "apres": "if (typeof modele !== 'string' || !modele) return { etat: 'refusee' }",
+    "sha_avant": "7a9519e81af843978764e5a782eda7d51de7e6d5566bb1e1dca7cbfb7948cac2",
+    "occurrences": 1,
+    "sha_sabote": "539ee6217f55954a5e6c3b1076f2c49d99715f29ce8e30c57e4343cf68eab9dd",
+    "code": 1,
+    "secondes": 1014,
+    "verdict": "--preuve-echecs : (a)=true (b)=false (c)=false (d)=true → FAIL",
+    "sha_restaure": "7a9519e81af843978764e5a782eda7d51de7e6d5566bb1e1dca7cbfb7948cac2",
+    "restaure_ok": true,
+    "bilan_rapport": "(a) ok · (b) NON · (c) NON · (d) ok · 1006 s",
+    "verdicts": [
+      "Verdict (a) : CONFORME — premier échec réel : SVS-2",
+      "Verdict (b) : NON CONFORME",
+      "Verdict (c) : NON CONFORME"
+    ],
+    "echecs_temoin": [
+      "FAIL SVS-10 — modele-cloud : etat general.semantique \"active\" (attendu \"refusee\")"
+    ],
+    "svs1_depot": "PASS SVS-1 — ok",
+    "premier_echec_a": "SVS-2",
+    "sab_non": [
+      "S01 (docs/savoir/sources.json) → attendu SVS-1 SEUL en échec : NON — moteurs.interne : [\"codex\",\"ollama_local\",\"claude\",\"freellmapi\"] (attendu exactement [\"codex\",\"ollama_local\",\"claude\"]) (aussi : SVS-10)"
+    ]
+  }
+]

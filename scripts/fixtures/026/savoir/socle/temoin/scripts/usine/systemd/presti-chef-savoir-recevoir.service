@@ -1,0 +1,14 @@
+[Unit]
+Description=Presti — savoir : réception des exports du poste (dépôt vers travail, compte agents)
+Documentation=file:///srv/presti-agents/scripts/usine/savoir-recevoir.mjs
+
+[Service]
+Type=oneshot
+User=agents
+Group=agents
+WorkingDirectory=/srv/presti-agents
+ExecStart=/usr/bin/node scripts/usine/savoir-recevoir.mjs --depot=/srv/presti-savoir/depot
+IPAddressDeny=any
+NoNewPrivileges=yes
+PrivateTmp=yes
+UMask=0007

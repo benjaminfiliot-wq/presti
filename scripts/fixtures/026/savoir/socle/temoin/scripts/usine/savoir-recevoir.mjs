@@ -1,0 +1,178 @@
+#!/usr/bin/env node
+// TÉMOIN (026-229) de scripts/usine/savoir-recevoir.mjs, jugé par SVS-8 : sur l'usine, sous le compte agents, lancé par
+// presti-chef-savoir-recevoir.path quand un <compartiment>-<horodatage>.pret paraît dans le dépôt. Chaque archive est
+// validée ENTIÈRE avant la moindre écriture ; saine, elle remplace <racine>/<compartiment>/courant par renommage (l'ancien
+// devient precedent) et pose a-indexer ; refusée, rien n'est écrit hors du journal. Archive et .pret sont toujours
+// retirés. Une ligne par archive au journal, sans aucun contenu.
+//
+//   node scripts/usine/savoir-recevoir.mjs --depot=/srv/presti-savoir/depot [--racine-travail=/home/agents/travail/savoir]
+// Codes : 0 tout reçu (ou rien à recevoir) ; 1 au moins une archive refusée ; 2 usage.
+import fs from 'node:fs'
+import path from 'node:path'
+import crypto from 'node:crypto'
+
+const MAX_FICHIERS = 20000
+const MAX_OCTETS = 100 * 1024 * 1024
+const NOM_ARCHIVE = /^(general|prospects)-\d{8}T\d{6}Z$/
+const CLES_PAX = new Set(['path', 'mtime', 'atime', 'ctime'])
+const CLASSES = { general: new Set(['public', 'interne']), prospects: new Set(['prospects']) }
+
+class Refus extends Error {}
+const refus = (raison) => { throw new Refus(raison) }
+
+function champ(h, debut, longueur) {
+  const s = h.subarray(debut, debut + longueur)
+  const z = s.indexOf(0)
+  return (z < 0 ? s : s.subarray(0, z)).toString('utf8')
+}
+function nombre(h, debut, longueur) {
+  const t = h.subarray(debut, debut + longueur).toString('latin1').replace(/[\0 ]+/g, '')
+  if (!/^[0-7]*$/.test(t)) refus('champ numérique illisible')
+  return t ? parseInt(t, 8) : 0
+}
+function lirePax(d) {
+  const cles = {}
+  let i = 0
+  while (i < d.length) {
+    const esp = d.indexOf(0x20, i)
+    const L = esp < 0 ? NaN : Number(d.subarray(i, esp).toString('latin1'))
+    if (!Number.isInteger(L) || L <= esp - i + 1 || i + L > d.length) refus('en-tête pax illisible')
+    const rec = d.subarray(esp + 1, i + L).toString('utf8')
+    const kv = rec.endsWith('\n') ? rec.slice(0, -1) : rec
+    const eg = kv.indexOf('=')
+    if (eg <= 0) refus('en-tête pax illisible')
+    const cle = kv.slice(0, eg)
+    if (!CLES_PAX.has(cle)) refus('clé pax refusée (path, mtime, atime, ctime seulement)')
+    cles[cle] = kv.slice(eg + 1)
+    i += L
+  }
+  return cles
+}
+function cheminSur(nom) {
+  if (!nom || nom.length > 1024 || /[\\:\0]/.test(nom) || nom.startsWith('/')) return false
+  const segs = nom.split('/')
+  if (segs.some((s) => s === '' || s === '.' || s === '..')) return false
+  return nom === 'manifeste.json' || (segs[0] === 'fichiers' && segs.length >= 3)
+}
+/** Lit l'archive ENTIÈRE et rend ses fichiers, ou refuse : aucune écriture ici. */
+function lireArchive(buf) {
+  const entrees = new Map()
+  let pax = null
+  let off = 0
+  let total = 0
+  let nbFichiers = 0
+  let fin = false
+  while (off + 512 <= buf.length) {
+    const h = buf.subarray(off, off + 512)
+    if (h.every((x) => x === 0)) { fin = true; break }
+    let somme = 0
+    for (let i = 0; i < 512; i++) somme += i >= 148 && i < 156 ? 32 : h[i]
+    if (somme !== nombre(h, 148, 8)) refus('somme de contrôle fausse')
+    if (h.subarray(257, 263).toString('latin1') !== 'ustar\u0000' || h.subarray(263, 265).toString('latin1') !== '00') refus('archive hors du format ustar POSIX')
+    const type = h[156] === 0 ? '0' : String.fromCharCode(h[156])
+    const taille = nombre(h, 124, 12)
+    if (taille > MAX_OCTETS) refus('taille déclarée au-delà de 100 Mo')
+    total += taille
+    if (total > MAX_OCTETS) refus('taille totale déclarée au-delà de 100 Mo')
+    const d0 = off + 512
+    if (d0 + taille > buf.length) refus('archive tronquée')
+    const donnees = buf.subarray(d0, d0 + taille)
+    off = d0 + Math.ceil(taille / 512) * 512
+    if (type === 'x') { if (pax) refus('deux en-têtes pax de suite'); pax = lirePax(donnees); continue }
+    if (type !== '0') refus(`entrée de type ${JSON.stringify(type)} refusée (fichiers réguliers seulement)`)
+    const prefixe = champ(h, 345, 155)
+    const nom = pax?.path ?? (prefixe ? `${prefixe}/${champ(h, 0, 100)}` : champ(h, 0, 100))
+    pax = null
+    if (!cheminSur(nom)) refus('chemin d’entrée refusé (absolu, remontée, ou hors manifeste.json et fichiers/)')
+    if (entrees.has(nom)) refus('entrée en double')
+    entrees.set(nom, Buffer.from(donnees))
+    if (nom !== 'manifeste.json' && ++nbFichiers > MAX_FICHIERS) refus('plus de 20 000 fichiers')
+  }
+  if (!fin) refus('fin d’archive absente')
+  return entrees
+}
+function valider(compartiment, entrees) {
+  const brut = entrees.get('manifeste.json')
+  if (!brut) refus('manifeste.json absent')
+  let m
+  try { m = JSON.parse(brut.toString('utf8')) } catch { refus('manifeste illisible') }
+  if (m.compartiment !== compartiment) refus('le manifeste n’est pas celui du compartiment de l’archive')
+  if (!Array.isArray(m.fichiers)) refus('manifeste sans liste de fichiers')
+  const attendus = new Map()
+  for (const f of m.fichiers) {
+    const nom = `fichiers/${f.racine}/${f.chemin}`
+    if (typeof f.racine !== 'string' || !/^[a-z]+$/.test(f.racine) || typeof f.chemin !== 'string' || !cheminSur(nom)) refus('chemin de manifeste refusé')
+    if (!CLASSES[compartiment].has(f.classe)) refus(`classe ${JSON.stringify(f.classe)} interdite dans ${compartiment}`)
+    attendus.set(nom, f)
+  }
+  for (const [nom, donnees] of entrees) {
+    if (nom === 'manifeste.json') continue
+    const f = attendus.get(nom)
+    if (!f) refus('fichier de l’archive absent du manifeste')
+    if (f.octets !== donnees.length || f.sha256 !== crypto.createHash('sha256').update(donnees).digest('hex')) refus('empreinte ou taille différente du manifeste')
+  }
+  for (const nom of attendus.keys()) if (!entrees.has(nom)) refus('fichier du manifeste absent de l’archive')
+  return { fichiers: attendus.size, manifesteSha: crypto.createHash('sha256').update(brut).digest('hex') }
+}
+function installer(racine, compartiment, entrees) {
+  const dossier = path.join(racine, compartiment)
+  const entrant = path.join(dossier, 'entrant')
+  fs.rmSync(entrant, { recursive: true, force: true })
+  for (const [nom, donnees] of entrees) {
+    const p = path.join(entrant, ...nom.split('/'))
+    fs.mkdirSync(path.dirname(p), { recursive: true })
+    fs.writeFileSync(p, donnees)
+  }
+  const courant = path.join(dossier, 'courant')
+  const precedent = path.join(dossier, 'precedent')
+  if (fs.existsSync(courant)) { fs.rmSync(precedent, { recursive: true, force: true }); fs.renameSync(courant, precedent) }
+  fs.renameSync(entrant, courant)
+  fs.writeFileSync(path.join(racine, 'a-indexer'), `${JSON.stringify({ compartiment, recu_le: new Date().toISOString() })}\n`)
+}
+function retirer(p) { try { if (fs.lstatSync(p)) fs.unlinkSync(p) } catch { /* déjà parti */ } }
+
+export function recevoir({ depot, racine }) {
+  fs.mkdirSync(racine, { recursive: true })
+  const journal = path.join(racine, 'journal.jsonl')
+  let refusees = 0
+  const prets = fs.readdirSync(depot).filter((n) => n.endsWith('.pret')).sort()
+  for (const pret of prets) {
+    const nom = pret.slice(0, -'.pret'.length)
+    const pPret = path.join(depot, pret)
+    const pTar = path.join(depot, `${nom}.tar`)
+    const ligne = { le: new Date().toISOString(), evenement: 'savoir recevoir', archive: NOM_ARCHIVE.test(nom) ? nom : '(nom refusé)' }
+    try {
+      if (!NOM_ARCHIVE.test(nom)) refus('nom d’archive hors de la forme <compartiment>-<horodatage>')
+      if (!fs.lstatSync(pPret).isFile()) refus('.pret qui n’est pas un fichier régulier (lien refusé)')
+      let st
+      try { st = fs.lstatSync(pTar) } catch { refus('archive absente') }
+      if (!st.isFile()) refus('archive qui n’est pas un fichier régulier (lien refusé)')
+      if (st.size > MAX_OCTETS + 20 * 1024 * 1024) refus('archive au-delà de 100 Mo')
+      const compartiment = nom.split('-')[0]
+      const entrees = lireArchive(fs.readFileSync(pTar))
+      const v = valider(compartiment, entrees)
+      installer(racine, compartiment, entrees)
+      Object.assign(ligne, { compartiment, resultat: 'recu', fichiers: v.fichiers, manifeste_sha256: v.manifesteSha })
+    } catch (e) {
+      refusees++
+      Object.assign(ligne, { resultat: 'refuse', raison: e instanceof Refus ? e.message : 'erreur de lecture' })
+    }
+    retirer(pTar)
+    retirer(pPret)
+    fs.appendFileSync(journal, `${JSON.stringify(ligne)}\n`)
+  }
+  return refusees ? 1 : 0
+}
+
+function options(argv) {
+  const o = { racine: '/home/agents/travail/savoir' }
+  for (const a of argv) {
+    if (a.startsWith('--depot=') && a.length > 8) o.depot = path.resolve(a.slice(8))
+    else if (a.startsWith('--racine-travail=') && a.length > 17) o.racine = path.resolve(a.slice(17))
+    else return null
+  }
+  return o.depot ? o : null
+}
+const o = options(process.argv.slice(2))
+if (!o) { console.error('usage : node scripts/usine/savoir-recevoir.mjs --depot=<dossier> [--racine-travail=<dossier>]'); process.exit(2) }
+process.exitCode = recevoir(o)

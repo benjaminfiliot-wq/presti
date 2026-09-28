@@ -1,0 +1,9 @@
+[Unit]
+Description=Presti — savoir : surveille le dépôt des exports (un .pret déclenche la réception)
+
+[Path]
+PathExistsGlob=/srv/presti-savoir/depot/*.pret
+Unit=presti-chef-savoir-recevoir.service
+
+[Install]
+WantedBy=paths.target
