@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>visuel</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  body { margin:0; background:#0b0f14; }
+  .clip { position:absolute; inset:0; }
+  .fond { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .texte-surimpression { position:absolute; left:8%; right:8%; top:auto; bottom:auto; color:#fff; font:700 54px/1.25 Arial, Helvetica, sans-serif; text-shadow:0 3px 10px rgba(0,0,0,.75); }
+  #mention-ia { position:absolute; left:6%; right:auto; top:auto; bottom:8%; color:#fff; font:500 26px/1.3 Arial, Helvetica, sans-serif; background:rgba(0,0,0,.55); padding:10px 16px; border-radius:10px; }
+  #root { position:relative; width:1080px; height:1080px; overflow:hidden; }
+  #accroche { top:22%; font-size:40px; }
+  #cta { top:70%; }
+</style>
+</head>
+<body>
+  <div id="root" data-composition-id="visuel" data-start="0" data-width="1080" data-height="1080" data-duration="2">
+    <section id="c1" class="clip" data-start="0" data-duration="2"><img class="fond" src="img/1.jpg" /></section>
+    <div id="accroche" class="clip texte-surimpression" data-start="0" data-duration="2">Electricien a Nantes, reactif et a votre ecoute</div>
+    <div id="cta" class="clip texte-surimpression" data-start="0" data-duration="2">Appelez-nous 01 23 45 67 89</div>
+    <!-- solo-si-voix -->
+    <audio id="voix" class="clip" data-start="0" data-duration="2" src="voix.mp3"></audio>
+    <div id="mention-ia" class="clip" data-start="0" data-duration="2">Voix générée par IA</div>
+    <!-- /solo-si-voix -->
+  </div>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true })
+      var el = document.querySelector('#c1 .fond')
+      tl.fromTo(el, { scale: 1 }, { scale: 1.08, duration: 2, ease: 'none' }, 0)
+      window.__timelines['visuel'] = tl
+    })()
+  </script>
+</body>
+</html>
