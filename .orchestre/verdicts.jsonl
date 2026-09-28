@@ -465,3 +465,6 @@
 {"id":"026-058","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:26:57Z","duree_s":5,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"026-110","verdict":"FAIL","ligne":"PASS pack-pub-dossier-qa --partie=api — référence : code 1, FAIL PD-1 — lib/packPubDossier.ts ne s'importe pas : Error [ERR_MODULE_NOT_FOUND]: Cannot find modul","code":1,"date":"2026-09-28T11:30:28Z","duree_s":439,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"026-041","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:37:03Z","duree_s":224,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-110","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:39:06Z","duree_s":364,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-248","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:43:06Z","duree_s":461,"agent":"claude-code","executant":"claude-code","lignes":5759,"dossier":"en-cours"}
+{"id":"026-039","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:44:10Z","duree_s":322,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait","copie_isolee":true}

@@ -4,6 +4,7 @@ import PublicNav from '@/app/PublicNav'
 import NePasCompter from './NePasCompter'
 import { actif } from '@/lib/flags'
 import { MOIS_AUDIENCE } from '@/lib/audience'
+import { SECTION_PROSPECTION } from '@/lib/confidentialite/prospection'
 
 export const metadata = {
   title: 'Politique de confidentialité',
@@ -21,7 +22,7 @@ export default function Confidentialite() {
     <main className="legal-wrap">
       <Back />
       <h1>Politique de confidentialité</h1>
-      <div className="legal-updated">Dernière mise à jour : {actif('audience') ? '14 septembre 2026' : '5 septembre 2026'} · Conforme au RGPD</div>
+      <div className="legal-updated">Dernière mise à jour : {actif('audience') ? '27 septembre 2026' : '27 septembre 2026'} · Conforme au RGPD</div>
 
       <p>Presti attache une grande importance à la protection de vos données personnelles. Cette politique explique quelles données nous collectons, pourquoi, et quels sont vos droits.</p>
 
@@ -90,6 +91,12 @@ export default function Confidentialite() {
         <li><strong>Rapports d’erreur</strong> : en cas de panne d’un écran, le chemin de la page (sans identifiant ni contenu) et le message technique nous sont envoyés pour corriger.</li>
       </ul>
       <p>Aucune mesure d’audience ni publicité n’est intégrée à l’application.</p>
+
+      <h2 id="prospection">{SECTION_PROSPECTION.titre}</h2>
+      {SECTION_PROSPECTION.paragraphes.map((paragraphe) => <p key={paragraphe}>{paragraphe}</p>)}
+      <ul>
+        {SECTION_PROSPECTION.liste.map((element) => <li key={element}>{element}</li>)}
+      </ul>
 
       <p style={{ marginTop: '2.4rem' }}><a href="/cgu">Conditions générales</a> · <a href="/mentions-legales">Mentions légales</a></p>
     </main>
