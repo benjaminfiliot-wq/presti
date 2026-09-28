@@ -86,6 +86,13 @@ const REGISTRE = [
   { lot: 5, juge: 'scripts/facteur-qa.mjs', arguments: ['--partie=gmail'], attendu: 'GM-1', loader: true },
   { lot: 5, juge: 'scripts/disjoncteurs-qa.mjs', arguments: [], attendu: 'DJ-1', loader: true },
   { lot: 5, juge: 'scripts/jauges-qa.mjs', arguments: [], attendu: 'JG-1', loader: true },
+  // Lot 6 (026-081) : les juges de l'entrant et des réponses — webhooks Meta, Répondeur, page de rendez-vous. Chaque
+  // module et sa route (lib/agents/acquisition/metaWebhooks.ts + app/api/webhooks/meta/route.ts ; repondeur.ts +
+  // app/api/cron/repondeur/route.ts ; rendezVous.ts + app/rendez-vous/[jeton]/route.ts) sont écrits par une fiche
+  // ultérieure (026-090, 026-096, 026-084) : sur la référence, le premier critère échoue avec « module absent ».
+  { lot: 6, juge: 'scripts/meta-webhooks-qa.mjs', arguments: [], attendu: 'MW-1', loader: true },
+  { lot: 6, juge: 'scripts/repondeur-qa.mjs', arguments: [], attendu: 'RP-1', loader: true },
+  { lot: 6, juge: 'scripts/rendez-vous-qa.mjs', arguments: [], attendu: 'RV-1', loader: true },
   // Lot 7 (026-071) : la fabrication — la vidéo de maquette et la bibliothèque des douleurs. Chaque module jugé
   // (scripts/agents/maquette-video.mjs, lib/agents/acquisition/douleurs.ts) est écrit par une fiche ultérieure
   // (026-075, 026-073) : sur la référence, le premier critère échoue avec « module absent ».

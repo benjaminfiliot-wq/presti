@@ -563,3 +563,7 @@
 {"id":"026-080","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T18:47:27Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":2962,"dossier":"en-cours"}
 {"id":"026-080","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T18:47:51Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":2962,"dossier":"fait"}
 {"id":"026-080","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T18:49:34Z","duree_s":3,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-141","verdict":"FAIL","ligne":"✅ BL-2 busEnPause : faux seulement sur une réponse explicite false ; vrai sur true, null, une erreur PostgREST (400), une erreur serveur (500) et un rpc qui lèv","code":1,"date":"2026-09-28T18:53:07Z","duree_s":53,"agent":"usine-codex-101","executant":"codex","lignes":532,"dossier":"fait"}
+{"id":"026-081","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T19:28:30Z","duree_s":23,"agent":"claude-code","executant":"claude-code","lignes":1882,"dossier":"en-cours"}
+{"id":"026-081","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T19:29:00Z","duree_s":13,"agent":"claude-code","executant":"claude-code","lignes":1882,"dossier":"fait"}
+{"id":"026-081","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T19:32:31Z","duree_s":11,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
