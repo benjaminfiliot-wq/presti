@@ -24,6 +24,8 @@ export type Action =
   // Le site à la demande (v15 §3.2) : la validation humaine d'un site généré, et son renvoi en génération
   // avec une consigne — deux gestes de direction qui laissent une trace datée.
   | 'site_valide' | 'site_regeneration' | 'site_en_ligne' | 'site_search_console' | 'site_dossier_envoye'
+  // Livraison et retouche du pack pubs locales : 'pack_livre' et 'pack_refaire'.
+  | 'pack_livre' | 'pack_refaire'
   | 'pause_generale'
   | 'decision_tranchee' | 'appel_rendu' | 'agent_pause' | 'consigne_transmise'
   | 'envoi_froid_ouvert' | 'technologie_reprise' | 'canal_rouvert' | 'modele_leve' | 'palier_plafond'
