@@ -475,3 +475,4 @@
 {"id":"026-229","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T12:07:17Z","duree_s":224,"agent":"claude-code","executant":"claude-code","lignes":4389,"dossier":"fait"}
 {"id":"026-230","verdict":"FAIL","ligne":"FAIL SVS-1 — interrupteurs.semantique est actif sans depuis/accord","code":1,"date":"2026-09-28T12:20:16Z","duree_s":72,"agent":"usine-codex-77","executant":"codex","lignes":588,"dossier":"fait"}
 {"id":"026-119","verdict":"FAIL","ligne":"FAIL CR-NR — lib/alertes.ts modifié par rapport à HEAD","code":1,"date":"2026-09-28T12:32:10Z","duree_s":8,"agent":"usine-codex-72","executant":"codex","lignes":624,"dossier":"fait"}
+{"id":"026-119","verdict":"FAIL","ligne":"Error: Cannot find module 'C:\\Users\\benja\\AppData\\Local\\Temp\\vi-026-119-66468\\scripts\\crieur-qa.mjs'","code":1,"date":"2026-09-28T12:38:01Z","duree_s":3,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","copie_isolee":true}
