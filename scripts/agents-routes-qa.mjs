@@ -336,9 +336,17 @@ async function jugerDrapeau(racine) {
   else {
     const i = t.indexOf('export const FLAGS = {'), j = t.indexOf('} as const', i)
     const bloc = i < 0 || j < 0 ? '' : t.slice(i, j)
-    if (!/^\s*busAgents\s*:\s*false\s*,?\s*$/m.test(bloc)) e.push(`${FLAGS} : busAgents: false absent de FLAGS`)
+    // 28/09 : la levée prévue par la fiche (« sur décision de Benj ») est admise, et elle seule : busAgents: true n'est
+    // accepté que si son commentaire porte « Levé le JJ/MM/AAAA … Benj » (qui l'a décidé, quand). Un true sans cette
+    // trace reste rouge ; le comportement drapeau baissé (404, zéro appel) est jugé par la sonde, qui le force à false.
+    const leveeDatee = /Levé le \d{2}\/\d{2}\/\d{4}[^\n]*Benj/.test(bloc)
+    const leve = /^\s*busAgents\s*:\s*true\s*,?\s*$/m.test(bloc)
+    if (!/^\s*busAgents\s*:\s*false\s*,?\s*$/m.test(bloc) && !(leve && leveeDatee)) e.push(`${FLAGS} : busAgents: false absent de FLAGS (ou levé sans « Levé le JJ/MM/AAAA … Benj » dans son commentaire)`)
     const { ajoutes, retires } = C.diffLignes(h, t)
-    if (/\bbusAgents\b/.test(h)) { if (ajoutes.length || retires.length) e.push(`${FLAGS} : ${ajoutes.length + retires.length} ligne(s) changée(s) alors que busAgents est déjà à HEAD`) }
+    const estCom = (l) => /^\s*(\/\/|\/\*|\*)/.test(l)
+    const levee = leve && leveeDatee && ajoutes.filter((l) => /^\s*busAgents\s*:\s*true/.test(l)).length === 1 && ajoutes.every((l) => /^\s*busAgents\s*:\s*true/.test(l) || estCom(l))
+      && retires.filter((l) => /^\s*busAgents\s*:\s*false/.test(l)).length === 1 && retires.every((l) => /^\s*busAgents\s*:\s*false/.test(l) || estCom(l))
+    if (/\bbusAgents\b/.test(h)) { if ((ajoutes.length || retires.length) && !levee) e.push(`${FLAGS} : ${ajoutes.length + retires.length} ligne(s) changée(s) alors que busAgents est déjà à HEAD`) }
     else {
       const drapeau = ajoutes.filter((l) => /^\s*busAgents\s*:/.test(l)), com = ajoutes.filter((l) => /^\s*(\/\/|\/\*|\*)/.test(l)), autres = ajoutes.filter((l) => !drapeau.includes(l) && !com.includes(l))
       if (retires.length || autres.length || drapeau.length > 1) e.push(`${FLAGS} : le diff avec HEAD ne se limite pas à busAgents et son commentaire (${retires.length} retirée(s), ${autres.length} autre(s) ajoutée(s)${autres.length ? ` : « ${court(autres[0], 50)} »` : ''})`)
