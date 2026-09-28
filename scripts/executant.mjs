@@ -1,22 +1,20 @@
-// scripts/executant.mjs — un second exécutant quand Antigravity est à sec (ses quotas tombent en minutes dès que deux
-// agents tournent, 13-14/09). Codex (application OpenAI Codex, compte ChatGPT de Benj), Gemini CLI (clé d'API) ou Qwen Code, pilotés sans les
-// mains, avec le MÊME contrat de tâche que scripts/antigravity.mjs (le prompt est importé de là : une seule source).
+// bin/executant.mjs — un second exécutant quand Antigravity est à sec (ses quotas tombent en minutes dès que deux
+// agents tournent). Codex (application OpenAI Codex), piloté sans les mains, avec le MÊME contrat de tâche que
+// bin/antigravity.mjs (le prompt est importé de là : une seule source). Vendorisé dans <projet>/scripts/executant.mjs
+// par `orchestre.mjs maj`, comme bin/orchestre.mjs — généraliste : aucun chemin propre à un projet particulier ici,
+// tout vient de .orchestre/orchestre.json (racine, vault, source, projet).
 //
 // Usage :
-//   node scripts/executant.mjs sonde [--moteur=codex|gemini|qwen]           → l'authentification tient ? (une question, une réponse)
-//   node scripts/executant.mjs lancer <agent> --tache=<id> [--moteur=codex|gemini|qwen] [--model=…] [--effort=medium] [--boucle=3] [--duo]
+//   node scripts/executant.mjs sonde [--moteur=codex]                        → l'authentification tient ? (une question, une réponse)
+//   node scripts/executant.mjs lancer <agent> --tache=<id> [--moteur=codex] [--model=…] [--effort=medium] [--boucle=3] [--duo]
 //   node scripts/executant.mjs pas <agent> --tache=<id> <message…>          → un pas de plus (duo) : l'histoire est dans le fichier de prompt
 //   node scripts/executant.mjs etat                                          → les lancements et leurs journaux
-// Première fois (une seule, par Benj, dans un terminal) :
-//   Gemini : GEMINI_API_KEY=… dans .env.local (clé gratuite, aistudio.google.com). « Login with Google » ne marche plus : le
-//            14/09/2026, Google a refusé l'offre gratuite à ce client (IneligibleTierError UNSUPPORTED_CLIENT, « migrate to
-//            the Antigravity suite ») après une connexion pourtant réussie — Gemini gratuit passe désormais par Antigravity.
-//   Codex  : rien à faire. L'application Codex est connectée au compte ChatGPT de Benj (14/09/2026) ; le binaire vit dans
-//            %LOCALAPPDATA%/OpenAI/Codex/bin/<version>/codex.exe (le plus récent est pris). Il est lancé en « exec » dans un bac
-//            à sable limité au dépôt (-s workspace-write, réseau autorisé, vault SaaS en plus), jamais avec le « danger-full-access »
-//            que ~/.codex/config.toml règle pour l'application. Moteur par défaut depuis le 14/09/2026.
-//   Qwen   : `npx @qwen-code/qwen-code` → /auth → « Qwen OAuth » (gratuit)
+// Première fois (une seule, dans un terminal) : rien à faire. L'application Codex est connectée par ChatGPT ; le
+// binaire vit dans %LOCALAPPDATA%/OpenAI/Codex/bin/<version>/codex.exe (le plus récent est pris). Il est lancé en
+// « exec » dans un bac à sable limité au dépôt (-s workspace-write, réseau autorisé, vault du projet en plus quand
+// il est configuré), jamais avec le « danger-full-access » que ~/.codex/config.toml règle pour l'application.
 // Les journaux vont dans .orchestre/travail/executant/ ; le registre « un agent, une tâche » est le même (.orchestre/agents.jsonl).
+// Gemini CLI et Qwen Code, exécutants fantômes, ont été retirés le 28/09/2026 (026-107).
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawn, spawnSync } from 'node:child_process'
@@ -25,17 +23,27 @@ import { PROMPT } from './antigravity.mjs'
 // Sans conversation persistante, le duo (plans/duo-antigravity.md) se joue en pas successifs : « pas » rejoue le fichier de prompt.
 const PROMPT_DUO = (agent, tache) => PROMPT(agent, tache) + '\nMode duo : fais seulement le pas 1 — lis la tâche, lance sa commande verifier UNE fois (--statique si c’est site-qa), note les lignes ÉCHEC — puis rends compte en trois lignes et arrête-toi : Claude Code dicte le pas suivant.'
 
-const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+// La racine du projet : le dossier qui contient .orchestre/, en remontant depuis le répertoire courant, sinon depuis
+// ce fichier — comme bin/orchestre.mjs. Sans .orchestre/ trouvable (ex. ce fichier copié seul, sans le projet), on
+// retombe sur l'hypothèse habituelle « ce fichier vit dans <racine>/scripts/ ».
+function trouverRacine(depart) {
+  let d = path.resolve(depart)
+  for (;;) {
+    if (fs.existsSync(path.join(d, '.orchestre')) && fs.statSync(path.join(d, '.orchestre')).isDirectory()) return d
+    const parent = path.dirname(d)
+    if (parent === d) return null
+    d = parent
+  }
+}
+const ICI = path.dirname(fileURLToPath(import.meta.url))
+const RACINE = trouverRacine(process.cwd()) || trouverRacine(ICI) || path.resolve(ICI, '..')
 const ORCH = path.join(RACINE, '.orchestre')
 const TRAVAIL = path.join(ORCH, 'travail', 'executant')
 const AGENTS = path.join(ORCH, 'agents.jsonl')
 const MOTEURS = {
-  // Modèle par défaut gpt-6-sol (« workhorse model for coding and everyday work ») : consigne de Benj du 24/09/2026 pour
-  // l'écosystème, « ce sera GPT-6 sol ou luna ». Tâches légères et répétitives (tri, relances, veille) : --model=gpt-6-luna
-  // (« fast and affordable ») ; très gros chantier : --model=gpt-6-astra. gpt-5.6-* est désormais marqué « older » par Codex.
+  // Modèle par défaut gpt-6-sol (« workhorse model for coding and everyday work »). Tâches légères et répétitives
+  // (tri, relances, veille) : --model=gpt-6-luna (« fast and affordable ») ; très gros chantier : --model=gpt-6-astra.
   codex: { paquet: null, modele: 'gpt-6-sol', cle: null, auth: /not logged in|please log ?in|codex login|401 Unauthorized|403 Forbidden/i },
-  gemini: { paquet: '@google/gemini-cli', modele: 'gemini-2.5-pro', cle: 'GEMINI_API_KEY', auth: /auth method|GEMINI_API_KEY|login|unauthenticated|IneligibleTier|no longer supported|401|403/i },
-  qwen: { paquet: '@qwen-code/qwen-code', modele: null, cle: null, auth: /auth|login|unauthenticated|401|403/i },
 }
 const args = process.argv.slice(2)
 const commande = args[0]
@@ -55,6 +63,26 @@ function env(moteur) {
   return e
 }
 
+// La clé « source » de .orchestre/orchestre.json (le dépôt orchestre) : quand elle existe sur disque, Codex y reçoit
+// aussi l'accès en écriture (026-098 — avant ça, seul le vault s'ajoutait à RACINE dans le bac à sable).
+function configSource() {
+  try {
+    const cfg = JSON.parse(fs.readFileSync(path.join(ORCH, 'orchestre.json'), 'utf8'))
+    if (cfg.source) { const s = path.resolve(RACINE, cfg.source); if (fs.existsSync(s)) return s }
+  } catch { /* pas de config, ou source absente/introuvable : on n'ajoute rien */ }
+  return null
+}
+
+// La clé « vault » de .orchestre/orchestre.json (le second dépôt du projet, ex. son cerveau Obsidian) : quand il
+// existe sur disque, Codex y reçoit l'accès en écriture dans le bac à sable, en plus de RACINE.
+function configVault() {
+  try {
+    const cfg = JSON.parse(fs.readFileSync(path.join(ORCH, 'orchestre.json'), 'utf8'))
+    if (cfg.vault) { const v = path.resolve(RACINE, cfg.vault); if (fs.existsSync(v)) return v }
+  } catch { /* pas de config, ou vault absent/introuvable : on n'ajoute rien */ }
+  return null
+}
+
 // Le binaire de l'application Codex : le dossier bin/<version>/ change à chaque mise à jour, on prend le plus récent.
 function binaireCodex() {
   const base = path.join(process.env.LOCALAPPDATA || '', 'OpenAI', 'Codex', 'bin')
@@ -67,6 +95,14 @@ function binaireCodex() {
 // --effort=none|minimal|low|medium|high|xhigh ; par défaut medium pour lancer et pas, rien de forcé pour la sonde.
 function effortCodex() { const e = option('effort', commande === 'sonde' ? null : 'medium'); return e && /^(none|minimal|low|medium|high|xhigh)$/.test(e) ? e : null }
 
+// L'argv de Codex, seule à être testée à blanc (--a-blanc) : mêmes bras-de-sable qu'en vrai (RACINE + vault du
+// projet s'il existe + dépôt orchestre s'il existe), pour que la ligne affichée à blanc soit celle réellement lancée.
+function argvCodex(dernier, modele, instruction) {
+  const vault = configVault()
+  const src = configSource()
+  return ['exec', '-C', RACINE, ...(vault ? ['--add-dir', vault] : []), ...(src ? ['--add-dir', src] : []), '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=true', '--color', 'never', '-o', dernier, ...(modele ? ['-m', modele] : []), ...(effortCodex() ? ['-c', 'model_reasoning_effort=' + effortCodex()] : []), instruction]
+}
+
 // Lance le CLI en mode sans les mains : -p (prompt) + --yolo (outils auto-approuvés), dans le dépôt. Le prompt long vit dans un
 // fichier : on ne passe à la ligne de commande qu'une phrase sans guillemets (Windows + shell:true n'aiment ni les retours
 // à la ligne ni les backticks).
@@ -77,7 +113,7 @@ function executer(moteur, instruction, modele, journal, delaiMs) {
   // dans un fichier à côté du journal, relu à la fin pour y trouver la ligne de verdict.
   const dernier = journal.replace(/\.log$/, '') + '.dernier-message.md'
   const argv = codex
-    ? ['exec', '-C', RACINE, '--add-dir', path.resolve(RACINE, '..', 'SaaS'), '-s', 'workspace-write', '-c', 'sandbox_workspace_write.network_access=true', '--color', 'never', '-o', dernier, ...(modele ? ['-m', modele] : []), ...(effortCodex() ? ['-c', 'model_reasoning_effort=' + effortCodex()] : []), instruction]
+    ? argvCodex(dernier, modele, instruction)
     : ['-y', m.paquet, '-p', `"${instruction.replace(/"/g, '')}"`, '--yolo', ...(modele ? ['-m', modele] : [])]
   return new Promise((resolve) => {
     const debut = Date.now()
@@ -98,7 +134,7 @@ function executer(moteur, instruction, modele, journal, delaiMs) {
 async function sonde(moteur) {
   const journal = path.join(TRAVAIL, `sonde-${moteur}-${horodatage()}.log`)
   const r = await executer(moteur, 'Réponds uniquement le mot OK, rien d autre.', option('model', MOTEURS[moteur].modele), journal, 120_000)
-  if (r.auth) { console.log(`\n✗ ${moteur} : pas authentifié. ${moteur === 'codex' ? 'Ouvrir l’application Codex et se connecter avec ChatGPT (codex login status doit répondre Logged in).' : moteur === 'gemini' ? 'Mettre GEMINI_API_KEY dans .env.local (aistudio.google.com) : la connexion Google est refusée par Google depuis le 14/09/2026 (UNSUPPORTED_CLIENT).' : 'Dans un terminal : npx @qwen-code/qwen-code → /auth → Qwen OAuth.'}`); return 1 }
+  if (r.auth) { console.log(`\n✗ ${moteur} : pas authentifié. Ouvrir l’application Codex et se connecter avec ChatGPT (codex login status doit répondre Logged in).`); return 1 }
   const ok = r.code === 0 && /\bOK\b/.test(r.sortie)
   console.log(`\n${ok ? '✓' : '?'} ${moteur} : ${ok ? 'répond' : 'sortie inattendue'} en ${r.duree} s (code ${r.code}) · journal ${path.relative(RACINE, journal)}`)
   return ok ? 0 : 1
@@ -157,6 +193,17 @@ async function boucleCodex(agent, tache, modele, fPrompt, journal) {
 
 async function lancer(agent, tache, moteur, modele) {
   if (!tache) { console.error('lancer <agent> --tache=<id> est obligatoire ici : sans conversation persistante, un exécutant reçoit une tâche nommée'); process.exit(2) }
+  // --a-blanc : affiche la ligne qui serait lancée (JSON {moteur, argv, cwd}), sans rien lancer ni rien écrire (ni
+  // fichier de prompt, ni journal, ni agents.jsonl) — 026-098, pour que Codex (bac à sable) puisse s'y fier sans risque.
+  if (option('a-blanc')) {
+    const journal = path.join(TRAVAIL, `${tache}-${horodatage()}.log`)
+    const dernier = journal.replace(/\.log$/, '') + '.dernier-message.md'
+    const argv = moteur === 'codex'
+      ? argvCodex(dernier, modele, '<prompt de la tâche>')
+      : ['-y', MOTEURS[moteur].paquet, '-p', '"<prompt de la tâche>"', '--yolo', ...(modele ? ['-m', modele] : [])]
+    console.log(JSON.stringify({ moteur, argv, cwd: RACINE }))
+    process.exit(0)
+  }
   const prompt = (option('duo') ? PROMPT_DUO(agent, tache) : PROMPT(agent, tache)) + (moteur === 'codex' && !option('duo') ? SUPPLEMENT_CODEX(tache) : '')
   const fPrompt = path.join(TRAVAIL, `${tache}.prompt.md`)
   fs.writeFileSync(fPrompt, `# Tâche ${tache} — agent ${agent} — ${maintenant()}\n\n${prompt}\n`)
@@ -186,12 +233,19 @@ function etat() {
   for (const l of lignes.slice(-12)) { const j = path.join(TRAVAIL, l.conversationId.replace(/^executant-/, '') + '.log'); const taille = fs.existsSync(j) ? fs.statSync(j).size : 0; console.log(`${l.date}  ${l.agent.padEnd(14)} ${String(l.tache).padEnd(8)} ${l.modele.padEnd(22)} journal ${taille ? Math.round(taille / 1024) + ' Ko' : 'absent'}`) }
 }
 
-const moteur = option('moteur', 'codex')
-if (!MOTEURS[moteur]) { console.error(`moteur inconnu : ${moteur} (codex | gemini | qwen)`); process.exit(2) }
-switch (commande) {
-  case 'sonde': process.exit(await sonde(moteur))
-  case 'lancer': if (!positionnels[0]) { console.error('lancer <agent> --tache=<id> [--moteur=codex|gemini|qwen] [--model=…] [--duo]'); process.exit(2) } await lancer(positionnels[0], option('tache'), moteur, option('model', MOTEURS[moteur].modele)); break
-  case 'pas': if (positionnels.length < 2) { console.error('pas <agent> --tache=<id> <message…>'); process.exit(2) } await pas(positionnels[0], option('tache'), positionnels.slice(1).join(' '), moteur, option('model', MOTEURS[moteur].modele)); break
-  case 'etat': etat(); break
-  default: console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').filter((l) => l.startsWith('//')).slice(4, 13).map((l) => l.replace(/^\/\/ ?/, '')).join('\n'))
+// Le CLI ne tourne que si ce fichier est lancé directement : bin/antigravity.mjs importe PROMPT sans rien lancer,
+// et un projet qui importe scripts/executant.mjs (026-107, ORS-7) ne doit rien voir s'afficher ni s'exécuter.
+const estPrincipal = !!process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+if (estPrincipal) {
+  const moteur = option('moteur', 'codex')
+  if (!MOTEURS[moteur]) { console.error(`moteur inconnu : ${moteur} (codex)`); process.exit(2) }
+  switch (commande) {
+    case 'sonde': process.exit(await sonde(moteur))
+    case 'lancer': if (!positionnels[0]) { console.error('lancer <agent> --tache=<id> [--moteur=codex] [--model=…] [--duo]'); process.exit(2) } await lancer(positionnels[0], option('tache'), moteur, option('model', MOTEURS[moteur].modele)); break
+    case 'pas': if (positionnels.length < 2) { console.error('pas <agent> --tache=<id> <message…>'); process.exit(2) } await pas(positionnels[0], option('tache'), positionnels.slice(1).join(' '), moteur, option('model', MOTEURS[moteur].modele)); break
+    case 'etat': etat(); break
+    default: console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').filter((l) => l.startsWith('//')).slice(4, 13).map((l) => l.replace(/^\/\/ ?/, '')).join('\n'))
+  }
 }
+
+export { binaireCodex }

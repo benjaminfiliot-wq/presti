@@ -20,9 +20,7 @@
   "executants": [
     "antigravity",
     "codex",
-    "claude-code",
-    "gemini-cli",
-    "qwen"
+    "claude-code"
   ],
   "maxMinutes": 30,
   "lectureLibre": [

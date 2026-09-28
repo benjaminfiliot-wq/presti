@@ -1,9 +1,12 @@
-// scripts/antigravity.mjs — le pilote d'Antigravity depuis Claude Code (prompt v15 §1 : « tu penses, il produit »).
+// bin/antigravity.mjs — le pilote d'Antigravity depuis Claude Code (prompt v16 §1 : « tu penses, il produit »).
+// Vendorisé dans <projet>/scripts/antigravity.mjs par `orchestre.mjs maj`, comme bin/orchestre.mjs : généraliste,
+// aucun chemin propre à un projet particulier ici — racine, vault et nom du projet viennent de .orchestre/orchestre.json.
 //
-// Antigravity (l'IDE) doit être ouvert sur l'espace de travail presti + SaaS : son serveur local (language_server.exe)
-// expose une API d'agents — `agentapi new-conversation`, `send-message`, `get-conversation-metadata` — protégée par un
-// jeton CSRF qu'on lit dans la ligne de commande du processus. Rien n'est stocké : jeton, port et projet sont
-// redécouverts à chaque appel. Le suivi se lit sur disque : ~/.gemini/antigravity/brain/<conversation>/…/transcript.jsonl.
+// Antigravity (l'IDE) doit être ouvert sur l'espace de travail du projet (et de son vault, s'il en a un) : son
+// serveur local (language_server.exe) expose une API d'agents — `agentapi new-conversation`, `send-message`,
+// `get-conversation-metadata` — protégée par un jeton CSRF qu'on lit dans la ligne de commande du processus. Rien
+// n'est stocké : jeton, port et projet sont redécouverts à chaque appel. Le suivi se lit sur disque :
+// ~/.gemini/antigravity/brain/<conversation>/…/transcript.jsonl.
 //
 // Usage :
 //   node scripts/antigravity.mjs etat                                l'état de chaque agent lancé (et des tâches)
@@ -29,9 +32,29 @@ import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
-const RACINE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+// La racine du projet : le dossier qui contient .orchestre/, en remontant depuis le répertoire courant, sinon depuis
+// ce fichier — comme bin/orchestre.mjs. Sans .orchestre/ trouvable (ex. ce fichier copié seul, sans le projet), on
+// retombe sur l'hypothèse habituelle « ce fichier vit dans <racine>/scripts/ » : `instantane()` échoue alors
+// naturellement sur un dossier sans dépôt git, ce qui est le comportement voulu (refus, rien de lancé).
+function trouverRacine(depart) {
+  let d = path.resolve(depart)
+  for (;;) {
+    if (fs.existsSync(path.join(d, '.orchestre')) && fs.statSync(path.join(d, '.orchestre')).isDirectory()) return d
+    const parent = path.dirname(d)
+    if (parent === d) return null
+    d = parent
+  }
+}
+const ICI = path.dirname(fileURLToPath(import.meta.url))
+const RACINE = trouverRacine(process.cwd()) || trouverRacine(ICI) || path.resolve(ICI, '..')
 const ORCH = path.join(RACINE, '.orchestre')
 const AGENTS = path.join(ORCH, 'agents.jsonl')
+// .orchestre/orchestre.json relu à chaque appel (jamais mis en cache) : projet, vault et carteVault en sortent.
+function config() {
+  try { return JSON.parse(fs.readFileSync(path.join(ORCH, 'orchestre.json'), 'utf8')) } catch { return {} }
+}
+function nomProjet() { return config().projet || path.basename(RACINE) }
+function cheminVault() { const v = config().vault; if (!v) return null; const p = path.resolve(RACINE, v); return fs.existsSync(p) ? p : null }
 const LS = path.join(process.env.LOCALAPPDATA || '', 'Programs', 'antigravity', 'resources', 'bin', 'language_server.exe')
 const GEMINI = path.join(os.homedir(), '.gemini')
 const MODELES_GEMINI = ['pro', 'flash', 'flash_lite']
@@ -50,20 +73,26 @@ const maintenant = () => new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 function ps(script) { return execFileSync('powershell', ['-NoProfile', '-Command', script], { encoding: 'utf8', timeout: 20000 }).trim() }
 function contexte() {
   if (!fs.existsSync(LS)) throw new Error(`Antigravity n'est pas installé ici (${LS})`)
+  const nom = nomProjet()
+  const vault = cheminVault()
+  const nomVault = vault ? path.basename(vault) : null
+  const espace = nomVault ? `${nom} + ${nomVault}` : nom
   const ligne = ps(`(Get-CimInstance Win32_Process -Filter "name='language_server.exe'" | Select-Object -First 1) | ForEach-Object { $_.ProcessId.ToString() + '|' + $_.CommandLine }`)
-  if (!ligne) throw new Error("Antigravity n'est pas ouvert (aucun language_server.exe) : ouvre-le sur presti + SaaS")
+  if (!ligne) throw new Error(`Antigravity n'est pas ouvert (aucun language_server.exe) : ouvre-le sur ${espace}`)
   const [pid, ...reste] = ligne.split('|')
   const jeton = (reste.join('|').match(/--csrf_token[ =]+(\S+)/) || [])[1]
   if (!jeton) throw new Error('jeton CSRF introuvable dans la ligne de commande du serveur')
   const ports = ps(`Get-NetTCPConnection -OwningProcess ${pid} -State Listen | Select-Object -ExpandProperty LocalPort`).split(/\s+/).filter(Boolean)
   let projet = null
   const dossierProjets = path.join(GEMINI, 'config', 'projects')
+  const echapper = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const motifs = [nom, nomVault].filter(Boolean).map((n) => new RegExp(`[\\\\/]${echapper(n)}(["\\\\/]|%2F|$)`, 'i'))
   for (const f of fs.existsSync(dossierProjets) ? fs.readdirSync(dossierProjets) : []) {
     if (!f.endsWith('.json')) continue
     const texte = fs.readFileSync(path.join(dossierProjets, f), 'utf8')
-    if (/Documents(\/|%2F|\\\\)presti/i.test(texte) || /Documents(\/|%2F|\\\\)SaaS/i.test(texte)) { projet = f.replace(/\.json$/, ''); break }
+    if (motifs.some((m) => m.test(texte))) { projet = f.replace(/\.json$/, ''); break }
   }
-  if (!projet) throw new Error("aucun projet Antigravity ne pointe sur presti : ouvre l'espace de travail presti + SaaS dans Antigravity")
+  if (!projet) throw new Error(`aucun projet Antigravity ne pointe sur ${nom} : ouvre l'espace de travail ${espace} dans Antigravity`)
   for (const port of ports) {
     const env = { ...process.env, ANTIGRAVITY_CSRF_TOKEN: jeton, ANTIGRAVITY_LS_ADDRESS: `127.0.0.1:${port}`, ANTIGRAVITY_PROJECT_ID: projet }
     try {
@@ -139,14 +168,21 @@ const etatDe = (t) => {
 }
 
 // ── Le prompt d'un exécutant : la boucle, une tâche, une conversation ────────────────────────────────────
-const PROMPT = (agent, tache) => `Tu es un exécutant du système .orchestre/ du dépôt presti (dossier C:/Users/benja/Documents/presti de cet espace de travail). Lis d'abord presti/AGENTS.md (court), puis presti/.orchestre/contexte.md, puis SaaS/CLAUDE.md et SaaS/Produit/Carte-du-code.md. N'explore rien d'autre avant d'avoir ta tâche.
-Ensuite, dans le dossier presti :
+const PROMPT = (agent, tache) => {
+  const cfg = config()
+  const nom = cfg.projet || path.basename(RACINE)
+  const vault = cheminVault()
+  const nomVault = vault ? path.basename(vault) : null
+  const ligneVault = nomVault ? ` Lis aussi ${nomVault}/CLAUDE.md${cfg.carteVault ? ' et ' + nomVault + '/' + cfg.carteVault : ''}.` : ''
+  return `Tu es un exécutant du système .orchestre/ du dépôt ${nom} (dossier de cet espace de travail). Lis d'abord AGENTS.md (court), puis .orchestre/contexte.md.${ligneVault} N'explore rien d'autre avant d'avoir ta tâche.
+Ensuite, dans le dossier ${nom} :
 1. Lance \`node scripts/orchestre.mjs prochaine --agent=${agent}${tache ? ` --tache=${tache}` : ''}\` : la tâche s'affiche en entier, avec ce qu'il faut faire à la fin. Code de sortie 2 = rien à faire : dis-le en une ligne et arrête-toi.
 2. Fais exactement ce que dit la tâche, dans son \`perimetre\` seulement. \`interdit\` reste intact, même pour aider. Le \`budget\` est une limite.
 3. Dépose tes preuves dans .orchestre/preuves/<id>/. Lance \`node scripts/orchestre.mjs verifier <id>\` autant de fois que nécessaire. Quand c'est vert : déplace le fichier de .orchestre/en-cours/ vers .orchestre/fait/ et relance \`verifier <id>\` — c'est ce verdict-là qui compte.
 4. Bloqué ? Écris .orchestre/en-cours/<id>.question.md avec deux ou trois options numérotées, puis ATTENDS : la réponse arrive dans <id>.reponse.md ET dans cette conversation. Ne contourne jamais une règle ou un vérificateur pour finir.
 5. Termine par une seule ligne : \`<id> : PASS|FAIL — <ligne du verdict>\`. Une seule tâche par conversation : ne prends pas la suivante.
-Règles : français ; zéro donnée réelle (comptes @presti-test.invalid, supprimés après) ; une fonctionnalité non finie n'apparaît pas ; aucun chiffre non sourcé ; aucun secret dans un fichier versionné ; tu ne modifies ni scripts/orchestre.mjs, ni scripts/antigravity.mjs, ni les vérificateurs, ni plans/cerveau-site.md.`
+Règles : français ; zéro donnée réelle (comptes de test jetables, supprimés après) ; une fonctionnalité non finie n'apparaît pas ; aucun chiffre non sourcé ; aucun secret dans un fichier versionné ; tu ne modifies ni scripts/orchestre.mjs, ni scripts/antigravity.mjs, ni scripts/executant.mjs, ni les vérificateurs, sauf si la tâche les met dans son périmètre.`
+}
 
 // ── Instantané avant chaque lancement (décision D3 de Benj, 24/09/2026) ─────────────────────────────────────
 // Antigravity tourne avec un terminal hors bac à sable : c'est lui qui a lancé le « git restore » du 13/09 (trois jours de
@@ -156,7 +192,7 @@ Règles : français ; zéro donnée réelle (comptes @presti-test.invalid, suppr
 //   git show refs/instantanes/<nom>:<chemin>     (liste : git for-each-ref refs/instantanes)
 // Sans instantané, pas de lancement.
 function instantane(nom) {
-  const index = path.join(os.tmpdir(), `presti-instantane-${process.pid}-${Date.now()}.index`)
+  const index = path.join(os.tmpdir(), `${nomProjet()}-instantane-${process.pid}-${Date.now()}.index`)
   const env = { ...process.env, GIT_INDEX_FILE: index }
   const git = (a) => execFileSync('git', a, { cwd: RACINE, encoding: 'utf8', env, maxBuffer: 1 << 26 }).trim()
   try {
@@ -169,18 +205,22 @@ function instantane(nom) {
   } finally { fs.rmSync(index, { force: true }) }
 }
 
+// Le duo (plans/duo-antigravity.md) : l'agent prend sa tâche, la lit, et ATTEND les pas de Claude Code — un à la fois.
+const PROMPT_DUO = (agent, tache, nom) => [
+  `Tu travailles en duo avec Claude Code, qui dirige, dans le dépôt ${nom} (dossier de cet espace de travail). Règles : tu ne touches qu’au périmètre de ta tâche ; jamais git restore, git checkout <fichier>, git stash, git reset, git clean, ni de suppression hors périmètre ; zéro donnée réelle ; tu ne fabriques aucun fichier de preuve (police, photo, capture) — tu copies des sources réelles ou tu dis que tu ne trouves pas.`,
+  'Maintenant : (1) lance « node scripts/orchestre.mjs prochaine --agent=' + agent + ' --tache=' + tache + ' » dans ' + nom + ' et lis la tâche affichée ; (2) lance la commande « verifier » de la tâche UNE fois (avec --statique si c’est site-qa) et note les lignes ÉCHEC ; (3) réponds seulement « prêt — N échecs au juge statique » suivi des lignes ÉCHEC, puis ATTENDS le pas 1. Tu ne fais rien d’autre tant que Claude Code ne t’a pas envoyé un pas. Chaque pas se termine par la commande qui le prouve ; tu me rends uniquement les lignes ÉCHEC restantes (ou « aucune »).',
+].join('\n')
+
 // ── Commandes ────────────────────────────────────────────────────────────────────────────────────────────
-async function lancer(ctx, agent, tache, modele) {
+// L'instantané (décision D3) passe AVANT toute prise de contact avec Antigravity : sans dépôt git, on refuse et on
+// ne lance rien, jamais un appel réseau au serveur local en premier (026-107, ORS-6).
+async function lancer(agent, tache, modele) {
   let photo
   try { photo = instantane(`ag-${agent}`) } catch (e) { console.error(`✗ instantané impossible, lancement refusé : ${String(e.message).slice(0, 300)}`); process.exit(1) }
   console.log(`· instantané ${photo.ref} (${photo.commit.slice(0, 8)})`)
+  const ctx = contexte()
   // Un palier Gemini (agentapi), un alias (opus, sonnet) ou n'importe quel libellé du catalogue (« Gemini 3.8 Flash (High) ») — voir `catalogue`.
-// Le duo (plans/duo-antigravity.md) : l'agent prend sa tâche, la lit, et ATTEND les pas de Claude Code — un à la fois.
-const PROMPT_DUO = (agent, tache) => [
-  'Tu travailles en duo avec Claude Code, qui dirige, dans le dépôt presti (C:/Users/benja/Documents/presti de cet espace de travail). Règles : tu ne touches qu’au périmètre de ta tâche ; jamais git restore, git checkout <fichier>, git stash, git reset, git clean, ni de suppression hors périmètre ; zéro donnée réelle ; tu ne fabriques aucun fichier de preuve (police, photo, capture) — tu copies des sources réelles ou tu dis que tu ne trouves pas.',
-  'Maintenant : (1) lance « node scripts/orchestre.mjs prochaine --agent=' + agent + ' --tache=' + tache + ' » dans presti et lis la tâche affichée ; (2) lance la commande « verifier » de la tâche UNE fois (avec --statique si c’est site-qa) et note les lignes ÉCHEC ; (3) réponds seulement « prêt — N échecs au juge statique » suivi des lignes ÉCHEC, puis ATTENDS le pas 1. Tu ne fais rien d’autre tant que Claude Code ne t’a pas envoyé un pas. Chaque pas se termine par la commande qui le prouve ; tu me rends uniquement les lignes ÉCHEC restantes (ou « aucune »).',
-].join('\n')
-  const prompt = option('duo') ? PROMPT_DUO(agent, tache) : PROMPT(agent, tache)
+  const prompt = option('duo') ? PROMPT_DUO(agent, tache, nomProjet()) : PROMPT(agent, tache)
   let id
   if (!MODELES_GEMINI.includes(modele)) {
     id = await lancerCascadeClaude(ctx, modele, prompt)
@@ -193,7 +233,7 @@ const PROMPT_DUO = (agent, tache) => [
   console.log(`✓ ${agent}${tache ? ' → ' + tache : ''} lancé (${modele}) · conversation ${id}`)
   return id
 }
-async function flotte(ctx, n, modele) {
+async function flotte(n, modele) {
   const file = fs.existsSync(path.join(ORCH, 'file')) ? fs.readdirSync(path.join(ORCH, 'file')).filter((f) => f.endsWith('.md')).sort() : []
   const dejaVisees = new Set(agents().map((a) => a.tache).filter(Boolean))
   const prefixe = (g) => String(g).split(/[*?{]/)[0]
@@ -206,7 +246,7 @@ async function flotte(ctx, n, modele) {
     const per = (m ? m[1].split(',') : []).map((x) => prefixe(x.trim()))
     if (per.some((p) => perimetres.some((q) => p.startsWith(q) || q.startsWith(p)))) { console.log(`  ${id} : chevauche une tâche déjà lancée, attendra`); continue }
     perimetres.push(...per)
-    await lancer(ctx, `ag-${id.replace(/^0+/, '').replace(/-/g, '')}`, id, modele)
+    await lancer(`ag-${id.replace(/^0+/, '').replace(/-/g, '')}`, id, modele)
     lancees.push(id)
     if (lancees.length >= n) break
   }
@@ -261,19 +301,20 @@ async function sonde(ctx, modele) {
   console.log(`? sonde ${modele} : pas de réponse en 60 s`); return 1
 }
 
-// Le CLI ne tourne que si ce fichier est lancé directement : scripts/executant.mjs importe PROMPT et PROMPT_DUO sans rien lancer.
+// Le CLI ne tourne que si ce fichier est lancé directement : scripts/executant.mjs importe PROMPT et instantane
+// sans rien lancer, ni rien afficher (026-107, ORS-7 pour l'équivalent côté executant.mjs).
 const estPrincipal = !!process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 if (estPrincipal) try {
   switch (commande) {
     case 'etat': etat(); break
     case 'catalogue': { const liste = await catalogueModeles(contexte()); console.log(liste.map((c) => `${c.label}  →  ${JSON.stringify(c.modelOrAlias)}${c.modelId ? '  (' + c.modelId + ')' : ''}`).join('\n') || '(catalogue vide)'); break }
     case 'sonde': process.exit(await sonde(contexte(), option('model', 'flash_lite'))); break
-    case 'lancer': { if (!positionnels[0]) { console.error('lancer <agent> [--tache=<id>] [--model=pro]'); process.exit(2) } await lancer(contexte(), positionnels[0], option('tache'), option('model', 'pro')); break }
-    case 'flotte': await flotte(contexte(), Number(option('n', '6')) || 6, option('model', 'pro')); break
+    case 'lancer': { if (!positionnels[0]) { console.error('lancer <agent> [--tache=<id>] [--model=pro]'); process.exit(2) } await lancer(positionnels[0], option('tache'), option('model', 'pro')); break }
+    case 'flotte': await flotte(Number(option('n', '6')) || 6, option('model', 'pro')); break
     case 'repondre': repondre(contexte(), positionnels[0], positionnels[1], positionnels.slice(2).join(' ')); break
     case 'dire': { if (positionnels.length < 2) { console.error('dire <agent> <message>'); process.exit(2) } dire(contexte(), positionnels[0], positionnels.slice(1).join(' ')); break }
     default: console.log(fs.readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').filter((l) => l.startsWith('//')).slice(8, 14).map((l) => l.replace(/^\/\/ ?/, '')).join('\n')); process.exit(commande ? 2 : 0)
   }
 } catch (e) { console.error(`✗ ${e.message}`); process.exit(1) }
 
-export { PROMPT }
+export { PROMPT, instantane }

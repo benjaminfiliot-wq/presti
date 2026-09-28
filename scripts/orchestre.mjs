@@ -48,7 +48,7 @@ const MAX_LIGNES_DIGEST = 100
 const SEUIL_PART_LUE = 60 // au-delà de ce pourcentage, Claude Code lit trop au lieu de faire lire
 const DEFAUTS = {
   projet: null, description: '', pile: '', source: null, vault: null, carteVault: 'Produit/Carte-du-code.md',
-  carte: {}, juges: {}, executants: ['antigravity', 'claude-code', 'gemini-cli', 'qwen'], maxMinutes: 30,
+  carte: {}, juges: {}, executants: ['antigravity', 'codex', 'claude-code'], maxMinutes: 30,
   lectureLibre: ['.orchestre/**', 'plans/**'], methodeSupplement: [],
 }
 
@@ -787,6 +787,12 @@ function init(dossier, options) {
   // Le bin et sa bibliothèque : une copie (pas de lien symbolique : Windows). Le bin, c'est ce fichier-ci.
   lignes.push(`✓ scripts/orchestre.mjs ${copier(CE_FICHIER, path.join(racine, 'scripts', 'orchestre.mjs'))}`)
   lignes.push(`✓ scripts/lib/preuves.mjs ${copier(path.join(path.dirname(CE_FICHIER), 'lib', 'preuves.mjs'), path.join(racine, 'scripts', 'lib', 'preuves.mjs'))}`)
+  // Les deux pilotes (executant.mjs, antigravity.mjs) : présents seulement quand CE_FICHIER est le bin/ du dépôt
+  // outil (pas une copie vendorisée qui relancerait « init » sur elle-même).
+  for (const p of ['executant.mjs', 'antigravity.mjs']) {
+    const src = path.join(path.dirname(CE_FICHIER), p)
+    if (existe(src)) lignes.push(`✓ scripts/${p} ${copier(src, path.join(racine, 'scripts', p))}`)
+  }
   // CLAUDE.md : s'il existe, on n'y insère que le bloc Méthode ; sinon le gabarit rendu.
   const claude = path.join(racine, 'CLAUDE.md')
   if (existe(claude)) { const s = lire(claude); const n = remplacerBloc(s, true); if (n !== s) fs.writeFileSync(claude, n); lignes.push(`✓ CLAUDE.md existant : bloc Méthode ${n !== s ? 'posé' : 'déjà à jour'}`) }
@@ -830,6 +836,8 @@ function maj() {
   const paires = [
     ['bin/orchestre.mjs', 'scripts/orchestre.mjs'],
     ['bin/lib/preuves.mjs', 'scripts/lib/preuves.mjs'],
+    ['bin/executant.mjs', 'scripts/executant.mjs'],
+    ['bin/antigravity.mjs', 'scripts/antigravity.mjs'],
     ...(existe(path.join(source, 'hooks')) ? fs.readdirSync(path.join(source, 'hooks')).filter((f) => f.endsWith('.mjs')).map((h) => [`hooks/${h}`, `scripts/hooks/${h}`]) : []),
     // Les juges déjà installés se rafraîchissent ; un juge que le projet n'a pas n'est pas ajouté ici (c'est le rôle d'init).
     ...(existe(path.join(source, 'juges')) ? fs.readdirSync(path.join(source, 'juges')).filter((f) => f.endsWith('.mjs') && existe(path.join(RACINE, 'scripts', 'juges', f))).map((j) => [`juges/${j}`, `scripts/juges/${j}`]) : []),
