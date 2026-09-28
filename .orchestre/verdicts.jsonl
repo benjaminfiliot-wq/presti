@@ -437,3 +437,5 @@
 {"id":"026-131","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:24:13Z","duree_s":44,"agent":"claude-code","executant":"claude-code","lignes":311,"dossier":"fait"}
 {"id":"026-047","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:24:50Z","duree_s":254,"agent":"usine-codex-63","executant":"codex","lignes":572,"dossier":"fait"}
 {"id":"026-056","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:35:50Z","duree_s":419,"agent":"usine-codex-64","executant":"codex","lignes":431,"dossier":"fait"}
+{"id":"026-114","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T10:43:24Z","duree_s":10,"agent":"claude-code","executant":"claude-code","lignes":616,"dossier":"fait"}
+{"id":"026-100","verdict":"FAIL","ligne":"❌ CH-8 rédacteur en échec : le journal montre [\"export\"], l'export puis la rédaction seulement attendus","code":1,"date":"2026-09-28T10:43:43Z","duree_s":75,"agent":"usine-codex-65","executant":"codex","lignes":454,"dossier":"fait"}
