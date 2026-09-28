@@ -2122,6 +2122,86 @@
           ]
         }
       ]
+    },
+    "accords_benj": {
+      "fiche": "026-034",
+      "migration": "0099",
+      "contrat": "- **`ops.accords_benj`**, un accord de Benj sur un envoi :",
+      "colonnes": [
+        {
+          "nom": "id",
+          "type": "uuid",
+          "pk": true,
+          "defaut": "gen_random_uuid()",
+          "texte": "`id uuid primary key default gen_random_uuid()` ;"
+        },
+        {
+          "nom": "envoi_id",
+          "type": "uuid",
+          "not_null": true,
+          "references": "ops.envois(id)",
+          "texte": "`envoi_id uuid not null references ops.envois(id) on delete cascade` ;"
+        },
+        {
+          "nom": "canal",
+          "type": "text",
+          "not_null": true,
+          "texte": "`canal text not null`"
+        },
+        {
+          "nom": "destinataire",
+          "type": "text",
+          "texte": "`destinataire text`"
+        },
+        {
+          "nom": "empreinte_texte",
+          "type": "text",
+          "not_null": true,
+          "texte": "`empreinte_texte text not null check (empreinte_texte ~ '^[0-9a-f]{64}$')`"
+        },
+        {
+          "nom": "donne_par",
+          "type": "uuid",
+          "not_null": true,
+          "references": "public.artisans(id)",
+          "texte": "`donne_par uuid not null references public.artisans(id)`"
+        },
+        {
+          "nom": "emis_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "defaut": "now()",
+          "texte": "`emis_le timestamptz not null default now()`"
+        },
+        {
+          "nom": "expire_le",
+          "type": "timestamptz",
+          "not_null": true,
+          "texte": "`expire_le timestamptz not null`"
+        },
+        {
+          "nom": "utilise_le",
+          "type": "timestamptz",
+          "texte": "`utilise_le timestamptz`"
+        },
+        {
+          "nom": "annule_le",
+          "type": "timestamptz",
+          "texte": "`annule_le timestamptz`"
+        }
+      ],
+      "contraintes": [
+        "accords_benj_24_heures check (expire_le > emis_le and expire_le <= emis_le + interval '24 hours')"
+      ],
+      "statuts_envois": [
+        "prepare",
+        "attend_accord_benj",
+        "approuve",
+        "envoye",
+        "saute",
+        "perime",
+        "annule"
+      ]
     }
   },
   "graines": {
@@ -2898,8 +2978,8 @@
       "schema": "ops",
       "params": [],
       "rend": "trigger",
-      "declencheur": "before insert or update of statut on ops.envois for each row",
-      "contrat": "**1. `ops.garde_envois()`**, déclencheur `before insert or update of statut on ops.envois for each row`.",
+      "declencheur": "before insert or update on ops.envois for each row",
+      "contrat": "**1. `ops.garde_envois()`**, déclencheur `before insert or update on ops.envois for each row` (toutes les colonnes depuis la correction du 27/09 : une colonne oubliée dans `update of …` était une porte). Contre-vérification et décisions de Benj du 27/09 : toute insertion est jugée quel que soit son statut ; toute entrée ou ré-entrée en `prepare`, `attend_accord_benj` ou `approuve` reprend `prepare_le := now()` et compte au plafond du jour où elle a lieu ; dès l’attente, `entetes`, `verdicts` et `approuve_par_agent` sont figés comme les autres champs (`ops:envoi_fige`) ; le passage à `envoye` est refusé sous pause active (`ops:pause_generale`) ou accord consommé tombé, échu ou émis avant le dernier mouvement de la pause (`ops:accord_perime`), et signalé (`envoi_hors_regle`) pour tout autre écart.",
       "droits": "aucun"
     },
     "ops.annuler_sur_opposition": {
@@ -2910,6 +2990,16 @@
       "rend": "trigger",
       "declencheur": "after insert or update of expire_le on ops.opposition for each row",
       "contrat": "**2. `ops.annuler_sur_opposition()`**, déclencheur `after insert or update of expire_le on ops.opposition for each row`, pour une opposition active. Les envois `prepare` ou `approuve` dont le prospect ou le destinataire correspond passent en `annule`, sauf une `confirmation_stop`. Un événement, sans donnée personnelle. **Il ne change pas l'étape du prospect** : cette colonne appartient à la série acquisition (`acq_opposer`).",
+      "droits": "aucun"
+    },
+    "ops.garde_accords": {
+      "fiche": "026-034",
+      "migration": "0099",
+      "schema": "ops",
+      "params": [],
+      "rend": "trigger",
+      "declencheur": "before insert or update on ops.accords_benj for each row",
+      "contrat": "**4. `ops.garde_accords()`**, déclencheur `before insert or update on ops.accords_benj for each row`. À l'émission : `donne_par` fondateur, sinon `ops:accord_auteur` ; `emis_le := now()`, `expire_le` ramenée à 24 h au plus (échue : `ops:accord_perime`), `utilise_le` et `annule_le` vides ; l'envoi existe, est en `attend_accord_benj` et porte le même canal, le même destinataire et la même empreinte, sinon `ops:accord_envoi`. Ensuite un accord ne change plus : seul `utilise_le` ou `annule_le` se pose, une fois, jamais les deux, sinon `ops:accord_fige`.",
       "droits": "aucun"
     },
     "ops_garde_etat": {
@@ -3091,6 +3181,30 @@
     ],
     "ops:vt": [
       "026-036"
+    ],
+    "ops:accord_absent": [
+      "026-034"
+    ],
+    "ops:accord_perime": [
+      "026-034"
+    ],
+    "ops:accord_rejoue": [
+      "026-034"
+    ],
+    "ops:accord_different": [
+      "026-034"
+    ],
+    "ops:accord_auteur": [
+      "026-034"
+    ],
+    "ops:accord_envoi": [
+      "026-034"
+    ],
+    "ops:accord_fige": [
+      "026-034"
+    ],
+    "ops:envoi_fige": [
+      "026-034"
     ]
   }
 }

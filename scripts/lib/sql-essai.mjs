@@ -290,8 +290,11 @@ export function analyserEssai(bloc, { nus = null } = {}) {
     const segs = segments(blocs[0].corps)
     charges = segs.filter((s) => s.type === 'dollar' && s.tag === ETIQUETTE_MIGRATION).map((s) => s.corps)
     if (!charges.length) raisons.push('aucun jumeau exécuté par « execute $migration_026$…$migration_026$ »')
-    const autres = segs.filter((s) => s.type === 'dollar' && s.tag !== ETIQUETTE_MIGRATION)
-    if (autres.length) raisons.push(`bloc(s) $…$ inattendu(s) dans le corps : ${autres.map((s) => `$${s.tag}$`).join(', ')}`)
+    // Un scénario légitime peut définir localement une fonction (ex. remplacer une horloge stable) avec son propre bloc
+    // $$…$$ ou $tag$…$tag$ : seule une réapparition de l'étiquette $essai_026$ elle-même est une vraie collision (défaut
+    // du 28/09, fiche 026-063 : un scénario avec « as $$ … $$ » était refusé alors qu'il ne portait aucune ambiguïté).
+    const autres = segs.filter((s) => s.type === 'dollar' && s.tag === ETIQUETTE_ESSAI)
+    if (autres.length) raisons.push(`bloc(s) $${ETIQUETTE_ESSAI}$ imbriqué(s) dans le corps : collision d'étiquette`)
     const code = segs.filter((s) => s.type === 'code').map((s) => s.texte).join(' ').toLowerCase()
     for (const [nom, re] of MOTS_INTERDITS_ESSAI) if (re.test(code)) raisons.push(`« ${nom} » hors des chaînes`)
     corps = segs.filter((s) => !(s.type === 'dollar' && s.tag === ETIQUETTE_MIGRATION)).map((s) => s.texte).join('')
