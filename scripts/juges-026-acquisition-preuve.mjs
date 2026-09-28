@@ -65,6 +65,12 @@ const REGISTRE = [
   { lot: 2, juge: 'scripts/vigie-meta-qa.mjs', arguments: [], attendu: 'VM-1', loader: true },
   { lot: 2, juge: 'scripts/conformite-qa.mjs', arguments: [], attendu: 'CO-1', loader: true },
   { lot: 2, juge: 'scripts/redacteur-qa.mjs', arguments: [], attendu: 'RD-1', loader: true },
+  // Lot 3 (026-080) : le Standard, le lien privé d'une maquette, l'Atelier sur l'usine. Chaque module jugé
+  // (standardiste.ts, maquettesLien.ts, atelier-maquettes.mjs + magasinUsine.ts + les quatre routes) est écrit par une
+  // fiche ultérieure (026-085, 026-082, 026-097) : sur la référence, le premier critère échoue avec « module absent ».
+  { lot: 3, juge: 'scripts/standardiste-qa.mjs', arguments: [], attendu: 'ST-1', loader: true },
+  { lot: 3, juge: 'scripts/maquette-lien-qa.mjs', arguments: [], attendu: 'ML-1', loader: true },
+  { lot: 3, juge: 'scripts/atelier-maquettes-qa.mjs', arguments: [], attendu: 'AM-1', loader: true },
   // Lot 4 (026-037) : la base, les routes, la page de confidentialité. `auto` : les épreuves exigées en --auto-controle.
   { lot: 4, juge: 'scripts/ops-acquisition-qa.mjs', arguments: ['--migration=socle'], attendu: 'OA-1', auto: ['AC-TEMOIN-SOCLE', 'AC-OA-2A', 'AC-OA-2B', 'AC-OA-2C', 'AC-TEMOIN-OAR', 'AC-OAR-1', 'AC-OAR-2'] },
   { lot: 4, juge: 'scripts/ops-acquisition-qa.mjs', arguments: ['--migration=echanges'], attendu: 'OB-1', auto: ['AC-TEMOIN-ECHANGES', 'AC-TEMOIN-OBR', 'AC-OBR-1', 'AC-OBR-2'] },
@@ -245,8 +251,11 @@ if (IDS.includes('JP-4')) {
   // hôtes des scripts de captcha nommés dans les pages d'abandon de scripts/fixtures/026-acquisition/envoi/formulaires.mjs
   // (reCAPTCHA, hCaptcha, Turnstile, Friendly Captcha). Lot 2 (026-069, JP-6 de son propre cahier) ajoute : prestiapp.fr
   // (le vrai domaine de Presti, dans les seuls messages fautifs ou après un « oui » du corpus de J3) et github.io (la
-  // NOTICE_URL d'essai) : ce ne sont pas des domaines de tiers, jamais des adresses inventées.
-  const PERMIS = ['recherche-entreprises.api.gouv.fr', 'data.ademe.fr', 'graph.facebook.com', 'instagram.com', 'facebook.com', 'pagesjaunes.fr', 'linkedin.com', 'dns.google', 'smtp.gmail.com', 'imap.gmail.com', 'www.google.com', 'js.hcaptcha.com', 'challenges.cloudflare.com', 'cdn.jsdelivr.net', 'prestiapp.fr', 'github.io']
+  // NOTICE_URL d'essai). Lot 3 (026-080, ST-20 de 026-085) ajoute : orange.fr, une messagerie gratuite RÉELLE de
+  // MESSAGERIES_GRATUITES (contrat.ts) citée telle quelle (jamais une clé d'opposition de domaine) pour prouver qu'un
+  // STOP depuis cette adresse ne met jamais tout orange.fr en opposition. Ce ne sont pas des domaines de tiers, jamais des
+  // adresses inventées.
+  const PERMIS = ['recherche-entreprises.api.gouv.fr', 'data.ademe.fr', 'graph.facebook.com', 'instagram.com', 'facebook.com', 'pagesjaunes.fr', 'linkedin.com', 'dns.google', 'smtp.gmail.com', 'imap.gmail.com', 'www.google.com', 'js.hcaptcha.com', 'challenges.cloudflare.com', 'cdn.jsdelivr.net', 'prestiapp.fr', 'github.io', 'orange.fr']
   const TLD = new Set(['fr', 'com', 'net', 'org', 'io', 'eu', 'dev', 'app', 'co', 'info', 'biz', 'be', 'ch', 'de', 'uk', 'es', 'it', 'nl', 'google', 'cloud', 'site', 'online', 'shop', 'store', 'xyz', 'me', 'us', 'ai', 'tv', 'pro', 're', 'gouv'])
   const dossier = path.join(R, 'scripts', 'fixtures', '026-acquisition')
   const fichiers = []

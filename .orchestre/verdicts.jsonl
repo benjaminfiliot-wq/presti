@@ -559,3 +559,7 @@
 {"id":"026-006","verdict":"FAIL","ligne":"FAIL N16-1 — next installé 16.3.6 (package.json demande \"^16.3.6\"), react 19.3.0, react-dom 19.3.0, @types/react \"^19.3.0\", @types/react-dom \"^19.3.0\"","code":1,"date":"2026-09-28T18:29:58Z","duree_s":98,"agent":"claude-code","executant":"claude-code","lignes":5120,"dossier":"en-cours"}
 {"id":"026-006","verdict":"FAIL","ligne":"PASS N16-4 — npm run typecheck vert","code":1,"date":"2026-09-28T18:34:33Z","duree_s":28,"agent":"claude-code","executant":"claude-code","lignes":5090,"dossier":"en-cours"}
 {"id":"026-204","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T18:34:35Z","duree_s":43,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-135","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T18:37:42Z","duree_s":34,"agent":"usine-codex-98","executant":"codex","lignes":523,"dossier":"fait"}
+{"id":"026-080","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T18:47:27Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":2962,"dossier":"en-cours"}
+{"id":"026-080","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T18:47:51Z","duree_s":3,"agent":"claude-code","executant":"claude-code","lignes":2962,"dossier":"fait"}
+{"id":"026-080","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T18:49:34Z","duree_s":3,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
