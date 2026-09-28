@@ -145,3 +145,28 @@ export async function envoyerPushArtisan(artisanId: string, charge: ChargePush):
   ])
   return r
 }
+
+/** Les fondateurs réels ont les mêmes abonnements et limites que les autres comptes. */
+export async function lireFondateurs(): Promise<string[]> {
+  const { data, error } = await supabaseAdmin.from('artisans').select('id').eq('is_founder', true).eq('est_demo', false)
+  if (error) throw error
+  return (data ?? []).map((fondateur) => fondateur.id)
+}
+
+export async function envoyerPushFondateurs(
+  charge: ChargePush,
+  dep = { fondateurs: lireFondateurs, envoyer: envoyerPushArtisan },
+): Promise<{ envoyes: number; raison?: 'aucun_fondateur' }> {
+  try {
+    const fondateurs = await dep.fondateurs()
+    if (fondateurs.length === 0) return { envoyes: 0, raison: 'aucun_fondateur' }
+    const resultats = await Promise.all(fondateurs.map(async (id) => {
+      try { return (await dep.envoyer(id, charge)).envoyes }
+      catch (erreur) { console.error('[push] envoi fondateur :', erreur); return 0 }
+    }))
+    return { envoyes: resultats.reduce((total, nombre) => total + nombre, 0) }
+  } catch (erreur) {
+    console.error('[push] lecture des fondateurs :', erreur)
+    return { envoyes: 0 }
+  }
+}

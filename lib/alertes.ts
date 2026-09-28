@@ -2,6 +2,8 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { consommerLimite } from '@/lib/limites'
 import { sendEmail, notifierEntreprise, EMAIL_ENTREPRISE } from '@/lib/email'
 import { planConf } from '@/lib/plans'
+import { chargeFondateur } from '@/lib/pilotage/notifications'
+import { envoyerPushFondateurs } from '@/lib/push'
 
 // Les alertes de Presti (prompt v6 §6) : Benj doit être prévenu AVANT que ça casse.
 //
@@ -324,6 +326,10 @@ async function envoyer(al: Alerte, simulation: boolean): Promise<boolean> {
   // v10 J1 : l'alerte est aussi GARDÉE (table alertes, 0065) pour « À faire » du Centre de direction — non bloquant :
   // table absente ou doublon du jour (index unique) → on envoie quand même l'email.
   if (!simulation) await persisterAlerte(al)
+  if (!simulation && al.a === 'entreprise') {
+    const charge = chargeFondateur(al.motif)
+    if (charge) envoyerPushFondateurs(charge).catch(erreur => console.error('[alertes] push fondateurs :', erreur))
+  }
   const sujet = simulation ? `[SIMULATION] ${al.sujet}` : al.sujet
   const corps = simulation ? `${al.corps}\n\n— Ceci est une simulation lancée volontairement (scripts/alertes-e2e.mjs). Aucun incident réel.` : al.corps
   try {

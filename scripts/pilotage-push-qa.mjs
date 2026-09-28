@@ -24,6 +24,7 @@ process.env.TZ = 'UTC'
 import fs from 'node:fs'
 import path from 'node:path'
 import { register } from 'node:module'
+import { randomUUID } from 'node:crypto'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
   R, TRAVAIL, jeu, lireOptions, creerSortie, importsDe, sansCommentaires, typecheck, court, lancerAsync, lireOuNull, git,
@@ -67,8 +68,12 @@ export async function resolve(spec, ctx, next) {
   return next(s, ctx)
 }`
 
-const F1 = '90000000-0000-4000-8000-00000000f001', F2 = '90000000-0000-4000-8000-00000000f002'
-const DEMO = '90000000-0000-4000-8000-00000000d003', ARTISAN = '90000000-0000-4000-8000-00000000a004'
+// PF-5 (durci le 28/09, contre-vérification 026-051) : des identifiants tirés à chaque exécution, jamais les mêmes littéraux
+// d'une fois sur l'autre — une implémentation qui répondrait par des ids figés (recopiés d'une exécution passée du juge, y
+// compris ces anciens « …f001 »/« …f002 ») échouerait la comparaison au prochain rejeu, alors qu'un texte source
+// syntaxiquement correct ne suffit plus à le masquer.
+const F1 = randomUUID(), F2 = randomUUID()
+const DEMO = randomUUID(), ARTISAN = randomUUID()
 const abo = (id, n) => ({ id: `abo-temoin-${n}`, artisan_id: id, type: 'web', endpoint: `https://fcm.googleapis.com/fcm/send/temoin-${n}`, jeton: null, p256dh: 'BTemoinP256dh', auth: 'temoin-auth', echecs: 0, actif: true })
 const TABLES = {
   artisans: [
@@ -80,7 +85,20 @@ const TABLES = {
   push_abonnements: [abo(F1, 1), abo(F2, 2), abo(DEMO, 3), abo(ARTISAN, 4)],
 }
 const BOUT = { [F1]: abo(F1, 1).endpoint, [F2]: abo(F2, 2).endpoint, [DEMO]: abo(DEMO, 3).endpoint, [ARTISAN]: abo(ARTISAN, 4).endpoint }
-const BLOC_DU_MOTIF = { paiement: 'argent', appel: 'appeler', panne_agent: 'agents', argent_bloque: 'argent', coupe_circuit: 'decider', digest: null }
+const BLOC_DU_MOTIF = { paiement: 'argent', appel: 'appeler', panne_agent: 'agents', argent_bloque: 'argent', coupe_circuit: 'decider', digest: null, usine_injoignable: 'agents', canal_arrete: 'envois', gmail_bloque: 'envois' }
+// PF-2 (durci le 28/09, contre-vérification 026-051 — majeurs Codex non re-vérifiés) : le texte et le `renotify` réellement
+// prescrits par la fiche (« Ce qu'il faut faire » pour les six motifs d'origine, § « réponse de Claude Code » du 28/09 pour
+// les trois ajoutés), indépendants du source jugé — pas seulement leur forme (longueur, non-vide). `titre`/`ligne` absents
+// ci-dessous (les trois motifs ajoutés le 28/09, dont le texte n'est pas fixé mot à mot par la fiche) ne sont pas comparés.
+const PRESCRIT = {
+  paiement: { titre: 'Paiement', ligne: 'Un paiement demande votre attention. Le détail est dans le Poste.', renotify: true },
+  appel: { titre: 'Appel à rendre', ligne: 'Quelqu’un demande à être rappelé.', renotify: true },
+  panne_agent: { titre: 'Agent en panne', ligne: 'Un agent ne donne plus signe de vie depuis plus de 2 h.', renotify: true },
+  argent_bloque: { titre: 'Argent bloqué', ligne: 'Une commande payée n’avance pas.', renotify: true },
+  coupe_circuit: { titre: 'Agents en pause', ligne: 'Des coûts sans recette ce mois : une décision vous attend.', renotify: false },
+  digest: { titre: 'Le point du Pilotage', ligne: 'Décisions, appels et argent du jour : tout est dans le Poste.', renotify: false },
+  usine_injoignable: { renotify: true }, canal_arrete: { renotify: true }, gmail_bloque: { renotify: true },
+}
 
 async function enfant(mode, RAC) {
   const res = { mode, erreurs: [], imports: {}, criteres: {}, charges: [], reseau: [], rejets: [] }
@@ -191,9 +209,20 @@ async function enfant(mode, RAC) {
         await alertes.ronde({ simuler: 'digest' }); await attendre(Infinity, 250)
         if (E.push.length) e.push(`ronde({ simuler: 'digest' }) : ${E.push.length} push partis, 0 attendu (!simulation)`)
       }
+      // H (durci le 28/09, contre-vérification 026-051 — bloquant Codex+R1) : chacun des neuf motifs poussés, pris un par
+      // un avec sa propre alerte d'entreprise, atteint bien les deux fondateurs — pas seulement panne_agent (scénario A).
+      // Une exclusion supplémentaire dans la condition d'envoi (ex. « && al.motif !== 'coupe_circuit' ») ne changerait rien
+      // au texte source lu par PF-7, mais viderait ici la liste des destinataires pour ce seul motif : rouge immédiat.
+      for (const m of P.pousses) {
+        D.reinitialiser(TABLES)
+        const al = P.alertes.find((a) => a.motif === m && a.a === 'entreprise')
+        if (!al) { e.push(`motif ${m} : aucune alerte d'entreprise dans alertes-push.json pour l'exercer`); continue }
+        await envoyerAlertes([al]); await attendre(2)
+        auxFondateurs(`motif ${m} (H)`, [F1, F2], charge(m))
+      }
       if (res.rejets.length) e.push(`promesse rejetée sans gestionnaire : ${res.rejets[0]}`)
       if (reseau.length) e.push(`appel réseau : ${reseau[0]}`)
-      return { echecs: e, detail: `envoyerAlertes avec les doublures (2 fondateurs, 1 fondateur de démo, 1 artisan) : panne_agent d'entreprise → 1 e-mail et 1 push à chacun des 2 fondateurs, charge = chargeUtile(chargeFondateur(motif)) ; même clé → ni e-mail ni push ; solde_ia → 1 e-mail, 0 push ; alerte à un artisan → aucun push aux fondateurs ; e-mail qui lève ou refusé → le push part ; lecture des fondateurs en panne → l'e-mail part, aucun rejet ; simulation → aucun push ; aucun appel réseau` }
+      return { echecs: e, detail: `envoyerAlertes avec les doublures (2 fondateurs, 1 fondateur de démo, 1 artisan) : panne_agent d'entreprise → 1 e-mail et 1 push à chacun des 2 fondateurs, charge = chargeUtile(chargeFondateur(motif)) ; même clé → ni e-mail ni push ; solde_ia → 1 e-mail, 0 push ; alerte à un artisan → aucun push aux fondateurs ; e-mail qui lève ou refusé → le push part ; lecture des fondateurs en panne → l'e-mail part, aucun rejet ; simulation → aucun push ; chacun des neuf motifs poussés (H) atteint les deux fondateurs, pris isolément ; aucun appel réseau` }
     })
 
     await garde('PF-2', async () => {
@@ -203,7 +232,7 @@ async function enfant(mode, RAC) {
       if (!(RE0 instanceof RegExp)) return { echecs: ['RE_LIEN_PILOTAGE absent de lib/pilotage/liens.ts'] }
       const RE = new RegExp(RE0.source, RE0.flags.replace(/[gy]/g, ''))
       const mp = notif.MOTIFS_POUSSES
-      if (!Array.isArray(mp) || [...mp].sort().join() !== [...P.pousses].sort().join() || mp.length !== 6) e.push(`MOTIFS_POUSSES = ${JSON.stringify(mp)}, les six motifs ${P.pousses.join(', ')} attendus`)
+      if (!Array.isArray(mp) || [...mp].sort().join() !== [...P.pousses].sort().join() || mp.length !== 9) e.push(`MOTIFS_POUSSES = ${JSON.stringify(mp)}, les neuf motifs ${P.pousses.join(', ')} attendus`)
       for (const m of P.pousses) {
         const c = chargeFondateur(m)
         if (!c || typeof c !== 'object') { e.push(`${m} : ${JSON.stringify(c)} au lieu d'une charge`); continue }
@@ -213,9 +242,15 @@ async function enfant(mode, RAC) {
         const attendu = BLOC_DU_MOTIF[m] ? lienPilotage({ bloc: BLOC_DU_MOTIF[m] }) : lienPilotage()
         if (c.url !== attendu) e.push(`${m} : url ${JSON.stringify(c.url)}, ${JSON.stringify(attendu)} attendu (bloc ${BLOC_DU_MOTIF[m] ?? 'aucun'})`)
         if (c.tag !== `pilotage-${m}`) e.push(`${m} : tag ${JSON.stringify(c.tag)}, « pilotage-${m} » attendu`)
+        const p = PRESCRIT[m]
+        if (p) {
+          if (p.titre !== undefined && c.titre !== p.titre) e.push(`${m} : titre ${JSON.stringify(c.titre)}, ${JSON.stringify(p.titre)} prescrit par la fiche`)
+          if (p.ligne !== undefined && c.ligne !== p.ligne) e.push(`${m} : ligne ${JSON.stringify(c.ligne)}, ${JSON.stringify(p.ligne)} prescrite par la fiche`)
+          if (!!c.renotify !== p.renotify) e.push(`${m} : renotify ${JSON.stringify(!!c.renotify)}, ${p.renotify} prescrit par la fiche`)
+        }
       }
       for (const m of P.non_pousses) { const c = chargeFondateur(m); if (c !== null) e.push(`${m} : ${JSON.stringify(c).slice(0, 80)} au lieu de null`) }
-      return { echecs: e, detail: `chargeFondateur : les six motifs poussés (${P.pousses.join(', ')}) → titre ≤ 60, ligne ≤ 120, url conforme à RE_LIEN_PILOTAGE et au bloc de chaque motif, tag pilotage-<motif> ; MOTIFS_POUSSES exact ; null pour ${P.non_pousses.join(', ')}` }
+      return { echecs: e, detail: `chargeFondateur : les neuf motifs poussés (${P.pousses.join(', ')}) → titre ≤ 60, ligne ≤ 120, url conforme à RE_LIEN_PILOTAGE et au bloc de chaque motif, tag pilotage-<motif>, texte et renotify prescrits par la fiche (six motifs d'origine + renotify des trois ajoutés) ; MOTIFS_POUSSES exact ; null pour ${P.non_pousses.join(', ')}` }
     })
 
     await garde('PF-3', async () => {
@@ -231,7 +266,7 @@ async function enfant(mode, RAC) {
         for (const [quoi, texte] of [['charge', JSON.stringify(c)], ['charge envoyée', push.chargeUtile(c)]]) { const f = fuites(texte); if (f.length) e.push(`${a.cle} : la ${quoi} porte ${f.join(', ')}`) }
       }
       for (const x of res.charges) { const f = fuites(x.corps); if (f.length) e.push(`${x.quoi} (charge réellement envoyée) : ${f.join(', ')}`) }
-      if (n < 7) e.push(`${n} alertes piégées ont une charge, 7 attendues (six motifs d'entreprise et un paiement d'artisan)`)
+      if (n < 10) e.push(`${n} alertes piégées ont une charge, 10 attendues (neuf motifs d'entreprise et un paiement d'artisan)`)
       if (!res.charges.length) e.push('aucune charge réellement envoyée à examiner (PF-8 n’a rien fait partir)')
       return { echecs: e, detail: `${n} alertes piégées (nom, téléphone, adresse, montant, référence de 12 chiffres dans le sujet et le corps) : ni la charge ni chargeUtile(charge) ne portent un piège ni 6 chiffres de suite ; ${res.charges.length} charges réellement envoyées par PF-8, propres aussi ; chargeFondateur ne déclare qu'un paramètre (le motif)` }
     })
@@ -243,10 +278,14 @@ async function enfant(mode, RAC) {
       const charge = Object.freeze({ titre: 'Témoin', ligne: 'Ligne témoin', url: '/controle?onglet=pilotage', tag: 'pilotage-digest', renotify: false })
       const ok = { envoyes: 1, supprimes: 0, desactives: 0 }
       const appels = []
-      const r1 = await envoyerPushFondateurs(charge, { fondateurs: async () => ['f1', 'f2'], envoyer: async (id, c) => { appels.push([id, c]); return ok } })
+      // Durci le 28/09 (contre-vérification 026-051, sabotage majeur n°5) : des doublures qui rendent des `envoyes`
+      // DIFFÉRENTS et non égaux à 1 par fondateur (0 pour f1 — aucun appareil actif — 3 pour f2 — plusieurs appareils),
+      // pour que la somme réelle (3) diverge du nombre de fondateurs (2) : un total recopié sur fondateurs.length rougirait.
+      const OK_ASYM = { f1: { envoyes: 0, supprimes: 0, desactives: 0 }, f2: { envoyes: 3, supprimes: 0, desactives: 0 } }
+      const r1 = await envoyerPushFondateurs(charge, { fondateurs: async () => ['f1', 'f2'], envoyer: async (id, c) => { appels.push([id, c]); return OK_ASYM[id] } })
       if (appels.map((x) => x[0]).sort().join() !== 'f1,f2') e.push(`deux fondateurs : envois vers ${appels.map((x) => x[0]).join(', ') || 'personne'}`)
       if (appels.some(([, c]) => JSON.stringify(c) !== JSON.stringify(charge))) e.push('deux fondateurs : la charge transmise n’est pas la même')
-      if (r1?.envoyes !== 2) e.push(`deux fondateurs : envoyes = ${JSON.stringify(r1?.envoyes)}, 2 attendu`)
+      if (r1?.envoyes !== 3) e.push(`deux fondateurs : envoyes = ${JSON.stringify(r1?.envoyes)}, 3 attendu (0 + 3, mesuré sur les envois rendus — pas le nombre de fondateurs)`)
       let n2 = 0
       const r2 = await envoyerPushFondateurs(charge, { fondateurs: async () => [], envoyer: async () => { n2++; return ok } })
       if (!(r2?.envoyes === 0 && r2?.raison === 'aucun_fondateur') || n2) e.push(`aucun fondateur : ${JSON.stringify(r2)} et ${n2} envoi(s), { envoyes: 0, raison: 'aucun_fondateur' } attendu`)
@@ -256,7 +295,7 @@ async function enfant(mode, RAC) {
       if (!vus.includes('f2')) e.push('un envoi qui lève pour le premier : le second n’est pas tenté')
       if (r3 && typeof r3.envoyes !== 'number') e.push(`un envoi qui lève : ${JSON.stringify(r3)}`)
       try { await envoyerPushFondateurs(charge, { fondateurs: async () => { throw new Error('lecture en panne (doublure)') }, envoyer: async () => ok }) } catch (err) { e.push(`la lecture des fondateurs qui lève : la fonction lève (${premiereLigne(err)})`) }
-      return { echecs: e, detail: 'envoyerPushFondateurs avec doublures : deux fondateurs → deux envois de la même charge, envoyes = 2 ; aucun fondateur → { envoyes: 0, raison: aucun_fondateur } sans envoi ; le premier envoi qui lève n’empêche pas le second et rien ne lève ; la lecture des fondateurs qui lève ne fait pas lever non plus' }
+      return { echecs: e, detail: 'envoyerPushFondateurs avec doublures : deux fondateurs → deux envois de la même charge, envoyes = somme réelle des envois rendus (0 + 3 = 3, pas le nombre de fondateurs) ; aucun fondateur → { envoyes: 0, raison: aucun_fondateur } sans envoi ; le premier envoi qui lève n’empêche pas le second et rien ne lève ; la lecture des fondateurs qui lève ne fait pas lever non plus' }
     })
 
     if (o.drapeaux.has('urgents')) {
@@ -511,7 +550,7 @@ async function complet() {
 async function temoin() {
   const e = []
   for (const [nom, f] of Object.entries(TEMOINS.push)) { try { for (const x of f()) e.push(`${nom} : ${x}`) } catch (err) { e.push(`${nom} : illisible (${court(err.message, 120)})`) } }
-  s.juger('PF-T1', e, `alertes-push.json conforme : les six motifs poussés et les huit autres ont chacun une alerte d'entreprise, une alerte adressée à un artisan, et chaque sujet et corps porte le nom, le téléphone, l'adresse, le montant et 6 chiffres de suite`)
+  s.juger('PF-T1', e, `alertes-push.json conforme : les neuf motifs poussés et les huit autres ont chacun une alerte d'entreprise, une alerte adressée à un artisan, et chaque sujet et corps porte le nom, le téléphone, l'adresse, le montant et 6 chiffres de suite`)
 
   const r = await lancerEnfant('temoin')
   if (r.panne || r.erreurs?.length) s.echoue('PF-T2', r.panne ?? `processus enfant en erreur : ${r.erreurs.join(' | ')}`)

@@ -1,2 +1,2 @@
-1. Étendre le contrat de cette tâche aux trois motifs urgents du veilleur (`usine_injoignable`, `canal_arrete`, `gmail_bloque`) et préciser leurs charges neutres, puis autoriser leur ajout à `MOTIFS_POUSSES`.
-2. Maintenir la liste fermée de six motifs de cette tâche et réviser la règle PF-9 du juge pour qu'elle vérifie seulement ces six motifs.
+1. Mettre à jour le juge et sa fixture hors de cette tâche pour attendre les neuf motifs imposés par la réponse du 28/09, puis relancer la vérification.
+2. Réviser explicitement la fiche pour ne garder que six motifs poussés et modifier la règle PF-9 sur les urgences du veilleur.
