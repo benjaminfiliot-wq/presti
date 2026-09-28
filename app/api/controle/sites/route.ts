@@ -6,7 +6,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } from '@/lib/direction/garde'
-import { ETATS, type EtatCommande } from '@/lib/siteCommande'
+import { ETATS, erreursFabrication, type EtatCommande, type Brouillon } from '@/lib/siteCommande'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -20,9 +20,9 @@ export async function GET(req: Request) {
   const limite = Math.min(200, Math.max(1, Number(u.searchParams.get('limite')) || 50))
   const etat = u.searchParams.get('etat')
   let q = supabaseAdmin.from('sites_commandes')
-    .select('id, artisan_id, email, etat, domaine_mode, domaine, metier, metiers_secondaires, communes, prix_cents, paye_le, genere_le, valide_le, en_ligne_le, scores, verifications, consigne, regenerations, cree_le, modifie_le')
+    .select('id, artisan_id, email, etat, domaine_mode, domaine, metier, metiers_secondaires, communes, matiere, prix_cents, paye_le, genere_le, valide_le, en_ligne_le, search_console_le, retiree_le, dossier_envoye_le, scores, verifications, consigne, regenerations, cree_le, modifie_le')
     .neq('etat', 'brouillon').order('modifie_le', { ascending: false }).limit(limite)
-  if (etat && ETATS.includes(etat as EtatCommande) && etat !== 'brouillon') q = q.eq('etat', etat)
+  if (etat && (ETATS.includes(etat as EtatCommande) || etat === 'retiree') && etat !== 'brouillon') q = q.eq('etat', etat)
   const { data, error } = await q
   // Table absente (0088 pas collée) ou base injoignable : 503, jamais une liste vide qui rassure à tort.
   if (error) return NextResponse.json({ error: 'Commandes de site indisponibles.', code: 'indisponible' }, { status: 503 })
@@ -35,5 +35,15 @@ export async function GET(req: Request) {
     const { data: j } = await supabaseAdmin.from('sites_commandes').select('id, apercu_jeton').in('id', (data ?? []).map((c) => c.id))
     for (const x of j ?? []) jetons.set(x.id, x.apercu_jeton)
   }
-  return NextResponse.json({ commandes: (data ?? []).map((c) => ({ ...c, artisan: c.artisan_id ? parId.get(c.artisan_id) ?? null : null, apercu: jetons.get(c.id) ? `/site-genere/${c.id}/?apercu=${jetons.get(c.id)}` : null })) })
+  return NextResponse.json({ commandes: (data ?? []).map((c) => {
+    const { matiere, ...publique } = c
+    const contenu = matiere as Brouillon['matiere']
+    return { ...publique, matiere_resume: {
+      photos: contenu?.photos?.length ?? 0,
+      voix: Boolean(contenu?.artisan?.citation),
+      prestations: contenu?.prestations?.length ?? 0,
+      manquants: erreursFabrication(c as Brouillon),
+    }, artisan: c.artisan_id ? parId.get(c.artisan_id) ?? null : null,
+    apercu: jetons.get(c.id) ? `/site-genere/${c.id}/?apercu=${jetons.get(c.id)}` : null }
+  }) })
 }

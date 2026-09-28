@@ -4,6 +4,8 @@ import { estFondateur, estRefus, reponseRefus, exigerDomaine, domaineRefuse } fr
 import { sourcer, euros } from '@/lib/direction/fraicheur'
 import { echecsRecents } from '@/lib/direction/stripe'
 import { CRONS_ATTENDUS } from '@/lib/alertes'
+import { erreursFabrication, type Brouillon } from '@/lib/siteCommande'
+import { heuresOuvreesEntre } from '@/lib/siteLivraison'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -18,11 +20,19 @@ export const dynamic = 'force-dynamic'
 // `methode: 'GET'` veut dire OUVRIR, pas exécuter : l'écran suit le lien au lieu de poster. C'est le
 // seul geste sensé devant une facture impayée — la relance se décide en la regardant, pas en cliquant.
 export type Action = { libelle: string; route: string; methode: 'POST' | 'DELETE' | 'GET'; corps?: Record<string, unknown>; reconfirmation: boolean; portee?: string }
-export type Ligne = { id: string; type: 'paiement' | 'alerte' | 'cron'; libelleType: string; gravite: 'info' | 'attention' | 'critique'; libelle: string; detail: string; a: string; source: string; action?: Action }
+export type Ligne = { id: string; type: 'paiement' | 'alerte' | 'cron' | 'commande'; libelleType: string; gravite: 'info' | 'attention' | 'critique'; libelle: string; detail: string; a: string; source: string; action?: Action }
 
-const LIBELLES_TYPE = { paiement: 'Paiement', alerte: 'Alerte', cron: 'Tâche' } as const
+const LIBELLES_TYPE = { paiement: 'Paiement', alerte: 'Alerte', cron: 'Tâche', commande: 'Site' } as const
 /** Le nom des tâches planifiées, en français — pas leur identifiant technique. */
-const NOMS_CRON: Record<string, string> = { relances: 'Relances de devis', 'canaux-relever': 'Relève des boîtes email', alertes: 'Ronde des alertes', 'purges-rgpd': 'Purges RGPD', tic: 'Horloge des agents' }
+const NOMS_CRON: Record<string, string> = { relances: 'Relances de devis', 'canaux-relever': 'Relève des boîtes email', alertes: 'Ronde des alertes', 'purges-rgpd': 'Purges RGPD', tic: 'Horloge des agents', livraison: 'Livraison des sites' }
+
+const commandesEnAttente = () => sourcer('afaire:commandes', 'supabase', async () => {
+  const { data, error } = await supabaseAdmin.from('sites_commandes')
+    .select('id, artisan_id, etat, paye_le, genere_le, valide_le, en_ligne_le, search_console_le, domaine_mode, domaine, metier, communes, matiere')
+    .in('etat', ['payee', 'generee', 'validee', 'en_ligne']).limit(500)
+  if (error) throw new Error(error.message)
+  return data ?? []
+})
 
 const alertesOuvertes = () => sourcer('afaire:alertes', 'supabase', async () => {
   const { data, error } = await supabaseAdmin.from('alertes').select('id, motif, gravite, sujet, corps, cree_le').is('acquittee_le', null).order('cree_le', { ascending: false }).limit(30)
@@ -45,7 +55,7 @@ export async function GET(req: Request) {
   if (estRefus(f)) return reponseRefus(f)
   const perimetre = exigerDomaine(f, 'sante', 'voir')
   if (domaineRefuse(perimetre)) return reponseRefus(perimetre)
-  const [echecs, alertes, crons] = await Promise.all([echecsRecents(), alertesOuvertes(), cronsEnRetard()])
+  const [echecs, alertes, crons, commandes] = await Promise.all([echecsRecents(), alertesOuvertes(), cronsEnRetard(), commandesEnAttente()])
   const lignes: Ligne[] = []
   for (const e of echecs.valeur ?? []) lignes.push({
     id: `paiement:${e.id}`, type: 'paiement', libelleType: LIBELLES_TYPE.paiement, gravite: 'critique',
@@ -85,8 +95,41 @@ export async function GET(req: Request) {
       action: { libelle: 'Relancer', route: `/api/controle/crons/${c.nom}/relancer`, methode: 'POST', reconfirmation: false },
     })
   }
+  const idsArtisans = [...new Set((commandes.valeur ?? []).map((c) => c.artisan_id).filter(Boolean))] as string[]
+  const { data: artisans } = idsArtisans.length
+    ? await supabaseAdmin.from('artisans').select('id, nom').in('id', idsArtisans)
+    : { data: [] }
+  const noms = new Map((artisans ?? []).map((a) => [a.id, a.nom]))
+  const maintenant = new Date()
+  for (const c of commandes.valeur ?? []) {
+    const origine = c.etat === 'payee' ? c.paye_le : c.etat === 'generee' ? c.genere_le : c.etat === 'validee' ? c.valide_le : c.en_ligne_le
+    if (!origine) continue
+    const heures = heuresOuvreesEntre(new Date(origine), maintenant)
+    let libelle: string
+    let detail = noms.get(c.artisan_id ?? '') ?? 'Artisan'
+    let route = '/controle?onglet=sites'
+    if (c.etat === 'payee') {
+      if (heures <= 24) continue
+      if (erreursFabrication(c as unknown as Brouillon).length) {
+        libelle = 'Appeler l’artisan : dossier incomplet'
+        route = c.artisan_id ? `/controle?onglet=clients&client=${c.artisan_id}` : '/controle?onglet=clients'
+      } else {
+        libelle = 'Générer le site'
+        detail += ` · node --import ./scripts/ts-loader.mjs scripts/livrer-site.mjs ${c.id}`
+      }
+    } else if (c.etat === 'generee') libelle = 'Relire et mettre en ligne'
+    else if (c.etat === 'validee') libelle = 'Mettre en ligne'
+    else {
+      if (c.search_console_le || (Date.now() - new Date(c.en_ligne_le).getTime()) < 86_400_000) continue
+      libelle = 'Soumettre le plan du site à la Search Console'
+    }
+    lignes.push({ id: `commande:${c.id}`, type: 'commande', libelleType: LIBELLES_TYPE.commande,
+      gravite: c.valide_le && heuresOuvreesEntre(new Date(c.valide_le), maintenant) > 48 ? 'critique' : 'attention',
+      libelle, detail, a: origine, source: 'supabase',
+      action: { libelle: 'Ouvrir', route, methode: 'GET', reconfirmation: false } })
+  }
   const ordre = { critique: 0, attention: 1, info: 2 }
   lignes.sort((x, y) => ordre[x.gravite] - ordre[y.gravite] || y.a.localeCompare(x.a))
-  const sources = { stripe: { a: echecs.a, erreur: echecs.erreur }, alertes: { a: alertes.a, erreur: alertes.erreur }, crons: { a: crons.a, erreur: crons.erreur } }
+  const sources = { stripe: { a: echecs.a, erreur: echecs.erreur }, alertes: { a: alertes.a, erreur: alertes.erreur }, crons: { a: crons.a, erreur: crons.erreur }, commandes: { a: commandes.a, erreur: commandes.erreur } }
   return NextResponse.json({ lignes, sources, role: f.role, a: new Date().toISOString() })
 }

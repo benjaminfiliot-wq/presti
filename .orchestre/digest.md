@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-28T17:05:49Z
+# Digest — 2026-09-28T17:08:54Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 120 tâche(s) PASS, 193485 ligne(s) · faites par Claude Code : 68 tâche(s) PASS, 92831 ligne(s).
-**État** — file : 5 · en cours : 8 · faites : 195 · refusées : 8
+**Mesure** — déléguées (antigravity, codex) : 121 tâche(s) PASS, 193974 ligne(s) · faites par Claude Code : 68 tâche(s) PASS, 90073 ligne(s).
+**État** — file : 5 · en cours : 7 · faites : 196 · refusées : 8
 
 ## ⚠ 1 question(s) en attente
 - `.orchestre/en-cours/026-063.question.md` → `node scripts/orchestre.mjs repondre 026-063 <n>`
@@ -19,7 +19,6 @@
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
 | 026-106 | feature | en-cours | usine-codex-91 | — | depuis 2026-09-28T16:59:16Z · Avant le premier envoi à froid, faire générer et déposer un site payé hors du poste, dans GitHub Actions, PC éteint (workflow generer-site.yml déclenché par repository_dispatch, 20 min au plus, une exécution à la fois, sans artefact ni clé du produit), demandé depuis Vercel par demanderGeneration sous un plafond mensuel d'exécutions et trois tentatives par commande |
-| 026-078 | feature | en-cours | usine-codex-90 | — | depuis 2026-09-28T16:58:48Z · Dans le Poste, montrer le résumé de la matière de chaque commande, mettre en ligne un site généré en un seul geste, noter la soumission du plan à la Search Console, envoyer le dossier sur demande, et faire remonter dans À faire chaque commande qui attend un geste humain |
 | 026-086 | feature | en-cours | usine-codex-87 | — | depuis 2026-09-28T15:02:36Z · Écrire la migration 0101 qui active pg_cron et pg_net et planifie chaque minute public.ops_horloge_minute() (baux expirés, décisions échues, puis GET https://prestiapp.fr/api/agents/tic avec le jeton CRON_SECRET lu dans Supabase Vault et un timeout_milliseconds explicite), plus un ménage quotidien et ops_horloge_etat() qui ne rend jamais le secret, avec jumeaux, contrôle et compte rendu d'essai à sec |
 | 026-124 | test | en-cours | claude-code | — | depuis 2026-09-28T16:12:58Z · Ajouter à video-qa un profil pub-locale (vertical 15 s, voix ou silence) sans changer les profils reseaux et landing, écrire visages-qa (OpenCV YuNet, modèle épinglé par empreinte, étalonné sur les photos des démos) et socle-pubs-qa qui prouve les deux, pour que juges-026-pubs-contenu-preuve --lot=09 soit vert |
 | 026-135 | feature | en-cours | usine-codex-92 | — | depuis 2026-09-28T16:59:35Z · Écrire lib/packPubDossier.ts (nettoyerDossierPack, pure, qui n'accepte que les photos de l'artisan lui-même) et la route GET/PUT /api/pubs/commander/brouillon qui lit et enregistre le dossier du pack derrière le drapeau packPub |
@@ -31,6 +30,8 @@
 | 025-10 | test | file | usine-codex-13 | — | Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-006 | feature | file | claude-code | — | Passer presti à Next.js 16 (dernière 16.x), React et React DOM 19.2 et leurs types, avec le script build en next build --webpack pour @serwist/next et sans script next lint, typecheck, build et budget de poids verts, jusqu'au vert de next16-qa --groupe=dependances |
 | 026-115 | feature | file | codex | — | Quand Codex annonce son quota épuisé, faire rendre la tâche à la file, noter l'échéance dans .orchestre/quotas.json, refuser codex-* dans prochaine et executant.mjs jusqu'à cette échéance et dire dans le bloc Attention quel autre exécutant lancer, jusqu'au vert du groupe quota de preuve-026 |
+| 026-078 | feature | fait | usine-codex-90 | PASS | 2026-09-28T17:08:54Z · 84s · 489 l. |
+| 026-232 | test | fait | claude-code | PASS | 2026-09-28T17:08:20Z · 470s · 0 l. |
 | 026-075 | feature | fait | usine-codex-89 | PASS | 2026-09-28T17:05:48Z · 59s · 444 l. |
 | 026-016 | test | fait | claude-code | PASS | 2026-09-28T17:03:06Z · 50s · 0 l. |
 | 026-100 | feature | fait | codex | PASS | 2026-09-28T16:41:28Z · 169s · 0 l. |
@@ -48,7 +49,6 @@
 | 026-248 | test | fait | claude-code | PASS | 2026-09-28T15:45:41Z · 289s · 0 l. |
 | 026-229 | test | fait | claude-code | PASS | 2026-09-28T15:39:06Z · 328s · 0 l. |
 | 026-114 | feature | fait | claude-code | PASS | 2026-09-28T15:35:08Z · 3s · 0 l. |
-| 026-232 | test | fait | claude-code | PASS | 2026-09-28T14:32:10Z · 871s · 2758 l. |
 | 026-116 | test | fait | claude-code | PASS | 2026-09-28T14:25:19Z · 195s · 0 l. |
 | 026-074 | feature | fait | codex | PASS | 2026-09-28T13:46:33Z · 953s · 0 l. |
 | 026-118 | feature | refuse | usine-codex-78 | FAIL | PASS PP-8 — POST : 404 (drapeau packPub), authArtisan, 403 fondateur, erreursAvantPaiementPack, parametresCheckoutPack, poserSessionStripePack, dans l'ordre ; a |

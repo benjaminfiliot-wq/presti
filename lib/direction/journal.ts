@@ -23,8 +23,10 @@ export type Action =
   | 'partenaire_retire'
   // Le site à la demande (v15 §3.2) : la validation humaine d'un site généré, et son renvoi en génération
   // avec une consigne — deux gestes de direction qui laissent une trace datée.
-  | 'site_valide' | 'site_regeneration' | 'site_en_ligne'
+  | 'site_valide' | 'site_regeneration' | 'site_en_ligne' | 'site_search_console' | 'site_dossier_envoye'
   | 'pause_generale'
+  | 'decision_tranchee' | 'appel_rendu' | 'agent_pause' | 'consigne_transmise'
+  | 'envoi_froid_ouvert' | 'technologie_reprise' | 'canal_rouvert' | 'modele_leve' | 'palier_plafond'
 
 export type Entree = {
   acteur: Fondateur

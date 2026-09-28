@@ -1,8 +1,10 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { apiDirection } from './client'
+import { apiDirection, reconfirmationValide } from './client'
+import Reconfirmer from './Reconfirmer'
 import { LIBELLE_ETAT, type EtatCommande } from '@/lib/siteCommande'
+import { LIBELLE_RETIRE } from '@/lib/siteRetrait'
 
 type Commande = {
   id: string
@@ -19,6 +21,10 @@ type Commande = {
   genere_le: string | null
   valide_le: string | null
   en_ligne_le: string | null
+  search_console_le: string | null
+  retiree_le: string | null
+  dossier_envoye_le: string | null
+  matiere_resume: { photos: number; voix: boolean | number; prestations: number; manquants: string[] }
   scores: { performance?: number; accessibility?: number; 'best-practices'?: number; seo?: number } | null
   verifications: any | null
   consigne: string | null
@@ -34,6 +40,7 @@ const ETATS_FILTRE = [
   { id: 'generee', label: 'Générées' },
   { id: 'validee', label: 'Validées' },
   { id: 'en_ligne', label: 'En ligne' },
+  { id: 'retiree', label: 'Retirés' },
 ]
 
 export default function Sites({ role, signaler }: { role: 'direction' | 'lecture'; signaler?: (m: { type: 'ok' | 'err'; text: string }) => void }) {
@@ -44,6 +51,7 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
   const [busyId, setBusyId] = useState<string | null>(null)
   const [consignes, setConsignes] = useState<Record<string, string>>({})
   const [dnsParCommande, setDnsParCommande] = useState<Record<string, { type: string; name: string; value: string }[]>>({})
+  const [dossierAConfirmer, setDossierAConfirmer] = useState<Commande | null>(null)
 
   const charger = useCallback(async (filtre: string) => {
     const url = `/api/controle/sites${filtre ? `?etat=${filtre}` : ''}`
@@ -91,7 +99,7 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
   }
 
   const mettreEnLigne = async (c: Commande) => {
-    if (c.etat !== 'validee') return
+    if (c.etat !== 'validee' && c.etat !== 'generee') return
     const domaineTexte = c.domaine || 'son domaine'
     if (!window.confirm(`Le site sera servi sur ${domaineTexte} — les enregistrements DNS seront à donner à l'artisan.`)) {
       return
@@ -102,7 +110,7 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
         `/api/controle/sites/${c.id}`,
         {
           method: 'POST',
-          body: JSON.stringify({ action: 'mettre_en_ligne' }),
+          body: JSON.stringify({ action: c.etat === 'generee' ? 'valider_et_mettre_en_ligne' : 'mettre_en_ligne' }),
         },
         true
       )
@@ -120,11 +128,27 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
     }
   }
 
+  const autreGeste = async (c: Commande, action: 'search_console' | 'envoyer_dossier') => {
+    if (action === 'envoyer_dossier' && !reconfirmationValide('artisan')) {
+      setDossierAConfirmer(c)
+      return
+    }
+    setBusyId(c.id)
+    try {
+      const r = await apiDirection<{ error?: string }>(`/api/controle/sites/${c.id}`, {
+        method: 'POST', body: JSON.stringify({ action }),
+      }, action === 'envoyer_dossier')
+      signaler?.({ type: r.ok ? 'ok' : 'err', text: r.ok ? (action === 'search_console' ? 'Soumission du plan notée.' : 'Dossier envoyé.') : r.data.error ?? 'Action refusée.' })
+      if (r.ok) void charger(etatFiltre)
+    } finally { setBusyId(null) }
+  }
+
   const colonnes = 6
 
   return (
     <div className="tool-card" data-sites>
       <h2>Commandes de sites</h2>
+      {dossierAConfirmer ? <Reconfirmer portee="artisan" action="envoyer le dossier" onConfirme={() => { const c = dossierAConfirmer; setDossierAConfirmer(null); void autreGeste(c, 'envoyer_dossier') }} onAnnule={() => setDossierAConfirmer(null)} /> : null}
       <p className="muted" style={{ margin: '0 0 .9rem' }}>
         Suivi des sites à la demande et relecture des aperçus générés avant validation (300 € une fois).
       </p>
@@ -195,6 +219,9 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
                           Communes : {c.communes.join(', ')}<br />
                           {c.metiers_secondaires?.length ? <>Secondaires : {c.metiers_secondaires.join(', ')}<br /></> : null}
                           {c.consigne ? <>Consigne précédente : {c.consigne}<br /></> : null}
+                          {c.matiere_resume ? <div>Photos : {c.matiere_resume.photos} · Voix : {c.matiere_resume.voix ? 'présente' : 'absente'} · Prestations : {c.matiere_resume.prestations}
+                            {c.matiere_resume.manquants.length ? <ul>{c.matiere_resume.manquants.map((manquant, i) => <li key={i}>{manquant}</li>)}</ul> : <span> · Dossier complet</span>}
+                          </div> : null}
                           {c.verifications?.blocs ? (
                             <details style={{ marginTop: '.3rem' }}>
                               <summary>Rapport QA ({c.verifications.blocs.filter((b: any) => !b.passe).length} échec(s))</summary>
@@ -228,6 +255,9 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
                           {c.etat === 'generee' && role === 'direction' && (
                             <div style={{ marginTop: '.8rem', padding: '.6rem', background: 'rgba(0,0,0,0.03)', borderRadius: '6px' }}>
                               <div style={{ display: 'flex', gap: '.5rem', marginBottom: '.5rem' }}>
+                                <button type="button" className="btn btn--primary" disabled={busyId === c.id} onClick={() => void mettreEnLigne(c)}>
+                                  Mettre en ligne
+                                </button>
                                 <button
                                   type="button"
                                   className="btn btn--primary"
@@ -316,13 +346,19 @@ export default function Sites({ role, signaler }: { role: 'direction' | 'lecture
                               </div>
                             </div>
                           )}
+                          {role === 'direction' && c.etat === 'en_ligne' && !c.search_console_le && (
+                            <button type="button" className="btn btn--ghost" disabled={busyId === c.id} onClick={() => void autreGeste(c, 'search_console')}>Plan soumis à la Search Console</button>
+                          )}
+                          {role === 'direction' && (c.etat === 'en_ligne' || c.etat === 'retiree') && (
+                            <button type="button" className="btn btn--ghost" disabled={busyId === c.id} onClick={() => void autreGeste(c, 'envoyer_dossier')}>Envoyer le dossier</button>
+                          )}
                         </div>
                       )}
                     </td>
                     <td data-lab="État">
                       <span className={`pill ${c.etat === 'en_ligne' || c.etat === 'validee' ? 'ok' : c.etat === 'generee' ? 'warn' : 'muted'}`}>
                         <span className="pdot" />
-                        {LIBELLE_ETAT[c.etat as EtatCommande] ?? c.etat}
+                        {c.etat === 'retiree' ? LIBELLE_RETIRE : LIBELLE_ETAT[c.etat as EtatCommande] ?? c.etat}
                       </span>
                     </td>
                     <td data-lab="Scores Lighthouse">

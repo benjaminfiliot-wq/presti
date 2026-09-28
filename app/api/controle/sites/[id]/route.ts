@@ -13,11 +13,14 @@ import { journaliser } from '@/lib/direction/journal'
 import { transitionValide, type EtatCommande } from '@/lib/siteCommande'
 import { siteDepose } from '@/lib/sitesGeneres'
 import { addDomain, normalizeDomain, type DnsRecord } from '@/lib/vercelDomains'
+import { exigerReconfirmation } from '@/lib/direction/reconfirmation'
+import { creerJetonDossier } from '@/lib/siteDossier'
+import { sendEmail } from '@/lib/email'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const ACTIONS = { valider: 'validee', regenerer: 'payee', mettre_en_ligne: 'en_ligne' } as const
+const ACTIONS = { valider: 'validee', regenerer: 'payee', mettre_en_ligne: 'en_ligne', valider_et_mettre_en_ligne: 'en_ligne', search_console: 'en_ligne', envoyer_dossier: 'en_ligne' } as const
 
 // Un appel Supabase qui échoue une fois n'est pas encore une panne : on réessaie UNE fois après 400 ms (constaté le 14/09,
 // trois suites e2e en parallèle sur la production → 503 intermittents sur des lectures et des écritures saines).
@@ -43,9 +46,62 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const consigne = String(corps.consigne ?? '').replace(/<[^>]*>/g, '').trim().slice(0, 1000)
   if (action === 'regenerer' && consigne.length < 10) return NextResponse.json({ error: 'Une consigne de régénération est obligatoire (au moins 10 signes) : dire ce qui ne va pas.' }, { status: 400 })
 
-  const { data: avant, error: eLecture } = await reprise(() => supabaseAdmin.from('sites_commandes').select('id, artisan_id, etat, regenerations, consigne, scores, domaine, domaine_mode').eq('id', id).maybeSingle(), (r) => !r.error)
+  const { data: avant, error: eLecture } = await reprise(() => supabaseAdmin.from('sites_commandes').select('id, artisan_id, email, etat, regenerations, consigne, scores, domaine, domaine_mode, search_console_le').eq('id', id).maybeSingle(), (r) => !r.error)
   if (eLecture) return NextResponse.json({ error: 'Commande indisponible.', code: 'indisponible' }, { status: 503 })
   if (!avant) return NextResponse.json({ error: 'Commande introuvable.' }, { status: 404 })
+  if (action === 'valider_et_mettre_en_ligne') {
+    if (avant.etat !== 'generee') return NextResponse.json({ error: 'La commande doit être générée.' }, { status: 409 })
+    if (!(await siteDepose(id))) return NextResponse.json({ error: 'Aucun site déposé pour cette commande.' }, { status: 409 })
+    let dns: DnsRecord[] = []
+    const domaine = avant.domaine_mode !== 'aucun' && avant.domaine ? normalizeDomain(avant.domaine) : null
+    if (domaine) {
+      const statut = await addDomain(domaine)
+      if (!statut.ok) return NextResponse.json({ error: `Domaine ${domaine} : ${statut.error || 'rattachement refusé'}` }, { status: 502 })
+      dns = statut.records
+    }
+    const maintenant = new Date().toISOString()
+    const journalise = await reprise(() => journaliser({
+      acteur: f, action: 'site_en_ligne', cible_type: 'site_commande', cible_id: id,
+      artisan_id: avant.artisan_id ?? undefined, avant: { etat: 'generee' }, apres: { etat: 'en_ligne' }, reconfirme: false,
+    }, req).catch(() => false), (ok) => ok === true)
+    if (!journalise) return NextResponse.json({ error: 'Le journal de direction est indisponible : geste refusé.', code: 'indisponible' }, { status: 503 })
+    const { data: passe, error: eMaj } = await reprise(() => supabaseAdmin.from('sites_commandes')
+      .update({ etat: 'en_ligne', valide_le: maintenant, en_ligne_le: maintenant, modifie_le: maintenant })
+      .eq('id', id).eq('etat', 'generee').select('id, etat, valide_le, en_ligne_le'), (r) => !r.error)
+    if (eMaj) return NextResponse.json({ error: 'Écriture impossible.', code: 'indisponible' }, { status: 503 })
+    if (!passe?.length) return NextResponse.json({ error: 'La commande a changé entre-temps : rechargez.' }, { status: 409 })
+    if (avant.artisan_id) await supabaseAdmin.from('artisans').update({ site_origine: 'commande' }).eq('id', avant.artisan_id)
+    return NextResponse.json({ ok: true, commande: passe[0], dns })
+  }
+  if (action === 'search_console') {
+    if (avant.etat !== 'en_ligne') return NextResponse.json({ error: 'Le site doit être en ligne.' }, { status: 409 })
+    if (avant.search_console_le) return NextResponse.json({ ok: true, search_console_le: avant.search_console_le })
+    const journalise = await journaliser({ acteur: f, action: 'site_search_console', cible_type: 'site_commande', cible_id: id,
+      artisan_id: avant.artisan_id ?? undefined, avant: { search_console_le: null }, apres: { soumis: true }, reconfirme: false }, req).catch(() => false)
+    if (!journalise) return NextResponse.json({ error: 'Journal indisponible.', code: 'indisponible' }, { status: 503 })
+    const date = new Date().toISOString()
+    const { data: passe, error } = await supabaseAdmin.from('sites_commandes').update({ search_console_le: date })
+      .eq('id', id).eq('etat', 'en_ligne').is('search_console_le', null).select('search_console_le')
+    if (error) return NextResponse.json({ error: 'Écriture impossible.', code: 'indisponible' }, { status: 503 })
+    return NextResponse.json({ ok: true, search_console_le: passe?.[0]?.search_console_le ?? avant.search_console_le })
+  }
+  if (action === 'envoyer_dossier') {
+    if (avant.etat !== 'en_ligne' && avant.etat !== 'retiree') return NextResponse.json({ error: 'Dossier indisponible à cet état.' }, { status: 409 })
+    const refus = await exigerReconfirmation(req, f.uid, 'artisan')
+    if (refus) return refus
+    const journalise = await journaliser({ acteur: f, action: 'site_dossier_envoye', cible_type: 'site_commande', cible_id: id,
+      artisan_id: avant.artisan_id ?? undefined, avant: { etat: avant.etat }, apres: { dossier_envoye: true }, reconfirme: true }, req).catch(() => false)
+    if (!journalise) return NextResponse.json({ error: 'Journal indisponible.', code: 'indisponible' }, { status: 503 })
+    try {
+      const jeton = await creerJetonDossier(id, 90)
+      const envoi = await sendEmail({ to: avant.email, subject: 'Dossier de votre site',
+        text: `Bonjour,\n\nVoici le lien pour télécharger le dossier de votre site :\nhttps://prestiapp.fr/api/site-dossier/${id}?j=${encodeURIComponent(jeton)}\n\nCe lien expire dans 90 jours.\n\nL’équipe Presti`, critique: true })
+      if (!envoi.ok) return NextResponse.json({ error: 'Envoi du dossier impossible.', code: 'indisponible' }, { status: 503 })
+      const { error } = await supabaseAdmin.from('sites_commandes').update({ dossier_envoye_le: new Date().toISOString() }).eq('id', id)
+      if (error) return NextResponse.json({ error: 'Envoi effectué, date non enregistrée.', code: 'indisponible' }, { status: 503 })
+      return NextResponse.json({ ok: true })
+    } catch { return NextResponse.json({ error: 'Dossier indisponible.', code: 'indisponible' }, { status: 503 }) }
+  }
   const vers = ACTIONS[action]
   if (!transitionValide(avant.etat as EtatCommande, vers)) {
     return NextResponse.json({ error: `Impossible depuis l'état « ${avant.etat} » : ${action} demande une commande générée.` }, { status: 409 })
