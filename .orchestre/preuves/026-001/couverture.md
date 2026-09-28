@@ -1,16 +1,16 @@
 # Couverture de la série 026
 
-> Écrit par `node scripts/juges-026-preuve.mjs --couverture` le 2026-09-27T06:19:46.617Z. Rien ici n'est recopié à la main : tout est lu dans les fiches.
+> Écrit par `node scripts/juges-026-preuve.mjs --couverture` le 2026-09-28T10:01:22.254Z. Rien ici n'est recopié à la main : tout est lu dans les fiches.
 
-**Fiches 026 lues : 228** — fiches de juges : 44 · fiches de fabrication : 166 · fiches de mutations : 18. Fiches 025 lues : 22.
+**Fiches 026 lues : 251** — fiches de juges : 52 · fiches de fabrication : 179 · fiches de mutations : 20. Fiches 025 lues : 22.
 Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-ecosysteme/026/ (025 : …/brouillons-ecosysteme/) · vagues : .orchestre/brouillons-ecosysteme/026/INDEX.md.
 
 **Verdict de la couverture : PASS**
 
 ## Les critères
 
-    PASS CV-1 — 228 fiche(s) de 026-001 à 026-228, sans trou ni doublon, chacune avec sa section « Place dans la série »
-    PASS CV-2 — chaque juge des 166 fiche(s) de fabrication et des 18 de mutations écrit avant par une seule des 44 fiche(s) de juges
+    PASS CV-1 — 251 fiche(s) de 026-001 à 026-251, sans trou ni doublon, chacune avec sa section « Place dans la série »
+    PASS CV-2 — chaque juge des 179 fiche(s) de fabrication et des 20 de mutations écrit avant par une seule des 52 fiche(s) de juges
     PASS CV-3 — aucun juge ni jeu d’essai dans le périmètre d’une fiche de fabrication ou de mutations
     PASS CV-4 — ids cités dans « Place dans la série » tous plus petits, 22 fiche(s) 025 lue(s)
     PASS CV-5 — chaque chevauchement de périmètres ordonné par « Dépend de » ou « Sérialisée après »
@@ -23,7 +23,7 @@ Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-eco
 | fiche | classe | juge | écrit par | muté par |
 |---|---|---|---|---|
 | 026-001 | juges | `scripts/juges-026-preuve.mjs` | 026-001 | 026-101, 026-161 |
-| 026-001 | juges | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-001 | juges | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-002 | juges | `scripts/juges-026-securite-preuve.mjs` | 026-002 | — |
 | 026-003 | fabrication | `scripts/media-octets-qa.mjs` | 026-002 | 026-150 |
 | 026-004 | juges | `scripts/next16-qa.mjs` | 026-004 | 026-150 |
@@ -115,7 +115,7 @@ Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-eco
 | 026-088 | fabrication | `scripts/pilotage-sql-qa.mjs` | 026-066 | 026-130, 026-192 |
 | 026-089 | fabrication | `scripts/facteur-qa.mjs` | 026-062 | 026-099 |
 | 026-090 | fabrication | `scripts/meta-webhooks-qa.mjs` | 026-081 | 026-099 |
-| 026-091 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-091 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-092 | fabrication | `scripts/station-route-qa.mjs` | 026-067 | 026-130, 026-192 |
 | 026-093 | fabrication | `scripts/redacteur-v2-qa.mjs` | 026-029 | 026-152 |
 | 026-094 | fabrication | `scripts/routes-acquisition-qa.mjs` | 026-037 | 026-101 |
@@ -123,9 +123,9 @@ Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-eco
 | 026-096 | fabrication | `scripts/repondeur-qa.mjs` | 026-081 | 026-099 |
 | 026-097 | fabrication | `scripts/atelier-maquettes-qa.mjs` | 026-080 | 026-101 |
 | 026-098 | juges | `../orchestre/test/preuve-026.mjs` | 026-098 | 026-151 |
-| 026-099 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-099 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-100 | fabrication | `scripts/livrer-site-qa.mjs` | 026-029 | 026-152 |
-| 026-101 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-101 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-102 | juges | `scripts/chef-qa.mjs` | 026-102 | 026-133, 026-151 |
 | 026-103 | fabrication | `scripts/station-reunion-qa.mjs` | 026-067 | 026-130, 026-133 |
 | 026-104 | juges | `scripts/juges-026-pilotage-preuve.mjs` | 026-012 | — |
@@ -154,10 +154,10 @@ Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-eco
 | 026-127 | fabrication | `scripts/chef-qa.mjs` | 026-102 | 026-133, 026-151 |
 | 026-128 | juges | `scripts/juges-026-pubs-contenu-preuve.mjs` | 026-108 | — |
 | 026-129 | fabrication | `scripts/chef-qa.mjs` | 026-102 | 026-133, 026-151 |
-| 026-130 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-130 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-131 | fabrication | `scripts/cgu-pack-pub-qa.mjs` | 026-108 | 026-159 |
-| 026-132 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
-| 026-133 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-132 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
+| 026-133 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-134 | fabrication | `scripts/crieur-qa.mjs` | 026-116 | 026-159 |
 | 026-135 | fabrication | `scripts/pack-pub-dossier-qa.mjs` | 026-110 | 026-159 |
 | 026-136 | fabrication | `scripts/ops-acquisition-qa.mjs` | 026-037 | 026-101, 026-161 |
@@ -176,24 +176,24 @@ Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-eco
 | 026-147 | fabrication | `scripts/pack-pub-livraison-qa.mjs` | 026-110 | 026-159 |
 | 026-148 | fabrication | `scripts/chef-qa.mjs` | 026-102 | 026-133, 026-151 |
 | 026-149 | fabrication | `scripts/pack-pub-livraison-qa.mjs` | 026-110 | 026-159 |
-| 026-150 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
-| 026-151 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
-| 026-152 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-150 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
+| 026-151 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
+| 026-152 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-153 | fabrication | `scripts/pub-locale-qa.mjs` | 026-126 | 026-159, 026-203 |
 | 026-154 | fabrication | `scripts/pub-locale-qa.mjs` | 026-126 | 026-159, 026-203 |
 | 026-155 | fabrication | `scripts/studio-garde-qa.mjs` | 026-128 | 026-159 |
 | 026-156 | fabrication | `scripts/pub-locale-qa.mjs` | 026-126 | 026-159, 026-203 |
 | 026-157 | fabrication | `scripts/pack-pub-livraison-qa.mjs` | 026-110 | 026-159 |
 | 026-158 | fabrication | `scripts/pub-qa.mjs` | 026-128 | 026-159 |
-| 026-159 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-159 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-160 | fabrication | `scripts/pont-orchestre-qa.mjs` | 026-142 | 026-161 |
-| 026-161 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-161 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-162 | fabrication | `scripts/confidentialite-prospection-qa.mjs` | 026-037 | 026-101 |
 | 026-163 | fabrication | `scripts/atelier-maquettes-qa.mjs` | 026-080 | 026-101 |
 | 026-164 | fabrication | `scripts/pilotage-ecran-qa.mjs` | 026-104 | 026-130, 026-132, 026-192 |
 | 026-165 | juges | `scripts/agents/mesure-a-sec.mjs` | 026-165 | — |
 | 026-166 | fabrication | `scripts/studio-offre-qa.mjs` | 026-128 | 026-167 |
-| 026-167 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-167 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-168 | juges | `scripts/juges-026-pilotage-preuve.mjs` | 026-012 | — |
 | 026-169 | fabrication | `scripts/station-planche-qa.mjs` | 026-168 | 026-191 |
 | 026-170 | juges | `scripts/juges-026-pilotage-preuve.mjs` | 026-012 | — |
@@ -225,21 +225,21 @@ Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-eco
 | 026-190 | fabrication | `scripts/station-themes-qa.mjs` | 026-171 | 026-191 |
 | 026-190 | fabrication | `scripts/station-claw3d-qa.mjs` | 026-170 | 026-191 |
 | 026-190 | fabrication | `scripts/station-ecran-qa.mjs` | 026-172 | 026-132, 026-191, 026-192 |
-| 026-191 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
-| 026-192 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-191 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
+| 026-192 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-193 | fabrication | `scripts/station-recette.mjs` | 026-172 | — |
 | 026-194 | juges | `scripts/pont-telegram-qa.mjs` | 026-194 | 026-198 |
 | 026-194 | juges | `scripts/usine-durcie-qa.mjs` | 026-194 | 026-198 |
 | 026-195 | fabrication | `scripts/pont-telegram-qa.mjs` | 026-194 | 026-198 |
 | 026-196 | fabrication | `scripts/pont-telegram-qa.mjs` | 026-194 | 026-198 |
 | 026-197 | fabrication | `scripts/usine-durcie-qa.mjs` | 026-194 | 026-198 |
-| 026-198 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-198 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-199 | juges | `scripts/usine-pubs-qa.mjs` | 026-199 | 026-203 |
 | 026-199 | juges | `scripts/search-console-qa.mjs` | 026-199 | 026-203 |
 | 026-200 | fabrication | `scripts/usine-pubs-qa.mjs` | 026-199 | 026-203 |
 | 026-201 | fabrication | `scripts/search-console-qa.mjs` | 026-199 | 026-203 |
 | 026-202 | fabrication | `scripts/usine-pubs-qa.mjs` | 026-199 | 026-203 |
-| 026-203 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-203 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-204 | juges | `scripts/juges-026-reseaux-preuve.mjs` | 026-204 | — |
 | 026-205 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
 | 026-206 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
@@ -255,7 +255,7 @@ Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-eco
 | 026-216 | fabrication | `scripts/contenu-ecran-qa.mjs` | 026-204 | 026-219 |
 | 026-217 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
 | 026-218 | fabrication | `scripts/contenu-qa.mjs` | 026-204 | 026-219 |
-| 026-219 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-219 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
 | 026-220 | juges | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
 | 026-221 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
 | 026-222 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
@@ -264,5 +264,35 @@ Sources : .orchestre/{file,en-cours,fait,refuse}/ puis .orchestre/brouillons-eco
 | 026-225 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
 | 026-226 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
 | 026-227 | fabrication | `scripts/juges-026-completude-qa.mjs` | 026-220 | 026-228 |
-| 026-228 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203 |
+| 026-228 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
+| 026-229 | juges | `scripts/savoir-socle-qa.mjs` | 026-229 | 026-240 |
+| 026-230 | fabrication | `scripts/savoir-socle-qa.mjs` | 026-229 | 026-240 |
+| 026-231 | fabrication | `scripts/savoir-socle-qa.mjs` | 026-229 | 026-240 |
+| 026-232 | juges | `scripts/savoir-recherche-qa.mjs` | 026-232 | 026-240 |
+| 026-233 | fabrication | `scripts/savoir-recherche-qa.mjs` | 026-232 | 026-240 |
+| 026-234 | juges | `scripts/savoir-lecons-qa.mjs` | 026-234 | 026-240 |
+| 026-235 | fabrication | `scripts/savoir-lecons-qa.mjs` | 026-234 | 026-240 |
+| 026-236 | fabrication | `scripts/savoir-lecons-qa.mjs` | 026-234 | 026-240 |
+| 026-237 | fabrication | `scripts/savoir-lecons-qa.mjs` | 026-234 | 026-240 |
+| 026-237 | fabrication | `scripts/agents-llm-qa.mjs` | 026-041 | 026-161 |
+| 026-237 | fabrication | `scripts/chef-qa.mjs` | 026-102 | 026-133, 026-151 |
+| 026-238 | juges | `scripts/savoir-reflexion-qa.mjs` | 026-238 | 026-240 |
+| 026-239 | fabrication | `scripts/savoir-reflexion-qa.mjs` | 026-238 | 026-240 |
+| 026-240 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
+| 026-241 | fabrication | `scripts/savoir-socle-qa.mjs` | 026-229 | 026-240 |
+| 026-241 | fabrication | `scripts/savoir-recherche-qa.mjs` | 026-232 | 026-240 |
+| 026-241 | fabrication | `scripts/savoir-reflexion-qa.mjs` | 026-238 | 026-240 |
+| 026-242 | juges | `scripts/comptable-qa.mjs` | 026-242 | 026-250 |
+| 026-243 | fabrication | `scripts/comptable-qa.mjs` | 026-242 | 026-250 |
+| 026-244 | juges | `scripts/sav-qa.mjs` | 026-244 | 026-250 |
+| 026-245 | fabrication | `scripts/sav-qa.mjs` | 026-244 | 026-250 |
+| 026-246 | juges | `scripts/qualite-sites-qa.mjs` | 026-246 | 026-250 |
+| 026-247 | fabrication | `scripts/qualite-sites-qa.mjs` | 026-246 | 026-250 |
+| 026-248 | juges | `scripts/vigile-qa.mjs` | 026-248 | 026-250 |
+| 026-249 | fabrication | `scripts/vigile-qa.mjs` | 026-248 | 026-250 |
+| 026-250 | mutations | `scripts/juges-026-mutations-preuve.mjs` | 026-001 | 026-091, 026-099, 026-101, 026-130, 026-132, 026-133, 026-150, 026-151, 026-152, 026-159, 026-161, 026-167, 026-191, 026-192, 026-198, 026-203, 026-240, 026-250 |
+| 026-251 | fabrication | `scripts/pilotage-sql-qa.mjs` | 026-066 | 026-130, 026-192 |
+| 026-251 | fabrication | `scripts/usine-socle-qa.mjs` | 026-048 | 026-133 |
+| 026-251 | fabrication | `scripts/station-logique-qa.mjs` | 026-067 | 026-130 |
+| 026-251 | fabrication | `scripts/vigile-qa.mjs` | 026-248 | 026-250 |
 
