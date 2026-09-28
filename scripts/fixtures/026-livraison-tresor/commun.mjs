@@ -250,12 +250,18 @@ export function corpsDeFonction(sc, nom) {
   while (j < sc.length && sc[j] !== '{' && sc[j] !== '=') j++
   if (sc[j] === ':' || (sc[j] === '{' && /:\s*$/.test(sc.slice(i + 1, j)))) { /* type objet en retour : rare, on prend l'accolade suivante */ }
   if (sc[j] === '=' && sc[j + 1] === '>') { j += 2; while (/\s/.test(sc[j] ?? '')) j++; if (sc[j] !== '{') return { debut: j, fin: j, corps: '' } }
-  // Un type de retour littéral objet (`): { a: number } {`) : on saute les accolades équilibrées suivies d'une autre.
+  // Un type de retour qui porte des accolades (`): { a: number } {`, `): Promise<{ a: b }> {`, `): Promise<{ a } | null> {`) :
+  // tant que l'accolade trouvée est encore dans le type (un `<` ouvert, ou après `:`, `|`, `&`, `,`), on la saute.
+  // 28/09 : l'ancienne règle n'acceptait que `} {` et s'arrêtait à l'accolade de `Promise<{ … }>` (question de 026-059).
   let debut = sc.indexOf('{', j)
   if (debut < 0) return null
   let f = fermante(sc, debut)
-  const apres = sc.slice(f + 1).match(/^\s*(=>\s*)?\{/)
-  if (apres && /:\s*$/.test(sc.slice(i + 1, debut))) { debut = f + 1 + apres[0].length - 1; f = fermante(sc, debut) }
+  const dansType = (k) => {
+    const seg = sc.slice(i + 1, k).replace(/=>/g, '  ')
+    if (!/^\s*:/.test(seg)) return false
+    return (seg.match(/</g) ?? []).length > (seg.match(/>/g) ?? []).length || /[:|&,(<]\s*$/.test(seg)
+  }
+  while (f > 0 && dansType(debut)) { debut = sc.indexOf('{', f + 1); if (debut < 0) return null; f = fermante(sc, debut) }
   if (f < 0) return null
   return { debut, fin: f, corps: sc.slice(debut + 1, f) }
 }

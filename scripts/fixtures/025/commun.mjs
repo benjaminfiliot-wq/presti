@@ -445,13 +445,25 @@ export function t2({ racine = R } = {}) {
  * l'autre). Les fichiers jugés ne doivent porter aucun @ts-nocheck, ni plus de @ts-ignore / @ts-expect-error qu'à 1620723.
  * → liste des défauts (vide = conforme).
  */
+// 28/09 : depuis 25bc2058 (27/09), les dossiers témoins des juges (scripts/fixtures/**/temoin(s) : du code faux exprès) sont
+// exclus du typecheck du dépôt. Seuls ces deux ajouts à "exclude" sont admis, liste fermée ; tout le reste de tsconfig.json
+// doit rester celui de REFERENCE_COMMIT (un "exclude" retiré ou un autre ajouté reste un assouplissement).
+const EXCLUS_ADMIS = ['scripts/fixtures/**/temoins', 'scripts/fixtures/**/temoin']
+function tsconfigEquivalent(ts, tsRef) {
+  if (ts === tsRef) return true
+  let a, b
+  try { a = JSON.parse(tsRef); b = JSON.parse(ts) } catch { return false }
+  const exA = Array.isArray(a.exclude) ? a.exclude : [], exB = Array.isArray(b.exclude) ? b.exclude : []
+  if (exA.some((x) => !exB.includes(x)) || exB.some((x) => !exA.includes(x) && !EXCLUS_ADMIS.includes(x))) return false
+  return JSON.stringify({ ...a, exclude: null }) === JSON.stringify({ ...b, exclude: null })
+}
 export function defautsTypecheck(racine, fichiersJuges = []) {
   const d = []
   const lf = (b) => (b ? b.toString('utf8').replace(/\r\n/g, '\n') : null)
   const tsRef = lf(blobGit(R, REFERENCE_COMMIT, 'tsconfig.json')), ts = lf(lireOuNull(path.join(racine, 'tsconfig.json')))
   if (ts === null) d.push('tsconfig.json absent de la racine')
   else if (tsRef === null) d.push(`tsconfig.json introuvable à ${REFERENCE_COMMIT}`)
-  else if (ts !== tsRef) {
+  else if (!tsconfigEquivalent(ts, tsRef)) {
     const a = tsRef.split('\n'), b = ts.split('\n')
     const k = b.findIndex((l, i) => l !== a[i])
     d.push(`tsconfig.json diffère de ${REFERENCE_COMMIT} (ligne ${k + 1} : « ${court(b[k] ?? '(fin)', 70)} » au lieu de « ${court(a[k] ?? '(fin)', 70)} ») : le typecheck ne se juge qu'avec la configuration d'origine`)
