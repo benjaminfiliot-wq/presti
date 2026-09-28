@@ -25,6 +25,16 @@
 //   JP-6  (lot 1) le magasin factice, sur son propre scénario : chacune des règles de JP-6 (REGLES_JP6 de
 //         magasin-memoire.mjs) est verte et aucune ne lève ; TRANSITIONS porte maquette_prete → lien_prepare ; les options
 //         de chaque DecisionAcquisition vont de 2 à 7 (lu dans le contrat : OptionsDecision et OPTIONS_DECISIONS).
+//   JP-3  s'étend à une entrée qui porte `auto` : chacune de ces épreuves est verte dans la sortie de --auto-controle
+//         (lot 4 : le témoin de chaque juge et les analyseurs exigés par JP-2 de 026-037).
+//   JP-7  (lot 4, JP-3 de 026-037) aucun chemin du registre ne lance --reel ; ops-acquisition-qa refuse --reel sans
+//         --confirmer-reel (code 2, avant tout accès), et confidentialite-prospection-qa de même pour --hebergement --reel.
+//   JP-8  (lot 4, JP-5 de 026-037) aucun juge du lot ne contient sequenceur, SEQUENCEUR, META_ADLIB_TOKEN,
+//         ACQ_ADRESSES_NOMINATIVES ni domaines-prospection hors de son bloc « chaînes refusées » ;
+//         confidentialite-prospection-qa --domaines sort en code 2 et renvoie vers --hebergement.
+//   JP-9  (lot 4, JP-4 de 026-037) les lots 1 à 3 restent verts : chaque lot déjà peuplé (au moins un juge inscrit) est
+//         rejoué par un sous-processus de cette preuve (--lot=1, 2, 3) et doit sortir en PASS ; un lot pas encore peuplé
+//         (« aucun juge inscrit ») est toléré, ce n'est pas une régression de 026-037.
 //
 // Sortie : une ligne par critère, puis « juges-026-acquisition-preuve --lot=<N> : PASS|FAIL — … ». Code 0 seulement si tout
 // est vert ; 1 sinon ; 2 si l'appel est invalide. N'écrit que sous .orchestre/travail/026-acquisition/ et dans
@@ -49,9 +59,30 @@ const REGISTRE = [
   { lot: 1, juge: 'scripts/recenseur-qa.mjs', arguments: ['--partie=site'], attendu: 'LS-1', loader: true },
   { lot: 1, juge: 'scripts/recenseur-qa.mjs', arguments: ['--partie=orchestration'], attendu: 'RC-1', loader: true },
   { lot: 1, juge: 'scripts/faits-qa.mjs', arguments: [], attendu: 'JF-1', loader: true },
+  // Lot 2 (026-069) : la vigie Meta, J3/le second juge et la Plume. Chaque module jugé (vigieMeta.ts, modeles.ts +
+  // conformite.ts + secondJuge.ts, redacteur.ts) est écrit par une fiche ultérieure (026-072, 026-083, 026-087) : sur la
+  // référence, le premier critère échoue avec « module absent ».
+  { lot: 2, juge: 'scripts/vigie-meta-qa.mjs', arguments: [], attendu: 'VM-1', loader: true },
+  { lot: 2, juge: 'scripts/conformite-qa.mjs', arguments: [], attendu: 'CO-1', loader: true },
+  { lot: 2, juge: 'scripts/redacteur-qa.mjs', arguments: [], attendu: 'RD-1', loader: true },
+  // Lot 4 (026-037) : la base, les routes, la page de confidentialité. `auto` : les épreuves exigées en --auto-controle.
+  { lot: 4, juge: 'scripts/ops-acquisition-qa.mjs', arguments: ['--migration=socle'], attendu: 'OA-1', auto: ['AC-TEMOIN-SOCLE', 'AC-OA-2A', 'AC-OA-2B', 'AC-OA-2C', 'AC-TEMOIN-OAR', 'AC-OAR-1', 'AC-OAR-2'] },
+  { lot: 4, juge: 'scripts/ops-acquisition-qa.mjs', arguments: ['--migration=echanges'], attendu: 'OB-1', auto: ['AC-TEMOIN-ECHANGES', 'AC-TEMOIN-OBR', 'AC-OBR-1', 'AC-OBR-2'] },
+  { lot: 4, juge: 'scripts/ops-acquisition-qa.mjs', arguments: ['--migration=planification'], attendu: 'PG-1', auto: ['AC-TEMOIN-PLANIFICATION', 'AC-TEMOIN-PGR', 'AC-PGR-1', 'AC-PGR-2'] },
+  { lot: 4, juge: 'scripts/routes-acquisition-qa.mjs', arguments: ['--lot=recensement'], attendu: 'RA-1', loader: true, auto: ['AC-TEMOIN-RECENSEMENT', 'AC-RA-2A'] },
+  { lot: 4, juge: 'scripts/routes-acquisition-qa.mjs', arguments: ['--lot=echanges'], attendu: 'RB-1', loader: true, auto: ['AC-TEMOIN-ECHANGES'] },
+  { lot: 4, juge: 'scripts/confidentialite-prospection-qa.mjs', arguments: [], attendu: 'CP-1', auto: ['AC-TEMOIN-CP', 'AC-TEMOIN-CPH'] },
+  // Lot 5 (026-062) : l'envoi automatique — Facteur, porteur Gmail, porteur du formulaire, disjoncteurs, jauges. Chaque
+  // module jugé (facteur.ts, porteurs/gmail.ts, porteurFormulaire.ts, disjoncteurs.ts, jauges.ts) est écrit par une fiche
+  // ultérieure (026-089, 026-095, 026-063, 026-064) : sur la référence, le premier critère échoue avec « module absent ».
+  { lot: 5, juge: 'scripts/facteur-qa.mjs', arguments: ['--partie=facteur'], attendu: 'FA-1', loader: true },
+  { lot: 5, juge: 'scripts/facteur-qa.mjs', arguments: ['--partie=porteur'], attendu: 'PF-1', loader: true },
+  { lot: 5, juge: 'scripts/facteur-qa.mjs', arguments: ['--partie=gmail'], attendu: 'GM-1', loader: true },
+  { lot: 5, juge: 'scripts/disjoncteurs-qa.mjs', arguments: [], attendu: 'DJ-1', loader: true },
+  { lot: 5, juge: 'scripts/jauges-qa.mjs', arguments: [], attendu: 'JG-1', loader: true },
 ]
 // Les critères propres à un lot (les autres lots ont JP-2, JP-3 et JP-5 ; leurs fiches ajoutent les leurs ici).
-const CRITERES = { 1: ['JP-1', 'JP-2', 'JP-3', 'JP-4', 'JP-5', 'JP-6'] }
+const CRITERES = { 1: ['JP-1', 'JP-2', 'JP-3', 'JP-4', 'JP-5', 'JP-6'], 4: ['JP-2', 'JP-3', 'JP-5', 'JP-7', 'JP-8', 'JP-9'] }
 
 const o = lireOptions(process.argv.slice(2), { connues: ['lot'] })
 const refuser = (m) => { console.log(`${NOM_PREUVE} : appel refusé — ${m}`); process.exit(2) }
@@ -92,6 +123,7 @@ const entrees = REGISTRE.filter((e) => e.lot === LOT)
     if (!/^scripts\/[\w./-]+\.mjs$/.test(x.juge) || x.juge.includes('..') || !fs.existsSync(path.join(R, x.juge))) e.push(`entrée ${i + 1} : juge ${JSON.stringify(x.juge)} introuvable`)
     if (!Array.isArray(x.arguments) || x.arguments.some((a) => typeof a !== 'string' || /^--(racine|auto-controle|reel|confirmer-reel)\b/.test(a))) e.push(`entrée ${i + 1} : arguments ${JSON.stringify(x.arguments)} (ni --racine, ni --auto-controle, ni --reel)`)
     if (!RE_ID.test(String(x.attendu))) e.push(`entrée ${i + 1} : critère attendu ${JSON.stringify(x.attendu)} mal formé`)
+    if (x.auto !== undefined && (!Array.isArray(x.auto) || x.auto.some((a) => !RE_ID.test(String(a))))) e.push(`entrée ${i + 1} : épreuves auto ${JSON.stringify(x.auto)} mal formées`)
   }
   if (e.length) { for (const id of IDS) noter(id, id === 'JP-2' ? e : ['non jugé : registre du lot refusé']); finir() }
 }
@@ -196,14 +228,20 @@ for (const [i, x] of entrees.entries()) {
   const verts = lignesDe(a.sortie).filter((l) => l.startsWith('✅ ')).map((l) => RE_CRITERE.exec(l)?.[2]).filter(Boolean)
   const rouges = lignesDe(a.sortie).filter((l) => l.startsWith('❌ '))
   res.auto = { code: a.code, verts, rouges, derniere: a.sortie.trim().split(/\r?\n/).pop() }
-  noter('JP-3', a.code === 0 && verts.length && !rouges.length ? [] : [`${res.label} --auto-controle : code ${a.code}${a.erreur ? ` (${a.erreur})` : ''}${rouges.length ? `, ${court(rouges[0], 160)}` : ''}${!verts.length ? ', aucun critère vert' : ''}`], `${res.label} --auto-controle : code 0 (${verts.join(', ')})`)
+  const exigees = (x.auto ?? []).filter((id) => !verts.includes(id))
+  noter('JP-3', a.code === 0 && verts.length && !rouges.length && !exigees.length ? [] : [`${res.label} --auto-controle : code ${a.code}${a.erreur ? ` (${a.erreur})` : ''}${rouges.length ? `, ${court(rouges[0], 160)}` : ''}${!verts.length ? ', aucun critère vert' : ''}${exigees.length ? `, épreuve(s) exigée(s) absente(s) ou rouge(s) : ${exigees.join(', ')}` : ''}`], `${res.label} --auto-controle : code 0 (${verts.length > 12 ? `${verts.length} épreuves vertes, dont ${(x.auto ?? verts.slice(0, 3)).join(', ')}` : verts.join(', ')})`)
   resultats.push(res)
 }
 if (REF) noter('JP-2', [], `référence ${REF.commit.slice(0, 7)} (reference.txt) ${REF.reutilise ? 'réutilisée, identique blob pour blob' : 'extraite par git archive'} sous ${rel(REF.dest)} (${REF.fichiers} fichiers), ancêtre de HEAD ; ${resultats.filter((r) => r.extrait).map((r) => `${r.label} → code ${r.ref.code}, « ${court(r.extrait, 60)} »`).join(' ; ')}`)
 
 // ── JP-4 : aucun domaine hors .invalid dans les jeux d'essai ─────────────────────────────────────────────────────────────
 if (IDS.includes('JP-4')) {
-  const PERMIS = ['recherche-entreprises.api.gouv.fr', 'data.ademe.fr', 'graph.facebook.com', 'instagram.com', 'facebook.com', 'pagesjaunes.fr', 'linkedin.com', 'dns.google']
+  // Lot 5 (026-062, JP-4 de son propre cahier) ajoute : smtp.gmail.com, imap.gmail.com (le Gmail de prospection) et les
+  // hôtes des scripts de captcha nommés dans les pages d'abandon de scripts/fixtures/026-acquisition/envoi/formulaires.mjs
+  // (reCAPTCHA, hCaptcha, Turnstile, Friendly Captcha). Lot 2 (026-069, JP-6 de son propre cahier) ajoute : prestiapp.fr
+  // (le vrai domaine de Presti, dans les seuls messages fautifs ou après un « oui » du corpus de J3) et github.io (la
+  // NOTICE_URL d'essai) : ce ne sont pas des domaines de tiers, jamais des adresses inventées.
+  const PERMIS = ['recherche-entreprises.api.gouv.fr', 'data.ademe.fr', 'graph.facebook.com', 'instagram.com', 'facebook.com', 'pagesjaunes.fr', 'linkedin.com', 'dns.google', 'smtp.gmail.com', 'imap.gmail.com', 'www.google.com', 'js.hcaptcha.com', 'challenges.cloudflare.com', 'cdn.jsdelivr.net', 'prestiapp.fr', 'github.io']
   const TLD = new Set(['fr', 'com', 'net', 'org', 'io', 'eu', 'dev', 'app', 'co', 'info', 'biz', 'be', 'ch', 'de', 'uk', 'es', 'it', 'nl', 'google', 'cloud', 'site', 'online', 'shop', 'store', 'xyz', 'me', 'us', 'ai', 'tv', 'pro', 're', 'gouv'])
   const dossier = path.join(R, 'scripts', 'fixtures', '026-acquisition')
   const fichiers = []
@@ -262,6 +300,52 @@ if (IDS.includes('JP-6')) {
     } else e.push('contrat.ts non importé')
     noter('JP-6', e, `magasin-memoire.mjs : les ${REGLES_JP6.length} règles de JP-6 vertes sans exception (${REGLES_JP6.join(', ')}), et ${autres.length} règles en plus ; TRANSITIONS porte maquette_prete → lien_prepare ; OptionsDecision de 2 à 7, OPTIONS_DECISIONS de chaque type entre 2 et 7 avec son défaut`)
   } catch (err) { noter('JP-6', [`scénario interrompu : ${premiereLigne(err)}`]) }
+}
+
+// ── JP-7 : la garde de --reel ; JP-8 : les chaînes refusées et --domaines (lot 4) ─────────────────────────────────────────
+if (IDS.includes('JP-7')) {
+  const e = []
+  for (const x of entrees) if (x.arguments.some((a) => /^--(reel|confirmer-reel|hebergement)\b/.test(a))) e.push(`${label(x)} : le registre porte ${x.arguments.join(' ')}`)
+  const gardes = [
+    ['scripts/ops-acquisition-qa.mjs', ['--migration=socle', '--reel'], /--confirmer-reel/],
+    ['scripts/ops-acquisition-qa.mjs', ['--migration=echanges', '--reel'], /--confirmer-reel/],
+    ['scripts/confidentialite-prospection-qa.mjs', ['--hebergement', '--reel'], /--confirmer-reel/],
+    ['scripts/confidentialite-prospection-qa.mjs', ['--hebergement'], /--reel --confirmer-reel/],
+  ]
+  for (const [juge, args, re] of gardes) {
+    const r = lancer(process.execPath, [juge, ...args], { cwd: R, timeout: 60_000, env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '', NEXT_PUBLIC_SUPABASE_ANON_KEY: '' } })
+    fs.writeFileSync(path.join(SORTIES, `garde-${path.basename(juge, '.mjs')}-${args.join('').replace(/[^\w]+/g, '-')}.log`), `$ node ${juge} ${args.join(' ')}\n${r.sortie}\n--- code ${r.code}\n`)
+    if (r.code !== 2 || !re.test(r.sortie)) e.push(`${path.basename(juge)} ${args.join(' ')} : code ${r.code}, « ${court(r.sortie.trim().split(/\r?\n/).pop(), 100)} » (code 2 et renvoi à ${re.source} attendus)`)
+  }
+  noter('JP-7', e, `aucune entrée du registre ne porte --reel ; ops-acquisition-qa --reel sans --confirmer-reel → code 2 (socle, echanges) ; confidentialite-prospection-qa --hebergement sans --reel --confirmer-reel → code 2, avant tout accès`)
+}
+if (IDS.includes('JP-8')) {
+  const e = []
+  const MOTS = ['sequenceur', 'SEQUENCEUR', 'META_ADLIB_TOKEN', 'ACQ_ADRESSES_NOMINATIVES', 'domaines-prospection']
+  const juges = [...new Set(entrees.map((x) => x.juge))]
+  for (const j of juges) {
+    const s = fs.readFileSync(path.join(R, j), 'utf8')
+    const a = s.indexOf('// chaînes refusées : début'), b = s.indexOf('// chaînes refusées : fin')
+    const hors = a >= 0 && b > a ? s.slice(0, a) + s.slice(b) : s
+    for (const m of MOTS) { const k = hors.indexOf(m); if (k >= 0) e.push(`${j} : « ${m} » hors du bloc des chaînes refusées (ligne ${hors.slice(0, k).split('\n').length})`) }
+  }
+  const d = lancer(process.execPath, ['scripts/confidentialite-prospection-qa.mjs', '--domaines'], { cwd: R, timeout: 60_000 })
+  fs.writeFileSync(path.join(SORTIES, 'garde-confidentialite-domaines.log'), `$ node scripts/confidentialite-prospection-qa.mjs --domaines\n${d.sortie}\n--- code ${d.code}\n`)
+  if (d.code !== 2 || !/--hebergement/.test(d.sortie)) e.push(`confidentialite-prospection-qa --domaines : code ${d.code} (2 et renvoi vers --hebergement attendus)`)
+  noter('JP-8', e, `${juges.length} juges lus : ${MOTS.join(', ')} n'apparaissent que dans leur bloc « chaînes refusées » ; --domaines → code 2, renvoi vers --hebergement`)
+}
+// ── JP-9 : les lots 1 à 3 déjà peuplés restent verts (clôture de 026-037) ────────────────────────────────────────────────
+if (IDS.includes('JP-9')) {
+  const e = [], etats = []
+  for (const n of [1, 2, 3]) {
+    const rp = lancer(process.execPath, [path.join(R, 'scripts', `${NOM_PREUVE}.mjs`), `--lot=${n}`], { cwd: R, timeout: 8 * 60_000 })
+    fs.writeFileSync(path.join(SORTIES, `cloture-lot-${n}.log`), `$ node scripts/${NOM_PREUVE}.mjs --lot=${n}\n${rp.sortie}\n--- code ${rp.code}${rp.erreur ? ` (${rp.erreur})` : ''} · ${rp.duree.toFixed(1)} s\n`)
+    if (/aucun juge inscrit au lot \d+ du registre/.test(rp.sortie)) { etats.push(`lot ${n} : pas encore peuplé (toléré)`); continue }
+    const derniere = rp.sortie.trim().split(/\r?\n/).pop() ?? ''
+    if (rp.code === 0 && /: PASS$/.test(derniere)) etats.push(`lot ${n} : PASS`)
+    else e.push(`lot ${n} : code ${rp.code}${rp.erreur ? ` (${rp.erreur})` : ''}, « ${court(derniere, 140)} »`)
+  }
+  noter('JP-9', e, `clôture rejouée par sous-processus : ${etats.join(' ; ') || 'aucun lot 1 à 3 encore peuplé'}`)
 }
 
 // ── echecs-attendus.md, relu (JP-5) ───────────────────────────────────────────────────────────────────────────────────────

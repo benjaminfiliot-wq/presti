@@ -1,0 +1,8 @@
+{
+  "_lisez_moi": "Messages rendus par la doublure de releverGmail (juge routes-acquisition-qa, 026-037, RB-9 à RB-12). La doublure ne rend que ceux dont « a » est l'adresse qu'elle reçoit. Les marqueurs {{…}} sont posés par le juge : l'adresse de prospection, une autre adresse de la boîte, et une messagerie gratuite de MESSAGERIES_GRATUITES (contrat.ts).",
+  "messages": [
+    { "a": "{{ADRESSE_PROSPECTION}}", "id_externe": "<stop-1@essai.invalid>", "de": "martin.essai@{{MESSAGERIE_GRATUITE}}", "objet": "Re: votre message", "texte": "STOP", "en_reponse_a": null, "auto": false, "accuse_site": false, "imap_uid": 42 },
+    { "a": "{{ADRESSE_PROSPECTION}}", "id_externe": "<reponse-2@essai.invalid>", "de": "contact@menuiserie-essai.invalid", "objet": "Re: votre message Réf. AB12CD", "texte": "Bonjour, combien coûte le site ? TEXTE-PIEGE-REPONSE, rappelez-moi au 0600000000 ou voyez https://menuiserie-essai.invalid/devis", "en_reponse_a": "<envoi-1@essai.invalid>", "auto": false, "accuse_site": false, "imap_uid": 43 },
+    { "a": "{{AUTRE_ADRESSE}}", "id_externe": "<ailleurs-3@essai.invalid>", "de": "releves@banque-essai.invalid", "objet": "Votre relevé", "texte": "TEXTE-PIEGE-AILLEURS : ce message ne doit jamais atteindre le magasin", "en_reponse_a": null, "auto": false, "accuse_site": false, "imap_uid": 44 }
+  ]
+}

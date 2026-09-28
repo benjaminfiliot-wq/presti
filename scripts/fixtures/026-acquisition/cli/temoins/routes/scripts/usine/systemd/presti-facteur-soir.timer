@@ -1,0 +1,10 @@
+# TÉMOIN (026-037, RB-18)
+[Unit]
+Description=Presti : rejugement du soir
+
+[Timer]
+OnCalendar=*-*-* 20:05:00 Europe/Paris
+Persistent=true
+
+[Install]
+WantedBy=timers.target
