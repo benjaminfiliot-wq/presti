@@ -486,3 +486,9 @@
 {"id":"026-068","verdict":"FAIL","ligne":"✅ RL-4 six blocs → 200 au contrat (bloc, source, a ; valeur à la forme, ou nulle avec erreur ou manque), jamais 500","code":1,"date":"2026-09-28T12:53:59Z","duree_s":312,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"026-071","verdict":"FAIL","ligne":"juges-026-acquisition-preuve --lot=7 : FAIL — JP-2, JP-3, JP-5","code":1,"date":"2026-09-28T13:07:29Z","duree_s":60,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
 {"id":"026-114","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T13:17:05Z","duree_s":6,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-068","verdict":"FAIL","ligne":"✅ RL-9 npm run typecheck vert","code":1,"date":"2026-09-28T13:42:11Z","duree_s":727,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-100","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T13:44:21Z","duree_s":327,"agent":"claude-code","executant":"codex","lignes":510,"dossier":"en-cours"}
+{"id":"026-074","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T13:46:33Z","duree_s":953,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-071","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T13:56:08Z","duree_s":75,"agent":"claude-code","executant":"claude-code","lignes":1271,"dossier":"fait"}
+{"id":"026-068","verdict":"FAIL","ligne":"✅ RL-4 six blocs → 200 au contrat (bloc, source, a ; valeur à la forme, ou nulle avec erreur ou manque), jamais 500","code":1,"date":"2026-09-28T13:58:06Z","duree_s":511,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-100","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T13:58:11Z","duree_s":272,"agent":"claude-code","executant":"codex","lignes":510,"dossier":"fait"}
