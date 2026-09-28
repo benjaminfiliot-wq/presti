@@ -388,3 +388,6 @@
 {"id":"026-027","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:37:41Z","duree_s":138,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"026-121","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:37:53Z","duree_s":152,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
 {"id":"026-220","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:38:10Z","duree_s":151,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-037","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:41:16Z","duree_s":354,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-146","verdict":"FAIL","ligne":"FAIL CT-1 — conforme : code 1, attendu 0 (fiche conforme, juge rouge sur RD-1) — code 1 : ✗ juge déjà vert avant fabrication","code":1,"date":"2026-09-28T05:43:05Z","duree_s":30,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-223","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T05:43:08Z","duree_s":1,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
