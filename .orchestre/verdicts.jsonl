@@ -446,3 +446,10 @@
 {"id":"026-107","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:06:01Z","duree_s":148,"agent":"claude-code","executant":"claude-code","lignes":511,"dossier":"en-cours"}
 {"id":"026-116","verdict":"FAIL","ligne":"Error: Cannot find module 'C:\\Users\\benja\\AppData\\Local\\Temp\\vi-026-116-45603\\scripts\\juges-026-pubs-contenu-preuve.mjs'","code":1,"date":"2026-09-28T11:06:48Z","duree_s":1,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-107","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:08:26Z","duree_s":78,"agent":"claude-code","executant":"claude-code","lignes":511,"dossier":"fait"}
+{"id":"026-057","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:09:25Z","duree_s":88,"agent":"usine-codex-69","executant":"codex","lignes":702,"dossier":"fait"}
+{"id":"026-116","verdict":"FAIL","ligne":"PASS crieur-qa --partie=composer — référence : code 1, FAIL CR-1 — lib/crieur/faits.ts ne s'importe pas : Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\\U","code":1,"date":"2026-09-28T11:11:00Z","duree_s":113,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-043","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:11:00Z","duree_s":207,"agent":"claude-code","executant":"claude-code","lignes":1139,"dossier":"fait"}
+{"id":"026-110","verdict":"FAIL","ligne":"Error: Cannot find module 'C:\\Users\\benja\\AppData\\Local\\Temp\\vi-026-110-47335\\scripts\\juges-026-pubs-contenu-preuve.mjs'","code":1,"date":"2026-09-28T11:12:42Z","duree_s":1,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-116","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:13:27Z","duree_s":84,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-043","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:14:15Z","duree_s":168,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-114","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T11:14:24Z","duree_s":7,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
