@@ -99,7 +99,10 @@ function jugerLV1(s) {
   else if (/variables?\s+(?:manquante|manquantes)|SUPABASE/i.test(rCasse.sortie)) s.echoue('LV-1', "dossier cassé : refusé pour des variables d'environnement manquantes plutôt que pour le contenu — pub-locale-qa.mjs doit être jugé AVANT le réseau")
 
   const fab = path.join(FIX, 'fabrication-temoin')
-  const rSec = lancer(process.execPath, [fichier, 'pack-temoin-0001', fab, '--a-sec'], { cwd: racine, timeout: 20_000, env: envSansSecret })
+  // deposer.mjs juge D'ABORD pour de vrai (pub-locale-qa --partie=complet --dossier=<fab>, vidéos + transcription
+  // comprises) avant même --a-sec : sur un témoin complet et conforme (026-110, 28/09), cet appel prend ~100 s à lui
+  // seul — 20 s le tuait (SIGTERM) quelle que soit la qualité de l'implémentation jugée. Mesuré une fois, marge large.
+  const rSec = lancer(process.execPath, [fichier, 'pack-temoin-0001', fab, '--a-sec'], { cwd: racine, timeout: 4 * 60_000, env: envSansSecret })
   if (rSec.code !== 0) s.echoue('LV-1', `--a-sec sur le témoin de fabrication : code ${rSec.code}${rSec.signal ? ` (signal ${rSec.signal})` : ''}, 0 attendu — ${court(rSec.sortie, 200)}`)
   else {
     const attendus = fs.readdirSync(path.join(fab, 'sortie')).sort()
