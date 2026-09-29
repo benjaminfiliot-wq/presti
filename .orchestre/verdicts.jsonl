@@ -696,3 +696,9 @@
 {"id":"026-222","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T12:26:08Z","duree_s":1,"agent":"claude-code","executant":"claude-code","lignes":400,"dossier":"fait"}
 {"id":"026-235","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T12:28:37Z","duree_s":118,"agent":"usine-codex-133","executant":"codex","lignes":915,"dossier":"fait"}
 {"id":"026-224","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T12:36:20Z","duree_s":23,"agent":"claude-code","executant":"codex","lignes":611,"dossier":"fait"}
+{"id":"026-233","verdict":"FAIL","ligne":"FAIL SVR-12 — git status : chemin(s) apparu(s) pendant ce passage, hors .orchestre/travail/ et preuves/ : .orchestre/file/026-224.md | .orchestre/fait/026-236.m","code":1,"date":"2026-09-29T12:59:34Z","duree_s":304,"agent":"claude-code","executant":"codex","lignes":947,"dossier":"fait"}
+{"id":"026-236","verdict":"FAIL","ligne":"FAIL SVL-11 — git status : chemin(s) apparu(s) pendant ce passage : .orchestre/verdicts.jsonl | .orchestre/refuse/026-233.md (181 s)","code":1,"date":"2026-09-29T13:03:10Z","duree_s":255,"agent":"usine-codex-134","executant":"codex","lignes":603,"dossier":"fait"}
+{"id":"026-215","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T13:03:22Z","duree_s":16,"agent":"claude-code","executant":"codex","lignes":748,"dossier":"en-cours"}
+{"id":"026-207","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T13:03:50Z","duree_s":15,"agent":"claude-code","executant":"claude-code","lignes":834,"dossier":"fait"}
+{"id":"026-215","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T13:03:50Z","duree_s":7,"agent":"claude-code","executant":"codex","lignes":748,"dossier":"fait"}
+{"id":"026-215","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T13:05:41Z","duree_s":6,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
