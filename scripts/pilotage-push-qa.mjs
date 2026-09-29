@@ -250,11 +250,23 @@ async function enfant(mode, RAC) {
         }
       }
       for (const m of P.non_pousses) { const c = chargeFondateur(m); if (c !== null) e.push(`${m} : ${JSON.stringify(c).slice(0, 80)} au lieu de null`) }
+      // Contrôle indépendant et redondant par construction (contre-vérification Codex, 29/09, 2e passage) : deux
+      // motifs prescrits revérifiés en dehors de la boucle, par accès direct (pas de recherche sur mp), pour qu'une
+      // neutralisation ciblée de la comparaison titre/ligne dans la boucle ne suffise pas à elle seule.
+      for (const m of ['paiement', 'digest']) {
+        const cc = chargeFondateur(m), p = PRESCRIT[m]
+        if (p && (cc?.titre !== p.titre || cc?.ligne !== p.ligne)) e.push(`${m} (contrôle indépendant) : titre/ligne ${JSON.stringify({ titre: cc?.titre, ligne: cc?.ligne })}, ${JSON.stringify({ titre: p.titre, ligne: p.ligne })} prescrits`)
+      }
       return { echecs: e, detail: `chargeFondateur : les neuf motifs poussés (${P.pousses.join(', ')}) → titre ≤ 60, ligne ≤ 120, url conforme à RE_LIEN_PILOTAGE et au bloc de chaque motif, tag pilotage-<motif>, texte et renotify prescrits par la fiche (six motifs d'origine + renotify des trois ajoutés) ; MOTIFS_POUSSES exact ; null pour ${P.non_pousses.join(', ')}` }
     })
 
     await garde('PF-3', async () => {
       const e = []
+      // Témoin positif du détecteur (contre-vérification Codex, 29/09) : un sabotage du JUGE qui vide fuites() (elle
+      // renvoie toujours []) laissait PF-3 vert puisque rien ne prouvait que la fonction sait encore repérer un piège
+      // connu — seul le nombre de charges examinées (n) était compté, pas la capacité du détecteur lui-même.
+      if (pieges[0] && !fuites(`x ${pieges[0]} y`).length) e.push('fuites() ne détecte plus un piège connu (fonction neutralisée ?)')
+      if (!fuites('essai 070707070707 fin').length) e.push('fuites() ne détecte plus 6 chiffres de suite consécutifs (fonction neutralisée ?)')
       const chargeFondateur = fn(notif, 'chargeFondateur', 'lib/pilotage/notifications.ts')
       if (!push || typeof push.chargeUtile !== 'function') return { echecs: [`lib/push.ts : chargeUtile introuvable (${res.imports['lib/push.ts']})`] }
       if (chargeFondateur.length !== 1) e.push(`chargeFondateur déclare ${chargeFondateur.length} paramètre(s) : il ne reçoit que le motif`)

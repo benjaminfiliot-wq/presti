@@ -125,11 +125,25 @@ async function decider(s) {
 
   await s.critere('DC-2', () => {
     const carteValide = fn(m.decisions, 'carteValide', D), e = []
+    // Compteurs de couverture (contre-vérification Codex, 29/09 : un sabotage du JUGE lui-même, pas du témoin, qui vide
+    // silencieusement cette boucle laissait DC-2 vert — rien ne comptait combien de fautives avaient été vraiment examinées.
+    let vusF = 0, vusV = 0
     for (const x of d.fautives) {
+      vusF++
       const r = carteValide(x)
       if (!(r && r.ok === false && typeof r.raison === 'string' && r.raison.trim())) e.push(`${d.fautes[x.id]} : ${JSON.stringify(r)} au lieu de { ok: false, raison }`)
     }
-    for (const x of d.valides) { const r = carteValide(x); if (!(r && r.ok === true)) e.push(`décision valide à ${x.options.length} options refusée : ${JSON.stringify(r)}`) }
+    for (const x of d.valides) { vusV++; const r = carteValide(x); if (!(r && r.ok === true)) e.push(`décision valide à ${x.options.length} options refusée : ${JSON.stringify(r)}`) }
+    if (vusF !== d.fautives.length) e.push(`DC-2 : ${vusF}/${d.fautives.length} décision(s) fautive(s) examinée(s) — contrôle réduit`)
+    if (vusV !== d.valides.length) e.push(`DC-2 : ${vusV}/${d.valides.length} décision(s) valide(s) examinée(s) — contrôle réduit`)
+    // Contrôle indépendant et redondant par construction (contre-vérification Codex, 29/09, 2e passage) : la boucle
+    // ci-dessus a été rejouée avec sa CONDITION neutralisée tout en gardant vusF/vusV corrects (le compteur seul ne
+    // suffit pas). Ce bloc revérifie le même fait, hors de la boucle, dans une forme différente : un seul sabotage
+    // d'une ligne ne peut pas neutraliser les deux chemins de code à la fois.
+    for (const sp of [d.fautives[0], d.fautives[d.fautives.length - 1]].filter(Boolean)) {
+      const rr = carteValide(sp)
+      if (rr?.ok !== false) e.push(`DC-2 (contrôle indépendant) : carteValide(${d.fautes[sp.id]}) rend ok=${JSON.stringify(rr?.ok)}, false attendu`)
+    }
     return { echecs: e, detail: `carteValide refuse les 6 fautives, chacune avec sa raison (${d.fautives.map((x) => d.fautes[x.id]).join(', ')}) et accepte les 8 valides, dont celles à 2, 3 et 7 options` }
   })
 
@@ -409,25 +423,34 @@ async function envois(s) {
 
   await s.critere('LE-6', () => {
     const e = []
+    // Contrôles comptés (contre-vérification Codex, 29/09) : chaque `if` ci-dessous compte pour un contrôle ; en retirer
+    // un du JUGE lui-même (comme le compteur de rejets, visé par le sabotage établi) fait tomber le total à 11 et rougit
+    // — sans ce compteur, une ligne de contrôle disparue du juge passait inaperçue tant que rien d'autre ne bougeait.
+    let n_controles = 0
+    const c = (cond, msg) => { n_controles++; if (cond) e.push(msg) }
     const r = envoisDesAgents()(lignes, cc.canaux, tc.technologies, t)
     const ids = (r?.envois ?? []).map((x) => x.id)
     const sv = r?.envois?.find((x) => x.id === cas.sans_verdict), cp = r?.envois?.find((x) => x.id === cas.complet)
     const an = r?.anomalies ?? []
-    if (!sv || sv.complet !== false) e.push(`envoi sans verdict : complet = ${sv?.complet}, false attendu`)
-    if (!an.some((a) => a.id === cas.sans_verdict && a.raison === 'verdicts_incomplets')) e.push('envoi sans verdict absent des anomalies (raison verdicts_incomplets)')
-    if (!cp || cp.complet !== true) e.push(`envoi aux trois pass : complet = ${cp?.complet}, true attendu`)
-    if (an.some((a) => a.id === cas.complet)) e.push('envoi aux trois pass compté en anomalie')
-    if (an.length !== v.attendu.anomalies.length) e.push(`${an.length} anomalie(s), ${v.attendu.anomalies.length} attendue(s) (${an.map((a) => a.id.slice(-2)).join(', ')})`)
-    if (an.some((a) => a.id === cas.prepare_sans_second)) e.push('un envoi seulement préparé est compté en anomalie')
-    if (r?.rejets !== v.attendu.rejets) e.push(`rejets = ${r?.rejets}, ${v.attendu.rejets} attendus (envois du jour avec au moins un refus)`)
-    if (ids.includes(cas.hier) || an.some((a) => a.id === cas.hier)) e.push('l’envoi d’hier (23 h 30 à Paris) apparaît')
-    if (!ids.includes(cas.minuit_paris)) e.push('l’envoi de 0 h 30 à Paris (22 h 30 UTC la veille) manque : jour pris en UTC ?')
-    if (ids.length !== v.attendu.du_jour) e.push(`${ids.length} envois du jour, ${v.attendu.du_jour} attendus`)
+    c(!sv || sv.complet !== false, `envoi sans verdict : complet = ${sv?.complet}, false attendu`)
+    c(!an.some((a) => a.id === cas.sans_verdict && a.raison === 'verdicts_incomplets'), 'envoi sans verdict absent des anomalies (raison verdicts_incomplets)')
+    c(!cp || cp.complet !== true, `envoi aux trois pass : complet = ${cp?.complet}, true attendu`)
+    c(an.some((a) => a.id === cas.complet), 'envoi aux trois pass compté en anomalie')
+    c(an.length !== v.attendu.anomalies.length, `${an.length} anomalie(s), ${v.attendu.anomalies.length} attendue(s) (${an.map((a) => a.id.slice(-2)).join(', ')})`)
+    c(an.some((a) => a.id === cas.prepare_sans_second), 'un envoi seulement préparé est compté en anomalie')
+    c(r?.rejets !== v.attendu.rejets, `rejets = ${r?.rejets}, ${v.attendu.rejets} attendus (envois du jour avec au moins un refus)`)
+    c(ids.includes(cas.hier) || an.some((a) => a.id === cas.hier), 'l’envoi d’hier (23 h 30 à Paris) apparaît')
+    c(!ids.includes(cas.minuit_paris), 'l’envoi de 0 h 30 à Paris (22 h 30 UTC la veille) manque : jour pris en UTC ?')
+    c(ids.length !== v.attendu.du_jour, `${ids.length} envois du jour, ${v.attendu.du_jour} attendus`)
     const date = (x) => Date.parse(x.envoye_le ?? lignes.find((l) => l.id === x.id).prepare_le)
     for (let i = 1; i < (r?.envois ?? []).length; i++) if (date(r.envois[i - 1]) < date(r.envois[i])) { e.push('envois pas du plus récent au plus ancien'); break }
     const soir = envoisDesAgents()(lignes, cc.canaux, tc.technologies, new Date('2026-10-14T21:30:00.000Z'))
     const idsSoir = (soir?.envois ?? []).map((x) => x.id)
-    if (idsSoir.length !== v.attendu.du_jour || idsSoir.includes(cas.hier) || !idsSoir.includes(cas.minuit_paris)) e.push(`à 23 h 30 à Paris le même jour : ${idsSoir.length} envois, hier ${idsSoir.includes(cas.hier) ? 'présent' : 'absent'}, 0 h 30 ${idsSoir.includes(cas.minuit_paris) ? 'présent' : 'absent'}`)
+    c(idsSoir.length !== v.attendu.du_jour || idsSoir.includes(cas.hier) || !idsSoir.includes(cas.minuit_paris), `à 23 h 30 à Paris le même jour : ${idsSoir.length} envois, hier ${idsSoir.includes(cas.hier) ? 'présent' : 'absent'}, 0 h 30 ${idsSoir.includes(cas.minuit_paris) ? 'présent' : 'absent'}`)
+    if (n_controles !== 11) e.push(`LE-6 : ${n_controles} contrôle(s) exécuté(s), 11 attendus — un contrôle a disparu du juge`)
+    // Second contrôle des rejets, indépendant et redondant par construction (contre-vérification Codex, 29/09, 2e
+    // passage) : le compteur ci-dessus reste juste même quand la condition du premier contrôle est neutralisée seule.
+    if (Number(r?.rejets) !== Number(v.attendu.rejets)) e.push(`rejets (contrôle indépendant) = ${r?.rejets}, ${v.attendu.rejets} attendus`)
     return { echecs: e, detail: `l'envoi « envoye » sans son second verdict est l'unique anomalie (verdicts_incomplets, complet: false) ; l'envoi aux trois pass est complet ; rejets = ${v.attendu.rejets} ; ${v.attendu.du_jour} envois du jour à Paris, du plus récent au plus ancien : 0 h 30 à Paris (22 h 30 UTC la veille) dedans, 23 h 30 la veille dehors, à 12 h comme à 23 h 30` }
   })
 
@@ -618,6 +641,11 @@ async function agents(s) {
       const bloc = blocAttention(fs.readFileSync(path.join(ORCHESTRE_ESSAI, 'digest.md'), 'utf8'))
       const norm = (l) => String(l).replace(/^\s*[-*]\s+/, '').trim()
       if (JSON.stringify((j.attention ?? []).map(norm)) !== JSON.stringify(bloc.lignes)) e.push(`attention ${JSON.stringify(j.attention)} ≠ les 3 lignes du bloc « ## Attention (3) »`)
+      // Contrôle indépendant et redondant par construction (contre-vérification Codex, 29/09, 2e passage) : revérifie
+      // la file du snapshot par un chemin de code différent (Set, pas de tri/join), pour qu'une neutralisation
+      // ciblée de la comparaison ci-dessus ne suffise pas à elle seule.
+      const filSet = new Set(j.file ?? [])
+      if (filSet.size !== 2 || !filSet.has('099-temoin-a') || !filSet.has('099-temoin-b')) e.push(`file (contrôle indépendant) : ${JSON.stringify(j.file)}, exactement 099-temoin-a et 099-temoin-b attendus`)
     }
     const sansDigest = path.join(travail, 'orchestre-sans-digest')
     fs.cpSync(ORCHESTRE_ESSAI, sansDigest, { recursive: true })
@@ -668,7 +696,11 @@ async function agents(s) {
     if (/console\.log\s*\(\s*process\.env/.test(nu)) e.push('le source affiche process.env')
     if (/presti-secrets/.test(src)) e.push('le source lit presti-secrets')
     if (!sorties.length) e.push('aucun lancement du script à examiner (AC-5 et AC-7 n’ont rien lancé)')
-    for (const x of sorties) if (x.stdout.includes(cle) || x.stderr.includes(cle)) e.push(`lancement ${x.nom} : la clé de service apparaît sur sa sortie`)
+    // Compteur de couverture (contre-vérification Codex, 29/09) : un sabotage du JUGE qui vide cette boucle laissait
+    // AC-6 vert sans qu'aucune sortie n'ait été examinée pour la fuite de la clé.
+    let scannes = 0
+    for (const x of sorties) { scannes++; if (x.stdout.includes(cle) || x.stderr.includes(cle)) e.push(`lancement ${x.nom} : la clé de service apparaît sur sa sortie`) }
+    if (scannes !== sorties.length) e.push(`AC-6 : ${scannes}/${sorties.length} sortie(s) examinée(s) pour la clé — contrôle réduit`)
     if (!sorties.some((x) => x.nom.startsWith('reel'))) e.push('aucun lancement réel examiné')
     return { echecs: e, detail: `fausse clé de service tirée au hasard (${cle.length} signes) : absente des sorties standard et d'erreur des ${sorties.length} lancements (--a-sec et réels) ; ni console.log(process.env, ni presti-secrets dans le source` }
   })

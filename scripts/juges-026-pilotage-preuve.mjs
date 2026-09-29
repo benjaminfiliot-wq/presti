@@ -18,7 +18,8 @@
 //         https.get vers l'extérieur, et laisse passer 127.0.0.1 ; plus les contrôles « JA-4 » déclarés par le lot (lot a :
 //         aucun juge ne lit .env.local ni presti-secrets, lu dans le source et vérifié sous un piège des lectures) ;
 //   JA-5  `git status --porcelain` (fichiers non suivis compris, taille et date de chaque fichier listé) est le même avant et
-//         après, hors .orchestre/travail/ et .orchestre/preuves/ ;
+//         après, hors .orchestre/travail/, .orchestre/preuves/ et le reste de .orchestre/ (bruit d'autres fiches sur ce
+//         dépôt travaillé en continu — seul .orchestre/decisions.md y reste surveillé) ;
 //   JA-6  un lot.mjs sans `fiche`, ou avec une `fiche` hors de ^026-[\w-]+$, est refusé (la preuve se relance elle-même sur
 //         deux copies fautives et une copie intacte, sous .orchestre/travail/) ; la section du lot est écrite dans le dossier
 //         de preuves de SA fiche ; plus les contrôles « JA-6 » déclarés par le lot (lot a : --partie=lot refusée en code 2).
@@ -103,7 +104,20 @@ function finir() {
 }
 
 // ── JA-5 : l'état du dépôt, avant ────────────────────────────────────────────────────────────────────────────────────────
+// 29/09 : ce dépôt est travaillé 24h/24 par plusieurs sessions (l'écosystème 026 tourne en continu). Sur deux rejeux
+// consécutifs (28/09 matin puis soir), JA-5 a rougi uniquement sur du bruit d'autres fiches — .orchestre/contexte.md,
+// .orchestre/digest.md, des .orchestre/en-cours/<autre-id>.*, .orchestre/a-relire/<autre-id>.md, .orchestre/fait/<autre-id>.md
+// — jamais sur un chemin protégé par le périmètre de 026-012 (voir l'en-tête de la fiche : interdit ne cite qu'un seul
+// chemin sous .orchestre/, à savoir .orchestre/decisions.md). JA-5 ne doit surveiller que ce que 026-012 doit réellement
+// protéger : tout .orchestre/ sauf .orchestre/decisions.md est désormais hors surveillance, comme .orchestre/travail/ et
+// .orchestre/preuves/ l'étaient déjà. app/**, lib/**, supabase/**, public/**, scripts/** (hors ce lot) restent surveillés.
 const HORS_JA5 = ['.orchestre/travail/', '.orchestre/preuves/']
+const PROTEGE_JA5_SOUS_ORCHESTRE = new Set(['.orchestre/decisions.md'])
+function horsJA5(chemin) {
+  if (HORS_JA5.some((h) => chemin.startsWith(h))) return true
+  if (chemin.startsWith('.orchestre/') && !PROTEGE_JA5_SOUS_ORCHESTRE.has(chemin)) return true
+  return false
+}
 function etatDepot() {
   const r = git(['status', '--porcelain=v1', '-z', '--untracked-files=all'])
   if (r.code !== 0) throw new Error(`git status : ${court(r.stderr || r.erreur)}`)
@@ -113,7 +127,7 @@ function etatDepot() {
     if (!e[i]) continue
     const statut = e[i].slice(0, 2), chemin = e[i].slice(3)
     if (/[RC]/.test(statut)) i++ // le chemin d'origine d'un renommage suit
-    if (HORS_JA5.some((h) => chemin.startsWith(h))) continue
+    if (horsJA5(chemin)) continue
     let empreinte = 'absent'
     try { const st = fs.statSync(path.join(R, chemin)); empreinte = st.isDirectory() ? 'dossier' : `${st.size}:${st.mtimeMs}` } catch { /* supprimé */ }
     m.set(chemin, `${statut}|${empreinte}`)
@@ -554,7 +568,7 @@ if (avant) {
     const d = []
     for (const [k, v] of avant) if (!apres.has(k)) d.push(`${k} revenu propre ou disparu`); else if (apres.get(k) !== v) d.push(`${k} modifié (${v.split('|')[0].trim() || 'suivi'})`)
     for (const k of apres.keys()) if (!avant.has(k)) d.push(`${k} apparu dans git status`)
-    noter('JA-5', d, `git status --porcelain identique avant et après (${avant.size} entrée(s) hors ${HORS_JA5.join(' et ')}, taille et date de chacune comprises)`)
+    noter('JA-5', d, `git status --porcelain identique avant et après (${avant.size} entrée(s) hors ${HORS_JA5.join(' et ')} et le reste de .orchestre/ sauf .orchestre/decisions.md, taille et date de chacune comprises)`)
   } catch (e) { noter('JA-5', [`état final illisible : ${premiereLigne(e)}`]) }
 }
 finir()

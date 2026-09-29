@@ -318,7 +318,7 @@ export function verifierAlertesPush() {
   }
   for (const m of [...(p.pousses ?? []), ...(p.non_pousses ?? [])]) if (!(p.alertes ?? []).some((a) => a.motif === m && a.a === 'entreprise')) e.push(`motif ${m} : aucune alerte d’entreprise`)
   if (!(p.alertes ?? []).some((a) => a.a !== 'entreprise' && a.a?.artisanId && a.a?.email)) e.push('aucune alerte adressée à un artisan')
-  if ((p.pousses ?? []).join() !== 'paiement,appel,panne_agent,argent_bloque,coupe_circuit,digest') e.push('pousses : les six motifs de 026-051, dans l’ordre')
+  if ((p.pousses ?? []).join() !== 'paiement,appel,panne_agent,argent_bloque,coupe_circuit,digest,usine_injoignable,canal_arrete,gmail_bloque') e.push('pousses : les neuf motifs de 026-051 (réponse du 28/09 incluse), dans l’ordre')
   return e
 }
 

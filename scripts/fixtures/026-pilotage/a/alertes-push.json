@@ -1,5 +1,5 @@
 {
-  "_lisez_moi": "Une alerte de chaque motif (les six poussés aux fondateurs, puis les autres), adressées à l’entreprise ou à un artisan, chacune chargée des pièges dans le sujet et le corps : un nom, un téléphone, une adresse, un montant, et une référence de 12 chiffres.",
+  "_lisez_moi": "Une alerte de chaque motif (les neuf poussés aux fondateurs — six de 026-051, plus usine_injoignable, canal_arrete et gmail_bloque de la réponse du 28/09 — puis les autres), adressées à l’entreprise ou à un artisan, chacune chargée des pièges dans le sujet et le corps : un nom, un téléphone, une adresse, un montant, et une référence de 12 chiffres.",
   "pieges": {
     "nom": "Jean Témoin",
     "telephone": "06 12 34 56 78",
@@ -12,7 +12,10 @@
     "panne_agent",
     "argent_bloque",
     "coupe_circuit",
-    "digest"
+    "digest",
+    "usine_injoignable",
+    "canal_arrete",
+    "gmail_bloque"
   ],
   "non_pousses": [
     "solde_ia",
@@ -65,6 +68,27 @@
       "a": "entreprise",
       "cle": "temoin-digest",
       "sujet": "digest — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "usine_injoignable",
+      "a": "entreprise",
+      "cle": "temoin-usine",
+      "sujet": "usine_injoignable — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "canal_arrete",
+      "a": "entreprise",
+      "cle": "temoin-canal",
+      "sujet": "canal_arrete — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
+      "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
+    },
+    {
+      "motif": "gmail_bloque",
+      "a": "entreprise",
+      "cle": "temoin-gmail",
+      "sujet": "gmail_bloque — Jean Témoin (06 12 34 56 78) : 1 234,56 €",
       "corps": "Artisan : Jean Témoin <jean.temoin@exemple.invalid>\nTéléphone : 06 12 34 56 78\nMontant : 1 234,56 €\nRéférence : 998877665544"
     },
     {
