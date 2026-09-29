@@ -72,7 +72,7 @@ export const FLAGS = {
   canauxReseaux: false,
   /** v15 §3 — le site à la demande : la page /site/commander, le dossier (api/site/commander/brouillon) et le
    *  paiement unique (api/site/commander). À lever dès que la migration 0088 est collée : levé sans la table,
-   *  les routes répondent 503 (fail-closed, voulu) — d'où l'ordre : coller, puis lever. Baissé : 404. */
+   *  les routes répondent 503 (fail-closed, voulu) — d'où l'ordre : appliquer (Claude Code), puis lever. Baissé : 404. */
   siteCommande: true,
   /** v15 §4 — la VENTE du site : le bloc « Le site, à la demande — 300 € une fois » et le bouton « Commander mon
    *  site » sur la landing et /abonnement. Ne se lève qu'après l'étape 7 verte et un site de démonstration
@@ -100,6 +100,13 @@ export const FLAGS = {
   audience: true,
   /** 24/09 — Pilotage (Mission Control), premier onglet du Poste. Baissé : GET /api/controle/pilotage répond 404 et l'onglet n'existe pas. Levé par la fiche 026-140, après la recette et l'accord de Benj. */
   pilotage: false,
+  /** 026-118 — le pack pubs locales : le dossier (/pubs/commander, /api/pubs/commander/brouillon) et le paiement
+   *  (POST /api/pubs/commander). Baissé : les routes répondent 404. À lever sur décision de Benj, seulement après
+   *  l'application de 0102, le PASS des fiches 05 (CGU 3 ter, lues par Benj), 12, 15 et 24 (effacement des fichiers
+   *  promis par le 3 ter), 134 et 144, la catégorie « Logement » vérifiée par Benj et un pack d'essai regardé par Benj. */
+  packPub: false,
+  /** 026-118 — la carte de vente du pack pubs dans l'application. À lever après packPub. */
+  packPubVente: false,
 } as const
 
 export type Flag = keyof typeof FLAGS

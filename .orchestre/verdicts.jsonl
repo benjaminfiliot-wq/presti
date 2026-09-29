@@ -653,3 +653,6 @@
 {"id":"026-119","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T08:49:29Z","duree_s":6,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-141","verdict":"FAIL","ligne":"✅ BL-2 busEnPause : faux seulement sur une réponse explicite false ; vrai sur true, null, une erreur PostgREST (400), une erreur serveur (500) et un rpc qui lèv","code":1,"date":"2026-09-29T08:52:56Z","duree_s":350,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"026-063","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T09:12:19Z","duree_s":382,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-118","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T09:19:28Z","duree_s":219,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-026","verdict":"FAIL","ligne":"délai dépassé (25 min)","code":124,"date":"2026-09-29T09:25:13Z","duree_s":1503,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-115","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T09:28:50Z","duree_s":94,"agent":"claude-code","executant":"claude-code","lignes":438,"dossier":"en-cours"}
