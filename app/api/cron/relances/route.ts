@@ -5,6 +5,7 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { suspensionEnCours } from '@/lib/suspension'
 import { purgerComptes } from '@/lib/purgeComptes'
 import { purgerRgpd } from '@/lib/purgesRgpd'
+import { purgerPacksExpires } from '@/lib/packPubPurge'
 import { generateRelanceReply, relanceTemplate } from '@/lib/ai'
 import { sendEmail } from '@/lib/email'
 import { relever } from '@/lib/direction/courriers'
@@ -144,6 +145,13 @@ export async function GET(req: Request) {
   } catch (e) {
     purges = { erreur: e instanceof Error ? e.message : String(e) }
     await enregistrerPassage('purges-rgpd', purges, false)
+  }
+
+  try {
+    const r = await purgerPacksExpires()
+    await enregistrerPassage('purge-packs', r, r.erreurs.length === 0)
+  } catch (e) {
+    await enregistrerPassage('purge-packs', { erreur: e instanceof Error ? e.message : String(e) }, false)
   }
 
   // La ronde des alertes (§6) vit ici : Vercel n'accorde que deux tâches planifiées à cette
