@@ -32,8 +32,13 @@ import zlib from 'node:zlib'
 import path from 'node:path'
 
 const BUDGETS = [
-  { route: '/site/[slug]', maxKo: 135, pourquoi: 'le site vitrine, ouvert au téléphone depuis un chantier' },
-  { route: '/p/[slug]', maxKo: 135, pourquoi: 'la plateforme où le client écrit sa demande' },
+  // 29/09 — décision du chef (Claude Code), fiche 026-006 : budgets relevés de 135 à 150 Ko pour la montée à Next 16
+  // (mesure honnête sous Next 16 --webpack : /site/[slug] 138 Ko, /p/[slug] 143 Ko, dont 129 Ko de runtime Next/React
+  // communs à toute page ; 179 Ko pour /p/[slug] sous Next 15 — voir .orchestre/preuves/026-253/diagnostic.md).
+  // Le socle commun (runtime + layout racine) pèse déjà 133,5 Ko : 135 n'est plus tenable sans toucher aux pages des
+  // artisans, ce que Benj refuse (décision du 29/09, .orchestre/decisions.md) ; la fiche d'allègement 026-254 est annulée.
+  { route: '/site/[slug]', maxKo: 150, pourquoi: 'le site vitrine, ouvert au téléphone depuis un chantier' },
+  { route: '/p/[slug]', maxKo: 150, pourquoi: 'la plateforme où le client écrit sa demande' },
 ]
 
 if (!fs.existsSync('.next')) {
