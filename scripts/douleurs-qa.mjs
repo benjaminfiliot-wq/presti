@@ -2,7 +2,8 @@
 // 026-073), écrit par Claude Code AVANT le module qu'il juge (lib/agents/acquisition/douleurs.ts). L'exécutant qui le
 // lance n'y touche jamais (CLAUDE.md:23). Cahier DL de 026-073, écrit ici en 026-071.
 //
-//   node --import ./scripts/ts-loader.mjs scripts/douleurs-qa.mjs [--racine=<dossier>] [--auto-controle] [--hors-ligne]
+//   node --import ./scripts/ts-loader.mjs scripts/douleurs-qa.mjs [--racine=<dossier>] [--auto-controle] [--hors-ligne] [--cible-complete]
+//   --cible-complete  la cible d'origine (40 citations, 8 métiers) au lieu de la cible provisoire du 29/09 (12, 3) : verifier de 026-254
 //
 // Par défaut (ni --auto-controle ni --hors-ligne), DL-4 relit CHAQUE source_url du module jugé SUR LE RÉSEAU : le
 // robots.txt de son hôte est lu et respecté (PrestiRecenseur, sinon *), une requête par seconde et par hôte, 8 s de
@@ -34,7 +35,7 @@ import {
 import { ENTREES_ESSAI, couvertureEssai } from './fixtures/026-acquisition/douleurs/entrees.mjs'
 
 const JUGE = 'douleurs-qa'
-const o = lireOptions(process.argv.slice(2), { drapeauxConnus: ['hors-ligne'] })
+const o = lireOptions(process.argv.slice(2), { drapeauxConnus: ['hors-ligne', 'cible-complete'] })
 const refuser = (m) => { console.log(`${JUGE} : appel refusé — ${m}`); process.exit(2) }
 if (o.inconnues.length || o.positionnels.length) refuser(`option(s) inconnue(s) : ${[...o.inconnues, ...o.positionnels].join(' ')}`)
 if (!fs.existsSync(o.racine) || !fs.statSync(o.racine).isDirectory()) refuser(`--racine : ${o.racine} n'est pas un dossier`)
@@ -76,14 +77,24 @@ function identifiantsEnDouble(entrees) {
   for (const e of entrees) vus.set(e.id, (vus.get(e.id) ?? 0) + 1)
   return [...vus.entries()].filter(([, n]) => n > 1)
 }
-/** DL-1 (complément) : couverture par métier — 8 métiers au moins, 3 entrées au moins chacun, 10 « tous » au plus. */
-function controlerCouverture(entrees, metiersConnus) {
+/**
+ * DL-1 (complément) : la cible de couverture. DÉCISION DU 29/09/2026 (.orchestre/decisions.md) : cible PROVISOIRE de
+ * 12 citations réelles sur 3 métiers au moins (3 entrées au moins par métier couvert, 10 « tous » au plus) ; la
+ * complétion à 40 citations sur 8 métiers est renvoyée à la fiche de suite 026-254. Rien d'autre n'est assoupli : un
+ * nombre sous la cible rougit toujours, et une citation introuvable sur sa page rougit toujours (DL-4).
+ */
+// --cible-complete : la cible d'origine de la fiche 026-073 (40 citations, 8 métiers), celle de la fiche de suite 026-254.
+const CIBLE_COMPLETE = o.drapeaux.has('cible-complete')
+const CIBLE_ENTREES = CIBLE_COMPLETE ? 40 : 12
+const CIBLE_METIERS = CIBLE_COMPLETE ? 8 : 3
+/** DL-1 (complément) : couverture par métier — CIBLE_METIERS métiers au moins, 3 entrées au moins chacun, CIBLE_ENTREES au total, 10 « tous » au plus. */
+function controlerCouverture(entrees, metiersConnus, { minEntrees = CIBLE_ENTREES, minMetiers = CIBLE_METIERS } = {}) {
   const err = []
-  if (!Array.isArray(entrees) || entrees.length < 40) err.push(`${Array.isArray(entrees) ? entrees.length : 0} entrée(s), 40 au moins attendues`)
+  if (!Array.isArray(entrees) || entrees.length < minEntrees) err.push(`${Array.isArray(entrees) ? entrees.length : 0} entrée(s), ${minEntrees} au moins attendues`)
   const parMetier = new Map()
   for (const e of entrees ?? []) parMetier.set(e.metier, (parMetier.get(e.metier) ?? 0) + 1)
   const couverts = [...parMetier.keys()].filter((m) => m !== 'tous' && metiersConnus.includes(m))
-  if (couverts.length < 8) err.push(`${couverts.length} métier(s) couvert(s), 8 au moins attendus`)
+  if (couverts.length < minMetiers) err.push(`${couverts.length} métier(s) couvert(s), ${minMetiers} au moins attendus`)
   for (const m of couverts) if (parMetier.get(m) < 3) err.push(`métier ${m} : ${parMetier.get(m)} entrée(s), 3 au moins`)
   if ((parMetier.get('tous') ?? 0) > 10) err.push(`« tous » : ${parMetier.get('tous')} entrée(s), 10 au plus`)
   return err
@@ -180,12 +191,31 @@ const ids = o.autoControle ? ['AC-1', 'AC-2', 'AC-3', 'AC-4'] : ['DL-1', 'DL-2',
 const s = creerSortie(NOM, ids, `${NOM} — racine ${rel(RAC)} — ${METIERS_IDS.length} métiers du contrat, ${DOMAINES_EXCLUS.length} domaines exclus`)
 
 if (o.autoControle) {
-  // AC-1 : la couverture par métier (comptage de DL-1)
+  // AC-1 : la couverture par métier (comptage de DL-1), à la cible du 29/09 (12 entrées, 3 métiers) et aux bords
   {
-    const conf = controlerCouverture(couvertureEssai(true), METIERS_IDS)
-    const faut = controlerCouverture(couvertureEssai(false), METIERS_IDS)
-    const e = [...conf.map((m) => `scénario conforme refusé : ${m}`), ...(faut.length ? [] : ['scénario fautif (un métier à 2 entrées) accepté à tort'])]
-    s.juger('AC-1', e, `scénario à 8 métiers/5 entrées (40) accepté ; scénario à un métier retombé à 2 entrées refusé (${faut[0] ?? ''})`)
+    const fabrique = (repartition) => repartition.flatMap(([m, n]) => Array.from({ length: n }, (_, i) => ({ id: `${m}-${i}`, metier: m })))
+    const PROV = { minEntrees: 12, minMetiers: 3 }, COMPLETE = { minEntrees: 40, minMetiers: 8 }
+    const conf = controlerCouverture(couvertureEssai(true), METIERS_IDS, PROV)
+    const faut = controlerCouverture(couvertureEssai(false), METIERS_IDS, PROV)
+    const exact = controlerCouverture(fabrique([['plombier', 4], ['chauffagiste', 4], ['electricien', 4]]), METIERS_IDS, PROV)
+    const sousCible = controlerCouverture(fabrique([['plombier', 4], ['chauffagiste', 4], ['electricien', 3]]), METIERS_IDS, PROV)
+    const deuxMetiers = controlerCouverture(fabrique([['plombier', 6], ['chauffagiste', 6]]), METIERS_IDS, PROV)
+    const tropDeTous = controlerCouverture([...fabrique([['plombier', 4], ['chauffagiste', 4], ['electricien', 4]]), ...fabrique([['tous', 11]])], METIERS_IDS, PROV)
+    const completeOk = controlerCouverture(couvertureEssai(true), METIERS_IDS, COMPLETE)
+    const completeTrois = controlerCouverture(fabrique([['plombier', 14], ['chauffagiste', 14], ['electricien', 14]]), METIERS_IDS, COMPLETE)
+    const complete39 = controlerCouverture(couvertureEssai(true).slice(1), METIERS_IDS, COMPLETE)
+    const e = [
+      ...conf.map((m) => `scénario conforme (8 métiers, 40) refusé : ${m}`),
+      ...exact.map((m) => `scénario juste à la cible (3 métiers × 4 = 12) refusé : ${m}`),
+      ...completeOk.map((m) => `scénario conforme refusé à la cible complète (40, 8 métiers) : ${m}`),
+      ...(faut.length ? [] : ['scénario fautif (un métier à 2 entrées) accepté à tort']),
+      ...(sousCible.length ? [] : ['scénario à 11 entrées (sous la cible de 12) accepté à tort']),
+      ...(deuxMetiers.length ? [] : ['scénario à 2 métiers (12 entrées) accepté à tort']),
+      ...(tropDeTous.length ? [] : ['scénario à 11 entrées « tous » accepté à tort']),
+      ...(completeTrois.length ? [] : ['scénario à 3 métiers × 14 accepté à tort à la cible complète (8 métiers)']),
+      ...(complete39.length ? [] : ['scénario à 39 entrées accepté à tort à la cible complète (40)']),
+    ]
+    s.juger('AC-1', e, `scénarios à 8 métiers/40 entrées et 3 métiers × 4 = 12 acceptés ; refusés : un métier à 2 entrées (${faut[0] ?? ''}), 11 entrées (${sousCible[0] ?? ''}), 2 métiers (${deuxMetiers[0] ?? ''}), 11 « tous » ; à la cible complète (--cible-complete) : 40/8 acceptés, 39 entrées et 3 métiers refusés`)
   }
   // AC-2 : forme, donnée personnelle, terme interdit — chaque échantillon de entrees.mjs (hors DL-4 et identifiant en double)
   {
