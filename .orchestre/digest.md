@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-29T03:14:46Z
+# Digest — 2026-09-29T03:21:45Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 127 tâche(s) PASS, 197149 ligne(s) · faites par Claude Code : 71 tâche(s) PASS, 64662 ligne(s).
-**État** — file : 6 · en cours : 14 · faites : 205 · refusées : 14
+**Mesure** — déléguées (antigravity, codex) : 127 tâche(s) PASS, 197149 ligne(s) · faites par Claude Code : 74 tâche(s) PASS, 64876 ligne(s).
+**État** — file : 6 · en cours : 13 · faites : 207 · refusées : 13
 
 ## ⚠ 5 question(s) en attente
 - `.orchestre/en-cours/026-006.question.md` → `node scripts/orchestre.mjs repondre 026-006 <n>`
@@ -22,12 +22,11 @@
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
-| 026-023 | test | en-cours | ? | — | depuis ? · Écrire les juges du lot B (achat-public-qa, lien-connexion-qa, complement-dossier-qa, achat-ecrans-qa) et leurs jeux d'essai, et les inscrire au lot B de juges-026-lt-preuve.mjs, qui passe seulement si chacun échoue sur la référence avec son premier critère et passe en --temoin |
+| 026-012 | test | en-cours | claude-code | — | depuis 2026-09-29T03:14:45Z · Écrire les juges hors ligne pilotage-logique-qa (--partie=decider\|envois\|agents) et pilotage-push-qa avec leurs jeux d'essai, et scripts/juges-026-pilotage-preuve.mjs --lot=<x> (générique, la fiche de chaque lot lue dans son lot.mjs), qui sort en code 0 seulement si chaque juge du lot échoue sur l'arbre de référence avec son premier critère et passe son témoin |
 | 026-006 | feature | en-cours | claude-code | — | depuis 2026-09-29T01:53:00Z · Passer presti à Next.js 16 (dernière 16.x), React et React DOM 19.2 et leurs types, avec le script build en next build --webpack pour @serwist/next et sans script next lint, typecheck, build et budget de poids verts, jusqu'au vert de next16-qa --groupe=dependances |
 | 026-156 | feature | en-cours | ag-026-156 | — | depuis 2026-09-28T23:57:50Z · Écrire scripts/pack-pub/fabriquer.mjs qui, depuis un dossier de pack, prépare les photos (octets vérifiés, sans métadonnées), refuse une personne sans accord, écrit le manifeste des entrées, instancie et rend les trois films et les trois visuels avec HyperFrames en local, puis appelle textes.mjs, pour produire un sortie/ que pub-locale-qa accepte sur les trois jeux d'essai |
 | 026-138 | audit | en-cours | claude-code | — | depuis 2026-09-28T21:56:26Z · Prouver en production que l'horloge a tenu 24 h sans le poste : au moins 1 380 minutes exécutées par pg_cron sans trou de plus de 10 min, au moins 276 passages du veilleur A0 sans trou de plus de 15 min, les deux digests du jour partis, aucun message d'argent en souffrance non signalé, et au plus 3 notifications non urgentes par jour de Paris |
 | 026-170 | test | en-cours | claude-code | — | depuis 2026-09-28T18:53:44Z · Écrire le juge propre à Claw3D station-claw3d-qa (dix parties : provenance, verite, repos, garde, csp, poids, pixel, contexte, grille, hygiene ; csp et poids sur un build de production de la copie), le format du thème (theme.schema.json), un thème d'essai neutre sans donnée, une session simulée sans compte ni clé pour faire tourner les juges de rendu sur l'usine, un témoin minimal par partie (jamais un moteur complet) et le lot k de la preuve, chaque partie échouant sur un moteur piégé et passant sur son témoin |
-| 026-012 | test | en-cours | claude-code | — | depuis 2026-09-29T03:14:45Z · Écrire les juges hors ligne pilotage-logique-qa (--partie=decider\|envois\|agents) et pilotage-push-qa avec leurs jeux d'essai, et scripts/juges-026-pilotage-preuve.mjs --lot=<x> (générique, la fiche de chaque lot lue dans son lot.mjs), qui sort en code 0 seulement si chaque juge du lot échoue sur l'arbre de référence avec son premier critère et passe son témoin |
 | 023-03 | test | en-cours | claude-code | — | depuis 2026-09-28T21:43:03Z · Écrire scripts/juges-023-mutations.mjs, qui prouve par des mutations sur copies que les juges corrigés familles-socle-suite-qa.mjs (023-01) et signature-repos-qa.mjs (023-02) échouent encore sur de vraies fautes, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 025-10 | test | en-cours | claude-code | — | depuis 2026-09-29T00:26:10Z · Écrire scripts/juges-025-mutations.mjs, qui prouve sur des copies que chaque juge de la série 025 échoue sur une vraie faute et passe sur l'arbre réel, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-063 | feature | en-cours | usine-codex-99 | — | depuis 2026-09-28T18:09:33Z · Écrire la migration 0111 des disjoncteurs de l'envoi, tenus par la base en compteurs absolus (paliers du formulaire de 5 à 40 par jour qui écrivent seuls la ligne de plafond du formulaire, technologies de formulaire, signaux de STOP, plainte, avis d'abus, échec de soumission, refus du Gmail et erreur Meta qui mettent en pause une technologie, un modèle, le formulaire, le Gmail ou Meta, montée de palier par règle et bilan des 100 premiers contacts froids, descente au premier voyant rouge, notice vérifiée, gestes du fondateur dont l'ouverture d'envoi_froid au plus tôt le 12/10, jauges, échantillon du soir), ses jumeaux, son contrôle, lib/agents/acquisition/disjoncteurs.ts et la partie MagasinEnvoi de magasinSupabase.ts, essayée à sec |
@@ -42,9 +41,11 @@
 | 026-115 | feature | file | codex | — | Quand Codex annonce son quota épuisé, faire rendre la tâche à la file, noter l'échéance dans .orchestre/quotas.json, refuser codex-* dans prochaine et executant.mjs jusqu'à cette échéance et dire dans le bloc Attention quel autre exécutant lancer, jusqu'au vert du groupe quota de preuve-026 |
 | 026-171 | test | file | claude-code | — | Écrire les juges des modules purs, des thèmes, des réglages, de l'extraction du Poste et de la branche réservée (station-themes-qa --partie=modules et --theme=station\|vaisseau, station-reglages-qa, poste-extraction-qa, ecommerce-reservee-qa) avec leurs jeux d'essai et le lot t de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
 | 026-172 | test | file | claude-code | — | Écrire le juge d'écran de la station Claw3D station-ecran-qa (--partie=verite\|camera\|acteurs\|calque\|themes\|reglages\|salles2 [--lot=a\|b]\|webkit, sur la copie aux drapeaux pilotage et stationCarte levés, avec la session simulée de 026-170, captures prises par le juge), le script de recette de la carte station-recette.mjs (--avant, --reel, --constat) et le lot e de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
-| 026-023 | test | refuse | claude-code | FAIL | ✅ JL-1 référence 4041ec9 extraite par git archive sous .orchestre/travail/026-lt-preuve/reference (750 fichiers), ancêtre de HEAD, sans app/api/site/commander/p |
+| 026-012 | test | refuse | claude-code | PASS | 2026-09-29T03:21:45Z · 180s · 214 l. |
+| 026-023 | test | fait | claude-code | PASS | 2026-09-29T03:15:48Z · 172s · 0 l. |
+| 026-023 | test | refuse | claude-code | PASS | 2026-09-29T03:15:48Z · 172s · 0 l. |
+| 026-026 | test | fait | claude-code | PASS | 2026-09-29T03:15:22Z · 282s · 0 l. |
 | 026-032 | test | fait | claude-code | PASS | 2026-09-29T03:10:02Z · 80s · 0 l. |
-| 026-026 | test | refuse | claude-code | FAIL | juges-026-lt-preuve --lot=D : FAIL — JL-1, JL-5 |
 | 026-029 | test | fait | claude-code | PASS | 2026-09-29T03:05:59Z · 51s · 0 l. |
 | 026-081 | test | fait | claude-code | PASS | 2026-09-29T01:43:02Z · 10s · 0 l. |
 | 026-016 | test | fait | claude-code | PASS | 2026-09-29T01:41:52Z · 12s · 0 l. |
@@ -70,7 +71,6 @@
 | 026-070 | feature | fait | codex | PASS | 2026-09-28T17:26:49Z · 49s · 0 l. |
 | 026-137 | feature | fait | usine-codex-93 | PASS | 2026-09-28T17:22:44Z · 46s · 513 l. |
 | 026-009 | test | fait | claude-code | PASS | 2026-09-28T17:13:27Z · 74s · 0 l. |
-| 026-012 | test | refuse | claude-code | FAIL | ✅ JA-1 référence 4041ec9 réutilisée (identique blob pour blob) sous .orchestre/travail/juges-026-pilotage/reference (2421 fichiers), ancêtre de HEAD, sans lib/p |
 | 026-106 | feature | fait | usine-codex-91 | PASS | 2026-09-28T17:12:32Z · 57s · 497 l. |
 | 026-232 | test | fait | claude-code | PASS | 2026-09-28T17:10:25Z · 499s · 0 l. |
 | 026-078 | feature | fait | usine-codex-90 | PASS | 2026-09-28T17:08:54Z · 84s · 489 l. |

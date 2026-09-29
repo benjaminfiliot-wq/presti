@@ -1,14 +1,70 @@
 M .orchestre/agents.jsonl
- M .orchestre/brouillons-ecosysteme/026/026-041.md
- M .orchestre/brouillons-ecosysteme/026/INDEX.md
+ M .orchestre/brouillons-ecosysteme/026/026-248.md
  M .orchestre/contexte.md
- M .orchestre/digest.md
- D .orchestre/file/000-marketing-026.md
+ D .orchestre/fait/026-012.md
+ D .orchestre/fait/026-047.md
+ D .orchestre/file/026-006.md
+ D .orchestre/file/026-030.md
+ D .orchestre/file/026-031.md
+ D .orchestre/file/026-033.md
+ D .orchestre/file/026-035.md
+ D .orchestre/file/026-042.md
+ D .orchestre/file/026-046.md
+ D .orchestre/file/026-047.md
+ D .orchestre/file/026-049.md
+ D .orchestre/file/026-056.md
+ D .orchestre/file/026-059.md
+D  .orchestre/file/026-068.md
+ D .orchestre/file/026-073.md
+D  .orchestre/file/026-074.md
+ D .orchestre/file/026-075.md
+ D .orchestre/file/026-082.md
+ D .orchestre/file/026-091.md
+ D .orchestre/file/026-118.md
+ D .orchestre/file/026-137.md
+ D .orchestre/file/026-141.md
+ D .orchestre/file/026-149.md
+ D .orchestre/file/026-153.md
+ D .orchestre/file/026-154.md
+ D .orchestre/file/026-155.md
+ D .orchestre/file/026-156.md
+ D .orchestre/file/026-157.md
+ D .orchestre/file/026-168.md
+ D .orchestre/file/026-230.md
+ D .orchestre/file/026-235.md
  M .orchestre/preuves/026-001/couverture.md
- M .orchestre/preuves/026-012/echecs-attendus.md
+ M .orchestre/preuves/026-006/avant.txt
+ M .orchestre/preuves/026-037/echecs-attendus.md
+ M .orchestre/preuves/026-045/echecs-attendus.md
+ M .orchestre/preuves/026-062/echecs-attendus.md
+ M .orchestre/preuves/026-066/echecs-attendus.md
+ M .orchestre/preuves/026-069/contre-verif-28-09.md
+ M .orchestre/preuves/026-069/echecs-attendus.md
+ M .orchestre/preuves/026-112/contre-verif-28-09.md
+ M .orchestre/preuves/026-116/contre-verif-28-09.md
+ M .orchestre/preuves/026-116/echecs-attendus.md
+ M .orchestre/preuves/026-126/echecs-attendus.md
+ M AGENTS.md
+ M CLAUDE.md
+ M app/api/cron/relances/route.ts
+ M lib/alertes.ts
+ M lib/crieur/juge.ts
+ M lib/flags.ts
  M plans/journal-publications.md
+ M scripts/crieur-qa.mjs
  M scripts/familles-socle-suite-qa.mjs
+ M scripts/fixtures/026-horloge-bus/essais/0099.sql
+ M scripts/fixtures/026-pilotage/a/alertes-push.json
+ M scripts/fixtures/026-pilotage/a/jeux.mjs
+ M scripts/fixtures/026-pilotage/b/scenarios-sql.mjs
+ M scripts/fixtures/026-pilotage/s/commun.mjs
+ M scripts/fixtures/026-pilotage/s/temoin/lib/pilotage/equipage.ts.temoin
+ M scripts/fixtures/026-pubs-contenu/crieur/corpus-juge.json
+ M scripts/prospection-sql-qa.mjs
  M scripts/signature-repos-qa.mjs
+ M scripts/station-logique-qa.mjs
+ M scripts/veilleur-qa.mjs
+ M tsconfig.json
 ?? .claude/skills/captions-overlay/
 ?? .claude/skills/changelog-video/
 ?? .claude/skills/cut-the-curve/
@@ -36,22 +92,8 @@ M .orchestre/agents.jsonl
 ?? .claude/skills/slideshow/
 ?? .claude/skills/talking-head-recut/
 ?? .codex/
-?? .orchestre/brouillons-ecosysteme/026/026-204.md
-?? .orchestre/brouillons-ecosysteme/026/026-205.md
-?? .orchestre/brouillons-ecosysteme/026/026-206.md
-?? .orchestre/brouillons-ecosysteme/026/026-207.md
-?? .orchestre/brouillons-ecosysteme/026/026-208.md
-?? .orchestre/brouillons-ecosysteme/026/026-209.md
-?? .orchestre/brouillons-ecosysteme/026/026-210.md
-?? .orchestre/brouillons-ecosysteme/026/026-211.md
-?? .orchestre/brouillons-ecosysteme/026/026-212.md
-?? .orchestre/brouillons-ecosysteme/026/026-213.md
-?? .orchestre/brouillons-ecosysteme/026/026-214.md
-?? .orchestre/brouillons-ecosysteme/026/026-215.md
-?? .orchestre/brouillons-ecosysteme/026/026-216.md
-?? .orchestre/brouillons-ecosysteme/026/026-217.md
-?? .orchestre/brouillons-ecosysteme/026/026-218.md
-?? .orchestre/brouillons-ecosysteme/026/026-219.md
+?? .orchestre/a-decider/
+?? .orchestre/brouillons-ecosysteme/026/026-252.md
 ?? .orchestre/en-cours/
 ?? .orchestre/fait/000-usine-essai-2.md
 ?? .orchestre/fait/000-usine-essai-3.md
@@ -73,7 +115,16 @@ M .orchestre/agents.jsonl
 ?? .orchestre/fait/023-01.md
 ?? .orchestre/fait/023-02.md
 ?? .orchestre/fait/023-04.md
-?? .orchestre/preuves/000-marketing-026/
+?? .orchestre/fait/026-057.md
+?? .orchestre/fait/026-082.md
+?? .orchestre/fait/026-135.md
+?? .orchestre/fait/026-149.md
+?? .orchestre/fait/026-153.md
+?? .orchestre/fait/026-154.md
+?? .orchestre/fait/026-220.md
+?? .orchestre/file/026-171.md
+?? .orchestre/file/026-172.md
+?? .orchestre/file/026-252.md
 ?? .orchestre/preuves/000-usine-essai-2/
 ?? .orchestre/preuves/000-usine-essai-3/
 ?? .orchestre/preuves/000-usine-essai/
@@ -146,27 +197,83 @@ M .orchestre/agents.jsonl
 ?? .orchestre/preuves/024-01/
 ?? .orchestre/preuves/024-02/
 ?? .orchestre/preuves/025-10/
-?? .orchestre/preuves/026-023/
-?? .orchestre/preuves/026-048/
+?? .orchestre/preuves/026-006/next16-en-attente/
+?? .orchestre/preuves/026-006/package-lock.next16.json
+?? .orchestre/preuves/026-006/package.next16.json
+?? .orchestre/preuves/026-006/versions.md
+?? .orchestre/preuves/026-027/contre-verif-nuit-28-09.md
+?? .orchestre/preuves/026-057/
+?? .orchestre/preuves/026-063/
+?? .orchestre/preuves/026-073/
+?? .orchestre/preuves/026-082/avant.txt
+?? .orchestre/preuves/026-082/reponse-chef.md
+?? .orchestre/preuves/026-084/
+?? .orchestre/preuves/026-091/
+?? .orchestre/preuves/026-116/correction-28-09.md
+?? .orchestre/preuves/026-118/
+?? .orchestre/preuves/026-119/
+?? .orchestre/preuves/026-121/contre-verif-nuit-28-09.md
+?? .orchestre/preuves/026-135/
+?? .orchestre/preuves/026-138/
+?? .orchestre/preuves/026-141/
+?? .orchestre/preuves/026-149/
+?? .orchestre/preuves/026-153/
+?? .orchestre/preuves/026-154/
+?? .orchestre/preuves/026-155/
+?? .orchestre/preuves/026-156/
+?? .orchestre/preuves/026-157/
+?? .orchestre/preuves/026-170/
+?? .orchestre/preuves/026-171/
+?? .orchestre/preuves/026-172/
+?? .orchestre/preuves/026-220/
+?? .orchestre/preuves/026-223/contre-verif-nuit-28-09.md
+?? .orchestre/preuves/026-230/
+?? .orchestre/preuves/026-235/
+?? .orchestre/preuves/026-252/
 ?? .orchestre/refuse/021-02.md
 ?? .orchestre/refuse/021-14.md
 ?? .orchestre/refuse/021-15.md
 ?? .orchestre/refuse/021-16.md
 ?? .orchestre/refuse/021-20.md
+?? .orchestre/refuse/026-012.md
+?? .orchestre/refuse/026-047.md
+?? .orchestre/refuse/026-118.md
+?? .orchestre/refuse/026-119.md
+?? .orchestre/refuse/026-141.md
+?? .orchestre/refuse/026-230.md
 ?? ChromeSetup.exe
+?? app/api/cron/maquettes-purge/
+?? app/api/pubs/
+?? app/maquette/
 ?? build-demo.mjs
 ?? build-menuisier-1.mjs
 ?? build-menuisier-2.mjs
 ?? build-menuisier.mjs
 ?? build-plombier.mjs
+?? debug-fiches.mjs
+?? debug-ready.mjs
+?? docs/agents/mesure-a-sec-2026-09-28.md
+?? docs/agents/usine-production.md
+?? echecs-attendus.md
+?? find-ready.mjs
+?? find-really-ready.mjs
 ?? fix.js
 ?? fix_home.py
 ?? fix_html.py
 ?? fix_newlines.py
 ?? full_qa_output.txt
+?? gabarits-pubs/locale/artisan-ville/
+?? gabarits-pubs/locale/avant-apres/
+?? gabarits-pubs/locale/chantier/
+?? gabarits-pubs/locale/visuel/
 ?? generate-site.mjs
 ?? generate_026.js
 ?? generate_026.mjs
+?? lib/agents/acquisition/maquettesLien.ts
+?? lib/crieur/composer.ts
+?? lib/crieur/faits.ts
+?? lib/packPubDossier.ts
+?? lib/packPubPurge.ts
 ?? plans/publications-serie-2.md
 ?? promo-src/
 ?? public/promo/facebook-couverture-1640x856.png
@@ -192,15 +299,15 @@ M .orchestre/agents.jsonl
 ?? scratch-generator.mjs
 ?? scratch-screenshot.mjs
 ?? screenshot.mjs
-?? scripts/achat-public-qa.mjs
 ?? scripts/cibles-instagram-qa.mjs
 ?? scripts/emails-artisans-qa.mjs
-?? scripts/fixtures/026-livraison-tresor/b/
-?? scripts/fixtures/026-livraison-tresor/preuve-b.json
+?? scripts/fixtures/026-completude/
+?? scripts/fixtures/026-pilotage/k/
 ?? scripts/fixtures/usine-essai-2/
 ?? scripts/fixtures/usine-essai-3/
 ?? scripts/fixtures/usine-essai/
 ?? scripts/juges-023-mutations.mjs
+?? scripts/juges-026-completude-qa.mjs
 ?? scripts/kit-figma.mjs
 ?? scripts/lib/mobile-banc.mjs
 ?? scripts/lib/mobile-bureau.mjs
@@ -210,8 +317,17 @@ M .orchestre/agents.jsonl
 ?? scripts/lib/mobile-parcours.mjs
 ?? scripts/lib/mobile-perf.mjs
 ?? scripts/mobile-qa.mjs
+?? scripts/pack-pub/
 ?? scripts/photos-contraste.mjs
 ?? scripts/publications-serie2-qa.mjs
+?? scripts/station-claw3d-qa.mjs
+?? scripts/usine-repartition.mjs
+?? scripts/usine/capacites.mjs
+?? scripts/usine/systemd/presti-atelier.service
+?? scripts/usine/systemd/presti-atelier.timer
+?? scripts/usine/systemd/presti-livreur.service
+?? scripts/usine/systemd/presti-livreur.timer
+?? scripts/usine/tourneur.mjs
 ?? scripts/visuels-serie2-qa.mjs
 ?? scripts/visuels-serie2.mjs
 ?? shot_cerveaux.mjs

@@ -619,3 +619,5 @@
 {"id":"026-023","verdict":"FAIL","ligne":"✅ JL-1 référence 4041ec9 extraite par git archive sous .orchestre/travail/026-lt-preuve/reference (750 fichiers), ancêtre de HEAD, sans app/api/site/commander/p","code":1,"date":"2026-09-29T03:11:45Z","duree_s":134,"agent":"claude-code","executant":"claude-code","lignes":176,"dossier":"fait"}
 {"id":"026-026","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T03:15:22Z","duree_s":282,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-023","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T03:15:48Z","duree_s":172,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-012","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T03:21:45Z","duree_s":180,"agent":"claude-code","executant":"claude-code","lignes":214,"dossier":"en-cours"}
+{"id":"026-023","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T03:29:32Z","duree_s":90,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
