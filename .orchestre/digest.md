@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-29T12:09:25Z
+# Digest — 2026-09-29T12:13:50Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 138 tâche(s) PASS, 199380 ligne(s) · faites par Claude Code : 83 tâche(s) PASS, 76236 ligne(s).
-**État** — file : 13 · en cours : 16 · faites : 227 · refusées : 8
+**Mesure** — déléguées (antigravity, codex) : 139 tâche(s) PASS, 199380 ligne(s) · faites par Claude Code : 84 tâche(s) PASS, 78570 ligne(s).
+**État** — file : 13 · en cours : 14 · faites : 229 · refusées : 8
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
@@ -28,8 +28,6 @@
 | 026-133 | test | en-cours | usine-codex-121 | — | depuis 2026-09-29T10:19:50Z · Écrire scripts/juges-026-usine-mutations.mjs, qui prouve sur des copies que usine-socle-qa, usine-sql-qa, usine-routes-qa, usine-production-qa et les groupes consigne (schéma de réunion), consignes, fil et usine de chef-qa échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
 | 026-151 | test | en-cours | usine-codex-126 | — | depuis 2026-09-29T11:00:00Z · Écrire scripts/juges-026-orchestre-chef-mutations.mjs, qui prouve sur des copies que preuve-026 (groupes source, baux, quota), chef-qa, revue-qa et chantier-qa échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
 | 026-171 | test | en-cours | claude-code | — | depuis 2026-09-29T11:08:32Z · Écrire les juges des modules purs, des thèmes, des réglages, de l'extraction du Poste et de la branche réservée (station-themes-qa --partie=modules et --theme=station\|vaisseau, station-reglages-qa, poste-extraction-qa, ecommerce-reservee-qa) avec leurs jeux d'essai et le lot t de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
-| 026-206 | feature | en-cours | claude-code | — | depuis 2026-09-29T12:09:21Z · C03 — schéma des lignes, publications, mesures et idées, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
-| 026-208 | feature | en-cours | ag-026-208 | — | depuis 2026-09-29T12:07:10Z · C05 — cinq gabarits vidéo et un carrousel HyperFrames, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
 | 026-235 | feature | en-cours | usine-codex-132 | — | depuis 2026-09-29T12:07:10Z · Écrire scripts/savoir/lecons.mjs (candidats depuis les verdicts en échec, les décisions tranchées par Benj, les décisions tranchées du bus et les corrections des fiches, datées, sourcées, caviardées et idempotentes ; lister ; valider et rejeter par Claude Code ou la revue du lundi seulement, jamais sur l'usine ; verifier-source), jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=candidats,validation |
 | 026-155 | feature | file | usine-codex-112 | — | Écrire scripts/studio/garde.mjs, qui refuse d'ouvrir un échantillon du Studio tant que les préalables datés de 026-128 (licences de la chaîne gratuite avec le droit commercial, fiche ARPP, activité de l'EI ; ni juriste ni compte Instagram) et le dossier de la marque (accord écrit tiré de sa réponse, page produit datée de moins de 30 jours, absence de refus) manquent, ainsi que docs/studio/modeles-messages.md (qui renvoie aux modèles de lib/agents/acquisition/modeles.ts sans les recopier) et docs/studio/seance.md (la séance de Claude Code ouverte par une décision studio_echantillon, jusqu'au dépôt de l'échantillon et à l'envoi par le Répondeur) |
 | 026-252 | feature | file | claude-code | — | Faire passer `next build --webpack` (Next 16, fiche 026-006) en coupant l'import Node natif (`node:crypto`, `node:zlib`) qui remonte jusqu'au bundle client via `app/controle/Sites.tsx`, sans toucher à la logique de `lib/siteDossier.ts`, `lib/siteRetrait.ts` ni `lib/zip.ts` |
@@ -44,6 +42,8 @@
 | 026-224 | feature | file | codex | — | Fish Audio sous garde de licence et quota selon la relecture de complétude du 27/09 |
 | 026-233 | feature | file | codex | — | Écrire lib/savoir/recherche.ts (chercher : le savoir d'abord dans les classes de l'agent, puis le web par lireAvecFirecrawl sous la réserve de crédits, Perplexity seulement plan et coût constatés, refus de toute donnée personnelle dans une requête web, chaque résultat sourcé, un événement savoir_recherche ; avecRecherche : deux besoins et une relance au plus) et scripts/savoir/chercher.mjs (index de l'usine, journal par POST /api/agents/evenements avec le jeton de l'agent), jusqu'au vert de scripts/savoir-recherche-qa.mjs --partie=outil,cli |
 | 026-237 | feature | file | claude-code | — | Brancher les leçons validées dans la porte unique des modèles (creerLecteur de lib/agents/llm.ts, les trois moteurs, leçons lues une fois à la création, sous l'interrupteur lecons_dans_consignes) et dans l'entrée du chef (scripts/chef/etat.mjs lance lecons-entree.mjs après l'état), dire le bloc <lecons_validees> dans docs/agents/chef.md, jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=branchement, de scripts/agents-llm-qa.mjs et de scripts/chef-qa.mjs --groupe=consigne,etat,cycle |
+| 026-208 | feature | fait | antigravity | PASS | 2026-09-29T12:13:49Z · 0s · 0 l. |
+| 026-206 | feature | fait | claude-code | PASS | 2026-09-29T12:13:36Z · 0s · 2334 l. |
 | 026-253 | feature | fait | claude-code | PASS | 2026-09-29T12:08:44Z · 419s · 0 l. |
 | 026-158 | feature | fait | antigravity | PASS | 2026-09-29T11:51:24Z · 425s · 0 l. |
 | 026-006 | feature | fait | claude-code | PASS | 2026-09-29T11:47:23Z · 381s · 9610 l. |

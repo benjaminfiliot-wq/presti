@@ -1,0 +1,15 @@
+{
+  "ligne": "L5",
+  "type": "hyperframes",
+  "format": "1080x1920",
+  "duree_s": 15,
+  "sous_titres_incrustes": true,
+  "coupes_par_10s": 5,
+  "audio": {
+    "licence_commerciale": true,
+    "credit": "Audio by Author",
+    "lufs": -23
+  },
+  "mention_exemple": false,
+  "etiquette_ia": true
+}
