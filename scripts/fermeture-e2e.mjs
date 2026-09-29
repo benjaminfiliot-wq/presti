@@ -245,6 +245,8 @@ if (FLAGS) {
     // et les DEUX routes doivent lire le drapeau elles-mêmes.
     'audience': ['route', '/api/audience', 'POST', 'app/api/audience/route.ts', 'app/api/controle/audience/route.ts'],
     'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/controle/pilotage/route.ts', 'app/api/controle/pilotage/decisions/[id]/route.ts', 'app/api/controle/pilotage/appels/[id]/route.ts', 'app/api/controle/pilotage/agents/[nom]/route.ts', 'app/api/controle/pilotage/consignes/route.ts', 'app/api/controle/pilotage/gestes/route.ts'],
+    // 29/09 — les demandes de Benj à l'écosystème : la route du Poste et les deux routes du bus lisent ce drapeau (les routes du bus lisent AUSSI busAgents).
+    'demandesEcosysteme': ['route', '/api/controle/demandes', 'GET', 'app/api/controle/demandes/route.ts', 'app/api/agents/demandes/route.ts', 'app/api/agents/demandes/[id]/route.ts'],
     'inventaireOcr': ['note', 'rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)'],
     // Ces trois-là étaient mal classés tant que le détecteur ignorait les lectures par index
     // dynamique (`FLAGS[l.flag]` dans lib/plans.ts). Deux étaient dits « ne ferment rien » sur un

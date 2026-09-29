@@ -107,6 +107,10 @@ export const FLAGS = {
   packPub: false,
   /** 026-118 — la carte de vente du pack pubs dans l'application. À lever après packPub. */
   packPubVente: false,
+  /** Levé le 29/09/2026 par Claude Code sur la demande de Benj : envoyer des demandes à l'écosystème quand la limite de Claude Code est atteinte
+   *  (POST et GET /api/controle/demandes, onglet Demandes du Poste, GET et PATCH /api/agents/demandes). Levé avant l'application de 0117 : tant
+   *  qu'elle n'est pas appliquée, les routes répondent 503 (fail-closed, voulu). Baissé : 404 partout, l'onglet n'existe pas. */
+  demandesEcosysteme: true,
 } as const
 
 export type Flag = keyof typeof FLAGS
