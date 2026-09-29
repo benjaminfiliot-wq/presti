@@ -15,6 +15,7 @@ import Comptabilite from './Comptabilite'
 import Reglages from './Reglages'
 import Cerveaux from './Cerveaux'
 import Sites from './Sites'
+import Packs from './Packs'
 import BarreEtat from './BarreEtat'
 import Recherche from './Recherche'
 import Visiteurs from './Visiteurs'
@@ -31,7 +32,7 @@ import { CLE_NE_PAS_COMPTER, hoteMesure } from '@/lib/audience'
 // L'accès se vérifie sur la route la plus LÉGÈRE (`journal?limite=1`, une lecture) et non plus sur l'état complet
 // (six appels réseau) : l'écran s'ouvrait en huit secondes, et une base muette (migration pas encore collée, 503)
 // ou un plafond atteint (429) le laissaient sur « Vérification de l’accès… » pour toujours (revue du 07/09).
-type Onglet = 'aujourdhui' | 'visiteurs' | 'clients' | 'apports' | 'messagerie' | 'comptabilite' | 'cerveaux' | 'journal' | 'reglages' | 'sites' | 'demandes'
+type Onglet = 'aujourdhui' | 'visiteurs' | 'clients' | 'apports' | 'messagerie' | 'comptabilite' | 'cerveaux' | 'journal' | 'reglages' | 'sites' | 'demandes' | 'packs'
 type Message = { type: 'ok' | 'err'; text: string } | null
 // Le rail ne montre que ce qui existe : un onglet dont la migration n'est pas collée mènerait à un 404.
 const ONGLETS: Onglet[] = [
@@ -41,12 +42,13 @@ const ONGLETS: Onglet[] = [
   ...(actif('messagerie') ? (['messagerie'] as const) : []),
   ...(actif('comptabilite') ? (['comptabilite'] as const) : []),
   ...(actif('siteCommande') ? (['sites'] as const) : []),
+  ...(actif('packPub') ? (['packs'] as const) : []),
   ...(actif('demandesEcosysteme') ? (['demandes'] as const) : []),
   'cerveaux' as const,
   'journal' as const,
   'reglages' as const,
 ]
-const TITRES: Record<Onglet, string> = { aujourdhui: 'Aujourd’hui', visiteurs: 'Visiteurs', clients: 'Clients & abonnements', apports: 'Apports', messagerie: 'Messagerie', comptabilite: 'Comptabilité', cerveaux: 'Cerveaux', journal: 'Journal', reglages: 'Réglages', sites: 'Sites', demandes: 'Demandes' }
+const TITRES: Record<Onglet, string> = { aujourdhui: 'Aujourd’hui', visiteurs: 'Visiteurs', clients: 'Clients & abonnements', apports: 'Apports', messagerie: 'Messagerie', comptabilite: 'Comptabilité', cerveaux: 'Cerveaux', journal: 'Journal', reglages: 'Réglages', sites: 'Sites', demandes: 'Demandes', packs: 'Packs pubs' }
 const ic = (d: ReactNode) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
 const NAV: { id: Onglet; label: string; detail: string; icone: ReactNode }[] = [
   { id: 'aujourdhui', label: 'Aujourd’hui', detail: 'État, à faire, chiffres, fil', icone: ic(<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>) },
@@ -56,6 +58,7 @@ const NAV: { id: Onglet; label: string; detail: string; icone: ReactNode }[] = [
   { id: 'messagerie', label: 'Messagerie', detail: 'Les emails de l’entreprise', icone: ic(<><path d="M3 6h18v12H3z" /><path d="m3 7 9 6 9-6" /></>) },
   { id: 'comptabilite', label: 'Comptabilité', detail: 'TVA, achats, échéances, relevé', icone: ic(<><path d="M4 4h16v16H4z" /><path d="M8 9h8M8 13h5" /><path d="M15 17h3" /></>) },
   { id: 'sites', label: 'Sites', detail: 'Commandes de site et validation', icone: ic(<><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></>) },
+  { id: 'packs', label: 'Packs pubs', detail: 'Pubs locales à regarder et livrer', icone: ic(<><rect x="2" y="2" width="20" height="20" rx="2" /><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5" /></>) },
   { id: 'demandes', label: 'Demandes', detail: 'Un travail pour l’écosystème', icone: ic(<><path d="M4 5h16v11H9l-5 4z" /><path d="M8 9h8M8 12h5" /></>) },
   { id: 'cerveaux', label: 'Cerveaux', detail: 'Scores, cas et dernière amélioration', icone: ic(<><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" /><path d="M12 6v6l4 2" /></>) },
   { id: 'journal', label: 'Journal', detail: 'Chaque action, avant et après', icone: ic(<><path d="M4 4h12l4 4v12H4z" /><path d="M8 12h8M8 16h5" /></>) },
@@ -147,6 +150,7 @@ function PosteInner() {
             : onglet === 'apports' ? <Apports role={role} signaler={signaler} />
             : onglet === 'comptabilite' ? <Comptabilite role={role} signaler={signaler} />
             : onglet === 'sites' ? <Sites role={role} signaler={signaler} />
+            : onglet === 'packs' ? <Packs role={role} signaler={signaler} />
             : onglet === 'demandes' ? <Demandes role={role} signaler={signaler} />
             : onglet === 'reglages' ? <Reglages role={role} signaler={signaler} />
             : onglet === 'messagerie' ? <Messagerie role={role} signaler={signaler} onArtisan={(id) => { setFiche(id); router.replace('/controle?onglet=clients', { scroll: false }) }} />
