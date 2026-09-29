@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-29T12:03:09Z
+# Digest — 2026-09-29T12:04:37Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 138 tâche(s) PASS, 199380 ligne(s) · faites par Claude Code : 82 tâche(s) PASS, 76236 ligne(s).
-**État** — file : 12 · en cours : 14 · faites : 227 · refusées : 8
+**État** — file : 14 · en cours : 13 · faites : 227 · refusées : 8
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
@@ -28,7 +28,6 @@
 | 026-133 | test | en-cours | usine-codex-121 | — | depuis 2026-09-29T10:19:50Z · Écrire scripts/juges-026-usine-mutations.mjs, qui prouve sur des copies que usine-socle-qa, usine-sql-qa, usine-routes-qa, usine-production-qa et les groupes consigne (schéma de réunion), consignes, fil et usine de chef-qa échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
 | 026-151 | test | en-cours | usine-codex-126 | — | depuis 2026-09-29T11:00:00Z · Écrire scripts/juges-026-orchestre-chef-mutations.mjs, qui prouve sur des copies que preuve-026 (groupes source, baux, quota), chef-qa, revue-qa et chantier-qa échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
 | 026-171 | test | en-cours | claude-code | — | depuis 2026-09-29T11:08:32Z · Écrire les juges des modules purs, des thèmes, des réglages, de l'extraction du Poste et de la branche réservée (station-themes-qa --partie=modules et --theme=station\|vaisseau, station-reglages-qa, poste-extraction-qa, ecommerce-reservee-qa) avec leurs jeux d'essai et le lot t de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
-| 026-235 | feature | en-cours | usine-codex-130 | — | depuis 2026-09-29T11:57:38Z · Écrire scripts/savoir/lecons.mjs (candidats depuis les verdicts en échec, les décisions tranchées par Benj, les décisions tranchées du bus et les corrections des fiches, datées, sourcées, caviardées et idempotentes ; lister ; valider et rejeter par Claude Code ou la revue du lundi seulement, jamais sur l'usine ; verifier-source), jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=candidats,validation |
 | 026-155 | feature | file | usine-codex-112 | — | Écrire scripts/studio/garde.mjs, qui refuse d'ouvrir un échantillon du Studio tant que les préalables datés de 026-128 (licences de la chaîne gratuite avec le droit commercial, fiche ARPP, activité de l'EI ; ni juriste ni compte Instagram) et le dossier de la marque (accord écrit tiré de sa réponse, page produit datée de moins de 30 jours, absence de refus) manquent, ainsi que docs/studio/modeles-messages.md (qui renvoie aux modèles de lib/agents/acquisition/modeles.ts sans les recopier) et docs/studio/seance.md (la séance de Claude Code ouverte par une décision studio_echantillon, jusqu'au dépôt de l'échantillon et à l'envoi par le Répondeur) |
 | 026-252 | feature | file | claude-code | — | Faire passer `next build --webpack` (Next 16, fiche 026-006) en coupant l'import Node natif (`node:crypto`, `node:zlib`) qui remonte jusqu'au bundle client via `app/controle/Sites.tsx`, sans toucher à la logique de `lib/siteDossier.ts`, `lib/siteRetrait.ts` ni `lib/zip.ts` |
 | 026-073 | contenu | file | codex | — | Constituer la bibliothèque des douleurs lib/agents/acquisition/douleurs.ts (au moins 40 entrées sur au moins 8 métiers du bâtiment, chacune tirée de ce que des artisans écrivent eux-mêmes en public, avec la citation exacte, sa page source et sa date, les mots-clés, une question « qui appuie là où ça fait mal » et une accroche d'objet, sans aucune donnée personnelle, toutes à approuve false jusqu'à l'approbation unique de Benj) et sa méthode docs/agents/douleurs-methode.md, pour que chaque citation se retrouve mot pour mot sur sa page quand le juge la relit |
@@ -37,9 +36,11 @@
 | 026-144 | feature | file | antigravity | — | Créer la page /pubs/commander où l'artisan choisit 6 à 12 de ses photos, dit qui y figure et avec quel accord, donne ses faits, choisit accroche et voix, puis paie 149 €, et la carte CartePackPub montrée sur le tableau de bord sous le drapeau packPubVente |
 | 026-152 | test | file | codex | — | Écrire scripts/juges-026-lt-mutations.mjs, qui prouve sur des copies que chacun des 16 juges du domaine livraison et trésorerie échoue, sur le critère attendu, face à une vraie faute plantée dans le code PASS, et passe sur l'arbre réel ; code 0 seulement si chaque mutation est prise et chaque témoin passe |
 | 026-172 | test | file | claude-code | — | Écrire le juge d'écran de la station Claw3D station-ecran-qa (--partie=verite\|camera\|acteurs\|calque\|themes\|reglages\|salles2 [--lot=a\|b]\|webkit, sur la copie aux drapeaux pilotage et stationCarte levés, avec la session simulée de 026-170, captures prises par le juge), le script de recette de la carte station-recette.mjs (--avant, --reel, --constat) et le lot e de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
+| 026-208 | feature | file | antigravity | — | C05 — cinq gabarits vidéo et un carrousel HyperFrames, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
 | 026-222 | feature | file | codex | — | Cursor comme exécutant borné de l’orchestre selon la relecture de complétude du 27/09 |
 | 026-224 | feature | file | codex | — | Fish Audio sous garde de licence et quota selon la relecture de complétude du 27/09 |
 | 026-233 | feature | file | codex | — | Écrire lib/savoir/recherche.ts (chercher : le savoir d'abord dans les classes de l'agent, puis le web par lireAvecFirecrawl sous la réserve de crédits, Perplexity seulement plan et coût constatés, refus de toute donnée personnelle dans une requête web, chaque résultat sourcé, un événement savoir_recherche ; avecRecherche : deux besoins et une relance au plus) et scripts/savoir/chercher.mjs (index de l'usine, journal par POST /api/agents/evenements avec le jeton de l'agent), jusqu'au vert de scripts/savoir-recherche-qa.mjs --partie=outil,cli |
+| 026-235 | feature | file | codex | — | Écrire scripts/savoir/lecons.mjs (candidats depuis les verdicts en échec, les décisions tranchées par Benj, les décisions tranchées du bus et les corrections des fiches, datées, sourcées, caviardées et idempotentes ; lister ; valider et rejeter par Claude Code ou la revue du lundi seulement, jamais sur l'usine ; verifier-source), jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=candidats,validation |
 | 026-237 | feature | file | claude-code | — | Brancher les leçons validées dans la porte unique des modèles (creerLecteur de lib/agents/llm.ts, les trois moteurs, leçons lues une fois à la création, sous l'interrupteur lecons_dans_consignes) et dans l'entrée du chef (scripts/chef/etat.mjs lance lecons-entree.mjs après l'état), dire le bloc <lecons_validees> dans docs/agents/chef.md, jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=branchement, de scripts/agents-llm-qa.mjs et de scripts/chef-qa.mjs --groupe=consigne,etat,cycle |
 | 026-158 | feature | fait | antigravity | PASS | 2026-09-29T11:51:24Z · 425s · 0 l. |
 | 026-006 | feature | fait | claude-code | PASS | 2026-09-29T11:47:23Z · 381s · 9610 l. |
@@ -114,6 +115,5 @@
 | 026-069 | test | fait | claude-code | PASS | 2026-09-28T11:20:32Z · 33s · 0 l. |
 | 026-049 | feature | fait | usine-codex-66 | PASS | 2026-09-28T11:17:07Z · 151s · 420 l. |
 | 026-057 | feature | fait | usine-codex-69 | PASS | 2026-09-28T11:09:25Z · 88s · 702 l. |
-| 026-107 | feature | fait | claude-code | PASS | 2026-09-28T11:08:26Z · 78s · 511 l. |
 
-… 161 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 162 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
