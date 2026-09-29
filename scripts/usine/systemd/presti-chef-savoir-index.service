@@ -1,0 +1,16 @@
+[Unit]
+Description=Index local du savoir Presti
+
+[Service]
+Type=oneshot
+User=agents
+WorkingDirectory=/srv/presti-agents
+ExecStart=/usr/bin/node --experimental-strip-types --import ./scripts/ts-loader.mjs scripts/savoir/indexer.mjs --compartiment=tous
+IPAddressDeny=any
+IPAddressAllow=localhost
+Nice=15
+TimeoutStartSec=90min
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/home/agents/travail/savoir /home/agents/travail/chef
+

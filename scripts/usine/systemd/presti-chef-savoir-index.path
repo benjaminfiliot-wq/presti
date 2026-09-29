@@ -1,0 +1,10 @@
+[Unit]
+Description=Surveiller les nouvelles réceptions du savoir
+
+[Path]
+PathExists=/home/agents/travail/savoir/a-indexer
+Unit=presti-chef-savoir-index.service
+
+[Install]
+WantedBy=multi-user.target
+

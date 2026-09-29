@@ -1,0 +1,13 @@
+[Unit]
+Description=Réception locale du savoir Presti
+
+[Service]
+Type=oneshot
+User=agents
+WorkingDirectory=/srv/presti-agents
+ExecStart=/usr/bin/node scripts/usine/savoir-recevoir.mjs --depot=/srv/presti-savoir/depot
+IPAddressDeny=any
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/srv/presti-savoir/depot /home/agents/travail/savoir
+

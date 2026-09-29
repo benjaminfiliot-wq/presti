@@ -1,0 +1,10 @@
+[Unit]
+Description=Surveiller les archives du savoir
+
+[Path]
+PathExistsGlob=/srv/presti-savoir/depot/*.pret
+Unit=presti-chef-savoir-recevoir.service
+
+[Install]
+WantedBy=multi-user.target
+
