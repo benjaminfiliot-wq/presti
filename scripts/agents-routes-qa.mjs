@@ -8,8 +8,8 @@
 //   AR-1  les 7 fichiers de routes existent, chacun avec runtime = 'nodejs' et dynamic = 'force-dynamic' ; [id] typé en
 //         promesse et attendu.
 //   AR-2  lib/flags.ts porte busAgents: false, et son diff avec HEAD se limite à ce drapeau et à son commentaire ; la carte de
-//         scripts/fermeture-e2e.mjs gagne exactement la ligne 'busAgents': ['route', '/api/agents/etat', 'GET', <les 7>], et
-//         rien d'autre ; drapeau baissé, les 9 méthodes des 7 routes répondent 404 sans aucun appel au faux PostgREST.
+//         scripts/fermeture-e2e.mjs gagne exactement la ligne 'busAgents': ['route', '/api/agents/etat', 'GET', <les 8>] (les 7
+//         routes du bus + app/api/agents/tic/route.ts, fiche 026-049 : décision du chef du 29/09), et rien d'autre ; drapeau baissé, les 9 méthodes des 7 routes répondent 404 sans aucun appel au faux PostgREST.
 //   AR-3  drapeau levé, sans jeton : 401 partout, et aucun appel hors d'ops_agent_par_jeton et consommer_limite.
 //   AR-4  un type hors typesCrees → 403 sans ops_tache_creer ; un agent sans la table evenements, ou sans decisions → 403.
 //   AR-5  chaque méthode appelle exactement sa fonction (noms de paramètres acceptés par le faux PostgREST) ; un corps qui porte
@@ -49,6 +49,10 @@ const { court, hasard, sha256, jetonEssai } = C
 const T = 'app/api/agents/taches/route.ts', P = 'app/api/agents/taches/prendre/route.ts', RE = 'app/api/agents/taches/[id]/rendre/route.ts'
 const EV = 'app/api/agents/evenements/route.ts', DE = 'app/api/agents/decisions/route.ts', BA = 'app/api/agents/battement/route.ts', ET = 'app/api/agents/etat/route.ts'
 export const FICHIERS = [T, P, RE, EV, DE, BA, ET]
+// 29/09 (décision du chef, 026-044) : la carte de fermeture-e2e liste les 7 routes du bus ET la route du tic (026-049), soit 8 fichiers.
+// FICHIERS reste les 7 routes du bus (AR-1, AR-10, témoin) ; CARTE est ce que la ligne busAgents doit lister, ni plus ni moins.
+const TIC = 'app/api/agents/tic/route.ts'
+export const CARTE = [...FICHIERS, TIC]
 const FLAGS = 'lib/flags.ts', FERMETURE = 'scripts/fermeture-e2e.mjs'
 const GARDE = new Set(['ops_agent_par_jeton', 'consommer_limite'])
 const JOUR = 86_400_000
@@ -322,13 +326,13 @@ function jugerFichiers(racine) {
   }
   return res(e, '7 fichiers, runtime nodejs et dynamic force-dynamic ; [id] typé Promise<{ id: string }> et attendu')
 }
-const ligneCarte = () => `    'busAgents': ['route', '/api/agents/etat', 'GET', ${FICHIERS.map((f) => `'${f}'`).join(', ')}],`
+const ligneCarte = () => `    'busAgents': ['route', '/api/agents/etat', 'GET', ${CARTE.map((f) => `'${f}'`).join(', ')}],`
 const lireLigneCarte = (l) => {
   const m = /^\s*['"]?busAgents['"]?\s*:\s*\[(.*)\]\s*,?\s*$/.exec(l)
   if (!m) return null
   return [...m[1].matchAll(/'([^']*)'|"([^"]*)"|`([^`]*)`/g)].map((x) => x[1] ?? x[2] ?? x[3])
 }
-const carteConforme = (v) => !!v && v[0] === 'route' && v[1] === '/api/agents/etat' && v[2] === 'GET' && v.length === 10 && egaux([...v.slice(3)].sort(), [...FICHIERS].sort())
+const carteConforme = (v) => !!v && v[0] === 'route' && v[1] === '/api/agents/etat' && v[2] === 'GET' && v.length === 3 + CARTE.length && egaux([...v.slice(3)].sort(), [...CARTE].sort())
 async function jugerDrapeau(racine) {
   const e = []
   const t = C.lire(racine, FLAGS), h = C.aHead(FLAGS)
@@ -359,18 +363,18 @@ async function jugerDrapeau(racine) {
     const { ajoutes, retires } = C.diffLignes(fh, f)
     if (/'busAgents'/.test(fh)) { if (ajoutes.length || retires.length) e.push(`${FERMETURE} : ${ajoutes.length + retires.length} ligne(s) changée(s) alors que la carte porte déjà busAgents à HEAD`) }
     else if (retires.length || ajoutes.length !== 1) e.push(`${FERMETURE} : ${ajoutes.length} ligne(s) ajoutée(s), ${retires.length} retirée(s) ; une seule ligne ajoutée à la carte attendue`)
-    else if (!carteConforme(lireLigneCarte(ajoutes[0]))) e.push(`${FERMETURE} : la ligne ajoutée n'est pas 'busAgents': ['route', '/api/agents/etat', 'GET', <les 7 fichiers>] (« ${court(ajoutes[0], 90)} »)`)
+    else if (!carteConforme(lireLigneCarte(ajoutes[0]))) e.push(`${FERMETURE} : la ligne ajoutée n'est pas 'busAgents': ['route', '/api/agents/etat', 'GET', <les 8 fichiers>] (« ${court(ajoutes[0], 90)} »)`)
     const L = f.split('\n'), iC = L.findIndex((l) => /const CARTE = \{/.test(l))
     let fC = iC
     while (fC >= 0 && fC < L.length && !/^\s*\}\s*$/.test(L[fC])) fC++
     const k = L.findIndex((l) => /^\s*['"]?busAgents['"]?\s*:/.test(l))
     if (k < 0 || iC < 0 || k < iC || k > fC) e.push(`${FERMETURE} : busAgents n'est pas dans la carte CARTE`)
-    else if (!carteConforme(lireLigneCarte(L[k]))) e.push(`${FERMETURE} : la ligne busAgents de la carte ne liste pas exactement les 7 fichiers`)
+    else if (!carteConforme(lireLigneCarte(L[k]))) e.push(`${FERMETURE} : la ligne busAgents de la carte ne liste pas exactement les 8 fichiers (les 7 routes du bus et app/api/agents/tic/route.ts)`)
   }
   const n = nonJuge(racine)
   if (n) e.push(...n.echecs)
   else { const x = deSonde(await sonde('drapeau', racine)); e.push(...x.echecs) }
-  return res(e, `${FLAGS} : busAgents: false et son commentaire, rien d'autre ; ${FERMETURE} : la ligne de carte des 7 fichiers, rien d'autre ; drapeau baissé : 404 sur les 9 méthodes, zéro appel`)
+  return res(e, `${FLAGS} : busAgents: false et son commentaire, rien d'autre ; ${FERMETURE} : la ligne de carte des 8 fichiers, rien d'autre ; drapeau baissé : 404 sur les 9 méthodes, zéro appel`)
 }
 const jugerSonde = (nom) => async (racine) => { const n = nonJuge(racine); if (n) return n; return deSonde(await sonde(nom, racine)) }
 
@@ -453,9 +457,12 @@ export const SABOTAGES = [
   { id: 'AR-1', nom: 'route manquante', fichier: BA, supprimer: true },
   { id: 'AR-1', nom: 'dynamic oublié', fichier: ET, chercher: "export const dynamic = 'force-dynamic'\n", remplacer: '' },
   { id: 'AR-2', nom: 'drapeau non lu par etat', fichier: ET, chercher: "  if (!actif('busAgents')) return NextResponse.json({ error: 'Introuvable.' }, { status: 404 })\n", remplacer: '' },
-  { id: 'AR-2', nom: 'drapeau levé', fichier: FLAGS, chercher: 'busAgents: false,', remplacer: 'busAgents: true,' },
+  // 29/09 : busAgents est levé à HEAD depuis le 28/09 (026-058) ; le sabotage « levé » d'avant (false → true) n'a plus de texte à muter. La levée sans sa trace datée reste la faute.
+  { id: 'AR-2', nom: 'levée sans date', fichier: FLAGS, chercher: 'Levé le 28/09/2026 par Claude Code', remplacer: 'Levé par Claude Code' },
   { id: 'AR-2', nom: 'autre drapeau touché', fichier: FLAGS, chercher: 'codeEmail: true,', remplacer: 'codeEmail: false,' },
   { id: 'AR-2', nom: 'carte sans battement', fichier: FERMETURE, chercher: ", 'app/api/agents/battement/route.ts'", remplacer: '' },
+  { id: 'AR-2', nom: 'carte sans tic', fichier: FERMETURE, chercher: `, '${TIC}'`, remplacer: '' },
+  { id: 'AR-2', nom: 'carte avec un fichier en trop', fichier: FERMETURE, chercher: `, '${TIC}'`, remplacer: `, '${TIC}', 'app/api/agents/intrus/route.ts'` },
   { id: 'AR-2', nom: 'ligne de carte absente', fichier: FERMETURE, chercher: ligneCarte() + '\n', remplacer: '' },
   { id: 'AR-3', nom: 'battement sans garde', fichier: BA, chercher: '  const agent = await authAgent(req)\n  if (refus(agent)) return reponseRefusAgent(agent)\n  const r = await ops_battement({ p_nom: agent.nom })', remplacer: "  const r = await ops_battement({ p_nom: 'inconnu' })" },
   { id: 'AR-3', nom: 'etat lu avant la garde', fichier: ET, chercher: '  const agent = await authAgent(req)', remplacer: '  await ops_etat()\n  const agent = await authAgent(req)' },
