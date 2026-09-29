@@ -845,3 +845,11 @@
 {"id":"026-095","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":0,"date":"2026-09-29T20:43:48Z","duree_s":156,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
 {"id":"026-157","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T20:43:52Z","duree_s":182,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"026-095","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T20:47:05Z","duree_s":147,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-008","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T20:56:18Z","duree_s":415,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-166","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":0,"date":"2026-09-29T21:09:44Z","duree_s":16,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-096","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":0,"date":"2026-09-29T21:10:22Z","duree_s":44,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
+{ \ " i d \ " : \ " 0 2 6 - 2 3 9 \ " , \ " v e r d i c t \ " : \ " P A S S \ " , \ " l i g n e \ " : \ " r e s e t   p o u r   r e j o u e r \ " , \ " c o d e \ " : n u l l , \ " d a t e \ " : \ " 2 0 2 6 - 0 9 - 2 9 T 2 3 : 1 0 : 0 0 Z \ " , \ " d u r e e _ s \ " : 0 , \ " a g e n t \ " : \ " a g - 0 2 6 - 2 3 9 \ " , \ " e x e c u t a n t \ " : \ " c o d e x \ " , \ " l i g n e s \ " : 0 , \ " d o s s i e r \ " : \ " f i l e \ " }  
+ {"id":"026-239","verdict":"PASS","ligne":"reset","code":null,"date":"2026-09-29T21:10:00Z","duree_s":0,"agent":"ag-026-239","executant":"codex","lignes":0,"dossier":"file"}
+
+{"id":"026-239","verdict":"PASS","ligne":"reset","code":null,"date":"2026-09-29T21:10:00Z","duree_s":0,"agent":"ag-026-239","executant":"codex","lignes":0,"dossier":"file"}
+{"id":"026-166","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T21:11:44Z","duree_s":10,"agent":"claude-code","executant":"claude-code","lignes":7,"dossier":"fait","machine":"usine"}
