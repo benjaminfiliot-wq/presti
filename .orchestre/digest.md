@@ -6,17 +6,18 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-29T15:56:52Z
+# Digest — 2026-09-29T16:12:43Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 149 tâche(s) PASS, 201285 ligne(s) · faites par Claude Code : 86 tâche(s) PASS, 78970 ligne(s).
-**État** — file : 26 · en cours : 10 · faites : 242 · refusées : 11
+**État** — file : 25 · en cours : 10 · faites : 242 · refusées : 12
 
-## Attention (3)
+## Attention (4)
 - 026-008 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-008 --forcer`
 - 026-138 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-138 --forcer`
 - 026-157 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-157 --forcer`
+- 026-147 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-147 --forcer`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
@@ -45,7 +46,6 @@
 | 026-092 | feature | file | codex | — | Créer GET /api/controle/station?vue=direct\|fil\|salle\|agent (404 tant que le drapeau pilotage est baissé, garde fondateur, chaque sous-partie sourcée et lue seulement par les fonctions pilotage_* et station_* et les modules purs de lib/pilotage), lib/pilotage/station.ts, et les deux routes de la réunion réservées au jeton du Chef (POST /api/agents/reunion : ouvrir, clore, abandonner ; GET /api/agents/reunion/chiffres), inscrites dans la ligne pilotage de scripts/fermeture-e2e.mjs |
 | 026-096 | feature | file | codex | — | Créer lib/agents/acquisition/repondeur.ts et la route app/api/cron/repondeur : le Répondeur prépare, par les seuls modèles approuvés et sans modèle de langage, la réponse privée à chaque commentaire « SITE » et la réponse à chaque message classé (question tirée de la FAQ, prix, appel, confirmation d'un STOP, accusé d'une demande RGPD, questions à un entrant, suite du Studio pour une marque), par le Gmail de prospection dans le fil avec sa preuve de demande ou dans la conversation Meta, et la seule relance après un lien de maquette resté sans réponse, annoncée comme l'assistant IA de Presti, avec le lien de rendez-vous ou de paiement qui passe la main à Benj, sans jamais négocier, promettre hors de la liste, ni répondre à un cas sensible ou hostile ; le Facteur l'envoie après les juges |
 | 026-111 | feature | file | antigravity | — | Créer la station /controle/station (Mission Control plein écran, derrière le drapeau pilotage) : barre des compteurs en deux lignes, équipage, file Attention unique, Commandement (objectif, missions, niveau, compte rendu), bandeau des ventes, mise en page colonnes ou flottante, disposition téléphone à onglets, réglages lus au chargement, cadres réservés à la carte (avec la liste des salles), au journal, aux panneaux, aux vues et à l'habillage, jetons .mc-* par défaut dans le seul fichier de la station, et l'entrée « Station » du Poste qui y renvoie |
-| 026-147 | feature | file | antigravity | — | Ajouter au Poste de contrôle un onglet Packs pubs (sous le drapeau packPub) qui liste les packs, montre les trois films et les trois visuels d'un pack fabriqué pour que Benj les regarde, et offre Livrer (avec mot de passe) et Refaire (avec consigne) |
 | 026-172 | test | file | claude-code | — | Écrire le juge d'écran de la station Claw3D station-ecran-qa (--partie=verite\|camera\|acteurs\|calque\|themes\|reglages\|salles2 [--lot=a\|b]\|webkit, sur la copie aux drapeaux pilotage et stationCarte levés, avec la session simulée de 026-170, captures prises par le juge), le script de recette de la carte station-recette.mjs (--avant, --reel, --constat) et le lot e de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
 | 026-212 | feature | file | codex | — | C09 — publication des Reels Instagram et vidéos Facebook par Graph, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
 | 026-213 | feature | file | codex | — | C10 — mesure par publication et attribution prudente, selon Ecosysteme-Marketing-Reel-2026-09-25.md §3.7 et §4 bis ; conserver l'accord individuel de Benj et le contrôle local Laya |
@@ -56,6 +56,7 @@
 | 026-242 | test | file | claude-code | — | Écrire scripts/comptable-qa.mjs (critères CPT) et ses jeux d'essai (Stripe factice en lecture seule avec une clé d'écriture piégée, ventes et abonnements factices, seuil de franchise 293 B daté) qui prouvent que le module du Comptable rapproche chaque encaissement d'une vente sans double compte, suit le seuil de franchise sans jamais le dépasser sans alerte, prépare des montants de déclaration jamais déposés ni payés, ne touche à aucune mention de TVA et n'envoie une donnée financière ou de client qu'à Codex ou à un moteur local, jamais à un gratuit ni à un :cloud |
 | 026-244 | test | file | claude-code | — | Écrire scripts/sav-qa.mjs (critères SAV) et ses jeux d'essai (messages de clients déjà payants dont un corpus d'injection, brouillons factices, compteur des 20 approbations sans retouche, cas remboursement et litige) qui prouvent que le module du SAV répond dans le fil du bon client avec le ton de Presti, ne part jamais sans un portier, escalade tout remboursement ou litige à Benj, et n'envoie une donnée de client qu'à Codex ou à un moteur local, jamais à un gratuit ni à un :cloud |
 | 026-246 | test | file | claude-code | — | Écrire scripts/qualite-sites-qa.mjs (critères QSI) et ses jeux d'essai (serveur factice de sites livrés avec des pannes réglables : HTTP, HTTPS, poids, accessibilité, liens morts, mentions légales absentes, formulaire cassé) qui prouvent que le Contrôleur qualité mesure le rendu réel d'un site livré sans jamais le modifier, sans jamais soumettre un faux message dans son formulaire, et propose une correction au Livreur ou à Claude Code par une décision plutôt que d'agir lui-même |
+| 026-147 | feature | refuse | antigravity | DISJONCTÉE | FAIL LV-7 — 0 <video controls>, 3 attendues ; « Livrer » n'appelle pas apiDirection( ; « Livrer » n'appelle pas /api/controle/packs/ ; le troisième argument `tr \| FAIL LV-7 — 0 <video controls>, 3 attendues ; « Livrer » n'appelle pas apiDirection( ; « Livrer » n'appelle pas /api/controle/packs/ ; le |
 | 026-157 | feature | refuse | claude-code | DISJONCTÉE | bail expiré : usine-codex-108 silencieux depuis 794 min \| FAIL LV-1 — --a-sec sur le témoin de fabrication : code null (signal SIGTERM), 0 attendu — \| FAIL LV-1 — --a-sec sur le témoin de fabrication : code null (signal SIGTERM), 0 attendu — |
 | 026-237 | feature | fait | claude-code | FAIL | FAIL SVL-11 — git status : chemin(s) apparu(s) pendant ce passage : lib/agents/acquisition/porteurFormulaire.ts \| lib/agents/acquisition/porteurs/ (101 s) |
 | 026-138 | audit | refuse | claude-code | DISJONCTÉE | bail expiré : claude-code silencieux depuis 919 min \| bail expiré : claude-code silencieux depuis 61 min \| bail expiré : claude-code silencieux depuis 60 min |
