@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Pub Chantier</title>
+  <style>
+    body { margin: 0; background: #000; overflow: hidden; font-family: sans-serif; color: white; }
+    .abs { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+    .texte { position: absolute; z-index: 100; text-align: center; width: 100%; font-size: 60px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+    #accroche { top: 20%; font-weight: bold; }
+    #detail { top: 40%; font-size: 50px; }
+    #fin { top: 60%; font-size: 50px; }
+    #logo-container { position: absolute; bottom: 20%; left: 0; width: 100%; text-align: center; z-index: 100; }
+    #logo-container img { max-width: 200px; max-height: 200px; }
+    #mention-ia { position: absolute; bottom: 15%; right: 5%; color: rgba(255,255,255,0.7); font-size: 30px; z-index: 1000; }
+    #sous-titres { position: absolute; bottom: 25%; left: 0; width: 100%; text-align: center; font-size: 40px; z-index: 100; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+</head>
+<body data-composition-id="chantier" data-width="1080" data-height="1920" data-fps="30" data-start="0" data-duration="15">
+  <div id="mention-ia" class="clip" data-start="0" data-duration="15">Voix générée par IA</div>
+  <audio id="voix" src="{{voix}}" data-start="0" data-duration="15"></audio>
+  
+  <img id="img1" class="abs" src="{{photo:0}}" alt="" style="opacity: 1;">
+  <img id="img2" class="abs" src="{{photo:1}}" alt="">
+  <img id="img3" class="abs" src="{{photo:2}}" alt="">
+  <img id="img4" class="abs" src="{{photo:3}}" alt="">
+  <img id="img5" class="abs" src="{{photo:4}}" alt="">
+
+  <div id="accroche" class="texte">{{accroche}}</div>
+  <div id="detail" class="texte" style="opacity: 0;">{{duree_travaux}}<br>{{materiaux}}</div>
+  <div id="fin" class="texte" style="opacity: 0;">{{metier}} à {{ville}}<br><br>{{cta}}</div>
+  <div id="logo-container" style="opacity: 0;"><img src="{{logo}}" alt=""></div>
+  <div id="sous-titres">{{sous_titres}}</div>
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    window.__timelines["chantier"] = gsap.timeline({ paused: true })
+      .to("#img1", { scale: 1.1, duration: 3 }, 0)
+      .to("#img1", { opacity: 0, duration: 0.5 }, 2.5)
+      .to("#accroche", { opacity: 0, duration: 0.5 }, 2.5)
+      
+      .to("#img2", { opacity: 1, duration: 0.5 }, 2.5)
+      .to("#img2", { scale: 1.1, duration: 3 }, 2.5)
+      .to("#detail", { opacity: 1, duration: 0.5 }, 2.5)
+      
+      .to("#img2", { opacity: 0, duration: 0.5 }, 5)
+      .to("#img3", { opacity: 1, duration: 0.5 }, 5)
+      .to("#img3", { scale: 1.1, duration: 3 }, 5)
+      
+      .to("#img3", { opacity: 0, duration: 0.5 }, 7.5)
+      .to("#img4", { opacity: 1, duration: 0.5 }, 7.5)
+      .to("#img4", { scale: 1.1, duration: 3 }, 7.5)
+      
+      .to("#img4", { opacity: 0, duration: 0.5 }, 10)
+      .to("#detail", { opacity: 0, duration: 0.5 }, 10)
+      
+      .to("#img5", { opacity: 1, duration: 0.5 }, 10)
+      .to("#img5", { scale: 1.1, duration: 5 }, 10)
+      .to(["#fin", "#logo-container"], { opacity: 1, duration: 0.5 }, 11);
+  </script>
+</body>
+</html>

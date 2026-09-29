@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Pub Visuel</title>
+  <style>
+    body { margin: 0; background: #000; overflow: hidden; font-family: sans-serif; color: white; }
+    .abs { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+    .texte { position: absolute; z-index: 100; text-align: center; width: 100%; font-size: 40px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+    #accroche { top: 15%; font-weight: bold; font-size: 50px; }
+    #fin { top: 75%; }
+    #logo-container { position: absolute; bottom: 5%; left: 0; width: 100%; text-align: center; z-index: 100; }
+    #logo-container img { max-width: 150px; max-height: 150px; }
+    #mention-ia { position: absolute; bottom: 15%; right: 5%; color: rgba(255,255,255,0.7); font-size: 30px; z-index: 1000; }
+  </style>
+</head>
+<body data-composition-id="visuel" data-width="1080" data-height="1080" data-fps="30" data-start="0" data-duration="1">
+  <div id="mention-ia" class="clip" data-start="0" data-duration="1">Voix générée par IA</div>
+  <img class="abs" src="{{photo:0}}" alt="">
+  <div id="accroche" class="texte">{{accroche}}</div>
+  <div id="fin" class="texte">{{metier}} à {{ville}}<br><br>{{cta}}</div>
+  <div id="logo-container"><img src="{{logo}}" alt=""></div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    window.__timelines["visuel"] = gsap.timeline({ paused: true });
+  </script>
+</body>
+</html>

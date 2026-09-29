@@ -1,0 +1,13 @@
+{
+  "name": "chantier",
+  "version": "1.0.0",
+  "compositions": [
+    {
+      "id": "chantier",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "duration": 15
+    }
+  ]
+}

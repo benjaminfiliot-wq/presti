@@ -1,0 +1,13 @@
+{
+  "name": "artisan-ville",
+  "version": "1.0.0",
+  "compositions": [
+    {
+      "id": "artisan-ville",
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "duration": 15
+    }
+  ]
+}
