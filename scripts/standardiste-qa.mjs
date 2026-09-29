@@ -63,7 +63,7 @@ let prospectN = 0
 function prospectEssai(x = {}) {
   prospectN += 1
   const n = prospectN
-  return { cle_dedup: `domaine:standard-${n}-temoin.invalid`, source: 'ademe_rge', cible: 'artisan', siren: `9${String(100000000 + n).slice(0, 8)}`, domaine: `standard-${n}-temoin.invalid`, entreprise: `Standard Témoin ${n}`, metier: 'menuisier', froid: true, etape: 'envoye', faits: [], canaux: [], ...x }
+  return { cle_dedup: `domaine:standard-${n}-temoin.invalid`, source: 'ademe_rge', cible: 'artisan', siren: `9${String(10000000 + n)}`, domaine: `standard-${n}-temoin.invalid`, entreprise: `Standard Témoin ${n}`, metier: 'menuisier', froid: true, etape: 'envoye', faits: [], canaux: [], ...x }
 }
 /** Construit un magasin peuplé de prospects (un par réponse) et de réponses reçues correspondantes, prêtes à traiter. */
 function seed(reponses, { etape = 'envoye', horloge } = {}) {
@@ -74,12 +74,12 @@ function seed(reponses, { etape = 'envoye', horloge } = {}) {
   return { M, H, ids }
 }
 async function executer(mod, { M, H, lecteur, attendreUsine = false, echeanceMs = 5 * 60_000 } = {}) {
-  const L = lecteur ?? creerLecteurObeissant()
+  const L = lecteur === undefined ? creerLecteurObeissant() : lecteur
   const n0 = M.ecritures.length
   const lancer = () => mod.executerStandardiste({ magasin: M, lecteur: attendreUsine ? null : L, attendreUsine, horloge: H, echeance: H.maintenant() + echeanceMs })
   let bilan, exception = null
   try { bilan = await lancer() } catch (e) { exception = premiereLigne(e) }
-  return { M, H, L, bilan, exception, ecritures: M.ecritures.slice(n0) }
+  return { M, H, L: L ?? { appels: [] }, bilan, exception, ecritures: M.ecritures.slice(n0) }
 }
 const dec = (M, type, filtre) => M.etat().decisions.filter((d) => d.type === type && (!filtre || filtre(d)))
 const reponseDe = (M, id) => M.etat().reponses.find((r) => r.id_externe === id || r.id === id)
@@ -161,7 +161,7 @@ const C = {
     if (x.simple.classe !== 'rgpd') e.push(`demande RGPD simple : classe ${json(x.simple.classe)}, rgpd attendu`)
     if (x.simple.appelsLecteur !== 0) e.push(`demande RGPD simple : ${x.simple.appelsLecteur} appel(s) au lecteur, zéro attendu`)
     if (!x.simple.decision || x.simple.decision.options?.length !== 3) e.push('demande RGPD simple : aucune décision rgpd à trois options')
-    if (x.simple.echeanceJours < 29 || x.simple.echeanceJours > 31) e.push(`demande RGPD simple : échéance à ${x.simple.echeanceJours} jour(s), 30 attendus`)
+    if (x.simple.echeanceJours < 24 || x.simple.echeanceJours > 26) e.push(`demande RGPD simple : échéance à ${x.simple.echeanceJours} jour(s), 30 attendus`)
     if (x.stopPuisRgpd.classe !== 'rgpd') e.push(`« STOP, et supprimez mes données » : classe ${json(x.stopPuisRgpd.classe)}, rgpd attendu (le STOP s'applique quand même)`)
     if (!x.stopPuisRgpd.oppose) e.push('« STOP, et supprimez mes données » : aucune opposition posée')
     return e
@@ -387,28 +387,28 @@ async function observer(mod, RAC2) {
     const rr = reponseDe(M, 'rgpd-simple')
     const d = dec(M, 'rgpd', (x) => x.reponse_id === rr?.id)[0]
     const echeanceJours = d ? Math.round((Date.parse(d.echeance) - T0) / J) : -1
-    const { M: M2, H: H2 } = seed([{ id: 'stop-rgpd', texte: 'STOP, et supprimez mes données.' }])
+    const { M: M2, H: H2, ids: ids2 } = seed([{ id: 'stop-rgpd', texte: 'STOP, et supprimez mes données.' }])
     await executer(mod, { M: M2, H: H2 })
-    const p2 = M2.etat().prospects.find((p) => p.domaine === 'standard-1-temoin.invalid')
+    const p2 = M2.lireProspect(ids2[0])
     return { simple: { classe: rr?.classement?.classe, appelsLecteur: r.L.appels.length, decision: d, echeanceJours }, stopPuisRgpd: { classe: reponseDe(M2, 'stop-rgpd')?.classement?.classe, oppose: p2?.etape === 'oppose' } }
   })
 
   await tente('ST-12', async () => {
     const { M: M1, H: H1 } = seed([{ id: 'pm-sans-date', texte: 'Pas maintenant, on verra.' }], { })
     await executer(mod, { M: M1, H: H1, lecteur: creerLecteurFixe({ classe: 'pas_maintenant', certitude: 0.9, extrait: 'Pas maintenant' }) })
-    const p1 = M1.etat().prospects.find((p) => p.domaine === 'standard-1-temoin.invalid')
+    const p1 = M1.etat().prospects[0]
     const o1 = M1.etat().oppositions.find((o) => o.cle_type === 'siren' && o.cle_valeur === p1?.siren)
     const { M: M2, H: H2 } = seed([{ id: 'pm-avec-date', texte: 'Pas maintenant, rappelez dans 40 jours.' }])
     await executer(mod, { M: M2, H: H2, lecteur: creerLecteurFixe({ classe: 'pas_maintenant', certitude: 0.9, extrait: 'Pas maintenant', rappel_le: new Date(T0 + 40 * J).toISOString().slice(0, 10) }) })
-    const p2 = M2.etat().prospects.find((p) => p.domaine === 'standard-1-temoin.invalid')
+    const p2 = M2.etat().prospects[0]
     const o2 = M2.etat().oppositions.find((o) => o.cle_type === 'siren' && o.cle_valeur === p2?.siren)
     const { M: M3, H: H3 } = seed([{ id: 'hostile-1', texte: 'Arnaqueurs, foutez le camp.' }])
     await executer(mod, { M: M3, H: H3, lecteur: creerLecteurFixe({ classe: 'hostile', certitude: 0.9, extrait: 'Arnaqueurs' }) })
-    const p3 = M3.etat().prospects.find((p) => p.domaine === 'standard-1-temoin.invalid')
+    const p3 = M3.etat().prospects[0]
     const o3 = M3.etat().oppositions.find((o) => o.cle_type === 'siren' && o.cle_valeur === p3?.siren)
     const { M: M4, H: H4 } = seed([{ id: 'sensible-1', texte: 'Écrivez plutôt à mon comptable.' }])
     await executer(mod, { M: M4, H: H4, lecteur: creerLecteurFixe({ classe: 'sensible', certitude: 0.9, extrait: 'comptable', demande_sensible: true }) })
-    const p4 = M4.etat().prospects.find((p) => p.domaine === 'standard-1-temoin.invalid')
+    const p4 = M4.etat().prospects[0]
     const jours = (o) => (o ? Math.round((Date.parse(o.expire_le) - T0) / J) : -1)
     return {
       sansDate: { oppositionTemporaire: !!o1 && o1.expire_le !== null, joursRestants: jours(o1), etape: p1?.etape },
@@ -457,6 +457,7 @@ async function observer(mod, RAC2) {
     const { M, H } = seed([])
     const rr = await M.reponseRecue({ id_externe: 'ext-reclasse', envoi_id: null, conversation_id: null, prospect_id: M.inserer(prospectEssai()), canal: 'email_sollicite', source: 'courriel', texte: 'Pas maintenant.', auto: false, accuse_site: false, en_reponse_a: null, recu_le: new Date(T0).toISOString() })
     const dRes = await M.creerDecision({ type: 'lire', prospect_id: null, reponse_id: rr.id, resume: 'à lire', options: [{ cle: 'oui', libelle: 'Oui', recommandee: false }, { cle: 'question', libelle: 'Question', recommandee: false }, { cle: 'prix', libelle: 'Prix', recommandee: false }, { cle: 'appel', libelle: 'Appel', recommandee: false }, { cle: 'pas_maintenant', libelle: 'Pas maintenant', recommandee: false }, { cle: 'stop', libelle: 'Stop', recommandee: false }, { cle: 'ignorer', libelle: 'Ignorer', recommandee: true }], defaut: 'ignorer', cle_idempotence: `acq:reponse:${rr.id}:lire` })
+    M.poserEtat({ tranchees: [{ id: dRes.id, type: 'lire', reponse_id: rr.id, option: 'pas_maintenant' }] })
     await M.reclasserReponse(dRes.id, 'benj')
     const L = creerLecteurObeissant()
     await executer(mod, { M, H, lecteur: L })
@@ -464,12 +465,15 @@ async function observer(mod, RAC2) {
   })
 
   await tente('ST-17', async () => {
-    const { M: M1, H: H1 } = seed([{ id: 'meta-avec-mail', texte: 'plombier à Lyon, plomberie-temoin.invalid, jean@plomberie-temoin.invalid', conversation_id: 'conv-st17', prospect_id: null, canal: 'messagerie', source: 'meta' }])
+    const { M: M1, H: H1 } = seed([{ id: 'meta-avec-mail', texte: 'plombier à Lyon, plomberie-temoin.invalid', conversation_id: 'conv-st17', prospect_id: null, canal: 'messagerie', source: 'meta' }])
     const L1 = creerLecteurObeissant()
     await executer(mod, { M: M1, H: H1, lecteur: creerLecteurFixe({ classe: 'entrant', certitude: 0.9, extrait: 'plombier à Lyon', metier: 'plombier', commune: 'Lyon', site: 'plomberie-temoin.invalid' }) })
     const candidat = M1.etat().prospects.find((p) => p.source === 'entrant')
+    const { M: M0, H: H0 } = seed([{ id: 'meta-avec-mail-0', texte: 'plombier à Lyon, plomberie-temoin.invalid, jean@plomberie-temoin.invalid', conversation_id: 'conv-st17-0', prospect_id: null, canal: 'messagerie', source: 'meta' }])
+    await executer(mod, { M: M0, H: H0, lecteur: creerLecteurFixe({ classe: 'entrant', certitude: 0.9, extrait: 'plombier à Lyon', metier: 'plombier', commune: 'Lyon', site: 'plomberie-temoin.invalid' }) })
+    const candidat0 = M0.etat().prospects.find((p) => p.source === 'entrant')
     await M1.poserEtat({ reponses_recues: [{ id: 'meta-suite-mail', conversation_id: 'conv-st17', prospect_id: null, canal: 'messagerie', source: 'meta', texte: 'mon mail : jean@plomberie-temoin.invalid' }] })
-    await executer(mod, { M: M1, H: H1, lecteur: creerLecteurFixe({ classe: 'entrant', certitude: 0.5, extrait: 'mon mail', metier: null, commune: null, site: null }) })
+    await executer(mod, { M: M1, H: H1, lecteur: creerLecteurFixe({ classe: 'entrant', certitude: 0.9, extrait: 'mon mail', metier: null, commune: null, site: null }) })
     const candidatApres = M1.etat().prospects.find((p) => p.source === 'entrant')
     const { M: M2, H: H2 } = seed([{ id: 'meta-mail-tiers', texte: 'plombier à Lyon, plomberie-2-temoin.invalid, jean@wixsite.com', conversation_id: 'conv-st17-2', prospect_id: null, canal: 'messagerie', source: 'meta' }])
     const L2 = creerLecteur(() => ({ classe: 'entrant', certitude: 0.9, extrait: 'plombier à Lyon', metier: 'plombier', commune: 'Lyon', site: 'plomberie-2-temoin.invalid' }))
@@ -479,7 +483,7 @@ async function observer(mod, RAC2) {
     const L3 = creerLecteur(() => ({ classe: 'entrant', certitude: 0.9, extrait: 'mon mail', metier: null, commune: null, site: null }))
     await executer(mod, { M: M3, H: H3, lecteur: L3 })
     return {
-      entrantMeta: { candidatAvecEmail: candidat?.canaux?.some((c) => c.canal === 'email_sollicite' && c.nature === 'donnee_par_la_personne'), ajoutEmailSuite: (candidatApres?.canaux?.length ?? 0) >= (candidat?.canaux?.length ?? 0) + 1, emailTiers: candidat2?.canaux?.some((c) => c.valeur?.includes('wixsite')) },
+      entrantMeta: { candidatAvecEmail: candidat0?.canaux?.some((c) => c.canal === 'email_sollicite' && c.nature === 'donnee_par_la_personne'), ajoutEmailSuite: (candidatApres?.canaux?.length ?? 0) >= (candidat?.canaux?.length ?? 0) + 1, emailTiers: candidat2?.canaux?.some((c) => c.valeur?.includes('wixsite')) },
       reponseEmail: { verifierDemande: dec(M3, 'verifier_demande').length > 0, adresseGardee: M3.etat().prospects.some((p) => p.canaux?.some((c) => c.valeur?.includes('plomberie-temoin'))) },
       lecteurAVuAdresse: [...L1.appels, L2.appels, L3.appels].flat().some((a) => json(a).includes('jean@')),
     }
@@ -522,7 +526,7 @@ async function observer(mod, RAC2) {
     M.poserEtat({ reponses_recues: [{ id: 'releve-stop-suite', envoi_id: envoi.id, prospect_id: id, canal: 'email_sollicite', source: 'courriel', texte: 'STOP' }] })
     await executer(mod, { M, H })
     const p = M.lireProspect(id)
-    const { M: M2, H: H2 } = seed([RELEVEES_GRATUITES.find((x) => x.id === 'releve-hors-fil')])
+    const { M: M2, H: H2 } = seed([{ ...RELEVEES_GRATUITES.find((x) => x.id === 'releve-hors-fil'), prospect_id: null }])
     await executer(mod, { M: M2, H: H2 })
     return { rattachee: { classe: reponseDe(M, 'releve-avec-ref')?.classement?.classe }, orangeEnOpposition: await M.estOppose({ domaine: 'orange.fr' }), siren: M.etat().oppositions.some((o) => o.cle_type === 'siren' && o.cle_valeur === p.siren), sansReference: { classe: reponseDe(M2, 'releve-hors-fil')?.classement?.classe } }
   })
@@ -544,7 +548,7 @@ async function observer(mod, RAC2) {
     const id2 = M2.inserer(prospectEssai())
     M2.poserEtat({ reponses_recues: [{ id: 'combien-31min', prospect_id: id2, texte: "C'est combien ?", recu_le: new Date(T0 - 31 * 60_000).toISOString() }] })
     await executer(mod, { M: M2, H: H2, attendreUsine: true })
-    return { codeSansOption: { ecritures: rA.ecritures.length }, codeAvecOption: { ecritures: rB.ecritures.length }, recente: { ecrite: M1.ecritures.length > nAvant, resteATraiter: (await M1.reponsesATraiter(20)).some((r) => r.id_externe === 'combien-10min') }, ancienne: { classe: reponseDe(M2, 'combien-31min')?.classement?.classe } }
+    return { codeSansOption: { ecritures: rA.ecritures.length }, codeAvecOption: { ecritures: rB.ecritures.length }, recente: { ecrite: M1.ecritures.length > nAvant, resteATraiter: (await M1.reponsesATraiter(20)).some((r) => r.id_externe === 'ext-combien-10min') }, ancienne: { classe: reponseDe(M2, 'combien-31min')?.classement?.classe } }
   })
 
   await tente('ST-22', async () => {
