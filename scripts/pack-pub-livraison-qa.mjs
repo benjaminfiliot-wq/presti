@@ -90,11 +90,11 @@ function jugerLV1(s) {
   const fichier = ch(rel)
   if (!fs.existsSync(fichier)) { s.echoue('LV-1', `${rel} absent`); return }
   const envSansSecret = { NEXT_PUBLIC_SUPABASE_URL: '', SUPABASE_SERVICE_ROLE_KEY: '' }
-  const rVide = lancer(process.execPath, [fichier], { cwd: racine, timeout: 20_000, env: envSansSecret })
+  const rVide = lancer(process.execPath, [fichier], { cwd: racine, timeout: 90_000, env: envSansSecret })
   if (rVide.code !== 2) s.echoue('LV-1', `sans argument : code ${rVide.code}${rVide.signal ? ` (signal ${rVide.signal})` : ''}, 2 attendu`)
 
   const dossierCasse = path.join(FIX, 'dossier-casse')
-  const rCasse = lancer(process.execPath, [fichier, 'pack-casse-0001', dossierCasse], { cwd: racine, timeout: 20_000, env: envSansSecret })
+  const rCasse = lancer(process.execPath, [fichier, 'pack-casse-0001', dossierCasse], { cwd: racine, timeout: 4 * 60_000, env: envSansSecret })
   if (rCasse.code !== 1) s.echoue('LV-1', `dossier cassé : code ${rCasse.code}${rCasse.signal ? ` (signal ${rCasse.signal})` : ''}, 1 attendu (refus LOCAL par pub-locale-qa.mjs, avant tout accès réseau) — ${court(rCasse.sortie, 160)}`)
   else if (/variables?\s+(?:manquante|manquantes)|SUPABASE/i.test(rCasse.sortie)) s.echoue('LV-1', "dossier cassé : refusé pour des variables d'environnement manquantes plutôt que pour le contenu — pub-locale-qa.mjs doit être jugé AVANT le réseau")
 
@@ -102,23 +102,27 @@ function jugerLV1(s) {
   // deposer.mjs juge D'ABORD pour de vrai (pub-locale-qa --partie=complet --dossier=<fab>, vidéos + transcription
   // comprises) avant même --a-sec : sur un témoin complet et conforme (026-110, 28/09), cet appel prend ~100 s à lui
   // seul — 20 s le tuait (SIGTERM) quelle que soit la qualité de l'implémentation jugée. Mesuré une fois, marge large.
-  const rSec = lancer(process.execPath, [fichier, 'pack-temoin-0001', fab, '--a-sec'], { cwd: racine, timeout: 4 * 60_000, env: envSansSecret })
+  const rSec = lancer(process.execPath, [fichier, 'pack-temoin-0001', fab, '--a-sec'], { cwd: racine, timeout: 12 * 60_000, env: envSansSecret })
   if (rSec.code !== 0) s.echoue('LV-1', `--a-sec sur le témoin de fabrication : code ${rSec.code}${rSec.signal ? ` (signal ${rSec.signal})` : ''}, 0 attendu — ${court(rSec.sortie, 200)}`)
   else {
     const attendus = fs.readdirSync(path.join(fab, 'sortie')).sort()
     const manquants = attendus.filter((f) => !rSec.sortie.includes(f))
     if (manquants.length) s.echoue('LV-1', `--a-sec : fichier(s) de sortie/ absent(s) de la liste : ${manquants.join(', ')}`)
-    if (/\bpack\.json\b|\bphotos\/|\bhf\//.test(rSec.sortie)) s.echoue('LV-1', "--a-sec : pack.json, photos/ ou hf/ apparaît dans la liste — seuls les 8 fichiers de sortie/ sont attendus")
+    if (/\bpack\.json\b|\bphotos\/|\bhf\//.test(rSec.sortie)) s.echoue('LV-1', "--a-sec : pack.json, photos/ ou hf/ apparaît dans la liste — seuls les fichiers de sortie/ sont attendus")
   }
-  if (!s.enEchec('LV-1')) s.passe('LV-1', "sans argument : code 2 ; dossier cassé : refusé LOCALEMENT (code 1) avant le réseau ; --a-sec : exactement les 8 fichiers de sortie/, rien de pack.json/photos//hf/")
+  if (!s.enEchec('LV-1')) s.passe('LV-1', "sans argument : code 2 ; dossier cassé : refusé LOCALEMENT (code 1) avant le réseau ; --a-sec : exactement les fichiers présents dans sortie/ (sept, huit avec fiche-10-min.md), rien de pack.json/photos//hf/")
 }
 function jugerLV2(s) {
   const texte = lireSi(ch('scripts/pack-pub/deposer.mjs'))
   if (texte === null) { s.echoue('LV-2', 'scripts/pack-pub/deposer.mjs absent ou vide'); return }
   if (!/['"]packs-pubs['"]/.test(texte)) s.echoue('LV-2', "bucket 'packs-pubs' absent")
   if (!/storage\/v1\/bucket/.test(texte)) s.echoue('LV-2', 'mesure de tous les buckets absente (storage/v1/bucket, comme scripts/promo-heberger.mjs:56-72)')
-  if (!/\b400\b/.test(texte)) s.echoue('LV-2', 'marge de 400 Mo absente')
-  if (!/\b30\b/.test(texte)) s.echoue('LV-2', 'refus au-delà de 30 Mo par pack absent')
+  // Les deux seuils doivent être DANS une comparaison en octets (400 * 1048576, 30 * 1048576, ou * 1024 * 1024) : un « 400 » resté
+  // dans un message ou un commentaire ne prouve rien (contre-vérification du 29/09 : marge ramenée à 40 Mo, LV-2 restait PASS).
+  const MO = '(?:1_?048_?576|1024\\s*\\*\\s*1024)'
+  const seuil = (n) => new RegExp(`[<>]=?\\s*${n}\\s*\\*\\s*${MO}|\\b${n}\\s*\\*\\s*${MO}\\s*[<>]=?`).test(texte)
+  if (!seuil(400)) s.echoue('LV-2', 'marge de 400 Mo absente : aucune comparaison avec 400 * 1048576 dans le code')
+  if (!seuil(30)) s.echoue('LV-2', 'refus au-delà de 30 Mo par pack absent : aucune comparaison avec 30 * 1048576 dans le code')
   if (!/\.eq\(\s*['"]etat['"]\s*,\s*['"]payee['"]\s*\)/.test(texte)) s.echoue('LV-2', "passage d'état .eq('etat', 'payee') absent")
   if (!/['"]fabriquee['"]/.test(texte)) s.echoue('LV-2', "état 'fabriquee' absent")
   for (const champ of ['fabrique_le', 'verifications']) if (!texte.includes(champ)) s.echoue('LV-2', `${champ} absent de la mise à jour`)
@@ -135,7 +139,7 @@ function jugerLV10(s) {
     const lignePath = path.join(LIGNES, 'payee-sans-voix.json')
     const j = JSON.parse(fs.readFileSync(lignePath, 'utf8'))
     const dest = dossierSortie('payee-sans-voix')
-    const r = lancer(process.execPath, [fichier, j.id, dest, `--depuis-fichier=${lignePath}`], { cwd: racine, timeout: 20_000, env: {} })
+    const r = lancer(process.execPath, [fichier, j.id, dest, `--depuis-fichier=${lignePath}`], { cwd: racine, timeout: 90_000, env: {} })
     if (r.code !== 0) s.echoue('LV-10', `payee sans voix : code ${r.code}${r.signal ? ` (signal ${r.signal})` : ''}, 0 attendu — ${court(r.sortie, 160)}`)
     else {
       const pj = path.join(dest, 'pack.json')
@@ -156,7 +160,7 @@ function jugerLV10(s) {
     const lignePath = path.join(LIGNES, 'payee-voix-a-produire.json')
     const j = JSON.parse(fs.readFileSync(lignePath, 'utf8'))
     const dest = dossierSortie('payee-voix-a-produire')
-    const r = lancer(process.execPath, [fichier, j.id, dest, `--depuis-fichier=${lignePath}`], { cwd: racine, timeout: 20_000, env: {} })
+    const r = lancer(process.execPath, [fichier, j.id, dest, `--depuis-fichier=${lignePath}`], { cwd: racine, timeout: 90_000, env: {} })
     if (r.code !== 4) s.echoue('LV-10', `voix à produire : code ${r.code}${r.signal ? ` (signal ${r.signal})` : ''}, 4 attendu`)
     const vp = path.join(dest, 'voix-a-produire.txt')
     if (!fs.existsSync(vp)) s.echoue('LV-10', 'voix-a-produire.txt non écrit')
@@ -171,7 +175,7 @@ function jugerLV10(s) {
     const lignePath = path.join(LIGNES, 'fabriquee-etat-autre.json')
     const j = JSON.parse(fs.readFileSync(lignePath, 'utf8'))
     const dest = dossierSortie('autre-etat')
-    const r = lancer(process.execPath, [fichier, j.id, dest, `--depuis-fichier=${lignePath}`], { cwd: racine, timeout: 20_000, env: {} })
+    const r = lancer(process.execPath, [fichier, j.id, dest, `--depuis-fichier=${lignePath}`], { cwd: racine, timeout: 90_000, env: {} })
     if (r.code !== 1) s.echoue('LV-10', `ligne en état ${j.etat} : code ${r.code}${r.signal ? ` (signal ${r.signal})` : ''}, 1 attendu`)
     if (fs.existsSync(dest) && fs.readdirSync(dest).length) s.echoue('LV-10', `ligne en état ${j.etat} : ${fs.readdirSync(dest).length} fichier(s) écrit(s), aucun attendu`)
   }
@@ -181,7 +185,9 @@ function jugerLV11(s) {
   const texte = lireSi(ch('scripts/pack-pub/exporter.mjs'))
   if (texte === null) { s.echoue('LV-11', 'scripts/pack-pub/exporter.mjs absent ou vide'); return }
   if (!/\.env\.local/.test(texte)) s.echoue('LV-11', ".env.local n'est pas chargé par le script lui-même")
-  if (!/\.eq\(\s*['"]id['"]/.test(texte)) s.echoue('LV-11', "lecture filtrée .eq('id', …) absente")
+  // Le filtre .eq('id', …) doit être sur la lecture de packs_pubs elle-même (contre-vérification du 29/09 : un autre .eq('id', …) du
+  // fichier, sur artisans, suffisait à laisser passer une lecture de packs_pubs devenue .limit(1)).
+  if (!/from\(\s*['"]packs_pubs['"]\s*\)\s*\.select\([^)]*\)\s*\.eq\(\s*['"]id['"]/.test(texte)) s.echoue('LV-11', "lecture filtrée absente : from('packs_pubs').select(…).eq('id', …) attendu")
   if (/\.(insert|update|upsert|delete)\(/.test(texte)) s.echoue('LV-11', 'écriture en base trouvée (.insert/.update/.upsert/.delete) : exporter.mjs ne doit que lire')
   if (!s.enEchec('LV-11')) s.passe('LV-11', '.env.local chargé par le script lui-même, lecture filtrée .eq(id), aucune écriture en base')
 }
