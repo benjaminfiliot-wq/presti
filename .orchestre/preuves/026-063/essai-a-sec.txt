@@ -1,0 +1,26 @@
+essai à sec de la migration 0111 (fiche 026-063), 5e passe — exécuté par Claude Code (le chef) le 2026-09-29, par le
+connecteur MCP Supabase (execute_sql, projet gorcdvmueakcncsmrouo), sur la migration du dépôt principal APRÈS la
+contre-vérification du chef : le second verrou d'accord que Codex avait ajouté (ops.accords_envoi, colonne
+ops.envois.attend_accord_benj, déclencheurs garde_accord_envoi / annuler_accord_retouche / annuler_accords_envoi,
+acq_accord_envoi_poser, et l'update qui annulait les envois approuvés) est retiré : l'accord individuel de Benj (R24,
+correction du 27/09) est déjà tenu, une seule fois, par 0099 en production (ops.accords_benj, statut attend_accord_benj,
+ops.garde_envois, 026-034). Voir application-2026-09-29.md.
+Bloc généré par `node --import ./scripts/ts-loader.mjs scripts/disjoncteurs-qa.mjs --generer-essai` (sans --avec : 0096 à
+0107 déjà appliquées pour de vrai), copié dans .orchestre/preuves/026-063/essai.sql ; exécuté tel quel (commentaires du
+scénario ôtés, aucun énoncé changé). Empreinte du jumeau :
+00d33f981a2fdf7ba7b72f5cf9b28bad18be940a5094c254019cf51930998d80
+
+Message brut rendu par execute_sql (la levée `raise exception 'ESSAI_A_SEC …'` finale ; rien n'est commité, la
+transaction entière est annulée par cette exception) :
+
+ERROR:  P0001: ESSAI_A_SEC 00d33f981a2fdf7ba7b72f5cf9b28bad18be940a5094c254019cf51930998d80 {"diag_p0": "envoi_froid=true palier=P0", "diag_anon": "42501", "diag_etat0": "envoi_froid=false palier=P0", "diag_techno": "{\"actions\": [\"disjoncteur_technologie\", \"palier_descendu\"]}", "diag_trop_tot": "ops:trop_tot", "trop_tot_refuse": true, "ouverture_08h_ok": true, "anon_refuse_signal": true, "avis_abus_coupe_48h": true, "p0_formulaire_a_cinq": true, "jauge_200_sur_200_refuse": true, "quatre_stop_suspend_modele": true, "jauge_199_sur_200_accepte_1": true, "envoi_froid_ferme_palier_zero": true, "ads_archive_sans_evenement_refuse": true, "ads_archive_permis_apres_evenement": true, "gmail_refus_coupe_gmail_et_formulaire": true, "technologie_en_pause_apres_trois_echecs": true}
+CONTEXT:  PL/pgSQL function inline_code_block line 453 at RAISE
+
+Contrôle après coup (execute_sql, requête séparée, après l'essai) :
+select to_regclass('ops.technologies') is null as rien_ne_reste, to_regclass('ops.paliers') is null as paliers_absent,
+       to_regclass('ops.etat_envoi') is null as etat_envoi_absent, to_regclass('ops.signaux') is null as signaux_absent,
+       (select count(*) from ops.evenements where resume like '%essai à sec%') as evenements_essai_restants, ...;
+→ {"rien_ne_reste":true,"paliers_absent":true,"etat_envoi_absent":true,"signaux_absent":true,"evenements_essai_restants":0,"fonctions_0111_restantes":0}
+quotas_canaux inchangés (formulaire_site 0/0, email_sollicite 50/0, reponse_privee 50/0, messagerie 100/0), envoi_froid=false.
+
+APRES rien_ne_reste=true

@@ -656,3 +656,6 @@
 {"id":"026-118","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T09:19:28Z","duree_s":219,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-026","verdict":"FAIL","ligne":"délai dépassé (25 min)","code":124,"date":"2026-09-29T09:25:13Z","duree_s":1503,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-115","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T09:28:50Z","duree_s":94,"agent":"claude-code","executant":"claude-code","lignes":438,"dossier":"en-cours"}
+{"id":"026-154","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T09:30:41Z","duree_s":16,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-115","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T09:31:04Z","duree_s":81,"agent":"claude-code","executant":"claude-code","lignes":438,"dossier":"fait"}
+{"id":"026-154","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T09:31:12Z","duree_s":2,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}

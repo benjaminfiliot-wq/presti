@@ -8,10 +8,10 @@
 // dans une Error, préfixé par le nom de la fonction appelée, pour que la route sache où ça a cassé.
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import type {
-  Annonceur, Candidat, Canal, Classement, ClesOpposition, Compteurs, Conversation, ContactPasse, DecisionAcquisition,
+  Annonceur, Candidat, Canal, Classement, ClesOpposition, Compteurs, Conversation, ContactPasse, DecisionAcquisition, EtatEnvoi,
   DecisionTranchee, Envoyeur, EnvoiApprouve, EnvoiEnAttente, EnvoiPrepare, Etape, Evenement, LienRdv, MagasinEchanges,
-  MagasinSocle, MaquetteEtat, NomAgent, PatchProspect, PreuveEnvoi, ProspectReserve, ReponseARepondre, ReponseProspect,
-  ResultatPreparation, ResultatRegle, TypeDecision, Verdicts,
+  MagasinSocle, MagasinEnvoi, MaquetteEtat, NomAgent, PatchProspect, PreuveEnvoi, ProspectReserve, ReponseARepondre, ReponseProspect,
+  ResultatPreparation, ResultatRegle, Signal, Jauge, TypeDecision, Verdicts,
 } from '@/lib/agents/acquisition/contrat'
 
 async function appeler<T>(fonction: string, args: Record<string, unknown>): Promise<T> {
@@ -20,7 +20,31 @@ async function appeler<T>(fonction: string, args: Record<string, unknown>): Prom
   return data as T
 }
 
-export const magasinSupabase: MagasinSocle & MagasinEchanges = {
+export const magasinSupabase: MagasinSocle & MagasinEchanges & MagasinEnvoi = {
+  async etatEnvoi(): Promise<EtatEnvoi> {
+    const { data, error } = await supabaseAdmin.rpc('acq_etat_envoi', {})
+    if (error) throw new Error(`[magasinSupabase] acq_etat_envoi : ${error.message}`)
+    return data as EtatEnvoi
+  },
+  async signal(s: Signal): Promise<void> {
+    await appeler<unknown>('acq_signal', { p: s })
+  },
+  async modelesSuspendus(): Promise<string[]> {
+    return appeler<string[]>('acq_modeles_suspendus', {})
+  },
+  async suspendreModele(modeleId: string, motif: string): Promise<void> {
+    await appeler<unknown>('acq_modele_suspendre', { p_modele: modeleId, p_motif: motif, p_par: 'facteur' })
+  },
+  async jaugeConsommer(fournisseur: string, n: number): Promise<boolean> {
+    const periode = new Date().toISOString().slice(0, 10)
+    return appeler<boolean>('acq_jauge_consommer', { p_fournisseur: fournisseur, p_periode: periode, p_n: n, p_plafond: 200 })
+  },
+  async jauges(): Promise<Jauge[]> {
+    return appeler<Jauge[]>('acq_jauges', {})
+  },
+  async echantillonDuSoir(jour: string): Promise<EnvoiApprouve[]> {
+    return appeler<EnvoiApprouve[]>('acq_echantillon_du_soir', { p_jour: jour })
+  },
   async enPause(agent: NomAgent): Promise<boolean> {
     return appeler<boolean>('acq_en_pause', { p_agent: agent })
   },
