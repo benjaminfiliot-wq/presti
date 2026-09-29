@@ -1,0 +1,11 @@
+[Unit]
+Description=Passage de l'atelier Presti
+
+[Timer]
+OnCalendar=*:0/15
+RandomizedDelaySec=60
+Persistent=false
+Unit=presti-atelier.service
+
+[Install]
+WantedBy=timers.target

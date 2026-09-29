@@ -1,0 +1,11 @@
+[Unit]
+Description=Passage du livreur Presti
+
+[Timer]
+OnCalendar=*:0/10
+RandomizedDelaySec=60
+Persistent=false
+Unit=presti-livreur.service
+
+[Install]
+WantedBy=timers.target
