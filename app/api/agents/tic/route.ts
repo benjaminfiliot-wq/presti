@@ -6,6 +6,7 @@ import { veilleur } from '@/lib/agents/veilleur'
 import { pauseGenerale } from '@/lib/agents/pause'
 import { enregistrerPassage } from '@/lib/alertes'
 import { consommerLimite } from '@/lib/limites'
+import { tourLivraison } from '@/lib/siteLivraison'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -79,6 +80,14 @@ export async function GET(req: Request) {
   } catch {
     etapes.veilleur = { statut: 'echec' }
     reussi = false
+  }
+
+  if (new Date().getUTCMinutes() % 15 === 0) {
+    try {
+      await tourLivraison()
+    } catch {
+      reussi = false
+    }
   }
 
   const dureeMs = Date.now() - debut

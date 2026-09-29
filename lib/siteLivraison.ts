@@ -8,6 +8,8 @@ import { retraitsDus, retirer } from '@/lib/siteRetrait'
 import { purgerFichiersExpires } from '@/lib/siteDossier'
 import { veilleTresorerie } from '@/lib/direction/veilleTresorerie'
 import { demanderGeneration } from '@/lib/siteGenerationDistante'
+import { busEnPause, cloreTacheLivraison, battementLivreur, battementTresorier } from '@/lib/siteLivraisonBus'
+import { consommerSortiesUsine } from '@/lib/siteLivraisonUsine'
 
 type CleCourriel = 'payee' | 'generee' | 'en_ligne'
 type CommandeLivraison = Omit<Commande, 'etat'> & { etat: Commande['etat'] | 'retiree'; courriels?: Partial<Record<CleCourriel, string>>; retiree_le?: string | null }
@@ -25,7 +27,7 @@ const dependances = (d: Dependances) => ({
   envoyer: d.envoyer ?? sendEmail,
   statutDomaine: d.statutDomaine ?? getStatus,
   maintenant: d.maintenant ?? (() => new Date()),
-  enPause: d.enPause ?? (async () => false),
+  enPause: d.enPause ?? busEnPause,
 })
 
 export function courrielsDus(commande: CommandeLivraison): CleCourriel[] {
@@ -135,8 +137,8 @@ export async function commandesEnRetard(deps: Dependances = {}): Promise<Alerte[
 export async function tourLivraison(deps: Dependances = {}): Promise<{ courriels: number; retards: number; erreurs: number }> {
   const d = dependances(deps)
   const bilan = { courriels: 0, retards: 0, erreurs: 0 }
-  const enPause = d.enPause
-  if (process.env.GITHUB_DISPATCH_TOKEN && !(await enPause())) {
+  const pause = await d.enPause()
+  if (process.env.GITHUB_DISPATCH_TOKEN && !pause) {
     try {
       const { data, error } = await d.base.from('sites_commandes').select('*').eq('etat', 'payee').order('paye_le', { ascending: true }).limit(5)
       if (error) throw new Error('Lecture des commandes payées impossible')
@@ -154,14 +156,29 @@ export async function tourLivraison(deps: Dependances = {}): Promise<{ courriels
       catch (e) { bilan.erreurs++; console.error('[livraison] commande', commande.id, e) }
     }
   } catch (e) { bilan.erreurs++; console.error('[livraison] courriels', e) }
+  if (!pause) try { await consommerSortiesUsine({ stockage: d.base.storage, maintenant: d.maintenant }) }
+  catch (e) { bilan.erreurs++; console.error('[livraison] sorties usine', e) }
   try {
-    if (!(await d.enPause())) bilan.retards = (await commandesEnRetard(deps)).length
+    const { data, error } = await d.base.from('sites_commandes').select('id, etat, genere_le, valide_le, en_ligne_le').in('etat', ['generee', 'validee', 'en_ligne']).order('modifie_le', { ascending: false }).limit(100)
+    if (error) throw new Error('Lecture des commandes livrées impossible')
+    let traitees = 0
+    const limiteDate = d.maintenant().getTime() - 30 * 24 * 60 * 60 * 1000
+    for (const commande of data ?? []) {
+      const date = commande.etat === 'generee' ? commande.genere_le : commande.etat === 'validee' ? commande.valide_le : commande.en_ligne_le
+      if (!date || new Date(date).getTime() < limiteDate || traitees >= 20) continue
+      traitees++
+      try { if (await cloreTacheLivraison(commande.id, commande.etat) === 'erreur') bilan.erreurs++ }
+      catch { bilan.erreurs++ }
+    }
+  } catch (e) { bilan.erreurs++; console.error('[livraison] clôture des tâches', e) }
+  try {
+    if (!pause) bilan.retards = (await commandesEnRetard(deps)).length
   } catch (e) { bilan.erreurs++; console.error('[livraison] retards', e) }
   // Achat public (026-025) : les brouillons sans compte jamais payés s'effacent après 7 jours (minimisation des données).
   try { await purgerBrouillonsPublics({ base: d.base, maintenant: d.maintenant }) }
   catch (e) { bilan.erreurs++; console.error('[livraison] purge des brouillons publics', e) }
   try {
-    if (!(await d.enPause())) {
+    if (!pause) {
       try {
         const commandes = await retraitsDus({ base: d.base, maintenant: d.maintenant })
         for (const commande of commandes.slice(0, 10)) {
@@ -173,8 +190,11 @@ export async function tourLivraison(deps: Dependances = {}): Promise<{ courriels
       catch (e) { bilan.erreurs++; console.error('[livraison] fichiers expirés', e) }
     }
   } catch (e) { bilan.erreurs++; console.error('[livraison] pause du retrait', e) }
-  try { await veilleTresorerie() }
+  let tresorerieOk = false
+  try { await veilleTresorerie(); tresorerieOk = true }
   catch (e) { bilan.erreurs++; console.error('[livraison] veille trésorerie', e) }
+  if (tresorerieOk) await battementTresorier()
+  if (bilan.erreurs === 0) await battementLivreur()
   await enregistrerPassage('livraison', bilan, bilan.erreurs === 0)
   return bilan
 }
