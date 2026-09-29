@@ -672,6 +672,26 @@ async function verifierComplet(s, sortieDir, packDir, pack, contrat, { estTemoin
   s.verdict('PL-12', !echecs12.length, 'jeu-visage/photo.jpg est bien une fixture positive (visage détecté malgré personnes:false)', echecs12.join(' ; '))
 }
 
+const IDS_COMPLET = ['PL-1', 'PL-2', 'PL-3', 'PL-4', 'PL-5', 'PL-6', 'PL-7', 'PL-8', 'PL-9', 'PL-10', 'PL-11', 'PL-12']
+const JEUX_COMPLET = ['jeu-1', 'jeu-2', 'jeu-3']
+
+/** Enveloppe s : préfixe chaque détail non vide par `étiquette :` (distingue les trois jeux dans une même ligne PL-N),
+ * sans casser le caractère collant d'un échec ni le "conforme" d'un PASS sans détail. */
+function avecEtiquette(s, etiquette) {
+  const marquer = (d) => (d ? `${etiquette} : ${d}` : d)
+  return {
+    passe: (id, d = '') => s.passe(id, marquer(d)),
+    echoue: (id, d) => s.echoue(id, marquer(d)),
+    verdict: (id, ok, dOk = '', dKo = '') => (ok ? s.passe(id, marquer(dOk)) : s.echoue(id, marquer(dKo || dOk))),
+  }
+}
+
+// --partie=complet, sans --dossier ni --temoin (le `verifier:` de la fiche 026-156) : fabrique réellement les trois
+// jeux d'essai (jeu-1, jeu-2, jeu-3 — fiche 026-126 point 3) via le vrai `scripts/pack-pub/fabriquer.mjs`, chacun dans
+// sa propre copie sous .orchestre/travail/pub-locale-qa/, puis les juge avec verifierComplet (décidé fiche 026-126,
+// section 4 : « --partie=complet lance lui-même fabriquer.mjs sur une copie de chaque jeu… puis juge la sortie »).
+// Un échec de fabriquer.mjs sur UN jeu suffit à faire échouer les douze critères PL-N pour ce jeu (détail étiqueté par
+// jeu, sticky avec les deux autres) ; jeu-visage (PL-12) reste évalué à part, via visages-qa directement, ci-dessus.
 async function partieComplet(s, { racine, temoin, dossier, contrat }) {
   if (dossier) {
     const pack = chargerPack(path.join(dossier, 'pack.json'))
@@ -685,7 +705,28 @@ async function partieComplet(s, { racine, temoin, dossier, contrat }) {
     return
   }
   const script = path.join(racine, 'scripts', 'pack-pub', 'fabriquer.mjs')
-  for (const id of ['PL-1', 'PL-2', 'PL-3', 'PL-4', 'PL-5', 'PL-6', 'PL-7', 'PL-8', 'PL-9', 'PL-10', 'PL-11', 'PL-12']) s.echoue(id, `non évalué : ${rel(script, racine)} introuvable`)
+  if (!fs.existsSync(script)) {
+    for (const id of IDS_COMPLET) s.echoue(id, `non évalué : ${rel(script, racine)} introuvable`)
+    return
+  }
+  for (const jeuId of JEUX_COMPLET) {
+    const sj = avecEtiquette(s, jeuId)
+    const srcDir = path.join(R, 'scripts', 'fixtures', '026-pubs-contenu', 'pack', jeuId)
+    const dirReel = path.join(MON_TRAVAIL, jeuId)
+    fs.rmSync(dirReel, { recursive: true, force: true })
+    fs.mkdirSync(dirReel, { recursive: true })
+    fs.copyFileSync(path.join(srcDir, 'pack.json'), path.join(dirReel, 'pack.json'))
+    const voix = path.join(srcDir, 'voix.mp3')
+    if (existeNonVide(voix)) fs.copyFileSync(voix, path.join(dirReel, 'voix.mp3'))
+    const r = spawnSync(process.execPath, [script, dirReel], { cwd: racine, encoding: 'utf8', windowsHide: true, timeout: 7 * 60_000, maxBuffer: 1 << 26 })
+    if (r.status !== 0) {
+      const detail = `${rel(script, racine)} : code ${r.status} — ${(r.stderr || r.stdout || '').trim().split('\n').slice(-3).join(' | ')}`
+      for (const id of IDS_COMPLET) sj.echoue(id, detail)
+      continue
+    }
+    const pack = chargerPack(path.join(dirReel, 'pack.json'))
+    await verifierComplet(sj, path.join(dirReel, 'sortie'), dirReel, pack, contrat, { estTemoin: false })
+  }
 }
 
 function normaliserPourWer(texte) {
