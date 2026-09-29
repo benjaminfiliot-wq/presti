@@ -22,7 +22,7 @@ import { envoyerPushFondateurs } from '@/lib/push'
 // Chaque motif se simule pour prouver le tuyau de bout en bout : `?simuler=<motif>`.
 
 export type Motif = 'solde_ia' | 'credits_artisan' | 'paiement' | 'erreurs' | 'cron_muet' | 'domaine_mail' | 'securite' | 'digest'
-  | 'agent_muet' | 'panne_agent' | 'disjoncteur' | 'jeton_externe' | 'stockage' | 'argent_bloque' | 'coupe_circuit' | 'usine_injoignable' | 'jeton_meta_expire' | 'canal_arrete' | 'gmail_bloque' | 'technologie_en_pause' | 'modele_suspendu' | 'notice_perimee' | 'bilan' | 'vercel_pro' | 'meta_erreur' | 'changer_message' | 'quota_haut' | 'jauge_pleine' | 'non_mesure'
+  | 'agent_muet' | 'panne_agent' | 'disjoncteur' | 'jeton_externe' | 'stockage' | 'argent_bloque' | 'coupe_circuit' | 'usine_injoignable' | 'jeton_meta_expire' | 'canal_arrete' | 'gmail_bloque' | 'technologie_en_pause' | 'modele_suspendu' | 'notice_perimee' | 'bilan' | 'vercel_pro' | 'meta_erreur' | 'changer_message' | 'quota_haut' | 'jauge_pleine' | 'non_mesure' | 'appel'
 
 export type Alerte = {
   motif: Motif
@@ -357,7 +357,7 @@ const sansEmail = (t: string) => t.replace(/[\w.+-]+@[\w-]+\.[\w.-]+/g, '[adress
 
 async function persisterAlerte(al: Alerte): Promise<void> {
   if (al.a !== 'entreprise') return
-  const gravite = /solde_ia|paiement|securite|cron_muet|panne_agent|argent_bloque|coupe_circuit|usine_injoignable|jeton_meta_expire|canal_arrete|gmail_bloque|notice_perimee|jauge_pleine/.test(al.motif) ? 'critique' : al.motif === 'digest' ? 'info' : 'attention'
+  const gravite = /solde_ia|paiement|securite|cron_muet|panne_agent|argent_bloque|coupe_circuit|usine_injoignable|jeton_meta_expire|canal_arrete|gmail_bloque|notice_perimee|jauge_pleine|appel/.test(al.motif) ? 'critique' : al.motif === 'digest' ? 'info' : 'attention'
   const artisan = (al.cle ?? '').match(UUID_EN_TETE)?.[1] ?? null
   const { error } = await supabaseAdmin.from('alertes').insert({
     motif: al.motif, cle: al.cle ?? null, gravite, artisan_id: artisan,
@@ -404,11 +404,12 @@ function simulation(motif: Motif): Alerte[] {
     case 'quota_haut': return [{ motif, a: 'entreprise', cle: 's', sujet: "8 sur 10 ce mois-ci chez formulaires du jour", corps: "À faire : surveiller la jauge." }]
     case 'jauge_pleine': return [{ motif, a: 'entreprise', cle: 's', sujet: "Jauge pleine : 10 sur 10", corps: "À faire : attendre la remise à zéro." }]
     case 'non_mesure': return [{ motif, a: 'entreprise', cle: 's', sujet: "La file de l’argent n’a pas pu être lue", corps: "À faire : relancer le passage." }]
+    case 'appel': return [{ motif, a: 'entreprise', cle: 's', sujet: "Appel réservé : plombier, Lyon, lundi 14 h 00", corps: "Le numéro est dans le Poste, carte « À appeler »." }]
   }
 }
 
 export const MOTIFS: Motif[] = ['solde_ia', 'credits_artisan', 'paiement', 'erreurs', 'cron_muet', 'domaine_mail', 'securite', 'digest',
-  'agent_muet', 'panne_agent', 'disjoncteur', 'jeton_externe', 'stockage', 'argent_bloque', 'coupe_circuit', 'usine_injoignable', 'jeton_meta_expire', 'canal_arrete', 'gmail_bloque', 'technologie_en_pause', 'modele_suspendu', 'notice_perimee', 'bilan', 'vercel_pro', 'meta_erreur', 'changer_message', 'quota_haut', 'jauge_pleine', 'non_mesure']
+  'agent_muet', 'panne_agent', 'disjoncteur', 'jeton_externe', 'stockage', 'argent_bloque', 'coupe_circuit', 'usine_injoignable', 'jeton_meta_expire', 'canal_arrete', 'gmail_bloque', 'technologie_en_pause', 'modele_suspendu', 'notice_perimee', 'bilan', 'vercel_pro', 'meta_erreur', 'changer_message', 'quota_haut', 'jauge_pleine', 'non_mesure', 'appel']
 
 /** Un passage « tic » de moins de 26 h : l'horloge de Supabase tourne, le digest du veilleur remplace celui du lundi. */
 async function passageTicRecent(): Promise<boolean> {
