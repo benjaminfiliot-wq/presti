@@ -204,7 +204,7 @@ await S.critere('EQ-1', () => {
   if (canon([...cs]) !== canon(CLES_SALLE_ATTENDUES)) e.push(`CLES_SALLE : ${[...cs].join(', ')} ; les vingt clés puis ecommerce attendues`)
   const EQP = val(EQ, 'EQUIPAGE', 'equipage')
   const noms = Object.keys(EQP ?? {})
-  if (canon([...noms].sort()) !== canon(Object.keys(EQUIPAGE_ATTENDU).sort())) e.push(`EQUIPAGE : ${noms.join(', ')} ; les dix-huit noms de 026-070 attendus`)
+  if (canon([...noms].sort()) !== canon(Object.keys(EQUIPAGE_ATTENDU).sort())) e.push(`EQUIPAGE : ${noms.join(', ')} ; les vingt-cinq noms de 026-070 (décision du chef d'entreprise du 27/09) attendus`)
   for (const [nom, salle] of Object.entries(EQUIPAGE_ATTENDU)) {
     const x = EQP?.[nom]
     if (!x) continue
@@ -229,7 +229,7 @@ await S.critere('EQ-1', () => {
   const fx = cartes.find((c) => c.nom === 'redacteur')
   if (fx && fx.activite !== 'Variante A réécrite') e.push(`activité du redacteur « ${fx?.activite} », le résumé masqué de son dernier événement attendu`)
   for (const m of MODULES) if (/JEU_SPRITES/.test(src[m])) e.push(`${m}.ts contient JEU_SPRITES`)
-  return { echecs: e, detail: `vingt salles et leurs genres, ecommerce réservée hors SALLES, CLES_SALLE = 20 + ecommerce ; dix-huit titulaires, avatar = nom technique, aucun sprite ; ${rendus.length} cartes = les agents reçus, dans l’ordre des salles ; inconnu → machines, avatar defaut` }
+  return { echecs: e, detail: `vingt salles et leurs genres, ecommerce réservée hors SALLES, CLES_SALLE = 20 + ecommerce ; vingt-cinq titulaires (décision du 27/09), avatar = nom technique, aucun sprite ; ${rendus.length} cartes = les agents reçus, dans l’ordre des salles ; inconnu → machines, avatar defaut` }
 })
 await S.critere('EQ-2', () => {
   const e = [], pt = fn(EQ, 'point', 'equipage'), cd = fn(EQ, 'cadence', 'equipage')
