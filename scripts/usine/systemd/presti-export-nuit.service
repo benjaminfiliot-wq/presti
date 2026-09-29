@@ -1,0 +1,14 @@
+[Unit]
+Description=Presti export de nuit des oppositions et purge des preuves sur l'usine
+
+[Service]
+Type=oneshot
+User=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+Environment=PRESTI_URL=https://prestiapp.fr
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_FACTEUR_USINE -- /usr/bin/node --import ./scripts/ts-loader.mjs scripts/agents/porteur-formulaire.mjs --export-nuit
+StandardError=inherit
+TimeoutStartSec=20min
+MemoryMax=600M
+Nice=10

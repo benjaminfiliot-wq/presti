@@ -1,0 +1,10 @@
+[Unit]
+Description=Export de nuit Presti (chaque jour à 03 h 30, heure de Paris)
+
+[Timer]
+OnCalendar=*-*-* 03:30:00 Europe/Paris
+Persistent=true
+Unit=presti-export-nuit.service
+
+[Install]
+WantedBy=timers.target

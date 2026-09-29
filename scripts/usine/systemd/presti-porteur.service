@@ -1,0 +1,15 @@
+[Unit]
+Description=Presti porteur du formulaire sur l'usine
+
+[Service]
+Type=oneshot
+User=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+Environment=PRESTI_URL=https://prestiapp.fr
+Environment=PLAYWRIGHT_BROWSERS_PATH=/srv/playwright
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_FACTEUR_USINE -- /usr/bin/node --import ./scripts/ts-loader.mjs scripts/agents/porteur-formulaire.mjs
+StandardError=inherit
+TimeoutStartSec=14min
+MemoryMax=1200M
+Nice=10

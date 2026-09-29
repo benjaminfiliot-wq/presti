@@ -844,3 +844,4 @@
 {"id":"026-096","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T20:43:03Z","duree_s":43,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
 {"id":"026-095","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":0,"date":"2026-09-29T20:43:48Z","duree_s":156,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
 {"id":"026-157","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T20:43:52Z","duree_s":182,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-095","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T20:47:05Z","duree_s":147,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
