@@ -914,11 +914,16 @@ const commandePour = (binaire) => (/\.[cm]?js$/i.test(binaire) ? [process.execPa
 const FOURNISSEURS = [
   { nom: 'chatgpt', libelle: 'abonnement ChatGPT' },
   { nom: 'ol', libelle: 'Ollama Cloud', modele: () => 'gpt-oss:120b-cloud', config: 'model_providers.ol={name="ollama",base_url="http://127.0.0.1:11434/v1",wire_api="responses"}' },
+  // 29/09 au soir : gpt-oss-120b à bout (429) ; gemini-3-flash-preview (clé Gemini de freellmapi) lance les outils en mode
+  // responses (essai réel : function_call shell), comme ministral-14b ; FL_MODELE pour en imposer un autre.
   // gpt-oss-120b (29/09/2026) : devstral-2 et mistral-large-3 rendent « no_providers_configured » sur freellmapi (aucune clé Mistral
   // configurée dans son tableau de bord) et codestral ne lance aucun outil ; gpt-oss-120b tient la boucle d'outils de Codex (essai
   // réel sur l'usine : a.txt → b.txt). La clé (env_key FL_KEY) est lue dans ~/.config/presti/freellmapi.key au lancement,
   // passée à Codex par son environnement seulement, jamais écrite dans un journal.
-  { nom: 'fl', libelle: 'freellmapi', modele: () => 'gpt-oss-120b', config: 'model_providers.fl={name="freellmapi",base_url="http://127.0.0.1:3001/v1",env_key="FL_KEY",wire_api="responses"}', cle: true },
+  { nom: 'fl', libelle: 'freellmapi', modele: () => process.env.FL_MODELE || 'gemini-3-flash-preview', config: 'model_providers.fl={name="freellmapi",base_url="http://127.0.0.1:3001/v1",env_key="FL_KEY",wire_api="responses"}', cle: true },
+  // 29/09 au soir : dernier recours quand gemini-3-flash-preview est lui aussi à bout. ministral-14b (clé Mistral de freellmapi)
+  // tient la boucle d'outils de Codex : essai réel sur l'usine, a.txt → b.txt, une ligne exec, code 0 (mistral-code : aucun exec).
+  { nom: 'fm', libelle: 'freellmapi (Mistral)', modele: () => 'ministral-14b', config: 'model_providers.fm={name="freellmapi",base_url="http://127.0.0.1:3001/v1",env_key="FL_KEY",wire_api="responses"}', cle: true },
 ]
 const lireCleFL = () => { try { return fs.readFileSync(path.join(os.homedir(), '.config', 'presti', 'freellmapi.key'), 'utf8').trim() || null } catch { return null } }
 // Épuisé ? Pour les trois fournisseurs, les mêmes exigences (contre-vérification du 27/09) :
