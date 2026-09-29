@@ -788,7 +788,20 @@ async function reel() {
       await refusService('station_reunion_ouvrir', { p_agent: 'pont' }, 'ops:agent')
       await refusService('station_experience_lancer', { p_nom: 'essai refusé', p_budget_eur: 0, p_auteur: NON_FONDATEUR }, 'ops:auteur')
       await refusService('station_pause_par_agent', { p_agent: 'essai_sans_capacite', p_motif: 'essai' }, 'ops:agent')
-      for (const n of NOMS) await refusAnon(n, {})
+      // La clé anonyme est appelée avec les VRAIS noms de paramètres : sur un corps vide, PostgREST répond 404 (fonction introuvable
+      // dans son cache) avant d'examiner le droit d'exécution, ce qui ne prouve aucun refus. Les valeurs sont refusées d'avance.
+      const CORPS_ANON = {
+        station_consigne_transmettre: { p_texte: '', p_auteur: NON_FONDATEUR, p_agent: null },
+        station_consigne_par_agent: { p_agent: 'essai_sans_capacite', p_texte: '', p_agent_cible: 'chef' },
+        station_pause_par_agent: { p_agent: 'essai_sans_capacite', p_motif: 'essai' },
+        station_reunion_ouvrir: { p_agent: 'pont' },
+        station_reunion_clore: { p_id: NON_FONDATEUR, p_agent: 'pont', p_lignes: ['essai'], p_objectif: null, p_idees: [] },
+        station_reunion_abandonner: { p_id: NON_FONDATEUR, p_agent: 'pont', p_motif: 'essai' },
+        station_reunion_lire: { p_limite: 1 },
+        station_experience_lancer: { p_nom: 'essai refusé', p_budget_eur: 0, p_auteur: NON_FONDATEUR },
+        station_experience_arreter: { p_id: NON_FONDATEUR, p_auteur: NON_FONDATEUR, p_motif: 'essai' },
+      }
+      for (const n of NOMS) await refusAnon(n, CORPS_ANON[n] ?? {})
       const apres = await lireEvts()
       if (avant === null || apres === null || apres !== avant) e.push(`événements consigne, reunion_* ou experience_* écrits pendant le passage (${avant} → ${apres})`)
       vus.push('cron.job : lu par Claude Code dans le contrôle de la migration (execute_sql), pas par l’API')
