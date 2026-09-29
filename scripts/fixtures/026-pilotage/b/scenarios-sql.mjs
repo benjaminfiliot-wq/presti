@@ -348,12 +348,13 @@ ${cas('reunion_echue', `
     ${annule(`    delete from ops.reunions;
     v_id := public.station_reunion_ouvrir('chef');
     update ops.reunions set ouverte_le = now() - interval '31 minutes' where id = v_id;
-    v_ok := public.station_reunions_echues_abandonner() = 1
+    v_n := public.station_reunions_echues_abandonner();
+    v_ok := v_n = 1
       and exists (select 1 from ops.evenements where type = 'reunion_abandonnee' and objet = v_id::text)
       and (select statut = 'abandonnee' from ops.reunions where id = v_id);`)}
-    ok := v_ok;`, 'v_id uuid; v_ok boolean;')}
+    ok := v_ok;`, 'v_id uuid; v_ok boolean; v_n integer;')}
 ${cas('experience_lancer', `
-    ${annule(`    if exists (select 1 from public.sites_commandes where statut <> 'brouillon') then
+    ${annule(`    if exists (select 1 from public.sites_commandes where etat <> 'brouillon') then
       v_id := public.station_experience_lancer('Expérience d''essai', 0, v_f);
       begin perform public.station_experience_lancer('Seconde expérience', 0, v_f); v_ok := false;
       exception when others then v_ok := v_id is not null and sqlerrm like '%ops:deja_en_cours%'; end;
@@ -368,11 +369,13 @@ ${cas('experience_lancer', `
     r := r || jsonb_build_object('diag_experience_lancer', v_branche);`, 'v_id uuid; v_ok boolean; v_branche text;')}
 ${cas('experiences_echues', `
     ${annule(`    insert into ops.experiences (nom, debut_le, fin_prevue_le, gains_eur) values ('Essai sans gain', now() - interval '31 days', now() - interval '1 day', 0) returning id into v_a;
-    v_ok := public.station_experiences_echues_arreter() = 1 and (select statut = 'arretee_auto' from ops.experiences where id = v_a);
+    v_n := public.station_experiences_echues_arreter();
+    v_ok := v_n = 1 and (select statut = 'arretee_auto' from ops.experiences where id = v_a);
     insert into ops.experiences (nom, debut_le, fin_prevue_le, gains_eur) values ('Essai gagnant', now() - interval '31 days', now() - interval '1 day', 5) returning id into v_b;
-    v_ok := v_ok and public.station_experiences_echues_arreter() = 1 and (select statut = 'gagnante' from ops.experiences where id = v_b)
+    v_n := public.station_experiences_echues_arreter();
+    v_ok := v_ok and v_n = 1 and (select statut = 'gagnante' from ops.experiences where id = v_b)
       and (select count(*) = 1 from public.station_experience_etat());`)}
-    ok := v_ok;`, 'v_a uuid; v_b uuid; v_ok boolean;')}
+    ok := v_ok;`, 'v_a uuid; v_b uuid; v_ok boolean; v_n integer;')}
 ${cas('experience_etat_une_ligne', `
     ok := (select count(*) = 1 from public.station_experience_etat());`)}
 ${cas('chiffres_sans_texte', `
@@ -383,12 +386,14 @@ ${cas('ss15_pause_motif_court', leve(`perform public.station_pause_par_agent('es
 ${cas('ss15_pause_posee', `
     ${annule(`    update ops.interrupteurs set actif = false where nom = 'pause_generale';
     v_ev := coalesce((select max(id) from ops.evenements), 0);
-    v_ok := public.station_pause_par_agent('essai_e2e_pp', 'Motif d''essai')
+    v_p := public.station_pause_par_agent('essai_e2e_pp', 'Motif d''essai');
+    v_ok := v_p
       and (select actif from ops.interrupteurs where nom = 'pause_generale')
       and exists (select 1 from ops.evenements where id > v_ev and type = 'interrupteur' and agent = 'essai_e2e_pp');
     v_n := (select count(*) from ops.evenements where id > v_ev);
-    v_ok := v_ok and not public.station_pause_par_agent('essai_e2e_pp', 'Motif d''essai') and (select count(*) from ops.evenements where id > v_ev) = v_n;`)}
-    ok := v_ok;`, 'v_ok boolean; v_n bigint;')}
+    v_p := public.station_pause_par_agent('essai_e2e_pp', 'Motif d''essai');
+    v_ok := v_ok and not v_p and (select count(*) from ops.evenements where id > v_ev) = v_n;`)}
+    ok := v_ok;`, 'v_ok boolean; v_n bigint; v_p boolean;')}
 ${cas('ss15_consigne_sans_capacite', leve(`perform public.station_consigne_par_agent('essai_e2e_sp', 'Texte d''essai', 'chef')`, 'ops:agent'))}
 ${cas('ss15_consigne_pont', `
     ${annule(`    v_ev := public.station_consigne_par_agent('essai_e2e_pc', 'Consigne du pont', 'chef');
