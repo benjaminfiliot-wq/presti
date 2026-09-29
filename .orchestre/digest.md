@@ -6,30 +6,28 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-29T20:39:55Z
+# Digest — 2026-09-29T20:44:19Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 157 tâche(s) PASS, 202405 ligne(s) · faites par Claude Code : 89 tâche(s) PASS, 81975 ligne(s).
-**État** — file : 31 · en cours : 2 · faites : 255 · refusées : 15
+**Mesure** — déléguées (antigravity, codex) : 159 tâche(s) PASS, 202405 ligne(s) · faites par Claude Code : 89 tâche(s) PASS, 81975 ligne(s).
+**État** — file : 29 · en cours : 2 · faites : 255 · refusées : 16
 
 ## Attention (7)
 - 026-008 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-008 --forcer`
 - 026-138 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-138 --forcer`
-- 026-157 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-157 --forcer`
 - 026-239 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-239 --forcer`
 - 026-156 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-156 --forcer`
 - 026-095 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-095 --forcer`
 - 026-254 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-254 --forcer`
+- 026-103 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-103 --forcer`
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
 | 026-133 | test | en-cours | usine-codex-206 | — | depuis 2026-09-29T19:23:06Z · Écrire scripts/juges-026-usine-mutations.mjs, qui prouve sur des copies que usine-socle-qa, usine-sql-qa, usine-routes-qa, usine-production-qa et les groupes consigne (schéma de réunion), consignes, fil et usine de chef-qa échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
 | 026-179 | feature | en-cours | usine-codex-212 | — | depuis 2026-09-29T19:42:56Z · Copier dans app/controle/station/moteur/claw3d/ le squelette 2D de Claw3D que garde le §0.3 (hôte Phaser réécrit en mode station seul avec un module CSS, pont vers React, types de carte, buildNavGrid2D et astar2D, générateur d'avatar) et, dans moteur/scene/, la scène pixel art de l'atelier sans roomFor, le peintre d'agents et la seule palette, avec LICENSE-claw3d.txt et PROVENANCE.md ; écrire le point d'entrée moteur/entree.tsx et ses accroches vides ; charger ce point d'entrée dans Carte.tsx par next/dynamic sans rendu serveur, seulement drapeau stationCarte levé ; poser stationCarte: false et sa ligne de carte ; ajouter station\/.* à CHEMINS_APP_PRESTI de proxy.ts, jusqu'au vert de station-claw3d-qa (provenance, garde, csp, poids, repos, hygiene) |
-| 026-008 | feature | file | codex | — | Renommer middleware.ts en proxy.ts (fonction proxy, même matcher, même corps) et faire passer la CI et le lanceur nocturne par npm run build, jusqu'au vert complet de scripts/next16-qa.mjs (dépendances, code, service local sur le port 3161, suites e2e locales et juges verts avant la migration) |
 | 026-194 | test | file | claude-code | — | Écrire scripts/pont-telegram-qa.mjs (critères PT, parties routes, usine et reel) et scripts/usine-durcie-qa.mjs (critères UD, statique et --reel), avec leurs jeux d'essai, et prouver qu'ils échouent aujourd'hui et passent en témoin |
 | 026-152 | test | file | claude-code | — | Écrire scripts/juges-026-lt-mutations.mjs, qui prouve sur des copies que chacun des 16 juges du domaine livraison et trésorerie échoue, sur le critère attendu, face à une vraie faute plantée dans le code PASS, et passe sur l'arbre réel ; code 0 seulement si chaque mutation est prise et chaque témoin passe |
-| 026-095 | feature | file | codex | — | Écrire le porteur du formulaire, sur l'usine : lib/agents/acquisition/porteurFormulaire.ts (plan de remplissage pur et contrôles des protections vues dans le navigateur, abandon définitif sans jamais contourner), scripts/agents/porteur-formulaire.mjs (Playwright Chromium sur l'usine : prend les formulaires approuvés, relit robots.txt, la pause et l'opposition, soumet une fois, garde ses preuves sur l'usine, rend le résultat ; export de nuit des oppositions et purge des preuves de plus de 3 ans), les routes app/api/usine/porteur/travail, rendu et oppositions, et les unités systemd du porteur et de l'export de nuit |
 | 026-239 | feature | file | usine-codex-173 | — | Écrire scripts/chef/bilan-donnees.mjs (les chiffres du jour ou de la semaine, chacun sourcé ou « non mesuré » : verdicts, échecs, coûts, quotas, leçons, recherches, savoir lié), scripts/chef/bilan.mjs (le bilan quotidien léger de Matt : Codex luna sans réseau relit les données, un script vérifie chaque nombre et chaque source, puis les propositions partent comme un plan léger par appliquer.mjs vers le pont, et un événement bilan_quotidien au fil) et les unités presti-chef-bilan (.service et .timer de 7 h 35), jusqu'au vert de scripts/savoir-reflexion-qa.mjs --partie=donnees,bilan,unites |
 | 026-083 | feature | file | claude-code | — | Créer lib/agents/acquisition/modeles.ts (le modèle de formulaire du §1.1 de la voie gratuite, variantes B et A, le formulaire du Studio, les sujets, les pieds, le message du lien et sa seule relance, la réponse privée, les messages du Répondeur et du Studio, chacun avec son empreinte et approuve à false), affirmations.ts, faq.ts, conformite.ts dont jugerMessage refuse tout message qui n'est pas exactement un modèle approuvé rempli par un fait vérifié et une douleur approuvée, ou qui oublie la première phrase, l'identité, la source de la liste, la notice, l'adresse de réponse, le STOP ou la référence, porte un lien ou prestiapp.fr dans un formulaire, un prix au premier message, un texte plus long que le champ, un e-mail sans preuve de demande, ou dépasse les règles de contact, et secondJuge.ts qui juge le ton et les promesses implicites par un lecteur injecté, fermé par défaut et étalonné sur un jeu de pièges |
 | 026-151 | test | file | usine-codex-126 | — | Écrire scripts/juges-026-orchestre-chef-mutations.mjs, qui prouve sur des copies que preuve-026 (groupes source, baux, quota), chef-qa, revue-qa et chantier-qa échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
@@ -57,9 +55,10 @@
 | 026-242 | test | file | claude-code | — | Écrire scripts/comptable-qa.mjs (critères CPT) et ses jeux d'essai (Stripe factice en lecture seule avec une clé d'écriture piégée, ventes et abonnements factices, seuil de franchise 293 B daté) qui prouvent que le module du Comptable rapproche chaque encaissement d'une vente sans double compte, suit le seuil de franchise sans jamais le dépasser sans alerte, prépare des montants de déclaration jamais déposés ni payés, ne touche à aucune mention de TVA et n'envoie une donnée financière ou de client qu'à Codex ou à un moteur local, jamais à un gratuit ni à un :cloud |
 | 026-244 | test | file | claude-code | — | Écrire scripts/sav-qa.mjs (critères SAV) et ses jeux d'essai (messages de clients déjà payants dont un corpus d'injection, brouillons factices, compteur des 20 approbations sans retouche, cas remboursement et litige) qui prouvent que le module du SAV répond dans le fil du bon client avec le ton de Presti, ne part jamais sans un portier, escalade tout remboursement ou litige à Benj, et n'envoie une donnée de client qu'à Codex ou à un moteur local, jamais à un gratuit ni à un :cloud |
 | 026-246 | test | file | claude-code | — | Écrire scripts/qualite-sites-qa.mjs (critères QSI) et ses jeux d'essai (serveur factice de sites livrés avec des pannes réglables : HTTP, HTTPS, poids, accessibilité, liens morts, mentions légales absentes, formulaire cassé) qui prouvent que le Contrôleur qualité mesure le rendu réel d'un site livré sans jamais le modifier, sans jamais soumettre un faux message dans son formulaire, et propose une correction au Livreur ou à Claude Code par une décision plutôt que d'agir lui-même |
-| 026-096 | feature | fait | claude-code | FAIL | decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche |
+| 026-095 | feature | refuse | codex | FAIL | decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche |
+| 026-096 | feature | fait | codex | PASS | 2026-09-29T20:43:03Z · 43s · 0 l. |
 | 026-166 | feature | fait | claude-code | PASS | 2026-09-29T20:36:30Z · 18s · 0 l. |
-| 026-157 | feature | fait | codex | FAIL | decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche |
+| 026-008 | feature | fait | codex | FAIL | decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche |
 | 026-213 | feature | fait | codex | PASS | 2026-09-29T20:02:17Z · 9s · 0 l. |
 | 026-156 | feature | refuse | antigravity | FAIL | decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche |
 | 026-111 | feature | refuse | claude-code | FAIL | decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche |
@@ -124,5 +123,6 @@
 | 026-016 | test | fait | claude-code | PASS | 2026-09-29T01:41:52Z · 12s · 0 l. |
 | 026-082 | feature | fait | usine-codex-109 | PASS | 2026-09-29T00:52:56Z · 49s · 581 l. |
 | 026-126 | test | fait | claude-code | PASS | 2026-09-29T00:34:29Z · 282s · 0 l. |
+| 026-061 | feature | fait | claude-code | PASS | 2026-09-29T00:08:26Z · 24s · 0 l. |
 
-… 203 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 202 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
