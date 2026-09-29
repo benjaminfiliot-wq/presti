@@ -1,0 +1,55 @@
+## poste (Windows) â€” 2026-09-29T15:10:47+02:00
+$ where openclaw
+Informationÿ: impossible de trouver des fichiers pour le(s) modŠle(s) sp‚cifi‚(s).
+(code 1)
+$ where clawhub
+Informationÿ: impossible de trouver des fichiers pour le(s) modŠle(s) sp‚cifi‚(s).
+(code 1)
+$ npm ls -g --depth=0 openclaw clawhub
+C:\Users\benja\AppData\Roaming\npm
+`-- (empty)
+
+(code 1)
+$ test -e ~/.openclaw ; USERPROFILE\.openclaw
+ls: cannot access 'C:\Users\benja/.openclaw': No such file or directory
+absent
+
+## usine (usine@88.96.53.3), lecture seule â€” 2026-09-29T15:11:13+02:00
+$ command -v openclaw clawhub
+(code 1)
+$ npm ls -g --depth=0 openclaw clawhub
+/home/usine/.npm-global/lib
+â””â”€â”€ (empty)
+
+(code 1)
+$ test -e ~/.openclaw
+PRESENT ~/.openclaw
+$ docker ps (conteneurs, pour mÃ©moire)
+hermes nousresearch/hermes-agent:v2026.9.24
+hermes-relais nousresearch/hermes-agent:v2026.9.24
+openclaw-relais ghcr.io/openclaw/openclaw:2026.9.6-slim
+openclaw ghcr.io/openclaw/openclaw:2026.9.6-slim
+freellmapi-freellmapi-1 ghcr.io/tashfeenahmed/freellmapi:latest
+(ssh code 0)
+
+## usine â€” contenu de ~/.openclaw (find, sans lire de fichier)
+d 775 4096 /home/usine/.openclaw
+d 775 4096 /home/usine/.openclaw/claw3d
+f 664 3581 /home/usine/.openclaw/claw3d/settings.json
+d 775 4096 /home/usine/.openclaw/claw3d/task-manager
+---
+250:- OpenClaw config: `~/.openclaw/openclaw.json`
+251:- Studio settings: `~/.openclaw/claw3d/settings.json`
+263:- OpenClaw file defaults still come from `~/.openclaw/openclaw.json` when present.
+AGENTS.md
+ARCHITECTURE.md
+CHANGELOG.md
+CODE_DOCUMENTATION.md
+CODE_OF_CONDUCT.MD
+
+## Conclusion (Claude Code, 29/09)
+- Poste : openclaw et clawhub absents (where, npm ls -g, %USERPROFILE%\.openclaw absent). Conforme.
+- Usine, HORS conteneur : aucune installation (command -v vide, npm ls -g vide). ~/.openclaw du compte usine ne contient que
+  claw3d/ (settings.json + task-manager, rÃ©glages de Claw3D, pas d'openclaw.json ni de binaire) : ce n'est pas une installation.
+- Usine, conteneurs : `openclaw` et `openclaw-relais` (ghcr.io/openclaw/openclaw:2026.9.6-slim) tournent dÃ©jÃ , montages sous /srv/openclaw.
+  026-221 n'a pas encore de PASS dans verdicts.jsonl : prÃ©sence Ã  surveiller, pas une installation hors conteneur. Pas d'ALERTE BENJ.
