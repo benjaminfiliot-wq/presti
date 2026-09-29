@@ -1,16 +1,14 @@
-# Textes d'annonce — temoin
-
 ## Variante 1
-- Titre : Électricien à Nantes
-- Texte : Électricien à Nantes, réactif et à votre écoute. Intervention en 2 jours. Appelez-nous.
-- Description : Devis gratuit rapide
+Texte : Un projet de Électricité à Nantes ? Matériaux : matériel aux normes. Garantie décennale. Appelez le 01 23 45 67 89.
+Titre : Électricité à Nantes
+Description : Appelez le 01 23 45 67 89.
 
 ## Variante 2
-- Titre : Devis gratuit rapide
-- Texte : Électricité à Nantes, matériel aux normes, intervention en 2 jours. Appelez le 01 23 45 67 89.
-- Description : Artisan de confiance
+Texte : Besoin de Électricité à Nantes ? Durée des travaux : 2 jours. Appelez le 01 23 45 67 89.
+Titre : Votre projet à Nantes
+Description : Appelez le 01 23 45 67 89.
 
 ## Variante 3
-- Titre : Artisan électricien Nantes
-- Texte : Travaux couverts par la garantie décennale. Devis gratuit, intervention en 2 jours à Nantes.
-- Description : Appelez-nous vite
+Texte : Électricité à Nantes. Travaux : 2 jours. Matériaux : matériel aux normes. Appelez le 01 23 45 67 89.
+Titre : Électricité à Nantes
+Description : Appelez le 01 23 45 67 89.
