@@ -1,0 +1,3 @@
+Preuve brute fictive du témoin 026-220 (jamais une vraie demande).
+demande dem-essai-001 reçue le 2026-09-27T10:00:00.000Z par le formulaire « Recevoir une maquette »
+case de consentement : non précochée, cochée par le demandeur fictif ; adresse artisan.essai@presti-test.invalid

@@ -1,0 +1,521 @@
+{
+  "juge": "juges-026-completude-qa",
+  "version": 1,
+  "racine": "C:/Users/benja/Documents/presti/.orchestre/travail/juges-026-completude-qa/racines/temoin/presti",
+  "reel": false,
+  "horloge": "2026-09-27T10:00:00.000Z",
+  "parties": {
+    "openclaw": {
+      "fichier": "scripts/usine/openclaw/lanceur.mjs",
+      "fiche": "026-221",
+      "criteres": [
+        {
+          "id": "OC-1",
+          "nom": "lanceur présent et exports du contrat",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-2",
+          "nom": "image épinglée par empreinte sha256",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-3",
+          "nom": "utilisateur non privilégié",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-4",
+          "nom": "mode privilégié refusé (capacités, réseau hôte)",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-5",
+          "nom": "système de fichiers limité : lecture seule, volumes nommés, ni coffre ni socket docker",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-6",
+          "nom": "limites CPU, mémoire et processus",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-7",
+          "nom": "port d'administration lié à 127.0.0.1",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-8",
+          "nom": "aucun jeton Claude, aucun héritage d'environnement",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-9",
+          "nom": "sorties réseau : liste fermée",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-10",
+          "nom": "modèles gratuits seulement, abonnement Claude refusé",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-11",
+          "nom": "données de prospect ou non classées : Ollama local seulement",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-12",
+          "nom": "chaque refus avant docker et avant connexion",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-13",
+          "nom": "lancement propre : un seul docker, diagnostic sans valeur",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "OC-R",
+          "nom": "aucun effet hors des doublures du juge",
+          "ok": true,
+          "details": []
+        }
+      ]
+    },
+    "cursor": {
+      "fichier": "../orchestre/bin/cursor.mjs",
+      "fiche": "026-222",
+      "criteres": [
+        {
+          "id": "CU-1",
+          "nom": "adaptateur présent et exports du contrat",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "CU-2",
+          "nom": "coût nul prouvé avant activation, coût inconnu = inactif",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "CU-3",
+          "nom": "rôle d'exécutant : aucun verdict d'argent, sécurité, droits ou cerveau",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "CU-4",
+          "nom": "périmètre écrit, interdit et chemins normalisés",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "CU-5",
+          "nom": "aucun secret lu",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "CU-6",
+          "nom": "réseau non prévu et commandes de destruction refusés",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "CU-7",
+          "nom": "reprise : même id, preuve partielle, verrou exclusif, rien d'écrasé",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "CU-8",
+          "nom": "journal : consommation inconnue = « non mesuré »",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "CU-R",
+          "nom": "aucun effet hors des doublures du juge",
+          "ok": true,
+          "details": []
+        }
+      ]
+    },
+    "firecrawl": {
+      "fichier": "lib/agents/lectureFirecrawl.ts",
+      "fiche": "026-223",
+      "criteres": [
+        {
+          "id": "FC-1",
+          "nom": "adaptateur présent et export du contrat",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FC-2",
+          "nom": "hôte privé, réseau local ou lien de compte refusés avant tout appel",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FC-3",
+          "nom": "robots lus avant la requête : interdit ou inconnu annule",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FC-4",
+          "nom": "borne de 1 000 crédits, mesure exigée, jamais un solde",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FC-5",
+          "nom": "provenance : URL, méthode et horodatage ; page sans provenance écartée",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FC-6",
+          "nom": "repli vers le lecteur 026-020 (clé absente, 429, panne)",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FC-7",
+          "nom": "redirection hors du domaine refusée",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FC-8",
+          "nom": "aucune donnée personnelle envoyée ; recherche bornée",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FC-9",
+          "nom": "la clé ne sort jamais",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FC-10",
+          "nom": "lecture nominale par Firecrawl, robots avant l'appel",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FC-R",
+          "nom": "aucun effet hors des doublures du juge",
+          "ok": true,
+          "details": []
+        }
+      ]
+    },
+    "fish": {
+      "fichier": "lib/studio/voixFish.ts",
+      "fiche": "026-224",
+      "criteres": [
+        {
+          "id": "FA-1",
+          "nom": "garde présente et exports du contrat",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-2",
+          "nom": "HTTP 200 n'est pas une licence : commercial sans forfait → ff_siwis",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-3",
+          "nom": "offre gratuite = usage interne, non publiable",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-4",
+          "nom": "quota inconnu, absent ou épuisé → voix locale",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-5",
+          "nom": "forfait commercial prouvé, daté, sourcé et non expiré",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-6",
+          "nom": "idempotence par id",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-7",
+          "nom": "crédit réservé, consommé au succès, restitué à l'échec",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-8",
+          "nom": "voix clonée : droit distinct exigé",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-9",
+          "nom": "manifeste complet ; la voix locale n'annonce pas Fish",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-10",
+          "nom": "la clé ne sort jamais",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-11",
+          "nom": "clé absente ou Fish indisponible → voix locale sans appel",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "FA-R",
+          "nom": "aucun effet hors des doublures du juge",
+          "ok": true,
+          "details": []
+        }
+      ]
+    },
+    "entrant": {
+      "fichier": "docs/agents/recette-entrant-2026-09-27.md",
+      "fiche": "026-225",
+      "criteres": [
+        {
+          "id": "EN-1",
+          "nom": "compte rendu présent, journal recette-entrant lisible, dix étapes dans l'ordre",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-2",
+          "nom": "personnes fictives : @presti-test.invalid, aucun téléphone",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-3",
+          "nom": "demande explicite : case non précochée, preuve, opposition, doublon et sans-consentement rejetés",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-4",
+          "nom": "accord sur le texte exact : empreinte sha256 inchangée jusqu'à l'envoi",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-5",
+          "nom": "accord valide au moment de l'envoi",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-6",
+          "nom": "envoi unique par accord ; second accord pour la réponse",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-7",
+          "nom": "demande non retirée avant l'envoi",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-8",
+          "nom": "aucun contact froid avant le 12/10",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-9",
+          "nom": "opposition : arrêt, aucune relance ni second envoi",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-10",
+          "nom": "données de la demande : ni Ollama Cloud ni freellmapi ; juge des faits passé",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-11",
+          "nom": "états honnêtes : « prouvé » adossé à une preuve brute, aucune durée inventée, verdict fondé",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EN-12",
+          "nom": "prose conforme au verdict",
+          "ok": true,
+          "details": []
+        }
+      ]
+    },
+    "douleurs": {
+      "fichier": "scripts/chef/douleurs.mjs",
+      "fiche": "026-226",
+      "criteres": [
+        {
+          "id": "DO-1",
+          "nom": "passe présente et export du contrat",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "DO-2",
+          "nom": "cadence : mois écoulé, une passe par mois, clé idempotente",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "DO-3",
+          "nom": "chaque douleur sourcée ; nombre ou « non mesuré »",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "DO-4",
+          "nom": "une anecdote n'est pas une tendance",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "DO-5",
+          "nom": "source périmée écartée",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "DO-6",
+          "nom": "mois vide : « rien de mesuré »",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "DO-7",
+          "nom": "trois propositions au plus, coût estimé, garde et validation",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "DO-8",
+          "nom": "aucune donnée personnelle, extraits anonymisés",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "DO-9",
+          "nom": "le classeur annote, ne crée ni ne décide",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "DO-R",
+          "nom": "aucun effet hors des doublures du juge",
+          "ok": true,
+          "details": []
+        }
+      ]
+    },
+    "experience": {
+      "fichier": "scripts/chef/lancer-experience.mjs",
+      "fiche": "026-227",
+      "criteres": [
+        {
+          "id": "EX-1",
+          "nom": "lanceur présent et exports du contrat",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EX-2",
+          "nom": "verrou de la première vente : encaissement confirmé, sourcé et non test (indicateurs explicites)",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EX-3",
+          "nom": "lancement approuvé par Benj, sinon « proposée »",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EX-4",
+          "nom": "cadre complet avant le premier événement",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EX-5",
+          "nom": "froid fermé avant le 12/10",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EX-6",
+          "nom": "un id = une expérience",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EX-7",
+          "nom": "objectif modifié = nouvel accord",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EX-8",
+          "nom": "mesure absente : « non mesuré », jamais un succès",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EX-9",
+          "nom": "bilan séparé, aucun drapeau basculé",
+          "ok": true,
+          "details": []
+        },
+        {
+          "id": "EX-R",
+          "nom": "aucun effet hors des doublures du juge",
+          "ok": true,
+          "details": []
+        }
+      ]
+    }
+  },
+  "rouges": [],
+  "code": 0
+}
