@@ -22,5 +22,20 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "deny": [
+      "Bash(git restore:*)",
+      "Bash(git checkout --:*)",
+      "Bash(git checkout .:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git stash drop:*)",
+      "Bash(git stash clear:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)"
+    ]
   }
 }
