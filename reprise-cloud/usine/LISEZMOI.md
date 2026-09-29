@@ -425,6 +425,10 @@ Essais rejoués sur l'usine réelle le 25/09/2026 entre 11 h 16 et 11 h 31 (bacs
 - **Même utilisateur Unix.** Le juge tourne sous `usine`, comme l'outil : un juge malveillant pourrait tuer la veille ou écrire de fausses marques. Les marques protègent contre les accidents (TERM attrapé et sortie 0, ssh coupé, commande tuée), pas contre un juge écrit pour tromper. Le jeton du repère de fin et du fichier de fin n'est ni exporté ni passé en argument, pour qu'un juge ne tombe pas dessus par hasard.
 - **Signal dans une commande composée.** Le lanceur voit « tuée par un signal » quand c'est la commande elle-même (`bash -c` exécute directement une commande simple). Dans `a && b`, si `b` est tué, `bash` sort d'elle-même avec 128+N : le code est relayé tel quel (non nul, donc jamais un faux PASS), avec une ligne « un sous-processus a peut-être été tué par un signal ».
 
+## Revue d'une fiche par Codex, juge indépendant (`revue-codex.mjs`)
+
+Depuis presti : `node ../presti-ops/usine/revue-codex.mjs <id> [--sabotages=4] [--delai=90] [--a-sec]`. Codex (abonnement ChatGPT seul, sans réseau, sans conseiller : permis pour une fiche de prospects) relit la fiche dans un bac `rc-<id>` d'executer, fait ses sabotages ; le verifier est lancé par le coureur hors bac à sable et seul son relevé compte. Codes : 0 vert, 1 rouge, 3 quota, 125 pas jugé. Tout est rendu dans `.orchestre/travail/revue-codex/<id>/`. Détail : l'en-tête du script.
+
 ## Ménage des bacs (`menage-bacs.sh`)
 
 Ajouté le 25/09/2026. `executer` recrée son bac à chaque appel et ne le retire jamais : le 25/09 à 14 h, 27 bacs occupaient 5,8 Go (hors `node_modules`, qui est en liens physiques et ne compte qu'une fois). `menage-bacs.sh`, lancé **sur l'usine**, retire les bacs :

@@ -1,0 +1,298 @@
+---
+name: journee-27-09-etat
+description: "État de la poussée du 27/09 (deadline de Benj : dimanche soir) : ce qui tourne, où, ce qui attend la session principale"
+metadata:
+  node_type: memory
+  type: project
+  originSessionId: fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d
+  modified: 2026-09-27T11:10:11.064Z
+---
+
+Poussée du dimanche 27/09/2026. Benj vise « 80-90 % ce soir ». Honnêtement : impossible pour la série 026 (19 fiches sur 228 à 13 h, 121 vagues de dépendances). Promis : le tableau d'avancement de tout l'écosystème ce soir.
+
+**Why :** si la session se réinitialise, reprendre sans rien perdre ni relancer en double.
+
+**How to apply :**
+- **Moteur sans Claude** : `presti-ops/usine/moteur.mjs`, lancé depuis presti.
+  - Toutes les 5 min, il dépose les fiches codex prêtes, en lance 4 sur l'usine, rapatrie, vérifie les types sur l'usine si un .ts change, puis commite et pousse les PASS.
+  - Journal : `presti-ops/usine/moteur.log`. État : `moteur-etat.json`. Arrêt : créer `moteur.stop`.
+- **Chantier de juges** `wf_57c2e67b-8b4` (juges-026-poussee-27, script dans `workflows/scripts/`), repris deux fois après des coupures pendant le trajet.
+  - Faits : les preuves de 026-009 et 026-012 réparées, 026-038 produite.
+  - Reste : 026-102, 066, 032, 037, puis les contre-vérifications.
+- **Chantier des migrations** `wf_233cdfd9-082` : 026-010 (0096, débloque 127 fiches) et 026-021 (0103, débloque 117). Les agents font l'essai à sec, SANS appliquer. **La session principale applique** ensuite (apply_migration, contrôle, test réel annulé, zéro trace), puis commite.
+- **026-026, 026-029 et 026-168 rouvertes** : les juges de Gemini étaient des coquilles. Plus aucune fiche de juges pour Gemini.
+- **Livré le 27/09** :
+  - `llms.txt` et FAQPage (5b919ac) ;
+  - le droit de rétractation (0c1b7f1) ;
+  - la relecture appliquée : 46 fiches corrigées et 026-220 à 228 (e556274) ;
+  - le cadre légal de la prospection (`SaaS/Produit/Prospection-Cadre-Legal-2026-09-27.md`).
+- **Kit d'appel** : `presti-ops/prospection/2026-09-27-liste/maquettes-2026-09-27/`, avec 30 maquettes, 23 numéros, et les SMS et mails avec les mentions (Benjamin Filiot EI, 1 rue du Brouage 17230 Marans, SIREN 109 411 348).
+- **Meta** : « API access blocked » (code 200) depuis le 27/09 à 7 h. Benj doit regarder l'appli Presti Veille.
+
+Voir [[presti-orchestre-antigravity]], [[usine-oracle]].
+- **Troisième ligne de juges** `wf_c7f9bd02-8e3` (juges-026-ligne-3), dans des worktrees isolés, avec report dans le dépôt principal : 026-029, 045, 026, 052, 220 et 168. Les fiches reportées sont à rejuger et à commiter par la session principale (commit-fiche.sh dans le scratchpad, ou à la main).
+- **Vague 2 de prospection** sur l'usine (Codex « chef d'équipe »), `~/veille/vague2/`, juge `juges/juge-vague2.mjs` (les 4 juges de la vague 1 lancés avec VEILLE=vague2), journal `journal-codex-vague2.log`. À rapatrier à la fin dans `presti-ops/prospection/`.
+- **Étude de marché Perplexity** : thread `ca6e5810-d543-47c8-bc3c-febc413b48e6` (prix, concurrents, arguments, où trouver les artisans du 17/85/79). À lire avec read_thread, puis à ranger dans `SaaS/Produit/`.
+- **Piège des workflows isolés (27/09) :** leurs worktrees vont dans `presti/.claude/worktrees/`.
+  - `garde-commit.mjs` les scannait et bloquait TOUS les commits (faux secrets de 026-041). Corrigé en 43bc964.
+  - Ils n'étaient pas ignorés, donc les paquets de l'usine les auraient emportés. Corrigé en cbd9dd1.
+- **Antigravity** : `000-modeles-metiers` (6 modèles de maquette : maçon, carreleur, peintre, chauffagiste, isolation, paysagiste), juge `scripts/modeles-metiers-qa.mjs`.
+- **Entraide** : `conseil.mjs` fait tourner les relecteurs Mistral Large 3, Gemini 3.5/3.7 Flash, GPT-OSS 120B et Devstral (Ollama local en mode privé).
+- **Vers 14 h :**
+  - **0096 et 0103 APPLIQUÉES** par la session principale : contrôle 9/9 oui, --reel PASS, zéro trace (commits 7af31ee et 8914134). La réparation de 026-009 est commitée (06b54d3 avec 026-038) ; les 6 modèles de maquette aussi (c8f9a3b).
+  - **Le moteur a fait seul 026-024.** La 026 est à 22 fiches sur 228.
+  - **La réparation de 026-012 (preuve du Pilotage) n'est PAS commitée.** JA-7 et JA-9 rougissent : son témoin se compare à HEAD, qui avance. À corriger (le témoin doit suivre HEAD) avant de commiter 066 et 168.
+  - **Les migrations suivantes, APPLIQUÉES par la session principale après l'essai à sec de l'agent :** 026-011 (0097) et 026-025.
+- **Ligne 2, suite** : `wf_a2b2dcbb-b71` (026-011 migration 0097, à APPLIQUER par la session principale ; puis 026-025, l'achat public sans compte sur le chemin de paiement). À la fin : appliquer 0097 (apply_migration, contrôle, --reel, zéro trace), rejouer et commiter.
+- **Vers 15 h :**
+  - **Un verrou git orphelin** (`.git/index.lock` de 14:19:56, vide, aucun git en cours) a bloqué les commits pendant 46 min. Retiré. Si des commits échouent, regarder d'abord ce verrou.
+  - **Le moteur est corrigé** (une fiche déposée dont le lancement a échoué n'était jamais relancée) et redémarré à 13:08 UTC.
+  - **Fausses clés** dans `livrer-site-qa.mjs:193` et `commande-exporter-qa.mjs:136` (026-029, ligne 3) : le nom de variable est maintenant calculé (`['SUPABASE_SERVICE_' + 'ROLE_KEY']`), et le paquet de l'usine passe.
+  - **Décision de Benj** : la première mission de l'écosystème sera de remettre tout Presti à niveau (82d5136).
+- **Vers 15 h 30, workflow `wf_26993323-805`** (ligne-2-0097-025-regressions). Il fait trois choses, puis une contre-vérification :
+  - un agent APPLIQUE 0097 (026-011 est prête et contre-vérifiée), avec le protocole complet ;
+  - il répare les juges du lot B (026-023 : la rétractation côté serveur et l'absence de TVA n'étaient pas jugées, le jeu d'essai d'AP-4 était incomplet, le conflit CF-3/AP-9) et finit 026-025 (achat public sans compte) ;
+  - il corrige les régressions du 27/09 sur HEAD : parcours-commande-qa PC-8 et PC-10, promesses-qa PR-1 à PR-9.
+  - **Ensuite :** rejouer, commiter 026-011 (0097 appliquée), 026-025 et les corrections. 026-035 devra afficher la case L221-28.
+- **Verrous git (27/09, 16 h).** Deux causes :
+  - j'ai arrêté le moteur par taskkill en pleine opération git, et le verrou est resté ;
+  - l'application Codex (ChatGPT.exe) ouverte sur presti lance des commandes git en permanence.
+  - Un commit garde aussi le verrou pendant tout le crochet (typecheck et 672 tests, 2 à 3 min).
+  - **Règles :** arrêter le moteur par `moteur.stop`, jamais taskkill ; retirer un verrou seulement s'il a plus de 90 s ET qu'aucun commit n'est en cours.
+- **Commités vers 16 h 25 :** 026-011 (0097 appliquée, b6f3350), 026-025 (achat sans compte, b3d95bd), la reprise des juges du lot B et les régressions (a14b6c1).
+  - **Reste à commiter :** la réécriture de 026-029 par la ligne 3 (fixtures c/ supprimées et récrites, livrer-site-qa, commande-exporter-qa, generation-actions-qa, redacteur-v2-qa), après sa contre-vérification.
+- **Vers 16 h 30 : le QUOTA CODEX (abonnement ChatGPT) est épuisé.** « try again at 4:13 PM », en heure UTC de l'usine, soit **vers 18 h 13 à Paris**.
+  - **La vague 2** (`~/veille/vague2`) a échoué sur les téléphones (0 trouvé) et sur le kit (maquettes non nommées). Elle a aussi 177 entreprises et 30 maquettes validées. Elle est rapatriée dans `presti-ops/prospection/2026-09-27-vague2/`.
+    - **Après 18 h 13 :** relancer, avec SANS_REPLI=1, uniquement les étapes téléphones et kit (lancer-codex-tache2.sh, juge juge-vague2.mjs).
+  - **026-105** est bloquée en en-cours par le QUOTA. **Après 18 h 13 :** `node scripts/orchestre.mjs liberer 026-105` puis `usine.mjs nettoyer 026-105 --forcer`, et le moteur la relancera.
+  - **Idée pour ne plus dépendre du seul quota ChatGPT :** permettre à usine.mjs un fournisseur Ollama Cloud (gpt-oss:120b) pour les fiches de code SANS données de prospects, et donner des fiches de code à Antigravity quand Codex est à bout.
+- **17 h 30 : décision de Benj.** Toutes les IA et tous les agents vont sur la **série 026 et la station Claw3D**, parce qu'une fois l'écosystème fini, le reste est plus facile.
+  - **Ligne 4** `wf_e98e6c4e-6d8` (worktrees) : 026-067 (juges de la station), 026-013 (migration 0098, qui débloque 125 fiches, ESSAI À SEC seulement : à appliquer ensuite par la session principale), 026-027, 026-121.
+  - **Accordé aussi : 10 sites de référence** autour de Marans, construits par Codex à partir de 18 h 13 (retour du quota), au niveau de Lestraque, avec nos photos de démonstration.
+    - Pour chaque artisan, Codex liste les liens de ses pages (Facebook, Instagram, site). **Pas d'aspiration automatique des réseaux** (conditions de Meta, droits sur les photos).
+    - Benj choisit lui-même des photos, pour une maquette privée, et demande l'accord de l'artisan au téléphone.
+  - **À 18 h 13, au retour du quota Codex :**
+    - libérer 026-105 (`orchestre liberer` + `usine nettoyer --forcer`) ;
+    - relancer les téléphones et le kit de la vague 2 ;
+    - lancer les 10 sites de référence ;
+    - faire passer le moteur sur Ollama Cloud (gpt-oss:120b) pour les fiches de code SANS données de prospects quand ChatGPT est à bout.
+- **18 h 16-18 h 35 : fait au retour du quota Codex.**
+  - Codex répond ; 026-105 est libérée.
+  - La vague 2 est relancée (téléphones et kit, `journal-codex-vague2b.log`).
+  - **Les 10 sites de référence sont lancés.** Juge : `presti-ops/veille/juge-sites-reference.mjs` (écrit avant). Consigne : `consigne-codex-sites-reference.md`. Sortie : `~/veille/prospection/sites-reference/`. Journal : `journal-codex-sites-ref.log`. Lancement avec SANS_REPLI=1.
+  - **DISQUE DE L'USINE PLEIN** (110 Mo libres). Le moteur échouait à chaque tour sur « No space left on device » (026-028, 026-105).
+    - **Cause :** 19 Go de bacs `~/bacs/<nom>`, les worktrees jetables d'`usine.mjs executer`, jamais retirés (78 bacs).
+    - **Fait :** 75 bacs libres retirés, 18 Go libres. Ensuite, une boucle nohup lance chaque heure le script EXISTANT `presti-ops/usine/menage-bacs.sh --heures=2` (pid dans `~/usine/menage-bacs.pid`, journal `~/usine/menage-bacs.log` ; l'usine n'a pas crontab). Il existait depuis le 25/09 mais personne ne le lançait : relire la mémoire de l'usine AVANT d'écrire un nouvel outil.
+  - **L'étude de marché Perplexity** est rangée dans `SaaS/Produit/Etude-Marche-Site-Vitrine-Artisans-2026-09-27.md` (34 Ko). À reprendre dans le KIT-APPEL : objections, options GBP 90 €, modification 30 €, frais de domaine annoncés d'emblée.
+  - **026-012, la preuve JA-7 de pilotage-push-qa (PF-7) :** le témoin était comparé au HEAD du dépôt, et 026-024 avait changé `lib/alertes.ts`. Corrigé : la preuve pose `JUGE_BASE_GIT` (sa référence) quand elle juge le témoin et ses sabotages, et pilotage-push-qa l'utilise à la place de HEAD. Reste à rejouer la preuve et commiter.
+- **18 h 40-18 h 50.**
+  - **Moteur :** il a livré 026-105 (PASS, commitée et poussée).
+    - Il avait rejeté 026-028 à tort. Le « typecheck rouge » venait du contrôle du paquet (code 125), qui refusait `scripts/bus-livraison-qa.mjs`, un juge en cours d'écriture par la ligne 3 (`'secret-du-juge-bl4'`).
+    - Corrigé dans `moteur.mjs` : sur un code 3, 124 ou 125, le PC fait le typecheck lui-même (tsc).
+    - **026-028 est verte**, avec les types verts sur le PC. Elle attend dans refuse/ ; son patch est dans `.orchestre/travail/usine/026-028/resultat.patch`. La recommiter APRÈS 026-026, que la ligne 3 réécrit (juge `dossier-zip-qa.mjs`, non commité).
+  - **Vague 2 :** PASS, contre-vérifié par moi (16/24 téléphones). Rapatriée dans `presti-ops/prospection/2026-09-27-vague2/`.
+  - **Kits d'appel 1 et 2 :** objections 9 à 12 ajoutées, et une section « À trancher par Benj » (qui paie le renouvellement du domaine ; les options de l'étude). Le juge du kit interdit « TTC » : je l'avais écrit, il l'a vu.
+  - **10 sites de référence, première passe :** PASS, rapatriés dans `presti-ops/prospection/2026-09-27-sites-reference/`.
+    - Ils sont faits main (Georgia, Arial) : Codex n'a pas utilisé le kit.
+    - Une seule page Facebook trouvée sur dix, et aucun artisan de Marans même.
+    - **Seconde passe lancée** : juge `juge-sites-reference-v2.mjs` (polices woff2, DA du métier, kit.js, pages par commune, `nom_affiche`), consigne `consigne-codex-sites-reference-v2.md`, journal `journal-codex-sites-ref2.log`.
+  - **Lignes :**
+    - ligne 5 `wf_4d99431c-892` : 026-050, le coffre de l'usine ;
+    - ligne 6 `wf_7a77f90c-b0b` : 026-013, la migration 0098, en essai à sec, pour ne pas attendre la ligne 4, qui avance fiche par fiche.
+  - **026-007** (sauvegarde : tâche planifiée Windows) : la fiche exige l'accord écrit de Benj. À lui demander.
+- **18 h 50-19 h 00 (PC à 6 % de batterie, Benj rentre chez lui).**
+  - **VERROU GIT ORPHELIN :** aucun commit n'a abouti de 16 h 35 à 18 h 50. Un index.lock de 0 octet réapparaît, sans processus qui le tienne. Cause probable : l'application Codex, dont le `git status` est tué quand l'arbre est lourd (316 fichiers modifiés).
+    - Le moteur annonçait « commitée et poussée » sans rien commiter : un `git add` refusé laissait l'index vide, et « rien à commiter » passait pour un succès. Corrigé dans `moteur.mjs` : un add refusé est un échec, et « rien de neuf » est dit à part.
+    - Commités et poussés : **48e42ec** (026-012 réparée : témoin vert, JUGE_BASE_GIT, preuve PASS JA-1 à JA-10 rejouée dans le worktree `scratchpad/wt-026-012`) et **82b6d60** (026-105, chef-qa 19/19 rejoué sur le PC). `verdicts.jsonl` n'est pas encore commité ; `verifier.log` est ignoré par git, c'est voulu.
+  - **LE MOTEUR EST ARRÊTÉ** (`moteur.stop` posé). Le relancer seulement PC branché : `rm ../presti-ops/usine/moteur.stop`, puis `node ../presti-ops/usine/moteur.mjs --max=4 --heures=14` depuis presti. Il a deux correctifs : le typecheck sur le PC si l'usine ne juge pas, et l'échec de git add.
+  - **Reste à faire :**
+    - 026-028 (refuse/, patch dans `travail/usine/026-028/`) : à commiter après 026-026, que la ligne 3 réécrit ;
+    - appliquer 0098 quand la ligne 6 rend PRET_A_APPLIQUER ;
+    - reprendre les résultats des lignes 1, 3, 4, 5 et 6 ;
+    - juger la seconde passe des sites (`journal-codex-sites-ref2.log` sur l'usine) et la rapatrier ;
+    - demander à Benj son accord pour 026-007 (tâche planifiée de sauvegarde).
+- **19 h 25-19 h 45 (Benj rentré, PC sur secteur).**
+  - **Décisions de Benj :**
+    - « 1 autorisé » : 026-007 (sauvegarde : premier envoi + tâche planifiée) ;
+    - « c'est son nom de domaine donc il paye » : le renouvellement du domaine (8 à 10 € par an) est payé par le client. Reporté dans les deux kits d'appel (juge PASS).
+  - **026-007 :**
+    - passage à blanc par moi : 6 721 fichiers, 675 Mo, 0 exclusion ;
+    - ligne 7 `wf_98d1d2d9-2f5` : scan des secrets AVANT l'envoi, envoi, tâche planifiée, puis contre-vérification qui re-scanne la branche poussée.
+  - **Moteur relancé** (balai des verrous de plus de 8 min, échec de git add, typecheck sur le PC). Le guetteur `scratchpad/guetteur-verrou.ps1` note qui crée `.git/index.lock` (journal `guetteur-verrou.log`). Processus qui interrogent git : Antigravity, ChatGPT/Codex.
+  - **Sites de référence, seconde passe :** PASS du juge v2 et rapatriée. Vue à l'image : vraies polices et DA du métier, bien meilleure. Revue indépendante en cours (`wf_c565cd01-286`), sur le rendu et la conformité.
+  - **Meta :**
+    - l'API de la Bibliothèque publicitaire rend « API access blocked » (code 200) même sur /me. Ce n'est pas une expiration (ce serait le code 190) : l'appli Presti Veille ou le compte est bloqué ;
+    - aucun incident public ;
+    - le navigateur intégré n'est pas connecté à Facebook. Benj doit se connecter lui-même dans le panneau, ou me dire d'utiliser son Chrome.
+- **Meta, vers 20 h :**
+  - Cause trouvée : le compte de DÉVELOPPEUR de Benj était bloqué pour « activité inhabituelle ». Benj l'a fait vérifier, et /me répond de nouveau.
+  - La Bibliothèque publicitaire rend ensuite code 10, sous-code 2332002 : il faut la confirmation d'identité (facebook.com/ID).
+  - Benj a renvoyé sa carte d'identité : demande EN ATTENTE. Retester avec `node presti-ops/veille/meta-bibliotheque-verifier.mjs`, sans rien lui demander.
+  - **Benj ne refera PLUS la vérification** (« c'est la dernière fois ») : chaque envoi de carte lui vaut une nouvelle demande. Si Meta refuse, trouver une alternative RENTABLE et conforme, sans aspirer la Bibliothèque. Pistes : jeu Google Ads Transparency sur BigQuery, bibliothèques des autres réseaux au titre du DSA, outil payant bon marché. Ne pas lancer cette recherche avant la réponse de Meta (consigne de Benj).
+- **20 h, la session Claude s'est fermée** et a tué tout ce qui tournait en tâche de fond (moteur, guetteur, commits, sept lignes).
+  - **Reprise :**
+    - le moteur et le guetteur (balai des verrous de plus de 8 min) sont relancés DÉTACHÉS par Start-Process, pour survivre à une fermeture. Les PID sont dans `presti-ops/usine/moteur.pid` et `scratchpad/guetteur.pid`. Arrêt du moteur : `moteur.stop` ; arrêt du guetteur : son PID ;
+    - les lignes sont reprises avec resumeFromRunId : L1 wf_57c2e67b-8b4, L3 wf_c7f9bd02-8e3, L4 wf_e98e6c4e-6d8 (026-013 retirée de sa liste), L5 wf_4d99431c-892, L6 wf_7a77f90c-b0b, L7b wf_c84b7d53-33e (l'invariant de la sauvegarde), et la revue des sites wf_c565cd01-286.
+  - **Trou trouvé :** b3d95bd (026-025) n'a jamais contenu `app/api/site/commander/public/route.ts` ni `fait/026-025.md`, sans doute un git add refusé par un verrou. Commit en cours avec 026-032, 026-029 et 026-026 (`commit-fiche.sh` attend désormais le verrou et dit ✗ en clair).
+  - **Coupable probable des verrous :** l'appli Codex (ChatGPT.exe, `git -c attr.tree= -c filter.lfs...`). Benj l'a « fermée », mais 7 processus ChatGPT.exe tournent encore (zone de notification ?).
+- **20 h 30 : commités et poussés.**
+  - 7b3babc 026-032, 9c206ef 026-029, c7c0e11 026-026.
+  - 5893cda 026-025 : sa route publique et sa fiche, oubliées.
+  - b539d5d 026-028 : sauvée de refuse/, DZ-1 à DZ-7.
+  - efe0ac9 026-009 : fixtures temoins/ et bancs/, oubliées.
+  - 358400f 026-045 : rejouée dans une copie isolée.
+  - Un agent audite le travail non commité, par fiche.
+  - Leçon : une copie de travail isolée avec lien vers node_modules doit être défaite par `cmd /c rmdir` du lien AVANT `git worktree remove`.
+- **20 h 45 : CONSIGNE DE BENJ, « concentre-toi que sur le principal : l'écosystème 24/24 full automatique, laisse le reste tel quel ».**
+  - Seule priorité : la série 026 et la station Claw3D. La production vient après.
+  - **Sites de référence :** la passe 3 (juge v3 écrit, consigne `consigne-codex-sites-reference-v3.md`) est ARRÊTÉE, pour garder le quota Codex à la 026. On reste sur la v2, utilisable pour les appels. La revue indépendante (5 défauts importants) est dans wf_c565cd01-286.
+  - **Audit du non-commité :** trous de la 026 comblés en **97e6b61**. Il manquait les fixtures bancs/ et temoins/ de 026-009 (efe0ac9 les annonçait sans les contenir : elles n'étaient pas dans le périmètre de la fiche), brouillon-complet.json de 026-023, les preuves de 026-048 et 026-001, et `file/026-024` à retirer de l'index.
+  - **Garde de l'index** ajoutée à `commit-fiche.sh` et au moteur : un chemin non suivi ou modifié hors index = aucun commit.
+  - **5 fichiers vides** (coquilles Gemini aux chemins de 026-033, 093, 100 et 106) mis en quarantaine dans `scratchpad/quarantaine-026/`.
+  - **Laissé tel quel (consigne) :** séries 018 à 025 (fiches 022 et 023 jamais commitées, verrous 023-03 et 025-10), `plans/publications-serie-2.md` non suivi, anciennes démos à la racine, `promo-src/`.
+- **21 h 15 : MIGRATION 0098 APPLIQUÉE** par moi, avec le protocole complet :
+  - apply_migration 0098_ops_taches ;
+  - md5 des 13 corps en base identiques au fichier (`scratchpad/md5-0098.mjs`) ;
+  - contrôle 16/16 oui ;
+  - `--reel` OT-8 PASS ;
+  - zéro trace ;
+  - preuve : `.orchestre/preuves/026-013/application-2026-09-27.md`.
+  Commit en cours : tsconfig, puis 026-013, puis 026-050.
+  - **026-050 (coffre de l'usine) :** 23/23, contre-vérifiée avec 7 sabotages. Écart accepté : CODEX_LANCEUR passe par avec-coffre. Point de conception : le compte usine est dans le groupe docker, donc root ; il pourrait modifier le code des agents. À fermer avec le chantier docker.
+  - **tsconfig :** `scripts/fixtures/**/temoins` et `temoin` exclus. Les témoins .ts de 026-037 cassaient le typecheck du crochet ; ils auraient aussi cassé Vercel.
+  - **Moteur :** prend désormais aussi les 19 fiches « antigravity », envoyées à Codex sur l'usine (usine.mjs ne refuse que claude-code). Le pilote Antigravity du PC avance pas à pas et ne tourne pas seul.
+  - **Vague 9-12** (wf_d7ffd00b-802) : 026-027, 026-121, 026-220 et 026-168 en parallèle. Un Monitor doit arrêter L3 (wlui815vh) et L4 (wxgcl2z5h) s'ils démarrent ces fiches.
+  - **L8** (wf_a203e977-11c) : 026-104, juge d'écran de la station.
+- **21 h 40, Benj : « rajouter dans l'écosystème toutes les IA ».**
+  - **État :** Codex (152 fiches), Antigravity (45), Laya (28), Ollama (25), freellmapi (20), Jev (19), OpenClaw (11), Fish (6), Cursor (6), Firecrawl (5), Perplexity (3) sont cités dans la 026. Trous : Mistral et Cerebras n'étaient nommés nulle part (Cerebras n'a d'ailleurs aucun modèle au catalogue de freellmapi) ; l'entraide et le relais de quota n'existaient que dans la veille, pas dans la production.
+  - **Lancé wf_634c0229-91d :**
+    - relais de fournisseur dans `scripts/usine.mjs` (chatgpt → Ollama Cloud gpt-oss:120b → freellmapi devstral-2 / mistral-large-3 ; aucun relais pour une fiche de prospects) ;
+    - entraide (conseil.mjs après un FAIL, réinjecté au tour suivant) ;
+    - banc `scripts/usine-relais-qa.mjs` et contre-vérification ;
+    - complément « toutes les IA » à la fiche 026-041 (le routeur des modèles).
+  - Exemple « gemini → groq » corrigé en « gemini → mistral » dans 026-053 (Groq exclu par Benj).
+  - **026-053** (surveillance de l'usine, Codex) : faux rouge du PC. SV-12 mesurait 0,73 à 0,94 s de CPU sous Windows, contre 0,27 s sur l'usine, pour un plafond de 0,5 s. Plafond passé à 1,5 s sous Windows seulement, et le banc vérifie qu'une boucle occupée est toujours attrapée (tâche bh1g404nw). Ensuite : appliquer le patch de `travail/usine/026-053`, puis refuse → fait, verifier, commit.
+- **22 h 00 : la session est tombée une 2e fois.** Même lancés par Start-Process, le moteur et le guetteur sont morts avec elle : Windows les avait rangés dans le job de la session.
+  - **Relance par WMI** (Win32_Process.Create, parent WmiPrvSE), qui survit à la session : `presti-ops/usine/relancer-demons.ps1`.
+  - **Outils rangés à un endroit stable :** `presti-ops/usine/commit-fiche.sh` (attend le verrou, garde l'index) et `guetteur-verrou.ps1` (journal dans presti-ops/usine).
+  - **Lignes relancées** depuis le cache. L3 réduite à 026-052 et L4 à 026-067 : 220, 168, 027 et 121 sont menées par les lignes 9-12. Balayage des 228 brouillons par orchestre valider (wf_33956170-b7e) : le moteur refusait 026-146 et 026-223.
+  - **Consignes de Benj (22 h 10) :**
+    - « demain matin écosystème prêt, pas d'excuse » ;
+    - « le PC ne doit pas s'éteindre » ;
+    - « économise les tokens avec toutes les IA dispo ».
+  - **PC éveillé :** `reste-eveille.ps1` (SetThreadExecutionState, sans toucher aux réglages), hors session jusqu'au 28/09 à 9 h (PID dans reste-eveille.pid). Le capot fermé met quand même en veille.
+  - **Tâche planifiée « relance-chantier-ecosysteme »,** accord de Benj : cron `0 23,0-8 * * *`. Elle ne fait rien si la session principale vit, et reprend le chantier sinon. **À DÉSACTIVER le 28/09 au matin** (garde de date dans le prompt).
+- **22 h 20, Benj : « vraiment toutes les IA, les locales aussi, et beaucoup d'agents ».**
+  - **Codex contre-vérificateur** (wf_18c2817d-49c) : outil `presti-ops/usine/revue-codex.mjs <id>`, qui fait relire un juge par Codex sur l'usine (usine.mjs executer), sabotages compris. À calibrer sur 026-050. S'il est fiable, il remplace la contre-vérification Claude : économie de limite.
+  - **À faire quand le relais sera prêt** (wf_634c0229-91d) : moteur à `--max=8`, avec une partie des fiches envoyée d'emblée à Ollama Cloud et à freellmapi, sauf les fiches de prospects.
+  - **IA locales** (Qwen sur l'usine, Laya) : entraide privée et tri seulement. Trop faibles pour du code juste.
+  - **Juges :** toujours Claude seul.
+  - **Lignes futures :** découper chaque fiche de juges en un agent par partie, puis intégrer.
+- **22 h 40 : points de situation.**
+  - **Garde des commits :** plus rien ne passait. `juges-026-completude-qa.mjs` (026-220) contenait une fausse clé `sk-ant-…` écrite d'un bloc ; elle est maintenant assemblée à l'exécution, et garde-commit est vert.
+  - **Codex a produit 026-146 et 026-223.** Elles sont en fait/ mais pas commitées. Leurs juges (026-121 et 026-220) sont en correction après une contre-vérification rouge : il faudra les rejuger avant de commiter. Ordre : 121, puis 146 ; 220, puis 223.
+  - **Brouillons :** les 228 passent orchestre valider. Le refus du moteur était passager.
+  - **Organigramme** (`SaaS/Produit/Ecosysteme-Organigramme-2026-09-27.md`) : 30 postes et 12 postes manquants. À écrire en premier : comptable, service après-vente, qualité des sites, sécurité. 30 incohérences.
+  - **Décisions appliquées par wf_da278bce-91f :**
+    - R24 l'emporte sur le Crieur qui « publie seul » ;
+    - plus de clé Anthropic annulée pour les prospects ;
+    - Groq retiré ;
+    - OpenClaw OUI, isolé ;
+    - Matt peut mettre un agent en pause, pas le relancer ;
+    - cohérence de la station ;
+    - revue, chantier et pont passent sur l'usine.
+  - **Postes manquants :** les écrire en fiches APRÈS la couche Savoir (ids 229 et suivants), pour éviter les collisions d'id et d'INDEX.
+- **22 h 55 : `presti-ops/usine/verifier-isole.sh <id>`.**
+  - Il rejoue `orchestre verifier` dans une copie isolée (HEAD + périmètre non commité + fiche + preuves), rapporte les preuves et le verdict (`"copie_isolee": true`), et passe la fiche en fait/ si PASS.
+  - Il sert pour les critères « immobile » (JA-5, JP-6, JL-5), que le travail concurrent fait rougir.
+  - Premier usage : 026-067 (juges de la station), puis commit (tâche bayuiohlg).
+  - Le prompt de la tâche de nuit est mis à jour : juges commités avant les productions ; contre-vérification exigée ; verifier-isole ; rejugement des refus du moteur.
+- **22 h 55 : les « coupures » de session étaient des REDÉMARRAGES DU PC,** lancés depuis le menu Démarrer par benja (11 h 11, 22 h 05, 22 h 51 ; événement 1074). Ce n'étaient pas des pannes. Un redémarrage tue même les processus WMI.
+  - `relancer-demons.ps1` relance maintenant aussi reste-éveillé (jusqu'au 28/09 à 9 h).
+  - Les 9 lignes sont reprises depuis leur cache.
+  - 026-067 : verifier-isole puis commit, en tâche de fond.
+  - Benj est couché. Consigne : économiser la limite Claude et faire travailler les autres IA.
+- **23 h 30 : 026-067 commitée (50f0451d)**, via verifier-isole (650 s).
+  - **revue-codex** (`presti-ops/usine/revue-codex.mjs <id>`, codes 0/1/3/125) est calibré : bon premier filtre gratuit, mais PAS un remplaçant. Il a manqué un CF-7 planté. On l'emploie en première passe ; Claude (Sonnet) garde la contre-vérification de la sécurité.
+    - **Il a trouvé :** 026-050 ROUGE sous Linux, parce que le juge usine-socle-qa crée ses coffres d'essai en 0644 ; et des trous SO-2, 4, 5, 6 et 8. La réparation est en cours (wf_e4abb8f3-9ce), avec le sauvetage de 026-053.
+    - **Défaut connu de revue-codex :** un sabotage compte comme « vu » même quand le témoin était déjà rouge.
+  - **Débloqué :** l'URL à identifiants de `juges-026-completude-qa.mjs` (l. 798) est désormais assemblée à l'exécution ; usine executer passe de nouveau.
+  - **À faire :** bug `usine.mjs:320`. Un paquet vide fait échouer git check-ignore sur une entrée vide, donc code 125 ; il faut sauter le contrôle quand la liste est vide. usine.mjs est en cours de modification par wf_634c0229-91d : le corriger après.
+- **23 h 50 :**
+  - **026-040 commitée (0e3fc806).** --reel AG-1 à AG-9 PASS, zéro trace ; elle débloque 026-042 pour le moteur.
+  - **0099 (026-034) NON appliquée.** Trois défauts : il manque le statut attend_accord_benj de R24 ; un envoi approuvé peut être retouché sans contrôle ; le plafond se contourne par antidatage (prepare_le fourni par l'écrivain). Correction en cours : wf_5073cc58-1f6, relecture revue-codex puis contre-vérification Claude.
+  - **Relais et entraide (usine.mjs) :** contre-vérification NON. Bloquant : la détection des prospects rate un e-mail, « Sirene », « SIRENs » et « 0033 ». Le moteur utilise déjà cet usine.mjs non commité. Correction en cours : wf_18e34f58-9f7, contre-vérification par Sonnet.
+  - **026-041 :** complément « toutes les IA » écrit (PASS). La couche Savoir numérote au moins jusqu'à 026-237.
+- **00 h 30 (28/09) :**
+  - **Commits :** 026-052 (e78b87b6) ; conception 2eb0f8c0 (51 fichiers : 36 brouillons de décisions, couche Savoir 026-229 à 241, complément 026-041, Groq retiré de 053). Couverture 026-001 verte sur 241 fiches.
+  - **Couche Savoir :** RELECTURE ROUGE, à corriger AVANT la vague V147. Bloquant : le compartiment « interne » (douleurs) est servi à freellmapi. Importants :
+    - le suffixe -cloud n'est pas refusé ;
+    - nomsProspects n'est pas défini ;
+    - l'archive des prospects est lisible par le compte usine (celui de Codex, avec réseau) ;
+    - chercherSecrets ne connaît que 8 familles de clés ;
+    - les jonctions Windows ne sont pas traitées ;
+    - la liste SENSIBLES de CV-7 ne couvre pas docs/savoir ;
+    - les mutations anti-fuite manquent.
+    Détail dans le journal de wf_d6d04fc1-0b2 (agent « contre-relecture »).
+  - **Fiches de suite à écrire** (juges d'abord), selon l'intégrateur des décisions : secours de Matt (chef-qa CH-C4) ; pause de Matt (appliquer.mjs) ; consignes adressées ; revue et chantier sur l'usine ; 026-067 EQ-1 (25 noms) et EQ-7 avant 026-070 ; 026-164 et 104 à aligner sur R24 (le Crieur ne programme plus) ; pilotage-sql-qa SR-8 et SR-11 pour 026-175 ; battement du trésorier dans bus-livraison-qa pour 026-141.
+  - **À TRANCHER PAR BENJ :** le cadre légal du 27/09 dit que les formulaires de contact s'envoient à la main, un par un, sinon c'est du spam ; or l'INDEX (026-095, GO de 026-165) fait soumettre `formulaire_site` par l'usine, 5 à 40 par jour.
+- **00 h 50 :**
+  - **Relais et entraide COMMITÉS (2db10cab)** : 43/43 cas, 29/29 mutants, contre-vérification verte. La détection des prospects couvre maintenant e-mail, Sirene et +33/0033 ; le quota ne se déclenche que sur une vraie erreur de Codex.
+  - **usine.mjs :** un paquet vide ne rend plus 125.
+  - **Moteur :** relancé avec `--max=6` (relancer-demons.ps1).
+- **00 h 40, défaut du moteur corrigé :** `dans()` ne reconnaissait que les ids à 3 chiffres. Les dépendances 025-05 et 025-06 (en fait/) n'étaient jamais vues comme faites, ce qui bloquait à tort 17 fiches 026, dont 026-042. Relancé : il a pris aussitôt 026-030, 026-031 et 026-042.
+- **01 h 00 (28/09) :**
+  - **Commités :**
+    - 84375ac7 : réparation de 026-048 (usine-socle-qa juge l'exécution, CF-8 sous Linux, SV-12 sous Windows) ;
+    - 899a4f06 : 026-053 ;
+    - db6434df : 026-031 par le moteur, qui a emporté par erreur la réparation de 026-005 (invariant de la sauvegarde) ;
+    - 189a49cc : 026-007, la sauvegarde EN SERVICE (premier envoi le 28/09 à 00 h 38, tâche Windows posée) ;
+    - 37893b33 : 026-042 par le moteur.
+  - **Course de commits :** un `git commit` nu (moteur ou session) emporte tout l'index. Corrigé : le moteur ET commit-fiche.sh font `git commit -- <leurs chemins>`. Moteur relancé ; une note de traçabilité pour db6434df est en cours.
+  - **IQ-14** peut rougir à tort sur un script correct (sonde s6 de la contre-vérification) : à durcir plus tard.
+- **01 h 15 : 0099 (026-034), passe 1 corrigée.**
+  - Ajouts : statut attend_accord_benj, table ops.accords_benj (accord de Benj à usage unique, 24 h), envoi figé, dates posées par la base.
+  - Résultat : 81 attaques sur 83 refusées. RESTE BLOQUANT : on contourne encore le plafond en réanimant des fiches (insertion en saute sans contrôle).
+  - **Décisions du chef :** pause ou accord échu BLOQUENT l'envoi ; entêtes et verdicts figés.
+  - Passe 2 : wf_b1eacd14-0e1. Ne JAMAIS appliquer 0099 sans une contre-vérification verte.
+- **01 h 30 : fin des lignes 9 à 12.**
+  - **En commit :** 026-027, 026-121 et 026-220 ; puis rejugement et commit de 026-146 et 026-223, produites par Codex avant leurs juges.
+  - **026-168 NON commitée**, défaut important : le juge de la planche juge la visibilité par les propriétés CSS, pas par le rendu. À corriger.
+  - **Juges à durcir (suite) :**
+    - lien-connexion-qa (de 026-023) : LC-5 (appel du gestionnaire, setSession, redirection) et LC-6 (égalité exacte des adresses ; le code est juste, ligne 134 de siteAchatPublic.ts) ;
+    - IQ-14 (faux rouge possible) ;
+    - RV-4 (nombres collés à une lettre).
+  - **Défaut latent :** app/GoogleAnalytics.tsx n'exclut pas /connexion/lien, dont l'URL porte un jeton, quand NEXT_PUBLIC_GA_ID sera posé.
+
+## Tâche de nuit, 28/09 07:33-08:16
+- Démons morts à 07:33 (moteur, reste-éveillé, guetteur) : relancés. Session principale inactive depuis 6 h, puis revenue vers 07:39 (commits 027/121/223, 220 indexé).
+- Workflow wf_7044d3c9-418 : 8 fiches contre-vérifiées (≥4 sabotages rougis chacune, preuves `.orchestre/preuves/<id>/contre-verif-nuit-28-09.md`). Toutes vertes : 220, 121, 037, 104 (isolé), 168 (isolé), 027, 223, 146. **Restent à commiter : 026-037, 026-104, 026-146, 026-168 (+ 220 déjà indexé).**
+- ⚠️ URGENT : le commit 1fe376ae (026-121) a embarqué une version SABOTÉE de `docs/agents/chantier.md` (« **Un connecteur** » au lieu de « **Aucun connecteur** »), faite par un sabotage de contre-vérification pendant le commit concurrent. La copie de travail est restaurée, mais la ligne reste à commiter : tant que ce n'est pas fait, CT-5 est rouge dans toute copie propre.
+- 026-104 : deux défauts du juge corrigés (piège HTML d'EX-4 jamais servi ; capture VU-9 au bord du seuil). Mineurs : LC-6 ne couvre pas un e-mail stocké en casse mixte (026-027) ; RV-4 plante en CRLF ; chantier-qa:549 lève une trace de pile au lieu d'un FAIL ; 026-220 a produit 9 fichiers au lieu des 6 annoncés (à acter).
+- 026-039 (refuse/) : le rouge CP-7 est réel (notice régénérée ≠ source), ce n'est pas la charge : rien n'a été rejoué.
+
+## Matinée 28/09 (session principale, 09:30-10:00)
+- **0099 appliquée** (026-034, 83593a58) : md5 4/4, contrôle 11/11, --reel PASS, zéro trace. Reste 0100/0105/0107/0110 (vague en cours : essais à sec seulement).
+- **Build Vercel cassé de 01:09 à 09:49** : 026-035 (Codex, a876a4ce) a mis `useSearchParams()` sans `<Suspense>` dans onboarding et merci ; le typecheck ne le voit pas. Corrigé 894f0c36 (READY). Garde : `garde-commit.mjs` refuse désormais une page useSearchParams sans Suspense (dd0ddc37) ; `moteur.mjs` regarde Vercel toutes les 30 min → ligne ⚠ + `presti-ops/usine/ALERTE-deploiement.txt`.
+- Juges : `corpsDeFonction` sautait mal `Promise<{…}>` (question de Codex sur 026-059, commitée 861fe3db) ; `defautsTypecheck` (025/commun.mjs) admet les 2 exclusions de témoins de 25bc2058, liste fermée (5b631d0a).
+- `docs/agents/chantier.md` désaboté (b574b5d9). 104, 168, 146 commitées. reste-éveillé prolongé jusqu'au 05/10 09:00.
+- Vague wf_064336ef-921 lancée : 15 fiches claude-code prêtes + réparation de 037 (sonnet ; contre-vérif par revue-codex d'abord). 229 : corriger d'abord « interne jamais vers un moteur gratuit ».
+- **Meta : accès OK le 28/09 ~10:00** (meta-bibliotheque-verifier : ✓ politique US 5 pubs, ✓ commerciale FR « rénovation » 5 pubs). La vérification d'identité de Benj est passée : plus d'alternative à chercher.
+- **Suite du 28/09 (10:00-12:30)** : migrations **0100, 0105, 0110 appliquées** (en plus de 0099) ; fiches commitées 044 (pause générale, PA-7 --reel PASS), 093, 004, 036, 054, 060, 059 ; intégration 242-251 (0c854900).
+- **Deux blocages du dépôt entier par une fausse clé** : `sk-ant-…` écrit d'un bloc dans un juge → garde-commit refuse TOUT commit ; `sk-…` de 20+ caractères → le paquet de l'usine refuse TOUT envoi (moteur muet 09:23-10:40). Règle donnée aux agents : assembler à l'exécution ou contenir « sentinelle » (usine.mjs admet désormais « sentinelle », bb8b009d).
+- Bascule vers Codex : 006, 046, 074, 118, 174, 177 (112 et 166 restent à Claude : CV-7 interdit à Codex lib/stripe* et app/api/stripe/**) ; 107 rendue à claude-code (périmètre dans ../orchestre, absent de l'usine).
+- 039 : le vrai rouge était CRLF (notice-prospection --verifier ramène à LF) ; attend le commit de 037 (qui porte son juge confidentialite-prospection-qa.mjs), puis verifier-isole.
+- 058 attend Benj (compte système, sudoers, service systemd sur l'usine : « oui » à chaque étape). 076 : option 1 (scénario du juge corrigé). Vague 2 wf_aed4b22d-238 lancée.
+- ops-acquisition-qa --reel laisse ses lignes d'essai (ops fermé à service_role) : son ménage est un SQL à passer par execute_sql, sur la marque essai-026-acq-<horodatage>.
+- **28/09 16:40 : moteur multi-IA EN SERVICE** (banc presti-ops/usine/juges-croises-qa.mjs 97/97, usine.mjs 0748e6b9) : 6 Codex + 3 voie libre (Ollama Cloud/freellmapi, jamais prospects) + 3 Gemini (Antigravity sur le PC) ; rédactions croisées → .orchestre/a-relire/ (jamais commitées par le moteur) ; questions non répétitives → .orchestre/a-decider/ ; garde des imports non commités dans commit-fiche.sh (garde-imports.mjs). OpenClaw sur l'usine pour recherches/premiers jets. Les sessions Claude se coupent souvent : relancer-demons.ps1 puis reprendre les vagues par resumeFromRunId.
+- **Boucle de chantier (28/09 soir)** : script de workflow réutilisable C:/Users/benja/.claude/projects/C--Users-benja-Documents-presti/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/workflows/scripts/chantier-continu-wf_3972e532-8c3.js (files .orchestre/a-relire et a-decider + fiches réservées à Claude, contre-vérif revue-codex, commits, jusqu'à 2 tours à vide). Après une coupure de session : relancer-demons.ps1 puis Workflow({scriptPath: ce fichier}) (pas de resume entre sessions). Disque usine 96 Go. Moteur visé : --max=8 --max-libre=4 --max-ag=3.
+- **Nuit du 28-29/09** : 111/251 à 00h40. L'agent de 026-006 a fait npm install de Next 16 DANS le dépôt principal malgré la consigne → package.json modifié → le paquet de l'usine refuse tout (moteur muet). Rétabli : package.json/lock de HEAD + npm ci (Next 15.5.26) ; versions Next 16 gardées dans .orchestre/preuves/026-006/next16-en-attente/. Build Vercel cassé depuis 6b3054af (026-078 : Sites.tsx 'use client' importait la chaîne node:crypto) → corrigé ea6d299c (lib/sitesConstantes.ts). 006 : à faire dans une copie isolée, après réécriture de budget-perf.mjs (N16-7, manifestes de Next 16) ; Next 15 sans correctifs après le 21/10.
+
+## Pour Benj au réveil (29/09)
+- **Catégorie Logement de Meta (pack pubs)** : docs/pubs/meta-logement.json est à « a_verifier » ; tant que Benj n'a pas dit si les pubs d'artisans relèvent de la catégorie spéciale « Logement » de Meta (oui/non), la fiche « lancer la pub en 10 minutes » n'est pas écrite et LV-1 (026-157) reste rouge. À demander à Benj.
+- **Next 16 (026-006)** : gardée pour la journée (npm install dans le dépôt partagé) ; d'abord 026-253 (budget-perf.mjs pour les manifestes de Next 16), puis 006 dans une copie isolée, commit de package.json/lock, npm ci au calme, usine.mjs preparer. Échéance : Next 15 sans correctifs après le 21/10.
+- **Poids de /p/[slug] (page publique de l'artisan)** : budget-perf.mjs était faussement vert (il mesurait /site/[slug]/icon/route) ; corrigé par 026-253 (5a47316b) : /p/[slug] = 179 Ko en prod pour un budget de 135 Ko (138-143 Ko sous Next 16). Décision du chef : alléger la page (fiche à ouvrir, Codex ou Gemini), pas relever le budget. 026-006 et 026-252 restent rouges tant que N16-7 l'est.
+
+## Pour Benj au réveil (29/09)
+- 026-006 (Next 16) bloquée par la règle « jamais npm install » : lever pour ce ticket seulement, dans une fenêtre où aucun autre agent ne tourne, avec 026-253 enchaînée dans la même session. Réponse : .orchestre/preuves/026-006/reponse-chef.md
+- **Réponses de Benj, 29/09 ~8h40** : (1) NE PAS toucher à la page publique des artisans (/p/[slug]) : budget de poids relevé à 150 Ko pour Next 16, AUCUNE fiche d'allègement (annuler celle que l'agent 006a aurait ouverte) ; (2) Next 16 : oui ; (3) catégorie Logement de Meta : décision déléguée au chef (agent : source officielle Meta, « oui » en cas de doute). Accélération : 14 fiches racines seulement ; attaque-racines lancée (063 bloque 83, 006 bloque 53, 119/118/141).

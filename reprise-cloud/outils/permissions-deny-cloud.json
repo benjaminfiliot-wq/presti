@@ -1,0 +1,18 @@
+{
+  "_lisez": "À FUSIONNER dans .claude/settings.json du dépôt (clé permissions.deny) par la session du PC, en un commit dédié : c'est la seule façon de faire valoir ces garde-fous dans une session cloud, car ~/.claude/settings.json (où vivent les 35 règles du PC) n'y est pas lu. Ce sont les 11 règles Bash de Benj du 24/09 (D3). Les 12 règles PowerShell ne servent pas sous Linux. Les règles de connecteurs (achats Vercel, create_project et confirm_cost Supabase, suppression d'agents et de numéros ElevenLabs) portent le préfixe mcp__<identifiant>__ du PC : le préfixe peut être différent dans le cloud, relever les noms exacts par /mcp dans la session cloud avant de les ajouter (aucune règle inventée ici).",
+  "permissions": {
+    "deny": [
+      "Bash(git restore:*)",
+      "Bash(git checkout --:*)",
+      "Bash(git checkout .:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git stash drop:*)",
+      "Bash(git stash clear:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)"
+    ]
+  }
+}

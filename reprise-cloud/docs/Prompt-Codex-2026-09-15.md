@@ -73,7 +73,7 @@ Tu reprends le travail de Claude Code sur Presti (dépôt `C:\Users\benja\Docume
   - environ une minute entre deux envois.
 - **Envoi :**
   1. Crée les brouillons manquants, sans jamais doubler une adresse déjà au journal.
-  2. Envoie depuis le Gmail de Benj (benjaminfiliot@gmail.com).
+  2. Envoie depuis le Gmail de Benj (<e-mail caviardé>).
   3. Vérifie chaque envoi dans « Messages envoyés ».
   4. Note-le dans `SaaS/Prospection/emails-artisans/envois-2026-09-15.md`.
   5. Si Gmail freine ou bloque, arrête-toi et note où.

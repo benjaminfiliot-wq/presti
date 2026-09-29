@@ -1,6 +1,5 @@
 # Memory Index
 
-- [SaaS side project](saas-side-project.md) — SaaS avec un pote, INDÉPENDANT de l'OFM/YouTube ; cerveau Obsidian dans Documents/SaaS ; phase = trouver un problème rentable ; skills `saas-problem-finder` + `vault-organizer`
 - [Corrections incrémentales](benj-corrections-incrementales.md) — ne jamais tout raser/relancer sur une demande de correction : fixer l'existant, vitesse > refonte
 - [Presti — règle vitrine](presti-feature-showcase-rule.md) — une fonctionnalité livrée doit se voir dans la vitrine de la landing ; le support est DemoSequence (captures réelles), plus FeatureShowcase (supprimé)
 - [Presti — facturation & TVA](presti-facturation-tva.md) — franchise en base, art. 293 B : aucune TVA facturée ; les 3 choses à changer ENSEMBLE le jour de l'immatriculation
@@ -50,13 +49,9 @@
 - [Juger un relais en continu](juge-relais-continu.md) — 019-01 PASS avec un trou de 1 500 px sans appel visible : échantillonner tout le défilement (150 px) et tester la visibilité réelle (elementFromPoint), pas IntersectionObserver
 - [Exécutants d'abord](benj-executants-d-abord.md) — 15/09 : Benj veut la production chez Codex/Antigravity (orchestre), pas en sous-agents internes ; paralléliser, montrer tôt au même lien ; page de choix « films + mesures + questions » validée
 - [MotionSites : le connecteur marche](motionsites-connecteur-marche.md) — mcp__26de8380 répond ; ne jamais relayer « à réautoriser » sans avoir appelé search_prompts soi-même (Benj l'a répété deux fois le 15/09)
-- [TikTok Studio : l'affichage ment](tiktok-studio-affichage-menteur.md) — la colonne confidentialité est périmée dans les deux sens ; relire après rechargement, prouver sans cookies
 - [Déposer sur Drive sans champ fichier](drive-televerser-sans-champ-fichier.md) — intercepter input.click() pour téléverser depuis le navigateur ; le connecteur et file_upload ne suffisent pas
 - [Args d'un workflow : jamais à la main](args-workflow-jamais-a-la-main.md) — 31 fichiers mal appariés sur 48 ; générer les args, exiger l'arrêt sur chemin absent, mettre une contrainte vérifiable dans le résultat
-- [TikTok — épingler un commentaire](tiktok-epingler-commentaire-mobile.md) — impossible sur le web (menu « Supprimer » seul, les deux interfaces) : geste du téléphone, appui long
 - [Le juge mesure le décor](juge-mesure-le-decor.md) — compter les pixels clairs juge le fond (barre d'outils Roblox) : une propriété géométrique se mesure géométriquement
-- [TikTok — dépôt automatique](tiktok-depot-automatique.md) — MARCHE (22/09) si l'onglet est visible : Chrome gèle la vidéo des onglets cachés ; file_upload ≤10 Mo, légende par frappe, Publier = accord de Benj
-- [TikTok — sons sous licence](tiktok-sons-sous-licence.md) — musique et bruitages pris dans Studio > Sons libres de droits par API ; kit, poser_musique, passe_sfx, qualite_clip
 - [Écosystème Presti (24/09)](ecosysteme-presti.md) — objectif final : automatisation totale ; pubs UGC 5 vidéos/490 € ; OpenClaw NON ; interface = CLAW3D avec dessins pixel art, DANS le Poste (choix de Benj du 25/09, remplace l'étude qui l'écartait)
 - [ECC installé](ecc-installation.md) — plugin Claude hooks « minimal » + plugin Codex ; --dry-run de setup installe quand même, et l'installeur coupe la mention de co-auteur
 - [Usine Oracle](usine-oracle.md) — presti-usine (88.96.53.3, ARM 2/12) EN LIGNE le 24/09 ; pièges : IP publique grisée, jamais ufw, AppArmor pour Codex ; un juge rouge sur le PC saturé n'est pas un verdict
@@ -64,6 +59,8 @@
 - [Windsor.ai — Instagram](windsor-instagram.md) — relié le 24/09 (essai) : démographie agrégée + commentaires nominatifs, PAS la liste des abonnés ; actions publier/commenter (hors quota Publora)
 - [Revérifier décisions et vidéos](benj-reverifier-decisions-et-videos.md) — consigne du 25/09 : chaque conception finit par un agent de conformité qui relit ses décisions ET les vidéos de référence à l'image
 - [Migrations : je les applique moi-même](migrations-je-les-applique.md) — ne JAMAIS demander à Benj de coller du SQL : apply_migration par le connecteur, puis contrôle + test réel annulé + zéro trace
-- [Reprise cloud](reprise-cloud.md) — presti/reprise-cloud/ (26/09) pour une session claude.ai/code ; maj.sh ; le cloud partage la limite, n'atteint ni l'usine ni les secrets
+- [Reprise cloud](reprise-cloud.md) — presti/reprise-cloud/ (v2 29/09) : LISEZ-MOI-D-ABORD.md + LIMITES-DU-CLOUD.md + outils/ ; maj.sh v2 caviarde et scanne ; le cloud partage la limite, n'atteint ni l'usine ni les secrets, ne pousse pas sur main ; seule voie vers l'égalité totale = Remote Control
 - [Tuer par PID seulement](tuer-par-pid-seulement.md) — 26/09 : un taskkill par nom a fermé tous les Chrome/Node du PC ; pkill -f tue sa propre session ssh
 - [Codex CLI 401 → secours gratuit](codex-cli-401-secours-gratuit.md) — nuit du 26/09 : codex exec rend 401 (PC + usine), l'app marche ; secours Codex sur freellmapi (wire_api=responses)
+- [Journée du 27/09 : état](journee-27-09-etat.md) — moteur sans Claude + 3 chantiers (juges, migrations 0096/0103 à appliquer par moi) ; fiches rouvertes ; livrés du jour
+- [Node 24 Windows : process.exit plante](node24-windows-process-exit.md) — assertion libuv async.c:94 (3221226505) après un fetch : poser process.exitCode, jamais process.exit en fin de script

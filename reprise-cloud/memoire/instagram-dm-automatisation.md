@@ -98,7 +98,7 @@ se jette en fermant le panneau par la croix et en rechargeant le profil — il n
 Même recette côté Facebook pour les commentaires de Page (voir [[facebook-demarchage-artisans]]).
 
 **Sauts de ligne (14/09)** : `execCommand('insertText')` avec des `\n` les **avale** (message collé :
-« …prestiapp.fr/06 30 78 16 47 »). Recette qui donne de vrais paragraphes : insérer **paragraphe par
+« …prestiapp.fr/<téléphone caviardé> »). Recette qui donne de vrais paragraphes : insérer **paragraphe par
 paragraphe**, et entre deux, dispatcher un **Maj+Entrée synthétique**
 (`new KeyboardEvent('keydown', {key:'Enter', code:'Enter', keyCode:13, which:13, shiftKey:true, bubbles:true, cancelable:true})`)
 après avoir replacé la sélection en fin de contenu. Relire avec `innerText.replace(/\n+/g,'\n')`

@@ -1,0 +1,84 @@
+# OpenClaw sur l'usine : /srv/openclaw/compose.yaml
+# Lancer :   docker compose -f /srv/openclaw/compose.yaml up -d
+# Arrêter :  docker compose -f /srv/openclaw/compose.yaml down
+#
+# Règles tenues : aucun abonnement ni clé Claude/Anthropic, modèles gratuits seulement
+# (Ollama local + Ollama Cloud, freellmapi), aucun secret de Presti, aucun port
+# ouvert vers l'extérieur (la passerelle est publiée sur 127.0.0.1 seulement).
+# OC_UID / OC_GID viennent de /srv/openclaw/.env (compte système « openclaw »).
+name: openclaw
+
+x-durci: &durci
+  image: ghcr.io/openclaw/openclaw:2026.9.6-slim
+  user: "${OC_UID}:${OC_GID}"
+  restart: unless-stopped
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "5" }
+
+services:
+  openclaw:
+    <<: *durci
+    container_name: openclaw
+    entrypoint: ["tini", "-s", "--", "sh", "/opt/pont/lancer.sh"]
+    environment:
+      HOME: /home/node
+      OPENCLAW_HOME: /home/node
+      OPENCLAW_STATE_DIR: /home/node/.openclaw
+      OPENCLAW_CONFIG_PATH: /home/node/.openclaw/openclaw.json
+      OPENCLAW_DISABLE_BONJOUR: "1"
+      DO_NOT_TRACK: "1"
+      TZ: Europe/Paris
+      NODE_OPTIONS: "--max-old-space-size=2048"
+    volumes:
+      - /srv/openclaw/etat:/home/node/.openclaw
+      - /srv/openclaw/work:/work
+      - /srv/openclaw/relais:/relais
+      - /srv/openclaw/pont:/opt/pont:ro
+      - /srv/openclaw/secrets/freellmapi.key:/run/secrets/freellmapi.key:ro
+      - /srv/openclaw/secrets/gateway.token:/run/secrets/gateway.token:ro
+    tmpfs:
+      - /tmp:size=512m,mode=1777
+      - /home/node:size=256m,uid=${OC_UID},gid=${OC_GID},mode=0700
+    ports:
+      - "127.0.0.1:18800:18789"
+    networks: [isole]
+    mem_limit: 4g
+    memswap_limit: 4g
+    cpus: 1.5
+    pids_limit: 512
+    healthcheck:
+      test: ["CMD", "node", "/opt/pont/sante.mjs"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    depends_on: [relais]
+
+  relais:
+    <<: *durci
+    container_name: openclaw-relais
+    entrypoint: ["tini", "-s", "--", "node", "/opt/pont/pont.mjs", "hote"]
+    network_mode: host
+    volumes:
+      - /srv/openclaw/relais:/relais
+      - /srv/openclaw/pont:/opt/pont:ro
+    mem_limit: 128m
+    memswap_limit: 128m
+    cpus: 0.25
+    pids_limit: 64
+    # Sans ceci, Docker hérite du HEALTHCHECK gravé dans l'image (dist/docker-healthcheck.js),
+    # qui teste le vrai service openclaw (gateway) — absent ici puisque ce conteneur ne lance
+    # que le pont pont.mjs. Constaté le 28/09/2026 : « unhealthy » en continu (40 échecs,
+    # ExitCode 1) alors qu'une tâche réelle passait par ce relais sans problème. On désactive
+    # la sonde plutôt que de la remplacer : rien d'équivalent à surveiller côté pont (les deux
+    # sockets sont recréés à chaque démarrage, voir logs).
+    healthcheck:
+      disable: true
+
+networks:
+  isole:
+    driver: bridge

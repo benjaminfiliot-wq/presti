@@ -8,7 +8,7 @@ metadata:
   modified: 2026-09-07T19:44:31.809Z
 ---
 
-La boîte relevée par le Poste de contrôle est **`benjaminfiliot@gmail.com`** (`IMAP_USER` sur Vercel,
+La boîte relevée par le Poste de contrôle est **`<e-mail caviardé>`** (`IMAP_USER` sur Vercel,
 production seulement), pas `contact@prestiapp.fr`.
 
 **`contact@prestiapp.fr` envoie mais ne reçoit pas** : c'est le domaine signé DKIM chez Resend, et

@@ -30,3 +30,5 @@ Il a publié une page de choix avant d'avoir tous les candidats, en disant ce qu
 - Signal à ne pas laisser traîner : trois rejets ou relances d'affilée sur la même tâche. Proposer de finir soi-même avant que Benj ne le demande.
 
 **24/09 au soir — accélérer.** Benj : « va falloir accélérer le rythme, vu qu'on a plein d'IA pour nous aider, plus toi, apportez votre aide à Codex ». Claude produit donc AUSSI des fiches, en parallèle de Codex, et plus seulement les juges. Codex tourne à plusieurs fiches à la fois sur l'usine. Les verdicts se rendent sur l'usine quand le juge n'a pas besoin du PC. Le PC de Benj (8 Go, souvent ~1 Go libre) est le goulot : lui retirer tout le lourd.
+
+**29/09 — économie : plus d'ultracode.** Benj (renseigné) : l'effort « élevé » suffit, ultracode fait trop réfléchir et coûte trop (il pose « le coût en jetons n'est pas une contrainte » et pousse aux workflows partout). Retiré de la tâche horaire. Par défaut : un agent Sonnet ciblé par besoin, contre-vérification par Codex, workflows seulement pour un vrai parallélisme ; jamais de boucles de vérification redondantes.

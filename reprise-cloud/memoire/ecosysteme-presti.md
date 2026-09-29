@@ -5,10 +5,24 @@ metadata:
   node_type: memory
   type: project
   originSessionId: fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d
-  modified: 2026-09-25T20:25:49.268Z
+  modified: 2026-09-28T08:58:18.137Z
 ---
 
 Le 24/09/2026, Benj fixe le but final de Presti : une automatisation totale. Il ne fait que regarder l'argent rentrer et prendre les appels des clients qui veulent l'entendre.
+
+**Le 27/09 au soir, Benj le rappelle : « tu seras le chef d'entreprise ».** Claude Code est le chef d'entreprise de l'écosystème : il pense, il tranche, il écrit les juges et arbitre les propositions. Il dirige aussi les IA.
+
+La hiérarchie, telle qu'elle est déjà dans la série 026 :
+
+| Qui | Rôle | Où, et comment |
+|---|---|---|
+| **Claude Code** (moi) | chef d'entreprise | sur le PC. Reçoit les propositions du bus par l'agent `pont`. Écrit les juges. Applique les migrations. Commite. |
+| **Matt** (026-102/105, `docs/agents/chef.md`) | directeur des opérations | 24 h/24 sur l'usine, en Codex GPT-6 sol (cycles légers en luna). Règle, compare et rend compte par un plan JSON que des scripts vérifient. Ne pose rien lui-même. |
+| **Les agents du bus** | exécutent | sous leurs limites (tâches, décisions, disjoncteurs de 0098). |
+| **Nouveaux postes (28/09, fiches 242-251)** | Comptable, SAV, Contrôleur qualité des sites, Vigile (salle Sécurité) | Le Vigile peut **poser** une pause de sécurité sur UN agent, comme Matt, sur seuil de `vigile.json` ; jamais la lever, jamais la pause générale (« oui » de Benj le 28/09 : « si c'est réellement utile, ce qui selon moi est le cas »). **Uniquement si nécessaire** (seuil de gravité : sécurité, argent, loi ; un défaut de qualité se signale seulement) ; jamais sur Matt, Claude Code ni le pont ; chaque pause remonte à Matt et à Benj. Benj : « Matt est le plus gradé, lui ce sera différent » → Matt au-dessus de tous les postes du bus. |
+| **Benj** | propriétaire | les appels, l'argent, et les accords : envois, dépenses, publication, R24. |
+
+Conséquence : quand je ne suis pas là (PC éteint, limite atteinte), Matt tient l'opérationnel. Les décisions de fond attendent le chef d'entreprise ou Benj.
 
 Ce qu'il demande :
 - **Des agents qui travaillent ensemble 24 h/24 :** Claude Code, Codex, Antigravity, les sous-agents et les skills ECC s'échangent tâches, scraping, prospects, idées et fonctionnalités.
@@ -142,3 +156,16 @@ Voir [[ecc-installation]], [[presti-orchestre-antigravity]], [[benj-executants-d
   - isolé, dans un conteneur sur l'usine ;
   - branché aux modèles gratuits : Ollama local et Cloud, freellmapi.
 - Deadline de Benj : **dimanche 27/09 au soir**, « prêt ou pratiquement prêt », surtout pour les clients et la prospection. Le 27/09 à 8 h (fin de la limite Claude), grosse poussée.
+
+**Décision de Benj, 27/09 vers 14 h :** quand l'écosystème sera en place, l'une de ses PREMIÈRES missions sera de **réaméliorer Presti dans son entier**, et de le réadapter à toutes les nouvelles décisions : outils (Firecrawl, Fish Audio, Ollama, Laya, OpenClaw, Cursor), prospection et cadre légal, marketing C01-C16, pubs, voie entrante. Benj pense que c'était prévu. C'est inscrit en fin d'INDEX 026, et une fiche dédiée est à écrire en fin de série.
+
+**Le 27/09, 21 h 45, Benj :** « dès sa création, l'écosystème aura accès à absolument toutes les connaissances, informations et données qu'on a acquises, en plus de la capacité d'auto-chercher, d'auto-apprendre et d'auto-réfléchir ».
+- La série 026 n'avait ni socle du savoir ni boucle d'apprentissage ni réflexion. Seuls existaient la mémoire marketing (026-205), des leçons (026-043, 026-121) et la recherche web (026-072, 165, 215).
+- La conception de la couche « Savoir » est confiée à wf_d6d04fc1-0b2 : inventaire des sources, nouvelles fiches 026-229 et suivantes (juge claude-code + production), contre-relecture.
+- **Bornes de « absolument tout » :**
+  - les secrets ne sortent jamais ;
+  - les données de prospects ne vont qu'à Codex ou à un modèle local ;
+  - les embeddings des sources internes et des prospects sont faits en local ;
+  - une leçon ne lève jamais une limite et n'est appliquée qu'après le chef d'entreprise ou Benj.
+
+**Décision de Benj, 28/09 ~14 h 40 : JUGES CROISÉS** (remplace « juges écrits par Claude seul »). Codex rédige les juges des fiches produites par Antigravity/Gemini ; Gemini (Antigravity) rédige ceux des fiches produites par Codex ; Codex rédige les migrations. Claude relit CHAQUE juge, l'attaque par sabotages avant usage, fait les essais à sec et applique les migrations. Jamais une IA ne juge son propre travail. Motif : « utilise les autres IA de manière considérable » (les IA restaient inoccupées : 0 fiche prête hors juges). Dans INDEX, l'exécutant reste claude-code (responsable, commit, CV-7) ; la rédaction déléguée est notée dans la fiche.

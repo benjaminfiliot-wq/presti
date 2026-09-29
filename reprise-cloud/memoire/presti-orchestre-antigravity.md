@@ -61,3 +61,14 @@ Voisins : [[presti-state]], [[presti-platform-v2-masterplan]], [[claude-cli-plug
   - regarder la TAILLE des juges livrés avant de commiter ;
   - une fiche finie en moins de 10 min est suspecte.
 - Pour 026-038 (lot 03 de la preuve horloge-bus), l'agent Gemini a posé une vraie question au lieu de contourner : c'est le bon comportement, à garder dans les consignes (« pose la question sans contourner »).
+
+**27/09, 13 h : règle DÉFINITIVE, plus aucune fiche de juges pour Gemini ni Antigravity.**
+- La contre-vérification Claude de 026-026, 026-029 et 026-168 (juges écrits par Gemini le 26/09, notés par la preuve d'une autre fiche) a montré des coquilles :
+  - des `existsSync` seulement ;
+  - un « témoin vert » qui passe même sur un dossier vide ;
+  - 1 critère sur 10 à 12 réellement testé ;
+  - 5 sabotages ratés par fiche.
+- Les preuves d'alors (026-012, 026-018) étaient trop faibles pour le voir. Elles ont été durcies le 27/09 : témoin vert réel exigé, refus d'un juge qui sort toujours en 0 ou toujours en 1.
+- Les trois fiches sont rouvertes.
+- **Gemini et Antigravity font seulement du code jugé par des juges de Claude** (026-003, 055, 065 : valables).
+- Et on n'accepte jamais une fiche de juges sans une contre-vérification de Claude qui sabote chaque critère.

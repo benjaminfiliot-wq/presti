@@ -41,7 +41,7 @@ Le 24/09/2026, Claude Code a créé l'usine des agents sur le compte Oracle de B
   - `preparer` vérifie la règle sudo autorisée ;
   - sudo restreint (le compte `ubuntu` garde le sudo complet, c'est le secours) ;
   - veille « Presti usine veille » toutes les 15 min sur le PC ;
-  - `presti-ops/usine/menage-bacs.sh` pour le ménage ;
+  - `presti-ops/usine/menage-bacs.sh` pour le ménage : depuis le 27/09, une boucle nohup le lance chaque heure (`--heures=2`, pid `~/usine/menage-bacs.pid`). Sans elle, le disque de 45 Go s'est rempli (19 Go de bacs), et le moteur échouait sur « No space left on device » ;
   - le groupe docker de `usine` donne encore accès à root (à retirer).
 - **Ne jamais cliquer « Upgrade »** dans la bannière Free Trial.
 - **Always Free = 2 OCPU / 12 Go depuis le 15/06/2026** (c'était 4/24). Source : InfoQ, et `LISEZMOI.md` ligne 50.
@@ -64,3 +64,12 @@ Le 24/09/2026, Claude Code a créé l'usine des agents sur le compte Oracle de B
   - Écrit dans le registre des IA et dans la fiche 026-041.
 
 Voir [[ecosysteme-presti]], [[codex-executant]].
+- **Entraide des IA (27/09, demande de Benj)** : `~/veille/lancer-codex-tache2.sh` et `conseil.mjs`.
+  - Après chaque tour de Codex refusé par le juge, une AUTRE IA relit le verdict et la fin du journal, puis propose 5 corrections, que Codex reçoit au tour suivant.
+  - Sans données de prospects : Mistral Large 3, puis GPT-OSS 120B, puis Devstral 2, via freellmapi. Avec `SANS_REPLI=1` (données de prospects) : `--prive`, donc Qwen3 4B en local via Ollama.
+  - **Piège trouvé au test :** une option sans valeur (`--prive`) lue par `Object.fromEntries(...split('='))` vaut `undefined`, donc « absente ». Le mode privé partait vers freellmapi : c'était une fuite. Il faut tester `('prive' in A)`, et toujours essayer le mode privé AVANT de s'en servir.
+  - **Piège Ollama :** avec `OLLAMA_NUM_PARALLEL=1`, une demande abandonnée côté client continue côté serveur et bloque la file. Garder des demandes courtes en local.
+- **Mistral dans freellmapi** : `mistral-large-3`, `mistral-medium-3.5`, `devstral-2`, `codestral`. Les alias « -latest » n'existent pas.
+
+**OpenClaw installé le 28/09** (v2026.9.6, image officielle ghcr.io/openclaw/openclaw, compte système `openclaw`, /srv/openclaw/compose.yaml) : conteneur isolé (FS lecture seule, 4 Go, 1,5 cœur, port 127.0.0.1:18800 seulement), relais `openclaw-relais` par sockets Unix vers Ollama (11434) et freellmapi (3001) parce que le pare-feu refuse Docker→hôte (ne pas y toucher). Aucune clé Claude (greffon anthropic interdit), aucun secret Presti, outils limités à /work + web. Confier une tâche depuis le PC : `bash ~/Documents/presti-ops/usine/openclaw/tache.sh consigne.md ./sortie` (modèle par défaut gpt-oss:120b-cloud ; relire : sortie parfois en anglais). Doc : presti-ops/usine/openclaw/LISEZMOI.md. Disque de l'usine à 90 % le 28/09 16 h : surveiller.
+**Hermes Agent installé le 28/09** (image officielle nousresearch/hermes-agent:v2026.9.24, 3,9 Go ; compte système `hermes` uid **10000 imposé**, sinon le pont échoue en silence ; `command:` et non `entrypoint:` ; caps CHOWN/FOWNER/SETUID/SETGID/DAC_OVERRIDE ; /run en tmpfs exec) : conteneurs `hermes` + `hermes-relais`, isolés comme OpenClaw, modèles gratuits seulement. Doc et tâches : presti-ops/usine/hermes/ (LISEZMOI.md, tache.sh). prompt-master (skill audité propre) installé pour Claude, Codex (~/.codex/skills) et OpenClaw (/srv/openclaw/work/skills). openclaw-relais : sonde de santé héritée désactivée. **Disque agrandi à 100 Go le 28/09 par Benj (console Oracle) : 96 Go, 58 Go libres.** Procédure après un agrandissement : sous ubuntu, `dd iflag=direct if=/dev/sda of=/dev/null count=1` puis `echo 1 > /sys/class/block/sda/device/rescan`, `growpart /dev/sda 1`, `resize2fs /dev/sda1` (sans redémarrage).

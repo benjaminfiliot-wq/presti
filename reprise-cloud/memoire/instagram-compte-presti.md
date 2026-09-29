@@ -34,7 +34,7 @@ par » du Poste de contrôle dira « Organique » pour tout le monde. Même rais
 Facebook et LinkedIn — et le `canal = true` évite les 20 % de commission dus à personne.
 
 **L'adresse e-mail professionnelle n'est pas remplie, exprès** : `contact@prestiapp.fr` ne reçoit
-rien (voir [[presti-messagerie-entreprise]]) et `benjaminfiliot@gmail.com` est personnelle. Le choix
+rien (voir [[presti-messagerie-entreprise]]) et `<e-mail caviardé>` est personnelle. Le choix
 appartient à Benj ; la bonne réponse à terme est une vraie boîte derrière le domaine.
 
 Publier les vidéos reste manuel : voir [[upload-video-reseaux-impossible]].

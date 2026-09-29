@@ -9,7 +9,7 @@ metadata:
 ---
 
 ECC (affaan-m/ECC, « agent harness OS ») est installé depuis le 24/09/2026 :
-- **Claude Code :** plugin `ecc@ecc` 2.2.2, portée utilisateur, `pluginConfigs.ecc@ecc.options.hook_profile = "minimal"` dans `~/.claude/settings.json`.
+- **Claude Code :** plugin `ecc@ecc` 2.2.2, portée utilisateur, `<e-mail caviardé>_profile = "minimal"` dans `~/.claude/settings.json`.
 - **Codex :** marketplace `ecc` et plugin `ecc@ecc` 2.2.2 (`codex plugin add`). Les hooks Codex exigent une approbation explicite ; aucun n'a été approuvé.
 - **Antigravity :** non installé. L'adaptateur est expérimental et écrirait `.agents/skills` dans le projet courant.
 - **Sauvegardes d'avant :** `~/.claude/backups/avant-ecc-2026-09-24/`.
