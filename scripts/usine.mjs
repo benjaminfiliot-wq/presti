@@ -913,9 +913,11 @@ const commandePour = (binaire) => (/\.[cm]?js$/i.test(binaire) ? [process.execPa
 const FOURNISSEURS = [
   { nom: 'chatgpt', libelle: 'abonnement ChatGPT' },
   { nom: 'ol', libelle: 'Ollama Cloud', modele: () => 'gpt-oss:120b-cloud', config: 'model_providers.ol={name="ollama",base_url="http://127.0.0.1:11434/v1",wire_api="responses"}' },
-  // devstral-2 pour une fiche de code, mistral-large-3 sinon ; la clé (env_key FL_KEY) est lue dans ~/.config/presti/freellmapi.key
-  // au lancement, passée à Codex par son environnement seulement, jamais écrite dans un journal.
-  { nom: 'fl', libelle: 'freellmapi', modele: (code) => (code ? 'devstral-2' : 'mistral-large-3'), config: 'model_providers.fl={name="freellmapi",base_url="http://127.0.0.1:3001/v1",env_key="FL_KEY",wire_api="responses"}', cle: true },
+  // gpt-oss-120b (29/09/2026) : devstral-2 et mistral-large-3 rendent « no_providers_configured » sur freellmapi (aucune clé Mistral
+  // configurée dans son tableau de bord) et codestral ne lance aucun outil ; gpt-oss-120b tient la boucle d'outils de Codex (essai
+  // réel sur l'usine : a.txt → b.txt). La clé (env_key FL_KEY) est lue dans ~/.config/presti/freellmapi.key au lancement,
+  // passée à Codex par son environnement seulement, jamais écrite dans un journal.
+  { nom: 'fl', libelle: 'freellmapi', modele: () => 'gpt-oss-120b', config: 'model_providers.fl={name="freellmapi",base_url="http://127.0.0.1:3001/v1",env_key="FL_KEY",wire_api="responses"}', cle: true },
 ]
 const lireCleFL = () => { try { return fs.readFileSync(path.join(os.homedir(), '.config', 'presti', 'freellmapi.key'), 'utf8').trim() || null } catch { return null } }
 // Épuisé ? Pour les trois fournisseurs, les mêmes exigences (contre-vérification du 27/09) :
@@ -945,6 +947,13 @@ function finDeCodex(propre, message) {
 }
 // r : ce que rend codexExec ({ code, propre, message, tue }).
 function fournisseurEpuise(fr, r) {
+  // Inerte (29/09/2026) : Ollama Cloud (gpt-oss:120b-cloud) écrit parfois l'appel d'outil en TEXTE au lieu de le faire exécuter
+  // (essai réel : 1 tour sur 3) ; Codex sort en code 0 sans avoir lancé une seule commande (aucune ligne « exec »), le
+  // vérificateur rend rouge et le tour suivant recommence pareil. Un fournisseur libre qui n'a rien exécuté est rejoué sur le
+  // suivant. Jamais pour ChatGPT ; jamais quand Codex a posé une question (le tourneur la lit juste après).
+  if (r.code === 0 && !r.tue && fr.nom !== 'chatgpt' && !/^exec$/m.test(String(r.propre || '').replace(/\r/g, '')) && !/\.question\.md/.test(String(r.propre || ''))) {
+    return `${fr.libelle} inerte : le modèle n'a lancé aucune commande (appel d'outil écrit en texte)`
+  }
   if (r.code === 0 || r.tue) return null
   const fin = finDeCodex(r.propre, r.message)
   if (fr.nom === 'chatgpt') {
@@ -984,7 +993,11 @@ const MOTIFS_PROSPECTS = [
   { nom: 'numéro de téléphone international (+33 / 0033)', re: /(?:\+|00)33[\s.]?(?:\(0\)[\s.]?)?[1-9](?:[\s.-]?\d{2}){4}/ },
   { nom: 'e-mail d’une personne', re: { test: (t) => adressesDePersonnes(t).length > 0 } },
 ]
-const motifProspects = (texte) => MOTIFS_PROSPECTS.find((m) => m.re.test(texte))?.nom || null
+// Le NOM d'un script ou d'un module de code (scripts/prospection-sql-qa.mjs) ne désigne aucune donnée de prospect : 026-091 (mutations
+// des juges) est restée bloquée sur la voie libre par ce seul nom dans son périmètre (29/09/2026). Seuls les fichiers de CODE
+// (.mjs .cjs .js .ts .tsx .sh .ps1) sont retirés avant l'analyse ; un .md, .json, .sql ou un dossier de données (prospection/) compte toujours.
+const NOM_DE_CODE = /[\p{L}\p{N}_@.\/-]*\.(?:mjs|cjs|js|ts|tsx|sh|ps1)\b/gu
+const motifProspects = (texte) => { const t = String(texte).replace(NOM_DE_CODE, ' '); return MOTIFS_PROSPECTS.find((m) => m.re.test(t))?.nom || null }
 // Une fiche de code (le périmètre vise du code) : freellmapi la donne à devstral-2, sinon à mistral-large-3.
 const CODE = /\.(?:[cm]?[jt]sx?|sql|sh|py|css|scss|html?|json)$|^(?:scripts|app|lib|components|supabase|src|pages|hooks|tests?|e2e|middleware)\//i
 // Le conseiller : 90 s au plus, sortie coupée à 4 000 signes. PRESTI_CONSEIL_DELAI_MS ne sert qu'au banc d'essai (--rapide) :

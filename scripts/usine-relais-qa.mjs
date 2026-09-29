@@ -11,7 +11,7 @@
 // codex.log, conseil-<tour>.md et ces appels.
 //
 // Ce qu'il prouve : quota ChatGPT → Ollama Cloud (fournisseur ol, gpt-oss:120b-cloud) ; Ollama Cloud à bout → freellmapi
-// (fl, devstral-2 pour du code, mistral-large-3 sinon, clé passée par FL_KEY) ; tout épuisé → code 3 ; fiche de prospects
+// (fl, gpt-oss-120b — devstral-2/mistral-large-3 n'ont pas de clé sur freellmapi —, clé passée par FL_KEY) ; un fournisseur libre inerte (aucune commande lancée) est rejoué sur le suivant ; tout épuisé → code 3 ; fiche de prospects
 // → aucun relais et code 3 ; tour rouge → conseil appelé (--prive pour des prospects) et réinjecté au tour suivant ;
 // PASS ou QUESTION → pas de conseil ; conseil qui plante ou dépasse 90 s → le tour continue ; conseil coupé à 4 000 signes ;
 // une sortie de commande qui parle de quota n'est pas un quota ; la clé factice n'apparaît dans aucun journal.
@@ -196,18 +196,32 @@ const CAS = [
       fin(r, D, 0, 'PASS'); appels(r, D, ['chatgpt', 'ol', 'fl'])
       const c3 = r.codex[2]
       if (c3 && !(aConfig(c3, FL_CONFIG) && aConfig(c3, 'model_provider=fl'))) D.push(`appel freellmapi sans « -c ${FL_CONFIG} -c model_provider=fl »`)
-      if (c3 && c3.modele !== 'devstral-2') D.push(`freellmapi sur -m ${c3.modele} pour une fiche de code (devstral-2 attendu)`)
+      if (c3 && c3.modele !== 'gpt-oss-120b') D.push(`freellmapi sur -m ${c3.modele} pour une fiche de code (gpt-oss-120b attendu)`)
       if (c3 && c3.flKey !== CLE_FACTICE) D.push(`freellmapi lancé sans la clé de ~/.config/presti/freellmapi.key dans FL_KEY (vu : ${c3.flKey === null ? 'absente' : 'autre valeur'})`)
-      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', 'devstral-2')
+      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', 'gpt-oss-120b')
     },
   },
   {
     nom: 'ol-fl-texte', fiche: { perimetre: 'docs/banc-relais.md' }, env: { BANC_EPUISES: 'chatgpt,ol', BANC_VERDICTS: 'PASS' },
     juger(r, D) {
       fin(r, D, 0, 'PASS'); appels(r, D, ['chatgpt', 'ol', 'fl'])
-      if (r.codex[2] && r.codex[2].modele !== 'mistral-large-3') D.push(`freellmapi sur -m ${r.codex[2].modele} pour une fiche sans code (mistral-large-3 attendu)`)
-      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', 'mistral-large-3')
+      if (r.codex[2] && r.codex[2].modele !== 'gpt-oss-120b') D.push(`freellmapi sur -m ${r.codex[2].modele} pour une fiche sans code (gpt-oss-120b attendu)`)
+      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', 'gpt-oss-120b')
     },
+  },
+  {
+    // 29/09 : Ollama Cloud écrit l'appel d'outil en texte (code 0, aucune commande) : le tour est rejoué sur freellmapi.
+    nom: 'ol-inerte', env: { BANC_EPUISES: 'chatgpt', BANC_INERTE: 'ol', BANC_VERDICTS: 'PASS' },
+    juger(r, D) {
+      fin(r, D, 0, 'PASS'); appels(r, D, ['chatgpt', 'ol', 'fl'])
+      bascule(r, D, ['chatgpt→ol', 'ol→fl'], 'fl', 'gpt-oss-120b')
+      if (!/inerte/.test(r.log)) D.push('codex.log sans « inerte » : la bascule ne dit pas pourquoi')
+    },
+  },
+  {
+    // 29/09 : le seul NOM d'un script « prospection » (026-091) ne fait pas une fiche de prospects ; un .md, lui, en fait une.
+    nom: 'nom-de-script', fiche: { perimetre: 'scripts/prospection-sql-qa.mjs, scripts/juges-026-preuve.mjs' }, env: { BANC_EPUISES: 'chatgpt', BANC_VERDICTS: 'PASS' },
+    juger(r, D) { sansBascule(r, D, ['chatgpt', 'ol'], 'ol'); if (r.etat?.prospects) D.push(`fiche prise pour une fiche de prospects (${r.etat.prospects}) : un nom de script n'est pas une donnée`) },
   },
   {
     nom: 'tout-epuise', env: { BANC_EPUISES: 'chatgpt,ol,fl', BANC_VERDICTS: 'PASS' },
@@ -478,7 +492,9 @@ const MUTANTS = [
   { nom: 'épuisement total non vu (pas de code 3)', cas: ['tout-epuise'], r: [['if (!epuise) break', 'if (!epuise || iFournisseur === FOURNISSEURS.length - 1) break']] },
   { nom: 'fournisseur servi absent de etat.json', cas: ['quota-ol'], r: [['poser({ fournisseur: vers.nom, modeleServi: modele })', 'poser({ modeleServi: modele })']] },
   { nom: 'bascule absente de codex.log', cas: ['quota-ol'], r: [['noter(`=== ${maintenant()} bascule de fournisseur', 'void (`=== ${maintenant()} bascule de fournisseur']] },
-  { nom: 'détection des prospects retirée', cas: ['prospect-entete', 'prospect-siren'], r: [['const motifProspects = (texte) => MOTIFS_PROSPECTS.find((m) => m.re.test(texte))?.nom || null', 'const motifProspects = (texte) => null']] },
+  { nom: 'détection des prospects retirée', cas: ['prospect-entete', 'prospect-siren'], r: [['const motifProspects = (texte) => { const t = String(texte).replace(NOM_DE_CODE, \' \'); return MOTIFS_PROSPECTS.find((m) => m.re.test(t))?.nom || null }', 'const motifProspects = (texte) => null']] },
+  { nom: 'inertie non vue (Ollama Cloud rejoué en boucle)', cas: ['ol-inerte'], r: [["if (r.code === 0 && !r.tue && fr.nom !== 'chatgpt'", "if (false && !r.tue && fr.nom !== 'chatgpt'"]] },
+  { nom: 'noms de scripts comptés comme prospects', cas: ['nom-de-script'], r: [['const t = String(texte).replace(NOM_DE_CODE, \' \')', 'const t = String(texte)']] },
   { nom: 'relais sans garde « prospects »', cas: ['prospect-entete'], r: [['if (toucheProspects()) finir(3, \'QUOTA\', `${epuise} ; pas de relais', 'if (false) finir(3, \'QUOTA\', `${epuise} ; pas de relais'], ["if (fr.nom !== 'chatgpt' && toucheProspects()) finir(3,", 'if (false) finir(3,']] },
   { nom: 'détection d\'épuisement lâche (toute ligne, code ignoré)', cas: ['bruit-ol'], r: [['const LIGNE_ERREUR_CODEX = /^(?:ERROR:|■)/', 'const LIGNE_ERREUR_CODEX = /^/'], ['if (r.code === 0 || r.tue) return null', 'if (false) return null']] },
   // ── contre-vérification du 27/09 : chaque trou trouvé, rouvert sur une copie ──

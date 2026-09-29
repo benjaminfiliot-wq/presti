@@ -19,6 +19,8 @@
 //                    comme le vrai Codex (codex.log de 026-105 : le message final juste après « tokens used »).
 //   BANC_CODE_<f>    code de sortie forcé quand il est servi par le fournisseur <f> (chatgpt, ol, fl), après son travail.
 //   BANC_DORT_<f>    secondes d'attente avant de sortir, servi par <f> (pour être tué par le délai du tourneur).
+//   BANC_INERTE=<f>  servi par <f>, ne lance aucune commande : écrit son appel d'outil en TEXTE, code 0, ne prend pas la fiche
+//                    (Ollama Cloud, 29/09/2026). Hors ce cas, tout travail imprime une ligne « exec » comme le vrai Codex.
 //   BANC_ECRIT_PROSPECT_PAR=<f>  la note SIREN de BANC_ECRIT_PROSPECT n'est écrite que servi par <f>.
 import fs from 'node:fs'
 import path from 'node:path'
@@ -68,6 +70,10 @@ if (aBout) {
   process.exit(1)
 }
 
+if (process.env.BANC_INERTE === fournisseur) {
+  console.log(['codex', '{', '  "cmd": "echo bonjour > a.txt",', '  "login": true', '}'].join('\n'))
+  process.exit(0)
+}
 const orch = path.join(arbre, '.orchestre')
 const f = (d) => path.join(orch, d, `${id}.md`)
 if (process.env.BANC_QUESTION === '1') {
@@ -85,6 +91,7 @@ if (process.env.BANC_NE_PREND_PAS !== '1' && fs.existsSync(f('file'))) {
 if (process.env.BANC_ECRIT_PROSPECT === '1' && (!process.env.BANC_ECRIT_PROSPECT_PAR || process.env.BANC_ECRIT_PROSPECT_PAR === fournisseur) && fs.existsSync(f('en-cours'))) {
   fs.appendFileSync(f('en-cours'), '\nNote de travail : la table gardera la colonne SIREN des prospects importés.\n')
 }
+if (process.env.BANC_QUESTION !== '1') console.log(['exec', 'bash -lc "sed -n 1,5p banc-travail.txt" in ' + arbre, ' succeeded in 4ms:'].join('\n'))
 fs.writeFileSync(path.join(arbre, 'banc-travail.txt'), `travail de ${fournisseur}, appel ${rang}\n`, { flag: 'a' })
 const message = `${id} : PRÊT — travail du banc (${fournisseur})${process.env.BANC_DERNIER ? '\n' + process.env.BANC_DERNIER : ''}\n`
 if (dernier) fs.writeFileSync(dernier, message)
