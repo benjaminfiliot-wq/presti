@@ -67,6 +67,12 @@ function creerMagasinJaugesFactice(plafonds = {}) {
   }
 }
 
+// Amène la période `cle` au plafond RÉEL : poserEtat ne fixe que le plafond (consommé 0) ; il faut consommer pour l'atteindre.
+async function remplirJusquAuPlafond(M, cle, plafond) {
+  M.poserEtat({ jauges: { [cle]: plafond } })
+  for (let i = 0; i < plafond; i++) if (!(await M.jaugeConsommer(cle, 1))) throw new Error(`le magasin factice refuse avant le plafond (${i}/${plafond})`)
+}
+
 // ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 // L'auto-contrôle : uniquement les jeux d'essai, indépendant du module (encore à écrire)
 // ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -174,14 +180,19 @@ async function jugementNormal(s) {
     try {
       const ok1 = await mod.consommerJauge(M, 'meta_ads_archive', 1, new Date('2026-10-14T22:59:00.000Z'))
       if (!ok1) e.push('un premier appel sous le plafond est refusé')
-      const n0 = M.ecritures.length
       // Le plafond horaire de meta_ads_archive est atteint juste avant minuit, puis l'heure change (23:59 → 00:00, Paris).
-      M.poserEtat({ jauges: { [`meta_ads_archive:${'2026-10-14T23'}`]: K.META_APPELS_PAR_HEURE } })
-      const auPlafond = await mod.consommerJauge(M, 'meta_ads_archive', 1, new Date('2026-10-14T23:59:30.000Z'))
+      await remplirJusquAuPlafond(M, `meta_ads_archive:${'2026-10-14T23'}`, K.META_APPELS_PAR_HEURE)
+      const n0 = M.ecritures.length
+      const auPlafond = await mod.consommerJauge(M, 'meta_ads_archive', 1, new Date('2026-10-14T21:59:30.000Z'))
       if (auPlafond) e.push('un appel au plafond horaire est accepté')
       if (M.ecritures.length !== n0) e.push('un appel refusé a quand même écrit dans le magasin')
-      const apresMinuit = await mod.consommerJauge(M, 'meta_ads_archive', 1, new Date('2026-10-15T00:00:30.000Z'))
+      const apresMinuit = await mod.consommerJauge(M, 'meta_ads_archive', 1, new Date('2026-10-14T22:00:30.000Z'))
       if (!apresMinuit) e.push('une nouvelle heure (après minuit, Paris) est encore refusée : la période n\'a pas changé')
+      // Heure d'hiver (UTC+1) : 22:59:30Z = 23:59:30 Paris, même clé d'heure T23 que l'été à 21:59:30Z.
+      const M2 = creerMagasinJaugesFactice()
+      await remplirJusquAuPlafond(M2, `meta_ads_archive:${'2026-12-14T23'}`, K.META_APPELS_PAR_HEURE)
+      if (await mod.consommerJauge(M2, 'meta_ads_archive', 1, new Date('2026-12-14T22:59:30.000Z'))) e.push("heure d'hiver : 23 h 59 Paris (22:59Z) devrait tomber sur la période 2026-12-14T23, au plafond")
+      if (!(await mod.consommerJauge(M2, 'meta_ads_archive', 1, new Date('2026-12-14T23:00:30.000Z')))) e.push("heure d'hiver : 0 h 00 Paris (23:00Z) devrait ouvrir une nouvelle période")
     } catch (err) { e.push(`appel simple : ${premiereLigne(err)}`) }
     // Une jauge « derive » (formulaire, technologie, e-mail sollicité, messagerie : comptées par la base, 0111) ne se
     // consomme jamais ici → erreur de programmation attendue.
