@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient'
 import AppShell from '@/app/AppShell'
 import { urlPlateforme } from '@/lib/urls'
 import Info from '@/app/Info'
+import CartePackPub from '@/app/pubs/CartePackPub'; import { actif } from '@/lib/flags'
 
 type Artisan = { id: string; nom: string | null; metier: string | null; slug: string | null; domaine?: string | null; domaine_verifie?: boolean | null }
 type Lead = { id: string; nom_prospect: string | null; contact: string | null; message: string | null; statut: string | null; created_at: string }
@@ -128,6 +129,7 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {actif('packPubVente') && <CartePackPub />}
           <div className="psh-panel">
             <header>
               <h2>Vos demandes</h2>

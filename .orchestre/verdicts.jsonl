@@ -724,3 +724,19 @@
 {"id":"026-073","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T13:52:56Z","duree_s":27,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"026-073","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T13:54:07Z","duree_s":27,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"026-239","verdict":"EXPIRÉE","ligne":"bail expiré : usine-codex-135 silencieux depuis 63 min","code":null,"date":"2026-09-29T14:17:46Z","duree_s":0,"agent":"usine-codex-135","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"026-138","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 61 min","code":null,"date":"2026-09-29T14:22:42Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"026-156","verdict":"EXPIRÉE","ligne":"bail expiré : ag-026-156 silencieux depuis 60 min","code":null,"date":"2026-09-29T14:23:27Z","duree_s":0,"agent":"ag-026-156","executant":"antigravity","lignes":0,"dossier":"en-cours"}
+{"id":"026-224","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:23:56Z","duree_s":21,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-233","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:24:37Z","duree_s":74,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-215","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:26:12Z","duree_s":17,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-008","verdict":"EXPIRÉE","ligne":"bail expiré : usine-codex-136 silencieux depuis 61 min","code":null,"date":"2026-09-29T14:30:20Z","duree_s":0,"agent":"usine-codex-136","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"026-133","verdict":"EXPIRÉE","ligne":"bail expiré : usine-codex-137 silencieux depuis 60 min","code":null,"date":"2026-09-29T14:30:20Z","duree_s":0,"agent":"usine-codex-137","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"026-084","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:47:05Z","duree_s":63,"agent":"claude-code","executant":"codex","lignes":795,"dossier":"en-cours"}
+{"id":"026-157","verdict":"FAIL","ligne":"FAIL LV-1 — --a-sec sur le témoin de fabrication : code null (signal SIGTERM), 0 attendu —","code":1,"date":"2026-09-29T14:47:38Z","duree_s":259,"agent":"claude-code","executant":"codex","lignes":705,"dossier":"fait"}
+{"id":"026-209","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:49:32Z","duree_s":16,"agent":"claude-code","executant":"codex","lignes":1140,"dossier":"en-cours"}
+{"id":"026-084","verdict":"FAIL","ligne":"✅ RV-1 rendezVous.ts (DISPONIBILITES, creneauxLibres, validerReservation, pageRendezVous, pageConfirmation, REPONSE_404) et route.ts (GET, POST, pas de page.tsx","code":143,"date":"2026-09-29T14:50:09Z","duree_s":61,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-236","verdict":"FAIL","ligne":"FAIL SVL-11 — git status : chemin(s) apparu(s) pendant ce passage : .orchestre/refuse/026-084.md (94 s)","code":1,"date":"2026-09-29T14:50:37Z","duree_s":108,"agent":"claude-code","executant":"codex","lignes":713,"dossier":"fait"}
+{"id":"026-144","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:51:05Z","duree_s":115,"agent":"claude-code","executant":"antigravity","lignes":831,"dossier":"fait"}
+{"id":"026-144","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:52:29Z","duree_s":48,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
+{"id":"026-084","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:52:34Z","duree_s":70,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-236","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:53:10Z","duree_s":70,"agent":"claude-code","executant":"codex","lignes":713,"dossier":"fait","machine":"usine"}
