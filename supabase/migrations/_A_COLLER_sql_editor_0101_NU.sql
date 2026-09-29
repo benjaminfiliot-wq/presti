@@ -77,7 +77,7 @@ begin
    where x.suivant is not null and x.suivant - x.debut > interval '5 minutes'
    limit 20;
   -- Le nombre de réponses par code HTTP, sur 6 heures au plus.
-  select coalesce(jsonb_object_agg(r.code::text, r.n), '{}'::jsonb)
+  select coalesce(jsonb_object_agg(coalesce(r.code::text, 'sans_code'), r.n), '{}'::jsonb)
     into v_reponses
     from (
       select status_code as code, count(*) as n
