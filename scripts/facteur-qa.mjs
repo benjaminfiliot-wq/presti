@@ -4,7 +4,8 @@
 // (026-062).
 //
 //   node --import ./scripts/ts-loader.mjs scripts/facteur-qa.mjs --partie=facteur|gmail|porteur [--racine=<d>] [--auto-controle]
-//   node … --partie=porteur --ici        (sur l'usine seulement : sert formulaires/ sur 127.0.0.1, lance Chromium)
+//   node … --partie=porteur --ici        (sur l'usine seulement : sert formulaires/ sur 127.0.0.1, lance Chromium, puis joue
+//                                         envoi/essai-porteur.mjs : le vrai script du porteur, les 3 routes, le source ; PF-3 à PF-15)
 //   node … --partie=porteur --reel --confirmer-reel   (mise en service, 026-143 ; lundi-vendredi 8h-17h30 Paris seulement)
 //
 // Un module ou fichier absent fait échouer le PREMIER critère de sa partie (FA-1, GM-1 ou PF-1) avec son identifiant ; les
@@ -659,6 +660,7 @@ async function partiePorteur(s, IDS) {
   }
   // PF-3 à PF-8, PF-10, PF-12, PF-13 : demandent un vrai Chromium — exercés seulement en --ici (sur l'usine).
   const CHROMIUM = ['PF-3', 'PF-4', 'PF-5', 'PF-6', 'PF-7', 'PF-8', 'PF-10', 'PF-12', 'PF-13']
+  const ESSAI_IDS = ['PF-3', 'PF-4', 'PF-5', 'PF-6', 'PF-7', 'PF-8', 'PF-9', 'PF-10', 'PF-11', 'PF-12', 'PF-13', 'PF-14', 'PF-15'] // ce que l'essai réel doit rendre, sur l'usine
   if (!ICI) {
     // PF-6/PF-7/PF-11 : les routes de l'usine sont jugeables sans Chromium (ce sont des routes Vercel), par le banc.
     {
@@ -695,7 +697,7 @@ async function partiePorteur(s, IDS) {
       s.passe(id, 'réservé à l\'exécution sur l\'usine (--ici), où un vrai Chromium tourne (le poste ne le lance jamais pour ce juge)')
     }
     // Le poste relance sa propre partie navigateur sur l'usine, comme le prescrit la fiche, et recopie le verdict.
-    const r = spawnSync(process.execPath, ['scripts/usine.mjs', 'executer', '--nom=porteur-qa', '--', process.execPath, '--import', './scripts/ts-loader.mjs', 'scripts/facteur-qa.mjs', '--partie=porteur', '--ici'], { cwd: R, encoding: 'utf8', timeout: 20 * 60_000, windowsHide: true })
+    const r = spawnSync(process.execPath, ['scripts/usine.mjs', 'executer', '--nom=porteur-qa', '--', 'node', '--import', './scripts/ts-loader.mjs', 'scripts/facteur-qa.mjs', '--partie=porteur', '--ici'], { cwd: R, encoding: 'utf8', timeout: 20 * 60_000, windowsHide: true })
     if (r.error || r.status === 5 || r.status === 3 || r.status === null) {
       console.log(String(r.stdout ?? '')); console.log(String(r.stderr ?? ''))
       console.log(`${JUGE} --partie=porteur : usine injoignable — ${r.error ? premiereLigne(r.error) : `code usine ${r.status}`}`)
@@ -705,7 +707,10 @@ async function partiePorteur(s, IDS) {
     console.log(String(r.stdout ?? ''))
     if (r.stderr) console.log(String(r.stderr))
     piege.retirer()
-    process.exit(r.status ?? 1)
+    // le verdict du poste ne se contente pas de celui de l'usine : un critère rouge ici (PF-1, PF-2, PF-9 et son typecheck) reste rouge
+    const rougesPoste = IDS.filter((id) => s.enEchec(id))
+    if (rougesPoste.length) console.log(`${NOM} : FAIL sur le poste — ${rougesPoste.join(', ')}`)
+    process.exit(r.status === 0 && !rougesPoste.length ? 0 : (r.status || 1))
   } else {
     // --ici : sur l'usine, vrai Chromium. Playwright doit être installé (026-143, mise en service) ; sinon, refus explicite
     // plutôt qu'un faux vert.
@@ -726,12 +731,20 @@ async function partiePorteur(s, IDS) {
       const soumissionsAvant = serveur.requetes.filter((x) => x.methode === 'POST').length
       if (serveur.requetes.filter((x) => x.methode === 'POST').length !== soumissionsAvant) e3.push('une requête de soumission a été consignée sur une page d\'abandon')
       s.juger('PF-3', e3, `${RAISONS.length} pages d'abandon jugées par un vrai Chromium, chacune à sa raison exacte, aucune soumission`)
-      // PF-4 : robots.txt interdit l'action.
-      const e4 = []
-      await page.goto(serveur.urlDe('/interdit-action/contact'), { waitUntil: 'load' })
-      s.juger('PF-4', e4, 'robots.txt qui interdit l\'action → abandon robots_txt, aucune requête vers l\'action (jugé dans porteur-formulaire.mjs, orchestrant robotsAutorise)')
-      for (const id of ['PF-5', 'PF-6', 'PF-7', 'PF-8', 'PF-10', 'PF-12', 'PF-13']) s.passe(id, 'jugé sur l\'usine (soumission réelle, verrou par envoi_id, export de nuit) une fois porter-formulaire.mjs écrit : ce banc-ci fixe déjà la page et le serveur')
     } finally { await navigateur.close(); await serveur.arreter() }
+    // L'essai réel (026-095, juge corrigé le 29/09 : PF-4 était vide et PF-5, 6, 7, 8, 10, 12, 13 « passe » sans essai, PF-9 et PF-11
+    // non évalués) : le vrai script du porteur dans un vrai Chromium, contre des sites témoins en 127.0.0.1 et une doublure de l'API ;
+    // les trois routes par le banc ; le source. Une ligne ✅/❌ par critère, recopiée ici. Un critère sans ligne est rouge.
+    const essaiF = path.join(ENVOI, 'essai-porteur.mjs')
+    if (!fs.existsSync(essaiF)) { for (const id of ESSAI_IDS) s.echoue(id, 'essai-porteur.mjs absent des jeux d\'essai'); return }
+    const essai = spawnSync(process.execPath, ['--import', pathToFileURL(LOADER).href, essaiF, `--racine=${RAC}`], { cwd: R, encoding: 'utf8', timeout: 20 * 60_000, maxBuffer: 64 * 1024 * 1024, windowsHide: true })
+    const sortieEssai = `${essai.stdout ?? ''}\n${essai.stderr ?? ''}`
+    const finEssai = /^essai-porteur : (PASS|FAIL)(?: — (.*))?$/mu.exec(sortieEssai)
+    const vus = new Set()
+    for (const m of sortieEssai.matchAll(/^(✅|❌) (PF-\d+) (.*)$/gmu)) { vus.add(m[2]); s.juger(m[2], m[1] === '✅' ? [] : [m[3]], m[3]) }
+    if (finEssai?.[1] === 'FAIL') for (const id of (finEssai[2] ?? '').split(/,\s*/).filter(Boolean)) if (!s.enEchec(id)) s.echoue(id, 'l\'essai annonce FAIL sur ce critère')
+    const raisonSansVerdict = finEssai ? 'l\'essai n\'a rendu aucune ligne pour ce critère' : `l'essai n'a pas rendu de verdict : ${essai.error ? premiereLigne(essai.error) : court(sortieEssai.split('\n').filter(Boolean).slice(-3).join(' · '), 300)}`
+    for (const id of ESSAI_IDS) if (!vus.has(id)) s.echoue(id, raisonSansVerdict)
   }
 
   // --reel --confirmer-reel : mise en service (026-143), lundi-vendredi 8h-17h30 Paris seulement.
@@ -794,7 +807,7 @@ async function autoControle(s) {
 // ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 const IDS_FACTEUR = Array.from({ length: 14 }, (_, i) => `FA-${i + 1}`)
 const IDS_GMAIL = Array.from({ length: 7 }, (_, i) => `GM-${i + 1}`)
-const IDS_PORTEUR = Array.from({ length: 13 }, (_, i) => `PF-${i + 1}`)
+const IDS_PORTEUR = Array.from({ length: 15 }, (_, i) => `PF-${i + 1}`) // PF-14 (relecture avant le clic) et PF-15 (route oppositions) : ajoutés le 29/09 avec l'essai réel
 const IDS = { facteur: IDS_FACTEUR, gmail: IDS_GMAIL, porteur: IDS_PORTEUR }[PARTIE]
 const idsAuto = { facteur: ['AC-1', 'AC-2', 'AC-3'], gmail: ['AC-1'], porteur: ['AC-2', 'AC-3'] }[PARTIE]
 const ids = o.autoControle ? idsAuto : IDS
