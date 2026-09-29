@@ -740,3 +740,4 @@
 {"id":"026-144","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:52:29Z","duree_s":48,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
 {"id":"026-084","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:52:34Z","duree_s":70,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
 {"id":"026-236","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:53:10Z","duree_s":70,"agent":"claude-code","executant":"codex","lignes":713,"dossier":"fait","machine":"usine"}
+{"id":"026-236","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T15:03:52Z","duree_s":109,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}

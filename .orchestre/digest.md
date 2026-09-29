@@ -6,14 +6,15 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-29T14:59:26Z
+# Digest — 2026-09-29T15:03:57Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 149 tâche(s) PASS, 203138 ligne(s) · faites par Claude Code : 86 tâche(s) PASS, 78970 ligne(s).
+**Mesure** — déléguées (antigravity, codex) : 149 tâche(s) PASS, 202425 ligne(s) · faites par Claude Code : 86 tâche(s) PASS, 78970 ligne(s).
 **État** — file : 11 · en cours : 9 · faites : 240 · refusées : 9
 
-## Attention (2)
+## Attention (3)
+- verrou expiré : 026-254 (usine-codex-144, silencieux depuis 62 min) — `node scripts/orchestre.mjs expirer`
 - 2 question(s) en attente : `026-088` — `node scripts/orchestre.mjs repondre 026-088 <n>`
 - 2 question(s) en attente : `026-138` — `node scripts/orchestre.mjs repondre 026-138 <n>`
 
@@ -39,7 +40,7 @@
 | 026-091 | test | file | codex | — | Écrire scripts/juges-026-horloge-bus-mutations.mjs, qui prouve sur des copies que chacun des dix juges du domaine horloge et bus échoue sur une vraie faute avec le critère nommé et passe sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue et chaque témoin passe |
 | 026-172 | test | file | claude-code | — | Écrire le juge d'écran de la station Claw3D station-ecran-qa (--partie=verite\|camera\|acteurs\|calque\|themes\|reglages\|salles2 [--lot=a\|b]\|webkit, sur la copie aux drapeaux pilotage et stationCarte levés, avec la session simulée de 026-170, captures prises par le juge), le script de recette de la carte station-recette.mjs (--avant, --reel, --constat) et le lot e de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
 | 026-237 | feature | file | claude-code | — | Brancher les leçons validées dans la porte unique des modèles (creerLecteur de lib/agents/llm.ts, les trois moteurs, leçons lues une fois à la création, sous l'interrupteur lecons_dans_consignes) et dans l'entrée du chef (scripts/chef/etat.mjs lance lecons-entree.mjs après l'état), dire le bloc <lecons_validees> dans docs/agents/chef.md, jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=branchement, de scripts/agents-llm-qa.mjs et de scripts/chef-qa.mjs --groupe=consigne,etat,cycle |
-| 026-236 | feature | fait | claude-code | PASS | 2026-09-29T14:53:10Z · 70s · 713 l. |
+| 026-236 | feature | fait | codex | PASS | 2026-09-29T15:03:52Z · 109s · 0 l. |
 | 026-084 | feature | fait | codex | PASS | 2026-09-29T14:52:34Z · 70s · 0 l. |
 | 026-144 | feature | fait | antigravity | PASS | 2026-09-29T14:52:29Z · 48s · 0 l. |
 | 026-157 | feature | refuse | claude-code | FAIL | FAIL LV-1 — --a-sec sur le témoin de fabrication : code null (signal SIGTERM), 0 attendu — |
