@@ -741,3 +741,4 @@
 {"id":"026-084","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:52:34Z","duree_s":70,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
 {"id":"026-236","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T14:53:10Z","duree_s":70,"agent":"claude-code","executant":"codex","lignes":713,"dossier":"fait","machine":"usine"}
 {"id":"026-236","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T15:03:52Z","duree_s":109,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-254","verdict":"EXPIRÉE","ligne":"bail expiré : usine-codex-144 silencieux depuis 63 min","code":null,"date":"2026-09-29T15:05:18Z","duree_s":0,"agent":"usine-codex-144","executant":"codex","lignes":0,"dossier":"en-cours"}
