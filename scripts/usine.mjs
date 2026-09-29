@@ -950,8 +950,8 @@ function fournisseurEpuise(fr, r) {
   // Inerte (29/09/2026) : Ollama Cloud (gpt-oss:120b-cloud) écrit parfois l'appel d'outil en TEXTE au lieu de le faire exécuter
   // (essai réel : 1 tour sur 3) ; Codex sort en code 0 sans avoir lancé une seule commande (aucune ligne « exec »), le
   // vérificateur rend rouge et le tour suivant recommence pareil. Un fournisseur libre qui n'a rien exécuté est rejoué sur le
-  // suivant. Jamais pour ChatGPT ; jamais quand Codex a posé une question (le tourneur la lit juste après).
-  if (r.code === 0 && !r.tue && fr.nom !== 'chatgpt' && !/^exec$/m.test(String(r.propre || '').replace(/\r/g, '')) && !/\.question\.md/.test(String(r.propre || ''))) {
+  // suivant. Jamais pour ChatGPT ; jamais quand Codex a posé une question (r.question, posé par le tourneur).
+  if (r.code === 0 && !r.tue && fr.nom !== 'chatgpt' && !/^exec$/m.test(String(r.propre || '').replace(/\r/g, '')) && !r.question) {
     return `${fr.libelle} inerte : le modèle n'a lancé aucune commande (appel d'outil écrit en texte)`
   }
   if (r.code === 0 || r.tue) return null
@@ -1172,6 +1172,12 @@ async function tourner(dossier) {
     const ligne = (sortie.match(new RegExp(`${id}\\s*:\\s*(PASS|FAIL)[^\\n]*`)) || [])[0] || sortie.trim().split('\n').pop() || ''
     return { pass: r.status === 0 && new RegExp(`${id}\\s*:\\s*PASS`).test(sortie), sortie, ligne: ligne.slice(0, 200) }
   }
+  // Question d'un modèle LIBRE (29/09/2026) : gpt-oss (Ollama Cloud) abandonne en 30 s et pose une question de complaisance (026-235,
+  // deux fois de suite : « stub minimal ou plus de détails ? ») au lieu de faire la fiche. Sur la voie libre, au plus deux fois par tâche
+  // et jamais au dernier tour, la question est écartée (copie gardée dans question-<tour>.md) et le tour suivant reçoit l'ordre de décider
+  // seul ; le vérificateur reste le juge. ChatGPT, lui, garde son droit de poser une vraie question (code 7).
+  let relanceQuestion = null
+  let questionsEcartees = 0
   let conseilSuite = null // le conseil d'une autre IA après le tour rouge précédent, ajouté à l'instruction de ce tour-ci
   for (let tour = 1; tour <= cfg.tours; tour++) {
     poser({ tour })
@@ -1180,6 +1186,8 @@ async function tourner(dossier) {
       : `Relis le fichier ${relPrompt} du depot : sa derniere section contient le retour du verificateur lance hors bac a sable. Corrige ce qui echoue, dans le perimetre de la tache ${id}, puis termine par la ligne ${id} : PRÊT.`
     if (conseilSuite) instruction += `\n\n${TITRE_CONSEIL}\n\n${conseilSuite}`
     conseilSuite = null
+    if (relanceQuestion) instruction += relanceQuestion
+    relanceQuestion = null
     // Le tour, rejoué sur le fournisseur suivant tant que le servi rend sa ligne de quota : au plus une fois par fournisseur.
     let r
     for (let rejeu = false; ; rejeu = true) {
@@ -1188,6 +1196,7 @@ async function tourner(dossier) {
       if (fr.nom !== 'chatgpt' && toucheProspects()) finir(3, 'QUOTA', `relais arrêté : la fiche touche des données de prospects (${etatT.prospects}) — jamais d'IA gratuite ni de modèle :cloud`)
       const reprise = !rejeu ? '' : `\n\nReprise sur un autre modele (${fr.libelle}) : le precedent s est arrete sur un quota pendant ce tour ; ce qu il a deja ecrit est dans le depot, continue a partir de la.${fs.existsSync(fiche('en-cours')) ? ` La tache ${id} est deja prise (.orchestre/en-cours/${id}.md) : ne relance pas prochaine, lis-la et fais le travail.` : ''}`
       r = await codexExec(arbre, instruction + reprise, cfg, journal, dernier, fr, ficheCode)
+      r.question = fs.existsSync(path.join(arbre, '.orchestre', 'en-cours', `${id}.question.md`)) // une question posée n'est pas de l'inertie
       etatT.codes.push(r.code); poser()
       if (fr.nom === 'chatgpt' && r.code !== 0 && /not logged in|please log ?in|codex login|401 Unauthorized|403 Forbidden/i.test(r.sortie)) finir(6, 'AUTH', 'codex n est pas connecté (codex login --device-auth, code validé par Benj)')
       // Seulement les lignes d'erreur de Codex tout en bas de sa sortie, Codex sorti en erreur (fournisseurEpuise) : le 27/09,
@@ -1198,6 +1207,12 @@ async function tourner(dossier) {
       if (!basculer(tour, epuise)) finir(3, 'QUOTA', `tous les fournisseurs épuisés (${FOURNISSEURS.map((f) => f.libelle).join(' → ')}) — ${epuise}`)
     }
     const qf = path.join(arbre, '.orchestre', 'en-cours', `${id}.question.md`)
+    if (fs.existsSync(qf) && !fs.existsSync(qf.replace(/\.question\.md$/, '.reponse.md')) && FOURNISSEURS[iFournisseur].nom !== 'chatgpt' && questionsEcartees < 2 && tour < cfg.tours) {
+      questionsEcartees++
+      try { fs.copyFileSync(qf, path.join(dossier, `question-${tour}.md`)); fs.rmSync(qf) } catch { /* la copie échoue : la question reste posée, code 7 */ }
+      noter(`=== ${maintenant()} question écartée (voie libre, ${questionsEcartees}/2, tour ${tour}) : ${FOURNISSEURS[iFournisseur].libelle} a posé une question au lieu de travailler ; copie dans question-${tour}.md ; le tour suivant lui ordonne de décider seul`)
+      relanceQuestion = `\n\nTu as pose une question au lieu de travailler. Personne ne repondra : decide seul, prends l option la plus complete qui respecte le perimetre et le verificateur de la tache ${id}, ecris le code et les preuves, puis termine par la ligne ${id} : PRÊT. Ne pose plus de question.`
+    }
     if (fs.existsSync(qf) && !fs.existsSync(qf.replace(/\.question\.md$/, '.reponse.md'))) finir(7, 'QUESTION', `Codex a posé une question (.orchestre/en-cours/${id}.question.md)`)
     // Un tour précédent vert en fait/ puis rouge au final a envoyé la fiche en refuse/ : dans cette copie jetable, on la remet en en-cours/.
     if (fs.existsSync(fiche('refuse')) && !fs.existsSync(fiche('en-cours')) && !fs.existsSync(fiche('fait'))) fs.renameSync(fiche('refuse'), fiche('en-cours'))

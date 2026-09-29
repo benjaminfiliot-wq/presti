@@ -9,6 +9,7 @@
 //   BANC_BRUIT=1     écrit aussi des lignes qui NE sont PAS des erreurs de Codex (sortie de commande, texte de fiche) mais
 //                    qui parlent de quota, de 429, d'Unauthorized : elles ne doivent déclencher aucun relais.
 //   BANC_QUESTION=1  pose une question (.orchestre/en-cours/<id>.question.md) au lieu de travailler.
+//   BANC_QUESTION_UNE_FOIS=1  pose sa question au 1er appel de chaque fournisseur seulement, puis travaille.
 //   BANC_NE_PREND_PAS=1  ne prend pas la fiche (elle reste en file/).
 //   BANC_ECRIT_PROSPECT=1  en travaillant, ajoute à sa copie de la fiche une colonne SIREN de prospects.
 //   BANC_BRUIT=fin   les mêmes lignes de bruit, mais TOUT EN BAS de sa sortie (après son travail).
@@ -76,7 +77,7 @@ if (process.env.BANC_INERTE === fournisseur) {
 }
 const orch = path.join(arbre, '.orchestre')
 const f = (d) => path.join(orch, d, `${id}.md`)
-if (process.env.BANC_QUESTION === '1') {
+if (process.env.BANC_QUESTION === '1' || (process.env.BANC_QUESTION_UNE_FOIS === '1' && rang === 1)) {
   fs.mkdirSync(path.join(orch, 'en-cours'), { recursive: true })
   if (fs.existsSync(f('file'))) fs.renameSync(f('file'), f('en-cours'))
   fs.writeFileSync(path.join(orch, 'en-cours', `${id}.question.md`), 'Question du banc : quelle colonne garder ?\n')

@@ -310,6 +310,19 @@ const CAS = [
     juger(r, D) { fin(r, D, 7, 'QUESTION'); pasDeConseil(r, D) },
   },
   {
+    // 29/09 : un modèle LIBRE qui pose une question de complaisance est renvoyé au travail (2 fois au plus), ChatGPT garde sa question.
+    nom: 'question-libre-ecartee', env: { BANC_EPUISES: 'chatgpt', BANC_QUESTION_UNE_FOIS: '1', BANC_VERDICTS: 'FAIL,PASS', BANC_CONSEIL: 'ok' },
+    juger(r, D) {
+      fin(r, D, 0, 'PASS'); appels(r, D, ['chatgpt', 'ol', 'ol'])
+      if (!/question écartée \(voie libre, 1\/2/.test(r.log)) D.push('codex.log sans « question écartée (voie libre, 1/2 »')
+      if (r.codex[2] && !/Ne pose plus de question/.test(r.codex[2].instruction)) D.push('le tour suivant ne dit pas au modèle libre de décider seul')
+    },
+  },
+  {
+    nom: 'question-libre-persistante', tours: 3, env: { BANC_EPUISES: 'chatgpt', BANC_QUESTION: '1', BANC_VERDICTS: 'FAIL' },
+    juger(r, D) { fin(r, D, 7, 'QUESTION'); appels(r, D, ['chatgpt', 'ol', 'ol', 'ol']) },
+  },
+  {
     nom: 'non-prise', env: { BANC_NE_PREND_PAS: '1', BANC_VERDICTS: 'FAIL', BANC_CONSEIL: 'ok' },
     juger(r, D) { fin(r, D, 4, 'NON_PRISE'); pasDeConseil(r, D) },
   },
@@ -494,6 +507,7 @@ const MUTANTS = [
   { nom: 'bascule absente de codex.log', cas: ['quota-ol'], r: [['noter(`=== ${maintenant()} bascule de fournisseur', 'void (`=== ${maintenant()} bascule de fournisseur']] },
   { nom: 'détection des prospects retirée', cas: ['prospect-entete', 'prospect-siren'], r: [['const motifProspects = (texte) => { const t = String(texte).replace(NOM_DE_CODE, \' \'); return MOTIFS_PROSPECTS.find((m) => m.re.test(t))?.nom || null }', 'const motifProspects = (texte) => null']] },
   { nom: 'inertie non vue (Ollama Cloud rejoué en boucle)', cas: ['ol-inerte'], r: [["if (r.code === 0 && !r.tue && fr.nom !== 'chatgpt'", "if (false && !r.tue && fr.nom !== 'chatgpt'"]] },
+  { nom: 'question de complaisance du modèle libre non écartée', cas: ['question-libre-ecartee'], r: [["&& questionsEcartees < 2 && tour < cfg.tours) {", '&& false) {']] },
   { nom: 'noms de scripts comptés comme prospects', cas: ['nom-de-script'], r: [['const t = String(texte).replace(NOM_DE_CODE, \' \')', 'const t = String(texte)']] },
   { nom: 'relais sans garde « prospects »', cas: ['prospect-entete'], r: [['if (toucheProspects()) finir(3, \'QUOTA\', `${epuise} ; pas de relais', 'if (false) finir(3, \'QUOTA\', `${epuise} ; pas de relais'], ["if (fr.nom !== 'chatgpt' && toucheProspects()) finir(3,", 'if (false) finir(3,']] },
   { nom: 'détection d\'épuisement lâche (toute ligne, code ignoré)', cas: ['bruit-ol'], r: [['const LIGNE_ERREUR_CODEX = /^(?:ERROR:|■)/', 'const LIGNE_ERREUR_CODEX = /^/'], ['if (r.code === 0 || r.tue) return null', 'if (false) return null']] },
