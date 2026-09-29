@@ -6,18 +6,16 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-29T10:55:02Z
+# Digest — 2026-09-29T10:57:06Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 136 tâche(s) PASS, 199380 ligne(s) · faites par Claude Code : 78 tâche(s) PASS, 65100 ligne(s).
-**État** — file : 11 · en cours : 14 · faites : 221 · refusées : 9
-
-## ⚠ 1 question(s) en attente
-- `.orchestre/en-cours/026-231.question.md` → `node scripts/orchestre.mjs repondre 026-231 <n>`
+**Mesure** — déléguées (antigravity, codex) : 138 tâche(s) PASS, 200133 ligne(s) · faites par Claude Code : 78 tâche(s) PASS, 65100 ligne(s).
+**État** — file : 11 · en cours : 14 · faites : 222 · refusées : 8
 
 | id | type | où | exécutant | verdict | détail |
 |---|---|---|---|---|---|
+| 026-231 | feature | en-cours | claude-code | — | depuis 2026-09-29T10:56:47Z · Écrire la moitié usine du socle du savoir, scripts/usine/savoir-recevoir.mjs (archives du dépôt validées puis posées sous /home/agents/travail/savoir, compartiments general et prospects séparés), lib/savoir/index.ts (découpe, normalisation, index BM25 déterministe, caviardage, fusion des scores), scripts/savoir/indexer.mjs (index par compartiment, vecteurs Ollama locaux pour general seulement et sous interrupteur), les unités presti-chef-savoir-recevoir et presti-chef-savoir-index (.service et .path) et docs/savoir/LISEZMOI.md, jusqu'au vert de scripts/savoir-socle-qa.mjs --partie=reception,index,unites |
 | 026-157 | feature | en-cours | usine-codex-108 | — | depuis 2026-09-29T00:01:10Z · Écrire scripts/pack-pub/exporter.mjs (une ligne packs_pubs payée devient un dossier pack.json local, sans courriel, et signale la voix à produire) et scripts/pack-pub/deposer.mjs (juge local vert d'abord, puis dépôt de sortie/ dans le bucket privé packs-pubs avec une marge de 400 Mo et passage payee → fabriquee) |
 | 026-006 | feature | en-cours | claude-code | — | depuis 2026-09-29T01:53:00Z · Passer presti à Next.js 16 (dernière 16.x), React et React DOM 19.2 et leurs types, avec le script build en next build --webpack pour @serwist/next et sans script next lint, typecheck, build et budget de poids verts, jusqu'au vert de next16-qa --groupe=dependances |
 | 026-156 | feature | en-cours | ag-026-156 | — | depuis 2026-09-28T23:57:50Z · Écrire scripts/pack-pub/fabriquer.mjs qui, depuis un dossier de pack, prépare les photos (octets vérifiés, sans métadonnées), refuse une personne sans accord, écrit le manifeste des entrées, instancie et rend les trois films et les trois visuels avec HyperFrames en local, puis appelle textes.mjs, pour produire un sortie/ que pub-locale-qa accepte sur les trois jeux d'essai |
@@ -30,7 +28,6 @@
 | 026-133 | test | en-cours | usine-codex-121 | — | depuis 2026-09-29T10:19:50Z · Écrire scripts/juges-026-usine-mutations.mjs, qui prouve sur des copies que usine-socle-qa, usine-sql-qa, usine-routes-qa, usine-production-qa et les groupes consigne (schéma de réunion), consignes, fil et usine de chef-qa échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
 | 026-152 | test | en-cours | usine-codex-122 | — | depuis 2026-09-29T10:20:21Z · Écrire scripts/juges-026-lt-mutations.mjs, qui prouve sur des copies que chacun des 16 juges du domaine livraison et trésorerie échoue, sur le critère attendu, face à une vraie faute plantée dans le code PASS, et passe sur l'arbre réel ; code 0 seulement si chaque mutation est prise et chaque témoin passe |
 | 026-224 | feature | en-cours | usine-codex-123 | — | depuis 2026-09-29T10:27:05Z · Fish Audio sous garde de licence et quota selon la relecture de complétude du 27/09 |
-| 026-231 | feature | en-cours | usine-codex-120 | — | depuis 2026-09-29T10:11:34Z · Écrire la moitié usine du socle du savoir, scripts/usine/savoir-recevoir.mjs (archives du dépôt validées puis posées sous /home/agents/travail/savoir, compartiments general et prospects séparés), lib/savoir/index.ts (découpe, normalisation, index BM25 déterministe, caviardage, fusion des scores), scripts/savoir/indexer.mjs (index par compartiment, vecteurs Ollama locaux pour general seulement et sous interrupteur), les unités presti-chef-savoir-recevoir et presti-chef-savoir-index (.service et .path) et docs/savoir/LISEZMOI.md, jusqu'au vert de scripts/savoir-socle-qa.mjs --partie=reception,index,unites |
 | 026-235 | feature | en-cours | usine-codex-84 | — | depuis 2026-09-28T14:56:22Z · Écrire scripts/savoir/lecons.mjs (candidats depuis les verdicts en échec, les décisions tranchées par Benj, les décisions tranchées du bus et les corrections des fiches, datées, sourcées, caviardées et idempotentes ; lister ; valider et rejeter par Claude Code ou la revue du lundi seulement, jamais sur l'usine ; verifier-source), jusqu'au vert de scripts/savoir-lecons-qa.mjs --partie=candidats,validation |
 | 026-155 | feature | file | usine-codex-112 | — | Écrire scripts/studio/garde.mjs, qui refuse d'ouvrir un échantillon du Studio tant que les préalables datés de 026-128 (licences de la chaîne gratuite avec le droit commercial, fiche ARPP, activité de l'EI ; ni juriste ni compte Instagram) et le dossier de la marque (accord écrit tiré de sa réponse, page produit datée de moins de 30 jours, absence de refus) manquent, ainsi que docs/studio/modeles-messages.md (qui renvoie aux modèles de lib/agents/acquisition/modeles.ts sans les recopier) et docs/studio/seance.md (la séance de Claude Code ouverte par une décision studio_echantillon, jusqu'au dépôt de l'échantillon et à l'envoi par le Répondeur) |
 | 026-253 | feature | file | claude-code | — | Adapter scripts/budget-perf.mjs à la sortie de build de Next 16 --webpack (le fichier .next/app-build-manifest.json qu'il lisait a disparu), en gardant la même mesure honnête du poids réellement transféré pour /site/[slug] et /p/[slug], jusqu'au vert de next16-qa --groupe=dependances (N16-1 à N16-7) |
@@ -43,6 +40,7 @@
 | 026-171 | test | file | claude-code | — | Écrire les juges des modules purs, des thèmes, des réglages, de l'extraction du Poste et de la branche réservée (station-themes-qa --partie=modules et --theme=station\|vaisseau, station-reglages-qa, poste-extraction-qa, ecommerce-reservee-qa) avec leurs jeux d'essai et le lot t de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
 | 026-172 | test | file | claude-code | — | Écrire le juge d'écran de la station Claw3D station-ecran-qa (--partie=verite\|camera\|acteurs\|calque\|themes\|reglages\|salles2 [--lot=a\|b]\|webkit, sur la copie aux drapeaux pilotage et stationCarte levés, avec la session simulée de 026-170, captures prises par le juge), le script de recette de la carte station-recette.mjs (--avant, --reel, --constat) et le lot e de la preuve, chacun échouant sur la référence avec son premier critère et passant son témoin |
 | 026-222 | feature | file | codex | — | Cursor comme exécutant borné de l’orchestre selon la relecture de complétude du 27/09 |
+| 026-047 | feature | fait | codex | PASS | 2026-09-29T10:55:47Z · 509s · 0 l. |
 | 026-079 | feature | fait | claude-code | PASS | 2026-09-29T10:48:36Z · 24s · 0 l. |
 | 026-045 | test | fait | claude-code | FAIL | PASS JP-1 — [autotest echec-sur-reference : lecture des sorties : 6 sorties plantées refusées (dont le critère PASS à tort cité par d'autres), la conforme accep |
 | 026-238 | test | fait | claude-code | PASS | 2026-09-29T10:28:24Z · 565s · 0 l. |
@@ -67,7 +65,6 @@
 | 026-029 | test | fait | claude-code | PASS | 2026-09-29T03:05:59Z · 51s · 0 l. |
 | 026-081 | test | fait | claude-code | PASS | 2026-09-29T01:43:02Z · 10s · 0 l. |
 | 026-016 | test | fait | claude-code | PASS | 2026-09-29T01:41:52Z · 12s · 0 l. |
-| 026-047 | feature | refuse | codex | FAIL | FAIL VA-8 — app/api/controle/a-faire/route.ts : le diff avec HEAD (0 retirée(s), 0 ajoutée(s)) ne se limite pas à la ligne NOMS_CRON ; NOMS_CRON : ajouté rien ; |
 | 026-082 | feature | fait | usine-codex-109 | PASS | 2026-09-29T00:52:56Z · 49s · 581 l. |
 | 026-126 | test | fait | claude-code | PASS | 2026-09-29T00:34:29Z · 282s · 0 l. |
 | 026-061 | feature | fait | claude-code | PASS | 2026-09-29T00:08:26Z · 24s · 0 l. |
