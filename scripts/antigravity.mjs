@@ -164,7 +164,7 @@ const etatDe = (t) => {
   // (sortie d'outil) = il travaille. La fin se reconnaît à la ligne « <id> : PASS|FAIL » demandée par le prompt.
   const idle = d.type === 'PLANNER_RESPONSE' && contenu.length > 0
   const dernierTexte = [...t].reverse().map((x) => texteDe(x.content).trim()).find((x) => x) || ''
-  return { etat: idle ? (/\b\d{3}-[\w-]+ : (PASS|FAIL)/.test(contenu) ? 'terminé' : 'en attente (a parlé)') : 'travaille', quand: d.created_at || '', dernier: dernierTexte.replace(/\s+/g, ' ').slice(0, 110) }
+  return { etat: idle ? (/\b(?:\d{3}-[\w-]+|dem-[0-9a-f]{8}) : (PASS|FAIL)/.test(contenu) ? 'terminé' : 'en attente (a parlé)') : 'travaille', quand: d.created_at || '', dernier: dernierTexte.replace(/\s+/g, ' ').slice(0, 110) }
 }
 
 // ── Le prompt d'un exécutant : la boucle, une tâche, une conversation ────────────────────────────────────

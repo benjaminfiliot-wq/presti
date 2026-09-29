@@ -129,7 +129,8 @@ for (const m of [...MOTIFS, ...MOTIFS_EXECUTER]) m.tous = new RegExp(m.re.source
 // Fichiers de clé, reconnus au nom : écartés par le filtre (première barrière) ET refusés par controlerPaquet s'ils
 // passaient quand même (seconde). Avant le 24/09/2026, seule la seconde les arrêtait.
 const estFichierDeCle = (b) => /\.(pem|key|p12|pfx|jks|keystore|ppk)$|^id_(rsa|dsa|ecdsa|ed25519)$/i.test(b) && !/\.pub(\.pem)?$/i.test(b)
-const ID_VALIDE = /^\d{3}-[\w-]+$/
+// dem-<8 hexadécimaux> : les demandes de Benj (0117, scripts/demandes-ecosysteme.mjs) ; toutes les autres fiches : NNN-slug.
+const ID_VALIDE = /^(?:\d{3}-[\w-]+|dem-[0-9a-f]{8})$/
 
 const args = process.argv.slice(2)
 const commande = args[0]
