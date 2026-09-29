@@ -985,11 +985,23 @@ const SONDE_CHERCHER = `import fs from 'node:fs'\nimport path from 'node:path'\n
 function installerSavoir(ctx, bac) {
   const reel = path.join(ctx.racine, ...CHEMINS.chercher.split('/'))
   if (!existe(reel)) return `${CHEMINS.chercher} absent de la racine jugée (fiche ${QUI.chercher} : le savoir lié ne peut pas se chercher)`
-  for (const c of ['lib/savoir', 'lib/agents/lectureFirecrawl.ts', 'lib/agents/moteurs.ts', 'scripts/ts-loader.mjs']) {
+  for (const c of ['lib/savoir', 'lib/agents/lectureFirecrawl.ts', 'lib/agents/moteurs.ts', 'lib/agents/acquisition/lecteurSite.ts', 'lib/agents/acquisition/contrat.ts', 'scripts/ts-loader.mjs']) {
     const src = path.join(ctx.racine, ...c.split('/'))
     if (existe(src)) { fs.mkdirSync(path.dirname(path.join(bac, ...c.split('/'))), { recursive: true }); fs.cpSync(src, path.join(bac, ...c.split('/')), { recursive: true }) }
   }
   fs.mkdirSync(path.join(bac, 'scripts', 'savoir'), { recursive: true })
+  // L'index de l'essai est celui du temoin du socle (026-229) : son format n'est pas celui de l'indexeur reel (026-231), que le
+  // vrai chercher.mjs lit. Quand la racine jugee a son propre indexeur, on refait l'index du bac avec lui, a partir du meme corpus
+  // (general/courant, deja dans le bac) : le chercher et l'index sont alors du meme jeu, et l'attendu (premiere source) ne change pas.
+  const indexeur = path.join(ctx.racine, 'scripts', 'savoir', 'indexer.mjs')
+  if (existe(indexeur)) {
+    fs.copyFileSync(indexeur, path.join(bac, 'scripts', 'savoir', 'indexer.mjs'))
+    const reglages = path.join(bac, 'reglages-index.json')
+    const r0 = lireJSONSi(path.join(bac, 'docs', 'savoir', 'reglages.json')) || {}
+    fs.writeFileSync(reglages, JSON.stringify({ ...r0, interrupteurs: { ...(r0.interrupteurs || {}), semantique: { actif: false } } }))
+    const ix = spawnSync(process.execPath, ['--experimental-strip-types', ...importer(path.join(bac, 'scripts', 'ts-loader.mjs')), path.join(bac, 'scripts', 'savoir', 'indexer.mjs'), '--compartiment=general', `--racine-travail=${path.join(bac, '.orchestre', 'travail', 'savoir')}`, `--reglages=${reglages}`], { cwd: bac, encoding: 'utf8', windowsHide: true, timeout: 120_000, env: envEssai(bac) })
+    if (ix.status !== 0) return `indexer.mjs de la racine jugee : code ${ix.status ?? 'delai'} sur le corpus de l'essai — ${court(`${ix.stderr || ''}${ix.stdout || ''}`.split('\n').filter((l) => !/Warning|Reparsing|eliminate|trace-warn/.test(l)).join(' ').trim(), 200)}`
+  }
   fs.copyFileSync(reel, path.join(bac, 'scripts', 'savoir', 'chercher-reel.mjs'))
   fs.writeFileSync(path.join(bac, 'scripts', 'savoir', 'chercher.mjs'), SONDE_CHERCHER)
   return null
@@ -1026,7 +1038,11 @@ async function svb9(ctx) {
           if (!Array.isArray(l.sources) || l.sources.length < 1 || l.sources.length > 3) d.push(`savoir_lie[${i}] : ${Array.isArray(l.sources) ? l.sources.length : '?'} source(s) (de 1 à 3)`)
           else {
             for (const s of l.sources) if (!/^[^:]+:\d+-\d+$/.test(String(s))) d.push(`savoir_lie[${i}] : source « ${s} » (chemin:debut-fin attendu)`)
-            if (l.sources[0] !== att.premiere) d.push(`savoir_lie[${i}] : première source « ${l.sources[0]} », attendue « ${att.premiere} »`)
+            // Meme fichier, et des lignes comprises dans celles attendues : l'indexeur reel decoupe le document en passages plus fins que
+            // le temoin (3-4 au lieu de 1-4) ; le chemin exact et un intervalle contenu dans l'attendu restent exigés.
+            const [, cheminA, debA, finA] = String(att.premiere).match(/^(.+):(\d+)-(\d+)$/) || []
+            const [, cheminL, debL, finL] = String(l.sources[0]).match(/^(.+):(\d+)-(\d+)$/) || []
+            if (!cheminA || cheminL !== cheminA || Number(debL) < Number(debA) || Number(finL) > Number(finA) || Number(debL) > Number(finL)) d.push(`savoir_lie[${i}] : première source « ${l.sources[0]} », attendue « ${att.premiere} » (ou un intervalle de lignes contenu dedans)`)
           }
         })
       }
@@ -1086,7 +1102,10 @@ async function svb10(ctx) {
     }
     const ensemble = (s) => new Set(String(s || '').split('\n').filter(Boolean).map((l) => l.slice(3)).filter((p) => !p.startsWith('.orchestre/travail/') && !p.startsWith('.orchestre/preuves/')))
     const avant = ensemble(STATUT_AVANT)
-    const nouveaux = [...ensemble(git(['status', '--porcelain']))].filter((p) => !avant.has(p))
+    // D'autres sessions ecrivent dans le depot pendant le passage : seuls comptent les chemins du territoire de ce que l'on juge
+    // (les fichiers du bilan, ses unites, son document, ses reglages) ou dont le nom trahit une sortie du bilan.
+    const territoire = (p) => /^(scripts\/chef\/bilan|scripts\/usine\/systemd\/presti-chef-bilan|docs\/revues\/|docs\/agents\/chef-bilan|docs\/savoir\/reglages\.json)/.test(p) || /(^|\/)(plan-)?bilan[^/]*$|(^|\/)donnees\.md$|(^|\/)espion-[^/]*$/.test(p)
+    const nouveaux = [...ensemble(git(['status', '--porcelain']))].filter((p) => !avant.has(p) && territoire(p))
     if (nouveaux.length) d.push(`git status : chemin(s) apparu(s) pendant ce passage : ${nouveaux.slice(0, 6).join(' | ')}`)
   } else {
     const pkg = path.join(racine, 'package.json')
