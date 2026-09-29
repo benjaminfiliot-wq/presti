@@ -16,7 +16,8 @@
 //   TC-5  traiterFileArgent dure 20 s (simulées) → veilleur « saute » pour le budget, durée totale ≤ 26 s, passage noté.
 //   TC-6  10 h 05 puis 10 h 05 m 30 s → le veilleur une seule fois, par consommerLimite('a0:creneau:<AAAAMMJJHHmm>', 1, 300).
 //   TC-7  pause générale active → les étapes tournent, le détail du passage porte pause: true.
-//   TC-8  la réponse ne contient ni @, ni uuid, ni « ops. », même quand les modules rendent ou lèvent de tels textes.
+//   TC-8  la réponse ne contient ni @, ni uuid, ni « ops. », même quand les modules rendent ou lèvent de tels textes (dont une
+//         erreur levée par la file de l'argent : le catch de l'étape argent est exercé, revue de 026-091).
 //   TC-9  le diff de scripts/fermeture-e2e.mjs avec HEAD se limite au chemin du tic ajouté dans la ligne busAgents (026-042 ;
 //         tant qu'elle n'est pas à HEAD, la ligne que 026-042 y pose est la base) ; la route contient actif('busAgents').
 //   TC-10 npm run typecheck en code 0, la route parmi les fichiers vérifiés (en --temoin : la lecture du typecheck éprouvée).
@@ -222,6 +223,22 @@ export const SONDES = {
     m.reseau.rendre()
     return { echecs: e, resume: 'modules qui rendent ou lèvent @, uuid et ops. : la réponse n\'en porte aucun' }
   },
+  // Revue de 026-091 (29/09, décision du chef) : le `catch` de l'étape argent (app/api/agents/tic/route.ts) n'était jamais
+  // exercé : une erreur levée par fileArgent.traiterFileArgent, avec @, uuid et « ops. », ne doit rien laisser dans la réponse.
+  async fuitesArgent(ctx) {
+    const id = crypto.randomUUID()
+    const m = await monter(ctx, { 'fileArgent.traiterFileArgent': { erreur: `violates foreign key ops.taches ${id} contact@artisan-${id.slice(0, 5)}.invalid` } })
+    const e = []
+    const x = await m.appeler()
+    if (x.texte.includes('@')) e.push('argent en panne : la réponse contient « @ »')
+    if (S.RE_UUID.test(x.texte)) e.push('argent en panne : la réponse contient un uuid')
+    if (/ops\./.test(x.texte)) e.push('argent en panne : la réponse contient « ops. »')
+    if (x.texte.includes(id.slice(0, 5))) e.push('argent en panne : le texte de l\'erreur levée est dans la réponse')
+    const arg = etapesDe(x.json).argent
+    if (arg?.statut !== 'echec') e.push(`argent en panne : étape argent ${JSON.stringify(arg)}, « echec » attendu (la panne doit être exercée, pas ignorée)`)
+    m.reseau.rendre()
+    return { echecs: e, resume: 'traiterFileArgent lève @, uuid et ops. : l\'étape argent est en echec et la réponse n\'en porte aucun' }
+  },
 }
 
 // ── Côté juge ──────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -322,6 +339,7 @@ export const SABOTAGES = [
   { id: 'TC-7', nom: 'pause non reportée', fichier: TIC, chercher: '{ etapes, dureeMs, pause }', remplacer: '{ etapes, dureeMs }' },
   { id: 'TC-7', nom: 'pause qui arrête le tic', fichier: TIC, chercher: '  const debut = Date.now()\n', remplacer: "  if ((await pauseGenerale()).active) { await enregistrerPassage('tic', { pause: true }, true); return NextResponse.json({ ok: true, pause: true }) }\n  const debut = Date.now()\n" },
   { id: 'TC-8', nom: 'rendus bruts', fichier: TIC, chercher: "etapes[nom] = { statut: 'ok', dureeMs: Date.now() - t, ...nombres(r) }", remplacer: "etapes[nom] = { statut: 'ok', dureeMs: Date.now() - t, ...(r as object) }" },
+  { id: 'TC-8', nom: "le texte d'erreur de l'étape argent dans la réponse", fichier: TIC, chercher: "  } catch {\n    etapes.argent = { statut: 'echec' }\n    reussi = false\n  }", remplacer: "  } catch (e) {\n    etapes.argent = { statut: 'echec', raison: String(e instanceof Error ? e.message : e) as 'budget' }\n    reussi = false\n  }" },
   { id: 'TC-8', nom: 'identifiant du passage rendu', fichier: TIC, chercher: 'NextResponse.json({ ok: true, etapes, dureeMs })', remplacer: 'NextResponse.json({ ok: true, etapes, dureeMs, passage: globalThis.crypto.randomUUID() })' },
   { id: 'TC-9', nom: 'autre chemin ajouté', fichier: FERMETURE, chercher: `, '${TIC}'`, remplacer: `, '${TIC}', 'app/api/agents/horloge/route.ts'` },
   { id: 'TC-9', nom: 'tic absent de la carte', fichier: FERMETURE, chercher: `, '${TIC}'`, remplacer: '' },
@@ -336,7 +354,11 @@ export const CRITERES = {
   'TC-5': { juger: parSonde('budget') },
   'TC-6': { juger: parSonde('creneau') },
   'TC-7': { juger: parSonde('pause') },
-  'TC-8': { juger: parSonde('fuites') },
+  'TC-8': { juger: async (racine) => {
+    const n = nonJuge(racine); if (n) return n
+    const a = S.deSonde(await sonde('fuites', racine)), b = S.deSonde(await sonde('fuitesArgent', racine))
+    return res([...(a.echecs || []), ...(b.echecs || [])], [a.resume, b.resume].filter(Boolean).join(' ; '))
+  } },
   'TC-9': { juger: async (r) => jugerFermeture(r) },
   'TC-10': { juger: jugerTypecheck, temoin: async (r) => C.eprouverLectureTypecheck(r, [TIC]) },
   'TC-11': { juger: jugerReel, reel: true },

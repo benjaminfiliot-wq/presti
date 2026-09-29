@@ -14,7 +14,8 @@
 //   VA-2  lignes d'attention (etats/lignes.json) : chaque cas rend exactement ses lignes, et ses urgents partent tout de suite ;
 //         ops_argent_etat en erreur → « non mesuré », sans exception.
 //   VA-3  une journée de Paris, un passage toutes les 5 min, 6 alertes non urgentes : 3 envois non urgents au plus (digests
-//         compris), les deux digests une fois chacun, l'urgent une fois ; notifications_jour monte avec les digests.
+//         compris), les deux digests une fois chacun, l'urgent une fois ; notifications_jour monte avec les digests. Un passage au
+//         créneau du matin avec notifications_jour déjà à 3 : aucun digest (le plafond est atteint, revue de 026-091).
 //   VA-4  créneaux : 07 h 30 → matin une fois (pas à 07 h 35), 18 h 30 → soir, 12 h → rien ; creneauDigest juste au changement
 //         d'heure ; le digest : sections dans l'ordre, 5 décisions au plus avec des liens decision=<uuid> et rien d'autre dans la
 //         requête, 7 lignes d'attention au plus, aucune adresse, aucune valeur de prospect.
@@ -116,6 +117,7 @@ function etatDuCas(cas, t0, { agentsEnPlus = [], envoiEnPlus = null, agentsSeuls
   const ops = { ...b.ops_etat, agents }
   if (cas.couts_mois !== undefined) ops.couts_mois = cas.couts_mois
   if (cas.decisions_ouvertes) ops.decisions_ouvertes = cas.decisions_ouvertes
+  if (cas.notifications_jour !== undefined) ops.notifications_jour = cas.notifications_jour
   let envoi = cas.envoi === undefined ? b.envoi : typeof cas.envoi === 'string' ? cas.envoi : fusionner(b.envoi_calme, cas.envoi)
   if (envoiEnPlus && envoi && typeof envoi === 'object') envoi = envoiEnPlus(envoi)
   const e = {
@@ -331,6 +333,22 @@ export const SONDES = {
       const notif = m.monde.evenements.filter((v) => v.agent === 'a0' && v.type === 'notification').length
       if (notif !== 2) e.push(`${notif} événement(s) « notification » de a0, 2 attendus (un par digest)`)
       return { echecs: e, resume: `${j.passages} passages le ${jour} : ${emails} e-mail(s), dont ${nUrgents} urgent(s) et ${nonUrgents} non urgent(s) (digests ${d.join(', ')}) ; ${notif} notifications` }
+    } finally { await m.fermer() }
+  },
+  // Revue de 026-091 (29/09, décision du chef) : le plafond de 3 n'était jamais atteint (deux créneaux seulement). Un passage
+  // au créneau du matin, notifications_jour DÉJÀ à 3 : aucun digest, aucune notification (jamais dans le même monde que la journée).
+  async plafond(ctx) {
+    const c = lireEtat('journee.json').creneaux.passages.find((p) => p.digest === 'matin')
+    const m = await monter(ctx)
+    try {
+      const e = []
+      const tp = Date.parse(c.a)
+      await m.jouer({ nom: 'plafond atteint' }, { t0: tp, etat: etatDuCas({ notifications_jour: 3 }, tp), passages: [0] })
+      const dp = m.digestsEnvoyes()
+      const np = m.monde.evenements.filter((v) => v.agent === 'a0' && v.type === 'notification').length
+      if (dp.length) e.push(`notifications_jour déjà à 3 au créneau du matin : ${dp.length} digest envoyé (${dp.join(', ')}), aucun attendu (3 envois non urgents au plus par jour)`)
+      if (np) e.push(`notifications_jour déjà à 3 : ${np} événement(s) « notification » écrit(s), aucun attendu`)
+      return { echecs: e, resume: `notifications_jour à 3 au créneau du matin (${c.paris}) : ${dp.length} digest, ${np} notification` }
     } finally { await m.fermer() }
   },
   async creneaux(ctx) {
@@ -671,6 +689,7 @@ export const SABOTAGES = [
   { id: 'VA-2', nom: 'agent en pause surveillé', fichier: V, chercher: "!a.battement_le || a.en_pause || pause.active", remplacer: '!a.battement_le || pause.active' },
   { id: 'VA-2', nom: 'panne sans envoi', fichier: V, chercher: "export const URGENTS = ['paiement', 'appel', 'panne_agent',", remplacer: "export const URGENTS = ['paiement', 'appel'," },
   { id: 'VA-2', nom: 'jeton à J-8 signalé', fichier: V, chercher: 'reste <= 7 * 24 * HEURE', remplacer: 'reste <= 9 * 24 * HEURE' },
+  { id: 'VA-3', nom: 'plafond de 3 notifications retiré', fichier: V, chercher: 'if (creneau && Number(etat?.notifications_jour ?? 0) < 3) {', remplacer: 'if (creneau) {' },
   { id: 'VA-3', nom: 'non urgents envoyés', fichier: V, chercher: '  for (const l of triees.filter((x) => !x.urgent)) await garderAlerte(alerte(l))', remplacer: '  await envoyerAlertes(triees.filter((x) => !x.urgent).map(alerte))' },
   { id: 'VA-3', nom: 'notification non comptée', fichier: V, chercher: "      await ops_evenement_ajouter({ p_agent: 'a0', p_type: 'notification'", remplacer: "      if (Math.random() > 2) await ops_evenement_ajouter({ p_agent: 'a0', p_type: 'notification'" },
   { id: 'VA-4', nom: 'soir dès 18 h', fichier: V, chercher: 'if (m >= 18 * 60 + 30 && m < 20 * 60)', remplacer: 'if (m >= 18 * 60 && m < 20 * 60)' },
@@ -719,7 +738,11 @@ export const SABOTAGES = [
 export const CRITERES = {
   'VA-1': { juger: jugerExports },
   'VA-2': { juger: parSonde('lignes') },
-  'VA-3': { juger: parSonde('journee') },
+  'VA-3': { juger: async (racine) => {
+    const n = nonJuge(racine); if (n) return n
+    const jour = S.deSonde(await sonde('journee', racine)), plafond = S.deSonde(await sonde('plafond', racine))
+    return res([...(jour.echecs || []), ...(plafond.echecs || [])], [jour.resume, plafond.resume].filter(Boolean).join(' ; '))
+  } },
   'VA-4': { juger: parSonde('creneaux') },
   'VA-5': { juger: parSonde('coupe') },
   'VA-6': { juger: parSonde('passages') },

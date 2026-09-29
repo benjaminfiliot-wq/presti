@@ -485,6 +485,30 @@ function juger0099(s, texteM) {
       if (lecture >= 0 && lecture < iv) s.echoue(IDS.corps, `ops:${code} : le comptage dans ops.envois vient avant le verrou (${verrou}…)`)
     }
     if (!c.includes("attimezone'europe/paris'")) s.echoue(IDS.corps, "le jour ne se calcule pas « at time zone 'Europe/Paris' »")
+    // revue de 026-091 (29/09, décision du chef) : « Europe/Paris quelque part » ne suffit pas (une mutation qui ne change que
+    // le jour du plafond restait verte). Aucun autre fuseau dans le corps ; v_jour, v_debut et v_fin (les bornes des compteurs
+    // du jour) sont chacun calculés « at time zone 'Europe/Paris' », et existent.
+    {
+      for (const z of new Set([...g.corps.matchAll(/at\s+time\s+zone\s+'([^']*)'/gi)].map((x) => x[1]))) if (z !== 'Europe/Paris') s.echoue(IDS.corps, `un jour ou une borne se calcule « at time zone '${z}' » : seul 'Europe/Paris' est permis dans ops.garde_envois() (le jour des plafonds est le jour de Paris)`)
+      for (const v of ['v_jour', 'v_debut', 'v_fin']) {
+        const affect = [...g.corps.matchAll(new RegExp(`\\b${v}\\s*:=\\s*([^;]*);`, 'gi'))]
+        if (!affect.length) s.echoue(IDS.corps, `${v} n'est jamais affecté dans ops.garde_envois() : le jour du plafond n'est pas calculé`)
+        for (const a of affect) if (!/at\s+time\s+zone\s+'Europe\/Paris'/i.test(a[1])) s.echoue(IDS.corps, `${v} := ${court(a[1].replace(/\s+/g, ' '), 70)} : le jour du plafond doit se calculer « at time zone 'Europe/Paris' »`)
+      }
+    }
+    // le plafond du jour ne compte que les premiers contacts et les relances (et, sur les canaux où tout message compte, tout
+    // message) : chaque liste de types du bloc des plafonds est exactement ('premier_contact', 'relance'). lien_maquette, reponse,
+    // confirmation_stop et reponse_rgpd sont des réponses dans un fil ouvert, jamais comptées au plafond (revue A2 du 24/09).
+    {
+      const iP = g.corps.search(/\bif\s+new\.canal\s+in\s*\(\s*'formulaire_site'/i)
+      if (iP < 0) s.echoue(IDS.corps, "le bloc des plafonds du jour (« if new.canal in ('formulaire_site', … ) or new.type in (…) then ») est introuvable")
+      else {
+        const listes = [...g.corps.slice(iP).matchAll(/\b(?:new|e)\.type\s+in\s*\(([^)]*)\)/gi)].map((x) => listeSql(x[1]))
+        const attendu = ['premier_contact', 'relance']
+        if (listes.length < 3) s.echoue(IDS.corps, `${listes.length} liste(s) de types dans le bloc des plafonds ; attendu : l'entrée et les deux comptages (canal, puis canal et envoyeur)`)
+        for (const l of listes) if ([...l].sort().join(',') !== [...attendu].sort().join(',')) s.echoue(IDS.corps, `le plafond du jour compte les types ${l.map((k) => `« ${k} »`).join(', ')} ; il ne compte exactement que ${attendu.map((k) => `« ${k} »`).join(', ')} (lien_maquette, reponse, confirmation_stop et reponse_rgpd sont des réponses dans un fil ouvert)`)
+      }
+    }
     if (!c.includes("envoyeur='*'")) s.echoue(IDS.corps, "la ligne (canal, '*') n'est pas lue : un canal sans plafond doit être fermé (ops:quota_absent)")
     if (!(c.includes('to_jsonb(new)') && c.includes('preuve_demande'))) s.echoue(IDS.corps, 'preuve_demande n\'est pas lue par to_jsonb(new) (0099 doit marcher avant 0106)')
     if (!/expire_le is null or [a-z_.]*expire_le>now\(\)|expire_le>now\(\) or [a-z_.]*expire_le is null|coalesce\([a-z_.]*expire_le,'infinity'(?:::timestamptz)?\)>now\(\)/.test(sr)) s.echoue(IDS.corps, "l'opposition lue n'est pas l'opposition active (expire_le is null or expire_le > now())")

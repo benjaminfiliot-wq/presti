@@ -22,7 +22,7 @@
     "codex",
     "claude-code"
   ],
-  "maxMinutes": 30,
+  "maxMinutes": 65,
   "lectureLibre": [
     ".orchestre/**",
     "plans/**"
