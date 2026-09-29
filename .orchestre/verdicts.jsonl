@@ -600,3 +600,5 @@
 {"id":"026-154","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T23:52:07Z","duree_s":1,"agent":"usine-codex-106","executant":"codex","lignes":478,"dossier":"fait"}
 {"id":"026-110","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T23:57:00Z","duree_s":94,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T23:58:01Z","duree_s":384,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-156","verdict":"FAIL","ligne":"FAIL PL-1 — non évalué : scripts/pack-pub/fabriquer.mjs introuvable","code":1,"date":"2026-09-29T00:00:59Z","duree_s":0,"agent":"ag-026-156","executant":"antigravity","lignes":633,"dossier":"en-cours"}
+{"id":"026-061","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T00:08:26Z","duree_s":24,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
