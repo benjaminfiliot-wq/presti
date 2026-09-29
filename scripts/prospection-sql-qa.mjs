@@ -14,8 +14,17 @@
 // ou « … : FAIL — ids ») :
 //   PG-1 fichier et liste permise · PG-2 fonctions du contrat, aucune qui retire une opposition ni n'écrit les interrupteurs ·
 //   PG-3 sécurité · PG-4 lecture du corps de ops.garde_envois() (les dix-neuf codes de la voie gratuite, verrous, heure de
-//   Paris, opposition active, branche « envoye » sans refus) · PG-5 jumeaux et contrôle · PG-6 essai à sec ·
+//   Paris, opposition active, branche « envoye » refusée seulement sous pause ou accord tombé) · PG-5 jumeaux et contrôle · PG-6 essai à sec ·
 //   PG-7 non-régression · PG-8 --reel.
+//   Correction du 27/09 de 026-034 (juge d'abord : ces trois critères sont rouges sur le SQL d'avant) :
+//   PG-9 l'accord individuel de Benj (R24 : statut attend_accord_benj, ops.accords_benj, ops.garde_accords(), approbation
+//   qui consomme un accord) · PG-10 l'envoi figé dès l'attente (retouche après approbation, diag_g2) · PG-11 les dates posées
+//   par la base, jamais par l'écrivain (prepare_le antidaté, diag_g1). Chacun lit le SQL ET exige ses clés d'essai à true.
+//   Contre-vérification du 27/09 et décisions de Benj du 27/09 (juge d'abord, rouges sur le SQL d'avant) : PG-12 le plafond du
+//   jour à la réanimation (toute entrée ou ré-entrée en prepare, attend_accord_benj ou approuve est datée par la base et compte
+//   au jour où elle a lieu ; une insertion hors file passe les mêmes contrôles) · PG-13 le passage à envoye refusé sous pause
+//   active ou accord tombé (échu, ou émis avant un mouvement de la pause) ; PG-10 fige aussi entetes, verdicts et
+//   approuve_par_agent.
 //
 // Usage :
 //   node scripts/prospection-sql-qa.mjs [--racine=<dossier>] [--sans-essai]
@@ -56,11 +65,51 @@ const M = {
   apres: "select to_regprocedure('public.ops_garde_etat()') is null as rien_ne_reste",
 }
 const AVANT = ['0096', '0097', '0098'] // les migrations que --avec peut placer avant 0099
-const IDS = { fichier: 'PG-1', contrat: 'PG-2', securite: 'PG-3', corps: 'PG-4', jumeaux: 'PG-5', essai: 'PG-6', nr: 'PG-7', reel: 'PG-8' }
+const IDS = { fichier: 'PG-1', contrat: 'PG-2', securite: 'PG-3', corps: 'PG-4', jumeaux: 'PG-5', essai: 'PG-6', nr: 'PG-7', reel: 'PG-8', accord: 'PG-9', fige: 'PG-10', dates: 'PG-11', reanimation: 'PG-12', envoye: 'PG-13' }
 const ROLES_FERMES = ['public', 'anon', 'authenticated', 'service_role']
 
 // Les dix-neuf codes de la voie gratuite du 25/09 (« Place dans la série » de 026-032, PG-4 de 026-034), exactement.
 const CODES_VOIE_GRATUITE = ['pause_generale', 'opposition', 'confirmation_stop', 'rgpd_hors_demande', 'envoi_froid_ferme', '90_jours', 'relance_sans_contact', '3_messages', '72_heures', 'quota_absent', 'quota', 'quota_nouveaux', 'quota_reponses', 'verdicts', 'formulaire_deja', 'relance_formulaire', 'froid_email_interdit', 'preuve_demande_absente', 'relance_sollicitee']
+
+// Correction du 27/09 : les codes nouveaux (garde_envois, puis garde_accords), les sept statuts, les champs figés.
+const CODES_ACCORD_ENVOIS = ['accord_absent', 'accord_perime', 'accord_rejoue', 'accord_different', 'envoi_fige']
+const CODES_ACCORD_EMISSION = ['accord_auteur', 'accord_envoi', 'accord_fige', 'accord_perime']
+const STATUTS = ['prepare', 'attend_accord_benj', 'approuve', 'envoye', 'saute', 'perime', 'annule']
+// décision de Benj du 27/09 : entetes et verdicts figés comme les autres champs (et approuve_par_agent, qui porte les verdicts)
+const CHAMPS_FIGES = ['canal', 'envoyeur', 'type', 'prospect_id', 'destinataire', 'empreinte_texte', 'entetes', 'verdicts', 'approuve_par_agent']
+// décision de Benj du 27/09 : les deux seuls refus du passage à envoye
+const REFUS_ENVOYE = ['pause_generale', 'accord_perime']
+// Les clés d'essai de la correction du 27/09, par critère (elles entrent aussi dans PG-6).
+const CLES_PG9 = [
+  'attente_sans_verdicts_refusee', 'attente_verdicts_passe', 'approuve_sans_attente_refuse', 'accord_absent_refuse',
+  'accord_valide_approuve', 'accord_consomme', 'accord_unique_par_envoi', 'accord_rejoue_refuse', 'accord_perime_refuse',
+  'accord_pause_annule', 'accord_autre_destinataire_refuse', 'accord_autre_canal_refuse', 'accord_texte_modifie_refuse',
+  'accord_different_refuse', 'accord_non_fondateur_refuse', 'accord_hors_attente_refuse', 'accord_fige_refuse',
+  'accord_opposition_annule', 'accord_annule_hors_attente', 'envoye_sans_accord_signale', 'attente_compte_au_plafond',
+]
+const CLES_PG10 = [
+  'retouche_destinataire_approuve_refusee', 'retouche_texte_approuve_refusee', 'retouche_canal_approuve_refusee',
+  'retouche_type_approuve_refusee', 'retouche_prospect_approuve_refusee', 'retouche_envoyeur_approuve_refusee',
+  'retouche_texte_attente_refusee', 'retouche_envoye_refusee', 'envoye_ne_revient_pas', 'approuve_champ_libre_passe',
+  'retouche_prepare_passe',
+  // décision de Benj du 27/09 (info_a3 de la contre-vérification)
+  'retouche_entetes_approuve_refusee', 'retouche_verdicts_approuve_refusee', 'retouche_entetes_attente_refusee',
+  'retouche_verdicts_attente_refusee', 'retouche_approuve_par_agent_attente_refusee',
+]
+// Contre-vérification du 27/09 (a4, a4c) : la réanimation et le plafond du jour.
+const CLES_PG12 = [
+  'reanimation_datee_par_la_base', 'reanimation_respecte_plafond', 'du_jour_compte_les_reanimes', 'insertion_saute_controlee',
+  'insertion_saute_plafond_plein_refusee', 'attente_veille_compte_au_plafond', 'approbation_veille_compte_au_plafond',
+]
+// Décision de Benj du 27/09 (info_r1, info_r2) : pause active ou accord tombé bloquent le passage à envoye.
+const CLES_PG13 = [
+  'pause_envoye_refuse', 'pause_envoye_reste_approuve', 'envoye_insere_pause_refuse', 'envoye_accord_echu_refuse',
+  'envoye_pause_levee_refuse', 'envoye_accord_valide_passe',
+]
+const CLES_PG11 = [
+  'antidate_prepare_le_pose_par_la_base', 'antidate_ne_contourne_pas_plafond', 'antidate_puis_du_jour_refuse',
+  'prepare_le_immuable', 'envoye_le_pose_par_la_base', 'accord_emis_le_pose_par_la_base',
+]
 
 // Les clés d'essai du cahier PG-6 : le scénario doit toutes les porter (il peut en porter d'autres, jamais moins).
 const CLES_PG6 = [
@@ -86,8 +135,8 @@ const CLES_PG6 = [
   'confirmation_stop_passe_une_fois', 'confirmation_stop_seconde_refusee', 'opposition_expiree_ne_refuse_plus', 'opposition_temporaire_active_refuse',
   // 90 jours
   'premier_contact_10_jours_refuse', 'premier_contact_91_jours_passe', 'lien_maquette_1_jour_passe',
-  // pause générale
-  'pause_refuse_prepare', 'pause_refuse_lien_maquette', 'pause_envoye_passe', 'pause_envoye_evenement_hors_regle',
+  // pause générale (décision de Benj du 27/09 : le passage à envoye sous pause est refusé, voir CLES_PG13)
+  'pause_refuse_prepare', 'pause_refuse_lien_maquette',
   'prepare_vers_envoye_evenement_hors_regle', 'hors_regle_sans_donnee_personnelle',
   // filet des réponses
   'reponses_trois_passent', 'reponse_quatrieme_quota_reponses', 'reponses_vingt_jour_passent', 'reponse_21e_quota_reponses', 'reponse_veille_non_comptee',
@@ -96,6 +145,8 @@ const CLES_PG6 = [
   // ops_garde_etat et droits
   'garde_etat_declencheurs_actifs', 'garde_etat_interrupteurs', 'garde_etat_plafonds', 'garde_etat_du_jour', 'garde_etat_sans_donnee_prospect',
   'anon_refuse_garde_etat', 'authenticated_refuse_garde_etat',
+  // correction du 27/09, contre-vérification et décisions de Benj du 27/09
+  ...CLES_PG9, ...CLES_PG10, ...CLES_PG11, ...CLES_PG12, ...CLES_PG13,
 ]
 
 // ── Options ───────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -181,6 +232,25 @@ function brancheSi(corps, i) {
     else if ((k === 'elsif' || k === 'else') && prof === 0) return [t, x.index]
   }
   return null
+}
+/** Les valeurs d'une liste SQL serrée « 'a','b' » : ['a', 'b']. */
+const listeSql = (x) => String(x).split(',').map((v) => v.trim().replace(/^'|'$/g, '')).filter(Boolean)
+/** Les clés d'essai `cles` : portées par le scénario et à true dans le compte rendu de l'essai du jumeau courant. */
+function exigerCles(s, id, cles) {
+  if (SANS_ESSAI) { s.note(`${id} : --sans-essai, ses ${cles.length} clés d'essai ne sont pas lues`); return }
+  const sc = lireSi(path.join(R, M.scenario))
+  const dans = sc ? clesScenario(sc) : []
+  const absentes = cles.filter((c) => !dans.includes(c))
+  if (absentes.length) s.echoue(id, `${M.scenario} ne porte pas ${absentes.length} clé(s) : ${listeTxt(absentes)}`)
+  const N = lireSi(ch(M.nu))
+  if (!N) { s.echoue(id, `jumeau nu absent ou vide : l'essai ne se relit pas`); return }
+  const cr = lireCompteRendu(ch(M.essai_a_sec), { empreinte: empreinte(jumeauNuCoupe(ch(M.nu))), cles })
+  if (!cr.ok) for (const r of cr.raisons.slice(0, 2)) s.echoue(id, `essai à sec : ${r}`)
+}
+/** Chaque liste « statut in (…) » d'un corps serré qui compte prepare et approuve compte aussi attend_accord_benj. */
+function listesSansAttente(corps) {
+  return [...serrer(corps).matchAll(/\bstatut (?:not )?in\(([^)]*)\)/g)].map((x) => listeSql(x[1]))
+    .filter((l) => l.includes('prepare') && l.includes('approuve') && !l.includes('attend_accord_benj'))
 }
 /** Les valeurs de « canal » comparées ou listées dans un texte SERRÉ : canal='x', canal<>'x', canal in('x','y'). */
 function valeursCanal(sr) {
@@ -271,14 +341,23 @@ function jugerNonRegression(s, id) {
 const FONCTIONS = Object.entries(CONTRAT.fonctions).filter(([, f]) => f.migration === NUM) // ops.garde_envois, ops.annuler_sur_opposition, ops_garde_etat
 const GENRES = [
   ['fonction', /^create or replace function (ops|public)\.[a-z0-9_]+\(/],
-  ['drop_trigger', /^drop trigger if exists ([a-z0-9_]+) on ops\.(envois|opposition)$/],
+  ['drop_trigger', /^drop trigger if exists ([a-z0-9_]+) on ops\.(envois|opposition|accords_benj)$/],
   ['trigger', /^create (or replace )?trigger ([a-z0-9_]+) /],
   ['revoke', /^revoke (?:all|execute)(?: privileges)? on function (ops|public)\.([a-z0-9_]+)\b/],
   ['grant', /^grant execute on function (ops|public)\.([a-z0-9_]+)\b/],
-  ['commentaire', /^comment on (function|trigger) /],
+  ['commentaire', /^comment on (function|trigger|table ops\.accords_benj|column ops\.accords_benj\.[a-z_]+) /],
+  // correction du 27/09 (R24) : la contrainte de statut d'ops.envois, et la table des accords de Benj — rien d'autre
+  ['statut_drop', /^alter table ops\.envois drop constraint if exists envois_statut_check$/],
+  ['statut_add', /^alter table ops\.envois add constraint envois_statut_check check\(statut in\(([^)]*)\)\)$/],
+  ['table_accords', /^create table if not exists ops\.accords_benj\(/],
+  ['index_accords', /^create index if not exists [a-z0-9_]+ on ops\.accords_benj\(/],
+  ['rls_accords', /^alter table ops\.accords_benj enable row level security$/],
+  ['revoke_table', /^revoke all(?: privileges)? on (?:table )?ops\.accords_benj from /],
 ]
 const DECL = {
-  'ops.garde_envois': /^create (?:or replace )?trigger ([a-z0-9_]+) before (?:insert or update of statut|update of statut or insert) on ops\.envois for each row (?:when ?\(.*\) )?execute (?:function|procedure) ops\.garde_envois\(\)$/,
+  // correction du 27/09 (PG-10) : toute mise à jour, sans « of » ni « when » — une colonne oubliée dans la liste serait une porte
+  'ops.garde_envois': /^create (?:or replace )?trigger ([a-z0-9_]+) before (?:insert or update|update or insert) on ops\.envois for each row execute (?:function|procedure) ops\.garde_envois\(\)$/,
+  'ops.garde_accords': /^create (?:or replace )?trigger ([a-z0-9_]+) before (?:insert or update|update or insert) on ops\.accords_benj for each row execute (?:function|procedure) ops\.garde_accords\(\)$/,
   'ops.annuler_sur_opposition': /^create (?:or replace )?trigger ([a-z0-9_]+) after (?:insert or update of expire_le|update of expire_le or insert) on ops\.opposition for each row (?:when ?\(.*\) )?execute (?:function|procedure) ops\.annuler_sur_opposition\(\)$/,
 }
 function juger0099(s, texteM) {
@@ -288,10 +367,13 @@ function juger0099(s, texteM) {
   if (!ins.length) s.echoue(IDS.fichier, `${M.fichier} ne porte aucune instruction`)
   for (const x of genres) if (!x.g) s.echoue(IDS.fichier, `instruction hors de la liste du point 1 (fonctions, déclencheurs, droits, commentaires) : « ${court(x.n, 100)} »`)
   const cs = codeSeul(texteM)
-  for (const [quoi, re] of [['create table', /\bcreate (unlogged )?table\b/], ['alter table', /\balter table\b/], ['drop table', /\bdrop table\b/], ['create extension', /\bcreate extension\b/], ['create policy', /\bcreate policy\b/], ['create schema', /\bcreate schema\b/]]) {
-    if (re.test(cs)) s.echoue(IDS.fichier, `« ${quoi} » : 0099 ne crée aucune table et ne modifie aucune colonne`)
+  // hors de la liste permise (correction du 27/09 : ops.accords_benj et la contrainte de statut), aucune table ni colonne
+  const csHors = cs.replace(/\bcreate table if not exists ops\.accords_benj\b/g, '').replace(/\balter table ops\.envois (?:drop|add) constraint (?:if exists )?envois_statut_check\b/g, '').replace(/\balter table ops\.accords_benj enable row level security\b/g, '')
+  for (const [quoi, re] of [['create table', /\bcreate (unlogged |temp(?:orary)? )?table\b/], ['alter table', /\balter table\b/], ['drop table', /\bdrop table\b/], ['create extension', /\bcreate extension\b/], ['create policy', /\bcreate policy\b/], ['create schema', /\bcreate schema\b/], ['add column', /\badd column\b/], ['drop column', /\bdrop column\b/]]) {
+    if (re.test(csHors)) s.echoue(IDS.fichier, `« ${quoi} » hors de la liste permise : 0099 ne crée que ops.accords_benj et ne touche que la contrainte envois_statut_check`)
   }
-  if (!s.enEchec(IDS.fichier)) s.passe(IDS.fichier, `${ins.length} instructions : les fonctions, leurs déclencheurs (drop trigger if exists puis create trigger), les droits et des commentaires ; aucune table, aucune colonne`)
+  if (genres.filter((x) => x.g === 'table_accords').length > 1) s.echoue(IDS.fichier, 'ops.accords_benj créée deux fois')
+  if (!s.enEchec(IDS.fichier)) s.passe(IDS.fichier, `${ins.length} instructions : fonctions, déclencheurs (drop trigger if exists puis create trigger), droits, commentaires, et seulement la contrainte envois_statut_check et ops.accords_benj (correction du 27/09)`)
 
   // PG-2 — les fonctions du contrat, et elles seules
   const fonctions = genres.filter((x) => x.g === 'fonction').map((x) => parserFonction(x))
@@ -347,13 +429,13 @@ function juger0099(s, texteM) {
   const revoque = (sch, nom, roles) => revokes.some((x) => x.m[1] === sch && x.m[2] === nom && roles.every((ro) => rolesApres(x.n, 'from').includes(ro)))
   if (!revoque('public', 'ops_garde_etat', ['public', 'anon', 'authenticated'])) s.echoue(IDS.securite, 'ops_garde_etat : revoke … from public, anon, authenticated absent ou incomplet')
   if (!grants.some((x) => x.m[2] === 'ops_garde_etat' && rolesApres(x.n, 'to').includes('service_role'))) s.echoue(IDS.securite, 'ops_garde_etat : grant execute … to service_role absent')
-  for (const nom of ['garde_envois', 'annuler_sur_opposition']) {
+  for (const nom of ['garde_envois', 'annuler_sur_opposition', 'garde_accords']) {
     if (!revoque('ops', nom, ROLES_FERMES)) s.echoue(IDS.securite, `ops.${nom} : revoke … from ${ROLES_FERMES.join(', ')} absent ou incomplet (exécutable par aucun des quatre rôles)`)
     if (grants.some((x) => x.m[2] === nom)) s.echoue(IDS.securite, `ops.${nom} : un grant sur une fonction de déclencheur`)
   }
   for (const x of grants) if (rolesApres(x.n, 'to').some((ro) => ro !== 'service_role')) s.echoue(IDS.securite, `grant à ${rolesApres(x.n, 'to').filter((ro) => ro !== 'service_role').join(', ')} : « ${court(x.n, 80)} »`)
   if (/\bgrant\b/.test(cs.replace(/grant execute on function public\.ops_garde_etat(\(\))? to service_role/g, ''))) s.echoue(IDS.securite, 'un grant autre que « grant execute on function public.ops_garde_etat() to service_role »')
-  if (!s.enEchec(IDS.securite)) s.passe(IDS.securite, `ops_garde_etat security definer, search_path « ${CONTRAT.fonctions.ops_garde_etat.search_path} », service_role seul ; les deux fonctions de déclencheur révoquées à ${ROLES_FERMES.join(', ')}, sans grant`)
+  if (!s.enEchec(IDS.securite)) s.passe(IDS.securite, `ops_garde_etat security definer, search_path « ${CONTRAT.fonctions.ops_garde_etat.search_path} », service_role seul ; les trois fonctions de déclencheur révoquées à ${ROLES_FERMES.join(', ')}, sans grant`)
 
   // PG-4 — les déclencheurs et le corps de ops.garde_envois()
   const drops = new Map()
@@ -368,14 +450,26 @@ function juger0099(s, texteM) {
   if (!g || g.erreur) s.echoue(IDS.corps, 'ops.garde_envois() absente : corps non lu')
   else {
     const c = compacter(g.corps), sr = serrer(g.corps)
-    if (!/new\.statut (?:not )?in\('(?:prepare','approuve|approuve','prepare)'\)|new\.statut=any\(array\['(?:prepare','approuve|approuve','prepare)'\]\)/.test(sr)) s.echoue(IDS.corps, "la condition d'entrée ne porte pas sur new.statut in ('prepare','approuve')")
-    const me = /new\.statut\s*(?:=\s*'envoye'|in\s*\(\s*'envoye'\s*\))/i.exec(g.corps)
-    if (!me) s.echoue(IDS.corps, "branche « new.statut = 'envoye' » introuvable : le passage à envoye doit être consigné sans refus")
+    const entree = [...sr.matchAll(/new\.statut (?:not )?in\(([^)]*)\)/g)].map((x) => listeSql(x[1]))
+    if (!entree.some((l) => ['prepare', 'attend_accord_benj', 'approuve'].every((v) => l.includes(v)) && !l.includes('envoye'))) s.echoue(IDS.corps, "la condition d'entrée ne porte pas sur new.statut in ('prepare','attend_accord_benj','approuve')")
+    // chaque « if new.statut = 'envoye' then » (depuis le 27/09 il y en a plus d'un : la date d'envoi posée par la base) : aucun
+    // ne lève d'autre exception que les deux refus décidés par Benj le 27/09 (pause active, accord tombé : PG-13), et l'un
+    // d'eux écrit envoi_hors_regle
+    const mes = [...g.corps.matchAll(/\bif\s+new\.statut\s*(?:=\s*'envoye'|in\s*\(\s*'envoye'\s*\))\s*then\b/gi)]
+    if (!mes.length) s.echoue(IDS.corps, "branche « if new.statut = 'envoye' then » introuvable : le passage à envoye doit être consigné")
     else {
-      const b = brancheSi(g.corps, me.index)
-      if (!b) s.echoue(IDS.corps, "branche « envoye » illisible (if … then … end if)")
-      else if (/\braise\b(?!\s+(?:notice|warning|log|debug|info)\b)/.test(masquer(g.corps.slice(b[0], b[1])).toLowerCase())) s.echoue(IDS.corps, 'la branche « envoye » lève une exception : le passage à envoye n\'est jamais refusé')
-      else if (!g.corps.slice(b[0], b[1]).includes('envoi_hors_regle')) s.echoue(IDS.corps, 'la branche « envoye » n\'écrit pas l\'événement envoi_hors_regle')
+      let hors = false
+      for (const me of mes) {
+        const b = brancheSi(g.corps, me.index)
+        if (!b) { s.echoue(IDS.corps, "branche « envoye » illisible (if … then … end if)"); continue }
+        const brut = g.corps.slice(b[0], b[1])
+        const nRaise = (masquer(brut).toLowerCase().match(/\braise\b(?!\s+(?:notice|warning|log|debug|info)\b)/g) || []).length
+        const codesB = [...brut.matchAll(/\braise\b[^;]*?'ops:([a-z0-9_]+)'/gi)].map((x) => x[1])
+        const autres = codesB.filter((k) => !REFUS_ENVOYE.includes(k))
+        if (nRaise !== codesB.length || autres.length) s.echoue(IDS.corps, `une branche « envoye » lève ${autres.length ? autres.map((k) => `ops:${k}`).join(', ') : 'une exception sans code ops:'} : le passage à envoye n'est refusé que par ${REFUS_ENVOYE.map((k) => `ops:${k}`).join(' et ')} (décision du 27/09)`)
+        if (brut.includes('envoi_hors_regle')) hors = true
+      }
+      if (!hors) s.echoue(IDS.corps, 'aucune branche « envoye » n\'écrit l\'événement envoi_hors_regle')
     }
     const codes = [...new Set([...c.matchAll(/raise[^;]*?'ops:([a-z0-9_]+)'/g)].map((x) => x[1]))]
     const manquants = CODES_VOIE_GRATUITE.filter((k) => !codes.includes(k))
@@ -395,12 +489,23 @@ function juger0099(s, texteM) {
     if (!(c.includes('to_jsonb(new)') && c.includes('preuve_demande'))) s.echoue(IDS.corps, 'preuve_demande n\'est pas lue par to_jsonb(new) (0099 doit marcher avant 0106)')
     if (!/expire_le is null or [a-z_.]*expire_le>now\(\)|expire_le>now\(\) or [a-z_.]*expire_le is null|coalesce\([a-z_.]*expire_le,'infinity'(?:::timestamptz)?\)>now\(\)/.test(sr)) s.echoue(IDS.corps, "l'opposition lue n'est pas l'opposition active (expire_le is null or expire_le > now())")
     for (const [quoi, re] of [['90 jours', /'90days?'/], ['72 heures', /'72hours?'/], ['24 heures', /'24hours?'/], ['35 jours', /'35days?'/]]) if (!re.test(c)) s.echoue(IDS.corps, `l'intervalle de ${quoi} n'est pas écrit`)
+    // la règle des 90 jours (ops:90_jours) ne vaut que pour le premier contact : lien_maquette, reponse, confirmation_stop
+    // et reponse_rgpd sont des réponses dans un fil ouvert (commentaire de 0099 ; revue de 026-091, 29/09). Le
+    // « if new.type … then » qui porte le raise doit exister et ne nommer que premier_contact.
+    {
+      const porteurs = [...g.corps.matchAll(/\bif\s+new\.type\s*(?:=\s*'[a-z_]+'|in\s*\([^)]*\))\s*then\b/gi)].filter((me) => { const b = brancheSi(g.corps, me.index); return b && /'ops:90_jours'/.test(g.corps.slice(b[0], b[1])) })
+      if (!porteurs.length) s.echoue(IDS.corps, "ops:90_jours n'est levé sous aucun « if new.type … then » : la règle des 90 jours doit viser le premier contact seul")
+      for (const me of porteurs) {
+        const noms = [...me[0].matchAll(/'([a-z_]+)'/gi)].map((x) => x[1])
+        if (noms.length !== 1 || noms[0] !== 'premier_contact') s.echoue(IDS.corps, `la règle des 90 jours (ops:90_jours) vise ${noms.map((k) => `« ${k} »`).join(', ')} : elle ne vaut que pour premier_contact (lien_maquette, reponse, confirmation_stop et reponse_rgpd sont des réponses dans un fil ouvert, sans 90 jours)`)
+      }
+    }
   }
   const brut = sansCommentairesSql(texteM)
   if (/boite_/i.test(brut)) s.echoue(IDS.corps, 'boite_ dans la migration : les règles par boîte sont retirées (voie gratuite du 25/09)')
   const canaux = valeursCanal(serrer(brut))
   if (canaux.includes('email') || /\('email',\s*'\*'/.test(brut)) s.echoue(IDS.corps, "le canal 'email' est nommé : il n'existe plus (voie gratuite du 25/09)")
-  if (!s.enEchec(IDS.corps)) s.passe(IDS.corps, `déclencheurs du contrat, rejouables ; entrée sur prepare et approuve ; branche envoye sans refus, avec envoi_hors_regle ; les ${CODES_VOIE_GRATUITE.length} codes levés ; verrous avant comptage ; heure de Paris ; ligne '*' ; preuve_demande par to_jsonb(new) ; opposition active ; ni boite_ ni canal 'email'`)
+  if (!s.enEchec(IDS.corps)) s.passe(IDS.corps, `déclencheurs du contrat, rejouables ; entrée sur prepare, attend_accord_benj et approuve ; branche envoye refusée seulement par ops:pause_generale et ops:accord_perime (décision du 27/09), avec envoi_hors_regle ; les ${CODES_VOIE_GRATUITE.length} codes levés ; verrous avant comptage ; heure de Paris ; ligne '*' ; preuve_demande par to_jsonb(new) ; opposition active ; ni boite_ ni canal 'email'`)
 
   // PG-5 — jumeaux et contrôle
   jugerJumeaux(s, IDS.jumeaux, texteM)
@@ -412,10 +517,153 @@ function juger0099(s, texteM) {
       ['envoi_froid fermé', ['interrupteurs', "'envoi_froid'"]],
       ['ops_garde_etat sécurisée comme en 0097', ['ops_garde_etat', 'prosecdef', 'proconfig', 'search_path', 'has_function_privilege']],
       ["anon et authenticated n'exécutent rien de 0099", ["'anon'", "'authenticated'"]],
+      // correction du 27/09
+      ['la contrainte de statut porte attend_accord_benj', ['envois_statut_check', "attend_accord_benj"]],
+      ["ops.accords_benj : RLS, aucun droit d'API", ['accords_benj', 'relrowsecurity', 'has_table_privilege']],
+      ['le déclencheur garde_accords existe et est actif', ['garde_accords']],
+      // contre-vérification et décisions du 27/09 : la base porte bien le corps corrigé
+      ['ops.garde_envois porte la correction du 28/09 (entetes et verdicts figés, entrée datée, envoye refusé)', ['prosrc', 'new.entetes is distinct from old.entetes', 'new.verdicts is distinct from old.verdicts', "tg_op = ''update''", 'new.prepare_le := now()', 'ops:accord_perime']],
     ]
     for (const [quoi, tous] of points) { const m = tous.filter((x) => !cC.includes(compacter(x))); if (m.length) s.echoue(IDS.jumeaux, `${M.controle} ne couvre pas : ${quoi} (manque ${m.join(', ')})`) }
   }
-  if (!s.enEchec(IDS.jumeaux)) s.passe(IDS.jumeaux, `jumeaux équivalents (sql-nu --verifier, nu régénéré à l'identique) ; ${M.controle} en lecture seule, couvre déclencheurs, plafonds, envoi_froid, ops_garde_etat et droits d'anon et authenticated`)
+  if (!s.enEchec(IDS.jumeaux)) s.passe(IDS.jumeaux, `jumeaux équivalents (sql-nu --verifier, nu régénéré à l'identique) ; ${M.controle} en lecture seule, couvre déclencheurs, plafonds, envoi_froid, ops_garde_etat, droits d'anon et authenticated, contrainte de statut et ops.accords_benj`)
+
+  jugerCorrection(s, genres, F, cs)
+}
+
+// ── PG-9 à PG-11 : la correction du 27/09 (juge d'abord : rouges sur le SQL d'avant) ───────────────────────────────────────
+function jugerCorrection(s, genres, F, cs) {
+  const g = F('ops.garde_envois'), a = F('ops.garde_accords')
+  const cg = g && !g.erreur ? compacter(g.corps) : '', ca = a && !a.erreur ? compacter(a.corps) : ''
+  const leve = (c, code) => new RegExp(`raise[^;]*?'ops:${code}'`).test(c)
+  const avantRetour = (c, motif) => { const i = c.indexOf(motif), r = c.indexOf('returnnew;'); return i >= 0 && (r < 0 || i < r) }
+
+  // PG-9 — l'accord individuel de Benj (R24)
+  const id9 = IDS.accord
+  const add = genres.find((x) => x.g === 'statut_add'), drop = genres.findIndex((x) => x.g === 'statut_drop')
+  if (!add) s.echoue(id9, "aucun « alter table ops.envois add constraint envois_statut_check check (statut in (…)) » : le statut attend_accord_benj n'existe pas")
+  else {
+    const l = listeSql(add.m[1])
+    if ([...l].sort().join(',') !== [...STATUTS].sort().join(',')) s.echoue(id9, `envois_statut_check liste ${l.join(', ')} ; attendu ${STATUTS.join(', ')}`)
+    if (drop < 0 || drop > genres.indexOf(add)) s.echoue(id9, "« drop constraint if exists envois_statut_check » absent ou après l'ajout : la migration n'est pas rejouable")
+  }
+  const tab = genres.find((x) => x.g === 'table_accords')
+  if (!tab) s.echoue(id9, 'ops.accords_benj absente : aucun accord ne peut se donner')
+  else {
+    const spec = CONTRAT.tables.accords_benj
+    if (!spec) s.echoue(id9, `${CONTRAT_F} ne décrit pas ops.accords_benj`)
+    else {
+      for (const c of spec.colonnes) {
+        const attendu = compacter(c.texte.replace(/`/g, '').replace(/\s*;\s*$/, ''))
+        if (!tab.c.includes(attendu)) s.echoue(id9, `ops.accords_benj : colonne « ${c.texte.replace(/`/g, '').replace(/\s*;\s*$/, '')} » absente ou autre`)
+      }
+      for (const k of spec.contraintes || []) if (!tab.c.includes(compacter(k))) s.echoue(id9, `ops.accords_benj : contrainte « ${k} » absente`)
+    }
+    if (!genres.some((x) => x.g === 'rls_accords')) s.echoue(id9, 'ops.accords_benj sans row level security')
+    const rv = genres.find((x) => x.g === 'revoke_table')
+    if (!rv || !ROLES_FERMES.every((ro) => rolesApres(rv.n, 'from').includes(ro))) s.echoue(id9, `ops.accords_benj : revoke all … from ${ROLES_FERMES.join(', ')} absent ou incomplet`)
+    if (/\bgrant\b[^;]*\baccords_benj\b/.test(cs)) s.echoue(id9, 'ops.accords_benj : un grant')
+  }
+  if (!a || a.erreur) s.echoue(id9, 'ops.garde_accords() absente : un accord ne serait ni daté par la base, ni réservé à un fondateur, ni lié à l\'envoi')
+  else {
+    if (!ca.includes('is_founder')) s.echoue(id9, 'ops.garde_accords() ne vérifie pas que donne_par est un fondateur (is_founder)')
+    if (!ca.includes("'attend_accord_benj'")) s.echoue(id9, 'ops.garde_accords() ne lie pas l\'accord à un envoi en attend_accord_benj')
+    for (const k of ['canal', 'destinataire', 'empreinte_texte']) if (!new RegExp(`new\\.${k}`).test(ca)) s.echoue(id9, `ops.garde_accords() ne compare pas new.${k} à l'envoi`)
+    const m = CODES_ACCORD_EMISSION.filter((k) => !leve(ca, k))
+    if (m.length) s.echoue(id9, `ops.garde_accords() ne lève pas : ${m.map((k) => `ops:${k}`).join(', ')}`)
+  }
+  if (!g || g.erreur) s.echoue(id9, 'ops.garde_envois() absente')
+  else {
+    const m = CODES_ACCORD_ENVOIS.filter((k) => k !== 'envoi_fige' && !leve(cg, k))
+    if (m.length) s.echoue(id9, `ops.garde_envois() ne lève pas : ${m.map((k) => `ops:${k}`).join(', ')} (l'approbation n'exige pas l'accord de Benj)`)
+    if (!/old\.statut(?:<>|isdistinctfrom)'attend_accord_benj'/.test(cg)) s.echoue(id9, "ops.garde_envois() n'exige pas old.statut = 'attend_accord_benj' pour entrer en approuve")
+    if (!/updateops\.accords_benj[^;]*setutilise_le=now\(\)/.test(cg)) s.echoue(id9, "ops.garde_envois() ne consomme pas l'accord (update ops.accords_benj set utilise_le = now())")
+    if (!/updateops\.accords_benj[^;]*setannule_le=now\(\)/.test(cg)) s.echoue(id9, "ops.garde_envois() n'annule jamais un accord (sortie d'attente, second accord)")
+    if (!cg.includes('change_le')) s.echoue(id9, "ops.garde_envois() ne lit pas ops.interrupteurs.change_le : une pause n'annulerait pas l'accord")
+    if (!g.corps.includes('sans accord de Benj')) s.echoue(id9, "la branche envoye ne signale pas « sans accord de Benj »")
+  }
+  for (const cle of ['ops.garde_envois', 'ops.annuler_sur_opposition', 'ops_garde_etat']) {
+    const f = F(cle)
+    if (!f || f.erreur) continue
+    const l = listesSansAttente(f.corps)
+    if (l.length) s.echoue(id9, `${cle} : ${l.length} liste(s) de statuts qui comptent prepare et approuve sans attend_accord_benj (${l[0].join(', ')}) : un envoi qui attend ne compterait pas`)
+  }
+  const etat = F('ops_garde_etat')
+  if (etat && !etat.erreur && !etat.corps.includes('garde_accords')) s.echoue(id9, 'ops_garde_etat ne rend pas le déclencheur garde_accords')
+  exigerCles(s, id9, CLES_PG9)
+  if (!s.enEchec(id9)) s.passe(id9, `statut attend_accord_benj (${STATUTS.length} statuts) ; ops.accords_benj (colonnes du contrat, 24 h, RLS, aucun droit) ; garde_accords : fondateur, envoi en attente, même canal, destinataire et empreinte, figé ; approuve depuis l'attente seulement, accord consommé une fois ; ${CLES_PG9.length} clés d'essai à true`)
+
+  // PG-10 — l'envoi figé dès l'attente (retouche après approbation, diag_g2)
+  const id10 = IDS.fige
+  const trig = genres.find((x) => x.g === 'trigger' && / on ops\.envois /.test(x.n) && /ops\.garde_envois\(\)/.test(x.n))
+  if (!trig) s.echoue(id10, 'déclencheur de ops.garde_envois() absent')
+  else if (/ update of /.test(trig.n) || / when ?\(/.test(trig.n)) s.echoue(id10, `« ${court(trig.n, 110)} » : le déclencheur n'écoute pas toute mise à jour (update of / when) — une retouche de canal, type, prospect_id, destinataire ou empreinte_texte après approbation passe sans contrôle`)
+  if (g && !g.erreur) {
+    if (!leve(cg, 'envoi_fige')) s.echoue(id10, "ops.garde_envois() ne lève pas ops:envoi_fige : rien n'interdit de retoucher un envoi approuvé")
+    const sr = serrer(g.corps)
+    const manque = CHAMPS_FIGES.filter((k) => !new RegExp(`new\\.${k} is distinct from old\\.${k}`).test(sr))
+    if (manque.length) s.echoue(id10, `champ(s) jamais comparé(s) à old : ${manque.join(', ')}`)
+    const fig = [...sr.matchAll(/old\.statut in\(([^)]*)\)/g)].map((x) => listeSql(x[1]))
+    if (!fig.some((l) => ['attend_accord_benj', 'approuve', 'envoye'].every((v) => l.includes(v)))) s.echoue(id10, "l'envoi n'est pas figé en attend_accord_benj, approuve et envoye (old.statut in (…))")
+    if (!avantRetour(cg, "'ops:envoi_fige'")) s.echoue(id10, 'le contrôle ops:envoi_fige vient après un « return new » : une retouche sans changement de statut lui échappe')
+  }
+  exigerCles(s, id10, CLES_PG10)
+  if (!s.enEchec(id10)) s.passe(id10, `déclencheur sur toute mise à jour ; ${CHAMPS_FIGES.join(', ')} comparés à old dès attend_accord_benj, avant tout return ; ops:envoi_fige ; ${CLES_PG10.length} clés d'essai à true`)
+
+  // PG-11 — les dates posées par la base (prepare_le antidaté, diag_g1)
+  const id11 = IDS.dates
+  if (g && !g.erreur) {
+    for (const [motif, quoi] of [['new.prepare_le:=now()', 'new.prepare_le := now() à l\'insertion'], ['new.prepare_le:=old.prepare_le', 'new.prepare_le := old.prepare_le ensuite']]) {
+      if (!cg.includes(motif)) s.echoue(id11, `ops.garde_envois() ne pose pas ${quoi} : la date du plafond vient de l'écrivain`)
+      else if (!avantRetour(cg, motif)) s.echoue(id11, `${quoi} vient après un « return new »`)
+    }
+    if (!/new\.envoye_le:=[^;]*now\(\)/.test(cg)) s.echoue(id11, 'ops.garde_envois() ne pose pas envoye_le par now() : les 90 jours et les 72 h liraient la date de l\'écrivain')
+    if (!/new\.approuve_le:=now\(\)/.test(cg)) s.echoue(id11, 'approuve_le n\'est pas posée par now()')
+  } else s.echoue(id11, 'ops.garde_envois() absente')
+  if (a && !a.erreur && !ca.includes('new.emis_le:=now()')) s.echoue(id11, 'ops.garde_accords() ne pose pas new.emis_le := now()')
+  exigerCles(s, id11, CLES_PG11)
+  if (!s.enEchec(id11)) s.passe(id11, `prepare_le := now() puis immuable, envoye_le et approuve_le par now(), emis_le par now(), avant tout return ; ${CLES_PG11.length} clés d'essai à true (diag_g1 rejoué : l'antidaté ne libère aucune place)`)
+
+  // PG-12 — le plafond du jour à la réanimation (contre-vérification du 27/09, a4 et a4c)
+  const id12 = IDS.reanimation
+  if (g && !g.erreur) {
+    // la sortie avant les contrôles ne vaut que pour une mise à jour : une insertion, quel que soit son statut, est jugée
+    if (/ifnew\.statut<>'envoye'andnew\.statutnotin\(/.test(cg)) s.echoue(id12, "« if new.statut <> 'envoye' and new.statut not in (…) then return new » : une fiche insérée en saute, perime ou annule échappe à tout contrôle, puis se réanime")
+    const sortie = /iftg_op='update'andnew\.statutnotin\(([^)]*)\)thenreturnnew;/.exec(cg)
+    if (!sortie) s.echoue(id12, "aucune sortie « if tg_op = 'UPDATE' and new.statut not in (…) then return new » : l'insertion hors file n'est pas jugée comme les autres")
+    else if ([...listeSql(sortie[1])].sort().join(',') !== ['approuve', 'attend_accord_benj', 'envoye', 'prepare'].join(',')) s.echoue(id12, `la sortie liste ${listeSql(sortie[1]).join(', ')} ; attendu prepare, attend_accord_benj, approuve, envoye`)
+    // toute entrée ou ré-entrée (changement de statut) en prepare ou attend_accord_benj reprend la date de la base
+    const i0 = cg.indexOf('new.prepare_le:=old.prepare_le;')
+    const redate = i0 < 0 ? null : /ifnew\.statutin\(([^)]*)\)thennew\.prepare_le:=now\(\);/.exec(cg.slice(i0))
+    if (!redate) s.echoue(id12, "aucun « if new.statut in (…) then new.prepare_le := now() » après « new.prepare_le := old.prepare_le » : une fiche réanimée garde la date de sa première préparation et ne compte pas au plafond du jour")
+    else {
+      const l = listeSql(redate[1])
+      const manque = ['prepare', 'attend_accord_benj'].filter((v) => !l.includes(v))
+      if (manque.length) s.echoue(id12, `la ré-entrée en ${manque.join(', ')} ne reprend pas la date de la base`)
+      const iq = cg.indexOf("'ops:quota'"), ir = i0 + redate.index
+      if (iq >= 0 && ir > iq) s.echoue(id12, 'la date de la ré-entrée est posée après le contrôle du plafond')
+    }
+  } else s.echoue(id12, 'ops.garde_envois() absente')
+  exigerCles(s, id12, CLES_PG12)
+  if (!s.enEchec(id12)) s.passe(id12, `insertion jugée quel que soit son statut ; toute entrée ou ré-entrée en prepare ou attend_accord_benj (et approuve si listée) datée par la base avant le plafond ; ${CLES_PG12.length} clés d'essai à true (a4 et a4c rejoués)`)
+
+  // PG-13 — le passage à envoye refusé sous pause active ou accord tombé (décision de Benj du 27/09)
+  const id13 = IDS.envoye
+  if (g && !g.erreur) {
+    const mes = [...g.corps.matchAll(/\bif\s+new\.statut\s*(?:=\s*'envoye'|in\s*\(\s*'envoye'\s*\))\s*then\b/gi)]
+    const b = mes.map((me) => brancheSi(g.corps, me.index)).find((x) => x && g.corps.slice(x[0], x[1]).includes('envoi_hors_regle'))
+    if (!b) s.echoue(id13, 'branche « envoye » qui écrit envoi_hors_regle introuvable')
+    else {
+      const cb = compacter(g.corps.slice(b[0], b[1]))
+      for (const k of REFUS_ENVOYE) if (!leve(cb, k)) s.echoue(id13, `la branche « envoye » ne lève pas ops:${k}`)
+      if (!cb.includes("public.ops_interrupteur('pause_generale')")) s.echoue(id13, "la branche « envoye » ne lit pas la pause par public.ops_interrupteur('pause_generale') (un interrupteur absent doit fermer)")
+      const ie = cb.indexOf('ops_evenement_ajouter('), ip = cb.search(/raise[^;]*?'ops:pause_generale'/), ia = cb.search(/raise[^;]*?'ops:accord_perime'/)
+      if (ie >= 0 && ((ip >= 0 && ip > ie) || (ia >= 0 && ia > ie))) s.echoue(id13, 'un refus de la branche « envoye » vient après l\'écriture de envoi_hors_regle')
+      if (!/expire_le<=now\(\)/.test(cb) || !cb.includes('change_le') && !cb.includes('v_pause_le')) s.echoue(id13, "la branche « envoye » ne juge pas l'accord consommé (échu : expire_le <= now() ; tombé : émis avant le dernier mouvement de la pause)")
+    }
+  } else s.echoue(id13, 'ops.garde_envois() absente')
+  exigerCles(s, id13, CLES_PG13)
+  if (!s.enEchec(id13)) s.passe(id13, `branche « envoye » : ops:pause_generale (pause active, interrupteur absent compris) et ops:accord_perime (accord consommé échu ou tombé par la pause) avant tout signalement ; ${CLES_PG13.length} clés d'essai à true`)
 }
 
 // ── Le jugement ─────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -514,7 +762,7 @@ async function reel() {
   s.verdict(id, e.ok && e.j && typeof e.j === 'object', `ops_garde_etat() avec la clé de service (${code(e)})`, `ops_garde_etat() refusée avec la clé de service (${code(e)})`)
   if (e.ok && e.j && typeof e.j === 'object') {
     for (const k of CONTRAT.fonctions.ops_garde_etat.cles) s.verdict(id, k in e.j, `clé ${k} rendue`, `clé ${k} absente`)
-    for (const nom of ['garde_envois', 'annuler_sur_opposition']) { const b = etatNomme(e.j.declencheurs, nom); s.verdict(id, b === true, `déclencheur ${nom} actif`, `déclencheur ${nom} : ${b === null ? 'introuvable' : 'inactif'}`) }
+    for (const nom of ['garde_envois', 'annuler_sur_opposition', 'garde_accords']) { const b = etatNomme(e.j.declencheurs, nom); s.verdict(id, b === true, `déclencheur ${nom} actif`, `déclencheur ${nom} : ${b === null ? 'introuvable' : 'inactif'}`) }
     for (const canal of ['instagram', 'facebook']) { const l = lignePlafond(e.j.plafonds, canal); s.verdict(id, !!l && Number(l.plafond_jour) === 0 && Number(l.plafond_nouveaux_jour ?? 0) === 0, `(${canal}, *) à 0`, `(${canal}, *) : ${l ? `${l.plafond_jour}/${l.plafond_nouveaux_jour}` : 'ligne absente'} (0/0 attendu)`) }
     const froid = etatNomme(e.j.interrupteurs, 'envoi_froid')
     s.verdict(id, froid === false, 'envoi_froid fermé', `envoi_froid : ${froid === null ? 'introuvable' : 'ouvert'} (fermé attendu avant l'ouverture par Benj)`)
