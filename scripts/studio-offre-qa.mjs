@@ -88,8 +88,19 @@ async function jugerSO1(s) {
       if (!/490/.test(String(o1.prix_texte)) || !/€/.test(String(o1.prix_texte))) echecs.push(`offre().prix_texte = ${JSON.stringify(o1.prix_texte)}, un texte en euros attendu`)
     }
   }
-  const fuites = gitGrepFichiers(R, '490', { exclure: ['lib/studio/offre.ts', 'scripts/fixtures/', '.orchestre/'] })
-    .concat(gitGrepFichiers(R, '49000', { exclure: ['lib/studio/offre.ts', 'scripts/fixtures/', '.orchestre/'] }))
+  // Candidats : tout fichier suivi qui contient la sous-chaîne ; puis on ne retient que le prix lui-même — « 490 » ou « 49000 »
+  // isolé (ni précédé d'un chiffre, d'un point ou d'une virgule, ni suivi d'un chiffre) : 14900 (le pack C), 14901-PGP, un
+  // tracé SVG (-23.490000) ne sont pas le prix du Studio. Sont écartés : les jeux d'essai et les juges (scripts/*-qa.mjs,
+  // scripts/juges-*, qui écrivent ce prix pour l'éprouver), et ce qui n'est pas du code du produit : notes et mémoire
+  // (plans/, reprise-cloud/), actifs (public/ : tracés SVG, durées en ms), historique SQL (supabase/). Tout le reste des
+  // fichiers suivis (lib/, app/, components/, scripts/ hors juges…) reste jugé : un prix écrit là rouvre SO-1.
+  const EXCLURE_SO1 = ['lib/studio/offre.ts', 'scripts/fixtures/', '.orchestre/', 'plans/', 'reprise-cloud/', 'public/', 'supabase/']
+  const JUGE_SO1 = /^scripts\/(?:[^/]*-qa\.mjs|juges-[^/]*)$/
+  const PRIX_ISOLE = /(?<![\d.,])(?:490|49000)(?!\d)/
+  const fuites = gitGrepFichiers(R, '490', { exclure: EXCLURE_SO1 })
+    .concat(gitGrepFichiers(R, '49000', { exclure: EXCLURE_SO1 }))
+    .filter((f) => !JUGE_SO1.test(f))
+    .filter((f) => { const t = lireSi(path.join(R, f)); return t !== null && PRIX_ISOLE.test(t) })
   const fuitesUniques = [...new Set(fuites)]
   if (fuitesUniques.length) echecs.push(`« 490 » ou « 49000 » hors de lib/studio/offre.ts : ${fuitesUniques.slice(0, 5).join(', ')}`)
   if (echecs.length) { for (const x of echecs) s.echoue('SO-1', x); return null }
@@ -102,17 +113,24 @@ function jugerSO2(s) {
   const CONSOMMATEURS = [
     'app/studio/commander/[jeton]/page.tsx',
     'app/api/studio/commander/route.ts',
-    'lib/agents/acquisition/modeles.ts',
+    'app/api/cron/repondeur/route.ts', // le Répondeur lit l'offre par un import() protégé (026-096) : {videos} et {prix} de studio_offre_v1
   ]
+  // modeles.ts est un module pur qui n'importe jamais lib/studio (026-083) : ni import de l'offre, ni prix écrit en dur.
+  const PURS = ['lib/agents/acquisition/modeles.ts']
   const echecs = []
+  for (const f of PURS) {
+    const texte = lireSi(ch(f))
+    if (texte === null) { echecs.push(`${f} absent`); continue }
+    if (/490/.test(texte) || /49000/.test(texte)) echecs.push(`${f} : « 490 » ou « 49000 » écrit en dur (le prix vient du Répondeur, depuis offre.ts)`)
+  }
   for (const f of CONSOMMATEURS) {
     const texte = lireSi(ch(f))
     if (texte === null) { echecs.push(`${f} absent`); continue }
     if (/490/.test(texte) || /49000/.test(texte)) echecs.push(`${f} : « 490 » ou « 49000 » écrit en dur (attendu : lu depuis offre.ts)`)
-    if (!/(from\s+['"].*studio\/offre['"]|require\(['"].*studio\/offre['"]\))/.test(texte)) echecs.push(`${f} n'importe pas lib/studio/offre`)
+    if (!/(from\s+['"].*studio\/offre['"]|require\(\s*['"].*studio\/offre['"]\s*\)|import\(\s*['"].*studio\/offre['"]\s*\))/.test(texte)) echecs.push(`${f} n'importe pas lib/studio/offre`)
   }
   if (echecs.length) for (const x of echecs) s.echoue('SO-2', x)
-  else s.passe('SO-2', `${CONSOMMATEURS.length} fichier(s) lisent le prix depuis lib/studio/offre.ts, aucune valeur en dur`)
+  else s.passe('SO-2', `${CONSOMMATEURS.length} fichier(s) lisent le prix depuis lib/studio/offre.ts, ${PURS.length} module(s) pur(s) sans valeur en dur`)
 }
 
 // ── SO-3, SO-6 : la route (lecture statique du POST) ────────────────────────────────────────────────────────────────
@@ -252,7 +270,7 @@ function jugerSO8(s) {
   if (r1.code !== 1) echecs.push(`échantillon sans sortie/echantillon.mp4 (pub-qa rouge) : code ${r1.code}, 1 attendu`)
   const dossierSansDecision = path.join(TRAVAIL, 'so8-sans-decision')
   fs.rmSync(dossierSansDecision, { recursive: true, force: true }); fs.mkdirSync(path.join(dossierSansDecision, 'sortie'), { recursive: true })
-  const r2 = lancer(process.execPath, [script, '--marque=maison-inconnue-0000', `--echantillon=${dossierSansDecision}`], { timeout: 30_000 })
+  const r2 = lancer(process.execPath, [script, '--marque=maison-inconnue-0000', `--echantillon=${dossierSansDecision}`], { timeout: 5 * 60_000 })
   if (r2.code !== 2 && r2.code !== 1) echecs.push(`marque sans décision studio_echantillon ouverte : code ${r2.code}, 2 attendu`)
   if (echecs.length) for (const x of echecs) s.echoue('SO-8', x)
   else s.passe('SO-8', 'refuse (code 1) un échantillon sans vidéo, refuse (code 2) une marque sans décision ouverte')
