@@ -604,3 +604,6 @@
 {"id":"026-061","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T00:08:26Z","duree_s":24,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-006","verdict":"FAIL","ligne":"FAIL N16-1 — next installé 15.5.26 (package.json demande \"^15.5.26\"), react 19.2.8, react-dom 19.2.8, @types/react \"^19.0.7\", @types/react-dom \"^19.0.3\"","code":1,"date":"2026-09-29T00:20:31Z","duree_s":132,"agent":"claude-code","executant":"claude-code","lignes":9129,"dossier":"en-cours"}
 {"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T00:26:15Z","duree_s":489,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-126","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T00:34:29Z","duree_s":282,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-006","verdict":"FAIL","ligne":"FAIL N16-1 — next installé 15.5.26 (package.json demande \"^15.5.26\"), react 19.2.8, react-dom 19.2.8, @types/react \"^19.0.7\", @types/react-dom \"^19.0.3\"","code":1,"date":"2026-09-29T00:42:45Z","duree_s":132,"agent":"?","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"026-082","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T00:52:56Z","duree_s":49,"agent":"usine-codex-109","executant":"codex","lignes":581,"dossier":"fait"}
