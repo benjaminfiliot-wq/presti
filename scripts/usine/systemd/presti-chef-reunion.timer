@@ -1,0 +1,10 @@
+[Unit]
+Description=Presti — réunion d'équipage, chaque jour à 18 h (heure de Paris)
+
+[Timer]
+OnCalendar=*-*-* 18:00:00 Europe/Paris
+Persistent=false
+Unit=presti-chef-reunion.service
+
+[Install]
+WantedBy=timers.target

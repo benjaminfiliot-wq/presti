@@ -1,0 +1,12 @@
+[Unit]
+Description=Presti — file du modèle (ia), sous chef-modele, sans aucun droit sur le coffre
+
+[Service]
+Type=oneshot
+User=chef-modele
+Group=chef-modele
+SupplementaryGroups=agents
+WorkingDirectory=/srv/presti-ia/echange
+InaccessiblePaths=/home/agents
+ExecStart=/usr/bin/node /srv/presti-agents/scripts/usine/chef-modele.mjs servir --echange=/srv/presti-ia/echange
+TimeoutStartSec=30min

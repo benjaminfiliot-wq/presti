@@ -1,0 +1,10 @@
+[Unit]
+Description=Presti — cycle leger du chef, heures impaires à 05 (heure de Paris)
+
+[Timer]
+OnCalendar=*-*-* 01/2:05:00 Europe/Paris
+Persistent=false
+Unit=presti-chef-leger.service
+
+[Install]
+WantedBy=timers.target

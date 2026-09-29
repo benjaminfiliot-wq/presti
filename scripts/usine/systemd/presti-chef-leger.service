@@ -1,0 +1,14 @@
+[Unit]
+Description=Presti — cycle leger du chef d'opérations (GPT-6 luna)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=agents
+Group=agents
+WorkingDirectory=/srv/presti-agents
+Environment=PRESTI_HOTE=usine
+Environment=ORCHESTRE_CODEX_BIN=/usr/local/bin/presti-chef-modele
+ExecStart=/usr/bin/node scripts/usine/avec-coffre.mjs PRESTI_JETON_CHEF -- /usr/bin/node scripts/chef/cycle.mjs --mode=leger --base=https://prestiapp.fr
+TimeoutStartSec=20min

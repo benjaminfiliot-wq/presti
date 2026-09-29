@@ -1,0 +1,9 @@
+[Unit]
+Description=Presti — une demande au modèle (ia) est prête
+
+[Path]
+PathExistsGlob=/srv/presti-ia/echange/*/demande.pret
+Unit=presti-ia-modele.service
+
+[Install]
+WantedBy=paths.target
