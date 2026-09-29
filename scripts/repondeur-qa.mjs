@@ -38,7 +38,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 import {
   R, LOADER, lireOptions, creerSortie, importerDepuis, typecheck, piegerReseau, sansCommentaires, court, premiereLigne,
 } from './fixtures/026-acquisition/commun.mjs'
-import { creerMagasin, scenario as scenarioMagasin, REGLES_JP6 } from './fixtures/026-acquisition/magasin-memoire.mjs'
+import { creerMagasin, scenario as scenarioMagasin, REGLES_JP6, VERDICTS_OK } from './fixtures/026-acquisition/magasin-memoire.mjs'
 import { creerHorloge } from './fixtures/026-acquisition/horloge-factice.mjs'
 import { MODELES_TEMOIN, FAQ_TEMOIN, CAS, motFuiteDeReponse } from './fixtures/026-acquisition/repondeur/index.mjs'
 
@@ -94,6 +94,31 @@ async function semerReponse(M, pid, classe, { texte = 'Message de test', extra =
   await M.classerReponse(id, { classe, ...extra })
   return id
 }
+/** Une mise en scène qui échoue lève : jamais un envoi d'essai refusé en silence (un « dernier envoi » absent fausserait RP-4, RP-12, RP-15, RP-16). */
+const exiger = (r, quoi) => { if (!r || r.ok !== true) throw new Error(`mise en scène refusée par le magasin (${quoi}) : ${r && r.raison}`); return r.id }
+/** Une réponse reçue et jamais classée (le Répondeur ne la lit pas) : la preuve de demande (0099, message_recu) d'un envoi passé. */
+async function semerPreuve(M, pid) {
+  const { id } = await M.reponseRecue({ id_externe: `preuve-${pid}-${crypto.randomBytes(3).toString('hex')}`, prospect_id: pid, canal: 'email_sollicite', source: 'courriel', texte: "Oui, d'accord", en_reponse_a: null, recu_le: iso(T0 - H1) })
+  return id
+}
+/**
+ * Un envoi passé par email_sollicite, préparé par les règles du magasin (0099 : preuve de demande, étape du prospect), puis, si
+ * `envoye`, approuvé et marqué envoyé : le magasin ne l'annule pas quand une opposition tombe ensuite. → son id
+ */
+async function semerEnvoi(M, pid, { type, modele_id, texte, objet = 'Re: bonjour', envoye = false }) {
+  const preuveId = await semerPreuve(M, pid)
+  const destinataire = M.etat().prospects.find((p) => p.id === pid).canaux.find((c) => c.canal === 'email_sollicite').valeur
+  const id = exiger(await M.preparerEnvoi({ prospect_id: pid, type, canal: 'email_sollicite', envoyeur: 'gmail', destinataire, objet, texte, empreinte_texte: crypto.createHash('sha256').update(texte).digest('hex'), modele_id, variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: { type: 'message_recu', id: preuveId }, reference: null }), `${type} ${modele_id}`)
+  if (envoye) { exiger(await M.approuverEnvoi(id, VERDICTS_OK), `approbation de ${modele_id}`); await M.marquerEnvoye(id, { message_id: `<${id}@essai.invalid>` }) }
+  return id
+}
+/**
+ * Le contrat du magasin (contrat.ts, 026-016) n'a aucune lecture des conversations à commentaire « SITE » : le Répondeur lit
+ * `conversationsPourReponsePrivee(jours, limite)` si le magasin la porte (en-tête de repondeur.ts). Le juge la fournit au magasin
+ * en mémoire : TOUTES les conversations à commentaire, sans filtre de date ni de réponse déjà faite, pour que le Répondeur
+ * (fenêtre de 7 jours) et le magasin (une seule réponse privée par conversation) tiennent eux-mêmes leurs règles.
+ */
+const avecConversationsCommentees = (M) => Object.assign(M, { async conversationsPourReponsePrivee() { return M.etat().conversations.filter((c) => c.commentaire_id) } })
 const DEPS_BASE = (M, H, extra = {}) => ({
   magasin: M, horloge: H, echeance: H.maintenant() + 45_000, modeles: MODELES_TEMOIN, faq: FAQ_TEMOIN,
   drapeaux: { siteAchatPublic: true }, adresseReponse: 'contact@presti-essai.invalid', offre: null, lienCommandeStudio: null,
@@ -130,6 +155,7 @@ const C = {
   },
   'RP-4': (x) => {
     const e = []
+    if (!x.envoiOrigine) e.push("l'envoi d'origine du fil n'existe pas : le contrôle du fil serait vide")
     if (x.email.envoyeur !== 'gmail') e.push(`courriel : envoyeur ${JSON.stringify(x.email.envoyeur)}, gmail attendu`)
     if (x.email.canal !== 'email_sollicite') e.push(`courriel : canal ${JSON.stringify(x.email.canal)}, email_sollicite attendu`)
     if (x.email.fil_envoi_id !== x.envoiOrigine) e.push(`courriel : fil_envoi_id ${JSON.stringify(x.email.fil_envoi_id)}, ${JSON.stringify(x.envoiOrigine)} (l'envoi d'origine) attendu`)
@@ -231,7 +257,7 @@ const C = {
     if (!x.premierOui.decision || x.premierOui.decision.type !== 'studio_echantillon') e.push("« oui » d'une marque : aucune décision studio_echantillon créée")
     if (!x.echantillonDepose.envoi) e.push("décision studio_echantillon tranchée « depose » : aucun studio_echantillon_v1 préparé")
     if (!x.ouiApresEchantillon.offre) e.push("« oui » après l'échantillon : aucun studio_offre_v1 préparé")
-    else { if (x.ouiApresEchantillon.offre.texte.includes('{videos}') || x.ouiApresEchantillon.offre.texte.includes('{prix}') || x.ouiApresEchantillon.offre.texte.includes('{paiement}')) e.push('studio_offre_v1 : un gabarit non rempli (accolades encore présentes)') }
+    else { if (x.ouiApresEchantillon.offre.modele_id !== 'studio_offre_v1') e.push(`« oui » après l'échantillon : modele_id ${JSON.stringify(x.ouiApresEchantillon.offre.modele_id)}, studio_offre_v1 attendu (et non un second accusé)`); if (x.ouiApresEchantillon.offre.texte.includes('{videos}') || x.ouiApresEchantillon.offre.texte.includes('{prix}') || x.ouiApresEchantillon.offre.texte.includes('{paiement}')) e.push('studio_offre_v1 : un gabarit non rempli (accolades encore présentes)') }
     return e
   },
 }
@@ -305,9 +331,9 @@ async function observer(mod, routeMod, RAC2) {
 
   await tente('RP-4', async () => {
     const H = creerHorloge(T0); const M = creerMagasin({ horloge: H })
-    const pid = semerProspect(M, 900)
-    const envoiOrigine = (await M.preparerEnvoi({ prospect_id: pid, type: 'premier_contact', canal: 'email_sollicite', envoyeur: 'gmail', destinataire: 'artisan-900@repondeur-900-temoin.invalid', objet: 'Un site pour votre entreprise', texte: 'Bonjour, ...', empreinte_texte: 'e', modele_id: 'premier_contact_v1', variante: 'A', fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: null, reference: null })).id
-    await M.mettreAJour(pid, M.lireProspect(pid).etape, 'lien_envoye', {})
+    const pid = semerProspect(M, 900, { etape: 'oui' })
+    // L'envoi d'origine du fil : un lien de maquette réellement préparé par les règles du magasin (le premier contact par e-mail y est interdit).
+    const envoiOrigine = await semerEnvoi(M, pid, { type: 'lien_maquette', modele_id: 'lien_maquette_v1', texte: MODELES_TEMOIN.lien_maquette_v1.texte.replace('{lien_maquette}', 'https://prestiapp.fr/maquette/essai'), objet: 'Votre maquette' })
     const idReponse = await semerReponse(M, pid, 'appel', { texte: 'Vous pouvez me rappeler ?' })
     await mod.executerRepondeur(DEPS_BASE(M, H))
     const email = envoiDe(M, idReponse) ?? {}
@@ -323,17 +349,17 @@ async function observer(mod, routeMod, RAC2) {
 
   await tente('RP-5', async () => {
     const H = creerHorloge(T0)
-    const M3j = creerMagasin({ horloge: H }); M3j.poserEtat({ conversations: [{ id: 'conv-3j', plateforme: 'instagram', pseudo: 'p3j', suit_le_compte: true, fenetre_jusqua: null, commentaire_id: 'com-3j', reponse_privee_jusqua: iso(T0 + 4 * J) }] })
+    const M3j = avecConversationsCommentees(creerMagasin({ horloge: H })); M3j.poserEtat({ conversations: [{ id: 'conv-3j', plateforme: 'instagram', pseudo: 'p3j', suit_le_compte: true, meta_id: 'META-PERSONNE-3J', fenetre_jusqua: null, commentaire_id: 'com-3j', reponse_privee_jusqua: iso(T0 + 4 * J) }] })
     await mod.executerRepondeur(DEPS_BASE(M3j, H))
     const commentaire3j = M3j.etat().envois.some((x) => x.canal === 'reponse_privee' && x.conversation_id === 'conv-3j')
 
-    const M8j = creerMagasin({ horloge: H }); M8j.poserEtat({ conversations: [{ id: 'conv-8j', plateforme: 'instagram', pseudo: 'p8j', suit_le_compte: true, fenetre_jusqua: null, commentaire_id: 'com-8j', reponse_privee_jusqua: iso(T0 - 4 * J) }] })
+    const M8j = avecConversationsCommentees(creerMagasin({ horloge: H })); M8j.poserEtat({ conversations: [{ id: 'conv-8j', plateforme: 'instagram', pseudo: 'p8j', suit_le_compte: true, meta_id: 'META-PERSONNE-8J', fenetre_jusqua: null, commentaire_id: 'com-8j', reponse_privee_jusqua: iso(T0 - 4 * J) }] })
     await mod.executerRepondeur(DEPS_BASE(M8j, H))
     const commentaire8j = M8j.etat().envois.some((x) => x.canal === 'reponse_privee' && x.conversation_id === 'conv-8j')
 
-    const Mdeja = creerMagasin({ horloge: H })
-    Mdeja.poserEtat({ conversations: [{ id: 'conv-deja', plateforme: 'instagram', pseudo: 'pdeja', suit_le_compte: true, fenetre_jusqua: null, commentaire_id: 'com-deja', reponse_privee_jusqua: iso(T0 + 4 * J) }] })
-    await Mdeja.preparerEnvoi({ prospect_id: null, type: 'reponse', canal: 'reponse_privee', envoyeur: 'repondeur', destinataire: 'META-PERSONNE-DEJA', objet: null, texte: "Bonjour, je suis l'assistant IA de Presti. Dites-moi votre métier, votre ville et votre e-mail.", empreinte_texte: 'e', modele_id: 'questions_entrant_v2', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: 'conv-deja', preuve_demande: null, reference: null })
+    const Mdeja = avecConversationsCommentees(creerMagasin({ horloge: H }))
+    Mdeja.poserEtat({ conversations: [{ id: 'conv-deja', plateforme: 'instagram', pseudo: 'pdeja', suit_le_compte: true, meta_id: 'META-PERSONNE-DEJA', fenetre_jusqua: null, commentaire_id: 'com-deja', reponse_privee_jusqua: iso(T0 + 4 * J) }] })
+    exiger(await Mdeja.preparerEnvoi({ prospect_id: null, type: 'reponse', canal: 'reponse_privee', envoyeur: 'repondeur', destinataire: 'META-PERSONNE-DEJA', objet: null, texte: "Bonjour, je suis l'assistant IA de Presti. Dites-moi votre métier, votre ville et votre e-mail.", empreinte_texte: 'e', modele_id: 'questions_entrant_v2', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: 'conv-deja', preuve_demande: null, reference: null }), 'réponse privée déjà faite')
     const n0 = Mdeja.etat().envois.length
     await mod.executerRepondeur(DEPS_BASE(Mdeja, H))
     const dejaRepondu = Mdeja.etat().envois.length > n0
@@ -362,7 +388,7 @@ async function observer(mod, routeMod, RAC2) {
     const envoi = envoiDe(M, idAppel)
     const lienRdv = await M.rdvParJeton(hacherJeton(JETON_RDV))
     const M2 = creerMagasin({ horloge: H })
-    M2.poserEtat({ conversations: [{ id: 'conv-rp7', plateforme: 'instagram', pseudo: 'prp7', suit_le_compte: true, fenetre_jusqua: iso(T0 + H1) }] })
+    M2.poserEtat({ conversations: [{ id: 'conv-rp7', plateforme: 'instagram', pseudo: 'prp7', suit_le_compte: true, fenetre_jusqua: iso(T0 + H1), meta_id: 'META-PERSONNE-RP-7' }] })
     const { id: idConv } = await M2.reponseRecue({ id_externe: 'ext-rp7', conversation_id: 'conv-rp7', canal: 'messagerie', source: 'meta', texte: 'Vous pouvez me rappeler ?', en_reponse_a: null, recu_le: iso(T0) })
     await M2.classerReponse(idConv, { classe: 'appel' })
     await mod.executerRepondeur(DEPS_BASE(M2, H))
@@ -404,27 +430,32 @@ async function observer(mod, routeMod, RAC2) {
   })
 
   await tente('RP-12', async () => {
-    const H = creerHorloge(T0); const M = creerMagasin({ horloge: H })
-    const pid = semerProspect(M, 950)
-    await M.preparerEnvoi({ prospect_id: pid, type: 'reponse', canal: 'email_sollicite', envoyeur: 'gmail', destinataire: 'artisan-950@repondeur-950-temoin.invalid', objet: 'Re: bonjour', texte: "Bonjour, je suis l'assistant IA de Presti.", empreinte_texte: 'e', modele_id: 'rep_appel_v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: { type: 'case_entrant', id: pid }, reference: null })
+    const H = creerHorloge(T0)
+    const reponse = { type: 'reponse', modele_id: 'rep_appel_v1', texte: "Bonjour, je suis l'assistant IA de Presti. Le plus simple est d'en parler 15 min." }
+    // Notre dernier envoi : une réponse (envoyée), puis un message reçu 4 min plus tard → aucune réponse, un événement.
+    const M = creerMagasin({ horloge: H }); const pid = semerProspect(M, 950)
+    await semerEnvoi(M, pid, { ...reponse, envoye: true })
     const idTropRapide = await semerReponse(M, pid, 'question', { texte: 'Une autre question, désolé', recuLe: iso(T0 + 4 * 60_000) })
     await mod.executerRepondeur(DEPS_BASE(M, H))
-    const rTropRapide = reponseDe(M, idTropRapide)
     const evenementTropRapide = M.etat().evenements.some((x) => x.type === 'reponse_trop_rapide' && x.resume?.includes(idTropRapide))
 
+    // Le même message reçu 12 min après → la réponse.
     const M2 = creerMagasin({ horloge: H }); const pid2 = semerProspect(M2, 951)
-    await M2.preparerEnvoi({ prospect_id: pid2, type: 'reponse', canal: 'email_sollicite', envoyeur: 'gmail', destinataire: 'artisan-951@repondeur-951-temoin.invalid', objet: 'Re: bonjour', texte: "Bonjour, je suis l'assistant IA de Presti.", empreinte_texte: 'e', modele_id: 'rep_appel_v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: { type: 'case_entrant', id: pid2 }, reference: null })
+    await semerEnvoi(M2, pid2, { ...reponse, envoye: true })
     const idNormal = await semerReponse(M2, pid2, 'question', { texte: 'Une autre question', recuLe: iso(T0 + 12 * 60_000) })
     await mod.executerRepondeur(DEPS_BASE(M2, H))
 
-    const M3 = creerMagasin({ horloge: H }); const pid3 = semerProspect(M3, 952)
-    await M3.mettreAJour(pid3, 'verifie', 'lien_prepare', {})
-    await M3.preparerEnvoi({ prospect_id: pid3, type: 'lien_maquette', canal: 'email_sollicite', envoyeur: 'gmail', destinataire: 'artisan-952@repondeur-952-temoin.invalid', objet: 'Votre maquette', texte: "Bonjour, je suis l'assistant IA de Presti. Voici votre maquette.", empreinte_texte: 'e', modele_id: 'lien_maquette_v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: null, reference: null })
+    // Après un lien de maquette (pas une réponse), 4 min → servi : « Oui, c'est combien ? » ne reste pas sans réponse.
+    const M3 = creerMagasin({ horloge: H }); const pid3 = semerProspect(M3, 952, { etape: 'oui' })
+    await semerEnvoi(M3, pid3, { type: 'lien_maquette', modele_id: 'lien_maquette_v1', texte: MODELES_TEMOIN.lien_maquette_v1.texte.replace('{lien_maquette}', 'https://prestiapp.fr/maquette/essai'), objet: 'Votre maquette', envoye: true })
     const idPrixApresLien = await semerReponse(M3, pid3, 'prix', { texte: "C'est combien ?", recuLe: iso(T0 + 4 * 60_000) })
     await mod.executerRepondeur(DEPS_BASE(M3, H))
 
+    // Un STOP 2 min après notre réponse → sa confirmation quand même. L'opposition tombe APRÈS notre réponse envoyée (le magasin
+    // n'annule que les envois encore préparés ou approuvés) : la règle des 10 minutes a donc bien un dernier envoi à lire.
     const M4 = creerMagasin({ horloge: H }); const pid4 = semerProspect(M4, 953)
-    await M4.preparerEnvoi({ prospect_id: pid4, type: 'reponse', canal: 'email_sollicite', envoyeur: 'gmail', destinataire: 'artisan-953@repondeur-953-temoin.invalid', objet: 'Re: bonjour', texte: "Bonjour, je suis l'assistant IA de Presti.", empreinte_texte: 'e', modele_id: 'rep_appel_v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: { type: 'case_entrant', id: pid4 }, reference: null })
+    await semerEnvoi(M4, pid4, { ...reponse, envoye: true })
+    await M4.opposer({ domaine: 'repondeur-953-temoin.invalid' }, 'stop', 'webhook_meta')
     const idStopRapide = await semerReponse(M4, pid4, 'stop', { texte: 'STOP', recuLe: iso(T0 + 2 * 60_000) })
     await mod.executerRepondeur(DEPS_BASE(M4, H))
 
@@ -468,7 +499,7 @@ async function observer(mod, routeMod, RAC2) {
 
   await tente('RP-14', async () => {
     const H = creerHorloge(T0); const M = creerMagasin({ horloge: H })
-    M.poserEtat({ conversations: [{ id: 'conv-rp14', plateforme: 'instagram', pseudo: 'prp14', suit_le_compte: true, fenetre_jusqua: iso(T0 + H1) }] })
+    M.poserEtat({ conversations: [{ id: 'conv-rp14', plateforme: 'instagram', pseudo: 'prp14', suit_le_compte: true, fenetre_jusqua: iso(T0 + H1), meta_id: 'META-PERSONNE-RP-14' }] })
     const { id } = await M.reponseRecue({ id_externe: 'ext-rp14', conversation_id: 'conv-rp14', canal: 'messagerie', source: 'meta', texte: 'Bonjour, je suis menuisier', en_reponse_a: null, recu_le: iso(T0) })
     await M.classerReponse(id, { classe: 'entrant' })
     await mod.executerRepondeur(DEPS_BASE(M, H))
@@ -476,29 +507,31 @@ async function observer(mod, routeMod, RAC2) {
   })
 
   await tente('RP-15', async () => {
+    // Un lien de maquette réellement envoyé par e-mail (préparé par les règles du magasin, approuvé, marqué envoyé), la maquette prête
+    // (le lien de la relance en cite une nouvelle), l'envoi à froid ouvert : la relance sollicitée est une relance pour le magasin.
+    const semerLien = async (M, n, modele) => {
+      const pid = semerProspect(M, n, { etape: 'oui' })
+      await M.enregistrerMaquettePrete(pid, { chemin: `maquettes/essai-${n}`, empreinte: 'e'.repeat(64), variante: null })
+      M.poserEtat({ interrupteurs: { envoi_froid: true } })
+      await semerEnvoi(M, pid, { type: 'lien_maquette', modele_id: modele, texte: MODELES_TEMOIN[modele].texte.replace('{lien_maquette}', 'https://prestiapp.fr/maquette/essai'), objet: 'Votre maquette', envoye: true })
+      return pid
+    }
     const H = creerHorloge(T0)
-    const Man = creerMagasin({ horloge: H }); const pan = semerProspect(Man, 970)
-    await Man.mettreAJour(pan, 'verifie', 'lien_prepare', {})
-    const envoiLien = await Man.preparerEnvoi({ prospect_id: pan, type: 'lien_maquette', canal: 'email_sollicite', envoyeur: 'gmail', destinataire: 'artisan-970@repondeur-970-temoin.invalid', objet: 'Votre maquette', texte: MODELES_TEMOIN.lien_maquette_v1.texte, empreinte_texte: 'e', modele_id: 'lien_maquette_v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: null, reference: null })
+    const Man = creerMagasin({ horloge: H }); const pan = await semerLien(Man, 970, 'lien_maquette_v1')
     H.avancer(4 * J + H1)
     await mod.executerRepondeur(DEPS_BASE(Man, H))
     const relanceAnnonce4j = Man.etat().envois.some((x) => x.prospect_id === pan && x.modele_id === 'relance_oui_v1')
-    const relancesRejeu1 = Man.etat().envois.filter((x) => x.prospect_id === pan && x.modele_id === 'relance_oui_v1').length
     await mod.executerRepondeur(DEPS_BASE(Man, H))
     const relancesRejeu2 = Man.etat().envois.filter((x) => x.prospect_id === pan && x.modele_id === 'relance_oui_v1').length
 
     const H3j = creerHorloge(T0)
-    const M3j = creerMagasin({ horloge: H3j }); const p3j = semerProspect(M3j, 971)
-    await M3j.mettreAJour(p3j, 'verifie', 'lien_prepare', {})
-    await M3j.preparerEnvoi({ prospect_id: p3j, type: 'lien_maquette', canal: 'email_sollicite', envoyeur: 'gmail', destinataire: 'artisan-971@repondeur-971-temoin.invalid', objet: 'Votre maquette', texte: MODELES_TEMOIN.lien_maquette_v1.texte, empreinte_texte: 'e', modele_id: 'lien_maquette_v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: null, reference: null })
+    const M3j = creerMagasin({ horloge: H3j }); const p3j = await semerLien(M3j, 971, 'lien_maquette_v1')
     H3j.avancer(3 * J)
     await mod.executerRepondeur(DEPS_BASE(M3j, H3j))
     const relance3j = M3j.etat().envois.some((x) => x.prospect_id === p3j && x.modele_id === 'relance_oui_v1')
 
     const Hsa = creerHorloge(T0)
-    const Msa = creerMagasin({ horloge: Hsa }); const psa = semerProspect(Msa, 972)
-    await Msa.mettreAJour(psa, 'verifie', 'lien_prepare', {})
-    await Msa.preparerEnvoi({ prospect_id: psa, type: 'lien_maquette', canal: 'email_sollicite', envoyeur: 'gmail', destinataire: 'artisan-972@repondeur-972-temoin.invalid', objet: 'Votre maquette', texte: MODELES_TEMOIN.lien_maquette_sans_annonce_v1.texte, empreinte_texte: 'e', modele_id: 'lien_maquette_sans_annonce_v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: null, reference: null })
+    const Msa = creerMagasin({ horloge: Hsa }); const psa = await semerLien(Msa, 972, 'lien_maquette_sans_annonce_v1')
     Hsa.avancer(4 * J + H1)
     await mod.executerRepondeur(DEPS_BASE(Msa, Hsa))
     const relanceSansAnnonce = Msa.etat().envois.some((x) => x.prospect_id === psa && x.modele_id === 'relance_oui_v1')
@@ -514,14 +547,17 @@ async function observer(mod, routeMod, RAC2) {
     const accuse = envoiDe(M, idOui)
     const decision = M.etat().decisions.find((d) => d.prospect_id === pid && d.type === 'studio_echantillon')
 
+    // La décision tranchée « depose » cite le « oui » de la marque (déjà servi de son accusé) : c'est sa preuve de demande.
     const M2 = creerMagasin({ horloge: H }); const pid2 = semerProspect(M2, 981, { cible: 'marque' })
-    M2.poserEtat({ tranchees: [{ id: 'tr-981', type: 'studio_echantillon', prospect_id: pid2, reponse_id: null, option: 'depose', tranche_le: iso(T0) }] })
+    const idOui981 = await semerReponse(M2, pid2, 'oui'); await M2.reponseRepondue(idOui981, null)
+    M2.poserEtat({ tranchees: [{ id: 'tr-981', type: 'studio_echantillon', prospect_id: pid2, reponse_id: idOui981, option: 'depose', tranche_le: iso(T0) }] })
     await mod.executerRepondeur(DEPS_BASE(M2, H))
     const envoiEchantillon = M2.etat().envois.find((x) => x.prospect_id === pid2 && x.modele_id === 'studio_echantillon_v1')
 
+    // Un « oui » reçu APRÈS l'échantillon (envoyé, par les règles du magasin) → l'offre, et non un second accusé.
     const M3 = creerMagasin({ horloge: H }); const pid3 = semerProspect(M3, 982, { cible: 'marque' })
-    await M3.preparerEnvoi({ prospect_id: pid3, type: 'reponse', canal: 'email_sollicite', envoyeur: 'gmail', destinataire: 'artisan-982@repondeur-982-temoin.invalid', objet: 'Re: échantillon', texte: MODELES_TEMOIN.studio_echantillon_v1.texte, empreinte_texte: 'e', modele_id: 'studio_echantillon_v1', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: { type: 'case_entrant', id: pid3 }, reference: null })
-    const idOui2 = await semerReponse(M3, pid3, 'oui')
+    await semerEnvoi(M3, pid3, { type: 'reponse', modele_id: 'studio_echantillon_v1', texte: MODELES_TEMOIN.studio_echantillon_v1.texte, objet: 'Re: échantillon', envoye: true })
+    const idOui2 = await semerReponse(M3, pid3, 'oui', { recuLe: iso(T0 + 30 * 60_000) })
     await mod.executerRepondeur(DEPS_BASE(M3, H, { offre: { videos: 5, prix_texte: '490 €' }, lienCommandeStudio: (p) => `https://prestiapp.fr/studio/paiement/${p.id}` }))
     const offre = envoiDe(M3, idOui2)
 
@@ -563,7 +599,7 @@ function obsBase() {
     'RP-13': { rgpd: { modele: 'rep_rgpd_accuse_v1', type: 'reponse_rgpd' }, acces: { texteContientExport: true, contientJeton: false }, effacement: { modele: 'rep_rgpd_efface_v1' }, ignoree: { envoi: null }, rgpdAutre: { envoi: null } },
     'RP-14': { modele: 'questions_entrant_v2' },
     'RP-15': { annonce4j: { relance: true }, annonce3j: { relance: false }, sansAnnonce: { relance: false }, rejoue: { relances: 1 } },
-    'RP-16': { premierOui: { accuse: { modele_id: 'studio_accuse_v1' }, decision: { type: 'studio_echantillon' } }, echantillonDepose: { envoi: { modele_id: 'studio_echantillon_v1' } }, ouiApresEchantillon: { offre: { texte: 'Offre : 5 vidéos, 490 €, https://prestiapp.fr/studio/paiement/x' } } },
+    'RP-16': { premierOui: { accuse: { modele_id: 'studio_accuse_v1' }, decision: { type: 'studio_echantillon' } }, echantillonDepose: { envoi: { modele_id: 'studio_echantillon_v1' } }, ouiApresEchantillon: { offre: { modele_id: 'studio_offre_v1', texte: 'Offre : 5 vidéos, 490 €, https://prestiapp.fr/studio/paiement/x' } } },
   }
 }
 function muter(base, id, m) { const x = JSON.parse(JSON.stringify(base[id])); m(x); return x }
@@ -572,7 +608,7 @@ function echantillons() {
   return {
     'RP-2': [['conforme', b['RP-2'], false], ['pas_maintenant non traité', muter(b, 'RP-2', (x) => { x.pasMaintenant.repondue = false }), true], ['oui artisan avec envoi', muter(b, 'RP-2', (x) => { x.ouiArtisan.envoi = { modele_id: 'x' } }), true]],
     'RP-3': [['conforme', b['RP-3'], false], ['phrase absente', muter(b, 'RP-3', (x) => { x.textes.appel = 'Bonjour.' }), true], ['fuite du message', muter(b, 'RP-3', (x) => { x.textes.appel += ' pour votre menuiserie' }), true]],
-    'RP-4': [['conforme', b['RP-4'], false], ['fil rompu', muter(b, 'RP-4', (x) => { x.email.fil_envoi_id = null }), true], ['objet sans Re', muter(b, 'RP-4', (x) => { x.email.objet = 'bonjour' }), true]],
+    'RP-4': [['conforme', b['RP-4'], false], ['fil rompu', muter(b, 'RP-4', (x) => { x.email.fil_envoi_id = null }), true], ['objet sans Re', muter(b, 'RP-4', (x) => { x.email.objet = 'bonjour' }), true], ['fil vide (aucun envoi d origine semé)', muter(b, 'RP-4', (x) => { x.envoiOrigine = undefined; x.email.fil_envoi_id = undefined }), true]],
     'RP-5': [['conforme', b['RP-5'], false], ['8 jours répond quand même', muter(b, 'RP-5', (x) => { x.commentaire8j = true }), true], ['seconde réponse privée', muter(b, 'RP-5', (x) => { x.dejaRepondu = true }), true]],
     'RP-6': [['conforme', b['RP-6'], false], ['second stop répond aussi', muter(b, 'RP-6', (x) => { x.second = { type: 'confirmation_stop' } }), true]],
     'RP-7': [['conforme', b['RP-7'], false], ['lien absent du texte', muter(b, 'RP-7', (x) => { x.texte = 'aucun lien' }), true], ['lien de rendez-vous sans prospect', muter(b, 'RP-7', (x) => { x.sansProspectAUnLien = true }), true]],
@@ -584,7 +620,7 @@ function echantillons() {
     'RP-13': [['conforme', b['RP-13'], false], ['export avec un jeton', muter(b, 'RP-13', (x) => { x.acces.contientJeton = true }), true], ['ignoree envoie quand même', muter(b, 'RP-13', (x) => { x.ignoree.envoi = { modele_id: 'x' } }), true]],
     'RP-14': [['conforme', b['RP-14'], false], ['ancien modèle v1', muter(b, 'RP-14', (x) => { x.modele = 'questions_entrant_v1' }), true]],
     'RP-15': [['conforme', b['RP-15'], false], ['relance trop tôt (3 jours)', muter(b, 'RP-15', (x) => { x.annonce3j.relance = true }), true], ['relance rejouée deux fois', muter(b, 'RP-15', (x) => { x.rejoue.relances = 2 }), true]],
-    'RP-16': [['conforme', b['RP-16'], false], ['gabarit non rempli', muter(b, 'RP-16', (x) => { x.ouiApresEchantillon.offre.texte = 'Offre : {videos} vidéos pour {prix}' }), true], ['aucune décision créée', muter(b, 'RP-16', (x) => { x.premierOui.decision = null }), true]],
+    'RP-16': [['conforme', b['RP-16'], false], ['gabarit non rempli', muter(b, 'RP-16', (x) => { x.ouiApresEchantillon.offre.texte = 'Offre : {videos} vidéos pour {prix}' }), true], ['aucune décision créée', muter(b, 'RP-16', (x) => { x.premierOui.decision = null }), true], ['second accusé au lieu de l offre', muter(b, 'RP-16', (x) => { x.ouiApresEchantillon.offre.modele_id = 'studio_accuse_v1' }), true]],
   }
 }
 
