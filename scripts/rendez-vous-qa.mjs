@@ -9,9 +9,10 @@
 //
 // Les critères RV de 026-084.md. Le juge appelle les fonctions pures du module directement (creneauxLibres,
 // validerReservation), puis exécute app/rendez-vous/[jeton]/route.ts par ts-loader avec une doublure de magasinSupabase
-// (rdvParJeton, reserverRdv contrôlés par le juge) et de lib/alertes (envoyerAlertes capturée) ; lib/security et
-// lib/limites s'importent réels (consommerLimite échoue en douceur — repli « laisse passer » — sans base réelle, hors
-// ligne, piège réseau limité à 127.0.0.1).
+// (rdvParJeton, reserverRdv contrôlés par le juge), de lib/alertes (envoyerAlertes capturée) et de lib/limites
+// (consommerLimite laisse toujours passer, sans RPC réel : piegerReseau consigne une tentative même vers localhost,
+// ce qui ferait échouer RV-1 à tort si le vrai module était laissé s'exécuter) ; lib/security s'importe réel
+// (getIp, ipPseudonyme : pures, sans réseau).
 //
 //   --racine=<d>     importe <d>/lib/agents/acquisition/rendezVous.ts et <d>/app/rendez-vous/[jeton]/route.ts (défaut : le
 //                    dépôt).
@@ -59,10 +60,14 @@ const piege = piegerReseau()
 const hacherJeton = (j) => crypto.createHash('sha256').update(j).digest('hex')
 
 /** L'instant UTC d'une heure locale de Paris (essaie CET puis CEST, garde celle qui redonne la même heure via Intl : DST juste). */
+const FORMATEUR_PARIS_HM = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
 function parisVersUTC(jourISO, heureMinute) {
   for (const decalage of [1, 2]) {
     const instant = Date.parse(`${jourISO}T${heureMinute}:00.000Z`) - decalage * 3600_000
-    const relu = new Intl.DateTimeFormat('fr-CA', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(instant)
+    // formatToParts, pas format() : format() rend « 10 h 00 » en fr-CA (espace « h »), jamais « 10:00 » — la comparaison
+    // de chaîne ne pouvait donc jamais réussir, quel que soit decalage (bug distinct de celui posé par Codex).
+    const p = Object.fromEntries(FORMATEUR_PARIS_HM.formatToParts(instant).map((x) => [x.type, x.value]))
+    const relu = `${p.hour}:${p.minute}`
     if (relu === heureMinute) return instant
   }
   throw new Error(`conversion Paris impossible pour ${jourISO} ${heureMinute}`)
@@ -76,6 +81,7 @@ function doublerPourRoute(racine) {
   globalThis.__rv = { liens: {}, reserverResultat: { ok: true } }
   const cibleMagasin = cleChemin(pathToFileURL(path.join(racine, 'lib', 'agents', 'acquisition', 'magasinSupabase.ts')).href)
   const cibleAlertes = cleChemin(pathToFileURL(path.join(racine, 'lib', 'alertes.ts')).href)
+  const cibleLimites = cleChemin(pathToFileURL(path.join(racine, 'lib', 'limites.ts')).href)
   const doublureMagasin = `data:text/javascript,${encodeURIComponent(`
     export const magasinSupabase = {
       async rdvParJeton(h) { globalThis.__rvAppels.push(['rdvParJeton', h]); return globalThis.__rv.liens[h] ?? null },
@@ -86,13 +92,24 @@ function doublerPourRoute(racine) {
   const doublureAlertes = `data:text/javascript,${encodeURIComponent(
     "export async function envoyerAlertes(alertes) { globalThis.__rvAlertes.push(...alertes); return alertes.length }",
   )}`
+  // consommerLimite (lib/limites.ts) est réelle en RPC Supabase : hors ligne, elle « laisse passer » (repli), mais la
+  // tentative de fetch vers Supabase reste consignée par piegerReseau() même vers localhost (allowlist qui n'empêche
+  // pas l'enregistrement), ce qui fait échouer RV-1 à tort. Doublée comme le magasin et les alertes : laisse toujours
+  // passer, sans toucher au réseau.
+  const doublureLimites = `data:text/javascript,${encodeURIComponent(
+    "export async function consommerLimite() { globalThis.__rvAppels.push(['consommerLimite']); return true }",
+  )}`
   const crochet = `data:text/javascript,${encodeURIComponent(`
+    import path from 'node:path'
+    import { fileURLToPath } from 'node:url'
+    const cleChemin = ${cleChemin.toString()}
     export async function resolve(spec, ctx, next) {
       const r = await next(spec, ctx)
       if (!r.url.startsWith('file:')) return r
-      const k = (${cleChemin.toString()})(r.url)
+      const k = cleChemin(r.url)
       if (k === ${JSON.stringify(cibleMagasin)}) return { url: ${JSON.stringify(doublureMagasin)}, shortCircuit: true }
       if (k === ${JSON.stringify(cibleAlertes)}) return { url: ${JSON.stringify(doublureAlertes)}, shortCircuit: true }
+      if (k === ${JSON.stringify(cibleLimites)}) return { url: ${JSON.stringify(doublureLimites)}, shortCircuit: true }
       return r
     }
   `)}`
@@ -194,27 +211,32 @@ async function observer(mod, routeMod, RAC2) {
     const weekend = creneauxLundi.filter((c) => { const j = new Date(c).getUTCDay(); return j === 0 || j === 6 })
     const apres10Jours = creneauxLundi.filter((c) => Date.parse(c) > maintenantLundi + 10 * J)
 
-    const avantDST = mod.creneauxLibres(parisVersUTC('2026-10-05', '08:00'), [])
+    const avantDST = mod.creneauxLibres(parisVersUTC('2026-10-04', '08:00'), [])
     const attenduAvant = new Date(parisVersUTC('2026-10-05', '12:00')).toISOString()
-    const apresDST = mod.creneauxLibres(parisVersUTC('2026-11-02', '08:00'), [])
+    const apresDST = mod.creneauxLibres(parisVersUTC('2026-11-01', '08:00'), [])
     const attenduApres = new Date(parisVersUTC('2026-11-02', '12:00')).toISOString()
 
     return { lundiAvant22h, weekend, apres10Jours, dstAvant: { inclus: avantDST.includes(attenduAvant), attendu: attenduAvant }, dstApres: { inclus: apresDST.includes(attenduApres), attendu: attenduApres } }
   })
 
   const jetonHacheValide = hacherJeton(JETON_VALIDE), jetonHacheExpire = hacherJeton(JETON_EXPIRE), jetonHacheReserve = hacherJeton(JETON_DEJA_RESERVE)
+  // statut, metier, commune : acq_rdv_par_jeton (0106, 026-061) les rend réellement ; le lien de test doit les porter
+  // pour que preparer() (qui refuse tout statut ≠ 'propose') laisse passer le jeton valide, et pour que RV-4 puisse
+  // vérifier l'échappement HTML (« <b> » littéral dans le jeu d'essai).
   globalThis.__rv.liens = {
-    [jetonHacheValide]: { prospect_id: 'prospect-rv-1', jeton_hache: jetonHacheValide, expire_le: new Date(N + 10 * J).toISOString(), creneau: null },
-    [jetonHacheExpire]: { prospect_id: 'prospect-rv-2', jeton_hache: jetonHacheExpire, expire_le: new Date(N - J).toISOString(), creneau: null },
-    [jetonHacheReserve]: { prospect_id: 'prospect-rv-3', jeton_hache: jetonHacheReserve, expire_le: new Date(N + 10 * J).toISOString(), creneau: new Date(N + 2 * J).toISOString() },
+    [jetonHacheValide]: { prospect_id: 'prospect-rv-1', jeton_hache: jetonHacheValide, statut: 'propose', metier: '<b>plombier</b>', commune: '<b>Lyon</b>', expire_le: new Date(N + 10 * J).toISOString(), creneau: null },
+    [jetonHacheExpire]: { prospect_id: 'prospect-rv-2', jeton_hache: jetonHacheExpire, statut: 'propose', metier: 'plombier', commune: 'Lyon', expire_le: new Date(N - J).toISOString(), creneau: null },
+    [jetonHacheReserve]: { prospect_id: 'prospect-rv-3', jeton_hache: jetonHacheReserve, statut: 'reserve', metier: 'plombier', commune: 'Lyon', expire_le: new Date(N + 10 * J).toISOString(), creneau: new Date(N + 2 * J).toISOString() },
   }
   const ctx = (jeton) => ({ params: Promise.resolve({ jeton }) })
   const url = (jeton) => `http://127.0.0.1/rendez-vous/${encodeURIComponent(jeton)}`
   const lire = async (r) => { const t = await r.text(); return { statut: r.status, corps: t, entetes: Object.fromEntries([...r.headers.entries()].map(([k, v]) => [k.toLowerCase(), v])) } }
 
   await tente('RV-3', async () => ({
-    malforme: { get: await lire(await routeMod.GET(new Request(url(JETON_MAL_FORME)), ctx(JETON_MAL_FORME))), post: await lire(await routeMod.POST(new Request(url(JETON_MAL_FORME), { method: 'POST' }), ctx(JETON_MAL_FORME))) },
-    inconnu: { get: await lire(await routeMod.GET(new Request(url(JETON_INCONNU)), ctx(JETON_INCONNU))), post: await lire(await routeMod.POST(new Request(url(JETON_INCONNU), { method: 'POST' }), ctx(JETON_INCONNU))) },
+    // Origin correcte sur les deux POST : sinon le refus d'Origin (RV-5) répond avant même la vérification du jeton, et
+    // ce n'est plus REPONSE_404 qui est observée — RV-3 doit exercer la même 404 identique qu'en GET, pas le 403.
+    malforme: { get: await lire(await routeMod.GET(new Request(url(JETON_MAL_FORME)), ctx(JETON_MAL_FORME))), post: await lire(await routeMod.POST(new Request(url(JETON_MAL_FORME), { method: 'POST', headers: { origin: 'https://prestiapp.fr' } }), ctx(JETON_MAL_FORME))) },
+    inconnu: { get: await lire(await routeMod.GET(new Request(url(JETON_INCONNU)), ctx(JETON_INCONNU))), post: await lire(await routeMod.POST(new Request(url(JETON_INCONNU), { method: 'POST', headers: { origin: 'https://prestiapp.fr' } }), ctx(JETON_INCONNU))) },
     expire: { get: await lire(await routeMod.GET(new Request(url(JETON_EXPIRE)), ctx(JETON_EXPIRE))) },
     dejaReserve: { get: await lire(await routeMod.GET(new Request(url(JETON_DEJA_RESERVE)), ctx(JETON_DEJA_RESERVE))) },
   }))
