@@ -14,8 +14,8 @@
 //   4. titre lisible (R-12) : contraste p90 du fond du titre ≥ 3,0 à 8 instants du cycle, en 1088×800 et 1440×900 ;
 //   5. coins (R-4) : feuille magenta de test, rotation à ses deux extrêmes et poussée à 1, en 1088×800, 1280×800, 1440×900 et
 //      1920×1080 : au plus 20 pixels magenta (anticrénelage) ;
-//   6. rien ne tourne ni ne balaie en mouvement réduit (1440×900), en 1024×768 (sous le rapport 34/25), au téléphone (390×844) et
-//      sur la page commune menuisier-rennes (1440×900) ;
+//   6. rien ne tourne ni ne balaie en mouvement réduit (1440×900 et 390×844), en 1024×768 (sous le rapport 34/25) et
+//      sur la page commune menuisier-rennes (1440×900) ; au téléphone portrait avec mouvement permis, seules les animations autorisées tournent ;
 //   7. la barre retenue reste verte (scripts/nav-retenue-qa.mjs).
 //
 // Usage : node scripts/signature-repos-qa.mjs
@@ -153,17 +153,30 @@ try {
     await ctx.close()
   }
 
-  // 6 : nulle part ailleurs
+  // 6 : nulle part ailleurs (formats sans geste au repos, ou avec mouvement réduit)
   for (const [nom, chemin, opts] of [
     ['mouvement réduit 1440×900', '/index.html', { viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' }],
     ['1024×768', '/index.html', { viewport: { width: 1024, height: 768 } }],
-    ['téléphone 390×844', '/index.html', { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 }],
+    ['téléphone mouvement réduit 390×844', '/index.html', { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, reducedMotion: 'reduce' }],
     ['page commune menuisier-rennes 1440×900', '/menuisier-rennes/index.html', { viewport: { width: 1440, height: 900 } }],
   ]) {
     const { ctx, page } = await ouvrir(nav, chemin, opts)
     const sig = await signatures(page)
     if (sig.length) echecs.push(`${nom} : ${sig.map((s) => s.nom).join(', ')} actif (aucune signature attendue)`)
     else faits.push(`${nom} : aucune signature`)
+    await ctx.close()
+  }
+
+  // Téléphone portrait avec mouvement permis (famille « telephone », 021-17 Q4) : seules les animations autorisées au héros
+  {
+    const { ctx, page } = await ouvrir(nav, '/index.html', { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 })
+    const sig = await signatures(page)
+    for (const s of sig) {
+      if (!/^signature-(tourne|projecteur)/.test(s.nom)) echecs.push(`téléphone 390×844 : animation inattendue ${s.nom}`)
+      const hors = s.proprietes.filter((p) => !PROPRIETES.has(p))
+      if (hors.length) echecs.push(`téléphone 390×844 : ${s.nom} anime ${hors.join(', ')} (seuls rotate, scale, translate, transform, opacity)`)
+    }
+    faits.push(`téléphone 390×844 : ${sig.map((s) => s.nom + s.pseudo).join(', ') || 'aucune signature'}`)
     await ctx.close()
   }
 } finally {
