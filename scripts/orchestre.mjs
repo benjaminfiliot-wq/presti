@@ -10,7 +10,7 @@
 // symbolique : Windows) ; `maj` le recopie depuis le dépôt `orchestre` (clé `source` de la configuration).
 // La RACINE d'un projet est le dossier qui contient .orchestre/, trouvé en remontant depuis le cwd —
 // jamais « le dossier du script, un cran au-dessus ». Tout ce qui est propre au projet (description, pile,
-// vault, globs de la carte, juges, exécutants) vit dans .orchestre/orchestre.json.
+// vault, globs de la carte, juges, exécutants, bailMinutes) vit dans .orchestre/orchestre.json.
 //
 // Usage :
 //   node scripts/orchestre.mjs init [dossier] [--projet=nom] [--pile=…] [--vault=chemin] [--description=…]
@@ -26,7 +26,10 @@
 //   node scripts/orchestre.mjs valider <fichier.md>       contrôle l'en-tête d'une tâche avant de la déposer
 //   node scripts/orchestre.mjs repondre <id> <n> [ligne]  répond à en-cours/<id>.question.md
 //   node scripts/orchestre.mjs liberer <id>               l'exécutant abandonne : retour en file/, verrou levé
-//   node scripts/orchestre.mjs rejouer <id>               une tâche refusée retourne en file/
+//   node scripts/orchestre.mjs rejouer <id> [--forcer]    une tâche refusée retourne en file/ ; DISJONCTÉE refuse sans --forcer
+//   node scripts/orchestre.mjs battement <id>             le bail (verrou de en-cours/) repart pour un tour : exécutant vivant
+//   node scripts/orchestre.mjs expirer                    reprend les baux expirés en file/, disjoncte les tâches en échec répété
+//   node scripts/orchestre.mjs promouvoir <n> [--benj]    sort la proposition n de la quarantaine de .orchestre/decisions.md
 //
 // Périmètres : chemins relatifs à la racine du projet ; un chemin qui commence par `<nom du vault>/` vise le
 // vault configuré. Le chevauchement est jugé sur la partie littérale avant le premier joker — volontairement
@@ -48,7 +51,7 @@ const MAX_LIGNES_DIGEST = 100
 const SEUIL_PART_LUE = 60 // au-delà de ce pourcentage, Claude Code lit trop au lieu de faire lire
 const DEFAUTS = {
   projet: null, description: '', pile: '', source: null, vault: null, carteVault: 'Produit/Carte-du-code.md',
-  carte: {}, juges: {}, executants: ['antigravity', 'codex', 'claude-code'], maxMinutes: 30,
+  carte: {}, juges: {}, executants: ['antigravity', 'codex', 'claude-code'], maxMinutes: 30, bailMinutes: null,
   lectureLibre: ['.orchestre/**', 'plans/**'], methodeSupplement: [],
 }
 
@@ -94,6 +97,7 @@ function lireConfig(racine) {
   c.juges = c.juges && typeof c.juges === 'object' ? c.juges : {}
   c.executants = Array.isArray(c.executants) && c.executants.length ? c.executants : DEFAUTS.executants
   c.maxMinutes = Number(c.maxMinutes) > 0 ? Number(c.maxMinutes) : DEFAUTS.maxMinutes
+  c.bailMinutes = Number(c.bailMinutes) > 0 ? Number(c.bailMinutes) : null
   c.methodeSupplement = Array.isArray(c.methodeSupplement) ? c.methodeSupplement.filter((s) => typeof s === 'string' && s.trim()) : []
   return c
 }
@@ -110,6 +114,9 @@ function ouvrir(racine) {
 const preparer = () => { for (const d of Object.values(D)) fs.mkdirSync(path.join(ORCH, d), { recursive: true }) }
 const git = (args) => { try { return execFileSync('git', args, { cwd: RACINE, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim() } catch { return '' } }
 const prefixeVault = () => (VAULT ? `${path.basename(VAULT)}/` : null)
+// Le bail d'un verrou : CONFIG.bailMinutes, ou 2 × maxMinutes par défaut — un exécutant qui meurt ne doit pas
+// tenir sa tâche pour toujours (023-03 tenue depuis le 16/09, avant cette fiche).
+const seuilBailMinutes = () => (CONFIG.bailMinutes > 0 ? CONFIG.bailMinutes : CONFIG.maxMinutes * 2)
 
 // ── globs maison : ** = tout, y compris les « / » ; * = tout sauf « / » ; ? = un caractère ───────────
 function globVersRegex(motif) {
@@ -176,9 +183,12 @@ function lireTache(fichier) {
   const erreurs = []
   for (const c of CHAMPS) {
     const v = entete[c]
-    if (v === undefined || v === '' || (Array.isArray(v) && !v.length)) erreurs.push(`champ obligatoire absent ou vide : ${c}`)
+    // `interdit: []` est un choix valide (rien n'est hors de perimetre) : seule son ABSENCE est un défaut ;
+    // les autres listes (perimetre au premier chef) doivent, elles, avoir au moins un élément.
+    const videInterdit = c !== 'interdit' && Array.isArray(v) && !v.length
+    if (v === undefined || v === '' || videInterdit) erreurs.push(`champ obligatoire absent ou vide : ${c}`)
   }
-  if (entete.id !== undefined && !/^\d{3}-[\w-]+$/.test(String(entete.id))) erreurs.push(`id « ${entete.id} » : attendu NNN-slug (ex. 014-03)`)
+  if (entete.id !== undefined && !/^(\d{3}-[\w-]+|[A-Za-z][\w-]*)$/.test(String(entete.id))) erreurs.push(`id « ${entete.id} » : attendu NNN-slug (ex. 014-03)`)
   if (entete.type !== undefined && !TYPES.includes(entete.type)) erreurs.push(`type « ${entete.type} » : attendu ${TYPES.join(' | ')}`)
   if (entete.perimetre !== undefined && !Array.isArray(entete.perimetre)) erreurs.push('perimetre : attendu une liste [a, b]')
   if (entete.interdit !== undefined && !Array.isArray(entete.interdit)) erreurs.push('interdit : attendu une liste [a, b]')
@@ -192,8 +202,14 @@ function lireTache(fichier) {
 const prefixe = (g) => String(g).replace(/\\/g, '/').split(/[*?{]/)[0]
 const chevauche = (a, b) => { const pa = prefixe(a), pb = prefixe(b); return pa.startsWith(pb) || pb.startsWith(pa) }
 function conflit(t, enCours) {
-  for (const autre of enCours) for (const p of t.entete.perimetre) for (const q of autre.entete.perimetre) {
-    if (chevauche(p, q)) return `${autre.entete.id} (${q} ↔ ${p})`
+  for (const autre of enCours) {
+    // Deux tâches témoins (type: test — 000-test / 001-test-echec, posées par init()) partagent le même
+    // digest.md et le même verdicts.jsonl : les laisser actives ensemble mélangerait leurs compteurs
+    // dans le prochain digest. Une seule à la fois, même si leurs périmètres ne se chevauchent pas.
+    if (t.entete.type === 'test' && autre.entete.type === 'test') return `${autre.entete.id} (tâches témoins : une seule à la fois)`
+    for (const p of t.entete.perimetre) for (const q of autre.entete.perimetre) {
+      if (chevauche(p, q)) return `${autre.entete.id} (${q} ↔ ${p})`
+    }
   }
   return null
 }
@@ -203,6 +219,14 @@ function lireLock(id) {
   const o = {}
   if (existe(cheminLock(id))) for (const l of lire(cheminLock(id)).split(/\r?\n/)) { const i = l.indexOf(':'); if (i > 0) o[l.slice(0, i).trim()] = l.slice(i + 1).trim() }
   return o
+}
+// Réécrit le verrou en préservant agent/depuis/sha ; `battement:` (présence d'un exécutant vivant) n'est écrit
+// que s'il est fourni.
+function ecrireLock(id, lock) {
+  const lignes = [`agent: ${lock.agent || ''}`, `depuis: ${lock.depuis || ''}`]
+  if (lock.battement) lignes.push(`battement: ${lock.battement}`)
+  lignes.push(`sha: ${lock.sha || ''}`)
+  ecrire(cheminLock(id), lignes.join('\n') + '\n')
 }
 function trouver(id, dossiers = [D.enCours, D.fait, D.refuse, D.file]) {
   for (const d of dossiers) {
@@ -217,13 +241,188 @@ const PIED_DE_TACHE = (id) => `Quand tu as fini :
 1. Dépose ta preuve dans .orchestre/preuves/${id}/ (la sortie de la commande \`verifier\`). Les captures d'écran, c'est le JUGE qui les prend quand le vérificateur le prévoit : ne dépose jamais une image que tu n'as pas vue s'afficher — un fichier fabriqué ou de 0 octet est un refus.
 2. Tant que la tâche est en en-cours/, lance \`${CMD} verifier ${id}\` autant de fois que nécessaire.
 3. Quand c'est vert : déplace le fichier de en-cours/ vers fait/, puis relance \`${CMD} verifier ${id}\` — c'est ce verdict-là qui compte.
-Bloqué ? Écris .orchestre/en-cours/${id}.question.md avec deux ou trois options numérotées, puis attends ${id}.reponse.md. Jamais un paragraphe. Un choix courant est déjà tranché dans .orchestre/decisions.md : applique le défaut.
+Bloqué ? Écris .orchestre/en-cours/${id}.question.md avec deux ou trois options numérotées, puis attends ${id}.reponse.md. Jamais un paragraphe. Applique les décisions tranchées de .orchestre/decisions.md sans demander ; une ligne sous « Proposées (quarantaine) » ne vaut que pour la tâche dont elle porte l'id — tu n'écris toi-même que là, jamais dans le tableau tranché.
 Ne touche à rien hors \`perimetre\`. \`interdit\` est interdit même pour aider. Zéro donnée réelle. Identifiants en français.
 Le dépôt porte d'autres chantiers non committés : ils ne sont PAS à toi. INTERDIT, sans exception : \`git restore\`, \`git checkout <fichier>\`, \`git stash\`, \`git reset\`, \`git clean\`, \`git revert\`, et supprimer ou vider un fichier hors périmètre (\`del\`, \`remove-item\`, \`rm\`). Le 13/09, un agent a « nettoyé » ainsi trois jours de travail de trois sessions : perte sèche. Si le vérificateur te reproche un fichier que tu n'as pas touché, écris \`.orchestre/en-cours/<id>.question.md\` et attends — n'y touche pas.`
+
+// ── le bail d'un verrou : un exécutant qui meurt ne doit pas tenir sa tâche pour toujours ─────────
+// Un verrou est expiré quand `battement:` (à défaut `depuis:`) a plus que seuilBailMinutes(). expirerBaux()
+// tourne au début de `prochaine` et dans la commande `expirer` : la fiche revient en file/, ses annexes
+// éphémères de en-cours/ disparaissent, mais preuves/<id>/avant.txt (la trace de la tentative) reste.
+function expirerBaux() {
+  const reprises = []
+  const dossierEnCours = path.join(ORCH, D.enCours)
+  const seuil = seuilBailMinutes()
+  for (const f of taches(dossierEnCours)) {
+    const t = lireTache(path.join(dossierEnCours, f))
+    const id = t.entete?.id || f.replace(/\.md$/, '')
+    const lock = lireLock(id)
+    const reference = lock.battement || lock.depuis
+    if (!reference) continue
+    const ms = Date.parse(reference)
+    if (!Number.isFinite(ms)) continue
+    const ageMin = (Date.now() - ms) / 60_000
+    if (ageMin <= seuil) continue
+    fs.renameSync(path.join(dossierEnCours, f), path.join(ORCH, D.file, f))
+    for (const suffixe of ['.lock', '.avant.txt', '.question.md', '.reponse.md']) {
+      const p = path.join(dossierEnCours, id + suffixe)
+      if (existe(p)) fs.unlinkSync(p)
+    }
+    fs.appendFileSync(VERDICTS, JSON.stringify({
+      id, verdict: 'EXPIRÉE', ligne: `bail expiré : ${lock.agent || '?'} silencieux depuis ${Math.round(ageMin)} min`,
+      code: null, date: maintenant(), duree_s: 0, agent: lock.agent || '?', executant: t.entete?.executant || CONFIG.executants[0], lignes: 0, dossier: D.enCours,
+    }) + '\n')
+    reprises.push(id)
+  }
+  return reprises
+}
+
+// ── le disjoncteur : trois fins d'échec (FAIL depuis fait/, ou EXPIRÉE) depuis le dernier succès, ou
+// deux dernières identiques, font disjoncter une tâche — elle n'est plus distribuée. On relit tout
+// verdicts.jsonl à chaque appel : un DISJONCTÉE déjà écrit remet le compteur à zéro (idempotent).
+function finsDepuisSucces() {
+  const parId = new Map()
+  if (existe(VERDICTS)) for (const l of lire(VERDICTS).split('\n').filter(Boolean)) {
+    let v; try { v = JSON.parse(l) } catch { continue }
+    if (!v || !v.id) continue
+    if (!parId.has(v.id)) parId.set(v.id, [])
+    const fins = parId.get(v.id)
+    if (v.verdict === 'PASS' || v.verdict === 'DISJONCTÉE') { fins.length = 0; continue }
+    if ((v.verdict === 'FAIL' && v.dossier === D.fait) || v.verdict === 'EXPIRÉE') fins.push(v)
+  }
+  return parId
+}
+function estDisjonctee(id) {
+  if (!existe(VERDICTS)) return false
+  let dernier = null
+  for (const l of lire(VERDICTS).split('\n').filter(Boolean)) {
+    let v; try { v = JSON.parse(l) } catch { continue }
+    if (v && v.id === id && (v.verdict === 'PASS' || v.verdict === 'DISJONCTÉE')) dernier = v.verdict
+  }
+  return dernier === 'DISJONCTÉE'
+}
+function verifierDisjoncteurs() {
+  const disjonctees = []
+  for (const [id, fins] of finsDepuisSucces()) {
+    // « les deux derniers FAIL depuis fait/ avec la même ligne » : ce volet ne compte QUE les FAIL (dossier
+    // fait/), jamais une EXPIRÉE — deux bails expirés par deux agents différents ne se ressemblent pas.
+    const failsFait = fins.filter((f) => f.verdict === 'FAIL')
+    const deuxIdentiques = failsFait.length >= 2 && failsFait.at(-1).ligne === failsFait.at(-2).ligne
+    const disjoncte = fins.length >= 3 || deuxIdentiques
+    if (!disjoncte) continue
+    const retenues = fins.slice(-3)
+    const ligne = retenues.map((f) => f.ligne || '').join(' | ').slice(0, 300)
+    const dernier = retenues.at(-1)
+    fs.appendFileSync(VERDICTS, JSON.stringify({
+      id, verdict: 'DISJONCTÉE', ligne, code: null, date: maintenant(), duree_s: 0,
+      agent: dernier.agent || '?', executant: dernier.executant || CONFIG.executants[0], lignes: 0, dossier: D.refuse,
+    }) + '\n')
+    const ou = trouver(id)
+    if (ou && ou.dossier !== D.refuse) {
+      fs.renameSync(ou.fichier, path.join(ORCH, D.refuse, path.basename(ou.fichier)))
+      for (const suffixe of ['.lock', '.avant.txt', '.question.md', '.reponse.md']) { const p = path.join(ORCH, D.enCours, id + suffixe); if (existe(p)) fs.unlinkSync(p) }
+    }
+    disjonctees.push(id)
+  }
+  return disjonctees
+}
+
+// ── la quarantaine des décisions (ORB-9, R3 de la recherche du 24/09) : un exécutant n'écrit que sous
+// « ## Proposées (quarantaine) » ; verifier() refuse tout changement de decisions.md ailleurs.
+function sansQuarantaine(texte) {
+  const i = texte.indexOf('## Proposées (quarantaine)')
+  if (i < 0) return texte
+  const reste = texte.slice(i)
+  const j = reste.indexOf('\n## ', 1)
+  const fin = j < 0 ? texte.length : i + j
+  return texte.slice(0, i) + texte.slice(fin)
+}
+function extraireQuarantaine(texte) {
+  const i = texte.indexOf('## Proposées (quarantaine)')
+  if (i < 0) return []
+  const reste = texte.slice(i)
+  const j = reste.indexOf('\n## ', 1)
+  const section = j < 0 ? reste : reste.slice(0, j)
+  return section.split('\n').filter((l) => /^\s*-\s+/.test(l)).map((l) => l.trim().replace(/^-\s+/, ''))
+}
+function retirerDeQuarantaine(texte, idx) {
+  const i = texte.indexOf('## Proposées (quarantaine)')
+  if (i < 0) return texte
+  const reste = texte.slice(i)
+  const j = reste.indexOf('\n## ', 1)
+  const finRel = j < 0 ? reste.length : j
+  const section = reste.slice(0, finRel)
+  let compte = -1
+  const filtrees = section.split('\n').filter((l) => {
+    if (!/^\s*-\s+/.test(l)) return true
+    compte++
+    return compte !== idx
+  })
+  return texte.slice(0, i) + filtrees.join('\n') + reste.slice(finRel)
+}
+// Les trois catégories de questions que Benj seul tranche (gabarit decisions.md, § La règle).
+const MOTS_SENSIBLES = /\b(argent|prix|paiement|payer|abonnement|achat|facture|crédit|budget|€|\$|supprim|irréversible|irrévocable|envoi|envoyer|publi|migration|marque|promesse|positionnement)\b/i
+// init() pose decisions.md depuis le gabarit du dépôt outil (hors périmètre de cette fiche : gabarits/** est
+// interdit) — la section de quarantaine est donc garantie ICI, dans le code, quel que soit le contenu du
+// gabarit lu : un projet neuf a toujours « ## Proposées (quarantaine) », même si le gabarit ne l'a pas encore.
+function assurerQuarantaine(texte) {
+  if (texte.includes('## Proposées (quarantaine)')) return texte
+  const bloc = `## Proposées (quarantaine)\n\n<!-- Un exécutant n'écrit ici QUE, une ligne par proposition, avec l'id de sa tâche (ex. « - Nom d'une démo : Atelier Dubois (id de la tâche : 014-07) »). Une proposition ne vaut que pour la tâche dont elle porte l'id, jusqu'à ce qu'elle soit promue. Seul Claude Code la promeut (\`node scripts/orchestre.mjs promouvoir <n>\`), ou Benj s'il s'agit d'argent, d'une action irréversible ou de la marque (\`--benj\`). -->\n\n`
+  const i = texte.indexOf('## Décisions ajoutées par les agents')
+  return i >= 0 ? texte.slice(0, i) + bloc + texte.slice(i) : `${texte.trimEnd()}\n\n${bloc.trimEnd()}\n`
+}
+
+// ── quotas (026-115) : un moteur à sec ne reçoit plus rien jusqu'à son échéance ───────────────────
+// .orchestre/quotas.json ({"codex": {"jusqua": ISO UTC, "vu", "message"}}) est écrit par scripts/executant.mjs quand
+// Codex annonce son quota épuisé ; ce fichier-ci le lit directement (il n'importe pas executant.mjs). Une
+// échéance passée n'est pas active. Par convention, un agent porte le nom de son moteur : `codex-<n>`.
+const PARIS = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+function dateLisible(iso) { const p = Object.fromEntries(PARIS.formatToParts(new Date(Date.parse(iso))).map((x) => [x.type, x.value])); return `${p.day}/${p.month}/${p.year} à ${p.hour}h${p.minute}` }
+function quotasActifs() {
+  const actifs = {}
+  try {
+    const q = JSON.parse(lire(path.join(ORCH, 'quotas.json')))
+    for (const [moteur, v] of Object.entries(q && typeof q === 'object' ? q : {})) { const ms = Date.parse(v?.jusqua); if (Number.isFinite(ms) && ms > Date.now()) actifs[moteur] = v.jusqua }
+  } catch { /* pas de quotas.json (ou illisible) : aucun quota connu */ }
+  return actifs
+}
+const moteurDeAgent = (agent) => (String(agent).match(/^(codex)(?:-|$)/) || [])[1] || null
+// Jusqu'à deux tâches de file/ à confier à Antigravity pendant que `moteur` est à sec : celles qui portent
+// `executant: <moteur>`, ou aucun `executant` (n'importe quel agent peut la prendre, elle n'a pas à attendre la fin
+// du quota) ; ni les disjonctées, ni celles qui chevaucheraient une tâche en cours. Les noms `ag-<n>` continuent
+// ceux de agents.jsonl : un agent inscrit ne reçoit pas d'autre tâche.
+function commandesReaiguillage(moteur) {
+  const enCours = taches(path.join(ORCH, D.enCours)).map((f) => lireTache(path.join(ORCH, D.enCours, f))).filter((t) => t.entete)
+  const registre = path.join(ORCH, 'agents.jsonl')
+  const pris = existe(registre) ? [...lire(registre).matchAll(/"agent"\s*:\s*"ag-(\d+)"/g)].map((m) => Number(m[1])) : []
+  let n = pris.length ? Math.max(...pris) : 0
+  const commandes = []
+  for (const f of taches(path.join(ORCH, D.file))) {
+    if (commandes.length >= 2) break
+    const t = lireTache(path.join(ORCH, D.file, f))
+    if (t.erreurs.length || estDisjonctee(t.entete.id)) continue
+    if (t.entete.executant !== undefined && t.entete.executant !== moteur) continue
+    if (conflit(t, enCours)) continue
+    commandes.push(`node scripts/antigravity.mjs lancer ag-${++n} --tache=${t.entete.id}`)
+  }
+  return commandes
+}
 
 // ── prochaine ─────────────────────────────────────────────────────────────────────────────────────
 function prochaine(agent, tacheVoulue = null) {
   preparer()
+  // Un moteur à sec ne reçoit rien (026-115) : refus avant toute distribution, code 2.
+  const moteur = moteurDeAgent(agent)
+  const jusqua = moteur ? quotasActifs()[moteur] : null
+  if (jusqua) {
+    console.log(`✗ ${moteur} à sec jusqu'au ${dateLisible(jusqua)} : ${agent} ne prend rien avant. Autre exécutant : node scripts/antigravity.mjs lancer ag-<n> --tache=<id> (le choix reste à Claude Code).`)
+    process.exitCode = 2
+    return
+  }
+  // Baux et disjoncteur AVANT toute distribution : une fiche dont le bail vient d'expirer redevient
+  // candidate dans le même appel ; une fiche disjonctée sort de la circulation.
+  expirerBaux()
+  verifierDisjoncteurs()
   // Un agent, une tâche : le registre du pilote (agents.jsonl) dit laquelle. Un agent inscrit n'en reçoit pas d'autre
   // dans la même conversation — le 13/09, un agent a « pris 014-01 dans la foulée » de 014-12 et l'a rendue avec quatre
   // captures identiques ; un autre a ignoré son --tache et pris la première de la file.
@@ -239,6 +438,7 @@ function prochaine(agent, tacheVoulue = null) {
   // `--tache=<id>` : le pilote attribue une tâche précise à un agent ; sans lui, la première compatible.
   const candidates = taches(path.join(ORCH, D.file)).filter((f) => !tacheVoulue || f === `${tacheVoulue}.md` || f.startsWith(`${tacheVoulue}-`))
   if (tacheVoulue && !candidates.length) { console.log(`Aucune tâche ${tacheVoulue} dans file/ (déjà prise, faite ou inexistante).`); process.exit(2) }
+  const fins = finsDepuisSucces()
   for (const f of candidates) {
     const t = lireTache(path.join(ORCH, D.file, f))
     if (t.erreurs.length) {
@@ -248,6 +448,13 @@ function prochaine(agent, tacheVoulue = null) {
       ignorees.push(`${f} : en-tête refusé → refuse/ (${t.erreurs[0]})`)
       continue
     }
+    // Une tâche DISJONCTÉE « n'est plus distribuée » (point 3) : elle ne revient en file/ que par
+    // `rejouer --forcer`, jamais reprise automatiquement tant qu'un PASS ne l'a pas blanchie.
+    if (estDisjonctee(t.entete.id)) { ignorees.push(`${t.entete.id} : DISJONCTÉE — rejouer ${t.entete.id} --forcer après correction`); continue }
+    // Sans --tache= (attribution automatique), une tâche déjà à deux fins d'échec depuis son dernier
+    // succès (un pas du disjoncteur) laisse la main à une tâche plus fraîche : ne pas la redonner sans
+    // cesse à un nouvel agent pendant qu'elle est sur le point de disjoncter (§3, « redonnée sans fin »).
+    if (!tacheVoulue && (fins.get(t.entete.id)?.length || 0) >= 2) { ignorees.push(`${t.entete.id} : ${fins.get(t.entete.id).length} fin(s) d'échec depuis son dernier succès — attribution automatique suspendue`); continue }
     if (t.entete.executant === 'claude-code' && agent !== 'claude-code') { ignorees.push(`${t.entete.id} : réservée à claude-code`); continue }
     const c = conflit(t, enCours)
     if (c) { ignorees.push(`${t.entete.id} : chevauche ${c}`); continue }
@@ -258,9 +465,16 @@ function prochaine(agent, tacheVoulue = null) {
     // porte souvent d'autres chantiers non committés, qui ne sont pas de son fait.
     const avant = `${git(['status', '--porcelain'])}\n`
     ecrire(path.join(ORCH, D.enCours, `${t.entete.id}.avant.txt`), avant)
-    // La copie dans preuves/ survit au déplacement de la tâche (fait/, refuse/) : un verdict rejoué plus tard compare au même « avant ».
+    // La copie dans preuves/ survit au déplacement de la tâche (fait/, refuse/, un bail expiré qui la rend à
+    // file/) : elle n'est écrite qu'à la PREMIÈRE prise, pour qu'un verdict rejoué plus tard compare toujours
+    // au même « avant » — pas à celui, tout neuf, d'une reprise après expiration.
     fs.mkdirSync(path.join(ORCH, D.preuves, t.entete.id), { recursive: true })
-    ecrire(path.join(ORCH, D.preuves, t.entete.id, 'avant.txt'), avant)
+    const preuvesAvant = path.join(ORCH, D.preuves, t.entete.id, 'avant.txt')
+    if (!existe(preuvesAvant)) ecrire(preuvesAvant, avant)
+    // Le cliché de decisions.md « au lancement de la tâche » (ORB-9) : verifier() le comparera à l'état courant,
+    // hors de « ## Proposées (quarantaine) », pour repérer une écriture d'exécutant hors quarantaine.
+    const decisionsPath = path.join(ORCH, 'decisions.md')
+    ecrire(path.join(ORCH, D.preuves, t.entete.id, 'decisions-avant.md'), existe(decisionsPath) ? lire(decisionsPath) : '')
     digest()
     console.log(`# Tâche ${t.entete.id} prise par ${agent} — ${rel(dest)}\n`)
     console.log(lire(dest).trim())
@@ -269,7 +483,9 @@ function prochaine(agent, tacheVoulue = null) {
   }
   digest()
   console.log(`Aucune tâche disponible pour ${agent}.${ignorees.length ? '\n  ' + ignorees.join('\n  ') : ''}`)
-  process.exit(2)
+  // Code 2 : la file est vide (ou l'agent est refusé, quota compris). Code 3 (026-115) : la file porte des tâches, toutes
+  // bloquées — chevauchement, disjoncteur, réservée à Claude Code — : reviens plus tard, ce n'est pas un refus de ton moteur.
+  process.exitCode = ignorees.some((l) => !l.includes('en-tête refusé')) ? 3 : 2
 }
 
 // ── verifier : la commande de la tâche est exécutée ici, son code de sortie fait le verdict ───────
@@ -325,11 +541,25 @@ async function verifier(id) {
   // Une preuve de 0 octet est un mensonge, pas une preuve (quatre « captures » vides livrées le 13/09) : refus, même si la
   // commande est verte. Le vérificateur d'une tâche ne peut pas être plus indulgent que le chef de gare.
   const vides = fichiersVides(path.join(ORCH, D.preuves, id)).map((v) => path.basename(v))
-  const verdict = r.code === 0 && !vides.length ? 'PASS' : 'FAIL'
-  const ligne = verdict === 'PASS' ? '' : vides.length ? `preuve vide : ${vides.slice(0, 4).join(', ')}` : (r.expire
+  // La quarantaine des décisions (ORB-9) : une ligne changée, ajoutée ou retirée de decisions.md HORS de
+  // « ## Proposées (quarantaine) » depuis la prise de la tâche (cliché de `prochaine`) fait échouer la tâche,
+  // quel que soit le vérificateur — c'est une mémoire partagée, elle ne se réécrit pas en douce.
+  const decisionsAvantPath = path.join(ORCH, D.preuves, id, 'decisions-avant.md')
+  let violationDecisions = null
+  if (existe(decisionsAvantPath)) {
+    const decisionsPath = path.join(ORCH, 'decisions.md')
+    const avantD = lire(decisionsAvantPath)
+    const actuelD = existe(decisionsPath) ? lire(decisionsPath) : ''
+    if (sansQuarantaine(avantD) !== sansQuarantaine(actuelD)) violationDecisions = 'decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche'
+  }
+  const verdict = r.code === 0 && !vides.length && !violationDecisions ? 'PASS' : 'FAIL'
+  const ligne = verdict === 'PASS' ? '' : (violationDecisions || (vides.length ? `preuve vide : ${vides.slice(0, 4).join(', ')}` : (r.expire
     ? `délai dépassé (${minutes} min)`
-    : (lignes.find((l) => /ÉCHEC|ECHEC|FAIL|✗|Error|Erreur|not ok|AssertionError/i.test(l)) || lignes.at(-1) || `code ${r.code}`)).slice(0, 160)
+    : (lignes.find((l) => /ÉCHEC|ECHEC|FAIL|✗|Error|Erreur|not ok|AssertionError/i.test(l)) || lignes.at(-1) || `code ${r.code}`)))).slice(0, 160)
+  // Un exécutant qui vérifie est vivant : le bail repart pour un tour (ORB-2).
+  const lockExiste = existe(cheminLock(id))
   const lock = lireLock(id)
+  if (lockExiste) { lock.battement = maintenant(); ecrireLock(id, lock) }
   const production = compterLignes(t.entete.perimetre, lock.sha)
   fs.appendFileSync(VERDICTS, JSON.stringify({ id, verdict, ligne, code: r.code, date: maintenant(), duree_s: duree, agent: lock.agent || '?', executant: t.entete.executant || CONFIG.executants[0], lignes: production, dossier: ou.dossier }) + '\n')
   if (ou.dossier === D.fait) {
@@ -341,6 +571,26 @@ async function verifier(id) {
   console.log(`${verdict === 'PASS' ? '✓' : '✗'} ${id} : ${verdict}${ligne ? ' — ' + ligne : ''} · ${duree}s · ${production} ligne(s) produite(s) · preuve : ${rel(journal)}`)
   if (verdict === 'PASS') console.log('→ bloc terminé : /compact conseillé (et /clear entre deux chantiers)')
   process.exit(verdict === 'PASS' ? 0 : 1)
+}
+
+// ── battement / expirer : le bail d'un verrou ─────────────────────────────────────────────────────
+function battement(id) {
+  preparer()
+  if (!existe(cheminLock(id))) { console.error(`✗ ${id} : pas de verrou en en-cours/ (rien à battre)`); process.exit(3) }
+  const lock = lireLock(id)
+  lock.battement = maintenant()
+  ecrireLock(id, lock)
+  console.log(`✓ ${id} : battement ${lock.battement}`)
+  process.exit(0)
+}
+function expirer() {
+  preparer()
+  const reprises = expirerBaux()
+  const disjonctees = verifierDisjoncteurs()
+  digest()
+  console.log(reprises.length ? `✓ bail(s) expiré(s) repris en file/ : ${reprises.join(', ')}` : '· aucun bail expiré')
+  if (disjonctees.length) console.log(`✓ tâche(s) disjonctée(s) → refuse/ : ${disjonctees.join(', ')}`)
+  process.exit(0)
 }
 
 // ── digest : le seul fichier qu'on lit ────────────────────────────────────────────────────────────
@@ -356,6 +606,60 @@ function derniersVerdicts() {
   const m = new Map()
   if (existe(VERDICTS)) for (const l of lire(VERDICTS).split('\n').filter(Boolean)) { try { const v = JSON.parse(l); m.set(v.id, v) } catch { /* ligne abîmée */ } }
   return m
+}
+// ── Attention : la première section du digest, les décisions qui attendent un geste — les plus graves
+// d'abord, 7 lignes au plus, chacune finie par la commande ou le geste exact entre accents graves.
+function construireAttention(questions) {
+  const candidats = []
+  // 1. tâches DISJONCTÉE : plus rien à espérer d'elles sans correction.
+  const dernierParId = new Map()
+  if (existe(VERDICTS)) for (const l of lire(VERDICTS).split('\n').filter(Boolean)) {
+    let v; try { v = JSON.parse(l) } catch { continue }
+    if (v && v.id && (v.verdict === 'PASS' || v.verdict === 'DISJONCTÉE')) dernierParId.set(v.id, v.verdict)
+  }
+  for (const [id, verdict] of dernierParId) if (verdict === 'DISJONCTÉE') candidats.push({ severite: 0, texte: `${id} est DISJONCTÉE (trop d'échecs) : corrige, puis \`${CMD} rejouer ${id} --forcer\`` })
+  // 2. verrous au-delà du bail, pas encore repris (expirerBaux() n'a pas encore tourné depuis).
+  const seuil = seuilBailMinutes()
+  const dossierEnCours = path.join(ORCH, D.enCours)
+  for (const f of taches(dossierEnCours)) {
+    const id = f.replace(/\.md$/, '')
+    const lock = lireLock(id)
+    const reference = lock.battement || lock.depuis
+    if (!reference) continue
+    const ageMin = (Date.now() - Date.parse(reference)) / 60_000
+    if (Number.isFinite(ageMin) && ageMin > seuil) candidats.push({ severite: 1, texte: `verrou expiré : ${id} (${lock.agent || '?'}, silencieux depuis ${Math.round(ageMin)} min) — \`${CMD} expirer\`` })
+  }
+  // 2b. un exécutant à sec (quotas.json, 026-115) : une ligne par quota actif, avec la commande Antigravity de chaque
+  // tâche de la file qui lui était destinée (deux au plus). Le digest ne lance rien : le choix reste à Claude Code.
+  for (const [moteur, jusqua] of Object.entries(quotasActifs())) {
+    const commandes = moteur === 'codex' ? commandesReaiguillage(moteur) : []
+    candidats.push({ severite: 1.5, texte: `${moteur} à sec jusqu'au ${dateLisible(jusqua)} — ${commandes.length ? commandes.map((c) => `\`${c}\``).join(' · ') : `aucune tâche de la file à réaiguiller : \`${CMD} digest\``}` })
+  }
+  // 3. questions en attente (garde la phrase « N question(s) en attente » pour qui grep encore l'ancien format).
+  for (const q of questions) {
+    const id = q.replace(/\.question\.md$/, '')
+    candidats.push({ severite: 2, texte: `${questions.length} question(s) en attente : \`${id}\` — \`${CMD} repondre ${id} <n>\`` })
+  }
+  // 4. propositions en quarantaine (decisions.md), chacune avec sa commande de promotion.
+  const decisionsPath = path.join(ORCH, 'decisions.md')
+  if (existe(decisionsPath)) {
+    extraireQuarantaine(lire(decisionsPath)).forEach((texte, i) => {
+      candidats.push({ severite: 3, texte: `proposition ${i + 1} en quarantaine : ${echapper(texte).slice(0, 80)} — \`${CMD} promouvoir ${i + 1}\`` })
+    })
+  }
+  // 5. la sauvegarde quotidienne, vieille de plus de 36 h.
+  const sauvegardes = path.join(ORCH, 'travail', 'sauvegardes.jsonl')
+  if (existe(sauvegardes)) {
+    const ls = lire(sauvegardes).split('\n').filter(Boolean)
+    let derniere = null
+    if (ls.length) { try { derniere = JSON.parse(ls.at(-1)) } catch { derniere = null } }
+    if (derniere && derniere.ok === true && derniere.date) {
+      const ageH = (Date.now() - Date.parse(derniere.date)) / 3_600_000
+      if (Number.isFinite(ageH) && ageH > 36) candidats.push({ severite: 4, texte: `sauvegarde vieille de ${Math.round(ageH)} h — \`node scripts/instantane-quotidien.mjs --pousser\`` })
+    }
+  }
+  candidats.sort((a, b) => a.severite - b.severite)
+  return candidats.slice(0, 7).map((c) => c.texte)
 }
 function digest() {
   preparer()
@@ -382,10 +686,10 @@ function digest() {
     `**Mesure** — déléguées (${CONFIG.executants.filter((e) => e !== 'claude-code').join(', ')}) : ${mesure.deleguees.taches} tâche(s) PASS, ${mesure.deleguees.lignes} ligne(s) · faites par Claude Code : ${mesure['claude-code'].taches} tâche(s) PASS, ${mesure['claude-code'].lignes} ligne(s).${alerte}`,
     `**État** — file : ${n.file} · en cours : ${n['en-cours']} · faites : ${n.fait} · refusées : ${n.refuse}`,
   ]
-  if (questions.length) {
-    L.push('', `## ⚠ ${questions.length} question(s) en attente`)
-    for (const q of questions) L.push(`- \`${rel(path.join(dossierEnCours, q))}\` → \`${CMD} repondre ${q.replace(/\.question\.md$/, '')} <n>\``)
-  }
+  const attention = construireAttention(questions)
+  L.push('', `## Attention (${attention.length})`)
+  if (!attention.length) L.push(`- rien à décider — \`${CMD} digest\``)
+  else for (const a of attention) L.push(`- ${a}`)
   const ordre = { [D.enCours]: 0, [D.file]: 1, [D.fait]: 2, [D.refuse]: 2 }
   tout.sort((a, b) => (ordre[a.dossier] - ordre[b.dossier]) || ((b.verdict?.date || '').localeCompare(a.verdict?.date || '')) || a.id.localeCompare(b.id))
   L.push('', '| id | type | où | exécutant | verdict | détail |', '|---|---|---|---|---|---|')
@@ -652,7 +956,7 @@ const GABARITS_EMBARQUES = {
   'CLAUDE.md': `# {{projet}} — contexte du dépôt\n\n{{description}}\n\nPile : {{pile}}.\n\nCe dépôt est piloté par l'orchestre (\`scripts/orchestre.mjs\`, configuration dans \`.orchestre/orchestre.json\`). Claude Code ne lit que \`.orchestre/digest.md\` et \`.orchestre/contexte.md\` ; il délègue le volume.\n\n${DEBUT_BLOC}\n${FIN_BLOC}\n`,
   'AGENTS.md': `# AGENTS.md — règles pour tout exécutant dans le dépôt {{projet}}\n\n{{description}}\nTu n'explores pas le dépôt : tu lis \`.orchestre/contexte.md\` (ce que le code fait){{#vault}} et, dans le vault configuré, \`CLAUDE.md\` puis la carte du code (le pourquoi){{/vault}}. Puis tu prends une tâche.\n\n## La boucle d'un exécutant\n\n1. \`${CMD} prochaine --agent=<ton-nom>\` — la tâche s'affiche en entier, avec ce qu'il faut faire à la fin.\n2. Tu travailles UNIQUEMENT dans \`perimetre\`. \`interdit\` reste intact, même pour « aider ». Le \`budget\` est une limite, pas une cible.\n3. Tu déposes ta preuve dans \`.orchestre/preuves/<id>/\` : la sortie de la commande \`verifier\`. Jamais une image fabriquée, jamais un fichier de 0 octet.\n4. Tu lances \`${CMD} verifier <id>\` autant de fois que nécessaire tant que la tâche est en \`en-cours/\`.\n5. Vert ? Tu déplaces le fichier de \`en-cours/\` vers \`fait/\` et tu relances \`verifier <id>\` : ce verdict-là compte.\n6. Bloqué ? \`.orchestre/en-cours/<id>.question.md\` avec deux ou trois options numérotées. Tu attends \`<id>.reponse.md\`.\n7. Tu abandonnes ? \`${CMD} liberer <id>\`.\n\nUn agent, une tâche. Interdit, sans exception : \`git restore\`, \`git checkout <fichier>\`, \`git stash\`, \`git reset\`, \`git clean\`, \`git revert\`, et supprimer ou vider un fichier hors périmètre.\n{{#vault}}Tu n'écris dans le vault que par une tâche dont le périmètre le vise explicitement.\n{{/vault}}\n${DEBUT_BLOC}\n${FIN_BLOC}\n`,
   'tache.md': `---\nid: 000-exemple\ntype: feature\nobjectif: Une phrase qui dit ce qui doit exister à la fin\nperimetre: [app/exemple/**]\ninterdit: [supabase/**]\nverifier: node scripts/verifier-exemple.mjs\nbudget: { fichiers: 4, minutes: 20 }\npreuve: sortie de \`verifier\` dans .orchestre/preuves/000-exemple/verifier.log\n---\n\n# 000-exemple — titre lisible de la tâche\n\n## Contexte\n\n## Ce qu'il faut faire\n\n## C'est fini quand\n\n- \`verifier\` est vert depuis \`fait/\`.\n`,
-  'decisions.md': `# Décisions — les choix que les agents prennent seuls\n\n| Question | Défaut retenu | Réversible ? |\n|---|---|---|\n\n## Décisions ajoutées par les agents\n\n`,
+  'decisions.md': `# Décisions — les choix que les agents prennent seuls\n\n| Question | Défaut retenu | Réversible ? |\n|---|---|---|\n\n## Proposées (quarantaine)\n\n<!-- Un exécutant n'écrit ici QUE, une ligne par proposition, avec l'id de sa tâche. Seul Claude Code la promeut (\`node scripts/orchestre.mjs promouvoir <n>\`), ou Benj pour l'argent, l'irréversible ou la marque (\`--benj\`). -->\n\n## Décisions ajoutées par les agents\n\n`,
   'settings.json': JSON.stringify({ hooks: {
     PreToolUse: [{ matcher: 'Read', hooks: [{ type: 'command', command: 'node scripts/hooks/read-garde.mjs' }] }],
     PostToolUse: [{ matcher: 'Edit|Write|MultiEdit', hooks: [{ type: 'command', command: 'node scripts/hooks/contexte-fond.mjs' }] }],
@@ -802,7 +1106,7 @@ function init(dossier, options) {
   else { ecrire(agents, rendre(gabarit('AGENTS.md'))); lignes.push('✓ AGENTS.md créé depuis le gabarit') }
   for (const [nom, cible] of [['tache.md', path.join(ORCH, 'gabarit-tache.md')], ['decisions.md', path.join(ORCH, 'decisions.md')]]) {
     if (existe(cible)) lignes.push(`· ${rel(cible)} conservé`)
-    else { ecrire(cible, gabarit(nom)); lignes.push(`✓ ${rel(cible)} créé`) }
+    else { ecrire(cible, nom === 'decisions.md' ? assurerQuarantaine(gabarit(nom)) : gabarit(nom)); lignes.push(`✓ ${rel(cible)} créé`) }
   }
   // Hooks (toujours recopiés : c'est du code vendorisé) et leur branchement dans .claude/settings.json (fusion).
   const outil = dossierOutil()
@@ -876,9 +1180,40 @@ function deplacer(id, de, vers, etiquette) {
   digest()
   console.log(`✓ ${id} : ${etiquette}`)
 }
+// Une tâche DISJONCTÉE ne revient en file/ que corrigée et rejouée sciemment : --forcer l'assume.
+function rejouer(id, forcer) {
+  if (estDisjonctee(id) && !forcer) {
+    console.error(`✗ ${id} est DISJONCTÉE (trois échecs, ou deux identiques, depuis le dernier succès) : corrige, puis « ${CMD} rejouer ${id} --forcer ».`)
+    process.exit(3)
+  }
+  deplacer(id, D.refuse, D.file, forcer && estDisjonctee(id) ? 'remise en file (disjoncteur forcé)' : 'remise en file')
+}
+// promouvoir <n> [--benj] : déplace la proposition n de la quarantaine vers le tableau des décisions tranchées.
+// Une proposition qui touche l'argent, l'irréversible ou la marque est « refusée d'office » sans --benj.
+function promouvoir(n, benj) {
+  preparer()
+  const decisionsPath = path.join(ORCH, 'decisions.md')
+  const texte = existe(decisionsPath) ? lire(decisionsPath) : ''
+  const propositions = extraireQuarantaine(texte)
+  const idx = Number(n) - 1
+  if (!Number.isInteger(idx) || idx < 0 || idx >= propositions.length) { console.error(`✗ proposition ${n} introuvable (${propositions.length} en quarantaine)`); process.exit(3) }
+  const proposition = propositions[idx]
+  const sensible = MOTS_SENSIBLES.test(proposition)
+  if (sensible && !benj) { console.error(`✗ proposition ${n} touche l'argent, l'irréversible ou la marque : réservée à Benj (\`${CMD} promouvoir ${n} --benj\`)`); process.exit(3) }
+  const date = maintenant().slice(0, 10)
+  const statut = sensible ? "refusée d'office" : 'promue'
+  const ligneTableau = `| ${echapper(proposition)} | ${statut} (${date}, ${sensible ? '--benj' : 'Claude Code'}) | — |`
+  let nouveau = retirerDeQuarantaine(texte, idx)
+  nouveau = nouveau.includes('## Décisions ajoutées par les agents')
+    ? nouveau.replace('## Décisions ajoutées par les agents', `## Décisions ajoutées par les agents\n\n${ligneTableau}`)
+    : `${nouveau}\n\n## Décisions ajoutées par les agents\n\n${ligneTableau}\n`
+  ecrire(decisionsPath, nouveau)
+  digest()
+  console.log(`✓ proposition ${n} ${statut} → ${rel(decisionsPath)}`)
+}
 
 // ── entrée ────────────────────────────────────────────────────────────────────────────────────────
-const USAGE = lire(CE_FICHIER).split('\n').filter((l) => l.startsWith('//')).slice(13, 29).map((l) => l.replace(/^\/\/ ?/, '')).join('\n')
+const USAGE = lire(CE_FICHIER).split('\n').filter((l) => l.startsWith('//')).slice(13, 32).map((l) => l.replace(/^\/\/ ?/, '')).join('\n')
 const [, , commande, ...args] = process.argv
 const option = (nom) => { const a = args.find((x) => x.startsWith(`--${nom}=`)); return a ? a.slice(nom.length + 3) : null }
 const drapeau = (nom) => args.includes(`--${nom}`)
@@ -910,7 +1245,10 @@ if (commande === 'init') {
     case 'valider': if (!positionnels[0]) { console.error('✗ valider <fichier.md>'); process.exit(1) } valider(positionnels[0]); break
     case 'repondre': repondre(positionnels[0], positionnels[1], positionnels.slice(2).join(' ')); break
     case 'liberer': deplacer(positionnels[0], D.enCours, D.file, 'rendue à la file, verrou levé'); break
-    case 'rejouer': deplacer(positionnels[0], D.refuse, D.file, 'remise en file'); break
+    case 'rejouer': if (!positionnels[0]) { console.error('✗ rejouer <id> [--forcer]'); process.exit(1) } rejouer(positionnels[0], drapeau('forcer')); break
+    case 'battement': if (!positionnels[0]) { console.error('✗ battement <id>'); process.exit(1) } battement(positionnels[0]); break
+    case 'expirer': expirer(); break
+    case 'promouvoir': if (!positionnels[0]) { console.error('✗ promouvoir <n> [--benj]'); process.exit(1) } promouvoir(positionnels[0], drapeau('benj')); break
     default: console.log(USAGE); process.exit(1)
   }
 }
