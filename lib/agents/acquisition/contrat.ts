@@ -544,6 +544,10 @@ export interface LienRdv {
   jeton_hache: string
   expire_le: string
   creneau: string | null
+  /** Rendus par acq_rdv_par_jeton (0106, 026-061) depuis ops.prospects ; absents seulement d'un ancien jumeau. */
+  metier?: string | null
+  commune?: string | null
+  statut?: string
 }
 
 // ── Le monde, injecté ─────────────────────────────────────────────────────────────────────────────────────────────────────
