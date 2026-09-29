@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-29T22:14:09Z
+# Digest — 2026-09-29T22:15:48Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 162 tâche(s) PASS, 205493 ligne(s) · faites par Claude Code : 90 tâche(s) PASS, 81982 ligne(s).
-**État** — file : 26 · en cours : 4 · faites : 258 · refusées : 15
+**État** — file : 26 · en cours : 5 · faites : 258 · refusées : 15
 
 ## Attention (6)
 - 026-138 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-138 --forcer`
@@ -27,6 +27,7 @@
 | 026-133 | test | en-cours | usine-codex-247 | — | depuis 2026-09-29T21:20:17Z · Écrire scripts/juges-026-usine-mutations.mjs, qui prouve sur des copies que usine-socle-qa, usine-sql-qa, usine-routes-qa, usine-production-qa et les groupes consigne (schéma de réunion), consignes, fil et usine de chef-qa échouent chacun sur de vraies fautes et passent sur la copie intacte, et qui sort en code 0 seulement si chaque mutation échoue avec le critère attendu et chaque témoin passe |
 | 026-087 | feature | en-cours | usine-codex-277 | — | depuis 2026-09-29T22:13:29Z · Créer lib/agents/acquisition/redacteur.ts (la Plume) : executerRedacteur prépare pour le Facteur, sans modèle de langage et seulement quand l'envoi à froid est ouvert, les premiers contacts par le formulaire de contact du site (formulaire_B_v1, formulaire_A_v1 si la variante A est levée et la maquette prête, formulaire_studio_v1 pour une marque), un par entreprise, dans le reste du plafond du formulaire, avec un fait vérifié, une douleur approuvée du métier, l'adresse de prospection, la notice et une référence, sans jamais dépasser le champ du formulaire ; et preparerMessageLien rédige le message qui suit un oui, par le Gmail de prospection avec sa preuve de demande ou dans la conversation Meta ; rien ne va au magasin sans l'accord de jugerMessage |
 | 026-092 | feature | en-cours | usine-codex-279 | — | depuis 2026-09-29T22:13:58Z · Créer GET /api/controle/station?vue=direct\|fil\|salle\|agent (404 tant que le drapeau pilotage est baissé, garde fondateur, chaque sous-partie sourcée et lue seulement par les fonctions pilotage_* et station_* et les modules purs de lib/pilotage), lib/pilotage/station.ts, et les deux routes de la réunion réservées au jeton du Chef (POST /api/agents/reunion : ouvrir, clore, abandonner ; GET /api/agents/reunion/chiffres), inscrites dans la ligne pilotage de scripts/fermeture-e2e.mjs |
+| 026-134 | feature | en-cours | usine-codex-281 | — | depuis 2026-09-29T22:14:59Z · Écrire la migration 0104_crieur (table crieur_posts fermée à tous sauf service_role, qui garde les publications du Crieur sur LinkedIn, Facebook et Instagram, déposées en brouillon Publora avec leur créneau proposé en attendant l'accord de Benj pour chacune (R24, décision du 27/09 qui remplace R7), et les raisons d'un refus du juge, fonction public.crieur_appel qui lit cron_secret dans le Vault et appelle /api/cron/crieur par pg_net, tâche pg_cron presti-crieur chaque jour à 5 h UTC), ses jumeaux et son contrôle, puis l'éprouver à sec avant que Claude Code l'applique par le connecteur Supabase |
 | 026-194 | test | file | claude-code | — | Écrire scripts/pont-telegram-qa.mjs (critères PT, parties routes, usine et reel) et scripts/usine-durcie-qa.mjs (critères UD, statique et --reel), avec leurs jeux d'essai, et prouver qu'ils échouent aujourd'hui et passent en témoin |
 | 026-152 | test | file | claude-code | — | Écrire scripts/juges-026-lt-mutations.mjs, qui prouve sur des copies que chacun des 16 juges du domaine livraison et trésorerie échoue, sur le critère attendu, face à une vraie faute plantée dans le code PASS, et passe sur l'arbre réel ; code 0 seulement si chaque mutation est prise et chaque témoin passe |
 | 026-083 | feature | file | claude-code | — | Créer lib/agents/acquisition/modeles.ts (le modèle de formulaire du §1.1 de la voie gratuite, variantes B et A, le formulaire du Studio, les sujets, les pieds, le message du lien et sa seule relance, la réponse privée, les messages du Répondeur et du Studio, chacun avec son empreinte et approuve à false), affirmations.ts, faq.ts, conformite.ts dont jugerMessage refuse tout message qui n'est pas exactement un modèle approuvé rempli par un fait vérifié et une douleur approuvée, ou qui oublie la première phrase, l'identité, la source de la liste, la notice, l'adresse de réponse, le STOP ou la référence, porte un lien ou prestiapp.fr dans un formulaire, un prix au premier message, un texte plus long que le champ, un e-mail sans preuve de demande, ou dépasse les règles de contact, et secondJuge.ts qui juge le ton et les promesses implicites par un lecteur injecté, fermé par défaut et étalonné sur un jeu de pièges |
@@ -122,6 +123,5 @@
 | 026-081 | test | fait | claude-code | PASS | 2026-09-29T01:43:02Z · 10s · 0 l. |
 | 026-016 | test | fait | claude-code | PASS | 2026-09-29T01:41:52Z · 12s · 0 l. |
 | 026-082 | feature | fait | usine-codex-109 | PASS | 2026-09-29T00:52:56Z · 49s · 581 l. |
-| 026-126 | test | fait | claude-code | PASS | 2026-09-29T00:34:29Z · 282s · 0 l. |
 
-… 203 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 204 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
