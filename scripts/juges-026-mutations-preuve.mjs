@@ -53,6 +53,10 @@ const FIXTURES = path.join(PRESTI, 'scripts', 'fixtures', '026', 'mutations-preu
 const CRITERES = ['MP-1', 'MP-2', 'MP-3', 'MP-4', 'MP-5']
 const MAX_SCRIPT_MIN = 20
 const MAX_MINUTES = 30 // plafond de l'orchestre (maxMinutes) : le budget d'une fiche ne le dépasse jamais
+// Dérogations par fiche, étroites : décision du chef du 29/09 (026-091). La série complète des dix juges dure 43 min parce que six
+// juges TypeScript relancent `npm run typecheck` : le script a 50 min, le budget total 65 min (50 + le temps des contre-mutations).
+// Aucune autre fiche n'est concernée ; le plafond de l'orchestre (maxMinutes) borne toujours le verifier lancé par l'orchestre.
+const DEROGATIONS = { '026-091': { scriptMin: 50, totalMin: 65 } }
 const NB_CONTRE = 3
 const RE_CRITERE = /^[A-Z0-9]{1,5}-[A-Z0-9-]+$/
 const CHAMPS = ['juge', 'commande', 'fichier', 'avant', 'apres', 'critere', 'extrait', 'duree_s']
@@ -120,10 +124,12 @@ function trouverFiche(racine, id) {
   const lieux = [...FILE_ORCHESTRE.map((d) => path.join(orch, d, `${id}.md`)), path.join(orch, 'brouillons-ecosysteme', serie, `${id}.md`), path.join(orch, 'brouillons-ecosysteme', `${id}.md`)]
   return lieux.find(existe) || null
 }
-function budgetMinutes(texte) {
+function budgetMinutes(texte, id) {
+  if (DEROGATIONS[id]) return DEROGATIONS[id].totalMin
   const m = /^budget:\s*\{[^}\n]*\bminutes:\s*(\d+)/m.exec(texte)
   return Math.min(m ? Number(m[1]) : MAX_MINUTES, MAX_MINUTES)
 }
+const scriptMinutes = (id) => DEROGATIONS[id]?.scriptMin ?? MAX_SCRIPT_MIN
 /** La section « ## Juges contre-vérifiés (liste lue par le méta-juge) » : [{ juge, groupes: [[crit, alt…], …], ligne }]. */
 function listeImposee(texte) {
   const L = texte.replace(/\r\n/g, '\n').split('\n')
@@ -459,7 +465,7 @@ async function juger(o) {
 
   const ficheChemin = trouverFiche(R, o.fiche)
   const ficheTexte = ficheChemin ? lire(ficheChemin) : ''
-  const budgetS = budgetMinutes(ficheTexte) * 60
+  const budgetS = budgetMinutes(ficheTexte, o.fiche) * 60
 
   // Nettoyage d'une copie laissée par un lancement coupé : jonctions retirées d'abord.
   for (const n of existe(travail) ? fs.readdirSync(travail) : []) if (/^\d+$/.test(n)) supprimerCopie(path.join(travail, n), travail)
@@ -473,10 +479,10 @@ async function juger(o) {
   if (existe(rapport)) { const dest = path.join(journaux, 'rapport-precedent.json'); fs.mkdirSync(journaux, { recursive: true }); fs.copyFileSync(rapport, dest); fs.unlinkSync(rapport) }
 
   // MP-1 — le script de mutations, puis son rapport.
-  const x = await executer({ fichier: process.execPath, args: [path.join(R, o.script)], cwd: R, delaiMs: MAX_SCRIPT_MIN * 60_000 })
+  const x = await executer({ fichier: process.execPath, args: [path.join(R, o.script)], cwd: R, delaiMs: scriptMinutes(o.fiche) * 60_000 })
   ecrire(path.join(journaux, 'script.log'), `$ node ${o.script}\n# code ${x.code} · ${x.duree.toFixed(1)} s\n\n${x.sortie}`)
   for (const l of x.sortie.split(/\r?\n/).filter(Boolean).slice(-8)) console.log(`  │ ${court(l, 180)}`)
-  if (x.expire) D['MP-1'].push(`le script dépasse ${MAX_SCRIPT_MIN} min`)
+  if (x.expire) D['MP-1'].push(`le script dépasse ${scriptMinutes(o.fiche)} min`)
   else if (x.code !== 0) D['MP-1'].push(`le script sort en code ${x.code}`)
   const rap = lireRapport(rapport, debutMs)
   if (rap.erreur) D['MP-1'].push(`${rap.erreur} (${o.rapport})`)
