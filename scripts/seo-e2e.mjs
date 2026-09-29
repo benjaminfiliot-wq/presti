@@ -20,6 +20,9 @@ for (const l of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
   if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, '')
 }
 const BASE = process.env.TEST_BASE || 'https://prestiapp.fr'
+// Adresse publique attendue dans robots.txt, le sitemap et les canoniques : toujours le domaine de production, même quand
+// BASE est un serveur local (le code fixe metadataBase sur https://prestiapp.fr). Fiche 026-008, 29/09.
+const PUBLIC = 'https://prestiapp.fr'
 const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } })
 
 let ok = 0, ko = 0
@@ -35,12 +38,12 @@ try {
   for (const priv of ['/dashboard', '/messages', '/profil', '/parametres', '/plateforme', '/factures', '/controle', '/api/']) {
     T(`${priv} est interdit aux robots`, robots.includes(`Disallow: ${priv}`))
   }
-  T('le sitemap est déclaré', robots.includes(`Sitemap: ${BASE}/sitemap.xml`))
+  T('le sitemap est déclaré', robots.includes(`Sitemap: ${PUBLIC}/sitemap.xml`))
 
   console.log('\n── 2. sitemap.xml')
   const sm = await html(`${BASE}/sitemap.xml`)
   T('XML bien formé', sm.startsWith('<?xml') && sm.includes('</urlset>'))
-  T('la page d’accueil y est', sm.includes(`<loc>${BASE}</loc>`) || sm.includes(`<loc>${BASE}/</loc>`))
+  T('la page d’accueil y est', sm.includes(`<loc>${PUBLIC}</loc>`) || sm.includes(`<loc>${PUBLIC}/</loc>`))
   T('aucune page privée n’y figure', !/\/(dashboard|messages|profil|parametres|factures|controle)</.test(sm))
 
   const { data: u, error } = await sb.auth.admin.createUser({ email: `${slug}@presti-test.invalid`, password: crypto.randomUUID(), email_confirm: true })
@@ -137,7 +140,7 @@ try {
   const titres = new Map()
   for (const chemin of pagesPubliques) {
     const h = chemin === '/' ? accueil : await html(`${BASE}${chemin}`)
-    T(`${chemin} : canonique propre`, canonique(h) === `${BASE}${chemin}`.replace(/\/$/, ''), canonique(h) || 'absente')
+    T(`${chemin} : canonique propre`, canonique(h) === `${PUBLIC}${chemin}`.replace(/\/$/, ''), canonique(h) || 'absente')
     T(`${chemin} : titre non vide`, titre(h).length > 0)
     titres.set(chemin, titre(h))
   }

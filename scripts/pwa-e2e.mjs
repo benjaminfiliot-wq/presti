@@ -343,10 +343,11 @@ const simulerPrompt = (page) => page.evaluate(() => {
     T(`${chemin} : aucune carte d’installation sur un écran de conversation`, (await page.$('.psh-installer')) === null)
   }
   // liens externes et surfaces artisan : nouvel onglet (sinon l'artisan est piégé sans barre d'adresse)
+  // (/site/commander et /site/acheter sont des écrans de l'application, pas le site public d'un artisan : exclus — fiche 026-008, 29/09)
   const pieges = []
   for (const chemin of ['/dashboard', '/profil', '/plateforme', '/abonnement', '/parametres', '/inventaire/fournisseurs', '/devis']) {
     await page.goto(`${APP}${chemin}`, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {})
-    const l = await page.evaluate(() => [...document.querySelectorAll('a[href]')].filter((a) => { let u; try { u = new URL(a.getAttribute('href'), location.href) } catch { return false } if (!/^https?:$/.test(u.protocol)) return false; const externe = u.origin !== location.origin; const artisan = /^\/(site|p)\//.test(u.pathname); return (externe || artisan) && a.getAttribute('target') !== '_blank' }).map((a) => `${a.getAttribute('href')} « ${(a.textContent || '').trim().slice(0, 30)} »`))
+    const l = await page.evaluate(() => [...document.querySelectorAll('a[href]')].filter((a) => { let u; try { u = new URL(a.getAttribute('href'), location.href) } catch { return false } if (!/^https?:$/.test(u.protocol)) return false; const externe = u.origin !== location.origin; const artisan = /^\/(site|p)\/(?!(commander|acheter)(\/|$))/.test(u.pathname); return (externe || artisan) && a.getAttribute('target') !== '_blank' }).map((a) => `${a.getAttribute('href')} « ${(a.textContent || '').trim().slice(0, 30)} »`))
     for (const x of l) pieges.push(`${chemin}: ${x}`)
   }
   T('liens externes et surfaces artisan ouverts dans un nouvel onglet (target=_blank)', pieges.length === 0, pieges.slice(0, 6).join(' | '))

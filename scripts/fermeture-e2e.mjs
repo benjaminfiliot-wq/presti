@@ -72,7 +72,30 @@ const PROTEGEES = [
   [`/api/devis/${id}/envoyer`, 'POST', {}], [`/api/devis/${id}/pdf`, 'GET'],
   [`/api/factures/${id}/avoir`, 'POST', {}], [`/api/factures/${id}/facturx`, 'GET'], [`/api/factures/${id}/pdf`, 'GET'],
   ['/api/leads/photos', 'POST', {}],
+  // 29/09 (fiche 026-008) — douze routes du Poste livrées par les fiches d'écosystème sans passer par cette liste : c'est le
+  // verrou 1 ter qui les a signalées. Une sonde par route et par méthode exportée : un inconnu doit recevoir 401/403.
+  ['/api/controle/demandes', 'GET'], ['/api/controle/demandes', 'POST', {}],
+  ['/api/controle/jauges', 'GET'],
+  ['/api/controle/packs', 'GET'], [`/api/controle/packs/${id}`, 'POST', {}],
+  ['/api/controle/pause', 'GET'], ['/api/controle/pause', 'POST', {}],
+  ['/api/controle/pilotage', 'GET'],
+  [`/api/controle/pilotage/agents/${id}`, 'POST', {}], [`/api/controle/pilotage/appels/${id}`, 'POST', {}],
+  ['/api/controle/pilotage/consignes', 'POST', {}], [`/api/controle/pilotage/decisions/${id}`, 'POST', {}],
+  ['/api/controle/pilotage/gestes', 'POST', {}],
+  ['/api/controle/tresorerie', 'GET'],
 ]
+// 29/09 (fiche 026-008) — Pilotage (Mission Control) : `pilotage` est baissé et chaque route lit le drapeau AVANT la garde du fondateur, donc un
+// inconnu reçoit 404 (l'espace n'existe pas) et non 401. La tolérance est bornée : elle ne vaut que si le drapeau est effectivement baissé
+// ET si CHAQUE route.ts du dossier lit `actif('pilotage')` — une route supprimée par erreur (fichier absent) ou qui ne lit pas le drapeau
+// reste un échec, et dès que le drapeau est levé le 404 n'est plus toléré.
+const DERRIERE_LE_DRAPEAU_PILOTAGE = await (async () => {
+  const { FLAGS: F } = await import('../lib/flags.ts').catch(() => ({ FLAGS: null }))
+  const routesDe = (dossier) => !fs.existsSync(dossier) ? [] : fs.readdirSync(dossier, { recursive: true }).map(String).filter((f) => /(^|[\\/])route\.ts$/.test(f)).map((f) => `${dossier}/${f.replace(/\\/g, '/')}`)
+  return ['pilotage', 'jauges'].map((sub) => {
+    const fichiers = routesDe(`app/api/controle/${sub}`)
+    return { prefixe: `/api/controle/${sub}`, baisse: !!F && F.pilotage !== true, lit: fichiers.length > 0 && fichiers.every((f) => /actif\(['"`]pilotage['"`]\)/.test(fs.readFileSync(f, 'utf8'))) }
+  })
+})()
 for (const [chemin, methode, body] of PROTEGEES) {
   const r = await appel(chemin, methode, body)
   // /api/controle/* : 404 tant que FLAGS.direction est baissé (l'espace n'existe pas), 401 ensuite
@@ -82,7 +105,7 @@ for (const [chemin, methode, body] of PROTEGEES) {
   // Le mode support est sorti de cette liste le 08/09, en même temps que son drapeau se levait : ses
   // routes doivent désormais répondre 401, et un 404 y serait une route disparue, pas une porte
   // fermée. Une tolérance qu'on laisse traîner après sa raison d'être est un trou qui attend.
-  const DERRIERE_UN_DRAPEAU = []
+  const DERRIERE_UN_DRAPEAU = DERRIERE_LE_DRAPEAU_PILOTAGE.filter((d) => d.baisse && d.lit).map((d) => d.prefixe)
   // `/api/controle/*` ne bénéficie plus de la tolérance : `direction` est levé depuis longtemps,
   // donc ces routes DOIVENT répondre 401 à un inconnu. Tant que le 404 était accepté, une route
   // supprimée par erreur passait pour une porte fermée — ce que le commentaire ci-dessus dit
@@ -161,7 +184,11 @@ for (const [chemin, methode, body, attendus] of PUBLIQUES) {
 console.log('\n── 4. Pages orphelines : elles répondent, sans marque parasite')
 const page = async (u) => { const r = await fetch(`${BASE}${u}`, { headers: { 'User-Agent': 'presti-verif' } }); return { status: r.status, html: await r.text() } }
 const onb = await page('/onboarding')
-T('/onboarding répond (client : renvoie vers /login sans session)', onb.status === 200 && /Ton profil|login/i.test(onb.html))
+// Depuis 026-035 la page enveloppe useSearchParams() dans <Suspense> : le serveur rend une coquille (BAILOUT_TO_CLIENT_SIDE_RENDERING) et le
+// formulaire ou le renvoi vers /login n'existent plus qu'au client. On exige alors la coquille ET le script propre à la page /onboarding
+// (une route absente ou cassée n'a ni l'un ni l'autre : 404 ou page d'erreur).
+const onbCoquille = /BAILOUT_TO_CLIENT_SIDE_RENDERING/.test(onb.html) && /app\/onboarding\/page-[\w-]+\.js/.test(onb.html)
+T('/onboarding répond (client : renvoie vers /login sans session)', onb.status === 200 && (/Ton profil|login/i.test(onb.html) || onbCoquille))
 const rp = await page('/reset-password')
 T('/reset-password présente le formulaire', rp.status === 200 && /mot de passe/i.test(rp.html))
 const demo = await page('/site/atelier-du-chene/infos-legales')
@@ -247,6 +274,10 @@ if (FLAGS) {
     'pilotage': ['route', '/api/controle/pilotage', 'GET', 'app/api/controle/pilotage/route.ts', 'app/api/controle/pilotage/decisions/[id]/route.ts', 'app/api/controle/pilotage/appels/[id]/route.ts', 'app/api/controle/pilotage/agents/[nom]/route.ts', 'app/api/controle/pilotage/consignes/route.ts', 'app/api/controle/pilotage/gestes/route.ts'],
     // 29/09 — les demandes de Benj à l'écosystème : la route du Poste et les deux routes du bus lisent ce drapeau (les routes du bus lisent AUSSI busAgents).
     'demandesEcosysteme': ['route', '/api/controle/demandes', 'GET', 'app/api/controle/demandes/route.ts', 'app/api/agents/demandes/route.ts', 'app/api/agents/demandes/[id]/route.ts'],
+    // 026-118 / 026-144 — le pack pubs locales : les deux routes du dossier et du paiement lisent le drapeau (baissé : 404), et la carte de vente
+    // du tableau de bord (app/dashboard/page.tsx) lit `packPubVente`.
+    'packPub': ['route', '/api/pubs/commander/brouillon', 'GET', 'app/api/pubs/commander/brouillon/route.ts', 'app/api/pubs/commander/route.ts'],
+    'packPubVente': ['lu'],
     'inventaireOcr': ['note', 'rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)'],
     // Ces trois-là étaient mal classés tant que le détecteur ignorait les lectures par index
     // dynamique (`FLAGS[l.flag]` dans lib/plans.ts). Deux étaient dits « ne ferment rien » sur un

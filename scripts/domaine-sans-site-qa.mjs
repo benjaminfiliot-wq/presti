@@ -222,8 +222,12 @@ async function monterChaine(racine) {
   const base = monde(), journal = []
   const env = { NEXT_PUBLIC_SUPABASE_URL: 'https://supabase-simule.invalid', SUPABASE_SERVICE_ROLE_KEY: 'cle-simulee' }
   const Rep = { next: () => ({ type: 'next' }), rewrite: (u) => ({ type: 'rewrite', url: String(u) }), redirect: (u, s = 307) => ({ type: 'redirect', url: String(u), status: s }), json: (b, i = {}) => ({ type: 'json', corps: b, status: i.status ?? 200 }) }
-  const mw = await charger({ racine, fichier: path.join(racine, 'middleware.ts'), stubs: { 'next/server': { NextResponse: Rep } }, env, fetch: fauxFetch(base, journal) })
-  if (typeof mw.middleware !== 'function') throw new Error('middleware.ts n’exporte pas middleware')
+  // Next 16 (fiche 026-008) : le fichier s'appelle proxy.ts (export `proxy`) une fois migré ; un middleware.ts présent (dépôt d'avant, ou copie témoin
+  // corrigée) passe d'abord. Aucun des deux : « chaîne non montée », jamais un critère vert.
+  const fichierMw = fs.existsSync(path.join(racine, 'middleware.ts')) ? 'middleware.ts' : 'proxy.ts'
+  const nomMw = fichierMw === 'proxy.ts' ? 'proxy' : 'middleware'
+  const mw = await charger({ racine, fichier: path.join(racine, fichierMw), stubs: { 'next/server': { NextResponse: Rep } }, env, fetch: fauxFetch(base, journal) })
+  if (typeof mw[nomMw] !== 'function') throw new Error(`${fichierMw} n’exporte pas ${nomMw}`)
   const ctx = { hote: '' }
   const nav = (quoi) => (u) => { const e = new Error(`${quoi} ${u ?? ''}`); e.__nav = quoi; e.url = u; throw e }
   const page = await charger({
@@ -242,7 +246,7 @@ async function monterChaine(racine) {
     for (let i = 0; i < 6; i++) {
       const u = new URL(url)
       const nextUrl = Object.assign(new URL(u.href), { clone() { return new URL(this.href) } })
-      const r = await mw.middleware({ headers: { get: (k) => (String(k).toLowerCase() === 'host' ? u.host : null) }, nextUrl, url: u.href })
+      const r = await mw[nomMw]({ headers: { get: (k) => (String(k).toLowerCase() === 'host' ? u.host : null) }, nextUrl, url: u.href })
       if (r?.type === 'redirect') { etapes.push(`middleware → ${r.url}`); url = new URL(r.url, url).href; continue }
       const interne = r?.type === 'rewrite' ? new URL(r.url, url).pathname : u.pathname
       if (r?.type === 'rewrite') etapes.push(`réécrit en ${interne}`)
@@ -438,7 +442,7 @@ async function jugerTableauDeBord(racine) {
 
 // ── Témoin ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 export function construireTemoin() {
-  const d = preparerTemoin(JUGE, { copier: ['lib', 'middleware.ts', 'app/site/[slug]', 'app/api/domain', 'app/profil', 'app/parametres', 'app/dashboard', 'tsconfig.json'] })
+  const d = preparerTemoin(JUGE, { copier: ['lib', fs.existsSync(path.join(R, 'proxy.ts')) ? 'proxy.ts' : 'middleware.ts', 'app/site/[slug]', 'app/api/domain', 'app/profil', 'app/parametres', 'app/dashboard', 'tsconfig.json'] })
   let n = 0
   for (const f of listerFichiers(d)) if (f.endsWith('.temoin')) { fs.renameSync(path.join(d, f), path.join(d, f.slice(0, -'.temoin'.length))); n++ }
   if (n < 6) throw new Error(`témoin incomplet : ${n} fichier(s) .temoin dans ${rel(path.join(FIXTURES, 'temoins', JUGE))}`)

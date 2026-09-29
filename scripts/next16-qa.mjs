@@ -19,6 +19,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawn, spawnSync } from 'node:child_process'
+import http from 'node:http'
 import { fileURLToPath } from 'node:url'
 
 const DEPOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -351,6 +352,21 @@ async function avecServeur(racine, fn) {
   }
 }
 
+// GET avec un en-tête Host forgé : le fetch de Node 24 (undici) ignore Host, http.request le respecte (fiche 026-008, 29/09).
+function getAvecHote(url, host) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url)
+    const req = http.request({ hostname: u.hostname, port: u.port, path: u.pathname + u.search, method: 'GET', headers: { Host: host } }, (res) => {
+      const morceaux = []
+      res.on('data', (c) => morceaux.push(c))
+      res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, text: Buffer.concat(morceaux).toString('utf8') }))
+    })
+    req.setTimeout(30000, () => req.destroy(new Error(`délai dépassé pour ${url} (Host ${host})`)))
+    req.on('error', reject)
+    req.end()
+  })
+}
+
 // ── GROUPE service (fiche 12) ───────────────────────────────────────────────────────────────────
 async function groupeServiceAvecPort(rec, { port }) {
   const base = `http://localhost:${port}`
@@ -370,13 +386,13 @@ async function groupeServiceAvecPort(rec, { port }) {
   const ok13 = rIcon.status === 200 && /image\/png/.test(iconType)
   rec.t('N16-13', ok13, ok13 ? 'icon PNG rendue (params en promesse exécutés)' : `code ${rIcon.status}, content-type ${iconType}`)
 
-  const rInconnu = await fetch(`${base}/sw.js`, { headers: { Host: 'inconnu-026.example' } })
-  const inconnuType = rInconnu.headers.get('content-type') || ''
+  const rInconnu = await getAvecHote(`${base}/sw.js`, 'inconnu-026.example')
+  const inconnuType = rInconnu.headers['content-type'] || ''
   const ok14a = rInconnu.status === 404 && !/javascript/.test(inconnuType)
-  const rLanding = await fetch(`${base}/`, { headers: { Host: `localhost:${port}` } })
-  const rQg = await fetch(`${base}/`, { headers: { Host: `qg.localhost:${port}` } })
-  const bodyLanding = await rLanding.text().catch(() => '')
-  const bodyQg = await rQg.text().catch(() => '')
+  const rLanding = await getAvecHote(`${base}/`, `localhost:${port}`)
+  const rQg = await getAvecHote(`${base}/`, `qg.localhost:${port}`)
+  const bodyLanding = rLanding.text
+  const bodyQg = rQg.text
   const ok14b = rQg.status === 200 && bodyQg !== bodyLanding
   const ok14 = ok14a && ok14b
   rec.t('N16-14', ok14, ok14 ? 'proxy actif : hôte inconnu → 404 sans JS, qg. → autre rendu que la landing' : `hôte inconnu : code ${rInconnu.status}/${inconnuType} ; qg. : code ${rQg.status}, page identique à la landing=${bodyQg === bodyLanding}`)
