@@ -613,3 +613,9 @@
 {"id":"026-016","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T01:41:52Z","duree_s":12,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-081","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T01:43:02Z","duree_s":10,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
 {"id":"026-253","verdict":"FAIL","ligne":"FAIL N16-1 — next installé 15.5.26 (package.json demande \"^15.5.26\"), react 19.2.8, react-dom 19.2.8, @types/react \"^19.0.7\", @types/react-dom \"^19.0.3\"","code":1,"date":"2026-09-29T02:45:33Z","duree_s":101,"agent":"claude-code","executant":"claude-code","lignes":597,"dossier":"en-cours"}
+{"id":"026-029","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T03:05:59Z","duree_s":51,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-026","verdict":"FAIL","ligne":"juges-026-lt-preuve --lot=D : FAIL — JL-1, JL-5","code":1,"date":"2026-09-29T03:07:56Z","duree_s":166,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-032","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T03:10:02Z","duree_s":80,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
+{"id":"026-023","verdict":"FAIL","ligne":"✅ JL-1 référence 4041ec9 extraite par git archive sous .orchestre/travail/026-lt-preuve/reference (750 fichiers), ancêtre de HEAD, sans app/api/site/commander/p","code":1,"date":"2026-09-29T03:11:45Z","duree_s":134,"agent":"claude-code","executant":"claude-code","lignes":176,"dossier":"fait"}
+{"id":"026-026","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T03:15:22Z","duree_s":282,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-023","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T03:15:48Z","duree_s":172,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}

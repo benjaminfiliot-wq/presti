@@ -1,6 +1,6 @@
 # Échecs attendus des juges du lot D (026-026) sur leur arbre de référence
 
-Écrit par `node scripts/juges-026-lt-preuve.mjs --lot=D` le 2026-09-28T18:16:08Z. Chaque juge est lancé par la preuve elle-même : sur l'arbre de référence extrait par `git archive` (`.orchestre/travail/026-lt-preuve/reference`), avec `--racine`, puis avec `--temoin` sur l'arbre courant. L'extrait est la première ligne de critère de la sortie, recopiée telle quelle (seul `|` est échappé en `\|`), puis relue ici et retrouvée dans la sortie par la preuve.
+Écrit par `node scripts/juges-026-lt-preuve.mjs --lot=D` le 2026-09-29T03:15:22Z. Chaque juge est lancé par la preuve elle-même : sur l'arbre de référence extrait par `git archive` (`.orchestre/travail/026-lt-preuve/reference`), avec `--racine`, puis avec `--temoin` sur l'arbre courant. L'extrait est la première ligne de critère de la sortie, recopiée telle quelle (seul `|` est échappé en `\|`), puis relue ici et retrouvée dans la sortie par la preuve.
 
 | Juge | Fiche jugée | Commit de référence | Critère attendu en échec | Code | Extrait réel de sa sortie | Verdict du témoin |
 |---|---|---|---|---|---|---|
