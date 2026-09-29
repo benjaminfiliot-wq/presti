@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Habillage du Studio</title>
+  <!--
+    Habillage HyperFrames de l'échantillon du Studio (fiche 026-158) : 1080x1920, 15 s, 30 images/s, aucune dépendance
+    réseau (animation CSS cherchée par l'adaptateur `css` de HyperFrames, sans GSAP ni police distante).
+    scripts/studio/monter.mjs remplace les marques {{...}} : rien ici n'est généré par un modèle, tout est fait de la vraie
+    photo du produit. Les positions et textes des zones viennent de contrat-habillage.json (à lui, jamais modifié ici).
+  -->
+  <style>
+    html, body { margin: 0; padding: 0; background: #000; }
+    #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: {{couleur_fond}}; font-family: Arial, sans-serif; }
+
+    /* Un plan = un fond (image de fonds/, sinon l'aplat de la couleur dominante de la photo) + la vraie photo en zoom lent. */
+    .plan { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
+    .plan .fond { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+    .plan .photo { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px;
+      animation-name: zoom-lent; animation-duration: {{duree_plan}}s; animation-timing-function: linear;
+      animation-iteration-count: 1; animation-fill-mode: both; }
+    .plan .photo.couvre { object-fit: cover; }
+    .plan .photo.contient { object-fit: contain; }
+    @keyframes zoom-lent { from { transform: scale(1); } to { transform: scale({{zoom_fin}}); } }
+
+    /* Les deux zones légales : un dessous noir opaque, puis le calque du contrat (fond translucide, texte). */
+    .zone { position: absolute; background: #000; overflow: hidden; }
+    .zone svg { display: block; }
+    {{zones_css}}
+
+    /* Sous-titres maison : blanc sur fond sombre, dans la zone sûre (entre la mention et le filigrane). */
+    .sous-titre { position: absolute; left: 290px; width: 500px; bottom: 330px; text-align: center; }
+    .sous-titre span { display: inline-block; max-width: 500px; padding: 8px 18px; border-radius: 12px;
+      background: rgba(0, 0, 0, 0.5); color: #ffffff; font-family: Arial, sans-serif; font-weight: bold; font-size: 36px; line-height: 1.25;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9); }
+  </style>
+</head>
+<body>
+  <div id="root" data-composition-id="root" data-no-timeline data-start="0" data-duration="15" data-width="1080" data-height="1920">
+    {{plans}}
+    {{produit}}
+    <div id="mention" class="clip zone" data-start="0" data-duration="15">{{mention}}</div>
+    <div id="filigrane" class="clip zone" data-start="0" data-duration="15">{{filigrane}}</div>
+    {{sous_titres}}
+    {{voix}}
+  </div>
+</body>
+</html>

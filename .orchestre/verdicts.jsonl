@@ -664,3 +664,9 @@
 {"id":"026-064","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T09:52:15Z","duree_s":41,"agent":"usine-codex-114","executant":"codex","lignes":612,"dossier":"en-cours"}
 {"id":"026-064","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T09:54:39Z","duree_s":41,"agent":"usine-codex-114","executant":"codex","lignes":612,"dossier":"fait"}
 {"id":"026-141","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T10:01:36Z","duree_s":221,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-238","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T10:05:18Z","duree_s":739,"agent":"claude-code","executant":"claude-code","lignes":3309,"dossier":"en-cours"}
+{"id":"026-129","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T10:07:47Z","duree_s":219,"agent":"usine-codex-118","executant":"codex","lignes":937,"dossier":"fait"}
+{"id":"026-045","verdict":"FAIL","ligne":"PASS JP-1 — [autotest echec-sur-reference : lecture des sorties : 6 sorties plantées refusées (dont le critère PASS à tort cité par d'autres), la conforme accep","code":1,"date":"2026-09-29T01:37:46Z","duree_s":50,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true,"copie_isolee":true}
+{"id":"026-045","verdict":"FAIL","ligne":"PASS JP-1 — [autotest echec-sur-reference : lecture des sorties : 6 sorties plantées refusées (dont le critère PASS à tort cité par d'autres), la conforme accep","code":1,"date":"2026-09-29T10:25:00Z","duree_s":350,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-158","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T10:25:29Z","duree_s":391,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait","copie_isolee":true}
+{"id":"026-238","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T10:28:24Z","duree_s":565,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait"}
