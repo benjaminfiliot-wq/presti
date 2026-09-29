@@ -1,0 +1,15 @@
+essai à sec de la migration 0108 (fiche 026-079) — exécuté par Claude Code (le chef) le 2026-09-29, par le connecteur MCP Supabase
+(execute_sql, projet gorcdvmueakcncsmrouo), bloc généré par `node scripts/pilotage-sql-qa.mjs --migration=echanges --generer-essai`
+(copie : .orchestre/preuves/026-079/essai.sql), exécuté tel quel (commentaires du scénario ôtés). 0096 à 0111 déjà appliquées.
+1re passe : preparation=false (prepare_par 'essai' hors ops.agents, FK) — défaut du scénario, corrigé (agent 'facteur', antidatage sous
+session_replication_role) ; la 2e passe est celle ci-dessous. Les fonctions de 0108 ont compilé dès la 1re passe (13 fonctions).
+Empreinte du jumeau : 4b78aa729c13431f68c31ba0a154a96b99edab06f01e45c35484bab51ce089b6
+
+Message brut rendu par execute_sql (la levée finale annule toute la transaction) :
+
+ERROR:  P0001: ESSAI_A_SEC 4b78aa729c13431f68c31ba0a154a96b99edab06f01e45c35484bab51ce089b6 {"bilan_101": true, "entonnoir": true, "bilan_vide": true, "etat_envoi": true, "sans_texte": true, "preparation": true, "appels_ordre": true, "vente_froide": true, "envois_du_jour": true, "compteurs_egaux": true, "reponses_du_jour": true, "tapis_dix_lignes": true, "appel_sans_numero": true, "technologie_pause": true, "refus_anon_authenticated": true, "diag_refus_anon_authenticated": "26/26"}
+CONTEXT:  PL/pgSQL function inline_code_block line 433 at RAISE
+
+Vérification après coup (execute_sql) :
+APRES rien_ne_reste=true
+(to_regprocedure('public.pilotage_tapis(timestamptz)') est null ; 0 prospect 'essai', 0 envoi essai_e2e, 0 technologie, 0 commande essai, 0 réponse essai)

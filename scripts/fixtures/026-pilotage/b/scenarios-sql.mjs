@@ -52,6 +52,7 @@ const lecture = `
     v_t uuid; v_t2 uuid; v_id uuid;
     v_att0 jsonb := '{}'; v_att1 jsonb := '{}';
     v_chef0 integer := 0;
+    v_ade boolean := false; v_ade_diag jsonb := '{}';
     v_montants integer[] := array[5000, null, 5000, 100, null, 0, 20000];
     v_heures integer[] := array[48, 24, 24, 72, 12, 6, 96];
     v_portees text[] := array['argent', 'aucune', 'aucune', 'artisan', 'aucune', 'aucune', 'argent'];
@@ -77,6 +78,19 @@ ${cas('preparation', `
     perform public.ops_evenement_ajouter('essai_e2e_pl1', 'essai_fait', 'objet d''essai', 'Essai fait par un', null);
     perform public.ops_evenement_ajouter('essai_e2e_pl1', 'battement', null, 'battement', null);
     perform public.ops_evenement_ajouter('essai_e2e_pl2', 'battement', null, 'battement', null);
+    -- capturé ICI, avant la boucle des sept ops_decision_creer plus bas (qui pose ses propres événements
+    -- decision_creee pour essai_e2e_pl1) : sinon le dernier événement non-battement de pl1 devient une décision,
+    -- jamais 'essai_fait', et l'assertion ne teste plus ce qu'elle prétend tester (026-076, correction du 28/09).
+    -- pl2 n'a reçu, avant cette capture, qu'un enregistrement et un battement : ops_agent_enregistrer pose TOUJOURS
+    -- un événement 'agent_enregistre' (0097_ops_identite.sql, hors de mon périmètre), jamais aucun agent de cette
+    -- fixture n'a « aucun événement autre que battement » — son dernier événement réel est donc 'agent_enregistre',
+    -- jamais null ; le contrat (« dernier_* … nuls s'il n'en a aucun ») n'est pas contredit, juste jamais atteint ici.
+    select jsonb_build_object(
+      'pl1', (select jsonb_build_object('type', dernier_type, 'resume', dernier_resume) from public.pilotage_agents() where nom = 'essai_e2e_pl1'),
+      'pl2', (select jsonb_build_object('type', dernier_type, 'resume', dernier_resume) from public.pilotage_agents() where nom = 'essai_e2e_pl2')
+    ) into v_ade_diag;
+    v_ade := (v_ade_diag #>> '{pl2,type}' = 'agent_enregistre' and v_ade_diag #>> '{pl2,resume}' = 'fiche créée : Essai pilotage deux')
+      and (v_ade_diag #>> '{pl1,type}' = 'essai_fait' and v_ade_diag #>> '{pl1,resume}' = 'Essai fait par un');
     perform public.ops_evenement_ajouter('chef', 'cycle_termine', 'essai-modele-a', 'Cycle d''essai A', null);
     perform public.ops_evenement_ajouter('chef', 'cycle_termine', 'essai-modele-b', 'Cycle d''essai B', null);
     update ops.agents set disjoncteur_ouvert_le = now() where nom = 'essai_e2e_pl1';
@@ -114,8 +128,10 @@ ${cas('agents_modele_vieux', `
 ${cas('agents_retire_absent', `
     ok := exists (select 1 from public.pilotage_agents() where nom = 'essai_e2e_pl1') and not exists (select 1 from public.pilotage_agents() where nom = 'essai_e2e_ret');`)}
 ${cas('agents_dernier_evenement', `
-    ok := exists (select 1 from public.pilotage_agents() where nom = 'essai_e2e_pl2' and dernier_type is null)
-      and exists (select 1 from public.pilotage_agents() where nom = 'essai_e2e_pl1' and dernier_type = 'essai_fait' and dernier_resume = 'Essai fait par un');`)}
+    -- capturée dans 'preparation', AVANT la boucle des sept ops_decision_creer (qui poserait sept 'decision_creee'
+    -- plus récents pour essai_e2e_pl1 et invaliderait l'assertion) : voir v_ade (026-076, correction du 28/09).
+    ok := v_ade;
+    r := r || jsonb_build_object('diag_agents_dernier_evenement', v_ade_diag::text);`)}
 ${cas('evenements_cinq_derniers', `
     select array_agg(x.id order by x.n), bool_and(x.type <> 'battement'), count(*) into v_ids, v_sans, v_n from (select e.id, e.type, row_number() over () as n from public.pilotage_evenements(null, 5, null, null) e) x;
     ok := v_n = 5 and v_sans and v_ids = (select array_agg(i order by i) from unnest(v_ids) i)
@@ -139,8 +155,13 @@ ${cas('code_trop_gros', `
 ${cas('code_forme', `
     ok := public.pilotage_code_publier('[]'::jsonb) = 'forme';`)}
 ${cas('code_ok_relu', `
-    ok := public.pilotage_code_publier('{"essai": true, "n": 1}'::jsonb) = 'ok'
-      and (select etat from public.pilotage_code_lire()) = '{"essai": true, "n": 1}'::jsonb;`)}
+    -- deux instructions PL/pgSQL séparées (publier, PUIS lire), pas une seule expression combinée : Postgres fixe
+    -- l'instantané de toute une expression avant de l'exécuter, la lecture stable n'y voit alors jamais l'écriture
+    -- faite par le premier appel DANS LA MÊME expression, même en READ COMMITTED, même même transaction, même agent
+    -- (026-076, correction du 28/09 — reproduit hors 0107 sur deux fonctions jetables sans rapport avec la migration).
+    v_pub := public.pilotage_code_publier('{"essai": true, "n": 1}'::jsonb);
+    select etat into v_lu from public.pilotage_code_lire();
+    ok := v_pub = 'ok' and v_lu = '{"essai": true, "n": 1}'::jsonb;`, 'v_pub text; v_lu jsonb;')}
 ${refus('refus_anon_authenticated', ['public.pilotage_decisions(1)', 'public.pilotage_decision(gen_random_uuid())', "public.pilotage_decisions_par_cles(array['x'])", 'public.pilotage_agents()', 'public.pilotage_couts_agents(now())', 'public.pilotage_couts_taches(now(), 1)', 'public.pilotage_couts_modeles(now())', 'public.pilotage_chef()', 'public.pilotage_evenements(null, 1, null, null)', 'public.pilotage_attention_sources()', "public.pilotage_taches_agent('x', 1)", "public.pilotage_code_publier('{}'::jsonb)", 'public.pilotage_code_lire()'])}
   end;`
 
@@ -152,20 +173,23 @@ const echanges = `
     v_froids boolean;
   begin
 ${cas('preparation', `
-    insert into ops.prospects (cle_dedup, siren, domaine, metier, faits, source, froid) values ('essai_e2e:pilotage:p1', '900000001', 'essai-pilotage-un.invalid', 'Plombier', '{"commune":"Lyon"}', 'essai', true) returning id into v_p;
-    insert into ops.prospects (cle_dedup, siren, domaine, metier, faits, source, froid) values ('essai_e2e:pilotage:p2', '900000002', 'essai-pilotage-deux.invalid', 'Peintre', '{"commune":"Nantes"}', 'essai', false) returning id into v_pc;
-    insert into ops.prospects (cle_dedup, siren, domaine, metier, faits, source, froid) values ('essai_e2e:pilotage:p3', '900000003', 'essai-pilotage-trois.invalid', 'Maçon', '{"commune":"Lille"}', 'essai', true) returning id into v_pv;
+    insert into ops.prospects (cle_dedup, siren, domaine, metier, commune, faits, source, froid) values ('siren:900000001', '900000001', 'essai-pilotage-un.invalid', 'Plombier', 'Lyon', '[]', 'essai', true) returning id into v_p;
+    insert into ops.prospects (cle_dedup, siren, domaine, metier, commune, faits, source, froid) values ('siren:900000002', '900000002', 'essai-pilotage-deux.invalid', 'Peintre', 'Nantes', '[]', 'essai', false) returning id into v_pc;
+    insert into ops.prospects (cle_dedup, siren, domaine, metier, commune, faits, source, froid) values ('siren:900000003', '900000003', 'essai-pilotage-trois.invalid', 'Maçon', 'Lille', '[]', 'essai', true) returning id into v_pv;
+    -- garde_envois (0099) date tout envoi à now() à l'insertion : le temps d'antidater ceux d'hier et de 40 jours, les déclencheurs sont mis de côté
+    set local session_replication_role = replica;
     for i in 1..3 loop
       insert into ops.envois (prospect_id, canal, envoyeur, type, destinataire, empreinte_texte, statut, verdicts, prepare_par, prepare_le, envoye_le)
         values (v_p, 'essai_e2e', 'essai', case when i = 1 then 'premier_contact' else 'relance' end, 'essai' || i || '@essai-pilotage.invalid', repeat('a', 64), 'envoye',
-                jsonb_build_object('j1', 'pass', 'j3', case when i = 2 then 'refus' else 'pass' end, 'second', null), 'essai', now() - interval '10 minutes', now() - make_interval(mins => i))
+                jsonb_build_object('j1', 'pass', 'j3', case when i = 2 then 'refus' else 'pass' end, 'second', null), 'facteur', now() - interval '10 minutes', now() - make_interval(mins => i))
         returning id into v_id;
       v_e := v_e || v_id;
     end loop;
     insert into ops.envois (prospect_id, canal, envoyeur, type, destinataire, empreinte_texte, statut, verdicts, prepare_par, prepare_le, envoye_le)
-      values (v_pc, 'essai_e2e', 'essai', 'premier_contact', 'hier@essai-pilotage.invalid', repeat('b', 64), 'envoye', '{}'::jsonb, 'essai', v_minuit - interval '1 day', v_minuit - interval '20 hours') returning id into v_hier;
+      values (v_pc, 'essai_e2e', 'essai', 'premier_contact', 'hier@essai-pilotage.invalid', repeat('b', 64), 'envoye', '{}'::jsonb, 'facteur', v_minuit - interval '1 day', v_minuit - interval '20 hours') returning id into v_hier;
     insert into ops.envois (prospect_id, canal, envoyeur, type, destinataire, empreinte_texte, statut, verdicts, prepare_par, prepare_le, envoye_le)
-      values (v_pv, 'essai_e2e', 'essai', 'premier_contact', 'vieux@essai-pilotage.invalid', repeat('c', 64), 'envoye', '{}'::jsonb, 'essai', now() - interval '41 days', now() - interval '40 days') returning id into v_vieux;
+      values (v_pv, 'essai_e2e', 'essai', 'premier_contact', 'vieux@essai-pilotage.invalid', repeat('c', 64), 'envoye', '{}'::jsonb, 'facteur', now() - interval '41 days', now() - interval '40 days') returning id into v_vieux;
+    set local session_replication_role = origin;
     select exists (select 1 from ops.envois e join ops.prospects p on p.id = e.prospect_id where p.froid and e.type = 'premier_contact' and e.statut = 'envoye' and e.canal <> 'essai_e2e') into v_froids;
     ok := cardinality(v_e) = 3;`, 'i integer; v_id uuid;')}
 ${cas('envois_du_jour', `
@@ -174,7 +198,7 @@ ${cas('envois_du_jour', `
       and (select bool_and(verdicts ? 'j1' and verdicts ? 'j3' and verdicts ? 'second') from public.pilotage_envois_du_jour() where id = any(v_e))
       and exists (select 1 from public.pilotage_envois_du_jour() where id = v_e[2] and verdicts->>'j3' = 'refus');`)}
 ${cas('compteurs_egaux', `
-    ok := (select count(*) > 0 and bool_and(plafond = public.acq_plafond_du_jour(canal) and utilises = public.acq_envois_du_jour(canal)) from public.pilotage_compteurs_du_jour())
+    ok := (select count(*) > 0 and bool_and(plafond = coalesce((public.acq_plafond_du_jour(canal)->>'envois')::integer, 0) and utilises = coalesce((public.acq_envois_du_jour(canal)->>'envois')::integer, 0)) from public.pilotage_compteurs_du_jour())
       and not exists (select 1 from public.pilotage_compteurs_du_jour() where canal = 'email');`)}
 ${cas('entonnoir', `
     insert into ops.reponses (id_externe, envoi_id, prospect_id, canal, source, texte, auto, recu_le) values ('essai_e2e:pilotage:auto', v_e[1], v_p, 'essai_e2e', 'essai', 'Réponse automatique d''absence', true, now());
@@ -186,19 +210,24 @@ ${cas('bilan_vide', `
       ok := true;
       r := r || jsonb_build_object('diag_bilan_vide', 'branche sautée : des contacts froids réels sont déjà partis');
     else
-      ${annule(`      delete from ops.envois where id = v_vieux or id = any(v_e);
+      ${annule(`      delete from ops.reponses where prospect_id in (v_p, v_pc, v_pv);
+      delete from ops.envois where id = v_vieux or id = any(v_e);
       ok := (select count(*) = 1 and bool_and(bilan_le is null and verdict is null and prolonge_jusqua is null) from public.pilotage_bilan_date())
         and (select count(*) = 0 from public.pilotage_bilan(100));
       v_ok := ok;`)}
       ok := v_ok;
     end if;`, 'v_ok boolean;')}
 ${cas('bilan_101', `
-    ${annule(`    for i in 1..101 loop
-      insert into ops.prospects (cle_dedup, siren, domaine, metier, faits, source, froid) values ('essai_e2e:pilotage:b' || i, null, 'bilan-' || i || '.invalid', 'Plombier', '{}', 'essai', true) returning id into v_id;
+    ${annule(`    delete from ops.reponses where prospect_id in (v_p, v_pc, v_pv);
+      delete from ops.envois where id = v_vieux or id = v_hier or id = any(v_e);
+      set local session_replication_role = replica;
+    for i in 1..101 loop
+      insert into ops.prospects (cle_dedup, siren, domaine, metier, faits, source, froid) values ('domaine:bilan-' || i || '.invalid', null, 'bilan-' || i || '.invalid', 'Plombier', '[]', 'essai', true) returning id into v_id;
       insert into ops.envois (prospect_id, canal, envoyeur, type, destinataire, empreinte_texte, statut, verdicts, prepare_par, prepare_le, envoye_le)
-        values (v_id, 'essai_e2e', 'essai', 'premier_contact', 'b' || i || '@essai-pilotage.invalid', repeat('d', 64), 'envoye', '{}'::jsonb, 'essai', now() - interval '30 days', now() - interval '29 days' + make_interval(secs => i)) returning id into v_id;
+        values (v_id, 'essai_e2e', 'essai', 'premier_contact', 'b' || i || '@essai-pilotage.invalid', repeat('d', 64), 'envoye', '{}'::jsonb, 'facteur', now() - interval '30 days', now() - interval '29 days' + make_interval(secs => i)) returning id into v_id;
       v_b := v_b || v_id;
     end loop;
+    set local session_replication_role = origin;
     update ops.etat_envoi set bilan_le = (now() at time zone 'Europe/Paris')::date;
     v_ok := (select bilan_le = (now() at time zone 'Europe/Paris')::date from public.pilotage_bilan_date())
       and (select count(*) = 100 from public.pilotage_bilan(100))
@@ -207,7 +236,7 @@ ${cas('bilan_101', `
 ${cas('technologie_pause', `
     insert into ops.technologies (technologie, etat, pause_motif) values ('essai_e2e_techno', 'pause', 'essai de pause') on conflict (technologie) do update set etat = 'pause', pause_motif = 'essai de pause';
     ok := exists (select 1 from public.pilotage_compteurs_technologies() where technologie = 'essai_e2e_techno' and etat = 'pause' and pause_motif = 'essai de pause')
-      and 'essai_e2e_techno' = any((select technologies_pause from public.pilotage_etat_envoi()));`)}
+      and exists (select 1 from public.pilotage_etat_envoi() where 'essai_e2e_techno' = any(technologies_pause));`)}
 ${cas('appels_ordre', `
     insert into ops.reponses (id_externe, envoi_id, prospect_id, canal, source, texte, auto, recu_le, classe, traitee_le) values ('essai_e2e:pilotage:appel', v_e[1], v_p, 'essai_e2e', 'essai', 'Rappelez-moi au 06 12 34 56 78 svp', false, now() - interval '1 day', 'appel', now()) returning id into v_rep;
     insert into ops.rendez_vous (prospect_id, creneau, telephone, statut, reserve_le) values (v_p, date_trunc('hour', now()) + interval '1 day', '0611223344', 'reserve', now()) returning id into v_r1;
@@ -236,13 +265,13 @@ ${cas('etat_envoi', `
     ok := (select count(*) = 1 from public.pilotage_etat_envoi())
       and (select envoi_froid = (select actif from ops.interrupteurs where nom = 'envoi_froid') and mesure_a_sec from public.pilotage_etat_envoi());`)}
 ${cas('vente_froide', `
-    select count(*) into v_n0 from public.acq_ventes_froides();
-    insert into public.sites_commandes (matiere, statut, prix_cents, paye_le) values ('{"siren": "900000001"}'::jsonb, 'payee', 30000, now());
-    insert into public.sites_commandes (matiere, statut, prix_cents, paye_le) values ('{"siren": "900000002"}'::jsonb, 'payee', 30000, now());
-    insert into public.sites_commandes (matiere, statut, prix_cents) values ('{"siren": "900000003"}'::jsonb, 'brouillon', 30000);
+    v_n0 := public.acq_ventes_froides(now() - interval '60 days');
+    insert into public.sites_commandes (email, matiere, etat, prix_cents, paye_le) values ('essai1@essai-pilotage.invalid', '{"siren": "900000001"}'::jsonb, 'payee', 30000, now());
+    insert into public.sites_commandes (email, matiere, etat, prix_cents, paye_le) values ('essai2@essai-pilotage.invalid', '{"siren": "900000002"}'::jsonb, 'payee', 30000, now());
+    insert into public.sites_commandes (email, matiere, etat, prix_cents) values ('essai3@essai-pilotage.invalid', '{"siren": "900000003"}'::jsonb, 'brouillon', 30000);
     ok := exists (select 1 from public.pilotage_entonnoir(now() - interval '60 days') where id = v_e[1] and vente)
       and not exists (select 1 from public.pilotage_entonnoir(now() - interval '60 days') where id = v_hier and vente and froid)
-      and (select count(*) from public.acq_ventes_froides()) = v_n0 + 1
+      and public.acq_ventes_froides(now() - interval '60 days') = v_n0 + 1
       and exists (select 1 from public.pilotage_recettes_agents(now() - interval '1 day') where source = 'agents' and commandes >= 1)
       and exists (select 1 from public.pilotage_recettes_agents(now() - interval '1 day') where source = 'hors_agents' and commandes >= 1)
       and (select nombre >= 1 from public.pilotage_tapis(v_minuit) where etape = 'paye');`, 'v_n0 bigint;')}

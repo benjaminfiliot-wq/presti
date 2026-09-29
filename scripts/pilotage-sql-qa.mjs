@@ -532,7 +532,8 @@ function cahierEchanges() {
   if (!ee) e12.push('pilotage_etat_envoi absente')
   else {
     if (!/acq_etat_envoi\(\)/.test(compacterCorps(ee))) e12.push('pilotage_etat_envoi n’appelle pas acq_etat_envoi()')
-    if (/\b(ops\.)?(technologies|interrupteurs)\b/.test(serrerCorps(ee))) e12.push('pilotage_etat_envoi lit ops.technologies ou ops.interrupteurs elle-même')
+    // la clé JSON 'technologies' que rend acq_etat_envoi() n'est pas une lecture de la table : entre apostrophes, elle ne compte pas ; une jointure, une virgule ou un sous-select sur la table, si
+    if (sources(ee).some((t) => /^(ops\.)?(technologies|interrupteurs)$/.test(t)) || /(?<![\w'])(ops\.)?(technologies|interrupteurs)(?![\w'])/.test(serrerCorps(ee))) e12.push('pilotage_etat_envoi lit ops.technologies ou ops.interrupteurs elle-même')
   }
   if ((F('pilotage_bilan')?.params.length ?? 0) !== 1) e12.push('pilotage_bilan n’a pas exactement un paramètre')
   const code = compacter(TEXTE)
