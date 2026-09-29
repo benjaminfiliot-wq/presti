@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "compartiment": "general",
+  "exporte_le": "2026-09-28T06:00:00.000Z",
+  "fichiers": [
+    {
+      "racine": "presti",
+      "chemin": "docs/agents/revue-hebdo-essai.md",
+      "classe": "public",
+      "sha256": "374c7f7e423bfa331dc44699413194dbd69d46eae2b87b4648c55b35967b475e",
+      "octets": 195,
+      "caviardages": 0,
+      "reclasse": false
+    },
+    {
+      "racine": "presti",
+      "chemin": "docs/agents/chef-essai.md",
+      "classe": "public",
+      "sha256": "e2a25ba2849adb159666a903647975c4c7de22a1236f29db3434572e2e5cacf8",
+      "octets": 125,
+      "caviardages": 0,
+      "reclasse": false
+    },
+    {
+      "racine": "ops",
+      "chemin": "veille/agents-essai.md",
+      "classe": "public",
+      "sha256": "c07e3d662a09dcd4bbd69cbbff22dd79c47d5580f5a14815890f729e04457e03",
+      "octets": 121,
+      "caviardages": 0,
+      "reclasse": false
+    },
+    {
+      "racine": "saas",
+      "chemin": "Produit/relances-essai.md",
+      "classe": "public",
+      "sha256": "58085f610b15eebeee24775a555b8d8aa436c0b5e98a7dac3af63003adc71e30",
+      "octets": 85,
+      "caviardages": 0,
+      "reclasse": false
+    }
+  ],
+  "non_lus": [],
+  "prospects_compte": 0
+}

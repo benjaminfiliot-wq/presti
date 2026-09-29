@@ -77,11 +77,27 @@ lit, la commente, la fusionne ou non. **La routine ne fusionne jamais.**
 
    Une validation refusée (source pas encore sur main) : la ligne reste, la leçon attend la semaine suivante. Aucune
    candidate : pas de document de leçons.
-7. **La PR** : ajouter `docs/revues/AAAA-SS.md` et, s'ils existent, `docs/revues/AAAA-SS-lecons.md` et les fichiers
-   `docs/savoir/lecons/<id>.md` que l'étape 6 a écrits (jamais `revue.json`), les enregistrer sur la branche
+7. **Le bilan** (`docs/agents/chef-bilan.md`) : relire la semaine et proposer, jamais appliquer. Les chiffres, par un script :
+
+   ```
+   node scripts/chef/bilan-donnees.mjs --semaine=AAAA-SS --base=https://prestiapp.fr --verdicts=../presti/.orchestre/verdicts.jsonl --agents=../presti/.orchestre/agents.jsonl --candidates=../presti/.orchestre/travail/savoir/lecons/candidates --sortie=bilan-semaine.json
+   ```
+
+   Un code ≠ 0 arrête cette étape : pas de bilan cette semaine, la revue continue et Benj reçoit la ligne en échec.
+   Écrire `docs/revues/AAAA-SS-bilan.md` sur le modèle de `docs/revues/GABARIT-bilan.md` : cinq sections, 100 lignes
+   au plus, seulement des nombres présents dans `bilan-semaine.json` (mêmes exceptions que pour la revue), de une à
+   trois propositions au chef d'entreprise, chacune avec sa ligne « Source : » et sa ligne « Effet attendu : ». Une
+   proposition n'est jamais appliquée : Benj la lit, et Claude Code exécute ce qu'il retient. Le juge doit être vert
+   (mêmes trois corrections au plus, jamais `bilan-semaine.json`) :
+
+   ```
+   node scripts/savoir-reflexion-qa.mjs --document=docs/revues/AAAA-SS-bilan.md --donnees=bilan-semaine.json
+   ```
+8. **La PR** : ajouter `docs/revues/AAAA-SS.md` et, s'ils existent, `docs/revues/AAAA-SS-lecons.md`, `docs/revues/AAAA-SS-bilan.md` et les
+   fichiers `docs/savoir/lecons/<id>.md` que l'étape 6 a écrits (jamais `revue.json`, jamais `bilan-semaine.json`), les enregistrer sur la branche
    `revue/AAAA-SS`, pousser la branche et ouvrir une PR vers `main` (`gh pr create --base main --head revue/AAAA-SS`).
    **Jamais de fusion**, même si le texte paraît parfait : c'est Benj qui fusionne.
-8. **Le ménage** : supprimer `revue.json`, revenir au dépôt principal, puis `git worktree remove ../presti-revue-AAAA-SS`.
+9. **Le ménage** : supprimer `revue.json` et `bilan-semaine.json`, revenir au dépôt principal, puis `git worktree remove ../presti-revue-AAAA-SS`.
 
 ## Ce que la routine ne fait jamais
 
@@ -89,4 +105,5 @@ lit, la commente, la fusionne ou non. **La routine ne fusionne jamais.**
 - écrire dans le dépôt principal, fusionner une PR, pousser sur `main` ;
 - utiliser un connecteur, afficher ou recopier le jeton ;
 - valider une leçon avec un autre `--par` que `revue-AAAA-SS`, ou sans sa ligne `valider` ;
-- lancer autre chose que `revue-donnees.mjs`, `revue-qa.mjs`, `lecons.mjs`, `savoir-lecons-qa.mjs`, `git` et `gh`.
+- lancer autre chose que `revue-donnees.mjs`, `revue-qa.mjs`, `lecons.mjs`, `savoir-lecons-qa.mjs`, `bilan-donnees.mjs`,
+  `savoir-reflexion-qa.mjs`, `git` et `gh`.

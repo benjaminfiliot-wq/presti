@@ -1,0 +1,8 @@
+{
+  "_note": "Écrit à la main par Claude Code (fiche 026-238) : le savoir lié de bilan-donnees.mjs --semaine=2026-39 sur l'index d'essai (essai/.orchestre/travail/savoir/, fait par construire-index.mjs). Les trois premiers échecs de la semaine, la question `<critère> <fiche>` (le verdict à la place du critère s'il n'y en a pas). Le premier résultat de chaque question est le seul document qui porte ses deux jetons rares ; les autres résultats (le jeton « 099 » est partout) ne sont pas jugés. Le juge retire cette clé avant de comparer.",
+  "lignes": [
+    { "echec": 0, "question": "SVL-10 099-26", "premiere": "docs/agents/revue-hebdo-essai.md:1-4" },
+    { "echec": 1, "question": "SVB-5 099-24", "premiere": "docs/agents/chef-essai.md:1-3" },
+    { "echec": 2, "question": "AP-1 099-22", "premiere": "veille/agents-essai.md:1-3" }
+  ]
+}

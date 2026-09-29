@@ -1,0 +1,49 @@
+{
+  "constats": [
+    "Constat premier : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et note",
+    "Constat deuxième : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et not",
+    "Constat troisième : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et no",
+    "Constat quatrième : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et no",
+    "Constat cinquième : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et no"
+  ],
+  "propositions": [
+    {
+      "titre": "Proposition première : relire les verdicts avant de conclure sur un juge rouge et noter ce qui chang",
+      "pourquoi": "Pourquoi : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de con",
+      "sources": [
+        "/echecs/0",
+        "/executants",
+        "/lecons"
+      ],
+      "effet_attendu": "Effet : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rou",
+      "type": "relecture"
+    },
+    {
+      "titre": "Proposition deuxième : relire les verdicts avant de conclure sur un juge rouge et noter ce qui chang",
+      "pourquoi": "Pourquoi : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de con",
+      "sources": [
+        "/echecs/0",
+        "/executants",
+        "/lecons"
+      ],
+      "effet_attendu": "Effet : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rou",
+      "type": "verification"
+    },
+    {
+      "titre": "Proposition troisième : relire les verdicts avant de conclure sur un juge rouge et noter ce qui chan",
+      "pourquoi": "Pourquoi : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de con",
+      "sources": [
+        "/echecs/0",
+        "/executants",
+        "/lecons"
+      ],
+      "effet_attendu": "Effet : relire les verdicts avant de conclure sur un juge rouge et noter ce qui change relire les verdicts avant de conclure sur un juge rou",
+      "type": "redaction_interne"
+    }
+  ],
+  "compte_rendu": [
+    "bilan long relire les verdicts avant de conclure sur un juge",
+    "trois propositions longues relire les verdicts avant de conc",
+    "rien appliqué relire les verdicts avant de conclure sur un j"
+  ]
+}

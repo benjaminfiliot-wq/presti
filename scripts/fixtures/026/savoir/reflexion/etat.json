@@ -1,0 +1,18 @@
+{
+  "genere_le": "2026-09-29T06:00:00Z",
+  "taches": { "file": 3, "bail": 1, "faite": 41, "echec": 2, "a_decider": 1, "annulee": 0, "echecs_24h": 2 },
+  "agents": [
+    { "nom": "chef", "capacites": [], "battement_le": "2026-09-29T05:55:00Z", "periode_minutes": 60, "en_pause": false, "disjoncteur_ouvert": false, "disjoncteur_ouvert_le": null, "jeton_externe_expire_le": null },
+    { "nom": "pont", "capacites": ["code", "relecture"], "battement_le": "2026-09-29T05:57:00Z", "periode_minutes": 15, "en_pause": true, "disjoncteur_ouvert": false, "disjoncteur_ouvert_le": null, "jeton_externe_expire_le": null },
+    { "nom": "facteur", "capacites": ["redaction_interne"], "battement_le": "2026-09-29T05:40:00Z", "periode_minutes": 30, "en_pause": false, "disjoncteur_ouvert": true, "disjoncteur_ouvert_le": "2026-09-28T21:00:00Z", "jeton_externe_expire_le": null },
+    { "nom": "standardiste", "capacites": ["tri"], "battement_le": "2026-09-29T05:30:00Z", "periode_minutes": 30, "en_pause": true, "disjoncteur_ouvert": true, "disjoncteur_ouvert_le": "2026-09-28T22:00:00Z", "jeton_externe_expire_le": null }
+  ],
+  "decisions_ouvertes": [
+    { "id": "d-7", "question": "Envoyer le lot de relances de septembre ?", "echeance": "2026-09-30T06:00:00Z", "defaut": "attendre", "montant_cents": 0, "portee": "aucune" },
+    { "id": "d-8", "question": "Payer l'abonnement du mois ?", "echeance": "2026-10-01T06:00:00Z", "defaut": "attendre", "montant_cents": 2000, "portee": "argent" }
+  ],
+  "interrupteurs": { "pause_generale": false, "envoi_froid": false },
+  "couts_mois": 37.5,
+  "notifications_jour": 4,
+  "dernier_evenement_id": 5461
+}

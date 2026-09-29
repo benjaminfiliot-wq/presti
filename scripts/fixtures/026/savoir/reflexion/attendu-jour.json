@@ -1,0 +1,23 @@
+{
+  "_note": "Écrit à la main par Claude Code (fiche 026-238) : bilan-donnees.mjs --jour=2026-09-28 --sans-savoir sur essai/ et etat.json. Le dimanche 27/09 à 22:30 UTC (ligne 27 de verdicts.jsonl) tombe le lundi 28/09 à 00:30 à Paris : il compte dans ce jour. La ligne 31 (28/09 à 22:30 UTC) tombe le 29/09 à Paris : elle n'y compte pas. Le juge retire cette clé avant de comparer.",
+  "periode": { "type": "jour", "debut": "2026-09-28", "fin": "2026-09-28", "fuseau": "Europe/Paris" },
+  "executants": {
+    "source": "verdicts.jsonl",
+    "fraicheur": "2026-09-28T22:30:00Z",
+    "par_executant": {
+      "codex": { "pass": 0, "fail": 2, "refusees": 0, "expirees": 0, "disjonctees": 0 },
+      "claude-code": { "pass": 1, "fail": 0, "refusees": 0, "expirees": 1, "disjonctees": 0 }
+    }
+  },
+  "lignes_illisibles": 2,
+  "echecs": [
+    { "id": "099-30", "verdict": "EXPIRÉE", "critere": null, "date": "2026-09-28T20:00:00Z", "source": "verdicts.jsonl:30" },
+    { "id": "099-29", "verdict": "FAIL", "critere": "SVB-9", "date": "2026-09-28T13:00:00Z", "source": "verdicts.jsonl:29" },
+    { "id": "099-27", "verdict": "FAIL", "critere": "SVB-3", "date": "2026-09-27T22:30:00Z", "source": "verdicts.jsonl:27" }
+  ],
+  "couts": { "source": "etat", "fraicheur": "2026-09-29T06:00:00Z", "mois_eur": 37.5, "notifications_jour": 4 },
+  "quotas": { "source": "etat", "fraicheur": "2026-09-29T06:00:00Z", "agents_en_pause": 2, "disjoncteurs_ouverts": 2, "echecs_24h": 2, "decisions_ouvertes": 2 },
+  "lecons": { "source": "lecons", "fraicheur": "2026-09-28", "candidates": 3, "validees_periode": 1, "rejetees_periode": 1, "plus_vieille_candidate_jours": 18 },
+  "recherches": { "source": "recherches", "fraicheur": "2026-09-28T18:00:00.000Z", "total": 3, "web": 1, "perplexity": 0, "refus": 1, "credits": 3 },
+  "savoir_lie": "non mesuré"
+}

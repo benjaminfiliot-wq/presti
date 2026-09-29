@@ -1,0 +1,3 @@
+{"le":"2026-09-28T07:30:00.000Z","id":"r-0928-1","agent":"chef","question_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","n":2,"origines":{"savoir":2,"web":0,"perplexity":0},"credits":0,"refus":null}
+{"le":"2026-09-28T12:00:00.000Z","id":"r-0928-2","agent":"chef","question_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","n":0,"origines":{"savoir":0,"web":0,"perplexity":0},"credits":0,"refus":"donnee_personnelle"}
+{"le":"2026-09-28T18:00:00.000Z","id":"r-0928-3","agent":"chef","question_sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","n":3,"origines":{"savoir":1,"web":2,"perplexity":0},"credits":3,"refus":null}

@@ -1,0 +1,17 @@
+{
+  "_note": "Écrit par Claude Code (fiche 026-238). Les bilans du lundi fautifs, tirés de document-ok.md par une seule faute chacun (avant → apres, ou ajout en fin de document, ou une ligne répétée). `echec` : les morceaux de texte que la sortie de `savoir-reflexion-qa --document` doit tous contenir pour NOMMER la faute.",
+  "fautifs": [
+    { "nom": "nombre-absent", "avant": "- Leçons : 3 candidates", "apres": "- Taux de réussite : 15 %.\n- Leçons : 3 candidates", "echec": ["nombre absent des données : 15 (ligne"] },
+    { "nom": "section-manquante", "avant": "## Coûts\n\n", "apres": "", "echec": ["section « ## Coûts » absente"] },
+    { "nom": "titre-de-section-change", "avant": "## Coûts\n", "apres": "## Dépenses\n", "echec": ["section « ## Coûts » absente"] },
+    { "nom": "zero-proposition", "avant": "### 1. Relire l'échec le plus récent\n\nLe critère SVL-10 a échoué sur la fiche 099-26 : l'étape Leçons manquait à la revue.\nSource : `bilan-semaine.json` › `echecs`.\nEffet attendu : une consigne relue et corrigée.\n\n### 2. Trier les leçons candidates\n\nTrois leçons candidates attendent, la plus vieille depuis 17 jours.\nSource : `bilan-semaine.json` › `lecons`.\nEffet attendu : moins de leçons en attente à la prochaine revue.\n", "apres": "", "echec": ["0 proposition(s) : de 1 à 3"] },
+    { "nom": "quatre-propositions", "ajout": ["", "### 3. Noter les recherches", "", "Les recherches de la semaine méritent une note.", "Source : `bilan-semaine.json` › `recherches`.", "Effet attendu : une note interne.", "", "### 4. Lire les coûts", "", "Le coût du mois reste faible.", "Source : `bilan-semaine.json` › `couts`.", "Effet attendu : rien à payer de plus."], "echec": ["4 proposition(s) : de 1 à 3"] },
+    { "nom": "sans-source", "avant": "Source : `bilan-semaine.json` › `lecons`.\n", "apres": "", "echec": ["proposition 2", "sans ligne « Source : »"] },
+    { "nom": "sans-effet-attendu", "avant": "Effet attendu : une consigne relue et corrigée.\n", "apres": "", "echec": ["proposition 1", "sans ligne « Effet attendu : »"] },
+    { "nom": "source-sans-cle", "avant": "Source : `bilan-semaine.json` › `echecs`.", "apres": "Source : `bilan-semaine.json` › `ailleurs`.", "echec": ["proposition 1", "ne nomme aucune clé des données"] },
+    { "nom": "plus-de-100-lignes", "repeter": { "ligne": "- ligne de remplissage sans chiffre", "fois": 70 }, "echec": ["lignes : 100 au plus"] },
+    { "nom": "adresse", "ajout": ["Écrire à contact@exemple.fr pour le signaler."], "echec": ["une adresse, un numéro ou un secret"] },
+    { "nom": "lien", "ajout": ["Voir https://exemple.fr/bilan pour le détail."], "echec": ["un lien"] },
+    { "nom": "nombre-abrege", "ajout": ["- Budget : 12k € cette semaine."], "echec": ["nombre abrégé : 12k"] }
+  ]
+}

@@ -1,0 +1,10 @@
+[Unit]
+Description=Presti — bilan quotidien du chef, chaque jour à 7 h 35 (heure de Paris)
+
+[Timer]
+OnCalendar=*-*-* 07:35:00 Europe/Paris
+Persistent=false
+Unit=presti-chef-bilan.service
+
+[Install]
+WantedBy=timers.target

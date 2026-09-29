@@ -1,0 +1,31 @@
+{"id":"099-01","verdict":"PASS","ligne":"","code":0,"date":"2026-09-18T07:00:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"fait"}
+{"id":"099-02","verdict":"FAIL","ligne":"FAIL SVL-3 — la source plantée ne se résout pas","code":1,"date":"2026-09-20T21:30:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-03","verdict":"FAIL","ligne":"FAIL SVB-1 — les données du jour ne collent pas","code":1,"date":"2026-09-20T22:15:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-04","verdict":"PASS","ligne":"","code":0,"date":"2026-09-21T08:00:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"fait"}
+{"id":"099-05","verdict":"FAIL","ligne":"FAIL RV-4 — nombre absent des données : 15","code":1,"date":"2026-09-21T13:00:00Z","duree_s":12,"executant":"claude-code","lignes":10,"dossier":"en-cours"}
+{"id":"099-06","verdict":"QUOTA","ligne":"quota de Codex atteint","code":null,"date":"2026-09-21T15:00:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-07","verdict":"PASS","ligne":"","code":0,"date":"2026-09-22T07:30:00Z","duree_s":12,"executant":"claude-code","lignes":10,"dossier":"fait"}
+{"id":"099-08","verdict":"FAIL","ligne":"FAIL SVS-12 — hygiène : package.json diffère de HEAD","code":1,"date":"2026-09-22T09:10:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-09","verdict":"EXPIRÉE","ligne":"expirée : plus de 30 min sans verdict","code":null,"date":"2026-09-22T14:00:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-10","verdict":"DISJONCTÉE","ligne":"disjoncteur ouvert après trois échecs de suite (CH-C4)","code":null,"date":"2026-09-23T06:00:00Z","duree_s":12,"executant":"claude-code","lignes":10,"dossier":"en-cours"}
+{"id":"099-11","verdict":"PASS","ligne":"","code":0,"date":"2026-09-23T10:00:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"fait"}
+{"id":"099-12","verdict":"REFUSÉE","ligne":"en-tête : champ obligatoire absent : verifier","code":null,"date":"2026-09-23T11:45:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"file"}
+{"id":"099-13","verdict":"FAIL","ligne":"FAIL SVL-1 — candidate manquante","code":1,"date":"2026-09-24T07:05:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-14","verdict":"PASS","ligne":"","code":0,"date":"2026-09-24T12:00:00Z","duree_s":12,"executant":"claude-code","lignes":10,"dossier":"fait"}
+{"id":"099-15","verdict":"FAIL","ligne":"coupé en pleine écriture
+{"id":"099-16","verdict":"FAIL","ligne":"FAIL SVR-3 — la CLI ne rend pas de source","code":1,"date":"2026-09-25T08:20:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-17","verdict":"PASS","ligne":"","code":0,"date":"2026-09-25T09:00:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"fait"}
+{"id":"099-18","verdict":"FAIL","ligne":"FAIL JL-1 — faux rouge de charge","code":1,"date":"2026-09-25T15:30:00Z","duree_s":12,"executant":"claude-code","lignes":10,"dossier":"en-cours"}
+{"id":"099-19","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T07:00:00Z","duree_s":12,"executant":"claude-code","lignes":10,"dossier":"fait"}
+
+{"id":"099-21","verdict":"FAIL","ligne":"FAIL CH-U2 — l'environnement du modèle n'est pas réduit","code":1,"date":"2026-09-26T10:30:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-22","verdict":"FAIL","ligne":"FAIL AP-1 — sabotage non vu","code":1,"date":"2026-09-26T16:00:00Z","duree_s":12,"agent":"ag-essai","lignes":10,"dossier":"en-cours"}
+{"id":"099-23","verdict":"PASS","ligne":"","code":0,"date":"2026-09-26T17:00:00Z"}
+{"id":"099-24","verdict":"FAIL","ligne":"FAIL SVB-5 — l'argv du faux Codex","code":1,"date":"2026-09-27T09:00:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-25","verdict":"PASS","ligne":"","code":0,"date":"2026-09-27T12:00:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"fait"}
+{"id":"099-26","verdict":"FAIL","ligne":"FAIL SVL-10 — l'étape Leçons manque","code":1,"date":"2026-09-27T21:45:00Z","duree_s":12,"executant":"claude-code","lignes":10,"dossier":"en-cours"}
+{"id":"099-27","verdict":"FAIL","ligne":"FAIL SVB-3 — le faux bus reçoit trop de requêtes","code":1,"date":"2026-09-27T22:30:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-28","verdict":"PASS","ligne":"","code":0,"date":"2026-09-28T08:00:00Z","duree_s":12,"executant":"claude-code","lignes":10,"dossier":"fait"}
+{"id":"099-29","verdict":"FAIL","ligne":"FAIL SVB-9 — savoir lié sans source","code":1,"date":"2026-09-28T13:00:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"en-cours"}
+{"id":"099-30","verdict":"EXPIRÉE","ligne":"expirée : plus de 30 min sans verdict","code":null,"date":"2026-09-28T20:00:00Z","duree_s":12,"executant":"claude-code","lignes":10,"dossier":"en-cours"}
+{"id":"099-31","verdict":"REFUSÉE","ligne":"en-tête : périmètre vide","code":null,"date":"2026-09-28T22:30:00Z","duree_s":12,"executant":"codex","lignes":10,"dossier":"file"}

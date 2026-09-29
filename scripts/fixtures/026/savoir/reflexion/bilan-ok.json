@@ -1,0 +1,41 @@
+{
+  "constats": [
+    "Le codex a rendu quatre PASS et six FAIL cette semaine ; rien de nouveau côté claude-code.",
+    "Le coût du mois reste faible au bus, et les leçons candidates attendent la revue."
+  ],
+  "propositions": [
+    {
+      "titre": "Relire l'échec le plus récent",
+      "pourquoi": "Le critère du dernier échec n'a pas encore d'explication écrite : une relecture évite qu'il revienne.",
+      "sources": [
+        "/echecs/0"
+      ],
+      "effet_attendu": "Un échec de moins à expliquer à la prochaine revue.",
+      "type": "relecture"
+    },
+    {
+      "titre": "Trier les leçons candidates",
+      "pourquoi": "Des leçons candidates attendent depuis plusieurs jours : les trier avant la revue du lundi.",
+      "sources": [
+        "/lecons/candidates",
+        "/lecons/plus_vieille_candidate_jours"
+      ],
+      "effet_attendu": "Moins de leçons en attente.",
+      "type": "verification"
+    },
+    {
+      "titre": "Écrire la note des recherches",
+      "pourquoi": "Les recherches de la semaine méritent une note interne pour n'être pas refaites.",
+      "sources": [
+        "/recherches/total"
+      ],
+      "effet_attendu": "Une note interne relue par Claude Code.",
+      "type": "redaction_interne"
+    }
+  ],
+  "compte_rendu": [
+    "bilan terminé",
+    "propositions envoyées",
+    "rien appliqué"
+  ]
+}
