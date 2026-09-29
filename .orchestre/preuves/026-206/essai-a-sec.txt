@@ -1,0 +1,18 @@
+Essai à sec de 0114_contenu.sql (fiche 026-206) — projet Supabase gorcdvmueakcncsmrouo, 2026-09-29
+Migration jugée : supabase/migrations/0114_contenu.sql, sha256 4d49424611c3154b…
+Outil : execute_sql, UN énoncé DO (essai.sql, fabriqué par generer-essai.mjs) qui exécute la migration telle quelle,
+éprouve 105 cas avec de vraies décisions du bus (ops_decision_creer / ops_decision_trancher par un fondateur réel), puis lève
+une exception : tout est annulé.
+
+Résultat rendu par la base : ERROR P0001: ESSAI_A_SEC {"ko": 0, "total": 105, "echecs": []}
+
+Après l'essai : to_regclass('public.contenu_posts') = null ; to_regprocedure('public.contenu_accord_valide(uuid,text)') = null ;
+ops.decisions = 2 lignes (inchangé), aucune décision « Essai 026-206 » ; ops.agents = 19 (inchangé).
+(ops.evenements a passé de 259 à 263 entre les deux lectures : les agents du bus écrivent en continu ; les événements de l'essai,
+eux, sont annulés avec le reste.)
+
+Avant la base, la même chaîne a tourné sur une copie locale (PGlite, avec les vraies 0096-0098) : 105/105 ; puis 12 mutations de
+la migration ont été rejouées (accord sans statut, sans portée, sans choix, sans cible exacte, sans expiration, ligne fermée
+ignorée, suspension ignorée, chiffre sans source, seuil 0,5 retiré, déclencheur retiré, non mesuré à zéro, ventes certaines) :
+chacune fait échouer au moins un cas. Deux défauts réels ont été trouvés et corrigés ainsi : un CASE dans un IF plpgsql
+(le premier THEN coupait l'expression) et une répétition d'expression régulière au-delà de 255.
