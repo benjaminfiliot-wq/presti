@@ -21,7 +21,7 @@ import { spawnSync } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
 import {
   R, LOADER, lireOptions, creerSortie, importerDepuis, importerContrat, typecheck, piegerReseau, sansCommentaires, importsDe,
-  exportsNommes, court, premiereLigne, lireJson, sha256,
+  exportsNommes, court, premiereLigne, lireJson, sha256, exigerSousTravail, TRAVAIL,
 } from './fixtures/026-acquisition/commun.mjs'
 import { creerHorloge } from './fixtures/026-acquisition/horloge-factice.mjs'
 import { creerMagasin } from './fixtures/026-acquisition/magasin-memoire.mjs'
@@ -90,6 +90,20 @@ async function partieFacteur(s, IDS) {
   s.juger('FA-1', e1, 'facteur.ts (executerFacteur, travailDuJuge, jugerAvecAvis, rejugerAvecAvis, executerJuge), porteurs.ts, envoiMeta.ts, les 3 routes ; ni sequenceur.ts ni boites.mjs')
   if (e1.length) { s.nonJuges(IDS.slice(1), 'FA-1 en échec'); return }
 
+  // Le banc de routes importe chaque doublure « @/lib/… » une seule fois par processus (module data: en cache) : elle garde le
+  // premier __DBL. On garde donc ce premier D et on lui passe, à chaque appel, les comportements, les valeurs et le journal du D neuf.
+  {
+    let persistant = null
+    Object.defineProperty(globalThis, '__DBL', {
+      configurable: true,
+      get() { return persistant },
+      set(v) {
+        if (!persistant) { persistant = v; return }
+        persistant.comportements = v.comportements; persistant.valeurs = v.valeurs; persistant.journal.length = 0
+        v.journal = persistant.journal; v.appel = persistant.appel
+      },
+    })
+  }
   // Un banc commun : magasin en mémoire, horloge, faux SMTP/Meta/notice, lecteurs factices.
   async function banc2(seeder, deps = {}) {
     const H = creerHorloge(T0)
@@ -102,37 +116,121 @@ async function partieFacteur(s, IDS) {
     }
   }
 
-  // FA-2 : jugerAvecAvis / executerJuge sur un envoi conforme.
+  // FA-2 : jugement en deux moitiés. Tant que Benj n'a pas approuvé les textes (`approuve: false` dans modeles.ts, 026-083) et que la
+  // notice n'est pas en ligne (`NOTICE_URL` nul, 026-162), J3 refuse TOUT, à juste titre : aucun envoi ne peut être approuvé dans le
+  // dépôt. Le juge rejoue donc la chaîne (travail → avis → approbation) dans une COPIE de lib/agents/acquisition/ où les modèles sont
+  // approuvés et NOTICE_URL posé (jamais dans le dépôt), et il vérifie dans le dépôt réel qu'aucun envoi n'est approuvé.
   {
     const e = []
+    let racineMonde = null
     try {
-      const H = creerHorloge(T0)
-      const M = creerMagasin({ horloge: H })
-      M.poserEtat({ interrupteurs: { envoi_froid: true } })
-      const id = M.inserer(prospectVerifie(1))
-      const prep = await M.preparerEnvoi({ prospect_id: id, type: 'premier_contact', canal: 'formulaire_site', envoyeur: 'facteur_usine', destinataire: 'https://temoin-facteur-1.invalid/contact', objet: null, texte: texteConforme('TEM001'), empreinte_texte: sha256(texteConforme('TEM001')), modele_id: 'modele-temoin-v1', variante: 'A', fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: null, reference: 'FA2-TEM001' })
-      if (!prep.ok) e.push(`préparation refusée dans le banc : ${prep.raison}`)
-      const travail = await mod.travailDuJuge(M, 20)
-      const item = (travail?.envois ?? []).find((x) => x.id === prep.id)
-      if (!item) e.push('travailDuJuge ne rend pas l\'envoi préparé')
-      const lecteurOk = creerLecteurFactice({ nom: 'agents', reponse: { verdict: 'ok', raisons: [] } })
-      const avis = item ? await mod.executerJuge({ travail: { envois: [item] }, lecteur: lecteurOk, rendre: async (x) => x }) : null
-      const a0 = Array.isArray(avis) ? avis[0] : avis
-      const j2avis = a0 ?? { envoi_id: prep.id, empreinte: item?.empreinte, j2: { verdict: 'ok', raisons: [] }, j2_version: 'temoin-v1' }
-      const r = await mod.jugerAvecAvis({ magasin: M, recuperer: async () => ({ statut: 200, entetes: {}, corps: 'ok' }), horloge: H, jetonMeta: null, adresseReponse: ADRESSE_PROSPECTION, drapeaux: { siteAchatPublic: true, varianteA: true }, offre: null }, j2avis)
-      if (!r?.ok) e.push(`jugerAvecAvis sur un envoi conforme : ${JSON.stringify(r)}`)
-      const relu = (await M.envoisApprouves('formulaire_site', 10)).find((x) => x.id === prep.id)
-      if (!relu) e.push('l\'envoi conforme n\'est pas approuve après jugerAvecAvis')
-      // Lecteur null : aucun avis, aucune approbation.
-      const H2 = creerHorloge(T0); const M2 = creerMagasin({ horloge: H2 }); M2.poserEtat({ interrupteurs: { envoi_froid: true } })
-      const id2 = M2.inserer(prospectVerifie(2))
-      const prep2 = await M2.preparerEnvoi({ prospect_id: id2, type: 'premier_contact', canal: 'formulaire_site', envoyeur: 'facteur_usine', destinataire: 'https://temoin-facteur-2.invalid/contact', objet: null, texte: texteConforme('TEM002'), empreinte_texte: sha256(texteConforme('TEM002')), modele_id: 'modele-temoin-v1', variante: 'A', fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: null, reference: 'FA2-TEM002' })
-      const rendus = []
-      const avis2 = await mod.executerJuge({ travail: await mod.travailDuJuge(M2, 20), lecteur: null, rendre: async (x) => rendus.push(x) })
-      if (rendus.length) e.push('un lecteur null a quand même rendu un avis')
-      if ((await M2.envoisApprouves('formulaire_site', 10)).length) e.push('un envoi sans avis (lecteur null) a été approuvé')
-      s.juger('FA-2', e, 'travailDuJuge rend l\'envoi préparé ; executerJuge + jugerAvecAvis approuve un envoi conforme ; lecteur null → aucun avis rendu, aucune approbation')
-    } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`) ; s.juger('FA-2', e, '') }
+      const src = path.join(RAC, 'lib', 'agents', 'acquisition')
+      racineMonde = exigerSousTravail(path.join(TRAVAIL, JUGE, `monde-approuve-${process.pid}`))
+      const dst = path.join(racineMonde, 'lib', 'agents', 'acquisition')
+      fs.rmSync(racineMonde, { recursive: true, force: true })
+      fs.mkdirSync(dst, { recursive: true })
+      for (const f of fs.readdirSync(src)) {
+        if (!f.endsWith('.ts')) continue
+        let t = fs.readFileSync(path.join(src, f), 'utf8')
+        if (f === 'modeles.ts') { const n = t.split('approuve: false,').length - 1; if (n !== 1) throw new Error(`modeles.ts : « approuve: false, » trouvé ${n} fois, 1 attendue`); t = t.replace('approuve: false,', () => 'approuve: true,') }
+        if (f === 'contrat.ts') { const a = 'export const NOTICE_URL: string | null = null'; if (!t.includes(a)) throw new Error('contrat.ts : NOTICE_URL introuvable'); t = t.replace(a, () => "export const NOTICE_URL: string | null = 'https://notice.temoin.invalid/'") }
+        fs.writeFileSync(path.join(dst, f), t)
+      }
+      const monde = await importerDepuis(racineMonde, path.join('lib', 'agents', 'acquisition', 'facteur.ts'))
+      const modelesMonde = await importerDepuis(racineMonde, path.join('lib', 'agents', 'acquisition', 'modeles.ts'))
+      const TEXTE = modelesMonde.MODELES.questions_entrant_v2.texte
+      const ok = () => creerLecteurFactice({ nom: 'agents', reponse: { verdict: 'ok', raisons: [] } })
+      const jugeOk = async () => ({ j2: 'ok', raisons: [], version: 'temoin-v1' })
+      const depsAvis = (M, H) => ({ magasin: M, recuperer: async () => ({ statut: 200, entetes: {}, corps: 'ok', url_finale: 'https://temoin.invalid/' }), horloge: H, jetonMeta: null, adresseReponse: ADRESSE_PROSPECTION, drapeaux: { siteAchatPublic: true, varianteA: true }, offre: null })
+      const nouveauBanc = (n) => {
+        const H = creerHorloge(T0); const M = creerMagasin({ horloge: H })
+        M.poserEtat({ palier: 'P0', notice_verifiee_le: new Date(T0 - 3600_000).toISOString(), interrupteurs: { envoi_froid: true }, conversations: Array.from({ length: n }, (_, i) => ({ id: `conv-fa2-${i}`, plateforme: 'instagram', pseudo: `pseudo_${i}`, suit_le_compte: true, fenetre_jusqua: null, meta_id: `55500${String(i).padStart(2, '0')}`, commentaire_id: `com-${i}`, reponse_privee_jusqua: new Date(T0 + 3 * 24 * 3600_000).toISOString() })) })
+        const preparer = (i, texte = TEXTE) => M.preparerEnvoi({ prospect_id: null, conversation_id: `conv-fa2-${i}`, type: 'reponse', canal: 'reponse_privee', envoyeur: 'repondeur', destinataire: `55500${String(i).padStart(2, '0')}`, objet: null, texte, empreinte_texte: sha256(texte), modele_id: 'questions_entrant_v2', variante: null, fait_id: null, douleur_id: null, fil_envoi_id: null, preuve_demande: null, reference: `FA2-${n}-${i}` })
+        return { H, M, preparer }
+      }
+
+      // (a) le chemin conforme, en deux moitiés : travail → second juge (usine) → avis → approbation (Vercel)
+      {
+        const { H, M, preparer } = nouveauBanc(1)
+        const p = await preparer(0)
+        if (!p.ok) e.push(`préparation refusée dans le banc : ${p.raison}`)
+        const travail = await monde.travailDuJuge(M, 20)
+        const item = (travail?.envois ?? []).find((x) => x.id === p.id)
+        if (!item) e.push('travailDuJuge ne rend pas l\'envoi préparé')
+        else {
+          if (item.empreinte !== sha256(TEXTE)) e.push('travailDuJuge : l\'empreinte n\'est pas le SHA-256 du texte exact')
+          const rendus = await monde.executerJuge({ travail: { envois: [item] }, lecteur: ok(), rendre: async () => undefined, juger: jugeOk })
+          if (rendus.length !== 1 || rendus[0].j2.verdict !== 'ok' || rendus[0].envoi_id !== p.id) e.push(`executerJuge : ${JSON.stringify(rendus)}, un avis « ok » attendu`)
+          const r = await monde.jugerAvecAvis(depsAvis(M, H), rendus[0])
+          if (!r?.ok || r.statut !== 'approuve') e.push(`jugerAvecAvis sur un envoi conforme : ${JSON.stringify(r)}`)
+          const relu = (await M.envoisApprouves('reponse_privee', 10)).find((x) => x.id === p.id)
+          if (!relu) e.push('l\'envoi conforme n\'est pas approuve après jugerAvecAvis')
+          else if (!relu.verdicts || relu.verdicts.j1 !== 'sans_objet' || relu.verdicts.j3 !== 'ok' || relu.verdicts.j2 !== 'ok' || !relu.verdicts.j2_version) e.push(`approbation sans les trois verdicts : ${JSON.stringify(relu.verdicts)}`)
+          const encore = await monde.jugerAvecAvis(depsAvis(M, H), rendus[0])
+          if (encore.ok !== false || encore.raison !== 'perime') e.push(`second avis sur un envoi déjà jugé : ${JSON.stringify(encore)}, perime attendu`)
+        }
+      }
+      // (b) un avis « refus » de ton annule ; (c) une empreinte différente → perime, rien d'écrit ; (d) un texte retouché avant le travail : J3 refuse → annulé
+      {
+        const { H, M, preparer } = nouveauBanc(3)
+        const pRefus = await preparer(0), pPerime = await preparer(1), pRetouche = await preparer(2, `${TEXTE} Résultat garanti à 100 %.`)
+        const avis = (id, texte, verdict = 'ok') => ({ envoi_id: id, empreinte: sha256(texte), j2: { verdict, raisons: verdict === 'ok' ? [] : ['ton_temoin'] }, j2_version: 'temoin-v1' })
+        const rRefus = await monde.jugerAvecAvis(depsAvis(M, H), avis(pRefus.id, TEXTE, 'refus'))
+        if (rRefus.statut !== 'annule') e.push(`avis refus : ${JSON.stringify(rRefus)}, annule attendu`)
+        const rPerime = await monde.jugerAvecAvis(depsAvis(M, H), avis(pPerime.id, `${TEXTE} retouché`))
+        if (rPerime.ok !== false || rPerime.raison !== 'perime') e.push(`empreinte différente : ${JSON.stringify(rPerime)}, perime attendu`)
+        if ((await M.envoisApprouves('reponse_privee', 10)).some((x) => x.id === pPerime.id)) e.push('un avis périmé a approuvé l\'envoi')
+        const rRetouche = await monde.jugerAvecAvis(depsAvis(M, H), avis(pRetouche.id, `${TEXTE} Résultat garanti à 100 %.`))
+        if (rRetouche.statut !== 'annule') e.push(`texte hors modèle : ${JSON.stringify(rRetouche)}, annule attendu (J3)`)
+        if ((await M.envoisApprouves('reponse_privee', 10)).length) e.push('un envoi refusé par J2 ou J3 a été approuvé')
+      }
+      // (e) lecteur nul : aucun avis rendu, un événement, aucune approbation
+      {
+        const { M, preparer } = nouveauBanc(1)
+        await preparer(0)
+        const rendus = [], evts = []
+        const avis = await monde.executerJuge({ travail: await monde.travailDuJuge(M, 20), lecteur: null, rendre: async (x) => rendus.push(x), evenement: async (type) => { evts.push(type) } })
+        if (rendus.length || (Array.isArray(avis) && avis.length)) e.push('un lecteur null a quand même rendu un avis')
+        if (!evts.includes('second_juge_indisponible')) e.push('lecteur null : aucun événement second_juge_indisponible')
+        if ((await M.envoisApprouves('reponse_privee', 10)).length) e.push('un envoi sans avis (lecteur null) a été approuvé')
+      }
+      // (f) 25 envois à juger : 20 appels au second juge au plus, les 5 autres restés prepare
+      {
+        const { H, M, preparer } = nouveauBanc(25)
+        const ids = []
+        for (let i = 0; i < 25; i++) { const p = await preparer(i); if (p.ok) ids.push(p.id); else e.push(`préparation ${i} refusée : ${p.raison}`) }
+        const lecteur = ok()
+        const travail = await monde.travailDuJuge(M, 25)
+        const rendus = await monde.executerJuge({ travail, lecteur, rendre: async () => undefined, juger: async (entree, o) => { await o.lecteur('systeme', { texte: entree.texte }); return { j2: 'ok', raisons: [], version: 'temoin-v1' } } })
+        if (lecteur.appels.length > 20) e.push(`25 envois : ${lecteur.appels.length} appels au second juge, 20 au plus`)
+        if (rendus.length !== lecteur.appels.length) e.push(`${rendus.length} avis rendus pour ${lecteur.appels.length} appels`)
+        void H; void ids
+      }
+      // (g) la moitié Vercel ne juge plus rien : la passe `envoi` d'executerFacteur n'appelle ni jugerTon ni approuverEnvoi
+      {
+        const srcF = sansCommentaires(fs.readFileSync(fFacteur, 'utf8'))
+        const i = srcF.indexOf('export async function executerFacteur')
+        const corps = i >= 0 ? srcF.slice(i) : ''
+        if (!corps) e.push('executerFacteur introuvable dans facteur.ts')
+        else if (/jugerTon\s*\(|approuverEnvoi\s*\(/.test(corps)) e.push('executerFacteur appelle jugerTon ou approuverEnvoi : la passe envoi ne juge plus rien')
+        if (/lib\/agents\/llm/.test(fs.readFileSync(fCron, 'utf8'))) e.push('la route cron facteur importe lib/agents/llm')
+      }
+      // (h) dans le DÉPÔT réel : modèles non approuvés et notice absente → J3 refuse tout, aucune approbation possible
+      {
+        const H = creerHorloge(T0); const M = creerMagasin({ horloge: H })
+        M.poserEtat({ palier: 'P0', notice_verifiee_le: new Date(T0 - 3600_000).toISOString(), interrupteurs: { envoi_froid: true } })
+        const id = M.inserer(prospectVerifie(21))
+        const prep = await M.preparerEnvoi({ prospect_id: id, type: 'premier_contact', canal: 'formulaire_site', envoyeur: 'facteur_usine', destinataire: 'https://temoin-facteur-21.invalid/contact', objet: null, texte: texteConforme('TEM021'), empreinte_texte: sha256(texteConforme('TEM021')), modele_id: 'modele-temoin-v1', variante: 'A', fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: null, reference: 'FA2-TEM021' })
+        if (!prep.ok) e.push(`préparation refusée dans le banc : ${prep.raison}`)
+        else {
+          const r = await mod.jugerAvecAvis(depsAvis(M, H), { envoi_id: prep.id, empreinte: sha256(texteConforme('TEM021')), j2: { verdict: 'ok', raisons: [] }, j2_version: 'temoin-v1' })
+          if (r.statut === 'approuve') e.push('un texte hors modèle a été approuvé dans le dépôt réel')
+          if ((await M.envoisApprouves('formulaire_site', 10)).length) e.push('un formulaire hors modèle est approuve dans le dépôt réel')
+        }
+      }
+      s.juger('FA-2', e, 'jugement en deux moitiés (dans une copie où les modèles sont approuvés) : travail + empreinte, avis, approbation aux trois verdicts, second avis refusé, refus de ton / empreinte périmée / texte hors modèle → rien d\'approuvé, lecteur nul → aucun avis, 25 envois → 20 appels au plus ; dans le dépôt réel, J3 ne laisse rien approuver')
+    } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`); s.juger('FA-2', e, '') }
+    finally { if (racineMonde) { try { fs.rmSync(racineMonde, { recursive: true, force: true }) } catch { /* nettoyage */ } } }
   }
   // FA-3 : rien n'est envoyé pour un envoi qui n'est pas approuve.
   {
@@ -183,19 +281,26 @@ async function partieFacteur(s, IDS) {
   {
     const e = []
     try {
-      const notice = await demarrerServeurNotice({ scenario: 'ok', html: '<html>Notice</html>', mentions: '<html>Mentions</html>' })
-      const H = creerHorloge(T0); const M = creerMagasin({ horloge: H }); M.poserEtat({ interrupteurs: { envoi_froid: true } })
-      const r = await mod.executerFacteur({ magasin: M, gmail: null, meta: null, horloge: H, echeance: T0 + 45_000, passe: 'soir', adresseReponse: ADRESSE_PROSPECTION, notice: { html: '<html>Notice</html>', mentions: '<html>Mentions</html>' } })
-      const et = await M.etatEnvoi()
-      if (!et.notice_verifiee_le) e.push('la passe du soir n\'a pas posé notice_verifiee_le avec la notice conforme')
-      await notice.arreter()
-      const notice2 = await demarrerServeurNotice({ scenario: '404' })
-      const H2 = creerHorloge(T0); const M2 = creerMagasin({ horloge: H2 }); M2.poserEtat({ interrupteurs: { envoi_froid: true } })
-      await mod.executerFacteur({ magasin: M2, gmail: null, meta: null, horloge: H2, echeance: T0 + 45_000, passe: 'soir', adresseReponse: ADRESSE_PROSPECTION, notice: { html: '<html>Notice</html>', mentions: '<html>Mentions</html>' } })
-      const et2 = await M2.etatEnvoi()
-      if (et2.notice_verifiee_le) e.push('un 404 a quand même posé notice_verifiee_le')
-      await notice2.arreter()
-      s.juger('FA-7', e, 'notice servie à l\'empreinte attendue → notice_verifiee_le posé ; un 404 → non posé (rejugement du soir jugé côté usine, hors de ce banc)')
+      const NOTICE = { html: '<html>Notice</html>', mentions: '<html>Mentions</html>' }
+      // Le récupérateur du banc : un GET local sans suivre de redirection (comme recuperateurReseau, 026-020).
+      const recuperer = async (url) => { const r = await getLocal(url); return { statut: r.statut, entetes: {}, corps: r.texte, url_finale: url } }
+      const soir = async (scenario) => {
+        const serveur = await demarrerServeurNotice({ scenario, ...NOTICE })
+        try {
+          const H = creerHorloge(T0); const M = creerMagasin({ horloge: H }); M.poserEtat({ interrupteurs: { envoi_froid: true } })
+          await mod.executerFacteur({ magasin: M, gmail: null, meta: null, horloge: H, echeance: T0 + 45_000, passe: 'soir', adresseReponse: ADRESSE_PROSPECTION, notice: NOTICE, recuperer, noticeUrl: serveur.url })
+          return { et: await M.etatEnvoi(), M, requetes: serveur.requetes }
+        } finally { await serveur.arreter() }
+      }
+      const ok = await soir('ok')
+      if (!ok.et.notice_verifiee_le) e.push('la passe du soir n\'a pas posé notice_verifiee_le avec la notice conforme')
+      if (ok.requetes.length !== 2) e.push(`la notice conforme demande ${ok.requetes.length} page(s), 2 attendues (notice et mentions)`)
+      for (const sc of ['404', 'autre-page', 'redirection']) {
+        const r = await soir(sc)
+        if (r.et.notice_verifiee_le) e.push(`scénario ${sc} : notice_verifiee_le posé à tort`)
+        if (!r.M.evenements.some((ev) => ev.type === 'notice_non_verifiee')) e.push(`scénario ${sc} : aucun événement notice_non_verifiee`)
+      }
+      s.juger('FA-7', e, 'notice servie à l\'empreinte attendue → notice_verifiee_le posé ; un 404, une autre page ou une redirection → non posé et notice_non_verifiee (rejugement du soir jugé côté usine, hors de ce banc)')
     } catch (err) { e.push(`interrompu : ${premiereLigne(err)}`); s.juger('FA-7', e, '') }
   }
   // FA-8 : la route cron, par le banc (jeton, pause, battement, garde).
@@ -230,7 +335,7 @@ async function partieFacteur(s, IDS) {
   {
     const e = []
     try {
-      const H = creerHorloge(T0); const M = creerMagasin({ horloge: H }); M.poserEtat({ interrupteurs: { envoi_froid: true } })
+      const H = creerHorloge(T0); const M = creerMagasin({ horloge: H }); M.poserEtat({ palier: 'P0', interrupteurs: { envoi_froid: true } })
       const id = M.inserer(prospectVerifie(10))
       const p = await M.preparerEnvoi({ prospect_id: id, type: 'premier_contact', canal: 'formulaire_site', envoyeur: 'facteur_usine', destinataire: 'https://temoin-facteur-10.invalid/contact', objet: null, texte: texteConforme('TEM010'), empreinte_texte: sha256('x'), modele_id: 'm', variante: 'A', fait_id: null, douleur_id: null, fil_envoi_id: null, conversation_id: null, preuve_demande: null, reference: 'FA10' })
       if (p.ok) await M.approuverEnvoi(p.id, { j1: 'ok', j3: 'ok', j2: 'ok' })
@@ -254,25 +359,86 @@ async function partieFacteur(s, IDS) {
     if (!tc.ok) e.push(`typecheck : ${tc.detail}`)
     s.juger('FA-11', e, `aucun import de @/lib/ai, resend, @/lib/email ; hôtes attendus : ${hotesPermis.join(', ')} et NOTICE_URL ; typecheck vert`)
   }
-  // FA-12/13/14 : les routes de l'usine, par le banc.
+  // FA-12/13/14 : les routes de l'usine, par le banc (les doublures des gardes sont posées par cas ; ni jeton ni base réels).
+  const UUID_TEMOIN = '3f2b8c1e-9d4a-4b7e-8a61-2c5d7e9f0a1b'
+  const gardes = (surcharge = {}) => ({
+    actif: () => true,
+    authAgent: async () => ({ nom: 'facteur' }),
+    estRefusAgent: (r) => !!r && typeof r === 'object' && 'error' in r,
+    reponseRefusAgent: (r) => new Response(JSON.stringify({ error: r.error }), { status: r.status, headers: { 'content-type': 'application/json' } }),
+    ops_battement: async () => ({}),
+    pauseGenerale: async () => ({ active: false }),
+    enPause: async () => false,
+    ...surcharge,
+  })
+  const battements = (r) => r.journal.filter((j) => j.nom === 'ops_battement').length
+  const appels = (r, nom) => r.journal.filter((j) => j.nom === nom).length
+  const REQ = { travail: { url: 'https://prestiapp.fr/api/usine/facteur/travail' }, avis: { methode: 'POST', url: 'https://prestiapp.fr/api/usine/facteur/avis' } }
+  const corpsAvis = { envoi_id: UUID_TEMOIN, empreinte: 'a'.repeat(64), j2: { verdict: 'ok', raisons: [] }, j2_version: 'temoin-v1' }
   {
     const e = []
-    const r404 = await banc(fUsineTravail, { url: 'https://prestiapp.fr/api/usine/facteur/travail', env: { NEXT_PUBLIC_BUS_AGENTS: undefined } })
-    if (r404.statut !== 404 && r404.erreur === null && r404.statut !== 401) e.push(`busAgents baissé : statut ${r404.statut}, 404 attendu avant toute identité (source lu si la doublure de actif() n'est pas pilotable ici)`)
-    s.juger('FA-12', e, 'garde busAgents/jeton/pause de la moitié usine (lecture assistée par le banc)')
+    for (const [nom, fichier, req] of [['travail', fUsineTravail, REQ.travail], ['avis', fUsineAvis, { ...REQ.avis, corps: corpsAvis }]]) {
+      const r404 = await banc(fichier, { ...req, comportements: gardes({ actif: () => false, authAgent: async () => { throw new Error('identité lue avant le drapeau') } }) })
+      if (r404.erreur || r404.statut !== 404) e.push(`${nom} : busAgents baissé → ${r404.erreur ?? r404.statut}, 404 attendu avant toute identité`)
+      const r401 = await banc(fichier, { ...req, comportements: gardes({ authAgent: async () => ({ status: 401, code: 'jeton', error: 'jeton' }) }) })
+      if (r401.erreur || r401.statut !== 401) e.push(`${nom} : sans jeton → ${r401.erreur ?? r401.statut}, 401 attendu`)
+      for (const autre of ['facteur_usine', 'chef']) {
+        const r403 = await banc(fichier, { ...req, comportements: gardes({ authAgent: async () => ({ nom: autre }) }) })
+        if (r403.erreur || r403.statut !== 403) e.push(`${nom} : jeton de ${autre} → ${r403.erreur ?? r403.statut}, 403 attendu`)
+        if (battements(r403)) e.push(`${nom} : battement écrit pour l'agent ${autre}`)
+      }
+      const rp = await banc(fichier, { ...req, comportements: gardes({ pauseGenerale: async () => ({ active: true }) }) })
+      if (nom === 'travail') { if (rp.erreur || rp.statut !== 200 || JSON.stringify(rp.json) !== '{"envois":[]}') e.push(`travail : pause générale → ${rp.erreur ?? rp.statut} ${rp.texte}, { envois: [] } attendu`) }
+      else if (rp.erreur || rp.statut !== 423) e.push(`avis : pause générale → ${rp.erreur ?? rp.statut}, 423 attendu`)
+      if (appels(rp, 'jugerAvecAvis') || appels(rp, 'travailDuJuge')) e.push(`${nom} : le juge a travaillé malgré la pause générale`)
+      const rb = await banc(fichier, { ...req, comportements: gardes({ travailDuJuge: async () => ({ envois: [] }), jugerAvecAvis: async () => ({ ok: true, statut: 'approuve' }) }) })
+      if (rb.erreur || rb.statut !== 200) e.push(`${nom} : appel authentifié → ${rb.erreur ?? rb.statut}, 200 attendu`)
+      if (battements(rb) < 1) e.push(`${nom} : aucun battement facteur pour un appel authentifié`)
+    }
+    s.juger('FA-12', e, 'routes de l\'usine : busAgents baissé → 404 avant toute identité ; sans jeton → 401 ; jeton d\'un autre agent → 403 ; pause → { envois: [] } / 423 ; battement à chaque appel authentifié')
   }
   {
     const e = []
-    const r1 = await banc(fUsineTravail, { url: 'https://prestiapp.fr/api/usine/facteur/travail', comportements: { travailDuJuge: async () => ({ envois: [{ id: 'x', canal: 'formulaire_site', type: 'premier_contact', modele_id: 'm', texte: 'Texte Témoin adresse@temoin.invalid', empreinte: 'a'.repeat(64) }] }) } })
-    if (r1.erreur) e.push(r1.erreur)
-    else if (r1.texte && /adresse@temoin\.invalid/.test(r1.texte) === false) { /* rien : dépend de l'implémentation réelle, jugé une fois le module écrit */ }
-    s.juger('FA-13', e, 'GET travail (lecture assistée par le banc ; les champs exacts se jugent une fois la route écrite)')
+    const PIEGES = ['adresse-piege@temoin.invalid', 'FAIT-PIEGE-ID', 'REFERENCE-PIEGE', 'PROSPECT-PIEGE']
+    const piegeux = { id: 'x1', canal: 'formulaire_site', type: 'premier_contact', modele_id: 'm', texte: 'Texte Témoin', empreinte: 'a'.repeat(64), destinataire: PIEGES[0], fait_id: PIEGES[1], reference: PIEGES[2], prospect_id: PIEGES[3], references: [PIEGES[2]] }
+    const r1 = await banc(fUsineTravail, { ...REQ.travail, comportements: gardes({ travailDuJuge: async () => ({ envois: [piegeux] }) }) })
+    if (r1.erreur || r1.statut !== 200) e.push(`GET travail → ${r1.erreur ?? r1.statut}`)
+    else {
+      const champs = Object.keys(r1.json?.envois?.[0] ?? {}).sort().join(',')
+      if (champs !== 'canal,empreinte,id,modele_id,texte,type') e.push(`GET travail rend les champs « ${champs} », attendus : canal, empreinte, id, modele_id, texte, type`)
+      for (const x of PIEGES) if (r1.texte.includes(x)) e.push(`GET travail laisse passer la chaîne piégée ${x}`)
+    }
+    const r2 = await banc(fUsineTravail, { ...REQ.travail, url: 'https://prestiapp.fr/api/usine/facteur/travail?passe=soir', comportements: gardes({ travailDuSoir: async () => ({ envois: [] }), travailDuJuge: async () => { throw new Error('la passe du soir n\'appelle pas travailDuJuge') } }) })
+    if (r2.erreur || r2.statut !== 200) e.push(`GET travail?passe=soir → ${r2.erreur ?? r2.statut}`)
+    const r3 = await banc(fUsineTravail, { ...REQ.travail, url: 'https://prestiapp.fr/api/usine/facteur/travail?passe=pause', comportements: gardes() })
+    if (r3.erreur || r3.statut !== 400) e.push(`GET travail?passe=pause → ${r3.erreur ?? r3.statut}, 400 attendu`)
+    const src = fs.readFileSync(fUsineTravail, 'utf8')
+    if (importsDe(src).some((i) => i.spec && /lib\/agents\/llm/.test(i.spec))) e.push('travail/route.ts importe lib/agents/llm')
+    s.juger('FA-13', e, 'GET travail : seulement id, canal, type, modele_id, texte, empreinte (chaînes piégées absentes) ; ?passe=soir servi par travailDuSoir ; passe inconnue → 400')
   }
   {
     const e = []
-    const r1 = await banc(fUsineAvis, { methode: 'POST', url: 'https://prestiapp.fr/api/usine/facteur/avis', corps: '{malforme' })
-    if (r1.statut !== 400 && r1.erreur === null) e.push(`corps mal formé : statut ${r1.statut}, 400 attendu`)
-    s.juger('FA-14', e, 'POST avis, corps mal formé → 400 (lecture assistée par le banc ; jugement fin une fois la route écrite)')
+    const post = (corps, comp) => banc(fUsineAvis, { ...REQ.avis, corps, comportements: gardes(comp) })
+    const mal = [['JSON illisible', '{malforme'], ['champs absents', {}], ['empreinte courte', { ...corpsAvis, empreinte: 'abc' }], ['verdict inconnu', { ...corpsAvis, j2: { verdict: 'peut-etre', raisons: [] } }], ['6 raisons', { ...corpsAvis, j2: { verdict: 'ok', raisons: ['a', 'b', 'c', 'd', 'e', 'f'] } }], ['raison de 201 signes', { ...corpsAvis, j2: { verdict: 'refus', raisons: ['x'.repeat(201)] } }], ['identifiant non uuid', { ...corpsAvis, envoi_id: 'pas-un-uuid' }], ['j2_version vide', { ...corpsAvis, j2_version: '' }], ['passe inconnue', { ...corpsAvis, passe: 'matin' }]]
+    for (const [nom, corps] of mal) {
+      const r = await post(corps, { jugerAvecAvis: async () => ({ ok: true, statut: 'approuve' }), rejugerAvecAvis: async () => ({ ok: true, statut: 'envoye' }) })
+      if (r.erreur || r.statut !== 400) e.push(`corps mal formé (${nom}) : ${r.erreur ?? r.statut}, 400 attendu`)
+      if (appels(r, 'jugerAvecAvis') || appels(r, 'rejugerAvecAvis')) e.push(`corps mal formé (${nom}) : le juge a été appelé`)
+    }
+    const rOk = await post(corpsAvis, { jugerAvecAvis: async () => ({ ok: true, statut: 'approuve' }) })
+    if (rOk.erreur || rOk.statut !== 200 || rOk.json?.ok !== true) e.push(`avis conforme → ${rOk.erreur ?? rOk.statut} ${rOk.texte}, 200 { ok: true } attendu`)
+    if (appels(rOk, 'jugerAvecAvis') !== 1) e.push(`avis conforme : jugerAvecAvis appelé ${appels(rOk, 'jugerAvecAvis')} fois, 1 attendu`)
+    const rPerime = await post(corpsAvis, { jugerAvecAvis: async () => ({ ok: false, raison: 'perime' }) })
+    if (rPerime.erreur || rPerime.statut !== 200 || rPerime.json?.ok !== false || rPerime.json?.statut !== 'perime') e.push(`empreinte périmée → ${rPerime.erreur ?? rPerime.statut} ${rPerime.texte}, { ok: false, statut: 'perime' } attendu`)
+    const rDeja = await post(corpsAvis, { jugerAvecAvis: async () => ({ ok: false, raison: 'perime', detail: 'deja_juge' }) })
+    if (rDeja.erreur || rDeja.statut !== 409) e.push(`second avis sur un envoi déjà jugé → ${rDeja.erreur ?? rDeja.statut}, 409 attendu`)
+    const rSoir = await post({ ...corpsAvis, passe: 'soir' }, { rejugerAvecAvis: async () => ({ ok: true, statut: 'envoye' }), jugerAvecAvis: async () => { throw new Error('passe du soir : jugerAvecAvis appelé') } })
+    if (rSoir.erreur || rSoir.statut !== 200 || appels(rSoir, 'rejugerAvecAvis') !== 1) e.push(`avis du soir → ${rSoir.erreur ?? rSoir.statut}, rejugerAvecAvis une fois attendu`)
+    const src = fs.readFileSync(fUsineAvis, 'utf8')
+    if (importsDe(src).some((i) => i.spec && /lib\/agents\/llm/.test(i.spec))) e.push('avis/route.ts importe lib/agents/llm')
+    if (!/jugerAvecAvis/.test(src)) e.push('avis/route.ts n\'appelle pas jugerAvecAvis')
+    for (const r of [rOk, rPerime, rDeja]) if (/artisan|@|Texte Témoin/.test(r.console)) e.push('un texte ou une adresse apparaît dans la console de la route avis')
+    s.juger('FA-14', e, 'POST avis : 9 corps mal formés → 400 sans juge ; avis conforme → 200 ; périmé → { ok: false } ; second avis → 409 ; passe du soir → rejugerAvecAvis ; ni llm ni texte en console')
   }
 }
 
@@ -424,7 +590,11 @@ function creerTransportSmtpTest(port) {
             if (code === 535) { s.end(); resolve({ ok: false, erreur: 'auth' }); return }
             ecrire(`MAIL FROM:<${options.from2 ?? extraireAdresse(options.from)}>`); etape = 5; return
           }
-          if (etape === 5) { ecrire(`RCPT TO:<${options.to}>`); etape = 6; return }
+          if (etape === 5) {
+            // la réponse à MAIL FROM : 550 5.4.5 = quota de Gmail (le faux serveur le rend là)
+            if (code === 550) { s.end(); resolve({ ok: false, erreur: 'quota' }); return }
+            ecrire(`RCPT TO:<${options.to}>`); etape = 6; return
+          }
           if (etape === 6) { ecrire('DATA'); etape = 7; return }
           if (etape === 7) {
             if (code === 550) { s.end(); resolve({ ok: false, erreur: 'quota' }); return }

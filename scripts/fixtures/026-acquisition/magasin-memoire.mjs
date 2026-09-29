@@ -11,7 +11,7 @@
 //
 // Mise en scène et inspection (hors contrat) : etat(), ecritures, evenements, poserEtat({ palier, technologies,
 // interrupteurs: { envoi_froid, pause_generale }, modeles_suspendus, reponses_recues, quotas, conversations, tranchees,
-// pauses, jauges, releve_gmail_le, ads_archive }), inserer(prospect) (un prospect posé à une étape, pour les juges qui
+// pauses, jauges, releve_gmail_le, notice_verifiee_le, gmail_coupe_jusqua, meta_coupe_jusqua, ads_archive }), inserer(prospect) (un prospect posé à une étape, pour les juges qui
 // partent de « recense »), lireProspect(id), horloge.
 // Son propre scénario : scenario() → [{ nom, attendu, obtenu, ok }] (auto-contrôle des juges).
 import {
@@ -19,6 +19,7 @@ import {
   ECART_MIN_HEURES, REPONSES_MAX_PROSPECT_24H, REPONSES_MAX_JOUR, RGPD_REPONSES_MAX, RGPD_FENETRE_JOURS, FENETRE_META_HEURES,
   EMAIL_SOLLICITE_JOUR, SEUILS, TECHNOLOGIES_FORMULAIRE, EXPIRATION_MAQUETTE_JOURS, PROCHES,
 } from '../../../lib/agents/acquisition/contrat.ts'
+import { createHash } from 'node:crypto'
 import { creerHorloge } from './horloge-factice.mjs'
 
 const H = 3600_000
@@ -411,7 +412,16 @@ export function creerMagasin({ horloge = creerHorloge() } = {}) {
       ecrire('annulerEnvoi', { id, raison })
     },
     async envoisApprouves(canal, limite) {
-      return [...S.envois.values()].filter((x) => x.statut === 'approuve' && x.canal === canal && (x.bail_jusqua === null || x.bail_jusqua <= now())).slice(0, limite).map((x) => { const o = cloner(x); delete o.prepare_ms; delete o.bail_jusqua; return o })
+      return [...S.envois.values()].filter((x) => x.statut === 'approuve' && x.canal === canal && (x.bail_jusqua === null || x.bail_jusqua <= now())).slice(0, limite).map((x) => {
+        const o = cloner(x); delete o.prepare_ms; delete o.bail_jusqua
+        // 0106 (acq_envois_approuves) : sur email_sollicite, le message reçu que désigne la preuve donne le fil à poursuivre.
+        if (canal === 'email_sollicite') {
+          const r = x.preuve_demande && x.preuve_demande.type === 'message_recu' ? S.reponses.get(x.preuve_demande.id) : null
+          o.en_reponse_a = r ? r.id_externe : null
+          o.references = r ? r.en_reponse_a : null
+        }
+        return o
+      })
     },
     async marquerEnvoye(id, preuve) {
       const x = S.envois.get(id)
@@ -616,7 +626,15 @@ export function creerMagasin({ horloge = creerHorloge() } = {}) {
       return true
     },
     async jauges() { return [...S.jauges.values()].map((j) => ({ ...j, plafond: Number.isFinite(j.plafond) ? j.plafond : -1 })) },
-    async echantillonDuSoir(jour) { return [...S.envois.values()].filter((x) => x.statut === 'envoye' && jourParis(Date.parse(x.envoye_le)) === jour).map(cloner) },
+    // 0111 (acq_echantillon_du_soir) : un envoi sur dix, au moins un, dans l'ordre d'un hachage de l'identifiant (stable d'un appel à l'autre).
+    async echantillonDuSoir(jour) {
+      const du = [...S.envois.values()].filter((x) => x.statut === 'envoye' && jourParis(Date.parse(x.envoye_le)) === jour)
+      const rang = (x) => createHash('md5').update(String(x.id)).digest('hex')
+      return du.sort((a, b) => (rang(a) < rang(b) ? -1 : 1)).slice(0, du.length ? Math.max(1, Math.ceil(du.length / 10)) : 0).map(cloner)
+    },
+    // 0111 : les deux gestes de la passe du soir du Facteur (acq_palier_evaluer, acq_notice_verifiee).
+    async palierEvaluer() { ecrire('palierEvaluer', {}); return {} },
+    async noticeVerifiee(le) { S.etatEnvoi.notice_verifiee_le = new Date(le).toISOString(); ecrire('noticeVerifiee', {}) },
   }
   function publierReponse(r) {
     const o = cloner(r)
@@ -681,6 +699,9 @@ export function creerMagasin({ horloge = creerHorloge() } = {}) {
       if (o.tranchees) for (const d of o.tranchees) S.tranchees.set(d.id, cloner(d))
       if (o.jauges) for (const [f, plafond] of Object.entries(o.jauges)) S.jauges.set(f, { fournisseur: f, consomme: 0, plafond, jour: jourParis(now()) })
       if ('releve_gmail_le' in o) S.etatEnvoi.releve_gmail_le = o.releve_gmail_le
+      if ('notice_verifiee_le' in o) S.etatEnvoi.notice_verifiee_le = o.notice_verifiee_le
+      if ('gmail_coupe_jusqua' in o) S.etatEnvoi.gmail_coupe_jusqua = o.gmail_coupe_jusqua
+      if ('meta_coupe_jusqua' in o) S.etatEnvoi.meta_coupe_jusqua = o.meta_coupe_jusqua
       if (o.ads_archive) S.etatEnvoi.ads_archive = cloner(o.ads_archive)
     },
   })
