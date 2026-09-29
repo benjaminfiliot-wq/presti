@@ -822,3 +822,4 @@
 {"id":"026-218","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T19:19:13Z","duree_s":140,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
 {"id":"026-213","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T19:19:14Z","duree_s":135,"agent":"?","executant":"codex","lignes":0,"dossier":"fait","machine":"usine"}
 {"id":"026-194","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 68 min","code":null,"date":"2026-09-29T19:23:06Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
+{"id":"026-156","verdict":"FAIL","ligne":"délai dépassé (30 min)","code":124,"date":"2026-09-29T19:28:38Z","duree_s":1803,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}

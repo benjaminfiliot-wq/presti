@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-29T19:23:12Z
+# Digest — 2026-09-29T19:28:41Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
 **Mesure** — déléguées (antigravity, codex) : 157 tâche(s) PASS, 202405 ligne(s) · faites par Claude Code : 88 tâche(s) PASS, 81975 ligne(s).
-**État** — file : 24 · en cours : 5 · faites : 254 · refusées : 14
+**État** — file : 24 · en cours : 5 · faites : 253 · refusées : 15
 
 ## Attention (7)
 - 026-008 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-008 --forcer`
@@ -53,6 +53,7 @@
 | 026-242 | test | file | claude-code | — | Écrire scripts/comptable-qa.mjs (critères CPT) et ses jeux d'essai (Stripe factice en lecture seule avec une clé d'écriture piégée, ventes et abonnements factices, seuil de franchise 293 B daté) qui prouvent que le module du Comptable rapproche chaque encaissement d'une vente sans double compte, suit le seuil de franchise sans jamais le dépasser sans alerte, prépare des montants de déclaration jamais déposés ni payés, ne touche à aucune mention de TVA et n'envoie une donnée financière ou de client qu'à Codex ou à un moteur local, jamais à un gratuit ni à un :cloud |
 | 026-244 | test | file | claude-code | — | Écrire scripts/sav-qa.mjs (critères SAV) et ses jeux d'essai (messages de clients déjà payants dont un corpus d'injection, brouillons factices, compteur des 20 approbations sans retouche, cas remboursement et litige) qui prouvent que le module du SAV répond dans le fil du bon client avec le ton de Presti, ne part jamais sans un portier, escalade tout remboursement ou litige à Benj, et n'envoie une donnée de client qu'à Codex ou à un moteur local, jamais à un gratuit ni à un :cloud |
 | 026-246 | test | file | claude-code | — | Écrire scripts/qualite-sites-qa.mjs (critères QSI) et ses jeux d'essai (serveur factice de sites livrés avec des pannes réglables : HTTP, HTTPS, poids, accessibilité, liens morts, mentions légales absentes, formulaire cassé) qui prouvent que le Contrôleur qualité mesure le rendu réel d'un site livré sans jamais le modifier, sans jamais soumettre un faux message dans son formulaire, et propose une correction au Livreur ou à Claude Code par une décision plutôt que d'agir lui-même |
+| 026-156 | feature | refuse | antigravity | FAIL | délai dépassé (30 min) |
 | 026-213 | feature | fait | codex | PASS | 2026-09-29T19:19:14Z · 135s · 0 l. |
 | 026-218 | feature | fait | codex | PASS | 2026-09-29T19:19:13Z · 140s · 0 l. |
 | 026-214 | feature | fait | codex | PASS | 2026-09-29T19:17:34Z · 21s · 0 l. |
@@ -60,7 +61,6 @@
 | 026-157 | feature | refuse | codex | DISJONCTÉE | FAIL LV-1 — --a-sec sur le témoin de fabrication : code null (signal SIGTERM), 0 attendu — \| FAIL LV-1 — --a-sec sur le témoin de fabrication : code 1, 0 attendu — ✗ juge local rouge : FAIL PL-5 — interrompu : EPERM, Permission denied: \\?\C:\Users\benj \| FAIL LV-1 — dossier cassé : code null (signa |
 | 026-166 | feature | refuse | claude-code | FAIL | FAIL SO-1 — « 490 » ou « 49000 » hors de lib/studio/offre.ts : lib/packPub.ts, plans/003-presti-v4-plateforme-site-inventaire.md, plans/audit-final/motion.md, p |
 | 026-090 | feature | fait | codex | PASS | 2026-09-29T18:58:19Z · 94s · 0 l. |
-| 026-156 | feature | fait | antigravity | DISJONCTÉE | FAIL PL-1 — jeu-2 : scripts/pack-pub/fabriquer.mjs : code null — · check ok (76 s) ; jeu-3 : scripts/pack-pub/fabriquer.mjs : code null — · check ok (136 s) \| FAIL PL-1 — jeu-1 : scripts/pack-pub/fabriquer.mjs : code null — · check ok (115 s) ; jeu-2 : scripts/pack-pub/fabriquer.mjs : code null — · |
 | 026-008 | feature | fait | codex | FAIL | délai dépassé (30 min) |
 | 026-103 | feature | refuse | usine-codex-188 | DISJONCTÉE | bail expiré : usine-codex-165 silencieux depuis 61 min \| bail expiré : usine-codex-182 silencieux depuis 60 min \| bail expiré : usine-codex-188 silencieux depuis 70 min |
 | 026-254 | contenu | refuse | usine-codex-183 | DISJONCTÉE | bail expiré : usine-codex-144 silencieux depuis 63 min \| bail expiré : usine-codex-170 silencieux depuis 77 min \| bail expiré : usine-codex-183 silencieux depuis 61 min |
