@@ -15,14 +15,17 @@ export interface EntreeFaq {
   approuve: boolean
 }
 
+/** Approuvées le 29/09/2026 par Claude Code, par délégation de Benj (approbation.txt de 026-083, à l'empreinte du texte). */
+export const FAQ_APPROUVEES: readonly string[] = Object.freeze(['delai', 'nom_de_domaine', 'hebergement', 'modifications', 'photos', 'propriete', 'contenu', 'qui_est_presti', 'formules', 'reponse_client'])
+
 function entree(id: string, question: string, reponse_email: string, reponse_meta: string): EntreeFaq {
-  return Object.freeze({ id, question, reponse_email, reponse_meta, approuve: false })
+  return Object.freeze({ id, question, reponse_email, reponse_meta, approuve: FAQ_APPROUVEES.includes(id) })
 }
 
 export const FAQ: readonly EntreeFaq[] = Object.freeze([
   entree('delai', 'En combien de temps le site est-il en ligne ?',
     'Le site est en ligne sous 48 h ouvrées après validation par Presti ; sur votre domaine dès que ses DNS sont posés.',
-    'Le site est en ligne sous 48 h ouvrées après ta validation par Presti ; sur ton domaine dès que ses DNS sont posés.'),
+    'Le site est en ligne sous 48 h ouvrées après validation par Presti ; sur ton domaine dès que ses DNS sont posés.'),
   entree('nom_de_domaine', 'Et le nom de domaine ?',
     'Le domaine est à votre nom, et vous le réservez vous-même avec notre guide.',
     'Le domaine est à ton nom, et tu le réserves toi-même avec notre guide.'),
@@ -39,8 +42,8 @@ export const FAQ: readonly EntreeFaq[] = Object.freeze([
     'Le domaine est à votre nom, et vous le réservez vous-même avec notre guide. Pour le reste, le plus simple est d’en parler ensemble.',
     'Le domaine est à ton nom, et tu le réserves toi-même avec notre guide. Pour le reste, le plus simple est d’en parler ensemble.'),
   entree('contenu', "Qu'est-ce que contient le site ?",
-    "Le site complet est celui de la maquette que vous avez vue : 300 €, une fois, TVA non applicable. Pour ce qui s'y ajoute, c’est à voir ensemble.",
-    "Le site complet est celui de la maquette que tu as vue : 300 €, une fois, TVA non applicable. Pour ce qui s'y ajoute, c’est à voir ensemble."),
+    "Le site complet : 300 €, une fois, TVA non applicable. Ce qu’il contient précisément, le plus simple est d’en parler ensemble.",
+    "Le site complet : 300 €, une fois, TVA non applicable. Ce qu’il contient précisément, le plus simple est d’en parler ensemble."),
   entree('qui_est_presti', "Qui est Presti ?",
     "Presti est le service de Benjamin Filiot : des sites et des outils pour les artisans. Ce message est rédigé et envoyé par l'assistant IA de Presti.",
     "Presti est le service de Benjamin Filiot : des sites et des outils pour les artisans. Ce message est rédigé par l'assistant IA de Presti."),

@@ -27,6 +27,7 @@
 import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
+import crypto from 'node:crypto'
 import { pathToFileURL } from 'node:url'
 import {
   R, LOADER, lireOptions, creerSortie, importerDepuis, importerContrat, sous, normaliser, texteVisibleJuge, piegerReseau,
@@ -56,7 +57,21 @@ const LISTE_NOIRE = ['garanti', 'premier sur google', 'référencement', 'sans e
 const RE_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const RE_DATE = /^\d{4}-\d{2}-\d{2}$/
 /** DL-2 : la forme d'une entrée seule (hors unicité des identifiants, qui se juge sur l'ensemble). */
-function controlerForme(e, { metiersConnus }) {
+/**
+ * Les approbations de douleurs (décision du chef du 29/09) : .orchestre/preuves/026-083/approbation.txt, lignes
+ * « douleur <id> <sha256 de citation, question, accroche, métier> — approuvé le … par …, par délégation de Benj ».
+ * Une douleur n'est approuvée (approuve: true) que si sa ligne existe ET que son empreinte est celle du texte actuel.
+ */
+const empreinteDouleur = (e) => crypto.createHash('sha256').update([e.citation, e.question, e.accroche_objet, e.metier].join('\n'), 'utf8').digest('hex')
+function lireApprobationsDouleurs() {
+  const m = new Map()
+  let brut = ''
+  try { brut = fs.readFileSync(path.join(R, '.orchestre', 'preuves', '026-083', 'approbation.txt'), 'utf8') } catch { /* aucune approbation encore */ }
+  const re = /^douleur (\S+) ([0-9a-f]{64}) — approuvé le \d{2}\/\d{2}\/\d{4} par .+, par délégation de Benj\s*$/
+  for (const l of brut.split('\n')) { const r = re.exec(l.replace(/\r$/, '')); if (r) m.set(r[1], r[2]) }
+  return m
+}
+function controlerForme(e, { metiersConnus, approbations = new Map() }) {
   const err = []
   if (!RE_ID.test(e.id ?? '')) err.push(`id ${JSON.stringify(e.id)} mal formé (minuscules et tirets)`)
   if (e.metier !== 'tous' && !metiersConnus.includes(e.metier)) err.push(`metier ${JSON.stringify(e.metier)} inconnu`)
@@ -68,7 +83,11 @@ function controlerForme(e, { metiersConnus }) {
   if (String(e.accroche_objet ?? '').length > 60) err.push(`accroche_objet de ${e.accroche_objet.length} signes (60 au plus)`)
   if (!RE_DATE.test(e.relevee_le ?? '')) err.push(`relevee_le ${JSON.stringify(e.relevee_le)} mal formé (AAAA-MM-JJ)`)
   else if (e.relevee_le > new Date().toISOString().slice(0, 10)) err.push(`relevee_le ${e.relevee_le} dans le futur`)
-  if (e.approuve !== false) err.push(`approuve vaut ${JSON.stringify(e.approuve)}, false attendu tant que Benj n'a pas approuvé`)
+  if (e.approuve === true) {
+    const h = approbations.get(e.id)
+    if (!h) err.push("approuve vaut true sans ligne d'approbation (approbation.txt de 026-083)")
+    else if (h !== empreinteDouleur(e)) err.push("le texte a changé depuis son approbation (l'empreinte d'approbation.txt n'est plus la sienne)")
+  } else if (e.approuve !== false) err.push(`approuve vaut ${JSON.stringify(e.approuve)}, false attendu tant que Benj n'a pas approuvé`)
   return err
 }
 /** DL-2 (complément, sur l'ensemble) : aucun identifiant en double. → [{ id, n }] */
@@ -291,7 +310,7 @@ if (o.autoControle) {
   const entrees = mod?.DOULEURS ?? []
   s.juger('DL-1', [...e1, ...(mod && Array.isArray(mod.DOULEURS) ? controlerCouverture(entrees, METIERS_IDS) : [])], `DOULEURS importé depuis ${rel(RAC)} : gelé, couverture par métier vérifiée, ${rel(fMethode)} présent`)
   if (e1.length) { s.nonJuges(['DL-2', 'DL-3', 'DL-4', 'DL-5'], 'DL-1 en échec') } else {
-    const eForme = entrees.flatMap((e) => controlerForme(e, { metiersConnus: METIERS_IDS }).map((m) => `${e.id} : ${m}`))
+    const eForme = entrees.flatMap((e) => controlerForme(e, { metiersConnus: METIERS_IDS, approbations: lireApprobationsDouleurs() }).map((m) => `${e.id} : ${m}`))
     eForme.push(...identifiantsEnDouble(entrees).map(([id, n]) => `identifiant en double : ${id} (${n} fois)`))
     s.juger('DL-2', eForme, `${entrees.length} entrée(s) : forme, unicité des identifiants`)
     const ePersonnel = entrees.flatMap((e) => controlerPersonnel(e, { domainesExclus: DOMAINES_EXCLUS }).map((m) => `${e.id} : ${m}`))

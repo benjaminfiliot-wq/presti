@@ -30,7 +30,7 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import { pathToFileURL } from 'node:url'
 import {
-  R, LOADER, lireOptions, creerSortie, importerDepuis, typecheck, piegerReseau, sansCommentaires, importsDe, court,
+  R, LOADER, lireOptions, creerSortie, importerDepuis, importerContrat, typecheck, piegerReseau, sansCommentaires, importsDe, court,
   premiereLigne, sha256, lancer,
 } from './fixtures/026-acquisition/commun.mjs'
 import { MODELES, PREMIERE_PHRASE, piedFormulaire, PIED_SOLLICITE, SUJET_FORMULAIRE_V1, SUJET_STUDIO_V1 } from './fixtures/026-acquisition/messages/modeles.mjs'
@@ -80,19 +80,35 @@ if (o.drapeaux.has('etalonner')) {
   let llm
   try { llm = await importerDepuis(R, 'lib/agents/llm.ts') } catch (e) { console.log(`${JUGE} --etalonner : lib/agents/llm.ts introuvable (${premiereLigne(e)})`); process.exit(2) }
   const shaConsignes = sha256(Buffer.from(secondJuge.CONSIGNES_SECOND_JUGE ?? '', 'utf8'))
-  const tauxDe = async (creerLecteur) => {
-    const lecteur = creerLecteur
+  // Correction du 29/09 (décision du chef) : (1) `jugerTon` refuse sans étalonnage, donc l'étalonnage ne pouvait rien mesurer : il
+  // passe par `jugerTonPourEtalonnage` ; (2) un lecteur ne fait que 20 appels (PLAFONDS.appelsParExecution) : un lecteur neuf tous
+  // les 15 messages, sinon les conformes au-delà du vingtième étaient refusés d'office ; (3) un lecteur absent (creerLecteur rend
+  // null) ou en panne ne produit AUCUN rapport : un lecteur mort faisait passer pour un étalonnage raté (tout refusé) ce qui n'en était pas un.
+  const juger = secondJuge.jugerTonPourEtalonnage
+  if (typeof juger !== 'function') { console.log(`${JUGE} --etalonner : secondJuge.ts n'exporte pas jugerTonPourEtalonnage (jugerTon refuse tant que ETALONNAGE.version ≠ VERSION)`); process.exit(2) }
+  const PAR_LECTEUR = 15
+  let indisponibles = 0
+  const tauxDe = async (nouveau) => {
+    let lecteur = null, appels = 0
+    const un = async (m) => {
+      if (!lecteur || appels >= PAR_LECTEUR) { lecteur = nouveau(); appels = 0 }
+      if (typeof lecteur !== 'function') { console.log(`${JUGE} --etalonner : aucun lecteur (creerLecteur('facteur') rend null : CODEX_LANCEUR absent ou non exécutable, ou moteur sans quota) — aucun rapport écrit`); process.exit(2) }
+      appels++
+      const r = await juger({ texte: m.texte, canal: m.canal, type: m.type }, { lecteur })
+      if ((r.raisons ?? []).includes('second_juge_indisponible')) indisponibles++
+      return r
+    }
     let pr = 0, ca = 0
-    for (const p of pieges.pieges) { const r = await secondJuge.jugerTon({ texte: p.texte, canal: p.canal, type: p.type }, { lecteur }); if (r.j2 === 'refus') pr++ }
-    for (const c of pieges.conformes) { const r = await secondJuge.jugerTon({ texte: c.texte, canal: c.canal, type: c.type }, { lecteur }); if (r.j2 === 'ok') ca++ }
+    for (const p of pieges.pieges) { const r = await un(p); if (r.j2 === 'refus') pr++ }
+    for (const c of pieges.conformes) { const r = await un(c); if (r.j2 === 'ok') ca++ }
     return { pieges_refuses: pr / pieges.pieges.length, conformes_acceptes: ca / pieges.conformes.length, total: pieges.pieges.length + pieges.conformes.length }
   }
   const modeles = {}
   for (const [nom, opts] of [['agents', {}], ['rejuge', { modele: 'rejuge' }]]) {
-    const lect = llm.creerLecteur('facteur', opts)
-    modeles[nom] = await tauxDe(lect)
+    modeles[nom] = await tauxDe(() => llm.creerLecteur('facteur', opts))
+    if (indisponibles > 0) { console.log(`${JUGE} --etalonner : ${indisponibles} appel(s) du lecteur indisponible(s) pendant le modèle « ${nom} » — aucun rapport écrit (un lecteur en panne fausserait les taux)`); process.exit(2) }
   }
-  const rapport = { version: shaConsignes.slice(0, 16), sha_corpus: shaCorpus, sha_consignes: shaConsignes, taux: modeles, total: pieges.pieges.length + pieges.conformes.length, date: new Date().toISOString() }
+  const rapport = { version: shaConsignes.slice(0, 16), sha_corpus: shaCorpus, sha_consignes: shaConsignes, pieges: pieges.pieges.length, conformes: pieges.conformes.length, taux: modeles, lecteurs_indisponibles: 0, total: pieges.pieges.length + pieges.conformes.length, date: new Date().toISOString() }
   fs.mkdirSync(preuves, { recursive: true })
   fs.writeFileSync(path.join(preuves, 'etalonnage.json'), `${JSON.stringify(rapport, null, 1)}\n`)
   const ok = Object.values(modeles).every((t) => t.pieges_refuses >= 0.95 && t.conformes_acceptes >= 0.95)
@@ -188,15 +204,120 @@ async function chargerModules() {
   for (const [nom, noms] of Object.entries(EXPORTS)) if (mods[nom]) for (const n of noms) if (mods[nom][n] === undefined) e.push(`export ${n} absent de ${chemins[nom]}`)
   return { e, mods, chemins }
 }
+/** La réponse de l'entrée « delai » de la FAQ du banc (rend le texte du corpus, qui cite une réponse fictive, conforme à la FAQ). */
+let FAQ_DELAI = null
+/**
+ * L'entrée de J3 pour une ligne du corpus. Correction du 29/09 (décision du chef pour 026-083) : la ligne passe désormais ce que
+ * l'étiquette exprime — les faits du prospect (le fait cité par le texte, sauf si la ligne dit fait_id), le champ du formulaire
+ * (formulaire_max), l'historique (messages_deja_envoyes, heures_depuis_dernier, jours_depuis_dernier_contact), la FAQ (l'entrée
+ * « delai » quand la ligne est une réponse de FAQ) et la source d'une marque (meta) — au lieu de les jeter.
+ */
 function entreeDe(x, maintenant) {
+  const faits = Object.values(REPERES_MSG.faits)
+  const cite = faits.find((fa) => String(x.texte).includes(`« ${fa.extrait} »`))
+  const il = (h) => new Date(maintenant - h * 3_600_000).toISOString()
+  const historique = []
+  for (let i = 0; i < (x.messages_deja_envoyes ?? 0); i++) historique.push({ envoi_id: `h${i}`, type: 'reponse', canal: x.canal, statut: 'envoye', le: il(200 + i * 100) })
+  if (x.heures_depuis_dernier !== undefined) historique.push({ envoi_id: 'hd', type: 'relance', canal: x.canal, statut: 'envoye', le: il(x.heures_depuis_dernier) })
+  if (x.jours_depuis_dernier_contact !== undefined) historique.push({ envoi_id: 'hp', type: 'premier_contact', canal: 'formulaire_site', statut: 'envoye', le: il(x.jours_depuis_dernier_contact * 24) })
+  const faq = /^rep_faq_/.test(x.modele_id ?? '') && FAQ_DELAI
+  const source = x.source_prospect ?? (x.cible === 'marque' ? 'meta' : 'ademe_rge')
   return {
-    texte: x.texte, sujet: x.sujet ?? null, modele_id: x.modele_id, type: x.type, canal: x.canal, envoyeur: x.canal === 'formulaire_site' ? 'facteur_usine' : x.canal === 'email_sollicite' ? 'gmail' : 'repondeur',
-    adresse: REPERES_MSG.adresse_prospection, reference: x.reference_envoi ?? 'AB12CD', preuve_demande: 'preuve_demande' in x ? x.preuve_demande : (x.canal === 'email_sollicite' ? { type: 'message_recu', id: 'reponse-temoin' } : null),
-    fait_id: 'fait_id' in x ? x.fait_id : null, douleur_id: x.douleur_id ?? null, faq_id: null, liens: [], prospect: { froid: x.froid ?? (x.source_prospect !== 'entrant'), source: x.source_prospect ?? 'ademe_rge', metier: x.metier_prospect ?? 'menuisier' },
-    historique: [], oppose: x.oppose ?? false, opposition_le: x.opposition_le_heures !== undefined ? new Date(maintenant - x.opposition_le_heures * 3_600_000).toISOString() : undefined,
-    demande_rgpd_le: x.demande_rgpd_le_heures !== undefined ? new Date(maintenant - x.demande_rgpd_le_heures * 3_600_000).toISOString() : undefined,
+    texte: faq ? String(x.texte).split('Le site est en ligne 48 h ouvrées après validation.').join(x.canal === 'email_sollicite' ? FAQ_DELAI.email : FAQ_DELAI.meta) : x.texte,
+    sujet: x.sujet ?? null, modele_id: x.modele_id, type: x.type, canal: x.canal,
+    envoyeur: x.canal === 'formulaire_site' ? 'facteur_usine' : x.canal === 'email_sollicite' ? 'gmail' : 'repondeur',
+    adresse: REPERES_MSG.adresse_prospection, reference: x.reference_envoi ?? 'AB12CD',
+    preuve_demande: 'preuve_demande' in x ? x.preuve_demande : (x.canal === 'email_sollicite' ? { type: 'message_recu', id: 'reponse-temoin' } : null),
+    formulaire: x.formulaire_max !== undefined ? { longueur_max_message: x.formulaire_max } : null,
+    fait_id: 'fait_id' in x ? x.fait_id : (cite?.id ?? null), douleur_id: x.douleur_id !== undefined ? x.douleur_id : (DOULEURS_CORPUS.find((d) => String(x.texte).includes(d.question))?.id ?? null), faq_id: faq ? 'delai' : null, liens: [],
+    prospect: { froid: x.froid ?? (x.source_prospect !== 'entrant'), source, metier: x.metier_prospect ?? 'menuisier', faits },
+    historique, oppose: x.oppose ?? false,
+    opposition_le: x.opposition_le_heures !== undefined ? il(x.opposition_le_heures) : undefined,
+    demande_rgpd_le: x.demande_rgpd_le_heures !== undefined ? il(x.demande_rgpd_le_heures) : undefined,
     maquette: x.maquette ?? 'aucune', offre: x.offre, drapeaux: { siteAchatPublic: x.drapeaux?.siteAchatPublic ?? true, varianteA: x.drapeaux?.varianteA ?? false }, maintenant: new Date(maintenant).toISOString(),
   }
+}
+
+// ── Le banc (décision du chef du 29/09) ─────────────────────────────────────────────────────────────────────────────────────
+// Le corpus est écrit avec un monde d'essai (notice github.io d'essai, douleurs fictives approuvées, modèles et FAQ approuvés).
+// Il se juge donc sur une COPIE des modules réels qui ne diffère de la production que par ces points, déclarés et comptés :
+// la même logique de J3, un autre décor. La production, elle, est jugée par CO-3 (approbations) et CO-4b (un vrai formulaire).
+const FICHIERS_BANC = ['contrat.ts', 'modeles.ts', 'affirmations.ts', 'faq.ts', 'conformite.ts', 'secondJuge.ts', 'douleurs.ts']
+const DOULEURS_CORPUS = DOULEURS.map((d) => ({ ...d }))
+async function fabriquerBanc(nom, { approuve }) {
+  const dir = path.join(R, '.orchestre', 'travail', JUGE, `banc-${nom}`)
+  fs.rmSync(dir, { recursive: true, force: true })
+  const dest = path.join(dir, 'lib', 'agents', 'acquisition')
+  fs.mkdirSync(dest, { recursive: true })
+  const ecarts = []
+  const unique = (src, motif, par, quoi) => {
+    const n = src.split(motif).length - 1
+    if (n !== 1) throw new Error(`banc ${nom} : ${quoi} : motif trouvé ${n} fois (1 attendu) ; le module a changé, le juge doit suivre`)
+    ecarts.push(quoi)
+    return src.replace(motif, () => par)
+  }
+  for (const fic of FICHIERS_BANC) {
+    let src = fs.readFileSync(path.join(RAC, 'lib', 'agents', 'acquisition', fic), 'utf8')
+    if (fic === 'contrat.ts') {
+      const m = /export const NOTICE_URL: string \| null = [^\n]+/.exec(src)
+      if (!m) throw new Error('banc : NOTICE_URL introuvable dans contrat.ts')
+      src = unique(src, m[0], `export const NOTICE_URL: string | null = ${JSON.stringify(REPERES_MSG.notice_url)}`, "NOTICE_URL d'essai (celle du corpus)")
+    }
+    if (fic === 'modeles.ts') src = unique(src, '    approuve: APPROUVES.includes(id),\n    empreinte:', `    approuve: ${approuve},\n    empreinte:`, `modèles approuve ${approuve}`)
+    if (fic === 'faq.ts') src = unique(src, 'approuve: FAQ_APPROUVEES.includes(id) })', `approuve: ${approuve} })`, `FAQ approuve ${approuve}`)
+    if (fic === 'douleurs.ts') { src = `// banc du juge : les douleurs du corpus (scripts/fixtures/026-acquisition/messages/douleurs.json)\nexport const DOULEURS = ${JSON.stringify(DOULEURS_CORPUS)}\n`; ecarts.push('douleurs du corpus (fictives, approuvées comme le corpus les étiquette)') }
+    fs.writeFileSync(path.join(dest, fic), src)
+  }
+  const importer = (fic) => importerDepuis(dir, `lib/agents/acquisition/${fic}`)
+  return { CF: await importer('conformite.ts'), FQ: await importer('faq.ts'), MD: await importer('modeles.ts'), ecarts }
+}
+let BANC = null, BANC_NON = null
+/** Les valeurs d'emplacement du corpus (les mêmes que scripts/fixtures/026-acquisition/messages/corpus.mjs : VALS). */
+const VALS_CO = {
+  adresse: REPERES_MSG.adresse_prospection, notice: REPERES_MSG.notice_url, reference: 'AB12CD',
+  lien: `https://prestiapp.fr/maquette/${'x'.repeat(43)}`, rendez_vous: `https://prestiapp.fr/rendez-vous/${'y'.repeat(43)}`, paiement: 'https://prestiapp.fr/site/acheter',
+  export: '(fait Témoin : aucune ligne, prospect Témoin)', videos: '5', prix: '490 €', produit: 'Gourde isotherme Témoin', entreprise: 'Menuiserie Témoin',
+  reponse_faq: 'Le site est en ligne 48 h ouvrées après validation.',
+}
+const remplirCO = (texte) => Object.entries(VALS_CO).reduce((acc, [k, v]) => acc.split(`{${k}}`).join(v), String(texte))
+const remplirProduction = (texte, vals) => Object.entries(vals).reduce((acc, [k, v]) => acc.split(`{${k}}`).join(v), texte)
+const jugerBanc = (x, maintenant) => (x.approuve === false ? BANC_NON : BANC).CF.jugerMessage(entreeDe(x, maintenant))
+
+// ── Les approbations (026-083, decisions.md du 29/09) ────────────────────────────────────────────────────────────────────
+// .orchestre/preuves/026-083/approbation.txt : une ligne par élément approuvé, « <genre> <id> <empreinte sha256> — approuvé le
+// JJ/MM/AAAA par <qui>, par délégation de Benj ». Un élément n'est approuvé (approuve: true) que si sa ligne existe ET que son
+// empreinte est celle du texte actuel : modifier un texte approuvé lui retire l'approbation. (Avant : simple inclusion de l'id.)
+const sha = (x) => crypto.createHash('sha256').update(x, 'utf8').digest('hex')
+const empreinteApprobation = {
+  modele: (m) => m.empreinte,
+  affirmation: (a) => sha(a.texte),
+  faq: (q) => sha(`${q.question}\n${q.reponse_email}\n${q.reponse_meta}`),
+  douleur: (d) => sha(`${d.citation}\n${d.question}\n${d.accroche_objet}\n${d.metier}`),
+}
+function lireApprobations() {
+  const f = path.join(R, '.orchestre', 'preuves', '026-083', 'approbation.txt')
+  const m = new Map(), e = []
+  const brut = fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : null
+  for (const l of String(brut ?? '').split(/\r?\n/)) {
+    if (!l.trim() || l.startsWith('#')) continue
+    const r = /^(modele|affirmation|faq|douleur) (\S+) ([0-9a-f]{64}) — approuvé le \d{2}\/\d{2}\/\d{4} par .+, par délégation de Benj\s*$/.exec(l)
+    if (!r) e.push(`ligne d'approbation illisible : ${court(l, 80)}`)
+    else if (m.has(`${r[1]} ${r[2]}`)) e.push(`approbation en double : ${r[1]} ${r[2]}`)
+    else m.set(`${r[1]} ${r[2]}`, r[3])
+  }
+  return { m, e, present: brut !== null }
+}
+function jugerApprobations(genre, objets, ap, e) {
+  const vus = new Set()
+  for (const o of objets) {
+    const cle = `${genre} ${o.id}`
+    vus.add(cle)
+    const attendu = empreinteApprobation[genre](o)
+    const ligne = ap.m.get(cle)
+    if (ligne !== undefined && ligne !== attendu) e.push(`${cle} : le texte a changé depuis son approbation (empreinte ${ligne.slice(0, 12)}…, ${attendu.slice(0, 12)}… aujourd'hui)`)
+    if (!!o.approuve !== (ligne !== undefined && ligne === attendu)) e.push(`${cle} : approuve ${json(o.approuve)}, ${json(ligne === attendu)} attendu (${ap.present ? 'approbation.txt' : 'aucune approbation encore'})`)
+  }
+  for (const cle of ap.m.keys()) if (cle.startsWith(`${genre} `) && !vus.has(cle)) e.push(`approbation orpheline : ${cle} n'existe plus`)
 }
 
 const s0 = Date.now()
@@ -229,28 +350,65 @@ if (o.autoControle) {
     try {
       const e = []
       for (const [id, mo] of Object.entries(M.MODELES)) { const h = crypto.createHash('sha256').update(mo.texte ?? '', 'utf8').digest('hex'); if (mo.empreinte !== h) e.push(`${id} : empreinte ${mo.empreinte}, ${h} attendue`) }
-      const approbation = path.join(R, '.orchestre', 'preuves', '026-083', 'approbation.txt')
-      const approuves = fs.existsSync(approbation) ? fs.readFileSync(approbation, 'utf8') : null
-      for (const [id, mo] of Object.entries(M.MODELES)) {
-        const attendu = approuves ? approuves.includes(id) : false
-        if (!!mo.approuve !== attendu) e.push(`${id} : approuve ${json(mo.approuve)}, ${json(attendu)} attendu (${approuves ? 'approbation.txt' : 'aucune approbation encore'})`)
-        const j = await CF.jugerModele?.(mo)
-        if (j && j.ok === false) e.push(`jugerModele(${id}) refuse : ${json(j.raisons)}`)
-      }
-      s.juger('CO-3', e, `${Object.keys(M.MODELES).length} empreintes recalculées ; jugerModele accepte chaque modèle ; approbation lue dans ${rel(approbation)}`)
+      const ap = lireApprobations()
+      e.push(...ap.e)
+      for (const [id, mo] of Object.entries(M.MODELES)) { const j = await CF.jugerModele?.(mo); if (j && j.ok === false) e.push(`jugerModele(${id}) refuse : ${json(j.raisons)}`) }
+      jugerApprobations('modele', Object.values(M.MODELES), ap, e)
+      jugerApprobations('affirmation', AF.AFFIRMATIONS_PERMISES ?? [], ap, e)
+      jugerApprobations('faq', FQ.FAQ ?? [], ap, e)
+      const DL = await importerDepuis(RAC, 'lib/agents/acquisition/douleurs.ts')
+      jugerApprobations('douleur', DL.DOULEURS ?? [], ap, e)
+      s.juger('CO-3', e, `${Object.keys(M.MODELES).length} empreintes recalculées ; jugerModele accepte chaque modèle ; approbations (modèles, affirmations, FAQ, douleurs) lues dans .orchestre/preuves/026-083/approbation.txt, chacune à l'empreinte du texte actuel`)
     } catch (err) { s.echoue('CO-3', `interrompu : ${premiereLigne(err)}`) }
-    // CO-4 : chaque conforme accepté
+    // CO-4 : chaque conforme accepté (sur le banc), puis un vrai formulaire sur la production
     try {
       const e = []
-      for (const c of CONFORMES) { const r = await CF.jugerMessage(entreeDe(c, Date.parse('2026-10-14T09:00:00.000Z'))); if (!r.ok) e.push(`${c.id} refusé : ${json(r.raisons)}`) }
-      s.juger('CO-4', e, `${CONFORMES.length} messages conformes acceptés`)
+      BANC = await fabriquerBanc('approuve', { approuve: true }); BANC_NON = await fabriquerBanc('non-approuve', { approuve: false })
+      FAQ_DELAI = { email: BANC.FQ.FAQ.find((q) => q.id === 'delai')?.reponse_email, meta: BANC.FQ.FAQ.find((q) => q.id === 'delai')?.reponse_meta }
+      if (!FAQ_DELAI.email || !FAQ_DELAI.meta) throw new Error("la FAQ n'a pas d'entrée « delai »")
+      for (const c of CONFORMES) {
+        let ligne = c
+        // Le corpus décrit deux messages Meta sans mention IA ni STOP ; la fiche (point 1 : « chaque modèle porte la mention IA ») les impose.
+        // Le message conforme est donc le texte du corpus + le pied du modèle du module, à condition que le corpus en soit le début exact
+        // et que ce pied porte la mention IA et STOP ; le texte SANS pied doit, lui, être refusé pour mention_ia_absente.
+        if (c.canal === 'messagerie' && !/assistant IA de Presti/.test(c.texte)) {
+          const plein = remplirCO(BANC.MD.MODELES[c.modele_id]?.texte ?? '')
+          if (!plein.startsWith(c.texte)) { e.push(`${c.id} : le texte du corpus n'est pas le début du modèle du module`); continue }
+          const pied = plein.slice(c.texte.length)
+          if (!/assistant IA de Presti/.test(pied) || !/\bSTOP\b/.test(pied)) e.push(`${c.id} : le pied du modèle ne porte pas la mention IA et STOP`)
+          const sans = await jugerBanc(c, Date.parse('2026-10-14T09:00:00.000Z'))
+          if (sans.ok || !(sans.raisons ?? []).includes('mention_ia_absente')) e.push(`${c.id} sans pied : ${json(sans)}, mention_ia_absente attendu`)
+          ligne = { ...c, texte: plein }
+        }
+        const r = await jugerBanc(ligne, Date.parse('2026-10-14T09:00:00.000Z')); if (!r.ok) e.push(`${c.id} refusé : ${json(r.raisons)}`)
+      }
+      // CO-4b : la production elle-même. Un formulaire B, rempli des vraies valeurs (NOTICE_URL, une douleur approuvée du métier, un fait
+      // du repère), doit être accepté ; le même avec une douleur NON approuvée doit être refusé pour douleur_non_approuvee.
+      {
+        const KP = await importerContrat()
+        const DL = await importerDepuis(RAC, 'lib/agents/acquisition/douleurs.ts')
+        const modeleB = M.MODELES.formulaire_B_v1
+        const ap = DL.DOULEURS.find((d) => d.approuve === true && d.metier !== 'tous')
+        const nonAp = DL.DOULEURS.find((d) => d.approuve !== true && d.metier === ap?.metier)
+        const fait = REPERES_MSG.faits.site_titre_f2
+        const bati = (d, adr) => remplirProduction(modeleB.texte, { fait: `sur votre site, « ${fait.extrait} »`, douleur: d.question, adresse: adr, notice: KP.NOTICE_URL, reference: 'AB12CD', source_liste: KP.SOURCES_LISTE.ademe_rge })
+        if (!KP.NOTICE_URL) e.push('CO-4b : NOTICE_URL vaut null dans contrat.ts (026-162 non passée)')
+        else if (!ap) e.push('CO-4b : aucune douleur approuvée d\'un métier dans DOULEURS')
+        else {
+          const base = (d) => ({ texte: bati(d, REPERES_MSG.adresse_prospection), sujet: 'Proposition commerciale : un site pour Plomberie Témoin', modele_id: 'formulaire_B_v1', type: 'premier_contact', canal: 'formulaire_site', envoyeur: 'facteur_usine', adresse: REPERES_MSG.adresse_prospection, reference: 'AB12CD', preuve_demande: null, formulaire: null, fait_id: fait.id, douleur_id: d.id, faq_id: null, liens: [], prospect: { froid: true, source: 'ademe_rge', metier: d.metier, faits: [fait], entreprise: 'Plomberie Témoin' }, historique: [], oppose: false, maquette: 'aucune', drapeaux: { siteAchatPublic: false, varianteA: false }, maintenant: '2026-10-14T09:00:00.000Z' })
+          const r1 = CF.jugerMessage(base(ap))
+          if (!r1.ok) e.push(`CO-4b : formulaire_B_v1 de production (douleur ${ap.id}, notice ${KP.NOTICE_URL}) refusé : ${json(r1.raisons)}`)
+          if (nonAp) { const r2 = CF.jugerMessage(base(nonAp)); if (r2.ok || !(r2.raisons ?? []).includes('douleur_non_approuvee')) e.push(`CO-4b : la douleur non approuvée ${nonAp.id} n'est pas refusée pour douleur_non_approuvee : ${json(r2)}`) }
+        }
+      }
+      s.juger('CO-4', e, `${CONFORMES.length} messages conformes acceptés sur le banc (production + ${BANC.ecarts.length} écarts déclarés : ${BANC.ecarts.join(' ; ')}) ; CO-4b : un formulaire_B_v1 de production (vraie notice, douleur approuvée) accepté, une douleur non approuvée refusée`)
     } catch (err) { s.echoue('CO-4', `interrompu : ${premiereLigne(err)}`) }
     // CO-5 : chaque fautif refusé avec sa raison
     try {
       const e = []
       const vues = new Set()
       for (const f of FAUTIFS) {
-        const r = await CF.jugerMessage(entreeDe(f, Date.parse('2026-10-14T09:00:00.000Z')))
+        const r = await jugerBanc(f, Date.parse('2026-10-14T09:00:00.000Z'))
         if (r.ok) e.push(`${f.id} : accepté, ${f.raison} attendu`)
         else if (!(r.raisons ?? []).includes(f.raison)) e.push(`${f.id} : raisons ${json(r.raisons)}, ${f.raison} attendu`)
         else vues.add(f.raison)
@@ -305,6 +463,12 @@ if (o.autoControle) {
       if (!fs.existsSync(f)) e.push(`${rel(f)} absent (lancer --etalonner --reel --confirmer-reel d'abord)`)
       else {
         const et = JSON.parse(fs.readFileSync(f, 'utf8'))
+        const corpusEt = JSON.parse(fs.readFileSync(path.join(R, 'scripts', 'fixtures', '026-acquisition', 'pieges', 'corpus.json'), 'utf8'))
+        if (et.sha_corpus !== sha256(fs.readFileSync(path.join(R, 'scripts', 'fixtures', '026-acquisition', 'pieges', 'corpus.json')))) e.push("sha_corpus d'etalonnage.json ≠ SHA-256 du jeu de pièges actuel")
+        if (et.sha_consignes !== sha256(Buffer.from(SJ.CONSIGNES_SECOND_JUGE ?? '', 'utf8'))) e.push("sha_consignes d'etalonnage.json ≠ SHA-256 de CONSIGNES_SECOND_JUGE actuelles")
+        if (corpusEt.pieges.length < 20 || corpusEt.conformes.length < 20) e.push(`jeu de pièges trop court : ${corpusEt.pieges.length} pièges, ${corpusEt.conformes.length} conformes (20 et 20 au moins)`)
+        if (et.lecteurs_indisponibles !== 0) e.push(`etalonnage.json : ${et.lecteurs_indisponibles} lecteur(s) indisponible(s) pendant l'étalonnage`)
+        for (const nom of ['agents', 'rejuge']) if (!et.taux?.[nom]) e.push(`etalonnage.json : le modèle « ${nom} » n'a pas de taux`)
         for (const [, t] of Object.entries(et.taux ?? {})) if (t.pieges_refuses < 0.95 || t.conformes_acceptes < 0.95) e.push(`taux sous 95 % : ${json(t)}`)
         if (SJ.ETALONNAGE?.version !== et.version) e.push(`ETALONNAGE.version (${SJ.ETALONNAGE?.version}) ≠ version d'etalonnage.json (${et.version})`)
       }
@@ -313,19 +477,35 @@ if (o.autoControle) {
     // CO-10 : les cas de la revue du 25/09
     try {
       const e = []
+      // Correction du 29/09 (décision du chef) : les textes étaient MODELES.x.texte(null), c'est-à-dire les gabarits avec leurs {emplacements}
+      // non remplis ; les cas « accepté attendu » ne pouvaient pas l'être, et les cas « refusé » l'étaient pour de mauvaises raisons
+      // (studio_offre_v1 : le remplacement de « 5 vidéos » ne trouvait rien). Les textes sont remplis, et chaque refus dit sa raison.
+      const T = (id) => remplirCO(MODELES[id].texte(null))
+      const MD = BANC.MD.MODELES
+      const pasStop = remplirCO(MD.rep_faq_meta.texte).replace(' Pour ne plus rien recevoir : réponds STOP.', '')
+      if (pasStop === remplirCO(MD.rep_faq_meta.texte)) throw new Error('CO-10 : le pied Meta de rep_faq_meta a changé, le cas « sans STOP » doit suivre')
+      const R1 = { type: 'message_recu', id: 'r1' }
       const cas = [
-        ['lien_maquette_entrant_email_v1 à un entrant sans fait, preuve case_entrant', { texte: MODELES.lien_maquette_entrant_email_v1.texte(null), modele_id: 'lien_maquette_entrant_email_v1', canal: 'email_sollicite', type: 'lien_maquette', source_prospect: 'entrant', preuve_demande: { type: 'case_entrant', id: 'e1' } }, true],
-        ['le même à un prospect froid', { texte: MODELES.lien_maquette_entrant_email_v1.texte(null), modele_id: 'lien_maquette_entrant_email_v1', canal: 'email_sollicite', type: 'lien_maquette', froid: true }, false],
-        ['sans preuve', { texte: MODELES.lien_maquette_entrant_email_v1.texte(null), modele_id: 'lien_maquette_entrant_email_v1', canal: 'email_sollicite', type: 'lien_maquette', source_prospect: 'entrant', preuve_demande: null }, false],
-        ['lien_ferme quand siteAchatPublic est baissé', { texte: MODELES.lien_maquette_email_v2.texte(null), modele_id: 'lien_maquette_email_v2', canal: 'email_sollicite', type: 'lien_maquette', preuve_demande: { type: 'message_recu', id: 'r1' }, drapeaux: { siteAchatPublic: false } }, false],
-        ['stop_confirmation 2 h après opposition', { texte: MODELES.stop_confirmation.texte(null), modele_id: 'stop_confirmation', canal: 'email_sollicite', type: 'confirmation_stop', oppose: true, opposition_le_heures: 2 }, true],
-        ['stop_confirmation 30 h après opposition', { texte: MODELES.stop_confirmation.texte(null), modele_id: 'stop_confirmation', canal: 'email_sollicite', type: 'confirmation_stop', oppose: true, opposition_le_heures: 30 }, false],
-        ['rep_rgpd_acces à un opposant qui a fait sa demande il y a 3 jours', { texte: MODELES.rep_rgpd_acces_email.texte(null), modele_id: 'rep_rgpd_acces_email', canal: 'email_sollicite', type: 'reponse_rgpd', oppose: true, demande_rgpd_le_heures: 72 }, true],
-        ['questions_entrant_v2 sans STOP', { texte: MODELES.questions_entrant_v2.texte(null), modele_id: 'questions_entrant_v2', canal: 'reponse_privee', type: 'reponse' }, true],
-        ['rep_faq_meta sans STOP', { texte: 'Réponse Témoin sans STOP.', modele_id: 'rep_faq_meta', canal: 'messagerie', type: 'reponse' }, false],
-        ['studio_offre_v1 avec videos ≠ paramètre', { texte: MODELES.studio_offre_v1.texte(null).replace('5 vidéos', '10 vidéos'), modele_id: 'studio_offre_v1', canal: 'email_sollicite', type: 'reponse', offre: { videos: 5, prix_texte: '490 €' } }, false],
+        ['lien_maquette_entrant_email_v1 à un entrant sans fait, preuve case_entrant', { texte: T('lien_maquette_entrant_email_v1'), modele_id: 'lien_maquette_entrant_email_v1', canal: 'email_sollicite', type: 'lien_maquette', source_prospect: 'entrant', preuve_demande: { type: 'case_entrant', id: 'e1' } }, true],
+        ['le même à un prospect froid', { texte: T('lien_maquette_entrant_email_v1'), modele_id: 'lien_maquette_entrant_email_v1', canal: 'email_sollicite', type: 'lien_maquette', froid: true }, false, 'modele_hors_canal'],
+        ['sans preuve', { texte: T('lien_maquette_entrant_email_v1'), modele_id: 'lien_maquette_entrant_email_v1', canal: 'email_sollicite', type: 'lien_maquette', source_prospect: 'entrant', preuve_demande: null }, false, 'preuve_demande_absente'],
+        ['lien_ferme quand siteAchatPublic est baissé', { texte: T('lien_maquette_email_v2'), modele_id: 'lien_maquette_email_v2', canal: 'email_sollicite', type: 'lien_maquette', preuve_demande: R1, drapeaux: { siteAchatPublic: false } }, false, 'lien_ferme'],
+        ['la forme _rdv correspondante, drapeau baissé', { texte: remplirCO(MD.lien_maquette_email_rdv_v1.texte), modele_id: 'lien_maquette_email_rdv_v1', canal: 'email_sollicite', type: 'lien_maquette', preuve_demande: R1, drapeaux: { siteAchatPublic: false } }, true],
+        ['lien_maquette_email_v2, drapeau levé', { texte: T('lien_maquette_email_v2'), modele_id: 'lien_maquette_email_v2', canal: 'email_sollicite', type: 'lien_maquette', preuve_demande: R1, drapeaux: { siteAchatPublic: true } }, true],
+        ['la forme _rdv, drapeau levé', { texte: remplirCO(MD.lien_maquette_email_rdv_v1.texte), modele_id: 'lien_maquette_email_rdv_v1', canal: 'email_sollicite', type: 'lien_maquette', preuve_demande: R1, drapeaux: { siteAchatPublic: true } }, true],
+        ['stop_confirmation 2 h après opposition', { texte: T('stop_confirmation'), modele_id: 'stop_confirmation', canal: 'email_sollicite', type: 'confirmation_stop', oppose: true, opposition_le_heures: 2 }, true],
+        ['stop_confirmation 30 h après opposition', { texte: T('stop_confirmation'), modele_id: 'stop_confirmation', canal: 'email_sollicite', type: 'confirmation_stop', oppose: true, opposition_le_heures: 30 }, false, 'oppose'],
+        ['rep_rgpd_acces à un opposant qui a fait sa demande il y a 3 jours', { texte: T('rep_rgpd_acces_email'), modele_id: 'rep_rgpd_acces_email', canal: 'email_sollicite', type: 'reponse_rgpd', oppose: true, demande_rgpd_le_heures: 72 }, true],
+        ['questions_entrant_v2 sans STOP', { texte: T('questions_entrant_v2'), modele_id: 'questions_entrant_v2', canal: 'reponse_privee', type: 'reponse' }, true],
+        ['rep_faq_meta sans STOP', { texte: pasStop, modele_id: 'rep_faq_meta', canal: 'messagerie', type: 'reponse' }, false, 'stop_absent'],
+        ['studio_offre_v1 avec videos ≠ paramètre', { texte: T('studio_offre_v1').replace('5 vidéos', '10 vidéos'), modele_id: 'studio_offre_v1', canal: 'email_sollicite', type: 'reponse', offre: { videos: 5, prix_texte: '490 €' } }, false, 'offre_hors_parametre'],
+        ['studio_offre_v1 aux paramètres', { texte: T('studio_offre_v1'), modele_id: 'studio_offre_v1', canal: 'email_sollicite', type: 'reponse', offre: { videos: 5, prix_texte: '490 €' } }, true],
       ]
-      for (const [nom, entree, ok] of cas) { const r = await CF.jugerMessage(entreeDe(entree, Date.parse('2026-10-14T09:00:00.000Z'))); if (!!r.ok !== ok) e.push(`${nom} : ${json(r.ok ? { ok: true } : { ok: false, raisons: r.raisons })}, ${ok ? 'accepté' : 'refusé'} attendu`) }
+      for (const [nom, entree, ok, raison] of cas) {
+        const r = await jugerBanc(entree, Date.parse('2026-10-14T09:00:00.000Z'))
+        if (!!r.ok !== ok) e.push(`${nom} : ${json(r.ok ? { ok: true } : { ok: false, raisons: r.raisons })}, ${ok ? 'accepté' : 'refusé'} attendu`)
+        else if (!ok && raison && !(r.raisons ?? []).includes(raison)) e.push(`${nom} : refusé pour ${json(r.raisons)}, ${raison} attendu`)
+      }
       s.juger('CO-10', e, `${cas.length} cas de la revue du 25/09 (entrants, lien_ferme, exceptions d'opposition, questions_entrant_v2/rep_faq_meta, offre du Studio)`)
     } catch (err) { s.echoue('CO-10', `interrompu : ${premiereLigne(err)}`) }
   }
