@@ -719,3 +719,7 @@
 {"id":"026-170","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 1101 min","code":null,"date":"2026-09-29T13:15:04Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
 {"id":"026-171","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 127 min","code":null,"date":"2026-09-29T13:15:04Z","duree_s":0,"agent":"claude-code","executant":"claude-code","lignes":0,"dossier":"en-cours"}
 {"id":"026-156","verdict":"FAIL","ligne":"FAIL PL-1 — jeu-1 : scripts/pack-pub/fabriquer.mjs : code 1 — 1 ENOENT: no such file or directory, open 'C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\pub-","code":1,"date":"2026-09-29T13:23:23Z","duree_s":10,"agent":"ag-026-156","executant":"antigravity","lignes":803,"dossier":"en-cours"}
+{"id":"026-073","verdict":"EXPIRÉE","ligne":"bail expiré : claude-code silencieux depuis 68 min","code":null,"date":"2026-09-29T13:40:37Z","duree_s":0,"agent":"claude-code","executant":"codex","lignes":0,"dossier":"en-cours"}
+{"id":"026-073","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T13:52:17Z","duree_s":27,"agent":"claude-code","executant":"codex","lignes":607,"dossier":"fait"}
+{"id":"026-073","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T13:52:56Z","duree_s":27,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-073","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T13:54:07Z","duree_s":27,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
