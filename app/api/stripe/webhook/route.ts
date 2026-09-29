@@ -11,6 +11,7 @@ import { alertePaiement, envoyerAlertes } from '@/lib/alertes'
 import { mentionFranchise } from '@/lib/facturation'
 import { encaisserCommandeSite } from '@/lib/siteCommandeServeur'
 import { encaisserPackPub } from '@/lib/packPubServeur'
+import { encaisserPackStudio } from '@/lib/studio/commandeServeur'
 import { ouvrirCompteAcheteur } from '@/lib/siteAchatPublic'
 import { envoyerCourrielsDus } from '@/lib/siteLivraison'
 import { aiguiller, champsAbonnement } from '@/lib/stripeAiguillage'
@@ -120,6 +121,11 @@ export async function POST(req: Request) {
         const r = await encaisserPackPub(s)
         if (r === 'introuvable') throw new Error(`paiement de pack pubs sans dossier : session ${s.id}`)
         console.log('[stripe webhook] pack pubs', r, s.metadata?.pack_id)
+      } else if (voie === 'pack_studio') {
+        // Paiement UNIQUE — le pack vidéos du Studio (fiche 026-166). 'introuvable' remonte en erreur : Stripe rejoue, le catch prévient.
+        const r = await encaisserPackStudio(s)
+        if (r === 'introuvable') throw new Error(`paiement de pack Studio sans dossier : session ${s.id}`)
+        console.log('[stripe webhook] pack Studio', r, s.metadata?.pack_id)
       } else if (voie === 'en_attente') {
         console.log('[stripe webhook] paiement en attente', s.id)
       } else {

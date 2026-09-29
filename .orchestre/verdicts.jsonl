@@ -832,3 +832,8 @@
 {"id":"026-156","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":124,"date":"2026-09-29T20:01:21Z","duree_s":1816,"agent":"?","executant":"antigravity","lignes":0,"dossier":"fait"}
 {"id":"026-213","verdict":"FAIL","ligne":"contenu-qa --partie=mesure : FAIL","code":1,"date":"2026-09-29T20:01:28Z","duree_s":31,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
 {"id":"026-213","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T20:02:17Z","duree_s":9,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-008","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":1,"date":"2026-09-29T20:16:19Z","duree_s":1027,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-157","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":0,"date":"2026-09-29T20:32:14Z","duree_s":244,"agent":"?","executant":"codex","lignes":0,"dossier":"fait"}
+{"id":"026-166","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T20:35:56Z","duree_s":6,"agent":"claude-code","executant":"claude-code","lignes":830,"dossier":"fait"}
+{"id":"026-166","verdict":"PASS","ligne":"","code":0,"date":"2026-09-29T20:36:30Z","duree_s":18,"agent":"?","executant":"claude-code","lignes":0,"dossier":"fait","machine":"usine"}
+{"id":"026-096","verdict":"FAIL","ligne":"decisions.md modifié hors de « ## Proposées (quarantaine) » depuis la prise de la tâche","code":0,"date":"2026-09-29T20:37:06Z","duree_s":40,"agent":"claude-code","executant":"codex","lignes":1193,"dossier":"fait","machine":"usine"}

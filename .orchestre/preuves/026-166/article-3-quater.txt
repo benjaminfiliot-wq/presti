@@ -1,0 +1,7 @@
+(numéroté « 3 quinquies » dans les CGU : le 3 quater est déjà l'article du pack pubs locales, 026-131 ; balises ôtées, valeurs lues dans lib/studio/offre.ts)
+3 quinquies. Le pack vidéos du Studio
+Le pack vidéos du Studio comprend 5 vidéos de démonstration du produit de la marque, au prix affiché au moment de la commande (490 €, TVA non applicable, art. 293 B du CGI), payé une seule fois via Stripe. Aucune fabrication ne commence avant le paiement.
+Chaque vidéo porte la mention « Vidéo générée par IA ». Aucun témoignage ni avis n'est inventé.
+Les photos de la marque ne sont utilisées qu'avec son accord écrit. Presti ne diffuse rien sans l'accord écrit de la marque.
+La marque reste l'annonceur : elle diffuse les vidéos depuis ses propres comptes et répond de leur diffusion. Aucun résultat n'est promis : ni ventes, ni contacts, ni audience.
+Les 5 vidéos sont livrées sous 10 jours ouvrés après le paiement.

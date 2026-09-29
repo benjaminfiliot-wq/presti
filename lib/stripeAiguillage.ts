@@ -11,7 +11,7 @@
 // route, AVANT d'être vendu — sinon chacun de ses paiements lèvera une alerte d'orphelin.
 import type Stripe from 'stripe'
 
-export type Voie = 'commande_site' | 'pack_pub' | 'abonnement' | 'en_attente' | 'orphelin'
+export type Voie = 'commande_site' | 'pack_pub' | 'pack_studio' | 'abonnement' | 'en_attente' | 'orphelin'
 
 /** Ce que l'aiguillage lit d'une session, et rien d'autre. Une session réduite à {} est acceptée (→ orphelin). */
 export type SessionAiguillee = Partial<Pick<Stripe.Checkout.Session, 'mode' | 'metadata' | 'client_reference_id' | 'payment_status'>>
@@ -33,6 +33,13 @@ export function aiguiller(s: SessionAiguillee): Voie {
   // à la main (type = pack_pub sans pack_id) ne doit pas se faire passer pour un vrai pack (026-108 point 5).
   if (s.mode === 'payment' && s.metadata?.type === 'pack_pub' && s.metadata?.pack_id) {
     return s.payment_status === 'paid' ? 'pack_pub' : s.payment_status === 'unpaid' ? 'en_attente' : 'orphelin'
+  }
+  // Pack vidéos du Studio (fiche 026-166) : paiement unique, type pack_studio ET pack_id. En mode abonnement, jamais : orphelin.
+  if (s.metadata?.type === 'pack_studio') {
+    if (s.mode === 'payment' && s.metadata?.pack_id) {
+      return s.payment_status === 'paid' ? 'pack_studio' : s.payment_status === 'unpaid' ? 'en_attente' : 'orphelin'
+    }
+    return 'orphelin'
   }
   const { uid, plan } = champsAbonnement(s)
   if (uid && plan) {

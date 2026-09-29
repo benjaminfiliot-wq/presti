@@ -2,6 +2,7 @@ import '@/app/globals.css'
 import Breadcrumb from '@/app/Breadcrumb'
 import PublicNav from '@/app/PublicNav'
 import { TRAITEMENTS, SOUS_TRAITANTS } from '@/lib/legalArtisan'
+import { DELAI_LIVRAISON_JOURS_OUVRES, PRIX_PACK_STUDIO_TEXTE, VIDEOS_PACK_STUDIO } from '@/lib/studio/offre'
 
 export const metadata = {
   title: 'Conditions générales',
@@ -88,6 +89,15 @@ export default function CGU() {
       <p>Conformément à l’article L221-3 du Code de la consommation, une entreprise de cinq salariés ou moins bénéficie des règles de rétractation lorsque le contrat est conclu hors établissement et que la commande du pack pubs locales ne relève pas du champ de son activité principale. Le délai de rétractation est de <strong>14 jours</strong> à compter de la conclusion du contrat.</p>
       <p>Le pack est réalisé à partir de vos propres photos et selon vos spécifications : c’est un contenu personnalisé au sens de l’article L221-28 du Code de la consommation. Pour permettre la fabrication avant la fin de ce délai, la commande recueille votre demande expresse de commencer la prestation sans attendre et votre reconnaissance de la perte du droit de rétractation dès le début de la fabrication.</p>
       <p>Pour exercer ce droit avant le début de la fabrication, envoyez votre décision par email à l’adresse indiquée sur la <a href="/contact">page de contact</a>.</p>
+
+      <h2 id="studio">3 quinquies. Le pack vidéos du Studio</h2>
+      <ul>
+        <li>Le pack vidéos du Studio comprend {VIDEOS_PACK_STUDIO} vidéos de démonstration du produit de la marque, au prix affiché au moment de la commande ({PRIX_PACK_STUDIO_TEXTE}, TVA non applicable, art. 293 B du CGI), payé une seule fois via <strong>Stripe</strong>. Aucune fabrication ne commence avant le paiement.</li>
+        <li>Chaque vidéo porte la mention « Vidéo générée par IA ». Aucun témoignage ni avis n’est inventé.</li>
+        <li>Les photos de la marque ne sont utilisées qu’avec son accord écrit. Presti ne diffuse rien sans l’accord écrit de la marque.</li>
+        <li>La marque reste l’annonceur : elle diffuse les vidéos depuis ses propres comptes et répond de leur diffusion. Aucun résultat n’est promis : ni ventes, ni contacts, ni audience.</li>
+        <li>Les {VIDEOS_PACK_STUDIO} vidéos sont livrées sous <strong>{DELAI_LIVRAISON_JOURS_OUVRES} jours ouvrés</strong> après le paiement.</li>
+      </ul>
 
       <h2 id="support">4. Support et assistance</h2>
       <p>Le support se fait <strong>par écrit et en français</strong>, par <a href="/contact">le formulaire de contact</a> ou à l’adresse email des <a href="/mentions-legales">mentions légales</a> : les deux arrivent au même endroit.</p>
