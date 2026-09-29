@@ -545,11 +545,20 @@ function jugerAfaire(racine) {
   const e = []
   const h = C.aHead(AFAIRE), t = C.lire(racine, AFAIRE)
   if (h === null || t === null) return res([`${AFAIRE} introuvable (HEAD ou racine)`])
-  const { ajoutes, retires } = C.diffLignes(h, t)
-  if (retires.length !== 1 || ajoutes.length !== 1 || !NOMS_CRON.test(retires[0]) || !NOMS_CRON.test(ajoutes[0])) e.push(`${AFAIRE} : le diff avec HEAD (${retires.length} retirée(s), ${ajoutes.length} ajoutée(s)) ne se limite pas à la ligne NOMS_CRON`)
   const a = entrees(h), b = entrees(t)
-  if (!a || !b) e.push('NOMS_CRON introuvable')
-  else {
+  if (!a || !b) return res(['NOMS_CRON introuvable'])
+  if (h === t) {
+    // 026-047 déjà commitée : HEAD porte déjà tic (0d627a2a), donc plus aucun diff à observer ici — un diff vide ne veut
+    // pas dire qu'il manque quelque chose. On rejuge alors l'état final lui-même : tic présent avec le bon libellé, et
+    // aucune entrée en plus des six attendues (les deux sabotages VA-8, eux, mutent la racine et retombent dans la
+    // branche diff ci-dessous, où ils restent attrapés).
+    if (b.tic !== 'Horloge des agents') e.push(`NOMS_CRON : tic absent ou changé (${b.tic ?? 'absent'})`)
+    const attendues = ['relances', 'canaux-relever', 'alertes', 'purges-rgpd', 'tic', 'livraison']
+    const inattendues = Object.keys(b).filter((k) => !attendues.includes(k))
+    if (inattendues.length) e.push(`NOMS_CRON : entrée(s) inattendue(s) : ${inattendues.join(', ')}`)
+  } else {
+    const { ajoutes, retires } = C.diffLignes(h, t)
+    if (retires.length !== 1 || ajoutes.length !== 1 || !NOMS_CRON.test(retires[0]) || !NOMS_CRON.test(ajoutes[0])) e.push(`${AFAIRE} : le diff avec HEAD (${retires.length} retirée(s), ${ajoutes.length} ajoutée(s)) ne se limite pas à la ligne NOMS_CRON`)
     const plus = Object.keys(b).filter((k) => !(k in a)), change = Object.keys(a).filter((k) => b[k] !== a[k])
     if (plus.length !== 1 || plus[0] !== 'tic' || b.tic !== 'Horloge des agents') e.push(`NOMS_CRON : ajouté ${plus.map((k) => `${k}: '${b[k]}'`).join(', ') || 'rien'} ; tic: 'Horloge des agents' seul attendu`)
     if (change.length) e.push(`NOMS_CRON : entrée(s) de HEAD changée(s) : ${change.join(', ')}`)
@@ -631,6 +640,8 @@ const EXEMPLES = {
   non_mesure: ['La file de l’argent n’a pas pu être lue', 'À faire : relancer le passage.'],
 }
 export function alertesDerive(h) {
+  // 026-047 déjà commitée (0d627a2a) : HEAD porte déjà les motifs, la surveillance du tic et garderAlerte — le témoin dérivé de HEAD est HEAD.
+  if (/export async function garderAlerte/.test(h)) return h
   let t = h
   const rep = (a, b, quoi) => { if (typeof a === 'string' ? !t.includes(a) : !a.test(t)) throw new Error(`lib/alertes.ts de HEAD : ${quoi} introuvable`); t = t.replace(a, b) }
   const liste = NOUVEAUX_MOTIFS.map((m) => `'${m}'`)
@@ -676,7 +687,7 @@ export const SABOTAGES = [
   { id: 'VA-7', nom: 'verrou de envoyer relâché', fichier: ALERTES, chercher: 'consommerLimite(cle, 1, 86_400)', remplacer: 'consommerLimite(cle, 2, 86_400)' },
   { id: 'VA-7', nom: 'simulation du bilan oubliée', fichier: ALERTES, chercher: "    case 'bilan': return", remplacer: "    // case 'bilan': return" },
   { id: 'VA-7', nom: 'garderAlerte qui envoie', fichier: ALERTES, chercher: '  await persisterAlerte(al)\n}', remplacer: '  await persisterAlerte(al)\n  await notifierEntreprise(al.sujet, al.corps)\n}' },
-  { id: 'VA-8', nom: 'autre entrée ajoutée', fichier: AFAIRE, chercher: "tic: 'Horloge des agents' }", remplacer: "tic: 'Horloge des agents', veilleur: 'Veilleur' }" },
+  { id: 'VA-8', nom: 'autre entrée ajoutée', fichier: AFAIRE, chercher: "tic: 'Horloge des agents'", remplacer: "tic: 'Horloge des agents', veilleur: 'Veilleur'" },
   { id: 'VA-8', nom: 'libellé changé', fichier: AFAIRE, chercher: "relances: 'Relances de devis'", remplacer: "relances: 'Relances'" },
   { id: 'VA-9', nom: 'palier réévalué', fichier: V, chercher: "  const rj = await lire('acq_jauges')", remplacer: "  const rj = await lire('acq_jauges')\n  if (rj.absente) await supabaseAdmin.rpc('acq_palier_evaluer')" },
   { id: 'VA-9', nom: 'fetch vers Meta', fichier: V, chercher: "  const rj = await lire('acq_jauges')", remplacer: "  const rj = await lire('acq_jauges')\n  if (rj.absente && Math.random() > 2) await fetch('https://graph.facebook.com/v19.0/me')" },

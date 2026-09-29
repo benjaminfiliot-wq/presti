@@ -249,13 +249,21 @@ function jugerFermeture(racine) {
   const base = /'busAgents'/.test(h) ? h : fermetureDerive(h)
   const t = C.lire(racine, FERMETURE)
   if (t === null) return res([`${FERMETURE} absent de la racine`])
-  const { ajoutes, retires } = C.diffLignes(base, t)
-  const lb = base.split('\n').find((l) => CARTE.test(l))
-  if (retires.length !== 1 || retires[0] !== lb || ajoutes.length !== 1 || !CARTE.test(ajoutes[0])) e.push(`${FERMETURE} : le diff (${retires.length} ligne(s) retirée(s), ${ajoutes.length} ajoutée(s)) ne se limite pas à la ligne busAgents${ajoutes[0] && !CARTE.test(ajoutes[0]) ? ` (« ${court(ajoutes[0], 50)} »)` : ''}`)
-  else {
-    const avant = elements(lb), apres = elements(ajoutes[0])
-    const plus = apres.filter((x) => !avant.includes(x)), moins = avant.filter((x) => !apres.includes(x))
-    if (moins.length || plus.length !== 1 || plus[0] !== TIC) e.push(`ligne busAgents : ${plus.length ? `ajouté ${plus.join(', ')}` : 'rien d\'ajouté'}${moins.length ? `, retiré ${moins.join(', ')}` : ''} ; seul ${TIC} attendu`)
+  if (h === t && /'busAgents'/.test(h)) {
+    // 026-042 et 026-049 déjà commitées : HEAD porte déjà la ligne busAgents avec le tic, donc plus aucun diff à observer — un
+    // diff vide ne veut pas dire qu'il manque quelque chose. On rejuge alors l'état final : le tic dans la carte (les sabotages
+    // de TC-9 mutent la racine et retombent dans la branche diff ci-dessous, où ils restent attrapés).
+    const ligne = t.split('\n').find((l) => CARTE.test(l))
+    if (!ligne || !elements(ligne).includes(TIC)) e.push(`ligne busAgents : ${TIC} absent de la carte de ${FERMETURE}`)
+  } else {
+    const { ajoutes, retires } = C.diffLignes(base, t)
+    const lb = base.split('\n').find((l) => CARTE.test(l))
+    if (retires.length !== 1 || retires[0] !== lb || ajoutes.length !== 1 || !CARTE.test(ajoutes[0])) e.push(`${FERMETURE} : le diff (${retires.length} ligne(s) retirée(s), ${ajoutes.length} ajoutée(s)) ne se limite pas à la ligne busAgents${ajoutes[0] && !CARTE.test(ajoutes[0]) ? ` (« ${court(ajoutes[0], 50)} »)` : ''}`)
+    else {
+      const avant = elements(lb), apres = elements(ajoutes[0])
+      const plus = apres.filter((x) => !avant.includes(x)), moins = avant.filter((x) => !apres.includes(x))
+      if (moins.length || plus.length !== 1 || plus[0] !== TIC) e.push(`ligne busAgents : ${plus.length ? `ajouté ${plus.join(', ')}` : 'rien d\'ajouté'}${moins.length ? `, retiré ${moins.join(', ')}` : ''} ; seul ${TIC} attendu`)
+    }
   }
   if (!/actif\(\s*['"]busAgents['"]\s*\)/.test(C.sansCommentairesTs(C.lire(racine, TIC)))) e.push(`${TIC} ne contient pas actif('busAgents')`)
   return res(e, `${FERMETURE} : seul ${TIC} ajouté à la ligne busAgents ; la route lit actif('busAgents')`)
