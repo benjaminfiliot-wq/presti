@@ -55,7 +55,7 @@ export function posterJson(url, corps) {
     const u = new URL(url)
     if (u.hostname !== '127.0.0.1') return ko(new Error(`posterJson : ${u.hostname} refusé (127.0.0.1 seulement)`))
     const texte = JSON.stringify(corps ?? {})
-    const req = http.request({ hostname: '127.0.0.1', port: u.port, path: u.pathname + u.search, method: 'POST', headers: { 'content-type': 'application/json', 'content-length': Buffer.byteLength(texte) } }, (res) => {
+    const req = http.request({ agent: false, hostname: '127.0.0.1', port: u.port, path: u.pathname + u.search, method: 'POST', headers: { 'content-type': 'application/json', 'content-length': Buffer.byteLength(texte) } }, (res) => {
       let t = ''
       res.setEncoding('utf8')
       res.on('data', (d) => { t += d })
