@@ -14,6 +14,8 @@
 //
 // --temoin : composer, route et horloge n'ont rien à prouver eux-mêmes tant que leur propre fiche (026-119,
 // 026-122, 026-134) n'a pas livré — chacun de leurs critères est SAUTÉ, avec un renvoi vers cette fiche-là.
+// Correction du 28/09 : le saut est conditionné à l'absence de .orchestre/fait/<sa fiche>.md — une fois livrée, un
+// --temoin rejuge pour de vrai (jamais de témoin vert indéfini sur une fabrication absente ou fausse).
 // --partie=juge --temoin exécute CR-14 pour de vrai (juge.ts existe déjà). CR-NR (non-régression de quatre fichiers
 // hors du périmètre du Crieur : app/api/cron/relances/route.ts, lib/alertes.ts, scripts/pipeline.mjs, vercel.json,
 // identiques à HEAD) est vérifié dans TOUS les modes et toutes les parties.
@@ -282,9 +284,17 @@ function jugerComposer(s) {
       const preuve = f.preuve
       if (!preuve || typeof preuve !== 'object') s.echoue('CR-1', `${f.id || '?'} : preuve manquante`)
       else if (preuve.fichier) {
-        const texteFichier = lireSi(ch(preuve.fichier))
-        if (texteFichier === null) s.echoue('CR-1', `${f.id} : preuve.fichier ${preuve.fichier} introuvable`)
-        else if (!texteFichier.includes(String(preuve.motif || ''))) s.echoue('CR-1', `${f.id} : ${preuve.fichier} ne contient pas mot pour mot « ${court(preuve.motif, 60)} »`)
+        // Correction du 28/09 (contre-vérification indépendante, défaut bloquant confirmé, Codex) :
+        // `texteFichier.includes(String(preuve.motif || ''))` valait toujours vrai quand `motif` était vide ou
+        // absent (`''.includes('')` en JS) — un fait pouvait être déclaré « prouvé » sans qu'aucun motif ne soit
+        // réellement vérifié dans le fichier. Un motif vide (ou seulement des blancs) est désormais un échec.
+        const motif = typeof preuve.motif === 'string' ? preuve.motif : ''
+        if (!motif.trim()) s.echoue('CR-1', `${f.id || '?'} : preuve.motif vide ou absent (un motif réel est requis pour vérifier ${preuve.fichier})`)
+        else {
+          const texteFichier = lireSi(ch(preuve.fichier))
+          if (texteFichier === null) s.echoue('CR-1', `${f.id} : preuve.fichier ${preuve.fichier} introuvable`)
+          else if (!texteFichier.includes(motif)) s.echoue('CR-1', `${f.id} : ${preuve.fichier} ne contient pas mot pour mot « ${court(motif, 60)} »`)
+        }
       } else if (preuve.promesse !== undefined) {
         const p = lireSi(ch('plans/promesses.md'))
         if (p === null) s.echoue('CR-1', `${f.id} : plans/promesses.md introuvable`)
@@ -331,6 +341,13 @@ function jugerComposer(s) {
       }
       if (!Array.isArray(publications)) { s.echoue('CR-3', `composerLot(${lot.nom}) ne rend pas un tableau`); continue }
       if (publications.length > 3) s.echoue('CR-3', `composerLot(${lot.nom}) : ${publications.length} publication(s), 3 au plus attendues`)
+      // Correction du 28/09 (contre-vérification indépendante, défaut majeur, Codex) : seules des bornes hautes
+      // étaient vérifiées — un composerLot qui renvoie toujours [] les satisfaisait toutes. mois-neuf, fait-recent
+      // et drapeau-baisse ont un quota et des parutions à venir loin d'être atteints (CR-1 exige ≥ 12 faits) : au
+      // moins une publication est attendue, sans quoi le composeur n'aurait jamais rien exclu (fait récent, drapeau).
+      if (['mois-neuf', 'fait-recent', 'drapeau-baisse'].includes(lot.nom) && publications.length === 0) {
+        s.echoue('CR-3', `composerLot(${lot.nom}) : liste vide reçue, au moins 1 publication attendue (quota et parutions à venir loin d'être atteints)`)
+      }
       const canaux = new Set()
       publications.forEach((p, i) => {
         const id = `composerLot(${lot.nom})[${i}]`
@@ -380,6 +397,10 @@ function jugerComposer(s) {
     } else s.echoue('CR-4', `horairesSemaine = ${JSON.stringify(r.horairesSemaine)}`)
     if (Array.isArray(r.horizon)) {
       if (r.horizon.length > 1) s.echoue('CR-4', `composerLot(…, { horizonHeures: 26 }) : ${r.horizon.length} publication(s), au plus 1 attendue (lundi 5 h UTC → seul le créneau du lundi midi tombe dans les 26 h)`)
+      // Correction du 28/09 (contre-vérification indépendante, défaut majeur, Codex) : seule la borne haute (≤ 1)
+      // était vérifiée — un composerLot qui renvoie toujours [] la satisfaisait aussi. Le créneau du lundi midi
+      // tombe bien dans les 26 h depuis 5 h UTC : une liste vide est donc aussi un échec, pas seulement > 1.
+      else if (r.horizon.length === 0) s.echoue('CR-4', `composerLot(…, { horizonHeures: 26 }) : aucune publication rendue, 1 attendue (le créneau du lundi midi tombe dans les 26 h depuis lundi 5 h UTC)`)
       if (r.horizon[0] && r.horizon[0].canal !== 'instagram') s.echoue('CR-4', `composerLot(…, { horizonHeures: 26 }) : canal ${r.horizon[0].canal}, instagram attendu (créneau du lundi)`)
     } else s.echoue('CR-4', `composerLot(…, { horizonHeures: 26 }) = ${JSON.stringify(r.horizon)}`)
     if (!s.enEchec('CR-4')) s.passe('CR-4', 'déterminisme, cleSemaine (AAAA-Snn), horairesSemaine (lundi/mercredi/vendredi 12 h Paris, dans les 7 jours), horizonHeures=26 ne rend que le créneau du lundi')
@@ -443,6 +464,10 @@ function jugerCR7(s) {
     const cles = Object.keys(a.corps || {}).sort()
     const permis = new Set(['content', 'platforms', 'mediaUrls'])
     for (const k of cles) if (!permis.has(k)) s.echoue('CR-7', `create-post : clé non permise dans le corps : ${k}`)
+    // Correction du 28/09 (contre-vérification indépendante, défaut majeur, Codex) : l'absence de clé en trop ne
+    // suffit pas — un corps vide ({}) passait cette seule vérification. content et platforms sont désormais exigées.
+    if (typeof a.corps?.content !== 'string' || !a.corps.content.trim()) s.echoue('CR-7', 'create-post : corps sans content (ou content vide)')
+    if (!Array.isArray(a.corps?.platforms) || !a.corps.platforms.length) s.echoue('CR-7', 'create-post : corps sans platforms (tableau non vide attendu)')
     if ('scheduledTime' in (a.corps || {})) s.echoue('CR-7', 'create-post : scheduledTime présent dans le corps (interdit depuis le 27/09, R24)')
   }
   const appelInstagram = appelsCreation.find((a) => (a.corps?.platforms || []).some((p) => String(p).startsWith('instagram-')))
@@ -688,11 +713,20 @@ function jugerHorloge(s) {
 // ════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 // Le jugement
 // ════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+// Correction du 28/09 (contre-vérification indépendante, défaut bloquant confirmé, Codex, « risque de conception ») :
+// --temoin sautait TOUJOURS les critères fonctionnels de composer/route/horloge, sans regarder si leur fiche avait
+// livré — un composer.ts/route.ts/migration absent OU FAUX aurait pu laisser un témoin vert indéfiniment, tant que
+// personne ne relançait crieur-qa SANS --temoin. Le saut ne vaut plus que tant que la fiche propriétaire n'est pas
+// dans fait/ : une fois 026-119/122/134 livrée (fait/<id>.md présent), --temoin rejuge pour de vrai, comme --partie
+// seul. Aujourd'hui (026-119/122/134 pas encore livrées), ce changement ne modifie rien : preuve dans correction-28-09.md.
+function ficheLivree(id) {
+  return id ? lireSi(ch(`.orchestre/fait/${id}.md`)) !== null : false
+}
 function juger() {
   const s = creerRapport(NOM, IDS[PARTIE], { entete: `${NOM} --partie=${PARTIE} (${FICHE[PARTIE]}) — racine ${aff(racine)}${o.temoin ? ' — témoin' : ''}` })
-  const modeFabrication = o.temoin && PARTIE !== 'juge'
+  const modeFabrication = o.temoin && PARTIE !== 'juge' && !ficheLivree(FICHE[PARTIE])
   if (modeFabrication) {
-    for (const id of IDS[PARTIE]) if (id !== 'CR-NR') s.saute(id, `témoin : critère de fabrication, prouvé par le PASS de sa propre fiche (${FICHE[PARTIE]})`)
+    for (const id of IDS[PARTIE]) if (id !== 'CR-NR') s.saute(id, `témoin : critère de fabrication, sauté tant que ${FICHE[PARTIE]} n'est pas dans fait/ (sa propre PASS le prouvera une fois livrée)`)
   } else if (PARTIE === 'composer') {
     jugerComposer(s)
   } else if (PARTIE === 'route') {

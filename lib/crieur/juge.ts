@@ -18,7 +18,9 @@
 // Crieur n'a lue nulle part ne part jamais.
 //
 // Raisons de refus (un identifiant par ligne de `raisons`, sans doublon) :
-//   phrase_inconnue    une phrase qui n'est ni un texte de fait cité, ni une phrase du gabarit, ni la phrase aimant.
+//   phrase_inconnue    une phrase qui n'est ni un texte de fait cité, ni une phrase du gabarit, ni la phrase aimant ;
+//                      un texte entièrement vide (aucune phrase) ; ou un fait_ids qui cite un id absent de `faits`
+//                      (correction du 28/09 : une contre-vérification a montré que ni l'un ni l'autre n'était refusé).
 //   aimant_absent      Instagram ou Facebook sans PHRASE_AIMANT en dernière phrase, quand drapeaux.aimantSite est vrai.
 //   aimant_en_trop     LinkedIn avec PHRASE_AIMANT (peu importe le drapeau) ; et, sur tout canal, dès que
 //                      drapeaux.aimantSite n'est pas vrai (revue du 25/09 : la promesse ne part pas avant d'être servie).
@@ -26,7 +28,9 @@
 //                      dans la même phrase, « Presti répond » sans « Studio »/« Signature » dans la même phrase,
 //                      « n°1 », « meilleur », « garanti », « premier sur Google »).
 //   drapeau_baisse     un fait cité (fait_ids) porte un drapeau, et drapeaux[ce drapeau] n'est pas true.
-//   adresse_etrangere  une adresse http(s) ou www. dans `texte` qui ne commence pas par https://prestiapp.fr.
+//   adresse_etrangere  une adresse http(s) ou www. dans `texte` dont le nom d'hôte n'est pas exactement
+//                      prestiapp.fr (correction du 28/09 : un simple préfixe de texte laissait passer
+//                      https://prestiapp.fr.evil.com — l'hôte est désormais comparé, pas le préfixe).
 //   media_invalide     Instagram sans média, un média qui n'est pas
 //                      ^https://prestiapp\.fr/api/crieur/visuel/[a-z0-9-]+\.png$, ou un média sur un autre canal.
 //   trop_long          LinkedIn > 1300 signes, Facebook > 500, Instagram > 2200 (comptés en points de code Unicode).
@@ -60,7 +64,10 @@ export type VerdictJuge = { ok: true } | { ok: false; raisons: string[] }
 const LIMITES: Record<Canal, number> = { linkedin: 1300, facebook: 500, instagram: 2200 }
 const MEDIA_VALIDE = /^https:\/\/prestiapp\.fr\/api\/crieur\/visuel\/[a-z0-9-]+\.png$/
 const ADRESSE = /\b(?:https?:\/\/|www\.)[^\s]+/gi
-const ADRESSE_AUTORISEE = 'https://prestiapp.fr'
+const HOTE_AUTORISE = 'prestiapp.fr'
+// Ponctuation de fin de phrase qui peut coller à une adresse captée par ADRESSE (« …prestiapp.fr. » en fin de post) :
+// retirée avant l'analyse de l'hôte, jamais avant la détection elle-même (ADRESSE reste inchangée).
+const PONCTUATION_FINALE = /[.,;:!?)\]}'"«»]+$/
 const EMAIL = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i
 const TELEPHONE = /(?:\+33[\s.-]?|0)[1-9](?:[\s.-]?\d{2}){4}\b/
 const APOSTROPHES = "['’ʼ]"
@@ -69,6 +76,19 @@ const RE_PRETE_PREPARE = /prêt|prépar/i
 const RE_PRESTI_REPOND = /presti répond/i
 const RE_STUDIO_SIGNATURE = /studio|signature/i
 const FORMULES_SIMPLES = [/n°\s?1/i, /\bmeilleur/i, /\bgaranti/i, /premier sur google/i]
+
+// Correction du 28/09 (contre-vérification indépendante, défaut bloquant confirmé) : l'ancien test était un simple
+// `.startsWith('https://prestiapp.fr')`, donc « https://prestiapp.fr.evil.com/hack » passait — le préfixe de chaîne
+// coïncide avec le préfixe de domaine. On compare désormais le NOM D'HÔTE réel (via `URL`), jamais un préfixe de texte.
+function hoteAutorise(adresseBrute: string): boolean {
+  const sansPonctuation = adresseBrute.replace(PONCTUATION_FINALE, '')
+  if (!sansPonctuation) return false
+  const avecSchema = /^https?:\/\//i.test(sansPonctuation) ? sansPonctuation : `https://${sansPonctuation}`
+  let u: URL
+  try { u = new URL(avecSchema) } catch { return false }
+  const hote = u.hostname.toLowerCase().replace(/\.$/, '')
+  return hote === HOTE_AUTORISE
+}
 
 /** Découpe `texte` en phrases : chaque morceau qui finit par ./!/? suivi d'un blanc ou de la fin du texte. */
 function phrasesDe(texte: string): string[] {
@@ -101,6 +121,18 @@ export function jugerPublication(pub: PublicationAJuger, ctx: ContexteJuge): Ver
   const textesFaitsCites = new Set(faitIds.map((id) => faits[id]?.texte).filter((t): t is string => typeof t === 'string'))
   const gabaritConnu = new Set(phrasesGabarit)
 
+  // Correction du 28/09 (contre-vérification indépendante, défaut bloquant confirmé) : un texte entièrement vide ne
+  // produit aucune phrase, donc la boucle ci-dessous ne s'exécutait jamais et jugerPublication rendait { ok: true }
+  // pour { canal, texte: '', fait_ids: [] } — une publication qui ne cite rien n'est plus jamais acceptée.
+  if (phrases.length === 0) raisons.add('phrase_inconnue')
+
+  // Correction du 28/09 : un fait_ids qui cite un id absent de `faits` était silencieusement ignoré (aucune de ses
+  // phrases n'était alors « couverte » par ce fait, mais rien ne signalait la citation elle-même comme invalide) —
+  // un fait_ids inconnu ne peut jamais être une preuve, la publication est donc refusée dès qu'elle en cite un.
+  for (const id of faitIds) {
+    if (!Object.prototype.hasOwnProperty.call(faits, id)) raisons.add('phrase_inconnue')
+  }
+
   for (const p of phrases) {
     if (p === PHRASE_AIMANT) continue
     if (textesFaitsCites.has(p)) continue
@@ -125,7 +157,7 @@ export function jugerPublication(pub: PublicationAJuger, ctx: ContexteJuge): Ver
   }
 
   for (const m of texte.matchAll(ADRESSE)) {
-    if (!m[0].toLowerCase().startsWith(ADRESSE_AUTORISEE)) { raisons.add('adresse_etrangere'); break }
+    if (!hoteAutorise(m[0])) { raisons.add('adresse_etrangere'); break }
   }
 
   const media = pub?.media || null

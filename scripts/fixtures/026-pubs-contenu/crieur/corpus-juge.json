@@ -1,5 +1,5 @@
 {
-  "_source": "fiche 026-116, cahier CR-14 : corpus étiqueté pour lib/crieur/juge.ts (jugerPublication). Les fautives couvrent les 9 raisons de refus ; « instagram-aimant-leve » (conforme) et « instagram-aimant-baisse » (fautive) jugent la même publication sous les deux valeurs de drapeaux.aimantSite.",
+  "_source": "fiche 026-116, cahier CR-14 : corpus étiqueté pour lib/crieur/juge.ts (jugerPublication). Les fautives couvrent les 9 raisons de refus ; « instagram-aimant-leve » (conforme) et « instagram-aimant-baisse » (fautive) jugent la même publication sous les deux valeurs de drapeaux.aimantSite. Correction du 28/09 (contre-vérification indépendante) : « publication-vide » et « fait-id-inconnu » couvrent les deux défauts bloquants alors non détectés par ce corpus (texte entièrement vide accepté, fait_ids inconnu silencieusement ignoré).",
   "faits": {
     "minute": { "texte": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez." },
     "studio": { "texte": "Presti Studio et Presti Signature créent le site de l'artisan en un après-midi." },
@@ -29,6 +29,8 @@
     { "nom": "adresse-etrangere", "canal": "linkedin", "fait_ids": [], "texte": "Plus d'infos sur https://exemple-externe.test/offre.", "raison": "adresse_etrangere" },
     { "nom": "trop-long-facebook", "canal": "facebook", "fait_ids": ["minute"], "texteBase": "Réponse prête en moins d'une minute : Presti la prépare, vous l'envoyez.", "repeter": 8, "raison": "trop_long" },
     { "nom": "donnee-personnelle-email", "canal": "linkedin", "fait_ids": [], "texte": "Écrivez-nous à contact@exemple.test pour en savoir plus.", "raison": "donnee_personnelle" },
-    { "nom": "donnee-personnelle-telephone", "canal": "linkedin", "fait_ids": [], "texte": "Appelez-nous au 06 12 34 56 78 dès aujourd'hui.", "raison": "donnee_personnelle" }
+    { "nom": "donnee-personnelle-telephone", "canal": "linkedin", "fait_ids": [], "texte": "Appelez-nous au 06 12 34 56 78 dès aujourd'hui.", "raison": "donnee_personnelle" },
+    { "nom": "publication-vide", "canal": "linkedin", "fait_ids": [], "texte": "", "raison": "phrase_inconnue" },
+    { "nom": "fait-id-inconnu", "canal": "linkedin", "fait_ids": ["id-qui-nexiste-pas"], "texte": "Découvrez comment ça marche.", "raison": "phrase_inconnue" }
   ]
 }
