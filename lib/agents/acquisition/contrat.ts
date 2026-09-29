@@ -775,7 +775,7 @@ export const DOMAINE_PRINCIPAL = 'prestiapp.fr'
 export const PREMIERE_PHRASE = 'Message commercial de Presti, rédigé et envoyé par l\'assistant IA de Presti. Ce n\'est pas une demande de devis.'
 export const NOM_EXPEDITEUR = 'Benjamin Filiot – Presti'
 /** L'adresse GitHub Pages de la notice, posée par 026-162 ; null d'ici là (J3 refuse alors tout formulaire : `notice_absente`). */
-export const NOTICE_URL: string | null = null
+export const NOTICE_URL: string | null = 'https://benjaminfiliot-wq.github.io/presti-notice/'
 /** La phrase qui dit d'où vient le contact, par source. */
 export const SOURCES_LISTE: Readonly<Partial<Record<Source, string>>> = Object.freeze({
   ademe_rge: 'Votre site figure dans la liste publique des entreprises RGE de l\'ADEME.',

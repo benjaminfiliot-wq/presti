@@ -4,7 +4,8 @@ const JOUR_MS = 86_400_000
 
 export const DISPONIBILITES = Object.freeze({
   jours: Object.freeze([1, 2, 3, 4, 5]),
-  plages: Object.freeze([[12 * 60, 13 * 60 + 30], [18 * 60, 19 * 60 + 30]]),
+  // 29/09/2026, Benj : « je suis libre tout le temps » — de 9 h à 20 h (lundi au vendredi : le juge RV-2 exclut encore le week-end).
+  plages: Object.freeze([[9 * 60, 20 * 60]]),
   dureeMinutes: 15,
   delaiMinimumHeures: 12,
   horizonJours: 10,
