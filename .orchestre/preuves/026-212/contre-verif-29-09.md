@@ -1,0 +1,14 @@
+# 026-212 — contre-vérification du 29/09 (Claude Code ; fiche produite par Claude Code, Hermes et OpenClaw sans résultat utilisable en 15 min : voir la fin)
+
+Quatre sabotages réversibles de la production (lib/contenu/metaPublier.ts), jugés par `node scripts/contenu-qa.mjs --partie=meta` ; chaque fichier est restauré et son sha256 relu (16 premiers caractères).
+
+- 1 média hors bucket accepté : code 1, ❌ MP-1 — bucket privé attendu — média hors bucket accepté ; sha256 avant=924c368963cf919e après restauration=924c368963cf919e IDENTIQUE ; critère attendu MP-1 ROUGE comme prévu
+- 2 accord individuel jamais exigé : code 1, ❌ MP-3 — accord de ligne seul insuffisant — un accord de ligne seul a suffi à publier ; sha256 avant=924c368963cf919e après restauration=924c368963cf919e IDENTIQUE ; critère attendu MP-3 ROUGE comme prévu
+- 3 idempotence retirée (republie un post déjà publié) : code 1, ❌ MP-4 — idempotence par ID — republication non signalée idempotente ({"ok":true,"url":"https://exemple.invalid/publication-essai"}) ; sha256 avant=924c368963cf919e après restauration=924c368963cf919e IDENTIQUE ; critère attendu MP-4 ROUGE comme prévu
+- 4 chiffres non contrôlés (ni source ni Laya) : code 1, ❌ MP-2 — chiffres contrôlés — chiffre sous le seuil accepté ; sha256 avant=924c368963cf919e après restauration=924c368963cf919e IDENTIQUE ; critère attendu MP-2 ROUGE comme prévu
+
+Sabotage 3 : la première tentative (idempotence retirée dans `controlerAvantPublication` seulement) n'a rien rougi, parce que `publierMeta` porte une seconde garde identique (défense en profondeur) ; la contre-vérification retire donc les DEUX gardes, et MP-4 rougit. Sabotage 4 : le juge appelle MP-2 sans source, donc le refus « sans source » masque le seuil de Laya ; retirer la boucle de contrôle entière est nécessaire pour rougir MP-2. Le cas « source présente, Laya p=0,1 » est prouvé par `essais-212.mjs`.
+
+Essais complémentaires : `essais-212.mjs` (sortie dans `essais-212.log`) — cas que le juge ne couvre pas, faux Graph / faux jev, aucun réseau réel.
+
+Pourquoi Claude Code et pas Hermes / OpenClaw : le 29/09 à 20:11 les quatre fiches ont été confiées aux deux agents de l'usine (consigne complète : fiche, extraits du juge, code des dépendances). 1er tour : Ollama Cloud (gpt-oss:120b) = HTTP 429 « monthly usage limit » ; freellmapi/mistral-large-3 = HTTP 503 « no usable provider key » ; qwen3 local (8b puis 4b) = « context overflow » même avec une consigne réduite ; rien produit. 2e tour (freellmapi/ministral-14b, qui répond) : à 15 minutes, Hermes n'avait rendu que boucle.ts (214, sans brief.ts) et rien pour 212 ; OpenClaw avait rendu mesure.ts et mesurer.mjs (213, un stub du niveau du témoin du juge : ni échéancier, ni insights, ni attribution) et couts.ts (218, sans Couts.tsx). Rien d'utilisable tel quel ; la fiche est produite par Claude Code, qui a passé le juge et ajouté les essais ci-dessus.
