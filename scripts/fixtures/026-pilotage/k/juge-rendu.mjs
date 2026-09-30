@@ -122,7 +122,7 @@ export async function nouvellePage(ctx, o = {}) {
 
 const SELECTEUR_TOILE = '[data-station-carte] canvas'
 /** La carte est prête : un canevas dans [data-station-carte] et le jeu Phaser instrumenté. → null si prête, sinon la raison. */
-export async function attendrePrete(P, { delai = 60_000 } = {}) {
+export async function attendrePrete(P, { delai = 30_000 } = {}) {
   const ok = await jusqua(async () => (await P.page.locator(SELECTEUR_TOILE).count()) > 0 && await P.page.evaluate(() => !!globalThis.__stationGame), { delai })
   if (ok) return null
   const nb = await P.page.locator(SELECTEUR_TOILE).count().catch(() => -1)
@@ -169,7 +169,7 @@ function chemins(journal) {
 }
 
 /** Attend que le miroir porte `attendu`, que tout le monde soit arrivé et que le journal se taise 700 ms. */
-async function attendreRepos(P, attendu, { delai = 60_000 } = {}) {
+async function attendreRepos(P, attendu, { delai = 25_000 } = {}) {
   const noms = Object.keys(attendu).sort()
   let dernierN = -1, depuis = Date.now(), miroir = []
   const ok = await jusqua(async () => {
@@ -220,6 +220,7 @@ async function jouerSuite(ctx, suite, { avantChaqueEtape } = {}) {
       e.hash = em.hash ?? null; e.instable = !!em.instable; e.erreurImage = em.erreur ?? null
       if (avantChaqueEtape) await avantChaqueEtape(P, etape, e)
       res.etapes.push(e)
+      if (!ok) { res.arret = etape.cle; break } // la suite ne se rejoue pas sur un miroir déjà faux
     }
   } finally { await P.fermer() }
   return res
@@ -241,6 +242,7 @@ export async function critereVerite(ctx) {
     // CL-5 : mêmes chemins (journal du miroir) et même empreinte du canevas à chaque étape, sur deux pages neuves.
     for (const [n, etape] of suite.etapes.entries()) {
       const a = A.etapes[n], b = B.etapes[n]
+      if (!a || !b) break
       const ca = chemins(a.journal), cb = chemins(b.journal)
       if (!memes(ca, cb)) {
         const nom = [...new Set([...Object.keys(ca), ...Object.keys(cb)])].sort().find((n) => !memes(ca[n], cb[n]))
@@ -256,6 +258,7 @@ export async function critereVerite(ctx) {
     let precedent = null
     for (const [n, etape] of suite.etapes.entries()) {
       const a = A.etapes[n]
+      if (!a) break
       for (const d of a.ecarts) cl7.push(`étape « ${etape.cle} » : ${d}`)
       for (const l of a.miroir) {
         if (l.motif !== 'pause' && l.salle === 'repos') cl7.push(`étape « ${etape.cle} » : ${l.nom} (${l.motif}) est dessiné au Repos : seul le motif « pause » y mène`)
@@ -536,7 +539,7 @@ async function peser(ctx, base, chemin, { session = true } = {}) {
   const P = await nouvellePage(ctx, { chemin, mesurer: true, base, session })
   try {
     await P.aller()
-    if (chemin === '/controle/station') { const r = await attendrePrete(P, { delai: 60_000 }); if (r) return { erreur: r } }
+    if (chemin === '/controle/station') { const r = await attendrePrete(P); if (r) return { erreur: r } }
     await attendre(chemin === '/controle/station' ? 2500 : 4000)
     await Promise.all([])
   } finally { await P.fermer() }
@@ -645,9 +648,7 @@ export async function critereContexte(ctx) {
     })
     if (perdu === 'aucun contexte WebGL') return { echecs: ['préalable : le canevas n\'a pas de contexte WebGL (le jeu tourne déjà en rendu Canvas) : la perte ne peut pas être simulée'], detail: '' }
     if (perdu) return { echecs: [`préalable : ${perdu}`], detail: '' }
-    await attendre(600)
-    // Un appareil rend le contexte tôt ou tard : le juge le rend aussi (sans effet si le moteur a changé de canevas).
-    await P.page.evaluate(() => { try { globalThis.__perte.restoreContext() } catch { /* canevas retiré */ } })
+    // Le contexte n'est PAS rendu : un moteur qui ne fait qu'attendre sa restauration reste vide. Il doit se rebâtir (WebGL neuf ou rendu Canvas).
     const revenu = await jusqua(async () => {
       if (!(await P.page.locator(SELECTEUR_TOILE).count())) return null
       const n = await couleurs(ctx, await lireImage(P.page).catch(() => Buffer.alloc(0)).then((b) => (b.length ? b : Buffer.from('')))).catch(() => 0)
@@ -658,7 +659,7 @@ export async function critereContexte(ctx) {
       const apres = await lireMiroir(P.page)
       if (apres.length !== avant.length) e.push(`après la perte, le miroir porte ${apres.length} personnage(s), ${avant.length} avant : la scène rebâtie n'a pas reçu l'état`)
       const type = await P.page.evaluate(() => (globalThis.__stationGame ? globalThis.__stationGame.config.renderType : null))
-      detail = `perte simulée (WEBGL_lose_context) : le canevas est de nouveau dessiné dans les 5 s${type === 1 ? ' (rendu Canvas)' : ''}, ${apres.length} personnages au miroir`
+      detail = `perte simulée (WEBGL_lose_context, contexte jamais rendu) : le canevas est de nouveau dessiné dans les 5 s${type === 1 ? ' (rendu Canvas)' : ''}, ${apres.length} personnages au miroir`
     }
     const non = P.erreurs.filter((m) => m.startsWith('pageerror'))
     if (non.length) e.push(`erreur non rattrapée après la perte : ${non[0]}`)

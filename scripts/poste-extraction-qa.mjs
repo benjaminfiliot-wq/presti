@@ -40,7 +40,7 @@ import { R, LOADER, lireOptions, creerSortie, sansCommentaires, lancerAsync, pre
 import { commitBase, cheminsBase, copieAvecDrapeau, serveurCopie, avecComptes } from './fixtures/026-pilotage/b/commun.mjs'
 import { TRAVAIL, arbreBase, arbreTemoinT, figer, typecheckFichiers, CROCHET, urlDossier, DOUBLURES_B, T } from './fixtures/026-pilotage/t/commun-b.mjs'
 import { ROUTES, CAS } from './fixtures/026-pilotage/t/extraction/cas.mjs'
-import { baseExtraction, TICKETS, INSTANT, X } from './fixtures/026-pilotage/t/extraction/base.mjs'
+import { baseExtraction, TICKETS, INSTANT, PASSAGES, X } from './fixtures/026-pilotage/t/extraction/base.mjs'
 
 const JUGE = 'poste-extraction-qa'
 const CE_SCRIPT = fileURLToPath(import.meta.url)
@@ -104,7 +104,8 @@ async function enfant(RAC, quoi) {
     if (a.f === 'rpc') return { f: 'rpc', nom: a.nom, args: a.args }
     return a
   }
-  for (const [i, c] of CAS.entries()) {
+  /** Pose le cas n° i : horloge, dossier de travail, environnement, base et comptes d'essai. */
+  const poser = (c, i) => {
     figer(new Date(Date.parse(INSTANT) + i * 600_000).toISOString()) // dix minutes par cas : les caches des sources (5 min au plus) ne servent pas d'un cas à l'autre
     process.chdir(CWD[c.cwd ?? 'avec'])
     for (const k of ['ANTHROPIC_WORKSPACE_PRESTI', 'BUDGET_IA_MENSUEL_EUR', 'TAUX_USD_EUR']) delete process.env[k]
@@ -118,6 +119,32 @@ async function enfant(RAC, quoi) {
       fondateur: COMPTES[c.compte] ?? null, refusGarde: REFUS[c.compte] ?? null, rpc: b.rpc, table: b.table,
       stripe: convertir(c.stripe), coutIA: erreurs(c.coutIA), estimationCredits: c.estimationCredits ?? null, saturee: c.saturee ?? false, fetch: c.fetch ?? {},
     }
+  }
+  if (quoi === 'lectures') {
+    // Les lectures APPELÉES DIRECTEMENT, comme la station les appellera, dans un processus à part (aucun cache des cas précédents) et
+    // à l'instant exact du cas dont la route de la référence donne le résultat attendu.
+    res.lectures = {}
+    const idx = (nom) => CAS.findIndex((c) => c.nom === nom)
+    const lire = async (cle, nom, cas, f) => {
+      try {
+        poser(CAS[idx(cas)], idx(cas))
+        const m = await import(pathToFileURL(path.join(RAC, LECTURES, 'index.ts')).href)
+        if (typeof m[nom] !== 'function') throw new Error(`${LECTURES}/index.ts n'exporte pas ${nom}`)
+        res.lectures[cle] = { cas, valeur: JSON.parse(JSON.stringify((await f(m[nom])) ?? null)) }
+      } catch (e) { res.lectures[cle] = { cas, erreur: premiereLigne(e) } }
+    }
+    await lire('santeService', 'santeService', 'barre · fondateur', (f) => f('http://127.0.0.1:3400', 'jeton-essai'))
+    await lire('cronsDuService', 'cronsDuService', 'etat · fondateur', (f) => f())
+    await lire('audience', 'audience', 'audience · fondateur', (f) => f('jour'))
+    await lire('audience:historique', 'audience', 'audience · fondateur, historique', (f) => f('historique'))
+    await lire('bans', 'bans', 'bans · fondateur', (f) => f())
+    await lire('clients', 'clients', 'clients · fondateur', (f) => f())
+    await lire('cerveaux', 'cerveaux', 'cerveaux · fondateur', (f) => f())
+    res.crons = { liste: D.CRONS_ATTENDUS }
+    return res
+  }
+  for (const [i, c] of CAS.entries()) {
+    poser(c, i)
     const M = (modules[c.route] ??= await importer(ROUTE_DE(c.route)))
     let sortie
     try {
@@ -289,14 +316,14 @@ const fichierTickets = fichiersLectures.find((f) => /export\s+(?:async\s+)?funct
 }
 
 // ── Les enfants : la référence et l'état jugé jouent les mêmes cas ────────────────────────────────────────────────────────
-const MARQUEURS = { ref: null, jug: null }
+const MARQUEURS = { ref: null, jug: null, lec: null }
 async function lancerEnfant(racine, quoi) {
   const r = await lancerAsync(process.execPath, ['--import', pathToFileURL(LOADER).href, CE_SCRIPT, `--enfant=${quoi}`, `--racine=${racine}`], { cwd: R, timeout: 300_000 })
   const l = r.stdout.split(/\r?\n/).find((x) => x.startsWith(MARQUE))
   if (!l) return { erreur: `enfant ${quoi} sans résultat (code ${r.code}${r.erreur ? `, ${r.erreur}` : ''}) : ${court(r.stderr || r.stdout, 300)}` }
   try { return JSON.parse(l.slice(MARQUE.length)) } catch (err) { return { erreur: `résultat de l’enfant ${quoi} illisible : ${premiereLigne(err)}` } }
 }
-;[MARQUEURS.ref, MARQUEURS.jug] = await Promise.all([lancerEnfant(REF, 'référence'), lancerEnfant(RAC, 'jugé')])
+;[MARQUEURS.ref, MARQUEURS.jug, MARQUEURS.lec] = await Promise.all([lancerEnfant(REF, 'référence'), lancerEnfant(RAC, 'jugé'), lancerEnfant(RAC, 'lectures')])
 
 // ── La comparaison (XT-2) : champ par champ, puis octet par octet ──────────────────────────────────────────────────────────
 /** Les écarts entre deux valeurs JSON : « chemin : avant ≠ après ». */
@@ -366,10 +393,11 @@ function saneRef(ref) {
 // ── XT-2, XT-3 (sorties), XT-HARNAIS ──────────────────────────────────────────────────────────────────────────────────────
 {
   const e2 = [], e3 = []
-  const { ref: ER, jug: EJ } = MARQUEURS
+  const { ref: ER, jug: EJ, lec: EL } = MARQUEURS
   if (ER.erreur) e2.push(`référence : ${ER.erreur}`)
   if (EJ.erreur) e2.push(`état jugé : ${EJ.erreur}`)
-  if (!ER.erreur && !EJ.erreur) {
+  if (EL.erreur) e2.push(`état jugé (lectures directes) : ${EL.erreur}`)
+  if (!ER.erreur && !EJ.erreur && !EL.erreur) {
     e2.push(...saneRef(ER.cas))
     e2.push(...comparer(ER.cas, EJ.cas))
     const T3 = EJ.tickets
@@ -392,11 +420,36 @@ function saneRef(ref) {
         else if (MOTS_CONTENU.test(String(cols))) e3.push(`la requête sur tickets sélectionne « ${cols} » : une colonne de contenu`)
       }
     }
+    // XT-2 (suite) : les lectures appelées directement rendent ce que la route de la RÉFÉRENCE en tire (et, pour les crons, que
+    // aucune route n'expose, ce que le juge calcule lui-même depuis la base d'essai).
+    const routeJson = (nom) => { try { return JSON.parse(ER.cas[nom].text) } catch { return null } }
+    const sans = (o2, ...cles) => (o2 && typeof o2 === 'object' ? Object.fromEntries(Object.entries(o2).filter(([k]) => !cles.includes(k))) : o2)
+    const parties = (o2, ...cles) => (o2 && typeof o2 === 'object' ? Object.fromEntries(cles.map((k) => [k, o2[k]])) : o2)
+    const attendus = {
+      santeService: () => routeJson('barre · fondateur')?.service,
+      audience: () => parties(routeJson('audience · fondateur'), 'direct', 'inscriptions', 'historique', 'saturee'),
+      'audience:historique': () => parties(routeJson('audience · fondateur, historique'), 'direct', 'inscriptions', 'historique', 'saturee'),
+      bans: () => parties(routeJson('bans · fondateur'), 'bans', 'abus24h'),
+      clients: () => sans(routeJson('clients · fondateur'), 'role', 'a'),
+      cerveaux: () => routeJson('cerveaux · fondateur')?.cerveaux,
+      cronsDuService: () => {
+        const c = CAS.find((x) => x.nom === 'etat · fondateur'), a = Date.parse(INSTANT) + CAS.indexOf(c) * 600_000
+        return { valeur: (EL.crons?.liste ?? []).map((k) => { const p = PASSAGES.find((x) => x.nom === k.nom); const age = p ? (a - Date.parse(p.dernier_passage)) / 3_600_000 : null; return { nom: k.nom, dernier: p?.dernier_passage ?? null, reussi: p?.reussi ?? null, enRetard: age === null || age > k.maxHeures } }), source: 'supabase', a: new Date(a).toISOString(), cache: false }
+      },
+    }
+    for (const [nom, l] of Object.entries(EL.lectures ?? {})) {
+      if (!l) { e2.push(`la lecture ${nom} n'a pas été jouée`); continue }
+      if (l.erreur) { e2.push(`${nom}() lève : ${l.erreur}`); continue }
+      const attendu = attendus[nom]?.()
+      if (attendu === undefined || attendu === null) { e2.push(`${nom}() : rien à comparer dans la référence (${l.cas})`); continue }
+      const d = ecarts(JSON.parse(JSON.stringify(attendu)), l.valeur)
+      if (d.length) e2.push(`${nom}() appelée directement ≠ ${nom === 'cronsDuService' ? 'le calcul du juge' : `la route de la référence (« ${l.cas} »)`} : ${d.slice(0, 2).join(' ; ')}${d.length > 2 ? ` ; … (${d.length} écarts)` : ''}`)
+    }
     // Le piège ne sort nulle part : ni des réponses des routes, ni du résultat de ticketsOuverts().
     const sorties = JSON.stringify([...Object.values(EJ.cas).map((c) => c.text), EJ.tickets?.resultat ?? null, EJ.tickets?.resultatVide ?? null])
     for (const p of TICKETS.pieges) if (sorties.includes(p)) e3.push(`le piège « ${court(p, 40)} » sort dans une réponse`)
   }
-  noter('XT-2', e2, `${CAS.length} requêtes sur ${ROUTES.length} routes (fondateur, fondateur en lecture, partenaire, sans jeton, artisan ; pannes, drapeaux baissés, recherches) : statut, champs, ordre des clés (octet par octet), requêtes en base et gardes égaux à la référence ${BASE.slice(0, 7)}`)
+  noter('XT-2', e2, `${CAS.length} requêtes sur ${ROUTES.length} routes (fondateur, fondateur en lecture, partenaire, sans jeton, artisan ; pannes, drapeaux baissés, recherches) : statut, champs, ordre des clés (octet par octet), requêtes en base et gardes égaux à la référence ${BASE.slice(0, 7)} ; les lectures appelées directement (santeService, cronsDuService, audience, bans, clients, cerveaux) rendent ce que la route de la référence en tire (crons : le calcul du juge, aucune route ne les expose)`)
   noter('XT-3', e3, `ticketsOuverts() → { nombre: ${TICKETS.ouverts} } sur des tickets dont le contenu est un piège ; requête sans colonne de contenu ; le piège n'apparaît dans aucune sortie`)
 }
 
