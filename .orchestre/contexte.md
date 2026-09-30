@@ -1,4 +1,4 @@
-# Carte du code — presti (2026-09-30T13:43:35Z)
+# Carte du code — presti (2026-09-30T14:16:40Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
@@ -271,10 +271,10 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/vercelDomains.ts` (6) : DnsRecord, DomainStatus, normalizeDomain, addDomain, getStatus, removeDomain
 - `lib/zip.ts` (2) : crc32, ZipFlux
 
-## Migrations — `supabase/migrations` (114)
-- dernières : 0112_pilotage_station.sql, 0114_contenu.sql, 0116_maquette_lien_objet.sql, 0117_ops_demandes.sql, 0120_ops_horloge_codes_nuls.sql
+## Migrations — `supabase/migrations` (116)
+- dernières : 0113_station_reglages.sql, 0114_contenu.sql, 0116_maquette_lien_objet.sql, 0117_ops_demandes.sql, 0120_ops_horloge_codes_nuls.sql
 
 ## Scripts — `scripts/` (382 .mjs, dont 78 suites e2e)
 
-## Orchestre — file : 41 · en cours : 0 · faites : 248 · refusées : 1
+## Orchestre — file : 39 · en cours : 0 · faites : 250 · refusées : 1
 
