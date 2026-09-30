@@ -1,0 +1,215 @@
+
+── 1. Routes protégées : sans identité, rien ne passe (401/403), jamais 500
+(node:22324) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/benja/Documents/presti/lib/flags.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\benja\Documents\presti\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✅ GET /api/account/slug → 401
+  ✅ POST /api/account/slug → 401
+  ✅ POST /api/canaux/relever → 401
+  ✅ GET /api/controle/etat → 401
+  ✅ GET /api/controle/chiffres → 401
+  ✅ GET /api/controle/a-faire → 401
+  ✅ GET /api/controle/fil → 401
+  ✅ GET /api/controle/journal → 401
+  ✅ POST /api/controle/reconfirmer → 401
+  ✅ POST /api/controle/securite/bans → 401
+  ✅ GET /api/controle/barre → 401
+  ✅ GET /api/controle/recherche → 401
+  ✅ POST /api/controle/alertes/:id/acquitter → 401
+  ✅ POST /api/controle/apports/:id/statut → 401
+  ✅ GET /api/controle/clients/:id → 401
+  ✅ POST /api/controle/clients/:id/action → 401
+  ✅ GET /api/controle/courriers/:id → 401
+  ✅ POST /api/controle/courriers/:id/action → 401
+  ✅ POST /api/controle/courriers/relever → 401
+  ✅ POST /api/controle/crons/relances/relancer → 401
+  ✅ GET /api/controle/apports → 401
+  ✅ POST /api/controle/apports → 401
+  ✅ GET /api/controle/clients → 401
+  ✅ GET /api/controle/courriers → 401
+  ✅ GET /api/controle/compta → 401
+  ✅ POST /api/controle/compta → 401
+  ✅ GET /api/controle/reglages → 401
+  ✅ POST /api/controle/reglages → 401
+  ✅ GET /api/controle/releve → 401
+  ✅ POST /api/controle/releve → 401
+  ✅ POST /api/controle/crons/relances/relancer → 401
+  ✅ POST /api/support/demande → 401
+  ✅ GET /api/securite/acces-support → 401
+  ✅ GET /api/controle/support/lire → 401
+  ✅ POST /api/controle/support/demander → 401
+  ✅ GET /api/controle/support?artisan=00000000-0000-0000-0000-000000000000 → 401
+  ✅ GET /api/controle/audience → 401
+  ✅ GET /api/controle/audience?historique=1 → 401
+  ✅ GET /api/controle/sites → 401
+  ✅ POST /api/controle/sites/:id → 401
+  ✅ GET /api/controle/cerveaux → 401
+  ✅ POST /api/devis/auto → 401
+  ✅ POST /api/inventaire/recherche → 401
+  ✅ POST /api/inventaire/recherche/retenir → 401
+  ✅ GET /api/plateforme/apparence → 401
+  ✅ POST /api/plateforme/apparence → 401
+  ✅ GET /api/stripe/portail → 401
+  ✅ POST /api/stripe/portail → 401
+  ✅ POST /api/devis/:id/envoyer → 401
+  ✅ GET /api/devis/:id/pdf → 401
+  ✅ POST /api/factures/:id/avoir → 401
+  ✅ GET /api/factures/:id/facturx → 401
+  ✅ GET /api/factures/:id/pdf → 401
+  ✅ POST /api/leads/photos → 401
+  ✅ GET /api/controle/demandes → 401
+  ✅ POST /api/controle/demandes → 401
+  ✅ GET /api/controle/jauges → 404
+  ✅ GET /api/controle/packs → 401
+  ✅ POST /api/controle/packs/:id → 401
+  ✅ GET /api/controle/pause → 401
+  ✅ POST /api/controle/pause → 401
+  ✅ GET /api/controle/pilotage → 404
+  ✅ GET /api/controle/station → 404
+  ✅ POST /api/controle/pilotage/agents/:id → 404
+  ✅ POST /api/controle/pilotage/appels/:id → 404
+  ✅ POST /api/controle/pilotage/consignes → 404
+  ✅ POST /api/controle/pilotage/decisions/:id → 404
+  ✅ POST /api/controle/pilotage/gestes → 404
+  ✅ GET /api/controle/tresorerie → 401
+  ✅ ⭑ les 43 routes du Poste de contrôle sont toutes dans PROTEGEES
+
+── 1 bis. L’ancien poste de contrôle n’existe plus (fuite mesurée le 07/09)
+  ✅ /api/control/stats n’existe plus → 404
+  ✅ /api/control/inbox n’existe plus → 404
+  ✅ /api/control/security n’existe plus → 404
+  ✅ /api/control/stripe n’existe plus → 404
+  ✅ /api/control/agents n’existe plus → 404
+  ✅ /api/control/run-agent n’existe plus → 404
+
+── 2. Crons : sans le secret, 401 — les deux planifiés et les deux appelés
+  ✅ /api/cron/relances sans secret → 401
+  ✅ /api/cron/relances avec un faux secret → 401
+  ✅ /api/canaux/relever sans secret → 401
+  ✅ /api/canaux/relever avec un faux secret → 401
+  ✅ /api/cron/alertes sans secret → 401
+  ✅ /api/cron/alertes avec un faux secret → 401
+  ✅ /api/cron/purge-comptes sans secret → 401
+  ✅ /api/cron/purge-comptes avec un faux secret → 401
+
+── 3. Routes publiques : une entrée vide est refusée proprement (400/404/429), jamais 500
+  ✅ POST /api/account/inscription à vide → 401
+  ✅ POST /api/contact à vide → 400
+  ✅ POST /api/leads/contact à vide → 400
+  ✅ POST /api/conversation/regles à vide → 400
+  ✅ POST /api/plat-event à vide → 400
+  ✅ POST /api/audience à vide → 204
+  ✅ POST /api/report-error à vide → 200
+
+── 4. Pages orphelines : elles répondent, sans marque parasite
+  ✅ /onboarding répond (client : renvoie vers /login sans session)
+  ✅ /reset-password présente le formulaire
+  ✅ /site/[slug]/infos-legales de la démo : 200, « Presti » seulement dans la liste des sous-traitants
+
+── 5. Capacités d’offre : la grille dit vrai (lib/plans)
+  ✅ plateforme.comptes_clients : ouvert à partir de « gratuit », fermé en dessous
+  ✅ devis.prix_artisan : ouvert à partir de « gratuit », fermé en dessous
+  ✅ devis.ia : ouvert à partir de « gratuit », fermé en dessous
+  ✅ factures.electronique : ouvert à partir de « gratuit », fermé en dessous
+  ✅ canaux.email : ouvert à partir de « gratuit », fermé en dessous
+  ✅ plateforme.domaine_perso : ouvert à partir de « gratuit », fermé en dessous
+  ✅ site.domaine_perso : ouvert à partir de « gratuit », fermé en dessous
+  ✅ export : ouvert à partir de « studio », fermé en dessous (offreMinimale = studio)
+  ✅ plateforme.personnalisation_avancee : ouvert à partir de « studio », fermé en dessous (offreMinimale = studio)
+  ✅ inventaire.recherche_ia : ouvert à partir de « studio », fermé en dessous (offreMinimale = studio)
+  ✅ canaux.whatsapp : ouvert à partir de « studio », fermé en dessous (offreMinimale = studio)
+  ✅ plateforme.ia.expert : ouvert à partir de « signature », fermé en dessous (offreMinimale = signature)
+  ✅ canaux.reseaux : ouvert à partir de « signature », fermé en dessous (offreMinimale = signature)
+  ✅ support.prioritaire : ouvert à partir de « signature », fermé en dessous (offreMinimale = signature)
+  ✅ site.essentiel : fermé à toutes les offres, le site se commande à part (offreMinimale = null)
+  ✅ site.pro : fermé à toutes les offres, le site se commande à part (offreMinimale = null)
+  ✅ site.signature : fermé à toutes les offres, le site se commande à part (offreMinimale = null)
+  ✅ site.slides3d : fermé à toutes les offres, le site se commande à part (offreMinimale = null)
+
+── 6. Drapeaux : un drapeau baissé est invisible en production (§7)
+  ✅ landingVideo=false ↔ vidéo de la démo absente sur la landing
+  ✅ aideCentre=true ↔ /aide 200
+  ✅ inventaireOcr baissé → aucun « OCR » vendu sur la landing ni la FAQ
+  ✅ canauxWhatsapp / canauxReseaux baissés → pas vendus sur la landing
+  ✅ siteCommandeVente=true ↔ « Commander mon site » présent sur la landing
+  ✅ chaque drapeau de lib/flags est dans la carte
+  ✅ aimantSite est lu par le code
+  ✅ busAgents=true ↔ GET /api/agents/etat → 401
+  ✅ app/api/agents/taches/route.ts lit lui-même « busAgents » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/taches/prendre/route.ts lit lui-même « busAgents » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/taches/[id]/rendre/route.ts lit lui-même « busAgents » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/evenements/route.ts lit lui-même « busAgents » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/decisions/route.ts lit lui-même « busAgents » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/battement/route.ts lit lui-même « busAgents » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/etat/route.ts lit lui-même « busAgents » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/tic/route.ts lit lui-même « busAgents » (le bouton caché ne ferme pas la porte)
+  ✅ constructeurSite=false ↔ POST /api/site/generate → 404
+  ✅ app/api/site/generate/route.ts lit lui-même « constructeurSite » (le bouton caché ne ferme pas la porte)
+  ✅ codeEmail=true ↔ POST /api/auth/code → 400
+  ✅ app/api/auth/code/route.ts lit lui-même « codeEmail » (le bouton caché ne ferme pas la porte)
+  ✅ pushWeb=true ↔ POST /api/push/abonner → 401
+  ✅ app/api/push/abonner/route.ts lit lui-même « pushWeb » (le bouton caché ne ferme pas la porte)
+  ✅ direction=true ↔ GET /api/controle/etat → 401
+  ✅ lib/direction/garde.ts lit lui-même « direction » (le bouton caché ne ferme pas la porte)
+  ✅ apports=true ↔ GET /api/controle/apports → 401
+  ✅ app/api/controle/apports/route.ts lit lui-même « apports » (le bouton caché ne ferme pas la porte)
+  ✅ actionsArtisan=true ↔ POST /api/controle/clients/00000000-0000-4000-8000-000000000000/action → 401
+  ✅ app/api/controle/clients/[id]/action/route.ts lit lui-même « actionsArtisan » (le bouton caché ne ferme pas la porte)
+  ✅ messagerie=true ↔ GET /api/controle/courriers → 401
+  ✅ app/api/controle/courriers/route.ts lit lui-même « messagerie » (le bouton caché ne ferme pas la porte)
+  ✅ comptabilite=true ↔ GET /api/controle/compta → 401
+  ✅ app/api/controle/compta/route.ts lit lui-même « comptabilite » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/controle/releve/route.ts lit lui-même « comptabilite » (le bouton caché ne ferme pas la porte)
+  ✅ inventaireRecherche=true ↔ POST /api/inventaire/recherche → 401
+  ✅ app/api/inventaire/recherche/route.ts lit lui-même « inventaireRecherche » (le bouton caché ne ferme pas la porte)
+  ✅ pushNatif est lu par le code
+  ✅ mfa est lu par le code
+  ✅ plateformeRegles est lu par le code
+  ✅ aideVisites est lu par le code
+  ✅ aideCentre est lu par le code
+  ✅ landingVideo est lu par le code
+  ✅ landingDemoSite est lu par le code
+  ✅ siteCommande=true ↔ GET /api/site/commander/brouillon → 401
+  ✅ app/api/site/commander/brouillon/route.ts lit lui-même « siteCommande » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/site/commander/route.ts lit lui-même « siteCommande » (le bouton caché ne ferme pas la porte)
+  ✅ app/site/commander/page.tsx lit lui-même « siteCommande » (le bouton caché ne ferme pas la porte)
+  ✅ siteCommandeVente est lu par le code
+  ✅ siteAchatPublic=false ↔ POST /api/site/commander/public → 404
+  ✅ app/api/site/commander/public/route.ts lit lui-même « siteAchatPublic » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/site/commander/public/renvoyer/route.ts lit lui-même « siteAchatPublic » (le bouton caché ne ferme pas la porte)
+  ✅ supportArtisan=true ↔ POST /api/controle/support/demander → 401
+  ✅ app/api/controle/support/demander/route.ts lit lui-même « supportArtisan » (le bouton caché ne ferme pas la porte)
+  ✅ audience=true ↔ POST /api/audience → 204
+  ✅ app/api/audience/route.ts lit lui-même « audience » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/controle/audience/route.ts lit lui-même « audience » (le bouton caché ne ferme pas la porte)
+  ✅ pilotage=false ↔ GET /api/controle/pilotage → 404
+  ✅ app/api/controle/pilotage/route.ts lit lui-même « pilotage » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/controle/pilotage/decisions/[id]/route.ts lit lui-même « pilotage » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/controle/pilotage/appels/[id]/route.ts lit lui-même « pilotage » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/controle/pilotage/agents/[nom]/route.ts lit lui-même « pilotage » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/controle/pilotage/consignes/route.ts lit lui-même « pilotage » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/controle/pilotage/gestes/route.ts lit lui-même « pilotage » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/controle/station/route.ts lit lui-même « pilotage » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/reunion/route.ts lit lui-même « pilotage » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/reunion/chiffres/route.ts lit lui-même « pilotage » (le bouton caché ne ferme pas la porte)
+  ✅ demandesEcosysteme=true ↔ GET /api/controle/demandes → 401
+  ✅ app/api/controle/demandes/route.ts lit lui-même « demandesEcosysteme » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/demandes/route.ts lit lui-même « demandesEcosysteme » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/agents/demandes/[id]/route.ts lit lui-même « demandesEcosysteme » (le bouton caché ne ferme pas la porte)
+  ✅ prospectsEntrant=false ↔ POST /api/prospects/entrant → 404
+  ✅ app/api/prospects/entrant/route.ts lit lui-même « prospectsEntrant » (le bouton caché ne ferme pas la porte)
+  ✅ packPub=false ↔ GET /api/pubs/commander/brouillon → 404
+  ✅ app/api/pubs/commander/brouillon/route.ts lit lui-même « packPub » (le bouton caché ne ferme pas la porte)
+  ✅ app/api/pubs/commander/route.ts lit lui-même « packPub » (le bouton caché ne ferme pas la porte)
+  ✅ packPubVente est lu par le code
+  ✅ ecommerce : baissé, et il ne ferme rien — branche réservée : rien n’est construit, attend les trois vidéos sources de Benj
+  ✅ inventaireOcr : baissé, et il ne ferme rien — rien ne le lit : la preuve est qu’aucun « OCR » n’est vendu (test plus haut)
+  ✅ canauxWhatsapp est lu par le code
+  ✅ canauxReseaux est lu par le code
+  ✅ plateformePersona est lu par le code
+
+── 7. Aucune suite « gratuite » ne fait répondre le modèle (la réserve ne se dépense pas la nuit)
+  ✅ aucune suite non-IA ne fait répondre le modèle
+
+✅ 193 réussis, 0 échoués
