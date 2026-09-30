@@ -1,0 +1,13 @@
+# Provenance du moteur de la carte
+
+Fichier factice du témoin du lot k (fiche 026-170) : il n'est là que pour faire passer la partie `provenance` du juge
+`station-claw3d-qa`. Aucun fichier ci-dessous n'est du code de Claw3D ; le tableau dit, dans la forme attendue de la
+vraie livraison, ce qui serait copié ou modifié.
+
+- Projet d'origine : Claw3D, licence MIT, notice dans `LICENSE-claw3d.txt` (Luke The Dev).
+- Commit d'origine : 0565b78.
+
+| Fichier | État | Origine (chemin dans Claw3D) |
+|---|---|---|
+| `app/controle/station/moteur/claw3d/OfficeSceneBridge.ts` | modifié | pont de la scène (factice) |
+| `lib/avatars/profile.ts` | modifié | profil d'avatar (factice) |

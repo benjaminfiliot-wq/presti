@@ -1,0 +1,24 @@
+'use client'
+
+// La carte de la station. Baissé, le drapeau garde le cadre d'attente et la liste des salles ; levé, le moteur (Phaser)
+// ne se charge que par next/dynamic, côté navigateur, et seulement par moteur/entree.tsx.
+import dynamic from 'next/dynamic'
+import { actif } from '@/lib/flags'
+
+export type PropsCarte = { equipage?: unknown; tapis?: unknown; bulles?: unknown; reglages?: unknown; carte?: unknown }
+
+const Moteur = dynamic(() => import('./moteur/entree'), { ssr: false })
+
+export default function Carte(props: PropsCarte) {
+  if (!actif('stationCarte')) {
+    const agents = (Array.isArray(props.equipage) ? props.equipage : []) as { position?: { salle?: string } | null }[]
+    const salles = [...new Set(agents.map((a) => a?.position?.salle).filter((s): s is string => typeof s === 'string'))].sort()
+    return (
+      <section data-station-attente>
+        <p>La carte arrive avec sa fiche.</p>
+        <ul>{salles.map((s) => <li key={s}>{s}</li>)}</ul>
+      </section>
+    )
+  }
+  return <section data-station-carte style={{ width: '100%' }}><Moteur {...props} /></section>
+}

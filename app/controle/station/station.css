@@ -1,0 +1,238 @@
+/* La station Mission Control (fiche 026-111). Les jetons --mc-* sont déclarés ICI et nulle part ailleurs, sur .mc : c'est la
+   seule feuille de Presti où le bleu et le violet ont droit de cité (décision R8) ; le corail de la console reste celui
+   d'Attention. Les surcharges (thème actif, réglages) se posent sur le seul nœud .mc, jamais sur :root ni sur body. */
+
+.mc {
+  --mc-fond: #0A0C11;
+  --mc-neon-1: #6C8CFF;
+  --mc-neon-2: #8A6BFF;
+  --mc-actif: #3EE0F0;
+  --mc-ok: #38CD8C;
+  --mc-warn: #E4B45A;
+  --mc-crit: #F0776A;
+  --mc-argent: #F2C879;
+  --mc-survol: rgba(108, 140, 255, 0.16);
+  --mc-texte: #E8ECF5;
+  --mc-texte-doux: #9AA3B8;
+  --mc-panneau: rgba(10, 12, 17, 0.84);
+  --mc-bord: rgba(108, 140, 255, 0.32);
+  --mc-mono: var(--font-mono, ui-monospace), ui-monospace, "JetBrains Mono", monospace;
+
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  background: var(--mc-fond);
+  color: var(--mc-texte);
+  font-family: var(--font-body, system-ui), system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.35;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+.mc, .mc *, .mc *::before, .mc *::after { box-sizing: border-box; }
+.mc h2, .mc p, .mc ul { margin: 0; padding: 0; }
+.mc small { font-size: 12px; }
+.mc ul { list-style: none; }
+.mc button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+.mc a { color: inherit; text-decoration: none; }
+.mc button:focus-visible, .mc a:focus-visible, .mc [role="button"]:focus-visible { outline: 2px solid var(--mc-actif); outline-offset: 1px; }
+.mc button:disabled { cursor: default; opacity: 0.55; }
+
+/* ── Attente (vérification de l'accès) ─────────────────────────────────────────────────────────────────────────────── */
+.mc-attente { display: grid; place-items: center; }
+.mc-attente-boite { padding: 16px 20px; border: 1px solid var(--mc-bord); border-radius: 10px; color: var(--mc-texte-doux); text-align: center; }
+.mc-attente-boite button { margin-top: 10px; min-height: 44px; padding: 0 16px; border: 1px solid var(--mc-neon-1); border-radius: 8px; }
+
+/* ── Les zones : titres, états, pannes ─────────────────────────────────────────────────────────────────────────────── */
+.mc-zone { padding: 10px 12px 12px; }
+.mc-zone-tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mc-titre-zone { margin: 0 0 8px; font-family: var(--font-display, system-ui), system-ui, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; color: var(--mc-neon-1); }
+.mc-etat { color: var(--mc-texte-doux); overflow-wrap: anywhere; }
+.mc-panne { color: var(--mc-crit); }
+.mc-icone { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 6px; color: var(--mc-texte-doux); transition: background 0.15s, color 0.15s; }
+.mc-icone:hover { background: var(--mc-survol); color: var(--mc-texte); }
+
+/* ── La barre (bureau) : 36 px puis 44 px ──────────────────────────────────────────────────────────────────────────── */
+.mc-barre { position: fixed; top: 0; left: 0; right: 0; height: 80px; z-index: 30; background: rgba(10, 12, 17, 0.96); box-shadow: 0 1px 0 var(--mc-bord), 0 0 22px rgba(138, 107, 255, 0.22); }
+.mc-ligne1 { height: 36px; display: flex; align-items: center; gap: 12px; padding: 0 12px; white-space: nowrap; }
+.mc-ligne2 { height: 44px; display: flex; flex-wrap: wrap; align-content: center; column-gap: 18px; padding: 0 12px; overflow: hidden; }
+.mc-retour { color: var(--mc-texte-doux); }
+.mc-retour:hover { color: var(--mc-texte); }
+.mc-titre { font-family: var(--font-display, system-ui), system-ui, sans-serif; font-weight: 700; letter-spacing: 0.12em; }
+.mc-version { font-family: var(--mc-mono); color: var(--mc-texte-doux); }
+.mc-ariane { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--mc-texte-doux); }
+.mc-lecture { padding: 1px 8px; border: 1px solid var(--mc-warn); border-radius: 10px; color: var(--mc-warn); }
+.mc-temps { font-family: var(--mc-mono); color: var(--mc-texte); }
+.mc-nuit { color: var(--mc-neon-2); }
+.mc-sante { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; letter-spacing: 0.08em; }
+.mc-sante::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--mc-texte-doux); }
+.mc-sante[data-etat="en ligne"]::before { background: var(--mc-ok); box-shadow: 0 0 8px var(--mc-ok); }
+.mc-sante[data-etat="dégradée"]::before { background: var(--mc-warn); }
+.mc-sante[data-etat="hors ligne"]::before { background: var(--mc-crit); }
+.mc [data-cloche] { font-family: var(--mc-mono); color: var(--mc-texte); }
+.mc [data-auto] { display: inline-flex; align-items: center; height: 22px; padding: 0 10px; border: 1px solid var(--mc-texte-doux); border-radius: 11px; background: transparent; color: var(--mc-texte-doux); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
+.mc [data-auto][data-actif="oui"] { background: var(--mc-ok); border-color: var(--mc-ok); color: var(--mc-fond); }
+.mc [data-notifications][data-etat="actif"] { color: var(--mc-ok); }
+.mc [data-notifications][data-etat="refuse"] { color: var(--mc-crit); }
+
+/* Les compteurs : étiquette en petites capitales, valeur en mono colorée. */
+.mc-cpt { display: flex; align-items: baseline; gap: 6px; min-width: 0; height: 22px; line-height: 22px; white-space: nowrap; }
+.mc-cpt-l { font-size: 12px; letter-spacing: 0.06em; color: var(--mc-texte-doux); }
+.mc-cpt-v { font-family: var(--mc-mono); font-size: 13px; font-weight: 700; color: var(--mc-actif); }
+.mc-cpt-n { font-size: 12px; color: var(--mc-texte-doux); }
+.mc-cpt[data-compteur="encaisse_mois"] .mc-cpt-v,
+.mc-cpt[data-compteur="depense_mois"] .mc-cpt-v,
+.mc-cpt[data-compteur="marge_mois"] .mc-cpt-v { color: var(--mc-argent); }
+.mc-cpt[data-ton="alerte"] .mc-cpt-v, .mc-cpt[data-ton="alerte"] .mc-cpt-n { color: var(--mc-crit); }
+.mc-cpt[data-ton="muet"] .mc-cpt-v { color: var(--mc-texte-doux); font-weight: 500; }
+
+/* ── Les colonnes (bureau) ─────────────────────────────────────────────────────────────────────────────────────────── */
+.mc.mc-bureau { --mc-col-g: 280px; --mc-col-d: 320px; }
+@media (min-width: 1440px) { .mc.mc-bureau { --mc-col-g: 300px; --mc-col-d: 340px; } }
+
+.mc-col { position: fixed; top: 80px; bottom: 44px; z-index: 5; display: flex; flex-direction: column; min-height: 0; background: rgba(10, 12, 17, 0.84); }
+.mc-col-g { left: 0; width: var(--mc-col-g); box-shadow: 1px 0 0 var(--mc-bord); }
+.mc-col-d { right: 0; width: var(--mc-col-d); box-shadow: -1px 0 0 var(--mc-bord); }
+.mc-col.mc-replie { width: 44px; }
+.mc-replier { flex: 0 0 auto; align-self: flex-end; width: 32px; height: 26px; margin: 4px 6px 0; border-radius: 6px; color: var(--mc-texte-doux); text-align: center; transition: background 0.15s; }
+.mc-replier:hover { background: var(--mc-survol); color: var(--mc-texte); }
+.mc-replie .mc-replier { align-self: center; margin: 4px 0 0; }
+.mc-col [data-zone] { overflow-x: hidden; overflow-y: auto; }
+.mc-col [data-zone="equipage"] { flex: 1 1 0; min-height: 120px; }
+.mc-col [data-zone="attention"] { flex: 0 1 auto; max-height: 45%; box-shadow: 0 -1px 0 var(--mc-bord); }
+.mc-col [data-zone="commandement"] { flex: 0 1 auto; max-height: 60%; }
+.mc-col [data-station-journal] { flex: 1 1 0; min-height: 120px; overflow-y: auto; box-shadow: 0 -1px 0 var(--mc-bord); }
+
+/* Mise en page flottante (thème Vaisseau) : l'équipage à gauche, Attention à droite sous la barre, le Commandement en
+   panneau droit (⚑ l'ouvre, × le ferme), le journal en bas à gauche. */
+.mc[data-mise-en-page="flottante"] .mc-col-g { bottom: 268px; }
+.mc-flot { position: fixed; z-index: 5; }
+.mc-flot-att { top: 92px; right: 12px; width: var(--mc-col-d); max-height: calc(100% - 92px - 56px); overflow-y: auto; }
+.mc-flot-att [data-zone="attention"] { padding: 0; }
+.mc[data-cmd-ouvert="oui"] .mc-flot-att { right: calc(var(--mc-col-d) + 24px); }
+.mc-flot-cmd { top: 92px; right: 12px; z-index: 8; width: var(--mc-col-d); max-height: calc(100% - 92px - 56px); overflow-y: auto; background: var(--mc-panneau); border: 1px solid var(--mc-bord); border-radius: 10px; box-shadow: 0 0 24px rgba(138, 107, 255, 0.22); }
+.mc-flot-journal { left: 12px; bottom: 56px; z-index: 6; width: calc(var(--mc-col-g) - 12px); height: 200px; overflow-y: auto; background: var(--mc-panneau); border: 1px solid var(--mc-bord); border-radius: 10px; }
+
+/* ── La carte : plein cadre entre la barre et le bandeau, SOUS les colonnes ─────────────────────────────────────────── */
+.mc-bureau [data-station-carte] {
+  position: fixed; left: 0; right: 0; top: 80px; bottom: 44px; z-index: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 16px calc(var(--mc-col-d) + 16px) 16px calc(var(--mc-col-g) + 16px);
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(108, 140, 255, 0.10), transparent 60%),
+    radial-gradient(ellipse at 75% 80%, rgba(138, 107, 255, 0.10), transparent 60%),
+    var(--mc-fond);
+}
+.mc-carte-attente { margin-bottom: 14px; color: var(--mc-texte-doux); font-family: var(--mc-police-pixel, var(--font-mono, ui-monospace)), monospace; font-size: 14px; }
+.mc-salles { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+.mc-salles button { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--mc-bord); border-radius: 8px; background: rgba(10, 12, 17, 0.6); font-family: var(--mc-police-pixel, var(--font-body, system-ui)), system-ui, sans-serif; font-size: 14px; transition: background 0.15s, border-color 0.15s; }
+.mc-salles button:hover:not(:disabled) { background: var(--mc-survol); border-color: var(--mc-neon-1); }
+
+.mc-toast { position: fixed; left: calc(var(--mc-col-g) + 12px); bottom: 56px; z-index: 6; display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 12px; border: 1px solid var(--mc-crit); border-radius: 8px; background: var(--mc-panneau); color: var(--mc-crit); }
+.mc-toast button { min-width: 26px; height: 26px; border-radius: 6px; color: var(--mc-texte-doux); }
+.mc-toast button:hover { background: var(--mc-survol); color: var(--mc-texte); }
+
+/* ── L'équipage ─────────────────────────────────────────────────────────────────────────────────────────────────────── */
+.mc-commandant { display: flex; flex-direction: column; gap: 1px; margin-bottom: 10px; padding: 8px 10px; border: 1px solid var(--mc-neon-2); border-radius: 8px; background: rgba(138, 107, 255, 0.10); }
+.mc-commandant small { color: var(--mc-texte-doux); }
+.mc-agent { display: flex; flex-direction: column; gap: 2px; margin-bottom: 6px; padding: 8px 10px; border: 1px solid var(--mc-bord); border-radius: 8px; background: rgba(10, 12, 17, 0.5); cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+.mc-agent:hover { background: var(--mc-survol); border-color: var(--mc-neon-1); }
+.mc-agent-tete { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.mc-agent-tete b { white-space: nowrap; }
+.mc-agent-tete small { color: var(--mc-texte-doux); overflow-wrap: anywhere; }
+.mc-point { flex: 0 0 auto; width: 10px; height: 10px; border-radius: 50%; background: var(--mc-texte-doux); }
+.mc-point[data-point="cyan"] { background: var(--mc-actif); box-shadow: 0 0 6px var(--mc-actif); }
+.mc-point[data-point="jaune"] { background: var(--mc-warn); }
+.mc-point[data-point="rouge"] { background: var(--mc-crit); }
+.mc-agent-act { overflow-wrap: anywhere; }
+.mc-agent-alerte { color: var(--mc-crit); overflow-wrap: anywhere; }
+.mc-agent-meta { display: flex; justify-content: space-between; gap: 8px; color: var(--mc-texte-doux); font-size: 12px; }
+.mc-agent-meta [data-cout] { font-family: var(--mc-mono); }
+.mc-agent-modele { color: var(--mc-neon-1); font-family: var(--mc-mono); font-size: 12px; overflow-wrap: anywhere; }
+.mc-rail { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; }
+.mc-pastille { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; }
+.mc-pastille:hover { background: var(--mc-survol); }
+
+/* ── Attention ─────────────────────────────────────────────────────────────────────────────────────────────────────── */
+.mc-att { --c: var(--mc-neon-1); display: flex; align-items: center; gap: 10px; margin-bottom: 6px; padding: 8px 10px; border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); border-left: 4px solid var(--c); border-radius: 8px; background: color-mix(in srgb, var(--c) 12%, rgba(10, 12, 17, 0.9)); }
+.mc-att[data-couleur="rouge"] { --c: var(--mc-crit); }
+.mc-att[data-couleur="orange"] { --c: var(--accent, #D97757); }
+.mc-att[data-couleur="jaune"] { --c: var(--mc-warn); }
+.mc-att[data-couleur="bleu"] { --c: var(--mc-neon-1); }
+a.mc-att { transition: background 0.15s; }
+a.mc-att:hover { background: color-mix(in srgb, var(--c) 22%, rgba(10, 12, 17, 0.9)); }
+.mc-att-nombre { flex: 0 0 auto; min-width: 22px; font-family: var(--mc-mono); font-size: 16px; font-weight: 700; color: var(--c); text-align: center; }
+.mc-att-titre { overflow-wrap: anywhere; }
+.mc-autres { margin-top: 4px; color: var(--mc-texte-doux); }
+
+/* ── Commandement ──────────────────────────────────────────────────────────────────────────────────────────────────── */
+.mc-objectif { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.mc-objectif-l { font-weight: 700; overflow-wrap: anywhere; }
+.mc-signature { color: var(--mc-neon-2); letter-spacing: 0.12em; }
+.mc-barre-progres { height: 6px; border-radius: 3px; background: rgba(154, 163, 184, 0.22); overflow: hidden; }
+.mc-barre-progres > span { display: block; height: 100%; background: linear-gradient(90deg, var(--mc-neon-1), var(--mc-neon-2)); }
+.mc-missions { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.mc-missions li { display: flex; justify-content: space-between; gap: 10px; }
+.mc-missions li span { overflow-wrap: anywhere; }
+.mc-missions li b { flex: 0 0 auto; font-family: var(--mc-mono); color: var(--mc-actif); }
+.mc-missions li[data-atteinte="oui"] b { color: var(--mc-ok); }
+.mc-niveau { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.mc-niveau .mc-barre-progres { flex: 1 1 0; }
+.mc-niveau small { color: var(--mc-texte-doux); font-family: var(--mc-mono); }
+.mc-succes { margin-bottom: 8px; color: var(--mc-texte-doux); }
+.mc-succes b { color: var(--mc-warn); }
+.mc-compte-rendu { display: flex; flex-direction: column; gap: 3px; padding-left: 10px; border-left: 2px solid var(--mc-neon-2); color: var(--mc-texte-doux); }
+
+/* ── Le journal (cadre d'attente) ──────────────────────────────────────────────────────────────────────────────────── */
+.mc-journal { min-height: 0; }
+
+/* ── Le bandeau du bas ─────────────────────────────────────────────────────────────────────────────────────────────── */
+.mc-bandeau { position: fixed; left: 0; right: 0; bottom: 0; height: 44px; z-index: 30; display: flex; align-items: center; gap: 14px; padding: 0 12px; background: rgba(10, 12, 17, 0.96); box-shadow: 0 -1px 0 var(--mc-bord); }
+.mc-nav { flex: 0 0 auto; display: flex; gap: 2px; }
+.mc-nav button { height: 30px; padding: 0 10px; border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; color: var(--mc-texte-doux); transition: background 0.15s, color 0.15s; }
+.mc-nav button:hover { background: var(--mc-survol); color: var(--mc-texte); }
+.mc-nav button[aria-current="page"] { background: var(--mc-survol); color: var(--mc-actif); }
+.mc-elements { flex: 1 1 0; min-width: 0; display: flex; justify-content: flex-end; gap: 22px; overflow: hidden; white-space: nowrap; }
+.mc-element { color: var(--mc-texte); }
+.mc-element::before { content: "●"; margin-right: 6px; color: var(--mc-ok); }
+.mc-element[data-nouveau] { animation: mc-entree 0.5s ease-out both; }
+.mc-pastille-bandeau { flex: 0 0 auto; padding: 4px 12px; border: 1px solid var(--mc-argent); border-radius: 14px; font-family: var(--mc-mono); font-weight: 700; color: var(--mc-argent); white-space: nowrap; }
+@keyframes mc-entree { from { transform: translateX(60px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ── Les avis : direct en pause, dernière lecture en échec ─────────────────────────────────────────────────────────── */
+.mc-avis { position: fixed; top: 92px; left: 50%; z-index: 40; max-width: calc(100% - 24px); padding: 8px 16px; border: 1px solid var(--mc-warn); border-radius: 8px; background: var(--mc-fond); color: var(--mc-warn); transform: translateX(-50%); text-align: center; }
+.mc-avis-panne { top: auto; bottom: 56px; border-color: var(--mc-crit); color: var(--mc-crit); }
+
+/* ── Téléphone (moins de 1024 px) ──────────────────────────────────────────────────────────────────────────────────── */
+.mc-barre-tel { position: fixed; top: 0; left: 0; right: 0; height: 88px; z-index: 30; background: var(--mc-fond); box-shadow: 0 1px 0 var(--mc-bord); }
+.mc-tel-l1 { height: 44px; display: flex; align-items: center; gap: 12px; padding: 0 12px; }
+.mc-tel-titre { margin-right: auto; font-family: var(--font-display, system-ui), system-ui, sans-serif; font-size: 13px; letter-spacing: 0.1em; }
+.mc-tel .mc-sante::before { width: 12px; height: 12px; }
+.mc-tel-l2 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; height: 44px; padding: 0 6px; text-align: left; }
+.mc-tel-l2 .mc-cpt { flex-direction: column; align-items: flex-start; justify-content: center; gap: 0; height: 44px; padding: 0 6px; line-height: 1.15; white-space: normal; overflow-wrap: anywhere; }
+.mc-tel-l2 .mc-cpt-n { display: none; }
+.mc-tel-main { position: fixed; top: 88px; bottom: calc(64px + env(safe-area-inset-bottom, 0px)); left: 0; right: 0; overflow-x: hidden; overflow-y: auto; padding: 12px; }
+.mc-tel .mc-zone { padding: 0 0 12px; }
+.mc-tel [data-station-carte] { position: relative; margin-bottom: 12px; padding: 12px; border: 1px solid var(--mc-bord); border-radius: 10px; background: rgba(10, 12, 17, 0.6); }
+.mc-tel .mc-salles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mc-tel .mc-salles button { overflow-wrap: anywhere; }
+.mc-tel .mc-toast { position: static; margin-bottom: 12px; }
+.mc-tel button, .mc-tel a[href] { min-height: 44px; }
+.mc-tel .mc-att, .mc-tel .mc-agent { min-height: 44px; }
+.mc-tel-onglets { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); height: calc(64px + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--mc-fond); box-shadow: 0 -1px 0 var(--mc-bord); }
+.mc-tel-onglets button { position: relative; display: flex; align-items: center; justify-content: center; height: 64px; min-height: 64px; text-align: center; font-size: 12px; font-weight: 600; color: var(--mc-texte-doux); }
+.mc-tel-onglets button[aria-selected="true"] { color: var(--mc-actif); box-shadow: inset 0 2px 0 var(--mc-actif); }
+.mc-badge { position: absolute; top: 6px; right: 8px; min-width: 18px; padding: 0 5px; border-radius: 9px; background: var(--accent, #D97757); color: var(--mc-fond); font-family: var(--mc-mono); font-size: 12px; font-weight: 700; line-height: 18px; text-align: center; }
+.mc-plus { display: flex; flex-direction: column; gap: 8px; }
+.mc-plus button, .mc-plus a { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border: 1px solid var(--mc-bord); border-radius: 10px; background: rgba(10, 12, 17, 0.6); }
+.mc-feuille { position: fixed; inset: 0; z-index: 45; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; background: var(--mc-fond); }
+.mc-feuille-tete { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; }
+.mc-feuille-tete h2 { font-family: var(--font-display, system-ui), system-ui, sans-serif; font-size: 16px; }
+.mc-feuille-tete button { padding: 0 16px; border: 1px solid var(--mc-neon-1); border-radius: 8px; }
+.mc-feuille-grille { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 12px 16px; }
+.mc-feuille-grille .mc-cpt { flex-direction: column; align-items: flex-start; gap: 2px; height: auto; padding: 8px 10px; border: 1px solid var(--mc-bord); border-radius: 8px; line-height: 1.25; white-space: normal; overflow-wrap: anywhere; }
+
+/* ── Mouvement réduit : aucune transition ni animation ─────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .mc, .mc *, .mc *::before, .mc *::after { animation: none !important; transition: none !important; }
+}

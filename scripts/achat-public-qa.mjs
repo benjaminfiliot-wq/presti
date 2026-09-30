@@ -70,6 +70,7 @@
 // Sortie : une ligne par critère, puis « achat-public-qa : PASS|FAIL ». Code 0 seulement si tout est vert ; 1 sinon ; 2 si
 // l'appel est invalide ou un préalable absent. Écriture seulement sous .orchestre/travail/achat-public-qa/.
 import fs from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { fileURLToPath } from 'node:url'
@@ -78,6 +79,11 @@ import {
   corpsDeFonction, differentsDeHead, jugerPreuvesVides, lancerEnfant, resultatEnfant, importer, figerHorloge, jugerDans,
   typecheck, chargerEnvLocal, fichePass, baseAvant, diffLignes, lancer, egalProfond, marqueEssai,
 } from './fixtures/026-livraison-tresor/commun.mjs'
+
+/** Le texte d'un fichier à une révision du dépôt réel (null s'il n'y existe pas). */
+function texteGit(rev, chemin) {
+  try { return execFileSync('git', ['show', `${rev}:${chemin}`], { cwd: R, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }) } catch { return null }
+}
 import { preparerEnfantB, jeuB, DOUBLES_B, requeteJson, corpsJson } from './fixtures/026-livraison-tresor/b/enfant.mjs'
 
 const JUGE = 'achat-public-qa'
@@ -550,10 +556,21 @@ if (o.enfant === 'complet') {
       const base = baseAvant(FERMETURE, /siteAchatPublic/)
       if (base.texte === null) e.push(`${FERMETURE} : aucune version sans siteAchatPublic dans l'historique`)
       else {
-        const d = diffLignes(base.texte, cur)
-        for (const x of d.retraits.filter((l) => l.texte.trim())) e.push(`${FERMETURE} (base ${base.commit.slice(0, 7)}) : ligne ${x.i + 1} retirée ou changée : « ${court(x.texte, 70)} »`)
+        // Tant que la fiche n'est pas commitée, la base est HEAD et on juge l'arbre contre lui. Dès qu'elle l'est (HEAD porte déjà
+        // siteAchatPublic), d'autres fiches ont légitimement touché la carte depuis : on juge alors le commit qui l'a introduite,
+        // contre son parent (la garde d'origine, inchangée), et non plus l'arbre contre une version d'avant de plusieurs fiches.
+        let avant = base.texte, apres = cur, etiquette = `base ${base.commit.slice(0, 7)}`
+        const tete = texteGit('HEAD', FERMETURE)
+        if (tete !== null && /siteAchatPublic/.test(tete)) {
+          const intro = execFileSync('git', ['log', '--format=%H', '-S', 'siteAchatPublic', '--', FERMETURE], { cwd: R, encoding: 'utf8' }).split(/\r?\n/).filter(Boolean).at(-1)
+          const texteIntro = intro ? texteGit(intro, FERMETURE) : null, texteParent = intro ? texteGit(`${intro}^`, FERMETURE) : null
+          if (texteIntro === null || texteParent === null) e.push(`${FERMETURE} : le commit qui a introduit siteAchatPublic est introuvable dans l'historique`)
+          else { avant = texteParent; apres = texteIntro; etiquette = `introduction ${intro.slice(0, 7)}` }
+        }
+        const d = diffLignes(avant, apres)
+        for (const x of d.retraits.filter((l) => l.texte.trim())) e.push(`${FERMETURE} (${etiquette}) : ligne ${x.i + 1} retirée ou changée : « ${court(x.texte, 70)} »`)
         const ajouts = d.ajouts.filter((l) => l.texte.trim() && !/^\s*\/\//.test(l.texte))
-        if (ajouts.length !== 1 || !/siteAchatPublic/.test(ajouts[0].texte)) e.push(`${FERMETURE} (base ${base.commit.slice(0, 7)}) : ${ajouts.length} ligne(s) de code ajoutée(s) (${ajouts.slice(0, 3).map((l) => `« ${court(l.texte, 50)} »`).join(', ')}), seule la ligne siteAchatPublic attendue`)
+        if (ajouts.length !== 1 || !/siteAchatPublic/.test(ajouts[0].texte)) e.push(`${FERMETURE} (${etiquette}) : ${ajouts.length} ligne(s) de code ajoutée(s) (${ajouts.slice(0, 3).map((l) => `« ${court(l.texte, 50)} »`).join(', ')}), seule la ligne siteAchatPublic attendue`)
       }
       const bloc = /export\s+const\s+FLAGS\s*=\s*\{([\s\S]*?)\}\s*as\s+const/.exec(flags)
       const drapeaux = bloc ? [...bloc[1].matchAll(/^\s*([A-Za-z_]\w*)\s*:\s*(?:true|false)\b/gm)].map((m) => m[1]) : []

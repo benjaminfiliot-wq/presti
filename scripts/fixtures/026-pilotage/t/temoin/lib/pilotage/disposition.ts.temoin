@@ -1,0 +1,106 @@
+// lib/pilotage/disposition.ts — [TÉMOIN du lot t, fiche 026-171 : l'implémentation de référence minimale et correcte de 026-173,
+// écrite par Claude Code. Ce n'est PAS le module livré.]
+//
+// validerDisposition(theme, disposition) : la place des salles dans les emplacements du thème, pour la grille du bureau ET pour
+// la grille `portrait`. Une salle par emplacement et un seul emplacement par salle ; le graphe des coursives connexe depuis le
+// Commandement ; le tapis de la prospection continu ; la salle réservée E-commerce ni déplaçable ni renommable.
+// Module pur : aucun import hors de lib/pilotage/, ni horloge, ni hasard, ni réseau.
+import { SALLES, SALLE_RESERVEE } from './equipage'
+import type { Coursives, Emplacement, Tapis, Theme } from './theme'
+
+export type Disposition = {
+  salles: Record<string, string> // salle → clé d'emplacement (les mêmes clés d'emplacement au bureau et en portrait)
+  plaques?: Record<string, string> // salle → texte de plaque
+  coursives?: Coursives // remplace celles du thème (bureau)
+  tapis?: Tapis // remplace celui du thème
+  portrait?: { coursives?: Coursives } // remplace celles du bloc `portrait` du thème
+}
+export type VerdictDisposition = { ok: true } | { ok: false; raison: string }
+
+const refus = (raison: string): VerdictDisposition => ({ ok: false, raison })
+const plaqueDe = (salle: string, d: Disposition) => d.plaques?.[salle] ?? SALLES.find((s) => s.cle === salle)?.plaque ?? salle
+const nommer = (p: string) => (/^Salle/.test(p) ? `La ${p}` : `La salle « ${p} »`)
+
+function distance(p: { x: number; y: number }, a: { x: number; y: number }, b: { x: number; y: number }) {
+  const dx = b.x - a.x, dy = b.y - a.y, n = dx * dx + dy * dy
+  const t = n === 0 ? 0 : Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / n))
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy))
+}
+
+/** Le graphe d'une grille : les composantes touchées par la porte de chaque emplacement. Rend une raison si une arête est bancale. */
+function grapheDe(emplacements: Emplacement[], c: Coursives): { portes: Map<string, Set<number>>; morceaux: number } | string {
+  const noeuds = new Map(c.noeuds.map((n) => [n.id, n]))
+  const parent = new Map(c.noeuds.map((n) => [n.id, n.id]))
+  const racine = (i: string): string => { while (parent.get(i) !== i) i = parent.get(i) as string; return i }
+  for (const a of c.aretes) {
+    if (!noeuds.has(a.de) || !noeuds.has(a.a)) return `Une coursive relie un nœud inconnu (« ${noeuds.has(a.de) ? a.a : a.de} »).`
+    parent.set(racine(a.de), racine(a.a))
+  }
+  const numero = new Map<string, number>()
+  for (const n of c.noeuds) { const r = racine(n.id); if (!numero.has(r)) numero.set(r, numero.size) }
+  const portes = new Map<string, Set<number>>()
+  for (const e of emplacements) {
+    const s = new Set<number>()
+    for (const a of c.aretes) if (distance(e.porte, noeuds.get(a.de) as { x: number; y: number }, noeuds.get(a.a) as { x: number; y: number }) <= a.largeur / 2) s.add(numero.get(racine(a.de)) as number)
+    portes.set(e.cle, s)
+  }
+  return { portes, morceaux: numero.size }
+}
+
+function verifierGrille(emplacements: Emplacement[], c: Coursives, d: Disposition, prefixe: string): VerdictDisposition {
+  const g = grapheDe(emplacements, c)
+  if (typeof g === 'string') return refus(`${prefixe}${g}`)
+  const depart = g.portes.get(d.salles.commandement)
+  if (!depart || depart.size === 0) return refus(`${prefixe}Le Commandement n'est plus relié aux coursives.`)
+  for (const s of SALLES) {
+    const cles = g.portes.get(d.salles[s.cle])
+    if (!cles || ![...cles].some((x) => depart.has(x))) return refus(`${prefixe}${nommer(plaqueDe(s.cle, d))} n'est plus reliée au reste.`)
+  }
+  if (g.morceaux > 1) return refus(`${prefixe}Les coursives sont coupées en plusieurs morceaux.`)
+  return { ok: true }
+}
+
+export function validerDisposition(theme: Theme, disposition: Disposition): VerdictDisposition {
+  try {
+    if (!theme || !Array.isArray(theme.emplacements)) return refus('Le thème est illisible.')
+    if (!disposition || typeof disposition !== 'object' || !disposition.salles || typeof disposition.salles !== 'object' || Array.isArray(disposition.salles)) return refus('La disposition est illisible.')
+    const d = disposition
+    const reservee = theme.emplacements.find((e) => e.reservee)
+    if (!reservee) return refus('Le thème n\'a pas d\'emplacement réservé.')
+    const cles = new Set(theme.emplacements.map((e) => e.cle))
+    const connues = new Set([...SALLES.map((s) => s.cle), SALLE_RESERVEE.cle])
+    for (const [salle, cle] of Object.entries(d.salles)) {
+      if (!connues.has(salle)) return refus(`La salle « ${salle} » n'existe pas.`)
+      if (!cles.has(cle)) return refus(`L'emplacement « ${String(cle)} » n'existe pas dans ce thème.`)
+    }
+    if (d.salles[SALLE_RESERVEE.cle] !== undefined && d.salles[SALLE_RESERVEE.cle] !== reservee.cle) return refus(`La salle réservée ${SALLE_RESERVEE.plaque} ne se déplace pas.`)
+    if (d.plaques && d.plaques[SALLE_RESERVEE.cle] !== undefined && d.plaques[SALLE_RESERVEE.cle] !== SALLE_RESERVEE.plaque) return refus(`La salle réservée ${SALLE_RESERVEE.plaque} ne se renomme pas.`)
+    const occupant = new Map<string, string>()
+    for (const s of SALLES) {
+      const cle = d.salles[s.cle]
+      if (cle === undefined) return refus(`${nommer(s.plaque)} n'a pas d'emplacement.`)
+      if (cle === reservee.cle) return refus(`L'emplacement réservé à ${SALLE_RESERVEE.plaque} n'accueille aucune autre salle.`)
+      const deja = occupant.get(cle)
+      if (deja) return refus(`Deux salles occupent l'emplacement « ${cle} » (${plaqueDe(deja, d)} et ${plaqueDe(s.cle, d)}).`)
+      occupant.set(cle, s.cle)
+    }
+    const c = d.coursives ?? theme.coursives
+    const bureau = verifierGrille(theme.emplacements, c, d, '')
+    if (!bureau.ok) return bureau
+    if (theme.portrait) {
+      const p = verifierGrille(theme.portrait.emplacements, d.portrait?.coursives ?? theme.portrait.coursives, d, 'Sur le téléphone : ')
+      if (!p.ok) return p
+    }
+    const tapis = d.tapis ?? theme.tapis
+    const pas = theme.grille.pas
+    for (let i = 1; i < tapis.trace.length; i++) {
+      const dx = Math.abs(tapis.trace[i].x - tapis.trace[i - 1].x), dy = Math.abs(tapis.trace[i].y - tapis.trace[i - 1].y)
+      if (dx > pas || dy > pas || (dx === 0 && dy === 0)) return refus(`Le tapis de la prospection est rompu entre les points ${i - 1} et ${i}.`)
+    }
+    const sur = new Set(tapis.trace.map((p) => `${p.x},${p.y}`))
+    for (const e of tapis.etapes) if (!sur.has(`${e.x},${e.y}`)) return refus(`Le tapis de la prospection est rompu : l'étape « ${e.cle} » n'est plus sur son tracé.`)
+    return { ok: true }
+  } catch (e) {
+    return refus(`La disposition est illisible (${String((e as Error).message).slice(0, 60)}).`)
+  }
+}

@@ -1,0 +1,42 @@
+'use client'
+
+// La SEULE porte du moteur : Carte.tsx charge ce module (et lui seul), après son drapeau et la garde de la page.
+import { useEffect, useRef } from 'react'
+import { Adaptateur } from './adaptateur'
+import { OfficeSceneBridge } from './claw3d/OfficeSceneBridge'
+import { chargerTheme, cleValide } from './theme/charger'
+import type { PropsCarte } from './types'
+
+export default function Entree(props: PropsCarte) {
+  const hote = useRef<HTMLDivElement>(null)
+  const adaptateur = useRef<Adaptateur | null>(null)
+  const dernieres = useRef(props)
+  dernieres.current = props
+
+  useEffect(() => {
+    let annule = false
+    let arret: (() => void) | null = null
+    void (async () => {
+      try {
+        const cle = cleValide((props.reglages as { theme?: unknown } | null | undefined)?.theme)
+        const theme = await chargerTheme(cle)
+        if (annule || !hote.current) return
+        const pont = new OfficeSceneBridge()
+        const { demarrerHote } = await import('./scene/hote')
+        const h = await demarrerHote(hote.current, theme, pont)
+        if (annule) { h.detruire(); return }
+        arret = () => h.detruire()
+        adaptateur.current = new Adaptateur(pont, theme)
+        adaptateur.current.pousser(dernieres.current)
+      } catch (e) {
+        console.error('carte de la station indisponible', e)
+      }
+    })()
+    return () => { annule = true; adaptateur.current = null; arret?.() }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => { adaptateur.current?.pousser(props) })
+
+  return <div ref={hote} style={{ width: '100%' }} />
+}

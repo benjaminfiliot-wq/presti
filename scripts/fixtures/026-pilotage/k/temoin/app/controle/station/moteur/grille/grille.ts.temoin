@@ -1,0 +1,110 @@
+// La grille de marche, dérivée du thème, et la recherche de chemin (témoin du lot k). Module pur : ni Phaser ni DOM.
+import type { Emplacement, Point, Theme } from '../types'
+
+export type Grille = { pas: number; colonnes: number; lignes: number; libre: boolean[] }
+
+const rectangleDe = (e: Emplacement) => {
+  if (e.forme.type === 'rectangle') return { x: e.forme.x ?? 0, y: e.forme.y ?? 0, l: e.forme.l ?? 0, h: e.forme.h ?? 0 }
+  const pts = e.forme.points ?? []
+  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1])
+  const x = Math.min(...xs), y = Math.min(...ys)
+  return { x, y, l: Math.max(...xs) - x, h: Math.max(...ys) - y }
+}
+
+/** Les cases libres : l'intérieur de chaque salle (hors murs), sa porte, et les bandes des coursives. La salle réservée reste fermée. */
+export function construireGrille(theme: Theme): Grille {
+  const { pas, largeur, hauteur } = theme.grille
+  const colonnes = Math.floor(largeur / pas), lignes = Math.floor(hauteur / pas)
+  const libre: boolean[] = new Array(colonnes * lignes).fill(false)
+  const poser = (cx: number, cy: number, v: boolean) => { if (cx >= 0 && cy >= 0 && cx < colonnes && cy < lignes) libre[cy * colonnes + cx] = v }
+  const noeuds = new Map(theme.coursives.noeuds.map((n) => [n.id, n] as const))
+  for (const a of theme.coursives.aretes) {
+    const p = noeuds.get(a.de), q = noeuds.get(a.a)
+    if (!p || !q) continue
+    const epaisseur = Math.max(1, Math.round(a.largeur / pas))
+    const x0 = Math.min(p.x, q.x) / pas, x1 = Math.max(p.x, q.x) / pas, y0 = Math.min(p.y, q.y) / pas, y1 = Math.max(p.y, q.y) / pas
+    if (p.y === q.y) { for (let cx = x0; cx <= x1; cx++) for (let cy = y0; cy < y0 + epaisseur; cy++) poser(cx, cy, true) }
+    else if (p.x === q.x) { for (let cx = x0; cx < x0 + epaisseur; cx++) for (let cy = y0; cy <= y1; cy++) poser(cx, cy, true) }
+  }
+  for (const e of theme.emplacements) {
+    const r = rectangleDe(e)
+    if (e.reservee) { for (let cx = r.x / pas; cx < (r.x + r.l) / pas; cx++) for (let cy = r.y / pas; cy < (r.y + r.h) / pas; cy++) poser(cx, cy, false); continue }
+    for (const c of casesInterieures(e, pas)) poser(c.x / pas, c.y / pas, true)
+    poser(e.porte.x / pas, e.porte.y / pas, true)
+  }
+  return { pas, colonnes, lignes, libre }
+}
+
+/** Les cases à l'intérieur des murs d'une salle (haut-gauche de chaque case, en pixels logiques). */
+export function casesInterieures(e: Emplacement, pas: number): Point[] {
+  const r = rectangleDe(e), out: Point[] = []
+  for (let y = r.y + pas; y < r.y + r.h - pas; y += pas) for (let x = r.x + pas; x < r.x + r.l - pas; x += pas) out.push({ x, y })
+  return out
+}
+
+/** L'emplacement où le thème range une salle par défaut (null si elle n'a pas de place). */
+export function emplacementDe(theme: Theme, salle: string): Emplacement | null {
+  const d = theme.defauts.find((x) => x.salle === salle)
+  return theme.emplacements.find((e) => e.cle === (d ? d.emplacement : salle)) ?? null
+}
+
+/** La case d'un acteur de rang `rang` dans une salle : le poste d'abord, puis les cases voisines. Null : salle inconnue ou réservée. */
+export function place(theme: Theme, salle: string, rang: number): Point | null {
+  const e = emplacementDe(theme, salle)
+  if (!e || e.reservee || !e.poste) return null
+  const p = e.poste
+  const cases = casesInterieures(e, theme.grille.pas).sort((a, b) => Math.abs(a.x - p.x) + Math.abs(a.y - p.y) - (Math.abs(b.x - p.x) + Math.abs(b.y - p.y)) || a.y - b.y || a.x - b.x)
+  return cases.length ? cases[((rang % cases.length) + cases.length) % cases.length] : null
+}
+
+/** Les destinations : la porte de chaque salle et son poste. La salle réservée n'en a aucune. */
+export function destinations(theme: Theme): { salles: Record<string, Point>; postes: Record<string, Point> } {
+  const salles: Record<string, Point> = {}, postes: Record<string, Point> = {}
+  for (const d of theme.defauts) {
+    const e = emplacementDe(theme, d.salle)
+    if (!e || e.reservee || !e.poste) continue
+    salles[d.salle] = e.porte
+    postes[d.salle] = e.poste
+  }
+  return { salles, postes }
+}
+
+/** Le tapis est continu : deux points consécutifs du tracé à une case l'un de l'autre, et chaque étape sur le tracé. */
+export function tapisContinu(theme: Theme): boolean {
+  const { trace, etapes } = theme.tapis, pas = theme.grille.pas
+  if (trace.length < 2) return false
+  for (let i = 1; i < trace.length; i++) if (Math.abs(trace[i].x - trace[i - 1].x) + Math.abs(trace[i].y - trace[i - 1].y) !== pas) return false
+  return etapes.every((s) => trace.some((p) => p.x === s.x && p.y === s.y))
+}
+
+/** A* sur quatre voisins, sans hasard : le plus petit coût estimé, puis le plus petit indice. Chemin en cases (haut-gauche, en pixels), départ exclu ; null : inatteignable. */
+export function astar2D(g: Grille, de: Point, vers: Point): Point[] | null {
+  const A = { cx: Math.floor(de.x / g.pas), cy: Math.floor(de.y / g.pas) }, B = { cx: Math.floor(vers.x / g.pas), cy: Math.floor(vers.y / g.pas) }
+  const libre = (cx: number, cy: number) => cx >= 0 && cy >= 0 && cx < g.colonnes && cy < g.lignes && g.libre[cy * g.colonnes + cx]
+  if (!libre(A.cx, A.cy) || !libre(B.cx, B.cy)) return null
+  const a = A.cy * g.colonnes + A.cx, b = B.cy * g.colonnes + B.cx
+  if (a === b) return []
+  const h = (i: number) => Math.abs((i % g.colonnes) - B.cx) + Math.abs(Math.floor(i / g.colonnes) - B.cy)
+  const cout = new Map<number, number>([[a, 0]]), pere = new Map<number, number>(), fermes = new Set<number>()
+  const ouverts: { i: number; f: number }[] = [{ i: a, f: h(a) }]
+  while (ouverts.length) {
+    let m = 0
+    for (let k = 1; k < ouverts.length; k++) if (ouverts[k].f < ouverts[m].f || (ouverts[k].f === ouverts[m].f && ouverts[k].i < ouverts[m].i)) m = k
+    const { i } = ouverts.splice(m, 1)[0]
+    if (fermes.has(i)) continue
+    fermes.add(i)
+    if (i === b) {
+      const chemin: Point[] = []
+      for (let c = b; c !== a; c = pere.get(c) as number) chemin.unshift({ x: (c % g.colonnes) * g.pas, y: Math.floor(c / g.colonnes) * g.pas })
+      return chemin
+    }
+    const cx = i % g.colonnes, cy = Math.floor(i / g.colonnes)
+    for (const [dx, dy] of [[0, -1], [1, 0], [0, 1], [-1, 0]]) {
+      const nx = cx + dx, ny = cy + dy
+      if (!libre(nx, ny)) continue
+      const ni = ny * g.colonnes + nx, c2 = (cout.get(i) as number) + 1
+      if (c2 < (cout.get(ni) ?? Infinity)) { cout.set(ni, c2); pere.set(ni, i); ouverts.push({ i: ni, f: c2 + h(ni) }) }
+    }
+  }
+  return null
+}

@@ -1,18 +1,18 @@
-# Carte du code — presti (2026-09-30T15:24:53Z)
+# Carte du code — presti (2026-09-30T19:48:37Z)
 
 > Générée par `node scripts/orchestre.mjs contexte` depuis le code, jamais à la main. Une page : ce que le code FAIT.
 > Pourquoi on l’a décidé vit dans le vault (`../SaaS` : `CLAUDE.md`, `Decisions/`, `Récap-Projet.md`). Où en est le chantier : `.orchestre/digest.md`.
 
 SaaS pour les artisans du bâtiment : plateforme de conversation, devis, factures, site à la demande Pile : Next.js + Supabase + Vercel.
 
-## Pages (39) — `app/**/page.tsx`
+## Pages (40) — `app/**/page.tsx`
 - `/abonnement` : ·
 - `/aide` : ·
 - `/cgu` : ·
 - `/confidentialite` : ·
 - `/connexion` : lien
 - `/contact` : ·
-- `/controle` : ·
+- `/controle` : ·, station
 - `/dashboard` : ·
 - `/devis` : [id], ·
 - `/direction` : ·
@@ -36,7 +36,7 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/studio` : commander/[jeton]
 - `/tarifs` : ·
 
-## API (137) — `app/api/**/route.ts`, préfixe `/api`
+## API (138) — `app/api/**/route.ts`, préfixe `/api`
 - `/account` : delete [GET POST DELETE], inscription [POST], slug [GET POST]
 - `/agents` : battement [POST], decisions [POST GET], demandes/[id] [PATCH], demandes [GET], etat [GET], evenements [POST GET], taches/[id]/rendre [POST], taches/prendre [POST], taches [POST], tic [GET], usine/depot [POST], usine/entree [POST]
 - `/audience` : · [POST]
@@ -45,7 +45,7 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/contact` : · [POST]
 - `/controle` : a-faire [GET], alertes/[id]/acquitter [POST], apports/[id]/statut [POST], apports [GET POST PATCH], audience [GET], barre [GET], cerveaux [GET], chiffres [GET], clients/[id]/action [POST], clients/[id] [GET], clients [GET], compta [GET POST], courriers/[fil]/action [POST], courriers/[fil] [GET], courriers/relever [POST], courriers [GET], crons/[nom]/relancer [POST], demandes [POST GET], etat [GET], fil [GET], jauges [GET], journal [GET], packs/[id] [POST], packs [GET], pause [GET POST], pilotage/agents/[nom] [POST], pilotage/appels/[id] [POST], pilotage/consignes [POST], pilotage/decisions/[id] [POST], pilotage/gestes [POST], pilotage [GET], recherche [GET], reconfirmer [POST], reglages [GET POST], releve [GET POST], securite/bans [GET POST DELETE], sites/[id] [POST], sites [GET], support/demander [POST], support/lire [GET], support [GET POST], tresorerie [GET]
 - `/conversation` : devis [POST], regles [POST], · [GET POST], stream [POST]
-- `/cron` : alertes [GET], contenu [GET], juge-faits [GET], livraison [GET], maquettes-purge [GET], purge-comptes [GET], recenseur [GET], relances [GET], vigie-meta [GET]
+- `/cron` : alertes [GET], contenu [GET], crieur [GET], juge-faits [GET], livraison [GET], maquettes-purge [GET], purge-comptes [GET], recenseur [GET], relances [GET], vigie-meta [GET]
 - `/devis` : [id]/envoyer [POST], [id]/pdf [GET], [id] [POST DELETE], auto [POST], generer [POST], · [POST]
 - `/domain` : · [GET POST DELETE]
 - `/donnees` : export [GET], · [GET POST]
@@ -73,15 +73,15 @@ SaaS pour les artisans du bâtiment : plateforme de conversation, devis, facture
 - `/usine` : porteur/oppositions [GET POST], porteur/rendu [POST], porteur/travail [GET]
 - `/webhooks` : meta [GET POST]
 
-## Drapeaux — `lib/flags.ts` (31) : une fonctionnalité non finie n'apparaît pas
-busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformeRegles=true · aideVisites=true · aideCentre=true · landingVideo=false · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · siteCommande=true · siteCommandeVente=true · siteAchatPublic=false · landingDemoSite=true · audience=true · pilotage=false · packPub=false · packPubVente=false · demandesEcosysteme=true · prospectsEntrant=false
+## Drapeaux — `lib/flags.ts` (33) : une fonctionnalité non finie n'apparaît pas
+busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pushNatif=true · mfa=true · direction=true · apports=true · actionsArtisan=true · messagerie=true · comptabilite=true · supportArtisan=true · inventaireOcr=false · inventaireRecherche=true · plateformeRegles=true · aideVisites=true · aideCentre=true · landingVideo=false · plateformePersona=true · canauxWhatsapp=false · canauxReseaux=false · siteCommande=true · siteCommandeVente=true · siteAchatPublic=false · landingDemoSite=true · audience=true · pilotage=false · packPub=false · packPubVente=false · demandesEcosysteme=true · prospectsEntrant=false · aimantSite=false · ecommerce=false
 
 ## Formules — `lib/plans.ts`
 - plans : gratuit (Essai, 0 €/mois, BASE) · essentiel (Essentiel, 29 €/mois, BASE) · studio (Studio, 59 €/mois, STUDIO) · signature (Signature, 99 €/mois, SIGNATURE) · business (Business, 0 €/mois, SIGNATURE)
 - capacités (24) : plateforme.conversation, plateforme.ia.auto, plateforme.ia.expert, plateforme.comptes_clients, plateforme.domaine_perso, plateforme.personnalisation_avancee, plateforme.regles, site.essentiel, site.pro, site.signature, site.slides3d, site.domaine_perso, devis.ia, devis.prix_artisan, factures, factures.electronique, inventaire.stock, inventaire.recherche_ia, canaux.email, canaux.whatsapp, canaux.reseaux, relances, export, support.prioritaire
 - grille complète (16 lignes) : Page de conversation à votre marque · Assistant IA · Comptes clients (lien magique, historique) · Personnalisation · Votre nom de domaine sur la page de conversation · Devis chiffrés par l’IA, sur vos prix · Factures + facture électronique · Relances automatiques · Stock par lieu, scan, seuils · Recherche IA chez vos fournisseurs · Votre boîte email branchée · WhatsApp · Réseaux sociaux · Crédits chaque mois · Export de vos données · Support prioritaire
 
-## Bibliothèque — `lib/**/*.ts` (188 fichiers, exports nommés)
+## Bibliothèque — `lib/**/*.ts` (189 fichiers, exports nommés)
 - `lib/abonnementSync.ts` (3) : planDepuisMontant, Alignement, alignerSurAbonnement
 - `lib/agents/acquisition/affirmations.ts` (4) : Affirmation, AFFIRMATIONS_APPROUVEES, AFFIRMATIONS_PERMISES, AFFIRMATIONS_RETIREES
 - `lib/agents/acquisition/conformite.ts` (6) : ProspectJuge, EtatMaquette, EntreeJuge, VerdictConformite, jugerMessage, jugerModele
@@ -152,6 +152,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 - `lib/crieur/composer.ts` (4) : PHRASES_GABARIT, cleSemaine, horairesSemaine, composerLot
 - `lib/crieur/faits.ts` (2) : Fait, FAITS
 - `lib/crieur/juge.ts` (7) : PHRASE_AIMANT, Canal, PublicationAJuger, FaitPourJuge, ContexteJuge, VerdictJuge, jugerPublication
+- `lib/crieur/publora.ts` (2) : connexions, creerPublication
 - `lib/devisAuto.ts` (3) : SourceDevis, ResultatDevisAuto, creerDevisBrouillonPourLead
 - `lib/devisPdfData.ts` (3) : mentionsReglement, MENTION_TVA_DEBITS, buildPdfData
 - `lib/devisTotals.ts` (2) : LigneCalc, computeTotals
@@ -274,7 +275,7 @@ busAgents=true · constructeurSite=false · codeEmail=true · pushWeb=true · pu
 ## Migrations — `supabase/migrations` (116)
 - dernières : 0113_station_reglages.sql, 0114_contenu.sql, 0116_maquette_lien_objet.sql, 0117_ops_demandes.sql, 0120_ops_horloge_codes_nuls.sql
 
-## Scripts — `scripts/` (384 .mjs, dont 78 suites e2e)
+## Scripts — `scripts/` (390 .mjs, dont 78 suites e2e)
 
-## Orchestre — file : 39 · en cours : 0 · faites : 251 · refusées : 1
+## Orchestre — file : 39 · en cours : 0 · faites : 257 · refusées : 1
 

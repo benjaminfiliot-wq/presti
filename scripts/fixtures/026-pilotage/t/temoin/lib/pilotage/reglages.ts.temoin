@@ -1,0 +1,119 @@
+// lib/pilotage/reglages.ts — [TÉMOIN du lot t, fiche 026-171 : l'implémentation de référence minimale et correcte de 026-173,
+// écrite par Claude Code. Ce n'est PAS le module livré.]
+//
+// validerReglages (schéma fermé, bornes), fusionner (les réglages l'emportent clé par clé), appliquerReglages (les jetons --mc-*
+// et data-* sur le SEUL nœud qu'on lui passe, jamais du HTML). Module pur : aucun import hors de lib/pilotage/, ni horloge,
+// ni hasard, ni réseau.
+import { EQUIPAGE, SALLES, SALLE_RESERVEE } from './equipage'
+import { validerDisposition } from './disposition'
+import type { Theme } from './theme'
+
+export const CLES_REGLAGES = ['theme', 'mise_en_page', 'nuit', 'equipage', 'salles', 'couleurs', 'affichage'] as const
+export const TAILLE_MAX = 65536 // 64 Ko sérialisés
+export type Reglages = Partial<{
+  theme: 'station' | 'vaisseau'; mise_en_page: 'colonnes' | 'flottante'
+  nuit: { actif?: boolean; debut?: number; fin?: number }
+  equipage: Record<string, { nom?: string; avatar?: string; couleur?: string }>
+  salles: Record<string, { emplacement?: string; plaque?: string; teinte?: string }>
+  couleurs: Record<string, string>
+  affichage: { titre?: string; taille_plaques?: 'petite' | 'normale' | 'grande' }
+}>
+export type VerdictReglages = { ok: true; reglages: Reglages } | { ok: false; raisons: string[]; clesPermises: string[] }
+
+const RE_COULEUR = /^#[0-9A-Fa-f]{6}$/
+const RE_NOM = /^[\p{L}\p{N} '’-]{2,16}$/u // nom d'un agent : le nom technique ne change jamais
+const RE_PLAQUE = /^[\p{L}\p{N} '’-]{2,24}$/u
+const RE_TITRE = /^[\p{L}\p{N} '’-]{2,32}$/u
+const estObjet = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
+
+function objetFerme(v: unknown, chemin: string, permises: readonly string[], raisons: string[]): v is Record<string, unknown> {
+  if (!estObjet(v)) { raisons.push(`${chemin} : un objet est attendu`); return false }
+  for (const k of Object.keys(v)) if (!permises.includes(k)) raisons.push(`${chemin} : la clé « ${k} » est inconnue (permises : ${permises.join(', ')})`)
+  return true
+}
+
+export function validerReglages(brut: unknown, theme: Theme): VerdictReglages {
+  const raisons: string[] = []
+  const fin = (): VerdictReglages => (raisons.length ? { ok: false, raisons, clesPermises: [...CLES_REGLAGES] } : { ok: true, reglages: brut as Reglages })
+  try {
+    if (JSON.stringify(brut).length > TAILLE_MAX) { raisons.push('Les réglages dépassent 64 Ko.'); return fin() }
+  } catch { raisons.push('Les réglages ne sont pas sérialisables.'); return fin() }
+  if (!objetFerme(brut, 'reglages', CLES_REGLAGES, raisons)) return fin()
+  const r = brut
+  if ('theme' in r && r.theme !== 'station' && r.theme !== 'vaisseau') raisons.push('theme : « station » ou « vaisseau » attendu')
+  if ('mise_en_page' in r && r.mise_en_page !== 'colonnes' && r.mise_en_page !== 'flottante') raisons.push('mise_en_page : « colonnes » ou « flottante » attendu')
+  if ('nuit' in r && objetFerme(r.nuit, 'nuit', ['actif', 'debut', 'fin'], raisons)) {
+    const n = r.nuit as Record<string, unknown>
+    if ('actif' in n && typeof n.actif !== 'boolean') raisons.push('nuit.actif : un booléen est attendu')
+    for (const k of ['debut', 'fin']) if (k in n && !(typeof n[k] === 'number' && Number.isInteger(n[k]) && (n[k] as number) >= 0 && (n[k] as number) <= 23)) raisons.push(`nuit.${k} : une heure entière de 0 à 23 est attendue`)
+  }
+  const avatars = new Set((theme?.avatars ?? []).map((a) => a.cle))
+  if ('equipage' in r && objetFerme(r.equipage, 'equipage', Object.keys(EQUIPAGE), raisons)) {
+    for (const [agent, v] of Object.entries(r.equipage as Record<string, unknown>)) {
+      if (!Object.prototype.hasOwnProperty.call(EQUIPAGE, agent) || !objetFerme(v, `equipage.${agent}`, ['nom', 'avatar', 'couleur'], raisons)) continue
+      const a = v as Record<string, unknown>
+      if ('nom' in a && !(typeof a.nom === 'string' && RE_NOM.test(a.nom))) raisons.push(`equipage.${agent}.nom : 2 à 16 signes (lettres, chiffres, espace, tiret, apostrophe)`)
+      if ('avatar' in a && !(typeof a.avatar === 'string' && avatars.has(a.avatar))) raisons.push(`equipage.${agent}.avatar : hors de la liste du thème`)
+      if ('couleur' in a && !(typeof a.couleur === 'string' && RE_COULEUR.test(a.couleur))) raisons.push(`equipage.${agent}.couleur : une couleur #RRGGBB est attendue`)
+    }
+  }
+  let disposition: { salles: Record<string, string>; plaques: Record<string, string> } | null = null
+  if ('salles' in r && objetFerme(r.salles, 'salles', [...SALLES.map((s) => s.cle), SALLE_RESERVEE.cle], raisons)) {
+    const salles: Record<string, string> = Object.fromEntries((theme?.defauts ?? []).map((d) => [d.salle, d.emplacement]))
+    const plaques: Record<string, string> = {}
+    let propre = true
+    for (const [salle, v] of Object.entries(r.salles as Record<string, unknown>)) {
+      if (!objetFerme(v, `salles.${salle}`, ['emplacement', 'plaque', 'teinte'], raisons)) { propre = false; continue }
+      const s = v as Record<string, unknown>
+      if ('emplacement' in s) { if (typeof s.emplacement === 'string') salles[salle] = s.emplacement; else { raisons.push(`salles.${salle}.emplacement : une clé d'emplacement est attendue`); propre = false } }
+      if ('plaque' in s) { if (typeof s.plaque === 'string' && RE_PLAQUE.test(s.plaque)) plaques[salle] = s.plaque; else { raisons.push(`salles.${salle}.plaque : 2 à 24 signes (lettres, chiffres, espace, tiret, apostrophe)`); propre = false } }
+      if ('teinte' in s && !(typeof s.teinte === 'string' && RE_COULEUR.test(s.teinte))) raisons.push(`salles.${salle}.teinte : une couleur #RRGGBB est attendue`)
+    }
+    if (propre) disposition = { salles, plaques }
+  }
+  if ('couleurs' in r && objetFerme(r.couleurs, 'couleurs', Object.keys(theme?.palette ?? {}), raisons)) {
+    for (const [j, v] of Object.entries(r.couleurs as Record<string, unknown>)) if (Object.prototype.hasOwnProperty.call(theme.palette, j) && !(typeof v === 'string' && RE_COULEUR.test(v))) raisons.push(`couleurs.${j} : une couleur #RRGGBB est attendue`)
+  }
+  if ('affichage' in r && objetFerme(r.affichage, 'affichage', ['titre', 'taille_plaques'], raisons)) {
+    const a = r.affichage as Record<string, unknown>
+    if ('titre' in a && !(typeof a.titre === 'string' && RE_TITRE.test(a.titre))) raisons.push('affichage.titre : 2 à 32 signes (lettres, chiffres, espace, tiret, apostrophe)')
+    if ('taille_plaques' in a && !['petite', 'normale', 'grande'].includes(a.taille_plaques as string)) raisons.push('affichage.taille_plaques : « petite », « normale » ou « grande » attendu')
+  }
+  if (disposition && !raisons.length) {
+    const v = validerDisposition(theme, disposition)
+    if (!v.ok) raisons.push(`salles : ${v.raison}`)
+  }
+  return fin()
+}
+
+const INTERDITES = new Set(['__proto__', 'constructor', 'prototype'])
+/** Les réglages l'emportent clé par clé (en profondeur) ; une clé absente garde le défaut ; les entrées ne sont pas modifiées. */
+export function fusionner<T extends Record<string, unknown>>(defauts: T, reglages: Record<string, unknown> | null | undefined): T {
+  const copier = (v: unknown): unknown => (Array.isArray(v) ? v.map(copier) : estObjet(v) ? Object.fromEntries(Object.entries(v).filter(([k]) => !INTERDITES.has(k)).map(([k, x]) => [k, copier(x)])) : v)
+  const sortie = copier(defauts) as Record<string, unknown>
+  const poser = (cible: Record<string, unknown>, source: Record<string, unknown>) => {
+    for (const [k, v] of Object.entries(source)) {
+      if (INTERDITES.has(k) || v === undefined) continue
+      if (estObjet(v) && estObjet(cible[k])) poser(cible[k] as Record<string, unknown>, v)
+      else cible[k] = copier(v)
+    }
+  }
+  if (estObjet(reglages)) poser(sortie, reglages)
+  return sortie as T
+}
+
+type Noeud = { style?: { setProperty?: (k: string, v: string) => void }; setAttribute?: (k: string, v: string) => void }
+/** Pose les jetons --mc-* (la palette du thème, puis les couleurs réglées) et les data-* sur le SEUL nœud passé ; jamais du HTML. */
+export function appliquerReglages(noeud: Noeud | null | undefined, reglages: Reglages | null | undefined, theme: Theme): void {
+  if (!noeud || typeof noeud !== 'object') return
+  const choisies: Record<string, unknown> = estObjet(reglages?.couleurs) ? (reglages?.couleurs as Record<string, unknown>) : {}
+  for (const jeton of Object.keys(theme.palette)) {
+    const voulue = choisies[jeton]
+    const v = typeof voulue === 'string' && RE_COULEUR.test(voulue) ? voulue : (theme.palette as Record<string, string>)[jeton]
+    if (/^--mc-[a-z]+$/.test(jeton) && RE_COULEUR.test(v)) noeud.style?.setProperty?.(jeton, v)
+  }
+  noeud.setAttribute?.('data-mise-en-page', String(reglages?.mise_en_page ?? theme.mise_en_page))
+  noeud.setAttribute?.('data-nuit', reglages?.nuit?.actif ?? theme.nuit ? 'oui' : 'non')
+  if (typeof reglages?.affichage?.titre === 'string') noeud.setAttribute?.('data-titre', reglages.affichage.titre)
+  if (typeof reglages?.affichage?.taille_plaques === 'string') noeud.setAttribute?.('data-taille-plaques', reglages.affichage.taille_plaques)
+}

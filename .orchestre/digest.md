@@ -6,12 +6,12 @@
 - part lue = (entrée + création de cache) / (entrée + création de cache + produit) : ce qui entre de neuf dans le contexte (fichiers, sorties d’outils) face à ce que Claude Code écrit ; la relecture du cache (la conversation relue à chaque tour) est montrée à part — elle baisse avec /compact et /clear. Pas de prix : le tarif n’est pas connu.
 <!-- budget:fin -->
 
-# Digest — 2026-09-30T15:24:53Z
+# Digest — 2026-09-30T19:48:37Z
 
 > Généré par `node scripts/orchestre.mjs digest`. Une ligne par tâche, 100 au plus. C'est le seul fichier à lire pour savoir où en est le chantier.
 
-**Mesure** — déléguées (antigravity, codex) : 165 tâche(s) PASS, 207699 ligne(s) · faites par Claude Code : 94 tâche(s) PASS, 81823 ligne(s).
-**État** — file : 39 · en cours : 0 · faites : 251 · refusées : 1
+**Mesure** — déléguées (antigravity, codex) : 166 tâche(s) PASS, 207699 ligne(s) · faites par Claude Code : 96 tâche(s) PASS, 81823 ligne(s).
+**État** — file : 39 · en cours : 0 · faites : 257 · refusées : 1
 
 ## Attention (7)
 - 026-138 est DISJONCTÉE (trop d'échecs) : corrige, puis `node scripts/orchestre.mjs rejouer 026-138 --forcer`
@@ -63,6 +63,9 @@
 | 026-031 | feature | file | usine-codex-56 | — | Tenir l'article 3 bis des CGU : dater la suppression du compte sur ses sites en ligne quand la purge réussit et prévenir l'artisan, puis douze mois plus tard envoyer le lien du dossier, passer la commande à retiree, détacher le domaine et purger les fichiers à l'expiration, le tout dans tourLivraison |
 | 026-030 | feature | file | usine-codex-55 | — | Permettre de compléter le dossier d'une commande déjà payée et pas encore générée (GET/PUT /api/site/commander/complement, qui rattache d'abord la commande par l'adresse de la session), et ajouter au dossier la liste des prestations, exigée avant la fabrication par erreursFabrication sans toucher aux règles du paiement |
 | 026-240 | test | file | codex | — | Écrire scripts/juges-026-savoir-mutations.mjs, qui mute sur des copies isolées les quatre juges de la couche Savoir (savoir-socle-qa, savoir-recherche-qa, savoir-lecons-qa, savoir-reflexion-qa) une faute à la fois et prouve que chacune est prise par le critère attendu, témoin intact vert, jusqu'au vert du méta-juge de 026-001 |
+| 026-176 | feature | fait | codex | PASS | 2026-09-30T19:48:37Z · 0s · 0 l. |
+| 026-171 | test | fait | claude-code | PASS | 2026-09-30T18:49:06Z · 283s · 0 l. |
+| 026-170 | test | fait | claude-code | PASS | 2026-09-30T18:39:48Z · 1387s · 0 l. |
 | 026-194 | test | fait | claude-code | PASS | 2026-09-30T15:24:53Z · 8s · 142 l. |
 | 026-134 | feature | fait | claude-code | PASS | 2026-09-30T14:16:40Z · 0s · 0 l. |
 | 026-175 | feature | fait | claude-code | PASS | 2026-09-30T14:16:40Z · 1s · 0 l. |
@@ -78,6 +81,7 @@
 | 026-095 | feature | fait | codex | PASS | 2026-09-29T20:47:05Z · 147s · 0 l. |
 | 026-157 | feature | fait | codex | PASS | 2026-09-29T20:43:52Z · 182s · 0 l. |
 | 026-213 | feature | fait | codex | PASS | 2026-09-29T20:02:17Z · 9s · 0 l. |
+| 026-122 | feature | fait | usine-codex-196 | DISJONCTÉE | bail expiré : usine-codex-166 silencieux depuis 61 min \| bail expiré : usine-codex-184 silencieux depuis 61 min \| bail expiré : usine-codex-196 silencieux depuis 63 min |
 | 026-218 | feature | fait | codex | PASS | 2026-09-29T19:19:13Z · 140s · 0 l. |
 | 026-214 | feature | fait | codex | PASS | 2026-09-29T19:17:34Z · 21s · 0 l. |
 | 026-212 | feature | fait | codex | PASS | 2026-09-29T19:14:45Z · 44s · 0 l. |
@@ -120,9 +124,5 @@
 | 026-063 | feature | fait | claude-code | PASS | 2026-09-29T09:12:19Z · 382s · 0 l. |
 | 026-119 | feature | fait | codex | PASS | 2026-09-29T08:49:29Z · 6s · 0 l. |
 | 026-230 | feature | fait | codex | PASS | 2026-09-29T08:45:37Z · 292s · 0 l. |
-| 026-012 | test | fait | claude-code | PASS | 2026-09-29T04:50:35Z · 451s · 0 l. |
-| 026-023 | test | fait | claude-code | PASS | 2026-09-29T03:29:32Z · 90s · 0 l. |
-| 026-032 | test | fait | claude-code | PASS | 2026-09-29T03:10:02Z · 80s · 0 l. |
-| 026-029 | test | fait | claude-code | PASS | 2026-09-29T03:05:59Z · 51s · 0 l. |
 
-… 191 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
+… 197 tâche(s) de plus : voir `.orchestre/verdicts.jsonl`.
