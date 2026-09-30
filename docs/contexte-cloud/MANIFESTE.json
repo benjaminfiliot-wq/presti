@@ -5235,564 +5235,634 @@
       "sha256CopieAvantGit": "2d6908112ad8d25616f55690d864f7af4ec4b58ad9257727a0124ac402f4ea05"
     },
     {
-      "fichier": "presti/app/api/agents/battement/route.ts",
+      "fichier": "presti/app/api/agents/battement/route.ts.txt",
       "source": "presti/app/api/agents/battement/route.ts",
       "octets": 741,
       "sha256": "050fd7afa24c737ad59b1dd97140e1bfc858552a05fbe9018ac8a1d10bc46e3d",
       "masquages": 0,
-      "sha256CopieAvantGit": "2fda143c00e865bdfda486f7c73eb406c59ddea2d1f16bed79a2bf14710d56fb"
+      "sha256CopieAvantGit": "2fda143c00e865bdfda486f7c73eb406c59ddea2d1f16bed79a2bf14710d56fb",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/decisions/route.ts",
+      "fichier": "presti/app/api/agents/decisions/route.ts.txt",
       "source": "presti/app/api/agents/decisions/route.ts",
       "octets": 3915,
       "sha256": "6d5ccea61f32d2193aed5f1ada54232dbdf09058e2a56f241017b805b102118a",
       "masquages": 0,
-      "sha256CopieAvantGit": "89531999b1ce14acade9bec2024fe4ef3d31807150ef16d3f6cbeccdbdbb1219"
+      "sha256CopieAvantGit": "89531999b1ce14acade9bec2024fe4ef3d31807150ef16d3f6cbeccdbdbb1219",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/demandes/route.ts",
+      "fichier": "presti/app/api/agents/demandes/route.ts.txt",
       "source": "presti/app/api/agents/demandes/route.ts",
       "octets": 1509,
       "sha256": "e34c94a3624e0844a09577d730118206598fc3130298c11cf3aca186eeb88907",
       "masquages": 0,
-      "sha256CopieAvantGit": "e34c94a3624e0844a09577d730118206598fc3130298c11cf3aca186eeb88907"
+      "sha256CopieAvantGit": "e34c94a3624e0844a09577d730118206598fc3130298c11cf3aca186eeb88907",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/demandes/[id]/route.ts",
+      "fichier": "presti/app/api/agents/demandes/[id]/route.ts.txt",
       "source": "presti/app/api/agents/demandes/[id]/route.ts",
       "octets": 2453,
       "sha256": "7e19e556a28f277f75ca0d1594e2dfdfe67215f1e7869c96e7f76c51bbb7bcba",
       "masquages": 0,
-      "sha256CopieAvantGit": "7e19e556a28f277f75ca0d1594e2dfdfe67215f1e7869c96e7f76c51bbb7bcba"
+      "sha256CopieAvantGit": "7e19e556a28f277f75ca0d1594e2dfdfe67215f1e7869c96e7f76c51bbb7bcba",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/etat/route.ts",
+      "fichier": "presti/app/api/agents/etat/route.ts.txt",
       "source": "presti/app/api/agents/etat/route.ts",
       "octets": 710,
       "sha256": "0f1bd78fbfa9b65976b3fbecc8804e53a0403099ffa639334ff213fda57f9f61",
       "masquages": 0,
-      "sha256CopieAvantGit": "b26ba8a26c33767ffde0ff8405c94207d66b229df5ae3d4f1fb0d19786ec8e50"
+      "sha256CopieAvantGit": "b26ba8a26c33767ffde0ff8405c94207d66b229df5ae3d4f1fb0d19786ec8e50",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/evenements/route.ts",
+      "fichier": "presti/app/api/agents/evenements/route.ts.txt",
       "source": "presti/app/api/agents/evenements/route.ts",
       "octets": 2632,
       "sha256": "67cc83da333938ad54d3cdb490d142dadbf07f65d7bc0b825e94d41fbe1f0882",
       "masquages": 0,
-      "sha256CopieAvantGit": "8d1e09784d7828400c8c1fbebaa1d2034f022966ee4460570af1b9786bf6281e"
+      "sha256CopieAvantGit": "8d1e09784d7828400c8c1fbebaa1d2034f022966ee4460570af1b9786bf6281e",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/reunion/chiffres/route.ts",
+      "fichier": "presti/app/api/agents/reunion/chiffres/route.ts.txt",
       "source": "presti/app/api/agents/reunion/chiffres/route.ts",
       "octets": 1063,
       "sha256": "ee0f5a859739b8e341ddc94b596a9359f4d86f6c483919c8c1e7465d19f3eb54",
       "masquages": 0,
-      "sha256CopieAvantGit": "9fcc20e263a4e6cb2d5c0edd31b361f8478007ce0435002309a4a3c9579764b6"
+      "sha256CopieAvantGit": "9fcc20e263a4e6cb2d5c0edd31b361f8478007ce0435002309a4a3c9579764b6",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/reunion/route.ts",
+      "fichier": "presti/app/api/agents/reunion/route.ts.txt",
       "source": "presti/app/api/agents/reunion/route.ts",
       "octets": 3888,
       "sha256": "3bbbb5308960da02d3ed2ca4dc95642869723bdcd2421574131ed034d811e059",
       "masquages": 0,
-      "sha256CopieAvantGit": "5eb2a63c6e26394742a511251895305247e9a79cf34900ff0311766a963d1f20"
+      "sha256CopieAvantGit": "5eb2a63c6e26394742a511251895305247e9a79cf34900ff0311766a963d1f20",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/taches/prendre/route.ts",
+      "fichier": "presti/app/api/agents/taches/prendre/route.ts.txt",
       "source": "presti/app/api/agents/taches/prendre/route.ts",
       "octets": 860,
       "sha256": "cf5a8be1e740f1c717a04fbf435132e9377d74c9358ad7e9a8cde9ae9ee2f97c",
       "masquages": 0,
-      "sha256CopieAvantGit": "eb04c8760a04dce3fadca31517c20400fc1c830d615bb2b678758d1420f191f7"
+      "sha256CopieAvantGit": "eb04c8760a04dce3fadca31517c20400fc1c830d615bb2b678758d1420f191f7",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/taches/route.ts",
+      "fichier": "presti/app/api/agents/taches/route.ts.txt",
       "source": "presti/app/api/agents/taches/route.ts",
       "octets": 2099,
       "sha256": "a172f145efea8c2cfae02469a6c8d951e6f5d4d954235d245586abedd4a37483",
       "masquages": 0,
-      "sha256CopieAvantGit": "184174e25932dac5d41dfb3eec6c8bc437a33a1a2bf74507527ed0021bf3fcf7"
+      "sha256CopieAvantGit": "184174e25932dac5d41dfb3eec6c8bc437a33a1a2bf74507527ed0021bf3fcf7",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/taches/[id]/rendre/route.ts",
+      "fichier": "presti/app/api/agents/taches/[id]/rendre/route.ts.txt",
       "source": "presti/app/api/agents/taches/[id]/rendre/route.ts",
       "octets": 1939,
       "sha256": "da4528cc0006d99ca364b3ee97eb160472f3e752726e24d9d301c6f44792b163",
       "masquages": 0,
-      "sha256CopieAvantGit": "25470063d37eb3e7dda2e3026ded839b278d17e38322661cd670e7dd78f6b6d7"
+      "sha256CopieAvantGit": "25470063d37eb3e7dda2e3026ded839b278d17e38322661cd670e7dd78f6b6d7",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/tic/route.ts",
+      "fichier": "presti/app/api/agents/tic/route.ts.txt",
       "source": "presti/app/api/agents/tic/route.ts",
       "octets": 3534,
       "sha256": "5f1d3cc666a7c8ce35eae1d0a6abc6fc6a8d13bb086127ae8a44beadc9940a77",
       "masquages": 0,
-      "sha256CopieAvantGit": "0377ae9a9290de14ffc97950e5ff9cbbb656fe970549e185278bc69591c10716"
+      "sha256CopieAvantGit": "0377ae9a9290de14ffc97950e5ff9cbbb656fe970549e185278bc69591c10716",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/usine/depot/route.ts",
+      "fichier": "presti/app/api/agents/usine/depot/route.ts.txt",
       "source": "presti/app/api/agents/usine/depot/route.ts",
       "octets": 1956,
       "sha256": "f8ce91e7ee87d26c8680b4e3df605ffa716c5642457399eb15fd18072535791d",
       "masquages": 0,
-      "sha256CopieAvantGit": "edcfa49ae50f678168882310b4c7f11331f83526b7a301d606a520d450f779f0"
+      "sha256CopieAvantGit": "edcfa49ae50f678168882310b4c7f11331f83526b7a301d606a520d450f779f0",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/agents/usine/entree/route.ts",
+      "fichier": "presti/app/api/agents/usine/entree/route.ts.txt",
       "source": "presti/app/api/agents/usine/entree/route.ts",
       "octets": 1522,
       "sha256": "656aa9e3b48e4cf7a86ac1244d70cb16eb6a3847ea892e0a7338fea29c3b4964",
       "masquages": 0,
-      "sha256CopieAvantGit": "e3c0f3c64e4b194c46efe7029e8cb1e53b3bc33e7263427ea5dcf79bd4fe5a91"
+      "sha256CopieAvantGit": "e3c0f3c64e4b194c46efe7029e8cb1e53b3bc33e7263427ea5dcf79bd4fe5a91",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/a-faire/route.ts",
+      "fichier": "presti/app/api/controle/a-faire/route.ts.txt",
       "source": "presti/app/api/controle/a-faire/route.ts",
       "octets": 9446,
       "sha256": "6560add6cf9eb1c8078408f8440aa0b29e5297a464470d1f4aaceb4d095c28d9",
       "masquages": 0,
-      "sha256CopieAvantGit": "be13d3b58d971af08d67e3e8d6fd48b320a2f5d376a8f847f726769948f470c5"
+      "sha256CopieAvantGit": "be13d3b58d971af08d67e3e8d6fd48b320a2f5d376a8f847f726769948f470c5",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/alertes/[id]/acquitter/route.ts",
+      "fichier": "presti/app/api/controle/alertes/[id]/acquitter/route.ts.txt",
       "source": "presti/app/api/controle/alertes/[id]/acquitter/route.ts",
       "octets": 2135,
       "sha256": "2bc9f151ea03b71dedcfdf89bcf5877f3da30c761e806c9ff57b0bbcaa1368e8",
       "masquages": 0,
-      "sha256CopieAvantGit": "2bc9f151ea03b71dedcfdf89bcf5877f3da30c761e806c9ff57b0bbcaa1368e8"
+      "sha256CopieAvantGit": "2bc9f151ea03b71dedcfdf89bcf5877f3da30c761e806c9ff57b0bbcaa1368e8",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/apports/route.ts",
+      "fichier": "presti/app/api/controle/apports/route.ts.txt",
       "source": "presti/app/api/controle/apports/route.ts",
       "octets": 15446,
       "sha256": "55ed3faf2d0b1fc39dd2abdfa00fe15ffe293d6e007795da52724e133437b498",
       "masquages": 0,
-      "sha256CopieAvantGit": "df9e5b6dd88905d3d143aff8a2a49ee6083695f6d429497c5d63c538567e6492"
+      "sha256CopieAvantGit": "df9e5b6dd88905d3d143aff8a2a49ee6083695f6d429497c5d63c538567e6492",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/apports/[id]/statut/route.ts",
+      "fichier": "presti/app/api/controle/apports/[id]/statut/route.ts.txt",
       "source": "presti/app/api/controle/apports/[id]/statut/route.ts",
       "octets": 7610,
       "sha256": "b6f311d73fb503d2dddbb16d6b4701a88104bcd140da72021a5dee7d607dbb55",
       "masquages": 0,
-      "sha256CopieAvantGit": "b6f311d73fb503d2dddbb16d6b4701a88104bcd140da72021a5dee7d607dbb55"
+      "sha256CopieAvantGit": "b6f311d73fb503d2dddbb16d6b4701a88104bcd140da72021a5dee7d607dbb55",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/audience/route.ts",
+      "fichier": "presti/app/api/controle/audience/route.ts.txt",
       "source": "presti/app/api/controle/audience/route.ts",
       "octets": 3902,
       "sha256": "7460bdea32c223ce620055fd73d2050d33217bc3d913eff87708627cff4dea51",
       "masquages": 0,
-      "sha256CopieAvantGit": "7460bdea32c223ce620055fd73d2050d33217bc3d913eff87708627cff4dea51"
+      "sha256CopieAvantGit": "7460bdea32c223ce620055fd73d2050d33217bc3d913eff87708627cff4dea51",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/barre/route.ts",
+      "fichier": "presti/app/api/controle/barre/route.ts.txt",
       "source": "presti/app/api/controle/barre/route.ts",
       "octets": 7413,
       "sha256": "42df22d7333596c04182f8b2ac054e5c8fa7c450b627184fb56718acad2022ee",
       "masquages": 0,
-      "sha256CopieAvantGit": "42df22d7333596c04182f8b2ac054e5c8fa7c450b627184fb56718acad2022ee"
+      "sha256CopieAvantGit": "42df22d7333596c04182f8b2ac054e5c8fa7c450b627184fb56718acad2022ee",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/cerveaux/route.ts",
+      "fichier": "presti/app/api/controle/cerveaux/route.ts.txt",
       "source": "presti/app/api/controle/cerveaux/route.ts",
       "octets": 2603,
       "sha256": "7549bf568889d37a0fa4f5889c2027d43bdc37b4c2d6a66048d327004e53e675",
       "masquages": 0,
-      "sha256CopieAvantGit": "7549bf568889d37a0fa4f5889c2027d43bdc37b4c2d6a66048d327004e53e675"
+      "sha256CopieAvantGit": "7549bf568889d37a0fa4f5889c2027d43bdc37b4c2d6a66048d327004e53e675",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/chiffres/route.ts",
+      "fichier": "presti/app/api/controle/chiffres/route.ts.txt",
       "source": "presti/app/api/controle/chiffres/route.ts",
       "octets": 5998,
       "sha256": "2f6f6e534342b851e171b6d7d5898ca7352870767f37e5fdf92677773a2b16a5",
       "masquages": 0,
-      "sha256CopieAvantGit": "2f6f6e534342b851e171b6d7d5898ca7352870767f37e5fdf92677773a2b16a5"
+      "sha256CopieAvantGit": "2f6f6e534342b851e171b6d7d5898ca7352870767f37e5fdf92677773a2b16a5",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/clients/route.ts",
+      "fichier": "presti/app/api/controle/clients/route.ts.txt",
       "source": "presti/app/api/controle/clients/route.ts",
       "octets": 6424,
       "sha256": "2731cb463986ad8b5460fb0da45a6451826a23b16f555393f3f02485e4e1abcf",
       "masquages": 0,
-      "sha256CopieAvantGit": "c62fcfb3739aee5fa8451655082cac50d3ec1586c59fd2d3ee72a30215629013"
+      "sha256CopieAvantGit": "c62fcfb3739aee5fa8451655082cac50d3ec1586c59fd2d3ee72a30215629013",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/clients/[id]/action/route.ts",
+      "fichier": "presti/app/api/controle/clients/[id]/action/route.ts.txt",
       "source": "presti/app/api/controle/clients/[id]/action/route.ts",
       "octets": 16926,
       "sha256": "dfe11c3b14b500da5be5d6a6e6c1dcec00c21140866f579a8042b04f263d87dc",
       "masquages": 0,
-      "sha256CopieAvantGit": "dfe11c3b14b500da5be5d6a6e6c1dcec00c21140866f579a8042b04f263d87dc"
+      "sha256CopieAvantGit": "dfe11c3b14b500da5be5d6a6e6c1dcec00c21140866f579a8042b04f263d87dc",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/clients/[id]/route.ts",
+      "fichier": "presti/app/api/controle/clients/[id]/route.ts.txt",
       "source": "presti/app/api/controle/clients/[id]/route.ts",
       "octets": 8332,
       "sha256": "c5f8518f767c32788ce1ad961084d37f38ba17bba5b2406a23d9b79c1ae249a0",
       "masquages": 0,
-      "sha256CopieAvantGit": "fb1eda85de7fc9a763b842431f8e5eb5e6ef0384a89b1ec76aba2625990f13ee"
+      "sha256CopieAvantGit": "fb1eda85de7fc9a763b842431f8e5eb5e6ef0384a89b1ec76aba2625990f13ee",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/compta/route.ts",
+      "fichier": "presti/app/api/controle/compta/route.ts.txt",
       "source": "presti/app/api/controle/compta/route.ts",
       "octets": 9634,
       "sha256": "613170890dbfcb174bff3169670eb25a2076c9b325d7d09ec6068212435f5469",
       "masquages": 0,
-      "sha256CopieAvantGit": "613170890dbfcb174bff3169670eb25a2076c9b325d7d09ec6068212435f5469"
+      "sha256CopieAvantGit": "613170890dbfcb174bff3169670eb25a2076c9b325d7d09ec6068212435f5469",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/courriers/relever/route.ts",
+      "fichier": "presti/app/api/controle/courriers/relever/route.ts.txt",
       "source": "presti/app/api/controle/courriers/relever/route.ts",
       "octets": 2258,
       "sha256": "49fe5db331ac853d8fcffaa4c3a40e2c7863bad08c764d8c3d4845a2ff341bbb",
       "masquages": 0,
-      "sha256CopieAvantGit": "49fe5db331ac853d8fcffaa4c3a40e2c7863bad08c764d8c3d4845a2ff341bbb"
+      "sha256CopieAvantGit": "49fe5db331ac853d8fcffaa4c3a40e2c7863bad08c764d8c3d4845a2ff341bbb",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/courriers/route.ts",
+      "fichier": "presti/app/api/controle/courriers/route.ts.txt",
       "source": "presti/app/api/controle/courriers/route.ts",
       "octets": 6576,
       "sha256": "04a4b948d951e13b8a89b9353505df58f65ce1b4b9226ab5055b283fb01763c5",
       "masquages": 0,
-      "sha256CopieAvantGit": "04a4b948d951e13b8a89b9353505df58f65ce1b4b9226ab5055b283fb01763c5"
+      "sha256CopieAvantGit": "04a4b948d951e13b8a89b9353505df58f65ce1b4b9226ab5055b283fb01763c5",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/courriers/[fil]/action/route.ts",
+      "fichier": "presti/app/api/controle/courriers/[fil]/action/route.ts.txt",
       "source": "presti/app/api/controle/courriers/[fil]/action/route.ts",
       "octets": 7736,
       "sha256": "5fb958db023e1e43a9b843808189dd00d7b9a513309e4b298e01f8964a0a6af8",
       "masquages": 0,
-      "sha256CopieAvantGit": "5fb958db023e1e43a9b843808189dd00d7b9a513309e4b298e01f8964a0a6af8"
+      "sha256CopieAvantGit": "5fb958db023e1e43a9b843808189dd00d7b9a513309e4b298e01f8964a0a6af8",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/courriers/[fil]/route.ts",
+      "fichier": "presti/app/api/controle/courriers/[fil]/route.ts.txt",
       "source": "presti/app/api/controle/courriers/[fil]/route.ts",
       "octets": 3369,
       "sha256": "63a818fa01a1c30a91776ac75c8ef0bde8736a9170cb8a1c4b8a377e1b6f739a",
       "masquages": 0,
-      "sha256CopieAvantGit": "63a818fa01a1c30a91776ac75c8ef0bde8736a9170cb8a1c4b8a377e1b6f739a"
+      "sha256CopieAvantGit": "63a818fa01a1c30a91776ac75c8ef0bde8736a9170cb8a1c4b8a377e1b6f739a",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/crons/[nom]/relancer/route.ts",
+      "fichier": "presti/app/api/controle/crons/[nom]/relancer/route.ts.txt",
       "source": "presti/app/api/controle/crons/[nom]/relancer/route.ts",
       "octets": 4236,
       "sha256": "a77e8eb3548ceb7921e86eeb0598a2650c5fbe55e27c178ff558c59a8529ad67",
       "masquages": 0,
-      "sha256CopieAvantGit": "a77e8eb3548ceb7921e86eeb0598a2650c5fbe55e27c178ff558c59a8529ad67"
+      "sha256CopieAvantGit": "a77e8eb3548ceb7921e86eeb0598a2650c5fbe55e27c178ff558c59a8529ad67",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/demandes/route.ts",
+      "fichier": "presti/app/api/controle/demandes/route.ts.txt",
       "source": "presti/app/api/controle/demandes/route.ts",
       "octets": 2859,
       "sha256": "c14f4208458bf143328244b63946c80d3ae6919f313873c1a5abdc020e205bc8",
       "masquages": 0,
-      "sha256CopieAvantGit": "c14f4208458bf143328244b63946c80d3ae6919f313873c1a5abdc020e205bc8"
+      "sha256CopieAvantGit": "c14f4208458bf143328244b63946c80d3ae6919f313873c1a5abdc020e205bc8",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/etat/route.ts",
+      "fichier": "presti/app/api/controle/etat/route.ts.txt",
       "source": "presti/app/api/controle/etat/route.ts",
       "octets": 5785,
       "sha256": "d099324c2578a34cdc6e99352c9e38911bdb6176afc88aebca28a931f5425d16",
       "masquages": 0,
-      "sha256CopieAvantGit": "d099324c2578a34cdc6e99352c9e38911bdb6176afc88aebca28a931f5425d16"
+      "sha256CopieAvantGit": "d099324c2578a34cdc6e99352c9e38911bdb6176afc88aebca28a931f5425d16",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/fil/route.ts",
+      "fichier": "presti/app/api/controle/fil/route.ts.txt",
       "source": "presti/app/api/controle/fil/route.ts",
       "octets": 4978,
       "sha256": "238e65a12f86690518321316879e1f80ba350aeebcae072bf4bf30c46915f6e9",
       "masquages": 1,
-      "sha256CopieAvantGit": "238e65a12f86690518321316879e1f80ba350aeebcae072bf4bf30c46915f6e9"
+      "sha256CopieAvantGit": "238e65a12f86690518321316879e1f80ba350aeebcae072bf4bf30c46915f6e9",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/jauges/route.ts",
+      "fichier": "presti/app/api/controle/jauges/route.ts.txt",
       "source": "presti/app/api/controle/jauges/route.ts",
       "octets": 1031,
       "sha256": "a6d63c80a52d3fc06b47fa9c9fb85d213ca51b098fcf0db0ffa68c0778635883",
       "masquages": 0,
-      "sha256CopieAvantGit": "62c25e59859872d9f54ec932d18fa094848312b6cdd22325fb0f1f613b9ce2ed"
+      "sha256CopieAvantGit": "62c25e59859872d9f54ec932d18fa094848312b6cdd22325fb0f1f613b9ce2ed",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/journal/route.ts",
+      "fichier": "presti/app/api/controle/journal/route.ts.txt",
       "source": "presti/app/api/controle/journal/route.ts",
       "octets": 2345,
       "sha256": "05e9b48bb2824c2c65de1a1a20af78391ad97363ee1c98afd945fdd3ab5823ce",
       "masquages": 0,
-      "sha256CopieAvantGit": "05e9b48bb2824c2c65de1a1a20af78391ad97363ee1c98afd945fdd3ab5823ce"
+      "sha256CopieAvantGit": "05e9b48bb2824c2c65de1a1a20af78391ad97363ee1c98afd945fdd3ab5823ce",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/packs/route.ts",
+      "fichier": "presti/app/api/controle/packs/route.ts.txt",
       "source": "presti/app/api/controle/packs/route.ts",
       "octets": 2413,
       "sha256": "a46ec9ec0fef88cb3661ec0e15b2120adbb790ebfd30cf64c196fecce0e4bad4",
       "masquages": 0,
-      "sha256CopieAvantGit": "db213ae6ce2ddcffabbf9c7a7be51e5dd7659de5441ff8700b259925a9a044e0"
+      "sha256CopieAvantGit": "db213ae6ce2ddcffabbf9c7a7be51e5dd7659de5441ff8700b259925a9a044e0",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/packs/[id]/route.ts",
+      "fichier": "presti/app/api/controle/packs/[id]/route.ts.txt",
       "source": "presti/app/api/controle/packs/[id]/route.ts",
       "octets": 6332,
       "sha256": "5007a2f3336152ad9c420c4dcdb98fd06d093ad5441c9feb4287ab310e31d923",
       "masquages": 0,
-      "sha256CopieAvantGit": "a621adc7ef00ef73b36a85bbd1bfb1dedd716e147fc84d87620e5aee9417f52c"
+      "sha256CopieAvantGit": "a621adc7ef00ef73b36a85bbd1bfb1dedd716e147fc84d87620e5aee9417f52c",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/pause/route.ts",
+      "fichier": "presti/app/api/controle/pause/route.ts.txt",
       "source": "presti/app/api/controle/pause/route.ts",
       "octets": 2897,
       "sha256": "f9afdfc4c2b1b9764c3a958c9257fafa6c1f9fe8180ea63b443217c7885b0047",
       "masquages": 0,
-      "sha256CopieAvantGit": "f9afdfc4c2b1b9764c3a958c9257fafa6c1f9fe8180ea63b443217c7885b0047"
+      "sha256CopieAvantGit": "f9afdfc4c2b1b9764c3a958c9257fafa6c1f9fe8180ea63b443217c7885b0047",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/pilotage/agents/[nom]/route.ts",
+      "fichier": "presti/app/api/controle/pilotage/agents/[nom]/route.ts.txt",
       "source": "presti/app/api/controle/pilotage/agents/[nom]/route.ts",
       "octets": 2146,
       "sha256": "5f75c74dc23da8a82e664ef814bf2f674a561f68b9ac28c3f00206d33bf9c26f",
       "masquages": 0,
-      "sha256CopieAvantGit": "b52539cbf479cef957c4502bbbb9557a24c3f43d084b18db1d00e06fbf64f71e"
+      "sha256CopieAvantGit": "b52539cbf479cef957c4502bbbb9557a24c3f43d084b18db1d00e06fbf64f71e",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/pilotage/appels/[id]/route.ts",
+      "fichier": "presti/app/api/controle/pilotage/appels/[id]/route.ts.txt",
       "source": "presti/app/api/controle/pilotage/appels/[id]/route.ts",
       "octets": 1877,
       "sha256": "d4e26e2fc011ee96dc01be85a73555fa85bcd04b7c3f3f27ef5d2028dadb3958",
       "masquages": 0,
-      "sha256CopieAvantGit": "e43c3c52250a9cb7c8399aa383a19a3fccdce88da016debdab93662ed66a651d"
+      "sha256CopieAvantGit": "e43c3c52250a9cb7c8399aa383a19a3fccdce88da016debdab93662ed66a651d",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/pilotage/consignes/route.ts",
+      "fichier": "presti/app/api/controle/pilotage/consignes/route.ts.txt",
       "source": "presti/app/api/controle/pilotage/consignes/route.ts",
       "octets": 2232,
       "sha256": "097bb04753e26b2cf2ff241be8534499c78f3bf50b9eb9f371cec4bdacdc3688",
       "masquages": 0,
-      "sha256CopieAvantGit": "b9ce5262abf2de771e09b2d5b6772e6b36f09d5cd4fb0b1ae6698bea1e4ff9db"
+      "sha256CopieAvantGit": "b9ce5262abf2de771e09b2d5b6772e6b36f09d5cd4fb0b1ae6698bea1e4ff9db",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/pilotage/decisions/[id]/route.ts",
+      "fichier": "presti/app/api/controle/pilotage/decisions/[id]/route.ts.txt",
       "source": "presti/app/api/controle/pilotage/decisions/[id]/route.ts",
       "octets": 3427,
       "sha256": "cdeaedb86c6e48169910c25dd146bbcb736dd2964ba83f1a1acaf63f0102e12c",
       "masquages": 0,
-      "sha256CopieAvantGit": "5cbdeefab49abab80401274bd16829a6c86e3472dda642a039e429f492643b14"
+      "sha256CopieAvantGit": "5cbdeefab49abab80401274bd16829a6c86e3472dda642a039e429f492643b14",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/pilotage/gestes/route.ts",
+      "fichier": "presti/app/api/controle/pilotage/gestes/route.ts.txt",
       "source": "presti/app/api/controle/pilotage/gestes/route.ts",
       "octets": 5223,
       "sha256": "eb39ab885ed82c536264fbcd755c1c299a24f8846f9960f7412a3a8cd6ca5781",
       "masquages": 0,
-      "sha256CopieAvantGit": "a9e376e4cd4788e183106a3ec7cc56aa67c3a6198e1269855307bb7b452c3749"
+      "sha256CopieAvantGit": "a9e376e4cd4788e183106a3ec7cc56aa67c3a6198e1269855307bb7b452c3749",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/pilotage/route.ts",
+      "fichier": "presti/app/api/controle/pilotage/route.ts.txt",
       "source": "presti/app/api/controle/pilotage/route.ts",
       "octets": 1322,
       "sha256": "c7c488f870d6a2c8716dbf2be8f1e8c9a51cc63ab3bb58532c6073f2ff1b52b7",
       "masquages": 0,
-      "sha256CopieAvantGit": "c839d43ea3624879ea073192ba66735513152ac7b64601567344eeaf7aa4accf"
+      "sha256CopieAvantGit": "c839d43ea3624879ea073192ba66735513152ac7b64601567344eeaf7aa4accf",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/recherche/route.ts",
+      "fichier": "presti/app/api/controle/recherche/route.ts.txt",
       "source": "presti/app/api/controle/recherche/route.ts",
       "octets": 6928,
       "sha256": "4be8a85ac17de85471b095cf18947a20dc6b1dfafd684ffe1819a6d8edccf7ab",
       "masquages": 0,
-      "sha256CopieAvantGit": "4be8a85ac17de85471b095cf18947a20dc6b1dfafd684ffe1819a6d8edccf7ab"
+      "sha256CopieAvantGit": "4be8a85ac17de85471b095cf18947a20dc6b1dfafd684ffe1819a6d8edccf7ab",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/reconfirmer/route.ts",
+      "fichier": "presti/app/api/controle/reconfirmer/route.ts.txt",
       "source": "presti/app/api/controle/reconfirmer/route.ts",
       "octets": 3326,
       "sha256": "9430ed55e6534caafcc8da9a61500b80915af34aac8624b5e98f80ae258f13e9",
       "masquages": 0,
-      "sha256CopieAvantGit": "9430ed55e6534caafcc8da9a61500b80915af34aac8624b5e98f80ae258f13e9"
+      "sha256CopieAvantGit": "9430ed55e6534caafcc8da9a61500b80915af34aac8624b5e98f80ae258f13e9",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/reglages/route.ts",
+      "fichier": "presti/app/api/controle/reglages/route.ts.txt",
       "source": "presti/app/api/controle/reglages/route.ts",
       "octets": 10531,
       "sha256": "82c4eb3763f4fd407102ce82dd81541c30d6591085d9bb2781859de8a703c079",
       "masquages": 0,
-      "sha256CopieAvantGit": "82c4eb3763f4fd407102ce82dd81541c30d6591085d9bb2781859de8a703c079"
+      "sha256CopieAvantGit": "82c4eb3763f4fd407102ce82dd81541c30d6591085d9bb2781859de8a703c079",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/releve/route.ts",
+      "fichier": "presti/app/api/controle/releve/route.ts.txt",
       "source": "presti/app/api/controle/releve/route.ts",
       "octets": 16219,
       "sha256": "01c3c77b2961af218bf22861731c03def269632d77c4f139c60536ca00a59a99",
       "masquages": 0,
-      "sha256CopieAvantGit": "39e3fee55b942f94dd206bd1606ea62a28bea85212ad0db73264f49556aac199"
+      "sha256CopieAvantGit": "39e3fee55b942f94dd206bd1606ea62a28bea85212ad0db73264f49556aac199",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/securite/bans/route.ts",
+      "fichier": "presti/app/api/controle/securite/bans/route.ts.txt",
       "source": "presti/app/api/controle/securite/bans/route.ts",
       "octets": 7695,
       "sha256": "b6556a91de5fb226b3615d2e1b8ddb6b15d005100b25e6df164cf29f30d34ae5",
       "masquages": 0,
-      "sha256CopieAvantGit": "b6556a91de5fb226b3615d2e1b8ddb6b15d005100b25e6df164cf29f30d34ae5"
+      "sha256CopieAvantGit": "b6556a91de5fb226b3615d2e1b8ddb6b15d005100b25e6df164cf29f30d34ae5",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/sites/route.ts",
+      "fichier": "presti/app/api/controle/sites/route.ts.txt",
       "source": "presti/app/api/controle/sites/route.ts",
       "octets": 3334,
       "sha256": "281411557498ae2ae9b6207c5a7001730381aa183e7ba2fcfd45c8f049537f13",
       "masquages": 0,
-      "sha256CopieAvantGit": "3108320b67815780b021a7d1f888174027ebaecdc6664c4d987236e804081f34"
+      "sha256CopieAvantGit": "3108320b67815780b021a7d1f888174027ebaecdc6664c4d987236e804081f34",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/sites/[id]/route.ts",
+      "fichier": "presti/app/api/controle/sites/[id]/route.ts.txt",
       "source": "presti/app/api/controle/sites/[id]/route.ts",
       "octets": 11772,
       "sha256": "6ad9a25e2cd555d0b49ffe43e934b204807f070983872ce16a3573e9f0d51a53",
       "masquages": 0,
-      "sha256CopieAvantGit": "688200af161b7ebe245920ac73fd985837e9561557660fa4de4b7dbe3d6edfce"
+      "sha256CopieAvantGit": "688200af161b7ebe245920ac73fd985837e9561557660fa4de4b7dbe3d6edfce",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/station/route.ts",
+      "fichier": "presti/app/api/controle/station/route.ts.txt",
       "source": "presti/app/api/controle/station/route.ts",
       "octets": 2091,
       "sha256": "51f9a165f228c023a1cbac0226c0acf3294bee861fc8115076552010941e3276",
       "masquages": 0,
-      "sha256CopieAvantGit": "a19729df87c5e25b46e658585239b366de0beecae9a31082dc28e0d0de3199e3"
+      "sha256CopieAvantGit": "a19729df87c5e25b46e658585239b366de0beecae9a31082dc28e0d0de3199e3",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/support/demander/route.ts",
+      "fichier": "presti/app/api/controle/support/demander/route.ts.txt",
       "source": "presti/app/api/controle/support/demander/route.ts",
       "octets": 7348,
       "sha256": "c1c788a7dc07397f082ebbc8fc5b3567258acf6abca4f0aa38525f3d2299d8b9",
       "masquages": 0,
-      "sha256CopieAvantGit": "c1c788a7dc07397f082ebbc8fc5b3567258acf6abca4f0aa38525f3d2299d8b9"
+      "sha256CopieAvantGit": "c1c788a7dc07397f082ebbc8fc5b3567258acf6abca4f0aa38525f3d2299d8b9",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/support/lire/route.ts",
+      "fichier": "presti/app/api/controle/support/lire/route.ts.txt",
       "source": "presti/app/api/controle/support/lire/route.ts",
       "octets": 4383,
       "sha256": "28596b5c35ab1885fc375b686f400b06bc3b7af9c49ae26faa2525c56ac1a8f3",
       "masquages": 0,
-      "sha256CopieAvantGit": "28596b5c35ab1885fc375b686f400b06bc3b7af9c49ae26faa2525c56ac1a8f3"
+      "sha256CopieAvantGit": "28596b5c35ab1885fc375b686f400b06bc3b7af9c49ae26faa2525c56ac1a8f3",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/support/route.ts",
+      "fichier": "presti/app/api/controle/support/route.ts.txt",
       "source": "presti/app/api/controle/support/route.ts",
       "octets": 5957,
       "sha256": "8870ac240384d35a2b3b96ecd09a5e3780fc51e98651997b739e9b2123121fee",
       "masquages": 0,
-      "sha256CopieAvantGit": "8870ac240384d35a2b3b96ecd09a5e3780fc51e98651997b739e9b2123121fee"
+      "sha256CopieAvantGit": "8870ac240384d35a2b3b96ecd09a5e3780fc51e98651997b739e9b2123121fee",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/controle/tresorerie/route.ts",
+      "fichier": "presti/app/api/controle/tresorerie/route.ts.txt",
       "source": "presti/app/api/controle/tresorerie/route.ts",
       "octets": 3020,
       "sha256": "ea050d88aca14cb1527f18c42303d3f2ffdddaf1e6a804080258a964f49f5f0e",
       "masquages": 0,
-      "sha256CopieAvantGit": "2fad8b5c13e7e34666af4fd23001d1e6fe9b2f8ec9f794fdfb9db037a97c2c68"
+      "sha256CopieAvantGit": "2fad8b5c13e7e34666af4fd23001d1e6fe9b2f8ec9f794fdfb9db037a97c2c68",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/crieur/visuel/[id]/route.tsx",
+      "fichier": "presti/app/api/crieur/visuel/[id]/route.tsx.txt",
       "source": "presti/app/api/crieur/visuel/[id]/route.tsx",
       "octets": 871,
       "sha256": "c548515727a12e82d24aa06afae61297f7d02ade04d8d5be1527057ab71564d1",
       "masquages": 0,
-      "sha256CopieAvantGit": "c548515727a12e82d24aa06afae61297f7d02ade04d8d5be1527057ab71564d1"
+      "sha256CopieAvantGit": "c548515727a12e82d24aa06afae61297f7d02ade04d8d5be1527057ab71564d1",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/alertes/route.ts",
+      "fichier": "presti/app/api/cron/alertes/route.ts.txt",
       "source": "presti/app/api/cron/alertes/route.ts",
       "octets": 2207,
       "sha256": "ca33c041300e4fa976274aa765cdbf996650eed34e3f3597fe4bd0ecde14fa53",
       "masquages": 0,
-      "sha256CopieAvantGit": "ca33c041300e4fa976274aa765cdbf996650eed34e3f3597fe4bd0ecde14fa53"
+      "sha256CopieAvantGit": "ca33c041300e4fa976274aa765cdbf996650eed34e3f3597fe4bd0ecde14fa53",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/contenu/route.ts",
+      "fichier": "presti/app/api/cron/contenu/route.ts.txt",
       "source": "presti/app/api/cron/contenu/route.ts",
       "octets": 1240,
       "sha256": "041c927b87906cc1feaeaccaab07c4fb2af15b0239d945c17c74828750be920c",
       "masquages": 0,
-      "sha256CopieAvantGit": "041c927b87906cc1feaeaccaab07c4fb2af15b0239d945c17c74828750be920c"
+      "sha256CopieAvantGit": "041c927b87906cc1feaeaccaab07c4fb2af15b0239d945c17c74828750be920c",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/crieur/route.ts",
+      "fichier": "presti/app/api/cron/crieur/route.ts.txt",
       "source": "presti/app/api/cron/crieur/route.ts",
       "octets": 7443,
       "sha256": "a1d03c4417a725c234dce727fcac9406d1c0d5fb7f9e5c573f4789738d1fbc3a",
       "masquages": 0,
-      "sha256CopieAvantGit": "a1d03c4417a725c234dce727fcac9406d1c0d5fb7f9e5c573f4789738d1fbc3a"
+      "sha256CopieAvantGit": "a1d03c4417a725c234dce727fcac9406d1c0d5fb7f9e5c573f4789738d1fbc3a",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/facteur/route.ts",
+      "fichier": "presti/app/api/cron/facteur/route.ts.txt",
       "source": "presti/app/api/cron/facteur/route.ts",
       "octets": 5927,
       "sha256": "1af4d167c328f4b5e46514d229b37565c65169510b954f6fa85bcded87fcf0cb",
       "masquages": 0,
-      "sha256CopieAvantGit": "1af4d167c328f4b5e46514d229b37565c65169510b954f6fa85bcded87fcf0cb"
+      "sha256CopieAvantGit": "1af4d167c328f4b5e46514d229b37565c65169510b954f6fa85bcded87fcf0cb",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/juge-faits/route.ts",
+      "fichier": "presti/app/api/cron/juge-faits/route.ts.txt",
       "source": "presti/app/api/cron/juge-faits/route.ts",
       "octets": 2840,
       "sha256": "2610381a2b1a8394e983aa798cfa3ddfae2df4a70e60fa34a105822c75110282",
       "masquages": 0,
-      "sha256CopieAvantGit": "12624f0a4ddbbb954597db60539a9292a5ae6d43211e02ef92720b9d204d31ef"
+      "sha256CopieAvantGit": "12624f0a4ddbbb954597db60539a9292a5ae6d43211e02ef92720b9d204d31ef",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/livraison/route.ts",
+      "fichier": "presti/app/api/cron/livraison/route.ts.txt",
       "source": "presti/app/api/cron/livraison/route.ts",
       "octets": 847,
       "sha256": "ed37ade51aeb7455d0642b661ec82a9d92d555e8f9a1acfeec99ad5ce4e51818",
       "masquages": 0,
-      "sha256CopieAvantGit": "a51d877c6aa98199b5c00db24c130e93f2e5a15e3748ae8d5a49ac2e38c3b412"
+      "sha256CopieAvantGit": "a51d877c6aa98199b5c00db24c130e93f2e5a15e3748ae8d5a49ac2e38c3b412",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/maquettes-purge/route.ts",
+      "fichier": "presti/app/api/cron/maquettes-purge/route.ts.txt",
       "source": "presti/app/api/cron/maquettes-purge/route.ts",
       "octets": 1772,
       "sha256": "6b395b5a9a8bcaa9d4593f96bab7784316de203de0aea025440e9769aaa6f842",
       "masquages": 0,
-      "sha256CopieAvantGit": "541988aba799b3168f9e7ca409f78fb0570f96de0739fdc5c6daab65644ab546"
+      "sha256CopieAvantGit": "541988aba799b3168f9e7ca409f78fb0570f96de0739fdc5c6daab65644ab546",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/purge-comptes/route.ts",
+      "fichier": "presti/app/api/cron/purge-comptes/route.ts.txt",
       "source": "presti/app/api/cron/purge-comptes/route.ts",
       "octets": 838,
       "sha256": "f9ae10739d46efab3521b9131425dc815e625d5df05ae9dea1dfc288fe465c86",
       "masquages": 0,
-      "sha256CopieAvantGit": "f9ae10739d46efab3521b9131425dc815e625d5df05ae9dea1dfc288fe465c86"
+      "sha256CopieAvantGit": "f9ae10739d46efab3521b9131425dc815e625d5df05ae9dea1dfc288fe465c86",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/recenseur/route.ts",
+      "fichier": "presti/app/api/cron/recenseur/route.ts.txt",
       "source": "presti/app/api/cron/recenseur/route.ts",
       "octets": 3204,
       "sha256": "f2037bec40e795045b2391074e4e16cb0fdc51e2bd245de029b095d3797a703d",
       "masquages": 0,
-      "sha256CopieAvantGit": "5102fe7f07e6905f71eec75eb6252f4f6528725a2a33f79b76164de8e783bb45"
+      "sha256CopieAvantGit": "5102fe7f07e6905f71eec75eb6252f4f6528725a2a33f79b76164de8e783bb45",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/relances/route.ts",
+      "fichier": "presti/app/api/cron/relances/route.ts.txt",
       "source": "presti/app/api/cron/relances/route.ts",
       "octets": 9778,
       "sha256": "d42584a056cb8c949507f5b316cfc1a3a4cc1405568798a7b8fdf97a2f2f068e",
       "masquages": 0,
-      "sha256CopieAvantGit": "0030c44369a05841e7ffd91428c829b957a15f0ae6756af06b4d6ba3cc76d814"
+      "sha256CopieAvantGit": "0030c44369a05841e7ffd91428c829b957a15f0ae6756af06b4d6ba3cc76d814",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/repondeur/route.ts",
+      "fichier": "presti/app/api/cron/repondeur/route.ts.txt",
       "source": "presti/app/api/cron/repondeur/route.ts",
       "octets": 3790,
       "sha256": "8629ab0bf418134398a628db4d2bbef448a1b4ea2a0610de909f2d7ab3a758bb",
       "masquages": 0,
-      "sha256CopieAvantGit": "8629ab0bf418134398a628db4d2bbef448a1b4ea2a0610de909f2d7ab3a758bb"
+      "sha256CopieAvantGit": "8629ab0bf418134398a628db4d2bbef448a1b4ea2a0610de909f2d7ab3a758bb",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/app/api/cron/vigie-meta/route.ts",
+      "fichier": "presti/app/api/cron/vigie-meta/route.ts.txt",
       "source": "presti/app/api/cron/vigie-meta/route.ts",
       "octets": 5084,
       "sha256": "155ce0b3918f9ede05919e7898921a1938d41c573c8c082026b99c535f81eb38",
       "masquages": 0,
-      "sha256CopieAvantGit": "5c2c7cb746a7aa65be4eae073d4bcde081edefaa5f96a2854a1798e148373145"
+      "sha256CopieAvantGit": "5c2c7cb746a7aa65be4eae073d4bcde081edefaa5f96a2854a1798e148373145",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
       "fichier": "presti/CLAUDE.md",
@@ -6235,316 +6305,355 @@
       "sha256CopieAvantGit": "d8b56dd174177d20c4c57f838850f042958989e8997f906d2b44ccb46c558669"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/affirmations.ts",
+      "fichier": "presti/lib/agents/acquisition/affirmations.ts.txt",
       "source": "presti/lib/agents/acquisition/affirmations.ts",
       "octets": 3185,
       "sha256": "2f8aa5848513072c6bcbfda1ba09438a406f3eef43dc5a2d784aa2f16be6b40b",
       "masquages": 0,
-      "sha256CopieAvantGit": "2f8aa5848513072c6bcbfda1ba09438a406f3eef43dc5a2d784aa2f16be6b40b"
+      "sha256CopieAvantGit": "2f8aa5848513072c6bcbfda1ba09438a406f3eef43dc5a2d784aa2f16be6b40b",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/conformite.ts",
+      "fichier": "presti/lib/agents/acquisition/conformite.ts.txt",
       "source": "presti/lib/agents/acquisition/conformite.ts",
       "octets": 31712,
       "sha256": "8b133e46549aed3c72cb105a7db3edb59a94cd07c933f9ff2eca0bb0ce9af852",
       "masquages": 0,
-      "sha256CopieAvantGit": "8b133e46549aed3c72cb105a7db3edb59a94cd07c933f9ff2eca0bb0ce9af852"
+      "sha256CopieAvantGit": "8b133e46549aed3c72cb105a7db3edb59a94cd07c933f9ff2eca0bb0ce9af852",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/contrat.ts",
+      "fichier": "presti/lib/agents/acquisition/contrat.ts.txt",
       "source": "presti/lib/agents/acquisition/contrat.ts",
       "octets": 42436,
       "sha256": "dd36f950d28efb1b040393e9ac14e854742e56fefcc8e064c93bbf1d4911e09c",
       "masquages": 0,
-      "sha256CopieAvantGit": "dd36f950d28efb1b040393e9ac14e854742e56fefcc8e064c93bbf1d4911e09c"
+      "sha256CopieAvantGit": "dd36f950d28efb1b040393e9ac14e854742e56fefcc8e064c93bbf1d4911e09c",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/disjoncteurs.ts",
+      "fichier": "presti/lib/agents/acquisition/disjoncteurs.ts.txt",
       "source": "presti/lib/agents/acquisition/disjoncteurs.ts",
       "octets": 4269,
       "sha256": "74425c758511184d7d1f1e0dc38bb0b0e4c1a7dc8a027eac9faf21df60e68249",
       "masquages": 0,
-      "sha256CopieAvantGit": "79a7276135adb10882fc52140e67da18827498bdfcfda068f00452fdecf50749"
+      "sha256CopieAvantGit": "79a7276135adb10882fc52140e67da18827498bdfcfda068f00452fdecf50749",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/douleurs.ts",
+      "fichier": "presti/lib/agents/acquisition/douleurs.ts.txt",
       "source": "presti/lib/agents/acquisition/douleurs.ts",
       "octets": 9721,
       "sha256": "42afba2ffe9609f0107098cbd06b4116b8ca267664d251fea874f5f35d3635c7",
       "masquages": 0,
-      "sha256CopieAvantGit": "42afba2ffe9609f0107098cbd06b4116b8ca267664d251fea874f5f35d3635c7"
+      "sha256CopieAvantGit": "42afba2ffe9609f0107098cbd06b4116b8ca267664d251fea874f5f35d3635c7",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/entrant.ts",
+      "fichier": "presti/lib/agents/acquisition/entrant.ts.txt",
       "source": "presti/lib/agents/acquisition/entrant.ts",
       "octets": 5300,
       "sha256": "d1de066019fc5e368381e8bfd18a19a77e2c40a5e909d77eedda48a797583152",
       "masquages": 0,
-      "sha256CopieAvantGit": "d1de066019fc5e368381e8bfd18a19a77e2c40a5e909d77eedda48a797583152"
+      "sha256CopieAvantGit": "d1de066019fc5e368381e8bfd18a19a77e2c40a5e909d77eedda48a797583152",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/envoiMeta.ts",
+      "fichier": "presti/lib/agents/acquisition/envoiMeta.ts.txt",
       "source": "presti/lib/agents/acquisition/envoiMeta.ts",
       "octets": 5152,
       "sha256": "febc410d8151b4c59fac315751a39d5a676163daaaac434312f7c961972b5a79",
       "masquages": 0,
-      "sha256CopieAvantGit": "febc410d8151b4c59fac315751a39d5a676163daaaac434312f7c961972b5a79"
+      "sha256CopieAvantGit": "febc410d8151b4c59fac315751a39d5a676163daaaac434312f7c961972b5a79",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/facteur.ts",
+      "fichier": "presti/lib/agents/acquisition/facteur.ts.txt",
       "source": "presti/lib/agents/acquisition/facteur.ts",
       "octets": 37491,
       "sha256": "8ae54a1c6c574259373d28855b727a1de95c823f785f7283c7530e77aa61d6f7",
       "masquages": 0,
-      "sha256CopieAvantGit": "8ae54a1c6c574259373d28855b727a1de95c823f785f7283c7530e77aa61d6f7"
+      "sha256CopieAvantGit": "8ae54a1c6c574259373d28855b727a1de95c823f785f7283c7530e77aa61d6f7",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/faq.ts",
+      "fichier": "presti/lib/agents/acquisition/faq.ts.txt",
       "source": "presti/lib/agents/acquisition/faq.ts",
       "octets": 4601,
       "sha256": "5a1e6453942103fd17f7131a82c21915d5b309939642a7757553d03a0506cf2b",
       "masquages": 0,
-      "sha256CopieAvantGit": "5a1e6453942103fd17f7131a82c21915d5b309939642a7757553d03a0506cf2b"
+      "sha256CopieAvantGit": "5a1e6453942103fd17f7131a82c21915d5b309939642a7757553d03a0506cf2b",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/jauges.ts",
+      "fichier": "presti/lib/agents/acquisition/jauges.ts.txt",
       "source": "presti/lib/agents/acquisition/jauges.ts",
       "octets": 7098,
       "sha256": "8260bb3a8b567051d3b013b0f3f1a07a80a71417b3e8db2236b6bc7803276a32",
       "masquages": 0,
-      "sha256CopieAvantGit": "3c0e41f108795b891484b043ca12ad7eaad2b02fbb3ecc5c1aa13a4d93dcfd60"
+      "sha256CopieAvantGit": "3c0e41f108795b891484b043ca12ad7eaad2b02fbb3ecc5c1aa13a4d93dcfd60",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/jugeFaits.ts",
+      "fichier": "presti/lib/agents/acquisition/jugeFaits.ts.txt",
       "source": "presti/lib/agents/acquisition/jugeFaits.ts",
       "octets": 13402,
       "sha256": "c26046519ac272559f2ddfb7e4ab623777ca1fa77c87551f710dce66e0ab32fd",
       "masquages": 0,
-      "sha256CopieAvantGit": "c26046519ac272559f2ddfb7e4ab623777ca1fa77c87551f710dce66e0ab32fd"
+      "sha256CopieAvantGit": "c26046519ac272559f2ddfb7e4ab623777ca1fa77c87551f710dce66e0ab32fd",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/lecteurSite.ts",
+      "fichier": "presti/lib/agents/acquisition/lecteurSite.ts.txt",
       "source": "presti/lib/agents/acquisition/lecteurSite.ts",
       "octets": 21476,
       "sha256": "9f49588182cfeca96b4cc5296f8fa8fef8160bde3a18178b317ea7616884c4f5",
       "masquages": 0,
-      "sha256CopieAvantGit": "681607b220abd1aded01fa361bd24d7eee122cedf5188e14596c37792f5b0add"
+      "sha256CopieAvantGit": "681607b220abd1aded01fa361bd24d7eee122cedf5188e14596c37792f5b0add",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/magasinSupabase.ts",
+      "fichier": "presti/lib/agents/acquisition/magasinSupabase.ts.txt",
       "source": "presti/lib/agents/acquisition/magasinSupabase.ts",
       "octets": 12793,
       "sha256": "f1ebe9cd2d43b4ff73ca10c08dbba47393697aabe1a0a757d62fba3cd6c9a6c0",
       "masquages": 0,
-      "sha256CopieAvantGit": "45a983f34aac32abef8a88e85370031ba0aa1093c72734a5837879ff86545f42"
+      "sha256CopieAvantGit": "45a983f34aac32abef8a88e85370031ba0aa1093c72734a5837879ff86545f42",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/maquettesLien.ts",
+      "fichier": "presti/lib/agents/acquisition/maquettesLien.ts.txt",
       "source": "presti/lib/agents/acquisition/maquettesLien.ts",
       "octets": 7140,
       "sha256": "5530fa95464f32e16252f28e572523af0383177d15caed439a96d91865d5aed1",
       "masquages": 0,
-      "sha256CopieAvantGit": "c318f1836fe22fd91da33f74416e5ba0c1742c2d7a4c202eb7cfb65ace0532fe"
+      "sha256CopieAvantGit": "c318f1836fe22fd91da33f74416e5ba0c1742c2d7a4c202eb7cfb65ace0532fe",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/metaWebhooks.ts",
+      "fichier": "presti/lib/agents/acquisition/metaWebhooks.ts.txt",
       "source": "presti/lib/agents/acquisition/metaWebhooks.ts",
       "octets": 19584,
       "sha256": "de19017dc63ca2c6a2d58b3e12c1e20c5c0d366e97ca4a693e55e21b168ad39c",
       "masquages": 0,
-      "sha256CopieAvantGit": "de19017dc63ca2c6a2d58b3e12c1e20c5c0d366e97ca4a693e55e21b168ad39c"
+      "sha256CopieAvantGit": "de19017dc63ca2c6a2d58b3e12c1e20c5c0d366e97ca4a693e55e21b168ad39c",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/modeles.ts",
+      "fichier": "presti/lib/agents/acquisition/modeles.ts.txt",
       "source": "presti/lib/agents/acquisition/modeles.ts",
       "octets": 16142,
       "sha256": "c55ec5f1ae9355b8f3cc550536a9c9770de9987a273bb8d50246612d768ff095",
       "masquages": 0,
-      "sha256CopieAvantGit": "c55ec5f1ae9355b8f3cc550536a9c9770de9987a273bb8d50246612d768ff095"
+      "sha256CopieAvantGit": "c55ec5f1ae9355b8f3cc550536a9c9770de9987a273bb8d50246612d768ff095",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/porteurFormulaire.ts",
+      "fichier": "presti/lib/agents/acquisition/porteurFormulaire.ts.txt",
       "source": "presti/lib/agents/acquisition/porteurFormulaire.ts",
       "octets": 17038,
       "sha256": "382ae0695acfae1d77bbe0aa4a203769f31321fffed32e47b1a28f609837517a",
       "masquages": 0,
-      "sha256CopieAvantGit": "382ae0695acfae1d77bbe0aa4a203769f31321fffed32e47b1a28f609837517a"
+      "sha256CopieAvantGit": "382ae0695acfae1d77bbe0aa4a203769f31321fffed32e47b1a28f609837517a",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/porteurs/gmail.ts",
+      "fichier": "presti/lib/agents/acquisition/porteurs/gmail.ts.txt",
       "source": "presti/lib/agents/acquisition/porteurs/gmail.ts",
       "octets": 20298,
       "sha256": "ebfa56a8519a24368b0f60b858ca37c1b1b0560c85a82869369ad0233335a77e",
       "masquages": 0,
-      "sha256CopieAvantGit": "ebfa56a8519a24368b0f60b858ca37c1b1b0560c85a82869369ad0233335a77e"
+      "sha256CopieAvantGit": "ebfa56a8519a24368b0f60b858ca37c1b1b0560c85a82869369ad0233335a77e",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/porteurs.ts",
+      "fichier": "presti/lib/agents/acquisition/porteurs.ts.txt",
       "source": "presti/lib/agents/acquisition/porteurs.ts",
       "octets": 1411,
       "sha256": "6142ee7c69e61f2568e12aff6e0f849fe7fcd96fa1d26a37febdafbea4200f3e",
       "masquages": 0,
-      "sha256CopieAvantGit": "6142ee7c69e61f2568e12aff6e0f849fe7fcd96fa1d26a37febdafbea4200f3e"
+      "sha256CopieAvantGit": "6142ee7c69e61f2568e12aff6e0f849fe7fcd96fa1d26a37febdafbea4200f3e",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/recenseur.ts",
+      "fichier": "presti/lib/agents/acquisition/recenseur.ts.txt",
       "source": "presti/lib/agents/acquisition/recenseur.ts",
       "octets": 6494,
       "sha256": "fa09662871645be4408e25d2cc5c364a4dde7afd790054d27e103e66d3a3075b",
       "masquages": 0,
-      "sha256CopieAvantGit": "954c631c6019dbd5c42cf3cf1a4c41d2bc014d68aef3bbe84af2c145d894dd62"
+      "sha256CopieAvantGit": "954c631c6019dbd5c42cf3cf1a4c41d2bc014d68aef3bbe84af2c145d894dd62",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/redacteur.ts",
+      "fichier": "presti/lib/agents/acquisition/redacteur.ts.txt",
       "source": "presti/lib/agents/acquisition/redacteur.ts",
       "octets": 22143,
       "sha256": "561a73c911c40817e6e6753527fb52e96279447854c7480815538b1d0b9ec295",
       "masquages": 0,
-      "sha256CopieAvantGit": "561a73c911c40817e6e6753527fb52e96279447854c7480815538b1d0b9ec295"
+      "sha256CopieAvantGit": "561a73c911c40817e6e6753527fb52e96279447854c7480815538b1d0b9ec295",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/rendezVous.ts",
+      "fichier": "presti/lib/agents/acquisition/rendezVous.ts.txt",
       "source": "presti/lib/agents/acquisition/rendezVous.ts",
       "octets": 6984,
       "sha256": "9dc8504284c832580be4d942d61b3716a34e6d7192a4b3adc15e95256451e038",
       "masquages": 0,
-      "sha256CopieAvantGit": "144b3663800439675a4d5929de058d7fd95ed5ab9d097aa43d90203bb89b1e6d"
+      "sha256CopieAvantGit": "144b3663800439675a4d5929de058d7fd95ed5ab9d097aa43d90203bb89b1e6d",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/repondeur.ts",
+      "fichier": "presti/lib/agents/acquisition/repondeur.ts.txt",
       "source": "presti/lib/agents/acquisition/repondeur.ts",
       "octets": 39446,
       "sha256": "e3b941fe36ec318f7fb99e86758d0a25f8f6728acf92683409d953f4150fa9e8",
       "masquages": 0,
-      "sha256CopieAvantGit": "e3b941fe36ec318f7fb99e86758d0a25f8f6728acf92683409d953f4150fa9e8"
+      "sha256CopieAvantGit": "e3b941fe36ec318f7fb99e86758d0a25f8f6728acf92683409d953f4150fa9e8",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/rge.ts",
+      "fichier": "presti/lib/agents/acquisition/rge.ts.txt",
       "source": "presti/lib/agents/acquisition/rge.ts",
       "octets": 4678,
       "sha256": "0d905054d2555cdce65de31a8aecb301998b5ef4c562999f6fe95f00b9b8474e",
       "masquages": 0,
-      "sha256CopieAvantGit": "6dee4579a81d5916115d2aa05a2067d209b45fe10a168c4a6d34f36b7d1a4b30"
+      "sha256CopieAvantGit": "6dee4579a81d5916115d2aa05a2067d209b45fe10a168c4a6d34f36b7d1a4b30",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/secondJuge.ts",
+      "fichier": "presti/lib/agents/acquisition/secondJuge.ts.txt",
       "source": "presti/lib/agents/acquisition/secondJuge.ts",
       "octets": 9755,
       "sha256": "f98f74d179f1cb202b247aa550483f700defae2fb68151cfcad40f9cbd632687",
       "masquages": 0,
-      "sha256CopieAvantGit": "f98f74d179f1cb202b247aa550483f700defae2fb68151cfcad40f9cbd632687"
+      "sha256CopieAvantGit": "f98f74d179f1cb202b247aa550483f700defae2fb68151cfcad40f9cbd632687",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/sirene.ts",
+      "fichier": "presti/lib/agents/acquisition/sirene.ts.txt",
       "source": "presti/lib/agents/acquisition/sirene.ts",
       "octets": 5695,
       "sha256": "8b284bcc3b725e3e7bfbf74963be3c6936b692cc4d9216de7e16e805553ff373",
       "masquages": 0,
-      "sha256CopieAvantGit": "acc609805a25e49c7bf8b0cb5392d652ed2f4839b6fed3efaf33dcd49db3a9c6"
+      "sha256CopieAvantGit": "acc609805a25e49c7bf8b0cb5392d652ed2f4839b6fed3efaf33dcd49db3a9c6",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/standardiste.ts",
+      "fichier": "presti/lib/agents/acquisition/standardiste.ts.txt",
       "source": "presti/lib/agents/acquisition/standardiste.ts",
       "octets": 30185,
       "sha256": "0fc0bdb75e290e601aaa1b6281d1477656f1589ecf1426dde385ceef133245d5",
       "masquages": 0,
-      "sha256CopieAvantGit": "0fc0bdb75e290e601aaa1b6281d1477656f1589ecf1426dde385ceef133245d5"
+      "sha256CopieAvantGit": "0fc0bdb75e290e601aaa1b6281d1477656f1589ecf1426dde385ceef133245d5",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/acquisition/vigieMeta.ts",
+      "fichier": "presti/lib/agents/acquisition/vigieMeta.ts.txt",
       "source": "presti/lib/agents/acquisition/vigieMeta.ts",
       "octets": 9067,
       "sha256": "1cb143506485dc2037a112c7e8879e1d4d6d246db83184c760bf835d4b27f3d6",
       "masquages": 0,
-      "sha256CopieAvantGit": "1d893819c27d31e05beebe36639a2af046fbf33e84479faab20bf4b2ed63613b"
+      "sha256CopieAvantGit": "1d893819c27d31e05beebe36639a2af046fbf33e84479faab20bf4b2ed63613b",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/bus.ts",
+      "fichier": "presti/lib/agents/bus.ts.txt",
       "source": "presti/lib/agents/bus.ts",
       "octets": 10819,
       "sha256": "0c49010f84288e0b27a1497e218962bdd5eba8f33541933fa465feefaf1d7294",
       "masquages": 0,
-      "sha256CopieAvantGit": "0c49010f84288e0b27a1497e218962bdd5eba8f33541933fa465feefaf1d7294"
+      "sha256CopieAvantGit": "0c49010f84288e0b27a1497e218962bdd5eba8f33541933fa465feefaf1d7294",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/demandes.ts",
+      "fichier": "presti/lib/agents/demandes.ts.txt",
       "source": "presti/lib/agents/demandes.ts",
       "octets": 4155,
       "sha256": "525c166d866f79e2e3286f0a460e659247a7c64d316acb7ecc0570f54fda1cb0",
       "masquages": 0,
-      "sha256CopieAvantGit": "525c166d866f79e2e3286f0a460e659247a7c64d316acb7ecc0570f54fda1cb0"
+      "sha256CopieAvantGit": "525c166d866f79e2e3286f0a460e659247a7c64d316acb7ecc0570f54fda1cb0",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/fileArgent.ts",
+      "fichier": "presti/lib/agents/fileArgent.ts.txt",
       "source": "presti/lib/agents/fileArgent.ts",
       "octets": 8675,
       "sha256": "3d67114caa9b878defbc27c7a072b410fd7f51d600b89c8cca5f2931175fdeed",
       "masquages": 0,
-      "sha256CopieAvantGit": "778c2b42604dc12b5c4ff072e8df4b26835f45d3383b8920e713c2c50a35b9e4"
+      "sha256CopieAvantGit": "778c2b42604dc12b5c4ff072e8df4b26835f45d3383b8920e713c2c50a35b9e4",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/garde.ts",
+      "fichier": "presti/lib/agents/garde.ts.txt",
       "source": "presti/lib/agents/garde.ts",
       "octets": 9777,
       "sha256": "61c90273fd95e8f6aa7a99ff05884106a9e369be51f58eb1ef7cf45b5824df23",
       "masquages": 0,
-      "sha256CopieAvantGit": "61c90273fd95e8f6aa7a99ff05884106a9e369be51f58eb1ef7cf45b5824df23"
+      "sha256CopieAvantGit": "61c90273fd95e8f6aa7a99ff05884106a9e369be51f58eb1ef7cf45b5824df23",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/jetons.ts",
+      "fichier": "presti/lib/agents/jetons.ts.txt",
       "source": "presti/lib/agents/jetons.ts",
       "octets": 2459,
       "sha256": "cbd5a6cdafabc5aa979f89b6454281ca1aa01e3e5d328295bbc038be053349c6",
       "masquages": 0,
-      "sha256CopieAvantGit": "cbd5a6cdafabc5aa979f89b6454281ca1aa01e3e5d328295bbc038be053349c6"
+      "sha256CopieAvantGit": "cbd5a6cdafabc5aa979f89b6454281ca1aa01e3e5d328295bbc038be053349c6",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/lecons.ts",
+      "fichier": "presti/lib/agents/lecons.ts.txt",
       "source": "presti/lib/agents/lecons.ts",
       "octets": 7299,
       "sha256": "f9fe1471f7d7ed34acd31532b6b3438ec6642edf8de2a76dbbcbf175deb11136",
       "masquages": 0,
-      "sha256CopieAvantGit": "f9fe1471f7d7ed34acd31532b6b3438ec6642edf8de2a76dbbcbf175deb11136"
+      "sha256CopieAvantGit": "f9fe1471f7d7ed34acd31532b6b3438ec6642edf8de2a76dbbcbf175deb11136",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/lectureFirecrawl.ts",
+      "fichier": "presti/lib/agents/lectureFirecrawl.ts.txt",
       "source": "presti/lib/agents/lectureFirecrawl.ts",
       "octets": 9205,
       "sha256": "ff43e8f2b32bf37b763c6198d5d35d0c630075329eca976e9743d99412635bc5",
       "masquages": 0,
-      "sha256CopieAvantGit": "3c85596ab94f7bb2401afae0f6c7c1bd72eb01e72e4d642d8e7423b4883618a8"
+      "sha256CopieAvantGit": "3c85596ab94f7bb2401afae0f6c7c1bd72eb01e72e4d642d8e7423b4883618a8",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/llm.ts",
+      "fichier": "presti/lib/agents/llm.ts.txt",
       "source": "presti/lib/agents/llm.ts",
       "octets": 33577,
       "sha256": "ad8ea26b6e415e937fc4fda590c82cd19049baf62b9ad19c2f2456291f0ecd57",
       "masquages": 0,
-      "sha256CopieAvantGit": "ad8ea26b6e415e937fc4fda590c82cd19049baf62b9ad19c2f2456291f0ecd57"
+      "sha256CopieAvantGit": "ad8ea26b6e415e937fc4fda590c82cd19049baf62b9ad19c2f2456291f0ecd57",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/moteurs.ts",
+      "fichier": "presti/lib/agents/moteurs.ts.txt",
       "source": "presti/lib/agents/moteurs.ts",
       "octets": 17078,
       "sha256": "da6d4f344f44824378ca8ca60b8ceb35ceac0deb0a24d7f1aee9f195ed6b5a1d",
       "masquages": 0,
-      "sha256CopieAvantGit": "da6d4f344f44824378ca8ca60b8ceb35ceac0deb0a24d7f1aee9f195ed6b5a1d"
+      "sha256CopieAvantGit": "da6d4f344f44824378ca8ca60b8ceb35ceac0deb0a24d7f1aee9f195ed6b5a1d",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/pause.ts",
+      "fichier": "presti/lib/agents/pause.ts.txt",
       "source": "presti/lib/agents/pause.ts",
       "octets": 1439,
       "sha256": "8e2638cefd1a0c36403322204784c3307e8702620ba82037dc4fae23615d1f4b",
       "masquages": 0,
-      "sha256CopieAvantGit": "8e2638cefd1a0c36403322204784c3307e8702620ba82037dc4fae23615d1f4b"
+      "sha256CopieAvantGit": "8e2638cefd1a0c36403322204784c3307e8702620ba82037dc4fae23615d1f4b",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/agents/usineDepot.ts",
+      "fichier": "presti/lib/agents/usineDepot.ts.txt",
       "source": "presti/lib/agents/usineDepot.ts",
       "octets": 4217,
       "sha256": "2bdd2134c4d74f1fca489c978bcd3939dae6ccd6c8678d10d3312bdb370fd580",
       "masquages": 0,
-      "sha256CopieAvantGit": "584c2ca814b7e744f4275d5936803df771d56346bb1f78bb43471148b2bf4c5c"
+      "sha256CopieAvantGit": "584c2ca814b7e744f4275d5936803df771d56346bb1f78bb43471148b2bf4c5c",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
       "fichier": "presti/lib/agents/usineLimites.json",
@@ -6555,220 +6664,247 @@
       "sha256CopieAvantGit": "122a0bd8f9062ae1585f46080f285b09a8f857d69c2eaa0b022e71df56540f4e"
     },
     {
-      "fichier": "presti/lib/agents/veilleur.ts",
+      "fichier": "presti/lib/agents/veilleur.ts.txt",
       "source": "presti/lib/agents/veilleur.ts",
       "octets": 21977,
       "sha256": "2d7d09d6e014ec700fe01358a01d5a2a12e68b5605403171286bc0b20eb401c4",
       "masquages": 0,
-      "sha256CopieAvantGit": "97e9dc29412ce27659dc237100f42e146f6145896fa7848355341ba5d5bf523d"
+      "sha256CopieAvantGit": "97e9dc29412ce27659dc237100f42e146f6145896fa7848355341ba5d5bf523d",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/controle/confiance.ts",
+      "fichier": "presti/lib/controle/confiance.ts.txt",
       "source": "presti/lib/controle/confiance.ts",
       "octets": 10574,
       "sha256": "423fbfbe293b3fab3c564c0d8313d905d98f67e17cea263245bb65ac8fabf71b",
       "masquages": 0,
-      "sha256CopieAvantGit": "8bc84328ce0a31f54a726e98dbbddb91acbd005b8e712affd0b46abcd5dc3c6c"
+      "sha256CopieAvantGit": "8bc84328ce0a31f54a726e98dbbddb91acbd005b8e712affd0b46abcd5dc3c6c",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/controle/droits.ts",
+      "fichier": "presti/lib/controle/droits.ts.txt",
       "source": "presti/lib/controle/droits.ts",
       "octets": 7543,
       "sha256": "554e0d6b78554b3d6efefe46bd306358b0641c7fd65fa151e9fd5a7aadcb9bc2",
       "masquages": 0,
-      "sha256CopieAvantGit": "554e0d6b78554b3d6efefe46bd306358b0641c7fd65fa151e9fd5a7aadcb9bc2"
+      "sha256CopieAvantGit": "554e0d6b78554b3d6efefe46bd306358b0641c7fd65fa151e9fd5a7aadcb9bc2",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/controle/releve.ts",
+      "fichier": "presti/lib/controle/releve.ts.txt",
       "source": "presti/lib/controle/releve.ts",
       "octets": 7162,
       "sha256": "a768360847c2634cbe1a607a9dfd39661b1ed6376520b949a259155dcf5ea3a2",
       "masquages": 0,
-      "sha256CopieAvantGit": "a768360847c2634cbe1a607a9dfd39661b1ed6376520b949a259155dcf5ea3a2"
+      "sha256CopieAvantGit": "a768360847c2634cbe1a607a9dfd39661b1ed6376520b949a259155dcf5ea3a2",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/controle/sante.ts",
+      "fichier": "presti/lib/controle/sante.ts.txt",
       "source": "presti/lib/controle/sante.ts",
       "octets": 1895,
       "sha256": "831c983b577f55604ed8d446ab20ba8630d1b7daad603c3ddf4f9d013370b0f6",
       "masquages": 0,
-      "sha256CopieAvantGit": "831c983b577f55604ed8d446ab20ba8630d1b7daad603c3ddf4f9d013370b0f6"
+      "sha256CopieAvantGit": "831c983b577f55604ed8d446ab20ba8630d1b7daad603c3ddf4f9d013370b0f6",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/crieur/composer.ts",
+      "fichier": "presti/lib/crieur/composer.ts.txt",
       "source": "presti/lib/crieur/composer.ts",
       "octets": 5769,
       "sha256": "49cd1575e63a19607d54e7c03823303f360b235c89b74fa966fd19f034109008",
       "masquages": 0,
-      "sha256CopieAvantGit": "981924f02522d9c8d5401f5a64273f794f2a4daebc5411c9ce485a1a4c869451"
+      "sha256CopieAvantGit": "981924f02522d9c8d5401f5a64273f794f2a4daebc5411c9ce485a1a4c869451",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/crieur/faits.ts",
+      "fichier": "presti/lib/crieur/faits.ts.txt",
       "source": "presti/lib/crieur/faits.ts",
       "octets": 3163,
       "sha256": "e5dd6b6d8b5506c1c5b0051d0aecbd76d1e632b3db40faf9ac92344ebc9372f5",
       "masquages": 0,
-      "sha256CopieAvantGit": "1149afcd1e1bfe46fe1503090a8d9663e7212fcc9780e164da5d262fa5d4004c"
+      "sha256CopieAvantGit": "1149afcd1e1bfe46fe1503090a8d9663e7212fcc9780e164da5d262fa5d4004c",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/crieur/juge.ts",
+      "fichier": "presti/lib/crieur/juge.ts.txt",
       "source": "presti/lib/crieur/juge.ts",
       "octets": 10009,
       "sha256": "e7b13503faaa1fecd766528119f3e5114e7407c06a52c38066d3b810176d7c10",
       "masquages": 0,
-      "sha256CopieAvantGit": "e7b13503faaa1fecd766528119f3e5114e7407c06a52c38066d3b810176d7c10"
+      "sha256CopieAvantGit": "e7b13503faaa1fecd766528119f3e5114e7407c06a52c38066d3b810176d7c10",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/crieur/publora.ts",
+      "fichier": "presti/lib/crieur/publora.ts.txt",
       "source": "presti/lib/crieur/publora.ts",
       "octets": 2660,
       "sha256": "ce2d86f8ec817fc4f7d2ba6bb52c7e4c32f4e050df32ef045f69024f21528f7c",
       "masquages": 0,
-      "sha256CopieAvantGit": "ce2d86f8ec817fc4f7d2ba6bb52c7e4c32f4e050df32ef045f69024f21528f7c"
+      "sha256CopieAvantGit": "ce2d86f8ec817fc4f7d2ba6bb52c7e4c32f4e050df32ef045f69024f21528f7c",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/flags.ts",
+      "fichier": "presti/lib/flags.ts.txt",
       "source": "presti/lib/flags.ts",
       "octets": 9951,
       "sha256": "655d9812aec6ee6ab9fa3e2830ccfb9f6abe639ec4aeed639da9d5c2376595d7",
       "masquages": 0,
-      "sha256CopieAvantGit": "597da7a26e5d30d4f41776fe7bdc5b265bc173343148b72d3db92853a532ca85"
+      "sha256CopieAvantGit": "597da7a26e5d30d4f41776fe7bdc5b265bc173343148b72d3db92853a532ca85",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/agents.ts",
+      "fichier": "presti/lib/pilotage/agents.ts.txt",
       "source": "presti/lib/pilotage/agents.ts",
       "octets": 1483,
       "sha256": "05943a7e408fe2b59635bcd94520658b70368eb6c373ca560de45661197a06f7",
       "masquages": 0,
-      "sha256CopieAvantGit": "7a063e7d0fb389933c7163be6cba332c5f63cc17ba92f8becf94706ef30e50e3"
+      "sha256CopieAvantGit": "7a063e7d0fb389933c7163be6cba332c5f63cc17ba92f8becf94706ef30e50e3",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/appels.ts",
+      "fichier": "presti/lib/pilotage/appels.ts.txt",
       "source": "presti/lib/pilotage/appels.ts",
       "octets": 3938,
       "sha256": "422d22fcd115913412353a7491f77c21215e226626617018f96aa7b522558f08",
       "masquages": 0,
-      "sha256CopieAvantGit": "013b9e9abfd3b5045f3fc4633046fca917397319d6161b9718cc38ee393af56a"
+      "sha256CopieAvantGit": "013b9e9abfd3b5045f3fc4633046fca917397319d6161b9718cc38ee393af56a",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/attention.ts",
+      "fichier": "presti/lib/pilotage/attention.ts.txt",
       "source": "presti/lib/pilotage/attention.ts",
       "octets": 4096,
       "sha256": "45e097c0eaa70addb185f05a873df4b3b019f838b1555dbcd8402b7ec3793bc0",
       "masquages": 0,
-      "sha256CopieAvantGit": "29b0db35185d36a97a72132a7369bca432b4e36543c7ede617ec9e55c8fbb117"
+      "sha256CopieAvantGit": "29b0db35185d36a97a72132a7369bca432b4e36543c7ede617ec9e55c8fbb117",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/barre.ts",
+      "fichier": "presti/lib/pilotage/barre.ts.txt",
       "source": "presti/lib/pilotage/barre.ts",
       "octets": 5896,
       "sha256": "e9bde16c85b098e7313551a6109156842275fd1c2487336c1cb2b6711f6d971a",
       "masquages": 0,
-      "sha256CopieAvantGit": "e7cc38f9275b2113333c9ab35232536ff35300a9f48675e703806480424eacf1"
+      "sha256CopieAvantGit": "e7cc38f9275b2113333c9ab35232536ff35300a9f48675e703806480424eacf1",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/blocs.ts",
+      "fichier": "presti/lib/pilotage/blocs.ts.txt",
       "source": "presti/lib/pilotage/blocs.ts",
       "octets": 5567,
       "sha256": "4dd0395455a4784772d94faaa171a460e8de5404ab78758b4936771f95c81630",
       "masquages": 0,
-      "sha256CopieAvantGit": "78033bd9bee2a21d18664b7176da7f93d340b88b91f931131d127b3a3a99999b"
+      "sha256CopieAvantGit": "78033bd9bee2a21d18664b7176da7f93d340b88b91f931131d127b3a3a99999b",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/code.ts",
+      "fichier": "presti/lib/pilotage/code.ts.txt",
       "source": "presti/lib/pilotage/code.ts",
       "octets": 2903,
       "sha256": "1d389e6f5bb314390544aa77232abe6b76329d08bc9b3d63d5801a0a82c25fa0",
       "masquages": 0,
-      "sha256CopieAvantGit": "e6b7be64e25e7f41e61b22d80aabd03d051519ccc464aa67c42ead869f65d0c2"
+      "sha256CopieAvantGit": "e6b7be64e25e7f41e61b22d80aabd03d051519ccc464aa67c42ead869f65d0c2",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/decisions.ts",
+      "fichier": "presti/lib/pilotage/decisions.ts.txt",
       "source": "presti/lib/pilotage/decisions.ts",
       "octets": 4083,
       "sha256": "b671969888ec2e28bb21a691a2519d6629ab99f39c0b3986773057d9dade6180",
       "masquages": 0,
-      "sha256CopieAvantGit": "a5e688249bc3c9f78c00e7e7b012c939041cc684e7206631f0be956cae892746"
+      "sha256CopieAvantGit": "a5e688249bc3c9f78c00e7e7b012c939041cc684e7206631f0be956cae892746",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/entonnoir.ts",
+      "fichier": "presti/lib/pilotage/entonnoir.ts.txt",
       "source": "presti/lib/pilotage/entonnoir.ts",
       "octets": 3402,
       "sha256": "4693006a561dec001310c1bad7ce4eced53070d482c8e6df10c613e5220e4b20",
       "masquages": 0,
-      "sha256CopieAvantGit": "eccfdd645b67b213fd79324d667903e067a797bf2928527e11d7e4029731bbf4"
+      "sha256CopieAvantGit": "eccfdd645b67b213fd79324d667903e067a797bf2928527e11d7e4029731bbf4",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/envois.ts",
+      "fichier": "presti/lib/pilotage/envois.ts.txt",
       "source": "presti/lib/pilotage/envois.ts",
       "octets": 4875,
       "sha256": "553e9ee6bf6a487015864adf1815e37d472416e9c0ae1b69c24c0326747a4b40",
       "masquages": 0,
-      "sha256CopieAvantGit": "9f6a10e7ad05a032a5c6601987cce71c11dc3abedd1692624671442bc4ca4f0a"
+      "sha256CopieAvantGit": "9f6a10e7ad05a032a5c6601987cce71c11dc3abedd1692624671442bc4ca4f0a",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/equipage.ts",
+      "fichier": "presti/lib/pilotage/equipage.ts.txt",
       "source": "presti/lib/pilotage/equipage.ts",
       "octets": 8771,
       "sha256": "2e286d4ca8399340267b4a9ffe4ec2df5e85cc1b0b1133d3e2c61ab6cadb1574",
       "masquages": 0,
-      "sha256CopieAvantGit": "e5e8f24bbf7cf5e5897c0c41be021e42611bdb445dd19d25c6b9100c3ab0922a"
+      "sha256CopieAvantGit": "e5e8f24bbf7cf5e5897c0c41be021e42611bdb445dd19d25c6b9100c3ab0922a",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/experience.ts",
+      "fichier": "presti/lib/pilotage/experience.ts.txt",
       "source": "presti/lib/pilotage/experience.ts",
       "octets": 1157,
       "sha256": "16191a5d10fbd2944b2fc5e4f2b9466288427df59bbc3aeef0bb0f0bfc65ce44",
       "masquages": 0,
-      "sha256CopieAvantGit": "0ff481796d1cd19bf24b9723577194ab172680d852bd8dae6a6f16fde6481b29"
+      "sha256CopieAvantGit": "0ff481796d1cd19bf24b9723577194ab172680d852bd8dae6a6f16fde6481b29",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/fil.ts",
+      "fichier": "presti/lib/pilotage/fil.ts.txt",
       "source": "presti/lib/pilotage/fil.ts",
       "octets": 2862,
       "sha256": "5fb97c75c61d40a81d836b41e611fbae2e8039355dd0bf22d5c593088e54991d",
       "masquages": 0,
-      "sha256CopieAvantGit": "15a9614acb70d0931c963c2f427c1d1c194695ded1dd3f546f588995dd1bd688"
+      "sha256CopieAvantGit": "15a9614acb70d0931c963c2f427c1d1c194695ded1dd3f546f588995dd1bd688",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/liens.ts",
+      "fichier": "presti/lib/pilotage/liens.ts.txt",
       "source": "presti/lib/pilotage/liens.ts",
       "octets": 888,
       "sha256": "4d17f64523657771a36446f84b0cf8c0743f5e054f95c245a67fe07fd92e7143",
       "masquages": 0,
-      "sha256CopieAvantGit": "0a61f0575d20a30ca08f3e5efe22e3994033426fef4aeb9ae701e20cb14037b6"
+      "sha256CopieAvantGit": "0a61f0575d20a30ca08f3e5efe22e3994033426fef4aeb9ae701e20cb14037b6",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/missions.ts",
+      "fichier": "presti/lib/pilotage/missions.ts.txt",
       "source": "presti/lib/pilotage/missions.ts",
       "octets": 3785,
       "sha256": "437aa3f601887f5889cfca3270cdf861ad7bb201356ecee15a42dac65ebf5eda",
       "masquages": 0,
-      "sha256CopieAvantGit": "ba024d76d75df9f21790dd175a5f8776db312a16ac7644000d575d999004b724"
+      "sha256CopieAvantGit": "ba024d76d75df9f21790dd175a5f8776db312a16ac7644000d575d999004b724",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/notifications.ts",
+      "fichier": "presti/lib/pilotage/notifications.ts.txt",
       "source": "presti/lib/pilotage/notifications.ts",
       "octets": 2062,
       "sha256": "835b490b86b3c22f112ebce7f32947758378aa20af067f1f2948e509f635f65b",
       "masquages": 0,
-      "sha256CopieAvantGit": "a9801b833a6f6b0085c2d5f165e9c83212ac766bfea65c40bd63d408d7214909"
+      "sha256CopieAvantGit": "a9801b833a6f6b0085c2d5f165e9c83212ac766bfea65c40bd63d408d7214909",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/station.ts",
+      "fichier": "presti/lib/pilotage/station.ts.txt",
       "source": "presti/lib/pilotage/station.ts",
       "octets": 31057,
       "sha256": "47412f5d95b2722249fcb0be7f33afdfa634c042750b37a7bed79eeec75a27f2",
       "masquages": 0,
-      "sha256CopieAvantGit": "d42d0acf5489a9fee6cf1f13bb43bd6e3180469a8e802b418437d2a8d9b99031"
+      "sha256CopieAvantGit": "d42d0acf5489a9fee6cf1f13bb43bd6e3180469a8e802b418437d2a8d9b99031",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
-      "fichier": "presti/lib/pilotage/tapis.ts",
+      "fichier": "presti/lib/pilotage/tapis.ts.txt",
       "source": "presti/lib/pilotage/tapis.ts",
       "octets": 2214,
       "sha256": "b23149c43ca814ccda612546992aff1b451539d8d884d83c117750b2243bd791",
       "masquages": 0,
-      "sha256CopieAvantGit": "4d51950badcc46db6f358080fdb1774f7736141682a1b822fe98855b85ce201f"
+      "sha256CopieAvantGit": "4d51950badcc46db6f358080fdb1774f7736141682a1b822fe98855b85ce201f",
+      "format": "snapshot TypeScript textuel, exclu de la compilation"
     },
     {
       "fichier": "presti/package.json",
