@@ -1,0 +1,62 @@
+[
+  {
+    "fichier": "images/hero-1600.webp",
+    "base": "hero",
+    "largeur": 1600,
+    "hauteur": 1106,
+    "legende": "Mosaïque de sol et motifs géométriques",
+    "alt": "Mosaïque de sol et motifs géométriques",
+    "auteur": "Downtowngal",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Tesselated_tile_floor_pattern.jpg",
+    "titre_commons": "File:Tesselated tile floor pattern.jpg"
+  },
+  {
+    "fichier": "images/ceramique-960.webp",
+    "base": "ceramique",
+    "largeur": 1600,
+    "hauteur": 2844,
+    "legende": "Revêtement céramique mural pour pièce d'eau",
+    "alt": "Revêtement céramique mural pour pièce d'eau",
+    "auteur": "Niren 65",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_tile.jpg",
+    "titre_commons": "File:Bathroom tile.jpg"
+  },
+  {
+    "fichier": "images/dallage-960.webp",
+    "base": "dallage",
+    "largeur": 1600,
+    "hauteur": 1067,
+    "legende": "Dallage à motifs, calepinage traditionnel",
+    "alt": "Dallage à motifs, calepinage traditionnel",
+    "auteur": "Kritzolina",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Tiled_floor_in_the_Medina_of_Tunis.jpg",
+    "titre_commons": "File:Tiled floor in the Medina of Tunis.jpg"
+  },
+  {
+    "fichier": "images/douche-960.webp",
+    "base": "douche",
+    "largeur": 1600,
+    "hauteur": 1200,
+    "legende": "Douche carrelée, étanchéité sous carrelage",
+    "alt": "Douche carrelée, étanchéité sous carrelage",
+    "auteur": "Bart Everson",
+    "licence": "CC BY 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Mid-City_New_Orleans_Bathroom_-_Tile_in_the_Shower.jpg",
+    "titre_commons": "File:Mid-City New Orleans Bathroom - Tile in the Shower.jpg"
+  },
+  {
+    "fichier": "images/faience-960.webp",
+    "base": "faience",
+    "largeur": 1080,
+    "hauteur": 1920,
+    "legende": "Faïence murale d'une salle de bains",
+    "alt": "Faïence murale d'une salle de bains",
+    "auteur": "Ameerahraheem",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Bathroom_Tiles.jpg",
+    "titre_commons": "File:Bathroom Tiles.jpg"
+  }
+]

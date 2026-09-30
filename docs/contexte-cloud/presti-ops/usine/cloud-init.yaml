@@ -1,0 +1,76 @@
+#cloud-config
+# Usine des agents Presti - serveur Oracle Cloud Always Free (VM.Standard.A1.Flex, 2 OCPU, 12 Go, Ubuntu 24.04 ARM).
+# Ecrit par Claude Code le 24/09/2026. Colle dans " Paste cloud-init script " a la creation de l'instance.
+# Role : le travail lourd des agents quand le PC de Benj est eteint (recherche de prospects, maquettes, pubs, Codex).
+# JAMAIS le site : prestiapp.fr reste chez Vercel. Aucun secret ici : les cles arrivent apres, par un fichier protege.
+# 25/09/2026 : sudo restreint pour usine (voir users et /etc/sudoers.d/usine-restreint). Docker (installe apres, pour
+# freellmapi) n est pas dans ce fichier ; attention : usine dans le groupe docker = root (LISEZMOI, Sudo restreint).
+package_update: true
+package_upgrade: true
+packages:
+  - git
+  - curl
+  - ca-certificates
+  - fail2ban
+  - unattended-upgrades
+  - ffmpeg
+  - python3-venv
+  - build-essential
+  - jq
+users:
+  - default
+  - name: usine
+    gecos: Usine des agents Presti
+    shell: /bin/bash
+    # Pas de groupe sudo ni de sudo complet (25/09/2026) : usine n'a droit qu'a la commande apt EXACTE de Playwright,
+    # posee plus bas dans /etc/sudoers.d/usine-restreint. L'administration passe par le compte ubuntu (meme cle, sudo complet).
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKYZNOdgPdilpzWLvsETyJjJhuJDBt3mPP7nCXFCj975 presti-usine-2026-09-24
+ssh_pwauth: false
+disable_root: true
+write_files:
+  - path: /etc/sudoers.d/usine-restreint
+    owner: root:root
+    permissions: '0440'
+    content: |
+      # /etc/sudoers.d/usine-restreint -- pose le 25/09/2026 (presti-ops/usine/LISEZMOI.md, section "Sudo restreint").
+      # L utilisateur usine ne peut plus devenir root. Seule exception, sans mot de passe : la commande EXACTE que lance
+      # `npx playwright install --with-deps chromium webkit` (scripts/usine.mjs preparer ; Playwright 1.63.0, Ubuntu 24.04 arm64)
+      # pour les dependances apt de Chromium et WebKit. Aucun joker : un argument de plus, de moins ou dans un autre ordre,
+      # et sudo refuse. Si une autre version de Playwright demande une autre liste : la regenerer (meme section du LISEZMOI).
+      usine ALL=(root) NOPASSWD: /usr/bin/sh -c apt-get update&& apt-get install -y --no-install-recommends libasound2t64 libatk-bridge2.0-0t64 libatk1.0-0t64 libatspi2.0-0t64 libcairo2 libcups2t64 libdbus-1-3 libdrm2 libgbm1 libglib2.0-0t64 libnspr4 libnss3 libpango-1.0-0 libx11-6 libxcb1 libxcomposite1 libxdamage1 libxext6 libxfixes3 libxkbcommon0 libxrandr2 xvfb fonts-noto-color-emoji fonts-unifont libfontconfig1 libfreetype6 xfonts-cyrillic xfonts-scalable fonts-liberation fonts-ipafont-gothic fonts-wqy-zenhei fonts-tlwg-loma-otf fonts-freefont-ttf gstreamer1.0-libav gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good libicu74 libatomic1 libcairo-gobject2 libenchant-2-2 libepoxy0 libevent-2.1-7t64 libflite1 libgdk-pixbuf-2.0-0 libgles2 libgstreamer-gl1.0-0 libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-base1.0-0 libgstreamer1.0-0 libgtk-4-1 libharfbuzz-icu0 libharfbuzz0b libhyphen0 libjpeg-turbo8 liblcms2-2 libmanette-0.2-0 libopus0 libpangocairo-1.0-0 libpng16-16t64 libsecret-1-0 libvpx9 libwayland-client0 libwayland-egl1 libwayland-server0 libwebp7 libwebpdemux2 libwoff1 libxml2 libxslt1.1 libx264-164 libavif16
+  - path: /etc/ssh/sshd_config.d/10-usine.conf
+    content: |
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      PermitRootLogin no
+      AllowUsers usine ubuntu
+      MaxAuthTries 3
+  - path: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+  - path: /etc/fail2ban/jail.d/sshd.local
+    content: |
+      [sshd]
+      enabled = true
+      maxretry = 4
+      bantime = 1h
+runcmd:
+  # Pare-feu : PAS de ufw. L'image Oracle pose deja iptables-persistent (entree : SSH seul, le reste rejete ;
+  # chaine InstanceServices qui protege les services internes 169.254.x). Installer ufw desinstalle
+  # iptables-persistent et perd ces regles au redemarrage. Constate le 24/09/2026 sur l'instance presti-usine.
+  - systemctl restart ssh
+  - systemctl enable --now fail2ban
+  # Node 24 (meme version que le PC de Benj) et uv pour Python.
+  - curl -fsSL https://deb.nodesource.com/setup_24.x | bash -
+  - apt-get install -y nodejs
+  - sudo -u usine bash -lc 'curl -LsSf https://astral.sh/uv/install.sh | sh'
+  # Chromium et WebKit pour Playwright (maquettes, captures, juges ; les juges de la serie 025 lancent les deux).
+  # Les dependances systeme sont posees ici EN ROOT (runcmd tourne en root) : usine n'a plus de sudo complet, et
+  # --with-deps lance par usine ne passe que si sa liste apt est exactement celle de usine-restreint.
+  - sudo -u usine bash -lc 'mkdir -p ~/usine && cd ~/usine && npm init -y >/dev/null && npm i playwright@1.63.0 >/dev/null'
+  - cd /home/usine/usine && ./node_modules/.bin/playwright install-deps chromium webkit
+  - sudo -u usine bash -lc 'cd ~/usine && npx playwright install chromium webkit'
+  - echo "usine prete $(date -Is)" > /var/log/usine-prete.log

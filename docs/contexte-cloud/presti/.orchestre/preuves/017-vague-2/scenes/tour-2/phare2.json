@@ -1,0 +1,115 @@
+[
+ {
+  "passe": 1,
+  "chargeCpuAvant": "68",
+  "benchmarkIndex": 791,
+  "perf": 75,
+  "FCP": "0.9 s",
+  "LCP": "2.1 s",
+  "TBT": "1,140 ms",
+  "CLS": "0",
+  "SI": "2.8 s",
+  "lcpEl": "",
+  "longues": [
+   "index.html 614 ms @1789",
+   "Unattributable 458 ms @737",
+   "index.html 202 ms @2476",
+   "index.html 173 ms @1532",
+   "site.js 153 ms @2678",
+   "index.html 84 ms @1705",
+   "index.html 83 ms @1208",
+   "styles.css 77 ms @1291",
+   "Unattributable 60 ms @1368",
+   "index.html 58 ms @2887",
+   "site.js 56 ms @2831",
+   "index.html 52 ms @1428",
+   "index.html 52 ms @1480",
+   "index.html 50 ms @2403"
+  ],
+  "fil": [
+   "Other 1762",
+   "Style & Layout 1214",
+   "Parse HTML & CSS 349",
+   "Script Evaluation 338",
+   "Rendering 146",
+   "Script Parsing & Compilation 11"
+  ]
+ },
+ {
+  "passe": 2,
+  "chargeCpuAvant": "45",
+  "benchmarkIndex": 2405.5,
+  "perf": 99,
+  "FCP": "1.3 s",
+  "LCP": "2.0 s",
+  "TBT": "80 ms",
+  "CLS": "0",
+  "SI": "1.5 s",
+  "lcpEl": "",
+  "longues": [
+   "site.js 132 ms @1577",
+   "index.html 93 ms @773"
+  ],
+  "fil": [
+   "Other 413",
+   "Style & Layout 326",
+   "Script Evaluation 61",
+   "Parse HTML & CSS 38",
+   "Rendering 11",
+   "Script Parsing & Compilation 4"
+  ]
+ },
+ {
+  "passe": 3,
+  "chargeCpuAvant": "73",
+  "benchmarkIndex": 1677.5,
+  "perf": 76,
+  "FCP": "1.1 s",
+  "LCP": "2.5 s",
+  "TBT": "930 ms",
+  "CLS": "0",
+  "SI": "1.8 s",
+  "lcpEl": "",
+  "longues": [
+   "Unattributable 597 ms @1253",
+   "index.html 320 ms @1850",
+   "index.html 243 ms @1010",
+   "Unattributable 105 ms @776",
+   "Unattributable 84 ms @881"
+  ],
+  "fil": [
+   "Other 1401",
+   "Style & Layout 414",
+   "Script Evaluation 80",
+   "Parse HTML & CSS 58",
+   "Rendering 23",
+   "Script Parsing & Compilation 10"
+  ]
+ },
+ {
+  "passe": 4,
+  "chargeCpuAvant": "62",
+  "benchmarkIndex": 1802.5,
+  "perf": 99,
+  "FCP": "1.2 s",
+  "LCP": "1.9 s",
+  "TBT": "10 ms",
+  "CLS": "0",
+  "SI": "1.3 s",
+  "lcpEl": "",
+  "longues": [
+   "Unattributable 121 ms @762",
+   "index.html 104 ms @884",
+   "site.js 69 ms @1122",
+   "site.js 56 ms @1191"
+  ],
+  "fil": [
+   "Other 651",
+   "Style & Layout 200",
+   "Script Evaluation 59",
+   "Rendering 19",
+   "Parse HTML & CSS 16",
+   "Script Parsing & Compilation 5"
+  ]
+ }
+]

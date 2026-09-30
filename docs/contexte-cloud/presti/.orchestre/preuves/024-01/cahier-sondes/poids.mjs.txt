@@ -1,0 +1,17 @@
+import fs from 'node:fs'; import zlib from 'node:zlib'; import path from 'node:path'
+const R='C:/Users/benja/Documents/presti', T=path.join(R,'.orchestre/travail/024-01/cahier')
+const br=(b)=>zlib.brotliCompressSync(b,{params:{[zlib.constants.BROTLI_PARAM_QUALITY]:11}}).length
+const sc=(css)=>css.replace(/\/\*[\s\S]*?\*\//g,'').replace(/[ \t]*\n[ \t]*/g,'\n').replace(/\n{2,}/g,'\n').trim()
+const out={}
+for (const c of ['actuel','ref','nue']) for (const f of ['styles.css','site.js','bureau.css']) { const p=path.join(T,c,f); if(fs.existsSync(p)){const b=fs.readFileSync(p); out[`${c}/${f}`]={brut:b.length,br:br(b)}} else out[`${c}/${f}`]=null }
+const K=path.join(R,'public/sites-demo/_kit')
+for (const f of ['kit.js','familles/recit.js','familles/video.js','familles/survol.js']) { const b=fs.readFileSync(path.join(K,f)); out[f]={brut:b.length,br:br(b)} }
+const tel=sc(fs.readFileSync(path.join(K,'familles/telephone.css'),'utf8')); out['telephone.css sans commentaires']={brut:Buffer.byteLength(tel),br:br(Buffer.from(tel))}
+const html=fs.readFileSync(path.join(T,'actuel/index.html'),'utf8')
+out.reveal=(html.match(/class="[^"]*\breveal\b/g)||[]).length
+out.ml=(html.match(/class="ml__in"/g)||[]).length
+out.h2=[...html.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/g)].map(m=>({mots:(m[1].match(/ml__in/g)||[]).length, texte:m[1].replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim()}))
+out.scripts=[...html.matchAll(/<script[^>]*>/g)].map(m=>m[0])
+out.links=[...html.matchAll(/<link rel="stylesheet"[^>]*>/g)].map(m=>m[0])
+for (const c of ['actuel','ref']) { const a=fs.readFileSync(path.join(T,c,'index.html'),'utf8'); out[`index ${c} octets`]=a.length }
+console.log(JSON.stringify(out,null,1))

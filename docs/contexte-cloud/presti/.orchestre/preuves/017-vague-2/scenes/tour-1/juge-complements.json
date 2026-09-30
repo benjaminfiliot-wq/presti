@@ -1,0 +1,60 @@
+{
+ "hauteur390": 10069,
+ "b1440 index.html": {
+  "avant": {
+   "op": 1,
+   "top": 526,
+   "bas": 731,
+   "t": 0
+  },
+  "apres": {
+   "op": 1,
+   "top": 526,
+   "bas": 731,
+   "t": 0
+  }
+ },
+ "b1440 menuisier-rennes/index.html": {
+  "avant": {
+   "op": 1,
+   "top": 362,
+   "bas": 484,
+   "t": 0
+  },
+  "apres": {
+   "op": 1,
+   "top": 362,
+   "bas": 484,
+   "t": 0
+  }
+ },
+ "m390 index.html": {
+  "avant": {
+   "op": 1,
+   "top": 120,
+   "bas": 447,
+   "t": 0
+  },
+  "apres": {
+   "op": 1,
+   "top": 120,
+   "bas": 447,
+   "t": 0
+  }
+ },
+ "m390 menuisier-rennes/index.html": {
+  "avant": {
+   "op": 1,
+   "top": 319,
+   "bas": 429,
+   "t": 0
+  },
+  "apres": {
+   "op": 1,
+   "top": 319,
+   "bas": 429,
+   "t": 0
+  }
+ },
+ "absents": []
+}

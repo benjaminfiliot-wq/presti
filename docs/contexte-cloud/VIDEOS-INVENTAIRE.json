@@ -1,0 +1,5491 @@
+{
+  "capture": "2026-09-30T20:20:35.368Z",
+  "note": "Les 808 vidéos sont transférées dans quatre archives GitHub Release privées. Fichiers ZIP contrôlés par CRC et empreinte SHA256, tailles distantes confirmées. Une vidéo source de 0 octet est conservée. 1 fichier porte une extension vidéo mais contient un pointeur Git LFS ; il est archivé tel que présent sur le PC, sans prétendre posséder son original.",
+  "total": 808,
+  "octets": 2495740172,
+  "videos": [
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/descente/avant-correction/descente-d066.mp4",
+      "octets": 2176857,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/descente/avant-correction/descente-d116-roulis.mp4",
+      "octets": 2335826,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/descente/avant-correction/descente-d116.mp4",
+      "octets": 2307659,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/descente/avant-correction/descente-sansgpu.mp4",
+      "octets": 1779369,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/L1/film-1088x800.mp4",
+      "octets": 2660603,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/L1/film-1440x900.mp4",
+      "octets": 3600773,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/L2/film-1088x800.mp4",
+      "octets": 2256867,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/L2/film-1440x900.mp4",
+      "octets": 2912522,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/R/film-1088x800.mp4",
+      "octets": 2084497,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/R/film-1440x900.mp4",
+      "octets": 2706591,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/RL/film-1088x800.mp4",
+      "octets": 2764196,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/020-01/RL/film-1440x900.mp4",
+      "octets": 3570989,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-03/juge/chiffres-film.mp4",
+      "octets": 509611,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-03/juge/verbes-film.mp4",
+      "octets": 1168920,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-05/juge/eclate-film.mp4",
+      "octets": 498460,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-06/juge/survol-film-1088x800.mp4",
+      "octets": 387032,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-06/juge/survol-film-1440x900.mp4",
+      "octets": 431312,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-09/cote-a-cote.mp4",
+      "octets": 4013638,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-09/lenis.mp4",
+      "octets": 2846953,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-09/natif.mp4",
+      "octets": 1494181,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-13/juge/atelier-film.mp4",
+      "octets": 1285803,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-14/cote-a-cote.mp4",
+      "octets": 1728335,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-14/lenis.mp4",
+      "octets": 1198863,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-14/natif.mp4",
+      "octets": 520577,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/cote-a-cote.mp4",
+      "octets": 14110098,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/ouverture-1088x800.av1.mp4",
+      "octets": 3737204,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/ouverture-1088x800.h264.mp4",
+      "octets": 17227820,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/ouverture-1440x900.av1.mp4",
+      "octets": 4681790,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/ouverture-1440x900.h264.mp4",
+      "octets": 14200760,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@022b4f179a848a41feb9246f00a1f09f.webm",
+      "octets": 2833944,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@064a9a0fd7bf2d0cc4800edae7a47ec3.webm",
+      "octets": 6719029,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@0f9e11a22194be37e18410f89afb884e.webm",
+      "octets": 5649705,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@37a6939b658dd88b3a7bf5923554196c.webm",
+      "octets": 4463804,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@81042532ff7026bfd03f813d919e0318.webm",
+      "octets": 6016273,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@9b2d9f1f0ecc43769140b933fa1b948f.webm",
+      "octets": 3291052,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@a60b66daa1d48437b33834807cd8a097.webm",
+      "octets": 1973807,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@a6ae1f5356cb80d367a8a07778d6a313.webm",
+      "octets": 0,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@a9d1e90a79fc3bf9e48f91a6c91e5cc6.webm",
+      "octets": 3742249,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@c3a8433d30b8652cc8e8763e078d133f.webm",
+      "octets": 2140468,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-15/page@dd1d4b6de6362a14c961ecf2c4ccacb7.webm",
+      "octets": 4816181,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-16/juge/etapes-recit-film.mp4",
+      "octets": 358742,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-17/juge/tel-avant-apres.mp4",
+      "octets": 4494854,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-18/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-18/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/021-18/juge/boucle-x3.mp4",
+      "octets": 794533,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/024-01/diagnostic/android/film-haut.mp4",
+      "octets": 4711427,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/024-01/diagnostic/android/film-haut.webm",
+      "octets": 2135943,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/024-01/diagnostic/comparaison-films.mp4",
+      "octets": 9181764,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/024-01/diagnostic/iphone/film-haut.mp4",
+      "octets": 4394023,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/preuves/024-01/diagnostic/iphone/film-haut.webm",
+      "octets": 2038931,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-03-4/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-03-4/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-0/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-0/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-1/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-1/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-2/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-2/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-3/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-3/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-juge-diag/juge/eclate-film.mp4",
+      "octets": 439766,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-juge-diag2/juge/eclate-film.mp4",
+      "octets": 439668,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-verif-mutation/mutant/juge/eclate-film.mp4",
+      "octets": 500796,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-verif-mutation/sansvecteur/juge/eclate-film.mp4",
+      "octets": 501907,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-05-verif-mutation/temoin/juge/eclate-film.mp4",
+      "octets": 501031,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-06-4/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-06-4/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-06-ref/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-06-ref/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-09/page@002f76ec27eb2e491efdc4f307068726.webm",
+      "octets": 956210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-13-0/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-13-0/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-13-1/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-13-1/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-14/test_pipe.mp4",
+      "octets": 4777,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-16-essai-juge/etapes-recit-film.mp4",
+      "octets": 363255,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-16-final/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-16-final/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-16-juge-diag/juge/eclate-film.mp4",
+      "octets": 503542,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-17-1/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-17-1/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-17-2/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-17-2/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-17-3/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-17-3/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-17-nue/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-17-nue/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-17-ref/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-17-ref/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-18/miroir/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-18/miroir/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-18/variante-gardee/atelier.av1.mp4",
+      "octets": 95639,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-18/variante-gardee/atelier.h264.mp4",
+      "octets": 263801,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m1/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m1/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m2/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m2/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m3/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m3/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m4/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m4/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m5/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m5/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m6/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/m6/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/temoin/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/021-23/temoin/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/024-01/explore/mobile/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/024-01/explore/mobile/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/024-01/explore/ref/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/024-01/explore/ref/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/essai/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/essai/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/formulaire/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/formulaire/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/formulaire/site-p-vid-o-de-l-atelier/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/reference/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/reference/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/reference/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/reference/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/reference/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/reference/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/025-01/reference/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-029-maquette/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-029-maquette/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-029-maquette/public/promo/presti-carre.mp4",
+      "octets": 2311036,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-029-maquette/public/promo/presti-paysage.mp4",
+      "octets": 4495589,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-029-maquette/public/promo/presti-vertical.mp4",
+      "octets": 2602857,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-029-maquette/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-029-maquette/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-091/copie/scripts/fixtures/026-acquisition/maquettes/video-essai.mp4",
+      "octets": 164790,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-091/copie/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/video-1.mp4",
+      "octets": 6657564,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-091/copie/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/video-2.mp4",
+      "octets": 6658319,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-091/copie/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/video-3.mp4",
+      "octets": 6658398,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-156-essai/j1b/sortie/video-1.mp4",
+      "octets": 6054855,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-156-essai/j1b/sortie/video-2.mp4",
+      "octets": 7195024,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-156-essai/j1b/sortie/video-3.mp4",
+      "octets": 6006195,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-258/so8/ok/sortie/echantillon.mp4",
+      "octets": 2097152,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-258/so8/toobig/sortie/echantillon.mp4",
+      "octets": 3145729,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-acquisition/reference/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-acquisition/reference/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-acquisition/reference/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-acquisition/reference/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-acquisition/reference/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-acquisition/reference/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-acquisition/reference/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-pubs-contenu/pack-temoin/sortie/video-1.mp4",
+      "octets": 6657564,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-pubs-contenu/pack-temoin/sortie/video-2.mp4",
+      "octets": 6658319,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/026-pubs-contenu/pack-temoin/sortie/video-3.mp4",
+      "octets": 6658398,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/atelier-plan-qa-121092/site/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/atelier-plan-qa-121092/site/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/atelier-video-qa-28364/reference/video/atelier.av1.mp4",
+      "octets": 743736,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/atelier-video-qa-28364/reference/video/atelier.h264.mp4",
+      "octets": 931688,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/atelier-video-qa-28364/video/video/atelier.av1.mp4",
+      "octets": 743736,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/atelier-video-qa-28364/video/video/atelier.h264.mp4",
+      "octets": 931688,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/commun-025/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/commun-025/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-base/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-base/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m1/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m1/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m1b/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m1b/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m2/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m2/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m2b/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m2b/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m3/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m3/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m4/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m4/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m4b/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m4b/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m5/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m5/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m6/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m6/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m6b/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-m6b/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-temoin/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/demos-temoin/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-accord/refuter-1/racine/.orchestre/preuves/021-05/juge/eclate-film.mp4",
+      "octets": 497279,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-qa-55212/arbre/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-qa-55212/arbre/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-qa-55212/reference/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-qa-55212/reference/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-qa-55212/site/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/eclate-qa-55212/site/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/formulaire-site-qa/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/formulaire-site-qa/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge6/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge6/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge6/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge6/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge6/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge6/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge6/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge9/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge9/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge9/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge9/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge9/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge9/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/ge9/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/se2/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/se2/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/se2/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/se2/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/se2/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/se2/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/se2/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq2/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq2/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq2/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq2/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq2/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq2/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq2/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3b/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3b/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3b/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3b/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3b/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3b/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3b/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3c/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3c/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3c/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3c/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3c/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3c/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juge-independant-026-066/sq3c/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/reference/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/reference/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/reference/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/reference/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/reference/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/reference/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/reference/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-a/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-a/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-a/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-a/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-a/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-a/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-a/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-b/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-b/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-b/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-b/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-b/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-b/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-b/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-c/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-c/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-c/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-c/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-c/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-c/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-c/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/scripts/fixtures/026-acquisition/maquettes/video-essai.mp4",
+      "octets": 164790,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/artisan_de_confiance.mp4",
+      "octets": 36,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/avant_apres.mp4",
+      "octets": 27,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/avis_clients.mp4",
+      "octets": 28,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/garantie_decennale.mp4",
+      "octets": 34,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/intervention_rapide.mp4",
+      "octets": 35,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/proximite_locale.mp4",
+      "octets": 32,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/reactivite.mp4",
+      "octets": 26,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-k/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/savoir_faire.mp4",
+      "octets": 28,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-p/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-p/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-p/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-p/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-p/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-p/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-p/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-s/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-s/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-s/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-s/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-s/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-s/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pilotage/temoin-s/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-01/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-01/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-01/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-01/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-01/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-01/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-01/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-06/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-06/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-06/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-06/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-06/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-06/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-06/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-09/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-09/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-09/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-09/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-09/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-09/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-09/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/scripts/fixtures/026-acquisition/maquettes/video-essai.mp4",
+      "octets": 164790,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/artisan_de_confiance.mp4",
+      "octets": 36,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/avant_apres.mp4",
+      "octets": 27,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/avis_clients.mp4",
+      "octets": 28,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/garantie_decennale.mp4",
+      "octets": 34,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/intervention_rapide.mp4",
+      "octets": 35,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/proximite_locale.mp4",
+      "octets": 32,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/reactivite.mp4",
+      "octets": 26,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-10/scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/savoir_faire.mp4",
+      "octets": 28,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-17/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-17/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-17/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-17/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-17/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-17/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-17/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-20/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-20/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-20/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-20/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-20/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-20/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/juges-026-pubs-contenu/reference-20/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/kit-figma/exactitude-1/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/kit-figma/exactitude-1/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/kit-figma/exactitude-2/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/kit-figma/exactitude-2/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/kit-figma/generation/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/kit-figma/generation/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/kit-figma/lestraque-copie/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/kit-figma/lestraque-copie/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/landing-video/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/livraison-site/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/livraison-site/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/maquette-qa/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/maquette-qa/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/maquette-video-qa/essai-fige.mp4",
+      "octets": 6328,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/maquette-video-qa/essai-mouvant.mp4",
+      "octets": 136652,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/maquette-video-qa/page-blanche.mp4",
+      "octets": 27595,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/maquette-video-qa/site-temoin-2.mp4",
+      "octets": 459725,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/maquette-video-qa/site-temoin.mp4",
+      "octets": 459725,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/art-landing.mp4",
+      "octets": 12954852,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/luxury-focus-720.mp4",
+      "octets": 1675557,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/no-code-waitlist-720.mp4",
+      "octets": 1408935,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/ps-forest-sage-organic-store.mp4",
+      "octets": 1153798,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/ps-stacking-cards-portfolio.mp4",
+      "octets": 1357388,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/ps-sticky-content-switch.mp4",
+      "octets": 924665,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/ps-superdesign-editorial-manifesto.mp4",
+      "octets": 1695397,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/ps-terroir-tasting-room.mp4",
+      "octets": 1157355,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/recit-art-landing.mp4",
+      "octets": 12954852,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/speakup-venture-hero-720.mp4",
+      "octets": 1187595,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/vision-reveal.mp4",
+      "octets": 2245538,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/motionsites-apercus/visual-hero-720.mp4",
+      "octets": 1944338,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-locale-qa/jeu-1/sortie/video-1.mp4",
+      "octets": 6014695,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/etalonnage/PQ-2/echantillon-1/sortie/echantillon.mp4",
+      "octets": 6955857,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/etalonnage/PQ-3/echantillon-1/sortie/echantillon.mp4",
+      "octets": 6955847,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/etalonnage/PQ-5/echantillon-1/sortie/echantillon.mp4",
+      "octets": 6956313,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/etalonnage/PQ-6/echantillon-1/sortie/echantillon.mp4",
+      "octets": 6955981,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/etalonnage/PQ-7/echantillon-1/sortie/echantillon.mp4",
+      "octets": 6955779,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/maison-solane/avec-voix.mp4",
+      "octets": 6847483,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/maison-solane/plans-muet.mp4",
+      "octets": 6627040,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/maison-solane/seg-0.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/maison-solane/seg-1.mp4",
+      "octets": 1105187,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/maison-solane/seg-2.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/maison-solane/seg-3.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/maison-solane/seg-4.mp4",
+      "octets": 1105187,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/maison-solane/seg-5.mp4",
+      "octets": 1105189,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-2/avec-voix.mp4",
+      "octets": 6847489,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-2/plans-muet.mp4",
+      "octets": 6627046,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-2/seg-0.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-2/seg-1.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-2/seg-2.mp4",
+      "octets": 1105189,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-2/seg-3.mp4",
+      "octets": 1105190,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-2/seg-4.mp4",
+      "octets": 1105190,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-2/seg-5.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-3/avec-voix.mp4",
+      "octets": 6847484,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-3/plans-muet.mp4",
+      "octets": 6627041,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-3/seg-0.mp4",
+      "octets": 1105187,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-3/seg-1.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-3/seg-2.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-3/seg-3.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-3/seg-4.mp4",
+      "octets": 1105189,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-3/seg-5.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-5/avec-voix.mp4",
+      "octets": 6847956,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-5/plans-muet.mp4",
+      "octets": 6627039,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-5/seg-0.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-5/seg-1.mp4",
+      "octets": 1105187,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-5/seg-2.mp4",
+      "octets": 1105189,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-5/seg-3.mp4",
+      "octets": 1105187,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-5/seg-4.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-5/seg-5.mp4",
+      "octets": 1105187,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-6/avec-voix.mp4",
+      "octets": 6847606,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-6/plans-muet.mp4",
+      "octets": 6627041,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-6/seg-0.mp4",
+      "octets": 1105187,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-6/seg-1.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-6/seg-2.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-6/seg-3.mp4",
+      "octets": 1105189,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-6/seg-4.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-6/seg-5.mp4",
+      "octets": 1105188,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-7/avec-voix.mp4",
+      "octets": 6847453,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-7/plans-muet.mp4",
+      "octets": 6627010,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-7/seg-0.mp4",
+      "octets": 1105182,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-7/seg-1.mp4",
+      "octets": 1105183,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-7/seg-2.mp4",
+      "octets": 1105183,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-7/seg-3.mp4",
+      "octets": 1105183,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-7/seg-4.mp4",
+      "octets": 1105183,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/fabrication/PQ-7/seg-5.mp4",
+      "octets": 1105183,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/monter-temoin/maison-solane/echantillon-1/hf/renders/rendu.mp4",
+      "octets": 7253664,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/monter-temoin/maison-solane/echantillon-1/sortie/echantillon.mp4",
+      "octets": 7253664,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/pub-qa/temoin/maison-solane/echantillon-1/sortie/echantillon.mp4",
+      "octets": 6955849,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84076/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84076/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84076-films/chiffres-film.mp4",
+      "octets": 586270,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84076-films/page@68daac84a45b24dfa3c843803f1ecbd4.webm",
+      "octets": 1024375,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84076-films/page@80ca8deba06434b46fb261bdd5113222.webm",
+      "octets": 1171530,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84076-films/verbes-film.mp4",
+      "octets": 1263183,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84076-reference/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84076-reference/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84368-films/chiffres-film.mp4",
+      "octets": 69945,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84368-films/page@461102701d8ca735595e9e92d20e626d.webm",
+      "octets": 1289598,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84368-films/page@8d2ca0867fee59b8003de3765633c13d.webm",
+      "octets": 1110706,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/recit-qa-84368-films/verbes-film.mp4",
+      "octets": 1211031,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/rushes-atelier/commons-mondial-metiers.webm",
+      "octets": 16242045,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/rushes-atelier/coverr-filing-down-wood.mp4",
+      "octets": 8235251,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/rushes-atelier/coverr-sawing-plank.mp4",
+      "octets": 8637912,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/rushes-atelier/coverr-sawing-wood.mp4",
+      "octets": 8659377,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/rushes-atelier/mixkit-1445-measures-wood.mp4",
+      "octets": 3261656,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/rushes-atelier/mixkit-39684-leveling-board.mp4",
+      "octets": 3440115,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/rushes-atelier/mixkit-776-sanding-lumber.mp4",
+      "octets": 10786704,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/rushes-atelier/mixkit-778-marking-wood.mp4",
+      "octets": 12553895,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/site-signature-repos-16636/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/site-signature-repos-16636/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/conforme-muet.mp4",
+      "octets": 6626959,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/conforme-seg0.mp4",
+      "octets": 1105172,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/conforme-seg1.mp4",
+      "octets": 1105172,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/conforme-seg2.mp4",
+      "octets": 1105179,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/conforme-seg3.mp4",
+      "octets": 1105172,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/conforme-seg4.mp4",
+      "octets": 1105180,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/conforme-seg5.mp4",
+      "octets": 1105171,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/conforme.mp4",
+      "octets": 6699421,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-diaporama-muet.mp4",
+      "octets": 6626963,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-diaporama-seg0.mp4",
+      "octets": 1105175,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-diaporama-seg1.mp4",
+      "octets": 1105178,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-diaporama-seg2.mp4",
+      "octets": 1105173,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-diaporama-seg3.mp4",
+      "octets": 1105172,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-diaporama-seg4.mp4",
+      "octets": 1105175,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-diaporama-seg5.mp4",
+      "octets": 1105177,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-diaporama.mp4",
+      "octets": 6699425,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-duree-muet.mp4",
+      "octets": 5275716,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-duree-seg0.mp4",
+      "octets": 879945,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-duree-seg1.mp4",
+      "octets": 879945,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-duree-seg2.mp4",
+      "octets": 879948,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-duree-seg3.mp4",
+      "octets": 879946,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-duree-seg4.mp4",
+      "octets": 879949,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-duree-seg5.mp4",
+      "octets": 879942,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-duree.mp4",
+      "octets": 5345350,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-format-muet.mp4",
+      "octets": 6626978,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-format-seg0.mp4",
+      "octets": 1105169,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-format-seg1.mp4",
+      "octets": 1105168,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-format-seg2.mp4",
+      "octets": 1105170,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-format-seg3.mp4",
+      "octets": 1105174,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-format-seg4.mp4",
+      "octets": 1105178,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-format-seg5.mp4",
+      "octets": 1105169,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-format.mp4",
+      "octets": 6699404,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-son-muet.mp4",
+      "octets": 6626954,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-son-seg0.mp4",
+      "octets": 1105171,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-son-seg1.mp4",
+      "octets": 1105172,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-son-seg2.mp4",
+      "octets": 1105177,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-son-seg3.mp4",
+      "octets": 1105172,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-son-seg4.mp4",
+      "octets": 1105178,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-son-seg5.mp4",
+      "octets": 1105171,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/mutation-son.mp4",
+      "octets": 6700201,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/portrait-4s.mp4",
+      "octets": 192739,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/reseaux-temoin-muet.mp4",
+      "octets": 6626960,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/reseaux-temoin-seg0.mp4",
+      "octets": 1105170,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/reseaux-temoin-seg1.mp4",
+      "octets": 1105175,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/reseaux-temoin-seg2.mp4",
+      "octets": 1105177,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/reseaux-temoin-seg3.mp4",
+      "octets": 1105175,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/reseaux-temoin-seg4.mp4",
+      "octets": 1105178,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/reseaux-temoin-seg5.mp4",
+      "octets": 1105172,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/reseaux-temoin.mp4",
+      "octets": 6626960,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/seg/test1.mp4",
+      "octets": 322905,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/seg/test2.mp4",
+      "octets": 339467,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle/test-cbr.mp4",
+      "octets": 1105171,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-pubs-qa-essai-ref/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-pubs-qa-essai-ref/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-pubs-qa-essai-ref/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-pubs-qa-essai-ref/public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-pubs-qa-essai-ref/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-pubs-qa-essai-ref/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-pubs-qa-essai-ref/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-18168/apres/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-18168/apres/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-18168/avant/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-18168/avant/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-18168/copie/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-18168/copie/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-18168/sortie-temoin/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-18168/sortie-temoin/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-19964/apres/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-19964/apres/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-19964/avant/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-19964/avant/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-19964/copie/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-19964/copie/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-19964/sortie-temoin/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-19964/sortie-temoin/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-21180/apres/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-21180/apres/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-21180/avant/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-21180/avant/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-21180/copie/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-21180/copie/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-21180/sortie-temoin/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-qa-21180/sortie-temoin/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-15372/apres/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-15372/apres/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-15372/avant/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-15372/avant/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-15372/copie/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-15372/copie/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-15372/sortie-temoin/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-15372/sortie-temoin/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-8396/apres/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-8396/apres/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-8396/avant/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-8396/avant/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-8396/copie/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-8396/copie/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-8396/sortie-temoin/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/socle-suite-qa-8396/sortie-temoin/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/sv10/preuves-trace/survol-film-1088x800.mp4",
+      "octets": 240430,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/sv10/preuves-trace/survol-film-1440x900.mp4",
+      "octets": 340531,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/sv10/site/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/sv10/site/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/sv10/site-recit-survol/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/sv10/site-recit-survol/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/sv10/site-survol/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".orchestre/travail/sv10/site-survol/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "exclu",
+      "motif": "travail temporaire, sauvegarde ou journal"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/carre/bout-00.mp4",
+      "octets": 381253,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/carre/bout-01.mp4",
+      "octets": 368170,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/carre/bout-02.mp4",
+      "octets": 381514,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/carre/bout-03.mp4",
+      "octets": 334476,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/carre/bout-04.mp4",
+      "octets": 349367,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/carre/bout-05.mp4",
+      "octets": 357590,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/carre/bout-06.mp4",
+      "octets": 404241,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/carre/bout-07.mp4",
+      "octets": 399484,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/paysage/bout-00.mp4",
+      "octets": 563561,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/paysage/bout-01.mp4",
+      "octets": 528961,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/paysage/bout-02.mp4",
+      "octets": 547027,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/paysage/bout-03.mp4",
+      "octets": 533602,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/paysage/bout-04.mp4",
+      "octets": 515243,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/paysage/bout-05.mp4",
+      "octets": 548241,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/paysage/bout-06.mp4",
+      "octets": 566923,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/paysage/bout-07.mp4",
+      "octets": 568099,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/paysage/bout-08.mp4",
+      "octets": 546777,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/paysage/bout-09.mp4",
+      "octets": 574193,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/vertical/bout-00.mp4",
+      "octets": 526424,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/vertical/bout-01.mp4",
+      "octets": 511372,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/vertical/bout-02.mp4",
+      "octets": 520695,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/vertical/bout-03.mp4",
+      "octets": 453262,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/vertical/bout-04.mp4",
+      "octets": 486423,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/vertical/bout-05.mp4",
+      "octets": 492456,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/vertical/bout-06.mp4",
+      "octets": 553669,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".promo-tmp/vertical/bout-07.mp4",
+      "octets": 550056,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "public/demo/hero.mp4",
+      "octets": 4780514,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "public/promo/presti-carre.mp4",
+      "octets": 2311036,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "public/promo/presti-paysage.mp4",
+      "octets": 4495589,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "public/promo/presti-vertical.mp4",
+      "octets": 2602857,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-01/carre.mp4",
+      "octets": 8868902,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-01/paysage.mp4",
+      "octets": 12051212,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-01/vertical.mp4",
+      "octets": 10892605,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-02/carre.mp4",
+      "octets": 8215176,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-02/paysage.mp4",
+      "octets": 10727966,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-02/vertical.mp4",
+      "octets": 10169456,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-03/carre.mp4",
+      "octets": 7969648,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-03/paysage.mp4",
+      "octets": 10385389,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-03/vertical.mp4",
+      "octets": 9923820,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-04/carre.mp4",
+      "octets": 9383744,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-04/paysage.mp4",
+      "octets": 12403586,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-04/vertical.mp4",
+      "octets": 11404164,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-05/carre.mp4",
+      "octets": 8060749,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-05/paysage.mp4",
+      "octets": 10582294,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-05/vertical.mp4",
+      "octets": 9875041,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-06/carre.mp4",
+      "octets": 8012606,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-06/paysage.mp4",
+      "octets": 11335595,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-06/vertical.mp4",
+      "octets": 9856056,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-07/carre.mp4",
+      "octets": 8524781,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-07/paysage.mp4",
+      "octets": 11186659,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-07/vertical.mp4",
+      "octets": 10353253,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-08/carre.mp4",
+      "octets": 8278926,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-08/paysage.mp4",
+      "octets": 11173447,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-08/vertical.mp4",
+      "octets": 10270085,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-09/carre.mp4",
+      "octets": 8456816,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-09/paysage.mp4",
+      "octets": 11111760,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-09/vertical.mp4",
+      "octets": 10364738,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-10/carre.mp4",
+      "octets": 8207545,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-10/paysage.mp4",
+      "octets": 11051824,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-10/vertical.mp4",
+      "octets": 10145141,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-11/carre.mp4",
+      "octets": 8903714,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-11/paysage.mp4",
+      "octets": 11968190,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-11/vertical.mp4",
+      "octets": 10868100,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-12/carre.mp4",
+      "octets": 8657220,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-12/paysage.mp4",
+      "octets": 12458378,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-12/vertical.mp4",
+      "octets": 10617156,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-13/carre.mp4",
+      "octets": 8359559,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-13/paysage.mp4",
+      "octets": 11443258,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-13/vertical.mp4",
+      "octets": 10172263,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-14/carre.mp4",
+      "octets": 8212070,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-14/paysage.mp4",
+      "octets": 11691190,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-14/vertical.mp4",
+      "octets": 10077368,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-15/carre.mp4",
+      "octets": 9141286,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-15/paysage.mp4",
+      "octets": 12399492,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-15/vertical.mp4",
+      "octets": 11395838,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-16/carre.mp4",
+      "octets": 8397172,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-16/paysage.mp4",
+      "octets": 11490044,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-16/vertical.mp4",
+      "octets": 10668800,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-17/carre.mp4",
+      "octets": 9166974,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-17/paysage.mp4",
+      "octets": 12683653,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-17/vertical.mp4",
+      "octets": 11060280,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-18/carre.mp4",
+      "octets": 8171293,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-18/paysage.mp4",
+      "octets": 11731326,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-18/vertical.mp4",
+      "octets": 10188742,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-19/carre.mp4",
+      "octets": 8343405,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-19/paysage.mp4",
+      "octets": 11497667,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-19/vertical.mp4",
+      "octets": 10268512,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-20/carre.mp4",
+      "octets": 9315448,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-20/paysage.mp4",
+      "octets": 13149123,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "publications/pub-20/vertical.mp4",
+      "octets": 11393435,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "scripts/fixtures/026-acquisition/maquettes/video-essai.mp4",
+      "octets": 164790,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/video-1.mp4",
+      "octets": 6657564,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/video-2.mp4",
+      "octets": 6658319,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti",
+      "fichier": "scripts/fixtures/026-pubs-contenu/livraison/fabrication-temoin/sortie/video-3.mp4",
+      "octets": 6658398,
+      "etat": "déjà accessible sur main"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/2026-09-24/videos/androoagi.mp4",
+      "octets": 29031518,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/2026-09-24/videos/hugomatias-DcODQPCMsLl.mp4",
+      "octets": 16240224,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/2026-09-24/videos/insta-DdKrZjlg1eC.mp4",
+      "octets": 2108024,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/2026-09-24/videos/mr_pynk.mp4",
+      "octets": 1855611,
+      "etat": "exclu",
+      "motif": "binaire ou format non textuel, inventorié"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/2026-09-24/videos/trevsagents.mp4",
+      "octets": 37801669,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/2026-09-25/reel-DdscwJUROKo.mp4",
+      "octets": 11896481,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/5uaSrfCLd78/video.mp4",
+      "octets": 53801547,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/9cXVJqlWNK0/video.mp4",
+      "octets": 31170794,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/AWyEpJokQiM/video.mp4",
+      "octets": 52634622,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/dh542CjmMi0/video.mp4",
+      "octets": 33736028,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/ip4IHi1ZfhA/video.mp4",
+      "octets": 63770762,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/J6Cpt7BOqI0/video.mp4",
+      "octets": 46806224,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/JBIuZCw74FI/video.mp4",
+      "octets": 42400957,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/NrjE4aBhzmU/video.mp4",
+      "octets": 23022149,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/pPoR_0FHl-U/video.mp4",
+      "octets": 93536911,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/sPhCwBND6oI/video.mp4",
+      "octets": 19956638,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/uNrz5v9p-zk/video.mp4",
+      "octets": 45576419,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/vEP99KxIYHk/video.mp4",
+      "octets": 36228380,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/Z2un1Yax_aQ/video.mp4",
+      "octets": 25008570,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti-ops",
+      "fichier": "veille/youtube/ZCC6uqwHxV4/video.mp4",
+      "octets": 22829877,
+      "etat": "exclu",
+      "motif": "artefact supérieur à 10 Mo"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".agents/skills/changelog-video/assets/bg-pattern.mp4",
+      "octets": 133,
+      "source": "pointeur Git LFS local, vidéo originale absente sur le PC"
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-1/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-1/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-1/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-1/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-1/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-1/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-1/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-2/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-2/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-2/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-2/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-2/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-2/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_4d99431c-892-2/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/.orchestre/travail/026-029-maquette/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/.orchestre/travail/026-029-maquette/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/.orchestre/travail/026-029-maquette/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/.orchestre/travail/026-029-maquette/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-1/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-3/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-3/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-3/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-3/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-3/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-3/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-3/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/.orchestre/travail/025-01/reference/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/.orchestre/travail/025-01/reference/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/.orchestre/travail/025-01/reference/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/.orchestre/travail/025-01/reference/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/.orchestre/travail/025-01/reference/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/.orchestre/travail/025-01/reference/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/.orchestre/travail/025-01/reference/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-5/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-7/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-7/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-7/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-7/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-7/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-7/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_c7f9bd02-8e3-7/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/reference/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/reference/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/reference/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/reference/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/reference/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/reference/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/reference/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-conforme/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-presence-seule/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-rouge/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-autotest-toujours-vert/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-s/.orchestre/preuves/018-05/video/lestraque.mp4",
+      "octets": 1360622
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-s/.orchestre/preuves/018-07/video/lestraque.mp4",
+      "octets": 1355210
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-s/.orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-s/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-s/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-s/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/.orchestre/travail/juges-026-pilotage/temoin-s/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/public/demo/hero.mp4",
+      "octets": 4780514
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475
+    },
+    {
+      "dossier": "presti",
+      "fichier": ".claude/worktrees/wf_e98e6c4e-6d8-1/public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449
+    }
+  ],
+  "release": "https://github.com/benjaminfiliot-wq/presti/releases/tag/codex-videos-2026-09-30",
+  "archives": [
+    {
+      "lot": 1,
+      "fichiers": 478,
+      "octets": 840709949,
+      "sha256": "a07fe2dd50280e93ffa10e7bf88227093d54d72f820055d263b8fa76fca288d6",
+      "id": 601733568,
+      "url": "https://github.com/benjaminfiliot-wq/presti/releases/download/codex-videos-2026-09-30/presti-videos-2026-09-30-lot-1.zip",
+      "digestGitHub": "sha256:a07fe2dd50280e93ffa10e7bf88227093d54d72f820055d263b8fa76fca288d6",
+      "etat": "uploaded"
+    },
+    {
+      "lot": 2,
+      "fichiers": 208,
+      "octets": 840735601,
+      "sha256": "c01279e3ae569c91945523d5994704d9cec88372258b2809487b6259b7c8a379",
+      "id": 601734659,
+      "url": "https://github.com/benjaminfiliot-wq/presti/releases/download/codex-videos-2026-09-30/presti-videos-2026-09-30-lot-2.zip",
+      "digestGitHub": "sha256:c01279e3ae569c91945523d5994704d9cec88372258b2809487b6259b7c8a379",
+      "etat": "uploaded"
+    },
+    {
+      "lot": 3,
+      "fichiers": 19,
+      "octets": 660385201,
+      "sha256": "31ff63697dfbb9d15ddfd248a6b2b937905c2dcb439f3815bfad3e8e316411bb",
+      "id": 601735744,
+      "url": "https://github.com/benjaminfiliot-wq/presti/releases/download/codex-videos-2026-09-30/presti-videos-2026-09-30-lot-3.zip",
+      "digestGitHub": "sha256:31ff63697dfbb9d15ddfd248a6b2b937905c2dcb439f3815bfad3e8e316411bb",
+      "etat": "uploaded"
+    },
+    {
+      "lot": 4,
+      "fichiers": 103,
+      "octets": 154098495,
+      "sha256": "db95ab38d16946d2a94c4617f15369e090019cc467d8260eaef76ae85a933023",
+      "id": 601738318,
+      "url": "https://github.com/benjaminfiliot-wq/presti/releases/download/codex-videos-2026-09-30/presti-videos-2026-09-30-lot-4.zip",
+      "digestGitHub": "sha256:db95ab38d16946d2a94c4617f15369e090019cc467d8260eaef76ae85a933023",
+      "etat": "uploaded"
+    }
+  ]
+}

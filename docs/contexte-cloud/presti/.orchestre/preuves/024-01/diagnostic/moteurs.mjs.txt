@@ -1,0 +1,434 @@
+// moteurs.mjs — diagnostic 024-01 : ce qui bouge VRAIMENT au téléphone sur la démo Lestraque, par profil.
+// Usage (depuis la racine du dépôt) : node .orchestre/preuves/024-01/diagnostic/moteurs.mjs [--profils=android,iphone,iphone-litteral] [--sans-film]
+//
+// Profils
+//   android          : https://prestiapp.fr/sites-demo/lestraque/index.html, Chromium, appareil Playwright « Pixel 7 », support natif.
+//   iphone           : copie générée (.orchestre/travail/024-01/moteurs/www) recopiée, dont chaque « @supports (animation-timeline: view()) »
+//                      et « @supports (animation-timeline: scroll()) » de styles.css et bureau.css devient
+//                      « @supports (animation-timeline: non-supporte()) » (FAUX dans Chromium 153, sonde-supports.txt), servie en local ;
+//                      script d'init : CSS.supports(...) répond faux pour animation-timeline / view-timeline / scroll-timeline ;
+//                      appareil « iPhone 13 » (UA iPhone, dpr 3, tactile) en 390×844.
+//   iphone-litteral  : même chose avec la réécriture littérale de la consigne, « @supports (animation-timeline: --non-supporte()) »,
+//                      qui est VRAIE dans Chromium 153 (fonction à tirets = fonction de substitution) : témoin, sans film.
+//
+// Pour chaque profil : au chargement puis tous les 400 px jusqu'au bas, document.getAnimations() (type, nom, cible, section, état,
+// timeline, progression), CSS.supports('animation-timeline: view()') vu par la page et natif, matchMedia mouvement réduit, journal
+// des mutations style/class (ce que du JavaScript fait bouger hors getAnimations) ; capture à chaque arrêt ; énergie hors défilement :
+// deux captures à 600 ms d'écart sans défiler (1,5 s après l'arrêt), écart moyen de gris, global et par bande de section ; puis un
+// geste de pouce sur chaque rail horizontal ; un balayage fin sans capture (pas de 40 px, page neuve) ; puis un film de 15 s depuis y = 0 à 480 px/s, soit 8 px
+// par image à 60 Hz, position recalculée à chaque image sur le temps réel.
+// Calme exigé avant chaque profil et chaque film : aucun processus « -qa.mjs » ET une page vide à ≥ 55 images/s pendant 2 s (toutes les
+// 20 s, 20 min au plus) ; une paire de captures dont les débuts sont à plus de 700 ms est refaite (3 essais) ; un film sous 55 images/s
+// rAF est refait (3 essais, tous consignés dans films[].essais).
+import { chromium, devices } from 'playwright'
+import http from 'node:http'
+import fs from 'node:fs'
+import path from 'node:path'
+import { execFileSync } from 'node:child_process'
+import sharp from 'sharp'
+
+const RACINE = 'C:/Users/benja/Documents/presti'
+const TRAVAIL = path.join(RACINE, '.orchestre/travail/024-01/moteurs')
+const PREUVES = path.join(RACINE, '.orchestre/preuves/024-01/diagnostic')
+const EN_LIGNE = 'https://prestiapp.fr/sites-demo/lestraque/index.html'
+const args = process.argv.slice(2)
+const PROFILS = (args.find((a) => a.startsWith('--profils='))?.slice(10) || 'android,iphone,iphone-litteral').split(',')
+const SANS_FILM = args.includes('--sans-film')
+const PAS = 400, ECART_ENERGIE = 600, REPOS = 1500, VITESSE = 480, DUREE_FILM = 15000
+const journal = (...m) => console.log(new Date().toISOString().slice(11, 19), ...m)
+
+// ── attendre qu'aucun autre juge « -qa.mjs » ne tourne (toutes les 20 s, 20 min au plus) ─────────────────────────────────────
+const attentes = []
+async function cadenceVide(browser) {
+  const p = await browser.newPage()
+  const ips = await p.evaluate(() => new Promise((ok) => { let n = 0; const t0 = performance.now(); const f = (t) => { n++; if (t - t0 < 2000) requestAnimationFrame(f); else ok(Math.round((n / ((t - t0) / 1000)) * 10) / 10) }; requestAnimationFrame(f) }))
+  await p.close()
+  return ips
+}
+async function attendreCalme(pourquoi, browser) {
+  const debut = Date.now()
+  for (let k = 0; ; k++) {
+    let n = 0
+    try {
+      n = Number(execFileSync('powershell.exe', ['-NoProfile', '-Command', "(Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Where-Object { $_.CommandLine -match '-qa\\.mjs' } | Measure-Object).Count"], { encoding: 'utf8' }).trim())
+    } catch (e) { n = -1 }
+    const ips = n === 0 ? await cadenceVide(browser) : null
+    if ((n === 0 && ips >= 55) || Date.now() - debut > 20 * 60e3) { attentes.push({ pourquoi, controles: k + 1, attenteMs: Date.now() - debut, autresQa: n, imagesParSecondePageVide: ips }); return }
+    journal(`  ${n} processus -qa.mjs en cours, page vide à ${ips} images/s, attente 20 s (${pourquoi})`)
+    await new Promise((r) => setTimeout(r, 20e3))
+  }
+}
+
+// ── copies iPhone : la copie générée, recopiée, @supports réécrits ────────────────────────────────────────────────────────────
+const MOTIF_SUPPORTS = /@supports\s*\(\s*animation-timeline\s*:\s*(view|scroll)\(\)\s*\)/g
+function preparerCopie(nom, remplacement) {
+  const src = path.join(TRAVAIL, 'www')
+  const dst = path.join(TRAVAIL, `www-${nom}`)
+  fs.rmSync(dst, { recursive: true, force: true })
+  fs.cpSync(src, dst, { recursive: true })
+  const bilan = {}
+  for (const f of ['styles.css', 'bureau.css']) {
+    const p = path.join(dst, 'sites-demo/lestraque', f)
+    const avant = fs.readFileSync(p, 'utf8')
+    const n = (avant.match(MOTIF_SUPPORTS) || []).length
+    const apres = avant.replace(MOTIF_SUPPORTS, remplacement)
+    fs.writeFileSync(p, apres)
+    bilan[f] = { remplaces: n, restantsView: (apres.match(/animation-timeline:\s*view\(\)\s*\)/g) || []).length, restantsScroll: (apres.match(/@supports\s*\(\s*animation-timeline:\s*scroll\(\)/g) || []).length, nouveaux: apres.split(remplacement).length - 1 }
+  }
+  return { racine: dst, remplacement, bilan }
+}
+
+const TYPES = { html: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8', js: 'text/javascript; charset=utf-8', json: 'application/json', svg: 'image/svg+xml', avif: 'image/avif', webp: 'image/webp', jpg: 'image/jpeg', png: 'image/png', woff2: 'font/woff2', mp4: 'video/mp4', xml: 'application/xml', txt: 'text/plain' }
+async function servir(racine) {
+  const srv = http.createServer((q, r) => {
+    const p = decodeURIComponent(new URL(q.url, 'http://x').pathname)
+    const f = path.join(racine, p.endsWith('/') ? p + 'index.html' : p)
+    if (!f.startsWith(racine) || !fs.existsSync(f) || !fs.statSync(f).isFile()) { r.writeHead(404); return r.end() }
+    r.writeHead(200, { 'content-type': TYPES[path.extname(f).slice(1)] || 'application/octet-stream', 'cache-control': 'no-store' })
+    fs.createReadStream(f).pipe(r)
+  })
+  await new Promise((ok) => srv.listen(0, '127.0.0.1', ok))
+  return { base: `http://127.0.0.1:${srv.address().port}`, fermer: () => new Promise((ok) => srv.close(() => ok())) }
+}
+
+// ── injecté avant tout script de la page ─────────────────────────────────────────────────────────────────────────────────────
+function INIT(simuler) {
+  const natif = CSS.supports.bind(CSS)
+  window.__supportsNatif = natif
+  if (simuler) {
+    const motif = /(animation-timeline|view-timeline|scroll-timeline)/i
+    CSS.supports = function (a, b) {
+      if (motif.test(String(a))) return false
+      return arguments.length > 1 ? natif(a, b) : natif(a)
+    }
+  }
+  const ETATS = new Set(['vu', 'entier', 'solide', 'nav--sombre', 'nav--bande', 'nav--appel', 'nav--retenue', 'tout-rendu', 'js', 'no-js', 'pilote', 'relief-3d', 'menu-ouvert', 'ouvert', 'est-ouverte', 'est-sortie'])
+  function sel(el) {
+    if (!el || el.nodeType !== 1) return String(el && el.nodeName)
+    let s = el.tagName.toLowerCase()
+    if (el.id) s += '#' + el.id
+    const cls = [...el.classList].filter((c) => !ETATS.has(c))
+    if (cls.length) s += '.' + cls.slice(0, 3).join('.')
+    const p = el.parentElement
+    if (p && !el.id) {
+      const freres = [...p.children].filter((x) => x.tagName === el.tagName && x.className === el.className)
+      if (freres.length > 1) s += `:${freres.indexOf(el) + 1}`
+    }
+    return s
+  }
+  function section(el) {
+    if (!el || el.nodeType !== 1) return 'document'
+    if (el.closest('header.nav, .panneau, .voile')) return 'nav'
+    if (el.closest('.hero--plein')) return 'heros'
+    if (el.closest('section.plateau')) return 'plateau'
+    const s = el.closest('section[id], footer')
+    if (s) return s.id || 'pied'
+    if (el === document.documentElement || el === document.body) return 'document'
+    return 'hors-section'
+  }
+  const val = (v) => (v == null ? null : typeof v === 'number' ? Math.round(v * 10) / 10 : String(v))
+  window.__anims = function () {
+    return document.getAnimations().map((a) => {
+      const e = a.effect, t = e && e.target, tl = a.timeline
+      const ct = e ? e.getComputedTiming() : {}
+      const r = t ? t.getBoundingClientRect() : null
+      let sujet = null
+      try { if (tl && tl.subject) sujet = sel(tl.subject); else if (tl && tl.source) sujet = sel(tl.source) } catch (x) {}
+      return {
+        type: a.constructor.name,
+        nom: a.animationName || a.transitionProperty || a.id || '',
+        cible: sel(t) + (e && e.pseudoElement ? e.pseudoElement : ''),
+        section: section(t),
+        etat: a.playState,
+        timeline: tl ? tl.constructor.name : 'aucune',
+        sujet, axe: tl && tl.axis ? tl.axis : null,
+        progression: ct.progress == null ? null : Math.round(ct.progress * 1e4) / 1e4,
+        tempsCourant: val(a.currentTime),
+        duree: val(ct.duration), iterations: ct.iterations === Infinity ? 'infinite' : ct.iterations, delai: val(ct.delay),
+        aLEcran: !!(r && r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth),
+      }
+    })
+  }
+  window.__journal = []
+  const mo = new MutationObserver((ms) => {
+    for (const m of ms) {
+      if (window.__journal.length > 50000) return
+      window.__journal.push([sel(m.target), section(m.target), m.attributeName, (m.target.getAttribute(m.attributeName) || '').slice(0, 200)])
+    }
+  })
+  mo.observe(document, { attributes: true, subtree: true, attributeFilter: ['style', 'class', 'hidden', 'open'] })
+  window.__lireJournal = function () {
+    const agg = new Map()
+    for (const [cible, sec, attr, v] of window.__journal) {
+      const k = cible + '|' + attr
+      const x = agg.get(k) || { cible, section: sec, attribut: attr, n: 0, valeurs: new Set(), derniere: '' }
+      x.n++; if (x.valeurs.size < 6) x.valeurs.add(v); x.derniere = v
+      agg.set(k, x)
+    }
+    window.__journal.length = 0
+    return [...agg.values()].map((x) => ({ ...x, valeurs: [...x.valeurs] }))
+  }
+  window.__sel = sel; window.__section = section
+}
+
+const SECTIONS = [['heros', '.hero--plein:not(.hero--commune)'], ['plateau', 'section.plateau'], ['prestations', '#prestations'], ['atelier', '#atelier'], ['realisations', '#realisations'], ['communes', '#communes'], ['etapes', '#etapes'], ['questions', '#questions'], ['contact', '#contact'], ['pied', 'footer.pied']]
+
+async function contexte(browser, profil, extra = {}) {
+  const base = profil.nom === 'android' ? { ...devices['Pixel 7'] } : { ...devices['iPhone 13'], viewport: { width: 390, height: 844 } }
+  delete base.defaultBrowserType
+  const ctx = await browser.newContext({ ...base, reducedMotion: 'no-preference', ...extra })
+  await ctx.addInitScript(INIT, profil.nom !== 'android')
+  return ctx
+}
+
+const rafs = (page, n = 2) => page.evaluate((n) => new Promise((ok) => { let k = 0; const f = () => (++k >= n ? ok() : requestAnimationFrame(f)); requestAnimationFrame(f) }), n)
+
+async function gris(buf) {
+  const { data, info } = await sharp(buf).grayscale().raw().toBuffer({ resolveWithObject: true })
+  return { data, w: info.width, h: info.height }
+}
+function ecart(a, b, y0 = 0, y1 = a.h) {
+  let s = 0, n8 = 0, n = 0
+  for (let y = Math.max(0, y0); y < Math.min(a.h, y1); y++) for (let x = 0; x < a.w; x++) {
+    const i = y * a.w + x, d = Math.abs(a.data[i] - b.data[i])
+    s += d; if (d > 8) n8++; n++
+  }
+  return n ? { moyen: Math.round((s / n) * 1000) / 1000, part8: Math.round((n8 / n) * 1e5) / 1e5, pixels: n } : null
+}
+
+async function mesurerArrets(browser, profil, dossier) {
+  const ctx = await contexte(browser, profil)
+  const page = await ctx.newPage()
+  const erreurs = []
+  page.on('pageerror', (e) => erreurs.push(String(e)))
+  page.on('console', (m) => { if (m.type() === 'error') erreurs.push(m.text()) })
+  const t0 = Date.now()
+  await page.goto(profil.url, { waitUntil: 'load', timeout: 60000 })
+  const chargement = await page.evaluate(() => ({
+    tMs: Math.round(performance.now()),
+    anims: window.__anims(),
+    supportsVuParLaPage: CSS.supports('animation-timeline: view()'),
+    supportsNatif: window.__supportsNatif('animation-timeline: view()'),
+    supportsScrollVuParLaPage: CSS.supports('animation-timeline: scroll()'),
+    reduit: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    ecran: { w: innerWidth, h: innerHeight, dpr: devicePixelRatio, ua: navigator.userAgent, tactile: matchMedia('(pointer: coarse)').matches, survol: matchMedia('(hover: hover)').matches },
+    classesHtml: document.documentElement.className,
+    feuilles: [...document.styleSheets].map((s) => ({ href: s.href, media: s.media.mediaText, regles: (() => { try { return s.cssRules.length } catch (e) { return null } })() })),
+  }))
+  // les @supports de la page tels que le moteur les lit (conditionText et verdict du CSSOM)
+  chargement.supportsCssom = await page.evaluate(() => {
+    const out = []
+    const parcourir = (regles, href) => { for (const r of regles) { if (r instanceof CSSSupportsRule) out.push({ href: (href || '').split('/').pop(), condition: r.conditionText, vraie: window.__supportsNatif(r.conditionText) }); if (r.cssRules) parcourir(r.cssRules, href) } }
+    for (const s of document.styleSheets) { try { parcourir(s.cssRules, s.href) } catch (e) {} }
+    const agg = {}
+    for (const x of out) { const k = `${x.href} ${x.condition} → ${x.vraie}`; agg[k] = (agg[k] || 0) + 1 }
+    return agg
+  })
+  await page.evaluate(() => document.fonts.ready)
+  await page.evaluate(() => window.__lireJournal()) // le journal du chargement est gardé à part
+  const arrets = []
+  let y = 0, i = 0
+  fs.mkdirSync(path.join(dossier, 'arrets'), { recursive: true })
+  for (;;) {
+    const tArret = Date.now()
+    if (i > 0) await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), y)
+    else await page.waitForTimeout(REPOS) // à y = 0, les entrées du chargement se jouent
+    await rafs(page, 2); await page.waitForTimeout(150)
+    const aLArret = await page.evaluate(() => ({ scrollY: Math.round(scrollY), anims: window.__anims() }))
+    // images à l'écran chargées et décodées (5 s au plus), puis repos jusqu'à 1,5 s après l'arrêt
+    const imagesAttendues = await page.evaluate(async () => {
+      const debut = performance.now()
+      const enCours = () => [...document.images].filter((im) => { const r = im.getBoundingClientRect(); return r.width > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth && !(im.complete && im.naturalWidth > 0) }).map((im) => im.currentSrc || im.src)
+      let l = enCours()
+      while (l.length && performance.now() - debut < 5000) { await new Promise((r) => setTimeout(r, 100)); l = enCours() }
+      return { restantes: l, attenteMs: Math.round(performance.now() - debut) }
+    })
+    const reste = REPOS - (Date.now() - tArret)
+    if (reste > 0) await page.waitForTimeout(reste)
+    const auRepos = await page.evaluate((SECTIONS) => ({
+      scrollY: Math.round(scrollY), hauteur: document.documentElement.scrollHeight, max: document.documentElement.scrollHeight - innerHeight,
+      anims: window.__anims(),
+      sections: SECTIONS.map(([nom, s]) => { const el = document.querySelector(s); if (!el) return { nom, absente: true }; const r = el.getBoundingClientRect(); return { nom, haut: Math.round(r.top), bas: Math.round(r.bottom), visibleDe: Math.max(0, Math.round(r.top)), visibleA: Math.min(innerHeight, Math.round(r.bottom)) } }).filter((x) => !x.absente && x.visibleA > x.visibleDe),
+      reduit: matchMedia('(prefers-reduced-motion: reduce)').matches,
+      supportsVuParLaPage: CSS.supports('animation-timeline: view()'),
+    }), SECTIONS)
+    let tA, tB, pngA, pngB, essaisPaire = 0
+    do {
+      essaisPaire++
+      tA = Date.now()
+      pngA = await page.screenshot({ scale: 'css', caret: 'initial' })
+      const attente = ECART_ENERGIE - (Date.now() - tA)
+      if (attente > 0) await page.waitForTimeout(attente)
+      tB = Date.now()
+      pngB = await page.screenshot({ scale: 'css', caret: 'initial' })
+    } while (tB - tA > 700 && essaisPaire < 3)
+    const scrollApres = await page.evaluate(() => Math.round(scrollY))
+    const ga = await gris(pngA), gb = await gris(pngB)
+    const energie = { global: ecart(ga, gb), ecartDebutsMs: tB - tA, essaisPaire, parSection: {} }
+    for (const s of auRepos.sections) energie.parSection[s.nom] = { de: s.visibleDe, a: s.visibleA, ...ecart(ga, gb, s.visibleDe, s.visibleA) }
+    const nomCapture = `${String(i).padStart(2, '0')}-y${String(auRepos.scrollY).padStart(5, '0')}.jpg`
+    await sharp(pngA).jpeg({ quality: 82 }).toFile(path.join(dossier, 'arrets', nomCapture))
+    const mutations = await page.evaluate(() => window.__lireJournal())
+    arrets.push({ i, yDemande: y, scrollYArret: aLArret.scrollY, scrollYRepos: auRepos.scrollY, scrollYApresCaptures: scrollApres, capture: `arrets/${nomCapture}`, imagesAttendues, hauteurPage: auRepos.hauteur, sections: auRepos.sections, reduit: auRepos.reduit, supportsVuParLaPage: auRepos.supportsVuParLaPage, animsALArret: aLArret.anims, animsAuRepos: auRepos.anims, energie, mutationsDepuisArretPrecedent: mutations })
+    journal(`  ${profil.nom} arrêt ${i} y=${auRepos.scrollY}/${auRepos.max} anims=${auRepos.anims.length} énergie=${energie.global.moyen} (${energie.ecartDebutsMs} ms)`)
+    if (y >= auRepos.max) break
+    y = Math.min(y + PAS, auRepos.max); i++
+    if (i > 80) break
+  }
+
+  // geste du pouce sur les rails horizontaux : jauge avant / après un défilement d'une carte
+  const rails = []
+  for (const [nom, s, jauge] of [['prestations', '.scene--presta .presta', '.scene--presta .presta__jauge span'], ['realisations', '.scene--galerie .galerie--scene', '.scene--galerie .galerie__jauge span'], ['etapes', '#etapes .etapes__liste', '#etapes .etapes__jauge span']]) {
+    const avant = await page.evaluate(([s, j]) => {
+      const rail = document.querySelector(s); if (!rail) return { absent: true }
+      rail.scrollIntoView({ block: 'center', behavior: 'instant' })
+      const js = document.querySelector(j), cs = js ? getComputedStyle(js) : null, jp = js ? getComputedStyle(js.parentElement) : null
+      return { largeurVisible: rail.clientWidth, largeurTotale: rail.scrollWidth, defilable: rail.scrollWidth > rail.clientWidth + 1, overflowX: getComputedStyle(rail).overflowX, jaugeAffichee: !!(jp && jp.display !== 'none'), jaugeTransform: cs && cs.transform, animsJauge: js ? js.getAnimations().map((a) => ({ nom: a.animationName, timeline: a.timeline ? a.timeline.constructor.name : 'aucune', progression: a.effect.getComputedTiming().progress })) : [] }
+    }, [s, jauge])
+    if (avant.absent) { rails.push({ nom, absent: true }); continue }
+    await page.waitForTimeout(800)
+    const captureAvant = `rail-${nom}-avant.jpg`
+    await sharp(await page.screenshot({ scale: 'css', caret: 'initial' })).jpeg({ quality: 82 }).toFile(path.join(dossier, captureAvant))
+    await page.evaluate((s) => { const rail = document.querySelector(s); rail.scrollBy({ left: Math.round(rail.clientWidth * 0.85), behavior: 'instant' }) }, s)
+    await rafs(page, 3); await page.waitForTimeout(500)
+    const apres = await page.evaluate(([s, j]) => {
+      const rail = document.querySelector(s), js = document.querySelector(j), cs = js ? getComputedStyle(js) : null
+      return { scrollLeft: Math.round(rail.scrollLeft), jaugeTransform: cs && cs.transform, animsJauge: js ? js.getAnimations().map((a) => ({ nom: a.animationName, timeline: a.timeline ? a.timeline.constructor.name : 'aucune', progression: a.effect.getComputedTiming().progress })) : [] }
+    }, [s, jauge])
+    const captureApres = `rail-${nom}-apres.jpg`
+    await sharp(await page.screenshot({ scale: 'css', caret: 'initial' })).jpeg({ quality: 82 }).toFile(path.join(dossier, captureApres))
+    rails.push({ nom, avant, apres, captures: [captureAvant, captureApres] })
+    await page.evaluate((s) => { document.querySelector(s).scrollTo({ left: 0, behavior: 'instant' }) }, s)
+  }
+  await ctx.close()
+  return { chargement, arrets, rails, erreurs, dureeMs: Date.now() - t0 }
+}
+
+async function filmer(browser, profil, dossier, depart, nom) {
+  const tmp = path.join(TRAVAIL, `videos-${profil.nom}-${nom}`)
+  fs.rmSync(tmp, { recursive: true, force: true })
+  const taille = profil.nom === 'android' ? { width: 412, height: 839 } : { width: 390, height: 844 }
+  const ctx = await contexte(browser, profil, { recordVideo: { dir: tmp, size: taille } })
+  const tCreation = Date.now()
+  const page = await ctx.newPage()
+  await page.goto(profil.url, { waitUntil: 'load', timeout: 60000 })
+  await page.evaluate(() => document.fonts.ready)
+  if (depart > 0) {
+    await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), depart)
+    await page.waitForTimeout(2500) // tout-rendu, images du point de départ
+    await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), depart)
+  }
+  await page.waitForTimeout(2000)
+  const tDebut = Date.now()
+  const echantillons = await page.evaluate(({ depart, vitesse, duree }) => new Promise((ok) => {
+    const t0 = performance.now(), ech = []
+    const f = (now) => {
+      const t = now - t0
+      window.scrollTo({ top: depart + (vitesse * Math.min(t, duree)) / 1000, behavior: 'instant' })
+      ech.push([Math.round(t * 10) / 10, Math.round(scrollY * 10) / 10])
+      if (t < duree) requestAnimationFrame(f); else ok(ech)
+    }
+    requestAnimationFrame(f)
+  }), { depart, vitesse: VITESSE, duree: DUREE_FILM })
+  const tFin = Date.now()
+  await page.waitForTimeout(500)
+  const video = page.video()
+  await ctx.close()
+  const brut = await video.path()
+  const webm = path.join(dossier, `film-${nom}.webm`)
+  fs.copyFileSync(brut, webm)
+  const debutS = Math.max(0, (tDebut - tCreation) / 1000 - 0.3)
+  const mp4 = path.join(dossier, `film-${nom}.mp4`)
+  execFileSync('ffmpeg', ['-y', '-v', 'error', '-ss', debutS.toFixed(2), '-i', webm, '-t', ((tFin - tDebut) / 1000 + 0.6).toFixed(2), '-c:v', 'libx264', '-crf', '20', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', mp4])
+  const pas = echantillons.slice(1).map((e, k) => e[1] - echantillons[k][1]).sort((a, b) => a - b)
+  const dts = echantillons.slice(1).map((e, k) => e[0] - echantillons[k][0]).sort((a, b) => a - b)
+  fs.rmSync(tmp, { recursive: true, force: true })
+  return { nom, depart, fichiers: [path.basename(webm), path.basename(mp4)], decoupeDebutS: debutS, imagesRaf: echantillons.length, dureeMesureeMs: echantillons.at(-1)[0], imagesParSeconde: Math.round((echantillons.length / (echantillons.at(-1)[0] / 1000)) * 10) / 10, pasMedianPx: pas[Math.floor(pas.length / 2)], intervalleMedianMs: dts[Math.floor(dts.length / 2)], intervalleP95Ms: dts[Math.floor(dts.length * 0.95)], yDebut: echantillons[0][1], yFin: echantillons.at(-1)[1] }
+}
+
+// balayage fin (pas de 40 px, sans capture, page neuve) : où chaque animation liée au défilement avance, et où chaque .reveal / .etape reçoit « vu »
+async function balayageFin(browser, profil) {
+  const ctx = await contexte(browser, profil)
+  const page = await ctx.newPage()
+  await page.goto(profil.url, { waitUntil: 'load', timeout: 60000 })
+  await page.evaluate(() => document.fonts.ready)
+  await page.waitForTimeout(REPOS)
+  await page.evaluate(() => { window.__vus = new Set([...document.querySelectorAll('.vu')]) })
+  const lignes = []
+  for (let y = 0, k = 0; k < 600; k++) {
+    await page.evaluate((y) => window.scrollTo({ top: y, behavior: 'instant' }), y)
+    await rafs(page, 2)
+    const l = await page.evaluate(() => {
+      const nouveaux = [...document.querySelectorAll('.vu')].filter((e) => !window.__vus.has(e))
+      nouveaux.forEach((e) => window.__vus.add(e))
+      const defil = document.getAnimations().filter((a) => a.timeline && a.timeline.constructor.name !== 'DocumentTimeline').map((a) => [a.animationName || a.transitionProperty, window.__sel(a.effect.target) + (a.effect.pseudoElement || ''), window.__section(a.effect.target), a.timeline.constructor.name, Math.round((a.effect.getComputedTiming().progress ?? -1) * 1000) / 1000])
+      const liste = document.querySelector('.etapes__liste')
+      return { y: Math.round(scrollY), max: document.documentElement.scrollHeight - innerHeight, vus: nouveaux.map((e) => [window.__sel(e), window.__section(e)]), defil, avancee: liste ? liste.style.getPropertyValue('--avancee') : null }
+    })
+    lignes.push(l)
+    if (y >= l.max) break
+    y = Math.min(y + 40, l.max)
+  }
+  await ctx.close()
+  // résumé : pour chaque animation liée au défilement, premier y où elle a quitté 0, premier y où elle vaut 1, et les valeurs vues
+  const anims = new Map()
+  for (const l of lignes) for (const [nom, cible, section, tl, p] of l.defil) {
+    const c = nom + ' @ ' + cible + ' @ ' + section
+    const x = anims.get(c) || { nom, cible, section, timeline: tl, yDepart: null, yPlein: null, yRetour: null, progressions: 0 }
+    if (p > 0 && x.yDepart == null) x.yDepart = l.y
+    if (p >= 1 && x.yPlein == null) x.yPlein = l.y
+    if (x.yPlein != null && p < 1 && x.yRetour == null) x.yRetour = l.y
+    if (p > 0 && p < 1) x.progressions++
+    anims.set(c, x)
+  }
+  const vus = []
+  for (const l of lignes) for (const [cible, section] of l.vus) vus.push({ y: l.y, cible, section })
+  // la ligne des étapes (kit.js, --avancee en style en ligne, pas une Animation) : premier y hors de 0, premier y à 1
+  const av = lignes.filter((l) => l.avancee !== null && l.avancee !== '').map((l) => ({ y: l.y, v: Number(l.avancee) }))
+  const avancee = { valeursDistinctes: new Set(av.map((x) => x.v)).size, yPremiereValeur: av.length ? av[0].y : null, yHorsZero: av.find((x) => x.v > 0)?.y ?? null, yPlein: av.find((x) => x.v >= 1)?.y ?? null }
+  return { pas: 40, positions: lignes.length, animsDefilement: [...anims.values()], reveals: vus, avancee }
+}
+
+// ── principal ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+const browser = await chromium.launch()
+const bilan = { date: new Date().toISOString(), chromium: browser.version(), playwright: JSON.parse(fs.readFileSync(path.join(RACINE, 'node_modules/playwright/package.json'), 'utf8')).version, profils: {}, attentes }
+for (const nom of PROFILS) {
+  const dossier = path.join(PREUVES, nom)
+  fs.rmSync(dossier, { recursive: true, force: true }); fs.mkdirSync(dossier, { recursive: true })
+  const profil = { nom }
+  let serveur = null
+  if (nom === 'android') profil.url = EN_LIGNE
+  else {
+    profil.copie = preparerCopie(nom, nom === 'iphone' ? '@supports (animation-timeline: non-supporte())' : '@supports (animation-timeline: --non-supporte())')
+    serveur = await servir(profil.copie.racine)
+    profil.url = `${serveur.base}/sites-demo/lestraque/index.html`
+  }
+  journal(`profil ${nom} → ${profil.url}`)
+  await attendreCalme(`${nom} arrêts`, browser)
+  const mesures = await mesurerArrets(browser, profil, dossier)
+  mesures.balayage = await balayageFin(browser, profil)
+  journal(`  balayage : ${mesures.balayage.positions} positions, ${mesures.balayage.animsDefilement.length} animations liées au défilement, ${mesures.balayage.reveals.length} « vu »`)
+  const films = []
+  if (!SANS_FILM && nom !== 'iphone-litteral') {
+    for (const [depart, n] of [[0, 'haut']]) {
+      await attendreCalme(`${nom} film ${n}`, browser)
+      const essais = []
+      for (let e = 0; e < 3; e++) {
+        if (e > 0) await attendreCalme(`${nom} film ${n} essai ${e + 1}`, browser)
+        const f = await filmer(browser, profil, dossier, depart, n)
+        essais.push({ imagesParSeconde: f.imagesParSeconde, intervalleP95Ms: f.intervalleP95Ms })
+        f.essais = essais.slice()
+        if (f.imagesParSeconde >= 55 || e === 2) { films.push(f); break }
+        journal(`  film ${n} à ${f.imagesParSeconde} images/s : refait`)
+      }
+      journal(`  film ${n} : ${JSON.stringify(films.at(-1))}`)
+    }
+  }
+  if (serveur) await serveur.fermer()
+  const sortie = { profil: { nom, url: profil.url, copie: profil.copie ? { remplacement: profil.copie.remplacement, bilan: profil.copie.bilan } : null }, ...mesures, films }
+  fs.writeFileSync(path.join(dossier, 'mesures.json'), JSON.stringify(sortie, null, 1))
+  bilan.profils[nom] = { arrets: mesures.arrets.length, films: films.length, erreurs: mesures.erreurs.length }
+}
+await browser.close()
+fs.writeFileSync(path.join(PREUVES, 'bilan-execution.json'), JSON.stringify(bilan, null, 1))
+journal('fini', JSON.stringify(bilan))

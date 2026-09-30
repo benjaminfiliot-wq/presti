@@ -1,0 +1,15 @@
+// diag-film2.mjs — où l'image 82 du mp4 (y = 270) diffère-t-elle de l'image-clé c-4-y0270 ? grille 16×10 des écarts moyens
+// de luminance, et image de différence amplifiée ×4.
+import { createRequire } from 'node:module'
+import { execFileSync } from 'node:child_process'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/'
+const v = execFileSync('ffmpeg', ['-v', 'error', '-i', ICI + 'descente-sansgpu.mp4', '-ss', (81.5 / 30).toFixed(4), '-frames:v', '1', '-f', 'rawvideo', '-pix_fmt', 'gray', '-'], { maxBuffer: 1 << 28 })
+const k = await sharp(ICI + 'images-cles/c-4-y0270.jpg').greyscale().raw().toBuffer()
+const W = 1440, H = 900, d = Buffer.alloc(W * H)
+const cell = Array.from({ length: 10 }, () => new Float64Array(16))
+for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const e = Math.abs(v[y * W + x] - k[y * W + x]); d[y * W + x] = Math.min(255, e * 4); cell[Math.floor(y / 90)][Math.floor(x / 90)] += e / 8100 }
+for (const r of cell) console.log([...r].map((x) => x.toFixed(0).padStart(3)).join(''))
+// signe : le film est-il un zoom plus fort / plus faible ? profil horizontal moyen sur la bande y 120-420
+await sharp(d, { raw: { width: W, height: H, channels: 1 } }).jpeg({ quality: 85 }).toFile(ICI + 'diag-difference-y270.jpg')

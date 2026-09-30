@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prestiapp.fr/schemas/chef-reunion.schema.json",
+  "title": "Plan de la réunion d'équipage (reunion.json)",
+  "description": "Écrit par le chef (Codex GPT-6 sol) pendant la réunion quotidienne ; scripts/chef/reunion.mjs (026-103) le valide et le refuse en bloc au moindre écart, puis clôt la réunion. Contrat du point « Le plan de réunion » de 026-103. Les définitions cle_idee, option, options, options_idee, defaut_idee et texte sont recopiées à l'identique de chef-plan.schema.json : une idée de réunion et une idée de cycle ne divergent jamais (le juge les compare). L'échéance entre +1 h et +7 j est tenue par reunion.mjs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["lignes", "objectif", "idees"],
+  "properties": {
+    "lignes": {
+      "type": "array", "minItems": 1, "maxItems": 5,
+      "items": { "$ref": "#/$defs/ligne" }
+    },
+    "objectif": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["libelle", "mesure", "cible"],
+          "properties": {
+            "libelle": { "allOf": [{ "$ref": "#/$defs/texte" }], "minLength": 5, "maxLength": 80 },
+            "mesure": { "enum": [null, "encaisse_eur", "oui", "contacts_froids", "sites_en_ligne"] },
+            "cible": { "anyOf": [{ "type": "null" }, { "type": "integer", "minimum": 0 }] }
+          }
+        }
+      ]
+    },
+    "idees": {
+      "type": "array", "maxItems": 3,
+      "items": { "$ref": "#/$defs/idee" }
+    }
+  },
+  "$defs": {
+    "ligne": {
+      "description": "Une ligne du compte rendu, que le fil montre : ni @, ni 9 chiffres de suite, ni lien.",
+      "allOf": [{ "$ref": "#/$defs/texte" }],
+      "minLength": 1, "maxLength": 140,
+      "not": { "anyOf": [{ "pattern": "@" }, { "pattern": "[0-9]{9}" }, { "pattern": "[Hh][Tt][Tt][Pp]" }] }
+    },
+    "idee": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cle_idempotence", "question", "contexte", "options", "option_defaut", "portee", "montant_cents", "echeance"],
+      "properties": {
+        "cle_idempotence": { "$ref": "#/$defs/cle_idee" },
+        "question": { "allOf": [{ "$ref": "#/$defs/texte" }], "minLength": 5, "maxLength": 300 },
+        "contexte": { "allOf": [{ "$ref": "#/$defs/texte" }], "maxLength": 2000 },
+        "options": { "$ref": "#/$defs/options_idee" },
+        "option_defaut": { "$ref": "#/$defs/defaut_idee" },
+        "portee": { "const": "aucune" },
+        "montant_cents": { "const": 0 },
+        "echeance": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|[+-]\\d{2}:\\d{2})$"
+        }
+      }
+    },
+    "texte": {
+      "description": "Toute chaîne libre : ni adresse e-mail, ni secret (motifs MOTIFS_SECRETS de scripts/instantane-quotidien.mjs, et tout jeton JWT).",
+      "type": "string",
+      "not": {
+        "anyOf": [
+          { "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}" },
+          { "pattern": "\\b(?:sk_live_|rk_live_|sk_test_)[A-Za-z0-9]{20,}" },
+          { "pattern": "\\bwhsec_[A-Za-z0-9]{10,}" },
+          { "pattern": "\\bsk-ant-[A-Za-z0-9_-]{10,}" },
+          { "pattern": "\\bre_[A-Za-z0-9]{20,}" },
+          { "pattern": "eyJ[A-Za-z0-9_-]+\\.eyJ[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+" },
+          { "pattern": "-----BEGIN [A-Z ]*PRIVATE KEY-----" },
+          { "pattern": "\\bAIza[A-Za-z0-9_-]{35}" },
+          { "pattern": "\\b(?:ghp_|github_pat_)[A-Za-z0-9_]{20,}" }
+        ]
+      }
+    },
+    "cle_idee": {
+      "description": "Le préfixe idee- est ce à quoi le chantier A12 reconnaît une idée tranchée (ops.decisions n'a pas de colonne nature). Définition identique dans chef-reunion.schema.json.",
+      "type": "string",
+      "pattern": "^chef:\\d{4}-\\d{2}-\\d{2}:idee-[a-z0-9-]{3,75}$"
+    },
+    "option": {
+      "description": "Contrat de 0098 et de POST /api/agents/decisions (cle, libelle, recommandee) ; engage_cents reste propre au plan (contrôle du défaut prudent) et ne part jamais au bus. Définition identique dans chef-reunion.schema.json.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cle", "libelle", "recommandee", "engage_cents"],
+      "properties": {
+        "cle": { "type": "string", "pattern": "^[a-z_]{2,30}$" },
+        "libelle": { "allOf": [{ "$ref": "#/$defs/texte" }], "minLength": 1, "maxLength": 80 },
+        "recommandee": { "type": "boolean" },
+        "engage_cents": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "options": {
+      "description": "2 ou 3 options, exactement une recommandée. Définition identique dans chef-reunion.schema.json.",
+      "type": "array", "minItems": 2, "maxItems": 3,
+      "items": { "$ref": "#/$defs/option" },
+      "contains": { "type": "object", "properties": { "recommandee": { "const": true } }, "required": ["recommandee"] },
+      "minContains": 1, "maxContains": 1
+    },
+    "options_idee": {
+      "description": "Une idée : exactement les options lancer et reporter, sans engagement. Définition identique dans chef-reunion.schema.json.",
+      "allOf": [{ "$ref": "#/$defs/options" }],
+      "minItems": 2, "maxItems": 2,
+      "items": { "type": "object", "properties": { "engage_cents": { "const": 0 } } },
+      "anyOf": [
+        { "prefixItems": [{ "type": "object", "properties": { "cle": { "const": "lancer" } } }, { "type": "object", "properties": { "cle": { "const": "reporter" } } }] },
+        { "prefixItems": [{ "type": "object", "properties": { "cle": { "const": "reporter" } } }, { "type": "object", "properties": { "cle": { "const": "lancer" } } }] }
+      ]
+    },
+    "defaut_idee": {
+      "description": "Le défaut d'une idée est toujours reporter. Définition identique dans chef-reunion.schema.json.",
+      "const": "reporter"
+    }
+  }
+}

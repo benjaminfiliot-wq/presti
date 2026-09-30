@@ -1,0 +1,159 @@
+{
+  "metier": "peintre",
+  "libelles": {
+    "sur": "Peinture",
+    "alt_heros": "Illustration de peinture",
+    "alt_atelier": "Illustration du métier de peinture",
+    "reperes": [
+      "Métier",
+      "Commune",
+      "Projet"
+    ]
+  },
+  "pages": {
+    "/": {
+      "type": "accueil",
+      "title": "Peinture à Saint-Jean-d'Hermine — Menanteau",
+      "description": "Maquette de site pour Menanteau, peinture à Saint-Jean-d'Hermine.",
+      "h1": "Peinture à Saint-Jean-d'Hermine",
+      "h1Ligne": "La couleur en lumière",
+      "chapeau": "Une proposition visuelle pour présenter le métier de peinture à Saint-Jean-d'Hermine.",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Les travaux en images",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette présentation propose des exemples de peinture. Les interventions de Menanteau seront précisées ensemble."
+            }
+          ]
+        },
+        {
+          "genre": "contact",
+          "h2": "Parlons de votre projet",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page est une proposition visuelle destinée à Menanteau à Saint-Jean-d'Hermine."
+            }
+          ]
+        }
+      ]
+    },
+    "/prestations/": {
+      "type": "prestations",
+      "title": "Prestations — Menanteau | Maquette",
+      "description": "Proposition de rubriques pour Menanteau à Saint-Jean-d'Hermine.",
+      "h1": "Peinture : rubriques à valider",
+      "sections": [
+        {
+          "genre": "prestations",
+          "h2": "Les rubriques proposées",
+          "blocs": [
+            {
+              "type": "h3",
+              "texte": "Peinture"
+            },
+            {
+              "type": "p",
+              "texte": "La peinture peut être présentée par support, pièce et rendu souhaité. Les couleurs photographiées sont des illustrations, pas des chantiers de l’entreprise."
+            },
+            {
+              "type": "h3",
+              "texte": "Préparation des supports"
+            },
+            {
+              "type": "p",
+              "texte": "La préparation des supports mérite une place distincte dans le parcours du projet. Les gestes réellement proposés seront décrits après échange."
+            },
+            {
+              "type": "h3",
+              "texte": "Revêtements"
+            },
+            {
+              "type": "p",
+              "texte": "Les revêtements peuvent faire l’objet d’une rubrique avec des exemples de matières et de finitions. Aucun produit précis n’est promis ici."
+            }
+          ]
+        }
+      ]
+    },
+    "/contact/": {
+      "type": "contact",
+      "title": "Contact — Menanteau | Maquette",
+      "description": "Téléphone publié de Menanteau à Saint-Jean-d'Hermine.",
+      "h1": "Joindre Menanteau",
+      "sections": []
+    },
+    "/mentions/": {
+      "type": "legal",
+      "title": "Mentions — Menanteau | Maquette",
+      "description": "Crédits et limites de cette maquette privée.",
+      "h1": "Mentions de la maquette",
+      "sections": []
+    },
+    "/peintre-saint-aubin-la-plaine/": {
+      "type": "commune",
+      "title": "Peinture à Saint-Aubin-la-Plaine — Menanteau | Maquette",
+      "description": "Projet de page locale pour Menanteau : peinture à Saint-Aubin-la-Plaine.",
+      "h1": "Peinture à Saint-Aubin-la-Plaine",
+      "commune": "Saint-Aubin-la-Plaine",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de peinture à Saint-Aubin-la-Plaine. La zone d’intervention de Menanteau reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    },
+    "/peintre-la-reorthe/": {
+      "type": "commune",
+      "title": "Peinture à La Réorthe — Menanteau | Maquette",
+      "description": "Projet de page locale pour Menanteau : peinture à La Réorthe.",
+      "h1": "Peinture à La Réorthe",
+      "commune": "La Réorthe",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de peinture à La Réorthe. La zone d’intervention de Menanteau reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    },
+    "/peintre-saint-juire-champgillon/": {
+      "type": "commune",
+      "title": "Peinture à Saint-Juire-Champgillon — Menanteau | Maquette",
+      "description": "Projet de page locale pour Menanteau : peinture à Saint-Juire-Champgillon.",
+      "h1": "Peinture à Saint-Juire-Champgillon",
+      "commune": "Saint-Juire-Champgillon",
+      "sections": [
+        {
+          "genre": "prose",
+          "h2": "Un repère local",
+          "blocs": [
+            {
+              "type": "p",
+              "texte": "Cette page de maquette associe le métier de peinture à Saint-Juire-Champgillon. La zone d’intervention de Menanteau reste à confirmer directement avec l’entreprise."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "photos": {
+    "demo": "peintre",
+    "fichiers": []
+  },
+  "provenance_modele": "Schéma du générateur Presti, modèle métier absent dans maquettes/modeles"
+}

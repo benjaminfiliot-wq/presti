@@ -1,0 +1,390 @@
+{
+ "date": "2026-09-15T09:57:15.491Z",
+ "url": "https://prestiapp.fr/sites-demo/lestraque/index.html",
+ "enLigne": {
+  "reglesSignatureAvantInjection": 0,
+  "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue",
+  "ua": "Chrome/153.0.8010.12",
+  "supportsViewTimeline": true,
+  "reliefA8s": "sans",
+  "imgSrc": "heros-escalier-1600.avif",
+  "imgLargeur": 1440,
+  "netteteBois": 109.8,
+  "netteteMarches": 107.9,
+  "contrasteTitreY0_pousse0": 3.405
+ },
+ "bloc2": {
+  "reglesSignatureAvantInjection": 0,
+  "classesHtml": "js texture--papier da--etapes da--communes da--nav-retenue",
+  "ua": "Chrome/153.0.8010.12",
+  "supportsViewTimeline": true,
+  "reliefA8s": "sans",
+  "releves": [
+   {
+    "y": 0,
+    "plateauHaut": 1170,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 1,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "voile": 0,
+    "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "mediaScale": "1",
+    "imgScale": "1",
+    "cleOpacite": 1,
+    "cleVisibilite": "visible",
+    "piedOpacite": 1,
+    "piedVisibilite": "visible",
+    "ligneHaut": 526.13,
+    "boiteH1": {
+     "x": 72,
+     "y": 489.140625,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": false,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   },
+   {
+    "y": 90,
+    "plateauHaut": 1080,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 1,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "voile": 0,
+    "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "mediaScale": "1.01333",
+    "imgScale": "1",
+    "cleOpacite": 0.6,
+    "cleVisibilite": "visible",
+    "piedOpacite": 0.6,
+    "piedVisibilite": "visible",
+    "ligneHaut": 526.13,
+    "boiteH1": {
+     "x": 72,
+     "y": 489.140625,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": false,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   },
+   {
+    "y": 112,
+    "plateauHaut": 1058,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 1,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "voile": 0,
+    "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "mediaScale": "1.01659",
+    "imgScale": "1",
+    "cleOpacite": 0.502,
+    "cleVisibilite": "visible",
+    "piedOpacite": 0.502,
+    "piedVisibilite": "visible",
+    "ligneHaut": 526.13,
+    "boiteH1": {
+     "x": 72,
+     "y": 489.140625,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": false,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   },
+   {
+    "y": 135,
+    "plateauHaut": 1035,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 1,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "voile": 0,
+    "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "mediaScale": "1.02",
+    "imgScale": "1",
+    "cleOpacite": 0.4,
+    "cleVisibilite": "visible",
+    "piedOpacite": 0.4,
+    "piedVisibilite": "visible",
+    "ligneHaut": 526.13,
+    "boiteH1": {
+     "x": 72,
+     "y": 489.140625,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": false,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   },
+   {
+    "y": 180,
+    "plateauHaut": 990,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 1,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "voile": 0,
+    "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "mediaScale": "1.02667",
+    "imgScale": "1",
+    "cleOpacite": 0.2,
+    "cleVisibilite": "visible",
+    "piedOpacite": 0.2,
+    "piedVisibilite": "visible",
+    "ligneHaut": 526.13,
+    "boiteH1": {
+     "x": 72,
+     "y": 489.140625,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": false,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   },
+   {
+    "y": 225,
+    "plateauHaut": 945,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 1,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "voile": 0,
+    "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "mediaScale": "1.03333",
+    "imgScale": "1",
+    "cleOpacite": 0,
+    "cleVisibilite": "hidden",
+    "piedOpacite": 0,
+    "piedVisibilite": "hidden",
+    "ligneHaut": 526.13,
+    "boiteH1": {
+     "x": 72,
+     "y": 489.140625,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": true,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   },
+   {
+    "y": 270,
+    "plateauHaut": 900,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 1,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "voile": 0,
+    "mediaTransform": "matrix(1, 0, 0, 1, 0, 0)",
+    "mediaScale": "1.04",
+    "imgScale": "1",
+    "cleOpacite": 0,
+    "cleVisibilite": "hidden",
+    "piedOpacite": 0,
+    "piedVisibilite": "hidden",
+    "ligneHaut": 526.13,
+    "boiteH1": {
+     "x": 72,
+     "y": 489.140625,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": true,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   },
+   {
+    "y": 518,
+    "plateauHaut": 652,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 0.499,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, -63.1273)",
+    "voile": 0.117,
+    "mediaTransform": "matrix(1.02204, 0, 0, 1.02204, 0, 0)",
+    "mediaScale": "1.04",
+    "imgScale": "1",
+    "cleOpacite": 0,
+    "cleVisibilite": "hidden",
+    "piedOpacite": 0,
+    "piedVisibilite": "hidden",
+    "ligneHaut": 463,
+    "boiteH1": {
+     "x": 72,
+     "y": 426.01336669921875,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": true,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   },
+   {
+    "y": 765,
+    "plateauHaut": 405,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 0,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, -126)",
+    "voile": 0.3,
+    "mediaTransform": "matrix(1.044, 0, 0, 1.044, 0, 0)",
+    "mediaScale": "1.04",
+    "imgScale": "1",
+    "cleOpacite": 0,
+    "cleVisibilite": "hidden",
+    "piedOpacite": 0,
+    "piedVisibilite": "hidden",
+    "ligneHaut": 400.13,
+    "boiteH1": {
+     "x": 72,
+     "y": 363.140625,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": true,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   },
+   {
+    "y": 1170,
+    "plateauHaut": 0,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 0,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, -126)",
+    "voile": 0.6,
+    "mediaTransform": "matrix(1.08, 0, 0, 1.08, 0, 0)",
+    "mediaScale": "1.04",
+    "imgScale": "1",
+    "cleOpacite": 0,
+    "cleVisibilite": "hidden",
+    "piedOpacite": 0,
+    "piedVisibilite": "hidden",
+    "ligneHaut": 400.13,
+    "boiteH1": {
+     "x": 72,
+     "y": 363.140625,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": true,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   },
+   {
+    "y": 1270,
+    "plateauHaut": -100,
+    "ouvertureHauteur": 2158,
+    "contenuOpacite": 0,
+    "contenuTransform": "matrix(1, 0, 0, 1, 0, -126)",
+    "voile": 0.6,
+    "mediaTransform": "matrix(1.08, 0, 0, 1.08, 0, 0)",
+    "mediaScale": "1.04",
+    "imgScale": "1",
+    "cleOpacite": 0,
+    "cleVisibilite": "hidden",
+    "piedOpacite": 0,
+    "piedVisibilite": "hidden",
+    "ligneHaut": 388.08,
+    "boiteH1": {
+     "x": 72,
+     "y": 351.09375,
+     "w": 1296,
+     "h": 216.921875
+    },
+    "devisNav": true,
+    "imgSrc": "heros-escalier-1600.avif",
+    "imgLargeur": 1440,
+    "pousse": 0,
+    "animationsAuTempsEnCours": 0,
+    "relief": "sans"
+   }
+  ]
+ },
+ "tempsReelContrePositionne": {
+  "y": 135,
+  "delta": 0.058,
+  "pousseAvantCapture_ms": 11699.6,
+  "pousseApresCapture_ms": 13016.2,
+  "etatPousse": "running",
+  "pousseReposee_ms": 12357.9,
+  "etatApres": {
+   "y": 135,
+   "imgSrc": "d0.05800_r0.000_2400.png",
+   "animationsAuTempsEnCours": 0
+  },
+  "ecartPage": {
+   "moyen": 0.0032,
+   "part8": 0.006
+  },
+  "ecartPhoto": {
+   "moyen": 0.004,
+   "part8": 0.014
+  },
+  "temoinDecale1s": {
+   "ecartPage": {
+    "moyen": 0.0067,
+    "part8": 0.033
+   },
+   "ecartPhoto": {
+    "moyen": 0.0086,
+    "part8": 0.056
+   }
+  }
+ },
+ "sensibiliteSource": {
+  "src2400_y0_d0": {
+   "bois": 160.9,
+   "marches": 158.2
+  },
+  "src2880_y0_d0": {
+   "bois": 209.5,
+   "marches": 206.7
+  },
+  "src2400_y270_d0.116": {
+   "bois": 55.4,
+   "marches": 77.4
+  },
+  "src2880_y270_d0.116": {
+   "bois": 75.9,
+   "marches": 102.6
+  },
+  "src2400_y270_d0.066": {
+   "bois": 85,
+   "marches": 98.7
+  },
+  "src2880_y270_d0.066": {
+   "bois": 123.5,
+   "marches": 140.7
+  }
+ }
+}

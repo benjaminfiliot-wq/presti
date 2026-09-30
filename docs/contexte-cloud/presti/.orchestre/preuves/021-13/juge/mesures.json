@@ -1,0 +1,408 @@
+{
+ "date": "2026-09-15T16:59:34.013Z",
+ "familles": {
+  "video": [
+   "recit",
+   "video"
+  ],
+  "reference": [
+   "recit"
+  ]
+ },
+ "poids": {
+  "bureauCssBrotli": 927,
+  "bureauCssBrotliEnPlus": 466,
+  "siteJsBrotliEnPlus": 1962,
+  "stylesCssBrotliEnPlus": 0
+ },
+ "va2va3": {
+  "requetesAvant": [],
+  "element": {
+   "n": 1,
+   "dansMedia": true,
+   "classe": true,
+   "muted": true,
+   "loop": true,
+   "playsInline": true,
+   "preload": "auto",
+   "ariaHidden": "true",
+   "tabindex": "-1",
+   "pip": true,
+   "src": "",
+   "currentSrc": "http://127.0.0.1:54854/video/atelier.av1.mp4",
+   "paused": true,
+   "sources": [
+    {
+     "src": "http://127.0.0.1:54854/video/atelier.av1.mp4",
+     "type": "video/mp4; codecs=\"av01.0.08M.08\""
+    },
+    {
+     "src": "http://127.0.0.1:54854/video/atelier.h264.mp4",
+     "type": "video/mp4; codecs=\"avc1.640028\""
+    }
+   ]
+  },
+  "requetesApproche": [
+   {
+    "url": "/video/atelier.av1.mp4",
+    "type": "media"
+   }
+  ],
+  "changements": 423,
+  "instants": {
+   "verbePlein": 22573,
+   "scene60": 19615,
+   "lesDeux": 22573,
+   "playing": 22582
+  },
+  "auPlaying": {
+   "couverture": 0.916,
+   "dernierVerbe": 0.996
+  },
+  "pause": {
+   "sous20": 36567,
+   "paused": 36635,
+   "delaiMs": 68
+  }
+ },
+ "va4": {
+  "390×844": {
+   "requetes": 0,
+   "videos": 0
+  },
+  "820×1180": {
+   "requetes": 0,
+   "videos": 0
+  },
+  "mouvement réduit": {
+   "requetes": 0,
+   "videos": 0
+  },
+  "économie de données": {
+   "requetes": 0,
+   "videos": 0
+  },
+  "JavaScript coupé": {
+   "requetes": 0,
+   "videos": 0
+  }
+ },
+ "va5": {
+  "delaiMs": -351,
+  "currentSrc": "/video/atelier.av1.mp4",
+  "requetes": [
+   "/video/atelier.av1.mp4"
+  ]
+ },
+ "va6": {
+  "delaiMs": -161,
+  "currentSrc": "/video/atelier.h264.mp4",
+  "requetes": [
+   "/video/atelier.av1.mp4",
+   "/video/atelier.h264.mp4"
+  ]
+ },
+ "va8": {
+  "requetes404": 2,
+  "cree": true,
+  "retraitMs": -2288,
+  "photo": {
+   "op": 1,
+   "vis": "visible",
+   "disp": "block",
+   "l": 1612.800048828125,
+   "w": 1440,
+   "etat": "running",
+   "anims": [
+    {
+     "nom": "derive",
+     "etat": "running"
+    }
+   ]
+  }
+ },
+ "lecture": {
+  "1440x900": {
+   "playingMs": -522,
+   "va10": {
+    "auTemps": [],
+    "derive": [
+     "paused"
+    ],
+    "suivis": 5,
+    "bougePx": 0,
+    "opacite": 0
+   },
+   "va12": {
+    "csp": [],
+    "console": [],
+    "exceptions": [],
+    "reference": {
+     "csp": [],
+     "console": [],
+     "page": []
+    },
+    "lectureMs": 10035
+   },
+   "va9": {
+    "voileIdentique": true,
+    "filtreVideo": "none",
+    "opaciteVideo": 1,
+    "zone": {
+     "x": 72,
+     "y": 299,
+     "width": 473,
+     "height": 114
+    },
+    "pixels": 42866,
+    "captures": [
+     {
+      "contraste": 8.428,
+      "temps": 4.16,
+      "joue": true
+     },
+     {
+      "contraste": 7.562,
+      "temps": 5.42,
+      "joue": true
+     },
+     {
+      "contraste": 7.46,
+      "temps": 0.66,
+      "joue": true
+     },
+     {
+      "contraste": 7.833,
+      "temps": 1.83,
+      "joue": true
+     },
+     {
+      "contraste": 8.696,
+      "temps": 3.09,
+      "joue": true
+     },
+     {
+      "contraste": 8.399,
+      "temps": 4.22,
+      "joue": true
+     },
+     {
+      "contraste": 7.599,
+      "temps": 5.39,
+      "joue": true
+     },
+     {
+      "contraste": 7.415,
+      "temps": 0.49,
+      "joue": true
+     }
+    ],
+    "ecart1a5": 0.01
+   },
+   "va7": {
+    "bouton": {
+     "tag": "BUTTON",
+     "lien": false,
+     "visible": true,
+     "droite": true,
+     "bas": true
+    },
+    "contacts": 0,
+    "contactsRef": 0,
+    "etapes": [
+     {
+      "nom": "clic",
+      "delai": 26,
+      "etat": {
+       "paused": true,
+       "pressed": "true",
+       "pause": 0,
+       "relance": 1
+      }
+     },
+     {
+      "nom": "2e clic",
+      "delai": 2,
+      "etat": {
+       "paused": false,
+       "pressed": "false",
+       "pause": 1,
+       "relance": 0
+      }
+     },
+     {
+      "nom": "Entrée",
+      "delai": 12,
+      "etat": {
+       "paused": true,
+       "pressed": "true",
+       "pause": 0,
+       "relance": 1
+      }
+     },
+     {
+      "nom": "2e Entrée",
+      "delai": 8,
+      "etat": {
+       "paused": false,
+       "pressed": "false",
+       "pause": 1,
+       "relance": 0
+      }
+     }
+    ]
+   }
+  },
+  "1280x800": {
+   "playingMs": -378,
+   "va9": {
+    "voileIdentique": true,
+    "filtreVideo": "none",
+    "opaciteVideo": 1,
+    "zone": {
+     "x": 64,
+     "y": 266,
+     "width": 420,
+     "height": 102
+    },
+    "pixels": 33921,
+    "captures": [
+     {
+      "contraste": 7.833,
+      "temps": 1.78,
+      "joue": true
+     },
+     {
+      "contraste": 8.526,
+      "temps": 2.97,
+      "joue": true
+     },
+     {
+      "contraste": 8.526,
+      "temps": 4.08,
+      "joue": true
+     },
+     {
+      "contraste": 7.71,
+      "temps": 5.18,
+      "joue": true
+     },
+     {
+      "contraste": 7.413,
+      "temps": 0.24,
+      "joue": true
+     },
+     {
+      "contraste": 7.618,
+      "temps": 1.3,
+      "joue": true
+     },
+     {
+      "contraste": 8.033,
+      "temps": 2.41,
+      "joue": true
+     },
+     {
+      "contraste": 8.846,
+      "temps": 3.46,
+      "joue": true
+     }
+    ],
+    "ecart1a5": 0.0401
+   }
+  },
+  "1088x800": {
+   "playingMs": -255,
+   "va9": {
+    "voileIdentique": true,
+    "filtreVideo": "none",
+    "opaciteVideo": 1,
+    "zone": {
+     "x": 54,
+     "y": 241,
+     "width": 358,
+     "height": 86
+    },
+    "pixels": 24593,
+    "captures": [
+     {
+      "contraste": 8.001,
+      "temps": 1.6,
+      "joue": true
+     },
+     {
+      "contraste": 8.612,
+      "temps": 2.6,
+      "joue": true
+     },
+     {
+      "contraste": 9.575,
+      "temps": 3.58,
+      "joue": true
+     },
+     {
+      "contraste": 8.352,
+      "temps": 4.57,
+      "joue": true
+     },
+     {
+      "contraste": 7.677,
+      "temps": 5.54,
+      "joue": true
+     },
+     {
+      "contraste": 7.504,
+      "temps": 0.49,
+      "joue": true
+     },
+     {
+      "contraste": 7.926,
+      "temps": 1.47,
+      "joue": true
+     },
+     {
+      "contraste": 8.519,
+      "temps": 2.45,
+      "joue": true
+     }
+    ],
+    "ecart1a5": 0.0197
+   }
+  }
+ },
+ "va11": {
+  "video": 9,
+  "reference": 9,
+  "enPlus": [],
+  "enMoins": []
+ },
+ "preuves": {
+  "film": {
+   "octets": 1285803,
+   "duree": 16.36
+  },
+  "capture": 86033
+ },
+ "echecs": [],
+ "faits": [
+  "F : famille lue dans public/sites-demo/_kit/familles, plan dans public/sites-demo/lestraque/video ; base recit ; 0 préalable(s) manquant(s)",
+  "copies générées : video (--familles=recit,video) et référence (--familles=recit)",
+  "VA-1 : 5 pages (accueil et communes), 0 avec <video>",
+  "VA-1 : crédit des mentions légales « Images d’illustration : Marco Lopez, Mixkit, Mixkit Stock Video Free License — Marco Lopez ( Mixkit Stock Video Free Lic »",
+  "VA-1 : copie sans atelier.h264.mp4 → code 1 (✗ lestraque : video : lestraque/video/atelier.h264.mp4 manque ou est vide)",
+  "P : brotli 11 — bureau.css 927 o (+466), site.js +1962 o, styles.css +0 o",
+  "VA-2 : 0 requête vidéo à y = 0 ; à l'approche [{\"url\":\"/video/atelier.av1.mp4\",\"type\":\"media\"}]",
+  "VA-3 : 423 changements de scrollY ; verbe plein 22573 ms, scène à 60 % 19615 ms, playing 22582 ms ; pause 68 ms après la sortie sous 20 %",
+  "VA-4 : 390×844 0 requête, 0 video ; 820×1180 0 requête, 0 video ; mouvement réduit 0 requête, 0 video ; économie de données 0 requête, 0 video ; JavaScript coupé 0 requête, 0 video",
+  "VA-5 : sans requestIdleCallback, playing -351 ms après l'arrivée",
+  "VA-6 : Chrome 152.0.7977.84, AV1 bloquée, playing -161 ms après l'arrivée, source /video/atelier.h264.mp4",
+  "VA-8 : 2 requête(s) en 404, élément créé puis retiré à -2288 ms de l'arrivée ; photo à 1.00, dérive [{\"nom\":\"derive\",\"etat\":\"running\"}]",
+  "VA-9 : contraste minimal 1440x900 7.42 (écart des captures 0.01) ; 1280x800 7.41 (écart des captures 0.0401) ; 1088x800 7.50 (écart des captures 0.0197)",
+  "VA-10 : 0 animation au temps, dérive [\"paused\"], 5 éléments suivis bougent de 0 px",
+  "VA-12 : 0 violation, 0 erreur de console, 0 exception en 10 s de lecture",
+  "VA-7 : clic 26 ms, 2e clic 2 ms, Entrée 12 ms, 2e Entrée 8 ms",
+  "VA-11 : téléphone, 9 requêtes jusqu'à load (référence 9)",
+  "PR : .orchestre/preuves/021-13/juge/ — atelier-film.mp4 (16.4 s, 1285803 octets), atelier-lecture.jpg, mesures.json",
+  "VA-11 : Lighthouse — ✓ Lighthouse mobile, médianes sur 5 passes : performance 100, LCP 1649 ms, TBT 4 ms, CLS 0 — C:\\Users\\benja\\Documents\\presti\\.orchestre\\travail\\atelier-video-qa-111812\\lighthouse.json"
+ ]
+}

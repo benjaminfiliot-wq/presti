@@ -1,0 +1,32 @@
+const fs = require('fs'); let c = fs.readFileSync('outils/construire.mjs', 'utf8')
+const rep = (a, b) => { if (!c.includes(a)) { console.error('ABSENT: ' + a.slice(0, 80)); process.exit(1) } c = c.split(a).join(b) }
+rep("const SEUIL_OMBRE = 4 / 255        // queue d'ombre plus faible que ça : transparente (boîtes serrées)", "const SEUIL_OMBRE = 12 / 255       // queue d'ombre plus faible que ça : transparente (boîtes serrées, invisible sur #14110E)")
+rep(`  const octets = {}
+  for (const [nom, buf] of Object.entries(png)) {
+    const q = qualites[nom]
+    const avif = await sharp(buf).avif({ quality: q, effort: 6, chromaSubsampling: '4:4:4' }).toBuffer()
+    if (!avif.length) throw new Error(\`\${nom}.avif vide\`)
+    fs.writeFileSync(path.join(sortie, \`\${nom}.avif\`), avif)
+    octets[nom] = avif.length
+  }
+  return { scene, mesures, octets, png }`, `  // qualité AVIF : on part des qualités de base et on retire 2 points à tous les fichiers tant que le total dépasse
+  // 57 000 octets (plafond OB-3 : 60 000, marge pour le second lancement)
+  let octets = {}, retrait = 0
+  for (;;) {
+    const bufs = {}
+    for (const [nom, buf] of Object.entries(png)) bufs[nom] = await sharp(buf).avif({ quality: qualites[nom] - retrait, effort: 6, chromaSubsampling: '4:4:4' }).toBuffer()
+    const total = Object.values(bufs).reduce((a, b) => a + b.length, 0)
+    if (total <= 57000 || retrait >= 30) {
+      for (const [nom, avif] of Object.entries(bufs)) {
+        if (!avif.length) throw new Error(\`\${nom}.avif vide\`)
+        fs.writeFileSync(path.join(sortie, \`\${nom}.avif\`), avif)
+        octets[nom] = avif.length
+      }
+      break
+    }
+    retrait += 2
+  }
+  const qualitesEmployees = Object.fromEntries(Object.keys(png).map((n) => [n, qualites[n] - retrait]))
+  return { scene, mesures, octets, png, qualitesEmployees }`)
+rep("date: new Date().toISOString(), graine: GRAINE, qualites: QUALITES, opaciteOmbre: OPACITE_OMBRE,", "date: new Date().toISOString(), graine: GRAINE, qualites: res.rendus.qualitesEmployees, qualitesBis: res['rendus-bis'] ? res['rendus-bis'].qualitesEmployees : null, opaciteOmbre: OPACITE_OMBRE,")
+fs.writeFileSync('outils/construire.mjs', c); console.log('patch5 ok')

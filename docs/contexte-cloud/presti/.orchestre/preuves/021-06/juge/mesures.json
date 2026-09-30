@@ -1,0 +1,620 @@
+{
+ "date": "2026-09-15T17:11:59.004Z",
+ "titres": [
+  "Escaliers sur mesure",
+  "Dressings et placards",
+  "Bibliothèques et meubles",
+  "Parquets massifs",
+  "Cuisines et plans de travail",
+  "Portes et verrières intérieures"
+ ],
+ "poids": {
+  "bureauCssBrotliEnPlus": 344,
+  "siteJsBrotliEnPlus": 2496,
+  "stylesCssBrotliEnPlus": 0,
+  "bureauCssBrotli": 1271
+ },
+ "bureau": {
+  "1440×900": {
+   "lignes": [
+    {
+     "ligne": 1,
+     "ouvertureMs": 196,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "tournage-copeaux-720.avif"
+     },
+     "taille": [
+      345.6,
+      432
+     ]
+    },
+    {
+     "ligne": 2,
+     "ouvertureMs": 194,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "penderie-720.avif"
+     },
+     "taille": [
+      345.6,
+      432
+     ]
+    },
+    {
+     "ligne": 3,
+     "ouvertureMs": 194,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "reserve-bibliotheque-720.avif"
+     },
+     "taille": [
+      345.6,
+      432
+     ]
+    },
+    {
+     "ligne": 4,
+     "ouvertureMs": 191,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 2880,
+      "fichier": "atelier-poncage-2880.avif"
+     },
+     "taille": [
+      345.6,
+      432
+     ]
+    },
+    {
+     "ligne": 5,
+     "ouvertureMs": 195,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "reserve-cuisine-poutres-720.avif"
+     },
+     "taille": [
+      345.6,
+      432
+     ]
+    },
+    {
+     "ligne": 6,
+     "ouvertureMs": 196,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "boiserie-720.avif"
+     },
+     "taille": [
+      345.6,
+      432
+     ]
+    }
+   ],
+   "suivi": {
+    "ligne": 5,
+    "depart": 527,
+    "cible": 555,
+    "ecart100": 63.85,
+    "ecart1000": 0.71
+   },
+   "passages": [
+    {
+     "de": 1,
+     "fermetureMs": 112,
+     "ouvertesA300": [
+      2
+     ]
+    },
+    {
+     "de": 2,
+     "fermetureMs": 127,
+     "ouvertesA300": [
+      3
+     ]
+    },
+    {
+     "de": 3,
+     "fermetureMs": 113,
+     "ouvertesA300": [
+      4
+     ]
+    },
+    {
+     "de": 4,
+     "fermetureMs": 124,
+     "ouvertesA300": [
+      5
+     ]
+    },
+    {
+     "de": 5,
+     "fermetureMs": 122,
+     "ouvertesA300": [
+      6
+     ]
+    }
+   ],
+   "balayage": {
+    "echantillonsLent": 157,
+    "echantillonsVite": 69,
+    "vignettesVues": 187,
+    "intersectionMaxPx2": 0,
+    "intersectionTourneeMaxPx2": 0,
+    "horsSection": 0,
+    "rotationMaxLent": 2.28,
+    "rotationMaxVite": 3.1
+   }
+  },
+  "1280×800": {
+   "lignes": [
+    {
+     "ligne": 1,
+     "ouvertureMs": 192,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "tournage-copeaux-720.avif"
+     },
+     "taille": [
+      307.2,
+      384
+     ]
+    },
+    {
+     "ligne": 2,
+     "ouvertureMs": 195,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "penderie-720.avif"
+     },
+     "taille": [
+      307.2,
+      384
+     ]
+    },
+    {
+     "ligne": 3,
+     "ouvertureMs": 194,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "reserve-bibliotheque-720.avif"
+     },
+     "taille": [
+      307.2,
+      384
+     ]
+    },
+    {
+     "ligne": 4,
+     "ouvertureMs": 191,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 2880,
+      "fichier": "atelier-poncage-2880.avif"
+     },
+     "taille": [
+      307.2,
+      384
+     ]
+    },
+    {
+     "ligne": 5,
+     "ouvertureMs": 194,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "reserve-cuisine-poutres-720.avif"
+     },
+     "taille": [
+      307.2,
+      384
+     ]
+    },
+    {
+     "ligne": 6,
+     "ouvertureMs": 195,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "boiserie-720.avif"
+     },
+     "taille": [
+      307.2,
+      384
+     ]
+    }
+   ],
+   "suivi": {
+    "ligne": 5,
+    "depart": 457,
+    "cible": 503,
+    "ecart100": 63.85,
+    "ecart1000": 0.71
+   },
+   "passages": [
+    {
+     "de": 1,
+     "fermetureMs": 111,
+     "ouvertesA300": [
+      2
+     ]
+    },
+    {
+     "de": 2,
+     "fermetureMs": 112,
+     "ouvertesA300": [
+      3
+     ]
+    },
+    {
+     "de": 3,
+     "fermetureMs": 100,
+     "ouvertesA300": [
+      4
+     ]
+    },
+    {
+     "de": 4,
+     "fermetureMs": 113,
+     "ouvertesA300": [
+      5
+     ]
+    },
+    {
+     "de": 5,
+     "fermetureMs": 114,
+     "ouvertesA300": [
+      6
+     ]
+    }
+   ],
+   "balayage": {
+    "echantillonsLent": 157,
+    "echantillonsVite": 69,
+    "vignettesVues": 187,
+    "intersectionMaxPx2": 0,
+    "intersectionTourneeMaxPx2": 0,
+    "horsSection": 0,
+    "rotationMaxLent": 2,
+    "rotationMaxVite": 2.77
+   }
+  },
+  "1088×800": {
+   "lignes": [
+    {
+     "ligne": 1,
+     "ouvertureMs": 196,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "tournage-copeaux-720.avif"
+     },
+     "taille": [
+      261.1,
+      326.4
+     ]
+    },
+    {
+     "ligne": 2,
+     "ouvertureMs": 196,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "penderie-720.avif"
+     },
+     "taille": [
+      261.1,
+      326.4
+     ]
+    },
+    {
+     "ligne": 3,
+     "ouvertureMs": 192,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "reserve-bibliotheque-720.avif"
+     },
+     "taille": [
+      261.1,
+      326.4
+     ]
+    },
+    {
+     "ligne": 4,
+     "ouvertureMs": 190,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 2400,
+      "fichier": "atelier-poncage-2400.avif"
+     },
+     "taille": [
+      261.1,
+      326.4
+     ]
+    },
+    {
+     "ligne": 5,
+     "ouvertureMs": 210,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "reserve-cuisine-poutres-720.avif"
+     },
+     "taille": [
+      261.1,
+      326.4
+     ]
+    },
+    {
+     "ligne": 6,
+     "ouvertureMs": 194,
+     "couverture": 0,
+     "net": {
+      "complet": true,
+      "largeur": 720,
+      "fichier": "boiserie-720.avif"
+     },
+     "taille": [
+      261.1,
+      326.4
+     ]
+    }
+   ],
+   "suivi": {
+    "ligne": 5,
+    "depart": 373,
+    "cible": 442,
+    "ecart100": 63.84,
+    "ecart1000": 0.71
+   },
+   "passages": [
+    {
+     "de": 1,
+     "fermetureMs": 112,
+     "ouvertesA300": [
+      2
+     ]
+    },
+    {
+     "de": 2,
+     "fermetureMs": 116,
+     "ouvertesA300": [
+      3
+     ]
+    },
+    {
+     "de": 3,
+     "fermetureMs": 123,
+     "ouvertesA300": [
+      4
+     ]
+    },
+    {
+     "de": 4,
+     "fermetureMs": 103,
+     "ouvertesA300": [
+      5
+     ]
+    },
+    {
+     "de": 5,
+     "fermetureMs": 99,
+     "ouvertesA300": [
+      6
+     ]
+    }
+   ],
+   "balayage": {
+    "echantillonsLent": 157,
+    "echantillonsVite": 69,
+    "vignettesVues": 190,
+    "intersectionMaxPx2": 0,
+    "intersectionTourneeMaxPx2": 0,
+    "horsSection": 0,
+    "rotationMaxLent": 1.67,
+    "rotationMaxVite": 2.57
+   }
+  }
+ },
+ "reseau": {
+  "reference": {
+   "avant": [
+    "/images/atelier-poncage-2880.avif",
+    "/images/atelier-poncage-480.avif",
+    "/images/boiserie-480.avif",
+    "/images/penderie-480.avif",
+    "/images/reserve-bibliotheque-480.avif",
+    "/images/reserve-cuisine-poutres-480.avif",
+    "/images/tournage-copeaux-480.avif"
+   ],
+   "approche": 2117692,
+   "sizes": "(max-width: 767px) 80vw, 11rem",
+   "ajout": [],
+   "raf": 0,
+   "ecouteurs": [
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "pointermove",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    }
+   ],
+   "total": 2117692
+  },
+  "survol": {
+   "avant": [
+    "/images/atelier-poncage-2880.avif",
+    "/images/atelier-poncage-480.avif",
+    "/images/boiserie-480.avif",
+    "/images/penderie-480.avif",
+    "/images/reserve-bibliotheque-480.avif",
+    "/images/reserve-cuisine-poutres-480.avif",
+    "/images/tournage-copeaux-480.avif"
+   ],
+   "approche": 2202122,
+   "sizes": "(max-width: 767px) 80vw, min(24vw, 26rem)",
+   "ajout": [],
+   "raf": 0,
+   "ecouteurs": [
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "pointermove",
+     "passive": true,
+     "cible": "ol"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "pointermove",
+     "passive": true,
+     "cible": "window"
+    },
+    {
+     "type": "scroll",
+     "passive": true,
+     "cible": "window"
+    }
+   ],
+   "total": 2202122
+  }
+ },
+ "clavier": {
+  "boutons": 6,
+  "ouvertureMs": 195,
+  "deplacement": [
+   0,
+   0
+  ],
+  "echapMs": 124,
+  "nomAccessible": "Escaliers sur mesure"
+ },
+ "mouvementReduit": {
+  "ouvertureMs": 21,
+  "rotationMax": 0,
+  "deplacement": [
+   0,
+   0
+  ]
+ },
+ "echecs": [],
+ "faits": [
+  "copies générées : survol (--familles=recit,video,survol) et référence (--familles=recit,video)",
+  "SV-13 : 35 règles :hover ; 0 transition(s) de mise en page",
+  "P : brotli 11 en plus de la référence — bureau.css 344 o (total 1271), site.js 2496 o, styles.css 0 o",
+  "1440×900 : ouverture 196/194/194/191/195/196 ms ; titre couvert 0.0/0.0/0.0/0.0/0.0/0.0 % ; fichier d'image 720/720/720/2880/720/720 px ; taille 345.6 × 432 (attendu 345.6 de large)",
+  "1440×900 : suivi sur la ligne 5, écart à la cible 63.85 px à 100 ms puis 0.71 px à 1 s",
+  "1440×900 : passages de ligne, fermeture 112/127/113/124/122 ms",
+  "1440×900 : balayage lent, 157 relevés, 187 vignettes visibles, intersection max 0.0 px² (0.0 px² avec la rotation), 0 hors section ; rotation max 2.28° lent, 3.10° rapide",
+  "1280×800 : ouverture 192/195/194/191/194/195 ms ; titre couvert 0.0/0.0/0.0/0.0/0.0/0.0 % ; fichier d'image 720/720/720/2880/720/720 px ; taille 307.2 × 384 (attendu 307.2 de large)",
+  "1280×800 : suivi sur la ligne 5, écart à la cible 63.85 px à 100 ms puis 0.71 px à 1 s",
+  "1280×800 : passages de ligne, fermeture 111/112/100/113/114 ms",
+  "1280×800 : balayage lent, 157 relevés, 187 vignettes visibles, intersection max 0.0 px² (0.0 px² avec la rotation), 0 hors section ; rotation max 2.00° lent, 2.77° rapide",
+  "1088×800 : ouverture 196/196/192/190/210/194 ms ; titre couvert 0.0/0.0/0.0/0.0/0.0/0.0 % ; fichier d'image 720/720/720/2400/720/720 px ; taille 261.1 × 326.4 (attendu 261.1 de large)",
+  "1088×800 : suivi sur la ligne 5, écart à la cible 63.84 px à 100 ms puis 0.71 px à 1 s",
+  "1088×800 : passages de ligne, fermeture 112/116/123/103/99 ms",
+  "1088×800 : balayage lent, 157 relevés, 190 vignettes visibles, intersection max 0.0 px² (0.0 px² avec la rotation), 0 hors section ; rotation max 1.67° lent, 2.57° rapide",
+  "SV-9 : avant l'approche 7 image(s) de vignette (référence 7) ; à l'approche 2202122 octets contre 2117692 (+84430) ; sizes « (max-width: 767px) 80vw, min(24vw, 26rem) » ; le balayage ajoute 0 requête(s) d'image",
+  "SV-14 : 10 écouteurs pointermove/scroll/wheel/touchmove (0 non passifs, référence 0) ; rAF demandés entre 1 et 2 s après la sortie : 0 (référence 0)",
+  "SV-7 : 6 bouton(s) ; focus 195 ms ; Échap 124 ms ; nom accessible « Escaliers sur mesure »",
+  "SV-10 : ouverture 21 ms, rotation max 0.00°, déplacement 0 × 0 px",
+  "SV-11 : téléphone, #prestations identique ; 23 URL demandées (référence 23) ; 0 bouton(s)",
+  "SV-12 : sans JavaScript, vignette ≥ 0,90 en 203 ms (référence 202 ms)",
+  "SV-8 : 1440×900, relais de 0 à 3382 px tous les 150 px : 0 trou(s), 0 doublon(s) ; 0 lien(s) vers #contact dans #prestations",
+  "SV-8 : 1280×800, relais de 0 à 3047 px tous les 150 px : 0 trou(s), 0 doublon(s) ; 0 lien(s) vers #contact dans #prestations",
+  "PR : survol-film-1440x900.mp4, 431312 octets, 5.7 s filmées, écart-type du gris à mi-film 52.9",
+  "PR : survol-film-1088x800.mp4, 387032 octets, 5.5 s filmées, écart-type du gris à mi-film 44.4",
+  "CSP : 0 violation(s) propre(s) à la copie « survol » (référence : 0) ; 0 exception(s) de page propre(s) à la copie « survol »"
+ ]
+}

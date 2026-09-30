@@ -1,0 +1,767 @@
+{
+ "date": "2026-09-16T19:57:46.896Z",
+ "profils": {
+  "android": {
+   "citationAvantEntree": {
+    "classes": "plateau__citation reveal",
+    "opacity": "1",
+    "transform": "none",
+    "transitionDuration": "0s",
+    "transitionProperty": "none"
+   },
+   "y400": {
+    "scrollY": 400,
+    "citation": {
+     "n": 15,
+     "min": 0.55,
+     "max": 1,
+     "mots": [
+      1,
+      1,
+      1,
+      1,
+      0.962,
+      0.901,
+      0.839,
+      0.778,
+      0.716,
+      0.655,
+      0.594,
+      0.55,
+      0.55,
+      0.55,
+      0.55
+     ]
+    },
+    "verbes": [
+     {
+      "texte": "trace",
+      "opacite": 0,
+      "translate": "0px 2.592px",
+      "display": "inline-block"
+     },
+     {
+      "texte": "débite",
+      "opacite": 0,
+      "translate": "0px 2.592px",
+      "display": "inline-block"
+     },
+     {
+      "texte": "assemble",
+      "opacite": 0,
+      "translate": "0px 2.592px",
+      "display": "inline-block"
+     },
+     {
+      "texte": "ponce",
+      "opacite": 0,
+      "translate": "0px 2.592px",
+      "display": "inline-block"
+     }
+    ],
+    "eclate": {
+     "hautFigure": 4538,
+     "basFigure": 4847,
+     "eclate": [
+      {
+       "src": "eclate.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "assemble": [
+      {
+       "src": "assemble.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "calques": [
+      {
+       "src": "calque-limon.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "0px",
+       "charge": null
+      },
+      {
+       "src": "calque-contremarche.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "0px",
+       "charge": null
+      },
+      {
+       "src": "calque-marche.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "0px",
+       "charge": null
+      },
+      {
+       "src": "calque-vis.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "0px",
+       "charge": null
+      }
+     ],
+     "pastilles": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "jauges": [
+     {
+      "s": ".presta__jauge",
+      "display": "block"
+     },
+     {
+      "s": ".galerie__jauge",
+      "display": "block"
+     },
+     {
+      "s": ".etapes__jauge",
+      "display": "block"
+     }
+    ]
+   },
+   "y2400": {
+    "scrollY": 2400,
+    "citation": {
+     "n": 15,
+     "min": 1,
+     "max": 1,
+     "mots": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    "verbes": [
+     {
+      "texte": "trace",
+      "opacite": 0.878,
+      "translate": "0px 0.702514px",
+      "display": "inline-block"
+     },
+     {
+      "texte": "débite",
+      "opacite": 0.685,
+      "translate": "0px 1.81333px",
+      "display": "inline-block"
+     },
+     {
+      "texte": "assemble",
+      "opacite": 0.55,
+      "translate": "0px 2.592px",
+      "display": "inline-block"
+     },
+     {
+      "texte": "ponce",
+      "opacite": 0.55,
+      "translate": "0px 2.592px",
+      "display": "inline-block"
+     }
+    ],
+    "eclate": {
+     "hautFigure": 2538,
+     "basFigure": 2847,
+     "eclate": [
+      {
+       "src": "eclate.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "assemble": [
+      {
+       "src": "assemble.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "calques": [
+      {
+       "src": "calque-limon.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "0px",
+       "charge": null
+      },
+      {
+       "src": "calque-contremarche.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "0px",
+       "charge": null
+      },
+      {
+       "src": "calque-marche.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "0px",
+       "charge": null
+      },
+      {
+       "src": "calque-vis.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "0px",
+       "charge": null
+      }
+     ],
+     "pastilles": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "jauges": [
+     {
+      "s": ".presta__jauge",
+      "display": "block"
+     },
+     {
+      "s": ".galerie__jauge",
+      "display": "block"
+     },
+     {
+      "s": ".etapes__jauge",
+      "display": "block"
+     }
+    ]
+   },
+   "y4400": {
+    "scrollY": 4400,
+    "citation": {
+     "n": 15,
+     "min": 1,
+     "max": 1,
+     "mots": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    "verbes": [
+     {
+      "texte": "trace",
+      "opacite": 1,
+      "translate": "0px",
+      "display": "inline-block"
+     },
+     {
+      "texte": "débite",
+      "opacite": 1,
+      "translate": "0px",
+      "display": "inline-block"
+     },
+     {
+      "texte": "assemble",
+      "opacite": 1,
+      "translate": "0px",
+      "display": "inline-block"
+     },
+     {
+      "texte": "ponce",
+      "opacite": 1,
+      "translate": "0px",
+      "display": "inline-block"
+     }
+    ],
+    "eclate": {
+     "hautFigure": 494,
+     "basFigure": 803,
+     "eclate": [
+      {
+       "src": "eclate.avif",
+       "display": "none",
+       "opacite": 1,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "assemble": [
+      {
+       "src": "assemble.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "none",
+       "charge": true
+      }
+     ],
+     "calques": [
+      {
+       "src": "calque-limon.avif",
+       "display": "block",
+       "opacite": 1,
+       "translate": "-44.1916px -4.35455px",
+       "charge": true
+      },
+      {
+       "src": "calque-contremarche.avif",
+       "display": "block",
+       "opacite": 1,
+       "translate": "-42.7402px 23.2246px",
+       "charge": true
+      },
+      {
+       "src": "calque-marche.avif",
+       "display": "block",
+       "opacite": 1,
+       "translate": "21.9346px -10.6446px",
+       "charge": true
+      },
+      {
+       "src": "calque-vis.avif",
+       "display": "block",
+       "opacite": 1,
+       "translate": "21.9346px -25.9663px",
+       "charge": true
+      }
+     ],
+     "pastilles": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "jauges": [
+     {
+      "s": ".presta__jauge",
+      "display": "block"
+     },
+     {
+      "s": ".galerie__jauge",
+      "display": "block"
+     },
+     {
+      "s": ".etapes__jauge",
+      "display": "block"
+     }
+    ]
+   }
+  },
+  "iphone": {
+   "citationAvantEntree": {
+    "classes": "plateau__citation reveal",
+    "opacity": "0",
+    "transform": "matrix(1, 0, 0, 1, 0, 44)",
+    "transitionDuration": "0.55s, 0.55s",
+    "transitionProperty": "opacity, transform"
+   },
+   "y400": {
+    "scrollY": 400,
+    "citation": {
+     "n": 15,
+     "min": 1,
+     "max": 1,
+     "mots": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    "verbes": [
+     {
+      "texte": "trace",
+      "opacite": 0,
+      "translate": "none",
+      "display": "inline"
+     },
+     {
+      "texte": "débite",
+      "opacite": 0,
+      "translate": "none",
+      "display": "inline"
+     },
+     {
+      "texte": "assemble",
+      "opacite": 0,
+      "translate": "none",
+      "display": "inline"
+     },
+     {
+      "texte": "ponce",
+      "opacite": 0,
+      "translate": "none",
+      "display": "inline"
+     }
+    ],
+    "eclate": {
+     "hautFigure": 4523,
+     "basFigure": 4816,
+     "eclate": [
+      {
+       "src": "eclate.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "assemble": [
+      {
+       "src": "assemble.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "calques": [
+      {
+       "src": "calque-limon.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      },
+      {
+       "src": "calque-contremarche.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      },
+      {
+       "src": "calque-marche.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      },
+      {
+       "src": "calque-vis.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "pastilles": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "jauges": [
+     {
+      "s": ".presta__jauge",
+      "display": "none"
+     },
+     {
+      "s": ".galerie__jauge",
+      "display": "none"
+     },
+     {
+      "s": ".etapes__jauge",
+      "display": "none"
+     }
+    ]
+   },
+   "y2400": {
+    "scrollY": 2400,
+    "citation": {
+     "n": 15,
+     "min": 1,
+     "max": 1,
+     "mots": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    "verbes": [
+     {
+      "texte": "trace",
+      "opacite": 1,
+      "translate": "none",
+      "display": "inline"
+     },
+     {
+      "texte": "débite",
+      "opacite": 1,
+      "translate": "none",
+      "display": "inline"
+     },
+     {
+      "texte": "assemble",
+      "opacite": 1,
+      "translate": "none",
+      "display": "inline"
+     },
+     {
+      "texte": "ponce",
+      "opacite": 1,
+      "translate": "none",
+      "display": "inline"
+     }
+    ],
+    "eclate": {
+     "hautFigure": 2523,
+     "basFigure": 2816,
+     "eclate": [
+      {
+       "src": "eclate.avif",
+       "display": "block",
+       "opacite": 0,
+       "translate": "none",
+       "charge": true
+      }
+     ],
+     "assemble": [
+      {
+       "src": "assemble.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "calques": [
+      {
+       "src": "calque-limon.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      },
+      {
+       "src": "calque-contremarche.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      },
+      {
+       "src": "calque-marche.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      },
+      {
+       "src": "calque-vis.avif",
+       "display": "none",
+       "opacite": 0,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "pastilles": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "jauges": [
+     {
+      "s": ".presta__jauge",
+      "display": "none"
+     },
+     {
+      "s": ".galerie__jauge",
+      "display": "none"
+     },
+     {
+      "s": ".etapes__jauge",
+      "display": "none"
+     }
+    ]
+   },
+   "y4400": {
+    "scrollY": 4400,
+    "citation": {
+     "n": 15,
+     "min": 1,
+     "max": 1,
+     "mots": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    "verbes": [
+     {
+      "texte": "trace",
+      "opacite": 1,
+      "translate": "none",
+      "display": "inline"
+     },
+     {
+      "texte": "débite",
+      "opacite": 1,
+      "translate": "none",
+      "display": "inline"
+     },
+     {
+      "texte": "assemble",
+      "opacite": 1,
+      "translate": "none",
+      "display": "inline"
+     },
+     {
+      "texte": "ponce",
+      "opacite": 1,
+      "translate": "none",
+      "display": "inline"
+     }
+    ],
+    "eclate": {
+     "hautFigure": 479,
+     "basFigure": 772,
+     "eclate": [
+      {
+       "src": "eclate.avif",
+       "display": "block",
+       "opacite": 1,
+       "translate": "none",
+       "charge": true
+      }
+     ],
+     "assemble": [
+      {
+       "src": "assemble.avif",
+       "display": "none",
+       "opacite": 1,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "calques": [
+      {
+       "src": "calque-limon.avif",
+       "display": "none",
+       "opacite": 1,
+       "translate": "none",
+       "charge": null
+      },
+      {
+       "src": "calque-contremarche.avif",
+       "display": "none",
+       "opacite": 1,
+       "translate": "none",
+       "charge": null
+      },
+      {
+       "src": "calque-marche.avif",
+       "display": "none",
+       "opacite": 1,
+       "translate": "none",
+       "charge": null
+      },
+      {
+       "src": "calque-vis.avif",
+       "display": "none",
+       "opacite": 1,
+       "translate": "none",
+       "charge": null
+      }
+     ],
+     "pastilles": [
+      1,
+      1,
+      1,
+      1,
+      1
+     ]
+    },
+    "jauges": [
+     {
+      "s": ".presta__jauge",
+      "display": "none"
+     },
+     {
+      "s": ".galerie__jauge",
+      "display": "none"
+     },
+     {
+      "s": ".etapes__jauge",
+      "display": "none"
+     }
+    ]
+   }
+  }
+ }
+}

@@ -1,0 +1,298 @@
+{
+ "chromium": {
+  "version": "153.0.8010.12",
+  "identique": false,
+  "sans": {
+   "page": 8425,
+   "h2": [
+    [
+     "Ce que je fabrique",
+     1873,
+     85
+    ],
+    [
+     "Dans l’atelier",
+     2895,
+     121
+    ],
+    [
+     "Pièces livrées",
+     3725,
+     43
+    ],
+    [
+     "Autour de Rennes",
+     4599,
+     33
+    ],
+    [
+     "En quatre temps",
+     5435,
+     33
+    ],
+    [
+     "Vos questions",
+     6155,
+     37
+    ],
+    [
+     "Parlons de votre p",
+     6900,
+     104
+    ]
+   ],
+   "citation": [
+    944,
+    155,
+    4
+   ],
+   "phrase": [
+    3031,
+    76,
+    3
+   ],
+   "chiffres": [
+    [
+     1273,
+     83
+    ],
+    [
+     1356,
+     83
+    ],
+    [
+     1439,
+     82
+    ]
+   ],
+   "figure": [
+    4979,
+    293
+   ],
+   "h1": [
+    93,
+    315
+   ]
+  },
+  "avec": {
+   "page": 8425,
+   "h2": [
+    [
+     "Ce que je fabrique",
+     1874,
+     85
+    ],
+    [
+     "Dans l’atelier",
+     2895,
+     121
+    ],
+    [
+     "Pièces livrées",
+     3725,
+     43
+    ],
+    [
+     "Autour de Rennes",
+     4599,
+     33
+    ],
+    [
+     "En quatre temps",
+     5435,
+     33
+    ],
+    [
+     "Vos questions",
+     6155,
+     37
+    ],
+    [
+     "Parlons de votre p",
+     6900,
+     104
+    ]
+   ],
+   "citation": [
+    944,
+    155,
+    8
+   ],
+   "phrase": [
+    3032,
+    76,
+    4
+   ],
+   "chiffres": [
+    [
+     1273,
+     83
+    ],
+    [
+     1356,
+     83
+    ],
+    [
+     1439,
+     82
+    ]
+   ],
+   "figure": [
+    4980,
+    293
+   ],
+   "h1": [
+    93,
+    315
+   ]
+  }
+ },
+ "webkit": {
+  "version": "26.6",
+  "identique": false,
+  "sans": {
+   "page": 8409,
+   "h2": [
+    [
+     "Ce que je fabrique",
+     1847,
+     85
+    ],
+    [
+     "Dans l’atelier",
+     2869,
+     121
+    ],
+    [
+     "Pièces livrées",
+     3699,
+     43
+    ],
+    [
+     "Autour de Rennes",
+     4573,
+     33
+    ],
+    [
+     "En quatre temps",
+     5408,
+     33
+    ],
+    [
+     "Vos questions",
+     6128,
+     37
+    ],
+    [
+     "Parlons de votre p",
+     6873,
+     104
+    ]
+   ],
+   "citation": [
+    944,
+    155,
+    4
+   ],
+   "phrase": [
+    3005,
+    76,
+    3
+   ],
+   "chiffres": [
+    [
+     1273,
+     83
+    ],
+    [
+     1356,
+     83
+    ],
+    [
+     1439,
+     82
+    ]
+   ],
+   "figure": [
+    4953,
+    293
+   ],
+   "h1": [
+    93,
+    315
+   ]
+  },
+  "avec": {
+   "page": 8435,
+   "h2": [
+    [
+     "Ce que je fabrique",
+     1873,
+     85
+    ],
+    [
+     "Dans l’atelier",
+     2895,
+     121
+    ],
+    [
+     "Pièces livrées",
+     3725,
+     43
+    ],
+    [
+     "Autour de Rennes",
+     4599,
+     33
+    ],
+    [
+     "En quatre temps",
+     5434,
+     33
+    ],
+    [
+     "Vos questions",
+     6154,
+     37
+    ],
+    [
+     "Parlons de votre p",
+     6899,
+     104
+    ]
+   ],
+   "citation": [
+    944,
+    155,
+    8
+   ],
+   "phrase": [
+    3031,
+    76,
+    3
+   ],
+   "chiffres": [
+    [
+     1273,
+     83
+    ],
+    [
+     1356,
+     83
+    ],
+    [
+     1439,
+     82
+    ]
+   ],
+   "figure": [
+    4979,
+    293
+   ],
+   "h1": [
+    93,
+    315
+   ]
+  }
+ }
+}

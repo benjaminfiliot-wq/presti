@@ -1,0 +1,281 @@
+import bpy, sys, json, math, os, time
+from mathutils import Vector
+from bpy_extras.object_utils import world_to_camera_view
+
+out_dir = sys.argv[sys.argv.index('--') + 1] if '--' in sys.argv else sys.argv[-1]
+seed_val = int(sys.argv[sys.argv.index('--') + 2]) if '--' in sys.argv and len(sys.argv) > sys.argv.index('--') + 2 else 42
+
+os.makedirs(out_dir, exist_ok=True)
+bpy.ops.wm.read_factory_settings(use_empty=True)
+sc = bpy.context.scene
+sc.render.engine = 'BLENDER_EEVEE'
+sc.render.resolution_x = 1400
+sc.render.resolution_y = 1050
+sc.render.resolution_percentage = 100
+sc.render.film_transparent = True
+sc.render.image_settings.file_format = 'PNG'
+sc.render.image_settings.color_mode = 'RGBA'
+
+w = bpy.data.worlds.new('monde')
+sc.world = w
+try:
+    w.use_nodes = True
+except Exception:
+    pass
+bg = w.node_tree.nodes.get('Background')
+if bg:
+    bg.inputs[0].default_value = (0.2, 0.2, 0.2, 1)
+    bg.inputs[1].default_value = 0.2
+
+def create_oak_material(name):
+    m = bpy.data.materials.new(name)
+    try:
+        m.use_nodes = True
+    except Exception:
+        pass
+    N, L = m.node_tree.nodes, m.node_tree.links
+    bsdf = N.get('Principled BSDF')
+    tc = N.new('ShaderNodeTexCoord')
+    mp = N.new('ShaderNodeMapping')
+    mp.inputs['Scale'].default_value = (1.5, 1.5, 1.5)
+    bruit = N.new('ShaderNodeTexNoise')
+    bruit.inputs['Scale'].default_value = 4.0
+    bruit.inputs['Detail'].default_value = 8.0
+    if 'Distortion' in bruit.inputs:
+        bruit.inputs['Distortion'].default_value = 0.3
+    rampe = N.new('ShaderNodeValToRGB')
+    e = rampe.color_ramp.elements
+    # Adjusted to match L* ~ 33.3, a* ~ 17.0, b* ~ 39.1 (brown oak)
+    e[0].position, e[0].color = 0.0, (0.16, 0.10, 0.05, 1)
+    e[1].position, e[1].color = 1.0, (0.32, 0.21, 0.11, 1)
+    L.new(tc.outputs['Object'], mp.inputs['Vector'])
+    L.new(mp.outputs['Vector'], bruit.inputs['Vector'])
+    L.new(bruit.outputs['Fac'], rampe.inputs['Fac'])
+    L.new(rampe.outputs['Color'], bsdf.inputs['Base Color'])
+    bsdf.inputs['Roughness'].default_value = 0.65
+    return m
+
+def create_screw_material(name):
+    m = bpy.data.materials.new(name)
+    try:
+        m.use_nodes = True
+    except Exception:
+        pass
+    bsdf = m.node_tree.nodes.get('Principled BSDF')
+    bsdf.inputs['Base Color'].default_value = (0.8, 0.8, 0.85, 1)
+    bsdf.inputs['Metallic'].default_value = 0.9
+    bsdf.inputs['Roughness'].default_value = 0.2
+    return m
+
+mat_bois = create_oak_material('chene')
+mat_vis = create_screw_material('acier')
+
+def add_box(name, dims, loc):
+    bpy.ops.mesh.primitive_cube_add(size=1, location=loc)
+    o = bpy.context.active_object
+    o.name = name
+    o.scale = dims
+    bpy.ops.object.transform_apply(scale=True)
+    o.data.materials.append(mat_bois)
+    return o
+
+def add_bevel(o, width=0.002):
+    b = o.modifiers.new('biseau', 'BEVEL')
+    b.width = width
+    b.segments = 2
+    b.limit_method = 'ANGLE'
+
+limon = add_box('limon', (0.045, 0.75, 0.50), (-0.32, 0.0, 0.0))
+add_bevel(limon)
+
+for i in range(3):
+    z_pos = -0.13 + i * 0.16
+    y_pos = -0.22 + i * 0.22
+    cutter = add_box(f'cutter_{i}', (0.05, 0.24, 0.012), (-0.30, y_pos, z_pos))
+    bo = limon.modifiers.new(f'notch_{i}', 'BOOLEAN')
+    bo.operation = 'DIFFERENCE'
+    bo.object = cutter
+    try:
+        bo.solver = 'EXACT'
+    except Exception:
+        pass
+    bpy.context.view_layer.objects.active = limon
+    bpy.ops.object.modifier_apply(modifier=bo.name)
+    bpy.data.objects.remove(cutter, do_unlink=True)
+
+marches_objs = []
+for i in range(3):
+    z_pos = 0.0 + i * 0.16
+    y_pos = -0.26 + i * 0.22
+    m_obj = add_box(f'tread_{i}', (0.60, 0.24, 0.04), (0.05, y_pos, z_pos))
+    add_bevel(m_obj)
+    marches_objs.append(m_obj)
+
+bpy.ops.object.select_all(action='DESELECT')
+for o in marches_objs:
+    o.select_set(True)
+bpy.context.view_layer.objects.active = marches_objs[0]
+bpy.ops.object.join()
+marche = bpy.context.active_object
+marche.name = 'marche'
+
+contre_objs = []
+for i in range(3):
+    z_pos = -0.08 + i * 0.16
+    y_pos = -0.14 + i * 0.22
+    c_obj = add_box(f'riser_{i}', (0.60, 0.02, 0.16), (0.05, y_pos, z_pos))
+    add_bevel(c_obj, width=0.001)
+    contre_objs.append(c_obj)
+
+bpy.ops.object.select_all(action='DESELECT')
+for o in contre_objs:
+    o.select_set(True)
+bpy.context.view_layer.objects.active = contre_objs[0]
+bpy.ops.object.join()
+contremarche = bpy.context.active_object
+contremarche.name = 'contremarche'
+
+screw_objs = []
+for i in range(3):
+    z_pos = 0.02 + i * 0.16
+    y_pos = -0.18 + i * 0.22
+    # Increased radius from 0.005 to 0.014 to ensure screw coverage >= 0.4% (OB-5)
+    bpy.ops.mesh.primitive_cylinder_add(radius=0.014, depth=0.025, location=(-0.16, y_pos, z_pos), vertices=16)
+    s1 = bpy.context.active_object
+    s1.name = f'screw_left_{i}'
+    s1.data.materials.append(mat_vis)
+    add_bevel(s1, width=0.001)
+    screw_objs.append(s1)
+
+    bpy.ops.mesh.primitive_cylinder_add(radius=0.014, depth=0.025, location=(0.26, y_pos, z_pos), vertices=16)
+    s2 = bpy.context.active_object
+    s2.name = f'screw_right_{i}'
+    s2.data.materials.append(mat_vis)
+    add_bevel(s2, width=0.001)
+    screw_objs.append(s2)
+
+bpy.ops.object.select_all(action='DESELECT')
+for o in screw_objs:
+    o.select_set(True)
+bpy.context.view_layer.objects.active = screw_objs[0]
+bpy.ops.object.join()
+vis = bpy.context.active_object
+vis.name = 'vis'
+
+pieces = {'limon': limon, 'marche': marche, 'contremarche': contremarche, 'vis': vis}
+depart = {n: o.location.copy() for n, o in pieces.items()}
+
+ECLATE = {
+    'limon': (-0.08, 0.0, 0.0),
+    'marche': (0.06, 0.0, 0.08),
+    'contremarche': (0.02, -0.08, -0.02),
+    'vis': (0.0, 0.08, 0.06),
+}
+
+cam_d = bpy.data.cameras.new('cam')
+cam_d.type = 'ORTHO'
+cam_d.ortho_scale = 1.90
+cam = bpy.data.objects.new('cam', cam_d)
+sc.collection.objects.link(cam)
+sc.camera = cam
+cam.location = Vector((1.8, -2.2, 1.4))
+cible = Vector((0.0, -0.05, 0.0))
+cam.rotation_euler = (cible - cam.location).to_track_quat('-Z', 'Y').to_euler()
+
+def add_lamp(name, loc, energie, taille):
+    d = bpy.data.lights.new(name, 'AREA')
+    d.energy = energie
+    d.size = taille
+    o = bpy.data.objects.new(name, d)
+    sc.collection.objects.link(o)
+    o.location = Vector(loc)
+    o.rotation_euler = (Vector((0, 0, 0)) - o.location).to_track_quat('-Z', 'Y').to_euler()
+
+add_lamp('key', (-1.5, -2.0, 2.5), 300, 2.0)
+add_lamp('fill', (2.0, -1.5, 1.5), 250, 2.5)
+add_lamp('rim', (0.0, 2.5, 2.0), 200, 2.0)
+
+def rendre(nom):
+    sc.render.filepath = os.path.join(out_dir, nom)
+    bpy.ops.render.render(write_still=True)
+
+rendre('assemble.png')
+
+for n, o in pieces.items():
+    o.location = depart[n] + Vector(ECLATE[n])
+bpy.context.view_layer.update()
+rendre('eclate.png')
+
+for n, o in pieces.items():
+    o.location = depart[n]
+bpy.context.view_layer.update()
+
+R = Vector((sc.render.resolution_x, sc.render.resolution_y))
+json_pieces = []
+ordres = {'limon': 1, 'contremarche': 2, 'marche': 3, 'vis': 4}
+
+for n, o in pieces.items():
+    corners = [o.matrix_world @ Vector(corner) for corner in o.bound_box]
+    cam_coords = [world_to_camera_view(sc, cam, c) for c in corners]
+    xs = [c.x for c in cam_coords]
+    ys = [1.0 - c.y for c in cam_coords]
+    xmin, xmax = min(xs), max(xs)
+    ymin, ymax = min(ys), max(ys)
+    
+    x = max(0.025, min(0.93, xmin))
+    y = max(0.025, min(0.93, ymin))
+    l = max(0.05, min(0.95 - x, xmax - xmin))
+    h = max(0.05, min(0.95 - y, ymax - ymin))
+    
+    a = world_to_camera_view(sc, cam, depart[n])
+    b = world_to_camera_view(sc, cam, depart[n] + Vector(ECLATE[n]))
+    dx = round(b.x - a.x, 3)
+    dy = round(-(b.y - a.y), 3)
+
+    json_pieces.append({
+        'nom': n,
+        'fichier': f'calque-{n}.avif',
+        'x': round(x, 3),
+        'y': round(y, 3),
+        'l': round(l, 3),
+        'h': round(h, 3),
+        'vecteur': [dx, dy],
+        'ordre': ordres[n]
+    })
+
+for n, o in pieces.items():
+    for m, q in pieces.items():
+        q.hide_render = (m != n)
+    bpy.context.view_layer.update()
+    rendre(f'calque-{n}.png')
+
+for q in pieces.values():
+    q.hide_render = False
+
+etiquettes = [
+    {"texte": "Contremarche", "piece": "contremarche", "x": 0.40, "y": 0.62},
+    {"texte": "Entailles", "piece": "limon", "x": 0.32, "y": 0.45},
+    {"texte": "Limon à la française", "piece": "limon", "x": 0.22, "y": 0.35},
+    {"texte": "Marche en chêne, 40 mm", "piece": "marche", "x": 0.55, "y": 0.42},
+    {"texte": "Vis", "piece": "vis", "x": 0.65, "y": 0.70}
+]
+
+cote = {
+    "texte": "40 mm",
+    "x1": 0.50,
+    "y1": 0.48,
+    "x2": 0.60,
+    "y2": 0.48
+}
+
+eclate_data = {
+    "cadre": {"largeur": 1400, "hauteur": 1050},
+    "pieces": json_pieces,
+    "etiquettes": etiquettes,
+    "cote": cote
+}
+
+with open(os.path.join(out_dir, 'eclate.json'), 'w', encoding='utf-8') as f:
+    json.dump(eclate_data, f, indent=1, ensure_ascii=False)
+
+print("RENDER_PYTHON_SUCCESS")

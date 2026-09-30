@@ -1,0 +1,436 @@
+{
+  "slug": "317c",
+  "url": "https://www.317c.net/",
+  "profil": "pixel7",
+  "date": "2026-09-16T19:58:25.802Z",
+  "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+  "viewport": {
+    "width": 412,
+    "height": 839
+  },
+  "rafParSecondeAuRepos": 181,
+  "defilement": {
+    "mode": "doigt",
+    "pas": 30,
+    "budgetEpuise": false,
+    "scrollYMax": 12203,
+    "parcoursVisuelMedian": 8504,
+    "hauteurDocument": 13042
+  },
+  "titre": "SEVA ARCHITECTURE - Cabinet d'architecte à Lège-Cap-Ferret en Gironde",
+  "styleJs": [
+    {
+      "cible": "span.tricksword",
+      "elements": 143,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 143,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1498,
+      "ecrituresTotales": 22989
+    },
+    {
+      "cible": "div.journal-image-wrapp.is-2",
+      "elements": 3,
+      "proprietes": "transform",
+      "rafales": 3,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 43012,
+      "ecrituresTotales": 7773
+    },
+    {
+      "cible": "div.journal-image-wrapp.is-1",
+      "elements": 3,
+      "proprietes": "transform",
+      "rafales": 3,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 42991,
+      "ecrituresTotales": 7752
+    },
+    {
+      "cible": "div.fade-up",
+      "elements": 18,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 18,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1299,
+      "ecrituresTotales": 2772
+    },
+    {
+      "cible": "div.img-mask",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 36913,
+      "ecrituresTotales": 2207
+    },
+    {
+      "cible": "div.hero__image-wrapper.w-dyn-items",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 1,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 36913,
+      "ecrituresTotales": 2207
+    },
+    {
+      "cible": "img.cta-text-img",
+      "elements": 1,
+      "proprietes": "transform",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 32526,
+      "ecrituresTotales": 2143
+    },
+    {
+      "cible": "div.parution-date-holder.fade-up",
+      "elements": 9,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 9,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1298,
+      "ecrituresTotales": 1388
+    },
+    {
+      "cible": "div.divider.is-top",
+      "elements": 16,
+      "proprietes": "opacity",
+      "rafales": 16,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1000,
+      "ecrituresTotales": 1106
+    },
+    {
+      "cible": "div.fom-field-holder.fade-up",
+      "elements": 6,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 6,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1298,
+      "ecrituresTotales": 928
+    },
+    {
+      "cible": "h3.h2-style.tricks",
+      "elements": 5,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 5,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1295,
+      "ecrituresTotales": 771
+    },
+    {
+      "cible": "div.eyes-iris",
+      "elements": 2,
+      "proprietes": "transform",
+      "rafales": 24,
+      "rafalesParElement": 12,
+      "dureeMedianeMs": 399,
+      "ecrituresTotales": 650
+    },
+    {
+      "cible": "div.margin-30.fade-up",
+      "elements": 4,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 4,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1299,
+      "ecrituresTotales": 613
+    },
+    {
+      "cible": "div.hero-image.w-dyn-item",
+      "elements": 3,
+      "proprietes": "opacity",
+      "rafales": 9,
+      "rafalesParElement": 3,
+      "dureeMedianeMs": 951,
+      "ecrituresTotales": 467
+    },
+    {
+      "cible": "a.linkblock.fade-up",
+      "elements": 3,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 3,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1295,
+      "ecrituresTotales": 463
+    },
+    {
+      "cible": "h2.tab-title.fade-up",
+      "elements": 3,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 3,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1302,
+      "ecrituresTotales": 461
+    },
+    {
+      "cible": "div.tab-number.fade-up",
+      "elements": 3,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 3,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1298,
+      "ecrituresTotales": 459
+    },
+    {
+      "cible": "img.cta-finger.no-click",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 4540,
+      "ecrituresTotales": 322
+    },
+    {
+      "cible": "div.margin-60.fade-up",
+      "elements": 2,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1300,
+      "ecrituresTotales": 310
+    },
+    {
+      "cible": "span.span-hero-1.to-animate",
+      "elements": 2,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 1,
+      "dureeMedianeMs": 1204,
+      "ecrituresTotales": 289
+    }
+  ],
+  "io": {
+    "n": 0,
+    "observe": 0,
+    "options": []
+  },
+  "animate": {
+    "n": 0,
+    "samples": []
+  },
+  "play": {
+    "calls": 0,
+    "ok": 0,
+    "rejected": []
+  },
+  "ecouteurs": {
+    "touchstart:non-precise:document": 3,
+    "resize:non-precise:window": 6,
+    "scroll:non-precise:window": 1,
+    "touchmove:non-precise:document": 1,
+    "scroll:non-precise:document": 3,
+    "wheel:non-precise:document": 2,
+    "wheel:passif:window": 3,
+    "scroll:passif:document": 19,
+    "touchstart:passif:element": 4,
+    "touchstart:passif:document": 1,
+    "resize:passif:window": 19,
+    "touchmove:actif-explicite:element": 3,
+    "wheel:non-precise:element": 1,
+    "touchmove:non-precise:element": 1,
+    "touchstart:non-precise:element": 1
+  },
+  "matchMedia": [
+    "(prefers-reduced-motion: reduce)",
+    "(hover: none), (pointer: coarse)",
+    "(min-width: 991px)",
+    "(pointer: fine)"
+  ],
+  "compteursNumeriques": {},
+  "transitions": [
+    [
+      "opacity | 0.4s | ease-in-out | delai 0s",
+      {
+        "n": 222,
+        "ex": "div.home-tab-content-holder"
+      }
+    ],
+    [
+      "opacity | 0.2s | cubic-bezier(0.25, 0.46, 0.45, 0.94) | delai 0s",
+      {
+        "n": 78,
+        "ex": "div.swiper-button-prev.fade-up"
+      }
+    ],
+    [
+      "opacity | 0.5s | ease-in-out | delai 0s",
+      {
+        "n": 30,
+        "ex": "div.cookie__wrapper"
+      }
+    ],
+    [
+      "opacity | 0.2s | ease-out | delai 0s",
+      {
+        "n": 1,
+        "ex": "a.languages-link.is-nav-front"
+      }
+    ]
+  ],
+  "animationsCss": [],
+  "videos": [],
+  "gsapGlobal": {
+    "version": "3.11.1",
+    "enfantsRestants": 33,
+    "parDureeEase": [
+      [
+        "0.59s | power2.inOut",
+        10
+      ],
+      [
+        "0s | fonction",
+        5
+      ],
+      [
+        "0.4s | power2.out",
+        2
+      ],
+      [
+        "2.2s | power2.in",
+        2
+      ],
+      [
+        "8s | none",
+        2
+      ],
+      [
+        "0.5s | fonction",
+        2
+      ],
+      [
+        "4.6s | fonction",
+        1
+      ],
+      [
+        "2s | power2.inOut",
+        1
+      ],
+      [
+        "1.65s | power2.out",
+        1
+      ],
+      [
+        "1.5s | power2.out",
+        1
+      ],
+      [
+        "1.2s | power2.out",
+        1
+      ],
+      [
+        "1.2s | power4.inOut",
+        1
+      ]
+    ]
+  },
+  "scrollTriggerGlobal": {
+    "n": 18,
+    "pin": 0,
+    "scrub": 2
+  },
+  "pinSpacers": 0,
+  "scenesSticky": 2,
+  "texteDecoupe": {
+    "parentsAvec3Fragments": 10,
+    "fragments": 103
+  },
+  "classesRacine": "w-mod-js w-mod-touch show-loader w-mod-ix wf-rubik-n3-active wf-rubik-n4-active wf-rubik-i3-active wf-rubik-i4-active wf-active",
+  "supports": {
+    "view": true,
+    "scroll": true
+  },
+  "reducedMotion": false,
+  "imagesDecodingAsync": 0,
+  "imagesLazy": 81,
+  "images": 115,
+  "signaturesCss": {
+    "animation-timeline": false,
+    "view-timeline": false,
+    "scroll-timeline": false,
+    "view()": false,
+    "prefers-reduced-motion": false,
+    "svh/lvh/dvh": false,
+    "@view-transition": false,
+    "hover:hover": false,
+    "hover:none|pointer:coarse": false,
+    "content-visibility": true,
+    "will-change": true,
+    "position:sticky": true,
+    "overscroll-behavior": false,
+    "scroll-snap-type": false,
+    "page-enter/leave (Vue)": false
+  },
+  "signaturesJs": {
+    "gsap": true,
+    "ScrollTrigger": true,
+    "SplitText": false,
+    "split-type/splitting": true,
+    "lenis": false,
+    "locomotive": false,
+    "barba/swup/taxi/highway": false,
+    "three": false,
+    "IntersectionObserver": false,
+    "prefers-reduced-motion (JS)": true,
+    "startViewTransition": false,
+    "ScrollTimeline/ViewTimeline": false,
+    "framer-motion/motion": false,
+    "swiper": true,
+    "webflow": true,
+    "nuxt": false
+  },
+  "animationsVuesPendantDefilement": [
+    [
+      "CSSTransition | opacity | 400 | ease-in-out | 1 | DocumentTimeline | opacity",
+      {
+        "n": 102,
+        "ex": "div.home-service-item-img.w-dyn-item"
+      }
+    ],
+    [
+      "CSSTransition | opacity | 500 | ease-in-out | 1 | DocumentTimeline | opacity",
+      {
+        "n": 1,
+        "ex": "div.cookie__wrapper"
+      }
+    ],
+    [
+      "CSSTransition | opacity | 200 | cubic-bezier(0.25, 0.46, 0.45, 0.94) | 1 | DocumentTimeline | opacity",
+      {
+        "n": 1,
+        "ex": "div.swiper-button-prev.fade-up"
+      }
+    ]
+  ],
+  "poidsParType": {
+    "document": {
+      "requetes": 11,
+      "octets": 887738
+    },
+    "script": {
+      "requetes": 43,
+      "octets": 506949
+    },
+    "stylesheet": {
+      "requetes": 2,
+      "octets": 28004
+    },
+    "image": {
+      "requetes": 70,
+      "octets": 12916009
+    },
+    "font": {
+      "requetes": 5,
+      "octets": 222512
+    },
+    "xhr": {
+      "requetes": 19,
+      "octets": 3195778
+    },
+    "fetch": {
+      "requetes": 8,
+      "octets": 17656
+    }
+  },
+  "octetsTotal": 17774646
+}

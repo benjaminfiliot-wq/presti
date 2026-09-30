@@ -1,0 +1,76 @@
+// Étape 3 : enrichit chaque SIRET via l'API Recherche d'entreprises (gratuite, data.gouv.fr)
+// -> état administratif (actif/fermé), date de création, effectif.
+// Filtre ensuite : ne garde que les entreprises actives.
+import fs from "node:fs";
+
+const IN = new URL("../data/02-entreprises.json", import.meta.url);
+const OUT = new URL("../data/03-entreprises-actives.json", import.meta.url);
+
+const entreprises = JSON.parse(fs.readFileSync(IN, "utf8"));
+
+const EFFECTIF_LABELS = {
+  "NN": "non renseigné", "00": "0 salarié", "01": "1-2", "02": "3-5", "03": "6-9",
+  "11": "10-19", "12": "20-49", "21": "50-99", "22": "100-199", "31": "200-249",
+  "32": "250-499", "41": "500-999", "42": "1000-1999", "51": "2000-4999",
+  "52": "5000-9999", "53": "10000+",
+};
+
+function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
+
+async function lookup(siret, tries = 3) {
+  const url = `https://recherche-entreprises.api.gouv.fr/search?q=${siret}&per_page=1`;
+  for (let i = 0; i < tries; i++) {
+    try {
+      const res = await fetch(url);
+      if (res.status === 429) { await sleep(1500); continue; }
+      if (!res.ok) return null;
+      const json = await res.json();
+      const r = json.results && json.results[0];
+      if (!r) return null;
+      // cherche l'établissement précis dans matching_etablissements, sinon retombe sur le siège
+      const etab = (r.matching_etablissements || []).find((e) => e.siret === siret) || r.siege || {};
+      return {
+        etat_administratif: etab.etat_administratif || r.etat_administratif || "",
+        date_creation: r.date_creation || etab.date_creation || "",
+        effectif_code: r.tranche_effectif_salarie || etab.tranche_effectif_salarie || "",
+        nom_complet: r.nom_complet || "",
+      };
+    } catch (e) {
+      await sleep(800);
+    }
+  }
+  return null;
+}
+
+const out = [];
+let i = 0;
+for (const e of entreprises) {
+  i++;
+  const info = await lookup(e.siret);
+  process.stdout.write(`\r${i}/${entreprises.length}`);
+  if (!info) {
+    out.push({ ...e, etat_administratif: "inconnu", date_creation: "", effectif: "inconnu", nom_complet_officiel: "" });
+  } else {
+    out.push({
+      ...e,
+      etat_administratif: info.etat_administratif,
+      date_creation: info.date_creation,
+      effectif: EFFECTIF_LABELS[info.effectif_code] || info.effectif_code || "inconnu",
+      nom_complet_officiel: info.nom_complet,
+    });
+  }
+  await sleep(180); // reste large sous les quotas publics de l'API
+}
+console.log("");
+
+const actives = out.filter((e) => e.etat_administratif === "A");
+console.log(`Actives (état = A) : ${actives.length} / ${out.length}`);
+const fermees = out.filter((e) => e.etat_administratif && e.etat_administratif !== "A" && e.etat_administratif !== "inconnu");
+console.log(`Fermées/cessées écartées : ${fermees.length}`);
+const inconnues = out.filter((e) => e.etat_administratif === "inconnu");
+console.log(`État inconnu (API sans réponse) : ${inconnues.length} -> gardées par précaution`);
+
+const finales = out.filter((e) => e.etat_administratif === "A" || e.etat_administratif === "inconnu");
+
+fs.writeFileSync(OUT, JSON.stringify(finales, null, 2));
+console.log(`Écrit -> data/03-entreprises-actives.json (${finales.length} entreprises)`);

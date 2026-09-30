@@ -1,0 +1,26 @@
+[
+  {
+    "fichier": "images/hero-960.webp",
+    "base": "hero",
+    "largeur": 1280,
+    "hauteur": 853,
+    "legende": "Assemblage d'onglet avec clés de renfort, détail",
+    "alt": "Assemblage d'onglet avec clés de renfort, détail",
+    "auteur": "Steve Ryan",
+    "licence": "CC BY-SA 2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Corner_Detail_of_a_wooden_box_-_spline_joint.jpg",
+    "titre_commons": "File:Corner Detail of a wooden box - spline joint.jpg"
+  },
+  {
+    "fichier": "images/bibliotheque-720.webp",
+    "base": "bibliotheque",
+    "largeur": 1600,
+    "hauteur": 1060,
+    "legende": "Bibliothèque sur mesure en chêne et acier",
+    "alt": "Bibliothèque sur mesure en chêne et acier",
+    "auteur": "Micheli Design",
+    "licence": "CC0",
+    "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg",
+    "titre_commons": "File:Custom-made industrial wood and metal bookcase – Micheli Design.jpg"
+  }
+]

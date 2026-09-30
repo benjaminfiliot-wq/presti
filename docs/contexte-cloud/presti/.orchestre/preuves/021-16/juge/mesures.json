@@ -1,0 +1,452 @@
+{
+ "date": "2026-09-16T17:45:15.018Z",
+ "sources": "C:\\Users\\benja\\Documents\\presti\\public\\sites-demo",
+ "essai": false,
+ "etiquettes": [
+  "Limon à la française",
+  "Entailles",
+  "Marche en chêne, 40 mm",
+  "Contremarche",
+  "Vis"
+ ],
+ "html": {
+  "figure": true,
+  "figureOctets": 5820,
+  "legende": true,
+  "contactsEtapes": [
+   0,
+   0
+  ]
+ },
+ "formats": {
+  "1440×900": {
+   "centres": [
+    {
+     "c": 14.56,
+     "pleine": 1,
+     "fiche": [
+      1,
+      1,
+      1
+     ],
+     "releve": 0,
+     "assemble": 0,
+     "calques": 0,
+     "cotes": [
+      0,
+      0
+     ],
+     "etiquettesNumerotees": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "phrase": 0,
+     "rendu": {
+      "l": 0,
+      "t": 260.109375,
+      "r": 731.53125,
+      "b": 808.75
+     }
+    },
+    {
+     "c": 43.75,
+     "pleine": 2,
+     "fiche": [
+      0,
+      0,
+      0
+     ],
+     "releve": 1,
+     "assemble": 1,
+     "calques": 0,
+     "cotes": [
+      1,
+      1
+     ],
+     "etiquettesNumerotees": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "phrase": 0,
+     "rendu": {
+      "l": 0,
+      "t": 260.109375,
+      "r": 731.53125,
+      "b": 808.75
+     }
+    },
+    {
+     "c": 66.25,
+     "pleine": 3,
+     "fiche": [
+      0,
+      0,
+      0
+     ],
+     "releve": 0,
+     "assemble": 0,
+     "calques": 1,
+     "cotes": [
+      0,
+      0
+     ],
+     "etiquettesNumerotees": [
+      1,
+      1,
+      1,
+      1,
+      1
+     ],
+     "phrase": 0,
+     "rendu": {
+      "l": 0,
+      "t": 260.109375,
+      "r": 731.53125,
+      "b": 808.75
+     }
+    },
+    {
+     "c": 90.44,
+     "pleine": 4,
+     "fiche": [
+      0,
+      0,
+      0
+     ],
+     "releve": 0,
+     "assemble": 1,
+     "calques": 0,
+     "cotes": [
+      0,
+      0
+     ],
+     "etiquettesNumerotees": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "phrase": 1,
+     "rendu": {
+      "l": 0,
+      "t": 260.109375,
+      "r": 731.53125,
+      "b": 808.75
+     }
+    }
+   ],
+   "contrasteFiche": [
+    {
+     "texte": "Votre projet — Escalier",
+     "p10": 11.927871175888228,
+     "pixels": 7772
+    },
+    {
+     "texte": "Commune — Rennes",
+     "p10": 11.927871175888228,
+     "pixels": 6748
+    },
+    {
+     "texte": "Quand — Dans les trois mois",
+     "p10": 11.927871175888228,
+     "pixels": 12648
+    }
+   ],
+   "contrastePhrase": [
+    {
+     "texte": "Tout commence par votre demande.",
+     "p10": 16.14662379604388,
+     "pixels": 17945
+    }
+   ],
+   "ecarts": [
+    0.053850694444444444,
+    0.08108619281045751,
+    0.08239481209150328
+   ],
+   "fondu": {
+    "groupesQuiBougent": [
+     [
+      "fiche",
+      "29,13 → 29,63 %"
+     ]
+    ],
+    "cotesVues": [],
+    "textes": 27
+   }
+  },
+  "1088×800": {
+   "centres": [
+    {
+     "c": 14.56,
+     "pleine": 1,
+     "fiche": [
+      1,
+      1,
+      1
+     ],
+     "releve": 0,
+     "assemble": 0,
+     "calques": 0,
+     "cotes": [
+      0,
+      0
+     ],
+     "etiquettesNumerotees": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "phrase": 0,
+     "rendu": {
+      "l": 0.015625,
+      "t": 264.390625,
+      "r": 529.59375,
+      "b": 661.5625
+     }
+    },
+    {
+     "c": 43.75,
+     "pleine": 2,
+     "fiche": [
+      0,
+      0,
+      0
+     ],
+     "releve": 1,
+     "assemble": 1,
+     "calques": 0,
+     "cotes": [
+      1,
+      1
+     ],
+     "etiquettesNumerotees": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "phrase": 0,
+     "rendu": {
+      "l": 0.015625,
+      "t": 264.390625,
+      "r": 529.59375,
+      "b": 661.5625
+     }
+    },
+    {
+     "c": 66.25,
+     "pleine": 3,
+     "fiche": [
+      0,
+      0,
+      0
+     ],
+     "releve": 0,
+     "assemble": 0,
+     "calques": 1,
+     "cotes": [
+      0,
+      0
+     ],
+     "etiquettesNumerotees": [
+      1,
+      1,
+      1,
+      1,
+      1
+     ],
+     "phrase": 0,
+     "rendu": {
+      "l": 0.015625,
+      "t": 264.390625,
+      "r": 529.59375,
+      "b": 661.5625
+     }
+    },
+    {
+     "c": 90.44,
+     "pleine": 4,
+     "fiche": [
+      0,
+      0,
+      0
+     ],
+     "releve": 0,
+     "assemble": 1,
+     "calques": 0,
+     "cotes": [
+      0,
+      0
+     ],
+     "etiquettesNumerotees": [
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "phrase": 1,
+     "rendu": {
+      "l": 0.015625,
+      "t": 264.390625,
+      "r": 529.59375,
+      "b": 661.5625
+     }
+    }
+   ],
+   "contrasteFiche": [
+    {
+     "texte": "Votre projet — Escalier",
+     "p10": 11.927871175888228,
+     "pixels": 5935
+    },
+    {
+     "texte": "Commune — Rennes",
+     "p10": 11.927871175888228,
+     "pixels": 5006
+    },
+    {
+     "texte": "Quand — Dans les trois mois",
+     "p10": 11.927871175888228,
+     "pixels": 9501
+    }
+   ],
+   "contrastePhrase": [
+    {
+     "texte": "Tout commence par votre demande.",
+     "p10": 16.14662379604388,
+     "pixels": 9477
+    }
+   ],
+   "ecarts": [
+    0.05681760620915033,
+    0.08786437908496732,
+    0.08914522058823529
+   ],
+   "fondu": {
+    "groupesQuiBougent": [
+     [
+      "fiche",
+      "29,13 → 29,63 %"
+     ]
+    ],
+    "cotesVues": [],
+    "textes": 27
+   }
+  }
+ },
+ "repli": {
+  "sans JavaScript 1440×900": {
+   "eclate": [
+    "/eclate/calque-limon.avif",
+    "/eclate/calque-contremarche.avif",
+    "/eclate/calque-marche.avif",
+    "/eclate/calque-vis.avif",
+    "/eclate/assemble.avif",
+    "/eclate/eclate.avif"
+   ],
+   "fixe": 0,
+   "legende": [
+    {
+     "n": 5,
+     "min": 0
+    }
+   ],
+   "fiche": [
+    0,
+    0,
+    0
+   ],
+   "releve": 0
+  },
+  "téléphone 390×844": {
+   "eclate": [
+    "/eclate/calque-limon.avif",
+    "/eclate/calque-contremarche.avif",
+    "/eclate/calque-marche.avif",
+    "/eclate/calque-vis.avif",
+    "/eclate/assemble.avif"
+   ],
+   "fixe": 0,
+   "legende": [
+    {
+     "n": 5,
+     "min": 1
+    }
+   ],
+   "fiche": [
+    0,
+    0,
+    0
+   ],
+   "releve": 0
+  },
+  "mouvement réduit 1440×900": {
+   "eclate": [
+    "/eclate/eclate.avif"
+   ],
+   "fixe": 1,
+   "legende": [
+    {
+     "n": 5,
+     "min": 1
+    }
+   ],
+   "fiche": [
+    0,
+    0,
+    0
+   ],
+   "releve": 0
+  },
+  "hauteur 1440×640": {
+   "eclate": [
+    "/eclate/eclate.avif"
+   ],
+   "fixe": 1,
+   "legende": [
+    {
+     "n": 5,
+     "min": 1
+    }
+   ],
+   "fiche": [
+    0,
+    0,
+    0
+   ],
+   "releve": 0
+  }
+ },
+ "filmSecondes": 16,
+ "dureeS": 645,
+ "echecs": [
+  "ER-7 : téléphone 390×844 : eclate.avif à 0,00 (≥ 0,98) ; téléphone 390×844 : eclate.avif pas décodée",
+  "EC : eclate-qa.mjs en échec — grande scène des étapes : FAIL — EC-8 : 0 tâche(s) longue(s) (0) et p95 des intervalles rAF 33.3 ms (≤ 20) aux deux essais ; référence sans eclate dans les mêmes conditions : p95 rAF 16.8 ms, 0 tâche(s) longue(s), 719 changements de scrollY en 720 crans"
+ ],
+ "faits": [
+  "copies générées : eclate (--familles=recit,video,survol,telephone,eclate) et référence (--familles=recit,video,survol,telephone)",
+  "ER-1 1440×900 : écarts 0,054 · 0,081 · 0,082",
+  "ER-6 1440×900 : 27 nœuds de texte suivis, groupes en mouvement : fiche",
+  "ER-1 1088×800 : écarts 0,057 · 0,088 · 0,089",
+  "ER-6 1088×800 : 27 nœuds de texte suivis, groupes en mouvement : fiche",
+  "ER-5 1440×900 : 34 positions de #etapes (tous les 150 px), 0 trou(s), 0 doublon(s) (mesure appelsVisibles de nav-retenue-qa)",
+  "ER-5 1280×800 : 30 positions de #etapes (tous les 150 px), 0 trou(s), 0 doublon(s) (mesure appelsVisibles de nav-retenue-qa)",
+  "ER-7 sans JavaScript 1440×900 : requêtes d'eclate/ calque-limon.avif, calque-contremarche.avif, calque-marche.avif, calque-vis.avif, assemble.avif, eclate.avif",
+  "ER-7 téléphone 390×844 : requêtes d'eclate/ calque-limon.avif, calque-contremarche.avif, calque-marche.avif, calque-vis.avif, assemble.avif",
+  "ER-7 mouvement réduit 1440×900 : requêtes d'eclate/ eclate.avif",
+  "ER-7 hauteur 1440×640 : requêtes d'eclate/ eclate.avif",
+  "EC : ✗ grande scène des étapes : FAIL — EC-8 : 0 tâche(s) longue(s) (0) et p95 des intervalles rAF 33.3 ms (≤ 20) aux deux essais ; référence sans eclate dans les mêmes conditions : p95 rAF 16.8 ms, 0 tâch"
+ ]
+}

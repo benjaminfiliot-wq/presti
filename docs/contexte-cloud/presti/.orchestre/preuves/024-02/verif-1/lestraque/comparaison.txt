@@ -1,0 +1,355 @@
+
+##### 1440 — Lestraque final vs kit (console 0, erreurs 0)
+cadre-01-heros: 
+  innerText diffère
+    L: Fait pour rester
+    K: MENUISIER À RENNES Fait pour rester Escaliers, dressings et bibliothèques en bois massif, que je dessine, fabrique et pose. Demander un devis
+    bloc 0 h1.: texte « Fait pour rester » ≠ « MENUISIER À RENNES Fait pour rester » ; boîte 72,363 1296×217 ≠ 72,489 1296×217
+    bloc 1 p.chapeau: texte «  » ≠ « Escaliers, dressings et bibliothèques en bois massif, que je » ; boîte 72,654 288×72 ≠ 72,780 288×72
+    bloc 2 a.bouton: texte «  » ≠ « Demander un devis » ; boîte 1135,662 233×57 ≠ 1135,788 233×57
+cadre-02-plateau: 
+    bloc 0 blockquote.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 2 figcaption.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 4 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+    bloc 6 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+    bloc 8 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+cadre-03-prestations: 
+  taille L=1440×1224 K=1440×1125
+    bloc 2 li.presta__ligne reveal vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 72,446 1296×114 ≠ 72,347 1296×114
+    bloc 3 h3.: boîte 292,480 639×44 ≠ 292,381 639×44
+    bloc 4 button.presta__declencheur: texte « Escaliers sur mesure » ≠ « Droits, quart tournant ou hélicoïdaux, en chêne, frêne ou hê » ; police Fraunces 400 43.92px ≠ "IBM Plex Sans" 400 15.2px ; boîte 292,480 399×44 ≠ 975,369 393×68 ; couleur rgb(31, 22, 14) ≠ rgb(94, 78, 62)
+    bloc 5 p.: texte « Droits, quart tournant ou hélicoïdaux, en chêne, frêne ou hê » ≠ « 02 Dressings et placards Penderies sous combles, placards so » ; police "IBM Plex Sans" 400 15.2px ≠ "IBM Plex Sans" 400 15px ; boîte 975,468 393×68 ≠ 72,461 1296×114 ; couleur rgb(94, 78, 62) ≠ rgb(31, 22, 14)
+    bloc 6 li.presta__ligne reveal vu: texte « 02 Dressings et placards Penderies sous combles, placards so » ≠ « Dressings et placards » ; police "IBM Plex Sans" 400 17px ≠ Fraunces 400 43.92px ; boîte 72,560 1296×114 ≠ 292,495 639×44
+    bloc 7 h3.: texte « Dressings et placards » ≠ « Penderies sous combles, placards sous escalier, séparations  » ; police Fraunces 400 43.92px ≠ "IBM Plex Sans" 400 15.2px ; boîte 292,594 639×44 ≠ 975,483 393×68 ; couleur rgb(31, 22, 14) ≠ rgb(94, 78, 62)
+    bloc 8 button.presta__declencheur: texte « Dressings et placards » ≠ « 03 Bibliothèques et meubles Ensembles muraux en chêne massif » ; police Fraunces 400 43.92px ≠ "IBM Plex Sans" 400 15px ; boîte 292,594 411×44 ≠ 72,575 1296×114
+    bloc 9 p.: texte « Penderies sous combles, placards sous escalier, séparations  » ≠ « Bibliothèques et meubles » ; police "IBM Plex Sans" 400 15.2px ≠ Fraunces 400 43.92px ; boîte 975,582 393×68 ≠ 292,610 639×44 ; couleur rgb(94, 78, 62) ≠ rgb(31, 22, 14)
+    bloc 10 li.presta__ligne reveal vu: texte « 03 Bibliothèques et meubles Ensembles muraux en chêne massif » ≠ « Ensembles muraux en chêne massif ou en contreplaqué de boule » ; police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15.2px ; boîte 72,684 1296×114 ≠ 975,597 393×68 ; couleur rgb(31, 22, 14) ≠ rgb(94, 78, 62) ; opacité 0.78557 ≠ 1
+    bloc 11 h3.: texte « Bibliothèques et meubles » ≠ « 04 Parquets massifs Chêne à l’anglaise, à bâtons rompus ou e » ; police Fraunces 400 43.92px ≠ "IBM Plex Sans" 400 15px ; boîte 292,719 639×44 ≠ 72,689 1296×114
+    bloc 12 button.presta__declencheur: texte « Bibliothèques et meubles » ≠ « Parquets massifs » ; boîte 292,719 484×44 ≠ 292,724 639×44
+    bloc 13 p.: texte « Ensembles muraux en chêne massif ou en contreplaqué de boule » ≠ « Chêne à l’anglaise, à bâtons rompus ou en point de Hongrie,  » ; boîte 975,707 393×68 ≠ 975,712 393×68
+  nombre de blocs L=26 K=20
+    … 18 blocs en écart au total
+cadre-04-atelier: 
+  innerText diffère
+    L: Dans l’atelier Je trace, débite, assemble et ponce chaque pièce ici, à Rennes, avant de la poser chez vous. PONÇAGE À LA MAIN D’UNE PIÈCE CHANTOURNÉE METTRE LA VIDÉO EN PAUSE
+    K: Dans l’atelier Je trace, débite, assemble et ponce chaque pièce ici, à Rennes, avant de la poser chez vous. PONÇAGE À LA MAIN D’UNE PIÈCE CHANTOURNÉE
+  textContent diffère
+  vidéo/canvas L=VIDEO atelier__video atelier__video--lue 1440×900 op=1 K=
+  nombre de blocs L=4 K=3
+cadre-05-realisations: 
+  innerText diffère
+    L: Pièces livrées Quelques ouvrages sortis de l’atelier, du relevé à la pose. 01 02 03 04 / 04 01 Bibliothèque en bois et niches ouvertes 02 Cuisine sous poutres avec plan de travail en bois 03 Penderie en bois, tringle et quatre cintres 04 Escalier hélicoïdal en bois massif Photographies : Petar Milošević (CC BY-SA 4.0, adaptation sous la même licence), Shixart1985 (CC BY 2.0), Bertrand from Paris, 
+    K: Pièces livrées Quelques ouvrages sortis de l’atelier, du relevé à la pose. 01 Bibliothèque en bois et niches ouvertes 02 Cuisine sous poutres avec plan de travail en bois 03 Penderie en bois, tringle et quatre cintres 04 Escalier hélicoïdal en bois massif Photographies : Petar Milošević (CC BY-SA 4.0, adaptation sous la même licence), Shixart1985 (CC BY 2.0), Bertrand from Paris, France (CC BY 2.0
+  taille L=1440×1656 K=1440×1481
+    bloc 0 h2.h2--scene: boîte 72,90 614×98 ≠ 72,96 614×98
+    bloc 1 p.: boîte 744,129 347×59 ≠ 72,210 443×26
+    bloc 2 p.compteur: texte « 01 02 03 04 / 04 » ≠ « 01 Bibliothèque en bois et niches ouvertes » ; police Fraunces 300 48.96px ≠ "IBM Plex Sans" 400 14.72px ; boîte 1250,120 118×69 ≠ 72,787 856×21 ; couleur rgb(244, 237, 226) ≠ rgba(244, 237, 226, 0.74)
+    bloc 3 figcaption.: texte « 01 Bibliothèque en bois et niches ouvertes » ≠ « 02 Cuisine sous poutres avec plan de travail en bois » ; boîte 73,738 487×87 ≠ 951,784 417×21 ; couleur rgb(244, 237, 226) ≠ rgba(244, 237, 226, 0.74)
+    bloc 4 figcaption.: texte « 02 Cuisine sous poutres avec plan de travail en bois » ≠ « 03 Penderie en bois, tringle et quatre cintres » ; boîte 610,738 916×90 ≠ 72,1270 636×21 ; couleur rgb(244, 237, 226) ≠ rgba(244, 237, 226, 0.74) ; opacité 0 ≠ 1
+    bloc 5 figcaption.: texte « 03 Penderie en bois, tringle et quatre cintres » ≠ « 04 Escalier hélicoïdal en bois massif » ; boîte 1573,733 478×91 ≠ 732,1270 636×21 ; couleur rgb(244, 237, 226) ≠ rgba(244, 237, 226, 0.74) ; opacité 0 ≠ 1
+    bloc 6 figcaption.: texte « 04 Escalier hélicoïdal en bois massif » ≠ « Photographies : Petar Milošević (CC BY-SA 4.0, adaptation so » ; police "IBM Plex Sans" 400 14.72px ≠ "IBM Plex Sans" 400 12.8px ; boîte 2116,730 898×98 ≠ 72,1356 1296×38 ; couleur rgb(244, 237, 226) ≠ rgba(244, 237, 226, 0.74) ; opacité 0 ≠ 1
+    bloc 7 p.galerie__credits: texte « Photographies : Petar Milošević (CC BY-SA 4.0, adaptation so » ≠ « Sources, licences et modifications » ; police "IBM Plex Sans" 400 11.84px ≠ "IBM Plex Sans" 400 12.8px ; boîte 72,848 1296×34 ≠ 370,1376 195×17
+  nombre de blocs L=9 K=8
+cadre-06-communes: identique (texte, images, taille, blocs)
+cadre-07-etapes: 
+  innerText diffère
+    L: COMMENT ÇA SE PASSE En quatre temps Du premier appel à la pose, quatre rendez-vous, toujours avec moi. 40 mm 17 mm 1 Limon à la française 2 Entailles 3 Marche en chêne, 40 mm 4 Contremarche 5 Vis VOTRE PROJET — Escalier COMMUNE — Rennes QUAND — Dans les trois mois Tout commence par votre demande. 01 02 03 04 / 04 01 Prise de contact Vous décrivez la pièce, l’usage et le bois qui vous plaît, par té
+    K: COMMENT ÇA SE PASSE En quatre temps Du premier appel à la pose, quatre rendez-vous, toujours avec moi. 1 2 3 4 5 Limon à la française Entailles Marche en chêne, 40 mm Contremarche Vis 01 Prise de contact Vous décrivez la pièce, l’usage et le bois qui vous plaît, par téléphone ou avec le formulaire en bas de page. 02 Visite technique Je relève les cotes chez vous et je vérifie les aplombs, l’humidi
+  taille L=1440×4050 K=1440×1016
+  images de fond L=eclate__releve releve.avif") K=
+    bloc 0 span.mono: boîte 72,88 660×19 ≠ 72,128 540×18
+    bloc 1 h2.: police Fraunces 400 89.1243px ≠ Fraunces 400 106.56px ; boîte 72,119 660×82 ≠ 72,162 540×196
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 72,230 660×27 ≠ 72,374 540×23 ; opacité 0.647288 ≠ 1
+    bloc 3 p.eclate__phrase: texte « Tout commence par votre demande. » ≠ « Limon à la française » ; police Fraunces 400 29.2612px ≠ "IBM Plex Sans" 400 14px ; boîte 0,735 732×34 ≠ 72,812 296×20 ; couleur rgb(244, 237, 226) ≠ rgba(244, 237, 226, 0.86) ; opacité 0 ≠ 1
+    bloc 4 li.etape vu: texte « 01 Prise de contact Vous décrivez la pièce, l’usage et le bo » ≠ « Entailles » ; police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 14px ; boîte 763,196 605×143 ≠ 384,812 228×20 ; couleur rgb(244, 237, 226) ≠ rgba(244, 237, 226, 0.86)
+    bloc 5 h3.: texte « Prise de contact » ≠ « Marche en chêne, 40 mm » ; police Fraunces 400 31.68px ≠ "IBM Plex Sans" 400 14px ; boîte 936,225 432×35 ≠ 72,840 296×20 ; couleur rgb(244, 237, 226) ≠ rgba(244, 237, 226, 0.86)
+    bloc 6 p.: texte « Vous décrivez la pièce, l’usage et le bois qui vous plaît, p » ≠ « Contremarche » ; police "IBM Plex Sans" 400 16px ≠ "IBM Plex Sans" 400 14px ; boîte 936,269 432×48 ≠ 384,840 228×20 ; couleur rgba(244, 237, 226, 0.74) ≠ rgba(244, 237, 226, 0.86)
+    bloc 7 li.etape vu: texte « 02 Visite technique Je relève les cotes chez vous et je véri » ≠ « Vis » ; police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 14px ; boîte 763,339 605×143 ≠ 72,868 296×20 ; couleur rgb(244, 237, 226) ≠ rgba(244, 237, 226, 0.86)
+    bloc 8 h3.: texte « Visite technique » ≠ « 01 Prise de contact Vous décrivez la pièce, l’usage et le bo » ; police Fraunces 400 31.68px ≠ "IBM Plex Sans" 400 15px ; boîte 956,368 432×35 ≠ 692,128 676×173
+    bloc 9 p.: texte « Je relève les cotes chez vous et je vérifie les aplombs, l’h » ≠ « Prise de contact » ; police "IBM Plex Sans" 400 16px ≠ Fraunces 400 31.68px ; boîte 956,412 432×48 ≠ 885,171 483×35 ; couleur rgba(244, 237, 226, 0.74) ≠ rgb(244, 237, 226)
+    bloc 10 li.etape vu: texte « 03 Plan et devis Vous recevez le plan coté, le choix des ess » ≠ « Vous décrivez la pièce, l’usage et le bois qui vous plaît, p » ; police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 16px ; boîte 763,482 605×143 ≠ 885,216 483×48 ; couleur rgb(244, 237, 226) ≠ rgba(244, 237, 226, 0.74)
+    bloc 11 h3.: texte « Plan et devis » ≠ « 02 Visite technique Je relève les cotes chez vous et je véri » ; police Fraunces 400 31.68px ≠ "IBM Plex Sans" 400 15px ; boîte 956,511 432×35 ≠ 692,301 676×173
+  nombre de blocs L=16 K=20
+    … 16 blocs en écart au total
+cadre-08-questions: 
+  taille L=1440×743 K=1440×733
+    bloc 3 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 651,289 673×54 ≠ 651,289 594×45
+    bloc 4 summary.: boîte 651,370 717×85 ≠ 651,361 717×85
+    bloc 5 summary.: boîte 651,456 717×85 ≠ 651,446 717×85
+    bloc 6 summary.: boîte 651,542 717×85 ≠ 651,532 717×85
+cadre-09-contact: 
+  taille L=1440×902 K=1440×883
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 940,298 428×54 ≠ 990,297 378×45
+    bloc 3 label.: boîte 651,424 202×18 ≠ 651,414 202×17
+    bloc 4 label.: boîte 873,424 202×18 ≠ 873,414 202×17
+    bloc 5 label.: boîte 1095,424 273×18 ≠ 1095,414 273×17
+    bloc 6 label.: boîte 651,516 717×18 ≠ 651,504 717×17
+    bloc 7 label.: boîte 651,659 717×18 ≠ 651,642 717×17
+    bloc 8 button.bouton: boîte 651,759 250×57 ≠ 651,740 250×57
+    bloc 9 p.devis__note: boîte 925,777 200×21 ≠ 925,758 200×20
+    bloc 10 p.bande__tel: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 72,449 478×27 ≠ 72,439 478×23
+    bloc 11 a.: police "IBM Plex Sans" 600 17px ≠ "IBM Plex Sans" 600 15px ; boîte 217,451 118×25 ≠ 200,440 104×22
+cadre-10-pied: 
+  taille L=1440×306 K=1440×298
+    bloc 8 li.: boîte 720,140 308×23 ≠ 720,136 308×22
+    bloc 9 a.: boîte 720,142 30×19 ≠ 720,137 30×19
+    bloc 10 li.: boîte 720,169 308×23 ≠ 720,164 308×22
+    bloc 11 a.: boîte 720,171 94×19 ≠ 720,165 94×19
+    bloc 17 li.: boîte 1060,140 308×23 ≠ 1060,136 308×22
+    bloc 18 a.: boîte 1060,142 95×19 ≠ 1060,137 95×19
+cadre-09b-contact-demande-recue: 
+  textContent diffère
+  taille L=1440×1268 K=1440×1246
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 940,298 428×54 ≠ 990,297 378×45
+    bloc 3 p.devis__merci-titre: boîte 651,428 717×78 ≠ 651,418 717×78
+    bloc 4 p.devis__note devis__note--merci: boîte 651,522 602×24 ≠ 651,512 602×23
+    bloc 5 p.devis__merci-rappel: boîte 651,569 697×28 ≠ 651,557 697×26
+    bloc 6 dt.: boîte 651,636 223×18 ≠ 651,623 223×17
+    bloc 7 dd.: boîte 651,660 223×28 ≠ 651,645 223×28
+    bloc 8 dt.: boîte 907,636 206×18 ≠ 907,623 206×17
+    bloc 9 dd.: boîte 907,660 206×28 ≠ 907,645 206×28
+    bloc 10 dt.: boîte 1146,636 206×18 ≠ 1146,623 206×17
+    bloc 11 dd.: boîte 1146,660 206×56 ≠ 1146,645 206×56
+    bloc 12 p.devis__suite-titre: boîte 651,756 456×18 ≠ 651,741 456×17
+    bloc 13 li.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 651,788 717×99 ≠ 651,772 717×98
+    … 20 blocs en écart au total
+nav L: {"haut":{"cls":"nav nav--claire nav--retenue nav--bande nav--sombre","texte":"Atelier Lestraque Prestations Réalisations Communes Questions","h":78},"papier":{"cls":"nav nav--claire nav--retenue nav--bande solide nav--appel","texte":"Atelier Lestraque Prestations Réalisations Communes Questions Devis","h":78},"sombre":{"cls":"nav nav--claire nav--retenue nav--bande solide nav--appel nav--sombre","texte":"Atelier Lestraque Prestations Réalisations Communes Questions Devis","h":78}}
+
+##### 1440 — Lestraque reduit vs kit (console 0, erreurs 0)
+cadre-01-heros: identique (texte, images, taille, blocs)
+cadre-02-plateau: 
+    bloc 0 blockquote.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 2 figcaption.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 4 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+    bloc 6 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+    bloc 8 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+cadre-03-prestations: 
+  taille L=1440×1224 K=1440×1125
+    bloc 2 li.presta__ligne reveal vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 72,446 1296×114 ≠ 72,347 1296×114
+    bloc 3 h3.: boîte 292,480 639×44 ≠ 292,381 639×44
+    bloc 4 button.presta__declencheur: texte « Escaliers sur mesure » ≠ « Droits, quart tournant ou hélicoïdaux, en chêne, frêne ou hê » ; police Fraunces 400 43.92px ≠ "IBM Plex Sans" 400 15.2px ; boîte 292,480 399×44 ≠ 975,369 393×68 ; couleur rgb(31, 22, 14) ≠ rgb(94, 78, 62)
+    bloc 5 p.: texte « Droits, quart tournant ou hélicoïdaux, en chêne, frêne ou hê » ≠ « 02 Dressings et placards Penderies sous combles, placards so » ; police "IBM Plex Sans" 400 15.2px ≠ "IBM Plex Sans" 400 15px ; boîte 975,468 393×68 ≠ 72,461 1296×114 ; couleur rgb(94, 78, 62) ≠ rgb(31, 22, 14)
+    bloc 6 li.presta__ligne reveal vu: texte « 02 Dressings et placards Penderies sous combles, placards so » ≠ « Dressings et placards » ; police "IBM Plex Sans" 400 17px ≠ Fraunces 400 43.92px ; boîte 72,560 1296×114 ≠ 292,495 639×44
+    bloc 7 h3.: texte « Dressings et placards » ≠ « Penderies sous combles, placards sous escalier, séparations  » ; police Fraunces 400 43.92px ≠ "IBM Plex Sans" 400 15.2px ; boîte 292,594 639×44 ≠ 975,483 393×68 ; couleur rgb(31, 22, 14) ≠ rgb(94, 78, 62)
+    bloc 8 button.presta__declencheur: texte « Dressings et placards » ≠ « 03 Bibliothèques et meubles Ensembles muraux en chêne massif » ; police Fraunces 400 43.92px ≠ "IBM Plex Sans" 400 15px ; boîte 292,594 411×44 ≠ 72,575 1296×114
+    bloc 9 p.: texte « Penderies sous combles, placards sous escalier, séparations  » ≠ « Bibliothèques et meubles » ; police "IBM Plex Sans" 400 15.2px ≠ Fraunces 400 43.92px ; boîte 975,582 393×68 ≠ 292,610 639×44 ; couleur rgb(94, 78, 62) ≠ rgb(31, 22, 14)
+    bloc 10 li.presta__ligne reveal vu: texte « 03 Bibliothèques et meubles Ensembles muraux en chêne massif » ≠ « Ensembles muraux en chêne massif ou en contreplaqué de boule » ; police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15.2px ; boîte 72,674 1296×114 ≠ 975,597 393×68 ; couleur rgb(31, 22, 14) ≠ rgb(94, 78, 62)
+    bloc 11 h3.: texte « Bibliothèques et meubles » ≠ « 04 Parquets massifs Chêne à l’anglaise, à bâtons rompus ou e » ; police Fraunces 400 43.92px ≠ "IBM Plex Sans" 400 15px ; boîte 292,709 639×44 ≠ 72,689 1296×114
+    bloc 12 button.presta__declencheur: texte « Bibliothèques et meubles » ≠ « Parquets massifs » ; boîte 292,709 484×44 ≠ 292,724 639×44
+    bloc 13 p.: texte « Ensembles muraux en chêne massif ou en contreplaqué de boule » ≠ « Chêne à l’anglaise, à bâtons rompus ou en point de Hongrie,  » ; boîte 975,696 393×68 ≠ 975,712 393×68
+  nombre de blocs L=26 K=20
+    … 18 blocs en écart au total
+cadre-04-atelier: identique (texte, images, taille, blocs)
+cadre-05-realisations: identique (texte, images, taille, blocs)
+cadre-06-communes: identique (texte, images, taille, blocs)
+cadre-07-etapes: 
+  taille L=1440×1022 K=1440×1016
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 72,375 540×27 ≠ 72,374 540×23
+    bloc 3 li.: boîte 72,818 296×20 ≠ 72,812 296×20
+    bloc 4 li.: boîte 384,818 228×20 ≠ 384,812 228×20
+    bloc 5 li.: boîte 72,846 296×20 ≠ 72,840 296×20
+    bloc 6 li.: boîte 384,846 228×20 ≠ 384,840 228×20
+    bloc 7 li.: boîte 72,874 296×20 ≠ 72,868 296×20
+    bloc 8 li.etape vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 11 li.etape vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 14 li.etape vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 17 li.etape vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+cadre-08-questions: 
+  taille L=1440×743 K=1440×733
+    bloc 3 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 651,289 673×54 ≠ 651,289 594×45
+    bloc 4 summary.: boîte 651,370 717×85 ≠ 651,361 717×85
+    bloc 5 summary.: boîte 651,456 717×85 ≠ 651,446 717×85
+    bloc 6 summary.: boîte 651,542 717×85 ≠ 651,532 717×85
+cadre-09-contact: 
+  taille L=1440×902 K=1440×883
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 940,298 428×54 ≠ 990,297 378×45
+    bloc 3 label.: boîte 651,424 202×18 ≠ 651,414 202×17
+    bloc 4 label.: boîte 873,424 202×18 ≠ 873,414 202×17
+    bloc 5 label.: boîte 1095,424 273×18 ≠ 1095,414 273×17
+    bloc 6 label.: boîte 651,516 717×18 ≠ 651,504 717×17
+    bloc 7 label.: boîte 651,659 717×18 ≠ 651,642 717×17
+    bloc 8 button.bouton: boîte 651,759 250×57 ≠ 651,740 250×57
+    bloc 9 p.devis__note: boîte 925,777 200×21 ≠ 925,758 200×20
+    bloc 10 p.bande__tel: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 72,449 478×27 ≠ 72,439 478×23
+    bloc 11 a.: police "IBM Plex Sans" 600 17px ≠ "IBM Plex Sans" 600 15px ; boîte 217,451 118×25 ≠ 200,440 104×22
+cadre-10-pied: 
+  taille L=1440×306 K=1440×298
+    bloc 8 li.: boîte 720,140 308×23 ≠ 720,136 308×22
+    bloc 9 a.: boîte 720,142 30×19 ≠ 720,137 30×19
+    bloc 10 li.: boîte 720,169 308×23 ≠ 720,164 308×22
+    bloc 11 a.: boîte 720,171 94×19 ≠ 720,165 94×19
+    bloc 17 li.: boîte 1060,140 308×23 ≠ 1060,136 308×22
+    bloc 18 a.: boîte 1060,142 95×19 ≠ 1060,137 95×19
+cadre-09b-contact-demande-recue: 
+  textContent diffère
+  taille L=1440×1268 K=1440×1246
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 940,298 428×54 ≠ 990,297 378×45
+    bloc 3 p.devis__merci-titre: boîte 651,428 717×78 ≠ 651,418 717×78
+    bloc 4 p.devis__note devis__note--merci: boîte 651,522 602×24 ≠ 651,512 602×23
+    bloc 5 p.devis__merci-rappel: boîte 651,569 697×28 ≠ 651,557 697×26
+    bloc 6 dt.: boîte 651,636 223×18 ≠ 651,623 223×17
+    bloc 7 dd.: boîte 651,660 223×28 ≠ 651,645 223×28
+    bloc 8 dt.: boîte 907,636 206×18 ≠ 907,623 206×17
+    bloc 9 dd.: boîte 907,660 206×28 ≠ 907,645 206×28
+    bloc 10 dt.: boîte 1146,636 206×18 ≠ 1146,623 206×17
+    bloc 11 dd.: boîte 1146,660 206×56 ≠ 1146,645 206×56
+    bloc 12 p.devis__suite-titre: boîte 651,756 456×18 ≠ 651,741 456×17
+    bloc 13 li.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 651,788 717×99 ≠ 651,772 717×98
+    … 20 blocs en écart au total
+nav L: {"haut":{"cls":"nav nav--claire nav--retenue nav--bande nav--sombre","texte":"Atelier Lestraque Prestations Réalisations Communes Questions","h":78},"papier":{"cls":"nav nav--claire nav--retenue nav--bande solide nav--appel","texte":"Atelier Lestraque Prestations Réalisations Communes Questions Devis","h":78},"sombre":{"cls":"nav nav--claire nav--retenue nav--bande solide nav--appel nav--sombre","texte":"Atelier Lestraque Prestations Réalisations Communes Questions Devis","h":78}}
+
+##### 390 — Lestraque final vs kit (console 0, erreurs 0)
+cadre-01-heros: identique (texte, images, taille, blocs)
+cadre-02-plateau: 
+    bloc 0 blockquote.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 2 figcaption.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 4 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+    bloc 6 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+    bloc 8 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+cadre-03-prestations: 
+  taille L=390×968 K=390×938
+    bloc 2 li.presta__ligne reveal vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 5 li.presta__ligne reveal vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 8 li.presta__ligne reveal: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 11 li.presta__ligne reveal: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 14 li.presta__ligne reveal: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 17 li.presta__ligne reveal: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+cadre-04-atelier: identique (texte, images, taille, blocs)
+cadre-05-realisations: 
+  taille L=390×922 K=390×896
+    bloc 4 figcaption.: opacité 0 ≠ 1
+    bloc 5 figcaption.: opacité 0 ≠ 1
+    bloc 6 p.galerie__credits: boîte 20,767 351×115 ≠ 20,741 351×115
+    bloc 7 a.: boîte 20,844 304×36 ≠ 20,818 304×36
+cadre-06-communes: identique (texte, images, taille, blocs)
+cadre-07-etapes: 
+  taille L=390×879 K=390×841
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,505 351×54 ≠ 20,504 351×45
+    bloc 8 li.etape vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,587 296×196 ≠ 20,577 296×196
+    bloc 9 h3.: boîte 20,676 296×26 ≠ 20,666 296×26
+    bloc 10 p.: boîte 20,711 296×72 ≠ 20,701 296×72
+    bloc 11 li.etape vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 331,587 296×196 ≠ 331,577 296×196
+    bloc 12 h3.: boîte 331,676 296×26 ≠ 331,666 296×26
+    bloc 13 p.: boîte 331,711 296×72 ≠ 331,701 296×72
+    bloc 14 li.etape: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 643,587 296×196 ≠ 643,577 296×196
+    bloc 15 h3.: boîte 643,676 296×26 ≠ 643,666 296×26
+    bloc 16 p.: boîte 643,711 296×72 ≠ 643,701 296×72
+    bloc 17 li.etape: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 955,587 296×196 ≠ 955,577 296×196
+    bloc 18 h3.: boîte 955,676 296×26 ≠ 955,666 296×26
+    … 13 blocs en écart au total
+cadre-08-questions: 
+  innerText diffère
+    L: Vos questions Ce qu’on me demande le plus souvent avant un premier rendez-vous. Quelles essences de bois privilégier pour un agencement ? Pourquoi une prise de cotes sur place est-elle indispensable ? Quel entretien pour des ouvrages en bois massif ? Comment se passe le devis ?
+    K: Vos questions Ce qu’on me demande le plus souvent avant un premier rendez-vous. Quelles essences de bois privilégier pour un agencement ? Pour des marches ou une pièce de passage, le chêne ou le frêne, qui sont durs. Pour un meuble léger ou l’intérieur d’un placard, un résineux ou un panneau latté suffit. Pourquoi une prise de cotes sur place est-elle indispensable ? Quel entretien pour des ouvrag
+    bloc 3 summary.: texte « Pourquoi une prise de cotes sur place est-elle indispensable » ≠ « Pour des marches ou une pièce de passage, le chêne ou le frê » ; police Fraunces 600 17.6px ≠ "IBM Plex Sans" 400 15px ; boîte 20,541 351×107 ≠ 20,540 351×90 ; couleur rgb(31, 22, 14) ≠ rgb(94, 78, 62)
+    bloc 4 summary.: texte « Quel entretien pour des ouvrages en bois massif ? » ≠ « Pourquoi une prise de cotes sur place est-elle indispensable » ; boîte 20,649 351×107 ≠ 20,541 351×107
+    bloc 5 summary.: texte « Comment se passe le devis ? » ≠ « Quel entretien pour des ouvrages en bois massif ? » ; boîte 20,756 351×91 ≠ 20,649 351×107
+  nombre de blocs L=6 K=7
+cadre-09-contact: 
+  taille L=390×1293 K=390×1257
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,246 351×54 ≠ 20,245 351×45
+    bloc 3 label.: boîte 20,326 170×18 ≠ 20,315 170×17
+    bloc 4 label.: boîte 201,326 170×18 ≠ 201,315 170×17
+    bloc 5 label.: boîte 20,414 351×18 ≠ 20,402 351×17
+    bloc 6 label.: boîte 20,502 351×18 ≠ 20,489 351×17
+    bloc 7 label.: boîte 20,642 351×18 ≠ 20,623 351×17
+    bloc 8 button.bouton: boîte 20,739 250×57 ≠ 20,718 250×57
+    bloc 9 p.devis__note: boîte 20,808 200×21 ≠ 20,787 200×20
+    bloc 10 p.bande__tel: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,1023 351×27 ≠ 20,1001 351×23
+    bloc 11 a.: police "IBM Plex Sans" 600 17px ≠ "IBM Plex Sans" 600 15px ; boîte 165,1025 118×25 ≠ 148,1002 104×22
+cadre-10-pied: identique (texte, images, taille, blocs)
+cadre-09b-contact-demande-recue: 
+  textContent diffère
+  taille L=390×1733 K=390×1687
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,246 351×54 ≠ 20,245 351×45
+    bloc 3 p.devis__merci-titre: boîte 20,330 351×42 ≠ 20,319 351×42
+    bloc 4 p.devis__note devis__note--merci: boîte 20,387 351×24 ≠ 20,377 351×23
+    bloc 5 p.devis__merci-rappel: boîte 20,434 351×56 ≠ 20,422 351×53
+    bloc 6 dt.: boîte 20,530 335×18 ≠ 20,514 335×17
+    bloc 7 dd.: boîte 20,554 335×22 ≠ 20,537 335×22
+    bloc 8 dt.: boîte 20,609 335×18 ≠ 20,592 335×17
+    bloc 9 dd.: boîte 20,633 335×22 ≠ 20,615 335×22
+    bloc 10 dt.: boîte 20,688 335×18 ≠ 20,670 335×17
+    bloc 11 dd.: boîte 20,712 335×22 ≠ 20,693 335×22
+    bloc 12 p.devis__suite-titre: boîte 20,773 351×18 ≠ 20,754 351×17
+    bloc 13 li.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,806 351×139 ≠ 20,785 351×134
+    … 20 blocs en écart au total
+nav L: {"haut":{"cls":"nav nav--claire nav--bande nav--sombre","texte":"Atelier Lestraque Devis","h":78},"papier":{"cls":"nav nav--claire nav--bande solide","texte":"Atelier Lestraque Devis","h":78},"sombre":{"cls":"nav nav--claire nav--bande solide nav--sombre","texte":"Atelier Lestraque Devis","h":78},"menu":{"body":"menu-ouvert","panneau":"panneau ouvert","texte":"Prestations Réalisations Communes Questions Contact Rennes · Cesson-Sévigné · Bruz · Saint-Grégoire Demander un devis"}}
+
+##### 390 — Lestraque reduit vs kit (console 0, erreurs 0)
+cadre-01-heros: identique (texte, images, taille, blocs)
+cadre-02-plateau: 
+    bloc 0 blockquote.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 2 figcaption.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 4 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+    bloc 6 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+    bloc 8 dd.: police Fraunces 300 17px ≠ Fraunces 300 15px
+cadre-03-prestations: 
+  taille L=390×968 K=390×938
+    bloc 2 li.presta__ligne reveal vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 5 li.presta__ligne reveal vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 8 li.presta__ligne reveal vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 11 li.presta__ligne reveal vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 14 li.presta__ligne reveal vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+    bloc 17 li.presta__ligne reveal vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px
+cadre-04-atelier: identique (texte, images, taille, blocs)
+cadre-05-realisations: 
+  taille L=390×922 K=390×896
+    bloc 6 p.galerie__credits: boîte 20,767 351×115 ≠ 20,741 351×115
+    bloc 7 a.: boîte 20,844 304×36 ≠ 20,818 304×36
+cadre-06-communes: identique (texte, images, taille, blocs)
+cadre-07-etapes: 
+  taille L=390×879 K=390×841
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,505 351×54 ≠ 20,504 351×45
+    bloc 8 li.etape vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,587 296×196 ≠ 20,577 296×196
+    bloc 9 h3.: boîte 20,676 296×26 ≠ 20,666 296×26
+    bloc 10 p.: boîte 20,711 296×72 ≠ 20,701 296×72
+    bloc 11 li.etape vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 331,587 296×196 ≠ 331,577 296×196
+    bloc 12 h3.: boîte 331,676 296×26 ≠ 331,666 296×26
+    bloc 13 p.: boîte 331,711 296×72 ≠ 331,701 296×72
+    bloc 14 li.etape vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 643,587 296×196 ≠ 643,577 296×196
+    bloc 15 h3.: boîte 643,676 296×26 ≠ 643,666 296×26
+    bloc 16 p.: boîte 643,711 296×72 ≠ 643,701 296×72
+    bloc 17 li.etape vu: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 955,587 296×196 ≠ 955,577 296×196
+    bloc 18 h3.: boîte 955,676 296×26 ≠ 955,666 296×26
+    … 13 blocs en écart au total
+cadre-08-questions: 
+  innerText diffère
+    L: Vos questions Ce qu’on me demande le plus souvent avant un premier rendez-vous. Quelles essences de bois privilégier pour un agencement ? Pourquoi une prise de cotes sur place est-elle indispensable ? Quel entretien pour des ouvrages en bois massif ? Comment se passe le devis ?
+    K: Vos questions Ce qu’on me demande le plus souvent avant un premier rendez-vous. Quelles essences de bois privilégier pour un agencement ? Pour des marches ou une pièce de passage, le chêne ou le frêne, qui sont durs. Pour un meuble léger ou l’intérieur d’un placard, un résineux ou un panneau latté suffit. Pourquoi une prise de cotes sur place est-elle indispensable ? Quel entretien pour des ouvrag
+    bloc 3 summary.: texte « Pourquoi une prise de cotes sur place est-elle indispensable » ≠ « Pour des marches ou une pièce de passage, le chêne ou le frê » ; police Fraunces 600 17.6px ≠ "IBM Plex Sans" 400 15px ; boîte 20,541 351×107 ≠ 20,540 351×90 ; couleur rgb(31, 22, 14) ≠ rgb(94, 78, 62)
+    bloc 4 summary.: texte « Quel entretien pour des ouvrages en bois massif ? » ≠ « Pourquoi une prise de cotes sur place est-elle indispensable » ; boîte 20,649 351×107 ≠ 20,541 351×107
+    bloc 5 summary.: texte « Comment se passe le devis ? » ≠ « Quel entretien pour des ouvrages en bois massif ? » ; boîte 20,756 351×91 ≠ 20,649 351×107
+  nombre de blocs L=6 K=7
+cadre-09-contact: 
+  taille L=390×1293 K=390×1257
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,246 351×54 ≠ 20,245 351×45
+    bloc 3 label.: boîte 20,326 170×18 ≠ 20,315 170×17
+    bloc 4 label.: boîte 201,326 170×18 ≠ 201,315 170×17
+    bloc 5 label.: boîte 20,414 351×18 ≠ 20,402 351×17
+    bloc 6 label.: boîte 20,502 351×18 ≠ 20,489 351×17
+    bloc 7 label.: boîte 20,642 351×18 ≠ 20,623 351×17
+    bloc 8 button.bouton: boîte 20,739 250×57 ≠ 20,718 250×57
+    bloc 9 p.devis__note: boîte 20,808 200×21 ≠ 20,787 200×20
+    bloc 10 p.bande__tel: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,1023 351×27 ≠ 20,1001 351×23
+    bloc 11 a.: police "IBM Plex Sans" 600 17px ≠ "IBM Plex Sans" 600 15px ; boîte 165,1025 118×25 ≠ 148,1002 104×22
+cadre-10-pied: identique (texte, images, taille, blocs)
+cadre-09b-contact-demande-recue: 
+  textContent diffère
+  taille L=390×1733 K=390×1687
+    bloc 2 p.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,246 351×54 ≠ 20,245 351×45
+    bloc 3 p.devis__merci-titre: boîte 20,330 351×42 ≠ 20,319 351×42
+    bloc 4 p.devis__note devis__note--merci: boîte 20,387 351×24 ≠ 20,377 351×23
+    bloc 5 p.devis__merci-rappel: boîte 20,434 351×56 ≠ 20,422 351×53
+    bloc 6 dt.: boîte 20,530 335×18 ≠ 20,514 335×17
+    bloc 7 dd.: boîte 20,554 335×22 ≠ 20,537 335×22
+    bloc 8 dt.: boîte 20,609 335×18 ≠ 20,592 335×17
+    bloc 9 dd.: boîte 20,633 335×22 ≠ 20,615 335×22
+    bloc 10 dt.: boîte 20,688 335×18 ≠ 20,670 335×17
+    bloc 11 dd.: boîte 20,712 335×22 ≠ 20,693 335×22
+    bloc 12 p.devis__suite-titre: boîte 20,773 351×18 ≠ 20,754 351×17
+    bloc 13 li.: police "IBM Plex Sans" 400 17px ≠ "IBM Plex Sans" 400 15px ; boîte 20,806 351×139 ≠ 20,785 351×134
+    … 20 blocs en écart au total
+nav L: {"haut":{"cls":"nav nav--claire nav--bande nav--sombre","texte":"Atelier Lestraque Devis","h":78},"papier":{"cls":"nav nav--claire nav--bande solide","texte":"Atelier Lestraque Devis","h":78},"sombre":{"cls":"nav nav--claire nav--bande solide nav--sombre","texte":"Atelier Lestraque Devis","h":78},"menu":{"body":"menu-ouvert","panneau":"panneau ouvert","texte":"Prestations Réalisations Communes Questions Contact Rennes · Cesson-Sévigné · Bruz · Saint-Grégoire Demander un devis"}}
+nav K1440: [{"cls":"nav nav--claire","texte":"Atelier Lestraque Prestations Réalisations Communes Questions Devis","h":77},{"cls":"nav nav--claire solide","texte":"Atelier Lestraque Prestations Réalisations Communes Questions Devis","h":77},{"cls":"nav nav--claire solide nav--sombre","texte":"Atelier Lestraque Prestations Réalisations Communes Questions Devis","h":77},{"cls":"nav nav--claire","texte":"Atelier Lestraque PrestationsRéalisationsCommunesQuestions 02 61 91 38 47Devis","h":0}] {"panneau":"panneau ouvert","texte":"PrestationsRéalisationsCommunesQuestionsContact Rennes · Cesson-Sévigné · Bruz · Saint-Grégoire Demander un devis"}
+nav K390: [{"cls":"nav nav--claire","texte":"Atelier Lestraque Devis","h":78},{"cls":"nav nav--claire solide","texte":"Atelier Lestraque Devis","h":78},{"cls":"nav nav--claire solide nav--sombre","texte":"Atelier Lestraque Devis","h":78},{"cls":"nav nav--claire","texte":"Atelier Lestraque","h":78}] {"panneau":"panneau ouvert","texte":"Prestations Réalisations Communes Questions Contact Rennes · Cesson-Sévigné · Bruz · Saint-Grégoire Demander un devis"}

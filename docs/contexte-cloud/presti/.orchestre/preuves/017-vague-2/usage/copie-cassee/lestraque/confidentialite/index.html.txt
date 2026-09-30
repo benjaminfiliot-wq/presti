@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr" class="no-js texture--papier da--etapes da--communes">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Politique de confidentialité — Atelier Lestraque</title>
+<meta name="description" content="Politique de confidentialité et protection des données personnelles de Atelier Lestraque. Aucun traceur publicitaire ni cookie tiers.">
+<link rel="canonical" href="https://lestraque.demo.invalid/confidentialite/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#F4EDE2">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Politique de confidentialité — Atelier Lestraque">
+<meta property="og:description" content="Politique de confidentialité et protection des données personnelles de Atelier Lestraque. Aucun traceur publicitaire ni cookie tiers.">
+<meta property="og:image" content="https://lestraque.demo.invalid/images/heros-escalier-1600.webp">
+<meta property="og:url" content="https://lestraque.demo.invalid/confidentialite/">
+<meta property="og:locale" content="fr_FR">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/ibm-plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/ibm-plex-sans-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<script>document.documentElement.classList.replace('no-js','js')</script>
+<script src="../site.js" defer></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"HomeAndConstructionBusiness","name":"Atelier Lestraque","url":"https://lestraque.demo.invalid/confidentialite/","telephone":"+33 2 61 91 38 47","openingHours":"Mo-Fr 08:00-18:00","address":{"@type":"PostalAddress","streetAddress":"1 rue de la Démonstration","postalCode":"35000","addressLocality":"Rennes","addressCountry":"FR"},"areaServed":["Rennes","Cesson-Sévigné","Bruz","Saint-Grégoire"],"image":"https://lestraque.demo.invalid/images/heros-escalier-1600.webp"}</script>
+</head>
+<body>
+<header class="nav"><div class="conteneur nav__inner">
+<a class="nav__marque" href="../index.html"><svg class="marque" viewBox="0 0 2329 2329" aria-hidden="true"><circle cx="1164.5" cy="1164.5" r="1106.3" fill="none" stroke="currentColor" stroke-width="81.5"/><g fill="currentColor"><path transform="translate(605.8 445.7)" d="M565.8 97.4 509.4 110.2Q485.2 116.4 472.2 130.5Q459.2 144.6 459.2 167.2V1228.8Q459.2 1266.6 480.9 1283.1Q502.6 1299.6 547.6 1299.6H714.6Q770.2 1299.6 810.2 1284.6Q850.2 1269.6 882.5 1230.6Q914.8 1191.6 947.2 1119L1008.6 980.8Q1019.8 956.4 1037.1 947.8Q1054.4 939.2 1077.6 945.2Q1102.4 950.6 1112.1 966.9Q1121.8 983.2 1114 1012.2L1023.6 1364Q1012.8 1401.6 996.4 1419.6Q980 1437.6 948.2 1437.6Q926.2 1437.6 906.1 1428.2Q886 1418.8 861.4 1409.4Q836.8 1400 799.6 1400H60.4Q29.4 1400 14.7 1387.4Q0 1374.8 0 1354.4Q0 1316.6 42.2 1302.6L99.6 1289.8Q124.4 1283.6 137.1 1269.5Q149.8 1255.4 149.8 1232.8V167.2Q149.8 144.6 137.1 130.5Q124.4 116.4 99.6 110.2L42.2 97.4Q0 83.4 0 45.6Q0 24.2 14.7 12.1Q29.4 0 60.4 0H547.6Q579 0 593.3 12.1Q607.6 24.2 607.6 45.6Q607.6 83.4 565.8 97.4Z"/></g></svg><span>Atelier Lestraque</span></a>
+<nav class="nav__liens" aria-label="Sections"><a href="../index.html#prestations">Prestations</a><a href="../index.html#realisations">Réalisations</a><a href="../index.html#communes">Communes</a><a href="../index.html#questions">Questions</a></nav>
+<div class="nav__droite"><a class="nav__tel" href="tel:+33 2 61 91 38 47">02 61 91 38 47</a><button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="panneau"><span></span><span></span></button></div>
+</div></header>
+<div class="voile" aria-hidden="true"></div>
+<div class="panneau" id="panneau">
+<nav aria-label="Menu"><a href="../index.html">Accueil</a><a href="../index.html#prestations">Prestations</a><a href="../index.html#realisations">Réalisations</a><a href="../index.html#communes">Communes</a><a href="../index.html#questions">Questions</a><a href="../index.html#contact">Contact</a></nav>
+<div class="panneau__bas"><span><a href="../menuisier-rennes/index.html">Rennes</a> · <a href="../menuisier-cesson-sevigne/index.html">Cesson-Sévigné</a> · <a href="../menuisier-bruz/index.html">Bruz</a> · <a href="../menuisier-saint-gregoire/index.html">Saint-Grégoire</a></span></div>
+<div><a class="bouton" href="../index.html#contact">Demander un devis <span class="bouton__cercle"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M5 13L13 5M13 5H6M13 5V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>
+</div>
+<main><section class="hero hero--page"><div class="conteneur"><div class="hero__contenu"><nav class="ariane" aria-label="Fil d’Ariane"><a href="../index.html">Accueil</a><span>/</span><span>Politique de confidentialité</span></nav><h1><span class="mot" style="--i:0">Politique</span> <span class="mot" style="--i:1">de</span> <span class="mot" style="--i:2">confidentialité</span></h1><p class="chapeau">Le respect de votre vie privée est une priorité pour Atelier Lestraque. Cette politique décrit les règles appliquées à la collecte et au traitement de vos informations personnelles.</p></div></div></section><section class="section"><div class="conteneur"><div class="prose"><h2>Protection de vos données personnelles</h2><p>Le respect de votre vie privée est une priorité pour Atelier Lestraque. Cette politique décrit les règles appliquées à la collecte et au traitement de vos informations personnelles.</p><h2>Données collectées via le formulaire</h2><p>Lorsque vous effectuez une demande de contact ou de devis, les données suivantes sont recueillies :</p><p>Votre nom et prénom pour vous identifier convenablement</p><p>Votre numéro de téléphone pour planifier un appel ou une visite</p><p>Votre adresse de chantier pour évaluer la zone géographique</p><p>La description de votre projet de menuiserie</p><h2>Finalité et durée de conservation</h2><p>Ces données sont strictement réservées à l’établissement de propositions commerciales et à la gestion de la relation client. Elles ne sont jamais cédées, vendues ni louées à des tiers.</p><p>Les données de devis sans suite sont purgées au bout de 12 mois. Les données relatives aux commandes exécutées sont conservées conformément aux délais légaux de prescription.</p><h2>Absence totale de cookies tiers</h2><p>Ce site statique n’emploie aucun cookie publicitaire, aucun traceur de réseaux sociaux et aucun service tiers de mesure d’audience intrusif.</p><h2>Vos droits</h2><p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d’un droit d’accès, de rectification et de suppression de vos données personnelles sur simple demande à contact@menuisier.demo.invalid.</p></div></div></section></main>
+<footer class="pied"><div class="conteneur">
+<div class="pied__grille">
+<div><div class="nav__marque" style="margin-bottom:.75rem"><svg class="marque" viewBox="0 0 2329 2329" aria-hidden="true"><circle cx="1164.5" cy="1164.5" r="1106.3" fill="none" stroke="currentColor" stroke-width="81.5"/><g fill="currentColor"><path transform="translate(605.8 445.7)" d="M565.8 97.4 509.4 110.2Q485.2 116.4 472.2 130.5Q459.2 144.6 459.2 167.2V1228.8Q459.2 1266.6 480.9 1283.1Q502.6 1299.6 547.6 1299.6H714.6Q770.2 1299.6 810.2 1284.6Q850.2 1269.6 882.5 1230.6Q914.8 1191.6 947.2 1119L1008.6 980.8Q1019.8 956.4 1037.1 947.8Q1054.4 939.2 1077.6 945.2Q1102.4 950.6 1112.1 966.9Q1121.8 983.2 1114 1012.2L1023.6 1364Q1012.8 1401.6 996.4 1419.6Q980 1437.6 948.2 1437.6Q926.2 1437.6 906.1 1428.2Q886 1418.8 861.4 1409.4Q836.8 1400 799.6 1400H60.4Q29.4 1400 14.7 1387.4Q0 1374.8 0 1354.4Q0 1316.6 42.2 1302.6L99.6 1289.8Q124.4 1283.6 137.1 1269.5Q149.8 1255.4 149.8 1232.8V167.2Q149.8 144.6 137.1 130.5Q124.4 116.4 99.6 110.2L42.2 97.4Q0 83.4 0 45.6Q0 24.2 14.7 12.1Q29.4 0 60.4 0H547.6Q579 0 593.3 12.1Q607.6 24.2 607.6 45.6Q607.6 83.4 565.8 97.4Z"/></g></svg><span>Atelier Lestraque</span></div><p>Menuisier à Rennes · <a href="tel:+33 2 61 91 38 47">02 61 91 38 47</a></p><p>SIREN 000000000 · Assurance décennale Assureur fictif n° DEMO-0001</p></div>
+<div><p class="pied__titre">Communes servies</p><ul><li><a href="../menuisier-rennes/index.html">Rennes</a></li><li><a href="../menuisier-cesson-sevigne/index.html">Cesson-Sévigné</a></li><li><a href="../menuisier-bruz/index.html">Bruz</a></li><li><a href="../menuisier-saint-gregoire/index.html">Saint-Grégoire</a></li></ul></div>
+<div><p class="pied__titre">Le site</p><ul><li><a href="../index.html">Accueil</a></li><li><a href="../mentions-legales/index.html">Mentions légales</a></li><li><a href="../confidentialite/index.html">Confidentialité</a></li></ul></div>
+</div>
+<div class="pied__bas"><span>© 2026 Atelier Lestraque</span><span>Site de démonstration — entreprise fictive, photos sous licence libre (voir les mentions légales)</span></div>
+</div></footer>
+</body>
+</html>

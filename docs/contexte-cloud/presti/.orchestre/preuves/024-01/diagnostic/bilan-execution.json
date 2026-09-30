@@ -1,0 +1,59 @@
+{
+ "date": "2026-09-16T19:30:37.809Z",
+ "chromium": "153.0.8010.12",
+ "playwright": "1.63.0",
+ "profils": {
+  "android": {
+   "arrets": 20,
+   "films": 1,
+   "erreurs": 0
+  },
+  "iphone": {
+   "arrets": 20,
+   "films": 1,
+   "erreurs": 0
+  },
+  "iphone-litteral": {
+   "arrets": 20,
+   "films": 0,
+   "erreurs": 0
+  }
+ },
+ "attentes": [
+  {
+   "pourquoi": "android arrêts",
+   "controles": 1,
+   "attenteMs": 4528,
+   "autresQa": 0,
+   "imagesParSecondePageVide": 60.6
+  },
+  {
+   "pourquoi": "android film haut",
+   "controles": 1,
+   "attenteMs": 3284,
+   "autresQa": 0,
+   "imagesParSecondePageVide": 60.2
+  },
+  {
+   "pourquoi": "iphone arrêts",
+   "controles": 1,
+   "attenteMs": 3166,
+   "autresQa": 0,
+   "imagesParSecondePageVide": 60.5
+  },
+  {
+   "pourquoi": "iphone film haut",
+   "controles": 57,
+   "attenteMs": 1209134,
+   "autresQa": 2,
+   "imagesParSecondePageVide": null
+  },
+  {
+   "pourquoi": "iphone-litteral arrêts",
+   "controles": 6,
+   "attenteMs": 108361,
+   "autresQa": 0,
+   "imagesParSecondePageVide": 60.4
+  }
+ ]
+}

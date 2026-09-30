@@ -1,0 +1,101 @@
+#!/usr/bin/env node
+// Juge de la tâche 022-02 — la série 2 des publications Presti (plans/publications-serie-2.md).
+//
+// Ce qu'il exige, parce que c'est ce qui a manqué avant (le 10/09, sept publications sur dix affirmaient des choses que le
+// produit ne fait pas — plans/journal-publications.md) :
+//   · six publications au moins, n° 11 et suivantes, au format de plans/publications-10.md ;
+//   · deux variantes par publication : A pour la Page Facebook **Presti**, B pour Instagram @prestiapp. Pas de LinkedIn :
+//     il est à Louis-Victor (décision de Benj du 10/09) ;
+//   · un sourçage ligne à ligne : au moins cinq renvois `chemin:ligne` par publication, vers des fichiers et des lignes
+//     qui existent ;
+//   · aucune des phrases qui ont déjà menti (nom du produit, heures gagnées, « rien ne part sans vous », tarifs
+//     fournisseurs automatiques, WhatsApp et OCR non construits, site à 300 € pas encore vendu, témoignages, « mon IA »,
+//     relances « automatiques » sans la réserve Studio) ;
+//   · un visuel par variante Instagram : un fichier réel du dépôt (Instagram ne publie pas de texte seul).
+// Il ne juge ni le style ni la justesse fine d'un renvoi : ça, c'est la relecture de Claude Code, puis Benj.
+//
+// Usage : node scripts/publications-serie2-qa.mjs
+import fs from 'node:fs'
+
+const F = 'plans/publications-serie-2.md'
+let ok = 0, ko = 0
+const T = (n, c, d = '') => { if (c) { ok++; console.log(`  ✅ ${n}`) } else { ko++; console.log(`  ❌ ${n}${d ? `\n     → ${d}` : ''}`) } }
+const fin = () => { console.log(`\n${ko === 0 ? '✅' : '❌'} ${ok} réussis, ${ko} échoués`); process.exit(ko === 0 ? 0 : 1) }
+
+if (!fs.existsSync(F)) { T(`${F} existe`, false); fin() }
+const md = fs.readFileSync(F, 'utf8')
+const serie1 = fs.existsSync('plans/publications-10.md') ? fs.readFileSync('plans/publications-10.md', 'utf8').replace(/\s+/g, ' ') : ''
+
+const entetes = [...md.matchAll(/^# Publication n° (\d{2}) — « (.+?) »\s*$/gm)]
+T('six publications au moins, titrées « # Publication n° NN — « … » »', entetes.length >= 6, String(entetes.length))
+const numeros = entetes.map((m) => Number(m[1]))
+T('numérotées à partir de 11, sans trou ni doublon', numeros.length > 0 && numeros.every((n, i) => n === 11 + i), numeros.join(', '))
+
+const INTERDITS = [
+  [/\bPreti\b/, 'le produit s’appelle Presti'],
+  [/heures?\s+(par|chaque|toutes les)\s+semaines?|\d+\s*(h|heures?)\s+(de\s+)?(gagn|économ|libér)/i, 'aucune mesure d’heures gagnées n’existe'],
+  [/rien ne part sans (vous|votre)/i, 'faux : un accusé de réception part seul'],
+  [/(mise à jour|synchronis\w*) automatique[^.]{0,40}(tarifs|prix)/i, 'faux : l’import des tarifs fournisseurs est un CSV manuel'],
+  [/whats\s?app/i, 'WhatsApp n’est pas construit (FLAGS.canauxWhatsapp baissé)'],
+  [/\bOCR\b|photo de (la |votre |vos )?factures? fournisseurs?/i, 'la lecture de factures fournisseurs n’est pas construite (FLAGS.inventaireOcr baissé)'],
+  [/300\s?€|site à la demande|commander (votre|mon|un) site/i, 'le site à la demande n’est pas encore vendu (FLAGS.siteCommandeVente baissé)'],
+  [/témoignage|nos clients (disent|adorent|ont)|\d+\s+artisans? (nous |l['’]|utilisent|ont)|note de \d|★/i, 'aucun client ni avis à citer'],
+  [/\b(mon|notre) IA\b/i, 'dire « mon logiciel », jamais « mon IA »'],
+]
+const RELANCE_AUTO = /relances?[^.]{0,30}(automatique|toute?s? seules?|sans (vous|rien faire))/i
+
+const sections = (bloc) => {
+  const out = []
+  const re = /^## (.+)$/gm
+  let m, prec = null
+  while ((m = re.exec(bloc))) {
+    if (prec) out.push({ titre: prec.titre, texte: bloc.slice(prec.fin, m.index) })
+    prec = { titre: m[1].trim(), fin: re.lastIndex }
+  }
+  if (prec) out.push({ titre: prec.titre, texte: bloc.slice(prec.fin) })
+  return out
+}
+const lignesDe = new Map()
+const nbLignes = (f) => {
+  if (!lignesDe.has(f)) lignesDe.set(f, fs.existsSync(f) ? fs.readFileSync(f, 'utf8').split('\n').length : -1)
+  return lignesDe.get(f)
+}
+
+let fb = 0, ig = 0
+entetes.forEach((m, i) => {
+  const n = m[1]
+  const bloc = md.slice(m.index, i + 1 < entetes.length ? entetes[i + 1].index : md.length)
+  const secs = sections(bloc)
+  const trouve = (re) => secs.find((s) => re.test(s.titre))
+  console.log(`\n── n° ${n} — ${m[2]}`)
+  T(`n° ${n} : « Le mécanisme réel qui la fonde »`, !!trouve(/^Le mécanisme réel/))
+  const vA = trouve(/^Variante A — Facebook/)
+  const vB = trouve(/^Variante B — Instagram/)
+  T(`n° ${n} : variante A pour la Page Facebook Presti`, !!vA)
+  T(`n° ${n} : variante B pour Instagram`, !!vB)
+  if (vA) fb++
+  if (vB) ig++
+  T(`n° ${n} : premier commentaire, trois réponses type, « ce qui n’est PAS »`, !!trouve(/^Le premier commentaire/) && !!trouve(/^Trois réponses type/) && !!trouve(/^Ce qui n.est PAS/))
+  const sourcage = trouve(/^Sourçage ligne à ligne/)
+  const refs = sourcage ? [...sourcage.texte.matchAll(/((?:app|lib|scripts|supabase|components|promo-src|public)\/[\w/[\]().@-]+\.(?:ts|tsx|mjs|js|sql|json|css)):(\d+)(?:[-–](\d+))?/g)] : []
+  T(`n° ${n} : au moins cinq renvois chemin:ligne dans « Sourçage ligne à ligne »`, refs.length >= 5, String(refs.length))
+  const cassees = refs.filter((r) => { const total = nbLignes(r[1]); return total < 0 || Number(r[2]) < 1 || Number(r[3] ?? r[2]) > total })
+  T(`n° ${n} : chaque renvoi pointe un fichier et une ligne qui existent`, refs.length > 0 && cassees.length === 0, cassees.map((r) => r[0]).slice(0, 6).join(' · '))
+  for (const s of [vA, vB, trouve(/^Le premier commentaire/), trouve(/^Trois réponses type/)].filter(Boolean)) {
+    for (const [re, pourquoi] of INTERDITS) { const x = re.exec(s.texte); T(`n° ${n} · ${s.titre} : ${pourquoi}`, !x, x ? `« ${x[0]} »` : '') }
+    if (RELANCE_AUTO.test(s.texte)) T(`n° ${n} · ${s.titre} : relances « automatiques » seulement avec la réserve Studio`, /Studio|59\s?€/.test(s.texte))
+  }
+  for (const s of [vA, vB].filter(Boolean)) {
+    const corps = s.texte.replace(/^\s*Visuel\s*:.*$/gim, '').trim()
+    T(`n° ${n} · ${s.titre} : entre 200 et 2 200 caractères`, corps.length >= 200 && corps.length <= 2200, String(corps.length))
+    const debut = corps.replace(/\s+/g, ' ').slice(0, 80)
+    T(`n° ${n} · ${s.titre} : pas recopiée de la série 1`, debut.length < 40 || !serie1.includes(debut))
+  }
+  if (vB) {
+    const v = /^\s*Visuel\s*:\s*`?([^`\n]+?)`?\s*$/im.exec(vB.texte)
+    T(`n° ${n} · Instagram : une ligne « Visuel : <fichier réel du dépôt> »`, !!v && fs.existsSync(v[1].trim()), v ? v[1] : 'absente')
+  }
+})
+console.log('')
+T('au moins six variantes Facebook et six Instagram', fb >= 6 && ig >= 6, `${fb} / ${ig}`)
+fin()

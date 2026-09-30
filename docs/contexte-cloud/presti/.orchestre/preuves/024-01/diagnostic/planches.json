@@ -1,0 +1,84 @@
+{
+ "arrets": [
+  {
+   "yAndroid": 0,
+   "yIphone": 0,
+   "animationsEnCoursAndroid": [],
+   "captures": [
+    "android/arrets/00-y00000.jpg",
+    "iphone/arrets/00-y00000.jpg"
+   ]
+  },
+  {
+   "yAndroid": 400,
+   "yIphone": 400,
+   "animationsEnCoursAndroid": [
+    "telephone-mot"
+   ],
+   "captures": [
+    "android/arrets/01-y00400.jpg",
+    "iphone/arrets/01-y00400.jpg"
+   ]
+  },
+  {
+   "yAndroid": 2400,
+   "yIphone": 2400,
+   "animationsEnCoursAndroid": [
+    "telephone-verbe"
+   ],
+   "captures": [
+    "android/arrets/06-y02400.jpg",
+    "iphone/arrets/06-y02400.jpg"
+   ]
+  },
+  {
+   "yAndroid": 4400,
+   "yIphone": 4400,
+   "animationsEnCoursAndroid": [
+    "telephone-eclate"
+   ],
+   "captures": [
+    "android/arrets/11-y04400.jpg",
+    "iphone/arrets/11-y04400.jpg"
+   ]
+  }
+ ],
+ "films": {
+  "android": {
+   "webm": "android\\film-haut.webm",
+   "fps": 25,
+   "images": 462,
+   "estimationS": 2.547,
+   "ecartMedianAvant": 0.31,
+   "seuil": 4,
+   "imageDebut": 62,
+   "debutS": 2.44
+  },
+  "iphone": {
+   "webm": "iphone\\film-haut.webm",
+   "fps": 25,
+   "images": 462,
+   "estimationS": 2.586,
+   "ecartMedianAvant": 0.36,
+   "seuil": 4,
+   "imageDebut": 63,
+   "debutS": 2.48
+  },
+  "comparaison": {
+   "programs": [],
+   "stream_groups": [],
+   "streams": [
+    {
+     "width": 804,
+     "height": 844,
+     "avg_frame_rate": "25/1",
+     "nb_frames": "395"
+    }
+   ],
+   "format": {
+    "duration": "15.800000",
+    "size": "9181764"
+   }
+  }
+ }
+}

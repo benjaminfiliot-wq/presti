@@ -1,0 +1,153 @@
+[
+  {
+    "dossier": "presti",
+    "fichier": ".env.development.local",
+    "variables": [
+      {
+        "variable": "STRIPE_WEBHOOK_SECRET",
+        "renseignee": true
+      }
+    ]
+  },
+  {
+    "dossier": "presti",
+    "fichier": ".env.local",
+    "variables": [
+      {
+        "variable": "NEXT_PUBLIC_SUPABASE_URL",
+        "renseignee": true
+      },
+      {
+        "variable": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "SUPABASE_SERVICE_ROLE_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "RESEND_API_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "SUPABASE_DB_PASSWORD",
+        "renseignee": true
+      },
+      {
+        "variable": "DIRECT_URL",
+        "renseignee": true
+      },
+      {
+        "variable": "VERCEL_TOKEN",
+        "renseignee": true
+      },
+      {
+        "variable": "CANAUX_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "STRIPE_SECRET_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "EMAIL_ENTREPRISE",
+        "renseignee": true
+      },
+      {
+        "variable": "PRESTI_ALERTES_EMAIL",
+        "renseignee": true
+      },
+      {
+        "variable": "STRIPE_SECRET_KEY_TEST",
+        "renseignee": true
+      },
+      {
+        "variable": "VAPID_PUBLIC_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "VAPID_PRIVATE_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "VAPID_SUBJECT",
+        "renseignee": true
+      },
+      {
+        "variable": "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "FIREBASE_SERVICE_ACCOUNT",
+        "renseignee": true
+      },
+      {
+        "variable": "RELECTURE_EMAIL",
+        "renseignee": true
+      },
+      {
+        "variable": "RELECTURE_CODE",
+        "renseignee": true
+      },
+      {
+        "variable": "RELECTURE_MOT_DE_PASSE",
+        "renseignee": true
+      },
+      {
+        "variable": "ANTHROPIC_ADMIN_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "ANTHROPIC_WORKSPACE_PRESTI",
+        "renseignee": true
+      },
+      {
+        "variable": "ANTHROPIC_API_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "PUBLORA_API_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "STRIPE_PRIX_SITE",
+        "renseignee": true
+      }
+    ]
+  },
+  {
+    "dossier": "presti",
+    "fichier": ".env.local.example",
+    "variables": [
+      {
+        "variable": "NEXT_PUBLIC_SUPABASE_URL",
+        "renseignee": true
+      },
+      {
+        "variable": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "SUPABASE_SERVICE_ROLE_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "ANTHROPIC_API_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "RESEND_API_KEY",
+        "renseignee": true
+      },
+      {
+        "variable": "CRON_SECRET",
+        "renseignee": true
+      }
+    ]
+  },
+  {
+    "dossier": "presti-ops",
+    "fichier": "usine/hermes/.env.example",
+    "variables": []
+  }
+]

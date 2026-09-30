@@ -1,0 +1,70 @@
+// assembler.mjs — réunit les mesures de la descente en un seul mesures.json (résumé en tête, détail ensuite) et vérifie les films
+// par ffprobe (durée, images, format, codec, absence de son).
+import fs from 'node:fs'
+import { execFileSync } from 'node:child_process'
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/'
+const lire = (f) => JSON.parse(fs.readFileSync(ICI + f, 'utf8'))
+const temoins = lire('mesures-temoins.json'), budget = lire('budget.json'), refs = lire('references.json'), d15 = lire('mesures-d15.json')
+const MODES = ['d116', 'd066', 'sansgpu', 'd116-roulis']
+const films = Object.fromEntries(MODES.filter((m) => fs.existsSync(ICI + `mesures-${m}.json`)).map((m) => [m, lire(`mesures-${m}.json`)]))
+const avantBois = temoins.enLigne.netteteBois, avantMarches = temoins.enLigne.netteteMarches
+const ffprobe = (f) => {
+  const j = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-count_frames', '-show_entries', 'stream=codec_type,codec_name,width,height,pix_fmt,r_frame_rate,nb_read_frames:format=duration,size', '-of', 'json', ICI + f], { encoding: 'utf8' }))
+  const v = j.streams.find((s) => s.codec_type === 'video')
+  return { fichier: f, duree_s: +(+j.format.duration).toFixed(3), octets: +j.format.size, codec: v.codec_name, format: `${v.width}x${v.height}`, pixfmt: v.pix_fmt, ips: v.r_frame_rate, images: +v.nb_read_frames, pistesAudio: j.streams.filter((s) => s.codec_type === 'audio').length }
+}
+const resume = {}
+for (const [m, r] of Object.entries(films)) {
+  const oeil = r.perceptibiliteD15.zones.oeil.resume, marches = r.perceptibiliteD15.zones.marches.resume
+  const serieDescente = r.serie.filter((s) => s.y <= 270)
+  const premierDevis = r.serie.find((s) => s.devisNav)
+  resume[m] = {
+    film: r.fichier, planche: r.planche, verificationFilm: ffprobe(r.fichier),
+    controleFilmContreImagesCles: fs.existsSync(ICI + `controle-film-${m}.json`) ? lire(`controle-film-${m}.json`) : null,
+    devisDansLaBarre_premierY: premierDevis ? premierDevis.y : null,
+    D5_contrasteParcours: r.contrasteD5parcours,
+    D5_grille: Object.fromEntries(Object.entries(r.contrasteD5grille).map(([k, v]) => [k, { min: v.min, passe: v.passe }])),
+    contrasteSurLaDescente_y0a270: { min: Math.min(...serieDescente.map((s) => s.contrasteP90)), max: Math.max(...serieDescente.map((s) => s.contrasteP90)) },
+    D9_nettete: {
+      y0: r.nettete.y0, y270: r.nettete.y270,
+      ratioBois_y270_contrePageEnLigne: +(r.nettete.y270.bois / avantBois).toFixed(3), ratioMarches_y270_contrePageEnLigne: +(r.nettete.y270.marches / avantMarches).toFixed(3),
+      seuilIndicatif: 0.68, passeContrePageEnLigne: r.nettete.y270.bois / avantBois >= 0.68,
+      ratioBois_y270_contreSonImageY0: +(r.nettete.y270.bois / r.nettete.y0.bois).toFixed(3),
+    },
+    D15_perceptibilite: { retenu: 'd15.mjs, recherche ±32 px réduits, blocs à la limite exclus', ...d15[m], premierePasseDansLeFilm_R18: { oeil, marches } },
+    mouvementFilm: r.mouvementFilm,
+    relief: r.page.reliefA8s,
+  }
+}
+const sortie = {
+  date: new Date().toISOString(),
+  objet: 'Descente au défilement (cahier §2, §2.1, Q2) : trois films + une variante avec roulis, mesures du §8.2 applicables à un prototype',
+  conditions: {
+    page: temoins.url, identiteAvecLeDepot: 'styles.css et index.html en ligne = public/sites-demo/lestraque (md5 da4afc11… et fb457364…, relevé du 15/09 par curl + md5sum)',
+    navigateur: temoins.enLigne.ua, lancement: 'chromium.launch() sans drapeau (sans carte graphique)', dataReliefEtatA8s: temoins.enLigne.reliefA8s,
+    photoServieParLaPage: `${temoins.enLigne.imgSrc} (largeur naturelle corrigée ${temoins.enLigne.imgLargeur})`,
+    reglesSignatureAvantInjection: temoins.enLigne.reglesSignatureAvantInjection,
+    injection: 'classe da--signature sur <html> + bloc 2 du §7.3 tel quel ; harnais : html{scroll-behavior:auto!important} et règle du titre transparent (§8.0) activée par classe',
+    perspective: 'films a, b, a-roulis : image rendue hors ligne (rendu.mjs, modèle proto7.mjs:19-31, γ 0,6, RW 0,045, œil 0,404 ; 0,386) depuis heros-escalier-2400.webp à 2400×1800, servie par page.route, <source> retirées ; δ = δmax·clamp(y/270)',
+    determinisme: 'animations au temps en pause et positionnées (poussée = t du film, entrées à leur fin, transitions menées à leur fin) ; défilement par scrollTo ; 30 images/s ; ffmpeg libx264 crf 20 yuv420p sans son +faststart',
+    controleTempsReel: temoins.tempsReelContrePositionne,
+  },
+  geometrieBloc2_D1_D2_D3: temoins.bloc2.releves.map((e) => ({ y: e.y, plateauHaut: e.plateauHaut, ouvertureHauteur: e.ouvertureHauteur, contenuOpacite: e.contenuOpacite, contenuTransform: e.contenuTransform, voile: e.voile, mediaTransform: e.mediaTransform, zoomPalier: e.mediaScale, surtitre: [e.cleOpacite, e.cleVisibilite], pied: [e.piedOpacite, e.piedVisibilite], hautDuTitre: e.ligneHaut, devisDansLaBarre: e.devisNav })),
+  netteteReferences: { pageEnLigneY0_png: { bois: avantBois, marches: avantMarches }, cahierAvantReliefGPU_cdcVerif2: { bois: 109.0, marches: 108.7 }, imagesJpegDuCahier: refs, sensibiliteSource2400contre2880: temoins.sensibiliteSource },
+  D8_budgetGrossissement: budget,
+  resume,
+  nonMesurableSurUnPrototypeHorsLigne: [
+    'D-4 (nav-retenue-qa sur la démo régénérée) : aucune démo régénérée, seulement une injection ; relevé indicatif seulement (« Devis » dans la barre à y ≥ 225).',
+    'D-5 « avec carte graphique » : le shader n’existe pas ; la perspective injectée tient lieu de toile. Le contraste mesuré est celui de l’image hors ligne, pas d’un rendu WebGL (lumière du shader, voile uVoile, intro).',
+    'D-6 (le worker suit la page), D-7 (dmax lu dans compte), D-11 (latence), D-12 (tâches longues), D-14 (redimensionnement) : aucun worker, aucun message, aucune toile.',
+    'D-10 (inversion de Newton en GLSL, demi-précision) : le prototype inverse par dichotomie en double précision (table de 65 537 valeurs) ; la boucle GLSL n’est pas écrite.',
+    'D-9 exact : la netteté réelle dépendra du filtrage de la texture 2880 (mipmaps LINEAR_MIPMAP_LINEAR) et du dpr de la toile ; le prototype lit la 2400 (4 sous-échantillons) et laisse le navigateur réduire. Sensibilité mesurée (mesures-temoins.json → sensibiliteSource) : la 2880 donne +37 % au bois à y = 270 pour δ = 0,116 (75,9 contre 55,4) et +45 % pour δ = 0,066 (123,5 contre 85,0). Première image des films a et b plus nette que la page en ligne (160,9 contre 109,8) : l’adoucissement vu À L’INTÉRIEUR de ces films est exagéré ; lire D-9 contre la page en ligne.',
+    'Loupes 1:1 pour l’œil : loupe-bois.jpg et loupe-marches.jpg (page en ligne y = 0 ; c, b, a à y = 270, poussée figée).',
+    'Contrôle image positionnée ↔ temps réel : l’écart (0,0032) est sous le seuil « identiques » de 0,006, mais la capture en temps réel a duré 1,3 s et un décalage d’une seconde de poussée ne donne que 0,0067 : le contrôle exclut un état faux, pas un décalage de moins d’une seconde.',
+    'δ = 0,066 « à dpr 1,5 » : filmé en 1440×900 à dpr 1 ; la netteté à dpr 1,5 (toile 2160 px) n’est pas représentée, seule l’amplitude du geste l’est.',
+    'P-1 à P-4 (Lighthouse, poids, site-qa, coût au bureau) et R-8 complet sans JavaScript : hors prototype.',
+    'Le geste au repos (Q1) n’est pas tranché : aucun n’est filmé ; seule la poussée existante tourne (départ à 0). E_b = 1 (pas de rotation) ; ρ = 0 dans a et b, comme le prévoit le §2 si le geste retenu tourne ; la variante a-roulis montre le cas contraire.',
+  ],
+}
+fs.writeFileSync(ICI + 'mesures.json', JSON.stringify(sortie, null, 1))
+console.log(JSON.stringify(sortie.resume, null, 1))

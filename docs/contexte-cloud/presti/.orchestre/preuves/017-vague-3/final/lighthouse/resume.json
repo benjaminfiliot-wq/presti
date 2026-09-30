@@ -1,0 +1,326 @@
+{
+  "date": "2026-09-15T02:00:50.938Z",
+  "dossier": "C:\\Users\\benja\\Documents\\presti\\public\\sites-demo\\lestraque",
+  "origine": "http://127.0.0.1:51777",
+  "empreinteAvant": {
+    "index.html": "9d982c505739e4d1",
+    "styles.css": "1658d9f1b300330d",
+    "site.js": "2911d399895deca3",
+    "relief.js": "403fedaa4e964396",
+    "relief-fil.js": "034b3d1d7db87b59",
+    "menuisier-rennes/index.html": "7b805a23e34369c1"
+  },
+  "empreinteApres": {
+    "index.html": "9d982c505739e4d1",
+    "styles.css": "1658d9f1b300330d",
+    "site.js": "2911d399895deca3",
+    "relief.js": "403fedaa4e964396",
+    "relief-fil.js": "034b3d1d7db87b59",
+    "menuisier-rennes/index.html": "7b805a23e34369c1"
+  },
+  "fichiersInchanges": true,
+  "medianePerformanceAccueil": 97,
+  "passes": [
+    {
+      "nom": "accueil-1",
+      "chemin": "/",
+      "url": "http://127.0.0.1:51777/",
+      "performance": 94,
+      "accessibilite": 100,
+      "bonnesPratiques": 100,
+      "seo": 100,
+      "tbtMs": 192,
+      "lcpMs": 2486,
+      "cls": 0,
+      "fcpMs": 1211,
+      "siMs": 1279,
+      "elementLcp": null,
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "benchmarkIndex": 1582.5,
+      "lighthouseVersion": "13.4.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+      "fetchTime": "2026-09-15T01:59:30.705Z",
+      "runWarnings": [],
+      "incidents": [],
+      "auditsSousUn": {
+        "accessibility": [],
+        "best-practices": [],
+        "seo": []
+      }
+    },
+    {
+      "nom": "accueil-2",
+      "chemin": "/",
+      "url": "http://127.0.0.1:51777/",
+      "performance": 97,
+      "accessibilite": 100,
+      "bonnesPratiques": 100,
+      "seo": 100,
+      "tbtMs": 0,
+      "lcpMs": 2485,
+      "cls": 0,
+      "fcpMs": 1510,
+      "siMs": 1510,
+      "elementLcp": null,
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "benchmarkIndex": 2291,
+      "lighthouseVersion": "13.4.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+      "fetchTime": "2026-09-15T01:59:44.171Z",
+      "runWarnings": [],
+      "incidents": [],
+      "auditsSousUn": {
+        "accessibility": [],
+        "best-practices": [],
+        "seo": []
+      }
+    },
+    {
+      "nom": "accueil-3",
+      "chemin": "/",
+      "url": "http://127.0.0.1:51777/",
+      "performance": 97,
+      "accessibilite": 100,
+      "bonnesPratiques": 100,
+      "seo": 100,
+      "tbtMs": 84,
+      "lcpMs": 2487,
+      "cls": 0,
+      "fcpMs": 1212,
+      "siMs": 1212,
+      "elementLcp": null,
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "benchmarkIndex": 2138,
+      "lighthouseVersion": "13.4.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+      "fetchTime": "2026-09-15T01:59:55.563Z",
+      "runWarnings": [],
+      "incidents": [],
+      "auditsSousUn": {
+        "accessibility": [],
+        "best-practices": [],
+        "seo": []
+      }
+    },
+    {
+      "nom": "accueil-4",
+      "chemin": "/",
+      "url": "http://127.0.0.1:51777/",
+      "performance": 97,
+      "accessibilite": 100,
+      "bonnesPratiques": 100,
+      "seo": 100,
+      "tbtMs": 0,
+      "lcpMs": 2480,
+      "cls": 0,
+      "fcpMs": 1505,
+      "siMs": 1505,
+      "elementLcp": null,
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "benchmarkIndex": 2643,
+      "lighthouseVersion": "13.4.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+      "fetchTime": "2026-09-15T02:00:07.179Z",
+      "runWarnings": [],
+      "incidents": [],
+      "auditsSousUn": {
+        "accessibility": [],
+        "best-practices": [],
+        "seo": []
+      }
+    },
+    {
+      "nom": "accueil-5",
+      "chemin": "/",
+      "url": "http://127.0.0.1:51777/",
+      "performance": 97,
+      "accessibilite": 100,
+      "bonnesPratiques": 100,
+      "seo": 100,
+      "tbtMs": 0,
+      "lcpMs": 2483,
+      "cls": 0,
+      "fcpMs": 1508,
+      "siMs": 1508,
+      "elementLcp": null,
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "benchmarkIndex": 2660.5,
+      "lighthouseVersion": "13.4.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+      "fetchTime": "2026-09-15T02:00:18.324Z",
+      "runWarnings": [],
+      "incidents": [],
+      "auditsSousUn": {
+        "accessibility": [],
+        "best-practices": [],
+        "seo": []
+      }
+    },
+    {
+      "nom": "menuisier-rennes-1",
+      "chemin": "/menuisier-rennes/",
+      "url": "http://127.0.0.1:51777/menuisier-rennes/",
+      "performance": 96,
+      "accessibilite": 100,
+      "bonnesPratiques": 100,
+      "seo": 100,
+      "tbtMs": 0,
+      "lcpMs": 2631,
+      "cls": 0,
+      "fcpMs": 1506,
+      "siMs": 1506,
+      "elementLcp": null,
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "benchmarkIndex": 2068,
+      "lighthouseVersion": "13.4.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+      "fetchTime": "2026-09-15T02:00:30.744Z",
+      "runWarnings": [],
+      "incidents": [],
+      "auditsSousUn": {
+        "accessibility": [],
+        "best-practices": [],
+        "seo": []
+      }
+    },
+    {
+      "nom": "menuisier-rennes-2",
+      "chemin": "/menuisier-rennes/",
+      "url": "http://127.0.0.1:51777/menuisier-rennes/",
+      "performance": 97,
+      "accessibilite": 100,
+      "bonnesPratiques": 100,
+      "seo": 100,
+      "tbtMs": 0,
+      "lcpMs": 2635,
+      "cls": 0,
+      "fcpMs": 1210,
+      "siMs": 1210,
+      "elementLcp": null,
+      "formFactor": "mobile",
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      },
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "benchmarkIndex": 2308,
+      "lighthouseVersion": "13.4.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36",
+      "fetchTime": "2026-09-15T02:00:41.568Z",
+      "runWarnings": [],
+      "incidents": [],
+      "auditsSousUn": {
+        "accessibility": [],
+        "best-practices": [],
+        "seo": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "fichier": "images/hero-1600.webp",
+    "base": "hero",
+    "largeur": 1600,
+    "hauteur": 1069,
+    "legende": "Salle de bains avec double vasque et robinetterie posée",
+    "alt": "Salle de bains avec double vasque et robinetterie posée",
+    "auteur": "Basile Morin",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Hand-washing_sinks_of_Amantaka_Suite_Amantaka_luxury_Resort_%26_Hotel_Luang_Prabang_Laos.jpg",
+    "titre_commons": "File:Hand-washing sinks of Amantaka Suite Amantaka luxury Resort & Hotel Luang Prabang Laos.jpg"
+  },
+  {
+    "fichier": "images/canalisations-960.webp",
+    "base": "canalisations",
+    "largeur": 1600,
+    "hauteur": 1067,
+    "legende": "Canalisations prêtes à la pose",
+    "alt": "Canalisations prêtes à la pose",
+    "auteur": "Dietmar Rabich",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Haltern_am_See,_Sythen,_Werkzeughalle_der_Quarzwerke_--_2015_--_4989.jpg",
+    "titre_commons": "File:Haltern am See, Sythen, Werkzeughalle der Quarzwerke -- 2015 -- 4989.jpg"
+  },
+  {
+    "fichier": "images/colonne-960.webp",
+    "base": "colonne",
+    "largeur": 1600,
+    "hauteur": 2400,
+    "legende": "Colonne de douche et mitigeur thermostatique",
+    "alt": "Colonne de douche et mitigeur thermostatique",
+    "auteur": "Matti Blume",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Silesian_Stadium,_Chorzow_(DBR45830).jpg",
+    "titre_commons": "File:Silesian Stadium, Chorzow (DBR45830).jpg"
+  },
+  {
+    "fichier": "images/douches-960.webp",
+    "base": "douches",
+    "largeur": 1600,
+    "hauteur": 1067,
+    "legende": "Espace douche carrelé, alimentations encastrées",
+    "alt": "Espace douche carrelé, alimentations encastrées",
+    "auteur": "Basile Morin",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Indoor_pool_and_showers_of_the_spa_at_Amantaka_luxury_Resort_%26_Hotel_in_Luang_Prabang_Laos.jpg",
+    "titre_commons": "File:Indoor pool and showers of the spa at Amantaka luxury Resort & Hotel in Luang Prabang Laos.jpg"
+  },
+  {
+    "fichier": "images/lavabo-960.webp",
+    "base": "lavabo",
+    "largeur": 1600,
+    "hauteur": 1259,
+    "legende": "Lavabo, siphon et robinetterie installés",
+    "alt": "Lavabo, siphon et robinetterie installés",
+    "auteur": "W.carter",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Sink_and_taps_in_the_men%27s_locker_room_6.jpg",
+    "titre_commons": "File:Sink and taps in the men's locker room 6.jpg"
+  }
+]

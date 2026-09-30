@@ -1,0 +1,21 @@
+# Lance une commande node site par site, en attendant avant chaque site qu'aucun processus node « -qa.mjs » ne tourne
+# (contrôle toutes les 20 s, 20 min au plus) : les mesures relèvent des cadences rAF et ne doivent pas charger la machine
+# pendant qu'un juge mesure du temps.
+# Usage : lancer-avec-attente.ps1 -script mesurer-references.mjs -sites "a=https://…","b=https://…" -options "--reduit","--sans-captures"
+param([string]$script, [string[]]$sites, [string[]]$options = @())
+$ici = Split-Path -Parent $MyInvocation.MyCommand.Path
+Set-Location $ici
+foreach ($site in $sites) {
+  $debut = Get-Date
+  $qa = @()
+  while ($true) {
+    $qa = @(Get-CimInstance Win32_Process -Filter "Name='node.exe'" | Where-Object { $_.CommandLine -match '-qa\.mjs' })
+    if ($qa.Count -eq 0) { break }
+    if (((Get-Date) - $debut).TotalMinutes -gt 20) { break }
+    Start-Sleep -Seconds 20
+  }
+  if ($qa.Count -ne 0) { "ABANDON $site : -qa.mjs actif depuis 20 min"; continue }
+  "$(Get-Date -Format HH:mm:ss) aucun -qa.mjs, lancement $site"
+  node $script $site @options
+}
+"FIN $script $($options -join ' ')"

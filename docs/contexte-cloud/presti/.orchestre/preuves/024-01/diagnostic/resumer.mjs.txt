@@ -1,0 +1,116 @@
+// resumer.mjs — lit <profil>/mesures.json (moteurs.mjs) et écrit resume.json + resume-tableaux.md : section par section, ce qui
+// s'anime et ce qui reste figé, avec les chiffres mesurés. Aucun chiffre n'est tapé à la main : tout sort des fichiers de mesure.
+// Usage : node .orchestre/preuves/024-01/diagnostic/resumer.mjs
+import fs from 'node:fs'
+import path from 'node:path'
+
+const ICI = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'))
+const PROFILS = ['android', 'iphone', 'iphone-litteral'].filter((p) => fs.existsSync(path.join(ICI, p, 'mesures.json')))
+const SECTIONS = ['heros', 'plateau', 'prestations', 'atelier', 'realisations', 'communes', 'etapes', 'questions', 'contact', 'pied', 'nav']
+const m = Object.fromEntries(PROFILS.map((p) => [p, JSON.parse(fs.readFileSync(path.join(ICI, p, 'mesures.json'), 'utf8'))]))
+const r3 = (x) => (x == null ? null : Math.round(x * 1000) / 1000)
+
+const resume = {}
+for (const p of PROFILS) {
+  const d = m[p]
+  const R = { profil: {}, sections: {} }
+  const c = d.chargement
+  R.profil = {
+    url: d.profil.url, copie: d.profil.copie, ecran: c.ecran, reduit: c.reduit,
+    supportsVuParLaPage: c.supportsVuParLaPage, supportsNatif: c.supportsNatif, supportsScrollVuParLaPage: c.supportsScrollVuParLaPage,
+    supportsCssom: c.supportsCssom, animsAuChargement: c.anims.length,
+    animsAuChargementDetail: c.anims.map((a) => `${a.type} ${a.nom} @ ${a.cible} (${a.section}, ${a.timeline}, ${a.etat})`),
+    arrets: d.arrets.length, hauteurPage: d.arrets.at(-1).hauteurPage, yMax: d.arrets.at(-1).scrollYRepos,
+    reduitAuxArrets: [...new Set(d.arrets.map((a) => a.reduit))], supportsAuxArrets: [...new Set(d.arrets.map((a) => a.supportsVuParLaPage))],
+    ecartsCapturesMs: [Math.min(...d.arrets.map((a) => a.energie.ecartDebutsMs)), Math.max(...d.arrets.map((a) => a.energie.ecartDebutsMs))],
+    imagesNonChargeesAuxCaptures: d.arrets.reduce((s, a) => s + a.imagesAttendues.restantes.length, 0),
+    defilementPendantCaptures: d.arrets.filter((a) => a.scrollYRepos !== a.scrollYApresCaptures).length,
+    energieGlobale: d.arrets.map((a) => ({ i: a.i, y: a.scrollYRepos, moyen: a.energie.global.moyen, part8: a.energie.global.part8 })),
+    erreurs: d.erreurs, films: d.films, rails: d.rails,
+    animationsParType: (() => { const t = {}; for (const a of d.arrets) for (const x of a.animsAuRepos) { const k = `${x.type}/${x.timeline}`; t[k] = t[k] || new Set(); t[k].add(x.nom + '@' + x.cible + '@' + x.section) } return Object.fromEntries(Object.entries(t).map(([k, v]) => [k, v.size])) })(),
+  }
+  for (const s of SECTIONS) {
+    const S = {}
+    // animations au temps (timeline du document), relevées au repos
+    const temps = new Map()
+    for (const a of d.arrets) for (const x of a.animsAuRepos.filter((x) => x.section === s && x.timeline === 'DocumentTimeline' && x.type === 'CSSAnimation')) {
+      const k = x.nom + ' @ ' + x.cible
+      const v = temps.get(k) || { nom: x.nom, cible: x.cible, duree: x.duree, iterations: x.iterations, etats: new Set(), arretsALEcran: 0 }
+      v.etats.add(x.etat); if (x.aLEcran) v.arretsALEcran++
+      temps.set(k, v)
+    }
+    S.animationsAuTemps = [...temps.values()].map((v) => ({ ...v, etats: [...v.etats] }))
+    // animations liées au défilement (balayage fin)
+    S.animationsDefilement = (d.balayage?.animsDefilement || []).filter((x) => x.section === s)
+    // transitions déclenchées par l'arrêt (relevé 2 images + 150 ms après chaque arrêt)
+    const trans = new Map()
+    for (const a of d.arrets) for (const x of a.animsALArret.filter((x) => x.section === s && x.type === 'CSSTransition')) {
+      const k = x.cible
+      const v = trans.get(k) || { cible: x.cible, proprietes: new Set(), arrets: new Set() }
+      v.proprietes.add(x.nom); v.arrets.add(a.i)
+      trans.set(k, v)
+    }
+    S.transitions = [...trans.values()].map((v) => ({ cible: v.cible, proprietes: [...v.proprietes], arrets: [...v.arrets] }))
+    // « vu » posés par kit.js (IntersectionObserver), balayage fin
+    S.reveals = (d.balayage?.reveals || []).filter((x) => x.section === s)
+    // mutations JavaScript hors « vu » (styles en ligne, classes d'état)
+    const mut = new Map()
+    for (const a of d.arrets) for (const x of a.mutationsDepuisArretPrecedent.filter((x) => x.section === s)) {
+      if (x.attribut === 'class' && x.valeurs.every((v) => / vu$/.test(v))) continue
+      const k = x.cible + ' [' + x.attribut + ']'
+      const v = mut.get(k) || { cible: x.cible, attribut: x.attribut, n: 0, valeurs: new Set() }
+      v.n += x.n; for (const val of x.valeurs) if (v.valeurs.size < 8) v.valeurs.add(val)
+      mut.set(k, v)
+    }
+    S.mutationsJs = [...mut.values()].map((v) => ({ ...v, valeurs: [...v.valeurs] }))
+    // énergie hors défilement dans la bande de la section (arrêts où elle couvre au moins 200 px d'écran)
+    const en = d.arrets.map((a) => ({ i: a.i, y: a.scrollYRepos, ...a.energie.parSection[s] })).filter((x) => x.moyen != null && x.a - x.de >= 200)
+    S.energie = en.length ? { arrets: en.length, max: r3(Math.max(...en.map((x) => x.moyen))), moyenne: r3(en.reduce((t, x) => t + x.moyen, 0) / en.length), part8Max: Math.max(...en.map((x) => x.part8)), detail: en.map((x) => ({ i: x.i, y: x.y, bande: `${x.de}-${x.a}`, moyen: x.moyen, part8: x.part8 })) } : null
+    S.captures = d.arrets.filter((a) => a.sections.some((x) => x.nom === s && x.visibleA - x.visibleDe >= 200)).map((a) => a.capture)
+    R.sections[s] = S
+  }
+  resume[p] = R
+}
+fs.writeFileSync(path.join(ICI, 'resume.json'), JSON.stringify(resume, null, 1))
+
+// ── tableaux ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+const L = []
+L.push('| Profil | Écran | CSS.supports view() (page / natif) | @supports du CSSOM | Mouvement réduit | Arrêts | Hauteur page | Animations (type/timeline : nombre distinct) |')
+L.push('|---|---|---|---|---|---|---|---|')
+for (const p of PROFILS) {
+  const P = resume[p].profil
+  L.push(`| ${p} | ${P.ecran.w}×${P.ecran.h} dpr ${P.ecran.dpr}, tactile ${P.ecran.tactile} | ${P.supportsVuParLaPage} / ${P.supportsNatif} | ${Object.entries(P.supportsCssom).map(([k, v]) => `${k} ×${v}`).join('<br>')} | ${P.reduit} | ${P.arrets} | ${P.hauteurPage} px | ${Object.entries(P.animationsParType).map(([k, v]) => `${k} : ${v}`).join('<br>')} |`)
+}
+L.push('')
+for (const s of SECTIONS) {
+  L.push(`#### ${s}`)
+  L.push('| Profil | Au temps (boucles) | Liées au défilement (y départ → y plein, pas de 40 px) | Transitions à l’arrêt | « vu » (y) | JS hors « vu » | Énergie hors défilement (max / moyenne, part > 8 max, arrêts) |')
+  L.push('|---|---|---|---|---|---|---|')
+  for (const p of PROFILS) {
+    const S = resume[p].sections[s]
+    const temps = S.animationsAuTemps.map((a) => `${a.nom} @ ${a.cible} (${a.duree} ms, ${a.iterations}, ${a.etats.join('/')})`).join('<br>') || '—'
+    const groupes = new Map()
+    for (const a of S.animationsDefilement) { const k = a.nom + ' (' + a.timeline + ')'; const g = groupes.get(k) || { n: 0, dep: [], plein: [] }; g.n++; if (a.yDepart != null) g.dep.push(a.yDepart); if (a.yPlein != null) g.plein.push(a.yPlein); groupes.set(k, g) }
+    const defil = [...groupes].map(([k, g]) => `${k} ×${g.n} : ${g.dep.length ? Math.min(...g.dep) : 'jamais'} → ${g.plein.length ? Math.max(...g.plein) : 'jamais plein'}`).join('<br>') || '—'
+    const trans = S.transitions.length ? `${S.transitions.length} cibles : ${[...new Set(S.transitions.flatMap((t) => t.proprietes))].join(', ')}` : '—'
+    const vus = S.reveals.length ? S.reveals.map((v) => `${v.cible.replace(/\.reveal/, '')} ${v.y}`).join('<br>') : '—'
+    const js = S.mutationsJs.map((x) => `${x.cible} [${x.attribut}] ×${x.n}`).join('<br>') || '—'
+    const e = S.energie ? `${S.energie.max} / ${S.energie.moyenne}, ${S.energie.part8Max}, ${S.energie.arrets}` : '—'
+    L.push(`| ${p} | ${temps} | ${defil} | ${trans} | ${vus} | ${js} | ${e} |`)
+  }
+  L.push('')
+}
+L.push('#### Rails horizontaux (un geste de 85 % de largeur)')
+L.push('| Profil | Rail | Défilable | Jauge affichée | Jauge avant → après (transform) | Animation de la jauge (progression après) |')
+L.push('|---|---|---|---|---|---|')
+for (const p of PROFILS) for (const r of resume[p].profil.rails) {
+  if (r.absent) { L.push(`| ${p} | ${r.nom} | absent | | | |`); continue }
+  L.push(`| ${p} | ${r.nom} | ${r.avant.defilable} (${r.avant.largeurTotale}/${r.avant.largeurVisible} px, décalé de ${r.apres.scrollLeft}) | ${r.avant.jaugeAffichee} | ${r.avant.jaugeTransform} → ${r.apres.jaugeTransform} | ${r.apres.animsJauge.map((a) => `${a.nom} ${a.timeline} ${r3(a.progression)}`).join(', ') || 'aucune'} |`)
+}
+L.push('')
+L.push('#### Films')
+L.push('| Profil | Fichiers | Images rAF | Durée mesurée | Images/s rAF | Pas médian | Intervalle médian / p95 | y début → fin |')
+L.push('|---|---|---|---|---|---|---|---|')
+for (const p of PROFILS) for (const f of resume[p].profil.films || []) L.push(`| ${p} | ${f.fichiers.join(', ')} | ${f.imagesRaf} | ${f.dureeMesureeMs} ms | ${f.imagesParSeconde} | ${f.pasMedianPx} px | ${f.intervalleMedianMs} / ${f.intervalleP95Ms} ms | ${f.yDebut} → ${f.yFin} |`)
+fs.writeFileSync(path.join(ICI, 'resume-tableaux.md'), L.join('\n') + '\n')
+console.log(L.join('\n'))

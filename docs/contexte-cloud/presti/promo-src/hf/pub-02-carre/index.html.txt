@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1350" />
+    <title>Presti — publication 02 (carre)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.[MASQUE_SECRET]" />
+    <link
+      href="https://fonts.[MASQUE_SECRET]/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1350px; overflow: hidden; background: #0A0C11; }
+      #root { position: relative; width: 1080px; height: 1350px; overflow: hidden; background: #0A0C11; }
+      /* Le fond vivant, sous tous les plans. Les plans qui le laissent voir sont transparents ;
+         seules les captures posent un fond opaque, et elles bougent d'elles-mêmes. */
+      .fond { position: absolute; inset: 0; overflow: hidden; background: #0A0C11; z-index: 0; }
+      .halo-fond {
+        position: absolute; left: 50%; top: 50%;
+        width: 2052px; height: 2052px;
+        margin-left: -1026px; margin-top: -1026px;
+        background: radial-gradient(closest-side, rgba(217,119,87,0.30), rgba(217,119,87,0.07) 55%, rgba(217,119,87,0) 78%);
+        will-change: transform;
+      }
+      .horizon {
+        position: absolute; left: -30%; width: 160%; height: 2px;
+        background: linear-gradient(to right, rgba(217,119,87,0) 0%, rgba(217,119,87,0.55) 45%, rgba(217,119,87,0) 100%);
+        will-change: transform;
+      }
+      /* Le grain. ⚠️ Sa maille décide du POIDS du fichier, pas seulement de son aspect.
+         À 3 px, un motif de points qui bouge est du bruit haute fréquence : x264 ne peut rien
+         prédire et dépense tout son débit dessus — 77 Mo pour 26 s, mesuré. À 7 px avec moins
+         d'opacité, l'effet à l'écran est presque le même et le fichier tient dans le tiers.
+         On garde le mouvement, on lâche la finesse : c'est le seul des deux qui se voit. */
+      .grain {
+        position: absolute; inset: -12%;
+        background-image: radial-gradient(rgba(243,238,230,0.10) 1.5px, rgba(0,0,0,0) 1.6px);
+        background-size: 7px 7px; opacity: 0.42; will-change: transform;
+      }
+
+      .clip { position: absolute; inset: 0; overflow: hidden; z-index: 1; }
+      /* ⚠️ Seule la coupe est opaque. Les autres plans laissent voir le fond vivant qui tourne
+         dessous — sans ça il est construit, il tourne, et il est CACHÉ : c'est exactement ce qui a
+         laissé un plan figé de 1,63 s sur la carte « Brouillon », un carton de 200 px de haut posé
+         sur une trappe fermée. Les captures plein cadre et en défilement remplissent l'écran de
+         toute façon ; la carte, elle, respire enfin. */
+      .coupe { background: #0A0C11; }
+
+      /* Le balai — un Reveal par masque. Un bloc corail traverse tout le cadre en 0,22 s et
+         découvre le plan suivant. C'est le seul procédé qui change assez de pixels d'un coup pour
+         qu'un détecteur de plan (et un œil qui défile) voie la coupe. */
+      .balai { position: absolute; inset: 0; background: #D97757; z-index: 3; will-change: transform; }
+      /* Un rendu image par image n'a pas d'obturateur : chaque image est un instant net, et une
+         arête qui franchit 1 260 px entre deux images strobe. Le flou en tient lieu — il n'agit
+         que sur les ARÊTES, jamais sur la couverture maximale, donc le juge reste vert. */
+      .balai:not(.echelle) { filter: blur(14px); }
+      /* ⚠️ Le rideau était NUIT sur un fond NUIT : il ne changeait presque aucun pixel.
+         Une transition sur trois était invisible — au détecteur de plan comme à l œil. Mesuré :
+         le carré tombait à 4,0 coupes / 10 s pour 5 exigées. Il passe en crème : clair sur sombre,
+         c est le contraste maximal, et les trois familles se distinguent enfin les unes des autres. */
+      .balai.glisse { background: #ECEAE6; }
+      .balai.echelle { border-radius: 50%; transform-origin: 50% 50%; }
+      .voile-sortie { position: absolute; inset: 0; background: #0A0C11; z-index: 2; }
+
+      /* La zone sûre : 10 % en haut, 16 % en bas.
+         Ce n'est pas une consigne, c'est la boîte dans laquelle tout le contenu vit. */
+      .bloc {
+        position: absolute; left: 108px; right: 108px;
+        top: 135px; bottom: 216px;
+        display: flex; flex-direction: column; justify-content: center; gap: 34px;
+      }
+
+      .titre {
+        font-family: "Bricolage Grotesque", Georgia, serif; font-weight: 700;
+        line-height: 0.96; letter-spacing: -0.035em; color: #ECEAE6; text-wrap: balance;
+      }
+      .titre .mot { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: 0.08em; }
+      .titre .mot i { display: inline-block; font-style: normal; }
+      .accent .titre { color: #D97757; }
+      .sourd .titre { color: #8B867D; }
+
+      .kicker {
+        font-family: "Hanken Grotesk", system-ui, sans-serif; font-weight: 600;
+        font-size: 46px; letter-spacing: 0.2em; text-transform: uppercase; color: #D97757;
+      }
+      .filet { display: block; height: 5px; background: #D97757; transform-origin: left center; }
+
+      /* Captures. Les trois modes occupent la largeur entière : aucun n'autorise le timbre-poste. */
+      .capture .cadre { position: absolute; inset: 0; overflow: hidden; display: flex; justify-content: center; }
+      .capture .cadre img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+      .capture .voile {
+        position: absolute; inset: 0;
+        background: linear-gradient(to bottom, rgba(10,12,17,0.74) 0%, rgba(10,12,17,0) 24%, rgba(10,12,17,0) 42%, rgba(10,12,17,0.95) 86%);
+      }
+      .capture.defilement .cadre { align-items: flex-start; }
+      .capture.defilement .cadre img { height: auto; object-fit: fill; }
+
+      /* La section carte dérive (voir la dérive de plan) : son propre overflow:hidden la ferait
+         découper son halo. Invisible en vertical (le halo y vaut 0 d'alpha au bord) mais visible en
+         paysage, où il vaut encore 0,31 : on verrait une couture horizontale. Le rognage reste tenu
+         par #root, lui aussi en overflow:hidden — au repos l'image est identique au pixel près. */
+      .capture.carte { overflow: visible; }
+      .capture.carte .halo {
+        position: absolute; left: 50%; top: 50%;
+        width: 1404px; height: 1404px;
+        margin-left: -702px; margin-top: -702px;
+        background: radial-gradient(closest-side, rgba(217,119,87,0.55), rgba(217,119,87,0));
+      }
+      .capture.carte .porte {
+        position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+        display: flex; justify-content: center; overflow: hidden;
+      }
+      .capture.carte .porte img {
+        width: 1102px; height: auto; object-fit: fill;
+        border-radius: 20px; box-shadow: 0 44px 130px rgba(0,0,0,0.72);
+      }
+      .capture.carte .lueur {
+        position: absolute; top: -20%; bottom: -20%; left: 0; width: 34%;
+        background: linear-gradient(100deg, rgba(243,238,230,0) 0%, rgba(243,238,230,0.16) 50%, rgba(243,238,230,0) 100%);
+        pointer-events: none; will-change: transform;
+      }
+      .capture.carte .surligne {
+        position: absolute; left: 108px; width: 864px;
+        top: calc(50% + 74px);
+        height: 7px; background: #D97757; transform-origin: left center;
+      }
+
+      .legende {
+        position: absolute; left: 108px; right: 108px; bottom: 86px;
+        font-family: "Hanken Grotesk", system-ui, sans-serif; font-weight: 600;
+        font-size: 62px; line-height: 1.14; color: #ECEAE6; text-wrap: balance;
+      }
+      .legende.souligne { color: #D97757; }
+
+      /* Preuve par le code : une ligne, lisible sur un téléphone tenu à bout de bras. */
+      .code .fenetre {
+        border: 2px solid rgba(217,119,87,0.42); border-radius: 22px;
+        background: rgba(217,119,87,0.07); padding: 52px 40px;
+        display: flex; flex-direction: column; gap: 18px;
+      }
+      .code .ligne i { display: inline-block; }
+      .code .ligne {
+        font-family: "JetBrains Mono", ui-monospace, monospace; font-weight: 500;
+        font-size: 56px; line-height: 1.4; color: #ECEAE6; word-break: break-word;
+      }
+      .code .note {
+        font-family: "Hanken Grotesk", system-ui, sans-serif; font-weight: 600;
+        font-size: 76px; line-height: 1.14; color: #D97757; text-wrap: balance;
+      }
+
+      /* La clôture : l'aube qui monte du bas. Jamais de blanc. */
+      .marque .aube {
+        position: absolute; left: -20%; right: -20%; bottom: -12%; height: 62%;
+        transform-origin: bottom center;
+        background: radial-gradient(60% 100% at 50% 100%, #D97757 0%, rgba(217,119,87,0.34) 42%, rgba(217,119,87,0) 74%);
+      }
+      .marque .bloc { justify-content: flex-end; gap: 30px; }
+      .marque .logo { width: 536px; height: auto; }
+      .marque .mot-fin {
+        font-family: "Bricolage Grotesque", Georgia, serif; font-weight: 700;
+        font-size: 85px; line-height: 1.02; letter-spacing: -0.03em; color: #ECEAE6;
+      }
+      .marque .url {
+        font-family: "Hanken Grotesk", system-ui, sans-serif; font-weight: 600;
+        font-size: 52px; letter-spacing: 0.16em; color: #D97757;
+      }
+
+      .coupe { background: #0A0C11; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-width="1080"
+      data-height="1350"
+      data-duration="19.14"
+      data-fps="30"
+    >
+      <!-- Le fond vivant. Il est SOUS tous les plans et ne s'éteint jamais : c'est lui qui tient
+           le critère « l'image vit » du juge, et qui rend un plan figé impossible même quand le
+           texte, lui, ne bouge plus. Trois couches, trois procédés nommés :
+           Orbit (le halo qui tourne), Parallax (l'horizon plus lent que le halo), Float (le grain). -->
+      <div class="fond" data-layout-ignore="true">
+        <div class="halo-fond" id="halo-fond"></div>
+        <div class="horizon" id="horizon"></div>
+        <div class="grain" id="grain"></div>
+      </div>
+      <section id="p00" class="clip texte" data-start="0" data-duration="1.7">
+        <div class="bloc" id="p00-bloc">
+          <p class="kicker" id="p00-k">22 h 40</p>
+          <h2 class="titre" id="p00-t" style="font-size: 176px"><span class="mot"><i>Une</i></span> <span class="mot"><i>demande</i></span> <span class="mot"><i>arrive.</i></span></h2>
+          <span class="filet" id="p00-fi"></span>
+        </div>
+      </section>
+      <div id="p01-tr" class="balai balai" data-start="1.54" data-duration="0.32"></div>
+      <section id="p01" class="clip texte" data-start="1.7" data-duration="1.5">
+        <div class="bloc" id="p01-bloc">
+          
+          <h2 class="titre" id="p01-t" style="font-size: 176px"><span class="mot"><i>Vous</i></span> <span class="mot"><i>avez</i></span> <span class="mot"><i>fini</i></span> <span class="mot"><i>à</i></span> <span class="mot"><i>19</i></span> <span class="mot"><i>h.</i></span></h2>
+          
+        </div>
+      </section>
+      <div id="p02-tr" class="balai glisse" data-start="3.04" data-duration="0.32"></div>
+      <section id="p02" class="clip texte sourd" data-start="3.2" data-duration="1.4">
+        <div class="bloc" id="p02-bloc">
+          
+          <h2 class="titre" id="p02-t" style="font-size: 136px"><span class="mot"><i>Demain,</i></span> <span class="mot"><i>cinq</i></span> <span class="mot"><i>heures</i></span> <span class="mot"><i>de</i></span> <span class="mot"><i>chantier.</i></span></h2>
+          
+        </div>
+      </section>
+      <section id="p03" class="clip coupe" data-start="4.6" data-duration="0.12"></section>
+      <section id="p04" class="clip texte accent" data-start="4.72" data-duration="1.7">
+        <div class="bloc" id="p04-bloc">
+          
+          <h2 class="titre" id="p04-t" style="font-size: 156px"><span class="mot"><i>Vous</i></span> <span class="mot"><i>demandez,</i></span> <span class="mot"><i>elle</i></span> <span class="mot"><i>rédige.</i></span></h2>
+          
+        </div>
+      </section>
+      <div id="p05-tr" class="balai echelle" data-start="6.26" data-duration="0.32"></div>
+      <section id="p05" class="clip capture carte" data-layout-allow-overflow="true" data-start="6.42" data-duration="1.9">
+        <div class="halo" id="p05-halo"></div>
+        <div class="porte" data-layout-allow-overflow="true"><img id="p05-img" src="assets/crop-rep.png" alt="" data-start="6.42" data-duration="1.9" /><span class="lueur" id="p05-lu"></span></div>
+        
+        <p class="legende" id="p05-lg">Elle a lu la demande.</p>
+      </section>
+      <div id="p06-tr" class="balai balai" data-start="8.16" data-duration="0.32"></div>
+      <section id="p06" class="clip texte" data-start="8.32" data-duration="1.5">
+        <div class="bloc" id="p06-bloc">
+          
+          <h2 class="titre" id="p06-t" style="font-size: 156px"><span class="mot"><i>Pas</i></span> <span class="mot"><i>un</i></span> <span class="mot"><i>message</i></span> <span class="mot"><i>automatique.</i></span></h2>
+          
+        </div>
+      </section>
+      <section id="p07" class="clip coupe" data-start="9.82" data-duration="0.12"></section>
+      <section id="p08" class="clip texte" data-start="9.94" data-duration="1.6">
+        <div class="bloc" id="p08-bloc">
+          
+          <h2 class="titre" id="p08-t" style="font-size: 176px"><span class="mot"><i>Vous</i></span> <span class="mot"><i>validez</i></span> <span class="mot"><i>d’un</i></span> <span class="mot"><i>pouce.</i></span></h2>
+          
+        </div>
+      </section>
+      <div id="p09-tr" class="balai glisse" data-start="11.379999999999999" data-duration="0.32"></div>
+      <section id="p09" class="clip texte" data-start="11.54" data-duration="1.7">
+        <div class="bloc" id="p09-bloc">
+          
+          <h2 class="titre" id="p09-t" style="font-size: 128px"><span class="mot"><i>Dès</i></span> <span class="mot"><i>59</i></span> <span class="mot"><i>€/mois,</i></span> <span class="mot"><i>elle</i></span> <span class="mot"><i>répond</i></span> <span class="mot"><i>seule.</i></span></h2>
+          
+        </div>
+      </section>
+      <div id="p10-tr" class="balai echelle" data-start="13.08" data-duration="0.32"></div>
+      <section id="p10" class="clip texte" data-start="13.24" data-duration="1.5">
+        <div class="bloc" id="p10-bloc">
+          
+          <h2 class="titre" id="p10-t" style="font-size: 136px"><span class="mot"><i>Sur</i></span> <span class="mot"><i>votre</i></span> <span class="mot"><i>page,</i></span> <span class="mot"><i>à</i></span> <span class="mot"><i>votre</i></span> <span class="mot"><i>marque.</i></span></h2>
+          
+        </div>
+      </section>
+      <div id="p11-tr" class="balai balai" data-start="14.58" data-duration="0.32"></div>
+      <section id="p11" class="clip texte accent" data-start="14.74" data-duration="2">
+        <div class="bloc" id="p11-bloc">
+          
+          <h2 class="titre" id="p11-t" style="font-size: 176px"><span class="mot"><i>Le</i></span> <span class="mot"><i>client</i></span> <span class="mot"><i>n’attend</i></span> <span class="mot"><i>plus.</i></span></h2>
+          
+        </div>
+      </section>
+      <div id="p12-tr" class="balai glisse" data-start="16.58" data-duration="0.32"></div>
+      <section id="p12" class="clip marque" data-start="16.74" data-duration="2.4">
+        <div class="aube" data-layout-allow-overflow="true" id="p12-aube"></div>
+        <div class="bloc" id="p12-bloc">
+          <img class="logo" id="p12-logo" src="assets/marque.svg" alt="Presti" data-start="16.74" data-duration="2.4" />
+          <p class="mot-fin" id="p12-mot">Le premier qui répond emporte le chantier.</p>
+          <p class="url" id="p12-url">prestiapp.fr</p>
+        </div>
+      </section>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+  tl.fromTo("#p00-k", {y: 16, opacity: 0}, {...{y: 0, opacity: 1}, duration: 0.3, ease: "power3.out"}, 0);
+  tl.fromTo("#p00-t .mot i", {yPercent: 108, opacity: 0}, {yPercent: 0, opacity: 1, duration: 0.46, ease: "power3.out", stagger: 0.055}, 0.14);
+  tl.fromTo("#p00-fi", {scaleX: 0, opacity: 1}, {...{scaleX: 1}, duration: 0.7, ease: "power3.out"}, 0.3);
+  tl.fromTo("#p00-bloc", {y: 49, xPercent: 1.5}, {...{y: -49, xPercent: -1.5}, duration: 1.7, ease: "sine.inOut"}, 0);
+  tl.fromTo("#p01-tr", {xPercent: -105, skewX: -8}, {xPercent: 105, skewX: -8, duration: 0.32, ease: "power2.inOut"}, 1.54);
+  tl.fromTo("#p01-t .mot i", {yPercent: 108, opacity: 0}, {yPercent: 0, opacity: 1, duration: 0.46, ease: "power3.out", stagger: 0.055}, 1.74);
+  tl.fromTo("#p01-bloc", {y: 44, xPercent: 1.5}, {...{y: -44, xPercent: -1.5}, duration: 1.5, ease: "sine.inOut"}, 1.7);
+  tl.fromTo("#p02-tr", {yPercent: 105}, {yPercent: -105, duration: 0.32, ease: "power2.inOut"}, 3.04);
+  tl.fromTo("#p02-t .mot i", {yPercent: 108, opacity: 0}, {yPercent: 0, opacity: 1, duration: 0.46, ease: "power3.out", stagger: 0.055}, 3.24);
+  tl.fromTo("#p02-bloc", {y: 41, xPercent: 1.5}, {...{y: -41, xPercent: -1.5}, duration: 1.4, ease: "sine.inOut"}, 3.2);
+  tl.fromTo("#p04-t .mot i", {yPercent: 108, opacity: 0}, {yPercent: 0, opacity: 1, duration: 0.46, ease: "power3.out", stagger: 0.055}, 4.76);
+  tl.fromTo("#p04-bloc", {y: 49, xPercent: 1.5}, {...{y: -49, xPercent: -1.5}, duration: 1.7, ease: "sine.inOut"}, 4.72);
+  tl.fromTo("#p05-tr", {scale: 0.06, opacity: 1}, {scale: 2.4, opacity: 0, duration: 0.32, ease: "power2.inOut"}, 6.26);
+  tl.fromTo("#p05-img", {scale: 0.98, x: 53}, {...{scale: 1.14, x: -53}, duration: 1.9, ease: "sine.inOut"}, 6.42);
+  tl.fromTo("#p05-lu", {xPercent: -140}, {...{xPercent: 140}, duration: 1.1, ease: "power1.inOut"}, 6.6);
+  tl.fromTo("#p05-halo", {opacity: 0.10, scale: 0.78}, {...{opacity: 0.5, scale: 1.28}, duration: 1.9, ease: "sine.inOut"}, 6.42);
+  tl.fromTo("#p05", {y: 0}, {...{y: -110}, duration: 1.9, ease: "sine.inOut"}, 6.42);
+  tl.fromTo("#p05-lg", {y: 38, opacity: 0}, {...{y: 0, opacity: 1}, duration: 0.42, ease: "power3.out"}, 6.52);
+  tl.fromTo("#p06-tr", {xPercent: -105, skewX: -8}, {xPercent: 105, skewX: -8, duration: 0.32, ease: "power2.inOut"}, 8.16);
+  tl.fromTo("#p06-t .mot i", {yPercent: 108, opacity: 0}, {yPercent: 0, opacity: 1, duration: 0.46, ease: "power3.out", stagger: 0.055}, 8.36);
+  tl.fromTo("#p06-bloc", {y: 44, xPercent: 1.5}, {...{y: -44, xPercent: -1.5}, duration: 1.5, ease: "sine.inOut"}, 8.32);
+  tl.fromTo("#p08-t .mot i", {yPercent: 108, opacity: 0}, {yPercent: 0, opacity: 1, duration: 0.46, ease: "power3.out", stagger: 0.055}, 9.98);
+  tl.fromTo("#p08-bloc", {y: 46, xPercent: 1.5}, {...{y: -46, xPercent: -1.5}, duration: 1.6, ease: "sine.inOut"}, 9.94);
+  tl.fromTo("#p09-tr", {yPercent: 105}, {yPercent: -105, duration: 0.32, ease: "power2.inOut"}, 11.38);
+  tl.fromTo("#p09-t .mot i", {yPercent: 108, opacity: 0}, {yPercent: 0, opacity: 1, duration: 0.46, ease: "power3.out", stagger: 0.055}, 11.58);
+  tl.fromTo("#p09-bloc", {y: 49, xPercent: 1.5}, {...{y: -49, xPercent: -1.5}, duration: 1.7, ease: "sine.inOut"}, 11.54);
+  tl.fromTo("#p10-tr", {scale: 0.06, opacity: 1}, {scale: 2.4, opacity: 0, duration: 0.32, ease: "power2.inOut"}, 13.08);
+  tl.fromTo("#p10-t .mot i", {yPercent: 108, opacity: 0}, {yPercent: 0, opacity: 1, duration: 0.46, ease: "power3.out", stagger: 0.055}, 13.28);
+  tl.fromTo("#p10-bloc", {y: 44, xPercent: 1.5}, {...{y: -44, xPercent: -1.5}, duration: 1.5, ease: "sine.inOut"}, 13.24);
+  tl.fromTo("#p11-tr", {xPercent: -105, skewX: -8}, {xPercent: 105, skewX: -8, duration: 0.32, ease: "power2.inOut"}, 14.58);
+  tl.fromTo("#p11-t .mot i", {yPercent: 108, opacity: 0}, {yPercent: 0, opacity: 1, duration: 0.46, ease: "power3.out", stagger: 0.055}, 14.78);
+  tl.fromTo("#p11-bloc", {y: 58, xPercent: 1.5}, {...{y: -58, xPercent: -1.5}, duration: 2, ease: "sine.inOut"}, 14.74);
+  tl.fromTo("#p12-tr", {yPercent: 105}, {yPercent: -105, duration: 0.32, ease: "power2.inOut"}, 16.58);
+  tl.fromTo("#p12-aube", {scaleY: 0.42, opacity: 0.22, xPercent: -8}, {...{scaleY: 1.4, opacity: 1, xPercent: 8}, duration: 2.4, ease: "sine.inOut"}, 16.74);
+  tl.fromTo("#p12-logo", {y: 46, opacity: 0}, {...{y: 0, opacity: 1}, duration: 0.6, ease: "power3.out"}, 16.79);
+  tl.fromTo("#p12-mot", {y: 34, opacity: 0}, {...{y: 0, opacity: 1}, duration: 0.55, ease: "power3.out"}, 17.06);
+  tl.fromTo("#p12-url", {y: 20, opacity: 0}, {...{y: 0, opacity: 1}, duration: 0.5, ease: "power3.out"}, 17.36);
+  tl.fromTo("#p12-bloc", {y: 37}, {...{y: -37}, duration: 2.4, ease: "sine.inOut"}, 16.74);
+  tl.fromTo("#halo-fond", {xPercent: -16, yPercent: 9, scale: 0.92}, {...{xPercent: 16, yPercent: -9, scale: 1.1}, duration: 4.3, ease: "sine.inOut", repeat: 5, yoyo: true}, 0);
+  tl.fromTo("#horizon", {y: 837, xPercent: 6}, {...{y: 459, xPercent: -6}, duration: 6.7, ease: "sine.inOut", repeat: 3, yoyo: true}, 0);
+  tl.fromTo("#grain", {xPercent: -1.6, yPercent: 1.2, opacity: 0.34}, {...{xPercent: 1.6, yPercent: -1.2, opacity: 0.62}, duration: 2.9, ease: "sine.inOut", repeat: 7, yoyo: true}, 0);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+Compte de relecture des stores — Presti (généré le 2026-09-06 par scripts/compte-relecture.mjs)
+
+À copier dans les notes de relecture (App Store Connect « Informations de connexion » / Play Console « Instructions pour l'accès à l'application ») :
+
+  Email : [EMAIL_MASQUE]
+  Mot de passe : [MASQUE_SECRET]
+  Code à 6 chiffres demandé après le mot de passe (« code envoyé par email ») : 204543
+
+Le code est fixe pour CE compte uniquement (variables RELECTURE_EMAIL / RELECTURE_CODE sur Vercel). Aucun email n'est envoyé.
+Pour le renouveler : relancer le script (nouveau code, nouveau mot de passe), puis mettre à jour les notes des stores.

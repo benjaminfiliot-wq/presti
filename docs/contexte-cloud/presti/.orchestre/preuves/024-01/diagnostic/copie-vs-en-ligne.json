@@ -1,0 +1,170 @@
+{
+ "date": "2026-09-16T19:06:24.178Z",
+ "out": [
+  {
+   "fichier": "index.html",
+   "http": 200,
+   "octetsLocal": 44313,
+   "octetsEnLigne": 44313,
+   "shaLocal": "2be7dbe65bd1c955",
+   "shaEnLigne": "2be7dbe65bd1c955",
+   "identique": true,
+   "age": "28877",
+   "etag": "W/\"de5f5819ac4ee5036a89e80aa5e08279\""
+  },
+  {
+   "fichier": "styles.css",
+   "http": 200,
+   "octetsLocal": 82728,
+   "octetsEnLigne": 82728,
+   "shaLocal": "eccacb0055db9ec5",
+   "shaEnLigne": "f56be90187d9f3f3",
+   "identique": false,
+   "age": "78735",
+   "etag": "W/\"ed8d7c2d8768e5a30d356ce74bf68f0f\""
+  },
+  {
+   "fichier": "bureau.css",
+   "http": 200,
+   "octetsLocal": 13745,
+   "octetsEnLigne": 13745,
+   "shaLocal": "498feaf0f734cd49",
+   "shaEnLigne": "498feaf0f734cd49",
+   "identique": true,
+   "age": "28877",
+   "etag": "W/\"b6debd2fff75e9e0432d6572b335fb24\""
+  },
+  {
+   "fichier": "site.js",
+   "http": 200,
+   "octetsLocal": 44552,
+   "octetsEnLigne": 44552,
+   "shaLocal": "469bf16444653465",
+   "shaEnLigne": "469bf16444653465",
+   "identique": true,
+   "age": "76484",
+   "etag": "W/\"48b9231d45c72ec6c9f3a43d93c5b181\""
+  },
+  {
+   "fichier": "relief.js",
+   "http": 200,
+   "octetsLocal": 10661,
+   "octetsEnLigne": 10661,
+   "shaLocal": "0577c003c1bfc6e3",
+   "shaEnLigne": "0577c003c1bfc6e3",
+   "identique": true,
+   "age": "0",
+   "etag": "W/\"794d62aa611500106a82e986168a90c7\""
+  },
+  {
+   "fichier": "relief-fil.js",
+   "http": 200,
+   "octetsLocal": 21094,
+   "octetsEnLigne": 21094,
+   "shaLocal": "8b1c990cec8762cb",
+   "shaEnLigne": "8b1c990cec8762cb",
+   "identique": true,
+   "age": "0",
+   "etag": "W/\"b5c4126b5bcf1c7c52d28ea68c802354\""
+  },
+  {
+   "fichier": "favicon.svg",
+   "http": 200,
+   "octetsLocal": 968,
+   "octetsEnLigne": 968,
+   "shaLocal": "0c380ce6a66bf109",
+   "shaEnLigne": "0c380ce6a66bf109",
+   "identique": true,
+   "age": "0",
+   "etag": "\"e03f6b6cc9cbb1d4bbbebf8c12d14f47\""
+  },
+  {
+   "fichier": "eclate/assemble.avif",
+   "http": 200,
+   "octetsLocal": 9478,
+   "octetsEnLigne": 9478,
+   "shaLocal": "92118ca71bd110d8",
+   "shaEnLigne": "92118ca71bd110d8",
+   "identique": true,
+   "age": "76476",
+   "etag": "\"04857debe11b4b70caa7975cf4e5599d\""
+  },
+  {
+   "fichier": "eclate/calque-contremarche.avif",
+   "http": 200,
+   "octetsLocal": 8372,
+   "octetsEnLigne": 8372,
+   "shaLocal": "95c8b9e50fe668c1",
+   "shaEnLigne": "95c8b9e50fe668c1",
+   "identique": true,
+   "age": "76476",
+   "etag": "\"f67db17a7fad3d3841e080641854dc87\""
+  },
+  {
+   "fichier": "eclate/calque-limon.avif",
+   "http": 200,
+   "octetsLocal": 7844,
+   "octetsEnLigne": 7844,
+   "shaLocal": "11a232598728e925",
+   "shaEnLigne": "11a232598728e925",
+   "identique": true,
+   "age": "76476",
+   "etag": "\"aa3407f7bb14f4e487c38b6270b54f35\""
+  },
+  {
+   "fichier": "eclate/calque-marche.avif",
+   "http": 200,
+   "octetsLocal": 10915,
+   "octetsEnLigne": 10915,
+   "shaLocal": "9c7578134f672078",
+   "shaEnLigne": "9c7578134f672078",
+   "identique": true,
+   "age": "0",
+   "etag": "\"a09425d0aee71ab3a41f5db12d2dce70\""
+  },
+  {
+   "fichier": "eclate/calque-vis.avif",
+   "http": 200,
+   "octetsLocal": 5140,
+   "octetsEnLigne": 5140,
+   "shaLocal": "0d8d62a426e4dff3",
+   "shaEnLigne": "0d8d62a426e4dff3",
+   "identique": true,
+   "age": "0",
+   "etag": "\"1abf1728c95977bccc224d149439bfd6\""
+  },
+  {
+   "fichier": "eclate/eclate.avif",
+   "http": 200,
+   "octetsLocal": 15070,
+   "octetsEnLigne": 15070,
+   "shaLocal": "1e2860df690e7808",
+   "shaEnLigne": "1e2860df690e7808",
+   "identique": true,
+   "age": "0",
+   "etag": "\"6cec22bd2a3f428d88f087b34ebfe090\""
+  },
+  {
+   "fichier": "menuisier-rennes/index.html",
+   "http": 200,
+   "octetsLocal": 23642,
+   "octetsEnLigne": 23642,
+   "shaLocal": "d72e0fe72ad44879",
+   "shaEnLigne": "d72e0fe72ad44879",
+   "identique": true,
+   "age": "35915",
+   "etag": "W/\"e64ae93a6d1c78a2e2c73628ef4d69c0\""
+  },
+  {
+   "fichier": "mentions-legales/index.html",
+   "http": 200,
+   "octetsLocal": 14632,
+   "octetsEnLigne": 14632,
+   "shaLocal": "ec92751c2b0c18c4",
+   "shaEnLigne": "ec92751c2b0c18c4",
+   "identique": true,
+   "age": "0",
+   "etag": "W/\"3a2c1656cdd138a24c5976602a5939c2\""
+  }
+ ]
+}

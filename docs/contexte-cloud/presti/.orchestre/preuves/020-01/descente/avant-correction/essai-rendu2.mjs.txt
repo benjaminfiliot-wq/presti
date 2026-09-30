@@ -1,0 +1,19 @@
+// essai-rendu2.mjs — témoin du rendu à la résolution de la source : identité à δ = 0, durées, aperçus JPEG
+import { createRequire } from 'node:module'
+import fs from 'node:fs'
+import { rendre, versPng, SRC2400 } from './rendu.mjs'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const sharp = require('sharp')
+const ICI = 'C:/Users/benja/AppData/Local/Temp/claude/C--Users-benja-Documents-ofm/fdff3dee-5b68-4d0d-a1d7-d3b56ef3740d/scratchpad/signature/films/descente/'
+const res = {}
+const ref = await sharp(SRC2400).removeAlpha().raw().toBuffer()
+for (const [d, rho] of [[0, 0], [0.116, 0], [0.066, 0], [0.116, -8.923]]) {
+  let t0 = Date.now(); const r = await rendre(d, rho); const tr = Date.now() - t0
+  t0 = Date.now(); const png = await versPng(r); const tp = Date.now() - t0
+  const nom = `d${d}_r${rho}`
+  res[nom] = { rendu_ms: tr, png_ms: tp, png_octets: png.length, taille: `${r.width}x${r.height}` }
+  if (d === 0) { let m = 0, s = 0; for (let i = 0; i < ref.length; i++) { const e = Math.abs(ref[i] - r.data[i]); s += e; if (e > m) m = e } res[nom].ecartMoyenContreSource = s / ref.length / 255; res[nom].ecartMaxNiveaux = m }
+  await sharp(r.data, { raw: { width: r.width, height: r.height, channels: 3 } }).resize(1440).jpeg({ quality: 88 }).toFile(ICI + `essai-rendu2-${nom}.jpg`)
+}
+console.log(JSON.stringify(res, null, 1))
+fs.writeFileSync(ICI + 'essai-rendu2.json', JSON.stringify(res, null, 1))

@@ -1,0 +1,15 @@
+# Noms internes des polices (table name) — lu le 2026-09-16 avec fontTools 4.63, lecture seule
+# Fichiers : public/sites-demo/lestraque/fonts/*.woff2 et public/sites-demo/_polices/{fraunces,ibm-plex-sans}/*.woff2
+lestraque/fonts/fraunces-300.woff2	famille(1)='Fraunces'	sous-famille(2)='Regular'	nom-complet(4)='Fraunces Regular'	postscript(6)='Fraunces-Regular'	OS/2.usWeightClass=300	axes(fvar)=None
+lestraque/fonts/fraunces-400.woff2	famille(1)='Fraunces'	sous-famille(2)='Regular'	nom-complet(4)='Fraunces Regular'	postscript(6)='Fraunces-Regular'	OS/2.usWeightClass=400	axes(fvar)=None
+lestraque/fonts/fraunces-600.woff2	famille(1)='Fraunces'	sous-famille(2)='Regular'	nom-complet(4)='Fraunces Regular'	postscript(6)='Fraunces-Regular'	OS/2.usWeightClass=600	axes(fvar)=None
+lestraque/fonts/ibm-plex-sans-400.woff2	famille(1)='IBM Plex Sans'	sous-famille(2)='Regular'	nom-complet(4)='IBM Plex Sans Regular'	postscript(6)='IBMPlexSans-Regular'	OS/2.usWeightClass=400	axes(fvar)=None
+lestraque/fonts/ibm-plex-sans-600.woff2	famille(1)='IBM Plex Sans'	sous-famille(2)='Regular'	nom-complet(4)='IBM Plex Sans Regular'	postscript(6)='IBMPlexSans-Regular'	OS/2.usWeightClass=600	axes(fvar)=None
+_polices/fraunces/fraunces-300.woff2	famille(1)='Fraunces'	sous-famille(2)='Regular'	nom-complet(4)='Fraunces Regular'	postscript(6)='Fraunces-Regular'	OS/2.usWeightClass=300	axes(fvar)=None
+_polices/fraunces/fraunces-400.woff2	famille(1)='Fraunces'	sous-famille(2)='Regular'	nom-complet(4)='Fraunces Regular'	postscript(6)='Fraunces-Regular'	OS/2.usWeightClass=400	axes(fvar)=None
+_polices/fraunces/fraunces-600.woff2	famille(1)='Fraunces'	sous-famille(2)='Regular'	nom-complet(4)='Fraunces Regular'	postscript(6)='Fraunces-Regular'	OS/2.usWeightClass=600	axes(fvar)=None
+_polices/fraunces/fraunces.woff2	famille(1)='Fraunces'	sous-famille(2)='Regular'	nom-complet(4)='Fraunces Regular'	postscript(6)='Fraunces-Regular'	OS/2.usWeightClass=900	axes(fvar)=[('wght', 100.0, 900.0)]
+_polices/ibm-plex-sans/ibm-plex-sans-400.woff2	famille(1)='IBM Plex Sans'	sous-famille(2)='Regular'	nom-complet(4)='IBM Plex Sans Regular'	postscript(6)='IBMPlexSans-Regular'	OS/2.usWeightClass=400	axes(fvar)=None
+_polices/ibm-plex-sans/ibm-plex-sans-600.woff2	famille(1)='IBM Plex Sans'	sous-famille(2)='Regular'	nom-complet(4)='IBM Plex Sans Regular'	postscript(6)='IBMPlexSans-Regular'	OS/2.usWeightClass=600	axes(fvar)=None
+_polices/ibm-plex-sans/ibm-plex-sans-latin-ext.woff2	famille(1)='IBM Plex Sans'	sous-famille(2)='Regular'	nom-complet(4)='IBM Plex Sans Regular'	postscript(6)='IBMPlexSans-Regular'	OS/2.usWeightClass=400	axes(fvar)=[('wght', 100.0, 700.0)]
+_polices/ibm-plex-sans/ibm-plex-sans.woff2	famille(1)='IBM Plex Sans'	sous-famille(2)='Regular'	nom-complet(4)='IBM Plex Sans Regular'	postscript(6)='IBMPlexSans-Regular'	OS/2.usWeightClass=400	axes(fvar)=[('wght', 100.0, 700.0)]

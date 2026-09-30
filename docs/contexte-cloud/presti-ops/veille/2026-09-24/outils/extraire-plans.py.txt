@@ -1,0 +1,119 @@
+# Extraction des plans (scene + toutes les 2 s), dedoublonnage, planches 3x3 avec drawtext.
+# Usage : python plans.py <nom>
+import json, os, re, subprocess, sys
+import numpy as np
+from PIL import Image
+
+BASE = "C:/Users/benja/Documents/presti-ops/veille/2026-09-24"
+FONT = "C\\:/Windows/Fonts/arialbd.ttf"
+nom = sys.argv[1]
+video = f"{BASE}/videos/{nom}.mp4"
+out = f"{BASE}/images/{nom}"
+planches = f"{out}/planches"
+os.makedirs(planches, exist_ok=True)
+
+def run(args):
+    return subprocess.run(args, capture_output=True, text=True, encoding="utf-8", errors="replace")
+
+dur = float(run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", video]).stdout.strip())
+
+# 1) detection des changements de scene (sur une copie reduite, plus leger)
+r = run(["ffmpeg", "-hide_banner", "-nostats", "-i", video, "-an",
+         "-vf", "scale=360:-2,select='gt(scene,0.2)',showinfo", "-f", "null", "-"])
+scenes = [float(m) for m in re.findall(r"pts_time:([0-9.]+)", r.stderr)]
+# 2) un plan toutes les 2 s
+regular = [float(t) for t in np.arange(0, dur - 0.05, 2.0)]
+
+cands = {}
+for t in regular:
+    cands[round(t, 1)] = "2s"
+for t in scenes:
+    k = round(t, 1)
+    cands[k] = "scene" if k not in cands else cands[k] + "+scene"
+times = sorted(cands)
+
+def fname(t):
+    return f"t{t:05.1f}.jpg"
+
+for t in times:
+    p = f"{out}/{fname(t)}"
+    if os.path.exists(p) and os.path.getsize(p) > 0:
+        continue
+    tt = min(t, max(dur - 0.1, 0))
+    run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-ss", f"{tt:.3f}", "-i", video,
+         "-frames:v", "1", "-vf", "scale=720:-2", "-q:v", "3", p])
+
+# 3) verification : aucun fichier vide
+kept = []
+for t in times:
+    p = f"{out}/{fname(t)}"
+    if os.path.exists(p) and os.path.getsize(p) > 1000:
+        kept.append(t)
+    else:
+        if os.path.exists(p):
+            os.remove(p)
+        print("ECHEC plan", t)
+
+extracted = len(kept)
+
+# 4) dedoublonnage des quasi identiques si > 60 plans
+def sig(t):
+    # signature normalisee (moyenne 0, ecart-type 1) : un ecran sombre compte autant qu'une page blanche
+    im = Image.open(f"{out}/{fname(t)}").convert("L").resize((72, 128))
+    a = np.asarray(im, dtype=np.float32)
+    return (a - a.mean()) / (a.std() + 1e-3)
+
+removed = 0
+if len(kept) > 60:
+    # on retire un a un le plan le plus proche de son voisin precedent, jusqu'a 60
+    sigs = {t: sig(t) for t in kept}
+    final = list(kept)
+    while len(final) > 60:
+        diffs = [(np.abs(sigs[final[i]] - sigs[final[i - 1]]).mean(), i) for i in range(1, len(final))]
+        d, i = min(diffs)
+        final.pop(i)
+    for t in kept:
+        if t not in final:
+            os.remove(f"{out}/{fname(t)}")
+            removed += 1
+    kept = final
+
+# 5) planches 3x3 (vignettes 360 px, horodatage incruste par drawtext)
+for f in os.listdir(planches):
+    os.remove(f"{planches}/{f}")
+nplanches = 0
+for i in range(0, len(kept), 9):
+    grp = kept[i:i + 9]
+    args = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y"]
+    for t in grp:
+        args += ["-i", f"{out}/{fname(t)}"]
+    # complete la grille avec du noir
+    fc = []
+    labels = []
+    for j, t in enumerate(grp):
+        mm, ss = divmod(t, 60)
+        txt = f"{int(mm)}\\:{ss:04.1f}"
+        tag = cands.get(t, "")
+        mark = " S" if "scene" in tag else ""
+        fc.append(f"[{j}:v]scale=360:640:force_original_aspect_ratio=decrease,pad=360:640:(ow-iw)/2:(oh-ih)/2:black,"
+                  f"drawtext=fontfile='{FONT}':text='{txt}{mark}':x=8:y=8:fontsize=30:fontcolor=yellow:"
+                  f"box=1:boxcolor=black@0.75:boxborderw=6[v{j}]")
+        labels.append(f"[v{j}]")
+    for j in range(len(grp), 9):
+        fc.append(f"color=c=black:s=360x640:d=1[v{j}]")
+        labels.append(f"[v{j}]")
+    layout = "|".join(f"{(j % 3) * 360}_{(j // 3) * 640}" for j in range(9))
+    fc.append("".join(labels) + f"xstack=inputs=9:layout={layout}:fill=black[o]")
+    p = f"{planches}/planche-{i // 9 + 1:02d}.jpg"
+    r = run(args + ["-filter_complex", ";".join(fc), "-map", "[o]", "-frames:v", "1", "-q:v", "3", p])
+    if os.path.exists(p) and os.path.getsize(p) > 1000:
+        nplanches += 1
+    else:
+        print("ECHEC planche", p, r.stderr[-800:])
+
+res = {"nom": nom, "duree": round(dur, 1), "scenes_detectees": len(scenes), "candidats": len(times),
+       "extraits": extracted, "doublons_supprimes": removed, "plans": len(kept), "planches": nplanches,
+       "zero_octet": [f for f in os.listdir(out) if os.path.isfile(f"{out}/{f}") and os.path.getsize(f"{out}/{f}") == 0]}
+json.dump({"resume": res, "plans": [{"t": t, "source": cands[t]} for t in kept]},
+          open(f"{out}/plans.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+print(json.dumps(res, ensure_ascii=False))

@@ -1,0 +1,59 @@
+{
+  "slug": "kononenko",
+  "url": "https://kononenkogroup.com/",
+  "lighthouse": "13.4.1",
+  "fetchTime": "2026-09-16T20:49:48.611Z",
+  "formFactor": "mobile",
+  "throttlingMethod": "simulate",
+  "throttling": {
+    "rttMs": 150,
+    "throughputKbps": 1638.4,
+    "requestLatencyMs": 562.5,
+    "downloadThroughputKbps": 1474.5600000000002,
+    "uploadThroughputKbps": 675,
+    "cpuSlowdownMultiplier": 4
+  },
+  "userAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Mobile Safari/537.36",
+  "benchmarkIndex": 665,
+  "erreurExecution": null,
+  "avertissements": [
+    "The tested device appears to have a slower CPU than  Lighthouse expects. This can negatively affect your performance score. Learn more about [calibrating an appropriate CPU slowdown multiplier](https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md#cpu-throttling)."
+  ],
+  "scorePerformance": 0.06,
+  "FCP_ms": 4361.09,
+  "LCP_ms": 8101.721500000001,
+  "TBT_ms": 3011.1079999999993,
+  "CLS": 0.8131792535459135,
+  "SpeedIndex_ms": 8009.620419158413,
+  "TTI_ms": 10589.0392,
+  "poidsTotal_octets": 3288037,
+  "tempsJs_ms": 5715.075999999965,
+  "travailThreadPrincipal_ms": 12973.85600000006,
+  "domElements": null,
+  "animationsNonComposees": {
+    "score": null,
+    "elements": 0,
+    "titre": null
+  },
+  "longuesTaches": 17,
+  "auditsEchoues": [
+    "first-contentful-paint (4.4 s)",
+    "largest-contentful-paint (8.1 s)",
+    "speed-index (8.0 s)",
+    "total-blocking-time (3,010 ms)",
+    "max-potential-fid (1,470 ms)",
+    "cumulative-layout-shift (0.813)",
+    "interactive (10.6 s)",
+    "mainthread-work-breakdown (13.0 s)",
+    "bootup-time (5.7 s)",
+    "layout-shifts (1 layout shift found)",
+    "unused-javascript (Est savings of 227 KiB)",
+    "bf-cache (1 failure reason)",
+    "cls-culprits-insight",
+    "forced-reflow-insight",
+    "image-delivery-insight (Est savings of 636 KiB)",
+    "lcp-breakdown-insight",
+    "lcp-discovery-insight",
+    "network-dependency-tree-insight"
+  ]
+}

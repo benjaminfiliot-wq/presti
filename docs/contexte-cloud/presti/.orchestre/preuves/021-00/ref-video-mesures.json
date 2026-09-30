@@ -1,0 +1,25 @@
+{
+  "date": "2026-09-15T13:20:00+02:00",
+  "methode_ecarts": "|a-b|/255 moyen entre images successives, réduction grise 160 px de large (comme scripts/video-qa.mjs) ; WebP à leur cadence (67 ms), MP4 rééchantillonnés à 15 i/s ; script travail/motionsites-apercus/ecarts.mjs",
+  "apercus_motionsites": {
+    "luxury-hero": { "acces": "premium", "format": "webp anime 640x472", "images": 75, "dureeMs": 4999, "octets": 2842722, "ecartMoyen": 0.0692, "ecartMax": 0.186, "premiereDerniere": 0.2111, "intervallesSup008": 28 },
+    "unwind-hero": { "acces": "premium", "format": "webp anime 640x466", "images": 75, "dureeMs": 4999, "octets": 1673622, "ecartMoyen": 0.0046, "ecartMax": 0.0067, "premiereDerniere": 0.0785 },
+    "speakup-venture-hero": { "acces": "premium", "format": "HLS Mux, copie 992x720 h264", "dureeS": 5.235, "octets": 1187595, "ecartMoyen": 0.0039, "ecartMax": 0.0741, "premiereDerniere": 0.0441 },
+    "visual-hero": { "acces": "free", "format": "HLS Mux (498x360 a 2026x1464, 736 a 8341 kbit/s), copie 996x720 h264", "dureeS": 6.93, "octets": 1944338, "ecartMoyen": 0.0061, "ecartMax": 0.0161, "premiereDerniere": 0.0991 },
+    "cinematic-brand": { "acces": "premium", "format": "webp anime 640x472", "images": 75, "dureeMs": 4999, "octets": 2455484, "ecartMoyen": 0.0241, "ecartMax": 0.0813, "premiereDerniere": 0.0952, "grilleC2": 5 },
+    "ember-dsgn-hero": { "acces": "premium", "format": "webp anime 640x464", "images": 74, "dureeMs": 4933, "octets": 1479644, "ecartMoyen": 0.0077, "ecartMax": 0.0363, "premiereDerniere": 0.1359 },
+    "luxury-focus": { "acces": "premium", "format": "HLS Mux, copie 982x720 h264", "dureeS": 5.88, "octets": 1675557, "ecartMoyen": 0.0527, "ecartMax": 0.2086, "premiereDerniere": 0.4768, "intervallesSup008": 17 },
+    "no-code-waitlist": { "acces": "free", "format": "HLS Mux, copie 988x720 h264", "dureeS": 9.366, "octets": 1408935, "ecartMoyen": 0.0048, "ecartMax": 0.0108, "premiereDerniere": 0.199 }
+  },
+  "essais_encodage": {
+    "outil": "ffmpeg 8.1.1 (gyan full) ; H.264 libx264 -preset slow -tune film ; AV1 libsvtav1 -preset 5 -g 240 réencodé depuis le H.264 ; sans son ; 24 i/s",
+    "escalier-1080-8s": { "h264_crf26": 1190283, "av1_crf38": 650092, "niveaux": "H.264 High 5.0 ; AV1 Main level 8" },
+    "escalier-720-8s": { "h264_crf26": 596020, "av1_crf38": 329164 },
+    "atelier-720-8s": { "h264_crf26": 279023, "av1_crf38": 109208 },
+    "escalier-portrait-720x1280-6s": { "h264_crf27": 290622, "av1_crf40": 187281, "niveaux": "H.264 High 3.1 ; AV1 Main level 5" },
+    "affiche_avif_q50": { "1920": 123606, "1280": 60289 }
+  },
+  "rendu_blender": { "version": "5.2.1 LTS", "moteur": "BLENDER_EEVEE", "definition": "1280x720", "echantillons": 32, "scene": "40 marches + noyau + soleil + fond uni + texture wave", "secondesImage1": 3.44, "secondesImage2": 2.34, "aspect": "schéma plat, sans ombre lisible" },
+  "lighthouse_actuel": { "source": ".orchestre/preuves/017-vague-3/final/lighthouse/resume.json", "performances": [94, 97, 97, 97, 97], "mediane": 97, "lcpMs": [2486, 2485, 2487, 2480, 2483], "octets": 352046, "debitDescendantKbps": 1474.56, "ralentissementCpu": 4 },
+  "telechargement_simule_s": { "tel_av1": 1.02, "tel_h264": 1.58, "atelier720_av1": 0.59, "atelier720_h264": 1.51, "escalier720_av1": 1.79, "escalier720_h264": 3.23, "escalier1080_av1": 3.53, "escalier1080_h264": 6.46 }
+}

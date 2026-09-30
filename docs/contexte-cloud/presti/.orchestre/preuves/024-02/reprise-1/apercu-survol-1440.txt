@@ -1,0 +1,2 @@
+site 292,4 346×432 rot=0deg
+kit  292,4 346×432 rot=0deg

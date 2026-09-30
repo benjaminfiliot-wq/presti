@@ -1,0 +1,1059 @@
+{
+  "genere_le": "2026-09-28T08:25:51.021Z",
+  "lots": [
+    "lot-16.json",
+    "lot-17-finitions.json",
+    "lot-17-gros-oeuvre.json",
+    "lot-17-plomberie-elec.json",
+    "lot-79.json",
+    "lot-85.json"
+  ],
+  "retenues": [
+    {
+      "entreprise": "L'Atelier du Marais",
+      "metier": "menuisier",
+      "ville": "Ars-en-Ré",
+      "departement": "17",
+      "email": "contact@atelmar.fr",
+      "source_url": "https://www.latelierdumarais-iledere.com",
+      "civilite": null,
+      "dirigeant": null,
+      "lot": "lot-17-finitions.json",
+      "site": "latelierdumarais-iledere.com"
+    },
+    {
+      "entreprise": "LB Électricité 17",
+      "metier": "électricien",
+      "ville": "Jonzac",
+      "departement": "17",
+      "email": "sarl.lbelectricite@orange.fr",
+      "source_url": "https://www.lbelectricite17.fr/mentions-legales",
+      "civilite": null,
+      "dirigeant": null,
+      "lot": "lot-17-plomberie-elec.json",
+      "site": "lbelectricite17.fr"
+    },
+    {
+      "entreprise": "Alex Clim & Chauffage",
+      "metier": "chauffagiste",
+      "ville": "Surgères",
+      "departement": "17",
+      "email": "alexclimetchauffage@gmail.com",
+      "source_url": "https://www.alex-clim-et-chauffage.fr/mentions-legales",
+      "civilite": null,
+      "dirigeant": null,
+      "lot": "lot-17-plomberie-elec.json",
+      "site": "alex-clim-et-chauffage.fr"
+    }
+  ],
+  "rejets": [
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Couverture Aptel",
+      "email": "contact@couverture-aptel.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Artisan Teddy Couverture",
+      "email": "artisan.teddy.couverture@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Entreprise Gadras Sylvain",
+      "email": "gadras.sylvain@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Dumasdelage Bâtiment",
+      "email": "dumasdelage@bati16.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Angoulême Renov",
+      "email": "angoulemerenov@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "SARL Joackim Turpain",
+      "email": "j.turpain@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Martin Menuiserie 16",
+      "email": "martinmenuiserie16100@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "ABC du Chaud et Froid",
+      "email": "contact@abcduchaudetfroid.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Dominique Peinture",
+      "email": "dominiquepeinture00@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Elec'eaux",
+      "email": "contact@eleceaux.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Jouanaud Bâtiment",
+      "email": "cedricjouanaud@live.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Le Peintre Charentais",
+      "email": "contact@le-peintre-charentais.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "SARL Riffaud",
+      "email": "riffaud.eric@wanadoo.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Artisan JP",
+      "email": "contact@artisan-jp.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Home Art 16",
+      "email": "relationspubliques@homeart16.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "MVS",
+      "email": "skf.mvs.16@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "SARL Brault et Fils",
+      "email": "sarl.brault.fils@hotmail.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Debessac",
+      "email": "contact@debessac.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Mon Jardin en Charente",
+      "email": "monjardin@monjardin.pro",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Ets Perot",
+      "email": "contact@entreprise-perot.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "SARL A. Martaud",
+      "email": "contact@sarl-a-martaud.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "AB16 Energies",
+      "email": "contact@ab16energies.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "David Parizel",
+      "email": "david.parizel@hotmail.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Jardinessences",
+      "email": "contact@jardinessences.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-16.json",
+      "entreprise": "Jérôme Dépannage",
+      "email": "jerome.depannage16@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Oléron Paysage",
+      "email": "oleronpaysage@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Okipouros",
+      "email": "contact@okipouros.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Pépinières Coindet",
+      "email": "contact@pepinieres-coindet-oleron.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "A tout' Cuisines",
+      "email": "atoutcuisines@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Parquetsol17",
+      "email": "parquetsol17@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Lesteph Peinture",
+      "email": "lesteph@yahoo.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "M-H Peinture",
+      "email": "mhpeinture17@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "LACS17",
+      "email": "contact@lacspeintre17.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Lafitte Paysage",
+      "email": "contact@lafittepaysage.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Rhéa Menuiserie",
+      "email": "germain@rhea-menuiserie.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Aurélien Paysage",
+      "email": "aurelienmaitre@sfr.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "S&J Créations",
+      "email": "setj.creations@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Bonnet Paysage",
+      "email": "bonnet-paysage@laposte.net",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Pairault Paysage",
+      "email": "contact@pairaultpaysage.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Bourdieu Couverture",
+      "email": "bourdieu-couverture@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Diamant Toiture",
+      "email": "contact@diamant-toiture.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Couverture J.Cassagrand",
+      "email": "contact@couvreur-zingueur-17.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "MV Toitures",
+      "email": "mail@mv-toitures.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Entreprise Guérin Frédéric",
+      "email": "fred.guerin.17200@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Mauléon Maçonnerie",
+      "email": "mauleonf@wanadoo.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "SARL Bienvenu Père et Fils et Fille",
+      "email": "pascalbienvenu17@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Atelier Plaquiste",
+      "email": "atelierplaquiste@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "PBP Bâtiment",
+      "email": "entreprise-pbp-17@outlook.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Valladon Art & Façade",
+      "email": "valladonartetfacade@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Sarl Ferre Degave",
+      "email": "contact@menuiserie-ferre17.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Isol'r",
+      "email": "contact@isolr.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Les Artisans Couvreurs du 17",
+      "email": "lesartisanscouvreursdu17@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Artero Asley",
+      "email": "asley.artero@outlook.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "E.G Bat Martinaud",
+      "email": "egbatmartinaud@outlook.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Sarl Augustin",
+      "email": "sarlaugustin17@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "EURL Esprit Bois",
+      "email": "contact@espritbois17.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "AEC Charpente",
+      "email": "contact@aecbois.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Colin Sébastien",
+      "email": "colin.sebastien1@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Couverture SM",
+      "email": "contact@couverturesm.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Emmanuel Perez",
+      "email": "iomanuperez@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Mikael Rénovation",
+      "email": "contact@mickael-renovation.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Alves'isolation",
+      "email": "contact@alvesplacos.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "TR Plaquiste",
+      "email": "contact@tr-plaquiste.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Plaq '&' Joint",
+      "email": "chantaraud.stephane@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Rijol JP",
+      "email": "jp-rijol@wanadoo.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Maçonnerie Ouvrard",
+      "email": "jeanmarie.ouvrard@wanadoo.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Gaylor Menuiserie",
+      "email": "contact@fabrication-bois-17.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Les Enduits Rochelais",
+      "email": "enduit.rochelais@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Gaëtan Raynaud",
+      "email": "raynaud.gaetan.17@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Les Artisans Charentais",
+      "email": "lesartisanscharentais17@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Fargeas Couverture",
+      "email": "contact@fargeas-couverture.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "SARL Mathieu Henry",
+      "email": "henrymathieu17@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "SAS Gendre",
+      "email": "sarl.gendre@wanadoo.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "SOS Couverture 17",
+      "email": "paulriva7@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "NC Couverture",
+      "email": "nil.couverture@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Gary Couverture",
+      "email": "garycouverture94@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Noureau Gendry",
+      "email": "contact@noureaugendry.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "A&S Maçonnerie Almeida et Suire",
+      "email": "diamantina.suire@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "SAS Da Silva",
+      "email": "lazarodsl80@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "Pentecôte SAS",
+      "email": "contact@pentecote-sas.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "CVC17",
+      "email": "info@cvc17.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Climeo17",
+      "email": "contact@climeo17.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "AG Clim 17",
+      "email": "agclim17@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Eco Solutions 17",
+      "email": "contact@eco-solutions-17.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Lachaud Construction",
+      "email": "contact@lachaud-construction.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Atout Habitation",
+      "email": "contact@electricien-la-rochelle.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Atlantique Électricité 17",
+      "email": "atl.elec17@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Forestier EURL",
+      "email": "eurl.forestier@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Bel Entreprise",
+      "email": "infos@bel.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "AK Chauffage",
+      "email": "aklein@coopetbat.pro",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Grignon Électricien",
+      "email": "contact@electricien-iledere.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Moustache Elec",
+      "email": "contact@moustache-elec.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Royan Énergies",
+      "email": "vo@royan-energies.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "ESHB",
+      "email": "bienvenue@eshb.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "N.F.J Plomberie Chauffage",
+      "email": "nfjplomberiechauffage@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Plomberie MN",
+      "email": "plombier.mn@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "TIBS Énergie",
+      "email": "contact@tibs-energie.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Minguez-Rullier",
+      "email": "minguez.rullier@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Électricité Générale Jacquet",
+      "email": "egj17500@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Seguin Freddy",
+      "email": "seguinfreddy@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-plomberie-elec.json",
+      "entreprise": "Chevalier Frédéric",
+      "email": "fchevalierfred@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Ortica",
+      "email": "artisan.ortica79@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "FBM",
+      "email": "contact@fbm-79.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "HD Couverture",
+      "email": "contact.hd.couverture@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "SARL Vivion Grunewald",
+      "email": "couvreur.viviongrunewald@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "La Maison du Bonheur 79",
+      "email": "bonheursauzer@hotmail.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Menuiserie Ariana",
+      "email": "franck.papot@dallerit.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Berger Menuiserie",
+      "email": "berger.menuiserie@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Menuiserie Cédric Bonnet",
+      "email": "aud.ced@hotmail.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Menuiserie Couteau",
+      "email": "menuiserie.couteau@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Ecodemeure",
+      "email": "ecodemeure79@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Lehir Paysages",
+      "email": "lehir.paysage@ymail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Damien Decaudin Paysagiste",
+      "email": "damien.decaudin@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Créavenir Paysage",
+      "email": "creavenir.paysage@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Terraflore",
+      "email": "contact@terraflore.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "EURL Giraudeau Guérin",
+      "email": "giraudeau.paysages@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Art D&Co",
+      "email": "fredfavrioux@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Bodin Peinture",
+      "email": "michel.bodin17@wanadoo.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Mat. Pro. Pose",
+      "email": "mathias@matpropose.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "SARL Gueret",
+      "email": "contact@sarlgueret.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "SARL Martin et Fils",
+      "email": "martin-et-fils-79@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Entreprise Coutant",
+      "email": "contact@entreprisecoutant.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "CB Elec",
+      "email": "contact@cbelec79.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-79.json",
+      "entreprise": "Électricité Thouarsaise",
+      "email": "contact@electricite-thouarsaise.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Concept'R",
+      "email": "contact@concept-r.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "TC2G",
+      "email": "contact@tc2g.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Vert Elec 85",
+      "email": "contact@vertelec85.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "RP Elect",
+      "email": "rpelectricte@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Audouit SARL",
+      "email": "batiment@audouitsarl.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "AGF Couverture",
+      "email": "contact@agf-couverture.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "G.H Couverture & Façades",
+      "email": "gringohemery@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "SARL Frédéric Drapeau",
+      "email": "sarlfredericdrapeau@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "MOBWA",
+      "email": "contact@mobwa.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "CMO Bois",
+      "email": "cmobois85@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "ML Paysages",
+      "email": "mlpaysages@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Franck Pineau Paysagiste",
+      "email": "contact@franckpineaupaysagiste.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Garden Paysage",
+      "email": "contact@gardenpaysage.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Ma'de Garden",
+      "email": "madegarden@outlook.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Paysages Rivière",
+      "email": "contact@paysages-riviere.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Sicaud Paysage",
+      "email": "sicaudpaysage@outlook.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Martin Concept Carrelage",
+      "email": "martinconceptcarrelage@outlook.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Fèvre Carrelage",
+      "email": "contact@fevre-carrelage.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Epaulais Carrelage",
+      "email": "contact@epaulais-carrelage.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Monts Carrelage",
+      "email": "contact@monts-carrelage.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "PRT Carrelage",
+      "email": "contact@prtcarrelage.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Actiba Menuiseries",
+      "email": "actiba@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "IDM Menuiserie",
+      "email": "contact@idm-menuiserie.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "SARL Moreau David",
+      "email": "contact@moreau-david.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Vergnolle Bordage",
+      "email": "contact@vergnolle-menuiserie.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Menuiserie Vaillant",
+      "email": "contact@menuiserie-vaillant.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Rodolphe Chapleau",
+      "email": "contact@chapleaurodolphe.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "SARL Anthony Tortellier",
+      "email": "contact@artisan-peintre-tortellier.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "L'Décor",
+      "email": "ldecor85@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "JM Gauvrit Peinture",
+      "email": "jean-marc-gauvrit@gauvrit-peinture.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "SAS Rabillier Cédric",
+      "email": "sasrabilliercedric@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "La Chouette Plaque",
+      "email": "contact@lachouetteplaque.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Maçonnerie Tradinnovante (Axel Retureau)",
+      "email": "axel.retureau@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Botton Construction",
+      "email": "bottonconstruction@outlook.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Kévin Froger Renov",
+      "email": "contact@kevinfroger-renov.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "BA Constructions",
+      "email": "contact@baconstructions.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Turcot Christophe Maçonnerie",
+      "email": "christophe.turcot@orange.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Pontoizeau Maçonnerie",
+      "email": "pontoizeaumaconnerie@gmail.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Charruyer Plomberie",
+      "email": "contact@charruyer-plomberie.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "SARL Braud",
+      "email": "braudelectricite@wanadoo.fr",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "Soulard Didier",
+      "email": "contact@didiersoulard.com",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-85.json",
+      "entreprise": "SB Chauffage Plomberie (Ets JJ Drapeau)",
+      "email": "jjdrapeau@cegetel.net",
+      "raison": "déjà contacté, en réserve ou écarté"
+    },
+    {
+      "fichier": "lot-17-finitions.json",
+      "entreprise": "Cornuaud Paysage",
+      "email": "contact@cornuaudpaysage.com",
+      "raison": "le domaine ne reçoit pas de courrier (aucun MX)"
+    },
+    {
+      "fichier": "lot-17-gros-oeuvre.json",
+      "entreprise": "L'Atelier du Marais",
+      "email": "contact@atelmar.fr",
+      "raison": "doublon (même adresse ou même site)"
+    }
+  ]
+}

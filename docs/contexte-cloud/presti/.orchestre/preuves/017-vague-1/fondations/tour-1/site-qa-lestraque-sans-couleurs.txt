@@ -1,0 +1,233 @@
+Juge de site — C:\Users\benja\Documents\presti\public\sites-demo\lestraque
+
+site.json — le contrat
+   OK   site.json présent et lisible                               lu                             attendu le contrat du générateur (voir l’en-tête du script)
+
+Le dossier — pages, communes, sitemap, robots
+   OK   site.json : métier connu                                   menuisier                      attendu plombier|electricien|chauffagiste|peintre|couvreur|serrurier|macon|menuisier|carreleur|paysagiste|generique
+   OK   site.json : communes déclarées                             4                              attendu ≥ 1 commune réellement servie
+   OK   site.json : SIREN et décennale                             000000000 · Assureur fictif    attendu 9 chiffres · assureur + numéro
+   OK   toutes les pages HTML sont déclarées dans site.json        aucune en trop                 attendu aucune page cachée
+   OK   toutes les pages déclarées existent                        toutes présentes               attendu index.html sous chaque chemin
+   OK   une page par commune réellement servie                     toutes couvertes               attendu Rennes, Cesson-Sévigné, Bruz, Saint-Grégoire
+   OK   aucune page de commune non déclarée (satellite)            aucune                         attendu zéro page pour une ville où il ne va pas
+   OK   une page par métier secondaire                             0 page(s)                      attendu 0 métier(s)
+   OK   pages légales : mentions légales et confidentialité        /mentions-legales/, /confidentialite/ attendu /mentions-legales/ et /confidentialite/
+   OK   robots.txt présent, sans Disallow global, avec Sitemap     présent                        attendu Sitemap: … et pas de Disallow: /
+   OK   attributions.json : chaque image a un auteur réel, la page source (pas la racine d'un site), une légende bien encodée et une licence permise 0 sans attribution · 0 non crédible(s) (auteur bidon, source sans page, « Ã© », licence) attendu toutes ; licences : CC0, domaine public, CC BY 4.0, CC BY 3.0, CC BY 2.0, CC BY-SA 4.0, CC BY-SA 3.0, CC BY-SA 2.0, propriétaire
+   OK   sitemap.xml liste toutes les pages (légales à part)        5 <loc>                        attendu chaque page publique dans un <loc>
+
+La substance et la direction artistique
+   OK   les feuilles de style du dossier sont chargées par l'accueil (<link rel="stylesheet">) toutes liées                   attendu aucune feuille orpheline
+   OK   CSS réel et UTILISÉ (≥ 6000 signes de règles dont les classes existent dans les pages) 25181 signes utiles sur 34850 · 56 règle(s) sans emploi attendu ≥ 6000
+   OK   un contenu masqué en attendant JavaScript (opacity: 0) a un filet de sécurité (<noscript><style>, ou règle sous html.js / .no-js) 7 sélecteur(s) à opacité 0 : .panneau, /* opacité + transform seulement : un flou animé (filter) sort du compositeur et coûte 400 ms de fil principal sur mobile (Lighthouse, 14/09) */
+/* départ à .2 s : un h1 à opacité 0 n'est pas encore « peint » pour le LCP — chaque dixième compte sur mobile */
+html.js .mot, html.js .hero .entre attendu un filet, ou rien de masqué
+   OK   polices auto-hébergées (woff2 dans le dossier, licence OFL à côté) 2 police(s), OFL.txt           attendu ≥ 1 woff2 + OFL.txt
+   OK   aucune police chargée depuis un service tiers              lu                             attendu tout est dans le dossier
+   OK   des photos réelles (≥ 3 WebP de ≥ 800 px et ≥ 25 Ko)       22 photo(s) réelle(s)          attendu ≥ 3
+   OK   accueil : du texte (≥ 1200 signes) et des sections (≥ 4 <h2>) 5926 signes · 6 h2             attendu ≥ 1200 · ≥ 4
+   OK   accueil : du texte écrit, pas répété (aucune phrase plus de deux fois, ≥ 70 % de suites de cinq mots distinctes) « menuisier à rennes — atelier lestraque atelier lestraque pre… » ×1 · 93 % distinctes attendu ≤ 2 · ≥ 70 %
+   OK   pages de commune : du texte écrit, pas répété              toutes                         attendu ≤ 2 · ≥ 70 %
+   OK   pages de commune : du texte (≥ 400 signes chacune)         toutes                         attendu 0 page creuse
+   OK   direction artistique du métier : l'accent #A9743F est dans le CSS couleurs présentes             attendu #A9743F
+   OK   direction artistique du métier : la police display « Fraunces » 'Fraunces'                     attendu Fraunces
+   OK   pas de carrousel automatique ni de police système déguisée en identité lu                             attendu aucun défilement automatique
+
+Le geste — le mouvement et le métier de design
+   OK   le h1 est composé mot à mot (≥ 3 <span class="mot">, dans le HTML : pas de décalage de mise en page) 3                              attendu ≥ 3
+   OK   un dévoilement au défilement en cascade (≥ 12 éléments .reveal sur l’accueil) 21                             attendu ≥ 12
+   OK   les pièces du geste : rideau, bande qui défile, galerie, panneau d’étapes, accordéon toutes                         attendu toutes
+   OK   des survols travaillés (≥ 8 règles :hover) et une courbe d’accélération maison (cubic-bezier) 20 :hover, cubic-bezier        attendu ≥ 8 + cubic-bezier
+   OK   prefers-reduced-motion : reduce est traité dans le CSS     lu                             attendu un bloc @media (prefers-reduced-motion: reduce)
+   OK   rien n’anime la mise en page (width/height/top/left/padding/margin en transition), hors ligne des étapes et accordéon aucune                         attendu transform / opacity seulement
+
+Page / (accueil)
+   OK   lang="fr"                                                  fr                             attendu fr
+   OK   robots : index, follow (jamais noindex)                    index, follow                  attendu index, follow
+   OK   title unique et de 15 à 70 signes                          38 signes                      attendu unique, 15–70
+   OK   meta description unique et de 50 à 160 signes              139 signes                     attendu unique, 50–160
+   OK   canonical = la page elle-même                              https://lestraque.demo.invalid/ attendu /
+   OK   Open Graph : og:title, og:description, og:image            complet                        attendu les trois
+   OK   un seul <h1>                                               1                              attendu 1
+   OK   images en AVIF/WebP                                        7 image(s)                     attendu aucune en jpg/png
+   OK   images : alt rédigé                                        0 sans alt                     attendu 0 sans alt
+   OK   images : dimensions déclarées                              0 sans width/height            attendu 0
+   OK   images : lazy sauf le héros                                héros eager · 0 suivante(s) non lazy attendu héros eager, les autres lazy
+   OK   lien vers les mentions légales et la confidentialité       34 lien(s)                     attendu les deux dans le pied de page
+   OK   JSON-LD @type = HomeAndConstructionBusiness                HomeAndConstructionBusiness    attendu HomeAndConstructionBusiness
+   OK   JSON-LD : adresse postale complète                         3/3                            attendu streetAddress, postalCode, addressLocality
+   OK   JSON-LD : téléphone, horaires, zone servie, url            complet                        attendu les quatre
+   OK   JSON-LD : le téléphone est celui du dossier                +33 4 00 00 00 00              attendu +33 4 00 00 00 00
+   OK   aucune promesse de classement                              texte lu                       attendu ni « première page » ni « n° 1 sur Google »
+
+Page /menuisier-rennes/ (commune · Rennes)
+   OK   lang="fr"                                                  fr                             attendu fr
+   OK   robots : index, follow (jamais noindex)                    index, follow                  attendu index, follow
+   OK   title unique et de 15 à 70 signes                          46 signes                      attendu unique, 15–70
+   OK   meta description unique et de 50 à 160 signes              145 signes                     attendu unique, 50–160
+   OK   canonical = la page elle-même                              https://lestraque.demo.invalid/menuisier-rennes/ attendu /menuisier-rennes/
+   OK   Open Graph : og:title, og:description, og:image            complet                        attendu les trois
+   OK   un seul <h1>                                               1                              attendu 1
+   OK   images en AVIF/WebP                                        3 image(s)                     attendu aucune en jpg/png
+   OK   images : alt rédigé                                        0 sans alt                     attendu 0 sans alt
+   OK   images : dimensions déclarées                              0 sans width/height            attendu 0
+   OK   images : lazy sauf le héros                                héros eager · 0 suivante(s) non lazy attendu héros eager, les autres lazy
+   OK   lien vers les mentions légales et la confidentialité       34 lien(s)                     attendu les deux dans le pied de page
+   OK   JSON-LD @type = HomeAndConstructionBusiness                HomeAndConstructionBusiness    attendu HomeAndConstructionBusiness
+   OK   JSON-LD : adresse postale complète                         3/3                            attendu streetAddress, postalCode, addressLocality
+   OK   JSON-LD : téléphone, horaires, zone servie, url            complet                        attendu les quatre
+   OK   JSON-LD : le téléphone est celui du dossier                +33 4 00 00 00 00              attendu +33 4 00 00 00 00
+   OK   aucune promesse de classement                              texte lu                       attendu ni « première page » ni « n° 1 sur Google »
+   OK   page de commune : la commune dans le title et le h1        Artisan menuisier à Rennes — Atelier Lestraque attendu Rennes
+
+Page /menuisier-cesson-sevigne/ (commune · Cesson-Sévigné)
+   OK   lang="fr"                                                  fr                             attendu fr
+   OK   robots : index, follow (jamais noindex)                    index, follow                  attendu index, follow
+   OK   title unique et de 15 à 70 signes                          54 signes                      attendu unique, 15–70
+   OK   meta description unique et de 50 à 160 signes              153 signes                     attendu unique, 50–160
+   OK   canonical = la page elle-même                              https://lestraque.demo.invalid/menuisier-cesson-sevigne/ attendu /menuisier-cesson-sevigne/
+   OK   Open Graph : og:title, og:description, og:image            complet                        attendu les trois
+   OK   un seul <h1>                                               1                              attendu 1
+   OK   images en AVIF/WebP                                        3 image(s)                     attendu aucune en jpg/png
+   OK   images : alt rédigé                                        0 sans alt                     attendu 0 sans alt
+   OK   images : dimensions déclarées                              0 sans width/height            attendu 0
+   OK   images : lazy sauf le héros                                héros eager · 0 suivante(s) non lazy attendu héros eager, les autres lazy
+   OK   lien vers les mentions légales et la confidentialité       34 lien(s)                     attendu les deux dans le pied de page
+   OK   JSON-LD @type = HomeAndConstructionBusiness                HomeAndConstructionBusiness    attendu HomeAndConstructionBusiness
+   OK   JSON-LD : adresse postale complète                         3/3                            attendu streetAddress, postalCode, addressLocality
+   OK   JSON-LD : téléphone, horaires, zone servie, url            complet                        attendu les quatre
+   OK   JSON-LD : le téléphone est celui du dossier                +33 4 00 00 00 00              attendu +33 4 00 00 00 00
+   OK   aucune promesse de classement                              texte lu                       attendu ni « première page » ni « n° 1 sur Google »
+   OK   page de commune : la commune dans le title et le h1        Artisan menuisier à Cesson-Sévigné — Atelier Lestraque attendu Cesson-Sévigné
+
+Page /menuisier-bruz/ (commune · Bruz)
+   OK   lang="fr"                                                  fr                             attendu fr
+   OK   robots : index, follow (jamais noindex)                    index, follow                  attendu index, follow
+   OK   title unique et de 15 à 70 signes                          44 signes                      attendu unique, 15–70
+   OK   meta description unique et de 50 à 160 signes              143 signes                     attendu unique, 50–160
+   OK   canonical = la page elle-même                              https://lestraque.demo.invalid/menuisier-bruz/ attendu /menuisier-bruz/
+   OK   Open Graph : og:title, og:description, og:image            complet                        attendu les trois
+   OK   un seul <h1>                                               1                              attendu 1
+   OK   images en AVIF/WebP                                        3 image(s)                     attendu aucune en jpg/png
+   OK   images : alt rédigé                                        0 sans alt                     attendu 0 sans alt
+   OK   images : dimensions déclarées                              0 sans width/height            attendu 0
+   OK   images : lazy sauf le héros                                héros eager · 0 suivante(s) non lazy attendu héros eager, les autres lazy
+   OK   lien vers les mentions légales et la confidentialité       34 lien(s)                     attendu les deux dans le pied de page
+   OK   JSON-LD @type = HomeAndConstructionBusiness                HomeAndConstructionBusiness    attendu HomeAndConstructionBusiness
+   OK   JSON-LD : adresse postale complète                         3/3                            attendu streetAddress, postalCode, addressLocality
+   OK   JSON-LD : téléphone, horaires, zone servie, url            complet                        attendu les quatre
+   OK   JSON-LD : le téléphone est celui du dossier                +33 4 00 00 00 00              attendu +33 4 00 00 00 00
+   OK   aucune promesse de classement                              texte lu                       attendu ni « première page » ni « n° 1 sur Google »
+   OK   page de commune : la commune dans le title et le h1        Artisan menuisier à Bruz — Atelier Lestraque attendu Bruz
+
+Page /menuisier-saint-gregoire/ (commune · Saint-Grégoire)
+   OK   lang="fr"                                                  fr                             attendu fr
+   OK   robots : index, follow (jamais noindex)                    index, follow                  attendu index, follow
+   OK   title unique et de 15 à 70 signes                          54 signes                      attendu unique, 15–70
+   OK   meta description unique et de 50 à 160 signes              153 signes                     attendu unique, 50–160
+   OK   canonical = la page elle-même                              https://lestraque.demo.invalid/menuisier-saint-gregoire/ attendu /menuisier-saint-gregoire/
+   OK   Open Graph : og:title, og:description, og:image            complet                        attendu les trois
+   OK   un seul <h1>                                               1                              attendu 1
+   OK   images en AVIF/WebP                                        3 image(s)                     attendu aucune en jpg/png
+   OK   images : alt rédigé                                        0 sans alt                     attendu 0 sans alt
+   OK   images : dimensions déclarées                              0 sans width/height            attendu 0
+   OK   images : lazy sauf le héros                                héros eager · 0 suivante(s) non lazy attendu héros eager, les autres lazy
+   OK   lien vers les mentions légales et la confidentialité       34 lien(s)                     attendu les deux dans le pied de page
+   OK   JSON-LD @type = HomeAndConstructionBusiness                HomeAndConstructionBusiness    attendu HomeAndConstructionBusiness
+   OK   JSON-LD : adresse postale complète                         3/3                            attendu streetAddress, postalCode, addressLocality
+   OK   JSON-LD : téléphone, horaires, zone servie, url            complet                        attendu les quatre
+   OK   JSON-LD : le téléphone est celui du dossier                +33 4 00 00 00 00              attendu +33 4 00 00 00 00
+   OK   aucune promesse de classement                              texte lu                       attendu ni « première page » ni « n° 1 sur Google »
+   OK   page de commune : la commune dans le title et le h1        Artisan menuisier à Saint-Grégoire — Atelier Lestraque attendu Saint-Grégoire
+
+Page /mentions-legales/ (legal)
+   OK   lang="fr"                                                  fr                             attendu fr
+   OK   robots : index, follow (jamais noindex)                    index, follow                  attendu index, follow
+   OK   title unique et de 15 à 70 signes                          36 signes                      attendu unique, 15–70
+   OK   meta description unique et de 50 à 160 signes              132 signes                     attendu unique, 50–160
+   OK   canonical = la page elle-même                              https://lestraque.demo.invalid/mentions-legales/ attendu /mentions-legales/
+   OK   Open Graph : og:title, og:description, og:image            complet                        attendu les trois
+   OK   un seul <h1>                                               1                              attendu 1
+   OK   images en AVIF/WebP                                        0 image(s)                     attendu aucune en jpg/png
+   OK   images : alt rédigé                                        0 sans alt                     attendu 0 sans alt
+   OK   images : dimensions déclarées                              0 sans width/height            attendu 0
+   OK   images : lazy sauf le héros                                aucune image                   attendu héros eager, les autres lazy
+   OK   lien vers les mentions légales et la confidentialité       46 lien(s)                     attendu les deux dans le pied de page
+   OK   mentions légales : SIREN affiché                           lu                             attendu 000000000
+   OK   mentions légales : assurance décennale (assureur et numéro) lu                             attendu Assureur fictif · DEMO-0001
+   OK   mentions légales : crédits photos — chaque auteur cité     tous cités                     attendu Phil Gradwell, Simon A. Eugster, Terasaface, Tiesse, Roman Eisele, Andrew Filer from Seattle (ex-Minneapoli, Bertrand from Paris, France, Petar Milošević, MajestyWoodworks, Micheli Design, Tim Sheerman-Chase
+   OK   site de démonstration : dit comme tel                      lu                             attendu le mot « démonstration » dans les mentions
+
+Page /confidentialite/ (legal)
+   OK   lang="fr"                                                  fr                             attendu fr
+   OK   robots : index, follow (jamais noindex)                    index, follow                  attendu index, follow
+   OK   title unique et de 15 à 70 signes                          48 signes                      attendu unique, 15–70
+   OK   meta description unique et de 50 à 160 signes              133 signes                     attendu unique, 50–160
+   OK   canonical = la page elle-même                              https://lestraque.demo.invalid/confidentialite/ attendu /confidentialite/
+   OK   Open Graph : og:title, og:description, og:image            complet                        attendu les trois
+   OK   un seul <h1>                                               1                              attendu 1
+   OK   images en AVIF/WebP                                        0 image(s)                     attendu aucune en jpg/png
+   OK   images : alt rédigé                                        0 sans alt                     attendu 0 sans alt
+   OK   images : dimensions déclarées                              0 sans width/height            attendu 0
+   OK   images : lazy sauf le héros                                aucune image                   attendu héros eager, les autres lazy
+   OK   lien vers les mentions légales et la confidentialité       25 lien(s)                     attendu les deux dans le pied de page
+
+Le rendu réel — bureau et mobile
+   OK   bureau : toutes les images chargées et visibles après défilement (opacité ≥ 0,9) 7/7                            attendu toutes
+   OK   bureau : aucun vide vertical de plus de 700 px sans contenu visible 308 px (page de 7532 px)       attendu ≤ 700 px
+   OK   bureau : le contenu occupe la largeur (≥ 900 px sur 1280)  1280 px                        attendu ≥ 900 px
+   OK   mobile : images visibles et aucun vide de plus de 900 px   7/7 · vide max 342 px          attendu ≤ 900 px
+   OK   le h1 est composé en « Fraunces » (police du métier appliquée, pas seulement déclarée) Fraunces, Georgia, serif       attendu Fraunces
+   OK   la police « Fraunces » est réellement chargée par le navigateur (fichier woff2 valide) Fraunces:loaded, IBM Plex Sans:loaded attendu loaded
+   OK   le geste : le h1 est composé grand sur bureau (≥ 56 px), approche négative, et lisible après le mot à mot 160 px, approche -5.60 px      attendu ≥ 56 px, approche < 0
+   OK   le geste : sous la ligne de flottaison, le contenu attend son dévoilement puis apparaît en entier (bureau et mobile) 21/21 masqués avant · 0 encore caché(s) après attendu masqués avant, 0 caché après
+   OK   le geste : en mouvement réduit (prefers-reduced-motion), tout est visible sans défiler 0 masqué(s) avant, 0 après     attendu 0 et 0
+
+Lighthouse mobile — /
+   OK   Lighthouse mobile · Performance ≥ 95                       96                             attendu ≥ 95
+   OK   Lighthouse mobile · Accessibilité ≥ 95                     100                            attendu ≥ 95
+   OK   Lighthouse mobile · Bonnes pratiques ≥ 95                  100                            attendu ≥ 95
+   OK   Lighthouse mobile · SEO ≥ 95                               100                            attendu ≥ 95
+   OK   LCP < 2500 ms                                              2338 ms                        attendu < 2500 ms
+   OK   CLS < 0.1                                                  0.000                          attendu < 0.1
+   OK   TBT < 200 ms (substitut d'INP en laboratoire)              146 ms                         attendu < 200 ms
+
+Lighthouse mobile — /menuisier-rennes/
+   OK   Lighthouse mobile · Performance ≥ 95                       99                             attendu ≥ 95
+   OK   Lighthouse mobile · Accessibilité ≥ 95                     96                             attendu ≥ 95
+   OK   Lighthouse mobile · Bonnes pratiques ≥ 95                  100                            attendu ≥ 95
+   OK   Lighthouse mobile · SEO ≥ 95                               100                            attendu ≥ 95
+   OK   LCP < 2500 ms                                              2108 ms                        attendu < 2500 ms
+   OK   CLS < 0.1                                                  0.000                          attendu < 0.1
+   OK   TBT < 200 ms (substitut d'INP en laboratoire)              0 ms                           attendu < 200 ms
+
+Lighthouse mobile — /menuisier-cesson-sevigne/
+   OK   Lighthouse mobile · Performance ≥ 95                       99                             attendu ≥ 95
+   OK   Lighthouse mobile · Accessibilité ≥ 95                     96                             attendu ≥ 95
+   OK   Lighthouse mobile · Bonnes pratiques ≥ 95                  100                            attendu ≥ 95
+   OK   Lighthouse mobile · SEO ≥ 95                               100                            attendu ≥ 95
+   OK   LCP < 2500 ms                                              1956 ms                        attendu < 2500 ms
+   OK   CLS < 0.1                                                  0.000                          attendu < 0.1
+   OK   TBT < 200 ms (substitut d'INP en laboratoire)              0 ms                           attendu < 200 ms
+
+Lighthouse mobile — /menuisier-bruz/
+   OK   Lighthouse mobile · Performance ≥ 95                       99                             attendu ≥ 95
+   OK   Lighthouse mobile · Accessibilité ≥ 95                     96                             attendu ≥ 95
+   OK   Lighthouse mobile · Bonnes pratiques ≥ 95                  100                            attendu ≥ 95
+   OK   Lighthouse mobile · SEO ≥ 95                               100                            attendu ≥ 95
+   OK   LCP < 2500 ms                                              2108 ms                        attendu < 2500 ms
+   OK   CLS < 0.1                                                  0.000                          attendu < 0.1
+   OK   TBT < 200 ms (substitut d'INP en laboratoire)              0 ms                           attendu < 200 ms
+
+Lighthouse mobile — /menuisier-saint-gregoire/
+   OK   Lighthouse mobile · Performance ≥ 95                       99                             attendu ≥ 95
+   OK   Lighthouse mobile · Accessibilité ≥ 95                     96                             attendu ≥ 95
+   OK   Lighthouse mobile · Bonnes pratiques ≥ 95                  100                            attendu ≥ 95
+   OK   Lighthouse mobile · SEO ≥ 95                               100                            attendu ≥ 95
+   OK   LCP < 2500 ms                                              2031 ms                        attendu < 2500 ms
+   OK   CLS < 0.1                                                  0.000                          attendu < 0.1
+   OK   TBT < 200 ms (substitut d'INP en laboratoire)              0 ms                           attendu < 200 ms
+
+✓ Tout passe.
+code sortie site-qa = 0

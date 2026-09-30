@@ -1,0 +1,642 @@
+{
+  "slug": "nabilissa",
+  "url": "https://nabilissa.com/",
+  "profil": "pixel7-reduit",
+  "date": "2026-09-16T20:26:27.773Z",
+  "ua": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Mobile Safari/537.36",
+  "viewport": {
+    "width": 412,
+    "height": 839
+  },
+  "rafParSecondeAuRepos": 126.7,
+  "defilement": {
+    "mode": "doigt",
+    "pas": 58,
+    "budgetEpuise": false,
+    "scrollYMax": 24558,
+    "parcoursVisuelMedian": 24558,
+    "hauteurDocument": 25397
+  },
+  "titre": "Nabil Issa",
+  "styleJs": [
+    {
+      "cible": "div.item-photo.parallax-image",
+      "elements": 14,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 37,
+      "rafalesParElement": 2.6,
+      "dureeMedianeMs": 570,
+      "ecrituresTotales": 1063
+    },
+    {
+      "cible": "div.split-line",
+      "elements": 6,
+      "proprietes": "opacity",
+      "rafales": 18,
+      "rafalesParElement": 3,
+      "dureeMedianeMs": 594,
+      "ecrituresTotales": 928
+    },
+    {
+      "cible": "div",
+      "elements": 293,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 200,
+      "rafalesParElement": 0.7,
+      "dureeMedianeMs": 0,
+      "ecrituresTotales": 700
+    },
+    {
+      "cible": "img.inner-img",
+      "elements": 15,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 77,
+      "rafalesParElement": 5.1,
+      "dureeMedianeMs": 267,
+      "ecrituresTotales": 623
+    },
+    {
+      "cible": "div.text-shine.h1-book",
+      "elements": 9,
+      "proprietes": "opacity",
+      "rafales": 27,
+      "rafalesParElement": 3,
+      "dureeMedianeMs": 598,
+      "ecrituresTotales": 581
+    },
+    {
+      "cible": "div.sect-3-photo-wrap.parallax-image",
+      "elements": 7,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 16,
+      "rafalesParElement": 2.3,
+      "dureeMedianeMs": 67,
+      "ecrituresTotales": 473
+    },
+    {
+      "cible": "div.chapter-text-wrap",
+      "elements": 5,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 15,
+      "rafalesParElement": 3,
+      "dureeMedianeMs": 593,
+      "ecrituresTotales": 405
+    },
+    {
+      "cible": "div.text-shine.h2-book",
+      "elements": 5,
+      "proprietes": "opacity",
+      "rafales": 15,
+      "rafalesParElement": 3,
+      "dureeMedianeMs": 597,
+      "ecrituresTotales": 351
+    },
+    {
+      "cible": "div.chapter-line",
+      "elements": 5,
+      "proprietes": "clip-path",
+      "rafales": 14,
+      "rafalesParElement": 2.8,
+      "dureeMedianeMs": 596,
+      "ecrituresTotales": 329
+    },
+    {
+      "cible": "div.chapter-decor-wrap",
+      "elements": 5,
+      "proprietes": "opacity",
+      "rafales": 14,
+      "rafalesParElement": 2.8,
+      "dureeMedianeMs": 596,
+      "ecrituresTotales": 324
+    },
+    {
+      "cible": "img",
+      "elements": 7,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 38,
+      "rafalesParElement": 5.4,
+      "dureeMedianeMs": 248,
+      "ecrituresTotales": 287
+    },
+    {
+      "cible": "div.sect-3-img",
+      "elements": 4,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 21,
+      "rafalesParElement": 5.3,
+      "dureeMedianeMs": 426,
+      "ecrituresTotales": 197
+    },
+    {
+      "cible": "header.header",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 7,
+      "rafalesParElement": 7,
+      "dureeMedianeMs": 217,
+      "ecrituresTotales": 162
+    },
+    {
+      "cible": "div.item",
+      "elements": 4,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 20,
+      "rafalesParElement": 5,
+      "dureeMedianeMs": 488,
+      "ecrituresTotales": 152
+    },
+    {
+      "cible": "div.item-title",
+      "elements": 4,
+      "proprietes": "opacity",
+      "rafales": 8,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 581,
+      "ecrituresTotales": 136
+    },
+    {
+      "cible": "div.sect-3-photos",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate",
+      "rafales": 8,
+      "rafalesParElement": 8,
+      "dureeMedianeMs": 521,
+      "ecrituresTotales": 96
+    },
+    {
+      "cible": "div.quote-photo",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 597,
+      "ecrituresTotales": 87
+    },
+    {
+      "cible": "div.subtitles",
+      "elements": 1,
+      "proprietes": "opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 602,
+      "ecrituresTotales": 81
+    },
+    {
+      "cible": "div.sect-2-image.parallax-image",
+      "elements": 1,
+      "proprietes": "transform,translate,scale,rotate,opacity",
+      "rafales": 2,
+      "rafalesParElement": 2,
+      "dureeMedianeMs": 612,
+      "ecrituresTotales": 80
+    },
+    {
+      "cible": "div.text-shine.title1",
+      "elements": 1,
+      "proprietes": "opacity",
+      "rafales": 3,
+      "rafalesParElement": 3,
+      "dureeMedianeMs": 602,
+      "ecrituresTotales": 77
+    }
+  ],
+  "io": {
+    "n": 0,
+    "observe": 0,
+    "options": []
+  },
+  "animate": {
+    "n": 0,
+    "samples": []
+  },
+  "play": {
+    "calls": 0,
+    "ok": 0,
+    "rejected": []
+  },
+  "ecouteurs": {
+    "wheel:passif:window": 3,
+    "scroll:passif:document": 1,
+    "touchstart:passif:element": 1,
+    "touchstart:passif:document": 1,
+    "resize:passif:window": 123,
+    "resize:non-precise:window": 32,
+    "scroll:non-precise:window": 1,
+    "wheel:actif-explicite:window": 1,
+    "touchstart:actif-explicite:window": 1,
+    "touchmove:actif-explicite:window": 1,
+    "scroll:passif:element": 2,
+    "touchmove:passif:window": 2
+  },
+  "matchMedia": [
+    "(hover: none), (pointer: coarse)",
+    "(orientation: portrait)",
+    "(prefers-reduced-motion: reduce)"
+  ],
+  "compteursNumeriques": {},
+  "transitions": [
+    [
+      "background-color | 0.6s | cubic-bezier(0.83, 0, 0.17, 1) | delai 0s",
+      {
+        "n": 44,
+        "ex": "span"
+      }
+    ],
+    [
+      "color | 0.6s | cubic-bezier(0.83, 0, 0.17, 1) | delai 0s",
+      {
+        "n": 29,
+        "ex": "div.animation-container.black"
+      }
+    ],
+    [
+      "opacity | 0.6s | cubic-bezier(0.83, 0, 0.17, 1) | delai 0s",
+      {
+        "n": 17,
+        "ex": "img.logo-white"
+      }
+    ],
+    [
+      "color | 0.5s | ease | delai 0s",
+      {
+        "n": 10,
+        "ex": "div.chapter-item.l1-thin"
+      }
+    ],
+    [
+      "background-color | 0.6s | cubic-bezier(0.83, 0, 0.17, 1) | delai 0.3s",
+      {
+        "n": 8,
+        "ex": "div.btn-decor"
+      }
+    ],
+    [
+      "flex-grow | 0.5s | ease | delai 0s",
+      {
+        "n": 8,
+        "ex": "div.chapter-item.l1-thin"
+      }
+    ],
+    [
+      "border-bottom-color | 0.6s | cubic-bezier(0.83, 0, 0.17, 1) | delai 0.3s",
+      {
+        "n": 4,
+        "ex": "div.btn-decor"
+      }
+    ],
+    [
+      "border-left-color | 0.6s | cubic-bezier(0.83, 0, 0.17, 1) | delai 0.3s",
+      {
+        "n": 4,
+        "ex": "div.btn-decor"
+      }
+    ],
+    [
+      "border-right-color | 0.6s | cubic-bezier(0.83, 0, 0.17, 1) | delai 0.3s",
+      {
+        "n": 4,
+        "ex": "div.btn-decor"
+      }
+    ],
+    [
+      "border-top-color | 0.6s | cubic-bezier(0.83, 0, 0.17, 1) | delai 0.3s",
+      {
+        "n": 4,
+        "ex": "div.btn-decor"
+      }
+    ],
+    [
+      "min-width | 0.5s | ease | delai 0s",
+      {
+        "n": 4,
+        "ex": "div.chapter-item.l1-thin"
+      }
+    ],
+    [
+      "transform | 0.6s | cubic-bezier(0.83, 0, 0.17, 1) | delai 0s",
+      {
+        "n": 3,
+        "ex": "div.chapter-decor"
+      }
+    ]
+  ],
+  "animationsCss": [
+    [
+      "shine | 0.0004s | ease | x0.0004 | timeline auto",
+      {
+        "n": 11,
+        "ex": "div.text-shine.h1-book"
+      }
+    ],
+    [
+      "shine | 0.0005s | ease | x0.0005 | timeline auto",
+      {
+        "n": 5,
+        "ex": "div.text-shine.h2-book"
+      }
+    ],
+    [
+      "shine | 0.6471s | ease | x0.6471 | timeline auto",
+      {
+        "n": 4,
+        "ex": "div.text-shine.h2-book"
+      }
+    ],
+    [
+      "shine | 0.6014s | ease | x0.6014 | timeline auto",
+      {
+        "n": 4,
+        "ex": "div.text-shine.h2-book"
+      }
+    ],
+    [
+      "shine | 0.002s | ease | x0.002 | timeline auto",
+      {
+        "n": 3,
+        "ex": "div.text-shine.h1-book"
+      }
+    ],
+    [
+      "ticker | 33s | linear | xinfinite | timeline auto",
+      {
+        "n": 2,
+        "ex": "div.track"
+      }
+    ],
+    [
+      "shine | 0.6399s | ease | x0.6399 | timeline auto",
+      {
+        "n": 2,
+        "ex": "div.text-shine.title1"
+      }
+    ],
+    [
+      "shine | 0.6797s | ease | x0.6797 | timeline auto",
+      {
+        "n": 2,
+        "ex": "div.text-shine.h1-book"
+      }
+    ],
+    [
+      "shine | 0.6326s | ease | x0.6326 | timeline auto",
+      {
+        "n": 2,
+        "ex": "div.text-shine.h2-book"
+      }
+    ],
+    [
+      "shine | 0.6094s | ease | x0.6094 | timeline auto",
+      {
+        "n": 2,
+        "ex": "div.text-shine.h1-book"
+      }
+    ],
+    [
+      "shine | 0.6539s | ease | x0.6539 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.text-shine.h1-book"
+      }
+    ],
+    [
+      "shine | 0.6252s | ease | x0.6252 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.text-shine.h2-book"
+      }
+    ],
+    [
+      "shine | 0.0021s | ease | x0.0021 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.text-shine.h1-book"
+      }
+    ],
+    [
+      "shine | 0.6672s | ease | x0.6672 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.text-shine.h1-book"
+      }
+    ],
+    [
+      "shine | 0.0018s | ease | x0.0018 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.text-shine"
+      }
+    ],
+    [
+      "shine | 0.5573s | ease | x0.5573 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.text-shine"
+      }
+    ],
+    [
+      "shine | 0.6173s | ease | x0.6173 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.text-shine"
+      }
+    ],
+    [
+      "shine | 0.0006s | ease | x0.0006 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.text-shine.h2-book"
+      }
+    ],
+    [
+      "shine | 0.5663s | ease | x0.5663 | timeline auto",
+      {
+        "n": 1,
+        "ex": "div.text-shine.h2-book"
+      }
+    ]
+  ],
+  "videos": [],
+  "gsapGlobal": null,
+  "scrollTriggerGlobal": null,
+  "pinSpacers": 0,
+  "scenesSticky": 7,
+  "texteDecoupe": {
+    "parentsAvec3Fragments": 16,
+    "fragments": 166
+  },
+  "classesRacine": "lenis lenis-scrolling",
+  "supports": {
+    "view": true,
+    "scroll": true
+  },
+  "reducedMotion": true,
+  "imagesDecodingAsync": 0,
+  "imagesLazy": 9,
+  "images": 83,
+  "signaturesCss": {
+    "animation-timeline": false,
+    "view-timeline": false,
+    "scroll-timeline": false,
+    "view()": false,
+    "prefers-reduced-motion": true,
+    "svh/lvh/dvh": true,
+    "@view-transition": false,
+    "hover:hover": true,
+    "hover:none|pointer:coarse": false,
+    "content-visibility": true,
+    "will-change": true,
+    "position:sticky": true,
+    "overscroll-behavior": true,
+    "scroll-snap-type": true,
+    "page-enter/leave (Vue)": false
+  },
+  "signaturesJs": {
+    "gsap": true,
+    "ScrollTrigger": true,
+    "SplitText": true,
+    "split-type/splitting": false,
+    "lenis": true,
+    "locomotive": false,
+    "barba/swup/taxi/highway": false,
+    "three": false,
+    "IntersectionObserver": true,
+    "prefers-reduced-motion (JS)": true,
+    "startViewTransition": true,
+    "ScrollTimeline/ViewTimeline": false,
+    "framer-motion/motion": false,
+    "swiper": true,
+    "webflow": false,
+    "nuxt": true
+  },
+  "animationsVuesPendantDefilement": [
+    [
+      "CSSAnimation | ticker | 33000 | linear | Infinity | DocumentTimeline | transform",
+      {
+        "n": 118,
+        "ex": "div.track"
+      }
+    ],
+    [
+      "CSSAnimation | shine | 1000 | linear | 1 | DocumentTimeline | backgroundPositionX,backgroundPositionY",
+      {
+        "n": 11,
+        "ex": "div.text-shine.h1-book"
+      }
+    ],
+    [
+      "CSSTransition | background-color | 600 | cubic-bezier(0.83, 0, 0.17, 1) | 1 | DocumentTimeline | backgroundColor",
+      {
+        "n": 10,
+        "ex": "div.btn-decor"
+      }
+    ],
+    [
+      "CSSTransition | opacity | 600 | cubic-bezier(0.83, 0, 0.17, 1) | 1 | DocumentTimeline | opacity",
+      {
+        "n": 7,
+        "ex": "img.logo-white"
+      }
+    ],
+    [
+      "CSSTransition | color | 600 | cubic-bezier(0.83, 0, 0.17, 1) | 1 | DocumentTimeline | color",
+      {
+        "n": 3,
+        "ex": "div.animation-container.black"
+      }
+    ],
+    [
+      "CSSTransition | transform | 600 | cubic-bezier(0.83, 0, 0.17, 1) | 1 | DocumentTimeline | transform",
+      {
+        "n": 3,
+        "ex": "div.chapter-decor"
+      }
+    ],
+    [
+      "CSSTransition | border-bottom-color | 600 | cubic-bezier(0.83, 0, 0.17, 1) | 1 | DocumentTimeline | borderBottomColor",
+      {
+        "n": 2,
+        "ex": "div.btn-decor"
+      }
+    ],
+    [
+      "CSSTransition | border-left-color | 600 | cubic-bezier(0.83, 0, 0.17, 1) | 1 | DocumentTimeline | borderLeftColor",
+      {
+        "n": 2,
+        "ex": "div.btn-decor"
+      }
+    ],
+    [
+      "CSSTransition | border-right-color | 600 | cubic-bezier(0.83, 0, 0.17, 1) | 1 | DocumentTimeline | borderRightColor",
+      {
+        "n": 2,
+        "ex": "div.btn-decor"
+      }
+    ],
+    [
+      "CSSTransition | border-top-color | 600 | cubic-bezier(0.83, 0, 0.17, 1) | 1 | DocumentTimeline | borderTopColor",
+      {
+        "n": 2,
+        "ex": "div.btn-decor"
+      }
+    ],
+    [
+      "CSSTransition | flex-grow | 500 | ease | 1 | DocumentTimeline | flexGrow",
+      {
+        "n": 2,
+        "ex": "div.chapter-item.l1-thin"
+      }
+    ],
+    [
+      "CSSAnimation | shine | 998 | linear | 0.9977 | DocumentTimeline | backgroundPositionX,backgroundPositionY",
+      {
+        "n": 1,
+        "ex": "div.text-shine.h2-book"
+      }
+    ],
+    [
+      "CSSAnimation | shine | 990 | linear | 0.9896 | DocumentTimeline | backgroundPositionX,backgroundPositionY",
+      {
+        "n": 1,
+        "ex": "div.text-shine.h1-book"
+      }
+    ],
+    [
+      "CSSAnimation | shine | 999 | linear | 0.9985 | DocumentTimeline | backgroundPositionX,backgroundPositionY",
+      {
+        "n": 1,
+        "ex": "div.text-shine"
+      }
+    ]
+  ],
+  "poidsParType": {
+    "document": {
+      "requetes": 1,
+      "octets": 34495
+    },
+    "stylesheet": {
+      "requetes": 2,
+      "octets": 9890
+    },
+    "script": {
+      "requetes": 2,
+      "octets": 272806
+    },
+    "image": {
+      "requetes": 55,
+      "octets": 6564808
+    },
+    "font": {
+      "requetes": 6,
+      "octets": 1668196
+    },
+    "xhr": {
+      "requetes": 2,
+      "octets": 426499
+    },
+    "fetch": {
+      "requetes": 1,
+      "octets": 352
+    }
+  },
+  "octetsTotal": 8977046
+}

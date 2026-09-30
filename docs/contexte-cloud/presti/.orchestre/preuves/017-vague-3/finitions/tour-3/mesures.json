@@ -1,0 +1,1313 @@
+{
+ "base": "http://127.0.0.1:4897/",
+ "date": "2026-09-14T22:40:32.037Z",
+ "photos_b1440": {
+  "compte": {
+   "heros-escalier": 2,
+   "mains-noyer": 1,
+   "tournage-copeaux": 2,
+   "penderie": 2,
+   "reserve-bibliotheque": 2,
+   "atelier-poncage": 2,
+   "reserve-cuisine-poutres": 2,
+   "boiserie": 2,
+   "tasseaux-cloison": 1
+  },
+  "fonds": [
+   {
+    "el": "js texture--papier da--etapes da--communes tout-rendu",
+    "pseudo": "::before",
+    "bg": "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulen",
+    "b": null
+   }
+  ],
+  "detail": [
+   {
+    "noms": [
+     "heros-escalier"
+    ],
+    "currentSrc": "/images/heros-escalier-1600.avif",
+    "dans": "hero hero--plein",
+    "parent": "hero__media"
+   },
+   {
+    "noms": [
+     "mains-noyer"
+    ],
+    "currentSrc": "/images/mains-noyer-720.avif",
+    "dans": "plateau",
+    "parent": "plateau__photo reveal vu"
+   },
+   {
+    "noms": [
+     "tournage-copeaux"
+    ],
+    "currentSrc": "/images/tournage-copeaux-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "penderie"
+    ],
+    "currentSrc": "/images/penderie-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "reserve-bibliotheque"
+    ],
+    "currentSrc": "/images/reserve-bibliotheque-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "atelier-poncage"
+    ],
+    "currentSrc": "/images/atelier-poncage-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "reserve-cuisine-poutres"
+    ],
+    "currentSrc": "/images/reserve-cuisine-poutres-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "boiserie"
+    ],
+    "currentSrc": "/images/boiserie-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "atelier-poncage"
+    ],
+    "currentSrc": "/images/atelier-poncage-1600.avif",
+    "dans": "atelier",
+    "parent": "atelier__media"
+   },
+   {
+    "noms": [
+     "reserve-bibliotheque"
+    ],
+    "currentSrc": "/images/reserve-bibliotheque-960.avif",
+    "dans": "realisations",
+    "parent": "galerie__cadre"
+   },
+   {
+    "noms": [
+     "reserve-cuisine-poutres"
+    ],
+    "currentSrc": "/images/reserve-cuisine-poutres-960.avif",
+    "dans": "realisations",
+    "parent": "galerie__cadre"
+   },
+   {
+    "noms": [
+     "penderie"
+    ],
+    "currentSrc": "/images/penderie-960.avif",
+    "dans": "realisations",
+    "parent": "galerie__cadre"
+   },
+   {
+    "noms": [
+     "heros-escalier"
+    ],
+    "currentSrc": "/images/heros-escalier-1600.avif",
+    "dans": "realisations",
+    "parent": "galerie__cadre"
+   },
+   {
+    "noms": [
+     "tournage-copeaux"
+    ],
+    "currentSrc": "/images/tournage-copeaux-480.avif",
+    "dans": "etapes",
+    "parent": "etapes__photo"
+   },
+   {
+    "noms": [
+     "tasseaux-cloison"
+    ],
+    "currentSrc": "/images/tasseaux-cloison-780.avif",
+    "dans": "questions",
+    "parent": "faq-scene__photo"
+   },
+   {
+    "noms": [
+     "boiserie"
+    ],
+    "currentSrc": "/images/boiserie-1600.avif",
+    "dans": "contact",
+    "parent": "contact__media"
+   }
+  ],
+  "portePanneaux": {
+   "html": 0,
+   "css": 0,
+   "js": 0,
+   "attributions": 0,
+   "mentions": 0
+  },
+  "reserveRestantes": [],
+  "credits": {
+   "heros-escalier": {
+    "entrees": 18,
+    "usages": [
+     "site uniquement — CC BY-SA : jamais dans un film (le partage à l'identique s'étendrait au film)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "mains-noyer": {
+    "entrees": 8,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "tournage-copeaux": {
+    "entrees": 8,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "penderie": {
+    "entrees": 8,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "reserve-bibliotheque": {
+    "entrees": 12,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "atelier-poncage": {
+    "entrees": 16,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "reserve-cuisine-poutres": {
+    "entrees": 12,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "boiserie": {
+    "entrees": 10,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "tasseaux-cloison": {
+    "entrees": 4,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   }
+  }
+ },
+ "carte_b1440": [
+  {
+   "id": "hero",
+   "top": 0,
+   "h": 900,
+   "sombre": true
+  },
+  {
+   "id": "plateau",
+   "top": 900,
+   "h": 988,
+   "sombre": true
+  },
+  {
+   "id": "prestations",
+   "top": 1888,
+   "h": 1125,
+   "sombre": false
+  },
+  {
+   "id": "atelier",
+   "top": 3013,
+   "h": 900,
+   "sombre": true
+  },
+  {
+   "id": "realisations",
+   "top": 3913,
+   "h": 1656,
+   "sombre": true
+  },
+  {
+   "id": "communes",
+   "top": 5569,
+   "h": 509,
+   "sombre": false
+  },
+  {
+   "id": "etapes",
+   "top": 6078,
+   "h": 947,
+   "sombre": true
+  },
+  {
+   "id": "questions",
+   "top": 7025,
+   "h": 743,
+   "sombre": false
+  },
+  {
+   "id": "contact",
+   "top": 7768,
+   "h": 902,
+   "sombre": true
+  },
+  {
+   "id": "pied",
+   "top": 8670,
+   "h": 306,
+   "sombre": false
+  }
+ ],
+ "nav_b1440": [
+  {
+   "capture": "b1440-nav-plateau.png",
+   "scrollY": 1050,
+   "hNav": 78,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.01,
+   "lumFondMilieu": 0.0058,
+   "contrasteMilieu": 1.07,
+   "lumNavMoy": 0.0085,
+   "lumFondMoy": 0.0092,
+   "barreClaireSurSombre": false,
+   "classes": "nav nav--claire nav--bande solide nav--sombre",
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "capture": "b1440-nav-galerie.png",
+   "scrollY": 4113,
+   "hNav": 78,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0058,
+   "lumFondMilieu": 0.0058,
+   "contrasteMilieu": 1,
+   "lumNavMoy": 0.0058,
+   "lumFondMoy": 0.0058,
+   "barreClaireSurSombre": false,
+   "classes": "nav nav--claire nav--bande solide nav--sombre",
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "capture": "b1440-nav-galerie-milieu.png",
+   "scrollY": 4741,
+   "hNav": 78,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0072,
+   "lumFondMilieu": 0.0058,
+   "contrasteMilieu": 1.02,
+   "lumNavMoy": 0.0071,
+   "lumFondMoy": 0.0058,
+   "barreClaireSurSombre": false,
+   "classes": "nav nav--claire nav--bande solide nav--sombre",
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "capture": "b1440-nav-etapes.png",
+   "scrollY": 6228,
+   "hNav": 78,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0099,
+   "lumFondMilieu": 0.0058,
+   "contrasteMilieu": 1.07,
+   "lumNavMoy": 0.007,
+   "lumFondMoy": 0.0058,
+   "barreClaireSurSombre": false,
+   "classes": "nav nav--claire nav--bande solide nav--sombre",
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "capture": "b1440-nav-contact.png",
+   "scrollY": 7918,
+   "hNav": 78,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0113,
+   "lumFondMilieu": 0.0176,
+   "contrasteMilieu": 1.1,
+   "lumNavMoy": 0.0107,
+   "lumFondMoy": 0.016,
+   "barreClaireSurSombre": false,
+   "classes": "nav nav--claire nav--bande solide nav--sombre",
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  }
+ ],
+ "balayage_b1440": {
+  "positions": 404,
+  "pas": 20,
+  "alertes": 5,
+  "barresPleines": 0,
+  "detail": [
+   {
+    "y": 7360,
+    "hNav": 78,
+    "lignesAlerte": 1,
+    "pireSuite": 1,
+    "lumNavMilieu": 0.7075,
+    "lumFondMilieu": 0.7821,
+    "contrasteMilieu": 1.1,
+    "lumNavMoy": 0.7667,
+    "lumFondMoy": 0.7635,
+    "barreClaireSurSombre": false,
+    "classes": "nav nav--claire nav--bande solide",
+    "avant": "inset(0px)",
+    "apres": "inset(78px 0px 0px)"
+   },
+   {
+    "y": 7380,
+    "hNav": 78,
+    "lignesAlerte": 5,
+    "pireSuite": 2,
+    "lumNavMilieu": 0.707,
+    "lumFondMilieu": 0.7821,
+    "contrasteMilieu": 1.1,
+    "lumNavMoy": 0.7577,
+    "lumFondMoy": 0.7124,
+    "barreClaireSurSombre": false,
+    "classes": "nav nav--claire nav--bande solide",
+    "avant": "inset(0px)",
+    "apres": "inset(78px 0px 0px)"
+   },
+   {
+    "y": 7400,
+    "hNav": 78,
+    "lignesAlerte": 4,
+    "pireSuite": 2,
+    "lumNavMilieu": 0.691,
+    "lumFondMilieu": 0.1796,
+    "contrasteMilieu": 3.23,
+    "lumNavMoy": 0.76,
+    "lumFondMoy": 0.7146,
+    "barreClaireSurSombre": false,
+    "classes": "nav nav--claire nav--bande solide",
+    "avant": "inset(0px)",
+    "apres": "inset(78px 0px 0px)"
+   },
+   {
+    "y": 7420,
+    "hNav": 78,
+    "lignesAlerte": 4,
+    "pireSuite": 2,
+    "lumNavMilieu": 0.707,
+    "lumFondMilieu": 0.7821,
+    "contrasteMilieu": 1.1,
+    "lumNavMoy": 0.7572,
+    "lumFondMoy": 0.7123,
+    "barreClaireSurSombre": false,
+    "classes": "nav nav--claire nav--bande solide",
+    "avant": "inset(0px)",
+    "apres": "inset(78px 0px 0px)"
+   },
+   {
+    "y": 7440,
+    "hNav": 78,
+    "lignesAlerte": 2,
+    "pireSuite": 2,
+    "lumNavMilieu": 0.7075,
+    "lumFondMilieu": 0.7821,
+    "contrasteMilieu": 1.1,
+    "lumNavMoy": 0.7645,
+    "lumFondMoy": 0.7516,
+    "barreClaireSurSombre": false,
+    "classes": "nav nav--claire nav--bande solide",
+    "avant": "inset(0px)",
+    "apres": "inset(78px 0px 0px)"
+   }
+  ]
+ },
+ "clicHeros1440": {
+  "scrollY": 7768,
+  "hNav": 78,
+  "lignesAlerte": 0,
+  "pireSuite": 0,
+  "lumNavMilieu": 0.0086,
+  "lumFondMilieu": 0.0219,
+  "contrasteMilieu": 1.23,
+  "lumNavMoy": 0.0082,
+  "lumFondMoy": 0.0223,
+  "barreClaireSurSombre": false,
+  "classes": "nav nav--claire nav--bande solide nav--sombre",
+  "avant": "inset(78px 0px 0px)",
+  "apres": "inset(0px)"
+ },
+ "contact_b1440": {
+  "classe": "",
+  "outer": "<div><strong>Horaires</strong> <span class=\"bande__ligne\">Lundi–vendredi, 8 h–18 h</span> <span class=\"bande__ligne\">Intervention sur rendez-vous</span></div>",
+  "innerText": "HORAIRES\nLundi–vendredi, 8 h–18 h\nIntervention sur rendez-vous",
+  "textContent": "Horaires Lundi–vendredi, 8 h–18 h Intervention sur rendez-vous",
+  "spans": [
+   {
+    "tag": "STRONG",
+    "t": "Horaires",
+    "top": 8326.2,
+    "bottom": 8344.6,
+    "left": 72,
+    "display": "block"
+   },
+   {
+    "tag": "SPAN",
+    "t": "Lundi–vendredi, 8 h–18 h",
+    "top": 8347,
+    "bottom": 8371.3,
+    "left": 72,
+    "display": "block"
+   },
+   {
+    "tag": "SPAN",
+    "t": "Intervention sur rendez-vous",
+    "top": 8371.3,
+    "bottom": 8395.6,
+    "left": 72,
+    "display": "block"
+   }
+  ],
+  "tels": [
+   "tel:+33261913847",
+   "tel:+33261913847",
+   "tel:+33261913847"
+  ]
+ },
+ "survolPresta": {
+  "numero": {
+   "l": 72,
+   "r": 249,
+   "t": 332,
+   "b": 403,
+   "op": "1"
+  },
+  "glyphe": {
+   "l": 72,
+   "r": 170
+  },
+  "vignette": {
+   "l": 187,
+   "r": 270,
+   "t": 321,
+   "b": 414,
+   "op": "1"
+  },
+  "h3": {
+   "l": 309,
+   "r": 949,
+   "t": 345,
+   "b": 389,
+   "op": "1"
+  },
+  "ligne": {
+   "l": 72,
+   "r": 1368,
+   "t": 311,
+   "b": 425,
+   "op": "1"
+  }
+ },
+ "mentionsBlanc": {
+  "h2top": 489,
+  "precedentBas": null,
+  "blanc": null,
+  "credits": [
+   "Les photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence, les modifications apportées et la page d’origine. Toutes ont été redimensionnées et converties pour le web, et modifiées par Presti : étalonnées, et recadrées pour",
+   "Escalier hélicoïdal en bois massif— Petar Milošević(CC BY-SA 4.0)Modifiée — adaptation : étalonnée depuis l’original (courbe de luminance, ombres et veinage gardés, hautes lumières ramenées vers un crème ambré et désaturées) ; recadrée en 4:5 pour la version téléphone, par Presti. L’adaptation est d",
+   "Ponçage à la main d’une pièce chantournée— Shixart1985(CC BY 2.0)Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit) ; recadrée en 9:16 pour la version téléphone, par Presti.page du fichier",
+   "Penderie en bois, tringle et quatre cintres— Shixart1985(CC BY 2.0)Modifiée : recadrée, étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.page du fichier",
+   "Boiseries et placards intégrés en bois sombre— Crew(CC0)Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.page du fichier",
+   "Tournage sur bois, copeaux en vol— Bertrand from Paris, France(CC BY 2.0)Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.page du fichier",
+   "Mains posées sur une planche de noyer, sciure au sol— Ian Schneider(CC0)Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit), par Presti.page du fichier",
+   "Cuisine en bois et cloison à tasseaux— Shixart1985(CC BY 2.0)Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain) puis recadrée sur la cloison à tasseaux (sans la porte, la cuisine ni le meuble bas), par Presti.page du fichier",
+   "Cuisine sous poutres avec plan de travail en bois— Shixart1985(CC BY 2.0)Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain), par Presti.page du fichier",
+   "Bibliothèque en bois et niches ouvertes— Shixart1985(CC BY 2.0)Modifiée : étalonnée (balance des blancs chaude, exposition, noirs relevés, contraste réduit, grain), par Presti.page du fichier"
+  ]
+ },
+ "alignement1440": {
+  "mesures": {
+   "nav_marque": 72,
+   "heros_h1": 72,
+   "heros_chapeau": 72,
+   "communes_h2": 72,
+   "communes_premiere": 72,
+   "pied_marque": 72,
+   "pied_titre_col1": 72,
+   "pied_bas": 72,
+   "mentions_nav": 72,
+   "mentions_h1": 72,
+   "mentions_premier_p": 72,
+   "mentions_h2": 72,
+   "mentions_pied": 72
+  },
+  "horsCritere": {
+   "nav_marque_texte": 111.2,
+   "communes_intro_colonne_droite": 924.7
+  },
+  "manquants": [],
+  "ecart": 0
+ },
+ "h2_1440": [
+  {
+   "texte": "Ce que je fabrique",
+   "px": 106.56,
+   "vw": 7.4,
+   "section": "prestations",
+   "apresGalerie": false,
+   "hauteurRendue": 196,
+   "largeurRendue": 771,
+   "visible": true
+  },
+  {
+   "texte": "Dans l’atelier",
+   "px": 180,
+   "vw": 12.5,
+   "section": "atelier",
+   "apresGalerie": false,
+   "hauteurRendue": 155,
+   "largeurRendue": 1296,
+   "visible": true
+  },
+  {
+   "texte": "Pièces livrées",
+   "px": 106.56,
+   "vw": 7.4,
+   "section": "realisations",
+   "apresGalerie": false,
+   "hauteurRendue": 98,
+   "largeurRendue": 614,
+   "visible": true
+  },
+  {
+   "texte": "Autour de Rennes",
+   "px": 106.56,
+   "vw": 7.4,
+   "section": "communes",
+   "apresGalerie": true,
+   "hauteurRendue": 196,
+   "largeurRendue": 771,
+   "visible": true
+  },
+  {
+   "texte": "En quatre temps",
+   "px": 106.56,
+   "vw": 7.4,
+   "section": "etapes",
+   "apresGalerie": true,
+   "hauteurRendue": 196,
+   "largeurRendue": 540,
+   "visible": true
+  },
+  {
+   "texte": "Vos questions",
+   "px": 106.56,
+   "vw": 7.4,
+   "section": "questions",
+   "apresGalerie": true,
+   "hauteurRendue": 196,
+   "largeurRendue": 478,
+   "visible": true
+  },
+  {
+   "texte": "Parlons de votre projet",
+   "px": 123.84,
+   "vw": 8.6,
+   "section": "contact",
+   "apresGalerie": true,
+   "hauteurRendue": 124,
+   "largeurRendue": 1296,
+   "visible": true
+  }
+ ],
+ "realisations1440": {
+  "section": 1656,
+  "rect": 1656,
+  "travelling": 1656,
+  "fenetre": 900,
+  "ratio": 1.84,
+  "positionEpingle": "sticky",
+  "pilote": true
+ },
+ "photos_m390": {
+  "compte": {
+   "heros-escalier": 2,
+   "mains-noyer": 1,
+   "tournage-copeaux": 2,
+   "penderie": 2,
+   "reserve-bibliotheque": 2,
+   "atelier-poncage": 2,
+   "reserve-cuisine-poutres": 2,
+   "boiserie": 2,
+   "tasseaux-cloison": 1
+  },
+  "fonds": [
+   {
+    "el": "js texture--papier da--etapes da--communes tout-rendu",
+    "pseudo": "::before",
+    "bg": "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulen",
+    "b": null
+   }
+  ],
+  "detail": [
+   {
+    "noms": [
+     "heros-escalier"
+    ],
+    "currentSrc": "/images/heros-escalier-portrait-720.avif",
+    "dans": "hero hero--plein",
+    "parent": "hero__media"
+   },
+   {
+    "noms": [
+     "mains-noyer"
+    ],
+    "currentSrc": "/images/mains-noyer-480.avif",
+    "dans": "plateau",
+    "parent": "plateau__photo reveal vu"
+   },
+   {
+    "noms": [
+     "tournage-copeaux"
+    ],
+    "currentSrc": "/images/tournage-copeaux-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "penderie"
+    ],
+    "currentSrc": "/images/penderie-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "reserve-bibliotheque"
+    ],
+    "currentSrc": "/images/reserve-bibliotheque-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "atelier-poncage"
+    ],
+    "currentSrc": "/images/atelier-poncage-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "reserve-cuisine-poutres"
+    ],
+    "currentSrc": "/images/reserve-cuisine-poutres-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "boiserie"
+    ],
+    "currentSrc": "/images/boiserie-480.avif",
+    "dans": "prestations",
+    "parent": "presta__vignette"
+   },
+   {
+    "noms": [
+     "atelier-poncage"
+    ],
+    "currentSrc": "/images/atelier-poncage-portrait-720.avif",
+    "dans": "atelier",
+    "parent": "atelier__media"
+   },
+   {
+    "noms": [
+     "reserve-bibliotheque"
+    ],
+    "currentSrc": "/images/reserve-bibliotheque-480.avif",
+    "dans": "realisations",
+    "parent": "galerie__cadre"
+   },
+   {
+    "noms": [
+     "reserve-cuisine-poutres"
+    ],
+    "currentSrc": "/images/reserve-cuisine-poutres-480.avif",
+    "dans": "realisations",
+    "parent": "galerie__cadre"
+   },
+   {
+    "noms": [
+     "penderie"
+    ],
+    "currentSrc": "/images/penderie-480.avif",
+    "dans": "realisations",
+    "parent": "galerie__cadre"
+   },
+   {
+    "noms": [
+     "heros-escalier"
+    ],
+    "currentSrc": "/images/heros-escalier-480.avif",
+    "dans": "realisations",
+    "parent": "galerie__cadre"
+   },
+   {
+    "noms": [
+     "tournage-copeaux"
+    ],
+    "currentSrc": "/images/tournage-copeaux-480.avif",
+    "dans": "etapes",
+    "parent": "etapes__photo"
+   },
+   {
+    "noms": [
+     "tasseaux-cloison"
+    ],
+    "currentSrc": "/images/tasseaux-cloison-480.avif",
+    "dans": "questions",
+    "parent": "faq-scene__photo"
+   },
+   {
+    "noms": [
+     "boiserie"
+    ],
+    "currentSrc": "/images/boiserie-960.avif",
+    "dans": "contact",
+    "parent": "contact__media"
+   }
+  ],
+  "portePanneaux": {
+   "html": 0,
+   "css": 0,
+   "js": 0,
+   "attributions": 0,
+   "mentions": 0
+  },
+  "reserveRestantes": [],
+  "credits": {
+   "heros-escalier": {
+    "entrees": 18,
+    "usages": [
+     "site uniquement — CC BY-SA : jamais dans un film (le partage à l'identique s'étendrait au film)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "mains-noyer": {
+    "entrees": 8,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "tournage-copeaux": {
+    "entrees": 8,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "penderie": {
+    "entrees": 8,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "reserve-bibliotheque": {
+    "entrees": 12,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "atelier-poncage": {
+    "entrees": 16,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "reserve-cuisine-poutres": {
+    "entrees": 12,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "boiserie": {
+    "entrees": 10,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   },
+   "tasseaux-cloison": {
+    "entrees": 4,
+    "usages": [
+     "(aucun)"
+    ],
+    "modifiee": true,
+    "sourceDansMentions": true,
+    "auteurDansMentions": true
+   }
+  }
+ },
+ "carte_m390": [
+  {
+   "id": "hero",
+   "top": 0,
+   "h": 844,
+   "sombre": true
+  },
+  {
+   "id": "plateau",
+   "top": 844,
+   "h": 929,
+   "sombre": true
+  },
+  {
+   "id": "prestations",
+   "top": 1773,
+   "h": 968,
+   "sombre": false
+  },
+  {
+   "id": "atelier",
+   "top": 2741,
+   "h": 844,
+   "sombre": true
+  },
+  {
+   "id": "realisations",
+   "top": 3585,
+   "h": 922,
+   "sombre": true
+  },
+  {
+   "id": "communes",
+   "top": 4507,
+   "h": 429,
+   "sombre": false
+  },
+  {
+   "id": "etapes",
+   "top": 4935,
+   "h": 747,
+   "sombre": true
+  },
+  {
+   "id": "questions",
+   "top": 5682,
+   "h": 913,
+   "sombre": false
+  },
+  {
+   "id": "contact",
+   "top": 6595,
+   "h": 1293,
+   "sombre": true
+  },
+  {
+   "id": "pied",
+   "top": 7888,
+   "h": 405,
+   "sombre": false
+  }
+ ],
+ "nav_m390": [
+  {
+   "capture": "m390-nav-plateau.png",
+   "scrollY": 994,
+   "hNav": 78,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0274,
+   "lumFondMilieu": 0.0058,
+   "contrasteMilieu": 1.39,
+   "lumNavMoy": 0.0158,
+   "lumFondMoy": 0.0058,
+   "barreClaireSurSombre": false,
+   "classes": "nav nav--claire nav--bande solide nav--sombre",
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "capture": "m390-nav-galerie.png",
+   "scrollY": 3785,
+   "hNav": 78,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0291,
+   "lumFondMilieu": 0.0546,
+   "contrasteMilieu": 1.32,
+   "lumNavMoy": 0.0155,
+   "lumFondMoy": 0.0285,
+   "barreClaireSurSombre": false,
+   "classes": "nav nav--claire nav--bande solide nav--sombre",
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "capture": "m390-nav-galerie-milieu.png",
+   "scrollY": 4046,
+   "hNav": 78,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0332,
+   "lumFondMilieu": 0.0571,
+   "contrasteMilieu": 1.29,
+   "lumNavMoy": 0.0219,
+   "lumFondMoy": 0.0759,
+   "barreClaireSurSombre": false,
+   "classes": "nav nav--claire nav--bande solide nav--sombre",
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "capture": "m390-nav-etapes.png",
+   "scrollY": 5085,
+   "hNav": 78,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0291,
+   "lumFondMilieu": 0.1422,
+   "contrasteMilieu": 2.43,
+   "lumNavMoy": 0.0259,
+   "lumFondMoy": 0.1164,
+   "barreClaireSurSombre": false,
+   "classes": "nav nav--claire nav--bande solide nav--sombre",
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  },
+  {
+   "capture": "m390-nav-contact.png",
+   "scrollY": 6745,
+   "hNav": 78,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0306,
+   "lumFondMilieu": 0.0179,
+   "contrasteMilieu": 1.19,
+   "lumNavMoy": 0.0193,
+   "lumFondMoy": 0.0194,
+   "barreClaireSurSombre": false,
+   "classes": "nav nav--claire nav--bande solide nav--sombre",
+   "avant": "inset(78px 0px 0px)",
+   "apres": "inset(0px)"
+  }
+ ],
+ "balayage_m390": {
+  "positions": 373,
+  "pas": 20,
+  "alertes": 0,
+  "barresPleines": 0,
+  "detail": []
+ },
+ "panneauBouton": {
+  "texte": "Demander un devis",
+  "href": "#contact"
+ },
+ "clicPanneau390": {
+  "scrollY": 6595,
+  "contactTop": 0,
+  "menuFerme": true,
+  "hNav": 78,
+  "lignesAlerte": 0,
+  "pireSuite": 0,
+  "lumNavMilieu": 0.0311,
+  "lumFondMilieu": 0.0187,
+  "contrasteMilieu": 1.18,
+  "lumNavMoy": 0.0159,
+  "lumFondMoy": 0.0264,
+  "barreClaireSurSombre": false,
+  "classes": "nav nav--claire nav--bande solide nav--sombre",
+  "avant": "inset(78px 0px 0px)",
+  "apres": "inset(0px)"
+ },
+ "clicPanneau390_pendant": [
+  {
+   "y": 63,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.8529,
+   "lumFondMilieu": 0.8529
+  },
+  {
+   "y": 2241,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.8529,
+   "lumFondMilieu": 0.8529
+  },
+  {
+   "y": 5072,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.8529,
+   "lumFondMilieu": 0.8529
+  },
+  {
+   "y": 6015,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.8529,
+   "lumFondMilieu": 0.8529
+  },
+  {
+   "y": 6408,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.8553,
+   "lumFondMilieu": 0.8529
+  },
+  {
+   "y": 6570,
+   "lignesAlerte": 19,
+   "pireSuite": 19,
+   "lumNavMilieu": 0.0131,
+   "lumFondMilieu": 0.0215
+  },
+  {
+   "y": 6595,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0311,
+   "lumFondMilieu": 0.0187
+  },
+  {
+   "y": 6595,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0311,
+   "lumFondMilieu": 0.0187
+  },
+  {
+   "y": 6595,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0311,
+   "lumFondMilieu": 0.0187
+  },
+  {
+   "y": 6595,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0311,
+   "lumFondMilieu": 0.0187
+  },
+  {
+   "y": 6595,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0311,
+   "lumFondMilieu": 0.0187
+  },
+  {
+   "y": 6595,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0311,
+   "lumFondMilieu": 0.0187
+  },
+  {
+   "y": 6595,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0311,
+   "lumFondMilieu": 0.0187
+  },
+  {
+   "y": 6595,
+   "lignesAlerte": 0,
+   "pireSuite": 0,
+   "lumNavMilieu": 0.0311,
+   "lumFondMilieu": 0.0187
+  }
+ ],
+ "contact_m390": {
+  "classe": "",
+  "outer": "<div><strong>Horaires</strong> <span class=\"bande__ligne\">Lundi–vendredi, 8 h–18 h</span> <span class=\"bande__ligne\">Intervention sur rendez-vous</span></div>",
+  "innerText": "HORAIRES\nLundi–vendredi, 8 h–18 h\nIntervention sur rendez-vous",
+  "textContent": "Horaires Lundi–vendredi, 8 h–18 h Intervention sur rendez-vous",
+  "spans": [
+   {
+    "tag": "STRONG",
+    "t": "Horaires",
+    "top": 7726.8,
+    "bottom": 7745.3,
+    "left": 19.5,
+    "display": "block"
+   },
+   {
+    "tag": "SPAN",
+    "t": "Lundi–vendredi, 8 h–18 h",
+    "top": 7747.7,
+    "bottom": 7772,
+    "left": 19.5,
+    "display": "block"
+   },
+   {
+    "tag": "SPAN",
+    "t": "Intervention sur rendez-vous",
+    "top": 7772,
+    "bottom": 7796.3,
+    "left": 19.5,
+    "display": "block"
+   }
+  ],
+  "tels": [
+   "tel:+33261913847",
+   "tel:+33261913847",
+   "tel:+33261913847"
+  ]
+ },
+ "communes": [
+  {
+   "fenetre": "1280x800",
+   "hauteur": 454.9,
+   "offset": 455,
+   "top": 4991,
+   "limite": 640,
+   "ok": true
+  },
+  {
+   "fenetre": "1366x768",
+   "hauteur": 485.3,
+   "offset": 485,
+   "top": 4964,
+   "limite": 614.4,
+   "ok": true
+  },
+  {
+   "fenetre": "1440x900",
+   "hauteur": 508.7,
+   "offset": 509,
+   "top": 5569,
+   "limite": 720,
+   "ok": true
+  }
+ ],
+ "telsFichiers": {
+  "index.html": {
+   "tels": [
+    "tel:+33261913847",
+    "tel:+33261913847",
+    "tel:+33261913847"
+   ],
+   "ok": true
+  },
+  "mentions-legales/index.html": {
+   "tels": [
+    "tel:+33261913847",
+    "tel:+33261913847"
+   ],
+   "ok": true
+  },
+  "confidentialite/index.html": {
+   "tels": [
+    "tel:+33261913847",
+    "tel:+33261913847"
+   ],
+   "ok": true
+  },
+  "menuisier-rennes/index.html": {
+   "tels": [
+    "tel:+33261913847",
+    "tel:+33261913847",
+    "tel:+33261913847"
+   ],
+   "ok": true
+  },
+  "menuisier-cesson-sevigne/index.html": {
+   "tels": [
+    "tel:+33261913847",
+    "tel:+33261913847",
+    "tel:+33261913847"
+   ],
+   "ok": true
+  },
+  "menuisier-bruz/index.html": {
+   "tels": [
+    "tel:+33261913847",
+    "tel:+33261913847",
+    "tel:+33261913847"
+   ],
+   "ok": true
+  },
+  "menuisier-saint-gregoire/index.html": {
+   "tels": [
+    "tel:+33261913847",
+    "tel:+33261913847",
+    "tel:+33261913847"
+   ],
+   "ok": true
+  }
+ }
+}

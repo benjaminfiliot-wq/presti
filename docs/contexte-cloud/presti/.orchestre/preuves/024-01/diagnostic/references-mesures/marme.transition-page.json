@@ -1,0 +1,21 @@
+{
+  "slug": "marme",
+  "url": "https://marme.fr/",
+  "date": "2026-09-16T20:42:41.705Z",
+  "lien": {
+    "href": "https://menuiserieretaise.fr/entrees/",
+    "texte": "Entrées"
+  },
+  "urlFinale": "https://menuiserieretaise.fr/entrees/#-",
+  "appels": {
+    "vt": 0,
+    "push": 0
+  },
+  "documentRemplace": true,
+  "animationsPendantLaTransition": [
+    [
+      "CSSTransition | background-color | 300 | ease | 1 | ",
+      1
+    ]
+  ]
+}

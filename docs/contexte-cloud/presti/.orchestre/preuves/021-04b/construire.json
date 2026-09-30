@@ -1,0 +1,120 @@
+{
+ "date": "2026-09-15T16:42:34.554Z",
+ "graine": 5204,
+ "qualites": {
+  "assemble": 54,
+  "eclate": 54,
+  "calque-limon": 54,
+  "calque-contremarche": 54,
+  "calque-marche": 54,
+  "calque-vis": 56
+ },
+ "qualitesBis": {
+  "assemble": 54,
+  "eclate": 54,
+  "calque-limon": 54,
+  "calque-contremarche": 54,
+  "calque-marche": 54,
+  "calque-vis": 56
+ },
+ "opaciteOmbre": 0.5,
+ "lancements": {
+  "rendus": {
+   "secondes": 252.4,
+   "commande": "\"C:/Program Files/Blender Foundation/blender.exe\" --background --factory-startup --python C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\021-04b\\outils\\marche.py -- C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\021-04b\\brut 5204 final"
+  },
+  "rendus-bis": {
+   "secondes": 279,
+   "commande": "\"C:/Program Files/Blender Foundation/blender.exe\" --background --factory-startup --python C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\021-04b\\outils\\marche.py -- C:\\Users\\benja\\Documents\\presti\\.orchestre\\preuves\\021-04b\\brut-bis 5204 final"
+  }
+ },
+ "blender": "5.2.1 LTS",
+ "echantillons": {
+  "beaute": 48,
+  "ombre": 32
+ },
+ "secondesBlender": {
+  "rendus": 242,
+  "rendus-bis": 272.1
+ },
+ "secondesParRendu": {
+  "assemble_beaute.png": 67.4,
+  "assemble_ombre.png": 11.5,
+  "calque-limon_beaute.png": 31.5,
+  "calque-limon_ombre.png": 3.6,
+  "calque-contremarche_beaute.png": 22.1,
+  "calque-contremarche_ombre.png": 2.4,
+  "calque-marche_beaute.png": 25.1,
+  "calque-marche_ombre.png": 3.7,
+  "calque-vis_beaute.png": 7.5,
+  "calque-vis_ombre.png": 1.1,
+  "eclate_beaute.png": 56.5,
+  "eclate_ombre.png": 8.7
+ },
+ "octets": {
+  "assemble": 9478,
+  "eclate": 15070,
+  "calque-limon": 7844,
+  "calque-contremarche": 8372,
+  "calque-marche": 10915,
+  "calque-vis": 5140
+ },
+ "total": 56819,
+ "mesures": {
+  "limon": {
+   "boitePx": {
+    "left": 361,
+    "top": 75,
+    "width": 663,
+    "height": 666
+   },
+   "alphaOmbreMax": 0.5
+  },
+  "contremarche": {
+   "boitePx": {
+    "left": 422,
+    "top": 347,
+    "width": 722,
+    "height": 506
+   },
+   "alphaOmbreMax": 0.5
+  },
+  "marche": {
+   "boitePx": {
+    "left": 411,
+    "top": 275,
+    "width": 799,
+    "height": 510
+   },
+   "alphaOmbreMax": 0.5
+  },
+  "vis": {
+   "boitePx": {
+    "left": 473,
+    "top": 343,
+    "width": 454,
+    "height": 456
+   },
+   "alphaOmbreMax": 0.237
+  }
+ },
+ "vecteursPx": {
+  "limon": [
+   -274,
+   -27
+  ],
+  "contremarche": [
+   -265,
+   144
+  ],
+  "marche": [
+   136,
+   -66
+  ],
+  "vis": [
+   136,
+   -161
+  ]
+ },
+ "echelle": 2.367693880419882
+}

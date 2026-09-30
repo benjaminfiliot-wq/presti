@@ -1,0 +1,602 @@
+{
+ "plateau-1440": {
+  "capture": "b1440-plateau.png",
+  "plateau": {
+   "top": 0,
+   "bottom": 850.328125,
+   "left": 0,
+   "right": 1440
+  },
+  "innerWidth": 1440,
+  "innerHeight": 900,
+  "vals": [
+   {
+    "t": "10",
+    "x": 72,
+    "y": 522.71875,
+    "w": 148.8125,
+    "h": 123.546875,
+    "corps": 158.4,
+    "opacite": "1",
+    "transform": "none"
+   },
+   {
+    "t": "180",
+    "x": 542.4375,
+    "y": 522.71875,
+    "w": 226.34375,
+    "h": 123.546875,
+    "corps": 158.4,
+    "opacite": "1",
+    "transform": "none"
+   },
+   {
+    "t": "8",
+    "x": 974.4375,
+    "y": 522.71875,
+    "w": 77.546875,
+    "h": 123.546875,
+    "corps": 158.4,
+    "opacite": "1",
+    "transform": "none"
+   }
+  ],
+  "nav": "nav nav--claire nav--sombre solide",
+  "fondPlateau": "rgb(20, 17, 14)",
+  "citation": "Du premier relevé à la dernière marche posée, c’est la même main qui travaille.\n\nYANN, FONDATEUR DE L’ATELIER",
+  "dt": [
+   "de garantie décennale sur chaque ouvrage posé",
+   "d’atelier à Rennes, où chaque pièce est fabriquée",
+   "délai type d’un escalier, du relevé à la pose"
+  ],
+  "bandeCss": [
+   0,
+   850.328125
+  ],
+  "partSous30DansLaBande": 95.6,
+  "partSous30Capture": 90.3,
+  "chiffres": [
+   {
+    "t": "10",
+    "x": 72,
+    "y": 522.71875,
+    "w": 148.8125,
+    "h": 123.546875,
+    "corps": 158.4,
+    "opacite": "1",
+    "transform": "none",
+    "visibleEntier": true,
+    "encreCssPx": 116,
+    "seuil7vw": 100.8,
+    "passe": true
+   },
+   {
+    "t": "180",
+    "x": 542.4375,
+    "y": 522.71875,
+    "w": 226.34375,
+    "h": 123.546875,
+    "corps": 158.4,
+    "opacite": "1",
+    "transform": "none",
+    "visibleEntier": true,
+    "encreCssPx": 116,
+    "seuil7vw": 100.8,
+    "passe": true
+   },
+   {
+    "t": "8",
+    "x": 974.4375,
+    "y": 522.71875,
+    "w": 77.546875,
+    "h": 123.546875,
+    "corps": 158.4,
+    "opacite": "1",
+    "transform": "none",
+    "visibleEntier": true,
+    "encreCssPx": 115,
+    "seuil7vw": 100.8,
+    "passe": true
+   }
+  ]
+ },
+ "plateau-390": {
+  "capture": "m390-plateau.png",
+  "plateau": {
+   "top": 0,
+   "bottom": 917.953125,
+   "left": 0,
+   "right": 390
+  },
+  "innerWidth": 390,
+  "innerHeight": 844,
+  "vals": [
+   {
+    "t": "10",
+    "x": 19.5,
+    "y": 340.484375,
+    "w": 95.265625,
+    "h": 79.09375,
+    "corps": 101.4,
+    "opacite": "1",
+    "transform": "none"
+   },
+   {
+    "t": "180",
+    "x": 19.5,
+    "y": 523.640625,
+    "w": 144.90625,
+    "h": 79.09375,
+    "corps": 101.4,
+    "opacite": "1",
+    "transform": "none"
+   },
+   {
+    "t": "8",
+    "x": 19.5,
+    "y": 706.796875,
+    "w": 49.640625,
+    "h": 79.09375,
+    "corps": 101.4,
+    "opacite": "1",
+    "transform": "none"
+   }
+  ],
+  "nav": "nav nav--claire nav--sombre solide",
+  "fondPlateau": "rgb(20, 17, 14)",
+  "citation": "Du premier relevé à la dernière marche posée, c’est la même main qui travaille.\n\nYANN, FONDATEUR DE L’ATELIER",
+  "dt": [
+   "de garantie décennale sur chaque ouvrage posé",
+   "d’atelier à Rennes, où chaque pièce est fabriquée",
+   "délai type d’un escalier, du relevé à la pose"
+  ],
+  "bandeCss": [
+   0,
+   844
+  ],
+  "partSous30DansLaBande": 93.1,
+  "partSous30Capture": 93.1,
+  "chiffres": [
+   {
+    "t": "10",
+    "x": 19.5,
+    "y": 340.484375,
+    "w": 95.265625,
+    "h": 79.09375,
+    "corps": 101.4,
+    "opacite": "1",
+    "transform": "none",
+    "visibleEntier": true,
+    "encreCssPx": 74.5,
+    "seuil7vw": 27.3,
+    "passe": true
+   },
+   {
+    "t": "180",
+    "x": 19.5,
+    "y": 523.640625,
+    "w": 144.90625,
+    "h": 79.09375,
+    "corps": 101.4,
+    "opacite": "1",
+    "transform": "none",
+    "visibleEntier": true,
+    "encreCssPx": 74.5,
+    "seuil7vw": 27.3,
+    "passe": true
+   },
+   {
+    "t": "8",
+    "x": 19.5,
+    "y": 706.796875,
+    "w": 49.640625,
+    "h": 79.09375,
+    "corps": 101.4,
+    "opacite": "1",
+    "transform": "none",
+    "visibleEntier": true,
+    "encreCssPx": 73.5,
+    "seuil7vw": 27.3,
+    "passe": true
+   }
+  ],
+  "vueChiffres": [
+   {
+    "t": "10",
+    "y": 93,
+    "visibleEntier": true,
+    "encreCssPx": 74.5
+   },
+   {
+    "t": "180",
+    "y": 277,
+    "visibleEntier": true,
+    "encreCssPx": 74.5
+   },
+   {
+    "t": "8",
+    "y": 460,
+    "visibleEntier": true,
+    "encreCssPx": 73.5
+   }
+  ]
+ },
+ "domHorsPied": {
+  "000000000": 0,
+  "DEMO-0001": 0,
+  "fictif": 0,
+  "telephoneTexteVisible": 2,
+  "liensTelHorsPied": [
+   "nav → 02 61 91 38 47",
+   "section → 02 61 91 38 47"
+  ],
+  "telDansPied": 1,
+  "defile": 0,
+  "sectionApresHeros": "plateau",
+  "piedFictif": 1
+ },
+ "polices-bureau-1440-premier-passage": {
+  "parSelecteur": {
+   ".h1__cle": [
+    "IBM Plex Sans (web) ×18"
+   ],
+   ".h1__ligne-in": [
+    "Fraunces (web) ×16"
+   ],
+   ".hero .chapeau": [
+    "IBM Plex Sans (web) ×84"
+   ],
+   ".hero .bouton": [
+    "IBM Plex Sans (web) ×17"
+   ],
+   ".nav__marque span": [
+    "Fraunces (web) ×17"
+   ],
+   ".nav__liens a": [
+    "IBM Plex Sans (web) ×11"
+   ],
+   ".nav__tel": [
+    "IBM Plex Sans (web) ×14"
+   ],
+   ".plateau__citation p": [
+    "Fraunces (web) ×77"
+   ],
+   ".plateau__citation figcaption": [
+    "IBM Plex Sans (web) ×28"
+   ],
+   ".chiffre dt": [
+    "IBM Plex Sans (web) ×44"
+   ],
+   ".chiffre__valeur": [
+    "Fraunces (web) ×2"
+   ],
+   ".chiffre__unite": [
+    "Fraunces (web) ×3"
+   ],
+   "#prestations .mono": [
+    "IBM Plex Sans (web) ×11"
+   ],
+   "#prestations .entete p": [
+    "IBM Plex Sans (web) ×96"
+   ],
+   ".carte h3": [
+    "Fraunces (web) ×25"
+   ],
+   ".carte p": [
+    "IBM Plex Sans (web) ×150"
+   ],
+   ".galerie figcaption span": [
+    "IBM Plex Sans (web) ×34"
+   ],
+   ".galerie__credits": [
+    "IBM Plex Sans (web) ×304",
+    "Segoe UI (système) ×2"
+   ],
+   ".commune span": [
+    "Fraunces (web) ×6"
+   ],
+   "#etapes .mono": [
+    "IBM Plex Sans (web) ×19"
+   ],
+   ".etape p": [
+    "IBM Plex Sans (web) ×109"
+   ],
+   "summary": [
+    "Fraunces (web) ×57",
+    "IBM Plex Sans (web) ×1"
+   ],
+   ".devis label": [
+    "IBM Plex Sans (web) ×12"
+   ],
+   ".devis__note": [
+    "IBM Plex Sans (web) ×34"
+   ],
+   ".bande__infos": [],
+   ".pied p": [
+    "IBM Plex Sans (web) ×35"
+   ],
+   ".pied__bas span": [
+    "IBM Plex Sans (web) ×24"
+   ]
+  },
+  "selecteursEnPoliceSysteme": [
+   ".galerie__credits: IBM Plex Sans (web) ×304, Segoe UI (système) ×2"
+  ],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ },
+ "polices-mobile-390-premier-passage": {
+  "parSelecteur": {
+   ".h1__cle": [
+    "IBM Plex Sans (web) ×18"
+   ],
+   ".h1__ligne-in": [
+    "Fraunces (web) ×15"
+   ],
+   ".hero .chapeau": [
+    "IBM Plex Sans (web) ×84"
+   ],
+   ".hero .bouton": [
+    "IBM Plex Sans (web) ×17"
+   ],
+   ".nav__marque span": [
+    "Fraunces (web) ×17"
+   ],
+   ".nav__liens a": [],
+   ".nav__tel": [],
+   ".plateau__citation p": [
+    "Fraunces (web) ×76"
+   ],
+   ".plateau__citation figcaption": [
+    "IBM Plex Sans (web) ×28"
+   ],
+   ".chiffre dt": [
+    "IBM Plex Sans (web) ×44"
+   ],
+   ".chiffre__valeur": [
+    "Fraunces (web) ×2"
+   ],
+   ".chiffre__unite": [
+    "Fraunces (web) ×3"
+   ],
+   "#prestations .mono": [
+    "IBM Plex Sans (web) ×11"
+   ],
+   "#prestations .entete p": [
+    "IBM Plex Sans (web) ×95"
+   ],
+   ".carte h3": [
+    "Fraunces (web) ×25"
+   ],
+   ".carte p": [
+    "IBM Plex Sans (web) ×150"
+   ],
+   ".galerie figcaption span": [
+    "IBM Plex Sans (web) ×34"
+   ],
+   ".galerie__credits": [
+    "IBM Plex Sans (web) ×300",
+    "Segoe UI (système) ×2"
+   ],
+   ".commune span": [
+    "Fraunces (web) ×6"
+   ],
+   "#etapes .mono": [
+    "IBM Plex Sans (web) ×19"
+   ],
+   ".etape p": [
+    "IBM Plex Sans (web) ×108"
+   ],
+   "summary": [
+    "Fraunces (web) ×56",
+    "IBM Plex Sans (web) ×1"
+   ],
+   ".devis label": [
+    "IBM Plex Sans (web) ×12"
+   ],
+   ".devis__note": [
+    "IBM Plex Sans (web) ×34"
+   ],
+   ".bande__infos": [],
+   ".pied p": [
+    "IBM Plex Sans (web) ×35"
+   ],
+   ".pied__bas span": [
+    "IBM Plex Sans (web) ×24"
+   ]
+  },
+  "selecteursEnPoliceSysteme": [
+   ".galerie__credits: IBM Plex Sans (web) ×300, Segoe UI (système) ×2"
+  ],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ },
+ "polices-mobile-390-premier-passage-4g-lente": {
+  "parSelecteur": {
+   ".h1__cle": [
+    "IBM Plex Sans (web) ×18"
+   ],
+   ".h1__ligne-in": [
+    "Fraunces (web) ×15"
+   ],
+   ".hero .chapeau": [
+    "IBM Plex Sans (web) ×84"
+   ],
+   ".hero .bouton": [
+    "IBM Plex Sans (web) ×17"
+   ],
+   ".nav__marque span": [
+    "Fraunces (web) ×17"
+   ],
+   ".nav__liens a": [],
+   ".nav__tel": [],
+   ".plateau__citation p": [
+    "Fraunces (web) ×76"
+   ],
+   ".plateau__citation figcaption": [
+    "IBM Plex Sans (web) ×28"
+   ],
+   ".chiffre dt": [
+    "IBM Plex Sans (web) ×44"
+   ],
+   ".chiffre__valeur": [
+    "Fraunces (web) ×2"
+   ],
+   ".chiffre__unite": [
+    "Fraunces (web) ×3"
+   ],
+   "#prestations .mono": [
+    "IBM Plex Sans (web) ×11"
+   ],
+   "#prestations .entete p": [
+    "IBM Plex Sans (web) ×95"
+   ],
+   ".carte h3": [
+    "Fraunces (web) ×25"
+   ],
+   ".carte p": [
+    "IBM Plex Sans (web) ×150"
+   ],
+   ".galerie figcaption span": [
+    "IBM Plex Sans (web) ×34"
+   ],
+   ".galerie__credits": [
+    "IBM Plex Sans (web) ×300",
+    "Segoe UI (système) ×2"
+   ],
+   ".commune span": [
+    "Fraunces (web) ×6"
+   ],
+   "#etapes .mono": [
+    "IBM Plex Sans (web) ×19"
+   ],
+   ".etape p": [
+    "IBM Plex Sans (web) ×108"
+   ],
+   "summary": [
+    "Fraunces (web) ×56",
+    "IBM Plex Sans (web) ×1"
+   ],
+   ".devis label": [
+    "IBM Plex Sans (web) ×12"
+   ],
+   ".devis__note": [
+    "IBM Plex Sans (web) ×34"
+   ],
+   ".bande__infos": [],
+   ".pied p": [
+    "IBM Plex Sans (web) ×35"
+   ],
+   ".pied__bas span": [
+    "IBM Plex Sans (web) ×24"
+   ]
+  },
+  "selecteursEnPoliceSysteme": [
+   ".galerie__credits: IBM Plex Sans (web) ×300, Segoe UI (système) ×2"
+  ],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ },
+ "polices-bureau-1440-premier-passage-4g-lente": {
+  "parSelecteur": {
+   ".h1__cle": [
+    "IBM Plex Sans (web) ×18"
+   ],
+   ".h1__ligne-in": [
+    "Fraunces (web) ×16"
+   ],
+   ".hero .chapeau": [
+    "IBM Plex Sans (web) ×84"
+   ],
+   ".hero .bouton": [
+    "IBM Plex Sans (web) ×17"
+   ],
+   ".nav__marque span": [
+    "Fraunces (web) ×17"
+   ],
+   ".nav__liens a": [
+    "IBM Plex Sans (web) ×11"
+   ],
+   ".nav__tel": [
+    "IBM Plex Sans (web) ×14"
+   ],
+   ".plateau__citation p": [
+    "Fraunces (web) ×77"
+   ],
+   ".plateau__citation figcaption": [
+    "IBM Plex Sans (web) ×28"
+   ],
+   ".chiffre dt": [
+    "IBM Plex Sans (web) ×44"
+   ],
+   ".chiffre__valeur": [
+    "Fraunces (web) ×2"
+   ],
+   ".chiffre__unite": [
+    "Fraunces (web) ×3"
+   ],
+   "#prestations .mono": [
+    "IBM Plex Sans (web) ×11"
+   ],
+   "#prestations .entete p": [
+    "IBM Plex Sans (web) ×96"
+   ],
+   ".carte h3": [
+    "Fraunces (web) ×25"
+   ],
+   ".carte p": [
+    "IBM Plex Sans (web) ×150"
+   ],
+   ".galerie figcaption span": [
+    "IBM Plex Sans (web) ×34"
+   ],
+   ".galerie__credits": [
+    "IBM Plex Sans (web) ×304",
+    "Segoe UI (système) ×2"
+   ],
+   ".commune span": [
+    "Fraunces (web) ×6"
+   ],
+   "#etapes .mono": [
+    "IBM Plex Sans (web) ×19"
+   ],
+   ".etape p": [
+    "IBM Plex Sans (web) ×109"
+   ],
+   "summary": [
+    "Fraunces (web) ×57",
+    "IBM Plex Sans (web) ×1"
+   ],
+   ".devis label": [
+    "IBM Plex Sans (web) ×12"
+   ],
+   ".devis__note": [
+    "IBM Plex Sans (web) ×34"
+   ],
+   ".bande__infos": [],
+   ".pied p": [
+    "IBM Plex Sans (web) ×35"
+   ],
+   ".pied__bas span": [
+    "IBM Plex Sans (web) ×24"
+   ]
+  },
+  "selecteursEnPoliceSysteme": [
+   ".galerie__credits: IBM Plex Sans (web) ×304, Segoe UI (système) ×2"
+  ],
+  "fontsApi": [
+   "Fraunces 100 900 loaded",
+   "IBM Plex Sans 400 loaded",
+   "IBM Plex Sans 600 loaded"
+  ]
+ }
+}

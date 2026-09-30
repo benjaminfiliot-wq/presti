@@ -1,0 +1,50 @@
+{
+  "siren": "539960963",
+  "nom": "SARL BOUFFET OLIVIER",
+  "metier": "menuisier",
+  "commune": "Lussant",
+  "code_postal": "17430",
+  "telephone": "05 46 84 89 86",
+  "source_telephone": "https://www.pagesjaunes.fr/pros/50719112",
+  "demo": true,
+  "nom_affiche": "SARL Bouffet Olivier",
+  "communes": [
+    "Lussant",
+    "Moragne",
+    "Tonnay-Charente",
+    "Cabariot"
+  ],
+  "pages": [
+    {
+      "chemin": "/",
+      "type": "accueil"
+    },
+    {
+      "chemin": "/prestations/",
+      "type": "prestations"
+    },
+    {
+      "chemin": "/contact/",
+      "type": "contact"
+    },
+    {
+      "chemin": "/mentions/",
+      "type": "legal"
+    },
+    {
+      "chemin": "/menuisier-moragne/",
+      "type": "commune",
+      "cible": "Moragne"
+    },
+    {
+      "chemin": "/menuisier-tonnay-charente/",
+      "type": "commune",
+      "cible": "Tonnay-Charente"
+    },
+    {
+      "chemin": "/menuisier-cabariot/",
+      "type": "commune",
+      "cible": "Cabariot"
+    }
+  ]
+}

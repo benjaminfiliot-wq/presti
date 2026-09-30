@@ -1,0 +1,7 @@
+import { chromium } from 'playwright'
+const b = await chromium.launch()
+const p = await b.newPage()
+const cands = ['(animation-timeline: --non-supporte())', '(animation-timeline: non-supporte())', '(animation-timeline: view(non-supporte))', '(propriete-non-supportee: 1)']
+await p.setContent(`<style>${cands.map((c, i) => `@supports ${c} { #s${i} { --t: vrai } }`).join('\n')}</style>${cands.map((c, i) => `<div id=s${i}></div>`).join('')}`)
+console.log(await p.evaluate((cands) => cands.map((c, i) => ({ condition: c, regleAppliquee: getComputedStyle(document.getElementById('s' + i)).getPropertyValue('--t') === 'vrai', cssSupports: CSS.supports(c) })), cands))
+await b.close()

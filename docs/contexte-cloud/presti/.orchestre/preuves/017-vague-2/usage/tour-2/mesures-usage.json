@@ -1,0 +1,637 @@
+{
+  "origine": "http://127.0.0.1:51632",
+  "date": "2026-09-14T20:35:02.815Z",
+  "polices": {
+    "bureau-1440": {
+      ".h1__cle span": "IBM Plex Sans (web) ×18",
+      ".h1__ligne .mot": "Fraunces (web) ×4",
+      ".chapeau": "IBM Plex Sans (web) ×85",
+      ".hero .bouton": "IBM Plex Sans (web) ×17",
+      ".nav__marque span": "Fraunces (web) ×17",
+      ".nav__liens a": "IBM Plex Sans (web) ×11",
+      ".nav__tel": "IBM Plex Sans (web) ×14",
+      ".nav__devis": "IBM Plex Sans (web) ×5",
+      ".plateau blockquote p": "Fraunces (web) ×76",
+      ".plateau__signe": "IBM Plex Sans (web) ×40",
+      ".plateau__parcours": "IBM Plex Sans (web) ×103",
+      ".chiffre__valeur": "Fraunces (web) ×2",
+      ".chiffre dt": "IBM Plex Sans (web) ×44",
+      "#prestations h2": "Fraunces (web) ×17",
+      ".presta h3": "Fraunces (web) ×20",
+      ".presta__texte p": "IBM Plex Sans (web) ×134",
+      ".presta__num": "Fraunces (web) ×2",
+      ".atelier__phrase": "Fraunces (web) ×90",
+      ".galerie figcaption span:not(.galerie__n)": "IBM Plex Sans (web) ×59",
+      "#communes .commune span": "Fraunces (web) ×6",
+      "#etapes .mono": "IBM Plex Sans (web) ×19",
+      ".etape h3": "Fraunces (web) ×16",
+      ".etape p": "IBM Plex Sans (web) ×109",
+      ".etape__num": "Fraunces (web) ×2",
+      ".faq summary": "Fraunces (web) ×57 + IBM Plex Sans (web) ×1",
+      ".devis label": "IBM Plex Sans (web) ×12",
+      ".devis__form .bouton": "IBM Plex Sans (web) ×18",
+      ".devis__note": "IBM Plex Sans (web) ×34",
+      ".pied p": "IBM Plex Sans (web) ×35",
+      "document.fonts": "Fraunces 100 900 loaded | IBM Plex Sans 400 loaded | IBM Plex Sans 600 loaded"
+    },
+    "mobile-390": {
+      ".h1__cle span": "IBM Plex Sans (web) ×18",
+      ".h1__ligne .mot": "Fraunces (web) ×4",
+      ".chapeau": "IBM Plex Sans (web) ×86",
+      ".hero .bouton": "IBM Plex Sans (web) ×17",
+      ".nav__marque span": "Fraunces (web) ×17",
+      ".nav__liens a": "(non rendu)",
+      ".nav__tel": "(non rendu)",
+      ".nav__devis": "(non rendu)",
+      ".plateau blockquote p": "Fraunces (web) ×76",
+      ".plateau__signe": "IBM Plex Sans (web) ×39",
+      ".plateau__parcours": "IBM Plex Sans (web) ×102",
+      ".chiffre__valeur": "Fraunces (web) ×2",
+      ".chiffre dt": "IBM Plex Sans (web) ×44",
+      "#prestations h2": "Fraunces (web) ×17",
+      ".presta h3": "Fraunces (web) ×20",
+      ".presta__texte p": "IBM Plex Sans (web) ×133",
+      ".presta__num": "Fraunces (web) ×2",
+      ".atelier__phrase": "(non rendu)",
+      ".galerie figcaption span:not(.galerie__n)": "(non rendu)",
+      "#communes .commune span": "(non rendu)",
+      "#etapes .mono": "(non rendu)",
+      ".etape h3": "(non rendu)",
+      ".etape p": "(non rendu)",
+      ".etape__num": "(non rendu)",
+      ".faq summary": "(non rendu)",
+      ".devis label": "(non rendu)",
+      ".devis__form .bouton": "(non rendu)",
+      ".devis__note": "(non rendu)",
+      ".pied p": "IBM Plex Sans (web) ×35",
+      "document.fonts": "Fraunces 100 900 loaded | IBM Plex Sans 400 loaded | IBM Plex Sans 600 loaded"
+    },
+    "mobile-390-4g-cpu4": {
+      ".h1__cle span": "IBM Plex Sans (web) ×18",
+      ".h1__ligne .mot": "Fraunces (web) ×4",
+      ".chapeau": "IBM Plex Sans (web) ×86",
+      ".hero .bouton": "IBM Plex Sans (web) ×17",
+      ".nav__marque span": "Fraunces (web) ×17",
+      ".nav__liens a": "(non rendu)",
+      ".nav__tel": "(non rendu)",
+      ".nav__devis": "(non rendu)",
+      ".plateau blockquote p": "Fraunces (web) ×76",
+      ".plateau__signe": "IBM Plex Sans (web) ×39",
+      ".plateau__parcours": "IBM Plex Sans (web) ×102",
+      ".chiffre__valeur": "Fraunces (web) ×2",
+      ".chiffre dt": "IBM Plex Sans (web) ×44",
+      "#prestations h2": "Fraunces (web) ×17",
+      ".presta h3": "Fraunces (web) ×20",
+      ".presta__texte p": "IBM Plex Sans (web) ×133",
+      ".presta__num": "Fraunces (web) ×2",
+      ".atelier__phrase": "(non rendu)",
+      ".galerie figcaption span:not(.galerie__n)": "(non rendu)",
+      "#communes .commune span": "(non rendu)",
+      "#etapes .mono": "(non rendu)",
+      ".etape h3": "(non rendu)",
+      ".etape p": "(non rendu)",
+      ".etape__num": "(non rendu)",
+      ".faq summary": "(non rendu)",
+      ".devis label": "(non rendu)",
+      ".devis__form .bouton": "(non rendu)",
+      ".devis__note": "(non rendu)",
+      ".pied p": "IBM Plex Sans (web) ×35",
+      "document.fonts": "Fraunces 100 900 loaded | IBM Plex Sans 400 loaded | IBM Plex Sans 600 loaded"
+    }
+  },
+  "texte": {
+    "signes": 4623,
+    "je": 22,
+    "nous": 0,
+    "phrasesJe": [
+      "Escaliers, dressings et bibliothèques en bois massif, que je dessine, fabrique et pose.",
+      "CAP puis brevet professionnel de menuisier, huit ans dans un atelier d’escaliers avant d’ouvrir le mien.",
+      "Ce que je fabrique",
+      "De la menuiserie intérieure seulement : je dessine chaque ouvrage, je le fabrique à l’atelier et je le pose moi-même.",
+      "Je trace, débite, assemble et ponce chaque pièce ici, à Rennes, avant de la poser chez vous.",
+      "Je viens voir la pièce chez vous, dans ces quatre communes.",
+      "Du premier appel à la pose, quatre rendez-vous, toujours avec moi.",
+      "Je relève les cotes chez vous et je vérifie les aplombs, l’humidité des murs et les accès.",
+      "Je fabrique les pièces à l’atelier, puis je les pose chez vous à la date fixée ensemble.",
+      "Décrivez la pièce et l’usage : je vous rappelle pour fixer une visite.",
+      "Plus tard, je me renseigne",
+      "Envoyer ma demande"
+    ],
+    "prenomNom": [],
+    "cliches": [],
+    "prix": [],
+    "avis": [],
+    "gratuit": [
+      "Vos devis de menuiserie sont-ils gratuits ?"
+    ]
+  },
+  "texteCommune": {
+    "signes": 2367
+  },
+  "devisAccueil": {
+    "bureauListe": [
+      {
+        "i": 0,
+        "texte": "Devis",
+        "href": "#contact",
+        "classe": "nav__devis",
+        "visible": true
+      },
+      {
+        "i": 1,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "classe": "bouton",
+        "visible": false
+      },
+      {
+        "i": 2,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "classe": "bouton",
+        "visible": true
+      }
+    ],
+    "bureauClics": [
+      {
+        "lien": "Devis (nav__devis)",
+        "ok": true,
+        "champTop": 717,
+        "champBas": 765,
+        "navBas": 78,
+        "formTop": 691,
+        "formBas": 1083,
+        "h": 900,
+        "sousLeDoigt": "SELECT.",
+        "hash": "#contact",
+        "y": 8364
+      },
+      {
+        "lien": "Demander un devis (bouton)",
+        "ok": true,
+        "champTop": 717,
+        "champBas": 765,
+        "navBas": 78,
+        "formTop": 691,
+        "formBas": 1083,
+        "h": 900,
+        "sousLeDoigt": "SELECT.",
+        "hash": "#contact",
+        "y": 8364
+      }
+    ],
+    "bureauEnvoi": {
+      "merciAffiche": true,
+      "formCache": true,
+      "titre": "Demande reçue.",
+      "note": "Démonstration : aucune donnée n’a été envoyée.",
+      "noteALecran": true,
+      "titreALecran": true,
+      "noteRect": [
+        622,
+        646
+      ],
+      "h2Top": 126,
+      "navBas": 78,
+      "recap": [
+        "Escalier",
+        "Bruz",
+        "Dans trois à six mois"
+      ],
+      "stockage": {
+        "local": 0,
+        "session": 0,
+        "cookie": ""
+      },
+      "urlInchangee": true,
+      "requetesApresEnvoi": [],
+      "erreursConsole": []
+    },
+    "mobileListe": [
+      {
+        "i": 0,
+        "texte": "Devis",
+        "href": "#contact",
+        "classe": "nav__devis",
+        "visible": false
+      },
+      {
+        "i": 1,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "classe": "bouton",
+        "visible": false
+      },
+      {
+        "i": 2,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "classe": "bouton",
+        "visible": true
+      }
+    ],
+    "mobileClics": [
+      {
+        "lien": "Demander un devis (bouton)",
+        "ok": true,
+        "champTop": 408,
+        "champBas": 456,
+        "navBas": 78,
+        "formTop": 382,
+        "formBas": 885,
+        "h": 844,
+        "sousLeDoigt": "SELECT.",
+        "hash": "#contact",
+        "y": 6468
+      },
+      {
+        "lien": "Demander un devis (panneau du menu)",
+        "menuReferme": true,
+        "ok": true,
+        "champTop": 408,
+        "champBas": 456,
+        "navBas": 78,
+        "formTop": 382,
+        "formBas": 885,
+        "h": 844,
+        "sousLeDoigt": "SELECT.",
+        "hash": "#contact",
+        "y": 6468
+      }
+    ],
+    "mobileEnvoi": {
+      "merciAffiche": true,
+      "formCache": true,
+      "titre": "Demande reçue.",
+      "note": "Démonstration : aucune donnée n’a été envoyée.",
+      "noteALecran": true,
+      "titreALecran": true,
+      "noteRect": [
+        450,
+        474
+      ],
+      "h2Top": 191,
+      "navBas": 78,
+      "recap": [
+        "Escalier",
+        "Bruz",
+        "Dans trois à six mois"
+      ],
+      "stockage": {
+        "local": 0,
+        "session": 0,
+        "cookie": ""
+      },
+      "urlInchangee": true,
+      "requetesApresEnvoi": [],
+      "erreursConsole": []
+    }
+  },
+  "devisRennes": {
+    "bureauListe": [
+      {
+        "i": 0,
+        "texte": "Devis",
+        "href": "#contact",
+        "classe": "nav__devis",
+        "visible": true
+      },
+      {
+        "i": 1,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "classe": "bouton",
+        "visible": false
+      },
+      {
+        "i": 2,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "classe": "bouton",
+        "visible": true
+      }
+    ],
+    "bureauClics": [
+      {
+        "lien": "Devis (nav__devis)",
+        "ok": true,
+        "champTop": 610,
+        "champBas": 658,
+        "navBas": 78,
+        "formTop": 585,
+        "formBas": 976,
+        "h": 900,
+        "sousLeDoigt": "SELECT.",
+        "hash": "#contact",
+        "y": 3200
+      },
+      {
+        "lien": "Demander un devis (bouton)",
+        "ok": true,
+        "champTop": 610,
+        "champBas": 658,
+        "navBas": 78,
+        "formTop": 585,
+        "formBas": 976,
+        "h": 900,
+        "sousLeDoigt": "SELECT.",
+        "hash": "#contact",
+        "y": 3200
+      }
+    ],
+    "bureauEnvoi": {
+      "merciAffiche": true,
+      "formCache": true,
+      "titre": "Demande reçue.",
+      "note": "Démonstration : aucune donnée n’a été envoyée.",
+      "noteALecran": true,
+      "titreALecran": true,
+      "noteRect": [
+        515,
+        540
+      ],
+      "h2Top": 126,
+      "navBas": 78,
+      "recap": [
+        "Escalier",
+        "Bruz",
+        "Dans trois à six mois"
+      ],
+      "stockage": {
+        "local": 0,
+        "session": 0,
+        "cookie": ""
+      },
+      "urlInchangee": true,
+      "requetesApresEnvoi": [],
+      "erreursConsole": []
+    },
+    "mobileListe": [
+      {
+        "i": 0,
+        "texte": "Devis",
+        "href": "#contact",
+        "classe": "nav__devis",
+        "visible": false
+      },
+      {
+        "i": 1,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "classe": "bouton",
+        "visible": false
+      },
+      {
+        "i": 2,
+        "texte": "Demander un devis",
+        "href": "#contact",
+        "classe": "bouton",
+        "visible": true
+      }
+    ],
+    "mobileClics": [
+      {
+        "lien": "Demander un devis (bouton)",
+        "ok": true,
+        "champTop": 512,
+        "champBas": 560,
+        "navBas": 78,
+        "formTop": 486,
+        "formBas": 989,
+        "h": 844,
+        "sousLeDoigt": "SELECT.",
+        "hash": "#contact",
+        "y": 2868
+      },
+      {
+        "lien": "Demander un devis (panneau du menu)",
+        "menuReferme": true,
+        "ok": true,
+        "champTop": 512,
+        "champBas": 560,
+        "navBas": 78,
+        "formTop": 486,
+        "formBas": 989,
+        "h": 844,
+        "sousLeDoigt": "SELECT.",
+        "hash": "#contact",
+        "y": 2868
+      }
+    ],
+    "mobileEnvoi": {
+      "merciAffiche": true,
+      "formCache": true,
+      "titre": "Demande reçue.",
+      "note": "Démonstration : aucune donnée n’a été envoyée.",
+      "noteALecran": true,
+      "titreALecran": true,
+      "noteRect": [
+        554,
+        578
+      ],
+      "h2Top": 191,
+      "navBas": 78,
+      "recap": [
+        "Escalier",
+        "Bruz",
+        "Dans trois à six mois"
+      ],
+      "stockage": {
+        "local": 0,
+        "session": 0,
+        "cookie": ""
+      },
+      "urlInchangee": true,
+      "requetesApresEnvoi": [],
+      "erreursConsole": []
+    }
+  },
+  "rennes-b": {
+    "h1": "MENUISIER À RENNES\nEscaliers et agencement",
+    "images": 8,
+    "hauteur": 4568,
+    "h3": [
+      "H2 Menuiserie sur mesure à Rennes",
+      "H3 Agencement sur mesure",
+      "H3 Escaliers et garde-corps",
+      "H3 Parquets et habillages",
+      "H2 Réalisations en atelier et sur chantier",
+      "H2 Communes limitrophes et voisines",
+      "H2 Prendre contact pour un projet à Rennes"
+    ]
+  },
+  "rennes-m": {
+    "h1": "MENUISIER À RENNES\nEscaliers et agencement",
+    "images": 8,
+    "hauteur": 4582,
+    "h3": [
+      "H2 Menuiserie sur mesure à Rennes",
+      "H3 Agencement sur mesure",
+      "H3 Escaliers et garde-corps",
+      "H3 Parquets et habillages",
+      "H2 Réalisations en atelier et sur chantier",
+      "H2 Communes limitrophes et voisines",
+      "H2 Prendre contact pour un projet à Rennes"
+    ]
+  },
+  "menu": {
+    "burger": {
+      "x": 347.5,
+      "y": 39
+    },
+    "apresTap1": {
+      "aria": "true",
+      "ouvert": true,
+      "sousLeDoigt": "span.",
+      "burgerDessus": true,
+      "voileOpacite": "1",
+      "voileVisibilite": "visible",
+      "y": 0,
+      "hash": ""
+    },
+    "panneau": {
+      "panneauRect": [
+        8,
+        518
+      ],
+      "fondPanneau": "rgb(31, 22, 14)",
+      "fondBouton": "rgb(244, 237, 226)",
+      "couleurTexte": "rgb(31, 22, 14)",
+      "texte": "Demander un devis",
+      "boutonRect": [
+        40,
+        429,
+        233,
+        57
+      ],
+      "fontSize": "16px",
+      "fontWeight": "600",
+      "h": 844,
+      "liens": [
+        "Prestations",
+        "Réalisations",
+        "Communes",
+        "Questions",
+        "Contact"
+      ]
+    },
+    "contrasteTextePilule": 15.312029976236303,
+    "contrastePiluleFond": 15.312029976236303,
+    "apresTapCroix": {
+      "aria": "false",
+      "ouvert": false,
+      "sousLeDoigt": "button.burger",
+      "burgerDessus": true,
+      "voileOpacite": "0",
+      "voileVisibilite": "hidden",
+      "y": 0,
+      "hash": ""
+    },
+    "rouvert": {
+      "aria": "true",
+      "ouvert": true,
+      "sousLeDoigt": "span.",
+      "burgerDessus": true,
+      "voileOpacite": "1",
+      "voileVisibilite": "visible",
+      "y": 0,
+      "hash": ""
+    },
+    "pointVoile": {
+      "x": 195,
+      "y": 681
+    },
+    "sousPointVoile": "div.voile",
+    "apresTapVoile": {
+      "aria": "false",
+      "ouvert": false,
+      "sousLeDoigt": "button.burger",
+      "burgerDessus": true,
+      "voileOpacite": "0",
+      "voileVisibilite": "hidden",
+      "y": 0,
+      "hash": ""
+    },
+    "erreurs": []
+  },
+  "acquis": {
+    "bureau": {
+      "etapes": 4,
+      "etapesTitres": [
+        "Prise de contact",
+        "Visite technique",
+        "Plan et devis",
+        "Fabrication et pose"
+      ],
+      "h3Communes": 0,
+      "smallCommunes": 0,
+      "ccDansLegendes": 0
+    },
+    "legendes390": [
+      {
+        "texte": "Cuisine au plan de travail en bois massif, claustra à lames",
+        "lignes": 2,
+        "largeurLegende": 332,
+        "largeurCarte": 332
+      },
+      {
+        "texte": "Penderie en bois, tringle et quatre cintres",
+        "lignes": 1,
+        "largeurLegende": 332,
+        "largeurCarte": 332
+      },
+      {
+        "texte": "Escalier hélicoïdal en bois massif",
+        "lignes": 1,
+        "largeurLegende": 332,
+        "largeurCarte": 332
+      },
+      {
+        "texte": "Boiseries et placards intégrés en bois sombre",
+        "lignes": 1,
+        "largeurLegende": 332,
+        "largeurCarte": 332
+      }
+    ],
+    "creditsMobile": {
+      "texte": "Photographies : Petar Milošević (CC BY-SA 4.0, adaptation sous la même licence), Shixart1985 (CC BY 2.0), Ian Schneider (CC0), Crew (CC0), Bertrand from Paris, France (CC BY 2.0) — toutes modifiées pour ce site (étalonnées, parfois recadrées) et redimensionnées pour le web. Sources, licences et modifications",
+      "href": "mentions-legales/index.html#credits",
+      "rect": [
+        404,
+        36
+      ],
+      "cliquable": false,
+      "opacite": "1",
+      "couleur": "rgba(244, 237, 226, 0.74)"
+    },
+    "pageCredits": {
+      "url": "/mentions-legales/index.html#credits",
+      "existe": true,
+      "top": 88,
+      "auteurs": [
+        [
+          "Petar Milošević",
+          true
+        ],
+        [
+          "Shixart1985",
+          true
+        ],
+        [
+          "Ian Schneider",
+          true
+        ],
+        [
+          "Crew",
+          true
+        ],
+        [
+          "Bertrand from Paris",
+          true
+        ]
+      ],
+      "modifiee": true,
+      "reserve": false
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "zone": "85 Vendée",
+  "entrees": [
+    { "entreprise": "Concept'R", "metier": "électricien", "ville": "La Roche-sur-Yon", "departement": "85", "email": "contact@concept-r.fr", "source_url": "https://www.concept-r.fr/contact-devis-electricien-vendee-la-roche-sur-yon/", "civilite": null, "dirigeant": "Mathieu Retailleau" },
+    { "entreprise": "TC2G", "metier": "électricien", "ville": "Bessay", "departement": "85", "email": "contact@tc2g.fr", "source_url": "https://www.tc2g.fr/contact", "civilite": null, "dirigeant": null },
+    { "entreprise": "Vert Elec 85", "metier": "électricien", "ville": "secteur Luçon", "departement": "85", "email": "contact@vertelec85.fr", "source_url": "https://vertelec85.com/contact/", "civilite": null, "dirigeant": "Matthieu Champion" },
+    { "entreprise": "RP Elect", "metier": "électricien", "ville": "secteur Montaigu", "departement": "85", "email": "rpelectricte@gmail.com", "source_url": "https://www.rp-elect.fr/mentions-legales/", "civilite": "monsieur", "dirigeant": "Richard PAVAGEAU" },
+
+    { "entreprise": "Audouit SARL", "metier": "couvreur", "ville": "secteur Fontenay-le-Comte", "departement": "85", "email": "batiment@audouitsarl.fr", "source_url": "https://www.audouitsarl.fr/mentions-legales/", "civilite": "monsieur", "dirigeant": "Audouit Charles" },
+    { "entreprise": "AGF Couverture", "metier": "couvreur", "ville": "La Roche-sur-Yon", "departement": "85", "email": "contact@agf-couverture.fr", "source_url": "https://agf-couverture.fr/mentions-legales/", "civilite": null, "dirigeant": "Louis Gautier" },
+    { "entreprise": "G.H Couverture & Façades", "metier": "couvreur", "ville": "Le Poiré-sur-Vie", "departement": "85", "email": "gringohemery@gmail.com", "source_url": "https://gh-couverture-facades.fr/contact/", "civilite": null, "dirigeant": null },
+
+    { "entreprise": "SARL Frédéric Drapeau", "metier": "charpentier", "ville": "secteur Montaigu", "departement": "85", "email": "sarlfredericdrapeau@orange.fr", "source_url": "https://www.sarlfredericdrapeau.com/contactez-nous.php", "civilite": "monsieur", "dirigeant": "Frédéric Drapeau" },
+    { "entreprise": "MOBWA", "metier": "charpentier", "ville": "Challans", "departement": "85", "email": "contact@mobwa.fr", "source_url": "https://www.mobwa.fr/contact", "civilite": null, "dirigeant": "Nicolas Fournier" },
+    { "entreprise": "CMO Bois", "metier": "charpentier", "ville": "Challans", "departement": "85", "email": "cmobois85@gmail.com", "source_url": "https://www.cmobois85.fr/mentions-legales/", "civilite": null, "dirigeant": null },
+
+    { "entreprise": "ML Paysages", "metier": "paysagiste", "ville": "L'Épine", "departement": "85", "email": "mlpaysages@orange.fr", "source_url": "https://www.mlpaysages.com/contact/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Franck Pineau Paysagiste", "metier": "paysagiste", "ville": "Les Herbiers", "departement": "85", "email": "contact@franckpineaupaysagiste.fr", "source_url": "https://www.franckpineaupaysagiste.fr/contact", "civilite": null, "dirigeant": "Franck Pineau" },
+    { "entreprise": "Garden Paysage", "metier": "paysagiste", "ville": "Les Herbiers", "departement": "85", "email": "contact@gardenpaysage.com", "source_url": "https://gardenpaysage.com/contact/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Ma'de Garden", "metier": "paysagiste", "ville": "Les Herbiers", "departement": "85", "email": "madegarden@outlook.fr", "source_url": "https://madegarden.fr/", "civilite": null, "dirigeant": null },
+    { "entreprise": "Paysages Rivière", "metier": "paysagiste", "ville": "Petosse", "departement": "85", "email": "contact@paysages-riviere.com", "source_url": "https://www.paysages-riviere.com/", "civilite": null, "dirigeant": "RIVIERE Jean-Paul" },
+    { "entreprise": "Sicaud Paysage", "metier": "paysagiste", "ville": "Fontenay-le-Comte", "departement": "85", "email": "sicaudpaysage@outlook.com", "source_url": "https://sicaudpaysage.fr/contactez-sicaud-paysage-jardinier-paysagiste-en-vendee/", "civilite": null, "dirigeant": "Yohann SICAUD" },
+
+    { "entreprise": "Martin Concept Carrelage", "metier": "carreleur", "ville": "secteur La Roche-sur-Yon", "departement": "85", "email": "martinconceptcarrelage@outlook.fr", "source_url": "https://martinconceptcarrelage.fr/", "civilite": "monsieur", "dirigeant": "Martin" },
+    { "entreprise": "Fèvre Carrelage", "metier": "carreleur", "ville": "Le Poiré-sur-Vie", "departement": "85", "email": "contact@fevre-carrelage.fr", "source_url": "https://www.carrelage-poire-sur-vie.fr/mentions-legales/", "civilite": null, "dirigeant": "Frédéric FEVRE" },
+    { "entreprise": "Epaulais Carrelage", "metier": "carreleur", "ville": "secteur Montaigu", "departement": "85", "email": "contact@epaulais-carrelage.fr", "source_url": "https://www.epaulais-carrelage.fr/mentions", "civilite": null, "dirigeant": "Yoann Epaulais" },
+    { "entreprise": "Monts Carrelage", "metier": "carreleur", "ville": "La Barre-de-Monts", "departement": "85", "email": "contact@monts-carrelage.fr", "source_url": "https://www.monts-carrelage.fr/mentions", "civilite": null, "dirigeant": "Alexandre Bounaud" },
+    { "entreprise": "PRT Carrelage", "metier": "carreleur", "ville": "La Chapelle-Palluau", "departement": "85", "email": "contact@prtcarrelage.fr", "source_url": "https://prtcarrelage.fr/", "civilite": null, "dirigeant": "Fabian PROUTEAU" },
+
+    { "entreprise": "Actiba Menuiseries", "metier": "menuisier", "ville": "Montaigu-Vendée", "departement": "85", "email": "actiba@orange.fr", "source_url": "https://actiba-menuiseries.fr/contact/", "civilite": null, "dirigeant": "Alain VINET" },
+    { "entreprise": "IDM Menuiserie", "metier": "menuisier", "ville": "Montaigu-Vendée", "departement": "85", "email": "contact@idm-menuiserie.fr", "source_url": "https://www.idm-menuiserie.fr/mentions-legales", "civilite": null, "dirigeant": null },
+    { "entreprise": "SARL Moreau David", "metier": "menuisier", "ville": "Luçon", "departement": "85", "email": "contact@moreau-david.com", "source_url": "https://www.moreau-david85.com/t-p-7-mentions-legales.php", "civilite": null, "dirigeant": null },
+    { "entreprise": "Vergnolle Bordage", "metier": "menuisier", "ville": "La Ferrière", "departement": "85", "email": "contact@vergnolle-menuiserie.fr", "source_url": "https://www.menuiserie-vergnolle-85.com/contactez-nous.php", "civilite": null, "dirigeant": "EDITH BORDAGE" },
+    { "entreprise": "Menuiserie Vaillant", "metier": "menuisier", "ville": "Pouzauges", "departement": "85", "email": "contact@menuiserie-vaillant.fr", "source_url": "https://www.menuiserievaillant.com/contact-devis-gratuit-menuisier-a-pouzauges-85700/", "civilite": null, "dirigeant": "Djimmy Vaillant" },
+
+    { "entreprise": "Rodolphe Chapleau", "metier": "peintre", "ville": "Les Sables-d'Olonne", "departement": "85", "email": "contact@chapleaurodolphe.fr", "source_url": "https://www.chapleaurodolphe.fr/fr/contact-peintre", "civilite": null, "dirigeant": "Rodolphe Chapleau" },
+    { "entreprise": "SARL Anthony Tortellier", "metier": "peintre", "ville": "secteur Challans", "departement": "85", "email": "contact@artisan-peintre-tortellier.com", "source_url": "https://www.artisan-peintre-tortellier.com/mentions", "civilite": null, "dirigeant": "Anthony Tortellier" },
+    { "entreprise": "L'Décor", "metier": "peintre", "ville": "secteur La Roche-sur-Yon", "departement": "85", "email": "ldecor85@orange.fr", "source_url": "https://www.ldecor85.fr/mentions-legales/", "civilite": null, "dirigeant": null },
+    { "entreprise": "JM Gauvrit Peinture", "metier": "peintre", "ville": "La Roche-sur-Yon", "departement": "85", "email": "jean-marc-gauvrit@gauvrit-peinture.fr", "source_url": "https://www.gauvrit-peinture.fr/mentions-legales/", "civilite": null, "dirigeant": "Jean-Marc GAUVRIT" },
+
+    { "entreprise": "SAS Rabillier Cédric", "metier": "plaquiste", "ville": "La Roche-sur-Yon", "departement": "85", "email": "sasrabilliercedric@orange.fr", "source_url": "https://www.rabillier-cedric.fr/contact", "civilite": null, "dirigeant": "Cédric Rabillier" },
+    { "entreprise": "La Chouette Plaque", "metier": "plaquiste", "ville": "La Chapelle-Hermier", "departement": "85", "email": "contact@lachouetteplaque.fr", "source_url": "https://www.lachouetteplaque.fr/", "civilite": "monsieur", "dirigeant": "Garandeau Charlie" },
+
+    { "entreprise": "Maçonnerie Tradinnovante (Axel Retureau)", "metier": "maçon", "ville": "Les Sables-d'Olonne", "departement": "85", "email": "axel.retureau@gmail.com", "source_url": "https://www.maconnerie-tradinnovante-85.fr/contactez-moi.php", "civilite": null, "dirigeant": "AXEL RETUREAU" },
+    { "entreprise": "Botton Construction", "metier": "maçon", "ville": "Luçon", "departement": "85", "email": "bottonconstruction@outlook.com", "source_url": "https://www.botton-construction.fr/devis-contact/", "civilite": null, "dirigeant": "Nicolas Botton" },
+    { "entreprise": "Kévin Froger Renov", "metier": "maçon", "ville": "Bois-de-Céné", "departement": "85", "email": "contact@kevinfroger-renov.fr", "source_url": "https://www.kevinfroger-renov.fr/mentions", "civilite": null, "dirigeant": "Kévin Froger" },
+    { "entreprise": "BA Constructions", "metier": "maçon", "ville": "Saint-Jean-de-Monts", "departement": "85", "email": "contact@baconstructions.fr", "source_url": "https://www.baconstructions.fr/mentions", "civilite": null, "dirigeant": "Andy BRANCHU" },
+    { "entreprise": "Turcot Christophe Maçonnerie", "metier": "maçon", "ville": "Saint-Jean-de-Monts", "departement": "85", "email": "christophe.turcot@orange.fr", "source_url": "https://www.turcot-maconnerie-vendee.fr/contact", "civilite": null, "dirigeant": null },
+    { "entreprise": "Pontoizeau Maçonnerie", "metier": "maçon", "ville": "Saint-Jean-de-Monts", "departement": "85", "email": "pontoizeaumaconnerie@gmail.com", "source_url": "https://pontoizeau-maconnerie.fr/contact/", "civilite": null, "dirigeant": null },
+
+    { "entreprise": "Charruyer Plomberie", "metier": "plombier", "ville": "Challans", "departement": "85", "email": "contact@charruyer-plomberie.fr", "source_url": "https://www.charruyer-plomberie.fr/mentions", "civilite": null, "dirigeant": "Mickael Charruyer" },
+    { "entreprise": "SARL Braud", "metier": "plombier", "ville": "La Bruffière", "departement": "85", "email": "braudelectricite@wanadoo.fr", "source_url": "https://www.braud-sarl.fr/mentions-legales/", "civilite": null, "dirigeant": "F. BRAUD" },
+    { "entreprise": "Soulard Didier", "metier": "plombier", "ville": "Pouzauges", "departement": "85", "email": "contact@didiersoulard.com", "source_url": "https://www.didiersoulard.com/mentions-legales/", "civilite": null, "dirigeant": "Emmanuelle SOULARD" },
+    { "entreprise": "SB Chauffage Plomberie (Ets JJ Drapeau)", "metier": "plombier", "ville": "Fontenay-le-Comte", "departement": "85", "email": "jjdrapeau@cegetel.net", "source_url": "https://www.drapeau-85.com/mentions-legales/", "civilite": null, "dirigeant": "S. BARRE" }
+  ]
+}

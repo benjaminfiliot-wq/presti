@@ -1,0 +1,91 @@
+// Calibrage « l'effet se voit » : écart entre l'état caché (début) et l'état final (fin) de chaque effet prescrit, posé en CSS
+// injecté sur la copie « ref » (sans famille téléphone), Chromium 153, iPhone 13 forcé en 390×844 dpr 3. Méthode du cahier 020
+// (§0.1 du cahier de la vague 5) : réduction grise de 160 px de large, écart moyen /255 et part des pixels à plus de 8 niveaux.
+import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path'; import { createRequire } from 'node:module'
+const require = createRequire('C:/Users/benja/Documents/presti/package.json')
+const pw = require('playwright'); const sharp = require('sharp')
+const T = path.join('C:/Users/benja/Documents/presti', '.orchestre/travail/024-01/cahier')
+const TYPES = { html: 'text/html; charset=utf-8', css: 'text/css', js: 'text/javascript', json: 'application/json', svg: 'image/svg+xml', webp: 'image/webp', avif: 'image/avif', woff2: 'font/woff2' }
+const srv = http.createServer((q, r) => { let p = decodeURIComponent(new URL(q.url, 'http://x').pathname); if (p.endsWith('/')) p += 'index.html'; const f = path.join(T, p); if (!f.startsWith(T) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { r.writeHead(404); return r.end() } r.writeHead(200, { 'content-type': TYPES[path.extname(f).slice(1)] || 'application/octet-stream' }); fs.createReadStream(f).pipe(r) })
+await new Promise((ok) => srv.listen(0, '127.0.0.1', ok))
+const base = `http://127.0.0.1:${srv.address().port}`
+const gris = (buf) => sharp(buf).resize(160).greyscale().raw().toBuffer()
+const comparer = (a, b) => { if (a.length !== b.length) return { moyen: 1, part8: 1 }; let s = 0, n8 = 0; for (let i = 0; i < a.length; i++) { const d = Math.abs(a[i] - b[i]); s += d; if (d > 8) n8++ } return { moyen: +(s / a.length / 255).toFixed(4), part8: +(n8 / a.length).toFixed(4) } }
+
+// structure commune aux deux états (neutre pour la mise en page, sondé le 16/09) + tout le kit visible et figé
+const STRUCT = 'html.js .reveal{opacity:1!important;transform:none!important;transition:none!important}'
+  + '.galerie--scene .galerie__cadre{clip-path:none!important;transition:none!important}.galerie--scene .galerie__cadre img{transform:none!important;transition:none!important}.galerie--scene figcaption{opacity:1!important;transition:none!important}'
+  + '.ml{display:inline-block;vertical-align:top;overflow:clip;padding-block:.1em .26em;margin-block:-.1em -.26em}.ml__in{display:inline-block}'
+  + '.plateau__citation .citation__mot{display:inline-block}.atelier__verbe{display:inline-block;position:relative}'
+  + '.plateau__photo,.presta__vignette,.galerie__cadre,.faq-scene__photo{position:relative}'
+  + '.h1__cle{overflow:clip}.h1__cle>span{display:block}'
+  + '*,*::before,*::after{transition:none!important}'
+const EFFETS = [
+  { id: 'heros-entree', sel: '.hero--plein', y: 0, debut: '.hero--plein .hero__media{scale:1.12;transform-origin:50% 76.86%}.h1__cle>span{translate:0 110%}.hero__pied{opacity:0}.hero--plein .chapeau{translate:0 14px}' },
+  { id: 'citation-mots', sel: '.plateau__citation blockquote p', debut: '.plateau__citation .citation__mot{opacity:0;translate:0 .35em}' },
+  { id: 'citation-signature', sel: '.plateau__citation figcaption', debut: '.plateau__citation figcaption{opacity:0;translate:0 12px}' },
+  { id: 'chiffre-1', sel: '.chiffre', debut: 'html.js .chiffres .chiffre:first-child{opacity:0!important;translate:0 20px}' },
+  { id: 'plateau-photo-volet', sel: '.plateau__photo', debut: '.plateau__photo::after{content:"";position:absolute;inset:0;background:#14110E}.plateau__photo picture{scale:1.1}' },
+  { id: 'titre-prestations', sel: '.scene--presta h2', debut: '.scene--presta h2 .ml__in{translate:0 110%}' },
+  { id: 'intro-prestations', sel: '.scene--presta .scene__tete p', debut: '.scene--presta .scene__tete p{opacity:0;translate:0 16px}' },
+  { id: 'carte-presta-1', sel: '.presta__ligne', debut: '.presta__ligne:first-child .presta__vignette::after{content:"";position:absolute;inset:0;background:#F4EDE2}.presta__ligne:first-child .presta__vignette picture{scale:1.12}.presta__ligne:first-child :is(.presta__num,h3,.presta__texte){opacity:0;translate:0 16px}' },
+  { id: 'titre-atelier', sel: '.atelier__titre', debut: '.atelier__titre .ml__in{translate:0 110%}' },
+  { id: 'atelier-phrase', sel: '.atelier__phrase', debut: 'html.js .atelier .atelier__phrase{opacity:0!important}' },
+  { id: 'atelier-verbes', sel: '.atelier__phrase', fin: '.atelier__verbe::after{content:"";position:absolute;left:0;right:0;bottom:.04em;height:2px;background:#D4A574}', debut: '.atelier__verbe{opacity:.55;translate:0 .12em}.atelier__verbe::after{content:"";position:absolute;left:0;right:0;bottom:.04em;height:2px;background:#D4A574;scale:0 1;transform-origin:0 50%}' },
+  { id: 'titre-realisations', sel: '.galerie__tete h2', debut: '.galerie__tete h2 .ml__in{translate:0 110%}' },
+  { id: 'carte-galerie-1', sel: '.galerie__item', debut: '.galerie__item:first-child .galerie__cadre::after{content:"";position:absolute;inset:0;background:#14110E}.galerie__item:first-child .galerie__cadre img{scale:1.18}.galerie__item:first-child figcaption{opacity:0!important;translate:0 10px}' },
+  { id: 'commune-1', sel: '#communes .commune', debut: '#communes .commune:first-child>span:first-child{opacity:0;translate:-.4em 0}#communes .commune:first-child svg{opacity:0;translate:-.25em .25em}' },
+  { id: 'titre-etapes', sel: '#etapes h2', debut: '#etapes h2 .ml__in{translate:0 110%}' },
+  { id: 'legende-eclate', sel: '.eclate__legende', debut: '.eclate__legende li{opacity:0;translate:0 8px}' },
+  { id: 'carte-etape-1', sel: '#etapes .etape', debut: 'html.js.da--etapes #etapes .etape:first-child .etape__num{opacity:.55!important;scale:.9;transform-origin:0 70%}#etapes .etape:first-child .etape__corps{opacity:0;translate:0 16px}', fin: 'html.js.da--etapes #etapes .etape:first-child .etape__num{opacity:1!important}' },
+  { id: 'faq-photo-volet', sel: '.faq-scene__photo', debut: '.faq-scene__photo::after{content:"";position:absolute;inset:0;background:#F4EDE2}.faq-scene__photo picture{scale:1.12}' },
+  { id: 'faq-liste', sel: '.faq', debut: '.faq details{opacity:0;translate:0 14px}' },
+  { id: 'titre-contact', sel: '#contact h2', debut: '#contact h2 .ml__in{translate:0 110%}' },
+  { id: 'atelier-derive', sel: '#atelier', debut: '.atelier__media img{scale:1.12;translate:0 -5%}', fin: '.atelier__media img{scale:1.12;translate:0 5%}' },
+  { id: 'plateau-photo-glisse', sel: '.plateau__photo', debut: '.plateau__photo img{scale:1.14;translate:0 -6%}', fin: '.plateau__photo img{scale:1.14;translate:0 6%}' },
+]
+const out = { date: new Date().toISOString(), methode: 'gris 160 px, écart moyen /255, part > 8', effets: {} }
+const b = await pw.chromium.launch()
+out.version = b.version()
+const ctx = await b.newContext({ ...pw.devices['iPhone 13'], viewport: { width: 390, height: 844 } })
+const page = await ctx.newPage()
+await page.goto(`${base}/ref/index.html`, { waitUntil: 'load' }); await page.evaluate(() => document.fonts.ready)
+await page.evaluate(async () => { document.documentElement.classList.add('tout-rendu'); for (let y = 0; y < document.documentElement.scrollHeight; y += 400) { scrollTo(0, y); await new Promise((k) => setTimeout(k, 60)) } scrollTo(0, 0) })
+await page.addStyleTag({ content: STRUCT })
+await page.waitForTimeout(1500)
+await page.evaluate(() => document.getAnimations().filter((a) => a.timeline instanceof DocumentTimeline).forEach((a) => { a.pause(); a.currentTime = 0 }))
+const f2 = () => page.evaluate(() => new Promise((k) => requestAnimationFrame(() => requestAnimationFrame(k))))
+for (const e of EFFETS) {
+  const y = e.y ?? await page.evaluate((s) => { const el = document.querySelector(s); let t = 0; for (let n = el; n; n = n.offsetParent) t += n.offsetTop; return Math.max(0, Math.round(t - innerHeight * 0.35)) }, e.sel)
+  await page.evaluate((y) => scrollTo(0, y), y); await f2(); await page.waitForTimeout(250)
+  await page.evaluate(() => document.getAnimations().filter((a) => a.timeline instanceof DocumentTimeline).forEach((a) => { a.pause(); a.currentTime = 0 }))
+  const capt = async (css) => {
+    const h = css ? await page.addStyleTag({ content: css }) : null
+    await f2(); await page.waitForTimeout(120)
+    await page.evaluate(() => document.getAnimations().filter((a) => a.timeline instanceof DocumentTimeline).forEach((a) => { a.pause(); a.currentTime = 0 }))
+    const box = await page.evaluate((s) => { const r = document.querySelector(s).getBoundingClientRect(); return { x: Math.max(0, r.left), y: Math.max(0, r.top), width: Math.min(innerWidth, r.right) - Math.max(0, r.left), height: Math.min(innerHeight, r.bottom) - Math.max(0, r.top) } }, e.sel)
+    const png = await page.screenshot({ clip: box, scale: 'css', animations: 'allow' })
+    if (h) await h.evaluate((n) => n.remove())
+    return { png, box }
+  }
+  const fin = await capt(e.fin || null), debut = await capt(e.debut)
+  out.effets[e.id] = { sel: e.sel, y, boite: `${Math.round(fin.box.width)}×${Math.round(fin.box.height)}`, ...comparer(await gris(debut.png), await gris(fin.png)) }
+}
+// éclaté natif (copie « actuel », famille telephone) : figure à cover 10 %, 45 % et 50 %
+await page.goto(`${base}/actuel/index.html`, { waitUntil: 'load' }); await page.evaluate(() => document.fonts.ready)
+await page.evaluate(async () => { document.documentElement.classList.add('tout-rendu'); for (let y = 0; y < document.documentElement.scrollHeight; y += 400) { scrollTo(0, y); await new Promise((k) => setTimeout(k, 60)) } })
+await page.addStyleTag({ content: 'html.js .reveal{opacity:1!important;transform:none!important;transition:none!important}' })
+const eclate = {}
+for (const p of [0.30, 0.45, 0.60, 'ferme45']) {
+  await page.evaluate(({ p }) => { const el = document.querySelector('#etapes figure.eclate'); let t = 0; for (let n = el; n; n = n.offsetParent) t += n.offsetTop; scrollTo(0, Math.round(t - innerHeight + p * (innerHeight + el.offsetHeight))) }, { p: p === 'ferme45' ? 0.45 : p })
+  for (let i = 0; i < 40; i++) { const ok = await page.evaluate(() => [...document.querySelectorAll('#etapes figure.eclate img')].every((i) => getComputedStyle(i).display === 'none' || i.complete)); if (ok) break; await page.waitForTimeout(150) }
+  const hf = p === 'ferme45' ? await page.addStyleTag({ content: '#etapes figure.eclate img.eclate__calque{translate:0 0!important;opacity:1!important}#etapes figure.eclate .eclate__pastille{opacity:0!important}' }) : null
+  await f2(); await page.waitForTimeout(200)
+  const box = await page.evaluate(() => { const r = document.querySelector('#etapes figure.eclate').getBoundingClientRect(); return { x: 0, y: Math.max(0, r.top), width: innerWidth, height: Math.min(innerHeight, r.bottom) - Math.max(0, r.top) } })
+  eclate[p] = await gris(await page.screenshot({ clip: box, scale: 'css' }))
+}
+out.effets['eclate-cover30-45'] = comparer(eclate[0.30], eclate[0.45]); out.effets['eclate-ferme45-ouvert45'] = comparer(eclate.ferme45, eclate[0.45])
+out.effets['eclate-cover45-60'] = comparer(eclate[0.45], eclate[0.60])
+await b.close(); srv.close()
+fs.writeFileSync(path.join(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')), 'sonde-energie.json'), JSON.stringify(out, null, 1))
+console.log(JSON.stringify(out, null, 1))

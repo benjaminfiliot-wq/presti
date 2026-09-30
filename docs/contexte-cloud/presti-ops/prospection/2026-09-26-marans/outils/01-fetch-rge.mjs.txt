@@ -1,0 +1,87 @@
+// Étape 1 : télécharge les lignes RGE (ADEME, open data) pour les codes postaux ciblés.
+// Source : https://data.ademe.fr/data-fair/api/v1/datasets/liste-des-entreprises-rge-2
+// Traitement 100% par code — aucune donnée de prospect n'est envoyée à un modèle IA.
+import fs from "node:fs";
+import path from "node:path";
+
+const OUT_DIR = new URL("../data/", import.meta.url);
+fs.mkdirSync(OUT_DIR, { recursive: true });
+
+// Codes postaux ~35 km autour de Marans (17230), voir liste-resume.md pour le détail commune par commune.
+const CODES_POSTAUX = [
+  "17230", // Marans, Andilly, Charron, Villedoux, Longèves, Saint-Ouen-d'Aunis
+  "17137", // Esnandes, Nieul-sur-Mer, Marsilly, L'Houmeau
+  "17540", // Nuaillé-d'Aunis
+  "17170", // Courçon, Saint-Jean-de-Liversay, Ferrières, La Ronde, Taugon
+  "17139", // Dompierre-sur-Mer
+  "17138", // Puilboreau, Saint-Xandre
+  "17180", // Périgny
+  "17000", // La Rochelle
+  "17140", // Lagord
+  "17440", // Aytré
+  "17700", // Surgères
+  "85450", // Chaillé-les-Marais
+  "85400", // Luçon
+  "85770", // L'Île-d'Elle
+];
+
+// Domaines RGE retenus -> métier (voir /values/domaine de l'API pour la liste complète).
+const DOMAINE_TO_METIER = {
+  "Chaudière bois": "plomberie-chauffage",
+  "Chaudière condensation ou micro-cogénération gaz ou fioul": "plomberie-chauffage",
+  "Chauffage et/ou eau chaude solaire": "plomberie-chauffage",
+  "Chauffe-Eau Thermodynamique": "plomberie-chauffage",
+  "Pompe à chaleur : chauffage": "plomberie-chauffage",
+  "Poêle ou insert bois": "plomberie-chauffage",
+  "Ventilation mécanique": "plomberie-chauffage",
+  "Radiateurs électriques, dont régulation.": "électricité",
+  "Panneaux solaires photovoltaïques": "électricité",
+  "Fenêtres de toit": "menuiserie",
+  "Fenêtres, volets, portes donnant sur l'extérieur": "menuiserie",
+  "Isolation des toitures terrasses ou des toitures par l'extérieur": "couverture",
+  "Isolation des combles perdus": "isolation",
+  "Isolation des murs par l'extérieur": "isolation",
+  "Isolation des planchers bas": "isolation",
+  "Isolation par l'intérieur des murs ou rampants de toitures  ou plafonds": "isolation",
+};
+
+const BASE = "https://data.ademe.fr/data-fair/api/v1/datasets/liste-des-entreprises-rge-2/lines";
+
+async function fetchAllForPostal(cp) {
+  let url = `${BASE}?qs=${encodeURIComponent(`code_postal:${cp}`)}&size=200`;
+  const rows = [];
+  let guard = 0;
+  while (url && guard < 50) {
+    guard++;
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.error(`  ! ${cp} -> HTTP ${res.status}`);
+      break;
+    }
+    const json = await res.json();
+    rows.push(...(json.results || []));
+    url = json.next || null;
+  }
+  return rows;
+}
+
+const all = [];
+for (const cp of CODES_POSTAUX) {
+  process.stdout.write(`Code postal ${cp}... `);
+  const rows = await fetchAllForPostal(cp);
+  console.log(`${rows.length} lignes RGE brutes`);
+  all.push(...rows);
+}
+
+console.log(`\nTotal lignes RGE brutes (toutes qualifications confondues) : ${all.length}`);
+
+// On ne garde que les domaines pertinents pour les métiers ciblés.
+const filtered = all.filter((r) => DOMAINE_TO_METIER[r.domaine]);
+console.log(`Après filtre métier (plomberie-chauffage / électricité / couverture / menuiserie / isolation) : ${filtered.length}`);
+
+fs.writeFileSync(
+  new URL("./01-rge-brut.json", OUT_DIR),
+  JSON.stringify(filtered.map((r) => ({ ...r, metier: DOMAINE_TO_METIER[r.domaine] })), null, 2),
+);
+
+console.log(`Écrit -> data/01-rge-brut.json`);

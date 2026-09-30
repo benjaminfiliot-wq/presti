@@ -1,0 +1,832 @@
+{
+ "C1_dom": {
+  "nbEtapesDansEtapes": 4,
+  "nbSectionsEtapes": 1,
+  "titres": [
+   "Prise de contact",
+   "Visite technique",
+   "Devis & sélection",
+   "Fabrication & pose"
+  ],
+  "textes": [
+   "Vous décrivez vos envies, contraintes d'espace et préférences de matériaux par téléphone ou via notre formulaire.",
+   "Relevé métrique précis sur votre chantier, vérification des aplombs, de l'hygrométrie et des accès.",
+   "Remise d'une proposition détaillée avec plan d'agencement et choix définitif des essences et ferrures.",
+   "Usinage en atelier, assemblage soigné et installation à votre domicile dans le respect des délais convenus."
+  ],
+  "numeros": [
+   "01",
+   "02",
+   "03",
+   "04"
+  ],
+  "paragraphesTete": [
+   "Un parcours transparent en quatre étapes pour garantir la conformité esthétique et technique de votre réalisation."
+  ],
+  "paragraphesTeteQuiCommencentParUnChiffre": 0,
+  "listesVides": 0
+ },
+ "C3_dom": {
+  "communesH3": 0,
+  "communeSmall": 0,
+  "nbFigcaptions": 6,
+  "figcaptionsAvecCCBY": 0,
+  "figcaptionsAvecPhotoOuLicence": 0,
+  "legendes": [
+   "Escalier hélicoïdal en bois massif",
+   "Vastringue et copeaux sur une pièce de bois",
+   "Lit suspendu en noyer massif, fabrication sur mesure",
+   "Veinage et nœuds d'une planche ancienne",
+   "Bibliothèque sur mesure en chêne et acier",
+   "Rabot japonais et copeaux de chêne"
+  ],
+  "nbGaleries": 1,
+  "nbLignesCredits": 1,
+  "creditsJusteApresGalerie": [
+   true
+  ],
+  "texteCredits": [
+   "Photographies : Petar Milošević (CC BY-SA 4.0), Simon A. Eugster (CC BY-SA 3.0), MajestyWoodworks (CC BY 4.0), Roman Eisele (CC BY-SA 4.0), Micheli Design (CC0), Terasaface (CC BY-SA 4.0) — redimensionnées pour le web. Sources et licences"
+  ],
+  "liensCredits": [
+   [
+    "mentions-legales/index.html#credits"
+   ]
+  ]
+ },
+ "C2_geometrie": {
+  "secTop": 4981.28125,
+  "secH": 1071,
+  "listeTop": 5159.671875,
+  "listeH": 714
+ },
+ "C2_allumages": [
+  {
+   "nom": "p1-entree",
+   "scrollY": 4731,
+   "avancee": "0.307",
+   "allumes": 1,
+   "opacites": [
+    "1.00",
+    "0.40",
+    "0.25",
+    "0.25"
+   ]
+  },
+  {
+   "nom": "p2-milieu",
+   "scrollY": 4833,
+   "avancee": "0.450",
+   "allumes": 2,
+   "opacites": [
+    "1.00",
+    "1.00",
+    "0.25",
+    "0.25"
+   ]
+  },
+  {
+   "nom": "p3-fin",
+   "scrollY": 5266,
+   "avancee": "1.000",
+   "allumes": 4,
+   "opacites": [
+    "1.00",
+    "1.00",
+    "1.00",
+    "1.00"
+   ]
+  }
+ ],
+ "C2_boites_numeros": [
+  {
+   "txt": "01",
+   "op": 1,
+   "x": 698,
+   "y": -69,
+   "w": 150,
+   "h": 100,
+   "fontSize": "124.8px",
+   "color": "rgb(212, 165, 116)"
+  },
+  {
+   "txt": "02",
+   "op": 1,
+   "x": 698,
+   "y": 127,
+   "w": 150,
+   "h": 100,
+   "fontSize": "124.8px",
+   "color": "rgb(212, 165, 116)"
+  },
+  {
+   "txt": "03",
+   "op": 1,
+   "x": 698,
+   "y": 299,
+   "w": 150,
+   "h": 100,
+   "fontSize": "124.8px",
+   "color": "rgb(212, 165, 116)"
+  },
+  {
+   "txt": "04",
+   "op": 1,
+   "x": 698,
+   "y": 472,
+   "w": 150,
+   "h": 100,
+   "fontSize": "124.8px",
+   "color": "rgb(212, 165, 116)"
+  }
+ ],
+ "C2_hauteur_encre_numeros": [
+  {
+   "txt": "01",
+   "fond": [
+    208,
+    199,
+    189
+   ],
+   "hauteurEncrePx": 11
+  },
+  {
+   "txt": "02",
+   "fond": [
+    48,
+    39,
+    32
+   ],
+   "hauteurEncrePx": 91
+  },
+  {
+   "txt": "03",
+   "fond": [
+    44,
+    36,
+    27
+   ],
+   "hauteurEncrePx": 174
+  },
+  {
+   "txt": "04",
+   "fond": [
+    44,
+    36,
+    28
+   ],
+   "hauteurEncrePx": 133
+  }
+ ],
+ "C2_moitie_droite_pixels_differents": {
+  "fond": [
+   237,
+   230,
+   219
+  ],
+  "part": 0.952,
+  "taille": [
+   1440,
+   1072
+  ]
+ },
+ "C4_communes_1440": {
+  "survol": "Rennes",
+  "transformNom": "matrix(1, 0, 0, 1, 36, 0)",
+  "sectionH": 711,
+  "ecran": 900,
+  "ratio": 0.79,
+  "debordementHorizontal": false,
+  "boites": [
+   {
+    "q": "ligne0",
+    "x": 0,
+    "y": 272,
+    "w": 1440,
+    "h": 108
+   },
+   {
+    "q": "span0",
+    "x": 156,
+    "y": 278,
+    "w": 325,
+    "h": 91,
+    "t": "Rennes"
+   },
+   {
+    "q": "svg0",
+    "x": 517,
+    "y": 299,
+    "w": 50,
+    "h": 50,
+    "t": ""
+   },
+   {
+    "q": "ligne1",
+    "x": 0,
+    "y": 380,
+    "w": 1440,
+    "h": 108
+   },
+   {
+    "q": "span1",
+    "x": 120,
+    "y": 386,
+    "w": 693,
+    "h": 91,
+    "t": "Cesson-Sévigné"
+   },
+   {
+    "q": "svg1",
+    "x": 849,
+    "y": 406,
+    "w": 50,
+    "h": 50,
+    "t": ""
+   },
+   {
+    "q": "ligne2",
+    "x": 0,
+    "y": 488,
+    "w": 1440,
+    "h": 108
+   },
+   {
+    "q": "span2",
+    "x": 120,
+    "y": 494,
+    "w": 207,
+    "h": 91,
+    "t": "Bruz"
+   },
+   {
+    "q": "svg2",
+    "x": 363,
+    "y": 514,
+    "w": 50,
+    "h": 50,
+    "t": ""
+   },
+   {
+    "q": "ligne3",
+    "x": 0,
+    "y": 596,
+    "w": 1440,
+    "h": 108
+   },
+   {
+    "q": "span3",
+    "x": 120,
+    "y": 602,
+    "w": 647,
+    "h": 91,
+    "t": "Saint-Grégoire"
+   },
+   {
+    "q": "svg3",
+    "x": 803,
+    "y": 622,
+    "w": 50,
+    "h": 50,
+    "t": ""
+   }
+  ],
+  "chevauchements": []
+ },
+ "C4_communes_1280": {
+  "survol": "Rennes",
+  "transformNom": "matrix(1, 0, 0, 1, 32, 0)",
+  "sectionH": 676,
+  "ecran": 800,
+  "ratio": 0.845,
+  "debordementHorizontal": false,
+  "boites": [
+   {
+    "q": "ligne0",
+    "x": 0,
+    "y": 261,
+    "w": 1280,
+    "h": 103
+   },
+   {
+    "q": "span0",
+    "x": 72,
+    "y": 267,
+    "w": 309,
+    "h": 86,
+    "t": "Rennes"
+   },
+   {
+    "q": "svg0",
+    "x": 413,
+    "y": 286,
+    "w": 48,
+    "h": 48,
+    "t": ""
+   },
+   {
+    "q": "ligne1",
+    "x": 0,
+    "y": 364,
+    "w": 1280,
+    "h": 103
+   },
+   {
+    "q": "span1",
+    "x": 40,
+    "y": 370,
+    "w": 660,
+    "h": 86,
+    "t": "Cesson-Sévigné"
+   },
+   {
+    "q": "svg1",
+    "x": 732,
+    "y": 389,
+    "w": 48,
+    "h": 48,
+    "t": ""
+   },
+   {
+    "q": "ligne2",
+    "x": 0,
+    "y": 467,
+    "w": 1280,
+    "h": 103
+   },
+   {
+    "q": "span2",
+    "x": 40,
+    "y": 472,
+    "w": 197,
+    "h": 86,
+    "t": "Bruz"
+   },
+   {
+    "q": "svg2",
+    "x": 269,
+    "y": 491,
+    "w": 48,
+    "h": 48,
+    "t": ""
+   },
+   {
+    "q": "ligne3",
+    "x": 0,
+    "y": 569,
+    "w": 1280,
+    "h": 103
+   },
+   {
+    "q": "span3",
+    "x": 40,
+    "y": 575,
+    "w": 616,
+    "h": 86,
+    "t": "Saint-Grégoire"
+   },
+   {
+    "q": "svg3",
+    "x": 688,
+    "y": 594,
+    "w": 48,
+    "h": 48,
+    "t": ""
+   }
+  ],
+  "chevauchements": []
+ },
+ "C4_communes_1920": {
+  "survol": "Rennes",
+  "transformNom": "matrix(1, 0, 0, 1, 48, 0)",
+  "sectionH": 854,
+  "ecran": 1080,
+  "ratio": 0.791,
+  "debordementHorizontal": false,
+  "boites": [
+   {
+    "q": "ligne0",
+    "x": 0,
+    "y": 272,
+    "w": 1920,
+    "h": 143
+   },
+   {
+    "q": "span0",
+    "x": 408,
+    "y": 281,
+    "w": 433,
+    "h": 121,
+    "t": "Rennes"
+   },
+   {
+    "q": "svg0",
+    "x": 881,
+    "y": 307,
+    "w": 67,
+    "h": 67,
+    "t": ""
+   },
+   {
+    "q": "ligne1",
+    "x": 0,
+    "y": 416,
+    "w": 1920,
+    "h": 143
+   },
+   {
+    "q": "span1",
+    "x": 360,
+    "y": 424,
+    "w": 924,
+    "h": 121,
+    "t": "Cesson-Sévigné"
+   },
+   {
+    "q": "svg1",
+    "x": 1324,
+    "y": 451,
+    "w": 67,
+    "h": 67,
+    "t": ""
+   },
+   {
+    "q": "ligne2",
+    "x": 0,
+    "y": 559,
+    "w": 1920,
+    "h": 143
+   },
+   {
+    "q": "span2",
+    "x": 360,
+    "y": 567,
+    "w": 275,
+    "h": 121,
+    "t": "Bruz"
+   },
+   {
+    "q": "svg2",
+    "x": 675,
+    "y": 594,
+    "w": 67,
+    "h": 67,
+    "t": ""
+   },
+   {
+    "q": "ligne3",
+    "x": 0,
+    "y": 703,
+    "w": 1920,
+    "h": 143
+   },
+   {
+    "q": "span3",
+    "x": 360,
+    "y": 711,
+    "w": 862,
+    "h": 121,
+    "t": "Saint-Grégoire"
+   },
+   {
+    "q": "svg3",
+    "x": 1262,
+    "y": 738,
+    "w": 67,
+    "h": 67,
+    "t": ""
+   }
+  ],
+  "chevauchements": []
+ },
+ "C3_mentions_credits": {
+  "url": "/lestraque/mentions-legales/index.html#credits",
+  "creditsExiste": true,
+  "creditsTitre": "Propriété intellectuelle et crédits photographiques",
+  "creditsTopDansEcran": 0,
+  "phraseApres": "Les photographies de ce site de démonstration proviennent de Wikimedia Commons, sous licence libre. Pour chacune : l’auteur, la licence et la page d’origine. Les fichiers ont été redimensionnés et convertis pour le web.",
+  "nbPhotos": 11,
+  "photos": [
+   {
+    "texte": "Rabot à main posé sur une planche, copeaux de bois— Phil Gradwell(CC BY 2.0)page du fichier",
+    "licenceHref": "https://creativecommons.org/licenses/by/2.0/deed.fr",
+    "source": "https://commons.wikimedia.org/wiki/File:Stanley_jack_plane.jpg"
+   },
+   {
+    "texte": "Vastringue et copeaux sur une pièce de bois— Simon A. Eugster(CC BY-SA 3.0)page du fichier",
+    "licenceHref": "https://creativecommons.org/licenses/by-sa/3.0/deed.fr",
+    "source": "https://commons.wikimedia.org/wiki/File:Spokeshave_with_swarf.jpeg"
+   },
+   {
+    "texte": "Rabot japonais et copeaux de chêne— Terasaface(CC BY-SA 4.0)page du fichier",
+    "licenceHref": "https://creativecommons.org/licenses/by-sa/4.0/deed.fr",
+    "source": "https://commons.wikimedia.org/wiki/File:Japanese_handplane_(kanna)_with_wood_shavings.jpg"
+   },
+   {
+    "texte": "Copeaux de bois après rabotage— Tiesse(domaine public)page du fichier",
+    "licenceHref": null,
+    "source": "https://commons.wikimedia.org/wiki/File:Trucioli_legno_002.jpg"
+   },
+   {
+    "texte": "Veinage et nœuds d'une planche ancienne— Roman Eisele(CC BY-SA 4.0)page du fichier",
+    "licenceHref": "https://creativecommons.org/licenses/by-sa/4.0/deed.fr",
+    "source": "https://commons.wikimedia.org/wiki/File:Beilstein_-_Schmidhausen_-_Hebelstra%C3%9Fe_-_Holzzaun_-_Augen_(1).jpg"
+   },
+   {
+    "texte": "Mur d'outils dans un atelier de menuiserie— Andrew Filer from Seattle (ex-Minneapoli(CC BY-SA 2.0)page du fichier",
+    "licenceHref": "https://creativecommons.org/licenses/by-sa/2.0/deed.fr",
+    "source": "https://commons.wikimedia.org/wiki/File:20120522-DSC00286-2_(7258107438).jpg"
+   },
+   {
+    "texte": "Tournage sur bois, copeaux en vol— Bertrand from Paris, France(CC BY 2.0)page du fichier",
+    "licenceHref": "https://creativecommons.org/licenses/by/2.0/deed.fr",
+    "source": "https://commons.wikimedia.org/wiki/File:Woodturning_Indonesia.jpg"
+   },
+   {
+    "texte": "Escalier hélicoïdal en bois massif— Petar Milošević(CC BY-SA 4.0)page du fichier",
+    "licenceHref": "https://creativecommons.org/licenses/by-sa/4.0/deed.fr",
+    "source": "https://commons.wikimedia.org/wiki/File:Wooden_spiral_stairs_(Neboti%C4%8Dnik,_Ljubljana).jpg"
+   },
+   {
+    "texte": "Lit suspendu en noyer massif, fabrication sur mesure— MajestyWoodworks(CC BY 4.0)page du fichier",
+    "licenceHref": "https://creativecommons.org/licenses/by/4.0/deed.fr",
+    "source": "https://commons.wikimedia.org/wiki/File:Handcrafted_custom_floating_walnut_bed.jpg"
+   },
+   {
+    "texte": "Bibliothèque sur mesure en chêne et acier— Micheli Design(CC0)page du fichier",
+    "licenceHref": "https://creativecommons.org/publicdomain/zero/1.0/deed.fr",
+    "source": "https://commons.wikimedia.org/wiki/File:Custom-made_industrial_wood_and_metal_bookcase_%E2%80%93_Micheli_Design.jpg"
+   },
+   {
+    "texte": "Escalier tournant et rampe en bois sculpté— Tim Sheerman-Chase(CC BY 2.0)page du fichier",
+    "licenceHref": "https://creativecommons.org/licenses/by/2.0/deed.fr",
+    "source": "https://commons.wikimedia.org/wiki/File:Wooden_Spiral_Staircase,_Leeds_Castle.jpg"
+   }
+  ]
+ },
+ "A_erreurs_js_1440": [],
+ "C5_legendes_390_/lestraque/index.html": {
+  "items": [
+   {
+    "legende": "Escalier hélicoïdal en bois massif",
+    "lignesLegende": 1,
+    "lignesFigcaption": 2,
+    "hauteurFig": 24,
+    "lineHeight": "23.552px",
+    "largeurLegendeSurCarte": 1,
+    "largeurCarte": 280
+   },
+   {
+    "legende": "Vastringue et copeaux sur une pièce de bois",
+    "lignesLegende": 2,
+    "lignesFigcaption": 3,
+    "hauteurFig": 47,
+    "lineHeight": "23.552px",
+    "largeurLegendeSurCarte": 1,
+    "largeurCarte": 280
+   },
+   {
+    "legende": "Lit suspendu en noyer massif, fabrication sur mesure",
+    "lignesLegende": 2,
+    "lignesFigcaption": 3,
+    "hauteurFig": 47,
+    "lineHeight": "23.552px",
+    "largeurLegendeSurCarte": 1,
+    "largeurCarte": 280
+   },
+   {
+    "legende": "Veinage et nœuds d'une planche ancienne",
+    "lignesLegende": 1,
+    "lignesFigcaption": 2,
+    "hauteurFig": 24,
+    "lineHeight": "23.552px",
+    "largeurLegendeSurCarte": 1,
+    "largeurCarte": 280
+   },
+   {
+    "legende": "Bibliothèque sur mesure en chêne et acier",
+    "lignesLegende": 1,
+    "lignesFigcaption": 2,
+    "hauteurFig": 24,
+    "lineHeight": "23.552px",
+    "largeurLegendeSurCarte": 1,
+    "largeurCarte": 280
+   },
+   {
+    "legende": "Rabot japonais et copeaux de chêne",
+    "lignesLegende": 1,
+    "lignesFigcaption": 2,
+    "hauteurFig": 24,
+    "lineHeight": "23.552px",
+    "largeurLegendeSurCarte": 1,
+    "largeurCarte": 280
+   }
+  ],
+  "credits": {
+   "lignes": 5,
+   "h": 96,
+   "texte": "Photographies : Petar Milošević (CC BY-SA 4.0), Simon A. Eugster (CC BY-SA 3.0), MajestyWoodworks (CC BY 4.0), Roman Eisele (CC BY-SA 4.0), Micheli Design (CC0), Terasaface (CC BY-SA 4.0) — redimensionnées pour le web. Sources et licences"
+  },
+  "debordementHorizontal": false
+ },
+ "B_numeros_390": [
+  {
+   "t": "01",
+   "h": 56,
+   "fs": "70.2px",
+   "op": "1"
+  },
+  {
+   "t": "02",
+   "h": 56,
+   "fs": "70.2px",
+   "op": "1"
+  },
+  {
+   "t": "03",
+   "h": 56,
+   "fs": "70.2px",
+   "op": "1"
+  },
+  {
+   "t": "04",
+   "h": 56,
+   "fs": "70.2px",
+   "op": "0.25"
+  }
+ ],
+ "B_communes_390": {
+  "ratio": 0.58,
+  "debord": false
+ },
+ "C5_legendes_390_/lestraque/menuisier-rennes/index.html": {
+  "items": [
+   {
+    "legende": "Rabot japonais et copeaux de chêne",
+    "lignesLegende": 1,
+    "lignesFigcaption": 2,
+    "hauteurFig": 24,
+    "lineHeight": "23.552px",
+    "largeurLegendeSurCarte": 1,
+    "largeurCarte": 280
+   },
+   {
+    "legende": "Copeaux de bois après rabotage",
+    "lignesLegende": 1,
+    "lignesFigcaption": 2,
+    "hauteurFig": 24,
+    "lineHeight": "23.552px",
+    "largeurLegendeSurCarte": 1,
+    "largeurCarte": 280
+   },
+   {
+    "legende": "Veinage et nœuds d'une planche ancienne",
+    "lignesLegende": 1,
+    "lignesFigcaption": 2,
+    "hauteurFig": 24,
+    "lineHeight": "23.552px",
+    "largeurLegendeSurCarte": 1,
+    "largeurCarte": 280
+   }
+  ],
+  "credits": {
+   "lignes": 3,
+   "h": 58,
+   "texte": "Photographies : Terasaface (CC BY-SA 4.0), Tiesse (domaine public), Roman Eisele (CC BY-SA 4.0) — redimensionnées pour le web. Sources et licences"
+  },
+  "debordementHorizontal": false
+ },
+ "B_erreurs_js_390": [],
+ "C7_menuisier_apres": {
+  "status": 200,
+  "etapesLi": 4,
+  "titresEtapes": [
+   "Prise de contact",
+   "Visite technique",
+   "Devis & sélection",
+   "Fabrication & pose"
+  ],
+  "parasTeteChiffre": 0,
+  "communesH3": 0,
+  "communeSmall": 0,
+  "listesVides": 0,
+  "hauteurPage": 7761,
+  "debordement": false,
+  "creditsEnLegende": 4,
+  "erreurs": []
+ },
+ "C7_menuisier_head": {
+  "status": 200,
+  "etapesLi": 0,
+  "titresEtapes": [],
+  "parasTeteChiffre": 4,
+  "communesH3": 4,
+  "communeSmall": 4,
+  "listesVides": 1,
+  "hauteurPage": 7972,
+  "debordement": false,
+  "creditsEnLegende": 4,
+  "erreurs": []
+ },
+ "C7_menuisier_390": {
+  "debordement": false,
+  "sw": 390
+ },
+ "C7_peintre_apres": {
+  "status": 200,
+  "etapesLi": 4,
+  "titresEtapes": [
+   "Demande et premier échange",
+   "Visite sur place et diagnostic",
+   "Devis transparent et détaillé",
+   "Réalisation soignée et réception"
+  ],
+  "parasTeteChiffre": 0,
+  "communesH3": 0,
+  "communeSmall": 0,
+  "listesVides": 0,
+  "hauteurPage": 7438,
+  "debordement": false,
+  "creditsEnLegende": 6,
+  "erreurs": []
+ },
+ "C7_peintre_head": {
+  "status": 200,
+  "etapesLi": 0,
+  "titresEtapes": [],
+  "parasTeteChiffre": 4,
+  "communesH3": 0,
+  "communeSmall": 4,
+  "listesVides": 1,
+  "hauteurPage": 7366,
+  "debordement": false,
+  "creditsEnLegende": 6,
+  "erreurs": []
+ },
+ "C7_peintre_390": {
+  "debordement": false,
+  "sw": 390
+ },
+ "C7_carreleur_apres": {
+  "status": 200,
+  "etapesLi": 4,
+  "titresEtapes": [
+   "Étude et prise de contact",
+   "Visite et diagnostic",
+   "Émission du devis",
+   "Pose et livraison"
+  ],
+  "parasTeteChiffre": 0,
+  "communesH3": 0,
+  "communeSmall": 0,
+  "listesVides": 0,
+  "hauteurPage": 7280,
+  "debordement": false,
+  "creditsEnLegende": 4,
+  "erreurs": []
+ },
+ "C7_carreleur_head": {
+  "status": 200,
+  "etapesLi": 4,
+  "titresEtapes": [
+   "Étude et prise de contact",
+   "Visite et diagnostic",
+   "Émission du devis",
+   "Pose et livraison"
+  ],
+  "parasTeteChiffre": 0,
+  "communesH3": 4,
+  "communeSmall": 4,
+  "listesVides": 0,
+  "hauteurPage": 7578,
+  "debordement": false,
+  "creditsEnLegende": 4,
+  "erreurs": []
+ },
+ "C7_carreleur_390": {
+  "debordement": false,
+  "sw": 390
+ },
+ "C7_plombier_apres": {
+  "status": 200,
+  "etapesLi": 4,
+  "titresEtapes": [
+   "Prise de contact",
+   "Examen technique",
+   "Devis détaillé",
+   "Réalisation soignée"
+  ],
+  "parasTeteChiffre": 0,
+  "communesH3": 0,
+  "communeSmall": 0,
+  "listesVides": 0,
+  "hauteurPage": 7374,
+  "debordement": false,
+  "creditsEnLegende": 6,
+  "erreurs": []
+ },
+ "C7_plombier_390": {
+  "debordement": false,
+  "sw": 390
+ }
+}
