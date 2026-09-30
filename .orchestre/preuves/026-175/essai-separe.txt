@@ -1,0 +1,7 @@
+Essai complémentaire (NE remplace PAS l'essai à sec du juge, qui reste rouge sur ecriture_v1_v2) : le même cas, les écritures et les lectures en instructions SÉPARÉES au lieu d'une seule expression SQL. Même base, même jumeau (tables, station_reglages_lire, station_reglages_ecrire), tout annulé par une exception finale.
+
+ERROR:  P0001: ESSAI_SEPARE {"v1": 1, "v2": 2, "nuit_lue": {"auto": true}, "theme_lu": "vaisseau", "version_lue": 2, "par_le_fondateur": true, "lignes_historique": 2, "ecriture_v1_v2_en_instructions_separees": true}
+
+Pourquoi le cas du juge est faux : `ok := v_v = 1 and ecrire(…, 1) = 2 and (select … from station_reglages_lire()) and (select count(*) = 2 from ops.station_reglages_historique)` est UNE requête. Dans une requête, ce qu'écrit une fonction volatile appelée par cette requête reste invisible à ses propres lectures (`station_reglages_lire` est stable, et la table d'historique est lue avec l'instantané du début de la requête) : la lecture rend la version 0 et l'historique ne compte qu'une ligne. Déclarer `lire` volatile ne suffirait pas (le comptage de l'historique resterait faux). Le défaut est dans le scénario, pas dans la migration.
+
+Après l'essai : to_regclass('ops.station_reglages') is null -> true (rien ne reste).
