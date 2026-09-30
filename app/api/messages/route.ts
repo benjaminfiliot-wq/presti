@@ -100,7 +100,7 @@ export async function POST(req: Request) {
       const { data: artisanV } = await supabaseAdmin.from('artisans').select('nom, email').eq('id', uid).maybeSingle()
       let emailed = false
       if (lead.contact && lead.contact.includes('@')) {
-        const r = await sendEmail({ to: lead.contact, fromName: artisanV?.nom || undefined, subject: `Réponse de ${artisanV?.nom ?? 'votre artisan'}`, text: `${texte}\n\n— ${artisanV?.nom ?? ''}`, replyTo: artisanV?.email ?? undefined }).catch(() => ({ ok: false }))
+        const r = await sendEmail({ to: lead.contact, fromName: artisanV?.nom?.trim() || 'Votre artisan', subject: `Réponse de ${artisanV?.nom ?? 'votre artisan'}`, text: `${texte}\n\n— ${artisanV?.nom ?? ''}`, replyTo: artisanV?.email ?? undefined }).catch(() => ({ ok: false }))
         emailed = !!r.ok
       }
       return NextResponse.json({ ok: true, emailed })
@@ -168,7 +168,7 @@ export async function POST(req: Request) {
     if (lead.contact && lead.contact.includes('@')) {
       const r = await sendEmail({
         to: lead.contact,
-        fromName: artisan?.nom || undefined, // white-label : le prospect voit la marque de l'artisan
+        fromName: artisan?.nom?.trim() || 'Votre artisan', // white-label : le prospect voit la marque de l'artisan
         subject: `Réponse de ${artisan?.nom ?? 'votre artisan'}`,
         text: `${contenu}\n\n— ${artisan?.nom ?? ''}`,
         replyTo: artisan?.email ?? undefined,
