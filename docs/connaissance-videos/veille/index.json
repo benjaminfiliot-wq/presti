@@ -1,0 +1,772 @@
+{
+  "videos_uniques": 20,
+  "attendu_catalogue": 20,
+  "transcriptions_disponibles": 20,
+  "videos": [
+    {
+      "id": "5uaSrfCLd78",
+      "titre": "J'ai copié une boutique dropshipping à 100 000€/mois avec l'IA (ça a marché)",
+      "url": "https://www.youtube.com/watch?v=5uaSrfCLd78",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\5uaSrfCLd78\\video.mp4",
+      "taille_octets": 53801547,
+      "sha256_video": "f958954c8bb356ce2991db73fae1db1997833fea6e24a77546ccd52c34daca83",
+      "duree_secondes": 2097.294,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "24/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        131.080875,
+        393.242625,
+        655.404375,
+        917.5661249999999,
+        1179.727875,
+        1441.8896249999998,
+        1704.051375,
+        1966.2131249999998
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\5uaSrfCLd78\\video.fr-orig.vtt",
+      "nombre_cues": 2753,
+      "nombre_lignes_transcription": 1377,
+      "empreintes_documents": {
+        "planche.jpg": "cb92736658681df3e2fdf5571426b8349e551ba557d64e85c8f70fcb6da4e723",
+        "sous-titres-originaux.vtt": "baef1fda93f83918997593255882a94010d2b03559a464f3ca9da9342da80084",
+        "transcription.txt": "78cacc4bb050d5e9a026c12504bae85ad9dcacb8c025d8192e4cf6fa962224ee"
+      }
+    },
+    {
+      "id": "9cXVJqlWNK0",
+      "titre": "E-Commerce 2026 : 5X plus de cash avec ÇA",
+      "url": "https://www.youtube.com/watch?v=9cXVJqlWNK0",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\9cXVJqlWNK0\\video.mp4",
+      "taille_octets": 31170794,
+      "sha256_video": "e29c9275312a93a5273b6838e4fb038f9a1694826d11fb8b3127e9696989e730",
+      "duree_secondes": 1043.334,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "25/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        65.208375,
+        195.62512500000003,
+        326.041875,
+        456.45862500000004,
+        586.8753750000001,
+        717.292125,
+        847.708875,
+        978.125625
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\9cXVJqlWNK0\\video.fr-orig.vtt",
+      "nombre_cues": 1223,
+      "nombre_lignes_transcription": 612,
+      "empreintes_documents": {
+        "planche.jpg": "84bc752a34862cd7da4b360eff4639fa77b0beff9a9df398a230fba0d8deb909",
+        "sous-titres-originaux.vtt": "a54270474a25b397d09e809c6bdced3572bc60b14f6c823b83f7597940769eed",
+        "transcription.txt": "444077aad9a49bfabb5415205774d0be7925288c6720c3f8d10004050d70fa15"
+      }
+    },
+    {
+      "id": "AWyEpJokQiM",
+      "titre": "8 ans d'e-commerce résumés en 30 min",
+      "url": "https://www.youtube.com/watch?v=AWyEpJokQiM",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\AWyEpJokQiM\\video.mp4",
+      "taille_octets": 52634622,
+      "sha256_video": "9cfb9b59fca99401d2b7a97ccd77c5cdb65a7fb6ad2f9c953e84443025eda21b",
+      "duree_secondes": 1581.894,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "25/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        98.868375,
+        296.605125,
+        494.341875,
+        692.078625,
+        889.815375,
+        1087.552125,
+        1285.288875,
+        1483.025625
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\AWyEpJokQiM\\video.fr-orig.vtt",
+      "nombre_cues": 1975,
+      "nombre_lignes_transcription": 988,
+      "empreintes_documents": {
+        "planche.jpg": "f6a6ed6809d68658e0165a5380aef02419394a8645a13265c7237031328d01b7",
+        "sous-titres-originaux.vtt": "294c1c4007fb5218f2149370c1bd8fe914302e4b21d9f9e2e446de7e725cf7a3",
+        "transcription.txt": "a6d5f6faa53f73b26866379844e2d1633e2bbd06ad7c2e9fcfb49aa3ec744c0f"
+      }
+    },
+    {
+      "id": "dh542CjmMi0",
+      "titre": "J'ai copié une boutique à 200K€/mois avec des publicités IA",
+      "url": "https://www.youtube.com/watch?v=dh542CjmMi0",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\dh542CjmMi0\\video.mp4",
+      "taille_octets": 33736028,
+      "sha256_video": "280cf718e1a28f7eaccec3ab08e43a7593ea30dcef21bfafd34aa20a089916ee",
+      "duree_secondes": 1337.294,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "24/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        83.580875,
+        250.74262500000003,
+        417.904375,
+        585.066125,
+        752.227875,
+        919.389625,
+        1086.551375,
+        1253.713125
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\dh542CjmMi0\\video.fr-orig.vtt",
+      "nombre_cues": 1673,
+      "nombre_lignes_transcription": 834,
+      "empreintes_documents": {
+        "planche.jpg": "56643c59f5216066f293ad19658eeb7ce457fcdb11d16ea1d01c5459fd878349",
+        "sous-titres-originaux.vtt": "b5f35a2548aec12125b9603514fe4f18bf0a31b072abc472ea3090498a6b700c",
+        "transcription.txt": "2fc1c3fe592e6f851d807c145e0edf4f5f8200a0347ea7fde64b8e3186977206"
+      }
+    },
+    {
+      "id": "ip4IHi1ZfhA",
+      "titre": "Ce Business IA Ennuyant Me Rapporte 28 974€/Mois (Avec Claude)",
+      "url": "https://www.youtube.com/watch?v=ip4IHi1ZfhA",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\ip4IHi1ZfhA\\video.mp4",
+      "taille_octets": 63770762,
+      "sha256_video": "642a6c29e060a1856ed38363e9588d245edf9f7bfc213958a66c52abee26fa32",
+      "duree_secondes": 2750.834,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "30/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        171.927125,
+        515.781375,
+        859.6356249999999,
+        1203.489875,
+        1547.3441249999998,
+        1891.198375,
+        2235.052625,
+        2578.9068749999997
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\ip4IHi1ZfhA\\video.fr-orig.vtt",
+      "nombre_cues": 3173,
+      "nombre_lignes_transcription": 1587,
+      "empreintes_documents": {
+        "planche.jpg": "4c0fffbadd3cfd30fff521f2ba0eaf6af7d40b5a0cd3ef0636d5174a9373ad01",
+        "sous-titres-originaux.vtt": "e2d031f9d9678832263d1325960d95b8225786559b5978044b3a134f30d7db5b",
+        "transcription.txt": "91c4ece40fc7ce708c63ef8f186749db06ab999b34dc9703790144646046c5bf"
+      }
+    },
+    {
+      "id": "J6Cpt7BOqI0",
+      "titre": "Comment construire une boutique SHOPIFY à 200K€/mois grâce à Claude",
+      "url": "https://www.youtube.com/watch?v=J6Cpt7BOqI0",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\J6Cpt7BOqI0\\video.mp4",
+      "taille_octets": 46806224,
+      "sha256_video": "d58384546b098a91c50ed8a99afa5f40c2948207ce81936cea1efc342f379385",
+      "duree_secondes": 1705.214,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "24/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        106.575875,
+        319.727625,
+        532.879375,
+        746.031125,
+        959.182875,
+        1172.334625,
+        1385.486375,
+        1598.638125
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\J6Cpt7BOqI0\\video.fr-orig.vtt",
+      "nombre_cues": 2011,
+      "nombre_lignes_transcription": 1006,
+      "empreintes_documents": {
+        "planche.jpg": "35c8e73515eea83d0b2f750c760e2a206bc441ba8b68d7a2cf3bd730db4c9a30",
+        "sous-titres-originaux.vtt": "92236cb120400c682f7993e1254eec0c4ae3a225f537e24168ff67aa1eee3bef",
+        "transcription.txt": "5f590afe7efd65d1fd5b1b1de3b2c3041cf3d8280e74052bd83ec8887718a21e"
+      }
+    },
+    {
+      "id": "JBIuZCw74FI",
+      "titre": "J'ai transformé Claude en agence vidéo IA automatisée (1 client = 5.000€)",
+      "url": "https://www.youtube.com/watch?v=JBIuZCw74FI",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\JBIuZCw74FI\\video.mp4",
+      "taille_octets": 42400957,
+      "sha256_video": "ebf06898cf62e962527d9f4dda290cd15ea557964f0c9c33d68b1ab963c96953",
+      "duree_secondes": 1289.734,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "30000/1001",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        80.608375,
+        241.82512499999999,
+        403.041875,
+        564.2586249999999,
+        725.475375,
+        886.6921249999999,
+        1047.9088749999999,
+        1209.125625
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\JBIuZCw74FI\\video.fr-orig.vtt",
+      "nombre_cues": 1777,
+      "nombre_lignes_transcription": 889,
+      "empreintes_documents": {
+        "planche.jpg": "da28976f596ab3f28aa623513260b1dbebe0e77d07798e13d0797e80c505599f",
+        "sous-titres-originaux.vtt": "8e81ff7b2aece0f8c39387e3a3bcaefe01c38c2f92e1c5bc541b6b5f07097410",
+        "transcription.txt": "2fc0141c53dc749a436579d98e215d0631c5c8f8675102a5bd3cb6d1b16c897a"
+      }
+    },
+    {
+      "id": "NrjE4aBhzmU",
+      "titre": "Comment je fais +50,000€/mois de profit en ecommerce google ads",
+      "url": "https://www.youtube.com/watch?v=NrjE4aBhzmU",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\NrjE4aBhzmU\\video.mp4",
+      "taille_octets": 23022149,
+      "sha256_video": "f541513b7e1d99852580c3d7230e6e9ce9971db260f0cb99ec412e2fbd88521e",
+      "duree_secondes": 803.174,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "25/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        50.198375,
+        150.595125,
+        250.991875,
+        351.388625,
+        451.785375,
+        552.182125,
+        652.5788749999999,
+        752.975625
+      ],
+      "transcription": "COMPLÈTE par ASR automatique sur Oracle, modèle small int8, langue fr, sans relecture humaine",
+      "empreintes_documents": {
+        "planche.jpg": "bb851ac5fb5e3eeb5a6b03ea824bb72967300eb94f61e811f5d1d77a6d86edfe",
+        "transcription-manquante.txt": "d88edffdab1cf07b72080407c7e890b843137637f31e924cc3e2804420361777",
+        "transcription.txt": "7acda584bd5e34bd1ff5df8c8ea46df80ce99ecb615470751b472c61d059e31e",
+        "transcription-asr.json": "5b116d071ca3ee2494a019dcbf2d252c76d7482682807cb397536cabe647c3ee"
+      },
+      "nombre_segments": 342
+    },
+    {
+      "id": "pPoR_0FHl-U",
+      "titre": "Comment Gagner VRAIMENT de l'Argent avec Claude (SANS BULLSH*T)",
+      "url": "https://www.youtube.com/watch?v=pPoR_0FHl-U",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\pPoR_0FHl-U\\video.mp4",
+      "taille_octets": 93536911,
+      "sha256_video": "7af6d48d11423c4c8b8343e141fc51da12205facb7c143bcad57d597eaf64c54",
+      "duree_secondes": 3304.094,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "30/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        206.505875,
+        619.517625,
+        1032.529375,
+        1445.541125,
+        1858.552875,
+        2271.564625,
+        2684.576375,
+        3097.588125
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\pPoR_0FHl-U\\video.fr-orig.vtt",
+      "nombre_cues": 3763,
+      "nombre_lignes_transcription": 1882,
+      "empreintes_documents": {
+        "planche.jpg": "9bf76b6b9f5b371a22734e51217e4db59f154bb1abb25174b782e14d9880a331",
+        "sous-titres-originaux.vtt": "84e91c595e3c658725688e30f1bb4450a6237400022d8ae2550e623d5d04b0d4",
+        "transcription.txt": "da25b10040d8c16e439f6b8b478059ee429bcb23550d44427ce18eeb52eb6624"
+      }
+    },
+    {
+      "id": "sPhCwBND6oI",
+      "titre": "Comment j'ai fais 308,000$ en 90 jours en ecommerce google ads",
+      "url": "https://www.youtube.com/watch?v=sPhCwBND6oI",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\sPhCwBND6oI\\video.mp4",
+      "taille_octets": 19956638,
+      "sha256_video": "ea46fa7ede0d5b7af9ebc5b64e758f7300fcded6a46dfec2e6c68610243f14f1",
+      "duree_secondes": 727.134,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "25/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        45.445875,
+        136.337625,
+        227.229375,
+        318.121125,
+        409.012875,
+        499.904625,
+        590.796375,
+        681.688125
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\sPhCwBND6oI\\video.fr-orig.vtt",
+      "nombre_cues": 1041,
+      "nombre_lignes_transcription": 521,
+      "empreintes_documents": {
+        "planche.jpg": "89217b76d67e29d52f5f93b869d4c9b80f3d4624216128c1d71fbc3990997b61",
+        "sous-titres-originaux.vtt": "88849b06a90cae981744581c257de0c3927172629e8edd62b41e5f188a65ecee",
+        "transcription.txt": "04a6b6bcf4ea4d12afdd7d3248ac604d207a888187fcacafb8bb8e7bde236b37"
+      }
+    },
+    {
+      "id": "uNrz5v9p-zk",
+      "titre": "J'ai copié une boutique à 2M€/mois grâce à Claude IA en 30 minutes",
+      "url": "https://www.youtube.com/watch?v=uNrz5v9p-zk",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\uNrz5v9p-zk\\video.mp4",
+      "taille_octets": 45576419,
+      "sha256_video": "8e84c7782954cc513b073b43a4efbd0677cc4562e10b30e7fbe8963a58638f0a",
+      "duree_secondes": 1790.294,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "24/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        111.893375,
+        335.68012500000003,
+        559.4668750000001,
+        783.253625,
+        1007.040375,
+        1230.827125,
+        1454.613875,
+        1678.400625
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\uNrz5v9p-zk\\video.fr-orig.vtt",
+      "nombre_cues": 2287,
+      "nombre_lignes_transcription": 1144,
+      "empreintes_documents": {
+        "planche.jpg": "cbbd2a5df838d74c14bd007d5a6dac4e69c18339df4175630fcba0cce5f0dc34",
+        "sous-titres-originaux.vtt": "f2970dfa63e79aa2af83dc5a915bb381960b1a4a8c22dbd83164ba59fc4deaf8",
+        "transcription.txt": "fa2f49f8cd6fd13f9941f4feb3b0941b1361d420a10ebfe1aa51b71e3aa59d3c"
+      }
+    },
+    {
+      "id": "vEP99KxIYHk",
+      "titre": "Comment je crée des pubs UGC avec l'IA (qui génèrent du cash)",
+      "url": "https://www.youtube.com/watch?v=vEP99KxIYHk",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\vEP99KxIYHk\\video.mp4",
+      "taille_octets": 36228380,
+      "sha256_video": "febcadaca5344f594fb83eaabaadc791654705bc025864b8fdc0a0d284deb20a",
+      "duree_secondes": 744.414,
+      "largeur": 854,
+      "hauteur": 480,
+      "codec_video": "av1",
+      "images_par_seconde": "30/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        46.525875,
+        139.577625,
+        232.62937499999998,
+        325.681125,
+        418.732875,
+        511.784625,
+        604.836375,
+        697.888125
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\vEP99KxIYHk\\video.fr-orig.vtt",
+      "nombre_cues": 1015,
+      "nombre_lignes_transcription": 508,
+      "empreintes_documents": {
+        "planche.jpg": "a9c752fb5dcc1e8fceec383e4f76b1f8e2239f335e5839fe49dbc14358af6fb4",
+        "sous-titres-originaux.vtt": "57313c3569a98b600b9d0c8aea15493edba79ff943270be6d56b3a45cb0fd9f6",
+        "transcription.txt": "84dbd27051ffba03d7ccdaf05cb2f7d6aea79fc55f51e5c7228200bbeaab9bd1"
+      }
+    },
+    {
+      "id": "Z2un1Yax_aQ",
+      "titre": "J’ai testé Claude AI en e-commerce (je m’y attendais pas)",
+      "url": "https://www.youtube.com/watch?v=Z2un1Yax_aQ",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\Z2un1Yax_aQ\\video.mp4",
+      "taille_octets": 25008570,
+      "sha256_video": "1cd6c863be9ff4bc650fa7e0fa9ea59186d05fac2dd037fd0cc15136dfb38ffb",
+      "duree_secondes": 768.014,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "25/1",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        48.000875,
+        144.002625,
+        240.004375,
+        336.006125,
+        432.007875,
+        528.009625,
+        624.011375,
+        720.0131250000001
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\Z2un1Yax_aQ\\video.fr-orig.vtt",
+      "nombre_cues": 927,
+      "nombre_lignes_transcription": 464,
+      "empreintes_documents": {
+        "planche.jpg": "eed00a45a10f313ca2747c2dbeb2eadde57ee56eb012d57a7daa58020c2ef488",
+        "sous-titres-originaux.vtt": "0e4691b79802def568b74bbc95779c22a2b5933207173a3bf6d34d90d4974aef",
+        "transcription.txt": "ee324f5b716a08e8964dc8128853aaa43ca21dc0cf1d1f761726fc55d08b8232"
+      }
+    },
+    {
+      "id": "ZCC6uqwHxV4",
+      "titre": "J’ai essayé de faire de l’Argent avec une Influenceuse IA",
+      "url": "https://www.youtube.com/watch?v=ZCC6uqwHxV4",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\ZCC6uqwHxV4\\video.mp4",
+      "taille_octets": 22829877,
+      "sha256_video": "e867b5c91c999f7301f01d862a19a22681fa331ae2fbf10c496a4407a32872a3",
+      "duree_secondes": 728.594,
+      "largeur": 640,
+      "hauteur": 360,
+      "codec_video": "av1",
+      "images_par_seconde": "24000/1001",
+      "audio": [
+        {
+          "codec": "opus",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        45.537125,
+        136.611375,
+        227.68562500000002,
+        318.759875,
+        409.83412500000003,
+        500.90837500000004,
+        591.9826250000001,
+        683.056875
+      ],
+      "transcription": "COMPLÈTE depuis les sous-titres français locaux, non corrigée humainement",
+      "source_vtt": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\youtube\\ZCC6uqwHxV4\\video.fr-orig.vtt",
+      "nombre_cues": 813,
+      "nombre_lignes_transcription": 407,
+      "empreintes_documents": {
+        "planche.jpg": "eea9de008f66f2d279fefb6f066fb4e5c362c451df354d8d8a852287508922e4",
+        "sous-titres-originaux.vtt": "1e5c40f8a038f486f108e50b824ebe5753f1374f938a4a27c4e5a89ce5ea9986",
+        "transcription.txt": "2c7abf96999580488d64a33476e3cd450a97f85712105114b5db1541772420e2"
+      }
+    },
+    {
+      "id": "androoagi",
+      "titre": "Best ways to create automated businesses with AI agents #aiagents #op...",
+      "url": "https://www.tiktok.com/@androoagi/video/7623856430621134110",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\videos\\androoagi.mp4",
+      "taille_octets": 29031518,
+      "sha256_video": "e8281efa29cf8a2c598fd970c39f07dc117b171b27cf29937db7c1b02e1d8ccb",
+      "duree_secondes": 179.800816,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec_video": "hevc",
+      "images_par_seconde": "30/1",
+      "audio": [
+        {
+          "codec": "mp3",
+          "frequence": "44100",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        11.237551,
+        33.712653,
+        56.187754999999996,
+        78.662857,
+        101.137959,
+        123.613061,
+        146.088163,
+        168.563265
+      ],
+      "transcription": "TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées",
+      "source_transcription": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\androoagi.txt",
+      "empreintes_documents": {
+        "planche.jpg": "4ec09c82a75b73f7b1dba737228b639913fb48252503008826e29f053d04e6c2",
+        "transcription.txt": "59bf8ed5b9e4500305cfe3ac4e1b42a3448e0f18e0c73dee5b9bae3951c20a06"
+      }
+    },
+    {
+      "id": "hugomatias-DcODQPCMsLl",
+      "titre": "Video by hugomatias.ai",
+      "url": "https://www.instagram.com/reel/DcODQPCMsLl/",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\videos\\hugomatias-DcODQPCMsLl.mp4",
+      "taille_octets": 16240224,
+      "sha256_video": "393c31345a774f6b792cfd5f7cc108aaeddb6032a05d65d60e0d190b6e8af3dc",
+      "duree_secondes": 59.743991,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec_video": "vp9",
+      "images_par_seconde": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "frequence": "44100",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        3.7339994375,
+        11.2019983125,
+        18.6699971875,
+        26.1379960625,
+        33.6059949375,
+        41.0739938125,
+        48.5419926875,
+        56.0099915625
+      ],
+      "transcription": "TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées",
+      "source_transcription": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\hugomatias-DcODQPCMsLl.txt",
+      "empreintes_documents": {
+        "planche.jpg": "ada90fffef98cb4a0ee3bed87a83800091bdbd3b556546b55e994784f90e56d5",
+        "transcription.txt": "b5ed7c0943315b4c7374cec2f9a1bf4e09d04bda2b5f51766d5028e4b504b692"
+      }
+    },
+    {
+      "id": "insta-DdKrZjlg1eC",
+      "titre": "Video by jaydenleilua",
+      "url": "https://www.instagram.com/reel/DdKrZjlg1eC/",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\videos\\insta-DdKrZjlg1eC.mp4",
+      "taille_octets": 2108024,
+      "sha256_video": "01399b41bf4f917ec117bd586a1288f696aa2f28cd7aeb3cd5b581442b76b40e",
+      "duree_secondes": 54.867007,
+      "largeur": 720,
+      "hauteur": 1280,
+      "codec_video": "vp9",
+      "images_par_seconde": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "frequence": "44100",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        3.4291879375,
+        10.2875638125,
+        17.1459396875,
+        24.0043155625,
+        30.8626914375,
+        37.7210673125,
+        44.579443187500004,
+        51.4378190625
+      ],
+      "transcription": "TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées",
+      "source_transcription": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\insta-DdKrZjlg1eC.txt",
+      "empreintes_documents": {
+        "planche.jpg": "64062bed0f0d79a0e017541818facbfdbd1d6bbce006cd78b26e2d4e4db509b3",
+        "transcription.txt": "e4dd4e58e82f0bfee498870ce29617cbcef25fc4673203ea52e9f792e9d32fde"
+      }
+    },
+    {
+      "id": "mr_pynk",
+      "titre": "Full Breakdown on Insta @mr.pynk  We built a full AI ad studio system...",
+      "url": "https://www.tiktok.com/@mr_pynk/video/7637274283470753056",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\videos\\mr_pynk.mp4",
+      "taille_octets": 1855611,
+      "sha256_video": "115be902963c858cd23991b92ec11ca63dd1f9369b30db912e85bc887fd2322b",
+      "duree_secondes": 35.7,
+      "largeur": 720,
+      "hauteur": 1280,
+      "codec_video": "hevc",
+      "images_par_seconde": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "frequence": "44100",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        2.23125,
+        6.6937500000000005,
+        11.15625,
+        15.618750000000002,
+        20.08125,
+        24.543750000000003,
+        29.00625,
+        33.46875
+      ],
+      "transcription": "TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées",
+      "source_transcription": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\mr_pynk.txt",
+      "empreintes_documents": {
+        "planche.jpg": "95d774f72e51912622b217b56f6de91ba5de0eb9c15b1b51337b80ed9f2c7e8f",
+        "transcription.txt": "3f2adfefcc3a16fa70127873a940830a4dda79b326903b02da10f5b90e50f502"
+      }
+    },
+    {
+      "id": "trevsagents",
+      "titre": "AUTOMATE YOUR BUSINESSES. IF YOU DONT HAVE ANY YET, DO THIS! #aiagent...",
+      "url": "https://www.tiktok.com/@trevsagents/video/7644344691688770846",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\videos\\trevsagents.mp4",
+      "taille_octets": 37801669,
+      "sha256_video": "0ab4ff7df8e5a47b5b43a62588256aee6eb81e77a542113e5f2959e31bdcf1d5",
+      "duree_secondes": 116.816817,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec_video": "hevc",
+      "images_par_seconde": "2997/50",
+      "audio": [
+        {
+          "codec": "aac",
+          "frequence": "44100",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        7.3010510625,
+        21.9031531875,
+        36.5052553125,
+        51.1073574375,
+        65.7094595625,
+        80.3115616875,
+        94.9136638125,
+        109.5157659375
+      ],
+      "transcription": "COMPLÈTE par ASR automatique sur Oracle, modèle small int8, langue en, sans relecture humaine",
+      "empreintes_documents": {
+        "planche.jpg": "463b8d6f25b2f07fe05a1ea4dd13cd42c60661d622b169d2989b4c39be065252",
+        "resume-local.txt": "41275fd17066256d10d2571248b5414cd2b8220945ac894eca0c9a4b71be4d93",
+        "transcription-manquante.txt": "ce4a1ce59cdd5c9886f2fa1d1e740772fcf16f60773e34a73d8f6d0beaa784f6",
+        "transcription.txt": "aff646c9a6b9610c7f62d29ed51118d4b0e9e81d71919dc53d73db701223d198",
+        "transcription-asr.json": "bededafbe846ccd7494b79a6193b543998acd753a048cc6935dcf9e3136c7bbe"
+      },
+      "source_resume": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\trevsagents-voix-video.txt",
+      "nombre_segments": 65
+    },
+    {
+      "id": "reel-DdscwJUROKo",
+      "titre": "Video by restructureai",
+      "url": "https://www.instagram.com/reel/DdscwJUROKo/",
+      "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-25\\reel-DdscwJUROKo.mp4",
+      "taille_octets": 11896481,
+      "sha256_video": "55124d34eff097eee11bf1fd550342a7c4c712a63cc28dcad84b8d488396112a",
+      "duree_secondes": 83.115,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec_video": "vp9",
+      "images_par_seconde": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "frequence": "48000",
+          "canaux": 2
+        }
+      ],
+      "images_secondes": [
+        5.1946875,
+        15.584062499999998,
+        25.9734375,
+        36.3628125,
+        46.7521875,
+        57.1415625,
+        67.5309375,
+        77.9203125
+      ],
+      "transcription": "TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées",
+      "source_transcription": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-25\\reel-DdscwJUROKo.txt",
+      "empreintes_documents": {
+        "planche.jpg": "8b0583a4d7a071608a5ba7b9aa16cddafc4baba6e07411c6451fc3676939fe77",
+        "transcription.txt": "78ec820499914860b49922b189d0a9b37801590d63878e66b89cc5aaad7dd69b"
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+[0.00 - 1.32] This is not a video game.
+[1.32 - 3.78] These are my AI agents all walking to the meeting room
+[3.78 - 6.36] to have a meeting to think how can we improve the business
+[6.36 - 7.80] as best as possible.
+[7.80 - 10.36] I built a bunch of AI agents that automate a ton of businesses
+[10.36 - 12.56] to make me a bunch of money all while I sleep.
+[12.56 - 15.92] We have a research agent, a manager agent, a fiverr agent,
+[15.92 - 18.20] a YouTube AI music agent that we're so setting up,
+[18.20 - 20.32] our agent that makes Etsy products,
+[20.32 - 21.32] a TikTok marketing agent,
+[21.32 - 23.08] and then a solo experimental agent.
+[23.08 - 24.96] And right now they're all having this clanker meeting
+[24.96 - 26.28] so they can figure out what they need to do
+[26.28 - 27.12] to improve the business.
+[27.12 - 29.00] And then my manager agent Matt
+[29.00 - 30.76] is gonna write up a briefing on talk about
+[30.76 - 32.84] what they talked about and what they came up.
+[32.84 - 34.36] Now they're not just moving around randomly
+[34.36 - 35.20] when they walk to the meeting,
+[35.20 - 37.32] they're actually on the back end having a meeting,
+[37.32 - 39.60] they're talking to each other, the AI are discussing things.
+[39.60 - 41.04] I just built this visual representation
+[41.04 - 42.88] so I can see better than looking in here,
+[42.88 - 44.56] I can see what's going on visually.
+[44.56 - 46.28] It's much better to look at and much nicer to look at
+[46.28 - 47.60] and it displays exactly what's happening
+[47.60 - 49.56] on the back end, on the front end.
+[49.56 - 51.44] We've also got a bunch of rooms in our space station
+[51.44 - 53.68] which all have an actual meeting like our revenue bay.
+[53.68 - 54.92] I can click on it talks to me
+[54.92 - 57.12] and talks to me about all the revenue we're making
+[57.12 - 58.40] once it loads, tells me how much money
+[58.40 - 60.96] we've made in 30 days, what it comes from and all that.
+[60.96 - 62.80] I've got the treasury bay which tells us
+[62.80 - 65.48] about how much money we've been spending on our API costs
+[65.48 - 69.08] and what Matt's running on the GPT 5.5.
+[69.08 - 70.56] I've got the factory room where I can see
+[70.56 - 72.48] all the deliveries that Blanc has made.
+[72.48 - 74.28] He has his candles, he makes t-shirts,
+[74.28 - 76.76] he makes it on Printify and then posts them to Etsy
+[76.76 - 78.20] and then Luke posts TikToks about it
+[78.20 - 79.04] where it's Luke right here.
+[79.04 - 80.28] So Luke lives in the media lab
+[80.28 - 82.40] making posts about these on TikTok.
+[82.40 - 84.32] And then we have a chill room, bar room, game room
+[84.32 - 85.32] which doesn't do anything because
+[85.32 - 86.44] they're actually not allowed in here
+[86.48 - 89.28] because they work around the clock 24-7 for me.
+[89.28 - 90.88] So if you haven't automated your businesses,
+[90.88 - 92.12] you should, I don't know why you haven't.
+[92.12 - 94.44] You need to be using AI agents, it's just open claw
+[94.44 - 95.60] and then this is like a custom thing
+[95.60 - 97.36] but all you need is open claw really
+[97.36 - 99.76] to have AI agents work for you, make businesses for you.
+[99.76 - 101.16] Even if you have already existing businesses
+[101.16 - 103.08] like I have one called the BOF bot
+[103.08 - 104.40] which is one of my apps
+[104.40 - 105.88] and I set it up so that my agents
+[105.88 - 107.92] can manage customer support,
+[107.92 - 109.12] they can push updates to the app,
+[109.12 - 110.76] they can like make the app better
+[110.76 - 112.76] and yeah, I don't know why you haven't used AI agents.
+[112.76 - 114.08] Yeah, just automate all your businesses
+[114.08 - 115.36] so you really don't have to do anything
+[115.36 - 116.92] except kind of check in during the day.

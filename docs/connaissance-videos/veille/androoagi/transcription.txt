@@ -1,0 +1,32 @@
+# androoagi.m4a — langue en (1.00), durée 179.8 s
+[   0.0-   5.9] This is a functioning ecosystem I built for my AI agents so that I could actually see where they are
+[   5.9-  11.1] and what they're working on at any given moment. And in this little ecosystem, we created these
+[  11.1-  17.6] two little factory rooms, which essentially run autonomous businesses 24-7. And on this
+[  17.6-  23.7] conveyor belt here is where we started our Etsy store that has almost produced $2,000 in revenue
+[  23.7-  30.7] in the last two weeks. And so far, we have 37 orders. And I figured I would talk a little bit
+[  30.7-  34.8] more about what the other factories are doing. I've talked a lot about in other videos on the
+[  34.8-  40.2] Etsy store. So what I want to do here is if you'll see in the top left corner, you'll see
+[  40.2-  46.9] Vibes in that little studio there. And all he does essentially is 24-7, he's pumping out house
+[  46.9-  51.6] music, deep house music and techno. And then he puts it on Spotify. I gave him a Spotify account
+[  51.6-  56.5] and his own YouTube channel. And this is what he's come up with so far. He even makes the
+[  56.5-  69.8] visualizers for the YouTube videos. I know he sounds glorious. It's insane. He sounds amazing.
+[  69.8-  76.7] So he just pumps out music 24-7. Over here is where you see services is actually a fiber service we just
+[  76.7-  80.7] started. And I want to show you guys this real quick. Look at this dickhead right here, right?
+[  81.1-  87.3] Five star reviews. He makes YouTube thumbnails and he charges people $55. And what you're
+[  87.3-  93.0] you get, you get this, an AI generated thumbnail. And you know, I was going on Fiverr and I said,
+[  93.2- 100.8] hmm, what if I took this fucking guy's job, which he's not even good at. He has 11 orders he hasn't
+[ 100.8- 105.5] even fulfilled that people have paid $55 for. He hasn't even fulfilled them. And I'm thinking,
+[ 105.6- 111.3] you know what? I'm going to take his fucking job and I'm just going to compete and start my own
+[ 111.3- 117.8] Fiverr fucking service. They're selling the same thing for cheaper, except I'm going to delegate all
+[ 117.8- 123.0] the work to my little factory. So all this does, whenever we get an order on our Fiverr account,
+[ 123.3- 128.3] it fulfills the order. All it does is make a YouTube thumbnail using Nano Banana Pro the same
+[ 128.3- 133.7] way this guy's doing it, except I just have my AI agents do it for me. Down here, game assets. If you
+[ 133.7- 141.9] take a look over here, this guy is selling 2D, look how trash this shit is. 2D game assets for $30.
+[ 142.7- 148.2] Same concept. I saw this shit. I'm like, brother, we could do the same fucking thing. And that's what
+[ 148.2- 153.6] we're doing. We're just making 2D game assets in like these little bundles like this. And all this
+[ 153.6- 158.2] does is pump out these bundles. This is our newsletter. It's just pumping out content for our
+[ 158.2- 162.4] newsletter. This is pretty new. We don't have too many subscribers on the newsletter yet. And this
+[ 162.4- 167.1] production, this just helps me with marketing content for my main business in which I sell
+[ 167.1- 171.8] software to car dealerships. And that is essentially a rundown of the whole factory.
+[ 172.3- 179.0] A thousand likes, fellas. And I'll do a full video tour on this entire factory. Let me know if you guys
+[ 179.0- 179.5] want that.

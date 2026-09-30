@@ -1,0 +1,1 @@
+-- 0001_init.sql : migration factice du projet d'essai ; aucune table, juste ce commentaire.

@@ -1,0 +1,32 @@
+$ node --import ./scripts/ts-loader.mjs scripts/station-route-qa.mjs --partie=lecture && node --import ./scripts/ts-loader.mjs scripts/station-route-qa.mjs --partie=reunion
+# 2026-09-30T21:12:08Z · code 1 · 113s
+
+station-route-qa --partie=lecture — racine C:\Users\benja\Documents\presti — base fd8ab54 — sources, doublures, puis vivant (arbre réel, copie au drapeau levé, comptes d’essai, typecheck)
+✅ SV-1 route et station.ts présents ; le GET commence par actif('pilotage') → 404 ; ni POST, ni PUT, ni DELETE
+✅ SV-2 doublures : doublures : drapeau baissé → 404 avant toute identité (l’arbre réel se juge sur la racine réelle)
+✅ SV-3 doublures : doublures : 401 sans jeton, 403 artisan, 400 vue, salle et nom inconnus (« Salle inconnue. »), salle=radar → 200
+✅ SV-4 doublures : doublures : 27 vues (direct, fil, les 20 salles et ecommerce, trois fiches d’agent) → 200 au contrat de s/contrat-vues.mjs, jamais 500
+✅ SV-5 station.ts importe les treize fonctions des modules ; ni .sort(, ni .reduce(, ni Math., ni seuil numérique hors des durées et limites (20, 50, 100, 15, 10, 30) dans la route et station.ts
+✅ SV-6 sources : ops lu par les seules fonctions pilotage_* et station_* de lecture ; tables permises avec colonnes explicites ; doublures : doublures : 26 fonctions lues, toutes de la liste fermée ; tables permises, colonnes explicites, ni e-mail, ni téléphone, ni nom, ni sujet, ni corps
+✅ SV-7 doublures : doublures : aucune adresse e-mail ni aucun numéro hors de salle=standard et agent&nom=repondeur, qui portent le texte exact
+✅ SV-8 doublures : doublures : pilotage_agents en panne → seule direct.equipage porte l’erreur ; tout en panne → 200 et sept erreurs
+✅ SV-9 lecture seule : aucune fonction d’écriture (consigne, réunion, expérience, ops_*), ni insert, update, delete
+✅ SV-10 doublures : doublures : p_apres = 41 transmis, dernier_id = le plus grand id reçu ; achats du mois de Paris, juste autour de minuit UTC
+❌ SV-11 scripts/fermeture-e2e.mjs diffère de fd8ab54 hors de la ligne 'pilotage' (5 ligne(s), dont « import './ts-loader.mjs' »)
+✅ SV-12 doublures : doublures : standard (p_limite 10), rédaction (variantes d’entonnoir, modèles suspendus), machines (un cron par nom, dernière mesure ou manque), envois (gestes = pilotage_etat_envoi)
+✅ SV-13 station.ts : aucune constante de date, ni JALON, ni pilotage_jalon, ni pilotage_compteurs_boites ; doublures : doublures : bilan non daté si la date est nulle, « bilan du 02/11 » sinon ; salle=envois : la phrase vide exacte, ni parBoite ni boites_pause
+✅ SV-14 doublures : doublures : une réservation (source rdv) et une réponse « appel » → une carte appel orange de nombre 2
+✅ SV-15 DOMAINE_DE dans station.ts, aucun objet deux fois (source) ; sans doublure : DOMAINE_DE importé : 59 objets ; commandes, ventes (bandeau), étape PAYÉ, packs, recettes et trésorerie sous comptabilite ; SITES EN LIGNE, lignes.sites et l’Usine sous clients
+❌ SV-16 route, « santé sans comptabilité » : hors contrat (direct.carte.paliers.commandement : null attendu)
+✅ SV-17 erreurs par la requête de la ronde (app_errors, 24 h), commandes du mois par ventesSites, la version jamais dans le layout ; doublures : doublures : version « 0123456 » ou « dev », erreurs des 24 h, commandes du mois par ventesSites, sites en ligne, santé « arrive avec sa fiche »
+✅ SV-18 doublures : doublures : ecommerce réservée sans appel à la base ; 10 salle(s) sans lecteur → « arrive avec sa fiche » sans appel ; 0 avec leur lecteur (026-178, jugées par SV-4 et --partie=salles2)
+✅ SV-19 doublures : doublures : 3 aperçus, chacun de createSignedUrl(…, ≤ 600 s) du bucket privé ; aucune adresse publique
+✅ SV-20 cout_jour_eur jamais écrit en dur ; doublures : doublures : dernier ia_quota par objet, 20 bascules au plus sur 24 h, coût du jour = la somme servie, « mesure des IA gratuites absente » sans événement récent ; trésorerie : modeles et total, plus de credit
+✅ SV-21 aucun nom de modèle écrit dans station.ts ; doublures : doublures : chaque carte et la fiche d’agent portent modeleAffiche de leur ligne ; « sans IA » pour un agent sans ligne ni MOTEUR_DE
+✅ SV-22 doublures : doublures : six enveloppes ; lignes.sites = le compte par état ; experience = etatExperience ; nuit vraie à 20 h, fausse à 7 h ; packs et experience hors périmètre sans comptabilité, le reste servi
+✅ SV-2 arbre réel (http://localhost:3492) : 404 sans identité (complément)
+✅ SV-3 copie au drapeau levé : 401 sans jeton, 403 artisan, 400 vue, salle et nom inconnus ; comptes d’essai supprimés (complément)
+✅ SV-4 copie : chaque vue → 200 au contrat, jamais 500 (complément)
+✅ SV-7 copie : ni e-mail ni téléphone hors de salle=standard (complément)
+✅ SV-11 tsc --noEmit vert sur C:\Users\benja\Documents\presti en 34 s (complément)
+station-route-qa --partie=lecture : FAIL — SV-11, SV-16

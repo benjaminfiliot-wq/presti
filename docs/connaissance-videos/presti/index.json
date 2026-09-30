@@ -1,0 +1,2024 @@
+{
+  "sources": [
+    {
+      "source": ".orchestre/preuves/018-07/video-corrige/lestraque.mp4",
+      "octets": 1345003,
+      "sha256": "29b184a245e6305a22575d84148e1062ff05c1321a5a6c3e1d47b2282c1f8a13",
+      "categorie": "preuve",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 14.8,
+      "largeur": 1280,
+      "hauteur": 720,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [],
+      "planche": ".orchestre--preuves--018-07--video-corrige--lestraque/planche.jpg",
+      "echantillonsSecondes": [
+        0.925,
+        2.775,
+        4.625,
+        6.475,
+        8.325,
+        10.175,
+        12.025,
+        13.875
+      ]
+    },
+    {
+      "source": ".orchestre/preuves/021-03/juge/chiffres-film.mp4",
+      "octets": 509611,
+      "sha256": "5d1c4995e7485976a898b29431edb4172e17b3346b87e712a66b7fdd2e71c333",
+      "categorie": "preuve",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 5.56,
+      "largeur": 1440,
+      "hauteur": 900,
+      "codec": "h264",
+      "fps": "25/1",
+      "audio": [],
+      "planche": ".orchestre--preuves--021-03--juge--chiffres-film/planche.jpg",
+      "echantillonsSecondes": [
+        0.347,
+        1.042,
+        1.737,
+        2.432,
+        3.127,
+        3.822,
+        4.518,
+        5.212
+      ]
+    },
+    {
+      "source": ".orchestre/preuves/021-16/juge/etapes-recit-film.mp4",
+      "octets": 358742,
+      "sha256": "688bd97e34ed0bec7c83c8bf587c135330d9d70d5c3c00f8c7f6bccf1d5ed931",
+      "categorie": "preuve",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 16.0,
+      "largeur": 1440,
+      "hauteur": 900,
+      "codec": "h264",
+      "fps": "15/1",
+      "audio": [],
+      "planche": ".orchestre--preuves--021-16--juge--etapes-recit-film/planche.jpg",
+      "echantillonsSecondes": [
+        1.0,
+        3.0,
+        5.0,
+        7.0,
+        9.0,
+        11.0,
+        13.0,
+        15.0
+      ]
+    },
+    {
+      "source": ".orchestre/preuves/021-17/juge/tel-avant-apres.mp4",
+      "octets": 4494854,
+      "sha256": "6de1ad648b7d9875407a116e2b3e2ba859a669a8a870ba9a6037c964c9f95de2",
+      "categorie": "preuve",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 10.833333,
+      "largeur": 780,
+      "hauteur": 844,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [],
+      "planche": ".orchestre--preuves--021-17--juge--tel-avant-apres/planche.jpg",
+      "echantillonsSecondes": [
+        0.677,
+        2.031,
+        3.385,
+        4.74,
+        6.094,
+        7.448,
+        8.802,
+        10.156
+      ]
+    },
+    {
+      "source": ".orchestre/preuves/024-01/diagnostic/comparaison-films.mp4",
+      "octets": 9181764,
+      "sha256": "ad7db7f8668f060bea6a5fcb6e0ba4b5e10a0f5104a1b9733b5bf871242bafba",
+      "categorie": "preuve",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 15.8,
+      "largeur": 804,
+      "hauteur": 844,
+      "codec": "h264",
+      "fps": "25/1",
+      "audio": [],
+      "planche": ".orchestre--preuves--024-01--diagnostic--comparaison-films/planche.jpg",
+      "echantillonsSecondes": [
+        0.988,
+        2.963,
+        4.938,
+        6.913,
+        8.888,
+        10.863,
+        12.838,
+        14.812
+      ]
+    },
+    {
+      "source": "public/demo/hero.mp4",
+      "octets": 4780514,
+      "sha256": "035d803dc95a682afda1466ff24276f7a51a3236538454ff5eb0f353c480bdbe",
+      "categorie": "demonstration",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 26.4,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [],
+      "planche": "public--demo--hero/planche.jpg",
+      "echantillonsSecondes": [
+        1.65,
+        4.95,
+        8.25,
+        11.55,
+        14.85,
+        18.15,
+        21.45,
+        24.75
+      ]
+    },
+    {
+      "source": "public/promo/demo-site/lestraque.mp4",
+      "octets": 1338588,
+      "sha256": "8b2f57aa76cd35842a4aa3b05f64916ce92015433b9ce57366b922a98f3112ba",
+      "categorie": "demonstration",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 29.5,
+      "largeur": 1280,
+      "hauteur": 720,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [],
+      "planche": "public--promo--demo-site--lestraque/planche.jpg",
+      "echantillonsSecondes": [
+        1.844,
+        5.531,
+        9.219,
+        12.906,
+        16.594,
+        20.281,
+        23.969,
+        27.656
+      ]
+    },
+    {
+      "source": "public/promo/presti-carre.mp4",
+      "octets": 2311036,
+      "sha256": "7d0cee8523d1f5b31a9497009c20568d613f090e7b0e6c69fb881800e4c09fa9",
+      "categorie": "demonstration",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 22.0,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [],
+      "planche": "public--promo--presti-carre/planche.jpg",
+      "echantillonsSecondes": [
+        1.375,
+        4.125,
+        6.875,
+        9.625,
+        12.375,
+        15.125,
+        17.875,
+        20.625
+      ]
+    },
+    {
+      "source": "public/promo/presti-paysage.mp4",
+      "octets": 4495589,
+      "sha256": "89ae32161045ce6e80e526546d44db5e30b9a816802d5620aaf46f61a929287b",
+      "categorie": "demonstration",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 40.2,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [],
+      "planche": "public--promo--presti-paysage/planche.jpg",
+      "echantillonsSecondes": [
+        2.513,
+        7.538,
+        12.562,
+        17.588,
+        22.613,
+        27.638,
+        32.663,
+        37.688
+      ]
+    },
+    {
+      "source": "public/promo/presti-vertical.mp4",
+      "octets": 2602857,
+      "sha256": "5128e8a1a65a112f45d4146dbe77d3a58ccc55c72121f8521600a63788c213fa",
+      "categorie": "demonstration",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 22.0,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [],
+      "planche": "public--promo--presti-vertical/planche.jpg",
+      "echantillonsSecondes": [
+        1.375,
+        4.125,
+        6.875,
+        9.625,
+        12.375,
+        15.125,
+        17.875,
+        20.625
+      ]
+    },
+    {
+      "source": "public/sites-demo/lestraque/video/atelier.av1.mp4",
+      "octets": 96475,
+      "sha256": "ffc54aaaa20fcbf211eea36d3798946d77934d6f00e57137836c55433d694c2a",
+      "categorie": "demonstration",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 6.006,
+      "largeur": 1280,
+      "hauteur": 720,
+      "codec": "av1",
+      "fps": "24000/1001",
+      "audio": [],
+      "planche": "public--sites-demo--lestraque--video--atelier.av1/planche.jpg",
+      "echantillonsSecondes": [
+        0.375,
+        1.126,
+        1.877,
+        2.628,
+        3.378,
+        4.129,
+        4.88,
+        5.631
+      ]
+    },
+    {
+      "source": "public/sites-demo/lestraque/video/atelier.h264.mp4",
+      "octets": 265449,
+      "sha256": "a0f99753dd99f6f7e2b9d80916730eee5b5f28b95df5a1ed4008c836ff654d8a",
+      "categorie": "demonstration",
+      "transcription": {
+        "etat": "aucune transcription auditive produite"
+      },
+      "dureeSecondes": 6.006,
+      "largeur": 1280,
+      "hauteur": 720,
+      "codec": "h264",
+      "fps": "24000/1001",
+      "audio": [],
+      "planche": "public--sites-demo--lestraque--video--atelier.h264/planche.jpg",
+      "echantillonsSecondes": [
+        0.375,
+        1.126,
+        1.877,
+        2.628,
+        3.378,
+        4.129,
+        4.88,
+        5.631
+      ]
+    },
+    {
+      "source": "publications/pub-01/carre.mp4",
+      "octets": 8868902,
+      "sha256": "b648f2244a6caf5ea790e95254e8d2d798df9fa8395bf2894b29b5b31c018a31",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-01/texte-source.md",
+        "source": "publications/pub-01/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 20.8,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-01/planche.jpg"
+    },
+    {
+      "source": "publications/pub-01/paysage.mp4",
+      "octets": 12051212,
+      "sha256": "c09b4071e26039df7edd811b5c39dbaa97a09e4c2e343b48ff428002939285ec",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-01/texte-source.md",
+        "source": "publications/pub-01/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 20.8,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-01/planche.jpg",
+      "echantillonsSecondes": [
+        1.3,
+        3.9,
+        6.5,
+        9.1,
+        11.7,
+        14.3,
+        16.9,
+        19.5
+      ]
+    },
+    {
+      "source": "publications/pub-01/vertical.mp4",
+      "octets": 10892605,
+      "sha256": "93be7415985a80e6fdf0e756420b798ea5012e650cfa38f1d714550601368e6c",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-01/texte-source.md",
+        "source": "publications/pub-01/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 20.8,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-01/planche.jpg"
+    },
+    {
+      "source": "publications/pub-02/carre.mp4",
+      "octets": 8215176,
+      "sha256": "72cc61b2860ec5769fbfed0c8b01528e2cd1a0fe2d8d829cd038672974b415c2",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-02/texte-source.md",
+        "source": "publications/pub-02/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-02/planche.jpg"
+    },
+    {
+      "source": "publications/pub-02/paysage.mp4",
+      "octets": 10727966,
+      "sha256": "6c48e2da89123f5ce663dabf6a8b3259b451003dfc4d46537c30b0e59da68723",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-02/texte-source.md",
+        "source": "publications/pub-02/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-02/planche.jpg",
+      "echantillonsSecondes": [
+        1.2,
+        3.6,
+        6.0,
+        8.4,
+        10.8,
+        13.2,
+        15.6,
+        18.0
+      ]
+    },
+    {
+      "source": "publications/pub-02/vertical.mp4",
+      "octets": 10169456,
+      "sha256": "c21b106e7265bf2e420f6dcbf52b7e51430ad8615a042a01e814bef6024f4b78",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-02/texte-source.md",
+        "source": "publications/pub-02/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-02/planche.jpg"
+    },
+    {
+      "source": "publications/pub-03/carre.mp4",
+      "octets": 7969648,
+      "sha256": "8bb9f9c349b14f6c93996f086123add08ac9e3f49be82787e8dd1ce081240235",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-03/texte-source.md",
+        "source": "publications/pub-03/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.4,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-03/planche.jpg"
+    },
+    {
+      "source": "publications/pub-03/paysage.mp4",
+      "octets": 10385389,
+      "sha256": "409cc3bcc568b3e4ecc9eca2c22f6420c16d1e867a0a29885f3a308fc03e85f9",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-03/texte-source.md",
+        "source": "publications/pub-03/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.4,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-03/planche.jpg",
+      "echantillonsSecondes": [
+        1.212,
+        3.637,
+        6.062,
+        8.487,
+        10.912,
+        13.337,
+        15.762,
+        18.188
+      ]
+    },
+    {
+      "source": "publications/pub-03/vertical.mp4",
+      "octets": 9923820,
+      "sha256": "905892c4487b960b227e81f66d449474a446bc7bb0497ee70888984ad923dbf4",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-03/texte-source.md",
+        "source": "publications/pub-03/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.4,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-03/planche.jpg"
+    },
+    {
+      "source": "publications/pub-04/carre.mp4",
+      "octets": 9383744,
+      "sha256": "fc64b1bbbedb68f1451a66087f8738a1dbce178b00a39172ee674d9e1303ea50",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-04/texte-source.md",
+        "source": "publications/pub-04/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 20.7,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-04/planche.jpg"
+    },
+    {
+      "source": "publications/pub-04/paysage.mp4",
+      "octets": 12403586,
+      "sha256": "f3afa717b11f54bcc9fe45890271a26f6dcec389b402bb5c1082c04e4cfaba8b",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-04/texte-source.md",
+        "source": "publications/pub-04/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 20.7,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-04/planche.jpg",
+      "echantillonsSecondes": [
+        1.294,
+        3.881,
+        6.469,
+        9.056,
+        11.644,
+        14.231,
+        16.819,
+        19.406
+      ]
+    },
+    {
+      "source": "publications/pub-04/vertical.mp4",
+      "octets": 11404164,
+      "sha256": "1faad9a31d442e4d5ad0d9e2a5ca6286d807a13e4890bf240aabae83ccf131f2",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-04/texte-source.md",
+        "source": "publications/pub-04/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 20.7,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-04/planche.jpg"
+    },
+    {
+      "source": "publications/pub-05/carre.mp4",
+      "octets": 8060749,
+      "sha256": "9697d7c076f7a9356f2a309028731dcbad050b08b1888bdbea8fa4903e1f818c",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-05/texte-source.md",
+        "source": "publications/pub-05/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 18.3,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-05/planche.jpg"
+    },
+    {
+      "source": "publications/pub-05/paysage.mp4",
+      "octets": 10582294,
+      "sha256": "4f4002f5928b583d98ed33a6c44c41e0f85f9277f3a078bf27982a9314e2d55b",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-05/texte-source.md",
+        "source": "publications/pub-05/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 18.3,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-05/planche.jpg",
+      "echantillonsSecondes": [
+        1.144,
+        3.431,
+        5.719,
+        8.006,
+        10.294,
+        12.581,
+        14.869,
+        17.156
+      ]
+    },
+    {
+      "source": "publications/pub-05/vertical.mp4",
+      "octets": 9875041,
+      "sha256": "f0d308493eeb74dc52ec3ecd289d7002e2f3230d5ca126a8ff661ab7ef493f29",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-05/texte-source.md",
+        "source": "publications/pub-05/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 18.3,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-05/planche.jpg"
+    },
+    {
+      "source": "publications/pub-06/carre.mp4",
+      "octets": 8012606,
+      "sha256": "53ab42b67220de6e82641779eed5084275bfab8e1c241ba0fc9676a20ef960ad",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-06/texte-source.md",
+        "source": "publications/pub-06/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-06/planche.jpg"
+    },
+    {
+      "source": "publications/pub-06/paysage.mp4",
+      "octets": 11335595,
+      "sha256": "147306a78ab22d4b8736a3e9ffa6d6faecebdee839ae21c30776d528fbcd50df",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-06/texte-source.md",
+        "source": "publications/pub-06/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-06/planche.jpg",
+      "echantillonsSecondes": [
+        1.2,
+        3.6,
+        6.0,
+        8.4,
+        10.8,
+        13.2,
+        15.6,
+        18.0
+      ]
+    },
+    {
+      "source": "publications/pub-06/vertical.mp4",
+      "octets": 9856056,
+      "sha256": "78af22643333086b1d19bc6abe96e5eb14535b2789451cc03bd4133a2ab9f4af",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-06/texte-source.md",
+        "source": "publications/pub-06/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-06/planche.jpg"
+    },
+    {
+      "source": "publications/pub-07/carre.mp4",
+      "octets": 8524781,
+      "sha256": "70c9c132ad649293da894d51308af0f30233f7406cc8ed736cf5e218e7c4394d",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-07/texte-source.md",
+        "source": "publications/pub-07/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.4,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-07/planche.jpg"
+    },
+    {
+      "source": "publications/pub-07/paysage.mp4",
+      "octets": 11186659,
+      "sha256": "8ca492e5a5a354f19c9349c3fe9e5ff26f5d7fa43b880425859b8d2cb256aedf",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-07/texte-source.md",
+        "source": "publications/pub-07/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.4,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-07/planche.jpg",
+      "echantillonsSecondes": [
+        1.212,
+        3.637,
+        6.062,
+        8.487,
+        10.912,
+        13.337,
+        15.762,
+        18.188
+      ]
+    },
+    {
+      "source": "publications/pub-07/vertical.mp4",
+      "octets": 10353253,
+      "sha256": "d99f7847fe3ee56783db4ba2148f818ddfc9d1e2bd1531c2b3e78d9a6bd5f982",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-07/texte-source.md",
+        "source": "publications/pub-07/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.4,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-07/planche.jpg"
+    },
+    {
+      "source": "publications/pub-08/carre.mp4",
+      "octets": 8278926,
+      "sha256": "17e7de3d9e9314de31a64214a9212b8244ff53b65d1efff42b7d6f9787901711",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-08/texte-source.md",
+        "source": "publications/pub-08/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-08/planche.jpg"
+    },
+    {
+      "source": "publications/pub-08/paysage.mp4",
+      "octets": 11173447,
+      "sha256": "a93f6714671b314d41717ccaa9c2c43ea4c2f9fd137e390c81992546c77d67aa",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-08/texte-source.md",
+        "source": "publications/pub-08/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-08/planche.jpg",
+      "echantillonsSecondes": [
+        1.2,
+        3.6,
+        6.0,
+        8.4,
+        10.8,
+        13.2,
+        15.6,
+        18.0
+      ]
+    },
+    {
+      "source": "publications/pub-08/vertical.mp4",
+      "octets": 10270085,
+      "sha256": "4b2145c5f5abfe2c495e8c014be75a6f0e3d5f183eea228a9c14455b55515811",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-08/texte-source.md",
+        "source": "publications/pub-08/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-08/planche.jpg"
+    },
+    {
+      "source": "publications/pub-09/carre.mp4",
+      "octets": 8456816,
+      "sha256": "eeeb38b42abc4bf26086485a9f30fa57a5a728b5cd99ff9fd126773b19e8d392",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-09/texte-source.md",
+        "source": "publications/pub-09/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.4,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-09/planche.jpg"
+    },
+    {
+      "source": "publications/pub-09/paysage.mp4",
+      "octets": 11111760,
+      "sha256": "c2599e5a61fd6802290e1fe965393e7e469b0adf70e84776c5b4b0e33760e399",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-09/texte-source.md",
+        "source": "publications/pub-09/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.4,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-09/planche.jpg",
+      "echantillonsSecondes": [
+        1.212,
+        3.637,
+        6.062,
+        8.487,
+        10.912,
+        13.337,
+        15.762,
+        18.188
+      ]
+    },
+    {
+      "source": "publications/pub-09/vertical.mp4",
+      "octets": 10364738,
+      "sha256": "edbb901cb55191e4244b5dfe9b7507ca8626e175743b38c354b06eda609e7523",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-09/texte-source.md",
+        "source": "publications/pub-09/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.4,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-09/planche.jpg"
+    },
+    {
+      "source": "publications/pub-10/carre.mp4",
+      "octets": 8207545,
+      "sha256": "a447804d243d49a79783db9589dde9c0655d9a8c2e636d9b932af65048764f41",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-10/texte-source.md",
+        "source": "publications/pub-10/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.7,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-10/planche.jpg"
+    },
+    {
+      "source": "publications/pub-10/paysage.mp4",
+      "octets": 11051824,
+      "sha256": "03c50efc9bbcedc79d9b95a1a8f9749002ed17a955f1c0e17e345618039d3781",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-10/texte-source.md",
+        "source": "publications/pub-10/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.7,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-10/planche.jpg",
+      "echantillonsSecondes": [
+        1.231,
+        3.694,
+        6.156,
+        8.619,
+        11.081,
+        13.544,
+        16.006,
+        18.469
+      ]
+    },
+    {
+      "source": "publications/pub-10/vertical.mp4",
+      "octets": 10145141,
+      "sha256": "2bfcf29c9d0a7b1708bacc80c72d590e1001e8d8e1572c65da5ecad7c6b9f81e",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "pub-10/texte-source.md",
+        "source": "publications/pub-10/texte.md",
+        "note": "Les dix premieres voix ont ete retirees au profit de musique selon public/promo/voix/LISEZMOI.md ; presence audio ne prouve pas des paroles."
+      },
+      "dureeSecondes": 19.7,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-10/planche.jpg"
+    },
+    {
+      "source": "publications/pub-11/carre.mp4",
+      "octets": 8903714,
+      "sha256": "467373fe440ca793a8c954675bb7c5a2c8c1bfae73e603010446ab08b90fc342",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 11. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.1,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-11/planche.jpg"
+    },
+    {
+      "source": "publications/pub-11/paysage.mp4",
+      "octets": 11968190,
+      "sha256": "20273b3b516337baa625e531e0e602020768160370ed647edbc4b800f04c2029",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 11. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.1,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-11/planche.jpg",
+      "echantillonsSecondes": [
+        1.256,
+        3.769,
+        6.281,
+        8.794,
+        11.306,
+        13.819,
+        16.331,
+        18.844
+      ]
+    },
+    {
+      "source": "publications/pub-11/vertical.mp4",
+      "octets": 10868100,
+      "sha256": "4ddd1a60b8a70b35035afe997867c8ca73bb1f231b98620911e9402e70768298",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 11. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.1,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-11/planche.jpg"
+    },
+    {
+      "source": "publications/pub-12/carre.mp4",
+      "octets": 8657220,
+      "sha256": "c1c8468d92df7fa3ca3608736147178c21c49b5c2a817a9ebd9758d7a3f4241c",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 12. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.9,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-12/planche.jpg"
+    },
+    {
+      "source": "publications/pub-12/paysage.mp4",
+      "octets": 12458378,
+      "sha256": "73b8b6cff17be1470b88a93067f23d1b98452fa84aec7c98d3d3b58d0f8b8e51",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 12. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.9,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-12/planche.jpg",
+      "echantillonsSecondes": [
+        1.244,
+        3.731,
+        6.219,
+        8.706,
+        11.194,
+        13.681,
+        16.169,
+        18.656
+      ]
+    },
+    {
+      "source": "publications/pub-12/vertical.mp4",
+      "octets": 10617156,
+      "sha256": "9b615516e30293978309c1e905d7f2767ff68079b998d549401b24a0db6f592f",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 12. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.9,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-12/planche.jpg"
+    },
+    {
+      "source": "publications/pub-13/carre.mp4",
+      "octets": 8359559,
+      "sha256": "5fe1406114cee5a15151a65c5aa550fa69ee0265681ffd0b16f3e0e6b56c3ad9",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 13. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.0,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-13/planche.jpg"
+    },
+    {
+      "source": "publications/pub-13/paysage.mp4",
+      "octets": 11443258,
+      "sha256": "03a1c02eaaee9fa90a147f278624cd5cc13762fb09b7d742672680f6fa64e62a",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 13. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.0,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-13/planche.jpg",
+      "echantillonsSecondes": [
+        1.188,
+        3.562,
+        5.938,
+        8.312,
+        10.688,
+        13.062,
+        15.438,
+        17.812
+      ]
+    },
+    {
+      "source": "publications/pub-13/vertical.mp4",
+      "octets": 10172263,
+      "sha256": "c5c688da118b07295cbdf43a425008a9544bfd5f3abea20bbf57a3ab065a55a0",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 13. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.0,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-13/planche.jpg"
+    },
+    {
+      "source": "publications/pub-14/carre.mp4",
+      "octets": 8212070,
+      "sha256": "87328ada4e78d5bcc02daf8be9c40ef3fd9c18eadf8d288da948a804cdd784ae",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 14. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.0,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-14/planche.jpg"
+    },
+    {
+      "source": "publications/pub-14/paysage.mp4",
+      "octets": 11691190,
+      "sha256": "d5663c3ae83367824d4069e2dedf233f077ccbc4b8e15788075648e529490c92",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 14. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.0,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-14/planche.jpg",
+      "echantillonsSecondes": [
+        1.188,
+        3.562,
+        5.938,
+        8.312,
+        10.688,
+        13.062,
+        15.438,
+        17.812
+      ]
+    },
+    {
+      "source": "publications/pub-14/vertical.mp4",
+      "octets": 10077368,
+      "sha256": "d4a14b70d85f7439db0c73ceb5574e203ec2e36d9edb03e842d7b202a6a0eb35",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 14. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.0,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-14/planche.jpg"
+    },
+    {
+      "source": "publications/pub-15/carre.mp4",
+      "octets": 9141286,
+      "sha256": "1136f1617bc5c971df5d9a50ac242fd171079cc136a3193c6262800c4a42df8e",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 15. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.6,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-15/planche.jpg"
+    },
+    {
+      "source": "publications/pub-15/paysage.mp4",
+      "octets": 12399492,
+      "sha256": "88eb27ac4a8fccffee6f937f3d1508015545e05d4acd8b508e7e5d4b7628d1ef",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 15. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.6,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-15/planche.jpg",
+      "echantillonsSecondes": [
+        1.288,
+        3.863,
+        6.438,
+        9.013,
+        11.588,
+        14.163,
+        16.738,
+        19.312
+      ]
+    },
+    {
+      "source": "publications/pub-15/vertical.mp4",
+      "octets": 11395838,
+      "sha256": "7f5a3a4ce5410669384ee1315618b052cedcc5bb20ee377d4f5281b0557b4c1c",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 15. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.6,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-15/planche.jpg"
+    },
+    {
+      "source": "publications/pub-16/carre.mp4",
+      "octets": 8397172,
+      "sha256": "f070cdd63122b8025044c394b39f5f1d1874a7f5429347d2acc7d605a02a4148",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 16. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.5,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-16/planche.jpg"
+    },
+    {
+      "source": "publications/pub-16/paysage.mp4",
+      "octets": 11490044,
+      "sha256": "3656f51e1f559d67f110ca5184bef512a82d41048c3a7476e182cb48e1e0a152",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 16. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.5,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-16/planche.jpg",
+      "echantillonsSecondes": [
+        1.219,
+        3.656,
+        6.094,
+        8.531,
+        10.969,
+        13.406,
+        15.844,
+        18.281
+      ]
+    },
+    {
+      "source": "publications/pub-16/vertical.mp4",
+      "octets": 10668800,
+      "sha256": "a067b3caac0ca54e797a5430d433ad844b37352d4c319ac747c94b938fd95451",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 16. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.5,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-16/planche.jpg"
+    },
+    {
+      "source": "publications/pub-17/carre.mp4",
+      "octets": 9166974,
+      "sha256": "4f23f8b7db154332b948a7df4a2946b31f9372a80f91d412272eaa65913e45de",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 17. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.3,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-17/planche.jpg"
+    },
+    {
+      "source": "publications/pub-17/paysage.mp4",
+      "octets": 12683653,
+      "sha256": "3cccddb361e7f5f76fb7e5c4997f1f5c1e8c362b1e2a3be693ffbfbe0968b186",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 17. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.3,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-17/planche.jpg",
+      "echantillonsSecondes": [
+        1.269,
+        3.806,
+        6.344,
+        8.881,
+        11.419,
+        13.956,
+        16.494,
+        19.031
+      ]
+    },
+    {
+      "source": "publications/pub-17/vertical.mp4",
+      "octets": 11060280,
+      "sha256": "3d37ebde051d6eb776c43a9f1b26e7984f000346ae1ac0ed4458f443655339b2",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 17. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.3,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-17/planche.jpg"
+    },
+    {
+      "source": "publications/pub-18/carre.mp4",
+      "octets": 8171293,
+      "sha256": "4e831f6a9d6ee1175d4355e9de5580f5d38aa6b7661c3c6109a00fca2e931151",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 18. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 18.7,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-18/planche.jpg"
+    },
+    {
+      "source": "publications/pub-18/paysage.mp4",
+      "octets": 11731326,
+      "sha256": "4613e34656d3adce8e579432b58713207382787385e33d05819b2a8c86ff5058",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 18. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 18.7,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-18/planche.jpg",
+      "echantillonsSecondes": [
+        1.169,
+        3.506,
+        5.844,
+        8.181,
+        10.519,
+        12.856,
+        15.194,
+        17.531
+      ]
+    },
+    {
+      "source": "publications/pub-18/vertical.mp4",
+      "octets": 10188742,
+      "sha256": "bbc36037e122a3cd531b92c14f4b8f0d000baf2ac4f0bbf89ed6e7b98281d95e",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 18. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 18.7,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-18/planche.jpg"
+    },
+    {
+      "source": "publications/pub-19/carre.mp4",
+      "octets": 8343405,
+      "sha256": "f9fcf0d9e53e84ac58b7843cd52b82d1b91185a36c40c14df0a8158cced953f6",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 19. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-19/planche.jpg"
+    },
+    {
+      "source": "publications/pub-19/paysage.mp4",
+      "octets": 11497667,
+      "sha256": "d1d7ffb175c61ed3a71402a9f429f9cd524f09594159fe31476fcb003baabcc0",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 19. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-19/planche.jpg",
+      "echantillonsSecondes": [
+        1.2,
+        3.6,
+        6.0,
+        8.4,
+        10.8,
+        13.2,
+        15.6,
+        18.0
+      ]
+    },
+    {
+      "source": "publications/pub-19/vertical.mp4",
+      "octets": 10268512,
+      "sha256": "dc6880cb3a338d93c85f4394851fc643cba195a48df389d90f9b955f2b28583c",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 19. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 19.2,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-19/planche.jpg"
+    },
+    {
+      "source": "publications/pub-20/carre.mp4",
+      "octets": 9315448,
+      "sha256": "87b4f4bba925df0a95f59dff04dc66e6ba585f963c0dab1ac585e0788163276e",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 20. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.9,
+      "largeur": 1080,
+      "hauteur": 1350,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-20/planche.jpg"
+    },
+    {
+      "source": "publications/pub-20/paysage.mp4",
+      "octets": 13149123,
+      "sha256": "d60eb115dd4705fb031c70fa3fdedc9fb3c98fa38729ab36fb2c9f538281b992",
+      "categorie": "publication",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 20. Audio non ecoute, pas de transcription ASR."
+      },
+      "dureeSecondes": 20.9,
+      "largeur": 1920,
+      "hauteur": 1080,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-20/planche.jpg",
+      "echantillonsSecondes": [
+        1.306,
+        3.919,
+        6.531,
+        9.144,
+        11.756,
+        14.369,
+        16.981,
+        19.594
+      ]
+    },
+    {
+      "source": "publications/pub-20/vertical.mp4",
+      "octets": 11393435,
+      "sha256": "ad585af1c879eaf4adc540ae31d58a0c69cc039aa8a14f320ea906a4516381ba",
+      "categorie": "publication",
+      "dureeSecondes": 20.9,
+      "largeur": 1080,
+      "hauteur": 1920,
+      "codec": "h264",
+      "fps": "30/1",
+      "audio": [
+        {
+          "codec": "aac",
+          "canaux": 2,
+          "frequence": "96000"
+        }
+      ],
+      "planche": "pub-20/planche.jpg",
+      "transcription": {
+        "etat": "texte editorial associe, pas transcription de la bande sonore",
+        "texte": "PUBLICATIONS-SERIE-2-TEXTES-SOURCE.md",
+        "source": "plans/publications-serie-2.md",
+        "note": "Section Publication numero 20. Audio non ecoute, pas de transcription ASR."
+      }
+    }
+  ],
+  "note": "Metadonnees ffprobe ; 8 images par video representative. Textes sources ne valent pas transcription auditive.",
+  "controle": {
+    "videos": 72,
+    "planches": 32,
+    "dimensionsPlanches": "2560x816",
+    "imagesParPlanche": 8,
+    "transcriptionAuditive": "non realisee ; textes ecrits identifies separement"
+  }
+}

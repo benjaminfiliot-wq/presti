@@ -1,0 +1,36 @@
+{
+  "id": "insta-DdKrZjlg1eC",
+  "titre": "Video by jaydenleilua",
+  "url": "https://www.instagram.com/reel/DdKrZjlg1eC/",
+  "source": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\videos\\insta-DdKrZjlg1eC.mp4",
+  "taille_octets": 2108024,
+  "sha256_video": "01399b41bf4f917ec117bd586a1288f696aa2f28cd7aeb3cd5b581442b76b40e",
+  "duree_secondes": 54.867007,
+  "largeur": 720,
+  "hauteur": 1280,
+  "codec_video": "vp9",
+  "images_par_seconde": "30/1",
+  "audio": [
+    {
+      "codec": "aac",
+      "frequence": "44100",
+      "canaux": 2
+    }
+  ],
+  "images_secondes": [
+    3.4291879375,
+    10.2875638125,
+    17.1459396875,
+    24.0043155625,
+    30.8626914375,
+    37.7210673125,
+    44.579443187500004,
+    51.4378190625
+  ],
+  "transcription": "TEXTE LOCAL intégral conservé; complétude et reconnaissance vocale non revérifiées",
+  "source_transcription": "C:\\Users\\benja\\Documents\\presti-ops\\veille\\2026-09-24\\insta-DdKrZjlg1eC.txt",
+  "empreintes_documents": {
+    "planche.jpg": "64062bed0f0d79a0e017541818facbfdbd1d6bbce006cd78b26e2d4e4db509b3",
+    "transcription.txt": "e4dd4e58e82f0bfee498870ce29617cbcef25fc4673203ea52e9f792e9d32fde"
+  }
+}
