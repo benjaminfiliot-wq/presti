@@ -1,0 +1,13 @@
+# Échecs attendus des juges du Pilotage sur leur arbre de référence
+
+Une section par lot ; chacune est réécrite par la preuve à chaque passage.
+
+<!-- lot:gplafond:debut -->
+## Lot gplafond — fiche 026-garde-plafond — référence `00f0ab5`
+
+Écrit par `node scripts/juges-026-pilotage-preuve.mjs --lot=gplafond` le 2026-09-30T21:11:20Z. Chaque juge est lancé par la preuve elle-même : sur l'arbre de référence extrait par `git archive` (`.orchestre/travail/juges-026-pilotage/reference`), avec `--racine`, puis avec `--temoin` sur l'état actuel, puis sur l'implémentation de référence du lot posée sur la référence (`.orchestre/travail/juges-026-pilotage/temoin-gplafond`, JA-7) et sur chacun de ses sabotages (JA-8). L'extrait est la première ligne de critère de la sortie, recopiée telle quelle (seul `|` est échappé en `\|`), puis relue ici et retrouvée dans la sortie par la preuve.
+
+| Juge et partie | Critère attendu en échec sur la référence | Code | Extrait réel de sa sortie | Témoin sur l’état actuel | Témoin vert (implémentation de référence) | Sabotages vus |
+|---|---|---|---|---|---|---|
+| garde-plafond-qa | GF-1 | 1 | ❌ GF-1 montant-un-centime : validerPlan l’accepte (aucune faute) ; montant-quarante-neuf-euros : validerPlan l’accepte (aucune faute) ; engage-option-non-defaut : validerPlan l’accepte (aucune faute) ; engage-un-centime : validerPlan l’accepte (aucune faute) | PASS, code 0 (GF-9, GF-0) | PASS, code 0, 10 critères verts | 36/36 (engage-permis → ❌ GF-1, montant-permis → ❌ GF-1, cout-zero-litteral-inscrit → ❌ GF-2, cout-inconnu-accepte → ❌ GF-2, inscription-sans-garde-de-montant → ❌ GF-2, laya-cout-zero-litteral → ❌ GF-2, voie-payante-declaree-gratuite → ❌ GF-2, sql-montant-null-accepte → ❌ GF-2, depense-cout-chaine-avec-jeton → ❌ GF-2, plafond-verdict-ignore → ❌ GF-3, plafond-verifie-apres-l-appel → ❌ GF-3, defaut-ouvert-en-panne → ❌ GF-3, defaut-catch-ouvert → ❌ GF-3, entraide-sans-controle → ❌ GF-3, sql-plafond-compare-apres → ❌ GF-3, plafond-defaut-un → ❌ GF-4, lignes-semees-gardent-un-euro → ❌ GF-4, gratuite-de-toute-voie-a-zero → ❌ GF-5, jeton-non-verifie → ❌ GF-5, jeton-expire-accepte → ❌ GF-5, jeton-plafond-de-montant-ignore → ❌ GF-5, jeton-emis-par-quiconque → ❌ GF-5, sans-secret-jeton-accepte → ❌ GF-5, firecrawl-verdict-jamais-lu → ❌ GF-5, anthropic-sans-import-du-controle → ❌ GF-5, perplexity-sans-garde → ❌ GF-5, agent-importe-l-ia-du-produit → ❌ GF-5, quarantaine-sans-tarif → ❌ GF-6, quarantaine-sans-dollar → ❌ GF-6, quarantaine-tout-refuse → ❌ GF-6, budget-d-essai-un-euro → ❌ GF-7, document-prevoit-la-depense → ❌ GF-7, seuil-cent-cinquante → ❌ GF-8, message-cent-cinquante → ❌ GF-8, agent-lit-une-cle-payante → ❌ GF-9, validateur-du-chef-retire → ❌ GF-1) |
+<!-- lot:gplafond:fin -->

@@ -1,0 +1,15 @@
+garde-doublon-qa --temoin — racine témoin (scripts/fixtures/026-garde/doublon/temoin/)
+(node:22415) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/user/presti/.orchestre/travail/garde-doublon-qa/temoin-22415/lib/agents/acquisition/facteur.ts?garde=22415 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/user/presti/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✅ GD-1 le Facteur réserve (en_cours_envoi + clé) AVANT tout appel Gmail ; réservation en panne ou refusée → rien ne part, rien ne lève
+✅ GD-2 écriture envoye en échec, base tombée, transport coupé ou levé : 1 seul appel Gmail en 5 passes, état incertain, carte sans donnée personnelle ; refus net relâché ; contrôle de réconciliation ; marquerEnvoye ne tait plus ok:false
+✅ GD-3 deux et trois passes simultanées : un seul appel, un seul message par destinataire, aucun envoi perdu ; UPDATE conditionnel sur statut=approuve
+✅ GD-4 même (destinataire, modèle, fait) ⇒ même clé (indépendante de l'id, du texte, de la casse, de la date), formule sha256 commune TS/SQL, index unique, deja_reserve
+✅ GD-5 repondeur (messagerie, réponse privée) réserve avant Meta ; le Facteur ne touche jamais un formulaire, le porteur de l'usine réserve en base ; acq_envoi_envoye exige en_cours_envoi ; magasin réel et contrat exposent la réservation ; aucun contournement
+✅ GD-6 trigger before insert or update of statut qui lève ops:envoye_sans_reservation hors en_cours_envoi/envoi_incertain avec clé ; exemption essai_e2e bornée aux destinataires .invalid ; statuts admis par la contrainte
+✅ GD-7 pause activée entre la lecture et la réservation : rien ne part, rien ne se perd, l'envoi reste approuve et repart à la levée ; acq_envoi_reserver lit pause_generale avant d'écrire
+✅ GD-8 plafond 2 (1 parti aujourd'hui, 1 hier) : 1 seul message, les autres restent approuve sans échec compté ni boucle, la place revient le lendemain ; acq_envoi_reserver compte en_cours_envoi/envoye/envoi_incertain du jour de Paris sous verrou, sans l'envoi lui-même
+garde-doublon-qa --temoin : PASS
+code temoin 0

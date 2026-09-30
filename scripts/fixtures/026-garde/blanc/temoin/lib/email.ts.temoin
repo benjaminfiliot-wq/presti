@@ -1,0 +1,62 @@
+// Témoin de garde-blanc-qa : lib/email.ts corrigé, réduit à ce que le juge lit (expéditeur, Reply-To, chemin « au nom d'un artisan »).
+// L'e-mail DE la plateforme garde son nom et son adresse ; l'e-mail AU NOM D'UN ARTISAN part d'une adresse neutre, sous le nom de
+// l'artisan (jamais un repli sur la marque de l'éditeur), avec son adresse en Reply-To.
+const RESEND_API_KEY = process.env.RESEND_API_KEY
+const FROM_ADDR_PLATEFORME = 'contact@prestiapp.fr'
+const NOM_PLATEFORME = 'Presti'
+const FROM_ADDR_ARTISAN = process.env.EMAIL_EXPEDITEUR_ARTISAN?.trim() || 'envoi@messagerie-artisans.example'
+const EMAIL_SIMPLE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+export const EMAIL_ENTREPRISE = process.env.PRESTI_ALERTES_EMAIL?.trim() || process.env.EMAIL_ENTREPRISE?.trim() || 'contact@prestiapp.fr'
+
+// `name === undefined` : e-mail de la plateforme. Un nom d'artisan (même vide après nettoyage) ne retombe jamais sur la plateforme.
+function fromHeader(name?: string | null): string {
+  if (name === undefined || name === null) return `${NOM_PLATEFORME} <${FROM_ADDR_PLATEFORME}>`
+  const clean = name.replace(/[\r\n<>"]/g, '').trim().slice(0, 70) || 'Votre artisan'
+  return `${clean} <${FROM_ADDR_ARTISAN}>`
+}
+
+type SendResult = { ok: boolean; id?: string; error?: string }
+
+export async function sendEmail(opts: {
+  to: string
+  subject: string
+  text: string
+  replyTo?: string
+  fromName?: string // marque de l'artisan ; absent : e-mail de la plateforme
+  critique?: boolean
+}): Promise<SendResult> {
+  if (/\.invalid$/i.test(opts.to.trim())) return { ok: true, id: 'ignore-adresse-de-test' }
+  if (!RESEND_API_KEY) return { ok: false, error: 'RESEND_API_KEY manquante' }
+  // Reply-To : l'artisan quand il y a un artisan, jamais l'adresse de l'éditeur.
+  const replyTo = opts.replyTo || (opts.fromName !== undefined ? undefined : EMAIL_ENTREPRISE)
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: fromHeader(opts.fromName),
+        to: [opts.to],
+        subject: opts.subject,
+        text: opts.text,
+        ...(replyTo ? { reply_to: replyTo } : {}),
+      }),
+    })
+    const data = (await res.json().catch(() => ({}))) as { id?: string; message?: string }
+    if (!res.ok) return { ok: false, error: data?.message || `HTTP ${res.status}` }
+    return { ok: true, id: data?.id }
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Erreur d'envoi email" }
+  }
+}
+
+/** Notification interne de l'entreprise : elle s'adresse à Presti et ne part jamais au nom d'un artisan. */
+export async function notifierEntreprise(sujet: string, corps: string, repondreA?: string): Promise<SendResult> {
+  return sendEmail({
+    to: EMAIL_ENTREPRISE,
+    subject: `[Presti] ${sujet.replace(/[\r\n]/g, ' ').slice(0, 120)}`,
+    text: `${corps.slice(0, 4000)}\n\n— Presti (notification automatique)`,
+    replyTo: repondreA && EMAIL_SIMPLE.test(repondreA) ? repondreA : EMAIL_ENTREPRISE,
+    critique: true,
+  })
+}
