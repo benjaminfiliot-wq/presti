@@ -13,6 +13,7 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { autoriserDepense, jetonDepenseDeLEnv, coutEstimeDeLEnv } from '../lib/agents/depense.mjs'
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const KDIR = path.join(ROOT, '.claude', 'agents', 'knowledge')
@@ -28,6 +29,8 @@ const BETA_AGENTS = 'managed-agents-2026-04-01'
 const BETA_MEM = 'agent-memory-2026-07-22'
 const base = { 'x-api-key': K, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' }
 const api = async (p, { beta = BETA_AGENTS, ...o } = {}) => {
+  const garde = autoriserDepense({ agent: 'coentreprise', fournisseur: 'anthropic_api', cout_eur: coutEstimeDeLEnv(), jeton_depense: jetonDepenseDeLEnv() })
+  if (!garde.ok) throw new Error(`dépense refusée (${garde.motif}) : une session Managed Agents se paie, seul un jeton de dépense de Benj l'autorise`)
   const r = await fetch('https://api.anthropic.com' + p, { ...o, headers: { ...base, 'anthropic-beta': beta, ...(o.headers || {}) } })
   const t = await r.text(); let j; try { j = JSON.parse(t) } catch { j = t }
   if (r.status >= 400) throw new Error(`${p} -> ${r.status} ${typeof j === 'object' ? JSON.stringify(j).slice(0, 300) : j}`)

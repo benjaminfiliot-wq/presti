@@ -10,6 +10,8 @@
 //  • email AU NOM D'UN ARTISAN (`fromName` posé : réponse auto, devis, relance, accusé de
 //    réception, lien de connexion) → Reply-To = l'artisan, JAMAIS `contact@prestiapp.fr`
 //    (white-label : la réponse du client ne doit pas atterrir chez l'éditeur).
+import { sortiePermise } from '@/lib/agents/sortie'
+
 const RESEND_API_KEY = process.env.RESEND_API_KEY
 const FROM_ADDR = 'contact@prestiapp.fr'
 /** Adresse de l'entreprise : reçoit les réponses aux emails de Presti et les notifications internes.
@@ -45,6 +47,12 @@ export async function sendEmail(opts: {
   // (audit final, F, majeur 8). On fait comme si c'était parti, sans rien envoyer.
   if (/\.invalid$/i.test(opts.to.trim())) return { ok: true, id: 'ignore-adresse-de-test' }
   if (!RESEND_API_KEY) return { ok: false, error: 'RESEND_API_KEY manquante' }
+  // La pause générale ferme TOUTE sortie ordinaire, par quelque voie qu'elle arrive ici ; dans le doute (lecture en erreur, valeur
+  // inattendue) elle reste fermée. Seuls les messages critiques passent : l'alerte au fondateur est ce qui lui dit que la pause est posée.
+  if (!opts.critique) {
+    const sortie = await sortiePermise()
+    if (!sortie.permise) return { ok: false, error: `pause générale : rien ne part (${sortie.raison})` }
+  }
   // Plafond global quotidien (F, majeur 7) : l'offre Resend gratuite s'arrête à 100 envois/jour ;
   // sans borne, six prospects par IP suffisaient à l'épuiser en une heure et demie, et plus
   // aucune alerte ni réinitialisation ne partait. Les envois critiques passent toujours.

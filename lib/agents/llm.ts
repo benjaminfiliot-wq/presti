@@ -18,7 +18,7 @@ import {
   CATALOGUE, ENTRAIDE, MODELES_LOCAUX, MODELE_AGENTS, MODELE_REJUGE, MOTEUR_DE, REPLI, TRAVAIL_DE,
   conseillersPour, type EntreeMoteur,
 } from './moteurs'
-import { ops_cout_ajouter } from './bus'
+import { ops_cout_ajouter, ops_cout_autoriser } from './bus'
 
 // ── contrat public ────────────────────────────────────────────────────────────────────────────────────────────────
 export type Lecteur = (systeme: string, donnees: unknown) => Promise<unknown>
@@ -38,6 +38,10 @@ export type DepsLecteur = {
   enregistrerCout?: (agent: string, montant: number, detail: Record<string, unknown>) => Promise<RetourCout>
   maintenant?: () => number
   attendre?: (ms: number) => Promise<void>
+  /** Le coût en euros d'une voie : un nombre fini ≥ 0, sinon l'appel est refusé (un coût inconnu n'est pas 0). */
+  coutDeVoie?: (id: string, detail: Record<string, unknown>) => unknown
+  /** Le plafond du jour, contrôlé AVANT l'appel : Promise<true> autorise ; tout autre retour, ou une exception, refuse. */
+  verifierPlafond?: (agent: string, coutPrevuEuros: number) => Promise<unknown>
 }
 
 export const PLAFONDS = Object.freeze({
@@ -46,6 +50,24 @@ export const PLAFONDS = Object.freeze({
   delaiMs: Object.freeze({ codex: 600_000, freellmapi: 60_000, ollama: 180_000, laya: 60_000 }),
   eurosParAppel: 0,
 })
+
+// ── le coût et le plafond, AVANT l'appel (plafond de 0 € par agent) ─────────────────────────────────────────────────────
+/** La liste fermée des voies dont la gratuité tient à leur nature (abonnement de Benj, machine locale) : toute autre voie a un coût INCONNU. */
+export const COUT_VOIE_EUROS: Readonly<Record<string, number>> = Object.freeze({ codex: 0, freellmapi: 0, ollama_local: 0, laya: 0 })
+function coutDeVoieParDefaut(id: string): number | undefined {
+  return Object.prototype.hasOwnProperty.call(COUT_VOIE_EUROS, id) ? COUT_VOIE_EUROS[id] : undefined
+}
+const coutValide = (c: unknown): c is number => typeof c === 'number' && Number.isFinite(c) && c >= 0
+/** La base dit oui (true) ou non ; une panne, un retour inattendu ou une exception REFUSENT : jamais « au mieux ». */
+async function verifierPlafondReel(agent: string, coutPrevuEuros: number): Promise<boolean> {
+  try {
+    const r = await ops_cout_autoriser({ p_agent: agent, p_montant_eur: coutPrevuEuros })
+    return r.ok === true && r.data === true
+  } catch { return false }
+}
+async function plafondAutorise(verifier: NonNullable<DepsLecteur['verifierPlafond']>, agent: string, cout: number): Promise<boolean> {
+  try { return (await verifier(agent, cout)) === true } catch { return false }
+}
 
 // ── emballerDonnees / retirerCoordonnees (contrat inchangé de 026-041) ───────────────────────────────────────────────
 /** Émballe la consigne pour l'entrée standard du lanceur ou le corps HTTP : jamais deux marques emboîtées. */
@@ -116,6 +138,7 @@ function attendreReel(ms: number): Promise<void> {
 }
 
 async function enregistrerCoutReel(agent: string, montant: number, detail: Record<string, unknown>): Promise<RetourCout> {
+  if (typeof montant !== 'number' || !Number.isFinite(montant) || montant < 0) return { coupe: true } // un coût inconnu n'est pas un coût nul
   const fournisseur = typeof detail?.moteur === 'string' ? String(detail.moteur) : 'inconnu'
   const r = await ops_cout_ajouter({ p_agent: agent, p_fournisseur: fournisseur, p_montant_eur: montant, p_detail: detail, p_tache: null })
   if (!r.ok) return { coupe: true }
@@ -300,6 +323,8 @@ export function creerLecteur(agent: string, options: OptionsLecteur = {}, deps: 
   const enregistrerCoutFn = deps.enregistrerCout ?? enregistrerCoutReel
   const maintenantFn = deps.maintenant ?? Date.now
   const attendreFn = deps.attendre ?? attendreReel
+  const coutDeVoieFn = deps.coutDeVoie ?? ((id: string) => coutDeVoieParDefaut(id))
+  const verifierPlafondFn = deps.verifierPlafond ?? verifierPlafondReel
 
   const candidats = repli.voies
     .map((v) => (typeof v === 'string' ? v : v.id))
@@ -384,10 +409,15 @@ export function creerLecteur(agent: string, options: OptionsLecteur = {}, deps: 
     let derniereErreur: Error = new Error('attente : toutes les voies ont échoué')
     for (const id of essais) {
       if (coupe) throw new Error('exécution coupée (plafond de coût)')
+      // Vérifier → appeler → inscrire : le coût est celui de la liste fermée (inconnu ou non numérique : refusé), le plafond du jour
+      // est contrôlé AVANT l'appel, jamais constaté après coup.
+      const cout = coutDeVoieFn(id, { moteur: id })
+      if (!coutValide(cout)) throw new Error('coût inconnu : appel refusé')
+      if (!(await plafondAutorise(verifierPlafondFn, agent, cout))) throw new Error('plafond de coût : appel refusé avant consommation')
       const resultat = await essayerUneVoie(id, systeme, donnees)
 
       let retourCout: RetourCout
-      try { retourCout = await enregistrerCoutFn(agent, 0, resultat.detail) }
+      try { retourCout = await enregistrerCoutFn(agent, cout, resultat.detail) }
       catch (e) { coupe = true; throw e instanceof Error ? e : new Error(String(e)) }
       if (retourCout && retourCout.coupe) { coupe = true; throw new Error('exécution coupée (plafond de coût)') }
 
@@ -421,6 +451,9 @@ export async function demanderConseil(
   const estD1 = ctx.classe === 'D1'
   const urlBase = estD1 ? lireOllamaUrl(env) : lireFreellmapiUrl(env)
   if (!urlBase) return null
+  const coutConseil = coutDeVoieParDefaut(estD1 ? 'ollama_local' : 'freellmapi')
+  const verifierPlafondFn = deps.verifierPlafond ?? verifierPlafondReel
+  if (!coutValide(coutConseil) || !(await plafondAutorise(verifierPlafondFn, 'entraide', coutConseil))) return null
 
   const derniers = (t: string, n: number) => (t.length > n ? t.slice(-n) : t)
   const extraits = {
@@ -443,10 +476,10 @@ export async function demanderConseil(
     }
     const moteur = estD1 ? 'ollama' : 'freellmapi'
     if (resultat.fournisseurReel && /^groq/i.test(resultat.fournisseurReel)) {
-      await enregistrerCoutFn('entraide', 0, { moteur, modele, fournisseur_reel: resultat.fournisseurReel })
+      await enregistrerCoutFn('entraide', coutConseil, { moteur, modele, fournisseur_reel: resultat.fournisseurReel })
       continue
     }
-    await enregistrerCoutFn('entraide', 0, { moteur, modele, fournisseur_reel: resultat.fournisseurReel })
+    await enregistrerCoutFn('entraide', coutConseil, { moteur, modele, fournisseur_reel: resultat.fournisseurReel })
     const lignes = resultat.texte.split('\n').slice(0, 25).join('\n')
     return { conseiller: modele, texte: lignes }
   }
@@ -465,6 +498,9 @@ async function appelerJev(mode: 'decide' | 'score' | 'noul', texte: string, opti
   if (opts.d1 && !estDrapeauLeve(env.IA_LOCALE_PROSPECTS_OUI, maintenantFn())) return null
   const chemin = lireJevChemin(env)
   if (!chemin) return null
+  const coutJev = coutDeVoieParDefaut('laya')
+  const verifierPlafondFn = deps.verifierPlafond ?? verifierPlafondReel
+  if (!coutValide(coutJev) || !(await plafondAutorise(verifierPlafondFn, 'laya', coutJev))) return null
 
   const dirTmp = fs.mkdtempSync(path.join(os.tmpdir(), 'presti-jev-'))
   const fichierRequete = path.join(dirTmp, 'requete.json')
@@ -495,7 +531,7 @@ async function appelerJev(mode: 'decide' | 'score' | 'noul', texte: string, opti
 
   let valeur: unknown = null
   try { valeur = JSON.parse(stdout.trim()) } catch { valeur = null }
-  await enregistrerCoutFn('laya', 0, { moteur: 'laya', mode })
+  await enregistrerCoutFn('laya', coutJev, { moteur: 'laya', mode })
   return code === 0 ? valeur : null
 }
 

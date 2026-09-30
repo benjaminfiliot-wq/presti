@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
-import { pauseGenerale } from '@/lib/agents/pause'
+import { sortiePermise } from '@/lib/agents/sortie'
+import { signalerProgrammees } from '@/lib/crieur/pauseProgrammees'
 import { ops_battement } from '@/lib/agents/bus'
 import { enregistrerPassage } from '@/lib/alertes'
 import { notifierEntreprise } from '@/lib/email'
@@ -18,14 +19,20 @@ type Ligne = { semaine: string; canal: string; fait_ids: string[]; statut: strin
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET
   if (!secret || req.headers.get('authorization') !== `Bearer ${secret}`) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-  const pause = await pauseGenerale()
-  if (pause.active) return NextResponse.json({ pause: true })
+  // Pause générale (ou doute sur sa lecture) : aucun nouveau dépôt, et les publications DÉJÀ programmées dans Publora, que Presti ne
+  // peut pas arrêter d'ici, sont comptées et signalées au fondateur (lib/crieur/pauseProgrammees.ts). Registre illisible : 503, avec la raison.
+  if (!(await sortiePermise()).permise) {
+    const bilan = await signalerProgrammees()
+    if (!bilan.ok) return NextResponse.json({ pause: true, erreur: bilan.raison }, { status: 503 })
+    return NextResponse.json({ pause: true, programmees_a_signaler: bilan.programmees, signalees: bilan.signalees })
+  }
 
   const maintenant = new Date()
   const semaine = cleSemaine(maintenant)
   const drapeaux = { ...FLAGS, aimantSite: actif('aimantSite') }
   const aSec = new URL(req.url).searchParams.get('a_sec') === '1'
   let brouillons = 0, refusees = 0, erreurs = 0
+  let interrompue = false
   const accords: string[] = []
   const incidents: string[] = []
   try {
@@ -56,6 +63,8 @@ export async function GET(req: Request) {
     }
     let plateformes: string[] | undefined
     for (const pub of lot) {
+      // La pause est relue à CHAQUE publication : posée en cours de passage, le reste du lot n'est pas déposé.
+      if (!(await sortiePermise()).permise) { interrompue = true; incidents.push('pause générale posée en cours de passage : le reste du lot n’est pas déposé'); break }
       const verdict = jugerPublication(pub, { faits: Object.fromEntries(FAITS.map((f) => [f.id, f])), phrasesGabarit: PHRASES_GABARIT, drapeaux })
       const raisons = verdict.ok ? ['preparation_en_cours'] : verdict.raisons
       // Réserver le couple semaine/canal AVANT Publora : la contrainte unique bloque un second appel concurrent.
@@ -92,7 +101,7 @@ export async function GET(req: Request) {
       const battement = await ops_battement({ p_nom: 'crieur' })
       if (!battement.ok) return NextResponse.json({ erreur: 'Battement Crieur impossible' }, { status: 503 })
     }
-    return NextResponse.json({ semaine, brouillons, refusees, erreurs }, { status: erreurs ? 503 : 200 })
+    return NextResponse.json({ semaine, brouillons, refusees, erreurs, ...(interrompue ? { pause: true } : {}) }, { status: erreurs ? 503 : 200 })
   } catch (e) {
     const raison = e instanceof Error ? e.message : 'Erreur Crieur'
     if (!aSec) {

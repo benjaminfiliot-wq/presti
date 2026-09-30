@@ -25,6 +25,7 @@ import http from 'node:http'
 import crypto from 'node:crypto'
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { autoriserDepense, jetonDepenseDeLEnv, coutEstimeDeLEnv } from '../../lib/agents/depense.mjs'
 
 const HOTE_USINE = 'presti-usine'
 const SOURCE = fileURLToPath(import.meta.url)
@@ -256,6 +257,8 @@ function depsAdaptateur(ctx, fc) {
 }
 async function firecrawlReel(operation, corps, entetes) {
   if (operation !== 'scrape') return { statut: 400, corps: null } // la mesure ne fait que lire une page
+  const garde = autoriserDepense({ agent: 'mesure_a_sec', fournisseur: 'firecrawl', cout_eur: coutEstimeDeLEnv(), jeton_depense: jetonDepenseDeLEnv() })
+  if (!garde.ok) return { statut: 403, corps: null }
   // Appel à l'API de Firecrawl (pas au site) : le corps ne porte que l'URL publique de la page.
   const r = await fetch('https://api.firecrawl.dev/v1/scrape', { method: 'POST', headers: { ...entetes, 'content-type': 'application/json' }, body: JSON.stringify(corps), signal: AbortSignal.timeout(60_000) })
   return { statut: r.status, corps: await r.json().catch(() => null) }
