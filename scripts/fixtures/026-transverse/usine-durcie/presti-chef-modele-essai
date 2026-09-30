@@ -1,0 +1,2 @@
+# regle etroite du chef (fichier d essai : le juge exige qu il ne bouge pas)
+usine ALL=(chef-modele) NOPASSWD: /usr/local/bin/presti-chef-modele-essai *
