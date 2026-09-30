@@ -1,0 +1,19 @@
+// Témoin de garde-blanc-qa : les deux e-mails d'une demande, l'accusé au prospect (au nom de l'artisan) et la notification à l'artisan.
+import { sendEmail } from '@/lib/email'
+
+type Artisan = { nom: string | null; email: string | null }
+
+export async function accuserReception(artisan: Artisan, contact: string, reply: string) {
+  await sendEmail({
+    to: contact,
+    fromName: artisan.nom?.trim() || 'Votre artisan',
+    subject: `Votre demande — ${artisan.nom ?? 'votre artisan'}`,
+    text: reply,
+    replyTo: artisan.email ?? undefined,
+  })
+}
+
+export function noteArtisan(nom: string, contact: string) {
+  // Destinataire : l'artisan lui-même (exemption E6).
+  return `Nouveau contact via votre page Presti — à vous de répondre.\n\nNom : ${nom}\nContact : ${contact}`
+}

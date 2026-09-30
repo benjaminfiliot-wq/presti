@@ -1,0 +1,18 @@
+{
+  "_": "Portée du témoin de garde-blanc-qa : les seules surfaces que le juge lit sur cet arbre (celles du témoin), posée par le témoin lui-même. Sur le dépôt réel ce fichier n'existe pas et le juge lit les vraies surfaces ; s'il y figurait, GB-7 le refuserait.",
+  "fichiers": [
+    "public/sites-demo/generer.mjs",
+    "public/sites-demo/temoin-artisan/index.html",
+    "public/sites-demo/temoin-artisan/mentions-legales/index.html",
+    "public/sites-demo/temoin-artisan/confidentialite/index.html",
+    "public/sites-demo/temoin-artisan/attributions.json",
+    "gabarits-pubs/locale/chantier/index.html",
+    "lib/email.ts",
+    "lib/agents/acquisition/modeles.ts",
+    "app/api/leads/route.ts"
+  ],
+  "generations": [{ "nom": "maquette-temoin", "maquette": "garde-blanc-jeu/maquette.json" }],
+  "sites": ["public/sites-demo/temoin-artisan"],
+  "appelants": ["app/api/leads/route.ts"],
+  "courriel": "lib/email.ts"
+}

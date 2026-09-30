@@ -1,0 +1,244 @@
+{
+  "racine": ".",
+  "payants": [
+    {
+      "fournisseur": "anthropic",
+      "fichier": "lib/ai.ts",
+      "statut": "liste fermée"
+    },
+    {
+      "fournisseur": "anthropic",
+      "fichier": "lib/ai/outils.ts",
+      "statut": "liste fermée"
+    },
+    {
+      "fournisseur": "anthropic",
+      "fichier": "lib/alertes.ts",
+      "statut": "liste fermée"
+    },
+    {
+      "fournisseur": "anthropic",
+      "fichier": "lib/recherche-fournisseurs.ts",
+      "statut": "liste fermée"
+    },
+    {
+      "fournisseur": "firecrawl",
+      "fichier": "scripts/agents/mesure-a-sec.mjs",
+      "statut": "point de contrôle"
+    },
+    {
+      "fournisseur": "anthropic",
+      "fichier": "scripts/cle-produit.mjs",
+      "statut": "liste fermée"
+    },
+    {
+      "fournisseur": "anthropic",
+      "fichier": "scripts/coentreprise.mjs",
+      "statut": "point de contrôle"
+    },
+    {
+      "fournisseur": "anthropic",
+      "fichier": "scripts/ma-probe.mjs",
+      "statut": "liste fermée"
+    },
+    {
+      "fournisseur": "anthropic",
+      "fichier": "scripts/ranger-env.mjs",
+      "statut": "liste fermée"
+    },
+    {
+      "fournisseur": "firecrawl",
+      "fichier": "scripts/savoir/chercher.mjs",
+      "statut": "point de contrôle"
+    },
+    {
+      "fournisseur": "perplexity",
+      "fichier": "scripts/savoir/chercher.mjs",
+      "statut": "point de contrôle"
+    }
+  ],
+  "libres": [
+    {
+      "fournisseur": "resend",
+      "fichier": "app/api/controle/etat/route.ts",
+      "motif": "envoi transactionnel du produit, palier gratuit, sans génération"
+    },
+    {
+      "fournisseur": "meta",
+      "fichier": "app/api/cron/vigie-meta/route.ts",
+      "motif": "API Graph de lecture et de publication, gratuite"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "app/api/stripe/webhook/route.ts",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "lib/abonnementSync.ts",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "meta",
+      "fichier": "lib/agents/acquisition/jugeFaits.ts",
+      "motif": "API Graph de lecture et de publication, gratuite"
+    },
+    {
+      "fournisseur": "meta",
+      "fichier": "lib/agents/acquisition/metaWebhooks.ts",
+      "motif": "API Graph de lecture et de publication, gratuite"
+    },
+    {
+      "fournisseur": "meta",
+      "fichier": "lib/agents/acquisition/vigieMeta.ts",
+      "motif": "API Graph de lecture et de publication, gratuite"
+    },
+    {
+      "fournisseur": "meta",
+      "fichier": "lib/contenu/metaPublier.ts",
+      "motif": "API Graph de lecture et de publication, gratuite"
+    },
+    {
+      "fournisseur": "publora",
+      "fichier": "lib/crieur/publora.ts",
+      "motif": "formule Starter gratuite (docs/marketing/README.md:33), quota mensuel borné par le code"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "lib/direction/stripe-actions.ts",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "lib/direction/stripe.ts",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "resend",
+      "fichier": "lib/email.ts",
+      "motif": "envoi transactionnel du produit, palier gratuit, sans génération"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "lib/packPub.ts",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "lib/packPubServeur.ts",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "lib/siteCommandeServeur.ts",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "lib/stripe.ts",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "lib/stripeAiguillage.ts",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "lib/studio/commandeServeur.ts",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "scripts/_DANGER_stripe-webhook-setup.mjs",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "meta",
+      "fichier": "scripts/agents/jeton-meta-poser.mjs",
+      "motif": "API Graph de lecture et de publication, gratuite"
+    },
+    {
+      "fournisseur": "publora",
+      "fichier": "scripts/pipeline.mjs",
+      "motif": "formule Starter gratuite (docs/marketing/README.md:33), quota mensuel borné par le code"
+    },
+    {
+      "fournisseur": "publora",
+      "fichier": "scripts/publier-serie.mjs",
+      "motif": "formule Starter gratuite (docs/marketing/README.md:33), quota mensuel borné par le code"
+    },
+    {
+      "fournisseur": "publora",
+      "fichier": "scripts/publora-verifier.mjs",
+      "motif": "formule Starter gratuite (docs/marketing/README.md:33), quota mensuel borné par le code"
+    },
+    {
+      "fournisseur": "publora",
+      "fichier": "scripts/reparer-env.mjs",
+      "motif": "formule Starter gratuite (docs/marketing/README.md:33), quota mensuel borné par le code"
+    },
+    {
+      "fournisseur": "resend",
+      "fichier": "scripts/resend-domain.mjs",
+      "motif": "envoi transactionnel du produit, palier gratuit, sans génération"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "scripts/site-commander-verifier.mjs",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "scripts/stripe-franchise-base.mjs",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "scripts/stripe-produit-site.mjs",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    },
+    {
+      "fournisseur": "stripe",
+      "fichier": "scripts/stripe-verifier.mjs",
+      "motif": "recette : l’argent entre, aucune dépense par appel"
+    }
+  ],
+  "exemptions": [
+    {
+      "fichier": "lib/ai.ts",
+      "fournisseur": "anthropic",
+      "motif": "IA du produit vendu à l’artisan : coût borné par les crédits et les quotas de chaque artisan (lib/plans.ts), aucun agent ne l’appelle (vérifié ci-dessous)"
+    },
+    {
+      "fichier": "lib/ai/outils.ts",
+      "fournisseur": "anthropic",
+      "motif": "outils de l’IA du produit, mêmes bornes par artisan"
+    },
+    {
+      "fichier": "lib/recherche-fournisseurs.ts",
+      "fournisseur": "anthropic",
+      "motif": "recherche de prix de l’inventaire du produit, plafonds durs par recherche et par artisan"
+    },
+    {
+      "fichier": "lib/alertes.ts",
+      "fournisseur": "anthropic",
+      "motif": "lecture du rapport de coûts de l’organisation (cost_report), aucune génération"
+    },
+    {
+      "fichier": "scripts/cle-produit.mjs",
+      "fournisseur": "anthropic",
+      "motif": "geste manuel de Benj à son terminal : administration de la clé du produit (une sonde d’un jeton)"
+    },
+    {
+      "fichier": "scripts/ma-probe.mjs",
+      "fournisseur": "anthropic",
+      "motif": "geste manuel de Benj : sonde de l’administration des clés"
+    },
+    {
+      "fichier": "scripts/ranger-env.mjs",
+      "fournisseur": "anthropic",
+      "motif": "geste manuel de Benj : rangement d’une clé dans .env.local"
+    }
+  ]
+}
