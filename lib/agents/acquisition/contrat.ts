@@ -396,6 +396,8 @@ export interface ReponseProspect {
   auto: boolean
   accuse_site: boolean
   en_reponse_a: string | null
+  /** L'en-tête From de la réponse (0123, ops.reponses.expediteur) : le Standard y lit l'adresse d'un STOP reçu hors de tout fil. Absent avant 0123. */
+  expediteur?: string | null
   recu_le: string
 }
 /**
